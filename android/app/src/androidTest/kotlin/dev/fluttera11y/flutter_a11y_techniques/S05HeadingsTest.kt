@@ -134,6 +134,22 @@ class S05HeadingsTest {
         assertNotHeading("Notifications")
     }
 
+
+    /**
+     * Moves TalkBack focus to the node [find] returns and fails the test if
+     * it cannot. A node that already has accessibility focus refuses the
+     * action, so focus is cleared and the action tried once more. Without
+     * this check a failed focus would pass silently and the transcript would
+     * credit the wrong speech to the element.
+     */
+    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
+        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
+        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
+        Thread.sleep(500)
+        assertTrue("TalkBack focus on $what",
+            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
+    }
+
     /**
      * L4. Moves TalkBack focus to each listed element and logs markers;
      * tool/talkback.py reads the speech from logcat. Skipped unless TalkBack
@@ -164,7 +180,7 @@ class S05HeadingsTest {
             Thread.sleep(8_000)
             for ((key, text) in elements) {
                 Log.i("S05TB", "FOCUS s05-$slug-$key")
-                node(text).performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+                talkBackFocus("s05-$slug-$key") { node(text) }
                 Thread.sleep(4_500)
             }
             Log.i("S05TB", "END $slug")

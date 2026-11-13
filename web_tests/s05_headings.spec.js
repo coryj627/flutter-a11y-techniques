@@ -8,22 +8,74 @@ async function open(page, slug) {
   await page.getByRole('heading', { name: 'Example', level: 2 }).waitFor();
 }
 
-/** Every heading on the page, in document order, as "level text". */
-const outline = (page) =>
-  page.locator('h1,h2,h3,h4,h5,h6,[role=heading]').evaluateAll((elements) =>
-    elements.map((e) => {
-      // aria-level wins; then the element's own level; a role="heading" with
-      // neither has the ARIA default level of 2.
-      const fromTag = /^H[1-6]$/.test(e.tagName) ? e.tagName.slice(1) : '2';
-      const level = e.getAttribute('aria-level') || fromTag;
-      return `${level} ${e.textContent}`;
-    }));
+/**
+ * Every heading on the page, in reading order, as "level text".
+ *
+ * The level is read from the browser's own accessibility tree (Chromium,
+ * over the DevTools protocol), not worked out from tags and attributes here.
+ * The browser decides what an aria-level means, including levels above 6 and
+ * values it rejects, and that decision is what assistive technology gets.
+ */
+const outline = async (page) => {
+  const client = await page.context().newCDPSession(page);
+  const { nodes } = await client.send('Accessibility.getFullAXTree');
+  await client.detach();
+  // The protocol returns nodes breadth-first. Reading order is depth-first
+  // through childIds, so walk the tree from its root. Ignored nodes are not
+  // reported themselves, but their children still are.
+  const byId = new Map(nodes.map((node) => [node.nodeId, node]));
+  const found = [];
+  const visit = (node) => {
+    if (!node) return;
+    if (!node.ignored && node.role?.value === 'heading') {
+      const level = node.properties?.find((p) => p.name === 'level')?.value?.value;
+      found.push(`${level} ${(node.name?.value ?? '').replace(/\s+/g, ' ').trim()}`);
+    }
+    for (const id of node.childIds ?? []) visit(byId.get(id));
+  };
+  visit(nodes.find((node) => !node.parentId));
+  return found;
+};
 
 /** Levels may go up by at most one from one heading to the next. */
 const skips = (headings) =>
   headings
     .map((h) => Number(h.split(' ')[0]))
     .filter((level, i, levels) => i > 0 && level - levels[i - 1] > 1);
+
+test('the outline helper reports the levels the browser exposes', async ({ page }) => {
+  await page.setContent(`
+    <h1> Title </h1>
+    <h3 aria-level="2">Aria wins</h3>
+    <div role="heading" aria-level="4">Div with level</div>
+    <div role="heading">Div with no level</div>
+    <div role="heading" aria-level="7">Level seven</div>`);
+  const headings = await outline(page);
+  expect(headings).toEqual([
+    '1 Title',
+    '2 Aria wins',
+    '4 Div with level',
+    '2 Div with no level',
+    // Browsers accept levels above 6. Clamping here would hide a real skip.
+    '7 Level seven',
+  ]);
+  expect(skips(headings)).toEqual([4, 7]);
+  expect(skips(['1 Title', '7 Deep'])).toEqual([7]);
+});
+
+test('the outline helper keeps reading order through nested containers', async ({ page }) => {
+  // A heading inside a region comes before a heading that follows the
+  // region, although it is deeper in the tree.
+  await page.setContent(`
+    <h1>Title</h1>
+    <section aria-label="Details">
+      <div><div><h3>Inside the region</h3></div></div>
+    </section>
+    <h2>After the region</h2>`);
+  const headings = await outline(page);
+  expect(headings).toEqual(['1 Title', '3 Inside the region', '2 After the region']);
+  expect(skips(headings)).toEqual([3]);
+});
 
 test.describe('good examples', () => {
   test('good-levels: real heading elements in an outline with no skipped level', async ({ page }) => {
