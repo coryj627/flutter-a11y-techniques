@@ -350,38 +350,38 @@ It was first described to us by the
   widgets, which the shell tests already cover. `flutter_markdown_plus` is in
   `pubspec.yaml` only for this spike and comes out with the fixture.
 
-**K5 Guidepup and VoiceOver on macOS — not working yet; parked.**
-Guidepup 0.40.0 and `@guidepup/playwright` 0.21.0 are installed in `web_tests/`
-with throwaway specs in `web_tests/vo/` (Chromium and Playwright's WebKit
-build, which is not Safari itself). macOS 27.0.1. What was found:
+**K5 Guidepup and VoiceOver on macOS — answered: the walk is repeatable.**
+Guidepup 0.40.0 and `@guidepup/playwright` 0.21.0, macOS 27.0.1, spec in
+`web_tests/vo/`, headed Chromium and Playwright's WebKit build (not Safari
+itself).
 
-- It cannot run from inside the Claude desktop app: macOS blocks the app's
-  processes from `~/Library/Group Containers/group.com.apple.VoiceOver`
-  (`EPERM … symlink`). L4 VoiceOver runs on macOS have to be started from the
-  owner's terminal.
-- `npx @guidepup/setup setup` ended with "Unable to configure automation
-  permissions", with and without `sudo`. It points to the
-  [manual VoiceOver setup guide](https://www.guidepup.dev/docs/guides/manual-voiceover-setup).
-  `npx @guidepup/setup install` worked.
-- From the owner's terminal VoiceOver starts, then every test fails at
-  `navigateToWebContent()` with "AppleEvent timed out (-1712)" in both browsers.
-- Diagnostic (`diag.spec.js`): a plain AppleScript `activate` of
-  `com.google.chrome.for.testing` returns in 85 ms. The same call inside
-  `with transaction`, which is what Guidepup sends, times out. So the browser
-  activation failure is Guidepup's transaction form, not a missing permission.
-- In the same run a System Events query timed out and the VoiceOver walk never
-  returned (test timeout after 3 minutes). That fits the automation
-  permissions the setup could not configure, but it is not confirmed.
-- No speech was captured. To finish this spike someone at the Mac has to do
-  the manual VoiceOver setup and accept the Automation prompts, and the specs
-  need their own activation step in place of `navigateToWebContent()`.
-- Until then web speech (VAL-5 on web) is unanswered and web relies on L3.
-  The fallback already allowed by D8 is VoiceOver with Chrome driven by
-  computer use, as evidence, not a gate.
+- Result on C01 `good-text`, three runs in each browser, all identical:
+  "heading level 2 Example", "Save button", "Cancel button",
+  "Learn more button", "Activations: 0". Web speech can be a gate (VAL-5).
+- Machine setup is the hard part. `npx @guidepup/setup setup` could not
+  configure automation permissions here ("Unable to configure automation
+  permissions", with and without `sudo`), and early runs failed with `EPERM`
+  on VoiceOver's preferences folder. A later attempt worked, including from
+  an agent session, after further setup by the owner; which change fixed it was
+  not recorded. See the [manual setup guide](https://www.guidepup.dev/docs/guides/manual-voiceover-setup).
+  `npx @guidepup/setup install` downloads Guidepup's VoiceOver preferences.
+- Guidepup's `navigateToWebContent()` does not work with these browser builds
+  on macOS 27: it activates the browser inside an AppleScript transaction,
+  which times out (-1712). A plain `activate` returns in 85 ms. The spec
+  activates the browser itself, moves DOM focus to the first control, and
+  walks with `voiceOver.previous()` / `next()`.
+- Guidepup records only speech that follows its own commands. The item under
+  focus has to be reached with a command to be read, and **live region
+  announcements are not captured**: after Enter on Save, "Activations: 1" did
+  not reach the log. On web the announcement is asserted at L3 instead.
+- The run takes over the screen and speaks aloud; it cannot run headless.
+  Whether a GitHub macOS runner allows it is untested.
+- Still to do: extend the web walk from `good-text` to all C01 examples and
+  write a transcript to `docs/evidence/C01/`.
 
 **Left in the repo by the spikes (all throwaway unless noted):**
-`web_tests/vo/` (the parked VoiceOver web spike). The rest of the spike code
-was removed when C01 was built. Kept on purpose: the `RunnerUITests` target, the `fluttera11y` URL
+The spike code was removed when C01 was built; `web_tests/vo/` is now the
+first web VoiceOver check. Kept on purpose: the `RunnerUITests` target, the `fluttera11y` URL
 scheme in `Info.plist`, and the `androidTest` dependencies and test runner in
 `android/app/build.gradle.kts`.
 
@@ -409,7 +409,8 @@ transcripts in `docs/evidence/C01/`. All passing locally on Flutter 3.47.5.
 The spike code is removed.
 
 Still open in this phase: in-app rendering of the technique doc, Widgetbook,
-L2 `integration_test` runs on devices, VoiceOver on web (K5), the CI jobs for
+L2 `integration_test` runs on devices, VoiceOver on web beyond `good-text`
+(K5), the CI jobs for
 web, Android, and iOS, and the `tool/` check that front matter and
 `technique.dart` agree. Two Flutter limitations found for `CupertinoButton`
 need issues filed (spec section 9).
