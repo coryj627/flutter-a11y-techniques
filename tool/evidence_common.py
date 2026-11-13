@@ -30,3 +30,18 @@ def flutter_version():
         if re.fullmatch(r"[\w.+-]{1,40}", candidate):
             return candidate
     return "unknown"
+
+
+# Techniques with screen reader evidence: id -> (title, Android test class,
+# iOS test class, web VoiceOver spec).
+TECHNIQUES = {
+    "C01": ("C01 Button", "C01ButtonTest", "C01ButtonUITests", "c01_button_vo.spec.js"),
+    "S05": ("S05 Headings", "S05HeadingsTest", "S05HeadingsUITests", "s05_headings_vo.spec.js"),
+}
+
+
+def technique_argument(argv, usage):
+    """The technique id given on the command line, validated."""
+    if len(argv) < 2 or argv[1].upper() not in TECHNIQUES:
+        raise SystemExit(f"{usage}\nTechniques: {', '.join(sorted(TECHNIQUES))}")
+    return argv[1].upper()

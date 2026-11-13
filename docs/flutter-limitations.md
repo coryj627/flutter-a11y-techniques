@@ -23,9 +23,9 @@ yet), **Fixed in x.y** (verified on that version).
 | --- | --- | --- | --- |
 | [FL-001](#fl-001) | Disabled `CupertinoButton` reports no disabled state | All | Confirmed |
 | [FL-002](#fl-002) | Enter does not activate a `CupertinoButton` on web | Web | Confirmed |
-| [FL-003](#fl-003) | `Semantics(header: true)` alone is not a heading for VoiceOver on iOS | iOS | Observed |
-| [FL-004](#fl-004) | `header: true` on web is always `<h2>` | Web | Observed |
-| [FL-005](#fl-005) | `header: true` with an identifier is not a heading on Android | Android | Observed |
+| [FL-003](#fl-003) | `Semantics(header: true)` alone is not a heading for VoiceOver on iOS | iOS | Confirmed |
+| [FL-004](#fl-004) | `header: true` on web is always `<h2>` | Web | Confirmed |
+| [FL-005](#fl-005) | `header: true` alone is not a heading on Android, except directly in a list | Android | Confirmed |
 | [FL-006](#fl-006) | Any tappable node is `role="button"` on web | Web | Confirmed |
 | [FL-007](#fl-007) | `Semantics(identifier:)` inside a button strips the button's name | Android, iOS | Observed |
 | [FL-008](#fl-008) | `IconButton` tooltip is read as a second item by VoiceOver in Chromium | Web (Chromium) | Observed |
@@ -34,6 +34,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-011](#fl-011) | Lazy lists expose only content near the viewport | Web (others not checked) | Confirmed |
 | [FL-012](#fl-012) | A web live region announcement can be erased by an earlier one's clear timer | Web | Confirmed (source read) |
 | [FL-013](#fl-013) | A web link with `linkUrl` is followed by the browser as well as by `onTap` | Web | Confirmed |
+| [FL-014](#fl-014) | `CupertinoListSection` does not expose its header as a heading | All | Confirmed |
 
 ---
 
@@ -91,48 +92,71 @@ yet), **Fixed in x.y** (verified on that version).
 
 **`Semantics(header: true)` alone is not a heading for VoiceOver on iOS.**
 
-- Status: Observed in spike K7 (docs/plan.md), Flutter 3.47.5, iOS 27.0
-  simulator. No dedicated test yet; S05 Headings must add one.
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator.
 - WCAG: 1.3.1 Info and Relationships, 2.4.6 Headings and Labels.
-- What happens: `Semantics(header: true, child: Text('Spike heading'))` and the
-  `AppBar` title were spoken as plain text, with no "Heading".
-  `Semantics(headingLevel: 1, …)` was spoken as "Level one Heading". A native
-  heading in Apple's Settings app, read through the same API, was spoken as
-  "General Heading", so the test API does report the trait.
+- What happens: `Semantics(header: true, child: Text('Profile'))` is spoken as
+  "Profile", with no "Heading". The same text with `headingLevel: 3` is spoken
+  as "Profile Heading". A native heading in Apple's Settings app, read through
+  the same test API, is spoken as "General Heading", so the API does report
+  the trait. An `AppBar` title is affected the same way, because `AppBar`
+  marks its title with `header: true` and no level.
 - Cause: not investigated.
-- Workaround: set `headingLevel` (with or without `header: true`). The shell's
-  `SectionHeading` does this and is read as "Example Heading"
-  (`docs/evidence/C01/voiceover-ios.md`).
+- Reproduce: `/t/S05/bad-header-only`. Asserted in
+  `ios/RunnerUITests/S05HeadingsUITests.swift` (`testVoiceOverSpeech`), written
+  to fail when this is fixed; transcript in
+  `docs/evidence/S05/voiceover-ios.md`.
+- Workaround: set `headingLevel`, with or without `header: true`
+  (`/t/S05/good-levels`). For an `AppBar`, wrap the title:
+  `AppBar(title: Semantics(headingLevel: 1, child: Text(title)))`. The shell
+  does both (`lib/app/widgets.dart`).
 - Upstream issue: not searched yet.
 
 ## FL-004
 
 **`header: true` on web is always `<h2>`.**
 
-- Status: Observed in spike K3, Flutter 3.47.5. No dedicated test yet (S05).
+- Status: Confirmed, Flutter 3.47.5, web.
 - WCAG: 1.3.1 Info and Relationships.
 - What happens: every `Semantics(header: true)` node becomes `<h2>`, whatever
-  its place in the page outline, including the `AppBar` title.
-  `Semantics(headingLevel: n)` produces the matching `<h1>`–`<h6>`.
-- Workaround: always set `headingLevel`.
-- Open question for S05: the `AppBar` title is exposed as `<h2>`
-  ("heading level 2 Text buttons" in `docs/evidence/C01/voiceover-web.md`), so
-  a screen has no `<h1>` unless the app adds one.
+  its place in the page outline, including an `AppBar` title. A page built
+  this way has no `<h1>`, and every heading is announced as "heading level
+  2". `Semantics(headingLevel: n)` produces the matching `<h1>`–`<h6>`.
+- Reproduce: `/t/S05/bad-header-only`. Asserted in
+  `web_tests/s05_headings.spec.js`, written to fail if the level changes;
+  VoiceOver says "heading level 2 Profile"
+  (`docs/evidence/S05/voiceover-web.md`).
+- Workaround: always set `headingLevel`, and give the `AppBar` title level 1
+  as in FL-003. `web_tests/s05_headings.spec.js` asserts that every screen of
+  this app has exactly one `<h1>` and no skipped level.
 - Upstream issue: not searched yet.
 
 ## FL-005
 
-**`header: true` with an identifier on the same node is not a heading on Android.**
+**`header: true` alone is not a heading on Android, except directly in a list.**
 
-- Status: Observed in the Phase 1 instrumented spike, Flutter 3.47.5,
-  Android 17 emulator. No dedicated test yet (S05).
-- What happens: `Semantics(header: true, child: Text(…))` reports
-  `AccessibilityNodeInfo.isHeading == true` and TalkBack says "Heading". The
-  same widget with `identifier:` set, or wrapped in the project's `TestId`,
-  reports `isHeading == false` and TalkBack does not say "Heading". With
-  `headingLevel` set, the identifier makes no difference and it is a heading.
-- Cause: not investigated.
-- Workaround: set `headingLevel`.
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator. SDK source read.
+- WCAG: 1.3.1 Info and Relationships.
+- What happens: `Semantics(header: true, child: Text('Profile'))` reports
+  `AccessibilityNodeInfo.isHeading == false`, TalkBack does not say
+  "Heading", and heading navigation skips it. With `headingLevel` set it is a
+  heading.
+- Cause (SDK source read): the Android embedding sets the heading property
+  from the level only, `result.setHeading(node.headingLevel > 0)` in
+  `engine/src/flutter/shell/platform/android/io/flutter/view/BaseRoleConfigurator.java`.
+  The header flag is used in one other place: when the node is a direct child
+  of a scrollable list it is passed as the "is heading" value of the node's
+  collection item info, and Android reports such an item as a heading. So the
+  same widget is a heading as a direct `ListView` child and not a heading
+  anywhere else, for example inside a `Column`.
+- Correction: an earlier version of this entry, from the Phase 1 spike, blamed
+  a test identifier on the same node. That was wrong. The spike's heading that
+  worked was a direct `ListView` child and the ones that failed were not; the
+  identifier was a coincidence.
+- Reproduce: `/t/S05/bad-header-only`. Asserted in `S05HeadingsTest.kt`
+  (`badHeaderOnlyIsNotAHeadingOnAndroid`), written to fail when this is fixed,
+  and in the TalkBack transcript.
+- Workaround: set `headingLevel` (`/t/S05/good-levels`). Android has one
+  heading level, so any level from 1 to 6 gives the same result there.
 - Upstream issue: not searched yet.
 
 ## FL-006
@@ -294,4 +318,26 @@ yet), **Fixed in x.y** (verified on that version).
   exactly one new tab and leaves this one alone; Space does nothing.
 - To examine in the links technique (S-group): whether `url_launcher`'s `Link`
   widget is the better documented mechanism.
+- Upstream issue: not searched yet.
+
+## FL-014
+
+**`CupertinoListSection` does not expose its header as a heading.**
+
+- Status: Confirmed, Flutter 3.47.5. Android, iOS, Web. SDK source read.
+- WCAG: 1.3.1 Info and Relationships.
+- What happens: the `header` of `CupertinoListSection` (and
+  `CupertinoListSection.insetGrouped`) is drawn in the section-header style
+  but is plain text to assistive technology. VoiceOver says "Notifications"
+  with no "Heading", TalkBack the same, and on web it is not a heading
+  element.
+- Cause (SDK source read): `packages/flutter/lib/src/cupertino/list_section.dart`
+  adds no `Semantics` to the header.
+- Reproduce: `/t/S05/bad-cupertino-section-header`. Asserted at every layer:
+  `test/techniques/s05_headings_test.dart`, `web_tests/s05_headings.spec.js`,
+  `S05HeadingsTest.kt`, and the three transcripts in `docs/evidence/S05/`.
+  The widget test is written to fail when this is fixed.
+- Workaround: pass a header that is a heading,
+  `header: Semantics(header: true, headingLevel: 3, child: Text('…'))`
+  (`/t/S05/good-cupertino`).
 - Upstream issue: not searched yet.

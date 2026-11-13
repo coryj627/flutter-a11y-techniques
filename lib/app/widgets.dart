@@ -29,7 +29,14 @@ class PageScaffold extends StatelessWidget {
       title: title == appName ? appName : '$title - $appName',
       color: Theme.of(context).colorScheme.primary,
       child: Scaffold(
-        appBar: AppBar(title: Text(title), actions: actions),
+        appBar: AppBar(
+          // The screen title is the page's level 1 heading. AppBar marks its
+          // title as a header with no level, which is level 2 on web and not
+          // a heading for VoiceOver on iOS (docs/flutter-limitations.md,
+          // FL-003 and FL-004), so the level is stated here.
+          title: Semantics(headingLevel: 1, child: Text(title)),
+          actions: actions,
+        ),
         body: SafeArea(
           child: Align(
             alignment: Alignment.topCenter,

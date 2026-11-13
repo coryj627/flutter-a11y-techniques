@@ -62,7 +62,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: App tree and keyboard tests
         working-directory: web_tests
-        run: npx playwright test c01_button.spec.js
+        run: npx playwright test c01_button.spec.js s05_headings.spec.js
       - name: Widgetbook tests
         working-directory: web_tests
         run: npx playwright test -c widgetbook.config.js
@@ -74,7 +74,7 @@ jobs:
 
   # L3 on Android: UI Automator against an emulator. The TalkBack walk skips
   # itself because TalkBack is not enabled here; speech runs are local
-  # (tool/talkback_c01.py).
+  # (python3 tool/talkback.py <ID>).
   android:
     runs-on: ubuntu-latest
     steps:
@@ -112,7 +112,7 @@ jobs:
 
   # L3 on iOS: XCUITest on a simulator. The VoiceOver test needs Xcode 27 and
   # an iOS 27 simulator; with anything older it compiles to a skip, so speech
-  # is only checked locally (tool/voiceover_ios_c01.py) until the hosted image
+  # is only checked locally (python3 tool/voiceover_ios.py <ID>) until the hosted image
   # has them.
   ios:
     runs-on: macos-latest

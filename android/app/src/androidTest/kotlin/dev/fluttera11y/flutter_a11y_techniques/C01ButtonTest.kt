@@ -183,7 +183,7 @@ class C01ButtonTest {
 
     /**
      * L4. Moves TalkBack focus to every identified node of every example and
-     * logs markers; tool/talkback_c01.py reads the speech from logcat. Skipped
+     * logs markers; tool/talkback.py reads the speech from logcat. Skipped
      * unless TalkBack is running.
      */
     @Test
