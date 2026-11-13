@@ -181,6 +181,22 @@ class C01ButtonTest {
         assertTrue(node.isEnabled)
     }
 
+
+    /**
+     * Moves TalkBack focus to the node [find] returns and fails the test if
+     * it cannot. A node that already has accessibility focus refuses the
+     * action, so focus is cleared and the action tried once more. Without
+     * this check a failed focus would pass silently and the transcript would
+     * credit the wrong speech to the element.
+     */
+    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
+        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
+        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
+        Thread.sleep(500)
+        assertTrue("TalkBack focus on $what",
+            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
+    }
+
     /**
      * L4. Moves TalkBack focus to every identified node of every example and
      * logs markers; tool/talkback.py reads the speech from logcat. Skipped
@@ -209,7 +225,7 @@ class C01ButtonTest {
             collect(automation.rootInActiveWindow)
             for (id in ids) {
                 Log.i("C01TB", "FOCUS $id")
-                node(id).performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+                talkBackFocus(id) { node(id) }
                 Thread.sleep(4_500)
             }
             Log.i("C01TB", "END $slug")

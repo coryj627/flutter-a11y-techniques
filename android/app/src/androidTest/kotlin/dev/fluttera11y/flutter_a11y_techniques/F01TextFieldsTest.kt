@@ -161,6 +161,22 @@ class F01TextFieldsTest {
         assertEquals("Contact address", name("f01-bad-name-mismatch-email"))
     }
 
+
+    /**
+     * Moves TalkBack focus to the node [find] returns and fails the test if
+     * it cannot. A node that already has accessibility focus refuses the
+     * action, so focus is cleared and the action tried once more. Without
+     * this check a failed focus would pass silently and the transcript would
+     * credit the wrong speech to the element.
+     */
+    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
+        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
+        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
+        Thread.sleep(500)
+        assertTrue("TalkBack focus on $what",
+            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
+    }
+
     /**
      * L4. Moves TalkBack focus to each field and logs markers;
      * tool/talkback.py reads the speech from logcat. The placeholder fields
@@ -190,7 +206,7 @@ class F01TextFieldsTest {
             Thread.sleep(8_000)
             for ((id, alsoFilled) in fields) {
                 Log.i("F01TB", "FOCUS $id")
-                node(id).performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+                talkBackFocus(id) { node(id) }
                 Thread.sleep(4_500)
                 if (alsoFilled) {
                     // Move focus away, fill the field, and read it again.
@@ -204,11 +220,13 @@ class F01TextFieldsTest {
                     }
                     // Typing leaves TalkBack on the field, and focusing a node
                     // that already has focus says nothing. Move away first.
-                    findByText(automation.rootInActiveWindow, "Example")
-                        ?.performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+                    talkBackFocus("the Example heading") {
+                        findByText(automation.rootInActiveWindow, "Example")
+                            ?: throw AssertionError("no Example heading")
+                    }
                     Thread.sleep(4_000)
                     Log.i("F01TB", "FOCUS $id-filled")
-                    node(id).performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+                    talkBackFocus("$id (filled)") { node(id) }
                     Thread.sleep(4_500)
                 }
             }

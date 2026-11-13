@@ -8,15 +8,19 @@ async function open(page, slug) {
   await page.getByRole('heading', { name: 'Example', level: 2 }).waitFor();
 }
 
-/** Every heading on the page, in document order, as "level text". */
+/**
+ * Every heading on the page, in document order, as "level text".
+ * The level is aria-level when that is a whole number from 1 to 6, then the
+ * element's own h1-h6 level, and otherwise 2: the ARIA default for
+ * role="heading", which is also what an out-of-range aria-level falls back to.
+ */
 const outline = (page) =>
   page.locator('h1,h2,h3,h4,h5,h6,[role=heading]').evaluateAll((elements) =>
     elements.map((e) => {
-      // aria-level wins; then the element's own level; a role="heading" with
-      // neither has the ARIA default level of 2.
+      const aria = (e.getAttribute('aria-level') || '').trim();
       const fromTag = /^H[1-6]$/.test(e.tagName) ? e.tagName.slice(1) : '2';
-      const level = e.getAttribute('aria-level') || fromTag;
-      return `${level} ${e.textContent}`;
+      const level = /^[1-6]$/.test(aria) ? aria : fromTag;
+      return `${level} ${e.textContent.replace(/\s+/g, ' ').trim()}`;
     }));
 
 /** Levels may go up by at most one from one heading to the next. */
@@ -24,6 +28,26 @@ const skips = (headings) =>
   headings
     .map((h) => Number(h.split(' ')[0]))
     .filter((level, i, levels) => i > 0 && level - levels[i - 1] > 1);
+
+test('the outline helper reads heading levels the way a browser does', async ({ page }) => {
+  await page.setContent(`
+    <h1> Title </h1>
+    <h3 aria-level="2">Aria wins</h3>
+    <div role="heading" aria-level="4">Div with level</div>
+    <div role="heading">Div with no level</div>
+    <div role="heading" aria-level="0">Level zero</div>
+    <div role="heading" aria-level="7">Level seven</div>
+    <h5 aria-level="nine">Bad level on an h5</h5>`);
+  expect(await outline(page)).toEqual([
+    '1 Title',
+    '2 Aria wins',
+    '4 Div with level',
+    '2 Div with no level',
+    '2 Level zero',
+    '2 Level seven',
+    '5 Bad level on an h5',
+  ]);
+});
 
 test.describe('good examples', () => {
   test('good-levels: real heading elements in an outline with no skipped level', async ({ page }) => {
