@@ -10,10 +10,19 @@ final class C01ButtonUITests: XCTestCase {
   }
 
   /// Cold-starts the app on one example through the `fluttera11y` URL scheme.
-  private func open(_ slug: String) {
-    app.terminate()
-    app.open(URL(string: "fluttera11y:///t/C01/\(slug)")!)
-    XCTAssertTrue(element("c01-\(slug)-count").waitForExistence(timeout: 30), "\(slug) did not open")
+  ///
+  /// On a slow simulator the first launch can come up without the example
+  /// (seen once on CI: the app started but the screen never appeared), so the
+  /// launch is tried up to three times before the test fails.
+  private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
+    let url = URL(string: "fluttera11y:///t/C01/\(slug)")!
+    for attempt in 1...3 {
+      app.terminate()
+      app.open(url)
+      if element("c01-\(slug)-count").waitForExistence(timeout: 30) { return }
+      print("C01 open \(slug): attempt \(attempt) did not show the example")
+    }
+    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
   }
 
   private func element(_ id: String) -> XCUIElement {

@@ -427,8 +427,11 @@ Xcode 26.6, which has neither the iOS 27 SDK nor `XCUIVoiceOverService`. The
 VoiceOver test is compiled only on Swift 6.4 or later and skips otherwise, so
 iOS speech is checked locally until a hosted image has Xcode 27.
 
-Written, first runs in progress: the CI jobs for web, Android, and iOS in
-`.github/workflows/ci.yml`. They run for the first time when the branch is
+CI status: analyze-test, web, and Android (API 35 emulator) pass on GitHub.
+The iOS job ran 8 of 9 tree tests green on an iOS 26 simulator; one failed
+because an example did not appear after a cold start by deep link, so the
+launch is now retried up to three times. Why the first launch came up without
+the example is not known (lost URL or a slow runner). They run for the first time when the branch is
 pushed. Known unknowns: the Android job uses an API 35 emulator (local runs
 were on Android 17), and the hosted macOS image may not have an iOS 27
 simulator, in which case the VoiceOver test skips itself.
