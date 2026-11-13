@@ -62,9 +62,20 @@ def adb(*args):
 
 
 def screen():
-    """Visible texts on the device, with the centre of each."""
-    adb("shell", "uiautomator", "dump", "/sdcard/ui.xml")
-    xml = adb("shell", "cat", "/sdcard/ui.xml")
+    """Visible texts on the device, with the centre of each.
+
+    The UI dump fails now and then while the screen is still settling, so it
+    is tried a few times before the failure is raised.
+    """
+    for attempt in range(3):
+        try:
+            adb_checked("shell", "uiautomator", "dump", "/sdcard/ui.xml")
+            xml = adb_checked("shell", "cat", "/sdcard/ui.xml")
+            break
+        except AdbError:
+            if attempt == 2:
+                raise
+            time.sleep(1)
     found = []
     for node in re.findall(r"<node [^>]*>", xml):
         attr = lambda k: re.search(k + r'="([^"]*)"', node).group(1)
@@ -76,15 +87,17 @@ def screen():
 
 
 def tap(text, scrolls=3):
+    """Taps the element showing text, scrolling to find it. Raises AdbError
+    if it is not found or the tap command fails."""
     for _ in range(scrolls + 1):
         for found, x, y in screen():
             if found == text:
-                adb("shell", "input", "tap", str(x), str(y))
+                adb_checked("shell", "input", "tap", str(x), str(y))
                 time.sleep(2)
                 return
-        adb("shell", "input", "swipe", "500", "1800", "500", "600")
+        adb_checked("shell", "input", "swipe", "500", "1800", "500", "600")
         time.sleep(1)
-    sys.exit(f'TalkBack settings: could not find "{text}"')
+    raise AdbError(f'TalkBack settings: could not find "{text}"')
 
 
 LOG_LEVELS = ("NONE", "ASSERT", "ERROR", "WARN", "INFO", "DEBUG", "VERBOSE")
@@ -118,10 +131,14 @@ def set_log_level(level, on_read=None):
     on a non-root image. Must be called with screen readers off so plain taps
     work. on_read, if given, is called with the current level before anything
     is changed, so the caller knows what to restore even if the change fails.
+
+    Every device command is checked, and after a change the level is read
+    back from the screen: a tap that did nothing raises AdbError instead of
+    passing as success.
     """
-    adb("shell", "am", "force-stop", "com.google.android.marvin.talkback")
-    adb("shell", "am", "start", "-n",
-        "com.google.android.marvin.talkback/com.android.talkback.TalkBackPreferencesActivity")
+    adb_checked("shell", "am", "force-stop", "com.google.android.marvin.talkback")
+    adb_checked("shell", "am", "start", "-n",
+                "com.google.android.marvin.talkback/com.android.talkback.TalkBackPreferencesActivity")
     time.sleep(3)
     tap("Advanced settings")
     tap("Developer settings")
@@ -133,7 +150,10 @@ def set_log_level(level, on_read=None):
         tap(level)
         if level == "VERBOSE":
             tap("Yes, enable verbose logging")
-    adb("shell", "input", "keyevent", "HOME")
+        now = current_log_level([t for t, _, _ in screen()])
+        if now != level:
+            raise AdbError(f"TalkBack log output level is {now}, not {level}, after setting it")
+    adb_checked("shell", "input", "keyevent", "HOME")
     return previous
 
 
@@ -255,18 +275,45 @@ def parse_speech(log):
     return spoken
 
 
+def said(fragments, phrase):
+    """Role and state words must be spoken as their own sentence, so a name
+    such as "Close button" does not count as the role."""
+    if phrase.lower() in ("button", "disabled"):
+        sentences = [t.strip() for f in fragments for t in f.split(".")]
+        return phrase.lower() in sentences
+    return phrase.lower() in " | ".join(fragments)
+
+
+def problems(ident, spoken_fragments):
+    """What is wrong with the speech for one element; empty when it is as
+    expected. An element with no expectations only has to have been spoken."""
+    fragments = [f.lower() for f in spoken_fragments]
+    joined = " | ".join(fragments)
+    if ident not in EXPECT:
+        return [] if fragments else [f"{ident}: nothing was spoken"]
+    must, must_not = EXPECT[ident]
+    found = [f'{ident}: expected "{phrase}" in "{joined}"'
+             for phrase in must if not said(fragments, phrase)]
+    found += [f'{ident}: did not expect "{phrase}" in "{joined}"'
+              for phrase in must_not if said(fragments, phrase)]
+    return found
+
+
 MAX_WALKS = 3
 
 
 def walk_until_heard(walk_once=None):
-    """Walks the examples until every focused element has some speech.
+    """Walks the examples until every element's speech is as expected.
 
-    Now and then TalkBack says nothing for an element it was moved to (seen
-    once in about ten runs). A silent element is walked again, up to
-    MAX_WALKS walks, and only its missing speech is filled in. An element
-    that stays silent is left empty and fails the checks.
+    Speech capture on a device is not perfectly repeatable: now and then
+    TalkBack says nothing for an element it was moved to, or a system
+    notification is spoken over it (both seen on the emulator). An element
+    whose speech fails its checks is walked again, up to MAX_WALKS walks, and
+    only that element's speech is replaced. One that still fails is reported
+    as a failure with what was last heard.
 
-    Returns the speech per element and the elements that needed another walk.
+    Returns the speech per element and the elements that needed another walk,
+    which the transcript lists so a retry is never hidden.
     """
     walk_once = walk_once or walk
     spoken, retried = {}, []
@@ -276,12 +323,13 @@ def walk_until_heard(walk_once=None):
             print(run.stdout[-3000:])
             sys.exit("instrumented walk failed")
         for ident, fragments in parse_speech(log).items():
-            if not spoken.get(ident):
+            if ident not in spoken or problems(ident, spoken[ident]):
                 spoken[ident] = fragments
-        silent = sorted(ident for ident, fragments in spoken.items() if not fragments)
-        if spoken and not silent:
+        wrong = sorted(ident for ident, fragments in spoken.items()
+                       if problems(ident, fragments))
+        if spoken and not wrong:
             break
-        retried = sorted(set(retried) | set(silent))
+        retried = sorted(set(retried) | set(wrong))
     return spoken, retried
 
 
@@ -289,32 +337,20 @@ def main():
     # The Gradle wrapper is generated by Flutter, not committed.
     if not os.path.exists(os.path.join(ROOT, "android", "gradlew")):
         sys.exit("android/gradlew is missing. Run `flutter build apk --debug` once first.")
-    spoken, retried = run_with_talkback(walk_until_heard)
+    try:
+        spoken, retried = run_with_talkback(walk_until_heard)
+    except AdbError as error:
+        sys.exit(str(error))
 
     if not any(spoken.values()):
         sys.exit("No speech captured. Is TalkBack's log output level VERBOSE?")
 
-    def said(fragments, phrase):
-        """Role and state words must be spoken as their own sentence, so a
-        name such as "Close button" does not count as the role."""
-        if phrase.lower() in ("button", "disabled"):
-            sentences = [t.strip() for f in fragments for t in f.split(".")]
-            return phrase.lower() in sentences
-        return phrase.lower() in " | ".join(fragments)
-
     failures = []
-    for ident, (must, must_not) in EXPECT.items():
+    for ident in EXPECT:
         if ident not in spoken:
             failures.append(f"{ident}: never focused")
-            continue
-        fragments = [f.lower() for f in spoken[ident]]
-        joined = " | ".join(fragments)
-        for phrase in must:
-            if not said(fragments, phrase):
-                failures.append(f'{ident}: expected "{phrase}" in "{joined}"')
-        for phrase in must_not:
-            if said(fragments, phrase):
-                failures.append(f'{ident}: did not expect "{phrase}" in "{joined}"')
+        else:
+            failures += problems(ident, spoken[ident])
 
     version = re.search(r"versionName=(\S+)", adb("shell", "dumpsys", "package",
                                                    "com.google.android.marvin.talkback"))
@@ -331,7 +367,7 @@ def main():
     out += [f"- {k}: {v}" for k, v in meta.items()]
     out += ["", f"Result: {'FAIL' if failures else 'PASS'}"]
     if retried:
-        out += ["", "Elements that were silent on a walk and were walked again: "
+        out += ["", "Elements whose speech failed its checks on a walk and were walked again: "
                 + ", ".join(f"`{ident}`" for ident in retried) + "."]
     out += ["", "| Element | Spoken |", "| --- | --- |"]
     for ident, fragments in spoken.items():

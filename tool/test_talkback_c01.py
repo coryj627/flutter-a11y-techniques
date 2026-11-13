@@ -291,7 +291,6 @@ class ReadingTheLogLevel(unittest.TestCase):
         device = FakeDevice(before)
         screens = iter([["Log output level", "ERROR"]])  # setup; cleanup gets []
         with mock.patch.object(tb, "adb_checked", device.adb), \
-                mock.patch.object(tb, "adb", return_value=""), \
                 mock.patch.object(tb, "tap"), \
                 mock.patch.object(tb.time, "sleep"), \
                 mock.patch.object(tb, "screen",
@@ -342,23 +341,170 @@ class Walks(unittest.TestCase):
         spoken, retried = tb.walk_until_heard(self.walker([log_for(speech)]))
         self.assertEqual((spoken, retried, self.walks), (speech, [], 1))
 
-    def test_a_silent_element_is_walked_again_and_only_it_is_filled_in(self):
+    def test_a_silent_element_is_walked_again_and_only_it_is_replaced(self):
         first = {"a": ["Save", "Button"], "b": []}
         second = {"a": ["Different"], "b": ["Submit", "Button. disabled"]}
         spoken, retried = tb.walk_until_heard(self.walker([log_for(first), log_for(second)]))
         self.assertEqual(spoken, {"a": ["Save", "Button"], "b": ["Submit", "Button. disabled"]})
         self.assertEqual((retried, self.walks), (["b"], 2))
 
-    def test_an_element_that_stays_silent_is_left_empty_after_three_walks(self):
-        silent = log_for({"a": ["Save"], "b": []})
-        spoken, retried = tb.walk_until_heard(self.walker([silent] * 5))
-        self.assertEqual(spoken["b"], [])
-        self.assertEqual((retried, self.walks), (["b"], tb.MAX_WALKS))
+    def test_an_element_spoken_over_by_a_notification_is_walked_again(self):
+        ident = "c01-good-text-filled"
+        first = {ident: ["Google Play Protect is turned on"]}
+        second = {ident: ["Save", "Button", "Double-tap to activate"]}
+        spoken, retried = tb.walk_until_heard(self.walker([log_for(first), log_for(second)]))
+        self.assertEqual(spoken[ident], second[ident])
+        self.assertEqual((retried, self.walks), ([ident], 2))
+
+    def test_an_element_that_keeps_failing_is_left_failing_after_three_walks(self):
+        ident = "c01-good-disabled-submit"
+        wrong = log_for({ident: ["Submit", "Button"]})  # never says disabled
+        spoken, retried = tb.walk_until_heard(self.walker([wrong] * 5))
+        self.assertEqual(spoken[ident], ["Submit", "Button"])
+        self.assertEqual((retried, self.walks), ([ident], tb.MAX_WALKS))
+        self.assertTrue(tb.problems(ident, spoken[ident]))
+
+    def test_a_bad_example_is_not_retried_for_having_its_defect(self):
+        ident = "c01-bad-unlabelled-icon-close"
+        speech = {ident: ["Button", "Double-tap to activate"]}
+        spoken, retried = tb.walk_until_heard(self.walker([log_for(speech)]))
+        self.assertEqual((retried, self.walks), ([], 1))
 
     def test_a_failed_walk_exits(self):
         failed = mock.Mock(returncode=1, stdout="BUILD FAILED")
         with mock.patch("builtins.print"), self.assertRaises(SystemExit):
             tb.walk_until_heard(lambda: (failed, ""))
+
+
+class FakeSettingsScreen:
+    """Stands in for TalkBack's developer settings screen."""
+
+    def __init__(self, level="ERROR"):
+        self.level = level
+        self.ignore_taps_on = set()   # taps that silently do nothing
+        self.fail_taps_on = set()     # taps whose adb command fails
+        self.taps = []
+
+    def screen(self):
+        return [(t, 0, 0) for t in ("Developer settings", "Log output level", self.level)]
+
+    def tap(self, text, scrolls=3):
+        self.taps.append(text)
+        if text in self.fail_taps_on:
+            raise tb.AdbError(f"adb shell input tap failed for {text}")
+        if text in tb.LOG_LEVELS and text not in self.ignore_taps_on:
+            self.level = text
+
+    def patches(self, device):
+        return (mock.patch.object(tb, "adb_checked", device.adb),
+                mock.patch.object(tb, "screen", self.screen),
+                mock.patch.object(tb, "tap", self.tap),
+                mock.patch.object(tb.time, "sleep"),
+                mock.patch("sys.stderr"))
+
+
+class LogLevelThroughTheScreen(unittest.TestCase):
+    BEFORE = {tb.SERVICES: OTHER, tb.ENABLED: "1"}
+
+    def run_with(self, ui, action=lambda: None):
+        device = FakeDevice(self.BEFORE)
+        patches = ui.patches(device)
+        for p in patches:
+            p.start()
+        try:
+            try:
+                tb.run_with_talkback(action)
+                return device, None
+            except tb.AdbError as error:
+                return device, error
+        finally:
+            for p in patches:
+                p.stop()
+
+    def test_sets_verbose_then_restores_the_level(self):
+        ui = FakeSettingsScreen("WARN")
+        during = []
+        device, error = self.run_with(ui, lambda: during.append(ui.level))
+        self.assertIsNone(error)
+        self.assertEqual(during, ["VERBOSE"])
+        self.assertEqual(ui.level, "WARN")
+        self.assertEqual(device.settings, self.BEFORE)
+
+    def test_a_restore_tap_that_does_nothing_is_reported_not_passed(self):
+        ui = FakeSettingsScreen("ERROR")
+        ui.ignore_taps_on = {"ERROR"}
+        device, error = self.run_with(ui)
+        self.assertIsInstance(error, tb.AdbError)
+        self.assertIn("log output level should be ERROR", str(error))
+        self.assertIn("is VERBOSE, not ERROR", str(error))
+        self.assertEqual(device.settings, self.BEFORE)
+
+    def test_a_restore_tap_whose_command_fails_is_reported(self):
+        ui = FakeSettingsScreen("ERROR")
+        ran = []
+
+        def action():
+            ran.append(True)
+            ui.fail_taps_on = {"ERROR"}  # fails only during cleanup
+
+        device, error = self.run_with(ui, action)
+        self.assertEqual(ran, [True])
+        self.assertIsInstance(error, tb.AdbError)
+        self.assertIn("log output level should be ERROR", str(error))
+        self.assertEqual(device.settings, self.BEFORE)
+
+    def test_a_setup_tap_that_does_nothing_stops_the_run_and_restores(self):
+        ui = FakeSettingsScreen("ERROR")
+        ui.ignore_taps_on = {"VERBOSE"}
+        ran = []
+        device, error = self.run_with(ui, lambda: ran.append(True))
+        self.assertEqual(ran, [])
+        self.assertIsInstance(error, tb.AdbError)
+        self.assertEqual(device.settings, self.BEFORE)
+
+
+class Taps(unittest.TestCase):
+    def test_tap_raises_when_the_tap_command_fails(self):
+        def adb(*args):
+            if args[:3] == ("shell", "input", "tap"):
+                raise tb.AdbError("device offline")
+            return ""
+
+        with mock.patch.object(tb, "adb_checked", adb), \
+                mock.patch.object(tb, "screen", return_value=[("ERROR", 5, 5)]), \
+                mock.patch.object(tb.time, "sleep"):
+            with self.assertRaises(tb.AdbError):
+                tb.tap("ERROR")
+
+    def test_tap_raises_when_the_text_is_not_on_screen(self):
+        with mock.patch.object(tb, "adb_checked", return_value=""), \
+                mock.patch.object(tb, "screen", return_value=[]), \
+                mock.patch.object(tb.time, "sleep"):
+            with self.assertRaises(tb.AdbError):
+                tb.tap("ERROR")
+
+    def test_screen_retries_a_failed_dump_then_raises(self):
+        calls = []
+
+        def adb(*args):
+            calls.append(args)
+            raise tb.AdbError("could not get idle state")
+
+        with mock.patch.object(tb, "adb_checked", adb), mock.patch.object(tb.time, "sleep"):
+            with self.assertRaises(tb.AdbError):
+                tb.screen()
+        self.assertEqual(len(calls), 3)
+
+
+class Checks(unittest.TestCase):
+    def test_role_in_a_name_does_not_count_as_the_role(self):
+        self.assertFalse(tb.said(["close button"], "Button"))
+        self.assertTrue(tb.said(["close button. button"], "Button"))
+
+    def test_expected_and_unexpected_phrases(self):
+        self.assertEqual(tb.problems("c01-good-text-filled", ["Save", "Button"]), [])
+        self.assertTrue(tb.problems("c01-good-text-filled", ["Save"]))
+        self.assertTrue(tb.problems("c01-bad-gesture-only-save", ["Save", "Button"]))
 
 
 if __name__ == "__main__":
