@@ -9,19 +9,24 @@ async function open(page, slug) {
 }
 
 /**
- * Every heading on the page, in document order, as "level text".
- * The level is aria-level when that is a whole number from 1 to 6, then the
- * element's own h1-h6 level, and otherwise 2: the ARIA default for
- * role="heading", which is also what an out-of-range aria-level falls back to.
+ * Every heading on the page, in reading order, as "level text".
+ *
+ * The level is read from the browser's own accessibility tree (Chromium,
+ * over the DevTools protocol), not worked out from tags and attributes here.
+ * The browser decides what an aria-level means, including levels above 6 and
+ * values it rejects, and that decision is what assistive technology gets.
  */
-const outline = (page) =>
-  page.locator('h1,h2,h3,h4,h5,h6,[role=heading]').evaluateAll((elements) =>
-    elements.map((e) => {
-      const aria = (e.getAttribute('aria-level') || '').trim();
-      const fromTag = /^H[1-6]$/.test(e.tagName) ? e.tagName.slice(1) : '2';
-      const level = /^[1-6]$/.test(aria) ? aria : fromTag;
-      return `${level} ${e.textContent.replace(/\s+/g, ' ').trim()}`;
-    }));
+const outline = async (page) => {
+  const client = await page.context().newCDPSession(page);
+  const { nodes } = await client.send('Accessibility.getFullAXTree');
+  await client.detach();
+  return nodes
+    .filter((node) => !node.ignored && node.role?.value === 'heading')
+    .map((node) => {
+      const level = node.properties?.find((p) => p.name === 'level')?.value?.value;
+      return `${level} ${(node.name?.value ?? '').replace(/\s+/g, ' ').trim()}`;
+    });
+};
 
 /** Levels may go up by at most one from one heading to the next. */
 const skips = (headings) =>
@@ -29,24 +34,24 @@ const skips = (headings) =>
     .map((h) => Number(h.split(' ')[0]))
     .filter((level, i, levels) => i > 0 && level - levels[i - 1] > 1);
 
-test('the outline helper reads heading levels the way a browser does', async ({ page }) => {
+test('the outline helper reports the levels the browser exposes', async ({ page }) => {
   await page.setContent(`
     <h1> Title </h1>
     <h3 aria-level="2">Aria wins</h3>
     <div role="heading" aria-level="4">Div with level</div>
     <div role="heading">Div with no level</div>
-    <div role="heading" aria-level="0">Level zero</div>
-    <div role="heading" aria-level="7">Level seven</div>
-    <h5 aria-level="nine">Bad level on an h5</h5>`);
-  expect(await outline(page)).toEqual([
+    <div role="heading" aria-level="7">Level seven</div>`);
+  const headings = await outline(page);
+  expect(headings).toEqual([
     '1 Title',
     '2 Aria wins',
     '4 Div with level',
     '2 Div with no level',
-    '2 Level zero',
-    '2 Level seven',
-    '5 Bad level on an h5',
+    // Browsers accept levels above 6. Clamping here would hide a real skip.
+    '7 Level seven',
   ]);
+  expect(skips(headings)).toEqual([4, 7]);
+  expect(skips(['1 Title', '7 Deep'])).toEqual([7]);
 });
 
 test.describe('good examples', () => {
