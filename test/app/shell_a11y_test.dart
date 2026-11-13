@@ -163,7 +163,16 @@ void main() {
   testWidgets('an unknown address shows one not-found page over the catalog', (
     tester,
   ) async {
-    for (final route in ['/nowhere', '/t/ZZZ/good-text', '/a/b/c/d']) {
+    for (final route in [
+      '/nowhere',
+      '/t/ZZZ/good-text',
+      '/a/b/c/d',
+      // Malformed encodings must not break startup.
+      '/t/C01/%FF',
+      '/t/%E0%A4%A/good-text',
+      '/%',
+      'http://[::1',
+    ]) {
       await _pump(tester, route);
       expect(await history(tester), [
         'Page not found',

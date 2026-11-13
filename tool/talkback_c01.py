@@ -107,18 +107,40 @@ SERVICES = "enabled_accessibility_services"
 ENABLED = "accessibility_enabled"
 
 
+class AdbError(RuntimeError):
+    """An adb command that had to succeed did not."""
+
+
+def adb_checked(*args):
+    """Like adb(), but raises AdbError when the command fails.
+
+    Used for the accessibility settings, where treating a failed command as
+    an empty answer would lead to the wrong value being restored.
+    """
+    run = subprocess.run([ADB, *args], capture_output=True, text=True)
+    if run.returncode != 0:
+        raise AdbError(f"adb {' '.join(args)} failed: {run.stderr.strip() or run.returncode}")
+    return run.stdout
+
+
 def read_setting(name):
-    """A secure setting's value, or None when it is not set."""
-    value = adb("shell", "settings", "get", "secure", name).strip()
-    return None if value in ("", "null") else value
+    """A secure setting's value, or None when it is not set.
+
+    `settings get` prints the literal "null" for a setting that is not set.
+    Empty output is not an answer, so it is an error, not "not set".
+    """
+    value = adb_checked("shell", "settings", "get", "secure", name).strip()
+    if value == "":
+        raise AdbError(f"adb returned nothing for secure setting {name}")
+    return None if value == "null" else value
 
 
 def write_setting(name, value):
     """Sets a secure setting, or deletes it when value is None."""
     if value is None:
-        adb("shell", "settings", "delete", "secure", name)
+        adb_checked("shell", "settings", "delete", "secure", name)
     else:
-        adb("shell", "settings", "put", "secure", name, value)
+        adb_checked("shell", "settings", "put", "secure", name, value)
 
 
 def with_talkback(services):
@@ -131,8 +153,11 @@ def run_with_talkback(action):
     """Runs action() with TalkBack on, then puts the device's accessibility
     settings back exactly as they were, whether or not anything failed.
 
-    Services are switched off for the settings-screen setup, because plain
-    taps do not work while a screen reader is running.
+    Both settings are read before anything is changed; if either read fails,
+    nothing is changed. Services are switched off for the settings-screen
+    setup, because plain taps do not work while a screen reader is running.
+    If a setting cannot be restored, that is reported with the value it
+    should have, and raised.
     """
     original = {name: read_setting(name) for name in (SERVICES, ENABLED)}
     try:
@@ -143,8 +168,17 @@ def run_with_talkback(action):
         write_setting(ENABLED, "1")
         return action()
     finally:
+        failed = []
         for name, value in original.items():
-            write_setting(name, value)
+            try:
+                write_setting(name, value)
+            except AdbError as error:
+                failed.append((name, value, error))
+        if failed:
+            lines = [f"  {name} should be {value!r} ({error})" for name, value, error in failed]
+            message = "Could not restore accessibility settings:\n" + "\n".join(lines)
+            print(message, file=sys.stderr)
+            raise AdbError(message)
 
 
 def walk():

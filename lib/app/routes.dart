@@ -4,6 +4,9 @@ abstract final class AppRoutes {
   static const catalog = '/';
   static const about = '/about';
 
+  /// Stands in for an address that is not valid URI syntax.
+  static const notFound = '/not-found';
+
   static String technique(String id) => '/t/$id';
 
   static String example(String id, String slug) => '/t/$id/$slug';
@@ -14,7 +17,14 @@ sealed class AppRoute {
 
   /// Parses a route name. Unknown shapes become [NotFoundRoute].
   factory AppRoute.parse(String? name) {
-    final segments = Uri.parse(name ?? '/').pathSegments;
+    final List<String> segments;
+    try {
+      segments = Uri.parse(name ?? '/').pathSegments;
+    } on FormatException {
+      // A malformed address, such as a bad percent-encoding (`/t/C01/%FF`),
+      // is an unknown page, not a crash at startup.
+      return const NotFoundRoute();
+    }
     return switch (segments) {
       [] => const CatalogRoute(),
       ['about'] => const AboutRoute(),

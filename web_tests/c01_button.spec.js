@@ -196,3 +196,24 @@ test.describe('technique doc in the app', () => {
     expect(await page.getByRole('listitem').count()).toBeGreaterThan(3);
   });
 });
+
+test.describe('addresses', () => {
+  for (const hash of ['/t/C01/%FF', '/t/%E0%A4%A/good-text', '/nowhere']) {
+    test(`a bad address (${hash}) shows the not-found page, not a blank app`, async ({ page }) => {
+      await page.goto('about:blank');
+      await page.goto(`/#${hash}`);
+      await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+      await page.getByRole('button', { name: 'Go to the catalog' }).click();
+      await expect(page.getByRole('heading', { name: 'Flutter A11Y Techniques' })).toBeVisible();
+    });
+  }
+
+  test('Back from a directly opened example reaches its technique, then the catalog', async ({ page }) => {
+    await open(page, 'good-text');
+    await page.getByRole('button', { name: 'Back' }).click();
+    await expect(page.getByRole('heading', { name: 'Button', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Back' }).click();
+    await expect(page.getByRole('heading', { name: 'Flutter A11Y Techniques' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Page not found' })).toHaveCount(0);
+  });
+});

@@ -49,6 +49,10 @@ void main() {
       );
       expect(AppRoute.parse('/nope'), isA<NotFoundRoute>());
       expect(AppRoute.parse('/t/C01/a/b'), isA<NotFoundRoute>());
+      // Malformed percent-encoding or URI syntax is unknown, not a throw.
+      for (final bad in ['/t/C01/%FF', '/t/%E0%A4%A/x', '/%', 'http://[::1']) {
+        expect(AppRoute.parse(bad), isA<NotFoundRoute>(), reason: bad);
+      }
     });
   });
 }

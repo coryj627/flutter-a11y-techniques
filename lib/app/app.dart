@@ -39,10 +39,23 @@ class A11yTechniquesApp extends StatelessWidget {
     );
   }
 
-  Route<void> _routeFor(RouteSettings settings) => MaterialPageRoute<void>(
-    settings: settings,
-    builder: (_) => _screenFor(AppRoute.parse(settings.name)),
-  );
+  Route<void> _routeFor(RouteSettings settings) {
+    // The Navigator parses every route name as a URI when it reports the
+    // current route, and throws on one that is not valid URI syntax. Such an
+    // address is shown as not found under a name that does parse.
+    final name = settings.name;
+    final parses = name == null || Uri.tryParse(name) != null;
+    return MaterialPageRoute<void>(
+      settings: parses
+          ? settings
+          : RouteSettings(
+              name: AppRoutes.notFound,
+              arguments: settings.arguments,
+            ),
+      builder: (_) =>
+          _screenFor(parses ? AppRoute.parse(name) : const NotFoundRoute()),
+    );
+  }
 
   /// The screens that sit under a deep link, oldest first, so Back from a
   /// directly opened example goes to its technique and then the catalog.
