@@ -161,9 +161,33 @@ class Reads(unittest.TestCase):
         with self.assertRaises(tb.AdbError):
             self.read("", returncode=1)
 
-    def test_empty_output_is_an_error_not_an_absent_setting(self):
+    def test_no_output_is_an_error_not_an_absent_setting(self):
         with self.assertRaises(tb.AdbError):
-            self.read("\n")
+            self.read("")
+
+    def test_bare_newline_is_an_empty_value(self):
+        self.assertEqual(self.read("\n"), "")
+
+
+class EmptyServices(unittest.TestCase):
+    def test_run_from_an_empty_services_list_restores_it_empty(self):
+        before = {tb.SERVICES: "", tb.ENABLED: "0"}
+        device = FakeDevice(before)
+        during = {}
+        puts = []
+
+        def adb(*args):
+            if args[:3] == ("shell", "settings", "put"):
+                puts.append(args[5])
+            return device.adb(*args)
+
+        with mock.patch.object(tb, "adb_checked", adb), \
+                mock.patch.object(tb, "ensure_verbose_logging"):
+            tb.run_with_talkback(lambda: during.update(device.settings))
+        self.assertEqual(during, {tb.SERVICES: tb.TALKBACK, tb.ENABLED: "1"})
+        self.assertEqual(device.settings, before)
+        # Never sent as a bare empty argument, which the device shell drops.
+        self.assertNotIn("", puts)
 
 
 if __name__ == "__main__":

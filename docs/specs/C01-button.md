@@ -188,7 +188,8 @@ Limitations are detailed in [flutter-limitations.md](../flutter-limitations.md)
 (`Semantics(button: true)` only) and still lists a tap action.
 
 **Limitation 2.** On web, Enter does not activate a `CupertinoButton`
-(`ButtonActivateIntent` is not handled). Space does.
+(`ButtonActivateIntent` is not handled). Space does. `good-cupertino` adds the
+missing action so the good example is fully keyboard operable.
 
 **Not done yet.** L2 `integration_test` runs, and a first run of the CI jobs. The keyboard
 checks planned for L2 are covered in L1 and in the web suite.

@@ -1,5 +1,6 @@
 import 'dart:ui' show Tristate;
 
+import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -343,6 +344,37 @@ void main() {
       await tester.pump();
       expect(_count(tester, 'bad-cupertino-disabled'), 0);
       handle.dispose();
+    });
+
+    // FL-002. On web Enter arrives as ButtonActivateIntent. A widget test
+    // cannot run as web, so this checks the action lookup that web relies on.
+    testWidgets('FL-002: CupertinoButton has no action for the intent web '
+        'sends for Enter; the good example adds one', (tester) async {
+      Future<bool> handlesEnterOnWeb(String slug, String id) async {
+        await tester.pumpWidget(const SizedBox());
+        await _open(tester, slug);
+        final button = tester.element(
+          find.descendant(of: _id(id), matching: find.byType(CupertinoButton)),
+        );
+        // Look up from inside the button, where its focus node is.
+        late BuildContext inside;
+        button.visitChildElements((child) => inside = child);
+        return Actions.maybeFind<ButtonActivateIntent>(inside) != null;
+      }
+
+      // If the plain button starts handling it, the limitation is fixed and
+      // the wrapper in good-cupertino can go.
+      expect(
+        await handlesEnterOnWeb(
+          'bad-cupertino-disabled',
+          'c01-bad-cupertino-disabled-delete',
+        ),
+        isFalse,
+      );
+      expect(
+        await handlesEnterOnWeb('good-cupertino', 'c01-good-cupertino-save'),
+        isTrue,
+      );
     });
   });
 }

@@ -153,8 +153,8 @@ class GoodUniqueNames extends StatelessWidget {
 // #endregion
 
 // #region good-cupertino
-/// Cupertino buttons expose their name and role. The disabled state has to
-/// be added.
+/// Cupertino buttons expose their name and role. The disabled state and
+/// Enter activation on web have to be added.
 class GoodCupertinoButtons extends StatelessWidget {
   const GoodCupertinoButtons({super.key});
 
@@ -165,9 +165,23 @@ class GoodCupertinoButtons extends StatelessWidget {
       builder: (context, activate) => [
         TestId(
           'c01-good-cupertino-save',
-          child: CupertinoButton.filled(
-            onPressed: activate,
-            child: const Text('Save'),
+          // Flutter 3.47.5: on web Enter is ButtonActivateIntent, which
+          // CupertinoButton does not handle, so Enter would do nothing
+          // (docs/flutter-limitations.md, FL-002). This adds the missing
+          // action; Space already works.
+          child: Actions(
+            actions: {
+              ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+                onInvoke: (_) {
+                  activate();
+                  return null;
+                },
+              ),
+            },
+            child: CupertinoButton.filled(
+              onPressed: activate,
+              child: const Text('Save'),
+            ),
           ),
         ),
         // Flutter 3.47.5: CupertinoButton does not report its own disabled

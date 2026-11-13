@@ -76,13 +76,14 @@ yet), **Fixed in x.y** (verified on that version).
   `ButtonActivateIntent` (`_defaultWebShortcuts` in
   `packages/flutter/lib/src/widgets/app.dart`). `CupertinoButton` registers an
   action for `ActivateIntent` only. Material's `InkWell` handles both.
-- Reproduce: `/t/C01/good-cupertino` on web, Tab to Save, press Enter.
-  Asserted in `web_tests/c01_button.spec.js` ("Tab reaches each button…"),
-  written to fail when this is fixed. On Android and iOS Enter is
-  `ActivateIntent` and works (`test/techniques/c01_button_test.dart`).
-- Workaround: none applied. A `Shortcuts`/`Actions` wrapper that maps
-  `ButtonActivateIntent` to the button's callback would work but is not in the
-  examples yet.
+- Reproduce: a plain `CupertinoButton` on web: Tab to it and press Enter.
+  `test/techniques/c01_button_test.dart` asserts that the plain button has no
+  action registered for `ButtonActivateIntent` (written to fail when this is
+  fixed). On Android and iOS Enter is `ActivateIntent` and works.
+- Workaround, applied in `/t/C01/good-cupertino`: wrap the button in
+  `Actions(actions: {ButtonActivateIntent: CallbackAction(onInvoke: …)})` that
+  calls the same callback. `web_tests/c01_button.spec.js` requires Enter and
+  Space to each activate it once.
 - Upstream issue: not found. To be filed.
 
 ## FL-003

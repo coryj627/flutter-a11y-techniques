@@ -124,14 +124,16 @@ def adb_checked(*args):
 
 
 def read_setting(name):
-    """A secure setting's value, or None when it is not set.
+    """A secure setting's value: None when it is not set, "" when it is set
+    to nothing (a valid state for the services list).
 
-    `settings get` prints the literal "null" for a setting that is not set.
-    Empty output is not an answer, so it is an error, not "not set".
+    `settings get` prints "null" for an unset setting and a bare newline for
+    an empty one. No output at all is not an answer, so it is an error.
     """
-    value = adb_checked("shell", "settings", "get", "secure", name).strip()
-    if value == "":
+    output = adb_checked("shell", "settings", "get", "secure", name)
+    if output == "":
         raise AdbError(f"adb returned nothing for secure setting {name}")
+    value = output.strip()
     return None if value == "null" else value
 
 
@@ -140,7 +142,8 @@ def write_setting(name, value):
     if value is None:
         adb_checked("shell", "settings", "delete", "secure", name)
     else:
-        adb_checked("shell", "settings", "put", "secure", name, value)
+        # An empty value must reach the device shell as a quoted empty string.
+        adb_checked("shell", "settings", "put", "secure", name, value or '""')
 
 
 def with_talkback(services):
@@ -161,7 +164,7 @@ def run_with_talkback(action):
     """
     original = {name: read_setting(name) for name in (SERVICES, ENABLED)}
     try:
-        write_setting(SERVICES, '""')
+        write_setting(SERVICES, "")
         write_setting(ENABLED, "0")
         ensure_verbose_logging()
         write_setting(SERVICES, with_talkback(original[SERVICES]))

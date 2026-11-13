@@ -67,15 +67,7 @@ test.describe('good examples', () => {
       for (const id of Object.keys(buttons)) {
         expect(await tabTo(page, byId(page, id)), `Tab reaches ${id}`).toBe(true);
         await page.keyboard.press('Enter');
-        if (id.includes('cupertino')) {
-          // Flutter limitation (3.47.5): on web Enter is ButtonActivateIntent,
-          // which CupertinoButton does not handle, so Enter does nothing.
-          // If this starts passing after an upgrade, the limitation is fixed.
-          await page.waitForTimeout(300);
-          await expectCount(page, slug, n);
-        } else {
-          await expectCount(page, slug, ++n);
-        }
+        await expectCount(page, slug, ++n);
         await page.keyboard.press('Space');
         await expectCount(page, slug, ++n);
       }
