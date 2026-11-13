@@ -225,28 +225,63 @@ def run_with_talkback(action):
         write_setting(ENABLED, "1")
         return action()
     finally:
-        failed = []
-        try:
-            if level.get("original", "VERBOSE") != "VERBOSE":
-                write_setting(SERVICES, "")
-                write_setting(ENABLED, "0")
-                set_log_level(level["original"])
-        # Anything at all going wrong here, SystemExit included, must not
-        # stop the accessibility settings below from being restored.
-        except BaseException as error:  # noqa: B036
-            failed.append(
-                f"  TalkBack log output level should be {level['original']} "
-                f"({type(error).__name__}: {error})")
-        finally:
-            for name, value in original.items():
-                try:
-                    write_setting(name, value)
-                except AdbError as error:
-                    failed.append(f"  {name} should be {value!r} ({error})")
-        if failed:
-            message = "Could not restore the device:\n" + "\n".join(failed)
-            print(message, file=sys.stderr)
-            raise AdbError(message)
+        # Nothing may cut the restore short: signals that arrive during it are
+        # held and honoured once the device is back as it was.
+        with signals_deferred():
+            failed = []
+            try:
+                if level.get("original", "VERBOSE") != "VERBOSE":
+                    write_setting(SERVICES, "")
+                    write_setting(ENABLED, "0")
+                    set_log_level(level["original"])
+            # Anything at all going wrong here, SystemExit included, must not
+            # stop the accessibility settings below from being restored.
+            except BaseException as error:  # noqa: B036
+                failed.append(
+                    f"  TalkBack log output level should be {level['original']} "
+                    f"({type(error).__name__}: {error})")
+            finally:
+                for name, value in original.items():
+                    try:
+                        write_setting(name, value)
+                    except AdbError as error:
+                        failed.append(f"  {name} should be {value!r} ({error})")
+            if failed:
+                message = "Could not restore the device:\n" + "\n".join(failed)
+                print(message, file=sys.stderr)
+                raise AdbError(message)
+
+
+DEFERRABLE = ("SIGINT", "SIGTERM", "SIGHUP")
+
+
+class signals_deferred:
+    """Holds interrupt and termination signals for the length of a block.
+
+    A signal received inside the block is remembered, not acted on. When the
+    block ends the previous handlers are put back and, if a signal arrived,
+    the script exits with that signal's status.
+    """
+
+    def __enter__(self):
+        self.pending = None
+        self.previous = {}
+
+        def hold(signum, frame):
+            self.pending = signum
+
+        for name in DEFERRABLE:
+            if hasattr(signal, name):
+                signum = getattr(signal, name)
+                self.previous[signum] = signal.signal(signum, hold)
+        return self
+
+    def __exit__(self, *exc):
+        for signum, handler in self.previous.items():
+            signal.signal(signum, handler)
+        if self.pending is not None:
+            sys.exit(128 + self.pending)
+        return False
 
 
 def walk():

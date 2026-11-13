@@ -526,7 +526,12 @@ def save():
     with open(state_file, "w") as f:
         json.dump(state, f)
 
+walked = []
+
 def adb(*args):
+    # Cleanup's first write, before anything has been restored.
+    if phase == "restore" and walked and not state["ready"]:
+        wait_for_signal()
     if args[:3] == ("shell", "settings", "get"):
         return state["settings"].get(args[4], "null") + "\n"
     if args[:3] == ("shell", "settings", "put"):
@@ -539,7 +544,8 @@ def adb(*args):
 def wait_for_signal():
     state["ready"] = True
     save()
-    time.sleep(30)
+    # In cleanup the signal is deferred, so the wait is not cut short.
+    time.sleep(1.5 if phase == "restore" else 30)
 
 def set_log_level(level, on_read=None):
     previous = state["log_level"]
@@ -554,7 +560,7 @@ def set_log_level(level, on_read=None):
 tb.adb_checked = adb
 tb.set_log_level = set_log_level
 tb.exit_on_termination_signals()
-tb.run_with_talkback(wait_for_signal if phase == "walk" else (lambda: None))
+tb.run_with_talkback(wait_for_signal if phase == "walk" else (lambda: walked.append(True)))
 """
 
 
@@ -610,6 +616,15 @@ class Termination(unittest.TestCase):
 
     def test_sighup_during_setup_restores_the_device(self):
         self.assert_restored("setup", signal.SIGHUP)
+
+    def test_sigterm_during_restoration_still_restores_the_device(self):
+        self.assert_restored("restore", signal.SIGTERM)
+
+    def test_sighup_during_restoration_still_restores_the_device(self):
+        self.assert_restored("restore", signal.SIGHUP)
+
+    def test_interrupt_during_restoration_still_restores_the_device(self):
+        self.assert_restored("restore", signal.SIGINT)
 
     def test_without_the_handler_a_signal_would_skip_cleanup(self):
         # Guards the test itself: with default handling the state stays changed.
