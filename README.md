@@ -64,10 +64,11 @@ techniques are logged, with reproduction steps and workarounds, in
 
 ## Testing a technique
 
-Each technique is checked at several layers. For C01 Button the commands are in
-[docs/techniques/C01.md](docs/techniques/C01.md#how-it-is-tested): widget
-tests, Playwright on web, UI Automator on Android, XCUITest on iOS, and
-screen reader transcripts from TalkBack and VoiceOver.
+Each technique is checked at several layers: widget tests, Playwright on web,
+UI Automator on Android, XCUITest on iOS, and screen reader transcripts from
+TalkBack and VoiceOver. The commands are in each technique's doc, for example
+[C01 Button](docs/techniques/C01.md#how-it-is-tested) and
+[S05 Headings](docs/techniques/S05.md#how-it-is-tested).
 
 ## Layout
 

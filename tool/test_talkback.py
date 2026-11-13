@@ -1,4 +1,4 @@
-"""Tests for the accessibility-settings handling in talkback_c01.py.
+"""Tests for the accessibility-settings handling in talkback.py.
 
 Run: python3 -m unittest discover -s tool -p 'test_*.py'
 """
@@ -12,7 +12,7 @@ import time
 import unittest
 from unittest import mock
 
-import talkback_c01 as tb
+import talkback as tb
 
 OTHER = "com.example.reader/.ReaderService"
 
@@ -527,7 +527,7 @@ class Checks(unittest.TestCase):
 SIGNAL_SCRIPT = r"""
 import json, sys, time
 sys.path.insert(0, sys.argv[1])
-import talkback_c01 as tb
+import talkback as tb
 
 state_file, phase = sys.argv[2], sys.argv[3]
 state = {"settings": {tb.SERVICES: "com.example.reader/.ReaderService", tb.ENABLED: "1"},
@@ -714,6 +714,39 @@ class Timeouts(unittest.TestCase):
         message = str(caught.exception)
         self.assertIn(f"{tb.SERVICES} should be {OTHER!r}", message)
         self.assertIn(f"{tb.ENABLED} should be '1'", message)
+
+
+class Techniques(unittest.TestCase):
+    def test_heading_is_a_role_word_like_button(self):
+        self.assertTrue(tb.said(["profile", "heading"], "Heading"))
+        # The word inside a name is not the role.
+        self.assertFalse(tb.said(["profile, heading"], "Heading"))
+        self.assertEqual(tb.problems("s05-bad-fake-label-profile", ["Profile, heading"]), [])
+        self.assertTrue(tb.problems("s05-bad-fake-label-profile", ["Profile", "Heading"]))
+
+    def test_log_markers_from_any_technique_are_parsed(self):
+        log = "\n".join([
+            "I C01TB   : FOCUS c01-a",
+            'V talkback: SpeechControllerImpl: Speaking fragment text="Save", utteranceId=x',
+            "I S05TB   : FOCUS s05-b",
+            'V talkback: SpeechControllerImpl: Speaking fragment text="Profile", utteranceId=x',
+            "I S05TB   : END slug",
+        ])
+        self.assertEqual(tb.parse_speech(log), {"c01-a": ["Save"], "s05-b": ["Profile"]})
+
+    def test_a_missing_or_unknown_technique_is_refused(self):
+        import evidence_common as common
+        for argv in (["tool"], ["tool", "ZZZ"]):
+            with self.assertRaises(SystemExit) as caught:
+                common.technique_argument(argv, "Usage: x <ID>")
+            self.assertIn("C01", str(caught.exception))
+        self.assertEqual(common.technique_argument(["tool", "s05"], "Usage"), "S05")
+
+    def test_every_listed_technique_has_expectations(self):
+        import evidence_common as common
+        for technique in common.TECHNIQUES:
+            prefix = technique.lower() + "-"
+            self.assertTrue(any(k.startswith(prefix) for k in tb.EXPECT), technique)
 
 
 if __name__ == "__main__":

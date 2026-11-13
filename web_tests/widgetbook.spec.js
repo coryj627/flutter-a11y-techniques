@@ -10,10 +10,12 @@ async function openUseCase(page, name) {
   await page.getByRole('button', { name, exact: true }).click();
 }
 
-test('navigation lists every C01 example, labelled good or bad', async ({ page }) => {
+test('navigation lists every example, labelled good or bad', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('button', { name: /\((good|bad)\)$/ })).toHaveCount(13);
-  await expect(page.getByRole('button', { name: /\(good\)$/ })).toHaveCount(6);
+  // C01 Button has 6 good and 7 bad; S05 Headings has 2 good and 6 bad.
+  await expect(page.getByRole('button', { name: /\((good|bad)\)$/ })).toHaveCount(21);
+  await expect(page.getByRole('button', { name: /\(good\)$/ })).toHaveCount(8);
+  await expect(page.getByRole('button', { name: 'Headings with levels (good)' })).toBeVisible();
 });
 
 test('a good use case shows the live example and the technique doc', async ({ page }) => {

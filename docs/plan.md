@@ -377,7 +377,7 @@ itself).
 - The run takes over the screen and speaks aloud; it cannot run headless.
   Whether a GitHub macOS runner allows it is untested.
 - All thirteen C01 examples are now walked in both browsers
-  (`web_tests/vo/c01_button_vo.spec.js`, run by `tool/voiceover_web_c01.py`):
+  (`web_tests/vo/c01_button_vo.spec.js`, run by `python3 tool/voiceover_web.py C01`):
   26 of 26 pass, transcript in `docs/evidence/C01/voiceover-web.md`.
 - The capture is not perfectly stable. In discovery runs Guidepup sometimes
   returned an empty phrase for an item, and twice VoiceOver's cursor left the
@@ -447,6 +447,25 @@ only after the second technique shows what actually repeats.
 
 Exit: all four techniques done; a technique template and a per-technique
 checklist are written from what the slice taught.
+
+#### Phase 3 status (2026-11-13)
+
+S05 Headings is built: eight examples, spec, doc, and tests at every layer
+with transcripts in `docs/evidence/S05/`. What repeated, and was extracted:
+
+- The evidence scripts take a technique id: `tool/talkback.py`,
+  `tool/voiceover_ios.py`, `tool/voiceover_web.py` (`TECHNIQUES` in
+  `tool/evidence_common.py` lists what each one runs).
+- The web VoiceOver walk is in `web_tests/vo/vo_helpers.js`.
+
+Not extracted yet: the Android and iOS test classes each carry their own
+`open` helper. Two copies are not enough to see the right shape.
+
+Building S05 corrected a spike finding (FL-005) and changed the shell: screen
+titles are now level 1 headings.
+
+Still to do in this phase: F01 Text fields and labels, I12 Announcements, the
+technique template, and the checklist.
 
 ### Phase 4 — Slice review
 
