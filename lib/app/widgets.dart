@@ -3,6 +3,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 const appName = 'Flutter A11Y Techniques';
 
+/// Where relative links in bundled docs point.
+const repoBlobUrl =
+    'https://github.com/coryj627/flutter-a11y-techniques/blob/main/';
+
 /// A screen with a title that is exposed as the page title (WCAG 2.4.2) and
 /// a scrolling body that reflows within a readable width.
 class PageScaffold extends StatelessWidget {
@@ -29,9 +33,16 @@ class PageScaffold extends StatelessWidget {
             alignment: Alignment.topCenter,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 720),
-              child: ListView(
+              // Not a ListView: a lazy list only builds, and only exposes to
+              // assistive technology, what is near the viewport, so headings
+              // and links further down would be missing from a screen
+              // reader's lists (docs/flutter-limitations.md, FL-011).
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                children: children,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: children,
+                ),
               ),
             ),
           ),
@@ -43,21 +54,27 @@ class PageScaffold extends StatelessWidget {
 
 /// A section heading, exposed to assistive technology as a heading.
 class SectionHeading extends StatelessWidget {
-  const SectionHeading(this.text, {super.key});
+  const SectionHeading(this.text, {super.key, this.level = 2});
 
   final String text;
 
+  /// Heading level, 2 to 6. The screen title is the level above.
+  final int level;
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      // headingLevel, not only header: on Flutter 3.47.5 `header: true` alone
-      // is not announced as a heading by VoiceOver on iOS and is always an
-      // <h2> on web (docs/plan.md, headings finding).
+      // headingLevel, not only header: see docs/flutter-limitations.md,
+      // FL-003 and FL-004.
       child: Semantics(
         header: true,
-        headingLevel: 2,
-        child: Text(text, style: Theme.of(context).textTheme.titleLarge),
+        headingLevel: level,
+        child: Text(
+          text,
+          style: level <= 2 ? theme.titleLarge : theme.titleMedium,
+        ),
       ),
     );
   }

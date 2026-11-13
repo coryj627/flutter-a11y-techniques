@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../catalog/registry.dart';
 import '../catalog/technique.dart';
+import 'doc_view.dart';
 import 'routes.dart';
 import 'widgets.dart';
 
@@ -71,6 +72,14 @@ class TechniqueScreen extends StatelessWidget {
         for (final e in good) _ExampleTile(technique: t, example: e),
         if (bad.isNotEmpty) const SectionHeading('Bad examples'),
         for (final e in bad) _ExampleTile(technique: t, example: e),
+        // The technique's Markdown doc, from the same file the repo shows.
+        // Its WCAG section is left out because the list below covers it.
+        TechniqueDocView(
+          techniqueId: t.id,
+          title: 'Documentation',
+          headingOffset: 1,
+          skipSections: const {'WCAG 2.2'},
+        ),
         const SectionHeading('WCAG 2.2 success criteria'),
         for (final c in t.wcag) ExternalLink(title: c.label, uri: c.uri),
         const SectionHeading('Sources'),

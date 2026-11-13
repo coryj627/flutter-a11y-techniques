@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   url_launcher: ^6.3.3
+  markdown: ^7.3.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -56,6 +57,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Technique docs are bundled so the app renders the same Markdown the repo
+  # shows (DOC-2, DOC-3).
+  assets:
+    - docs/techniques/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

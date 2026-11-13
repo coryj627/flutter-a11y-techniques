@@ -161,3 +161,26 @@ test.describe('bad examples have their defect', () => {
     await expectCount(page, 'bad-cupertino-disabled', 0);
   });
 });
+
+// DOC-2: the technique screen renders docs/techniques/C01.md.
+test.describe('technique doc in the app', () => {
+  test('headings, links, and lists are exposed', async ({ page }) => {
+    await page.goto('about:blank');
+    await page.goto('/#/t/C01');
+    await expect(page.getByRole('heading', { name: 'Documentation', level: 2 })).toBeAttached();
+    await expect(page.getByRole('heading', { name: 'Why it matters', level: 3 })).toBeAttached();
+    // The whole page is in the tree without scrolling, to the last section.
+    await expect(page.getByRole('heading', { name: 'Flutter limitations', level: 3 })).toBeAttached();
+    await expect(page.getByRole('heading', { name: 'Sources', level: 2 })).toBeAttached();
+    // The doc's own title and its WCAG section are not repeated.
+    await expect(page.getByRole('heading', { name: 'C01 Button' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'WCAG 2.2', exact: true })).toHaveCount(0);
+    // A web link and a repository link, both real links with a destination.
+    await expect(page.getByRole('link', { name: 'APG Button' }).first()).toHaveAttribute(
+      'href', 'https://www.w3.org/WAI/ARIA/apg/patterns/button/');
+    await expect(page.getByRole('link', { name: 'FL-001' })).toHaveAttribute(
+      'href', /github\.com\/coryj627\/flutter-a11y-techniques\/blob\/main\/docs\/flutter-limitations\.md#fl-001$/);
+    expect(await page.getByRole('list').count()).toBeGreaterThan(0);
+    expect(await page.getByRole('listitem').count()).toBeGreaterThan(3);
+  });
+});
