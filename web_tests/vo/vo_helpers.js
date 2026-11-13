@@ -12,8 +12,8 @@ export const activateBrowser = (browserName) =>
 
 /**
  * Starts from the Back button, the first control on every example screen, and
- * moves VoiceOver forward until `isLast(phrase)` is true. Returns what was
- * spoken at each step.
+ * moves VoiceOver forward until `isLast(phrase, index)` is true. Returns what
+ * was spoken at each step.
  */
 export async function walkFromBack(page, voiceOver, browserName, isLast, max = 24) {
   await activateBrowser(browserName);
@@ -35,7 +35,7 @@ export async function walkFromBack(page, voiceOver, browserName, isLast, max = 2
       phrase = (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim();
     }
     spoken.push(phrase);
-    if (isLast(phrase)) break;
+    if (isLast(phrase, i)) break;
   }
   return spoken;
 }

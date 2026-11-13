@@ -67,8 +67,9 @@ techniques are logged, with reproduction steps and workarounds, in
 Each technique is checked at several layers: widget tests, Playwright on web,
 UI Automator on Android, XCUITest on iOS, and screen reader transcripts from
 TalkBack and VoiceOver. The commands are in each technique's doc, for example
-[C01 Button](docs/techniques/C01.md#how-it-is-tested) and
-[S05 Headings](docs/techniques/S05.md#how-it-is-tested).
+[C01 Button](docs/techniques/C01.md#how-it-is-tested),
+[S05 Headings](docs/techniques/S05.md#how-it-is-tested), and
+[F01 Text fields and labels](docs/techniques/F01.md#how-it-is-tested).
 
 ## Layout
 

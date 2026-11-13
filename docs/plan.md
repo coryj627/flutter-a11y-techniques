@@ -464,8 +464,15 @@ Not extracted yet: the Android and iOS test classes each carry their own
 Building S05 corrected a spike finding (FL-005) and changed the shell: screen
 titles are now level 1 headings.
 
-Still to do in this phase: F01 Text fields and labels, I12 Announcements, the
-technique template, and the checklist.
+F01 Text fields and labels is built the same way: nine examples, spec, doc,
+tests at every layer, and transcripts in `docs/evidence/F01/`. Its tests type
+into each field and check again, which is how the placeholder defect and
+FL-015 (TalkBack drops a filled field's label) were found. The Android tests
+now wait for each example's own title before reading the screen; waiting for
+text every example has could match the previous screen.
+
+Still to do in this phase: I12 Announcements, the technique template, and the
+checklist.
 
 ### Phase 4 — Slice review
 
