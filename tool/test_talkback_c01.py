@@ -2,6 +2,7 @@
 
 Run: python3 -m unittest discover -s tool -p 'test_*.py'
 """
+import sys
 import unittest
 from unittest import mock
 
@@ -300,6 +301,64 @@ class ReadingTheLogLevel(unittest.TestCase):
                 tb.run_with_talkback(lambda: None)
         self.assertEqual(device.settings, before)
         self.assertIn("log output level should be ERROR", str(caught.exception))
+
+
+class Decoding(unittest.TestCase):
+    def test_invalid_utf8_in_device_output_does_not_fail_the_run(self):
+        # A real device log contained a byte that is not valid UTF-8.
+        script = "import sys; sys.stdout.buffer.write(b'Speaking \\xc0 fragment\\n')"
+        with mock.patch.object(tb, "ADB", sys.executable):
+            output = tb.adb("-c", script)
+        self.assertIn("Speaking", output)
+        self.assertIn("fragment", output)
+
+
+def log_for(speech):
+    """A device log in which each element was focused and spoke `speech`."""
+    lines = []
+    for ident, fragments in speech.items():
+        lines.append(f"11-13 10:00:00.000  1  1 I C01TB   : FOCUS {ident}")
+        lines += [f'V talkback: SpeechControllerImpl: Speaking fragment text="{f}", utteranceId=x'
+                  for f in fragments]
+    lines.append("11-13 10:00:01.000  1  1 I C01TB   : END slug")
+    return "\n".join(lines)
+
+
+class Walks(unittest.TestCase):
+    OK = mock.Mock(returncode=0, stdout="")
+
+    def walker(self, logs):
+        logs = iter(logs)
+        self.walks = 0
+
+        def walk_once():
+            self.walks += 1
+            return self.OK, next(logs)
+
+        return walk_once
+
+    def test_one_walk_when_everything_is_heard(self):
+        speech = {"a": ["Save", "Button"], "b": ["Close. Button"]}
+        spoken, retried = tb.walk_until_heard(self.walker([log_for(speech)]))
+        self.assertEqual((spoken, retried, self.walks), (speech, [], 1))
+
+    def test_a_silent_element_is_walked_again_and_only_it_is_filled_in(self):
+        first = {"a": ["Save", "Button"], "b": []}
+        second = {"a": ["Different"], "b": ["Submit", "Button. disabled"]}
+        spoken, retried = tb.walk_until_heard(self.walker([log_for(first), log_for(second)]))
+        self.assertEqual(spoken, {"a": ["Save", "Button"], "b": ["Submit", "Button. disabled"]})
+        self.assertEqual((retried, self.walks), (["b"], 2))
+
+    def test_an_element_that_stays_silent_is_left_empty_after_three_walks(self):
+        silent = log_for({"a": ["Save"], "b": []})
+        spoken, retried = tb.walk_until_heard(self.walker([silent] * 5))
+        self.assertEqual(spoken["b"], [])
+        self.assertEqual((retried, self.walks), (["b"], tb.MAX_WALKS))
+
+    def test_a_failed_walk_exits(self):
+        failed = mock.Mock(returncode=1, stdout="BUILD FAILED")
+        with mock.patch("builtins.print"), self.assertRaises(SystemExit):
+            tb.walk_until_heard(lambda: (failed, ""))
 
 
 if __name__ == "__main__":

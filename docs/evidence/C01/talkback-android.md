@@ -16,7 +16,7 @@ Result: PASS
 | `c01-good-text-filled` | Save / Button / Double-tap to activate |
 | `c01-good-text-outlined` | Cancel / Button / Double-tap to activate |
 | `c01-good-text-text` | Learn more / Button / Double-tap to activate |
-| `c01-good-icon-close` | Close. Button / Double-tap to activate |
+| `c01-good-icon-close` | Close. Button / TalkBack on |
 | `c01-good-disabled-submit` | Submit / Button. disabled |
 | `c01-good-unique-names-username` | Edit username / Button / Double-tap to activate |
 | `c01-good-unique-names-email` | Edit email / Button / Double-tap to activate |
@@ -24,7 +24,7 @@ Result: PASS
 | `c01-good-cupertino-save` | Save / Button / Double-tap to activate |
 | `c01-good-cupertino-delete` | Delete / Button. disabled |
 | `c01-good-custom-save` | Save / Button / Double-tap to activate |
-| `c01-bad-unlabelled-icon-close` | Button / Double-tap to activate |
+| `c01-bad-unlabelled-icon-close` | Button / Detected: Text, "X". / Double-tap to activate |
 | `c01-bad-gesture-only-save` | Save / Double-tap to activate |
 | `c01-bad-role-in-name-close` | Close button. Button / Double-tap to activate |
 | `c01-bad-duplicate-names-username` | Edit / Button / Double-tap to activate |
