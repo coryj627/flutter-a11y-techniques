@@ -32,6 +32,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-009](#fl-009) | `textContrastGuideline` checks disabled text | Test framework | Confirmed |
 | [FL-010](#fl-010) | Live region text is announced when the screen opens | Android, iOS, Web | Observed |
 | [FL-011](#fl-011) | Lazy lists expose only content near the viewport | Web (others not checked) | Confirmed |
+| [FL-012](#fl-012) | A web live region announcement can be erased by an earlier one's clear timer | Web | Confirmed (source read) |
 
 ---
 
@@ -237,3 +238,29 @@ yet), **Fixed in x.y** (verified on that version).
   what to do there is a question for the list techniques (S12, C-group).
 - Upstream issue: not searched yet. Lazy building is by design; the effect on
   assistive technology navigation is the limitation.
+
+## FL-012
+
+**A web live region announcement can be erased by an earlier one's clear timer.**
+
+- Status: Confirmed by reading the engine source, Flutter 3.47.5, web. Seen
+  as a test failure on CI. Whether a screen reader actually loses speech
+  because of it has not been tested.
+- WCAG: 4.1.3 Status Messages.
+- What happens: Flutter web does not put `aria-live` on the live region's own
+  node. It copies the text into a shared `<flt-announcement-polite>` element
+  and empties that element 300 ms later (`liveMessageDuration`). Each
+  announcement starts its own clear timer and nothing cancels the earlier
+  ones, so when two announcements are less than 300 ms apart the first one's
+  timer empties the element while it holds the second one's text. With a live
+  region that is present when a screen opens (see FL-010), a change made
+  within 300 ms of opening is affected.
+- Cause (SDK source read):
+  `engine/src/flutter/lib/web_ui/lib/src/engine/semantics/accessibility.dart`,
+  `AccessibilityAnnouncements.announce`.
+- How it showed up: `web_tests/c01_button.spec.js` read the element once after
+  clicking Save and found it empty on a slower CI machine. The test now
+  records every value the element is given.
+- Workaround: none applied. To be examined in I12 Announcements with a real
+  screen reader.
+- Upstream issue: not searched yet.

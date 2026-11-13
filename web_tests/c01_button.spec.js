@@ -100,8 +100,20 @@ test.describe('good examples', () => {
 
   test('activation is announced through a polite live region', async ({ page }) => {
     await open(page, 'good-text');
+    // Flutter writes an announcement into <flt-announcement-polite> and clears
+    // it again after a short time, and a pending clear from an earlier
+    // announcement can remove a newer one. Reading the element once is a race,
+    // so record everything it is given.
+    await page.locator('flt-announcement-polite').evaluate((element) => {
+      window.announcements = [];
+      new MutationObserver(() => {
+        if (element.textContent) window.announcements.push(element.textContent);
+      }).observe(element, { childList: true, characterData: true, subtree: true });
+    });
     await byId(page, 'c01-good-text-filled').click();
-    await expect(page.locator('flt-announcement-polite')).toHaveText(/Activations: 1/);
+    await expect
+      .poll(() => page.evaluate(() => window.announcements.join(' | ')))
+      .toMatch(/Activations: 1/);
   });
 });
 
