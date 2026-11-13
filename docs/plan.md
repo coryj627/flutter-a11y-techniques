@@ -422,7 +422,12 @@ Done for C01, all passing locally on Flutter 3.47.5:
   (`web_tests/widgetbook.spec.js`).
 - Framework issues are logged in [flutter-limitations.md](flutter-limitations.md).
 
-Written but not yet run: the CI jobs for web, Android, and iOS in
+First CI runs (2026-11-13): GitHub's `macos-latest` image is macOS 26 with
+Xcode 26.6, which has neither the iOS 27 SDK nor `XCUIVoiceOverService`. The
+VoiceOver test is compiled only on Swift 6.4 or later and skips otherwise, so
+iOS speech is checked locally until a hosted image has Xcode 27.
+
+Written, first runs in progress: the CI jobs for web, Android, and iOS in
 `.github/workflows/ci.yml`. They run for the first time when the branch is
 pushed. Known unknowns: the Android job uses an API 35 emulator (local runs
 were on Android 17), and the hosted macOS image may not have an iOS 27

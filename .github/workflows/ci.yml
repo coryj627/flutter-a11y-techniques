@@ -108,8 +108,10 @@ jobs:
           name: android-test-report
           path: build/app/reports/androidTests
 
-  # L3 on iOS: XCUITest on a simulator. The VoiceOver test needs iOS 27 and
-  # skips itself on older simulators.
+  # L3 on iOS: XCUITest on a simulator. The VoiceOver test needs Xcode 27 and
+  # an iOS 27 simulator; with anything older it compiles to a skip, so speech
+  # is only checked locally (tool/voiceover_ios_c01.py) until the hosted image
+  # has them.
   ios:
     runs-on: macos-latest
     steps:

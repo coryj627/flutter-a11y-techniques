@@ -150,6 +150,10 @@ final class C01ButtonUITests: XCTestCase {
   ]
 
   func testVoiceOverSpeech() throws {
+    // XCUIVoiceOverService is in the iOS 27 SDK (Xcode 27, Swift 6.4). With an
+    // older Xcode the symbol does not exist, so an availability check alone
+    // would not compile; the body is compiled only where the SDK has it.
+    #if compiler(>=6.4)
     guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in speech {
@@ -171,5 +175,8 @@ final class C01ButtonUITests: XCTestCase {
         XCTAssertFalse(spoken.contains(phrase), "\(example.slug): did not expect \"\(phrase)\" in \(spoken)")
       }
     }
+    #else
+    throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
+    #endif
   }
 }
