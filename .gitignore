@@ -117,3 +117,13 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+# Lock files are committed so builds are reproducible on the pinned SDK.
+!pubspec.lock
+!**/Podfile.lock
+
+# IDE
+.idea/
+*.iml
+
+# Flutter version manager
+.fvm/

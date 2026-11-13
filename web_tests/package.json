@@ -1,0 +1,16 @@
+{
+  "name": "web-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@guidepup/guidepup": "^0.40.0",
+    "@guidepup/playwright": "^0.21.0",
+    "@playwright/test": "^1.56.0"
+  },
+  "dependencies": {
+    "npm": "^9.6.2"
+  }
+}
