@@ -17,10 +17,24 @@ class FakeDevice:
     number of settings calls made so far.
     """
 
-    def __init__(self, settings, fail=lambda args, count: False):
+    def __init__(self, settings, fail=lambda args, count: False, log_level="ERROR"):
         self.settings = dict(settings)
         self.fail = fail
         self.calls = 0
+        self.log_level = log_level
+        self.during_log_setup = []
+        self.fail_log_change = None
+
+    def set_log_level(self, level, on_read=None):
+        """Stands in for driving TalkBack's settings screen."""
+        self.during_log_setup.append(dict(self.settings))
+        previous = self.log_level
+        if on_read:
+            on_read(previous)
+        if self.fail_log_change == level:
+            raise SystemExit(f'TalkBack settings: could not find "{level}"')
+        self.log_level = level
+        return previous
 
     def adb(self, *args):
         self.calls += 1
@@ -40,7 +54,7 @@ class RunWithTalkBack(unittest.TestCase):
     def run_on(self, settings, action=lambda: "done"):
         device = FakeDevice(settings)
         with mock.patch.object(tb, "adb_checked", device.adb), \
-                mock.patch.object(tb, "ensure_verbose_logging"):
+                mock.patch.object(tb, "set_log_level", device.set_log_level):
             try:
                 result = tb.run_with_talkback(action)
             except BaseException as error:  # SystemExit included
@@ -55,19 +69,19 @@ class RunWithTalkBack(unittest.TestCase):
             seen.update(device.settings)
 
         with mock.patch.object(tb, "adb_checked", device.adb), \
-                mock.patch.object(tb, "ensure_verbose_logging"):
+                mock.patch.object(tb, "set_log_level", device.set_log_level):
             tb.run_with_talkback(action)
         self.assertEqual(seen[tb.SERVICES], f"{OTHER}:{tb.TALKBACK}")
         self.assertEqual(seen[tb.ENABLED], "1")
 
     def test_services_are_off_while_the_settings_screen_is_driven(self):
         device = FakeDevice({tb.SERVICES: OTHER, tb.ENABLED: "1"})
-        during_setup = {}
         with mock.patch.object(tb, "adb_checked", device.adb), \
-                mock.patch.object(tb, "ensure_verbose_logging",
-                                  side_effect=lambda: during_setup.update(device.settings)):
+                mock.patch.object(tb, "set_log_level", device.set_log_level):
             tb.run_with_talkback(lambda: None)
-        self.assertEqual(during_setup, {tb.SERVICES: "", tb.ENABLED: "0"})
+        # Once to turn verbose logging on, once to put it back.
+        self.assertEqual(device.during_log_setup,
+                         [{tb.SERVICES: "", tb.ENABLED: "0"}] * 2)
 
     def test_restores_existing_services_after_success(self):
         before = {tb.SERVICES: OTHER, tb.ENABLED: "1"}
@@ -88,12 +102,13 @@ class RunWithTalkBack(unittest.TestCase):
     def test_restores_when_setup_exits(self):
         before = {tb.SERVICES: OTHER, tb.ENABLED: "1"}
         device = FakeDevice(before)
+        device.fail_log_change = "VERBOSE"
         with mock.patch.object(tb, "adb_checked", device.adb), \
-                mock.patch.object(tb, "ensure_verbose_logging",
-                                  side_effect=SystemExit("could not find setting")):
+                mock.patch.object(tb, "set_log_level", device.set_log_level):
             with self.assertRaises(SystemExit):
                 tb.run_with_talkback(lambda: None)
         self.assertEqual(device.settings, before)
+        self.assertEqual(device.log_level, "ERROR")
 
     def test_unset_settings_are_unset_again(self):
         device, _ = self.run_on({})
@@ -112,7 +127,7 @@ class Failures(unittest.TestCase):
     def run_failing(self, fail, action=lambda: "done"):
         device = FakeDevice(self.BEFORE, fail)
         with mock.patch.object(tb, "adb_checked", device.adb), \
-                mock.patch.object(tb, "ensure_verbose_logging"), \
+                mock.patch.object(tb, "set_log_level", device.set_log_level), \
                 mock.patch("sys.stderr"):
             with self.assertRaises(tb.AdbError) as raised:
                 tb.run_with_talkback(action)
@@ -135,8 +150,9 @@ class Failures(unittest.TestCase):
 
     def test_failed_restore_is_reported_with_the_value_to_set(self):
         ran = []
-        # Calls 1-2 read, 3-6 write for the run, 7 is the first restore.
-        device, error = self.run_failing(lambda args, count: count == 7,
+        # Calls 1-2 read, 3-6 write for the run, 7-8 switch services off to
+        # put the log level back, 9 is the first restore.
+        device, error = self.run_failing(lambda args, count: count == 9,
                                          action=lambda: ran.append(True))
         self.assertEqual(ran, [True])
         self.assertIn("Could not restore", str(error))
@@ -182,12 +198,57 @@ class EmptyServices(unittest.TestCase):
             return device.adb(*args)
 
         with mock.patch.object(tb, "adb_checked", adb), \
-                mock.patch.object(tb, "ensure_verbose_logging"):
+                mock.patch.object(tb, "set_log_level", device.set_log_level):
             tb.run_with_talkback(lambda: during.update(device.settings))
         self.assertEqual(during, {tb.SERVICES: tb.TALKBACK, tb.ENABLED: "1"})
         self.assertEqual(device.settings, before)
         # Never sent as a bare empty argument, which the device shell drops.
         self.assertNotIn("", puts)
+
+
+class LogLevel(unittest.TestCase):
+    BEFORE = {tb.SERVICES: OTHER, tb.ENABLED: "1"}
+
+    def run_on(self, device, action=lambda: None):
+        with mock.patch.object(tb, "adb_checked", device.adb), \
+                mock.patch.object(tb, "set_log_level", device.set_log_level), \
+                mock.patch("sys.stderr"):
+            try:
+                tb.run_with_talkback(action)
+            except BaseException as error:
+                return error
+
+    def test_verbose_during_the_run_and_restored_after_success(self):
+        device = FakeDevice(self.BEFORE, log_level="ERROR")
+        during = []
+        self.run_on(device, lambda: during.append(device.log_level))
+        self.assertEqual(during, ["VERBOSE"])
+        self.assertEqual(device.log_level, "ERROR")
+        self.assertEqual(device.settings, self.BEFORE)
+
+    def test_restored_when_the_walk_raises(self):
+        device = FakeDevice(self.BEFORE, log_level="WARN")
+
+        def fail():
+            raise OSError("gradlew could not start")
+
+        self.assertIsInstance(self.run_on(device, fail), OSError)
+        self.assertEqual(device.log_level, "WARN")
+        self.assertEqual(device.settings, self.BEFORE)
+
+    def test_already_verbose_is_left_alone(self):
+        device = FakeDevice(self.BEFORE, log_level="VERBOSE")
+        self.run_on(device)
+        self.assertEqual(device.log_level, "VERBOSE")
+        self.assertEqual(len(device.during_log_setup), 1)
+
+    def test_failed_log_restore_is_reported_and_settings_still_restored(self):
+        device = FakeDevice(self.BEFORE, log_level="ERROR")
+        device.fail_log_change = "ERROR"
+        error = self.run_on(device)
+        self.assertIsInstance(error, tb.AdbError)
+        self.assertIn("log output level should be ERROR", str(error))
+        self.assertEqual(device.settings, self.BEFORE)
 
 
 if __name__ == "__main__":

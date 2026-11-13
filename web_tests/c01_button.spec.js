@@ -209,3 +209,32 @@ test.describe('addresses', () => {
     await expect(page.getByRole('heading', { name: 'Page not found' })).toHaveCount(0);
   });
 });
+
+// A link must go to its destination once: in this tab, with no second tab.
+test.describe('external links', () => {
+  for (const how of ['click', 'Enter']) {
+    test(`activating a link by ${how} navigates this tab once and opens no other`, async ({ page, context }) => {
+      // Serve a stub so the test does not depend on the network.
+      await context.route(/^https:\/\/www\.w3\.org\//, (route) =>
+        route.fulfill({ status: 200, contentType: 'text/html', body: '<title>stub</title>' }));
+      const opened = [];
+      context.on('page', (p) => opened.push(p));
+      await page.goto('about:blank');
+      await page.goto('/#/about');
+      const link = page.getByRole('link', { name: 'WCAG 2.2' });
+      await expect(link).toHaveAttribute('href', 'https://www.w3.org/TR/WCAG22/');
+      if (how === 'click') {
+        await link.click();
+      } else {
+        await link.focus();
+        await page.keyboard.press('Enter');
+      }
+      await expect(page).toHaveURL('https://www.w3.org/TR/WCAG22/');
+      await page.waitForTimeout(1500);
+      expect(opened, 'no second tab').toHaveLength(0);
+      // Back returns to the app where the user was.
+      await page.goBack();
+      await expect(page.getByRole('heading', { name: 'About' })).toBeVisible();
+    });
+  }
+});

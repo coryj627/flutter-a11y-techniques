@@ -33,6 +33,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-010](#fl-010) | Live region text is announced when the screen opens | Android, iOS, Web | Observed |
 | [FL-011](#fl-011) | Lazy lists expose only content near the viewport | Web (others not checked) | Confirmed |
 | [FL-012](#fl-012) | A web live region announcement can be erased by an earlier one's clear timer | Web | Confirmed (source read) |
+| [FL-013](#fl-013) | A web link with `linkUrl` is followed by the browser as well as by `onTap` | Web | Confirmed |
 
 ---
 
@@ -264,4 +265,31 @@ yet), **Fixed in x.y** (verified on that version).
   records every value the element is given.
 - Workaround: none applied. To be examined in I12 Announcements with a real
   screen reader.
+- Upstream issue: not searched yet.
+
+## FL-013
+
+**A web link with `linkUrl` is followed by the browser as well as by `onTap`.**
+
+- Status: Confirmed, Flutter 3.47.5, web (Playwright Chromium).
+- What happens: `Semantics(link: true, linkUrl: uri)` around a tappable widget
+  becomes a real `<a href>`. A click runs the widget's `onTap` and the browser
+  also follows the `href` in the current tab. If `onTap` opens the URL in a
+  new tab (the usual `launchUrl`), one click opens the destination twice: the
+  current tab is replaced and a new tab opens. A key press is different:
+  Flutter handles Enter itself and the anchor is not followed, so `onTap` is
+  the only thing that navigates.
+- Why it matters: a link must have one predictable result (3.2.5 Change on
+  Request is AAA, but an unexpected second tab and a lost page is a failure
+  of the link either way).
+- Reproduce: was `ExternalLink` in `lib/app/widgets.dart` before it was
+  changed; clicking "WCAG 2.2" on the about screen navigated the tab and
+  opened a second one.
+- Workaround, applied: on web `onTap` opens the URL in the same tab
+  (`webOnlyWindowName: '_self'`), so the click's two navigations go to the
+  same place and Enter still works. `web_tests/c01_button.spec.js` asserts
+  that click and Enter each end on the destination in this tab with no second
+  tab, and that Back returns to the app.
+- To examine in the links technique (S-group): whether `url_launcher`'s `Link`
+  widget is the better documented mechanism.
 - Upstream issue: not searched yet.

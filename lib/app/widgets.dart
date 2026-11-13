@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -108,7 +109,17 @@ class ExternalLink extends StatelessWidget {
       link: true,
       linkUrl: uri,
       child: InkWell(
-        onTap: () => launchUrl(uri, mode: LaunchMode.externalApplication),
+        // On web `linkUrl` makes this a real <a href>, which the browser
+        // follows in this tab when it is clicked. A key press does not reach
+        // the anchor (Flutter handles Enter itself), so the tap must navigate
+        // too. Both therefore target this tab: opening a new tab here would
+        // give a click two destinations, one in each tab. Elsewhere the link
+        // opens in the browser app.
+        onTap: () => launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+          webOnlyWindowName: kIsWeb ? '_self' : null,
+        ),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 48),
           child: Padding(
@@ -128,7 +139,9 @@ class ExternalLink extends StatelessWidget {
                 const SizedBox(width: 8),
                 ExcludeSemantics(
                   child: Icon(
-                    Icons.open_in_new,
+                    // "Opens elsewhere" on mobile; on web the link opens in
+                    // the same tab, so the new-window icon would mislead.
+                    kIsWeb ? Icons.arrow_outward : Icons.open_in_new,
                     size: 20,
                     color: theme.colorScheme.primary,
                   ),

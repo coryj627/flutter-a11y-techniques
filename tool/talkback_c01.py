@@ -3,8 +3,8 @@
 
 Needs a running emulator with TalkBack installed. Sets TalkBack's developer
 "Log output level" to VERBOSE through its settings screen (docs/plan.md,
-finding K6), turns TalkBack on (restoring the device's accessibility settings
-afterwards),
+finding K6), turns TalkBack on (restoring the log level and the device's
+accessibility settings afterwards),
 runs C01ButtonTest#talkBackWalk, reads the speech from logcat, checks it, and
 writes the transcript to docs/evidence/C01/talkback-android.md.
 
@@ -82,11 +82,14 @@ def tap(text, scrolls=3):
     sys.exit(f'TalkBack settings: could not find "{text}"')
 
 
-def ensure_verbose_logging():
-    """Set TalkBack's developer log level to VERBOSE through its settings UI.
+def set_log_level(level, on_read=None):
+    """Sets TalkBack's developer "Log output level" through its settings UI
+    and returns the level it had before.
 
     The level lives in TalkBack's private preferences, which adb cannot write
-    on a non-root image. Done with TalkBack off so plain taps work.
+    on a non-root image. Must be called with screen readers off so plain taps
+    work. on_read, if given, is called with the current level before anything
+    is changed, so the caller knows what to restore even if the change fails.
     """
     adb("shell", "am", "force-stop", "com.google.android.marvin.talkback")
     adb("shell", "am", "start", "-n",
@@ -95,12 +98,16 @@ def ensure_verbose_logging():
     tap("Advanced settings")
     tap("Developer settings")
     texts = [t for t, _, _ in screen()]
-    level = texts[texts.index("Log output level") + 1]
-    if level != "VERBOSE":
+    previous = texts[texts.index("Log output level") + 1]
+    if on_read:
+        on_read(previous)
+    if previous != level:
         tap("Log output level")
-        tap("VERBOSE")
-        tap("Yes, enable verbose logging")
+        tap(level)
+        if level == "VERBOSE":
+            tap("Yes, enable verbose logging")
     adb("shell", "input", "keyevent", "HOME")
+    return previous
 
 
 SERVICES = "enabled_accessibility_services"
@@ -153,33 +160,42 @@ def with_talkback(services):
 
 
 def run_with_talkback(action):
-    """Runs action() with TalkBack on, then puts the device's accessibility
-    settings back exactly as they were, whether or not anything failed.
+    """Runs action() with TalkBack on and logging what it speaks, then puts
+    the device back exactly as it was, whether or not anything failed:
+    TalkBack's log level first, then the accessibility settings.
 
     Both settings are read before anything is changed; if either read fails,
-    nothing is changed. Services are switched off for the settings-screen
-    setup, because plain taps do not work while a screen reader is running.
-    If a setting cannot be restored, that is reported with the value it
-    should have, and raised.
+    nothing is changed. Services are switched off while the settings screen
+    is driven, because plain taps do not work while a screen reader is
+    running. Verbose logging is not left on, because it would keep writing
+    everything TalkBack speaks to the device log. Anything that cannot be
+    restored is reported with the value it should have, and raised.
     """
     original = {name: read_setting(name) for name in (SERVICES, ENABLED)}
+    level = {}
     try:
         write_setting(SERVICES, "")
         write_setting(ENABLED, "0")
-        ensure_verbose_logging()
+        set_log_level("VERBOSE", on_read=lambda value: level.update(original=value))
         write_setting(SERVICES, with_talkback(original[SERVICES]))
         write_setting(ENABLED, "1")
         return action()
     finally:
         failed = []
+        if level.get("original", "VERBOSE") != "VERBOSE":
+            try:
+                write_setting(SERVICES, "")
+                write_setting(ENABLED, "0")
+                set_log_level(level["original"])
+            except (AdbError, SystemExit) as error:
+                failed.append(f"  TalkBack log output level should be {level['original']} ({error})")
         for name, value in original.items():
             try:
                 write_setting(name, value)
             except AdbError as error:
-                failed.append((name, value, error))
+                failed.append(f"  {name} should be {value!r} ({error})")
         if failed:
-            lines = [f"  {name} should be {value!r} ({error})" for name, value, error in failed]
-            message = "Could not restore accessibility settings:\n" + "\n".join(lines)
+            message = "Could not restore the device:\n" + "\n".join(failed)
             print(message, file=sys.stderr)
             raise AdbError(message)
 
