@@ -246,9 +246,12 @@ def run_with_talkback(action):
                     write_setting(SERVICES, "")
                     write_setting(ENABLED, "0")
                     set_log_level(level["original"])
-            # Anything at all going wrong here, SystemExit included, must not
-            # stop the accessibility settings below from being restored.
-            except BaseException as error:  # noqa: B036
+            # An error here is reported below. Whatever happens, including an
+            # exception this does not catch, the finally underneath still
+            # restores the accessibility settings. Interrupts are not caught:
+            # signals are held for this whole block, and an interrupt raised
+            # some other way keeps its own meaning for the caller.
+            except Exception as error:
                 failed.append(
                     f"  TalkBack log output level should be {level['original']} "
                     f"({type(error).__name__}: {error})")

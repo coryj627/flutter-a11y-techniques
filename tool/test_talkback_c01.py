@@ -39,7 +39,7 @@ class FakeDevice:
         if on_read:
             on_read(previous)
         if self.fail_log_change == level:
-            raise SystemExit(f'TalkBack settings: could not find "{level}"')
+            raise tb.AdbError(f'TalkBack settings: could not find "{level}"')
         self.log_level = level
         return previous
 
@@ -112,7 +112,7 @@ class RunWithTalkBack(unittest.TestCase):
         device.fail_log_change = "VERBOSE"
         with mock.patch.object(tb, "adb_checked", device.adb), \
                 mock.patch.object(tb, "set_log_level", device.set_log_level):
-            with self.assertRaises(SystemExit):
+            with self.assertRaises(tb.AdbError):
                 tb.run_with_talkback(lambda: None)
         self.assertEqual(device.settings, before)
         self.assertEqual(device.log_level, "ERROR")
@@ -258,27 +258,38 @@ class LogLevel(unittest.TestCase):
         self.assertEqual(device.settings, self.BEFORE)
 
 
+    def flaky_restore(self, device, raised):
+        real, calls = device.set_log_level, []
+
+        def flaky(level, on_read=None):
+            calls.append(level)
+            if len(calls) == 2:  # the restore, in cleanup
+                raise raised
+            return real(level, on_read)
+
+        return (mock.patch.object(tb, "adb_checked", device.adb),
+                mock.patch.object(tb, "set_log_level", flaky),
+                mock.patch("sys.stderr"))
+
     def test_any_error_in_log_restore_still_restores_the_settings(self):
         for raised in (ValueError("'Log output level' is not in list"),
-                       IndexError("list index out of range"),
-                       KeyboardInterrupt()):
+                       IndexError("list index out of range")):
             device = FakeDevice(self.BEFORE, log_level="ERROR")
-            real = device.set_log_level
-            calls = []
-
-            def flaky(level, on_read=None, real=real, calls=calls, raised=raised):
-                calls.append(level)
-                if len(calls) == 2:  # the restore, in cleanup
-                    raise raised
-                return real(level, on_read)
-
-            with mock.patch.object(tb, "adb_checked", device.adb), \
-                    mock.patch.object(tb, "set_log_level", flaky), \
-                    mock.patch("sys.stderr"):
+            a, b, c = self.flaky_restore(device, raised)
+            with a, b, c:
                 with self.assertRaises(tb.AdbError) as caught:
                     tb.run_with_talkback(lambda: None)
             self.assertEqual(device.settings, self.BEFORE, type(raised).__name__)
             self.assertIn("log output level should be ERROR", str(caught.exception))
+
+    def test_an_interrupt_in_log_restore_stays_an_interrupt_and_settings_are_restored(self):
+        for raised in (KeyboardInterrupt(), SystemExit(143)):
+            device = FakeDevice(self.BEFORE, log_level="ERROR")
+            a, b, c = self.flaky_restore(device, raised)
+            with a, b, c:
+                with self.assertRaises(type(raised)):
+                    tb.run_with_talkback(lambda: None)
+            self.assertEqual(device.settings, self.BEFORE, type(raised).__name__)
 
 
 class ReadingTheLogLevel(unittest.TestCase):
