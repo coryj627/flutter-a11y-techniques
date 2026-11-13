@@ -82,6 +82,29 @@ def tap(text, scrolls=3):
     sys.exit(f'TalkBack settings: could not find "{text}"')
 
 
+LOG_LEVELS = ("NONE", "ASSERT", "ERROR", "WARN", "INFO", "DEBUG", "VERBOSE")
+
+
+class AdbError(RuntimeError):
+    """A device command or screen read that had to succeed did not."""
+
+
+def current_log_level(texts):
+    """The level shown under "Log output level" in the given screen texts.
+
+    Raises AdbError when the screen dump is missing, cut short, or shows
+    something that is not a log level, so a bad read is never mistaken for a
+    level to restore.
+    """
+    if "Log output level" not in texts:
+        raise AdbError('TalkBack settings: "Log output level" is not on screen')
+    index = texts.index("Log output level") + 1
+    if index >= len(texts) or texts[index] not in LOG_LEVELS:
+        shown = texts[index] if index < len(texts) else "nothing"
+        raise AdbError(f"TalkBack settings: expected a log level, found {shown!r}")
+    return texts[index]
+
+
 def set_log_level(level, on_read=None):
     """Sets TalkBack's developer "Log output level" through its settings UI
     and returns the level it had before.
@@ -97,8 +120,7 @@ def set_log_level(level, on_read=None):
     time.sleep(3)
     tap("Advanced settings")
     tap("Developer settings")
-    texts = [t for t, _, _ in screen()]
-    previous = texts[texts.index("Log output level") + 1]
+    previous = current_log_level([t for t, _, _ in screen()])
     if on_read:
         on_read(previous)
     if previous != level:
@@ -112,10 +134,6 @@ def set_log_level(level, on_read=None):
 
 SERVICES = "enabled_accessibility_services"
 ENABLED = "accessibility_enabled"
-
-
-class AdbError(RuntimeError):
-    """An adb command that had to succeed did not."""
 
 
 def adb_checked(*args):
@@ -182,18 +200,23 @@ def run_with_talkback(action):
         return action()
     finally:
         failed = []
-        if level.get("original", "VERBOSE") != "VERBOSE":
-            try:
+        try:
+            if level.get("original", "VERBOSE") != "VERBOSE":
                 write_setting(SERVICES, "")
                 write_setting(ENABLED, "0")
                 set_log_level(level["original"])
-            except (AdbError, SystemExit) as error:
-                failed.append(f"  TalkBack log output level should be {level['original']} ({error})")
-        for name, value in original.items():
-            try:
-                write_setting(name, value)
-            except AdbError as error:
-                failed.append(f"  {name} should be {value!r} ({error})")
+        # Anything at all going wrong here, SystemExit included, must not
+        # stop the accessibility settings below from being restored.
+        except BaseException as error:  # noqa: B036
+            failed.append(
+                f"  TalkBack log output level should be {level['original']} "
+                f"({type(error).__name__}: {error})")
+        finally:
+            for name, value in original.items():
+                try:
+                    write_setting(name, value)
+                except AdbError as error:
+                    failed.append(f"  {name} should be {value!r} ({error})")
         if failed:
             message = "Could not restore the device:\n" + "\n".join(failed)
             print(message, file=sys.stderr)

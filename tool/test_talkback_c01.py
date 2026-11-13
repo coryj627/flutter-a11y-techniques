@@ -251,5 +251,56 @@ class LogLevel(unittest.TestCase):
         self.assertEqual(device.settings, self.BEFORE)
 
 
+    def test_any_error_in_log_restore_still_restores_the_settings(self):
+        for raised in (ValueError("'Log output level' is not in list"),
+                       IndexError("list index out of range"),
+                       KeyboardInterrupt()):
+            device = FakeDevice(self.BEFORE, log_level="ERROR")
+            real = device.set_log_level
+            calls = []
+
+            def flaky(level, on_read=None, real=real, calls=calls, raised=raised):
+                calls.append(level)
+                if len(calls) == 2:  # the restore, in cleanup
+                    raise raised
+                return real(level, on_read)
+
+            with mock.patch.object(tb, "adb_checked", device.adb), \
+                    mock.patch.object(tb, "set_log_level", flaky), \
+                    mock.patch("sys.stderr"):
+                with self.assertRaises(tb.AdbError) as caught:
+                    tb.run_with_talkback(lambda: None)
+            self.assertEqual(device.settings, self.BEFORE, type(raised).__name__)
+            self.assertIn("log output level should be ERROR", str(caught.exception))
+
+
+class ReadingTheLogLevel(unittest.TestCase):
+    def test_reads_the_level_under_the_label(self):
+        texts = ["Developer settings", "Log output level", "WARN", "Other"]
+        self.assertEqual(tb.current_log_level(texts), "WARN")
+
+    def test_empty_or_incomplete_screen_dump_is_an_error(self):
+        for texts in ([], ["Developer settings"], ["Log output level"],
+                      ["Log output level", "Filter accessibility event logging"]):
+            with self.assertRaises(tb.AdbError, msg=texts):
+                tb.current_log_level(texts)
+
+    def test_a_bad_screen_read_during_cleanup_leaves_settings_restored(self):
+        before = {tb.SERVICES: OTHER, tb.ENABLED: "1"}
+        device = FakeDevice(before)
+        screens = iter([["Log output level", "ERROR"]])  # setup; cleanup gets []
+        with mock.patch.object(tb, "adb_checked", device.adb), \
+                mock.patch.object(tb, "adb", return_value=""), \
+                mock.patch.object(tb, "tap"), \
+                mock.patch.object(tb.time, "sleep"), \
+                mock.patch.object(tb, "screen",
+                                  side_effect=lambda: [(t, 0, 0) for t in next(screens, [])]), \
+                mock.patch("sys.stderr"):
+            with self.assertRaises(tb.AdbError) as caught:
+                tb.run_with_talkback(lambda: None)
+        self.assertEqual(device.settings, before)
+        self.assertIn("log output level should be ERROR", str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main()
