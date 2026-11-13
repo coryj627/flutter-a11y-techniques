@@ -12,7 +12,10 @@ async function open(page, slug) {
 const outline = (page) =>
   page.locator('h1,h2,h3,h4,h5,h6,[role=heading]').evaluateAll((elements) =>
     elements.map((e) => {
-      const level = e.getAttribute('aria-level') || e.tagName.slice(1);
+      // aria-level wins; then the element's own level; a role="heading" with
+      // neither has the ARIA default level of 2.
+      const fromTag = /^H[1-6]$/.test(e.tagName) ? e.tagName.slice(1) : '2';
+      const level = e.getAttribute('aria-level') || fromTag;
       return `${level} ${e.textContent}`;
     }));
 
