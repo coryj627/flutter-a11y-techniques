@@ -20,12 +20,21 @@ const outline = async (page) => {
   const client = await page.context().newCDPSession(page);
   const { nodes } = await client.send('Accessibility.getFullAXTree');
   await client.detach();
-  return nodes
-    .filter((node) => !node.ignored && node.role?.value === 'heading')
-    .map((node) => {
+  // The protocol returns nodes breadth-first. Reading order is depth-first
+  // through childIds, so walk the tree from its root. Ignored nodes are not
+  // reported themselves, but their children still are.
+  const byId = new Map(nodes.map((node) => [node.nodeId, node]));
+  const found = [];
+  const visit = (node) => {
+    if (!node) return;
+    if (!node.ignored && node.role?.value === 'heading') {
       const level = node.properties?.find((p) => p.name === 'level')?.value?.value;
-      return `${level} ${(node.name?.value ?? '').replace(/\s+/g, ' ').trim()}`;
-    });
+      found.push(`${level} ${(node.name?.value ?? '').replace(/\s+/g, ' ').trim()}`);
+    }
+    for (const id of node.childIds ?? []) visit(byId.get(id));
+  };
+  visit(nodes.find((node) => !node.parentId));
+  return found;
 };
 
 /** Levels may go up by at most one from one heading to the next. */
@@ -52,6 +61,20 @@ test('the outline helper reports the levels the browser exposes', async ({ page 
   ]);
   expect(skips(headings)).toEqual([4, 7]);
   expect(skips(['1 Title', '7 Deep'])).toEqual([7]);
+});
+
+test('the outline helper keeps reading order through nested containers', async ({ page }) => {
+  // A heading inside a region comes before a heading that follows the
+  // region, although it is deeper in the tree.
+  await page.setContent(`
+    <h1>Title</h1>
+    <section aria-label="Details">
+      <div><div><h3>Inside the region</h3></div></div>
+    </section>
+    <h2>After the region</h2>`);
+  const headings = await outline(page);
+  expect(headings).toEqual(['1 Title', '3 Inside the region', '2 After the region']);
+  expect(skips(headings)).toEqual([3]);
 });
 
 test.describe('good examples', () => {
