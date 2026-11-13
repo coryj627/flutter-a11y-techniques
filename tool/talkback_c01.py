@@ -58,8 +58,17 @@ EXPECT = {
 DECODE = {"capture_output": True, "encoding": "utf-8", "errors": "replace"}
 
 
+# No device command may wait forever: a stalled adb would otherwise block the
+# restore of the device's settings, which runs with signals held.
+ADB_TIMEOUT = 60
+
+
 def adb(*args):
-    return subprocess.run([ADB, *args], **DECODE).stdout
+    """Runs adb and returns its output; "" if it fails or times out."""
+    try:
+        return subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE).stdout
+    except subprocess.TimeoutExpired:
+        return ""
 
 
 def screen():
@@ -163,12 +172,15 @@ ENABLED = "accessibility_enabled"
 
 
 def adb_checked(*args):
-    """Like adb(), but raises AdbError when the command fails.
+    """Like adb(), but raises AdbError when the command fails or times out.
 
     Used for the accessibility settings, where treating a failed command as
     an empty answer would lead to the wrong value being restored.
     """
-    run = subprocess.run([ADB, *args], **DECODE)
+    try:
+        run = subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE)
+    except subprocess.TimeoutExpired:
+        raise AdbError(f"adb {' '.join(args)} did not finish in {ADB_TIMEOUT} seconds") from None
     if run.returncode != 0:
         raise AdbError(f"adb {' '.join(args)} failed: {run.stderr.strip() or run.returncode}")
     return run.stdout
@@ -284,14 +296,20 @@ class signals_deferred:
         return False
 
 
+WALK_TIMEOUT = 20 * 60
+
+
 def walk():
     """Runs the instrumented walk. Returns the Gradle result and the log."""
     time.sleep(5)
     adb("logcat", "-c")
-    run = subprocess.run(
-        ["./gradlew", "app:connectedDebugAndroidTest",
-         f"-Pandroid.testInstrumentationRunnerArguments.class={TEST}"],
-        cwd=os.path.join(ROOT, "android"), **DECODE)
+    try:
+        run = subprocess.run(
+            ["./gradlew", "app:connectedDebugAndroidTest",
+             f"-Pandroid.testInstrumentationRunnerArguments.class={TEST}"],
+            cwd=os.path.join(ROOT, "android"), timeout=WALK_TIMEOUT, **DECODE)
+    except subprocess.TimeoutExpired:
+        sys.exit(f"instrumented walk did not finish in {WALK_TIMEOUT // 60} minutes")
     return run, adb("logcat", "-d")
 
 

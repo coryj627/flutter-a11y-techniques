@@ -634,5 +634,76 @@ class Termination(unittest.TestCase):
         self.assertEqual(after["log_level"], "VERBOSE")
 
 
+class Timeouts(unittest.TestCase):
+    STALL = [sys.executable, "-c", "import time; time.sleep(30)"]
+
+    def stalled(self):
+        """Patches so every adb call is a process that never finishes."""
+        real_run = subprocess.run
+        return (mock.patch.object(tb, "ADB_TIMEOUT", 0.3),
+                mock.patch.object(tb.subprocess, "run",
+                                  lambda cmd, **kw: real_run(self.STALL, **kw)))
+
+    def test_a_stalled_checked_command_raises_instead_of_waiting(self):
+        patches = self.stalled()
+        started = time.time()
+        with patches[0], patches[1]:
+            with self.assertRaises(tb.AdbError) as caught:
+                tb.adb_checked("shell", "settings", "get", "secure", tb.SERVICES)
+        self.assertLess(time.time() - started, 5)
+        self.assertIn("did not finish", str(caught.exception))
+
+    def test_a_stalled_unchecked_command_returns_nothing(self):
+        patches = self.stalled()
+        with patches[0], patches[1]:
+            self.assertEqual(tb.adb("logcat", "-d"), "")
+
+    def test_a_stall_in_log_level_restore_still_restores_both_settings(self):
+        before = {tb.SERVICES: OTHER, tb.ENABLED: "1"}
+        device = FakeDevice(before)
+        attempts = []
+
+        def set_log_level(level, on_read=None):
+            attempts.append(level)
+            if len(attempts) == 2:  # the restore: a real stalled adb command
+                patches = self.stalled()
+                with patches[0], patches[1]:
+                    tb.__dict__["_real_adb_checked"]("shell", "input", "tap", "1", "1")
+            return device.set_log_level(level, on_read)
+
+        started = time.time()
+        with mock.patch.dict(tb.__dict__, {"_real_adb_checked": tb.adb_checked}), \
+                mock.patch.object(tb, "adb_checked", device.adb), \
+                mock.patch.object(tb, "set_log_level", set_log_level), \
+                mock.patch("sys.stderr"):
+            with self.assertRaises(tb.AdbError) as caught:
+                tb.run_with_talkback(lambda: None)
+        self.assertLess(time.time() - started, 5)
+        self.assertEqual(device.settings, before)
+        self.assertIn("log output level should be ERROR", str(caught.exception))
+        self.assertIn("did not finish", str(caught.exception))
+
+    def test_stalled_restore_writes_are_each_attempted_and_reported(self):
+        before = {tb.SERVICES: OTHER, tb.ENABLED: "1"}
+        device = FakeDevice(before, log_level="VERBOSE")  # no log-level cleanup
+        calls = []
+
+        def adb(*args):
+            calls.append(args)
+            if len(calls) > 6:  # the two restore writes
+                raise tb.AdbError(f"adb {' '.join(args)} did not finish in 60 seconds")
+            return device.adb(*args)
+
+        with mock.patch.object(tb, "adb_checked", adb), \
+                mock.patch.object(tb, "set_log_level", device.set_log_level), \
+                mock.patch("sys.stderr"):
+            with self.assertRaises(tb.AdbError) as caught:
+                tb.run_with_talkback(lambda: None)
+        self.assertEqual(len(calls), 8)  # both restores were tried
+        message = str(caught.exception)
+        self.assertIn(f"{tb.SERVICES} should be {OTHER!r}", message)
+        self.assertIn(f"{tb.ENABLED} should be '1'", message)
+
+
 if __name__ == "__main__":
     unittest.main()
