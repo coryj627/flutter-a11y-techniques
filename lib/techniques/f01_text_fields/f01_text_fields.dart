@@ -12,7 +12,11 @@ final f01TextFields = Technique(
       'field is filled in, and that label is the name assistive technology '
       'announces for the field.',
   platforms: const {
-    AppPlatform.android: PlatformStatus.applies(),
+    // docs/flutter-limitations.md, FL-015. No issue link yet: none found.
+    AppPlatform.android: PlatformStatus.limitation(
+      'The label is exposed, but TalkBack stops speaking it once the field '
+      'has a value, including in the good examples. No workaround was found.',
+    ),
     AppPlatform.ios: PlatformStatus.applies(),
     AppPlatform.web: PlatformStatus.applies(),
   },

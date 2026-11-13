@@ -211,4 +211,27 @@ void main() {
       handle.dispose();
     });
   });
+
+  testWidgets('the technique screen states the Android limitation', (
+    tester,
+  ) async {
+    expect(
+      f01TextFields.statusFor(AppPlatform.android).applicability,
+      Applicability.limitation,
+    );
+    await tester.pumpWidget(
+      A11yTechniquesApp(
+        registry: TechniqueRegistry([f01TextFields]),
+        platform: AppPlatform.android,
+        initialRoute: '/t/F01',
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Android: Flutter limitation. The label is exposed'),
+      findsOneWidget,
+    );
+    expect(find.text('iOS: Applies.'), findsOneWidget);
+    expect(find.text('Web: Applies.'), findsOneWidget);
+  });
 }

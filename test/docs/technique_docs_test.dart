@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/all_techniques.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -39,6 +40,27 @@ void main() {
             .map((m) => m.group(1))
             .toList();
         expect(wcag, [for (final c in technique.wcag) c.number]);
+      });
+
+      test('platform status matches the registered technique', () {
+        // Nested under `platforms:` in the front matter, for example
+        // `  android: limitation`.
+        final inDoc = {
+          for (final m in RegExp(
+            r'^  (android|ios|web):\s*(\S+)\s*$',
+            multiLine: true,
+          ).allMatches(source.substring(0, source.indexOf('\n---', 3))))
+            m.group(1)!: m.group(2)!,
+        };
+        String word(Applicability a) => switch (a) {
+          Applicability.applies => 'applies',
+          Applicability.limitation => 'limitation',
+          Applicability.notApplicable => 'not-applicable',
+        };
+        expect(inDoc, {
+          for (final p in AppPlatform.values)
+            p.name: word(technique.statusFor(p).applicability),
+        });
       });
 
       test('has the Flutter version it was measured on', () {
