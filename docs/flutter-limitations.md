@@ -285,11 +285,13 @@ yet), **Fixed in x.y** (verified on that version).
 - Reproduce: was `ExternalLink` in `lib/app/widgets.dart` before it was
   changed; clicking "WCAG 2.2" on the about screen navigated the tab and
   opened a second one.
-- Workaround, applied: on web `onTap` opens the URL in the same tab
-  (`webOnlyWindowName: '_self'`), so the click's two navigations go to the
-  same place and Enter still works. `web_tests/c01_button.spec.js` asserts
-  that click and Enter each end on the destination in this tab with no second
-  tab, and that Back returns to the app.
+- Workaround, applied: on web the tap does nothing and the browser follows
+  the anchor, which also keeps Ctrl- and Command-click working as they do for
+  any link. Enter is mapped with `Shortcuts` and `Actions` to open the URL in
+  the same tab, since the key press never reaches the anchor.
+  `web_tests/c01_button.spec.js` asserts: click and Enter each end on the
+  destination in this tab with no second tab; Ctrl/Command-click opens
+  exactly one new tab and leaves this one alone; Space does nothing.
 - To examine in the links technique (S-group): whether `url_launcher`'s `Link`
   widget is the better documented mechanism.
 - Upstream issue: not searched yet.

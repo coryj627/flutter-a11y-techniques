@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const appName = 'Flutter A11Y Techniques';
@@ -105,21 +106,15 @@ class ExternalLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Semantics(
+    final link = Semantics(
       link: true,
       linkUrl: uri,
       child: InkWell(
-        // On web `linkUrl` makes this a real <a href>, which the browser
-        // follows in this tab when it is clicked. A key press does not reach
-        // the anchor (Flutter handles Enter itself), so the tap must navigate
-        // too. Both therefore target this tab: opening a new tab here would
-        // give a click two destinations, one in each tab. Elsewhere the link
-        // opens in the browser app.
-        onTap: () => launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-          webOnlyWindowName: kIsWeb ? '_self' : null,
-        ),
+        // Off the web, a tap opens the link in the browser app. On web the
+        // browser follows the link itself (see below), so a tap does nothing.
+        onTap: kIsWeb
+            ? () {}
+            : () => launchUrl(uri, mode: LaunchMode.externalApplication),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 48),
           child: Padding(
@@ -152,5 +147,34 @@ class ExternalLink extends StatelessWidget {
         ),
       ),
     );
+    if (!kIsWeb) return link;
+
+    // On web `linkUrl` makes this a real <a href>. A click, including a
+    // Ctrl- or Command-click and a click made by assistive technology,
+    // reaches that anchor, and the browser follows it the way it follows any
+    // link. Navigating from the tap as well would send one click to two
+    // places. A key press never reaches the anchor, because Flutter handles
+    // keys itself, so Enter is the one activation the app has to carry out,
+    // and it opens the link in this tab as a native link would. Space is
+    // left alone: it does not activate a native link either.
+    // See docs/flutter-limitations.md, FL-013.
+    return Shortcuts(
+      shortcuts: const {
+        SingleActivator(LogicalKeyboardKey.enter): _FollowLinkIntent(),
+        SingleActivator(LogicalKeyboardKey.numpadEnter): _FollowLinkIntent(),
+      },
+      child: Actions(
+        actions: {
+          _FollowLinkIntent: CallbackAction<_FollowLinkIntent>(
+            onInvoke: (_) => launchUrl(uri, webOnlyWindowName: '_self'),
+          ),
+        },
+        child: link,
+      ),
+    );
   }
+}
+
+class _FollowLinkIntent extends Intent {
+  const _FollowLinkIntent();
 }

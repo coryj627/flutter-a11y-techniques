@@ -210,26 +210,34 @@ test.describe('addresses', () => {
   });
 });
 
-// A link must go to its destination once: in this tab, with no second tab.
+// A link must behave like a link: one destination per activation, with the
+// browser's own handling of modified clicks left intact.
 test.describe('external links', () => {
+  const destination = 'https://www.w3.org/TR/WCAG22/';
+
+  async function openAbout(page, context) {
+    // Serve a stub so the test does not depend on the network.
+    await context.route(/^https:\/\/www\.w3\.org\//, (route) =>
+      route.fulfill({ status: 200, contentType: 'text/html', body: '<title>stub</title>' }));
+    const opened = [];
+    context.on('page', (p) => opened.push(p));
+    await page.goto('about:blank');
+    await page.goto('/#/about');
+    const link = page.getByRole('link', { name: 'WCAG 2.2' });
+    await expect(link).toHaveAttribute('href', destination);
+    return { link, opened };
+  }
+
   for (const how of ['click', 'Enter']) {
     test(`activating a link by ${how} navigates this tab once and opens no other`, async ({ page, context }) => {
-      // Serve a stub so the test does not depend on the network.
-      await context.route(/^https:\/\/www\.w3\.org\//, (route) =>
-        route.fulfill({ status: 200, contentType: 'text/html', body: '<title>stub</title>' }));
-      const opened = [];
-      context.on('page', (p) => opened.push(p));
-      await page.goto('about:blank');
-      await page.goto('/#/about');
-      const link = page.getByRole('link', { name: 'WCAG 2.2' });
-      await expect(link).toHaveAttribute('href', 'https://www.w3.org/TR/WCAG22/');
+      const { link, opened } = await openAbout(page, context);
       if (how === 'click') {
         await link.click();
       } else {
         await link.focus();
         await page.keyboard.press('Enter');
       }
-      await expect(page).toHaveURL('https://www.w3.org/TR/WCAG22/');
+      await expect(page).toHaveURL(destination);
       await page.waitForTimeout(1500);
       expect(opened, 'no second tab').toHaveLength(0);
       // Back returns to the app where the user was.
@@ -237,4 +245,24 @@ test.describe('external links', () => {
       await expect(page.getByRole('heading', { name: 'About' })).toBeVisible();
     });
   }
+
+  test('Ctrl/Command-click opens one new tab and leaves this tab where it was', async ({ page, context }) => {
+    const { link, opened } = await openAbout(page, context);
+    await link.click({ modifiers: ['ControlOrMeta'] });
+    await expect.poll(() => opened.length).toBe(1);
+    await expect(opened[0]).toHaveURL(destination);
+    await page.waitForTimeout(1500);
+    expect(opened, 'exactly one new tab').toHaveLength(1);
+    await expect(page).toHaveURL(/#\/about$/);
+    await expect(page.getByRole('heading', { name: 'About' })).toBeVisible();
+  });
+
+  test('Space does not follow a link', async ({ page, context }) => {
+    const { link, opened } = await openAbout(page, context);
+    await link.focus();
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(1500);
+    await expect(page).toHaveURL(/#\/about$/);
+    expect(opened).toHaveLength(0);
+  });
 });

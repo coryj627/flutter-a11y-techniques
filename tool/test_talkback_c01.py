@@ -2,7 +2,13 @@
 
 Run: python3 -m unittest discover -s tool -p 'test_*.py'
 """
+import json
+import os
+import signal
+import subprocess
 import sys
+import tempfile
+import time
 import unittest
 from unittest import mock
 
@@ -505,6 +511,112 @@ class Checks(unittest.TestCase):
         self.assertEqual(tb.problems("c01-good-text-filled", ["Save", "Button"]), [])
         self.assertTrue(tb.problems("c01-good-text-filled", ["Save"]))
         self.assertTrue(tb.problems("c01-bad-gesture-only-save", ["Save", "Button"]))
+
+
+SIGNAL_SCRIPT = r"""
+import json, sys, time
+sys.path.insert(0, sys.argv[1])
+import talkback_c01 as tb
+
+state_file, phase = sys.argv[2], sys.argv[3]
+state = {"settings": {tb.SERVICES: "com.example.reader/.ReaderService", tb.ENABLED: "1"},
+         "log_level": "ERROR", "ready": False}
+
+def save():
+    with open(state_file, "w") as f:
+        json.dump(state, f)
+
+def adb(*args):
+    if args[:3] == ("shell", "settings", "get"):
+        return state["settings"].get(args[4], "null") + "\n"
+    if args[:3] == ("shell", "settings", "put"):
+        state["settings"][args[4]] = "" if args[5] == '""' else args[5]
+    if args[:3] == ("shell", "settings", "delete"):
+        state["settings"].pop(args[4], None)
+    save()
+    return ""
+
+def wait_for_signal():
+    state["ready"] = True
+    save()
+    time.sleep(30)
+
+def set_log_level(level, on_read=None):
+    previous = state["log_level"]
+    if on_read:
+        on_read(previous)
+    state["log_level"] = level
+    save()
+    if phase == "setup" and level == "VERBOSE":
+        wait_for_signal()
+    return previous
+
+tb.adb_checked = adb
+tb.set_log_level = set_log_level
+tb.exit_on_termination_signals()
+tb.run_with_talkback(wait_for_signal if phase == "walk" else (lambda: None))
+"""
+
+
+@unittest.skipIf(sys.platform == "win32", "POSIX signals")
+class Termination(unittest.TestCase):
+    """A real process is sent a real signal while the device is changed."""
+
+    def terminate_during(self, phase, signum):
+        tool = os.path.dirname(os.path.abspath(__file__))
+        with tempfile.TemporaryDirectory() as folder:
+            state_file = os.path.join(folder, "state.json")
+            process = subprocess.Popen(
+                [sys.executable, "-c", SIGNAL_SCRIPT, tool, state_file, phase],
+                stderr=subprocess.DEVNULL)
+            try:
+                deadline = time.time() + 20
+                while time.time() < deadline:
+                    try:
+                        with open(state_file) as f:
+                            if json.load(f)["ready"]:
+                                break
+                    except (OSError, ValueError):
+                        pass
+                    time.sleep(0.05)
+                else:
+                    self.fail("the script never reached the point to interrupt")
+                with open(state_file) as f:
+                    changed = json.load(f)
+                process.send_signal(signum)
+                code = process.wait(timeout=20)
+            finally:
+                process.kill()
+            with open(state_file) as f:
+                return changed, json.load(f), code
+
+    def assert_restored(self, phase, signum):
+        changed, after, code = self.terminate_during(phase, signum)
+        # The device really was in a changed state when the signal arrived.
+        self.assertEqual(changed["log_level"], "VERBOSE")
+        self.assertNotEqual(code, 0)
+        self.assertEqual(after["log_level"], "ERROR", (phase, signum))
+        self.assertEqual(after["settings"],
+                         {tb.SERVICES: OTHER, tb.ENABLED: "1"}, (phase, signum))
+
+    def test_sigterm_during_the_walk_restores_the_device(self):
+        self.assert_restored("walk", signal.SIGTERM)
+
+    def test_sighup_during_the_walk_restores_the_device(self):
+        self.assert_restored("walk", signal.SIGHUP)
+
+    def test_sigterm_during_setup_restores_the_device(self):
+        self.assert_restored("setup", signal.SIGTERM)
+
+    def test_sighup_during_setup_restores_the_device(self):
+        self.assert_restored("setup", signal.SIGHUP)
+
+    def test_without_the_handler_a_signal_would_skip_cleanup(self):
+        # Guards the test itself: with default handling the state stays changed.
+        script = SIGNAL_SCRIPT.replace("tb.exit_on_termination_signals()", "")
+        with mock.patch(__name__ + ".SIGNAL_SCRIPT", script):
+            changed, after, _ = self.terminate_during("walk", signal.SIGTERM)
+        self.assertEqual(after["log_level"], "VERBOSE")
 
 
 if __name__ == "__main__":
