@@ -376,12 +376,17 @@ itself).
   not reach the log. On web the announcement is asserted at L3 instead.
 - The run takes over the screen and speaks aloud; it cannot run headless.
   Whether a GitHub macOS runner allows it is untested.
-- Still to do: extend the web walk from `good-text` to all C01 examples and
-  write a transcript to `docs/evidence/C01/`.
+- All thirteen C01 examples are now walked in both browsers
+  (`web_tests/vo/c01_button_vo.spec.js`, run by `tool/voiceover_web_c01.py`):
+  26 of 26 pass, transcript in `docs/evidence/C01/voiceover-web.md`.
+- The capture is not perfectly stable. In discovery runs Guidepup sometimes
+  returned an empty phrase for an item, and twice VoiceOver's cursor left the
+  page (into the browser toolbar, and once into another app's window). The
+  config retries a failed walk twice; the final run needed no retries.
 
 **Left in the repo by the spikes (all throwaway unless noted):**
-The spike code was removed when C01 was built; `web_tests/vo/` is now the
-first web VoiceOver check. Kept on purpose: the `RunnerUITests` target, the `fluttera11y` URL
+The spike code was removed when C01 was built; `web_tests/vo/` now holds the
+web VoiceOver suite. Kept on purpose: the `RunnerUITests` target, the `fluttera11y` URL
 scheme in `Info.plist`, and the `androidTest` dependencies and test runner in
 `android/app/build.gradle.kts`.
 
@@ -404,13 +409,12 @@ app and Widgetbook on all three platforms.
 
 Done for C01: thirteen examples, spec, `docs/techniques/C01.md`, L1 (39 widget
 tests), L3 on web (20 Playwright tests), Android (9 UI Automator tests), and
-iOS (9 XCUITests), L4 on Android (TalkBack) and iOS (VoiceOver) with
-transcripts in `docs/evidence/C01/`. All passing locally on Flutter 3.47.5.
+iOS (9 XCUITests), L4 on Android (TalkBack), iOS (VoiceOver), and web
+(VoiceOver on macOS, 26 walks) with transcripts in `docs/evidence/C01/`. All passing locally on Flutter 3.47.5.
 The spike code is removed.
 
 Still open in this phase: in-app rendering of the technique doc, Widgetbook,
-L2 `integration_test` runs on devices, VoiceOver on web beyond `good-text`
-(K5), the CI jobs for
+L2 `integration_test` runs on devices, the CI jobs for
 web, Android, and iOS, and the `tool/` check that front matter and
 `technique.dart` agree. Two Flutter limitations found for `CupertinoButton`
 need issues filed (spec section 9).

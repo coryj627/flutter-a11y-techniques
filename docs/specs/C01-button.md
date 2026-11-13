@@ -188,5 +188,5 @@ keyboard access (no `tabindex`). Android reports the node as focusable.
 (`ButtonActivateIntent` is not handled). Space does.
 
 **Not done yet.** L2 `integration_test` runs, Widgetbook, in-app rendering of
-`docs/techniques/C01.md`, VoiceOver on web, and the extra CI jobs. The keyboard
+`docs/techniques/C01.md`, and the extra CI jobs. The keyboard
 checks planned for L2 are covered in L1 and in the web suite.
