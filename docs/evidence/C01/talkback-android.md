@@ -13,23 +13,23 @@ Result: PASS
 
 | Element | Spoken |
 | --- | --- |
-| `c01-good-text-filled` | Save / Button. 3 of 3. In list. 3 items / Double-tap to activate |
+| `c01-good-text-filled` | Save / Button / Double-tap to activate |
 | `c01-good-text-outlined` | Cancel / Button / Double-tap to activate |
 | `c01-good-text-text` | Learn more / Button / Double-tap to activate |
-| `c01-good-icon-close` | Close. Button. 3 of 3. In list. 3 items / Double-tap to activate |
-| `c01-good-disabled-submit` | Submit / Button. disabled. 3 of 3. In list. 3 items |
-| `c01-good-unique-names-username` | Edit username / Button. 3 of 3. In list. 3 items |
+| `c01-good-icon-close` | Close. Button / Double-tap to activate |
+| `c01-good-disabled-submit` | Submit / Button. disabled |
+| `c01-good-unique-names-username` | Edit username / Button / Double-tap to activate |
 | `c01-good-unique-names-email` | Edit email / Button / Double-tap to activate |
 | `c01-good-unique-names-password` | Edit password / Button / Double-tap to activate |
-| `c01-good-cupertino-save` | Save / Button. 3 of 3. In list. 3 items / Double-tap to activate |
+| `c01-good-cupertino-save` | Save / Button / Double-tap to activate |
 | `c01-good-cupertino-delete` | Delete / Button. disabled |
-| `c01-good-custom-save` | Save / Button. 3 of 3. In list. 3 items / Double-tap to activate |
-| `c01-bad-unlabelled-icon-close` | Button. 4 of 4. In list. 4 items / Detected: Text, "X". |
-| `c01-bad-gesture-only-save` | Save / 4 of 4. In list. 4 items / Double-tap to activate |
-| `c01-bad-role-in-name-close` | Close button. Button. 4 of 4. In list. 4 items |
-| `c01-bad-duplicate-names-username` | Edit / Button. 4 of 4. In list. 4 items / Double-tap to activate |
+| `c01-good-custom-save` | Save / Button / Double-tap to activate |
+| `c01-bad-unlabelled-icon-close` | Button / Detected: Text, "X". / Double-tap to activate |
+| `c01-bad-gesture-only-save` | Save / Double-tap to activate |
+| `c01-bad-role-in-name-close` | Close button. Button / Double-tap to activate |
+| `c01-bad-duplicate-names-username` | Edit / Button / Double-tap to activate |
 | `c01-bad-duplicate-names-email` | Edit / Button / Double-tap to activate |
 | `c01-bad-duplicate-names-password` | Edit / Button / Double-tap to activate |
-| `c01-bad-name-mismatch-edit` | Change username / Button. 4 of 4. In list. 4 items |
-| `c01-bad-fake-disabled-submit` | Submit / Button. 4 of 4. In list. 4 items |
-| `c01-bad-cupertino-disabled-delete` | Delete / Button. 4 of 4. In list. 4 items / Double-tap to activate |
+| `c01-bad-name-mismatch-edit` | Change username / Button / Double-tap to activate |
+| `c01-bad-fake-disabled-submit` | Submit / Button / Double-tap to activate |
+| `c01-bad-cupertino-disabled-delete` | Delete / Button / Double-tap to activate |

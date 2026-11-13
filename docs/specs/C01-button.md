@@ -181,12 +181,14 @@ keyboard access (no `tabindex`). Android reports the node as focusable.
   "Button. disabled". VoiceOver does not repeat the role for
   `bad-role-in-name`, so on iOS that defect is asserted in the tree only.
 
+Limitations are detailed in [flutter-limitations.md](../flutter-limitations.md)
+(FL-001, FL-002, FL-006, FL-008).
+
 **Limitation 1.** A disabled `CupertinoButton` reports no enabled state
 (`Semantics(button: true)` only) and still lists a tap action.
 
 **Limitation 2.** On web, Enter does not activate a `CupertinoButton`
 (`ButtonActivateIntent` is not handled). Space does.
 
-**Not done yet.** L2 `integration_test` runs, Widgetbook, in-app rendering of
-`docs/techniques/C01.md`, and the extra CI jobs. The keyboard
+**Not done yet.** L2 `integration_test` runs, and a first run of the CI jobs. The keyboard
 checks planned for L2 are covered in L1 and in the web suite.

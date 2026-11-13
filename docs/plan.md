@@ -407,17 +407,30 @@ app and Widgetbook on all three platforms.
 
 #### Phase 2 status (2026-11-12)
 
-Done for C01: thirteen examples, spec, `docs/techniques/C01.md`, L1 (39 widget
-tests), L3 on web (20 Playwright tests), Android (9 UI Automator tests), and
-iOS (9 XCUITests), L4 on Android (TalkBack), iOS (VoiceOver), and web
-(VoiceOver on macOS, 26 walks) with transcripts in `docs/evidence/C01/`. All passing locally on Flutter 3.47.5.
-The spike code is removed.
+Done for C01, all passing locally on Flutter 3.47.5:
 
-Still open in this phase: in-app rendering of the technique doc, Widgetbook,
-L2 `integration_test` runs on devices, the CI jobs for
-web, Android, and iOS, and the `tool/` check that front matter and
-`technique.dart` agree. Two Flutter limitations found for `CupertinoButton`
-need issues filed (spec section 9).
+- Thirteen examples, spec, and `docs/techniques/C01.md`.
+- L1: widget tests for the examples, the doc renderer, and a check that each
+  doc and its registered technique agree (`test/docs/`).
+- L3: web (Playwright), Android (UI Automator), iOS (XCUITest).
+- L4: TalkBack, VoiceOver on iOS, and VoiceOver on web, with transcripts in
+  `docs/evidence/C01/`.
+- In-app documentation: the technique screen renders the Markdown doc from a
+  bundled asset (`lib/app/doc_view.dart`).
+- Widgetbook: `widgetbook/`, built from the same registry, one use case per
+  example with the doc underneath; checked on web with Playwright
+  (`web_tests/widgetbook.spec.js`).
+- Framework issues are logged in [flutter-limitations.md](flutter-limitations.md).
+
+Written but not yet run: the CI jobs for web, Android, and iOS in
+`.github/workflows/ci.yml`. They run for the first time when the branch is
+pushed. Known unknowns: the Android job uses an API 35 emulator (local runs
+were on Android 17), and the hosted macOS image may not have an iOS 27
+simulator, in which case the VoiceOver test skips itself.
+
+Still open in this phase: L2 `integration_test` runs on devices (their
+keyboard checks are covered in L1 and on web), getting CI green, and filing
+upstream issues for the entries in the limitations log.
 
 ### Phase 3 — Remaining slice techniques
 

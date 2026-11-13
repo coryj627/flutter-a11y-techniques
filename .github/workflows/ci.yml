@@ -5,7 +5,16 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Keep in step with .fvmrc.
+  FLUTTER_VERSION: 3.47.5
+
 jobs:
+  # L1: analysis and widget tests, for the app and the Widgetbook.
   analyze-test:
     runs-on: ubuntu-latest
     steps:
@@ -13,10 +22,107 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          # Keep in step with .fvmrc.
-          flutter-version: 3.47.5
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
-      - run: dart format --output=none --set-exit-if-changed lib test
+      - run: dart format --output=none --set-exit-if-changed lib test widgetbook/lib
       - run: flutter analyze
       - run: flutter test
+      - name: Analyze Widgetbook
+        working-directory: widgetbook
+        run: |
+          flutter pub get
+          flutter analyze
+
+  # L3 on web: the browser accessibility tree, for the app and the Widgetbook.
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web_tests/package-lock.json
+      - run: flutter build web
+      - name: Build Widgetbook
+        working-directory: widgetbook
+        run: flutter build web
+      - name: Install Playwright
+        working-directory: web_tests
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: App tree and keyboard tests
+        working-directory: web_tests
+        run: npx playwright test c01_button.spec.js
+      - name: Widgetbook tests
+        working-directory: web_tests
+        run: npx playwright test -c widgetbook.config.js
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-results
+          path: web_tests/test-results
+
+  # L3 on Android: UI Automator against an emulator. The TalkBack walk skips
+  # itself because TalkBack is not enabled here; speech runs are local
+  # (tool/talkback_c01.py).
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          working-directory: android
+          script: ./gradlew app:connectedDebugAndroidTest
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-test-report
+          path: build/app/reports/androidTests
+
+  # L3 on iOS: XCUITest on a simulator. The VoiceOver test needs iOS 27 and
+  # skips itself on older simulators.
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - run: flutter build ios --simulator --debug
+      - name: UI tests
+        working-directory: ios
+        run: |
+          DEVICE=$(xcrun simctl list devices available | grep -m1 -o 'iPhone [^(]*' | sed 's/ *$//')
+          echo "Using simulator: $DEVICE"
+          xcodebuild test -workspace Runner.xcworkspace -scheme Runner -configuration Debug \
+            -destination "platform=iOS Simulator,name=$DEVICE" \
+            -only-testing:RunnerUITests

@@ -48,10 +48,22 @@ class _TechniqueDocViewState extends State<TechniqueDocView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _source ??= DefaultAssetBundle.of(context)
-        .loadString(TechniqueDocView.assetPath(widget.techniqueId))
-        .then<String?>((value) => value)
-        .catchError((Object _) => null);
+    _source ??= _load(DefaultAssetBundle.of(context));
+  }
+
+  /// The doc is an asset of this package. Inside the app its key is the plain
+  /// path; from another app that depends on this package, such as the
+  /// Widgetbook, it is under `packages/`.
+  Future<String?> _load(AssetBundle bundle) async {
+    final path = TechniqueDocView.assetPath(widget.techniqueId);
+    for (final key in [path, 'packages/flutter_a11y_techniques/$path']) {
+      try {
+        return await bundle.loadString(key);
+      } on Object {
+        continue;
+      }
+    }
+    return null;
   }
 
   @override

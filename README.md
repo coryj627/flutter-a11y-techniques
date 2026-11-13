@@ -47,6 +47,21 @@ flutter test
 
 Platforms: Android, iOS, and Web.
 
+## Widgetbook
+
+Every example, with its documentation, is also in a Widgetbook built from the
+same catalog:
+
+```bash
+cd widgetbook && flutter run -d chrome
+```
+
+## Flutter limitations
+
+Accessibility issues found in the Flutter framework while building the
+techniques are logged, with reproduction steps and workarounds, in
+[docs/flutter-limitations.md](docs/flutter-limitations.md).
+
 ## Testing a technique
 
 Each technique is checked at several layers. For C01 Button the commands are in

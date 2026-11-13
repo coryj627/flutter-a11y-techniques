@@ -1,0 +1,21 @@
+name: a11y_techniques_widgetbook
+description: "Widgetbook for Flutter A11Y Techniques: every example with its documentation."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.4
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  widgetbook: ^3.25.0
+  flutter_a11y_techniques:
+    path: ..
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+flutter:
+  uses-material-design: true
