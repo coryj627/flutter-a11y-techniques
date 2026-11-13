@@ -13,6 +13,8 @@ import re
 import subprocess
 import sys
 
+from evidence_common import flutter_version
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEVICE = sys.argv[1] if len(sys.argv) > 1 else "iPhone 17"
 
@@ -39,7 +41,7 @@ def main():
            f"- Device: {DEVICE} (simulator)",
            f"- iOS: {os_version.group(1) if os_version else 'unknown'}",
            f"- {xcode}",
-           f"- Flutter: {open(os.path.join(ROOT, '.fvmrc')).read().split(chr(34))[3]}",
+           f"- Flutter: {flutter_version()}",
            "- Method: `XCUIVoiceOverService.moveForward()` from the top of each example "
            "screen to the activation count; utterances are cut at 64 characters by the API",
            "", f"Result: {'PASS' if passed else 'FAIL'}", "",

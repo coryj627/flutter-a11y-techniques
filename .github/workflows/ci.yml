@@ -87,6 +87,9 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
+      # android/gradlew is not committed (Flutter's default .gitignore); a
+      # Flutter build generates it and warms the Gradle cache.
+      - run: flutter build apk --debug
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules

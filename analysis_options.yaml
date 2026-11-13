@@ -15,6 +15,9 @@ analyzer:
     - android/**
     - ios/**
     - web/**
+    # A separate package with its own dependencies; analyzed in its own
+    # directory (see .github/workflows/ci.yml).
+    - widgetbook/**
 
 linter:
   # The lint rules applied to this project can be customized in the

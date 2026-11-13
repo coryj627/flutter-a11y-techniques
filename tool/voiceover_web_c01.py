@@ -18,6 +18,8 @@ import re
 import subprocess
 import sys
 
+from evidence_common import flutter_version
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB_TESTS = os.path.join(ROOT, "web_tests")
 
@@ -49,7 +51,7 @@ def main():
            f"- Browsers: Playwright {version('@playwright/test')} Chromium and WebKit builds "
            "(WebKit is not Safari itself)",
            f"- Guidepup: {version('@guidepup/guidepup')}",
-           f"- Flutter: {open(os.path.join(ROOT, '.fvmrc')).read().split(chr(34))[3]}",
+           f"- Flutter: {flutter_version()}",
            "- Method: focus the Back button, then `voiceOver.next()` to the activation count",
            "", f"Result: {'PASS' if passed else 'FAIL'} ({'; '.join(s.strip() for s in summary)})"]
     if retried:

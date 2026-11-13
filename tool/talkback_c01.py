@@ -16,6 +16,8 @@ import subprocess
 import sys
 import time
 
+from evidence_common import flutter_version
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ADB = os.path.expanduser(os.environ.get("ADB", "~/Library/Android/sdk/platform-tools/adb"))
 TALKBACK = "com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService"
@@ -163,7 +165,7 @@ def main():
         "Device": adb("shell", "getprop", "ro.product.model").strip() + " (emulator)",
         "Android": adb("shell", "getprop", "ro.build.version.release").strip(),
         "TalkBack": version.group(1) if version else "unknown",
-        "Flutter": open(os.path.join(ROOT, ".fvmrc")).read().split('"')[3],
+        "Flutter": flutter_version(),
         "Method": "ACTION_ACCESSIBILITY_FOCUS on each node; speech read from TalkBack's verbose log",
     }
     out = ["# C01 Button: TalkBack transcript (Android)", "",
