@@ -31,11 +31,35 @@ class A11yTechniquesApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       initialRoute: initialRoute,
-      onGenerateRoute: (settings) => MaterialPageRoute<void>(
-        settings: settings,
-        builder: (_) => _screenFor(AppRoute.parse(settings.name)),
-      ),
+      onGenerateRoute: _routeFor,
+      onGenerateInitialRoutes: (name) => [
+        for (final ancestor in _historyFor(name))
+          _routeFor(RouteSettings(name: ancestor)),
+      ],
     );
+  }
+
+  Route<void> _routeFor(RouteSettings settings) => MaterialPageRoute<void>(
+    settings: settings,
+    builder: (_) => _screenFor(AppRoute.parse(settings.name)),
+  );
+
+  /// The screens that sit under a deep link, oldest first, so Back from a
+  /// directly opened example goes to its technique and then the catalog.
+  ///
+  /// Flutter's default splits the path at every `/`, which would put `/t`
+  /// (not a screen) into the history as a "Page not found" page. Only screens
+  /// that exist are included here.
+  List<String> _historyFor(String name) {
+    final technique = switch (AppRoute.parse(name)) {
+      ExampleRoute(:final id) => registry.byId(id),
+      _ => null,
+    };
+    return [
+      if (AppRoute.parse(name) is! CatalogRoute) AppRoutes.catalog,
+      if (technique != null) AppRoutes.technique(technique.id),
+      name,
+    ];
   }
 
   Widget _screenFor(AppRoute route) {

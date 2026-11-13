@@ -28,6 +28,8 @@ jobs:
       - run: dart format --output=none --set-exit-if-changed lib test widgetbook/lib
       - run: flutter analyze
       - run: flutter test
+      - name: Test the evidence scripts
+        run: python3 -m unittest discover -s tool -p 'test_*.py'
       - name: Analyze Widgetbook
         working-directory: widgetbook
         run: |
