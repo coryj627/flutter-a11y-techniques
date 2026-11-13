@@ -62,7 +62,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: App tree and keyboard tests
         working-directory: web_tests
-        run: npx playwright test c01_button.spec.js s05_headings.spec.js
+        run: npx playwright test c01_button.spec.js s05_headings.spec.js f01_text_fields.spec.js
       - name: Widgetbook tests
         working-directory: web_tests
         run: npx playwright test -c widgetbook.config.js

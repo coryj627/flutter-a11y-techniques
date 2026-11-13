@@ -35,6 +35,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-012](#fl-012) | A web live region announcement can be erased by an earlier one's clear timer | Web | Confirmed (source read) |
 | [FL-013](#fl-013) | A web link with `linkUrl` is followed by the browser as well as by `onTap` | Web | Confirmed |
 | [FL-014](#fl-014) | `CupertinoListSection` does not expose its header as a heading | All | Confirmed |
+| [FL-015](#fl-015) | On Android, TalkBack stops speaking a text field's label once it has a value | Android | Confirmed |
+| [FL-016](#fl-016) | Cupertino text fields have no label | All | Confirmed |
 
 ---
 
@@ -340,4 +342,54 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround: pass a header that is a heading,
   `header: Semantics(header: true, headingLevel: 3, child: Text('…'))`
   (`/t/S05/good-cupertino`).
+- Upstream issue: not searched yet.
+
+## FL-015
+
+**On Android, TalkBack stops speaking a text field's label once it has a value.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator, TalkBack 17.0. SDK
+  source read for how the label is exposed; TalkBack's side is observed, not
+  read.
+- WCAG: 4.1.2 Name, Role, Value; 3.3.2 Labels or Instructions.
+- What happens: a field with `InputDecoration(labelText: 'Email')` is read as
+  "Email, Edit box" while empty. With "abc" typed it is read as "abc, Edit
+  box", whether or not it is being edited. The label is still in the tree. A
+  field named with `Semantics(label:)` behaves the same. On iOS VoiceOver
+  says "Email abc Text field", and on web "abc … Email edit text".
+- Cause: Flutter's Android embedding puts a text field's label and hint
+  together into the node's hint text (`getTextFieldHint()` in
+  `AccessibilityBridge.java`, applied with `setHintText` in
+  `BaseRoleConfigurator.java`) and sets nothing else that names the field.
+  TalkBack spoke that hint only for an empty field.
+- Reproduce: `/t/F01/good-label`, type into Email, move TalkBack focus away
+  and back. Captured by `python3 tool/talkback.py F01`
+  (`f01-good-label-email-filled` in `docs/evidence/F01/talkback-android.md`).
+  The expectation is written to fail when "Email" starts being spoken.
+- Workaround: none found within the SDK. A separate visible label that is
+  left in the tree is read as its own stop before the field, which helps a
+  user exploring in order but does not name the field.
+- Upstream issue: not searched yet.
+
+## FL-016
+
+**Cupertino text fields have no label.**
+
+- Status: Confirmed, Flutter 3.47.5. Android, iOS, Web.
+- WCAG: 1.3.1 Info and Relationships; 3.3.2 Labels or Instructions; 4.1.2
+  Name, Role, Value.
+- What happens: `CupertinoTextField` has a `placeholder` and no label
+  parameter. The placeholder names the field only while it is empty; once
+  text is typed the field has no name (VoiceOver: "abc Text field"). A
+  `CupertinoFormRow(prefix: Text('Email'), child: CupertinoTextField())` draws
+  a label beside the field, but the prefix is separate text and the field is
+  unnamed (VoiceOver: "Email", then "Text field").
+- Reproduce: `/t/F01/bad-cupertino-placeholder` and
+  `/t/F01/bad-cupertino-prefix`. Asserted at every layer:
+  `test/techniques/f01_text_fields_test.dart`,
+  `web_tests/f01_text_fields.spec.js`, `F01TextFieldsTest.kt`,
+  `F01TextFieldsUITests.swift`, and the transcripts in `docs/evidence/F01/`.
+- Workaround: name the field with `Semantics(label: 'Email', child: …)` and
+  wrap the visible prefix in `ExcludeSemantics` so it is not read twice
+  (`/t/F01/good-cupertino`).
 - Upstream issue: not searched yet.

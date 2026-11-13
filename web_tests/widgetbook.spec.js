@@ -12,11 +12,27 @@ async function openUseCase(page, name) {
 
 test('navigation lists every example, labelled good or bad', async ({ page }) => {
   await page.goto('/');
-  // C01 Button has 6 good and 7 bad; S05 Headings has 2 good and 6 bad.
-  await expect(page.getByRole('button', { name: /\((good|bad)\)$/ })).toHaveCount(21);
-  await expect(page.getByRole('button', { name: /\(good\)$/ })).toHaveCount(8);
-  await expect(page.getByRole('button', { name: 'Headings with levels (good)' })).toBeVisible();
+  // The navigation is a lazy list, so only entries near the top are in the
+  // tree (FL-011). C01 Button, the first technique, has 6 good and 7 bad.
+  await expect(page.getByRole('button', { name: 'Text buttons (good)' })).toBeVisible();
+  const c01 = page.getByRole('button', { name: /\((good|bad)\)$/ });
+  expect(await c01.count()).toBeGreaterThanOrEqual(13);
 });
+
+// One test per link, each in a fresh page.
+for (const [path, heading] of [
+  ['components/c01-button/text-buttons-(good)', 'Example'],
+  ['semantics-and-content/s05-headings/headings-with-levels-(good)', 'Profile'],
+  ['forms/f01-text-fields-and-labels/fields-with-a-label-(good)', 'Example'],
+]) {
+  test(`a use case opens by its link: ${path.split('/')[1]}`, async ({ page }) => {
+    await page.goto(`/#/?path=${path}`);
+    await expect(page.getByRole('heading', { name: heading }).first()).toBeAttached();
+    if (path.startsWith('forms/')) {
+      await expect(page.getByRole('textbox', { name: 'Email' })).toBeAttached();
+    }
+  });
+}
 
 test('a good use case shows the live example and the technique doc', async ({ page }) => {
   await openUseCase(page, 'Text buttons (good)');

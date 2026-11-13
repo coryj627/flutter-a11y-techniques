@@ -39,9 +39,23 @@ class S05HeadingsTest {
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             .putExtra("route", "/t/S05/$slug")
         inst.targetContext.startActivity(intent)
+        // Wait for this example's own title. A text every example screen has
+        // would also match the previous screen while the new one loads.
         assertTrue("example $slug did not open",
-            device.wait(Until.hasObject(By.desc("Example")), 20_000))
+            device.wait(Until.hasObject(By.desc(titles.getValue(slug))), 20_000))
+        device.waitForIdle()
     }
+
+    private val titles = mapOf(
+        "good-levels" to "Headings with levels",
+        "good-cupertino" to "Cupertino section heading",
+        "bad-visual-only" to "Heading by appearance only",
+        "bad-fake-label" to "The word \"heading\" in the name",
+        "bad-skipped-level" to "Skipped heading level",
+        "bad-header-only" to "Heading with no level",
+        "bad-emphasis-heading" to "Heading used for emphasis",
+        "bad-cupertino-section-header" to "Cupertino section header that is not a heading",
+    )
 
     private fun find(root: AccessibilityNodeInfo?, text: String): AccessibilityNodeInfo? {
         if (root == null) return null
