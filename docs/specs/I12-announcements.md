@@ -128,7 +128,10 @@ Detail is in [flutter-limitations.md](../flutter-limitations.md).
   activated. With VoiceOver on, `XCUIElement.tap()` only moves the VoiceOver
   cursor to the button; `doubleTap()` activates it. After that
   `currentSpeech()` returns the announcement when there is one and the button
-  when there is none. The first attempt used `tap()`, never activated the
+  when there is none. The test requires the message to be on screen, and
+  then steps the cursor back and forward to confirm it is still on the
+  button, which separates an announcement from the cursor having moved onto
+  the message. The first attempt used `tap()`, never activated the
   button, and wrongly concluded that announcements could not be captured. A
   second spike (D27) found the cause and cross-checked the result against
   `UIAccessibility.announcementDidFinishNotification` observed inside the

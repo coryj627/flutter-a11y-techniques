@@ -121,7 +121,8 @@ press the button.
 the example with `XCUIVoiceOverService` and assert whole utterances. With
 VoiceOver on, `tap()` only moves the VoiceOver cursor; use `doubleTap()` to
 activate a control, and assert that it acted. For announcements, activate
-that way and poll `currentSpeech()`, as `I12AnnouncementsUITests` does.
+that way, poll `currentSpeech()`, and confirm the cursor is still on the
+control, as `I12AnnouncementsUITests` does.
 
 **L4 VoiceOver on web.** `python3 tool/voiceover_web.py <ID>`. Use
 `walkFromBack` and stop at a recognised last phrase; do not count steps. For

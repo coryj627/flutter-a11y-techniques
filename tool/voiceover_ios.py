@@ -25,8 +25,10 @@ METHODS = {
     "I12": ("the VoiceOver cursor is put on the example's button, the button is activated "
             "with a double tap, and `XCUIVoiceOverService.currentSpeech()` is read until the "
             "message is heard, or for four seconds after the visible change when nothing "
-            "should be said",
-            "Spoken: on the button / after it is activated"),
+            "should be said. The message must be on screen first. The cursor is then moved "
+            "back and forward once, which must land on the button again, to show that the "
+            "message was announced and not reached by a moved cursor",
+            "Spoken: on the button / after it is activated / after one step back and forward"),
 }
 
 
