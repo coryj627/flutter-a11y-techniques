@@ -1,0 +1,70 @@
+// S03 probe (throwaway, not committed): what decorative images expose.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+import 'techniques/s02_informative_images/example_image.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class _Wave extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawLine(Offset(0, size.height / 2), Offset(size.width, size.height / 2), Paint()..color = Colors.indigo..strokeWidth = 3);
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
+}
+
+class ProbeScreen extends StatelessWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    Widget img({String? label, bool exclude = false}) => Image.memory(sunrisePng, width: 96, height: 48, semanticLabel: label, excludeFromSemantics: exclude);
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4,
+            children: [
+              const Text('01 excludeFromSemantics'),
+              img(exclude: true),
+              const Text('02 empty label'),
+              img(label: ''),
+              const Text('03 no label'),
+              img(),
+              const Text('04 DecorationImage'),
+              DecoratedBox(decoration: BoxDecoration(image: DecorationImage(image: MemoryImage(sunrisePng), fit: BoxFit.cover)), child: const SizedBox(width: 96, height: 48)),
+              const Text('05 CircleAvatar backgroundImage'),
+              CircleAvatar(backgroundImage: MemoryImage(sunrisePng)),
+              const Text('06 ExcludeSemantics labelled image'),
+              ExcludeSemantics(child: img(label: 'Hidden label')),
+              const Text('07 row icon no label + text'),
+              const Row(children: [Icon(Icons.local_shipping), Text('Shipping')]),
+              const Text('08 Semantics image no label'),
+              Semantics(image: true, child: CustomPaint(size: const Size(96, 20), painter: _Wave())),
+              const Text('09 merged unlabelled image + text'),
+              MergeSemantics(child: Row(children: [img(), const Text('Merged text')])),
+              const Text('10 icon empty label'),
+              const Icon(Icons.star, semanticLabel: ''),
+              const Text('11 ExcludeSemantics unlabelled image'),
+              ExcludeSemantics(child: img()),
+              const Text('12 merged excluded image + text'),
+              MergeSemantics(child: Row(children: [img(exclude: true), const Text('Merged clean')])),
+              const Text('13 row labelled icon + same text'),
+              const Row(children: [Icon(Icons.local_shipping, semanticLabel: 'Shipping'), Text('Shipping')]),
+              const Text('14 CircleAvatar child initials + name'),
+              const Row(children: [CircleAvatar(child: Text('AK')), Text('Ana Kovac')]),
+              const Text('15 end'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
