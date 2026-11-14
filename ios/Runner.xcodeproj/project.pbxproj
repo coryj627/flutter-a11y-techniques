@@ -20,6 +20,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		A6E3F1BB9940E335EF2EDC97 /* I12AnnouncementsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0D81D816D80C2F7E06B85D /* I12AnnouncementsUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9E0D81D816D80C2F7E06B85D /* I12AnnouncementsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = I12AnnouncementsUITests.swift; sourceTree = "<group>"; };
 		D83505D92D63C20BABDBB83C /* S05HeadingsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = S05HeadingsUITests.swift; sourceTree = "<group>"; };
 		F124CD67206A8E3E4198A2CD /* F01TextFieldsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = F01TextFieldsUITests.swift; sourceTree = "<group>"; };
 		F48CA69B603BA9839B324288 /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +105,7 @@
 				1C6A492A2506534AB6CDE41E /* C01ButtonUITests.swift */,
 				D83505D92D63C20BABDBB83C /* S05HeadingsUITests.swift */,
 				F124CD67206A8E3E4198A2CD /* F01TextFieldsUITests.swift */,
+				9E0D81D816D80C2F7E06B85D /* I12AnnouncementsUITests.swift */,
 			);
 			name = RunnerUITests;
 			path = RunnerUITests;
@@ -356,6 +359,7 @@
 				13E57FEB033EF7A296DCC71F /* C01ButtonUITests.swift in Sources */,
 				6F3FA00C6DB040DB3EB9D92B /* S05HeadingsUITests.swift in Sources */,
 				8A136CE70F81CD3C26C2646C /* F01TextFieldsUITests.swift in Sources */,
+				A6E3F1BB9940E335EF2EDC97 /* I12AnnouncementsUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

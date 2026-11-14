@@ -742,6 +742,15 @@ class Techniques(unittest.TestCase):
             self.assertIn("C01", str(caught.exception))
         self.assertEqual(common.technique_argument(["tool", "s05"], "Usage"), "S05")
 
+    def test_a_technique_with_no_ios_voiceover_test_is_refused_with_a_reason(self):
+        import voiceover_ios
+        with mock.patch.object(sys, "argv", ["voiceover_ios.py", "I12"]), \
+                mock.patch.object(voiceover_ios.subprocess, "run") as run:
+            with self.assertRaises(SystemExit) as caught:
+                voiceover_ios.main()
+        self.assertIn("no VoiceOver test on iOS", str(caught.exception))
+        run.assert_not_called()
+
     def test_every_listed_technique_has_expectations(self):
         import evidence_common as common
         for technique in common.TECHNIQUES:

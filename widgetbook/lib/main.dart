@@ -107,8 +107,10 @@ class UseCaseView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final e = example;
-    return Material(
-      child: SafeArea(
+    // A Scaffold, not just Material: examples that show a SnackBar need one
+    // under the use case's own ScaffoldMessenger to appear at all.
+    return Scaffold(
+      body: SafeArea(
         child: Align(
           alignment: Alignment.topCenter,
           child: ConstrainedBox(

@@ -30,9 +30,10 @@ enum Applicability { applies, notApplicable, limitation }
 /// Whether a technique applies on one platform, and why not if it does not.
 @immutable
 class PlatformStatus {
-  const PlatformStatus.applies()
+  /// [note] is for something a reader must know even though the technique
+  /// applies, such as a check that could not be automated on this platform.
+  const PlatformStatus.applies({this.note})
     : applicability = Applicability.applies,
-      note = null,
       issue = null;
 
   const PlatformStatus.notApplicable(String this.note)

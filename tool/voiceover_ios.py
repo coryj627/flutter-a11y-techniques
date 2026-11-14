@@ -22,6 +22,8 @@ DEVICE = sys.argv[2] if len(sys.argv) > 2 else "iPhone 17"
 def main():
     technique = technique_argument(sys.argv, 'Usage: python3 tool/voiceover_ios.py <ID> ["iPhone 17"]')
     title, _, ios_test, _ = TECHNIQUES[technique]
+    if ios_test is None:
+        sys.exit(f"{technique} has no VoiceOver test on iOS; see its technique doc for why.")
     run = subprocess.run(
         ["xcodebuild", "test", "-workspace", "Runner.xcworkspace", "-scheme", "Runner",
          "-configuration", "Debug", "-destination", f"platform=iOS Simulator,name={DEVICE}",
