@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter_a11y_techniques/app/app.dart';
+import 'package:flutter_a11y_techniques/catalog/registry.dart';
+import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/all_techniques.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -116,6 +119,27 @@ class B {}
 
   group('technique docs', () {
     final root = Directory.current;
+
+    testWidgets('the app shows the code and not the markers', (tester) async {
+      await tester.pumpWidget(
+        A11yTechniquesApp(
+          registry: TechniqueRegistry(allTechniques),
+          platform: AppPlatform.android,
+          initialRoute: '/t/${allTechniques.first.id}',
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Example code', skipOffstage: false), findsOneWidget);
+      expect(find.text('Shared code', skipOffstage: false), findsOneWidget);
+      expect(
+        find.textContaining('example-code:', skipOffstage: false),
+        findsNothing,
+      );
+      expect(
+        find.textContaining('class GoodTextButtons', skipOffstage: false),
+        findsOneWidget,
+      );
+    });
 
     test('every registered technique has a doc the tool manages', () {
       expect(techniqueDocs(root).map((f) => f.uri.pathSegments.last).toSet(), {
