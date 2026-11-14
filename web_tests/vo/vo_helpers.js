@@ -46,13 +46,21 @@ export async function walkFromBack(page, voiceOver, browserName, isLast, max = 2
 // read directly over AppleScript at any time, which is how announcements are
 // observed here: the keyboard drives, VoiceOver is polled.
 
-const osascript = (script) =>
-  new Promise((resolve) =>
-    execFile('/usr/bin/osascript', ['-e', script], { timeout: 5000 },
-      (err, out) => resolve(err ? '' : out.replace(/\s+/g, ' ').trim())));
+/**
+ * Runs an AppleScript and returns its output. Rejects on any error or
+ * timeout: a failed read must never look like "VoiceOver said nothing",
+ * or a check for silence would pass when capture is broken.
+ */
+export const runAppleScript = (script) =>
+  new Promise((resolve, reject) =>
+    execFile('/usr/bin/osascript', ['-e', script], { timeout: 5000 }, (err, out, stderr) =>
+      err
+        ? reject(new Error(`AppleScript failed: ${(stderr || err.message).trim()}`))
+        : resolve(out.replace(/\s+/g, ' ').trim())));
 
-/** The last phrase VoiceOver was given to speak. */
-export const lastPhrase = () => osascript('tell application "VoiceOver" to get content of last phrase');
+/** The last phrase VoiceOver was given to speak. Throws if it cannot be read. */
+export const lastPhrase = () =>
+  runAppleScript('tell application "VoiceOver" to get content of last phrase');
 
 /**
  * Waits until VoiceOver's last phrase has not changed for `quietMs`, and
@@ -89,4 +97,21 @@ export async function heardAfter(page, action, ignore, listenMs = 6000) {
     await page.waitForTimeout(150);
   }
   return heard;
+}
+
+/**
+ * Proves that speech capture is working right now: moves VoiceOver's cursor
+ * and requires the last phrase to change to something non-empty. Call it
+ * after listening for silence, so "nothing was announced" cannot be the
+ * result of capture having stopped.
+ */
+export async function assertCaptureIsLive(page, voiceOver) {
+  const before = await lastPhrase();
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await voiceOver.previous();
+    await page.waitForTimeout(600);
+    const now = await lastPhrase();
+    if (now && now !== before) return now;
+  }
+  throw new Error(`VoiceOver capture is not live: last phrase stayed "${before}" after moving the cursor`);
 }

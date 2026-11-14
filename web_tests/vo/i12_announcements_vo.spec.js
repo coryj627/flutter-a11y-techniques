@@ -4,7 +4,7 @@
 // Run through `python3 tool/voiceover_web.py I12`, which also writes the transcript.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
-import { activateBrowser, heardAfter, waitUntilQuiet } from './vo_helpers.js';
+import { activateBrowser, assertCaptureIsLive, heardAfter, waitUntilQuiet } from './vo_helpers.js';
 
 // slug -> { must: text that has to be announced, mustNot: text that must
 // not be, atLeast: how many separate announcements are needed }.
@@ -43,6 +43,10 @@ for (const [slug, { must = [], mustNot = [], atLeast = 1, listenMs }] of Object.
     // The keyboard activates the button; VoiceOver is only listened to.
     const heard = await heardAfter(page, () => page.keyboard.press('Enter'), quiet, listenMs);
     console.log(`I12VO ${browserName} ${slug} | ${heard.join(' / ') || '(nothing)'}`);
+
+    // Silence only counts if capture is still working: every read above
+    // throws on failure, and here VoiceOver is made to say something.
+    if (mustNot.length) await assertCaptureIsLive(page, voiceOver);
 
     const all = heard.join(' | ');
     for (const text of must) expect(all, slug).toContain(text);
