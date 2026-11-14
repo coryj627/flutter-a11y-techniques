@@ -60,8 +60,8 @@ no material connection to CVS Health.
 | S16 | Language of page and parts | ✓ | ✓ | ✓ | 3.1.1, 3.1.2 | Language, AttributedStrings | TextLanguageIdentification | — | — | `lang` on `html` and parts |
 | S17 | Text direction and RTL layout | ✓ | ✓ | ✓ | 1.3.2 | — | — | — | — | `bdi`, `bdo`, `dir` |
 | S18 | Pronunciation | ✓ | ? | ✗ | 3.1.6 (AAA, note only) | VoiceOverPronunciation | — | — | — | `ruby`, `rt`, `rp`, `abbr` |
-| S19 | Inline text semantics | ✗ | ✗ | ✗ | 1.3.1 | AttributedStrings | — | — | — | `em`, `strong`, `mark`, `del`, `ins`, `s`, `sub`, `sup`, `code`, `kbd`, `samp`, `var`, `q`, `cite`, `dfn`, `time`, `data`, `small` |
-| S20 | Block text structure | ✗ | ✗ | ✗ | 1.3.1 | — | — | — | — | `p`, `blockquote`, `pre`, `hr` |
+| S19 | Inline text semantics | ✗ | ✗ | ? | 1.3.1 | AttributedStrings | — | — | — | `em`, `strong`, `mark`, `del`, `ins`, `s`, `sub`, `sup`, `code`, `kbd`, `samp`, `var`, `q`, `cite`, `dfn`, `time`, `data`, `small` |
+| S20 | Block text structure | ✗ | ✗ | ? | 1.3.1 | — | — | — | — | `p`, `blockquote`, `pre`, `hr` |
 | S21 | Custom content (extra detail on demand) | ✗ | ✗ | ✗ | 1.3.1 | AccessibilityCustomContent | — | — | — | — |
 | S22 | Semantics identifiers for testing | ✓ | ✓ | ✓ | — (test enablement) | AccessibilityIdentifier | — | — | — | `id`, `data-testid` equivalents |
 
@@ -152,18 +152,18 @@ no material connection to CVS Health.
 | C17 | Carousel | ✓ | ✓ | ✓ | 2.2.2, 4.1.2 | Carousels | — | — | Carousel | — |
 | C18 | Card | ✓ | ✓ | ✓ | 1.3.1, 2.4.4 | Cards | — | — | — | `article` |
 | C19 | Data table | ✗ | ✗ | ✓ | 1.3.1 | DataTables | — | — | Table | `table`, `caption`, `thead`, `tbody`, `tfoot`, `tr`, `th`, `td`, `col`, `colgroup` |
-| C20 | Interactive grid | ✗ | ✗ | ✗ | 4.1.2, 2.1.1 | — | — | — | Grid | — |
-| C21 | Tree view | ✗ | ✗ | ✗ | 4.1.2, 2.1.1 | — | — | — | Tree View | — |
-| C22 | Treegrid | ✗ | ✗ | ✗ | 4.1.2, 2.1.1 | — | — | — | Treegrid | — |
-| C23 | Feed | ✗ | ✗ | ✗ | 1.3.1, 2.1.1 | — | — | — | Feed | `article` |
-| C24 | Window splitter | ✗ | ✗ | ✗ | 4.1.2, 2.5.7 | — | — | — | Window Splitter | — |
-| C25 | Meter | ✗ | ✗ | ✗ | 4.1.2, 1.1.1 | — | — | — | Meter | `meter` |
+| C20 | Interactive grid | ✗ | ✗ | ? | 4.1.2, 2.1.1 | — | — | — | Grid | — |
+| C21 | Tree view | ✗ | ✗ | ? | 4.1.2, 2.1.1 | — | — | — | Tree View | — |
+| C22 | Treegrid | ✗ | ✗ | ? | 4.1.2, 2.1.1 | — | — | — | Treegrid | — |
+| C23 | Feed | ✗ | ✗ | ? | 1.3.1, 2.1.1 | — | — | — | Feed | `article` |
+| C24 | Window splitter | ✗ | ✗ | ? | 4.1.2, 2.5.7 | — | — | — | Window Splitter | — |
+| C25 | Meter | ✗ | ✗ | ? | 4.1.2, 1.1.1 | — | — | — | Meter | `meter` |
 | C26 | Progress indicator | ✓ | ✓ | ✓ | 4.1.2, 4.1.3 | ProgressIndicators | — | — | — | `progress` |
 | C27 | Charts | ✓ | ✓ | ✓ | 1.1.1, 1.4.1 | Charts | — | — | — | `canvas`, `svg` |
 | C28 | Maps | ? | ? | ? | 1.1.1, 2.5.1 | Maps | — | — | — | — |
 | C29 | Video and audio | ? | ? | ? | 1.2.1–1.2.5, 1.4.2 | Videos | — | — | — | `video`, `audio`, `track`, `source` |
 | C30 | Embedded web and platform views | ? | ? | ? | 4.1.2, 1.4.4 | WebViewDynamicType | — | — | — | `iframe`, `embed`, `object` |
-| C31 | Math content | ✗ | ✗ | ✗ | 1.1.1, 1.3.1 | — | — | — | — | `math` |
+| C31 | Math content | ✗ | ✗ | ? | 1.1.1, 1.3.1 | — | — | — | — | `math` |
 
 ## 2. Source items that are not techniques
 
@@ -229,6 +229,11 @@ raw output are in [evidence/probes/batch-0](evidence/probes/batch-0/). The
 A / I / W columns above now carry the result; a `?` that remains is explained
 here.
 
+For S19, S20, C20 to C25, and C31 the web column stays `?`. Flutter's
+`Semantics` API has no mechanism for them, but on web the SDK can embed native
+HTML with `HtmlElementView`, and that route was not probed. Whether it counts
+as a Flutter technique is an open question for the owner.
+
 These are probe results, not verified techniques. Each entry that is built
 gets its full spec and tests, and may change again.
 
@@ -236,8 +241,8 @@ gets its full spec and tests, and may change again.
 | --- | --- | --- | --- |
 | S07 | Landmarks and regions | Build, web; limitation on mobile | `SemanticsRole.main`, `navigation`, `complementary`, `contentInfo`, `region`, and `form` become ARIA landmarks on web. Android and iOS expose a plain node; a labelled landmark becomes an extra stop that reads only its label. FL-019 |
 | S18 | Pronunciation | Build | `SpellOutStringAttribute` reaches Android as a `TtsSpan`, and `LocaleStringAttribute` and `localeForSubtree` as a `LocaleSpan`. On iOS the engine sets an attributed label; whether speech changes was not confirmed. On web only `localeForSubtree` has an effect, and it writes `lang="fr_FR"`. FL-020 |
-| S19 | Inline text semantics | Limitation entry | A `Text.rich` with bold and struck-through spans is one plain string on every platform. No SDK mechanism for emphasis, deletion, sub or superscript, code. FL-021 |
-| S20 | Block text structure | Limitation entry | No SDK mechanism for paragraph, quotation, preformatted text, or a separator. `Divider` exposes an empty node. FL-021 |
+| S19 | Inline text semantics | Limitation entry (`Semantics` API) | A `Text.rich` with bold and struck-through spans is one plain string on every platform. No SDK mechanism for emphasis, deletion, sub or superscript, code. FL-021 |
+| S20 | Block text structure | Limitation entry (`Semantics` API) | No SDK mechanism for paragraph, quotation, preformatted text, or a separator. `Divider` exposes an empty node. FL-021 |
 | S21 | Custom content (extra detail on demand) | Limitation entry | No Flutter API, and the iOS engine does not implement `accessibilityCustomContent`. FL-025 |
 | V04 | Inverted colours | Build, iOS, small | `MediaQuery.invertColors` exists and is documented as iOS only. There is no way to exclude an image from inversion (`accessibilityIgnoresInvertColors` is not in the engine). Not toggled on the simulator in this probe. FL-025 |
 | V08 | Large content viewer | Limitation entry | No Flutter API for the iOS large content viewer. FL-025 |
@@ -250,17 +255,17 @@ gets its full spec and tests, and may change again.
 | I11 | Voice input labels | Fold into label-in-name checks | No API for iOS `accessibilityUserInputLabels`. What can be done is WCAG 2.5.3, already asserted per component. FL-025 |
 | I17 | Assistive Access mode | Not applicable | Assistive Access is a native app mode set up in the native scene and Info.plist, not something a Flutter widget does |
 | C15 | Menubar | Build, expect limitations | `MenuBar`, `SubmenuButton`, and `MenuItemButton` do not use the menu roles: on web a group of buttons, items as button, checkbox, and radio; on Android and iOS the items have no button role. `SemanticsRole.menuBar`, `menu`, and `menuItem` exist but were not probed. FL-023 |
-| C19 | Data table | Build, web; limitation on mobile | `DataTable` is `table`, `row`, `columnheader`, `cell` on web. A plain `Table` has cells and no headers. Android has no collection information and iOS only the cell text. FL-024 |
-| C20 | Interactive grid | Limitation entry | No grid role in `SemanticsRole`. FL-026 |
-| C21 | Tree view | Limitation entry | `TreeSliver` rows are buttons with no tree role, level, or expanded state on any platform. FL-026 |
-| C22 | Treegrid | Limitation entry | No treegrid role. FL-026 |
-| C23 | Feed | Limitation entry | No feed or article role. FL-026 |
-| C24 | Window splitter | Limitation entry | No separator role. Slider semantics give an adjustable control on all three platforms (`SeekBar`, `role="slider"`), which is a slider, not a splitter. FL-026 |
+| C19 | Data table | Build, web; limitation on mobile | `DataTable` is `table`, `row`, `columnheader`, `cell` on web. A plain `Table` of `Text` cells has no headers; marking one with `SemanticsRole.columnHeader` was read in the source and not probed. Android has no collection information and iOS only the cell text. FL-024 |
+| C20 | Interactive grid | Limitation entry (`Semantics` API) | No grid role in `SemanticsRole`. FL-026 |
+| C21 | Tree view | Limitation entry (`Semantics` API) | `TreeSliver` rows are buttons with no tree role, level, or expanded state on any platform. FL-026 |
+| C22 | Treegrid | Limitation entry (`Semantics` API) | No treegrid role. FL-026 |
+| C23 | Feed | Limitation entry (`Semantics` API) | No feed or article role. FL-026 |
+| C24 | Window splitter | Limitation entry (`Semantics` API) | No separator role. Slider semantics give an adjustable control on all three platforms (`SeekBar`, `role="slider"`), which is a slider, not a splitter. FL-026 |
 | C25 | Meter | Limitation entry; see the progress entry | No meter role. `SemanticsRole.progressBar` with `minValue` and `maxValue` is a progress bar on web and Android, which is a different thing from a meter. FL-026, FL-027 |
 | C28 | Maps | Owner decision: needs a plugin | Nothing in the SDK. `google_maps_flutter` is a platform view |
 | C29 | Video and audio | Owner decision: needs a plugin | Nothing in the SDK plays media; `video_player` does. The SDK does report `autoPlayVideos` and `autoPlayAnimatedImages` |
 | C30 | Embedded web and platform views | Owner decision: needs a plugin off the web | `HtmlElementView` is in the SDK for web; its content was not reachable from the page DOM in this probe. Mobile needs `webview_flutter` |
-| C31 | Math content | Limitation entry | No math semantics. Only a text alternative is possible, which S02 covers. FL-026 |
+| C31 | Math content | Limitation entry (`Semantics` API) | No math semantics. Only a text alternative is possible, which S02 covers. FL-026 |
 
 Totals: 7 to build (S07, S18, V04, I05, I06, C15, C19); 15 limitation
 entries, which under TEC-6 stay in the catalog with the gap documented and the

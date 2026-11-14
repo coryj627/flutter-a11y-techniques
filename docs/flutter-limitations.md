@@ -44,9 +44,9 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-021](#fl-021) | No semantics for inline or block text structure | All | Observed |
 | [FL-022](#fl-022) | Custom semantics actions are not exposed on web | Web | Observed |
 | [FL-023](#fl-023) | Material menu widgets do not use the menu roles, and their items have no button role on Android and iOS | All | Observed |
-| [FL-024](#fl-024) | Tables have structure on web only, and a plain `Table` has no headers | Android, iOS, Web | Observed |
+| [FL-024](#fl-024) | Tables have structure on web only, and a plain `Table` marks no headers by itself | Android, iOS, Web | Observed |
 | [FL-025](#fl-025) | iOS accessibility APIs and settings with no Flutter counterpart | iOS | Confirmed |
-| [FL-026](#fl-026) | No roles for grid, tree, treegrid, feed, separator, meter, or math | All | Confirmed |
+| [FL-026](#fl-026) | No semantics roles for grid, tree, treegrid, feed, separator, meter, or math | All | Confirmed |
 | [FL-027](#fl-027) | A progress indicator whose value has a percent sign reports an empty range on Android | Android | Observed |
 
 ---
@@ -516,7 +516,9 @@ yet), **Fixed in x.y** (verified on that version).
   the single string "Was 20 now 15 dollars" on web, Android, and iOS. Nothing
   says that one price is deleted. There is no SDK mechanism for emphasis,
   insertion and deletion, subscript and superscript, code, quotation,
-  preformatted text, or a thematic break; `Divider` exposes an empty node.
+  preformatted text, or a thematic break in the `Semantics` API; `Divider`
+  exposes an empty node. As in FL-026, native HTML embedded with
+  `HtmlElementView` on web was not probed.
 - Effect: meaning carried only by text styling is lost to screen reader
   users.
 - Workaround: put the meaning in words, for example
@@ -562,13 +564,17 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-024
 
-**Tables have structure on web only, and a plain `Table` has no headers.**
+**Tables have structure on web only, and a plain `Table` marks no headers by itself.**
 
 - Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`).
 - WCAG: 1.3.1 Info and Relationships.
 - What happens: on web `DataTable` is `role="table"` with `row`,
   `columnheader`, and `cell`. The widgets-layer `Table` is `table`, `row`,
-  and `cell` with no header cells and no API to mark one. On Android neither
+  and `cell` with no header cells when its children are plain `Text`: it does
+  not infer a header row. `RenderTable` keeps a child that has
+  `SemanticsRole.columnHeader`, which is how `DataTable` marks its headings,
+  so wrapping a cell in `Semantics(role: SemanticsRole.columnHeader)` is the
+  SDK mechanism; that was read in the source and not probed. On Android neither
   has `CollectionInfo` or `CollectionItemInfo`; the cells are plain views. On
   iOS the cells are static text in reading order.
 - Effect: on mobile a screen reader user hears cell text with no row,
@@ -603,7 +609,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-026
 
-**No roles for grid, tree, treegrid, feed, separator, meter, or math.**
+**No semantics roles for grid, tree, treegrid, feed, separator, meter, or math.**
 
 - Status: Confirmed, Flutter 3.47.5, by reading `SemanticsRole`; `TreeSliver`
   observed in the batch 0 probe (`docs/evidence/probes/batch-0/`).
@@ -619,10 +625,16 @@ yet), **Fixed in x.y** (verified on that version).
   `TreeSliver` exposes each row as a button, with no level and no expanded
   or collapsed state, on all three platforms.
 - Effect: the APG Grid, Tree View, Treegrid, Feed, Window Splitter, and Meter
-  patterns cannot be expressed. The nearest roles (a slider for a splitter, a
-  progress bar for a meter) tell the user something different.
-- Workaround: none that keeps the pattern. Each entry documents the closest
-  achievable example.
+  patterns cannot be expressed through Flutter's semantics tree. The nearest
+  roles (a slider for a splitter, a progress bar for a meter) tell the user
+  something different.
+- Scope of this entry: the `Semantics` API only. On web the SDK can also
+  embed native HTML with `HtmlElementView`, which could carry any ARIA role.
+  That route was not probed (the probe recorded only the wrapper around the
+  embedded element), and whether it counts as a Flutter technique is an open
+  question in [requirements.md](requirements.md).
+- Workaround: none through `Semantics` that keeps the pattern. Each entry
+  documents the closest achievable example.
 - Upstream issue: not searched yet.
 
 ## FL-027
@@ -640,8 +652,9 @@ yet), **Fixed in x.y** (verified on that version).
   `aria-valuenow="40"`. The percent sign in the value is the likely cause
   (a value that is not a number); the engine source was not read. Whether the widget's default value, with no `semanticsValue`, has the same
   result was not probed.
-- Effect: TalkBack still reads the label "40%, Storage used", so the user
-  hears the value; tools and services that read the range get nothing.
-- Workaround: not needed for speech. To be checked in the progress indicator
-  technique.
+- Effect: anything that reads the range gets nothing. The node's description
+  still holds the value ("40%, Storage used"); what TalkBack speaks was not
+  recorded.
+- Workaround: none found yet. To be checked, with TalkBack, in the progress
+  indicator technique.
 - Upstream issue: not searched yet.
