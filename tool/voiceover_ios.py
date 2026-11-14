@@ -63,7 +63,8 @@ def main():
            f"- Method: {method}; utterances are cut at 64 characters by the API",
            "", f"Result: {'PASS' if passed else 'FAIL'}", "",
            f"| Example | {column} |", "| --- | --- |"]
-    out += [f"| `{slug}` | {spoken} |" for slug, spoken in rows]
+    # A pipe in an utterance would end the table cell.
+    out += ["| `{}` | {} |".format(slug, spoken.replace("|", "\\|")) for slug, spoken in rows]
     if failures:
         out += ["", "## Failures", ""] + [f"- {f}" for f in failures]
     os.makedirs(os.path.join(ROOT, "docs", "evidence", technique), exist_ok=True)
