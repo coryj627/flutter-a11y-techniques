@@ -146,6 +146,11 @@ silence is asserted.
 - **Say "Observed" until a test in the repo reproduces it**, then
   "Confirmed". One spike finding (FL-005) was wrong for a whole phase because
   it was a guess recorded as a cause.
+- **A limitation entry says what Flutter has not added yet**, in those
+  words, and shows the closest achievable example. Where native HTML embedded
+  with `HtmlElementView` can fill the gap on web, show it as a labelled
+  workaround: web only, a lesser option, never a good example, no plugins,
+  and verified with the same tests as an example (D31, D32).
 - **If a platform cannot be verified, say "not verified"** in the doc and the
   catalog (`PlatformStatus.applies(note: …)`). If a limitation has no
   workaround, mark the platform `PlatformStatus.limitation(…)`.

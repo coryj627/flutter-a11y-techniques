@@ -591,6 +591,15 @@ limitations FL-019 to FL-027, raw output in
 - Native HTML embedded with `HtmlElementView` is not used to supply roles the
   `Semantics` API lacks (D31: widgets only), so the entries with no semantics
   role are limitation entries on web too.
+- Those entries are framed as work Flutter has not done yet. Where embedded
+  HTML can fill the gap on web, the entry shows it as a labelled workaround,
+  a lesser option and not a good example (D32). To build before the first
+  such entry: a third example kind in the catalog model (`ExampleKind` has
+  only good and bad), with its own label in the app, Widgetbook, and docs;
+  and a probe of whether an embedded element is reachable by a screen reader
+  and the keyboard without the `pointer_interceptor` plugin, which D30 rules
+  out. If it is not, the entry says the workaround was tried and why it
+  fails.
 
 How the probe was run, for the next time one is needed: a second entry point
 (`lib/probe.dart`) built with `-t lib/probe.dart` for web and Android

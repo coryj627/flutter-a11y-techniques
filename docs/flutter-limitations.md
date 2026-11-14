@@ -518,7 +518,8 @@ yet), **Fixed in x.y** (verified on that version).
   insertion and deletion, subscript and superscript, code, quotation,
   preformatted text, or a thematic break in the `Semantics` API; `Divider`
   exposes an empty node. As in FL-026, native HTML embedded with
-  `HtmlElementView` on web was not probed and is out of scope (D31).
+  `HtmlElementView` on web was not probed. It is not a good example (D31) and
+  may be shown as a labelled web workaround once verified (D32).
 - Effect: meaning carried only by text styling is lost to screen reader
   users.
 - Workaround: put the meaning in words, for example
@@ -631,12 +632,16 @@ yet), **Fixed in x.y** (verified on that version).
 - Scope of this entry: the `Semantics` API only. On web the SDK can also
   embed native HTML with `HtmlElementView`, which could carry any ARIA role.
   That route was not probed (the probe recorded only the wrapper around the
-  embedded element). It is out of scope for this project: decision D31 in
-  [requirements.md](requirements.md) keeps techniques to widgets and the
-  `Semantics` API, the mechanisms Flutter's web accessibility documentation
-  names.
+  embedded element). Decision D31 in [requirements.md](requirements.md) keeps
+  good examples to widgets and the `Semantics` API, the mechanisms Flutter's
+  web accessibility documentation names. Under D32 an entry may show
+  embedded HTML as a labelled workaround on web, a lesser option, once it
+  has been verified. None has been yet.
 - Workaround: none through `Semantics` that keeps the pattern. Each entry
   documents the closest achievable example.
+- How to read this entry: these are roles Flutter has not added yet. Treat
+  it as unfinished work in the framework, and re-check it whenever the
+  pinned version changes.
 - Upstream issue: not searched yet.
 
 ## FL-027

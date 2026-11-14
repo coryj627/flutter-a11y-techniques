@@ -232,7 +232,10 @@ here.
 For S19, S20, C20 to C25, and C31, Flutter's `Semantics` API has no
 mechanism. On web the SDK can embed native HTML with `HtmlElementView`, which
 was not probed. The owner decided on 2026-11-13 that this is not a technique
-(D31: widgets only), so these are `✗` on web as well.
+(D31: widgets only), so these are `✗` on web as well. Each of these entries
+says that Flutter has not added the semantics yet, and, where embedded HTML
+can fill the gap on web, shows that as a labelled workaround, a lesser option
+and not a good example (D32). No workaround has been built or verified yet.
 
 These are probe results, not verified techniques. Each entry that is built
 gets its full spec and tests, and may change again.
@@ -273,5 +276,5 @@ closest achievable example where there is one; 1 not applicable (I17); and 1
 folded into existing checks (I11). Three of the limitation entries (C28, C29,
 C30) need a plugin from outside the SDK, which the owner ruled out on
 2026-11-13 (D30). On web C30 documents `HtmlElementView` for what Flutter
-documents it for, embedding content; it is not used to supply missing roles
-(D31).
+documents it for, embedding content. In the other limitation entries it may
+appear as a labelled web workaround, never as a good example (D31, D32).
