@@ -52,6 +52,22 @@ EXPECT = {
     "c01-bad-name-mismatch-edit": (["Change username", "Button"], ["Edit"]),
     "c01-bad-fake-disabled-submit": (["Submit", "Button"], ["Disabled"]),
     "c01-bad-cupertino-disabled-delete": (["Delete", "Button"], ["Disabled"]),
+    # S02 Informative images. An image is announced with its text alternative
+    # and "Image"; an icon's alternative is read as text.
+    "s02-good-image-label-photo": (["Sunrise over green hills", "Image"], []),
+    "s02-good-icon-label-delivered": (["Delivered", "Order 1042"], ["Image"]),
+    "s02-good-icon-label-delayed": (["Delayed", "Order 1043"], ["Image"]),
+    "s02-good-group-description-sunrise": (["Sunrise at 6:35 am"], []),
+    "s02-good-chart-chart": (["Bar chart: orders rose every quarter of 2025", "Image"], []),
+    "s02-good-chart-data": (["Orders in 2025"], ["Image"]),
+    # The photo has no text alternative: TalkBack says so, and the text after
+    # it says nothing of the picture.
+    "s02-bad-no-label-photo": (["Unlabelled", "Image"], ["sunrise"]),
+    "s02-bad-no-label-caption": (["Taken from the east ridge trail"], ["sunrise"]),
+    "s02-bad-icon-no-label-first": (["Order 1042"], ["Delivered"]),
+    "s02-bad-icon-no-label-second": (["Order 1043"], ["Delayed"]),
+    "s02-bad-role-in-label-photo": (["Image of a sunrise over green hills", "Image"], []),
+    "s02-bad-filename-label-photo": (["IMG_2041.png", "Image"], []),
     # S05 Headings. "Heading" must be spoken as the role for a real heading,
     # and must not be for text that only looks or reads like one.
     "s05-good-levels-profile": (["Profile", "Heading"], []),
@@ -386,19 +402,68 @@ def walk():
     return run, adb("logcat", "-d")
 
 
+SPEECH_TAG = "talkback: SpeechControllerImpl: "
+
+# Put in an element's speech when a fragment spoken during its focus was cut
+# off in the log. Its words are lost, so nothing may be concluded from what
+# was captured: problems() reports it and the element is walked again.
+INCOMPLETE = "[speech capture was cut off]"
+
+
 def parse_speech(log):
-    """What TalkBack spoke while each identified node had focus."""
-    spoken, current = {}, None
+    """What TalkBack spoke while each identified node had focus.
+
+    A spoken text with a line break in it (a merged node such as "Delivered",
+    new line, "Order 1042") is split by logcat over several lines, each with
+    the same prefix. Those lines are joined, with a space where the break was.
+    Only a line from TalkBack's speech controller can continue a fragment. A
+    fragment that is cut off by a marker, by another fragment, or by any
+    other log line is never credited to an element; INCOMPLETE is recorded
+    for the element that had focus, so its speech fails its checks.
+    """
+    spoken, current, open_fragment = {}, None, None
+
+    def drop():
+        nonlocal open_fragment
+        if open_fragment is not None and current:
+            spoken[current].append(INCOMPLETE)
+        open_fragment = None
+
     for line in log.splitlines():
-        m = re.search(r"[A-Z]\d\dTB\s*: (FOCUS|END) (\S+)", line)
-        if m:
-            current = m.group(2) if m.group(1) == "FOCUS" else None
+        marker = re.search(r"[A-Z]\d\dTB\s*: (FOCUS|END) (\S+)", line)
+        if marker:
+            drop()
+            current = marker.group(2) if marker.group(1) == "FOCUS" else None
             if current:
                 spoken[current] = []
             continue
-        m = re.search(r'Speaking fragment text="(.*?)", utteranceId', line)
-        if m and current:
-            spoken[current].append(m.group(1))
+        whole = re.search(r'Speaking fragment text="(.*?)", utteranceId', line)
+        if whole:
+            drop()
+            if current:
+                spoken[current].append(whole.group(1))
+            continue
+        start = re.search(r'Speaking fragment text="(.*)$', line)
+        if start:
+            drop()
+            if SPEECH_TAG in line:
+                open_fragment = [start.group(1)]
+            continue
+        if open_fragment is None:
+            continue
+        if SPEECH_TAG not in line:
+            # Some other log line: the fragment was not finished.
+            drop()
+            continue
+        rest = line.split(SPEECH_TAG, 1)[1]
+        end = re.match(r'(.*?)", utteranceId', rest)
+        if end:
+            if current:
+                spoken[current].append(" ".join(open_fragment + [end.group(1)]))
+            open_fragment = None
+        else:
+            open_fragment.append(rest)
+    drop()
     return spoken
 
 
@@ -406,7 +471,7 @@ def said(fragments, phrase):
     """Role and state words must be spoken as their own sentence, so a name
     such as "Close button" does not count as the role."""
     if phrase.lower() in ("button", "disabled", "heading", "edit box", "switch",
-                          "check box", "slider"):
+                          "check box", "slider", "image"):
         sentences = [t.strip() for f in fragments for t in f.split(".")]
         return phrase.lower() in sentences
     return phrase.lower() in " | ".join(fragments)
@@ -415,6 +480,8 @@ def said(fragments, phrase):
 def problems(ident, spoken_fragments):
     """What is wrong with the speech for one element; empty when it is as
     expected. An element with no expectations only has to have been spoken."""
+    if INCOMPLETE in spoken_fragments:
+        return [f"{ident}: speech capture was cut off; what was said is not known"]
     fragments = [f.lower() for f in spoken_fragments]
     joined = " | ".join(fragments)
     if ident not in EXPECT:

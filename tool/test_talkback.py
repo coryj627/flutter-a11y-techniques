@@ -734,6 +734,60 @@ class Techniques(unittest.TestCase):
         ])
         self.assertEqual(tb.parse_speech(log), {"c01-a": ["Save"], "s05-b": ["Profile"]})
 
+    def test_a_fragment_split_over_log_lines_is_joined(self):
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-a",
+            '11-14 14:05:20.227 1 1 V talkback: SpeechControllerImpl: Speaking fragment text="Delayed',
+            '11-14 14:05:20.227 1 1 V talkback: SpeechControllerImpl: Order 1043", utteranceId=x',
+            'V talkback: SpeechControllerImpl: Speaking fragment text="Image", utteranceId=x',
+            "I S02TB   : END slug",
+        ])
+        self.assertEqual(tb.parse_speech(log), {"s02-a": ["Delayed Order 1043", "Image"]})
+
+    def test_an_unfinished_fragment_never_takes_other_lines(self):
+        speech = "11-14 14:05:20.227 1 1 V talkback: SpeechControllerImpl: "
+        # Cut off by an unrelated log line that happens to hold the words.
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-a",
+            speech + 'Speaking fragment text="Delayed',
+            '11-14 14:05:20.300 9 9 I Other: Order 1043", utteranceId=x',
+            "I S02TB   : END slug",
+        ])
+        self.assertEqual(tb.parse_speech(log), {"s02-a": [tb.INCOMPLETE]})
+        # Cut off by the next element's marker: its speech stays its own.
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-a",
+            speech + 'Speaking fragment text="Delayed',
+            "I S02TB   : FOCUS s02-b",
+            speech + 'Speaking fragment text="Image", utteranceId=x',
+            "I S02TB   : END slug",
+        ])
+        self.assertEqual(tb.parse_speech(log), {"s02-a": [tb.INCOMPLETE], "s02-b": ["Image"]})
+        # Cut off by another fragment.
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-a",
+            speech + 'Speaking fragment text="Delayed',
+            speech + 'Speaking fragment text="Image", utteranceId=x',
+            speech + 'Order 1043", utteranceId=x',
+            "I S02TB   : END slug",
+        ])
+        self.assertEqual(tb.parse_speech(log), {"s02-a": [tb.INCOMPLETE, "Image"]})
+
+    def test_cut_off_speech_fails_even_when_the_required_speech_was_heard(self):
+        speech = "11-14 14:05:20.227 1 1 V talkback: SpeechControllerImpl: "
+        # "Order 1042" is heard whole; a second fragment, which may have been
+        # the forbidden "Delivered", is cut off.
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-bad-icon-no-label-first",
+            speech + 'Speaking fragment text="Order 1042", utteranceId=x',
+            speech + 'Speaking fragment text="Delivered',
+            "I S02TB   : END slug",
+        ])
+        heard = tb.parse_speech(log)["s02-bad-icon-no-label-first"]
+        self.assertEqual(heard, ["Order 1042", tb.INCOMPLETE])
+        self.assertTrue(tb.problems("s02-bad-icon-no-label-first", heard))
+        self.assertFalse(tb.problems("s02-bad-icon-no-label-first", ["Order 1042"]))
+
     def test_a_missing_or_unknown_technique_is_refused(self):
         import evidence_common as common
         for argv in (["tool"], ["tool", "ZZZ"]):
