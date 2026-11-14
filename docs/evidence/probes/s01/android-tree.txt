@@ -1,0 +1,22 @@
+resource-id | class | content-desc   (first screen only; the rest was off screen)
+p-cb-tile | CheckBox | Tile checkbox
+p-sw-tile | Switch | Tile switch
+p-rd-tile-a | RadioButton | Tile radio A
+p-rd-tile-b | RadioButton | Tile radio B
+p-cb-merge | CheckBox | Merged checkbox
+p-cb-inkwell | CheckBox | Inkwell checkbox
+p-cb-bare | CheckBox | (empty)
+(none) | View | Bare checkbox
+p-cb-label | CheckBox | Labelled checkbox
+p-cb-semlabel | CheckBox | Param checkbox
+p-sw-label | Switch | Labelled switch
+p-sw-merge | Switch | Merged switch
+(none) | View | Bare slider
+p-sl-bare | SeekBar | 40%
+p-sl-label | SeekBar | 40%, Labelled slider
+p-sl-merge | SeekBar | 40%, Merged slider
+p-cu-sw-merge | Switch | Cupertino merged switch
+p-cu-sw-label | Switch | Cupertino labelled switch
+p-cu-tile | Switch | Cupertino tile switch
+
+Every CheckBox, Switch, and RadioButton: checkable, clickable, focusable.

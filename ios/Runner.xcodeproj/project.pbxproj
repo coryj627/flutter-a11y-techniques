@@ -13,6 +13,7 @@
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		6F3FA00C6DB040DB3EB9D92B /* S05HeadingsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83505D92D63C20BABDBB83C /* S05HeadingsUITests.swift */; };
+		A1B2C3D4E5F60718293A4B5D /* S01AccessibleNamesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* S01AccessibleNamesUITests.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
@@ -74,6 +75,7 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9E0D81D816D80C2F7E06B85D /* I12AnnouncementsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = I12AnnouncementsUITests.swift; sourceTree = "<group>"; };
 		D83505D92D63C20BABDBB83C /* S05HeadingsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = S05HeadingsUITests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5C /* S01AccessibleNamesUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = S01AccessibleNamesUITests.swift; sourceTree = "<group>"; };
 		F124CD67206A8E3E4198A2CD /* F01TextFieldsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = F01TextFieldsUITests.swift; sourceTree = "<group>"; };
 		F48CA69B603BA9839B324288 /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFC9686E6EC960C0B6C12C78 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -104,6 +106,7 @@
 			children = (
 				1C6A492A2506534AB6CDE41E /* C01ButtonUITests.swift */,
 				D83505D92D63C20BABDBB83C /* S05HeadingsUITests.swift */,
+				A1B2C3D4E5F60718293A4B5C /* S01AccessibleNamesUITests.swift */,
 				F124CD67206A8E3E4198A2CD /* F01TextFieldsUITests.swift */,
 				9E0D81D816D80C2F7E06B85D /* I12AnnouncementsUITests.swift */,
 			);
@@ -358,6 +361,7 @@
 			files = (
 				13E57FEB033EF7A296DCC71F /* C01ButtonUITests.swift in Sources */,
 				6F3FA00C6DB040DB3EB9D92B /* S05HeadingsUITests.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5D /* S01AccessibleNamesUITests.swift in Sources */,
 				8A136CE70F81CD3C26C2646C /* F01TextFieldsUITests.swift in Sources */,
 				A6E3F1BB9940E335EF2EDC97 /* I12AnnouncementsUITests.swift in Sources */,
 			);

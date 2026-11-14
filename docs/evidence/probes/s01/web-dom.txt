@@ -1,0 +1,54 @@
+flt-semantics {"aria-label":"Tile checkbox","flt-semantics-identifier":"p-cb-tile","role":"checkbox","aria-checked":"false"}
+flt-semantics {"aria-label":"Tile switch","flt-semantics-identifier":"p-sw-tile","role":"switch","aria-checked":"false"}
+flt-semantics {"role":"radiogroup"}
+  flt-semantics {"aria-label":"Tile radio A","flt-semantics-identifier":"p-rd-tile-a","role":"radio","aria-checked":"true"}
+  flt-semantics {"aria-label":"Tile radio B","aria-description":"Not selected","flt-semantics-identifier":"p-rd-tile-b","role":"radio","aria-checked":"false"}
+flt-semantics {"aria-label":"Merged checkbox","flt-semantics-identifier":"p-cb-merge","role":"checkbox","aria-checked":"false"}
+flt-semantics {"aria-label":"Inkwell checkbox","flt-semantics-identifier":"p-cb-inkwell","role":"checkbox","aria-checked":"false"}
+flt-semantics {"flt-semantics-identifier":"p-cb-bare","role":"checkbox","aria-checked":"false"}
+  span text="Bare checkbox"   (a sibling element, not inside the checkbox)
+flt-semantics {"aria-label":"Labelled checkbox","flt-semantics-identifier":"p-cb-label","role":"checkbox","aria-checked":"false"}
+flt-semantics {"aria-label":"Param checkbox","flt-semantics-identifier":"p-cb-semlabel","role":"checkbox","aria-checked":"false"}
+flt-semantics {"aria-label":"Labelled switch","flt-semantics-identifier":"p-sw-label","role":"switch","aria-checked":"false"}
+flt-semantics {"aria-label":"Merged switch","flt-semantics-identifier":"p-sw-merge","role":"switch","aria-checked":"false"}
+span text="Bare slider"
+flt-semantics {"flt-semantics-identifier":"p-sl-bare"}
+  input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","aria-valuemax":"2","aria-valuemin":"0"}
+flt-semantics {"aria-label":"Labelled slider","flt-semantics-identifier":"p-sl-label"}
+  input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","aria-valuemax":"2","aria-valuemin":"0"}
+flt-semantics {"aria-label":"Merged slider","flt-semantics-identifier":"p-sl-merge"}
+  input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","aria-valuemax":"2","aria-valuemin":"0"}
+flt-semantics {"aria-label":"Cupertino merged switch","flt-semantics-identifier":"p-cu-sw-merge","role":"switch","aria-checked":"false"}
+flt-semantics {"aria-label":"Cupertino labelled switch","flt-semantics-identifier":"p-cu-sw-label","role":"switch","aria-checked":"false"}
+flt-semantics {"aria-label":"Cupertino tile switch","flt-semantics-identifier":"p-cu-tile","role":"switch","aria-checked":"false"}
+flt-semantics {"aria-label":"Cupertino labelled slider","flt-semantics-identifier":"p-cu-sl-label"}
+  input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","aria-valuemax":"2","aria-valuemin":"0"}
+flt-semantics {"aria-label":"Cupertino merged checkbox","flt-semantics-identifier":"p-cu-cb-merge","role":"checkbox","aria-checked":"false"}
+flt-semantics {"aria-label":"Cupertino param checkbox","flt-semantics-identifier":"p-cu-cb-semlabel","role":"checkbox","aria-checked":"false"}
+
+(tabindex="0" on the checkbox, switch, and radio elements is left out above.)
+
+---- Playwright ARIA snapshot
+- checkbox "Tile checkbox"
+- switch "Tile switch"
+- radiogroup:
+  - radio "Tile radio A" [checked]
+  - radio "Tile radio B"
+- checkbox "Merged checkbox"
+- checkbox "Inkwell checkbox"
+- checkbox
+- text: Bare checkbox
+- checkbox "Labelled checkbox"
+- checkbox "Param checkbox"
+- switch "Labelled switch"
+- switch "Merged switch"
+- text: Bare slider
+- slider: "1"
+- slider: "1"
+- slider: "1"
+- switch "Cupertino merged switch"
+- switch "Cupertino labelled switch"
+- switch "Cupertino tile switch"
+- slider: "1"
+- checkbox "Cupertino merged checkbox"
+- checkbox "Cupertino param checkbox"

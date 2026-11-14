@@ -14,15 +14,20 @@ export const activateBrowser = (browserName) =>
  * Starts from the Back button, the first control on every example screen, and
  * moves VoiceOver forward until `isLast(phrase, index)` is true. Returns what
  * was spoken at each step.
+ *
+ * `skipClick` leaves out the click that moves keyboard focus into the page.
+ * It is for a screen with a Material `Slider`, which on web adds an empty
+ * full-screen element above the others, so Playwright cannot click anything
+ * (docs/flutter-limitations.md, FL-029).
  */
-export async function walkFromBack(page, voiceOver, browserName, isLast, max = 24) {
+export async function walkFromBack(page, voiceOver, browserName, isLast, max = 24, skipClick = false) {
   await activateBrowser(browserName);
   await page.bringToFront();
   // A real click, on inert text: the browser can come up with keyboard focus
   // in its own toolbar, and setting DOM focus from script does not move it
   // into the page, which left VoiceOver's cursor in the tab bar on about
   // every other walk.
-  await page.getByRole('heading', { name: 'Example', level: 2 }).click();
+  if (!skipClick) await page.getByRole('heading', { name: 'Example', level: 2 }).click();
   await page.getByRole('button', { name: 'Back' }).focus();
   await page.waitForTimeout(1500);
   const spoken = [];

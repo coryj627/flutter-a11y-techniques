@@ -42,7 +42,7 @@ no material connection to CVS Health.
 
 | ID | Technique | A | I | W | WCAG | iOS | View | Compose | APG | HTML |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S01 | Accessible names | ✓ | ✓ | ✓ | 4.1.2, 2.4.6 | AccessibilityLabel, MeaningfulAccessibleNames | — | InteractiveControlLabels | — | `label` |
+| S01 | Accessible names | ✓ | ✓ | ✓ | 1.3.1, 2.4.6, 2.5.3, 4.1.2 | AccessibilityLabel, MeaningfulAccessibleNames | — | InteractiveControlLabels | — | `label` |
 | S02 | Informative images | ✓ | ✓ | ✓ | 1.1.1 | Images, InformativeImages | TextAlternatives | TextAlternatives | — | `img`, `picture`, `figure`, `figcaption`, `svg` |
 | S03 | Decorative images | ✓ | ✓ | ✓ | 1.1.1 | DecorativeImages | TextAlternatives | TextAlternatives | — | `img` (empty alt) |
 | S04 | Functional images | ✓ | ✓ | ✓ | 1.1.1, 4.1.2 | FunctionalImages | TextAlternatives | TextAlternatives | — | `img` in `a`/`button`, `area`, `map` |

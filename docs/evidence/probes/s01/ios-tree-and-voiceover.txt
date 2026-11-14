@@ -1,0 +1,42 @@
+Switch, identifier: 'p-cb-tile', label: 'Tile checkbox', value: 0
+Switch, identifier: 'p-sw-tile', label: 'Tile switch', value: 0
+Button, identifier: 'p-rd-tile-a', label: 'Tile radio A', Selected
+Button, identifier: 'p-rd-tile-b', label: 'Tile radio B'
+Switch, identifier: 'p-cb-merge', label: 'Merged checkbox', value: 0
+Switch, identifier: 'p-cb-inkwell', label: 'Inkwell checkbox', value: 0
+Switch, identifier: 'p-cb-bare', value: 0
+StaticText, label: 'Bare checkbox'
+Switch, identifier: 'p-cb-label', label: 'Labelled checkbox', value: 0
+Switch, identifier: 'p-cb-semlabel', label: 'Param checkbox', value: 0
+Switch, identifier: 'p-sw-label', label: 'Labelled switch', value: 0
+Switch, identifier: 'p-sw-merge', label: 'Merged switch', value: 0
+StaticText, label: 'Bare slider'
+Other, identifier: 'p-sl-bare', value: 40%
+Other, identifier: 'p-sl-label', label: 'Labelled slider', value: 40%
+Other, identifier: 'p-sl-merge', label: 'Merged slider', value: 40%
+Switch, identifier: 'p-cu-sw-merge', label: 'Cupertino merged switch', value: 0
+Switch, identifier: 'p-cu-sw-label', label: 'Cupertino labelled switch', value: 0
+Switch, identifier: 'p-cu-tile', label: 'Cupertino tile switch', value: 0
+Other, identifier: 'p-cu-sl-label', label: 'Cupertino labelled slider', value: 40%
+Switch, identifier: 'p-cu-cb-merge', label: 'Cupertino merged checkbox', value: 0
+Switch, identifier: 'p-cu-cb-semlabel', label: 'Cupertino param checkbox', value: 0
+
+---- VoiceOver, swiping forward (utterances are cut at 64 characters; the walk
+---- stopped at the bottom of the first screen)
+Tile checkbox Switch button off Double tap to toggle setting.
+Tile switch Switch button off Double tap to toggle setting.
+selected Tile radio A Button
+Tile radio B Button Not selected
+Merged checkbox Switch button off Double tap to toggle setting.
+Inkwell checkbox Switch button off Double tap to toggle setting.
+Switch button off Double tap to toggle setting.
+Bare checkbox
+Labelled checkbox Switch button off Double tap to toggle setting
+Param checkbox Switch button off Double tap to toggle setting.
+Labelled switch Switch button off Double tap to toggle setting.
+Merged switch Switch button off Double tap to toggle setting.
+Bare slider
+40% adjustable Swipe up or down with one finger to adjust the va
+Labelled slider 40% adjustable Swipe up or down with one finger 
+Merged slider 40% adjustable Swipe up or down with one finger to
+Cupertino merged switch Switch button off Double tap to toggle s

@@ -1,0 +1,69 @@
+// S01 probe (throwaway, not committed): ways to name a non-button control.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+import 'catalog/test_id.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+  @override
+  State<ProbeScreen> createState() => _S();
+}
+
+class _S extends State<ProbeScreen> {
+  final on = <String, bool>{};
+  final v = <String, double>{};
+  String radio = 'a';
+  bool b(String k) => on[k] ?? false;
+  void t(String k) => setState(() => on[k] = !b(k));
+  double d(String k) => v[k] ?? 0.4;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TestId('p-cb-tile', child: CheckboxListTile(title: const Text('Tile checkbox'), value: b('1'), onChanged: (_) => t('1'))),
+              TestId('p-sw-tile', child: SwitchListTile(title: const Text('Tile switch'), value: b('2'), onChanged: (_) => t('2'))),
+              RadioGroup<String>(
+                groupValue: radio,
+                onChanged: (x) => setState(() => radio = x!),
+                child: const Column(children: [
+                  TestId('p-rd-tile-a', child: RadioListTile<String>(title: Text('Tile radio A'), value: 'a')),
+                  TestId('p-rd-tile-b', child: RadioListTile<String>(title: Text('Tile radio B'), value: 'b')),
+                ]),
+              ),
+              TestId('p-cb-merge', child: MergeSemantics(child: Row(children: [Checkbox(value: b('3'), onChanged: (_) => t('3')), const Text('Merged checkbox')]))),
+              TestId('p-cb-inkwell', child: InkWell(onTap: () => t('4'), child: Row(children: [Checkbox(value: b('4'), onChanged: (_) => t('4')), const Text('Inkwell checkbox')]))),
+              Row(children: [TestId('p-cb-bare', child: Checkbox(value: b('5'), onChanged: (_) => t('5'))), const Text('Bare checkbox')]),
+              Row(children: [TestId('p-cb-label', child: Semantics(label: 'Labelled checkbox', child: Checkbox(value: b('6'), onChanged: (_) => t('6')))), const ExcludeSemantics(child: Text('Labelled checkbox'))]),
+              Row(children: [TestId('p-cb-semlabel', child: Checkbox(semanticLabel: 'Param checkbox', value: b('7'), onChanged: (_) => t('7'))), const ExcludeSemantics(child: Text('Param checkbox'))]),
+              Row(children: [TestId('p-sw-label', child: Semantics(label: 'Labelled switch', child: Switch(value: b('8'), onChanged: (_) => t('8')))), const ExcludeSemantics(child: Text('Labelled switch'))]),
+              TestId('p-sw-merge', child: MergeSemantics(child: Row(children: [const Text('Merged switch'), Switch(value: b('9'), onChanged: (_) => t('9'))]))),
+              const Text('Bare slider'),
+              TestId('p-sl-bare', child: Slider(value: d('a'), onChanged: (x) => setState(() => v['a'] = x))),
+              const ExcludeSemantics(child: Text('Labelled slider')),
+              TestId('p-sl-label', child: Semantics(label: 'Labelled slider', child: Slider(value: d('b'), onChanged: (x) => setState(() => v['b'] = x)))),
+              TestId('p-sl-merge', child: MergeSemantics(child: Column(children: [const Text('Merged slider'), Slider(value: d('c'), onChanged: (x) => setState(() => v['c'] = x))]))),
+              TestId('p-cu-sw-merge', child: MergeSemantics(child: Row(children: [const Text('Cupertino merged switch'), CupertinoSwitch(value: b('10'), onChanged: (_) => t('10'))]))),
+              TestId('p-cu-sw-label', child: Semantics(label: 'Cupertino labelled switch', child: CupertinoSwitch(value: b('11'), onChanged: (_) => t('11')))),
+              TestId('p-cu-tile', child: CupertinoListTile(title: const Text('Cupertino tile switch'), onTap: () => t('12'), trailing: CupertinoSwitch(value: b('12'), onChanged: (_) => t('12')))),
+              TestId('p-cu-sl-label', child: Semantics(label: 'Cupertino labelled slider', child: CupertinoSlider(value: d('d'), onChanged: (x) => setState(() => v['d'] = x)))),
+              TestId('p-cu-cb-merge', child: MergeSemantics(child: Row(children: [CupertinoCheckbox(value: b('13'), onChanged: (_) => t('13')), const Text('Cupertino merged checkbox')]))),
+              TestId('p-cu-cb-semlabel', child: CupertinoCheckbox(semanticLabel: 'Cupertino param checkbox', value: b('14'), onChanged: (_) => t('14'))),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
