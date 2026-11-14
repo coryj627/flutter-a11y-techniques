@@ -2,7 +2,9 @@
 /// in the technique's `examples.dart` (decision D24 in docs/requirements.md).
 ///
 /// Each example in `examples.dart` sits between `// #region <slug>` and
-/// `// #endregion`. Each doc in `docs/techniques/` has a generated block
+/// `// #endregion`. Code the examples share sits in a region named `shared`
+/// (or `shared-<name>`), and nothing but imports and comments may sit outside
+/// a region, so the docs show everything the examples run. Each doc in `docs/techniques/` has a generated block
 /// between [startMarker] and [endMarker]; this tool rewrites that block from
 /// the regions, so the code in the docs is the code that is tested.
 ///
@@ -68,8 +70,43 @@ Map<String, String> regions(String source) {
   return found;
 }
 
-/// The generated block for [examples], markers included.
-String block(Map<String, String> examples, String examplesPath) {
+/// Whether a region holds code the examples share, not an example.
+bool isShared(String region) =>
+    region == 'shared' || region.startsWith('shared-');
+
+/// Lines of [source] outside every region that are code: not blank, not a
+/// comment, and not an import. Such code would be missing from the docs.
+List<String> unmarked(String source) {
+  final found = <String>[];
+  var inside = false;
+  var number = 0;
+  for (final line in source.split('\n')) {
+    number++;
+    if (_regionStart.hasMatch(line)) {
+      inside = true;
+    } else if (_regionEnd.hasMatch(line)) {
+      inside = false;
+    } else if (!inside) {
+      final text = line.trim();
+      if (text.isEmpty || text.startsWith('//') || text.startsWith('import ')) {
+        continue;
+      }
+      found.add('line $number: $text');
+    }
+  }
+  return found;
+}
+
+/// The generated block for the regions in [all], markers included.
+String block(Map<String, String> all, String examplesPath) {
+  final shared = {
+    for (final e in all.entries)
+      if (isShared(e.key)) e.key: e.value,
+  };
+  final examples = {
+    for (final e in all.entries)
+      if (!isShared(e.key)) e.key: e.value,
+  };
   final out = StringBuffer()
     ..writeln(startMarker)
     ..writeln('## Example code')
@@ -82,6 +119,20 @@ String block(Map<String, String> examples, String examplesPath) {
     ..writeln(
       'run, including the `TestId` wrappers they use to find its elements.',
     );
+  if (shared.isNotEmpty) {
+    out
+      ..writeln()
+      ..writeln('### Shared code')
+      ..writeln()
+      ..writeln('Used by the examples below.');
+    for (final code in shared.values) {
+      out
+        ..writeln()
+        ..writeln('```dart')
+        ..writeln(code)
+        ..writeln('```');
+    }
+  }
   for (final MapEntry(key: slug, value: code) in examples.entries) {
     out
       ..writeln()
@@ -105,8 +156,8 @@ String examplesPathOf(String doc) {
   return match.group(1)!;
 }
 
-/// [doc] with its generated block rebuilt from [examplesSource].
-String sync(String doc, String examplesSource, String examplesPath) {
+/// Where the generated block starts and ends in [doc].
+(int, int) _blockRange(String doc) {
   final start = doc.indexOf(startMarker);
   final end = doc.indexOf(endMarker);
   if (start < 0 || end < start) {
@@ -116,9 +167,29 @@ String sync(String doc, String examplesSource, String examplesPath) {
       doc.indexOf(endMarker, end + 1) >= 0) {
     throw const FormatException('more than one example-code block');
   }
+  return (start, end + endMarker.length);
+}
+
+/// [doc] without its generated block: the part a person wrote. Checks that
+/// the doc explains every example must read this, not the whole doc, or the
+/// generated headings would satisfy them.
+String handwritten(String doc) {
+  final (start, end) = _blockRange(doc);
+  return doc.substring(0, start) + doc.substring(end);
+}
+
+/// [doc] with its generated block rebuilt from [examplesSource].
+String sync(String doc, String examplesSource, String examplesPath) {
+  final (start, end) = _blockRange(doc);
+  final loose = unmarked(examplesSource);
+  if (loose.isNotEmpty) {
+    throw FormatException(
+      '$examplesPath has code outside a region (${loose.first})',
+    );
+  }
   return doc.substring(0, start) +
       block(regions(examplesSource), examplesPath) +
-      doc.substring(end + endMarker.length);
+      doc.substring(end);
 }
 
 /// The technique docs under [root]: `docs/techniques/*.md`.

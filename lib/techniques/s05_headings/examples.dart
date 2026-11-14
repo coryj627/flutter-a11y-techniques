@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+// #region shared
 /// Body copy between headings.
 class _Body extends StatelessWidget {
   const _Body(this.text);
@@ -24,6 +25,7 @@ TextStyle? _headingStyle(BuildContext context, int level) {
     _ => text.titleSmall,
   };
 }
+// #endregion
 
 // #region good-levels
 /// A heading states that it is a heading and what level it is with

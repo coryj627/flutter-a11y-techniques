@@ -59,6 +59,44 @@ class B {}
       expect(sync(result, examples, path), result, reason: 'stable');
     });
 
+    test('puts shared regions first, under one heading', () {
+      const source =
+          '// #region good-a\nclass A {}\n// #endregion\n'
+          '// #region shared\nclass _Demo {}\n// #endregion\n';
+      final result = sync('$startMarker\n$endMarker', source, path);
+      expect(result, contains('### Shared code'));
+      expect(result, isNot(contains('`shared`')));
+      expect(
+        result.indexOf('class _Demo {}'),
+        lessThan(result.indexOf('### `good-a`')),
+      );
+    });
+
+    test('rejects an examples file with code outside a region', () {
+      const source =
+          "import 'x';\n\n/// Doc.\nclass _Demo {}\n"
+          '// #region good-a\nclass A {}\n// #endregion\n';
+      expect(unmarked(source), ['line 4: class _Demo {}']);
+      expect(
+        () => sync('$startMarker\n$endMarker', source, path),
+        throwsFormatException,
+      );
+      expect(unmarked(examples), isEmpty);
+    });
+
+    test('handwritten leaves out the generated block', () {
+      final doc = sync(
+        '| `good-a` | How |\n\n$startMarker\n$endMarker\n',
+        examples,
+        path,
+      );
+      expect(doc, contains('### `good-a`'));
+      expect(handwritten(doc), '| `good-a` | How |\n\n\n');
+      // An example that is only in the generated block is not explained.
+      final unexplained = doc.replaceFirst('| `good-a` | How |', '');
+      expect(handwritten(unexplained), isNot(contains('good-a')));
+    });
+
     test('rejects a doc with no markers, or with two blocks', () {
       expect(() => sync('No markers.', examples, path), throwsFormatException);
       const twice = '$startMarker\n$endMarker\n$startMarker\n$endMarker\n';
@@ -99,7 +137,7 @@ class B {}
       test('${technique.id}: every example has a region, and no other', () {
         final source = doc.readAsStringSync();
         final examples = File(examplesPathOf(source)).readAsStringSync();
-        expect(regions(examples).keys.toSet(), {
+        expect(regions(examples).keys.where((r) => !isShared(r)).toSet(), {
           for (final e in technique.examples) e.slug,
         });
       });

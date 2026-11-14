@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../catalog/test_id.dart';
 
+// #region shared
 class _Fields extends StatelessWidget {
   const _Fields({required this.children});
 
@@ -17,6 +18,7 @@ class _Fields extends StatelessWidget {
     );
   }
 }
+// #endregion
 
 // #region good-label
 /// `labelText` is the visible label and the field's accessible name. It

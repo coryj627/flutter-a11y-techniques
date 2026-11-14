@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../catalog/test_id.dart';
 
+// #region shared
 /// Lays out one example and reports how many times its buttons were
 /// activated, so people and tests can confirm that activation worked.
 class _Demo extends StatefulWidget {
@@ -36,6 +37,7 @@ class _DemoState extends State<_Demo> {
     );
   }
 }
+// #endregion
 
 // #region good-text
 /// Material buttons take their name from their text child and expose the
