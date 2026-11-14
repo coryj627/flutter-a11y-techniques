@@ -130,17 +130,25 @@ final class S02InformativeImagesUITests: XCTestCase {
       open(example.slug)
       try voiceOver.enable()
       var spoken: [String] = []
-      // Swipe right to the end of the screen: the last element repeats.
+      // Swipe right to the end of the screen, where the last element repeats.
+      // A move that throws, or a walk that never reaches the end, fails the
+      // test: what was not heard cannot be said to be absent.
+      var reachedEnd = false
       for _ in 0..<24 {
-        guard let utterance = try? voiceOver.moveForward().utterance else { continue }
+        // `try`, not `try?`: a move that fails ends the test with its error.
+        let utterance = try voiceOver.moveForward().utterance
         // VoiceOver separates the label and the role with other whitespace
         // than one space; every run of whitespace becomes one space.
         let text = utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
-        if spoken.last == text { break }
+        if spoken.last == text {
+          reachedEnd = true
+          break
+        }
         spoken.append(text)
       }
       try voiceOver.disable()
       print("S02VO \(example.slug) | \(spoken.joined(separator: " / "))")
+      XCTAssertTrue(reachedEnd, "\(example.slug): the walk did not reach the end of the screen")
       // What comes after the "Example" heading is the example itself.
       let start = (spoken.firstIndex(of: "Example Heading") ?? -1) + 1
       XCTAssertGreaterThan(start, 0, "\(example.slug): the walk reached the example")
