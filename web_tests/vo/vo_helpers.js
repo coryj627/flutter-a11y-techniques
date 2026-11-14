@@ -39,3 +39,54 @@ export async function walkFromBack(page, voiceOver, browserName, isLast, max = 2
   }
   return spoken;
 }
+
+// --- Announcements -------------------------------------------------------
+// Guidepup only records speech that follows one of its own commands, so it
+// never sees a live region announcement. VoiceOver's "last phrase" can be
+// read directly over AppleScript at any time, which is how announcements are
+// observed here: the keyboard drives, VoiceOver is polled.
+
+const osascript = (script) =>
+  new Promise((resolve) =>
+    execFile('/usr/bin/osascript', ['-e', script], { timeout: 5000 },
+      (err, out) => resolve(err ? '' : out.replace(/\s+/g, ' ').trim())));
+
+/** The last phrase VoiceOver was given to speak. */
+export const lastPhrase = () => osascript('tell application "VoiceOver" to get content of last phrase');
+
+/**
+ * Waits until VoiceOver's last phrase has not changed for `quietMs`, and
+ * returns it. After focus lands on a control VoiceOver reads the control and,
+ * a few seconds later, a long usage hint; an announcement must not be
+ * mistaken for either.
+ */
+export async function waitUntilQuiet(page, quietMs = 4000, limitMs = 20000) {
+  let phrase = await lastPhrase();
+  let since = Date.now();
+  const limit = Date.now() + limitMs;
+  while (Date.now() - since < quietMs && Date.now() < limit) {
+    await page.waitForTimeout(250);
+    const now = await lastPhrase();
+    if (now !== phrase) {
+      phrase = now;
+      since = Date.now();
+    }
+  }
+  return phrase;
+}
+
+/**
+ * Runs `action`, then collects each new phrase VoiceOver is given for
+ * `listenMs`. `ignore` is the phrase from before the action.
+ */
+export async function heardAfter(page, action, ignore, listenMs = 6000) {
+  await action();
+  const heard = [];
+  const end = Date.now() + listenMs;
+  while (Date.now() < end) {
+    const now = await lastPhrase();
+    if (now && now !== ignore && now !== heard[heard.length - 1]) heard.push(now);
+    await page.waitForTimeout(150);
+  }
+  return heard;
+}

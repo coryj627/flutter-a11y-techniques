@@ -24,6 +24,14 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB_TESTS = os.path.join(ROOT, "web_tests")
 
 
+DEFAULT_METHOD = "focus the Back button, then `voiceOver.next()` to the last element of the example"
+METHODS = {
+    "I12": "press the example's button with the keyboard, then poll VoiceOver's last phrase "
+           "over AppleScript for what it was given to announce; Chromium only, because "
+           "Playwright's WebKit build passes no live region changes to VoiceOver",
+}
+
+
 def version(package):
     with open(os.path.join(WEB_TESTS, "node_modules", package, "package.json")) as f:
         return json.load(f)["version"]
@@ -54,7 +62,7 @@ def main():
            "(WebKit is not Safari itself)",
            f"- Guidepup: {version('@guidepup/guidepup')}",
            f"- Flutter: {flutter_version()}",
-           "- Method: focus the Back button, then `voiceOver.next()` to the last element of the example",
+           f"- Method: {METHODS.get(technique, DEFAULT_METHOD)}",
            "", f"Result: {'PASS' if passed else 'FAIL'} ({'; '.join(s.strip() for s in summary)})"]
     if retried:
         out += ["", "Walks that needed a retry: "

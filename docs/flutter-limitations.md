@@ -37,6 +37,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-014](#fl-014) | `CupertinoListSection` does not expose its header as a heading | All | Confirmed |
 | [FL-015](#fl-015) | On Android, TalkBack stops speaking a text field's label once it has a value | Android | Confirmed |
 | [FL-016](#fl-016) | Cupertino text fields have no label | All | Confirmed |
+| [FL-017](#fl-017) | The status and alert roles are announced on web only | Android (iOS not verified) | Confirmed |
+| [FL-018](#fl-018) | Announcements sent from code are reported as unsupported on Android, and assertiveness is web only | Android, iOS | Confirmed |
 
 ---
 
@@ -233,15 +235,20 @@ yet), **Fixed in x.y** (verified on that version).
 
 **Live region text is announced when the screen opens.**
 
-- Status: Observed, Flutter 3.47.5. TalkBack on Android 17.
+- Status: Observed, Flutter 3.47.5. TalkBack on Android 17; also seen in
+  Flutter web's announcer element.
 - What happens: a `Semantics(liveRegion: true)` node that is present when a
-  route opens is announced immediately ("Activations: 0"), before the user
-  has done anything. On Android the announcement can also interrupt or delay
-  speech for the element that receives focus.
+  route opens is announced immediately ("Activations: 0", "Cart is empty"),
+  before the user has done anything. On Android the announcement can also
+  interrupt or delay speech for the element that receives focus. On web the
+  text is written to the polite announcer as the screen appears.
 - Why it matters: 4.1.3 Status Messages is about changes; reading initial
-  content is noise. To be examined properly in I12 Announcements, including
-  whether iOS and web do the same.
-- Workaround: none applied.
+  content is noise.
+- Effect on the tests: the web suites wait for these opening announcements to
+  clear before recording (`web_tests/i12_announcements.spec.js`), and the
+  TalkBack walks wait for the screen's own speech to finish.
+- Workaround: none applied. Not adding the live region until there is
+  something to announce avoids it, at the cost of the first message.
 - Upstream issue: not searched yet.
 
 ## FL-011
@@ -392,4 +399,57 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround: name the field with `Semantics(label: 'Email', child: …)` and
   wrap the visible prefix in `ExcludeSemantics` so it is not read twice
   (`/t/F01/good-cupertino`).
+- Upstream issue: not searched yet.
+
+## FL-017
+
+**The status and alert roles are announced on web only.**
+
+- Status: Confirmed, Flutter 3.47.5. Android 17 with TalkBack 17.0; web with
+  VoiceOver in Chromium. iOS could not be verified (see I12).
+- WCAG: 4.1.3 Status Messages.
+- What happens: `Semantics(role: SemanticsRole.status, child: Text(…))` and
+  `SemanticsRole.alert` become `role="status"` and `role="alert"` on web, and
+  VoiceOver announces a change to them. On Android the same nodes are not
+  live regions (`AccessibilityNodeInfo.liveRegion` is none) and TalkBack says
+  nothing when their text changes. An error shown only this way is silent to
+  a TalkBack user.
+- The roles cannot be combined with `liveRegion: true` on one node: the
+  framework asserts against it (`_noLiveRegion` in
+  `packages/flutter/lib/src/semantics/semantics.dart`).
+- Also seen on web: the message is carried as the node's `aria-label`, and
+  VoiceOver in Chromium reads it twice ("1 item in cart 1 item in cart").
+- Reproduce: `/t/I12/bad-status-role-only` and `/t/I12/bad-alert-role-only`.
+  Asserted in `I12AnnouncementsTest.kt` (no live region) and in the TalkBack
+  transcript (nothing spoken), both written to fail when this is fixed, and
+  on web in `web_tests/i12_announcements.spec.js` and the VoiceOver transcript.
+- Workaround: use `Semantics(liveRegion: true)` for a status message
+  (`/t/I12/good-live-region`). It is announced on Android and web.
+- Upstream issue: not searched yet.
+
+## FL-018
+
+**Announcements sent from code are reported as unsupported on Android, and assertiveness is web only.**
+
+- Status: Confirmed, Flutter 3.47.5. SDK documentation and source read;
+  behaviour checked on Android 17 with TalkBack 17.0.
+- WCAG: 4.1.3 Status Messages.
+- What happens:
+  - `MediaQuery.supportsAnnounceOf(context)` is false on Android. The SDK
+    documentation says Android has deprecated announcement events and to use
+    `Semantics` instead. Code that follows the documentation and checks
+    support therefore sends nothing on Android.
+  - When `SemanticsService.sendAnnouncement` is called anyway on this Android
+    version, TalkBack does speak it. The platform says not to rely on that.
+  - The `assertiveness` argument "is only supported by the web engine and has
+    no effect on other platforms" (SDK documentation). On Android Flutter
+    exposes live regions as polite only, so there is no assertive option
+    there.
+- Effect: there is no single way to announce from code on every platform,
+  and no way to make an urgent message assertive off the web.
+- Reproduce and workaround: `/t/I12/good-announce` checks
+  `supportsAnnounceOf` and, where it is false, makes its visible confirmation
+  a live region instead. Asserted in
+  `test/techniques/i12_announcements_test.dart` (both branches),
+  `I12AnnouncementsTest.kt`, and the TalkBack transcript ("Link copied").
 - Upstream issue: not searched yet.

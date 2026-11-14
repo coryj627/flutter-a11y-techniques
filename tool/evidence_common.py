@@ -33,12 +33,16 @@ def flutter_version():
 
 
 # Techniques with screen reader evidence: id -> (title, Android test class,
-# iOS test class, web VoiceOver spec).
+# iOS test class, web VoiceOver spec). None means that platform has no
+# screen reader test for the technique.
 TECHNIQUES = {
     "C01": ("C01 Button", "C01ButtonTest", "C01ButtonUITests", "c01_button_vo.spec.js"),
     "S05": ("S05 Headings", "S05HeadingsTest", "S05HeadingsUITests", "s05_headings_vo.spec.js"),
     "F01": ("F01 Text fields and labels", "F01TextFieldsTest", "F01TextFieldsUITests",
             "f01_text_fields_vo.spec.js"),
+    # No iOS VoiceOver test: XCUIVoiceOverService cannot observe announcements.
+    "I12": ("I12 Announcements and live regions", "I12AnnouncementsTest",
+            None, "i12_announcements_vo.spec.js"),
 }
 
 

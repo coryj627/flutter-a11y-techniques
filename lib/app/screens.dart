@@ -91,7 +91,7 @@ class TechniqueScreen extends StatelessWidget {
   static String _describe(PlatformStatus status) {
     final note = status.note == null ? '' : ' ${status.note}';
     return switch (status.applicability) {
-      Applicability.applies => 'Applies.',
+      Applicability.applies => 'Applies.$note',
       Applicability.notApplicable => 'Not applicable.$note',
       Applicability.limitation => 'Flutter limitation.$note',
     };

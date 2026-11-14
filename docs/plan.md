@@ -471,8 +471,23 @@ FL-015 (TalkBack drops a filled field's label) were found. The Android tests
 now wait for each example's own title before reading the screen; waiting for
 text every example has could match the previous screen.
 
-Still to do in this phase: I12 Announcements, the technique template, and the
-checklist.
+I12 Announcements and live regions completes the four slice techniques: seven
+examples, spec, doc, tests, and transcripts for TalkBack and for VoiceOver on
+web. What it added to the test approach:
+
+- **Web announcements are captured by polling VoiceOver's "last phrase"** over
+  AppleScript after a key press (`web_tests/vo/vo_helpers.js`). Guidepup only
+  records speech after its own commands. The keyboard drives and VoiceOver is
+  observed, the model used in the author's `slate` project.
+- **Playwright's WebKit build announces no live regions**, even for plain
+  HTML, so announcement speech is checked in Chromium only.
+- **iOS announcements cannot be captured.** `XCUIVoiceOverService` returns the
+  focused element's speech and never the announcement; the simulator log does
+  not have it. I12 is unverified on iOS and the catalog says so.
+- The Android tests look for nodes in every window and retry, because with
+  TalkBack running a system dialog can be the active window.
+
+Still to do in this phase: the technique template and the checklist.
 
 ### Phase 4 — Slice review
 
