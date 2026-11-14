@@ -130,20 +130,31 @@ final class S02InformativeImagesUITests: XCTestCase {
       open(example.slug)
       try voiceOver.enable()
       var spoken: [String] = []
-      // Swipe right to the end of the screen, where the last element repeats.
-      // A move that throws, or a walk that never reaches the end, fails the
-      // test: what was not heard cannot be said to be absent.
+      // Swipe right to the end of the screen. There VoiceOver stays on the
+      // last element and repeats it. One repeat could also be two elements
+      // that read the same, so the end counts only when two more moves give
+      // the same utterance again; anything else is kept as speech. A move
+      // that throws, or a walk that never reaches the end, fails the test:
+      // what was not heard cannot be said to be absent.
       var reachedEnd = false
-      for _ in 0..<24 {
+      var repeats = 0
+      for _ in 0..<30 {
         // `try`, not `try?`: a move that fails ends the test with its error.
         let utterance = try voiceOver.moveForward().utterance
         // VoiceOver separates the label and the role with other whitespace
         // than one space; every run of whitespace becomes one space.
         let text = utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
         if spoken.last == text {
-          reachedEnd = true
-          break
+          repeats += 1
+          if repeats == 3 {
+            reachedEnd = true
+            break
+          }
+          continue
         }
+        // Repeats that were not the end were elements of their own.
+        spoken.append(contentsOf: Array(repeating: spoken.last ?? "", count: repeats))
+        repeats = 0
         spoken.append(text)
       }
       try voiceOver.disable()
