@@ -108,7 +108,8 @@ final class S02InformativeImagesUITests: XCTestCase {
     // Bad examples: the defect must be audible.
     // VoiceOver skips the photo: the text after it follows "Example" directly.
     ("bad-no-label", ["Taken from the east ridge trail."], ["*Image", "Sunrise*"]),
-    ("bad-icon-no-label", ["Order 1042", "Order 1043"], ["Delivered*", "Delayed*"]),
+    ("bad-icon-no-label", ["Order 1042", "Order 1043"],
+     ["Delivered*", "Delayed*", "*Delivered", "*Delayed"]),
     ("bad-role-in-label", ["Image of a sunrise over green hills Image"], []),
     ("bad-filename-label", ["IMG_2041.png Image"], []),
   ]

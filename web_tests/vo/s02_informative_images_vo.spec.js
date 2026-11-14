@@ -20,7 +20,8 @@ const EXAMPLES = {
   // Bad examples: the defect must be audible.
   // The photo is announced as an image and nothing more.
   'bad-no-label': [['image', 'Taken from the east ridge trail.'], []],
-  'bad-icon-no-label': [['Order 1042', 'Order 1043'], ['Delivered Order 1042', 'Delayed Order 1043']],
+  // No phrase may hold a status at all; see the check in the test below.
+  'bad-icon-no-label': [['Order 1042', 'Order 1043'], []],
   'bad-role-in-label': [['Image of a sunrise over green hills image'], []],
   'bad-filename-label': [['IMG_2041.png image'], []],
 };
@@ -36,6 +37,11 @@ for (const [slug, [must, mustNot]] of Object.entries(EXAMPLES)) {
     for (const phrase of mustNot) expect(spoken, slug).not.toContain(phrase);
     // Nothing in the example mentions the picture's content unless it has a
     // text alternative.
+    // The status must not be spoken in any form: not merged with the order,
+    // and not as an element of its own.
+    if (slug === 'bad-icon-no-label') {
+      expect(spoken.filter((p) => /Delivered|Delayed/i.test(p)), slug).toHaveLength(0);
+    }
     if (slug === 'bad-no-label') {
       expect(spoken.filter((p) => /sunrise/i.test(p)), slug).toHaveLength(0);
     }

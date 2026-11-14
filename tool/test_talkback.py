@@ -744,6 +744,35 @@ class Techniques(unittest.TestCase):
         ])
         self.assertEqual(tb.parse_speech(log), {"s02-a": ["Delayed Order 1043", "Image"]})
 
+    def test_an_unfinished_fragment_never_takes_other_lines(self):
+        speech = "11-14 14:05:20.227 1 1 V talkback: SpeechControllerImpl: "
+        # Cut off by an unrelated log line that happens to hold the words.
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-a",
+            speech + 'Speaking fragment text="Delayed',
+            '11-14 14:05:20.300 9 9 I Other: Order 1043", utteranceId=x',
+            "I S02TB   : END slug",
+        ])
+        self.assertEqual(tb.parse_speech(log), {"s02-a": []})
+        # Cut off by the next element's marker: its speech stays its own.
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-a",
+            speech + 'Speaking fragment text="Delayed',
+            "I S02TB   : FOCUS s02-b",
+            speech + 'Speaking fragment text="Image", utteranceId=x',
+            "I S02TB   : END slug",
+        ])
+        self.assertEqual(tb.parse_speech(log), {"s02-a": [], "s02-b": ["Image"]})
+        # Cut off by another fragment.
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-a",
+            speech + 'Speaking fragment text="Delayed',
+            speech + 'Speaking fragment text="Image", utteranceId=x',
+            speech + 'Order 1043", utteranceId=x',
+            "I S02TB   : END slug",
+        ])
+        self.assertEqual(tb.parse_speech(log), {"s02-a": ["Image"]})
+
     def test_a_missing_or_unknown_technique_is_refused(self):
         import evidence_common as common
         for argv in (["tool"], ["tool", "ZZZ"]):

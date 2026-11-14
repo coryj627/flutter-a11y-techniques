@@ -402,39 +402,52 @@ def walk():
     return run, adb("logcat", "-d")
 
 
+SPEECH_TAG = "talkback: SpeechControllerImpl: "
+
+
 def parse_speech(log):
     """What TalkBack spoke while each identified node had focus.
 
     A spoken text with a line break in it (a merged node such as "Delivered",
     new line, "Order 1042") is split by logcat over several lines, each with
-    its own prefix. Those lines are joined, with a space where the break was.
+    the same prefix. Those lines are joined, with a space where the break was.
+    Only a line from TalkBack's speech controller can continue a fragment. A
+    fragment that is cut off by a marker, by another fragment, or by any
+    other log line is dropped, never credited to an element.
     """
     spoken, current, open_fragment = {}, None, None
     for line in log.splitlines():
-        if open_fragment is not None:
-            rest = line.split("SpeechControllerImpl: ", 1)[-1]
-            end = re.match(r'(.*?)", utteranceId', rest)
-            if end:
-                if current:
-                    spoken[current].append(" ".join(open_fragment + [end.group(1)]))
-                open_fragment = None
-            else:
-                open_fragment.append(rest)
-            continue
-        m = re.search(r"[A-Z]\d\dTB\s*: (FOCUS|END) (\S+)", line)
-        if m:
-            current = m.group(2) if m.group(1) == "FOCUS" else None
+        marker = re.search(r"[A-Z]\d\dTB\s*: (FOCUS|END) (\S+)", line)
+        if marker:
+            open_fragment = None
+            current = marker.group(2) if marker.group(1) == "FOCUS" else None
             if current:
                 spoken[current] = []
             continue
-        m = re.search(r'Speaking fragment text="(.*?)", utteranceId', line)
-        if m:
+        whole = re.search(r'Speaking fragment text="(.*?)", utteranceId', line)
+        if whole:
+            open_fragment = None
             if current:
-                spoken[current].append(m.group(1))
+                spoken[current].append(whole.group(1))
             continue
-        m = re.search(r'Speaking fragment text="(.*)$', line)
-        if m:
-            open_fragment = [m.group(1)]
+        start = re.search(r'Speaking fragment text="(.*)$', line)
+        if start:
+            open_fragment = [start.group(1)] if SPEECH_TAG in line else None
+            continue
+        if open_fragment is None:
+            continue
+        if SPEECH_TAG not in line:
+            # Some other log line: the fragment was not finished.
+            open_fragment = None
+            continue
+        rest = line.split(SPEECH_TAG, 1)[1]
+        end = re.match(r'(.*?)", utteranceId', rest)
+        if end:
+            if current:
+                spoken[current].append(" ".join(open_fragment + [end.group(1)]))
+            open_fragment = None
+        else:
+            open_fragment.append(rest)
     return spoken
 
 
