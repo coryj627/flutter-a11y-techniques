@@ -32,6 +32,8 @@ is the work of an independent developer, not a representative of the company.
 - [Coverage inventory](docs/coverage-inventory.md)
 - [Architecture and vertical-slice plan](docs/plan.md)
 - [Specs](docs/specs/)
+- [How to add a technique](docs/technique-guide.md) and the [checklist](docs/technique-checklist.md)
+- [Vertical slice review](docs/slice-review.md)
 
 ## Running
 
