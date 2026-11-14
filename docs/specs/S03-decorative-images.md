@@ -121,7 +121,8 @@ The probe that came first is in [evidence/probes/s03](../evidence/probes/s03/).
   the transcript shows the repeated words of `bad-redundant-label`. A direct
   read can also catch a VoiceOver hint ("You are currently on a heading
   ...") in place of an element's text when VoiceOver has been on it for a
-  moment; the transcript shows this where it happened.
+  moment. That was seen once while recording, on a heading before the
+  example; the committed transcript has none.
 - No new Flutter limitation.
 
 **Not done yet.** Which elements a TalkBack swipe stops on is not tested:
