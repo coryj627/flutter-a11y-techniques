@@ -80,10 +80,15 @@ export async function walkFromBack(page, voiceOver, browserName, isLast, max = 2
  * within `max` moves.
  *
  * Speech alone cannot show the end, or tell two elements that read the same
- * from one element read twice, so the cursor's position decides. A move that
- * leaves the cursor where it was did not reach a new element and is not a
- * stop; two such moves in a row are the end of the screen. A move that
- * changes the position is a stop even when no new phrase is reported for it.
+ * from one element read twice, so the cursor's position is used as well. A
+ * move is a stop on a new element when the position changed, or when a
+ * phrase was spoken that differs from the last stop's (two elements can sit
+ * in the same place). A stop is kept even when no new phrase is reported
+ * for it. A move that changes neither is not a stop, and two of those in a
+ * row are the end of the screen.
+ *
+ * What this cannot tell apart: two elements in the same place that read the
+ * same. The tree tests, which count elements, cover that case.
  */
 export async function stopsToEnd(step, start, max = 40) {
   const stops = [];
@@ -91,7 +96,8 @@ export async function stopsToEnd(step, start, max = 40) {
   let unmoved = 0;
   for (let i = 0; i < max; i++) {
     const { phrase, position: now } = await step();
-    if (now === position) {
+    const spokeAnew = phrase !== '' && stops.length > 0 && phrase !== stops[stops.length - 1];
+    if (now === position && !spokeAnew) {
       unmoved++;
       if (unmoved === 2) return { stops, reachedEnd: true };
       continue;

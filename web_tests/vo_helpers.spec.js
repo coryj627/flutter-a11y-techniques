@@ -55,3 +55,17 @@ test('a walk that runs out of moves did not reach the end', async () => {
   expect(result.reachedEnd).toBe(false);
   expect(result.stops).toHaveLength(5);
 });
+
+test('a different phrase in the same place is a stop', async () => {
+  // An image that sits exactly where the row before it does.
+  const result = await stopsToEnd(
+    moves([['Row', 'a'], ['unexpected image', 'a'], ['unexpected image', 'a'], ['unexpected image', 'a']]),
+    'start');
+  expect(result).toEqual({ stops: ['Row', 'unexpected image'], reachedEnd: true });
+});
+
+test('a different phrase after one unmoved step is still a stop', async () => {
+  const result = await stopsToEnd(
+    moves([['Row', 'a'], ['', 'a'], ['late image', 'a'], ['', 'a'], ['', 'a']]), 'start');
+  expect(result).toEqual({ stops: ['Row', 'late image'], reachedEnd: true });
+});

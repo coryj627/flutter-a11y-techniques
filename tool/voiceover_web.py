@@ -27,9 +27,10 @@ WEB_TESTS = os.path.join(ROOT, "web_tests")
 DEFAULT_METHOD = "focus the Back button, then `voiceOver.next()` to the last element of the example"
 METHODS = {
     "S03": "focus the Back button, then `voiceOver.next()` to the end of the screen. The "
-           "position of VoiceOver's cursor is read after every move: a move that changes it "
-           "is a stop, listed even when no new phrase was reported for it (shown as empty), "
-           "and two moves in a row that do not change it are the end",
+           "position of VoiceOver's cursor is read after every move: a move that changes it, "
+           "or that speaks a different phrase, is a stop, listed even when no new phrase "
+           "was reported for it (shown as empty); two moves in a row that do neither are "
+           "the end",
     "I12": "press the example's button with the keyboard, then poll VoiceOver's last phrase "
            "over AppleScript for what it was given to announce; Chromium only, because "
            "Playwright's WebKit build passes no live region changes to VoiceOver",
