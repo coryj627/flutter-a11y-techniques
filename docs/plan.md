@@ -588,9 +588,9 @@ limitations FL-019 to FL-027, raw output in
   web and platform views) need a plugin from outside the SDK. The owner
   decided on 2026-11-13 that the project is SDK only (D30), so they are
   limitation entries.
-- Native HTML embedded with `HtmlElementView` is not used to supply roles the
-  `Semantics` API lacks (D31: widgets only), so the entries with no semantics
-  role are limitation entries on web too.
+- Good examples do not use native HTML embedded with `HtmlElementView` to
+  supply roles the `Semantics` API lacks (D31: widgets only), so the entries
+  with no semantics role are limitation entries on web too.
 - Those entries are framed as work Flutter has not done yet. Where embedded
   HTML can fill the gap on web, the entry shows it as a labelled workaround,
   a lesser option and not a good example (D32). To build before the first
