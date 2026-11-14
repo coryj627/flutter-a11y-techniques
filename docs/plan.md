@@ -588,8 +588,9 @@ limitations FL-019 to FL-027, raw output in
   web and platform views) need a plugin from outside the SDK. The owner
   decided on 2026-11-13 that the project is SDK only (D30), so they are
   limitation entries.
-- **Open for the owner:** on web, does native HTML embedded with
-  `HtmlElementView` count as a Flutter technique?
+- Native HTML embedded with `HtmlElementView` is not used to supply roles the
+  `Semantics` API lacks (D31: widgets only), so the entries with no semantics
+  role are limitation entries on web too.
 
 How the probe was run, for the next time one is needed: a second entry point
 (`lib/probe.dart`) built with `-t lib/probe.dart` for web and Android

@@ -161,7 +161,8 @@ unless a documented reason prevents it.
 | D27 | 2026-11-13 | Spike again on verifying iOS announcements: more research, Apple's `XCUIVoiceOverService` documentation, and how the owner's `slate` project handles announcements. | Leave unverified; manual check as evidence. |
 | D28 | 2026-11-13 | Reflow and zoom, high contrast, and reduced motion are their own catalog entries (V02, V06, V09); other techniques check text scaling and light and dark contrast. | Add those checks to every technique. |
 | D29 | 2026-11-13 | Minimum OS and browser versions are those of the pinned Flutter release. Assistive technology is verified on the current major OS and browser versions. | Support and test current majors only. |
-| D30 | 2026-11-13 | SDK only: techniques use the Flutter SDK and no plugins, first-party ones included. Maps (C28) and Video and audio (C29) become limitation entries; Embedded web and platform views (C30) is a limitation entry on Android and iOS, and on web depends on open question 1. | Bring `google_maps_flutter`, `video_player`, and `webview_flutter` into scope. |
+| D30 | 2026-11-13 | SDK only: techniques use the Flutter SDK and no plugins, first-party ones included. Maps (C28) and Video and audio (C29) become limitation entries; Embedded web and platform views (C30) is a limitation entry on Android and iOS, and on web documents `HtmlElementView` for embedding content only (D31). | Bring `google_maps_flutter`, `video_player`, and `webview_flutter` into scope. |
+| D31 | 2026-11-13 | Widgets only: accessibility techniques use Flutter widgets and the `Semantics` API. Native HTML embedded with `HtmlElementView` is not used to supply roles the `Semantics` API lacks. Flutter's [web accessibility documentation](https://docs.flutter.dev/ui/accessibility/web-accessibility) names standard widgets and `Semantics` with `SemanticsRole` as the mechanisms; the [`HtmlElementView` documentation](https://docs.flutter.dev/platform-integration/web/web-content-in-flutter) presents it for embedding content and says nothing about accessibility, so that use would have no source to cite (TEC-2). | Allow embedded HTML on web for grid, tree, treegrid, feed, separator, meter, math, and text semantics. |
 
 ## 5a. Status after the vertical slice (2026-11-13)
 
@@ -184,13 +185,8 @@ VAL-1, VAL-8, and VAL-10 above were revised to match.
 
 ## 6. Open questions
 
-1. On web, does native HTML embedded with `HtmlElementView` count as a
-   Flutter technique? Flutter's `Semantics` API has no role for grid, tree,
-   treegrid, feed, separator, meter, math, or inline text semantics (FL-021,
-   FL-026). `HtmlElementView` could carry them on web only, at the cost of
-   writing HTML instead of widgets. Not probed yet. The same answer settles
-   C30 on web. (Plugins were ruled out by D30; `HtmlElementView` is in the
-   SDK, so D30 does not answer this.)
+None. The plugin question was settled by D30 and the embedded HTML question
+by D31.
 
 ## 7. Assumptions to verify
 
