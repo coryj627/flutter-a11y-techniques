@@ -404,6 +404,11 @@ def walk():
 
 SPEECH_TAG = "talkback: SpeechControllerImpl: "
 
+# Put in an element's speech when a fragment spoken during its focus was cut
+# off in the log. Its words are lost, so nothing may be concluded from what
+# was captured: problems() reports it and the element is walked again.
+INCOMPLETE = "[speech capture was cut off]"
+
 
 def parse_speech(log):
     """What TalkBack spoke while each identified node had focus.
@@ -413,32 +418,42 @@ def parse_speech(log):
     the same prefix. Those lines are joined, with a space where the break was.
     Only a line from TalkBack's speech controller can continue a fragment. A
     fragment that is cut off by a marker, by another fragment, or by any
-    other log line is dropped, never credited to an element.
+    other log line is never credited to an element; INCOMPLETE is recorded
+    for the element that had focus, so its speech fails its checks.
     """
     spoken, current, open_fragment = {}, None, None
+
+    def drop():
+        nonlocal open_fragment
+        if open_fragment is not None and current:
+            spoken[current].append(INCOMPLETE)
+        open_fragment = None
+
     for line in log.splitlines():
         marker = re.search(r"[A-Z]\d\dTB\s*: (FOCUS|END) (\S+)", line)
         if marker:
-            open_fragment = None
+            drop()
             current = marker.group(2) if marker.group(1) == "FOCUS" else None
             if current:
                 spoken[current] = []
             continue
         whole = re.search(r'Speaking fragment text="(.*?)", utteranceId', line)
         if whole:
-            open_fragment = None
+            drop()
             if current:
                 spoken[current].append(whole.group(1))
             continue
         start = re.search(r'Speaking fragment text="(.*)$', line)
         if start:
-            open_fragment = [start.group(1)] if SPEECH_TAG in line else None
+            drop()
+            if SPEECH_TAG in line:
+                open_fragment = [start.group(1)]
             continue
         if open_fragment is None:
             continue
         if SPEECH_TAG not in line:
             # Some other log line: the fragment was not finished.
-            open_fragment = None
+            drop()
             continue
         rest = line.split(SPEECH_TAG, 1)[1]
         end = re.match(r'(.*?)", utteranceId', rest)
@@ -448,6 +463,7 @@ def parse_speech(log):
             open_fragment = None
         else:
             open_fragment.append(rest)
+    drop()
     return spoken
 
 
@@ -464,6 +480,8 @@ def said(fragments, phrase):
 def problems(ident, spoken_fragments):
     """What is wrong with the speech for one element; empty when it is as
     expected. An element with no expectations only has to have been spoken."""
+    if INCOMPLETE in spoken_fragments:
+        return [f"{ident}: speech capture was cut off; what was said is not known"]
     fragments = [f.lower() for f in spoken_fragments]
     joined = " | ".join(fragments)
     if ident not in EXPECT:

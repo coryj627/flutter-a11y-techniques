@@ -202,7 +202,9 @@ class S02InformativeImagesTest {
                 talkBackFocus("s02-$slug-$key") {
                     if (text == UNNAMED_IMAGE) images().single() else node(text)
                 }
-                Thread.sleep(8_000)
+                // TalkBack spells a file name out, which takes longer than a
+                // sentence; at 8 seconds its "Image" was sometimes not spoken yet.
+                Thread.sleep(if (slug == "bad-filename-label") 14_000 else 8_000)
             }
             Log.i("S02TB", "END $slug")
         }

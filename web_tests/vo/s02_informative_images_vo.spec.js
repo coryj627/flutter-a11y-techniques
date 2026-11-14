@@ -6,8 +6,8 @@ import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { walkFromBack } from './vo_helpers.js';
 
-// slug -> [phrases that must be spoken, phrases that must not be]. The walk
-// stops at the last phrase in the first list.
+// slug -> [phrases that must be spoken, phrases that must not be]. The last
+// phrase in the first list is the last element of the example.
 const EXAMPLES = {
   'good-image-label': [
     ['Sunrise over green hills image', 'Taken from the east ridge trail.'], []],
@@ -30,9 +30,19 @@ for (const [slug, [must, mustNot]] of Object.entries(EXAMPLES)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
     await page.goto(`/#/t/S02/${slug}`, { waitUntil: 'load' });
     await expect(page.getByRole('heading', { name: 'Example', level: 2 })).toBeVisible();
+    // Walk one step past the last expected phrase, so that anything exposed
+    // after it is heard too. At the end of the screen VoiceOver says nothing
+    // or repeats the last element.
     const last = must[must.length - 1];
-    const spoken = await walkFromBack(page, voiceOver, browserName, (p) => p === last);
+    let reachedLast = false;
+    const spoken = await walkFromBack(page, voiceOver, browserName, (p) => {
+      if (reachedLast) return true;
+      reachedLast = p === last;
+      return false;
+    });
     console.log(`S02VO ${browserName} ${slug} | ${spoken.join(' / ')}`);
+    expect(spoken.indexOf(last), `${slug}: reached the last element`).toBe(spoken.length - 2);
+    expect(['', last], `${slug}: nothing follows the last element`).toContain(spoken[spoken.length - 1]);
     for (const phrase of must) expect(spoken, slug).toContain(phrase);
     for (const phrase of mustNot) expect(spoken, slug).not.toContain(phrase);
     // Nothing in the example mentions the picture's content unless it has a

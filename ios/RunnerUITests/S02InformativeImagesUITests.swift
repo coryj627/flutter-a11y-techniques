@@ -98,7 +98,8 @@ final class S02InformativeImagesUITests: XCTestCase {
 
   // L4. What VoiceOver speaks while swiping through each example.
   // (slug, phrases that must be spoken, phrases that must not be). A phrase
-  // ending in "*" is matched as the start of an utterance.
+  // starting with "~" matches anywhere in an utterance, in any case; any
+  // other phrase must be the whole utterance.
   private let speech: [(slug: String, must: [String], mustNot: [String])] = [
     ("good-image-label", ["Sunrise over green hills Image", "Taken from the east ridge trail."], []),
     ("good-icon-label", ["Delivered Order 1042", "Delayed Order 1043"], ["Order 1042", "Delivered"]),
@@ -107,16 +108,14 @@ final class S02InformativeImagesUITests: XCTestCase {
                     "Orders in 2025: Q1 20, Q2 35, Q3 50, Q4 80."], []),
     // Bad examples: the defect must be audible.
     // VoiceOver skips the photo: the text after it follows "Example" directly.
-    ("bad-no-label", ["Taken from the east ridge trail."], ["*Image", "Sunrise*"]),
-    ("bad-icon-no-label", ["Order 1042", "Order 1043"],
-     ["Delivered*", "Delayed*", "*Delivered", "*Delayed"]),
+    ("bad-no-label", ["Taken from the east ridge trail."], ["~image", "~sunrise"]),
+    ("bad-icon-no-label", ["Order 1042", "Order 1043"], ["~delivered", "~delayed"]),
     ("bad-role-in-label", ["Image of a sunrise over green hills Image"], []),
     ("bad-filename-label", ["IMG_2041.png Image"], []),
   ]
 
   private func matches(_ utterance: String, _ phrase: String) -> Bool {
-    if phrase.hasPrefix("*") { return utterance.hasSuffix(String(phrase.dropFirst())) }
-    if phrase.hasSuffix("*") { return utterance.hasPrefix(String(phrase.dropLast())) }
+    if phrase.hasPrefix("~") { return utterance.lowercased().contains(phrase.dropFirst().lowercased()) }
     return utterance == phrase
   }
 

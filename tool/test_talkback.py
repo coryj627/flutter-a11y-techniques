@@ -753,7 +753,7 @@ class Techniques(unittest.TestCase):
             '11-14 14:05:20.300 9 9 I Other: Order 1043", utteranceId=x',
             "I S02TB   : END slug",
         ])
-        self.assertEqual(tb.parse_speech(log), {"s02-a": []})
+        self.assertEqual(tb.parse_speech(log), {"s02-a": [tb.INCOMPLETE]})
         # Cut off by the next element's marker: its speech stays its own.
         log = "\n".join([
             "I S02TB   : FOCUS s02-a",
@@ -762,7 +762,7 @@ class Techniques(unittest.TestCase):
             speech + 'Speaking fragment text="Image", utteranceId=x',
             "I S02TB   : END slug",
         ])
-        self.assertEqual(tb.parse_speech(log), {"s02-a": [], "s02-b": ["Image"]})
+        self.assertEqual(tb.parse_speech(log), {"s02-a": [tb.INCOMPLETE], "s02-b": ["Image"]})
         # Cut off by another fragment.
         log = "\n".join([
             "I S02TB   : FOCUS s02-a",
@@ -771,7 +771,22 @@ class Techniques(unittest.TestCase):
             speech + 'Order 1043", utteranceId=x',
             "I S02TB   : END slug",
         ])
-        self.assertEqual(tb.parse_speech(log), {"s02-a": ["Image"]})
+        self.assertEqual(tb.parse_speech(log), {"s02-a": [tb.INCOMPLETE, "Image"]})
+
+    def test_cut_off_speech_fails_even_when_the_required_speech_was_heard(self):
+        speech = "11-14 14:05:20.227 1 1 V talkback: SpeechControllerImpl: "
+        # "Order 1042" is heard whole; a second fragment, which may have been
+        # the forbidden "Delivered", is cut off.
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-bad-icon-no-label-first",
+            speech + 'Speaking fragment text="Order 1042", utteranceId=x',
+            speech + 'Speaking fragment text="Delivered',
+            "I S02TB   : END slug",
+        ])
+        heard = tb.parse_speech(log)["s02-bad-icon-no-label-first"]
+        self.assertEqual(heard, ["Order 1042", tb.INCOMPLETE])
+        self.assertTrue(tb.problems("s02-bad-icon-no-label-first", heard))
+        self.assertFalse(tb.problems("s02-bad-icon-no-label-first", ["Order 1042"]))
 
     def test_a_missing_or_unknown_technique_is_refused(self):
         import evidence_common as common
