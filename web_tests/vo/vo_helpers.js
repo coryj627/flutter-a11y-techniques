@@ -31,6 +31,7 @@ export async function walkFromBack(page, voiceOver, browserName, isLast, max = 2
   const heading = page.getByRole('heading', { name: 'Example', level: 2 });
   if (clickAtPoint) {
     const box = await heading.boundingBox();
+    if (!box) throw new Error('The "Example" heading has no box to click: it is not on screen.');
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   } else {
     await heading.click();
