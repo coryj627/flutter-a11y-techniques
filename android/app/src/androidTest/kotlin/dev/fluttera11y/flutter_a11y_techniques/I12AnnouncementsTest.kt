@@ -189,6 +189,13 @@ class I12AnnouncementsTest {
             press(slug)
             // The chatty example needs a few seconds to show its defect.
             Thread.sleep(if (slug == "bad-chatty-live-region") 7_000 else 5_000)
+            if (slug == "good-announce") {
+                // A second press must be announced too, although the message
+                // on screen ends up the same.
+                Log.i("I12TB", "FOCUS i12-$slug-announced-again")
+                press(slug)
+                Thread.sleep(5_000)
+            }
             Log.i("I12TB", "END $slug")
         }
     }

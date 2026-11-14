@@ -157,6 +157,12 @@ void main() {
       });
       expect(sent, ['Link copied']);
       expect(find.text('Link copied'), findsOneWidget);
+      // Every press is announced, not only the first.
+      final again = await _announcements(tester, () async {
+        await tester.tap(_action('good-announce'));
+        await tester.pumpAndSettle();
+      });
+      expect(again, ['Link copied']);
       expect(
         _status(tester, 'good-announce').flagsCollection.isLiveRegion,
         isFalse,
@@ -176,6 +182,17 @@ void main() {
       final status = _status(tester, 'good-announce');
       expect(status.label, 'Link copied');
       expect(status.flagsCollection.isLiveRegion, isTrue);
+
+      // A second press must change the live region's text again, or nothing
+      // would be announced: it is cleared for one frame, then set.
+      await tester.tap(_action('good-announce'));
+      await tester.pump();
+      // For this frame the message is gone, from the screen and the tree.
+      expect(find.text('Link copied'), findsNothing);
+      await tester.pump();
+      final again = _status(tester, 'good-announce');
+      expect(again.label, 'Link copied');
+      expect(again.flagsCollection.isLiveRegion, isTrue);
       handle.dispose();
     });
 

@@ -50,6 +50,9 @@ test.describe('good examples', () => {
     await expect.poll(() => announced(page)).toEqual(['polite: Link copied']);
     await page.waitForTimeout(1200);
     expect(await announced(page)).toEqual(['polite: Link copied']);
+    // A second press is announced again.
+    await press(page, 'good-announce');
+    await expect.poll(() => announced(page)).toEqual(['polite: Link copied', 'polite: Link copied']);
   });
 
   test('good-snackbar: the SnackBar message is announced', async ({ page }) => {

@@ -100,34 +100,63 @@ class GoodLiveRegion extends StatelessWidget {
 // #region good-announce
 /// A change announced from code, for platforms that support it, with a live
 /// region for the ones that do not (Android).
-class GoodAnnouncement extends StatelessWidget {
+class GoodAnnouncement extends StatefulWidget {
   const GoodAnnouncement({super.key});
+
+  @override
+  State<GoodAnnouncement> createState() => _GoodAnnouncementState();
+}
+
+class _GoodAnnouncementState extends State<GoodAnnouncement> {
+  static const _confirmation = 'Link copied';
+  String _message = '';
+
+  void _copy(bool canAnnounce) {
+    if (canAnnounce) {
+      setState(() => _message = _confirmation);
+      SemanticsService.sendAnnouncement(
+        View.of(context),
+        _confirmation,
+        Directionality.of(context),
+      );
+      return;
+    }
+    // A live region is announced when its text changes. Pressing the button
+    // a second time would leave the same text in place and say nothing, so
+    // the message is cleared and set again in the next frame: every press is
+    // a change, and every press is announced.
+    setState(() => _message = '');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _message = _confirmation);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     // False on Android, which has deprecated announcements sent from code.
     final canAnnounce = MediaQuery.supportsAnnounceOf(context);
-    return _Demo(
-      slug: 'good-announce',
-      action: 'Copy link',
-      initial: '',
-      message: (count) => 'Link copied',
-      // Where code cannot announce, the visible confirmation is a live
-      // region instead. Never both, or the message would be read twice.
-      statusBuilder: (context, text) => Semantics(
-        identifier: 'i12-good-announce-status',
-        liveRegion: !canAnnounce,
-        child: text,
-      ),
-      onPressed: (context, message) {
-        if (canAnnounce) {
-          SemanticsService.sendAnnouncement(
-            View.of(context),
-            message,
-            Directionality.of(context),
-          );
-        }
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16,
+      children: [
+        TestId(
+          'i12-good-announce-action',
+          child: FilledButton(
+            onPressed: () => _copy(canAnnounce),
+            child: const Text('Copy link'),
+          ),
+        ),
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 24),
+          // Where code cannot announce, the visible confirmation is a live
+          // region instead. Never both, or the message would be read twice.
+          child: Semantics(
+            identifier: 'i12-good-announce-status',
+            liveRegion: !canAnnounce,
+            child: Text(_message, style: Theme.of(context).textTheme.bodyLarge),
+          ),
+        ),
+      ],
     );
   }
 }

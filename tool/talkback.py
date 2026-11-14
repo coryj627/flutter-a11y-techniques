@@ -94,6 +94,8 @@ EXPECT = {
     "i12-good-live-region-announced": (["1 item in cart"], []),
     # On Android this example falls back to a live region.
     "i12-good-announce-announced": (["Link copied"], []),
+    # The same button pressed a second time.
+    "i12-good-announce-announced-again": (["Link copied"], []),
     "i12-good-snackbar-announced": (["Message archived"], []),
     # Bad examples.
     "i12-bad-silent-update-announced": ([], ["item in cart"]),
@@ -149,7 +151,7 @@ def screen():
     return found
 
 
-def tap(text, scrolls=3):
+def tap(text, scrolls=5):
     """Taps the element showing text, scrolling to find it. Raises AdbError
     if it is not found or the tap command fails."""
     for _ in range(scrolls + 1):
