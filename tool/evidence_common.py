@@ -37,6 +37,8 @@ def flutter_version():
 # screen reader test for the technique.
 TECHNIQUES = {
     "C01": ("C01 Button", "C01ButtonTest", "C01ButtonUITests", "c01_button_vo.spec.js"),
+    "S01": ("S01 Accessible names", "S01AccessibleNamesTest", "S01AccessibleNamesUITests",
+            "s01_accessible_names_vo.spec.js"),
     "S05": ("S05 Headings", "S05HeadingsTest", "S05HeadingsUITests", "s05_headings_vo.spec.js"),
     "F01": ("F01 Text fields and labels", "F01TextFieldsTest", "F01TextFieldsUITests",
             "f01_text_fields_vo.spec.js"),

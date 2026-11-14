@@ -70,6 +70,21 @@ EXPECT = {
     "s05-bad-header-only-profile": (["Profile"], ["Heading"]),
     "s05-bad-emphasis-heading-notice": (["Please check your address", "Heading"], []),
     "s05-bad-cupertino-section-header-notifications": (["Notifications"], ["Heading"]),
+    # S01 Accessible names. A named control is announced with its name and
+    # its role; the bad examples must sound as their defects say.
+    "s01-good-visible-label-updates": (["Email me order updates", "Check box"], []),
+    "s01-good-visible-label-dark": (["Dark mode", "Switch"], []),
+    "s01-good-merged-label-remember": (["Remember this device", "Check box"], []),
+    "s01-good-merged-label-wifi": (["Wi-Fi", "Switch"], []),
+    "s01-good-specific-names-email": (["Order updates, email", "Switch"], []),
+    "s01-good-specific-names-sms": (["Order updates, text message", "Switch"], []),
+    "s01-good-cupertino-airplane": (["Airplane mode", "Switch"], []),
+    "s01-bad-unassociated-label-terms": (["Check box"], ["I accept the terms"]),
+    "s01-bad-duplicate-names-email": (["Order updates", "Switch"], ["email"]),
+    "s01-bad-duplicate-names-sms": (["Order updates", "Switch"], ["text message"]),
+    "s01-bad-role-in-name-dark": (["Dark mode switch", "Switch"], []),
+    # FL-028 is a web limitation: on Android the slider is named.
+    "s01-bad-slider-name-web-volume": (["Volume", "Slider"], []),
     # F01 Text fields and labels. A field must be announced with its name and
     # as an edit box. Ids ending in -filled are read after text was typed.
     "f01-good-label-email": (["Email", "Edit box"], []),
@@ -390,7 +405,8 @@ def parse_speech(log):
 def said(fragments, phrase):
     """Role and state words must be spoken as their own sentence, so a name
     such as "Close button" does not count as the role."""
-    if phrase.lower() in ("button", "disabled", "heading", "edit box"):
+    if phrase.lower() in ("button", "disabled", "heading", "edit box", "switch",
+                          "check box", "slider"):
         sentences = [t.strip() for f in fragments for t in f.split(".")]
         return phrase.lower() in sentences
     return phrase.lower() in " | ".join(fragments)

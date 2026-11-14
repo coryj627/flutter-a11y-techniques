@@ -14,15 +14,31 @@ export const activateBrowser = (browserName) =>
  * Starts from the Back button, the first control on every example screen, and
  * moves VoiceOver forward until `isLast(phrase, index)` is true. Returns what
  * was spoken at each step.
+ *
+ * `clickAtPoint` makes that click with the mouse at the heading's position,
+ * without Playwright's check that nothing covers it. It is for a screen with
+ * a Material `Slider`, which on web adds an empty full-screen element above
+ * the others, so the checked click never succeeds
+ * (docs/flutter-limitations.md, FL-029).
  */
-export async function walkFromBack(page, voiceOver, browserName, isLast, max = 24) {
+export async function walkFromBack(page, voiceOver, browserName, isLast, max = 24, clickAtPoint = false) {
   await activateBrowser(browserName);
   await page.bringToFront();
   // A real click, on inert text: the browser can come up with keyboard focus
   // in its own toolbar, and setting DOM focus from script does not move it
   // into the page, which left VoiceOver's cursor in the tab bar on about
   // every other walk.
-  await page.getByRole('heading', { name: 'Example', level: 2 }).click();
+  const heading = page.getByRole('heading', { name: 'Example', level: 2 });
+  if (clickAtPoint) {
+    const box = await heading.boundingBox();
+    if (!box) {
+      throw new Error(`The "Example" heading has no box to click on ${page.url()}: ` +
+        `${await heading.count()} matching element(s), none on screen.`);
+    }
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  } else {
+    await heading.click();
+  }
   await page.getByRole('button', { name: 'Back' }).focus();
   await page.waitForTimeout(1500);
   const spoken = [];

@@ -48,6 +48,11 @@ For a technique with id `X00` and name `thing`:
 The app, the Widgetbook, and the doc check pick a technique up from the
 registry; nothing else needs wiring.
 
+A new technique changes the Widgetbook's navigation, so rebuild the
+Widgetbook (`cd widgetbook && flutter build web`) and run its tests
+(`npx playwright test -c widgetbook.config.js` in `web_tests/`) before
+pushing. S01 failed CI here: the tests had passed against a stale build.
+
 ## Examples
 
 - **Slugs** start with `good-` or `bad-` and are stable; they are routes and

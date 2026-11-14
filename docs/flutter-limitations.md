@@ -48,6 +48,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-025](#fl-025) | iOS accessibility APIs and settings with no Flutter counterpart | iOS | Confirmed |
 | [FL-026](#fl-026) | No semantics roles for grid, tree, treegrid, feed, separator, meter, or math | All | Confirmed |
 | [FL-027](#fl-027) | A progress indicator whose value has a percent sign reports an empty range on Android | Android | Observed |
+| [FL-028](#fl-028) | A slider has no accessible name on web | Web | Confirmed |
+| [FL-029](#fl-029) | A Material `Slider` adds an empty full-screen element that takes pointer events on web | Web | Observed |
 
 ---
 
@@ -665,3 +667,73 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround: none found yet. To be checked, with TalkBack, in the progress
   indicator technique.
 - Upstream issue: not searched yet.
+
+## FL-028
+
+**A slider has no accessible name on web.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the S01 probe
+  (`docs/evidence/probes/s01/`); asserted by
+  `web_tests/s01_accessible_names.spec.js` (`bad-slider-name-web`) and heard
+  in `docs/evidence/S01/voiceover-web.md`. Engine source read:
+  `lib/web_ui/lib/src/engine/semantics/incrementable.dart`.
+- WCAG: 4.1.2 Name, Role, Value; 1.3.1 Info and Relationships.
+- What happens: the framework gives the slider's node its label. On web the
+  engine draws that node as a `flt-semantics` element with no role, puts
+  `aria-label` on it, and appends an `<input type="range" role="slider">`
+  inside it. The input is the element that takes focus and has the role and
+  the value, and it gets no `aria-label` and no `aria-labelledby`. Chromium
+  computes an empty accessible name for the slider. The same happens for
+  `Semantics(label:)` around a `Slider`, for `MergeSemantics` around a
+  `Slider` and its text, and for `CupertinoSlider`.
+- Not affected: Android (`SeekBar` with description "40%, Volume") and iOS
+  (label "Volume", value "40%"). Checkbox, switch, and radio elements on web
+  carry `aria-label` on the element that has the role.
+- Effect: the slider has no name of its own, so a list of form controls or
+  a move by Tab gives a slider and a value with no word on what it adjusts,
+  and speech input cannot address it by name. Heard with VoiceOver on macOS
+  in Chromium, moving with the VoiceOver cursor: "Volume group" as one stop,
+  then "40% dimmed slider". What is spoken when Tab lands on the slider was
+  not recorded.
+- Also seen, not followed up here: VoiceOver calls the slider "dimmed". The
+  engine disables the `input` while the browser is in pointer mode
+  (`incrementable.dart`). To check in the slider technique (F10).
+- How to reproduce: `/t/S01/bad-slider-name-web` in the app, on web.
+- Workaround: none found in the SDK. Not tried: putting the name in the value
+  text with `Slider.semanticFormatterCallback`, which would also change what
+  Android and iOS say.
+- Upstream issue: not searched yet (D25).
+
+## FL-029
+
+**A Material `Slider` adds an empty full-screen element that takes pointer events on web.**
+
+- Status: Observed, Flutter 3.47.5, while recording VoiceOver for
+  `/t/S01/bad-slider-name-web`. No test in the repo asserts it. Cause not
+  read in the SDK source.
+- What happens: on the screen with a `Slider`, the semantics DOM has one more
+  `flt-semantics` element than the other S01 screens: no role, no label, no
+  children, the size of the whole view (1280 by 720 in the test), with
+  `pointer-events: auto`, after the other nodes in document order. It is
+  there with and without `divisions`. The other seven S01 example screens,
+  which have no slider, have no such element.
+- Effect seen: Playwright refuses to click any other semantics element on
+  that screen, because this element is on top of it ("intercepts pointer
+  events"). Keyboard operation of the slider is not affected (asserted in
+  the S01 web test). Whether a person using a mouse, touch, or a screen
+  reader's click is affected was not tested.
+- Seen on the same screen, not a finding: with Playwright's WebKit build,
+  VoiceOver's cursor usually left the page content after the screen title
+  and did not reach the slider, with and without a mouse click to put focus
+  in the page first. It walked the other seven S01 screens normally, and in
+  Chromium it reached the slider. The test cannot tell a fault of the page
+  from the test harness losing focus, so this is recorded in
+  `docs/evidence/S01/voiceover-web.md` and nothing is asserted. The WebKit
+  build is not Safari; Safari was not tried.
+- How it is handled here: `walkFromBack` in `web_tests/vo/vo_helpers.js`
+  takes a `clickAtPoint` flag for this screen, which clicks with the mouse
+  at a position and skips Playwright's check.
+- To do in the slider technique (F10): find the widget that creates the
+  element, and test pointer and screen reader activation of controls beside
+  a slider.
+- Upstream issue: not searched yet (D25).

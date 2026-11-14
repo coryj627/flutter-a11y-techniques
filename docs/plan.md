@@ -607,8 +607,37 @@ How the probe was run, for the next time one is needed: a second entry point
 so the catalog app is not touched; the fixture source is kept with the
 evidence.
 
-Next: batch 1, names, roles, and images (S01, S02, S03, S04, S13, S14, S15,
-S22), one technique per pull request.
+### Batch 1: names, roles, and images
+
+S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
+
+- S01 Accessible names: built on 2026-11-14. Found FL-028 (a slider has no
+  name on web) and FL-029 (a Material `Slider` adds an empty full-screen
+  element on web). Both go to the slider technique (F10) for more work.
+- Next: S02 Informative images.
+
+### Late-stage tasks
+
+Asked for by the owner on 2026-11-14. Both come after the technique batches.
+
+1. **Flutter accessibility history, by version.** Read every entry of the
+   [Flutter release notes](https://docs.flutter.dev/release/release-notes)
+   and write a log of what each version added or changed for accessibility
+   and for the semantics of widgets. It is the frame of reference for the
+   limitation entries: what Flutter has done, and when. Then match each entry
+   in [flutter-limitations.md](flutter-limitations.md) to the open
+   accessibility issues in the Flutter repository, and record the issue link
+   in the entry. This is matching to issues that exist; filing new ones is
+   still held back (D25).
+2. **An in-app view of Flutter's open accessibility issues.** Searchable,
+   with category toggles for the kind of issue by assistive technology and by
+   platform. First choice: read the issues live from the GitHub API. If that
+   is not feasible, a GitHub Action builds the list as a data file and the
+   app is built and released from it every two weeks. To settle when the task
+   starts, not decided now: the API's limits for a client with no sign-in;
+   how the app makes the request under D30 (SDK only, so no `http` package);
+   and how issues are put into categories (Flutter's own labels, or rules
+   written here).
 
 ## 4. Definition of done for a technique
 
