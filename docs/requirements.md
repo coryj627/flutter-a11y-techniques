@@ -161,6 +161,7 @@ unless a documented reason prevents it.
 | D27 | 2026-11-13 | Spike again on verifying iOS announcements: more research, Apple's `XCUIVoiceOverService` documentation, and how the owner's `slate` project handles announcements. | Leave unverified; manual check as evidence. |
 | D28 | 2026-11-13 | Reflow and zoom, high contrast, and reduced motion are their own catalog entries (V02, V06, V09); other techniques check text scaling and light and dark contrast. | Add those checks to every technique. |
 | D29 | 2026-11-13 | Minimum OS and browser versions are those of the pinned Flutter release. Assistive technology is verified on the current major OS and browser versions. | Support and test current majors only. |
+| D30 | 2026-11-13 | SDK only: techniques use the Flutter SDK and no plugins, first-party ones included. Maps (C28) and Video and audio (C29) become limitation entries; Embedded web and platform views (C30) is a limitation entry on Android and iOS, and on web depends on open question 1. | Bring `google_maps_flutter`, `video_player`, and `webview_flutter` into scope. |
 
 ## 5a. Status after the vertical slice (2026-11-13)
 
@@ -183,16 +184,13 @@ VAL-1, VAL-8, and VAL-10 above were revised to match.
 
 ## 6. Open questions
 
-1. Are first-party plugins in scope? Batch 0 found that Maps (C28), Video and
-   audio (C29), and Embedded web and platform views (C30) have no mechanism in
-   the Flutter SDK itself; they need `google_maps_flutter`, `video_player`,
-   and `webview_flutter`. See
-   [coverage-inventory.md, section 5](coverage-inventory.md#5-batch-0-probes-of-the-27-unknown-entries).
-2. On web, does native HTML embedded with `HtmlElementView` count as a
+1. On web, does native HTML embedded with `HtmlElementView` count as a
    Flutter technique? Flutter's `Semantics` API has no role for grid, tree,
    treegrid, feed, separator, meter, math, or inline text semantics (FL-021,
    FL-026). `HtmlElementView` could carry them on web only, at the cost of
-   writing HTML instead of widgets. Not probed yet.
+   writing HTML instead of widgets. Not probed yet. The same answer settles
+   C30 on web. (Plugins were ruled out by D30; `HtmlElementView` is in the
+   SDK, so D30 does not answer this.)
 
 ## 7. Assumptions to verify
 

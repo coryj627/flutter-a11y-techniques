@@ -583,11 +583,13 @@ limitations FL-019 to FL-027, raw output in
 [evidence/probes/batch-0](evidence/probes/batch-0/).
 
 - 7 to build: S07, S18, V04, I05, I06, C15, C19.
-- 15 limitation entries, 1 not applicable, 1 folded into existing checks.
-- 3 need a plugin from outside the SDK (C28 Maps, C29 Video and audio, C30
-  Embedded web and platform views). **Open for the owner:** are first-party
-  plugins (`video_player`, `webview_flutter`, `google_maps_flutter`) in
-  scope?
+- 18 limitation entries, 1 not applicable, 1 folded into existing checks.
+- 3 of those limitation entries (C28 Maps, C29 Video and audio, C30 Embedded
+  web and platform views) need a plugin from outside the SDK. The owner
+  decided on 2026-11-13 that the project is SDK only (D30), so they are
+  limitation entries.
+- **Open for the owner:** on web, does native HTML embedded with
+  `HtmlElementView` count as a Flutter technique?
 
 How the probe was run, for the next time one is needed: a second entry point
 (`lib/probe.dart`) built with `-t lib/probe.dart` for web and Android

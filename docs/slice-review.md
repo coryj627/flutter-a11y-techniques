@@ -181,7 +181,7 @@ most common controls come first.
 | 7. Visual preferences | V01, V02, V03, V05, V06, V07, V09, V12 | Contrast, themes, scaling, reflow, orientation, motion. Closes the VAL-10 gaps |
 | 8. Remaining forms | F04, F05, F11, F12, F13, F14, F15, F16, F17, F18 | Pickers, comboboxes, and less common inputs |
 | 9. Navigation and complex components | I07, I13, I14, I15, I16, C07, C17, C27 | Tabs, carousel, charts, navigation, drag alternatives |
-| 10. What batch 0 found | S07, S18, V04, I05, I06, C15, C19 to build; S19, S20, S21, V08, V10, V11, I09, I10, C20, C21, C22, C23, C24, C25, C31 as limitation entries | Seven techniques, most with a limitation on at least one platform, and fifteen short limitation entries (TEC-6). I11 is folded into label-in-name checks, I17 is not applicable, and C28, C29, C30 wait on the owner's decision about plugins |
+| 10. What batch 0 found | S07, S18, V04, I05, I06, C15, C19 to build; S19, S20, S21, V08, V10, V11, I09, I10, C20, C21, C22, C23, C24, C25, C28, C29, C30, C31 as limitation entries | Seven techniques, most with a limitation on at least one platform, and eighteen short limitation entries (TEC-6). I11 is folded into label-in-name checks and I17 is not applicable. C28, C29, and C30 need plugins, which D30 rules out |
 
 Each batch is a set of pull requests, one technique each, through the same
 gates. The batch list is a plan, not a commitment: batch 0 will move entries
