@@ -1,0 +1,235 @@
+// Batch 0 probe (throwaway, not committed): one fixture per mechanism.
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  String log = 'none';
+  void did(String what) => setState(() => log = what);
+
+  Widget landmark(String id, SemanticsRole role, String text, {String? label}) {
+    return Semantics(
+      identifier: 'p-s07-$id',
+      role: role,
+      label: label,
+      container: true,
+      explicitChildNodes: true,
+      child: Text(text),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    final f = WidgetsBinding.instance.platformDispatcher.accessibilityFeatures;
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 8,
+            children: [
+              Semantics(identifier: 'p-log', child: Text('Last action: $log')),
+              Semantics(
+                identifier: 'p-flags',
+                child: Text(
+                  'invert=${mq.invertColors} contrast=${mq.highContrast} '
+                  'bold=${mq.boldText} noAnim=${mq.disableAnimations} '
+                  'reduceMotion=${f.reduceMotion} switchLabels=${mq.onOffSwitchLabels} '
+                  'autoVideo=${f.autoPlayVideos} autoImages=${f.autoPlayAnimatedImages}',
+                ),
+              ),
+              landmark('main', SemanticsRole.main, 'Main landmark text'),
+              landmark('navigation', SemanticsRole.navigation, 'Navigation landmark text', label: 'Primary'),
+              landmark('complementary', SemanticsRole.complementary, 'Complementary landmark text', label: 'Related'),
+              landmark('contentinfo', SemanticsRole.contentInfo, 'Content info landmark text'),
+              landmark('region', SemanticsRole.region, 'Region landmark text', label: 'Filters'),
+              landmark('form', SemanticsRole.form, 'Form landmark text', label: 'Sign in'),
+              Semantics(
+                identifier: 'p-s18-spell',
+                attributedLabel: AttributedString(
+                  'Code ABC',
+                  attributes: [SpellOutStringAttribute(range: const TextRange(start: 5, end: 8))],
+                ),
+                child: const ExcludeSemantics(child: Text('Code ABC')),
+              ),
+              Semantics(
+                identifier: 'p-s18-locale-attr',
+                attributedLabel: AttributedString(
+                  'She said bonjour tout le monde',
+                  attributes: [
+                    LocaleStringAttribute(range: const TextRange(start: 9, end: 30), locale: const Locale('fr', 'FR')),
+                  ],
+                ),
+                child: const ExcludeSemantics(child: Text('She said bonjour tout le monde')),
+              ),
+              Semantics(
+                identifier: 'p-s18-locale-subtree',
+                localeForSubtree: const Locale('fr', 'FR'),
+                container: true,
+                child: const Text('Bonjour tout le monde'),
+              ),
+              Semantics(
+                identifier: 'p-s19-rich',
+                container: true,
+                child: const Text.rich(
+                  TextSpan(
+                    text: 'Was ',
+                    children: [
+                      TextSpan(text: '20', style: TextStyle(decoration: TextDecoration.lineThrough)),
+                      TextSpan(text: ' now '),
+                      TextSpan(text: '15', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ' dollars'),
+                    ],
+                  ),
+                ),
+              ),
+              Semantics(identifier: 'p-s20-divider', container: true, child: const Divider()),
+              Semantics(
+                identifier: 'p-i05-custom',
+                container: true,
+                label: 'Message from Ana',
+                customSemanticsActions: {
+                  const CustomSemanticsAction(label: 'Archive'): () => did('archive'),
+                  const CustomSemanticsAction(label: 'Delete'): () => did('delete'),
+                },
+                child: const SizedBox(height: 40, width: 200),
+              ),
+              Semantics(
+                identifier: 'p-i06-hints',
+                container: true,
+                button: true,
+                label: 'Photo of a beach',
+                onTap: () => did('tap'),
+                onLongPress: () => did('longpress'),
+                onTapHint: 'open photo',
+                onLongPressHint: 'show options',
+                child: const SizedBox(height: 40, width: 200),
+              ),
+              Semantics(
+                identifier: 'p-c15-menubar',
+                container: true,
+                explicitChildNodes: true,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: MenuBar(
+                        children: [
+                          SubmenuButton(
+                            menuChildren: [
+                              MenuItemButton(onPressed: () => did('new'), child: const Text('New')),
+                              CheckboxMenuButton(value: true, onChanged: (_) => did('wrap'), child: const Text('Word wrap')),
+                              RadioMenuButton<int>(value: 1, groupValue: 1, onChanged: (_) => did('radio'), child: const Text('Small')),
+                            ],
+                            child: const Text('File'),
+                          ),
+                          MenuItemButton(onPressed: () => did('help'), child: const Text('Help')),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Semantics(
+                identifier: 'p-c19-datatable',
+                container: true,
+                explicitChildNodes: true,
+                child: DataTable(
+                  columns: const [DataColumn(label: Text('Name')), DataColumn(label: Text('Role'))],
+                  rows: const [
+                    DataRow(cells: [DataCell(Text('Ana')), DataCell(Text('Admin'))]),
+                    DataRow(cells: [DataCell(Text('Ben')), DataCell(Text('Editor'))]),
+                  ],
+                ),
+              ),
+              Semantics(
+                identifier: 'p-c19-table',
+                container: true,
+                explicitChildNodes: true,
+                child: Table(
+                  children: const [
+                    TableRow(children: [Text('City'), Text('Temp')]),
+                    TableRow(children: [Text('Oslo'), Text('4')]),
+                  ],
+                ),
+              ),
+              Semantics(
+                identifier: 'p-c21-tree',
+                container: true,
+                explicitChildNodes: true,
+                child: SizedBox(
+                  height: 160,
+                  child: CustomScrollView(
+                    slivers: [
+                      TreeSliver<String>(
+                        tree: [
+                          TreeSliverNode<String>('Fruit', expanded: true, children: [
+                            TreeSliverNode<String>('Apple'),
+                            TreeSliverNode<String>('Pear'),
+                          ]),
+                          TreeSliverNode<String>('Vegetables', children: [TreeSliverNode<String>('Leek')]),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Semantics(
+                identifier: 'p-c25-progress',
+                container: true,
+                child: const LinearProgressIndicator(value: 0.4, semanticsLabel: 'Storage used', semanticsValue: '40%'),
+              ),
+              Semantics(
+                identifier: 'p-c25-role',
+                container: true,
+                role: SemanticsRole.progressBar,
+                label: 'Battery',
+                value: '40',
+                minValue: '0',
+                maxValue: '100',
+                child: const SizedBox(height: 24, width: 200),
+              ),
+              Semantics(
+                identifier: 'p-c24-splitter',
+                container: true,
+                slider: true,
+                label: 'Resize sidebar',
+                value: '30%',
+                increasedValue: '40%',
+                decreasedValue: '20%',
+                onIncrease: () => did('wider'),
+                onDecrease: () => did('narrower'),
+                child: const SizedBox(height: 40, width: 200),
+              ),
+              if (kIsWeb)
+                Semantics(
+                  identifier: 'p-c30-html',
+                  container: true,
+                  child: SizedBox(
+                    height: 48,
+                    width: 240,
+                    child: HtmlElementView.fromTagName(
+                      tagName: 'button',
+                      onElementCreated: (Object e) => (e as dynamic).textContent = 'Native HTML button',
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 40),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

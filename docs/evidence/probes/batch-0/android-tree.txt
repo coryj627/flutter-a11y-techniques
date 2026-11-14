@@ -1,0 +1,82 @@
+## p-log
+class=android.view.View desc='Last action: none' spans=LocaleSpan[0-17]:LocaleSpan{locales=[en_US]}
+## p-flags
+class=android.view.View desc='invert=false contrast=false bold=false noAnim=false reduceMotion=false switchLabels=false autoVideo=true autoImages=true' spans=LocaleSpan[0-120]:LocaleSpan{locales=[en_US]}
+## p-s07-main
+class=android.view.View
+  class=android.view.View desc='Main landmark text' spans=LocaleSpan[0-18]:LocaleSpan{locales=[en_US]}
+## p-s07-navigation
+class=android.view.View desc='Primary' spans=LocaleSpan[0-7]:LocaleSpan{locales=[en_US]}
+  class=android.view.View desc='Navigation landmark text' spans=LocaleSpan[0-24]:LocaleSpan{locales=[en_US]}
+## p-s07-complementary
+class=android.view.View desc='Related' spans=LocaleSpan[0-7]:LocaleSpan{locales=[en_US]}
+  class=android.view.View desc='Complementary landmark text' spans=LocaleSpan[0-27]:LocaleSpan{locales=[en_US]}
+## p-s07-contentinfo
+class=android.view.View
+  class=android.view.View desc='Content info landmark text' spans=LocaleSpan[0-26]:LocaleSpan{locales=[en_US]}
+## p-s07-region
+class=android.view.View desc='Filters' spans=LocaleSpan[0-7]:LocaleSpan{locales=[en_US]}
+  class=android.view.View desc='Region landmark text' spans=LocaleSpan[0-20]:LocaleSpan{locales=[en_US]}
+## p-s07-form
+class=android.view.View desc='Sign in' spans=LocaleSpan[0-7]:LocaleSpan{locales=[en_US]}
+  class=android.view.View desc='Form landmark text' spans=LocaleSpan[0-18]:LocaleSpan{locales=[en_US]}
+## p-s18-spell
+class=android.view.View desc='Code ABC' spans=TtsSpan[5-8]:android.text.style.TtsSpan@35d7647,LocaleSpan[0-8]:LocaleSpan{locales=[en_US]}
+## p-s18-locale-attr
+class=android.view.View desc='She said bonjour tout le monde' spans=LocaleSpan[9-30]:LocaleSpan{locales=[fr_FR]},LocaleSpan[0-30]:LocaleSpan{locales=[en_US]}
+## p-s18-locale-subtree
+class=android.view.View
+  class=android.view.View desc='Bonjour tout le monde' spans=LocaleSpan[0-21]:LocaleSpan{locales=[fr_FR]}
+## p-s19-rich
+class=android.view.View desc='Was 20 now 15 dollars' spans=LocaleSpan[0-21]:LocaleSpan{locales=[en_US]}
+## p-s20-divider
+class=android.view.View
+## p-i05-custom
+class=android.view.View desc='Message from Ana' actions=UNKNOWN(267386881)='Archive',UNKNOWN(267386882)='Delete' spans=LocaleSpan[0-16]:LocaleSpan{locales=[en_US]}
+## p-i06-hints
+class=android.widget.Button desc='Photo of a beach' clickable longClickable actions=CLICK(16)='open photo',LONG_CLICK(32)='show options',UNKNOWN(267386883),UNKNOWN(267386884) spans=LocaleSpan[0-16]:LocaleSpan{locales=[en_US]}
+## p-c15-menubar
+class=android.view.View
+  class=android.view.View
+    class=android.view.View
+      class=android.view.View
+        class=android.view.View desc='File' clickable actions=CLICK(16) spans=LocaleSpan[0-4]:LocaleSpan{locales=[en_US]}
+      class=android.view.View desc='Help' clickable actions=CLICK(16) spans=LocaleSpan[0-4]:LocaleSpan{locales=[en_US]}
+## p-c19-datatable
+class=android.view.View
+  class=android.view.View
+    class=android.view.View
+      class=android.view.View desc='Name' spans=LocaleSpan[0-4]:LocaleSpan{locales=[en_US]}
+      class=android.view.View desc='Role' spans=LocaleSpan[0-4]:LocaleSpan{locales=[en_US]}
+    class=android.view.View
+      class=android.view.View desc='Ana' spans=LocaleSpan[0-3]:LocaleSpan{locales=[en_US]}
+      class=android.view.View desc='Admin' spans=LocaleSpan[0-5]:LocaleSpan{locales=[en_US]}
+    class=android.view.View
+      class=android.view.View desc='Ben' spans=LocaleSpan[0-3]:LocaleSpan{locales=[en_US]}
+      class=android.view.View desc='Editor' spans=LocaleSpan[0-6]:LocaleSpan{locales=[en_US]}
+## p-c19-table
+class=android.view.View
+  class=android.view.View
+    class=android.view.View
+      class=android.view.View
+        class=android.view.View desc='City' spans=LocaleSpan[0-4]:LocaleSpan{locales=[en_US]}
+      class=android.view.View
+        class=android.view.View desc='Temp' spans=LocaleSpan[0-4]:LocaleSpan{locales=[en_US]}
+    class=android.view.View
+      class=android.view.View
+        class=android.view.View desc='Oslo' spans=LocaleSpan[0-4]:LocaleSpan{locales=[en_US]}
+      class=android.view.View
+        class=android.view.View desc='4' spans=LocaleSpan[0-1]:LocaleSpan{locales=[en_US]}
+## p-c21-tree
+class=android.view.View
+  class=android.view.View
+    class=android.view.View
+      class=android.view.View desc='Fruit' clickable actions=CLICK(16) spans=LocaleSpan[0-5]:LocaleSpan{locales=[en_US]}
+      class=android.view.View desc='Apple' clickable actions=CLICK(16) spans=LocaleSpan[0-5]:LocaleSpan{locales=[en_US]}
+      class=android.view.View desc='Pear' clickable actions=CLICK(16) spans=LocaleSpan[0-4]:LocaleSpan{locales=[en_US]}
+## p-c25-progress
+class=android.widget.ProgressBar desc='40%, Storage used' range(0.0..0.0 cur=0.0) spans=LocaleSpan[0-3]:LocaleSpan{locales=[en_US]},LocaleSpan[5-17]:LocaleSpan{locales=[en_US]}
+## p-c25-role
+class=android.widget.ProgressBar desc='40, Battery' range(0.0..100.0 cur=40.0) spans=LocaleSpan[0-2]:LocaleSpan{locales=[en_US]},LocaleSpan[4-11]:LocaleSpan{locales=[en_US]}
+## p-c24-splitter
+class=android.widget.SeekBar desc='30%, Resize sidebar' clickable actions=CLICK(16),SCROLL_FORWARD(4096),SCROLL_BACKWARD(8192) spans=LocaleSpan[0-3]:LocaleSpan{locales=[en_US]},LocaleSpan[5-19]:LocaleSpan{locales=[en_US]}

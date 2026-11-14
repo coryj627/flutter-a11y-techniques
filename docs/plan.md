@@ -572,8 +572,31 @@ each example's region from `examples.dart` into the "Example code" section of
 its technique doc, and `test/docs/doc_code_test.dart` fails when a doc is out
 of date or an example has no region.
 
-Next: batch 0, the probes
-of the 27 unknown-feasibility entries.
+### Batch 0: the 27 unknown entries
+
+Done on 2026-11-13. A throwaway screen with one fixture per SDK mechanism was
+dumped on web (DOM), Android (`AccessibilityNodeInfo`), and iOS (XCUITest tree
+and a VoiceOver walk); entries with no SDK mechanism were settled by reading
+the SDK and searching the iOS engine source. Results:
+[coverage-inventory.md, section 5](coverage-inventory.md#5-batch-0-probes-of-the-27-unknown-entries),
+limitations FL-019 to FL-027, raw output in
+[evidence/probes/batch-0](evidence/probes/batch-0/).
+
+- 7 to build: S07, S18, V04, I05, I06, C15, C19.
+- 15 limitation entries, 1 not applicable, 1 folded into existing checks.
+- 3 need a plugin from outside the SDK (C28 Maps, C29 Video and audio, C30
+  Embedded web and platform views). **Open for the owner:** are first-party
+  plugins (`video_player`, `webview_flutter`, `google_maps_flutter`) in
+  scope?
+
+How the probe was run, for the next time one is needed: a second entry point
+(`lib/probe.dart`) built with `-t lib/probe.dart` for web and Android
+(`-Ptarget=` for Gradle) and `FLUTTER_TARGET=lib/probe.dart` for `xcodebuild`,
+so the catalog app is not touched; the fixture source is kept with the
+evidence.
+
+Next: batch 1, names, roles, and images (S01, S02, S03, S04, S13, S14, S15,
+S22), one technique per pull request.
 
 ## 4. Definition of done for a technique
 

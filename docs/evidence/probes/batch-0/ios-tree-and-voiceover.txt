@@ -1,0 +1,80 @@
+                      StaticText, identifier: 'p-log', label: 'Last action: none'
+                      StaticText, identifier: 'p-flags', label: 'invert=false contrast=false bold=false noAnim=false reduceMotion=false switchLabels=false autoVideo=true autoImages=true'
+                        Other, identifier: 'p-s07-main'
+                        StaticText, label: 'Main landmark text'
+                        Other, identifier: 'p-s07-navigation', label: 'Primary'
+                        StaticText, label: 'Navigation landmark text'
+                        Other, identifier: 'p-s07-complementary', label: 'Related'
+                        StaticText, label: 'Complementary landmark text'
+                        Other, identifier: 'p-s07-contentinfo'
+                        StaticText, label: 'Content info landmark text'
+                        Other, identifier: 'p-s07-region', label: 'Filters'
+                        StaticText, label: 'Region landmark text'
+                        Other, identifier: 'p-s07-form', label: 'Sign in'
+                        StaticText, label: 'Form landmark text'
+                      StaticText, identifier: 'p-s18-spell', label: 'Code ABC'
+                      StaticText, identifier: 'p-s18-locale-attr', label: 'She said bonjour tout le monde'
+                        Other, identifier: 'p-s18-locale-subtree'
+                        StaticText, label: 'Bonjour tout le monde'
+                      StaticText, identifier: 'p-s19-rich', label: 'Was 20 now 15 dollars'
+                      Other, identifier: 'p-s20-divider'
+                      StaticText, identifier: 'p-i05-custom', label: 'Message from Ana'
+                      Button, identifier: 'p-i06-hints', label: 'Photo of a beach'
+                        Other, identifier: 'p-c15-menubar'
+                              StaticText, label: 'File'
+                            StaticText, label: 'Help'
+                        Other, identifier: 'p-c19-datatable'
+                            StaticText, label: 'Name'
+                            StaticText, label: 'Role'
+                            StaticText, label: 'Ana'
+                            StaticText, label: 'Admin'
+                            StaticText, label: 'Ben'
+                            StaticText, label: 'Editor'
+                        Other, identifier: 'p-c19-table'
+                              StaticText, label: 'City'
+                              StaticText, label: 'Temp'
+                              StaticText, label: 'Oslo'
+                              StaticText, label: '4'
+                        Other, identifier: 'p-c21-tree'
+                            StaticText, label: 'Fruit'
+                            StaticText, label: 'Apple'
+                            StaticText, label: 'Pear'
+                            StaticText, label: 'Vegetables'
+                      StaticText, identifier: 'p-c25-progress', label: 'Storage used', value: 40%
+                      StaticText, identifier: 'p-c25-role', label: 'Battery', value: 40
+                      Other, identifier: 'p-c24-splitter', label: 'Resize sidebar', value: 30%
+
+VoiceOver, XCUIVoiceOverService.moveForward():
+0 | Last action: none
+1 | invert=false contrast=false bold=false noAnim=false reduceMotion
+2 | Main landmark text
+3 | Primary
+4 | Navigation landmark text
+5 | Related
+6 | Complementary landmark text
+7 | Content info landmark text
+8 | Filters
+9 | Region landmark text
+10 | Sign in
+11 | Form landmark text
+12 | Code  ABC
+13 | She said  bonjour tout le monde
+14 | Bonjour tout le monde
+15 | Was 20 now 15 dollars
+16 | Message from Ana Actions available
+17 | Photo of a beach Button
+18 | File
+19 | Help
+20 | Name
+21 | Role
+22 | Ana
+23 | Admin
+24 | Ben
+25 | Editor
+26 | City
+27 | Temp
+28 | Oslo
+29 | 4
+30 | Fruit
+31 | Fruit
+32 | Fruit

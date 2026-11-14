@@ -39,6 +39,15 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-016](#fl-016) | Cupertino text fields have no label | All | Confirmed |
 | [FL-017](#fl-017) | The status and alert roles are announced on web only | Android, iOS | Confirmed |
 | [FL-018](#fl-018) | Announcements sent from code are reported as unsupported on Android, and assertiveness is web only | Android, iOS | Confirmed |
+| [FL-019](#fl-019) | Landmark roles have an effect on web only | Android, iOS | Observed |
+| [FL-020](#fl-020) | Spell-out and language attributes do not reach the web, and `localeForSubtree` writes an invalid `lang` | Web | Observed |
+| [FL-021](#fl-021) | No semantics for inline or block text structure | All | Observed |
+| [FL-022](#fl-022) | Custom semantics actions are not exposed on web | Web | Observed |
+| [FL-023](#fl-023) | Material menu widgets do not use the menu roles, and their items have no button role on Android and iOS | All | Observed |
+| [FL-024](#fl-024) | Tables have structure on web only, and a plain `Table` marks no headers by itself | Android, iOS, Web | Observed |
+| [FL-025](#fl-025) | iOS accessibility APIs and settings with no Flutter counterpart | iOS | Confirmed |
+| [FL-026](#fl-026) | No semantics roles for grid, tree, treegrid, feed, separator, meter, or math | All | Confirmed |
+| [FL-027](#fl-027) | A progress indicator whose value has a percent sign reports an empty range on Android | Android | Observed |
 
 ---
 
@@ -453,4 +462,199 @@ yet), **Fixed in x.y** (verified on that version).
   a live region instead. Asserted in
   `test/techniques/i12_announcements_test.dart` (both branches),
   `I12AnnouncementsTest.kt`, and the TalkBack transcript ("Link copied").
+- Upstream issue: not searched yet.
+
+## FL-019
+
+**Landmark roles have an effect on web only.**
+
+- Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`). Chromium;
+  Android 17; iOS 27.0 with VoiceOver.
+- WCAG: 1.3.1 Info and Relationships, 2.4.1 Bypass Blocks.
+- What happens: `Semantics(role: SemanticsRole.main)` and the `navigation`,
+  `complementary`, `contentInfo`, `region`, and `form` roles become
+  `role="main"` and so on (a `<form>` element for `form`) on web. On Android
+  the node is a plain `android.view.View` with no pane title or role. On iOS
+  it is an element of type Other. Where the landmark has a label, the label
+  becomes an extra stop on mobile that reads only the label ("Primary").
+- Effect: landmark navigation exists only on web. On mobile a labelled
+  landmark adds a stop that says nothing about what it is.
+- Workaround: none found yet. To be worked out in S07.
+- Upstream issue: not searched yet.
+
+## FL-020
+
+**Spell-out and language attributes do not reach the web, and `localeForSubtree` writes an invalid `lang`.**
+
+- Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`).
+- WCAG: 3.1.2 Language of Parts; 3.1.6 Pronunciation (AAA).
+- What happens:
+  - On Android, `SpellOutStringAttribute` arrives as a `TtsSpan` and
+    `LocaleStringAttribute` as a `LocaleSpan` over the same range.
+    `Semantics(localeForSubtree:)` arrives as a `LocaleSpan` on the text.
+  - On web, the two string attributes leave no trace in the DOM.
+    `localeForSubtree: Locale('fr', 'FR')` writes `lang="fr_FR"`. A language
+    tag uses a hyphen (`fr-FR`); whether browsers and screen readers accept
+    the underscore form was not tested.
+  - On iOS, the engine sets an attributed label. XCUITest cannot read speech
+    attributes, and the utterance text was unchanged apart from spacing, so
+    whether VoiceOver changes pronunciation was not confirmed.
+- Effect: a phrase in another language inside a sentence cannot be marked on
+  web, and a whole passage may be marked with a tag browsers do not
+  recognise.
+- Workaround: none found yet. To be worked out in S17 and S18.
+- Upstream issue: not searched yet.
+
+## FL-021
+
+**No semantics for inline or block text structure.**
+
+- Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`); the
+  `SemanticsRole` and `SemanticsProperties` API was read.
+- WCAG: 1.3.1 Info and Relationships.
+- What happens: a `Text.rich` with a struck-through "20" and a bold "15" is
+  the single string "Was 20 now 15 dollars" on web, Android, and iOS. Nothing
+  says that one price is deleted. There is no SDK mechanism for emphasis,
+  insertion and deletion, subscript and superscript, code, quotation,
+  preformatted text, or a thematic break in the `Semantics` API; `Divider`
+  exposes an empty node. As in FL-026, native HTML embedded with
+  `HtmlElementView` on web was not probed.
+- Effect: meaning carried only by text styling is lost to screen reader
+  users.
+- Workaround: put the meaning in words, for example
+  `Text.rich(…, semanticsLabel: 'Was 20 dollars, now 15 dollars')`.
+- Upstream issue: not searched yet.
+
+## FL-022
+
+**Custom semantics actions are not exposed on web.**
+
+- Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`).
+- WCAG: 2.1.1 Keyboard, 2.5.1 Pointer Gestures, 2.5.7 Dragging Movements.
+- What happens: `Semantics(customSemanticsActions: …)` with "Archive" and
+  "Delete" gives two labelled actions on the Android node, and VoiceOver on
+  iOS reads "Message from Ana, Actions available". On web the node is a plain
+  element holding the label; the actions are not in the DOM.
+- Effect: an alternative to a swipe or drag that is offered only as a custom
+  action does not exist on web.
+- Workaround: also offer the actions as visible controls or a menu. To be
+  worked out in I05.
+- Upstream issue: not searched yet.
+
+## FL-023
+
+**Material menu widgets do not use the menu roles, and their items have no button role on Android and iOS.**
+
+- Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`);
+  `material/menu_anchor.dart` contains no `SemanticsRole`.
+- WCAG: 4.1.2 Name, Role, Value.
+- What happens: a `MenuBar` with a `SubmenuButton` and a `MenuItemButton` is
+  `role="group"` holding two `role="button"` elements on web, with
+  `aria-expanded` on the submenu button. Opened, the items are a button, a
+  `checkbox`, and a `radio`; nothing has `menubar`, `menu`, or `menuitem`. On
+  Android "File" and "Help" are clickable `android.view.View` nodes, and on
+  iOS VoiceOver reads "File" and "Help" with no "Button".
+  `SemanticsRole.menuBar`, `menu`, `menuItem`, `menuItemCheckbox`, and
+  `menuItemRadio` exist in the SDK; what they do when applied by hand was not
+  probed.
+- Effect: a menu bar is not announced as one, and on mobile its items are
+  not announced as buttons.
+- Workaround: none found yet. To be worked out in C15.
+- Upstream issue: not searched yet.
+
+## FL-024
+
+**Tables have structure on web only, and a plain `Table` marks no headers by itself.**
+
+- Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`).
+- WCAG: 1.3.1 Info and Relationships.
+- What happens: on web `DataTable` is `role="table"` with `row`,
+  `columnheader`, and `cell`. The widgets-layer `Table` is `table`, `row`,
+  and `cell` with no header cells when its children are plain `Text`: it does
+  not infer a header row. `RenderTable` keeps a child that has
+  `SemanticsRole.columnHeader`, which is how `DataTable` marks its headings,
+  so wrapping a cell in `Semantics(role: SemanticsRole.columnHeader)` is the
+  SDK mechanism; that was read in the source and not probed. On Android neither
+  has `CollectionInfo` or `CollectionItemInfo`; the cells are plain views. On
+  iOS the cells are static text in reading order.
+- Effect: on mobile a screen reader user hears cell text with no row,
+  column, or header.
+- Workaround: none found yet. To be worked out in C19.
+- Upstream issue: not searched yet.
+
+## FL-025
+
+**iOS accessibility APIs and settings with no Flutter counterpart.**
+
+- Status: Confirmed, Flutter 3.47.5, by reading the SDK and searching the iOS
+  engine source (`engine/src/flutter/shell/platform/darwin/ios`).
+- What is missing:
+  - Custom content (`accessibilityCustomContent`).
+  - Custom rotors (`accessibilityCustomRotors`).
+  - Magic Tap (`accessibilityPerformMagicTap`). Escape is implemented.
+  - Voice Control input labels (`accessibilityUserInputLabels`).
+  - The large content viewer.
+  - `accessibilityIgnoresInvertColors`, so an image cannot be kept out of
+    Smart Invert. `MediaQuery.invertColors` does report the setting.
+  - The Reduce Transparency and Button Shapes settings.
+    `AccessibilityFeatures` reports `accessibleNavigation`, `invertColors`,
+    `disableAnimations`, `boldText`, `reduceMotion`, `highContrast`,
+    `onOffSwitchLabels`, `supportsAnnounce`, `autoPlayAnimatedImages`,
+    `autoPlayVideos`, and `deterministicCursor`, and nothing else.
+- Effect: the CVS iOS techniques for these features cannot be reproduced in
+  Flutter without writing platform code, which is outside this project's
+  rule that good examples use SDK mechanisms.
+- Workaround: none within the SDK.
+- Upstream issue: not searched yet.
+
+## FL-026
+
+**No semantics roles for grid, tree, treegrid, feed, separator, meter, or math.**
+
+- Status: Confirmed, Flutter 3.47.5, by reading `SemanticsRole`; `TreeSliver`
+  observed in the batch 0 probe (`docs/evidence/probes/batch-0/`).
+- WCAG: 4.1.2 Name, Role, Value; 1.3.1 Info and Relationships.
+- What happens: `SemanticsRole` has `tab`, `tabBar`, `tabPanel`, `dialog`,
+  `alertDialog`, `table`, `cell`, `row`, `columnHeader`, `dragHandle`,
+  `spinButton`, `comboBox`, `menuBar`, `menu`, `menuItem`,
+  `menuItemCheckbox`, `menuItemRadio`, `list`, `listItem`, `form`, `tooltip`,
+  `loadingSpinner`, `progressBar`, `hotKey`, `radioGroup`, `status`, `alert`,
+  `complementary`, `contentInfo`, `main`, `navigation`, and `region`. The
+  ARIA roles `grid`, `tree`, `treeitem`, `treegrid`, `feed`, `article`,
+  `separator`, `meter`, and `math` have no counterpart. The SDK's own
+  `TreeSliver` exposes each row as a button, with no level and no expanded
+  or collapsed state, on all three platforms.
+- Effect: the APG Grid, Tree View, Treegrid, Feed, Window Splitter, and Meter
+  patterns cannot be expressed through Flutter's semantics tree. The nearest
+  roles (a slider for a splitter, a progress bar for a meter) tell the user
+  something different.
+- Scope of this entry: the `Semantics` API only. On web the SDK can also
+  embed native HTML with `HtmlElementView`, which could carry any ARIA role.
+  That route was not probed (the probe recorded only the wrapper around the
+  embedded element), and whether it counts as a Flutter technique is an open
+  question in [requirements.md](requirements.md).
+- Workaround: none through `Semantics` that keeps the pattern. Each entry
+  documents the closest achievable example.
+- Upstream issue: not searched yet.
+
+## FL-027
+
+**A progress indicator whose value has a percent sign reports an empty range on Android.**
+
+- Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`);
+  `material/progress_indicator.dart` read.
+- WCAG: 4.1.2 Name, Role, Value.
+- What happens: `LinearProgressIndicator(value: 0.4, semanticsValue: '40%')`
+  sets `minValue: '0'` and `maxValue: '100'`, and is an
+  `android.widget.ProgressBar` whose `RangeInfo` is 0 to 0 with current 0.
+  `Semantics(role: SemanticsRole.progressBar, value: '40', minValue: '0',
+  maxValue: '100')` gives 0 to 100 with current 40. On web both give
+  `aria-valuenow="40"`. The percent sign in the value is the likely cause
+  (a value that is not a number); the engine source was not read. Whether the widget's default value, with no `semanticsValue`, has the same
+  result was not probed.
+- Effect: anything that reads the range gets nothing. The node's description
+  still holds the value ("40%, Storage used"); what TalkBack speaks was not
+  recorded.
+- Workaround: none found yet. To be checked, with TalkBack, in the progress
+  indicator technique.
 - Upstream issue: not searched yet.

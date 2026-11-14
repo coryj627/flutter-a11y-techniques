@@ -1,0 +1,132 @@
+## p-log
+<flt-semantics >
+  <span > "Last action: none"
+
+## p-flags
+<flt-semantics >
+  <span > "invert=false contrast=false bold=false noAnim=false reduceMotion=false switchLabels=false autoVideo=true autoImages=true"
+
+## p-s07-main
+<flt-semantics role="main">
+  <flt-semantics >
+    <span > "Main landmark text"
+
+## p-s07-navigation
+<flt-semantics role="navigation" aria-label="Primary">
+  <flt-semantics >
+    <span > "Navigation landmark text"
+
+## p-s07-complementary
+<flt-semantics role="complementary" aria-label="Related">
+  <flt-semantics >
+    <span > "Complementary landmark text"
+
+## p-s07-contentinfo
+<flt-semantics role="contentinfo">
+  <flt-semantics >
+    <span > "Content info landmark text"
+
+## p-s07-region
+<flt-semantics role="region" aria-label="Filters">
+  <flt-semantics >
+    <span > "Region landmark text"
+
+## p-s07-form
+<form aria-label="Sign in">
+  <flt-semantics >
+    <span > "Form landmark text"
+
+## p-s18-spell
+<flt-semantics >
+  <span > "Code ABC"
+
+## p-s18-locale-attr
+<flt-semantics >
+  <span > "She said bonjour tout le monde"
+
+## p-s18-locale-subtree
+<flt-semantics lang="fr_FR">
+  <flt-semantics >
+    <span > "Bonjour tout le monde"
+
+## p-s19-rich
+<flt-semantics >
+  <span > "Was 20 now 15 dollars"
+
+## p-s20-divider
+<flt-semantics >
+
+## p-i05-custom
+<flt-semantics >
+  <span > "Message from Ana"
+
+## p-i06-hints
+<flt-semantics role="button" flt-tappable=""> "Photo of a beach"
+
+## p-c15-menubar
+<flt-semantics >
+  <flt-semantics >
+    <flt-semantics role="group">
+      <flt-semantics >
+        <flt-semantics role="button" tabindex="0" aria-expanded="false" flt-tappable=""> "File"
+      <flt-semantics role="button" tabindex="0" flt-tappable=""> "Help"
+
+## p-c19-datatable
+<flt-semantics >
+  <flt-semantics role="table">
+    <flt-semantics role="row">
+      <flt-semantics role="columnheader" aria-label="Name">
+      <flt-semantics role="columnheader" aria-label="Role">
+    <flt-semantics role="row">
+      <flt-semantics role="cell">
+        <span > "Ana"
+      <flt-semantics role="cell">
+        <span > "Admin"
+    <flt-semantics role="row">
+      <flt-semantics role="cell">
+        <span > "Ben"
+      <flt-semantics role="cell">
+        <span > "Editor"
+
+## p-c19-table
+<flt-semantics >
+  <flt-semantics role="table">
+    <flt-semantics role="row">
+      <flt-semantics role="cell">
+        <flt-semantics >
+          <span > "City"
+      <flt-semantics role="cell">
+        <flt-semantics >
+          <span > "Temp"
+    <flt-semantics role="row">
+      <flt-semantics role="cell">
+        <flt-semantics >
+          <span > "Oslo"
+      <flt-semantics role="cell">
+        <flt-semantics >
+          <span > "4"
+
+## p-c21-tree
+<flt-semantics >
+  <flt-semantics >
+    <flt-semantics role="group">
+      <flt-semantics role="button" flt-tappable=""> "Fruit"
+      <flt-semantics role="button" flt-tappable=""> "Apple"
+      <flt-semantics role="button" flt-tappable=""> "Pear"
+      <flt-semantics role="button" flt-tappable=""> "Vegetables"
+
+## p-c25-progress
+<flt-semantics role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" aria-valuetext="40%" aria-label="Storage used 40%">
+
+## p-c25-role
+<flt-semantics role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" aria-label="Battery 40">
+
+## p-c24-splitter
+<flt-semantics aria-label="Resize sidebar">
+  <input type="range" role="slider" tabindex="0" aria-valuenow="1" aria-valuetext="30%" max="2" aria-valuemax="2" min="0" aria-valuemin="0">
+
+## p-c30-html
+<flt-semantics tabindex="0">
+  <flt-semantics >
+
+
