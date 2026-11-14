@@ -11,17 +11,11 @@ export const activateBrowser = (browserName) =>
       { timeout: 20000 }, (err) => (err ? reject(err) : resolve())));
 
 /**
- * Starts from the Back button, the first control on every example screen, and
- * moves VoiceOver forward until `isLast(phrase, index)` is true. Returns what
- * was spoken at each step.
- *
- * `clickAtPoint` makes that click with the mouse at the heading's position,
- * without Playwright's check that nothing covers it. It is for a screen with
- * a Material `Slider`, which on web adds an empty full-screen element above
- * the others, so the checked click never succeeds
- * (docs/flutter-limitations.md, FL-029).
+ * Puts keyboard focus, and with it VoiceOver's cursor, on the Back button,
+ * the first control on every example screen. See walkFromBack for
+ * `clickAtPoint`.
  */
-export async function walkFromBack(page, voiceOver, browserName, isLast, max = 24, clickAtPoint = false) {
+async function startAtBack(page, browserName, clickAtPoint) {
   await activateBrowser(browserName);
   await page.bringToFront();
   // A real click, on inert text: the browser can come up with keyboard focus
@@ -41,19 +35,86 @@ export async function walkFromBack(page, voiceOver, browserName, isLast, max = 2
   }
   await page.getByRole('button', { name: 'Back' }).focus();
   await page.waitForTimeout(1500);
+}
+
+/** Moves VoiceOver to the next element and returns what it then spoke. */
+async function nextPhrase(page, voiceOver) {
+  await voiceOver.next();
+  let phrase = (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim();
+  // Guidepup sometimes returns before VoiceOver has spoken; give it a moment.
+  for (let wait = 0; wait < 3 && phrase === ''; wait++) {
+    await page.waitForTimeout(400);
+    phrase = (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim();
+  }
+  return phrase;
+}
+
+/**
+ * Starts from the Back button, the first control on every example screen, and
+ * moves VoiceOver forward until `isLast(phrase, index)` is true. Returns what
+ * was spoken at each step.
+ *
+ * `clickAtPoint` makes that click with the mouse at the heading's position,
+ * without Playwright's check that nothing covers it. It is for a screen with
+ * a Material `Slider`, which on web adds an empty full-screen element above
+ * the others, so the checked click never succeeds
+ * (docs/flutter-limitations.md, FL-029).
+ */
+export async function walkFromBack(page, voiceOver, browserName, isLast, max = 24, clickAtPoint = false) {
+  await startAtBack(page, browserName, clickAtPoint);
   const spoken = [];
   for (let i = 0; i < max; i++) {
-    await voiceOver.next();
-    let phrase = (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim();
-    // Guidepup sometimes returns before VoiceOver has spoken; give it a moment.
-    for (let wait = 0; wait < 3 && phrase === ''; wait++) {
-      await page.waitForTimeout(400);
-      phrase = (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim();
-    }
+    const phrase = await nextPhrase(page, voiceOver);
     spoken.push(phrase);
     if (isLast(phrase, i)) break;
   }
   return spoken;
+}
+
+/**
+ * Calls `step()` until the end of the screen. `step` moves VoiceOver forward
+ * once and resolves to `{ phrase, position }`: what was spoken and where
+ * VoiceOver's cursor then is. `start` is the cursor's position before the
+ * first move. Returns `{ stops, reachedEnd }`: the phrase spoken at each
+ * element the cursor stopped on, in order, and whether the end was reached
+ * within `max` moves.
+ *
+ * Speech alone cannot show the end, or tell two elements that read the same
+ * from one element read twice, so the cursor's position decides. A move that
+ * leaves the cursor where it was did not reach a new element and is not a
+ * stop; two such moves in a row are the end of the screen. A move that
+ * changes the position is a stop even when no new phrase is reported for it.
+ */
+export async function stopsToEnd(step, start, max = 40) {
+  const stops = [];
+  let position = start;
+  let unmoved = 0;
+  for (let i = 0; i < max; i++) {
+    const { phrase, position: now } = await step();
+    if (now === position) {
+      unmoved++;
+      if (unmoved === 2) return { stops, reachedEnd: true };
+      continue;
+    }
+    unmoved = 0;
+    position = now;
+    stops.push(phrase);
+  }
+  return { stops, reachedEnd: false };
+}
+
+/**
+ * Starts from the Back button and moves VoiceOver forward to the end of the
+ * screen, reading the position of VoiceOver's cursor after every move. See
+ * stopsToEnd for what is returned.
+ */
+export async function walkToEnd(page, voiceOver, browserName, max = 40) {
+  await startAtBack(page, browserName, false);
+  const step = async () => ({
+    phrase: await nextPhrase(page, voiceOver),
+    position: await cursorBounds(),
+  });
+  return stopsToEnd(step, await cursorBounds(), max);
 }
 
 // --- Announcements -------------------------------------------------------
@@ -73,6 +134,13 @@ export const runAppleScript = (script) =>
       err
         ? reject(new Error(`AppleScript failed: ${(stderr || err.message).trim()}`))
         : resolve(out.replace(/\s+/g, ' ').trim())));
+
+/**
+ * Where VoiceOver's cursor is on the screen, as "left, top, right, bottom".
+ * Throws if it cannot be read.
+ */
+export const cursorBounds = () =>
+  runAppleScript('tell application "VoiceOver" to get bounds of vo cursor');
 
 /** The last phrase VoiceOver was given to speak. Throws if it cannot be read. */
 export const lastPhrase = () =>

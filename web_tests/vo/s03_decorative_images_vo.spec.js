@@ -4,7 +4,7 @@
 // writes the transcript.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
-import { walkFromBack } from './vo_helpers.js';
+import { walkToEnd } from './vo_helpers.js';
 
 const WELCOME = ['Welcome back, Ana.', 'You have 2 new messages.'];
 const DELIVERY = 'Delivery takes 2 to 4 days.';
@@ -13,13 +13,14 @@ const EXAMPLE = 'heading level 2 Example';
 // VoiceOver stops on the icon's label and then on the word, which are the
 // same text. Guidepup reports no new phrase at the second of two stops that
 // read the same, so that stop is recorded as '' here; the repeated word is
-// accepted as well, in case a later Guidepup reports it.
+// accepted as well, in case a later Guidepup reports it. That it is a stop
+// on another element is known from the cursor's position (walkToEnd).
 const again = (word) => ['', word];
 
 // slug -> everything VoiceOver speaks after the "Example" heading, in order,
-// one entry for each stop. An entry that is a list names the phrases that
-// are accepted at that stop. Because every stop is listed, the list also
-// shows what is not spoken.
+// one entry for each element its cursor stops on. An entry that is a list
+// names the phrases that are accepted at that stop. Because every stop to
+// the end of the screen is listed, the list also shows what is not spoken.
 const EXAMPLES = {
   'good-image-excluded': WELCOME,
   'good-icon-no-label': ['Shipping', 'Returns', DELIVERY],
@@ -38,24 +39,15 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
     await page.goto(`/#/t/S03/${slug}`, { waitUntil: 'load' });
     await expect(page.getByRole('heading', { name: 'Example', level: 2 })).toBeVisible();
-    // Walk as many steps past the "Example" heading as the example has
-    // elements, and one more. At the end of the screen VoiceOver says nothing
-    // or repeats the last element, so that extra step shows nothing follows.
-    const spoken = [];
-    await walkFromBack(page, voiceOver, browserName, (phrase) => {
-      spoken.push(phrase);
-      const start = spoken.indexOf(EXAMPLE);
-      return start >= 0 && spoken.length === start + 1 + expected.length + 1;
-    });
-    console.log(`S03VO ${browserName} ${slug} | ${spoken.join(' / ')}`);
-    const start = spoken.indexOf(EXAMPLE);
+    const { stops, reachedEnd } = await walkToEnd(page, voiceOver, browserName);
+    console.log(`S03VO ${browserName} ${slug} | ${stops.join(' / ')}`);
+    expect(reachedEnd, `${slug}: the walk reached the end of the screen`).toBe(true);
+    const start = stops.indexOf(EXAMPLE);
     expect(start, `${slug}: reached the example`).toBeGreaterThanOrEqual(0);
-    const content = spoken.slice(start + 1);
-    expect(content.length, `${slug}: walked one step past the example`).toBe(expected.length + 1);
+    const content = stops.slice(start + 1);
+    expect(content.length, `${slug}: stops in ${content.join(' / ')}`).toBe(expected.length);
     expected.forEach((accepted, i) => {
       expect([accepted].flat(), `${slug}: stop ${i + 1} of ${content.join(' / ')}`).toContain(content[i]);
     });
-    const last = expected[expected.length - 1];
-    expect(['', last], `${slug}: nothing follows the last element`).toContain(content[expected.length]);
   });
 }

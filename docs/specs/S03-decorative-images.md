@@ -89,13 +89,16 @@ Elements are located by role and name. Images have no controls to identify.
 | L3 Android | No `ImageView` in the good examples and the example's nodes in order; an `ImageView` with no description; doubled nodes; the merged row as `ImageView` |
 | L3 iOS | No image element in the good examples; an image element with no label; doubled elements; the merged row as an image |
 | L4 TalkBack | What is read on each text and row, and on the unnamed banner when focus is moved to it |
-| L4 VoiceOver iOS | Every utterance of each example, in swipe order, compared as a whole list |
-| L4 VoiceOver web | Every phrase of each example, in order, compared as a whole list, and one step beyond it |
+| L4 VoiceOver iOS | Every element of each example, in order, compared as a whole list. The end of the screen is shown by a walk forward that comes to rest and a walk back to the heading |
+| L4 VoiceOver web | Every stop of VoiceOver's cursor in each example, in order, compared as a whole list. Stops and the end of the screen are told by the cursor's position, read after every move |
 
 ## 7. What the build found (Flutter 3.47.5)
 
 The probe that came first is in [evidence/probes/s03](../evidence/probes/s03/).
 
+- **A `CustomPaint` exposes nothing only when its painter has no
+  `semanticsBuilder` and it has no child with semantics.** The probe's
+  painter had neither.
 - **`excludeFromSemantics: true`, an `Icon` with no label, a
   `DecorationImage`, a `CircleAvatar` background image, and anything inside
   `ExcludeSemantics` expose nothing** on all three platforms.
@@ -114,7 +117,8 @@ The probe that came first is in [evidence/probes/s03](../evidence/probes/s03/).
 - **The web VoiceOver transcript shows the doubled word as an empty stop.**
   In `bad-redundant-label` VoiceOver on macOS makes two stops per row.
   Guidepup reports no new phrase at the second, so the test accepts an
-  empty phrase or the repeated word there, and requires the stop.
+  empty phrase or the repeated word there. That it is a stop on another
+  element is known from the position of VoiceOver's cursor, which moved.
 - No new Flutter limitation.
 
 **Not done yet.** Which elements a TalkBack swipe stops on is not tested:

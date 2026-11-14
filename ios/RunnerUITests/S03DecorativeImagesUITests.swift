@@ -102,9 +102,9 @@ final class S03DecorativeImagesUITests: XCTestCase {
     XCTAssertEqual(app.images.firstMatch.label, "Trail guide\n12 routes")
   }
 
-  // L4. What VoiceOver speaks while swiping through each example: the whole
-  // list of utterances after the "Example" heading, in order. Because the
-  // list is complete, it also shows what is not spoken.
+  // L4. What VoiceOver speaks in each example: every element after the
+  // "Example" heading, in order, to the end of the screen. Because the list
+  // is complete, it also shows what is not spoken.
   private static let welcome = ["Welcome back, Ana.", "You have 2 new messages."]
   private static let delivery = "Delivery takes 2 to 4 days."
   private let speech: [(slug: String, spoken: [String])] = [
@@ -121,6 +121,45 @@ final class S03DecorativeImagesUITests: XCTestCase {
     ("bad-merged-image", ["Trail guide 12 routes Image"]),
   ]
 
+  /// One utterance with every run of whitespace made one space: VoiceOver
+  /// separates a label and its role with other whitespace than one space.
+  private func normalized(_ utterance: String) -> String {
+    utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
+  }
+
+  /// The elements of the example, last to first, from what was heard while
+  /// walking backward from the last element (`backward`, which ends at the
+  /// "Example" heading), given the last element's own utterance. Returns nil
+  /// when the forward walk did not prove the end of the screen.
+  ///
+  /// The forward walk stopped after hearing `last` four times in a row
+  /// (`forwardRun`). Walking backward shows how many of those were separate
+  /// elements: the utterances equal to `last` at the start of `backward`,
+  /// and the element the walk began on. If that accounts for all four, no
+  /// move was seen to stay on the same element, so the end was not shown.
+  static func exampleContent(last: String, forwardRun: Int, backward: [String]) -> [String]? {
+    let sameAsLast = backward.prefix { $0 == last }.count
+    guard sameAsLast + 1 < forwardRun else { return nil }
+    return Array(backward.reversed()) + [last]
+  }
+
+  /// exampleContent on made-up walks: no device or VoiceOver is involved.
+  func testExampleContentKeepsRepeatsAndNeedsAProvenEnd() {
+    typealias T = S03DecorativeImagesUITests
+    // One last element: nothing equal to it is heard on the way back.
+    XCTAssertEqual(T.exampleContent(last: "B", forwardRun: 4, backward: ["A"]), ["A", "B"])
+    // Two elements that read the same at the end are both kept.
+    XCTAssertEqual(T.exampleContent(last: "B", forwardRun: 4, backward: ["B", "A"]), ["A", "B", "B"])
+    XCTAssertEqual(T.exampleContent(last: "B", forwardRun: 4, backward: ["B", "B", "A"]),
+                   ["A", "B", "B", "B"])
+    // Four elements that read the same: every forward move reached a new
+    // element, so the end of the screen was never shown.
+    XCTAssertNil(T.exampleContent(last: "B", forwardRun: 4, backward: ["B", "B", "B", "A"]))
+    // Repeats in the middle are kept as they were heard.
+    XCTAssertEqual(T.exampleContent(last: "C", forwardRun: 4, backward: ["B", "B", "A"]),
+                   ["A", "B", "B", "C"])
+  }
+
   func testVoiceOverSpeech() throws {
     // XCUIVoiceOverService is in the iOS 27 SDK (Xcode 27, Swift 6.4). With an
     // older Xcode the symbol does not exist, so the body is compiled only
@@ -128,44 +167,50 @@ final class S03DecorativeImagesUITests: XCTestCase {
     #if compiler(>=6.4)
     guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
     let voiceOver = XCUIDevice.shared.voiceOverService
+    let endRun = 4
     for example in speech {
       open(example.slug)
       try voiceOver.enable()
-      var spoken: [String] = []
-      // Swipe right to the end of the screen. There VoiceOver stays on the
-      // last element and repeats it. One repeat could also be two elements
-      // that read the same, so the end counts only when two more moves give
-      // the same utterance again; anything else is kept as speech. A move
-      // that throws, or a walk that never reaches the end, fails the test:
-      // what was not heard cannot be said to be absent.
-      var reachedEnd = false
-      var repeats = 0
-      for _ in 0..<30 {
-        // `try`, not `try?`: a move that fails ends the test with its error.
-        let utterance = try voiceOver.moveForward().utterance
-        // VoiceOver separates the label and the role with other whitespace
-        // than one space; every run of whitespace becomes one space.
-        let text = utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
-        if spoken.last == text {
-          repeats += 1
-          if repeats == 3 {
-            reachedEnd = true
+      // Swipe right until the same utterance has been heard four times in a
+      // row. At the end of the screen VoiceOver stays on the last element
+      // and repeats it; elements that read the same also repeat. Which it
+      // was is settled by the walk back, below. A move that throws fails
+      // the test with its error (`try`, not `try?`).
+      var heading: [String] = []
+      var last = ""
+      var run = 0
+      for _ in 0..<40 where run < endRun {
+        let text = normalized(try voiceOver.moveForward().utterance)
+        if text == last {
+          run += 1
+        } else {
+          last = text
+          run = 1
+        }
+        if heading.last != "Example Heading" { heading.append(text) }
+      }
+      // Swipe left from there to the "Example" heading. This is the record
+      // of the example: every element once, last to first.
+      var backward: [String] = []
+      var reachedHeading = false
+      if run == endRun {
+        for _ in 0..<40 {
+          let text = normalized(try voiceOver.moveBackward().utterance)
+          if text == "Example Heading" {
+            reachedHeading = true
             break
           }
-          continue
+          backward.append(text)
         }
-        // Repeats that were not the end were elements of their own.
-        spoken.append(contentsOf: Array(repeating: spoken.last ?? "", count: repeats))
-        repeats = 0
-        spoken.append(text)
       }
       try voiceOver.disable()
-      print("S03VO \(example.slug) | \(spoken.joined(separator: " / "))")
-      XCTAssertTrue(reachedEnd, "\(example.slug): the walk did not reach the end of the screen")
-      // What comes after the "Example" heading is the example itself.
-      let start = (spoken.firstIndex(of: "Example Heading") ?? -1) + 1
-      XCTAssertGreaterThan(start, 0, "\(example.slug): the walk reached the example")
-      XCTAssertEqual(Array(spoken[start...]), example.spoken, example.slug)
+      XCTAssertEqual(run, endRun, "\(example.slug): the walk did not come to rest")
+      XCTAssertTrue(reachedHeading, "\(example.slug): the walk back did not reach the heading")
+      let content = S03DecorativeImagesUITests.exampleContent(
+        last: last, forwardRun: run, backward: backward)
+      XCTAssertNotNil(content, "\(example.slug): the end of the screen was not shown")
+      print("S03VO \(example.slug) | \((heading + (content ?? [])).joined(separator: " / "))")
+      XCTAssertEqual(content, example.spoken, example.slug)
     }
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
