@@ -11,11 +11,11 @@ const DELIVERY = 'Delivery takes 2 to 4 days.';
 const EXAMPLE = 'heading level 2 Example';
 
 // VoiceOver stops on the icon's label and then on the word, which are the
-// same text. Guidepup reports no new phrase at the second of two stops that
-// read the same, so that stop is recorded as '' here; the repeated word is
-// accepted as well, in case a later Guidepup reports it. That it is a stop
-// on another element is known from the cursor's position (walkToEnd).
-const again = (word) => ['', word];
+// same text. The repeated word is expected at the second stop; an empty
+// phrase is accepted too, for a VoiceOver that reports nothing new there.
+// That it is a stop on another element is known from the cursor's position
+// (walkToEnd).
+const again = (word) => [word, ''];
 
 // slug -> everything VoiceOver speaks after the "Example" heading, in order,
 // one entry for each element its cursor stops on. An entry that is a list

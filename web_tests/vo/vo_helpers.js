@@ -111,15 +111,20 @@ export async function stopsToEnd(step, start, max = 40) {
 
 /**
  * Starts from the Back button and moves VoiceOver forward to the end of the
- * screen, reading the position of VoiceOver's cursor after every move. See
- * stopsToEnd for what is returned.
+ * screen, reading what VoiceOver spoke and the position of its cursor after
+ * every move. See stopsToEnd for what is returned.
+ *
+ * Both are read from VoiceOver directly over AppleScript, which throws when
+ * a read fails. Guidepup's own record of the speech is not used here: it
+ * turns a failed read into an empty phrase, and an empty phrase at an
+ * unchanged position is what the end of the screen looks like.
  */
 export async function walkToEnd(page, voiceOver, browserName, max = 40) {
   await startAtBack(page, browserName, false);
-  const step = async () => ({
-    phrase: await nextPhrase(page, voiceOver),
-    position: await cursorBounds(),
-  });
+  const step = async () => {
+    await voiceOver.next();
+    return { phrase: await lastPhrase(), position: await cursorBounds() };
+  };
   return stopsToEnd(step, await cursorBounds(), max);
 }
 

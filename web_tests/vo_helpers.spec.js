@@ -69,3 +69,14 @@ test('a different phrase after one unmoved step is still a stop', async () => {
     moves([['Row', 'a'], ['', 'a'], ['late image', 'a'], ['', 'a'], ['', 'a']]), 'start');
   expect(result).toEqual({ stops: ['Row', 'late image'], reachedEnd: true });
 });
+
+test('a read that fails ends the walk with its error, not with an end of screen', async () => {
+  const list = [['Row', 'a']];
+  let i = 0;
+  const step = async () => {
+    if (i >= list.length) throw new Error('AppleScript failed: no speech');
+    const [phrase, position] = list[i++];
+    return { phrase, position };
+  };
+  await expect(stopsToEnd(step, 'start')).rejects.toThrow(/AppleScript failed/);
+});

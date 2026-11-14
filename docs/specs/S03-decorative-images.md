@@ -114,11 +114,14 @@ The probe that came first is in [evidence/probes/s03](../evidence/probes/s03/).
 - **`Icon(semanticLabel: '')` leaves an empty node on Android** (not
   focusable) and nothing on web and iOS. Seen in the probe only; no example
   uses it.
-- **The web VoiceOver transcript shows the doubled word as an empty stop.**
-  In `bad-redundant-label` VoiceOver on macOS makes two stops per row.
-  Guidepup reports no new phrase at the second, so the test accepts an
-  empty phrase or the repeated word there. That it is a stop on another
-  element is known from the position of VoiceOver's cursor, which moved.
+- **The web VoiceOver walk reads VoiceOver directly.** Guidepup reported
+  no phrase at the second of two stops that read the same, and turns a
+  failed read into an empty phrase. The S03 walk therefore reads the last
+  phrase and the cursor's position over AppleScript after every move, and
+  the transcript shows the repeated words of `bad-redundant-label`. A direct
+  read can also catch a VoiceOver hint ("You are currently on a heading
+  ...") in place of an element's text when VoiceOver has been on it for a
+  moment; the transcript shows this where it happened.
 - No new Flutter limitation.
 
 **Not done yet.** Which elements a TalkBack swipe stops on is not tested:
