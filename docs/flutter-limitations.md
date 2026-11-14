@@ -723,9 +723,11 @@ yet), **Fixed in x.y** (verified on that version).
   the S01 web test). Whether a person using a mouse, touch, or a screen
   reader's click is affected was not tested.
 - Possibly related, cause not established: with Playwright's WebKit build,
-  VoiceOver's cursor did not move past the screen title on this screen (six
-  walks out of six; `docs/evidence/S01/voiceover-web.md`), and it walked the
-  other seven S01 screens normally. In Chromium the cursor reached the
+  VoiceOver's cursor did not move past the screen title on this screen in
+  seven walks out of eight (`docs/evidence/S01/voiceover-web.md`). The
+  eighth failed the test's checks and was retried; what it spoke was not
+  kept, so it is not known whether the cursor got further. The cursor walked
+  the other seven S01 screens normally. In Chromium the cursor reached the
   slider. The WebKit build is not Safari; Safari was not tried.
 - How it is handled here: `walkFromBack` in `web_tests/vo/vo_helpers.js`
   takes a `skipClick` flag for this screen, and the S01 VoiceOver test
