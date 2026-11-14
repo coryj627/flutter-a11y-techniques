@@ -47,6 +47,25 @@ test('a good use case shows the live example and the technique doc', async ({ pa
   await expect(page.getByRole('link', { name: 'FL-001' })).toHaveAttribute('href', /flutter-limitations\.md#fl-001$/);
 });
 
+test('a SnackBar example shows and announces its message', async ({ page }) => {
+  await page.goto('/#/?path=interaction-and-input/i12-announcements-and-live-regions/snackbar-(good)');
+  const action = page.locator('[flt-semantics-identifier="i12-good-snackbar-action"]');
+  await action.waitFor();
+  await page.waitForTimeout(900);
+  await page.evaluate(() => {
+    window.announced = [];
+    const element = document.querySelector('flt-announcement-polite');
+    new MutationObserver(() => {
+      const text = element.textContent.replace(/\u00a0/g, ' ').trim();
+      if (text) window.announced.push(text);
+    }).observe(element, { childList: true, characterData: true, subtree: true });
+  });
+  await action.click();
+  // The message is on screen in the SnackBar (and, briefly, in the announcer).
+  await expect(page.locator('flt-semantics', { hasText: 'Message archived' }).last()).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.announced)).toContain('Message archived');
+});
+
 test('a bad use case states its defect in text', async ({ page }) => {
   await openUseCase(page, 'Icon button with no name (bad)');
   await expect(page.getByText('Defect: The icon button has no accessible name.')).toBeAttached();
