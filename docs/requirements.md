@@ -154,6 +154,25 @@ unless a documented reason prevents it.
 | D20 | 2026-11-12 | Public repo, solo for now; contribution scaffolding later. | Contributor-ready in v1; private. |
 | D21 | 2026-11-12 | Flutter pin is latest stable minus one (currently 3.47.5, with 3.50.0 just released). Fixes only in the newest stable are recorded as limitations until the pin moves. | Pinning the newest stable. |
 
+## 5a. Status after the vertical slice (2026-11-13)
+
+The slice built four techniques end to end. The requirements above are
+unchanged. Where the slice did not meet one, the gap and a proposal are in
+[slice-review.md](slice-review.md), sections 3 and 4, for the owner to decide:
+
+| Requirement | Status after the slice |
+| --- | --- |
+| VAL-1 | `integration_test` not built; proposed for removal |
+| VAL-2 | Met with Playwright, XCUITest, and UI Automator. Espresso cannot see Flutter content |
+| VAL-5 | Speech is a gate for TalkBack, VoiceOver on iOS (focus speech), and VoiceOver on web |
+| VAL-8 | Web runs use Playwright's Chromium and WebKit builds, not Chrome and Safari |
+| VAL-9 | Keyboard verified in widget tests and on web; focus visibility not asserted |
+| VAL-10 | Text scaling and light and dark contrast checked; zoom, high contrast, and reduced motion not |
+| DOC-5 | Docs describe code but do not show it |
+| TEC-6 | Limitations documented in [flutter-limitations.md](flutter-limitations.md); no Flutter issues filed or linked |
+| APP-2 | Widgetbook does not filter by platform |
+| CAT-1 to CAT-3 | 4 of 102 inventory entries built |
+
 ## 6. Open questions
 
 1. **Minimum OS and browser versions.** Proposed default: the minimums supported

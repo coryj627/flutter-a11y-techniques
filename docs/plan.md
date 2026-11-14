@@ -487,7 +487,10 @@ web. What it added to the test approach:
 - The Android tests look for nodes in every window and retry, because with
   TalkBack running a system dialog can be the active window.
 
-Still to do in this phase: the technique template and the checklist.
+The template and checklist are written:
+[technique-guide.md](technique-guide.md),
+[technique-checklist.md](technique-checklist.md), and the two files in
+[templates/](templates/). Phase 3 is complete.
 
 ### Phase 4 — Slice review
 
@@ -497,7 +500,25 @@ Still to do in this phase: the technique template and the checklist.
 4. Plan batches for the remaining 98 entries, probing the 27 unknown-feasibility
    entries early.
 
+#### Phase 4 status (2026-11-13)
+
+Written up in [slice-review.md](slice-review.md): the gate per screen reader,
+run times, what the slice disproved, the requirements it did not meet, and a
+batch plan for the remaining 98 entries starting with a probe of the 27
+unknowns.
+
+Step 3 is only half done on purpose. The review lists eight proposals that
+change a requirement or the way of working (dropping `integration_test`,
+scoping device runs to the changed technique, showing code in the docs, filing
+Flutter issues, the browsers for web screen reader runs, iOS announcements,
+the missing visual checks, and minimum versions). They are the owner's
+decisions, so [requirements.md](requirements.md) records the gaps and is
+otherwise unchanged until they are made.
+
 ## 4. Definition of done for a technique
+
+The working version of this list is [technique-checklist.md](technique-checklist.md),
+written after the slice. The original, kept for the record:
 
 - Spec written and sources linked
 - At least one good and one bad example, SDK-only for good
@@ -513,9 +534,9 @@ Still to do in this phase: the technique template and the checklist.
 | # | Risk | Response |
 | --- | --- | --- |
 | R1 | Native test tools see little of Flutter's tree on Android through Espresso | Lean on UI Automator; record what Espresso can and cannot do as a finding |
-| R2 | VoiceOver speech cannot be captured on the iOS Simulator | Resolved for focus speech by `XCUIVoiceOverService` on iOS 27 (finding K7). Still open for live region announcements and for heading speech |
+| R2 | VoiceOver speech cannot be captured on the iOS Simulator | Resolved for focus speech, including headings, by `XCUIVoiceOverService` on iOS 27. Not resolved for announcements: I12 is unverified on iOS |
 | R3 | Screen reader speech is not repeatable enough to gate | Gate on normalised phrases (role and name), keep full transcript as evidence |
-| R4 | Four test layers per technique across 102 entries is a large cost | Slice measures it; phase 4 decides whether L2 and L3 overlap enough to trim |
+| R4 | Four test layers per technique across 102 entries is a large cost | Measured in [slice-review.md](slice-review.md). L2 was never built and is proposed for removal; device and transcript runs are proposed to be scoped to the changed technique |
 | R5 | Flutter upgrade changes semantics output | Pinned SDK; upgrade is its own change with every suite re-run (APP-5) |
 | R6 | CVS mappings were made from titles only | Each spec starts by reading the source docs |
 
