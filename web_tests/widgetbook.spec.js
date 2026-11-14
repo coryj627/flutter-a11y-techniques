@@ -4,19 +4,26 @@
 // Run: npx playwright test -c widgetbook.config.js
 import { test, expect } from '@playwright/test';
 
-async function openUseCase(page, name) {
+// Use cases are opened by their link. The navigation is a lazy list, so only
+// entries near the top are in the tree to click (FL-011); which ones those
+// are changes as techniques are added.
+async function openUseCase(page, path) {
   await page.goto('about:blank');
-  await page.goto('/');
-  await page.getByRole('button', { name, exact: true }).click();
+  await page.goto(`/#/?path=${path}`);
 }
 
 test('navigation lists every example, labelled good or bad', async ({ page }) => {
   await page.goto('/');
-  // The navigation is a lazy list, so only entries near the top are in the
-  // tree (FL-011). C01 Button, the first technique, has 6 good and 7 bad.
-  await expect(page.getByRole('button', { name: 'Text buttons (good)' })).toBeVisible();
-  const c01 = page.getByRole('button', { name: /\((good|bad)\)$/ });
-  expect(await c01.count()).toBeGreaterThanOrEqual(13);
+  // S01 Accessible names, the first technique in the list, has 4 good and 4
+  // bad.
+  const first = page.getByRole('button', { name: 'List tile controls named by their text (good)' });
+  await expect(first).toBeVisible();
+  const entries = page.getByRole('button', { name: /\((good|bad)\)$/ });
+  expect(await entries.count()).toBeGreaterThanOrEqual(8);
+  // An entry opens its use case.
+  await first.click();
+  await expect(page).toHaveURL(/path=semantics-and-content\/s01-accessible-names\//);
+  await expect(page.locator('[flt-semantics-identifier="s01-good-visible-label-dark"]')).toHaveRole('switch');
 });
 
 // One test per link, each in a fresh page.
@@ -35,7 +42,7 @@ for (const [path, heading] of [
 }
 
 test('a good use case shows the live example and the technique doc', async ({ page }) => {
-  await openUseCase(page, 'Text buttons (good)');
+  await openUseCase(page, 'components/c01-button/text-buttons-(good)');
   await expect(page).toHaveURL(/path=components\/c01-button\//);
   const save = page.locator('[flt-semantics-identifier="c01-good-text-filled"]');
   await expect(save).toHaveRole('button');
@@ -67,7 +74,7 @@ test('a SnackBar example shows and announces its message', async ({ page }) => {
 });
 
 test('a bad use case states its defect in text', async ({ page }) => {
-  await openUseCase(page, 'Icon button with no name (bad)');
+  await openUseCase(page, 'components/c01-button/icon-button-with-no-name-(bad)');
   await expect(page.getByText('Defect: The icon button has no accessible name.')).toBeAttached();
   await expect(page.locator('[flt-semantics-identifier="c01-bad-unlabelled-icon-close"]')).toHaveAccessibleName('');
 });
