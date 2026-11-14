@@ -5,6 +5,7 @@ import 'package:flutter/semantics.dart';
 
 import '../../catalog/test_id.dart';
 
+// #region shared
 /// A button that changes a message on screen. How the message is exposed is
 /// what each example varies.
 class _Demo extends StatefulWidget {
@@ -73,6 +74,7 @@ class _DemoState extends State<_Demo> {
 
 String _cart(int count) =>
     count == 1 ? '1 item in cart' : '$count items in cart';
+// #endregion
 
 // #region good-live-region
 /// A status message in a live region: when its text changes, assistive

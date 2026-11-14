@@ -4,6 +4,8 @@ import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/all_techniques.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../tool/doc_code.dart';
+
 /// DOC-3: the Markdown doc and the registered technique must not drift apart.
 void main() {
   for (final technique in allTechniques) {
@@ -71,8 +73,10 @@ void main() {
       });
 
       test('names every example, and no example that does not exist', () {
+        // Only what a person wrote counts: the generated code section names
+        // every example by itself, and must not stand in for an explanation.
         final inDoc = RegExp(r'`((?:good|bad)-[a-z-]+)`')
-            .allMatches(source)
+            .allMatches(handwritten(source))
             .map((m) => m.group(1)!)
             .toSet();
         expect(inDoc, {for (final e in technique.examples) e.slug});

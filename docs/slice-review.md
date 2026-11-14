@@ -132,7 +132,7 @@ decided on 2026-11-13 and are in the decision log of
 | --- | --- | --- |
 | 1 | Drop `integration_test` as a separate layer, or build it once for the shell | **Dropped** (D22). VAL-1 reworded |
 | 2 | Before each merge run only the changed technique's device and screen reader suites; run everything on a schedule | **Adopted** (D23) |
-| 3 | Show code in the technique docs from the region markers | **Adopted** (D24); to be built |
+| 3 | Show code in the technique docs from the region markers | **Adopted** (D24). Built: `tool/doc_code.dart` |
 | 4 | File the Flutter issues for the 18 limitations | **Not now** (D25) |
 | 5 | Web browsers for screen reader runs: accept Playwright's builds, or spike real Chrome and Safari | **Accept Playwright's builds** (D26). VAL-8 reworded |
 | 6 | How iOS announcements get verified | **Spike again** (D27), with more research, Apple's `XCUIVoiceOverService` documentation, and the approach in the owner's `slate` project. Done: it succeeded, see [plan.md](plan.md) |
