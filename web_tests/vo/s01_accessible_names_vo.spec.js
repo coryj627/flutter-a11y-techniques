@@ -67,28 +67,28 @@ test('voiceover reads bad-duplicate-names', async ({ page, voiceOver, browserNam
   expect(spoken.filter((p) => p === 'Order updates off switch'), slug).toHaveLength(2);
 });
 
-// Flutter limitations FL-028 and FL-029.
-// Chromium: VoiceOver reads the wrapper as a group called "Volume", then the
-// slider with its value and no name. If it starts saying "Volume" with the
-// slider after a Flutter upgrade, this fails and FL-028 is fixed.
-// Playwright's WebKit build: VoiceOver's cursor does not get past the screen
-// title on this screen, and never reaches the slider. If it reaches the
-// slider after an upgrade, this fails and the entry needs updating.
+// Flutter limitation FL-028, in Chromium: VoiceOver reads the wrapper as a
+// group called "Volume", then the slider with its value and no name. If it
+// starts saying "Volume" with the slider after a Flutter upgrade, this fails
+// and FL-028 is fixed.
+//
+// Playwright's WebKit build is recorded and not judged. There VoiceOver's
+// cursor usually leaves the page content after the screen title and never
+// reaches the slider. This test cannot tell a fault of the page from the
+// harness losing focus, so nothing about the slider is asserted for WebKit;
+// the walk is kept in the transcript as an observation (FL-029).
 test('voiceover reads bad-slider-name-web', async ({ page, voiceOver, browserName }) => {
   const slug = 'bad-slider-name-web';
   await page.goto(`/#/t/S01/${slug}`, { waitUntil: 'load' });
   await expect(page.getByRole('heading', { name: 'Example', level: 2 })).toBeVisible();
   const spoken = await walkFromBack(page, voiceOver, browserName, isSlider, 12, true);
   console.log(`S01VO ${browserName} ${slug} | ${spoken.join(' / ')}`);
+  // Capture is working and the cursor started in the page.
   expect(spoken[0], slug).toBe('heading level 1 Slider whose name is lost on web');
+  if (browserName !== 'chromium') return;
   const slider = spoken.filter(isSlider);
-  if (browserName === 'chromium') {
-    expect(spoken, slug).toContain('Volume group');
-    expect(slider, slug).toHaveLength(1);
-    expect(slider[0], slug).toContain('40%');
-    expect(slider[0], slug).not.toContain('Volume');
-  } else {
-    expect(slider, slug).toHaveLength(0);
-    expect(spoken, slug).not.toContain('heading level 2 Example');
-  }
+  expect(spoken, slug).toContain('Volume group');
+  expect(slider, slug).toHaveLength(1);
+  expect(slider[0], slug).toContain('40%');
+  expect(slider[0], slug).not.toContain('Volume');
 });

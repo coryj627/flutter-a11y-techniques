@@ -76,7 +76,7 @@ Flutter references for the mechanisms used:
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
 | `bad-unassociated-label` | Text beside a checkbox, not joined to it: the checkbox has no name | R1, R2 | 1.3.1, 4.1.2 |
-| `bad-duplicate-names` | Two switches both named "Order updates" | R3 | 2.4.6 |
+| `bad-duplicate-names` | Two switches both named "Order updates" | R3 | — (the sources ask for unique names; the tests show the names are equal, not a WCAG failure) |
 | `bad-role-in-name` | The name is "Dark mode switch" | R5 | — (the role is heard twice) |
 | `bad-slider-name-web` | A slider joined to its text as in `good-merged-label`; on web it has no name (Flutter limitation FL-028) | R1, R6 | 4.1.2 on web |
 
@@ -96,7 +96,7 @@ Controls are located by `TestId`.
 | L3 iOS | Element type (switch), label, value "0" then "1" after a tap; one element per label; the slider is named |
 | L4 TalkBack | Name and role spoken per control; no name for the unassociated checkbox |
 | L4 VoiceOver iOS | The utterance for each control starts with its name; the unassociated checkbox is read with no name |
-| L4 VoiceOver web | Name, state, and role spoken per control. Chromium: the unnamed checkbox has no name; the slider is read with its value and no name. WebKit build: what was observed is asserted (the guessed name; the cursor that does not reach the slider) |
+| L4 VoiceOver web | Name, state, and role spoken per control. Chromium: the unnamed checkbox has no name; the slider is read with its value and no name. WebKit build: the guessed name for the unnamed checkbox is asserted; the slider walk is recorded and not judged |
 
 Where a defect cannot be observed on a platform, the test asserts what is
 observable: `bad-slider-name-web` is asserted as named on Android and iOS.
@@ -116,8 +116,8 @@ that came first is in [evidence/probes/s01](../evidence/probes/s01/).
   dimmed slider".
 - **A Material `Slider` adds an empty full-screen element on web** that
   blocks Playwright's clicks on the rest of the screen (FL-029). Its effect
-  on people was not tested. On the same screen, VoiceOver's cursor in
-  Playwright's WebKit build did not get past the title.
+  on people was not tested. On the same screen the VoiceOver walk in
+  Playwright's WebKit build was not reliable; it is recorded and not judged.
 - **VoiceOver in Playwright's WebKit build guesses a name for the unnamed
   checkbox** from the text beside it. The other three screen reader runs
   read it with no name.

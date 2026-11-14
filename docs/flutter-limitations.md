@@ -722,16 +722,17 @@ yet), **Fixed in x.y** (verified on that version).
   events"). Keyboard operation of the slider is not affected (asserted in
   the S01 web test). Whether a person using a mouse, touch, or a screen
   reader's click is affected was not tested.
-- Possibly related, cause not established: with Playwright's WebKit build,
-  VoiceOver's cursor did not move past the screen title on this screen in
-  seven walks out of eight (`docs/evidence/S01/voiceover-web.md`). The
-  eighth failed the test's checks and was retried; what it spoke was not
-  kept, so it is not known whether the cursor got further. The cursor walked
-  the other seven S01 screens normally. In Chromium the cursor reached the
-  slider. The WebKit build is not Safari; Safari was not tried.
+- Seen on the same screen, not a finding: with Playwright's WebKit build,
+  VoiceOver's cursor usually left the page content after the screen title
+  and did not reach the slider, with and without a mouse click to put focus
+  in the page first. It walked the other seven S01 screens normally, and in
+  Chromium it reached the slider. The test cannot tell a fault of the page
+  from the test harness losing focus, so this is recorded in
+  `docs/evidence/S01/voiceover-web.md` and nothing is asserted. The WebKit
+  build is not Safari; Safari was not tried.
 - How it is handled here: `walkFromBack` in `web_tests/vo/vo_helpers.js`
-  takes a `skipClick` flag for this screen, and the S01 VoiceOver test
-  asserts the stuck cursor in WebKit so that a change is noticed.
+  takes a `clickAtPoint` flag for this screen, which clicks with the mouse
+  at a position and skips Playwright's check.
 - To do in the slider technique (F10): find the widget that creates the
   element, and test pointer and screen reader activation of controls beside
   a slider.
