@@ -43,7 +43,7 @@ lib/
 docs/
   techniques/<id>.md         single source for each technique's documentation (DOC-3)
 test/techniques/<id>/        widget tests: semantics + guidelines (VAL-1)
-integration_test/            Flutter integration tests per platform (VAL-1)
+(integration_test/ was planned here and dropped, D22)
 android/app/src/androidTest/ UI Automator tests (VAL-2)
 ios/RunnerUITests/           XCUITest tests (VAL-2)
 web_tests/                   Playwright tests; Guidepup VoiceOver tests (VAL-2, VAL-4)
@@ -100,7 +100,7 @@ heading, list, and link semantics (APP-3). Chosen in spike K4.
 | Layer | Tool | Runs | Asserts |
 | --- | --- | --- | --- |
 | L1 Widget | `flutter_test` | CI, every PR | Semantics label, role, flags, actions, value; the four guidelines; text scaling to 200% without overflow; contrast |
-| L2 Integration | `integration_test` | CI, per platform | Example opens by route; keyboard focus order and activation; state changes |
+| ~~L2 Integration~~ | `integration_test` | Dropped (D22) | Its checks are made at L1 and L3: examples open by route, keyboard focus order and activation, state changes |
 | L3 Platform tree | Playwright (web), XCUITest (iOS), UI Automator (Android; Espresso cannot see Flutter content, finding K1) | CI, per platform | What the platform accessibility API exposes: ARIA role and name on web; `accessibilityLabel`, traits, value on iOS; class name, content description, state, actions on Android |
 | L4 Screen reader | Guidepup + VoiceOver (web, macOS); TalkBack on emulator; VoiceOver on iOS; computer use | Local Mac | Spoken output. Gate where deterministic, transcript otherwise (VAL-5) |
 
@@ -115,9 +115,9 @@ limited to what its accessibility checks can see. Confirmed in spike K1.
 | Job | Runner | Contents |
 | --- | --- | --- |
 | analyze-test | Linux | format, analyze, L1, docs generator checks |
-| web | Linux | build web, L2 on Chrome, L3 Playwright |
-| android | Linux with emulator | L2, L3 |
-| ios | macOS with simulator | L2, L3 |
+| web | Linux | build web, L3 Playwright |
+| android | Linux with emulator | L3 |
+| ios | macOS with simulator | L3 |
 | widgetbook | Linux | builds for web; Android and iOS builds compile-checked |
 
 L4 runs from `tool/` scripts on a Mac and commits transcripts to `evidence/`.
@@ -507,13 +507,16 @@ run times, what the slice disproved, the requirements it did not meet, and a
 batch plan for the remaining 98 entries starting with a probe of the 27
 unknowns.
 
-Step 3 is only half done on purpose. The review lists eight proposals that
-change a requirement or the way of working (dropping `integration_test`,
-scoping device runs to the changed technique, showing code in the docs, filing
-Flutter issues, the browsers for web screen reader runs, iOS announcements,
-the missing visual checks, and minimum versions). They are the owner's
-decisions, so [requirements.md](requirements.md) records the gaps and is
-otherwise unchanged until they are made.
+The review's eight proposals were decided by the owner on 2026-11-13 (D22 to
+D29 in [requirements.md](requirements.md)): `integration_test` is dropped;
+device and screen reader runs before a merge are scoped to the changed
+technique; docs will show code from the example files; Flutter issues are not
+filed yet; Playwright's browser builds are accepted for web; iOS announcements
+get another spike; the missing visual checks become their own techniques; and
+minimum versions follow the pinned Flutter release.
+
+Next, in order: the iOS announcement spike (D27), the code-in-docs build step
+(D24), then batch 0, the probes of the 27 unknown-feasibility entries.
 
 ## 4. Definition of done for a technique
 

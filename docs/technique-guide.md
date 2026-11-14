@@ -19,8 +19,10 @@ templates are in [templates/](templates/).
    platform, it is a bad example with a limitation entry, not a good one.
 4. **Write the tests at each layer**, then the spec's "what the build found"
    section, then the technique doc.
-5. **Run the gates**: local suites, Codex adversarial review until it
-   approves, then the PR with green CI and Codoki's "safe to merge".
+5. **Run the gates**: this technique's suites and transcripts locally (the
+   full device and transcript run is scheduled, not per merge), Codex
+   adversarial review until it approves, then the PR with green CI and
+   Codoki's "safe to merge".
 
 ## Files for a technique
 
