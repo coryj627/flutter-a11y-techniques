@@ -171,6 +171,11 @@ final class S03DecorativeImagesUITests: XCTestCase {
     for example in speech {
       open(example.slug)
       try voiceOver.enable()
+      // A move that throws leaves this loop early; VoiceOver must not stay
+      // on for the tests that follow. On the normal path it is switched off
+      // below with `try`, so a failure to stop is still reported.
+      var voiceOverOn = true
+      defer { if voiceOverOn { try? voiceOver.disable() } }
       // Swipe right until the same utterance has been heard four times in a
       // row. At the end of the screen VoiceOver stays on the last element
       // and repeats it; elements that read the same also repeat. Which it
@@ -204,6 +209,7 @@ final class S03DecorativeImagesUITests: XCTestCase {
         }
       }
       try voiceOver.disable()
+      voiceOverOn = false
       XCTAssertEqual(run, endRun, "\(example.slug): the walk did not come to rest")
       XCTAssertTrue(reachedHeading, "\(example.slug): the walk back did not reach the heading")
       let content = S03DecorativeImagesUITests.exampleContent(
