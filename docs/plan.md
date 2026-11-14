@@ -567,7 +567,12 @@ later techniques:
   unreliable. It sees only announcements the app posts (which is how Flutter
   implements live regions and `sendAnnouncement` on iOS), not other speech.
 
-Next, in order: the code-in-docs build step (D24), then batch 0, the probes
+The code-in-docs step (D24) is built: `dart run tool/doc_code.dart` copies
+each example's region from `examples.dart` into the "Example code" section of
+its technique doc, and `test/docs/doc_code_test.dart` fails when a doc is out
+of date or an example has no region.
+
+Next: batch 0, the probes
 of the 27 unknown-feasibility entries.
 
 ## 4. Definition of done for a technique

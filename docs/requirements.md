@@ -176,7 +176,7 @@ VAL-1, VAL-8, and VAL-10 above were revised to match.
 | VAL-8 | Met as revised (D26) |
 | VAL-9 | Keyboard verified in widget tests and on web; focus visibility not asserted yet (planned with V14) |
 | VAL-10 | Met as revised (D28); V02, V06, and V09 are still to build |
-| DOC-5 | Not met yet: docs describe code but do not show it. To be built (D24) |
+| DOC-5 | Met: each technique doc has an "Example code" section copied from the example files by `tool/doc_code.dart`, and `flutter test` fails if it is out of date (D24) |
 | TEC-6 | Limitations documented in [flutter-limitations.md](flutter-limitations.md); no Flutter issues filed, by decision for now (D25) |
 | APP-2 | Widgetbook does not filter by platform; no technique so far is platform-specific |
 | CAT-1 to CAT-3 | 4 of 102 inventory entries built |

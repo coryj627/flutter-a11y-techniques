@@ -63,6 +63,8 @@ behind each one is in [the technique guide](technique-guide.md).
 
 ## Before merging
 
+- [ ] `dart run tool/doc_code.dart` run after the last change to
+      `examples.dart`, so the doc shows the tested code
 - [ ] `dart format`, `flutter analyze`, `flutter test`, and the script tests
       pass
 - [ ] All Playwright suites and the Widgetbook suite pass against fresh builds

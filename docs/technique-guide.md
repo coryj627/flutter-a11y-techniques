@@ -56,7 +56,10 @@ registry; nothing else needs wiring.
   every layer that can see the defect asserts it. Write those assertions so
   they fail if a Flutter upgrade fixes the defect.
 - **Region markers** (`// #region good-x` … `// #endregion`) surround each
-  example in `examples.dart`.
+  example in `examples.dart`. `dart run tool/doc_code.dart` copies each region
+  into the "Example code" section of the technique doc, between the
+  `example-code` markers; never edit that section by hand. `flutter test`
+  fails if it is out of date, or if an example has no region.
 - **Give the example something to verify.** The Button examples count
   activations; the text field tests type and re-read; the announcement
   examples have a button that changes a message.
