@@ -57,10 +57,85 @@ final class I12AnnouncementsUITests: XCTestCase {
     XCTAssertTrue(element(labelled: "Message archived").waitForExistence(timeout: 5))
   }
 
-  // L4 is not automated on iOS for this technique. XCUIVoiceOverService
-  // returns what VoiceOver says for the element it is on (moveForward,
-  // currentSpeech); after a button is pressed it keeps returning the button,
-  // never the announcement that follows. The simulator's system log does not
-  // contain the speech either. Both were tried on iOS 27.0 (docs/plan.md).
-  // So on iOS whether these messages are announced is not verified here.
+  // L4. What VoiceOver says after each example's button is activated.
+  //
+  // With VoiceOver on, XCUIElement.tap() only moves the VoiceOver cursor to
+  // the button; a double tap activates it, as it does for a person. After
+  // that, XCUIVoiceOverService.currentSpeech() returns the announcement when
+  // there is one, and keeps returning the button when there is none. To tell
+  // an announcement from the cursor having moved onto the message, the test
+  // then steps the cursor back and forward again and expects to land on the
+  // button. (An
+  // earlier attempt used tap() alone, never activated the button, and wrongly
+  // concluded that announcements could not be captured; see docs/plan.md.)
+  // `message` is the visible text after activation; `announced` says
+  // whether VoiceOver must speak it.
+  private let speech: [(slug: String, button: String, message: String, announced: Bool)] = [
+    ("good-live-region", "Add to cart Button", "1 item in cart", true),
+    ("good-announce", "Copy link Button", "Link copied", true),
+    ("good-snackbar", "Archive message Button", "Message archived", true),
+    ("bad-silent-update", "Add to cart Button", "1 item in cart", false),
+    // Flutter's status and alert roles do nothing on iOS (FL-017).
+    ("bad-status-role-only", "Add to cart Button", "1 item in cart", false),
+    ("bad-alert-role-only", "Save changes Button", "Could not save. Attempt 1 failed.", false),
+  ]
+
+  func testVoiceOverSpeech() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    func current() -> String {
+      ((try? voiceOver.currentSpeech().utterance) ?? "").replacingOccurrences(of: "\n", with: " ")
+    }
+    /// Polls until `done` accepts the current speech or `seconds` pass.
+    func waitForSpeech(_ seconds: TimeInterval, until done: (String) -> Bool) -> String {
+      let deadline = Date().addingTimeInterval(seconds)
+      var last = current()
+      while !done(last) && Date() < deadline {
+        usleep(250_000)
+        last = current()
+      }
+      return last
+    }
+    for example in speech {
+      open(example.slug)
+      try voiceOver.enable()
+      defer { try? voiceOver.disable() }
+      let action = element("i12-\(example.slug)-action")
+      // Put the VoiceOver cursor on the button and wait until it is read.
+      var before = ""
+      for _ in 0..<5 {
+        action.tap()
+        before = waitForSpeech(4) { $0 == example.button }
+        if before == example.button { break }
+      }
+      XCTAssertEqual(before, example.button, "\(example.slug): cursor is not on the button")
+      action.doubleTap()
+      // The button acted: its message is on screen. Without this, silence
+      // could mean only that the double tap did nothing.
+      XCTAssertTrue(
+        element(labelled: example.message).waitForExistence(timeout: 5),
+        "\(example.slug): the button was not activated")
+      let after: String
+      if example.announced {
+        after = waitForSpeech(8) { $0 == example.message }
+        XCTAssertEqual(after, example.message, "\(example.slug): the message was not announced")
+      } else {
+        // Nothing should be said. Give VoiceOver the time in which the good
+        // examples do announce.
+        after = waitForSpeech(4) { $0 != example.button }
+        XCTAssertEqual(after, example.button, "\(example.slug): something was announced")
+      }
+      // The cursor did not move: one step back and one forward lands on the
+      // button. Had it moved onto the message, this would read the message.
+      _ = try? voiceOver.moveBackward()
+      let returned = ((try? voiceOver.moveForward().utterance) ?? "")
+        .replacingOccurrences(of: "\n", with: " ")
+      XCTAssertEqual(returned, example.button, "\(example.slug): the VoiceOver cursor left the button")
+      print("I12VO \(example.slug) | \(before) / (activate) / \(after) / (back, forward) / \(returned)")
+    }
+    #else
+    throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
+    #endif
+  }
 }

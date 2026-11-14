@@ -744,7 +744,9 @@ class Techniques(unittest.TestCase):
 
     def test_a_technique_with_no_ios_voiceover_test_is_refused_with_a_reason(self):
         import voiceover_ios
-        with mock.patch.object(sys, "argv", ["voiceover_ios.py", "I12"]), \
+        entry = {"X99": ("X99 Example", "X99Test", None, "x99_vo.spec.js")}
+        with mock.patch.object(sys, "argv", ["voiceover_ios.py", "X99"]), \
+                mock.patch.dict(voiceover_ios.TECHNIQUES, entry), \
                 mock.patch.object(voiceover_ios.subprocess, "run") as run:
             with self.assertRaises(SystemExit) as caught:
                 voiceover_ios.main()

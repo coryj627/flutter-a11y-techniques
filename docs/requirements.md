@@ -108,15 +108,15 @@ unless a documented reason prevents it.
 
 | ID | Priority | Requirement |
 | --- | --- | --- |
-| VAL-1 | Must | Every technique is validated in the Flutter stack: `flutter_test` semantics assertions and accessibility guideline checks, plus `integration_test` on each applicable platform. |
+| VAL-1 | Must | Every technique is validated in the Flutter stack with `flutter_test`: semantics assertions, accessibility guideline checks, and keyboard reach and activation. (Revised by D22: `integration_test` runs on devices are not required; platform behaviour is covered by VAL-2.) |
 | VAL-2 | Must | Every technique is validated by platform UI automation against the platform accessibility tree: Playwright (web), XCUITest (iOS), Espresso / UI Automator (Android). |
 | VAL-3 | Must | Bad examples have tests asserting that their specific defect is present, so a framework upgrade cannot silently fix a demo. |
 | VAL-4 | Must | Screen reader behaviour is verified through automation rather than manual testing alone: VoiceOver scripting and AppleScript, emulator and simulator control, and agent-driven computer use (including VoiceOver with Chrome). |
 | VAL-5 | Must | Spoken-output assertions are a pass/fail gate where they are deterministic. Where they are not, the run produces a recorded transcript stored with the technique as evidence. |
 | VAL-6 | Must | Evidence records the AT, OS, browser, and Flutter versions and the date. |
-| VAL-8 | Must | v1 screen readers are TalkBack (Android), VoiceOver (iOS), and VoiceOver on macOS with Chrome and Safari (web). |
+| VAL-8 | Must | v1 screen readers are TalkBack (Android), VoiceOver (iOS), and VoiceOver on macOS for web, run in Playwright's Chromium and WebKit browser builds. Announcements are checked in Chromium only, because the WebKit build passes no live region changes to VoiceOver. (Revised by D26.) |
 | VAL-9 | Must | Each applicable technique is verified for keyboard operation: focus order, focus visibility, and key bindings (per APG on web). |
-| VAL-10 | Must | Each applicable technique is verified for text scaling, reflow and zoom, contrast (including dark and high-contrast modes), and reduced motion. |
+| VAL-10 | Must | Each applicable technique is verified for text scaling to 200% and for contrast in light and dark themes. Reflow and zoom, high-contrast mode, and reduced motion are verified in their own catalog entries (V02, V06, V09), not in every technique. (Revised by D28.) |
 | VAL-11 | Must | Speech transcripts and version metadata are committed as text beside each technique. Screenshots and recordings are kept out of git and attached to CI runs or releases. |
 | VAL-7 | Must | Flutter tests, Playwright, Espresso / UI Automator, and XCUITest run in GitHub Actions on every pull request. Screen reader automation runs locally on a Mac and commits its results. |
 
@@ -153,31 +153,37 @@ unless a documented reason prevents it.
 | D19 | 2026-11-12 | Transcripts as text in repo; media as CI or release artifacts. | All in repo with LFS; artifacts only. |
 | D20 | 2026-11-12 | Public repo, solo for now; contribution scaffolding later. | Contributor-ready in v1; private. |
 | D21 | 2026-11-12 | Flutter pin is latest stable minus one (currently 3.47.5, with 3.50.0 just released). Fixes only in the newest stable are recorded as limitations until the pin moves. | Pinning the newest stable. |
+| D22 | 2026-11-13 | Drop `integration_test` as a validation layer. Widget tests, web tests, and the platform tree tests already assert what it would. | One suite for the shell only; one per technique. |
+| D23 | 2026-11-13 | Before a merge, run only the changed technique's device and screen reader suites locally. Run every suite on a schedule and before a release. CI still runs all tree tests on every pull request. | Rerun everything before every merge. |
+| D24 | 2026-11-13 | Technique docs show the real example code, pulled from the region markers in the example files by a build step. | Keep describing code in tables and reword DOC-5. |
+| D25 | 2026-11-13 | Do not file Flutter issues for the limitations log yet. | Drafts for the owner to file; filing from the owner's account. |
+| D26 | 2026-11-13 | Web screen reader runs use Playwright's Chromium and WebKit builds; VAL-8 reworded to say so. | A spike on driving real Chrome and Safari. |
+| D27 | 2026-11-13 | Spike again on verifying iOS announcements: more research, Apple's `XCUIVoiceOverService` documentation, and how the owner's `slate` project handles announcements. | Leave unverified; manual check as evidence. |
+| D28 | 2026-11-13 | Reflow and zoom, high contrast, and reduced motion are their own catalog entries (V02, V06, V09); other techniques check text scaling and light and dark contrast. | Add those checks to every technique. |
+| D29 | 2026-11-13 | Minimum OS and browser versions are those of the pinned Flutter release. Assistive technology is verified on the current major OS and browser versions. | Support and test current majors only. |
 
 ## 5a. Status after the vertical slice (2026-11-13)
 
-The slice built four techniques end to end. The requirements above are
-unchanged. Where the slice did not meet one, the gap and a proposal are in
-[slice-review.md](slice-review.md), sections 3 and 4, for the owner to decide:
+The slice built four techniques end to end. The owner then decided the eight
+proposals in [slice-review.md](slice-review.md) (decisions D22 to D29), and
+VAL-1, VAL-8, and VAL-10 above were revised to match.
 
-| Requirement | Status after the slice |
+| Requirement | Status |
 | --- | --- |
-| VAL-1 | `integration_test` not built; proposed for removal |
+| VAL-1 | Met as revised (D22) |
 | VAL-2 | Met with Playwright, XCUITest, and UI Automator. Espresso cannot see Flutter content |
-| VAL-5 | Speech is a gate for TalkBack, VoiceOver on iOS (focus speech), and VoiceOver on web |
-| VAL-8 | Web runs use Playwright's Chromium and WebKit builds, not Chrome and Safari |
-| VAL-9 | Keyboard verified in widget tests and on web; focus visibility not asserted |
-| VAL-10 | Text scaling and light and dark contrast checked; zoom, high contrast, and reduced motion not |
-| DOC-5 | Docs describe code but do not show it |
-| TEC-6 | Limitations documented in [flutter-limitations.md](flutter-limitations.md); no Flutter issues filed or linked |
-| APP-2 | Widgetbook does not filter by platform |
+| VAL-5 | Speech is a gate for TalkBack, VoiceOver on iOS (focus speech), and VoiceOver on web. iOS announcements included since the D27 spike |
+| VAL-8 | Met as revised (D26) |
+| VAL-9 | Keyboard verified in widget tests and on web; focus visibility not asserted yet (planned with V14) |
+| VAL-10 | Met as revised (D28); V02, V06, and V09 are still to build |
+| DOC-5 | Not met yet: docs describe code but do not show it. To be built (D24) |
+| TEC-6 | Limitations documented in [flutter-limitations.md](flutter-limitations.md); no Flutter issues filed, by decision for now (D25) |
+| APP-2 | Widgetbook does not filter by platform; no technique so far is platform-specific |
 | CAT-1 to CAT-3 | 4 of 102 inventory entries built |
 
 ## 6. Open questions
 
-1. **Minimum OS and browser versions.** Proposed default: the minimums supported
-   by the pinned Flutter stable release, with AT verification on the current
-   major OS and browser versions. To be confirmed in the plan.
+None. The question of minimum OS and browser versions was settled by D29.
 
 ## 7. Assumptions to verify
 

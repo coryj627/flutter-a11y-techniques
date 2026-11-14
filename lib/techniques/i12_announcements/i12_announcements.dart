@@ -13,11 +13,7 @@ final i12Announcements = Technique(
       'change still learn about it.',
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(),
-    AppPlatform.ios: PlatformStatus.applies(
-      note:
-          'Not verified by automated tests: the available tools cannot '
-          'capture what VoiceOver announces on iOS.',
-    ),
+    AppPlatform.ios: PlatformStatus.applies(),
     AppPlatform.web: PlatformStatus.applies(),
   },
   wcag: const [WcagCriterion('4.1.3', 'Status Messages', 'status-messages')],

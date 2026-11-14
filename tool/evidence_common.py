@@ -40,9 +40,8 @@ TECHNIQUES = {
     "S05": ("S05 Headings", "S05HeadingsTest", "S05HeadingsUITests", "s05_headings_vo.spec.js"),
     "F01": ("F01 Text fields and labels", "F01TextFieldsTest", "F01TextFieldsUITests",
             "f01_text_fields_vo.spec.js"),
-    # No iOS VoiceOver test: XCUIVoiceOverService cannot observe announcements.
     "I12": ("I12 Announcements and live regions", "I12AnnouncementsTest",
-            None, "i12_announcements_vo.spec.js"),
+            "I12AnnouncementsUITests", "i12_announcements_vo.spec.js"),
 }
 
 

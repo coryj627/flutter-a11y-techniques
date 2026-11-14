@@ -19,8 +19,10 @@ templates are in [templates/](templates/).
    platform, it is a bad example with a limitation entry, not a good one.
 4. **Write the tests at each layer**, then the spec's "what the build found"
    section, then the technique doc.
-5. **Run the gates**: local suites, Codex adversarial review until it
-   approves, then the PR with green CI and Codoki's "safe to merge".
+5. **Run the gates**: this technique's suites and transcripts locally (the
+   full device and transcript run is scheduled, not per merge), Codex
+   adversarial review until it approves, then the PR with green CI and
+   Codoki's "safe to merge".
 
 ## Files for a technique
 
@@ -116,8 +118,11 @@ failed, and restores the device. For announcements, leave focus alone and
 press the button.
 
 **L4 VoiceOver on iOS.** `python3 tool/voiceover_ios.py <ID>`. Swipe through
-the example with `XCUIVoiceOverService` and assert whole utterances. It cannot
-observe announcements.
+the example with `XCUIVoiceOverService` and assert whole utterances. With
+VoiceOver on, `tap()` only moves the VoiceOver cursor; use `doubleTap()` to
+activate a control, and assert that it acted. For announcements, activate
+that way, poll `currentSpeech()`, and confirm the cursor is still on the
+control, as `I12AnnouncementsUITests` does.
 
 **L4 VoiceOver on web.** `python3 tool/voiceover_web.py <ID>`. Use
 `walkFromBack` and stop at a recognised last phrase; do not count steps. For

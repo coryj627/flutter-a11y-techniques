@@ -13,7 +13,7 @@ these run locally on a Mac, not in CI.
 | Screen reader | How speech is captured | Gate? | What it can and cannot do |
 | --- | --- | --- | --- |
 | TalkBack, Android emulator | TalkBack's verbose log, with focus moved or a button pressed by an instrumented test | Yes | Reads what is spoken per element and after an action. Does not exercise swipe order. A system notification is sometimes spoken over an element; a failed element is walked again, up to three walks, and the transcript lists every retry |
-| VoiceOver, iOS simulator | `XCUIVoiceOverService` (iOS 27) | Yes, for focus speech | Reads the element VoiceOver is on, in swipe order. Utterances are cut at 64 characters. Cannot observe announcements, so I12 is not verified on iOS |
+| VoiceOver, iOS simulator | `XCUIVoiceOverService` (iOS 27) | Yes, for focus speech | Reads the element VoiceOver is on, in swipe order. Utterances are cut at 64 characters. Announcements are read with `currentSpeech()` after a double tap activates the control (found by the D27 spike, after this review) |
 | VoiceOver, macOS, Chromium | Guidepup for the swipe walk; VoiceOver's "last phrase" polled over AppleScript for announcements | Yes | Both walks and announcements. Guidepup sometimes returns an empty phrase; a failed walk is retried and the transcript says so |
 | VoiceOver, macOS, WebKit | Guidepup for the swipe walk | Yes, for focus speech | Playwright's WebKit build passes no live region changes to VoiceOver, even for plain HTML, so announcements cannot be checked there |
 
@@ -97,8 +97,8 @@ No screen reader speech runs in CI.
 
 ### Requirements not met by the slice
 
-These are gaps against [requirements.md](requirements.md), stated plainly.
-None has been changed in the requirements; section 4 proposes what to do.
+These were the gaps against [requirements.md](requirements.md) when the slice
+ended. Section 4 records what was decided about each.
 
 | Requirement | Gap |
 | --- | --- |
@@ -122,31 +122,22 @@ None has been changed in the requirements; section 4 proposes what to do.
 - An adversarial review before each pull request: it found real defects in
   every technique except one.
 
-## 4. Proposals for the owner
+## 4. Proposals, and what the owner decided
 
-Each of these changes a requirement or how the work is done, so each is a
-decision for the project owner, not something to adopt silently.
+Each of these changes a requirement or how the work is done. All eight were
+decided on 2026-11-13 and are in the decision log of
+[requirements.md](requirements.md) as D22 to D29.
 
-1. **Drop `integration_test` as a separate layer (VAL-1), or build it once
-   for the shell only.** It would repeat what three other layers assert.
-   Recommended: drop it and reword VAL-1 to name widget tests plus platform
-   tree tests.
-2. **Before each merge run the changed technique's device suites; run
-   everything on a schedule.** Otherwise run time grows linearly with the
-   catalog.
-3. **Show code in the technique docs** from the region markers, with a small
-   build step, to meet DOC-5.
-4. **File the Flutter issues.** The log has 18 entries with reproductions.
-   This is public posting under the owner's account, so it needs the owner's
-   go-ahead; drafts can be prepared.
-5. **Decide the web browsers for VAL-8**: accept Playwright's builds and
-   reword the requirement, or spend a spike on driving Chrome and Safari.
-6. **Decide how iOS announcements get verified**: a manual check recorded as
-   evidence, or a spike on another capture route.
-7. **Add the missing VAL-10 checks** (reduced motion, high contrast, zoom) as
-   their own techniques (V02, V06, V09 in the inventory) rather than as
-   checks on every technique.
-8. **Answer the open question on minimum OS and browser versions.**
+| # | Proposal | Decision |
+| --- | --- | --- |
+| 1 | Drop `integration_test` as a separate layer, or build it once for the shell | **Dropped** (D22). VAL-1 reworded |
+| 2 | Before each merge run only the changed technique's device and screen reader suites; run everything on a schedule | **Adopted** (D23) |
+| 3 | Show code in the technique docs from the region markers | **Adopted** (D24); to be built |
+| 4 | File the Flutter issues for the 18 limitations | **Not now** (D25) |
+| 5 | Web browsers for screen reader runs: accept Playwright's builds, or spike real Chrome and Safari | **Accept Playwright's builds** (D26). VAL-8 reworded |
+| 6 | How iOS announcements get verified | **Spike again** (D27), with more research, Apple's `XCUIVoiceOverService` documentation, and the approach in the owner's `slate` project. Done: it succeeded, see [plan.md](plan.md) |
+| 7 | The missing visual checks: own techniques, or on every technique | **Own techniques** V02, V06, V09 (D28). VAL-10 reworded |
+| 8 | Minimum OS and browser versions | **The pinned Flutter release's minimums** (D29) |
 
 ## 5. Batches for the remaining 98 entries
 

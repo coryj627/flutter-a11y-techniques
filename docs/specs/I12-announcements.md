@@ -15,11 +15,10 @@ technology announces it, and it does so without being flooded.
 
 | Android | iOS | Web |
 | --- | --- | --- |
-| Applies | Applies, not verified | Applies |
+| Applies | Applies | Applies |
 
-No available tool captured what VoiceOver announces on iOS, so nothing here is
-verified by automation on that platform (section 7). Two Flutter limitations
-shape which mechanisms count as good (FL-017, FL-018).
+Two Flutter limitations shape which mechanisms count as good (FL-017,
+FL-018).
 
 ## 3. WCAG 2.2 success criteria
 
@@ -83,7 +82,7 @@ message an identifier, `i12-<slug>-status`.
 | L3 iOS | The message text changes. XCUITest cannot read whether an element is a live region |
 | L4 TalkBack | What is spoken after the button is pressed, with focus elsewhere |
 | L4 VoiceOver web | What VoiceOver is given to speak after the button is pressed, in Chromium |
-| L4 VoiceOver iOS | Not automated; see section 7 |
+| L4 VoiceOver iOS | What VoiceOver says after the button is activated with a double tap |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -91,14 +90,14 @@ Detail is in [flutter-limitations.md](../flutter-limitations.md).
 
 | Mechanism | Web (VoiceOver, Chromium) | Android (TalkBack) | iOS |
 | --- | --- | --- | --- |
-| `liveRegion: true` | announced | announced | not verified |
-| SnackBar | announced | announced | not verified |
-| `sendAnnouncement`, support checked | announced | not sent; `supportsAnnounce` is false | not verified |
-| `sendAnnouncement`, unconditional | announced | announced, though Android deprecates it | not verified |
-| status role alone | announced, twice | silent | not verified |
-| alert role alone | announced, twice | silent | not verified |
+| `liveRegion: true` | announced | announced | announced |
+| SnackBar | announced | announced | announced |
+| `sendAnnouncement`, support checked | announced | not sent; `supportsAnnounce` is false | announced |
+| `sendAnnouncement`, unconditional | announced | announced, though Android deprecates it | not an example; same call as the row above |
+| status role alone | announced, twice | silent | silent |
+| alert role alone | announced, twice | silent | silent |
 
-- **A live region is the one mechanism verified on both Android and web.**
+- **A live region is the one mechanism announced on Android, iOS, and web.**
 - **The status and alert roles are web only** (FL-017), so they are bad
   examples when used alone. They also cannot be combined with `liveRegion` on
   one node.
@@ -125,9 +124,18 @@ Detail is in [flutter-limitations.md](../flutter-limitations.md).
   VoiceOver. A plain HTML page with `aria-live`, `role="status"`, and
   `role="alert"` was silent there too, so this is the test browser and not
   Flutter. Announcements are checked in Chromium only.
-- **iOS:** not captured. `XCUIVoiceOverService` returns the speech for the
-  element VoiceOver is on; after the button is pressed it keeps returning the
-  button. The simulator's system log does not contain the speech either.
+- **iOS:** `XCUIVoiceOverService.currentSpeech()`, read after the button is
+  activated. With VoiceOver on, `XCUIElement.tap()` only moves the VoiceOver
+  cursor to the button; `doubleTap()` activates it. After that
+  `currentSpeech()` returns the announcement when there is one and the button
+  when there is none. The test requires the message to be on screen, and
+  then steps the cursor back and forward to confirm it is still on the
+  button, which separates an announcement from the cursor having moved onto
+  the message. The first attempt used `tap()`, never activated the
+  button, and wrongly concluded that announcements could not be captured. A
+  second spike (D27) found the cause and cross-checked the result against
+  `UIAccessibility.announcementDidFinishNotification` observed inside the
+  app: it fired, with success, for the three good examples and for none of
+  the bad ones. That observer was spike code and is not in the app.
 
-**Not done yet.** Verification on iOS, by hand or with another tool; an
-assertive example; rate-limiting patterns beyond showing the defect.
+**Not done yet.** An assertive example; rate-limiting patterns beyond showing the defect.

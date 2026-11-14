@@ -37,7 +37,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-014](#fl-014) | `CupertinoListSection` does not expose its header as a heading | All | Confirmed |
 | [FL-015](#fl-015) | On Android, TalkBack stops speaking a text field's label once it has a value | Android | Confirmed |
 | [FL-016](#fl-016) | Cupertino text fields have no label | All | Confirmed |
-| [FL-017](#fl-017) | The status and alert roles are announced on web only | Android (iOS not verified) | Confirmed |
+| [FL-017](#fl-017) | The status and alert roles are announced on web only | Android, iOS | Confirmed |
 | [FL-018](#fl-018) | Announcements sent from code are reported as unsupported on Android, and assertiveness is web only | Android, iOS | Confirmed |
 
 ---
@@ -406,7 +406,8 @@ yet), **Fixed in x.y** (verified on that version).
 **The status and alert roles are announced on web only.**
 
 - Status: Confirmed, Flutter 3.47.5. Android 17 with TalkBack 17.0; web with
-  VoiceOver in Chromium. iOS could not be verified (see I12).
+  VoiceOver in Chromium; iOS 27.0 with VoiceOver, where both roles are also
+  silent (`docs/evidence/I12/voiceover-ios.md`).
 - WCAG: 4.1.3 Status Messages.
 - What happens: `Semantics(role: SemanticsRole.status, child: Text(…))` and
   `SemanticsRole.alert` become `role="status"` and `role="alert"` on web, and
