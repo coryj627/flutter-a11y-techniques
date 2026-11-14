@@ -172,7 +172,7 @@ VAL-1, VAL-8, and VAL-10 above were revised to match.
 | --- | --- |
 | VAL-1 | Met as revised (D22) |
 | VAL-2 | Met with Playwright, XCUITest, and UI Automator. Espresso cannot see Flutter content |
-| VAL-5 | Speech is a gate for TalkBack, VoiceOver on iOS (focus speech), and VoiceOver on web. iOS announcements: spike in progress (D27) |
+| VAL-5 | Speech is a gate for TalkBack, VoiceOver on iOS (focus speech), and VoiceOver on web. iOS announcements included since the D27 spike |
 | VAL-8 | Met as revised (D26) |
 | VAL-9 | Keyboard verified in widget tests and on web; focus visibility not asserted yet (planned with V14) |
 | VAL-10 | Met as revised (D28); V02, V06, and V09 are still to build |

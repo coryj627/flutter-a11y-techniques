@@ -288,7 +288,9 @@ void main() {
     }
   });
 
-  testWidgets('the technique screen says iOS is not verified', (tester) async {
+  testWidgets('the technique screen lists every platform as applying', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       A11yTechniquesApp(
         registry: TechniqueRegistry([i12Announcements]),
@@ -297,10 +299,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(
-      find.textContaining('iOS: Applies. Not verified by automated tests'),
-      findsOneWidget,
-    );
+    expect(find.text('iOS: Applies.'), findsOneWidget);
     expect(find.text('Android: Applies.'), findsOneWidget);
   });
 }

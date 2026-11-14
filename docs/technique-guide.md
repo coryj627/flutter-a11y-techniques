@@ -118,8 +118,10 @@ failed, and restores the device. For announcements, leave focus alone and
 press the button.
 
 **L4 VoiceOver on iOS.** `python3 tool/voiceover_ios.py <ID>`. Swipe through
-the example with `XCUIVoiceOverService` and assert whole utterances. It cannot
-observe announcements.
+the example with `XCUIVoiceOverService` and assert whole utterances. With
+VoiceOver on, `tap()` only moves the VoiceOver cursor; use `doubleTap()` to
+activate a control, and assert that it acted. For announcements, activate
+that way and poll `currentSpeech()`, as `I12AnnouncementsUITests` does.
 
 **L4 VoiceOver on web.** `python3 tool/voiceover_web.py <ID>`. Use
 `walkFromBack` and stop at a recognised last phrase; do not count steps. For

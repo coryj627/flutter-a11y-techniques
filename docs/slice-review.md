@@ -13,7 +13,7 @@ these run locally on a Mac, not in CI.
 | Screen reader | How speech is captured | Gate? | What it can and cannot do |
 | --- | --- | --- | --- |
 | TalkBack, Android emulator | TalkBack's verbose log, with focus moved or a button pressed by an instrumented test | Yes | Reads what is spoken per element and after an action. Does not exercise swipe order. A system notification is sometimes spoken over an element; a failed element is walked again, up to three walks, and the transcript lists every retry |
-| VoiceOver, iOS simulator | `XCUIVoiceOverService` (iOS 27) | Yes, for focus speech | Reads the element VoiceOver is on, in swipe order. Utterances are cut at 64 characters. Cannot observe announcements, so I12 is not verified on iOS |
+| VoiceOver, iOS simulator | `XCUIVoiceOverService` (iOS 27) | Yes, for focus speech | Reads the element VoiceOver is on, in swipe order. Utterances are cut at 64 characters. Announcements are read with `currentSpeech()` after a double tap activates the control (found by the D27 spike, after this review) |
 | VoiceOver, macOS, Chromium | Guidepup for the swipe walk; VoiceOver's "last phrase" polled over AppleScript for announcements | Yes | Both walks and announcements. Guidepup sometimes returns an empty phrase; a failed walk is retried and the transcript says so |
 | VoiceOver, macOS, WebKit | Guidepup for the swipe walk | Yes, for focus speech | Playwright's WebKit build passes no live region changes to VoiceOver, even for plain HTML, so announcements cannot be checked there |
 
@@ -135,7 +135,7 @@ decided on 2026-11-13 and are in the decision log of
 | 3 | Show code in the technique docs from the region markers | **Adopted** (D24); to be built |
 | 4 | File the Flutter issues for the 18 limitations | **Not now** (D25) |
 | 5 | Web browsers for screen reader runs: accept Playwright's builds, or spike real Chrome and Safari | **Accept Playwright's builds** (D26). VAL-8 reworded |
-| 6 | How iOS announcements get verified | **Spike again** (D27), with more research, Apple's `XCUIVoiceOverService` documentation, and the approach in the owner's `slate` project |
+| 6 | How iOS announcements get verified | **Spike again** (D27), with more research, Apple's `XCUIVoiceOverService` documentation, and the approach in the owner's `slate` project. Done: it succeeded, see [plan.md](plan.md) |
 | 7 | The missing visual checks: own techniques, or on every technique | **Own techniques** V02, V06, V09 (D28). VAL-10 reworded |
 | 8 | Minimum OS and browser versions | **The pinned Flutter release's minimums** (D29) |
 

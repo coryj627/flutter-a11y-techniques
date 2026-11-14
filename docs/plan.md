@@ -21,7 +21,7 @@ remaining catalog are planned after the slice, once its unknowns are settled.
 | Widgetbook can show Markdown documentation per use case | — | **Not confirmed** |
 | UI Automator can read Flutter's semantics tree without extra setup | Spike K1 | Confirmed on Android and with XCUITest on iOS; Espresso sees only the `FlutterView` |
 | `Semantics(identifier:)` surfaces as a stable locator | Spike K2 | Confirmed on web, Android, and iOS; tree position differs on iOS |
-| VoiceOver speech can be captured on an iOS Simulator | `XCUIVoiceOverService` (iOS 27), Xcode 27.1 SDK headers and spike K7 | Confirmed for a Flutter app; announcements not captured |
+| VoiceOver speech can be captured on an iOS Simulator | `XCUIVoiceOverService` (iOS 27), Xcode 27.1 SDK headers and spike K7 | Confirmed for a Flutter app, including announcements (second spike, D27) |
 | TalkBack speech can be captured from an emulator | Spike K6 | TalkBack runs; text capture **not yet achieved** |
 
 Everything marked not confirmed is resolved by a spike in phase 1 before anything
@@ -303,6 +303,8 @@ It was first described to us by the
 - **Live region announcements were not captured.** After activating Save,
   `currentSpeech()` kept returning the focused element (`Save Button`), not
   `Saved 1 times`. I12 needs another way on iOS, or stays evidence-only.
+  (Wrong conclusion: the tap had not activated Save. See "The iOS
+  announcement spike" below.)
 - One `moveForward()` returned "No speech available" on an element between the
   section heading and the fixture; which element was not identified.
 - `XCUIElement.tap()` still works while VoiceOver is on.
@@ -481,9 +483,13 @@ web. What it added to the test approach:
   observed, the model used in the author's `slate` project.
 - **Playwright's WebKit build announces no live regions**, even for plain
   HTML, so announcement speech is checked in Chromium only.
-- **iOS announcements cannot be captured.** `XCUIVoiceOverService` returns the
-  focused element's speech and never the announcement; the simulator log does
-  not have it. I12 is unverified on iOS and the catalog says so.
+- **iOS announcements can be captured, once the button is really activated.**
+  The slice first concluded they could not: `currentSpeech()` kept returning
+  the button. The second spike (D27) found the cause. With VoiceOver on,
+  `XCUIElement.tap()` only moves the VoiceOver cursor; the button was never
+  pressed, so nothing was announced. `doubleTap()` activates it, and
+  `currentSpeech()` then returns the announcement. See "The iOS announcement
+  spike" below.
 - The Android tests look for nodes in every window and retry, because with
   TalkBack running a system dialog can be the active window.
 
@@ -512,11 +518,57 @@ D29 in [requirements.md](requirements.md)): `integration_test` is dropped;
 device and screen reader runs before a merge are scoped to the changed
 technique; docs will show code from the example files; Flutter issues are not
 filed yet; Playwright's browser builds are accepted for web; iOS announcements
-get another spike; the missing visual checks become their own techniques; and
+got another spike, which succeeded; the missing visual checks become their own techniques; and
 minimum versions follow the pinned Flutter release.
 
-Next, in order: the iOS announcement spike (D27), the code-in-docs build step
-(D24), then batch 0, the probes of the 27 unknown-feasibility entries.
+### The iOS announcement spike (D27)
+
+Done on 2026-11-13, iPhone 17 simulator, iOS 27.0, Xcode 27.1.
+
+Research first:
+
+- Apple's documentation for `XCUIVoiceOverService` lists `enable`, `disable`,
+  `isEnabled`, `moveForward`, `moveBackward`, `moveIn`, `moveOut`, and
+  `currentSpeech`, with an `Output` that carries an utterance. There is no
+  call for observing announcements, no speech history, and no activate call.
+- The author's `slate` project checks announcements in two ways: unit tests
+  record them at the point where the app posts them, and for real VoiceOver
+  on macOS a script polls VoiceOver's "last phrase" after a key press. The
+  second is what the web check here already does. The first verifies the
+  app's intent, not the screen reader.
+- UIKit posts `UIAccessibility.announcementDidFinishNotification` inside the
+  app when VoiceOver finishes an announcement, with the text and whether it
+  was spoken in full.
+
+What was tried, on the I12 examples:
+
+1. An observer for that notification in the app, logging to the system log.
+   With `tap()` on the button, nothing arrived and `currentSpeech()` stayed
+   on the button, as in the first spike. A control announcement posted by the
+   app itself did arrive, so the observer worked: the examples were not
+   announcing anything.
+2. The example's visible message had not changed either. With VoiceOver on,
+   the tap had moved the VoiceOver cursor and not pressed the button.
+3. With `tap()` to place the cursor and `doubleTap()` to activate,
+   `currentSpeech()` returned "Link copied", "1 item in cart", and "Message
+   archived" for the good examples, and the button's own speech for the three
+   bad ones. The in-app observer agreed: one finished, successful
+   announcement for each good example, none for the bad ones.
+
+Result: `currentSpeech()` after a real activation is enough, so nothing was
+added to the app. I12 has an iOS VoiceOver test and transcript, and the
+catalog no longer says iOS is unverified. Two things to keep in mind for
+later techniques:
+
+- With VoiceOver on, `tap()` focuses and `doubleTap()` activates. Any VoiceOver
+  test that needs to operate a control must use the second and check that the
+  control really acted.
+- The in-app observer is a second route if `currentSpeech()` ever proves
+  unreliable. It sees only announcements the app posts (which is how Flutter
+  implements live regions and `sendAnnouncement` on iOS), not other speech.
+
+Next, in order: the code-in-docs build step (D24), then batch 0, the probes
+of the 27 unknown-feasibility entries.
 
 ## 4. Definition of done for a technique
 
@@ -537,7 +589,7 @@ written after the slice. The original, kept for the record:
 | # | Risk | Response |
 | --- | --- | --- |
 | R1 | Native test tools see little of Flutter's tree on Android through Espresso | Lean on UI Automator; record what Espresso can and cannot do as a finding |
-| R2 | VoiceOver speech cannot be captured on the iOS Simulator | Resolved for focus speech, including headings, by `XCUIVoiceOverService` on iOS 27. Not resolved for announcements: I12 is unverified on iOS |
+| R2 | VoiceOver speech cannot be captured on the iOS Simulator | Resolved for focus speech, including headings, by `XCUIVoiceOverService` on iOS 27. Resolved for announcements too by the second spike (D27) |
 | R3 | Screen reader speech is not repeatable enough to gate | Gate on normalised phrases (role and name), keep full transcript as evidence |
 | R4 | Four test layers per technique across 102 entries is a large cost | Measured in [slice-review.md](slice-review.md). L2 was never built and is proposed for removal; device and transcript runs are proposed to be scoped to the changed technique |
 | R5 | Flutter upgrade changes semantics output | Pinned SDK; upgrade is its own change with every suite re-run (APP-5) |

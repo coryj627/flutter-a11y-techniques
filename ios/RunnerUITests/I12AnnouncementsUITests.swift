@@ -57,10 +57,79 @@ final class I12AnnouncementsUITests: XCTestCase {
     XCTAssertTrue(element(labelled: "Message archived").waitForExistence(timeout: 5))
   }
 
-  // L4 is not automated on iOS for this technique. XCUIVoiceOverService
-  // returns what VoiceOver says for the element it is on (moveForward,
-  // currentSpeech); after a button is pressed it keeps returning the button,
-  // never the announcement that follows. The simulator's system log does not
-  // contain the speech either. Both were tried on iOS 27.0 (docs/plan.md).
-  // So on iOS whether these messages are announced is not verified here.
+  // L4. What VoiceOver says after each example's button is activated.
+  //
+  // With VoiceOver on, XCUIElement.tap() only moves the VoiceOver cursor to
+  // the button; a double tap activates it, as it does for a person. After
+  // that, XCUIVoiceOverService.currentSpeech() returns the announcement when
+  // there is one, and keeps returning the button when there is none. (An
+  // earlier attempt used tap() alone, never activated the button, and wrongly
+  // concluded that announcements could not be captured; see docs/plan.md.)
+  private let speech: [(slug: String, button: String, announced: String?)] = [
+    ("good-live-region", "Add to cart Button", "1 item in cart"),
+    ("good-announce", "Copy link Button", "Link copied"),
+    ("good-snackbar", "Archive message Button", "Message archived"),
+    ("bad-silent-update", "Add to cart Button", nil),
+    // Flutter's status and alert roles do nothing on iOS (FL-017).
+    ("bad-status-role-only", "Add to cart Button", nil),
+    ("bad-alert-role-only", "Save changes Button", nil),
+  ]
+
+  func testVoiceOverSpeech() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    func current() -> String {
+      ((try? voiceOver.currentSpeech().utterance) ?? "").replacingOccurrences(of: "\n", with: " ")
+    }
+    /// Polls until `done` accepts the current speech or `seconds` pass.
+    func waitForSpeech(_ seconds: TimeInterval, until done: (String) -> Bool) -> String {
+      let deadline = Date().addingTimeInterval(seconds)
+      var last = current()
+      while !done(last) && Date() < deadline {
+        usleep(250_000)
+        last = current()
+      }
+      return last
+    }
+    for example in speech {
+      open(example.slug)
+      try voiceOver.enable()
+      defer { try? voiceOver.disable() }
+      let action = element("i12-\(example.slug)-action")
+      // Put the VoiceOver cursor on the button and wait until it is read.
+      var before = ""
+      for _ in 0..<5 {
+        action.tap()
+        before = waitForSpeech(4) { $0 == example.button }
+        if before == example.button { break }
+      }
+      XCTAssertEqual(before, example.button, "\(example.slug): cursor is not on the button")
+      action.doubleTap()
+      let after: String
+      if let announced = example.announced {
+        after = waitForSpeech(8) { $0 == announced }
+        XCTAssertEqual(after, announced, "\(example.slug): the message was not announced")
+      } else {
+        // Nothing should be said. Wait for the visible change, then give
+        // VoiceOver the time in which the good examples do announce.
+        if example.slug != "bad-alert-role-only" {
+          let status = element("i12-\(example.slug)-status")
+          let deadline = Date().addingTimeInterval(5)
+          while status.label != "1 item in cart" && Date() < deadline { usleep(100_000) }
+          XCTAssertEqual(status.label, "1 item in cart", "\(example.slug): the button was not activated")
+        } else {
+          XCTAssertTrue(
+            element("i12-\(example.slug)-status").waitForExistence(timeout: 5),
+            "\(example.slug): the button was not activated")
+        }
+        after = waitForSpeech(4) { $0 != example.button }
+        XCTAssertEqual(after, example.button, "\(example.slug): something was announced")
+      }
+      print("I12VO \(example.slug) | \(before) / (activate) / \(after)")
+    }
+    #else
+    throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
+    #endif
+  }
 }
