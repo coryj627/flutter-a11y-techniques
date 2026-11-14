@@ -1,0 +1,69 @@
+// S02 probe (throwaway, not committed): what images expose.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+import 'techniques/s02_informative_images/example_image.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class _Bars extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()..color = Colors.indigo;
+    for (var i = 0; i < 4; i++) {
+      final h = size.height * (i + 1) / 5;
+      canvas.drawRect(Rect.fromLTWH(i * 30.0 + 5, size.height - h, 20, h), p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
+}
+
+class ProbeScreen extends StatelessWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    Widget img({String? label, bool exclude = false}) => Image.memory(sunrisePng, width: 96, height: 64, semanticLabel: label, excludeFromSemantics: exclude);
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 6,
+            children: [
+              const Text('01 image with label'),
+              Semantics(identifier: 'p-img-label', child: img(label: 'Sunrise over hills')),
+              const Text('02 image no label'),
+              img(),
+              const Text('03 image excluded'),
+              Semantics(identifier: 'p-img-excluded', container: true, child: img(label: 'Excluded label', exclude: true)),
+              const Text('04 icon with label'),
+              Semantics(identifier: 'p-icon-label', child: const Icon(Icons.check_circle, semanticLabel: 'Delivered')),
+              const Text('05 icon no label'),
+              const Icon(Icons.check_circle),
+              const Text('06 custom paint image+label'),
+              Semantics(identifier: 'p-paint-image', image: true, label: 'Bar chart rising', child: CustomPaint(size: const Size(130, 60), painter: _Bars())),
+              const Text('07 custom paint label only'),
+              Semantics(identifier: 'p-paint-label', label: 'Bar chart no flag', child: CustomPaint(size: const Size(130, 60), painter: _Bars())),
+              const Text('08 merged icon no label + text'),
+              Semantics(identifier: 'p-merge', child: const MergeSemantics(child: Row(children: [Icon(Icons.check_circle), Text('Order delivered')]))),
+              const Text('09 group description'),
+              Semantics(identifier: 'p-group', label: 'Sunrise at 6:35 am', child: const ExcludeSemantics(child: Row(children: [Icon(Icons.wb_twilight), Text('6:35 am')]))),
+              const Text('10 role in label'),
+              Semantics(identifier: 'p-img-role', child: img(label: 'Image of a sunrise')),
+              const Text('11 merged labelled icon + text'),
+              Semantics(identifier: 'p-merge-both', child: const MergeSemantics(child: Row(children: [Icon(Icons.check_circle, semanticLabel: 'Delivered'), Text('Order 1234')]))),
+              const Text('12 custom paint no semantics'),
+              CustomPaint(size: const Size(130, 60), painter: _Bars()),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

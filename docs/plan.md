@@ -614,7 +614,10 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
 - S01 Accessible names: built on 2026-11-14. Found FL-028 (a slider has no
   name on web) and FL-029 (a Material `Slider` adds an empty full-screen
   element on web). Both go to the slider technique (F10) for more work.
-- Next: S02 Informative images.
+- S02 Informative images: built on 2026-11-14. No new limitation. An
+  unlabelled `Image` stays in the tree as an unnamed image on all three
+  platforms, which S03 has to deal with.
+- Next: S03 Decorative images.
 
 ### Late-stage tasks
 

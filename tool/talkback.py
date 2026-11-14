@@ -52,6 +52,22 @@ EXPECT = {
     "c01-bad-name-mismatch-edit": (["Change username", "Button"], ["Edit"]),
     "c01-bad-fake-disabled-submit": (["Submit", "Button"], ["Disabled"]),
     "c01-bad-cupertino-disabled-delete": (["Delete", "Button"], ["Disabled"]),
+    # S02 Informative images. An image is announced with its text alternative
+    # and "Image"; an icon's alternative is read as text.
+    "s02-good-image-label-photo": (["Sunrise over green hills", "Image"], []),
+    "s02-good-icon-label-delivered": (["Delivered", "Order 1042"], ["Image"]),
+    "s02-good-icon-label-delayed": (["Delayed", "Order 1043"], ["Image"]),
+    "s02-good-group-description-sunrise": (["Sunrise at 6:35 am"], []),
+    "s02-good-chart-chart": (["Bar chart: orders rose every quarter of 2025", "Image"], []),
+    "s02-good-chart-data": (["Orders in 2025"], ["Image"]),
+    # The photo has no text alternative: TalkBack says so, and the text after
+    # it says nothing of the picture.
+    "s02-bad-no-label-photo": (["Unlabelled", "Image"], ["sunrise"]),
+    "s02-bad-no-label-caption": (["Taken from the east ridge trail"], ["sunrise"]),
+    "s02-bad-icon-no-label-first": (["Order 1042"], ["Delivered"]),
+    "s02-bad-icon-no-label-second": (["Order 1043"], ["Delayed"]),
+    "s02-bad-role-in-label-photo": (["Image of a sunrise over green hills", "Image"], []),
+    "s02-bad-filename-label-photo": (["IMG_2041.png", "Image"], []),
     # S05 Headings. "Heading" must be spoken as the role for a real heading,
     # and must not be for text that only looks or reads like one.
     "s05-good-levels-profile": (["Profile", "Heading"], []),
@@ -387,9 +403,24 @@ def walk():
 
 
 def parse_speech(log):
-    """What TalkBack spoke while each identified node had focus."""
-    spoken, current = {}, None
+    """What TalkBack spoke while each identified node had focus.
+
+    A spoken text with a line break in it (a merged node such as "Delivered",
+    new line, "Order 1042") is split by logcat over several lines, each with
+    its own prefix. Those lines are joined, with a space where the break was.
+    """
+    spoken, current, open_fragment = {}, None, None
     for line in log.splitlines():
+        if open_fragment is not None:
+            rest = line.split("SpeechControllerImpl: ", 1)[-1]
+            end = re.match(r'(.*?)", utteranceId', rest)
+            if end:
+                if current:
+                    spoken[current].append(" ".join(open_fragment + [end.group(1)]))
+                open_fragment = None
+            else:
+                open_fragment.append(rest)
+            continue
         m = re.search(r"[A-Z]\d\dTB\s*: (FOCUS|END) (\S+)", line)
         if m:
             current = m.group(2) if m.group(1) == "FOCUS" else None
@@ -397,8 +428,13 @@ def parse_speech(log):
                 spoken[current] = []
             continue
         m = re.search(r'Speaking fragment text="(.*?)", utteranceId', line)
-        if m and current:
-            spoken[current].append(m.group(1))
+        if m:
+            if current:
+                spoken[current].append(m.group(1))
+            continue
+        m = re.search(r'Speaking fragment text="(.*)$', line)
+        if m:
+            open_fragment = [m.group(1)]
     return spoken
 
 
@@ -406,7 +442,7 @@ def said(fragments, phrase):
     """Role and state words must be spoken as their own sentence, so a name
     such as "Close button" does not count as the role."""
     if phrase.lower() in ("button", "disabled", "heading", "edit box", "switch",
-                          "check box", "slider"):
+                          "check box", "slider", "image"):
         sentences = [t.strip() for f in fragments for t in f.split(".")]
         return phrase.lower() in sentences
     return phrase.lower() in " | ".join(fragments)

@@ -71,6 +71,7 @@ UI Automator on Android, XCUITest on iOS, and screen reader transcripts from
 TalkBack and VoiceOver. The commands are in each technique's doc, for example
 [C01 Button](docs/techniques/C01.md#how-it-is-tested),
 [S01 Accessible names](docs/techniques/S01.md#how-it-is-tested),
+[S02 Informative images](docs/techniques/S02.md#how-it-is-tested),
 [S05 Headings](docs/techniques/S05.md#how-it-is-tested),
 [F01 Text fields and labels](docs/techniques/F01.md#how-it-is-tested), and
 [I12 Announcements and live regions](docs/techniques/I12.md#how-it-is-tested).

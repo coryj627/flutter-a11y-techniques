@@ -624,7 +624,8 @@ yet), **Fixed in x.y** (verified on that version).
   `loadingSpinner`, `progressBar`, `hotKey`, `radioGroup`, `status`, `alert`,
   `complementary`, `contentInfo`, `main`, `navigation`, and `region`. The
   ARIA roles `grid`, `tree`, `treeitem`, `treegrid`, `feed`, `article`,
-  `separator`, `meter`, and `math` have no counterpart. The SDK's own
+  `separator`, `meter`, `math`, and `figure` (noted while building S02
+  Informative images) have no counterpart. The SDK's own
   `TreeSliver` exposes each row as a button, with no level and no expanded
   or collapsed state, on all three platforms.
 - Effect: the APG Grid, Tree View, Treegrid, Feed, Window Splitter, and Meter

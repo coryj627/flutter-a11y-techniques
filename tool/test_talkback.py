@@ -734,6 +734,16 @@ class Techniques(unittest.TestCase):
         ])
         self.assertEqual(tb.parse_speech(log), {"c01-a": ["Save"], "s05-b": ["Profile"]})
 
+    def test_a_fragment_split_over_log_lines_is_joined(self):
+        log = "\n".join([
+            "I S02TB   : FOCUS s02-a",
+            '11-14 14:05:20.227 1 1 V talkback: SpeechControllerImpl: Speaking fragment text="Delayed',
+            '11-14 14:05:20.227 1 1 V talkback: SpeechControllerImpl: Order 1043", utteranceId=x',
+            'V talkback: SpeechControllerImpl: Speaking fragment text="Image", utteranceId=x',
+            "I S02TB   : END slug",
+        ])
+        self.assertEqual(tb.parse_speech(log), {"s02-a": ["Delayed Order 1043", "Image"]})
+
     def test_a_missing_or_unknown_technique_is_refused(self):
         import evidence_common as common
         for argv in (["tool"], ["tool", "ZZZ"]):
