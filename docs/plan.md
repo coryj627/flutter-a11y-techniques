@@ -583,11 +583,23 @@ limitations FL-019 to FL-027, raw output in
 [evidence/probes/batch-0](evidence/probes/batch-0/).
 
 - 7 to build: S07, S18, V04, I05, I06, C15, C19.
-- 15 limitation entries, 1 not applicable, 1 folded into existing checks.
-- 3 need a plugin from outside the SDK (C28 Maps, C29 Video and audio, C30
-  Embedded web and platform views). **Open for the owner:** are first-party
-  plugins (`video_player`, `webview_flutter`, `google_maps_flutter`) in
-  scope?
+- 18 limitation entries, 1 not applicable, 1 folded into existing checks.
+- 3 of those limitation entries (C28 Maps, C29 Video and audio, C30 Embedded
+  web and platform views) need a plugin from outside the SDK. The owner
+  decided on 2026-11-13 that the project is SDK only (D30), so they are
+  limitation entries.
+- Good examples do not use native HTML embedded with `HtmlElementView` to
+  supply roles the `Semantics` API lacks (D31: widgets only), so the entries
+  with no semantics role are limitation entries on web too.
+- Those entries are framed as work Flutter has not done yet. Where embedded
+  HTML can fill the gap on web, the entry shows it as a labelled workaround,
+  a lesser option and not a good example (D32). To build before the first
+  such entry: a third example kind in the catalog model (`ExampleKind` has
+  only good and bad), with its own label in the app, Widgetbook, and docs;
+  and a probe of whether an embedded element is reachable by a screen reader
+  and the keyboard without the `pointer_interceptor` plugin, which D30 rules
+  out. If it is not, the entry says the workaround was tried and why it
+  fails.
 
 How the probe was run, for the next time one is needed: a second entry point
 (`lib/probe.dart`) built with `-t lib/probe.dart` for web and Android

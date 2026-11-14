@@ -60,8 +60,8 @@ no material connection to CVS Health.
 | S16 | Language of page and parts | ✓ | ✓ | ✓ | 3.1.1, 3.1.2 | Language, AttributedStrings | TextLanguageIdentification | — | — | `lang` on `html` and parts |
 | S17 | Text direction and RTL layout | ✓ | ✓ | ✓ | 1.3.2 | — | — | — | — | `bdi`, `bdo`, `dir` |
 | S18 | Pronunciation | ✓ | ? | ✗ | 3.1.6 (AAA, note only) | VoiceOverPronunciation | — | — | — | `ruby`, `rt`, `rp`, `abbr` |
-| S19 | Inline text semantics | ✗ | ✗ | ? | 1.3.1 | AttributedStrings | — | — | — | `em`, `strong`, `mark`, `del`, `ins`, `s`, `sub`, `sup`, `code`, `kbd`, `samp`, `var`, `q`, `cite`, `dfn`, `time`, `data`, `small` |
-| S20 | Block text structure | ✗ | ✗ | ? | 1.3.1 | — | — | — | — | `p`, `blockquote`, `pre`, `hr` |
+| S19 | Inline text semantics | ✗ | ✗ | ✗ | 1.3.1 | AttributedStrings | — | — | — | `em`, `strong`, `mark`, `del`, `ins`, `s`, `sub`, `sup`, `code`, `kbd`, `samp`, `var`, `q`, `cite`, `dfn`, `time`, `data`, `small` |
+| S20 | Block text structure | ✗ | ✗ | ✗ | 1.3.1 | — | — | — | — | `p`, `blockquote`, `pre`, `hr` |
 | S21 | Custom content (extra detail on demand) | ✗ | ✗ | ✗ | 1.3.1 | AccessibilityCustomContent | — | — | — | — |
 | S22 | Semantics identifiers for testing | ✓ | ✓ | ✓ | — (test enablement) | AccessibilityIdentifier | — | — | — | `id`, `data-testid` equivalents |
 
@@ -152,18 +152,18 @@ no material connection to CVS Health.
 | C17 | Carousel | ✓ | ✓ | ✓ | 2.2.2, 4.1.2 | Carousels | — | — | Carousel | — |
 | C18 | Card | ✓ | ✓ | ✓ | 1.3.1, 2.4.4 | Cards | — | — | — | `article` |
 | C19 | Data table | ✗ | ✗ | ✓ | 1.3.1 | DataTables | — | — | Table | `table`, `caption`, `thead`, `tbody`, `tfoot`, `tr`, `th`, `td`, `col`, `colgroup` |
-| C20 | Interactive grid | ✗ | ✗ | ? | 4.1.2, 2.1.1 | — | — | — | Grid | — |
-| C21 | Tree view | ✗ | ✗ | ? | 4.1.2, 2.1.1 | — | — | — | Tree View | — |
-| C22 | Treegrid | ✗ | ✗ | ? | 4.1.2, 2.1.1 | — | — | — | Treegrid | — |
-| C23 | Feed | ✗ | ✗ | ? | 1.3.1, 2.1.1 | — | — | — | Feed | `article` |
-| C24 | Window splitter | ✗ | ✗ | ? | 4.1.2, 2.5.7 | — | — | — | Window Splitter | — |
-| C25 | Meter | ✗ | ✗ | ? | 4.1.2, 1.1.1 | — | — | — | Meter | `meter` |
+| C20 | Interactive grid | ✗ | ✗ | ✗ | 4.1.2, 2.1.1 | — | — | — | Grid | — |
+| C21 | Tree view | ✗ | ✗ | ✗ | 4.1.2, 2.1.1 | — | — | — | Tree View | — |
+| C22 | Treegrid | ✗ | ✗ | ✗ | 4.1.2, 2.1.1 | — | — | — | Treegrid | — |
+| C23 | Feed | ✗ | ✗ | ✗ | 1.3.1, 2.1.1 | — | — | — | Feed | `article` |
+| C24 | Window splitter | ✗ | ✗ | ✗ | 4.1.2, 2.5.7 | — | — | — | Window Splitter | — |
+| C25 | Meter | ✗ | ✗ | ✗ | 4.1.2, 1.1.1 | — | — | — | Meter | `meter` |
 | C26 | Progress indicator | ✓ | ✓ | ✓ | 4.1.2, 4.1.3 | ProgressIndicators | — | — | — | `progress` |
 | C27 | Charts | ✓ | ✓ | ✓ | 1.1.1, 1.4.1 | Charts | — | — | — | `canvas`, `svg` |
-| C28 | Maps | ? | ? | ? | 1.1.1, 2.5.1 | Maps | — | — | — | — |
-| C29 | Video and audio | ? | ? | ? | 1.2.1–1.2.5, 1.4.2 | Videos | — | — | — | `video`, `audio`, `track`, `source` |
-| C30 | Embedded web and platform views | ? | ? | ? | 4.1.2, 1.4.4 | WebViewDynamicType | — | — | — | `iframe`, `embed`, `object` |
-| C31 | Math content | ✗ | ✗ | ? | 1.1.1, 1.3.1 | — | — | — | — | `math` |
+| C28 | Maps | ✗ | ✗ | ✗ | 1.1.1, 2.5.1 | Maps | — | — | — | — |
+| C29 | Video and audio | ✗ | ✗ | ✗ | 1.2.1–1.2.5, 1.4.2 | Videos | — | — | — | `video`, `audio`, `track`, `source` |
+| C30 | Embedded web and platform views | ✗ | ✗ | ? | 4.1.2, 1.4.4 | WebViewDynamicType | — | — | — | `iframe`, `embed`, `object` |
+| C31 | Math content | ✗ | ✗ | ✗ | 1.1.1, 1.3.1 | — | — | — | — | `math` |
 
 ## 2. Source items that are not techniques
 
@@ -229,10 +229,13 @@ raw output are in [evidence/probes/batch-0](evidence/probes/batch-0/). The
 A / I / W columns above now carry the result; a `?` that remains is explained
 here.
 
-For S19, S20, C20 to C25, and C31 the web column stays `?`. Flutter's
-`Semantics` API has no mechanism for them, but on web the SDK can embed native
-HTML with `HtmlElementView`, and that route was not probed. Whether it counts
-as a Flutter technique is an open question for the owner.
+For S19, S20, C20 to C25, and C31, Flutter's `Semantics` API has no
+mechanism. On web the SDK can embed native HTML with `HtmlElementView`, which
+was not probed. The owner decided on 2026-11-13 that this is not a technique
+(D31: widgets only), so these are `✗` on web as well. Each of these entries
+says that Flutter has not added the semantics yet, and, where embedded HTML
+can fill the gap on web, shows that as a labelled workaround, a lesser option
+and not a good example (D32). No workaround has been built or verified yet.
 
 These are probe results, not verified techniques. Each entry that is built
 gets its full spec and tests, and may change again.
@@ -262,14 +265,16 @@ gets its full spec and tests, and may change again.
 | C23 | Feed | Limitation entry (`Semantics` API) | No feed or article role. FL-026 |
 | C24 | Window splitter | Limitation entry (`Semantics` API) | No separator role. Slider semantics give an adjustable control on all three platforms (`SeekBar`, `role="slider"`), which is a slider, not a splitter. FL-026 |
 | C25 | Meter | Limitation entry; see the progress entry | No meter role. `SemanticsRole.progressBar` with `minValue` and `maxValue` is a progress bar on web and Android, which is a different thing from a meter. FL-026, FL-027 |
-| C28 | Maps | Owner decision: needs a plugin | Nothing in the SDK. `google_maps_flutter` is a platform view |
-| C29 | Video and audio | Owner decision: needs a plugin | Nothing in the SDK plays media; `video_player` does. The SDK does report `autoPlayVideos` and `autoPlayAnimatedImages` |
-| C30 | Embedded web and platform views | Owner decision: needs a plugin off the web | `HtmlElementView` is in the SDK for web; its content was not reachable from the page DOM in this probe. Mobile needs `webview_flutter` |
+| C28 | Maps | Limitation entry (D30: SDK only) | Nothing in the SDK. `google_maps_flutter` is a platform view |
+| C29 | Video and audio | Limitation entry (D30: SDK only) | Nothing in the SDK plays media; `video_player` does. The SDK does report `autoPlayVideos` and `autoPlayAnimatedImages` |
+| C30 | Embedded web and platform views | Limitation entry on mobile (D30); on web, embedding content only (D31) | `HtmlElementView` is in the SDK for web; its content was not reachable from the page DOM in this probe. Mobile needs `webview_flutter` |
 | C31 | Math content | Limitation entry (`Semantics` API) | No math semantics. Only a text alternative is possible, which S02 covers. FL-026 |
 
-Totals: 7 to build (S07, S18, V04, I05, I06, C15, C19); 15 limitation
+Totals: 7 to build (S07, S18, V04, I05, I06, C15, C19); 18 limitation
 entries, which under TEC-6 stay in the catalog with the gap documented and the
-closest achievable example where there is one; 1 not applicable (I17); 1
-folded into existing checks (I11); and 3 that need a plugin from outside the
-SDK (C28, C29, C30). Whether first-party plugins such as `video_player` and
-`webview_flutter` are in scope is a decision for the owner.
+closest achievable example where there is one; 1 not applicable (I17); and 1
+folded into existing checks (I11). Three of the limitation entries (C28, C29,
+C30) need a plugin from outside the SDK, which the owner ruled out on
+2026-11-13 (D30). On web C30 documents `HtmlElementView` for what Flutter
+documents it for, embedding content. In the other limitation entries it may
+appear as a labelled web workaround, never as a good example (D31, D32).

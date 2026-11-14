@@ -17,6 +17,8 @@ templates are in [templates/](templates/).
 3. **Decide the examples from the evidence.** A good example must work on
    every platform that can be checked. If a mechanism only works on one
    platform, it is a bad example with a limitation entry, not a good one.
+   The one exception is a labelled web workaround in a limitation entry
+   (D32, under "Examples" below): it is neither good nor bad.
 4. **Write the tests at each layer**, then the spec's "what the build found"
    section, then the technique doc.
 5. **Run the gates**: this technique's suites and transcripts locally (the
@@ -49,7 +51,10 @@ registry; nothing else needs wiring.
 ## Examples
 
 - **Slugs** start with `good-` or `bad-` and are stable; they are routes and
-  test locators.
+  test locators. A workaround (D32) is a third kind and will start with
+  `workaround-`; the catalog model, app, Widgetbook, and doc tests do not
+  support that kind yet, and it must be added before the first one is
+  written.
 - **Good examples use SDK APIs only**, and every mechanism traces to a source
   in the spec.
 - **A bad example has one defect**, stated as what the user experiences, and
@@ -67,7 +72,10 @@ registry; nothing else needs wiring.
   activations; the text field tests type and re-read; the announcement
   examples have a button that changes a message.
 - **If a defect cannot be demonstrated, drop the example** and say so in the
-  spec. Two I12 examples went this way.
+  spec. Two I12 examples went this way. This is about bad examples. A
+  workaround has no defect to demonstrate; it is kept only if the tests show
+  it does what it claims, and is otherwise recorded in the entry as tried
+  and why it failed.
 
 ## Locators
 
@@ -146,6 +154,11 @@ silence is asserted.
 - **Say "Observed" until a test in the repo reproduces it**, then
   "Confirmed". One spike finding (FL-005) was wrong for a whole phase because
   it was a guess recorded as a cause.
+- **A limitation entry says what Flutter has not added yet**, in those
+  words, and shows the closest achievable example. Where native HTML embedded
+  with `HtmlElementView` can fill the gap on web, show it as a labelled
+  workaround: web only, a lesser option, never a good example, no plugins,
+  and verified with the same tests as an example (D31, D32).
 - **If a platform cannot be verified, say "not verified"** in the doc and the
   catalog (`PlatformStatus.applies(note: …)`). If a limitation has no
   workaround, mark the platform `PlatformStatus.limitation(…)`.
