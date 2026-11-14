@@ -183,7 +183,11 @@ VAL-1, VAL-8, and VAL-10 above were revised to match.
 
 ## 6. Open questions
 
-None. The question of minimum OS and browser versions was settled by D29.
+1. Are first-party plugins in scope? Batch 0 found that Maps (C28), Video and
+   audio (C29), and Embedded web and platform views (C30) have no mechanism in
+   the Flutter SDK itself; they need `google_maps_flutter`, `video_player`,
+   and `webview_flutter`. See
+   [coverage-inventory.md, section 5](coverage-inventory.md#5-batch-0-probes-of-the-27-unknown-entries).
 
 ## 7. Assumptions to verify
 
