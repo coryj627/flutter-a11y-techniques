@@ -66,7 +66,9 @@ behind each one is in [the technique guide](technique-guide.md).
 - [ ] `dart format`, `flutter analyze`, `flutter test`, and the script tests
       pass
 - [ ] All Playwright suites and the Widgetbook suite pass against fresh builds
-- [ ] The full Android and iOS suites pass, not only this technique's
+- [ ] This technique's Android and iOS suites and its transcripts pass
+      locally. The full device and transcript run is on a schedule and before
+      a release (D23); CI runs every tree test on the pull request
 - [ ] Codex adversarial review returns "approve"
 - [ ] CI is green on the pull request's exact head commit
 - [ ] Codoki's review says "Safe to merge", with every thread answered
