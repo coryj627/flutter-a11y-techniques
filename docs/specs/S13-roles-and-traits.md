@@ -138,7 +138,8 @@ The probe that came first is in [evidence/probes/s13](../evidence/probes/s13/).
   platforms.** A custom control with `button: true` is `role="button"`, an
   Android `Button`, and an iOS button. With `toggled` it is `role="switch"`,
   a `Switch`, and an iOS switch, and it is not a button as well. `selected`
-  on a button is `aria-current` on the web, the selected state on Android
+  on a button is `aria-current` on the web ("Week, current item, button"
+  from VoiceOver), the selected state on Android
   ("selected, Week, Button" from TalkBack), and the selected trait on iOS
   ("selected, Week, Button").
 - **A custom switch needs `enabled: true`**
@@ -175,7 +176,9 @@ The probe that came first is in [evidence/probes/s13](../evidence/probes/s13/).
   `Semantics(button: true)` around a `FilledButton` is a node of its own
   with no name. On the web it is a button around a button, both named
   "Save" by the text. On Android it is an unnamed `Button` that cannot be
-  clicked; TalkBack, with focus moved to it, says "Button". The iOS tree has
+  clicked; TalkBack, with focus moved to it, says "Button". VoiceOver on
+  macOS stops once, on "Save button, group" in Chromium and "Save button"
+  in WebKit. The iOS tree has
   an unnamed button too, and VoiceOver does not stop on it.
 - **Enter does not toggle a `CupertinoSwitch` on the web; Space does.** The
   same cause as [FL-002](../flutter-limitations.md#fl-002). The APG Switch
@@ -188,10 +191,7 @@ The probe that came first is in [evidence/probes/s13](../evidence/probes/s13/).
 - A method named `activate` on a `State` overrides `State.activate`. The
   shared state of the examples calls it `press`.
 
-**Not done yet.** The web VoiceOver transcript has to be recorded from the
-owner's Terminal (macOS does not let this session start VoiceOver), so
-`web_tests/vo/s13_roles_and_traits_vo.spec.js` holds expected speech that
-has not been heard yet. Whether VoiceOver can activate `bad-action-hidden`, on iOS or on the web,
+**Not done yet.** Whether VoiceOver can activate `bad-action-hidden`, on iOS or on the web,
 is not known. What Switch Access and Voice Access do
 with the examples was not tested; the tests go by the click action those
 services use. Links are left to C03, and a checked radio button that

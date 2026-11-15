@@ -19,14 +19,17 @@ const EXAMPLES = {
   'good-cupertino': ['Save button', 'Wi-Fi off switch'],
   'good-custom-button': ['Scan barcode button'],
   'good-custom-switch': ['Dark mode off switch'],
-  'good-selected': ['Day button', 'current item Week button', 'Month button'],
+  // `selected` on a button is aria-current on web, read as "current item".
+  'good-selected': ['Day button', 'Week current item button', 'Month button'],
   // On web every node with a tap action is a button (FL-006), so the
   // missing role cannot be heard here.
   'bad-no-role': ['Scan barcode button'],
   // Bad examples: the defect must be audible.
   'bad-wrong-role': ['Dark mode button'],
   'bad-role-on-text': ['Free delivery button'],
-  'bad-role-on-standard': ['Save button'],
+  // One stop. In Chromium the button around the button is heard as a
+  // group; Playwright's WebKit build reads a plain button.
+  'bad-role-on-standard': { chromium: ['Save button, group'], webkit: ['Save button'] },
   // Read the same as the good custom button: the missing action is not
   // spoken. The tree test shows that activation does nothing.
   'bad-action-hidden': ['Scan barcode button'],
@@ -43,6 +46,7 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
     expect(reachedEnd, `${slug}: the walk reached the end of the screen`).toBe(true);
     const start = stops.indexOf(EXAMPLE);
     expect(start, `${slug}: reached the example`).toBeGreaterThanOrEqual(0);
-    expect(stops.slice(start + 1), slug).toEqual([...expected, COUNT]);
+    const content = Array.isArray(expected) ? expected : expected[browserName];
+    expect(stops.slice(start + 1), slug).toEqual([...content, COUNT]);
   });
 }
