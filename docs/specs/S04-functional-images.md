@@ -153,10 +153,7 @@ The probe that came first is in [evidence/probes/s04](../evidence/probes/s04/).
 - The iOS walk needs no rule for the end of the screen here: the activation
   count is a unique last element in every example.
 
-**Not done yet.** The web VoiceOver transcript was recorded before the
-regions of `good-image-regions` were given a `Material` and a focus ring and
-before the defect statement of `bad-image-not-excluded` was reworded; it
-could not be recorded again on the day (see the technique doc). Which elements a TalkBack swipe stops on is not tested;
+**Not done yet.** Which elements a TalkBack swipe stops on is not tested;
 the walk moves focus by action (see S03). Image links are left to C03. A
 toggle made from an image (a favourite star) is left to C02 Toggle button. Whether a name describes the action well cannot be tested:
 `bad-describes-picture` asserts only that the name is the one written.
