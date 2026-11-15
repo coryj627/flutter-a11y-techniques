@@ -30,11 +30,11 @@ FL-018).
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | Changes that result from a user action or an automatic update must be announced to screen reader users | [CVS View UX Change Announcements](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/dynamicbehaviors/UXChangeAnnouncements.md), [CVS Compose UX Change Announcements](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/UXChangeAnnouncements.md), [CVS iOS Accessibility Notifications](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityNotifications.md) |
-| R2 | Announce without moving focus | CVS iOS Accessibility Notifications; [APG Alert](https://www.w3.org/WAI/ARIA/apg/patterns/alert/) |
-| R3 | Use a live region for a value that changes on screen | CVS View and Compose; [MDN live regions](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Live_regions), [MDN output](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/output) |
-| R4 | Announce from code when no on-screen text changes; on Android this is discouraged in favour of live regions | CVS iOS; CVS Compose |
-| R5 | Rate-limit automatic updates so they do not overwhelm | CVS View and Compose |
+| R1 | Changes that result from a user action or an automatic update must be announced to screen reader users | [Android View UX Change Announcements](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/dynamicbehaviors/UXChangeAnnouncements.md), [Android Compose UX Change Announcements](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/UXChangeAnnouncements.md), [iOS Accessibility Notifications](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityNotifications.md) |
+| R2 | Announce without moving focus | iOS Accessibility Notifications; [APG Alert](https://www.w3.org/WAI/ARIA/apg/patterns/alert/) |
+| R3 | Use a live region for a value that changes on screen | Android View and Compose; [MDN live regions](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Live_regions), [MDN output](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/output) |
+| R4 | Announce from code when no on-screen text changes; on Android this is discouraged in favour of live regions | iOS; Android Compose |
+| R5 | Rate-limit automatic updates so they do not overwhelm | Android View and Compose |
 | R6 | Reserve alerts for messages that need immediate attention | APG Alert |
 
 Flutter references for the mechanisms used:

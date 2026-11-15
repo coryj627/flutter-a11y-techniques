@@ -29,15 +29,15 @@ final s01AccessibleNames = Technique(
   ],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Accessibility Label',
+      'iOS SwiftUI: Accessibility Label',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityLabel.md',
     ),
     SourceLink(
-      'CVS Health iOS SwiftUI: Meaningful Accessible Names',
+      'iOS SwiftUI: Meaningful Accessible Names',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/MeaningfulAccessibleNames.md',
     ),
     SourceLink(
-      'CVS Health Android Compose: Interactive Control Labels',
+      'Android Compose: Interactive Control Labels',
       'https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/InteractiveControlLabels.md',
     ),
     SourceLink(

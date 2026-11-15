@@ -31,14 +31,14 @@ excluded.
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | A decorative image is hidden from the screen reader | [CVS iOS Decorative Images](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/DecorativeImages.md), [CVS iOS Images](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Images.md), [CVS Compose Text Alternatives](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/TextAlternatives.md), [CVS View Text Alternatives](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/TextAlternatives.md), [MDN `img`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img), [WAI Images Tutorial: Decorative Images](https://www.w3.org/WAI/tutorials/images/decorative/) |
-| R2 | A decorative image has no text alternative | CVS iOS Decorative Images ("should have no `.accessibilityLabel`"); CVS Compose and View Text Alternatives ("never put a non-null `contentDescription` on a purely decorative image") |
+| R1 | A decorative image is hidden from the screen reader | [iOS Decorative Images](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/DecorativeImages.md), [iOS Images](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Images.md), [Android Compose Text Alternatives](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/TextAlternatives.md), [Android View Text Alternatives](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/TextAlternatives.md), [MDN `img`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img), [WAI Images Tutorial: Decorative Images](https://www.w3.org/WAI/tutorials/images/decorative/) |
+| R2 | A decorative image has no text alternative | iOS Decorative Images ("should have no `.accessibilityLabel`"); Android Compose and View Text Alternatives ("never put a non-null `contentDescription` on a purely decorative image") |
 | R3 | An image that only repeats the text beside it is decorative | WAI Images Tutorial: Decorative Images |
-| R4 | The platform's own way to mark decoration is used; an empty string is not a substitute where the platform does not treat it as one | CVS Compose Text Alternatives ("Never use the empty string for a `contentDescription`") |
+| R4 | The platform's own way to mark decoration is used; an empty string is not a substitute where the platform does not treat it as one | Android Compose Text Alternatives ("Never use the empty string for a `contentDescription`") |
 | R5 | A decorative image that assistive technology cannot ignore is a failure of 1.1.1 | [WCAG failure F38](https://www.w3.org/WAI/WCAG22/Techniques/failures/F38) |
-| R6 | The simple mechanism is preferred; hiding by a general "hide from accessibility" wrapper is for cases that have no simpler one | CVS Compose Text Alternatives |
+| R6 | The simple mechanism is preferred; hiding by a general "hide from accessibility" wrapper is for cases that have no simpler one | Android Compose Text Alternatives |
 
-Whether an image is decorative is a judgement. The CVS Compose and View
+Whether an image is decorative is a judgement. The Android Compose and View
 documents note that a picture that sets a tone may deserve a description;
 that choice belongs to the designer and is not tested here.
 

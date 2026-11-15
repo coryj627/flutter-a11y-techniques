@@ -8,7 +8,7 @@ it is not a technique.
 
 ## How to read this
 
-- **Sources were inventoried by document title only.** The CVS documents
+- **Sources were inventoried by document title only.** The reference repositories' documents
   themselves have not been read yet, so mappings may shift when each technique is
   specified.
 - **WCAG mappings are provisional** and get confirmed against
@@ -167,7 +167,7 @@ no material connection to CVS Health.
 
 ## 2. Source items that are not techniques
 
-### 2.1 CVS tooling and testing documents
+### 2.1 Reference tooling and testing documents
 
 These inform the validation harness (VAL-1 to VAL-5), not the catalog.
 
@@ -197,9 +197,9 @@ template) are not techniques.
 
 ## 3. Coverage check
 
-- **CVS iOS:** 86 technique docs mapped to catalog entries; 4 tooling docs in 2.1.
-- **CVS Android View:** 30 technique docs mapped; 1 tooling doc in 2.1.
-- **CVS Android Compose:** 36 technique docs mapped; 1 tooling doc in 2.1.
+- **iOS:** 86 technique docs mapped to catalog entries; 4 tooling docs in 2.1.
+- **Android View:** 30 technique docs mapped; 1 tooling doc in 2.1.
+- **Android Compose:** 36 technique docs mapped; 1 tooling doc in 2.1.
 - **APG:** all 30 patterns mapped.
 - **HTML:** every element on the MDN reference is either mapped or listed in 2.2.
 
@@ -213,7 +213,7 @@ template) are not techniques.
 2. **Landmarks, tables, and inline text semantics on mobile** are the likeliest
    limitation entries and worth probing early, since many other techniques
    reference them.
-3. **Vertical slice candidates** (DEL-1) that touch all three CVS repos, APG, and
+3. **Vertical slice candidates** (DEL-1) that touch all three reference repositories, APG, and
    HTML: C01 Button, S05 Headings, F01 Text fields and labels. Adding I12
    Announcements would exercise the screen reader speech gate.
 4. **Cupertino variants** are expected mainly in the F and C groups (switch,

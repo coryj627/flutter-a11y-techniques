@@ -44,17 +44,17 @@ applies.
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | A custom control with a value or state that changes exposes it as its value, not in its name | [CVS iOS Accessibility Value](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityValue.md) ("The value describes the current state ... not the label or action"), [Apple: accessibilityValue](https://developer.apple.com/documentation/uikit/uiaccessibilityelement/accessibilityvalue) |
-| R2 | The value is in words a person would use: "3 out of 5", "Step 2 of 4" | CVS iOS Accessibility Value (its examples), [MDN: aria-valuetext](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuetext) (for when the number alone is not meaningful) |
-| R3 | The value is updated when the state changes | CVS iOS Accessibility Value ("Update the value dynamically as the state changes") |
-| R4 | A value that can be adjusted has the adjust actions, so a screen reader user can change it | CVS iOS Accessibility Value ("combine `.accessibilityValue` with `.accessibilityAdjustableAction`") |
-| R5 | Standard controls give their own values; nothing is added | CVS iOS Accessibility Value ("Native controls like `Slider`, `Toggle`, and `Stepper` provide their own values automatically") |
-| R6 | The wording of a standard control's state can be replaced with words that fit it better ("Activated" for "Checked") | [CVS Compose Custom State Descriptions](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/CustomStateDescriptions.md), [CVS View Custom State Descriptions](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/dynamicbehaviors/CustomStateDescriptions.md), [Android: View.setStateDescription](https://developer.android.com/reference/android/view/View#setStateDescription(java.lang.CharSequence)) |
+| R1 | A custom control with a value or state that changes exposes it as its value, not in its name | [iOS Accessibility Value](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityValue.md) ("The value describes the current state ... not the label or action"), [Apple: accessibilityValue](https://developer.apple.com/documentation/uikit/uiaccessibilityelement/accessibilityvalue) |
+| R2 | The value is in words a person would use: "3 out of 5", "Step 2 of 4" | iOS Accessibility Value (its examples), [MDN: aria-valuetext](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuetext) (for when the number alone is not meaningful) |
+| R3 | The value is updated when the state changes | iOS Accessibility Value ("Update the value dynamically as the state changes") |
+| R4 | A value that can be adjusted has the adjust actions, so a screen reader user can change it | iOS Accessibility Value ("combine `.accessibilityValue` with `.accessibilityAdjustableAction`") |
+| R5 | Standard controls give their own values; nothing is added | iOS Accessibility Value ("Native controls like `Slider`, `Toggle`, and `Stepper` provide their own values automatically") |
+| R6 | The wording of a standard control's state can be replaced with words that fit it better ("Activated" for "Checked") | [Android Compose Custom State Descriptions](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/CustomStateDescriptions.md), [Android View Custom State Descriptions](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/dynamicbehaviors/CustomStateDescriptions.md), [Android: View.setStateDescription](https://developer.android.com/reference/android/view/View#setStateDescription(java.lang.CharSequence)) |
 
 R6 cannot be met in Flutter 3.47.5 for a switch or a checkbox
 ([FL-036](../flutter-limitations.md#fl-036)). It can for a slider, whose
 value text is `semanticFormatterCallback` (`good-slider-format`). The second
-half of the CVS View document, the label of the click action, is I06.
+half of the Android View document, the label of the click action, is I06.
 
 Flutter references for the mechanisms used:
 
@@ -69,7 +69,7 @@ The inventory row names no APG pattern and no HTML element.
 ## 5. Examples
 
 Every example ends with a count of changes, so a person or a test can tell
-that a control worked. The star rating and the step indicator are examples of the CVS iOS
+that a control worked. The star rating and the step indicator are examples of the iOS
 document. Its third example, an on/off toggle with the value "enabled", is
 `good-custom-switch` in S13, because in Flutter the switch role carries that
 state. The three-mode button here shows a value on a button whose state no

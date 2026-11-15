@@ -24,15 +24,15 @@ final s14ValuesAndStateDescriptions = Technique(
   wcag: const [WcagCriterion('4.1.2', 'Name, Role, Value', 'name-role-value')],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Accessibility Value',
+      'iOS SwiftUI: Accessibility Value',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityValue.md',
     ),
     SourceLink(
-      'CVS Health Android Compose: Custom State Descriptions',
+      'Android Compose: Custom State Descriptions',
       'https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/CustomStateDescriptions.md',
     ),
     SourceLink(
-      'CVS Health Android View: Custom State Descriptions',
+      'Android View: Custom State Descriptions',
       'https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/dynamicbehaviors/CustomStateDescriptions.md',
     ),
     SourceLink(

@@ -18,19 +18,19 @@ final s03DecorativeImages = Technique(
   wcag: const [WcagCriterion('1.1.1', 'Non-text Content', 'non-text-content')],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Decorative Images',
+      'iOS SwiftUI: Decorative Images',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/DecorativeImages.md',
     ),
     SourceLink(
-      'CVS Health iOS SwiftUI: Images',
+      'iOS SwiftUI: Images',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Images.md',
     ),
     SourceLink(
-      'CVS Health Android Compose: Text Alternatives',
+      'Android Compose: Text Alternatives',
       'https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/TextAlternatives.md',
     ),
     SourceLink(
-      'CVS Health Android View: Text Alternatives',
+      'Android View: Text Alternatives',
       'https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/TextAlternatives.md',
     ),
     SourceLink(

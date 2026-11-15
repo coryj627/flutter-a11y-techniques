@@ -31,7 +31,7 @@ A role is not put on something that does not behave that way.
 | --- | --- |
 | [4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value) | The role of every user interface component can be read by assistive technology, and so can its state |
 
-The CVS document on `accessibilityRespondsToUserInteraction` lists 2.1.1
+The iOS reference document on `accessibilityRespondsToUserInteraction` lists 2.1.1
 Keyboard and 2.4.3 Focus Order, because on iOS that property decides what
 Full Keyboard Access and Switch Control can reach. In Flutter the keyboard
 is handled by `Focus` and is separate from the semantics tree, so the
@@ -42,11 +42,11 @@ keyboard and is recorded against 4.1.2 only.
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | A custom control is given the role that matches what it does | [CVS iOS Accessibility Traits](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityTraits.md) ("add custom traits matching the roles and functionality of the control"; its good example adds the button trait to an image with a tap gesture), [WCAG technique ARIA4](https://www.w3.org/WAI/WCAG22/Techniques/aria/ARIA4), [WCAG failure F59](https://www.w3.org/WAI/WCAG22/Techniques/failures/F59), [MDN: WAI-ARIA roles](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles), [Apple: UIAccessibilityTraits](https://developer.apple.com/documentation/uikit/uiaccessibilitytraits), [Android: Role](https://developer.android.com/reference/kotlin/androidx/compose/ui/semantics/Role) |
-| R2 | Standard controls already have their roles; nothing is added to them | CVS iOS Accessibility Traits ("Standard native controls already include accessibility traits by default") |
+| R1 | A custom control is given the role that matches what it does | [iOS Accessibility Traits](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityTraits.md) ("add custom traits matching the roles and functionality of the control"; its good example adds the button trait to an image with a tap gesture), [WCAG technique ARIA4](https://www.w3.org/WAI/WCAG22/Techniques/aria/ARIA4), [WCAG failure F59](https://www.w3.org/WAI/WCAG22/Techniques/failures/F59), [MDN: WAI-ARIA roles](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles), [Apple: UIAccessibilityTraits](https://developer.apple.com/documentation/uikit/uiaccessibilitytraits), [Android: Role](https://developer.android.com/reference/kotlin/androidx/compose/ui/semantics/Role) |
+| R2 | Standard controls already have their roles; nothing is added to them | iOS Accessibility Traits ("Standard native controls already include accessibility traits by default") |
 | R3 | A role is a promise: the element behaves as its role says. No role is better than a wrong one | [APG: Read Me First](https://www.w3.org/WAI/ARIA/apg/practices/read-me-first/) ("A role is a promise"; "No ARIA is better than bad ARIA") |
-| R4 | A control that can be operated is not taken away from assistive technology, and text that cannot be operated is not presented as if it could | [CVS iOS Accessibility Responds To User Interaction](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityRespondsToUserInteraction.md) (its bad example turns the property off on tappable text and on for static text) |
-| R5 | A state that is part of the role (selected, on or off) is exposed with it | CVS iOS Accessibility Traits (the list of traits has Selected and Toggle); WCAG 4.1.2 |
+| R4 | A control that can be operated is not taken away from assistive technology, and text that cannot be operated is not presented as if it could | [iOS Accessibility Responds To User Interaction](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityRespondsToUserInteraction.md) (its bad example turns the property off on tappable text and on for static text) |
+| R5 | A state that is part of the role (selected, on or off) is exposed with it | iOS Accessibility Traits (the list of traits has Selected and Toggle); WCAG 4.1.2 |
 
 Flutter references for the mechanisms used:
 
@@ -60,7 +60,7 @@ The inventory row names no APG pattern and no HTML element. The HTML
 counterpart of R2 is using the native element (`button`, `input`) in place
 of a `div` with a role.
 
-### The CVS list of traits, and what Flutter has for each
+### The iOS reference list of traits, and what Flutter has for each
 
 | iOS trait | Flutter | Where |
 | --- | --- | --- |

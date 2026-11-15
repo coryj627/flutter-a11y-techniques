@@ -21,15 +21,15 @@ final s05Headings = Technique(
   ],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Headings',
+      'iOS SwiftUI: Headings',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Headings.md',
     ),
     SourceLink(
-      'CVS Health Android Compose: Heading Semantics',
+      'Android Compose: Heading Semantics',
       'https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/HeadingSemantics.md',
     ),
     SourceLink(
-      'CVS Health Android View: Heading Semantics',
+      'Android View: Heading Semantics',
       'https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/grouping/HeadingSemantics.md',
     ),
     SourceLink(

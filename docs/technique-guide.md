@@ -7,7 +7,7 @@ templates are in [templates/](templates/).
 
 ## Order of work
 
-1. **Read the sources.** Fetch the CVS docs, the APG pattern, and the MDN page
+1. **Read the sources.** Fetch the reference repository docs, the APG pattern, and the MDN page
    named in the [coverage inventory](coverage-inventory.md). The inventory
    mapped them by title; the text often changes the scope.
 2. **Probe before you assert.** Build rough examples, then look at what each
