@@ -154,6 +154,27 @@ EXPECT = {
     "s14-bad-button-no-value-repeat-changed": (["Repeat", "Button"], ["Off", "All"]),
     # Both wordings of the state are read.
     "s14-bad-value-on-switch-alarm": (["Home alarm", "Deactivated", "Switch"], []),
+    # S15 Hints. Android has no hint of its own: the hint is the end of the
+    # description, so it is read straight after the name, before the role.
+    "s15-good-result-favorite": (["Favorite", "Adds this item to your favorites", "Button"], []),
+    "s15-good-row-song": (["Night Ferry", "The Lanterns", "Plays the song", "Button"], []),
+    "s15-good-cupertino-share": (["Share", "Shares the current page", "Button"], []),
+    "s15-good-custom-archive": (["Archive", "Moves this message out of the inbox", "Button"], []),
+    "s15-good-field-username": (["Username", "3 to 12 letters or numbers"], []),
+    "s15-good-field-rule": (["3 to 12 letters or numbers"], ["Username"]),
+    # Bad examples: the defect must be audible.
+    # TalkBack's own "Double-tap to activate" follows after a pause and is
+    # not always inside the listening window, so it is not required.
+    "s15-bad-gesture-favorite": (["Favorite", "Double tap to add this item", "Button"], []),
+    # "Delete" twice, as two fragments with TalkBack's pause between them.
+    "s15-bad-repeats-label-delete": (["delete, |   | delete", "Button"], []),
+    "s15-bad-control-type-share": (["Share", "This button shares the current page", "Button"], []),
+    "s15-bad-no-hint-song": (["Night Ferry", "The Lanterns", "Button"], ["Plays"]),
+    # The hint is an element of its own, and the button has none (FL-040).
+    "s15-bad-hint-detached-hint": (["Adds this item to your favorites"], ["Button"]),
+    "s15-bad-hint-detached-favorite": (["Favorite", "Button"], ["Adds this item"]),
+    # Read as the good field is: the tree test finds no rule on the screen.
+    "s15-bad-hint-only-username": (["Username", "3 to 12 letters or numbers"], []),
     # S05 Headings. "Heading" must be spoken as the role for a real heading,
     # and must not be for text that only looks or reads like one.
     "s05-good-levels-profile": (["Profile", "Heading"], []),

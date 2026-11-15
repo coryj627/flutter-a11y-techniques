@@ -1,0 +1,64 @@
+// S15 probe (throwaway, not committed): where Semantics(hint:) goes.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatelessWidget {
+  const ProbeScreen({super.key});
+
+  Widget _box(String text) => ExcludeSemantics(
+    child: SizedBox(width: 180, height: 40, child: Align(alignment: Alignment.centerLeft, child: Text(text))),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 01 plain custom button with a hint
+              Semantics(container: true, button: true, label: 'h01 Favorite', hint: 'Adds this item to your favorites.', onTap: () {}, child: _box('h01')),
+              // 02 Material button wrapped in Semantics(hint:)
+              Semantics(hint: 'Adds this item to your favorites.', child: FilledButton(onPressed: () {}, child: const Text('h02 Favorite'))),
+              // 03 Cupertino button wrapped
+              Semantics(hint: 'Adds this item to your favorites.', child: CupertinoButton(onPressed: () {}, child: const Text('h03 Favorite'))),
+              // 04 list row: InkWell with merged text and a hint
+              Semantics(hint: 'Plays the song.', child: ListTile(title: const Text('h04 Night Ferry'), subtitle: const Text('The Lanterns'), onTap: () {})),
+              // 05 static text with a hint and no action
+              Semantics(container: true, label: 'h05 Total', hint: 'Includes tax.', child: _box('h05')),
+              // 06 text field: helperText
+              const Padding(padding: EdgeInsets.all(8), child: TextField(decoration: InputDecoration(labelText: 'h06 Password', helperText: '8 characters minimum.'))),
+              // 07 text field: hintText
+              const Padding(padding: EdgeInsets.all(8), child: TextField(decoration: InputDecoration(labelText: 'h07 Password', hintText: '8 characters minimum.'))),
+              // 08 text field wrapped in Semantics(hint:)
+              Padding(padding: const EdgeInsets.all(8), child: Semantics(hint: '8 characters minimum.', child: const TextField(decoration: InputDecoration(labelText: 'h08 Password')))),
+              // 09 onTapHint only
+              Semantics(container: true, button: true, label: 'h09 Favorite', onTapHint: 'add to favorites', onTap: () {}, child: _box('h09')),
+              // 10 hint and onTapHint
+              Semantics(container: true, button: true, label: 'h10 Favorite', hint: 'Adds this item to your favorites.', onTapHint: 'add to favorites', onTap: () {}, child: _box('h10')),
+              // 11 switch with a hint
+              Semantics(container: true, toggled: false, enabled: true, label: 'h11 Wi-Fi', hint: 'Turns wireless networking on or off.', onTap: () {}, child: _box('h11')),
+              // 12 tooltip property
+              Semantics(container: true, button: true, label: 'h12 Favorite', tooltip: 'Add to favorites', onTap: () {}, child: _box('h12')),
+              // 13 IconButton tooltip
+              IconButton(onPressed: () {}, tooltip: 'h13 Favorite', icon: const Icon(Icons.favorite_border)),
+              // 14 hint with no label
+              Semantics(container: true, button: true, hint: 'h14 Adds this item to your favorites.', onTap: () {}, child: _box('h14')),
+              // 15 hint on a link
+              Semantics(container: true, link: true, label: 'h15 Terms', hint: 'Opens in the browser.', onTap: () {}, child: _box('h15')),
+              // 16 slider with hint
+              Semantics(container: true, label: 'h16 Volume', value: '3', increasedValue: '4', decreasedValue: '2', hint: 'Changes the media volume.', onIncrease: () {}, onDecrease: () {}, child: _box('h16')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
