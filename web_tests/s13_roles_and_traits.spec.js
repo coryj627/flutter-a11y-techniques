@@ -26,8 +26,9 @@ async function tabTo(page, locator, max = 8) {
 }
 
 /**
- * Activates an element the way assistive technology does: a click sent to
- * the element itself, with no pointer position. Flutter listens for it only
+ * Activates an element with a click sent to the element itself, with no
+ * pointer position. Which events a screen reader's activation command
+ * sends was not recorded; this is the nearest thing a tree test can do. Flutter listens for it only
  * on an element whose node has a tap action.
  */
 const domClick = (locator) => locator.evaluate((e) => e.click());
@@ -67,7 +68,7 @@ test.describe('good examples', () => {
         await control.click();
         await expectCount(page, slug, ++n);
         if (role !== 'button') await expect(control).toBeChecked();
-        // Activation without a pointer, as a screen reader sends it.
+        // Activation with no pointer position.
         await domClick(control);
         await expectCount(page, slug, ++n);
         if (role !== 'button') await expect(control).toBeChecked({ checked: false });
@@ -178,7 +179,7 @@ test.describe('bad examples have their defect', () => {
     await expect(control).toHaveAccessibleName('Scan barcode');
     await expect(control).toBeEnabled();
     await expect(control).not.toHaveAttribute('flt-tappable');
-    // What a screen reader's activation command sends does nothing.
+    // A click sent to the element does nothing.
     await domClick(control);
     await page.waitForTimeout(300);
     await expectCount(page, 'bad-action-hidden', 0);

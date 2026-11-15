@@ -59,8 +59,9 @@ around a `Text`, with `onTap` given to `Semantics` directly.
 | 16 | custom, `button`, `selected: true`, `enabled: true` | `button`, `aria-current="true"` | `Button`, selected | "selected, r16 custom, Button" |
 | 17 | custom, `button`, `selected: false`, `enabled: true` | `button`, `aria-current="false"` | `Button` | "r17 custom, Button" |
 
-On web a click sent to the element itself (`element.click()`, which is what
-a screen reader's activation command produces) activated fixtures 08, 09,
+On web a click sent to the element itself (`element.click()`, with no
+pointer position; which events a screen reader's activation command sends
+was not recorded) activated fixtures 08, 09,
 and 15, and did nothing for 10 and 11.
 
 ## What it shows

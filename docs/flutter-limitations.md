@@ -945,7 +945,12 @@ yet), **Fixed in x.y** (verified on that version).
   wording to match, and on/off is a fair reading of checked/unchecked. But a
   screen that shows a tick box and a switch reads both as switches, and
   support staff or documentation that says "tick the box" does not match
-  what is heard. Not a WCAG failure: the role is a near equivalent and the
-  state is right.
+  what is heard. For a checkbox with two states this is not a WCAG failure:
+  the role is a near equivalent and on/off follows checked/unchecked.
+- A checkbox with three states is worse off (engine source read, not
+  probed): `accessibilityValue` sets the native switch on only when the
+  state is checked, so the mixed state of `Checkbox(tristate: true, value:
+  null)` would be read as "off". That is a wrong state (4.1.2) and goes to
+  F07 Checkbox to be probed.
 - Workaround: none within the SDK.
 - Upstream issue: not searched yet (D25).

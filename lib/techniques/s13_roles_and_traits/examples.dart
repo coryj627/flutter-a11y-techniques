@@ -332,6 +332,8 @@ class GoodCustomSwitch extends StatelessWidget {
               toggled: demo.isOn('dark'),
               enabled: true,
               child: GestureDetector(
+                // The whole face takes the tap, its padding included.
+                behavior: HitTestBehavior.opaque,
                 onTap: () => demo.toggle('dark'),
                 child: _SwitchFace(text: 'Dark mode', on: demo.isOn('dark')),
               ),
@@ -441,6 +443,8 @@ class BadWrongRole extends StatelessWidget {
               button: true,
               enabled: true,
               child: GestureDetector(
+                // The whole face takes the tap, its padding included.
+                behavior: HitTestBehavior.opaque,
                 onTap: () => demo.toggle('dark'),
                 child: _SwitchFace(text: 'Dark mode', on: demo.isOn('dark')),
               ),
@@ -503,9 +507,9 @@ class BadRoleOnStandard extends StatelessWidget {
 
 // #region bad-action-hidden
 /// Defect: the control looks and reads as a button and works by touch and
-/// keyboard, but its tap is kept out of the semantics tree. A screen reader,
-/// Switch Access, or Voice Access has no action to call, so it cannot
-/// activate the control.
+/// keyboard, but its tap is kept out of the semantics tree. On Android the
+/// node has no click action, which is what TalkBack, Switch Access, and
+/// Voice Access call. On the web a click sent to the element does nothing.
 class BadActionHidden extends StatelessWidget {
   const BadActionHidden({super.key});
 
@@ -559,6 +563,8 @@ class BadSwitchNotEnabled extends StatelessWidget {
               toggled: demo.isOn('dark'),
               // No enabled: true.
               child: GestureDetector(
+                // The whole face takes the tap, its padding included.
+                behavior: HitTestBehavior.opaque,
                 onTap: () => demo.toggle('dark'),
                 child: _SwitchFace(text: 'Dark mode', on: demo.isOn('dark')),
               ),

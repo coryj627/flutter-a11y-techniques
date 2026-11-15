@@ -629,7 +629,8 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
   without `linkUrl` is a link on iOS only), FL-033 (a custom switch with no
   `enabled` flag is read as dimmed by VoiceOver on iOS), FL-034
   (`keyboardKey` has no effect anywhere), and FL-035 (a checkbox is a switch
-  for VoiceOver on iOS). Links go to C03. A checked radio button was read on
+  for VoiceOver on iOS). Links go to C03. A mixed checkbox on iOS (FL-035,
+  source read only) goes to F07. A checked radio button was read on
   iOS as a button with no state in the probe; that goes to F08.
 - Next: S14 Values and state descriptions.
 

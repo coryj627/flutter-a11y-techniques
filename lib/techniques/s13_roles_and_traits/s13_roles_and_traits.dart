@@ -130,7 +130,7 @@ final s13RolesAndTraits = Technique(
       slug: 'bad-action-hidden',
       title: 'Button whose tap is hidden from assistive technology',
       variant: ExampleVariant.widgets,
-      defect: 'The button has no action in the semantics tree, so a screen reader or switch user cannot activate it on Android or the web.',
+      defect: 'The button has no action in the semantics tree: on Android assistive technology has nothing to call, and on the web a click sent to the element does nothing.',
       builder: (_) => const BadActionHidden(),
     ),
     TechniqueExample.bad(

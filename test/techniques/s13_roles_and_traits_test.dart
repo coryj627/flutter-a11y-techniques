@@ -269,6 +269,39 @@ void main() {
       handle.dispose();
     });
 
+    for (final (slug, id) in [
+      ('good-custom-switch', 's13-good-custom-switch-dark'),
+      ('bad-wrong-role', 's13-bad-wrong-role-dark'),
+      ('bad-switch-not-enabled', 's13-bad-switch-not-enabled-dark'),
+    ]) {
+      testWidgets('$slug: a tap anywhere on the switch operates it once', (
+        tester,
+      ) async {
+        await _open(tester, slug);
+        final detector = find.descendant(
+          of: _id(id),
+          matching: find.byType(GestureDetector),
+        );
+        final rect = tester.getRect(detector);
+        expect(rect.height, greaterThanOrEqualTo(48));
+        // The padding at each corner, and the gap between text and track.
+        final track = tester.getRect(
+          find.descendant(of: detector, matching: find.byIcon(Icons.close)),
+        );
+        final points = [
+          rect.topLeft + const Offset(2, 2),
+          rect.bottomRight - const Offset(2, 2),
+          Offset(track.left - 20, rect.center.dy),
+        ];
+        var expected = 0;
+        for (final point in points) {
+          await tester.tapAt(point);
+          await tester.pump();
+          expect(_count(tester, slug), ++expected, reason: 'tap at $point');
+        }
+      });
+    }
+
     testWidgets('good-custom-button: the semantics tap action activates it', (
       tester,
     ) async {

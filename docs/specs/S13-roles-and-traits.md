@@ -103,7 +103,7 @@ role and no tap action; each example writes its own `Semantics` and
 | `bad-wrong-role` | A switch with the button role: "Dark mode, button", and never whether it is on | R1, R5 | 4.1.2 |
 | `bad-role-on-text` | Text that does nothing has the button role | R3, R4 | 4.1.2 |
 | `bad-role-on-standard` | `Semantics(button: true)` around a `FilledButton`: a second button with no name around the real one on Android, and a button inside a button on the web | R2 | — on iOS; 4.1.2 where the unnamed button is exposed |
-| `bad-action-hidden` | The button's tap is kept out of the semantics tree (`excludeFromSemantics: true`). It reads as a button and works by touch and keyboard, and assistive technology has no action to call on Android or the web | R4 | 4.1.2 |
+| `bad-action-hidden` | The button's tap is kept out of the semantics tree (`excludeFromSemantics: true`). It reads as a button and works by touch and keyboard, and has no action in the semantics tree: no click action on Android, and on the web a click sent to the element does nothing | R4 | 4.1.2 |
 | `bad-switch-not-enabled` | `Semantics(toggled:)` with no `enabled`: VoiceOver on iOS reads a working switch as dimmed ([FL-033](../flutter-limitations.md#fl-033)) | R5 | 4.1.2 on iOS |
 
 `bad-role-on-standard` has no `TestId`: its `MergeSemantics` would join the
@@ -120,7 +120,7 @@ Controls are located by `TestId`, except in `bad-role-on-standard`.
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Good: name, the flags of the role and none of another role, `enabled`, the tap action, tap, the semantics tap action, Tab reach, Enter and Space, the state after each; guidelines in light and dark and 200% text. Bad: tap action and no role flag; button flag and no state before and after a press; button flag with no tap action and no focus; two button nodes, the outer one unnamed; button flag with no tap action that a touch and Enter still activate; `toggled` with no enabled state |
-| L3 web | Good: role (`button`, `switch`, `checkbox`), accessible name, `aria-checked`, `aria-current` for `selected`, a pointer click, a click sent to the element (what a screen reader's activation sends), Tab, Enter on buttons and Space on all. Bad: `bad-no-role` is asserted to be a button on web; a button with no state attribute; a button with no `tabindex` that nothing activates; a button inside a button; a button with no `flt-tappable` that ignores a click sent to it and answers to a pointer and Enter; `bad-switch-not-enabled` is asserted to be an ordinary switch on web |
+| L3 web | Good: role (`button`, `switch`, `checkbox`), accessible name, `aria-checked`, `aria-current` for `selected`, a pointer click, a click sent to the element (activation with no pointer position), Tab, Enter on buttons and Space on all. Bad: `bad-no-role` is asserted to be a button on web; a button with no state attribute; a button with no `tabindex` that nothing activates; a button inside a button; a button with no `flt-tappable` that ignores a click sent to it and answers to a pointer and Enter; `bad-switch-not-enabled` is asserted to be an ordinary switch on web |
 | L3 Android | Good: class (`Button`, `Switch`, `CheckBox`), description, enabled, clickable, the click action, checked and selected. Bad: a clickable `View`; a `Button` that is not checkable and has no state description; a `Button` with no click action that a click does not activate; an unnamed `Button` around the named one; `bad-switch-not-enabled` is asserted to be an enabled `Switch` |
 | L3 iOS | Good: element type (button, switch), label, enabled, value, selected. Bad: static text and no button; a button with no value; a button that a tap does not activate; a switch that is not enabled. `bad-action-hidden` cannot be told from the good button: XCUITest taps by touch and cannot read whether an element has an accessibility action |
 | L4 TalkBack | What is read with focus on each control, including whether "Double-tap to activate" is offered |
@@ -162,7 +162,12 @@ The probe that came first is in [evidence/probes/s13](../evidence/probes/s13/).
   `flt-tappable` and ignores a click sent to it. Flutter's Android bridge
   answers `true` to a click on any node, so the tests check that nothing
   was activated, not the result of the call.
-- **`bad-action-hidden` on iOS is not known.** XCUITest taps by touch, which
+- **What a screen reader's own activation does to `bad-action-hidden` was
+  not tested on the web or on iOS.** On the web the test sends
+  `element.click()`, which activates the good controls and not this one;
+  which events VoiceOver sends in Chromium and WebKit was not recorded. On
+  Android the node has no click action and `ACTION_CLICK` activates
+  nothing. On iOS: XCUITest taps by touch, which
   works, and `XCUIVoiceOverService` has no command to activate the element
   under the cursor. VoiceOver reads it as "Scan barcode, Button", the same
   as the good example.
@@ -186,8 +191,8 @@ The probe that came first is in [evidence/probes/s13](../evidence/probes/s13/).
 **Not done yet.** The web VoiceOver transcript has to be recorded from the
 owner's Terminal (macOS does not let this session start VoiceOver), so
 `web_tests/vo/s13_roles_and_traits_vo.spec.js` holds expected speech that
-has not been heard yet. Whether VoiceOver on iOS can activate
-`bad-action-hidden` is not known. What Switch Access and Voice Access do
+has not been heard yet. Whether VoiceOver can activate `bad-action-hidden`, on iOS or on the web,
+is not known. What Switch Access and Voice Access do
 with the examples was not tested; the tests go by the click action those
 services use. Links are left to C03, and a checked radio button that
 VoiceOver on iOS read as "Button" with no state (probe, fixture 09) to F08.
