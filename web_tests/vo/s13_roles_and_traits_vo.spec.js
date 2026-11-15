@@ -47,6 +47,8 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
     const start = stops.indexOf(EXAMPLE);
     expect(start, `${slug}: reached the example`).toBeGreaterThanOrEqual(0);
     const content = Array.isArray(expected) ? expected : expected[browserName];
+    // No fallback to another browser's speech: it differs, which is the point.
+    expect(content, `${slug}: no expected speech for ${browserName}`).toBeDefined();
     expect(stops.slice(start + 1), slug).toEqual([...content, COUNT]);
   });
 }
