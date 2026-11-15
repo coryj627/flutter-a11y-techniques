@@ -162,9 +162,13 @@ The probe that came first is in [evidence/probes/s14](../evidence/probes/s14/).
   changed. The iOS and web VoiceOver walks do not change it; the tree tests
   on every platform do, and the TalkBack walk does.
 
-**Not done yet.** The web VoiceOver transcript has to be recorded from the
-owner's Terminal, so `web_tests/vo/s14_values_and_state_descriptions_vo.spec.js`
-holds expected speech that has not been heard yet. VoiceOver's own adjust
+- **VoiceOver on the web reads a slider in two stops in Chromium**: "Rating
+  group", then "3 out of 5 dimmed slider". The valueless rating is "1 dimmed
+  slider": a bare number. In Playwright's WebKit build the walk reached the
+  custom rating and lost the page on the Material `Slider`; WebKit is
+  recorded and not judged for the four sliders, as in S01.
+
+**Not done yet.** VoiceOver's own adjust
 gesture was not sent on iOS (the test API has no command for it); the iOS
 tests change the rating by touch. Which elements a TalkBack swipe stops on
 is not tested. The label of a tap action is left to I06, and a slider's
