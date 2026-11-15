@@ -59,7 +59,8 @@ behind each one is in [the technique guide](technique-guide.md).
 - [ ] A limitation with no workaround is a `PlatformStatus.limitation` in the
       catalog; an unverified platform has a note
 - [ ] Anything not done is listed under "Not yet covered" in the doc
-- [ ] README's list of techniques updated
+- [ ] README's list of techniques updated, and the count and ids in its
+      status line
 
 ## Before merging
 
