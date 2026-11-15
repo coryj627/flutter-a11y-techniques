@@ -109,6 +109,30 @@ EXPECT = {
     # Written to fail if TalkBack starts saying "Image".
     "s04-bad-image-not-excluded-guide": (["Trail guide", "Button"], ["Image"]),
     "s04-bad-redundant-label-print": (["Printer", "Print", "Button"], []),
+    # S13 Roles and traits. Each control is read with the role that matches
+    # what it does, and TalkBack offers "Double-tap to activate" only where
+    # the node has a click action.
+    "s13-good-standard-save": (["Save", "Button", "Double-tap to activate"], []),
+    "s13-good-standard-wifi": (["Wi-Fi", "Switch"], ["Button"]),
+    "s13-good-standard-remember": (["Remember me", "Check box"], ["Switch"]),
+    "s13-good-cupertino-save": (["Save", "Button", "Double-tap to activate"], []),
+    "s13-good-cupertino-wifi": (["Wi-Fi", "Switch"], ["Button"]),
+    "s13-good-custom-button-scan": (["Scan barcode", "Button", "Double-tap to activate"], []),
+    "s13-good-custom-switch-dark": (["Dark mode", "Switch"], ["Button", "Disabled"]),
+    "s13-good-selected-day": (["Day", "Button"], ["Selected"]),
+    "s13-good-selected-week": (["Selected", "Week", "Button"], []),
+    "s13-good-selected-month": (["Month", "Button"], ["Selected"]),
+    # Bad examples: the defect must be audible.
+    "s13-bad-no-role-scan": (["Scan barcode"], ["Button"]),
+    "s13-bad-wrong-role-dark": (["Dark mode", "Button"], ["Switch"]),
+    "s13-bad-role-on-text-delivery": (["Free delivery", "Button"], ["Double-tap to activate"]),
+    # The added role is a node of its own with no name. TalkBack said
+    # "Button" for it; only the missing name is checked (see S04).
+    "s13-bad-role-on-standard-outer": ([], ["Save"]),
+    "s13-bad-role-on-standard-save": (["Save", "Button"], []),
+    "s13-bad-action-hidden-scan": (["Scan barcode", "Button"], ["Double-tap to activate"]),
+    # The defect is on iOS only: on Android this is an ordinary switch.
+    "s13-bad-switch-not-enabled-dark": (["Dark mode", "Switch"], ["Disabled"]),
     # S05 Headings. "Heading" must be spoken as the role for a real heading,
     # and must not be for text that only looks or reads like one.
     "s05-good-levels-profile": (["Profile", "Heading"], []),

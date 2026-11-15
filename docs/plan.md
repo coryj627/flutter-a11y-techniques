@@ -625,7 +625,13 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
   `Image` inside a button does not name the button on Android and iOS) and
   FL-031 (an `Image` left in a button's semantics makes the button an image
   as well). Both have a workaround in the SDK. Image links are left to C03.
-- Next: S13 Roles and traits.
+- S13 Roles and traits: built on 2026-11-15. Found FL-032 (`link: true`
+  without `linkUrl` is a link on iOS only), FL-033 (a custom switch with no
+  `enabled` flag is read as dimmed by VoiceOver on iOS), FL-034
+  (`keyboardKey` has no effect anywhere), and FL-035 (a checkbox is a switch
+  for VoiceOver on iOS). Links go to C03. A checked radio button was read on
+  iOS as a button with no state in the probe; that goes to F08.
+- Next: S14 Values and state descriptions.
 
 ### Late-stage tasks
 

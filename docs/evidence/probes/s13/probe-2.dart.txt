@@ -1,0 +1,111 @@
+// S13 probe, round 2 (throwaway, not committed): custom controls and
+// roles added to standard widgets.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  String _last = 'none';
+  bool _on = true;
+
+  void _did(String what) => setState(() => _last = what);
+
+  Widget _box(String text) => SizedBox(
+    width: 180,
+    height: 40,
+    child: Align(alignment: Alignment.centerLeft, child: Text(text)),
+  );
+
+  Widget _custom(String id, {required Widget Function(Widget child) semantics, bool hideAction = false}) {
+    return FocusableActionDetector(
+      actions: {
+        ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => _did(id)),
+        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(onInvoke: (_) => _did(id)),
+      },
+      child: semantics(
+        GestureDetector(
+          excludeFromSemantics: hideAction,
+          behavior: HitTestBehavior.opaque,
+          onTap: () => _did(id),
+          child: _box('r$id custom'),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Wrap(
+            spacing: 4,
+            runSpacing: 2,
+            children: [
+              Semantics(container: true, toggled: true, enabled: true, onTap: () => _did('01'), child: _box('r01 toggled enabled')),
+              Semantics(container: true, checked: true, enabled: true, onTap: () => _did('02'), child: _box('r02 checked enabled')),
+              Semantics(
+                container: true,
+                checked: true,
+                inMutuallyExclusiveGroup: true,
+                enabled: true,
+                onTap: () => _did('03'),
+                child: _box('r03 radio enabled'),
+              ),
+              Semantics(button: true, child: FilledButton(onPressed: () => _did('04'), child: const Text('r04 wrapped'))),
+              Semantics(
+                container: true,
+                button: true,
+                child: FilledButton(onPressed: () => _did('05'), child: const Text('r05 wrapped c')),
+              ),
+              Semantics(link: true, child: TextButton(onPressed: () => _did('06'), child: const Text('r06 link wrap'))),
+              _custom('08', semantics: (c) => Semantics(button: true, enabled: true, child: c)),
+              _custom('09', semantics: (c) => c),
+              _custom('10', hideAction: true, semantics: (c) => Semantics(button: true, enabled: true, child: c)),
+              Semantics(container: true, button: true, enabled: true, child: _box('r11 role on text')),
+              SizedBox(
+                width: 380,
+                child: SwitchListTile(title: const Text('r12 switch tile'), value: _on, onChanged: (v) => setState(() => _on = v)),
+              ),
+              SizedBox(
+                width: 380,
+                child: CheckboxListTile(
+                  title: const Text('r13 checkbox tile'),
+                  value: _on,
+                  onChanged: (v) => setState(() => _on = v!),
+                ),
+              ),
+              SizedBox(
+                width: 380,
+                child: MergeSemantics(
+                  child: Row(
+                    children: [
+                      const Expanded(child: Text('r14 cupertino switch')),
+                      CupertinoSwitch(value: _on, onChanged: (v) => setState(() => _on = v)),
+                    ],
+                  ),
+                ),
+              ),
+              _custom('15', semantics: (c) => Semantics(toggled: _on, enabled: true, child: c)),
+              _custom('16', semantics: (c) => Semantics(button: true, selected: true, enabled: true, child: c)),
+              _custom('17', semantics: (c) => Semantics(button: true, selected: false, enabled: true, child: c)),
+              Semantics(container: true, liveRegion: true, child: _box('last: $_last')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

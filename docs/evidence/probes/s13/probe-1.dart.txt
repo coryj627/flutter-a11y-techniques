@@ -1,0 +1,121 @@
+// S13 probe (throwaway, not committed): what each role flag exposes.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  String _last = 'none';
+
+  void _did(String what) => setState(() => _last = what);
+
+  Widget _box(String text) => SizedBox(
+    width: 180,
+    height: 40,
+    child: Align(alignment: Alignment.centerLeft, child: Text(text)),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Wrap(
+            spacing: 4,
+            runSpacing: 2,
+            children: [
+              Semantics(container: true, button: true, onTap: () => _did('01'), child: _box('n01 button')),
+              Semantics(container: true, link: true, onTap: () => _did('02'), child: _box('n02 link')),
+              Semantics(
+                container: true,
+                link: true,
+                linkUrl: Uri.parse('https://example.com/'),
+                onTap: () => _did('03'),
+                child: _box('n03 link url'),
+              ),
+              Semantics(container: true, image: true, child: _box('n04 image')),
+              Semantics(container: true, selected: true, onTap: () => _did('05'), child: _box('n05 selected')),
+              Semantics(
+                container: true,
+                button: true,
+                selected: true,
+                onTap: () => _did('06'),
+                child: _box('n06 button selected'),
+              ),
+              Semantics(container: true, toggled: true, onTap: () => _did('07'), child: _box('n07 toggled')),
+              Semantics(container: true, checked: true, onTap: () => _did('08'), child: _box('n08 checked')),
+              Semantics(
+                container: true,
+                checked: true,
+                inMutuallyExclusiveGroup: true,
+                onTap: () => _did('09'),
+                child: _box('n09 radio'),
+              ),
+              Semantics(container: true, keyboardKey: true, onTap: () => _did('10'), child: _box('n10 key')),
+              Semantics(
+                container: true,
+                keyboardKey: true,
+                button: true,
+                onTap: () => _did('11'),
+                child: _box('n11 key button'),
+              ),
+              Semantics(
+                container: true,
+                slider: true,
+                value: '5',
+                increasedValue: '6',
+                decreasedValue: '4',
+                onIncrease: () => _did('12+'),
+                onDecrease: () => _did('12-'),
+                child: _box('n12 slider'),
+              ),
+              Semantics(container: true, button: true, child: _box('n13 button no action')),
+              Semantics(container: true, onTap: () => _did('14'), child: _box('n14 action no role')),
+              Semantics(
+                container: true,
+                button: true,
+                child: GestureDetector(
+                  excludeFromSemantics: true,
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => _did('15'),
+                  child: _box('n15 button hidden action'),
+                ),
+              ),
+              _box('n16 text'),
+              Semantics(container: true, button: true, enabled: false, child: _box('n17 button disabled')),
+              Semantics(
+                container: true,
+                button: true,
+                toggled: true,
+                onTap: () => _did('18'),
+                child: _box('n18 button toggled'),
+              ),
+              Semantics(container: true, header: true, child: _box('n19 header')),
+              Semantics(
+                container: true,
+                button: true,
+                link: true,
+                onTap: () => _did('20'),
+                child: _box('n20 button link'),
+              ),
+              Focus(child: _box('n21 focusable text')),
+              GestureDetector(onTap: () => _did('22'), child: _box('n22 gesture')),
+              Semantics(container: true, button: true, image: true, onTap: () => _did('23'), child: _box('n23 button image')),
+              Semantics(container: true, liveRegion: true, child: _box('last: $_last')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
