@@ -48,6 +48,8 @@ TECHNIQUES = {
     "S05": ("S05 Headings", "S05HeadingsTest", "S05HeadingsUITests", "s05_headings_vo.spec.js"),
     "S13": ("S13 Roles and traits", "S13RolesAndTraitsTest",
             "S13RolesAndTraitsUITests", "s13_roles_and_traits_vo.spec.js"),
+    "S14": ("S14 Values and state descriptions", "S14ValuesAndStateDescriptionsTest",
+            "S14ValuesAndStateDescriptionsUITests", "s14_values_and_state_descriptions_vo.spec.js"),
     "F01": ("F01 Text fields and labels", "F01TextFieldsTest", "F01TextFieldsUITests",
             "f01_text_fields_vo.spec.js"),
     "I12": ("I12 Announcements and live regions", "I12AnnouncementsTest",

@@ -632,7 +632,12 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
   for VoiceOver on iOS). Links go to C03. A mixed checkbox on iOS (FL-035,
   source read only) goes to F07. A checked radio button was read on
   iOS as a button with no state in the probe; that goes to F08.
-- Next: S14 Values and state descriptions.
+- S14 Values and state descriptions: built on 2026-11-15. Found FL-036 (no
+  way to reword a switch's or checkbox's state; a `value` on one is handled
+  three ways), FL-037 (on web a value is appended to the name), and FL-038
+  (on Android `increasedValue` is read as the value straight after an
+  increase). No Cupertino example. Action labels go to I06.
+- Next: S15 Hints.
 
 ### Late-stage tasks
 

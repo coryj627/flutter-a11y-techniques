@@ -76,6 +76,7 @@ TalkBack and VoiceOver. The commands are in each technique's doc, for example
 [S04 Functional images](docs/techniques/S04.md#how-it-is-tested),
 [S05 Headings](docs/techniques/S05.md#how-it-is-tested),
 [S13 Roles and traits](docs/techniques/S13.md#how-it-is-tested),
+[S14 Values and state descriptions](docs/techniques/S14.md#how-it-is-tested),
 [F01 Text fields and labels](docs/techniques/F01.md#how-it-is-tested), and
 [I12 Announcements and live regions](docs/techniques/I12.md#how-it-is-tested).
 

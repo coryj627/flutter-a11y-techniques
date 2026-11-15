@@ -56,6 +56,9 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-033](#fl-033) | A switch or checkbox with no `enabled` flag is read as dimmed by VoiceOver on iOS | iOS | Confirmed (source read) |
 | [FL-034](#fl-034) | `Semantics(keyboardKey: true)` has no effect on any platform | All | Observed (source read) |
 | [FL-035](#fl-035) | A checkbox is a switch for VoiceOver on iOS | iOS | Confirmed (source read) |
+| [FL-036](#fl-036) | No way to reword the state of a switch or checkbox; `value` on one is handled three different ways | All | Confirmed |
+| [FL-037](#fl-037) | On web a `value` is appended to the accessible name | Web | Confirmed |
+| [FL-038](#fl-038) | On Android an adjustable node shows `increasedValue` as its value straight after the action | Android | Confirmed (source read) |
 
 ---
 
@@ -954,3 +957,91 @@ yet), **Fixed in x.y** (verified on that version).
   F07 Checkbox to be probed.
 - Workaround: none within the SDK.
 - Upstream issue: not searched yet (D25).
+
+## FL-036
+
+**No way to reword the state of a switch or checkbox; `value` on one is handled three different ways.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the S14 probe
+  (`docs/evidence/probes/s14/`, fixtures 06 to 08); asserted by the S14
+  widget, web, Android, and iOS tests (`bad-value-on-switch`) and heard in
+  the S14 transcripts. Engine source read for iOS
+  (`FlutterSwitchSemanticsObject.accessibilityValue` in `SemanticsObject.mm`)
+  and searched for Android (`AccessibilityBridge.java` never calls
+  `setStateDescription`).
+- What is missing: Android lets an app replace "checked" and "not checked",
+  or "on" and "off", with words that fit the control
+  (`View.setStateDescription`, `stateDescription` in Compose), which is the
+  subject of the CVS Health Android technique "Custom State Descriptions".
+  `Semantics` has no such property, and the Android engine sets no state
+  description.
+- What happens if `value` is used for it, as in
+  `Semantics(toggled: on, value: on ? 'Activated' : 'Deactivated')`:
+  - Android: the value is written into the content description, "Deactivated,
+    Home alarm", beside the checked state. TalkBack reads both wordings.
+  - iOS: the value is dropped. The switch's value is its own 0 or 1, and
+    VoiceOver reads "Home alarm, Switch button, off".
+  - Web: the value is appended to the name: `role="switch"` named "Home
+    alarm Deactivated", with `aria-checked`. The name changes every time the
+    switch does ([FL-037](#fl-037)).
+- Why it matters: the standard wording is not a failure, so nothing is lost
+  by leaving it alone. The harm comes from trying: the state is said twice
+  on Android, and on the web the control's name is no longer stable.
+- Workaround: none within the SDK. Keep the standard wording, and put any
+  extra meaning in the label ("Home alarm" on or off is clear enough).
+- How to read this entry: Flutter has not added this yet. Re-check when the
+  pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-037
+
+**On web a `value` is appended to the accessible name.**
+
+- Status: Confirmed, Flutter 3.47.5, web. Found in the S14 probe; asserted
+  by `web_tests/s14_values_and_state_descriptions.spec.js` (`good-step`,
+  `good-button-value`, `bad-value-on-switch`). Engine source not read.
+- What happens: for a node that is not adjustable, `Semantics(label: 'Repeat',
+  value: 'All')` becomes one string, "Repeat All": the text of the element,
+  or its `aria-label` when it has a role that takes one. A button is
+  `role="button"` with the accessible name "Repeat All"; plain text reads
+  "Progress Step 2 of 4". Only an adjustable node keeps the two apart, with
+  the value in `aria-valuetext`.
+- Why it matters: a screen reader user hears the same words in the same
+  order as on iOS, so reading is not harmed. But the name is no longer the
+  name: it changes with the state, a test or script that finds the control
+  by its name has to know the state, and a speech-input user who says the
+  visible label still matches only because the label comes first. HTML has
+  no general "value" for a button, so there is no obvious better mapping;
+  `aria-description` would be one candidate.
+- Workaround: none needed for reading. In tests, find the control by its
+  identifier and assert the whole name.
+- Upstream issue: not searched yet (D25).
+
+## FL-038
+
+**On Android an adjustable node shows `increasedValue` as its value straight after the action.**
+
+- Status: Confirmed, Flutter 3.47.5, Android. Asserted by
+  `S14ValuesAndStateDescriptionsTest.badStaleValueKeepsItsFirstValue`.
+  Engine source read: `AccessibilityBridge.java`, in the handling of
+  `ACTION_SCROLL_FORWARD` and `ACTION_SCROLL_BACKWARD`
+  (`semanticsNode.value = semanticsNode.increasedValue`).
+- What happens: when TalkBack (or any service) sends the increase action,
+  the Android bridge sends it to the app and at once replaces the node's
+  value with its `increasedValue`, without waiting for the app's next
+  semantics update. If the app then sends an update, that wins. If it does
+  not, the guess stays.
+- Why it matters: `increasedValue` and `decreasedValue` are not just hints.
+  On Android they are what the user hears after adjusting, until the app
+  says otherwise. A control with a wrong or missing `increasedValue`
+  announces a wrong value, or none. In `bad-stale-value`, whose semantics
+  never change, the node read "3 out of 5", then "4 out of 5" after one
+  increase and still "4 out of 5" after a second, with five stars showing.
+- Related, on the web (S14 probe and `bad-rating-no-value`): with no
+  `increasedValue` and no `decreasedValue` the slider element has the same
+  minimum and maximum. The arrow keys still reach the app. Whether a
+  screen reader's adjust command can move such a slider was not tested.
+- Workaround: always give `increasedValue` and `decreasedValue` with
+  `onIncrease` and `onDecrease`, computed from the current value, as
+  `good-rating` does.
+- Upstream issue: not searched yet (D25). This is probably intended.
