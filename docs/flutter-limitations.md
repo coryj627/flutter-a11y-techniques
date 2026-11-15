@@ -52,6 +52,10 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-029](#fl-029) | A Material `Slider` adds an empty full-screen element that takes pointer events on web | Web | Observed |
 | [FL-030](#fl-030) | A label on an `Image` inside a button does not name the button | Android, iOS | Confirmed (source read) |
 | [FL-031](#fl-031) | An `Image` left in a button's semantics makes the button an image as well | Android, iOS | Confirmed |
+| [FL-032](#fl-032) | `Semantics(link: true)` without `linkUrl` is a link on iOS only | Android, Web | Observed (source read) |
+| [FL-033](#fl-033) | A switch or checkbox with no `enabled` flag is read as dimmed by VoiceOver on iOS | iOS | Confirmed (source read) |
+| [FL-034](#fl-034) | `Semantics(keyboardKey: true)` has no effect on any platform | All | Observed (source read) |
+| [FL-035](#fl-035) | A checkbox is a switch for VoiceOver on iOS | iOS | Confirmed (source read) |
 
 ---
 
@@ -103,6 +107,10 @@ yet), **Fixed in x.y** (verified on that version).
   `Actions(actions: {ButtonActivateIntent: CallbackAction(onInvoke: …)})` that
   calls the same callback. `web_tests/c01_button.spec.js` requires Enter and
   Space to each activate it once.
+- Also seen in S13 (2026-11-15): Enter does not toggle a `CupertinoSwitch`
+  on web; Space does. The APG Switch pattern makes Enter optional, so
+  `/t/S13/good-cupertino` adds no action for it, and
+  `web_tests/s13_roles_and_traits.spec.js` requires Space only.
 - Upstream issue: not found. To be filed.
 
 ## FL-003
@@ -821,4 +829,128 @@ yet), **Fixed in x.y** (verified on that version).
   VoiceOver on iOS.
 - Workaround, in the SDK: `excludeFromSemantics: true` on every `Image`
   inside a control (`good-image-with-text`).
+- Upstream issue: not searched yet (D25).
+
+## FL-032
+
+**`Semantics(link: true)` without `linkUrl` is a link on iOS only.**
+
+- Status: Observed, Flutter 3.47.5, in the S13 probe
+  (`docs/evidence/probes/s13/`, round 1, fixtures 02, 03, and 20; and
+  fixtures 08 and 09 of `docs/evidence/probes/s04/`). No test in the repo
+  yet. Engine source read:
+  `shell/platform/android/io/flutter/view/AccessibilityBridge.java`
+  (`shouldBeTreatedAsButton`).
+- WCAG: 4.1.2 Name, Role, Value.
+- What happens: `Semantics(link: true, onTap: ...)` with no `linkUrl`:
+  - iOS: the link trait. VoiceOver reads "Link".
+  - Android: the node's class is `android.widget.Button`. The engine's
+    comment says "a link is treated as a button if and only if it does not
+    have a URL". What TalkBack says was not recorded.
+  - Web: an `<a>` element with no `href`. An anchor with no `href` has no
+    link role; Playwright's ARIA snapshot shows it as text. A node with
+    `button: true` and `link: true` becomes the same `<a>` and so loses the
+    button role as well.
+- With `linkUrl`: the web element is `<a href>`, a real link, and the
+  Android node is a `View` (the engine attaches the URL as a `URLSpan`; what
+  TalkBack says was not recorded). On the web the browser then follows the
+  `href` as well as running `onTap` ([FL-013](#fl-013)).
+- Why it matters: `link: true` reads as the way to give a custom control the
+  link role, as `button: true` gives the button role. On two of three
+  platforms it does not.
+- Workaround: give `linkUrl` as well, and handle [FL-013](#fl-013) on the
+  web. To be built and verified in C03 Stand-alone link.
+- Upstream issue: not searched yet (D25).
+
+## FL-033
+
+**A switch or checkbox with no `enabled` flag is read as dimmed by VoiceOver on iOS.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the S13 probe
+  (`docs/evidence/probes/s13/`); asserted by the S13 iOS tests
+  (`bad-switch-not-enabled`: the tree, and VoiceOver's speech in
+  `docs/evidence/S13/voiceover-ios.md`). Engine source read:
+  `shell/platform/darwin/ios/framework/Source/SemanticsObject.mm`
+  (`FlutterSwitchSemanticsObject`).
+- WCAG: 4.1.2 Name, Role, Value (the state that is exposed is wrong).
+- What happens: `Semantics(toggled: value)` or `Semantics(checked: value)`
+  with no `enabled` argument has no enabled state at all: it is neither
+  enabled nor disabled. On iOS the engine backs such a node with a native
+  `UISwitch` and sets `nativeSwitch.enabled = (isEnabled == true)`, so an
+  absent flag counts as disabled.
+  - iOS: XCUITest reports the switch as not enabled, and VoiceOver reads
+    "Dark mode, dimmed, Switch button, off". The switch still works.
+  - Android: an ordinary enabled `Switch`. Not affected.
+  - Web: `role="switch"` with no `aria-disabled`. Not affected.
+- Not affected: a node with `button: true` and no `enabled` (for example a
+  `CupertinoButton`, [FL-001](#fl-001)) is not read as dimmed. The SDK's
+  `Switch`, `Checkbox`, their list tiles, and `CupertinoSwitch` all set
+  `enabled`.
+- Why it matters: "dimmed" tells a VoiceOver user the control cannot be
+  used. The `Semantics` documentation does not say that `toggled` or
+  `checked` needs `enabled`.
+- How to reproduce: `/t/S13/bad-switch-not-enabled` in the app, with
+  VoiceOver on iOS.
+- Workaround, in the SDK: pass `enabled: true` with `toggled` or `checked`
+  (`/t/S13/good-custom-switch`).
+- Upstream issue: not searched yet (D25).
+
+## FL-034
+
+**`Semantics(keyboardKey: true)` has no effect on any platform.**
+
+- Status: Observed, Flutter 3.47.5, in the S13 probe
+  (`docs/evidence/probes/s13/`, round 1, fixtures 10 and 11). No example and
+  no test in the repo. Engine source read for iOS, Android, and web.
+- What happens: the flag is sent to the engine and nothing uses it.
+  - iOS: `SemanticsObject.mm` sets no trait for it;
+    `UIAccessibilityTraitKeyboardKey` does not appear in the iOS engine
+    source. VoiceOver reads a node with only this flag as plain text.
+  - Android: `AccessibilityBridge.java` defines `IS_KEYBOARD_KEY` and never
+    reads it. The node is a `View`.
+  - Web: no role handles it. The node is a button only if it has a tap
+    action ([FL-006](#fl-006)).
+- Why it matters: the CVS Health iOS technique lists the keyboard key trait,
+  which on iOS lets VoiceOver users type on a custom keypad in the way they
+  have chosen for the system keyboard. A Flutter keypad cannot have it. Use
+  `button: true` on each key, which is what the SDK's own widgets do.
+- Also without a Flutter counterpart, from the same CVS list of traits:
+  plays sound, starts media session, allows direct interaction, causes page
+  turn, summary element, search field, and tab bar as a trait (the tab roles
+  are `SemanticsRole.tab` and `tabBar`, left to the tabs technique). Static
+  text is given by the engine to a node with a label and no other trait,
+  and "updates frequently" is set from `liveRegion: true` (I12).
+- Workaround: none for the trait.
+- How to read this entry: Flutter has not added these yet. Re-check when the
+  pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-035
+
+**A checkbox is a switch for VoiceOver on iOS.**
+
+- Status: Confirmed, Flutter 3.47.5. Asserted by the S13 iOS tests
+  (`good-standard`: the tree, and VoiceOver's speech in
+  `docs/evidence/S13/voiceover-ios.md`); first heard in the S01 probe.
+  Engine source read:
+  `shell/platform/darwin/ios/framework/Source/accessibility_bridge.mm`.
+- What happens: the iOS engine backs every node that has a `toggled` or a
+  `checked` state, and is not in a mutually exclusive group, with the same
+  object, which borrows the traits and value of a native `UISwitch`. A
+  `Checkbox`, a `CheckboxListTile`, and `Semantics(checked:)` are therefore
+  switches to XCUITest, and VoiceOver reads "Remember me, Switch button,
+  off. Double tap to toggle setting". Android (`CheckBox`) and the web
+  (`role="checkbox"`) keep the two apart.
+- Why it matters: UIKit has no checkbox control, so there is no native
+  wording to match, and on/off is a fair reading of checked/unchecked. But a
+  screen that shows a tick box and a switch reads both as switches, and
+  support staff or documentation that says "tick the box" does not match
+  what is heard. For a checkbox with two states this is not a WCAG failure:
+  the role is a near equivalent and on/off follows checked/unchecked.
+- A checkbox with three states is worse off (engine source read, not
+  probed): `accessibilityValue` sets the native switch on only when the
+  state is checked, so the mixed state of `Checkbox(tristate: true, value:
+  null)` would be read as "off". That is a wrong state (4.1.2) and goes to
+  F07 Checkbox to be probed.
+- Workaround: none within the SDK.
 - Upstream issue: not searched yet (D25).
