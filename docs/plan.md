@@ -621,7 +621,11 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
   `semanticLabel` does not hide an `Image`, and an unlabelled `Image` in a
   merged row makes the row an image. TalkBack could not be moved by swipe
   or key command on the emulator, so what a swipe stops on is not tested.
-- Next: S04 Functional images.
+- S04 Functional images: built on 2026-11-14. Found FL-030 (a label on an
+  `Image` inside a button does not name the button on Android and iOS) and
+  FL-031 (an `Image` left in a button's semantics makes the button an image
+  as well). Both have a workaround in the SDK. Image links are left to C03.
+- Next: S13 Roles and traits.
 
 ### Late-stage tasks
 

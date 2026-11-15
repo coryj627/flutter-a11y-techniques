@@ -1,0 +1,81 @@
+// S04 probe (throwaway, not committed): what images inside controls expose.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+import 'techniques/s02_informative_images/example_image.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatelessWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    Widget img({String? label, bool exclude = false}) => Image.memory(sunrisePng, width: 72, height: 48, semanticLabel: label, excludeFromSemantics: exclude);
+    void tap() {}
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 2,
+            children: [
+              const Text('01 IconButton labelled image'),
+              IconButton(onPressed: tap, icon: img(label: 'Open one')),
+              const Text('02 IconButton excluded image tooltip'),
+              IconButton(onPressed: tap, tooltip: 'Open two', icon: img(exclude: true)),
+              const Text('03 IconButton unlabelled image tooltip'),
+              IconButton(onPressed: tap, tooltip: 'Open three', icon: img()),
+              const Text('04 IconButton unlabelled image no tooltip'),
+              IconButton(onPressed: tap, icon: img()),
+              const Text('05 InkWell labelled image'),
+              InkWell(onTap: tap, child: img(label: 'Open five')),
+              const Text('06 GestureDetector labelled image'),
+              GestureDetector(onTap: tap, child: img(label: 'Open six')),
+              const Text('07 Semantics button label + excluded image in InkWell'),
+              Semantics(button: true, label: 'Open seven', child: InkWell(onTap: tap, child: img(exclude: true))),
+              const Text('08 Semantics link + GestureDetector labelled image'),
+              Semantics(link: true, child: GestureDetector(onTap: tap, child: img(label: 'Example home'))),
+              const Text('09 Semantics link label + excluded image InkWell'),
+              Semantics(link: true, label: 'Example nine', child: InkWell(onTap: tap, child: img(exclude: true))),
+              const Text('10 FilledButton.icon unlabelled icon'),
+              FilledButton.icon(onPressed: tap, icon: const Icon(Icons.print), label: const Text('Print')),
+              const Text('11 FilledButton.icon labelled icon'),
+              FilledButton.icon(onPressed: tap, icon: const Icon(Icons.print, semanticLabel: 'Printer'), label: const Text('Print')),
+              const Text('12 TextButton image labelled + text'),
+              TextButton(onPressed: tap, child: Row(mainAxisSize: MainAxisSize.min, children: [img(label: 'Logo'), const Text('Home twelve')])),
+              const Text('13 TextButton image excluded + text'),
+              TextButton(onPressed: tap, child: Row(mainAxisSize: MainAxisSize.min, children: [img(exclude: true), const Text('Home thirteen')])),
+              const Text('14 TextButton image unlabelled + text'),
+              TextButton(onPressed: tap, child: Row(mainAxisSize: MainAxisSize.min, children: [img(), const Text('Home fourteen')])),
+              const Text('15 image map: Stack with two Semantics button regions'),
+              SizedBox(
+                width: 192,
+                height: 64,
+                child: Stack(
+                  children: [
+                    Positioned.fill(child: Image.memory(sunrisePng, fit: BoxFit.cover, excludeFromSemantics: true)),
+                    Positioned(left: 0, top: 0, width: 96, height: 64, child: Semantics(button: true, label: 'North trail', child: InkWell(onTap: tap))),
+                    Positioned(left: 96, top: 0, width: 96, height: 64, child: Semantics(button: true, label: 'South trail', child: InkWell(onTap: tap))),
+                  ],
+                ),
+              ),
+              const Text('16 InkWell Tooltip excluded image'),
+              Tooltip(message: 'Open sixteen', child: InkWell(onTap: tap, child: img(exclude: true))),
+              const Text('17 IconButton icon labelled'),
+              IconButton(onPressed: tap, icon: const Icon(Icons.search, semanticLabel: 'Search')),
+              const Text('18 Ink.image InkWell with Semantics label'),
+              Semantics(button: true, label: 'Open eighteen', child: Ink.image(image: MemoryImage(sunrisePng), width: 72, height: 48, child: InkWell(onTap: tap))),
+              const Text('19 InkWell unlabelled image'),
+              InkWell(onTap: tap, child: img()),
+              const Text('20 end'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

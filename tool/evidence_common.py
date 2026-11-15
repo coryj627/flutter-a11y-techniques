@@ -43,6 +43,8 @@ TECHNIQUES = {
             "S02InformativeImagesUITests", "s02_informative_images_vo.spec.js"),
     "S03": ("S03 Decorative images", "S03DecorativeImagesTest",
             "S03DecorativeImagesUITests", "s03_decorative_images_vo.spec.js"),
+    "S04": ("S04 Functional images", "S04FunctionalImagesTest",
+            "S04FunctionalImagesUITests", "s04_functional_images_vo.spec.js"),
     "S05": ("S05 Headings", "S05HeadingsTest", "S05HeadingsUITests", "s05_headings_vo.spec.js"),
     "F01": ("F01 Text fields and labels", "F01TextFieldsTest", "F01TextFieldsUITests",
             "f01_text_fields_vo.spec.js"),
