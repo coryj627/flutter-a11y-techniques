@@ -288,13 +288,10 @@ class GoodImageRegions extends StatelessWidget {
                 top: 0,
                 width: 120,
                 height: 80,
-                child: TestId(
-                  's04-good-image-regions-west',
-                  child: Semantics(
-                    button: true,
-                    label: 'West trail',
-                    child: InkWell(onTap: activate),
-                  ),
+                child: _Region(
+                  id: 's04-good-image-regions-west',
+                  label: 'West trail',
+                  onPressed: activate,
                 ),
               ),
               Positioned(
@@ -302,19 +299,77 @@ class GoodImageRegions extends StatelessWidget {
                 top: 0,
                 width: 120,
                 height: 80,
-                child: TestId(
-                  's04-good-image-regions-east',
-                  child: Semantics(
-                    button: true,
-                    label: 'East trail',
-                    child: InkWell(onTap: activate),
-                  ),
+                child: _Region(
+                  id: 's04-good-image-regions-east',
+                  label: 'East trail',
+                  onPressed: activate,
                 ),
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+/// One region of the picture: a named button with nothing drawn in it until
+/// it has keyboard focus.
+class _Region extends StatefulWidget {
+  const _Region({
+    required this.id,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String id;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  State<_Region> createState() => _RegionState();
+}
+
+class _RegionState extends State<_Region> {
+  bool _focused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return TestId(
+      widget.id,
+      child: Semantics(
+        button: true,
+        label: widget.label,
+        // An InkWell paints on the nearest Material. Without one above the
+        // picture, its focus highlight would be painted under the picture.
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            onTap: widget.onPressed,
+            onFocusChange: (value) => setState(() => _focused = value),
+            child: _focused
+                // A black ring around a white one, so that the focused
+                // region can be seen on any part of the picture.
+                ? DecoratedBox(
+                    key: ValueKey<String>('${widget.id}-focus'),
+                    decoration: BoxDecoration(border: Border.all(width: 3)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0xFFFFFFFF),
+                            width: 3,
+                          ),
+                        ),
+                        child: const SizedBox.expand(),
+                      ),
+                    ),
+                  )
+                : const SizedBox.expand(),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -78,7 +78,7 @@ or a test can tell that the control worked.
 | `good-image-with-text` | Material | A picture beside a button's text, and an icon beside another's | `TextButton` with an excluded `Image` and `Text`; `FilledButton.icon` with an unlabelled `Icon` | R5 |
 | `good-cupertino` | Cupertino | An icon button | `CupertinoButton` with `Icon(semanticLabel:)` | R1, R2 |
 | `good-custom` | Widgets | A picture made into a button without Material | `Semantics(button: true, label:)`, `FocusableActionDetector`, `GestureDetector`, excluded `Image` | R1, R2, R4 |
-| `good-image-regions` | Material | One picture with two regions that are buttons | `Stack`: an excluded `Image` under two `Semantics(button: true, label:)` with `InkWell` | R6 |
+| `good-image-regions` | Material | One picture with two regions that are buttons | `Stack`: an excluded `Image` under two `Semantics(button: true, label:)`, each with an `InkWell` on a transparent `Material` and a focus ring drawn above the picture | R6 |
 
 ### Bad
 
@@ -102,12 +102,12 @@ Controls are located by `TestId`, except in the two examples above.
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good: name, button flag, no image flag, no image node, tap, Tab reach, Enter and Space; guidelines in light and dark and 200% text. Bad: no name; the unnamed button with the named image as its child; image and no button, no focus; the wrong name; button and image flags together; the doubled name |
+| L1 widget tests | Good: name, button flag, no image flag, no image node, tap, Tab reach, Enter and Space; the focus ring of the focused region in `good-image-regions`; guidelines in light and dark and 200% text. Bad: no name; the unnamed button with the named image as its child; image and no button, no focus; the wrong name; button and image flags together; the doubled name |
 | L3 web | Good: `role="button"`, accessible name, click, Tab, Enter and Space, no `role="img"`. Bad: the unnamed button; an `img` nested in a button that has no `aria-label`; an `img` and no button, never focused; the wrong name; the doubled name. `bad-image-not-excluded` is asserted to be a plain button on web |
 | L3 Android | Good: `Button` class, description, click, no `ImageView`. Bad: an unnamed clickable node; an unnamed `Button` with a named `ImageView` child; an `ImageView` and no `Button`; `ImageView` class on the button with a picture; the doubled description |
 | L3 iOS | Good: button type, label, tap, no image element. Bad: an unnamed button; an unnamed button and a named image; an image and no button; the doubled label. The image trait on a button cannot be read from the tree |
 | L4 TalkBack | What is read with focus on each control, and on each of the two nodes of `bad-label-on-image` and `bad-tap-gesture` |
-| L4 VoiceOver iOS | Every utterance between the "Example" heading and the activation count, compared as a whole list; a stop with no speech is an entry in the list |
+| L4 VoiceOver iOS | Every utterance between the "Example" heading and the activation count, compared as a whole list. A move with no speech is an entry in the list as a silent stop only when one move back reads the element before it and the move forward again is silent too |
 | L4 VoiceOver web | Every stop of VoiceOver's cursor between the "Example" heading and the activation count, compared as a whole list, in Chromium and WebKit |
 
 ## 7. What the build found (Flutter 3.47.5)
@@ -130,8 +130,8 @@ The probe that came first is in [evidence/probes/s04](../evidence/probes/s04/).
   exposes a plain button.
 - **A tap handler around a labelled `Image` is two elements on Android and
   iOS**: one that takes the tap and has no name or role, and the image.
-  VoiceOver on iOS stops on the first and says nothing; TalkBack says
-  "Button" for it. On the web it is one image that the keyboard cannot
+  VoiceOver on iOS stops on the first and says nothing; TalkBack said
+  "Button" for it in two recordings and nothing in a third. On the web it is one image that the keyboard cannot
   reach.
 - **`bad-no-name` is heard as "button" on the web and by TalkBack, and as
   "Button, Image" by VoiceOver on iOS.**
@@ -141,10 +141,22 @@ The probe that came first is in [evidence/probes/s04](../evidence/probes/s04/).
 - **`Semantics(link: true)` without `linkUrl` is not a link on the web**
   (probe fixtures 08 and 09): the element is an `<a>` with no `href`. Left
   to C03.
+- **An `InkWell` placed over a picture needs a `Material` above the
+  picture.** Its highlights are painted on the nearest `Material` ancestor,
+  which is otherwise under the picture, so keyboard focus could not be seen.
+  The regions of `good-image-regions` have a transparent `Material` and draw
+  a focus ring of their own.
+- **"No speech" from `XCUIVoiceOverService` is a timeout, not a position.**
+  The iOS walk steps back and forward again before it records a silent
+  stop. In `bad-tap-gesture` the step back read the "Example" heading and
+  the second step forward was silent again.
 - The iOS walk needs no rule for the end of the screen here: the activation
   count is a unique last element in every example.
 
-**Not done yet.** Which elements a TalkBack swipe stops on is not tested;
+**Not done yet.** The web VoiceOver transcript was recorded before the
+regions of `good-image-regions` were given a `Material` and a focus ring and
+before the defect statement of `bad-image-not-excluded` was reworded; it
+could not be recorded again on the day (see the technique doc). Which elements a TalkBack swipe stops on is not tested;
 the walk moves focus by action (see S03). Image links are left to C03. A
 toggle made from an image (a favourite star) is left to C02 Toggle button. Whether a name describes the action well cannot be tested:
 `bad-describes-picture` asserts only that the name is the one written.

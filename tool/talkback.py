@@ -98,9 +98,10 @@ EXPECT = {
     # The name is on the image inside the button, a second stop.
     "s04-bad-label-on-image-button": (["Button"], ["Open trail guide"]),
     "s04-bad-label-on-image-image": (["Open trail guide", "Image"], ["Button"]),
-    # The node that takes the tap has no name; TalkBack calls it a button.
-    # The name is on the image inside it, which is not one.
-    "s04-bad-tap-gesture-tappable": (["Button"], ["Open trail guide"]),
+    # The node that takes the tap has no name and no role. TalkBack said
+    # "Button" for it in two recordings and nothing in a third, so only the
+    # missing name is checked. The name is on the image inside it.
+    "s04-bad-tap-gesture-tappable": ([], ["Open trail guide"]),
     "s04-bad-tap-gesture-image": (["Open trail guide", "Image"], ["Button"]),
     "s04-bad-describes-picture-search": (["Magnifying glass", "Button"], []),
     # The node's class is ImageView, but TalkBack reads it as a button and

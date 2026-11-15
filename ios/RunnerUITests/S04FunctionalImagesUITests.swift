@@ -137,7 +137,9 @@ final class S04FunctionalImagesUITests: XCTestCase {
 
   // L4. Everything VoiceOver says between the "Example" heading and the
   // activation count, which is the last element of every example. A stop at
-  // which VoiceOver says nothing is recorded as "(no speech)".
+  // which VoiceOver says nothing is recorded as "(no speech)", once a move
+  // back and forward has shown that the cursor is on an element of its own
+  // (afterNoSpeech).
   private let speech: [(slug: String, content: [String])] = [
     ("good-image-button", ["Open trail guide Button"]),
     ("good-icon-label", ["Search Button"]),
@@ -185,6 +187,45 @@ final class S04FunctionalImagesUITests: XCTestCase {
     XCTAssertNil(Self.exampleContent([]))
   }
 
+  static func isNoSpeech(_ error: NSError) -> Bool {
+    error.domain == "com.apple.xctest.voiceoverservice" && error.code == 3
+  }
+
+  /// What to record for a move forward that gave no speech. `previous` is
+  /// the utterance before that move, `back` what one move back then said,
+  /// and `again` what the move forward after that said (nil for no speech).
+  ///
+  /// The stop is silent only if the move back read `previous`, which shows
+  /// the cursor had gone one element past it, and the second move forward
+  /// was silent as well. If the second move speaks, the first was a late
+  /// answer and the speech is the element. Anything else is recorded as not
+  /// known, which no expected list contains.
+  static func afterNoSpeech(previous: String?, back: String, again: String?) -> String {
+    guard let previous, previous != silent, back == previous else {
+      return "(no speech; the cursor's position is not known)"
+    }
+    return again ?? silent
+  }
+
+  func testAfterNoSpeechNeedsProofThatTheCursorMoved() {
+    // The move back reads the element before the silent one: a silent stop.
+    XCTAssertEqual(
+      Self.afterNoSpeech(previous: "Example Heading", back: "Example Heading", again: nil),
+      Self.silent)
+    // The cursor had not moved: the move back reads an earlier element.
+    XCTAssertNotEqual(
+      Self.afterNoSpeech(previous: "Example Heading", back: "Defect: text", again: nil),
+      Self.silent)
+    // The second try speaks: the element is not silent.
+    XCTAssertEqual(
+      Self.afterNoSpeech(previous: "Example Heading", back: "Example Heading", again: "Search Button"),
+      "Search Button")
+    // Nothing before it to compare with.
+    XCTAssertNotEqual(Self.afterNoSpeech(previous: nil, back: "Back Button", again: nil), Self.silent)
+    XCTAssertNotEqual(
+      Self.afterNoSpeech(previous: Self.silent, back: Self.silent, again: nil), Self.silent)
+  }
+
   func testVoiceOverSpeech() throws {
     // XCUIVoiceOverService is in the iOS 27 SDK (Xcode 27, Swift 6.4). With an
     // older Xcode the symbol does not exist, so an availability check alone
@@ -202,10 +243,16 @@ final class S04FunctionalImagesUITests: XCTestCase {
       for _ in 0..<20 {
         do {
           spoken.append(Self.normalized(try voiceOver.moveForward().utterance))
-        } catch let error as NSError
-          where error.domain == "com.apple.xctest.voiceoverservice" && error.code == 3 {
-          // "No speech available": VoiceOver moved and said nothing.
-          spoken.append(Self.silent)
+        } catch let error as NSError where Self.isNoSpeech(error) {
+          // No speech within the API's timeout. That alone does not show
+          // that the cursor moved, so step back and forward again to find
+          // out where it is.
+          let back = Self.normalized(try voiceOver.moveBackward().utterance)
+          var again: String? = nil
+          do {
+            again = Self.normalized(try voiceOver.moveForward().utterance)
+          } catch let error as NSError where Self.isNoSpeech(error) {}
+          spoken.append(Self.afterNoSpeech(previous: spoken.last, back: back, again: again))
         }
         if spoken.last!.hasPrefix("Activations:") { break }
       }

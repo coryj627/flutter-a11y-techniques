@@ -770,9 +770,11 @@ yet), **Fixed in x.y** (verified on that version).
 - The same split with other tappable parents: `InkWell` or `GestureDetector`
   around a labelled `Image` gives a tappable node with no name and no role,
   with the image inside it. VoiceOver on iOS stops on that node and says
-  nothing (`XCUIVoiceOverService` reports "No speech available"), then reads
-  the image; TalkBack reads it as "Button" with no name
-  (`bad-tap-gesture`).
+  nothing, then reads the image. (`XCUIVoiceOverService` reports "No speech
+  available"; the test takes it as a stop because one move back reads the
+  element before it and the move forward again is silent too.) TalkBack,
+  with focus moved to that node, said "Button" in two recordings and
+  nothing in a third, and never the name (`bad-tap-gesture`).
 - Not affected: `Icon(semanticLabel:)`. An `Icon`'s label is not a container
   and becomes the name of the button around it on all three platforms
   (`good-icon-label`).

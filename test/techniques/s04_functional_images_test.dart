@@ -175,6 +175,41 @@ void main() {
     }
   });
 
+  testWidgets('good-image-regions: the focused region shows a focus ring', (
+    tester,
+  ) async {
+    await _open(tester, 'good-image-regions');
+    const west = 's04-good-image-regions-west';
+    const east = 's04-good-image-regions-east';
+    Finder ring(String id) => find.byKey(ValueKey<String>('$id-focus'));
+    expect(ring(west), findsNothing);
+    expect(ring(east), findsNothing);
+    final handle = tester.ensureSemantics();
+    for (final (focused, other) in [(west, east), (east, west)]) {
+      var reached = false;
+      for (var i = 0; i < 6 && !reached; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        reached = _focused(tester, _id(focused));
+      }
+      expect(reached, isTrue, reason: 'Tab did not reach $focused');
+      expect(ring(focused), findsOneWidget);
+      expect(ring(other), findsNothing);
+      // The ring is drawn above the picture: it comes later in the Stack.
+      final stack = find.ancestor(
+        of: ring(focused),
+        matching: find.byType(Stack),
+      );
+      final picture = find.descendant(
+        of: stack.first,
+        matching: find.byType(Image),
+      );
+      expect(picture, findsOneWidget);
+      expect(tester.getRect(ring(focused)).size, const Size(120, 80));
+    }
+    handle.dispose();
+  });
+
   group('bad examples have their defect', () {
     testWidgets('bad-no-name: a button with no name', (tester) async {
       final handle = tester.ensureSemantics();
@@ -225,22 +260,36 @@ void main() {
       expect(images.single.label, 'Open trail guide');
       expect(images.single.flagsCollection.isButton, isFalse);
       // The tap action is on a node of its own with no role and no name.
-      final image = tester.getSemantics(find.byType(Image));
-      final tappable = image.parent!.getSemanticsData();
-      expect(tappable.hasAction(SemanticsAction.tap), isTrue);
-      expect(tappable.flagsCollection.isButton, isFalse);
-      expect(tappable.label, isEmpty);
-      // Tab through everything on the screen; focus never lands on it.
+      SemanticsNode image() => tester.getSemantics(find.byType(Image));
+      SemanticsData tappable() => image().parent!.getSemanticsData();
+      expect(tappable().hasAction(SemanticsAction.tap), isTrue);
+      expect(tappable().flagsCollection.isButton, isFalse);
+      expect(tappable().label, isEmpty);
+      // Tab through everything on the screen. Focus never lands on the
+      // picture or on the node that takes the tap, so no key can operate
+      // it. Both are read again after every Tab.
       for (var i = 0; i < 4; i++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pump();
         expect(
-          image.getSemanticsData().flagsCollection.isFocused,
+          image().getSemanticsData().flagsCollection.isFocused,
           Tristate.none,
+          reason: 'image after Tab ${i + 1}',
         );
-        expect(tappable.flagsCollection.isFocused, Tristate.none);
+        expect(
+          tappable().flagsCollection.isFocused,
+          Tristate.none,
+          reason: 'tappable node after Tab ${i + 1}',
+        );
       }
-      expect(_count(tester, 'bad-tap-gesture'), 0);
+      // The example builds no Focus widget of its own either.
+      expect(
+        find.descendant(
+          of: _id('s04-bad-tap-gesture-guide'),
+          matching: find.byType(Focus),
+        ),
+        findsNothing,
+      );
       // It still works by touch, which is what hides the defect.
       await tester.tap(_id('s04-bad-tap-gesture-guide'));
       await tester.pump();

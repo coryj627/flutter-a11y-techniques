@@ -24,8 +24,8 @@ Result: PASS
 | `s04-bad-no-name-guide` | Button / Double-tap to activate |
 | `s04-bad-label-on-image-button` | Button / Double-tap to activate |
 | `s04-bad-label-on-image-image` | Open trail guide / Image |
-| `s04-bad-tap-gesture-tappable` | Button / Double-tap to activate |
+| `s04-bad-tap-gesture-tappable` | (nothing) |
 | `s04-bad-tap-gesture-image` | Open trail guide / Image |
-| `s04-bad-describes-picture-search` | Magnifying glass. Button |
+| `s04-bad-describes-picture-search` | Magnifying glass. Button / Double-tap to activate |
 | `s04-bad-image-not-excluded-guide` | Trail guide / Button / Double-tap to activate |
-| `s04-bad-redundant-label-print` | Printer Print / Button |
+| `s04-bad-redundant-label-print` | Double-tap to activate / Printer Print / Button / Double-tap to activate |
