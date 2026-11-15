@@ -5,7 +5,7 @@ behind each one is in [the technique guide](technique-guide.md).
 
 ## Before building
 
-- [ ] Source documents read: the CVS docs, the APG pattern, and the MDN page
+- [ ] Source documents read: the reference repository docs, the APG pattern, and the MDN page
       for this entry in the [coverage inventory](coverage-inventory.md)
 - [ ] Rough examples probed on web, Android, and iOS, and with each screen
       reader, before any assertion was written

@@ -62,11 +62,11 @@ unless a documented reason prevents it.
 
 | ID | Priority | Requirement |
 | --- | --- | --- |
-| CAT-1 | Must | Cover every interaction and component covered by the three CVS Health techniques projects, where applicable to Flutter on the target platform. |
+| CAT-1 | Must | Cover every interaction and component covered by the three reference techniques projects, where applicable to Flutter on the target platform. |
 | CAT-2 | Must | Cover the [W3C ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/). |
 | CAT-3 | Must | Cover the relevant [HTML5 elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements) — those with accessibility semantics or interaction a Flutter app would need to reproduce. |
 | CAT-4 | Must | Each technique declares which platforms it applies to. Android-only, iOS-only, and mobile-only techniques are marked as such and are not presented as applicable elsewhere. |
-| CAT-5 | Must | Maintain a coverage inventory that maps every CVS technique, APG pattern, and relevant HTML element to a catalog entry or to a recorded "not applicable" reason. |
+| CAT-5 | Must | Maintain a coverage inventory that maps every reference repository technique, APG pattern, and relevant HTML element to a catalog entry or to a recorded "not applicable" reason. |
 | CAT-7 | Must | Include techniques for language of parts, text direction, and right-to-left layout. |
 | CAT-6 | Should | Use [Radix UI Primitives](https://github.com/radix-ui/primitives) as the bar for web capability when judging whether a web example is good enough. |
 
@@ -97,7 +97,7 @@ unless a documented reason prevents it.
 
 | ID | Priority | Requirement |
 | --- | --- | --- |
-| APP-1 | Should | One Flutter app with a shared technique catalog, built for Android, iOS, and Web, akin to the CVS techniques apps. |
+| APP-1 | Should | One Flutter app with a shared technique catalog, built for Android, iOS, and Web, akin to the reference techniques apps. |
 | APP-2 | Should | One Widgetbook project built for Android, iOS, and Web, exposing the same good and bad examples, with use cases filtered by platform applicability. |
 | APP-3 | Must | The app itself (navigation, catalog, documentation views) meets WCAG 2.2 AA. |
 | APP-4 | Must | The web build enables the semantics tree at startup using the documented `SemanticsBinding.instance.ensureSemantics()`. Flutter's default opt-in behaviour is documented as a technique. |
@@ -193,7 +193,7 @@ by D31 and D32.
 
 These have not been checked yet and will be confirmed during planning.
 
-- The complete technique lists of the three CVS repos have not been inventoried.
+- The complete technique lists of the three reference repositories have not been inventoried.
   CAT-5 is the deliverable that does this.
 - Which APG patterns and HTML elements Flutter can express on each platform is
   unknown until each is built and tested. TEC-6 covers the outcome.

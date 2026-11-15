@@ -38,12 +38,12 @@ these.
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | Buttons need unique, specific label text describing their function | [CVS iOS Buttons](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Buttons.md) |
-| R2 | When several buttons share a visible label, give each a unique accessible name that begins with the visible text | CVS iOS Buttons |
-| R3 | Do not put the word "button" in the label; the screen reader adds the role | CVS iOS Buttons |
-| R4 | Disabled state must be conveyed | CVS iOS Buttons; [APG Button](https://www.w3.org/WAI/ARIA/apg/patterns/button/) (`aria-disabled`) |
-| R5 | An icon-only button must have a non-empty text alternative | [CVS Compose Interactive Control Labels](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/InteractiveControlLabels.md) |
-| R6 | A touchable control must be focusable and respond to click, not only touch, so keyboard and switch users can operate it | [CVS View Focusable, Clickable Controls](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/FocusableClickableControls.md) |
+| R1 | Buttons need unique, specific label text describing their function | [iOS Buttons](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Buttons.md) |
+| R2 | When several buttons share a visible label, give each a unique accessible name that begins with the visible text | iOS Buttons |
+| R3 | Do not put the word "button" in the label; the screen reader adds the role | iOS Buttons |
+| R4 | Disabled state must be conveyed | iOS Buttons; [APG Button](https://www.w3.org/WAI/ARIA/apg/patterns/button/) (`aria-disabled`) |
+| R5 | An icon-only button must have a non-empty text alternative | [Android Compose Interactive Control Labels](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/InteractiveControlLabels.md) |
+| R6 | A touchable control must be focusable and respond to click, not only touch, so keyboard and switch users can operate it | [Android View Focusable, Clickable Controls](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/FocusableClickableControls.md) |
 | R7 | Role is button; Space and Enter both activate it | APG Button |
 | R8 | Accessible name comes from the text content, or is supplied explicitly | APG Button; [MDN `<button>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button) |
 

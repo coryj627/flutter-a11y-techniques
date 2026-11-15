@@ -33,12 +33,12 @@ limitations were found; see section 7.
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | Heading and subheading text must be exposed as a heading, so screen reader users can move between headings | [CVS iOS Headings](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Headings.md), [CVS Compose Heading Semantics](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/HeadingSemantics.md), [CVS View Heading Semantics](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/grouping/HeadingSemantics.md) |
-| R2 | Heading levels must not skip a level going down | CVS iOS Headings; [MDN heading elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements) |
-| R3 | Never fake a heading by adding the word "heading" to the name | CVS iOS, Compose, and View |
+| R1 | Heading and subheading text must be exposed as a heading, so screen reader users can move between headings | [iOS Headings](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Headings.md), [Android Compose Heading Semantics](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/HeadingSemantics.md), [Android View Heading Semantics](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/grouping/HeadingSemantics.md) |
+| R2 | Heading levels must not skip a level going down | iOS Headings; [MDN heading elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements) |
+| R3 | Never fake a heading by adding the word "heading" to the name | iOS, Compose, and View |
 | R4 | A page has one level 1 heading, and lower levels nest under it | MDN heading elements |
-| R5 | Titles of app bars, dialogs, and sheets are headings | CVS Compose and View |
-| R6 | Only mark real section headings; do not use a heading to style or emphasise text | CVS Compose and View; MDN heading elements |
+| R5 | Titles of app bars, dialogs, and sheets are headings | Android Compose and View |
+| R6 | Only mark real section headings; do not use a heading to style or emphasise text | Android Compose and View; MDN heading elements |
 
 Flutter references for the mechanism used:
 

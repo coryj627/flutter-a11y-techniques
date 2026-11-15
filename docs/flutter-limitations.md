@@ -617,7 +617,7 @@ yet), **Fixed in x.y** (verified on that version).
     `disableAnimations`, `boldText`, `reduceMotion`, `highContrast`,
     `onOffSwitchLabels`, `supportsAnnounce`, `autoPlayAnimatedImages`,
     `autoPlayVideos`, and `deterministicCursor`, and nothing else.
-- Effect: the CVS iOS techniques for these features cannot be reproduced in
+- Effect: the iOS techniques for these features cannot be reproduced in
   Flutter without writing platform code, which is outside this project's
   rule that good examples use SDK mechanisms.
 - Workaround: none within the SDK.
@@ -913,11 +913,11 @@ yet), **Fixed in x.y** (verified on that version).
     reads it. The node is a `View`.
   - Web: no role handles it. The node is a button only if it has a tap
     action ([FL-006](#fl-006)).
-- Why it matters: the CVS Health iOS technique lists the keyboard key trait,
+- Why it matters: the iOS reference technique lists the keyboard key trait,
   which on iOS lets VoiceOver users type on a custom keypad in the way they
   have chosen for the system keyboard. A Flutter keypad cannot have it. Use
   `button: true` on each key, which is what the SDK's own widgets do.
-- Also without a Flutter counterpart, from the same CVS list of traits:
+- Also without a Flutter counterpart, from the same list of traits:
   plays sound, starts media session, allows direct interaction, causes page
   turn, summary element, search field, and tab bar as a trait (the tab roles
   are `SemanticsRole.tab` and `tabBar`, left to the tabs technique). Static
@@ -972,7 +972,7 @@ yet), **Fixed in x.y** (verified on that version).
 - What is missing: Android lets an app replace "checked" and "not checked",
   or "on" and "off", with words that fit the control
   (`View.setStateDescription`, `stateDescription` in Compose), which is the
-  subject of the CVS Health Android technique "Custom State Descriptions".
+  subject of the Android reference technique "Custom State Descriptions".
   `Semantics` has no such property, and the Android engine sets no state
   description.
 - What happens if `value` is used for it, as in

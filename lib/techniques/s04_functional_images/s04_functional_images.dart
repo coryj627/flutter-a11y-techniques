@@ -21,15 +21,15 @@ final s04FunctionalImages = Technique(
   ],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Functional Images',
+      'iOS SwiftUI: Functional Images',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/FunctionalImages.md',
     ),
     SourceLink(
-      'CVS Health Android Compose: Text Alternatives',
+      'Android Compose: Text Alternatives',
       'https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/TextAlternatives.md',
     ),
     SourceLink(
-      'CVS Health Android View: Text Alternatives',
+      'Android View: Text Alternatives',
       'https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/TextAlternatives.md',
     ),
     SourceLink(

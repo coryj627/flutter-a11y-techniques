@@ -24,15 +24,15 @@ final c01Button = Technique(
   ],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Buttons',
+      'iOS SwiftUI: Buttons',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Buttons.md',
     ),
     SourceLink(
-      'CVS Health Android Compose: Interactive Control Labels',
+      'Android Compose: Interactive Control Labels',
       'https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/InteractiveControlLabels.md',
     ),
     SourceLink(
-      'CVS Health Android View: Focusable, Clickable Controls',
+      'Android View: Focusable, Clickable Controls',
       'https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/FocusableClickableControls.md',
     ),
     SourceLink(

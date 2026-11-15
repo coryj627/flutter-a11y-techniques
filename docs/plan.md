@@ -165,7 +165,7 @@ written finding added to this plan.
 | K4 | Markdown rendering: package or build step, judged on resulting semantics? Can Widgetbook show it per use case? | DOC-3 mechanism |
 | K5 | Does Guidepup drive VoiceOver against Flutter web in Chrome and Safari with repeatable output across three runs? | Where the VAL-5 gate sits on web |
 | K6 | Can TalkBack speech be captured from an emulator repeatably? | Gate or evidence on Android |
-| K7 | What is achievable for VoiceOver on iOS: simulator, physical device, or Accessibility Inspector via computer use? Read the CVS VoiceOverAutomationTesting doc first. | Gate or evidence on iOS |
+| K7 | What is achievable for VoiceOver on iOS: simulator, physical device, or Accessibility Inspector via computer use? Read the iOS reference repository's VoiceOverAutomationTesting doc first. | Gate or evidence on iOS |
 
 Exit: each not-confirmed row in section 1 is replaced with a finding.
 
@@ -287,7 +287,7 @@ iOS 27+): `enable()`, `disable()`, `isEnabled`, `moveForward()`,
 `moveBackward()`, `moveIn()`, `moveOut()`, `currentSpeech()`, each returning an
 output with `utterance`. Reached through `XCUIDevice.shared.voiceOverService`.
 It was first described to us by the
-[CVS VoiceOver Automation Testing doc](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/VoiceOverAutomationTesting.md).
+[iOS VoiceOver Automation Testing doc](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/VoiceOverAutomationTesting.md).
 
 - It runs in the Simulator and returns what VoiceOver speaks for the Flutter
   fixture: `Save Button`, `Close Button`, `Email Text field Double tap to edit.`,
@@ -396,7 +396,7 @@ scheme in `Info.plist`, and the `androidTest` dependencies and test runner in
 
 1. Write the technique spec (`docs/specs/C01-button.md`): examples, defects,
    WCAG criteria, sources, expected assertions per layer.
-2. Read the CVS button docs and the APG and MDN button pages; record sources.
+2. Read the reference repositories' button docs and the APG and MDN button pages; record sources.
 3. Build good examples (Material, Cupertino, custom widgets-layer button) and
    bad examples (for example: unlabelled icon button, gesture-only tap target
    with no button role, undersized target).
@@ -685,7 +685,7 @@ written after the slice. The original, kept for the record:
 | R3 | Screen reader speech is not repeatable enough to gate | Gate on normalised phrases (role and name), keep full transcript as evidence |
 | R4 | Four test layers per technique across 102 entries is a large cost | Measured in [slice-review.md](slice-review.md). L2 was never built and is proposed for removal; device and transcript runs are proposed to be scoped to the changed technique |
 | R5 | Flutter upgrade changes semantics output | Pinned SDK; upgrade is its own change with every suite re-run (APP-5) |
-| R6 | CVS mappings were made from titles only | Each spec starts by reading the source docs |
+| R6 | Reference repository mappings were made from titles only | Each spec starts by reading the source docs |
 
 ## 6. Decisions needed
 
