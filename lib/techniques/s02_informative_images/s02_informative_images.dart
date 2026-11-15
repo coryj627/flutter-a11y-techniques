@@ -18,23 +18,23 @@ final s02InformativeImages = Technique(
   wcag: const [WcagCriterion('1.1.1', 'Non-text Content', 'non-text-content')],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Images',
+      'iOS SwiftUI: Images',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Images.md',
     ),
     SourceLink(
-      'CVS Health iOS SwiftUI: Informative Images',
+      'iOS SwiftUI: Informative Images',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/InformativeImages.md',
     ),
     SourceLink(
-      'CVS Health iOS SwiftUI: Accessibility Label',
+      'iOS SwiftUI: Accessibility Label',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityLabel.md',
     ),
     SourceLink(
-      'CVS Health Android Compose: Text Alternatives',
+      'Android Compose: Text Alternatives',
       'https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/TextAlternatives.md',
     ),
     SourceLink(
-      'CVS Health Android View: Text Alternatives',
+      'Android View: Text Alternatives',
       'https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/TextAlternatives.md',
     ),
     SourceLink(

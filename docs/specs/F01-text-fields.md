@@ -35,10 +35,10 @@ section 7.
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | A text field needs visible label text next to it, exposed as the field's accessible name | [CVS iOS Text Fields](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/TextFields.md), [CVS View Input Field Labels](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/InputFieldLabels.md), [CVS Compose TextField Controls](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/components/TextFieldControls.md) |
-| R2 | Screen reader users must hear the label when focus is on the field | CVS iOS Text Fields |
-| R3 | Do not use placeholder text in place of a label: it disappears once a value is entered | CVS iOS Text Fields; [MDN input](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input) |
-| R4 | A label must be associated with its field, not only placed near it | CVS View Input Field Labels; [MDN label](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label) |
+| R1 | A text field needs visible label text next to it, exposed as the field's accessible name | [iOS Text Fields](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/TextFields.md), [Android View Input Field Labels](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/InputFieldLabels.md), [Android Compose TextField Controls](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/components/TextFieldControls.md) |
+| R2 | Screen reader users must hear the label when focus is on the field | iOS Text Fields |
+| R3 | Do not use placeholder text in place of a label: it disappears once a value is entered | iOS Text Fields; [MDN input](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input) |
+| R4 | A label must be associated with its field, not only placed near it | Android View Input Field Labels; [MDN label](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label) |
 | R5 | Multi-line input is labelled the same way | [MDN textarea](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/textarea) |
 
 Flutter references for the mechanisms used:

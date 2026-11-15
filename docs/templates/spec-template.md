@@ -29,7 +29,7 @@ mapped sources by title only.
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | … | [CVS …](url), [APG …](url), [MDN …](url) |
+| R1 | … | [iOS, Android View, or Android Compose …](url), [APG …](url), [MDN …](url) |
 
 Flutter references for the mechanisms used:
 

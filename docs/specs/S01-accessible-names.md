@@ -32,24 +32,24 @@ On web a slider cannot be given a name (Flutter limitation FL-028).
 | [2.5.3 Label in Name](https://www.w3.org/TR/WCAG22/#label-in-name) | The name contains the visible label text |
 | [4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value) | Every control has a name that can be programmatically determined |
 
-The inventory listed 4.1.2 and 2.4.6. The sources add 2.5.3 (CVS iOS
-Meaningful Accessible Names) and 1.3.1 (CVS Compose Interactive Control
+The inventory listed 4.1.2 and 2.4.6. The sources add 2.5.3 (iOS
+Meaningful Accessible Names) and 1.3.1 (Android Compose Interactive Control
 Labels).
 
 ## 4. Source requirements
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | Every accessible element has a label that says what it is | [CVS iOS Accessibility Label](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityLabel.md) |
-| R2 | A control and its visible label are associated, so the label is the control's name. Checkbox, switch, and radio button: a wrapping layout that merges the text and the control and takes the click | [CVS Compose Interactive Control Labels](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/InteractiveControlLabels.md); [MDN `label`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label) |
-| R3 | Names are unique and specific. Where the visible text does not say what the control does, give a more specific name | [CVS iOS Meaningful Accessible Names](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/MeaningfulAccessibleNames.md) |
-| R4 | A name that differs from the visible text begins with the visible text, so speech input still works | CVS iOS Accessibility Label; CVS iOS Meaningful Accessible Names |
-| R5 | The name does not include the control type; the screen reader adds it | CVS iOS Accessibility Label; [APG Names and Descriptions](https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/) |
-| R6 | A slider has a visible label, and that text is in its name | CVS Compose Interactive Control Labels |
-| R7 | Clicking the label operates the control | MDN `label`; CVS Compose (the wrapping row is the click target) |
+| R1 | Every accessible element has a label that says what it is | [iOS Accessibility Label](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityLabel.md) |
+| R2 | A control and its visible label are associated, so the label is the control's name. Checkbox, switch, and radio button: a wrapping layout that merges the text and the control and takes the click | [Android Compose Interactive Control Labels](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/InteractiveControlLabels.md); [MDN `label`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label) |
+| R3 | Names are unique and specific. Where the visible text does not say what the control does, give a more specific name | [iOS Meaningful Accessible Names](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/MeaningfulAccessibleNames.md) |
+| R4 | A name that differs from the visible text begins with the visible text, so speech input still works | iOS Accessibility Label; iOS Meaningful Accessible Names |
+| R5 | The name does not include the control type; the screen reader adds it | iOS Accessibility Label; [APG Names and Descriptions](https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/) |
+| R6 | A slider has a visible label, and that text is in its name | Android Compose Interactive Control Labels |
+| R7 | Clicking the label operates the control | MDN `label`; Android Compose (the wrapping row is the click target) |
 
 Not taken from the sources: "ideally a single word" and "begin with a
-capitalized word, no period" (CVS iOS Accessibility Label) are style advice
+capitalized word, no period" (iOS Accessibility Label) are style advice
 and are not asserted.
 
 Flutter references for the mechanisms used:

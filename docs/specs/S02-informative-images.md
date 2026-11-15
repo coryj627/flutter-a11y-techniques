@@ -30,14 +30,14 @@ shows or means, and does not include the word "image" or a file name.
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | An informative image has a text alternative | [CVS iOS Images](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Images.md), [CVS iOS Informative Images](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/InformativeImages.md), [CVS Compose Text Alternatives](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/TextAlternatives.md), [CVS View Text Alternatives](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/TextAlternatives.md), [MDN `img`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img) |
-| R2 | The alternative matches the relevant content of the image | CVS iOS Informative Images |
-| R3 | The alternative does not include the word "image"; the screen reader says it | CVS iOS Informative Images |
-| R4 | The alternative describes what the image shows, not its file name | [CVS iOS Accessibility Label](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityLabel.md); MDN `img` |
-| R5 | An icon that conveys information has a text alternative | CVS Compose Text Alternatives |
-| R6 | An image and text that belong together can be combined into one element | CVS iOS Informative Images; CVS Compose Text Alternatives ("Avoid redundancy in grouped content") |
-| R7 | A group of image and text can be replaced by a single description, with the parts hidden so they are not read as well | CVS Compose Text Alternatives ("Overriding grouped content with a single description") |
-| R8 | A complex image such as a chart has a concise alternative for its purpose, and its detail in text nearby | CVS Compose Text Alternatives ("Handling complex images") |
+| R1 | An informative image has a text alternative | [iOS Images](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Images.md), [iOS Informative Images](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/InformativeImages.md), [Android Compose Text Alternatives](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/TextAlternatives.md), [Android View Text Alternatives](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/TextAlternatives.md), [MDN `img`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img) |
+| R2 | The alternative matches the relevant content of the image | iOS Informative Images |
+| R3 | The alternative does not include the word "image"; the screen reader says it | iOS Informative Images |
+| R4 | The alternative describes what the image shows, not its file name | [iOS Accessibility Label](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityLabel.md); MDN `img` |
+| R5 | An icon that conveys information has a text alternative | Android Compose Text Alternatives |
+| R6 | An image and text that belong together can be combined into one element | iOS Informative Images; Android Compose Text Alternatives ("Avoid redundancy in grouped content") |
+| R7 | A group of image and text can be replaced by a single description, with the parts hidden so they are not read as well | Android Compose Text Alternatives ("Overriding grouped content with a single description") |
+| R8 | A complex image such as a chart has a concise alternative for its purpose, and its detail in text nearby | Android Compose Text Alternatives ("Handling complex images") |
 
 Flutter references for the mechanisms used:
 

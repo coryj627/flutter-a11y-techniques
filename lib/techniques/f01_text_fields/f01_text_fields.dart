@@ -28,15 +28,15 @@ final f01TextFields = Technique(
   ],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Text Fields',
+      'iOS SwiftUI: Text Fields',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/TextFields.md',
     ),
     SourceLink(
-      'CVS Health Android View: Input Field Labels',
+      'Android View: Input Field Labels',
       'https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/basics/InputFieldLabels.md',
     ),
     SourceLink(
-      'CVS Health Android Compose: TextField Controls',
+      'Android Compose: TextField Controls',
       'https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/components/TextFieldControls.md',
     ),
     SourceLink(

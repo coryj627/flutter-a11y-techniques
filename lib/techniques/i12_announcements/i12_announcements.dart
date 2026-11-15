@@ -19,15 +19,15 @@ final i12Announcements = Technique(
   wcag: const [WcagCriterion('4.1.3', 'Status Messages', 'status-messages')],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Accessibility Notifications',
+      'iOS SwiftUI: Accessibility Notifications',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityNotifications.md',
     ),
     SourceLink(
-      'CVS Health Android View: UX Change Announcements',
+      'Android View: UX Change Announcements',
       'https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/dynamicbehaviors/UXChangeAnnouncements.md',
     ),
     SourceLink(
-      'CVS Health Android Compose: UX Change Announcements',
+      'Android Compose: UX Change Announcements',
       'https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/interactions/UXChangeAnnouncements.md',
     ),
     SourceLink(

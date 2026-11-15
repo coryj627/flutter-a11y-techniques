@@ -19,11 +19,11 @@ final s13RolesAndTraits = Technique(
   wcag: const [WcagCriterion('4.1.2', 'Name, Role, Value', 'name-role-value')],
   sources: const [
     SourceLink(
-      'CVS Health iOS SwiftUI: Accessibility Traits',
+      'iOS SwiftUI: Accessibility Traits',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityTraits.md',
     ),
     SourceLink(
-      'CVS Health iOS SwiftUI: Accessibility Responds To User Interaction',
+      'iOS SwiftUI: Accessibility Responds To User Interaction',
       'https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityRespondsToUserInteraction.md',
     ),
     SourceLink(
