@@ -22,6 +22,11 @@ WALK = ("`XCUIVoiceOverService.moveForward()` from the top of each example scree
         "last element", "Spoken, in swipe order")
 # technique -> (how the speech was captured, heading of the transcript column)
 METHODS = {
+    "S03": ("`XCUIVoiceOverService.moveForward()` until the same utterance is heard four "
+            "times in a row, then `moveBackward()` to the \"Example\" heading. The walk back "
+            "gives each element of the example once and shows that the walk forward had "
+            "reached the end of the screen",
+            "Spoken, in swipe order"),
     "I12": ("the VoiceOver cursor is put on the example's button, the button is activated "
             "with a double tap, and `XCUIVoiceOverService.currentSpeech()` is read until the "
             "message is heard, or for four seconds after the visible change when nothing "

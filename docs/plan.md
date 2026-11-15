@@ -617,7 +617,11 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
 - S02 Informative images: built on 2026-11-14. No new limitation. An
   unlabelled `Image` stays in the tree as an unnamed image on all three
   platforms, which S03 has to deal with.
-- Next: S03 Decorative images.
+- S03 Decorative images: built on 2026-11-14. No new limitation. An empty
+  `semanticLabel` does not hide an `Image`, and an unlabelled `Image` in a
+  merged row makes the row an image. TalkBack could not be moved by swipe
+  or key command on the emulator, so what a swipe stops on is not tested.
+- Next: S04 Functional images.
 
 ### Late-stage tasks
 
