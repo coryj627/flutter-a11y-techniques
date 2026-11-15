@@ -50,6 +50,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-027](#fl-027) | A progress indicator whose value has a percent sign reports an empty range on Android | Android | Observed |
 | [FL-028](#fl-028) | A slider has no accessible name on web | Web | Confirmed |
 | [FL-029](#fl-029) | A Material `Slider` adds an empty full-screen element that takes pointer events on web | Web | Observed |
+| [FL-030](#fl-030) | A label on an `Image` inside a button does not name the button | Android, iOS | Confirmed (source read) |
+| [FL-031](#fl-031) | An `Image` left in a button's semantics makes the button an image as well | Android, iOS | Confirmed |
 
 ---
 
@@ -737,4 +739,86 @@ yet), **Fixed in x.y** (verified on that version).
 - To do in the slider technique (F10): find the widget that creates the
   element, and test pointer and screen reader activation of controls beside
   a slider.
+- Upstream issue: not searched yet (D25).
+
+## FL-030
+
+**A label on an `Image` inside a button does not name the button.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the S04 probe
+  (`docs/evidence/probes/s04/`); asserted by the S04 widget, web, Android,
+  and iOS tests (`bad-label-on-image`) and heard in
+  `docs/evidence/S04/talkback-android.md` and
+  `docs/evidence/S04/voiceover-ios.md`. Framework source read:
+  `packages/flutter/lib/src/widgets/image.dart`.
+- WCAG: 4.1.2 Name, Role, Value; 1.1.1 Non-text Content.
+- What happens: `Image` wraps itself in
+  `Semantics(container: semanticLabel != null, image: true, label: ...)`.
+  With a label, `container` is true, so the image is always a semantics node
+  of its own and its label is not merged into a control around it. For
+  `IconButton(icon: Image(semanticLabel: 'Open trail guide'))` the tree is a
+  button node with no label and, as its child, an image node with the label.
+  - Android: a `Button` with no description that can be clicked, and inside
+    it an `ImageView` "Open trail guide" that cannot. TalkBack, with focus
+    moved to each: "Button", then "Open trail guide, Image".
+  - iOS: a button with no label and an image "Open trail guide". VoiceOver
+    stops twice: "Button", then "Open trail guide, Image".
+  - Web: `role="button"` with no `aria-label` and a `role="img"` child with
+    `aria-label`. Chromium computes the button's name from the child, and
+    VoiceOver on macOS reads "Open trail guide, button" as one stop in
+    Chromium and in Playwright's WebKit build. The web is not affected.
+- The same split with other tappable parents: `InkWell` or `GestureDetector`
+  around a labelled `Image` gives a tappable node with no name and no role,
+  with the image inside it. VoiceOver on iOS stops on that node and says
+  nothing, then reads the image. (`XCUIVoiceOverService` reports "No speech
+  available"; the test takes it as a stop because one move back reads the
+  element before it and the move forward again is silent too.) TalkBack,
+  with focus moved to that node, said "Button" in two recordings and
+  nothing in a third, and never the name (`bad-tap-gesture`).
+- Not affected: `Icon(semanticLabel:)`. An `Icon`'s label is not a container
+  and becomes the name of the button around it on all three platforms
+  (`good-icon-label`).
+- Why it matters: `Image.semanticLabel` is the documented text alternative
+  for an image, and on the web and in native toolkits the alternative of an
+  image inside a button is the button's name. Code written that way in
+  Flutter gives Android and iOS users a button with no name.
+- How to reproduce: `/t/S04/bad-label-on-image` in the app.
+- Workaround, in the SDK: name the control, not the image, and exclude the
+  image. `IconButton(tooltip: ..., icon: Image(excludeFromSemantics: true))`
+  (`good-image-button`), or `Semantics(button: true, label: ...)` around a
+  custom control (`good-custom`). Not tried: `MergeSemantics` around the
+  button.
+- Upstream issue: not searched yet (D25).
+
+## FL-031
+
+**An `Image` left in a button's semantics makes the button an image as well.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the S04 probe
+  (`docs/evidence/probes/s04/`); asserted by the S04 widget, Android, and
+  iOS tests (`bad-image-not-excluded`, `bad-no-name`) and heard in
+  `docs/evidence/S04/voiceover-ios.md`. Engine source not read.
+- What happens: an `Image` with no `semanticLabel` and without
+  `excludeFromSemantics: true` contributes `image: true` and no node of its
+  own (`container` is false, see FL-030). Inside a button the flag is merged
+  into the button's node, which is then a button and an image. Seen with
+  `TextButton(child: Row(children: [Image(...), Text('Trail guide')]))` and
+  with `IconButton(icon: Image(...))`.
+  - iOS: VoiceOver reads "Trail guide, Button, Image". XCUITest still
+    reports a button.
+  - Android: the node's class is `android.widget.ImageView`, not
+    `android.widget.Button`, though it can be clicked. TalkBack, with focus
+    moved to it, still says "Trail guide, Button" and does not say "Image".
+    A tool that goes by the class sees an image.
+  - Web: `role="button"` only. Not affected.
+- The same merging outside a button is in S03 (`bad-merged-image`): an
+  unlabelled `Image` in a `MergeSemantics` row makes the row an image on all
+  three platforms.
+- Why it matters: the picture is decoration inside the button, and it is
+  announced as part of the button's role on iOS. It is not a WCAG failure on
+  its own, because the button role and name are still there.
+- How to reproduce: `/t/S04/bad-image-not-excluded` in the app, with
+  VoiceOver on iOS.
+- Workaround, in the SDK: `excludeFromSemantics: true` on every `Image`
+  inside a control (`good-image-with-text`).
 - Upstream issue: not searched yet (D25).

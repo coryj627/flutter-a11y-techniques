@@ -83,6 +83,32 @@ EXPECT = {
     "s03-bad-redundant-label-icon": (["Shipping"], []),
     "s03-bad-redundant-label-word": (["Shipping"], []),
     "s03-bad-merged-image-row": (["Trail guide", "12 routes", "Image"], []),
+    # S04 Functional images. A good image control is read as a named button
+    # and never as an image.
+    "s04-good-image-button-guide": (["Open trail guide", "Button"], ["Image"]),
+    "s04-good-icon-label-search": (["Search", "Button"], ["Image"]),
+    "s04-good-image-with-text-guide": (["Trail guide", "Button"], ["Image"]),
+    "s04-good-image-with-text-print": (["Print", "Button"], ["Image"]),
+    "s04-good-cupertino-search": (["Search", "Button"], ["Image"]),
+    "s04-good-custom-guide": (["Open trail guide", "Button"], ["Image"]),
+    "s04-good-image-regions-west": (["West trail", "Button"], ["Image"]),
+    "s04-good-image-regions-east": (["East trail", "Button"], ["Image"]),
+    # Bad examples: the defect must be audible.
+    "s04-bad-no-name-guide": (["Button"], ["Open trail guide"]),
+    # The name is on the image inside the button, a second stop.
+    "s04-bad-label-on-image-button": (["Button"], ["Open trail guide"]),
+    "s04-bad-label-on-image-image": (["Open trail guide", "Image"], ["Button"]),
+    # The node that takes the tap has no name and no role. TalkBack said
+    # "Button" for it in two recordings and nothing in a third, so only the
+    # missing name is checked. The name is on the image inside it.
+    "s04-bad-tap-gesture-tappable": ([], ["Open trail guide"]),
+    "s04-bad-tap-gesture-image": (["Open trail guide", "Image"], ["Button"]),
+    "s04-bad-describes-picture-search": (["Magnifying glass", "Button"], []),
+    # The node's class is ImageView, but TalkBack reads it as a button and
+    # does not say "Image": on Android this defect is in the tree only.
+    # Written to fail if TalkBack starts saying "Image".
+    "s04-bad-image-not-excluded-guide": (["Trail guide", "Button"], ["Image"]),
+    "s04-bad-redundant-label-print": (["Printer", "Print", "Button"], []),
     # S05 Headings. "Heading" must be spoken as the role for a real heading,
     # and must not be for text that only looks or reads like one.
     "s05-good-levels-profile": (["Profile", "Heading"], []),

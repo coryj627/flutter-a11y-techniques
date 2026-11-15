@@ -31,6 +31,11 @@ METHODS = {
            "AppleScript after every move: a move that changes the position, or that "
            "speaks a different phrase, is a stop; two moves in a row that do neither are "
            "the end",
+    "S04": "focus the Back button, then `voiceOver.next()` to the end of the screen. "
+           "VoiceOver's last phrase and the position of its cursor are read over "
+           "AppleScript after every move: a move that changes the position, or that "
+           "speaks a different phrase, is a stop; two moves in a row that do neither are "
+           "the end. The activation count is the last element of every example",
     "I12": "press the example's button with the keyboard, then poll VoiceOver's last phrase "
            "over AppleScript for what it was given to announce; Chromium only, because "
            "Playwright's WebKit build passes no live region changes to VoiceOver",
