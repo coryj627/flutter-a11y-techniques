@@ -1039,7 +1039,8 @@ yet), **Fixed in x.y** (verified on that version).
   increase and still "4 out of 5" after a second, with five stars showing.
 - Related, on the web (S14 probe and `bad-rating-no-value`): with no
   `increasedValue` and no `decreasedValue` the slider element has the same
-  minimum and maximum, so it cannot be moved from the browser's side.
+  minimum and maximum. The arrow keys still reach the app. Whether a
+  screen reader's adjust command can move such a slider was not tested.
 - Workaround: always give `increasedValue` and `decreasedValue` with
   `onIncrease` and `onDecrease`, computed from the current value, as
   `good-rating` does.

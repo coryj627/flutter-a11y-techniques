@@ -109,6 +109,16 @@ test.describe('bad examples have their defect', () => {
     // to go: its minimum and maximum are the same.
     expect(await input.getAttribute('aria-valuemin')).toBe(await input.getAttribute('aria-valuemax'));
     await expect(page.getByText('out of 5')).toHaveCount(0);
+    // The arrow keys still change the rating, through Flutter's own key
+    // handling, so the missing value is the defect and not a dead control.
+    // Whether a screen reader's adjust command can move a slider with a
+    // range of one point was not tested.
+    expect(await tabTo(page, input), 'Tab reaches the rating').toBe(true);
+    await page.keyboard.press('ArrowRight');
+    await expectCount(page, 'bad-rating-no-value', 1);
+    await page.keyboard.press('ArrowLeft');
+    await expectCount(page, 'bad-rating-no-value', 2);
+    await expect(input).toHaveAttribute('aria-valuetext', '');
   });
 
   test('bad-stale-value: the value text does not follow the rating', async ({ page }) => {

@@ -14,7 +14,12 @@ final s14ValuesAndStateDescriptions = Technique(
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(),
     AppPlatform.ios: PlatformStatus.applies(),
-    AppPlatform.web: PlatformStatus.applies(),
+    AppPlatform.web: PlatformStatus.applies(
+      note:
+          'Anything adjustable is a slider on web, and a slider cannot be '
+          'given a name there (limitation FL-028). The rating and the slider '
+          'here read their value on web without their name.',
+    ),
   },
   wcag: const [WcagCriterion('4.1.2', 'Name, Role, Value', 'name-role-value')],
   sources: const [
@@ -58,7 +63,7 @@ final s14ValuesAndStateDescriptions = Technique(
   examples: [
     TechniqueExample.good(
       slug: 'good-rating',
-      title: 'Star rating with a value that can be adjusted',
+      title: 'Star rating with a value that can be adjusted (no name on web)',
       variant: ExampleVariant.widgets,
       builder: (_) => const GoodRating(),
     ),
@@ -76,7 +81,7 @@ final s14ValuesAndStateDescriptions = Technique(
     ),
     TechniqueExample.good(
       slug: 'good-slider-format',
-      title: 'Slider whose value is given in words',
+      title: 'Slider whose value is given in words (no name on web)',
       variant: ExampleVariant.material,
       builder: (_) => const GoodSliderFormat(),
     ),

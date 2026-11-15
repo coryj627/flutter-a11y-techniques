@@ -24,6 +24,11 @@ adjusted, the control also says what it would become.
 | --- | --- | --- |
 | Applies | Applies | Applies |
 
+On the web anything adjustable is a slider, and a slider has no accessible
+name there ([FL-028](../flutter-limitations.md#fl-028)). `good-rating` and
+`good-slider-format` expose the right value on the web and no name; the
+catalog carries a note on the web platform and in both titles.
+
 Custom wording for the state of a switch or checkbox, the subject of the
 two Android source documents, cannot be done on any platform
 ([FL-036](../flutter-limitations.md#fl-036)). The technique as a whole still
@@ -134,8 +139,11 @@ The probe that came first is in [evidence/probes/s14](../evidence/probes/s14/).
   `bad-stale-value` the node read "3 out of 5", then "4 out of 5" after one
   increase and after two. So `increasedValue` and `decreasedValue` have to
   be right, and the TalkBack walk increases twice before it listens.
-- **With no `increasedValue` the web slider cannot move**: its minimum and
-  maximum are the same (`bad-rating-no-value`).
+- **With no `increasedValue` the web slider has a range of one point**: its
+  minimum and maximum are the same (`bad-rating-no-value`). The arrow keys
+  still change the rating, through Flutter's own key handling, and the web
+  test asserts that. Whether a screen reader's adjust command can move such
+  a slider was not tested.
 - **A switch's state cannot be reworded**
   ([FL-036](../flutter-limitations.md#fl-036)). With `value` on a switch,
   TalkBack reads "off, Deactivated, Home alarm, Switch"; VoiceOver on iOS
