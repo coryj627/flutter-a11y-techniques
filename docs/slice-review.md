@@ -147,6 +147,8 @@ so the unknowns are probed first, cheaply, before any is built out.
 
 ### Batch 0: probe the 27 unknowns
 
+Issue: [#16](https://github.com/coryj627/flutter-a11y-techniques/issues/16), closed by [#9](https://github.com/coryj627/flutter-a11y-techniques/pull/9).
+
 Done on 2026-11-13. Results are in
 [coverage-inventory.md, section 5](coverage-inventory.md#5-batch-0-probes-of-the-27-unknown-entries)
 and limitations FL-019 to FL-027. As planned at the time:
@@ -170,19 +172,20 @@ platform views, C31 Math content.
 Ordered so that each batch reuses what the one before it built, and so the
 most common controls come first.
 
-| Batch | Entries | Why together |
-| --- | --- | --- |
-| 1. Names, roles, and images | S01, S02, S03, S04, S13, S14, S15, S22 | The basic semantics every later technique relies on. S22 documents the `TestId` pattern already in use |
-| 2. Form controls | F07, F08, F09, F10, F02, F03, F06 | Reuse the F01 type-and-recheck tests; checkbox, radio, switch, and slider share state and value assertions |
-| 3. Links and simple components | C02, C03, C04, C05, C06, C12, C13, C18, C26 | Small components. C04 settles the inline-link question the doc renderer avoided; C13 builds on I12 |
-| 4. Structure and order | S06, S08, S09, S10, S11, S12, S16, S17 | Titles, lists, grouping, reading order, hiding, language, and direction. S08 must face lazy lists (FL-011) |
-| 5. Focus and keyboard | I01, I02, I03, I04, I08, V14, V13 | Focus order, management, shortcuts, escape, focus indicators, target size. Needs a way to assert focus visibility |
-| 6. Dialogs and overlays | C08, C09, C10, C11, C14, C16 | All need focus management from batch 5, and dialog titles left open by S05 |
-| 7. Visual preferences | V01, V02, V03, V05, V06, V07, V09, V12 | Contrast, themes, scaling, reflow, orientation, motion. Closes the VAL-10 gaps |
-| 8. Remaining forms | F04, F05, F11, F12, F13, F14, F15, F16, F17, F18 | Pickers, comboboxes, and less common inputs |
-| 9. Navigation and complex components | I07, I13, I14, I15, I16, C07, C17, C27 | Tabs, carousel, charts, navigation, drag alternatives |
-| 10. What batch 0 found | S07, S18, V04, I05, I06, C15, C19 to build; S19, S20, S21, V08, V10, V11, I09, I10, C20, C21, C22, C23, C24, C25, C28, C29, C30, C31 as limitation entries | Seven techniques, most with a limitation on at least one platform, and eighteen short limitation entries (TEC-6). I11 is folded into label-in-name checks and I17 is not applicable. C28, C29, and C30 need plugins, which D30 rules out |
+| Batch | Epic | Entries | Why together |
+| --- | --- | --- | --- |
+| 1. Names, roles, and images | [#30](https://github.com/coryj627/flutter-a11y-techniques/issues/30) | S01, S02, S03, S04, S13, S14, S15, S22 | The basic semantics every later technique relies on. S22 documents the `TestId` pattern already in use |
+| 2. Form controls | [#39](https://github.com/coryj627/flutter-a11y-techniques/issues/39) | F07, F08, F09, F10, F02, F03, F06 | Reuse the F01 type-and-recheck tests; checkbox, radio, switch, and slider share state and value assertions |
+| 3. Links and simple components | [#40](https://github.com/coryj627/flutter-a11y-techniques/issues/40) | C02, C03, C04, C05, C06, C12, C13, C18, C26 | Small components. C04 settles the inline-link question the doc renderer avoided; C13 builds on I12 |
+| 4. Structure and order | [#41](https://github.com/coryj627/flutter-a11y-techniques/issues/41) | S06, S08, S09, S10, S11, S12, S16, S17 | Titles, lists, grouping, reading order, hiding, language, and direction. S08 must face lazy lists (FL-011) |
+| 5. Focus and keyboard | [#42](https://github.com/coryj627/flutter-a11y-techniques/issues/42) | I01, I02, I03, I04, I08, V14, V13 | Focus order, management, shortcuts, escape, focus indicators, target size. Needs a way to assert focus visibility |
+| 6. Dialogs and overlays | [#43](https://github.com/coryj627/flutter-a11y-techniques/issues/43) | C08, C09, C10, C11, C14, C16 | All need focus management from batch 5, and dialog titles left open by S05 |
+| 7. Visual preferences | [#44](https://github.com/coryj627/flutter-a11y-techniques/issues/44) | V01, V02, V03, V05, V06, V07, V09, V12 | Contrast, themes, scaling, reflow, orientation, motion. Closes the VAL-10 gaps |
+| 8. Remaining forms | [#45](https://github.com/coryj627/flutter-a11y-techniques/issues/45) | F04, F05, F11, F12, F13, F14, F15, F16, F17, F18 | Pickers, comboboxes, and less common inputs |
+| 9. Navigation and complex components | [#46](https://github.com/coryj627/flutter-a11y-techniques/issues/46) | I07, I13, I14, I15, I16, C07, C17, C27 | Tabs, carousel, charts, navigation, drag alternatives |
+| 10. What batch 0 found | [#47](https://github.com/coryj627/flutter-a11y-techniques/issues/47) | S07, S18, V04, I05, I06, C15, C19 to build; S19, S20, S21, V08, V10, V11, I09, I10, C20, C21, C22, C23, C24, C25, C28, C29, C30, C31 as limitation entries | Seven techniques, most with a limitation on at least one platform, and eighteen short limitation entries (TEC-6). I11 is folded into label-in-name checks and I17 is not applicable. C28, C29, and C30 need plugins, which D30 rules out |
 
 Each batch is a set of pull requests, one technique each, through the same
-gates. The batch list is a plan, not a commitment: batch 0 will move entries
+gates. Each epic has one issue per entry, and each pull request closes its
+entry's issue. The batch list is a plan, not a commitment: batch 0 will move entries
 between "build", "limitation", and "not applicable".

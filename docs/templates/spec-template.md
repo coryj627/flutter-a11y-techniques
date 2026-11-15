@@ -2,6 +2,10 @@
 
 Status: Draft 1 (<date>). Flutter pin: <version from .fvmrc>.
 
+Issue: [#<n>](https://github.com/coryj627/flutter-a11y-techniques/issues/<n>).
+The pull request that delivers this technique says `Closes #<n>` in its
+description.
+
 <One line on what is out of scope and which entry covers it.>
 
 ## 1. Rule

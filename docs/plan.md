@@ -6,6 +6,11 @@ the catalog in [coverage-inventory.md](coverage-inventory.md).
 This plan covers the scaffold and the vertical slice (DEL-1). Batches for the
 remaining catalog are planned after the slice, once its unknowns are settled.
 
+Work is tracked in GitHub issues. Each phase, batch, and task below names the
+issue it closes, and the pull request that delivers it says `Closes #<n>` in
+its description. Issues for work delivered before 2026-11-15 were created
+afterwards and closed against the pull request that delivered them.
+
 ## 1. What was checked for this plan
 
 | Fact | Source | Status |
@@ -118,7 +123,7 @@ limited to what its accessibility checks can see. Confirmed in spike K1.
 | web | Linux | build web, L3 Playwright |
 | android | Linux with emulator | L3 |
 | ios | macOS with simulator | L3 |
-| widgetbook | Linux | builds for web; Android and iOS builds compile-checked |
+| widgetbook | Linux | builds for web; Android and iOS builds compile-checked. The web build runs in `analyze-test` and `web`; the Android and iOS compile check is not built yet, [#72](https://github.com/coryj627/flutter-a11y-techniques/issues/72) |
 
 L4 runs from `tool/` scripts on a Mac and commits transcripts to `evidence/`.
 
@@ -126,7 +131,7 @@ L4 runs from `tool/` scripts on a Mac and commits transcripts to `evidence/`.
 
 Pin with `.fvmrc` to **latest stable minus one** (APP-5, D21). Today that is the
 3.47 line; the installed 3.47.5 is the pin. 3.50.0 has just been released and is
-not adopted until the next stable supersedes it.
+not adopted until the next stable supersedes it. The move to 3.50 is [#86](https://github.com/coryj627/flutter-a11y-techniques/issues/86).
 
 Consequence: the web accessibility fixes the Flutter docs tie to 3.50 (slider
 semantics, named-route landmarks, dialog focus restoration, Escape on tooltips,
@@ -135,12 +140,16 @@ recorded as limitations "fixed in 3.50" (TEC-6) and re-verified on upgrade.
 
 ## 3. Vertical slice
 
+Epic: [#14](https://github.com/coryj627/flutter-a11y-techniques/issues/14), closed.
+
 Techniques: **C01 Button, S05 Headings, F01 Text fields and labels, I12
 Announcements and live regions.** Together they cover a role, a structural
 property, a labelled input with state, and dynamic speech output, which is every
 kind of assertion the four layers need to support.
 
 ### Phase 0 — Scaffold
+
+Issue: [#15](https://github.com/coryj627/flutter-a11y-techniques/issues/15), closed by [#1](https://github.com/coryj627/flutter-a11y-techniques/pull/1).
 
 1. Pin Flutter; create the app for Android, iOS, Web.
 2. Shell: catalog list, technique screen (docs + examples), about screen with the
@@ -153,6 +162,8 @@ Exit: empty catalog app runs on all three platforms; the shell passes L1
 guideline tests.
 
 ### Phase 1 — Spikes
+
+Issue: [#19](https://github.com/coryj627/flutter-a11y-techniques/issues/19), closed by [#1](https://github.com/coryj627/flutter-a11y-techniques/pull/1).
 
 Each spike is a throwaway proof using one button example, and ends with a
 written finding added to this plan.
@@ -331,7 +342,7 @@ It was first described to us by the
 - **Live region speech is captured:** after `ACTION_CLICK` on Save, TalkBack
   spoke `Saved 1 times`.
 - Limits: this focuses nodes directly, so it checks what is spoken per element,
-  not swipe order. Name, role, and hint arrive as separate fragments. Elements
+  not swipe order ([#64](https://github.com/coryj627/flutter-a11y-techniques/issues/64)). Name, role, and hint arrive as separate fragments. Elements
   below the fold were not reached; the test must scroll.
 - Consequence: Android speech can be a gate. It needs an emulator image with
   TalkBack (Google APIs / Play image) and the one-time log setting, both
@@ -394,6 +405,8 @@ scheme in `Info.plist`, and the `androidTest` dependencies and test runner in
 
 ### Phase 2 — First technique end to end (C01 Button)
 
+Issues: [#18](https://github.com/coryj627/flutter-a11y-techniques/issues/18) C01 Button and [#20](https://github.com/coryj627/flutter-a11y-techniques/issues/20) CI jobs, both closed by [#1](https://github.com/coryj627/flutter-a11y-techniques/pull/1).
+
 1. Write the technique spec (`docs/specs/C01-button.md`): examples, defects,
    WCAG criteria, sources, expected assertions per layer.
 2. Read the CVS button docs and the APG and MDN button pages; record sources.
@@ -427,7 +440,7 @@ Done for C01, all passing locally on Flutter 3.47.5:
 First CI runs (2026-11-13): GitHub's `macos-latest` image is macOS 26 with
 Xcode 26.6, which has neither the iOS 27 SDK nor `XCUIVoiceOverService`. The
 VoiceOver test is compiled only on Swift 6.4 or later and skips otherwise, so
-iOS speech is checked locally until a hosted image has Xcode 27.
+iOS speech is checked locally until a hosted image has Xcode 27 ([#78](https://github.com/coryj627/flutter-a11y-techniques/issues/78)).
 
 CI status: analyze-test, web, and Android (API 35 emulator) pass on GitHub.
 The iOS job ran 8 of 9 tree tests green on an iOS 26 simulator; one failed
@@ -443,6 +456,10 @@ keyboard checks are covered in L1 and on web), getting CI green, and filing
 upstream issues for the entries in the limitations log.
 
 ### Phase 3 — Remaining slice techniques
+
+Issues, all closed: [#21](https://github.com/coryj627/flutter-a11y-techniques/issues/21) S05 by [#2](https://github.com/coryj627/flutter-a11y-techniques/pull/2), [#22](https://github.com/coryj627/flutter-a11y-techniques/issues/22) F01 by [#3](https://github.com/coryj627/flutter-a11y-techniques/pull/3), [#23](https://github.com/coryj627/flutter-a11y-techniques/issues/23)
+review follow-ups by [#4](https://github.com/coryj627/flutter-a11y-techniques/pull/4), [#24](https://github.com/coryj627/flutter-a11y-techniques/issues/24) I12 by [#5](https://github.com/coryj627/flutter-a11y-techniques/pull/5), and [#25](https://github.com/coryj627/flutter-a11y-techniques/issues/25) the guide,
+checklist, and templates by [#6](https://github.com/coryj627/flutter-a11y-techniques/pull/6).
 
 S05, F01, I12, each following the phase 2 steps. Extract shared test helpers
 only after the second technique shows what actually repeats.
@@ -461,7 +478,8 @@ with transcripts in `docs/evidence/S05/`. What repeated, and was extracted:
 - The web VoiceOver walk is in `web_tests/vo/vo_helpers.js`.
 
 Not extracted yet: the Android and iOS test classes each carry their own
-`open` helper. Two copies are not enough to see the right shape.
+`open` helper. Two copies are not enough to see the right shape. With seven
+techniques built, extracting it is [#68](https://github.com/coryj627/flutter-a11y-techniques/issues/68).
 
 Building S05 corrected a spike finding (FL-005) and changed the shell: screen
 titles are now level 1 headings.
@@ -500,6 +518,9 @@ The template and checklist are written:
 
 ### Phase 4 — Slice review
 
+Issues: [#26](https://github.com/coryj627/flutter-a11y-techniques/issues/26) the review, closed by [#6](https://github.com/coryj627/flutter-a11y-techniques/pull/6), and [#27](https://github.com/coryj627/flutter-a11y-techniques/issues/27) decisions D22 to D29,
+closed by [#7](https://github.com/coryj627/flutter-a11y-techniques/pull/7).
+
 1. Record where the VAL-5 gate landed per screen reader.
 2. Measure cost per technique and CI time.
 3. Revise requirements and this plan with anything the slice disproved.
@@ -522,6 +543,8 @@ got another spike, which succeeded; the missing visual checks become their own t
 minimum versions follow the pinned Flutter release.
 
 ### The iOS announcement spike (D27)
+
+Issue: [#28](https://github.com/coryj627/flutter-a11y-techniques/issues/28), closed by [#7](https://github.com/coryj627/flutter-a11y-techniques/pull/7).
 
 Done on 2026-11-13, iPhone 17 simulator, iOS 27.0, Xcode 27.1.
 
@@ -567,12 +590,15 @@ later techniques:
   unreliable. It sees only announcements the app posts (which is how Flutter
   implements live regions and `sendAnnouncement` on iOS), not other speech.
 
-The code-in-docs step (D24) is built: `dart run tool/doc_code.dart` copies
+The code-in-docs step (D24, [#29](https://github.com/coryj627/flutter-a11y-techniques/issues/29), closed by [#8](https://github.com/coryj627/flutter-a11y-techniques/pull/8)) is built: `dart run tool/doc_code.dart` copies
 each example's region from `examples.dart` into the "Example code" section of
 its technique doc, and `test/docs/doc_code_test.dart` fails when a doc is out
 of date or an example has no region.
 
 ### Batch 0: the 27 unknown entries
+
+Issues: [#16](https://github.com/coryj627/flutter-a11y-techniques/issues/16) the probes, closed by [#9](https://github.com/coryj627/flutter-a11y-techniques/pull/9), and [#17](https://github.com/coryj627/flutter-a11y-techniques/issues/17) decisions D30 to
+D32, closed by [#10](https://github.com/coryj627/flutter-a11y-techniques/pull/10).
 
 Done on 2026-11-13. A throwaway screen with one fixture per SDK mechanism was
 dumped on web (DOM), Android (`AccessibilityNodeInfo`), and iOS (XCUITest tree
@@ -594,7 +620,7 @@ limitations FL-019 to FL-027, raw output in
 - Those entries are framed as work Flutter has not done yet. Where embedded
   HTML can fill the gap on web, the entry shows it as a labelled workaround,
   a lesser option and not a good example (D32). To build before the first
-  such entry: a third example kind in the catalog model (`ExampleKind` has
+  such entry ([#48](https://github.com/coryj627/flutter-a11y-techniques/issues/48)): a third example kind in the catalog model (`ExampleKind` has
   only good and bad), with its own label in the app, Widgetbook, and docs;
   and a probe of whether an embedded element is reachable by a screen reader
   and the keyboard without the `pointer_interceptor` plugin, which D30 rules
@@ -610,24 +636,51 @@ evidence.
 ### Batch 1: names, roles, and images
 
 S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
+Epic: [#30](https://github.com/coryj627/flutter-a11y-techniques/issues/30).
 
-- S01 Accessible names: built on 2026-11-14. Found FL-028 (a slider has no
+- S01 Accessible names ([#31](https://github.com/coryj627/flutter-a11y-techniques/issues/31), closed by [#11](https://github.com/coryj627/flutter-a11y-techniques/pull/11)): built on 2026-11-14. Found FL-028 (a slider has no
   name on web) and FL-029 (a Material `Slider` adds an empty full-screen
   element on web). Both go to the slider technique (F10) for more work.
-- S02 Informative images: built on 2026-11-14. No new limitation. An
+- S02 Informative images ([#32](https://github.com/coryj627/flutter-a11y-techniques/issues/32), closed by [#12](https://github.com/coryj627/flutter-a11y-techniques/pull/12)): built on 2026-11-14. No new limitation. An
   unlabelled `Image` stays in the tree as an unnamed image on all three
   platforms, which S03 has to deal with.
-- S03 Decorative images: built on 2026-11-14. No new limitation. An empty
+- S03 Decorative images ([#33](https://github.com/coryj627/flutter-a11y-techniques/issues/33), closed by [#13](https://github.com/coryj627/flutter-a11y-techniques/pull/13)): built on 2026-11-14. No new limitation. An empty
   `semanticLabel` does not hide an `Image`, and an unlabelled `Image` in a
   merged row makes the row an image. TalkBack could not be moved by swipe
   or key command on the emulator, so what a swipe stops on is not tested.
-- Next: S04 Functional images.
+- Still to build: S04 Functional images [#34](https://github.com/coryj627/flutter-a11y-techniques/issues/34), next; S13 Roles and traits
+  [#35](https://github.com/coryj627/flutter-a11y-techniques/issues/35); S14 Values and state descriptions [#36](https://github.com/coryj627/flutter-a11y-techniques/issues/36); S15 Hints [#37](https://github.com/coryj627/flutter-a11y-techniques/issues/37); S22
+  Semantics identifiers for testing [#38](https://github.com/coryj627/flutter-a11y-techniques/issues/38).
+
+### Batches 2 to 10
+
+Planned in [slice-review.md, section 5](slice-review.md#5-batches-for-the-remaining-98-entries),
+which names each batch's epic: [#39](https://github.com/coryj627/flutter-a11y-techniques/issues/39) to [#47](https://github.com/coryj627/flutter-a11y-techniques/issues/47). Each epic has one issue per
+technique or limitation entry.
+
+### Tooling and maintenance
+
+Not tied to a batch:
+
+- [#57](https://github.com/coryj627/flutter-a11y-techniques/issues/57) Filter Widgetbook use cases by platform (APP-2). Needed before the
+  first technique that applies to one platform only (S07, C19, V04, I06).
+- [#60](https://github.com/coryj627/flutter-a11y-techniques/issues/60) Move the C01, S01, S02, and S05 web VoiceOver walks to `walkToEnd`.
+- [#64](https://github.com/coryj627/flutter-a11y-techniques/issues/64) Spike: check TalkBack swipe order on the emulator.
+- [#68](https://github.com/coryj627/flutter-a11y-techniques/issues/68) Extract the shared `open` helper from the Android and iOS tests.
+- [#72](https://github.com/coryj627/flutter-a11y-techniques/issues/72) Compile-check the Widgetbook Android and iOS builds in CI.
+- [#78](https://github.com/coryj627/flutter-a11y-techniques/issues/78) Run the iOS VoiceOver tests in CI once a hosted image has Xcode 27.
+  Blocked on GitHub.
+- [#82](https://github.com/coryj627/flutter-a11y-techniques/issues/82) Script the full device and transcript run (D23).
+- [#86](https://github.com/coryj627/flutter-a11y-techniques/issues/86) Move the Flutter pin to 3.50 when the next stable is released.
+  Blocked on Flutter.
+- [#88](https://github.com/coryj627/flutter-a11y-techniques/issues/88) Update the README status line.
 
 ### Late-stage tasks
 
 Asked for by the owner on 2026-11-14. Both come after the technique batches.
+Epic: [#53](https://github.com/coryj627/flutter-a11y-techniques/issues/53).
 
-1. **Flutter accessibility history, by version.** Read every entry of the
+1. **Flutter accessibility history, by version** ([#95](https://github.com/coryj627/flutter-a11y-techniques/issues/95)). Read every entry of the
    [Flutter release notes](https://docs.flutter.dev/release/release-notes)
    and write a log of what each version added or changed for accessibility
    and for the semantics of widgets. It is the frame of reference for the
@@ -636,7 +689,7 @@ Asked for by the owner on 2026-11-14. Both come after the technique batches.
    accessibility issues in the Flutter repository, and record the issue link
    in the entry. This is matching to issues that exist; filing new ones is
    still held back (D25).
-2. **An in-app view of Flutter's open accessibility issues.** Searchable,
+2. **An in-app view of Flutter's open accessibility issues** ([#100](https://github.com/coryj627/flutter-a11y-techniques/issues/100)). Searchable,
    with category toggles for the kind of issue by assistive technology and by
    platform. First choice: read the issues live from the GitHub API. If that
    is not feasible, a GitHub Action builds the list as a data file and the

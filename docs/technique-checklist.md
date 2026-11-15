@@ -72,5 +72,7 @@ behind each one is in [the technique guide](technique-guide.md).
       locally. The full device and transcript run is on a schedule and before
       a release (D23); CI runs every tree test on the pull request
 - [ ] Codex adversarial review returns "approve"
+- [ ] The spec names the technique's issue, and the pull request description
+      says `Closes #<n>` for it
 - [ ] CI is green on the pull request's exact head commit
 - [ ] Codoki's review says "Safe to merge", with every thread answered

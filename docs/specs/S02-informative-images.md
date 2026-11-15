@@ -3,6 +3,8 @@
 Status: Draft 1 (2026-11-14), written with the build. Second technique of
 batch 1 ([plan](../plan.md)). Flutter pin: 3.47.5.
 
+Issue: [#32](https://github.com/coryj627/flutter-a11y-techniques/issues/32), closed by [#12](https://github.com/coryj627/flutter-a11y-techniques/pull/12).
+
 An informative image tells people something. Images that add nothing are
 S03 Decorative images; images that are a control's whole content (an icon
 button, an image link) are S04 Functional images and

@@ -3,6 +3,8 @@
 Status: Draft 1 (2026-11-13), written with the build. Third vertical-slice
 technique ([plan](../plan.md), phase 3). Flutter pin: 3.47.5.
 
+Issue: [#22](https://github.com/coryj627/flutter-a11y-techniques/issues/22), closed by [#3](https://github.com/coryj627/flutter-a11y-techniques/pull/3).
+
 Out of scope here, each with its own entry: input instructions (F02), keyboard
 types (F03), error messages (F04), required fields (F05), and autofill.
 

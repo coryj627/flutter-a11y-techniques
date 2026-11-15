@@ -3,6 +3,8 @@
 Status: Draft 2 (2026-11-12), updated with what the build found (section 9). First vertical-slice technique
 ([plan](../plan.md), phase 2). Flutter pin: 3.47.5.
 
+Issue: [#18](https://github.com/coryj627/flutter-a11y-techniques/issues/18), closed by [#1](https://github.com/coryj627/flutter-a11y-techniques/pull/1).
+
 Toggle buttons are a separate entry (C02). Touch target size (V13) and focus
 indicators (V14) have their own entries; this spec only checks that the good
 examples do not violate them.

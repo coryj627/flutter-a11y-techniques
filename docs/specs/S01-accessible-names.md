@@ -3,6 +3,8 @@
 Status: Draft 1 (2026-11-14), written with the build. First technique of
 batch 1 ([plan](../plan.md)). Flutter pin: 3.47.5.
 
+Issue: [#31](https://github.com/coryj627/flutter-a11y-techniques/issues/31), closed by [#11](https://github.com/coryj627/flutter-a11y-techniques/pull/11).
+
 This spec covers how a control gets its name, shown on checkboxes and
 switches. Names of buttons are in [C01](C01-button.md) and of text fields in
 [F01](F01-text-fields.md). Each control has its own entry for its role,

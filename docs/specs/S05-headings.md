@@ -3,6 +3,8 @@
 Status: Draft 1 (2026-11-13), written with the build. Second vertical-slice
 technique ([plan](../plan.md), phase 3). Flutter pin: 3.47.5.
 
+Issue: [#21](https://github.com/coryj627/flutter-a11y-techniques/issues/21), closed by [#2](https://github.com/coryj627/flutter-a11y-techniques/pull/2).
+
 Screen and page titles are a separate entry (S06). This spec covers the title
 only as the top of the heading outline.
 

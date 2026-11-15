@@ -3,6 +3,8 @@
 Status: Draft 1 (2026-11-13), written with the build. Fourth vertical-slice
 technique ([plan](../plan.md), phase 3). Flutter pin: 3.47.5.
 
+Issue: [#24](https://github.com/coryj627/flutter-a11y-techniques/issues/24), closed by [#5](https://github.com/coryj627/flutter-a11y-techniques/pull/5).
+
 Out of scope here: error messages on form fields (F04), dialogs and alert
 dialogs (C-group), and progress indicators.
 
