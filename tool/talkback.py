@@ -133,6 +133,27 @@ EXPECT = {
     "s13-bad-action-hidden-scan": (["Scan barcode", "Button"], ["Double-tap to activate"]),
     # The defect is on iOS only: on Android this is an ordinary switch.
     "s13-bad-switch-not-enabled-dark": (["Dark mode", "Switch"], ["Disabled"]),
+    # S14 Values and state descriptions. The value is read with the name,
+    # and again, changed, after the control is changed.
+    "s14-good-rating-rating": (["Rating", "3 out of 5"], []),
+    "s14-good-rating-rating-changed": (["Rating", "4 out of 5"], ["3 out of 5"]),
+    "s14-good-step-progress": (["Progress", "Step 2 of 4"], []),
+    "s14-good-step-progress-changed": (["Progress", "Step 3 of 4"], ["Step 2 of 4"]),
+    "s14-good-button-value-repeat": (["Repeat", "Off", "Button"], []),
+    "s14-good-button-value-repeat-changed": (["Repeat", "All", "Button"], []),
+    "s14-good-slider-format-timer": (["Timer", "15 minutes"], ["%", "percent"]),
+    # Bad examples: the defect must be audible.
+    "s14-bad-rating-no-value-rating": (["Rating"], ["out of 5"]),
+    "s14-bad-stale-value-rating": (["Rating", "3 out of 5"], []),
+    # The rating is 5 by then, and the true value must not be heard. Android
+    # says "4 out of 5": the bridge's guess after an increase (FL-038).
+    "s14-bad-stale-value-rating-changed": (["Rating"], ["5 out of 5"]),
+    "s14-bad-step-no-value-one": (["1"], ["Step", "Progress", "Selected"]),
+    "s14-bad-step-no-value-two": (["2"], ["Step", "Progress", "Selected"]),
+    "s14-bad-button-no-value-repeat": (["Repeat", "Button"], ["Off", "All"]),
+    "s14-bad-button-no-value-repeat-changed": (["Repeat", "Button"], ["Off", "All"]),
+    # Both wordings of the state are read.
+    "s14-bad-value-on-switch-alarm": (["Home alarm", "Deactivated", "Switch"], []),
     # S05 Headings. "Heading" must be spoken as the role for a real heading,
     # and must not be for text that only looks or reads like one.
     "s05-good-levels-profile": (["Profile", "Heading"], []),

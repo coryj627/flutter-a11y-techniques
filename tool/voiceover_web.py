@@ -41,6 +41,12 @@ METHODS = {
            "AppleScript after every move: a move that changes the position, or that "
            "speaks a different phrase, is a stop; two moves in a row that do neither are "
            "the end. The activation count is the last element of every example",
+    "S14": "focus the Back button, then `voiceOver.next()` to the end of the screen. "
+           "VoiceOver's last phrase and the position of its cursor are read over "
+           "AppleScript after every move: a move that changes the position, or that "
+           "speaks a different phrase, is a stop; two moves in a row that do neither are "
+           "the end. The four examples that are sliders on web are walked only as far "
+           "as the slider, and are judged in Chromium only",
     "I12": "press the example's button with the keyboard, then poll VoiceOver's last phrase "
            "over AppleScript for what it was given to announce; Chromium only, because "
            "Playwright's WebKit build passes no live region changes to VoiceOver",

@@ -1,0 +1,118 @@
+// S14 probe (throwaway, not committed): where Semantics(value:) goes.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  int _rating = 3;
+  bool _on = true;
+
+  Widget _box(String text) => ExcludeSemantics(
+    child: SizedBox(width: 180, height: 40, child: Align(alignment: Alignment.centerLeft, child: Text(text))),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    void up() => setState(() => _rating = (_rating + 1).clamp(0, 5));
+    void down() => setState(() => _rating = (_rating - 1).clamp(0, 5));
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Wrap(
+            spacing: 4,
+            runSpacing: 2,
+            children: [
+              Semantics(container: true, label: 'v01 Rating', value: '3 out of 5', child: _box('v01')),
+              Semantics(
+                container: true,
+                label: 'v02 Rating',
+                value: '$_rating out of 5',
+                increasedValue: '${(_rating + 1).clamp(0, 5)} out of 5',
+                decreasedValue: '${(_rating - 1).clamp(0, 5)} out of 5',
+                onIncrease: up,
+                onDecrease: down,
+                child: _box('v02 adjustable'),
+              ),
+              Semantics(
+                container: true,
+                slider: true,
+                label: 'v03 Rating',
+                value: '$_rating out of 5',
+                increasedValue: '${(_rating + 1).clamp(0, 5)} out of 5',
+                decreasedValue: '${(_rating - 1).clamp(0, 5)} out of 5',
+                onIncrease: up,
+                onDecrease: down,
+                child: _box('v03 slider'),
+              ),
+              Semantics(container: true, label: 'v04 Progress', value: 'Step 2 of 4', child: _box('v04')),
+              Semantics(
+                container: true,
+                button: true,
+                enabled: true,
+                label: 'v05 Notifications',
+                value: _on ? 'enabled' : 'disabled',
+                onTap: () => setState(() => _on = !_on),
+                child: _box('v05 button value'),
+              ),
+              Semantics(
+                container: true,
+                toggled: _on,
+                enabled: true,
+                label: 'v06 Alarm',
+                value: _on ? 'Activated' : 'Deactivated',
+                onTap: () => setState(() => _on = !_on),
+                child: _box('v06 switch value'),
+              ),
+              Semantics(
+                container: true,
+                checked: _on,
+                enabled: true,
+                label: 'v07 Alarm',
+                value: _on ? 'Activated' : 'Deactivated',
+                onTap: () => setState(() => _on = !_on),
+                child: _box('v07 checkbox value'),
+              ),
+              SizedBox(
+                width: 380,
+                child: MergeSemantics(
+                  child: Semantics(
+                    value: _on ? 'Activated' : 'Deactivated',
+                    child: CheckboxListTile(
+                      title: const Text('v08 Alarm tile'),
+                      value: _on,
+                      onChanged: (v) => setState(() => _on = v!),
+                    ),
+                  ),
+                ),
+              ),
+              Semantics(container: true, button: true, enabled: true, label: 'v09 Cart, 3 items', onTap: () {}, child: _box('v09')),
+              Semantics(container: true, label: 'v10 Storage', value: '40%', child: _box('v10 percent')),
+              Semantics(
+                container: true,
+                label: 'v11 Storage',
+                value: '40',
+                minValue: '0',
+                maxValue: '100',
+                role: SemanticsRole.progressBar,
+                child: _box('v11 progress'),
+              ),
+              Semantics(container: true, button: true, enabled: true, selected: true, label: 'v12 Step 2', value: 'current', onTap: () {}, child: _box('v12')),
+              Semantics(container: true, label: 'v13 end', child: _box('v13')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
