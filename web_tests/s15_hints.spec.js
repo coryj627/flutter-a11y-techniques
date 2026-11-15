@@ -28,8 +28,14 @@ async function tabTo(page, locator, max = 8) {
   return false;
 }
 
-/** Every element on the page that has a description of either kind. */
-const described = (page) => page.locator('[aria-description],[aria-describedby]');
+/**
+ * Every element on the page that carries a hint: `aria-description`, or the
+ * engine's fallback, `aria-describedby` pointing at a `flt-hint-` element.
+ * Off Apple platforms the route element has an `aria-describedby` of its
+ * own, pointing at the screen's title; that is not a hint.
+ */
+const described = (page) =>
+  page.locator('[aria-description],[aria-describedby^="flt-hint-"]');
 
 // On web a hint is aria-description: the accessible description of the
 // element, apart from its name.
@@ -83,7 +89,10 @@ test.describe('fields', () => {
     await expect(input).toHaveAccessibleName('Username');
     await expect(input).toHaveAccessibleDescription(rule);
     await expect(page.getByText(rule, { exact: true })).toHaveCount(1);
-    await input.pressSequentially('a');
+    // A click puts the field in editing mode; typing follows a frame later.
+    await input.click();
+    await page.waitForTimeout(300);
+    await page.keyboard.type('a', { delay: 40 });
     await expectCount(page, 'good-field', 1);
     await expect(input).toHaveAccessibleDescription(rule);
   });

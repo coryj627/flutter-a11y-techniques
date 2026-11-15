@@ -21,6 +21,7 @@ fixture is `probe.dart.txt` (a second entry point, not part of the app).
 | 14 | button with a hint and no label | button with no name and no description | `Button` whose description is the hint | "h14 Adds this item to your favorites. Button": the hint is read as the name |
 | 15 | link with a hint | `<a>`, `aria-description` | `Button`, "h15 Terms, Opens in the browser." | "h15 Terms Link Opens in the browser." |
 | 16 | adjustable node with a hint | `aria-description` on the element around the `<input type="range">`, not on the slider | `SeekBar`, "3, h16 Volume, Changes the media volume." | "h16 Volume 3 adjustable Changes the media volume. Swipe up or do…" |
+| 17 | `Semantics(hint:)` around a `TextField` with no label (`probe2.dart.txt`, web only) | `<input>` with no name and `aria-description` the hint, in Chromium and WebKit | not run | not run |
 
 ## What it shows
 
@@ -35,7 +36,8 @@ fixture is `probe.dart.txt` (a second entry point, not part of the app).
   the button is a semantics container. On the web that node has no name and
   is not rendered, so the hint is lost.
 - **A hint with no label is dropped on the web** (14) and is read as the
-  name on Android and iOS.
+  name on Android and iOS. A text field is the exception on the web: its
+  hint is set on the `<input>` with or without a label (17).
 - **`helperText` and `hintText` are not hints** in the semantics sense
   (06, 07).
 - **`onTapHint` is a different thing** (09): it is the label of the tap

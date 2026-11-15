@@ -61,8 +61,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-038](#fl-038) | On Android an adjustable node shows `increasedValue` as its value straight after the action | Android | Confirmed (source read) |
 | [FL-039](#fl-039) | On Android a hint is the end of the content description, not a hint | Android | Confirmed (source read) |
 | [FL-040](#fl-040) | `Semantics(hint:)` around a Material button stays on a node of its own | All | Confirmed |
-| [FL-041](#fl-041) | On web a hint on a node with no label is not rendered | Web | Confirmed (source read) |
-| [FL-042](#fl-042) | An obscured text field is a plain text field for VoiceOver on iOS | iOS | Observed (source read) |
+| [FL-041](#fl-041) | On web a hint on a node with no label is not rendered, unless the node is a text field | Web | Confirmed (source read) |
+| [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed once; not explored |
 
 ---
 
@@ -1110,19 +1110,24 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-041
 
-**On web a hint on a node with no label is not rendered.**
+**On web a hint on a node with no label is not rendered, unless the node is a text field.**
 
 - Status: Confirmed, Flutter 3.47.5, Web (Chromium and WebKit DOM). Seen in
-  the [S15 probe](evidence/probes/s15/README.md) (fixtures 02 and 14) and
-  asserted through `bad-hint-detached` in `web_tests/s15_hints.spec.js`.
+  the [S15 probe](evidence/probes/s15/README.md) (fixtures 02, 14, and 17)
+  and asserted through `bad-hint-detached` in `web_tests/s15_hints.spec.js`.
   Engine source read: `LabelAndValue.update()` in
   `lib/web_ui/lib/src/engine/semantics/label_and_value.dart`, which returns
-  before `_updateHintDescription` when the computed label is null.
-- What happens: a hint becomes `aria-description` on the element. That
-  line is reached only when the node has a label, a value, or a tooltip.
-  A node with a hint alone gets no description, and since it has no text
-  either, the hint is nowhere in the page. Android and iOS read the hint
-  of such a node as if it were its name.
+  before `_updateHintDescription` when the computed label is null; and
+  `text_field.dart`, which sets `aria-description` on the `<input>` on a
+  path of its own.
+- What happens: for a node that is not a text field, a hint becomes
+  `aria-description` on the element, and that line is reached only when
+  the node has a label, a value, or a tooltip. A button or plain node with
+  a hint alone gets no description, and since it has no text either, the
+  hint is nowhere in the page. A text field is different: its hint is set
+  on the `<input>` whether or not the field has a label (fixture 17). On
+  Android and iOS the hint of an unnamed button is read as if it were its
+  name.
 - Why it matters: the three platforms disagree about a mistake. A button
   with a hint and no label is "Adds this item to your favorites, Button"
   on Android and iOS and an unnamed button on the web. Neither is right,
@@ -1136,27 +1141,25 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-042
 
-**An obscured text field is a plain text field for VoiceOver on iOS.**
+**An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS.**
 
-- Status: Observed, Flutter 3.47.5, iOS 27.0 simulator, in the first build
-  of the S15 field examples, which were password fields. No test asserts
-  it now: those examples were changed to an ordinary field. Engine source
-  read: `SemanticsObject.mm` and `TextInputSemanticsObject.mm` under
-  `shell/platform/darwin/ios/framework/Source` have no reference to the
-  obscured flag.
-- What happens: `TextField(obscureText: true)` is reported by XCUITest as a
-  text field (`XCUIElementType.textField`), not a secure text field, and
-  VoiceOver reads "Password, Text field". A native `SecureField` is read as
-  "Secure text field". On Android TalkBack read "password. Edit box" for
-  the same field.
-- Why it matters: "secure" tells a VoiceOver user that what they type will
-  not be echoed or shown. Without it the field sounds like any other.
-- On the web the same field was a secure field to VoiceOver ("This is a
-  secure text field").
-- Found while building S15. It
-  belongs to the text field technique ([F01](techniques/F01.md)) and was
-  not explored further here: what VoiceOver echoes while typing in such a
-  field was not tested.
-- Workaround: none found in the SDK. Flutter has not added a secure text
-  field trait on iOS yet.
+- Status: Observed once, Flutter 3.47.5, iOS 27.0 simulator, in the first
+  build of the S15 field examples, which were password fields. Those
+  examples were changed to an ordinary field, so no test, fixture, or
+  transcript in the repository shows this now. Not explored.
+- What was seen: for `TextField(obscureText: true)` with VoiceOver's cursor
+  moved onto it and the field not being edited, XCUITest reported
+  `XCUIElementType.textField` (not `.secureTextField`) and VoiceOver said
+  "Password, Text field". On the web the same field was a secure field to
+  VoiceOver ("This is a secure text field"), and TalkBack read "password.
+  Edit box".
+- What is not known: what the field is while it is being edited. Flutter's
+  iOS text input plugin sets `secureTextEntry` from `obscureText`, and a
+  focused field is represented by the plugin's input view, so the role and
+  what VoiceOver echoes may differ there. That was not tested.
+- Why it could matter: "secure" tells a VoiceOver user that what they type
+  will not be echoed or shown.
+- Next: this belongs to the text field technique ([F01](techniques/F01.md))
+  or F03. It needs a probe of the element type and of VoiceOver's speech
+  before and during editing before anything is concluded.
 - Upstream issue: not searched yet (D25).

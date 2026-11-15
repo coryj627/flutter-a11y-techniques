@@ -17,7 +17,9 @@ final s15Hints = Technique(
       note:
           'Android has no separate hint. Flutter adds the hint to the end of '
           'the control\'s description, so TalkBack reads it as part of the '
-          'name and it cannot be turned off (limitation FL-039).',
+          'name and it cannot be turned off (limitation FL-039). A text '
+          'field is read with its name and hint only while it is empty '
+          '(limitation FL-015).',
     ),
     AppPlatform.ios: PlatformStatus.applies(),
     AppPlatform.web: PlatformStatus.applies(),

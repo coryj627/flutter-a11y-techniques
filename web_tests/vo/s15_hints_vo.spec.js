@@ -34,25 +34,14 @@ const EXAMPLES = {
   'bad-hint-only': [`Username ${RULE} edit text`],
 };
 
-// On a text field with a description VoiceOver follows the field's own
-// speech at once with its help message ("You are currently on a text
-// field…"), and that message is then its last phrase. Guidepup's log has
-// what was spoken for the move itself. It is used for such a stop only,
-// and only when it agrees with the walk at every other stop, so the two
-// records are known to line up.
-const HELP = /^You are currently on /;
-function withoutHelp(stops, log) {
-  const aligned = stops.every((stop, i) => HELP.test(stop) || stop === log[i]);
-  return aligned ? stops.map((stop, i) => (HELP.test(stop) ? log[i] : stop)) : stops;
-}
-
 for (const [slug, expected] of Object.entries(EXAMPLES)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
     await page.goto(`/#/t/S15/${slug}`, { waitUntil: 'load' });
     await expect(page.locator(`[flt-semantics-identifier="s15-${slug}-count"]`)).toBeVisible();
-    const walk = await walkToEnd(page, voiceOver, browserName);
-    const reachedEnd = walk.reachedEnd;
-    const stops = withoutHelp(walk.stops, await voiceOver.spokenPhraseLog());
+    // VoiceOver follows a described text field with its help message at
+    // once; at such a move the walk records Guidepup's phrase for that move
+    // (vo_helpers.js, phraseForMove).
+    const { stops, reachedEnd } = await walkToEnd(page, voiceOver, browserName, 40, { loggedForHelp: true });
     console.log(`S15VO ${browserName} ${slug} | ${stops.join(' / ')}`);
     expect(reachedEnd, `${slug}: the walk reached the end of the screen`).toBe(true);
     const start = stops.indexOf(EXAMPLE);

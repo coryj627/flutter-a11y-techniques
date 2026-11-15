@@ -14,15 +14,17 @@ Result: PASS
 | Element | Spoken |
 | --- | --- |
 | `s15-good-result-favorite` | Favorite, /   / Adds this item to your favorites. / Button / Double-tap to activate |
-| `s15-good-row-song` | Double-tap to activate / Night Ferry The Lanterns, /   / Plays the song. / Button |
+| `s15-good-row-song` | Night Ferry The Lanterns, /   / Plays the song. / Button |
 | `s15-good-cupertino-share` | Share, /   / Shares the current page. / Button / Double-tap to activate |
 | `s15-good-custom-archive` | Archive, /   / Moves this message out of the inbox. / Button / Double-tap to activate |
 | `s15-bad-gesture-favorite` | Favorite, /   / Double tap to add this item to your favorites. / Button |
 | `s15-bad-repeats-label-delete` | Delete, /   / Delete / Button / Double-tap to activate |
 | `s15-bad-control-type-share` | Share, /   / This button shares the current page. / Button / Double-tap to activate |
 | `s15-bad-no-hint-song` | Night Ferry The Lanterns / Button / Double-tap to activate |
-| `s15-good-field-username` | Username, /   / 3 to 12 letters or numbers. / Edit box |
+| `s15-good-field-username` | Username, /   / 3 to 12 letters or numbers. / Edit box / Double-tap to edit text. Actions available, use Tap with 3 fingers to view |
 | `s15-good-field-rule` | 3 to 12 letters or numbers. |
+| `s15-good-field-username-filled` | Editing.  / abc / Edit box / Actions available, use Tap with 3 fingers to view |
 | `s15-bad-hint-detached-hint` | Adds this item to your favorites. |
 | `s15-bad-hint-detached-favorite` | Favorite / Button / Double-tap to activate |
 | `s15-bad-hint-only-username` | Username, /   / 3 to 12 letters or numbers. / Edit box |
+| `s15-bad-hint-only-username-filled` | Editing.  / abc / Edit box / Actions available, use Tap with 3 fingers to view |

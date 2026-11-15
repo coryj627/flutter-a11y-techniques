@@ -1,7 +1,7 @@
 // The VoiceOver helpers must fail loudly. These checks need macOS (for
 // osascript) but not VoiceOver itself.
 import { test, expect } from '@playwright/test';
-import { runAppleScript, stopsToEnd } from './vo/vo_helpers.js';
+import { phraseForMove, runAppleScript, stopsToEnd } from './vo/vo_helpers.js';
 
 test.skip(process.platform !== 'darwin', 'osascript is macOS only');
 
@@ -79,4 +79,36 @@ test('a read that fails ends the walk with its error, not with an end of screen'
     return { phrase, position };
   };
   await expect(stopsToEnd(step, 'start')).rejects.toThrow(/AppleScript failed/);
+});
+
+// phraseForMove: the phrase logged for a move replaces VoiceOver's help
+// message, and nothing else.
+const HELP = 'You are currently on a text field, inside of web content.';
+
+test('a help message is replaced by the phrase logged for the same move', () => {
+  expect(phraseForMove(HELP, 'Username edit text')).toBe('Username edit text');
+  expect(phraseForMove('Save button', 'something else')).toBe('Save button');
+  // A failed read of the log is an empty phrase, not the help message.
+  expect(phraseForMove(HELP, '')).toBe('');
+});
+
+test('the logged phrase stays with its move when an earlier move is dropped', async () => {
+  // The first move neither moves the cursor nor speaks anew, so it is not a
+  // stop. The field comes two moves later and still gets its own phrase.
+  const made = [
+    { direct: '', logged: 'Back button', position: 'start' },
+    { direct: 'heading level 2 Example', logged: 'heading level 2 Example', position: 'a' },
+    { direct: HELP, logged: 'Username edit text', position: 'b' },
+    { direct: 'Changes: 0', logged: 'Changes: 0', position: 'c' },
+  ];
+  let i = 0;
+  const step = async () => {
+    const move = made[Math.min(i++, made.length - 1)];
+    return { phrase: phraseForMove(move.direct, move.logged), position: move.position };
+  };
+  const result = await stopsToEnd(step, 'start');
+  expect(result).toEqual({
+    stops: ['heading level 2 Example', 'Username edit text', 'Changes: 0'],
+    reachedEnd: true,
+  });
 });

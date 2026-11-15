@@ -641,8 +641,8 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
   end of the content description), FL-040 (`Semantics(hint:)` around a
   Material button stays on a node of its own; `MergeSemantics` fixes it),
   FL-041 (on web a hint on a node with no label is not rendered), and FL-042
-  (an obscured text field is a plain text field for VoiceOver on iOS, which
-  goes to F01's follow-up). VoiceOver on iOS does not read a hint equal to
+  (an obscured text field was read as a plain text field by VoiceOver on
+  iOS; seen once, not explored, goes to F01's follow-up). VoiceOver on iOS does not read a hint equal to
   the label. Field instructions go to F02, tooltips to C12, `onTapHint` to
   I06.
 - Next: S22 Semantics identifiers for testing.

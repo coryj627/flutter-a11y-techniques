@@ -130,6 +130,39 @@ class S15HintsTest {
         assertEquals(VIEW, rule.single().type())
     }
 
+    /** The text in a field; an empty EditText reports its hint as its text. */
+    private fun value(id: String): String = node(id).let {
+        if (it.isShowingHintText) "" else it.text?.toString().orEmpty()
+    }
+
+    private fun type(id: String, text: String) {
+        assertTrue("$id click", node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        Thread.sleep(1_000)
+        inst.sendStringSync(text)
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end && value(id) != text) Thread.sleep(100)
+        assertEquals("$id value", text, value(id))
+        // Give the rest of the field's semantics time to follow the value.
+        Thread.sleep(1_500)
+    }
+
+    @Test
+    fun aFilledFieldHasTheRuleInHintTextOnly() {
+        // Label and hint are only ever in the node's hint text. TalkBack
+        // reads hint text for an empty field and stops once the field has a
+        // value (FL-015); the walk records that.
+        open("good-field")
+        val id = "s15-good-field-username"
+        assertEquals("", value(id))
+        type(id, "abc")
+        val field = node(id)
+        assertEquals("abc", field.text?.toString())
+        assertEquals("Username, $RULE", field.hintText?.toString())
+        assertTrue(field.name().isEmpty())
+        // The rule on the screen is still an element of its own.
+        assertEquals(1, all().count { it.name() == RULE })
+    }
+
     @Test
     fun badHintDetachedHasTheHintOnANodeOfItsOwn() {
         open("bad-hint-detached")
@@ -192,6 +225,10 @@ class S15HintsTest {
                     "s15-bad-hint-detached-favorite" to { buttons().single() }),
                 "bad-hint-only" to listOf(byId("s15-bad-hint-only-username")),
             )
+        // The fields are read a second time with text in them (FL-015).
+        val filled = mapOf(
+            "good-field" to "s15-good-field-username",
+            "bad-hint-only" to "s15-bad-hint-only-username")
         for ((slug, elements) in walk) {
             open(slug)
             // Let TalkBack finish announcing the new screen first.
@@ -199,6 +236,24 @@ class S15HintsTest {
             for ((marker, find) in elements) {
                 Log.i("S15TB", "FOCUS $marker")
                 talkBackFocus(marker, find)
+                Thread.sleep(6_000)
+            }
+            val field = filled[slug]
+            if (field != null) {
+                // Move focus away, fill the field, and read it again.
+                Log.i("S15TB", "END $slug")
+                type(field, "abc")
+                // Put the keyboard away: with it up, TalkBack said nothing,
+                // or only "Editing", when its focus came back to the field.
+                device.pressBack()
+                // TalkBack says "keyboard hidden"; let it finish.
+                Thread.sleep(5_000)
+                // Typing leaves TalkBack on the field, and focusing a node
+                // that already has focus says nothing. Move away first.
+                talkBackFocus("the Example heading") { all().first { it.name() == "Example" } }
+                Thread.sleep(4_000)
+                Log.i("S15TB", "FOCUS $field-filled")
+                talkBackFocus("$field (filled)") { node(field) }
                 Thread.sleep(6_000)
             }
             Log.i("S15TB", "END $slug")

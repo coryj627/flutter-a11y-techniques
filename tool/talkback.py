@@ -161,6 +161,9 @@ EXPECT = {
     "s15-good-cupertino-share": (["Share", "Shares the current page", "Button"], []),
     "s15-good-custom-archive": (["Archive", "Moves this message out of the inbox", "Button"], []),
     "s15-good-field-username": (["Username", "3 to 12 letters or numbers"], []),
+    # Once the field has text TalkBack reads neither its name nor its hint
+    # (FL-015). Written to fail when either starts being spoken.
+    "s15-good-field-username-filled": (["abc", "Edit box"], ["Username", "3 to 12"]),
     "s15-good-field-rule": (["3 to 12 letters or numbers"], ["Username"]),
     # Bad examples: the defect must be audible.
     # TalkBack's own "Double-tap to activate" follows after a pause and is
@@ -175,6 +178,7 @@ EXPECT = {
     "s15-bad-hint-detached-favorite": (["Favorite", "Button"], ["Adds this item"]),
     # Read as the good field is: the tree test finds no rule on the screen.
     "s15-bad-hint-only-username": (["Username", "3 to 12 letters or numbers"], []),
+    "s15-bad-hint-only-username-filled": (["abc", "Edit box"], ["Username", "3 to 12"]),
     # S05 Headings. "Heading" must be spoken as the role for a real heading,
     # and must not be for text that only looks or reads like one.
     "s05-good-levels-profile": (["Profile", "Heading"], []),

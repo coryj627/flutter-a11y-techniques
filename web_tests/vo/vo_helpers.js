@@ -117,16 +117,35 @@ export async function stopsToEnd(step, start, max = 40) {
  * Both are read from VoiceOver directly over AppleScript, which throws when
  * a read fails. Guidepup's own record of the speech is not used here: it
  * turns a failed read into an empty phrase, and an empty phrase at an
- * unchanged position is what the end of the screen looks like.
+ * unchanged position is what the end of the screen looks like. The one
+ * exception is `loggedForHelp`, see phraseForMove.
  */
-export async function walkToEnd(page, voiceOver, browserName, max = 40) {
+export async function walkToEnd(page, voiceOver, browserName, max = 40, { loggedForHelp = false } = {}) {
   await startAtBack(page, browserName, false);
   const step = async () => {
     await voiceOver.next();
-    return { phrase: await lastPhrase(), position: await cursorBounds() };
+    let phrase = await lastPhrase();
+    if (loggedForHelp && VO_HELP.test(phrase)) {
+      const logged = (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim();
+      phrase = phraseForMove(phrase, logged);
+    }
+    return { phrase, position: await cursorBounds() };
   };
   return stopsToEnd(step, await cursorBounds(), max);
 }
+
+/** How VoiceOver's own help message for the element under its cursor starts. */
+export const VO_HELP = /^You are currently on /;
+
+/**
+ * What to record for one move. On a text field with a description VoiceOver
+ * follows the field's own speech at once with its help message ("You are
+ * currently on a text field…"), which is then its last phrase. `logged` is
+ * what Guidepup recorded for the same move, read straight after it, so the
+ * two belong to one command. It is used only in place of a help message: a
+ * failed read there is an empty phrase, which no expected list contains.
+ */
+export const phraseForMove = (direct, logged) => (VO_HELP.test(direct) ? logged : direct);
 
 // --- Announcements -------------------------------------------------------
 // Guidepup only records speech that follows one of its own commands, so it

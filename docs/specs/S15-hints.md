@@ -27,8 +27,12 @@ in the hint alone.
 
 On Android a hint is not kept apart: it is the end of the control's
 description, read with the name and before the role
-([FL-039](../flutter-limitations.md#fl-039)). The catalog carries a note on
-the Android platform.
+([FL-039](../flutter-limitations.md#fl-039)). A text field's name and hint
+are read by TalkBack only while the field is empty
+([FL-015](../flutter-limitations.md#fl-015)), so on Android `good-field`
+gives the rule on focus for an empty field only; after that the rule is
+reached as the text under the field. The catalog carries a note on the
+Android platform for both.
 
 ## 3. WCAG 2.2 success criteria
 
@@ -102,9 +106,9 @@ stray node by its hint.
 | --- | --- |
 | L1 widget tests | Every button: its label, its hint, the button flag and tap action, that no other node has a hint, and that tap, the semantics action, Enter, and Space all work and leave label and hint unchanged. Good hints: the wording rules R3 to R5. Good field: label, hint, a text field, and the rule as one separate node. Bad: the gesture, the repeated name, and the control type in the hint; the detached hint on a node with no label and no action, and none on the button; the rule in the hint and no text on the screen. Guidelines in light and dark and 200% text for good examples |
 | L3 web | Every button: role, accessible name, accessible description, `aria-description`, that nothing else is described, and click, Enter, and Space. Fields: name, description, and the rule as text or not. `bad-hint-detached`: no description on the button and the hint nowhere in the page |
-| L3 Android | Every button: the `Button` class and the description "name, hint"; empty hint text, tooltip, and state description; the click action. Fields: `EditText` with the hint text "Username, rule", and the rule as a separate node or not. `bad-hint-detached`: a `View` with the hint and no click action, and a button without it |
+| L3 Android | Every button: the `Button` class and the description "name, hint"; empty hint text, tooltip, and state description; the click action. Fields: `EditText` with the hint text "Username, rule", before and after text is typed, and the rule as a separate node or not. `bad-hint-detached`: a `View` with the hint and no click action, and a button without it |
 | L3 iOS | Every button: type, and a label without the hint. XCUITest cannot read a hint. Fields: label, and the rule as static text or not. `bad-hint-detached`: the hint is in no label |
-| L4 TalkBack | What is read with focus on each control |
+| L4 TalkBack | What is read with focus on each control, and for the two fields again with text in them |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count, compared as a whole list. This is the only iOS layer that sees a hint |
 | L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit. At a text field the phrase is taken from Guidepup's log (section 7) |
 
@@ -126,14 +130,17 @@ The probe that came first is in [evidence/probes/s15](../evidence/probes/s15/).
   container, so the hint stays on a node of its own. `MergeSemantics` joins
   them, and `good-result` uses it. `CupertinoButton` and `ListTile` are not
   containers and take the hint directly.
-- **On the web a node with a hint and no name gets nothing**
-  ([FL-041](../flutter-limitations.md#fl-041)), which is why the detached
-  hint disappears there.
+- **On the web a node with a hint and no name gets nothing, unless it is
+  a text field** ([FL-041](../flutter-limitations.md#fl-041)), which is why
+  the detached hint disappears there.
 - **VoiceOver on iOS does not read a hint that is the same as the label.**
   `bad-repeats-label` is "Delete, Button" there. TalkBack reads "Delete,
   Delete, Button", and VoiceOver on the web "Delete Delete button".
 - **A text field's hint is hint text on Android**: "Username, 3 to 12
-  letters or numbers." TalkBack reads it with the field.
+  letters or numbers." TalkBack reads it with the field while the field is
+  empty. With "abc" typed it reads "Editing, abc, Edit box" and neither the name nor
+  the rule ([FL-015](../flutter-limitations.md#fl-015)); the walk reads both
+  fields a second time, filled, to record that.
 - **On the web VoiceOver follows a described text field with its help
   message** ("You are currently on a text field, inside of web content…")
   straight away, so that message, not the field, is VoiceOver's last
@@ -142,9 +149,10 @@ The probe that came first is in [evidence/probes/s15](../evidence/probes/s15/).
   other stop. The field is read "Username 3 to 12 letters or numbers. edit
   text".
 - **The field examples were password fields at first, and were changed**
-  to keep this technique to hints. That build showed that an obscured
-  field is a plain text field on iOS
-  ([FL-042](../flutter-limitations.md#fl-042)).
+  to keep this technique to hints. In that build VoiceOver on iOS read the
+  obscured field, not being edited, as a plain text field
+  ([FL-042](../flutter-limitations.md#fl-042)); that was seen once and not
+  explored.
 - **`helperText` and `hintText` on `InputDecoration` are not semantic
   hints** (probe, fixtures 06 and 07). Helper text is a separate element;
   hint text was not exposed for an empty, unfocused field with a label.
