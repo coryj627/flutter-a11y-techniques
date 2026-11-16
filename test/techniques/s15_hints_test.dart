@@ -1,82 +1,17 @@
-import 'dart:ui' show Tristate;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_a11y_techniques/app/app.dart';
-import 'package:flutter_a11y_techniques/catalog/registry.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/s15_hints/s15_hints.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for S15 Hints (docs/specs/S15-hints.md).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([s15Hints]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/S15/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+final _open = exampleOpener(s15Hints);
 
-Finder _id(String id) => find.byKey(ValueKey<String>(id));
-
-/// The semantics node that stands for the element with [id]: the one whose
-/// merged data has the identifier, and that is not merged into a parent.
-FinderBase<SemanticsNode> _node(String id) => find.semantics.byPredicate(
-  (node) =>
-      !node.isMergedIntoParent && node.getSemanticsData().identifier == id,
-);
-
-/// What the node with [id] exposes now. Read again after every change.
-SemanticsData _data(String id) =>
-    _node(id).evaluate().single.getSemanticsData();
-
-int _count(WidgetTester tester, String slug) {
-  final text = tester.widget<Text>(
-    find.descendant(of: _id('s15-$slug-count'), matching: find.byType(Text)),
-  );
-  return int.parse(text.data!.split(': ').last);
-}
-
-/// Tabs until [id] has focus. The Back button comes first.
-Future<void> _tabTo(WidgetTester tester, String id) async {
-  var reached = false;
-  for (var i = 0; i < 8 && !reached; i++) {
-    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-    await tester.pump();
-    reached = _data(id).flagsCollection.isFocused == Tristate.isTrue;
-  }
-  expect(reached, isTrue, reason: 'Tab did not reach $id');
-}
-
-/// Every node on the screen that is not merged into a parent, in traversal
-/// order.
-List<SemanticsData> _nodes(WidgetTester tester) {
-  final found = <SemanticsData>[];
-  void visit(SemanticsNode node) {
-    if (!node.isMergedIntoParent) found.add(node.getSemanticsData());
-    node.visitChildren((child) {
-      visit(child);
-      return true;
-    });
-  }
-
-  visit(
-    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
-  );
-  return found;
-}
+int _count(WidgetTester tester, String slug) =>
+    countOf(tester, 's15-$slug-count');
 
 const _good = [
   'good-result',
@@ -199,16 +134,19 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'good-field');
       const id = 's15-good-field-username';
-      expect(_data(id).label, 'Username');
-      expect(_data(id).hint, _rule);
-      expect(_data(id).flagsCollection.isTextField, isTrue);
+      expect(dataById(id).label, 'Username');
+      expect(dataById(id).hint, _rule);
+      expect(dataById(id).flagsCollection.isTextField, isTrue);
       // The visible rule is an element of its own, not part of the field.
       expect(find.text(_rule), findsOneWidget);
-      expect(_nodes(tester).where((n) => n.label == _rule), hasLength(1));
+      expect(
+        semanticsNodes(tester).where((n) => n.label == _rule),
+        hasLength(1),
+      );
       await tester.enterText(find.byType(TextField), 'a');
       await tester.pump();
       expect(_count(tester, 'good-field'), 1);
-      expect(_data(id).hint, _rule);
+      expect(dataById(id).hint, _rule);
       handle.dispose();
     });
   });
@@ -221,14 +159,14 @@ void main() {
       ) async {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
-        final data = _data(id);
+        final data = dataById(id);
         expect(data.label, name);
         expect(data.hint, hint);
         expect(data.flagsCollection.isButton, isTrue);
         expect(data.hasAction(SemanticsAction.tap), isTrue);
         // The hint is on the button and nowhere else.
         expect(
-          _nodes(tester).where((n) => n.hint.isNotEmpty),
+          semanticsNodes(tester).where((n) => n.hint.isNotEmpty),
           hasLength(hint.isEmpty ? 0 : 1),
         );
         handle.dispose();
@@ -239,13 +177,13 @@ void main() {
       ) async {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
-        await tester.tap(_id(id));
+        await tester.tap(byId(id));
         await tester.pumpAndSettle();
         expect(_count(tester, slug), 1);
-        tester.semantics.tap(_node(id));
+        tester.semantics.tap(nodeById(id));
         await tester.pumpAndSettle();
         expect(_count(tester, slug), 2);
-        await _tabTo(tester, id);
+        await tabTo(tester, id);
         await tester.sendKeyEvent(LogicalKeyboardKey.enter);
         await tester.pumpAndSettle();
         expect(_count(tester, slug), 3);
@@ -253,8 +191,8 @@ void main() {
         await tester.pumpAndSettle();
         expect(_count(tester, slug), 4);
         // Using the control does not change what it says.
-        expect(_data(id).label, name);
-        expect(_data(id).hint, hint);
+        expect(dataById(id).label, name);
+        expect(dataById(id).hint, hint);
         handle.dispose();
       });
     }
@@ -265,7 +203,7 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-gesture');
       expect(
-        _data('s15-bad-gesture-favorite').hint.toLowerCase(),
+        dataById('s15-bad-gesture-favorite').hint.toLowerCase(),
         contains('double tap'),
       );
       handle.dispose();
@@ -274,7 +212,7 @@ void main() {
     testWidgets('bad-repeats-label: the hint is the name', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-repeats-label');
-      final data = _data('s15-bad-repeats-label-delete');
+      final data = dataById('s15-bad-repeats-label-delete');
       expect(data.hint, data.label);
       handle.dispose();
     });
@@ -282,7 +220,7 @@ void main() {
     testWidgets('bad-control-type: the hint says "button"', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-control-type');
-      expect(_data('s15-bad-control-type-share').hint, contains('button'));
+      expect(dataById('s15-bad-control-type-share').hint, contains('button'));
       handle.dispose();
     });
 
@@ -290,7 +228,7 @@ void main() {
         'action, and the button has none', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-hint-detached');
-      final nodes = _nodes(tester);
+      final nodes = semanticsNodes(tester);
       final button = nodes.singleWhere((n) => n.label == 'Favorite');
       expect(button.flagsCollection.isButton, isTrue);
       // Flutter 3.47.5: FilledButton is a semantics container, so the hint
@@ -303,7 +241,7 @@ void main() {
       expect(hinted.single.label, isEmpty);
       expect(hinted.single.hasAction(SemanticsAction.tap), isFalse);
       // The button still works.
-      await tester.tap(_id('s15-bad-hint-detached-favorite'));
+      await tester.tap(byId('s15-bad-hint-detached-favorite'));
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-hint-detached'), 1);
       handle.dispose();
@@ -314,10 +252,13 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-hint-only');
       const id = 's15-bad-hint-only-username';
-      expect(_data(id).label, 'Username');
-      expect(_data(id).hint, _rule);
+      expect(dataById(id).label, 'Username');
+      expect(dataById(id).hint, _rule);
       expect(find.text(_rule), findsNothing);
-      expect(_nodes(tester).where((n) => n.label.contains("3 to 12")), isEmpty);
+      expect(
+        semanticsNodes(tester).where((n) => n.label.contains("3 to 12")),
+        isEmpty,
+      );
       handle.dispose();
     });
   });

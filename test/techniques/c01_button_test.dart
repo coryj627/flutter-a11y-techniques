@@ -4,36 +4,17 @@ import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_a11y_techniques/app/app.dart';
-import 'package:flutter_a11y_techniques/catalog/registry.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/c01_button/c01_button.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// L1 for C01 Button (docs/specs/C01-button.md, section 6).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([c01Button]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/C01/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+import '../support/examples.dart';
 
-Finder _id(String id) => find.byKey(ValueKey<String>(id));
+/// L1 for C01 Button (docs/specs/C01-button.md, section 6).
+final _open = exampleOpener(c01Button);
 
 SemanticsNode _node(WidgetTester tester, String id) =>
-    tester.getSemantics(_id(id));
+    tester.getSemantics(byId(id));
 
 /// The accessible name: the label, or the tooltip when there is no label
 /// (an `IconButton` is named by its tooltip).
@@ -42,12 +23,8 @@ String _label(WidgetTester tester, String id) {
   return data.label.isNotEmpty ? data.label : data.tooltip;
 }
 
-int _count(WidgetTester tester, String slug) {
-  final text = tester.widget<Text>(
-    find.descendant(of: _id('c01-$slug-count'), matching: find.byType(Text)),
-  );
-  return int.parse(text.data!.split(': ').last);
-}
+int _count(WidgetTester tester, String slug) =>
+    countOf(tester, 'c01-$slug-count');
 
 /// Identifiers of the enabled good buttons, with their expected names.
 const _enabledGood = {
@@ -142,7 +119,7 @@ void main() {
           );
           final flags = _node(tester, id).getSemanticsData().flagsCollection;
           expect(flags.isEnabled, isNot(Tristate.isFalse), reason: id);
-          await tester.tap(_id(id));
+          await tester.tap(byId(id));
           await tester.pump();
           expect(_count(tester, slug), ++expected, reason: 'tap $id');
         }
@@ -207,7 +184,7 @@ void main() {
             );
           }
           final before = _count(tester, slug);
-          await tester.tap(_id(id), warnIfMissed: false);
+          await tester.tap(byId(id), warnIfMissed: false);
           await tester.pump();
           expect(_count(tester, slug), before, reason: 'tap $id');
         }
@@ -268,7 +245,7 @@ void main() {
       }
       expect(_count(tester, 'bad-gesture-only'), 0);
       // It still works by touch, which is what hides the defect.
-      await tester.tap(_id(id));
+      await tester.tap(byId(id));
       await tester.pump();
       expect(_count(tester, 'bad-gesture-only'), 1);
       handle.dispose();
@@ -323,7 +300,7 @@ void main() {
         _node(tester, id),
         isSemantics(isButton: true, isEnabled: true, hasTapAction: true),
       );
-      await tester.tap(_id(id));
+      await tester.tap(byId(id));
       await tester.pump();
       expect(_count(tester, 'bad-fake-disabled'), 1);
       handle.dispose();
@@ -340,7 +317,7 @@ void main() {
       // upgrade changes this, the limitation is fixed and this example and
       // the workaround in good-cupertino should be revisited.
       expect(flags.isEnabled, Tristate.none);
-      await tester.tap(_id(id), warnIfMissed: false);
+      await tester.tap(byId(id), warnIfMissed: false);
       await tester.pump();
       expect(_count(tester, 'bad-cupertino-disabled'), 0);
       handle.dispose();
@@ -354,7 +331,7 @@ void main() {
         await tester.pumpWidget(const SizedBox());
         await _open(tester, slug);
         final button = tester.element(
-          find.descendant(of: _id(id), matching: find.byType(CupertinoButton)),
+          find.descendant(of: byId(id), matching: find.byType(CupertinoButton)),
         );
         // Look up from inside the button, where its focus node is.
         late BuildContext inside;

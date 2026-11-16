@@ -1,38 +1,17 @@
 import 'dart:ui' show CheckedState, Tristate;
 
-import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_a11y_techniques/app/app.dart';
-import 'package:flutter_a11y_techniques/catalog/registry.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/s01_accessible_names/s01_accessible_names.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for S01 Accessible names (docs/specs/S01-accessible-names.md).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([s01AccessibleNames]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/S01/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+final _open = exampleOpener(s01AccessibleNames);
 
-Finder _id(String id) => find.byKey(ValueKey<String>(id));
-
-SemanticsData _data(WidgetTester tester, String id) =>
-    tester.getSemantics(_id(id)).getSemanticsData();
+SemanticsData _data(WidgetTester tester, String id) => dataOf(tester, byId(id));
 
 /// Whether the control is on: checked for a checkbox, toggled for a switch.
 bool _isOn(WidgetTester tester, String id) {
@@ -135,7 +114,7 @@ void main() {
           }
           // The visible text is part of the control, not a second element.
           expect(find.bySemanticsLabel(name), findsOneWidget, reason: id);
-          await tester.tap(_id(id));
+          await tester.tap(byId(id));
           await tester.pump();
           expect(_isOn(tester, id), isTrue, reason: 'tap $id');
         }
@@ -195,13 +174,13 @@ void main() {
       expect(data.tooltip, isEmpty);
       // The text is there, as an element of its own.
       final text = tester.getSemantics(find.text('I accept the terms'));
-      expect(text.id, isNot(tester.getSemantics(_id(id)).id));
+      expect(text.id, isNot(tester.getSemantics(byId(id)).id));
       await expectLater(
         tester,
         doesNotMeetGuideline(labeledTapTargetGuideline),
       );
       // The control still works; only the name is missing.
-      await tester.tap(_id(id));
+      await tester.tap(byId(id));
       await tester.pump();
       expect(_isOn(tester, id), isTrue);
       handle.dispose();

@@ -7,6 +7,8 @@ import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/i12_announcements/i12_announcements.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for I12 Announcements and live regions
 /// (docs/specs/I12-announcements.md).
 Future<void> _open(
@@ -15,21 +17,16 @@ Future<void> _open(
   Brightness brightness = Brightness.light,
   double textScale = 1,
   bool supportsAnnounce = true,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  tester.platformDispatcher.accessibilityFeaturesTestValue =
-      FakeAccessibilityFeatures(supportsAnnounce: supportsAnnounce);
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([i12Announcements]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/I12/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+}) => openExample(
+  tester,
+  i12Announcements,
+  slug,
+  brightness: brightness,
+  textScale: textScale,
+  accessibilityFeatures: FakeAccessibilityFeatures(
+    supportsAnnounce: supportsAnnounce,
+  ),
+);
 
 Finder _action(String slug) => find.byKey(ValueKey<String>('i12-$slug-action'));
 

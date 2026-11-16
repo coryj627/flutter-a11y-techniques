@@ -3,51 +3,25 @@ import 'dart:ui' show Tristate;
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_a11y_techniques/app/app.dart';
-import 'package:flutter_a11y_techniques/catalog/registry.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/s04_functional_images/s04_functional_images.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for S04 Functional images (docs/specs/S04-functional-images.md).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([s04FunctionalImages]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/S04/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
-
-Finder _id(String id) => find.byKey(ValueKey<String>(id));
-
-SemanticsData _data(WidgetTester tester, Finder finder) =>
-    tester.getSemantics(finder).getSemanticsData();
+final _open = exampleOpener(s04FunctionalImages);
 
 /// The accessible name: the label, or the tooltip when there is no label
 /// (an `IconButton` is named by its tooltip).
 String _name(SemanticsData data) =>
     data.label.isNotEmpty ? data.label : data.tooltip;
 
-int _count(WidgetTester tester, String slug) {
-  final text = tester.widget<Text>(
-    find.descendant(of: _id('s04-$slug-count'), matching: find.byType(Text)),
-  );
-  return int.parse(text.data!.split(': ').last);
-}
+int _count(WidgetTester tester, String slug) =>
+    countOf(tester, 's04-$slug-count');
 
 bool _focused(WidgetTester tester, Finder finder) =>
-    _data(tester, finder).flagsCollection.isFocused == Tristate.isTrue;
+    dataOf(tester, finder).flagsCollection.isFocused == Tristate.isTrue;
 
 /// Every node below the "Example" heading that is an image.
 List<SemanticsData> _imageNodes(WidgetTester tester) {
@@ -133,13 +107,13 @@ void main() {
         await _open(tester, slug);
         var expected = 0;
         for (final MapEntry(key: id, value: name) in buttons.entries) {
-          final data = _data(tester, _id(id));
+          final data = dataOf(tester, byId(id));
           expect(_name(data), name, reason: id);
           expect(data.identifier, id);
           expect(data.flagsCollection.isButton, isTrue, reason: id);
           expect(data.flagsCollection.isImage, isFalse, reason: id);
           expect(data.hasAction(SemanticsAction.tap), isTrue, reason: id);
-          await tester.tap(_id(id));
+          await tester.tap(byId(id));
           await tester.pump();
           expect(_count(tester, slug), ++expected, reason: 'tap $id');
         }
@@ -160,7 +134,7 @@ void main() {
           for (var i = 0; i < 6 && !reached; i++) {
             await tester.sendKeyEvent(LogicalKeyboardKey.tab);
             await tester.pump();
-            reached = _focused(tester, _id(id));
+            reached = _focused(tester, byId(id));
           }
           expect(reached, isTrue, reason: 'Tab did not reach $id');
           await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -190,7 +164,7 @@ void main() {
       for (var i = 0; i < 6 && !reached; i++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pump();
-        reached = _focused(tester, _id(focused));
+        reached = _focused(tester, byId(focused));
       }
       expect(reached, isTrue, reason: 'Tab did not reach $focused');
       expect(ring(focused), findsOneWidget);
@@ -214,7 +188,7 @@ void main() {
     testWidgets('bad-no-name: a button with no name', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-no-name');
-      final data = _data(tester, _id('s04-bad-no-name-guide'));
+      final data = dataOf(tester, byId('s04-bad-no-name-guide'));
       expect(data.flagsCollection.isButton, isTrue);
       expect(data.hasAction(SemanticsAction.tap), isTrue);
       expect(data.label, isEmpty);
@@ -232,7 +206,7 @@ void main() {
         'a separate image', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-label-on-image');
-      final button = tester.getSemantics(_id('s04-bad-label-on-image-guide'));
+      final button = tester.getSemantics(byId('s04-bad-label-on-image-guide'));
       final buttonData = button.getSemanticsData();
       expect(buttonData.flagsCollection.isButton, isTrue);
       expect(buttonData.hasAction(SemanticsAction.tap), isTrue);
@@ -285,13 +259,13 @@ void main() {
       // The example builds no Focus widget of its own either.
       expect(
         find.descendant(
-          of: _id('s04-bad-tap-gesture-guide'),
+          of: byId('s04-bad-tap-gesture-guide'),
           matching: find.byType(Focus),
         ),
         findsNothing,
       );
       // It still works by touch, which is what hides the defect.
-      await tester.tap(_id('s04-bad-tap-gesture-guide'));
+      await tester.tap(byId('s04-bad-tap-gesture-guide'));
       await tester.pump();
       expect(_count(tester, 'bad-tap-gesture'), 1);
       handle.dispose();
@@ -302,7 +276,7 @@ void main() {
     ) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-describes-picture');
-      final data = _data(tester, _id('s04-bad-describes-picture-search'));
+      final data = dataOf(tester, byId('s04-bad-describes-picture-search'));
       expect(data.flagsCollection.isButton, isTrue);
       expect(_name(data), 'Magnifying glass');
       handle.dispose();
@@ -313,7 +287,7 @@ void main() {
     ) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-image-not-excluded');
-      final data = _data(tester, _id('s04-bad-image-not-excluded-guide'));
+      final data = dataOf(tester, byId('s04-bad-image-not-excluded-guide'));
       expect(data.label, 'Trail guide');
       expect(data.flagsCollection.isButton, isTrue);
       expect(data.flagsCollection.isImage, isTrue);
@@ -324,7 +298,7 @@ void main() {
         'text', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-redundant-label');
-      final data = _data(tester, _id('s04-bad-redundant-label-print'));
+      final data = dataOf(tester, byId('s04-bad-redundant-label-print'));
       expect(data.flagsCollection.isButton, isTrue);
       expect(data.label, 'Printer\nPrint');
       expect(find.text('Print'), findsOneWidget);
