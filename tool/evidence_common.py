@@ -50,6 +50,7 @@ TECHNIQUES = {
             "S13RolesAndTraitsUITests", "s13_roles_and_traits_vo.spec.js"),
     "S14": ("S14 Values and state descriptions", "S14ValuesAndStateDescriptionsTest",
             "S14ValuesAndStateDescriptionsUITests", "s14_values_and_state_descriptions_vo.spec.js"),
+    "S15": ("S15 Hints", "S15HintsTest", "S15HintsUITests", "s15_hints_vo.spec.js"),
     "F01": ("F01 Text fields and labels", "F01TextFieldsTest", "F01TextFieldsUITests",
             "f01_text_fields_vo.spec.js"),
     "I12": ("I12 Announcements and live regions", "I12AnnouncementsTest",

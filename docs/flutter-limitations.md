@@ -59,6 +59,10 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-036](#fl-036) | No way to reword the state of a switch or checkbox; `value` on one is handled three different ways | All | Confirmed |
 | [FL-037](#fl-037) | On web a `value` is appended to the accessible name | Web | Confirmed |
 | [FL-038](#fl-038) | On Android an adjustable node shows `increasedValue` as its value straight after the action | Android | Confirmed (source read) |
+| [FL-039](#fl-039) | On Android a hint is the end of the content description, not a hint | Android | Confirmed (source read) |
+| [FL-040](#fl-040) | `Semantics(hint:)` around a Material button stays on a node of its own | All | Confirmed |
+| [FL-041](#fl-041) | On web a hint on a node with no label is not rendered, unless the node is a text field | Web | Confirmed (source read) |
+| [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed once; not explored |
 
 ---
 
@@ -1045,3 +1049,117 @@ yet), **Fixed in x.y** (verified on that version).
   `onIncrease` and `onDecrease`, computed from the current value, as
   `good-rating` does.
 - Upstream issue: not searched yet (D25). This is probably intended.
+
+## FL-039
+
+**On Android a hint is the end of the content description, not a hint.**
+
+- Status: Confirmed, Flutter 3.47.5, Android. Asserted by
+  `S15HintsTest.buttonsHaveTheirNameAndHintInTheDescription`. Engine source
+  read: `AccessibilityBridge.java`, `getValueLabelHint()`, which joins
+  value, label, and hint with ", " and is used for `setContentDescription`.
+- What happens: `Semantics(label: 'Favorite', hint: 'Adds this item to your
+  favorites.')` on a button gives an Android node whose content description
+  is "Favorite, Adds this item to your favorites.". Its hint text, tooltip
+  text, and state description are empty. A text field is the exception:
+  label and hint go into the node's hint text (`getTextFieldHint()`, see
+  [FL-015](#fl-015)).
+- Why it matters: to TalkBack the hint is part of the name. It is read
+  before the role ("Favorite, Adds this item to your favorites, Button"),
+  not after it as on iOS, and it is read every time, at once. It is not
+  in any field that a screen reader could treat as optional, which is what
+  a hint is on iOS; whether a TalkBack setting shortens it was not tested.
+  Anything that matches a control by
+  its description (Voice Access, a UI test) has to match the hint as well.
+  Android has no general hint for a view, so there is no exact place to put
+  it; the cost is that a hint is a heavier thing on Android than on iOS, and
+  should be short and used sparingly.
+- Workaround: none. Keep hints short, and use one only where the name does
+  not say what the control does.
+- Upstream issue: not searched yet (D25). This is probably intended.
+
+## FL-040
+
+**`Semantics(hint:)` around a Material button stays on a node of its own.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Asserted by the widget
+  test "bad-hint-detached", `web_tests/s15_hints.spec.js`,
+  `S15HintsTest.badHintDetachedHasTheHintOnANodeOfItsOwn`, and the iOS
+  VoiceOver walk.
+- What happens: Material buttons (`ButtonStyleButton`: `FilledButton`,
+  `ElevatedButton`, `OutlinedButton`, `TextButton`) wrap themselves in
+  `Semantics(container: true, button: true)`. A container starts a new
+  semantics node, so a `Semantics(hint: ...)` above it has nothing to join
+  and becomes a node with a hint and nothing else: no name, no role, no
+  action. The button's node has no hint. The same wrapper around a
+  `CupertinoButton`, a `ListTile`, or an `InkWell` does reach the control,
+  because those are not containers.
+- What the user gets: on Android and iOS the hint is an element of its own
+  in front of the button, read with no name and no role, and the button is
+  read without it. On the web the node has no name, so nothing is rendered
+  for it ([FL-041](#fl-041)) and the hint is gone.
+- Why it matters: the code looks right and analyses clean, and the same
+  line works for other widgets. Nothing warns that the hint missed.
+- Workaround: wrap both in `MergeSemantics`, as `good-result` does:
+  `MergeSemantics(child: Semantics(hint: ..., child: FilledButton(...)))`.
+  The project's `TestId` wrapper is a `MergeSemantics`, so a button inside
+  one already gets the hint; `bad-hint-detached` has no `TestId` for that
+  reason.
+- Upstream issue: not searched yet (D25). The container is deliberate; a
+  `hint` (or `semanticHint`) parameter on the buttons has not been added.
+
+## FL-041
+
+**On web a hint on a node with no label is not rendered, unless the node is a text field.**
+
+- Status: Confirmed, Flutter 3.47.5, Web (Chromium and WebKit DOM). Seen in
+  the [S15 probe](evidence/probes/s15/README.md) (fixtures 02, 14, and 17)
+  and asserted through `bad-hint-detached` in `web_tests/s15_hints.spec.js`.
+  Engine source read: `LabelAndValue.update()` in
+  `lib/web_ui/lib/src/engine/semantics/label_and_value.dart`, which returns
+  before `_updateHintDescription` when the computed label is null; and
+  `text_field.dart`, which sets `aria-description` on the `<input>` on a
+  path of its own.
+- What happens: for a node that is not a text field, a hint becomes
+  `aria-description` on the element, and that line is reached only when
+  the node has a label, a value, or a tooltip. A button or plain node with
+  a hint alone gets no description, and since it has no text either, the
+  hint is nowhere in the page. A text field is different: its hint is set
+  on the `<input>` whether or not the field has a label (fixture 17). On
+  Android and iOS the hint of an unnamed button is read as if it were its
+  name.
+- Why it matters: the three platforms disagree about a mistake. A button
+  with a hint and no label is "Adds this item to your favorites, Button"
+  on Android and iOS and an unnamed button on the web. Neither is right,
+  but the web result hides that a hint was ever written.
+- Related: on an adjustable node the description is on the element around
+  the `<input type="range">`, not on the slider, like its name
+  ([FL-028](#fl-028)).
+- Workaround: none needed for a control that has a name. A hint is not a
+  name: give the control a label ([S01](techniques/S01.md)).
+- Upstream issue: not searched yet (D25).
+
+## FL-042
+
+**An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS.**
+
+- Status: Observed once, Flutter 3.47.5, iOS 27.0 simulator, in the first
+  build of the S15 field examples, which were password fields. Those
+  examples were changed to an ordinary field, so no test, fixture, or
+  transcript in the repository shows this now. Not explored.
+- What was seen: for `TextField(obscureText: true)` with VoiceOver's cursor
+  moved onto it and the field not being edited, XCUITest reported
+  `XCUIElementType.textField` (not `.secureTextField`) and VoiceOver said
+  "Password, Text field". On the web the same field was a secure field to
+  VoiceOver ("This is a secure text field"), and TalkBack read "password.
+  Edit box".
+- What is not known: what the field is while it is being edited. Flutter's
+  iOS text input plugin sets `secureTextEntry` from `obscureText`, and a
+  focused field is represented by the plugin's input view, so the role and
+  what VoiceOver echoes may differ there. That was not tested.
+- Why it could matter: "secure" tells a VoiceOver user that what they type
+  will not be echoed or shown.
+- Next: this belongs to the text field technique ([F01](techniques/F01.md))
+  or F03. It needs a probe of the element type and of VoiceOver's speech
+  before and during editing before anything is concluded.
+- Upstream issue: not searched yet (D25).

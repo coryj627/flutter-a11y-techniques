@@ -9,6 +9,7 @@ import 's04_functional_images/s04_functional_images.dart';
 import 's05_headings/s05_headings.dart';
 import 's13_roles_and_traits/s13_roles_and_traits.dart';
 import 's14_values_and_state_descriptions/s14_values_and_state_descriptions.dart';
+import 's15_hints/s15_hints.dart';
 
 /// Every technique in the catalog. Add each new technique here.
 final List<Technique> allTechniques = [
@@ -20,6 +21,7 @@ final List<Technique> allTechniques = [
   s05Headings,
   s13RolesAndTraits,
   s14ValuesAndStateDescriptions,
+  s15Hints,
   f01TextFields,
   i12Announcements,
 ];
