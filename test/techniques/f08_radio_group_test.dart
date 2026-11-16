@@ -138,36 +138,35 @@ void main() {
         expect(tester.takeException(), isNull);
       });
 
-      testWidgets('$slug: the question is the label of a node around a radio '
-          'group, and is read once', (tester) async {
+      testWidgets('$slug: the question is the name of the radio group, and '
+          'is read once', (tester) async {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
         final question = slug == 'good-context'
             ? 'Are you at home?'
             : 'Delivery speed';
-        final outer = _node('f08-$slug-group').evaluate().single;
-        expect(outer.getSemanticsData().label, question);
+        final group = find.semantics
+            .byPredicate(
+              (n) => n.getSemanticsData().role == SemanticsRole.radioGroup,
+            )
+            .evaluate()
+            .single;
+        // The visible question, a Text inside the RadioGroup, is the label
+        // of the group's own node.
+        expect(group.getSemanticsData().label, question);
         expect(
-          outer.getSemanticsData().hasAction(SemanticsAction.tap),
+          group.getSemanticsData().hasAction(SemanticsAction.tap),
           isFalse,
         );
-        // Inside it, the node RadioGroup makes: the role, and no label.
-        final inner = <SemanticsNode>[];
-        outer.visitChildren((child) {
-          inner.add(child);
-          return true;
-        });
-        expect(inner, hasLength(1));
-        expect(inner.single.getSemanticsData().role, SemanticsRole.radioGroup);
-        // Flutter 3.47.5: RadioGroup has no way to take a name (FL-046). If
-        // this fails, it has one, and the wrapper is no longer needed.
-        expect(inner.single.getSemanticsData().label, isEmpty);
         var radios = 0;
-        inner.single.visitChildren((child) {
+        group.visitChildren((child) {
           final flags = child.getSemanticsData().flagsCollection;
-          if (flags.isInMutuallyExclusiveGroup) radios++;
+          expect(flags.isInMutuallyExclusiveGroup, isTrue);
+          radios++;
           return true;
         });
+        // The radio buttons are the group's only children: the question is
+        // not a node of its own.
         expect(radios, slug == 'good-context' ? 2 : 3);
         expect(find.text(question), findsOneWidget);
         expect(

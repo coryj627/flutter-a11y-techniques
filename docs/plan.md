@@ -675,8 +675,8 @@ F07, F08, F09, F10, F02, F03, F06, one technique per pull request.
   not in an example.
 - F08 Radio group: built on 2026-11-16. `RadioGroup` with the SDK's radio
   widgets gives role, state, and the APG keyboard on the web and Android.
-  Found FL-046 (`RadioGroup` cannot be named; the question goes on a node
-  around it) and FL-047 (a radio button is a button on iOS; the SDK's
+  Found FL-046 (`RadioGroup` has no label parameter; it is named by text
+  inside it, and a label around it misses) and FL-047 (a radio button is a button on iOS; the SDK's
   widgets add a selected state and a "Not selected" hint, and a radio
   button built from `checked` and `inMutuallyExclusiveGroup` alone has no
   state there). FL-045 extends to radio buttons: TalkBack says no state

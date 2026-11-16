@@ -222,10 +222,11 @@ class _HandBuiltState extends State<_HandBuilt> {
 /// choice and gives the group its role and its arrow keys. `RadioListTile`
 /// makes each button and its text one control.
 ///
-/// `RadioGroup` has no parameter for a name (docs/flutter-limitations.md,
-/// FL-046), so the question is the label of a node around the group. The
-/// visible question is left out of the semantics, or it would be read
-/// twice.
+/// The question is a `Text` inside the `RadioGroup`. Text in the group that
+/// belongs to no radio button becomes the group's name, so the visible
+/// question names the group and is read once. `RadioGroup` has no label
+/// parameter, and a label put around it misses it
+/// (docs/flutter-limitations.md, FL-046).
 class GoodGroup extends StatefulWidget {
   const GoodGroup({super.key});
 
@@ -241,36 +242,25 @@ class _GoodGroupState extends State<GoodGroup> {
     return _Demo(
       slug: 'good-group',
       builder: (context, changed) => [
-        Semantics(
-          key: const ValueKey<String>('f08-good-group-group'),
-          identifier: 'f08-good-group-group',
-          container: true,
-          explicitChildNodes: true,
-          label: _question,
+        RadioGroup<String>(
+          groupValue: _speed,
+          onChanged: (value) {
+            setState(() => _speed = value);
+            changed();
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const ExcludeSemantics(child: _Question(_question)),
-              RadioGroup<String>(
-                groupValue: _speed,
-                onChanged: (value) {
-                  setState(() => _speed = value);
-                  changed();
-                },
-                child: Column(
-                  children: [
-                    for (final option in _speeds)
-                      TestId(
-                        'f08-good-group-${_slugOf(option)}',
-                        child: RadioListTile<String>(
-                          contentPadding: EdgeInsets.zero,
-                          value: option,
-                          title: Text(option),
-                        ),
-                      ),
-                  ],
+              const _Question(_question),
+              for (final option in _speeds)
+                TestId(
+                  'f08-good-group-${_slugOf(option)}',
+                  child: RadioListTile<String>(
+                    contentPadding: EdgeInsets.zero,
+                    value: option,
+                    title: Text(option),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -306,43 +296,31 @@ class _GoodCupertinoState extends State<GoodCupertino> {
         }
 
         return [
-          Semantics(
-            key: const ValueKey<String>('f08-good-cupertino-group'),
-            identifier: 'f08-good-cupertino-group',
-            container: true,
-            explicitChildNodes: true,
-            label: _question,
+          RadioGroup<String>(
+            groupValue: _speed,
+            onChanged: select,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ExcludeSemantics(child: _Question(_question)),
-                RadioGroup<String>(
-                  groupValue: _speed,
-                  onChanged: select,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (final option in _speeds)
-                        TestId(
-                          'f08-good-cupertino-${_slugOf(option)}',
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => select(option),
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(minHeight: 48),
-                              child: Row(
-                                children: [
-                                  CupertinoRadio<String>(value: option),
-                                  const SizedBox(width: 12),
-                                  Flexible(child: Text(option)),
-                                ],
-                              ),
-                            ),
-                          ),
+                const _Question(_question),
+                for (final option in _speeds)
+                  TestId(
+                    'f08-good-cupertino-${_slugOf(option)}',
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => select(option),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 48),
+                        child: Row(
+                          children: [
+                            CupertinoRadio<String>(value: option),
+                            const SizedBox(width: 12),
+                            Flexible(child: Text(option)),
+                          ],
                         ),
-                    ],
+                      ),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -374,35 +352,23 @@ class _GoodCustomState extends State<GoodCustom> {
     return _Demo(
       slug: 'good-custom',
       builder: (context, changed) => [
-        Semantics(
-          key: const ValueKey<String>('f08-good-custom-group'),
-          identifier: 'f08-good-custom-group',
-          container: true,
-          explicitChildNodes: true,
-          label: _question,
+        RadioGroup<String>(
+          groupValue: _speed,
+          onChanged: (value) {
+            // A tap on the text of the chosen option arrives here too.
+            if (value == _speed) return;
+            setState(() => _speed = value);
+            changed();
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const ExcludeSemantics(child: _Question(_question)),
-              RadioGroup<String>(
-                groupValue: _speed,
-                onChanged: (value) {
-                  // A tap on the text of the chosen option arrives here too.
-                  if (value == _speed) return;
-                  setState(() => _speed = value);
-                  changed();
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (final option in _speeds)
-                      TestId(
-                        'f08-good-custom-${_slugOf(option)}',
-                        child: _RawRadioRow(option: option),
-                      ),
-                  ],
+              const _Question(_question),
+              for (final option in _speeds)
+                TestId(
+                  'f08-good-custom-${_slugOf(option)}',
+                  child: _RawRadioRow(option: option),
                 ),
-              ),
             ],
           ),
         ),
@@ -507,44 +473,30 @@ class _GoodContextState extends State<GoodContext> {
     return _Demo(
       slug: 'good-context',
       builder: (context, changed) => [
-        Semantics(
-          key: const ValueKey<String>('f08-good-context-group'),
-          identifier: 'f08-good-context-group',
-          container: true,
-          explicitChildNodes: true,
-          label: 'Are you at home?',
-          child: Column(
+        RadioGroup<String>(
+          groupValue: _answer,
+          onChanged: (value) {
+            setState(() => _answer = value);
+            changed();
+          },
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const ExcludeSemantics(child: _Question('Are you at home?')),
-              RadioGroup<String>(
-                groupValue: _answer,
-                onChanged: (value) {
-                  setState(() => _answer = value);
-                  changed();
-                },
-                child: const Column(
-                  children: [
-                    TestId(
-                      'f08-good-context-yes',
-                      child: RadioListTile<String>(
-                        contentPadding: EdgeInsets.zero,
-                        value: 'yes',
-                        title: Text('Yes', semanticsLabel: 'Yes, I am at home'),
-                      ),
-                    ),
-                    TestId(
-                      'f08-good-context-no',
-                      child: RadioListTile<String>(
-                        contentPadding: EdgeInsets.zero,
-                        value: 'no',
-                        title: Text(
-                          'No',
-                          semanticsLabel: 'No, I am not at home',
-                        ),
-                      ),
-                    ),
-                  ],
+              _Question('Are you at home?'),
+              TestId(
+                'f08-good-context-yes',
+                child: RadioListTile<String>(
+                  contentPadding: EdgeInsets.zero,
+                  value: 'yes',
+                  title: Text('Yes', semanticsLabel: 'Yes, I am at home'),
+                ),
+              ),
+              TestId(
+                'f08-good-context-no',
+                child: RadioListTile<String>(
+                  contentPadding: EdgeInsets.zero,
+                  value: 'no',
+                  title: Text('No', semanticsLabel: 'No, I am not at home'),
                 ),
               ),
             ],
@@ -605,8 +557,8 @@ class _BadUnlabelledState extends State<BadUnlabelled> {
 // #endregion
 
 // #region bad-group-unlabelled
-/// The question is printed above the radio buttons and is tied to nothing.
-/// The group has a role and no name.
+/// The question is printed above the radio buttons, outside the
+/// `RadioGroup`, and is tied to nothing. The group has a role and no name.
 class BadGroupUnlabelled extends StatefulWidget {
   const BadGroupUnlabelled({super.key});
 

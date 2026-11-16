@@ -66,7 +66,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-043](#fl-043) | `Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS | All | Confirmed |
 | [FL-044](#fl-044) | A mixed checkbox is exposed as not checked on the web, on iOS, and on Android before 16, and TalkBack says no state for it | All | Confirmed |
 | [FL-045](#fl-045) | TalkBack says no state for a checkbox or radio button that is not checked | Android | Confirmed; cause not found |
-| [FL-046](#fl-046) | `RadioGroup` cannot be given a name | All | Confirmed |
+| [FL-046](#fl-046) | `RadioGroup` has no label parameter: it is named by text inside it, and a label around it misses | All | Confirmed |
 | [FL-047](#fl-047) | A radio button is a button for VoiceOver on iOS, and a hand-built one has no state there | iOS | Confirmed (source read) |
 
 ---
@@ -1308,44 +1308,51 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-046
 
-**`RadioGroup` cannot be given a name.**
+**`RadioGroup` has no label parameter: it is named by text inside it, and a label around it misses.**
 
-- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the F08 probe
-  (`docs/evidence/probes/f08`, fixtures 01 to 04). Asserted by the F08
-  widget tests ("the question is the label of a node around a radio
-  group"), `web_tests/f08_radio_group.spec.js`, and
-  `F08RadioGroupTest.goodExamplesHaveTheQuestionOnANodeAroundTheRadioGroup`.
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the F08
+  probes (`docs/evidence/probes/f08`, fixtures 01 to 05 and 12 to 15).
+  Asserted by the F08 widget tests ("the question is the name of the
+  radio group", "bad-group-unlabelled", "bad-unlabelled"),
+  `web_tests/f08_radio_group.spec.js`, and
+  `F08RadioGroupTest.goodExamplesHaveTheQuestionAsTheNameOfTheRadioGroup`.
   Framework source read: `widgets/radio_group.dart`.
 - What happens: `RadioGroup` builds
   `Semantics(container: true, role: SemanticsRole.radioGroup, child: ...)`
-  and has no parameter for a label. The node it makes is
-  `role="radiogroup"` on the web and `android.widget.RadioGroup` on
-  Android, with no name. The APG pattern requires the radio group to have
-  a label.
-- A `Semantics(label:)` around it does not reach it, for the same reason
-  a hint or an identifier around a Material button does not
-  ([FL-040](#fl-040), [FL-043](#fl-043)): the group's node is a container,
-  so the label lands on a node of its own, around the group.
-- What that gives: on the web, `role="group"` with the label, containing
-  the unnamed `radiogroup`. On Android, a `View` with the label whose
-  child is the `RadioGroup`. On iOS, an element with the label, read
-  before the buttons. Adding `role: SemanticsRole.radioGroup` to the
-  wrapper makes a named `radiogroup` on the web with a second, unnamed
-  `radiogroup` inside it (probe, fixture 04).
-- What the user gets: the question is read, once, before the options, on
-  every platform. On the web VoiceOver announces a group with the
-  question as its name. What is lost is the direct link the pattern asks
-  for, a radio group that is itself named.
-- Workaround: the wrapper, as the F08 good examples do:
-  `Semantics(container: true, explicitChildNodes: true, label: 'Delivery speed', child: ...)`
-  around the `RadioGroup`, with the visible question in `ExcludeSemantics`
-  so it is not read twice.
-- Related: when radio buttons have no names of their own (`Radio` beside
-  `Text`, not joined), the stray texts become the group node's label:
-  `role="radiogroup"` named "Standard Express Next day" on the web, and
-  the same description on Android's `RadioGroup` (F08 `bad-unlabelled`).
-- How to read this entry: Flutter has not added this yet. Re-check when
-  the pinned version changes.
+  and has no parameter for a label. The APG pattern requires the radio
+  group to have one. Nothing in the API or its documentation says how to
+  give it one.
+- How it does get a name: the group's node is a container that does not
+  have `explicitChildNodes`, so any semantics inside it that belong to no
+  node of their own are merged into it. A `Text` placed inside the
+  `RadioGroup`, beside the radio buttons, becomes the group's label:
+  `role="radiogroup"` with `aria-label` on the web, an
+  `android.widget.RadioGroup` with that description on Android, and on
+  iOS an element with that label read before the buttons. A
+  `Semantics(label: ...)` inside the group does the same (probe, fixtures
+  12 to 14).
+- What misses: a label around the `RadioGroup`. The group's node is a
+  container, so a `Semantics(label:)` above it lands on a node of its own
+  around the group, as a hint or an identifier around a Material button
+  does ([FL-040](#fl-040), [FL-043](#fl-043)). The result is a `group`
+  named by the label around an unnamed `radiogroup` on the web, and a
+  `View` around an unnamed `RadioGroup` on Android. Giving the wrapper
+  `role: SemanticsRole.radioGroup` nests two radio groups (probe,
+  fixtures 02 to 04).
+- What also follows: the naming is by accident of position, so it goes
+  wrong the same way. The question printed just above the `RadioGroup`,
+  outside it, names nothing (F08 `bad-group-unlabelled`). Texts beside
+  radio buttons that are not joined to them become the group's name:
+  "Standard Express Next day" (F08 `bad-unlabelled`). A question marked as
+  a heading inside the group (`Semantics(header: true)`) named the group
+  on Android, and on the web became a `<header>` element inside an unnamed
+  `radiogroup`, with the radio buttons inside the header (probe, fixture
+  15).
+- Workaround: put the visible question inside the `RadioGroup`, as plain
+  text, as the F08 good examples do.
+- An earlier draft of this entry said the group could not be named at
+  all. A review pointed out that the probes had only tried labels outside
+  the group; the second probe corrected it.
 - Upstream issue: not searched yet (D25).
 
 ## FL-047

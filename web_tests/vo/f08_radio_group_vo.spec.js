@@ -18,24 +18,23 @@ const COUNT = 'Changes: 0';
 // not chosen the description "Not selected" (FL-047), which VoiceOver reads
 // between the name and the role.
 const SPEED = [
-  'Delivery speed group',
+  'Delivery speed radio group',
   'Standard Not selected radio button, 1 of 3',
   'Express selected radio button, 2 of 3',
   'Next day Not selected radio button, 3 of 3',
-  'end of Delivery speed group',
+  'end of Delivery speed radio group',
 ];
 const EXAMPLES = {
-  // The question is the name of a group, said on the way in and again on
-  // the way out. The radio group inside it has no name (FL-046) and is not
-  // announced; it is where "1 of 3" comes from.
+  // The question is the name of the radio group, said on the way in and
+  // again on the way out.
   'good-group': SPEED,
   'good-cupertino': SPEED,
   'good-custom': SPEED,
   'good-context': [
-    'Are you at home? group',
+    'Are you at home? radio group',
     'Yes, I am at home Not selected radio button, 1 of 2',
     'No, I am not at home selected radio button, 2 of 2',
-    'end of Are you at home? group',
+    'end of Are you at home? radio group',
   ],
   // Bad examples: the defect must be audible where it can be.
   // The radio buttons have no names, and their stray texts have become the

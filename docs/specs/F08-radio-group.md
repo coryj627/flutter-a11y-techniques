@@ -71,9 +71,9 @@ question is "Delivery speed", the options are "Standard", "Express", and
 
 | Slug | Variant | What it shows | Mechanism | Reqs |
 | --- | --- | --- | --- | --- |
-| `good-group` | Material | Three radio buttons under a question | `RadioGroup` around `RadioListTile`s, inside `Semantics(container: true, explicitChildNodes: true, label:)`, with the visible question in `ExcludeSemantics` | R1 to R5, R7 |
-| `good-cupertino` | Cupertino | The same with Cupertino buttons and visible text | `RadioGroup` around rows of `MergeSemantics` (through `TestId`), a `GestureDetector`, a `CupertinoRadio`, and a `Text` | R1 to R5, R7 |
-| `good-custom` | Widgets | The same drawn by hand | `RadioGroup` around `RawRadio`s with a hand-drawn ring | R1 to R5, R7 |
+| `good-group` | Material | Three radio buttons under a question | `RadioGroup` around a `Text` with the question and three `RadioListTile`s | R1 to R5, R7 |
+| `good-cupertino` | Cupertino | The same with Cupertino buttons and visible text | `RadioGroup` around the question and rows of `MergeSemantics` (through `TestId`), a `GestureDetector`, a `CupertinoRadio`, and a `Text` | R1 to R5, R7 |
+| `good-custom` | Widgets | The same drawn by hand | `RadioGroup` around the question and `RawRadio`s with a hand-drawn ring | R1 to R5, R7 |
 | `good-context` | Material | "Are you at home?" with "Yes" and "No", named "Yes, I am at home" and "No, I am not at home" | `Text('Yes', semanticsLabel: 'Yes, I am at home')` as the tile's title | R6 |
 
 ### Bad
@@ -81,7 +81,7 @@ question is "Delivery speed", the options are "Standard", "Express", and
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
 | `bad-unlabelled` | `Radio` buttons with `Text` beside them. The buttons have no names, and a tap on the text does nothing | R1 | 4.1.2, 1.3.1 |
-| `bad-group-unlabelled` | The question is plain text above the group. The group has no name | R4 | 1.3.1 |
+| `bad-group-unlabelled` | The question is plain text above the group, outside the `RadioGroup`. The group has no name | R4 | 1.3.1 |
 | `bad-no-state` | Hand-drawn radio buttons exposed as buttons. Nothing says which is chosen | R2 | 4.1.2 |
 | `bad-checkbox-role` | Hand-drawn radio buttons exposed as checkboxes: the state is right and the role says several can be chosen | R2 | 4.1.2 |
 | `bad-checked-only` | Hand-drawn radio buttons with `checked` and `inMutuallyExclusiveGroup` and nothing else. Right on Android and the web; on iOS no state is exposed ([FL-047](../flutter-limitations.md#fl-047)) | R2 | 4.1.2 on iOS |
@@ -90,10 +90,10 @@ question is "Delivery speed", the options are "Standard", "Express", and
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Every radio button: its label on one node, in an exclusive group, checked or not, not a toggle or a button, enabled, a tap action; a tap and the semantics action each choose one and clear the other; choosing the chosen one changes nothing. Grouped examples: Tab lands on the chosen option, the four arrow keys move the choice and wrap, and a tap on the text chooses. The question on a node whose one child has the radio group role and no label. With the platform set to iOS: the chosen option selected, the others with the hint "Not selected", and neither on `bad-checked-only`. Bad: no names; a group with no label; buttons with no state; checkboxes; no group. Guidelines in light and dark and 200% text for good examples |
-| L3 web | Every radio button: role, accessible name, `aria-checked`, a click. Grouped: Tab to the chosen one, the arrow keys, and Tab out. The question as the name of a `group` around a `radiogroup` that has no name. Bad: radios with no name; a `radiogroup` with no name and no named group; buttons with no `aria-checked`; checkboxes; radios with no `radiogroup` |
-| L3 Android | Every radio button: the `RadioButton` class, description, checkable, checked or not, and a click. The question on a `View` whose child is a `RadioGroup` with no description. Bad: `RadioButton`s with no description; the question as a sibling; `Button`s that are not checkable; `CheckBox`es; no `RadioGroup` |
-| L3 iOS | Every radio button: type `.button` (FL-047), label, one selected, and a tap. The question as one `Other` element. Bad: buttons with no label; the question as static text; buttons none of which is selected (`bad-no-state` and `bad-checked-only`); switches |
+| L1 widget tests | Every radio button: its label on one node, in an exclusive group, checked or not, not a toggle or a button, enabled, a tap action; a tap and the semantics action each choose one and clear the other; choosing the chosen one changes nothing. Grouped examples: Tab lands on the chosen option, the four arrow keys move the choice and wrap, and a tap on the text chooses. The question as the label of the node with the radio group role, whose only children are the radio buttons. With the platform set to iOS: the chosen option selected, the others with the hint "Not selected", and neither on `bad-checked-only`. Bad: no names; a group with no label; buttons with no state; checkboxes; no group. Guidelines in light and dark and 200% text for good examples |
+| L3 web | Every radio button: role, accessible name, `aria-checked`, a click. Grouped: Tab to the chosen one, the arrow keys, and Tab out. The question as the accessible name of the `radiogroup`. The "Not selected" description: on the options that are not chosen when the browser is on an Apple system, absent otherwise, following the choice. Bad: radios with no name; a `radiogroup` with no name; buttons with no `aria-checked`; checkboxes; radios with no `radiogroup` |
+| L3 Android | Every radio button: the `RadioButton` class, description, checkable, checked or not, and a click. The question as the description of the `RadioGroup`, whose children are the radio buttons. Bad: `RadioButton`s with no description; the question as a sibling; `Button`s that are not checkable; `CheckBox`es; no `RadioGroup` |
+| L3 iOS | Every radio button: type `.button` (FL-047), label, one selected, and a tap. The question as one `Other` element and not static text. Bad: buttons with no label; the question as static text; buttons none of which is selected (`bad-no-state` and `bad-checked-only`); switches |
 | L4 TalkBack | What is read with focus on the question, an option that is not chosen, the one that is, and the first again after it is chosen |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count, compared as a whole list |
 | L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit |
@@ -108,14 +108,21 @@ The probe that came first is in [evidence/probes/f08](../evidence/probes/f08/).
   web, a checkable `RadioButton` inside a `RadioGroup` on Android. Tab
   lands on the chosen option, the arrow keys move the choice and wrap, and
   Tab leaves the group.
-- **`RadioGroup` cannot be named**
-  ([FL-046](../flutter-limitations.md#fl-046)). The question goes on a
-  node around it. On the web that is a `group` named "Delivery speed"
-  around an unnamed `radiogroup`; VoiceOver says "Delivery speed group"
-  going in, "end of Delivery speed group" coming out, and counts the
-  buttons ("1 of 3"). On Android and iOS the question is an element read
-  before the buttons, which is also what `bad-group-unlabelled` sounds
-  like there. The difference on those two is in the tree only.
+- **`RadioGroup` is named by text inside it**
+  ([FL-046](../flutter-limitations.md#fl-046)). It has no label
+  parameter. A `Text` with the question, placed inside the group beside
+  the buttons, becomes the group's name: `role="radiogroup"` named
+  "Delivery speed" on the web, where VoiceOver says "Delivery speed radio
+  group" going in, "end of Delivery speed radio group" coming out, and
+  counts the buttons ("1 of 3"). On Android it is the description of the
+  `RadioGroup` node, and on iOS an element read before the buttons. The
+  first draft of these examples put a labelled `Semantics` around the
+  group instead, which misses it; a review caught that.
+- **The same question one line higher, outside the group, names
+  nothing** (`bad-group-unlabelled`). On Android and iOS it still sounds
+  the same, because the question is read before the buttons either way;
+  the difference there is in the tree. On the web the group is not
+  announced.
 - **On iOS a radio button is a button**
   ([FL-047](../flutter-limitations.md#fl-047)). Flutter's radio widgets
   add a selected state and a "Not selected" hint: "selected, Express,
@@ -128,7 +135,9 @@ The probe that came first is in [evidence/probes/f08](../evidence/probes/f08/).
 - **In a browser on an Apple device the same hint is an
   `aria-description`**, and VoiceOver reads it: "Standard Not selected
   radio button, 1 of 3". On other systems the attribute is not there. The
-  web tree tests do not assert it for that reason.
+  web tree tests assert both: present on the options that are not chosen
+  when the browser is on an Apple system, and absent on Linux, where CI
+  runs.
 - **TalkBack says no state for a radio button that is not chosen**
   ([FL-045](../flutter-limitations.md#fl-045)): "Standard, Radio button",
   and "checked, Express, Radio button" for the chosen one. It did not say

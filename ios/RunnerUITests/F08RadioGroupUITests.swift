@@ -86,13 +86,13 @@ final class F08RadioGroupUITests: XCTestCase {
       ("good-custom", "Delivery speed"), ("good-context", "Are you at home?"),
     ] {
       open(slug)
-      let group = element("f08-\(slug)-group")
-      XCTAssertEqual(group.elementType, .other, slug)
-      XCTAssertEqual(group.label, question, slug)
-      // Once: the visible text is not a second element.
+      // The question is the name of the radio group, which iOS shows as an
+      // element of type Other and not as static text.
       let withQuestion = app.descendants(matching: .any)
         .matching(NSPredicate(format: "label == %@", question))
       XCTAssertEqual(withQuestion.count, 1, slug)
+      XCTAssertEqual(withQuestion.firstMatch.elementType, .other, slug)
+      XCTAssertFalse(app.staticTexts[question].exists, slug)
     }
   }
 

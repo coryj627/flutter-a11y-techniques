@@ -22,13 +22,29 @@ selected state in the XCUITest tree.
 | 10 | `Semantics(button: true, label:, onTap:)` | `role="button"` | `Button` | button |
 | 11 | a `Text` above a `RadioGroup` | text, then the unnamed `radiogroup` | a `View`, then the `RadioGroup` | static text, then as 01 |
 
+## Second probe: naming the group from inside
+
+`probe2.dart.txt`, run the same day after a review pointed out that the
+first probe had only tried labels outside the group.
+
+| # | Fixture | Web | Android | iOS |
+| --- | --- | --- | --- | --- |
+| 12 | a `Text` with the question inside the `RadioGroup`, before the tiles | `role="radiogroup"` named by the text; the two radios are its only children | `RadioGroup` with the text as its description | an `Other` with the text, then the two buttons |
+| 13 | `Semantics(label:)` inside the `RadioGroup`, around the tiles | as 12 | as 12 | as 12; "r13 Size", then the buttons |
+| 14 | the same with the visible question in `ExcludeSemantics` | as 12 | as 12 | as 12 |
+| 15 | `Semantics(header: true)` around the question, inside the group | `radiogroup` with no name; inside it a `<header>` with the label, with the radios inside the header | `RadioGroup` with the text as its description | as 12 |
+
+So the group can be named, and the simplest way is 12: the visible
+question as plain text inside the group.
+
 ## What it shows
 
 - **The SDK's radio widgets are right on the web and Android** with no
   extra work (01, 06).
-- **`RadioGroup` has no name and cannot take one** (01). A label goes on
-  a node around it (02, 03). Giving that node the radio group role nests
-  two radio groups (04).
+- **`RadioGroup` has no label parameter and no name by default** (01). A
+  label around it lands on a node of its own (02, 03), and giving that
+  node the radio group role nests two radio groups (04). Text inside the
+  group names it (12 to 14).
 - **iOS has no radio button.** `RawRadio` adds a selected state and a
   "Not selected" hint there (01); a node built from `checked` and
   `inMutuallyExclusiveGroup` alone has no state at all (07), and adding

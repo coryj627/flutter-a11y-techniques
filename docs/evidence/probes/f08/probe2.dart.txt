@@ -1,0 +1,40 @@
+// F08 probe 2 (throwaway, not committed): naming a RadioGroup from inside.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatelessWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    void no(String? _) {}
+    List<Widget> tiles(String p) => [
+      RadioListTile<String>(value: 'a', title: Text('$p Small')),
+      RadioListTile<String>(value: 'b', title: Text('$p Large')),
+    ];
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 12 the visible question as a Text inside the RadioGroup
+              RadioGroup<String>(groupValue: 'b', onChanged: no, child: Column(children: [const Text('r12 Size'), ...tiles('r12')])),
+              // 13 Semantics(label:) inside the RadioGroup, around the tiles; no visible text
+              RadioGroup<String>(groupValue: 'b', onChanged: no, child: Semantics(label: 'r13 Size', child: Column(children: tiles('r13')))),
+              // 14 Semantics(label:) inside, with the visible question excluded
+              RadioGroup<String>(groupValue: 'b', onChanged: no, child: Semantics(label: 'r14 Size', child: Column(children: [const ExcludeSemantics(child: Text('r14 Size')), ...tiles('r14')]))),
+              // 15 the visible question as a header Text inside the RadioGroup
+              RadioGroup<String>(groupValue: 'b', onChanged: no, child: Column(children: [Semantics(header: true, child: const Text('r15 Size')), ...tiles('r15')])),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

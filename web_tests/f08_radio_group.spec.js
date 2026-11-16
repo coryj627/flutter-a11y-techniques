@@ -100,20 +100,15 @@ test.describe('the group and its question', () => {
     ['good-custom', 'Delivery speed', 3],
     ['good-context', 'Are you at home?', 2],
   ]) {
-    test(`${slug}: a group named "${question}" around the radio group`, async ({ page }) => {
+    test(`${slug}: a radio group named "${question}"`, async ({ page }) => {
       await open(page, slug);
-      const group = byId(page, `f08-${slug}-group`);
-      await expect(group).toHaveRole('group');
-      await expect(group).toHaveAccessibleName(question);
-      const radiogroup = group.getByRole('radiogroup');
+      // The visible question is a Text inside the RadioGroup, which makes
+      // it the name of the group itself.
+      const radiogroup = page.getByRole('radiogroup');
       await expect(radiogroup).toHaveCount(1);
+      await expect(radiogroup).toHaveAccessibleName(question);
       await expect(radiogroup.getByRole('radio')).toHaveCount(count);
-      // Flutter 3.47.5: RadioGroup makes role="radiogroup" and cannot be
-      // given a name (docs/flutter-limitations.md, FL-046), so the name is
-      // on the element around it. Written to fail if the radiogroup gets
-      // a name of its own.
-      await expect(radiogroup).toHaveAccessibleName('');
-      // The visible question is not a second element in the tree.
+      // The question is not a second element in the tree.
       await expect(page.locator('flt-semantics-host').getByText(question, { exact: true })).toHaveCount(0);
     });
   }
@@ -126,6 +121,44 @@ test.describe('the group and its question', () => {
     await byId(page, 'f08-good-context-yes').click();
     await expect(byId(page, 'f08-good-context-yes')).toHaveAttribute('aria-checked', 'true');
     await expect(byId(page, 'f08-good-context-no')).toHaveAttribute('aria-checked', 'false');
+  });
+});
+
+// Flutter's radio widgets give the options that are not chosen the hint
+// "Not selected" on iOS and macOS only, where it stands in for a state iOS
+// cannot expose (docs/flutter-limitations.md, FL-047). The web build
+// decides by the system the browser runs on, so the hint is an
+// aria-description in a browser on an Apple device and is absent anywhere
+// else, such as the Linux machine CI uses.
+test.describe('the "Not selected" description', () => {
+  const onApple = (page) => page.evaluate(() => /Mac|iPhone|iPad/.test(navigator.platform));
+
+  async function expectDescriptions(page, slug, chosenOption) {
+    const apple = await onApple(page);
+    for (const option of Object.keys(options)) {
+      const radio = byId(page, `f08-${slug}-${option}`);
+      if (apple && option !== chosenOption) {
+        await expect(radio, option).toHaveAttribute('aria-description', 'Not selected');
+      } else {
+        await expect(radio, option).not.toHaveAttribute('aria-description', /.*/);
+      }
+    }
+  }
+
+  for (const slug of grouped) {
+    test(`${slug}: on the options that are not chosen, on Apple systems only, and it follows the choice`, async ({ page }) => {
+      await open(page, slug);
+      await expectDescriptions(page, slug, 'express');
+      await byId(page, `f08-${slug}-standard`).click();
+      await expectCount(page, slug, 1);
+      await expect(byId(page, `f08-${slug}-standard`)).toHaveAttribute('aria-checked', 'true');
+      await expectDescriptions(page, slug, 'standard');
+    });
+  }
+
+  test('bad-checked-only: no option has it on any system', async ({ page }) => {
+    await open(page, 'bad-checked-only');
+    await expect(page.locator('[aria-description]')).toHaveCount(0);
   });
 });
 
@@ -143,7 +176,7 @@ test.describe('bad examples have their defect', () => {
     const radiogroup = page.getByRole('radiogroup');
     await expect(radiogroup).toHaveCount(1);
     await expect(radiogroup).toHaveAccessibleName('');
-    await expect(page.getByRole('group', { name: 'Delivery speed' })).toHaveCount(0);
+    await expect(page.getByRole('radiogroup', { name: 'Delivery speed' })).toHaveCount(0);
     // The question is text beside the group.
     await expect(page.locator('flt-semantics-host').getByText('Delivery speed', { exact: true })).toHaveCount(1);
   });

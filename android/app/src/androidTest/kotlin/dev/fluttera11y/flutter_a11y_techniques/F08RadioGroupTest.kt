@@ -132,7 +132,7 @@ class F08RadioGroupTest {
     }
 
     @Test
-    fun goodExamplesHaveTheQuestionOnANodeAroundTheRadioGroup() {
+    fun goodExamplesHaveTheQuestionAsTheNameOfTheRadioGroup() {
         for ((slug, question, count) in listOf(
             Triple("good-group", QUESTION, 3),
             Triple("good-cupertino", QUESTION, 3),
@@ -140,18 +140,15 @@ class F08RadioGroupTest {
             Triple("good-context", "Are you at home?", 2),
         )) {
             open(slug)
-            val outer = node("f08-$slug-group")
-            assertEquals(slug, VIEW, outer.type())
-            assertEquals(slug, question, outer.name())
-            assertFalse(slug, outer.isClickable)
+            // The visible question is a Text inside the RadioGroup, which
+            // makes it the description of the group's own node.
             val group = ofType(RADIO_GROUP).single()
-            assertEquals(slug, outer, group.parent)
-            // Flutter 3.47.5: RadioGroup cannot be given a name (FL-046).
-            // Written to fail if the group node gets one.
-            assertEquals(slug, "", group.name())
+            assertEquals(slug, question, group.name())
+            assertFalse(slug, group.isClickable)
             assertEquals(slug, count, ofType(RADIO_BUTTON).size)
             assertTrue(slug, ofType(RADIO_BUTTON).all { it.parent == group })
-            // The visible question is not a second node.
+            assertEquals(slug, count, group.childCount)
+            // The question is not a second node.
             assertEquals(slug, 1, all().count { it.name().contains(question) })
         }
     }
@@ -265,7 +262,7 @@ class F08RadioGroupTest {
         // The question, an option that is not chosen, the one that is, and
         // the first again after it has been chosen.
         fun group(slug: String) = slug to listOf(
-            byId("f08-$slug-group"),
+            Stop("f08-$slug-group") { ofType(RADIO_GROUP).single() },
             byId("f08-$slug-standard"),
             byId("f08-$slug-express"),
             afterClick("f08-$slug-standard", slug))
@@ -275,7 +272,7 @@ class F08RadioGroupTest {
             group("good-cupertino"),
             group("good-custom"),
             "good-context" to listOf(
-                byId("f08-good-context-group"),
+                Stop("f08-good-context-group") { ofType(RADIO_GROUP).single() },
                 byId("f08-good-context-yes"),
                 byId("f08-good-context-no")),
             // No identifiers here: the nodes are found by what they are.

@@ -15,9 +15,8 @@ final f08RadioGroup = Technique(
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(
       note:
-          'TalkBack says "checked" for the chosen radio button and no state '
-          'for the others, where a native control is read "not checked" '
-          '(limitation FL-045).',
+          'TalkBack 17 says "checked" for the chosen radio button and no '
+          'state for the others (limitation FL-045).',
     ),
     AppPlatform.ios: PlatformStatus.limitation(
       'iOS has no radio button: Flutter exposes one as a button that is '
