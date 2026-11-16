@@ -5,33 +5,18 @@
 // alike as a switch, with the value "0" or "1".
 import XCTest
 
-final class S01AccessibleNamesUITests: XCTestCase {
-  private let app = XCUIApplication()
+final class S01AccessibleNamesUITests: XCTestCase, TechniqueUITest {
+  static let technique = "S01"
+  let app = XCUIApplication()
 
   override func setUp() {
     continueAfterFailure = true
   }
 
-  private func element(_ id: String) -> XCUIElement {
-    app.descendants(matching: .any)[id]
-  }
-
-  private func elements(labelled label: String) -> XCUIElementQuery {
-    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label))
-  }
-
-  /// Cold-starts the app on one example through the `fluttera11y` URL scheme,
-  /// waiting for `firstId`, a control only that example has. Tried up to
-  /// three times (see C01ButtonUITests.open).
+  /// Opens an example and waits for `firstId`, a control only that example
+  /// has.
   private func open(_ slug: String, _ firstId: String, file: StaticString = #filePath, line: UInt = #line) {
-    let url = URL(string: "fluttera11y:///t/S01/\(slug)")!
-    for attempt in 1...3 {
-      app.terminate()
-      app.open(url)
-      if element(firstId).waitForExistence(timeout: 30) { return }
-      print("S01 open \(slug): attempt \(attempt) did not show the example")
-    }
-    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
+    open(slug, waitingFor: element(firstId), file: file, line: line)
   }
 
   private func expectValue(_ id: String, _ expected: String, file: StaticString = #filePath, line: UInt = #line) {
@@ -135,16 +120,8 @@ final class S01AccessibleNamesUITests: XCTestCase {
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in speech {
       open(example.slug, example.first)
-      try voiceOver.enable()
-      var spoken: [String] = []
       // Swipe right to the end of the screen: the last element repeats.
-      for _ in 0..<24 {
-        guard let utterance = try? voiceOver.moveForward().utterance else { continue }
-        let text = utterance.replacingOccurrences(of: "\n", with: " ")
-        if spoken.last == text { break }
-        spoken.append(text)
-      }
-      try voiceOver.disable()
+      let spoken = try VoiceOverWalk.forwardToRepeat(voiceOver)
       print("S01VO \(example.slug) | \(spoken.joined(separator: " / "))")
       for phrase in example.must {
         XCTAssertTrue(spoken.contains { $0.hasPrefix(phrase) },

@@ -6,44 +6,20 @@
 // iOS through what VoiceOver says.
 import XCTest
 
-final class S04FunctionalImagesUITests: XCTestCase {
-  private let app = XCUIApplication()
+final class S04FunctionalImagesUITests: XCTestCase, CountedTechniqueUITest {
+  static let technique = "S04"
+  static let countLabel = "Activations"
+  let app = XCUIApplication()
   private static let guide = "Open trail guide"
-
-  /// What the walk records for a stop at which VoiceOver said nothing.
-  static let silent = "(no speech)"
 
   override func setUp() {
     continueAfterFailure = true
   }
 
-  /// Cold-starts the app on one example through the `fluttera11y` URL scheme,
-  /// trying up to three times (see C01ButtonUITests.open).
+  /// Opens an example and waits for its count, then for the picture, which is
+  /// decoded after the first frame.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
-    let url = URL(string: "fluttera11y:///t/S04/\(slug)")!
-    for attempt in 1...3 {
-      app.terminate()
-      app.open(url)
-      if element("s04-\(slug)-count").waitForExistence(timeout: 30) {
-        // The picture is decoded after the first frame.
-        usleep(500_000)
-        return
-      }
-      print("S04 open \(slug): attempt \(attempt) did not show the example")
-    }
-    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
-  }
-
-  private func element(_ id: String) -> XCUIElement {
-    app.descendants(matching: .any)[id]
-  }
-
-  private func expectCount(_ slug: String, _ n: Int, file: StaticString = #filePath, line: UInt = #line) {
-    let count = element("s04-\(slug)-count")
-    let expected = "Activations: \(n)"
-    let deadline = Date().addingTimeInterval(5)
-    while count.label != expected && Date() < deadline { usleep(100_000) }
-    XCTAssertEqual(count.label, expected, slug, file: file, line: line)
+    open(slug, waitingFor: countElement(slug), settle: 500_000, file: file, line: line)
   }
 
   /// The buttons of the example: every button but the app bar's Back.
@@ -150,35 +126,22 @@ final class S04FunctionalImagesUITests: XCTestCase {
     // Bad examples: the defect must be audible.
     ("bad-no-name", ["Button Image"]),
     ("bad-label-on-image", ["Button", "Open trail guide Image"]),
-    ("bad-tap-gesture", [silent, "Open trail guide Image"]),
+    ("bad-tap-gesture", [VoiceOverWalk.silent, "Open trail guide Image"]),
     // The name is wrong, but only a person can tell.
     ("bad-describes-picture", ["Magnifying glass Button"]),
     ("bad-image-not-excluded", ["Trail guide Button Image"]),
     ("bad-redundant-label", ["Printer Print Button"]),
   ]
 
-  /// One utterance with every run of whitespace made one space.
-  private static func normalized(_ utterance: String) -> String {
-    utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
-  }
-
-  /// The utterances of the example itself: those after the last "Example
-  /// Heading" and before the activation count. Returns nil when the walk
-  /// did not pass the heading or did not end on the count, so an incomplete
-  /// walk cannot pass.
-  static func exampleContent(_ spoken: [String]) -> [String]? {
-    guard let last = spoken.last, last.hasPrefix("Activations:"),
-          let heading = spoken.lastIndex(of: "Example Heading") else { return nil }
-    return Array(spoken[(heading + 1)..<(spoken.count - 1)])
-  }
-
+  /// Self.exampleContent comes from CountedTechniqueUITest and
+  /// VoiceOverWalk; these tests of it, and of afterNoSpeech, need no device.
   func testExampleContentNeedsTheHeadingAndTheCount() {
     XCTAssertEqual(
       Self.exampleContent(["Back Button", "Example Heading", "Search Button", "Activations: 0"]),
       ["Search Button"])
     XCTAssertEqual(
-      Self.exampleContent(["Example Heading", Self.silent, "Open Image", "Activations: 0"]),
-      [Self.silent, "Open Image"])
+      Self.exampleContent(["Example Heading", VoiceOverWalk.silent, "Open Image", "Activations: 0"]),
+      [VoiceOverWalk.silent, "Open Image"])
     XCTAssertEqual(Self.exampleContent(["Example Heading", "Activations: 0"]), [])
     // No count at the end: the walk did not finish.
     XCTAssertNil(Self.exampleContent(["Example Heading", "Search Button"]))
@@ -187,43 +150,25 @@ final class S04FunctionalImagesUITests: XCTestCase {
     XCTAssertNil(Self.exampleContent([]))
   }
 
-  static func isNoSpeech(_ error: NSError) -> Bool {
-    error.domain == "com.apple.xctest.voiceoverservice" && error.code == 3
-  }
-
-  /// What to record for a move forward that gave no speech. `previous` is
-  /// the utterance before that move, `back` what one move back then said,
-  /// and `again` what the move forward after that said (nil for no speech).
-  ///
-  /// The stop is silent only if the move back read `previous`, which shows
-  /// the cursor had gone one element past it, and the second move forward
-  /// was silent as well. If the second move speaks, the first was a late
-  /// answer and the speech is the element. Anything else is recorded as not
-  /// known, which no expected list contains.
-  static func afterNoSpeech(previous: String?, back: String, again: String?) -> String {
-    guard let previous, previous != silent, back == previous else {
-      return "(no speech; the cursor's position is not known)"
-    }
-    return again ?? silent
-  }
-
   func testAfterNoSpeechNeedsProofThatTheCursorMoved() {
     // The move back reads the element before the silent one: a silent stop.
     XCTAssertEqual(
-      Self.afterNoSpeech(previous: "Example Heading", back: "Example Heading", again: nil),
-      Self.silent)
+      VoiceOverWalk.afterNoSpeech(previous: "Example Heading", back: "Example Heading", again: nil),
+      VoiceOverWalk.silent)
     // The cursor had not moved: the move back reads an earlier element.
     XCTAssertNotEqual(
-      Self.afterNoSpeech(previous: "Example Heading", back: "Defect: text", again: nil),
-      Self.silent)
+      VoiceOverWalk.afterNoSpeech(previous: "Example Heading", back: "Defect: text", again: nil),
+      VoiceOverWalk.silent)
     // The second try speaks: the element is not silent.
     XCTAssertEqual(
-      Self.afterNoSpeech(previous: "Example Heading", back: "Example Heading", again: "Search Button"),
+      VoiceOverWalk.afterNoSpeech(previous: "Example Heading", back: "Example Heading", again: "Search Button"),
       "Search Button")
     // Nothing before it to compare with.
-    XCTAssertNotEqual(Self.afterNoSpeech(previous: nil, back: "Back Button", again: nil), Self.silent)
     XCTAssertNotEqual(
-      Self.afterNoSpeech(previous: Self.silent, back: Self.silent, again: nil), Self.silent)
+      VoiceOverWalk.afterNoSpeech(previous: nil, back: "Back Button", again: nil), VoiceOverWalk.silent)
+    XCTAssertNotEqual(
+      VoiceOverWalk.afterNoSpeech(previous: VoiceOverWalk.silent, back: VoiceOverWalk.silent, again: nil),
+      VoiceOverWalk.silent)
   }
 
   func testVoiceOverSpeech() throws {
@@ -235,29 +180,8 @@ final class S04FunctionalImagesUITests: XCTestCase {
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in speech {
       open(example.slug)
-      try voiceOver.enable()
-      var voiceOverOn = true
-      defer { if voiceOverOn { try? voiceOver.disable() } }
-      var spoken: [String] = []
       // Swipe right until the activation count, the last element, is read.
-      for _ in 0..<20 {
-        do {
-          spoken.append(Self.normalized(try voiceOver.moveForward().utterance))
-        } catch let error as NSError where Self.isNoSpeech(error) {
-          // No speech within the API's timeout. That alone does not show
-          // that the cursor moved, so step back and forward again to find
-          // out where it is.
-          let back = Self.normalized(try voiceOver.moveBackward().utterance)
-          var again: String? = nil
-          do {
-            again = Self.normalized(try voiceOver.moveForward().utterance)
-          } catch let error as NSError where Self.isNoSpeech(error) {}
-          spoken.append(Self.afterNoSpeech(previous: spoken.last, back: back, again: again))
-        }
-        if spoken.last!.hasPrefix("Activations:") { break }
-      }
-      try voiceOver.disable()
-      voiceOverOn = false
+      let spoken = try VoiceOverWalk.forward(voiceOver, toUtteranceStartingWith: "Activations:")
       let content = Self.exampleContent(spoken)
       print("S04VO \(example.slug) | \((content ?? spoken).joined(separator: " / "))")
       XCTAssertNotNil(content, "\(example.slug): the walk did not run from the heading to the count: \(spoken)")

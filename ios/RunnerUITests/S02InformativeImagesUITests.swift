@@ -5,36 +5,22 @@
 // type when they have none.
 import XCTest
 
-final class S02InformativeImagesUITests: XCTestCase {
-  private let app = XCUIApplication()
+final class S02InformativeImagesUITests: XCTestCase, TechniqueUITest {
+  static let technique = "S02"
+  let app = XCUIApplication()
 
   override func setUp() {
     continueAfterFailure = true
-  }
-
-  private func elements(labelled label: String) -> XCUIElementQuery {
-    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label))
   }
 
   private func labels(containing text: String) -> XCUIElementQuery {
     app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS[c] %@", text))
   }
 
-  /// Cold-starts the app on one example through the `fluttera11y` URL scheme,
-  /// trying up to three times (see C01ButtonUITests.open).
+  /// Opens an example and waits for its "Example" heading, then for the
+  /// photo, which is decoded after the first frame.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
-    let url = URL(string: "fluttera11y:///t/S02/\(slug)")!
-    for attempt in 1...3 {
-      app.terminate()
-      app.open(url)
-      if elements(labelled: "Example").firstMatch.waitForExistence(timeout: 30) {
-        // The photo is decoded after the first frame.
-        usleep(500_000)
-        return
-      }
-      print("S02 open \(slug): attempt \(attempt) did not show the example")
-    }
-    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
+    open(slug, waitingFor: element(labelled: "Example"), settle: 500_000, file: file, line: line)
   }
 
   func testGoodImageLabelIsANamedImage() {

@@ -5,36 +5,22 @@
 // type when they have none.
 import XCTest
 
-final class S03DecorativeImagesUITests: XCTestCase {
-  private let app = XCUIApplication()
+final class S03DecorativeImagesUITests: XCTestCase, TechniqueUITest {
+  static let technique = "S03"
+  let app = XCUIApplication()
 
   override func setUp() {
     continueAfterFailure = true
-  }
-
-  private func elements(labelled label: String) -> XCUIElementQuery {
-    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label))
   }
 
   private func labels(containing text: String) -> XCUIElementQuery {
     app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS[c] %@", text))
   }
 
-  /// Cold-starts the app on one example through the `fluttera11y` URL scheme,
-  /// trying up to three times (see C01ButtonUITests.open).
+  /// Opens an example and waits for its "Example" heading, then for the
+  /// photo, which is decoded after the first frame.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
-    let url = URL(string: "fluttera11y:///t/S03/\(slug)")!
-    for attempt in 1...3 {
-      app.terminate()
-      app.open(url)
-      if elements(labelled: "Example").firstMatch.waitForExistence(timeout: 30) {
-        // The photo is decoded after the first frame.
-        usleep(500_000)
-        return
-      }
-      print("S03 open \(slug): attempt \(attempt) did not show the example")
-    }
-    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
+    open(slug, waitingFor: element(labelled: "Example"), settle: 500_000, file: file, line: line)
   }
 
   private func assertWelcomeText(file: StaticString = #filePath, line: UInt = #line) {
@@ -121,12 +107,6 @@ final class S03DecorativeImagesUITests: XCTestCase {
     ("bad-merged-image", ["Trail guide 12 routes Image"]),
   ]
 
-  /// One utterance with every run of whitespace made one space: VoiceOver
-  /// separates a label and its role with other whitespace than one space.
-  private func normalized(_ utterance: String) -> String {
-    utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
-  }
-
   /// The elements of the example, last to first, from what was heard while
   /// walking backward from the last element (`backward`, which ends at the
   /// "Example" heading), given the last element's own utterance. Returns nil
@@ -185,7 +165,7 @@ final class S03DecorativeImagesUITests: XCTestCase {
       var last = ""
       var run = 0
       for _ in 0..<40 where run < endRun {
-        let text = normalized(try voiceOver.moveForward().utterance)
+        let text = VoiceOverWalk.normalized(try voiceOver.moveForward().utterance)
         if text == last {
           run += 1
         } else {
@@ -200,7 +180,7 @@ final class S03DecorativeImagesUITests: XCTestCase {
       var reachedHeading = false
       if run == endRun {
         for _ in 0..<40 {
-          let text = normalized(try voiceOver.moveBackward().utterance)
+          let text = VoiceOverWalk.normalized(try voiceOver.moveBackward().utterance)
           if text == "Example Heading" {
             reachedHeading = true
             break

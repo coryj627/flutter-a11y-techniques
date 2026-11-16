@@ -7,28 +7,17 @@
 // heading.
 import XCTest
 
-final class S05HeadingsUITests: XCTestCase {
-  private let app = XCUIApplication()
+final class S05HeadingsUITests: XCTestCase, TechniqueUITest {
+  static let technique = "S05"
+  let app = XCUIApplication()
 
   override func setUp() {
     continueAfterFailure = true
   }
 
-  private func element(labelled label: String) -> XCUIElement {
-    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
-  }
-
-  /// Cold-starts the app on one example through the `fluttera11y` URL scheme,
-  /// trying up to three times (see C01ButtonUITests.open).
+  /// Opens an example and waits for its "Example" heading.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
-    let url = URL(string: "fluttera11y:///t/S05/\(slug)")!
-    for attempt in 1...3 {
-      app.terminate()
-      app.open(url)
-      if element(labelled: "Example").waitForExistence(timeout: 30) { return }
-      print("S05 open \(slug): attempt \(attempt) did not show the example")
-    }
-    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
+    open(slug, waitingFor: element(labelled: "Example"), file: file, line: line)
   }
 
   func testHeadingTextIsExposed() {
@@ -83,16 +72,8 @@ final class S05HeadingsUITests: XCTestCase {
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in speech {
       open(example.slug)
-      try voiceOver.enable()
-      var spoken: [String] = []
       // Swipe right to the end of the screen: the last element repeats.
-      for _ in 0..<24 {
-        guard let utterance = try? voiceOver.moveForward().utterance else { continue }
-        let text = utterance.replacingOccurrences(of: "\n", with: " ")
-        if spoken.last == text { break }
-        spoken.append(text)
-      }
-      try voiceOver.disable()
+      let spoken = try VoiceOverWalk.forwardToRepeat(voiceOver)
       print("S05VO \(example.slug) | \(spoken.joined(separator: " / "))")
       for phrase in example.must {
         XCTAssertTrue(spoken.contains(phrase), "\(example.slug): expected \"\(phrase)\" in \(spoken)")

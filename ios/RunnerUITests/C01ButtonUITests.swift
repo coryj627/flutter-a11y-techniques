@@ -2,39 +2,18 @@
 // Spec: docs/specs/C01-button.md.
 import XCTest
 
-final class C01ButtonUITests: XCTestCase {
-  private let app = XCUIApplication()
+final class C01ButtonUITests: XCTestCase, CountedTechniqueUITest {
+  static let technique = "C01"
+  static let countLabel = "Activations"
+  let app = XCUIApplication()
 
   override func setUp() {
     continueAfterFailure = true
   }
 
-  /// Cold-starts the app on one example through the `fluttera11y` URL scheme.
-  ///
-  /// On a slow simulator the first launch can come up without the example
-  /// (seen once on CI: the app started but the screen never appeared), so the
-  /// launch is tried up to three times before the test fails.
+  /// Opens an example and waits for its count.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
-    let url = URL(string: "fluttera11y:///t/C01/\(slug)")!
-    for attempt in 1...3 {
-      app.terminate()
-      app.open(url)
-      if element("c01-\(slug)-count").waitForExistence(timeout: 30) { return }
-      print("C01 open \(slug): attempt \(attempt) did not show the example")
-    }
-    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
-  }
-
-  private func element(_ id: String) -> XCUIElement {
-    app.descendants(matching: .any)[id]
-  }
-
-  private func expectCount(_ slug: String, _ n: Int, file: StaticString = #filePath, line: UInt = #line) {
-    let count = element("c01-\(slug)-count")
-    let expected = "Activations: \(n)"
-    let deadline = Date().addingTimeInterval(5)
-    while count.label != expected && Date() < deadline { usleep(100_000) }
-    XCTAssertEqual(count.label, expected, slug, file: file, line: line)
+    open(slug, waitingFor: countElement(slug), file: file, line: line)
   }
 
   private let enabledGood: [(slug: String, buttons: [(id: String, name: String)])] = [
@@ -170,6 +149,9 @@ final class C01ButtonUITests: XCTestCase {
       try voiceOver.enable()
       var spoken: [String] = []
       // Swipe right until the activation count, the last element, is read.
+      // Not VoiceOverWalk.forward: this walk skips a move that fails and
+      // makes only line breaks spaces, as it did when C01's transcript was
+      // recorded.
       for _ in 0..<20 {
         guard let utterance = try? voiceOver.moveForward().utterance else { continue }
         spoken.append(utterance.replacingOccurrences(of: "\n", with: " "))
