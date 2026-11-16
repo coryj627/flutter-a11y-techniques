@@ -49,7 +49,7 @@ ADB_TIMEOUT = 60
 def adb(*args):
     """Runs adb and returns its output; "" if it fails or times out."""
     try:
-        return subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE).stdout
+        return subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE, **device_lock.child_fds()).stdout
     except subprocess.TimeoutExpired:
         return ""
 
@@ -161,7 +161,7 @@ def adb_checked(*args):
     an empty answer would lead to the wrong value being restored.
     """
     try:
-        run = subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE)
+        run = subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE, **device_lock.child_fds())
     except subprocess.TimeoutExpired:
         raise AdbError(f"adb {' '.join(args)} did not finish in {ADB_TIMEOUT} seconds") from None
     if run.returncode != 0:

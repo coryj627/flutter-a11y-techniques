@@ -105,17 +105,41 @@ class AcquireTest(LockTestCase):
         self.addCleanup(lock.release)
         self.assertEqual(device_lock.read_holder()["label"], "mine")
 
-    def test_child_of_the_holder_runs_under_its_lock(self):
+    def test_child_of_the_holder_that_was_not_given_the_lock_is_refused(self):
+        # It could outlive the holder, and so the lock; it must not run.
+        lock = device_lock.acquire("evidence F08")
+        self.addCleanup(lock.release)
+        code = ("import device_lock\n"
+                "try:\n    device_lock.acquire('child')\n"
+                "except device_lock.NotPassedDown as e:\n    print('refused', e)\n")
+        for extra in ({}, {"start_new_session": True}):
+            child = subprocess.run([sys.executable, "-c", code], cwd=TOOL, env=dict(os.environ),
+                                   capture_output=True, text=True, timeout=30, **extra)
+            self.assertIn("refused", child.stdout, child.stderr)
+            self.assertIn('"evidence F08"', child.stdout)
+            self.assertIn("child_fds()", child.stdout)
+
+    def test_releasing_an_inherited_lock_leaves_the_holder_s_alone(self):
         lock = device_lock.acquire("evidence F08")
         self.addCleanup(lock.release)
         child = subprocess.run(
             [sys.executable, "-c",
              "import device_lock; l = device_lock.acquire('child', wait=False); "
-             "print(l.inherited); l.release(); print(device_lock.read_holder()['label'])"],
-            cwd=TOOL, env=dict(os.environ), capture_output=True, text=True)
-        self.assertEqual(child.stdout.split(), ["True", "evidence"] + ["F08"], child.stderr)
-        # The child's release left the parent's lock alone.
+             "l.release(); print(device_lock.read_holder()['label'])"],
+            cwd=TOOL, env=dict(os.environ), capture_output=True, text=True,
+            **device_lock.child_fds())
+        self.assertEqual(child.stdout.strip(), "evidence F08", child.stderr)
         self.assertIsNone(device_lock._try(self.path))
+
+    def test_holder_that_has_ended_is_reported_with_how_to_find_what_holds_it(self):
+        dead = subprocess.Popen([sys.executable, "-c", "pass"])
+        dead.wait()
+        text = device_lock.describe({"label": "evidence S05", "pid": dead.pid,
+                                     "since": "now", "cwd": "/w"})
+        self.assertIn("has ended", text)
+        self.assertIn("lsof", text)
+        self.assertNotIn("has ended", device_lock.describe(
+            {"label": "x", "pid": os.getpid(), "since": "now", "cwd": "/w"}))
 
     def test_command_given_the_descriptor_holds_the_lock_itself(self):
         lock = device_lock.acquire("evidence F08")

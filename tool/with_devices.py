@@ -107,6 +107,9 @@ def main(argv=None):
     except device_lock.Busy as busy:
         print(busy, file=sys.stderr)
         return BUSY
+    except device_lock.NotPassedDown as problem:
+        print(problem, file=sys.stderr)
+        return 1
     try:
         return run_group(command)
     except OSError as error:

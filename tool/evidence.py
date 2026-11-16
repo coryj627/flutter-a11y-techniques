@@ -282,6 +282,9 @@ def main(argv=None, run=run_technique):
     except device_lock.Busy as busy:
         print(busy)
         return BUSY
+    except device_lock.NotPassedDown as problem:
+        print(problem)
+        return 1
     all_results = {}
     try:
         for index, technique in enumerate(techniques):

@@ -19,6 +19,7 @@ import datetime
 import fcntl
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -52,9 +53,40 @@ def describe(holder):
     """One line saying who holds the lock, from the lock file's text."""
     if not holder:
         return "The devices are in use by another run (it has not said which)."
-    return ("The devices are in use by \"{label}\" (pid {pid}, started {since}, "
+    text = ("The devices are in use by \"{label}\" (pid {pid}, started {since}, "
             "in {cwd}).".format(label=holder.get("label", "?"), pid=holder.get("pid", "?"),
                                 since=holder.get("since", "?"), cwd=holder.get("cwd", "?")))
+    if not _alive(holder.get("pid")):
+        text += (" That process has ended, but a command it started is still running and "
+                 f"holds the lock; `lsof \"{lock_file()}\"` shows which.")
+    return text
+
+
+def _alive(pid):
+    try:
+        os.kill(int(pid), 0)
+    except (ProcessLookupError, ValueError, TypeError):
+        return False
+    except PermissionError:
+        pass
+    return True
+
+
+def _start_adb_server():
+    """Starts the adb server now, before the lock can be handed to anything.
+
+    The first adb command to find no server starts one, and the server stays
+    for good. If that command had been given the lock, the server could
+    inherit it and never let go. Started here, it cannot.
+    """
+    adb = os.path.expanduser(os.environ.get("ADB", "~/Library/Android/sdk/platform-tools/adb"))
+    if not os.path.exists(adb):
+        adb = shutil.which("adb")
+    if adb:
+        try:
+            subprocess.run([adb, "start-server"], capture_output=True, timeout=60)
+        except (OSError, subprocess.TimeoutExpired):
+            pass
 
 
 def read_holder(path=None):
@@ -67,12 +99,23 @@ def read_holder(path=None):
     return data if isinstance(data, dict) else None
 
 
+class NotPassedDown(Exception):
+    """This process runs under a run that holds the lock, but was not given it."""
+
+    def __init__(self, holder):
+        super().__init__(
+            "This command was started by a run that holds the device lock "
+            f"(\"{(holder or {}).get('label', '?')}\"), but the lock was not passed down to "
+            "it, so it could outlive that run and its lock. Start it through "
+            "tool/with_devices.py, or with subprocess's **device_lock.child_fds().")
+
+
 class Lock:
     """A held lock. Keep it referenced; release() or process exit frees it.
 
     An inherited lock is the parent run's: this process has a copy of its
-    descriptor (or, failing that, is a descendant of the process that holds
-    it), and releasing it here changes nothing.
+    descriptor, so the lock lasts at least as long as this process, and
+    releasing it here changes nothing.
     """
 
     def __init__(self, fd, inherited=False):
@@ -154,17 +197,21 @@ def _ancestors():
 
 
 def _inherited(path):
-    """The parent run's lock, if this process runs under it; else None."""
+    """The parent run's lock, if this process was given it; else None.
+
+    Raises NotPassedDown if the holder is an ancestor of this process but
+    its descriptor did not reach us (something in between closed it).
+    Waiting would never end, and carrying on without the lock would let this
+    process outlive it.
+    """
     fd = _inherited_fd(path)
     if fd is not None:
         return Lock(fd, inherited=True)
-    # No descriptor reached us (something in between closed it). The run is
-    # still ours if the process the lock file names is a live ancestor.
     claimed = os.environ.get(ENV_HELD)
     holder = read_holder(path)
     if (claimed and holder is not None and str(holder.get("pid")) == claimed
             and claimed in map(str, _ancestors())):
-        return Lock(None, inherited=True)
+        raise NotPassedDown(holder)
     return None
 
 
@@ -205,6 +252,8 @@ def acquire(label, wait=True, timeout=None, poll=2.0, remind=60.0, out=None):
               "since": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
     os.ftruncate(fd, 0)
     os.pwrite(fd, json.dumps(holder).encode(), 0)
+    if ENV_FILE not in os.environ:  # the real lock, not a test's
+        _start_adb_server()
     # Commands started with child_fds() get this descriptor and, with it,
     # the lock.
     os.set_inheritable(fd, True)
@@ -236,6 +285,6 @@ def hold_for_process(label, **kwargs):
     if _process_lock is None:
         try:
             _process_lock = acquire(label, **kwargs)
-        except Busy as busy:
-            sys.exit(str(busy))
+        except (Busy, NotPassedDown) as problem:
+            sys.exit(str(problem))
     return _process_lock
