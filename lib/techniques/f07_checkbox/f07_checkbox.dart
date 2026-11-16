@@ -14,10 +14,11 @@ final f07Checkbox = Technique(
       'that answer one question are grouped under that question.',
   platforms: const {
     AppPlatform.android: PlatformStatus.limitation(
-      'The states are exposed correctly, mixed included, but TalkBack says '
-      'no state for a mixed checkbox (limitation FL-044) or for one that is '
-      'not checked (limitation FL-045). It says "checked" for a checked '
-      'one. There is no workaround.',
+      'Checked and not checked are exposed correctly. A mixed checkbox is '
+      'exposed as partial on Android 16 and later and as not checked before '
+      'that, and TalkBack says no state for it on either (limitation '
+      'FL-044). TalkBack also says no state for a checkbox that is not '
+      'checked (limitation FL-045). There is no workaround.',
     ),
     AppPlatform.ios: PlatformStatus.limitation(
       'iOS has no checkbox: Flutter exposes one as a switch, read "on" or '

@@ -29,8 +29,9 @@ states:
 
 - iOS has no checkbox control. Flutter exposes a checkbox there as a
   switch, read "on" or "off" ([FL-035](../flutter-limitations.md#fl-035)).
-- A mixed checkbox is exposed as not checked on the web and on iOS. On
-  Android the node says partial and TalkBack says no state
+- A mixed checkbox is exposed as not checked on the web and on iOS, and
+  on Android before version 16 (API 36). On Android 16 and later the node
+  says partial and TalkBack says no state
   ([FL-044](../flutter-limitations.md#fl-044)).
 - On Android TalkBack says no state for a checkbox that is not checked,
   where it says "not checked" for a native one
@@ -95,7 +96,7 @@ that a control worked.
 | `bad-group-unlabelled` | The question is plain text above the boxes | R6 | 1.3.1 |
 
 `bad-mixed-as-unchecked` can be told from `good-mixed` only in the Android
-tree, not in TalkBack's speech. On iOS and the web the good example is
+tree on Android 16 and later, not in TalkBack's speech. On iOS and the web the good example is
 exposed the same way
 ([FL-044](../flutter-limitations.md#fl-044)); the tests there assert that
 sameness, so they fail when Flutter fixes it.
@@ -106,7 +107,7 @@ sameness, so they fail when Flutter fixes it.
 | --- | --- |
 | L1 widget tests | Every checkbox: its label on one node, a checked state that is not a toggle and not in an exclusive group, enabled, a tap action; tap, the semantics action, and Space each change the state. A tap on the label text changes the box. `good-mixed`: the mixed state, and each step of the cycle. `good-group`: the question on a node whose children are the two boxes, once. Bad: a checkbox with no label and text with no action; a button with no checked state before and after use; not checked while one child is; the question as a leaf beside the boxes. Guidelines in light and dark and 200% text for good examples |
 | L3 web | Every checkbox: role, accessible name, `aria-checked`, a click and Space. `good-mixed`: the cycle, and `aria-checked="false"` while mixed (FL-044). `good-group`: role `group` named by the question, containing both. Bad: a checkbox with no name; a button with no `aria-checked`; no named group |
-| L3 Android | Every checkbox: the `CheckBox` class, description, checkable, the checked state before and after a click. `good-mixed`: `CHECKED_STATE_PARTIAL`, and the cycle. `good-group`: a `View` with the question whose children are the boxes. Bad: a `CheckBox` with no description; a `Button` that is not checkable; not checked while one child is; the question as a sibling |
+| L3 Android | Every checkbox: the `CheckBox` class, description, checkable, the checked state before and after a click. `good-mixed`: `CHECKED_STATE_PARTIAL` on API 36 and later and not checked before that, and the cycle. `good-group`: a `View` with the question whose children are the boxes. Bad: a `CheckBox` with no description; a `Button` that is not checkable; not checked while one child is; the question as a sibling |
 | L3 iOS | Every checkbox: type `.switch` (FL-035), label, value "0" then "1" after a tap. `good-mixed`: value "0" while mixed (FL-044). `good-group`: one `Other` element with the question. Bad: a switch with no label; a button with no value; "0" while one child is "1"; the question as static text |
 | L4 TalkBack | What is read with focus on each checkbox, before and after it is changed; the mixed box; the group's question |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count, compared as a whole list |
@@ -151,7 +152,8 @@ The probe that came first is in [evidence/probes/f07](../evidence/probes/f07/).
   text beside it and reads "Email me product updates unchecked checkbox",
   then the text again; S01 saw the same guess.
 - **`bad-mixed-as-unchecked` and `good-mixed` sound the same everywhere.**
-  Only the Android tree tells them apart.
+  Only the Android tree tells them apart, and only on Android 16 and
+  later.
 - `XCUIVoiceOverService` returns the first 64 characters of an utterance:
   the long label's line ends "Double tap to toggle".
 

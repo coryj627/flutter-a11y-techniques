@@ -667,8 +667,8 @@ F07, F08, F09, F10, F02, F03, F06, one technique per pull request.
 
 - F07 Checkbox: built on 2026-11-16. Checked and not checked are right in
   every tree. Found FL-044 (a mixed checkbox is not checked on the web,
-  "off" on iOS, and has no spoken state in TalkBack; Android's node does
-  say partial) and FL-045 (TalkBack says no state for an unchecked Flutter
+  "off" on iOS, and has no spoken state in TalkBack; Android's node says
+  partial on Android 16 and later only) and FL-045 (TalkBack says no state for an unchecked Flutter
   checkbox, and "not checked" for a native one; cause not found). FL-035
   (a checkbox is a switch on iOS) holds. All three platforms are marked
   as limitations in the catalog. A disabled checkbox is in the probe and

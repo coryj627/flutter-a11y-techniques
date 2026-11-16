@@ -1253,8 +1253,9 @@ yet), **Fixed in x.y** (verified on that version).
     checked there, and CI runs it on API 35.
 - What the user gets: a "Select all" box with some of its items chosen is
   read as not checked on the web and "off" on iOS, which is false, and
-  with no state on Android. Sighted users see a dash in the box. On the
-  web and iOS this fails 4.1.2: the state is not what assistive technology
+  with no state on Android (where before Android 16 the node is not
+  checked as well). Sighted users see a dash in the box. On the
+  web, iOS, and Android before 16 this fails 4.1.2: the state is not what assistive technology
   is told.
 - Workaround: none within the SDK. Putting the state in the label or in a
   `value` changes the control's name as it changes
