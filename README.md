@@ -7,9 +7,9 @@ documentation explaining how to build each one.
 Techniques are measured against [WCAG 2.2](https://www.w3.org/TR/WCAG22/) Level A
 and AA.
 
-**Status:** in progress. 11 of the 102 entries in the
+**Status:** in progress. 12 of the 102 entries in the
 [coverage inventory](docs/coverage-inventory.md) are built, with tests and screen reader transcripts
-on Android, iOS, and web: C01, S01 to S05, S13 to S15, F01, and I12. They are
+on Android, iOS, and web: C01, S01 to S05, S13 to S15, S22, F01, and I12. They are
 listed under [Testing a technique](#testing-a-technique). The rest are planned in
 batches in the [plan](docs/plan.md).
 
@@ -82,6 +82,7 @@ TalkBack and VoiceOver. The commands are in each technique's doc, for example
 [S13 Roles and traits](docs/techniques/S13.md#how-it-is-tested),
 [S14 Values and state descriptions](docs/techniques/S14.md#how-it-is-tested),
 [S15 Hints](docs/techniques/S15.md#how-it-is-tested),
+[S22 Semantics identifiers for testing](docs/techniques/S22.md#how-it-is-tested),
 [F01 Text fields and labels](docs/techniques/F01.md#how-it-is-tested), and
 [I12 Announcements and live regions](docs/techniques/I12.md#how-it-is-tested).
 

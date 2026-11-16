@@ -34,7 +34,17 @@ async function startAtBack(page, browserName, clickAtPoint) {
     await heading.click();
   }
   await page.getByRole('button', { name: 'Back' }).focus();
-  await page.waitForTimeout(1500);
+  // VoiceOver reads the button, then about a second later its help message
+  // for it ("You are currently on a button…"), then an empty phrase. A walk
+  // that starts before those have passed gets one of them in place of a
+  // later element's speech. Wait until nothing new has come for two seconds.
+  // If it never goes quiet the walk would be contaminated, so that is an
+  // error and not a reason to carry on.
+  const { phrase, quiet } = await untilQuiet({
+    read: lastPhrase, sleep: (ms) => page.waitForTimeout(ms), quietMs: 2000, limitMs: 10000 });
+  if (!quiet) {
+    throw new Error(`VoiceOver did not go quiet within 10 seconds of focusing Back; it last said "${phrase}"`);
+  }
 }
 
 /** Moves VoiceOver to the next element and returns what it then spoke. */
@@ -177,23 +187,37 @@ export const lastPhrase = () =>
   runAppleScript('tell application "VoiceOver" to get content of last phrase');
 
 /**
+ * Polls `read()` until what it returns has not changed for `quietMs`, or
+ * until `limitMs` has passed. Resolves to `{ phrase, quiet }`: the last
+ * value read, and whether the quiet interval was completed. `quiet` is
+ * false when the limit came first. `read`, `sleep`, and `now` are passed in
+ * so this can be tested without VoiceOver.
+ */
+export async function untilQuiet({ read, sleep, now = Date.now, quietMs, limitMs, pollMs = 250 }) {
+  let phrase = await read();
+  let since = now();
+  const limit = now() + limitMs;
+  while (now() - since < quietMs && now() < limit) {
+    await sleep(pollMs);
+    const latest = await read();
+    if (latest !== phrase) {
+      phrase = latest;
+      since = now();
+    }
+  }
+  return { phrase, quiet: now() - since >= quietMs };
+}
+
+/**
  * Waits until VoiceOver's last phrase has not changed for `quietMs`, and
  * returns it. After focus lands on a control VoiceOver reads the control and,
  * a few seconds later, a long usage hint; an announcement must not be
- * mistaken for either.
+ * mistaken for either. Returns the last phrase at `limitMs` too: callers
+ * here go on to listen, and judge what they then hear.
  */
 export async function waitUntilQuiet(page, quietMs = 4000, limitMs = 20000) {
-  let phrase = await lastPhrase();
-  let since = Date.now();
-  const limit = Date.now() + limitMs;
-  while (Date.now() - since < quietMs && Date.now() < limit) {
-    await page.waitForTimeout(250);
-    const now = await lastPhrase();
-    if (now !== phrase) {
-      phrase = now;
-      since = Date.now();
-    }
-  }
+  const { phrase } = await untilQuiet({
+    read: lastPhrase, sleep: (ms) => page.waitForTimeout(ms), quietMs, limitMs });
   return phrase;
 }
 
