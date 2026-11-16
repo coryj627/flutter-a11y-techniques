@@ -1240,7 +1240,7 @@ yet), **Fixed in x.y** (verified on that version).
   - Android: the node is right and the speech is not. On Android 16 (API
     36) and later `BaseRoleConfigurator.setChecked` passes
     `AccessibilityNodeInfo.CHECKED_STATE_PARTIAL`, asserted by
-    `F07CheckboxTest.goodMixedIsPartiallyChecked`. TalkBack 17 reads the
+    `F07CheckboxTest.goodMixedIsPartiallyCheckedWhereAndroidHasThatState`. TalkBack 17 reads the
     box as "Select all, Check box" with no state
     (`docs/evidence/F07/talkback-android.md`). It did not speak the
     partial state of a native `CheckBox` either: one whose node was set to
@@ -1249,7 +1249,8 @@ yet), **Fixed in x.y** (verified on that version).
     tri-state checkbox a state description for this, and Flutter sets no
     state description ([FL-036](#fl-036)); that part is from memory of the
     Compose source and was not checked here. Before API 36 the engine
-    calls the two-state `setChecked(false)` (source read, not run).
+    calls the two-state `setChecked(false)`: the same test expects not
+    checked there, and CI runs it on API 35.
 - What the user gets: a "Select all" box with some of its items chosen is
   read as not checked on the web and "off" on iOS, which is false, and
   with no state on Android. Sighted users see a dash in the box. On the

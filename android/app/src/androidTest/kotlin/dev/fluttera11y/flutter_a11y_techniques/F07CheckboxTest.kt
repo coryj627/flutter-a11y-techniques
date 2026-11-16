@@ -83,11 +83,19 @@ class F07CheckboxTest {
 
     private fun checkBoxes(): List<AccessibilityNodeInfo> = all().filter { it.type() == CHECK_BOX }
 
+    private val hasPartialState = android.os.Build.VERSION.SDK_INT >= 36
+
     /**
      * The checked state of a node: true, false, or partial. Android 16 (API
-     * 36) added the third state, and the Flutter engine sets it there.
+     * 36) added the third state and `getChecked()`, and the Flutter engine
+     * sets it there. Before that there are two states and `isChecked`.
      */
-    private fun AccessibilityNodeInfo.state(): Int = checked
+    @Suppress("DEPRECATION")
+    private fun AccessibilityNodeInfo.state(): Int = when {
+        hasPartialState -> checked
+        isChecked -> AccessibilityNodeInfo.CHECKED_STATE_TRUE
+        else -> AccessibilityNodeInfo.CHECKED_STATE_FALSE
+    }
 
     private fun waitForState(id: String, expected: Int) {
         val end = System.currentTimeMillis() + 5_000
@@ -132,16 +140,18 @@ class F07CheckboxTest {
     }
 
     @Test
-    fun goodMixedIsPartiallyChecked() {
-        assumeTrue("the partial state needs Android 16", android.os.Build.VERSION.SDK_INT >= 36)
+    fun goodMixedIsPartiallyCheckedWhereAndroidHasThatState() {
         open("good-mixed")
         val all = "f07-good-mixed-all"
         assertEquals(CHECK_BOX, node(all).type())
         assertEquals("Select all", node(all).name())
         assertEquals(on, node("f07-good-mixed-email").state())
         assertEquals(off, node("f07-good-mixed-text").state())
-        assertEquals(partial, node(all).state())
-        // The old two-state property calls it not checked.
+        // Android 16 and later: partial. Before that the platform has two
+        // states and the engine reports a mixed box as not checked (FL-044).
+        val mixed = if (hasPartialState) partial else off
+        assertEquals(mixed, node(all).state())
+        // The old two-state property calls it not checked on every version.
         @Suppress("DEPRECATION")
         assertFalse(node(all).isChecked)
         // From mixed, "Select all" checks both; from checked, it clears both.
@@ -152,7 +162,7 @@ class F07CheckboxTest {
         waitForState(all, off)
         waitForState("f07-good-mixed-email", off)
         assertTrue(node("f07-good-mixed-email").performAction(AccessibilityNodeInfo.ACTION_CLICK))
-        waitForState(all, partial)
+        waitForState(all, mixed)
     }
 
     @Test
