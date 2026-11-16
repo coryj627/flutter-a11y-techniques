@@ -2,31 +2,12 @@
 // Spec: docs/specs/S15-hints.md. Runs against the release build in
 // build/web.
 import { test, expect } from '@playwright/test';
+import { byId, tabTo, technique } from './support/techniques.js';
 
-const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
+const { open, expectCount } = technique('S15', { countLabel: 'Changes' });
 
 /** The <input> inside the node carrying a test identifier. */
 const field = (page, id) => byId(page, id).locator('input');
-
-async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/S15/${slug}`);
-  await byId(page, `s15-${slug}-count`).waitFor();
-}
-
-const expectCount = (page, slug, n) =>
-  expect(byId(page, `s15-${slug}-count`)).toHaveText(`Changes: ${n}`);
-
-/** Press Tab until `locator` has focus. Returns false if it never does. */
-async function tabTo(page, locator, max = 8) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    // Flutter moves DOM focus on the next frame.
-    await page.waitForTimeout(100);
-    if (await locator.evaluate((e) => e === document.activeElement)) return true;
-  }
-  return false;
-}
 
 /**
  * Every element on the page that carries a hint: `aria-description`, or the

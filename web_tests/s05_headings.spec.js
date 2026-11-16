@@ -1,12 +1,10 @@
 // L3 for S05 Headings on web: the heading structure the browser exposes.
 // Spec: docs/specs/S05-headings.md. Runs against the release build in build/web.
 import { test, expect } from '@playwright/test';
+import { exampleHeading, technique } from './support/techniques.js';
 
-async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/S05/${slug}`);
-  await page.getByRole('heading', { name: 'Example', level: 2 }).waitFor();
-}
+// Waits for the "Example" heading.
+const { open } = technique('S05', { ready: exampleHeading });
 
 /**
  * Every heading on the page, in reading order, as "level text".

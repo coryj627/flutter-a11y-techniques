@@ -2,28 +2,9 @@
 // exposes. Spec: docs/specs/F07-checkbox.md. Runs against the release build
 // in build/web.
 import { test, expect } from '@playwright/test';
+import { byId, tabTo, technique } from './support/techniques.js';
 
-const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
-
-async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/F07/${slug}`);
-  await byId(page, `f07-${slug}-count`).waitFor();
-}
-
-const expectCount = (page, slug, n) =>
-  expect(byId(page, `f07-${slug}-count`)).toHaveText(`Changes: ${n}`);
-
-/** Press Tab until `locator` has focus. Returns false if it never does. */
-async function tabTo(page, locator, max = 10) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    // Flutter moves DOM focus on the next frame.
-    await page.waitForTimeout(100);
-    if (await locator.evaluate((e) => e === document.activeElement)) return true;
-  }
-  return false;
-}
+const { open, expectCount } = technique('F07', { countLabel: 'Changes' });
 
 const updates = 'Email me product updates';
 
@@ -58,7 +39,7 @@ test.describe('checkboxes', () => {
       await box.click();
       await expect(box).toBeChecked();
       await expectCount(page, slug, 1);
-      expect(await tabTo(page, box), 'Tab reaches the checkbox').toBe(true);
+      expect(await tabTo(page, box, 10), 'Tab reaches the checkbox').toBe(true);
       await page.keyboard.press('Space');
       await expect(box).not.toBeChecked();
       await expectCount(page, slug, 2);

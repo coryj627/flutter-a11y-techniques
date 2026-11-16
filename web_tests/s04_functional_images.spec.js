@@ -2,30 +2,9 @@
 // exposes. Spec: docs/specs/S04-functional-images.md. Runs against the
 // release build in build/web.
 import { test, expect } from '@playwright/test';
+import { byId, tabTo, technique } from './support/techniques.js';
 
-const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
-
-async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/S04/${slug}`);
-  await byId(page, `s04-${slug}-count`).waitFor();
-  // The picture is decoded after the first frame.
-  await page.waitForTimeout(500);
-}
-
-const expectCount = (page, slug, n) =>
-  expect(byId(page, `s04-${slug}-count`)).toHaveText(`Activations: ${n}`);
-
-/** Press Tab until `locator` has focus. Returns false if it never does. */
-async function tabTo(page, locator, max = 8) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    // Flutter moves DOM focus on the next frame.
-    await page.waitForTimeout(100);
-    if (await locator.evaluate((e) => e === document.activeElement)) return true;
-  }
-  return false;
-}
+const { open, expectCount } = technique('S04', { countLabel: 'Activations', settle: 500 });
 
 const good = {
   'good-image-button': { 's04-good-image-button-guide': 'Open trail guide' },
