@@ -179,6 +179,39 @@ EXPECT = {
     # Read as the good field is: the tree test finds no rule on the screen.
     "s15-bad-hint-only-username": (["Username", "3 to 12 letters or numbers"], []),
     "s15-bad-hint-only-username-filled": (["abc", "Edit box"], ["Username", "3 to 12"]),
+    # F08 Radio group. TalkBack says "checked" before the name of the chosen
+    # radio button and no state for the others, as for a checkbox (FL-045).
+    # Written to fail when "not checked" starts being spoken.
+    "f08-good-group-group": (["Delivery speed"], ["Radio button"]),
+    "f08-good-group-standard": (["Standard", "Radio button"], ["checked"]),
+    "f08-good-group-express": (["checked", "Express", "Radio button"], ["not checked"]),
+    "f08-good-group-standard-changed": (["checked", "Standard", "Radio button"], ["not checked"]),
+    "f08-good-cupertino-group": (["Delivery speed"], ["Radio button"]),
+    "f08-good-cupertino-standard": (["Standard", "Radio button"], ["checked"]),
+    "f08-good-cupertino-express": (["checked", "Express", "Radio button"], ["not checked"]),
+    "f08-good-cupertino-standard-changed": (["checked", "Standard", "Radio button"], ["not checked"]),
+    "f08-good-custom-group": (["Delivery speed"], ["Radio button"]),
+    "f08-good-custom-standard": (["Standard", "Radio button"], ["checked"]),
+    "f08-good-custom-express": (["checked", "Express", "Radio button"], ["not checked"]),
+    "f08-good-custom-standard-changed": (["checked", "Standard", "Radio button"], ["not checked"]),
+    # The answers carry the question.
+    "f08-good-context-group": (["Are you at home?"], ["Radio button"]),
+    "f08-good-context-yes": (["Yes, I am at home", "Radio button"], ["checked"]),
+    "f08-good-context-no": (["checked", "No, I am not at home", "Radio button"], ["not checked"]),
+    # Bad examples: the defect must be audible where it can be.
+    "f08-bad-unlabelled-first": (["Radio button"], ["Standard", "checked"]),
+    "f08-bad-unlabelled-second": (["checked", "Radio button"], ["Express"]),
+    "f08-bad-group-unlabelled-question": (["Delivery speed"], ["Radio button"]),
+    "f08-bad-group-unlabelled-standard": (["Standard", "Radio button"], ["checked"]),
+    "f08-bad-group-unlabelled-express": (["checked", "Express", "Radio button"], ["not checked"]),
+    "f08-bad-no-state-standard": (["Standard", "Button"], ["Radio button", "checked", "selected"]),
+    "f08-bad-no-state-express": (["Express", "Button"], ["Radio button", "checked", "selected"]),
+    "f08-bad-no-state-standard-changed": (["Standard", "Button"], ["Radio button", "checked", "selected"]),
+    "f08-bad-checkbox-role-standard": (["Standard", "Check box"], ["Radio button"]),
+    "f08-bad-checkbox-role-express": (["checked", "Express", "Check box"], ["Radio button"]),
+    # Correct on Android: the defect of this example is on iOS.
+    "f08-bad-checked-only-standard": (["Standard", "Radio button"], ["checked"]),
+    "f08-bad-checked-only-express": (["checked", "Express", "Radio button"], ["not checked"]),
     # F07 Checkbox. TalkBack says "checked" before the name of a checked
     # box. For a Flutter checkbox that is not checked it says no state at
     # all (FL-045); a native one is read "not checked". Written to fail when

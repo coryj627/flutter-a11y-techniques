@@ -673,7 +673,16 @@ F07, F08, F09, F10, F02, F03, F06, one technique per pull request.
   (a checkbox is a switch on iOS) holds. All three platforms are marked
   as limitations in the catalog. A disabled checkbox is in the probe and
   not in an example.
-- Next: F08 Radio group.
+- F08 Radio group: built on 2026-11-16. `RadioGroup` with the SDK's radio
+  widgets gives role, state, and the APG keyboard on the web and Android.
+  Found FL-046 (`RadioGroup` cannot be named; the question goes on a node
+  around it) and FL-047 (a radio button is a button on iOS; the SDK's
+  widgets add a selected state and a "Not selected" hint, and a radio
+  button built from `checked` and `inMutuallyExclusiveGroup` alone has no
+  state there). FL-045 extends to radio buttons: TalkBack says no state
+  for one that is not chosen. Only iOS is marked as a limitation. A
+  disabled radio button is in the probe and not in an example.
+- Next: F09 Switch.
 
 ### Late-stage tasks
 

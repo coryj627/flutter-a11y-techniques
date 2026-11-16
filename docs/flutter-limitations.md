@@ -65,7 +65,9 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed once; not explored |
 | [FL-043](#fl-043) | `Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS | All | Confirmed |
 | [FL-044](#fl-044) | A mixed checkbox is exposed as not checked on the web, on iOS, and on Android before 16, and TalkBack says no state for it | All | Confirmed |
-| [FL-045](#fl-045) | TalkBack says no state for a checkbox that is not checked | Android | Confirmed; cause not found |
+| [FL-045](#fl-045) | TalkBack says no state for a checkbox or radio button that is not checked | Android | Confirmed; cause not found |
+| [FL-046](#fl-046) | `RadioGroup` cannot be given a name | All | Confirmed |
+| [FL-047](#fl-047) | A radio button is a button for VoiceOver on iOS, and a hand-built one has no state there | iOS | Confirmed (source read) |
 
 ---
 
@@ -1268,7 +1270,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-045
 
-**TalkBack says no state for a checkbox that is not checked.**
+**TalkBack says no state for a checkbox or radio button that is not checked.**
 
 - Status: Confirmed, Flutter 3.47.5, Android 17, TalkBack 17.0. First seen
   in S01 and S13 and left to F07. Asserted by the F07 TalkBack transcript
@@ -1295,6 +1297,95 @@ yet), **Fixed in x.y** (verified on that version).
   state can be worked out, but it is not said. This is not counted as a
   WCAG failure here: the state is exposed to assistive technology
   correctly.
+- Radio buttons are the same (F08): an option that is not chosen is read
+  "Standard, Radio button", and the chosen one "checked, Express, Radio
+  button" (`docs/evidence/F08/talkback-android.md`). A native
+  `RadioButton` was not compared; the native comparison above is for a
+  checkbox only.
 - Workaround: none within the SDK. There is no state description to set
   ([FL-036](#fl-036)).
+- Upstream issue: not searched yet (D25).
+
+## FL-046
+
+**`RadioGroup` cannot be given a name.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the F08 probe
+  (`docs/evidence/probes/f08`, fixtures 01 to 04). Asserted by the F08
+  widget tests ("the question is the label of a node around a radio
+  group"), `web_tests/f08_radio_group.spec.js`, and
+  `F08RadioGroupTest.goodExamplesHaveTheQuestionOnANodeAroundTheRadioGroup`.
+  Framework source read: `widgets/radio_group.dart`.
+- What happens: `RadioGroup` builds
+  `Semantics(container: true, role: SemanticsRole.radioGroup, child: ...)`
+  and has no parameter for a label. The node it makes is
+  `role="radiogroup"` on the web and `android.widget.RadioGroup` on
+  Android, with no name. The APG pattern requires the radio group to have
+  a label.
+- A `Semantics(label:)` around it does not reach it, for the same reason
+  a hint or an identifier around a Material button does not
+  ([FL-040](#fl-040), [FL-043](#fl-043)): the group's node is a container,
+  so the label lands on a node of its own, around the group.
+- What that gives: on the web, `role="group"` with the label, containing
+  the unnamed `radiogroup`. On Android, a `View` with the label whose
+  child is the `RadioGroup`. On iOS, an element with the label, read
+  before the buttons. Adding `role: SemanticsRole.radioGroup` to the
+  wrapper makes a named `radiogroup` on the web with a second, unnamed
+  `radiogroup` inside it (probe, fixture 04).
+- What the user gets: the question is read, once, before the options, on
+  every platform. On the web VoiceOver announces a group with the
+  question as its name. What is lost is the direct link the pattern asks
+  for, a radio group that is itself named.
+- Workaround: the wrapper, as the F08 good examples do:
+  `Semantics(container: true, explicitChildNodes: true, label: 'Delivery speed', child: ...)`
+  around the `RadioGroup`, with the visible question in `ExcludeSemantics`
+  so it is not read twice.
+- Related: when radio buttons have no names of their own (`Radio` beside
+  `Text`, not joined), the stray texts become the group node's label:
+  `role="radiogroup"` named "Standard Express Next day" on the web, and
+  the same description on Android's `RadioGroup` (F08 `bad-unlabelled`).
+- How to read this entry: Flutter has not added this yet. Re-check when
+  the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-047
+
+**A radio button is a button for VoiceOver on iOS, and a hand-built one has no state there.**
+
+- Status: Confirmed, Flutter 3.47.5, iOS 27. First seen in the S13 probe
+  (fixture 09) and left to F08. Asserted by
+  `F08RadioGroupUITests.testRadioButtonsAreButtonsWithOneSelected`,
+  `testBadCheckedOnlyHasButtonsNoneSelected`, and the F08 VoiceOver
+  transcript. Engine source read: `SemanticsObject.mm`; framework source
+  read: `widgets/raw_radio.dart`.
+- What happens, part one: UIKit has no radio button. A node with
+  `inMutuallyExclusiveGroup` is an ordinary element with the button trait,
+  and `accessibilityValue` returns nothing for it (the engine's comment:
+  "iOS does not announce values of native radio buttons"), so its checked
+  state is not exposed. VoiceOver never says "radio button".
+- What Flutter's widgets do about it: `RawRadio`, which `Radio`,
+  `RadioListTile`, and `CupertinoRadio` are built on, adds
+  `selected: true` to the chosen button on iOS and macOS, and the hint
+  "Not selected" (`WidgetsLocalizations.radioButtonUnselectedLabel`) to
+  the others. VoiceOver reads "selected, Express, Button" and "Standard,
+  Button, Not selected". The state is announced; the role is "Button".
+- What happens, part two: a radio button built from
+  `Semantics(checked: ..., inMutuallyExclusiveGroup: true)` has neither
+  addition. It is right on Android (`RadioButton`, checked) and on the web
+  (`role="radio"`, `aria-checked`), and on iOS it is "Express, Button"
+  with no state at all: nothing says which option is chosen (4.1.2). The
+  code looks complete and works on the two platforms most people test
+  first.
+- On the web, on Apple devices only: the same hint is written as
+  `aria-description="Not selected"` on the buttons that are not chosen,
+  because the framework chooses by `defaultTargetPlatform`, which is
+  macOS or iOS in a browser there. A browser on another system gets no
+  description.
+- Why it matters: for the built-in widgets this is a naming difference,
+  like a checkbox being a switch ([FL-035](#fl-035)). For a hand-built
+  control it is a missing state.
+- Workaround: build custom radio buttons on `RawRadio` inside a
+  `RadioGroup`, as F08 `good-custom` does. To stay with `Semantics`, add
+  `selected:` on iOS as `RawRadio` does. There is no way to make
+  VoiceOver say "radio button".
 - Upstream issue: not searched yet (D25).

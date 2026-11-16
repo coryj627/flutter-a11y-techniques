@@ -69,6 +69,14 @@ METHODS = {
            "example. Where VoiceOver's last phrase is its own help message "
            "(\"You are currently on…\"), which follows the checkbox with no name at once, the "
            "phrase Guidepup logged for that move is shown instead",
+    "F08": "focus the Back button, wait until VoiceOver has been quiet for two seconds, then "
+           "`voiceOver.next()` to the end of the screen. VoiceOver's last phrase and the "
+           "position of its cursor are read over AppleScript after every move: a move that "
+           "changes the position, or that speaks a different phrase, is a stop; two moves in "
+           "a row that do neither are the end. The change count is the last element of every "
+           "example. Where VoiceOver's last phrase is its own help message "
+           "(\"You are currently on…\"), which follows a radio button with no name at once, the "
+           "phrase Guidepup logged for that move is shown instead",
     "I12": "press the example's button with the keyboard, then poll VoiceOver's last phrase "
            "over AppleScript for what it was given to announce; Chromium only, because "
            "Playwright's WebKit build passes no live region changes to VoiceOver",

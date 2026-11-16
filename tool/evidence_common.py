@@ -52,6 +52,7 @@ TECHNIQUES = {
             "S14ValuesAndStateDescriptionsUITests", "s14_values_and_state_descriptions_vo.spec.js"),
     "S15": ("S15 Hints", "S15HintsTest", "S15HintsUITests", "s15_hints_vo.spec.js"),
     "F07": ("F07 Checkbox", "F07CheckboxTest", "F07CheckboxUITests", "f07_checkbox_vo.spec.js"),
+    "F08": ("F08 Radio group", "F08RadioGroupTest", "F08RadioGroupUITests", "f08_radio_group_vo.spec.js"),
     "S22": ("S22 Semantics identifiers for testing", "S22SemanticsIdentifiersTest",
             "S22SemanticsIdentifiersUITests", "s22_semantics_identifiers_vo.spec.js"),
     "F01": ("F01 Text fields and labels", "F01TextFieldsTest", "F01TextFieldsUITests",

@@ -2,6 +2,7 @@ import '../catalog/technique.dart';
 import 'c01_button/c01_button.dart';
 import 'f01_text_fields/f01_text_fields.dart';
 import 'f07_checkbox/f07_checkbox.dart';
+import 'f08_radio_group/f08_radio_group.dart';
 import 'i12_announcements/i12_announcements.dart';
 import 's01_accessible_names/s01_accessible_names.dart';
 import 's02_informative_images/s02_informative_images.dart';
@@ -27,5 +28,6 @@ final List<Technique> allTechniques = [
   s22SemanticsIdentifiers,
   f01TextFields,
   f07Checkbox,
+  f08RadioGroup,
   i12Announcements,
 ];
