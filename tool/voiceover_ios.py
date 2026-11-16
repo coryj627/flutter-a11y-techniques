@@ -13,77 +13,17 @@ import re
 import subprocess
 import sys
 
-from evidence_common import TECHNIQUES, flutter_version, technique_argument
+from evidence_common import REGISTRATIONS, TECHNIQUES, flutter_version, technique_argument
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEVICE = sys.argv[2] if len(sys.argv) > 2 else "iPhone 17"
 
 WALK = ("`XCUIVoiceOverService.moveForward()` from the top of each example screen to its "
         "last element", "Spoken, in swipe order")
-# technique -> (how the speech was captured, heading of the transcript column)
-METHODS = {
-    "S03": ("`XCUIVoiceOverService.moveForward()` until the same utterance is heard four "
-            "times in a row, then `moveBackward()` to the \"Example\" heading. The walk back "
-            "gives each element of the example once and shows that the walk forward had "
-            "reached the end of the screen",
-            "Spoken, in swipe order"),
-    "S04": ("`XCUIVoiceOverService.moveForward()` from the top of the screen to the "
-            "activation count, which is the last element of every example. What is shown "
-            "is everything between the \"Example\" heading and the count; a move at which "
-            "VoiceOver said nothing is shown as \"(no speech)\" only when one move back "
-            "read the element before it and the move forward again was silent too, which "
-            "shows the cursor was on an element of its own",
-            "Spoken, in swipe order"),
-    "S13": ("`XCUIVoiceOverService.moveForward()` from the top of the screen to the "
-            "activation count, which is the last element of every example. What is shown "
-            "is everything between the \"Example\" heading and the count; a move at which "
-            "VoiceOver said nothing is shown as \"(no speech)\" only when one move back "
-            "read the element before it and the move forward again was silent too, which "
-            "shows the cursor was on an element of its own",
-            "Spoken, in swipe order"),
-    "S14": ("`XCUIVoiceOverService.moveForward()` from the top of the screen to the "
-            "change count, which is the last element of every example. What is shown "
-            "is everything between the \"Example\" heading and the count; a move at which "
-            "VoiceOver said nothing is shown as \"(no speech)\" only when one move back "
-            "read the element before it and the move forward again was silent too, which "
-            "shows the cursor was on an element of its own",
-            "Spoken, in swipe order"),
-    "S15": ("`XCUIVoiceOverService.moveForward()` from the top of the screen to the "
-            "change count, which is the last element of every example. What is shown "
-            "is everything between the \"Example\" heading and the count; a move at which "
-            "VoiceOver said nothing is shown as \"(no speech)\" only when one move back "
-            "read the element before it and the move forward again was silent too, which "
-            "shows the cursor was on an element of its own",
-            "Spoken, in swipe order"),
-    "S22": ("`XCUIVoiceOverService.moveForward()` from the top of the screen to the "
-            "change count, which is the last element of every example. What is shown "
-            "is everything between the \"Example\" heading and the count; a move at which "
-            "VoiceOver said nothing is shown as \"(no speech)\" only when one move back "
-            "read the element before it and the move forward again was silent too, which "
-            "shows the cursor was on an element of its own",
-            "Spoken, in swipe order"),
-    "F07": ("`XCUIVoiceOverService.moveForward()` from the top of the screen to the "
-            "change count, which is the last element of every example. What is shown "
-            "is everything between the \"Example\" heading and the count; a move at which "
-            "VoiceOver said nothing is shown as \"(no speech)\" only when one move back "
-            "read the element before it and the move forward again was silent too, which "
-            "shows the cursor was on an element of its own",
-            "Spoken, in swipe order"),
-    "F08": ("`XCUIVoiceOverService.moveForward()` from the top of the screen to the "
-            "change count, which is the last element of every example. What is shown "
-            "is everything between the \"Example\" heading and the count; a move at which "
-            "VoiceOver said nothing is shown as \"(no speech)\" only when one move back "
-            "read the element before it and the move forward again was silent too, which "
-            "shows the cursor was on an element of its own",
-            "Spoken, in swipe order"),
-    "I12": ("the VoiceOver cursor is put on the example's button, the button is activated "
-            "with a double tap, and `XCUIVoiceOverService.currentSpeech()` is read until the "
-            "message is heard, or for four seconds after the visible change when nothing "
-            "should be said. The message must be on screen first. The cursor is then moved "
-            "back and forward once, which must land on the button again, to show that the "
-            "message was announced and not reached by a moved cursor",
-            "Spoken: on the button / after it is activated / after one step back and forward"),
-}
+# technique -> (how the speech was captured, heading of the transcript column),
+# from the technique's file in tool/techniques/; WALK when it sets none.
+METHODS = {tid: r.voiceover_ios_method for tid, r in REGISTRATIONS.items()
+           if r.voiceover_ios_method}
 
 
 def main():
