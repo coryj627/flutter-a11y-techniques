@@ -189,8 +189,9 @@ EXPECT = {
     "f07-good-cupertino-updates-changed": (["checked", "Email me product updates", "Check box"], ["not checked"]),
     "f07-good-custom-updates": (["Email me product updates", "Check box"], ["checked"]),
     "f07-good-custom-updates-changed": (["checked", "Email me product updates", "Check box"], ["not checked"]),
-    # Mixed: the node is partially checked and TalkBack says no state for
-    # it (FL-044). Written to fail when it says one.
+    # Mixed: the node is partially checked on Android 16 (API 36) and later
+    # and not checked before that. TalkBack says no state for it on either
+    # (FL-044). Written to fail when it says one.
     "f07-good-mixed-all": (["Select all", "Check box"], ["checked", "partial", "mixed"]),
     "f07-good-mixed-email": (["checked", "Email", "Check box"], ["not checked"]),
     "f07-good-mixed-text": (["Text message", "Check box"], ["checked"]),

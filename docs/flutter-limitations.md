@@ -64,7 +64,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-041](#fl-041) | On web a hint on a node with no label is not rendered, unless the node is a text field | Web | Confirmed (source read) |
 | [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed once; not explored |
 | [FL-043](#fl-043) | `Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS | All | Confirmed |
-| [FL-044](#fl-044) | A mixed checkbox is exposed as not checked on the web and on iOS, and TalkBack says no state for it | All | Confirmed |
+| [FL-044](#fl-044) | A mixed checkbox is exposed as not checked on the web, on iOS, and on Android before 16, and TalkBack says no state for it | All | Confirmed |
 | [FL-045](#fl-045) | TalkBack says no state for a checkbox that is not checked | Android | Confirmed; cause not found |
 
 ---
@@ -1216,7 +1216,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-044
 
-**A mixed checkbox is exposed as not checked on the web and on iOS, and TalkBack says no state for it.**
+**A mixed checkbox is exposed as not checked on the web, on iOS, and on Android before 16, and TalkBack says no state for it.**
 
 - Status: Confirmed, Flutter 3.47.5, all platforms. Found in the F07 probe
   (`docs/evidence/probes/f07`, fixtures 03, 04, 08, 10). Asserted by
