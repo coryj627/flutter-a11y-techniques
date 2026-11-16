@@ -23,7 +23,11 @@ adb shell ps -A | grep -E "fluttera11y|uiautomator|talkback" || true
 echo "DIAG: ----- thread stacks of the app and test process -----"
 adb root || true
 sleep 3
-for pid in $(adb shell pidof $PKG); do
+pids=$(adb shell pidof $PKG | tr -d '\r' | tr -s ' \n' ' ')
+if [ -z "${pids// /}" ]; then
+  echo "DIAG: no process named $PKG is running; no thread stacks to take"
+fi
+for pid in $pids; do
   echo "DIAG: pid $pid"
   adb shell "ls /data/anr 2>/dev/null | wc -l"
   adb shell kill -3 "$pid"
