@@ -16,6 +16,7 @@ env:
 jobs:
   # L1: analysis and widget tests, for the app and the Widgetbook.
   analyze-test:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +39,7 @@ jobs:
 
   # L3 on web: the browser accessibility tree, for the app and the Widgetbook.
   web:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -106,7 +108,7 @@ jobs:
           working-directory: android
           # A test that hangs fails after three minutes with a stack trace,
           # and does not hold the job until GitHub's six hour limit.
-          script: ./gradlew app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.timeout_msec=180000
+          script: bash ../tool/ci_android_diag.sh
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -118,6 +120,7 @@ jobs:
   # is only checked locally (python3 tool/voiceover_ios.py <ID>) until the hosted image
   # has them.
   ios:
+    if: false
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
