@@ -1,0 +1,28 @@
+// Throwaway native comparison for the F07 probe. Not committed.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.Activity
+import android.os.Bundle
+import android.view.View
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.CheckBox
+import android.widget.LinearLayout
+
+class ProbeNativeActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 200, 40, 40) }
+        column.addView(CheckBox(this).apply { text = "n01 native unchecked" })
+        column.addView(CheckBox(this).apply { text = "n02 native checked"; isChecked = true })
+        column.addView(CheckBox(this).apply {
+            text = "n03 native partial"
+            accessibilityDelegate = object : View.AccessibilityDelegate() {
+                override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    info.setChecked(AccessibilityNodeInfo.CHECKED_STATE_PARTIAL)
+                }
+            }
+        })
+        setContentView(column)
+    }
+}

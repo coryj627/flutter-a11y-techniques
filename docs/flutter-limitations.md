@@ -64,6 +64,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-041](#fl-041) | On web a hint on a node with no label is not rendered, unless the node is a text field | Web | Confirmed (source read) |
 | [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed once; not explored |
 | [FL-043](#fl-043) | `Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS | All | Confirmed |
+| [FL-044](#fl-044) | A mixed checkbox is exposed as not checked on the web and on iOS, and TalkBack says no state for it | All | Confirmed |
+| [FL-045](#fl-045) | TalkBack says no state for a checkbox that is not checked | Android | Confirmed; cause not found |
 
 ---
 
@@ -970,8 +972,8 @@ yet), **Fixed in x.y** (verified on that version).
 - A checkbox with three states is worse off (engine source read, not
   probed): `accessibilityValue` sets the native switch on only when the
   state is checked, so the mixed state of `Checkbox(tristate: true, value:
-  null)` would be read as "off". That is a wrong state (4.1.2) and goes to
-  F07 Checkbox to be probed.
+  null)` is read as "off". F07 probed and confirmed it; see
+  [FL-044](#fl-044).
 - Workaround: none within the SDK.
 - Upstream issue: not searched yet (D25).
 
@@ -1211,3 +1213,86 @@ yet), **Fixed in x.y** (verified on that version).
   which is `TestId`. One node with role, name, and identifier everywhere.
 - Upstream issue: not searched yet (D25). The buttons have not been given
   an `identifier` parameter.
+
+## FL-044
+
+**A mixed checkbox is exposed as not checked on the web and on iOS, and TalkBack says no state for it.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the F07 probe
+  (`docs/evidence/probes/f07`, fixtures 03, 04, 08, 10). Asserted by
+  `web_tests/f07_checkbox.spec.js` ("the mixed state is exposed as not
+  checked"), `F07CheckboxUITests.testGoodMixedIsExposedAsOff`, and heard
+  in the F07 VoiceOver transcripts. Engine source read for both.
+- What happens: `Checkbox(tristate: true, value: null)`,
+  `CheckboxListTile` and `CupertinoCheckbox` with the same arguments, and
+  `Semantics(mixed: true)` all produce a semantics node whose checked
+  state is mixed (`CheckedState.mixed`; the F07 widget tests assert it).
+  - Web: the element is `role="checkbox"` with `aria-checked="false"`.
+    The role class that renders checkboxes, `SemanticCheckable` in
+    `lib/web_ui/lib/src/engine/semantics/checkable.dart`, writes `"true"`
+    when the state is checked and `"false"` for everything else. The same
+    file has a `Checkable` behaviour that does write `"mixed"`, but
+    `SemanticCheckable` does not use it.
+  - iOS: the element is a switch ([FL-035](#fl-035)) with the value "0".
+    `FlutterSwitchSemanticsObject.accessibilityValue` in
+    `SemanticsObject.mm` turns the native switch on only when the state is
+    checked. A `UISwitch` has no third state to use.
+  - Android: the node is right and the speech is not. On Android 16 (API
+    36) and later `BaseRoleConfigurator.setChecked` passes
+    `AccessibilityNodeInfo.CHECKED_STATE_PARTIAL`, asserted by
+    `F07CheckboxTest.goodMixedIsPartiallyChecked`. TalkBack 17 reads the
+    box as "Select all, Check box" with no state
+    (`docs/evidence/F07/talkback-android.md`). It did not speak the
+    partial state of a native `CheckBox` either: one whose node was set to
+    `CHECKED_STATE_PARTIAL` through an accessibility delegate was read "not
+    checked" (`docs/evidence/probes/f07`). Jetpack Compose gives a
+    tri-state checkbox a state description for this, and Flutter sets no
+    state description ([FL-036](#fl-036)); that part is from memory of the
+    Compose source and was not checked here. Before API 36 the engine
+    calls the two-state `setChecked(false)` (source read, not run).
+- What the user gets: a "Select all" box with some of its items chosen is
+  read as not checked on the web and "off" on iOS, which is false, and
+  with no state on Android. Sighted users see a dash in the box. On the
+  web and iOS this fails 4.1.2: the state is not what assistive technology
+  is told.
+- Workaround: none within the SDK. Putting the state in the label or in a
+  `value` changes the control's name as it changes
+  ([FL-036](#fl-036), [FL-037](#fl-037)), and a hint can be switched off
+  by the user. The items under the box still report their own states
+  correctly, so the information is reachable one box at a time.
+- How to read this entry: Flutter has not added this yet. Re-check when
+  the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-045
+
+**TalkBack says no state for a checkbox that is not checked.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17, TalkBack 17.0. First seen
+  in S01 and S13 and left to F07. Asserted by the F07 TalkBack transcript
+  (`tool/talkback.py`: every unchecked box must be read without the word
+  "checked"). Cause not found.
+- What happens: with focus on a Flutter checkbox that is not checked,
+  TalkBack says "Email me product updates, Check box, Double-tap to
+  toggle". Once the box is checked it says "checked, Email me product
+  updates, Check box". A Flutter switch that is off is read "off, Wi-Fi,
+  Switch", so the gap is the checkbox only.
+- Compared with a native control: a plain `android.widget.CheckBox` on
+  the same device is read "not checked, n01 native unchecked, Check box"
+  (`docs/evidence/probes/f07`, the native screen and its transcript in
+  the README).
+- What the node has: class `android.widget.CheckBox`, checkable, checked
+  false (`CHECKED_STATE_FALSE` on API 36 and later), the name in the
+  content description, no state description. UI Automator and the
+  instrumented test see a correct unchecked checkbox. What differs from
+  the native node that makes TalkBack skip the state was not found; the
+  native box has its name in `text`, where Flutter uses the content
+  description, and that is the only difference seen.
+- What the user gets: silence where "not checked" should be. Someone who
+  knows TalkBack can take the missing word to mean not checked, so the
+  state can be worked out, but it is not said. This is not counted as a
+  WCAG failure here: the state is exposed to assistive technology
+  correctly.
+- Workaround: none within the SDK. There is no state description to set
+  ([FL-036](#fl-036)).
+- Upstream issue: not searched yet (D25).
