@@ -660,7 +660,20 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
   been quiet for two seconds, and fails the walk if it never is. After
   that 12 of 12 diagnostic walks were clean, and the S22, S15, and S14
   recordings passed with no retries (16, 22, and 18 walks).
-- Next: batch 2, form controls, starting with F07.
+
+### Batch 2: form controls
+
+F07, F08, F09, F10, F02, F03, F06, one technique per pull request.
+
+- F07 Checkbox: built on 2026-11-16. Checked and not checked are right in
+  every tree. Found FL-044 (a mixed checkbox is not checked on the web,
+  "off" on iOS, and has no spoken state in TalkBack; Android's node says
+  partial on Android 16 and later only) and FL-045 (TalkBack says no state for an unchecked Flutter
+  checkbox, and "not checked" for a native one; cause not found). FL-035
+  (a checkbox is a switch on iOS) holds. All three platforms are marked
+  as limitations in the catalog. A disabled checkbox is in the probe and
+  not in an example.
+- Next: F08 Radio group.
 
 ### Late-stage tasks
 

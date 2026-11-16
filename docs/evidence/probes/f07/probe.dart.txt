@@ -1,0 +1,93 @@
+// F07 probe (throwaway, not committed): checkboxes.
+import 'dart:ui' show SemanticsRole;
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatelessWidget {
+  const ProbeScreen({super.key});
+
+  Widget _box(String text) => ExcludeSemantics(
+    child: SizedBox(width: 180, height: 40, child: Align(alignment: Alignment.centerLeft, child: Text(text))),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    void no(bool? _) {}
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 01-03 CheckboxListTile: checked, unchecked, mixed
+              CheckboxListTile(value: true, onChanged: no, title: const Text('k01 Email')),
+              CheckboxListTile(value: false, onChanged: no, title: const Text('k02 Email')),
+              CheckboxListTile(value: null, tristate: true, onChanged: no, title: const Text('k03 Select all')),
+              // 04 bare tristate Checkbox with semanticLabel, mixed
+              Checkbox(value: null, tristate: true, onChanged: no, semanticLabel: 'k04 Select all'),
+              // 05 bare Checkbox beside a Text, not associated
+              Row(children: [Checkbox(value: true, onChanged: no), const Text('k05 Email')]),
+              // 06 MergeSemantics around Checkbox and Text
+              MergeSemantics(child: Row(children: [Checkbox(value: true, onChanged: no), const Text('k06 Email')])),
+              // 07 CupertinoCheckbox with semanticLabel
+              CupertinoCheckbox(value: true, onChanged: no, semanticLabel: 'k07 Email'),
+              // 08 CupertinoCheckbox mixed
+              CupertinoCheckbox(value: null, tristate: true, onChanged: no, semanticLabel: 'k08 Select all'),
+              // 09 custom, checked
+              Semantics(container: true, checked: true, enabled: true, label: 'k09 Email', onTap: () {}, child: _box('k09')),
+              // 10 custom, mixed
+              Semantics(container: true, checked: false, mixed: true, enabled: true, label: 'k10 Select all', onTap: () {}, child: _box('k10')),
+              // 11 group: container with a label and explicit children
+              Semantics(
+                container: true,
+                explicitChildNodes: true,
+                label: 'k11 Contact me by',
+                child: Column(children: [
+                  CheckboxListTile(value: true, onChanged: no, title: const Text('k11 Phone')),
+                  CheckboxListTile(value: false, onChanged: no, title: const Text('k11 Post')),
+                ]),
+              ),
+              // 12 group: region role with a label
+              Semantics(
+                container: true,
+                explicitChildNodes: true,
+                role: SemanticsRole.region,
+                label: 'k12 Contact me by',
+                child: Column(children: [
+                  CheckboxListTile(value: true, onChanged: no, title: const Text('k12 Phone')),
+                  CheckboxListTile(value: false, onChanged: no, title: const Text('k12 Post')),
+                ]),
+              ),
+              // 13 disabled tile
+              const CheckboxListTile(value: true, onChanged: null, title: Text('k13 Email')),
+              // 14 tile with a subtitle
+              CheckboxListTile(value: false, onChanged: no, title: const Text('k14 Email'), subtitle: const Text('Once a week')),
+              // 15 visible text above the tiles, not associated
+              const Text('k15 Contact me by'),
+              CheckboxListTile(value: true, onChanged: no, title: const Text('k15 Phone')),
+              // 16 CupertinoCheckbox in a merged row with visible text
+              MergeSemantics(child: Row(children: [CupertinoCheckbox(value: false, onChanged: no), const Text('k16 Email')])),
+              // 17 custom, checked, drawn only: no checked semantics, button
+              Semantics(container: true, button: true, label: 'k17 Email', onTap: () {}, child: _box('k17')),
+              // 18 group: header text inside a labelled container via MergeSemantics? plain container without explicitChildNodes
+              Semantics(
+                container: true,
+                label: 'k18 Contact me by',
+                child: Column(children: [
+                  CheckboxListTile(value: true, onChanged: no, title: const Text('k18 Phone')),
+                ]),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
