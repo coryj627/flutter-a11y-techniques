@@ -13,6 +13,7 @@ import re
 import subprocess
 import sys
 
+import device_lock
 from evidence_common import REGISTRATIONS, TECHNIQUES, flutter_version, technique_argument
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -31,6 +32,8 @@ def main():
     title, _, ios_test, _ = TECHNIQUES[technique]
     if ios_test is None:
         sys.exit(f"{technique} has no VoiceOver test on iOS; see its technique doc for why.")
+    # The simulator is shared with every other run (tool/device_lock.py).
+    device_lock.hold_for_process(f"voiceover_ios {technique}")
     run = subprocess.run(
         ["xcodebuild", "test", "-workspace", "Runner.xcworkspace", "-scheme", "Runner",
          "-configuration", "Debug", "-destination", f"platform=iOS Simulator,name={DEVICE}",

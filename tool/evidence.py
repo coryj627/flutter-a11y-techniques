@@ -32,7 +32,7 @@ import sys
 import time
 
 import device_lock
-from evidence_common import ROOT, TECHNIQUES
+from evidence_common import REGISTRATIONS, ROOT, TECHNIQUES
 from with_devices import BUSY, run_group
 
 LAYERS = ("android", "talkback", "ios", "voiceover-ios", "web", "voiceover-web")
@@ -70,9 +70,11 @@ def flutter():
     return ["fvm", "flutter"] if shutil.which("fvm") else ["flutter"]
 
 
-def tree_spec(vo_spec):
-    """The web tree spec's file name, from the VoiceOver spec's."""
-    return vo_spec.replace("_vo.spec.js", ".spec.js")
+def tree_spec(technique):
+    """The web tree spec's file name: the technique's folder name, as its
+    registration file in tool/techniques/ is named."""
+    stem = os.path.splitext(os.path.basename(REGISTRATIONS[technique].path))[0]
+    return stem + ".spec.js"
 
 
 def builds(layers, no_build=False):
@@ -121,8 +123,9 @@ def checks(technique, layers):
         "voiceover-ios": ios_test and Step(
             "voiceover-ios", [python, os.path.join(tool, "voiceover_ios.py"), technique], ROOT,
             ("voiceover-ios",)),
-        "web": vo_spec and Step(
-            "web", ["npx", "playwright", "test", tree_spec(vo_spec)],
+        # Every technique has a tree spec (web_tests/check_spec_selection.js).
+        "web": Step(
+            "web", ["npx", "playwright", "test", tree_spec(technique)],
             os.path.join(ROOT, "web_tests"), ("web",)),
         "voiceover-web": vo_spec and Step(
             "voiceover-web", [python, os.path.join(tool, "voiceover_web.py"), technique], ROOT,

@@ -7,6 +7,9 @@
 import './voiceover_run_guard.js';
 import { defineConfig, devices } from '@playwright/test';
 import { screenReaderConfig } from '@guidepup/playwright';
+import { ports, webServer } from '../support/ports.js';
+
+const port = ports().app;
 
 export default defineConfig({
   ...screenReaderConfig,
@@ -14,14 +17,10 @@ export default defineConfig({
   reporter: 'list',
   timeout: 3 * 60 * 1000,
   retries: 2,
-  use: { baseURL: 'http://localhost:8765', headless: false },
+  use: { baseURL: `http://127.0.0.1:${port}`, headless: false },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'], headless: false } },
     { name: 'webkit', use: { ...devices['Desktop Safari'], headless: false } },
   ],
-  webServer: {
-    command: 'python3 -m http.server 8765 --directory ../../build/web',
-    url: 'http://localhost:8765',
-    reuseExistingServer: true,
-  },
+  webServer: webServer('build/web', port),
 });

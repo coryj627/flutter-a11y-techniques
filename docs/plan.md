@@ -607,6 +607,11 @@ How the probe was run, for the next time one is needed: a second entry point
 so the catalog app is not touched; the fixture source is kept with the
 evidence.
 
+From 2026-11-16 the techniques are built in parallel waves. How a wave is
+run is in [parallel-work.md](parallel-work.md); each wave keeps its notes in
+a file of its own under [waves/](waves/), starting with
+[wave 0](waves/wave-0.md), and does not edit this plan.
+
 ### Batch 1: names, roles, and images
 
 S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.

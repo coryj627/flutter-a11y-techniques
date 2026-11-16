@@ -115,13 +115,15 @@ class RunTechniqueTest(unittest.TestCase):
         self.assertEqual(slept, [])
 
     def test_layer_with_no_test_is_skipped(self):
-        entry = ("X99 Thing", "X99ThingTest", None, "x99_thing_vo.spec.js")
-        with mock.patch.dict(evidence.TECHNIQUES, {"X99": entry}):
-            results, runner, _, _ = run("X99")
+        entry = ("F08 Radio group", "F08RadioGroupTest", None, None)
+        with mock.patch.dict(evidence.TECHNIQUES, {"F08": entry}):
+            results, runner, _, _ = run("F08")
         self.assertNotIn("ios", runner.names)
         self.assertNotIn("voiceover-ios", runner.names)
         self.assertEqual(results["ios"][0], evidence.SKIPPED)
         self.assertEqual(results["voiceover-ios"][0], evidence.SKIPPED)
+        self.assertEqual(results["voiceover-web"][0], evidence.SKIPPED)
+        self.assertEqual(results["web"][0], evidence.PASS)
         self.assertEqual(results["android"][0], evidence.PASS)
 
 

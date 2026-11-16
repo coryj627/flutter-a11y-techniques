@@ -74,7 +74,8 @@ behind each one is in [the technique guide](technique-guide.md).
       pass
 - [ ] All Playwright suites and the Widgetbook suite pass against fresh builds
 - [ ] This technique's Android and iOS suites and its transcripts pass
-      locally. The full device and transcript run is on a schedule and before
+      locally: `python3 tool/evidence.py <ID>` prints PASS for every layer.
+      The full device and transcript run is on a schedule and before
       a release (D23); CI runs every tree test on the pull request
 - [ ] Codex adversarial review returns "approve"
 - [ ] CI is green on the pull request's exact head commit
