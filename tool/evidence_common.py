@@ -1,9 +1,9 @@
 """Shared helpers for the evidence scripts in tool/."""
 import collections
-import importlib.util
 import json
 import os
 import re
+import types
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TECHNIQUES_DIR = os.path.join(ROOT, "tool", "techniques")
@@ -122,10 +122,14 @@ def load_techniques(directory=TECHNIQUES_DIR):
         if expected_id in found:
             raise RegistrationError(
                 f"{path}: id {expected_id} is already registered by {found[expected_id].path}")
-        spec = importlib.util.spec_from_file_location(f"technique_registration_{name[:-3]}", path)
-        module = importlib.util.module_from_spec(spec)
+        # Run from source every time. The import system would keep bytecode
+        # in __pycache__, keyed on the file's size and whole-second time, and
+        # a file edited twice in a second at the same size would load stale.
+        module = types.ModuleType(f"technique_registration_{name[:-3]}")
+        module.__file__ = path
         try:
-            spec.loader.exec_module(module)
+            with open(path, encoding="utf-8") as f:
+                exec(compile(f.read(), path, "exec"), module.__dict__)
         except Exception as error:
             raise RegistrationError(f"{path}: could not be loaded: {type(error).__name__}: {error}") from error
         found[expected_id] = _check(module, path, expected_id)

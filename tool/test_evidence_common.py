@@ -152,6 +152,22 @@ class Loader(unittest.TestCase):
                 self.write("x01_thing.py", base + line + "\n")
                 self.refused(pattern)
 
+    def test_a_file_changed_at_once_to_the_same_size_is_read_again(self):
+        # Bytecode caching would return the first version here.
+        self.write("x01_thing.py")
+        first = self.load()["X01"]
+        path = os.path.join(self.dir.name, "x01_thing.py")
+        with open(path) as f:
+            source = f.read()
+        stat = os.stat(path)
+        with open(path, "w") as f:
+            f.write(source.replace("X01ThingTest", "X01OtherTest"))
+        os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+        self.assertEqual(os.stat(path).st_size, stat.st_size)
+        self.assertEqual(first.android_test, "X01ThingTest")
+        self.assertEqual(self.load()["X01"].android_test, "X01OtherTest")
+        self.assertFalse(os.path.exists(os.path.join(self.dir.name, "__pycache__")))
+
     def test_an_empty_directory_is_refused(self):
         self.refused(r"no technique registrations found")
 
