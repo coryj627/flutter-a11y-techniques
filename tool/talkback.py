@@ -188,7 +188,7 @@ EXPECT = {
     "s22-good-field-project": (["Project name", "Edit box"], ["s22", "field", "good"]),
     # Bad examples. The button has no name (FL-007); its text is read as a
     # separate element.
-    "s22-bad-inside-button": (["Button"], ["s22", "inside"]),
+    "s22-bad-inside-button": (["Button"], ["Save draft", "s22", "inside"]),
     "s22-bad-inside-save": (["Save draft"], ["Button", "s22", "inside"]),
     # Nothing is different for a TalkBack user here.
     "s22-bad-wrapper-button": (["Save draft", "Button"], ["s22", "wrapper"]),

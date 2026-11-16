@@ -1,7 +1,7 @@
 // The VoiceOver helpers must fail loudly. These checks need macOS (for
 // osascript) but not VoiceOver itself.
 import { test, expect } from '@playwright/test';
-import { phraseForMove, runAppleScript, stopsToEnd } from './vo/vo_helpers.js';
+import { phraseForMove, runAppleScript, stopsToEnd, untilQuiet } from './vo/vo_helpers.js';
 
 test.skip(process.platform !== 'darwin', 'osascript is macOS only');
 
@@ -112,3 +112,41 @@ test('the logged phrase stays with its move when an earlier move is dropped', as
     reachedEnd: true,
   });
 });
+
+// untilQuiet: driven by a made-up clock and a list of phrases, one for each
+// read. Every sleep moves the clock on by the time asked for.
+const fakeVoiceOver = (phrases) => {
+  let time = 0;
+  let reads = 0;
+  return {
+    read: async () => phrases[Math.min(reads++, phrases.length - 1)],
+    sleep: async (ms) => { time += ms; },
+    now: () => time,
+    elapsed: () => time,
+  };
+};
+
+test('quiet is reached once the phrase has stayed the same for the whole interval', async () => {
+  const vo = fakeVoiceOver(['Back button']);
+  const result = await untilQuiet({ ...vo, quietMs: 2000, limitMs: 10000 });
+  expect(result).toEqual({ phrase: 'Back button', quiet: true });
+  expect(vo.elapsed()).toBe(2000);
+});
+
+test('each new phrase starts the quiet interval again', async () => {
+  // The button, its help message a second later, then an empty phrase.
+  const vo = fakeVoiceOver(['Back', 'Back', 'Back', 'Back', 'You are currently on a button', 'You are currently on a button', '']);
+  const result = await untilQuiet({ ...vo, quietMs: 2000, limitMs: 10000 });
+  expect(result).toEqual({ phrase: '', quiet: true });
+  // Six reads to reach the empty phrase (1500 ms), then two quiet seconds.
+  expect(vo.elapsed()).toBe(3500);
+});
+
+test('speech that never stops is reported as not quiet, at the limit', async () => {
+  let n = 0;
+  const vo = fakeVoiceOver([]);
+  const result = await untilQuiet({ ...vo, read: async () => `phrase ${n++}`, quietMs: 2000, limitMs: 10000 });
+  expect(result.quiet).toBe(false);
+  expect(vo.elapsed()).toBe(10000);
+});
+

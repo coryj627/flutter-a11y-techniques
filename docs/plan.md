@@ -657,8 +657,9 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
   button, about a second later its help message for it, then an empty
   phrase, and a walk that began 1.5 seconds after focus got one of those
   in place of a later element. `startAtBack` now waits until VoiceOver has
-  been quiet for two seconds; 12 of 12 diagnostic walks and the S22
-  recording (16 of 16, no retries) were clean after that.
+  been quiet for two seconds, and fails the walk if it never is. After
+  that 12 of 12 diagnostic walks were clean, and the S22, S15, and S14
+  recordings passed with no retries (16, 22, and 18 walks).
 - Next: batch 2, form controls, starting with F07.
 
 ### Late-stage tasks

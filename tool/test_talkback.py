@@ -807,6 +807,15 @@ class Techniques(unittest.TestCase):
         self.assertIn("no VoiceOver test on iOS", str(caught.exception))
         run.assert_not_called()
 
+    def test_the_button_with_an_identifier_inside_must_be_read_without_its_name(self):
+        # FL-007: what was captured passes, and a named button would fail.
+        ident = "s22-bad-inside-button"
+        self.assertEqual(tb.problems(ident, ["Button", "Double-tap to activate"]), [])
+        self.assertTrue(tb.problems(ident, ["Save draft", "Button", "Double-tap to activate"]))
+        # An identifier that was read aloud fails a good example.
+        self.assertEqual(tb.problems("s22-good-merged-save", ["Save draft", "Button"]), [])
+        self.assertTrue(tb.problems("s22-good-merged-save", ["s22 good merged save", "Button"]))
+
     def test_every_listed_technique_has_expectations(self):
         import evidence_common as common
         for technique in common.TECHNIQUES:
