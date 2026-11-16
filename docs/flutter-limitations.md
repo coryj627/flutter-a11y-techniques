@@ -15,6 +15,29 @@ Rules for this file:
 - Test-tool problems (Guidepup, XCUITest, Espresso, TalkBack logging) are not
   framework issues. They are in [plan.md](plan.md).
 
+Ids are taken from ranges, so that work going on at the same time never
+picks the same id:
+
+| Ids | For |
+| --- | --- |
+| FL-001 to FL-047 | Entries from before the ranges |
+| FL-048 to FL-069 | Work outside the waves |
+| FL-070 to FL-099 | Wave 10, the limitation entries |
+| FL-N00 to FL-N99 | Wave N, for N from 1 to 9: FL-100 to FL-199 for wave 1, FL-200 to FL-299 for wave 2, and so on |
+
+The waves are: 1 forms, 2 links and simple components, 3 structure and
+order, 4 focus and keyboard, 5 visual preferences, 6 remaining forms, 7
+dialogs and overlays, 8 navigation and complex components, 9 the batch 10
+techniques, 10 the limitation entries. Ids stay three digits and are never
+reused. Use the next free id in your range.
+
+The index and the entries are both in id order, and each range has a place
+of its own in each: in the index, the rows after the range's bold row; in
+the entries, the entries after the range's comment line. Add a new entry
+at the end of its range in both, so that two changes in different ranges
+never touch the same lines. `test/docs/flutter_limitations_test.dart`
+checks the ids, the ranges, and that the index matches the entries.
+
 Status values: **Confirmed** (reproduced by an automated test in this repo, or
 read in the SDK source), **Observed** (seen in a spike, no test in the repo
 yet), **Fixed in x.y** (verified on that version).
@@ -68,6 +91,17 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-045](#fl-045) | TalkBack says no state for a checkbox or radio button that is not checked | Android | Confirmed; cause not found |
 | [FL-046](#fl-046) | `RadioGroup` has no label parameter: it is named by text inside it, and a label around it misses | All | Confirmed |
 | [FL-047](#fl-047) | A radio button is a button for VoiceOver on iOS, and a hand-built one has no state there | iOS | Confirmed (source read) |
+| **FL-048 to FL-069** | Work outside the waves | | |
+| **FL-070 to FL-099** | Wave 10, the limitation entries | | |
+| **FL-100 to FL-199** | Wave 1, forms | | |
+| **FL-200 to FL-299** | Wave 2, links and simple components | | |
+| **FL-300 to FL-399** | Wave 3, structure and order | | |
+| **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
+| **FL-500 to FL-599** | Wave 5, visual preferences | | |
+| **FL-600 to FL-699** | Wave 6, remaining forms | | |
+| **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
+| **FL-800 to FL-899** | Wave 8, navigation and complex components | | |
+| **FL-900 to FL-999** | Wave 9, the batch 10 techniques | | |
 
 ---
 
@@ -1396,3 +1430,27 @@ yet), **Fixed in x.y** (verified on that version).
   `selected:` on iOS as `RawRadio` does. There is no way to make
   VoiceOver say "radio button".
 - Upstream issue: not searched yet (D25).
+
+<!-- FL-048 to FL-069: Work outside the waves. Entries in this range go below, in id order. -->
+
+<!-- FL-070 to FL-099: Wave 10, the limitation entries. Entries in this range go below, in id order. -->
+
+<!-- FL-100 to FL-199: Wave 1, forms. Entries in this range go below, in id order. -->
+
+<!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->
+
+<!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
+
+<!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->
+
+<!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->
+
+<!-- FL-600 to FL-699: Wave 6, remaining forms. Entries in this range go below, in id order. -->
+
+<!-- FL-700 to FL-799: Wave 7, dialogs and overlays. Entries in this range go below, in id order. -->
+
+<!-- FL-800 to FL-899: Wave 8, navigation and complex components. Entries in this range go below, in id order. -->
+
+<!-- FL-900 to FL-999: Wave 9, the batch 10 techniques. Entries in this range go below, in id order. -->
+
+<!-- End of the entries. -->
