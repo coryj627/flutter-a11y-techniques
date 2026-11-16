@@ -293,7 +293,9 @@ def walk():
         run = subprocess.run(
             ["./gradlew", "app:connectedDebugAndroidTest",
              f"-Pandroid.testInstrumentationRunnerArguments.class={TEST}"],
-            cwd=os.path.join(ROOT, "android"), timeout=WALK_TIMEOUT, **DECODE)
+            cwd=os.path.join(ROOT, "android"), timeout=WALK_TIMEOUT, **DECODE,
+            # The command holds the device lock too, until it has ended.
+            **device_lock.child_fds())
     except subprocess.TimeoutExpired:
         sys.exit(f"instrumented walk did not finish in {WALK_TIMEOUT // 60} minutes")
     return run, adb("logcat", "-d")

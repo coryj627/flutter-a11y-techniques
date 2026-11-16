@@ -117,6 +117,60 @@ class AcquireTest(LockTestCase):
         # The child's release left the parent's lock alone.
         self.assertIsNone(device_lock._try(self.path))
 
+    def test_command_given_the_descriptor_holds_the_lock_itself(self):
+        lock = device_lock.acquire("evidence F08")
+        child = subprocess.run(
+            [sys.executable, "-c",
+             "import device_lock; l = device_lock.acquire('child', wait=False); "
+             "print(l.inherited, l.fd is not None, device_lock.child_fds() != {})"],
+            cwd=TOOL, env=dict(os.environ), capture_output=True, text=True,
+            **device_lock.child_fds())
+        self.assertEqual(child.stdout.split(), ["True", "True", "True"], child.stderr)
+        lock.release()
+
+    def test_lock_stays_taken_while_a_command_that_was_given_it_is_alive(self):
+        # The holder is killed outright; its command is still running.
+        script = ("import subprocess, sys, device_lock\n"
+                  "device_lock.acquire('evidence F08')\n"
+                  "child = subprocess.Popen([sys.executable, '-c', "
+                  "'import sys; print(1, flush=True); sys.stdin.read()'], "
+                  "stdin=subprocess.PIPE, start_new_session=True, **device_lock.child_fds())\n"
+                  "print(child.pid, flush=True)\n"
+                  "import time; time.sleep(60)\n")
+        holder = subprocess.Popen([sys.executable, "-c", script], cwd=TOOL, env=self.env(),
+                                  stdout=subprocess.PIPE, text=True)
+        self.addCleanup(holder.stdout.close)
+        command_pid = int(holder.stdout.readline())
+        self.addCleanup(self.kill, command_pid)
+        holder.kill()
+        holder.wait(timeout=10)
+        with self.assertRaises(device_lock.Busy):
+            device_lock.acquire("mine", wait=False)
+        self.kill(command_pid)
+        for _ in range(100):
+            fd = device_lock._try(self.path)
+            if fd is not None:
+                os.close(fd)
+                break
+            time.sleep(0.05)
+        else:
+            self.fail("the lock was not freed when the command ended")
+
+    def kill(self, pid):
+        try:
+            os.kill(pid, 9)
+        except ProcessLookupError:
+            pass
+
+    def test_claim_by_a_process_that_is_not_an_ancestor_does_not_skip_the_lock(self):
+        holder = self.start_holder("evidence S05")
+        # The environment names the real holder, but this process is not
+        # running under it and has no descriptor from it.
+        with mock.patch.dict(os.environ, {device_lock.ENV_HELD: str(holder.pid),
+                                          device_lock.ENV_FD: "987"}):
+            with self.assertRaises(device_lock.Busy):
+                device_lock.acquire("mine", wait=False)
+
     def test_stale_claim_in_the_environment_does_not_skip_the_lock(self):
         self.start_holder("evidence S05")
         # A claim that names some other process is not the holder's.
@@ -161,6 +215,59 @@ class WithDevicesTest(LockTestCase):
         self.assertEqual(run.returncode, with_devices.BUSY)
         self.assertIn('"evidence S05"', run.stderr)
         self.assertFalse(os.path.exists(marker))
+
+    # A command that starts a second process, which ignores SIGTERM, prints
+    # that process's pid, and then does what `then` says.
+    LEAVES_ONE = ("import subprocess, sys; p = subprocess.Popen([sys.executable, '-c', "
+                  "'import signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+                  "print(1, flush=True); time.sleep(60)'], stdout=subprocess.PIPE); "
+                  "p.stdout.readline(); print(p.pid, flush=True); {then}")
+
+    def assert_gone(self, pid):
+        # Reparented to launchd and reaped there; give that a moment.
+        for _ in range(100):
+            try:
+                os.kill(pid, 0)
+            except ProcessLookupError:
+                return
+            time.sleep(0.05)
+        self.fail(f"process {pid} was left running")
+
+    def test_a_process_the_command_leaves_behind_is_ended_before_returning(self):
+        with mock.patch.object(with_devices, "GRACE", 0.3):
+            read, write = os.pipe()
+            self.addCleanup(os.close, read)
+            status = with_devices.run_group(
+                [sys.executable, "-c", self.LEAVES_ONE.format(then="sys.exit(4)")], stdout=write)
+            os.close(write)
+        self.assertEqual(status, 4)
+        self.assert_gone(int(os.read(read, 100)))
+
+    def test_stopping_the_tool_ends_a_descendant_that_ignores_the_signal(self):
+        tool = subprocess.Popen(
+            [sys.executable, "-c",
+             "import sys, with_devices; with_devices.GRACE = 0.3; sys.exit(with_devices.main())",
+             "--", sys.executable, "-c", self.LEAVES_ONE.format(then="import time; time.sleep(60)")],
+            cwd=TOOL, env=self.env(), stdout=subprocess.PIPE, text=True)
+        self.addCleanup(tool.stdout.close)
+        descendant = int(tool.stdout.readline())
+        self.addCleanup(self.kill, descendant)
+        tool.terminate()
+        self.assertEqual(tool.wait(timeout=15), 128 + 15)
+        # The tool had the lock until it exited, and exited only once the
+        # descendant was gone.
+        try:
+            os.kill(descendant, 0)
+            self.fail("the descendant outlived the tool, and so the lock")
+        except ProcessLookupError:
+            pass
+        device_lock.acquire("mine", wait=False).release()
+
+    def kill(self, pid):
+        try:
+            os.kill(pid, 9)
+        except ProcessLookupError:
+            pass
 
     def test_missing_command_is_a_usage_error(self):
         self.assertEqual(self.run_tool("--label", "x").returncode, 2)

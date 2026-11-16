@@ -9,12 +9,17 @@ The lock is an flock on one file in the user's home folder, so it is the same
 for every worktree and clone. The system drops it when the holding process
 ends, however it ends, so there is no stale lock to clear. The file's text
 says who holds it; that text is only meaningful while the lock is held.
+
+The lock belongs to the open file, not to one process. The holder hands its
+descriptor to the commands it starts (child_fds()), so the lock stays taken
+for as long as any of them is alive, even if the holder itself is killed.
 """
 import contextlib
 import datetime
 import fcntl
 import json
 import os
+import subprocess
 import sys
 import time
 
@@ -23,6 +28,9 @@ ENV_FILE = "FA11Y_DEVICE_LOCK_FILE"
 # Set for child processes by the holder: the holder's pid. A tool started by
 # tool/evidence.py finds the lock taken by its own parent and must not wait.
 ENV_HELD = "FA11Y_DEVICE_LOCK_HELD"
+# Set with it: the number of the lock's descriptor, which the holder passes to
+# the commands it starts.
+ENV_FD = "FA11Y_DEVICE_LOCK_FD"
 
 DEFAULT_FILE = os.path.join(os.path.expanduser("~"), "Library", "Application Support",
                             "flutter-a11y-techniques", "device.lock")
@@ -60,21 +68,50 @@ def read_holder(path=None):
 
 
 class Lock:
-    """A held lock. Keep it referenced; release() or process exit frees it."""
+    """A held lock. Keep it referenced; release() or process exit frees it.
+
+    An inherited lock is the parent run's: this process has a copy of its
+    descriptor (or, failing that, is a descendant of the process that holds
+    it), and releasing it here changes nothing.
+    """
 
     def __init__(self, fd, inherited=False):
         self.fd = fd
         self.inherited = inherited
 
     def release(self):
+        if self.inherited:
+            return
         if self.fd is not None:
             try:
                 os.ftruncate(self.fd, 0)
             finally:
-                os.close(self.fd)  # closing the descriptor drops the flock
+                # The flock goes when the last copy of the descriptor is
+                # closed: this one, and any a still-running command has.
+                os.close(self.fd)
                 self.fd = None
-        if not self.inherited and os.environ.get(ENV_HELD) == str(os.getpid()):
-            del os.environ[ENV_HELD]
+        if os.environ.get(ENV_HELD) == str(os.getpid()):
+            os.environ.pop(ENV_HELD, None)
+            os.environ.pop(ENV_FD, None)
+        global _current
+        if _current is self:
+            _current = None
+
+
+_current = None  # the Lock this process holds or inherited, for child_fds()
+
+
+def child_fds():
+    """Keyword arguments for subprocess that hand the lock to a command.
+
+    Pass them to every command that drives a device:
+    subprocess.run(cmd, **device_lock.child_fds()). The command then holds
+    the lock too, so it stays taken until the command has ended, whatever
+    happens to this process. {} when this process has no descriptor to give.
+    """
+    if _current is not None and _current.fd is not None:
+        return {"pass_fds": (_current.fd,)}
+    return {}
 
 
 def _try(path):
@@ -88,11 +125,47 @@ def _try(path):
     return fd
 
 
-def _held_by_parent(path):
-    """True if an ancestor run holds the lock for this process."""
+def _inherited_fd(path):
+    """The lock's descriptor handed down by the holder, or None.
+
+    Only a descriptor that is open in this process and is the lock file
+    counts; a number left in the environment proves nothing.
+    """
+    try:
+        fd = int(os.environ.get(ENV_FD, ""))
+        ours, lock = os.fstat(fd), os.stat(path)
+    except (ValueError, OSError):
+        return None
+    return fd if (ours.st_dev, ours.st_ino) == (lock.st_dev, lock.st_ino) else None
+
+
+def _ancestors():
+    """The pids of this process's ancestors, nearest first."""
+    found, pid = [], os.getppid()
+    while pid > 1 and pid not in found:
+        found.append(pid)
+        try:
+            out = subprocess.run(["ps", "-o", "ppid=", "-p", str(pid)],
+                                 capture_output=True, text=True, timeout=10).stdout
+            pid = int(out.strip())
+        except (OSError, ValueError, subprocess.TimeoutExpired):
+            break
+    return found
+
+
+def _inherited(path):
+    """The parent run's lock, if this process runs under it; else None."""
+    fd = _inherited_fd(path)
+    if fd is not None:
+        return Lock(fd, inherited=True)
+    # No descriptor reached us (something in between closed it). The run is
+    # still ours if the process the lock file names is a live ancestor.
     claimed = os.environ.get(ENV_HELD)
     holder = read_holder(path)
-    return bool(claimed) and holder is not None and str(holder.get("pid")) == claimed
+    if (claimed and holder is not None and str(holder.get("pid")) == claimed
+            and claimed in map(str, _ancestors())):
+        return Lock(None, inherited=True)
+    return None
 
 
 def acquire(label, wait=True, timeout=None, poll=2.0, remind=60.0, out=None):
@@ -104,6 +177,7 @@ def acquire(label, wait=True, timeout=None, poll=2.0, remind=60.0, out=None):
     the lock is written to `out` (stderr) at the start and every `remind`
     seconds.
     """
+    global _current
     out = out or sys.stderr
     path = lock_file()
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -114,8 +188,11 @@ def acquire(label, wait=True, timeout=None, poll=2.0, remind=60.0, out=None):
         if fd is not None:
             break
         # Taken. If it is our own parent run that holds it, carry on under it.
-        if _held_by_parent(path):
-            return Lock(None, inherited=True)
+        inherited = _inherited(path)
+        if inherited is not None:
+            if _current is None:
+                _current = inherited
+            return inherited
         holder = read_holder(path)
         waited = time.monotonic() - started
         if not wait or (timeout is not None and waited >= timeout):
@@ -128,8 +205,13 @@ def acquire(label, wait=True, timeout=None, poll=2.0, remind=60.0, out=None):
               "since": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
     os.ftruncate(fd, 0)
     os.pwrite(fd, json.dumps(holder).encode(), 0)
+    # Commands started with child_fds() get this descriptor and, with it,
+    # the lock.
+    os.set_inheritable(fd, True)
     os.environ[ENV_HELD] = str(os.getpid())
-    return Lock(fd)
+    os.environ[ENV_FD] = str(fd)
+    _current = Lock(fd)
+    return _current
 
 
 @contextlib.contextmanager

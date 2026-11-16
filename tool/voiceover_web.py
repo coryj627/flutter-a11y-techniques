@@ -47,7 +47,9 @@ def main():
     device_lock.hold_for_process(f"voiceover_web {technique}")
     run = subprocess.run(["npx", "playwright", "test", spec],
                          cwd=os.path.join(WEB_TESTS, "vo"), capture_output=True, text=True,
-                         env={**os.environ, VOICEOVER_RUN: "1"})
+                         env={**os.environ, VOICEOVER_RUN: "1"},
+            # The command holds the device lock too, until it has ended.
+            **device_lock.child_fds())
     log = run.stdout + run.stderr
     # A retried walk prints more than once; the last attempt is the result.
     rows = {}

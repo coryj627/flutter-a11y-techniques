@@ -39,7 +39,9 @@ def main():
          "-configuration", "Debug", "-destination", f"platform=iOS Simulator,name={DEVICE}",
          f"-only-testing:RunnerUITests/{ios_test}/testVoiceOverSpeech",
          "-derivedDataPath", os.path.join(ROOT, "build", "ios_uitest")],
-        cwd=os.path.join(ROOT, "ios"), capture_output=True, text=True)
+        cwd=os.path.join(ROOT, "ios"), capture_output=True, text=True,
+            # The command holds the device lock too, until it has ended.
+            **device_lock.child_fds())
     log = run.stdout + run.stderr
     rows = re.findall(rf"^{technique}VO (\S+) \| (.*)$", log, re.M)
     failures = re.findall(r"error: .*? : (.*)$", log, re.M)
