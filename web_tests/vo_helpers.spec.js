@@ -1,7 +1,7 @@
 // The VoiceOver helpers must fail loudly. These checks need macOS (for
 // osascript) but not VoiceOver itself.
 import { test, expect } from '@playwright/test';
-import { phraseForMove, runAppleScript, stopsToEnd, untilQuiet } from './vo/vo_helpers.js';
+import { phraseForMove, runAppleScript, stopsToEnd, untilQuiet } from './vo/vo_logic.js';
 
 test.skip(process.platform !== 'darwin', 'osascript is macOS only');
 

@@ -60,9 +60,15 @@ jobs:
         run: |
           npm ci
           npx playwright install --with-deps chromium
+      # Lists, without running, what each config selects: one tree spec per
+      # technique folder and never a VoiceOver spec.
+      - name: Check which specs the configs select
+        working-directory: web_tests
+        run: node --test check_spec_selection.js
       - name: App tree and keyboard tests
         working-directory: web_tests
-        run: npx playwright test c01_button.spec.js s01_accessible_names.spec.js s02_informative_images.spec.js s03_decorative_images.spec.js s04_functional_images.spec.js s05_headings.spec.js s13_roles_and_traits.spec.js s14_values_and_state_descriptions.spec.js s15_hints.spec.js s22_semantics_identifiers.spec.js f01_text_fields.spec.js f07_checkbox.spec.js f08_radio_group.spec.js i12_announcements.spec.js
+        # playwright.config.js selects every web_tests/<id>_<name>.spec.js.
+        run: npx playwright test
       - name: Widgetbook tests
         working-directory: web_tests
         run: npx playwright test -c widgetbook.config.js
