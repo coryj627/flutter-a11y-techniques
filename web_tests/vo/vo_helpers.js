@@ -34,7 +34,11 @@ async function startAtBack(page, browserName, clickAtPoint) {
     await heading.click();
   }
   await page.getByRole('button', { name: 'Back' }).focus();
-  await page.waitForTimeout(1500);
+  // VoiceOver reads the button, then about a second later its help message
+  // for it ("You are currently on a button…"), then an empty phrase. A walk
+  // that starts before those have passed gets one of them in place of a
+  // later element's speech. Wait until nothing new has come for two seconds.
+  await waitUntilQuiet(page, 2000, 10000);
 }
 
 /** Moves VoiceOver to the next element and returns what it then spoke. */

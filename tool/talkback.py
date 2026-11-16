@@ -179,6 +179,23 @@ EXPECT = {
     # Read as the good field is: the tree test finds no rule on the screen.
     "s15-bad-hint-only-username": (["Username", "3 to 12 letters or numbers"], []),
     "s15-bad-hint-only-username-filled": (["abc", "Edit box"], ["Username", "3 to 12"]),
+    # S22 Semantics identifiers for testing. The identifier is the node's
+    # resource id and must not be read; the words in each second list are
+    # words from the identifier.
+    "s22-good-merged-save": (["Save draft", "Button"], ["s22", "merged", "good"]),
+    "s22-good-cupertino-save": (["Save draft", "Button"], ["s22", "cupertino", "good"]),
+    "s22-good-custom-save": (["Save draft", "Button"], ["s22", "custom", "good"]),
+    "s22-good-field-project": (["Project name", "Edit box"], ["s22", "field", "good"]),
+    # Bad examples. The button has no name (FL-007); its text is read as a
+    # separate element.
+    "s22-bad-inside-button": (["Button"], ["s22", "inside"]),
+    "s22-bad-inside-save": (["Save draft"], ["Button", "s22", "inside"]),
+    # Nothing is different for a TalkBack user here.
+    "s22-bad-wrapper-button": (["Save draft", "Button"], ["s22", "wrapper"]),
+    # The identifier is not a name.
+    "s22-bad-id-as-name-close": (["Button"], ["s22", "close", "name"]),
+    "s22-bad-duplicate-save": (["Save draft", "Button"], ["s22", "duplicate", "action"]),
+    "s22-bad-duplicate-discard": (["Discard draft", "Button"], ["s22", "duplicate", "action"]),
     # S05 Headings. "Heading" must be spoken as the role for a real heading,
     # and must not be for text that only looks or reads like one.
     "s05-good-levels-profile": (["Profile", "Heading"], []),

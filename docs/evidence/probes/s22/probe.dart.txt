@@ -1,0 +1,77 @@
+// S22 probe (throwaway, not committed): where Semantics(identifier:) goes.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatelessWidget {
+  const ProbeScreen({super.key});
+
+  Widget _box(String text) => ExcludeSemantics(
+    child: SizedBox(width: 180, height: 40, child: Align(alignment: Alignment.centerLeft, child: Text(text))),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 01 MergeSemantics + identifier around a Material button
+              MergeSemantics(child: Semantics(identifier: 'p01', child: FilledButton(onPressed: () {}, child: const Text('i01 Save')))),
+              // 02 identifier inside a Material button
+              FilledButton(onPressed: () {}, child: Semantics(identifier: 'p02', child: const Text('i02 Save'))),
+              // 03 plain wrapper around a Material button
+              Semantics(identifier: 'p03', child: FilledButton(onPressed: () {}, child: const Text('i03 Save'))),
+              // 04 plain wrapper around a Cupertino button
+              Semantics(identifier: 'p04', child: CupertinoButton(onPressed: () {}, child: const Text('i04 Save'))),
+              // 05 custom button, everything on one Semantics
+              Semantics(container: true, button: true, label: 'i05 Save', identifier: 'p05', onTap: () {}, child: _box('i05')),
+              // 06 plain wrapper around a TextField
+              Padding(padding: const EdgeInsets.all(8), child: Semantics(identifier: 'p06', child: const TextField(decoration: InputDecoration(labelText: 'i06 Name')))),
+              // 07 merged wrapper around a TextField
+              Padding(padding: const EdgeInsets.all(8), child: MergeSemantics(child: Semantics(identifier: 'p07', child: const TextField(decoration: InputDecoration(labelText: 'i07 Name'))))),
+              // 08 identifier on a Text
+              Semantics(identifier: 'p08', child: const Text('i08 Total: 3')),
+              // 09 identifier and no name on an icon button
+              MergeSemantics(child: Semantics(identifier: 'p09_close_button', child: IconButton(onPressed: () {}, icon: const Icon(Icons.close)))),
+              // 10 icon button with tooltip, merged identifier
+              MergeSemantics(child: Semantics(identifier: 'p10', child: IconButton(onPressed: () {}, tooltip: 'i10 Close', icon: const Icon(Icons.close)))),
+              // 11 container: true wrapper around a Material button
+              Semantics(container: true, identifier: 'p11', child: FilledButton(onPressed: () {}, child: const Text('i11 Save'))),
+              // 12 identifier in the button's style: Semantics inside CupertinoButton
+              CupertinoButton(onPressed: () {}, child: Semantics(identifier: 'p12', child: const Text('i12 Save'))),
+              // 13 identifier-only node, nothing else
+              Semantics(container: true, identifier: 'p13', child: const SizedBox(width: 180, height: 40)),
+              // 14 duplicate identifiers
+              MergeSemantics(child: Semantics(identifier: 'p14', child: FilledButton(onPressed: () {}, child: const Text('i14a Save')))),
+              MergeSemantics(child: Semantics(identifier: 'p14', child: FilledButton(onPressed: () {}, child: const Text('i14b Save')))),
+              // 15 merged around a checkbox row and a switch
+              MergeSemantics(child: Semantics(identifier: 'p15', child: CheckboxListTile(value: true, onChanged: (_) {}, title: const Text('i15 Agree')))),
+              // 16 merged around a ListTile
+              MergeSemantics(child: Semantics(identifier: 'p16', child: ListTile(title: const Text('i16 Row'), onTap: () {}))),
+              // 17 identifier on an icon with a label
+              Semantics(identifier: 'p17', child: const Icon(Icons.warning, semanticLabel: 'i17 Warning')),
+              // 18 plain wrapper around a ListTile
+              Semantics(identifier: 'p18', child: ListTile(title: const Text('i18 Row'), onTap: () {})),
+              // 19 plain wrapper around two texts
+              Semantics(identifier: 'p19', child: const Column(children: [Text('i19 One'), Text('i19 Two')])),
+              // 20 identifier inside a ListTile title
+              ListTile(title: Semantics(identifier: 'p20', child: const Text('i20 Row')), onTap: () {}),
+              // 21 explicitChildNodes wrapper around a Material button
+              Semantics(identifier: 'p21', explicitChildNodes: true, child: FilledButton(onPressed: () {}, child: const Text('i21 Save'))),
+              // 22 identifier inside an OutlinedButton via icon+label
+              OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.save), label: Semantics(identifier: 'p22', child: const Text('i22 Save'))),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

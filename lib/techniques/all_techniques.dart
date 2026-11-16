@@ -10,6 +10,7 @@ import 's05_headings/s05_headings.dart';
 import 's13_roles_and_traits/s13_roles_and_traits.dart';
 import 's14_values_and_state_descriptions/s14_values_and_state_descriptions.dart';
 import 's15_hints/s15_hints.dart';
+import 's22_semantics_identifiers/s22_semantics_identifiers.dart';
 
 /// Every technique in the catalog. Add each new technique here.
 final List<Technique> allTechniques = [
@@ -22,6 +23,7 @@ final List<Technique> allTechniques = [
   s13RolesAndTraits,
   s14ValuesAndStateDescriptions,
   s15Hints,
+  s22SemanticsIdentifiers,
   f01TextFields,
   i12Announcements,
 ];

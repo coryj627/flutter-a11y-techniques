@@ -27,7 +27,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-004](#fl-004) | `header: true` on web is always `<h2>` | Web | Confirmed |
 | [FL-005](#fl-005) | `header: true` alone is not a heading on Android, except directly in a list | Android | Confirmed |
 | [FL-006](#fl-006) | Any tappable node is `role="button"` on web | Web | Confirmed |
-| [FL-007](#fl-007) | `Semantics(identifier:)` inside a button strips the button's name | Android, iOS | Observed |
+| [FL-007](#fl-007) | `Semantics(identifier:)` inside a button strips the button's name | Android, iOS | Confirmed |
 | [FL-008](#fl-008) | `IconButton` tooltip is read as a second item by VoiceOver in Chromium | Web (Chromium) | Observed |
 | [FL-009](#fl-009) | `textContrastGuideline` checks disabled text | Test framework | Confirmed |
 | [FL-010](#fl-010) | Live region text is announced when the screen opens | Android, iOS, Web | Observed |
@@ -63,6 +63,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-040](#fl-040) | `Semantics(hint:)` around a Material button stays on a node of its own | All | Confirmed |
 | [FL-041](#fl-041) | On web a hint on a node with no label is not rendered, unless the node is a text field | Web | Confirmed (source read) |
 | [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed once; not explored |
+| [FL-043](#fl-043) | `Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS | All | Confirmed |
 
 ---
 
@@ -213,20 +214,32 @@ yet), **Fixed in x.y** (verified on that version).
 
 **`Semantics(identifier:)` inside a button strips the button's name.**
 
-- Status: Observed in spike K2, Flutter 3.47.5, Android 17 and iOS 27. The
-  spike fixture was removed; no test in the repo reproduces it.
+- Status: Confirmed, Flutter 3.47.5, Android 17 and iOS 27. First seen in
+  spike K2. Asserted by the widget test "bad-inside",
+  `S22SemanticsIdentifiersTest.badInsideLeavesTheButtonWithNoName`,
+  `S22SemanticsIdentifiersUITests.testBadInsideLeavesTheButtonWithNoName`,
+  and the TalkBack and iOS VoiceOver walks of S22.
 - What happens: `FilledButton(child: Semantics(identifier: 'x', child: Text('Save draft')))`
   produces two nodes on Android and iOS: a `Button` with no name and a
   separate text node carrying the label and the identifier. TalkBack and
   VoiceOver announce just "Button". An identifier added for testing has made
-  the control inaccessible (4.1.2).
+  the control inaccessible (4.1.2). The S22 probe saw the same split inside
+  `OutlinedButton.icon`, `CupertinoButton`, and `ListTile`
+  (`docs/evidence/probes/s22`, fixtures 02, 12, 20, 22).
+- On the web the tree splits the same way, and the identifier is on an
+  element inside the button, but the button keeps its name: a button's
+  accessible name is computed from its content
+  (`web_tests/s22_semantics_identifiers.spec.js`, "bad-inside").
+- Cause: a `Semantics` with an identifier is a node boundary for the text
+  under it, so the text can no longer merge up into the button. Not read in
+  the SDK source; this is from the trees.
 - Workaround: put the identifier outside the control and merge it:
   `MergeSemantics(child: Semantics(identifier: 'x', child: FilledButton(…)))`.
   This is the project's `TestId` widget (`lib/catalog/test_id.dart`) and gives
   one node with role, name, and identifier on all three platforms. A plain
-  outer `Semantics(identifier:)` without `MergeSemantics` makes a separate
-  node: a parent of the button on web and Android, a sibling on iOS.
-- Upstream issue: not searched yet.
+  outer `Semantics(identifier:)` without `MergeSemantics` is
+  [FL-043](#fl-043).
+- Upstream issue: not searched yet (D25).
 
 ## FL-008
 
@@ -1163,3 +1176,38 @@ yet), **Fixed in x.y** (verified on that version).
   or F03. It needs a probe of the element type and of VoiceOver's speech
   before and during editing before anything is concluded.
 - Upstream issue: not searched yet (D25).
+
+## FL-043
+
+**`Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. First seen in spike
+  K2. Asserted by the widget test "bad-wrapper",
+  `web_tests/s22_semantics_identifiers.spec.js`,
+  `S22SemanticsIdentifiersTest.badWrapperHasTheIdentifierOnANodeAroundTheButton`,
+  and
+  `S22SemanticsIdentifiersUITests.testBadWrapperHasTheIdentifierOnAnElementThatIsNotTheButton`.
+- What happens: Material buttons wrap themselves in
+  `Semantics(container: true, button: true)` (the same cause as
+  [FL-040](#fl-040)). A `Semantics(identifier: 'x')` above one has nothing
+  to join and becomes a node with the identifier and nothing else: no
+  role, no name, no action. The button's node has no identifier.
+- Where the node is: on the web an `flt-semantics` element around the
+  button, and on Android a `View` whose child is the `Button`. On iOS it
+  is an `Other` element beside the button, with the same frame, and the
+  button is not inside it. A test that finds the identifier and then looks
+  for a button inside it works on web and Android and finds nothing on
+  iOS. `Semantics(container: true, identifier:)` and
+  `Semantics(explicitChildNodes: true, identifier:)` give the same trees
+  (`docs/evidence/probes/s22`, fixtures 03, 11, 21).
+- What the user gets: nothing different. The node has nothing to read and
+  VoiceOver on iOS does not stop on it. The cost is to tests: the element
+  they found is not the control, cannot be asked for its role or name, and
+  is somewhere else on iOS.
+- Not affected: the same wrapper around a `CupertinoButton`, a `ListTile`,
+  a `TextField`, or a `Text` joins that widget's node (probe, fixtures 04,
+  06, 08, 18).
+- Workaround: `MergeSemantics(child: Semantics(identifier: 'x', child: FilledButton(…)))`,
+  which is `TestId`. One node with role, name, and identifier everywhere.
+- Upstream issue: not searched yet (D25). The buttons have not been given
+  an `identifier` parameter.

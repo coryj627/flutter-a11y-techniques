@@ -645,7 +645,21 @@ S01, S02, S03, S04, S13, S14, S15, S22, one technique per pull request.
   iOS; seen once, not explored, goes to F01's follow-up). VoiceOver on iOS does not read a hint equal to
   the label. Field instructions go to F02, tooltips to C12, `onTapHint` to
   I06.
-- Next: S22 Semantics identifiers for testing.
+- S22 Semantics identifiers for testing: built on 2026-11-15. Documents
+  the `TestId` pattern. FL-007 (an identifier inside a control takes its
+  name away on Android and iOS) is now asserted by tests, and FL-043 is new
+  (an identifier around a Material button with no `MergeSemantics` stays on
+  a node of its own, beside the button on iOS). On the web a button with
+  the identifier inside keeps its name. Two elements can share an
+  identifier with no error. This is the last technique of batch 1.
+  Test tool finding: the web VoiceOver walks that failed at random on
+  2026-11-15 (S15, S14) were starting too early. VoiceOver reads the Back
+  button, about a second later its help message for it, then an empty
+  phrase, and a walk that began 1.5 seconds after focus got one of those
+  in place of a later element. `startAtBack` now waits until VoiceOver has
+  been quiet for two seconds; 12 of 12 diagnostic walks and the S22
+  recording (16 of 16, no retries) were clean after that.
+- Next: batch 2, form controls, starting with F07.
 
 ### Late-stage tasks
 
