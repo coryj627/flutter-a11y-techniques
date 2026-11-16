@@ -21,21 +21,26 @@ import device_lock
 BUSY = 75  # EX_TEMPFAIL
 
 
-# Seconds a process group gets to stop before it is killed. A stopped
-# tool/talkback.py first puts the emulator's accessibility settings and
-# TalkBack's log level back, which takes 15 to 30 seconds of screen driving
-# and longer if adb is slow; killing it earlier would hand the next run an
-# altered device. The lock is held throughout.
+# Seconds a stopped command gets to end by itself before it is killed. Only
+# the command is told to stop, not what it started: a stopped
+# tool/talkback.py puts the emulator's accessibility settings and TalkBack's
+# log level back with adb commands of its own, which takes 15 to 30 seconds
+# and longer if adb is slow. Stopping those commands, or killing the tool
+# early, would hand the next run an altered device. The lock is held
+# throughout.
 GRACE = 300
+# Seconds anything the command left behind then gets before it is killed.
+STRAGGLER_GRACE = 10
 
 
 def run_group(command, **kwargs):
     """Runs a command in its own process group; returns its exit status.
 
     Returns only when the whole group has ended: the command and everything
-    it started. If the command ends and leaves something running, or this
-    process is interrupted or told to stop, the group is told to stop, and
-    killed if it has not within GRACE seconds. So nothing started here is
+    it started. If this process is interrupted or told to stop, the command
+    is told to stop and given GRACE seconds to clean up; whatever is left of
+    the group once the command has ended, then or after a normal exit, is
+    told to stop and killed after STRAGGLER_GRACE seconds. So nothing started here is
     still driving a device when the caller gives up the lock. The command is
     also handed the lock itself (device_lock.child_fds()), which covers the
     case where this process is killed outright.
@@ -60,13 +65,20 @@ def run_group(command, **kwargs):
                 signal.signal(signum, handler)
 
 
-def end_group(child, grace=None):
-    """Stops whatever is left of the child's process group and waits for it."""
-    grace = GRACE if grace is None else grace
+def end_group(child):
+    """Stops the child, then whatever is left of its process group."""
+    if child.poll() is None:
+        # The command first, alone, so that it can clean up with commands of
+        # its own.
+        child.terminate()
+        try:
+            child.wait(timeout=GRACE)
+        except subprocess.TimeoutExpired:
+            signal_group(child, signal.SIGKILL)
     if not group_alive(child):
         return
     signal_group(child, signal.SIGTERM)
-    deadline = time.monotonic() + grace
+    deadline = time.monotonic() + STRAGGLER_GRACE
     while group_alive(child):
         if time.monotonic() >= deadline:
             signal_group(child, signal.SIGKILL)

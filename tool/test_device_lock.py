@@ -258,7 +258,7 @@ class WithDevicesTest(LockTestCase):
         self.fail(f"process {pid} was left running")
 
     def test_a_process_the_command_leaves_behind_is_ended_before_returning(self):
-        with mock.patch.object(with_devices, "GRACE", 0.3):
+        with mock.patch.object(with_devices, "STRAGGLER_GRACE", 0.3):
             read, write = os.pipe()
             self.addCleanup(os.close, read)
             status = with_devices.run_group(
@@ -270,7 +270,8 @@ class WithDevicesTest(LockTestCase):
     def test_stopping_the_tool_ends_a_descendant_that_ignores_the_signal(self):
         tool = subprocess.Popen(
             [sys.executable, "-c",
-             "import sys, with_devices; with_devices.GRACE = 0.3; sys.exit(with_devices.main())",
+             "import sys, with_devices; with_devices.STRAGGLER_GRACE = 0.3; "
+             "sys.exit(with_devices.main())",
              "--", sys.executable, "-c", self.LEAVES_ONE.format(then="import time; time.sleep(60)")],
             cwd=TOOL, env=self.env(), stdout=subprocess.PIPE, text=True)
         self.addCleanup(tool.stdout.close)
@@ -298,10 +299,13 @@ class WithDevicesTest(LockTestCase):
         # longer than a short grace period would allow.
         self.assertGreaterEqual(with_devices.GRACE, 120)
         marker = os.path.join(self.dir.name, "restored")
-        cleanup = ("import signal, sys, time\n"
+        # It cleans up with a command of its own, as talkback.py does with
+        # adb; that command must not be stopped either.
+        cleanup = ("import signal, subprocess, sys, time\n"
                    "def stop(*_):\n"
-                   "    time.sleep(1.5)\n"
-                   f"    open({marker!r}, 'w').close()\n"
+                   "    restore = subprocess.run([sys.executable, '-c', 'import time; time.sleep(1.5)'])\n"
+                   "    if restore.returncode == 0:\n"
+                   f"        open({marker!r}, 'w').close()\n"
                    "    sys.exit(143)\n"
                    "signal.signal(signal.SIGTERM, stop)\n"
                    "print('up', flush=True)\n"
@@ -317,7 +321,21 @@ class WithDevicesTest(LockTestCase):
         with self.assertRaises(device_lock.Busy):
             device_lock.acquire("mine", wait=False)
         self.assertEqual(tool.wait(timeout=15), 128 + 15)
-        self.assertTrue(os.path.exists(marker), "the command was killed before it had cleaned up")
+        self.assertTrue(os.path.exists(marker), "the clean-up was cut short")
+
+    def test_command_that_will_not_stop_is_killed_after_the_grace_period(self):
+        stubborn = ("import signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+                    "print('up', flush=True); time.sleep(60)")
+        tool = subprocess.Popen(
+            [sys.executable, "-c",
+             "import sys, with_devices; with_devices.GRACE = 0.3; sys.exit(with_devices.main())",
+             "--", sys.executable, "-c", stubborn],
+            cwd=TOOL, env=self.env(), stdout=subprocess.PIPE, text=True)
+        self.addCleanup(tool.stdout.close)
+        self.assertEqual(tool.stdout.readline().strip(), "up")
+        tool.terminate()
+        self.assertEqual(tool.wait(timeout=15), 128 + 15)
+        device_lock.acquire("mine", wait=False).release()
         device_lock.acquire("mine", wait=False).release()
 
     def test_missing_command_is_a_usage_error(self):
