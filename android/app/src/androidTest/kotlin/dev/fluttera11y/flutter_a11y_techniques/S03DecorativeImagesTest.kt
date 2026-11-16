@@ -5,20 +5,11 @@
 // description, or by their class when they have none.
 package dev.fluttera11y.flutter_a11y_techniques
 
-import android.app.UiAutomation
-import android.content.Intent
-import android.provider.Settings
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -30,17 +21,7 @@ private const val UNNAMED_IMAGE = "\u0000image"
 private const val DELIVERY = "Delivery takes 2 to 4 days."
 
 @RunWith(AndroidJUnit4::class)
-class S03DecorativeImagesTest {
-    private val inst = InstrumentationRegistry.getInstrumentation()
-
-    // Without this flag a connected test switches TalkBack off.
-    private val automation: UiAutomation = run {
-        Configurator.getInstance().setUiAutomationFlags(
-            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-        inst.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-    }
-    private val device: UiDevice = UiDevice.getInstance(inst)
-
+class S03DecorativeImagesTest : TechniqueTest("S03") {
     private val titles = mapOf(
         "good-image-excluded" to "Decorative image excluded",
         "good-icon-no-label" to "Icons that repeat the text beside them",
@@ -53,35 +34,12 @@ class S03DecorativeImagesTest {
         "bad-merged-image" to "Decorative picture merged into a row",
     )
 
-    private fun open(slug: String) {
-        val intent = Intent(inst.targetContext, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .putExtra("route", "/t/S03/$slug")
-        inst.targetContext.startActivity(intent)
-        // Wait for this example's own title. A text every example screen has
-        // would also match the previous screen while the new one loads.
-        assertTrue("example $slug did not open",
-            device.wait(Until.hasObject(By.desc(titles.getValue(slug))), 20_000))
-        device.waitForIdle()
-        // The photo is decoded after the first frame.
-        Thread.sleep(500)
-    }
-
-    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
-        if (root == null) return
-        out.add(root)
-        for (i in 0 until root.childCount) collect(root.getChild(i), out)
-    }
-
-    private fun all(): List<AccessibilityNodeInfo> =
-        mutableListOf<AccessibilityNodeInfo>().also { collect(automation.rootInActiveWindow, it) }
-
-    private fun AccessibilityNodeInfo.name(): String = contentDescription?.toString().orEmpty()
+    // Waits for this example's own title, then for the photo, which is
+    // decoded after the first frame.
+    private fun open(slug: String) =
+        openExample(slug, By.desc(titles.getValue(slug)), settleMillis = 500)
 
     private fun names(): List<String> = all().map { it.name() }
-
-    private fun node(text: String): AccessibilityNodeInfo =
-        all().firstOrNull { it.name() == text } ?: throw AssertionError("no node named \"$text\"")
 
     /**
      * The names of the example's own nodes: those below the "Example"
@@ -89,7 +47,7 @@ class S03DecorativeImagesTest {
      */
     private fun example(): List<String> {
         val bounds = android.graphics.Rect()
-        node("Example").getBoundsInScreen(bounds)
+        named("Example").getBoundsInScreen(bounds)
         val top = bounds.bottom
         return all().filter { it.name().isNotEmpty() }
             .map { n -> android.graphics.Rect().also { n.getBoundsInScreen(it) } to n.name() }
@@ -169,21 +127,6 @@ class S03DecorativeImagesTest {
     }
 
     /**
-     * Moves TalkBack focus to the node [find] returns and fails the test if
-     * it cannot. A node that already has accessibility focus refuses the
-     * action, so focus is cleared and the action tried once more. Without
-     * this check a failed focus would pass silently and the transcript would
-     * credit the wrong speech to the element.
-     */
-    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
-        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
-        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
-        Thread.sleep(500)
-        assertTrue("TalkBack focus on $what",
-            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
-    }
-
-    /**
      * L4. Moves TalkBack focus to each listed element and logs markers;
      * tool/talkback.py reads the speech from logcat. Skipped unless TalkBack
      * is running. Focus is moved by action, so the walk shows what is read
@@ -191,9 +134,6 @@ class S03DecorativeImagesTest {
      */
     @Test
     fun talkBackWalk() {
-        val services = Settings.Secure.getString(
-            inst.targetContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
-        assumeTrue("TalkBack is not enabled", services.contains("talkback", ignoreCase = true))
         val banner = listOf("first" to "Welcome back, Ana.", "second" to "You have 2 new messages.")
         // slug -> (key suffix, description of the element)
         val walk = listOf(
@@ -209,27 +149,24 @@ class S03DecorativeImagesTest {
             "bad-redundant-label" to listOf("icon" to "Shipping#0", "word" to "Shipping#1"),
             "bad-merged-image" to listOf("row" to "Trail guide\n12 routes"),
         )
-        for ((slug, elements) in walk) {
-            open(slug)
-            // Let TalkBack finish announcing the new screen first.
-            Thread.sleep(8_000)
-            for ((key, text) in elements) {
-                Log.i("S03TB", "FOCUS s03-$slug-$key")
-                talkBackFocus("s03-$slug-$key") {
-                    when {
-                        text == UNNAMED_IMAGE -> images().single()
-                        text.contains('#') -> {
-                            val (name, index) = text.split('#')
-                            val found = all().filter { it.name() == name }
-                            assertEquals("nodes named \"$name\"", 2, found.size)
-                            found[index.toInt()]
+        talkBackWalk(
+            walk.map { (slug, elements) ->
+                slug to elements.map { (key, text) ->
+                    Stop("s03-$slug-$key") {
+                        when {
+                            text == UNNAMED_IMAGE -> images().single()
+                            text.contains('#') -> {
+                                val (name, index) = text.split('#')
+                                val found = all().filter { it.name() == name }
+                                assertEquals("nodes named \"$name\"", 2, found.size)
+                                found[index.toInt()]
+                            }
+                            else -> named(text)
                         }
-                        else -> node(text)
                     }
                 }
-                Thread.sleep(8_000)
-            }
-            Log.i("S03TB", "END $slug")
-        }
+            },
+            open = ::open,
+            dwellMillis = { 8_000 })
     }
 }

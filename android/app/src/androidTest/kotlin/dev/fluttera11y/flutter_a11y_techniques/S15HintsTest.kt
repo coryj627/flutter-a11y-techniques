@@ -2,21 +2,13 @@
 // Spec: docs/specs/S15-hints.md.
 package dev.fluttera11y.flutter_a11y_techniques
 
-import android.app.UiAutomation
-import android.content.Intent
-import android.provider.Settings
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -27,56 +19,8 @@ private const val RULE = "3 to 12 letters or numbers."
 private const val SONG = "Night Ferry\nThe Lanterns"
 
 @RunWith(AndroidJUnit4::class)
-class S15HintsTest {
-    private val inst = InstrumentationRegistry.getInstrumentation()
-
-    // Without this flag a connected test switches TalkBack off.
-    private val automation: UiAutomation = run {
-        Configurator.getInstance().setUiAutomationFlags(
-            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-        inst.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-    }
-    private val device: UiDevice = UiDevice.getInstance(inst)
-
-    private fun open(slug: String) {
-        val intent = Intent(inst.targetContext, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .putExtra("route", "/t/S15/$slug")
-        inst.targetContext.startActivity(intent)
-        assertTrue("example $slug did not open",
-            device.wait(Until.hasObject(By.res("s15-$slug-count")), 20_000))
-        device.waitForIdle()
-    }
-
-    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
-        if (root == null) return
-        out.add(root)
-        for (i in 0 until root.childCount) collect(root.getChild(i), out)
-    }
-
-    private fun all(): List<AccessibilityNodeInfo> =
-        mutableListOf<AccessibilityNodeInfo>().also { collect(automation.rootInActiveWindow, it) }
-
-    private fun AccessibilityNodeInfo.name(): String = contentDescription?.toString().orEmpty()
-    private fun AccessibilityNodeInfo.type(): String = className?.toString().orEmpty()
-    private fun AccessibilityNodeInfo.hasClickAction(): Boolean =
-        actionList.any { it.id == AccessibilityNodeInfo.ACTION_CLICK }
-
-    private fun node(id: String): AccessibilityNodeInfo =
-        all().firstOrNull { it.viewIdResourceName == id } ?: throw AssertionError("no node with id $id")
-
-    /** The nodes of the example with the button class: every one but Back. */
-    private fun buttons(): List<AccessibilityNodeInfo> =
-        all().filter { it.type() == BUTTON && it.name() != "Back" }
-
-    private fun count(slug: String): Int = node("s15-$slug-count").name().substringAfter(": ").toInt()
-
-    private fun waitForCount(slug: String, expected: Int) {
-        val end = System.currentTimeMillis() + 5_000
-        while (System.currentTimeMillis() < end && count(slug) != expected) Thread.sleep(100)
-        assertEquals("activation count for $slug", expected, count(slug))
-    }
-
+class S15HintsTest : TechniqueTest("S15") {
+    private fun open(slug: String) = openExample(slug, By.res("s15-$slug-count"))
 
     // Android has no hint of its own for a control. Flutter's bridge writes
     // "label, hint" into the content description (FL-039), so that is what
@@ -130,22 +74,6 @@ class S15HintsTest {
         assertEquals(VIEW, rule.single().type())
     }
 
-    /** The text in a field; an empty EditText reports its hint as its text. */
-    private fun value(id: String): String = node(id).let {
-        if (it.isShowingHintText) "" else it.text?.toString().orEmpty()
-    }
-
-    private fun type(id: String, text: String) {
-        assertTrue("$id click", node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
-        Thread.sleep(1_000)
-        inst.sendStringSync(text)
-        val end = System.currentTimeMillis() + 5_000
-        while (System.currentTimeMillis() < end && value(id) != text) Thread.sleep(100)
-        assertEquals("$id value", text, value(id))
-        // Give the rest of the field's semantics time to follow the value.
-        Thread.sleep(1_500)
-    }
-
     @Test
     fun aFilledFieldHasTheRuleInHintTextOnly() {
         // Label and hint are only ever in the node's hint text. TalkBack
@@ -188,30 +116,14 @@ class S15HintsTest {
     }
 
     /**
-     * Moves TalkBack focus to the node [find] returns and fails the test if
-     * it cannot. A node that already has accessibility focus refuses the
-     * action, so focus is cleared and the action tried once more. Without
-     * this check a failed focus would pass silently and the transcript would
-     * credit the wrong speech to the element.
-     */
-    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
-        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
-        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
-        Thread.sleep(500)
-        assertTrue("TalkBack focus on $what",
-            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
-    }
-
-    /**
      * L4. Moves TalkBack focus to each control of every example and logs
      * markers; tool/talkback.py reads the speech from logcat. Skipped unless
-     * TalkBack is running.
+     * TalkBack is running. Not TechniqueTest.talkBackWalk: the fields are
+     * read a second time once filled.
      */
     @Test
     fun talkBackWalk() {
-        val services = Settings.Secure.getString(
-            inst.targetContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
-        assumeTrue("TalkBack is not enabled", services.contains("talkback", ignoreCase = true))
+        assumeTalkBack()
         val byId = { id: String -> id to { node(id) } }
         val walk: List<Pair<String, List<Pair<String, () -> AccessibilityNodeInfo>>>> =
             buttons.map { (slug, id, _) -> slug to listOf(byId(id)) } + listOf(

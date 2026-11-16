@@ -2,21 +2,12 @@
 // Spec: docs/specs/S04-functional-images.md.
 package dev.fluttera11y.flutter_a11y_techniques
 
-import android.app.UiAutomation
-import android.content.Intent
-import android.provider.Settings
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -25,57 +16,16 @@ private const val IMAGE = "android.widget.ImageView"
 private const val GUIDE = "Open trail guide"
 
 @RunWith(AndroidJUnit4::class)
-class S04FunctionalImagesTest {
-    private val inst = InstrumentationRegistry.getInstrumentation()
-
-    // Without this flag a connected test switches TalkBack off.
-    private val automation: UiAutomation = run {
-        Configurator.getInstance().setUiAutomationFlags(
-            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-        inst.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-    }
-    private val device: UiDevice = UiDevice.getInstance(inst)
-
-    private fun open(slug: String) {
-        val intent = Intent(inst.targetContext, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .putExtra("route", "/t/S04/$slug")
-        inst.targetContext.startActivity(intent)
-        assertTrue("example $slug did not open",
-            device.wait(Until.hasObject(By.res("s04-$slug-count")), 20_000))
-        device.waitForIdle()
-        // The picture is decoded after the first frame.
-        Thread.sleep(500)
-    }
-
-    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
-        if (root == null) return
-        out.add(root)
-        for (i in 0 until root.childCount) collect(root.getChild(i), out)
-    }
-
-    private fun all(): List<AccessibilityNodeInfo> =
-        mutableListOf<AccessibilityNodeInfo>().also { collect(automation.rootInActiveWindow, it) }
-
-    private fun AccessibilityNodeInfo.name(): String = contentDescription?.toString().orEmpty()
-    private fun AccessibilityNodeInfo.type(): String = className?.toString().orEmpty()
-
-    private fun node(id: String): AccessibilityNodeInfo =
-        all().firstOrNull { it.viewIdResourceName == id } ?: throw AssertionError("no node with id $id")
+class S04FunctionalImagesTest : TechniqueTest("S04") {
+    // Waits for the count, then for the picture, which is decoded after the
+    // first frame.
+    private fun open(slug: String) = openExample(slug, By.res("s04-$slug-count"), settleMillis = 500)
 
     private fun images(): List<AccessibilityNodeInfo> = all().filter { it.type() == IMAGE }
 
     /** The clickable nodes of the example: every one but the app bar's Back. */
     private fun clickables(): List<AccessibilityNodeInfo> =
         all().filter { it.isClickable && it.name() != "Back" }
-
-    private fun count(slug: String): Int = node("s04-$slug-count").name().substringAfter(": ").toInt()
-
-    private fun waitForCount(slug: String, expected: Int) {
-        val end = System.currentTimeMillis() + 5_000
-        while (System.currentTimeMillis() < end && count(slug) != expected) Thread.sleep(100)
-        assertEquals("activation count for $slug", expected, count(slug))
-    }
 
     private val good = mapOf(
         "good-image-button" to mapOf("s04-good-image-button-guide" to GUIDE),
@@ -182,56 +132,28 @@ class S04FunctionalImagesTest {
     }
 
     /**
-     * Moves TalkBack focus to the node [find] returns and fails the test if
-     * it cannot. A node that already has accessibility focus refuses the
-     * action, so focus is cleared and the action tried once more. Without
-     * this check a failed focus would pass silently and the transcript would
-     * credit the wrong speech to the element.
-     */
-    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
-        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
-        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
-        Thread.sleep(500)
-        assertTrue("TalkBack focus on $what",
-            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
-    }
-
-    /**
      * L4. Moves TalkBack focus to each control of every example and logs
      * markers; tool/talkback.py reads the speech from logcat. Skipped unless
      * TalkBack is running.
      */
     @Test
     fun talkBackWalk() {
-        val services = Settings.Secure.getString(
-            inst.targetContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
-        assumeTrue("TalkBack is not enabled", services.contains("talkback", ignoreCase = true))
-        // slug -> (marker, how to find the node). The two examples with no
-        // identifier have their nodes found by what they are.
-        val byId = { id: String -> id to { node(id) } }
-        val walk: List<Pair<String, List<Pair<String, () -> AccessibilityNodeInfo>>>> =
+        // slug -> stops. The two examples with no identifier have their
+        // nodes found by what they are.
+        val byId = { id: String -> Stop(id) { node(id) } }
+        val walk: List<Pair<String, List<Stop>>> =
             good.map { (slug, buttons) -> slug to buttons.keys.map(byId) } + listOf(
                 "bad-no-name" to listOf(byId("s04-bad-no-name-guide")),
                 "bad-label-on-image" to listOf(
-                    "s04-bad-label-on-image-button" to { clickables().single() },
-                    "s04-bad-label-on-image-image" to { images().single() }),
+                    Stop("s04-bad-label-on-image-button") { clickables().single() },
+                    Stop("s04-bad-label-on-image-image") { images().single() }),
                 "bad-tap-gesture" to listOf(
-                    "s04-bad-tap-gesture-tappable" to { clickables().single() },
-                    "s04-bad-tap-gesture-image" to { images().single() }),
+                    Stop("s04-bad-tap-gesture-tappable") { clickables().single() },
+                    Stop("s04-bad-tap-gesture-image") { images().single() }),
                 "bad-describes-picture" to listOf(byId("s04-bad-describes-picture-search")),
                 "bad-image-not-excluded" to listOf(byId("s04-bad-image-not-excluded-guide")),
                 "bad-redundant-label" to listOf(byId("s04-bad-redundant-label-print")),
             )
-        for ((slug, elements) in walk) {
-            open(slug)
-            // Let TalkBack finish announcing the new screen first.
-            Thread.sleep(8_000)
-            for ((marker, find) in elements) {
-                Log.i("S04TB", "FOCUS $marker")
-                talkBackFocus(marker, find)
-                Thread.sleep(6_000)
-            }
-            Log.i("S04TB", "END $slug")
-        }
+        talkBackWalk(walk, open = ::open, dwellMillis = { 6_000 })
     }
 }

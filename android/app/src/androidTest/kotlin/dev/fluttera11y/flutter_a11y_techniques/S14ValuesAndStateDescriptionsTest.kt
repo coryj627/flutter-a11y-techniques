@@ -5,21 +5,12 @@
 // "value, label" into the content description.
 package dev.fluttera11y.flutter_a11y_techniques
 
-import android.app.UiAutomation
-import android.content.Intent
-import android.provider.Settings
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -28,52 +19,10 @@ private const val SWITCH = "android.widget.Switch"
 private const val SEEK_BAR = "android.widget.SeekBar"
 
 @RunWith(AndroidJUnit4::class)
-class S14ValuesAndStateDescriptionsTest {
-    private val inst = InstrumentationRegistry.getInstrumentation()
+class S14ValuesAndStateDescriptionsTest : TechniqueTest("S14") {
+    private fun open(slug: String) = openExample(slug, By.res("s14-$slug-count"))
 
-    // Without this flag a connected test switches TalkBack off.
-    private val automation: UiAutomation = run {
-        Configurator.getInstance().setUiAutomationFlags(
-            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-        inst.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-    }
-    private val device: UiDevice = UiDevice.getInstance(inst)
-
-    private fun open(slug: String) {
-        val intent = Intent(inst.targetContext, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .putExtra("route", "/t/S14/$slug")
-        inst.targetContext.startActivity(intent)
-        assertTrue("example $slug did not open",
-            device.wait(Until.hasObject(By.res("s14-$slug-count")), 20_000))
-        device.waitForIdle()
-    }
-
-    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
-        if (root == null) return
-        out.add(root)
-        for (i in 0 until root.childCount) collect(root.getChild(i), out)
-    }
-
-    private fun all(): List<AccessibilityNodeInfo> =
-        mutableListOf<AccessibilityNodeInfo>().also { collect(automation.rootInActiveWindow, it) }
-
-    private fun AccessibilityNodeInfo.name(): String = contentDescription?.toString().orEmpty()
-    private fun AccessibilityNodeInfo.type(): String = className?.toString().orEmpty()
-
-    private fun node(id: String): AccessibilityNodeInfo =
-        all().firstOrNull { it.viewIdResourceName == id } ?: throw AssertionError("no node with id $id")
-
-    private fun named(name: String): AccessibilityNodeInfo =
-        all().firstOrNull { it.name() == name } ?: throw AssertionError("no node named $name")
-
-    private fun count(slug: String): Int = node("s14-$slug-count").name().substringAfter(": ").toInt()
-
-    private fun waitForCount(slug: String, expected: Int) {
-        val end = System.currentTimeMillis() + 5_000
-        while (System.currentTimeMillis() < end && count(slug) != expected) Thread.sleep(100)
-        assertEquals("change count for $slug", expected, count(slug))
-    }
+    override val countName = "change count"
 
     private fun waitForName(id: String, expected: String) {
         val end = System.currentTimeMillis() + 5_000
@@ -215,24 +164,6 @@ class S14ValuesAndStateDescriptionsTest {
     }
 
     /**
-     * Moves TalkBack focus to the node [find] returns and fails the test if
-     * it cannot. A node that already has accessibility focus refuses the
-     * action, so focus is cleared and the action tried once more. Without
-     * this check a failed focus would pass silently and the transcript would
-     * credit the wrong speech to the element.
-     */
-    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
-        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
-        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
-        Thread.sleep(500)
-        assertTrue("TalkBack focus on $what",
-            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
-    }
-
-    /** One stop of the walk: something to do first, then the node to focus. */
-    private class Stop(val marker: String, val before: () -> Unit = {}, val find: () -> AccessibilityNodeInfo)
-
-    /**
      * L4. Moves TalkBack focus to each element and logs markers;
      * tool/talkback.py reads the speech from logcat. Where a value should
      * follow a change, the element is changed and focused a second time.
@@ -240,9 +171,6 @@ class S14ValuesAndStateDescriptionsTest {
      */
     @Test
     fun talkBackWalk() {
-        val services = Settings.Secure.getString(
-            inst.targetContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
-        assumeTrue("TalkBack is not enabled", services.contains("talkback", ignoreCase = true))
         fun byId(id: String) = Stop(id) { node(id) }
         // Focus is taken off the element before it is changed, so that what
         // is logged is what TalkBack reads on arriving, not a change notice.
@@ -284,17 +212,6 @@ class S14ValuesAndStateDescriptionsTest {
                     click("s14-bad-button-no-value-repeat"))),
             "bad-value-on-switch" to listOf(byId("s14-bad-value-on-switch-alarm")),
         )
-        for ((slug, stops) in walk) {
-            open(slug)
-            // Let TalkBack finish announcing the new screen first.
-            Thread.sleep(8_000)
-            for (stop in stops) {
-                stop.before()
-                Log.i("S14TB", "FOCUS ${stop.marker}")
-                talkBackFocus(stop.marker, stop.find)
-                Thread.sleep(6_000)
-            }
-            Log.i("S14TB", "END $slug")
-        }
+        talkBackWalk(walk, open = ::open, dwellMillis = { 6_000 })
     }
 }

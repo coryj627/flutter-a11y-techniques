@@ -3,21 +3,12 @@
 // Spec: docs/specs/S22-semantics-identifiers.md.
 package dev.fluttera11y.flutter_a11y_techniques
 
-import android.app.UiAutomation
-import android.content.Intent
-import android.provider.Settings
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -26,56 +17,8 @@ private const val EDIT_TEXT = "android.widget.EditText"
 private const val VIEW = "android.view.View"
 
 @RunWith(AndroidJUnit4::class)
-class S22SemanticsIdentifiersTest {
-    private val inst = InstrumentationRegistry.getInstrumentation()
-
-    // Without this flag a connected test switches TalkBack off.
-    private val automation: UiAutomation = run {
-        Configurator.getInstance().setUiAutomationFlags(
-            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-        inst.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-    }
-    private val device: UiDevice = UiDevice.getInstance(inst)
-
-    private fun open(slug: String) {
-        val intent = Intent(inst.targetContext, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .putExtra("route", "/t/S22/$slug")
-        inst.targetContext.startActivity(intent)
-        assertTrue("example $slug did not open",
-            device.wait(Until.hasObject(By.res("s22-$slug-count")), 20_000))
-        device.waitForIdle()
-    }
-
-    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
-        if (root == null) return
-        out.add(root)
-        for (i in 0 until root.childCount) collect(root.getChild(i), out)
-    }
-
-    private fun all(): List<AccessibilityNodeInfo> =
-        mutableListOf<AccessibilityNodeInfo>().also { collect(automation.rootInActiveWindow, it) }
-
-    private fun AccessibilityNodeInfo.name(): String = contentDescription?.toString().orEmpty()
-    private fun AccessibilityNodeInfo.type(): String = className?.toString().orEmpty()
-    private fun AccessibilityNodeInfo.hasClickAction(): Boolean =
-        actionList.any { it.id == AccessibilityNodeInfo.ACTION_CLICK }
-
-    private fun node(id: String): AccessibilityNodeInfo =
-        all().firstOrNull { it.viewIdResourceName == id } ?: throw AssertionError("no node with id $id")
-
-    /** The nodes of the example with the button class: every one but Back. */
-    private fun buttons(): List<AccessibilityNodeInfo> =
-        all().filter { it.type() == BUTTON && it.name() != "Back" }
-
-    private fun count(slug: String): Int = node("s22-$slug-count").name().substringAfter(": ").toInt()
-
-    private fun waitForCount(slug: String, expected: Int) {
-        val end = System.currentTimeMillis() + 5_000
-        while (System.currentTimeMillis() < end && count(slug) != expected) Thread.sleep(100)
-        assertEquals("activation count for $slug", expected, count(slug))
-    }
-
+class S22SemanticsIdentifiersTest : TechniqueTest("S22") {
+    private fun open(slug: String) = openExample(slug, By.res("s22-$slug-count"))
 
     private fun withId(id: String): List<AccessibilityNodeInfo> = all().filter { it.viewIdResourceName == id }
 
@@ -183,53 +126,25 @@ class S22SemanticsIdentifiersTest {
     }
 
     /**
-     * Moves TalkBack focus to the node [find] returns and fails the test if
-     * it cannot. A node that already has accessibility focus refuses the
-     * action, so focus is cleared and the action tried once more. Without
-     * this check a failed focus would pass silently and the transcript would
-     * credit the wrong speech to the element.
-     */
-    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
-        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
-        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
-        Thread.sleep(500)
-        assertTrue("TalkBack focus on $what",
-            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
-    }
-
-    /**
      * L4. Moves TalkBack focus to each control of every example and logs
      * markers; tool/talkback.py reads the speech from logcat. Skipped unless
      * TalkBack is running.
      */
     @Test
     fun talkBackWalk() {
-        val services = Settings.Secure.getString(
-            inst.targetContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
-        assumeTrue("TalkBack is not enabled", services.contains("talkback", ignoreCase = true))
-        val byId = { id: String -> id to { node(id) } }
-        val walk: List<Pair<String, List<Pair<String, () -> AccessibilityNodeInfo>>>> =
+        val byId = { id: String -> Stop(id) { node(id) } }
+        val walk: List<Pair<String, List<Stop>>> =
             buttons.map { (slug, id, _) -> slug to listOf(byId(id)) } + listOf(
                 "good-field" to listOf(byId("s22-good-field-project")),
                 // The button has no identifier here; it is the only button.
                 "bad-inside" to listOf(
-                    "s22-bad-inside-button" to { buttons().single() },
+                    Stop("s22-bad-inside-button") { buttons().single() },
                     byId("s22-bad-inside-save")),
-                "bad-wrapper" to listOf("s22-bad-wrapper-button" to { buttons().single() }),
+                "bad-wrapper" to listOf(Stop("s22-bad-wrapper-button") { buttons().single() }),
                 "bad-duplicate" to listOf(
-                    "s22-bad-duplicate-save" to { buttons().single { it.name() == "Save draft" } },
-                    "s22-bad-duplicate-discard" to { buttons().single { it.name() == "Discard draft" } }),
+                    Stop("s22-bad-duplicate-save") { buttons().single { it.name() == "Save draft" } },
+                    Stop("s22-bad-duplicate-discard") { buttons().single { it.name() == "Discard draft" } }),
             )
-        for ((slug, elements) in walk) {
-            open(slug)
-            // Let TalkBack finish announcing the new screen first.
-            Thread.sleep(8_000)
-            for ((marker, find) in elements) {
-                Log.i("S22TB", "FOCUS $marker")
-                talkBackFocus(marker, find)
-                Thread.sleep(6_000)
-            }
-            Log.i("S22TB", "END $slug")
-        }
+        talkBackWalk(walk, open = ::open, dwellMillis = { 6_000 })
     }
 }

@@ -2,67 +2,26 @@
 // Spec: docs/specs/C01-button.md.
 package dev.fluttera11y.flutter_a11y_techniques
 
-import android.app.UiAutomation
-import android.content.Intent
-import android.provider.Settings
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
 private const val BUTTON = "android.widget.Button"
 
 @RunWith(AndroidJUnit4::class)
-class C01ButtonTest {
-    private val inst = InstrumentationRegistry.getInstrumentation()
+class C01ButtonTest : TechniqueTest("C01") {
+    // No wait for idle after the count appears: C01's tests and its TalkBack
+    // transcript were made without one.
+    private fun open(slug: String) = openExample(slug, By.res("c01-$slug-count"), idle = false)
 
-    // Without this flag a connected test switches TalkBack off.
-    private val automation: UiAutomation = run {
-        Configurator.getInstance().setUiAutomationFlags(
-            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-        inst.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-    }
-    private val device: UiDevice = UiDevice.getInstance(inst)
-
-    private fun open(slug: String) {
-        val intent = Intent(inst.targetContext, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .putExtra("route", "/t/C01/$slug")
-        inst.targetContext.startActivity(intent)
-        assertTrue("example $slug did not open",
-            device.wait(Until.hasObject(By.res("c01-$slug-count")), 20_000))
-    }
-
-    private fun find(root: AccessibilityNodeInfo?, id: String): AccessibilityNodeInfo? {
-        if (root == null) return null
-        if (root.viewIdResourceName == id) return root
-        for (i in 0 until root.childCount) find(root.getChild(i), id)?.let { return it }
-        return null
-    }
-
-    private fun node(id: String): AccessibilityNodeInfo =
-        find(automation.rootInActiveWindow, id) ?: throw AssertionError("no node with id $id")
-
-    private fun name(id: String): String = node(id).contentDescription?.toString().orEmpty()
-
-    private fun count(slug: String): Int = name("c01-$slug-count").substringAfter(": ").toInt()
-
-    private fun waitForCount(slug: String, expected: Int) {
-        val end = System.currentTimeMillis() + 5_000
-        while (System.currentTimeMillis() < end && count(slug) != expected) Thread.sleep(100)
-        assertEquals("activation count for $slug", expected, count(slug))
-    }
+    private fun name(id: String): String = node(id).name()
 
     private val enabledGood = mapOf(
         "good-text" to mapOf(
@@ -181,32 +140,15 @@ class C01ButtonTest {
         assertTrue(node.isEnabled)
     }
 
-
-    /**
-     * Moves TalkBack focus to the node [find] returns and fails the test if
-     * it cannot. A node that already has accessibility focus refuses the
-     * action, so focus is cleared and the action tried once more. Without
-     * this check a failed focus would pass silently and the transcript would
-     * credit the wrong speech to the element.
-     */
-    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
-        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
-        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
-        Thread.sleep(500)
-        assertTrue("TalkBack focus on $what",
-            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
-    }
-
     /**
      * L4. Moves TalkBack focus to every identified node of every example and
      * logs markers; tool/talkback.py reads the speech from logcat. Skipped
-     * unless TalkBack is running.
+     * unless TalkBack is running. Not TechniqueTest.talkBackWalk: the nodes
+     * are collected from the screen once it has settled.
      */
     @Test
     fun talkBackWalk() {
-        val services = Settings.Secure.getString(
-            inst.targetContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
-        assumeTrue("TalkBack is not enabled", services.contains("talkback", ignoreCase = true))
+        assumeTalkBack()
         val slugs = listOf(
             "good-text", "good-icon", "good-disabled", "good-unique-names", "good-cupertino",
             "good-custom", "bad-unlabelled-icon", "bad-gesture-only", "bad-role-in-name",
