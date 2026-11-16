@@ -69,6 +69,13 @@ METHODS = {
             "read the element before it and the move forward again was silent too, which "
             "shows the cursor was on an element of its own",
             "Spoken, in swipe order"),
+    "F08": ("`XCUIVoiceOverService.moveForward()` from the top of the screen to the "
+            "change count, which is the last element of every example. What is shown "
+            "is everything between the \"Example\" heading and the count; a move at which "
+            "VoiceOver said nothing is shown as \"(no speech)\" only when one move back "
+            "read the element before it and the move forward again was silent too, which "
+            "shows the cursor was on an element of its own",
+            "Spoken, in swipe order"),
     "I12": ("the VoiceOver cursor is put on the example's button, the button is activated "
             "with a double tap, and `XCUIVoiceOverService.currentSpeech()` is read until the "
             "message is heard, or for four seconds after the visible change when nothing "
