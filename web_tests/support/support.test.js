@@ -99,6 +99,27 @@ test('the environment overrides the ports, and bad values are refused', () => {
 test('the Playwright web server entry never reuses a running server', () => {
   const entry = webServer('build/web', 21000);
   assert.equal(entry.reuseExistingServer, false);
-  assert.equal(entry.url, 'http://127.0.0.1:21000');
-  assert.match(entry.command, /^node ".*static_server\.js" ".*build\/web" 21000$/);
+  const token = entry.url.match(/^http:\/\/127\.0\.0\.1:21000\/__ready\/([\w-]{20,})$/)?.[1];
+  assert.ok(token, entry.url);
+  assert.ok(entry.command.endsWith(` 21000 ${token}`));
+  assert.match(entry.command, /^node ".*static_server\.js" ".*build\/web" 21000 /);
+  assert.notEqual(webServer('build/web', 21000).url, entry.url, 'a new token for every run');
+});
+
+test('only the server that was started with a token answers its ready address', async (t) => {
+  const { outer, root } = site();
+  const first = await serve(root, 0, 'token-of-the-first');
+  t.after(() => { first.close(); rmSync(outer, { recursive: true }); });
+  const port = first.address().port;
+  const base = `http://127.0.0.1:${port}`;
+  assert.equal((await fetch(`${base}/__ready/token-of-the-first`)).status, 200);
+  // A second run on the same port fails to start, and the first server
+  // does not answer for it: its wait can never succeed against this build.
+  await assert.rejects(serve(root, port, 'token-of-the-second'), { code: 'EADDRINUSE' });
+  assert.equal((await fetch(`${base}/__ready/token-of-the-second`)).status, 404);
+  assert.equal((await fetch(`${base}/__ready/`)).status, 404);
+  // Without a token there is no ready address at all.
+  const plain = await serve(root, 0);
+  t.after(() => plain.close());
+  assert.equal((await fetch(`http://127.0.0.1:${plain.address().port}/__ready/undefined`)).status, 404);
 });

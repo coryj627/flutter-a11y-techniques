@@ -1,6 +1,10 @@
 // A static file server for the Playwright runs.
 //
-// Usage: node support/static_server.js <directory> <port>
+// Usage: node support/static_server.js <directory> <port> [<token>]
+//
+// With a token, GET /__ready/<token> answers 200, and only this server
+// answers it. A caller that waits for that address knows the server it
+// reached is the one it started, not another run's on the same port.
 //
 // It replaces `python3 -m http.server`, which on some Macs binds its port and
 // then spends half a minute or more on a host name lookup before it listens
@@ -50,7 +54,7 @@ export function fileFor(root, urlPath) {
   }
 }
 
-export function serve(root, port) {
+export function serve(root, port, token) {
   // Fail at start, not on the first request, if there is no build to serve.
   if (!fileFor(root, '/')) {
     throw new Error(`${resolve(root)} has no index.html. Build it first (flutter build web).`);
@@ -58,6 +62,10 @@ export function serve(root, port) {
   const server = createServer((request, response) => {
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       response.writeHead(405).end();
+      return;
+    }
+    if (token && request.url === `/__ready/${token}`) {
+      response.writeHead(200, { 'content-type': 'text/plain', 'cache-control': 'no-store' }).end('ready');
       return;
     }
     const file = fileFor(root, request.url ?? '/');
@@ -82,12 +90,12 @@ export function serve(root, port) {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const [root, port] = process.argv.slice(2);
-  if (!root || !/^\d+$/.test(port ?? '')) {
-    console.error('Usage: node support/static_server.js <directory> <port>');
+  const [root, port, token] = process.argv.slice(2);
+  if (!root || !/^\d+$/.test(port ?? '') || (token !== undefined && !/^[\w-]+$/.test(token))) {
+    console.error('Usage: node support/static_server.js <directory> <port> [<token>]');
     process.exit(2);
   }
-  serve(root, Number(port)).then(
+  serve(root, Number(port), token).then(
     () => console.log(`Serving ${resolve(root)} on http://127.0.0.1:${port}`),
     (error) => {
       console.error(error.code === 'EADDRINUSE'

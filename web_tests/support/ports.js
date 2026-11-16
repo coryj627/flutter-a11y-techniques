@@ -4,7 +4,7 @@
 // path, so runs in two worktrees never share a server (and so never test
 // each other's build). FA11Y_WEB_PORT and FA11Y_WIDGETBOOK_PORT override
 // them.
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -45,9 +45,13 @@ export function ports(env = process.env, root = REPO_ROOT) {
 /** The webServer entry for a Playwright config serving `directory`. */
 export function webServer(directory, port) {
   const server = resolve(dirname(fileURLToPath(import.meta.url)), 'static_server.js');
+  // Only the server started here answers this address. If another run got
+  // the port first, ours exits, nothing answers, and the run fails; it never
+  // goes on to test the other run's build.
+  const token = randomUUID();
   return {
-    command: `node "${server}" "${resolve(REPO_ROOT, directory)}" ${port}`,
-    url: `http://127.0.0.1:${port}`,
+    command: `node "${server}" "${resolve(REPO_ROOT, directory)}" ${port} ${token}`,
+    url: `http://127.0.0.1:${port}/__ready/${token}`,
     // Never borrow a server that is already there: it may belong to another
     // worktree and serve a different build.
     reuseExistingServer: false,
