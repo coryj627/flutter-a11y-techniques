@@ -262,8 +262,9 @@ class _GoodCustomState extends State<GoodCustom> {
 /// is neither checked nor unchecked: `tristate: true` and a null value say
 /// so.
 ///
-/// Flutter 3.47.5 passes the mixed state on to Android only, where TalkBack
-/// does not speak it. On the web and on iOS it is exposed as not checked
+/// Flutter 3.47.5 passes the mixed state on to Android 16 (API 36) and
+/// later only, where TalkBack does not speak it. On the web, on iOS, and on
+/// older Android versions it is exposed as not checked
 /// (docs/flutter-limitations.md, FL-044).
 class GoodMixed extends StatefulWidget {
   const GoodMixed({super.key});
