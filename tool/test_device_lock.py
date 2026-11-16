@@ -293,6 +293,33 @@ class WithDevicesTest(LockTestCase):
         except ProcessLookupError:
             pass
 
+    def test_stopped_command_is_given_time_to_put_the_device_back(self):
+        # tool/talkback.py restores settings when told to stop; that takes
+        # longer than a short grace period would allow.
+        self.assertGreaterEqual(with_devices.GRACE, 120)
+        marker = os.path.join(self.dir.name, "restored")
+        cleanup = ("import signal, sys, time\n"
+                   "def stop(*_):\n"
+                   "    time.sleep(1.5)\n"
+                   f"    open({marker!r}, 'w').close()\n"
+                   "    sys.exit(143)\n"
+                   "signal.signal(signal.SIGTERM, stop)\n"
+                   "print('up', flush=True)\n"
+                   "time.sleep(60)\n")
+        tool = subprocess.Popen(
+            [sys.executable, os.path.join(TOOL, "with_devices.py"), "--", sys.executable, "-c",
+             cleanup], cwd=TOOL, env=self.env(), stdout=subprocess.PIPE, text=True)
+        self.addCleanup(tool.stdout.close)
+        self.assertEqual(tool.stdout.readline().strip(), "up")
+        tool.terminate()
+        time.sleep(0.5)
+        # Still cleaning up: the lock is still taken.
+        with self.assertRaises(device_lock.Busy):
+            device_lock.acquire("mine", wait=False)
+        self.assertEqual(tool.wait(timeout=15), 128 + 15)
+        self.assertTrue(os.path.exists(marker), "the command was killed before it had cleaned up")
+        device_lock.acquire("mine", wait=False).release()
+
     def test_missing_command_is_a_usage_error(self):
         self.assertEqual(self.run_tool("--label", "x").returncode, 2)
 

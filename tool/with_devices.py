@@ -21,7 +21,12 @@ import device_lock
 BUSY = 75  # EX_TEMPFAIL
 
 
-GRACE = 10  # seconds a process group gets to stop before it is killed
+# Seconds a process group gets to stop before it is killed. A stopped
+# tool/talkback.py first puts the emulator's accessibility settings and
+# TalkBack's log level back, which takes 15 to 30 seconds of screen driving
+# and longer if adb is slow; killing it earlier would hand the next run an
+# altered device. The lock is held throughout.
+GRACE = 300
 
 
 def run_group(command, **kwargs):
