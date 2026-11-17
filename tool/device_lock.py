@@ -343,28 +343,49 @@ def descendants(pid):
     command is still alive.
     """
     try:
-        table = subprocess.run(["ps", "-axo", "pid=,ppid="], capture_output=True, text=True,
-                               timeout=10).stdout
+        table = subprocess.run(["ps", "-axo", "pid=,ppid=,lstart="], capture_output=True,
+                               text=True, timeout=10).stdout
     except (OSError, subprocess.TimeoutExpired):
         return set()
-    children = {}
+    children, born = {}, {}
     for line in table.splitlines():
-        parts = line.split()
-        if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
+        parts = line.split(None, 2)
+        if len(parts) == 3 and parts[0].isdigit() and parts[1].isdigit():
             children.setdefault(int(parts[1]), []).append(int(parts[0]))
+            born[int(parts[0])] = parts[2].strip()
     found, queue = set(), [pid]
     while queue:
         for child in children.get(queue.pop(), []):
             if child not in found:
                 found.add(child)
                 queue.append(child)
+    for child in found:
+        _born[child] = born[child]
     return found
+
+
+# pid -> when the process that descendants() saw with that pid was started.
+# A pid is given to a new process once its old one has gone; over a long run
+# that can happen, and the new process is none of ours.
+_born = {}
+
+
+def _same_process(pid):
+    """Whether `pid` is still the process descendants() recorded."""
+    try:
+        now = subprocess.run(["ps", "-o", "stat=,lstart=", "-p", str(pid)], capture_output=True,
+                             text=True, timeout=10).stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    if not now or now.startswith("Z"):
+        return False  # gone, or ended and waiting to be reaped
+    return pid not in _born or now.split(None, 1)[1].strip() == _born[pid]
 
 
 def end_processes(pids, grace):
     """Ends the processes that are still alive, and returns once they are gone."""
     def alive():
-        return [pid for pid in pids if _alive(pid) and not _is_zombie(pid)]
+        return [pid for pid in pids if _same_process(pid)]
 
     for pid in alive():
         _signal(pid, signal.SIGTERM)
@@ -447,7 +468,8 @@ def run_to_the_end(command, **kwargs):
         def signal_all(signum):
             signal_group(child.pid, signum)
             for pid in started:
-                _signal(pid, signum)
+                if _same_process(pid):
+                    _signal(pid, signum)
 
         stage = 0  # 0 waiting, 1 told to stop, 2 killed
         ended_at = None  # when the interrupted command was seen to have ended

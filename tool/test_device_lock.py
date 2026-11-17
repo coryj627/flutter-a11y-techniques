@@ -368,6 +368,16 @@ class RunToTheEndTest(LockTestCase):
         # cannot end until it is gone.
         self.assert_ended_with_the_tool(self.run_tool_with_detached("time.sleep(60)\n"))
 
+    def test_a_recorded_pid_now_used_by_another_process_is_left_alone(self):
+        victim = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+        self.addCleanup(victim.wait)
+        self.addCleanup(victim.kill)
+        # As if an earlier process with this pid had been recorded and gone.
+        with mock.patch.dict(device_lock._born, {victim.pid: "Mon Jan  1 00:00:00 2001"}):
+            self.assertFalse(device_lock._same_process(victim.pid))
+            device_lock.end_processes({victim.pid}, 0.1)
+        self.assertIsNone(victim.poll(), "an unrelated process was stopped")
+
     def test_descendants_are_found_across_process_groups(self):
         code = ("import subprocess, sys, time\n"
                 "p = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'], "
@@ -471,6 +481,47 @@ class WithDevicesTest(LockTestCase):
             os.close(write)
         self.assertEqual(status, 4)
         self.assert_gone(int(os.read(read, 100)))
+
+    # A command that starts a process in a session of its own, which ignores
+    # SIGTERM, prints its pid, and then does what `then` says.
+    DETACHES_ONE = ("import subprocess, sys, time; p = subprocess.Popen([sys.executable, '-c', "
+                    "'import signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+                    "time.sleep(60)'], start_new_session=True, stdout=subprocess.DEVNULL); "
+                    "print(p.pid, flush=True); {then}")
+
+    def test_detached_process_is_ended_after_the_command_returns_normally(self):
+        with mock.patch.object(with_devices, "STRAGGLER_GRACE", 0.3), \
+                mock.patch.object(with_devices, "WATCH", 0.2):
+            read, write = os.pipe()
+            self.addCleanup(os.close, read)
+            status = with_devices.run_group(
+                [sys.executable, "-c", self.DETACHES_ONE.format(then="time.sleep(1)")],
+                stdout=write)
+            os.close(write)
+        self.assertEqual(status, 0)
+        detached = int(os.read(read, 100))
+        self.addCleanup(self.kill, detached)
+        self.assertFalse(device_lock._alive(detached) and not device_lock._is_zombie(detached),
+                         "a detached process outlived run_group")
+
+    def test_detached_process_is_ended_when_the_tool_is_stopped(self):
+        tool = subprocess.Popen(
+            [sys.executable, "-c",
+             "import sys, with_devices; with_devices.STRAGGLER_GRACE = 0.3; "
+             "with_devices.WATCH = 0.2; sys.exit(with_devices.main())",
+             "--", sys.executable, "-c", self.DETACHES_ONE.format(then="time.sleep(60)")],
+            cwd=TOOL, env=self.env(), stdout=subprocess.PIPE, text=True)
+        self.addCleanup(tool.stdout.close)
+        detached = int(tool.stdout.readline())
+        self.addCleanup(self.kill, detached)
+        time.sleep(0.5)
+        tool.terminate()
+        self.assertEqual(tool.wait(timeout=15), 128 + 15)
+        try:
+            os.kill(detached, 0)
+            self.fail("a detached process outlived the tool, and so the lock")
+        except ProcessLookupError:
+            pass
 
     def test_stopping_the_tool_ends_a_descendant_that_ignores_the_signal(self):
         tool = subprocess.Popen(

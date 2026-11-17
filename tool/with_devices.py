@@ -40,42 +40,69 @@ def run_group(command, **kwargs):
     it started. If this process is interrupted or told to stop, the command
     is told to stop and given GRACE seconds to clean up; whatever is left of
     the group once the command has ended, then or after a normal exit, is
-    told to stop and killed after STRAGGLER_GRACE seconds. So nothing started here is
-    still driving a device when the caller gives up the lock. The command is
-    also handed the lock itself (device_lock.child_fds()), which covers the
-    case where this process is killed outright.
+    told to stop and killed after STRAGGLER_GRACE seconds. The same goes for
+    what the command started in process groups of their own (a Gradle
+    daemon, a detached server): the process table is read every WATCH
+    seconds while the command runs, and whatever was seen and is still alive
+    at the end is ended too. So nothing started here is still driving a
+    device when the caller gives up the lock. The command is also handed the
+    lock itself (device_lock.child_fds()), which covers the case where this
+    process is killed outright.
     """
     child = subprocess.Popen(command, start_new_session=True, **device_lock.child_fds(),
                              **kwargs)
+    started = set()
 
     def stop(signum, _frame):
         raise SystemExit(128 + signum)
 
     previous = {s: signal.signal(s, stop) for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}
     try:
-        return child.wait()
+        return wait_watching(child, started)
     finally:
         # A second signal must not cut the clean-up short.
         for signum in previous:
             signal.signal(signum, signal.SIG_IGN)
         try:
-            end_group(child)
+            end_group(child, started)
         finally:
             for signum, handler in previous.items():
                 signal.signal(signum, handler)
 
 
-def end_group(child):
-    """Stops the child, then whatever is left of its process group."""
+# Seconds between looks at what the command has started.
+WATCH = 2
+
+
+def wait_watching(child, started, timeout=None):
+    """Waits for the child, adding what it starts to `started` as it goes.
+
+    Returns its exit status, or None if `timeout` seconds pass first.
+    """
+    deadline = None if timeout is None else time.monotonic() + timeout
+    while True:
+        started |= device_lock.descendants(child.pid)
+        wait = WATCH if deadline is None else min(WATCH, max(0, deadline - time.monotonic()))
+        try:
+            return child.wait(timeout=wait)
+        except subprocess.TimeoutExpired:
+            if deadline is not None and time.monotonic() >= deadline:
+                return None
+
+
+def end_group(child, started=None):
+    """Stops the child, then whatever is left of its process group and of
+    the processes in `started`."""
+    started = set() if started is None else started
     if child.poll() is None:
         # The command first, alone, so that it can clean up with commands of
         # its own.
+        started |= device_lock.descendants(child.pid)
         child.terminate()
-        try:
-            child.wait(timeout=GRACE)
-        except subprocess.TimeoutExpired:
+        if wait_watching(child, started, timeout=GRACE) is None:
             signal_group(child, signal.SIGKILL)
     device_lock.end_group(child.pid, STRAGGLER_GRACE, reap=child.poll)
+    device_lock.end_processes(started, STRAGGLER_GRACE)
 
 
 def signal_group(child, signum):

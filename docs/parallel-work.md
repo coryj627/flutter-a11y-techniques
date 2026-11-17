@@ -70,6 +70,11 @@ VoiceOver:
 Never start a device command without the lock, and do not hold the lock
 while thinking: run the command, read the result, release.
 
+When a command run under the lock ends, whatever it started and left
+running is ended too, a Gradle daemon included, so the next Gradle build
+starts a new one. That is deliberate: nothing started under the lock
+outlives it.
+
 The lock is passed down to every command a run starts, so it stays taken
 until the last of them has ended, even if the run itself is killed. If a
 waiting run says the holder "has ended", something it started is still
