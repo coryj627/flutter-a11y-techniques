@@ -117,6 +117,34 @@ def current_log_level(texts):
     return texts[index]
 
 
+SETTINGS_TRIES = 3
+
+
+def open_developer_settings():
+    """Opens TalkBack's settings and goes to its developer settings.
+
+    A tap made while the settings screen is still opening is lost, and the
+    next screen is then never reached ("could not find Developer settings";
+    seen on about half the runs on 2026-11-16, with builds running beside
+    the emulator). So the whole way there is tried again from a freshly
+    started settings screen, with a longer wait each time. Only getting
+    there is repeated: nothing has been changed yet.
+    """
+    for attempt in range(SETTINGS_TRIES):
+        adb_checked("shell", "am", "force-stop", "com.google.android.marvin.talkback")
+        adb_checked("shell", "am", "start", "-n",
+                    "com.google.android.marvin.talkback/"
+                    "com.android.talkback.TalkBackPreferencesActivity")
+        time.sleep(3 + 3 * attempt)
+        try:
+            tap("Advanced settings")
+            tap("Developer settings")
+            return
+        except AdbError as error:
+            if attempt + 1 == SETTINGS_TRIES or "could not find" not in str(error):
+                raise
+
+
 def set_log_level(level, on_read=None):
     """Sets TalkBack's developer "Log output level" through its settings UI
     and returns the level it had before.
@@ -130,12 +158,7 @@ def set_log_level(level, on_read=None):
     back from the screen: a tap that did nothing raises AdbError instead of
     passing as success.
     """
-    adb_checked("shell", "am", "force-stop", "com.google.android.marvin.talkback")
-    adb_checked("shell", "am", "start", "-n",
-                "com.google.android.marvin.talkback/com.android.talkback.TalkBackPreferencesActivity")
-    time.sleep(3)
-    tap("Advanced settings")
-    tap("Developer settings")
+    open_developer_settings()
     previous = current_log_level([t for t, _, _ in screen()])
     if on_read:
         on_read(previous)

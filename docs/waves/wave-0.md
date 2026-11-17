@@ -34,3 +34,13 @@ is the result.
 - A Python file rewritten within a second, at the same size, is loaded from
   stale bytecode by the import system. The registration loader compiles the
   source each time.
+- `tool/talkback.py` failed on about half its runs during this wave with
+  `could not find "Developer settings"`: a tap made while TalkBack's
+  settings screen was still opening was lost. Getting to the developer
+  settings is now tried up to three times from a freshly started screen.
+- One web VoiceOver walk in three runs of F08 recorded an empty phrase where
+  the committed transcript has one (a different phrase each time), and still
+  passed its checks. S02's TalkBack transcript, regenerated, lacks two
+  "Double-tap to activate" phrases that the committed one has, with the old
+  test code as well as the new. Neither was caused by this wave's changes;
+  both committed files were left as they are.

@@ -83,7 +83,16 @@ class AcquireTest(LockTestCase):
     def test_second_caller_waits_and_gets_it_when_the_holder_ends(self):
         holder = self.start_holder("evidence S05")
         out = io.StringIO()
-        with mock.patch.object(device_lock.time, "sleep", side_effect=lambda _: self.stop(holder)):
+        real_sleep = time.sleep
+
+        def let_go(_seconds):
+            # The holder ends while we wait. Only its stdin is closed here:
+            # waiting for it would itself sleep, through this same stand-in.
+            if not holder.stdin.closed:
+                holder.stdin.close()
+            real_sleep(0.05)
+
+        with mock.patch.object(device_lock.time, "sleep", side_effect=let_go):
             lock = device_lock.acquire("mine", out=out)
         self.addCleanup(lock.release)
         self.assertIn('in use by "evidence S05"', out.getvalue())

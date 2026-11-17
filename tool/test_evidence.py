@@ -341,6 +341,51 @@ class TalkBackWalkCommandTest(unittest.TestCase):
             self.assertEqual(run.call_count, runs)
 
 
+class TalkBackSettingsScreenTest(unittest.TestCase):
+    def open_with(self, tap_results):
+        import talkback
+        results = iter(tap_results)
+
+        def tap(text):
+            result = next(results)
+            if isinstance(result, Exception):
+                raise result
+        with mock.patch.object(talkback, "adb_checked") as adb, \
+                mock.patch.object(talkback, "tap", side_effect=tap) as taps, \
+                mock.patch.object(talkback.time, "sleep") as sleep:
+            try:
+                talkback.open_developer_settings()
+                error = None
+            except talkback.AdbError as caught:
+                error = caught
+        starts = [c for c in adb.call_args_list if c.args[:3] == ("shell", "am", "start")]
+        return error, len(starts), [c.args[0] for c in taps.call_args_list], \
+            [c.args[0] for c in sleep.call_args_list]
+
+    def test_a_lost_tap_is_tried_again_from_a_freshly_started_screen(self):
+        import talkback
+        lost = talkback.AdbError('TalkBack settings: could not find "Developer settings"')
+        error, starts, taps, sleeps = self.open_with([None, lost, None, None])
+        self.assertIsNone(error)
+        self.assertEqual(starts, 2)
+        self.assertEqual(taps, ["Advanced settings", "Developer settings"] * 2)
+        self.assertEqual(sleeps, [3, 6])  # a longer wait the second time
+
+    def test_it_gives_up_after_three_tries_with_the_original_error(self):
+        import talkback
+        lost = talkback.AdbError('TalkBack settings: could not find "Advanced settings"')
+        error, starts, _, _ = self.open_with([lost, lost, lost])
+        self.assertIs(error, lost)
+        self.assertEqual(starts, 3)
+
+    def test_a_failing_device_command_is_not_retried(self):
+        import talkback
+        broken = talkback.AdbError("adb shell input tap failed: device offline")
+        error, starts, _, _ = self.open_with([broken])
+        self.assertIs(error, broken)
+        self.assertEqual(starts, 1)
+
+
 class TalkBackMainTest(unittest.TestCase):
     def test_nothing_on_the_device_is_touched_if_an_earlier_test_may_be_running(self):
         import talkback
@@ -472,6 +517,27 @@ class MainTest(unittest.TestCase):
         self.assertEqual(status, 1)
         self.assertEqual(len(self.calls), 1)
         self.assertIn("not running the remaining techniques", text)
+
+    def test_a_run_whose_clean_up_cannot_be_vouched_for_stops_and_still_reports(self):
+        ran = []
+
+        def run(technique, layers, no_build=False):
+            ran.append(technique)
+            if len(ran) == 2:
+                raise device_lock.LookFailed()
+            return dict.fromkeys(layers, (evidence.PASS, "1 s"))
+
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            status = evidence.main(["--all", "--only", "web"], run=run)
+        text = out.getvalue()
+        self.assertEqual(status, 1)
+        self.assertEqual(len(ran), 2)
+        self.assertIn("Could not read the process table", text)
+        self.assertIn(f"\n{ran[0]}:\n  web            PASS", text)
+        self.assertIn(f"{ran[1]}: stopped before it finished", text)
+        self.assertTrue(text.rstrip().endswith("Result: FAIL"))
+        self.assertIsNone(device_lock.read_holder())
 
     def test_all_stops_after_a_failed_build(self):
         status, _ = self.main("--all", result=evidence.FAIL,

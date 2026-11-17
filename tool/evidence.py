@@ -330,11 +330,19 @@ def main(argv=None, run=run_technique):
         print(problem)
         return 1
     all_results = {}
+    unfinished = None
     try:
         for index, technique in enumerate(techniques):
             # Build once; later techniques use the same builds.
-            all_results[technique] = run(technique, layers,
-                                         no_build=args.no_build or index > 0)
+            try:
+                all_results[technique] = run(technique, layers,
+                                             no_build=args.no_build or index > 0)
+            except device_lock.LookFailed as problem:
+                # It could not be shown that everything a step started has
+                # ended. Nothing more is run; what was done is still reported.
+                print(problem)
+                unfinished = technique
+                break
             failed = [detail for result, detail in all_results[technique].values()
                       if result == FAIL]
             if index == 0 and any(detail.startswith("build ") for detail in failed):
@@ -347,6 +355,10 @@ def main(argv=None, run=run_technique):
     finally:
         lock.release()
     lines, ok = summarise(all_results, layers)
+    if unfinished:
+        lines[-1:] = [f"{unfinished}: stopped before it finished; see the message above.", "",
+                      "Result: FAIL"]
+        ok = False
     print("\n".join(lines))
     return 0 if ok else 1
 
