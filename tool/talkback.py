@@ -20,7 +20,7 @@ import time
 
 import device_lock
 from evidence_common import (GRADLE_UNSHARED, REGISTRATIONS, TECHNIQUES, flutter_version,
-                             technique_argument)
+                             stop_android_tests, technique_argument)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ADB = os.path.expanduser(os.environ.get("ADB", "~/Library/Android/sdk/platform-tools/adb"))
@@ -303,6 +303,13 @@ def walk():
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", errors="replace")
     except subprocess.TimeoutExpired:
         sys.exit(f"instrumented walk did not finish in {WALK_TIMEOUT // 60} minutes")
+    finally:
+        # However the Gradle run ended, the test inside the emulator must be
+        # over before the device's settings are put back or anyone else
+        # gets the device.
+        if not stop_android_tests():
+            print("Warning: the app or its tests could not be shown to have stopped on the "
+                  "emulator.", file=sys.stderr)
     return run, adb("logcat", "-d")
 
 

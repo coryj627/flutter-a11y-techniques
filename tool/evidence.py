@@ -33,7 +33,7 @@ import time
 
 import device_lock
 from evidence_common import (GRADLE_UNSHARED, KOTLIN_IN_PROCESS, REGISTRATIONS, ROOT,
-                             TECHNIQUES)
+                             TECHNIQUES, stop_android_tests, stop_ios_tests)
 from with_devices import BUSY, run_group
 
 LAYERS = ("android", "talkback", "ios", "voiceover-ios", "web", "voiceover-web")
@@ -184,7 +184,8 @@ def tail(path, lines=40):
 
 
 def run_technique(technique, layers, no_build=False, runner=run_logged, out=None,
-                  countdown=10, sleep=time.sleep, check=preflight):
+                  countdown=10, sleep=time.sleep, check=preflight,
+                  stop_android=stop_android_tests, stop_ios=stop_ios_tests):
     """Runs one technique's steps. Returns {layer: (result, detail)}.
 
     The caller holds the device lock.
@@ -207,7 +208,17 @@ def run_technique(technique, layers, no_build=False, runner=run_logged, out=None
         log_path = os.path.join(log_dir, step.name.replace(" ", "-") + ".log")
         say(f"[{technique}] {step.name}: running (log: {os.path.relpath(log_path, ROOT)})")
         started = time.monotonic()
-        status = runner(step, log_path)
+        try:
+            status = runner(step, log_path)
+        finally:
+            # Also when this run is being stopped: the test inside the
+            # emulator does not end with the Gradle run that started it.
+            if step.name == "android" and not stop_android():
+                say(f"[{technique}] warning: the app or its tests could not be shown to have "
+                    "stopped on the emulator")
+            if step.name == "ios" and not stop_ios():
+                say(f"[{technique}] warning: the app or its tests could not be shown to have "
+                    "stopped on the simulator")
         took = f"{time.monotonic() - started:.0f} s"
         if status == 0:
             say(f"[{technique}] {step.name}: ok, {took}")

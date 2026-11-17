@@ -39,6 +39,8 @@ class Runner:
 def run(technique="F08", layers=ALL, failing=(), **kwargs):
     runner, out, slept = Runner(failing), io.StringIO(), []
     kwargs.setdefault("check", no_problems)
+    kwargs.setdefault("stop_android", lambda: True)
+    kwargs.setdefault("stop_ios", lambda: True)
     results = evidence.run_technique(technique, layers, runner=runner, out=out,
                                      sleep=slept.append, **kwargs)
     return results, runner, out.getvalue(), slept
@@ -137,6 +139,93 @@ class RunTechniqueTest(unittest.TestCase):
         self.assertEqual(results["android"][0], evidence.PASS)
 
 
+class StopAndroidTest(unittest.TestCase):
+    def test_android_step_is_followed_by_stopping_the_tests_on_the_device(self):
+        order = []
+        runner = Runner()
+
+        def recording(step, log_path):
+            order.append(step.name)
+            return runner(step, log_path)
+
+        evidence.run_technique("F08", ["android", "ios"], runner=recording, out=io.StringIO(),
+                               check=no_problems, no_build=True,
+                               stop_android=lambda: order.append("stop android") or True,
+                               stop_ios=lambda: order.append("stop ios") or True)
+        self.assertEqual(order, ["android", "stop android", "ios", "stop ios"])
+
+    def test_tests_are_stopped_on_the_device_when_the_run_is_stopped_mid_step(self):
+        stopped = []
+
+        def interrupted(step, log_path):
+            raise SystemExit(143)
+
+        with self.assertRaises(SystemExit):
+            evidence.run_technique("F08", ["android"], runner=interrupted, out=io.StringIO(),
+                                   check=no_problems, no_build=True,
+                                   stop_android=lambda: stopped.append(1) or True,
+                                   stop_ios=lambda: True)
+        self.assertEqual(stopped, [1])
+
+    def test_a_device_that_does_not_confirm_is_reported(self):
+        out = io.StringIO()
+        evidence.run_technique("F08", ["android"], runner=Runner(), out=out, check=no_problems,
+                               no_build=True, stop_android=lambda: False, stop_ios=lambda: True)
+        self.assertIn("could not be shown to have stopped on the emulator", out.getvalue())
+        out = io.StringIO()
+        evidence.run_technique("F08", ["ios"], runner=Runner(), out=out, check=no_problems,
+                               no_build=True, stop_android=lambda: True, stop_ios=lambda: False)
+        self.assertIn("could not be shown to have stopped on the simulator", out.getvalue())
+
+    def test_simulator_apps_are_ended_until_simctl_says_nothing_is_left(self):
+        import evidence_common as common
+        calls = []
+        answers = iter([(0, ""), (3, "found nothing to terminate"),
+                        (3, "found nothing to terminate"), (3, "found nothing to terminate")])
+
+        def fake(command, **kwargs):
+            calls.append(command[3:])
+            code, said = next(answers)
+            return mock.Mock(returncode=code, stderr=said, stdout="")
+
+        self.assertTrue(common.stop_ios_tests(run=fake, sleep=lambda _: None))
+        runner = common.IOS_BUNDLE + ".RunnerUITests.xctrunner"
+        self.assertEqual(calls, [["iPhone 17", common.IOS_BUNDLE], ["iPhone 17", runner]] * 2)
+        # An error that says something else proves nothing.
+        other = lambda command, **kwargs: mock.Mock(returncode=1, stderr="boom", stdout="")
+        self.assertFalse(common.stop_ios_tests(run=other, wait=0, sleep=lambda _: None))
+        shut = lambda command, **kwargs: mock.Mock(
+            returncode=149, stderr="Unable to lookup in current state: Shutdown", stdout="")
+        self.assertTrue(common.stop_ios_tests(run=shut, wait=0, sleep=lambda _: None))
+
+    def test_force_stops_both_packages_and_waits_until_neither_is_running(self):
+        import evidence_common as common
+        calls, pids = [], iter(["4242", "", "", ""])
+
+        def fake(command, **kwargs):
+            calls.append(command[1:])
+            out = next(pids, "") if command[2] == "pidof" else ""
+            return mock.Mock(stdout=out, returncode=0)
+
+        self.assertTrue(common.stop_android_tests(run=fake, sleep=lambda _: None))
+        app, tests = common.ANDROID_PACKAGE, common.ANDROID_PACKAGE + ".test"
+        self.assertEqual(calls[:4], [["shell", "am", "force-stop", app],
+                                     ["shell", "am", "force-stop", tests],
+                                     ["shell", "pidof", app], ["shell", "pidof", tests]])
+        self.assertEqual(len(calls), 8)  # the app was still there the first time
+
+    def test_no_answer_from_the_device_is_not_taken_for_stopped(self):
+        import evidence_common as common
+        import subprocess
+
+        def unreachable(command, **kwargs):
+            raise subprocess.TimeoutExpired(command, 30)
+
+        self.assertFalse(common.stop_android_tests(run=unreachable, wait=0, sleep=lambda _: None))
+        still = lambda command, **kwargs: mock.Mock(stdout="4242\n", returncode=0)
+        self.assertFalse(common.stop_android_tests(run=still, wait=0, sleep=lambda _: None))
+
+
 class TalkBackWalkCommandTest(unittest.TestCase):
     def test_the_walk_runs_gradle_unshared_through_the_managed_runner(self):
         import talkback
@@ -144,6 +233,7 @@ class TalkBackWalkCommandTest(unittest.TestCase):
         with mock.patch.object(talkback, "TEST", "pkg.F08RadioGroupTest#talkBackWalk"), \
                 mock.patch.object(talkback.time, "sleep"), \
                 mock.patch.object(talkback, "adb", return_value="log") as adb, \
+                mock.patch.object(talkback, "stop_android_tests", return_value=True) as stop, \
                 mock.patch.object(talkback.subprocess, "run",
                                   side_effect=AssertionError("unmanaged process")), \
                 mock.patch.object(talkback.device_lock, "run_to_the_end",
@@ -156,17 +246,21 @@ class TalkBackWalkCommandTest(unittest.TestCase):
             "-Pandroid.testInstrumentationRunnerArguments.class=pkg.F08RadioGroupTest#talkBackWalk"])
         self.assertEqual(run.call_args.kwargs["timeout"], talkback.WALK_TIMEOUT)
         self.assertEqual(adb.call_args_list[0].args, ("logcat", "-c"))
+        stop.assert_called_once_with()
 
     def test_a_walk_that_times_out_ends_the_tool_with_a_message(self):
         import subprocess
         import talkback
         with mock.patch.object(talkback.time, "sleep"), \
                 mock.patch.object(talkback, "adb", return_value=""), \
+                mock.patch.object(talkback, "stop_android_tests", return_value=True) as stop, \
                 mock.patch.object(talkback.device_lock, "run_to_the_end",
                                   side_effect=subprocess.TimeoutExpired(["gradlew"], 1)), \
                 self.assertRaises(SystemExit) as stopped:
             talkback.walk()
         self.assertIn("did not finish", str(stopped.exception))
+        # The test inside the emulator is stopped all the same.
+        stop.assert_called_once_with()
 
 
 class PreflightTest(unittest.TestCase):
