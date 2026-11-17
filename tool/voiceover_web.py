@@ -45,11 +45,12 @@ def main():
     title, _, _, spec = TECHNIQUES[technique]
     # VoiceOver on this Mac is shared with every other run (tool/device_lock.py).
     device_lock.hold_for_process(f"voiceover_web {technique}")
-    run = subprocess.run(["npx", "playwright", "test", spec],
-                         cwd=os.path.join(WEB_TESTS, "vo"), capture_output=True, text=True,
-                         env={**os.environ, VOICEOVER_RUN: "1"},
-            # The command holds the device lock too, until it has ended.
-            **device_lock.child_fds())
+    # Holds the device lock too, and is seen through to its end if this tool
+    # is stopped: it is Playwright that switches VoiceOver off again.
+    run = device_lock.run_to_the_end(
+        ["npx", "playwright", "test", spec], cwd=os.path.join(WEB_TESTS, "vo"),
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        env={**os.environ, VOICEOVER_RUN: "1"})
     log = run.stdout + run.stderr
     # A retried walk prints more than once; the last attempt is the result.
     rows = {}

@@ -20,6 +20,7 @@ import fcntl
 import json
 import os
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -288,3 +289,36 @@ def hold_for_process(label, **kwargs):
         except (Busy, NotPassedDown) as problem:
             sys.exit(str(problem))
     return _process_lock
+
+
+def run_to_the_end(command, **kwargs):
+    """subprocess.run for a command that drives a device and cleans up after itself.
+
+    The command is given the lock (child_fds()). If this process is told to
+    stop or interrupted while it runs, the signal is passed on to the command
+    and this process stays until the command has ended, then exits with
+    128 + the signal's number. Playwright with Guidepup switches VoiceOver
+    off and puts its settings back when it is stopped, and xcodebuild ends
+    its test run; a tool that died at once would leave them cut off from
+    whoever is waiting for them to finish.
+    """
+    received = []
+    child = subprocess.Popen(command, **child_fds(), **kwargs)
+
+    def forward(signum, _frame):
+        received.append(signum)
+        try:
+            child.send_signal(signum)
+        except ProcessLookupError:
+            pass
+
+    previous = {s: signal.signal(s, forward)
+                for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}
+    try:
+        out, err = child.communicate()
+    finally:
+        for signum, handler in previous.items():
+            signal.signal(signum, handler)
+    if received:
+        sys.exit(128 + received[0])
+    return subprocess.CompletedProcess(command, child.returncode, out, err)

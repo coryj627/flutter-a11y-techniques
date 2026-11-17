@@ -34,14 +34,14 @@ def main():
         sys.exit(f"{technique} has no VoiceOver test on iOS; see its technique doc for why.")
     # The simulator is shared with every other run (tool/device_lock.py).
     device_lock.hold_for_process(f"voiceover_ios {technique}")
-    run = subprocess.run(
+    # Holds the device lock too, and is seen through to its end if this tool
+    # is stopped.
+    run = device_lock.run_to_the_end(
         ["xcodebuild", "test", "-workspace", "Runner.xcworkspace", "-scheme", "Runner",
          "-configuration", "Debug", "-destination", f"platform=iOS Simulator,name={DEVICE}",
          f"-only-testing:RunnerUITests/{ios_test}/testVoiceOverSpeech",
          "-derivedDataPath", os.path.join(ROOT, "build", "ios_uitest")],
-        cwd=os.path.join(ROOT, "ios"), capture_output=True, text=True,
-            # The command holds the device lock too, until it has ended.
-            **device_lock.child_fds())
+        cwd=os.path.join(ROOT, "ios"), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     log = run.stdout + run.stderr
     rows = re.findall(rf"^{technique}VO (\S+) \| (.*)$", log, re.M)
     failures = re.findall(r"error: .*? : (.*)$", log, re.M)

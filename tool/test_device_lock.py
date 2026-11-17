@@ -218,6 +218,43 @@ class AcquireTest(LockTestCase):
         self.assertNotIn(os.path.dirname(TOOL) + os.sep, path)
 
 
+class RunToTheEndTest(LockTestCase):
+    def test_returns_the_command_s_output_and_status(self):
+        run = device_lock.run_to_the_end(
+            [sys.executable, "-c", "import sys; print('out'); print('err', file=sys.stderr); sys.exit(5)"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        self.assertEqual((run.returncode, run.stdout, run.stderr), (5, "out\n", "err\n"))
+
+    def test_stopped_tool_stays_until_its_command_has_cleaned_up_and_keeps_the_lock(self):
+        # As tool/voiceover_web.py under tool/evidence.py: the tool is told to
+        # stop, and it is its command (Playwright) that restores VoiceOver.
+        marker = os.path.join(self.dir.name, "restored")
+        command = ("import signal, sys, time\n"
+                   "def stop(*_):\n"
+                   "    time.sleep(1.5)\n"
+                   f"    open({marker!r}, 'w').close()\n"
+                   "    sys.exit(0)\n"
+                   "signal.signal(signal.SIGTERM, stop)\n"
+                   "print('up', flush=True)\n"
+                   "time.sleep(60)\n")
+        tool_code = ("import subprocess, sys, device_lock\n"
+                     "device_lock.hold_for_process('voiceover_web F08')\n"
+                     f"device_lock.run_to_the_end([sys.executable, '-c', {command!r}])\n")
+        with mock.patch.object(with_devices, "STRAGGLER_GRACE", 0.2):
+            read, write = os.pipe()
+            self.addCleanup(os.close, read)
+            lock = device_lock.acquire("evidence F08")
+            child = subprocess.Popen([sys.executable, "-c", tool_code], cwd=TOOL, stdout=write,
+                                     env=dict(os.environ), start_new_session=True,
+                                     **device_lock.child_fds())
+            os.close(write)
+            self.assertEqual(os.read(read, 10).strip(), b"up")
+            with_devices.end_group(child)
+            lock.release()
+        self.assertEqual(child.returncode, 128 + 15)
+        self.assertTrue(os.path.exists(marker), "the command's clean-up was cut short")
+
+
 class WithDevicesTest(LockTestCase):
     def run_tool(self, *args):
         return subprocess.run([sys.executable, os.path.join(TOOL, "with_devices.py"), *args],
