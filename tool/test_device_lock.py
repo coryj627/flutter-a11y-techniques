@@ -235,6 +235,42 @@ class RunToTheEndTest(LockTestCase):
         self.assertNotEqual(group, os.getpgid(0))
         self.assertNotEqual(session, os.getsid(0))
 
+    def test_command_that_ignores_its_interrupt_is_stopped_with_its_session(self):
+        # It is outside the tool's process group, so nobody else would.
+        command = ("import signal, subprocess, sys, time\n"
+                   "signal.signal(signal.SIGINT, signal.SIG_IGN)\n"
+                   "signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
+                   "p = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])\n"
+                   "print(p.pid, flush=True)\n"
+                   "time.sleep(60)\n")
+        tool_code = ("import os, sys, device_lock\n"
+                     "device_lock.INTERRUPT_GRACE = 0.5\n"
+                     "device_lock.KILL_AFTER = 0.5\n"
+                     f"device_lock.run_to_the_end([sys.executable, '-c', {command!r}])\n")
+        tool = subprocess.Popen([sys.executable, "-c", tool_code], cwd=TOOL, env=self.env(),
+                                stdout=subprocess.PIPE, text=True)
+        self.addCleanup(tool.stdout.close)
+        grandchild = int(tool.stdout.readline())
+        self.addCleanup(self.kill, grandchild)
+        started = time.monotonic()
+        tool.terminate()
+        self.assertEqual(tool.wait(timeout=30), 128 + 15)
+        self.assertLess(time.monotonic() - started, 20)
+        for _ in range(100):
+            try:
+                os.kill(grandchild, 0)
+            except ProcessLookupError:
+                break
+            time.sleep(0.05)
+        else:
+            self.fail("part of the command's session was left running")
+
+    def kill(self, pid):
+        try:
+            os.kill(pid, 9)
+        except ProcessLookupError:
+            pass
+
     def test_stopped_tool_stays_until_its_command_has_cleaned_up_and_keeps_the_lock(self):
         # As tool/voiceover_web.py under tool/evidence.py: the tool is told to
         # stop, and it is its command (Playwright) that restores VoiceOver.

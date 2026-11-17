@@ -291,6 +291,14 @@ def hold_for_process(label, **kwargs):
     return _process_lock
 
 
+# Seconds an interrupted command gets to end before run_to_the_end stops its
+# whole session. Shorter than the time tool/with_devices.py gives a stopped
+# tool, so that the tool is still there to do it.
+INTERRUPT_GRACE = 240
+# Seconds between telling that session to stop and killing it.
+KILL_AFTER = 10
+
+
 def run_to_the_end(command, **kwargs):
     """subprocess.run for a command that drives a device and cleans up after itself.
 
@@ -307,24 +315,50 @@ def run_to_the_end(command, **kwargs):
     workers to tear down; SIGTERM ends the runner at once, and a second
     SIGINT makes it give up on the teardown. The command runs in a session
     of its own, so that Ctrl-C in a terminal reaches only this process and
-    pressing it twice still interrupts the command once.
+    pressing it twice still interrupts the command once. A command that has
+    not ended INTERRUPT_GRACE seconds after its interrupt is stopped with
+    everything in its session, and killed if that does not end it.
     """
     received = []
+    interrupted_at = []
     child = subprocess.Popen(command, start_new_session=True, **child_fds(), **kwargs)
 
     def forward(signum, _frame):
         received.append(signum)
         if len(received) > 1:
             return
+        interrupted_at.append(time.monotonic())
         try:
             child.send_signal(signal.SIGINT)
         except ProcessLookupError:
             pass
 
+    def signal_session(signum):
+        try:
+            os.killpg(child.pid, signum)
+        except (ProcessLookupError, PermissionError):
+            pass
+
     previous = {s: signal.signal(s, forward)
                 for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}
     try:
-        out, err = child.communicate()
+        stage = 0  # 0 waiting, 1 told to stop, 2 killed
+        while True:
+            try:
+                out, err = child.communicate(timeout=0.5)
+                break
+            except subprocess.TimeoutExpired:
+                pass
+            waited = time.monotonic() - interrupted_at[0] if interrupted_at else 0
+            if stage == 0 and waited >= INTERRUPT_GRACE:
+                signal_session(signal.SIGTERM)
+                stage = 1
+            elif stage == 1 and waited >= INTERRUPT_GRACE + KILL_AFTER:
+                signal_session(signal.SIGKILL)
+                stage = 2
+        if received:
+            # Nothing the command started may outlive this tool.
+            signal_session(signal.SIGKILL if stage else signal.SIGTERM)
     finally:
         for signum, handler in previous.items():
             signal.signal(signum, handler)
