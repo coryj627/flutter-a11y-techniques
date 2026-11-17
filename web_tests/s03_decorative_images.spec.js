@@ -3,14 +3,11 @@
 // release build in build/web. Images have no controls to identify, so they
 // are found by role and name.
 import { test, expect } from '@playwright/test';
+import { exampleHeading, technique } from './support/techniques.js';
 
-async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/S03/${slug}`);
-  await page.getByRole('heading', { name: 'Example', level: 2 }).waitFor();
-  // The photo is decoded after the first frame.
-  await page.waitForTimeout(500);
-}
+// Waits for the "Example" heading, then for the photo, which is decoded
+// after the first frame.
+const { open } = technique('S03', { ready: exampleHeading, settle: 500 });
 
 const images = (page) => page.getByRole('img');
 const text = (page, value) => page.getByText(value, { exact: true });

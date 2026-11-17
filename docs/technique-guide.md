@@ -119,7 +119,8 @@ pushing. S01 failed CI here: the tests had passed against a stale build.
 ## Tests by layer
 
 **L1 widget tests.** Open the example through the real app
-(`A11yTechniquesApp` with `initialRoute`). For good examples: the four
+(`A11yTechniquesApp` with `initialRoute`): `exampleOpener` and the other
+helpers in `test/support/examples.dart` do it. For good examples: the four
 accessibility guidelines in light and dark, and no overflow at 200% text on a
 320 by 640 screen. Then the semantics that matter. Things learned:
 
@@ -130,7 +131,9 @@ accessibility guidelines in light and dark, and no overflow at 200% text on a
 - Never press Space or Enter while focus may be on the Back button.
 
 **L3 web (Playwright, Chromium).** Use role queries and
-`toHaveAccessibleName`. Things learned:
+`toHaveAccessibleName`. `byId`, `tabTo`, and `technique()`, which gives a
+spec its `open` and `expectCount`, are in `web_tests/support/techniques.js`.
+Things learned:
 
 - Wait about 600 ms after load before typing; Flutter attaches text editing
   late.
@@ -140,29 +143,36 @@ accessibility guidelines in light and dark, and no overflow at 200% text on a
   (`outline()` in `web_tests/s05_headings.spec.js`).
 - Give each direct-link test a fresh page.
 
-**L3 Android (UI Automator).** Things learned:
+**L3 Android (UI Automator).** The test class extends `TechniqueTest`
+(`TechniqueTest.kt`), which opens an example by route (`openExample`) and
+has the node, count, and TalkBack helpers. Things learned:
 
-- Wait for the example's own title, not text every example has.
+- Wait for the example's own title or count, not text every example has.
 - With TalkBack on, look for nodes in every window and retry
-  (`I12AnnouncementsTest.kt`).
+  (`openExampleInAnyWindow` and `nodeInAnyWindow`, used by
+  `I12AnnouncementsTest.kt`).
 - Type with `sendStringSync` after a click. Setting text through the
   accessibility action leaves a field's hint in place.
 - `connectedDebugAndroidTest` uninstalls the app when it finishes.
 - Espresso cannot see Flutter content.
 
 **L3 iOS (XCUITest).** Open examples with the `fluttera11y` URL scheme, with
-the three-attempt retry. XCUITest cannot read traits, so headings and live
-regions cannot be checked in the tree.
+the three-attempt retry: the test class conforms to `TechniqueUITest`, or to
+`CountedTechniqueUITest` when its examples end with a count
+(`TechniqueUITest.swift`), and gets `open`, `element`, and `expectCount`.
+XCUITest cannot read traits, so headings and live regions cannot be checked
+in the tree.
 
-**L4 TalkBack.** `python3 tool/talkback.py <ID>`. The walk moves accessibility
-focus with the `talkBackFocus` helper and logs a marker per element; the tool
-reads TalkBack's verbose log, checks `TALKBACK_EXPECT` in the technique's file
-in `tool/techniques/`, retries an element whose speech
+**L4 TalkBack.** `python3 tool/talkback.py <ID>`. The walk (`talkBackWalk`)
+moves accessibility focus with the `talkBackFocus` helper and logs a marker
+per element; the tool reads TalkBack's verbose log, checks `TALKBACK_EXPECT`
+in the technique's file in `tool/techniques/`, retries an element whose speech
 failed, and restores the device. For announcements, leave focus alone and
 press the button.
 
 **L4 VoiceOver on iOS.** `python3 tool/voiceover_ios.py <ID>`. Swipe through
-the example with `XCUIVoiceOverService` and assert whole utterances. With
+the example with `XCUIVoiceOverService` (`VoiceOverWalk.forward` goes to the
+count) and assert whole utterances. With
 VoiceOver on, `tap()` only moves the VoiceOver cursor; use `doubleTap()` to
 activate a control, and assert that it acted. For announcements, activate
 that way, poll `currentSpeech()`, and confirm the cursor is still on the

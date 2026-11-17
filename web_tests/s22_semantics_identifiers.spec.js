@@ -4,29 +4,11 @@
 // Spec: docs/specs/S22-semantics-identifiers.md. Runs against the release
 // build in build/web.
 import { test, expect } from '@playwright/test';
+import { byId, tabTo, technique } from './support/techniques.js';
 
-// On web `Semantics(identifier:)` is the attribute flt-semantics-identifier.
-const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
-
-async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/S22/${slug}`);
-  await byId(page, `s22-${slug}-count`).waitFor();
-}
-
-const expectCount = (page, slug, n) =>
-  expect(byId(page, `s22-${slug}-count`)).toHaveText(`Changes: ${n}`);
-
-/** Press Tab until `locator` has focus. Returns false if it never does. */
-async function tabTo(page, locator, max = 8) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    // Flutter moves DOM focus on the next frame.
-    await page.waitForTimeout(100);
-    if (await locator.evaluate((e) => e === document.activeElement)) return true;
-  }
-  return false;
-}
+// On web `Semantics(identifier:)` is the attribute flt-semantics-identifier,
+// which byId finds.
+const { open, expectCount } = technique('S22', { countLabel: 'Changes' });
 
 /**
  * The identifier is in no attribute that names or describes an element and

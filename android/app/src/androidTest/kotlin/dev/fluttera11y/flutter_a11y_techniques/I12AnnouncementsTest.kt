@@ -2,34 +2,17 @@
 // Spec: docs/specs/I12-announcements.md.
 package dev.fluttera11y.flutter_a11y_techniques
 
-import android.app.UiAutomation
-import android.content.Intent
-import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.UiDevice
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class I12AnnouncementsTest {
-    private val inst = InstrumentationRegistry.getInstrumentation()
-
-    // Without this flag a connected test switches TalkBack off.
-    private val automation: UiAutomation = run {
-        Configurator.getInstance().setUiAutomationFlags(
-            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-        inst.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-    }
-    private val device: UiDevice = UiDevice.getInstance(inst)
-
+class I12AnnouncementsTest : TechniqueTest("I12") {
     private val titles = mapOf(
         "good-live-region" to "Status message in a live region",
         "good-announce" to "Announcement sent from code, with a fallback",
@@ -40,76 +23,17 @@ class I12AnnouncementsTest {
         "bad-alert-role-only" to "Alert role with no live region",
     )
 
+    // Waits for this example's own title, looked for in every window.
     private fun open(slug: String) {
-        val intent = Intent(inst.targetContext, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .putExtra("route", "/t/I12/$slug")
-        inst.targetContext.startActivity(intent)
-        // Wait for this example's own title. A text every example screen has
-        // would also match the previous screen while the new one loads.
-        // Looked for in every window: with TalkBack running a system dialog
-        // can be the active window while the app is on screen behind it.
         val title = titles.getValue(slug)
-        val end = System.currentTimeMillis() + 20_000
-        while (!anyWindowHas { it.contentDescription?.toString() == title }) {
-            assertTrue("example $slug did not open", System.currentTimeMillis() < end)
-            Thread.sleep(250)
-        }
-        device.waitForIdle()
+        openExampleInAnyWindow(slug) { it.contentDescription?.toString() == title }
     }
 
-    private fun anyWindowHas(match: (AccessibilityNodeInfo) -> Boolean): Boolean {
-        fun search(n: AccessibilityNodeInfo?): Boolean {
-            if (n == null) return false
-            if (match(n)) return true
-            for (i in 0 until n.childCount) if (search(n.getChild(i))) return true
-            return false
-        }
-        return search(automation.rootInActiveWindow) || automation.windows.any { search(it.root) }
-    }
-
-    private fun find(root: AccessibilityNodeInfo?, id: String): AccessibilityNodeInfo? {
-        if (root == null) return null
-        if (root.viewIdResourceName == id) return root
-        for (i in 0 until root.childCount) find(root.getChild(i), id)?.let { return it }
-        return null
-    }
-
-    /**
-     * Finds a node by test identifier, looking in every window and waiting a
-     * few seconds. With TalkBack running, a system dialog or TalkBack's own
-     * overlay can be the active window for a moment, so the active window
-     * alone is not a reliable place to look.
-     */
-    private fun node(id: String): AccessibilityNodeInfo {
-        val end = System.currentTimeMillis() + 8_000
-        while (true) {
-            find(automation.rootInActiveWindow, id)?.let { return it }
-            for (window in automation.windows) find(window.root, id)?.let { return it }
-            if (System.currentTimeMillis() > end) {
-                throw AssertionError("no node with id $id; on screen: ${describeScreen()}")
-            }
-            Thread.sleep(250)
-        }
-    }
-
-    /** Identifiers and texts in every window, for a failure message. */
-    private fun describeScreen(): String {
-        val seen = mutableListOf<String>()
-        fun walk(n: AccessibilityNodeInfo?) {
-            if (n == null) return
-            val label = n.viewIdResourceName ?: n.contentDescription?.toString()
-            if (!label.isNullOrEmpty()) seen.add(label.take(40))
-            for (i in 0 until n.childCount) walk(n.getChild(i))
-        }
-        automation.windows.forEach { seen.add("[window ${it.title}]"); walk(it.root) }
-        return seen.joinToString(" | ")
-    }
-
-    private fun status(slug: String): AccessibilityNodeInfo = node("i12-$slug-status")
+    // Nodes are looked for in every window, with a retry (nodeInAnyWindow).
+    private fun status(slug: String): AccessibilityNodeInfo = nodeInAnyWindow("i12-$slug-status")
 
     private fun press(slug: String) =
-        assertTrue("$slug action", node("i12-$slug-action").performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        assertTrue("$slug action", nodeInAnyWindow("i12-$slug-action").performAction(AccessibilityNodeInfo.ACTION_CLICK))
 
     private fun waitForText(slug: String, text: String) {
         val end = System.currentTimeMillis() + 5_000
@@ -174,13 +98,11 @@ class I12AnnouncementsTest {
      * tool/talkback.py reads what TalkBack announced from logcat. Focus is
      * parked on the screen title first, so anything spoken after the press
      * is an announcement, not a focus change. Skipped unless TalkBack is
-     * running.
+     * running. Not TechniqueTest.talkBackWalk: it presses, and moves no focus.
      */
     @Test
     fun talkBackWalk() {
-        val services = Settings.Secure.getString(
-            inst.targetContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
-        assumeTrue("TalkBack is not enabled", services.contains("talkback", ignoreCase = true))
+        assumeTalkBack()
         for (slug in titles.keys) {
             open(slug)
             // Let TalkBack finish announcing the new screen first.

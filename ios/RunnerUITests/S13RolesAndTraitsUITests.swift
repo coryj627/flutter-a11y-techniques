@@ -6,36 +6,18 @@
 // whether an element has an accessibility action (bad-action-hidden).
 import XCTest
 
-final class S13RolesAndTraitsUITests: XCTestCase {
-  private let app = XCUIApplication()
+final class S13RolesAndTraitsUITests: XCTestCase, CountedTechniqueUITest {
+  static let technique = "S13"
+  static let countLabel = "Activations"
+  let app = XCUIApplication()
 
   override func setUp() {
     continueAfterFailure = true
   }
 
-  /// Cold-starts the app on one example through the `fluttera11y` URL scheme,
-  /// trying up to three times (see C01ButtonUITests.open).
+  /// Opens an example and waits for its count.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
-    let url = URL(string: "fluttera11y:///t/S13/\(slug)")!
-    for attempt in 1...3 {
-      app.terminate()
-      app.open(url)
-      if element("s13-\(slug)-count").waitForExistence(timeout: 30) { return }
-      print("S13 open \(slug): attempt \(attempt) did not show the example")
-    }
-    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
-  }
-
-  private func element(_ id: String) -> XCUIElement {
-    app.descendants(matching: .any)[id]
-  }
-
-  private func expectCount(_ slug: String, _ n: Int, file: StaticString = #filePath, line: UInt = #line) {
-    let count = element("s13-\(slug)-count")
-    let expected = "Activations: \(n)"
-    let deadline = Date().addingTimeInterval(5)
-    while count.label != expected && Date() < deadline { usleep(100_000) }
-    XCTAssertEqual(count.label, expected, slug, file: file, line: line)
+    open(slug, waitingFor: countElement(slug), file: file, line: line)
   }
 
   /// The buttons of the example: every button but the app bar's Back.
@@ -163,8 +145,8 @@ final class S13RolesAndTraitsUITests: XCTestCase {
 
   // L4. Everything VoiceOver says between the "Example" heading and the
   // activation count, which is the last element of every example. The
-  // helpers are S04's: a stop with no speech is recorded only when a move
-  // back and forward has shown where the cursor is.
+  // walk is VoiceOverWalk.forward: a stop with no speech is recorded only
+  // when a move back and forward has shown where the cursor is.
   private let speech: [(slug: String, content: [String])] = [
     ("good-standard", ["Save Button",
                        "Wi-Fi Switch button off Double tap to toggle setting.",
@@ -188,11 +170,6 @@ final class S13RolesAndTraitsUITests: XCTestCase {
     ("bad-switch-not-enabled", ["Dark mode dimmed Switch button off"]),
   ]
 
-  /// One utterance with every run of whitespace made one space.
-  private static func normalized(_ utterance: String) -> String {
-    utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
-  }
-
   func testVoiceOverSpeech() throws {
     // XCUIVoiceOverService is in the iOS 27 SDK (Xcode 27, Swift 6.4). With an
     // older Xcode the symbol does not exist, so an availability check alone
@@ -202,28 +179,9 @@ final class S13RolesAndTraitsUITests: XCTestCase {
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in speech {
       open(example.slug)
-      try voiceOver.enable()
-      var voiceOverOn = true
-      defer { if voiceOverOn { try? voiceOver.disable() } }
-      var spoken: [String] = []
       // Swipe right until the activation count, the last element, is read.
-      for _ in 0..<20 {
-        do {
-          spoken.append(Self.normalized(try voiceOver.moveForward().utterance))
-        } catch let error as NSError where S04FunctionalImagesUITests.isNoSpeech(error) {
-          let back = Self.normalized(try voiceOver.moveBackward().utterance)
-          var again: String? = nil
-          do {
-            again = Self.normalized(try voiceOver.moveForward().utterance)
-          } catch let error as NSError where S04FunctionalImagesUITests.isNoSpeech(error) {}
-          spoken.append(S04FunctionalImagesUITests.afterNoSpeech(
-            previous: spoken.last, back: back, again: again))
-        }
-        if spoken.last!.hasPrefix("Activations:") { break }
-      }
-      try voiceOver.disable()
-      voiceOverOn = false
-      let content = S04FunctionalImagesUITests.exampleContent(spoken)
+      let spoken = try VoiceOverWalk.forward(voiceOver, toUtteranceStartingWith: "Activations:")
+      let content = Self.exampleContent(spoken)
       print("S13VO \(example.slug) | \((content ?? spoken).joined(separator: " / "))")
       XCTAssertNotNil(content, "\(example.slug): the walk did not run from the heading to the count: \(spoken)")
       XCTAssertEqual(content, example.content, example.slug)

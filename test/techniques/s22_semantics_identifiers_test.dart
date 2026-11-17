@@ -1,83 +1,18 @@
-import 'dart:ui' show Tristate;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_a11y_techniques/app/app.dart';
-import 'package:flutter_a11y_techniques/catalog/registry.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/s22_semantics_identifiers/s22_semantics_identifiers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for S22 Semantics identifiers for testing
 /// (docs/specs/S22-semantics-identifiers.md).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([s22SemanticsIdentifiers]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/S22/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+final _open = exampleOpener(s22SemanticsIdentifiers);
 
-Finder _id(String id) => find.byKey(ValueKey<String>(id));
-
-/// The semantics node that stands for the element with [id]: the one whose
-/// merged data has the identifier, and that is not merged into a parent.
-FinderBase<SemanticsNode> _node(String id) => find.semantics.byPredicate(
-  (node) =>
-      !node.isMergedIntoParent && node.getSemanticsData().identifier == id,
-);
-
-/// What the node with [id] exposes now. Read again after every change.
-SemanticsData _data(String id) =>
-    _node(id).evaluate().single.getSemanticsData();
-
-int _count(WidgetTester tester, String slug) {
-  final text = tester.widget<Text>(
-    find.descendant(of: _id('s22-$slug-count'), matching: find.byType(Text)),
-  );
-  return int.parse(text.data!.split(': ').last);
-}
-
-/// Tabs until [id] has focus. The Back button comes first.
-Future<void> _tabTo(WidgetTester tester, String id) async {
-  var reached = false;
-  for (var i = 0; i < 8 && !reached; i++) {
-    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-    await tester.pump();
-    reached = _data(id).flagsCollection.isFocused == Tristate.isTrue;
-  }
-  expect(reached, isTrue, reason: 'Tab did not reach $id');
-}
-
-/// Every node on the screen that is not merged into a parent, in traversal
-/// order.
-List<SemanticsData> _nodes(WidgetTester tester) {
-  final found = <SemanticsData>[];
-  void visit(SemanticsNode node) {
-    if (!node.isMergedIntoParent) found.add(node.getSemanticsData());
-    node.visitChildren((child) {
-      visit(child);
-      return true;
-    });
-  }
-
-  visit(
-    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
-  );
-  return found;
-}
+int _count(WidgetTester tester, String slug) =>
+    countOf(tester, 's22-$slug-count');
 
 const _good = ['good-merged', 'good-cupertino', 'good-custom', 'good-field'];
 
@@ -91,7 +26,7 @@ const _buttons = [
 
 /// Nodes on the screen whose identifier is [id].
 Iterable<SemanticsData> _withId(WidgetTester tester, String id) =>
-    _nodes(tester).where((n) => n.identifier == id);
+    semanticsNodes(tester).where((n) => n.identifier == id);
 
 void main() {
   test('the technique has the examples named in the spec', () {
@@ -138,7 +73,7 @@ void main() {
           'is in no label, value, hint, or tooltip', (tester) async {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
-        final nodes = _nodes(tester);
+        final nodes = semanticsNodes(tester);
         final ids = [
           for (final n in nodes)
             if (n.identifier.isNotEmpty) n.identifier,
@@ -159,13 +94,13 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'good-field');
       const id = 's22-good-field-project';
-      expect(_data(id).label, 'Project name');
-      expect(_data(id).flagsCollection.isTextField, isTrue);
+      expect(dataById(id).label, 'Project name');
+      expect(dataById(id).flagsCollection.isTextField, isTrue);
       await tester.enterText(find.byType(TextField), 'a');
       await tester.pump();
       expect(_count(tester, 'good-field'), 1);
-      expect(_data(id).value, 'a');
-      expect(_data(id).label, 'Project name');
+      expect(dataById(id).value, 'a');
+      expect(dataById(id).label, 'Project name');
       handle.dispose();
     });
   });
@@ -176,14 +111,14 @@ void main() {
           '${name.isEmpty ? 'with no name' : 'named "$name"'}', (tester) async {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
-        final data = _data(id);
+        final data = dataById(id);
         expect(data.label, name);
         expect(data.tooltip, isEmpty);
         expect(data.flagsCollection.isButton, isTrue);
         expect(data.hasAction(SemanticsAction.tap), isTrue);
         // One button on the screen besides Back, and it is this node.
         expect(
-          _nodes(tester).where((n) => n.flagsCollection.isButton),
+          semanticsNodes(tester).where((n) => n.flagsCollection.isButton),
           hasLength(2),
         );
         handle.dispose();
@@ -194,20 +129,20 @@ void main() {
       ) async {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
-        await tester.tap(_id(id));
+        await tester.tap(byId(id));
         await tester.pumpAndSettle();
         expect(_count(tester, slug), 1);
-        tester.semantics.tap(_node(id));
+        tester.semantics.tap(nodeById(id));
         await tester.pumpAndSettle();
         expect(_count(tester, slug), 2);
-        await _tabTo(tester, id);
+        await tabTo(tester, id);
         await tester.sendKeyEvent(LogicalKeyboardKey.enter);
         await tester.pumpAndSettle();
         expect(_count(tester, slug), 3);
         await tester.sendKeyEvent(LogicalKeyboardKey.space);
         await tester.pumpAndSettle();
         expect(_count(tester, slug), 4);
-        expect(_data(id).label, name);
+        expect(dataById(id).label, name);
         handle.dispose();
       });
     }
@@ -226,13 +161,13 @@ void main() {
       expect(withId.single.label, 'Save draft');
       expect(withId.single.flagsCollection.isButton, isFalse);
       expect(withId.single.hasAction(SemanticsAction.tap), isFalse);
-      final button = _nodes(
+      final button = semanticsNodes(
         tester,
       ).singleWhere((n) => n.flagsCollection.isButton && n.tooltip != 'Back');
       expect(button.label, isEmpty);
       expect(button.identifier, isEmpty);
       expect(button.hasAction(SemanticsAction.tap), isTrue);
-      await tester.tap(_id('s22-bad-inside-button'));
+      await tester.tap(byId('s22-bad-inside-button'));
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-inside'), 1);
       handle.dispose();
@@ -252,10 +187,11 @@ void main() {
       expect(withId.single.label, isEmpty);
       expect(withId.single.flagsCollection.isButton, isFalse);
       expect(withId.single.hasAction(SemanticsAction.tap), isFalse);
-      final button = _nodes(tester).singleWhere((n) => n.label == 'Save draft');
+      final button = semanticsNodes(tester)
+          .singleWhere((n) => n.label == 'Save draft');
       expect(button.flagsCollection.isButton, isTrue);
       expect(button.identifier, isEmpty);
-      await tester.tap(_id('s22-bad-wrapper-button'));
+      await tester.tap(byId('s22-bad-wrapper-button'));
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-wrapper'), 1);
       handle.dispose();
@@ -265,7 +201,7 @@ void main() {
         'labelled tap target guideline', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-id-as-name');
-      final data = _data('s22-bad-id-as-name-close');
+      final data = dataById('s22-bad-id-as-name-close');
       expect(data.label, isEmpty);
       expect(data.tooltip, isEmpty);
       expect(data.value, isEmpty);
@@ -284,9 +220,9 @@ void main() {
       final withId = _withId(tester, 's22-bad-duplicate-action').toList();
       expect(withId.map((n) => n.label), ['Save draft', 'Discard draft']);
       expect(withId.every((n) => n.flagsCollection.isButton), isTrue);
-      await tester.tap(_id('s22-bad-duplicate-save'));
+      await tester.tap(byId('s22-bad-duplicate-save'));
       await tester.pumpAndSettle();
-      await tester.tap(_id('s22-bad-duplicate-discard'));
+      await tester.tap(byId('s22-bad-duplicate-discard'));
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-duplicate'), 2);
       handle.dispose();

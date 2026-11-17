@@ -2,25 +2,10 @@
 // exposes. Spec: docs/specs/S01-accessible-names.md. Runs against the release
 // build in build/web.
 import { test, expect } from '@playwright/test';
+import { byId, openExample, tabTo } from './support/techniques.js';
 
-const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
-
-async function open(page, slug, firstId) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/S01/${slug}`);
-  await byId(page, firstId).waitFor();
-}
-
-/** Press Tab until `locator` has focus. Returns false if it never does. */
-async function tabTo(page, locator, max = 8) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    // Flutter moves DOM focus on the next frame.
-    await page.waitForTimeout(100);
-    if (await locator.evaluate((e) => e === document.activeElement)) return true;
-  }
-  return false;
-}
+/** Opens an example and waits for `firstId`, a control only it has. */
+const open = (page, slug, firstId) => openExample(page, 'S01', slug, byId(page, firstId));
 
 // id: [role, accessible name]
 const named = {

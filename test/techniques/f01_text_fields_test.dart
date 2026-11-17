@@ -6,34 +6,16 @@ import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/f01_text_fields/f01_text_fields.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for F01 Text fields and labels (docs/specs/F01-text-fields.md).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([f01TextFields]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/F01/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+final _open = exampleOpener(f01TextFields);
 
-Finder _id(String id) => find.byKey(ValueKey<String>(id));
-
-SemanticsData _data(WidgetTester tester, String id) =>
-    tester.getSemantics(_id(id)).getSemanticsData();
+SemanticsData _data(WidgetTester tester, String id) => dataOf(tester, byId(id));
 
 Future<void> _type(WidgetTester tester, String id, String text) async {
   await tester.enterText(
-    find.descendant(of: _id(id), matching: find.byType(EditableText)),
+    find.descendant(of: byId(id), matching: find.byType(EditableText)),
     text,
   );
   await tester.pumpAndSettle();
@@ -96,7 +78,7 @@ void main() {
         await _open(tester, slug);
         for (final MapEntry(key: id, value: name) in fields.entries) {
           expect(
-            tester.getSemantics(_id(id)),
+            tester.getSemantics(byId(id)),
             isSemantics(isTextField: true, label: name, identifier: id),
             reason: id,
           );
@@ -191,7 +173,7 @@ void main() {
       expect(data.hint, isEmpty);
       expect(
         find.descendant(
-          of: _id('f01-bad-no-label-search'),
+          of: byId('f01-bad-no-label-search'),
           matching: find.byType(Text),
         ),
         findsNothing,

@@ -2,32 +2,17 @@
 // Spec: docs/specs/I12-announcements.md.
 import XCTest
 
-final class I12AnnouncementsUITests: XCTestCase {
-  private let app = XCUIApplication()
+final class I12AnnouncementsUITests: XCTestCase, TechniqueUITest {
+  static let technique = "I12"
+  let app = XCUIApplication()
 
   override func setUp() {
     continueAfterFailure = true
   }
 
-  private func element(_ id: String) -> XCUIElement {
-    app.descendants(matching: .any)[id]
-  }
-
-  private func element(labelled label: String) -> XCUIElement {
-    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
-  }
-
-  /// Cold-starts the app on one example through the `fluttera11y` URL scheme,
-  /// trying up to three times (see C01ButtonUITests.open).
+  /// Opens an example and waits for its button.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
-    let url = URL(string: "fluttera11y:///t/I12/\(slug)")!
-    for attempt in 1...3 {
-      app.terminate()
-      app.open(url)
-      if element("i12-\(slug)-action").waitForExistence(timeout: 30) { return }
-      print("I12 open \(slug): attempt \(attempt) did not show the example")
-    }
-    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
+    open(slug, waitingFor: element("i12-\(slug)-action"), file: file, line: line)
   }
 
   // L3. The message text changes when the button is pressed, and focus is

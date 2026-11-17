@@ -3,80 +3,17 @@ import 'dart:ui' show CheckedState, Tristate;
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_a11y_techniques/app/app.dart';
-import 'package:flutter_a11y_techniques/catalog/registry.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/f07_checkbox/f07_checkbox.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for F07 Checkbox (docs/specs/F07-checkbox.md).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([f07Checkbox]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/F07/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+final _open = exampleOpener(f07Checkbox);
 
-Finder _id(String id) => find.byKey(ValueKey<String>(id));
-
-/// The semantics node that stands for the element with [id]: the one whose
-/// merged data has the identifier, and that is not merged into a parent.
-FinderBase<SemanticsNode> _node(String id) => find.semantics.byPredicate(
-  (node) =>
-      !node.isMergedIntoParent && node.getSemanticsData().identifier == id,
-);
-
-/// What the node with [id] exposes now. Read again after every change.
-SemanticsData _data(String id) =>
-    _node(id).evaluate().single.getSemanticsData();
-
-int _count(WidgetTester tester, String slug) {
-  final text = tester.widget<Text>(
-    find.descendant(of: _id('f07-$slug-count'), matching: find.byType(Text)),
-  );
-  return int.parse(text.data!.split(': ').last);
-}
-
-/// Tabs until [id] has focus. The Back button comes first.
-Future<void> _tabTo(WidgetTester tester, String id) async {
-  var reached = false;
-  for (var i = 0; i < 8 && !reached; i++) {
-    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-    await tester.pump();
-    reached = _data(id).flagsCollection.isFocused == Tristate.isTrue;
-  }
-  expect(reached, isTrue, reason: 'Tab did not reach $id');
-}
-
-/// Every node on the screen that is not merged into a parent, in traversal
-/// order.
-List<SemanticsData> _nodes(WidgetTester tester) {
-  final found = <SemanticsData>[];
-  void visit(SemanticsNode node) {
-    if (!node.isMergedIntoParent) found.add(node.getSemanticsData());
-    node.visitChildren((child) {
-      visit(child);
-      return true;
-    });
-  }
-
-  visit(
-    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
-  );
-  return found;
-}
+int _count(WidgetTester tester, String slug) =>
+    countOf(tester, 'f07-$slug-count');
 
 const _good = [
   'good-tile',
@@ -98,7 +35,7 @@ const _boxes = [
   ('bad-group-unlabelled', 'f07-bad-group-unlabelled-phone', 'Phone'),
 ];
 
-CheckedState _state(String id) => _data(id).flagsCollection.isChecked;
+CheckedState _state(String id) => dataById(id).flagsCollection.isChecked;
 
 void main() {
   test('the technique has the examples named in the spec', () {
@@ -149,7 +86,7 @@ void main() {
           'and a tap action', (tester) async {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
-        final data = _data(id);
+        final data = dataById(id);
         expect(data.label, name);
         expect(data.value, isEmpty);
         expect(_state(id), CheckedState.isFalse);
@@ -160,7 +97,10 @@ void main() {
         expect(data.flagsCollection.isEnabled, Tristate.isTrue);
         expect(data.hasAction(SemanticsAction.tap), isTrue);
         // The name is on the checkbox and on no other node.
-        expect(_nodes(tester).where((n) => n.label == name), hasLength(1));
+        expect(
+          semanticsNodes(tester).where((n) => n.label == name),
+          hasLength(1),
+        );
         handle.dispose();
       });
 
@@ -168,18 +108,18 @@ void main() {
           'the state', (tester) async {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
-        await tester.tap(_id(id));
+        await tester.tap(byId(id));
         await tester.pumpAndSettle();
         expect(_state(id), CheckedState.isTrue);
-        tester.semantics.tap(_node(id));
+        tester.semantics.tap(nodeById(id));
         await tester.pumpAndSettle();
         expect(_state(id), CheckedState.isFalse);
-        await _tabTo(tester, id);
+        await tabTo(tester, id);
         await tester.sendKeyEvent(LogicalKeyboardKey.space);
         await tester.pumpAndSettle();
         expect(_state(id), CheckedState.isTrue);
         expect(_count(tester, slug), 3);
-        expect(_data(id).label, name);
+        expect(dataById(id).label, name);
         handle.dispose();
       });
     }
@@ -192,7 +132,7 @@ void main() {
         await _open(tester, slug);
         await tester.tap(
           find.descendant(
-            of: _id('f07-$slug-updates'),
+            of: byId('f07-$slug-updates'),
             matching: find.text(_updates),
           ),
         );
@@ -214,7 +154,7 @@ void main() {
     ) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'good-mixed');
-      expect(_data(all).label, 'Select all');
+      expect(dataById(all).label, 'Select all');
       expect(_state(email), CheckedState.isTrue);
       expect(_state(text), CheckedState.isFalse);
       expect(_state(all), CheckedState.mixed);
@@ -225,20 +165,20 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'good-mixed');
       // Check the second box: all checked.
-      await tester.tap(_id(text));
+      await tester.tap(byId(text));
       await tester.pumpAndSettle();
       expect(_state(all), CheckedState.isTrue);
       // "Select all" from checked clears both.
-      await tester.tap(_id(all));
+      await tester.tap(byId(all));
       await tester.pumpAndSettle();
       expect(_state(all), CheckedState.isFalse);
       expect(_state(email), CheckedState.isFalse);
       expect(_state(text), CheckedState.isFalse);
       // One box: mixed again. "Select all" from mixed checks both.
-      await tester.tap(_id(email));
+      await tester.tap(byId(email));
       await tester.pumpAndSettle();
       expect(_state(all), CheckedState.mixed);
-      await _tabTo(tester, all);
+      await tabTo(tester, all);
       await tester.sendKeyEvent(LogicalKeyboardKey.space);
       await tester.pumpAndSettle();
       expect(_state(all), CheckedState.isTrue);
@@ -254,7 +194,7 @@ void main() {
         'is read once', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'good-group');
-      final group = _node('f07-good-group-contact').evaluate().single;
+      final group = nodeById('f07-good-group-contact').evaluate().single;
       expect(group.getSemanticsData().label, 'Contact me by');
       expect(group.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
       final children = <String>[];
@@ -266,7 +206,7 @@ void main() {
       // The visible text is on the screen and is not a second node.
       expect(find.text('Contact me by'), findsOneWidget);
       expect(
-        _nodes(tester).where((n) => n.label.contains('Contact me by')),
+        semanticsNodes(tester).where((n) => n.label.contains('Contact me by')),
         hasLength(1),
       );
       handle.dispose();
@@ -278,7 +218,7 @@ void main() {
         'text, and a tap on the text does nothing', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-unlabelled');
-      final nodes = _nodes(tester);
+      final nodes = semanticsNodes(tester);
       final box = nodes.singleWhere(
         (n) => n.flagsCollection.isChecked != CheckedState.none,
       );
@@ -294,7 +234,7 @@ void main() {
       await tester.tap(find.text(_updates));
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-unlabelled'), 0);
-      await tester.tap(_id('f07-bad-unlabelled-box'));
+      await tester.tap(byId('f07-bad-unlabelled-box'));
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-unlabelled'), 1);
       handle.dispose();
@@ -306,20 +246,20 @@ void main() {
       await _open(tester, 'bad-no-state');
       const id = 'f07-bad-no-state-updates';
       for (var taps = 0; taps < 2; taps++) {
-        final data = _data(id);
+        final data = dataById(id);
         expect(data.label, _updates);
         expect(data.flagsCollection.isButton, isTrue);
         expect(data.flagsCollection.isChecked, CheckedState.none);
         expect(data.flagsCollection.isToggled, Tristate.none);
         expect(data.flagsCollection.isSelected, Tristate.none);
         expect(data.value, isEmpty);
-        await tester.tap(_id(id));
+        await tester.tap(byId(id));
         await tester.pumpAndSettle();
       }
       expect(_count(tester, 'bad-no-state'), 2);
       // The drawing changed; the semantics did not.
       expect(find.byIcon(Icons.check), findsNothing);
-      await tester.tap(_id(id));
+      await tester.tap(byId(id));
       await tester.pumpAndSettle();
       expect(find.byIcon(Icons.check), findsOneWidget);
       handle.dispose();
@@ -348,7 +288,9 @@ void main() {
           .evaluate()
           .single;
       expect(question.childrenCount, 0);
-      final phone = _node('f07-bad-group-unlabelled-phone').evaluate().single;
+      final phone = nodeById('f07-bad-group-unlabelled-phone')
+          .evaluate()
+          .single;
       expect(phone.parent, question.parent);
       handle.dispose();
     });

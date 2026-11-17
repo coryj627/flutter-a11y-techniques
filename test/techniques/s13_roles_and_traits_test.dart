@@ -3,54 +3,30 @@ import 'dart:ui' show CheckedState, Tristate;
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_a11y_techniques/app/app.dart';
-import 'package:flutter_a11y_techniques/catalog/registry.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/s13_roles_and_traits/s13_roles_and_traits.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for S13 Roles and traits (docs/specs/S13-roles-and-traits.md).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([s13RolesAndTraits]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/S13/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+final _open = exampleOpener(s13RolesAndTraits);
 
-Finder _id(String id) => find.byKey(ValueKey<String>(id));
-
-SemanticsData _data(WidgetTester tester, Finder finder) =>
-    tester.getSemantics(finder).getSemanticsData();
-
-int _count(WidgetTester tester, String slug) {
-  final text = tester.widget<Text>(
-    find.descendant(of: _id('s13-$slug-count'), matching: find.byType(Text)),
-  );
-  return int.parse(text.data!.split(': ').last);
-}
+int _count(WidgetTester tester, String slug) =>
+    countOf(tester, 's13-$slug-count');
 
 bool _focused(WidgetTester tester, Finder finder) =>
-    _data(tester, finder).flagsCollection.isFocused == Tristate.isTrue;
+    dataOf(tester, finder).flagsCollection.isFocused == Tristate.isTrue;
 
-/// Tabs until [id] has focus. The Back button comes first.
+/// Tabs until [id] has focus. The Back button comes first. Not the shared
+/// tabTo: focus is read here through the widget's key, as S13's other
+/// checks read it, not through the identifier.
 Future<void> _tabTo(WidgetTester tester, String id) async {
   var reached = false;
   for (var i = 0; i < 8 && !reached; i++) {
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.pump();
-    reached = _focused(tester, _id(id));
+    reached = _focused(tester, byId(id));
   }
   expect(reached, isTrue, reason: 'Tab did not reach $id');
 }
@@ -76,7 +52,9 @@ List<SemanticsNode> _buttonNodes(WidgetTester tester) {
   return found;
 }
 
-/// The semantics node that has [id] as its identifier.
+/// The semantics node that has [id] as its identifier, merged into a parent
+/// or not: the node to tap. Not the shared nodeById, which finds the node
+/// that stands for it.
 FinderBase<SemanticsNode> _node(String id) =>
     find.semantics.byPredicate((node) => node.identifier == id);
 
@@ -181,11 +159,11 @@ void main() {
         await _open(tester, slug);
         var expected = 0;
         for (final MapEntry(key: id, value: (name, role)) in controls.entries) {
-          final data = _data(tester, _id(id));
+          final data = dataOf(tester, byId(id));
           expect(data.label, name, reason: id);
           expect(data.identifier, id);
           _expectRole(data, role, id);
-          await tester.tap(_id(id));
+          await tester.tap(byId(id));
           await tester.pump();
           expect(_count(tester, slug), ++expected, reason: 'tap $id');
         }
@@ -223,22 +201,22 @@ void main() {
       const wifi = 's13-good-standard-wifi';
       const remember = 's13-good-standard-remember';
       expect(
-        _data(tester, _id(wifi)).flagsCollection.isToggled,
+        dataOf(tester, byId(wifi)).flagsCollection.isToggled,
         Tristate.isFalse,
       );
       expect(
-        _data(tester, _id(remember)).flagsCollection.isChecked,
+        dataOf(tester, byId(remember)).flagsCollection.isChecked,
         CheckedState.isFalse,
       );
-      await tester.tap(_id(wifi));
-      await tester.tap(_id(remember));
+      await tester.tap(byId(wifi));
+      await tester.tap(byId(remember));
       await tester.pump();
       expect(
-        _data(tester, _id(wifi)).flagsCollection.isToggled,
+        dataOf(tester, byId(wifi)).flagsCollection.isToggled,
         Tristate.isTrue,
       );
       expect(
-        _data(tester, _id(remember)).flagsCollection.isChecked,
+        dataOf(tester, byId(remember)).flagsCollection.isChecked,
         CheckedState.isTrue,
       );
       handle.dispose();
@@ -251,19 +229,22 @@ void main() {
       await _open(tester, 'good-custom-switch');
       const id = 's13-good-custom-switch-dark';
       expect(
-        _data(tester, _id(id)).flagsCollection.isToggled,
+        dataOf(tester, byId(id)).flagsCollection.isToggled,
         Tristate.isFalse,
       );
       // Not a button as well: a switch is one role.
-      expect(_data(tester, _id(id)).flagsCollection.isButton, isFalse);
-      await tester.tap(_id(id));
+      expect(dataOf(tester, byId(id)).flagsCollection.isButton, isFalse);
+      await tester.tap(byId(id));
       await tester.pump();
-      expect(_data(tester, _id(id)).flagsCollection.isToggled, Tristate.isTrue);
+      expect(
+        dataOf(tester, byId(id)).flagsCollection.isToggled,
+        Tristate.isTrue,
+      );
       // The semantics tap action does the same as a touch.
       tester.semantics.tap(_node(id));
       await tester.pump();
       expect(
-        _data(tester, _id(id)).flagsCollection.isToggled,
+        dataOf(tester, byId(id)).flagsCollection.isToggled,
         Tristate.isFalse,
       );
       handle.dispose();
@@ -279,7 +260,7 @@ void main() {
       ) async {
         await _open(tester, slug);
         final detector = find.descendant(
-          of: _id(id),
+          of: byId(id),
           matching: find.byType(GestureDetector),
         );
         final rect = tester.getRect(detector);
@@ -319,9 +300,9 @@ void main() {
       await _open(tester, 'good-selected');
       Map<String, Tristate> selected() => {
         for (final view in ['day', 'week', 'month'])
-          view: _data(
+          view: dataOf(
             tester,
-            _id('s13-good-selected-$view'),
+            byId('s13-good-selected-$view'),
           ).flagsCollection.isSelected,
       };
       expect(selected(), {
@@ -329,7 +310,7 @@ void main() {
         'week': Tristate.isTrue,
         'month': Tristate.isFalse,
       });
-      await tester.tap(_id('s13-good-selected-month'));
+      await tester.tap(byId('s13-good-selected-month'));
       await tester.pump();
       expect(selected(), {
         'day': Tristate.isFalse,
@@ -346,7 +327,7 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-no-role');
       const id = 's13-bad-no-role-scan';
-      final data = _data(tester, _id(id));
+      final data = dataOf(tester, byId(id));
       expect(data.label, 'Scan barcode');
       expect(data.hasAction(SemanticsAction.tap), isTrue);
       expect(data.flagsCollection.isButton, isFalse);
@@ -354,7 +335,7 @@ void main() {
       expect(data.flagsCollection.isToggled, Tristate.none);
       expect(data.flagsCollection.isChecked, CheckedState.none);
       // Everything else works, so the missing role is the only defect.
-      await tester.tap(_id(id));
+      await tester.tap(byId(id));
       await tester.pump();
       expect(_count(tester, 'bad-no-role'), 1);
       tester.semantics.tap(_node(id));
@@ -373,14 +354,14 @@ void main() {
       await _open(tester, 'bad-wrong-role');
       const id = 's13-bad-wrong-role-dark';
       for (var presses = 0; presses < 2; presses++) {
-        final data = _data(tester, _id(id));
+        final data = dataOf(tester, byId(id));
         expect(data.label, 'Dark mode');
         expect(data.value, isEmpty);
         expect(data.flagsCollection.isButton, isTrue);
         expect(data.flagsCollection.isToggled, Tristate.none);
         expect(data.flagsCollection.isChecked, CheckedState.none);
         expect(data.flagsCollection.isSelected, Tristate.none);
-        await tester.tap(_id(id));
+        await tester.tap(byId(id));
         await tester.pump();
       }
       // It did switch: only the semantics do not say so.
@@ -394,11 +375,11 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-role-on-text');
       const id = 's13-bad-role-on-text-delivery';
-      SemanticsData data() => _data(tester, _id(id));
+      SemanticsData data() => dataOf(tester, byId(id));
       expect(data().label, 'Free delivery');
       expect(data().flagsCollection.isButton, isTrue);
       expect(data().hasAction(SemanticsAction.tap), isFalse);
-      await tester.tap(_id(id));
+      await tester.tap(byId(id));
       await tester.pump();
       expect(_count(tester, 'bad-role-on-text'), 0);
       for (var i = 0; i < 4; i++) {
@@ -428,7 +409,7 @@ void main() {
       expect(outer.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
       expect(inner.getSemanticsData().label, 'Save');
       expect(inner.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
-      await tester.tap(_id('s13-bad-role-on-standard-save'));
+      await tester.tap(byId('s13-bad-role-on-standard-save'));
       await tester.pump();
       expect(_count(tester, 'bad-role-on-standard'), 1);
       handle.dispose();
@@ -439,12 +420,12 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-action-hidden');
       const id = 's13-bad-action-hidden-scan';
-      final data = _data(tester, _id(id));
+      final data = dataOf(tester, byId(id));
       expect(data.label, 'Scan barcode');
       expect(data.flagsCollection.isButton, isTrue);
       expect(data.flagsCollection.isEnabled, Tristate.isTrue);
       expect(data.hasAction(SemanticsAction.tap), isFalse);
-      await tester.tap(_id(id));
+      await tester.tap(byId(id));
       await tester.pump();
       expect(_count(tester, 'bad-action-hidden'), 1);
       await _tabTo(tester, id);
@@ -459,17 +440,20 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-switch-not-enabled');
       const id = 's13-bad-switch-not-enabled-dark';
-      expect(_data(tester, _id(id)).label, 'Dark mode');
+      expect(dataOf(tester, byId(id)).label, 'Dark mode');
       expect(
-        _data(tester, _id(id)).flagsCollection.isToggled,
+        dataOf(tester, byId(id)).flagsCollection.isToggled,
         Tristate.isFalse,
       );
       // Neither enabled nor disabled: the flag is absent.
-      expect(_data(tester, _id(id)).flagsCollection.isEnabled, Tristate.none);
-      expect(_data(tester, _id(id)).hasAction(SemanticsAction.tap), isTrue);
-      await tester.tap(_id(id));
+      expect(dataOf(tester, byId(id)).flagsCollection.isEnabled, Tristate.none);
+      expect(dataOf(tester, byId(id)).hasAction(SemanticsAction.tap), isTrue);
+      await tester.tap(byId(id));
       await tester.pump();
-      expect(_data(tester, _id(id)).flagsCollection.isToggled, Tristate.isTrue);
+      expect(
+        dataOf(tester, byId(id)).flagsCollection.isToggled,
+        Tristate.isTrue,
+      );
       handle.dispose();
     });
   });

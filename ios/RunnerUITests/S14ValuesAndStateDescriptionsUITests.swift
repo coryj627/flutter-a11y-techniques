@@ -5,40 +5,22 @@
 // both.
 import XCTest
 
-final class S14ValuesAndStateDescriptionsUITests: XCTestCase {
-  private let app = XCUIApplication()
+final class S14ValuesAndStateDescriptionsUITests: XCTestCase, CountedTechniqueUITest {
+  static let technique = "S14"
+  static let countLabel = "Changes"
+  let app = XCUIApplication()
 
   override func setUp() {
     continueAfterFailure = true
   }
 
-  /// Cold-starts the app on one example through the `fluttera11y` URL scheme,
-  /// trying up to three times (see C01ButtonUITests.open).
+  /// Opens an example and waits for its count.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
-    let url = URL(string: "fluttera11y:///t/S14/\(slug)")!
-    for attempt in 1...3 {
-      app.terminate()
-      app.open(url)
-      if element("s14-\(slug)-count").waitForExistence(timeout: 30) { return }
-      print("S14 open \(slug): attempt \(attempt) did not show the example")
-    }
-    XCTFail("\(slug) did not open after three attempts", file: file, line: line)
-  }
-
-  private func element(_ id: String) -> XCUIElement {
-    app.descendants(matching: .any)[id]
+    open(slug, waitingFor: countElement(slug), file: file, line: line)
   }
 
   private func value(_ id: String) -> String {
     element(id).value as? String ?? ""
-  }
-
-  private func expectCount(_ slug: String, _ n: Int, file: StaticString = #filePath, line: UInt = #line) {
-    let count = element("s14-\(slug)-count")
-    let expected = "Changes: \(n)"
-    let deadline = Date().addingTimeInterval(5)
-    while count.label != expected && Date() < deadline { usleep(100_000) }
-    XCTAssertEqual(count.label, expected, slug, file: file, line: line)
   }
 
   /// Taps the fifth star of a rating: the stars are 48 points wide and the
@@ -149,9 +131,10 @@ final class S14ValuesAndStateDescriptionsUITests: XCTestCase {
   }
 
   // L4. Everything VoiceOver says between the "Example" heading and the
-  // change count, which is the last element of every example. The helpers
-  // are S04's. XCUIVoiceOverService returns at most the first 64 characters
-  // of an utterance, which cuts the hint of an adjustable element short.
+  // change count, which is the last element of every example. The walk
+  // is VoiceOverWalk.forward. XCUIVoiceOverService returns at most the
+  // first 64 characters of an utterance, which cuts the hint of an
+  // adjustable element short.
   private let speech: [(slug: String, content: [String])] = [
     ("good-rating", ["Rating 3 out of 5 adjustable Swipe up or down with one finger to"]),
     ("good-step", ["Progress Step 2 of 4", "Next step Button"]),
@@ -168,11 +151,6 @@ final class S14ValuesAndStateDescriptionsUITests: XCTestCase {
     ("bad-value-on-switch", ["Home alarm Switch button off Double tap to toggle setting."]),
   ]
 
-  /// One utterance with every run of whitespace made one space.
-  private static func normalized(_ utterance: String) -> String {
-    utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
-  }
-
   func testVoiceOverSpeech() throws {
     // XCUIVoiceOverService is in the iOS 27 SDK (Xcode 27, Swift 6.4). With an
     // older Xcode the symbol does not exist, so an availability check alone
@@ -182,27 +160,8 @@ final class S14ValuesAndStateDescriptionsUITests: XCTestCase {
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in speech {
       open(example.slug)
-      try voiceOver.enable()
-      var voiceOverOn = true
-      defer { if voiceOverOn { try? voiceOver.disable() } }
-      var spoken: [String] = []
       // Swipe right until the change count, the last element, is read.
-      for _ in 0..<20 {
-        do {
-          spoken.append(Self.normalized(try voiceOver.moveForward().utterance))
-        } catch let error as NSError where S04FunctionalImagesUITests.isNoSpeech(error) {
-          let back = Self.normalized(try voiceOver.moveBackward().utterance)
-          var again: String? = nil
-          do {
-            again = Self.normalized(try voiceOver.moveForward().utterance)
-          } catch let error as NSError where S04FunctionalImagesUITests.isNoSpeech(error) {}
-          spoken.append(S04FunctionalImagesUITests.afterNoSpeech(
-            previous: spoken.last, back: back, again: again))
-        }
-        if spoken.last!.hasPrefix("Changes:") { break }
-      }
-      try voiceOver.disable()
-      voiceOverOn = false
+      let spoken = try VoiceOverWalk.forward(voiceOver, toUtteranceStartingWith: "Changes:")
       let content = Self.exampleContent(spoken)
       print("S14VO \(example.slug) | \((content ?? spoken).joined(separator: " / "))")
       XCTAssertNotNil(content, "\(example.slug): the walk did not run from the heading to the count: \(spoken)")
@@ -211,13 +170,5 @@ final class S14ValuesAndStateDescriptionsUITests: XCTestCase {
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
     #endif
-  }
-
-  /// The utterances after the last "Example Heading" and before the change
-  /// count; nil when the walk did not pass the heading or end on the count.
-  static func exampleContent(_ spoken: [String]) -> [String]? {
-    guard let last = spoken.last, last.hasPrefix("Changes:"),
-          let heading = spoken.lastIndex(of: "Example Heading") else { return nil }
-    return Array(spoken[(heading + 1)..<(spoken.count - 1)])
   }
 }

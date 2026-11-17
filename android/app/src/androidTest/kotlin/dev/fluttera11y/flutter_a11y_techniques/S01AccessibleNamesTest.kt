@@ -2,21 +2,12 @@
 // Spec: docs/specs/S01-accessible-names.md.
 package dev.fluttera11y.flutter_a11y_techniques
 
-import android.app.UiAutomation
-import android.content.Intent
-import android.provider.Settings
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -25,38 +16,15 @@ private const val SWITCH = "android.widget.Switch"
 private const val SEEKBAR = "android.widget.SeekBar"
 
 @RunWith(AndroidJUnit4::class)
-class S01AccessibleNamesTest {
-    private val inst = InstrumentationRegistry.getInstrumentation()
+class S01AccessibleNamesTest : TechniqueTest("S01") {
+    /**
+     * Opens an example and waits for [firstId], a control only it has. No
+     * wait for idle after it: S01's tests and its TalkBack transcript were
+     * made without one.
+     */
+    private fun open(slug: String, firstId: String) = openExample(slug, By.res(firstId), idle = false)
 
-    // Without this flag a connected test switches TalkBack off.
-    private val automation: UiAutomation = run {
-        Configurator.getInstance().setUiAutomationFlags(
-            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-        inst.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-    }
-    private val device: UiDevice = UiDevice.getInstance(inst)
-
-    /** Opens an example and waits for [firstId], a control only it has. */
-    private fun open(slug: String, firstId: String) {
-        val intent = Intent(inst.targetContext, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .putExtra("route", "/t/S01/$slug")
-        inst.targetContext.startActivity(intent)
-        assertTrue("example $slug did not open",
-            device.wait(Until.hasObject(By.res(firstId)), 20_000))
-    }
-
-    private fun find(root: AccessibilityNodeInfo?, id: String): AccessibilityNodeInfo? {
-        if (root == null) return null
-        if (root.viewIdResourceName == id) return root
-        for (i in 0 until root.childCount) find(root.getChild(i), id)?.let { return it }
-        return null
-    }
-
-    private fun node(id: String): AccessibilityNodeInfo =
-        find(automation.rootInActiveWindow, id) ?: throw AssertionError("no node with id $id")
-
-    private fun name(id: String): String = node(id).contentDescription?.toString().orEmpty()
+    private fun name(id: String): String = node(id).name()
 
     private fun waitForChecked(id: String) {
         val end = System.currentTimeMillis() + 5_000
@@ -157,48 +125,23 @@ class S01AccessibleNamesTest {
     }
 
     /**
-     * Moves TalkBack focus to the node [find] returns and fails the test if
-     * it cannot. A node that already has accessibility focus refuses the
-     * action, so focus is cleared and the action tried once more. Without
-     * this check a failed focus would pass silently and the transcript would
-     * credit the wrong speech to the element.
-     */
-    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
-        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
-        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
-        Thread.sleep(500)
-        assertTrue("TalkBack focus on $what",
-            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
-    }
-
-    /**
      * L4. Moves TalkBack focus to every identified node of every example and
      * logs markers; tool/talkback.py reads the speech from logcat. Skipped
      * unless TalkBack is running.
      */
     @Test
     fun talkBackWalk() {
-        val services = Settings.Secure.getString(
-            inst.targetContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
-        assumeTrue("TalkBack is not enabled", services.contains("talkback", ignoreCase = true))
         val examples = named.mapValues { it.value.keys.toList() } + mapOf(
             "bad-unassociated-label" to listOf("s01-bad-unassociated-label-terms"),
             "bad-duplicate-names" to listOf(
                 "s01-bad-duplicate-names-email", "s01-bad-duplicate-names-sms"),
             "bad-role-in-name" to listOf("s01-bad-role-in-name-dark"),
             "bad-slider-name-web" to listOf("s01-bad-slider-name-web-volume"))
-        for ((slug, ids) in examples) {
-            open(slug, ids.first())
-            // Let TalkBack finish announcing the new screen first.
-            Thread.sleep(8_000)
-            for (id in ids) {
-                Log.i("S01TB", "FOCUS $id")
-                talkBackFocus(id) { node(id) }
-                // Long enough for the state, a long name, and the role. At 4.5
-                // seconds the role was sometimes not spoken yet.
-                Thread.sleep(8_000)
-            }
-            Log.i("S01TB", "END $slug")
-        }
+        talkBackWalk(
+            examples.map { (slug, ids) -> slug to ids.map { id -> Stop(id) { node(id) } } },
+            open = { slug -> open(slug, examples.getValue(slug).first()) },
+            // Long enough for the state, a long name, and the role. At 4.5
+            // seconds the role was sometimes not spoken yet.
+            dwellMillis = { 8_000 })
     }
 }

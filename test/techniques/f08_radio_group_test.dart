@@ -1,72 +1,19 @@
 import 'dart:ui' show CheckedState, SemanticsRole, Tristate;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_a11y_techniques/app/app.dart';
-import 'package:flutter_a11y_techniques/catalog/registry.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/f08_radio_group/f08_radio_group.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for F08 Radio group (docs/specs/F08-radio-group.md).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([f08RadioGroup]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/F08/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+final _open = exampleOpener(f08RadioGroup);
 
-Finder _id(String id) => find.byKey(ValueKey<String>(id));
-
-/// The semantics node that stands for the element with [id]: the one whose
-/// merged data has the identifier, and that is not merged into a parent.
-FinderBase<SemanticsNode> _node(String id) => find.semantics.byPredicate(
-  (node) =>
-      !node.isMergedIntoParent && node.getSemanticsData().identifier == id,
-);
-
-/// What the node with [id] exposes now. Read again after every change.
-SemanticsData _data(String id) =>
-    _node(id).evaluate().single.getSemanticsData();
-
-int _count(WidgetTester tester, String slug) {
-  final text = tester.widget<Text>(
-    find.descendant(of: _id('f08-$slug-count'), matching: find.byType(Text)),
-  );
-  return int.parse(text.data!.split(': ').last);
-}
-
-/// Every node on the screen that is not merged into a parent, in traversal
-/// order.
-List<SemanticsData> _nodes(WidgetTester tester) {
-  final found = <SemanticsData>[];
-  void visit(SemanticsNode node) {
-    if (!node.isMergedIntoParent) found.add(node.getSemanticsData());
-    node.visitChildren((child) {
-      visit(child);
-      return true;
-    });
-  }
-
-  visit(
-    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
-  );
-  return found;
-}
+int _count(WidgetTester tester, String slug) =>
+    countOf(tester, 'f08-$slug-count');
 
 const _good = ['good-group', 'good-cupertino', 'good-custom', 'good-context'];
 
@@ -89,7 +36,7 @@ const _options = {
   'next-day': 'Next day',
 };
 
-CheckedState _state(String id) => _data(id).flagsCollection.isChecked;
+CheckedState _state(String id) => dataById(id).flagsCollection.isChecked;
 
 /// The option that is checked, as its id segment.
 String _chosen(String slug) => _options.keys.singleWhere(
@@ -170,7 +117,7 @@ void main() {
         expect(radios, slug == 'good-context' ? 2 : 3);
         expect(find.text(question), findsOneWidget);
         expect(
-          _nodes(tester).where((n) => n.label.contains(question)),
+          semanticsNodes(tester).where((n) => n.label.contains(question)),
           hasLength(1),
         );
         handle.dispose();
@@ -185,7 +132,7 @@ void main() {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
         for (final MapEntry(key: option, value: name) in _options.entries) {
-          final data = _data('f08-$slug-$option');
+          final data = dataById('f08-$slug-$option');
           expect(data.label, name, reason: option);
           expect(data.flagsCollection.isInMutuallyExclusiveGroup, isTrue);
           expect(
@@ -198,7 +145,10 @@ void main() {
           expect(data.flagsCollection.isEnabled, Tristate.isTrue);
           expect(data.hasAction(SemanticsAction.tap), isTrue);
           // The name is on the radio button and on no other node.
-          expect(_nodes(tester).where((n) => n.label == name), hasLength(1));
+          expect(
+            semanticsNodes(tester).where((n) => n.label == name),
+            hasLength(1),
+          );
         }
         handle.dispose();
       });
@@ -207,15 +157,15 @@ void main() {
           'option and clear the other', (tester) async {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
-        await tester.tap(_id('f08-$slug-standard'));
+        await tester.tap(byId('f08-$slug-standard'));
         await tester.pumpAndSettle();
         expect(_chosen(slug), 'standard');
-        tester.semantics.tap(_node('f08-$slug-next-day'));
+        tester.semantics.tap(nodeById('f08-$slug-next-day'));
         await tester.pumpAndSettle();
         expect(_chosen(slug), 'next-day');
         expect(_count(tester, slug), 2);
         // Choosing the chosen one again changes nothing.
-        await tester.tap(_id('f08-$slug-next-day'));
+        await tester.tap(byId('f08-$slug-next-day'));
         await tester.pumpAndSettle();
         expect(_chosen(slug), 'next-day');
         expect(_count(tester, slug), 2);
@@ -234,14 +184,14 @@ void main() {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pump();
         expect(
-          _data('f08-$slug-express').flagsCollection.isFocused,
+          dataById('f08-$slug-express').flagsCollection.isFocused,
           Tristate.isTrue,
         );
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
         await tester.pumpAndSettle();
         expect(_chosen(slug), 'next-day');
         expect(
-          _data('f08-$slug-next-day').flagsCollection.isFocused,
+          dataById('f08-$slug-next-day').flagsCollection.isFocused,
           Tristate.isTrue,
         );
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
@@ -267,7 +217,7 @@ void main() {
         await _open(tester, slug);
         await tester.tap(
           find.descendant(
-            of: _id('f08-$slug-standard'),
+            of: byId('f08-$slug-standard'),
             matching: find.text('Standard'),
           ),
         );
@@ -290,12 +240,12 @@ void main() {
         final handle = tester.ensureSemantics();
         await _open(tester, slug);
         expect(
-          _data('f08-$slug-express').flagsCollection.isSelected,
+          dataById('f08-$slug-express').flagsCollection.isSelected,
           Tristate.isTrue,
         );
-        expect(_data('f08-$slug-express').hint, isEmpty);
+        expect(dataById('f08-$slug-express').hint, isEmpty);
         for (final option in ['standard', 'next-day']) {
-          final data = _data('f08-$slug-$option');
+          final data = dataById('f08-$slug-$option');
           expect(data.flagsCollection.isSelected, Tristate.isFalse);
           expect(data.hint, 'Not selected');
         }
@@ -311,7 +261,7 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-checked-only');
       for (final option in _options.keys) {
-        final data = _data('f08-bad-checked-only-$option');
+        final data = dataById('f08-bad-checked-only-$option');
         expect(data.flagsCollection.isSelected, Tristate.none, reason: option);
         expect(data.hint, isEmpty, reason: option);
       }
@@ -327,12 +277,12 @@ void main() {
         'and carries the question', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'good-context');
-      expect(_data('f08-good-context-yes').label, 'Yes, I am at home');
-      expect(_data('f08-good-context-no').label, 'No, I am not at home');
+      expect(dataById('f08-good-context-yes').label, 'Yes, I am at home');
+      expect(dataById('f08-good-context-no').label, 'No, I am not at home');
       expect(find.text('Yes'), findsOneWidget);
       expect(find.text('No'), findsOneWidget);
       expect(_state('f08-good-context-no'), CheckedState.isTrue);
-      await tester.tap(_id('f08-good-context-yes'));
+      await tester.tap(byId('f08-good-context-yes'));
       await tester.pumpAndSettle();
       expect(_state('f08-good-context-yes'), CheckedState.isTrue);
       expect(_state('f08-good-context-no'), CheckedState.isFalse);
@@ -345,7 +295,7 @@ void main() {
         'tap on the text does nothing', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-unlabelled');
-      final radios = _nodes(tester)
+      final radios = semanticsNodes(tester)
           .where((n) => n.flagsCollection.isInMutuallyExclusiveGroup)
           .toList();
       expect(radios, hasLength(3));
@@ -357,7 +307,7 @@ void main() {
       await tester.tap(find.text('Standard'));
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-unlabelled'), 0);
-      await tester.tap(_id('f08-bad-unlabelled-standard'));
+      await tester.tap(byId('f08-bad-unlabelled-standard'));
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-unlabelled'), 1);
       handle.dispose();
@@ -367,7 +317,7 @@ void main() {
         'labelled node around it', (tester) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-group-unlabelled');
-      final radio = _node('f08-bad-group-unlabelled-standard')
+      final radio = nodeById('f08-bad-group-unlabelled-standard')
           .evaluate()
           .single;
       final group = radio.parent!;
@@ -394,7 +344,7 @@ void main() {
       await _open(tester, 'bad-no-state');
       for (var pass = 0; pass < 2; pass++) {
         for (final MapEntry(key: option, value: name) in _options.entries) {
-          final data = _data('f08-bad-no-state-$option');
+          final data = dataById('f08-bad-no-state-$option');
           expect(data.label, name);
           expect(data.flagsCollection.isButton, isTrue);
           expect(data.flagsCollection.isChecked, CheckedState.none);
@@ -402,7 +352,7 @@ void main() {
           expect(data.flagsCollection.isInMutuallyExclusiveGroup, isFalse);
           expect(data.value, isEmpty);
         }
-        await tester.tap(_id('f08-bad-no-state-standard'));
+        await tester.tap(byId('f08-bad-no-state-standard'));
         await tester.pumpAndSettle();
       }
       expect(_count(tester, 'bad-no-state'), 1);
@@ -414,12 +364,12 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-checkbox-role');
       for (final option in _options.keys) {
-        final flags = _data('f08-bad-checkbox-role-$option').flagsCollection;
+        final flags = dataById('f08-bad-checkbox-role-$option').flagsCollection;
         expect(flags.isChecked, isNot(CheckedState.none), reason: option);
         expect(flags.isInMutuallyExclusiveGroup, isFalse, reason: option);
       }
       expect(_state('f08-bad-checkbox-role-express'), CheckedState.isTrue);
-      await tester.tap(_id('f08-bad-checkbox-role-standard'));
+      await tester.tap(byId('f08-bad-checkbox-role-standard'));
       await tester.pumpAndSettle();
       expect(_state('f08-bad-checkbox-role-standard'), CheckedState.isTrue);
       expect(_state('f08-bad-checkbox-role-express'), CheckedState.isFalse);
@@ -432,7 +382,7 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-checked-only');
       expect(
-        _nodes(tester).where((n) => n.role == SemanticsRole.radioGroup),
+        semanticsNodes(tester).where((n) => n.role == SemanticsRole.radioGroup),
         isEmpty,
       );
       handle.dispose();

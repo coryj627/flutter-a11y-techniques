@@ -2,8 +2,7 @@
 // browser's live regions. Spec: docs/specs/I12-announcements.md.
 // Runs against the release build in build/web.
 import { test, expect } from '@playwright/test';
-
-const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
+import { byId, openExample } from './support/techniques.js';
 
 /**
  * Opens an example and starts recording everything Flutter writes to its two
@@ -11,11 +10,9 @@ const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
  * them once is a race (docs/flutter-limitations.md, FL-012).
  */
 async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/I12/${slug}`);
-  await byId(page, `i12-${slug}-action`).waitFor();
-  // Let the announcements made as the screen opens come and go first.
-  await page.waitForTimeout(900);
+  // Waits for the example's button, then lets the announcements made as
+  // the screen opens come and go.
+  await openExample(page, 'I12', slug, byId(page, `i12-${slug}-action`), { settle: 900 });
   await page.evaluate(() => {
     window.announced = [];
     for (const politeness of ['polite', 'assertive']) {

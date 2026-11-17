@@ -5,21 +5,12 @@
 // description, or by their class when they have none.
 package dev.fluttera11y.flutter_a11y_techniques
 
-import android.app.UiAutomation
-import android.content.Intent
-import android.provider.Settings
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -29,17 +20,7 @@ private const val IMAGE = "android.widget.ImageView"
 private const val UNNAMED_IMAGE = "\u0000image"
 
 @RunWith(AndroidJUnit4::class)
-class S02InformativeImagesTest {
-    private val inst = InstrumentationRegistry.getInstrumentation()
-
-    // Without this flag a connected test switches TalkBack off.
-    private val automation: UiAutomation = run {
-        Configurator.getInstance().setUiAutomationFlags(
-            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-        inst.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
-    }
-    private val device: UiDevice = UiDevice.getInstance(inst)
-
+class S02InformativeImagesTest : TechniqueTest("S02") {
     private val titles = mapOf(
         "good-image-label" to "Photo with a text alternative",
         "good-icon-label" to "Status icons with text alternatives",
@@ -51,35 +32,12 @@ class S02InformativeImagesTest {
         "bad-filename-label" to "File name as the text alternative",
     )
 
-    private fun open(slug: String) {
-        val intent = Intent(inst.targetContext, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .putExtra("route", "/t/S02/$slug")
-        inst.targetContext.startActivity(intent)
-        // Wait for this example's own title. A text every example screen has
-        // would also match the previous screen while the new one loads.
-        assertTrue("example $slug did not open",
-            device.wait(Until.hasObject(By.desc(titles.getValue(slug))), 20_000))
-        device.waitForIdle()
-        // The photo is decoded after the first frame.
-        Thread.sleep(500)
-    }
-
-    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
-        if (root == null) return
-        out.add(root)
-        for (i in 0 until root.childCount) collect(root.getChild(i), out)
-    }
-
-    private fun all(): List<AccessibilityNodeInfo> =
-        mutableListOf<AccessibilityNodeInfo>().also { collect(automation.rootInActiveWindow, it) }
-
-    private fun AccessibilityNodeInfo.name(): String = contentDescription?.toString().orEmpty()
+    // Waits for this example's own title, then for the photo, which is
+    // decoded after the first frame.
+    private fun open(slug: String) =
+        openExample(slug, By.desc(titles.getValue(slug)), settleMillis = 500)
 
     private fun names(): List<String> = all().map { it.name() }
-
-    private fun node(text: String): AccessibilityNodeInfo =
-        all().firstOrNull { it.name() == text } ?: throw AssertionError("no node named \"$text\"")
 
     private fun images(): List<AccessibilityNodeInfo> = all().filter { it.className?.toString() == IMAGE }
 
@@ -87,7 +45,7 @@ class S02InformativeImagesTest {
     fun goodImageLabelIsANamedImage() {
         open("good-image-label")
         assertEquals(listOf("Sunrise over green hills"), images().map { it.name() })
-        assertNotEquals(IMAGE, node("Taken from the east ridge trail.").className?.toString())
+        assertNotEquals(IMAGE, named("Taken from the east ridge trail.").className?.toString())
     }
 
     @Test
@@ -114,7 +72,7 @@ class S02InformativeImagesTest {
         open("good-chart")
         assertEquals(listOf("Bar chart: orders rose every quarter of 2025"), images().map { it.name() })
         assertNotEquals(IMAGE,
-            node("Orders in 2025: Q1 20, Q2 35, Q3 50, Q4 80.").className?.toString())
+            named("Orders in 2025: Q1 20, Q2 35, Q3 50, Q4 80.").className?.toString())
     }
 
     // VAL-3: each bad example is asserted to have its named defect.
@@ -153,30 +111,12 @@ class S02InformativeImagesTest {
     }
 
     /**
-     * Moves TalkBack focus to the node [find] returns and fails the test if
-     * it cannot. A node that already has accessibility focus refuses the
-     * action, so focus is cleared and the action tried once more. Without
-     * this check a failed focus would pass silently and the transcript would
-     * credit the wrong speech to the element.
-     */
-    private fun talkBackFocus(what: String, find: () -> AccessibilityNodeInfo) {
-        if (find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)) return
-        find().performAction(AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
-        Thread.sleep(500)
-        assertTrue("TalkBack focus on $what",
-            find().performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS))
-    }
-
-    /**
      * L4. Moves TalkBack focus to each listed element and logs markers;
      * tool/talkback.py reads the speech from logcat. Skipped unless TalkBack
      * is running.
      */
     @Test
     fun talkBackWalk() {
-        val services = Settings.Secure.getString(
-            inst.targetContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
-        assumeTrue("TalkBack is not enabled", services.contains("talkback", ignoreCase = true))
         // slug -> (key suffix, description of the element)
         val walk = listOf(
             "good-image-label" to listOf("photo" to "Sunrise over green hills"),
@@ -193,20 +133,15 @@ class S02InformativeImagesTest {
             "bad-role-in-label" to listOf("photo" to "Image of a sunrise over green hills"),
             "bad-filename-label" to listOf("photo" to "IMG_2041.png"),
         )
-        for ((slug, elements) in walk) {
-            open(slug)
-            // Let TalkBack finish announcing the new screen first.
-            Thread.sleep(8_000)
-            for ((key, text) in elements) {
-                Log.i("S02TB", "FOCUS s02-$slug-$key")
-                talkBackFocus("s02-$slug-$key") {
-                    if (text == UNNAMED_IMAGE) images().single() else node(text)
+        talkBackWalk(
+            walk.map { (slug, elements) ->
+                slug to elements.map { (key, text) ->
+                    Stop("s02-$slug-$key") { if (text == UNNAMED_IMAGE) images().single() else named(text) }
                 }
-                // TalkBack spells a file name out, which takes longer than a
-                // sentence; at 8 seconds its "Image" was sometimes not spoken yet.
-                Thread.sleep(if (slug == "bad-filename-label") 14_000 else 8_000)
-            }
-            Log.i("S02TB", "END $slug")
-        }
+            },
+            open = ::open,
+            // TalkBack spells a file name out, which takes longer than a
+            // sentence; at 8 seconds its "Image" was sometimes not spoken yet.
+            dwellMillis = { slug -> if (slug == "bad-filename-label") 14_000 else 8_000 })
     }
 }

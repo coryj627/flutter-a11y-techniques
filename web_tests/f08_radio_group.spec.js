@@ -2,17 +2,9 @@
 // exposes. Spec: docs/specs/F08-radio-group.md. Runs against the release
 // build in build/web.
 import { test, expect } from '@playwright/test';
+import { byId, technique } from './support/techniques.js';
 
-const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
-
-async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/F08/${slug}`);
-  await byId(page, `f08-${slug}-count`).waitFor();
-}
-
-const expectCount = (page, slug, n) =>
-  expect(byId(page, `f08-${slug}-count`)).toHaveText(`Changes: ${n}`);
+const { open, expectCount } = technique('F08', { countLabel: 'Changes' });
 
 const options = { standard: 'Standard', express: 'Express', 'next-day': 'Next day' };
 

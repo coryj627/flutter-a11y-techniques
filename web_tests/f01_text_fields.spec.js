@@ -1,18 +1,15 @@
 // L3 for F01 Text fields and labels on web: what the browser exposes.
 // Spec: docs/specs/F01-text-fields.md. Runs against the release build in build/web.
 import { test, expect } from '@playwright/test';
+import { exampleHeading, technique } from './support/techniques.js';
 
 /** The <input> or <textarea> inside the node carrying a test identifier. */
 const field = (page, id) =>
   page.locator(`[flt-semantics-identifier="${id}"]`).locator('input,textarea');
 
-async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/F01/${slug}`);
-  await page.getByRole('heading', { name: 'Example', level: 2 }).waitFor();
-  // Flutter attaches its text editing a moment after the tree appears.
-  await page.waitForTimeout(600);
-}
+// Waits for the "Example" heading, then a moment more: Flutter attaches its
+// text editing a moment after the tree appears.
+const { open } = technique('F01', { ready: exampleHeading, settle: 600 });
 
 async function type(page, locator, text) {
   await locator.click();

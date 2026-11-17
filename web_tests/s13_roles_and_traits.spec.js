@@ -2,28 +2,9 @@
 // exposes. Spec: docs/specs/S13-roles-and-traits.md. Runs against the
 // release build in build/web.
 import { test, expect } from '@playwright/test';
+import { byId, tabTo, technique } from './support/techniques.js';
 
-const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
-
-async function open(page, slug) {
-  await page.goto('about:blank');
-  await page.goto(`/#/t/S13/${slug}`);
-  await byId(page, `s13-${slug}-count`).waitFor();
-}
-
-const expectCount = (page, slug, n) =>
-  expect(byId(page, `s13-${slug}-count`)).toHaveText(`Activations: ${n}`);
-
-/** Press Tab until `locator` has focus. Returns false if it never does. */
-async function tabTo(page, locator, max = 8) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    // Flutter moves DOM focus on the next frame.
-    await page.waitForTimeout(100);
-    if (await locator.evaluate((e) => e === document.activeElement)) return true;
-  }
-  return false;
-}
+const { open, expectCount } = technique('S13', { countLabel: 'Activations' });
 
 /**
  * Activates an element with a click sent to the element itself, with no

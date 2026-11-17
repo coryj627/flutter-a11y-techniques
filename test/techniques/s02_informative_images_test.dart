@@ -1,51 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:flutter_a11y_techniques/app/app.dart';
-import 'package:flutter_a11y_techniques/catalog/registry.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/s02_informative_images/examples.dart';
 import 'package:flutter_a11y_techniques/techniques/s02_informative_images/s02_informative_images.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for S02 Informative images (docs/specs/S02-informative-images.md).
 /// Images have no controls to identify, so they are found by their label.
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([s02InformativeImages]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/S02/$slug',
-    ),
-  );
-  // Image.memory decodes on a real async gap.
-  await tester.runAsync(() => Future<void>.delayed(Duration.zero));
-  await tester.pumpAndSettle();
-}
+final _open = exampleOpener(s02InformativeImages, decodeImages: true);
 
-/// The data of every semantics node on the screen, in traversal order.
-List<SemanticsData> _all(WidgetTester tester) {
-  final found = <SemanticsData>[];
-  void visit(SemanticsNode node) {
-    found.add(node.getSemanticsData());
-    node.visitChildren((child) {
-      visit(child);
-      return true;
-    });
-  }
-
-  visit(
-    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
-  );
-  return found;
-}
+/// The data of every semantics node on the screen, merged ones too.
+List<SemanticsData> _all(WidgetTester tester) =>
+    semanticsNodes(tester, includeMerged: true);
 
 bool _isImage(SemanticsData data) => data.flagsCollection.isImage;
 

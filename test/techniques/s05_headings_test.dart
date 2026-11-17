@@ -6,28 +6,13 @@ import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_a11y_techniques/techniques/s05_headings/s05_headings.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/examples.dart';
+
 /// L1 for S05 Headings (docs/specs/S05-headings.md).
-Future<void> _open(
-  WidgetTester tester,
-  String slug, {
-  Brightness brightness = Brightness.light,
-  double textScale = 1,
-}) async {
-  tester.platformDispatcher.platformBrightnessTestValue = brightness;
-  tester.platformDispatcher.textScaleFactorTestValue = textScale;
-  addTearDown(tester.platformDispatcher.clearAllTestValues);
-  await tester.pumpWidget(
-    A11yTechniquesApp(
-      registry: TechniqueRegistry([s05Headings]),
-      platform: AppPlatform.android,
-      initialRoute: '/t/S05/$slug',
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+final _open = exampleOpener(s05Headings);
 
 SemanticsData _data(WidgetTester tester, String text) =>
-    tester.getSemantics(find.text(text)).getSemanticsData();
+    dataOf(tester, find.text(text));
 
 /// Heading level of the node showing [text]; 0 when it is not a heading.
 int _level(WidgetTester tester, String text) {
