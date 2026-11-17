@@ -483,11 +483,14 @@ def end_processes(pids, grace, mark=None):
     told = set()
     deadline = time.monotonic() + grace
     while True:
+        # Marked ones first, then what any of them has started, and only
+        # then is anything signalled: a process is asked for its children
+        # while it is still there to be asked.
+        if mark:
+            pids |= marked(mark)
         left = {pid for pid in pids if _same_process(pid)}
         if left:
             pids |= descendants(left)
-        if mark:
-            pids |= marked(mark)
         left = {pid for pid in pids if _same_process(pid)}
         if not left:
             return

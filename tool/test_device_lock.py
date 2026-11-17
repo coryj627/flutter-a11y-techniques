@@ -527,6 +527,27 @@ class RunToTheEndTest(LockTestCase):
         # cannot end until it is gone.
         self.assert_ended_with_the_tool(self.run_tool_with_detached("time.sleep(60)\n"))
 
+    def test_worker_first_found_by_its_mark_during_cleanup_is_asked_for_its_helper(self):
+        # The worker carries the mark and is found only when cleanup looks;
+        # its helper, with no readable mark, is known only as its child.
+        mark = device_lock.run_mark()
+        code = ("import subprocess, sys, time\n"
+                "h = subprocess.Popen(['/bin/sleep', '60'], start_new_session=True, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                "print(h.pid, flush=True)\ntime.sleep(60)\n")
+        worker = subprocess.Popen([sys.executable, "-c", code], stdout=subprocess.PIPE, text=True,
+                                  start_new_session=True,
+                                  env={**os.environ, device_lock.ENV_RUN: mark})
+        self.addCleanup(worker.stdout.close)
+        self.addCleanup(worker.wait)
+        self.addCleanup(worker.kill)
+        helper = int(worker.stdout.readline())
+        self.addCleanup(self.kill, helper)
+        device_lock.end_processes(set(), 0.3, mark)
+        worker.wait(timeout=10)
+        self.assertFalse(device_lock._same_process(helper),
+                         "the helper of a worker found during cleanup was left running")
+
     def test_a_recorded_pid_now_used_by_another_process_is_left_alone(self):
         victim = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
         self.addCleanup(victim.wait)
