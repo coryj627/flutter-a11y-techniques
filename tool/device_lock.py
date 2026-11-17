@@ -580,8 +580,11 @@ def run_to_the_end(command, timeout=None, **kwargs):
             if child.poll() is not None and ended_at is None:
                 ended_at = now
             # What it has started is recorded all the while it runs: once
-            # it has ended, they can no longer be traced to it.
-            started |= descendants(child.pid)
+            # it has ended, they can no longer be traced to it. And what
+            # those have started in their turn, and the members of its
+            # group, which stay traceable after it has ended.
+            started |= group_members(child.pid)
+            started |= descendants(started | {child.pid})
             if timeout is not None and ended_at is None and now - begun >= timeout:
                 timed_out = True
             if not interrupted_at and ended_at is None and not timed_out:

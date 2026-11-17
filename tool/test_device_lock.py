@@ -316,6 +316,33 @@ class RunToTheEndTest(LockTestCase):
                                          stdout=subprocess.PIPE, text=True)
         self.assertEqual((run.returncode, run.stdout), (0, "1\n"))
 
+    def test_helper_of_a_worker_that_holds_the_output_is_ended_too(self):
+        # The command has ended; a worker it left keeps the captured output
+        # open. Told to stop, the worker starts a detached helper with no
+        # readable mark, and stays until killed.
+        worker = ("import signal, subprocess, sys, time\n"
+                  "def stop(*_):\n"
+                  "    h = subprocess.Popen(['/bin/sleep', '60'], start_new_session=True, "
+                  "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                  "    open(sys.argv[1], 'w').write(str(h.pid))\n"
+                  "signal.signal(signal.SIGTERM, stop)\n"
+                  "time.sleep(60)\n")
+        helper_file = os.path.join(self.dir.name, "helper")
+        command = ("import subprocess, sys, time\n"
+                   f"subprocess.Popen([sys.executable, '-c', {worker!r}, {helper_file!r}], "
+                   "start_new_session=True)\n"
+                   "time.sleep(1.5)\n")
+        with mock.patch.object(device_lock, "KILL_AFTER", 1), \
+                mock.patch.object(device_lock, "marked", return_value=set()):
+            run = device_lock.run_to_the_end([sys.executable, "-c", command],
+                                             stdout=subprocess.PIPE, text=True)
+        self.assertEqual(run.returncode, 0)
+        with open(helper_file) as f:
+            helper = int(f.read())
+        self.addCleanup(self.kill, helper)
+        self.assertFalse(device_lock._same_process(helper),
+                         "a helper started during the stop outlived run_to_the_end")
+
     def test_command_is_out_of_reach_of_the_terminal_s_interrupts(self):
         # Ctrl-C goes to the terminal's whole process group. The command must
         # not be in it, or it would be interrupted behind the tool's back.
