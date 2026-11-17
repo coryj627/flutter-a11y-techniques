@@ -113,11 +113,15 @@ jobs:
           arch: x86_64
           target: google_apis
           working-directory: android
+          # Each test runs in a process of its own: in one process the
+          # emulator's memory grew by about 55 MB for every example opened,
+          # until the runner ran out of memory and froze near test 90.
           # A test that hangs fails after three minutes with a stack trace.
-          # tool/ci_android_tests.sh also stops the run, saves the state of
-          # the runner and the emulator, and fails if no test starts or
-          # finishes for five minutes, or if the runner runs low on memory.
-          script: bash ../tool/ci_android_tests.sh -Pandroid.testInstrumentationRunnerArguments.timeout_msec=180000
+          # tool/ci_android_tests.sh stops the run, saves the state of the
+          # runner and the emulator, and fails if no test starts or finishes
+          # for five minutes, the runner runs low on memory, or the emulator
+          # exits.
+          script: bash ../tool/ci_android_tests.sh -PtestOrchestrator=true -Pandroid.testInstrumentationRunnerArguments.timeout_msec=180000
       - uses: actions/upload-artifact@v4
         if: always()
         with:
