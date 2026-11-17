@@ -358,6 +358,10 @@ def end_group(pgid, grace, reap=lambda: None, started=None, mark=None):
     reap()
     if not group_alive(pgid):
         return
+    # Look before signalling, here and everywhere: a process that is
+    # stopped can no longer be asked what it started.
+    if started is not None:
+        record(started, pgid, mark)
     signal_group(pgid, signal.SIGTERM)
     deadline = time.monotonic() + grace
     while True:

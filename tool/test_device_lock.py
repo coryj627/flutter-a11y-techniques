@@ -831,6 +831,34 @@ class WithDevicesTest(LockTestCase):
         self.assertFalse(device_lock._same_process(helper),
                          "the helper of an early-orphaned worker outlived run_group")
 
+    def test_helper_of_a_group_worker_nobody_had_recorded_is_ended(self):
+        # The command has ended between two looks. A worker of its group is
+        # left, never recorded, with a detached helper that has no readable
+        # mark. Ending the group must look before it stops the worker.
+        helper_file = os.path.join(self.dir.name, "helper")
+        worker = ("import subprocess, sys, time\n"
+                  "h = subprocess.Popen(['/bin/sleep', '60'], start_new_session=True, "
+                  "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                  "open(sys.argv[1], 'w').write(str(h.pid))\n"
+                  "time.sleep(60)\n")
+        command = ("import subprocess, sys, time\n"
+                   f"subprocess.Popen([sys.executable, '-c', {worker!r}, {helper_file!r}], "
+                   "stdout=subprocess.DEVNULL)\n"
+                   "time.sleep(0.5)\n")
+        child = subprocess.Popen([sys.executable, "-c", command], start_new_session=True)
+        child.wait()
+        for _ in range(100):
+            if os.path.exists(helper_file) and open(helper_file).read():
+                break
+            time.sleep(0.05)
+        helper = int(open(helper_file).read())
+        self.addCleanup(self.kill, helper)
+        with mock.patch.object(with_devices, "STRAGGLER_GRACE", 0.5), \
+                mock.patch.object(device_lock, "marked", return_value=set()):
+            with_devices.end_group(child, set(), None)
+        self.assertFalse(device_lock._same_process(helper),
+                         "the helper of an unrecorded group worker was left running")
+
     def test_detached_process_is_ended_when_the_tool_is_stopped(self):
         tool = subprocess.Popen(
             [sys.executable, "-c",

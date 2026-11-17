@@ -102,6 +102,7 @@ def end_group(child, started=None, mark=None):
         device_lock.record(started, child.pid, mark)
         child.terminate()
         if wait_watching(child, started, timeout=GRACE, mark=mark) is None:
+            device_lock.record(started, child.pid, mark)
             signal_group(child, signal.SIGKILL)
     device_lock.end_group(child.pid, STRAGGLER_GRACE, reap=child.poll, started=started, mark=mark)
     if mark:
