@@ -69,6 +69,11 @@ class RunTechniqueTest(unittest.TestCase):
         self.assertEqual(runner.steps[runner.names.index("web")].command,
                          ["npx", "playwright", "test", "f08_radio_group.spec.js"])
 
+    def test_android_build_starts_no_shared_gradle_daemon(self):
+        _, runner, _, _ = run(layers=["android"])
+        build = runner.steps[runner.names.index("build android")].command
+        self.assertEqual(build[-4:], ["build", "apk", "--debug", "--no-android-gradle-daemon"])
+
     def test_only_the_builds_the_chosen_layers_need(self):
         _, runner, _, _ = run(layers=["ios", "voiceover-ios"])
         self.assertEqual(runner.names, ["build ios", "ios", "voiceover-ios"])

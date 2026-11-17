@@ -83,7 +83,10 @@ def builds(layers, no_build=False):
         return []
     steps = []
     for name, target, fed in (
-            ("build android", ["apk", "--debug"], ("android", "talkback")),
+            # No Gradle daemon: one started here is ended with the step,
+            # and a build in another worktree might have picked it up.
+            ("build android", ["apk", "--debug", "--no-android-gradle-daemon"],
+             ("android", "talkback")),
             ("build ios", ["ios", "--simulator", "--debug"], ("ios", "voiceover-ios")),
             ("build web", ["web"], ("web", "voiceover-web"))):
         needed = tuple(layer for layer in fed if layer in layers)
