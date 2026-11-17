@@ -568,6 +568,23 @@ class RunToTheEndTest(LockTestCase):
             device_lock.end_processes({worker.pid}, 0.3)
         self.assertEqual(len(failures), 3)
         self.assertIsNotNone(worker.wait(timeout=10), "the worker escaped the cleanup")
+        # The same when ps runs but fails, saying nothing.
+        worker = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"],
+                                  start_new_session=True)
+        self.addCleanup(worker.wait)
+        self.addCleanup(worker.kill)
+        failures.clear()
+
+        def failing(command, **kwargs):
+            if command[:2] == ["ps", "-o"] and len(failures) < 3:
+                failures.append(1)
+                return subprocess.CompletedProcess(command, 1, "", "ps: failed")
+            return real_run(command, **kwargs)
+
+        with mock.patch.object(device_lock.subprocess, "run", side_effect=failing):
+            self.assertTrue(device_lock._same_process(worker.pid))
+            device_lock.end_processes({worker.pid}, 0.3)
+        self.assertIsNotNone(worker.wait(timeout=10), "the worker escaped the cleanup")
         # And a pid nothing has is still reported gone when the look fails.
         with mock.patch.object(device_lock.subprocess, "run",
                                side_effect=subprocess.TimeoutExpired(["ps"], 10)):

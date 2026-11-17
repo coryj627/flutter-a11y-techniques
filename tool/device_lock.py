@@ -467,14 +467,19 @@ _born = {}
 def _same_process(pid):
     """Whether `pid` is still the process descendants() recorded."""
     try:
-        now = subprocess.run(["ps", "-o", "stat=,lstart=", "-p", str(pid)], capture_output=True,
-                             text=True, timeout=10).stdout.strip()
+        run = subprocess.run(["ps", "-o", "stat=,lstart=", "-p", str(pid)], capture_output=True,
+                             text=True, timeout=10)
     except (OSError, subprocess.TimeoutExpired):
         # Could not look. That is not proof that it has gone: say it is
         # there if anything with that pid is, and let the caller look again.
         return _alive(pid)
-    if not now or now.startswith("Z"):
-        return False  # gone, or ended and waiting to be reaped
+    now = run.stdout.strip()
+    if not now:
+        # ps says nothing both for a pid nothing has and when it fails. Only
+        # the system's own answer for the pid settles which.
+        return _alive(pid)
+    if now.startswith("Z"):
+        return False  # ended and waiting to be reaped
     return pid not in _born or " ".join(now.split()[1:]) == _born[pid]
 
 
