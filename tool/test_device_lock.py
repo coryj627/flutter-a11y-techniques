@@ -327,6 +327,47 @@ class RunToTheEndTest(LockTestCase):
         except ProcessLookupError:
             pass
 
+    def run_tool_with_detached(self, command_tail, detached_extra=""):
+        """Runs a tool whose command starts a detached process that ignores
+        SIGTERM; stops the tool; returns the detached pid after the tool exits."""
+        command = ("import signal, subprocess, sys, time\n"
+                   "p = subprocess.Popen([sys.executable, '-c', 'import signal, time; "
+                   "signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(60)'], "
+                   f"start_new_session=True{detached_extra})\n"
+                   "sys.stderr.write(str(p.pid) + chr(10)); sys.stderr.flush()\n"
+                   + command_tail)
+        tool_code = ("import subprocess, sys, device_lock\n"
+                     "device_lock.KILL_AFTER = 0.5\n"
+                     f"device_lock.run_to_the_end([sys.executable, '-c', {command!r}], "
+                     "stdout=subprocess.PIPE, text=True)\n")
+        tool = subprocess.Popen([sys.executable, "-c", tool_code], cwd=TOOL, env=self.env(),
+                                stderr=subprocess.PIPE, text=True)
+        self.addCleanup(tool.stderr.close)
+        detached = int(tool.stderr.readline())
+        self.addCleanup(self.kill, detached)
+        time.sleep(0.3)
+        tool.terminate()
+        self.assertEqual(tool.wait(timeout=30), 128 + 15)
+        return detached
+
+    def assert_ended_with_the_tool(self, pid):
+        try:
+            os.kill(pid, 0)
+            self.fail("a detached process of the command outlived the tool")
+        except ProcessLookupError:
+            pass
+
+    def test_detached_process_is_ended_when_the_command_exits_at_once(self):
+        # The command dies on its interrupt before anyone could look again;
+        # what it started must have been recorded before the interrupt.
+        self.assert_ended_with_the_tool(self.run_tool_with_detached(
+            "time.sleep(60)\n", detached_extra=", stdout=subprocess.DEVNULL"))
+
+    def test_detached_process_holding_the_command_s_output_does_not_hang_the_tool(self):
+        # It inherits the captured stdout, so the tool's read of the output
+        # cannot end until it is gone.
+        self.assert_ended_with_the_tool(self.run_tool_with_detached("time.sleep(60)\n"))
+
     def test_descendants_are_found_across_process_groups(self):
         code = ("import subprocess, sys, time\n"
                 "p = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'], "

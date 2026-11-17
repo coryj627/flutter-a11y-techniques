@@ -433,6 +433,9 @@ def run_to_the_end(command, **kwargs):
         if len(received) > 1:
             return
         interrupted_at.append(time.monotonic())
+        # Before the interrupt: once the command has ended, what it started
+        # can no longer be traced to it.
+        started.update(descendants(child.pid))
         try:
             child.send_signal(signal.SIGINT)
         except ProcessLookupError:
@@ -441,21 +444,36 @@ def run_to_the_end(command, **kwargs):
     previous = {s: signal.signal(s, forward)
                 for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}
     try:
+        def signal_all(signum):
+            signal_group(child.pid, signum)
+            for pid in started:
+                _signal(pid, signum)
+
         stage = 0  # 0 waiting, 1 told to stop, 2 killed
+        ended_at = None  # when the interrupted command was seen to have ended
         while True:
             try:
+                # Waits for the command and for its output to close, which
+                # anything it started and left running can hold open.
                 out, err = child.communicate(timeout=0.5)
                 break
             except subprocess.TimeoutExpired:
                 pass
-            waited = time.monotonic() - interrupted_at[0] if interrupted_at else 0
-            if interrupted_at:
-                started |= descendants(child.pid)
-            if stage == 0 and waited >= INTERRUPT_GRACE:
-                signal_group(child.pid, signal.SIGTERM)
+            if not interrupted_at:
+                continue
+            now = time.monotonic()
+            started |= descendants(child.pid)
+            if child.poll() is not None and ended_at is None:
+                ended_at = now
+            # Force at the deadline, or sooner once the command itself has
+            # ended and only what it left behind is keeping us here.
+            due = min(interrupted_at[0] + INTERRUPT_GRACE,
+                      ended_at if ended_at is not None else float("inf"))
+            if stage == 0 and now >= due:
+                signal_all(signal.SIGTERM)
                 stage = 1
-            elif stage == 1 and waited >= INTERRUPT_GRACE + KILL_AFTER:
-                signal_group(child.pid, signal.SIGKILL)
+            elif stage == 1 and now >= due + KILL_AFTER:
+                signal_all(signal.SIGKILL)
                 stage = 2
         if received:
             # Nothing the command started may outlive this tool: it is out
