@@ -198,32 +198,74 @@ class StopAndroidTest(unittest.TestCase):
             returncode=149, stderr="Unable to lookup in current state: Shutdown", stdout="")
         self.assertTrue(common.stop_ios_tests(run=shut, wait=0, sleep=lambda _: None))
 
-    def test_force_stops_both_packages_and_waits_until_neither_is_running(self):
+    def test_force_stops_both_packages_and_waits_until_the_device_says_neither_runs(self):
         import evidence_common as common
-        calls, pids = [], iter(["4242", "", "", ""])
+        app, tests = common.ANDROID_PACKAGE, common.ANDROID_PACKAGE + ".test"
+        calls, running = [], {app: 1, tests: 0}  # the app survives the first force-stop
 
         def fake(command, **kwargs):
             calls.append(command[1:])
-            out = next(pids, "") if command[2] == "pidof" else ""
-            return mock.Mock(stdout=out, returncode=0)
+            if command[2] == "am":
+                return mock.Mock(stdout="", returncode=0)
+            package = command[2].split()[1]
+            if running[package] > 0:
+                running[package] -= 1
+                return mock.Mock(stdout="4242\n", returncode=0)
+            return mock.Mock(stdout=common.NOT_RUNNING + "\n", returncode=0)
 
         self.assertTrue(common.stop_android_tests(run=fake, sleep=lambda _: None))
-        app, tests = common.ANDROID_PACKAGE, common.ANDROID_PACKAGE + ".test"
-        self.assertEqual(calls[:4], [["shell", "am", "force-stop", app],
-                                     ["shell", "am", "force-stop", tests],
-                                     ["shell", "pidof", app], ["shell", "pidof", tests]])
-        self.assertEqual(len(calls), 8)  # the app was still there the first time
+        self.assertEqual(calls[:4], [
+            ["shell", "am", "force-stop", app],
+            ["shell", f"pidof {app} || echo {common.NOT_RUNNING}"],
+            ["shell", "am", "force-stop", tests],
+            ["shell", f"pidof {tests} || echo {common.NOT_RUNNING}"]])
+        self.assertEqual(len(calls), 8)  # asked again, both packages
 
     def test_no_answer_from_the_device_is_not_taken_for_stopped(self):
         import evidence_common as common
         import subprocess
+        quick = dict(wait=0, sleep=lambda _: None)
 
         def unreachable(command, **kwargs):
             raise subprocess.TimeoutExpired(command, 30)
 
-        self.assertFalse(common.stop_android_tests(run=unreachable, wait=0, sleep=lambda _: None))
+        self.assertFalse(common.stop_android_tests(run=unreachable, **quick))
         still = lambda command, **kwargs: mock.Mock(stdout="4242\n", returncode=0)
-        self.assertFalse(common.stop_android_tests(run=still, wait=0, sleep=lambda _: None))
+        self.assertFalse(common.stop_android_tests(run=still, **quick))
+        # An offline device: every command fails and prints nothing.
+        offline = lambda command, **kwargs: mock.Mock(
+            stdout="", stderr="error: device offline", returncode=1)
+        self.assertFalse(common.stop_android_tests(run=offline, **quick))
+        # Nothing printed, even with status 0, is not the device's word.
+        silent = lambda command, **kwargs: mock.Mock(stdout="", returncode=0)
+        self.assertFalse(common.stop_android_tests(run=silent, **quick))
+
+    def test_a_signal_during_the_device_clean_up_is_held_until_it_is_done(self):
+        import evidence_common as common
+        import signal
+        calls, got = [], []
+
+        def fake(command, **kwargs):
+            calls.append(command[1:])
+            if len(calls) == 1:
+                os.kill(os.getpid(), signal.SIGTERM)  # arrives mid clean-up
+                os.kill(os.getpid(), signal.SIGINT)   # and another
+            return mock.Mock(stdout=common.NOT_RUNNING, stderr="found nothing to terminate",
+                             returncode=0)
+
+        previous = signal.signal(signal.SIGTERM, lambda signum, _f: got.append(signum))
+        self.addCleanup(signal.signal, signal.SIGTERM, previous)
+        self.assertTrue(common.stop_android_tests(run=fake, sleep=lambda _: None))
+        self.assertEqual(len(calls), 4, "the clean-up was cut short")
+        self.assertEqual(got, [signal.SIGTERM], "the held signal was not passed on afterwards")
+
+        calls.clear()
+        got.clear()
+        ended = lambda command, **kwargs: (
+            calls.append(1), len(calls) == 1 and os.kill(os.getpid(), signal.SIGTERM),
+            mock.Mock(returncode=3, stderr="found nothing to terminate", stdout=""))[2]
+        self.assertTrue(common.stop_ios_tests(run=ended, sleep=lambda _: None))
+        self.assertEqual((len(calls), got), (2, [signal.SIGTERM]))
 
 
 class TalkBackWalkCommandTest(unittest.TestCase):
