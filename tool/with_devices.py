@@ -108,7 +108,7 @@ def end_group(child, started=None, mark=None):
         # Found by the mark they inherited, even if their parent ended
         # between two looks at the process table.
         started |= device_lock.marked(mark)
-    device_lock.end_processes(started, STRAGGLER_GRACE)
+    device_lock.end_processes(started, STRAGGLER_GRACE, mark)
 
 
 def signal_group(child, signum):

@@ -335,7 +335,8 @@ def end_group(pgid, grace, reap=lambda: None):
 
 
 def descendants(pid):
-    """The pids of every process started, however indirectly, by `pid`.
+    """The pids of every process started, however indirectly, by `pid`
+    (or by any of them, given several).
 
     Read from the process table, so it finds the ones that have left the
     command's process group: Playwright starts its web server and its
@@ -354,12 +355,14 @@ def descendants(pid):
         if len(parts) == 3 and parts[0].isdigit() and parts[1].isdigit():
             children.setdefault(int(parts[1]), []).append(int(parts[0]))
             born[int(parts[0])] = " ".join(parts[2].split())
-    found, queue = set(), [pid]
+    roots = {pid} if isinstance(pid, int) else set(pid)
+    found, queue = set(), list(roots)
     while queue:
         for child in children.get(queue.pop(), []):
             if child not in found:
                 found.add(child)
                 queue.append(child)
+    found -= roots
     for child in found:
         _born[child] = born[child]
     return found
@@ -428,19 +431,32 @@ def _same_process(pid):
     return pid not in _born or " ".join(now.split()[1:]) == _born[pid]
 
 
-def end_processes(pids, grace):
-    """Ends the processes that are still alive, and returns once they are gone."""
-    def alive():
-        return [pid for pid in pids if _same_process(pid)]
+def end_processes(pids, grace, mark=None):
+    """Ends the processes that are still alive, and returns once they are gone.
 
-    for pid in alive():
-        _signal(pid, signal.SIGTERM)
+    A process may start another while it is being stopped. So each time
+    round, what the remaining ones have started, and whatever carries the
+    run's `mark`, is added, told to stop, and waited for like the rest.
+    """
+    pids = set(pids)
+    told = set()
     deadline = time.monotonic() + grace
-    while alive():
-        if time.monotonic() >= deadline:
-            for pid in alive():
+    while True:
+        left = {pid for pid in pids if _same_process(pid)}
+        if left:
+            pids |= descendants(left)
+        if mark:
+            pids |= marked(mark)
+        left = {pid for pid in pids if _same_process(pid)}
+        if not left:
+            return
+        killing = time.monotonic() >= deadline
+        for pid in left:
+            if killing:
                 _signal(pid, signal.SIGKILL)
-            deadline = float("inf")
+            elif pid not in told:
+                _signal(pid, signal.SIGTERM)
+                told.add(pid)
         time.sleep(0.05)
 
 
@@ -568,7 +584,7 @@ def run_to_the_end(command, timeout=None, **kwargs):
             if child.poll() is None:
                 started |= descendants(child.pid)
             end_group(child.pid, KILL_AFTER, reap=child.poll)
-            end_processes(started | marked(mark), KILL_AFTER)
+            end_processes(started | marked(mark), KILL_AFTER, mark)
         finally:
             for signum, handler in previous.items():
                 signal.signal(signum, handler)
