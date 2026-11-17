@@ -299,6 +299,52 @@ class RunToTheEndTest(LockTestCase):
         except ProcessLookupError:
             pass
 
+    def test_what_the_command_started_in_a_group_of_its_own_is_ended_too(self):
+        # Playwright starts its web server and browsers detached. Here the
+        # command ignores its interrupt, so it is still there to be asked
+        # what it started, and is then stopped by force.
+        command = ("import signal, subprocess, sys, time\n"
+                   "signal.signal(signal.SIGINT, signal.SIG_IGN)\n"
+                   "p = subprocess.Popen([sys.executable, '-c', 'import signal, time; "
+                   "signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(60)'], "
+                   "start_new_session=True)\n"
+                   "print(p.pid, flush=True)\n"
+                   "time.sleep(60)\n")
+        tool_code = ("import sys, device_lock\n"
+                     "device_lock.INTERRUPT_GRACE = 1.5\n"
+                     "device_lock.KILL_AFTER = 0.5\n"
+                     f"device_lock.run_to_the_end([sys.executable, '-c', {command!r}])\n")
+        tool = subprocess.Popen([sys.executable, "-c", tool_code], cwd=TOOL, env=self.env(),
+                                stdout=subprocess.PIPE, text=True)
+        self.addCleanup(tool.stdout.close)
+        detached = int(tool.stdout.readline())
+        self.addCleanup(self.kill, detached)
+        tool.terminate()
+        self.assertEqual(tool.wait(timeout=30), 128 + 15)
+        try:
+            os.kill(detached, 0)
+            self.fail("a detached process of the command outlived the tool")
+        except ProcessLookupError:
+            pass
+
+    def test_descendants_are_found_across_process_groups(self):
+        code = ("import subprocess, sys, time\n"
+                "p = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'], "
+                "start_new_session=True)\n"
+                "print(p.pid, flush=True)\ntime.sleep(30)\n")
+        parent = subprocess.Popen([sys.executable, "-c", code], stdout=subprocess.PIPE, text=True)
+        self.addCleanup(parent.stdout.close)
+        grandchild = int(parent.stdout.readline())
+        try:
+            self.assertEqual(device_lock.descendants(os.getpid()) & {parent.pid, grandchild},
+                             {parent.pid, grandchild})
+            self.assertEqual(device_lock.descendants(parent.pid), {grandchild})
+        finally:
+            parent.kill()
+            parent.wait()
+            device_lock.end_processes({grandchild}, 0.2)
+        self.assertFalse(device_lock._alive(grandchild) and not device_lock._is_zombie(grandchild))
+
     def test_stopped_tool_stays_until_its_command_has_cleaned_up_and_keeps_the_lock(self):
         # As tool/voiceover_web.py under tool/evidence.py: the tool is told to
         # stop, and it is its command (Playwright) that restores VoiceOver.

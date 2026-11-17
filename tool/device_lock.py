@@ -333,6 +333,66 @@ def end_group(pgid, grace, reap=lambda: None):
         time.sleep(0.05)
 
 
+def descendants(pid):
+    """The pids of every process started, however indirectly, by `pid`.
+
+    Read from the process table, so it finds the ones that have left the
+    command's process group: Playwright starts its web server and its
+    browsers in groups of their own. A process whose parent has already
+    ended is no longer found, which is why run_to_the_end looks while the
+    command is still alive.
+    """
+    try:
+        table = subprocess.run(["ps", "-axo", "pid=,ppid="], capture_output=True, text=True,
+                               timeout=10).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return set()
+    children = {}
+    for line in table.splitlines():
+        parts = line.split()
+        if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
+            children.setdefault(int(parts[1]), []).append(int(parts[0]))
+    found, queue = set(), [pid]
+    while queue:
+        for child in children.get(queue.pop(), []):
+            if child not in found:
+                found.add(child)
+                queue.append(child)
+    return found
+
+
+def end_processes(pids, grace):
+    """Ends the processes that are still alive, and returns once they are gone."""
+    def alive():
+        return [pid for pid in pids if _alive(pid) and not _is_zombie(pid)]
+
+    for pid in alive():
+        _signal(pid, signal.SIGTERM)
+    deadline = time.monotonic() + grace
+    while alive():
+        if time.monotonic() >= deadline:
+            for pid in alive():
+                _signal(pid, signal.SIGKILL)
+            deadline = float("inf")
+        time.sleep(0.05)
+
+
+def _signal(pid, signum):
+    try:
+        os.kill(pid, signum)
+    except (ProcessLookupError, PermissionError):
+        pass
+
+
+def _is_zombie(pid):
+    try:
+        state = subprocess.run(["ps", "-o", "stat=", "-p", str(pid)], capture_output=True,
+                               text=True, timeout=10).stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    return state == "" or state.startswith("Z")
+
+
 # Seconds an interrupted command gets to end before run_to_the_end stops its
 # whole session. Shorter than the time tool/with_devices.py gives a stopped
 # tool, so that the tool is still there to do it.
@@ -359,10 +419,13 @@ def run_to_the_end(command, **kwargs):
     of its own, so that Ctrl-C in a terminal reaches only this process and
     pressing it twice still interrupts the command once. A command that has
     not ended INTERRUPT_GRACE seconds after its interrupt is stopped with
-    everything in its session, and killed if that does not end it.
+    everything in its session, and killed if that does not end it. Once
+    the command has ended, whatever is left of its session, and whatever it
+    had started outside it, is ended too before this process exits.
     """
     received = []
     interrupted_at = []
+    started = set()  # what the command had started, seen once it was interrupted
     child = subprocess.Popen(command, start_new_session=True, **child_fds(), **kwargs)
 
     def forward(signum, _frame):
@@ -386,6 +449,8 @@ def run_to_the_end(command, **kwargs):
             except subprocess.TimeoutExpired:
                 pass
             waited = time.monotonic() - interrupted_at[0] if interrupted_at else 0
+            if interrupted_at:
+                started |= descendants(child.pid)
             if stage == 0 and waited >= INTERRUPT_GRACE:
                 signal_group(child.pid, signal.SIGTERM)
                 stage = 1
@@ -396,6 +461,8 @@ def run_to_the_end(command, **kwargs):
             # Nothing the command started may outlive this tool: it is out
             # of reach of whoever stopped us. Wait until it has all gone.
             end_group(child.pid, KILL_AFTER, reap=child.poll)
+            # And what it had started in groups of their own.
+            end_processes(started, KILL_AFTER)
     finally:
         for signum, handler in previous.items():
             signal.signal(signum, handler)
