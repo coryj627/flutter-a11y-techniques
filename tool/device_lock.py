@@ -529,15 +529,16 @@ def run_to_the_end(command, **kwargs):
                 break
             except subprocess.TimeoutExpired:
                 pass
-            if not interrupted_at:
-                continue
             now = time.monotonic()
-            started |= descendants(child.pid) | marked(mark)
             if child.poll() is not None and ended_at is None:
                 ended_at = now
-            # Force at the deadline, or sooner once the command itself has
-            # ended and only what it left behind is keeping us here.
-            due = min(interrupted_at[0] + INTERRUPT_GRACE,
+            if not interrupted_at and ended_at is None:
+                continue  # running, and nobody has asked it to stop
+            started |= descendants(child.pid) | marked(mark)
+            # Force at the deadline after an interrupt, or sooner once the
+            # command itself has ended, interrupted or not, and only what it
+            # left behind is keeping us here.
+            due = min(interrupted_at[0] + INTERRUPT_GRACE if interrupted_at else float("inf"),
                       ended_at if ended_at is not None else float("inf"))
             if stage == 0 and now >= due:
                 signal_all(signal.SIGTERM)
@@ -545,12 +546,12 @@ def run_to_the_end(command, **kwargs):
             elif stage == 1 and now >= due + KILL_AFTER:
                 signal_all(signal.SIGKILL)
                 stage = 2
-        if received:
-            # Nothing the command started may outlive this tool: it is out
-            # of reach of whoever stopped us. Wait until it has all gone.
-            end_group(child.pid, KILL_AFTER, reap=child.poll)
-            # And what it had started in groups of their own.
-            end_processes(started | marked(mark), KILL_AFTER)
+        # Nothing the command started may outlive this call, however the
+        # command ended: it would be out of everyone's reach, and could go on
+        # driving a device after the lock is given up. First its session,
+        # then what it had started in groups of their own.
+        end_group(child.pid, KILL_AFTER, reap=child.poll)
+        end_processes(started | marked(mark), KILL_AFTER)
     finally:
         for signum, handler in previous.items():
             signal.signal(signum, handler)

@@ -225,6 +225,27 @@ class RunToTheEndTest(LockTestCase):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         self.assertEqual((run.returncode, run.stdout, run.stderr), (5, "out\n", "err\n"))
 
+    def test_detached_process_is_ended_when_the_command_ends_by_itself(self):
+        # Nobody stopped the tool; the command just finished, or failed.
+        for status in (0, 3):
+            for extra in (", stdout=subprocess.DEVNULL", ""):  # or holding the output
+                with self.subTest(status=status, extra=extra), \
+                        mock.patch.object(device_lock, "KILL_AFTER", 0.3):
+                    command = ("import subprocess, sys\n"
+                               "p = subprocess.Popen([sys.executable, '-c', 'import signal, time; "
+                               "signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(60)'], "
+                               f"start_new_session=True, close_fds=True{extra})\n"
+                               "sys.stderr.write(str(p.pid)); sys.stderr.flush()\n"
+                               f"sys.exit({status})\n")
+                    run = device_lock.run_to_the_end(
+                        [sys.executable, "-c", command], stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE, text=True)
+                    self.assertEqual(run.returncode, status)
+                    detached = int(run.stderr)
+                    self.addCleanup(self.kill, detached)
+                    self.assertFalse(device_lock._same_process(detached),
+                                     "a detached process outlived run_to_the_end")
+
     def test_command_is_out_of_reach_of_the_terminal_s_interrupts(self):
         # Ctrl-C goes to the terminal's whole process group. The command must
         # not be in it, or it would be interrupted behind the tool's back.
