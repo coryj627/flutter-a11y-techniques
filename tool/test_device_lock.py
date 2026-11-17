@@ -504,6 +504,23 @@ class WithDevicesTest(LockTestCase):
         self.assertFalse(device_lock._alive(detached) and not device_lock._is_zombie(detached),
                          "a detached process outlived run_group")
 
+    def test_detached_process_started_just_before_the_command_exits_is_ended(self):
+        # No look at the process table falls between its start and its
+        # parent's end (the watch interval is long): only its mark finds it.
+        with mock.patch.object(with_devices, "STRAGGLER_GRACE", 0.3), \
+                mock.patch.object(with_devices, "WATCH", 30):
+            read, write = os.pipe()
+            self.addCleanup(os.close, read)
+            status = with_devices.run_group(
+                [sys.executable, "-c", "import time; time.sleep(0.5); "
+                 + self.DETACHES_ONE.format(then="sys.exit(0)")], stdout=write)
+            os.close(write)
+        self.assertEqual(status, 0)
+        detached = int(os.read(read, 100))
+        self.addCleanup(self.kill, detached)
+        self.assertFalse(device_lock._alive(detached) and not device_lock._is_zombie(detached),
+                         "a detached process started late outlived run_group")
+
     def test_detached_process_is_ended_when_the_tool_is_stopped(self):
         tool = subprocess.Popen(
             [sys.executable, "-c",

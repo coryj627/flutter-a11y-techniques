@@ -24,6 +24,7 @@ import signal
 import subprocess
 import sys
 import time
+import uuid
 
 # Overrides the lock file's path. For tests.
 ENV_FILE = "FA11Y_DEVICE_LOCK_FILE"
@@ -352,7 +353,7 @@ def descendants(pid):
         parts = line.split(None, 2)
         if len(parts) == 3 and parts[0].isdigit() and parts[1].isdigit():
             children.setdefault(int(parts[1]), []).append(int(parts[0]))
-            born[int(parts[0])] = parts[2].strip()
+            born[int(parts[0])] = " ".join(parts[2].split())
     found, queue = set(), [pid]
     while queue:
         for child in children.get(queue.pop(), []):
@@ -361,6 +362,51 @@ def descendants(pid):
                 queue.append(child)
     for child in found:
         _born[child] = born[child]
+    return found
+
+
+# Set, to a value of its own, in the environment of each command a run
+# starts. Everything the command starts inherits it, wherever it ends up.
+ENV_RUN = "FA11Y_DEVICE_RUN"
+
+
+def run_mark():
+    """A new mark for one command, and the environment entry that carries it."""
+    return uuid.uuid4().hex
+
+
+def marked(mark):
+    """The pids of the processes that carry `mark` in their environment.
+
+    This finds what descendants() cannot: a process whose parent ended
+    before anyone looked, so that it is no longer anybody's descendant.
+    macOS shows the environment of the user's own processes, but not of
+    Apple's own programs (sh, sleep, xcodebuild), so this is a second net
+    under descendants(), not a replacement. Between them, what is not
+    caught is a process of an Apple program, started detached, whose parent
+    then ended within one look of the process table.
+    """
+    table = ""
+    # The first form is macOS's; the second is for Linux, where the tests of
+    # this file also run.
+    for form in (["ps", "-axEww", "-o", "pid=,lstart=,command="],
+                 ["ps", "axeww", "-o", "pid=,lstart=,args="]):
+        try:
+            run = subprocess.run(form, capture_output=True, text=True, timeout=10)
+        except (OSError, subprocess.TimeoutExpired):
+            continue
+        if run.returncode == 0 and run.stdout:
+            table = run.stdout
+            break
+    found = set()
+    for line in table.splitlines():
+        if f"{ENV_RUN}={mark}" not in line:
+            continue
+        parts = line.split(None, 1)
+        if len(parts) == 2 and parts[0].isdigit() and int(parts[0]) != os.getpid():
+            pid = int(parts[0])
+            found.add(pid)
+            _born[pid] = " ".join(parts[1].split()[:5])
     return found
 
 
@@ -379,7 +425,7 @@ def _same_process(pid):
         return False
     if not now or now.startswith("Z"):
         return False  # gone, or ended and waiting to be reaped
-    return pid not in _born or now.split(None, 1)[1].strip() == _born[pid]
+    return pid not in _born or " ".join(now.split()[1:]) == _born[pid]
 
 
 def end_processes(pids, grace):
@@ -447,6 +493,8 @@ def run_to_the_end(command, **kwargs):
     received = []
     interrupted_at = []
     started = set()  # what the command had started, seen once it was interrupted
+    mark = run_mark()
+    kwargs["env"] = {**kwargs.get("env", os.environ), ENV_RUN: mark}
     child = subprocess.Popen(command, start_new_session=True, **child_fds(), **kwargs)
 
     def forward(signum, _frame):
@@ -484,7 +532,7 @@ def run_to_the_end(command, **kwargs):
             if not interrupted_at:
                 continue
             now = time.monotonic()
-            started |= descendants(child.pid)
+            started |= descendants(child.pid) | marked(mark)
             if child.poll() is not None and ended_at is None:
                 ended_at = now
             # Force at the deadline, or sooner once the command itself has
@@ -502,7 +550,7 @@ def run_to_the_end(command, **kwargs):
             # of reach of whoever stopped us. Wait until it has all gone.
             end_group(child.pid, KILL_AFTER, reap=child.poll)
             # And what it had started in groups of their own.
-            end_processes(started, KILL_AFTER)
+            end_processes(started | marked(mark), KILL_AFTER)
     finally:
         for signum, handler in previous.items():
             signal.signal(signum, handler)

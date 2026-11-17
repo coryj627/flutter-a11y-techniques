@@ -49,6 +49,8 @@ def run_group(command, **kwargs):
     lock itself (device_lock.child_fds()), which covers the case where this
     process is killed outright.
     """
+    mark = device_lock.run_mark()
+    kwargs["env"] = {**kwargs.get("env", os.environ), device_lock.ENV_RUN: mark}
     child = subprocess.Popen(command, start_new_session=True, **device_lock.child_fds(),
                              **kwargs)
     started = set()
@@ -64,7 +66,7 @@ def run_group(command, **kwargs):
         for signum in previous:
             signal.signal(signum, signal.SIG_IGN)
         try:
-            end_group(child, started)
+            end_group(child, started, mark)
         finally:
             for signum, handler in previous.items():
                 signal.signal(signum, handler)
@@ -90,9 +92,9 @@ def wait_watching(child, started, timeout=None):
                 return None
 
 
-def end_group(child, started=None):
-    """Stops the child, then whatever is left of its process group and of
-    the processes in `started`."""
+def end_group(child, started=None, mark=None):
+    """Stops the child, then whatever is left of its process group, of the
+    processes in `started`, and of those that carry the run's `mark`."""
     started = set() if started is None else started
     if child.poll() is None:
         # The command first, alone, so that it can clean up with commands of
@@ -102,6 +104,10 @@ def end_group(child, started=None):
         if wait_watching(child, started, timeout=GRACE) is None:
             signal_group(child, signal.SIGKILL)
     device_lock.end_group(child.pid, STRAGGLER_GRACE, reap=child.poll)
+    if mark:
+        # Found by the mark they inherited, even if their parent ended
+        # between two looks at the process table.
+        started |= device_lock.marked(mark)
     device_lock.end_processes(started, STRAGGLER_GRACE)
 
 
