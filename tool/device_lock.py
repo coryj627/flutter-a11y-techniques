@@ -539,12 +539,15 @@ def end_processes(pids, grace, mark=None):
         # while it is still there to be asked.
         if mark:
             pids |= marked(mark)
-        left = {pid for pid in pids if _same_process(pid)}
-        if left:
-            pids |= descendants(left)
+        # Each process is identified once per round, and only the ones
+        # identified here, whose children are recorded just below, are
+        # signalled in this round. What turns up now is identified, asked
+        # for its own children, and signalled in the next.
         state = {pid: _identity(pid) for pid in pids}
         left = {pid for pid, what in state.items() if what == SAME}
         unsure = {pid for pid, what in state.items() if what == UNKNOWN}
+        if left:
+            pids |= descendants(left)
         if not left and not unsure:
             return
         # One that cannot be identified is waited for, not signalled and not

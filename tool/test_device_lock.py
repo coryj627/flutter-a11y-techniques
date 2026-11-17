@@ -652,6 +652,36 @@ class RunToTheEndTest(LockTestCase):
         sent.assert_not_called()
         self.assertIsNone(stranger.poll(), "an unrelated process was stopped")
 
+    def test_worker_identified_only_on_a_later_look_is_asked_for_its_child_first(self):
+        # The first look at the worker fails. It has a detached child with
+        # no readable mark, known to nobody yet.
+        code = ("import subprocess, sys, time\n"
+                "h = subprocess.Popen(['/bin/sleep', '60'], start_new_session=True, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                "print(h.pid, flush=True)\ntime.sleep(60)\n")
+        worker = subprocess.Popen([sys.executable, "-c", code], stdout=subprocess.PIPE, text=True,
+                                  start_new_session=True)
+        self.addCleanup(worker.stdout.close)
+        self.addCleanup(worker.wait)
+        self.addCleanup(worker.kill)
+        child = int(worker.stdout.readline())
+        self.addCleanup(self.kill, child)
+        real_run = subprocess.run
+        failures = []
+
+        def flaky(command, **kwargs):
+            if command[:2] == ["ps", "-o"] and command[-1] == str(worker.pid) and not failures:
+                failures.append(1)
+                return subprocess.CompletedProcess(command, 1, "", "ps: failed")
+            return real_run(command, **kwargs)
+
+        with mock.patch.object(device_lock.subprocess, "run", side_effect=flaky):
+            device_lock.end_processes({worker.pid}, 0.3)
+        self.assertEqual(failures, [1])
+        worker.wait(timeout=10)
+        self.assertFalse(device_lock._same_process(child),
+                         "the child of a worker identified late was left running")
+
     def test_a_recorded_pid_now_used_by_another_process_is_left_alone(self):
         victim = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
         self.addCleanup(victim.wait)
