@@ -564,7 +564,7 @@ class RunToTheEndTest(LockTestCase):
             return real_run(command, **kwargs)
 
         with mock.patch.object(device_lock.subprocess, "run", side_effect=flaky):
-            self.assertTrue(device_lock._same_process(worker.pid))
+            self.assertEqual(device_lock._identity(worker.pid), device_lock.UNKNOWN)
             device_lock.end_processes({worker.pid}, 0.3)
         self.assertEqual(len(failures), 3)
         self.assertIsNotNone(worker.wait(timeout=10), "the worker escaped the cleanup")
@@ -582,7 +582,7 @@ class RunToTheEndTest(LockTestCase):
             return real_run(command, **kwargs)
 
         with mock.patch.object(device_lock.subprocess, "run", side_effect=failing):
-            self.assertTrue(device_lock._same_process(worker.pid))
+            self.assertEqual(device_lock._identity(worker.pid), device_lock.UNKNOWN)
             device_lock.end_processes({worker.pid}, 0.3)
         self.assertIsNotNone(worker.wait(timeout=10), "the worker escaped the cleanup")
         # And a pid nothing has is still reported gone when the look fails.
@@ -628,6 +628,29 @@ class RunToTheEndTest(LockTestCase):
                          lambda: device_lock.marked("x")):
                 with self.assertRaisesRegex(device_lock.LookFailed, "process table"):
                     look()
+
+    def test_unidentified_process_on_a_reused_pid_is_never_signalled(self):
+        # A recorded pid now belongs to a stranger, and the looks that would
+        # show it fail. It must not be signalled on the strength of the pid
+        # merely existing; and the clean-up must not claim to be complete.
+        stranger = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+        self.addCleanup(stranger.wait)
+        self.addCleanup(stranger.kill)
+        real_run = subprocess.run
+
+        def failing(command, **kwargs):
+            if command[:2] == ["ps", "-o"]:
+                return subprocess.CompletedProcess(command, 1, "", "ps: failed")
+            return real_run(command, **kwargs)
+
+        with mock.patch.dict(device_lock._born, {stranger.pid: "Mon Jan  1 00:00:00 2001"}), \
+                mock.patch.object(device_lock, "UNSURE_GRACE", 0.3), \
+                mock.patch.object(device_lock, "_signal") as sent, \
+                mock.patch.object(device_lock.subprocess, "run", side_effect=failing):
+            with self.assertRaises(device_lock.LookFailed):
+                device_lock.end_processes({stranger.pid}, 0.1)
+        sent.assert_not_called()
+        self.assertIsNone(stranger.poll(), "an unrelated process was stopped")
 
     def test_a_recorded_pid_now_used_by_another_process_is_left_alone(self):
         victim = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])

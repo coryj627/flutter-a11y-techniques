@@ -486,23 +486,40 @@ def marked(mark):
 _born = {}
 
 
-def _same_process(pid):
-    """Whether `pid` is still the process descendants() recorded."""
+SAME, GONE, UNKNOWN = "same", "gone", "unknown"
+# Seconds end_processes waits for a process it cannot identify to become
+# identifiable or to go, before it gives up with LookFailed.
+UNSURE_GRACE = 30
+
+
+def _identity(pid):
+    """Whether `pid` is still the process that was recorded.
+
+    SAME: it is, so it is ours to stop. GONE: nothing has the pid, or it has
+    ended, or another process has the pid now. UNKNOWN: something has the
+    pid but ps would not say what; it may be ours and it may be a stranger,
+    so it is neither signalled nor counted as gone until a later look tells.
+    """
     try:
         run = subprocess.run(["ps", "-o", "stat=,lstart=", "-p", str(pid)], capture_output=True,
                              text=True, timeout=10)
+        now = run.stdout.strip()
     except (OSError, subprocess.TimeoutExpired):
-        # Could not look. That is not proof that it has gone: say it is
-        # there if anything with that pid is, and let the caller look again.
-        return _alive(pid)
-    now = run.stdout.strip()
+        now = ""
     if not now:
         # ps says nothing both for a pid nothing has and when it fails. Only
         # the system's own answer for the pid settles which.
-        return _alive(pid)
+        return UNKNOWN if _alive(pid) else GONE
     if now.startswith("Z"):
-        return False  # ended and waiting to be reaped
-    return pid not in _born or " ".join(now.split()[1:]) == _born[pid]
+        return GONE  # ended and waiting to be reaped
+    if pid not in _born or " ".join(now.split()[1:]) == _born[pid]:
+        return SAME
+    return GONE
+
+
+def _same_process(pid):
+    """Whether `pid` is known to be still the process that was recorded."""
+    return _identity(pid) == SAME
 
 
 def end_processes(pids, grace, mark=None):
@@ -515,6 +532,7 @@ def end_processes(pids, grace, mark=None):
     pids = set(pids)
     told = set()
     deadline = time.monotonic() + grace
+    unsure_since = None
     while True:
         # Marked ones first, then what any of them has started, and only
         # then is anything signalled: a process is asked for its children
@@ -524,9 +542,19 @@ def end_processes(pids, grace, mark=None):
         left = {pid for pid in pids if _same_process(pid)}
         if left:
             pids |= descendants(left)
-        left = {pid for pid in pids if _same_process(pid)}
-        if not left:
+        state = {pid: _identity(pid) for pid in pids}
+        left = {pid for pid, what in state.items() if what == SAME}
+        unsure = {pid for pid, what in state.items() if what == UNKNOWN}
+        if not left and not unsure:
             return
+        # One that cannot be identified is waited for, not signalled and not
+        # written off; if it stays that way the clean-up cannot be vouched for.
+        if unsure and not left:
+            unsure_since = unsure_since or time.monotonic()
+            if time.monotonic() - unsure_since > UNSURE_GRACE:
+                raise LookFailed()
+        else:
+            unsure_since = None
         killing = time.monotonic() >= deadline
         for pid in left:
             if killing:
