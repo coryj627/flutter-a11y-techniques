@@ -63,7 +63,13 @@ dump_state() {
   for pid in $(pgrep -x java); do
     timeout 30 "$JAVA_HOME/bin/jcmd" "$pid" Thread.print > "$d/host-java-$pid.txt" 2>&1
   done
+  cp ~/.android/avd/*.avd/config.ini "$d/emulator-config.ini" 2>/dev/null
+  find /tmp ~/.android -name '*.dmp' -newer "$DIAG_DIR/host-info.txt" -exec ls -l {} + > "$d/emulator-crash-dumps.txt" 2>&1
   timeout 20 adb devices -l > "$d/adb-devices.txt" 2>&1
+  if ! timeout 20 adb shell true > /dev/null 2>&1; then
+    say "the emulator does not answer; saved the runner's state only"
+    return
+  fi
   local t=40
   timeout $t adb shell uptime > "$d/device-uptime.txt" 2>&1
   timeout $t adb shell dumpsys activity activities > "$d/device-activities.txt" 2>&1
@@ -153,7 +159,9 @@ while kill -0 "$GRADLE_PID" 2>/dev/null; do
   window=$STALL_SECONDS
   [ "$lines" -eq 0 ] && window=$FIRST_TEST_SECONDS
 
-  if [ "$avail" -lt "$MIN_AVAILABLE_MB" ]; then
+  if ! pgrep -f qemu-system > /dev/null; then
+    REASON="the emulator has exited"
+  elif [ "$avail" -lt "$MIN_AVAILABLE_MB" ]; then
     REASON="the runner has only ${avail}MB of memory available (limit ${MIN_AVAILABLE_MB}MB)"
   elif [ $((now - LAST_PROGRESS)) -ge "$window" ]; then
     REASON="no test has started or finished for $((now - LAST_PROGRESS)) seconds"
@@ -175,5 +183,11 @@ done
 
 wait "$GRADLE_PID"
 rc=$?
+if [ "$rc" -ne 0 ]; then
+  say "Gradle failed with exit code $rc"
+  say "$(host_line)"
+  pgrep -f qemu-system > /dev/null || say "the emulator has exited"
+  dump_state
+fi
 cleanup
 exit $rc
