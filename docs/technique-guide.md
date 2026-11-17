@@ -165,8 +165,10 @@ has the node, count, and TalkBack helpers. Things learned:
   the runner runs low on memory, or the emulator exits, and saves the state
   of the runner and the emulator in the `android-diagnostics` artifact.
   It runs every file in the test folder that has a `@Test`, and fails if
-  the test runner's log shows no finished test for one of those classes,
-  so a new technique's test class needs no entry anywhere.
+  the test runner's log shows no finished test for one of those classes.
+  A last Gradle run asks the test runner for any test outside those
+  classes and fails if there is one. A new technique's test class needs
+  no entry anywhere.
 
 **L3 iOS (XCUITest).** Open examples with the `fluttera11y` URL scheme, with
 the three-attempt retry: the test class conforms to `TechniqueUITest`, or to

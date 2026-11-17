@@ -21,7 +21,13 @@
 #
 # The classes to run are every Kotlin file in the test folder that has a
 # @Test anywhere in it, a comment included: a file wrongly taken for a test
-# fails the run, where a test file wrongly passed over would not be noticed. The script fails if it finds none, if such a file does not
+# fails the run, where a test file wrongly passed over would not be noticed.
+#
+# After the batches, one more Gradle run asks the test runner for every test
+# that is in none of those classes. It should find none. If it runs any, or
+# never reaches the test runner, the script fails: the list above missed a
+# class, and this is the test runner's own word for it, whatever the file
+# looked like. The script fails if it finds none, if such a file does not
 # declare a class of its own name, or if, at the end, the test runner's log
 # does not show at least one finished test for every one of those classes.
 #
@@ -178,12 +184,13 @@ progress_lines() {
   echo "${n:-0}"
 }
 
-# Runs one batch of test classes (comma separated) and watches it. Returns
-# Gradle's exit code; if a check fails, saves the state and ends the script.
+# Runs Gradle with one test runner argument, such as class=A,B, and watches
+# it. Returns Gradle's exit code; if a check fails, saves the state and ends
+# the script.
 run_batch() {
-  local classes=$1 reason="" now line avail lines window base last_lines last_progress
+  local filter=$1 reason="" now line avail lines window base last_lines last_progress
   ./gradlew app:connectedDebugAndroidTest \
-    "-Pandroid.testInstrumentationRunnerArguments.class=$classes" "${GRADLE_ARGS[@]}" &
+    "-Pandroid.testInstrumentationRunnerArguments.$filter" "${GRADLE_ARGS[@]}" &
   GRADLE_PID=$!
   base=$(progress_lines)
   last_lines=$base
@@ -261,7 +268,7 @@ for ((i = 0; i < ${#CLASSES[@]}; i += BATCH_CLASSES)); do
   names=""
   for c in "${CLASSES[@]:i:BATCH_CLASSES}"; do names="$names${names:+,}$PKG.$c"; done
   say "batch $batch: ${CLASSES[*]:i:BATCH_CLASSES}"
-  run_batch "$names"
+  run_batch "class=$names"
   rc=$?
   # Each Gradle run replaces the last one's report; keep them all.
   if [ -d "$REPORTS/connected" ]; then
@@ -277,9 +284,33 @@ for ((i = 0; i < ${#CLASSES[@]}; i += BATCH_CLASSES)); do
   fi
 done
 
-# Every class must have run: the test runner's own log has to show a
-# finished test for each one. Give the log a moment to catch up first.
+# The sweep: every test that is in none of the classes above. There should
+# be none. Gradle's own result is not used, since it may count a run with
+# no tests as a failure; the test runner's log is.
+all=""
+for c in "${CLASSES[@]}"; do all="$all${all:+,}$PKG.$c"; done
 sleep "${SETTLE_SECONDS:-5}"
+before=$(wc -l < "$TESTS_LOG")
+say "sweep: any test outside those ${#CLASSES[@]} classes"
+run_batch "notClass=$all"
+rc=$?
+sleep "${SETTLE_SECONDS:-5}"
+swept=$(tail -n "+$((before + 1))" "$TESTS_LOG")
+if ! echo "$swept" | grep -qF "TestRunner: run started:"; then
+  FAILED=1
+  say "failed: the sweep never reached the test runner (Gradle exit code $rc), so nothing shows that every test class was in the list"
+  dump_state sweep-failed
+elif echo "$swept" | grep -qF "TestRunner: started: "; then
+  FAILED=1
+  say "failed: these tests are in a class the list missed, and ran only in the sweep:"
+  echo "$swept" | grep -F "TestRunner: started: " | sed -E 's/.*TestRunner: started: //'
+else
+  say "sweep: no test outside the list"
+fi
+[ -d "$REPORTS/connected" ] && { rm -rf "$REPORTS/sweep"; mv "$REPORTS/connected" "$REPORTS/sweep"; }
+
+# Every class must have run: the test runner's own log has to show a
+# finished test for each one.
 for c in "${CLASSES[@]}"; do
   n=$(grep -cF "TestRunner: finished: " "$TESTS_LOG" 2>/dev/null)
   ran=$(grep -F "TestRunner: finished: " "$TESTS_LOG" 2>/dev/null | grep -cF "($PKG.$c)")

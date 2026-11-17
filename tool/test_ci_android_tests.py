@@ -48,7 +48,7 @@ class Workspace:
         self.runner_log.write_text("")
         self.tool("adb", f"""\
             case "$*" in
-              *TestRunner:I*) cat "{self.runner_log}"; exec sleep 60 ;;
+              *TestRunner:I*) exec tail -n +1 -f "{self.runner_log}" ;;
               "logcat -c") exit 0 ;;
               logcat*) exec sleep 60 ;;
             esac
@@ -63,8 +63,15 @@ class Workspace:
         path.write_text("#!/bin/bash\n" + textwrap.dedent(body))
         path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
-    def gradle(self, body):
-        self.tool("gradlew", body, self.android)
+    def gradle(self, body, sweep=None):
+        """A stand-in Gradle. In the sweep it reports a run with no tests,
+        or runs `sweep` in its place."""
+        log = f"11-17 21:30:00.000  4037  4051 I TestRunner: run started: 0 tests"
+        sweep = sweep or f'echo "{log}" >> "{self.runner_log}"; exit 0'
+        self.tool("gradlew", f"""\
+            echo "$@" >> "$PWD/calls"
+            case "$*" in *notClass=*) {sweep} ;; esac
+            """ + textwrap.dedent(body), self.android)
 
     def finished(self, *names):
         self.runner_log.write_text("".join(
@@ -133,10 +140,9 @@ class ClassListTest(unittest.TestCase):
         self.assertIn("no class named C01ButtonTest", error)
 
     def test_runs_nothing_when_there_are_no_classes(self):
-        self.space.gradle('touch "$PWD/ran"; exit 0')
         result = self.space.run()
         self.assertEqual(result.returncode, 1)
-        self.assertFalse((self.space.android / "ran").exists())
+        self.assertFalse((self.space.android / "calls").exists())
 
 
 @unittest.skipUnless(sys.platform.startswith("linux"), "the script reads /proc")
@@ -146,17 +152,24 @@ class RunTest(unittest.TestCase):
         self.names = ["C01ButtonTest", "F01FieldsTest", "S01NamesTest"]
         for name in self.names:
             write_class(self.space.tests, name)
-        self.space.gradle('echo "$@" >> "$PWD/calls"; exit 0')
+        self.space.gradle("exit 0")
 
     def calls(self):
         return (self.space.android / "calls").read_text().splitlines()
+
+    def batches(self):
+        return [call for call in self.calls() if "notClass=" not in call]
 
     def test_passes_when_every_class_ran(self):
         self.space.finished(*self.names)
         result = self.space.run("-Pextra=1", BATCH_CLASSES="2")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        calls = self.calls()
+        calls = self.batches()
         self.assertEqual(len(calls), 2)
+        self.assertIn(
+            "notClass=" + ",".join(f"{PKG}.{name}" for name in self.names) + " -Pextra=1",
+            self.calls()[-1])
+        self.assertIn("sweep: no test outside the list", result.stdout)
         self.assertIn(f"class={PKG}.C01ButtonTest,{PKG}.F01FieldsTest -Pextra=1", calls[0])
         self.assertIn(f"class={PKG}.S01NamesTest -Pextra=1", calls[1])
 
@@ -168,12 +181,36 @@ class RunTest(unittest.TestCase):
 
     def test_fails_when_a_batch_fails_and_still_runs_the_rest(self):
         self.space.finished(*self.names)
-        self.space.gradle(
-            'echo "$@" >> "$PWD/calls"; case "$*" in *C01ButtonTest*) exit 3 ;; esac; exit 0')
+        self.space.gradle('case "$*" in *class=*C01ButtonTest*) exit 3 ;; esac; exit 0')
         result = self.space.run(BATCH_CLASSES="1")
         self.assertEqual(result.returncode, 1)
         self.assertIn("batch 1 failed: Gradle exit code 3", result.stdout)
-        self.assertEqual(len(self.calls()), 3)
+        self.assertEqual(len(self.batches()), 3)
+
+    def test_fails_when_the_sweep_finds_a_test_the_list_missed(self):
+        self.space.finished(*self.names)
+        line = f"11-17 21:30:00.000  4037  4051 I TestRunner: started: opens({PKG}.MissedTest)"
+        self.space.gradle("exit 0", sweep=(
+            f'echo "11-17 21:30:00.000  4037  4051 I TestRunner: run started: 1 tests"'
+            f' >> "{self.space.runner_log}"; echo "{line}" >> "{self.space.runner_log}"; exit 0'))
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("a class the list missed", result.stdout)
+        self.assertIn(f"opens({PKG}.MissedTest)", result.stdout)
+
+    def test_fails_when_the_sweep_never_reaches_the_test_runner(self):
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep="exit 1")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("the sweep never reached the test runner", result.stdout)
+
+    def test_a_sweep_gradle_calls_a_failure_passes_when_it_found_no_tests(self):
+        self.space.finished(*self.names)
+        log = "11-17 21:30:00.000  4037  4051 I TestRunner: run started: 0 tests"
+        self.space.gradle("exit 0", sweep=f'echo "{log}" >> "{self.space.runner_log}"; exit 1')
+        result = self.space.run()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_a_batch_that_ended_during_the_wait_keeps_its_own_result(self):
         # Gradle is over before the first check, and the time limit has
@@ -185,7 +222,7 @@ class RunTest(unittest.TestCase):
 
     def test_stops_a_run_that_is_still_going_past_the_limit(self):
         self.space.finished(*self.names)
-        self.space.gradle('[ "$1" = --stop ] && exit 0; exec sleep 60')
+        self.space.gradle('[ "$1" = --stop ] && exit 0; exec sleep 60', sweep="exec sleep 60")
         result = self.space.run(LIMIT_SECONDS="0")
         self.assertEqual(result.returncode, 1)
         self.assertIn("STOPPING THE TESTS", result.stdout)
