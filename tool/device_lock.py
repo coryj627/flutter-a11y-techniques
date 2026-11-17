@@ -295,20 +295,27 @@ def run_to_the_end(command, **kwargs):
     """subprocess.run for a command that drives a device and cleans up after itself.
 
     The command is given the lock (child_fds()). If this process is told to
-    stop or interrupted while it runs, the signal is passed on to the command
-    and this process stays until the command has ended, then exits with
-    128 + the signal's number. Playwright with Guidepup switches VoiceOver
-    off and puts its settings back when it is stopped, and xcodebuild ends
-    its test run; a tool that died at once would leave them cut off from
-    whoever is waiting for them to finish.
+    stop or interrupted while it runs, the command is interrupted and this
+    process stays until the command has ended, then exits with 128 + the
+    number of the signal it was sent. Playwright with Guidepup switches
+    VoiceOver off and puts its settings back when it is stopped, and
+    xcodebuild ends its test run; a tool that died at once would leave them
+    cut off from whoever is waiting for them to finish.
+
+    Whatever stops this process, the command gets one SIGINT. That is what
+    Playwright's runner treats as a request to stop cleanly, waiting for its
+    workers to tear down; SIGTERM ends the runner at once, and a second
+    SIGINT makes it give up on the teardown.
     """
     received = []
     child = subprocess.Popen(command, **child_fds(), **kwargs)
 
     def forward(signum, _frame):
         received.append(signum)
+        if len(received) > 1:
+            return
         try:
-            child.send_signal(signum)
+            child.send_signal(signal.SIGINT)
         except ProcessLookupError:
             pass
 

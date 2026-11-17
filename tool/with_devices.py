@@ -30,7 +30,7 @@ BUSY = 75  # EX_TEMPFAIL
 # throughout.
 GRACE = 300
 # Seconds anything the command left behind then gets before it is killed.
-STRAGGLER_GRACE = 10
+STRAGGLER_GRACE = 60
 
 
 def run_group(command, **kwargs):

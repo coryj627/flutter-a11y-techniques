@@ -230,11 +230,15 @@ class RunToTheEndTest(LockTestCase):
         # stop, and it is its command (Playwright) that restores VoiceOver.
         marker = os.path.join(self.dir.name, "restored")
         command = ("import signal, sys, time\n"
+                   "seen = []\n"
                    "def stop(*_):\n"
+                   "    seen.append(1)\n"
+                   "    if len(seen) > 1: sys.exit(9)  # a second interrupt\n"
                    "    time.sleep(1.5)\n"
                    f"    open({marker!r}, 'w').close()\n"
                    "    sys.exit(0)\n"
-                   "signal.signal(signal.SIGTERM, stop)\n"
+                   "# Playwright stops cleanly on SIGINT only; SIGTERM ends it at once.\n"
+                   "signal.signal(signal.SIGINT, stop)\n"
                    "print('up', flush=True)\n"
                    "time.sleep(60)\n")
         tool_code = ("import subprocess, sys, device_lock\n"
@@ -249,6 +253,9 @@ class RunToTheEndTest(LockTestCase):
                                      **device_lock.child_fds())
             os.close(write)
             self.assertEqual(os.read(read, 10).strip(), b"up")
+            # Told to stop twice over: the command is still interrupted once.
+            child.send_signal(15)
+            time.sleep(0.2)
             with_devices.end_group(child)
             lock.release()
         self.assertEqual(child.returncode, 128 + 15)
