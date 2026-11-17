@@ -548,6 +548,31 @@ class RunToTheEndTest(LockTestCase):
         self.assertFalse(device_lock._same_process(helper),
                          "the helper of a worker found during cleanup was left running")
 
+    def test_failing_to_look_is_not_taken_for_the_process_having_gone(self):
+        worker = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"],
+                                  start_new_session=True)
+        self.addCleanup(worker.wait)
+        self.addCleanup(worker.kill)
+        real_run = subprocess.run
+        failures = []
+
+        def flaky(command, **kwargs):
+            # The first few looks at this one process time out.
+            if command[:2] == ["ps", "-o"] and len(failures) < 3:
+                failures.append(1)
+                raise subprocess.TimeoutExpired(command, 10)
+            return real_run(command, **kwargs)
+
+        with mock.patch.object(device_lock.subprocess, "run", side_effect=flaky):
+            self.assertTrue(device_lock._same_process(worker.pid))
+            device_lock.end_processes({worker.pid}, 0.3)
+        self.assertEqual(len(failures), 3)
+        self.assertIsNotNone(worker.wait(timeout=10), "the worker escaped the cleanup")
+        # And a pid nothing has is still reported gone when the look fails.
+        with mock.patch.object(device_lock.subprocess, "run",
+                               side_effect=subprocess.TimeoutExpired(["ps"], 10)):
+            self.assertFalse(device_lock._same_process(worker.pid))
+
     def test_a_recorded_pid_now_used_by_another_process_is_left_alone(self):
         victim = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
         self.addCleanup(victim.wait)

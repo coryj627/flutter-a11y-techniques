@@ -470,7 +470,9 @@ def _same_process(pid):
         now = subprocess.run(["ps", "-o", "stat=,lstart=", "-p", str(pid)], capture_output=True,
                              text=True, timeout=10).stdout.strip()
     except (OSError, subprocess.TimeoutExpired):
-        return False
+        # Could not look. That is not proof that it has gone: say it is
+        # there if anything with that pid is, and let the caller look again.
+        return _alive(pid)
     if not now or now.startswith("Z"):
         return False  # gone, or ended and waiting to be reaped
     return pid not in _born or " ".join(now.split()[1:]) == _born[pid]
