@@ -28,7 +28,8 @@ class {name} : TechniqueTest {{
 """
 
 
-EMPTY_END = ("run finished: 0 tests, 0 failed, 0 ignored",)
+# What the test runner logs for a run with no tests in it, as seen on CI.
+EMPTY_RUN = ("run started: 1 tests", "run finished: 0 tests, 0 failed, 0 ignored")
 
 
 def write_class(folder, name, text=None):
@@ -69,7 +70,7 @@ class Workspace:
     def gradle(self, body, sweep=None):
         """A stand-in Gradle. In the sweep it reports a run with no tests,
         or runs `sweep` in its place."""
-        sweep = sweep or self.logs("run started: 0 tests", *EMPTY_END) + "exit 0"
+        sweep = sweep or self.logs(*EMPTY_RUN) + "exit 0"
         self.tool("gradlew", f"""\
             echo "$@" >> "$PWD/calls"
             case "$*" in *notClass=*) {sweep} ;; esac
@@ -216,6 +217,21 @@ class RunTest(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertIn("not an empty run", result.stdout)
 
+    def test_fails_when_the_sweep_ran_twice(self):
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep=self.space.logs(*EMPTY_RUN, *EMPTY_RUN) + "exit 0")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("not an empty run", result.stdout)
+
+    def test_fails_when_a_missed_class_is_ignored(self):
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep=self.space.logs(
+            "run started: 1 tests", "run finished: 0 tests, 0 failed, 1 ignored") + "exit 0")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("not an empty run", result.stdout)
+
     def test_fails_when_the_sweep_ends_after_it_started_with_tests(self):
         self.space.finished(*self.names)
         self.space.gradle("exit 0", sweep=self.space.logs("run started: 2 tests") + "exit 1")
@@ -225,7 +241,7 @@ class RunTest(unittest.TestCase):
 
     def test_fails_when_an_empty_sweep_never_finished(self):
         self.space.finished(*self.names)
-        self.space.gradle("exit 0", sweep=self.space.logs("run started: 0 tests") + "exit 0")
+        self.space.gradle("exit 0", sweep=self.space.logs(EMPTY_RUN[0]) + "exit 0")
         result = self.space.run()
         self.assertEqual(result.returncode, 1)
         self.assertIn("not an empty run", result.stdout)
@@ -240,7 +256,7 @@ class RunTest(unittest.TestCase):
     def test_a_sweep_gradle_calls_a_failure_passes_when_it_found_no_tests(self):
         self.space.finished(*self.names)
         self.space.gradle(
-            "exit 0", sweep=self.space.logs("run started: 0 tests", *EMPTY_END) + "exit 1")
+            "exit 0", sweep=self.space.logs(*EMPTY_RUN) + "exit 1")
         result = self.space.run()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

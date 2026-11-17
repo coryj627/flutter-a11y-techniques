@@ -297,17 +297,19 @@ rc=$?
 sleep "${SETTLE_SECONDS:-5}"
 swept=$(tail -n "+$((before + 1))" "$TESTS_LOG")
 # The only sweep that passes is one the test runner itself reports as empty
-# from start to end: it started with 0 tests, finished with 0 tests and 0
-# failed, and logged no other start, test or failure. A class that fails
-# before its first test starts has a count above 0 and no "started:" line.
+# from start to end: one start, a finish with 0 tests, 0 failed and 0
+# ignored, and nothing else logged: no test, failure or second run. The
+# count at the start is not used: the test runner gives 1 for a run with
+# no tests in it. A class that fails before its first test starts logs the
+# failure and finishes with 1 failed.
 other=$(echo "$swept" | grep -F "TestRunner: " \
-  | grep -vE "TestRunner: (run started: 0 tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
+  | grep -vE "TestRunner: (run started: [0-9]+ tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
 if ! echo "$swept" | grep -qF "TestRunner: run started:"; then
   FAILED=1
   say "failed: the sweep never reached the test runner (Gradle exit code $rc), so nothing shows that every test class was in the list"
   dump_state sweep-failed
 elif [ -n "$other" ] \
-  || ! echo "$swept" | grep -qE "TestRunner: run started: 0 tests[[:space:]]*$" \
+  || [ "$(echo "$swept" | grep -cF "TestRunner: run started:")" -ne 1 ] \
   || ! echo "$swept" | grep -qE "TestRunner: run finished: 0 tests, 0 failed, 0 ignored[[:space:]]*$"; then
   FAILED=1
   say "failed: the sweep was not an empty run from start to end (Gradle exit code $rc). A test class is missing from the list, or the sweep did not finish. The test runner logged:"
