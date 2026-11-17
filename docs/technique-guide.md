@@ -156,15 +156,14 @@ has the node, count, and TalkBack helpers. Things learned:
   accessibility action leaves a field's hint in place.
 - `connectedDebugAndroidTest` uninstalls the app when it finishes.
 - Espresso cannot see Flutter content.
-- On CI each test runs in a process of its own (the test orchestrator,
-  `-PtestOrchestrator=true`). In one process every example a test opens
-  leaves about 55 MB of graphics memory behind in the emulator; a full run
-  used up the runner's 16 GB and froze it near test 90. Local runs, one
-  technique at a time, run in one process.
-- On CI `tool/ci_android_tests.sh` runs the tests. It stops the run and
-  fails if no test starts or finishes for five minutes, the runner runs low
-  on memory, or the emulator exits, and saves the state of the runner and
-  the emulator in the `android-diagnostics` artifact.
+- On CI, `tool/ci_android_tests.sh` runs the test classes four at a time,
+  one Gradle run per batch, so each batch has a test process of its own.
+  Every example a test opens leaves about 55 MB of graphics memory in the
+  emulator until the test process ends; with every test in one process the
+  runner's 16 GB ran out near test 90 and the runner froze. The script also
+  stops the run and fails if no test starts or finishes for five minutes,
+  the runner runs low on memory, or the emulator exits, and saves the state
+  of the runner and the emulator in the `android-diagnostics` artifact.
 
 **L3 iOS (XCUITest).** Open examples with the `fluttera11y` URL scheme, with
 the three-attempt retry: the test class conforms to `TechniqueUITest`, or to

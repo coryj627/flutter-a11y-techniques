@@ -4,8 +4,6 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-val useTestOrchestrator = providers.gradleProperty("testOrchestrator").orNull == "true"
-
 android {
     namespace = "dev.fluttera11y.flutter_a11y_techniques"
     compileSdk = flutter.compileSdkVersion
@@ -30,18 +28,6 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    // CI runs every test in a process of its own (-PtestOrchestrator=true).
-    // In one long-lived process each example the tests open leaves graphics
-    // memory behind in the emulator, and a full run used up the CI runner's
-    // memory. Local runs leave this off: they run one technique's tests, and
-    // the device lock's clean-up stops the app's processes, which would not
-    // stop the orchestrator.
-    if (useTestOrchestrator) {
-        testOptions {
-            execution = "ANDROIDX_TEST_ORCHESTRATOR"
-        }
     }
 
     buildTypes {
@@ -70,8 +56,4 @@ dependencies {
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.4.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
     androidTestImplementation("androidx.test.espresso:espresso-accessibility:3.7.0")
-    if (useTestOrchestrator) {
-        androidTestUtil("androidx.test:orchestrator:1.6.1")
-        androidTestUtil("androidx.test.services:test-services:1.6.0")
-    }
 }

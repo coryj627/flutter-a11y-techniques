@@ -1,29 +1,39 @@
 #!/bin/bash
 # Runs the Android instrumented tests on CI and watches them.
 #
-# The android job used to hang now and then: progress stopped, and nothing
-# more was printed until GitHub's job time limit. This script runs Gradle in
-# the background and checks every 10 seconds that
+# The test classes run in batches of BATCH_CLASSES, one Gradle run each, so
+# that each batch has a test process of its own. In one process that runs
+# every test, each example a test opens leaves graphics memory behind in the
+# emulator (about 55 MB each); near test 90 the runner ran out of memory and
+# froze, and the job sat silent until GitHub's time limit. The memory is
+# given back when the test process ends.
+#
+# Gradle runs in the background, and every 10 seconds this script checks that
 #   - a test has started or finished in the last STALL_SECONDS (from the
 #     test runner's own log on the device, not Gradle's progress line),
-#   - the run has not gone on longer than LIMIT_SECONDS, and
-#   - the runner has at least MIN_AVAILABLE_MB of memory available.
-# If any check fails it prints why, saves the state of the runner, the
+#   - the run has not gone on longer than LIMIT_SECONDS,
+#   - the runner has at least MIN_AVAILABLE_MB of memory available, and
+#   - the emulator is still running.
+# If a check fails it prints why, saves the state of the runner, the
 # emulator and the test process to DIAG_DIR, stops Gradle, and fails. It
 # also keeps a record of the runner's memory and the emulator's log for
 # every run, so a passing run can be compared with a failing one.
 #
 # Run from android/, as the emulator runner action does. Arguments are
-# passed to Gradle.
+# passed to Gradle. Every batch runs even if an earlier one failed; the
+# script fails if any did.
 set -u
 
 DIAG_DIR=${DIAG_DIR:-$PWD/../build/android-diagnostics}
 STALL_SECONDS=${STALL_SECONDS:-300}
-# Before the first test starts Gradle compiles and installs; allow longer.
+# Before a batch's first test starts Gradle compiles and installs; allow longer.
 FIRST_TEST_SECONDS=${FIRST_TEST_SECONDS:-600}
-LIMIT_SECONDS=${LIMIT_SECONDS:-1500}
+LIMIT_SECONDS=${LIMIT_SECONDS:-1800}
 MIN_AVAILABLE_MB=${MIN_AVAILABLE_MB:-600}
+BATCH_CLASSES=${BATCH_CLASSES:-4}
 PKG=dev.fluttera11y.flutter_a11y_techniques
+TEST_DIR=app/src/androidTest/kotlin/dev/fluttera11y/flutter_a11y_techniques
+REPORTS=$PWD/../build/app/reports/androidTests
 
 mkdir -p "$DIAG_DIR"
 HOST_LOG=$DIAG_DIR/host-memory.log
@@ -32,7 +42,7 @@ TESTS_LOG=$DIAG_DIR/test-runner.log
 say() { echo "WATCHDOG $(date -u +%H:%M:%S) $*"; }
 
 # One line about the runner: memory available, swap used, memory pressure,
-# load, the emulator's and the biggest Java process's resident size, disk.
+# load, the emulator's and all Java processes' resident size, disk.
 host_line() {
   local avail swap_total swap_free psi load qemu java disk
   avail=$(awk '/^MemAvailable:/ {print int($2/1024)}' /proc/meminfo)
@@ -48,10 +58,12 @@ host_line() {
 
 available_mb() { awk '/^MemAvailable:/ {print int($2/1024)}' /proc/meminfo; }
 
-# Everything worth knowing when the run is stuck. Each command has its own
-# time limit, since adb itself may be what is stuck.
+# The state of the runner and the emulator, in DIAG_DIR/<name>. Each command
+# has its own time limit, since adb itself may be what is stuck. With
+# "full", also the test process's thread stacks and a bugreport, which
+# restart adb as root and take a few minutes; only for a run that is stuck.
 dump_state() {
-  local d=$DIAG_DIR/state
+  local d=$DIAG_DIR/$1 depth=${2:-light}
   mkdir -p "$d"
   say "saving the state of the runner and the emulator to $d"
   {
@@ -60,9 +72,6 @@ dump_state() {
   } > "$d/host.txt" 2>&1
   ps aux --sort=-rss > "$d/host-ps.txt" 2>&1
   timeout 20 sudo dmesg -T > "$d/host-dmesg.txt" 2>&1
-  for pid in $(pgrep -x java); do
-    timeout 30 "$JAVA_HOME/bin/jcmd" "$pid" Thread.print > "$d/host-java-$pid.txt" 2>&1
-  done
   cp ~/.android/avd/*.avd/config.ini "$d/emulator-config.ini" 2>/dev/null
   find /tmp ~/.android -name '*.dmp' -newer "$DIAG_DIR/host-info.txt" -exec ls -l {} + > "$d/emulator-crash-dumps.txt" 2>&1
   timeout 20 adb devices -l > "$d/adb-devices.txt" 2>&1
@@ -73,29 +82,34 @@ dump_state() {
   local t=40
   timeout $t adb shell uptime > "$d/device-uptime.txt" 2>&1
   timeout $t adb shell dumpsys activity activities > "$d/device-activities.txt" 2>&1
-  timeout $t adb shell dumpsys activity processes > "$d/device-processes.txt" 2>&1
   timeout $t adb shell dumpsys window windows > "$d/device-windows.txt" 2>&1
   timeout $t adb shell dumpsys meminfo > "$d/device-meminfo.txt" 2>&1
-  timeout $t adb shell dumpsys meminfo $PKG > "$d/device-meminfo-app.txt" 2>&1
-  timeout $t adb shell ps -A -T > "$d/device-threads.txt" 2>&1
-  timeout $t adb shell top -b -n 1 > "$d/device-top.txt" 2>&1
   timeout $t adb exec-out screencap -p > "$d/device-screen.png" 2>/dev/null
   timeout $t adb logcat -d -b crash > "$d/device-crash-log.txt" 2>&1
-  # Thread stacks of the app, which is also the test process. Taking them
-  # needs root, and restarting adb as root ends the test run's connection,
-  # so this comes after everything that does not.
-  timeout $t adb root > "$d/device-app-stacks.txt" 2>&1
-  sleep 3
-  timeout $t adb wait-for-device
-  local pid
-  pid=$(timeout $t adb shell pidof $PKG | tr -d '\r')
-  echo "app pid: ${pid:-none}" >> "$d/device-app-stacks.txt"
-  for p in $pid; do
-    timeout $t adb shell debuggerd -j "$p" >> "$d/device-app-stacks.txt" 2>&1
-    timeout $t adb shell debuggerd "$p" > "$d/device-app-native-stacks-$p.txt" 2>&1
-  done
-  timeout $t adb shell 'ls -l /data/anr /data/tombstones' > "$d/device-anr-list.txt" 2>&1
-  timeout 300 adb bugreport "$d/device-bugreport.zip" > "$d/device-bugreport.txt" 2>&1
+  if [ "$depth" = full ]; then
+    for pid in $(pgrep -x java); do
+      timeout 30 "$JAVA_HOME/bin/jcmd" "$pid" Thread.print > "$d/host-java-$pid.txt" 2>&1
+    done
+    timeout $t adb shell dumpsys activity processes > "$d/device-processes.txt" 2>&1
+    timeout $t adb shell dumpsys meminfo $PKG > "$d/device-meminfo-app.txt" 2>&1
+    timeout $t adb shell ps -A -T > "$d/device-threads.txt" 2>&1
+    timeout $t adb shell top -b -n 1 > "$d/device-top.txt" 2>&1
+    # Thread stacks of the app, which is also the test process. Taking them
+    # needs root, and restarting adb as root ends the test run's connection,
+    # so this comes after everything that does not.
+    timeout $t adb root > "$d/device-app-stacks.txt" 2>&1
+    sleep 3
+    timeout $t adb wait-for-device
+    local pid
+    pid=$(timeout $t adb shell pidof $PKG | tr -d '\r')
+    echo "app pid: ${pid:-none}" >> "$d/device-app-stacks.txt"
+    for p in $pid; do
+      timeout $t adb shell debuggerd -j "$p" >> "$d/device-app-stacks.txt" 2>&1
+      timeout $t adb shell debuggerd "$p" > "$d/device-app-native-stacks-$p.txt" 2>&1
+    done
+    timeout $t adb shell 'ls -l /data/anr /data/tombstones' > "$d/device-anr-list.txt" 2>&1
+    timeout 300 adb bugreport "$d/device-bugreport.zip" > "$d/device-bugreport.txt" 2>&1
+  fi
   say "state saved"
 }
 
@@ -115,6 +129,66 @@ cleanup() {
   say "lowest memory available during the run: ${MIN_SEEN}MB"
 }
 
+progress_lines() {
+  local n
+  n=$(grep -cE 'TestRunner: (started|finished):' "$TESTS_LOG" 2>/dev/null)
+  echo "${n:-0}"
+}
+
+# Runs one batch of test classes (comma separated) and watches it. Returns
+# Gradle's exit code; if a check fails, saves the state and ends the script.
+run_batch() {
+  local classes=$1 reason="" now line avail lines window base last_lines last_progress
+  ./gradlew app:connectedDebugAndroidTest \
+    "-Pandroid.testInstrumentationRunnerArguments.class=$classes" "${GRADLE_ARGS[@]}" &
+  GRADLE_PID=$!
+  base=$(progress_lines)
+  last_lines=$base
+  last_progress=$(date +%s)
+  while kill -0 "$GRADLE_PID" 2>/dev/null; do
+    sleep 10
+    now=$(date +%s)
+    line=$(host_line)
+    echo "$(date -u +%H:%M:%S) $line" >> "$HOST_LOG"
+    avail=$(available_mb)
+    [ "$avail" -lt "$MIN_SEEN" ] && MIN_SEEN=$avail
+    if [ $((now - LAST_PRINT)) -ge 60 ]; then
+      say "$line"
+      LAST_PRINT=$now
+    fi
+
+    lines=$(progress_lines)
+    if [ "$lines" -ne "$last_lines" ]; then
+      last_lines=$lines
+      last_progress=$now
+    fi
+    window=$STALL_SECONDS
+    [ "$lines" -eq "$base" ] && window=$FIRST_TEST_SECONDS
+
+    if ! pgrep -f qemu-system > /dev/null; then
+      reason="the emulator has exited"
+    elif [ "$avail" -lt "$MIN_AVAILABLE_MB" ]; then
+      reason="the runner has only ${avail}MB of memory available (limit ${MIN_AVAILABLE_MB}MB)"
+    elif [ $((now - last_progress)) -ge "$window" ]; then
+      reason="no test has started or finished for $((now - last_progress)) seconds"
+    elif [ $((now - START)) -ge "$LIMIT_SECONDS" ]; then
+      reason="the tests have run for $((now - START)) seconds (limit $LIMIT_SECONDS)"
+    fi
+    if [ -n "$reason" ]; then
+      say "STOPPING THE TESTS: $reason"
+      say "the last lines of the test runner's log:"
+      tail -6 "$TESTS_LOG"
+      say "$(host_line)"
+      dump_state stuck full
+      stop_gradle
+      cleanup
+      say "failed: $reason. The state is in the android-diagnostics artifact."
+      exit 1
+    fi
+  done
+  wait "$GRADLE_PID"
+}
+
 {
   echo "runner: $(nproc) processors, kernel $(uname -r)"
   free -m; swapon --show; df -h /
@@ -128,66 +202,37 @@ LOGCAT_PID=$!
 adb logcat -v threadtime -s TestRunner:I > "$TESTS_LOG" 2>&1 &
 TESTLOG_PID=$!
 
-./gradlew app:connectedDebugAndroidTest "$@" &
-GRADLE_PID=$!
-
+GRADLE_ARGS=("$@")
 START=$(date +%s)
-LAST_PROGRESS=$START
-LAST_LINES=0
 LAST_PRINT=0
 MIN_SEEN=$(available_mb)
-REASON=""
+FAILED=0
 
-while kill -0 "$GRADLE_PID" 2>/dev/null; do
-  sleep 10
-  now=$(date +%s)
-  line=$(host_line)
-  echo "$(date -u +%H:%M:%S) $line" >> "$HOST_LOG"
-  avail=$(available_mb)
-  [ "$avail" -lt "$MIN_SEEN" ] && MIN_SEEN=$avail
-  if [ $((now - LAST_PRINT)) -ge 60 ]; then
-    say "$line"
-    LAST_PRINT=$now
+# Every class that the runner runs, in name order.
+mapfile -t CLASSES < <(grep -l '^@RunWith' "$TEST_DIR"/*.kt | xargs -n1 basename | sed 's/\.kt$//' | sort)
+say "${#CLASSES[@]} test classes, in batches of $BATCH_CLASSES"
+batch=0
+for ((i = 0; i < ${#CLASSES[@]}; i += BATCH_CLASSES)); do
+  batch=$((batch + 1))
+  names=""
+  for c in "${CLASSES[@]:i:BATCH_CLASSES}"; do names="$names${names:+,}$PKG.$c"; done
+  say "batch $batch: ${CLASSES[*]:i:BATCH_CLASSES}"
+  run_batch "$names"
+  rc=$?
+  # Each Gradle run replaces the last one's report; keep them all.
+  if [ -d "$REPORTS/connected" ]; then
+    rm -rf "$REPORTS/batch-$batch"
+    mv "$REPORTS/connected" "$REPORTS/batch-$batch"
   fi
-
-  lines=$(grep -cE 'TestRunner: (started|finished):' "$TESTS_LOG" 2>/dev/null)
-  lines=${lines:-0}
-  if [ "$lines" -ne "$LAST_LINES" ]; then
-    LAST_LINES=$lines
-    LAST_PROGRESS=$now
-  fi
-  window=$STALL_SECONDS
-  [ "$lines" -eq 0 ] && window=$FIRST_TEST_SECONDS
-
-  if ! pgrep -f qemu-system > /dev/null; then
-    REASON="the emulator has exited"
-  elif [ "$avail" -lt "$MIN_AVAILABLE_MB" ]; then
-    REASON="the runner has only ${avail}MB of memory available (limit ${MIN_AVAILABLE_MB}MB)"
-  elif [ $((now - LAST_PROGRESS)) -ge "$window" ]; then
-    REASON="no test has started or finished for $((now - LAST_PROGRESS)) seconds"
-  elif [ $((now - START)) -ge "$LIMIT_SECONDS" ]; then
-    REASON="the tests have run for $((now - START)) seconds (limit $LIMIT_SECONDS)"
-  fi
-  if [ -n "$REASON" ]; then
-    say "STOPPING THE TESTS: $REASON"
-    say "the last lines of the test runner's log:"
-    tail -6 "$TESTS_LOG"
+  if [ "$rc" -ne 0 ]; then
+    FAILED=1
+    say "batch $batch failed: Gradle exit code $rc"
     say "$(host_line)"
-    dump_state
-    stop_gradle
-    cleanup
-    say "failed: $REASON. The state is in the android-diagnostics artifact."
-    exit 1
+    pgrep -f qemu-system > /dev/null || say "the emulator has exited"
+    dump_state "batch-$batch-failed"
   fi
 done
 
-wait "$GRADLE_PID"
-rc=$?
-if [ "$rc" -ne 0 ]; then
-  say "Gradle failed with exit code $rc"
-  say "$(host_line)"
-  pgrep -f qemu-system > /dev/null || say "the emulator has exited"
-  dump_state
-fi
 cleanup
-exit $rc
+[ "$FAILED" -ne 0 ] && say "failed: at least one batch failed; the reports are in the android-test-report artifact"
+exit $FAILED
