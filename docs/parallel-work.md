@@ -70,6 +70,14 @@ VoiceOver:
 Never start a device command without the lock, and do not hold the lock
 while thinking: run the command, read the result, release.
 
+The lock is passed down to every command a run starts, so it stays taken
+until the last of them has ended, even if the run itself is killed. If a
+waiting run says the holder "has ended", something it started is still
+alive: `lsof` on the lock file, as the message says, names it. The one
+long-lived case is the adb server, which keeps whatever it was started with
+(checked on this Mac); the tools start it before they take the lock so that
+it never has it, and `adb kill-server` frees a lock it does hold.
+
 The web VoiceOver recording turns VoiceOver on and takes over this Mac's
 screen and speech for several minutes. `tool/evidence.py` prints a warning
 and waits ten seconds before it. Nothing but `tool/voiceover_web.py` can
