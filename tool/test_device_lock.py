@@ -590,6 +590,45 @@ class RunToTheEndTest(LockTestCase):
                                side_effect=subprocess.TimeoutExpired(["ps"], 10)):
             self.assertFalse(device_lock._same_process(worker.pid))
 
+    def test_failed_reads_of_the_process_table_are_retried_not_taken_as_empty(self):
+        # The command leaves a detached worker and ends at once; for a
+        # while every read of the whole table fails.
+        command = ("import subprocess, sys\n"
+                   "p = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'], "
+                   "start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                   "sys.stderr.write(str(p.pid)); sys.stderr.flush()\n")
+        real_run = subprocess.run
+        failures = []
+
+        def flaky(command, **kwargs):
+            if command[0] == "ps" and any(a.startswith(("-ax", "ax")) for a in command[1:2]) \
+                    and len(failures) < 4:
+                failures.append(1)
+                return subprocess.CompletedProcess(command, 1, "", "ps: failed")
+            return real_run(command, **kwargs)
+
+        with mock.patch.object(device_lock, "KILL_AFTER", 0.3), \
+                mock.patch.object(device_lock, "LOOK_PAUSE", 0.05), \
+                mock.patch.object(device_lock.subprocess, "run", side_effect=flaky):
+            run = device_lock.run_to_the_end([sys.executable, "-c", command],
+                                             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                             text=True)
+        self.assertEqual(len(failures), 4)
+        worker = int(run.stderr)
+        self.addCleanup(self.kill, worker)
+        self.assertFalse(device_lock._same_process(worker),
+                         "a worker escaped while the process table could not be read")
+
+    def test_a_process_table_that_cannot_be_read_at_all_is_an_error(self):
+        with mock.patch.object(device_lock, "LOOK_PAUSE", 0), \
+                mock.patch.object(device_lock.subprocess, "run",
+                                  return_value=subprocess.CompletedProcess(["ps"], 1, "", "")):
+            for look in (lambda: device_lock.descendants(os.getpid()),
+                         lambda: device_lock.group_members(os.getpgid(0)),
+                         lambda: device_lock.marked("x")):
+                with self.assertRaisesRegex(device_lock.LookFailed, "process table"):
+                    look()
+
     def test_a_recorded_pid_now_used_by_another_process_is_left_alone(self):
         victim = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
         self.addCleanup(victim.wait)
@@ -889,11 +928,15 @@ class WithDevicesTest(LockTestCase):
                    "time.sleep(0.5)\n")
         child = subprocess.Popen([sys.executable, "-c", command], start_new_session=True)
         child.wait()
+        helper = None
         for _ in range(100):
-            if os.path.exists(helper_file) and open(helper_file).read():
-                break
+            if os.path.exists(helper_file):
+                with open(helper_file) as f:
+                    text = f.read()
+                if text:
+                    helper = int(text)
+                    break
             time.sleep(0.05)
-        helper = int(open(helper_file).read())
         self.addCleanup(self.kill, helper)
         with mock.patch.object(with_devices, "STRAGGLER_GRACE", 0.5), \
                 mock.patch.object(device_lock, "marked", return_value=set()):

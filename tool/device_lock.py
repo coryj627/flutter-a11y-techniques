@@ -312,13 +312,47 @@ def signal_group(pgid, signum):
         pass
 
 
+class LookFailed(RuntimeError):
+    """The process table could not be read, after several tries."""
+
+    def __init__(self):
+        super().__init__(
+            "Could not read the process table (ps failed repeatedly), so it cannot be "
+            "shown that everything this run started has ended. Check for processes it "
+            "left before using the devices again.")
+
+
+# How often a failed read of the process table is tried again, and the pause
+# between tries, in seconds.
+LOOK_TRIES = 6
+LOOK_PAUSE = 0.5
+
+
+def _process_table(*forms):
+    """The output of ps for the whole process table.
+
+    `forms` are the command lines to try, in order. A table is never empty
+    (this process is in it), so an empty answer or a failure is a failed
+    look, not a table with nothing in it: it is tried again, and after
+    LOOK_TRIES it raises LookFailed. Returning nothing here would let a
+    clean-up conclude that nothing is left running.
+    """
+    for attempt in range(LOOK_TRIES):
+        for form in forms:
+            try:
+                run = subprocess.run(form, capture_output=True, text=True, timeout=10)
+            except (OSError, subprocess.TimeoutExpired):
+                continue
+            if run.returncode == 0 and run.stdout.strip():
+                return run.stdout
+        if attempt + 1 < LOOK_TRIES:
+            time.sleep(LOOK_PAUSE)
+    raise LookFailed()
+
+
 def group_members(pgid):
     """The pids of the processes in a process group."""
-    try:
-        table = subprocess.run(["ps", "-axo", "pid=,pgid=,lstart="], capture_output=True,
-                               text=True, timeout=10).stdout
-    except (OSError, subprocess.TimeoutExpired):
-        return set()
+    table = _process_table(["ps", "-axo", "pid=,pgid=,lstart="])
     found = set()
     for line in table.splitlines():
         parts = line.split(None, 2)
@@ -386,11 +420,7 @@ def descendants(pid):
     ended is no longer found, which is why run_to_the_end looks while the
     command is still alive.
     """
-    try:
-        table = subprocess.run(["ps", "-axo", "pid=,ppid=,lstart="], capture_output=True,
-                               text=True, timeout=10).stdout
-    except (OSError, subprocess.TimeoutExpired):
-        return set()
+    table = _process_table(["ps", "-axo", "pid=,ppid=,lstart="])
     children, born = {}, {}
     for line in table.splitlines():
         parts = line.split(None, 2)
@@ -434,18 +464,10 @@ def marked(mark):
     caught is a process of an Apple program, started detached, whose parent
     then ended within one look of the process table.
     """
-    table = ""
     # The first form is macOS's; the second is for Linux, where the tests of
     # this file also run.
-    for form in (["ps", "-axEww", "-o", "pid=,lstart=,command="],
-                 ["ps", "axeww", "-o", "pid=,lstart=,args="]):
-        try:
-            run = subprocess.run(form, capture_output=True, text=True, timeout=10)
-        except (OSError, subprocess.TimeoutExpired):
-            continue
-        if run.returncode == 0 and run.stdout:
-            table = run.stdout
-            break
+    table = _process_table(["ps", "-axEww", "-o", "pid=,lstart=,command="],
+                           ["ps", "axeww", "-o", "pid=,lstart=,args="])
     found = set()
     for line in table.splitlines():
         if f"{ENV_RUN}={mark}" not in line:
