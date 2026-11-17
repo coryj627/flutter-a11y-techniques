@@ -353,27 +353,25 @@ class RunToTheEndTest(LockTestCase):
                    "start_new_session=True, stderr=subprocess.DEVNULL)\n"
                    "sys.stderr.write(str(p.pid)); sys.stderr.flush()\n")
         looks = []
-
-        def late(mark):
-            looks.append(1)
-            return {helper[0]} if helper and len(looks) > 6 else set()
-
         helper = []
         read, write = os.pipe()
         self.addCleanup(os.close, read)
 
-        def find_helper(*_):
+        def find_helper(started, *_):
+            looks.append(1)
             if not helper:
                 try:
                     helper.append(int(os.read(read, 100)))
                 except (BlockingIOError, ValueError):
                     pass
+            if helper and len(looks) > 6:
+                started.add(helper[0])
 
         os.set_blocking(read, False)
         started = time.monotonic()
         with mock.patch.object(device_lock, "KILL_AFTER", 0.3), \
                 mock.patch.object(device_lock, "record", side_effect=find_helper), \
-                mock.patch.object(device_lock, "marked", side_effect=late):
+                mock.patch.object(device_lock, "marked", return_value=set()):
             try:
                 run = device_lock.run_to_the_end([sys.executable, "-c", command],
                                                  stdout=subprocess.PIPE, stderr=write, text=True)
@@ -383,6 +381,30 @@ class RunToTheEndTest(LockTestCase):
         self.assertLess(time.monotonic() - started, 30)
         self.addCleanup(self.kill, helper[0])
         self.assertFalse(device_lock._same_process(helper[0]))
+
+    def test_marked_worker_found_while_output_drains_is_asked_for_its_child_first(self):
+        # The command ends at once. It leaves a marked worker that holds the
+        # captured output and has a detached child with no readable mark.
+        # The first time anyone sees the worker is during the wait for the
+        # output; its child must be on record before it is stopped.
+        child_file = os.path.join(self.dir.name, "child")
+        worker = ("import subprocess, sys, time\n"
+                  "h = subprocess.Popen(['/bin/sleep', '60'], start_new_session=True, "
+                  "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                  "open(sys.argv[1], 'w').write(str(h.pid))\n"
+                  "time.sleep(60)\n")
+        command = ("import subprocess, sys\n"
+                   f"subprocess.Popen([sys.executable, '-c', {worker!r}, {child_file!r}], "
+                   "start_new_session=True)\n")
+        with mock.patch.object(device_lock, "KILL_AFTER", 0.5):
+            run = device_lock.run_to_the_end([sys.executable, "-c", command],
+                                             stdout=subprocess.PIPE, text=True)
+        self.assertEqual(run.returncode, 0)
+        with open(child_file) as f:
+            child = int(f.read())
+        self.addCleanup(self.kill, child)
+        self.assertFalse(device_lock._same_process(child),
+                         "the child of a worker found late was left running")
 
     def test_command_is_out_of_reach_of_the_terminal_s_interrupts(self):
         # Ctrl-C goes to the terminal's whole process group. The command must

@@ -671,7 +671,6 @@ def run_to_the_end(command, timeout=None, **kwargs):
                 timed_out = True
             if not interrupted_at and ended_at is None and not timed_out:
                 continue  # running, and nobody has asked it to stop
-            started |= marked(mark)
             # Force at the deadline after an interrupt, or sooner once the
             # command itself has ended, interrupted or not, and only what it
             # left behind is keeping us here.
