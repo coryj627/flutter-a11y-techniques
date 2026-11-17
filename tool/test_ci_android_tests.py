@@ -28,6 +28,9 @@ class {name} : TechniqueTest {{
 """
 
 
+EMPTY_END = ("run finished: 0 tests, 0 failed, 0 ignored",)
+
+
 def write_class(folder, name, text=None):
     (folder / f"{name}.kt").write_text(text or TEST_CLASS.format(name=name))
 
@@ -49,7 +52,7 @@ class Workspace:
         self.tool("adb", f"""\
             case "$*" in
               *TestRunner:I*) exec tail -n +1 -f "{self.runner_log}" ;;
-              "logcat -c") exit 0 ;;
+              "logcat -c"|"logcat -d"*) exit 0 ;;
               logcat*) exec sleep 60 ;;
             esac
             exit 0
@@ -66,12 +69,17 @@ class Workspace:
     def gradle(self, body, sweep=None):
         """A stand-in Gradle. In the sweep it reports a run with no tests,
         or runs `sweep` in its place."""
-        log = f"11-17 21:30:00.000  4037  4051 I TestRunner: run started: 0 tests"
-        sweep = sweep or f'echo "{log}" >> "{self.runner_log}"; exit 0'
+        sweep = sweep or self.logs("run started: 0 tests", *EMPTY_END) + "exit 0"
         self.tool("gradlew", f"""\
             echo "$@" >> "$PWD/calls"
             case "$*" in *notClass=*) {sweep} ;; esac
             """ + textwrap.dedent(body), self.android)
+
+    def logs(self, *lines):
+        """Shell that adds these lines to the test runner's log."""
+        return "".join(
+            f'echo "11-17 21:30:00.000  4037  4051 I TestRunner: {line}" >> "{self.runner_log}"; '
+            for line in lines)
 
     def finished(self, *names):
         self.runner_log.write_text("".join(
@@ -189,14 +197,38 @@ class RunTest(unittest.TestCase):
 
     def test_fails_when_the_sweep_finds_a_test_the_list_missed(self):
         self.space.finished(*self.names)
-        line = f"11-17 21:30:00.000  4037  4051 I TestRunner: started: opens({PKG}.MissedTest)"
-        self.space.gradle("exit 0", sweep=(
-            f'echo "11-17 21:30:00.000  4037  4051 I TestRunner: run started: 1 tests"'
-            f' >> "{self.space.runner_log}"; echo "{line}" >> "{self.space.runner_log}"; exit 0'))
+        self.space.gradle("exit 0", sweep=self.space.logs(
+            "run started: 1 tests", f"started: opens({PKG}.MissedTest)",
+            f"finished: opens({PKG}.MissedTest)",
+            "run finished: 1 tests, 0 failed, 0 ignored") + "exit 0")
         result = self.space.run()
         self.assertEqual(result.returncode, 1)
-        self.assertIn("a class the list missed", result.stdout)
-        self.assertIn(f"opens({PKG}.MissedTest)", result.stdout)
+        self.assertIn("not an empty run", result.stdout)
+        self.assertIn(f"started: opens({PKG}.MissedTest)", result.stdout)
+
+    def test_fails_when_a_missed_class_fails_before_its_first_test(self):
+        # A failure in @BeforeClass: a count above 0 and no test ever starts.
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep=self.space.logs(
+            "run started: 1 tests", f"failed: initializationError({PKG}.MissedTest)",
+            "run finished: 0 tests, 1 failed, 0 ignored") + "exit 1")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("not an empty run", result.stdout)
+
+    def test_fails_when_the_sweep_ends_after_it_started_with_tests(self):
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep=self.space.logs("run started: 2 tests") + "exit 1")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("not an empty run", result.stdout)
+
+    def test_fails_when_an_empty_sweep_never_finished(self):
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep=self.space.logs("run started: 0 tests") + "exit 0")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("not an empty run", result.stdout)
 
     def test_fails_when_the_sweep_never_reaches_the_test_runner(self):
         self.space.finished(*self.names)
@@ -207,8 +239,8 @@ class RunTest(unittest.TestCase):
 
     def test_a_sweep_gradle_calls_a_failure_passes_when_it_found_no_tests(self):
         self.space.finished(*self.names)
-        log = "11-17 21:30:00.000  4037  4051 I TestRunner: run started: 0 tests"
-        self.space.gradle("exit 0", sweep=f'echo "{log}" >> "{self.space.runner_log}"; exit 1')
+        self.space.gradle(
+            "exit 0", sweep=self.space.logs("run started: 0 tests", *EMPTY_END) + "exit 1")
         result = self.space.run()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

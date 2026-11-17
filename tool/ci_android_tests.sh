@@ -296,14 +296,23 @@ run_batch "notClass=$all"
 rc=$?
 sleep "${SETTLE_SECONDS:-5}"
 swept=$(tail -n "+$((before + 1))" "$TESTS_LOG")
+# The only sweep that passes is one the test runner itself reports as empty
+# from start to end: it started with 0 tests, finished with 0 tests and 0
+# failed, and logged no other start, test or failure. A class that fails
+# before its first test starts has a count above 0 and no "started:" line.
+other=$(echo "$swept" | grep -F "TestRunner: " \
+  | grep -vE "TestRunner: (run started: 0 tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
 if ! echo "$swept" | grep -qF "TestRunner: run started:"; then
   FAILED=1
   say "failed: the sweep never reached the test runner (Gradle exit code $rc), so nothing shows that every test class was in the list"
   dump_state sweep-failed
-elif echo "$swept" | grep -qF "TestRunner: started: "; then
+elif [ -n "$other" ] \
+  || ! echo "$swept" | grep -qE "TestRunner: run started: 0 tests[[:space:]]*$" \
+  || ! echo "$swept" | grep -qE "TestRunner: run finished: 0 tests, 0 failed, 0 ignored[[:space:]]*$"; then
   FAILED=1
-  say "failed: these tests are in a class the list missed, and ran only in the sweep:"
-  echo "$swept" | grep -F "TestRunner: started: " | sed -E 's/.*TestRunner: started: //'
+  say "failed: the sweep was not an empty run from start to end (Gradle exit code $rc). A test class is missing from the list, or the sweep did not finish. The test runner logged:"
+  echo "$swept" | grep -F "TestRunner: " | sed -E 's/.*TestRunner: //'
+  dump_state sweep-failed
 else
   say "sweep: no test outside the list"
 fi
