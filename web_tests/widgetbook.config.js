@@ -4,6 +4,8 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: '.',
   testMatch: process.env.WB_MATCH || 'widgetbook.spec.js',
+  // Whatever WB_MATCH says, never a VoiceOver spec.
+  testIgnore: ['vo/**', '**/*_vo.spec.js', '**/node_modules/**'],
   reporter: 'list',
   use: { baseURL: 'http://localhost:8766' },
   webServer: {

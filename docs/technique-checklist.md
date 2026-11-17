@@ -29,16 +29,18 @@ behind each one is in [the technique guide](technique-guide.md).
 - [ ] L1: the semantics that carry the technique, for good and bad examples
 - [ ] L1: keyboard reach and activation, where the example is interactive
 - [ ] L3 web: role, name, state, and keyboard behaviour in Chromium; the spec
-      is added to the web job in `ci.yml`
+      is `web_tests/x00_thing.spec.js`, which the web job runs by its name
 - [ ] L3 Android: node properties through UI Automator
 - [ ] L3 iOS: element type, label, and value through XCUITest; the file is in
-      the `RunnerUITests` target
+      `ios/RunnerUITests/`, which the target builds whole
 - [ ] Every bad example's defect is asserted at every layer that can see it,
       written to fail if Flutter fixes it
 - [ ] Where a layer cannot observe something, the test says so in a comment
 
 ## Screen readers
 
+- [ ] The technique's evidence tool file, `tool/techniques/x00_thing.py`, names
+      its tests and its TalkBack expectations
 - [ ] TalkBack transcript generated with `tool/talkback.py` and passing
 - [ ] VoiceOver on iOS transcript generated with `tool/voiceover_ios.py` and
       passing, or the doc and catalog say iOS is not verified and why
@@ -55,12 +57,14 @@ behind each one is in [the technique guide](technique-guide.md).
 - [ ] Technique doc written from
       [the template](templates/technique-doc-template.md); the doc check passes
 - [ ] Every limitation is in [flutter-limitations.md](flutter-limitations.md)
-      with its status, and the doc links to it
+      with its status, and the doc links to it. A new id is the next free one
+      in the wave's range, and the entry is at the end of that range in the
+      index and in the entries
 - [ ] A limitation with no workaround is a `PlatformStatus.limitation` in the
       catalog; an unverified platform has a note
 - [ ] Anything not done is listed under "Not yet covered" in the doc
-- [ ] README's list of techniques updated, and the count and ids in its
-      status line
+- [ ] `dart run tool/technique_list.dart` run, so `all_techniques.dart` and the
+      README's list of techniques and status line include the technique
 
 ## Before merging
 

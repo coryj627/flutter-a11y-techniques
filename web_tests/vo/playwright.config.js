@@ -1,6 +1,10 @@
 // L4 on web. VoiceOver needs a headed browser and one worker. Guidepup
 // sometimes misses a phrase or VoiceOver's cursor leaves the page, so a failed
 // walk is retried.
+//
+// Only `python3 tool/voiceover_web.py <ID>` runs this config. Without the
+// variable it sets, the guard, imported first, stops the config loading.
+import './voiceover_run_guard.js';
 import { defineConfig, devices } from '@playwright/test';
 import { screenReaderConfig } from '@guidepup/playwright';
 

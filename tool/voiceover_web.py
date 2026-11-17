@@ -18,69 +18,20 @@ import re
 import subprocess
 import sys
 
-from evidence_common import TECHNIQUES, flutter_version, technique_argument
+from evidence_common import REGISTRATIONS, TECHNIQUES, flutter_version, technique_argument
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB_TESTS = os.path.join(ROOT, "web_tests")
+# The VoiceOver specs refuse to load unless this is set (web_tests/vo/vo_helpers.js),
+# so that no other command can start VoiceOver by accident.
+VOICEOVER_RUN = "FLUTTER_A11Y_VOICEOVER_RUN"
 
 
 DEFAULT_METHOD = "focus the Back button, then `voiceOver.next()` to the last element of the example"
-METHODS = {
-    "S03": "focus the Back button, then `voiceOver.next()` to the end of the screen. "
-           "VoiceOver's last phrase and the position of its cursor are read over "
-           "AppleScript after every move: a move that changes the position, or that "
-           "speaks a different phrase, is a stop; two moves in a row that do neither are "
-           "the end",
-    "S04": "focus the Back button, then `voiceOver.next()` to the end of the screen. "
-           "VoiceOver's last phrase and the position of its cursor are read over "
-           "AppleScript after every move: a move that changes the position, or that "
-           "speaks a different phrase, is a stop; two moves in a row that do neither are "
-           "the end. The activation count is the last element of every example",
-    "S13": "focus the Back button, then `voiceOver.next()` to the end of the screen. "
-           "VoiceOver's last phrase and the position of its cursor are read over "
-           "AppleScript after every move: a move that changes the position, or that "
-           "speaks a different phrase, is a stop; two moves in a row that do neither are "
-           "the end. The activation count is the last element of every example",
-    "S14": "focus the Back button, then `voiceOver.next()` to the end of the screen. "
-           "VoiceOver's last phrase and the position of its cursor are read over "
-           "AppleScript after every move: a move that changes the position, or that "
-           "speaks a different phrase, is a stop; two moves in a row that do neither are "
-           "the end. The four examples that are sliders on web are walked only as far "
-           "as the slider, and are judged in Chromium only",
-    "S15": "focus the Back button, then `voiceOver.next()` to the end of the screen. "
-           "VoiceOver's last phrase and the position of its cursor are read over "
-           "AppleScript after every move: a move that changes the position, or that "
-           "speaks a different phrase, is a stop; two moves in a row that do neither are "
-           "the end. The activation count is the last element of every example. Where VoiceOver's last phrase is its own help message for a "
-           "text field (\"You are currently on…\"), which follows a described field at "
-           "once, the phrase Guidepup logged for that move is shown instead",
-    "S22": "focus the Back button, wait until VoiceOver has been quiet for two seconds, then `voiceOver.next()` to the end of the screen. "
-           "VoiceOver's last phrase and the position of its cursor are read over "
-           "AppleScript after every move: a move that changes the position, or that "
-           "speaks a different phrase, is a stop; two moves in a row that do neither are "
-           "the end. The activation count is the last element of every example. Where VoiceOver's last phrase is its own help message for a "
-           "text field (\"You are currently on…\"), the phrase Guidepup logged for that "
-           "move is shown instead",
-    "F07": "focus the Back button, wait until VoiceOver has been quiet for two seconds, then "
-           "`voiceOver.next()` to the end of the screen. VoiceOver's last phrase and the "
-           "position of its cursor are read over AppleScript after every move: a move that "
-           "changes the position, or that speaks a different phrase, is a stop; two moves in "
-           "a row that do neither are the end. The change count is the last element of every "
-           "example. Where VoiceOver's last phrase is its own help message "
-           "(\"You are currently on…\"), which follows the checkbox with no name at once, the "
-           "phrase Guidepup logged for that move is shown instead",
-    "F08": "focus the Back button, wait until VoiceOver has been quiet for two seconds, then "
-           "`voiceOver.next()` to the end of the screen. VoiceOver's last phrase and the "
-           "position of its cursor are read over AppleScript after every move: a move that "
-           "changes the position, or that speaks a different phrase, is a stop; two moves in "
-           "a row that do neither are the end. The change count is the last element of every "
-           "example. Where VoiceOver's last phrase is its own help message "
-           "(\"You are currently on…\"), which follows a radio button with no name at once, the "
-           "phrase Guidepup logged for that move is shown instead",
-    "I12": "press the example's button with the keyboard, then poll VoiceOver's last phrase "
-           "over AppleScript for what it was given to announce; Chromium only, because "
-           "Playwright's WebKit build passes no live region changes to VoiceOver",
-}
+# technique -> how the speech was captured, from the technique's file in
+# tool/techniques/; DEFAULT_METHOD when it sets none.
+METHODS = {tid: r.voiceover_web_method for tid, r in REGISTRATIONS.items()
+           if r.voiceover_web_method}
 
 
 def version(package):
@@ -92,7 +43,8 @@ def main():
     technique = technique_argument(sys.argv, "Usage: python3 tool/voiceover_web.py <ID>")
     title, _, _, spec = TECHNIQUES[technique]
     run = subprocess.run(["npx", "playwright", "test", spec],
-                         cwd=os.path.join(WEB_TESTS, "vo"), capture_output=True, text=True)
+                         cwd=os.path.join(WEB_TESTS, "vo"), capture_output=True, text=True,
+                         env={**os.environ, VOICEOVER_RUN: "1"})
     log = run.stdout + run.stderr
     # A retried walk prints more than once; the last attempt is the result.
     rows = {}

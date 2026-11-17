@@ -33,20 +33,44 @@ For a technique with id `X00` and name `thing`:
 | What | Where |
 | --- | --- |
 | Examples | `lib/techniques/x00_thing/examples.dart` |
-| Registration | `lib/techniques/x00_thing/x00_thing.dart`, added to `lib/techniques/all_techniques.dart` |
+| Registration | `lib/techniques/x00_thing/x00_thing.dart`, declaring `final x00Thing = Technique(…)` |
 | Spec | `docs/specs/X00-thing.md` |
 | Technique doc | `docs/techniques/X00.md` |
 | Widget tests | `test/techniques/x00_thing_test.dart` |
-| Web tree tests | `web_tests/x00_thing.spec.js`, added to the web job in `.github/workflows/ci.yml` |
-| Web VoiceOver | `web_tests/vo/x00_thing_vo.spec.js` |
+| Web tree tests | `web_tests/x00_thing.spec.js` |
+| Web VoiceOver | `web_tests/vo/x00_thing_vo.spec.js`, importing `./vo_helpers.js` |
 | Android | `android/app/src/androidTest/.../X00ThingTest.kt` |
-| iOS | `ios/RunnerUITests/X00ThingUITests.swift`, added to the `RunnerUITests` target |
-| Speech expectations and test names | `EXPECT` in `tool/talkback.py`; `TECHNIQUES` in `tool/evidence_common.py` |
+| iOS | `ios/RunnerUITests/X00ThingUITests.swift` |
+| Speech expectations and test names | `tool/techniques/x00_thing.py` |
 | Transcripts | `docs/evidence/X00/`, written by the tools, never by hand |
 | Limitations | new or updated entries in `docs/flutter-limitations.md` |
 
-The app, the Widgetbook, and the doc check pick a technique up from the
-registry; nothing else needs wiring.
+Nothing else is registered by hand; each piece is found by its name or
+folder:
+
+- `lib/techniques/all_techniques.dart` and the README's status line and
+  list of techniques are generated from the folders in `lib/techniques/`.
+  Run `dart run tool/technique_list.dart` after adding the folder;
+  `flutter test` fails until it has been run. If two pull requests that
+  add techniques conflict in these files, take either side and run it
+  again.
+- The web job runs every `web_tests/<id>_<name>.spec.js`
+  (`web_tests/playwright.config.js`). It never runs a spec in
+  `web_tests/vo/`.
+- The `RunnerUITests` target builds every Swift file in
+  `ios/RunnerUITests/` (a synchronised folder, which needs Xcode 16 or
+  later); the Xcode project is not edited.
+- The evidence tools load `tool/techniques/x00_thing.py`. Copy another
+  technique's file; the names it must set are listed at the top of
+  `tool/evidence_common.py`, and the tools stop with an error if one is
+  wrong.
+- A new limitation takes the next free id in the range of the wave it is
+  found in, and goes at the end of that range in the index and in the
+  entries (the ranges are at the top of `docs/flutter-limitations.md`).
+
+The app, the Widgetbook, and the doc check pick a technique up from
+`allTechniques`; nothing else needs wiring. The progress note in
+`docs/plan.md` is still written by hand.
 
 A new technique changes the Widgetbook's navigation, so rebuild the
 Widgetbook (`cd widgetbook && flutter build web`) and run its tests
@@ -132,7 +156,8 @@ regions cannot be checked in the tree.
 
 **L4 TalkBack.** `python3 tool/talkback.py <ID>`. The walk moves accessibility
 focus with the `talkBackFocus` helper and logs a marker per element; the tool
-reads TalkBack's verbose log, checks `EXPECT`, retries an element whose speech
+reads TalkBack's verbose log, checks `TALKBACK_EXPECT` in the technique's file
+in `tool/techniques/`, retries an element whose speech
 failed, and restores the device. For announcements, leave focus alone and
 press the button.
 
@@ -143,7 +168,9 @@ activate a control, and assert that it acted. For announcements, activate
 that way, poll `currentSpeech()`, and confirm the cursor is still on the
 control, as `I12AnnouncementsUITests` does.
 
-**L4 VoiceOver on web.** `python3 tool/voiceover_web.py <ID>`. Use
+**L4 VoiceOver on web.** `python3 tool/voiceover_web.py <ID>`, and never any
+other command: the run takes over the Mac, so the specs in `web_tests/vo/`
+refuse to load unless the variable the tool sets is there. Use
 `walkFromBack` and stop at a recognised last phrase; do not count steps. For
 announcements, press with the keyboard and poll VoiceOver's last phrase
 (`heardAfter`), in Chromium only, and call `assertCaptureIsLive` whenever
