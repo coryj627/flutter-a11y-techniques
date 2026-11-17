@@ -549,15 +549,20 @@ def run_to_the_end(command, **kwargs):
             elif stage == 1 and now >= due + KILL_AFTER:
                 signal_all(signal.SIGKILL)
                 stage = 2
-        # Nothing the command started may outlive this call, however the
-        # command ended: it would be out of everyone's reach, and could go on
-        # driving a device after the lock is given up. First its session,
-        # then what it had started in groups of their own.
-        end_group(child.pid, KILL_AFTER, reap=child.poll)
-        end_processes(started | marked(mark), KILL_AFTER)
     finally:
-        for signum, handler in previous.items():
-            signal.signal(signum, handler)
+        # Nothing the command started may outlive this call, however the
+        # command ended and whatever went wrong here (output that cannot be
+        # decoded, for one): it would be out of everyone's reach, and could
+        # go on driving a device after the lock is given up. First its
+        # session, then what it had started in groups of their own.
+        try:
+            if child.poll() is None:
+                started |= descendants(child.pid)
+            end_group(child.pid, KILL_AFTER, reap=child.poll)
+            end_processes(started | marked(mark), KILL_AFTER)
+        finally:
+            for signum, handler in previous.items():
+                signal.signal(signum, handler)
     if received:
         sys.exit(128 + received[0])
     return subprocess.CompletedProcess(command, child.returncode, out, err)
