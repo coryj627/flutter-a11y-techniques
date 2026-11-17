@@ -140,7 +140,7 @@ class RunTechniqueTest(unittest.TestCase):
 
 
 class StopAndroidTest(unittest.TestCase):
-    def test_android_step_is_followed_by_stopping_the_tests_on_the_device(self):
+    def test_each_device_step_is_bracketed_by_checks_that_the_device_is_clear(self):
         order = []
         runner = Runner()
 
@@ -148,11 +148,15 @@ class StopAndroidTest(unittest.TestCase):
             order.append(step.name)
             return runner(step, log_path)
 
-        evidence.run_technique("F08", ["android", "ios"], runner=recording, out=io.StringIO(),
-                               check=no_problems, no_build=True,
-                               stop_android=lambda: order.append("stop android") or True,
-                               stop_ios=lambda: order.append("stop ios") or True)
-        self.assertEqual(order, ["android", "stop android", "ios", "stop ios"])
+        results = evidence.run_technique(
+            "F08", ["android", "talkback", "ios", "web"], runner=recording, out=io.StringIO(),
+            check=no_problems, no_build=True,
+            stop_android=lambda: order.append("clear emulator") or True,
+            stop_ios=lambda: order.append("clear simulator") or True)
+        self.assertEqual(order, ["clear emulator", "android", "clear emulator",
+                                 "clear emulator", "talkback", "clear emulator",
+                                 "clear simulator", "ios", "clear simulator", "web"])
+        self.assertEqual({r for r, _ in results.values()}, {evidence.PASS})
 
     def test_tests_are_stopped_on_the_device_when_the_run_is_stopped_mid_step(self):
         stopped = []
@@ -165,17 +169,34 @@ class StopAndroidTest(unittest.TestCase):
                                    check=no_problems, no_build=True,
                                    stop_android=lambda: stopped.append(1) or True,
                                    stop_ios=lambda: True)
-        self.assertEqual(stopped, [1])
+        self.assertEqual(stopped, [1, 1])  # before the step, and after it was cut short
 
-    def test_a_device_that_does_not_confirm_is_reported(self):
-        out = io.StringIO()
-        evidence.run_technique("F08", ["android"], runner=Runner(), out=out, check=no_problems,
-                               no_build=True, stop_android=lambda: False, stop_ios=lambda: True)
-        self.assertIn("could not be shown to have stopped on the emulator", out.getvalue())
-        out = io.StringIO()
-        evidence.run_technique("F08", ["ios"], runner=Runner(), out=out, check=no_problems,
-                               no_build=True, stop_android=lambda: True, stop_ios=lambda: False)
-        self.assertIn("could not be shown to have stopped on the simulator", out.getvalue())
+    def test_unconfirmed_clean_up_fails_the_layer_and_stops_work_on_that_device(self):
+        # The android step itself passes, but the emulator will not confirm
+        # afterwards that the test has stopped.
+        answers = iter([True, False])
+        runner, out = Runner(), io.StringIO()
+        results = evidence.run_technique(
+            "F08", ALL, runner=runner, out=out, check=no_problems, no_build=True,
+            sleep=lambda _: None, stop_android=lambda: next(answers), stop_ios=lambda: True)
+        self.assertNotIn("talkback", runner.names)
+        for layer in ("android", "talkback"):
+            self.assertEqual(results[layer][0], evidence.FAIL)
+            self.assertIn("emulator " + evidence.UNCONFIRMED, results[layer][1])
+        # The other devices are not affected.
+        self.assertEqual([results[layer][0] for layer in ALL[2:]], [evidence.PASS] * 4)
+        self.assertEqual(evidence.summarise({"F08": results}, ALL)[1], False)
+
+    def test_a_device_that_is_not_clear_beforehand_is_not_used(self):
+        runner, out = Runner(), io.StringIO()
+        results = evidence.run_technique(
+            "F08", ["ios", "voiceover-ios", "web"], runner=runner, out=out, check=no_problems,
+            no_build=True, stop_android=lambda: True, stop_ios=lambda: False)
+        self.assertEqual(runner.names, ["web"])
+        self.assertIn("ios: not run; the simulator " + evidence.UNCONFIRMED, out.getvalue())
+        for layer in ("ios", "voiceover-ios"):
+            self.assertEqual(results[layer][0], evidence.FAIL)
+        self.assertEqual(results["web"][0], evidence.PASS)
 
     def test_simulator_apps_are_ended_until_simctl_says_nothing_is_left(self):
         import evidence_common as common
@@ -288,7 +309,7 @@ class TalkBackWalkCommandTest(unittest.TestCase):
             "-Pandroid.testInstrumentationRunnerArguments.class=pkg.F08RadioGroupTest#talkBackWalk"])
         self.assertEqual(run.call_args.kwargs["timeout"], talkback.WALK_TIMEOUT)
         self.assertEqual(adb.call_args_list[0].args, ("logcat", "-c"))
-        stop.assert_called_once_with()
+        self.assertEqual(stop.call_count, 2)  # before the walk and after it
 
     def test_a_walk_that_times_out_ends_the_tool_with_a_message(self):
         import subprocess
@@ -302,7 +323,21 @@ class TalkBackWalkCommandTest(unittest.TestCase):
             talkback.walk()
         self.assertIn("did not finish", str(stopped.exception))
         # The test inside the emulator is stopped all the same.
-        stop.assert_called_once_with()
+        self.assertEqual(stop.call_count, 2)
+
+    def test_a_walk_is_refused_on_an_emulator_that_is_not_clear_and_fails_if_left_unclear(self):
+        import talkback
+        result = mock.Mock(returncode=0, stdout="", stderr="")
+        for answers, runs in (([False], 0), ([True, False], 1)):
+            with mock.patch.object(talkback.time, "sleep"), \
+                    mock.patch.object(talkback, "adb", return_value=""), \
+                    mock.patch.object(talkback, "stop_android_tests", side_effect=answers), \
+                    mock.patch.object(talkback.device_lock, "run_to_the_end",
+                                      return_value=result) as run, \
+                    self.assertRaises(SystemExit) as stopped:
+                talkback.walk()
+            self.assertIn("could not be shown to have stopped", str(stopped.exception))
+            self.assertEqual(run.call_count, runs)
 
 
 class PreflightTest(unittest.TestCase):
@@ -406,6 +441,13 @@ class MainTest(unittest.TestCase):
         self.assertEqual(self.calls[0][3], "evidence all techniques")
         for technique in evidence.TECHNIQUES:
             self.assertIn(f"\n{technique}:\n", text)
+
+    def test_all_stops_when_a_device_is_left_in_an_unknown_state(self):
+        status, text = self.main("--all", result=evidence.FAIL,
+                                 detail="the emulator " + evidence.UNCONFIRMED)
+        self.assertEqual(status, 1)
+        self.assertEqual(len(self.calls), 1)
+        self.assertIn("not running the remaining techniques", text)
 
     def test_all_stops_after_a_failed_build(self):
         status, _ = self.main("--all", result=evidence.FAIL,

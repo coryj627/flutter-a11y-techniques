@@ -286,8 +286,15 @@ class signals_deferred:
 WALK_TIMEOUT = 20 * 60
 
 
+UNCONFIRMED_EMULATOR = ("The app or its tests could not be shown to have stopped on the "
+                        "emulator. Nothing more was run; check the emulator before running again.")
+
+
 def walk():
     """Runs the instrumented walk. Returns the Gradle result and the log."""
+    # Not on an emulator where an earlier test may still be running.
+    if not stop_android_tests():
+        sys.exit(UNCONFIRMED_EMULATOR)
     time.sleep(5)
     adb("logcat", "-c")
     try:
@@ -307,9 +314,9 @@ def walk():
         # However the Gradle run ended, the test inside the emulator must be
         # over before the device's settings are put back or anyone else
         # gets the device.
-        if not stop_android_tests():
-            print("Warning: the app or its tests could not be shown to have stopped on the "
-                  "emulator.", file=sys.stderr)
+        cleaned = stop_android_tests()
+    if not cleaned:
+        sys.exit(UNCONFIRMED_EMULATOR)
     return run, adb("logcat", "-d")
 
 

@@ -53,6 +53,8 @@ VOICEOVER_WARNING = """
 """
 
 PASS, FAIL, SKIPPED = "PASS", "FAIL", "SKIPPED"
+# In the detail of a layer failed because its device's state is not known.
+UNCONFIRMED = "could not be shown to be free of a running test"
 
 
 class Step:
@@ -198,28 +200,51 @@ def run_technique(technique, layers, no_build=False, runner=run_logged, out=None
     wanted = [layer for layer in layers if layer not in results]
     steps = builds(wanted, no_build) + checks(technique, wanted)
     log_dir = os.path.join(ROOT, "build", "evidence", technique)
+    # Which device a layer uses, and how its tests are stopped there.
+    stoppers = {"android": ("emulator", stop_android), "talkback": ("emulator", stop_android),
+                "ios": ("simulator", stop_ios), "voiceover-ios": ("simulator", stop_ios)}
+
+    def give_up_on(device):
+        """Fails every layer of a device that has not been run yet."""
+        for layer, (name, _) in stoppers.items():
+            if name == device and layer in wanted and results.get(layer, (None,))[0] != FAIL:
+                results[layer] = (FAIL, f"the {device} {UNCONFIRMED}; "
+                                        "nothing more was run on it")
+
     for step in steps:
         pending = [layer for layer in step.layers if layer not in results]
         if not pending:
             continue  # its build failed, or nothing still needs this build
+        device, stop = stoppers.get(step.name, (None, None))
+        # A device is used only once it has said that no earlier test is
+        # still running on it, and nothing more is run on it once it has
+        # failed to say so after a step.
+        if stop and not stop():
+            say(f"[{technique}] {step.name}: not run; the {device} {UNCONFIRMED}")
+            give_up_on(device)
+            continue
         if step.name == "voiceover-web":
             say(VOICEOVER_WARNING.format(seconds=countdown))
             sleep(countdown)
         log_path = os.path.join(log_dir, step.name.replace(" ", "-") + ".log")
         say(f"[{technique}] {step.name}: running (log: {os.path.relpath(log_path, ROOT)})")
         started = time.monotonic()
+        cleaned = True
         try:
             status = runner(step, log_path)
         finally:
             # Also when this run is being stopped: the test inside the
-            # emulator does not end with the Gradle run that started it.
-            if step.name == "android" and not stop_android():
-                say(f"[{technique}] warning: the app or its tests could not be shown to have "
-                    "stopped on the emulator")
-            if step.name == "ios" and not stop_ios():
-                say(f"[{technique}] warning: the app or its tests could not be shown to have "
-                    "stopped on the simulator")
+            # device does not end with the command that started it.
+            if stop:
+                cleaned = stop()
+                if not cleaned:
+                    say(f"[{technique}] {step.name}: the {device} {UNCONFIRMED}")
         took = f"{time.monotonic() - started:.0f} s"
+        if not cleaned:
+            # Whatever the step said, a device left in an unknown state is
+            # not a pass, and nothing else may run on it.
+            give_up_on(device)
+            continue
         if status == 0:
             say(f"[{technique}] {step.name}: ok, {took}")
             if not step.build:
@@ -310,9 +335,14 @@ def main(argv=None, run=run_technique):
             # Build once; later techniques use the same builds.
             all_results[technique] = run(technique, layers,
                                          no_build=args.no_build or index > 0)
-            if index == 0 and any(detail.startswith("build ") for result, detail
-                                  in all_results[technique].values() if result == FAIL):
+            failed = [detail for result, detail in all_results[technique].values()
+                      if result == FAIL]
+            if index == 0 and any(detail.startswith("build ") for detail in failed):
                 print("A build failed; not running the remaining techniques.")
+                break
+            if any(UNCONFIRMED in detail for detail in failed):
+                print("A device could not be shown to be free of a running test; "
+                      "not running the remaining techniques.")
                 break
     finally:
         lock.release()

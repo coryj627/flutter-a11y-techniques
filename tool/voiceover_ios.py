@@ -37,6 +37,11 @@ def main():
     device_lock.hold_for_process(f"voiceover_ios {technique}")
     # Holds the device lock too, and is seen through to its end if this tool
     # is stopped.
+    unconfirmed = ("The app or its tests could not be shown to have stopped on the simulator. "
+                   "Nothing more was run; check the simulator before running again.")
+    # Not on a simulator where an earlier test may still be running.
+    if not stop_ios_tests(DEVICE):
+        sys.exit(unconfirmed)
     try:
         run = device_lock.run_to_the_end(
             ["xcodebuild", "test", "-workspace", "Runner.xcworkspace", "-scheme", "Runner",
@@ -47,9 +52,9 @@ def main():
     finally:
         # However xcodebuild ended, the test inside the simulator must be
         # over before anyone else gets the simulator.
-        if not stop_ios_tests(DEVICE):
-            print("Warning: the app or its tests could not be shown to have stopped on the "
-                  "simulator.", file=sys.stderr)
+        cleaned = stop_ios_tests(DEVICE)
+    if not cleaned:
+        sys.exit(unconfirmed)
     log = run.stdout + run.stderr
     rows = re.findall(rf"^{technique}VO (\S+) \| (.*)$", log, re.M)
     failures = re.findall(r"error: .*? : (.*)$", log, re.M)
