@@ -611,7 +611,9 @@ def run_to_the_end(command, timeout=None, **kwargs):
             if stage == 0 and now >= due:
                 signal_all(signal.SIGTERM)
                 stage = 1
-            elif stage == 1 and now >= due + KILL_AFTER:
+            elif stage >= 1 and now >= due + KILL_AFTER:
+                # And again on every look after that: something found only
+                # now, holding the output open, is killed like the rest.
                 signal_all(signal.SIGKILL)
                 stage = 2
     finally:

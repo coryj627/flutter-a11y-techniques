@@ -343,6 +343,47 @@ class RunToTheEndTest(LockTestCase):
         self.assertFalse(device_lock._same_process(helper),
                          "a helper started during the stop outlived run_to_the_end")
 
+    def test_process_found_after_the_kill_still_holding_the_output_is_killed(self):
+        # Looks at the process table are stubbed: the helper, which holds
+        # the captured output and ignores SIGTERM, is "found" only after
+        # the first kill has gone out.
+        command = ("import subprocess, sys\n"
+                   "p = subprocess.Popen([sys.executable, '-c', 'import signal, time; "
+                   "signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(60)'], "
+                   "start_new_session=True, stderr=subprocess.DEVNULL)\n"
+                   "sys.stderr.write(str(p.pid)); sys.stderr.flush()\n")
+        looks = []
+
+        def late(mark):
+            looks.append(1)
+            return {helper[0]} if helper and len(looks) > 6 else set()
+
+        helper = []
+        read, write = os.pipe()
+        self.addCleanup(os.close, read)
+
+        def find_helper(started, leader):
+            if not helper:
+                try:
+                    helper.append(int(os.read(read, 100)))
+                except (BlockingIOError, ValueError):
+                    pass
+
+        os.set_blocking(read, False)
+        started = time.monotonic()
+        with mock.patch.object(device_lock, "KILL_AFTER", 0.3), \
+                mock.patch.object(device_lock, "record", side_effect=find_helper), \
+                mock.patch.object(device_lock, "marked", side_effect=late):
+            try:
+                run = device_lock.run_to_the_end([sys.executable, "-c", command],
+                                                 stdout=subprocess.PIPE, stderr=write, text=True)
+            finally:
+                os.close(write)
+        self.assertEqual(run.returncode, 0)
+        self.assertLess(time.monotonic() - started, 30)
+        self.addCleanup(self.kill, helper[0])
+        self.assertFalse(device_lock._same_process(helper[0]))
+
     def test_command_is_out_of_reach_of_the_terminal_s_interrupts(self):
         # Ctrl-C goes to the terminal's whole process group. The command must
         # not be in it, or it would be interrupted behind the tool's back.
