@@ -19,9 +19,15 @@
 # also keeps a record of the runner's memory and the emulator's log for
 # every run, so a passing run can be compared with a failing one.
 #
+# The classes to run are every Kotlin file in the test folder that has a
+# @Test in it. The script fails if it finds none, if such a file does not
+# declare a class of its own name, or if, at the end, the test runner's log
+# does not show at least one finished test for every one of those classes.
+#
 # Run from android/, as the emulator runner action does. Arguments are
 # passed to Gradle. Every batch runs even if an earlier one failed; the
-# script fails if any did.
+# script fails if any did. With --list as the only argument it prints the
+# classes it would run, one per line, and runs nothing.
 set -u
 
 DIAG_DIR=${DIAG_DIR:-$PWD/../build/android-diagnostics}
@@ -31,9 +37,43 @@ FIRST_TEST_SECONDS=${FIRST_TEST_SECONDS:-600}
 LIMIT_SECONDS=${LIMIT_SECONDS:-1800}
 MIN_AVAILABLE_MB=${MIN_AVAILABLE_MB:-600}
 BATCH_CLASSES=${BATCH_CLASSES:-4}
+POLL_SECONDS=${POLL_SECONDS:-10}
 PKG=dev.fluttera11y.flutter_a11y_techniques
-TEST_DIR=app/src/androidTest/kotlin/dev/fluttera11y/flutter_a11y_techniques
+TEST_DIR=${TEST_DIR:-app/src/androidTest/kotlin/dev/fluttera11y/flutter_a11y_techniques}
 REPORTS=$PWD/../build/app/reports/androidTests
+
+# Every class with a test in it, in name order, in CLASSES. Fails if the
+# folder cannot be read, has no tests, or has a file with a @Test that does
+# not declare a class named after the file.
+find_classes() {
+  local files file name
+  CLASSES=()
+  if [ ! -d "$TEST_DIR" ]; then
+    echo "ci_android_tests: no test folder at $TEST_DIR" >&2
+    return 1
+  fi
+  files=$(grep -lE '^[[:space:]]*@Test\b' "$TEST_DIR"/*.kt 2>/dev/null | sort)
+  if [ -z "$files" ]; then
+    echo "ci_android_tests: no file in $TEST_DIR has a @Test" >&2
+    return 1
+  fi
+  while IFS= read -r file; do
+    name=$(basename "$file" .kt)
+    if ! grep -qE "^[[:space:]]*class[[:space:]]+$name\b" "$file"; then
+      echo "ci_android_tests: $file has a @Test but no class named $name" >&2
+      return 1
+    fi
+    CLASSES+=("$name")
+  done <<EOF_FILES
+$files
+EOF_FILES
+}
+
+find_classes || exit 1
+if [ "${1:-}" = --list ]; then
+  printf '%s\n' "${CLASSES[@]}"
+  exit 0
+fi
 
 mkdir -p "$DIAG_DIR"
 HOST_LOG=$DIAG_DIR/host-memory.log
@@ -72,7 +112,9 @@ dump_state() {
   } > "$d/host.txt" 2>&1
   ps aux --sort=-rss > "$d/host-ps.txt" 2>&1
   timeout 20 sudo dmesg -T > "$d/host-dmesg.txt" 2>&1
-  cp ~/.android/avd/*.avd/config.ini "$d/emulator-config.ini" 2>/dev/null
+  for avd in ~/.android/avd/*.avd; do
+    [ -f "$avd/config.ini" ] && cp "$avd/config.ini" "$d/emulator-config-$(basename "$avd" .avd).ini"
+  done
   find /tmp ~/.android -name '*.dmp' -newer "$DIAG_DIR/host-info.txt" -exec ls -l {} + > "$d/emulator-crash-dumps.txt" 2>&1
   timeout 20 adb devices -l > "$d/adb-devices.txt" 2>&1
   if ! timeout 20 adb shell true > /dev/null 2>&1; then
@@ -88,7 +130,7 @@ dump_state() {
   timeout $t adb logcat -d -b crash > "$d/device-crash-log.txt" 2>&1
   if [ "$depth" = full ]; then
     for pid in $(pgrep -x java); do
-      timeout 30 "$JAVA_HOME/bin/jcmd" "$pid" Thread.print > "$d/host-java-$pid.txt" 2>&1
+      timeout 30 "${JAVA_HOME:+$JAVA_HOME/bin/}jcmd" "$pid" Thread.print > "$d/host-java-$pid.txt" 2>&1
     done
     timeout $t adb shell dumpsys activity processes > "$d/device-processes.txt" 2>&1
     timeout $t adb shell dumpsys meminfo $PKG > "$d/device-meminfo-app.txt" 2>&1
@@ -146,7 +188,10 @@ run_batch() {
   last_lines=$base
   last_progress=$(date +%s)
   while kill -0 "$GRADLE_PID" 2>/dev/null; do
-    sleep 10
+    sleep "$POLL_SECONDS"
+    # Gradle may have finished during the sleep: then its own result
+    # stands, and no check below may fail a batch that is already over.
+    kill -0 "$GRADLE_PID" 2>/dev/null || break
     now=$(date +%s)
     line=$(host_line)
     echo "$(date -u +%H:%M:%S) $line" >> "$HOST_LOG"
@@ -174,7 +219,7 @@ run_batch() {
     elif [ $((now - START)) -ge "$LIMIT_SECONDS" ]; then
       reason="the tests have run for $((now - START)) seconds (limit $LIMIT_SECONDS)"
     fi
-    if [ -n "$reason" ]; then
+    if [ -n "$reason" ] && kill -0 "$GRADLE_PID" 2>/dev/null; then
       say "STOPPING THE TESTS: $reason"
       say "the last lines of the test runner's log:"
       tail -6 "$TESTS_LOG"
@@ -208,8 +253,6 @@ LAST_PRINT=0
 MIN_SEEN=$(available_mb)
 FAILED=0
 
-# Every class that the runner runs, in name order.
-mapfile -t CLASSES < <(grep -l '^@RunWith' "$TEST_DIR"/*.kt | xargs -n1 basename | sed 's/\.kt$//' | sort)
 say "${#CLASSES[@]} test classes, in batches of $BATCH_CLASSES"
 batch=0
 for ((i = 0; i < ${#CLASSES[@]}; i += BATCH_CLASSES)); do
@@ -233,6 +276,19 @@ for ((i = 0; i < ${#CLASSES[@]}; i += BATCH_CLASSES)); do
   fi
 done
 
+# Every class must have run: the test runner's own log has to show a
+# finished test for each one. Give the log a moment to catch up first.
+sleep "${SETTLE_SECONDS:-5}"
+for c in "${CLASSES[@]}"; do
+  n=$(grep -cF "TestRunner: finished: " "$TESTS_LOG" 2>/dev/null)
+  ran=$(grep -F "TestRunner: finished: " "$TESTS_LOG" 2>/dev/null | grep -cF "($PKG.$c)")
+  if [ "${ran:-0}" -eq 0 ]; then
+    FAILED=1
+    say "failed: no test of $c finished (the log shows ${n:-0} finished tests in all)"
+  fi
+done
+say "$(grep -cF 'TestRunner: finished: ' "$TESTS_LOG" 2>/dev/null) tests finished in ${#CLASSES[@]} classes"
+
 cleanup
-[ "$FAILED" -ne 0 ] && say "failed: at least one batch failed; the reports are in the android-test-report artifact"
+[ "$FAILED" -ne 0 ] && say "failed: a batch failed or a class did not run; the reports are in the android-test-report artifact"
 exit $FAILED
