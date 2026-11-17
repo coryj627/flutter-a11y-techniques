@@ -58,7 +58,8 @@ class RunTechniqueTest(unittest.TestCase):
                       commands["android"] + " ")
         self.assertIn("timeout_msec=180000", commands["android"])
         # No shared Gradle daemon: the run must own what drives the emulator.
-        self.assertTrue(commands["android"].startswith("./gradlew --no-daemon "))
+        self.assertTrue(commands["android"].startswith(
+            "./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process "))
         self.assertIn("-only-testing:RunnerUITests/F08RadioGroupUITests ", commands["ios"])
         self.assertIn("-skip-testing:RunnerUITests/F08RadioGroupUITests/testVoiceOverSpeech",
                       commands["ios"])
@@ -72,7 +73,9 @@ class RunTechniqueTest(unittest.TestCase):
     def test_android_build_starts_no_shared_gradle_daemon(self):
         _, runner, _, _ = run(layers=["android"])
         build = runner.steps[runner.names.index("build android")].command
-        self.assertEqual(build[-4:], ["build", "apk", "--debug", "--no-android-gradle-daemon"])
+        self.assertEqual(build[-5:], [
+            "build", "apk", "--debug", "--no-android-gradle-daemon",
+            "--android-project-arg=kotlin.compiler.execution.strategy=in-process"])
 
     def test_only_the_builds_the_chosen_layers_need(self):
         _, runner, _, _ = run(layers=["ios", "voiceover-ios"])
@@ -132,6 +135,38 @@ class RunTechniqueTest(unittest.TestCase):
         self.assertEqual(results["voiceover-web"][0], evidence.SKIPPED)
         self.assertEqual(results["web"][0], evidence.PASS)
         self.assertEqual(results["android"][0], evidence.PASS)
+
+
+class TalkBackWalkCommandTest(unittest.TestCase):
+    def test_the_walk_runs_gradle_unshared_through_the_managed_runner(self):
+        import talkback
+        result = mock.Mock(returncode=0, stdout="", stderr="")
+        with mock.patch.object(talkback, "TEST", "pkg.F08RadioGroupTest#talkBackWalk"), \
+                mock.patch.object(talkback.time, "sleep"), \
+                mock.patch.object(talkback, "adb", return_value="log") as adb, \
+                mock.patch.object(talkback.subprocess, "run",
+                                  side_effect=AssertionError("unmanaged process")), \
+                mock.patch.object(talkback.device_lock, "run_to_the_end",
+                                  return_value=result) as run:
+            self.assertEqual(talkback.walk(), (result, "log"))
+        command = run.call_args.args[0]
+        self.assertEqual(command, [
+            "./gradlew", "--no-daemon", "-Pkotlin.compiler.execution.strategy=in-process",
+            "app:connectedDebugAndroidTest",
+            "-Pandroid.testInstrumentationRunnerArguments.class=pkg.F08RadioGroupTest#talkBackWalk"])
+        self.assertEqual(run.call_args.kwargs["timeout"], talkback.WALK_TIMEOUT)
+        self.assertEqual(adb.call_args_list[0].args, ("logcat", "-c"))
+
+    def test_a_walk_that_times_out_ends_the_tool_with_a_message(self):
+        import subprocess
+        import talkback
+        with mock.patch.object(talkback.time, "sleep"), \
+                mock.patch.object(talkback, "adb", return_value=""), \
+                mock.patch.object(talkback.device_lock, "run_to_the_end",
+                                  side_effect=subprocess.TimeoutExpired(["gradlew"], 1)), \
+                self.assertRaises(SystemExit) as stopped:
+            talkback.walk()
+        self.assertIn("did not finish", str(stopped.exception))
 
 
 class PreflightTest(unittest.TestCase):

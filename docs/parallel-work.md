@@ -64,8 +64,9 @@ VoiceOver:
 - `python3 tool/talkback.py <ID>`, `tool/voiceover_ios.py <ID>`, and
   `tool/voiceover_web.py <ID>` take the lock themselves when run alone.
 - Everything else goes through `python3 tool/with_devices.py -- <command>`:
-  `./gradlew --no-daemon app:connectedDebugAndroidTest …` (no daemon, so
-  that the run owns what drives the emulator), `xcodebuild test …`, `adb`,
+  `./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process
+  app:connectedDebugAndroidTest …` (no daemons, so that the run owns what
+  drives the emulator and shares nothing), `xcodebuild test …`, `adb`,
   `xcrun simctl`, and probes.
 
 Never start a device command without the lock, and do not hold the lock
@@ -75,7 +76,8 @@ When a command run under the lock ends, whatever it started and left
 running is ended too: nothing started under the lock outlives it. That
 would include a Gradle daemon, which a build in another worktree might be
 using by then, so `tool/evidence.py` and `tool/talkback.py` run Gradle with
-no daemon. Do the same for a Gradle command of your own under the lock.
+no Gradle daemon and no Kotlin daemon. Do the same for a Gradle command of
+your own under the lock, with the two arguments shown above.
 
 The lock is passed down to every command a run starts, so it stays taken
 until the last of them has ended, even if the run itself is killed. If a

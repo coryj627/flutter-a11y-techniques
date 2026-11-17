@@ -19,7 +19,8 @@ import sys
 import time
 
 import device_lock
-from evidence_common import REGISTRATIONS, TECHNIQUES, flutter_version, technique_argument
+from evidence_common import (GRADLE_UNSHARED, REGISTRATIONS, TECHNIQUES, flutter_version,
+                             technique_argument)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ADB = os.path.expanduser(os.environ.get("ADB", "~/Library/Android/sdk/platform-tools/adb"))
@@ -294,9 +295,9 @@ def walk():
         # timeout, or because this tool is stopped), everything Gradle
         # started is gone before the device's settings are put back.
         run = device_lock.run_to_the_end(
-            # --no-daemon: a daemon left by an earlier build is not ours to
-            # stop, and would go on driving the emulator after a timeout.
-            ["./gradlew", "--no-daemon", "app:connectedDebugAndroidTest",
+            # No daemon: one left by an earlier build is not ours to stop,
+            # and would go on driving the emulator after a timeout.
+            ["./gradlew", *GRADLE_UNSHARED, "app:connectedDebugAndroidTest",
              f"-Pandroid.testInstrumentationRunnerArguments.class={TEST}"],
             cwd=os.path.join(ROOT, "android"), timeout=WALK_TIMEOUT,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", errors="replace")

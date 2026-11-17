@@ -32,7 +32,8 @@ import sys
 import time
 
 import device_lock
-from evidence_common import REGISTRATIONS, ROOT, TECHNIQUES
+from evidence_common import (GRADLE_UNSHARED, KOTLIN_IN_PROCESS, REGISTRATIONS, ROOT,
+                             TECHNIQUES)
 from with_devices import BUSY, run_group
 
 LAYERS = ("android", "talkback", "ios", "voiceover-ios", "web", "voiceover-web")
@@ -83,9 +84,10 @@ def builds(layers, no_build=False):
         return []
     steps = []
     for name, target, fed in (
-            # No Gradle daemon: one started here is ended with the step,
-            # and a build in another worktree might have picked it up.
-            ("build android", ["apk", "--debug", "--no-android-gradle-daemon"],
+            # No Gradle or Kotlin daemon: one started here is ended with the
+            # step, and a build in another worktree might have picked it up.
+            ("build android", ["apk", "--debug", "--no-android-gradle-daemon",
+                               "--android-project-arg=" + KOTLIN_IN_PROCESS],
              ("android", "talkback")),
             ("build ios", ["ios", "--simulator", "--debug"], ("ios", "voiceover-ios")),
             ("build web", ["web"], ("web", "voiceover-web"))):
@@ -106,10 +108,10 @@ def checks(technique, layers):
     tool = os.path.join(ROOT, "tool")
     available = {
         "android": android_test and Step(
-            # --no-daemon: a Gradle daemon left by an earlier build would do
+            # No daemon: a Gradle daemon left by an earlier build would do
             # the device work outside this run, where stopping the run
             # cannot reach it.
-            "android", ["./gradlew", "--no-daemon", "app:connectedDebugAndroidTest",
+            "android", ["./gradlew", *GRADLE_UNSHARED, "app:connectedDebugAndroidTest",
                         f"-Pandroid.testInstrumentationRunnerArguments.class={PACKAGE}.{android_test}",
                         "-Pandroid.testInstrumentationRunnerArguments.timeout_msec="
                         + ANDROID_TEST_TIMEOUT],

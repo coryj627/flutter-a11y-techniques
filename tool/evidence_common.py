@@ -6,6 +6,13 @@ import re
 import types
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Gradle arguments for anything run under the device lock. What a command
+# starts under the lock is ended with it, so it must start nothing that a
+# build in another worktree could come to share: no Gradle daemon, and the
+# Kotlin compiler inside Gradle's own process and not in Kotlin's daemon.
+KOTLIN_IN_PROCESS = "kotlin.compiler.execution.strategy=in-process"
+GRADLE_UNSHARED = ["--no-daemon", "-P" + KOTLIN_IN_PROCESS]
 TECHNIQUES_DIR = os.path.join(ROOT, "tool", "techniques")
 
 
