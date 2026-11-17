@@ -362,7 +362,7 @@ class RunToTheEndTest(LockTestCase):
         read, write = os.pipe()
         self.addCleanup(os.close, read)
 
-        def find_helper(started, leader):
+        def find_helper(*_):
             if not helper:
                 try:
                     helper.append(int(os.read(read, 100)))
@@ -771,6 +771,44 @@ class WithDevicesTest(LockTestCase):
         self.addCleanup(self.kill, helper)
         self.assertFalse(device_lock._same_process(helper),
                          "the helper of an orphaned worker outlived run_group")
+
+    def test_helper_of_a_worker_orphaned_before_the_first_look_is_ended(self):
+        # The intermediary is gone before anyone looks, so the worker is
+        # never seen as a descendant: only its mark finds it, and only
+        # while it lives. Its helper, a program of Apple's, has no readable
+        # mark; it is known only as the child of the worker.
+        helper_file = os.path.join(self.dir.name, "helper")
+        worker = ("import subprocess, sys, time\n"
+                  "time.sleep(1)\n"
+                  "h = subprocess.Popen(['/bin/sleep', '60'], start_new_session=True, "
+                  "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                  "open(sys.argv[1], 'w').write(str(h.pid))\n"
+                  "time.sleep(1.5)\n")
+        command = ("import subprocess, sys, time\n"
+                   "subprocess.run([sys.executable, '-c', 'import subprocess, sys; "
+                   "subprocess.Popen([sys.executable, \"-c\", sys.argv[1], sys.argv[2]], "
+                   "start_new_session=True, stdout=subprocess.DEVNULL)', "
+                   f"{worker!r}, {helper_file!r}])\n"
+                   "time.sleep(4)\n")
+        real_descendants = device_lock.descendants
+        first_look = []
+
+        def descendants_after_the_intermediary(roots):
+            if not first_look:
+                first_look.append(1)
+                time.sleep(0.6)  # the intermediary has ended by now
+            return real_descendants(roots)
+
+        with mock.patch.object(with_devices, "STRAGGLER_GRACE", 0.5), \
+                mock.patch.object(with_devices, "WATCH", 0.2), \
+                mock.patch.object(device_lock, "descendants",
+                                  side_effect=descendants_after_the_intermediary):
+            self.assertEqual(with_devices.run_group([sys.executable, "-c", command]), 0)
+        with open(helper_file) as f:
+            helper = int(f.read())
+        self.addCleanup(self.kill, helper)
+        self.assertFalse(device_lock._same_process(helper),
+                         "the helper of an early-orphaned worker outlived run_group")
 
     def test_detached_process_is_ended_when_the_tool_is_stopped(self):
         tool = subprocess.Popen(

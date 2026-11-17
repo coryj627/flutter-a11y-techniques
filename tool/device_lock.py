@@ -328,20 +328,23 @@ def group_members(pgid):
     return found
 
 
-def record(started, leader):
+def record(started, leader, mark=None):
     """Adds to `started` everything now traceable to the command `leader`.
 
-    That is the members of its process group, and whatever it or anything
-    already recorded has started. Called again and again while a command
+    That is the members of its process group, the processes that carry the
+    run's `mark`, and whatever it or anything already recorded has started. Called again and again while a command
     runs and while it is ended: a process can only be traced while its
     parent is alive or while it is still in the group, so each look keeps
     what the next could no longer find.
     """
     started |= group_members(leader)
+    if mark:
+        # First, so that what a marked process has started is followed too.
+        started |= marked(mark)
     started |= descendants(started | {leader})
 
 
-def end_group(pgid, grace, reap=lambda: None, started=None):
+def end_group(pgid, grace, reap=lambda: None, started=None, mark=None):
     """Ends whatever is left of a process group, and returns once it is gone.
 
     The group is told to stop, and killed if it has not within `grace`
@@ -360,7 +363,7 @@ def end_group(pgid, grace, reap=lambda: None, started=None):
     while True:
         reap()
         if started is not None:
-            record(started, pgid)
+            record(started, pgid, mark)
         if not group_alive(pgid):
             return
         if time.monotonic() >= deadline:
@@ -564,7 +567,7 @@ def run_to_the_end(command, timeout=None, **kwargs):
         interrupted_at.append(time.monotonic())
         # Before the interrupt: once the command has ended, what it started
         # can no longer be traced to it.
-        record(started, child.pid)
+        record(started, child.pid, mark)
         try:
             child.send_signal(signal.SIGINT)
         except ProcessLookupError:
@@ -596,7 +599,7 @@ def run_to_the_end(command, timeout=None, **kwargs):
             # it has ended, they can no longer be traced to it. And what
             # those have started in their turn, and the members of its
             # group, which stay traceable after it has ended.
-            record(started, child.pid)
+            record(started, child.pid, mark)
             if timeout is not None and ended_at is None and now - begun >= timeout:
                 timed_out = True
             if not interrupted_at and ended_at is None and not timed_out:
@@ -623,8 +626,8 @@ def run_to_the_end(command, timeout=None, **kwargs):
         # go on driving a device after the lock is given up. First its
         # session, then what it had started in groups of their own.
         try:
-            record(started, child.pid)
-            end_group(child.pid, KILL_AFTER, reap=child.poll, started=started)
+            record(started, child.pid, mark)
+            end_group(child.pid, KILL_AFTER, reap=child.poll, started=started, mark=mark)
             end_processes(started | marked(mark), KILL_AFTER, mark)
         finally:
             for signum, handler in previous.items():

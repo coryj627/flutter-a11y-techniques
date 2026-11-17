@@ -60,7 +60,7 @@ def run_group(command, **kwargs):
 
     previous = {s: signal.signal(s, stop) for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}
     try:
-        return wait_watching(child, started)
+        return wait_watching(child, started, mark=mark)
     finally:
         # A second signal must not cut the clean-up short.
         for signum in previous:
@@ -76,14 +76,14 @@ def run_group(command, **kwargs):
 WATCH = 2
 
 
-def wait_watching(child, started, timeout=None):
+def wait_watching(child, started, timeout=None, mark=None):
     """Waits for the child, adding what it starts to `started` as it goes.
 
     Returns its exit status, or None if `timeout` seconds pass first.
     """
     deadline = None if timeout is None else time.monotonic() + timeout
     while True:
-        device_lock.record(started, child.pid)
+        device_lock.record(started, child.pid, mark)
         wait = WATCH if deadline is None else min(WATCH, max(0, deadline - time.monotonic()))
         try:
             return child.wait(timeout=wait)
@@ -99,11 +99,11 @@ def end_group(child, started=None, mark=None):
     if child.poll() is None:
         # The command first, alone, so that it can clean up with commands of
         # its own.
-        device_lock.record(started, child.pid)
+        device_lock.record(started, child.pid, mark)
         child.terminate()
-        if wait_watching(child, started, timeout=GRACE) is None:
+        if wait_watching(child, started, timeout=GRACE, mark=mark) is None:
             signal_group(child, signal.SIGKILL)
-    device_lock.end_group(child.pid, STRAGGLER_GRACE, reap=child.poll, started=started)
+    device_lock.end_group(child.pid, STRAGGLER_GRACE, reap=child.poll, started=started, mark=mark)
     if mark:
         # Found by the mark they inherited, even if their parent ended
         # between two looks at the process table.
