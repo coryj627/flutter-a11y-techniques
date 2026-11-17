@@ -532,9 +532,12 @@ def run_to_the_end(command, **kwargs):
             now = time.monotonic()
             if child.poll() is not None and ended_at is None:
                 ended_at = now
+            # What it has started is recorded all the while it runs: once
+            # it has ended, they can no longer be traced to it.
+            started |= descendants(child.pid)
             if not interrupted_at and ended_at is None:
                 continue  # running, and nobody has asked it to stop
-            started |= descendants(child.pid) | marked(mark)
+            started |= marked(mark)
             # Force at the deadline after an interrupt, or sooner once the
             # command itself has ended, interrupted or not, and only what it
             # left behind is keeping us here.

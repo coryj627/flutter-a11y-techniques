@@ -246,6 +246,27 @@ class RunToTheEndTest(LockTestCase):
                     self.assertFalse(device_lock._same_process(detached),
                                      "a detached process outlived run_to_the_end")
 
+    def test_detached_process_with_no_mark_is_found_while_its_command_runs(self):
+        # As a program of Apple's, whose environment cannot be read: only
+        # having seen it as a descendant, while its parent lived, finds it.
+        for status in (0, 3):
+            with self.subTest(status=status), mock.patch.object(device_lock, "KILL_AFTER", 0.3), \
+                    mock.patch.object(device_lock, "marked", return_value=set()):
+                command = ("import subprocess, sys, time\n"
+                           "p = subprocess.Popen(['/bin/sleep', '60'], start_new_session=True, "
+                           "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                           "sys.stderr.write(str(p.pid)); sys.stderr.flush()\n"
+                           "time.sleep(2)\n"
+                           f"sys.exit({status})\n")
+                run = device_lock.run_to_the_end(
+                    [sys.executable, "-c", command], stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE, text=True)
+                self.assertEqual(run.returncode, status)
+                detached = int(run.stderr)
+                self.addCleanup(self.kill, detached)
+                self.assertFalse(device_lock._same_process(detached),
+                                 "a detached process outlived run_to_the_end")
+
     def test_command_is_out_of_reach_of_the_terminal_s_interrupts(self):
         # Ctrl-C goes to the terminal's whole process group. The command must
         # not be in it, or it would be interrupted behind the tool's back.
