@@ -305,10 +305,12 @@ def run_to_the_end(command, **kwargs):
     Whatever stops this process, the command gets one SIGINT. That is what
     Playwright's runner treats as a request to stop cleanly, waiting for its
     workers to tear down; SIGTERM ends the runner at once, and a second
-    SIGINT makes it give up on the teardown.
+    SIGINT makes it give up on the teardown. The command runs in a session
+    of its own, so that Ctrl-C in a terminal reaches only this process and
+    pressing it twice still interrupts the command once.
     """
     received = []
-    child = subprocess.Popen(command, **child_fds(), **kwargs)
+    child = subprocess.Popen(command, start_new_session=True, **child_fds(), **kwargs)
 
     def forward(signum, _frame):
         received.append(signum)

@@ -225,6 +225,16 @@ class RunToTheEndTest(LockTestCase):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         self.assertEqual((run.returncode, run.stdout, run.stderr), (5, "out\n", "err\n"))
 
+    def test_command_is_out_of_reach_of_the_terminal_s_interrupts(self):
+        # Ctrl-C goes to the terminal's whole process group. The command must
+        # not be in it, or it would be interrupted behind the tool's back.
+        run = device_lock.run_to_the_end(
+            [sys.executable, "-c", "import os; print(os.getpgid(0), os.getsid(0))"],
+            stdout=subprocess.PIPE, text=True)
+        group, session = map(int, run.stdout.split())
+        self.assertNotEqual(group, os.getpgid(0))
+        self.assertNotEqual(session, os.getsid(0))
+
     def test_stopped_tool_stays_until_its_command_has_cleaned_up_and_keeps_the_lock(self):
         # As tool/voiceover_web.py under tool/evidence.py: the tool is told to
         # stop, and it is its command (Playwright) that restores VoiceOver.
