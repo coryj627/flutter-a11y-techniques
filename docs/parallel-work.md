@@ -64,7 +64,8 @@ VoiceOver:
 - `python3 tool/talkback.py <ID>`, `tool/voiceover_ios.py <ID>`, and
   `tool/voiceover_web.py <ID>` take the lock themselves when run alone.
 - Everything else goes through `python3 tool/with_devices.py -- <command>`:
-  `./gradlew app:connectedDebugAndroidTest …`, `xcodebuild test …`, `adb`,
+  `./gradlew --no-daemon app:connectedDebugAndroidTest …` (no daemon, so
+  that the run owns what drives the emulator), `xcodebuild test …`, `adb`,
   `xcrun simctl`, and probes.
 
 Never start a device command without the lock, and do not hold the lock

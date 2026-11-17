@@ -57,6 +57,8 @@ class RunTechniqueTest(unittest.TestCase):
         self.assertIn("class=dev.fluttera11y.flutter_a11y_techniques.F08RadioGroupTest ",
                       commands["android"] + " ")
         self.assertIn("timeout_msec=180000", commands["android"])
+        # No shared Gradle daemon: the run must own what drives the emulator.
+        self.assertTrue(commands["android"].startswith("./gradlew --no-daemon "))
         self.assertIn("-only-testing:RunnerUITests/F08RadioGroupUITests ", commands["ios"])
         self.assertIn("-skip-testing:RunnerUITests/F08RadioGroupUITests/testVoiceOverSpeech",
                       commands["ios"])

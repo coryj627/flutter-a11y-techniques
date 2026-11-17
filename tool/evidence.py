@@ -103,7 +103,10 @@ def checks(technique, layers):
     tool = os.path.join(ROOT, "tool")
     available = {
         "android": android_test and Step(
-            "android", ["./gradlew", "app:connectedDebugAndroidTest",
+            # --no-daemon: a Gradle daemon left by an earlier build would do
+            # the device work outside this run, where stopping the run
+            # cannot reach it.
+            "android", ["./gradlew", "--no-daemon", "app:connectedDebugAndroidTest",
                         f"-Pandroid.testInstrumentationRunnerArguments.class={PACKAGE}.{android_test}",
                         "-Pandroid.testInstrumentationRunnerArguments.timeout_msec="
                         + ANDROID_TEST_TIMEOUT],
