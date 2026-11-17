@@ -20,7 +20,8 @@
 # every run, so a passing run can be compared with a failing one.
 #
 # The classes to run are every Kotlin file in the test folder that has a
-# @Test in it. The script fails if it finds none, if such a file does not
+# @Test anywhere in it, a comment included: a file wrongly taken for a test
+# fails the run, where a test file wrongly passed over would not be noticed. The script fails if it finds none, if such a file does not
 # declare a class of its own name, or if, at the end, the test runner's log
 # does not show at least one finished test for every one of those classes.
 #
@@ -52,14 +53,14 @@ find_classes() {
     echo "ci_android_tests: no test folder at $TEST_DIR" >&2
     return 1
   fi
-  files=$(grep -lE '^[[:space:]]*@Test\b' "$TEST_DIR"/*.kt 2>/dev/null | sort)
+  files=$(grep -lE '@Test\b' "$TEST_DIR"/*.kt 2>/dev/null | sort)
   if [ -z "$files" ]; then
     echo "ci_android_tests: no file in $TEST_DIR has a @Test" >&2
     return 1
   fi
   while IFS= read -r file; do
     name=$(basename "$file" .kt)
-    if ! grep -qE "^[[:space:]]*class[[:space:]]+$name\b" "$file"; then
+    if ! grep -qE "^[[:space:]]*([a-z]+[[:space:]]+)*class[[:space:]]+$name\b" "$file"; then
       echo "ci_android_tests: $file has a @Test but no class named $name" >&2
       return 1
     fi

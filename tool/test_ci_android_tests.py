@@ -101,7 +101,11 @@ class ClassListTest(unittest.TestCase):
             TEST_CLASS.format(name="C01ButtonTest"), "  "))
         write_class(self.space.tests, "F01FieldsTest",
                     "class F01FieldsTest {\n\t@Test fun opens() {}\n}\n")
-        self.assertEqual(self.listed()[:2], (0, ["C01ButtonTest", "F01FieldsTest"]))
+        write_class(self.space.tests, "S01NamesTest",
+                    "internal open class S01NamesTest {\n"
+                    "    @Ignore @Test fun opens() {}\n}\n")
+        self.assertEqual(self.listed()[:2],
+                         (0, ["C01ButtonTest", "F01FieldsTest", "S01NamesTest"]))
 
     def test_the_real_folder_lists_every_test_file(self):
         folder = SCRIPT.parents[1] / "android/app/src/androidTest/kotlin" / PKG.replace(".", "/")
