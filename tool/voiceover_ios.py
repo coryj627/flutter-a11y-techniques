@@ -13,7 +13,9 @@ import re
 import subprocess
 import sys
 
-from evidence_common import REGISTRATIONS, TECHNIQUES, flutter_version, technique_argument
+import device_lock
+from evidence_common import (REGISTRATIONS, TECHNIQUES, flutter_version, stop_ios_tests,
+                             technique_argument)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEVICE = sys.argv[2] if len(sys.argv) > 2 else "iPhone 17"
@@ -31,12 +33,28 @@ def main():
     title, _, ios_test, _ = TECHNIQUES[technique]
     if ios_test is None:
         sys.exit(f"{technique} has no VoiceOver test on iOS; see its technique doc for why.")
-    run = subprocess.run(
-        ["xcodebuild", "test", "-workspace", "Runner.xcworkspace", "-scheme", "Runner",
-         "-configuration", "Debug", "-destination", f"platform=iOS Simulator,name={DEVICE}",
-         f"-only-testing:RunnerUITests/{ios_test}/testVoiceOverSpeech",
-         "-derivedDataPath", os.path.join(ROOT, "build", "ios_uitest")],
-        cwd=os.path.join(ROOT, "ios"), capture_output=True, text=True)
+    # The simulator is shared with every other run (tool/device_lock.py).
+    device_lock.hold_for_process(f"voiceover_ios {technique}")
+    # Holds the device lock too, and is seen through to its end if this tool
+    # is stopped.
+    unconfirmed = ("The app or its tests could not be shown to have stopped on the simulator. "
+                   "Nothing more was run; check the simulator before running again.")
+    # Not on a simulator where an earlier test may still be running.
+    if not stop_ios_tests(DEVICE):
+        sys.exit(unconfirmed)
+    try:
+        run = device_lock.run_to_the_end(
+            ["xcodebuild", "test", "-workspace", "Runner.xcworkspace", "-scheme", "Runner",
+             "-configuration", "Debug", "-destination", f"platform=iOS Simulator,name={DEVICE}",
+             f"-only-testing:RunnerUITests/{ios_test}/testVoiceOverSpeech",
+             "-derivedDataPath", os.path.join(ROOT, "build", "ios_uitest")],
+            cwd=os.path.join(ROOT, "ios"), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    finally:
+        # However xcodebuild ended, the test inside the simulator must be
+        # over before anyone else gets the simulator.
+        cleaned = stop_ios_tests(DEVICE)
+    if not cleaned:
+        sys.exit(unconfirmed)
     log = run.stdout + run.stderr
     rows = re.findall(rf"^{technique}VO (\S+) \| (.*)$", log, re.M)
     failures = re.findall(r"error: .*? : (.*)$", log, re.M)

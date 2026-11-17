@@ -18,6 +18,7 @@ import re
 import subprocess
 import sys
 
+import device_lock
 from evidence_common import REGISTRATIONS, TECHNIQUES, flutter_version, technique_argument
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,9 +43,14 @@ def version(package):
 def main():
     technique = technique_argument(sys.argv, "Usage: python3 tool/voiceover_web.py <ID>")
     title, _, _, spec = TECHNIQUES[technique]
-    run = subprocess.run(["npx", "playwright", "test", spec],
-                         cwd=os.path.join(WEB_TESTS, "vo"), capture_output=True, text=True,
-                         env={**os.environ, VOICEOVER_RUN: "1"})
+    # VoiceOver on this Mac is shared with every other run (tool/device_lock.py).
+    device_lock.hold_for_process(f"voiceover_web {technique}")
+    # Holds the device lock too, and is seen through to its end if this tool
+    # is stopped: it is Playwright that switches VoiceOver off again.
+    run = device_lock.run_to_the_end(
+        ["npx", "playwright", "test", spec], cwd=os.path.join(WEB_TESTS, "vo"),
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        env={**os.environ, VOICEOVER_RUN: "1"})
     log = run.stdout + run.stderr
     # A retried walk prints more than once; the last attempt is the result.
     rows = {}

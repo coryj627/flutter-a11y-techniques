@@ -11,8 +11,11 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from '@playwright/test';
+import { ports, webServer } from './support/ports.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+// This checkout's own port; FA11Y_WEB_PORT overrides it (support/ports.js).
+const port = ports().app;
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
 
 export default defineConfig({
@@ -24,10 +27,6 @@ export default defineConfig({
     /[\\/]node_modules[\\/]/,
   ],
   reporter: 'list',
-  use: { baseURL: 'http://localhost:8765' },
-  webServer: {
-    command: 'python3 -m http.server 8765 --directory ../build/web',
-    url: 'http://localhost:8765',
-    reuseExistingServer: true,
-  },
+  use: { baseURL: `http://127.0.0.1:${port}` },
+  webServer: webServer('build/web', port),
 });

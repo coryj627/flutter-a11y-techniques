@@ -18,7 +18,9 @@ import subprocess
 import sys
 import time
 
-from evidence_common import REGISTRATIONS, TECHNIQUES, flutter_version, technique_argument
+import device_lock
+from evidence_common import (GRADLE_UNSHARED, REGISTRATIONS, TECHNIQUES, flutter_version,
+                             stop_android_tests, technique_argument)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ADB = os.path.expanduser(os.environ.get("ADB", "~/Library/Android/sdk/platform-tools/adb"))
@@ -48,7 +50,7 @@ ADB_TIMEOUT = 60
 def adb(*args):
     """Runs adb and returns its output; "" if it fails or times out."""
     try:
-        return subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE).stdout
+        return subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE, **device_lock.child_fds()).stdout
     except subprocess.TimeoutExpired:
         return ""
 
@@ -115,6 +117,34 @@ def current_log_level(texts):
     return texts[index]
 
 
+SETTINGS_TRIES = 3
+
+
+def open_developer_settings():
+    """Opens TalkBack's settings and goes to its developer settings.
+
+    A tap made while the settings screen is still opening is lost, and the
+    next screen is then never reached ("could not find Developer settings";
+    seen on about half the runs on 2026-11-16, with builds running beside
+    the emulator). So the whole way there is tried again from a freshly
+    started settings screen, with a longer wait each time. Only getting
+    there is repeated: nothing has been changed yet.
+    """
+    for attempt in range(SETTINGS_TRIES):
+        adb_checked("shell", "am", "force-stop", "com.google.android.marvin.talkback")
+        adb_checked("shell", "am", "start", "-n",
+                    "com.google.android.marvin.talkback/"
+                    "com.android.talkback.TalkBackPreferencesActivity")
+        time.sleep(3 + 3 * attempt)
+        try:
+            tap("Advanced settings")
+            tap("Developer settings")
+            return
+        except AdbError as error:
+            if attempt + 1 == SETTINGS_TRIES or "could not find" not in str(error):
+                raise
+
+
 def set_log_level(level, on_read=None):
     """Sets TalkBack's developer "Log output level" through its settings UI
     and returns the level it had before.
@@ -128,12 +158,7 @@ def set_log_level(level, on_read=None):
     back from the screen: a tap that did nothing raises AdbError instead of
     passing as success.
     """
-    adb_checked("shell", "am", "force-stop", "com.google.android.marvin.talkback")
-    adb_checked("shell", "am", "start", "-n",
-                "com.google.android.marvin.talkback/com.android.talkback.TalkBackPreferencesActivity")
-    time.sleep(3)
-    tap("Advanced settings")
-    tap("Developer settings")
+    open_developer_settings()
     previous = current_log_level([t for t, _, _ in screen()])
     if on_read:
         on_read(previous)
@@ -160,7 +185,7 @@ def adb_checked(*args):
     an empty answer would lead to the wrong value being restored.
     """
     try:
-        run = subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE)
+        run = subprocess.run([ADB, *args], timeout=ADB_TIMEOUT, **DECODE, **device_lock.child_fds())
     except subprocess.TimeoutExpired:
         raise AdbError(f"adb {' '.join(args)} did not finish in {ADB_TIMEOUT} seconds") from None
     if run.returncode != 0:
@@ -284,17 +309,37 @@ class signals_deferred:
 WALK_TIMEOUT = 20 * 60
 
 
+UNCONFIRMED_EMULATOR = ("The app or its tests could not be shown to have stopped on the "
+                        "emulator. Nothing more was run; check the emulator before running again.")
+
+
 def walk():
     """Runs the instrumented walk. Returns the Gradle result and the log."""
+    # Not on an emulator where an earlier test may still be running.
+    if not stop_android_tests():
+        sys.exit(UNCONFIRMED_EMULATOR)
     time.sleep(5)
     adb("logcat", "-c")
     try:
-        run = subprocess.run(
-            ["./gradlew", "app:connectedDebugAndroidTest",
+        # Holds the device lock too. However it ends (by itself, at the
+        # timeout, or because this tool is stopped), everything Gradle
+        # started is gone before the device's settings are put back.
+        run = device_lock.run_to_the_end(
+            # No daemon: one left by an earlier build is not ours to stop,
+            # and would go on driving the emulator after a timeout.
+            ["./gradlew", *GRADLE_UNSHARED, "app:connectedDebugAndroidTest",
              f"-Pandroid.testInstrumentationRunnerArguments.class={TEST}"],
-            cwd=os.path.join(ROOT, "android"), timeout=WALK_TIMEOUT, **DECODE)
+            cwd=os.path.join(ROOT, "android"), timeout=WALK_TIMEOUT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", errors="replace")
     except subprocess.TimeoutExpired:
         sys.exit(f"instrumented walk did not finish in {WALK_TIMEOUT // 60} minutes")
+    finally:
+        # However the Gradle run ended, the test inside the emulator must be
+        # over before the device's settings are put back or anyone else
+        # gets the device.
+        cleaned = stop_android_tests()
+    if not cleaned:
+        sys.exit(UNCONFIRMED_EMULATOR)
     return run, adb("logcat", "-d")
 
 
@@ -454,6 +499,12 @@ def main():
     # The Gradle wrapper is generated by Flutter, not committed.
     if not os.path.exists(os.path.join(ROOT, "android", "gradlew")):
         sys.exit("android/gradlew is missing. Run `flutter build apk --debug` once first.")
+    # The emulator is shared with every other run (tool/device_lock.py).
+    device_lock.hold_for_process(f"talkback {technique}")
+    # Before any setting is changed or the settings screen is driven: a test
+    # left running by an earlier run would tap through all of it.
+    if not stop_android_tests():
+        sys.exit(UNCONFIRMED_EMULATOR)
     exit_on_termination_signals()
     try:
         spoken, retried = run_with_talkback(walk_until_heard)

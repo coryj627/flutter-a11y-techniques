@@ -1,11 +1,22 @@
 """Shared helpers for the evidence scripts in tool/."""
 import collections
+import contextlib
 import json
 import os
 import re
+import signal
+import subprocess
+import time
 import types
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Gradle arguments for anything run under the device lock. What a command
+# starts under the lock is ended with it, so it must start nothing that a
+# build in another worktree could come to share: no Gradle daemon, and the
+# Kotlin compiler inside Gradle's own process and not in Kotlin's daemon.
+KOTLIN_IN_PROCESS = "kotlin.compiler.execution.strategy=in-process"
+GRADLE_UNSHARED = ["--no-daemon", "-P" + KOTLIN_IN_PROCESS]
 TECHNIQUES_DIR = os.path.join(ROOT, "tool", "techniques")
 
 
@@ -179,3 +190,120 @@ def technique_argument(argv, usage):
     if len(argv) < 2 or argv[1].upper() not in TECHNIQUES:
         raise SystemExit(f"{usage}\nTechniques: {', '.join(sorted(TECHNIQUES))}")
     return argv[1].upper()
+
+
+@contextlib.contextmanager
+def signals_held():
+    """Holds SIGINT, SIGTERM and SIGHUP until the block has finished.
+
+    For clean-up that must not be cut short: a signal that arrives during
+    it is kept, and sent to this process again once the block is done and
+    the handlers that were there before are back.
+    """
+    pending = []
+    names = [s for s in ("SIGINT", "SIGTERM", "SIGHUP") if hasattr(signal, s)]
+    try:
+        previous = {getattr(signal, n): signal.signal(getattr(signal, n),
+                                                      lambda signum, _f: pending.append(signum))
+                    for n in names}
+    except ValueError:  # not the main thread: nothing to hold
+        yield
+        return
+    try:
+        yield
+    finally:
+        for signum, handler in previous.items():
+            signal.signal(signum, handler)
+        for signum in pending[:1]:
+            os.kill(os.getpid(), signum)
+
+
+ANDROID_PACKAGE = "dev.fluttera11y.flutter_a11y_techniques"
+ADB = os.path.expanduser(os.environ.get("ADB", "~/Library/Android/sdk/platform-tools/adb"))
+# Printed by the device itself when pidof found nothing. An empty answer is
+# what a device that is offline gives too, and proves nothing.
+NOT_RUNNING = "fa11y-not-running"
+
+
+def stop_android_tests(run=subprocess.run, wait=10.0, sleep=time.sleep):
+    """Stops the app and its instrumentation on the emulator, and checks.
+
+    A test runs inside the emulator. Ending the Gradle run on this Mac, as
+    happens when a run is stopped or times out, does not end it there, and
+    it would go on tapping through the app under the next run. Called after
+    every Android step, however it ended, while the device lock is still
+    held; a signal that arrives meanwhile is held until it is done. Returns
+    True once the device itself has said that neither process is left,
+    False if it has not within `wait` seconds: one is still there, or the
+    device could not be asked (offline, adb failing).
+    """
+    import device_lock
+    packages = (ANDROID_PACKAGE, ANDROID_PACKAGE + ".test")
+
+    def adb(*args):
+        try:
+            return run([ADB, *args], capture_output=True, text=True, timeout=30,
+                       **device_lock.child_fds())
+        except (OSError, subprocess.TimeoutExpired):
+            return None
+
+    def stopped(package):
+        done = adb("shell", "am", "force-stop", package)
+        if done is None or done.returncode != 0:
+            return False
+        asked = adb("shell", f"pidof {package} || echo {NOT_RUNNING}")
+        return (asked is not None and asked.returncode == 0
+                and asked.stdout.strip() == NOT_RUNNING)
+
+    with signals_held():
+        deadline = time.monotonic() + wait
+        while True:
+            # Both are asked every time: one can start the other again.
+            if all([stopped(package) for package in packages]):
+                return True
+            if time.monotonic() >= deadline:
+                return False
+            sleep(0.5)
+
+
+IOS_BUNDLE = "dev.fluttera11y.flutterA11yTechniques"
+IOS_SIMULATOR = "iPhone 17"
+
+
+def stop_ios_tests(device=IOS_SIMULATOR, run=subprocess.run, wait=10.0, sleep=time.sleep):
+    """Stops the app and its UI test runner on the simulator, and checks.
+
+    The iOS counterpart of stop_android_tests(): a UI test runs inside the
+    simulator and does not end because xcodebuild was stopped. Returns True
+    once simctl says neither is running there (or the simulator is shut
+    down), False if that could not be shown within `wait` seconds. A signal
+    that arrives meanwhile is held until it is done.
+    """
+    import device_lock
+    bundles = (IOS_BUNDLE, IOS_BUNDLE + ".RunnerUITests.xctrunner")
+    with signals_held():
+        return _stop_ios(device, bundles, run, wait, sleep, device_lock.child_fds())
+
+
+def _stop_ios(device, bundles, run, wait, sleep, fds):
+    deadline = time.monotonic() + wait
+    while True:
+        stopped = 0
+        for bundle in bundles:
+            try:
+                done = run(["xcrun", "simctl", "terminate", device, bundle], capture_output=True,
+                           text=True, timeout=30, **fds)
+            except (OSError, subprocess.TimeoutExpired):
+                continue
+            said = (done.stderr or "") + (done.stdout or "")
+            # simctl ends a running app with status 0; asked again, it says
+            # there was nothing to end. Only that, or a simulator that is
+            # not running at all, shows that the app is not.
+            if done.returncode != 0 and ("found nothing to terminate" in said
+                                         or "current state: Shutdown" in said):
+                stopped += 1
+        if stopped == len(bundles):
+            return True
+        if time.monotonic() >= deadline:
+            return False
+        sleep(0.5)

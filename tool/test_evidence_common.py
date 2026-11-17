@@ -214,11 +214,22 @@ class RepositoryRegistrations(unittest.TestCase):
 class VoiceOverWebGuard(unittest.TestCase):
     def test_the_web_tool_sets_the_variable_the_voiceover_specs_require(self):
         import voiceover_web
+        # Nothing here may start a process: a real run takes over the Mac.
+        # Popen is closed off as well, in case the tool's way of running the
+        # command changes again.
         with mock.patch.object(sys, "argv", ["voiceover_web.py", "F08"]), \
-                mock.patch.object(voiceover_web.subprocess, "run",
+                mock.patch.object(voiceover_web.device_lock, "hold_for_process") as hold, \
+                mock.patch.object(voiceover_web.device_lock, "run_to_the_end",
                                   return_value=mock.Mock(returncode=1, stdout="", stderr="")) as run, \
-                mock.patch("builtins.print"), self.assertRaises(SystemExit):
+                mock.patch.object(voiceover_web.subprocess, "run",
+                                  side_effect=AssertionError("started a process")), \
+                mock.patch.object(voiceover_web.subprocess, "Popen",
+                                  side_effect=AssertionError("started a process")), \
+                mock.patch("builtins.print"), self.assertRaises(SystemExit) as stopped:
             voiceover_web.main()
+        self.assertEqual(str(stopped.exception), "No VoiceOver transcript captured.")
+        hold.assert_called_once_with("voiceover_web F08")
+        self.assertEqual(run.call_args.args[0][:3], ["npx", "playwright", "test"])
         self.assertEqual(run.call_args.kwargs["env"][voiceover_web.VOICEOVER_RUN], "1")
         self.assertEqual(run.call_args.kwargs["cwd"], os.path.join(voiceover_web.WEB_TESTS, "vo"))
         # The name is the one the specs check.

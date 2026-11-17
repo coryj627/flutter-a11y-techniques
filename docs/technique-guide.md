@@ -21,8 +21,9 @@ templates are in [templates/](templates/).
    (D32, under "Examples" below): it is neither good nor bad.
 4. **Write the tests at each layer**, then the spec's "what the build found"
    section, then the technique doc.
-5. **Run the gates**: this technique's suites and transcripts locally (the
-   full device and transcript run is scheduled, not per merge), Codex
+5. **Run the gates**: this technique's suites and transcripts locally with
+   `python3 tool/evidence.py <ID>` (the full device and transcript run is
+   scheduled, not per merge; see "The device and transcript run" below), Codex
    adversarial review until it approves, then the PR with green CI and
    Codoki's "safe to merge".
 
@@ -215,3 +216,20 @@ check against a native control or a plain HTML page:
   headings, so the missing "Heading" was Flutter's.
 - A plain HTML live region showed that Playwright's WebKit build announces
   nothing, so that silence was not Flutter's.
+
+## The device and transcript run
+
+`python3 tool/evidence.py <ID>` runs one technique's Android and iOS tree
+tests, its web tree spec, and its three transcripts, and prints a result for
+each. It takes about 25 minutes, and the last step, the web VoiceOver
+recording, takes over the Mac's screen and speech; the tool warns first. Run
+it before the technique's pull request is merged, and again after any change
+to its examples or walks. `--only` and `--skip` choose layers.
+
+`python3 tool/evidence.py --all` does the same for every technique in turn,
+about 25 minutes each. That is the scheduled run and the run before a
+release (D23), not a step of every merge.
+
+The emulator, the simulator, and VoiceOver are shared by every worktree, so
+these tools, and anything else that touches a device, wait for one lock.
+[Working in parallel](parallel-work.md) says what needs it.
