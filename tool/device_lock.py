@@ -328,6 +328,19 @@ def group_members(pgid):
     return found
 
 
+def record(started, leader):
+    """Adds to `started` everything now traceable to the command `leader`.
+
+    That is the members of its process group, and whatever it or anything
+    already recorded has started. Called again and again while a command
+    runs and while it is ended: a process can only be traced while its
+    parent is alive or while it is still in the group, so each look keeps
+    what the next could no longer find.
+    """
+    started |= group_members(leader)
+    started |= descendants(started | {leader})
+
+
 def end_group(pgid, grace, reap=lambda: None, started=None):
     """Ends whatever is left of a process group, and returns once it is gone.
 
@@ -347,10 +360,7 @@ def end_group(pgid, grace, reap=lambda: None, started=None):
     while True:
         reap()
         if started is not None:
-            # The members too: one whose parent has ended is nobody's
-            # descendant any more, but is still in the group.
-            started |= group_members(pgid)
-            started |= descendants(started | {pgid})
+            record(started, pgid)
         if not group_alive(pgid):
             return
         if time.monotonic() >= deadline:
@@ -381,7 +391,10 @@ def descendants(pid):
             children.setdefault(int(parts[1]), []).append(int(parts[0]))
             born[int(parts[0])] = " ".join(parts[2].split())
     roots = {pid} if isinstance(pid, int) else set(pid)
-    found, queue = set(), list(roots)
+    # A recorded pid that now belongs to some other process is not a root:
+    # what that process starts is none of ours.
+    live = {root for root in roots if root not in _born or born.get(root) == _born[root]}
+    found, queue = set(), list(live)
     while queue:
         for child in children.get(queue.pop(), []):
             if child not in found:
@@ -551,7 +564,7 @@ def run_to_the_end(command, timeout=None, **kwargs):
         interrupted_at.append(time.monotonic())
         # Before the interrupt: once the command has ended, what it started
         # can no longer be traced to it.
-        started.update(descendants(child.pid))
+        record(started, child.pid)
         try:
             child.send_signal(signal.SIGINT)
         except ProcessLookupError:
@@ -583,8 +596,7 @@ def run_to_the_end(command, timeout=None, **kwargs):
             # it has ended, they can no longer be traced to it. And what
             # those have started in their turn, and the members of its
             # group, which stay traceable after it has ended.
-            started |= group_members(child.pid)
-            started |= descendants(started | {child.pid})
+            record(started, child.pid)
             if timeout is not None and ended_at is None and now - begun >= timeout:
                 timed_out = True
             if not interrupted_at and ended_at is None and not timed_out:
@@ -609,8 +621,7 @@ def run_to_the_end(command, timeout=None, **kwargs):
         # go on driving a device after the lock is given up. First its
         # session, then what it had started in groups of their own.
         try:
-            if child.poll() is None:
-                started |= descendants(child.pid)
+            record(started, child.pid)
             end_group(child.pid, KILL_AFTER, reap=child.poll, started=started)
             end_processes(started | marked(mark), KILL_AFTER, mark)
         finally:

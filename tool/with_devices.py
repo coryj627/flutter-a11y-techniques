@@ -83,7 +83,7 @@ def wait_watching(child, started, timeout=None):
     """
     deadline = None if timeout is None else time.monotonic() + timeout
     while True:
-        started |= device_lock.descendants(child.pid)
+        device_lock.record(started, child.pid)
         wait = WATCH if deadline is None else min(WATCH, max(0, deadline - time.monotonic()))
         try:
             return child.wait(timeout=wait)
@@ -99,7 +99,7 @@ def end_group(child, started=None, mark=None):
     if child.poll() is None:
         # The command first, alone, so that it can clean up with commands of
         # its own.
-        started |= device_lock.descendants(child.pid)
+        device_lock.record(started, child.pid)
         child.terminate()
         if wait_watching(child, started, timeout=GRACE) is None:
             signal_group(child, signal.SIGKILL)

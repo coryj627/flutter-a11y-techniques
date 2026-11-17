@@ -496,6 +496,20 @@ class RunToTheEndTest(LockTestCase):
             device_lock.end_processes({victim.pid}, 0.1)
         self.assertIsNone(victim.poll(), "an unrelated process was stopped")
 
+    def test_children_of_a_process_that_took_over_a_recorded_pid_are_not_ours(self):
+        code = ("import subprocess, sys, time\n"
+                "p = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'])\n"
+                "print(p.pid, flush=True)\ntime.sleep(30)\n")
+        other = subprocess.Popen([sys.executable, "-c", code], stdout=subprocess.PIPE, text=True)
+        self.addCleanup(other.stdout.close)
+        self.addCleanup(other.wait)
+        self.addCleanup(other.kill)
+        child = int(other.stdout.readline())
+        self.addCleanup(self.kill, child)
+        self.assertEqual(device_lock.descendants({other.pid}), {child})
+        with mock.patch.dict(device_lock._born, {other.pid: "Mon Jan  1 00:00:00 2001"}):
+            self.assertEqual(device_lock.descendants({other.pid}), set())
+
     def test_descendants_are_found_across_process_groups(self):
         code = ("import subprocess, sys, time\n"
                 "p = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'], "
@@ -688,6 +702,34 @@ class WithDevicesTest(LockTestCase):
         self.addCleanup(self.kill, helper)
         self.assertFalse(device_lock._same_process(helper),
                          "a helper started during the stop outlived run_group")
+
+    def test_helper_of_a_worker_orphaned_while_the_command_runs_is_ended(self):
+        # An intermediary starts a detached worker and ends. Later the
+        # worker starts a detached helper with no readable mark, and ends
+        # itself, all before the command does.
+        helper_file = os.path.join(self.dir.name, "helper")
+        worker = ("import subprocess, sys, time\n"
+                  "time.sleep(1.5)\n"
+                  "h = subprocess.Popen(['/bin/sleep', '60'], start_new_session=True, "
+                  "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                  "open(sys.argv[1], 'w').write(str(h.pid))\n"
+                  "time.sleep(1.5)\n")
+        intermediary = ("import subprocess, sys, time\n"
+                        f"subprocess.Popen([sys.executable, '-c', {worker!r}, {helper_file!r}], "
+                        "start_new_session=True, stdout=subprocess.DEVNULL)\n"
+                        "time.sleep(0.8)\n")
+        command = ("import subprocess, sys, time\n"
+                   f"subprocess.run([sys.executable, '-c', {intermediary!r}])\n"
+                   "time.sleep(4)\n")
+        with mock.patch.object(with_devices, "STRAGGLER_GRACE", 0.5), \
+                mock.patch.object(with_devices, "WATCH", 0.2), \
+                mock.patch.object(device_lock, "marked", return_value=set()):
+            self.assertEqual(with_devices.run_group([sys.executable, "-c", command]), 0)
+        with open(helper_file) as f:
+            helper = int(f.read())
+        self.addCleanup(self.kill, helper)
+        self.assertFalse(device_lock._same_process(helper),
+                         "the helper of an orphaned worker outlived run_group")
 
     def test_detached_process_is_ended_when_the_tool_is_stopped(self):
         tool = subprocess.Popen(
