@@ -291,6 +291,48 @@ def hold_for_process(label, **kwargs):
     return _process_lock
 
 
+def group_alive(pgid):
+    """Whether any process of the group is left."""
+    try:
+        os.killpg(pgid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        # macOS answers this for a group that holds only processes that
+        # have ended and are waiting to be reaped by someone else.
+        return False
+    return True
+
+
+def signal_group(pgid, signum):
+    try:
+        os.killpg(pgid, signum)
+    except (ProcessLookupError, PermissionError):
+        pass
+
+
+def end_group(pgid, grace, reap=lambda: None):
+    """Ends whatever is left of a process group, and returns once it is gone.
+
+    The group is told to stop, and killed if it has not within `grace`
+    seconds. `reap` is called before each look, to collect a child of this
+    process that has ended; until collected it would count as alive.
+    """
+    reap()
+    if not group_alive(pgid):
+        return
+    signal_group(pgid, signal.SIGTERM)
+    deadline = time.monotonic() + grace
+    while True:
+        reap()
+        if not group_alive(pgid):
+            return
+        if time.monotonic() >= deadline:
+            signal_group(pgid, signal.SIGKILL)
+            deadline = float("inf")  # killed: now only wait for it to go
+        time.sleep(0.05)
+
+
 # Seconds an interrupted command gets to end before run_to_the_end stops its
 # whole session. Shorter than the time tool/with_devices.py gives a stopped
 # tool, so that the tool is still there to do it.
@@ -333,12 +375,6 @@ def run_to_the_end(command, **kwargs):
         except ProcessLookupError:
             pass
 
-    def signal_session(signum):
-        try:
-            os.killpg(child.pid, signum)
-        except (ProcessLookupError, PermissionError):
-            pass
-
     previous = {s: signal.signal(s, forward)
                 for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}
     try:
@@ -351,14 +387,15 @@ def run_to_the_end(command, **kwargs):
                 pass
             waited = time.monotonic() - interrupted_at[0] if interrupted_at else 0
             if stage == 0 and waited >= INTERRUPT_GRACE:
-                signal_session(signal.SIGTERM)
+                signal_group(child.pid, signal.SIGTERM)
                 stage = 1
             elif stage == 1 and waited >= INTERRUPT_GRACE + KILL_AFTER:
-                signal_session(signal.SIGKILL)
+                signal_group(child.pid, signal.SIGKILL)
                 stage = 2
         if received:
-            # Nothing the command started may outlive this tool.
-            signal_session(signal.SIGKILL if stage else signal.SIGTERM)
+            # Nothing the command started may outlive this tool: it is out
+            # of reach of whoever stopped us. Wait until it has all gone.
+            end_group(child.pid, KILL_AFTER, reap=child.poll)
     finally:
         for signum, handler in previous.items():
             signal.signal(signum, handler)

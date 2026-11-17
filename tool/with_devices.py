@@ -75,36 +75,11 @@ def end_group(child):
             child.wait(timeout=GRACE)
         except subprocess.TimeoutExpired:
             signal_group(child, signal.SIGKILL)
-    if not group_alive(child):
-        return
-    signal_group(child, signal.SIGTERM)
-    deadline = time.monotonic() + STRAGGLER_GRACE
-    while group_alive(child):
-        if time.monotonic() >= deadline:
-            signal_group(child, signal.SIGKILL)
-            deadline = float("inf")  # killed: now only wait for it to go
-        time.sleep(0.05)
-
-
-def group_alive(child):
-    """Whether any process of the child's group is left."""
-    child.poll()  # reap the child itself, or it would count for ever
-    try:
-        os.killpg(child.pid, 0)
-    except ProcessLookupError:
-        return False
-    except PermissionError:
-        # macOS answers this for a group that holds only processes that
-        # have ended and are waiting to be reaped by someone else.
-        return False
-    return True
+    device_lock.end_group(child.pid, STRAGGLER_GRACE, reap=child.poll)
 
 
 def signal_group(child, signum):
-    try:
-        os.killpg(child.pid, signum)
-    except (ProcessLookupError, PermissionError):
-        pass
+    device_lock.signal_group(child.pid, signum)
 
 
 def main(argv=None):

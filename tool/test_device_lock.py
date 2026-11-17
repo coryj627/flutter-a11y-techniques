@@ -271,6 +271,34 @@ class RunToTheEndTest(LockTestCase):
         except ProcessLookupError:
             pass
 
+    def test_what_an_interrupted_command_leaves_behind_is_ended_before_the_tool_exits(self):
+        # The command ends on its interrupt at once; something it started
+        # has let go of its output and ignores being told to stop.
+        command = ("import subprocess, sys, time\n"
+                   "p = subprocess.Popen([sys.executable, '-c', 'import signal, time; "
+                   "signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+                   "signal.signal(signal.SIGINT, signal.SIG_IGN); print(1, flush=True); "
+                   "time.sleep(60)'], stdout=subprocess.PIPE)\n"
+                   "p.stdout.readline()\n"
+                   "sys.stderr.write(str(p.pid) + chr(10)); sys.stderr.flush()\n"
+                   "time.sleep(60)\n")
+        tool_code = ("import subprocess, sys, device_lock\n"
+                     "device_lock.KILL_AFTER = 0.5\n"
+                     f"device_lock.run_to_the_end([sys.executable, '-c', {command!r}], "
+                     "stdout=subprocess.PIPE, text=True)\n")
+        tool = subprocess.Popen([sys.executable, "-c", tool_code], cwd=TOOL, env=self.env(),
+                                stderr=subprocess.PIPE, text=True)
+        self.addCleanup(tool.stderr.close)
+        left_behind = int(tool.stderr.readline())
+        self.addCleanup(self.kill, left_behind)
+        tool.terminate()
+        self.assertEqual(tool.wait(timeout=30), 128 + 15)
+        try:
+            os.kill(left_behind, 0)
+            self.fail("the tool exited while part of its command was still running")
+        except ProcessLookupError:
+            pass
+
     def test_stopped_tool_stays_until_its_command_has_cleaned_up_and_keeps_the_lock(self):
         # As tool/voiceover_web.py under tool/evidence.py: the tool is told to
         # stop, and it is its command (Playwright) that restores VoiceOver.
