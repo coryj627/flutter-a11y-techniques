@@ -478,6 +478,10 @@ def main():
         sys.exit("android/gradlew is missing. Run `flutter build apk --debug` once first.")
     # The emulator is shared with every other run (tool/device_lock.py).
     device_lock.hold_for_process(f"talkback {technique}")
+    # Before any setting is changed or the settings screen is driven: a test
+    # left running by an earlier run would tap through all of it.
+    if not stop_android_tests():
+        sys.exit(UNCONFIRMED_EMULATOR)
     exit_on_termination_signals()
     try:
         spoken, retried = run_with_talkback(walk_until_heard)

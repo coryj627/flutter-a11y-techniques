@@ -5,6 +5,7 @@ Run: python3 -m unittest discover -s tool -p 'test_*.py'
 import contextlib
 import io
 import os
+import sys
 import tempfile
 import unittest
 from unittest import mock
@@ -338,6 +339,29 @@ class TalkBackWalkCommandTest(unittest.TestCase):
                 talkback.walk()
             self.assertIn("could not be shown to have stopped", str(stopped.exception))
             self.assertEqual(run.call_count, runs)
+
+
+class TalkBackMainTest(unittest.TestCase):
+    def test_nothing_on_the_device_is_touched_if_an_earlier_test_may_be_running(self):
+        import talkback
+        with tempfile.TemporaryDirectory() as root, \
+                mock.patch.object(sys, "argv", ["talkback.py", "F08"]), \
+                mock.patch.object(talkback, "ROOT", root), \
+                mock.patch.object(talkback.device_lock, "hold_for_process") as hold, \
+                mock.patch.object(talkback, "stop_android_tests", return_value=False) as stop, \
+                mock.patch.object(talkback, "run_with_talkback") as setup, \
+                mock.patch.object(talkback, "adb") as adb, \
+                mock.patch.object(talkback.subprocess, "run",
+                                  side_effect=AssertionError("touched the device")), \
+                self.assertRaises(SystemExit) as stopped:
+            os.makedirs(os.path.join(root, "android"))
+            open(os.path.join(root, "android", "gradlew"), "w").close()
+            talkback.main()
+        self.assertIn("could not be shown to have stopped", str(stopped.exception))
+        hold.assert_called_once()
+        stop.assert_called_once_with()
+        setup.assert_not_called()
+        adb.assert_not_called()
 
 
 class PreflightTest(unittest.TestCase):
