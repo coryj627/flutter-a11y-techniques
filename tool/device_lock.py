@@ -468,7 +468,7 @@ INTERRUPT_GRACE = 240
 KILL_AFTER = 10
 
 
-def run_to_the_end(command, **kwargs):
+def run_to_the_end(command, timeout=None, **kwargs):
     """subprocess.run for a command that drives a device and cleans up after itself.
 
     The command is given the lock (child_fds()). If this process is told to
@@ -489,7 +489,13 @@ def run_to_the_end(command, **kwargs):
     everything in its session, and killed if that does not end it. Once
     the command has ended, whatever is left of its session, and whatever it
     had started outside it, is ended too before this process exits.
+
+    With a timeout (seconds), a command still running then is stopped the
+    same way, with its session and what it started, and
+    subprocess.TimeoutExpired is raised once all of it has gone.
     """
+    begun = time.monotonic()
+    timed_out = False
     received = []
     interrupted_at = []
     started = set()  # what the command had started, seen once it was interrupted
@@ -535,14 +541,17 @@ def run_to_the_end(command, **kwargs):
             # What it has started is recorded all the while it runs: once
             # it has ended, they can no longer be traced to it.
             started |= descendants(child.pid)
-            if not interrupted_at and ended_at is None:
+            if timeout is not None and ended_at is None and now - begun >= timeout:
+                timed_out = True
+            if not interrupted_at and ended_at is None and not timed_out:
                 continue  # running, and nobody has asked it to stop
             started |= marked(mark)
             # Force at the deadline after an interrupt, or sooner once the
             # command itself has ended, interrupted or not, and only what it
             # left behind is keeping us here.
             due = min(interrupted_at[0] + INTERRUPT_GRACE if interrupted_at else float("inf"),
-                      ended_at if ended_at is not None else float("inf"))
+                      ended_at if ended_at is not None else float("inf"),
+                      begun + timeout if timed_out else float("inf"))
             if stage == 0 and now >= due:
                 signal_all(signal.SIGTERM)
                 stage = 1
@@ -565,4 +574,6 @@ def run_to_the_end(command, **kwargs):
                 signal.signal(signum, handler)
     if received:
         sys.exit(128 + received[0])
+    if timed_out:
+        raise subprocess.TimeoutExpired(command, timeout, output=out, stderr=err)
     return subprocess.CompletedProcess(command, child.returncode, out, err)

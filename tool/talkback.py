@@ -290,12 +290,14 @@ def walk():
     time.sleep(5)
     adb("logcat", "-c")
     try:
-        run = subprocess.run(
+        # Holds the device lock too. However it ends (by itself, at the
+        # timeout, or because this tool is stopped), everything Gradle
+        # started is gone before the device's settings are put back.
+        run = device_lock.run_to_the_end(
             ["./gradlew", "app:connectedDebugAndroidTest",
              f"-Pandroid.testInstrumentationRunnerArguments.class={TEST}"],
-            cwd=os.path.join(ROOT, "android"), timeout=WALK_TIMEOUT, **DECODE,
-            # The command holds the device lock too, until it has ended.
-            **device_lock.child_fds())
+            cwd=os.path.join(ROOT, "android"), timeout=WALK_TIMEOUT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", errors="replace")
     except subprocess.TimeoutExpired:
         sys.exit(f"instrumented walk did not finish in {WALK_TIMEOUT // 60} minutes")
     return run, adb("logcat", "-d")

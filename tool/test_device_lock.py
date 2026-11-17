@@ -288,6 +288,34 @@ class RunToTheEndTest(LockTestCase):
         self.assertFalse(device_lock._same_process(detached),
                          "a detached process outlived the failed read")
 
+    def test_at_the_timeout_the_command_and_what_it_started_are_ended(self):
+        command = ("import signal, subprocess, sys, time\n"
+                   "signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
+                   "p = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'], "
+                   "start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                   "sys.stderr.write(str(p.pid) + chr(10)); sys.stderr.flush()\n"
+                   "time.sleep(60)\n")
+        read, write = os.pipe()
+        self.addCleanup(os.close, read)
+        started = time.monotonic()
+        with mock.patch.object(device_lock, "KILL_AFTER", 0.3), \
+                self.assertRaises(subprocess.TimeoutExpired):
+            try:
+                device_lock.run_to_the_end([sys.executable, "-c", command], timeout=1,
+                                           stdout=subprocess.PIPE, stderr=write, text=True)
+            finally:
+                os.close(write)
+        self.assertLess(time.monotonic() - started, 15)
+        detached = int(os.read(read, 100))
+        self.addCleanup(self.kill, detached)
+        self.assertFalse(device_lock._same_process(detached),
+                         "a detached process outlived the timeout")
+
+    def test_command_that_ends_in_time_is_not_a_timeout(self):
+        run = device_lock.run_to_the_end([sys.executable, "-c", "print(1)"], timeout=30,
+                                         stdout=subprocess.PIPE, text=True)
+        self.assertEqual((run.returncode, run.stdout), (0, "1\n"))
+
     def test_command_is_out_of_reach_of_the_terminal_s_interrupts(self):
         # Ctrl-C goes to the terminal's whole process group. The command must
         # not be in it, or it would be interrupted behind the tool's back.
