@@ -636,6 +636,32 @@ class WithDevicesTest(LockTestCase):
         self.assertFalse(device_lock._same_process(helper),
                          "a helper started during the stop outlived run_group")
 
+    def test_helper_started_by_a_group_member_while_it_is_stopped_is_ended_too(self):
+        # The worker is in the command's own group. Told to stop, it starts
+        # a detached helper with no readable mark, and stays until killed.
+        worker = ("import signal, subprocess, sys, time\n"
+                  "def stop(*_):\n"
+                  "    h = subprocess.Popen(['/bin/sleep', '60'], start_new_session=True, "
+                  "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                  "    open(sys.argv[1], 'w').write(str(h.pid))\n"
+                  "signal.signal(signal.SIGTERM, stop)\n"
+                  "print(1, flush=True)\n"
+                  "time.sleep(60)\n")
+        helper_file = os.path.join(self.dir.name, "helper")
+        command = ("import subprocess, sys\n"
+                   f"p = subprocess.Popen([sys.executable, '-c', {worker!r}, {helper_file!r}], "
+                   "stdout=subprocess.PIPE)\n"
+                   "p.stdout.readline()\n")
+        with mock.patch.object(with_devices, "STRAGGLER_GRACE", 1), \
+                mock.patch.object(with_devices, "WATCH", 0.2), \
+                mock.patch.object(device_lock, "marked", return_value=set()):
+            self.assertEqual(with_devices.run_group([sys.executable, "-c", command]), 0)
+        with open(helper_file) as f:
+            helper = int(f.read())
+        self.addCleanup(self.kill, helper)
+        self.assertFalse(device_lock._same_process(helper),
+                         "a helper started during the stop outlived run_group")
+
     def test_detached_process_is_ended_when_the_tool_is_stopped(self):
         tool = subprocess.Popen(
             [sys.executable, "-c",

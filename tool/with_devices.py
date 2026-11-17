@@ -103,7 +103,7 @@ def end_group(child, started=None, mark=None):
         child.terminate()
         if wait_watching(child, started, timeout=GRACE) is None:
             signal_group(child, signal.SIGKILL)
-    device_lock.end_group(child.pid, STRAGGLER_GRACE, reap=child.poll)
+    device_lock.end_group(child.pid, STRAGGLER_GRACE, reap=child.poll, started=started)
     if mark:
         # Found by the mark they inherited, even if their parent ended
         # between two looks at the process table.

@@ -312,12 +312,32 @@ def signal_group(pgid, signum):
         pass
 
 
-def end_group(pgid, grace, reap=lambda: None):
+def group_members(pgid):
+    """The pids of the processes in a process group."""
+    try:
+        table = subprocess.run(["ps", "-axo", "pid=,pgid=,lstart="], capture_output=True,
+                               text=True, timeout=10).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return set()
+    found = set()
+    for line in table.splitlines():
+        parts = line.split(None, 2)
+        if len(parts) == 3 and parts[0].isdigit() and parts[1] == str(pgid):
+            found.add(int(parts[0]))
+            _born[int(parts[0])] = " ".join(parts[2].split())
+    return found
+
+
+def end_group(pgid, grace, reap=lambda: None, started=None):
     """Ends whatever is left of a process group, and returns once it is gone.
 
     The group is told to stop, and killed if it has not within `grace`
     seconds. `reap` is called before each look, to collect a child of this
     process that has ended; until collected it would count as alive.
+    `started`, a set, is the processes already known to have come from the
+    group's command. While the group is being ended, whatever they start is
+    added to it, so that a helper started by a member that is then killed
+    is still known afterwards.
     """
     reap()
     if not group_alive(pgid):
@@ -326,6 +346,11 @@ def end_group(pgid, grace, reap=lambda: None):
     deadline = time.monotonic() + grace
     while True:
         reap()
+        if started is not None:
+            # The members too: one whose parent has ended is nobody's
+            # descendant any more, but is still in the group.
+            started |= group_members(pgid)
+            started |= descendants(started | {pgid})
         if not group_alive(pgid):
             return
         if time.monotonic() >= deadline:
@@ -583,7 +608,7 @@ def run_to_the_end(command, timeout=None, **kwargs):
         try:
             if child.poll() is None:
                 started |= descendants(child.pid)
-            end_group(child.pid, KILL_AFTER, reap=child.poll)
+            end_group(child.pid, KILL_AFTER, reap=child.poll, started=started)
             end_processes(started | marked(mark), KILL_AFTER, mark)
         finally:
             for signum, handler in previous.items():
