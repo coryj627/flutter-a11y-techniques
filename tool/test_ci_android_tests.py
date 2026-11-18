@@ -31,8 +31,10 @@ class {name} : TechniqueTest {{
 # What the test runner logs for a run with no tests in it, as seen on CI.
 EMPTY_RUN = ("run started: 1 tests", "run finished: 0 tests, 0 failed, 0 ignored")
 
-# The stand-in device's times: of the batches' lines, of the line the
-# script writes as the sweep starts, and of the sweep's lines.
+# The stand-in device's times: of the line the script writes at the start
+# of the run, of the batches' lines, of the line it writes as the sweep
+# starts, and of the sweep's lines.
+RUN_START_TIME = "11-17 21:20:00.000"
 BATCH_TIME = "11-17 21:25:29.060"
 MARK_TIME = "11-17 21:28:00.000"
 SWEEP_TIME = "11-17 21:30:00.000"
@@ -58,6 +60,11 @@ class Workspace:
         # writes to and the stand-in adb reads.
         self.runner_log = self.root / "runner.txt"
         self.runner_log.write_text("")
+        # Shell that prints the stand-in device's log as `logcat -d` gives
+        # it, with the marker lines the script wrote to it; or the markers
+        # only, a device that gives none of the test runner's lines.
+        self.marks = f'cat "{self.root}/marks" 2>/dev/null'
+        self.device = f'{self.marks}; cat "{self.runner_log}"'
         self.adb()
         self.tool("pgrep", "exit 0")
         self.tool("sudo", "exit 0")
@@ -72,10 +79,10 @@ class Workspace:
         once only, `stop_once_after STOP` only stops, and `drop_lines TEXT`
         never writes a line with TEXT in it, however often it starts again
         from an earlier time. `logcat -d` runs
-        `dump`, with $d its call count, by default printing the device's
-        log; `logcat -c` runs `clear`, by default emptying it."""
+        `dump`, with $d its call count, by default `self.device`;
+        `logcat -c` runs `clear`, by default emptying the device's log."""
         log, root = self.runner_log, self.root
-        dump = dump or f'cat "{log}"'
+        dump = dump or self.device
         clear = clear or f': > "{log}"'
         self.tool("adb", f"""\
             follow() {{ exec tail -s 0.1 -n "+$first" -f "{log}"; }}
@@ -112,13 +119,15 @@ class Workspace:
             case "$*" in
               "logcat -c") {clear} ;;
               "logcat -G"*|"logcat -d -b"*) exit 0 ;;
-              "logcat -d"*CiBoundary:I*) cat "{root}/marks" 2>/dev/null ;;
-              "shell log -t CiBoundary"*)
-                echo "{MARK_TIME}  1000  1000 I CiBoundary: ${{@: -1}}" >> "{root}/marks" ;;
               "logcat -d"*TestRunner:I*)
                 d=$(($(cat "{root}/dumps" 2>/dev/null || echo 0) + 1))
                 echo "$d" > "{root}/dumps"
                 {dump} ;;
+              "logcat -d"*CiBoundary:I*) cat "{root}/marks" 2>/dev/null ;;
+              "shell log -t CiBoundary"*)
+                text=${{@: -1}}
+                case $text in *run_start*) t="{RUN_START_TIME}" ;; *) t="{MARK_TIME}" ;; esac
+                echo "$t  1000  1000 I CiBoundary: $text" >> "{root}/marks" ;;
               *TestRunner:I*)
                 n=$(($(cat "{root}/reader-starts" 2>/dev/null || echo 0) + 1))
                 echo "$n" > "{root}/reader-starts"
@@ -363,6 +372,7 @@ class RunTest(unittest.TestCase):
 
     def assert_passed_once_each(self, result):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("CiBoundary", (self.space.diag / "test-runner.log").read_text())
         log = self.space.reader_log()
         self.assertEqual(len(log), len(set(log)), "\n".join(log))
         for name in self.names:
@@ -370,7 +380,7 @@ class RunTest(unittest.TestCase):
 
     def test_a_reader_that_stops_at_once_is_started_again(self):
         # The device's log gives nothing: the lines come from the restart.
-        self.space.adb(reader='[ "$n" -eq 1 ] && exit 0; follow', dump="exit 0")
+        self.space.adb(reader='[ "$n" -eq 1 ] && exit 0; follow', dump=self.space.marks)
         self.space.finished(*self.names)
         result = self.space.run()
         self.assert_passed_once_each(result)
@@ -379,7 +389,7 @@ class RunTest(unittest.TestCase):
         self.assertIn("restarts of the test runner's log reader: 1,", result.stdout)
 
     def test_a_reader_started_again_at_once_still_fails_a_class_that_did_not_run(self):
-        self.space.adb(reader='[ "$n" -eq 1 ] && exit 0; follow', dump="exit 0")
+        self.space.adb(reader='[ "$n" -eq 1 ] && exit 0; follow', dump=self.space.marks)
         self.space.finished("C01ButtonTest", "S01NamesTest")
         result = self.space.run()
         self.assertEqual(result.returncode, 1)
@@ -389,7 +399,7 @@ class RunTest(unittest.TestCase):
     def mid_batch(self, *later):
         """A batch that logs C01ButtonTest's test, then the classes
         `later`, while the reader stops after the first."""
-        self.space.adb(reader="stop_once_after C01ButtonTest", dump="exit 0")
+        self.space.adb(reader="stop_once_after C01ButtonTest", dump=self.space.marks)
         self.space.gradle(
             self.space.logs(f"finished: opens({PKG}.C01ButtonTest)", time=BATCH_TIME)
             + "sleep 1; "
@@ -459,7 +469,7 @@ class RunTest(unittest.TestCase):
     def test_fails_and_says_why_when_neither_the_reader_nor_the_device_has_the_lines(self):
         # The device's log can be read at the start only.
         self.space.adb(reader="exec sleep 60",
-                       dump=f'[ "$d" -gt 1 ] && exit 1; cat "{self.space.runner_log}"')
+                       dump=f'[ "$d" -gt 1 ] && exit 1; {self.space.device}')
         self.space.finished(*self.names)
         result = self.space.run()
         self.assertEqual(result.returncode, 1)
@@ -530,9 +540,9 @@ class RunTest(unittest.TestCase):
         # dump), so the batch's last line only comes after the sweep.
         result = self.lost_batch_summary(
             self.empty_sweep_in_two_parts(),
-            dump=f'[ "$d" -eq 2 ] && exit 1; cat "{self.space.runner_log}"')
+            dump=f'[ "$d" -eq 2 ] && exit 1; {self.space.device}')
         self.assert_passed_once_each(result)
-        self.assertIn("could not be checked against the device's log before the sweep",
+        self.assertIn("could not all be checked against the device's log before the sweep",
                       result.stdout)
         self.assertIn("sweep: no test outside the list", result.stdout)
         self.assertEqual(
@@ -585,8 +595,8 @@ class RunTest(unittest.TestCase):
         """A device's log that gives the lines with `text` in them only
         from its fourth read on: not at the start, before the sweep or when
         the sweep is checked, but at the class check."""
-        return (f'if [ "$d" -le 3 ]; then grep -vF "{text}" "{self.space.runner_log}"; '
-                f'else cat "{self.space.runner_log}"; fi')
+        return (f'if [ "$d" -le 3 ]; then {self.space.marks}; '
+                f'grep -vF "{text}" "{self.space.runner_log}"; else {self.space.device}; fi')
 
     def test_a_class_line_the_running_reader_left_out_is_taken_from_the_device(self):
         # The reader never writes the line, even when it is started again
@@ -636,11 +646,56 @@ class RunTest(unittest.TestCase):
         # The device's log can be read at the start and before the sweep only.
         result = self.sweep_with_hidden_lines(
             f"started: opens({PKG}.MissedTest)", f"finished: opens({PKG}.MissedTest)",
-            dump=f'[ "$d" -gt 2 ] && exit 1; cat "{self.space.runner_log}"')
+            dump=f'[ "$d" -gt 2 ] && exit 1; {self.space.device}')
         self.assertEqual(result.returncode, 1)
         self.assertIn("failed: the sweep could not be confirmed against the device's log",
                       result.stdout)
         self.assertNotIn("sweep: no test outside the list", result.stdout)
+
+    # A device's log that can be read but has dropped its oldest lines
+    # cannot show that nothing is missing.
+
+    def failing_second_run(self, dump):
+        return self.sweep_with_hidden_lines(
+            "run started: 1 tests", f"failed: initializationError({PKG}.MissedTest)",
+            "run finished: 0 tests, 1 failed, 0 ignored", dump=dump)
+
+    def test_a_sweep_fails_when_the_devices_log_comes_back_empty(self):
+        # From the check of the sweep on, the device's log is read but empty.
+        result = self.failing_second_run(f'[ "$d" -ge 3 ] && exit 0; {self.space.device}')
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("the device's log no longer goes back to the sweep's start", result.stdout)
+        self.assertIn("failed: the sweep could not be confirmed against the device's log: it "
+                      "no longer goes back to the sweep's start", result.stdout)
+        self.assertNotIn("sweep: no test outside the list", result.stdout)
+
+    def test_a_sweep_fails_when_the_devices_log_has_dropped_its_start(self):
+        # From the check of the sweep on, the device's log has only the
+        # empty run: the markers and the failing run have been dropped.
+        result = self.failing_second_run(
+            f'[ "$d" -ge 3 ] && {{ grep -F "{SWEEP_TIME}" "{self.space.runner_log}"; exit 0; }}; '
+            f'{self.space.device}')
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("it no longer goes back to the sweep's start", result.stdout)
+        self.assertNotIn("sweep: no test outside the list", result.stdout)
+
+    def test_a_missing_class_fails_when_the_devices_log_has_dropped_the_runs_start(self):
+        # The reader never writes F01FieldsTest's line, and from before the
+        # sweep on the device's log has dropped it and the run's marker.
+        self.space.adb(
+            reader=f'drop_lines "({PKG}.F01FieldsTest)"',
+            dump=f'if [ "$d" -ge 2 ]; then {self.space.marks} | grep -v _run_start_; '
+                 f'grep -vF "({PKG}.F01FieldsTest)" "{self.space.runner_log}"; '
+                 f'else {self.space.device}; fi')
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("sweep: no test outside the list", result.stdout)
+        self.assertIn("the device's log no longer goes back to the start of the run",
+                      result.stdout)
+        self.assertIn("no test of F01FieldsTest finished (the log shows 2 finished tests in "
+                      "all; the device's log no longer goes back to the start of the run, so "
+                      "its lines may have been dropped from it)", result.stdout)
 
     def test_a_sweep_line_the_class_check_brings_fails_a_sweep_that_had_passed(self):
         # The device gives a class's line and a test of the sweep only at the
@@ -666,7 +721,8 @@ class RunTest(unittest.TestCase):
     def test_fails_when_the_sweeps_start_cannot_be_marked(self):
         self.space.finished(*self.names)
         stand_in = (self.space.bin / "adb").read_text().split("\n", 1)[1]
-        self.space.tool("adb", 'case "$*" in "shell log"*) exit 1 ;; esac\n' + stand_in)
+        self.space.tool("adb", 'case "$*" in "shell log"*_sweep_*) exit 1 ;; esac\n'
+                        + stand_in)
         result = self.space.run()
         self.assertEqual(result.returncode, 1)
         self.assertIn("failed: could not mark the sweep's start", result.stdout)
