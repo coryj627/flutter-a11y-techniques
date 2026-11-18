@@ -10,6 +10,7 @@ import 'f09_switch/f09_switch.dart';
 import 'f10_slider/f10_slider.dart';
 import 'i01_focusable_controls/i01_focusable_controls.dart';
 import 'i02_focus_order/i02_focus_order.dart';
+import 'i03_focus_management/i03_focus_management.dart';
 import 'i12_announcements/i12_announcements.dart';
 import 's01_accessible_names/s01_accessible_names.dart';
 import 's02_informative_images/s02_informative_images.dart';
@@ -33,6 +34,7 @@ final List<Technique> allTechniques = [
   f10Slider,
   i01FocusableControls,
   i02FocusOrder,
+  i03FocusManagement,
   i12Announcements,
   s01AccessibleNames,
   s02InformativeImages,

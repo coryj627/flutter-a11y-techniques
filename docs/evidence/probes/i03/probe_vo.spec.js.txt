@@ -1,0 +1,215 @@
+// Throwaway: I03 probe with VoiceOver on the web (Chromium). Not the
+// technique's spec; kept as docs/evidence/probes/i03/probe_vo.spec.js.txt.
+// Run only through `python3 tool/voiceover_web.py I03`, against the probe's
+// web build. After each step it records what VoiceOver said, the element
+// under VoiceOver's cursor (found by comparing the cursor's bounds on the
+// screen with each element's), the element with DOM focus, and Flutter's
+// keyboard focus from the probe's status bar.
+import { voiceOverTest as test } from '@guidepup/playwright';
+import { activateBrowser, cursorBounds, lastPhrase, waitUntilQuiet } from './vo_helpers.js';
+
+const btn = (page, x) => page.getByRole('button', { name: x, exact: true });
+const id = (page, x) => page.locator(`[flt-semantics-identifier="${x}"]`);
+
+async function under(page) {
+  const bounds = (await cursorBounds()).split(',').map((v) => Number(v.trim()));
+  return page.evaluate(([l, t, r, b]) => {
+    const cx = (l + r) / 2;
+    const cy = (t + b) / 2;
+    const top = window.screenY + (window.outerHeight - window.innerHeight);
+    const left = window.screenX;
+    let best = null;
+    for (const e of document.querySelectorAll('flt-semantics, flt-semantics span, [role]')) {
+      const rect = e.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) continue;
+      const x0 = left + rect.left; const y0 = top + rect.top;
+      if (cx >= x0 && cx <= x0 + rect.width && cy >= y0 && cy <= y0 + rect.height) {
+        const area = rect.width * rect.height;
+        const text = (e.getAttribute('aria-label') || e.textContent || '').trim().slice(0, 30);
+        if (text && (!best || area < best.area)) best = { area, text };
+      }
+    }
+    return best ? best.text : `(nothing at ${Math.round(cx)},${Math.round(cy)})`;
+  }, bounds);
+}
+
+const dom = (page) => page.evaluate(() => {
+  const e = document.activeElement;
+  if (!e || e === document.body) return 'body';
+  return (e.getAttribute('aria-label') || e.textContent || e.tagName).trim().slice(0, 30);
+});
+
+const kf = async (page) => ((await id(page, 'kf').getAttribute('aria-label')) ?? (await id(page, 'kf').textContent()) ?? '').replace('KF: ', '');
+
+async function heard(page, ms = 4000) {
+  const out = [];
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    const now = (await lastPhrase()).replace(/\s+/g, ' ').trim();
+    if (now && now !== out[out.length - 1]) out.push(now.slice(0, 60));
+    await page.waitForTimeout(200);
+  }
+  return out;
+}
+
+async function where(page, ms) {
+  const said = await heard(page, ms);
+  return `heard [${said.join(' | ')}] / VO on ${await under(page)} / DOM ${await dom(page)} / KF ${await kf(page)}`;
+}
+
+async function start(page, browserName) {
+  await page.goto('/#/probe', { waitUntil: 'load' });
+  await id(page, 'p16 Last').waitFor();
+  await page.waitForTimeout(800);
+  await activateBrowser(browserName);
+  await page.bringToFront();
+  await page.getByText('Probe I03').click();
+}
+
+async function on(page, name) {
+  await btn(page, name).focus();
+  await waitUntilQuiet(page, 2000, 10000);
+}
+
+const fixtures = [
+  ['p1 Dialog', 'p1 Close'], ['p2 Autofocus dialog', 'p2 OK'], ['p3 Sheet', 'p3 Close'],
+  ['p4 Page', 'p4 Done'], ['p6 Action sheet', 'p6 Close'], ['p8 General dialog', 'p8 Close'],
+  ['p9 Overlay', 'p9 Close'], ['p10 Inline', 'p10 Close'], ['p11 Inline managed', 'p11 Close'],
+];
+
+for (const [trigger, close] of fixtures) {
+  test(`probe keyboard ${trigger}`, async ({ page, voiceOver, browserName }) => {
+    test.skip(browserName === 'webkit', 'probe in Chromium only');
+    await start(page, browserName);
+    await on(page, trigger);
+    const before = `VO on ${await under(page)} / DOM ${await dom(page)} / KF ${await kf(page)}`;
+    await page.keyboard.press('Enter');
+    const afterOpen = await where(page);
+    // To the control that closes it by Tab, then Space.
+    let reached = false;
+    for (let i = 0; i < 30 && !reached; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(250);
+      reached = (await kf(page)) === `node:${close}`;
+    }
+    await waitUntilQuiet(page, 2000, 10000);
+    await page.keyboard.press('Space');
+    const afterClose = await where(page);
+    console.log(`I03VO ${browserName} keyboard-${trigger.split(' ')[0]} | ${trigger} | before: ${before} | after Enter: ${afterOpen} | close by Tab ${reached}, after Space: ${afterClose}`);
+    void voiceOver;
+  });
+
+  test(`probe voiceover ${trigger}`, async ({ page, voiceOver, browserName }) => {
+    test.skip(browserName === 'webkit', 'probe in Chromium only');
+    await start(page, browserName);
+    await on(page, trigger);
+    const before = `VO on ${await under(page)} / DOM ${await dom(page)} / KF ${await kf(page)}`;
+    await voiceOver.act();
+    const afterOpen = await where(page);
+    let afterClose = `${close} not found`;
+    if (await btn(page, close).count()) {
+      await on(page, close);
+      await voiceOver.act();
+      afterClose = await where(page);
+    }
+    console.log(`I03VO ${browserName} vo-${trigger.split(' ')[0]} | ${trigger} | before: ${before} | after VO-Space: ${afterOpen} | after VO-Space on close: ${afterClose}`);
+  });
+}
+
+test('probe removal', async ({ page, voiceOver, browserName }) => {
+  test.skip(browserName === 'webkit', 'probe in Chromium only');
+  await start(page, browserName);
+  const rows = [];
+  for (const list of ['p13', 'p14', 'p17']) {
+    await on(page, `${list} Remove B`);
+    await voiceOver.act();
+    rows.push(`${list} Remove B by VO-Space: ${await where(page)}`);
+  }
+  for (const list of ['p13', 'p14']) {
+    await on(page, `${list} Remove A`);
+    await page.keyboard.press('Enter');
+    rows.push(`${list} Remove A by Enter: ${await where(page)}`);
+  }
+  console.log(`I03VO ${browserName} removal | ${rows.join(' || ')}`);
+});
+
+async function round3(page, browserName) {
+  await page.goto('/#/round3', { waitUntil: 'load' });
+  await id(page, 's9 Last').waitFor();
+  await page.waitForTimeout(800);
+  await activateBrowser(browserName);
+  await page.bringToFront();
+  await page.getByText('Round 3').click();
+}
+
+test('probe round 3 by VoiceOver', async ({ page, voiceOver, browserName }) => {
+  test.skip(browserName === 'webkit', 'probe in Chromium only');
+  await round3(page, browserName);
+  const rows = [];
+  await on(page, 's1 Remove A');
+  await voiceOver.act();
+  const openA = await where(page);
+  await on(page, 's1 Cancel');
+  await voiceOver.act();
+  rows.push(`s1 cancel: after opening on A: ${openA} / after Cancel: ${await where(page)}`);
+  for (const list of ['s1', 's2', 's3', 's4']) {
+    await on(page, `${list} Remove B`);
+    await voiceOver.act();
+    const open = await where(page, 3000);
+    await on(page, `${list} Confirm`);
+    await voiceOver.act();
+    rows.push(`${list}: after opening on B: ${open} / after Confirm: ${await where(page, 5000)}`);
+  }
+  for (const list of ['t', 'u', 'v']) {
+    await on(page, `${list} Remove B`);
+    await voiceOver.act();
+    rows.push(`${list}: after Remove B: ${await where(page, 4000)}`);
+  }
+  console.log(`I03VO ${browserName} round3-vo | ${rows.join(' || ')}`);
+});
+
+test('probe round 3 by keyboard', async ({ page, voiceOver, browserName }) => {
+  test.skip(browserName === 'webkit', 'probe in Chromium only');
+  await round3(page, browserName);
+  const rows = [];
+  for (const list of ['s1', 's2', 's4', 't', 'v']) {
+    await on(page, `${list} Remove B`);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(1500);
+    if (list.startsWith('s')) {
+      for (let i = 0; i < 4 && (await kf(page)) !== `node:${list} Confirm`; i++) {
+        await page.keyboard.press('Tab');
+        await page.waitForTimeout(300);
+      }
+      await waitUntilQuiet(page, 2000, 8000);
+      await page.keyboard.press('Enter');
+    }
+    rows.push(`${list}: after removing B: ${await where(page, 5000)}`);
+  }
+  console.log(`I03VO ${browserName} round3-keyboard | ${rows.join(' || ')}`);
+  void voiceOver;
+});
+
+test('probe round 3 w', async ({ page, voiceOver, browserName }) => {
+  test.skip(browserName === 'webkit', 'probe in Chromium only');
+  await round3(page, browserName);
+  await on(page, 'w Before');
+  await voiceOver.next();
+  const after = await where(page, 4000);
+  const log = await id(page, 'log').getAttribute('aria-label') ?? await id(page, 'log').textContent();
+  console.log(`I03VO ${browserName} round3-w | after one VO move from w Before: ${after} | ${log}`);
+});
+
+test('probe p15', async ({ page, voiceOver, browserName }) => {
+  test.skip(browserName === 'webkit', 'probe in Chromium only');
+  await start(page, browserName);
+  await on(page, 'p15 Go');
+  await voiceOver.act();
+  await page.waitForTimeout(1500);
+  await on(page, 'p15 Before');
+  const before = await where(page, 1000);
+  await voiceOver.next();
+  const after = await where(page, 4000);
+  const log = await id(page, 'log').getAttribute('aria-label');
+  console.log(`I03VO ${browserName} p15 | on Before: ${before} | after one VO move: ${after} | ${log}`);
+});

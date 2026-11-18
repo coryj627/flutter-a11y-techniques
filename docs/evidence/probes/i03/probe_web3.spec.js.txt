@@ -1,0 +1,74 @@
+// Throwaway: I03 probe round 3 on the web (Chromium). Not committed; kept
+// as docs/evidence/probes/i03/probe_web3.spec.js.txt.
+import { test } from '@playwright/test';
+
+const id = (page, x) => page.locator(`[flt-semantics-identifier="${x}"]`);
+const btn = (page, x) => page.getByRole('button', { name: x, exact: true });
+const status = async (page, x) => (await id(page, x).getAttribute('aria-label')) ?? (await id(page, x).textContent()) ?? '';
+const active = (page) => page.evaluate(() => {
+  const e = document.activeElement;
+  if (!e || e === document.body) return 'body';
+  return (e.getAttribute('aria-label') || e.textContent || e.tagName).trim().slice(0, 30);
+});
+const kf = async (page) => (await status(page, 'kf')).replace('KF: ', '');
+const where = async (page) => `KF ${await kf(page)} / DOM ${await active(page)}`;
+
+async function press(page, key) {
+  await page.keyboard.press(key);
+  await page.waitForTimeout(250);
+}
+
+async function tabTo(page, text, max = 40) {
+  for (let i = 0; i < max; i++) {
+    if ((await kf(page)) === `node:${text}`) return true;
+    await press(page, 'Tab');
+  }
+  return (await kf(page)) === `node:${text}`;
+}
+
+async function round3(page) {
+  await page.goto('about:blank');
+  await page.goto('/#/round3');
+  await id(page, 's9 Last').waitFor();
+  await page.waitForTimeout(800);
+}
+
+for (const list of ['s1', 's2', 's3', 's4', 't', 'u', 'v']) {
+  test(`keyboard ${list}`, async ({ page }) => {
+    await round3(page);
+    await tabTo(page, `${list} Remove B`);
+    await press(page, 'Enter');
+    await page.waitForTimeout(800);
+    if (list.startsWith('s')) {
+      await tabTo(page, `${list} Confirm`, 6);
+      await press(page, 'Enter');
+    }
+    await page.waitForTimeout(2500);
+    const after = await where(page);
+    await press(page, 'Tab');
+    console.log(`I03PROBE web round3 keyboard ${list} | after removing B: ${after} | Tab: ${await where(page)}`);
+  });
+
+  test(`focus and click ${list}`, async ({ page }) => {
+    await round3(page);
+    const act = async (name) => {
+      await btn(page, name).focus();
+      await page.waitForTimeout(300);
+      await btn(page, name).click();
+      await page.waitForTimeout(1500);
+    };
+    await act(`${list} Remove B`);
+    if (list.startsWith('s')) await act(`${list} Confirm`);
+    await page.waitForTimeout(2000);
+    const after = await where(page);
+    await press(page, 'Tab');
+    console.log(`I03PROBE web round3 click ${list} | after removing B: ${after} | Tab: ${await where(page)}`);
+  });
+}
+
+test('w: DOM focus onto it', async ({ page }) => {
+  await round3(page);
+  await btn(page, 'w Opens on focus').focus();
+  await page.waitForTimeout(1000);
+  console.log(`I03PROBE web round3 w: DOM focus() on it | ${await where(page)} | ${await status(page, 'log')}`);
+});

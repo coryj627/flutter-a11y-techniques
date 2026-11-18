@@ -1,0 +1,162 @@
+// Throwaway: I03 probe on the web (Chromium, Playwright). Not committed;
+// kept as docs/evidence/probes/i03/probe_web.spec.js.txt. Reads Flutter's
+// keyboard focus from the probe's status bar ("KF: ...") and the browser's
+// focus from document.activeElement, after each key.
+import { test } from '@playwright/test';
+
+const id = (page, x) => page.locator(`[flt-semantics-identifier="${x}"]`);
+const btn = (page, x) => page.getByRole('button', { name: x, exact: true });
+const status = async (page, x) => (await id(page, x).getAttribute('aria-label')) ?? (await id(page, x).textContent()) ?? '';
+const active = (page) => page.evaluate(() => {
+  const e = document.activeElement;
+  if (!e || e === document.body) return 'body';
+  const ident = e.getAttribute('flt-semantics-identifier') ?? e.closest('[flt-semantics-identifier]')?.getAttribute('flt-semantics-identifier');
+  if (ident) return ident;
+  const role = e.getAttribute('role') ?? '';
+  return `${e.tagName.toLowerCase()}{role=${role},label=${e.getAttribute('aria-label') ?? ''},text=${(e.textContent ?? '').trim().slice(0, 20)}}`;
+});
+const where = async (page) => `${(await status(page, 'kf')).replace('KF: ', 'KF ')} / DOM ${await active(page)}`;
+
+async function start(page) {
+  await page.goto('about:blank');
+  await page.goto('/#/probe');
+  await id(page, 'p16 Last').waitFor();
+  await page.waitForTimeout(800);
+}
+
+async function press(page, key) {
+  await page.keyboard.press(key);
+  await page.waitForTimeout(250);
+}
+
+async function tabTo(page, text, max = 40) {
+  for (let i = 0; i < max; i++) {
+    if ((await status(page, 'kf')) === `KF: node:${text}`) return true;
+    await press(page, 'Tab');
+  }
+  return (await status(page, 'kf')) === `KF: node:${text}`;
+}
+
+const fixtures = [
+  ['p1 Dialog', 'p1 Close'],
+  ['p2 Autofocus dialog', 'p2 OK'],
+  ['p3 Sheet', 'p3 Close'],
+  ['p4 Page', 'p4 Done'],
+  ['p5 Cupertino dialog', 'p5 Close'],
+  ['p6 Action sheet', 'p6 Close'],
+  ['p7 Cupertino page', 'p7 Done'],
+  ['p8 General dialog', 'p8 Close'],
+  ['p9 Overlay', 'p9 Close'],
+  ['p10 Inline', 'p10 Close'],
+  ['p11 Inline managed', 'p11 Close'],
+  ['p12 Inline a11y event', 'p12 Close'],
+];
+
+for (const [trigger, close] of fixtures) {
+  test(`keyboard: ${trigger}`, async ({ page }) => {
+    await start(page);
+    const reached = await tabTo(page, trigger);
+    await press(page, 'Enter');
+    await page.waitForTimeout(600);
+    const afterOpen = await where(page);
+    const path = [];
+    let closeReached = false;
+    for (let i = 0; i < 40 && !closeReached; i++) {
+      await press(page, 'Tab');
+      path.push(await where(page));
+      closeReached = (await status(page, 'kf')) === `KF: node:${close}`;
+    }
+    if (closeReached) {
+      await press(page, 'Space');
+    } else {
+      await btn(page, close).click();
+    }
+    await page.waitForTimeout(800);
+    const afterClose = await where(page);
+    const next = [];
+    for (let i = 0; i < 2; i++) {
+      await press(page, 'Tab');
+      next.push(await where(page));
+    }
+    console.log(`I03PROBE web keyboard ${trigger} | reached=${reached} | after Enter: ${afterOpen} | Tab until close: ${path.join(' > ')} | close by Tab: ${closeReached} | after close: ${afterClose} | Tab x2: ${next.join(' > ')}`);
+  });
+
+  // A screen reader on the web activates with a click on the element; with
+  // VoiceOver the element has DOM focus first (its cursor moves it there).
+  test(`focus then click: ${trigger}`, async ({ page }) => {
+    await start(page);
+    await btn(page, trigger).focus();
+    await page.waitForTimeout(300);
+    const before = await where(page);
+    await btn(page, trigger).click();
+    await page.waitForTimeout(800);
+    const afterOpen = await where(page);
+    await btn(page, close).focus();
+    await page.waitForTimeout(300);
+    await btn(page, close).click();
+    await page.waitForTimeout(1000);
+    const afterClose = await where(page);
+    console.log(`I03PROBE web click ${trigger} | before: ${before} | after open: ${afterOpen} | after close: ${afterClose}`);
+  });
+}
+
+test('removal', async ({ page }) => {
+  await start(page);
+  for (const list of ['p13', 'p14', 'p17']) {
+    await tabTo(page, `${list} Remove B`);
+    await press(page, 'Enter');
+    await page.waitForTimeout(400);
+    const after = await where(page);
+    await press(page, 'Tab');
+    const next = await where(page);
+    console.log(`I03PROBE web removal ${list} Remove B by Enter | after: ${after} | Tab: ${next}`);
+  }
+});
+
+test('removal by click', async ({ page }) => {
+  await start(page);
+  for (const list of ['p13', 'p14', 'p17']) {
+    await btn(page, `${list} Remove B`).focus();
+    await page.waitForTimeout(300);
+    await btn(page, `${list} Remove B`).click();
+    await page.waitForTimeout(600);
+    console.log(`I03PROBE web removal ${list} Remove B by focus and click | after: ${await where(page)}`);
+  }
+});
+
+test('p15 opens on focus', async ({ page }) => {
+  await start(page);
+  await tabTo(page, 'p15 Go');
+  await press(page, 'Enter');
+  await page.waitForTimeout(800);
+  await tabTo(page, 'p15 Before');
+  await press(page, 'Tab');
+  await page.waitForTimeout(600);
+  console.log(`I03PROBE web p15 Tab from Before | ${await where(page)} | log: ${await status(page, 'log')}`);
+});
+
+test('p15 opens when the element gets DOM focus', async ({ page }) => {
+  await start(page);
+  await tabTo(page, 'p15 Go');
+  await press(page, 'Enter');
+  await page.waitForTimeout(800);
+  await btn(page, 'p15 Opens on focus').focus();
+  await page.waitForTimeout(800);
+  console.log(`I03PROBE web p15 DOM focus() | ${await where(page)} | log: ${await status(page, 'log')}`);
+});
+
+test('dialog: DOM, roles, and Tab past the last control', async ({ page }) => {
+  await start(page);
+  await tabTo(page, 'p1 Dialog');
+  await press(page, 'Enter');
+  await page.waitForTimeout(800);
+  const dialogs = await page.evaluate(() => [...document.querySelectorAll('[role=dialog],[role=alertdialog]')]
+    .map((e) => `${e.getAttribute('role')} aria-label=${e.getAttribute('aria-label')} aria-modal=${e.getAttribute('aria-modal')} describedby=${e.getAttribute('aria-describedby')}`));
+  const behind = await id(page, 'p0 Start').count();
+  console.log(`I03PROBE web p1 dialog elements: ${dialogs.join(' | ')} | p0 Start in DOM while open: ${behind}`);
+  await tabTo(page, 'p1 Close');
+  await press(page, 'Tab');
+  console.log(`I03PROBE web p1 Tab past p1 Close: ${await where(page)}`);
+  await press(page, 'Tab');
+  console.log(`I03PROBE web p1 and again: ${await where(page)}`);
+});

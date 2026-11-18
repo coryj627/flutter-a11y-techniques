@@ -1,0 +1,202 @@
+// I03 probe, widget tests (throwaway, not committed; kept as
+// docs/evidence/probes/i03/probe_test.dart.txt). Drives lib/probe.dart with
+// the keyboard and prints where keyboard focus goes; records what the
+// framework sends the platform on the accessibility channel.
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+String kf() => describeFocus(FocusManager.instance.primaryFocus);
+
+Future<void> key(WidgetTester t, LogicalKeyboardKey k, {bool shift = false}) async {
+  if (shift) await t.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+  await t.sendKeyEvent(k);
+  if (shift) await t.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+  await t.pumpAndSettle();
+}
+
+Future<bool> tabTo(WidgetTester t, String text, {int max = 60}) async {
+  for (var i = 0; i < max; i++) {
+    if (kf() == 'node:$text') return true;
+    await key(t, LogicalKeyboardKey.tab);
+  }
+  return kf() == 'node:$text';
+}
+
+Future<List<String>> tabs(WidgetTester t, int n, {bool shift = false}) async {
+  final out = <String>[];
+  for (var i = 0; i < n; i++) {
+    await key(t, LogicalKeyboardKey.tab, shift: shift);
+    out.add(kf());
+  }
+  return out;
+}
+
+int? semanticsIdOf(WidgetTester t, String identifier) {
+  int? found;
+  final root = t.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!;
+  bool visit(SemanticsNode n) {
+    if (!n.isMergedIntoParent && n.getSemanticsData().identifier == identifier) {
+      found = n.id;
+      return false;
+    }
+    n.visitChildren(visit);
+    return found == null;
+  }
+
+  visit(root);
+  return found;
+}
+
+void out(String s) => debugPrint('I03PROBE $s');
+
+// Fixture: trigger, the control that closes it.
+const fixtures = [
+  ('p1 Dialog', 'p1 Close'),
+  ('p2 Autofocus dialog', 'p2 OK'),
+  ('p3 Sheet', 'p3 Close'),
+  ('p4 Page', 'p4 Done'),
+  ('p5 Cupertino dialog', 'p5 Close'),
+  ('p6 Action sheet', 'p6 Close'),
+  ('p7 Cupertino page', 'p7 Done'),
+  ('p8 General dialog', 'p8 Close'),
+  ('p9 Overlay', 'p9 Close'),
+  ('p10 Inline', 'p10 Close'),
+  ('p11 Inline managed', 'p11 Close'),
+  ('p12 Inline a11y event', 'p12 Close'),
+];
+
+void main() {
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    for (final (trigger, close) in fixtures) {
+      testWidgets('${platform.name} $trigger', (t) async {
+        debugDefaultTargetPlatformOverride = platform;
+        final sent = <Object?>[];
+        t.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(
+          SystemChannels.accessibility,
+          (m) async {
+            sent.add(m);
+            return null;
+          },
+        );
+        final handle = t.ensureSemantics();
+        await t.pumpWidget(const ProbeApp());
+        await t.pumpAndSettle();
+        final reached = await tabTo(t, trigger);
+        // Tell the framework the screen reader is on the trigger, as the
+        // engine does when accessibility focus lands on a node.
+        final triggerId = semanticsIdOf(t, trigger);
+        await t.binding.defaultBinaryMessenger.handlePlatformMessage(
+          SystemChannels.accessibility.name,
+          SystemChannels.accessibility.codec.encodeMessage(<String, Object?>{
+            'type': 'didGainFocus',
+            'nodeId': triggerId,
+          }),
+          (_) {},
+        );
+        await key(t, LogicalKeyboardKey.enter);
+        final afterOpen = kf();
+        // Tab from where the open left focus, stop by stop, until the
+        // control that closes it (at most 40 Tabs).
+        final opened = <String>[];
+        var closeReached = false;
+        for (var i = 0; i < 40 && !closeReached; i++) {
+          await key(t, LogicalKeyboardKey.tab);
+          opened.add(kf());
+          closeReached = kf() == 'node:$close';
+        }
+        if (!closeReached) {
+          out('${platform.name} $trigger: Tab never reached $close; tapping it');
+          await t.tap(find.text(close));
+          await t.pumpAndSettle();
+        } else {
+          await key(t, LogicalKeyboardKey.enter);
+        }
+        await t.pump(const Duration(seconds: 1));
+        await t.pumpAndSettle();
+        final afterClose = kf();
+        final next = await tabs(t, 2);
+        out(
+          '${platform.name} $trigger | reached=$reached | after Enter: $afterOpen '
+          '| Tab until close: ${opened.join(' > ')} | close reached by Tab: $closeReached '
+          '| after close: $afterClose | Tab x2: ${next.join(' > ')}',
+        );
+        out(
+          '${platform.name} $trigger | trigger semantics id $triggerId | sent on the '
+          'accessibility channel: $sent | log: ${probeLog.value.join(', ')}',
+        );
+        probeLog.value = [];
+        handle.dispose();
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
+
+    testWidgets('${platform.name} removal', (t) async {
+      debugDefaultTargetPlatformOverride = platform;
+      final handle = t.ensureSemantics();
+      await t.pumpWidget(const ProbeApp());
+      await t.pumpAndSettle();
+      for (final id in ['p13', 'p14', 'p17']) {
+        await tabTo(t, '$id Remove B');
+        await key(t, LogicalKeyboardKey.enter);
+        final after = kf();
+        final next = await tabs(t, 1);
+        out(
+          '${platform.name} $id Remove B pressed | after: $after | Tab: '
+          '${next.join()}',
+        );
+        await tabTo(t, '$id Remove C');
+        await key(t, LogicalKeyboardKey.enter);
+        final afterLast = kf();
+        final next2 = await tabs(t, 1);
+        out(
+          '${platform.name} $id Remove C (last) pressed | after: $afterLast '
+          '| Tab: ${next2.join()}',
+        );
+      }
+      out('${platform.name} log: ${probeLog.value.join(', ')}');
+      probeLog.value = [];
+      handle.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('${platform.name} p15 opens on focus', (t) async {
+      debugDefaultTargetPlatformOverride = platform;
+      final handle = t.ensureSemantics();
+      await t.pumpWidget(const ProbeApp());
+      await t.pumpAndSettle();
+      await tabTo(t, 'p15 Go');
+      await key(t, LogicalKeyboardKey.enter);
+      await tabTo(t, 'p15 Before');
+      await key(t, LogicalKeyboardKey.tab);
+      out(
+        '${platform.name} p15: one Tab from Before | KF: ${kf()} | dialog '
+        'shown: ${find.text('p15 Title').evaluate().isNotEmpty} | log: '
+        '${probeLog.value.join(', ')}',
+      );
+      probeLog.value = [];
+      handle.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('${platform.name} p5 Escape', (t) async {
+      debugDefaultTargetPlatformOverride = platform;
+      final handle = t.ensureSemantics();
+      await t.pumpWidget(const ProbeApp());
+      await t.pumpAndSettle();
+      await tabTo(t, 'p5 Cupertino dialog');
+      await key(t, LogicalKeyboardKey.enter);
+      await key(t, LogicalKeyboardKey.escape);
+      out(
+        '${platform.name} p5 Escape | dialog shown: '
+        '${find.text('p5 Title').evaluate().isNotEmpty} | KF: ${kf()}',
+      );
+      probeLog.value = [];
+      handle.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
+}
