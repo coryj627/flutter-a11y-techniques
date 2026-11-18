@@ -118,11 +118,15 @@ test('voiceover reads bad-opens-on-focus', async ({ page, voiceOver, browserName
   const slug = 'bad-opens-on-focus';
   await start(page, browserName, slug);
   await cursorTo(page, page.getByRole('button', { name: 'Back' }));
-  await expect(page.getByText(/\?$/)).toHaveCount(0);
+  // The list is there, and nothing is asked; the question below is found
+  // through the same locator.
+  const questions = page.getByText(/^Remove .+\?$/);
+  await expect(button(page, slug, 'remove-ridge')).toBeVisible();
+  await expect(questions).toHaveCount(0);
   // VoiceOver's own moves, from Back down the screen, until the question
   // appears. Every move before the Remove button asks nothing: the moves
   // arrive, and only the one onto the button asks.
-  const asked = () => page.getByText('Remove Ridge trail?').count();
+  const asked = () => questions.filter({ hasText: 'Remove Ridge trail?' }).count();
   const spoken = [];
   for (let i = 0; i < 12 && !(await asked()); i++) {
     await voiceOver.next();
@@ -132,7 +136,7 @@ test('voiceover reads bad-opens-on-focus', async ({ page, voiceOver, browserName
   const onButton = spoken.findIndex((p) => p.startsWith('Remove Ridge trail'));
   console.log(`I03VO ${browserName} ${slug} | moving from Back: ${spoken.join(' / ')} | asked: ${await asked() > 0}`);
   expect(spoken.length, 'VoiceOver moved').toBeGreaterThan(1);
-  await expect(page.getByText('Remove Ridge trail?')).toBeVisible();
+  await expect(questions.filter({ hasText: 'Remove Ridge trail?' })).toBeVisible();
   // The question came on the move onto Remove Ridge trail, or the move
   // after it, which reads the question.
   expect(onButton, 'the cursor reached Remove Ridge trail').toBeGreaterThanOrEqual(0);

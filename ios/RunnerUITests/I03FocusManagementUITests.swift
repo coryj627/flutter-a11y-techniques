@@ -42,11 +42,37 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
 
   private func control(_ slug: String, _ part: String) -> XCUIElement { element("i03-\(slug)-\(part)") }
 
-  private func question(_ name: String) -> XCUIElement { element(labelled: "Remove \(name)?") }
+  /// One read of the app's elements, as their labels, from a single
+  /// snapshot. Nil when the app is not in front, the snapshot fails, or it
+  /// holds neither the example's list (its count, "Saved: n") nor a
+  /// question: such a read can never pass for "nothing was asked".
+  private func readLabels() -> [String]? {
+    guard app.state == .runningForeground, let snapshot = try? app.snapshot() else { return nil }
+    var labels: [String] = []
+    func visit(_ element: XCUIElementSnapshot) {
+      labels.append(element.label)
+      element.children.forEach(visit)
+    }
+    visit(snapshot)
+    return labels.contains(where: { $0.hasPrefix("Saved: ") || $0.hasSuffix("?") }) ? labels : nil
+  }
 
-  /// Whether any question is on the screen.
-  private func asking() -> Bool {
-    app.descendants(matching: .any).matching(NSPredicate(format: "label ENDSWITH '?'")).count > 0
+  private func questions(_ labels: [String]) -> [String] { labels.filter { $0.hasSuffix("?") } }
+
+  /// Fails unless one read shows the example's list, all three Remove
+  /// buttons, and no question. The positive control, expectQuestion, uses
+  /// the same read and the same test for a question.
+  private func expectNothingAsked(
+    _ slug: String, _ context: String, file: StaticString = #filePath, line: UInt = #line
+  ) {
+    guard let labels = readLabels() else {
+      XCTFail("\(context): the read of the screen holds neither the list nor a question", file: file, line: line)
+      return
+    }
+    for (_, name) in Self.trails {
+      XCTAssertTrue(labels.contains("Remove \(name)"), "\(context): the read holds Remove \(name)", file: file, line: line)
+    }
+    XCTAssertEqual(questions(labels), [], context, file: file, line: line)
   }
 
   private static let enter = "\n"
@@ -60,15 +86,23 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
     }
   }
 
+  /// Waits up to five seconds for a read of the screen that shows the
+  /// question about `name` or, when `shown` is false, the list and no
+  /// question.
   private func expectQuestion(
-    _ name: String, _ shown: Bool = true, _ context: String,
+    _ slug: String, _ name: String, _ shown: Bool = true, _ context: String,
     file: StaticString = #filePath, line: UInt = #line
   ) {
-    let predicate = NSPredicate(format: shown ? "exists == true" : "exists == false")
-    let expectation = XCTNSPredicateExpectation(predicate: predicate, object: question(name))
-    XCTAssertEqual(XCTWaiter().wait(for: [expectation], timeout: 5), .completed,
-                   "\(context): \"Remove \(name)?\" \(shown ? "did not appear" : "did not go")",
-                   file: file, line: line)
+    func matches() -> Bool {
+      guard let labels = readLabels() else { return false }
+      let asked = questions(labels)
+      return shown ? asked.contains("Remove \(name)?")
+        : asked.isEmpty && labels.contains(where: { $0.hasPrefix("Saved: ") })
+    }
+    let deadline = Date().addingTimeInterval(5)
+    while !matches() && Date() < deadline { usleep(200_000) }
+    XCTAssertTrue(matches(), "\(context): \"Remove \(name)?\" \(shown ? "did not appear" : "did not go")",
+                  file: file, line: line)
   }
 
   /// Expects focus to be on Back: Space there leaves the screen.
@@ -105,9 +139,9 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
       for (index, (_, name)) in Self.trails.enumerated() {
         openAndTab(slug, index + 2)
         sleep(1)
-        XCTAssertFalse(asking(), "\(slug): Tab onto Remove \(name) asked")
+        expectNothingAsked(slug, "\(slug): Tab onto Remove \(name)")
         press(Self.space)
-        expectQuestion(name, true, "\(slug): Space on the stop")
+        expectQuestion(slug, name, true, "\(slug): Space on the stop")
       }
     }
   }
@@ -117,27 +151,27 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
     let slug = "bad-opens-on-focus"
     openAndTab(slug, 1)
     sleep(1)
-    XCTAssertFalse(asking(), "Tab onto Back asked")
+    expectNothingAsked(slug, "Tab onto Back")
     press(Self.tab)
-    expectQuestion("Ridge trail", true, "Tab onto Remove Ridge trail, no other key")
+    expectQuestion(slug, "Ridge trail", true, "Tab onto Remove Ridge trail, no other key")
     // The question's first control is Cancel: Space closes it, count unchanged.
     press(Self.tab)
     press(Self.space)
-    expectQuestion("Ridge trail", false, "Space on Cancel")
+    expectQuestion(slug, "Ridge trail", false, "Space on Cancel")
     expectCount(slug, 3)
     // Focus is back on Remove Ridge trail, which does not ask again; Tab
     // to the next button asks about it.
     sleep(1)
-    XCTAssertFalse(asking(), "focus coming back asked again")
+    expectNothingAsked(slug, "focus coming back to Remove Ridge trail")
     press(Self.tab)
-    expectQuestion("Lake loop", true, "Tab onto Remove Lake loop")
+    expectQuestion(slug, "Lake loop", true, "Tab onto Remove Lake loop")
   }
 
   /// Opens `slug`, tabs to Remove Lake loop, and presses Enter.
   private func askAboutLake(_ slug: String) {
     openAndTab(slug, 3)
     press(Self.enter)
-    expectQuestion("Lake loop", true, "\(slug): Enter on Remove Lake loop")
+    expectQuestion(slug, "Lake loop", true, "\(slug): Enter on Remove Lake loop")
   }
 
   func testCancelPutsFocusBackOnTheButton() {
@@ -145,11 +179,11 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
       askAboutLake(slug)
       press(Self.tab, times: Self.tabsToCancel[slug]!)
       press(Self.space)
-      expectQuestion("Lake loop", false, "\(slug): Space on Cancel")
+      expectQuestion(slug, "Lake loop", false, "\(slug): Space on Cancel")
       expectCount(slug, 3)
       // Space asks about Lake loop again: focus is back on its button.
       press(Self.space)
-      expectQuestion("Lake loop", true, "\(slug): Space after Cancel")
+      expectQuestion(slug, "Lake loop", true, "\(slug): Space after Cancel")
     }
   }
 
@@ -162,7 +196,7 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
       XCTAssertFalse(control(slug, "remove-lake").exists, slug)
       // Space asks about Summit path: focus is on its button.
       press(Self.space)
-      expectQuestion("Summit path", true, "\(slug): Space after Remove")
+      expectQuestion(slug, "Summit path", true, "\(slug): Space after Remove")
     }
   }
 
@@ -174,7 +208,7 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
     askAboutLake(slug)
     press(Self.tab)
     press(Self.space)
-    expectQuestion("Summit path", true, "Space after one Tab")
+    expectQuestion(slug, "Summit path", true, "Space after one Tab")
   }
 
   // The same defect on the way out: Cancel is reached only by Tab past the
@@ -187,11 +221,11 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
     // Remove Summit path behind the question, then Cancel.
     press(Self.tab, times: 2)
     press(Self.space)
-    expectQuestion("Lake loop", false, "Space on Cancel")
+    expectQuestion(slug, "Lake loop", false, "Space on Cancel")
     expectCount(slug, 3)
     press(Self.space)
     sleep(1)
-    XCTAssertFalse(asking(), "Space after Cancel asked: focus was on a Remove button")
+    expectNothingAsked(slug, "Space after Cancel: focus was on no Remove button")
     press(Self.tab)
     expectBack(slug)
   }
@@ -249,11 +283,15 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
       let opened = waitForSpeech(voiceOver, startingWith: "Remove Lake loop?")
       activate(control(slug, "cancel"))
       let cancelled = waitForSpeech(voiceOver, startingWith: "Remove Lake loop Button")
+      // Where the cursor is a few seconds later, so that a later move,
+      // the framework's or the app's, cannot be missed.
+      sleep(3)
       let (beforeLake, lakeAgain) = around(voiceOver)
       activate(control(slug, "remove-lake"))
       _ = waitForSpeech(voiceOver, startingWith: "Remove Lake loop?")
       activate(control(slug, "confirm"))
       let removed = waitForSpeech(voiceOver, startingWith: "Remove Summit path Button")
+      sleep(3)
       let (beforeSummit, summitAgain) = around(voiceOver)
       try voiceOver.disable()
       print("I03VO \(slug) | opened: \(opened) / cancelled: \(cancelled) (back: \(beforeLake), forward: \(lakeAgain)) / removed: \(removed) (back: \(beforeSummit), forward: \(summitAgain))")
@@ -275,14 +313,18 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
     try voiceOver.enable()
     defer { try? voiceOver.disable() }
     sleep(2)
+    expectNothingAsked(slug, "\(slug): before VoiceOver's move")
     control(slug, "remove-ridge").tap()
     let ridge = waitForSpeech(voiceOver, startingWith: "Remove Ridge trail")
     sleep(2)
-    let asked = asking()
-    try voiceOver.disable()
+    let asked = readLabels().map(questions) ?? ["(the read held neither the list nor a question)"]
     print("I03VO \(slug) | cursor on Remove Ridge trail: \(ridge) / asked: \(asked)")
     XCTAssertEqual(ridge, "Remove Ridge trail Button", slug)
-    XCTAssertFalse(asked, "\(slug): VoiceOver's cursor on Remove Ridge trail asked")
+    expectNothingAsked(slug, "\(slug): VoiceOver's cursor on Remove Ridge trail")
+    // The positive control, through the same read: a double tap asks.
+    control(slug, "remove-ridge").doubleTap()
+    expectQuestion(slug, "Ridge trail", true, "\(slug): a double tap on Remove Ridge trail")
+    try voiceOver.disable()
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
     #endif

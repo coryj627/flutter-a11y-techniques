@@ -43,6 +43,19 @@ int _saved(WidgetTester tester, String slug) =>
 /// The question that removing Lake loop asks, on screen or not.
 Finder get _lakeQuestion => find.text('Remove Lake loop?');
 
+/// Every question on the screen.
+Finder get _questions => find.textContaining(RegExp(r'^Remove .+\?$'));
+
+/// Expects the example's list, its three Remove buttons and its count, and
+/// no question.
+void _expectNothingAsked(String slug) {
+  for (final part in ['remove-ridge', 'remove-lake', 'remove-summit']) {
+    expect(byId(_id(slug, part)), findsOneWidget, reason: part);
+  }
+  expect(byId(_id(slug, 'count')), findsOneWidget);
+  expect(_questions, findsNothing);
+}
+
 /// Where keyboard focus is: 'back', one of [_names]'s keys, 'question'
 /// when it is on the question's route and on no control there, 'screen'
 /// when it is on the example's screen and on no control, or 'none'.
@@ -247,7 +260,7 @@ void main() {
           'remove-lake',
           'remove-summit',
         ]);
-        expect(find.textContaining('?'), findsNothing);
+        _expectNothingAsked(slug);
         // The positive control: the same key reached each button, and
         // Enter on one asks.
         await _key(tester, LogicalKeyboardKey.enter);
@@ -264,7 +277,7 @@ void main() {
       await _open(tester, slug);
       // Tab reaches Back and asks nothing: the key arrives.
       expect(await _tabs(tester, slug, 1), ['back']);
-      expect(find.textContaining('?'), findsNothing);
+      _expectNothingAsked(slug);
       // The next Tab alone, onto Remove Ridge trail, asks.
       await _key(tester, LogicalKeyboardKey.tab);
       expect(find.text('Remove Ridge trail?'), findsOneWidget);
@@ -272,7 +285,7 @@ void main() {
       // Cancel goes back to the button, which does not ask again ...
       await _tabInQuestionTo(tester, slug, 'cancel');
       await _key(tester, LogicalKeyboardKey.enter);
-      expect(find.textContaining('?'), findsNothing);
+      _expectNothingAsked(slug);
       expect(_stop(tester, slug), 'remove-ridge');
       // ... and Tab to the next button asks about it.
       await _key(tester, LogicalKeyboardKey.tab);
@@ -480,6 +493,50 @@ void main() {
           await tester.pump(_afterTheRoute);
           expect(requests, [lake, summit]);
           expect(nodeById(_id(slug, 'remove-lake')), findsNothing);
+          handle.dispose();
+        },
+      );
+
+      // The examples' request is dropped when the user has gone on before
+      // it is due: here keyboard focus moved off the button. The first
+      // removal, in the same launch, is the positive control: its request
+      // is sent.
+      testWidgets(
+        '$slug: a request still to come is dropped when keyboard focus '
+        'moves on before it is due',
+        variant: const TargetPlatformVariant({
+          TargetPlatform.android,
+          TargetPlatform.iOS,
+        }),
+        (tester) async {
+          final handle = tester.ensureSemantics();
+          ServicesBinding.instance.accessibilityFocus.value = null;
+          final requests = _recordFocusRequests(tester);
+          await _open(tester, slug);
+          final ridge = _nodeId(slug, 'remove-ridge');
+          final summit = _nodeId(slug, 'remove-summit');
+          await _screenReaderOn(tester, _nodeId(slug, 'remove-lake'));
+          await tester.tap(byId(_id(slug, 'remove-lake')));
+          await tester.pumpAndSettle();
+          await tester.tap(byId(_id(slug, 'confirm')));
+          await tester.pumpAndSettle();
+          await tester.pump(_afterTheRoute);
+          expect(requests.last, summit, reason: 'the positive control');
+          // Now Summit path: the next button is Ridge trail, which gets
+          // keyboard focus at once and the request a second later.
+          requests.clear();
+          await _screenReaderOn(tester, summit);
+          await tester.tap(byId(_id(slug, 'remove-summit')));
+          await tester.pumpAndSettle();
+          await tester.tap(byId(_id(slug, 'confirm')));
+          await tester.pumpAndSettle();
+          expect(_stop(tester, slug), 'remove-ridge');
+          // Before the request is due, the user moves on with Shift+Tab.
+          await _key(tester, LogicalKeyboardKey.tab, shift: true);
+          expect(_stop(tester, slug), 'back');
+          await tester.pump(_afterTheRoute);
+          expect(requests, isNot(contains(ridge)));
+          expect(_stop(tester, slug), 'back');
           handle.dispose();
         },
       );

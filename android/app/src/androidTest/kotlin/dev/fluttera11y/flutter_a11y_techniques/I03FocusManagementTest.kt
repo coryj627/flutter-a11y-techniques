@@ -8,10 +8,22 @@
 // because it is behind the question, is named by what Enter does there.
 // Tab and Enter are sent with `input keyevent`; Shift+Tab as four key
 // events through Instrumentation.sendKeySync (docs/evidence/probes/i02/
-// README.md). The TalkBack walk reads where TalkBack's own focus is
-// (AccessibilityNodeInfo.isAccessibilityFocused) after each step, and logs
-// a marker before the step so that tool/talkback.py can credit what
-// TalkBack then said to it.
+// README.md).
+//
+// Every read of the screen goes through screen(), which reads the app's own
+// window and fails unless that read holds the example or its question. So a
+// read that found nothing (no active window, or a system overlay in front)
+// can never pass for "no control has focus" or "nothing was asked", and a
+// check that nothing was asked uses the same read and the same test for a
+// question as the positive control that something was.
+//
+// The TalkBack walk reads where TalkBack's own focus is
+// (AccessibilityNodeInfo.isAccessibilityFocused) after each step, and keeps
+// reading after TalkBack has spoken: the step passes only if its focus is
+// where it should be for the whole of a last interval, so a move that comes
+// later (the framework's own, FL-442) cannot be missed. It logs a marker
+// before each step so that tool/talkback.py can credit what TalkBack then
+// said to it.
 package dev.fluttera11y.flutter_a11y_techniques
 
 import android.os.SystemClock
@@ -24,7 +36,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,16 +55,19 @@ private val NAMES = mapOf(
 
 // Enter on Remove Lake loop: the stop it leaves focus on ("none" while it
 // is on the question's own scope, which has no node), and the next Tab's.
-// How long the walk listens after TalkBack's focus has settled. When a
-// route closes TalkBack first reads the screen's title, which takes a few
-// seconds, and only then the control its focus is on.
-private const val SPEECH_MILLIS = 8_000L
-
 private val OPENS = mapOf(
     "good-material" to ("none" to "cancel"),
     "good-cupertino" to ("none" to "confirm"),
     "good-widgets" to ("cancel" to "confirm"),
 )
+
+// How long the walk listens after TalkBack's focus has first settled. When
+// a route closes TalkBack first reads the screen's title, which takes a few
+// seconds, and only then the control its focus is on.
+private const val SPEECH_MILLIS = 8_000L
+
+// The last interval of each step, in which TalkBack's focus must stay put.
+private const val STEADY_MILLIS = 2_000L
 
 @RunWith(AndroidJUnit4::class)
 class I03FocusManagementTest : TechniqueTest("I03") {
@@ -63,17 +77,77 @@ class I03FocusManagementTest : TechniqueTest("I03") {
 
     private fun control(slug: String, part: String): AccessibilityNodeInfo = node("i03-$slug-$part")
 
-    /** Whether a node named [name] is on the screen. */
-    private fun shows(name: String): Boolean = all().any { it.name() == name || it.text?.toString() == name }
+    private fun nodesOf(root: AccessibilityNodeInfo?): List<AccessibilityNodeInfo> {
+        val out = mutableListOf<AccessibilityNodeInfo>()
+        fun visit(n: AccessibilityNodeInfo?) {
+            if (n == null) return
+            out.add(n)
+            for (i in 0 until n.childCount) visit(n.getChild(i))
+        }
+        visit(root)
+        return out
+    }
 
-    /** Waits up to five seconds for a node named [name] to be there, or gone. */
-    private fun waitFor(name: String, there: Boolean = true): Boolean {
+    private fun isQuestion(n: AccessibilityNodeInfo): Boolean =
+        n.name().endsWith("?") || n.text?.toString()?.endsWith("?") == true
+
+    private fun questionOf(n: AccessibilityNodeInfo): String = n.name().ifEmpty { n.text?.toString().orEmpty() }
+
+    /**
+     * One read of the app's own window: every node, depth first. Of all the
+     * windows on the screen, the active one first, it is the one that holds
+     * a node of this example (one of its identifiers) or a question. Fails,
+     * after five seconds of trying, when none does.
+     */
+    private fun screen(slug: String): List<AccessibilityNodeInfo> {
+        val end = System.currentTimeMillis() + 5_000
+        while (true) {
+            val roots = listOfNotNull(automation.rootInActiveWindow) + automation.windows.mapNotNull { it.root }
+            for (root in roots) {
+                val nodes = nodesOf(root)
+                if (nodes.any { it.viewIdResourceName?.startsWith("i03-$slug-") == true || isQuestion(it) }) {
+                    return nodes
+                }
+            }
+            if (System.currentTimeMillis() > end) throw AssertionError("no window holds the example $slug")
+            Thread.sleep(250)
+        }
+    }
+
+    /** The questions in one read of the screen. */
+    private fun questions(nodes: List<AccessibilityNodeInfo>): List<String> =
+        nodes.filter(::isQuestion).map(::questionOf)
+
+    /**
+     * Fails unless one read of the screen shows the example's list, all
+     * three of its buttons, and no question. [context] names the check.
+     */
+    private fun assertNothingAsked(slug: String, context: String, parts: Collection<String> = NAMES.keys) {
+        val nodes = screen(slug)
+        val ids = nodes.mapNotNull { it.viewIdResourceName }
+        for (part in parts) assertTrue("$context: the read holds $part", "i03-$slug-$part" in ids)
+        assertEquals("$context: questions on the screen", emptyList<String>(), questions(nodes))
+    }
+
+    /** Waits up to five seconds for a read of the screen to show [question]. */
+    private fun waitForQuestion(slug: String, question: String): Boolean {
         val end = System.currentTimeMillis() + 5_000
         while (System.currentTimeMillis() < end) {
-            if (shows(name) == there) return true
+            if (question in questions(screen(slug))) return true
             Thread.sleep(200)
         }
-        return shows(name) == there
+        return question in questions(screen(slug))
+    }
+
+    /** Waits up to five seconds for a read of the screen to show the list and no question. */
+    private fun waitForNoQuestion(slug: String): Boolean {
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end) {
+            val nodes = screen(slug)
+            if (questions(nodes).isEmpty() && nodes.any { it.viewIdResourceName == "i03-$slug-count" }) return true
+            Thread.sleep(200)
+        }
+        return false
     }
 
     /** Presses a key on the emulator's keyboard and gives Flutter time to act. */
@@ -96,11 +170,12 @@ class I03FocusManagementTest : TechniqueTest("I03") {
     }
 
     /**
-     * The control with keyboard focus: "back", a part of the example by the
-     * last part of its identifier, or "none". Fails if two nodes have it.
+     * The control with keyboard focus, from one read of the screen: "back",
+     * a part of the example by the last part of its identifier, or "none".
+     * Fails if two nodes have it.
      */
     private fun stop(slug: String): String {
-        val focused = all().filter { it.isFocused && (it.viewIdResourceName != null || it.name().isNotEmpty()) }
+        val focused = screen(slug).filter { it.isFocused && (it.viewIdResourceName != null || it.name().isNotEmpty()) }
         if (focused.isEmpty()) return "none"
         assertEquals("nodes with focus: ${focused.map { it.viewIdResourceName ?: it.name() }}", 1, focused.size)
         val node = focused.single()
@@ -147,8 +222,8 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         }
     }
 
-    // 3.2.1. Each Tab alone, and no question; then Enter, the positive
-    // control, asks.
+    // 3.2.1. Each Tab alone, and no question in a read that holds the list;
+    // then Enter, the positive control, asks, seen through the same read.
     @Test
     fun tabOntoRemoveButtonsAsksNothingAndEnterAsks() {
         for (slug in PRESS_TO_ASK) {
@@ -157,10 +232,10 @@ class I03FocusManagementTest : TechniqueTest("I03") {
             for (part in listOf("remove-ridge", "remove-lake", "remove-summit")) {
                 key("TAB")
                 assertEquals(slug, part, stop(slug))
-                assertFalse("$slug: Tab onto $part asked", all().any { it.name().endsWith("?") })
+                assertNothingAsked(slug, "$slug: Tab onto $part")
             }
             key("ENTER")
-            assertTrue("$slug: Enter asks", waitFor("Remove Summit path?"))
+            assertTrue("$slug: Enter asks", waitForQuestion(slug, "Remove Summit path?"))
         }
     }
 
@@ -170,17 +245,18 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         val slug = "bad-opens-on-focus"
         open(slug)
         assertTrue("Tab reaches Back", tabTo(slug, "back", 3))
-        assertFalse("Tab onto Back asked", all().any { it.name().endsWith("?") })
+        assertNothingAsked(slug, "Tab onto Back")
         key("TAB")
-        assertTrue("Tab onto Remove Ridge trail asks", waitFor("Remove Ridge trail?"))
+        assertTrue("Tab onto Remove Ridge trail asks", waitForQuestion(slug, "Remove Ridge trail?"))
         // Cancel goes back to the button, which does not ask again; the next
         // Tab, to the next button, asks about it.
         assertTrue(tabTo(slug, "cancel", 4))
         key("ENTER")
-        assertTrue(waitFor("Remove Ridge trail?", there = false))
+        assertTrue(waitForNoQuestion(slug))
         assertEquals("remove-ridge", stop(slug))
+        assertNothingAsked(slug, "focus back on Remove Ridge trail")
         key("TAB")
-        assertTrue("Tab onto Remove Lake loop asks", waitFor("Remove Lake loop?"))
+        assertTrue("Tab onto Remove Lake loop asks", waitForQuestion(slug, "Remove Lake loop?"))
     }
 
     @Test
@@ -188,7 +264,7 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         for ((slug, stops) in OPENS) {
             openAtLake(slug)
             key("ENTER")
-            assertTrue("$slug: the question opens", waitFor("Remove Lake loop?"))
+            assertTrue("$slug: the question opens", waitForQuestion(slug, "Remove Lake loop?"))
             assertEquals(slug, stops.first, stop(slug))
             assertEquals(slug, listOf(stops.second), walk(slug, 1) { key("TAB") })
         }
@@ -203,12 +279,13 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         val slug = "bad-focus-left-behind"
         openAtLake(slug)
         key("ENTER")
-        assertTrue("the question opens", waitFor("Remove Lake loop?"))
+        assertTrue("the question opens", waitForQuestion(slug, "Remove Lake loop?"))
         assertEquals("none", stop(slug))
         key("TAB")
         assertEquals("no control of the question has focus", "none", stop(slug))
         key("ENTER")
-        assertTrue("Enter asks about Summit path: focus was on its button", waitFor("Remove Summit path?"))
+        assertTrue("Enter asks about Summit path: focus was on its button",
+            waitForQuestion(slug, "Remove Summit path?"))
     }
 
     @Test
@@ -216,7 +293,7 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         val slug = "bad-focus-left-behind"
         openAtLake(slug)
         key("ENTER")
-        assertTrue(waitFor("Remove Lake loop?"))
+        assertTrue(waitForQuestion(slug, "Remove Lake loop?"))
         // Remove Summit path, behind the question and out of the tree, then
         // Cancel.
         assertEquals(listOf("none", "cancel"), walk(slug, 2) { key("TAB") })
@@ -227,10 +304,10 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         for (slug in GOOD) {
             openAtLake(slug)
             key("ENTER")
-            assertTrue(waitFor("Remove Lake loop?"))
+            assertTrue(waitForQuestion(slug, "Remove Lake loop?"))
             assertTrue("$slug: Tab reaches Cancel", tabTo(slug, "cancel", 4))
             key("ENTER")
-            assertTrue(waitFor("Remove Lake loop?", there = false))
+            assertTrue(waitForNoQuestion(slug))
             assertEquals(slug, "remove-lake", stop(slug))
             assertEquals(slug, listOf("remove-summit"), walk(slug, 1) { key("TAB") })
         }
@@ -243,10 +320,10 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         val slug = "bad-focus-left-behind"
         openAtLake(slug)
         key("ENTER")
-        assertTrue(waitFor("Remove Lake loop?"))
+        assertTrue(waitForQuestion(slug, "Remove Lake loop?"))
         assertTrue("Tab reaches Cancel", tabTo(slug, "cancel", 4))
         key("ENTER")
-        assertTrue(waitFor("Remove Lake loop?", there = false))
+        assertTrue(waitForNoQuestion(slug))
         assertEquals("none", stop(slug))
         assertEquals(listOf("back"), walk(slug, 1) { key("TAB") })
     }
@@ -256,7 +333,7 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         for (slug in GOOD) {
             openAtLake(slug)
             key("ENTER")
-            assertTrue(waitFor("Remove Lake loop?"))
+            assertTrue(waitForQuestion(slug, "Remove Lake loop?"))
             assertTrue("$slug: Tab reaches Remove", tabTo(slug, "confirm", 4))
             key("ENTER")
             waitForCount(slug, 2)
@@ -293,6 +370,18 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         return now
     }
 
+    /** Where TalkBack's focus was, in order and without repeats, over the next [ms]. */
+    private fun talkBackOver(ms: Long): List<String> {
+        val seen = mutableListOf<String>()
+        val end = System.currentTimeMillis() + ms
+        while (System.currentTimeMillis() < end) {
+            val now = talkBackOn()
+            if (seen.lastOrNull() != now) seen.add(now)
+            Thread.sleep(200)
+        }
+        return seen
+    }
+
     /**
      * Puts TalkBack's focus on [id], lets it read the control, then logs
      * [marker] (when given) and activates the control, as a double tap
@@ -309,46 +398,101 @@ class I03FocusManagementTest : TechniqueTest("I03") {
     /**
      * L4. Skips unless TalkBack is running. In each example TalkBack
      * activates Remove Lake loop, then Cancel, then Remove Lake loop and
-     * Remove; after each, the test reads where TalkBack's own focus went
-     * and logs a marker, so that tool/talkback.py credits what TalkBack
-     * said then to that step. In bad-opens-on-focus TalkBack's focus is
-     * moved onto Remove Ridge trail, which asks nothing: TalkBack's focus is
-     * not keyboard focus.
+     * Remove. After each, the test waits for TalkBack's own focus to get
+     * where it should, listens while TalkBack speaks, and then requires its
+     * focus to stay there for the last interval. In good-material it then
+     * removes Ridge trail and moves keyboard focus on before the example's
+     * delayed request is due: TalkBack, which follows keyboard focus, must
+     * not be pulled back to Remove Summit path. In bad-opens-on-focus
+     * TalkBack's focus on Remove Ridge trail asks nothing, and the click
+     * action on it then asks, seen through the same read of the screen.
+     * Every failure is collected, and the test fails at the end with all of
+     * them.
      */
     @Test
     fun talkBackWalk() {
         assumeTalkBack()
+        val failures = mutableListOf<String>()
+        fun check(ok: Boolean, message: String) { if (!ok) failures += message }
+
+        /** The last interval of a step: TalkBack's focus must stay where [ok] accepts. */
+        fun steady(slug: String, step: String, ok: (String) -> Boolean): String {
+            Thread.sleep(SPEECH_MILLIS)
+            val seen = talkBackOver(STEADY_MILLIS)
+            check(seen.size == 1 && ok(seen.single()), "$slug: $step: TalkBack's focus over the last interval: $seen")
+            return seen.joinToString(" > ")
+        }
+
         for (slug in PRESS_TO_ASK) {
             openExampleInAnyWindow(slug) { it.viewIdResourceName == "i03-$slug-count" }
+            if (slug == "good-material") {
+                // One key now, so that the key sent later in this example is
+                // not the one lost to touch mode.
+                key("TAB")
+            }
             Thread.sleep(8_000)
             activate("i03-$slug-remove-lake", "i03-$slug-opened")
             val opened = talkBackSettlesOn(5_000) { inQuestion(slug, it) }
-            Thread.sleep(SPEECH_MILLIS)
+            check(inQuestion(slug, opened), "$slug: opened: TalkBack went to $opened")
+            val openedLast = steady(slug, "opened") { inQuestion(slug, it) }
             Log.i(talkBackTag, "END $slug-opened")
             activate("i03-$slug-cancel", "i03-$slug-cancelled")
             val cancelled = talkBackSettlesOn(6_000) { it == "i03-$slug-remove-lake" }
-            Thread.sleep(SPEECH_MILLIS)
+            check(cancelled == "i03-$slug-remove-lake", "$slug: cancelled: TalkBack went to $cancelled")
+            val cancelledLast = steady(slug, "cancelled") { it == "i03-$slug-remove-lake" }
             Log.i(talkBackTag, "END $slug-cancelled")
             activate("i03-$slug-remove-lake")
             Thread.sleep(3_000)
             activate("i03-$slug-confirm", "i03-$slug-removed")
             val removed = talkBackSettlesOn(8_000) { it == "i03-$slug-remove-summit" }
-            Thread.sleep(SPEECH_MILLIS)
+            check(removed == "i03-$slug-remove-summit", "$slug: removed: TalkBack went to $removed")
+            val removedLast = steady(slug, "removed") { it == "i03-$slug-remove-summit" }
             Log.i(talkBackTag, "END $slug")
-            Log.i("I03FOCUS", "$slug | opened: $opened | cancelled: $cancelled | removed: $removed")
-            assertTrue("$slug: TalkBack went into the question, to $opened",
-                inQuestion(slug, opened))
-            assertEquals("$slug: after Cancel", "i03-$slug-remove-lake", cancelled)
-            assertEquals("$slug: after Remove", "i03-$slug-remove-summit", removed)
+            Log.i("I03FOCUS", "$slug | opened: $opened, then $openedLast | cancelled: $cancelled, then $cancelledLast" +
+                " | removed: $removed, then $removedLast")
+
+            if (slug == "good-material") {
+                // Ridge trail and Summit path are left. Removing Ridge trail
+                // puts keyboard focus on Summit path and schedules the
+                // screen reader's move there. Before it is due, Shift+Tab
+                // moves keyboard focus to Back; the move must be dropped.
+                activate("i03-$slug-remove-ridge")
+                Thread.sleep(3_000)
+                activate("i03-$slug-confirm", "i03-$slug-moved-on")
+                Thread.sleep(400)
+                shiftTab()
+                val keyboard = stop(slug)
+                check(keyboard == "back", "$slug: moved on: Shift+Tab put keyboard focus on $keyboard, not Back")
+                val movedOn = steady(slug, "moved on") { it != "i03-$slug-remove-summit" }
+                Log.i(talkBackTag, "END $slug-moved-on")
+                Log.i("I03FOCUS", "$slug | moved on: keyboard $keyboard, TalkBack $movedOn")
+            }
         }
+
         val slug = "bad-opens-on-focus"
+        val ridge = "i03-$slug-remove-ridge"
         openExampleInAnyWindow(slug) { it.viewIdResourceName == "i03-$slug-count" }
         Thread.sleep(8_000)
-        Log.i(talkBackTag, "FOCUS i03-$slug-remove-ridge")
-        talkBackFocus("i03-$slug-remove-ridge") { nodeInAnyWindow("i03-$slug-remove-ridge") }
+        assertNothingAsked(slug, "before TalkBack's move")
+        Log.i(talkBackTag, "FOCUS $ridge")
+        talkBackFocus(ridge) { nodeInAnyWindow(ridge) }
         Thread.sleep(4_000)
         Log.i(talkBackTag, "END $slug")
-        assertFalse("TalkBack's focus on Remove Ridge trail asked", all().any { it.name().endsWith("?") })
-        assertNotNull(nodeInAnyWindow("i03-$slug-remove-lake"))
+        check(talkBackOn() == ridge, "$slug: TalkBack's focus is on ${talkBackOn()}, not Remove Ridge trail")
+        try {
+            assertNothingAsked(slug, "TalkBack's focus on Remove Ridge trail")
+        } catch (e: AssertionError) {
+            failures += "$slug: ${e.message}"
+            // Close what was asked, so that the positive control below
+            // starts from the list.
+            nodeInAnyWindow("i03-$slug-cancel").performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            waitForNoQuestion(slug)
+        }
+        // The positive control, through the same read and the same test: the
+        // click action, as a double tap, asks.
+        assertTrue("click Remove Ridge trail", nodeInAnyWindow(ridge).performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        check(waitForQuestion(slug, "Remove Ridge trail?"), "$slug: the click on Remove Ridge trail did not ask")
+
+        assertTrue(failures.joinToString("\n"), failures.isEmpty())
     }
 }

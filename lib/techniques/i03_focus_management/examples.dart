@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -21,10 +23,13 @@ typedef _Ask = Future<bool?> Function(
   String name,
 );
 
-/// How long after a question has closed its route has gone, and the
-/// framework has sent the screen reader back to where it was: the longest
-/// route transition here (the action sheet's 335 ms), and Android's 300 ms
-/// on top, with room to spare.
+/// How long to wait, after a question has closed, for the framework's own
+/// screen reader move: the question's route must animate out (150 ms for
+/// the Material dialog, 200 ms for the general dialog, 335 ms for the
+/// action sheet) and be disposed, and on Android the framework waits
+/// 300 ms more. One second leaves about a third of a second to spare. On a
+/// device slow enough to use that up, the framework's move would come
+/// last and the screen reader would be left at the top of the screen.
 const _afterTheRoute = Duration(seconds: 1);
 
 /// One Remove button, drawn the way the example draws its buttons.
@@ -68,8 +73,12 @@ class _TrailsState extends State<_Trails> {
   /// The test identifier of the part [part] of this example.
   String id(String part) => 'i03-${widget.slug}-$part';
 
+  /// The screen reader's move still to come after a removal, if any.
+  Timer? _screenReaderMove;
+
   @override
   void dispose() {
+    _screenReaderMove?.cancel();
     for (final node in _nodes.values) {
       node.dispose();
     }
@@ -77,6 +86,8 @@ class _TrailsState extends State<_Trails> {
   }
 
   Future<void> remove((String, String) trail) async {
+    // Anything newer, here a new question, replaces a move still to come.
+    _screenReaderMove?.cancel();
     final yes = await widget.ask(context, this, trail.$2);
     if (yes != true || !mounted) return;
     final index = _left.indexOf(trail);
@@ -85,18 +96,28 @@ class _TrailsState extends State<_Trails> {
     final next = _left[index < _left.length ? index : _left.length - 1].$1;
     // Keyboard focus, and on the web the screen reader with it.
     _nodes[next]!.requestFocus();
-    // On Android and iOS, when the question's route has gone, the
-    // framework sends the screen reader back to the button that opened it
-    // (on Android 300 ms later). That button has just been removed, so the
-    // screen reader is left at the top of the screen, and a move made
-    // before then is undone (docs/flutter-limitations.md, FL-442). So the
-    // screen reader is sent to the next button once that has happened.
-    Future<void>.delayed(_afterTheRoute, () {
-      if (!mounted) return;
-      _keys[next]!.currentContext?.findRenderObject()?.sendSemanticsEvent(
-        const FocusSemanticEvent(),
-      );
-    });
+    // On iOS VoiceOver does not follow keyboard focus, so it has to be
+    // sent. And on Android and iOS, when the question's route has gone,
+    // the framework sends the screen reader back to the button that opened
+    // it (on Android 300 ms later), which has just been removed; on
+    // Android that was seen to undo a move made before it
+    // (docs/flutter-limitations.md, FL-442). So the screen reader is sent
+    // to the next button once that has happened.
+    // This is a timing workaround: the framework gives no signal for when
+    // its own move has been made.
+    _screenReaderMove = Timer(_afterTheRoute, () => _sendScreenReaderTo(next));
+  }
+
+  /// Sends the screen reader to [key]'s button, unless that is no longer
+  /// where the user is: the trail has gone, or keyboard focus has moved
+  /// off its button since (the user went on, or a question opened).
+  void _sendScreenReaderTo(String key) {
+    _screenReaderMove = null;
+    if (!mounted || !_left.any((t) => t.$1 == key)) return;
+    if (!_nodes[key]!.hasPrimaryFocus) return;
+    _keys[key]!.currentContext?.findRenderObject()?.sendSemanticsEvent(
+      const FocusSemanticEvent(),
+    );
   }
 
   @override

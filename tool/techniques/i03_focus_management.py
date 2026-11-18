@@ -18,10 +18,18 @@ _PRESS_TO_ASK = ("good-material", "good-cupertino", "good-widgets", "bad-focus-l
 TALKBACK_EXPECT = {
     # Into the question: TalkBack reads its title.
     **{f"i03-{slug}-opened": (["Remove Lake loop?"], []) for slug in _PRESS_TO_ASK},
-    **{f"i03-{slug}-cancelled": (["Remove Lake loop", "Button"], ["Remove Lake loop?"])
+    # Back on the button: TalkBack reads the screen's title, then the
+    # button, and no other row. Where its focus ends, and that it stays
+    # there, the test itself checks.
+    **{f"i03-{slug}-cancelled": (["Remove Lake loop", "Button"],
+                                 ["Remove Lake loop?", "Remove Ridge trail", "Remove Summit path"])
        for slug in _PRESS_TO_ASK},
-    **{f"i03-{slug}-removed": (["Remove Summit path", "Button"], [])
+    **{f"i03-{slug}-removed": (["Remove Summit path", "Button"], ["Remove Ridge trail"])
        for slug in _PRESS_TO_ASK},
+    # good-material removes Ridge trail too, and keyboard focus moves on to
+    # Back before the example's request for Summit path is due: TalkBack
+    # follows keyboard focus to Back, and is not sent to Summit path.
+    "i03-good-material-moved-on": (["Back"], []),
     # TalkBack's focus on a Remove button is not keyboard focus, so the
     # defect does not happen: the button is read, and nothing is asked.
     "i03-bad-opens-on-focus-remove-ridge": (["Remove Ridge trail", "Button"], ["Remove Ridge trail?"]),
@@ -33,8 +41,11 @@ TALKBACK_METHOD = (
     "Lake loop and the question's Remove. A marker is logged before each activation, and what "
     "TalkBack says next is credited to it, so each row is what TalkBack read where its focus "
     "went by itself. The test also reads where TalkBack's focus is "
-    "(`isAccessibilityFocused`) and fails if it is not where the row says. Speech is read "
-    "from TalkBack's verbose log"
+    "(`isAccessibilityFocused`) for eight seconds after it first gets there and then for two "
+    "more, and fails unless it stays where the row says for those last two. In "
+    "good-material, Ridge trail is then removed and Shift+Tab moves keyboard focus to Back "
+    "before the example's request for Summit path is due (`moved-on`). Speech is read from "
+    "TalkBack's verbose log"
 )
 
 # tool/voiceover_ios.py: (how the speech was captured, heading of the

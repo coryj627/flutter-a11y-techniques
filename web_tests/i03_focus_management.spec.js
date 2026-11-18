@@ -19,7 +19,20 @@ const names = {
 };
 
 const control = (page, slug, part) => byId(page, `i03-${slug}-${part}`);
-const question = (page, name) => page.getByText(`Remove ${name}?`, { exact: true });
+// Every question, and the one about a trail: one locator, so that the
+// check that nothing was asked and its positive control test the same way.
+const questions = (page) => page.getByText(/^Remove .+\?$/);
+const question = (page, name) => questions(page).filter({ hasText: `Remove ${name}?` });
+
+/**
+ * Expects the example's list on the page, its three Remove buttons and its
+ * count, and no question. A page that shows nothing cannot pass.
+ */
+async function expectNothingAsked(page, slug) {
+  for (const part of Object.keys(names)) await expect(control(page, slug, part), part).toBeVisible();
+  await expect(byId(page, `i03-${slug}-count`)).toBeVisible();
+  await expect(questions(page)).toHaveCount(0);
+}
 
 /**
  * Names the element that has DOM focus: 'back', a part of the example
@@ -84,7 +97,7 @@ test.describe('the question opens on a press, not on focus (3.2.1)', () => {
     test(`${slug}: Tab onto each Remove button asks nothing; Enter on one asks`, async ({ page }) => {
       await open(page, slug);
       expect(await tabs(page, slug, 4)).toEqual(['back', 'remove-ridge', 'remove-lake', 'remove-summit']);
-      await expect(page.getByText(/\?$/)).toHaveCount(0);
+      await expectNothingAsked(page, slug);
       // The positive control: Enter on the button Tab reached asks.
       await press(page, 'Enter');
       await expect(question(page, 'Summit path')).toBeVisible();
@@ -97,7 +110,7 @@ test.describe('the question opens on a press, not on focus (3.2.1)', () => {
     await open(page, slug);
     // Tab reaches Back and asks nothing: the key arrives.
     expect(await tabs(page, slug, 1)).toEqual(['back']);
-    await expect(page.getByText(/\?$/)).toHaveCount(0);
+    await expectNothingAsked(page, slug);
     // The next Tab alone, onto Remove Ridge trail, asks.
     await press(page, 'Tab');
     await expect(question(page, 'Ridge trail')).toBeVisible();
@@ -105,7 +118,7 @@ test.describe('the question opens on a press, not on focus (3.2.1)', () => {
     // the next button asks about it.
     await tabInQuestionTo(page, slug, 'cancel');
     await press(page, 'Enter');
-    await expect(question(page, 'Ridge trail')).toHaveCount(0);
+    await expectNothingAsked(page, slug);
     expect(await stop(page, slug)).toBe('remove-ridge');
     await press(page, 'Tab');
     await expect(question(page, 'Lake loop')).toBeVisible();
