@@ -44,7 +44,8 @@ TALKBACK_METHOD = (
     "(`isAccessibilityFocused`) for eight seconds after it first gets there and then for two "
     "more, and fails unless it stays where the row says for those last two. In "
     "good-material, Ridge trail is then removed and Shift+Tab moves keyboard focus to Back "
-    "while the question is still going (`moved-on`); on Android the examples send TalkBack "
+    "while the question is still going (`moved-on`), and TalkBack's focus must be on Back "
+    "itself for the last two seconds; on Android the examples send TalkBack "
     "nothing of their own, so it follows keyboard focus. Speech is read from TalkBack's "
     "verbose log"
 )

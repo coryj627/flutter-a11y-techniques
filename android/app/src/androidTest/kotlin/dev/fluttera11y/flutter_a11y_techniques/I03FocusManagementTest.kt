@@ -458,7 +458,9 @@ class I03FocusManagementTest : TechniqueTest("I03") {
                 // nothing more on Android. While the question is still
                 // going, Shift+Tab moves keyboard focus to Back: TalkBack
                 // follows it there, and nothing may pull it back to Summit
-                // path.
+                // path. Its focus must be on Back itself for the last
+                // interval: lost focus ("none"), or focus anywhere else,
+                // fails.
                 activate("i03-$slug-remove-ridge")
                 Thread.sleep(3_000)
                 activate("i03-$slug-confirm", "i03-$slug-moved-on")
@@ -466,7 +468,7 @@ class I03FocusManagementTest : TechniqueTest("I03") {
                 shiftTab()
                 val keyboard = stop(slug)
                 check(keyboard == "back", "$slug: moved on: Shift+Tab put keyboard focus on $keyboard, not Back")
-                val movedOn = steady(slug, "moved on") { it != "i03-$slug-remove-summit" }
+                val movedOn = steady(slug, "moved on") { it == "Back" }
                 Log.i(talkBackTag, "END $slug-moved-on")
                 Log.i("I03FOCUS", "$slug | moved on: keyboard $keyboard, TalkBack $movedOn")
             }
