@@ -236,8 +236,9 @@ class BadInkWellNoRole extends StatelessWidget {
           'i01-bad-inkwell-no-role-trail',
           // Defect: an InkWell is focusable, answers Enter and Space, and
           // has a tap action, but sets no button flag. On Android and iOS
-          // nothing says that the card can be activated. (On the web the
-          // engine makes anything with a tap action a button, FL-006.)
+          // the card has no role: VoiceOver reads only its text, and
+          // TalkBack adds "Double-tap to activate". (On the web the engine
+          // makes anything with a tap action a button, FL-006.)
           child: Card(
             margin: EdgeInsets.zero,
             child: InkWell(

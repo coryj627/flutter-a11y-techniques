@@ -96,8 +96,9 @@ final i01FocusableControls = Technique(
       title: 'Card made tappable with an InkWell',
       variant: ExampleVariant.material,
       defect:
-          'On Android and iOS the card is not a button: a screen reader reads '
-          'its text and nothing says that it can be activated.',
+          'On Android and iOS the card is not a button. VoiceOver reads only '
+          'its text. TalkBack reads its text and "Double-tap to activate", '
+          'with no role.',
       builder: (_) => const BadInkWellNoRole(),
     ),
     TechniqueExample.bad(
