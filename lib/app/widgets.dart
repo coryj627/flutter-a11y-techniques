@@ -46,11 +46,20 @@ class PageScaffold extends StatelessWidget {
               // assistive technology, what is near the viewport, so headings
               // and links further down would be missing from a screen
               // reader's lists (docs/flutter-limitations.md, FL-011).
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: children,
+              //
+              // The group keeps the app bar's controls out of the body's
+              // focus order. The default order goes by position on the
+              // screen, and controls scrolled away above the view count as
+              // higher than the app bar, so without it Back comes between
+              // them (docs/flutter-limitations.md, FL-422). A group is
+              // placed by its own rectangle, which is the view's.
+              child: FocusTraversalGroup(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: children,
+                  ),
                 ),
               ),
             ),
