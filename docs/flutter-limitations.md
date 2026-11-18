@@ -1835,7 +1835,8 @@ yet), **Fixed in x.y** (verified on that version).
 - What happens: on Android, where Flutter reports that announcements are
   not supported ([FL-018](#fl-018)), every error text is a live region and
   TalkBack reads each one when it appears, however the error was set; with
-  two errors at once it read both, the last first (probe, q01). On iOS and
+  two errors at once it read both, in no fixed order (Email's first for
+  `good-form` and in probe q01, Name's first for `good-cupertino`). On iOS and
   the web the error text is not a live region, so an error set any other
   way than through `Form.validate()` is silent: `setState` on `errorText`,
   `AutovalidateMode.onUserInteraction` while typing, or

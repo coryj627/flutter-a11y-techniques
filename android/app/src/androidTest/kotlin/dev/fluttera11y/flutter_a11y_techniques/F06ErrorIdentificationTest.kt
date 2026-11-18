@@ -110,6 +110,8 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             hideKeyboard()
             send(slug)
             waitFor("$slug email focused") { node(email).isFocused }
+            // The tree can take a moment longer than focus to update.
+            waitFor("$slug name error cleared") { hint(name) == "Name" }
             assertEquals(name, "Name", hint(name))
             assertEquals(email, "Email, $EMAIL_ERROR", hint(email))
             // Put the text cursor at the end of "abc" and add the rest.
@@ -172,9 +174,11 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
         open("bad-merged-error")
         val id = "f06-bad-merged-error-email"
         send("bad-merged-error")
-        waitFor("error shown") { hint(id) != "Email" }
         // The error twice: merged into the label, then again as the hint.
-        assertEquals("Email\n$EMAIL_ERROR, $EMAIL_ERROR", hint(id))
+        // The two arrive in separate updates, so wait for both.
+        val merged = "Email\n$EMAIL_ERROR, $EMAIL_ERROR"
+        waitFor("error merged into the label and the hint") { hint(id) == merged }
+        assertEquals(merged, hint(id))
         assertEquals(View.ACCESSIBILITY_LIVE_REGION_POLITE, node(id).liveRegion)
         assertTrue("no separate error node", withText(EMAIL_ERROR) == null)
     }
@@ -210,6 +214,11 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
                     focusMoves[slug], focused?.viewIdResourceName)
             }
             hideKeyboard()
+            // Park TalkBack on Send first: focus may already be on the first
+            // field, and a node that has focus says nothing when focused
+            // again; "keyboard hidden" is said here too, not at a stop.
+            talkBackFocus("Send") { nodeInAnyWindow("f06-$slug-send") }
+            Thread.sleep(6_000)
             for ((marker, find) in stops) {
                 Log.i(talkBackTag, "FOCUS $marker")
                 talkBackFocus(marker, find)

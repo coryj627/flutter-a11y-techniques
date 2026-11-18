@@ -81,12 +81,17 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
 
   func testBadColorOnlyAddsNoText() {
     open("bad-color-only")
-    let before = Set(app.staticTexts.allElementsBoundByIndex.map(\.label))
+    // The words on screen; the empty error text is a static text with no
+    // label, which says nothing.
+    func words() -> Set<String> {
+      Set(app.staticTexts.allElementsBoundByIndex.map(\.label).filter { !$0.isEmpty })
+    }
+    let before = words()
     send("bad-color-only")
     XCTAssertTrue(hasKeyboardFocus("f06-bad-color-only-email") || {
       sleep(2); return self.hasKeyboardFocus("f06-bad-color-only-email")
     }(), "the form was sent: focus went to the field")
-    XCTAssertEqual(Set(app.staticTexts.allElementsBoundByIndex.map(\.label)), before)
+    XCTAssertEqual(words(), before)
     XCTAssertEqual(element("f06-bad-color-only-email").label, "Email")
   }
 
@@ -116,22 +121,29 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
   // L4. For each example: the VoiceOver cursor is put on Send, Send is
   // activated with a double tap, and every new utterance is collected for
   // eight seconds. Then the cursor is moved forward once and back once,
-  // which reads the element it was on. XCUIVoiceOverService gives the first
-  // 64 characters of an utterance, so phrases are matched as prefixes.
+  // which reads the element it was on; for the good examples it then moves
+  // forward twice more, past the first error to the second field, which is
+  // not being edited and so is read with its hint. XCUIVoiceOverService
+  // gives the first 64 characters of an utterance, so phrases are matched
+  // as prefixes. A field being edited is read "Name Text field Is editing
+  // …", which leaves no room for its hint within 64 characters.
   //
   // `heard`: what must be among the utterances after activation (empty for
   // nothing); `quiet`: text that must not be in any of them; `cursor`: the
-  // start of what the cursor is on afterwards.
-  private let speech: [(slug: String, heard: [String], quiet: [String], cursor: String)] = [
-    ("good-form", ["Name Text field \(nameError)"], [], "Name Text field \(nameError)"),
-    ("good-cupertino", ["Name Text field \(nameError)"], [], "Name Text field \(nameError)"),
-    // Focus goes to the field, which has nothing to say about the error.
-    ("bad-color-only", ["Email Text field"], ["Enter", "Invalid"], "Email Text field"),
-    ("bad-vague-message", ["Email Text field Invalid."], [], "Email Text field Invalid."),
+  // start of what the cursor is on afterwards; `then`: what the next moves
+  // forward read.
+  private let speech: [(slug: String, heard: [String], quiet: [String], cursor: String, then: [String])] = [
+    ("good-form", [nameError], [emailError], "Name Text field",
+     [nameError, "Email Text field \(emailError)"]),
+    ("good-cupertino", [nameError], [emailError], "Name Text field",
+     [nameError, "Email Text field \(emailError)"]),
+    // Focus goes to the field, and nothing says what is wrong.
+    ("bad-color-only", ["Email Text field"], ["Enter", "Invalid"], "Email Text field", []),
+    ("bad-vague-message", ["Invalid."], [emailError], "Email Text field", []),
     // Nothing is said, and the cursor stays on Send.
-    ("bad-not-announced", [], ["Enter an email"], "Send Button"),
-    // The error is in the name and again as the hint.
-    ("bad-merged-error", ["Email \(emailError)"], [], "Email Enter an email"),
+    ("bad-not-announced", [], ["Enter an email"], "Send Button", []),
+    // Read from Send, the field's name has the error in it.
+    ("bad-merged-error", [emailError], [], "Email \(emailError)", []),
   ]
 
   func testVoiceOverSpeech() throws {
@@ -163,7 +175,7 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
       let end = Date().addingTimeInterval(8)
       while Date() < end {
         let now = current()
-        if now != (heard.last ?? before) { heard.append(now) }
+        if !now.isEmpty && now != (heard.last ?? before) { heard.append(now) }
         usleep(200_000)
       }
       // Send acted: the example's error text, or for bad-color-only the
@@ -180,7 +192,12 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
       // move also proves that speech capture is live.
       let forward = norm((try? voiceOver.moveForward().utterance) ?? "")
       let back = norm((try? voiceOver.moveBackward().utterance) ?? "")
-      print("F06VO \(example.slug) | on Send: \(before) / after activation: \(heard.joined(separator: " / ")) / forward: \(forward) / back: \(back)")
+      var then: [String] = []
+      for _ in example.then {
+        then.append(norm((try? voiceOver.moveForward().utterance) ?? ""))
+      }
+      let more = then.isEmpty ? "" : " / then: \(then.joined(separator: " / "))"
+      print("F06VO \(example.slug) | on Send: \(before) / after activation: \(heard.joined(separator: " / ")) / forward: \(forward) / back: \(back)\(more)")
       XCTAssertFalse(forward.isEmpty || back.isEmpty, "\(example.slug): capture is not live")
       for phrase in example.heard {
         XCTAssertTrue(heard.contains { starts($0, phrase) }, "\(example.slug): expected \"\(phrase)\" in \(heard)")
@@ -192,6 +209,9 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
         XCTAssertFalse(heard.contains { $0.contains(phrase) }, "\(example.slug): did not expect \"\(phrase)\" in \(heard)")
       }
       XCTAssertTrue(starts(back, example.cursor), "\(example.slug): cursor on \"\(back)\", expected \"\(example.cursor)\"")
+      for (phrase, said) in zip(example.then, then) {
+        XCTAssertTrue(starts(said, phrase), "\(example.slug): expected \"\(phrase)\", heard \"\(said)\"")
+      }
     }
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")

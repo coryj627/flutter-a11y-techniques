@@ -47,7 +47,10 @@ TALKBACK_EXPECT = {
     "f06-bad-not-announced-email": (["Email", _EMAIL, "Edit box"], []),
     "f06-bad-merged-error-send": (["Send", "Button"], []),
     "f06-bad-merged-error-sent": ([_EMAIL], []),
-    "f06-bad-merged-error-email": (["Email", _EMAIL, "Edit box"], []),
+    # The merged label: "Email" and the error in one fragment, which only the
+    # field has. TalkBack's role word after it was cut off by "keyboard
+    # hidden" on one walk of two, so it is not required here.
+    "f06-bad-merged-error-email": (["Email " + _EMAIL], []),
 }
 
 TALKBACK_METHOD = (
