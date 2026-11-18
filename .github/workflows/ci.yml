@@ -13,10 +13,15 @@ env:
   # Keep in step with .fvmrc.
   FLUTTER_VERSION: 3.47.5
 
+# Every job runs on a Namespace runner (namespace.so), not a GitHub-hosted
+# one: the label is nscloud-<image>-<arch>-<vCPU>x<GB of memory>. The
+# hosted Linux runner left the Android emulator about 2 GB of memory, and
+# device tests failed on timing there. The Namespace GitHub app has to be
+# installed for this repository, or the jobs wait for a runner for ever.
 jobs:
   # L1: analysis and widget tests, for the app and the Widgetbook.
   analyze-test:
-    runs-on: ubuntu-latest
+    runs-on: nscloud-ubuntu-26.04-amd64-4x8
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -38,7 +43,7 @@ jobs:
 
   # L3 on web: the browser accessibility tree, for the app and the Widgetbook.
   web:
-    runs-on: ubuntu-latest
+    runs-on: nscloud-ubuntu-26.04-amd64-4x8
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -85,7 +90,7 @@ jobs:
   # itself because TalkBack is not enabled here; speech runs are local
   # (python3 tool/talkback.py <ID>).
   android:
-    runs-on: ubuntu-latest
+    runs-on: nscloud-ubuntu-26.04-amd64-8x16
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
@@ -138,7 +143,7 @@ jobs:
   # is only checked locally (python3 tool/voiceover_ios.py <ID>) until the hosted image
   # has them.
   ios:
-    runs-on: macos-latest
+    runs-on: nscloud-macos-tahoe-arm64-6x14
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
