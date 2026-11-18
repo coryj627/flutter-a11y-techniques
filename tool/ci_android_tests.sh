@@ -575,22 +575,32 @@ else
   rc=$?
   sleep "$SETTLE_SECONDS"
   after_run "the sweep" "$rc" "" "$sweep_from"
-  swept=$(lines_from "$sweep_from")
   # The only sweep that passes is one the test runner itself reports as empty
   # from start to end: one start, a finish with 0 tests, 0 failed and 0
   # ignored, and nothing else logged: no test, failure or second run. The
   # count at the start is not used: the test runner gives 1 for a run with
   # no tests in it. A class that fails before its first test starts logs the
   # failure and finishes with 1 failed.
-  other=$(echo "$swept" | grep -F "TestRunner: " \
-    | grep -vE "TestRunner: (run started: [0-9]+ tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
+  judge_sweep() {
+    swept=$(lines_from "$sweep_from")
+    other=$(echo "$swept" | grep -F "TestRunner: " \
+      | grep -vE "TestRunner: (run started: [0-9]+ tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
+    [ -z "$other" ] \
+      && [ "$(echo "$swept" | grep -cF "TestRunner: run started:")" -eq 1 ] \
+      && echo "$swept" | grep -qE "TestRunner: run finished: 0 tests, 0 failed, 0 ignored[[:space:]]*$"
+  }
+  # A reader that is still running can have left out a line, such as the
+  # sweep's finish: before failing the sweep, take what the device has.
+  if ! judge_sweep; then
+    say "the sweep's lines in the reader's log are not an empty run from start to end; checking the device's log before judging it"
+    resync_tests_log
+    judge_sweep
+  fi
   if ! echo "$swept" | grep -qF "TestRunner: run started:"; then
     FAILED=1
     say "failed: the sweep never reached the test runner (Gradle exit code $rc), so nothing shows that every test class was in the list$(reader_note)"
     dump_state sweep-failed
-  elif [ -n "$other" ] \
-    || [ "$(echo "$swept" | grep -cF "TestRunner: run started:")" -ne 1 ] \
-    || ! echo "$swept" | grep -qE "TestRunner: run finished: 0 tests, 0 failed, 0 ignored[[:space:]]*$"; then
+  elif ! judge_sweep; then
     FAILED=1
     say "failed: the sweep was not an empty run from start to end (Gradle exit code $rc). A test class is missing from the list, or the sweep did not finish$(reader_note). The test runner logged:"
     echo "$swept" | grep -F "TestRunner: " | sed -E 's/.*TestRunner: //'

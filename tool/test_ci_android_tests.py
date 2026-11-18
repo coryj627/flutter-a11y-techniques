@@ -69,7 +69,9 @@ class Workspace:
         gives from the -T time on; `follow` reads the device's log from
         there, `read_lines LOSE STOP` reads it but leaves out the first
         line with LOSE in it and stops after the first with STOP in it, each
-        once only, and `stop_once_after STOP` only stops. `logcat -d` runs
+        once only, `stop_once_after STOP` only stops, and `drop_lines TEXT`
+        never writes a line with TEXT in it, however often it starts again
+        from an earlier time. `logcat -d` runs
         `dump`, with $d its call count, by default printing the device's
         log; `logcat -c` runs `clear`, by default emptying it."""
         log, root = self.runner_log, self.root
@@ -98,6 +100,15 @@ class Workspace:
               done
             }}
             stop_once_after() {{ read_lines "" "$1"; }}
+            drop_lines() {{
+              k=$first
+              while :; do
+                line=$(sed -n "${{k}}p" "{log}")
+                if [ -z "$line" ]; then sleep 0.05; continue; fi
+                k=$((k + 1))
+                [[ $line == *"$1"* ]] || echo "$line"
+              done
+            }}
             case "$*" in
               "logcat -c") {clear} ;;
               "logcat -G"*|"logcat -d -b"*) exit 0 ;;
@@ -538,6 +549,52 @@ class RunTest(unittest.TestCase):
         swept = result.stdout.split("The test runner logged:")[1]
         self.assertIn(f"finished: opens({PKG}.MissedTest)", swept)
         self.assertNotIn("run finished: 3 tests", swept)
+
+    # A reader that keeps running but leaves out a line: the device's log
+    # makes up for it before anything is failed. (The class check is shown
+    # failing a class that really did not run, with a reader that writes
+    # every line, by test_fails_when_a_class_never_ran.)
+
+    def test_a_sweep_finish_the_running_reader_left_out_is_taken_from_the_device(self):
+        self.space.adb(reader='read_lines "run finished: 0 tests" ""')
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assert_passed_once_each(result)
+        self.assertIn("not an empty run from start to end; checking the device's log",
+                      result.stdout)
+        self.assertIn("took from the device's log 1 test runner lines", result.stdout)
+        self.assertIn("sweep: no test outside the list", result.stdout)
+        self.assertIn("restarts of the test runner's log reader: 0,", result.stdout)
+
+    def test_a_sweep_that_finds_a_missed_class_fails_when_the_reader_left_out_its_finish(self):
+        self.space.adb(reader='read_lines "run finished: 1 tests" ""')
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep=self.space.logs(
+            "run started: 1 tests", f"started: opens({PKG}.MissedTest)",
+            f"finished: opens({PKG}.MissedTest)",
+            "run finished: 1 tests, 0 failed, 0 ignored") + "exit 0")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("checking the device's log before judging it", result.stdout)
+        self.assertIn("not an empty run", result.stdout)
+        self.assertIn("run finished: 1 tests, 0 failed, 0 ignored",
+                      result.stdout.split("The test runner logged:")[1])
+
+    def test_a_class_line_the_running_reader_left_out_is_taken_from_the_device(self):
+        # The reader never writes the line, even when it is started again
+        # from an earlier time, and the check before the sweep (the second
+        # read of the device's log) fails, so only the class check can find
+        # the line.
+        self.space.adb(reader=f'drop_lines "({PKG}.F01FieldsTest)"',
+                       dump=f'[ "$d" -eq 2 ] && exit 1; cat "{self.space.runner_log}"')
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assert_passed_once_each(result)
+        self.assertIn("could not be checked against the device's log before the sweep",
+                      result.stdout)
+        self.assertIn("a class has no finished test in the reader's log; checking the device's log",
+                      result.stdout)
+        self.assertIn("restarts of the test runner's log reader: 0,", result.stdout)
 
     def test_fails_when_the_sweeps_start_cannot_be_marked(self):
         self.space.finished(*self.names)
