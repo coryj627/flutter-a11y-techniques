@@ -58,6 +58,26 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
         }
     }
 
+    /**
+     * Puts the keyboard away, then waits up to 5 seconds for the count of
+     * [slug] to be in the tree again, looking in every window. At CI's
+     * emulator size, 320 by 640 at 160 dpi, the keyboard that comes up when
+     * focus moves to a field in error covers the lower part of the screen:
+     * Send and the count below it are then out of view and not in the tree
+     * at all, and they are back within three seconds of Back putting the
+     * keyboard away (measured on this project's emulator set to that size,
+     * docs/evidence/probes/f06/keyboard; CI run 44386619996 failed on the
+     * missing count). A first version that waited with UI Automator's
+     * `Until.hasObject` failed there; the probe found the count by searching
+     * the windows directly, as this does.
+     */
+    private fun closeKeyboardAndWaitForCount(slug: String) {
+        hideKeyboard()
+        waitFor("the count of $slug is in the tree") {
+            anyWindowHas { it.viewIdResourceName == "f06-$slug-count" }
+        }
+    }
+
     private val good = mapOf(
         "good-form" to listOf(
             Triple("f06-good-form-name", "Name", NAME_ERROR),
@@ -77,7 +97,12 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             }
             send(slug)
             waitFor("$slug errors shown") { withText(NAME_ERROR) != null }
+            // Input focus is on the first field in error.
+            waitFor("$slug first field focused") { node(fields[0].first).isFocused }
+            assertFalse("$slug second field not focused", node(fields[1].first).isFocused)
+            closeKeyboardAndWaitForCount(slug)
             for ((id, label, error) in fields) {
+                waitFor("$id and its error in the tree") { withText(error) != null }
                 // Flutter joins the label and the error with ", ".
                 assertEquals(id, "$label, $error", hint(id))
                 assertTrue(id, node(id).contentDescription.isNullOrEmpty())
@@ -90,9 +115,6 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
                 assertEquals(error, View.ACCESSIBILITY_LIVE_REGION_POLITE, message.liveRegion)
                 assertFalse(error, message.isEditable)
             }
-            // Input focus is on the first field in error.
-            assertTrue("$slug first field focused", node(fields[0].first).isFocused)
-            assertFalse("$slug second field not focused", node(fields[1].first).isFocused)
             waitForCount(slug, 0)
         }
     }
@@ -144,6 +166,8 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
         val before = all().map { it.name() }.toSet()
         send("bad-color-only")
         waitFor("field focused") { node(id).isFocused }
+        // Compare with the keyboard away, so that nothing is out of view.
+        closeKeyboardAndWaitForCount("bad-color-only")
         // The field is in error and focused, and nothing new can be read.
         assertEquals("Email", hint(id))
         assertEquals(before, all().map { it.name() }.toSet())

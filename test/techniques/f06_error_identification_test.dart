@@ -800,6 +800,34 @@ void main() {
     });
   });
 
+  // The layout the Android tests meet on CI's emulator, 320 by 640 at 160
+  // dpi: after a failed send the count is in view, and with a keyboard-sized
+  // inset at the bottom it is scrolled out of view and hidden. That fits
+  // the count being missing from the tree on CI (run 44386619996), where
+  // the keyboard was up; that this was the cause is likely, not shown.
+  // F06ErrorIdentificationTest puts the keyboard away before it reads the
+  // count.
+  for (final slug in [..._good, 'bad-color-only']) {
+    testWidgets('$slug at 320 by 640: the count is hidden after a failed send '
+        'only while a keyboard covers the bottom', (tester) async {
+      final handle = tester.ensureSemantics();
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await _open(tester, slug);
+      await _pressSend(tester, slug);
+      bool hidden() => dataById('f06-$slug-count').flagsCollection.isHidden;
+      expect(hidden(), isFalse);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 260);
+      await tester.pumpAndSettle();
+      expect(hidden(), isTrue);
+      tester.view.viewInsets = FakeViewPadding.zero;
+      await tester.pumpAndSettle();
+      expect(hidden(), isFalse);
+      handle.dispose();
+    });
+  }
+
   // A Flutter limitation pinned here, written to fail when it is fixed.
   for (final supportsAnnounce in [true, false]) {
     testWidgets('FL-182: CupertinoTextFormFieldRow\'s error is not a live '
