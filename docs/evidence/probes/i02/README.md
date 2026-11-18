@@ -83,9 +83,8 @@ So:
   read across. The same layout read by column in the widget test and by
   row on the devices. FL-420.
 - **`OrderedTraversalPolicy` puts a control with no order after every
-  numbered one** (i), as its documentation says. In HTML it is the other
-  way round: elements with a positive `tabindex` come first and the rest
-  after.
+  numbered one** (i), as its documentation says. HTML does the same:
+  elements with a positive `tabindex` come first and the rest after.
 
 **Past the end.** On Android and iOS, Tab past the last control went
 round to the first control of the content (`a-map`), not to Back: the

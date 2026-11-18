@@ -165,8 +165,8 @@ output of each platform.
   `_childrenInDefaultOrder`). So every example here has a container per
   column, and the widget tests assert the two orders apart (FL-420).
 - **`OrderedTraversalPolicy` puts a control with no order last**, after
-  all the numbered ones, as its documentation says. A positive `tabindex`
-  in HTML is the other way round: numbered elements come first.
+  all the numbered ones, as its documentation says. HTML does the same:
+  elements with a positive `tabindex` come first and the rest after.
 - **On the web, Tab past Flutter's last control continues in the
   document's order** ([FL-421](../flutter-limitations.md#fl-421)). Flutter
   handles Tab itself, and at the end of its order lets the browser have
