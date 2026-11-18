@@ -1,6 +1,7 @@
 import 'dart:ui' show Tristate;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart' show DeviceGestureSettings;
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -319,8 +320,8 @@ void main() {
     }
 
     // FL-402: a tap is given up by how far the pointer has moved since the
-    // press (kTouchSlop, 18 logical pixels), not by whether it is still over
-    // the control. Written to fail when either half changes.
+    // press (the touch slop: 18 logical pixels here, where no device has
+    // set one), not by whether it is still over the control. Written to fail when either half changes.
     for (final slug in _good) {
       testWidgets('$slug (FL-402): let go just outside the edge after a short '
           'move, it still acts; after a longer move inside it, it does not', (
@@ -357,6 +358,53 @@ void main() {
         expect(_letGoInside, isTrue);
       });
     }
+
+    // The distance is the device's touch slop, which a GestureDetector
+    // takes from MediaQuery; 18 is the value used when none is given, as in
+    // the tests above.
+    testWidgets('FL-402: the distance that gives a tap up is the touch slop '
+        'in MediaQuery', (tester) async {
+      Future<int> tapsAfterMoving(double slop, double move) async {
+        var taps = 0;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(
+              builder: (context) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  gestureSettings: DeviceGestureSettings(touchSlop: slop),
+                ),
+                child: Center(
+                  child: GestureDetector(
+                    key: ValueKey(slop),
+                    onTap: () => taps++,
+                    child: const SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: ColoredBox(color: Color(0xFF000000)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        final gesture = await tester.startGesture(
+          tester.getCenter(find.byType(GestureDetector)),
+        );
+        await tester.pump(const Duration(milliseconds: 300));
+        await gesture.moveBy(Offset(move, 0));
+        await tester.pump();
+        await gesture.up();
+        await tester.pumpAndSettle();
+        return taps;
+      }
+
+      // The same 10 pixel move: a tap with a slop of 18, given up with 4.
+      expect(await tapsAfterMoving(18, 10), 1);
+      expect(await tapsAfterMoving(4, 10), 0);
+      // And a 30 pixel move is still a tap with a slop of 40.
+      expect(await tapsAfterMoving(40, 30), 1);
+    });
 
     testWidgets('bad-tap-down: it acts while it is pressed, and moving off '
         'before letting go does not take it back', (tester) async {

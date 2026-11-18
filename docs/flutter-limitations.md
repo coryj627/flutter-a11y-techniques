@@ -1862,19 +1862,27 @@ yet), **Fixed in x.y** (verified on that version).
   (`PrimaryPointerGestureRecognizer`), and `gestures/constants.dart`,
   `kTouchSlop`); it was not measured on a device. Asserted by the I01
   widget tests "FL-402" for `good-material`, `good-cupertino`, and
-  `good-custom`, written to fail when either half changes.
+  `good-custom`, written to fail when either half changes, and by one
+  with the touch slop set in `MediaQuery`.
 - WCAG: none failed. 2.5.2 Pointer Cancellation asks for a way to abort,
   and moving the pointer far enough is one.
 - What happens: `onTap` runs when the pointer is released, unless the
-  pointer has moved more than 18 logical pixels from where it was pressed
-  (`kTouchSlop`). Where the pointer is when it is released is not checked.
+  pointer has moved more than the touch slop from where it was pressed.
+  Where the pointer is when it is released is not checked. The slop is
+  the device's, which a `GestureDetector` takes from `MediaQuery`
+  (`gestureSettings.touchSlop`, which the framework fills from the
+  view's `physicalTouchSlop` when the engine reports one: read in the
+  source, `gestures/gesture_settings.dart`), and 18 logical pixels
+  (`kTouchSlop`) where none is given, as in a widget test. With the slop
+  at 18:
   - Pressed 4 pixels inside the control's edge, moved 10 pixels out, and
     released 6 pixels outside it: the control acts.
   - Pressed at its centre, moved 40 pixels sideways, and released still
     over it: the control does not act.
 - Effect: someone who presses the wrong control near its edge and slides
   just off it still activates it; to take a press back they have to move
-  further than 18 pixels, in any direction.
+  further than the touch slop, in any direction. What the slop is on each
+  device was not measured.
 - Workaround: none tried. A control could check the release position
   itself (`onTapUp` gives it) before acting.
 - Upstream issue: not searched yet (D25).

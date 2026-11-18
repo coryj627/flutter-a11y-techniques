@@ -165,8 +165,9 @@ of each platform.
   never acts; one held longer does, as the test holds it.
 - **A tap is given up by distance, not by the control's edge**
   ([FL-402](../flutter-limitations.md#fl-402)): `onTap` does not run once
-  the pointer has moved more than 18 logical pixels from the press, and
-  does not look at where it is released. In the widget tests a press 4
+  the pointer has moved more than the touch slop from the press (the
+  device's, from `MediaQuery`; 18 logical pixels where none is set, as in
+  the tests), and does not look at where it is released. In the widget tests a press 4
   pixels inside the edge released 6 outside still acts, and a press at
   the centre moved 40 pixels and released over the control does not. Not
   measured on a device.
