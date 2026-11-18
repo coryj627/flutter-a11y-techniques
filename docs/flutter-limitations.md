@@ -1294,8 +1294,10 @@ yet), **Fixed in x.y** (verified on that version).
   at all times, and TalkBack reads "Password", "password. Edit box", and
   with "abc" typed "password. 3 characters"
   (`docs/evidence/F03/talkback-android.md`). The web has
-  `<input type="password">` at all times; what VoiceOver says there is in
-  `docs/evidence/F03/voiceover-web.md`.
+  `<input type="password">` at all times, and VoiceOver on macOS reads
+  "Password secure text field" before anything is typed; with "abc"
+  typed, "3 characters contents selected Password secure text field" in
+  Chromium and "•••" in WebKit (`docs/evidence/F03/voiceover-web.md`).
 - Effect: a VoiceOver user moving through a form on iOS is not told that a
   field is a password field until they start to edit it. The label still
   says "Password", and what is typed is not read out. Not counted as a

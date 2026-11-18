@@ -19,14 +19,24 @@ const field = (page, id) => page.locator(`[flt-semantics-identifier="${id}"] inp
 // on, per browser where they differ }. Because every stop is listed, a stop
 // with no speech, or with the speech of the stop before it, fails the
 // comparison: an empty or stale capture cannot pass.
+// A phone field is `type="tel"` (FL-162), and VoiceOver names that type:
+// "telephone" in Chromium, "telephone number field" in WebKit. It is the
+// only keyboard type that is heard; an email field's `inputmode` is not.
+const PHONE = { chromium: 'Phone telephone', webkit: 'Phone telephone number field' };
 const WALKS = {
-  'good-contact': { slug: 'good-contact', content: ['Name edit text', 'Email edit text', 'Phone edit text'] },
+  'good-contact': { slug: 'good-contact',
+    content: (b) => ['Name edit text', 'Email edit text', PHONE[b]] },
   'good-amount': { slug: 'good-amount', content: ['Amount edit text'] },
-  'good-cupertino': { slug: 'good-cupertino', content: ['Email edit text', 'Phone edit text'] },
-  'good-sign-in': { slug: 'good-sign-in', content: ['Username edit text', 'Password secure edit text'] },
-  // The password with "abc" typed: what was typed is not read out.
+  'good-cupertino': { slug: 'good-cupertino', content: (b) => ['Email edit text', PHONE[b]] },
+  // A password input is a secure text field to VoiceOver from the start.
+  'good-sign-in': { slug: 'good-sign-in', content: ['Username edit text', 'Password secure text field'] },
+  // The password with "abc" typed: what was typed is never read out.
+  // Chromium reads its length; WebKit reads the bullets alone.
   'good-sign-in+filled': { slug: 'good-sign-in', fill: 'f03-good-sign-in-password',
-    content: ['Username edit text', 'Password secure edit text'] },
+    content: {
+      chromium: ['Username edit text', '3 characters contents selected Password secure text field'],
+      webkit: ['Username edit text', '•••'],
+    } },
   // Bad examples: the keyboard and the purpose are not heard, so these read
   // like the good ones.
   'bad-number-for-name': { slug: 'bad-number-for-name', content: ['Name edit text'] },

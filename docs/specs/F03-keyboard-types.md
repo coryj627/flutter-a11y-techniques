@@ -10,9 +10,14 @@ the user, what that information is (`autofillHints`), which is what WCAG
 1.3.5 asks for. It also covers a password field (`obscureText`), which
 F02 Input instructions (in review, so not linked) handed on with
 [FL-042](../flutter-limitations.md#fl-042). A field's label is
-[F01](F01-text-fields.md), its instructions F02, error messages F04, and
-required fields F05. Moving focus between fields with the keyboard is
-I-series work; this spec checks only that Next moves to the next field.
+[F01](F01-text-fields.md) and its instructions F02. Autofill in depth
+(addresses, card numbers, a wrong hint, autofill services and password
+managers) is F04 Autofill and input purpose, which the
+[coverage inventory](../coverage-inventory.md) also maps to 1.3.5; this
+spec sets hints the way the keyboard type references do, and
+`bad-no-purpose` and `good-sign-in` could move to F04 if the wave decides
+so. Error messages are F06. Focus order is I02 and keyboard actions in
+general I04; this spec checks only that Next moves to the next field.
 
 ## 1. Rule
 
@@ -201,13 +206,21 @@ The probe that came first is in [evidence/probes/f03](../evidence/probes/f03/).
   password. 3 characters. Edit box". iOS: a plain text field until it is
   edited ("Password Text field Double tap to edit."), a secure text field
   while it is ("Password Secure text field Is editing •••"), and a plain
-  one again after. Web: `type="password"` always. The typed text is not
-  exposed anywhere: the value is bullets in every tree.
+  one again after. Web: `type="password"` always; VoiceOver reads
+  "Password secure text field", and with "abc" typed "3 characters
+  contents selected Password secure text field" in Chromium and "•••" in
+  WebKit. The typed text is not exposed anywhere: the value is bullets in
+  every tree, and no screen reader read it.
 - **Next moves to the next field** in the widget tests and on the web,
   where Enter does it; Done ends editing.
-- **None of it is heard.** TalkBack and VoiceOver read a field's name and
-  role the same whatever keyboard or hint it has, so every bad example
-  sounds like its good one, and that is what the transcripts show.
+- **Almost none of it is heard.** TalkBack and VoiceOver on iOS read a
+  field's name and role the same whatever keyboard or hint it has, so
+  every bad example sounds like its good one, and that is what the
+  transcripts show. The one exception is a phone field on the web:
+  VoiceOver names its `type="tel"`, "Phone telephone" in Chromium and
+  "Phone telephone number field" in WebKit. A password is heard as one
+  everywhere: "password" (TalkBack), "Secure text field" while edited
+  (VoiceOver on iOS), "secure text field" (VoiceOver on the web).
 - **A bare `EditableText` cannot be focused** by a click on Android or
   the web (probe, fixture 11), which is why the widgets-layer example is
   an `AutofillGroup` and not a field built on `EditableText`.
