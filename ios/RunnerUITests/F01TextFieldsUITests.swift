@@ -18,10 +18,17 @@ final class F01TextFieldsUITests: XCTestCase, TechniqueUITest {
   /// Types into a field and leaves it, so the keyboard is gone.
   private func type(_ text: String, into id: String) {
     let field = element(id)
-    field.tap()
-    field.typeText(text + "\n")
-    let deadline = Date().addingTimeInterval(5)
-    while (field.value as? String) != text && Date() < deadline { usleep(100_000) }
+    // The first typing after a launch can be lost when the keyboard is not
+    // up yet (seen on CI: the value stayed empty). If nothing at all
+    // arrived, tap and type once more; a wrong or partial value is left for
+    // the assertions to fail on.
+    for _ in 0..<2 {
+      field.tap()
+      field.typeText(text + "\n")
+      let deadline = Date().addingTimeInterval(5)
+      while (field.value as? String) != text && Date() < deadline { usleep(100_000) }
+      if !((field.value as? String) ?? "").isEmpty { break }
+    }
   }
 
   private func describe(_ id: String) -> String {
