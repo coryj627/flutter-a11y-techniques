@@ -256,7 +256,10 @@ class F03KeyboardTypesTest : TechniqueTest("F03") {
      * start (seen on CI), so one letter is matched in either case.
      */
     private fun shows(keys: Set<String>, key: String): Boolean =
-        keys.any { it.equals(key, ignoreCase = key.length == 1) }
+        keys.any { it.equals(key, ignoreCase = key.length == 1) } ||
+            // The decimal point is "Period" in one Gboard and "." in another
+            // (the first on the local emulator, the second on CI).
+            (key == "Period" && "." in keys)
 
     private fun flutterView(): FlutterView {
         var found: FlutterView? = null
