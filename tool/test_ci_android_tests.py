@@ -48,19 +48,52 @@ class Workspace:
         self.diag = self.root / "diag"
         for folder in (self.android, self.tests, self.bin):
             folder.mkdir()
+        # The device's log of the test runner, which the stand-in Gradle
+        # writes to and the stand-in adb reads.
         self.runner_log = self.root / "runner.txt"
         self.runner_log.write_text("")
+        self.adb()
+        self.tool("pgrep", "exit 0")
+        self.tool("sudo", "exit 0")
+        self.gradle("exit 0")
+
+    def adb(self, reader="follow", dump=None):
+        """A stand-in adb. The reader of the test runner's log runs
+        `reader`, with $n its start count and $first the first line logcat
+        gives from the -T time on; `follow` reads the device's log from
+        there, and `stop_once_after TEXT` writes lines up to the first with
+        TEXT in it and stops, the first time only. `logcat -d` runs `dump`,
+        by default printing the device's log."""
+        log, root = self.runner_log, self.root
+        dump = dump or f'cat "{log}"'
         self.tool("adb", f"""\
+            follow() {{ exec tail -s 0.1 -n "+$first" -f "{log}"; }}
+            stop_once_after() {{
+              [ -e "{root}/reader-stopped" ] && follow
+              k=$first
+              while :; do
+                line=$(sed -n "${{k}}p" "{log}")
+                if [ -z "$line" ]; then sleep 0.05; continue; fi
+                echo "$line"
+                k=$((k + 1))
+                case $line in *"$1"*) touch "{root}/reader-stopped"; exit 0 ;; esac
+              done
+            }}
             case "$*" in
-              *TestRunner:I*) exec tail -n +1 -f "{self.runner_log}" ;;
-              "logcat -c"|"logcat -d"*) exit 0 ;;
+              "logcat -c"|"logcat -G"*|"logcat -d -b"*) exit 0 ;;
+              "logcat -d"*TestRunner:I*) {dump} ;;
+              *TestRunner:I*)
+                n=$(($(cat "{root}/reader-starts" 2>/dev/null || echo 0) + 1))
+                echo "$n" > "{root}/reader-starts"
+                since=""
+                while [ $# -gt 0 ]; do [ "$1" = -T ] && since=$2; shift; done
+                first=$(awk -v s="$since" 'substr($0, 1, 18) >= s {{ print NR; exit }}' "{log}")
+                first=${{first:-$(($(wc -l < "{log}") + 1))}}
+                {reader} ;;
               logcat*) exec sleep 60 ;;
             esac
             exit 0
             """)
-        self.tool("pgrep", "exit 0")
-        self.tool("sudo", "exit 0")
-        self.gradle("exit 0")
 
     def tool(self, name, body, folder=None):
         path = (folder or self.bin) / name
@@ -68,12 +101,20 @@ class Workspace:
         path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
     def gradle(self, body, sweep=None):
-        """A stand-in Gradle. In the sweep it reports a run with no tests,
-        or runs `sweep` in its place."""
+        """A stand-in Gradle. In a batch it logs a finished test for each
+        class of the batch given to `finished`, then runs `body`. In the
+        sweep it reports a run with no tests, or runs `sweep` in its
+        place."""
         sweep = sweep or self.logs(*EMPTY_RUN) + "exit 0"
         self.tool("gradlew", f"""\
             echo "$@" >> "$PWD/calls"
             case "$*" in *notClass=*) {sweep} ;; esac
+            for name in $(cat "{self.root}/finished" 2>/dev/null); do
+              case "$*" in *class=*"{PKG}.$name"*)
+                echo "11-17 21:25:29.060  4037  4051 I TestRunner: finished: opens({PKG}.$name)" \\
+                  >> "{self.runner_log}" ;;
+              esac
+            done
             """ + textwrap.dedent(body), self.android)
 
     def logs(self, *lines):
@@ -83,9 +124,13 @@ class Workspace:
             for line in lines)
 
     def finished(self, *names):
-        self.runner_log.write_text("".join(
-            f"11-17 21:25:29.060  4037  4051 I TestRunner: finished: opens({PKG}.{name})\n"
-            for name in names))
+        """A test of each of these classes finishes when its batch runs."""
+        (self.root / "finished").write_text("\n".join(names) + "\n")
+
+    def reader_log(self):
+        """The test runner's lines the script's reader wrote."""
+        return [line for line in (self.diag / "test-runner.log").read_text().splitlines()
+                if "TestRunner: " in line]
 
     def run(self, *args, **env):
         return subprocess.run(
@@ -94,7 +139,7 @@ class Workspace:
             env={**os.environ,
                  "PATH": f"{self.bin}{os.pathsep}{os.environ['PATH']}",
                  "TEST_DIR": str(self.tests), "DIAG_DIR": str(self.diag),
-                 "POLL_SECONDS": "2", "SETTLE_SECONDS": "1", **env})
+                 "POLL_SECONDS": "0.5", "SETTLE_SECONDS": "0.5", **env})
 
 
 class ClassListTest(unittest.TestCase):
@@ -274,6 +319,123 @@ class RunTest(unittest.TestCase):
         result = self.space.run(LIMIT_SECONDS="0")
         self.assertEqual(result.returncode, 1)
         self.assertIn("STOPPING THE TESTS", result.stdout)
+
+
+    # A reader of the device's log can stop on its own, or run and write
+    # nothing; the result must be the same as with one that never did.
+
+    def assert_passed_once_each(self, result):
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        log = self.space.reader_log()
+        self.assertEqual(len(log), len(set(log)), "\n".join(log))
+        for name in self.names:
+            self.assertEqual(sum(f"({PKG}.{name})" in line for line in log), 1, log)
+
+    def test_a_reader_that_stops_at_once_is_started_again(self):
+        # The device's log gives nothing: the lines come from the restart.
+        self.space.adb(reader='[ "$n" -eq 1 ] && exit 0; follow', dump="exit 0")
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assert_passed_once_each(result)
+        self.assertIn("the reader of the test runner's log stopped (exit code 0); "
+                      "restart 1, from the start of the device's log", result.stdout)
+        self.assertIn("restarts of the test runner's log reader: 1,", result.stdout)
+
+    def test_a_reader_started_again_at_once_still_fails_a_class_that_did_not_run(self):
+        self.space.adb(reader='[ "$n" -eq 1 ] && exit 0; follow', dump="exit 0")
+        self.space.finished("C01ButtonTest", "S01NamesTest")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("no test of F01FieldsTest finished", result.stdout)
+        self.assertIn("restarts of the test runner's log reader: 1;", result.stdout)
+
+    def mid_batch(self, *later):
+        """A batch that logs C01ButtonTest's test, then the classes
+        `later`, while the reader stops after the first."""
+        self.space.adb(reader="stop_once_after C01ButtonTest", dump="exit 0")
+        self.space.gradle(
+            self.space.logs(f"finished: opens({PKG}.C01ButtonTest)") + "sleep 1; "
+            + self.space.logs(*(f"finished: opens({PKG}.{name})" for name in later))
+            + "exit 0")
+        return self.space.run()
+
+    def test_a_reader_that_stops_during_a_batch_goes_on_from_where_it_stopped(self):
+        result = self.mid_batch("F01FieldsTest", "S01NamesTest")
+        self.assert_passed_once_each(result)
+        self.assertIn("restart 1, from 11-17 21:30:00.000, leaving out the lines it already has",
+                      result.stdout)
+
+    def test_a_reader_that_stops_during_a_batch_still_fails_a_class_that_did_not_run(self):
+        result = self.mid_batch("S01NamesTest")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("restart 1, from", result.stdout)
+        self.assertIn("no test of F01FieldsTest finished", result.stdout)
+
+    def test_a_line_written_again_after_a_restart_in_the_sweep_is_left_out(self):
+        # logcat repeats the sweep's start from the -T time; a second start
+        # would fail the sweep.
+        self.space.adb(reader='stop_once_after "run started"')
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep=self.space.logs(EMPTY_RUN[0]) + "sleep 1; "
+                          + self.space.logs(EMPTY_RUN[1]) + "exit 0")
+        result = self.space.run()
+        self.assert_passed_once_each(result)
+        self.assertIn("restart 1, from 11-17 21:30:00.000", result.stdout)
+        self.assertIn("sweep: no test outside the list", result.stdout)
+        self.assertEqual(sum("run started" in line for line in self.space.reader_log()), 1)
+
+    def test_a_reader_that_stops_during_the_sweep_still_finds_a_missed_class(self):
+        self.space.adb(reader='stop_once_after "run started"')
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep=self.space.logs("run started: 1 tests") + "sleep 1; "
+                          + self.space.logs(f"started: opens({PKG}.MissedTest)",
+                                            f"finished: opens({PKG}.MissedTest)",
+                                            "run finished: 1 tests, 0 failed, 0 ignored")
+                          + "exit 0")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("restart 1, from", result.stdout)
+        self.assertIn("not an empty run", result.stdout)
+        self.assertIn(f"finished: opens({PKG}.MissedTest)", result.stdout)
+
+    def test_a_reader_that_writes_nothing_is_made_up_for_from_the_devices_log(self):
+        self.space.adb(reader="exec sleep 60")
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assert_passed_once_each(result)
+        self.assertIn("reader fault: Gradle passed batch 1, but the reader wrote no test "
+                      "runner line for it", result.stdout)
+        self.assertIn("reader fault: Gradle passed the sweep", result.stdout)
+        self.assertIn("sweep: no test outside the list", result.stdout)
+        self.assertIn("which added 5 test runner lines", result.stdout)
+
+    def test_a_reader_that_writes_nothing_still_fails_a_class_that_did_not_run(self):
+        self.space.adb(reader="exec sleep 60")
+        self.space.finished("C01ButtonTest", "S01NamesTest")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("reader fault", result.stdout)
+        self.assertIn("no test of F01FieldsTest finished", result.stdout)
+
+    def test_fails_and_says_why_when_neither_the_reader_nor_the_device_has_the_lines(self):
+        self.space.adb(reader="exec sleep 60", dump="exit 1")
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("could not read the device's log", result.stdout)
+        self.assertIn("the sweep never reached the test runner", result.stdout)
+        self.assertIn("checks that could not use the device's log", result.stdout)
+        self.assertIn("no test of C01ButtonTest finished", result.stdout)
+
+    def test_a_reader_that_writes_nothing_is_not_taken_for_a_stalled_run(self):
+        self.space.adb(reader="exec sleep 60")
+        self.space.finished(*self.names)
+        self.space.gradle("sleep 2; exit 0")
+        result = self.space.run(FIRST_TEST_SECONDS="1")
+        self.assert_passed_once_each(result)
+        self.assertIn("the device's log has tests the reader did not write; carrying on",
+                      result.stdout)
+        self.assertNotIn("STOPPING THE TESTS", result.stdout)
 
 
 if __name__ == "__main__":

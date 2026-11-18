@@ -31,6 +31,21 @@
 # declare a class of its own name, or if, at the end, the test runner's log
 # does not show at least one finished test for every one of those classes.
 #
+# The test runner's log comes from `adb logcat` readers in the background,
+# and a reader can stop on its own: in one run both had stopped before
+# writing a line, with the emulator still attached, and a run in which
+# every test passed failed for want of their lines. So the script checks
+# the readers every POLL_SECONDS and after every Gradle run, says when one
+# has stopped, and starts it again from the time of the last line it wrote
+# (logcat -T), leaving out the lines it already has. The device's log is
+# cleared at the start, so it holds only this run. When a Gradle run ends
+# and the reader has no test runner line for it, or the reader was
+# restarted, and before calling a run stalled or a class not run, the
+# script adds every test runner line the device still holds that the
+# reader's log lacks (logcat -d). Lines are only ever added from the
+# device's own log, so a line the reader lost can make a run fail, never
+# pass.
+#
 # Run from android/, as the emulator runner action does. Arguments are
 # passed to Gradle. Every batch runs even if an earlier one failed; the
 # script fails if any did. With --list as the only argument it prints the
@@ -45,6 +60,7 @@ LIMIT_SECONDS=${LIMIT_SECONDS:-1800}
 MIN_AVAILABLE_MB=${MIN_AVAILABLE_MB:-600}
 BATCH_CLASSES=${BATCH_CLASSES:-4}
 POLL_SECONDS=${POLL_SECONDS:-10}
+SETTLE_SECONDS=${SETTLE_SECONDS:-5}
 PKG=dev.fluttera11y.flutter_a11y_techniques
 TEST_DIR=${TEST_DIR:-app/src/androidTest/kotlin/dev/fluttera11y/flutter_a11y_techniques}
 REPORTS=$PWD/../build/app/reports/androidTests
@@ -172,16 +188,205 @@ stop_gradle() {
   pkill -KILL -f 'com.android.tools.utp' 2>/dev/null
 }
 
+# The two readers of the device's log: "full", the whole log, kept for
+# diagnosis, and "tests", the test runner's lines, which every check is
+# made from. Each has a file it appends to, the logcat filter, what to call
+# it, the file adb's own messages go to, and, once started, its process,
+# the time it last started from and its restart count.
+full_file=$DIAG_DIR/logcat.txt full_filter="" full_what="the device's log"
+full_err=$DIAG_DIR/logcat-adb.txt full_pid="" full_since="" full_errpos=0 full_restarts=0
+tests_file=$TESTS_LOG tests_filter="-s TestRunner:I" tests_what="the test runner's log"
+tests_err=$DIAG_DIR/test-runner-adb.txt tests_pid="" tests_since="" tests_errpos=0 tests_restarts=0
+# The tests reader's restart count when its log was last checked against
+# the device's; how many such checks, the lines they added, and how many
+# could not read the device's log.
+TESTS_SYNCED=0 RESYNCS=0 RECOVERED=0 RESYNC_FAILED=0
+CLEARED=0
+
+# Prints the lines of standard input, except that each line of file $1
+# leaves out one line equal to it.
+drop_held() {
+  awk -v f="$1" 'BEGIN { while ((getline l < f) > 0) held[l]++ }
+    held[$0] > 0 { held[$0]--; next } { print }'
+}
+
+# The latest logcat time near the end of file $1, as -T takes it, or nothing.
+last_time() {
+  tail -n 2000 "$1" 2>/dev/null | awk '
+    /^[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9][.][0-9][0-9][0-9]/ {
+      t = substr($0, 1, 18); if (t > max) max = t }
+    END { print max }'
+}
+
+# Copies standard input, a log logcat gives from time $2 on, to standard
+# output as it comes, except that each line of file $1, the lines of time
+# $2 already written, leaves out one line equal to it, and a line of an
+# earlier time, which logcat should not give, is left out. Only lines of
+# time $2 can be held, so once a later line comes the rest is copied as it
+# is. (Line by line in the shell: awk would hold lines back until its
+# buffer filled.)
+skip_repeated() {
+  local since=$2 line i n=0 found
+  local held=()
+  while IFS= read -r line; do held[n]=$line; n=$((n + 1)); done < "$1"
+  while [ "$n" -gt 0 ] && IFS= read -r line; do
+    case $line in
+      [0-9][0-9]-[0-9][0-9]\ *) [[ "${line:0:18}" < "$since" ]] && continue ;;
+    esac
+    found=""
+    for i in "${!held[@]}"; do
+      if [ "${held[i]}" = "$line" ]; then
+        unset "held[i]"
+        n=$((n - 1))
+        found=1
+        break
+      fi
+    done
+    [ -n "$found" ] || printf '%s\n' "$line"
+    [[ "${line:0:18}" > "$since" ]] && break
+  done
+  exec cat
+}
+
+# Starts reader $1. With lines in its file it starts from the time of the
+# latest, which logcat gives again, and leaves out the lines of that time
+# the file already has; otherwise from the start of the device's log.
+start_reader() {
+  local name=$1 file filter err since pos
+  eval "file=\$${name}_file filter=\$${name}_filter err=\$${name}_err"
+  : >> "$err"
+  pos=$(wc -l < "$err")
+  since=$(last_time "$file")
+  if [ -z "$since" ]; then
+    adb logcat -v threadtime $filter >> "$file" 2>> "$err" &
+  else
+    tail -n 2000 "$file" | awk -v s="$since" 'substr($0, 1, 18) == s' > "$file.seam"
+    ( adb logcat -v threadtime -T "$since" $filter \
+      | skip_repeated "$file.seam" "$since" >> "$file" ) 2>> "$err" &
+  fi
+  eval "${name}_pid=\$! ${name}_since=\$since ${name}_errpos=\$((\${pos:-0} + 0))"
+}
+
+stop_reader() {
+  local pid
+  eval "pid=\$${1}_pid"
+  [ -n "$pid" ] || return 0
+  pkill -TERM -P "$pid" 2>/dev/null
+  kill -TERM "$pid" 2>/dev/null
+  wait "$pid" 2>/dev/null
+  eval "${1}_pid=\"\""
+}
+
+# If reader $1 has stopped, says so and starts it again.
+check_reader() {
+  local name=$1 pid err what pos code=unknown said since count from
+  eval "pid=\$${name}_pid err=\$${name}_err what=\$${name}_what pos=\$${name}_errpos"
+  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then return 0; fi
+  if [ -n "$pid" ]; then wait "$pid" 2>/dev/null; code=$?; fi
+  said=$(tail -n "+$((pos + 1))" "$err" 2>/dev/null | tr -s '\r\n' '  ' | cut -c 1-300)
+  eval "${name}_restarts=\$((${name}_restarts + 1)) count=\$${name}_restarts"
+  start_reader "$name"
+  eval "since=\$${name}_since"
+  from="the start of the device's log"
+  [ -n "$since" ] && from="$since, leaving out the lines it already has"
+  say "the reader of $what stopped (exit code $code${said:+; adb said: $said}); restart $count, from $from"
+}
+
+check_readers() { check_reader full; check_reader tests; }
+
+# Adds to the test runner's log every test runner line the device still
+# holds that the log lacks. The reader is stopped meanwhile, so that no
+# line is written twice, and started again after. Lines are only taken if
+# the device's log was cleared at the start, so all of them are this run's.
+resync_tests_log() {
+  local dump=$DIAG_DIR/test-runner-device.txt added
+  RESYNCS=$((RESYNCS + 1))
+  # A reader that has stopped is reported, not just started again below.
+  check_reader tests
+  TESTS_SYNCED=$tests_restarts
+  if [ "$CLEARED" -ne 1 ]; then
+    RESYNC_FAILED=$((RESYNC_FAILED + 1))
+    say "the device's log was not cleared at the start, so its lines cannot be told from an earlier run's; not using them"
+    return 1
+  fi
+  stop_reader tests
+  timeout 30 adb wait-for-device > /dev/null 2>&1
+  if timeout 60 adb logcat -d -v threadtime -s TestRunner:I > "$dump" 2>> "$tests_err"; then
+    drop_held "$TESTS_LOG" < "$dump" > "$dump.new"
+    added=$(grep -cF "TestRunner: " "$dump.new")
+    cat "$dump.new" >> "$TESTS_LOG"
+    RECOVERED=$((RECOVERED + added))
+    say "took from the device's log $added test runner lines the reader had not written"
+  else
+    RESYNC_FAILED=$((RESYNC_FAILED + 1))
+    say "could not read the device's log, so any test runner line the reader missed is still missing"
+  fi
+  start_reader tests
+}
+
+# Whether the test runner's log has a test runner line after its line $1.
+runner_line_after() { tail -n "+$(($1 + 1))" "$TESTS_LOG" | grep -qF "TestRunner: "; }
+
+# After the Gradle run $1, which exited with $2 and began when the test
+# runner's log had $3 lines: makes sure the log holds the run's lines
+# before the run is judged.
+after_run() {
+  local label=$1 rc=$2 before=$3 tries
+  # Up to SETTLE_SECONDS for the reader to write the run's first line.
+  tries=$(awk -v s="$SETTLE_SECONDS" 'BEGIN { print int(s * 5) }')
+  check_readers
+  while ! runner_line_after "$before" && [ "$tries" -gt 0 ]; do
+    sleep 0.2
+    tries=$((tries - 1))
+    check_readers
+  done
+  if ! runner_line_after "$before"; then
+    if [ "$rc" -eq 0 ]; then
+      say "reader fault: Gradle passed $label, but the reader wrote no test runner line for it; taking them from the device's log"
+    else
+      say "the reader wrote no test runner line for $label (Gradle exit code $rc); looking for them in the device's log"
+    fi
+    resync_tests_log
+  elif [ "$tests_restarts" -ne "$TESTS_SYNCED" ]; then
+    say "the reader of the test runner's log was restarted; taking any line it missed from the device's log"
+    resync_tests_log
+  fi
+}
+
+# How the readers did, for the failure messages: nothing if all was well.
+reader_note() {
+  [ "$tests_restarts" -eq 0 ] && [ "$RESYNC_FAILED" -eq 0 ] && return
+  echo " (restarts of the test runner's log reader: $tests_restarts; checks that could not use the device's log: $RESYNC_FAILED, so lines may be missing)"
+}
+
 cleanup() {
-  kill "$LOGCAT_PID" "$TESTLOG_PID" 2>/dev/null
-  gzip -f "$DIAG_DIR/logcat.txt" 2>/dev/null
+  stop_reader full
+  stop_reader tests
+  rm -f "$full_file.seam" "$tests_file.seam"
+  gzip -f "$full_file" 2>/dev/null
   say "lowest memory available during the run: ${MIN_SEEN}MB"
+  say "log readers: restarts of the test runner's log reader: $tests_restarts, of the whole log's: $full_restarts; checks against the device's log: $RESYNCS, which added $RECOVERED test runner lines; checks that could not use it: $RESYNC_FAILED"
 }
 
 progress_lines() {
   local n
   n=$(grep -cE 'TestRunner: (started|finished):' "$TESTS_LOG" 2>/dev/null)
   echo "${n:-0}"
+}
+
+# Called by run_batch, whose last_lines, last_progress and now it uses,
+# when no test has started or finished in the reader's log for too long: a
+# reader that runs but writes nothing looks like that too. Whether the
+# device's log shows progress the reader did not write.
+reader_missed_progress() {
+  local lines
+  say "no test has started or finished in the reader's log for $((now - last_progress)) seconds; checking the device's log"
+  resync_tests_log
+  lines=$(progress_lines)
+  [ "$lines" -ne "$last_lines" ] || return 1
+  say "reader fault: the device's log has tests the reader did not write; carrying on"
+  last_lines=$lines
+  last_progress=$now
 }
 
 # Runs Gradle with one test runner argument, such as class=A,B, and watches
@@ -210,6 +415,7 @@ run_batch() {
       LAST_PRINT=$now
     fi
 
+    check_readers
     lines=$(progress_lines)
     if [ "$lines" -ne "$last_lines" ]; then
       last_lines=$lines
@@ -222,7 +428,7 @@ run_batch() {
       reason="the emulator has exited"
     elif [ "$avail" -lt "$MIN_AVAILABLE_MB" ]; then
       reason="the runner has only ${avail}MB of memory available (limit ${MIN_AVAILABLE_MB}MB)"
-    elif [ $((now - last_progress)) -ge "$window" ]; then
+    elif [ $((now - last_progress)) -ge "$window" ] && ! reader_missed_progress; then
       reason="no test has started or finished for $((now - last_progress)) seconds"
     elif [ $((now - START)) -ge "$LIMIT_SECONDS" ]; then
       reason="the tests have run for $((now - START)) seconds (limit $LIMIT_SECONDS)"
@@ -249,11 +455,22 @@ run_batch() {
 say "runner: $(nproc) processors, $(awk '/^MemTotal:/ {print int($2/1024)}' /proc/meminfo)MB memory, $(awk '/^SwapTotal:/ {print int($2/1024)}' /proc/meminfo)MB swap"
 say "$(host_line)"
 
-adb logcat -c
-adb logcat -v threadtime > "$DIAG_DIR/logcat.txt" 2>&1 &
-LOGCAT_PID=$!
-adb logcat -v threadtime -s TestRunner:I > "$TESTS_LOG" 2>&1 &
-TESTLOG_PID=$!
+# Wait for the device first: a reader started while it is away stops.
+timeout 120 adb wait-for-device || say "the emulator is not attached to adb after 120 seconds"
+# A larger log on the device, so that it still holds the whole run when a
+# reader is restarted or a line is missing. Not every image allows it.
+timeout 30 adb logcat -G 16M > /dev/null 2>&1 || say "could not enlarge the device's log; it keeps its own size"
+for try in 1 2 3; do
+  if timeout 30 adb logcat -c; then CLEARED=1; break; fi
+  say "could not clear the device's log (try $try of 3)"
+  sleep 2
+done
+[ "$CLEARED" -eq 1 ] \
+  || say "the device's log was not cleared, so lines the readers miss will not be taken from it"
+: > "$full_file"
+: > "$TESTS_LOG"
+start_reader full
+start_reader tests
 
 GRADLE_ARGS=("$@")
 START=$(date +%s)
@@ -268,8 +485,10 @@ for ((i = 0; i < ${#CLASSES[@]}; i += BATCH_CLASSES)); do
   names=""
   for c in "${CLASSES[@]:i:BATCH_CLASSES}"; do names="$names${names:+,}$PKG.$c"; done
   say "batch $batch: ${CLASSES[*]:i:BATCH_CLASSES}"
+  before=$(wc -l < "$TESTS_LOG")
   run_batch "class=$names"
   rc=$?
+  after_run "batch $batch" "$rc" "$before"
   # Each Gradle run replaces the last one's report; keep them all.
   if [ -d "$REPORTS/connected" ]; then
     rm -rf "$REPORTS/batch-$batch"
@@ -289,12 +508,18 @@ done
 # no tests as a failure; the test runner's log is.
 all=""
 for c in "${CLASSES[@]}"; do all="$all${all:+,}$PKG.$c"; done
-sleep "${SETTLE_SECONDS:-5}"
+sleep "$SETTLE_SECONDS"
+# The sweep's lines are those after this point, so every earlier line has
+# to be in the log by now: if the reader was restarted, it may still have
+# been writing the batches' lines.
+check_readers
+[ "$tests_restarts" -ne "$TESTS_SYNCED" ] && resync_tests_log
 before=$(wc -l < "$TESTS_LOG")
 say "sweep: any test outside those ${#CLASSES[@]} classes"
 run_batch "notClass=$all"
 rc=$?
-sleep "${SETTLE_SECONDS:-5}"
+sleep "$SETTLE_SECONDS"
+after_run "the sweep" "$rc" "$before"
 swept=$(tail -n "+$((before + 1))" "$TESTS_LOG")
 # The only sweep that passes is one the test runner itself reports as empty
 # from start to end: one start, a finish with 0 tests, 0 failed and 0
@@ -306,13 +531,13 @@ other=$(echo "$swept" | grep -F "TestRunner: " \
   | grep -vE "TestRunner: (run started: [0-9]+ tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
 if ! echo "$swept" | grep -qF "TestRunner: run started:"; then
   FAILED=1
-  say "failed: the sweep never reached the test runner (Gradle exit code $rc), so nothing shows that every test class was in the list"
+  say "failed: the sweep never reached the test runner (Gradle exit code $rc), so nothing shows that every test class was in the list$(reader_note)"
   dump_state sweep-failed
 elif [ -n "$other" ] \
   || [ "$(echo "$swept" | grep -cF "TestRunner: run started:")" -ne 1 ] \
   || ! echo "$swept" | grep -qE "TestRunner: run finished: 0 tests, 0 failed, 0 ignored[[:space:]]*$"; then
   FAILED=1
-  say "failed: the sweep was not an empty run from start to end (Gradle exit code $rc). A test class is missing from the list, or the sweep did not finish. The test runner logged:"
+  say "failed: the sweep was not an empty run from start to end (Gradle exit code $rc). A test class is missing from the list, or the sweep did not finish$(reader_note). The test runner logged:"
   echo "$swept" | grep -F "TestRunner: " | sed -E 's/.*TestRunner: //'
   dump_state sweep-failed
 else
@@ -321,13 +546,24 @@ fi
 [ -d "$REPORTS/connected" ] && { rm -rf "$REPORTS/sweep"; mv "$REPORTS/connected" "$REPORTS/sweep"; }
 
 # Every class must have run: the test runner's own log has to show a
-# finished test for each one.
+# finished test for each one. Before a class is failed for it, the device's
+# log is checked for lines the reader did not write.
+ran_all() {
+  local c
+  for c in "${CLASSES[@]}"; do
+    grep -F "TestRunner: finished: " "$TESTS_LOG" 2>/dev/null | grep -qF "($PKG.$c)" || return 1
+  done
+}
+if ! ran_all; then
+  say "a class has no finished test in the reader's log; checking the device's log"
+  resync_tests_log
+fi
 for c in "${CLASSES[@]}"; do
   n=$(grep -cF "TestRunner: finished: " "$TESTS_LOG" 2>/dev/null)
   ran=$(grep -F "TestRunner: finished: " "$TESTS_LOG" 2>/dev/null | grep -cF "($PKG.$c)")
   if [ "${ran:-0}" -eq 0 ]; then
     FAILED=1
-    say "failed: no test of $c finished (the log shows ${n:-0} finished tests in all)"
+    say "failed: no test of $c finished (the log shows ${n:-0} finished tests in all)$(reader_note)"
   fi
 done
 say "$(grep -cF 'TestRunner: finished: ' "$TESTS_LOG" 2>/dev/null) tests finished in ${#CLASSES[@]} classes"
