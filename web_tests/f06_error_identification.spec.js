@@ -33,6 +33,23 @@ async function open(page, slug) {
 
 const announced = (page) => page.evaluate(() => window.announced);
 
+/**
+ * Proves the recording is live after a check for silence: text put in the
+ * assertive element must be recorded by the same observer. Without this an
+ * observer that had stopped would pass every silence check.
+ */
+async function expectRecordingIsLive(page) {
+  await page.evaluate(() => {
+    const element = document.querySelector('flt-announcement-assertive');
+    element.append(document.createTextNode('recording check'));
+  });
+  await expect.poll(() => announced(page)).toContain('assertive: recording check');
+  await page.evaluate(() => {
+    const element = document.querySelector('flt-announcement-assertive');
+    element.textContent = '';
+  });
+}
+
 /** The <input> inside the node carrying a test identifier. */
 const field = (page, id) => byId(page, id).locator('input');
 
@@ -144,6 +161,7 @@ test.describe('bad examples have their defect', () => {
     await expect(box).toHaveAccessibleName('Email');
     await expect(box).toHaveAccessibleDescription('');
     expect(await settledAnnouncements(page)).toEqual([]);
+    await expectRecordingIsLive(page);
     expect(await page.locator('flt-semantics-host').innerText()).toBe(textBefore);
     expect(await isFocused(box)).toBe(true);
   });
@@ -164,6 +182,7 @@ test.describe('bad examples have their defect', () => {
     await expect(box).toHaveAccessibleDescription(EMAIL_ERROR);
     await expect(box).toHaveAttribute('aria-invalid', 'true');
     expect(await settledAnnouncements(page)).toEqual([]);
+    await expectRecordingIsLive(page);
     expect(await isFocused(byId(page, 'f06-bad-not-announced-send'))).toBe(true);
   });
 

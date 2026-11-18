@@ -90,7 +90,17 @@ Future<List<(String, int)>> _announcements(
         ),
   );
   await body();
-  return sent;
+  // The recording is live: an announcement sent now through the same
+  // channel must be recorded, or an empty result could mean a dead handler.
+  final recorded = [...sent];
+  await SemanticsService.sendAnnouncement(
+    tester.view,
+    'recording check',
+    TextDirection.ltr,
+  );
+  expect(sent.length, recorded.length + 1, reason: 'recording is not live');
+  expect(sent.last.$1, 'recording check');
+  return recorded;
 }
 
 /// Presses Send with a tap, lets Form's announcement go out, and settles.

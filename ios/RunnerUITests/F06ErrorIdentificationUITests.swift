@@ -126,7 +126,9 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
   // not being edited and so is read with its hint. XCUIVoiceOverService
   // gives the first 64 characters of an utterance, so phrases are matched
   // as prefixes. A field being edited is read "Name Text field Is editing
-  // …", which leaves no room for its hint within 64 characters.
+  // …", which leaves no room for its hint within 64 characters. Last, a
+  // control proves that `currentSpeech()`, the read that the window polls,
+  // was live: see `control` below.
   //
   // `heard`: what must be among the utterances after activation (empty for
   // nothing); `quiet`: text that must not be in any of them; `cursor`: the
@@ -151,7 +153,8 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
     guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
     let voiceOver = XCUIDevice.shared.voiceOverService
     func norm(_ s: String) -> String { VoiceOverWalk.normalized(s) }
-    func current() -> String { norm((try? voiceOver.currentSpeech().utterance) ?? "") }
+    // A failed read fails the test: it must never look like silence.
+    func current() throws -> String { norm(try voiceOver.currentSpeech().utterance) }
     func starts(_ utterance: String, _ phrase: String) -> Bool {
       // A cut utterance is a prefix of the phrase; a whole one starts with it.
       utterance.hasPrefix(phrase) || (utterance.count >= 60 && phrase.hasPrefix(utterance))
@@ -165,8 +168,8 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
       for _ in 0..<5 {
         sendButton.tap()
         let deadline = Date().addingTimeInterval(4)
-        before = current()
-        while before != "Send Button" && Date() < deadline { usleep(250_000); before = current() }
+        before = try current()
+        while before != "Send Button" && Date() < deadline { usleep(250_000); before = try current() }
         if before == "Send Button" { break }
       }
       XCTAssertEqual(before, "Send Button", "\(example.slug): cursor is not on Send")
@@ -174,7 +177,7 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
       var heard: [String] = []
       let end = Date().addingTimeInterval(8)
       while Date() < end {
-        let now = current()
+        let now = try current()
         if !now.isEmpty && now != (heard.last ?? before) { heard.append(now) }
         usleep(200_000)
       }
@@ -197,8 +200,27 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
         then.append(norm((try? voiceOver.moveForward().utterance) ?? ""))
       }
       let more = then.isEmpty ? "" : " / then: \(then.joined(separator: " / "))"
-      print("F06VO \(example.slug) | on Send: \(before) / after activation: \(heard.joined(separator: " / ")) / forward: \(forward) / back: \(back)\(more)")
-      XCTAssertFalse(forward.isEmpty || back.isEmpty, "\(example.slug): capture is not live")
+      // Liveness of the capture the checks above and below rely on: move to
+      // the count, the last element, whose words ("Sent: 0") were not among
+      // what was heard, and require currentSpeech() itself, the API polled
+      // during the window, to report them. A read that fails, stays empty,
+      // or is stuck on an earlier utterance fails here.
+      let control = "\(Self.countLabel): 0"
+      for _ in 0..<10 {
+        let said = norm((try? voiceOver.moveForward().utterance) ?? "")
+        if said.hasPrefix(control) { break }
+      }
+      var live = ""
+      let liveDeadline = Date().addingTimeInterval(5)
+      repeat {
+        live = try current()
+        if live == control { break }
+        usleep(200_000)
+      } while Date() < liveDeadline
+      print("F06VO \(example.slug) | on Send: \(before) / after activation: \(heard.joined(separator: " / ")) / forward: \(forward) / back: \(back)\(more) / control: \(live)")
+      XCTAssertFalse(forward.isEmpty || back.isEmpty, "\(example.slug): moves gave no speech")
+      XCTAssertFalse(heard.contains(control), "\(example.slug): the control utterance was already heard")
+      XCTAssertEqual(live, control, "\(example.slug): currentSpeech() did not report the control utterance; capture is not live")
       for phrase in example.heard {
         XCTAssertTrue(heard.contains { starts($0, phrase) }, "\(example.slug): expected \"\(phrase)\" in \(heard)")
       }

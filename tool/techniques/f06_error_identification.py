@@ -64,8 +64,11 @@ VOICEOVER_IOS_METHOD = (
     "the VoiceOver cursor is put on Send and Send is activated with a double tap; every new "
     "utterance of `XCUIVoiceOverService.currentSpeech()` in the next eight seconds is "
     "recorded, then the cursor is moved forward once and back once, which reads the element "
-    "it was on. The example must show that Send acted. Utterances are the first 64 characters",
-    "Spoken: on Send / after activation / forward / back",
+    "it was on. The example must show that Send acted. Last, the cursor is moved to the count, "
+    "and `currentSpeech()` itself must report \"Sent: 0\" within five seconds, so a capture that "
+    "fails, stays empty, or is stuck cannot pass as silence. A failed `currentSpeech()` read "
+    "fails the test. Utterances are the first 64 characters",
+    "Spoken: on Send / after activation / forward / back / control",
 )
 
 VOICEOVER_WEB_METHOD = (

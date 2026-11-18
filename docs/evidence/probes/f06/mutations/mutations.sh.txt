@@ -1,0 +1,15 @@
+#!/bin/sh
+# Runs the F06 VoiceOver test on iOS once per mutation of currentSpeech(),
+# then restores the clean test. Run under tool/with_devices.py.
+REPO=/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ad7488433f1f8065c
+S=/private/tmp/claude-501/-Users-cory-dev-flutter-a11y-techniques--claude-worktrees-wave0-prep-51ac0e/18a0fc9d-6a75-4c6c-bf6e-8c96fa8f6ae7/scratchpad/f06eng
+T=$REPO/ios/RunnerUITests/F06ErrorIdentificationUITests.swift
+cd "$REPO" || exit 1
+for kind in throw empty stale; do
+  python3 "$S/mutate.py" "$S/UITests.clean.swift" "$T" "$kind"
+  python3 tool/voiceover_ios.py F06 > "$S/mutation-$kind.log" 2>&1
+  echo "mutation $kind: exit $?"
+  cp docs/evidence/F06/voiceover-ios.md "$S/mutation-$kind.md"
+done
+cp "$S/UITests.clean.swift" "$T"
+git checkout docs/evidence/F06/voiceover-ios.md
