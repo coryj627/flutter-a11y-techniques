@@ -17,4 +17,4 @@ Result: PASS
 | `good-cupertino` | opened: Remove Lake loop? / cancelled: Remove Lake loop Button (back: Remove Ridge trail Button, forward: Remove Lake loop Button) / removed: Remove Summit path Button (back: Remove Ridge trail Button, forward: Remove Summit path Button) |
 | `good-widgets` | opened: Remove Lake loop? / cancelled: Remove Lake loop Button (back: Remove Ridge trail Button, forward: Remove Lake loop Button) / removed: Remove Summit path Button (back: Remove Ridge trail Button, forward: Remove Summit path Button) |
 | `bad-focus-left-behind` | opened: Remove Lake loop? / cancelled: Remove Lake loop Button (back: Remove Ridge trail Button, forward: Remove Lake loop Button) / removed: Remove Summit path Button (back: Remove Ridge trail Button, forward: Remove Summit path Button) |
-| `bad-opens-on-focus` | cursor on Remove Ridge trail: Remove Ridge trail Button / asked: false |
+| `bad-opens-on-focus` | cursor on Remove Ridge trail: Remove Ridge trail Button / asked: [] |
