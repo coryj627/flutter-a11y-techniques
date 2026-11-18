@@ -85,7 +85,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-039](#fl-039) | On Android a hint is the end of the content description, not a hint | Android | Confirmed (source read) |
 | [FL-040](#fl-040) | `Semantics(hint:)` around a Material button stays on a node of its own | All | Confirmed |
 | [FL-041](#fl-041) | On web a hint on a node with no label is not rendered, unless the node is a text field | Web | Confirmed (source read) |
-| [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed once; not explored |
+| [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed in the S15 build and the F02 probe; no test yet |
 | [FL-043](#fl-043) | `Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS | All | Confirmed |
 | [FL-044](#fl-044) | A mixed checkbox is exposed as not checked on the web, on iOS, and on Android before 16, and TalkBack says no state for it | All | Confirmed |
 | [FL-045](#fl-045) | TalkBack says no state for a checkbox or radio button that is not checked | Android | Confirmed; cause not found |
@@ -103,6 +103,9 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-125](#fl-125) | On the web a slider's minimum, maximum, and current value are stand-ins | Web | Confirmed |
 | [FL-126](#fl-126) | A `RangeSlider` has two unnamed sliders on the web and one value on Android when merged | Android, iOS, Web | Observed |
 | [FL-127](#fl-127) | On the web a slider is disabled for half a second after any pointer event, and VoiceOver calls it "dimmed" | Web | Confirmed |
+| [FL-140](#fl-140) | Material helper text is not tied to its field; inside `MergeSemantics` it joins the field's name | All | Confirmed |
+| [FL-141](#fl-141) | Material helper text is cut to one line by default | All | Confirmed |
+| [FL-142](#fl-142) | A Material placeholder beside a label is exposed only while the field is focused and empty, and then as part of its name | All | Confirmed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
@@ -470,6 +473,21 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround: none found within the SDK. A separate visible label that is
   left in the tree is read as its own stop before the field, which helps a
   user exploring in order but does not name the field.
+- Instructions go the same way (F02). A field's hint is in the same hint
+  text, "Username, 4 to 10 characters, no spaces.", and is read only while
+  the field is empty: with "abc" typed TalkBack read "Editing.", "abc",
+  "Edit box" (`f02-good-helper-username-filled` in
+  `docs/evidence/F02/talkback-android.md`, written to fail when the label
+  or the instruction starts being spoken). VoiceOver on iOS and on the web
+  still read the hint of a filled field. What F02 does about it: the
+  visible instruction is kept as an element of its own (helper text, a
+  form row's help text, or a `Text`). It is still an element of its own
+  in the tree after the field has a value, and TalkBack reads the whole
+  instruction when focus is put on it (`f02-good-helper-rule` and
+  `f02-good-helper-rule-filled`). Whether a swipe from the filled field
+  lands on it was not tested: swipes and Alt or Meta arrow-key commands
+  did not move TalkBack focus on the emulator, in F02 as in S03. It does
+  not put the instruction back on the field.
 - Upstream issue: not searched yet.
 
 ## FL-016
@@ -493,6 +511,12 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround: name the field with `Semantics(label: 'Email', child: …)` and
   wrap the visible prefix in `ExcludeSemantics` so it is not read twice
   (`/t/F01/good-cupertino`).
+- Instructions (F02): a Cupertino field has no hint either, and the
+  `helper` of a `CupertinoFormRow` is plain text after the field, not tied
+  to it ([F02 probe](evidence/probes/f02/README.md), fixture 08). The same
+  workaround carries an instruction: `Semantics(label: 'Username', hint:
+  rule, …)` on the field, with the form row's `helper` showing the rule.
+  Verified on all three platforms in `/t/F02/good-cupertino`.
 - Upstream issue: not searched yet.
 
 ## FL-017
@@ -1191,7 +1215,9 @@ yet), **Fixed in x.y** (verified on that version).
   is "Favorite, Adds this item to your favorites.". Its hint text, tooltip
   text, and state description are empty. A text field is the exception:
   label and hint go into the node's hint text (`getTextFieldHint()`, see
-  [FL-015](#fl-015)).
+  [FL-015](#fl-015)), joined the same way: "Username, 4 to 10 characters,
+  no spaces." (asserted by
+  `F02InputInstructionsTest.fieldsHaveTheirLabelAndInstructionInTheHintTextBeforeAndAfterTyping`).
 - Why it matters: to TalkBack the hint is part of the name. It is read
   before the role ("Favorite, Adds this item to your favorites, Button"),
   not after it as on iOS, and it is read every time, at once. It is not
@@ -1253,7 +1279,9 @@ yet), **Fixed in x.y** (verified on that version).
   the node has a label, a value, or a tooltip. A button or plain node with
   a hint alone gets no description, and since it has no text either, the
   hint is nowhere in the page. A text field is different: its hint is set
-  on the `<input>` whether or not the field has a label (fixture 17). On
+  on the `<input>` whether or not the field has a label (fixture 17), and
+  it stays there once the field has a value
+  (`web_tests/f02_input_instructions.spec.js`). On
   Android and iOS the hint of an unnamed button is read as if it were its
   name.
 - Why it matters: the three platforms disagree about a mistake. A button
@@ -1271,10 +1299,10 @@ yet), **Fixed in x.y** (verified on that version).
 
 **An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS.**
 
-- Status: Observed once, Flutter 3.47.5, iOS 27.0 simulator, in the first
-  build of the S15 field examples, which were password fields. Those
-  examples were changed to an ordinary field, so no test, fixture, or
-  transcript in the repository shows this now. Not explored.
+- Status: Observed, Flutter 3.47.5, iOS 27.0 simulator: first in the first
+  build of the S15 field examples, which were password fields (those
+  examples were changed to an ordinary field), and again in the F02 probe,
+  whose fixture is kept (below). No test in the repository yet.
 - What was seen: for `TextField(obscureText: true)` with VoiceOver's cursor
   moved onto it and the field not being edited, XCUITest reported
   `XCUIElementType.textField` (not `.secureTextField`) and VoiceOver said
@@ -1287,9 +1315,19 @@ yet), **Fixed in x.y** (verified on that version).
   what VoiceOver echoes may differ there. That was not tested.
 - Why it could matter: "secure" tells a VoiceOver user that what they type
   will not be echoed or shown.
-- Next: this belongs to the text field technique ([F01](techniques/F01.md))
-  or F03. It needs a probe of the element type and of VoiceOver's speech
-  before and during editing before anything is concluded.
+- Probed again in F02 (2026-11-18, iOS 27.0 simulator,
+  [F02 probe](evidence/probes/f02/README.md), fixture 10): an obscured
+  field with a label and a hint, not being edited, was
+  `XCUIElementType.textField` and VoiceOver read "i10 Password Text field
+  8 characters minimum, …", with no "secure". While it was being edited,
+  with "abc" typed, XCUITest reported `.secureTextField` with the value
+  "•••". So the element type follows editing; what VoiceOver says during
+  editing was not captured (the probe's walk began on the next element).
+  Still no test in the repository: F02's examples have no password field,
+  to keep this out of a technique about instructions.
+- Next: this belongs to F03 (keyboard and input types), which needs a
+  password example: VoiceOver's speech for the field while it is being
+  edited, and whether "secure" is ever said.
 - Upstream issue: not searched yet (D25).
 
 ## FL-043
@@ -1764,6 +1802,127 @@ yet), **Fixed in x.y** (verified on that version).
   event is lost (measured as above). First noticed in S01
   ([FL-028](#fl-028)).
 - Workaround: none in the SDK.
+- Upstream issue: not searched yet (D25).
+
+## FL-140
+
+**Material helper text is not tied to its field; inside `MergeSemantics` it joins the field's name.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator, iOS 27.0
+  simulator, Chromium and WebKit. SDK source read:
+  `_HelperErrorState._buildHelper()` in
+  `packages/flutter/lib/src/material/input_decorator.dart` wraps the helper
+  in `Semantics(container: true)`, and `InputDecorator.build` gives the
+  field a semantics hint from `decoration.errorText` only (its comment:
+  "Pass error text to semantics so screen readers announce it along with
+  the input field"). Asserted by `bad-helper-only` and the FL-140 test in
+  `test/techniques/f02_input_instructions_test.dart`,
+  `web_tests/f02_input_instructions.spec.js`, `F02InputInstructionsTest.kt`,
+  and the three transcripts in `docs/evidence/F02/`. Seen first in the
+  [F02 probe](evidence/probes/f02/README.md), fixtures 01 and 02.
+- What happens: `InputDecoration(helperText:)` (and `helper:`) is the
+  documented place for an instruction under a Material field, and it is
+  drawn there. In the semantics tree it is a node of its own, a child of
+  the field's node, with the text as its label. The field gets no hint
+  from it: on the web the `<input>` has no `aria-description` and no
+  `aria-describedby`, and the helper is text beside the `<input>` inside
+  the field's element; on Android the field's hint text is the label
+  alone; on iOS the field has no hint and the helper is static text after
+  it. An error text, in the same place on the screen, does become the
+  field's hint (read in the source, not observed here; that is F04).
+- Inside `MergeSemantics` (the project's `TestId` is one) the helper is
+  merged into the field and becomes the end of its name: "Username\n4 to 10
+  characters, no spaces." as the `aria-label` on the web and the label on
+  iOS (probe, fixture 02), and in Android's hint text. It is then read as
+  part of the name, before the role, and on Android only while the field
+  is empty ([FL-015](#fl-015)).
+- What the user gets: "Username, edit box" with focus on the field, and the
+  instruction only if they move on past the field and recognise that the
+  next text belongs to it. VoiceOver on iOS: "Username Text field Double
+  tap to edit.", then "4 to 10 characters, no spaces."; on the web
+  "Username edit text", then the instruction.
+- Workaround: give the field the same words as its hint, and do not wrap
+  the field in `MergeSemantics`:
+  `Semantics(hint: rule, child: TextField(decoration: InputDecoration(helperText: rule, ...)))`
+  (`/t/F02/good-helper`). The field is read with its instruction on all
+  three platforms, and the helper stays an element of its own. On Android
+  that is where the instruction is left once the field has a value
+  (TalkBack reads it when focus is put on it; see [FL-015](#fl-015)). To give such a field a test identifier, put `identifier:` on that
+  same `Semantics`; it joins the field's node
+  ([FL-043](#fl-043) does not affect a `TextField`).
+- How to read this entry: Flutter has not added this yet. The comment in
+  `InputDecorator.build` names a follow-up with `aria-describedby` for
+  error text; helper text is not mentioned.
+- Upstream issue: not searched yet (D25).
+
+## FL-141
+
+**Material helper text is cut to one line by default.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms (the widget layer; the
+  device tests run at the default text size and cannot see it). Documented
+  in the SDK: `InputDecoration.helperMaxLines` "Defaults to null, which
+  means that soft line breaks in [helperText] are truncated with an
+  ellipse". Asserted by `bad-helper-cut-off` in
+  `test/techniques/f02_input_instructions_test.dart`, written to fail when
+  helper text wraps by default.
+- What happens: `helperText` is drawn with `overflow: TextOverflow.ellipsis`
+  and `maxLines: helperMaxLines`. With `helperMaxLines` left null, a helper
+  that is longer than the field is wide is shown as one line ending in
+  "…". "Shown on your posts. 2 to 30 letters or numbers." fits on one line
+  on an 800-wide screen at 100% text, and is cut at 200% (the widget test).
+  The semantics keep the whole text, so a screen reader reads all of it.
+- What the user gets: someone who uses large text, and does not use a
+  screen reader, sees the start of the instruction and an ellipsis. That
+  is a loss of content at 200% text (WCAG 1.4.4).
+- Workaround: set `helperMaxLines` to enough lines for the largest text
+  size, as `good-helper` does, or pass a `Text` as `helper:`, which wraps.
+- How to read this entry: this is a default, not a missing feature, and it
+  is in the documentation. It is here because the default loses an
+  instruction at large text sizes without warning.
+- Upstream issue: not searched yet (D25).
+
+## FL-142
+
+**A Material placeholder beside a label is exposed only while the field is focused and empty, and then as part of its name.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17, iOS 27.0, Chromium and
+  WebKit. SDK source read: in `InputDecorator.build`,
+  `showHint = isEmpty && !_hasInlineLabel`, so with a `labelText` the hint
+  text is drawn only while the field is focused (the label has floated)
+  and empty; the hint `Text` is merged into the field's node, as the
+  comment there says ("The hintText is already in the semantics tree via
+  the hint Text widget that merges up"). Asserted by
+  `bad-placeholder-format` in the widget tests,
+  `web_tests/f02_input_instructions.spec.js`, `F02InputInstructionsTest.kt`,
+  and `F02InputInstructionsUITests.swift`. Probe fixture 05.
+- What happens: `InputDecoration(labelText: 'Date of birth', hintText:
+  'DD/MM/YYYY')`. Not focused: the field's name is "Date of birth" and the
+  format is nowhere in the tree. Focused and empty: the placeholder is
+  drawn, and the name becomes "Date of birth\nDD/MM/YYYY" (the
+  `aria-label` on the web, which also gains a `placeholder` attribute; the
+  label on iOS; Android's hint text). After one character the name is
+  "Date of birth" again.
+- What the user gets: with TalkBack and VoiceOver on iOS, moving to the
+  field reads "Date of birth", "Edit box" and "Date of birth Text field" with
+  no format; the format is in the name only after editing has started and
+  before anything is typed. VoiceOver on the web moves keyboard focus into
+  a field it reaches, so there the placeholder appears and is read on
+  arrival: "Date of birth DD/MM/YYYY edit text" in WebKit, "Date of birth
+  DD/MM/YYYY" in Chromium. On every platform it is gone, from the screen
+  and the name, at the first character typed (the F02 transcripts).
+- WCAG: 3.3.2 Labels or Instructions, when the placeholder is the only
+  instruction. The Understanding document allows an instruction shown only
+  while the field has focus, and requires one that is provided to be
+  "persistently available". This one is gone from the first character
+  typed, with the field still focused, until the value is deleted
+  (asserted in the widget test).
+- Why it matters for instructions: this follows Material's design for a
+  placeholder, which is an example of the value and not a place for an
+  instruction. Combined with the label it changes the field's name while
+  it is being edited.
+- Workaround: put the format in helper text and in the field's hint, as
+  [F02](techniques/F02.md) `good-helper` does ([FL-140](#fl-140)).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->

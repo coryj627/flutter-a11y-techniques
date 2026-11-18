@@ -1,0 +1,206 @@
+// F02 probe (throwaway, not committed): input instructions.
+//
+// Every fixture's label starts with its number ("i01 Username"). The screen
+// has two pages, so that each fits on a phone screen and the iOS VoiceOver
+// walk never has to scroll; the button at the top switches between them.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+const _rule = '4 to 10 characters, no spaces.';
+const _long =
+    '8 characters minimum, with at least one capital letter, one number, '
+    'and one symbol.';
+
+Widget _field(String id, Widget child) =>
+    Semantics(identifier: id, child: child);
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  int _page = 1;
+
+  List<Widget> _page1() => [
+    // 01 labelText and helperText, nothing else.
+    _field(
+      'i01',
+      const TextField(
+        decoration: InputDecoration(
+          labelText: 'i01 Username',
+          helperText: _rule,
+        ),
+      ),
+    ),
+    // 02 the same inside MergeSemantics, as the app's TestId wraps a field.
+    MergeSemantics(
+      child: _field(
+        'i02',
+        const TextField(
+          decoration: InputDecoration(
+            labelText: 'i02 Username',
+            helperText: _rule,
+          ),
+        ),
+      ),
+    ),
+    // 03 Semantics(hint:) with the helper text as well.
+    _field(
+      'i03',
+      Semantics(
+        hint: _rule,
+        child: const TextField(
+          decoration: InputDecoration(
+            labelText: 'i03 Username',
+            helperText: _rule,
+          ),
+        ),
+      ),
+    ),
+    // 04 Semantics(hint:) and the helper hidden from semantics.
+    _field(
+      'i04',
+      Semantics(
+        hint: _rule,
+        child: const TextField(
+          decoration: InputDecoration(
+            labelText: 'i04 Username',
+            helper: ExcludeSemantics(child: Text(_rule)),
+          ),
+        ),
+      ),
+    ),
+    // 05 the instruction as hintText (placeholder) beside a label.
+    _field(
+      'i05',
+      const TextField(
+        decoration: InputDecoration(
+          labelText: 'i05 Email',
+          hintText: 'name@example.com',
+        ),
+      ),
+    ),
+    // 06 Semantics(hint:) and helperText, inside MergeSemantics.
+    MergeSemantics(
+      child: _field(
+        'i06',
+        Semantics(
+          hint: _rule,
+          child: const TextField(
+            decoration: InputDecoration(
+              labelText: 'i06 Username',
+              helperText: _rule,
+            ),
+          ),
+        ),
+      ),
+    ),
+  ];
+
+  List<Widget> _page2() => [
+    // 07 Cupertino: a form row whose helper is the instruction, and the
+    // field given the label and the hint.
+    CupertinoFormSection.insetGrouped(
+      children: [
+        CupertinoFormRow(
+          prefix: const ExcludeSemantics(child: Text('i07 Username')),
+          helper: const Text(_rule),
+          child: _field(
+            'i07',
+            Semantics(
+              label: 'i07 Username',
+              hint: _rule,
+              child: const CupertinoTextField.borderless(),
+            ),
+          ),
+        ),
+        // 08 the same with no hint: the helper is not tied to the field.
+        CupertinoFormRow(
+          prefix: const ExcludeSemantics(child: Text('i08 Username')),
+          helper: const Text(_rule),
+          child: _field(
+            'i08',
+            Semantics(
+              label: 'i08 Username',
+              child: const CupertinoTextField.borderless(),
+            ),
+          ),
+        ),
+      ],
+    ),
+    // 09 the instruction drawn above the field, before it in reading order,
+    // and the field named and given the hint.
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const ExcludeSemantics(child: Text('i09 Username')),
+        const Text(_rule),
+        _field(
+          'i09',
+          Semantics(
+            label: 'i09 Username',
+            hint: _rule,
+            child: const TextField(
+              decoration: InputDecoration(border: OutlineInputBorder()),
+            ),
+          ),
+        ),
+      ],
+    ),
+    // 10 an obscured field with a hint (FL-042).
+    _field(
+      'i10',
+      Semantics(
+        hint: _long,
+        child: const TextField(
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: 'i10 Password',
+            helperText: _long,
+          ),
+        ),
+      ),
+    ),
+    // 11 a long helperText with the default helperMaxLines.
+    _field(
+      'i11',
+      const TextField(
+        decoration: InputDecoration(
+          labelText: 'i11 Password',
+          helperText: _long,
+        ),
+      ),
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 8,
+            children: [
+              TextButton(
+                onPressed: () => setState(() => _page = _page == 1 ? 2 : 1),
+                child: Text('Page ${_page == 1 ? 2 : 1}'),
+              ),
+              ...(_page == 1 ? _page1() : _page2()),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

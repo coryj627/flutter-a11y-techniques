@@ -3,6 +3,7 @@
 import '../catalog/technique.dart';
 import 'c01_button/c01_button.dart';
 import 'f01_text_fields/f01_text_fields.dart';
+import 'f02_input_instructions/f02_input_instructions.dart';
 import 'f07_checkbox/f07_checkbox.dart';
 import 'f08_radio_group/f08_radio_group.dart';
 import 'f09_switch/f09_switch.dart';
@@ -24,6 +25,7 @@ import 's22_semantics_identifiers/s22_semantics_identifiers.dart';
 final List<Technique> allTechniques = [
   c01Button,
   f01TextFields,
+  f02InputInstructions,
   f07Checkbox,
   f08RadioGroup,
   f09Switch,
