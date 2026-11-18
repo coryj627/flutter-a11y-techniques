@@ -1,0 +1,60 @@
+// F02 probe (throwaway, not committed): the DOM and the accessibility tree.
+import { test, expect } from '@playwright/test';
+
+async function report(page, title, browserName) {
+  const rows = await page.evaluate(() => {
+    const out = [];
+    for (const el of document.querySelectorAll('flt-semantics, input, textarea')) {
+      const id = el.getAttribute('flt-semantics-identifier') ?? '';
+      const text = el.tagName === 'FLT-SEMANTICS' && !el.querySelector('flt-semantics,input,textarea') ? el.textContent.trim() : '';
+      const attrs = ['role', 'aria-label', 'aria-description', 'aria-describedby', 'placeholder', 'type']
+        .map((a) => (el.hasAttribute(a) ? `${a}=${JSON.stringify(el.getAttribute(a))}` : null))
+        .filter(Boolean);
+      if (!id && !text && attrs.length === 0) continue;
+      let depth = 0;
+      for (let p = el.parentElement; p; p = p.parentElement) if (p.tagName === 'FLT-SEMANTICS') depth++;
+      const inInput = el.closest('flt-semantics')?.querySelector(':scope > input,:scope > textarea') ? 'in-field-node' : '';
+      out.push(`${'  '.repeat(depth)}<${el.tagName.toLowerCase()}> ${id ? `id=${id} ` : ''}${attrs.join(' ')} ${text ? `text=${JSON.stringify(text)}` : ''} ${el.tagName === 'FLT-SEMANTICS' ? inInput : ''}`);
+    }
+    return out;
+  });
+  console.log(`F02PROBE ${browserName} ${title}\n${rows.join('\n')}`);
+  if (browserName === 'chromium') {
+    const cdp = await page.context().newCDPSession(page);
+    const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+    for (const n of nodes) {
+      if (JSON.stringify(n).includes('4 to 10') || JSON.stringify(n).includes('8 characters')) {
+        console.log(`F02PROBE AXRAW ${title} ignored=${n.ignored} role=${n.role?.value} name=${JSON.stringify(n.name?.value)} reasons=${JSON.stringify((n.ignoredReasons||[]).map(r=>r.name))}`);
+      }
+      if (n.ignored) continue;
+      const role = n.role?.value;
+      const name = n.name?.value ?? '';
+      const desc = n.description?.value ?? '';
+      if (!['textbox', 'StaticText', 'generic', 'group', 'button'].includes(role)) continue;
+      if (!name && !desc) continue;
+      console.log(`F02PROBE AX ${title} role=${role} name=${JSON.stringify(name)} description=${JSON.stringify(desc)}`);
+    }
+    await cdp.detach();
+  }
+}
+
+test('probe', async ({ page, browserName }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Page 2' }).waitFor();
+  await page.waitForTimeout(800);
+  await report(page, 'page 1', browserName);
+  const i05 = page.locator('[flt-semantics-identifier="i05"] input');
+  await i05.click();
+  await page.waitForTimeout(500);
+  await report(page, 'page 1, i05 focused', browserName);
+  for (const id of ['i03', 'i01']) {
+    await page.locator(`[flt-semantics-identifier="${id}"] input`).click();
+    await page.waitForTimeout(300);
+    await page.keyboard.type('abc', { delay: 40 });
+  }
+  await page.waitForTimeout(500);
+  await report(page, 'page 1, i03 and i01 filled', browserName);
+  await page.getByRole('button', { name: 'Page 2' }).click();
+  await page.waitForTimeout(800);
+  await report(page, 'page 2', browserName);
+});
