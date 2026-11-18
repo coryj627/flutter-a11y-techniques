@@ -2266,10 +2266,11 @@ yet), **Fixed in x.y** (verified on that version).
 **When a route closes, the framework sends the screen reader back to where it was, after the app's own move, even when that control has been removed.**
 
 - Status: the framework's request is Confirmed, Flutter 3.47.5 (source
-  read: `widgets/navigator.dart`; the I03 widget test "after Remove the
-  last request is for Remove Summit path" records it, on Android and iOS
-  as the framework sees them). Its effect is Observed on Android only, in
-  the I03 probe (`docs/evidence/probes/i03/`, round 2 row `r1`,
+  read: `widgets/navigator.dart`; the I03 widget test "after Remove, on
+  iOS the last request is for Remove Summit path, after the framework's;
+  on Android there is only the framework's" records it, on Android and
+  iOS as the framework sees them). Its effect is Observed on Android only,
+  in the I03 probe (`docs/evidence/probes/i03/`, round 2 row `r1`,
   `android_round2.txt`, and round 3 row `s1`, `android_round3.txt`), and
   was not reproduced in the I03 examples' own TalkBack walk
   (`docs/evidence/probes/i03/mutations/`, runs m1 to m3). What makes the
@@ -2277,63 +2278,69 @@ yet), **Fixed in x.y** (verified on that version).
 - What happens: the Navigator listens for the engine's `didGainFocus`
   messages and records, for the route on top, the semantics node the
   screen reader is on. When a route above it closes, it sends that node a
-  `FocusSemanticEvent` once the closed route has gone: at once on iOS,
-  and on Android after another 300 ms (`_kAndroidRefocusingDelayDuration`).
-  The web is left out; there the screen reader follows DOM focus. This
-  is what brings the screen reader back to the button that opened a
-  dialog. But the request is made whatever the app has done since the
-  dialog returned its answer: if the app removed that button and moved
-  focus to the next one, the request comes after the move, for a node
-  that no longer exists. In the probe, TalkBack activated Remove in a
-  confirmation dialog, the app removed the row and called `requestFocus`
-  on the next row's button at once: keyboard focus was on the next row,
-  and TalkBack ended on Back, the top of the screen (round 3, `s1`), or on
-  the row above (round 2, `r1`); waiting, or a `FocusSemanticEvent` to
-  the next row a second later, put it on the next row (`s2` to `s4`). In
-  the I03 examples, the same `requestFocus` with no event of the app's
-  took TalkBack to the next button, and so did the event sent 250 ms
-  after the removal, before the framework's request (mutation runs m1
-  and m2).
+  `FocusSemanticEvent` once the closed route has gone (when
+  `Route.dispose` runs): at once on iOS, and on Android after another
+  300 ms (`_kAndroidRefocusingDelayDuration`). The web is left out; there
+  the screen reader follows DOM focus. This is what brings the screen
+  reader back to the button that opened a dialog. But the request is made
+  whatever the app has done since the dialog returned its answer: if the
+  app removed that button and moved focus to the next one, the request
+  comes after the move, for a node that no longer exists. In the probe,
+  TalkBack activated Remove in a confirmation dialog, the app removed the
+  row and called `requestFocus` on the next row's button at once:
+  keyboard focus was on the next row, and TalkBack ended on Back, the top
+  of the screen (round 3, `s1`), or on the row above (round 2, `r1`);
+  waiting, or a `FocusSemanticEvent` to the next row a second later, put
+  it on the next row (`s2` to `s4`). In the I03 examples, the same
+  `requestFocus` with no event of the app's took TalkBack to the next
+  button, and so did an event sent 250 ms after the removal, before the
+  framework's request (mutation runs m1 and m2).
 - Effect, where it happens: a TalkBack user who confirms a removal is
   sent to the top of the screen, or to the wrong row, and has to find
   their place again.
 - On iOS the case is a different one: VoiceOver does not follow
   `requestFocus` at all (probe rows `t`, `s1`, `s2`, `p11`, `p14`), so
-  the app has to send a `FocusSemanticEvent` to move it after a removal;
-  sent a second later it put VoiceOver on the next row (probe `s3`, `s4`,
-  and the I03 VoiceOver walk on iOS). Whether an event sent sooner would
-  be undone by the framework's request was not measured on iOS.
-- Workaround, in the SDK: move keyboard focus at once, and send a
-  `FocusSemanticEvent` to the next row's button once the framework's own
-  request has been made: the I03 good examples send it a second later.
-  Verified in the I03 TalkBack walk (TalkBack reads the screen's title,
-  then the next button, and stays there) and the I03 VoiceOver walk on
-  iOS. Waiting until the route has gone before removing the row (probe
-  `s2`) also worked on Android, not on iOS, where `requestFocus` alone
-  does not move VoiceOver.
-- What the workaround waits for, and what it cannot know: it is a timing
-  workaround, since the framework gives no signal for when its own
-  request has been made. The one second covers the question's route
-  animating out (150 ms for `showDialog`, 200 ms for `showGeneralDialog`,
-  335 ms for `showCupertinoModalPopup`, read in the source), its
-  disposal, and Android's 300 ms, with about a third of a second to
-  spare. On a device slow enough to use that up, the framework's request
-  would come last and, where the effect above happens, the screen reader
-  would be left at the top of the screen or on the wrong row; no slow
-  device was measured. The request still to come is dropped when
-  something newer has happened: a new question cancels it, and it is not
-  sent if the trail has gone or keyboard focus is no longer on the
-  trail's button (the user went on, or a question is up). The I03 widget
-  test "a request still to come is dropped when keyboard focus moves on"
-  shows it on Android and iOS as the framework sees them, with a removal
-  whose request is sent as its positive control; on the device, the I03
-  TalkBack walk (`moved-on`: Shift+Tab before the request is due) shows
-  TalkBack following keyboard focus to Back and not being pulled back. What
-  the guard cannot see is a screen reader's own move made in that second
-  by a swipe, which moves no keyboard focus: the platform reports it the
-  same way as the move the framework's request causes, so a swipe in that
-  second would be undone. Not measured: the walks cannot swipe TalkBack
-  on the emulator, and the iOS walk does not swipe in that second.
+  the app has to send a `FocusSemanticEvent` to move it after a removal,
+  and it has to come after the framework's request, or the framework's
+  is the one VoiceOver is left with. The widget test above shows the
+  order: an event sent when `ModalRoute.completed` completes goes before
+  the framework's (that future completes in the same `dispose` call,
+  first), and one sent a frame later goes after it.
+- Workaround, in the SDK: on Android, move keyboard focus with
+  `requestFocus` and send nothing more; TalkBack follows it (the I03
+  TalkBack walk: TalkBack reads the screen's title, then the next button,
+  and stays there). On iOS, also note the question's route
+  (`ModalRoute.of` in its builder), wait for its `completed` future and
+  then for `WidgetsBinding.instance.endOfFrame`, and send the
+  `FocusSemanticEvent` to the next button then, unless keyboard focus has
+  left it. There is no fixed delay: until the route has gone the page
+  under it is hidden from the screen reader by the route's barrier (read
+  in the source: `ModalBarrier` builds a `BlockSemantics`; and seen in
+  the I03 widget test "on iOS a request still to come is dropped", where
+  the next button is out of the semantics tree while the question is
+  closing), so the event is sent one frame after the page is back in the
+  tree, before a user can have moved on to it; VoiceOver then takes time
+  of its own to act on it (see what is not known, below). Verified in the
+  I03 VoiceOver walk on iOS, in all four examples that ask on a press:
+  VoiceOver reads the next button and is still on it three seconds
+  later; and in `moved on`, VoiceOver's first speech after the double
+  tap on Remove is the next button, 1.4 to 1.7 s after it, and a move
+  of VoiceOver's own made at once (`moveBackward()`, as a swipe left) is
+  still where it went three seconds later. On the web nothing is sent:
+  the event does nothing there (read in the source: the web engine's
+  handler for `flutter/accessibility` acts only on announcements), and
+  VoiceOver follows DOM focus, which follows `requestFocus` (the I03
+  VoiceOver walk on the web).
+- What is not known: VoiceOver speaks the next button 1.4 to 1.7 s after
+  the double tap (the question's closing animation, 150 to 335 ms, is
+  part of it), and the walk cannot see when in that time the route has
+  gone. A move of VoiceOver's own made about 0.9 s after the double tap,
+  before VoiceOver had said anything, ended on the next button
+  (`docs/evidence/probes/i03/mutations/`, run `v2`): either it was made while
+  the question was still closing, and the event then did what it is
+  for, or it was made on the page and undone. A user who moves on that
+  fast, before hearing where they are, may be moved again. No slow
+  device was measured.
 - How to read this entry: Flutter has not added a way to tell the
   Navigator where the screen reader should go when a route closes, or to
   stop its request, yet.

@@ -1,6 +1,7 @@
 import 'dart:ui' show Tristate;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
@@ -33,9 +34,12 @@ const _names = {
 
 String _id(String slug, String part) => 'i03-$slug-$part';
 
-/// How long after a removal the examples send the screen reader to the
-/// next button (`_afterTheRoute` in examples.dart).
-const _afterTheRoute = Duration(seconds: 1);
+/// Longer than the framework's own screen reader request takes once a
+/// question's route has gone: on Android it comes 300 ms later (read in the
+/// source: widgets/navigator.dart, _kAndroidRefocusingDelayDuration). Tests
+/// wait this long so that no timer is left at the end, and so that a
+/// request made late would be seen.
+const _afterTheRoute = Duration(seconds: 2);
 
 int _saved(WidgetTester tester, String slug) =>
     countOf(tester, _id(slug, 'count'));
@@ -457,7 +461,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.tap(byId(_id(slug, 'cancel')));
           await tester.pumpAndSettle();
-          await tester.pump(const Duration(seconds: 1));
+          await tester.pump(_afterTheRoute);
           expect(requests, [lake]);
           handle.dispose();
         },
@@ -465,13 +469,16 @@ void main() {
     }
 
     // After Remove, the framework's own request is for Remove Lake loop,
-    // which is gone by then (FL-442); the good examples follow it with a
-    // request for Remove Summit path. The order matters: the last request
-    // is the one the platform is left with.
+    // which is gone by then (FL-442). On iOS the good examples follow it,
+    // one frame after the question's route has gone, with a request for
+    // Remove Summit path; the order matters, as the last request is the one
+    // the platform is left with. On Android they send nothing: TalkBack
+    // follows keyboard focus there.
     for (final slug in _good) {
       testWidgets(
-        '$slug: after Remove the last request is for Remove Summit path, '
-        'after the framework\'s for the removed button',
+        '$slug: after Remove, on iOS the last request is for Remove Summit '
+        'path, after the framework\'s; on Android there is only the '
+        'framework\'s',
         variant: const TargetPlatformVariant({
           TargetPlatform.android,
           TargetPlatform.iOS,
@@ -488,26 +495,59 @@ void main() {
           await tester.pumpAndSettle();
           await tester.tap(byId(_id(slug, 'confirm')));
           await tester.pumpAndSettle();
-          // The framework's request comes once the route has gone (on
-          // Android 300 ms later), the examples' after it.
           await tester.pump(_afterTheRoute);
-          expect(requests, [lake, summit]);
+          expect(
+            requests,
+            defaultTargetPlatform == TargetPlatform.iOS
+                ? [lake, summit]
+                : [lake],
+          );
           expect(nodeById(_id(slug, 'remove-lake')), findsNothing);
+          expect(_stop(tester, slug), 'remove-summit');
           handle.dispose();
         },
       );
 
-      // The examples' request is dropped when the user has gone on before
-      // it is due: here keyboard focus moved off the button. The first
-      // removal, in the same launch, is the positive control: its request
-      // is sent.
+      // Once the screen reader has been sent on, nothing more is sent, so a
+      // move the user then makes with the screen reader is left alone. The
+      // engine reports that move as the screen reader's focus landing on
+      // another node; keyboard focus stays where it was.
       testWidgets(
-        '$slug: a request still to come is dropped when keyboard focus '
-        'moves on before it is due',
-        variant: const TargetPlatformVariant({
-          TargetPlatform.android,
-          TargetPlatform.iOS,
-        }),
+        '$slug: after the request for Remove Summit path nothing more is '
+        'sent, though keyboard focus is still there',
+        variant: const TargetPlatformVariant({TargetPlatform.iOS}),
+        (tester) async {
+          final handle = tester.ensureSemantics();
+          ServicesBinding.instance.accessibilityFocus.value = null;
+          final requests = _recordFocusRequests(tester);
+          await _open(tester, slug);
+          final summit = _nodeId(slug, 'remove-summit');
+          await _screenReaderOn(tester, _nodeId(slug, 'remove-lake'));
+          await tester.tap(byId(_id(slug, 'remove-lake')));
+          await tester.pumpAndSettle();
+          await tester.tap(byId(_id(slug, 'confirm')));
+          await tester.pumpAndSettle();
+          // The positive control: the request was sent.
+          expect(requests.last, summit);
+          final sent = requests.length;
+          await _screenReaderOn(tester, summit);
+          // The user moves the screen reader to Remove Ridge trail.
+          await _screenReaderOn(tester, _nodeId(slug, 'remove-ridge'));
+          await tester.pump(_afterTheRoute);
+          expect(requests.length, sent, reason: 'sent after: $requests');
+          expect(_stop(tester, slug), 'remove-summit');
+          handle.dispose();
+        },
+      );
+
+      // The request is dropped when the user has gone on before it is due:
+      // here keyboard focus moved off the button while the question was
+      // still closing. The first removal, in the same launch, is the
+      // positive control: its request is sent.
+      testWidgets(
+        '$slug: on iOS a request still to come is dropped when keyboard '
+        'focus moves on before it is due',
+        variant: const TargetPlatformVariant({TargetPlatform.iOS}),
         (tester) async {
           final handle = tester.ensureSemantics();
           ServicesBinding.instance.accessibilityFocus.value = null;
@@ -523,17 +563,33 @@ void main() {
           await tester.pump(_afterTheRoute);
           expect(requests.last, summit, reason: 'the positive control');
           // Now Summit path: the next button is Ridge trail, which gets
-          // keyboard focus at once and the request a second later.
+          // keyboard focus at once, and the request once the question's
+          // route has gone.
           requests.clear();
           await _screenReaderOn(tester, summit);
           await tester.tap(byId(_id(slug, 'remove-summit')));
           await tester.pumpAndSettle();
           await tester.tap(byId(_id(slug, 'confirm')));
+          await tester.pump();
+          // The page is still hidden from the screen reader, so the focus
+          // node itself is read.
+          expect(
+            nodeById(_id(slug, 'remove-ridge')),
+            findsNothing,
+            reason:
+                'the page is out of the semantics tree while the '
+                'question closes',
+          );
+          final ridgeNode = _focusNodeOf(tester, slug, 'remove-ridge');
+          expect(FocusManager.instance.primaryFocus, ridgeNode);
+          expect(_questions, findsOneWidget, reason: 'still closing');
+          // Before the route has gone, the user moves on with Shift+Tab.
+          await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+          expect(FocusManager.instance.primaryFocus, isNot(ridgeNode));
+          expect(_questions, findsOneWidget, reason: 'still closing');
           await tester.pumpAndSettle();
-          expect(_stop(tester, slug), 'remove-ridge');
-          // Before the request is due, the user moves on with Shift+Tab.
-          await _key(tester, LogicalKeyboardKey.tab, shift: true);
-          expect(_stop(tester, slug), 'back');
           await tester.pump(_afterTheRoute);
           expect(requests, isNot(contains(ridge)));
           expect(_stop(tester, slug), 'back');

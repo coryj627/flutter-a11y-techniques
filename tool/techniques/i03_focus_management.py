@@ -27,8 +27,8 @@ TALKBACK_EXPECT = {
     **{f"i03-{slug}-removed": (["Remove Summit path", "Button"], ["Remove Ridge trail"])
        for slug in _PRESS_TO_ASK},
     # good-material removes Ridge trail too, and keyboard focus moves on to
-    # Back before the example's request for Summit path is due: TalkBack
-    # follows keyboard focus to Back, and is not sent to Summit path.
+    # Back while the question is still going: TalkBack follows keyboard
+    # focus to Back, and nothing sends it to Summit path.
     "i03-good-material-moved-on": (["Back"], []),
     # TalkBack's focus on a Remove button is not keyboard focus, so the
     # defect does not happen: the button is read, and nothing is asked.
@@ -44,8 +44,9 @@ TALKBACK_METHOD = (
     "(`isAccessibilityFocused`) for eight seconds after it first gets there and then for two "
     "more, and fails unless it stays where the row says for those last two. In "
     "good-material, Ridge trail is then removed and Shift+Tab moves keyboard focus to Back "
-    "before the example's request for Summit path is due (`moved-on`). Speech is read from "
-    "TalkBack's verbose log"
+    "while the question is still going (`moved-on`); on Android the examples send TalkBack "
+    "nothing of their own, so it follows keyboard focus. Speech is read from TalkBack's "
+    "verbose log"
 )
 
 # tool/voiceover_ios.py: (how the speech was captured, heading of the
@@ -53,7 +54,11 @@ TALKBACK_METHOD = (
 VOICEOVER_IOS_METHOD = (
     "with VoiceOver on, `tap()` moves its cursor to Remove Lake loop and `doubleTap()` "
     "activates it; `currentSpeech()` is then read for what VoiceOver said where its cursor "
-    "went by itself. The same for Cancel, and for Remove Lake loop and the question's Remove",
+    "went by itself. The same for Cancel, and for Remove Lake loop and the question's Remove. "
+    "Then Summit path is removed, and as soon as VoiceOver first speaks after the double tap "
+    "on the question's Remove (it must be Remove Ridge trail), `moveBackward()` moves its "
+    "cursor one element back, as a swipe left does, with keyboard focus left on Remove Ridge "
+    "trail (`moved on`): the cursor must still be there three seconds later",
     "Spoken after each step",
 )
 

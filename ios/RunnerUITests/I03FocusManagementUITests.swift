@@ -235,7 +235,8 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
   // VoiceOver said (currentSpeech()) and where its cursor is: one move back
   // and one forward again, which must land where it was. The cursor is
   // never put anywhere by the test after an activation, so where it is was
-  // VoiceOver's own move, or the app's.
+  // VoiceOver's own move, or the app's; the one exception is `moved on`,
+  // where the test moves it as the user, and requires it to stay there.
   #if compiler(>=6.4)
   @available(iOS 27.0, *)
   private func said(_ voiceOver: XCUIVoiceOverService) -> String {
@@ -268,6 +269,55 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
     sleep(2)
     element.doubleTap()
   }
+
+  /// What the user's move found, and what became of it.
+  struct MovedOn {
+    /// What VoiceOver first said after the double tap, and when, in
+    /// seconds from it.
+    let heard: String
+    let heardAfter: Double
+    /// What VoiceOver read for the user's move, and when the move ended.
+    let moved: String
+    let movedAfter: Double
+    /// What VoiceOver last said three seconds later.
+    let later: String
+    /// What it reads one move forward from there, and one back again.
+    let forward: String
+    let backAgain: String
+  }
+
+  /// Removes the trail whose Remove button is `part`. As soon as VoiceOver
+  /// first speaks after the double tap on the question's Remove, the user
+  /// moves its cursor one element back with VoiceOver's own command, as a
+  /// swipe left does; keyboard focus stays on the next Remove button. Then
+  /// reads where the cursor is three seconds later. A touch was too slow to
+  /// stand in for the user: XCUITest's tap came about six seconds after the
+  /// double tap.
+  @available(iOS 27.0, *)
+  private func removeThenMoveBack(_ voiceOver: XCUIVoiceOverService, _ slug: String, _ part: String) -> MovedOn {
+    activate(control(slug, part))
+    _ = waitForSpeech(voiceOver, startingWith: "Remove ")
+    let confirm = control(slug, "confirm")
+    confirm.tap()
+    sleep(2)
+    let before = said(voiceOver)
+    let start = Date()
+    confirm.doubleTap()
+    var heard = before
+    while heard == before && Date().timeIntervalSince(start) < 6 {
+      usleep(50_000)
+      heard = said(voiceOver)
+    }
+    let heardAfter = Date().timeIntervalSince(start)
+    let moved = VoiceOverWalk.normalized((try? voiceOver.moveBackward().utterance) ?? VoiceOverWalk.silent)
+    let movedAfter = Date().timeIntervalSince(start)
+    sleep(3)
+    let later = said(voiceOver)
+    let forward = VoiceOverWalk.normalized((try? voiceOver.moveForward().utterance) ?? VoiceOverWalk.silent)
+    let backAgain = VoiceOverWalk.normalized((try? voiceOver.moveBackward().utterance) ?? VoiceOverWalk.silent)
+    return MovedOn(heard: heard, heardAfter: heardAfter, moved: moved, movedAfter: movedAfter,
+                   later: later, forward: forward, backAgain: backAgain)
+  }
   #endif
 
   func testVoiceOverSpeech() throws {
@@ -293,8 +343,20 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
       let removed = waitForSpeech(voiceOver, startingWith: "Remove Summit path Button")
       sleep(3)
       let (beforeSummit, summitAgain) = around(voiceOver)
+      // The user moves on. Summit path is removed, so keyboard focus goes
+      // to Remove Ridge trail and VoiceOver is sent there; the moment
+      // VoiceOver first speaks, the user moves it one element back, to the
+      // list's title. Nothing may send it back to Remove Ridge trail after
+      // that.
+      let movedOn = removeThenMoveBack(voiceOver, slug, "remove-summit")
       try voiceOver.disable()
-      print("I03VO \(slug) | opened: \(opened) / cancelled: \(cancelled) (back: \(beforeLake), forward: \(lakeAgain)) / removed: \(removed) (back: \(beforeSummit), forward: \(summitAgain))")
+      let heardAt = String(format: "%.2f", movedOn.heardAfter)
+      let movedAt = String(format: "%.2f", movedOn.movedAfter)
+      print("I03VO \(slug) | opened: \(opened) / cancelled: \(cancelled) (back: \(beforeLake), forward: \(lakeAgain)) / removed: \(removed) (back: \(beforeSummit), forward: \(summitAgain)) / moved on: first heard \(heardAt) s after the double tap: \(movedOn.heard); one move back, done \(movedAt) s after: \(movedOn.moved); 3 s later: \(movedOn.later) (forward: \(movedOn.forward), back: \(movedOn.backAgain))")
+      XCTAssertEqual(movedOn.heard, "Remove Ridge trail Button", "\(slug): what VoiceOver first said after the removal")
+      XCTAssertEqual(movedOn.moved, "Saved trails", "\(slug): one move back from Remove Ridge trail")
+      XCTAssertEqual(movedOn.later, movedOn.moved, "\(slug): VoiceOver was moved after the user's move")
+      XCTAssertEqual(movedOn.backAgain, movedOn.moved, "\(slug): the cursor is not where the user moved it")
       // Into the question: its title, or its message if VoiceOver starts
       // there.
       XCTAssertTrue(opened.hasPrefix("Remove Lake loop?") || opened.hasPrefix("It goes from your saved trails"),

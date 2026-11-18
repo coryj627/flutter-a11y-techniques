@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 
@@ -23,15 +22,6 @@ typedef _Ask = Future<bool?> Function(
   String name,
 );
 
-/// How long to wait, after a question has closed, for the framework's own
-/// screen reader move: the question's route must animate out (150 ms for
-/// the Material dialog, 200 ms for the general dialog, 335 ms for the
-/// action sheet) and be disposed, and on Android the framework waits
-/// 300 ms more. One second leaves about a third of a second to spare. On a
-/// device slow enough to use that up, the framework's move would come
-/// last and the screen reader would be left at the top of the screen.
-const _afterTheRoute = Duration(seconds: 1);
-
 /// One Remove button, drawn the way the example draws its buttons.
 typedef _RemoveButton = Widget Function(
   String label,
@@ -46,7 +36,8 @@ typedef _RemoveButton = Widget Function(
 /// When a trail is removed its button goes with it, and the button that
 /// had focus is gone. Focus is then put on the next trail's button, or on
 /// the one before when the last trail went: keyboard focus at once, and
-/// the screen reader's once the question has closed (see [_TrailsState]).
+/// on iOS the screen reader's once the question has gone (see
+/// [_TrailsState.remove]).
 class _Trails extends StatefulWidget {
   const _Trails({required this.slug, required this.ask, required this.button});
 
@@ -73,12 +64,23 @@ class _TrailsState extends State<_Trails> {
   /// The test identifier of the part [part] of this example.
   String id(String part) => 'i03-${widget.slug}-$part';
 
-  /// The screen reader's move still to come after a removal, if any.
-  Timer? _screenReaderMove;
+  /// The route the question is in, noted by [asking] when the question
+  /// is built.
+  ModalRoute<Object?>? _question;
+
+  /// Counts the questions asked, so that a screen reader move still to
+  /// come after one question is dropped once another has been asked.
+  int _asked = 0;
+
+  /// Builds the question [child] and notes the route it is in, which
+  /// [remove] waits on. Each example builds its question through this.
+  Widget asking(BuildContext routeContext, Widget child) {
+    _question = ModalRoute.of(routeContext);
+    return child;
+  }
 
   @override
   void dispose() {
-    _screenReaderMove?.cancel();
     for (final node in _nodes.values) {
       node.dispose();
     }
@@ -86,34 +88,39 @@ class _TrailsState extends State<_Trails> {
   }
 
   Future<void> remove((String, String) trail) async {
-    // Anything newer, here a new question, replaces a move still to come.
-    _screenReaderMove?.cancel();
+    final asked = ++_asked;
     final yes = await widget.ask(context, this, trail.$2);
+    final question = _question;
+    _question = null;
     if (yes != true || !mounted) return;
     final index = _left.indexOf(trail);
     setState(() => _left.remove(trail));
     if (_left.isEmpty) return;
     final next = _left[index < _left.length ? index : _left.length - 1].$1;
-    // Keyboard focus, and on the web the screen reader with it.
+    // Keyboard focus. TalkBack on Android and the screen reader on the web
+    // follow it, so on those nothing more is sent.
     _nodes[next]!.requestFocus();
-    // On iOS VoiceOver does not follow keyboard focus, so it has to be
-    // sent. And on Android and iOS, when the question's route has gone,
-    // the framework sends the screen reader back to the button that opened
-    // it (on Android 300 ms later), which has just been removed; on
-    // Android that was seen to undo a move made before it
-    // (docs/flutter-limitations.md, FL-442). So the screen reader is sent
-    // to the next button once that has happened.
-    // This is a timing workaround: the framework gives no signal for when
-    // its own move has been made.
-    _screenReaderMove = Timer(_afterTheRoute, () => _sendScreenReaderTo(next));
+    // VoiceOver on iOS does not follow keyboard focus, so it is sent. Not
+    // at once: while the question is on screen the page under it is
+    // hidden from the screen reader, and once the question's route has
+    // gone the framework sends VoiceOver back to the button that opened
+    // it, which has just been removed (docs/flutter-limitations.md,
+    // FL-442). So this waits for the route to go, and then for one more
+    // frame, so that it comes after the framework's. In a browser on an
+    // iPhone defaultTargetPlatform is iOS too, and there the event would
+    // do nothing.
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) return;
+    await question?.completed;
+    await WidgetsBinding.instance.endOfFrame;
+    if (asked != _asked || !mounted) return;
+    _sendScreenReaderTo(next);
   }
 
   /// Sends the screen reader to [key]'s button, unless that is no longer
   /// where the user is: the trail has gone, or keyboard focus has moved
-  /// off its button since (the user went on, or a question opened).
+  /// off its button since.
   void _sendScreenReaderTo(String key) {
-    _screenReaderMove = null;
-    if (!mounted || !_left.any((t) => t.$1 == key)) return;
+    if (!_left.any((t) => t.$1 == key)) return;
     if (!_nodes[key]!.hasPrimaryFocus) return;
     _keys[key]!.currentContext?.findRenderObject()?.sendSemanticsEvent(
       const FocusSemanticEvent(),
@@ -157,25 +164,28 @@ Widget _materialQuestion(
   BuildContext context,
   _TrailsState trails,
   String name,
-) => AlertDialog(
-  title: Text('Remove $name?'),
-  content: const Text('It goes from your saved trails.'),
-  actions: [
-    TestId(
-      trails.id('cancel'),
-      child: TextButton(
-        onPressed: () => Navigator.pop(context, false),
-        child: const Text('Cancel'),
+) => trails.asking(
+  context,
+  AlertDialog(
+    title: Text('Remove $name?'),
+    content: const Text('It goes from your saved trails.'),
+    actions: [
+      TestId(
+        trails.id('cancel'),
+        child: TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Cancel'),
+        ),
       ),
-    ),
-    TestId(
-      trails.id('confirm'),
-      child: TextButton(
-        onPressed: () => Navigator.pop(context, true),
-        child: const Text('Remove'),
+      TestId(
+        trails.id('confirm'),
+        child: TextButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text('Remove'),
+        ),
       ),
-    ),
-  ],
+    ],
+  ),
 );
 // #endregion
 
@@ -226,34 +236,37 @@ class GoodCupertino extends StatelessWidget {
       ),
       ask: (context, trails, name) => showCupertinoModalPopup<bool>(
         context: context,
-        builder: (context) => CupertinoActionSheet(
-          // The sheet's own grey for these is too faint to read
-          // (FL-441), so they are given the label colour.
-          title: Text('Remove $name?', style: _label(context)),
-          message: Text(
-            'It goes from your saved trails.',
-            style: _label(context),
-          ),
-          actions: [
-            TestId(
-              trails.id('confirm'),
-              child: _enterToo(
-                () => Navigator.pop(context, true),
-                CupertinoActionSheetAction(
-                  isDestructiveAction: true,
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Remove'),
+        builder: (context) => trails.asking(
+          context,
+          CupertinoActionSheet(
+            // The sheet's own grey for these is too faint to read
+            // (FL-441), so they are given the label colour.
+            title: Text('Remove $name?', style: _label(context)),
+            message: Text(
+              'It goes from your saved trails.',
+              style: _label(context),
+            ),
+            actions: [
+              TestId(
+                trails.id('confirm'),
+                child: _enterToo(
+                  () => Navigator.pop(context, true),
+                  CupertinoActionSheetAction(
+                    isDestructiveAction: true,
+                    onPressed: () => Navigator.pop(context, true),
+                    child: const Text('Remove'),
+                  ),
                 ),
               ),
-            ),
-          ],
-          cancelButton: TestId(
-            trails.id('cancel'),
-            child: _enterToo(
-              () => Navigator.pop(context, false),
-              CupertinoActionSheetAction(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
+            ],
+            cancelButton: TestId(
+              trails.id('cancel'),
+              child: _enterToo(
+                () => Navigator.pop(context, false),
+                CupertinoActionSheetAction(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancel'),
+                ),
               ),
             ),
           ),
@@ -299,35 +312,38 @@ class GoodWidgets extends StatelessWidget {
         barrierLabel: 'Keep $name',
         // What the dialog is to assistive technology, its role and name,
         // is C08's; this example is about where focus goes.
-        pageBuilder: (context, _, _) => Center(
-          child: _Card(
-            children: [
-              Text(
-                'Remove $name?',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Text('It goes from your saved trails.'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TestId(
-                    trails.id('cancel'),
-                    child: TextButton(
-                      autofocus: true,
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Cancel'),
+        pageBuilder: (context, _, _) => trails.asking(
+          context,
+          Center(
+            child: _Card(
+              children: [
+                Text(
+                  'Remove $name?',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const Text('It goes from your saved trails.'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TestId(
+                      trails.id('cancel'),
+                      child: TextButton(
+                        autofocus: true,
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
                     ),
-                  ),
-                  TestId(
-                    trails.id('confirm'),
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Remove'),
+                    TestId(
+                      trails.id('confirm'),
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Remove'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

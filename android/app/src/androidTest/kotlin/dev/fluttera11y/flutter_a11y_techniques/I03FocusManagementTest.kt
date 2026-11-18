@@ -400,10 +400,11 @@ class I03FocusManagementTest : TechniqueTest("I03") {
      * activates Remove Lake loop, then Cancel, then Remove Lake loop and
      * Remove. After each, the test waits for TalkBack's own focus to get
      * where it should, listens while TalkBack speaks, and then requires its
-     * focus to stay there for the last interval. In good-material it then
-     * removes Ridge trail and moves keyboard focus on before the example's
-     * delayed request is due: TalkBack, which follows keyboard focus, must
-     * not be pulled back to Remove Summit path. In bad-opens-on-focus
+     * focus to stay there for the last interval. On Android the examples
+     * only move keyboard focus after a removal, and TalkBack follows it. In
+     * good-material the test then removes Ridge trail and at once moves
+     * keyboard focus on to Back: TalkBack must follow it, and not be pulled
+     * back to Remove Summit path. In bad-opens-on-focus
      * TalkBack's focus on Remove Ridge trail asks nothing, and the click
      * action on it then asks, seen through the same read of the screen.
      * Every failure is collected, and the test fails at the end with all of
@@ -453,9 +454,11 @@ class I03FocusManagementTest : TechniqueTest("I03") {
 
             if (slug == "good-material") {
                 // Ridge trail and Summit path are left. Removing Ridge trail
-                // puts keyboard focus on Summit path and schedules the
-                // screen reader's move there. Before it is due, Shift+Tab
-                // moves keyboard focus to Back; the move must be dropped.
+                // puts keyboard focus on Summit path, and the examples send
+                // nothing more on Android. While the question is still
+                // going, Shift+Tab moves keyboard focus to Back: TalkBack
+                // follows it there, and nothing may pull it back to Summit
+                // path.
                 activate("i03-$slug-remove-ridge")
                 Thread.sleep(3_000)
                 activate("i03-$slug-confirm", "i03-$slug-moved-on")

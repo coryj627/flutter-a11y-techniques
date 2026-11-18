@@ -243,3 +243,12 @@ activated with VO-Space or with Enter.
   Remove C.
 - **`onFocusChange` that opens a dialog** (p15, w): one VoiceOver move
   onto the button opened the dialog, and VoiceOver read it.
+
+## Afterwards
+
+The examples first sent the screen reader on a second after a removal
+(rows s3 and s4). After the second review they send it on iOS only, one
+frame after the question's route has gone, and on Android and the web
+nothing more than `requestFocus` (s1 above showed VoiceOver in Chromium
+following it at once). What that was measured to do is in
+[mutations/README.md](mutations/README.md), round two.

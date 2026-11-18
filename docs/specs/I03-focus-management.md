@@ -115,7 +115,7 @@ opened the dialog can be gone when it closes.
 
 | Slug | Variant | What it shows | Mechanism | Reqs |
 | --- | --- | --- | --- | --- |
-| `good-material` | Material | The question in an `AlertDialog`; after a removal, focus on the next trail's button | `showDialog`: the route takes focus when it opens and the screen gives it back to the button when it closes; `FocusNode.requestFocus` on the next button after a removal, and a `FocusSemanticEvent` to it a second later, once the framework has made its own request ([FL-442](../flutter-limitations.md#fl-442)) | R1 to R5 |
+| `good-material` | Material | The question in an `AlertDialog`; after a removal, focus on the next trail's button | `showDialog`: the route takes focus when it opens and the screen gives it back to the button when it closes; `FocusNode.requestFocus` on the next button after a removal; on iOS also a `FocusSemanticEvent` to it, sent one frame after the question's route has gone, after the framework's own request ([FL-442](../flutter-limitations.md#fl-442)) | R1 to R5 |
 | `good-cupertino` | Cupertino | The same in a `CupertinoActionSheet`, the Cupertino way to confirm a removal | `showCupertinoModalPopup`, the same `requestFocus` and event; Enter added on the web where the Cupertino controls handle Space only ([FL-002](../flutter-limitations.md#fl-002)) | R1 to R5 |
 | `good-widgets` | Widgets layer | The question drawn by hand in a general dialog, with focus put on Cancel when it opens | `showGeneralDialog`, `autofocus` on Cancel, the same `requestFocus` and event | R1 to R5 |
 
@@ -163,12 +163,12 @@ about that trail.
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good: guidelines in light and dark, with and without the question open; 200% text at 320 by 640 with the question open. Every example: three named Remove buttons, not focused, and "Saved: 3"; a tap asks and Remove removes. 3.2.1: Tab onto each Remove button asks nothing, and Enter asks (the positive control); in `bad-opens-on-focus` the Tab onto Remove Ridge trail alone asks, after a Tab onto Back that did not, and focus coming back from Cancel does not ask again. 2.4.3: Enter on Remove Lake loop puts focus in the question (the route's scope, then the first control; Cancel itself in `good-widgets`); Cancel puts it back on Remove Lake loop and Tab goes on to Remove Summit path; Remove puts it on Remove Summit path, and on the button before when the last trail goes. `bad-focus-left-behind`: focus stays on Remove Lake loop's node, the next Tab goes to Remove Summit path's, then Cancel; after Cancel focus is on the screen and on no control, and Tab goes to Back. The screen reader, as far as a widget test can see it: on Android and iOS, after Cancel the framework sends the platform a request to put the screen reader's focus on Remove Lake loop; after Remove, that request, for a button that is gone, and then the example's own for Remove Summit path; and, in the same launch as a removal whose request is sent, a request still to come that is not sent when keyboard focus has moved on before it is due. The SDK alone: a `CupertinoAlertDialog`'s actions take no focus (FL-440); a removed control hands focus to the control focused before it, past its neighbour; a `CupertinoActionSheetAction` has no action for the web's Enter (FL-002) and `good-cupertino`'s do; an action sheet's own text colours fail the contrast check (FL-441) |
+| L1 widget tests | Good: guidelines in light and dark, with and without the question open; 200% text at 320 by 640 with the question open. Every example: three named Remove buttons, not focused, and "Saved: 3"; a tap asks and Remove removes. 3.2.1: Tab onto each Remove button asks nothing, and Enter asks (the positive control); in `bad-opens-on-focus` the Tab onto Remove Ridge trail alone asks, after a Tab onto Back that did not, and focus coming back from Cancel does not ask again. 2.4.3: Enter on Remove Lake loop puts focus in the question (the route's scope, then the first control; Cancel itself in `good-widgets`); Cancel puts it back on Remove Lake loop and Tab goes on to Remove Summit path; Remove puts it on Remove Summit path, and on the button before when the last trail goes. `bad-focus-left-behind`: focus stays on Remove Lake loop's node, the next Tab goes to Remove Summit path's, then Cancel; after Cancel focus is on the screen and on no control, and Tab goes to Back. The screen reader, as far as a widget test can see it: on Android and iOS, after Cancel the framework sends the platform a request to put the screen reader's focus on Remove Lake loop; after Remove, that request, for a button that is gone, and then, on iOS only, the example's own for Remove Summit path (on Android nothing more), and after it nothing more, though the screen reader is then reported on another button; and, on iOS, in the same launch as a removal whose request is sent, a request still to come that is not sent when keyboard focus has moved on while the question is closing, with the page out of the semantics tree until it has gone. The SDK alone: a `CupertinoAlertDialog`'s actions take no focus (FL-440); a removed control hands focus to the control focused before it, past its neighbour; a `CupertinoActionSheetAction` has no action for the web's Enter (FL-002) and `good-cupertino`'s do; an action sheet's own text colours fail the contrast check (FL-441) |
 | L3 web | The same keyboard stops from `document.activeElement`; where the DOM focus is when each question opens (the dialog's title, nothing for the action sheet, Cancel for the general dialog); a stop behind the question named by Enter; focus put on an element and a click, as VoiceOver gives them, bring focus back to Remove Lake loop and on to Remove Summit path; in `bad-opens-on-focus` DOM focus alone asks |
 | L3 Android | Names, class, and count; the same keyboard stops by `isFocused`, with Shift+Tab after a removal; a stop behind the question named by Enter |
 | L3 iOS | Labels, type, and count; every stop named by what Space does |
-| L4 TalkBack | TalkBack activates Remove Lake loop, then Cancel, then Remove Lake loop and Remove; after each the test reads where TalkBack's own focus went (`isAccessibilityFocused`): into the question, back to Remove Lake loop, on to Remove Summit path, and it must stay there for the last two seconds of a ten-second window, so that a later move cannot be missed; and what TalkBack said is recorded. In `good-material`, Ridge trail is then removed and Shift+Tab moves keyboard focus to Back before the example's request is due: TalkBack must not end on Remove Summit path. In `bad-opens-on-focus` TalkBack's focus on a Remove button asks nothing, and the click action then asks, both seen through one read of the app's window that must hold the list |
-| L4 VoiceOver iOS | The same with VoiceOver's own double tap; where the cursor is is read three seconds after the speech, by one move back and one forward again |
+| L4 TalkBack | TalkBack activates Remove Lake loop, then Cancel, then Remove Lake loop and Remove; after each the test reads where TalkBack's own focus went (`isAccessibilityFocused`): into the question, back to Remove Lake loop, on to Remove Summit path, and it must stay there for the last two seconds of a ten-second window, so that a later move cannot be missed; and what TalkBack said is recorded. In `good-material`, Ridge trail is then removed and Shift+Tab moves keyboard focus to Back while the question is still closing: TalkBack must follow it and not end on Remove Summit path. In `bad-opens-on-focus` TalkBack's focus on a Remove button asks nothing, and the click action then asks, both seen through one read of the app's window that must hold the list |
+| L4 VoiceOver iOS | The same with VoiceOver's own double tap; where the cursor is is read three seconds after the speech, by one move back and one forward again. Then Summit path is removed: what VoiceOver first says after the double tap must be Remove Ridge trail, and at once VoiceOver's own command moves its cursor one element back, to "Saved trails", keyboard focus staying on Remove Ridge trail: three seconds later the cursor must still be there |
 | L4 VoiceOver web | The same with VoiceOver's own activation |
 
 ## 7. What the build found (Flutter 3.47.5)
@@ -247,19 +247,28 @@ screen reader's focus was measured.
   the examples' own request removed, or sent after 250 ms, TalkBack still
   ended and stayed on the next button (mutation runs m1 to m3,
   [evidence/probes/i03/mutations](../evidence/probes/i03/mutations/README.md));
-  what makes the difference was not found. Waiting until the route had gone before moving focus,
-  or sending a `FocusSemanticEvent` to the next row a second later, put
-  TalkBack on the next row. On iOS VoiceOver went to Back after
-  `requestFocus` with or without a dialog, and to the next row with the
-  event a second later; whether an event sent sooner would be undone by
-  the framework's request was not measured there. The good examples
-  move keyboard focus at once and send the event a second later; on the
-  web the event does nothing and VoiceOver follows the keyboard focus at
-  once. The delay is a timing workaround (FL-442 says what it waits for):
-  the event is dropped when a new question opens, the trail has gone, or
-  keyboard focus has left the button, so a user who has gone on is not
-  pulled back; a screen reader's own swipe in that second cannot be told
-  apart from the framework's move, and is not guarded against.
+  what makes the difference was not found. Waiting until the route had
+  gone before moving focus, or sending a `FocusSemanticEvent` to the next
+  row a second later, put TalkBack on the next row. On iOS VoiceOver went
+  to Back after `requestFocus` with or without a dialog, and to the next
+  row with the event a second later (probe). The good examples move
+  keyboard focus at once and, on iOS only, send the event one frame after
+  the question's route has gone (`ModalRoute.completed`, then
+  `endOfFrame`), which puts it after the framework's request (the I03
+  widget test records the order; sent when `completed` completes, it
+  comes first) and sent VoiceOver to the next button, where it stayed
+  (the I03 VoiceOver walk on iOS). No delay is waited out: until the
+  route has gone, the page under it is out of the semantics tree, so a
+  screen reader user cannot have moved on to it yet; a move of
+  VoiceOver's own made as soon as it has spoken the next button is left
+  alone (`moved on` in the walk). VoiceOver spoke the next button 1.4 to
+  1.7 s after the double tap; a move made before that, while it had said
+  nothing yet, ended on the next button, and whether the question was
+  still closing then is not known (FL-442). The event is not sent when a new question has been asked, the
+  trail has gone, or keyboard focus has left the button. On Android
+  nothing more is sent, as TalkBack follows `requestFocus`; on the web
+  nothing is sent either, as the event does nothing there and VoiceOver
+  follows DOM focus, which follows `requestFocus` at once.
 - **`requestFocus: false` leaves keyboard focus behind the dialog, and
   loses it on the way back** (keyboard; the I03 tests on every layer,
   and the probe in a widget test, on the web, and on Android).
