@@ -85,7 +85,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-039](#fl-039) | On Android a hint is the end of the content description, not a hint | Android | Confirmed (source read) |
 | [FL-040](#fl-040) | `Semantics(hint:)` around a Material button stays on a node of its own | All | Confirmed |
 | [FL-041](#fl-041) | On web a hint on a node with no label is not rendered, unless the node is a text field | Web | Confirmed (source read) |
-| [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed once; not explored |
+| [FL-042](#fl-042) | On iOS an obscured text field is a secure text field only while it is being edited | iOS | Confirmed |
 | [FL-043](#fl-043) | `Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS | All | Confirmed |
 | [FL-044](#fl-044) | A mixed checkbox is exposed as not checked on the web, on iOS, and on Android before 16, and TalkBack says no state for it | All | Confirmed |
 | [FL-045](#fl-045) | TalkBack says no state for a checkbox or radio button that is not checked | Android | Confirmed; cause not found |
@@ -103,6 +103,10 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-125](#fl-125) | On the web a slider's minimum, maximum, and current value are stand-ins | Web | Confirmed |
 | [FL-126](#fl-126) | A `RangeSlider` has two unnamed sliders on the web and one value on Android when merged | Android, iOS, Web | Observed |
 | [FL-127](#fl-127) | On the web a slider is disabled for half a second after any pointer event, and VoiceOver calls it "dimmed" | Web | Confirmed |
+| [FL-160](#fl-160) | On Android, turning suggestions off on an email field replaces the email keyboard with one that has no "@" | Android | Confirmed |
+| [FL-161](#fl-161) | On the web autofill hints do not reach `autocomplete`, except on an obscured field once it is focused | Web | Confirmed |
+| [FL-162](#fl-162) | On the web the number and decimal keyboard types leave nothing in the page, so a phone's browser shows its general keyboard | Web | Confirmed |
+| [FL-163](#fl-163) | On iOS the number, decimal, and phone pads have no return key, and a tap outside the field does not end editing | iOS | Confirmed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
@@ -1266,27 +1270,44 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-042
 
-**An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS.**
+**On iOS an obscured text field is a secure text field only while it is being edited.**
 
-- Status: Observed once, Flutter 3.47.5, iOS 27.0 simulator, in the first
-  build of the S15 field examples, which were password fields. Those
-  examples were changed to an ordinary field, so no test, fixture, or
-  transcript in the repository shows this now. Not explored.
-- What was seen: for `TextField(obscureText: true)` with VoiceOver's cursor
-  moved onto it and the field not being edited, XCUITest reported
-  `XCUIElementType.textField` (not `.secureTextField`) and VoiceOver said
-  "Password, Text field". On the web the same field was a secure field to
-  VoiceOver ("This is a secure text field"), and TalkBack read "password.
-  Edit box".
-- What is not known: what the field is while it is being edited. Flutter's
-  iOS text input plugin sets `secureTextEntry` from `obscureText`, and a
-  focused field is represented by the plugin's input view, so the role and
-  what VoiceOver echoes may differ there. That was not tested.
-- Why it could matter: "secure" tells a VoiceOver user that what they type
-  will not be echoed or shown.
-- Next: this belongs to the text field technique ([F01](techniques/F01.md))
-  or F03. It needs a probe of the element type and of VoiceOver's speech
-  before and during editing before anything is concluded.
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator. First seen once
+  in S15's first build; settled by the F03 probe
+  (`docs/evidence/probes/f03`, fixtures 13 to 16) and asserted on
+  `/t/F03/good-sign-in` by `F03KeyboardTypesUITests` (the tree, before,
+  during, and after editing) and by its VoiceOver walk, each written to
+  fail when the field is secure before it is edited. Engine source read:
+  `TextInputSemanticsObject.mm`, which presents a text field's
+  accessibility through the plugin's input view while the field is
+  focused and through a plain stand-in (`FlutterInactiveTextInput`, which
+  has no secure entry) otherwise; `FlutterTextInputPlugin.mm` sets
+  `secureTextEntry` on the input view from `obscureText`.
+- What happens: `TextField(obscureText: true)` that is not being edited is
+  `XCUIElementType.textField`, and VoiceOver reads it "Password Text field
+  Double tap to edit.", as it reads any field. Once it is tapped it is a
+  `.secureTextField`, and VoiceOver reads "Password Secure text field Is
+  editing •••" with "abc" typed. When editing moves to another field it
+  is a `.textField` again, with "•••" as its value. Its text is never
+  exposed: the value is bullets before, during, and after editing.
+- On the other platforms (F03): Android gives the node its password flag
+  at all times, and TalkBack reads "Password", "password. Edit box", and
+  with "abc" typed "password. 3 characters"
+  (`docs/evidence/F03/talkback-android.md`). The web has
+  `<input type="password">` at all times; what VoiceOver says there is in
+  `docs/evidence/F03/voiceover-web.md`.
+- Effect: a VoiceOver user moving through a form on iOS is not told that a
+  field is a password field until they start to edit it. The label still
+  says "Password", and what is typed is not read out. Not counted as a
+  WCAG failure here: the field's role, a text field, is right, and the
+  secure state is there whenever text is entered.
+- Workaround: none needed for the text; none in the SDK for the state.
+  `Semantics(obscured:)` sets the same flag `obscureText` does, and the
+  iOS engine does not read that flag anywhere (read in the source, not
+  tried).
+- How to read this entry: Flutter has not yet exposed an obscured field
+  as secure on iOS before it is edited. Re-check when the pinned version
+  changes.
 - Upstream issue: not searched yet (D25).
 
 ## FL-043
@@ -1761,6 +1782,158 @@ yet), **Fixed in x.y** (verified on that version).
   event is lost (measured as above). First noticed in S01
   ([FL-028](#fl-028)).
 - Workaround: none in the SDK.
+- Upstream issue: not searched yet (D25).
+
+## FL-160
+
+**On Android, turning suggestions off on an email field replaces the email keyboard with one that has no "@".**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator, Gboard. Found
+  in the F03 probe (`docs/evidence/probes/f03`, fixture 09) and asserted
+  by `F03KeyboardTypesTest.fieldsAskForTheirKeyboardAndPurpose` on
+  `/t/F03/bad-email-no-suggestions`, written to fail when the email
+  variation is kept. Engine source read:
+  `inputTypeFromTextInputType` in `TextInputPlugin.java`.
+- What happens: `TextField(keyboardType: TextInputType.emailAddress,
+  enableSuggestions: false)` asks the input method for input type
+  `0x800b1`. The engine starts from the email variation (`0x20`) and, for
+  `enableSuggestions: false`, adds `TYPE_TEXT_FLAG_NO_SUGGESTIONS` and
+  `TYPE_TEXT_VARIATION_VISIBLE_PASSWORD` (`0x90`) with a bitwise or. A
+  variation is a number, not a set of flags: `0x20 | 0x90` is `0xb0`,
+  `TYPE_TEXT_VARIATION_FILTER`. Gboard then shows its general keyboard,
+  with "," where the email keyboard has "@" (the keys are read from the
+  keyboard's window in the same test; the probe's screenshots, not kept,
+  show the same). The same field with suggestions on asks for `0x21` and
+  gets the "@" key.
+- Read in the source, not measured: the same or applies to the other text
+  variations. A URL field with suggestions off becomes a visible password
+  field (`0x10 | 0x90` is `0x90`), and a name field gets `0xf0`, which is
+  no defined variation. An obscured field is not affected, because the
+  suggestions branch is not taken for it.
+- iOS and the web keep the email keyboard: iOS shows "@" (the F03 iOS
+  test), and the web's `inputmode="email"` is unchanged.
+- Effect: a person typing an address has to switch to the symbols page
+  for "@". That is extra work, and real work for someone who types slowly
+  or with a switch; it fails no WCAG criterion as written. What else the
+  filter variation changes in Gboard was not looked at.
+- Workaround: leave `enableSuggestions` on for an email field and turn
+  off only `autocorrect`, which on its own does not touch the variation
+  (`good-contact`'s email field, input type `0x21`).
+- How to read this entry: Flutter has not made `enableSuggestions` keep a
+  field's keyboard variation yet. Re-check when the pinned version
+  changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-161
+
+**On the web autofill hints do not reach `autocomplete`, except on an obscured field once it is focused.**
+
+- Status: Confirmed, Flutter 3.47.5, web (Chromium and WebKit builds of
+  Playwright, desktop, and with a phone's user agent and platform).
+  Found in the F03 probe (`docs/evidence/probes/f03`, `web.txt` and
+  `web2.txt`) and asserted on every F03 field by
+  `web_tests/f03_keyboard_types.spec.js`, written to fail when a hint
+  arrives. Engine source read: `semantics/text_field.dart` and
+  `text_editing/text_editing.dart`.
+- What happens: a field's `<input>` is created with `autocomplete="off"`.
+  When editing starts, the text editing code writes the field's first
+  autofill hint as `autocomplete`, `name`, and `id` (`AutofillInfo.
+  applyToDomElement`). The semantics code then sets `autocomplete="off"`
+  again on every update of the field's node (`_updateInputType`), which
+  happens straight away and at every key. Measured: a field with
+  `AutofillHints.name`, `telephoneNumber`, `username`, or `url` has
+  `autocomplete="off"` before, while, and after it is edited, and
+  `name="name"` (or `tel`, `username`, `url`) from the first edit on.
+  Two exceptions, both from the same function:
+  - a field with `keyboardType: TextInputType.emailAddress` has
+    `autocomplete="email"` and `inputmode="email"` at all times, whatever
+    its hints, set by the semantics code from the field's input type;
+  - an obscured field is given `type="password"` and its `autocomplete`
+    is left alone, so it has "off" until it is first focused and then its
+    hint, such as `current-password` or `new-password`.
+  A multi-line field gets "on" once focused.
+- Effect: on the web the purpose of a name, a phone number, a username,
+  or any other field that is not an email address or a password cannot be
+  programmatically determined, so it fails 1.3.5 Identify Input Purpose
+  however the app is written. A browser can still guess from the `name`
+  attribute; a guess is not what 1.3.5 or H98 ask for. Before a password
+  field has been focused, nothing says it is one either.
+- Workaround: none in the SDK. For an email field, the email keyboard
+  type is what gives it `autocomplete="email"`; an email field without it
+  loses its purpose (`/t/F03/bad-default-keyboard`). A native `<input>`
+  through `HtmlElementView` would be a D32 workaround; the catalog has no
+  workaround kind yet, and none is built.
+- How to read this entry: Flutter has not yet kept a field's autofill
+  hint on the web. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-162
+
+**On the web the number and decimal keyboard types leave nothing in the page, so a phone's browser shows its general keyboard.**
+
+- Status: Confirmed, Flutter 3.47.5, web, Playwright's Chromium with an
+  Android phone's user agent and platform. Found in the F03 probe
+  (`docs/evidence/probes/f03/web2.txt`) and asserted by
+  `web_tests/f03_keyboard_types.spec.js` ("as on an Android phone"),
+  written to fail when `inputmode="numeric"` or `"decimal"` arrives.
+  Engine source read: `semantics/text_field.dart` and
+  `text_editing/input_type.dart`.
+- What happens: on a phone the text editing code can write `inputmode`
+  for a number (`numeric`), decimal (`decimal`), or phone (`tel`) field,
+  and `enterkeyhint` for its action; on a desktop browser it writes
+  neither. But the semantics code removes `inputmode` on every update of
+  the field's node and puts back only what it knows: `inputmode="email"`
+  for an email field, `type="tel"` for a phone field, `type="url"` for a
+  URL field, `type="search"` for a search field. Measured with a phone's
+  user agent and platform: a number and a decimal field have no
+  `inputmode` and `type="text"`; email, phone, and URL fields have their
+  attributes; and every field has the `enterkeyhint` of its action
+  (`next`, `done`, `enter` for a multi-line field), which the semantics
+  code does not touch.
+- Effect: in a phone's browser an amount or a count field gets the
+  general keyboard, and the digits are on its second page. A name field
+  that asks for the number keyboard (`bad-number-for-name`) is not
+  harmed on the web, for the same reason.
+- Not measured: a real phone. Playwright's emulation is what was run;
+  Flutter decides that it is on a phone from `navigator.platform` and the
+  user agent, and both were set as a phone's.
+- Workaround: none in the SDK. A phone field keeps `type="tel"`, which
+  MDN describes as bringing up a telephone keypad on its own; that was
+  not seen on a phone here.
+- How to read this entry: Flutter has not yet kept `inputmode` for the
+  number keyboard types on the web. Re-check when the pinned version
+  changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-163
+
+**On iOS the number, decimal, and phone pads have no return key, and a tap outside the field does not end editing.**
+
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator. Asserted by
+  `F03KeyboardTypesUITests.testEveryFieldGetsItsKeyboard` (no return key
+  on the pads of `good-contact`'s phone field, `good-amount`, and
+  `bad-number-for-name`) and `testAPhonePadCannotBePutAwayFromTheScreen`
+  (the keyboard is still up after a tap on the "Example" heading), both
+  written to fail when that changes. Framework source read:
+  `_EditableTextTapOutsideAction` in `widgets/editable_text.dart`, which
+  ends editing on a touch outside the field only on the web, and
+  `FlutterTextInputPlugin.mm`, which sets no input accessory view.
+- What happens: iOS's number pad, decimal pad, and phone pad have no
+  return key, so a field's `textInputAction` (`done`, `next`) has no key
+  there. Native apps put a bar with "Done" above such a pad; Flutter's
+  text input plugin adds none and has no API for one. A tap elsewhere on
+  the screen leaves the field focused and the keyboard up.
+- Effect: once a number or phone field has focus, the keyboard covers
+  the lower half of the screen until something in the app takes focus
+  away. A person cannot put it away to see or reach what it covers, and
+  "next" never moves on from such a field. The Android pads have a Done
+  or Next key (the F03 Android test).
+- Workaround, not built here: end editing on a tap outside the field,
+  `TextField(onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus())`,
+  or put a button that does so beside the field. Neither has been tested
+  with VoiceOver.
+- How to read this entry: Flutter has not added a way to give an iOS pad
+  a Done key yet. Re-check when the pinned version changes.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->
