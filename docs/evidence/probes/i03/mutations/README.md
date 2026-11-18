@@ -79,3 +79,23 @@ What these runs show:
   Remove, on iOS the last request is for Remove Summit path" failed in
   every good example (`[summit, lake]` where `[lake, summit]` is
   expected; run in `flutter test`, not kept).
+
+## Round three: TalkBack's focus on Back in `moved-on`
+
+Run on 2026-11-18, after the third review. Until then the last interval
+of the TalkBack walk's `moved-on` step accepted any one stable reading
+other than Remove Summit path, so TalkBack's focus lost (`"none"`) or put
+anywhere else passed. The step now requires the reading to be Back
+itself (commit `3779652`; the committed transcript is from that run).
+Both runs changed the test, not the app: each added a step after
+Shift+Tab, four seconds after Back had been spoken, and recorded what
+happened as an extra failure line so that it shows in the log.
+
+| Run | Change to the test | What happened |
+| --- | --- | --- |
+| m6a | `ACTION_CLEAR_ACCESSIBILITY_FOCUS` on the node with TalkBack's focus | Did not take: the last interval read Back, and the walk passed but for the run's own line (`m6a_talkback_log.txt`). Clearing TalkBack's focus from the test is not a way to lose it on this emulator |
+| m6b | TalkBack's focus put on the example's count ("Saved: 1") | Failed where it should: "good-material: moved on: TalkBack's focus over the last interval: [i03-good-material-count]" (`m6b_talkback_log.txt`). The check before this round, "not Remove Summit path", would have passed that reading. The test's own reading straight after the move still said Back; TalkBack moved a moment later |
+
+A reading of `"none"` was not produced on the device (m6a), so that case
+rests on the check itself: it names one value, Back, and `"none"` is not
+it.
