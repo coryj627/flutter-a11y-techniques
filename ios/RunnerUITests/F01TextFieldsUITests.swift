@@ -18,10 +18,14 @@ final class F01TextFieldsUITests: XCTestCase, TechniqueUITest {
   /// Types into a field and leaves it, so the keyboard is gone.
   private func type(_ text: String, into id: String) {
     let field = element(id)
+    // This is the first class of the run to type, and the first time a
+    // fresh simulator shows its keyboard the app can stall for many seconds
+    // (seen on CI: the value was still empty after 5 seconds, and a second
+    // tap then timed out). Type once and give the text time to arrive.
     field.tap()
     field.typeText(text + "\n")
-    let deadline = Date().addingTimeInterval(5)
-    while (field.value as? String) != text && Date() < deadline { usleep(100_000) }
+    let deadline = Date().addingTimeInterval(45)
+    while (field.value as? String) != text && Date() < deadline { usleep(250_000) }
   }
 
   private func describe(_ id: String) -> String {
