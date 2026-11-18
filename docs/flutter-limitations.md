@@ -106,6 +106,8 @@ yet), **Fixed in x.y** (verified on that version).
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
+| [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus and is not a button | All | Confirmed |
+| [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -1768,6 +1770,74 @@ yet), **Fixed in x.y** (verified on that version).
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->
+
+## FL-400
+
+**A `CupertinoListTile` with `onTap` takes no keyboard focus and is not a button.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the I01 probe
+  (`docs/evidence/probes/i01/`, fixture `k04`) on all three platforms.
+  Asserted by the I01 widget test "FL-400", written to fail when the tile
+  takes focus or becomes a button. Framework source read:
+  `cupertino/list_tile.dart`, which wraps the tile in a `GestureDetector`
+  when `onTap` is set and in nothing else: no `Focus`, no actions for the
+  keys, no `Semantics(button: true)`. `ListTile` has all three, through
+  `InkWell` and its own `Semantics`.
+- WCAG: 2.1.1 Keyboard; 4.1.2 Name, Role, Value.
+- What happens: the tile answers a tap, and the `GestureDetector` gives it
+  a tap action, so a screen reader can activate it. The keyboard cannot:
+  Tab went past it on the web, on the Android emulator (`adb shell input
+  keyevent`), and on the iOS simulator (XCUITest's hardware keys), and the
+  node is not focusable in the semantics tree. Nothing says it can be
+  activated:
+  - Android: `android.view.View`, clickable, "k04 CupertinoListTile".
+  - iOS: static text to XCUITest; VoiceOver reads "k04 CupertinoListTile"
+    with no "Button".
+  - Web: `role="button"` (any node with a tap action is one,
+    [FL-006](#fl-006)), with no `tabindex`, so the browser's Tab skips it.
+- Why it matters: `CupertinoListTile` is the Cupertino row for a list of
+  choices or settings, and its `onTap` is documented for making the row act.
+  A keyboard or switch user cannot reach a row built that way, and a
+  screen reader user on Android or iOS is not told it is a control.
+- Workaround, in the SDK: wrap the tile in `FocusableActionDetector` with
+  actions for `ActivateIntent` and `ButtonActivateIntent`, and put
+  `Semantics(button: true)` around it, as I01 `good-cupertino` does; draw
+  a focus ring from `onShowFocusHighlight`, since the tile shows none.
+  Verified in the I01 widget, web, Android, and iOS tests: Tab reaches it,
+  Enter and Space activate it, and it is a button everywhere.
+- How to read this entry: Flutter has not added keyboard support or a role
+  to `CupertinoListTile` yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-401
+
+**An `InkWell` with `onTap` is not a button on Android and iOS.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the I01 probe
+  (`docs/evidence/probes/i01/`, fixture `k02`); asserted by the I01 widget,
+  Android, and iOS tests of `bad-inkwell-no-role` and heard in its TalkBack
+  and VoiceOver on iOS transcripts. Framework source read:
+  `material/ink_well.dart`, whose `Semantics` sets `onTap` and nothing that
+  gives a role.
+- WCAG: 4.1.2 Name, Role, Value.
+- What happens: an `InkWell` takes keyboard focus, handles Enter and Space
+  (both `ActivateIntent` and `ButtonActivateIntent`), and has a tap action,
+  so everything but the role is right. The node has no button flag.
+  - Android: `android.view.View`, clickable. TalkBack reads the text and
+    "Double-tap to activate", and never "Button".
+  - iOS: static text to XCUITest. VoiceOver reads the text alone.
+  - Web: `role="button"`, from the tap action ([FL-006](#fl-006)). Not
+    affected.
+- Why it matters: the tappable card in the `Card` API documentation is a
+  `Card` around an `InkWell`, and the same is the usual way to make any
+  Material surface tappable. A screen reader user on iOS hears a card with
+  nothing to say it does anything; on Android only the usage hint gives
+  it away, and only when hints are on.
+- Workaround, in the SDK: `Semantics(button: true)` around the `InkWell`
+  (probe fixture `k03`: a button on all three platforms), or a `ListTile`
+  with `onTap`, which is a button by itself (I01 `good-material`).
+- Upstream issue: not searched yet (D25). This may be intended: `InkWell`
+  is an ink response and not a control of a given kind.
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->
 

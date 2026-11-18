@@ -1,0 +1,22 @@
+#!/bin/sh
+# I01 probe on iOS, under tool/with_devices.py. Run from the worktree root.
+cd ios || exit 1
+run() {
+  echo "== $1"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/I01ProbeUITests/$1" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "I01PROBE|error|passed|failed|Test Case"
+}
+run testTree
+run testKeys
+run testPressAndSlideOff
+echo "== Full Keyboard Access setting before: $(xcrun simctl spawn booted defaults read com.apple.Accessibility FullKeyboardAccessEnabled 2>&1)"
+xcrun simctl spawn booted defaults write com.apple.Accessibility FullKeyboardAccessEnabled -bool true
+echo "== Full Keyboard Access setting now: $(xcrun simctl spawn booted defaults read com.apple.Accessibility FullKeyboardAccessEnabled 2>&1)"
+run testKeys
+xcrun simctl spawn booted defaults delete com.apple.Accessibility FullKeyboardAccessEnabled
+echo "== Full Keyboard Access setting restored: $(xcrun simctl spawn booted defaults read com.apple.Accessibility FullKeyboardAccessEnabled 2>&1)"
+run testVoiceOverActivate
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

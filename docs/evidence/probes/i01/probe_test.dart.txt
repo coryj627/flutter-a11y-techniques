@@ -1,0 +1,88 @@
+// I01 probe (throwaway, not committed): the probe fixtures under flutter_test.
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+String _log(WidgetTester t) => t
+    .widget<Text>(find.textContaining('Log: '))
+    .data!;
+String _focus(WidgetTester t) => t
+    .widget<Text>(find.textContaining('Focus: '))
+    .data!;
+
+void main() {
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets('probe on ${platform.name}', (tester) async {
+      debugDefaultTargetPlatformOverride = platform;
+      final handle = tester.ensureSemantics();
+      tester.view.physicalSize = const Size(1200, 2400);
+      tester.view.devicePixelRatio = 1;
+      await tester.pumpWidget(const MaterialApp(home: ProbeScreen()));
+      await tester.pumpAndSettle();
+      // The semantics of each fixture.
+      for (var i = 1; i <= 14; i++) {
+        final id = 'k${i.toString().padLeft(2, '0')}';
+        final node = find.semantics.byPredicate(
+          (n) => !n.isMergedIntoParent && n.getSemanticsData().identifier == id,
+        );
+        final d = node.evaluate().single.getSemanticsData();
+        final f = d.flagsCollection;
+        // ignore: avoid_print
+        print('I01PROBE $id label="${d.label}" button=${f.isButton} '
+            'focused=${f.isFocused} enabled=${f.isEnabled} '
+            'tap=${d.hasAction(SemanticsAction.tap)} '
+            'focusAction=${d.hasAction(SemanticsAction.focus)}');
+      }
+      // Tab through, recording focus; then Enter and Space on each stop.
+      for (var i = 0; i < 16; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pumpAndSettle();
+        final focus = _focus(tester);
+        final before = _log(tester);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pumpAndSettle();
+        final afterEnter = _log(tester);
+        await tester.sendKeyEvent(LogicalKeyboardKey.space);
+        await tester.pumpAndSettle();
+        final afterSpace = _log(tester);
+        // ignore: avoid_print
+        print('I01PROBE tab $i: $focus | enter added '
+            '"${afterEnter.substring(before.length)}" | space added '
+            '"${afterSpace.substring(afterEnter.length)}"');
+      }
+      // Pointer down without up, then moved off and released: k01, k06, k09.
+      for (final text in ['k01 ListTile', 'k06 FAD tile', 'k09 onTapDown', 'k10 Listener', 'k04 CupertinoListTile']) {
+        final before = _log(tester);
+        final g = await tester.startGesture(tester.getCenter(find.text(text)));
+        await tester.pump(const Duration(milliseconds: 100));
+        final down = _log(tester);
+        await g.moveBy(const Offset(0, 300));
+        await tester.pump();
+        await g.up();
+        await tester.pumpAndSettle();
+        // ignore: avoid_print
+        print('I01PROBE press-and-slide-off $text: on down "${down.substring(before.length)}", '
+            'after "${_log(tester).substring(down.length)}"');
+      }
+      // Semantics tap on k10 and k13.
+      for (final id in ['k10', 'k13', 'k04', 'k07']) {
+        final before = _log(tester);
+        final node = find.semantics.byPredicate(
+          (n) => !n.isMergedIntoParent && n.getSemanticsData().identifier == id,
+        );
+        if (node.evaluate().single.getSemanticsData().hasAction(SemanticsAction.tap)) {
+          tester.semantics.tap(node);
+          await tester.pumpAndSettle();
+        }
+        // ignore: avoid_print
+        print('I01PROBE semantics tap $id: "${_log(tester).substring(before.length)}"');
+      }
+      handle.dispose();
+      debugDefaultTargetPlatformOverride = null;
+      tester.view.reset();
+    });
+  }
+}

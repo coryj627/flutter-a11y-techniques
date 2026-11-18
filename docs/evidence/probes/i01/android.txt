@@ -1,0 +1,192 @@
+== input devices (keyboards)
+    1: qwerty2 (aka device 0 - built-in keyboard)
+    2: virtio_input_multi_touch_11
+    3: virtio_input_multi_touch_10
+    5: virtio_input_multi_touch_8
+    6: virtio_input_multi_touch_7
+    7: virtio_input_multi_touch_6
+    8: virtio_input_multi_touch_5
+    9: virtio_input_multi_touch_4
+    11: virtio_input_multi_touch_2
+    12: virtio_input_multi_touch_1
+    13: gpio-keys
+    10: virtio_input_multi_touch_3
+    4: virtio_input_multi_touch_9
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD | DPAD
+    KeyboardType: 2
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD
+    KeyboardType: 1
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD | DPAD
+    KeyboardType: 2
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+    Sources: KEYBOARD | TOUCHSCREEN | STYLUS
+    KeyboardType: 1
+      0: name=fd0b4e3 ScreenDecorOverlayBottom, id=80, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SLIPPERY, alpha=1, frame=[0,2361][1080,2424], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=1137, ownerUid=10198, dispatchingTimeout=15000ms, token=0xb40074fe6c0d5d50, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+      1: name=d62d575 ScreenDecorOverlay, id=78, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SLIPPERY, alpha=1, frame=[0,0][1080,142], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=1137, ownerUid=10198, dispatchingTimeout=15000ms, token=0xb40074fe6c0d6290, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+      2: name=PointerEventDispatcherOverlay0, id=33, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY | DO_NOT_PILFER, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=PointerEventDispatcherOverlay0, applicationInfo.token=<null>, touchableRegion=[-10800,-24240][10800,24240], ownerPid=660, ownerUid=1000, dispatchingTimeout=15000ms, token=0xb40074fe6c0fc810, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+      3: name=stylus-handwriting-event-receiver-0, id=139, displayId=0, inputConfig=NOT_FOCUSABLE | NOT_TOUCHABLE | TRUSTED_OVERLAY | SPY | INTERCEPTS_STYLUS, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=stylus-handwriting-event-receiver-0, applicationInfo.token=<null>, touchableRegion=[-10800,-24240][10800,24240], ownerPid=660, ownerUid=1000, dispatchingTimeout=15000ms, token=0xb40074fe6c0cec90, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+      4: name=[Gesture Monitor] swipe-up, id=91, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=[Gesture Monitor] swipe-up, applicationInfo.token=<null>, touchableRegion=[-10800,-24240][10800,24240], ownerPid=1440, ownerUid=10197, dispatchingTimeout=15000ms, token=0xb40074fe6c0d3f10, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+      5: name=[Gesture Monitor] edge-swipe, id=75, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=[Gesture Monitor] edge-swipe, applicationInfo.token=<null>, touchableRegion=[-10800,-24240][10800,24240], ownerPid=1137, ownerUid=10198, dispatchingTimeout=15000ms, token=0xb40074fe6c0cfe10, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+      6: name=ecedfb4 Taskbar, id=61, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | WATCH_OUTSIDE_TOUCH | SLIPPERY, alpha=1, frame=[0,2361][1080,2424], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=1440, ownerUid=10197, dispatchingTimeout=15000ms, token=0xb40074fe6c0c9910, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+      7: name=ef1a04f StatusBar, id=90, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY, alpha=1, frame=[0,0][1080,142], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[0,0][1080,142], ownerPid=1137, ownerUid=10198, dispatchingTimeout=15000ms, token=0xb40074fe6c0d8650, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+      8: name=bccdc44 ActivityRecordInputSink com.google.android.marvin.talkback/com.android.talkback.TalkBackPreferencesActivity, id=17707, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE, alpha=0, frame=[0,302][0,302], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[0,302][1080,2726], ownerPid=660, ownerUid=1000, dispatchingTimeout=0ms, token=0, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=363, verifiedTransparentRegion=<empty>
+      9: name=a4f6dc7 ActivityRecordInputSink com.google.android.permissioncontroller/com.android.permissioncontroller.permission.ui.GrantPermissionsActivity, id=17518, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE, alpha=0, frame=[0,0][0,0], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[-10800,-24240][10800,24240], ownerPid=660, ownerUid=1000, dispatchingTimeout=0ms, token=0, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=360, verifiedTransparentRegion=<empty>
+      10: name=Dim layer#69, id=69, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=1137, ownerUid=10198, dispatchingTimeout=5000ms, token=0, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=7, verifiedTransparentRegion=<empty>
+      11: name=Dim layer#68, id=68, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=1137, ownerUid=10198, dispatchingTimeout=5000ms, token=0, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=6, verifiedTransparentRegion=<empty>
+      12: name=14c408e com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity, id=17735, displayId=0, inputConfig=DUPLICATE_TOUCH_TO_WALLPAPER, alpha=1, frame=[0,0][1080,2424], globalScale=1, applicationInfo.name=ActivityRecord{214329882 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t3}, applicationInfo.token=0xb40074fcac0d8410, touchableRegion=[0,0][1080,2424], ownerPid=1440, ownerUid=10197, dispatchingTimeout=15000ms, token=0xb40074fe6c0d2890, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=3, verifiedTransparentRegion=<empty>
+      13: name=2ef60c5 ActivityRecordInputSink com.google.android.apps.nexuslauncher/.NexusLauncherActivity, id=58, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_FOCUSABLE, alpha=1, frame=[0,0][0,0], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[-10800,-24240][10800,24240], ownerPid=660, ownerUid=1000, dispatchingTimeout=0ms, token=0, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=3, verifiedTransparentRegion=<empty>
+      14: name=[Gesture Monitor] minus-one, id=134, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=[Gesture Monitor] minus-one, applicationInfo.token=<null>, touchableRegion=[-10800,-24240][10800,24240], ownerPid=1440, ownerUid=10197, dispatchingTimeout=15000ms, token=0xb40074fe6c104610, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=3, verifiedTransparentRegion=<empty>
+      15: name=b665868 TaskInputSink 3, id=111, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_FOCUSABLE, alpha=1, frame=[0,0][0,0], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[-10800,-24240][10800,24240], ownerPid=660, ownerUid=1000, dispatchingTimeout=0ms, token=0, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=3, verifiedTransparentRegion=<empty>
+      16: name=Wallpaper BBQ wrapper#42, id=42, displayId=0, inputConfig=NO_INPUT_CHANNEL, alpha=1, frame=[-54,-121][2347,2545], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=1137, ownerUid=10198, dispatchingTimeout=5000ms, token=0, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+      17: name=afb36f2 com.android.systemui.wallpapers.ImageWallpaper, id=40, displayId=0, inputConfig=NOT_FOCUSABLE | NOT_TOUCHABLE | IS_WALLPAPER, alpha=1, frame=[-54,-121][-54,-121], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=1137, ownerUid=10198, dispatchingTimeout=15000ms, token=0xb40074fe6c0eae50, touchOcclusionMode=BLOCK_UNTRUSTED, focusGroup=0, verifiedTransparentRegion=<empty>
+    546: channelName='c3d98e5 InputMethod', status=NORMAL, isFocusMonitor=false, responsive=true
+    774: channelName='[Gesture Monitor] minus-one', status=NORMAL, isFocusMonitor=false, responsive=true
+    661: channelName='recents_animation_input_consumer', status=NORMAL, isFocusMonitor=false, responsive=true
+    602: channelName='[Gesture Monitor] swipe-up', status=NORMAL, isFocusMonitor=false, responsive=true
+    612: channelName='5eb6656 NotificationShade', status=NORMAL, isFocusMonitor=false, responsive=true
+    558: channelName='stylus-handwriting-event-receiver-0', status=NORMAL, isFocusMonitor=false, responsive=true
+    611: channelName='[Gesture Monitor] edge-swipe', status=NORMAL, isFocusMonitor=false, responsive=true
+    617: channelName='ef1a04f StatusBar', status=NORMAL, isFocusMonitor=false, responsive=true
+    610: channelName='18d1a27 DisplayBackGestureHandler 0', status=NORMAL, isFocusMonitor=false, responsive=true
+    590: channelName='d62d575 ScreenDecorOverlay', status=NORMAL, isFocusMonitor=false, responsive=true
+    608: channelName='b6a88bc ShellDropTarget', status=NORMAL, isFocusMonitor=false, responsive=true
+    495: channelName='ecedfb4 Taskbar', status=NORMAL, isFocusMonitor=false, responsive=true
+    588: channelName='afb36f2 com.android.systemui.wallpapers.ImageWallpaper', status=NORMAL, isFocusMonitor=false, responsive=true
+    603: channelName='14c408e com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity', status=NORMAL, isFocusMonitor=false, responsive=true
+    592: channelName='fd0b4e3 ScreenDecorOverlayBottom', status=NORMAL, isFocusMonitor=false, responsive=true
+    518: channelName='df54bcd com.google.android.marvin.talkback/com.android.talkback.TalkBackPreferencesActivity', status=NORMAL, isFocusMonitor=false, responsive=true
+    647: channelName='ce0d96f com.google.android.permissioncontroller/com.android.permissioncontroller.permission.ui.GrantPermissionsActivity', status=NORMAL, isFocusMonitor=false, responsive=true
+    230: channelName='PointerEventDispatcher0', status=NORMAL, isFocusMonitor=false, responsive=true
+    0: name='[Gesture Monitor] minus-one', InputChannel token=android.os.BinderProxy@c065702, displayId=0
+    1: name='[Gesture Monitor] swipe-up', InputChannel token=android.os.BinderProxy@822b16b, displayId=0
+    2: name='[Gesture Monitor] edge-swipe', InputChannel token=android.os.BinderProxy@6c1271f, displayId=0
+      0: pid=1137, monitored devices=[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+      0: DeviceId=3, Name='virtio_input_multi_touch_1', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      1: DeviceId=4, Name='virtio_input_multi_touch_2', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      2: DeviceId=5, Name='virtio_input_multi_touch_3', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      3: DeviceId=6, Name='virtio_input_multi_touch_4', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      4: DeviceId=7, Name='virtio_input_multi_touch_5', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      5: DeviceId=8, Name='virtio_input_multi_touch_6', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      6: DeviceId=9, Name='virtio_input_multi_touch_7', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      7: DeviceId=10, Name='virtio_input_multi_touch_8', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      8: DeviceId=11, Name='virtio_input_multi_touch_9', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      9: DeviceId=12, Name='virtio_input_multi_touch_10', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+      10: DeviceId=13, Name='virtio_input_multi_touch_11', NativeBattery=State{<not present>}, UEventListener=none, BluetoothState=null
+== settings
+show_ime_with_hard_keyboard: 0
+emulator hw keyboard prop qemu.hw.mainkeys: 
+17 API 37
+== tree at start
+Focus: _ModalScopeState&lt;dynamic&gt; Focus Scope | Log: -
+  k01 class=android.widget.Button desc='k01 ListTile' clickable=true focusable=true focused=false bounds=[21,289][1059,415]
+  k02 class=android.view.View desc='k02 InkWell' clickable=true focusable=true focused=false bounds=[21,426][1059,541]
+  k03 class=android.widget.Button desc='k03 InkWell button' clickable=true focusable=true focused=false bounds=[21,552][1059,667]
+  k04 class=android.view.View desc='k04 CupertinoListTile' clickable=true focusable=true focused=false bounds=[21,678][1059,793]
+  k05 class=android.widget.Button desc='k05 CupertinoListTile in FAD' clickable=true focusable=true focused=false bounds=[21,804][1059,919]
+  k06 class=android.widget.Button desc='k06 FAD tile' clickable=true focusable=true focused=false bounds=[21,930][1059,1045]
+  k07 class=android.widget.Button desc='k07 gesture button' clickable=true focusable=true focused=false bounds=[21,1056][1059,1171]
+  k08 class=android.widget.Button desc='k08 Focus, no actions' clickable=true focusable=true focused=false bounds=[21,1182][1059,1297]
+  k09 class=android.widget.Button desc='k09 onTapDown' clickable=true focusable=true focused=false bounds=[21,1308][1059,1423]
+  k10 class=android.widget.Button desc='k10 Listener' clickable=false focusable=true focused=false bounds=[21,1434][1059,1549]
+  k11 class=android.widget.Button desc='k11 CupertinoButton' clickable=true focusable=true focused=false bounds=[21,1560][515,1696]
+  k12 class=android.widget.Button desc='k12 TextButton' clickable=true focusable=true focused=false bounds=[21,1707][337,1833]
+  k13 class=android.widget.Button desc='k13 keys and semantics only' clickable=true focusable=true focused=false bounds=[21,1843][1059,1959]
+  k14 class=android.view.View desc='k14 FAD, no button role' clickable=true focusable=true focused=false bounds=[21,1969][1059,2085]
+== Tab by adb shell input keyevent KEYCODE_TAB
+tab 1: Focus: _ModalScopeState&lt;dynamic&gt; Focus Scope | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+tab 2: Focus: k01 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k01 class=android.widget.Button desc='k01 ListTile'
+tab 3: Focus: k02 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k02 class=android.view.View desc='k02 InkWell'
+tab 4: Focus: k03 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k03 class=android.widget.Button desc='k03 InkWell button'
+tab 5: Focus: k05 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k05 class=android.widget.Button desc='k05 CupertinoListTile in FAD'
+tab 6: Focus: k06 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k06 class=android.widget.Button desc='k06 FAD tile'
+tab 7: Focus: k08 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k08 class=android.widget.Button desc='k08 Focus, no actions'
+tab 8: Focus: k09 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k09 class=android.widget.Button desc='k09 onTapDown'
+tab 9: Focus: k11 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k11 class=android.widget.Button desc='k11 CupertinoButton'
+tab 10: Focus: k12 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k12 class=android.widget.Button desc='k12 TextButton'
+tab 11: Focus: k13 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k13 class=android.widget.Button desc='k13 keys and semantics only'
+tab 12: Focus: k14 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k14 class=android.view.View desc='k14 FAD, no button role'
+tab 13: Focus: k01 | Log: -
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k01 class=android.widget.Button desc='k01 ListTile'
+== Enter and Space where focus is now
+enter: Focus: k01 | Log: k01 tap
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k01 class=android.widget.Button desc='k01 ListTile'
+space: Focus: k01 | Log: k01 tap, k01 tap
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k01 class=android.widget.Button desc='k01 ListTile'
+== Shift+Tab back twice (keycombination)
+shift-tab 1: Focus: k02 | Log: k01 tap, k01 tap
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k02 class=android.view.View desc='k02 InkWell'
+shift-tab 2: Focus: k03 | Log: k01 tap, k01 tap
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k03 class=android.widget.Button desc='k03 InkWell button'
+== the same Tab with the keyboard source
+keyboard tab: Focus: k05 | Log: k01 tap, k01 tap
+  focused node: - class=android.widget.FrameLayout desc=''
+  focused node: k05 class=android.widget.Button desc='k05 CupertinoListTile in FAD'
+== Tab to each fixture, Enter, then Space
+tab 1: Focus: k01 | after Enter: Log: k01 tap | after Space: Log: k01 tap, k01 tap
+tab 2: Focus: k02 | after Enter: Log: k01 tap, k01 tap, k02 tap | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap
+tab 3: Focus: k03 | after Enter: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap
+tab 4: Focus: k05 | after Enter: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key
+tab 5: Focus: k06 | after Enter: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key
+tab 6: Focus: k08 | after Enter: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key
+tab 7: Focus: k09 | after Enter: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key, k09 key
+tab 8: Focus: k11 | after Enter: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key, k09 key, k11 tap | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key, k09 key, k11 tap, k11 tap
+tab 9: Focus: k12 | after Enter: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key, k09 key, k11 tap, k11 tap, k12 tap | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key, k09 key, k11 tap, k11 tap, k12 tap, k12 tap
+tab 10: Focus: k13 | after Enter: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key, k09 key, k11 tap, k11 tap, k12 tap, k12 tap, k13 key | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key, k09 key, k11 tap, k11 tap, k12 tap, k12 tap, k13 key, k13 key
+tab 11: Focus: k14 | after Enter: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key, k09 key, k11 tap, k11 tap, k12 tap, k12 tap, k13 key, k13 key, k14 key | after Space: Log: k01 tap, k01 tap, k02 tap, k02 tap, k03 tap, k03 tap, k05 key, k05 key, k06 key, k06 key, k09 key, k09 key, k11 tap, k11 tap, k12 tap, k12 tap, k13 key, k13 key, k14 key, k14 key
+== pointer: press on a fixture and slide off before release
+slide off k01 from 540,352: Log: -
+slide off k06 from 540,987: Log: -
+slide off k09 from 540,1365: Log: k09 down
+slide off k10 from 540,1491: Log: k09 down, k10 pointerup
+slide off k04 from 540,735: Log: k09 down, k10 pointerup
+== plain taps
+tap k04: Log: k09 down, k10 pointerup, k04 tap
+tap k07: Log: k09 down, k10 pointerup, k04 tap, k07 tap
+tap k10: Log: k09 down, k10 pointerup, k04 tap, k07 tap, k10 pointerup
