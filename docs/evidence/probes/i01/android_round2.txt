@@ -1,0 +1,14 @@
+== android
+BUILD SUCCESSFUL in 31s
+11-18 02:54:45.228 11765 11799 I I01PROBE: start: Focus: _ModalScopeState<dynamic> Focus Scope | Keys: - | Log: -
+11-18 02:54:46.294 11765 11799 I I01PROBE: UiDevice.pressKeyCode(TAB): Focus: _ModalScopeState<dynamic> Focus Scope | Keys: - | Log: -
+11-18 02:54:47.277 11765 11799 I I01PROBE: UiDevice.pressKeyCode(TAB) again: Focus: k01 | Keys: Tab | Log: -
+11-18 02:54:48.109 11765 11799 I I01PROBE: Instrumentation.sendKeyDownUpSync(TAB): Focus: k02 | Keys: Tab Tab | Log: -
+11-18 02:54:48.974 11765 11799 I I01PROBE: shell input keyevent TAB: Focus: k03 | Keys: Tab Tab Tab | Log: -
+11-18 02:54:49.964 11765 11799 I I01PROBE: UiDevice.pressKeyCode(TAB, META_SHIFT_ON): Focus: k05 | Keys: Tab Tab Tab Tab | Log: -
+11-18 02:54:50.862 11765 11799 I I01PROBE: shell input keycombination SHIFT_LEFT TAB: Focus: k06 | Keys: Tab Tab Tab Tab shift+Shift Left Tab | Log: -
+11-18 02:54:51.722 11765 11799 I I01PROBE: shell input keyevent ENTER: Focus: k06 | Keys: Tab Tab Tab Tab shift+Shift Left Tab Enter | Log: k06 key
+11-18 02:54:53.101 11765 11799 I I01PROBE: UiDevice.pressEnter(): Focus: k06 | Keys: Tab Tab Tab Tab shift+Shift Left Tab Enter Enter | Log: k06 key, k06 key
+11-18 02:54:54.115 11765 11799 I I01PROBE: shell input keyevent SPACE: Focus: k06 | Keys: Tab Tab Tab Tab shift+Shift Left Tab Enter Enter   | Log: k06 key, k06 key, k06 key
+11-18 02:54:55.060 11765 11799 I I01PROBE: UiDevice.pressKeyCode(SPACE): Focus: k06 | Keys: Tab Tab Tab Tab shift+Shift Left Tab Enter Enter     | Log: k06 key, k06 key, k06 key, k06 key
+11-18 02:54:55.939 11765 11799 I I01PROBE: shell input keyevent DPAD_DOWN: Focus: k08 | Keys: Tab Tab Tab Tab shift+Shift Left Tab Enter Enter     Arrow Down | Log: k06 key, k06 key, k06 key, k06 key

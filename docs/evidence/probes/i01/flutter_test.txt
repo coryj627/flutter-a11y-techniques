@@ -1,0 +1,78 @@
+I01PROBE k01 label="k01 ListTile" button=true focused=Tristate.isFalse enabled=Tristate.isTrue tap=true focusAction=true
+I01PROBE k02 label="k02 InkWell" button=false focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=true
+I01PROBE k03 label="k03 InkWell button" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=true
+I01PROBE k04 label="k04 CupertinoListTile" button=false focused=Tristate.none enabled=Tristate.none tap=true focusAction=false
+I01PROBE k05 label="k05 CupertinoListTile in FAD" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=true
+I01PROBE k06 label="k06 FAD tile" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=true
+I01PROBE k07 label="k07 gesture button" button=true focused=Tristate.none enabled=Tristate.none tap=true focusAction=false
+I01PROBE k08 label="k08 Focus, no actions" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=true
+I01PROBE k09 label="k09 onTapDown" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=true
+I01PROBE k10 label="k10 Listener" button=true focused=Tristate.none enabled=Tristate.none tap=false focusAction=false
+I01PROBE k11 label="k11 CupertinoButton" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=true
+I01PROBE k12 label="k12 TextButton" button=true focused=Tristate.isFalse enabled=Tristate.isTrue tap=true focusAction=true
+I01PROBE k13 label="k13 keys and semantics only" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=true
+I01PROBE k14 label="k14 FAD, no button role" button=false focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=true
+I01PROBE tab 0: Focus: k01 | enter added "01 tap" | space added ", k01 tap"
+I01PROBE tab 1: Focus: k02 | enter added ", k02 tap" | space added ", k02 tap"
+I01PROBE tab 2: Focus: k03 | enter added ", k03 tap" | space added ", k03 tap"
+I01PROBE tab 3: Focus: k05 | enter added ", k05 key" | space added ", k05 key"
+I01PROBE tab 4: Focus: k06 | enter added ", k06 key" | space added ", k06 key"
+I01PROBE tab 5: Focus: k08 | enter added "" | space added ""
+I01PROBE tab 6: Focus: k09 | enter added ", k09 key" | space added ", k09 key"
+I01PROBE tab 7: Focus: k11 | enter added ", k11 tap" | space added ", k11 tap"
+I01PROBE tab 8: Focus: k12 | enter added ", k12 tap" | space added ", k12 tap"
+I01PROBE tab 9: Focus: k13 | enter added ", k13 key" | space added ", k13 key"
+I01PROBE tab 10: Focus: k14 | enter added ", k14 key" | space added ", k14 key"
+I01PROBE tab 11: Focus: k01 | enter added ", k01 tap" | space added ", k01 tap"
+I01PROBE tab 12: Focus: k02 | enter added ", k02 tap" | space added ", k02 tap"
+I01PROBE tab 13: Focus: k03 | enter added ", k03 tap" | space added ", k03 tap"
+I01PROBE tab 14: Focus: k05 | enter added ", k05 key" | space added ", k05 key"
+I01PROBE tab 15: Focus: k06 | enter added ", k06 key" | space added ", k06 key"
+I01PROBE press-and-slide-off k01 ListTile: on down "", after ""
+I01PROBE press-and-slide-off k06 FAD tile: on down "", after ""
+I01PROBE press-and-slide-off k09 onTapDown: on down ", k09 down", after ""
+I01PROBE press-and-slide-off k10 Listener: on down "", after ", k10 pointerup"
+I01PROBE press-and-slide-off k04 CupertinoListTile: on down "", after ""
+I01PROBE semantics tap k10: ""
+I01PROBE semantics tap k13: ", k13 semantics"
+I01PROBE semantics tap k04: ", k04 tap"
+I01PROBE semantics tap k07: ", k07 tap"
+I01PROBE k01 label="k01 ListTile" button=true focused=Tristate.isFalse enabled=Tristate.isTrue tap=true focusAction=false
+I01PROBE k02 label="k02 InkWell" button=false focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=false
+I01PROBE k03 label="k03 InkWell button" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=false
+I01PROBE k04 label="k04 CupertinoListTile" button=false focused=Tristate.none enabled=Tristate.none tap=true focusAction=false
+I01PROBE k05 label="k05 CupertinoListTile in FAD" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=false
+I01PROBE k06 label="k06 FAD tile" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=false
+I01PROBE k07 label="k07 gesture button" button=true focused=Tristate.none enabled=Tristate.none tap=true focusAction=false
+I01PROBE k08 label="k08 Focus, no actions" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=false
+I01PROBE k09 label="k09 onTapDown" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=false
+I01PROBE k10 label="k10 Listener" button=true focused=Tristate.none enabled=Tristate.none tap=false focusAction=false
+I01PROBE k11 label="k11 CupertinoButton" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=false
+I01PROBE k12 label="k12 TextButton" button=true focused=Tristate.isFalse enabled=Tristate.isTrue tap=true focusAction=false
+I01PROBE k13 label="k13 keys and semantics only" button=true focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=false
+I01PROBE k14 label="k14 FAD, no button role" button=false focused=Tristate.isFalse enabled=Tristate.none tap=true focusAction=false
+I01PROBE tab 0: Focus: k01 | enter added "01 tap" | space added ", k01 tap"
+I01PROBE tab 1: Focus: k02 | enter added ", k02 tap" | space added ", k02 tap"
+I01PROBE tab 2: Focus: k03 | enter added ", k03 tap" | space added ", k03 tap"
+I01PROBE tab 3: Focus: k05 | enter added ", k05 key" | space added ", k05 key"
+I01PROBE tab 4: Focus: k06 | enter added ", k06 key" | space added ", k06 key"
+I01PROBE tab 5: Focus: k08 | enter added "" | space added ""
+I01PROBE tab 6: Focus: k09 | enter added ", k09 key" | space added ", k09 key"
+I01PROBE tab 7: Focus: k11 | enter added ", k11 tap" | space added ", k11 tap"
+I01PROBE tab 8: Focus: k12 | enter added ", k12 tap" | space added ", k12 tap"
+I01PROBE tab 9: Focus: k13 | enter added ", k13 key" | space added ", k13 key"
+I01PROBE tab 10: Focus: k14 | enter added ", k14 key" | space added ", k14 key"
+I01PROBE tab 11: Focus: k01 | enter added ", k01 tap" | space added ", k01 tap"
+I01PROBE tab 12: Focus: k02 | enter added ", k02 tap" | space added ", k02 tap"
+I01PROBE tab 13: Focus: k03 | enter added ", k03 tap" | space added ", k03 tap"
+I01PROBE tab 14: Focus: k05 | enter added ", k05 key" | space added ", k05 key"
+I01PROBE tab 15: Focus: k06 | enter added ", k06 key" | space added ", k06 key"
+I01PROBE press-and-slide-off k01 ListTile: on down "", after ""
+I01PROBE press-and-slide-off k06 FAD tile: on down "", after ""
+I01PROBE press-and-slide-off k09 onTapDown: on down ", k09 down", after ""
+I01PROBE press-and-slide-off k10 Listener: on down "", after ", k10 pointerup"
+I01PROBE press-and-slide-off k04 CupertinoListTile: on down "", after ""
+I01PROBE semantics tap k10: ""
+I01PROBE semantics tap k13: ", k13 semantics"
+I01PROBE semantics tap k04: ", k04 tap"
+I01PROBE semantics tap k07: ", k07 tap"
