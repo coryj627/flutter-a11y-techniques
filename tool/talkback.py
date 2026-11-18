@@ -409,13 +409,20 @@ def parse_speech(log):
 
 
 def said(fragments, phrase):
-    """Role and state words must be spoken as their own sentence, so a name
-    such as "Close button" does not count as the role."""
-    if phrase.lower() in ("button", "disabled", "heading", "edit box", "switch",
-                          "check box", "slider", "image"):
+    """Role and state words must be spoken on their own, so a name such as
+    "Close button" does not count as the role, "Bluetooth on" does not count
+    as the state "on", and "not checked" does not count as "checked". A role
+    word is a sentence of its own; a state word is a sentence or a part of
+    one between commas, since TalkBack says "Off, Repeat" as well as "off."."""
+    word = phrase.lower()
+    if word in ("button", "disabled", "heading", "edit box", "switch",
+                "check box", "slider", "image"):
         sentences = [t.strip() for f in fragments for t in f.split(".")]
-        return phrase.lower() in sentences
-    return phrase.lower() in " | ".join(fragments)
+        return word in sentences
+    if word in ("on", "off", "checked", "not checked"):
+        parts = [t.strip() for f in fragments for t in re.split(r"[.,]", f)]
+        return word in parts
+    return word in " | ".join(fragments)
 
 
 def problems(ident, spoken_fragments):
@@ -431,8 +438,18 @@ def problems(ident, spoken_fragments):
     found = [f'{ident}: expected "{phrase}" in "{joined}"'
              for phrase in must if not said(fragments, phrase)]
     found += [f'{ident}: did not expect "{phrase}" in "{joined}"'
-              for phrase in must_not if said(fragments, phrase)]
+              for phrase in must_not if unwanted(fragments, phrase)]
     return found
+
+
+def unwanted(fragments, phrase):
+    """Whether a phrase that must not be spoken was. An element that must
+    not say "checked" must not say "not checked" either: the expectations
+    that forbid "checked" mean that no checked state is spoken at all
+    (FL-045, FL-100), and are written to fail when one starts to be."""
+    if phrase.lower() == "checked" and said(fragments, "not checked"):
+        return True
+    return said(fragments, phrase)
 
 
 MAX_WALKS = 3

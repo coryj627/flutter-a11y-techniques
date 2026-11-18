@@ -1,0 +1,18 @@
+// Throwaway native comparison for the F09 probe. Not committed.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.Activity
+import android.os.Bundle
+import android.widget.LinearLayout
+import android.widget.Switch
+
+class ProbeNativeActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 200, 40, 40) }
+        column.addView(Switch(this).apply { text = "n01 native off" })
+        column.addView(Switch(this).apply { text = "n02 native on"; isChecked = true })
+        column.addView(Switch(this).apply { text = "n03 native clicked" })
+        setContentView(column)
+    }
+}

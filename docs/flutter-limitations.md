@@ -94,6 +94,7 @@ yet), **Fixed in x.y** (verified on that version).
 | **FL-048 to FL-069** | Work outside the waves | | |
 | **FL-070 to FL-099** | Wave 10, the limitation entries | | |
 | **FL-100 to FL-199** | Wave 1, forms | | |
+| [FL-100](#fl-100) | TalkBack says "checked" as well as "on" for a switch that is on | Android | Confirmed; cause not found |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
@@ -156,7 +157,10 @@ yet), **Fixed in x.y** (verified on that version).
 - Also seen in S13 (2026-11-15): Enter does not toggle a `CupertinoSwitch`
   on web; Space does. The APG Switch pattern makes Enter optional, so
   `/t/S13/good-cupertino` adds no action for it, and
-  `web_tests/s13_roles_and_traits.spec.js` requires Space only.
+  `web_tests/s13_roles_and_traits.spec.js` requires Space only. F09
+  (2026-11-17) asserts it: `web_tests/f09_switch.spec.js` requires Enter to
+  leave `/t/F09/good-cupertino` unchanged, written to fail when it is
+  fixed, and Enter toggles the Material and custom switches there.
 - Upstream issue: not found. To be filed.
 
 ## FL-003
@@ -1436,6 +1440,47 @@ yet), **Fixed in x.y** (verified on that version).
 <!-- FL-070 to FL-099: Wave 10, the limitation entries. Entries in this range go below, in id order. -->
 
 <!-- FL-100 to FL-199: Wave 1, forms. Entries in this range go below, in id order. -->
+
+## FL-100
+
+**TalkBack says "checked" as well as "on" for a switch that is on.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17, TalkBack 17.0. Found in
+  F09 and asserted by the F09 TalkBack transcript
+  (`docs/evidence/F09/talkback-android.md`; `tool/techniques/f09_switch.py`
+  requires "checked" as a sentence of its own for every switch that is on,
+  written to fail when it is no longer said). Cause not found.
+- What happens: with focus on a Flutter switch that is on, TalkBack says
+  "checked. on. Bluetooth, Switch". A switch that is off is read "off.
+  Bluetooth, Switch", with no "not checked". It is the same for
+  `SwitchListTile`, a `CupertinoSwitch` merged with its list tile, and a
+  switch built with `Semantics(toggled:)`. In the comparison run it was
+  still said for the `SwitchListTile` when focus came back to it eight
+  seconds after the change, so it is what TalkBack reads on arriving and
+  not a change notice.
+- Compared with a native control: a plain `android.widget.Switch` on the
+  same device is read "ON. n02 native on. Switch" and "OFF. n01 native
+  off. Switch", the same after a click (`docs/evidence/probes/f09`, the
+  native screen and the walk in the README). The upper case is the
+  switch's own state description, "ON" or "OFF".
+- What the node has: class `android.widget.Switch`, checkable, checked,
+  the name in the content description, no state description. The Android
+  engine never sets a state description ([FL-036](#fl-036)); the native
+  switch has one. That is the difference seen, and it fits: with no state
+  description TalkBack speaks the checked state ("checked", and nothing
+  for not checked, as for a checkbox in [FL-045](#fl-045)) and then its
+  own word for a switch's state. Not proven.
+- What the user gets: the state twice, in two vocabularies, when the
+  switch is on. The state itself is right and is not missed, so this is
+  not counted as a WCAG failure here. It does make an on switch sound like
+  a checkbox that is also on, and "checked" is not a word the switch uses
+  anywhere else.
+- Workaround: none within the SDK. There is no state description to set
+  ([FL-036](#fl-036)), and a `value` is added to the content description
+  instead of replacing anything.
+- How to read this entry: Flutter has not added this yet. Re-check when
+  the pinned version changes.
+- Upstream issue: not searched yet (D25).
 
 <!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->
 

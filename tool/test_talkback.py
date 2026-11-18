@@ -518,6 +518,48 @@ class Checks(unittest.TestCase):
         self.assertFalse(tb.said(["close button"], "Button"))
         self.assertTrue(tb.said(["close button. button"], "Button"))
 
+    def test_state_in_a_name_does_not_count_as_the_state(self):
+        self.assertFalse(tb.said(["bluetooth on.", "switch"], "on"))
+        self.assertFalse(tb.said(["bluetooth off"], "off"))
+        self.assertTrue(tb.said(["checked. on.  ", "bluetooth on"], "on"))
+        self.assertTrue(tb.said(["off, ", "repeat"], "Off"))
+
+    def test_not_checked_does_not_count_as_checked(self):
+        self.assertFalse(tb.said(["not checked. on."], "checked"))
+        self.assertTrue(tb.said(["not checked. on."], "not checked"))
+        self.assertTrue(tb.said(["checked. on."], "checked"))
+
+    def test_a_switch_whose_name_says_its_state_must_say_the_state_as_well(self):
+        self.assertTrue(tb.problems(
+            "f09-bad-label-changes-bluetooth", ["Bluetooth off.", "Switch"]))
+        self.assertTrue(tb.problems(
+            "f09-bad-label-changes-bluetooth-changed",
+            ["checked.", "Bluetooth on.", "Switch"]))
+        self.assertTrue(tb.problems(
+            "f09-good-tile-bluetooth-changed",
+            ["not checked. on.", "Bluetooth", "Switch"]))
+        self.assertEqual(tb.problems(
+            "f09-bad-label-changes-bluetooth-changed",
+            ["checked. on.  ", "Bluetooth on", "Switch"]), [])
+
+    def test_forbidding_checked_forbids_not_checked_as_well(self):
+        self.assertTrue(tb.unwanted(["not checked. off."], "checked"))
+        self.assertTrue(tb.unwanted(["checked. on."], "checked"))
+        self.assertFalse(tb.unwanted(["off.  ", "bluetooth"], "checked"))
+        checked = 0
+        for ident, (must, must_not) in tb.EXPECT.items():
+            if "checked" not in [p.lower() for p in must_not]:
+                continue
+            checked += 1
+            # Speech with everything the element must say passes; the same
+            # speech with "not checked." in front fails, and for that reason.
+            speech = [p + "." for p in must]
+            self.assertEqual(tb.problems(ident, speech), [], ident)
+            found = tb.problems(ident, ["not checked."] + speech)
+            self.assertEqual(len(found), 1, ident)
+            self.assertIn('did not expect "checked"', found[0])
+        self.assertGreater(checked, 20)
+
     def test_expected_and_unexpected_phrases(self):
         self.assertEqual(tb.problems("c01-good-text-filled", ["Save", "Button"]), [])
         self.assertTrue(tb.problems("c01-good-text-filled", ["Save"]))
