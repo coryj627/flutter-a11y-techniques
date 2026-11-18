@@ -1448,8 +1448,8 @@ yet), **Fixed in x.y** (verified on that version).
 - Status: Confirmed, Flutter 3.47.5, Android 17, TalkBack 17.0. Found in
   F09 and asserted by the F09 TalkBack transcript
   (`docs/evidence/F09/talkback-android.md`; `tool/techniques/f09_switch.py`
-  requires "checked." for every switch that is on, written to fail when it
-  is no longer said). Cause not found.
+  requires "checked" as a sentence of its own for every switch that is on,
+  written to fail when it is no longer said). Cause not found.
 - What happens: with focus on a Flutter switch that is on, TalkBack says
   "checked. on. Bluetooth, Switch". A switch that is off is read "off.
   Bluetooth, Switch", with no "not checked". It is the same for

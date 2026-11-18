@@ -518,6 +518,30 @@ class Checks(unittest.TestCase):
         self.assertFalse(tb.said(["close button"], "Button"))
         self.assertTrue(tb.said(["close button. button"], "Button"))
 
+    def test_state_in_a_name_does_not_count_as_the_state(self):
+        self.assertFalse(tb.said(["bluetooth on.", "switch"], "on"))
+        self.assertFalse(tb.said(["bluetooth off"], "off"))
+        self.assertTrue(tb.said(["checked. on.  ", "bluetooth on"], "on"))
+        self.assertTrue(tb.said(["off, ", "repeat"], "Off"))
+
+    def test_not_checked_does_not_count_as_checked(self):
+        self.assertFalse(tb.said(["not checked. on."], "checked"))
+        self.assertTrue(tb.said(["not checked. on."], "not checked"))
+        self.assertTrue(tb.said(["checked. on."], "checked"))
+
+    def test_a_switch_whose_name_says_its_state_must_say_the_state_as_well(self):
+        self.assertTrue(tb.problems(
+            "f09-bad-label-changes-bluetooth", ["Bluetooth off.", "Switch"]))
+        self.assertTrue(tb.problems(
+            "f09-bad-label-changes-bluetooth-changed",
+            ["checked.", "Bluetooth on.", "Switch"]))
+        self.assertTrue(tb.problems(
+            "f09-good-tile-bluetooth-changed",
+            ["not checked. on.", "Bluetooth", "Switch"]))
+        self.assertEqual(tb.problems(
+            "f09-bad-label-changes-bluetooth-changed",
+            ["checked. on.  ", "Bluetooth on", "Switch"]), [])
+
     def test_expected_and_unexpected_phrases(self):
         self.assertEqual(tb.problems("c01-good-text-filled", ["Save", "Button"]), [])
         self.assertTrue(tb.problems("c01-good-text-filled", ["Save"]))

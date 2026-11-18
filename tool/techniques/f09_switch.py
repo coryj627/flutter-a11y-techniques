@@ -12,35 +12,35 @@ WEB_VO_SPEC = "f09_switch_vo.spec.js"
 # must not be).
 TALKBACK_EXPECT = {
     # F09 Switch. TalkBack says the state first, as its own sentence: "off."
-    # or "on.", then the name and "Switch". The phrases end with the full
-    # stop so that "on" in a name such as "Bluetooth" does not count. For a
-    # switch that is on it says "checked." as well, which it does not say
-    # for a native switch (FL-100). Written to fail when "checked." stops
-    # being spoken.
-    "f09-good-tile-bluetooth": (["off.", "Bluetooth", "Switch"], ["on.", "checked"]),
-    "f09-good-tile-bluetooth-changed": (["checked.", "on.", "Bluetooth", "Switch"], ["off."]),
-    "f09-good-cupertino-bluetooth": (["off.", "Bluetooth", "Switch"], ["on.", "checked"]),
-    "f09-good-cupertino-bluetooth-changed": (["checked.", "on.", "Bluetooth", "Switch"], ["off."]),
-    "f09-good-custom-bluetooth": (["off.", "Bluetooth", "Switch"], ["on.", "checked"]),
-    "f09-good-custom-bluetooth-changed": (["checked.", "on.", "Bluetooth", "Switch"], ["off."]),
+    # or "on.", then the name and "Switch". tool/talkback.py matches "on",
+    # "off" and "checked" as whole sentences, so "on" in a name such as
+    # "Bluetooth on" does not count. For a switch that is on it says
+    # "checked." as well, which it does not say for a native switch
+    # (FL-100). Written to fail when "checked." stops being spoken.
+    "f09-good-tile-bluetooth": (["off", "Bluetooth", "Switch"], ["on", "checked"]),
+    "f09-good-tile-bluetooth-changed": (["checked", "on", "Bluetooth", "Switch"], ["off"]),
+    "f09-good-cupertino-bluetooth": (["off", "Bluetooth", "Switch"], ["on", "checked"]),
+    "f09-good-cupertino-bluetooth-changed": (["checked", "on", "Bluetooth", "Switch"], ["off"]),
+    "f09-good-custom-bluetooth": (["off", "Bluetooth", "Switch"], ["on", "checked"]),
+    "f09-good-custom-bluetooth-changed": (["checked", "on", "Bluetooth", "Switch"], ["off"]),
     # The group's question is an element of its own.
     "f09-good-group-notify": (["Notify me about"], ["Switch"]),
-    "f09-good-group-messages": (["off.", "Messages", "Switch"], ["on.", "checked"]),
-    "f09-good-group-reminders": (["off.", "Reminders", "Switch"], ["on.", "checked"]),
+    "f09-good-group-messages": (["off", "Messages", "Switch"], ["on", "checked"]),
+    "f09-good-group-reminders": (["off", "Reminders", "Switch"], ["on", "checked"]),
     # Bad examples: the defect must be audible where it can be.
-    "f09-bad-unlabelled-switch": (["off.", "Switch"], ["Bluetooth"]),
+    "f09-bad-unlabelled-switch": (["off", "Switch"], ["Bluetooth"]),
     "f09-bad-unlabelled-text": (["Bluetooth"], ["Switch"]),
     # The row is a button with no state, before and after it is used, and
     # the switch inside it has no name.
-    "f09-bad-tile-not-merged-tile": (["Bluetooth", "Button"], ["Switch", "off.", "on."]),
-    "f09-bad-tile-not-merged-switch": (["off.", "Switch"], ["Bluetooth"]),
-    "f09-bad-tile-not-merged-tile-changed": (["Bluetooth", "Button"], ["Switch", "off.", "on."]),
+    "f09-bad-tile-not-merged-tile": (["Bluetooth", "Button"], ["Switch", "off", "on"]),
+    "f09-bad-tile-not-merged-switch": (["off", "Switch"], ["Bluetooth"]),
+    "f09-bad-tile-not-merged-tile-changed": (["Bluetooth", "Button"], ["Switch", "off", "on"]),
     # The name says the state, so the state is heard twice, and the name
     # is different after a change.
-    "f09-bad-label-changes-bluetooth": (["off.", "Bluetooth off", "Switch"], ["Bluetooth on"]),
-    "f09-bad-label-changes-bluetooth-changed": (["checked.", "on.", "Bluetooth on", "Switch"], ["Bluetooth off"]),
-    "f09-bad-no-state-bluetooth": (["Bluetooth", "Button"], ["Switch", "off.", "on."]),
-    "f09-bad-no-state-bluetooth-changed": (["Bluetooth", "Button"], ["Switch", "off.", "on."]),
+    "f09-bad-label-changes-bluetooth": (["off", "Bluetooth off", "Switch"], ["Bluetooth on"]),
+    "f09-bad-label-changes-bluetooth-changed": (["checked", "on", "Bluetooth on", "Switch"], ["Bluetooth off"]),
+    "f09-bad-no-state-bluetooth": (["Bluetooth", "Button"], ["Switch", "off", "on"]),
+    "f09-bad-no-state-bluetooth-changed": (["Bluetooth", "Button"], ["Switch", "off", "on"]),
 }
 
 # tool/voiceover_ios.py: (how the speech was captured, heading of the

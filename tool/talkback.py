@@ -409,13 +409,20 @@ def parse_speech(log):
 
 
 def said(fragments, phrase):
-    """Role and state words must be spoken as their own sentence, so a name
-    such as "Close button" does not count as the role."""
-    if phrase.lower() in ("button", "disabled", "heading", "edit box", "switch",
-                          "check box", "slider", "image"):
+    """Role and state words must be spoken on their own, so a name such as
+    "Close button" does not count as the role, "Bluetooth on" does not count
+    as the state "on", and "not checked" does not count as "checked". A role
+    word is a sentence of its own; a state word is a sentence or a part of
+    one between commas, since TalkBack says "Off, Repeat" as well as "off."."""
+    word = phrase.lower()
+    if word in ("button", "disabled", "heading", "edit box", "switch",
+                "check box", "slider", "image"):
         sentences = [t.strip() for f in fragments for t in f.split(".")]
-        return phrase.lower() in sentences
-    return phrase.lower() in " | ".join(fragments)
+        return word in sentences
+    if word in ("on", "off", "checked", "not checked"):
+        parts = [t.strip() for f in fragments for t in re.split(r"[.,]", f)]
+        return word in parts
+    return word in " | ".join(fragments)
 
 
 def problems(ident, spoken_fragments):
