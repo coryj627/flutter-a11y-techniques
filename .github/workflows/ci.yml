@@ -14,14 +14,22 @@ env:
   FLUTTER_VERSION: 3.47.5
 
 # Every job runs on a Namespace runner (namespace.so), not a GitHub-hosted
-# one: the label is nscloud-<image>-<arch>-<vCPU>x<GB of memory>. The
-# hosted Linux runner left the Android emulator about 2 GB of memory, and
-# device tests failed on timing there. The Namespace GitHub app has to be
-# installed for this repository, or the jobs wait for a runner for ever.
+# one, through a runner profile of this repository's own:
+#   fa11y-linux    4 vCPU,  8 GB, Ubuntu 26.04   analysis and web tests
+#   fa11y-android  8 vCPU, 16 GB, Ubuntu 26.04   the Android emulator
+#   fa11y-ios      6 vCPU, 14 GB, macOS Tahoe    the iOS simulator
+# The hosted Linux runner left the emulator about 2 GB of memory, and device
+# tests failed on timing there.
+#
+# The profiles have Namespace's Restricted access level: a job gets no
+# access to the Namespace workspace. Keep it that way, and do not use a
+# direct nscloud-* machine label here: this repository is public, a pull
+# request's code runs in these jobs, and a direct label runs with the
+# workspace's default access.
 jobs:
   # L1: analysis and widget tests, for the app and the Widgetbook.
   analyze-test:
-    runs-on: nscloud-ubuntu-26.04-amd64-4x8
+    runs-on: namespace-profile-fa11y-linux
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -43,7 +51,7 @@ jobs:
 
   # L3 on web: the browser accessibility tree, for the app and the Widgetbook.
   web:
-    runs-on: nscloud-ubuntu-26.04-amd64-4x8
+    runs-on: namespace-profile-fa11y-linux
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -90,7 +98,7 @@ jobs:
   # itself because TalkBack is not enabled here; speech runs are local
   # (python3 tool/talkback.py <ID>).
   android:
-    runs-on: nscloud-ubuntu-26.04-amd64-8x16
+    runs-on: namespace-profile-fa11y-android
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
@@ -145,7 +153,7 @@ jobs:
   # is only checked locally (python3 tool/voiceover_ios.py <ID>) until the hosted image
   # has them.
   ios:
-    runs-on: nscloud-macos-tahoe-arm64-6x14
+    runs-on: namespace-profile-fa11y-ios
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
