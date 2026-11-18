@@ -542,6 +542,15 @@ class Checks(unittest.TestCase):
             "f09-bad-label-changes-bluetooth-changed",
             ["checked. on.  ", "Bluetooth on", "Switch"]), [])
 
+    def test_forbidding_checked_forbids_not_checked_as_well(self):
+        self.assertTrue(tb.unwanted(["not checked. off."], "checked"))
+        self.assertTrue(tb.unwanted(["checked. on."], "checked"))
+        self.assertFalse(tb.unwanted(["off.  ", "bluetooth"], "checked"))
+        for ident, (_, must_not) in tb.EXPECT.items():
+            if "checked" in [p.lower() for p in must_not]:
+                self.assertTrue(
+                    tb.problems(ident, ["not checked. off.", "anything"]), ident)
+
     def test_expected_and_unexpected_phrases(self):
         self.assertEqual(tb.problems("c01-good-text-filled", ["Save", "Button"]), [])
         self.assertTrue(tb.problems("c01-good-text-filled", ["Save"]))

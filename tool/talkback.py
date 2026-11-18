@@ -438,8 +438,18 @@ def problems(ident, spoken_fragments):
     found = [f'{ident}: expected "{phrase}" in "{joined}"'
              for phrase in must if not said(fragments, phrase)]
     found += [f'{ident}: did not expect "{phrase}" in "{joined}"'
-              for phrase in must_not if said(fragments, phrase)]
+              for phrase in must_not if unwanted(fragments, phrase)]
     return found
+
+
+def unwanted(fragments, phrase):
+    """Whether a phrase that must not be spoken was. An element that must
+    not say "checked" must not say "not checked" either: the expectations
+    that forbid "checked" mean that no checked state is spoken at all
+    (FL-045, FL-100), and are written to fail when one starts to be."""
+    if phrase.lower() == "checked" and said(fragments, "not checked"):
+        return True
+    return said(fragments, phrase)
 
 
 MAX_WALKS = 3
