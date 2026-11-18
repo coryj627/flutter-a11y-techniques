@@ -1,0 +1,74 @@
+// Throwaway F10 probe dump. Not committed.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeF10Test : TechniqueTest("F10") {
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = android.graphics.Rect().also { n.getBoundsInScreen(it) }
+        val range = n.rangeInfo?.let { " range=${it.min}..${it.max} now=${it.current} type=${it.type}" } ?: ""
+        val actions = n.actionList.joinToString(",") { a ->
+            when (a.id) {
+                AccessibilityNodeInfo.ACTION_CLICK -> "click"
+                AccessibilityNodeInfo.ACTION_SCROLL_FORWARD -> "fwd"
+                AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD -> "back"
+                AccessibilityNodeInfo.ACTION_FOCUS -> "focus"
+                AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS -> "a11yfocus"
+                AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS -> "clra11y"
+                android.R.id.accessibilityActionSetProgress -> "setProgress"
+                else -> a.id.toString()
+            }
+        }
+        return "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"${n.name()}\" text=\"${n.text ?: ""}\" state=\"${n.stateDescription ?: ""}\" " +
+            "enabled=${n.isEnabled} focusable=${n.isFocusable} visible=${n.isVisibleToUser} $r$range [$actions] children=${n.childCount}"
+    }
+
+    private fun dump(tag: String) {
+        Log.i("F10PROBE", "==== $tag")
+        for (n in all()) Log.i("F10PROBE", describe(n))
+    }
+
+    @Test
+    fun probe() {
+        val intent = inst.targetContext.packageManager.getLaunchIntentForPackage(inst.targetContext.packageName)!!
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        device.wait(Until.hasObject(By.res("p14")), 20_000)
+        device.waitForIdle()
+        Thread.sleep(1_500)
+        dump("start")
+        // FL-038: increase a Material slider and read its description at once and later.
+        for (id in listOf("p01", "p07", "p08", "p11", "p05")) {
+            val ok = node(id).performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+            Log.i("F10PROBE", "$id scroll forward=$ok at once: ${describe(node(id))}")
+            Thread.sleep(1_000)
+            Log.i("F10PROBE", "$id 1 s later: ${describe(node(id))}")
+        }
+        // Increase p01 to the end and once more.
+        for (i in 0 until 7) {
+            node("p01").performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+            Thread.sleep(400)
+        }
+        Log.i("F10PROBE", "p01 after 7 more: ${describe(node("p01"))}")
+        val ok = node("p01").performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+        Log.i("F10PROBE", "p01 at the end, forward=$ok at once: ${describe(node("p01"))}")
+        Thread.sleep(1_000)
+        Log.i("F10PROBE", "p01 at the end 1 s later: ${describe(node("p01"))}")
+        // A click on the button beside the sliders.
+        node("p14").performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(800)
+        Log.i("F10PROBE", "after click: ${describe(node("p14"))}")
+        val r = android.graphics.Rect().also { node("p14").getBoundsInScreen(it) }
+        device.click(r.centerX(), r.centerY())
+        Thread.sleep(800)
+        Log.i("F10PROBE", "after tap: ${describe(node("p14"))}")
+        dump("end")
+    }
+}

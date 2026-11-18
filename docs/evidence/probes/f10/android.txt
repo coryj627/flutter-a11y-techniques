@@ -1,0 +1,77 @@
+==== start
+- | android.widget.FrameLayout | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+- | android.widget.LinearLayout | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+android:id/content | android.widget.FrameLayout | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+- | android.widget.FrameLayout | desc="" text="" state="" enabled=true focusable=true visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 142 - 1080, 2022) [a11yfocus] children=20
+p01 | android.widget.SeekBar | desc="40%, p01 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 142 - 1080, 268) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p02 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 305 - 289, 357) [a11yfocus] children=0
+p02 | android.widget.SeekBar | desc="40%, p02 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 268 - 1080, 394) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p03 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 431 - 289, 483) [a11yfocus] children=0
+p03 | android.widget.SeekBar | desc="40%" text="" state="" enabled=true focusable=true visible=true Rect(289, 394 - 1080, 520) [a11yfocus,click,fwd,back] children=0
+p04 | android.widget.SeekBar | desc="40%, p04 Volume
+4" text="" state="" enabled=true focusable=true visible=true Rect(0, 520 - 1080, 646) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p04b" text="" state="" enabled=true focusable=true visible=true Rect(0, 683 - 289, 735) [a11yfocus] children=0
+p04b | android.widget.SeekBar | desc="40%, 4" text="" state="" enabled=true focusable=true visible=true Rect(289, 646 - 1080, 772) [a11yfocus,click,fwd,back] children=0
+p05 | android.widget.SeekBar | desc="4 of 10, p05 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 772 - 1080, 898) [a11yfocus,click,fwd,back] children=0
+p06 | android.widget.SeekBar | desc="40%, p06 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 898 - 1080, 1014) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p07" text="" state="" enabled=true focusable=true visible=true Rect(0, 1050 - 289, 1103) [a11yfocus] children=0
+p07 | android.widget.SeekBar | desc="40%, p07 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 1014 - 1080, 1140) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p08" text="" state="" enabled=true focusable=true visible=true Rect(0, 1176 - 289, 1229) [a11yfocus] children=0
+p08 | android.widget.SeekBar | desc="40%, p08 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 1140 - 1080, 1266) [a11yfocus,fwd,back] children=0
+p09 | android.view.View | desc="40%, p09 Volume" text="" state="" enabled=false focusable=true visible=true Rect(0, 1266 - 1080, 1392) [a11yfocus,click] children=0
+p10 | android.widget.SeekBar | desc="20%, p10 Price" text="" state="" enabled=true focusable=true visible=true Rect(0, 1392 - 1080, 1518) [a11yfocus,click,fwd,back] children=0
+p11 | android.widget.SeekBar | desc="40%, p11 Rating" text="" state="" enabled=true focusable=true visible=true Rect(0, 1518 - 1080, 1644) [a11yfocus,click,fwd,back] children=0
+p12 | android.widget.SeekBar | desc="40%, p12 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 1644 - 1080, 1770) [a11yfocus,click,fwd,back] children=0
+p13 | android.widget.SeekBar | desc="40%, p13 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 1770 - 1080, 1896) [a11yfocus,click,fwd,back] children=0
+p14 | android.widget.Button | desc="p14 Press 0" text="" state="" enabled=true focusable=true visible=true Rect(0, 1896 - 324, 2022) [a11yfocus,click] children=0
+p01 scroll forward=true at once: p01 | android.widget.SeekBar | desc="50%, p01 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 142 - 1080, 268) [a11yfocus,click,fwd,back] children=0
+p01 1 s later: p01 | android.widget.SeekBar | desc="50%, p01 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 142 - 1080, 268) [a11yfocus,click,fwd,back] children=0
+p07 scroll forward=true at once: p07 | android.widget.SeekBar | desc="50%, p07 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 1014 - 1080, 1140) [a11yfocus,click,fwd,back] children=0
+p07 1 s later: p07 | android.widget.SeekBar | desc="50%, p07 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 1014 - 1080, 1140) [a11yfocus,click,fwd,back] children=0
+p08 scroll forward=true at once: p08 | android.widget.SeekBar | desc="50%, p08 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 1140 - 1080, 1266) [a11yfocus,fwd,back] children=0
+p08 1 s later: p08 | android.widget.SeekBar | desc="50%, p08 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 1140 - 1080, 1266) [a11yfocus,fwd,back] children=0
+p11 scroll forward=true at once: p11 | android.widget.SeekBar | desc="50%, p11 Rating" text="" state="" enabled=true focusable=true visible=true Rect(0, 1518 - 1080, 1644) [a11yfocus,click,fwd,back] children=0
+p11 1 s later: p11 | android.widget.SeekBar | desc="50%, p11 Rating" text="" state="" enabled=true focusable=true visible=true Rect(0, 1518 - 1080, 1644) [a11yfocus,click,fwd,back] children=0
+p05 scroll forward=true at once: p05 | android.widget.SeekBar | desc="5 of 10, p05 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 772 - 1080, 898) [a11yfocus,click,fwd,back] children=0
+p05 1 s later: p05 | android.widget.SeekBar | desc="5 of 10, p05 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 772 - 1080, 898) [a11yfocus,click,fwd,back] children=0
+p01 after 7 more: p01 | android.widget.SeekBar | desc="100%, p01 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 142 - 1080, 268) [a11yfocus,click,fwd,back] children=0
+p01 at the end, forward=true at once: p01 | android.widget.SeekBar | desc="100%, p01 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 142 - 1080, 268) [a11yfocus,click,fwd,back] children=0
+p01 at the end 1 s later: p01 | android.widget.SeekBar | desc="100%, p01 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 142 - 1080, 268) [a11yfocus,click,fwd,back] children=0
+after click: p14 | android.widget.Button | desc="p14 Press 1" text="" state="" enabled=true focusable=true visible=true Rect(0, 1896 - 324, 2022) [a11yfocus,click] children=0
+after tap: p14 | android.widget.Button | desc="p14 Press 2" text="" state="" enabled=true focusable=true visible=true Rect(0, 1896 - 324, 2022) [a11yfocus,click] children=0
+==== end
+- | android.widget.FrameLayout | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+- | android.widget.LinearLayout | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+android:id/content | android.widget.FrameLayout | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+- | android.widget.FrameLayout | desc="" text="" state="" enabled=true focusable=true visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+ | android.view.View | desc="" text="" state="" enabled=true focusable=false visible=true Rect(0, 142 - 1080, 2022) [a11yfocus] children=20
+p01 | android.widget.SeekBar | desc="100%, p01 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 142 - 1080, 268) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p02 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 305 - 289, 357) [a11yfocus] children=0
+p02 | android.widget.SeekBar | desc="40%, p02 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 268 - 1080, 394) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p03 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 431 - 289, 483) [a11yfocus] children=0
+p03 | android.widget.SeekBar | desc="40%" text="" state="" enabled=true focusable=true visible=true Rect(289, 394 - 1080, 520) [a11yfocus,click,fwd,back] children=0
+p04 | android.widget.SeekBar | desc="40%, p04 Volume
+4" text="" state="" enabled=true focusable=true visible=true Rect(0, 520 - 1080, 646) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p04b" text="" state="" enabled=true focusable=true visible=true Rect(0, 683 - 289, 735) [a11yfocus] children=0
+p04b | android.widget.SeekBar | desc="40%, 4" text="" state="" enabled=true focusable=true visible=true Rect(289, 646 - 1080, 772) [a11yfocus,click,fwd,back] children=0
+p05 | android.widget.SeekBar | desc="5 of 10, p05 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 772 - 1080, 898) [a11yfocus,click,fwd,back] children=0
+p06 | android.widget.SeekBar | desc="40%, p06 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 898 - 1080, 1014) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p07" text="" state="" enabled=true focusable=true visible=true Rect(0, 1050 - 289, 1103) [a11yfocus] children=0
+p07 | android.widget.SeekBar | desc="50%, p07 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 1014 - 1080, 1140) [a11yfocus,click,fwd,back] children=0
+ | android.view.View | desc="p08" text="" state="" enabled=true focusable=true visible=true Rect(0, 1176 - 289, 1229) [a11yfocus] children=0
+p08 | android.widget.SeekBar | desc="50%, p08 Volume" text="" state="" enabled=true focusable=true visible=true Rect(289, 1140 - 1080, 1266) [a11yfocus,fwd,back] children=0
+p09 | android.view.View | desc="40%, p09 Volume" text="" state="" enabled=false focusable=true visible=true Rect(0, 1266 - 1080, 1392) [a11yfocus,click] children=0
+p10 | android.widget.SeekBar | desc="20%, p10 Price" text="" state="" enabled=true focusable=true visible=true Rect(0, 1392 - 1080, 1518) [a11yfocus,click,fwd,back] children=0
+p11 | android.widget.SeekBar | desc="50%, p11 Rating" text="" state="" enabled=true focusable=true visible=true Rect(0, 1518 - 1080, 1644) [a11yfocus,click,fwd,back] children=0
+p12 | android.widget.SeekBar | desc="40%, p12 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 1644 - 1080, 1770) [a11yfocus,click,fwd,back] children=0
+p13 | android.widget.SeekBar | desc="40%, p13 Volume" text="" state="" enabled=true focusable=true visible=true Rect(0, 1770 - 1080, 1896) [a11yfocus,click,fwd,back] children=0
+p14 | android.widget.Button | desc="p14 Press 2" text="" state="" enabled=true focusable=true visible=true Rect(0, 1896 - 324, 2022) [a11yfocus,click] children=0

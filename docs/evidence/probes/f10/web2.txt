@@ -1,0 +1,91 @@
+Running 2 tests using 1 worker
+==== DOM
+flt-semantics {} [0,0 1280x720] pe=none
+  flt-semantics {} [0,0 1280x720] pe=none
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=none
+      flt-semantics {} [0,0 1280x720] pe=none
+        flt-semantics {"role":"group"} [0,0 1280x380] pe=none
+          flt-semantics {"aria-label":"q01 Volume","flt-semantics-identifier":"q01"} [0,0 1280x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,2 1280x44] pe=
+          flt-semantics {} [0,62 110x20] pe=auto
+            span {} [0,62 110x20] pe=none text="q02 Price"
+          flt-semantics {"aria-owns":"flt-semantic-node-42"} [110,48 1170x48] pe=none
+            flt-semantics {} [110,48 1170x48] pe=none
+              flt-semantics {} [336,48 48x48] pe=all
+                input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"20%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [338,50 48x44] pe=
+              flt-semantics {} [783,48 48x48] pe=all
+                input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"60%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [785,50 48x44] pe=
+          flt-semantics {"aria-label":"q03 Volume","flt-semantics-identifier":"q03"} [0,96 1280x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,98 1280x44] pe=
+          flt-semantics {"aria-label":"q04 Volume","flt-semantics-identifier":"q04"} [0,144 1280x44] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,146 1280x40] pe=
+          flt-semantics {"aria-label":"q05 Volume","flt-semantics-identifier":"q05"} [0,188 1280x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,190 1280x44] pe=
+          flt-semantics {"aria-label":"q06 Volume","flt-semantics-identifier":"q06"} [0,236 1280x20] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,238 1280x16] pe=
+          flt-semantics {} [0,270 110x20] pe=auto
+            span {} [0,270 110x20] pe=none text="q07 Volume"
+          flt-semantics {"tabindex":"0","flt-semantics-identifier":"q07"} [110,256 1170x48] pe=auto
+            span {} [110,256 1183x48] pe=none text="40%"
+          flt-semantics {"flt-semantics-identifier":"q08"} [0,304 1280x44] pe=auto
+            span {} [0,304 1283x44] pe=none text="q08 Volume"
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"q09"} [0,348 123x32] pe=all text="q09 Press 0"
+    flt-semantics {} [0,0 1280x720] pe=auto
+elementFromPoint at q09: FLT-SEMANTICS id= parentId= role=null <flt-semantics id="flt-semantic-node-44" style="position: absolute; overflow: visible; pointer-event
+elementFromPoint at q01: FLT-SEMANTICS id= parentId= role=null <flt-semantics id="flt-semantic-node-44" style="position: absolute; overflow: visible; pointer-event
+elementFromPoint at q03: FLT-SEMANTICS id= parentId= role=null <flt-semantics id="flt-semantic-node-44" style="position: absolute; overflow: visible; pointer-event
+elementFromPoint at q04: FLT-SEMANTICS id= parentId= role=null <flt-semantics id="flt-semantic-node-44" style="position: absolute; overflow: visible; pointer-event
+tab 0: INPUT role=slider q01
+tab 1: INPUT role=slider 
+tab 2: INPUT role=slider 
+tab 3: INPUT role=slider q03
+tab 4: INPUT role=slider q04
+tab 5: INPUT role=slider q05
+tab 6: INPUT role=slider q06
+tab 7: FLT-SEMANTICS role=button q09
+tab 8: BODY role=null 
+q04 focused by script: INPUT role=slider q04
+q04 ArrowRight: 40% -> 50% (focus INPUT role=slider q04)
+q04 ArrowRight: 50% -> 60% (focus INPUT role=slider q04)
+q04 Home: 60% -> 0% (focus INPUT role=slider q04)
+q04 End: 0% -> 100% (focus INPUT role=slider q04)
+q04 ArrowLeft: 100% -> 90% (focus INPUT role=slider q04)
+q05 focused by script: INPUT role=slider q05
+q05 ArrowRight: 40% -> 50% (focus INPUT role=slider q05)
+q05 ArrowRight: 50% -> 60% (focus INPUT role=slider q05)
+q05 Home: 60% -> 0% (focus INPUT role=slider q05)
+q05 End: 0% -> 100% (focus INPUT role=slider q05)
+q05 ArrowLeft: 100% -> 90% (focus INPUT role=slider q05)
+q06 focused by script: INPUT role=slider q06
+q06 ArrowRight: 40% -> 50% (focus INPUT role=slider q06)
+q06 ArrowRight: 50% -> 60% (focus INPUT role=slider q06)
+q06 Home: 60% -> 0% (focus INPUT role=slider q06)
+q06 End: 0% -> 100% (focus INPUT role=slider q06)
+q06 ArrowLeft: 100% -> 90% (focus INPUT role=slider q06)
+q03 focused by script: INPUT role=slider q03
+q03 ArrowRight: 40% -> 50% (focus INPUT role=slider q03)
+q03 ArrowRight: 50% -> 60% (focus INPUT role=slider q03)
+q03 Home: 60% -> 50% (focus INPUT role=slider q03)
+q03 End: 50% -> 60% (focus INPUT role=slider q03)
+q03 ArrowLeft: 60% -> 50% (focus INPUT role=slider q03)
+  ✓  1 z99_probe.spec.js:29:1 › probe 2 (9.8s)
+by Tab q04 ArrowRight: 40% -> 50% (focus INPUT role=slider q04)
+by Tab q04 ArrowRight: 50% -> 60% (focus INPUT role=slider q04)
+by Tab q04 Home: 60% -> 0% (focus INPUT role=slider q04)
+by Tab q04 End: 0% -> 100% (focus INPUT role=slider q04)
+by Tab q04 ArrowLeft: 100% -> 90% (focus INPUT role=slider q04)
+by Tab q05 ArrowRight: 40% -> 50% (focus INPUT role=slider q05)
+by Tab q05 ArrowRight: 50% -> 60% (focus INPUT role=slider q05)
+by Tab q05 Home: 60% -> 0% (focus INPUT role=slider q05)
+by Tab q05 End: 0% -> 100% (focus INPUT role=slider q05)
+by Tab q05 ArrowLeft: 100% -> 90% (focus INPUT role=slider q05)
+by Tab q06 ArrowRight: 40% -> 50% (focus INPUT role=slider q06)
+by Tab q06 ArrowRight: 50% -> 60% (focus INPUT role=slider q06)
+by Tab q06 Home: 60% -> 0% (focus INPUT role=slider q06)
+by Tab q06 End: 0% -> 100% (focus INPUT role=slider q06)
+by Tab q06 ArrowLeft: 100% -> 90% (focus INPUT role=slider q06)
+  ✓  2 z99_probe.spec.js:62:1 › probe 2 by Tab (7.6s)
+  2 passed (17.9s)

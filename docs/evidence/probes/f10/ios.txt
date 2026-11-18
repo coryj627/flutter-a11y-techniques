@@ -1,0 +1,69 @@
+==== start
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+1 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 0.0, 402.0, 874.0)
+46 id= label="" value=Optional() enabled=true selected=false frame=(0.0, 62.0, 402.0, 712.0)
+1 id=p01 label="p01 Volume" value=Optional(40%) enabled=true selected=false frame=(0.0, 62.0, 402.0, 48.0)
+48 id= label="p02 Volume" value=Optional() enabled=true selected=false frame=(0.0, 124.0, 110.0, 20.0)
+1 id=p02 label="p02 Volume" value=Optional(40%) enabled=true selected=false frame=(110.0, 110.0, 292.0, 48.0)
+48 id= label="p03 Volume" value=Optional() enabled=true selected=false frame=(0.0, 172.0, 110.0, 20.0)
+1 id=p03 label="" value=Optional(40%) enabled=true selected=false frame=(110.0, 158.0, 292.0, 48.0)
+1 id=p04 label="p04 Volume\n4" value=Optional(40%) enabled=true selected=false frame=(0.0, 206.0, 402.0, 48.0)
+48 id= label="p04b" value=Optional() enabled=true selected=false frame=(0.0, 268.0, 110.0, 20.0)
+1 id=p04b label="4" value=Optional(40%) enabled=true selected=false frame=(110.0, 254.0, 292.0, 48.0)
+1 id=p05 label="p05 Volume" value=Optional(4 of 10) enabled=true selected=false frame=(0.0, 302.0, 402.0, 48.0)
+1 id=p06 label="p06 Volume" value=Optional(40%) enabled=true selected=false frame=(0.0, 350.0, 402.0, 44.0)
+48 id= label="p07" value=Optional() enabled=true selected=false frame=(0.0, 408.0, 110.0, 20.0)
+1 id=p07 label="p07 Volume" value=Optional(40%) enabled=true selected=false frame=(110.0, 394.0, 292.0, 48.0)
+48 id= label="p08" value=Optional() enabled=true selected=false frame=(0.0, 456.0, 110.0, 20.0)
+1 id=p08 label="p08 Volume" value=Optional(40%) enabled=true selected=false frame=(110.0, 442.0, 292.0, 48.0)
+1 id=p09 label="p09 Volume" value=Optional(40%) enabled=false selected=false frame=(0.0, 490.0, 402.0, 48.0)
+1 id=p10 label="p10 Price" value=Optional(20%) enabled=true selected=false frame=(0.0, 538.0, 402.0, 48.0)
+1 id=p11 label="p11 Rating" value=Optional(40%) enabled=true selected=false frame=(0.0, 586.0, 402.0, 48.0)
+1 id=p12 label="p12 Volume" value=Optional(40%) enabled=true selected=false frame=(0.0, 634.0, 402.0, 48.0)
+1 id=p13 label="p13 Volume" value=Optional(40%) enabled=true selected=false frame=(0.0, 682.0, 402.0, 44.0)
+9 id=p14 label="p14 Press 0" value=Optional() enabled=true selected=false frame=(0.0, 726.0, 127.65421549479167, 48.0)
+sliders: 0, adjustable others: 26
+p01 matches: 1: 1 id=p01 label="p01 Volume" value=Optional(40%) enabled=true selected=false frame=(0.0, 62.0, 402.0, 48.0)
+p01 after a tap at 85%: 1 id=p01 label="p01 Volume" value=Optional(90%) enabled=true selected=false frame=(0.0, 62.0, 402.0, 48.0)
+p02 matches: 1: 1 id=p02 label="p02 Volume" value=Optional(40%) enabled=true selected=false frame=(110.0, 110.0, 292.0, 48.0)
+p02 after a tap at 85%: 1 id=p02 label="p02 Volume" value=Optional(90%) enabled=true selected=false frame=(110.0, 110.0, 292.0, 48.0)
+p03 matches: 1: 1 id=p03 label="" value=Optional(40%) enabled=true selected=false frame=(110.0, 158.0, 292.0, 48.0)
+p03 after a tap at 85%: 1 id=p03 label="" value=Optional(90%) enabled=true selected=false frame=(110.0, 158.0, 292.0, 48.0)
+p06 matches: 1: 1 id=p06 label="p06 Volume" value=Optional(40%) enabled=true selected=false frame=(0.0, 350.0, 402.0, 44.0)
+p06 after a tap at 85%: 1 id=p06 label="p06 Volume" value=Optional(40%) enabled=true selected=false frame=(0.0, 350.0, 402.0, 44.0)
+p07 matches: 2: 48 id= label="p07" value=Optional() enabled=true selected=false frame=(0.0, 408.0, 110.0, 20.0) || 1 id=p07 label="p07 Volume" value=Optional(40%) enabled=true selected=false frame=(110.0, 394.0, 292.0, 48.0)
+p07 after a tap at 85%: 48 id= label="p07" value=Optional() enabled=true selected=false frame=(0.0, 408.0, 110.0, 20.0)
+p08 matches: 2: 48 id= label="p08" value=Optional() enabled=true selected=false frame=(0.0, 456.0, 110.0, 20.0) || 1 id=p08 label="p08 Volume" value=Optional(40%) enabled=true selected=false frame=(110.0, 442.0, 292.0, 48.0)
+p08 after a tap at 85%: 48 id= label="p08" value=Optional() enabled=true selected=false frame=(0.0, 456.0, 110.0, 20.0)
+p09 matches: 1: 1 id=p09 label="p09 Volume" value=Optional(40%) enabled=false selected=false frame=(0.0, 490.0, 402.0, 48.0)
+p09 after a tap at 85%: 1 id=p09 label="p09 Volume" value=Optional(40%) enabled=false selected=false frame=(0.0, 490.0, 402.0, 48.0)
+after tap: 9 id=p14 label="p14 Press 1" value=Optional() enabled=true selected=false frame=(0.0, 726.0, 125.29808553059895, 48.0)
+VO p02 Volume
+VO p02 Volume 90% adjustable Swipe up or down with one finger to ad
+VO p03 Volume
+VO 90% adjustable Swipe up or down with one finger to adjust the va
+VO p04 Volume 4 40% adjustable Swipe up or down with one finger to 
+VO p04b
+VO 4 40% adjustable Swipe up or down with one finger to adjust the 
+VO p05 Volume 4 of 10 adjustable Swipe up or down with one finger t
+VO p06 Volume 40% adjustable Swipe up or down with one finger to ad
+VO p07
+VO p07 Volume 40% adjustable Swipe up or down with one finger to ad
+VO p08
+VO p08 Volume 40% adjustable Swipe up or down with one finger to ad
+VO p09 Volume 40% dimmed
+VO p10 Price 20% adjustable Swipe up or down with one finger to adj
+VO p11 Rating 40% adjustable Swipe up or down with one finger to ad
+VO p12 Volume 40% adjustable Swipe up or down with one finger to ad
+VO p13 Volume 40% adjustable Swipe up or down with one finger to ad
+VO p14 Press 1 Button

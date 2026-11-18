@@ -1,0 +1,81 @@
+// Throwaway: F10 probe 2. Not committed.
+import { test } from '@playwright/test';
+
+const id = (page, x) => page.locator(`[flt-semantics-identifier="${x}"]`);
+
+async function dump(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const walk = (el, depth) => {
+      const attrs = {};
+      for (const a of el.attributes) if (!['style', 'id'].includes(a.name)) attrs[a.name] = a.value;
+      const r = el.getBoundingClientRect();
+      const text = el.childElementCount === 0 && el.textContent ? ` text="${el.textContent}"` : '';
+      out.push(`${'  '.repeat(depth)}${el.tagName.toLowerCase()} ${JSON.stringify(attrs)} [${Math.round(r.x)},${Math.round(r.y)} ${Math.round(r.width)}x${Math.round(r.height)}] pe=${el.style.pointerEvents}${el.disabled ? ' DISABLED' : ''}${text}`);
+      for (const c of el.children) walk(c, depth + 1);
+    };
+    for (const c of document.querySelector('flt-semantics-host').children) walk(c, 0);
+    return out.join('\n');
+  });
+}
+
+const active = (page) => page.evaluate(() => {
+  const e = document.activeElement;
+  return `${e.tagName} role=${e.getAttribute('role')} ${e.parentElement?.getAttribute('flt-semantics-identifier') ?? ''}${e.getAttribute('flt-semantics-identifier') ?? ''}`;
+});
+
+const valueOf = (page, x) => id(page, x).locator('input').first().getAttribute('aria-valuetext');
+
+test('probe 2', async ({ page }) => {
+  await page.goto('/');
+  await id(page, 'q09').waitFor();
+  await page.waitForTimeout(500);
+  console.log('==== DOM\n' + (await dump(page)));
+  for (const x of ['q09', 'q01', 'q03', 'q04']) {
+    const box = await id(page, x).boundingBox();
+    const hit = await page.evaluate(([cx, cy]) => {
+      const e = document.elementFromPoint(cx, cy);
+      return `${e.tagName} id=${e.getAttribute('flt-semantics-identifier') ?? ''} parentId=${e.parentElement?.getAttribute('flt-semantics-identifier') ?? ''} role=${e.getAttribute('role')} ${e.outerHTML.slice(0, 100)}`;
+    }, [box.x + box.width / 2, box.y + box.height / 2]);
+    console.log(`elementFromPoint at ${x}: ${hit}`);
+  }
+  // Tab order and keys.
+  for (let i = 0; i < 9; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(150);
+    console.log(`tab ${i}: ${await active(page)}`);
+  }
+  for (const x of ['q04', 'q05', 'q06', 'q03']) {
+    await id(page, x).locator('input').first().focus();
+    await page.waitForTimeout(200);
+    // Focus from script does not move Flutter's focus; Tab there instead.
+    console.log(`${x} focused by script: ${await active(page)}`);
+    for (const key of ['ArrowRight', 'ArrowRight', 'Home', 'End', 'ArrowLeft']) {
+      const before = await valueOf(page, x);
+      await page.keyboard.press(key);
+      await page.waitForTimeout(300);
+      console.log(`${x} ${key}: ${before} -> ${await valueOf(page, x)} (focus ${await active(page)})`);
+    }
+  }
+});
+
+test('probe 2 by Tab', async ({ page }) => {
+  await page.goto('/');
+  await id(page, 'q09').waitFor();
+  await page.waitForTimeout(500);
+  const seen = new Set();
+  for (let i = 0; i < 12; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(150);
+    const where = await active(page);
+    const m = where.match(/(q\d\d)/);
+    if (!m || seen.has(m[1]) || !['q04', 'q05', 'q06'].includes(m[1])) continue;
+    seen.add(m[1]);
+    for (const key of ['ArrowRight', 'ArrowRight', 'Home', 'End', 'ArrowLeft']) {
+      const before = await valueOf(page, m[1]);
+      await page.keyboard.press(key);
+      await page.waitForTimeout(300);
+      console.log(`by Tab ${m[1]} ${key}: ${before} -> ${await valueOf(page, m[1])} (focus ${await active(page)})`);
+    }
+  }
+});

@@ -1,0 +1,149 @@
+// F10 probe 2 (throwaway, not committed): ways round what probe 1 found.
+//
+// Every fixture is identified "qNN" and its visible text starts with "qNN".
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+
+import 'catalog/test_id.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class _Step extends Intent {
+  const _Step(this.to);
+
+  /// -1 and 1 are a step; -100 and 100 are the ends.
+  final int to;
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  final Map<String, double> v = {};
+  RangeValues range = const RangeValues(0.2, 0.6);
+  int presses = 0;
+
+  double d(String k) => v[k] ?? 0.4;
+  void set(String k, double x) => setState(() => v[k] = x.clamp(0, 1));
+  void step(String k, int to) => set(k, switch (to) {
+    -100 => 0,
+    100 => 1,
+    _ => ((d(k) * 10).round() + to) / 10,
+  });
+
+  Widget row(String text, Widget control) => Row(
+    children: [
+      SizedBox(width: 110, child: Text(text)),
+      Expanded(child: control),
+    ],
+  );
+
+  static const keys = <ShortcutActivator, Intent>{
+    SingleActivator(LogicalKeyboardKey.arrowRight): _Step(1),
+    SingleActivator(LogicalKeyboardKey.arrowUp): _Step(1),
+    SingleActivator(LogicalKeyboardKey.arrowLeft): _Step(-1),
+    SingleActivator(LogicalKeyboardKey.arrowDown): _Step(-1),
+    SingleActivator(LogicalKeyboardKey.home): _Step(-100),
+    SingleActivator(LogicalKeyboardKey.end): _Step(100),
+  };
+
+  Widget keyboard(String k, Widget child) => FocusableActionDetector(
+    shortcuts: keys,
+    actions: {_Step: CallbackAction<_Step>(onInvoke: (i) => step(k, i.to))},
+    child: child,
+  );
+
+  String pct(double x) => '${(x.clamp(0, 1) * 100).round()}%';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 01 one Material Slider, merged: how many empty full-screen elements?
+              TestId('q01', child: MergeSemantics(child: row('q01 Volume', Slider(value: d('01'), divisions: 10, onChanged: (x) => set('01', x))))),
+              // 02 RangeSlider, not merged, text beside
+              row('q02 Price', RangeSlider(values: range, divisions: 10, onChanged: (r) => setState(() => range = r))),
+              // 03 Material Slider in Overlay.wrap sized to the slider
+              TestId(
+                'q03',
+                child: MergeSemantics(
+                  child: row(
+                    'q03 Volume',
+                    Overlay.wrap(
+                      alwaysSizeToContent: true,
+                      clipBehavior: Clip.none,
+                      child: Slider(value: d('03'), divisions: 10, onChanged: (x) => set('03', x)),
+                    ),
+                  ),
+                ),
+              ),
+              // 04 CupertinoSlider with focus and arrow keys added
+              TestId(
+                'q04',
+                child: MergeSemantics(
+                  child: row('q04 Volume', keyboard('04', CupertinoSlider(value: d('04'), divisions: 10, onChanged: (x) => set('04', x)))),
+                ),
+              ),
+              // 05 Material Slider with Home and End added around it
+              TestId(
+                'q05',
+                child: MergeSemantics(
+                  child: row(
+                    'q05 Volume',
+                    CallbackShortcuts(
+                      bindings: {
+                        const SingleActivator(LogicalKeyboardKey.home): () => set('05', 0),
+                        const SingleActivator(LogicalKeyboardKey.end): () => set('05', 1),
+                      },
+                      child: Slider(value: d('05'), divisions: 10, onChanged: (x) => set('05', x)),
+                    ),
+                  ),
+                ),
+              ),
+              // 06 custom slider: semantics, focus, arrows, Home and End
+              TestId(
+                'q06',
+                child: keyboard(
+                  '06',
+                  Semantics(
+                    slider: true,
+                    label: 'q06 Volume',
+                    value: pct(d('06')),
+                    increasedValue: pct(d('06') + 0.1),
+                    decreasedValue: pct(d('06') - 0.1),
+                    onIncrease: () => step('06', 1),
+                    onDecrease: () => step('06', -1),
+                    child: ExcludeSemantics(child: row('q06 Volume', LinearProgressIndicator(value: d('06')))),
+                  ),
+                ),
+              ),
+              // 07 a disabled Material Slider, not merged, text beside
+              row('q07 Volume', TestId('q07', child: Slider(value: 0.4, divisions: 10, onChanged: null))),
+              // 08 a disabled CupertinoSlider, merged
+              TestId('q08', child: MergeSemantics(child: row('q08 Volume', const CupertinoSlider(value: 0.4, onChanged: null)))),
+              // 09 a button
+              TestId(
+                'q09',
+                child: FilledButton(onPressed: () => setState(() => presses++), child: Text('q09 Press $presses')),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
