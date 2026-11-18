@@ -10,7 +10,7 @@ const EMAIL_ERROR = 'Enter an email address with an @, like name@example.com.';
 
 // Waits for the example's count, then a moment more: Flutter attaches its
 // text editing a moment after the tree appears.
-const { open: openExample, expectCount } = technique('F06', { countLabel: 'Sent', settle: 600 });
+const { open: openExample, expectCount } = technique('F06', { countLabel: 'Forms sent', settle: 900 });
 
 /**
  * Opens an example and records everything Flutter writes to its two
@@ -134,7 +134,13 @@ test.describe('good examples', () => {
       await expectCount(page, slug, 1);
       await expect(field(page, email)).toHaveAttribute('aria-invalid', 'false');
       await expect(field(page, email)).not.toHaveAttribute('aria-description');
-      expect(await settledAnnouncements(page)).toEqual([`assertive: ${EMAIL_ERROR}`]);
+      // The form went through: that is announced, politely, by the count's
+      // live region, and the errors that were put right are not announced
+      // again. The error before it is the earlier, failed send.
+      expect(await settledAnnouncements(page)).toEqual([
+        `assertive: ${EMAIL_ERROR}`,
+        'polite: Forms sent: 1',
+      ]);
     });
   }
 

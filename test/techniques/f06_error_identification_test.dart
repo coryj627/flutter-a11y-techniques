@@ -277,9 +277,14 @@ void main() {
           tester,
           () => _pressSend(tester, slug),
         );
+        // The errors that were put right are not announced again, and
+        // nothing is sent from code: the success is the count's live region.
         expect(none, isEmpty);
         expect(find.text(_emailError), findsNothing);
         expect(_count(tester, slug), 1);
+        final count = dataById('f06-$slug-count');
+        expect(count.label, 'Forms sent: 1');
+        expect(count.flagsCollection.isLiveRegion, isTrue);
         handle.dispose();
       });
 
@@ -299,6 +304,28 @@ void main() {
   });
 
   // VAL-3: each bad example is asserted to have its named defect.
+  // A form that goes through is a status message in every example, good
+  // and bad, so each bad example differs from a good one by its defect only.
+  for (final slug in [..._good, ..._bad]) {
+    for (final supportsAnnounce in [true, false]) {
+      testWidgets('$slug: the count of forms sent is a live region, and a '
+          'failed send leaves it alone (supportsAnnounce: $supportsAnnounce)', (
+        tester,
+      ) async {
+        final handle = tester.ensureSemantics();
+        await _open(tester, slug, supportsAnnounce: supportsAnnounce);
+        final count = dataById('f06-$slug-count');
+        expect(count.label, 'Forms sent: 0');
+        expect(count.flagsCollection.isLiveRegion, isTrue);
+        // Every example starts empty, so Send fails; the count does not
+        // change, so nothing about it is announced.
+        await _pressSend(tester, slug);
+        expect(dataById('f06-$slug-count').label, 'Forms sent: 0');
+        handle.dispose();
+      });
+    }
+  }
+
   group('bad examples have their defect', () {
     testWidgets('bad-color-only: the field is invalid and turns red, and no '
         'words say what is wrong', (tester) async {

@@ -77,3 +77,43 @@ for (const [slug, { heard: must, mustNot, cursor }] of Object.entries(EXAMPLES))
     expect(back, `${slug}: where the cursor is`).toContain(cursor);
   });
 }
+
+// A form that goes through. Each good example is sent once with its errors,
+// then both fields are put right with the keyboard and the form is sent
+// again: the count's live region must be heard, and the errors that were
+// put right must not be. Hearing the count shows the capture was live for
+// the errors' absence.
+for (const slug of ['good-form', 'good-cupertino']) {
+  test(`voiceover announces a form sent in ${slug}`, async ({ page, voiceOver, browserName }) => {
+    test.skip(browserName === 'webkit', 'WebKit test build does not announce');
+    expect(voiceOver).toBeTruthy();
+    await page.goto(`/#/t/F06/${slug}`, { waitUntil: 'load' });
+    const send = page.locator(`[flt-semantics-identifier="f06-${slug}-send"]`);
+    const input = (name) => page.locator(`[flt-semantics-identifier="f06-${slug}-${name}"] input`);
+    await expect(send).toBeVisible();
+    await activateBrowser(browserName);
+    await page.bringToFront();
+    await page.getByRole('heading', { name: 'Example', level: 2 }).click();
+    const key = slug === 'good-cupertino' ? 'Space' : 'Enter';
+    await send.focus();
+    await page.keyboard.press(key);
+    await expect(page.getByText(NAME_ERROR, { exact: true })).toBeAttached();
+    await page.waitForTimeout(2500);
+    for (const [name, text] of [['name', 'Ana'], ['email', 'ana@example.com']]) {
+      await input(name).click();
+      await page.waitForTimeout(500);
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.type(text, { delay: 30 });
+      await expect(input(name)).toHaveValue(text);
+    }
+    await send.focus();
+    const quiet = await waitUntilQuiet(page);
+    const heard = (await heardAfter(page, () => page.keyboard.press(key), quiet, 8000)).map(clean);
+    console.log(`F06VO ${browserName} ${slug}-sent-ok | on Send: ${clean(quiet)} / after Send: ${heard.join(' / ') || '(nothing)'}`);
+    await expect(page.locator(`[flt-semantics-identifier="f06-${slug}-count"]`)).toHaveText('Forms sent: 1');
+    const all = heard.join(' | ');
+    expect(all, slug).toContain('Forms sent: 1');
+    expect(all, slug).not.toContain(NAME_ERROR);
+    expect(all, slug).not.toContain(EMAIL_ERROR);
+  });
+}

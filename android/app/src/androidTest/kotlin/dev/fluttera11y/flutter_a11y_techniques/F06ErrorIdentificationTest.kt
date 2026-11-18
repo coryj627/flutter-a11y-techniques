@@ -126,6 +126,10 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             hideKeyboard()
             send(slug)
             waitForCount(slug, 1)
+            // A form that goes through is a status message: the count is a
+            // polite live region.
+            assertEquals("$slug count", View.ACCESSIBILITY_LIVE_REGION_POLITE,
+                node("f06-$slug-count").liveRegion)
             assertEquals(email, "Email", hint(email))
             assertTrue("$slug errors gone", withText(EMAIL_ERROR) == null)
         }
@@ -236,6 +240,25 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
                 Log.i(talkBackTag, "FOCUS f06-good-form-email-filled")
                 talkBackFocus("Email, filled") { nodeInAnyWindow("f06-good-form-email") }
                 Thread.sleep(5_000)
+                // Put both right and send: the form goes through, and only
+                // that is announced, not the errors that were put right.
+                Log.i(talkBackTag, "END $slug-filled")
+                type("f06-good-form-name", "Ana")
+                val selection = android.os.Bundle().apply {
+                    putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, 3)
+                    putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, 3)
+                }
+                assertTrue(nodeInAnyWindow("f06-good-form-email")
+                    .performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selection))
+                Thread.sleep(500)
+                inst.sendStringSync("@example.com")
+                waitFor("email typed") { value("f06-good-form-email") == "abc@example.com" }
+                hideKeyboard()
+                talkBackFocus("Send") { nodeInAnyWindow("f06-good-form-send") }
+                Thread.sleep(6_000)
+                Log.i(talkBackTag, "FOCUS f06-good-form-sent-ok")
+                send(slug)
+                Thread.sleep(7_000)
             }
             Log.i(talkBackTag, "END $slug")
         }

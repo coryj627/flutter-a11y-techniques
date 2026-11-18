@@ -28,6 +28,11 @@ TALKBACK_EXPECT = {
     # label and the error are in the hint text, which TalkBack does not read
     # once there is a value (FL-015). Written to fail when it starts to.
     "f06-good-form-email-filled": (["abc", "Edit box"], [_EMAIL, "Email"]),
+    # Both fields put right and Send pressed: the form goes through, which
+    # the count's live region announces, and the errors that were put right
+    # are not announced again. The required phrase is the capture's
+    # liveness control for the phrases that must not be heard.
+    "f06-good-form-sent-ok": (["Forms sent: 1"], [_NAME, _EMAIL]),
     "f06-good-cupertino-send": (["Send", "Button"], []),
     "f06-good-cupertino-sent": ([_NAME, _EMAIL, "Edit box"], []),
     "f06-good-cupertino-name": (["Name", _NAME, "Edit box"], []),
@@ -57,7 +62,8 @@ TALKBACK_METHOD = (
     "TalkBack focus on Send, then ACTION_CLICK on Send and everything TalkBack says for "
     "seven seconds; then the keyboard is closed and ACTION_ACCESSIBILITY_FOCUS is put on each "
     "field and error in turn, which shows what is spoken and not the order of a swipe. "
-    "Speech is read from TalkBack's verbose log"
+    "For `good-form`, both fields are then put right and Send is pressed again "
+    "(`f06-good-form-sent-ok`). Speech is read from TalkBack's verbose log"
 )
 
 VOICEOVER_IOS_METHOD = (
@@ -65,9 +71,11 @@ VOICEOVER_IOS_METHOD = (
     "utterance of `XCUIVoiceOverService.currentSpeech()` in the next eight seconds is "
     "recorded, then the cursor is moved forward once and back once, which reads the element "
     "it was on. The example must show that Send acted. Last, the cursor is moved to the count, "
-    "and `currentSpeech()` itself must report \"Sent: 0\" within five seconds, so a capture that "
+    "and `currentSpeech()` itself must report \"Forms sent: 0\" within five seconds, so a capture that "
     "fails, stays empty, or is stuck cannot pass as silence. A failed `currentSpeech()` read "
-    "fails the test. Utterances are the first 64 characters",
+    "fails the test. The `-sent-ok` rows: after a failed send both fields are put right "
+    "with VoiceOver off, and Send is activated again with it on. Utterances are the first "
+    "64 characters",
     "Spoken: on Send / after activation / forward / back / control",
 )
 
@@ -75,5 +83,7 @@ VOICEOVER_WEB_METHOD = (
     "keyboard focus on Send, then Enter (Space for the Cupertino button), and VoiceOver's last "
     "phrase is polled over AppleScript for eight seconds; then the cursor is moved once each "
     "way to read where it is. Chromium only: Playwright's WebKit build passes no live region "
-    "or announcement to VoiceOver (I12). Silence is checked with the capture proven live"
+    "or announcement to VoiceOver (I12). Silence is checked with the capture proven live. "
+    "The `-sent-ok` rows: after a failed send both fields are put right with the keyboard "
+    "and Send is pressed again"
 )

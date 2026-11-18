@@ -7,7 +7,7 @@ private let emailError = "Enter an email address with an @, like name@example.co
 
 final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
   static let technique = "F06"
-  static let countLabel = "Sent"
+  static let countLabel = "Forms sent"
   let app = XCUIApplication()
 
   override func setUp() {
@@ -201,7 +201,7 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
       }
       let more = then.isEmpty ? "" : " / then: \(then.joined(separator: " / "))"
       // Liveness of the capture the checks above and below rely on: move to
-      // the count, the last element, whose words ("Sent: 0") were not among
+      // the count, the last element, whose words ("Forms sent: 0") were not among
       // what was heard, and require currentSpeech() itself, the API polled
       // during the window, to report them. A read that fails, stays empty,
       // or is stuck on an earlier utterance fails here.
@@ -233,6 +233,48 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
       XCTAssertTrue(starts(back, example.cursor), "\(example.slug): cursor on \"\(back)\", expected \"\(example.cursor)\"")
       for (phrase, said) in zip(example.then, then) {
         XCTAssertTrue(starts(said, phrase), "\(example.slug): expected \"\(phrase)\", heard \"\(said)\"")
+      }
+    }
+    // A form that goes through. Each good example is sent once with its
+    // errors, then both fields are put right with VoiceOver off; with it
+    // on, Send is activated again. The count's live region must be heard
+    // through currentSpeech(), which also shows that capture is live for
+    // the errors, which must not be announced again.
+    for slug in ["good-form", "good-cupertino"] {
+      open(slug)
+      send(slug)
+      XCTAssertTrue(element(labelled: nameError).waitForExistence(timeout: 5), "\(slug): errors shown")
+      let name = element("f06-\(slug)-name")
+      name.tap()
+      name.typeText("Ana")
+      let email = element("f06-\(slug)-email")
+      email.tap()
+      email.typeText("ana@example.com\n")
+      try voiceOver.enable()
+      defer { try? voiceOver.disable() }
+      let sendButton = element("f06-\(slug)-send")
+      var before = ""
+      for _ in 0..<5 {
+        sendButton.tap()
+        let deadline = Date().addingTimeInterval(4)
+        before = try current()
+        while before != "Send Button" && Date() < deadline { usleep(250_000); before = try current() }
+        if before == "Send Button" { break }
+      }
+      XCTAssertEqual(before, "Send Button", "\(slug): cursor is not on Send")
+      sendButton.doubleTap()
+      var heard: [String] = []
+      let end = Date().addingTimeInterval(8)
+      while Date() < end {
+        let now = try current()
+        if !now.isEmpty && now != (heard.last ?? before) { heard.append(now) }
+        usleep(200_000)
+      }
+      print("F06VO \(slug)-sent-ok | on Send: \(before) / after activation: \(heard.joined(separator: " / "))")
+      expectCount(slug, 1)
+      XCTAssertTrue(heard.contains("\(Self.countLabel): 1"), "\(slug): the form going through was not announced: \(heard)")
+      for phrase in [nameError, emailError] {
+        XCTAssertFalse(heard.contains { $0.contains(phrase) }, "\(slug): did not expect \"\(phrase)\" in \(heard)")
       }
     }
     #else
