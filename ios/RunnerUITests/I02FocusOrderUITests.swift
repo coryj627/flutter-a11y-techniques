@@ -111,12 +111,37 @@ final class I02FocusOrderUITests: XCTestCase, CountedTechniqueUITest {
   }
 
   // The example screen has one thing the keyboard can reach before the
-  // example: Back. The first Tab puts focus on it (I01 tests).
+  // example: Back. Every test that starts from a fresh screen relies on
+  // the first Tab putting focus there; this one checks it for every
+  // example, since Space on Back is the only way to see it and leaves the
+  // screen.
+  func testTheFirstTabGoesToBack() {
+    for slug in Self.all {
+      open(slug)
+      press(Self.tab)
+      expectBack(slug)
+    }
+  }
+
+  // The check above can fail: with focus one stop further on, on Map,
+  // Space checks Map and the screen stays, and expectBack reports it.
+  func testTheBackCheckFailsWhenFocusIsNotOnBack() {
+    // An expected failure must not end the test.
+    continueAfterFailure = true
+    let slug = "good-material"
+    open(slug)
+    press(Self.tab)
+    press(Self.tab)
+    XCTExpectFailure("focus is on Map, not on Back") {
+      expectBack(slug)
+    }
+    expectChecked(slug, ["map"], "after Space with focus on Map")
+  }
 
   func testTabGoesInTheExamplesOrderThenRoundToBack() {
     for slug in Self.all {
       open(slug)
-      press(Self.tab)  // Back
+      press(Self.tab)  // Back, as testTheFirstTabGoesToBack shows
       var on = Set<String>()
       var saves = 0
       for stop in Self.tabOrder[slug]! {

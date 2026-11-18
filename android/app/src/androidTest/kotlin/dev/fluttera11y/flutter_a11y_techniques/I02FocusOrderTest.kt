@@ -50,9 +50,51 @@ private val TAB_ORDER = mapOf(
 class I02FocusOrderTest : TechniqueTest("I02") {
     override val countName: String get() = "save count"
 
-    private fun open(slug: String) = openExample(slug, By.res("i02-$slug-count"))
+    // CI's emulator is 320 by 640 at 160 dpi. There the example screens
+    // scroll, and a node scrolled out of view is not in the tree that UI
+    // Automator reads: the count of bad-columns-mixed, below its longer
+    // defect text, was missing when the screen opened (measured with
+    // `wm size 320x640` and `wm density 160` on the local emulator). So the
+    // test waits for Map, near the top of every example, and finds a node
+    // that may be out of view by scrolling to it.
+    private fun open(slug: String) = openExample(slug, By.res("i02-$slug-map"))
 
-    private fun control(slug: String, c: String): AccessibilityNodeInfo = node("i02-$slug-$c")
+    private fun find(id: String): AccessibilityNodeInfo? = all().firstOrNull { it.viewIdResourceName == id }
+
+    private fun scrollView(): AccessibilityNodeInfo? = all().firstOrNull { it.isScrollable }
+
+    private fun scroll(action: Int): Boolean {
+        val moved = scrollView()?.performAction(action) ?: false
+        if (moved) Thread.sleep(500)
+        return moved
+    }
+
+    /**
+     * The node with the test identifier [id], scrolling the screen to it if
+     * it is out of view: forward first, then back. Scrolling moves no
+     * keyboard focus.
+     */
+    private fun reveal(id: String): AccessibilityNodeInfo {
+        find(id)?.let { return it }
+        for (action in listOf(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD, AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)) {
+            for (i in 0 until 8) {
+                if (!scroll(action)) break
+                find(id)?.let { return it }
+            }
+        }
+        throw AssertionError("no node with id $id, even after scrolling")
+    }
+
+    private fun control(slug: String, c: String): AccessibilityNodeInfo = reveal("i02-$slug-$c")
+
+    private fun saves(slug: String): Int = control(slug, "count").name().substringAfter(": ").toInt()
+
+    /** Waits up to 5 seconds for the save count of [slug] to be [expected]. */
+    private fun waitForSaves(slug: String, expected: Int) {
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end && saves(slug) != expected) Thread.sleep(200)
+        assertEquals("save count for $slug", expected, saves(slug))
+    }
 
     /** Presses a key on the emulator's keyboard and gives Flutter time to act. */
     private fun key(name: String) {
@@ -127,14 +169,25 @@ class I02FocusOrderTest : TechniqueTest("I02") {
     // their traversal order (read in the source: AccessibilityBridge.java).
     // It is the column order in every example. TalkBack's own moves are not
     // driven here: the TalkBack walk below puts its focus on each control.
+    // On a screen where the example scrolls, the tree holds only the nodes
+    // in view, so the order is read at each scroll position, from the top:
+    // every reading must be in the column order, and together they must
+    // hold every control.
     @Test
     fun theTreeHasTheControlsOneColumnThenTheOther() {
         for (slug in ALL) {
             open(slug)
-            val order = all().mapNotNull { it.viewIdResourceName }
-                .filter { it.startsWith("i02-$slug-") && !it.endsWith("-count") }
-                .map { it.removePrefix("i02-$slug-") }
-            assertEquals(slug, COLUMN_ORDER, order)
+            while (scroll(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)) { /* to the top */ }
+            val seen = mutableSetOf<String>()
+            for (i in 0 until 8) {
+                val order = all().mapNotNull { it.viewIdResourceName }
+                    .filter { it.startsWith("i02-$slug-") && !it.endsWith("-count") }
+                    .map { it.removePrefix("i02-$slug-") }
+                assertEquals("$slug, at scroll step $i", COLUMN_ORDER.filter { it in order }, order)
+                seen += order
+                if (!scroll(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)) break
+            }
+            assertEquals(slug, COLUMN_ORDER.toSet(), seen)
         }
     }
 
@@ -171,7 +224,7 @@ class I02FocusOrderTest : TechniqueTest("I02") {
                 assertEquals(slug, expected, stop(slug))
                 key("SPACE")
                 if (expected == "save") {
-                    waitForCount(slug, 1)
+                    waitForSaves(slug, 1)
                     continue
                 }
                 done += expected
@@ -208,7 +261,7 @@ class I02FocusOrderTest : TechniqueTest("I02") {
     @Test
     fun talkBackWalk() {
         val walk: List<Pair<String, List<Stop>>> = ALL.map { slug ->
-            slug to (BOXES + "save").map { c -> Stop("i02-$slug-$c") { node("i02-$slug-$c") } }
+            slug to (BOXES + "save").map { c -> Stop("i02-$slug-$c") { reveal("i02-$slug-$c") } }
         }
         talkBackWalk(walk, open = ::open, dwellMillis = { 3_000 })
     }

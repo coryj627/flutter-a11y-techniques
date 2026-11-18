@@ -187,7 +187,7 @@ void main() {
       testWidgets('$slug does not overflow at 200% text on a phone', (
         tester,
       ) async {
-        tester.view.physicalSize = const Size(640, 320);
+        tester.view.physicalSize = const Size(320, 640);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.reset);
         await _open(tester, slug, textScale: 2);
