@@ -75,6 +75,7 @@ Future<List<(String, int)>> _announcements(
   Future<void> Function() body,
 ) async {
   final sent = <(String, int)>[];
+  _recording = sent;
   tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(
     SystemChannels.accessibility,
     (message) async {
@@ -109,6 +110,12 @@ Future<List<(String, int)>> _announcements(
   expect(sent.last.$1, 'recording check');
   return recorded;
 }
+
+/// The list the running recording is filling, for [_peek].
+List<(String, int)> _recording = [];
+
+/// What the running recording has received so far.
+Future<List<(String, int)>> _peek(WidgetTester tester) async => [..._recording];
 
 /// Presses Send with a tap, lets Form's announcement go out, and settles.
 Future<void> _pressSend(WidgetTester tester, String slug) async {
@@ -277,7 +284,8 @@ void main() {
           tester,
           () => _pressSend(tester, slug),
         );
-        // The errors that were put right are not announced again, and
+        // The errors that were put right are not announced again on this
+        // path (on the iOS path, within a second they are: FL-181), and
         // nothing is sent from code: the success is the count's live region.
         expect(none, isEmpty);
         expect(find.text(_emailError), findsNothing);
@@ -679,6 +687,92 @@ void main() {
       expect(sent, isEmpty);
       handle.dispose();
     });
+
+    // FormState._validate captures the first error and, on iOS, sends it a
+    // second later without checking again. A form put right and sent again
+    // within that second still gets the old error, after the success.
+    Future<(List<(String, int)>, List<(String, int)>)> failThenFix(
+      WidgetTester tester, {
+      required Duration before,
+    }) async {
+      final form = GlobalKey<FormState>();
+      final controller = TextEditingController();
+      addTearDown(controller.dispose);
+      await pump(
+        tester,
+        Form(
+          key: form,
+          child: TextFormField(
+            controller: controller,
+            validator: _validateEmailLikeTheExamples,
+          ),
+        ),
+      );
+      // What was sent up to the moment the corrected form went through, and
+      // what was sent after it.
+      late List<(String, int)> untilSuccess;
+      final all = await _announcements(tester, () async {
+        expect(form.currentState!.validate(), isFalse);
+        await tester.pump(before);
+        controller.text = 'ana@example.com';
+        expect(form.currentState!.validate(), isTrue);
+        await tester.pump();
+        untilSuccess = await _peek(tester);
+        await tester.pump(const Duration(seconds: 2));
+        await tester.pumpAndSettle();
+      });
+      return (untilSuccess, all.sublist(untilSuccess.length));
+    }
+
+    testWidgets(
+      'iOS: an error put right and sent again within a second is still '
+      'announced, after the success',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        final (untilSuccess, afterSuccess) = await failThenFix(
+          tester,
+          before: const Duration(milliseconds: 300),
+        );
+        // Nothing yet when the form goes through, then the stale error.
+        // Written to fail when Form checks again before announcing.
+        expect(untilSuccess, isEmpty);
+        expect(afterSuccess, [(_emailError, Assertiveness.assertive.index)]);
+        handle.dispose();
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+    );
+
+    testWidgets(
+      'iOS: an error put right and sent again after the second is announced '
+      'once, before the success, and not after it',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        final (untilSuccess, afterSuccess) = await failThenFix(
+          tester,
+          before: const Duration(milliseconds: 1500),
+        );
+        expect(untilSuccess, [(_emailError, Assertiveness.assertive.index)]);
+        expect(afterSuccess, isEmpty);
+        handle.dispose();
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+    );
+
+    testWidgets(
+      'other platforms: the error is announced at once, so nothing is left '
+      'to come after a quick success',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        final (untilSuccess, afterSuccess) = await failThenFix(
+          tester,
+          before: const Duration(milliseconds: 300),
+        );
+        expect(untilSuccess, [(_emailError, Assertiveness.assertive.index)]);
+        expect(afterSuccess, isEmpty);
+        handle.dispose();
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+    );
 
     testWidgets('FormState.validateGranularly() announces the first error', (
       tester,

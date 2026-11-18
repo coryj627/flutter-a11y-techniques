@@ -30,7 +30,7 @@ TALKBACK_EXPECT = {
     "f06-good-form-email-filled": (["abc", "Edit box"], [_EMAIL, "Email"]),
     # Both fields put right and Send pressed: the form goes through, which
     # the count's live region announces, and the errors that were put right
-    # are not announced again. The required phrase is the capture's
+    # several seconds before are not announced again. The required phrase is the capture's
     # liveness control for the phrases that must not be heard.
     "f06-good-form-sent-ok": (["Forms sent: 1"], [_NAME, _EMAIL]),
     "f06-good-cupertino-send": (["Send", "Button"], []),

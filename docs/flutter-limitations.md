@@ -2069,6 +2069,25 @@ yet), **Fixed in x.y** (verified on that version).
     `onUserInteractionIfError`, and `onUnfocus` modes,
     `validateGranularly()`, and field-level autovalidation of a field that
     is not merged.
+- On iOS a corrected error can still be announced after the form goes
+  through. Read in the source: `_validate` takes the first error's text,
+  then, on iOS only, waits `_kIOSAnnouncementDelayDuration` (one second)
+  in an unawaited `Future` and sends that text without validating again or
+  checking that the error is still there; nothing can cancel it. Asserted
+  by the F06 widget tests on the iOS path: `validate()` failed, the field
+  was put right and `validate()` passed 300 ms later, and the recorder
+  had nothing when the form went through and then the old error, a second
+  after the first send. With the second send 1.5 s after the first, the
+  error came once, before it, and nothing after. On the other platforms'
+  path the error is sent at once, so nothing comes after a quick success.
+  What a user would hear in F06, where a form that goes through is
+  announced by a live count: "Forms sent: 1", then "Enter an email address
+  …" for a field that is no longer in error. It needs a send that fails
+  and a send that goes through less than a second apart. Not measured on a
+  device: the F06 walks put the fields right several seconds after the
+  failed send. No workaround in the app: the queued announcement has no
+  handle. It is recorded here and not as an entry of its own because it
+  is the same code as the rest of this entry.
 - What happens on Android: Flutter reports that announcements are not
   supported there ([FL-018](#fl-018)), so `Form` sends nothing. A
   Material field's error text is a live region (source; Android tree

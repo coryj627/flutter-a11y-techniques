@@ -239,7 +239,9 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
     // errors, then both fields are put right with VoiceOver off; with it
     // on, Send is activated again. The count's live region must be heard
     // through currentSpeech(), which also shows that capture is live for
-    // the errors, which must not be announced again.
+    // the errors, which must not be announced again. The second send comes
+    // several seconds after the first, past Form's one-second delay before
+    // it announces an error on iOS (FL-181).
     for slug in ["good-form", "good-cupertino"] {
       open(slug)
       send(slug)

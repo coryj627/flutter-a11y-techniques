@@ -136,7 +136,8 @@ test.describe('good examples', () => {
       await expect(field(page, email)).not.toHaveAttribute('aria-description');
       // The form went through: that is announced, politely, by the count's
       // live region, and the errors that were put right are not announced
-      // again. The error before it is the earlier, failed send.
+      // again (the web sends an error at once; on iOS Form waits a second
+      // first, FL-181). The error before it is the earlier, failed send.
       expect(await settledAnnouncements(page)).toEqual([
         `assertive: ${EMAIL_ERROR}`,
         'polite: Forms sent: 1',
