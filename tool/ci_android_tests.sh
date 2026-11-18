@@ -558,6 +558,34 @@ done
 # no tests as a failure; the test runner's log is.
 all=""
 for c in "${CLASSES[@]}"; do all="$all${all:+,}$PKG.$c"; done
+
+# The only sweep that passes is one the test runner itself reports as empty
+# from start to end: one start, a finish with 0 tests, 0 failed and 0
+# ignored, and nothing else logged: no test, failure or second run. The
+# count at the start is not used: the test runner gives 1 for a run with
+# no tests in it. A class that fails before its first test starts logs the
+# failure and finishes with 1 failed. Sets swept to the sweep's lines.
+judge_sweep() {
+  swept=$(lines_from "$sweep_from")
+  other=$(echo "$swept" | grep -F "TestRunner: " \
+    | grep -vE "TestRunner: (run started: [0-9]+ tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
+  [ -z "$other" ] \
+    && [ "$(echo "$swept" | grep -cF "TestRunner: run started:")" -eq 1 ] \
+    && echo "$swept" | grep -qE "TestRunner: run finished: 0 tests, 0 failed, 0 ignored[[:space:]]*$"
+}
+
+# Checks the test runner's log against the device's, up to three times.
+# Fails if the device's log could not be read.
+confirm_from_device() {
+  local try
+  for try in 1 2 3; do
+    resync_tests_log && return 0
+    [ "$try" -lt 3 ] && sleep "$POLL_SECONDS"
+  done
+  return 1
+}
+
+SWEEP_PASSED=0
 sleep "$SETTLE_SECONDS"
 # The batches' lines go into the log before the sweep starts, as far as the
 # device still has them. The sweep's lines are then those the device logged
@@ -575,28 +603,15 @@ else
   rc=$?
   sleep "$SETTLE_SECONDS"
   after_run "the sweep" "$rc" "" "$sweep_from"
-  # The only sweep that passes is one the test runner itself reports as empty
-  # from start to end: one start, a finish with 0 tests, 0 failed and 0
-  # ignored, and nothing else logged: no test, failure or second run. The
-  # count at the start is not used: the test runner gives 1 for a run with
-  # no tests in it. A class that fails before its first test starts logs the
-  # failure and finishes with 1 failed.
-  judge_sweep() {
-    swept=$(lines_from "$sweep_from")
-    other=$(echo "$swept" | grep -F "TestRunner: " \
-      | grep -vE "TestRunner: (run started: [0-9]+ tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
-    [ -z "$other" ] \
-      && [ "$(echo "$swept" | grep -cF "TestRunner: run started:")" -eq 1 ] \
-      && echo "$swept" | grep -qE "TestRunner: run finished: 0 tests, 0 failed, 0 ignored[[:space:]]*$"
-  }
-  # A reader that is still running can have left out a line, such as the
-  # sweep's finish: before failing the sweep, take what the device has.
-  if ! judge_sweep; then
-    say "the sweep's lines in the reader's log are not an empty run from start to end; checking the device's log before judging it"
-    resync_tests_log
-    judge_sweep
-  fi
-  if ! echo "$swept" | grep -qF "TestRunner: run started:"; then
+  # A reader that is still running can leave out any line, so a sweep that
+  # looks empty in its log may not be: every sweep is checked against the
+  # device's log before it is judged, and fails if that cannot be done.
+  say "sweep: checking its lines against the device's log before judging it"
+  if ! confirm_from_device; then
+    FAILED=1
+    say "failed: the sweep could not be confirmed against the device's log, so a line the reader left out could hide a test outside the list (Gradle exit code $rc)$(reader_note)"
+    dump_state sweep-failed
+  elif ! judge_sweep && ! echo "$swept" | grep -qF "TestRunner: run started:"; then
     FAILED=1
     say "failed: the sweep never reached the test runner (Gradle exit code $rc), so nothing shows that every test class was in the list$(reader_note)"
     dump_state sweep-failed
@@ -606,6 +621,7 @@ else
     echo "$swept" | grep -F "TestRunner: " | sed -E 's/.*TestRunner: //'
     dump_state sweep-failed
   else
+    SWEEP_PASSED=1
     say "sweep: no test outside the list"
   fi
   [ -d "$REPORTS/connected" ] && { rm -rf "$REPORTS/sweep"; mv "$REPORTS/connected" "$REPORTS/sweep"; }
@@ -613,7 +629,8 @@ fi
 
 # Every class must have run: the test runner's own log has to show a
 # finished test for each one. Before a class is failed for it, the device's
-# log is checked for lines the reader did not write.
+# log is checked for lines the reader did not write; the lines that check
+# adds are the sweep's too, so a sweep that passed is judged again.
 ran_all() {
   local c
   for c in "${CLASSES[@]}"; do
@@ -623,6 +640,11 @@ ran_all() {
 if ! ran_all; then
   say "a class has no finished test in the reader's log; checking the device's log"
   resync_tests_log
+  if [ "$SWEEP_PASSED" -eq 1 ] && ! judge_sweep; then
+    FAILED=1
+    say "failed: with the lines the device's log has just given, the sweep is not an empty run from start to end. A test class is missing from the list. The test runner logged:"
+    echo "$swept" | grep -F "TestRunner: " | sed -E 's/.*TestRunner: //'
+  fi
 fi
 for c in "${CLASSES[@]}"; do
   n=$(grep -cF "TestRunner: finished: " "$TESTS_LOG" 2>/dev/null)

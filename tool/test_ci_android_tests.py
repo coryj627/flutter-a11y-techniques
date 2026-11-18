@@ -464,7 +464,7 @@ class RunTest(unittest.TestCase):
         result = self.space.run()
         self.assertEqual(result.returncode, 1)
         self.assertIn("could not read the device's log", result.stdout)
-        self.assertIn("the sweep never reached the test runner", result.stdout)
+        self.assertIn("the sweep could not be confirmed against the device's log", result.stdout)
         self.assertIn("checks that could not use the device's log", result.stdout)
         self.assertIn("no test of C01ButtonTest finished", result.stdout)
 
@@ -560,7 +560,7 @@ class RunTest(unittest.TestCase):
         self.space.finished(*self.names)
         result = self.space.run()
         self.assert_passed_once_each(result)
-        self.assertIn("not an empty run from start to end; checking the device's log",
+        self.assertIn("sweep: checking its lines against the device's log before judging it",
                       result.stdout)
         self.assertIn("took from the device's log 1 test runner lines", result.stdout)
         self.assertIn("sweep: no test outside the list", result.stdout)
@@ -575,26 +575,93 @@ class RunTest(unittest.TestCase):
             "run finished: 1 tests, 0 failed, 0 ignored") + "exit 0")
         result = self.space.run()
         self.assertEqual(result.returncode, 1)
-        self.assertIn("checking the device's log before judging it", result.stdout)
+        self.assertIn("sweep: checking its lines against the device's log before judging it",
+                      result.stdout)
         self.assertIn("not an empty run", result.stdout)
         self.assertIn("run finished: 1 tests, 0 failed, 0 ignored",
                       result.stdout.split("The test runner logged:")[1])
 
+    def late_dump(self, text):
+        """A device's log that gives the lines with `text` in them only
+        from its fourth read on: not at the start, before the sweep or when
+        the sweep is checked, but at the class check."""
+        return (f'if [ "$d" -le 3 ]; then grep -vF "{text}" "{self.space.runner_log}"; '
+                f'else cat "{self.space.runner_log}"; fi')
+
     def test_a_class_line_the_running_reader_left_out_is_taken_from_the_device(self):
         # The reader never writes the line, even when it is started again
-        # from an earlier time, and the check before the sweep (the second
-        # read of the device's log) fails, so only the class check can find
-        # the line.
+        # from an earlier time, and the device gives it only at the class
+        # check.
         self.space.adb(reader=f'drop_lines "({PKG}.F01FieldsTest)"',
-                       dump=f'[ "$d" -eq 2 ] && exit 1; cat "{self.space.runner_log}"')
+                       dump=self.late_dump(f"({PKG}.F01FieldsTest)"))
         self.space.finished(*self.names)
         result = self.space.run()
         self.assert_passed_once_each(result)
-        self.assertIn("could not be checked against the device's log before the sweep",
-                      result.stdout)
         self.assertIn("a class has no finished test in the reader's log; checking the device's log",
                       result.stdout)
         self.assertIn("restarts of the test runner's log reader: 0,", result.stdout)
+
+    # A sweep that looks empty in the reader's log is still checked against
+    # the device's: the reader can have left out a second run or a test.
+
+    def sweep_with_hidden_lines(self, *hidden, dump=None):
+        """An empty sweep run, then `hidden` lines at a later time that the
+        running reader never writes; Gradle calls the sweep failed."""
+        later = "11-17 21:31:00.000"
+        self.space.adb(reader=f'drop_lines "{later}"', dump=dump)
+        self.space.finished(*self.names)
+        self.space.gradle("exit 0", sweep=self.space.logs(*EMPTY_RUN)
+                          + self.space.logs(*hidden, time=later) + "exit 1")
+        return self.space.run()
+
+    def test_a_second_failing_run_the_reader_left_out_fails_the_sweep(self):
+        result = self.sweep_with_hidden_lines(
+            "run started: 1 tests", f"failed: initializationError({PKG}.MissedTest)",
+            "run finished: 0 tests, 1 failed, 0 ignored")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("sweep: checking its lines against the device's log", result.stdout)
+        self.assertIn("not an empty run", result.stdout)
+        self.assertIn(f"failed: initializationError({PKG}.MissedTest)",
+                      result.stdout.split("The test runner logged:")[1])
+
+    def test_a_missed_class_test_the_reader_left_out_fails_the_sweep(self):
+        result = self.sweep_with_hidden_lines(
+            f"started: opens({PKG}.MissedTest)", f"finished: opens({PKG}.MissedTest)")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("not an empty run", result.stdout)
+        self.assertIn(f"started: opens({PKG}.MissedTest)",
+                      result.stdout.split("The test runner logged:")[1])
+
+    def test_a_sweep_that_cannot_be_checked_against_the_device_fails(self):
+        # The device's log can be read at the start and before the sweep only.
+        result = self.sweep_with_hidden_lines(
+            f"started: opens({PKG}.MissedTest)", f"finished: opens({PKG}.MissedTest)",
+            dump=f'[ "$d" -gt 2 ] && exit 1; cat "{self.space.runner_log}"')
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("failed: the sweep could not be confirmed against the device's log",
+                      result.stdout)
+        self.assertNotIn("sweep: no test outside the list", result.stdout)
+
+    def test_a_sweep_line_the_class_check_brings_fails_a_sweep_that_had_passed(self):
+        # The device gives a class's line and a test of the sweep only at the
+        # class check, after the sweep has passed.
+        hidden = "  9999  9999 "
+        self.space.adb(reader=f'drop_lines "{hidden}"', dump=self.late_dump(hidden))
+        self.space.finished("C01ButtonTest", "S01NamesTest")
+        self.space.gradle(
+            f'echo "{BATCH_TIME}{hidden}I TestRunner: finished: opens({PKG}.F01FieldsTest)" '
+            f'>> "{self.space.runner_log}"; exit 0',
+            sweep=self.space.logs(*EMPTY_RUN)
+            + f'echo "11-17 21:31:00.000{hidden}I TestRunner: started: opens({PKG}.MissedTest)" '
+            f'>> "{self.space.runner_log}"; exit 0')
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("sweep: no test outside the list", result.stdout)
+        self.assertIn("with the lines the device's log has just given, the sweep is not an "
+                      "empty run", result.stdout)
+        self.assertIn(f"started: opens({PKG}.MissedTest)",
+                      result.stdout.split("The test runner logged:")[1])
+        self.assertNotIn("no test of F01FieldsTest finished", result.stdout)
 
     def test_fails_when_the_sweeps_start_cannot_be_marked(self):
         self.space.finished(*self.names)
