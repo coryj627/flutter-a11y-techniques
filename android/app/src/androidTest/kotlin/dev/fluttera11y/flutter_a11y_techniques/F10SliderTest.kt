@@ -111,10 +111,15 @@ class F10SliderTest : TechniqueTest("F10") {
             // (FL-038); an SDK slider and these custom ones compute it from
             // the value, so it is the right one.
             increase(slug)
-            // Read at once, the value is the new one; the rest of the
-            // description can still be the old one (bad-indicator-label
-            // read "50%, Volume\n4" once), as only the value is guessed.
-            assertTrue(slug, slider(slug).name().startsWith(up.substringBefore(",")))
+            // The value is the new one before the rest of the description
+            // is (bad-indicator-label read "50%, Volume\n4" once), as only
+            // the value is guessed. The tree does not always show it on the
+            // very next read (seen on CI for bad-percent-value), so it is
+            // waited for, up to two seconds.
+            val value = up.substringBefore(",")
+            val end = System.currentTimeMillis() + 2_000
+            while (System.currentTimeMillis() < end && !slider(slug).name().startsWith(value)) Thread.sleep(50)
+            assertTrue("$slug: \"${slider(slug).name()}\" starts with $value", slider(slug).name().startsWith(value))
             waitForCount(slug, 1)
             waitForName(slug, up)
             // Each change is waited for in the app's count: the description
