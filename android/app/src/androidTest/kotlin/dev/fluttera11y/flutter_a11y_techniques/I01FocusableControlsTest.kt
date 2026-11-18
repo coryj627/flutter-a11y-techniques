@@ -69,10 +69,10 @@ class I01FocusableControlsTest : TechniqueTest("I01") {
         while (System.currentTimeMillis() < end) {
             Thread.sleep(250)
             val next = bounds()
-            if (next == r) break
+            if (next == r) return r.centerX() to r.centerY()
             r = next
         }
-        return r.centerX() to r.centerY()
+        throw AssertionError("$slug: the control was still moving after 5 seconds, last at $r")
     }
 
     /** Wait a little, then expect the count of [slug] still to be [expected]. */

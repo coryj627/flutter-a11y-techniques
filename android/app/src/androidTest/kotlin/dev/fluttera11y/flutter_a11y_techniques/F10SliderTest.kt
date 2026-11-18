@@ -62,12 +62,14 @@ class F10SliderTest : TechniqueTest("F10") {
         // likely cause (not confirmed).
         var r = bounds(slider(slug))
         val end = System.currentTimeMillis() + 5_000
-        while (System.currentTimeMillis() < end) {
+        var settled = false
+        while (!settled && System.currentTimeMillis() < end) {
             Thread.sleep(250)
             val next = bounds(slider(slug))
-            if (next == r) break
+            settled = next == r
             r = next
         }
+        if (!settled) throw AssertionError("$slug: the slider was still moving after 5 seconds, last at $r")
         val density = inst.targetContext.resources.displayMetrics.density
         return if (slug.contains("custom") || slug.contains("no-keyboard") || slug.contains("drag-only")) {
             val ring = (8 * density).toInt()
