@@ -23,10 +23,12 @@ final f03KeyboardTypes = Technique(
           'text field only while it is being edited (limitation FL-042).',
     ),
     AppPlatform.web: PlatformStatus.limitation(
-      'Autofill hints do not reach the page: the field\'s autocomplete '
-      'attribute is "off" for every hint (limitation FL-161). Only an email '
-      'keyboard type gives autocomplete="email". There is no workaround in '
-      'the SDK.',
+      'Autofill hints do not reach the page for a field that is not '
+      'obscured: its autocomplete attribute is "off" whatever the hint '
+      '(limitation FL-161). An email keyboard type gives '
+      'autocomplete="email", and an obscured field gets its hint once it '
+      'has been focused. There is no workaround in the SDK for other '
+      'fields.',
     ),
   },
   wcag: const [

@@ -64,7 +64,8 @@ How 1.3.5 is applied here, from the
   repositories say a keyboard type supports "part of" 1.3.5; here the
   keyboard type is not counted towards it. No WCAG 2.2 criterion requires
   a particular on-screen keyboard, so the keyboard defects below are
-  stated as defects with no criterion failed.
+  stated as defects that fail no criterion by themselves; where one also
+  loses the field's purpose on the web, the table says so.
 - It covers information about the user only. An amount is not, so
   `good-amount` needs no hint (the Understanding document's own example is
   `transaction-amount`).
@@ -123,8 +124,8 @@ test can tell that typing reached them.
 
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
-| `bad-number-for-name` | A name field with `TextInputType.number`. The on-screen keyboard has digits only: on Android and iOS a name cannot be typed with it | R1 | None as written: no criterion requires an on-screen keyboard. The purpose is given, so 1.3.5 is met where hints work |
-| `bad-default-keyboard` | An email field left with the default keyboard: no "@" on its first page | R1 | None as written on Android and iOS. On the web it also loses the only `autocomplete` an email field gets there (FL-161), which is the limitation's doing, not the example's |
+| `bad-number-for-name` | A name field with `TextInputType.number`. The on-screen keyboard has digits only: on Android and iOS a name cannot be typed with it | R1 | None on Android and iOS: no criterion requires an on-screen keyboard, and the purpose is given. 1.3.5 on the web, as every name field there (FL-161) |
+| `bad-default-keyboard` | An email field left with the default keyboard: no "@" on its first page | R1 | None on Android and iOS, where the hint still gives the purpose. 1.3.5 on the web: the email keyboard type is the only thing that gives an email field its `autocomplete` there (FL-161), so with the default keyboard the purpose is lost |
 | `bad-no-purpose` | A name field with the name keyboard and no autofill hint: nothing names its purpose | R2 | 1.3.5 on Android and iOS. On the web the good example fails it too (FL-161) |
 | `bad-email-no-suggestions` | An email field with `enableSuggestions: false`. On Android the engine turns the email keyboard into the general one, with no "@" ([FL-160](../flutter-limitations.md#fl-160)); iOS and the web keep it | R1 | None as written |
 
