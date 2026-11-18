@@ -11,7 +11,7 @@ final i01FocusableControls = Technique(
   summary:
       'Anything that can be tapped can also be reached with the keyboard, '
       'activated with Enter and Space, and activated by assistive '
-      'technology, and it acts when the pointer is released over it, not '
+      'technology, and it acts when the pointer is released, not '
       'when it goes down.',
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(

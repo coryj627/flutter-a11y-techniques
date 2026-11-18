@@ -1872,10 +1872,6 @@ yet), **Fixed in x.y** (verified on that version).
     released 6 pixels outside it: the control acts.
   - Pressed at its centre, moved 40 pixels sideways, and released still
     over it: the control does not act.
-  A web page's `click` needs the press and the release over the same
-  element ([UI Events: click](https://www.w3.org/TR/uievents/#event-type-click)),
-  so there a press released outside a button does nothing however short
-  the move.
 - Effect: someone who presses the wrong control near its edge and slides
   just off it still activates it; to take a press back they have to move
   further than 18 pixels, in any direction.

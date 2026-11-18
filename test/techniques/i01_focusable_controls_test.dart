@@ -31,7 +31,7 @@ const _all = [..._good, ..._bad];
 /// The examples that Tab reaches and Enter and Space activate.
 const _keyboard = [..._good, 'bad-inkwell-no-role', 'bad-tap-down'];
 
-/// The examples that act when the pointer is released over them.
+/// The examples that act when the pointer is released, not when it goes down.
 const _actOnRelease = [
   ..._good,
   'bad-inkwell-no-role',

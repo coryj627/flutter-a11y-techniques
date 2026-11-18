@@ -31,7 +31,7 @@ final class I01FocusableControlsUITests: XCTestCase, CountedTechniqueUITest {
   private static let all = good + ["bad-inkwell-no-role", "bad-no-focus", "bad-no-key-action", "bad-tap-down"]
   /// Tab reaches these, and Enter and Space activate them.
   private static let keyboard = good + ["bad-inkwell-no-role", "bad-tap-down"]
-  /// These act when the pointer is let go over them.
+  /// These act when the pointer is let go, not when it goes down.
   private static let actOnRelease = good + ["bad-inkwell-no-role", "bad-no-focus", "bad-no-key-action"]
 
   private func trail(_ slug: String) -> XCUIElement { element("i01-\(slug)-trail") }

@@ -121,7 +121,7 @@ class _KeyboardState extends State<_Keyboard> {
 
 // #region good-material
 /// A `ListTile` with `onTap` is focusable, answers Enter and Space, acts
-/// when the pointer is released over it, and is a button to assistive
+/// when the pointer is released, and is a button to assistive
 /// technology.
 class GoodMaterial extends StatelessWidget {
   const GoodMaterial({super.key});

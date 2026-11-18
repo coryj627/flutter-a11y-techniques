@@ -16,7 +16,7 @@ const good = ['good-material', 'good-cupertino', 'good-custom'];
 const all = [...good, 'bad-inkwell-no-role', 'bad-no-focus', 'bad-no-key-action', 'bad-tap-down'];
 // Tab reaches these, and Enter and Space activate them.
 const keyboard = [...good, 'bad-inkwell-no-role', 'bad-tap-down'];
-// These act when the pointer is let go over them.
+// These act when the pointer is let go, not when it goes down.
 const actOnRelease = [...good, 'bad-inkwell-no-role', 'bad-no-focus', 'bad-no-key-action'];
 
 /** Presses the control at its centre and waits `holdMs` with the button down. */
