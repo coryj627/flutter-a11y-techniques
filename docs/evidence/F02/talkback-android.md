@@ -25,3 +25,4 @@ Result: PASS
 | `f02-good-helper-username` | Username, /   / 4 to 10 characters, no spaces. / Edit box / Double-tap to edit text. Actions available, use Tap with 3 fingers to view |
 | `f02-good-helper-rule` | 4 to 10 characters, no spaces. |
 | `f02-good-helper-username-filled` | Editing.  / abc / Edit box / Actions available, use Tap with 3 fingers to view |
+| `f02-good-helper-rule-filled` | 4 to 10 characters, no spaces. |

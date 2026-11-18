@@ -38,15 +38,26 @@ a value.
 
 | Criterion | Why it applies |
 | --- | --- |
-| [3.3.2 Labels or Instructions](https://www.w3.org/TR/WCAG22/#labels-or-instructions) | Labels or instructions are provided when content requires user input. The instruction is shown to everyone, as text |
+| [3.3.2 Labels or Instructions](https://www.w3.org/TR/WCAG22/#labels-or-instructions) | Labels or instructions are provided when content requires user input. The instruction is shown to everyone, as text, and stays available while the field is filled in |
 | [1.3.1 Info and Relationships](https://www.w3.org/TR/WCAG22/#info-and-relationships) | The instruction is drawn next to its field, which says it belongs to the field. That relationship must be programmatically determinable too |
 | [1.4.4 Resize Text](https://www.w3.org/TR/WCAG22/#resize-text) | Text can be resized to 200 percent without loss of content. Material cuts helper text to one line unless told otherwise ([FL-141](../flutter-limitations.md#fl-141)) |
 
 The [Understanding document for 3.3.2](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html)
 says that 3.3.2 does not require labels or instructions to be marked up or
-associated with their fields; that is 1.3.1. It also allows an instruction
-to be shown only while its field has focus. Both decide what the bad
-examples below are said to fail.
+associated with their fields; that is 1.3.1. It allows an instruction to
+be made "available to users only when the individual control has focus",
+and requires that "when labels or instructions are provided, they need to
+be persistently available to users". An instruction shown whenever its
+field has focus is both. A placeholder is not: it is shown only while the
+field has focus and is empty, so it goes at the first character typed,
+with the field still focused, and comes back only if the value is
+deleted. These decide what the bad examples below are said to fail:
+`bad-helper-only` fails 1.3.1 and not 3.3.2, and `bad-placeholder-format`
+fails 3.3.2. No documented failure technique covers a placeholder; the
+only failure listed for 3.3.2 is F82 (phone number fields), so the second
+outcome rests on the Understanding document. The format itself is what
+sufficient technique [G89](https://www.w3.org/WAI/WCAG22/Techniques/general/G89)
+asks for.
 
 ## 4. Source requirements
 
@@ -92,7 +103,7 @@ the iOS reference's instruction, "4 to 10 characters, no spaces."
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
 | `bad-helper-only` | Helper text and nothing else. The instruction is on the screen, but the field is read without it, and the instruction is reached only as text after the field | R2, R3 | 1.3.1 |
-| `bad-placeholder-format` | The format, "DD/MM/YYYY", is only the placeholder (`hintText`) of a labelled field. Material shows it only while the field is being edited and is empty, so it is gone at the first character. On Android and iOS a screen reader that reaches the field does not say it (on the web VoiceOver focuses the field on arrival and does) | R2, R5 | — (3.3.2 allows an instruction shown on focus) |
+| `bad-placeholder-format` | The format, "DD/MM/YYYY", is only the placeholder (`hintText`) of a labelled field. Material shows it only while the field is being edited and is empty, so it is gone at the first character. On Android and iOS a screen reader that reaches the field does not say it (on the web VoiceOver focuses the field on arrival and does) | R2, R5 | 3.3.2 (not persistently available: the format is gone from the first character typed until the value is deleted, focused or not) |
 | `bad-helper-cut-off` | Helper text with the default `helperMaxLines`: with large text the instruction is cut to one line and ends in an ellipsis. The field has the instruction as its hint, so a screen reader reads it whole | R6 | 1.4.4 |
 
 `bad-helper-only` follows the iOS reference's bad example, which has no
@@ -118,11 +129,11 @@ affected).
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good fields: a text field named "Username" with the instruction as its hint, before and after typing; the instruction on the screen and one node of its own, not a text field and with no action; the visible label not a second node; Tab reaches the field; `good-before` has the instruction just before the field in reading order; the helper of `good-helper` is a child of the field's node. Guidelines in light and dark, and 200% text at 320 by 640 with the instruction not cut. Bad: no hint on `bad-helper-only` before and after typing, the instruction only as text inside the field's node; the placeholder not shown or exposed until the field is focused, then part of the name, and gone after one character; the helper of `bad-helper-cut-off` whole at 100% and cut at 200%, while the tree keeps all of it. FL-140: a field with helper text inside `TestId` has the helper in its name |
+| L1 widget tests | Good fields: a text field named "Username" with the instruction as its hint, before and after typing; the instruction on the screen and one node of its own, not a text field and with no action; the visible label not a second node; Tab reaches the field; `good-before` has the instruction just before the field in reading order; the helper of `good-helper` is a child of the field's node. Guidelines in light and dark, and 200% text at 320 by 640 with the instruction not cut. Bad: no hint on `bad-helper-only` before and after typing, the instruction only as text inside the field's node; the placeholder not shown or exposed until the field is focused, then part of the name, gone after one character with the field still focused, and back only once the value is deleted; the helper of `bad-helper-cut-off` whole at 100% and cut at 200%, while the tree keeps all of it. FL-140: a field with helper text inside `TestId` has the helper in its name |
 | L3 web | Every field: role `textbox`, accessible name, accessible description, `aria-description`, no `aria-describedby`, before and after typing; the instruction as visible text once; Tab reaches the field; in `good-before` the instruction precedes the `<input>`. Bad: no description; the placeholder only while focused and empty, in `aria-label` and `placeholder`; the whole of the cut-off instruction in the page (the cut itself is not visible to this layer) |
 | L3 Android | Every field: `EditText`, editable, the hint text "label, instruction" (or the label alone for `bad-helper-only`), no content description, before and after typing; the instruction as one node of its own that is not clickable; in `good-before` it is above the field. `bad-placeholder-format`: the hint text is the label until the field is clicked, then "label\nDD/MM/YYYY", then the label again after one character |
 | L3 iOS | Every field: type text field, label "Username", the value after typing, the instruction as static text once; in `good-before` it is above the field. XCUITest cannot read a hint. `bad-placeholder-format`: the label gains the placeholder while it is being edited and empty, and loses it after one character. The cut is not visible to this layer |
-| L4 TalkBack | What is read with focus on each field and each instruction, and for `good-helper` again with "abc" typed, as the last stop of the walk |
+| L4 TalkBack | What is read with focus on each field and each instruction, and for `good-helper` again with "abc" typed: the field, then its helper text, as the last two stops of the walk |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count, compared as a whole list, and the same for `good-helper` and `bad-helper-only` with "abc" typed. This is the only iOS layer that sees a hint |
 | L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit, and the same for `good-helper`, `bad-helper-only` and `bad-placeholder-format` with "abc" typed |
 
@@ -149,7 +160,9 @@ The probe that came first is in [evidence/probes/f02](../evidence/probes/f02/).
 - **TalkBack drops the instruction once the field has a value**, with the
   label ([FL-015](../flutter-limitations.md#fl-015)): "Editing.", "abc",
   "Edit box". VoiceOver on iOS and on the web still read it. The helper
-  text kept as an element is the way to reach it there, which is why no
+  text kept as an element is the way to reach it there: with "abc" typed,
+  TalkBack reads it whole as the next stop, "4 to 10 characters, no
+  spaces." (`f02-good-helper-rule-filled`). That is why no
   example hides the visible text from the semantics (probe, fixture 04).
   The good examples are read twice on iOS and the web, once on the field
   and once as text; the iOS reference does the same.

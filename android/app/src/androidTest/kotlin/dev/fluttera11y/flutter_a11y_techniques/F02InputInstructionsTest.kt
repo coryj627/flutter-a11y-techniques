@@ -148,6 +148,12 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
                 Log.i(talkBackTag, "FOCUS $field-filled")
                 talkBackFocus("$field (filled)") { node(field) }
                 Thread.sleep(6_000)
+                // The field no longer gives the instruction; the helper text
+                // next to it is still there to be read. This is the
+                // workaround for FL-015 that the doc relies on.
+                Log.i(talkBackTag, "FOCUS f02-$slug-rule-filled")
+                talkBackFocus("the rule of $slug (filled)") { withName(RULE).single() }
+                Thread.sleep(6_000)
             }
             Log.i(talkBackTag, "END $slug")
         }

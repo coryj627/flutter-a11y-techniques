@@ -479,8 +479,11 @@ yet), **Fixed in x.y** (verified on that version).
   still read the hint of a filled field. What F02 does about it: the
   visible instruction is kept as an element of its own (helper text, a
   form row's help text, or a `Text`), which TalkBack reads as a stop next
-  to the field (`f02-good-helper-rule`). That reaches the instruction; it
-  does not put it back on the field.
+  to the field, whole, before and after the field has a value
+  (`f02-good-helper-rule` and `f02-good-helper-rule-filled`, read straight
+  after the filled field). That reaches the instruction; it does not put
+  it back on the field, and a user has to move on past the field to hear
+  it.
 - Upstream issue: not searched yet.
 
 ## FL-016
@@ -1904,6 +1907,12 @@ yet), **Fixed in x.y** (verified on that version).
   arrival: "Date of birth DD/MM/YYYY edit text" in WebKit, "Date of birth
   DD/MM/YYYY" in Chromium. On every platform it is gone, from the screen
   and the name, at the first character typed (the F02 transcripts).
+- WCAG: 3.3.2 Labels or Instructions, when the placeholder is the only
+  instruction. The Understanding document allows an instruction shown only
+  while the field has focus, and requires one that is provided to be
+  "persistently available". This one is gone from the first character
+  typed, with the field still focused, until the value is deleted
+  (asserted in the widget test).
 - Why it matters for instructions: this follows Material's design for a
   placeholder, which is an example of the value and not a place for an
   instruction. Combined with the label it changes the field's name while

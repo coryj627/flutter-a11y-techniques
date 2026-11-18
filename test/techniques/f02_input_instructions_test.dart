@@ -1,3 +1,5 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
@@ -226,7 +228,16 @@ void main() {
         semanticsNodes(tester).where((n) => n.label.contains(format)),
         isEmpty,
       );
-      expect(_count(tester, 'bad-placeholder-format'), 1);
+      // The field still has focus, and the format does not come back while
+      // it has a value. It comes back only when the value is deleted.
+      expect(dataById(id).flagsCollection.isFocused, Tristate.isTrue);
+      await _type(tester, id, '01/02');
+      expect(shown(), isFalse);
+      expect(dataById(id).label, 'Date of birth');
+      await _type(tester, id, '');
+      expect(shown(), isTrue);
+      expect(dataById(id).label, 'Date of birth\n$format');
+      expect(_count(tester, 'bad-placeholder-format'), 3);
       handle.dispose();
     });
 

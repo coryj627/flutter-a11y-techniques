@@ -20,8 +20,12 @@ TALKBACK_EXPECT = {
     # Once the field has a value TalkBack reads neither its name nor the
     # instruction (FL-015). Written to fail when either starts being spoken.
     "f02-good-helper-username-filled": (["abc", "Edit box"], ["Username", "4 to 10"]),
-    # The helper text is still there to be read, as text of its own.
+    # The helper text is read as text of its own.
     "f02-good-helper-rule": (["4 to 10 characters, no spaces"], ["Edit box", "Username"]),
+    # And it is still there to be read once the field has a value, which is
+    # how the instruction is reached on Android then (FL-015). The whole
+    # instruction is required.
+    "f02-good-helper-rule-filled": (["4 to 10 characters, no spaces."], ["Edit box", "Username"]),
     "f02-good-cupertino-username": (["Username", "4 to 10 characters, no spaces", "Edit box"], []),
     "f02-good-cupertino-rule": (["4 to 10 characters, no spaces"], ["Edit box", "Username"]),
     "f02-good-before-rule": (["4 to 10 characters, no spaces"], ["Edit box", "Username"]),
