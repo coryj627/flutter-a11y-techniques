@@ -250,6 +250,14 @@ class F03KeyboardTypesTest : TechniqueTest("F03") {
         return labels
     }
 
+    /**
+     * Whether the keyboard shows [key]. A letter key is "q" or "Q" by the
+     * state of Shift, which a field that capitalises words turns on at its
+     * start (seen on CI), so one letter is matched in either case.
+     */
+    private fun shows(keys: Set<String>, key: String): Boolean =
+        keys.any { it.equals(key, ignoreCase = key.length == 1) }
+
     private fun flutterView(): FlutterView {
         var found: FlutterView? = null
         inst.runOnMainSync {
@@ -296,7 +304,7 @@ class F03KeyboardTypesTest : TechniqueTest("F03") {
         var info = editorInfo()
         var keys = keyLabels()
         while (System.currentTimeMillis() < end &&
-            (info?.first != e.inputType || (gboard && !keys.containsAll(e.keys)) || !node(e.id).isFocused)) {
+            (info?.first != e.inputType || (gboard && !e.keys.all { shows(keys, it) }) || !node(e.id).isFocused)) {
             Thread.sleep(250)
             info = editorInfo()
             keys = keyLabels()
@@ -324,8 +332,8 @@ class F03KeyboardTypesTest : TechniqueTest("F03") {
                     "0x" + Integer.toHexString(info?.first ?: -1))
                 assertEquals("${e.id} IME action", e.action, (info?.second ?: 0) and 0xff)
                 if (gboard) {
-                    for (key in e.keys) assertTrue("${e.id}: key \"$key\" in $keys", key in keys)
-                    for (key in e.noKeys) assertFalse("${e.id}: no key \"$key\" in $keys", key in keys)
+                    for (key in e.keys) assertTrue("${e.id}: key \"$key\" in $keys", shows(keys, key))
+                    for (key in e.noKeys) assertFalse("${e.id}: no key \"$key\" in $keys", shows(keys, key))
                 } else {
                     Log.i("F03", "not Gboard: the keys of ${e.id} are not checked")
                 }
