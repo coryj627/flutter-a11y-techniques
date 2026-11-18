@@ -443,8 +443,11 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
       await tester.pumpAndSettle();
       expect(slider().value, '50%');
+      // Each key is checked by itself: End up a step and Home back down
+      // would also end at 50%.
       await tester.sendKeyEvent(LogicalKeyboardKey.end);
       await tester.pumpAndSettle();
+      expect(slider().value, '50%');
       await tester.sendKeyEvent(LogicalKeyboardKey.home);
       await tester.pumpAndSettle();
       expect(slider().value, '50%');

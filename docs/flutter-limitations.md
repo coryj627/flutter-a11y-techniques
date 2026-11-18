@@ -781,8 +781,9 @@ yet), **Fixed in x.y** (verified on that version).
   in Chromium, moving with the VoiceOver cursor: "Volume group" as one stop,
   then "40% dimmed slider". What is spoken when Tab lands on the slider was
   not recorded.
-- "Dimmed": the slider is disabled while VoiceOver reads it, which is
-  [FL-127](#fl-127).
+- "Dimmed": see [FL-127](#fl-127). The input was found disabled after
+  each walk that read a slider; whether it is disabled at the moment
+  VoiceOver speaks was not established.
 - With a label on the input, as in plain HTML, VoiceOver in Chromium
   reads "40% Volume slider" (F10 web VoiceOver control,
   `plain-labelled-input`).
