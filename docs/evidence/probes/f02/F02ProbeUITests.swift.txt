@@ -1,0 +1,68 @@
+// F02 probe (throwaway, not committed): the tree and VoiceOver for lib/probe.dart.
+import XCTest
+
+final class F02ProbeUITests: XCTestCase {
+  let app = XCUIApplication()
+
+  private func tree(_ title: String) {
+    print("F02PROBE TREE \(title)")
+    for element in app.descendants(matching: .any).allElementsBoundByIndex {
+      let type = element.elementType
+      if type == .other && element.label.isEmpty && element.identifier.isEmpty { continue }
+      if type == .window || type == .application || type == .keyboard || type == .key { continue }
+      print("F02PROBE EL type=\(type.rawValue) id=\(element.identifier) label=\(element.label.debugDescription) value=\(String(describing: element.value)) frame=\(element.frame)")
+    }
+  }
+
+  private func walk(_ title: String) throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { return }
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    try voiceOver.enable()
+    defer { try? voiceOver.disable() }
+    sleep(2)
+    print("F02PROBE VO \(title)")
+    var last = ""
+    var repeats = 0
+    for _ in 0..<24 {
+      do {
+        let said = try voiceOver.moveForward().utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
+        print("F02PROBE VO \(said)")
+        if said == last { repeats += 1; if repeats > 1 { break } } else { repeats = 0 }
+        last = said
+      } catch {
+        print("F02PROBE VO (error \(error))")
+        repeats += 1
+        if repeats > 2 { break }
+      }
+    }
+    #endif
+  }
+
+  private func type(_ id: String) {
+    let field = app.descendants(matching: .any)[id].firstMatch
+    field.tap()
+    sleep(1)
+    app.typeText("abc")
+    sleep(1)
+  }
+
+  func testProbe() throws {
+    app.launch()
+    XCTAssertTrue(app.buttons["Page 2"].waitForExistence(timeout: 90))
+    sleep(2)
+    tree("page 1")
+    try walk("page 1")
+    type("i03")
+    type("i01")
+    tree("page 1 typed, i01 editing")
+    try walk("page 1 typed, i01 editing")
+    app.buttons["Page 2"].tap()
+    sleep(2)
+    tree("page 2")
+    try walk("page 2")
+    type("i10")
+    tree("page 2, i10 editing")
+    try walk("page 2, i10 editing")
+  }
+}
