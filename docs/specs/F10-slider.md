@@ -41,13 +41,12 @@ a workaround in the SDK. The value, the role, and the keyboard are right.
 | [4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value) | A slider is a user interface component: its name and role can be programmatically determined, its value can be set, and changes to it are available to assistive technology |
 | [2.5.7 Dragging Movements](https://www.w3.org/TR/WCAG22/#dragging-movements) | A slider is operated by dragging; a single pointer must be able to set it without dragging |
 | [2.1.1 Keyboard](https://www.w3.org/TR/WCAG22/#keyboard) | Everything a slider does can be done from a keyboard |
-| [2.5.3 Label in Name](https://www.w3.org/TR/WCAG22/#label-in-name) | The slider's name contains its visible text, so speech input can address it by what is on the screen |
 
 ## 4. Source requirements
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | The slider has a visible label, and its accessible name contains the visible text | [iOS Sliders](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Sliders.md) ("a unique and specific accessibility label" and "visible label `Text`"), [Android Compose Slider and RangeSlider Controls](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/components/SliderAndRangeSliderControls.md) ("the `contentDescription` must contain the visible label text"), [APG Slider](https://www.w3.org/WAI/ARIA/apg/patterns/slider/) (`aria-labelledby` the visible label), [MDN: input type=range](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/range) (a `<label>`) |
+| R1 | The slider has a visible label, its accessible name contains the visible text, and its value is reported apart from its name | [iOS Sliders](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Sliders.md) ("a unique and specific accessibility label" and "visible label `Text`"), [Android Compose Slider and RangeSlider Controls](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/components/SliderAndRangeSliderControls.md) ("the `contentDescription` must contain the visible label text"), [APG Slider](https://www.w3.org/WAI/ARIA/apg/patterns/slider/) (`aria-labelledby` the visible label, the value in `aria-valuenow` or `aria-valuetext`), [MDN: input type=range](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/range) (a `<label>`) |
 | R2 | It has the slider role, and screen readers can adjust it | iOS Sliders (the "adjustable" trait, "adjust the value by swiping up or down"), APG Slider (role `slider`), MDN (implicit role `slider`) |
 | R3 | Its value is reported, in words that fit it where a number or percentage does not | APG Slider (`aria-valuenow`, `aria-valuemin`, `aria-valuemax`, and `aria-valuetext` "if aria-valuenow isn't user-friendly"), Android Compose Slider (`stateDescription` "if the default announcement of 'xx percent' does not apply") |
 | R4 | Right and Up add a step, Left and Down take one away, Home goes to the first value and End to the last | APG Slider, keyboard interaction (Page Up and Page Down are optional and not built); Android Compose Slider (`onKeyEvent` for the arrow keys) |
@@ -84,8 +83,8 @@ Every example ends with a count of changes. The volume sliders start at
 
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
-| `bad-unlabelled` | The text above the slider is not joined to it. The slider has no name: "40%, slider" | R1 | 4.1.2, 2.5.3 |
-| `bad-indicator-label` | `Slider(label:)`, the number shown above the thumb, is added to the name ([FL-123](../flutter-limitations.md#fl-123)): "Volume 4" and "40%", and the name changes at every step | R1 | 2.5.3 |
+| `bad-unlabelled` | The text above the slider is not joined to it. The slider has no name: "40%, slider" | R1 | 4.1.2 |
+| `bad-indicator-label` | `Slider(label:)`, the number shown above the thumb, is added to the name ([FL-123](../flutter-limitations.md#fl-123)): TalkBack reads "40%", "Volume 4", "Slider", the value twice, and the name changes at every step | R1 | None by itself: a naming fault. The name still contains the visible label, so 2.5.3 is met |
 | `bad-percent-value` | A rating from 0 to 10 with no formatter: the screen says "4 out of 10" and a screen reader "40%" | R3 | 4.1.2 |
 | `bad-no-keyboard` | The custom slider with no focus or keys: Flutter's focus order goes past it, and on Android and iOS the keyboard cannot move it | R4 | 2.1.1 |
 | `bad-drag-only` | The custom slider whose track does not answer a tap: only a drag moves it | R5 | 2.5.7 |
@@ -100,12 +99,12 @@ example nor a bad one with one defect. It is in the probe.
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Every slider: one node with the slider flag, its label, value, increased and decreased values, and the increase and decrease actions, which move it a step. Keyboard: Tab reaches it, the four arrows, Home, and End, and focus stays. Good: a tap on the track sets it (`good-cupertino`: the track does not, the buttons do), a drag moves it, guidelines in light and dark, 200% text. Bad: no label; the indicator number in the label, changing; a percentage beside "4 out of 10"; no focus and keys that do nothing; a tap that does nothing and a drag that works. The SDK's own sliders: a `CupertinoSlider` takes no focus (FL-120) and ignores a tap on its track (FL-121), a `Slider` has no Home or End (FL-122), and a disabled slider has no adjust actions (FL-124) |
-| L3 web | Every slider: one `role="slider"`, the label on the element around it and none on the slider (FL-028), `aria-valuetext`, the stand-in range 0 to 2 (FL-125), and a change through the input. Keyboard: Tab, the arrows, Home, and End. Pointer: a click on the track, the step buttons. The empty element over the page on the Material screens and not the others, what a hit test finds there, and that Back still works by mouse and by a click event (FL-029). Bad: as L1, and on the web `bad-no-keyboard` is reached by the browser's own Tab order and Home and End move one step |
+| L3 web | Every slider: one `role="slider"`, the label on the element around it and none on the slider (FL-028), `aria-valuetext`, the stand-in range 0 to 2 (FL-125), and a change through the input. Keyboard: Tab, the arrows, Home, and End. Pointer: a click on the track, the step buttons. The empty element over the page on the Material screens and not the others, what a hit test finds there, and that Back still works by mouse and by a click event (FL-029). The input disabled straight after a mouse move, a change then lost, and the input enabled again after (FL-127). Bad: as L1, and on the web `bad-no-keyboard` is reached by the browser's own Tab order and Home and End move one step |
 | L3 Android | Every slider: one `SeekBar`, its description (value, then name), no `RangeInfo`, and the scroll actions, which move it a step and show the new value at once (FL-038). Pointer: a tap on the track, the step buttons, `good-cupertino`'s track ignoring a tap, `bad-drag-only` moving only by a swipe. The keyboard is not checked here |
 | L3 iOS | Every slider: type Other, label, value, enabled. Pointer: as Android. Bad: an empty label and the text as static text; the label changing with the value; a percentage |
 | L4 TalkBack | Each slider on arrival, and again after an increase; the step button; the text beside `bad-unlabelled` |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count |
-| L4 VoiceOver web | Every stop between the "Example" heading and the change count in Chromium, and in WebKit for the screens with no Material slider; in WebKit, that the cursor leaves the page on the five that have one. Pressing Back with VoiceOver on a Material slider's screen (Chromium). A control in plain HTML: Flutter's markup enabled is not "dimmed", disabled it is, and a labelled input is read with its label |
+| L4 VoiceOver web | Every stop between the "Example" heading and the change count in Chromium, and in WebKit for the screens with no Material slider; in WebKit, on the five that have one, that VoiceOver reads only the page's web area (after at most the title) and then reads Back when it is focused. After every walk, that there were pointer events, and after every walk that read the slider, that its input was disabled (FL-127). Before each WebKit walk, that VoiceOver reads Back when it is focused. Pressing Back with VoiceOver on a Material slider's screen (Chromium). A control in plain HTML: Flutter's markup enabled is not "dimmed", disabled it is, and a labelled input is read with its label |
 
 The keyboard and pointer defects (`bad-no-keyboard`, `bad-drag-only`) are
 not heard: a screen reader reads and adjusts those sliders correctly. The
@@ -171,18 +170,24 @@ The probes that came first are in [evidence/probes/f10](../evidence/probes/f10/)
 - **VoiceOver on the web reads the label as a group around the slider**:
   "Volume group", "40% dimmed slider", "end of Volume group" in
   Chromium. A copy of the same markup in plain HTML is read the same way,
-  and a plain `<label>` on the input is read "40% Volume slider", which is
-  what Flutter 3.50's change should give.
+  and a plain `<label>` on the input is read "40% Volume slider". A label
+  copied onto the input, as Flutter 3.50's source does, would be expected
+  to read the same; 3.50 was not run.
 - **"Dimmed" is the engine disabling the input**
-  ([FL-127](../flutter-limitations.md#fl-127)): it does so for half a
-  second after any pointer event, and the page received twenty or more
-  during each VoiceOver walk. The plain HTML copy is "dimmed" only with
-  `disabled` set.
-- **In Playwright's WebKit build VoiceOver's cursor left the page** after
-  the screen title on all five screens with a Material `Slider`, every
-  time, and walked the four others like Chromium
-  ([FL-029](../flutter-limitations.md#fl-029); cause not proven). The
-  spec asserts both.
+  ([FL-127](../flutter-limitations.md#fl-127)): the source disables it
+  for half a second after any pointer event; the tree tests show it
+  disabled straight after a mouse move and a change then lost; every
+  VoiceOver walk had pointer events, and every walk that read a slider
+  left its input disabled. The
+  plain HTML copy is "dimmed" only with `disabled` set. Whether it is
+  disabled at the very moment VoiceOver speaks was not established.
+- **In Playwright's WebKit build VoiceOver's cursor left the page** on
+  all five screens with a Material `Slider`, every time, and walked the four others like Chromium
+  ([FL-029](../flutter-limitations.md#fl-029); cause not proven). What
+  it read after Back was at most the screen title and then the page's web
+  area, "<document title> web content", over and over. The spec requires
+  that reading, and a live capture before and after (VoiceOver reads Back
+  when it is focused), so silence cannot pass.
 - **VoiceOver's own press works beside a Material slider**: in Chromium,
   VoiceOver on Back and its activate command went back, through the
   empty element.

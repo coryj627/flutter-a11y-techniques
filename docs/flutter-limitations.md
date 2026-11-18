@@ -841,15 +841,22 @@ yet), **Fixed in x.y** (verified on that version).
   too, and so does VoiceOver's own press (F10 web VoiceOver test).
   Keyboard operation is not affected.
 - Seen on the same screens, cause not proven: with Playwright's WebKit
-  build, VoiceOver's cursor leaves the page content after the screen
-  title on a screen with a Material `Slider`, and walks screens without
-  one normally. In F10 that held for all five Material screens, each
-  tried three times in the first recording, and for none of the four
-  others (`docs/evidence/F10/voiceover-web.md`); S01 and S14 saw the
-  same. The F10 web VoiceOver spec asserts it, written to fail when the
-  cursor starts reaching the slider. The empty element is the only
-  difference found between the two kinds of screen; the test cannot rule
-  out the harness. The WebKit build is not Safari; Safari was not tried.
+  build, VoiceOver's cursor leaves the page content on a screen with a
+  Material `Slider`, and walks screens without one normally. Moving on
+  from the Back button, which it has just read, it reads at most the
+  screen title and then only the page's web area, "<document title> web
+  content", again and again with empty phrases between, and never the
+  example. In F10 that held for all five Material
+  screens on every walk recorded, and for none of the four others
+  (`docs/evidence/F10/voiceover-web.md`); S01 and S14 saw the same. The
+  F10 web VoiceOver spec requires VoiceOver to read Back before the walk,
+  the web area at least twice and nothing else during it, and Back again
+  when it is focused after it, so a walk that heard nothing fails instead
+  of passing. It is
+  written to fail when the cursor starts reaching the slider. The empty
+  element is the only difference found between the two kinds of screen;
+  the test cannot rule out the harness. The WebKit build is not Safari;
+  Safari was not tried.
 - How it is handled here: `walkFromBack` in `web_tests/vo/vo_helpers.js`
   takes a `clickAtPoint` flag for these screens, which clicks with the
   mouse at a position and skips Playwright's check.
@@ -1634,8 +1641,11 @@ yet), **Fixed in x.y** (verified on that version).
   the name is the number alone. Usually that number is the value, so it
   is read twice in two forms ("40%, Volume 4" on Android), and the name
   changes at every step.
-- Effect: the name no longer matches the visible label alone (2.5.3), a
-  speech-input user has to say the number too, and anything that finds
+- Effect: the name carries a number that is not the label and changes
+  at every step. TalkBack reads "40%", "Volume 4", "Slider", and after a
+  step "50%", "Volume 5" (F10 transcript): the value twice, once inside
+  the name. The name still contains the visible label, so this is a
+  naming fault and not a failure of 2.5.3 Label in Name. Anything that finds
   the control by name has to know its value.
 - Workaround: none that keeps the indicator text out of the name. Leave
   `label` unset, or accept the longer name; give the value its words with
@@ -1711,28 +1721,44 @@ yet), **Fixed in x.y** (verified on that version).
 
 **On the web a slider is disabled for half a second after any pointer event, and VoiceOver calls it "dimmed".**
 
-- Status: Confirmed, Flutter 3.47.5, web (Chromium and WebKit builds, VoiceOver
-  on macOS 27). Asserted by `web_tests/vo/f10_slider_vo.spec.js`: every
-  F10 slider is read "dimmed slider", and a plain HTML copy of Flutter's
-  markup is "dimmed" only when its input is disabled. Engine source read:
-  `incrementable.dart` (the input is disabled whenever the gesture mode is
-  pointer events) and `_temporarilyDisableBrowserGestureMode` in
-  `semantics.dart` (any pointer, mouse, touch, or wheel event switches to
-  that mode for 500 ms).
-- What happens: the engine sets `disabled` on a slider's
-  `<input type="range">` for half a second after every pointer event the
-  page receives, so that the browser does not also handle a drag. During
-  a VoiceOver walk the page received 20 to 26 pointer and mouse events
-  where the walk itself made one click, and the input was disabled when
-  read straight after each walk (the spec's notes, written to
-  `web_tests/test-results/f10-vo-notes.txt`; which part of the system
-  sent the events was not found). VoiceOver reads a disabled input as
-  "dimmed": "40% dimmed slider" for every enabled Flutter slider, and
-  "40% slider" for the same markup in plain HTML with the input enabled.
-- Effect: a VoiceOver user is told an enabled slider is unavailable, and
-  may not try to adjust it. While the input is disabled the browser
-  ignores changes to it, so an adjustment made then does nothing. First
-  noticed in S01 ([FL-028](#fl-028)).
+- Status: Confirmed, Flutter 3.47.5, web. Each statement below says
+  whether it was measured or read in the source.
+- Read in the engine source: `incrementable.dart` sets `disabled` on the
+  slider's `<input type="range">` whenever the gesture mode is pointer
+  events, and its `change` listener returns without acting while the input
+  is disabled; `_temporarilyDisableBrowserGestureMode` in `semantics.dart`
+  switches to that mode for 500 ms on any pointer, mouse, touch, or wheel
+  event. The purpose given there is to keep the browser from handling a
+  drag that Flutter handles.
+- Measured, and asserted by `web_tests/f10_slider.spec.js` (Chromium, no
+  screen reader): straight after the mouse moves, the input is disabled; a
+  change through the input then, as a screen reader's adjust command makes
+  it, does nothing; with no more pointer events the input is enabled again
+  within three seconds and the same change moves the slider. The 500 ms
+  itself was not measured.
+- Measured, and asserted by `web_tests/vo/f10_slider_vo.spec.js` in both
+  Playwright builds: during every VoiceOver walk of an F10 example the page
+  received pointer events, and after every walk that read the slider its
+  input was disabled when read straight after the walk. VoiceOver read
+  every F10 slider it reached "dimmed slider". On the WebKit walks that leave the
+  page ([FL-029](#fl-029)) the notes show the input disabled and enabled
+  again many times, and at the end of the walk it was found either way, so
+  nothing is asserted about it there. A plain HTML copy of Flutter's markup was read "40% slider"
+  with the input enabled and "40% dimmed slider" with it disabled. The
+  numbers from the run whose transcript is committed are in
+  `docs/evidence/probes/f10/voiceover-web-notes.txt`, written by that
+  spec: 20 to 24 pointer and mouse events per walk in Chromium, where the
+  test itself clicks once, and 26 to 46 in WebKit, where it clicks twice;
+  and every change of `disabled` in order. The counts are recorded, not
+  asserted.
+- Not established: whether the input is disabled at the very moment
+  VoiceOver speaks the slider (it is read just after the walk, not at each
+  move), and
+  which part of the system sends the pointer events during a walk.
+- Effect: a VoiceOver user is told that an enabled slider is unavailable.
+  An adjustment that reaches the input in the half second after a pointer
+  event is lost (measured as above). First noticed in S01
+  ([FL-028](#fl-028)).
 - Workaround: none in the SDK.
 - Upstream issue: not searched yet (D25).
 

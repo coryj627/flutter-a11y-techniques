@@ -25,7 +25,6 @@ final f10Slider = Technique(
   },
   wcag: const [
     WcagCriterion('2.1.1', 'Keyboard', 'keyboard'),
-    WcagCriterion('2.5.3', 'Label in Name', 'label-in-name'),
     WcagCriterion('2.5.7', 'Dragging Movements', 'dragging-movements'),
     WcagCriterion('4.1.2', 'Name, Role, Value', 'name-role-value'),
   ],
@@ -103,7 +102,7 @@ final f10Slider = Technique(
       slug: 'bad-indicator-label',
       title: 'Slider with a value indicator label',
       variant: ExampleVariant.material,
-      defect: 'The number shown above the thumb is part of the name: a screen reader says "Volume 4" and "40%", and the name changes at every step.',
+      defect: 'The number shown above the thumb is added to the name: TalkBack says "40%", "Volume 4", "Slider", and the name changes at every step.',
       builder: (_) => const BadIndicatorLabel(),
     ),
     TechniqueExample.bad(

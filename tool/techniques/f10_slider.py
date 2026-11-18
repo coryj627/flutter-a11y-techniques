@@ -53,7 +53,10 @@ VOICEOVER_WEB_METHOD = (
     "puts an empty element over the page, FL-029), focus the Back button, wait until "
     "VoiceOver has been quiet for two seconds, then `voiceOver.next()` until the "
     "change count is read. In the WebKit build the walks of the five screens with a "
-    "Material slider leave the page after the title, and are kept as they are. The "
+    "Material slider leave the page: they pass only if VoiceOver read the Back button "
+    "before the walk, then reads at most the title and after it only the page's web "
+    "area (\"<title> web content\"), and reads Back again when it is focused after the "
+    "walk. Before every WebKit walk VoiceOver must read Back when it is focused. The "
     "`plain-` rows are a control: plain HTML in the shape Flutter gives a slider, "
     "enabled and disabled, and a range input with its own label"
 )

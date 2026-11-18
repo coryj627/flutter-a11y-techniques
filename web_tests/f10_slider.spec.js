@@ -236,6 +236,37 @@ test.describe('the empty element over the page', () => {
   });
 });
 
+// FL-127: the web engine disables the slider's input after any pointer
+// event, for about half a second, and the input then ignores a change.
+// VoiceOver reads a disabled input as "dimmed". Written to fail when the
+// engine stops doing it.
+test('good-custom: a pointer event disables the slider\'s input for a moment, and a change made then is lost', async ({ page }) => {
+  await open(page, 'good-custom');
+  const input = slider(page, 'good-custom');
+  const disabled = () => input.evaluate((e) => e.disabled);
+  await expect.poll(disabled).toBe(false);
+  await page.mouse.move(5, 5);
+  await page.mouse.move(6, 6);
+  expect(await disabled(), 'disabled straight after the pointer moved').toBe(true);
+  // A change through the input now, as a screen reader's adjust command
+  // makes it, does nothing.
+  await input.evaluate((e) => {
+    e.value = '2';
+    e.dispatchEvent(new Event('change'));
+  });
+  await page.waitForTimeout(200);
+  await expectCount(page, 'good-custom', 0);
+  await expect(input).toHaveAttribute('aria-valuetext', '40%');
+  // With no more pointer events it is enabled again, and the same change works.
+  await expect.poll(disabled, { timeout: 3000 }).toBe(false);
+  await input.evaluate((e) => {
+    e.value = '2';
+    e.dispatchEvent(new Event('change'));
+  });
+  await expectCount(page, 'good-custom', 1);
+  await expect(input).toHaveAttribute('aria-valuetext', '50%');
+});
+
 test.describe('bad examples have their defect', () => {
   test('bad-unlabelled: the text "Volume" is beside the slider and names nothing', async ({ page }) => {
     await open(page, 'bad-unlabelled');

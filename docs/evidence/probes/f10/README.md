@@ -26,6 +26,12 @@ How each was looked at, and the raw output:
   slider.
 - Screen readers on the web and TalkBack were not part of the probe; what
   they say was recorded with the examples.
+- `voiceover-web-notes.txt` is not from the probe: it is the notes that
+  `web_tests/vo/f10_slider_vo.spec.js` wrote during one run of
+  `python3 tool/voiceover_web.py F10`. One line per walk: the pointer and
+  mouse events the page received during it, every change of the slider's
+  input's `disabled` property in order, and whether it was disabled
+  straight after the walk (FL-127).
 
 ## First probe
 
