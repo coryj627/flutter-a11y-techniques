@@ -31,6 +31,12 @@ class {name} : TechniqueTest {{
 # What the test runner logs for a run with no tests in it, as seen on CI.
 EMPTY_RUN = ("run started: 1 tests", "run finished: 0 tests, 0 failed, 0 ignored")
 
+# The stand-in device's times: of the batches' lines, of the line the
+# script writes as the sweep starts, and of the sweep's lines.
+BATCH_TIME = "11-17 21:25:29.060"
+MARK_TIME = "11-17 21:28:00.000"
+SWEEP_TIME = "11-17 21:30:00.000"
+
 
 def write_class(folder, name, text=None):
     (folder / f"{name}.kt").write_text(text or TEST_CLASS.format(name=name))
@@ -57,31 +63,51 @@ class Workspace:
         self.tool("sudo", "exit 0")
         self.gradle("exit 0")
 
-    def adb(self, reader="follow", dump=None):
+    def adb(self, reader="follow", dump=None, clear=None):
         """A stand-in adb. The reader of the test runner's log runs
         `reader`, with $n its start count and $first the first line logcat
         gives from the -T time on; `follow` reads the device's log from
-        there, and `stop_once_after TEXT` writes lines up to the first with
-        TEXT in it and stops, the first time only. `logcat -d` runs `dump`,
-        by default printing the device's log."""
+        there, `read_lines LOSE STOP` reads it but leaves out the first
+        line with LOSE in it and stops after the first with STOP in it, each
+        once only, and `stop_once_after STOP` only stops. `logcat -d` runs
+        `dump`, with $d its call count, by default printing the device's
+        log; `logcat -c` runs `clear`, by default emptying it."""
         log, root = self.runner_log, self.root
         dump = dump or f'cat "{log}"'
+        clear = clear or f': > "{log}"'
         self.tool("adb", f"""\
             follow() {{ exec tail -s 0.1 -n "+$first" -f "{log}"; }}
-            stop_once_after() {{
-              [ -e "{root}/reader-stopped" ] && follow
+            read_lines() {{
+              lose=$1 stop=$2
+              {{ [ -z "$lose" ] || [ -e "{root}/reader-lost" ]; }} \\
+                && {{ [ -z "$stop" ] || [ -e "{root}/reader-stopped" ]; }} && follow
               k=$first
               while :; do
                 line=$(sed -n "${{k}}p" "{log}")
                 if [ -z "$line" ]; then sleep 0.05; continue; fi
-                echo "$line"
                 k=$((k + 1))
-                case $line in *"$1"*) touch "{root}/reader-stopped"; exit 0 ;; esac
+                if [ -n "$lose" ] && [ ! -e "{root}/reader-lost" ] && [[ $line == *"$lose"* ]]; then
+                  touch "{root}/reader-lost"
+                  continue
+                fi
+                echo "$line"
+                if [ -n "$stop" ] && [ ! -e "{root}/reader-stopped" ] && [[ $line == *"$stop"* ]]; then
+                  touch "{root}/reader-stopped"
+                  exit 0
+                fi
               done
             }}
+            stop_once_after() {{ read_lines "" "$1"; }}
             case "$*" in
-              "logcat -c"|"logcat -G"*|"logcat -d -b"*) exit 0 ;;
-              "logcat -d"*TestRunner:I*) {dump} ;;
+              "logcat -c") {clear} ;;
+              "logcat -G"*|"logcat -d -b"*) exit 0 ;;
+              "logcat -d"*CiBoundary:I*) cat "{root}/marks" 2>/dev/null ;;
+              "shell log -t CiBoundary"*)
+                echo "{MARK_TIME}  1000  1000 I CiBoundary: ${{@: -1}}" >> "{root}/marks" ;;
+              "logcat -d"*TestRunner:I*)
+                d=$(($(cat "{root}/dumps" 2>/dev/null || echo 0) + 1))
+                echo "$d" > "{root}/dumps"
+                {dump} ;;
               *TestRunner:I*)
                 n=$(($(cat "{root}/reader-starts" 2>/dev/null || echo 0) + 1))
                 echo "$n" > "{root}/reader-starts"
@@ -111,16 +137,16 @@ class Workspace:
             case "$*" in *notClass=*) {sweep} ;; esac
             for name in $(cat "{self.root}/finished" 2>/dev/null); do
               case "$*" in *class=*"{PKG}.$name"*)
-                echo "11-17 21:25:29.060  4037  4051 I TestRunner: finished: opens({PKG}.$name)" \\
+                echo "{BATCH_TIME}  4037  4051 I TestRunner: finished: opens({PKG}.$name)" \\
                   >> "{self.runner_log}" ;;
               esac
             done
             """ + textwrap.dedent(body), self.android)
 
-    def logs(self, *lines):
+    def logs(self, *lines, time=SWEEP_TIME):
         """Shell that adds these lines to the test runner's log."""
         return "".join(
-            f'echo "11-17 21:30:00.000  4037  4051 I TestRunner: {line}" >> "{self.runner_log}"; '
+            f'echo "{time}  4037  4051 I TestRunner: {line}" >> "{self.runner_log}"; '
             for line in lines)
 
     def finished(self, *names):
@@ -354,15 +380,17 @@ class RunTest(unittest.TestCase):
         `later`, while the reader stops after the first."""
         self.space.adb(reader="stop_once_after C01ButtonTest", dump="exit 0")
         self.space.gradle(
-            self.space.logs(f"finished: opens({PKG}.C01ButtonTest)") + "sleep 1; "
-            + self.space.logs(*(f"finished: opens({PKG}.{name})" for name in later))
+            self.space.logs(f"finished: opens({PKG}.C01ButtonTest)", time=BATCH_TIME)
+            + "sleep 1; "
+            + self.space.logs(*(f"finished: opens({PKG}.{name})" for name in later),
+                              time=BATCH_TIME)
             + "exit 0")
         return self.space.run()
 
     def test_a_reader_that_stops_during_a_batch_goes_on_from_where_it_stopped(self):
         result = self.mid_batch("F01FieldsTest", "S01NamesTest")
         self.assert_passed_once_each(result)
-        self.assertIn("restart 1, from 11-17 21:30:00.000, leaving out the lines it already has",
+        self.assertIn(f"restart 1, from {BATCH_TIME}, leaving out the lines it already has",
                       result.stdout)
 
     def test_a_reader_that_stops_during_a_batch_still_fails_a_class_that_did_not_run(self):
@@ -380,7 +408,7 @@ class RunTest(unittest.TestCase):
                           + self.space.logs(EMPTY_RUN[1]) + "exit 0")
         result = self.space.run()
         self.assert_passed_once_each(result)
-        self.assertIn("restart 1, from 11-17 21:30:00.000", result.stdout)
+        self.assertIn(f"restart 1, from {SWEEP_TIME}", result.stdout)
         self.assertIn("sweep: no test outside the list", result.stdout)
         self.assertEqual(sum("run started" in line for line in self.space.reader_log()), 1)
 
@@ -418,7 +446,9 @@ class RunTest(unittest.TestCase):
         self.assertIn("no test of F01FieldsTest finished", result.stdout)
 
     def test_fails_and_says_why_when_neither_the_reader_nor_the_device_has_the_lines(self):
-        self.space.adb(reader="exec sleep 60", dump="exit 1")
+        # The device's log can be read at the start only.
+        self.space.adb(reader="exec sleep 60",
+                       dump=f'[ "$d" -gt 1 ] && exit 1; cat "{self.space.runner_log}"')
         self.space.finished(*self.names)
         result = self.space.run()
         self.assertEqual(result.returncode, 1)
@@ -436,6 +466,87 @@ class RunTest(unittest.TestCase):
         self.assertIn("the device's log has tests the reader did not write; carrying on",
                       result.stdout)
         self.assertNotIn("STOPPING THE TESTS", result.stdout)
+
+
+    # The device's log must hold only this run's test runner lines.
+
+    def test_fails_before_any_test_when_the_devices_log_keeps_an_earlier_runs_lines(self):
+        # An earlier run finished F01FieldsTest; this one never runs it.
+        self.space.runner_log.write_text(
+            f"11-16 09:00:00.000  3000  3010 I TestRunner: finished: opens({PKG}.F01FieldsTest)\n")
+        self.space.adb(clear="exit 1")
+        self.space.finished("C01ButtonTest", "S01NamesTest")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("adb logcat -c failed (try 3 of 3)", result.stdout)
+        self.assertIn("failed: the device's log could not be cleared of test runner lines",
+                      result.stdout)
+        self.assertFalse((self.space.android / "calls").exists())
+
+    def test_runs_when_logcat_reports_a_failed_clear_but_the_log_is_clear(self):
+        self.space.adb(clear="exit 1")
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assert_passed_once_each(result)
+        self.assertIn("adb logcat -c failed (try 1 of 3)", result.stdout)
+
+    # The sweep's lines are the device's from the sweep's start on, wherever
+    # a batch's line that comes late ends up in the reader's log.
+
+    def lost_batch_summary(self, sweep, dump=None):
+        """The reader leaves out the batch's last line and stops in the
+        sweep after its start."""
+        self.space.adb(reader='read_lines "run finished: 3 tests" "run started"', dump=dump)
+        self.space.finished(*self.names)
+        self.space.gradle(self.space.logs("run finished: 3 tests, 0 failed, 0 ignored",
+                                          time=BATCH_TIME) + "exit 0", sweep=sweep)
+        return self.space.run()
+
+    def empty_sweep_in_two_parts(self):
+        return (self.space.logs(EMPTY_RUN[0]) + "sleep 1; "
+                + self.space.logs(EMPTY_RUN[1]) + "exit 0")
+
+    def test_a_batch_line_the_reader_missed_is_not_taken_for_the_sweeps(self):
+        result = self.lost_batch_summary(self.empty_sweep_in_two_parts())
+        self.assert_passed_once_each(result)
+        self.assertIn(f"from {MARK_TIME} on", result.stdout)
+        self.assertIn("sweep: no test outside the list", result.stdout)
+        self.assertEqual(
+            sum("run finished: 3 tests" in line for line in self.space.reader_log()), 1)
+
+    def test_a_late_batch_line_is_not_the_sweeps_when_the_check_before_it_fails(self):
+        # The device's log cannot be read just before the sweep (the second
+        # dump), so the batch's last line only comes after the sweep.
+        result = self.lost_batch_summary(
+            self.empty_sweep_in_two_parts(),
+            dump=f'[ "$d" -eq 2 ] && exit 1; cat "{self.space.runner_log}"')
+        self.assert_passed_once_each(result)
+        self.assertIn("could not be checked against the device's log before the sweep",
+                      result.stdout)
+        self.assertIn("sweep: no test outside the list", result.stdout)
+        self.assertEqual(
+            sum("run finished: 3 tests" in line for line in self.space.reader_log()), 1)
+
+    def test_a_sweep_that_finds_a_missed_class_fails_after_a_lost_batch_line(self):
+        result = self.lost_batch_summary(
+            self.space.logs("run started: 1 tests") + "sleep 1; "
+            + self.space.logs(f"started: opens({PKG}.MissedTest)",
+                              f"finished: opens({PKG}.MissedTest)",
+                              "run finished: 1 tests, 0 failed, 0 ignored") + "exit 0")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("not an empty run", result.stdout)
+        swept = result.stdout.split("The test runner logged:")[1]
+        self.assertIn(f"finished: opens({PKG}.MissedTest)", swept)
+        self.assertNotIn("run finished: 3 tests", swept)
+
+    def test_fails_when_the_sweeps_start_cannot_be_marked(self):
+        self.space.finished(*self.names)
+        stand_in = (self.space.bin / "adb").read_text().split("\n", 1)[1]
+        self.space.tool("adb", 'case "$*" in "shell log"*) exit 1 ;; esac\n' + stand_in)
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("failed: could not mark the sweep's start", result.stdout)
+        self.assertEqual(len(self.calls()), 1)
 
 
 if __name__ == "__main__":

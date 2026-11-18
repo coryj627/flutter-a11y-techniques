@@ -38,7 +38,11 @@
 # the readers every POLL_SECONDS and after every Gradle run, says when one
 # has stopped, and starts it again from the time of the last line it wrote
 # (logcat -T), leaving out the lines it already has. The device's log is
-# cleared at the start, so it holds only this run. When a Gradle run ends
+# cleared at the start, and the script fails before running anything
+# unless it then holds no test runner line, so it holds only this run. The
+# sweep's lines are told from the batches' by the device's own time: those
+# from a line the script writes to the device's log as the sweep starts,
+# wherever they end up in the reader's log. When a Gradle run ends
 # and the reader has no test runner line for it, or the reader was
 # restarted, and before calling a run stalled or a class not run, the
 # script adds every test runner line the device still holds that the
@@ -201,7 +205,6 @@ tests_err=$DIAG_DIR/test-runner-adb.txt tests_pid="" tests_since="" tests_errpos
 # the device's; how many such checks, the lines they added, and how many
 # could not read the device's log.
 TESTS_SYNCED=0 RESYNCS=0 RECOVERED=0 RESYNC_FAILED=0
-CLEARED=0
 
 # Prints the lines of standard input, except that each line of file $1
 # leaves out one line equal to it.
@@ -296,19 +299,15 @@ check_readers() { check_reader full; check_reader tests; }
 
 # Adds to the test runner's log every test runner line the device still
 # holds that the log lacks. The reader is stopped meanwhile, so that no
-# line is written twice, and started again after. Lines are only taken if
-# the device's log was cleared at the start, so all of them are this run's.
+# line is written twice, and started again after. The device's log held no
+# test runner line at the start, so all of them are this run's. Fails if
+# the device's log could not be read.
 resync_tests_log() {
-  local dump=$DIAG_DIR/test-runner-device.txt added
+  local dump=$DIAG_DIR/test-runner-device.txt added ok=0
   RESYNCS=$((RESYNCS + 1))
   # A reader that has stopped is reported, not just started again below.
   check_reader tests
   TESTS_SYNCED=$tests_restarts
-  if [ "$CLEARED" -ne 1 ]; then
-    RESYNC_FAILED=$((RESYNC_FAILED + 1))
-    say "the device's log was not cleared at the start, so its lines cannot be told from an earlier run's; not using them"
-    return 1
-  fi
   stop_reader tests
   timeout 30 adb wait-for-device > /dev/null 2>&1
   if timeout 60 adb logcat -d -v threadtime -s TestRunner:I > "$dump" 2>> "$tests_err"; then
@@ -317,30 +316,66 @@ resync_tests_log() {
     cat "$dump.new" >> "$TESTS_LOG"
     RECOVERED=$((RECOVERED + added))
     say "took from the device's log $added test runner lines the reader had not written"
+    ok=1
   else
     RESYNC_FAILED=$((RESYNC_FAILED + 1))
     say "could not read the device's log, so any test runner line the reader missed is still missing"
   fi
   start_reader tests
+  [ "$ok" -eq 1 ]
 }
 
-# Whether the test runner's log has a test runner line after its line $1.
-runner_line_after() { tail -n "+$(($1 + 1))" "$TESTS_LOG" | grep -qF "TestRunner: "; }
+# The lines of the test runner's log from device time $1 on, in the order
+# the log has them. A line taken from the device's log late is still
+# classed by the time the device gave it, not by where it was written.
+lines_from() { awk -v s="$1" 'substr($0, 1, 18) >= s' "$TESTS_LOG"; }
+
+# Whether the test runner's log has a test runner line for a run: one
+# after its line $1, or, with a device time $2, one from that time on.
+run_has_line() {
+  if [ -n "${2:-}" ]; then
+    lines_from "$2" | grep -qF "TestRunner: "
+  else
+    tail -n "+$(($1 + 1))" "$TESTS_LOG" | grep -qF "TestRunner: "
+  fi
+}
+
+# Writes a line that no other run has to the device's log and prints the
+# time the device gave it, as logcat shows it, or prints nothing and fails
+# if it cannot be done or seen. The device's own time marks where a run
+# begins, wherever a line ends up in the reader's log.
+mark_device() {
+  local text="ci_android_tests_$1_$$_$(date +%s)" try line
+  for try in 1 2 3; do
+    if timeout 30 adb shell log -t CiBoundary -p i "$text" > /dev/null 2>&1; then
+      line=$(timeout 60 adb logcat -d -v threadtime -s CiBoundary:I 2>> "$tests_err" \
+        | grep -F "CiBoundary: $text" | head -n 1)
+      case $line in
+        [0-9][0-9]-[0-9][0-9]\ [0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9]*)
+          echo "${line:0:18}"
+          return 0 ;;
+      esac
+    fi
+    say "could not mark the $1 in the device's log (try $try of 3)" >&2
+    sleep "$POLL_SECONDS"
+  done
+  return 1
+}
 
 # After the Gradle run $1, which exited with $2 and began when the test
-# runner's log had $3 lines: makes sure the log holds the run's lines
-# before the run is judged.
+# runner's log had $3 lines, or, with $4, at that device time: makes sure
+# the log holds the run's lines before the run is judged.
 after_run() {
-  local label=$1 rc=$2 before=$3 tries
+  local label=$1 rc=$2 before=$3 from=${4:-} tries
   # Up to SETTLE_SECONDS for the reader to write the run's first line.
   tries=$(awk -v s="$SETTLE_SECONDS" 'BEGIN { print int(s * 5) }')
   check_readers
-  while ! runner_line_after "$before" && [ "$tries" -gt 0 ]; do
+  while ! run_has_line "$before" "$from" && [ "$tries" -gt 0 ]; do
     sleep 0.2
     tries=$((tries - 1))
     check_readers
   done
-  if ! runner_line_after "$before"; then
+  if ! run_has_line "$before" "$from"; then
     if [ "$rc" -eq 0 ]; then
       say "reader fault: Gradle passed $label, but the reader wrote no test runner line for it; taking them from the device's log"
     else
@@ -460,13 +495,28 @@ timeout 120 adb wait-for-device || say "the emulator is not attached to adb afte
 # A larger log on the device, so that it still holds the whole run when a
 # reader is restarted or a line is missing. Not every image allows it.
 timeout 30 adb logcat -G 16M > /dev/null 2>&1 || say "could not enlarge the device's log; it keeps its own size"
+# The device's log must hold no test runner line from before this run:
+# one from an earlier run could pass a class this run never ran. logcat -c
+# can report a failure for a log it cannot clear and still clear this one,
+# so the log itself is looked at.
+cleared=0
 for try in 1 2 3; do
-  if timeout 30 adb logcat -c; then CLEARED=1; break; fi
-  say "could not clear the device's log (try $try of 3)"
-  sleep 2
+  timeout 30 adb logcat -c || say "adb logcat -c failed (try $try of 3)"
+  if timeout 60 adb logcat -d -v threadtime -s TestRunner:I > "$DIAG_DIR/test-runner-at-start.txt" 2>> "$tests_err"; then
+    if ! grep -qF "TestRunner: " "$DIAG_DIR/test-runner-at-start.txt"; then
+      cleared=1
+      break
+    fi
+    say "the device's log still holds test runner lines from before this run (try $try of 3)"
+  else
+    say "could not read the device's log to see that it was cleared (try $try of 3)"
+  fi
+  [ "$try" -lt 3 ] && sleep "$POLL_SECONDS"
 done
-[ "$CLEARED" -eq 1 ] \
-  || say "the device's log was not cleared, so lines the readers miss will not be taken from it"
+if [ "$cleared" -ne 1 ]; then
+  say "failed: the device's log could not be cleared of test runner lines from before this run, which could pass a class this run did not run. No test was run; the lines are in test-runner-at-start.txt in the android-diagnostics artifact."
+  exit 1
+fi
 : > "$full_file"
 : > "$TESTS_LOG"
 start_reader full
@@ -509,41 +559,47 @@ done
 all=""
 for c in "${CLASSES[@]}"; do all="$all${all:+,}$PKG.$c"; done
 sleep "$SETTLE_SECONDS"
-# The sweep's lines are those after this point, so every earlier line has
-# to be in the log by now: if the reader was restarted, it may still have
-# been writing the batches' lines.
-check_readers
-[ "$tests_restarts" -ne "$TESTS_SYNCED" ] && resync_tests_log
-before=$(wc -l < "$TESTS_LOG")
-say "sweep: any test outside those ${#CLASSES[@]} classes"
-run_batch "notClass=$all"
-rc=$?
-sleep "$SETTLE_SECONDS"
-after_run "the sweep" "$rc" "$before"
-swept=$(tail -n "+$((before + 1))" "$TESTS_LOG")
-# The only sweep that passes is one the test runner itself reports as empty
-# from start to end: one start, a finish with 0 tests, 0 failed and 0
-# ignored, and nothing else logged: no test, failure or second run. The
-# count at the start is not used: the test runner gives 1 for a run with
-# no tests in it. A class that fails before its first test starts logs the
-# failure and finishes with 1 failed.
-other=$(echo "$swept" | grep -F "TestRunner: " \
-  | grep -vE "TestRunner: (run started: [0-9]+ tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
-if ! echo "$swept" | grep -qF "TestRunner: run started:"; then
+# The batches' lines go into the log before the sweep starts, as far as the
+# device still has them. The sweep's lines are then those the device logged
+# from a line the script writes to it now: a batch's line that only comes
+# later still has the device's earlier time, so it is not taken for the
+# sweep's.
+resync_tests_log \
+  || say "the batches' lines could not be checked against the device's log before the sweep; the sweep is told from them by the device's time, and the classes are checked again at the end"
+if ! sweep_from=$(mark_device sweep); then
   FAILED=1
-  say "failed: the sweep never reached the test runner (Gradle exit code $rc), so nothing shows that every test class was in the list$(reader_note)"
-  dump_state sweep-failed
-elif [ -n "$other" ] \
-  || [ "$(echo "$swept" | grep -cF "TestRunner: run started:")" -ne 1 ] \
-  || ! echo "$swept" | grep -qE "TestRunner: run finished: 0 tests, 0 failed, 0 ignored[[:space:]]*$"; then
-  FAILED=1
-  say "failed: the sweep was not an empty run from start to end (Gradle exit code $rc). A test class is missing from the list, or the sweep did not finish$(reader_note). The test runner logged:"
-  echo "$swept" | grep -F "TestRunner: " | sed -E 's/.*TestRunner: //'
-  dump_state sweep-failed
+  say "failed: could not mark the sweep's start in the device's log, so its lines cannot be told from the batches'. The sweep was not run, so nothing shows that every test class was in the list."
 else
-  say "sweep: no test outside the list"
+  say "sweep: any test outside those ${#CLASSES[@]} classes (the device's lines from $sweep_from on)"
+  run_batch "notClass=$all"
+  rc=$?
+  sleep "$SETTLE_SECONDS"
+  after_run "the sweep" "$rc" "" "$sweep_from"
+  swept=$(lines_from "$sweep_from")
+  # The only sweep that passes is one the test runner itself reports as empty
+  # from start to end: one start, a finish with 0 tests, 0 failed and 0
+  # ignored, and nothing else logged: no test, failure or second run. The
+  # count at the start is not used: the test runner gives 1 for a run with
+  # no tests in it. A class that fails before its first test starts logs the
+  # failure and finishes with 1 failed.
+  other=$(echo "$swept" | grep -F "TestRunner: " \
+    | grep -vE "TestRunner: (run started: [0-9]+ tests|run finished: 0 tests, 0 failed, 0 ignored)[[:space:]]*$")
+  if ! echo "$swept" | grep -qF "TestRunner: run started:"; then
+    FAILED=1
+    say "failed: the sweep never reached the test runner (Gradle exit code $rc), so nothing shows that every test class was in the list$(reader_note)"
+    dump_state sweep-failed
+  elif [ -n "$other" ] \
+    || [ "$(echo "$swept" | grep -cF "TestRunner: run started:")" -ne 1 ] \
+    || ! echo "$swept" | grep -qE "TestRunner: run finished: 0 tests, 0 failed, 0 ignored[[:space:]]*$"; then
+    FAILED=1
+    say "failed: the sweep was not an empty run from start to end (Gradle exit code $rc). A test class is missing from the list, or the sweep did not finish$(reader_note). The test runner logged:"
+    echo "$swept" | grep -F "TestRunner: " | sed -E 's/.*TestRunner: //'
+    dump_state sweep-failed
+  else
+    say "sweep: no test outside the list"
+  fi
+  [ -d "$REPORTS/connected" ] && { rm -rf "$REPORTS/sweep"; mv "$REPORTS/connected" "$REPORTS/sweep"; }
 fi
-[ -d "$REPORTS/connected" ] && { rm -rf "$REPORTS/sweep"; mv "$REPORTS/connected" "$REPORTS/sweep"; }
 
 # Every class must have run: the test runner's own log has to show a
 # finished test for each one. Before a class is failed for it, the device's
