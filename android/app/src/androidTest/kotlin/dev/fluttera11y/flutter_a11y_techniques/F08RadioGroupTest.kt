@@ -35,9 +35,15 @@ class F08RadioGroupTest : TechniqueTest("F08") {
             assertEquals("one option of $slug is checked", 1, it.size)
         }.single()
 
+    private fun on(slug: String): List<String> =
+        options.map { it.first }.filter { node("f08-$slug-$it").on() }
+
+    // Waits until [expected] is the only option checked. The tree can show
+    // the new option checked a moment before it shows the old one cleared,
+    // so waiting for the new one alone let the check below see two.
     private fun waitForChosen(slug: String, expected: String) {
         val end = System.currentTimeMillis() + 5_000
-        while (System.currentTimeMillis() < end && !node("f08-$slug-$expected").on()) Thread.sleep(100)
+        while (System.currentTimeMillis() < end && on(slug) != listOf(expected)) Thread.sleep(100)
         assertEquals("chosen option of $slug", expected, chosen(slug))
     }
 

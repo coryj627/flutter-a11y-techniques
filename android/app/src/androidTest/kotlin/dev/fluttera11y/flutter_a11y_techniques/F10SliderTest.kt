@@ -56,7 +56,18 @@ class F10SliderTest : TechniqueTest("F10") {
      * focus ring; its track is the bottom 48 logical pixels inside the ring.
      */
     private fun trackPoint(slug: String, along: Double): Pair<Int, Int> {
-        val r = bounds(slider(slug))
+        // The slider's place on the screen once it has stopped moving. A
+        // tap on CI once left the value unchanged; a point worked out while
+        // the screen was still arriving would miss the track, which is the
+        // likely cause (not confirmed).
+        var r = bounds(slider(slug))
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end) {
+            Thread.sleep(250)
+            val next = bounds(slider(slug))
+            if (next == r) break
+            r = next
+        }
         val density = inst.targetContext.resources.displayMetrics.density
         return if (slug.contains("custom") || slug.contains("no-keyboard") || slug.contains("drag-only")) {
             val ring = (8 * density).toInt()
