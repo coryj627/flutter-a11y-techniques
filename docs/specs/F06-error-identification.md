@@ -93,8 +93,18 @@ in `aria-describedby` (or `aria-errormessage`), and on Android a native
 ## 5. Examples
 
 Every example has a Send button and ends with a count of the forms sent,
-so a person or a test can tell that a form with no errors goes through.
-The count is not a live region: the only thing announced is an error.
+"Forms sent: 0", so a person or a test can tell that a form with no errors
+goes through. A form that goes through is a status message too (the
+Understanding document for 4.1.3 gives "Your form was successfully
+submitted" as one), so in every example, good and bad, the count is
+`Semantics(liveRegion: true)`: the one mechanism I12 found announced on
+Android, iOS, and the web
+([I12 spec](I12-announcements.md), `good-live-region`). It changes only
+when a form goes through, so a failed send announces only its error. Like
+any live region present when a screen opens, it is announced as the
+screen opens ([FL-010](../flutter-limitations.md#fl-010)); the walks wait
+for that to pass. Each bad example still differs from a good one by its
+defect only.
 Name must not be empty; Email must have an `@` and a dot after it. Send
 with nothing filled in shows both errors.
 
@@ -142,13 +152,13 @@ Not built, and why:
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good, for both `supportsAnnounce` values (true for iOS and the web, false for Android): each field's label, hint, and validation result before and after Send; the error as a node of its own, a live region only where announcements are unsupported; one announcement from code, the first error, assertive, only where supported; focus on the first field in error, then on the next; the form sent once both are right; Send reached with Tab and pressed with Enter; guidelines in light and dark with the errors showing; no overflow and the whole message shown at 200% text on 320 by 640. Bad: no new text and no announcement; the hint "Invalid."; no announcement and no live region where supported, a live region on Android; the error in the label and the hint, no node of its own, the field a live region on Android. FL-182 pinned. Every recording of announcements ends with one sent by the test, which must be recorded |
-| L3 web | Good: `aria-invalid` false then true, the accessible name the label, the accessible description the error, the message once on the page; what reaches the assertive announcer (the first error only); DOM focus on the first field in error, then the next; sent once right; Tab order. Bad: invalid with no description and nothing announced; description "Invalid."; nothing announced and focus on Send; the error in the name and the description. After each check that nothing was announced, text put in the announcer must be recorded |
-| L3 Android | Good: the hint text "label, error" and back to the label; no content description, no native error, not content-invalid (FL-180); the error a separate node and a polite live region; input focus on the first field in error, then the next; sent once right. Bad: no new text; "Email, Invalid."; a live region on Android with focus left on Send; the hint "label\nerror, error" and the field a live region |
+| L1 widget tests | Good, for both `supportsAnnounce` values (true for iOS and the web, false for Android): each field's label, hint, and validation result before and after Send; the error as a node of its own, a live region only where announcements are unsupported; one announcement from code, the first error, assertive, only where supported; focus on the first field in error, then on the next; the form sent once both are right; Send reached with Tab and pressed with Enter; guidelines in light and dark with the errors showing; no overflow and the whole message shown at 200% text on 320 by 640. Bad: no new text and no announcement; the hint "Invalid."; no announcement and no live region where supported, a live region on Android; the error in the label and the hint, no node of its own, the field a live region on Android. FL-182 pinned. Every recording of announcements ends with one sent by the test, which must be recorded. Every example: the count a live region reading "Forms sent: 0", unchanged by a failed send; after a send that goes through "Forms sent: 1", with nothing sent from code and no error announced again |
+| L3 web | Good: `aria-invalid` false then true, the accessible name the label, the accessible description the error, the message once on the page; what reaches the assertive announcer (the first error only); DOM focus on the first field in error, then the next; sent once right; Tab order. Bad: invalid with no description and nothing announced; description "Invalid."; nothing announced and focus on Send; the error in the name and the description. After each check that nothing was announced, text put in the announcer must be recorded. After a send that goes through, the polite announcer gets "Forms sent: 1" and nothing else |
+| L3 Android | Good: the hint text "label, error" and back to the label; no content description, no native error, not content-invalid (FL-180); the error a separate node and a polite live region; input focus on the first field in error, then the next; sent once right. Bad: no new text; "Email, Invalid."; a live region on Android with focus left on Send; the hint "label\nerror, error" and the field a live region. After a send that goes through, the count is a polite live region |
 | L3 iOS | Good: a text field named by its label before and after Send, the error a static text of its own, keyboard focus on the first field; sent once right. Bad: no new text; "Invalid." shown; the error shown, focus not on the field; the error in the label. XCUITest cannot read a hint or a live region |
-| L4 TalkBack | What is said on Send, in the seven seconds after it is pressed, and with focus on each field and error; a field in error with a value; and where TalkBack's focus is after Send (asserted: the first field in error) |
-| L4 VoiceOver iOS | Everything said in the eight seconds after Send is activated, and where the cursor is afterwards; for the good examples, the second field read with its error as hint. A failed `currentSpeech()` read fails the test, and each example ends with a control: the cursor is moved to the count and `currentSpeech()`, the read the window polls, must report "Sent: 0", so a dead or stuck capture cannot pass as silence (shown against three broken captures in `evidence/probes/f06/mutations`) |
-| L4 VoiceOver web | Everything VoiceOver is given in the eight seconds after Send is pressed with the keyboard, in Chromium, and where the cursor is afterwards; silence only with the capture proven live |
+| L4 TalkBack | What is said on Send, in the seven seconds after it is pressed, and with focus on each field and error; a field in error with a value; and where TalkBack's focus is after Send (asserted: the first field in error). For `good-form`, both fields put right and Send pressed again: "Forms sent: 1" said, no error |
+| L4 VoiceOver iOS | Everything said in the eight seconds after Send is activated, and where the cursor is afterwards; for the good examples, the second field read with its error as hint. A failed `currentSpeech()` read fails the test, and each example ends with a control: the cursor is moved to the count and `currentSpeech()`, the read the window polls, must report "Sent: 0", so a dead or stuck capture cannot pass as silence (shown against three broken captures in `evidence/probes/f06/mutations`). For each good example, a send that goes through after a failed one: "Forms sent: 1" heard through `currentSpeech()`, no error |
+| L4 VoiceOver web | Everything VoiceOver is given in the eight seconds after Send is pressed with the keyboard, in Chromium, and where the cursor is afterwards; silence only with the capture proven live. For each good example, a send that goes through after a failed one: "Forms sent: 1" given to VoiceOver, no error |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -231,6 +241,14 @@ The probe that came first, with a native comparison on Android, is in
 - **`errorMaxLines` is needed.** The default is one line with an
   ellipsis; at 200% text on a 320 wide screen the email message needs
   more than five lines (widget test), and `good-form` allows eight.
+- **A form that goes through is announced by the live count.** On iOS
+  and the web VoiceOver was given "Forms sent: 1" after a failed send was
+  put right and sent again, and none of the errors (`*-sent-ok` rows in
+  the F06 transcripts), and TalkBack said "Forms sent: 1" and nothing
+  else (`f06-good-form-sent-ok`; the Cupertino example was not walked for
+  this on Android). The failed-send rows of
+  every transcript are unchanged by the live count: it does not change on
+  a failed send, so nothing about it is said then.
 - **`validationResult` is web only** (source read): nothing in the Android
   or iOS engine reads it.
 
@@ -240,7 +258,8 @@ The announcement mechanisms themselves are I12's: live regions, sending
 an announcement from code with a fallback, the status and alert roles, and
 assertiveness ([FL-017](../flutter-limitations.md#fl-017),
 [FL-018](../flutter-limitations.md#fl-018)). F06 uses what `Form` and
-`InputDecorator` already do and adds no announcement of its own. Not done
+`InputDecorator` already do for errors, and for a form that goes through
+uses I12's `good-live-region` as it is (a live count). Not done
 in either: an error summary at the top of a long form (probed, p11: on
 iOS VoiceOver said the summary and then `Form`'s first error; on the web
 both went to the announcer elements and VoiceOver was heard saying the

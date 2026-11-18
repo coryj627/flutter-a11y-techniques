@@ -97,7 +97,7 @@ for (const slug of ['good-form', 'good-cupertino']) {
     const key = slug === 'good-cupertino' ? 'Space' : 'Enter';
     await send.focus();
     await page.keyboard.press(key);
-    await expect(page.getByText(NAME_ERROR, { exact: true })).toBeAttached();
+    await expect(page.getByText(NAME_ERROR, { exact: true }).first()).toBeAttached();
     await page.waitForTimeout(2500);
     for (const [name, text] of [['name', 'Ana'], ['email', 'ana@example.com']]) {
       await input(name).click();

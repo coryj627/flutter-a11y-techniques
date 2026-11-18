@@ -240,19 +240,19 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
                 Log.i(talkBackTag, "FOCUS f06-good-form-email-filled")
                 talkBackFocus("Email, filled") { nodeInAnyWindow("f06-good-form-email") }
                 Thread.sleep(5_000)
-                // Put both right and send: the form goes through, and only
-                // that is announced, not the errors that were put right.
+                // A form that goes through: open good-form again, send it
+                // empty so that both errors show, fill both fields (the
+                // email field is empty here, so typing is enough), and send
+                // again. Only the form going through should be announced,
+                // not the errors that were put right.
                 Log.i(talkBackTag, "END $slug-filled")
+                openWithTalkBack(slug)
+                Thread.sleep(8_000)
+                send(slug)
+                waitFor("errors shown") { withText(NAME_ERROR) != null }
+                Thread.sleep(4_000)
                 type("f06-good-form-name", "Ana")
-                val selection = android.os.Bundle().apply {
-                    putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, 3)
-                    putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, 3)
-                }
-                assertTrue(nodeInAnyWindow("f06-good-form-email")
-                    .performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selection))
-                Thread.sleep(500)
-                inst.sendStringSync("@example.com")
-                waitFor("email typed") { value("f06-good-form-email") == "abc@example.com" }
+                type("f06-good-form-email", "ana@example.com")
                 hideKeyboard()
                 talkBackFocus("Send") { nodeInAnyWindow("f06-good-form-send") }
                 Thread.sleep(6_000)

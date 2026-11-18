@@ -62,8 +62,9 @@ TALKBACK_METHOD = (
     "TalkBack focus on Send, then ACTION_CLICK on Send and everything TalkBack says for "
     "seven seconds; then the keyboard is closed and ACTION_ACCESSIBILITY_FOCUS is put on each "
     "field and error in turn, which shows what is spoken and not the order of a swipe. "
-    "For `good-form`, both fields are then put right and Send is pressed again "
-    "(`f06-good-form-sent-ok`). Speech is read from TalkBack's verbose log"
+    "For `good-form`, the example is then opened again, sent empty, both fields are filled, "
+    "and Send is pressed again (`f06-good-form-sent-ok`). Speech is read from TalkBack's "
+    "verbose log"
 )
 
 VOICEOVER_IOS_METHOD = (
