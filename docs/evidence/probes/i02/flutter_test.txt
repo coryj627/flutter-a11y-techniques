@@ -1,0 +1,91 @@
+WORK none: tab Back B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11 B12 B1 | more B2 B3 B4 B5 Back B6 B7 B8 B9 B10 B11 B12 | shift B11 B10 B9 B8 B7 B6 Back B5 Back B4 Back B3 Back B2 Back B1
+WORK group: tab Back B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11 B12 Back | more B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11 B12 | shift B11 B10 B9 B8 B7 B6 B5 B4 B3 B2 B1 Back B12 B11 B10 B9
+WORK ordered: tab Back B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11 B12 Back | more B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11 B12 | shift B11 B10 B9 B8 B7 B6 B5 B4 B3 B2 B1 Back B12 B11 B10 B9
+WORK groups-both: tab B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11 B12 Back B1 | more B2 B3 B4 B5 B6 B7 B8 B9 B10 B11 B12 Back | shift B12 B11 B10 B9 B8 B7 B6 B5 B4 B3 B2 B1 Back B12 B11 B10
+I02PROBE test /scroll tab: other(FocusNode) s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s27 s28 s29 s30 s31 s32 s33 s34 s35 s36 s37 s38 s39 s40 s01
+I02PROBE test /scroll shift+tab: s40 s39 s38 s37 s36 s35 s34 s33 s32 s31 s30 s29 s28 s27 other(FocusNode) s26 other(FocusNode) s25 other(FocusNode) s24 other(FocusNode) s23 other(FocusNode) s22 other(FocusNode) s21 other(FocusNode) s20 other(FocusNode) s19 other(FocusNode) s18 other(FocusNode) s17 other(FocusNode) s16 other(FocusNode) s15 other(FocusNode) s14 other(FocusNode) s13
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+I02PROBE test /scroll-groups tab: other(FocusNode) s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s27 s28 s29 s30 s31 s32 s33 s34 s35 s36 s37 s38 s39 s40 s01
+I02PROBE test /scroll-groups shift+tab: s40 s39 s38 s37 s36 s35 s34 s33 s32 s31 s30 s29 other(FocusNode) s28 s27 s26 s25 other(FocusNode) s24 s23 s22 s21 other(FocusNode) s20 s19 s18 s17 other(FocusNode) s16 s15 s14 s13 other(FocusNode) s12 s11 s10 s09 other(FocusNode) s08 s07 s06 s05
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+I02PROBE 1280x720 shift+tab from f-down: f-right f-left f-up e-save e-alerts e-water e-map d-save d-aid d-closures d-water d-alerts d-map c-save c-closures c-alerts c-aid c-water c-map b-save b-closures b-alerts b-aid b-water b-map a-save a-aid a-closures a-water a-alerts
+I02PROBE 1280x720 tab from there: a-water a-closures a-aid a-save b-map b-water b-aid b-alerts b-closures b-save c-map c-water c-aid c-alerts c-closures c-save d-map d-alerts d-water d-closures d-aid d-save e-map e-water e-alerts e-save f-up f-left f-right f-down
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+I02PROBE android reading order: focus path log keys a-map a-water a-aid a-alerts a-closures a-save b-map b-water b-aid b-alerts b-closures b-save c-map c-water c-aid c-alerts c-closures c-save d-alerts d-closures d-map d-water d-aid d-save e-map e-alerts e-water e-save f-up f-left f-right f-down g-map g-alerts g-water g-closures g-aid g-save h-map h-water h-aid h-alerts h-closures h-save i-map i-alerts i-water i-closures i-aid i-save
+I02PROBE android tab: other a-map a-water a-alerts a-aid a-closures a-save b-map b-water b-aid b-alerts b-closures b-save c-map c-water c-aid c-alerts c-closures c-save d-map d-water d-alerts d-aid d-closures d-save e-map e-water e-alerts e-save f-up f-left f-right f-down g-map g-water g-aid g-alerts g-closures g-save h-map h-water h-aid h-alerts h-closures h-save i-map i-water i-alerts i-closures i-save
+I02PROBE android shift+tab: i-closures i-alerts i-water i-map h-save h-closures h-alerts h-aid h-water h-map g-save g-closures g-alerts g-aid g-water g-map f-down f-right f-left f-up e-save e-alerts e-water e-map d-save d-closures d-aid d-alerts d-water d-map c-save c-closures c-alerts c-aid c-water c-map b-save b-closures b-alerts b-aid b-water b-map a-save a-closures a-aid a-alerts a-water a-map other i-aid
+I02PROBE android arrow a-map down -> a-water
+I02PROBE android arrow a-map up -> other
+I02PROBE android arrow a-map left -> a-map
+I02PROBE android arrow a-map right -> a-alerts
+I02PROBE android arrow b-map down -> b-water
+I02PROBE android arrow b-map up -> a-save
+I02PROBE android arrow b-map left -> b-map
+I02PROBE android arrow b-map right -> b-alerts
+I02PROBE android arrow b-water down -> b-aid
+I02PROBE android arrow b-water up -> b-map
+I02PROBE android arrow b-water left -> b-water
+I02PROBE android arrow b-water right -> b-closures
+I02PROBE android arrow b-alerts down -> b-closures
+I02PROBE android arrow b-alerts up -> a-closures
+I02PROBE android arrow b-alerts left -> b-map
+I02PROBE android arrow b-alerts right -> b-alerts
+I02PROBE android arrow f-up down -> f-down
+I02PROBE android arrow f-up up -> e-alerts
+I02PROBE android arrow f-up left -> f-left
+I02PROBE android arrow f-up right -> f-right
+I02PROBE android arrow f-left down -> g-map
+I02PROBE android arrow f-left up -> e-save
+I02PROBE android arrow f-left left -> f-left
+I02PROBE android arrow f-left right -> f-right
+I02PROBE android arrow f-right down -> f-down
+I02PROBE android arrow f-right up -> d-closures
+I02PROBE android arrow f-right left -> f-left
+I02PROBE android arrow f-right right -> f-right
+I02PROBE android arrow f-down down -> g-map
+I02PROBE android arrow f-down up -> f-right
+I02PROBE android arrow f-down left -> f-left
+I02PROBE android arrow f-down right -> f-right
+I02PROBE android arrow g-map down -> g-water
+I02PROBE android arrow g-map up -> f-down
+I02PROBE android arrow g-map left -> g-map
+I02PROBE android arrow g-map right -> g-alerts
+I02PROBE iOS reading order: focus path log keys a-map a-water a-aid a-alerts a-closures a-save b-map b-water b-aid b-alerts b-closures b-save c-map c-water c-aid c-alerts c-closures c-save d-alerts d-closures d-map d-water d-aid d-save e-map e-alerts e-water e-save f-up f-left f-right f-down g-map g-alerts g-water g-closures g-aid g-save h-map h-water h-aid h-alerts h-closures h-save i-map i-alerts i-water i-closures i-aid i-save
+I02PROBE iOS tab: other a-map a-water a-alerts a-aid a-closures a-save b-map b-water b-aid b-alerts b-closures b-save c-map c-water c-aid c-alerts c-closures c-save d-map d-water d-alerts d-aid d-closures d-save e-map e-water e-alerts e-save f-up f-left f-right f-down g-map g-water g-aid g-alerts g-closures g-save h-map h-water h-aid h-alerts h-closures h-save i-map i-water i-alerts i-closures i-save
+I02PROBE iOS shift+tab: i-closures i-alerts i-water i-map h-save h-closures h-alerts h-aid h-water h-map g-save g-closures g-alerts g-aid g-water g-map f-down f-right f-left f-up e-save e-alerts e-water e-map d-save d-closures d-aid d-alerts d-water d-map c-save c-closures c-alerts c-aid c-water c-map b-save b-closures b-alerts b-aid b-water b-map a-save a-closures a-aid a-alerts a-water a-map other i-aid
+I02PROBE iOS arrow a-map down -> a-water
+I02PROBE iOS arrow a-map up -> other
+I02PROBE iOS arrow a-map left -> a-map
+I02PROBE iOS arrow a-map right -> a-alerts
+I02PROBE iOS arrow b-map down -> b-water
+I02PROBE iOS arrow b-map up -> a-save
+I02PROBE iOS arrow b-map left -> b-map
+I02PROBE iOS arrow b-map right -> b-alerts
+I02PROBE iOS arrow b-water down -> b-aid
+I02PROBE iOS arrow b-water up -> b-map
+I02PROBE iOS arrow b-water left -> b-water
+I02PROBE iOS arrow b-water right -> b-closures
+I02PROBE iOS arrow b-alerts down -> b-closures
+I02PROBE iOS arrow b-alerts up -> a-closures
+I02PROBE iOS arrow b-alerts left -> b-map
+I02PROBE iOS arrow b-alerts right -> b-alerts
+I02PROBE iOS arrow f-up down -> f-down
+I02PROBE iOS arrow f-up up -> e-alerts
+I02PROBE iOS arrow f-up left -> f-left
+I02PROBE iOS arrow f-up right -> f-right
+I02PROBE iOS arrow f-left down -> g-map
+I02PROBE iOS arrow f-left up -> e-save
+I02PROBE iOS arrow f-left left -> f-left
+I02PROBE iOS arrow f-left right -> f-right
+I02PROBE iOS arrow f-right down -> f-down
+I02PROBE iOS arrow f-right up -> d-closures
+I02PROBE iOS arrow f-right left -> f-left
+I02PROBE iOS arrow f-right right -> f-right
+I02PROBE iOS arrow f-down down -> g-map
+I02PROBE iOS arrow f-down up -> f-right
+I02PROBE iOS arrow f-down left -> f-left
+I02PROBE iOS arrow f-down right -> f-right
+I02PROBE iOS arrow g-map down -> g-water
+I02PROBE iOS arrow g-map up -> f-down
+I02PROBE iOS arrow g-map left -> g-map
+I02PROBE iOS arrow g-map right -> g-alerts

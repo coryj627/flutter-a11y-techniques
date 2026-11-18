@@ -1,0 +1,102 @@
+// Throwaway: I02 probe on iOS. Not committed. The probe's own Focus, Path,
+// and Keys lines say where Flutter's focus is, which XCUITest cannot.
+import XCTest
+
+final class I02ProbeUITests: XCTestCase {
+  let app = XCUIApplication()
+
+  private func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+  private func focus() -> String { el("focus").label.replacingOccurrences(of: "Focus: ", with: "") }
+  private func path() -> String { el("path").label }
+  private func keys() -> String { el("keys").label.split(separator: " ").suffix(6).joined(separator: " ") }
+
+  private func launch() {
+    app.launch()
+    XCTAssertTrue(el("path").waitForExistence(timeout: 30))
+    sleep(2)
+  }
+
+  private func press(_ key: String, _ flags: XCUIElement.KeyModifierFlags = []) {
+    app.typeKey(key, modifierFlags: flags)
+    usleep(500_000)
+  }
+
+  private func tabUntil(_ label: String, max: Int = 60) -> Bool {
+    for _ in 0..<max {
+      if focus() == label { return true }
+      press(XCUIKeyboardKey.tab.rawValue)
+    }
+    return focus() == label
+  }
+
+  func testTree() {
+    launch()
+    let all = app.descendants(matching: .any).allElementsBoundByIndex
+    let order = all.filter { !$0.identifier.isEmpty }.map { "\($0.identifier)(\($0.elementType.rawValue))" }
+    print("I02PROBE element order: \(order.joined(separator: " "))")
+  }
+
+  func testForward() {
+    launch()
+    for _ in 0..<60 { press(XCUIKeyboardKey.tab.rawValue) }
+    print("I02PROBE after 60 Tabs: \(path())")
+  }
+
+  func testShiftTab() {
+    launch()
+    let reached = tabUntil("b-closures")
+    let before = focus()
+    press(XCUIKeyboardKey.tab.rawValue, .shift)
+    print("I02PROBE typeKey(tab, .shift): reached=\(reached) before=\(before) after=\(focus()) keys=\(keys())")
+    press(XCUIKeyboardKey.tab.rawValue, .shift)
+    print("I02PROBE typeKey(tab, .shift) again: after=\(focus())")
+    // All the way back from i-save to see the order backwards.
+    _ = tabUntil("i-save")
+    let mark = path().count
+    for _ in 0..<54 { press(XCUIKeyboardKey.tab.rawValue, .shift) }
+    print("I02PROBE 54 Shift+Tabs from i-save: \(path().dropFirst(mark))")
+  }
+
+  func testArrows() {
+    launch()
+    let moves: [(String, String, XCUIKeyboardKey)] = [
+      ("f-up", "down", .downArrow), ("f-left", "down", .downArrow), ("f-left", "right", .rightArrow),
+      ("f-right", "down", .downArrow), ("b-map", "down", .downArrow), ("b-map", "right", .rightArrow),
+      ("b-alerts", "left", .leftArrow), ("b-water", "up", .upArrow),
+    ]
+    for (from, name, key) in moves {
+      let reached = tabUntil(from)
+      press(key.rawValue)
+      print("I02PROBE arrow \(from) \(name): reached=\(reached) after=\(focus())")
+    }
+  }
+
+  func testSpaceToggles() {
+    launch()
+    _ = tabUntil("b-water")
+    press(XCUIKeyboardKey.space.rawValue)
+    print("I02PROBE space on b-water: \(el("log").label)")
+  }
+
+  func testVoiceOverOrder() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    launch()
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    try voiceOver.enable()
+    defer { try? voiceOver.disable() }
+    var said: [String] = []
+    for _ in 0..<40 {
+      if let u = try? voiceOver.moveForward().utterance {
+        let t = u.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
+        said.append(t.hasPrefix("Path:") || t.hasPrefix("Keys:") ? String(t.prefix(12)) : t)
+      } else {
+        said.append("(no speech)")
+      }
+    }
+    print("I02PROBE VoiceOver forward: \(said.joined(separator: " / "))")
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}
