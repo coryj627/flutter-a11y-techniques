@@ -531,6 +531,23 @@ timeout 120 adb wait-for-device || say "the emulator is not attached to adb afte
 # every test after it fails. A test still fails if the app itself stops.
 timeout 30 adb shell settings put global hide_error_dialogs 1 > /dev/null 2>&1 \
   || say "could not turn off the system's error dialogs; one can cover the app"
+# The setting stops later dialogs and leaves one that is already up, so
+# that one is closed here: the system's error dialogs close themselves
+# when told to close system dialogs. Its window is titled "Application Not
+# Responding: <package>" or "Application Error: <package>".
+error_dialog() {
+  timeout 30 adb shell dumpsys window windows 2> /dev/null \
+    | grep -m 1 -oE 'Application (Not Responding|Error): [A-Za-z0-9._]+'
+}
+for try in 1 2 3; do
+  dialog=$(error_dialog) || break
+  say "closing a system dialog that is over the screen: $dialog (try $try of 3)"
+  timeout 30 adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS > /dev/null 2>&1
+  sleep "$POLL_SECONDS"
+done
+if dialog=$(error_dialog); then
+  say "a system dialog is still over the screen and the examples may not open: $dialog"
+fi
 # A larger log on the device, so that it still holds the whole run when a
 # reader is restarted or a line is missing. Not every image allows it.
 timeout 30 adb logcat -G 16M > /dev/null 2>&1 || say "could not enlarge the device's log; it keeps its own size"
