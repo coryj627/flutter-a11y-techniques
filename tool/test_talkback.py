@@ -546,10 +546,19 @@ class Checks(unittest.TestCase):
         self.assertTrue(tb.unwanted(["not checked. off."], "checked"))
         self.assertTrue(tb.unwanted(["checked. on."], "checked"))
         self.assertFalse(tb.unwanted(["off.  ", "bluetooth"], "checked"))
-        for ident, (_, must_not) in tb.EXPECT.items():
-            if "checked" in [p.lower() for p in must_not]:
-                self.assertTrue(
-                    tb.problems(ident, ["not checked. off.", "anything"]), ident)
+        checked = 0
+        for ident, (must, must_not) in tb.EXPECT.items():
+            if "checked" not in [p.lower() for p in must_not]:
+                continue
+            checked += 1
+            # Speech with everything the element must say passes; the same
+            # speech with "not checked." in front fails, and for that reason.
+            speech = [p + "." for p in must]
+            self.assertEqual(tb.problems(ident, speech), [], ident)
+            found = tb.problems(ident, ["not checked."] + speech)
+            self.assertEqual(len(found), 1, ident)
+            self.assertIn('did not expect "checked"', found[0])
+        self.assertGreater(checked, 20)
 
     def test_expected_and_unexpected_phrases(self):
         self.assertEqual(tb.problems("c01-good-text-filled", ["Save", "Button"]), [])
