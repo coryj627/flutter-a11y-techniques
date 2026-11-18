@@ -1,0 +1,122 @@
+== testTree
+I01PROBE EL k01 type=9 label="k01 ListTile" enabled=true hasFocus=false hittable=true frame=(8.0, 118.0, 386.0, 48.0)
+I01PROBE EL k02 type=48 label="k02 InkWell" enabled=true hasFocus=false hittable=true frame=(8.0, 170.0, 386.0, 44.0)
+I01PROBE EL k03 type=9 label="k03 InkWell button" enabled=true hasFocus=false hittable=true frame=(8.0, 218.0, 386.0, 44.0)
+I01PROBE EL k04 type=48 label="k04 CupertinoListTile" enabled=true hasFocus=false hittable=true frame=(8.0, 266.0, 386.0, 44.0)
+I01PROBE EL k05 type=9 label="k05 CupertinoListTile in FAD" enabled=true hasFocus=false hittable=true frame=(8.0, 314.0, 386.0, 44.0)
+I01PROBE EL k06 type=9 label="k06 FAD tile" enabled=true hasFocus=false hittable=true frame=(8.0, 362.0, 386.0, 44.0)
+I01PROBE EL k07 type=9 label="k07 gesture button" enabled=true hasFocus=false hittable=true frame=(8.0, 410.0, 386.0, 44.0)
+I01PROBE EL k08 type=9 label="k08 Focus, no actions" enabled=true hasFocus=false hittable=true frame=(8.0, 458.0, 386.0, 44.0)
+I01PROBE EL k09 type=9 label="k09 onTapDown" enabled=true hasFocus=false hittable=true frame=(8.0, 506.0, 386.0, 44.0)
+I01PROBE EL k10 type=9 label="k10 Listener" enabled=true hasFocus=false hittable=true frame=(8.0, 554.0, 386.0, 44.0)
+I01PROBE EL k11 type=9 label="k11 CupertinoButton" enabled=true hasFocus=false hittable=true frame=(8.0, 602.0, 194.43216959635416, 52.0)
+I01PROBE EL k12 type=9 label="k12 TextButton" enabled=true hasFocus=false hittable=true frame=(8.0, 658.0, 125.96724446614581, 48.0)
+I01PROBE EL k13 type=9 label="k13 keys and semantics only" enabled=true hasFocus=false hittable=true frame=(8.0, 710.0, 386.0, 44.0)
+I01PROBE EL k14 type=48 label="k14 FAD, no button role" enabled=true hasFocus=false hittable=true frame=(8.0, 758.0, 386.0, 44.0)
+Test Case '-[RunnerUITests.I01ProbeUITests testTree]' passed (8.428 seconds).
+== testKeys
+I01PROBE start: Focus: _ModalScopeState<dynamic> Focus Scope | Log: - | focused: 
+I01PROBE tab 1: Focus: k01 | Enter added "" | Space added "01 tap" | focused: 
+I01PROBE tab 2: Focus: k02 | Enter added "" | Space added ", k02 tap" | focused: 
+I01PROBE tab 3: Focus: k03 | Enter added "" | Space added ", k03 tap" | focused: 
+I01PROBE tab 4: Focus: k05 | Enter added "" | Space added ", k05 key" | focused: 
+I01PROBE tab 5: Focus: k06 | Enter added "" | Space added ", k06 key" | focused: 
+I01PROBE tab 6: Focus: k08 | Enter added "" | Space added "" | focused: 
+I01PROBE tab 7: Focus: k09 | Enter added "" | Space added ", k09 key" | focused: 
+I01PROBE tab 8: Focus: k11 | Enter added "" | Space added ", k11 tap" | focused: 
+I01PROBE tab 9: Focus: k12 | Enter added "" | Space added ", k12 tap" | focused: 
+I01PROBE tab 10: Focus: k13 | Enter added "" | Space added ", k13 key" | focused: 
+I01PROBE tab 11: Focus: k14 | Enter added "" | Space added ", k14 key" | focused: 
+I01PROBE tab 12: Focus: k01 | Enter added "" | Space added ", k01 tap" | focused: 
+Test Case '-[RunnerUITests.I01ProbeUITests testKeys]' passed (41.440 seconds).
+== testPressAndSlideOff
+I01PROBE slide off k01: ""
+I01PROBE slide off k06: ""
+I01PROBE slide off k09: "09 down"
+I01PROBE slide off k10: ", k10 pointerup"
+I01PROBE slide off k04: ""
+I01PROBE slide off k07: ""
+I01PROBE tap k04: ", k04 tap"
+I01PROBE tap k07: ", k07 tap"
+I01PROBE tap k10: ", k10 pointerup"
+I01PROBE tap k13: ""
+Test Case '-[RunnerUITests.I01ProbeUITests testPressAndSlideOff]' passed (25.863 seconds).
+== Full Keyboard Access setting before: Error: Could not find key 'FullKeyboardAccessEnabled' in domain 'com.apple.Accessibility'.
+== Full Keyboard Access setting now: 1
+== testKeys
+I01PROBE start: Focus: _ModalScopeState<dynamic> Focus Scope | Log: - | focused: 
+I01PROBE tab 1: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 2: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 3: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 4: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 5: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 6: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 7: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 8: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 9: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 10: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 11: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+I01PROBE tab 12: Focus: _ModalScopeState<dynamic> Focus Scope | Enter added "" | Space added "" | focused: 
+Test Case '-[RunnerUITests.I01ProbeUITests testKeys]' passed (39.940 seconds).
+== Full Keyboard Access setting restored: Error: Could not find key 'FullKeyboardAccessEnabled' in domain 'com.apple.Accessibility'.
+== testVoiceOverActivate
+I01PROBE VO Focus: _ModalScopeState<dynamic> Focus Scope
+I01PROBE VO k01 ListTile Button
+I01PROBE VO k02 InkWell
+I01PROBE VO k03 InkWell Button
+I01PROBE VO k04 CupertinoListTile
+I01PROBE VO k05 CupertinoListTile in FAD Button
+I01PROBE VO k06 FAD tile Button
+I01PROBE VO k07 gesture Button
+I01PROBE VO k08 Focus, no actions Button
+I01PROBE VO k09 onTapDown Button
+I01PROBE VO k10 Listener Button
+I01PROBE VO k11 CupertinoButton Button
+I01PROBE VO k12 TextButton Button
+I01PROBE VO k13 keys and semantics only Button
+I01PROBE VO k14 FAD, no button role
+I01PROBE VO double tap k10: "10 pointerup"
+I01PROBE VO double tap k07: ", k07 tap"
+I01PROBE VO double tap k04: ", k04 tap"
+Test Case '-[RunnerUITests.I01ProbeUITests testVoiceOverActivate]' passed (44.975 seconds).
+== round 2
+== ios
+I01PROBE2 tab: keys added "ab" | Focus: k01 | log added ""
+I01PROBE2 return: keys added "" | Focus: k01 | log added ""
+I01PROBE2 enter (keypad): keys added " Control Left C" | Focus: k01 | log added ""
+I01PROBE2 newline: keys added " Enter" | Focus: k01 | log added "01 tap"
+I01PROBE2 space: keys added "  " | Focus: k01 | log added ", k01 tap"
+I01PROBE2 shift+tab: keys added " shift+Shift Left shift+Tab" | Focus: k14 | log added ""
+I01PROBE2 escape: keys added "" | Focus: k14 | log added ""
+I01PROBE2 right arrow: keys added " Arrow Right" | Focus: k14 | log added ""
+Test Case '-[RunnerUITests.I01ProbeUITests testKeyNames]' passed (15.787 seconds).
+I01PROBE2 FKA switch "Full Keyboard Access" was off
+I01PROBE2 FKA switch now off
+I01PROBE2 FKA switch "Full Keyboard Access" was off
+I01PROBE2 FKA switch now off
+ios/RunnerUITests/I01ProbeUITests.swift:139: error: -[RunnerUITests.I01ProbeUITests testFullKeyboardAccess] : failed - could not turn Full Keyboard Access on
+Test Case '-[RunnerUITests.I01ProbeUITests testFullKeyboardAccess]' failed (37.017 seconds).
+== Full Keyboard Access, second try
+I01PROBE2 FKA switch "Full Keyboard Access" was off
+I01PROBE2 FKA after tap: value Optional(1); alerts 0; sheets 0; buttons ["Keyboards & Typing", "chevron", "chevron", "chevron", "Auto-Hide, 15s", "Color, Default", "Full Keyboard Access", "Increase Size", "High Contrast"]
+I01PROBE2 FKA switch now on
+I01PROBE2 FKA start: Focus: _ModalScopeState<dynamic> Focus Scope | keys Keys: - | focused: 
+I01PROBE2 FKA tab 1: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 2: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 3: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 4: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 5: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 6: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 7: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 8: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 9: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 10: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 11: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 12: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 13: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA tab 14: flutter Focus: _ModalScopeState<dynamic> Focus Scope | XCUITest hasFocus:  | Space added "" | keys "Keys: -"
+I01PROBE2 FKA switch "Full Keyboard Access" was on
+I01PROBE2 FKA after tap: value Optional(0); alerts 1; sheets 0; buttons ["Cancel", "Yes", "Keyboards & Typing", "chevron", "chevron", "chevron", "Commands", "Auto-Hide, 15s", "Color, Default", "Full Keyboard Access", "Increase Size", "High Contrast"]
+I01PROBE2 FKA switch now off
+I01PROBE2 FKA restored off: true
+Test Case '-[RunnerUITests.I01ProbeUITests testFullKeyboardAccess]' passed (88.707 seconds).

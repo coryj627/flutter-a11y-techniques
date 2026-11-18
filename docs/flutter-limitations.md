@@ -114,6 +114,9 @@ yet), **Fixed in x.y** (verified on that version).
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
+| [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
+| [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
+| [FL-402](#fl-402) | A tap is given up by how far the pointer has moved, not by whether it has left the control | All (widget test only) | Confirmed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -2194,6 +2197,121 @@ yet), **Fixed in x.y** (verified on that version).
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->
+
+## FL-400
+
+**A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS.**
+
+- Status: Confirmed, Flutter 3.47.5. Two separate gaps, each stated below
+  with where it was seen. Found in the I01 probe
+  (`docs/evidence/probes/i01/`, fixture `k04`). Asserted by the I01 widget
+  test "FL-400" (no focus state, no button flag, Tab goes past it),
+  written to fail when the tile takes focus or gets the flag. Framework
+  source read: `cupertino/list_tile.dart`, which wraps the tile in a
+  `GestureDetector` when `onTap` is set and in nothing else: no `Focus`,
+  no actions for the keys, no `Semantics(button: true)`. `ListTile` has
+  all three, through `InkWell` and its own `Semantics`.
+- No keyboard focus, on all three platforms. WCAG 2.1.1 Keyboard. Tab
+  went past the tile on the web (Chromium, no `tabindex` on its element),
+  on the Android emulator (`adb shell input keyevent`), and on the iOS
+  simulator (XCUITest's hardware keys), and in the semantics tree the node
+  has no focus state at all (`isFocused` is `Tristate.none`). The tile
+  answers a tap, and the `GestureDetector` gives it a tap action, so a
+  screen reader can still activate it.
+- Not a button, on Android and iOS only. WCAG 4.1.2 Name, Role, Value, on
+  those two. The framework sets no button flag on any platform; what each
+  platform makes of that:
+  - Android: `android.view.View`, clickable, "k04 CupertinoListTile".
+  - iOS: static text to XCUITest; VoiceOver reads "k04 CupertinoListTile"
+    with no "Button".
+  - Web: a button. The engine gives any node with a tap action
+    `role="button"` ([FL-006](#fl-006)), and Chromium's accessibility tree
+    has a button named "k04 CupertinoListTile". The role is not missing
+    there; only the focus is.
+- Why it matters: `CupertinoListTile` is the Cupertino row for a list of
+  choices or settings, and its `onTap` is documented for making the row act.
+  A keyboard or switch user cannot reach a row built that way on any
+  platform, and a screen reader user on Android or iOS is not told it is a
+  control.
+- Workaround, in the SDK: wrap the tile in `FocusableActionDetector` with
+  actions for `ActivateIntent` and `ButtonActivateIntent`, and put
+  `Semantics(button: true)` around it, as I01 `good-cupertino` does; draw
+  a focus ring from `onShowFocusHighlight`, since the tile shows none.
+  Verified in the I01 widget, web, Android, and iOS tests: Tab reaches it,
+  Enter and Space activate it, and it is a button on all three platforms.
+- How to read this entry: Flutter has not added keyboard support or a role
+  to `CupertinoListTile` yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-401
+
+**An `InkWell` with `onTap` is not a button on Android and iOS.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the I01 probe
+  (`docs/evidence/probes/i01/`, fixture `k02`); asserted by the I01 widget,
+  Android, and iOS tests of `bad-inkwell-no-role` and heard in its TalkBack
+  and VoiceOver on iOS transcripts. Framework source read:
+  `material/ink_well.dart`, whose `Semantics` sets `onTap` and nothing that
+  gives a role.
+- WCAG: 4.1.2 Name, Role, Value, on Android and iOS only.
+- What happens: an `InkWell` takes keyboard focus, handles Enter and Space
+  (both `ActivateIntent` and `ButtonActivateIntent`), and has a tap action,
+  so everything but the role is right: Tab reached it and Enter and Space
+  activated it on all three platforms (probe fixture `k02`, and the I01
+  tests of `bad-inkwell-no-role`). The framework sets no button flag on
+  any platform; what each platform makes of that:
+  - Android: `android.view.View`, clickable. TalkBack reads the text and
+    "Double-tap to activate", and never "Button".
+  - iOS: static text to XCUITest. VoiceOver reads the text alone.
+  - Web: a button. The engine gives any node with a tap action
+    `role="button"` ([FL-006](#fl-006)); VoiceOver reads "Ridge trail
+    button". Not affected.
+- Why it matters: the tappable card in the `Card` API documentation is a
+  `Card` around an `InkWell`, and the same is a common way to make a
+  Material surface tappable. A screen reader user on iOS hears a card with
+  nothing to say it does anything; on Android only TalkBack's usage hint,
+  "Double-tap to activate", gives it away. Whether TalkBack says anything
+  of the kind with its usage hints turned off was not tested.
+- Workaround, in the SDK: `Semantics(button: true)` around the `InkWell`
+  (probe fixture `k03`: a button on all three platforms), or a `ListTile`
+  with `onTap`, which is a button by itself (I01 `good-material`).
+- Upstream issue: not searched yet (D25). This may be intended: `InkWell`
+  is an ink response and not a control of a given kind.
+
+## FL-402
+
+**A tap is given up by how far the pointer has moved, not by whether it has left the control.**
+
+- Status: Confirmed in a widget test, Flutter 3.47.5. The gesture code is
+  the framework's and is the same on every platform (read in the source:
+  `gestures/tap.dart`, `gestures/recognizer.dart`
+  (`PrimaryPointerGestureRecognizer`), and `gestures/constants.dart`,
+  `kTouchSlop`); it was not measured on a device. Asserted by the I01
+  widget tests "FL-402" for `good-material`, `good-cupertino`, and
+  `good-custom`, written to fail when either half changes, and by one
+  with the touch slop set in `MediaQuery`.
+- WCAG: none failed. 2.5.2 Pointer Cancellation asks for a way to abort,
+  and moving the pointer far enough is one.
+- What happens: `onTap` runs when the pointer is released, unless the
+  pointer has moved more than the touch slop from where it was pressed.
+  Where the pointer is when it is released is not checked. The slop is
+  the device's, which a `GestureDetector` takes from `MediaQuery`
+  (`gestureSettings.touchSlop`, which the framework fills from the
+  view's `physicalTouchSlop` when the engine reports one: read in the
+  source, `gestures/gesture_settings.dart`), and 18 logical pixels
+  (`kTouchSlop`) where none is given, as in a widget test. With the slop
+  at 18:
+  - Pressed 4 pixels inside the control's edge, moved 10 pixels out, and
+    released 6 pixels outside it: the control acts.
+  - Pressed at its centre, moved 40 pixels sideways, and released still
+    over it: the control does not act.
+- Effect: someone who presses the wrong control near its edge and slides
+  just off it still activates it; to take a press back they have to move
+  further than the touch slop, in any direction. What the slop is on each
+  device was not measured.
+- Workaround: none tried. A control could check the release position
+  itself (`onTapUp` gives it) before acting.
+- Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->
 

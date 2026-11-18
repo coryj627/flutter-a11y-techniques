@@ -1,0 +1,94 @@
+Running 4 tests using 1 worker
+k01: {"role":"button","tabindex":"0","aria-current":"false","flt-tappable":"","flt-semantics-identifier":"k01"}
+k02: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k02"}
+k03: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k03"}
+k04: {"role":"button","flt-tappable":"","flt-semantics-identifier":"k04"}
+k05: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k05"}
+k06: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k06"}
+k07: {"role":"button","flt-tappable":"","flt-semantics-identifier":"k07"}
+k08: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k08"}
+k09: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k09"}
+k10: {"role":"button","flt-semantics-identifier":"k10"}
+k11: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k11"}
+k12: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k12"}
+k13: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k13"}
+k14: {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"k14"}
+AX button name="k01 ListTile" {"focusable":true}
+AX button name="k02 InkWell" {"focusable":true}
+AX button name="k03 InkWell button" {"focusable":true}
+AX button name="k04 CupertinoListTile" {}
+AX button name="k05 CupertinoListTile in FAD" {"focusable":true}
+AX button name="k06 FAD tile" {"focusable":true}
+AX button name="k07 gesture button" {}
+AX button name="k08 Focus, no actions" {"focusable":true}
+AX button name="k09 onTapDown" {"focusable":true}
+AX button name="k10 Listener" {}
+AX button name="k11 CupertinoButton" {"focusable":true}
+AX button name="k12 TextButton" {"focusable":true}
+AX button name="k13 keys and semantics only" {"focusable":true}
+AX button name="k14 FAD, no button role" {"focusable":true}
+AX StaticText name="k01 ListTile" {}
+AX StaticText name="k02 InkWell" {}
+AX StaticText name="k03 InkWell button" {}
+AX StaticText name="k04 CupertinoListTile" {}
+AX StaticText name="k05 CupertinoListTile in FAD" {}
+AX StaticText name="k06 FAD tile" {}
+AX StaticText name="k07 gesture button" {}
+AX StaticText name="k08 Focus, no actions" {}
+AX StaticText name="k09 onTapDown" {}
+AX StaticText name="k10 Listener" {}
+AX StaticText name="k11 CupertinoButton" {}
+AX StaticText name="k12 TextButton" {}
+AX StaticText name="k13 keys and semantics only" {}
+AX StaticText name="k14 FAD, no button role" {}
+AX InlineTextBox name="k01 ListTile" {}
+AX InlineTextBox name="k02 InkWell" {}
+AX InlineTextBox name="k03 InkWell button" {}
+AX InlineTextBox name="k04 CupertinoListTile" {}
+AX InlineTextBox name="k05 CupertinoListTile in FAD" {}
+AX InlineTextBox name="k06 FAD tile" {}
+AX InlineTextBox name="k07 gesture button" {}
+AX InlineTextBox name="k08 Focus, no actions" {}
+AX InlineTextBox name="k09 onTapDown" {}
+AX InlineTextBox name="k10 Listener" {}
+AX InlineTextBox name="k11 CupertinoButton" {}
+AX InlineTextBox name="k12 TextButton" {}
+AX InlineTextBox name="k13 keys and semantics only" {}
+AX InlineTextBox name="k14 FAD, no button role" {}
+  ✓  1 i99_probe.spec.js:22:1 › elements (1.4s)
+tab 1: flt-semantics id=k01 role=button tabindex=0 | Focus: unlabelled | Enter added "01 tap" | Space added ", k01 tap"
+tab 2: flt-semantics id=k02 role=button tabindex=0 | Focus: unlabelled | Enter added ", k02 tap" | Space added ", k02 tap"
+tab 3: flt-semantics id=k03 role=button tabindex=0 | Focus: unlabelled | Enter added ", k03 tap" | Space added ", k03 tap"
+tab 4: flt-semantics id=k05 role=button tabindex=0 | Focus: unlabelled | Enter added ", k05 key" | Space added ", k05 key"
+tab 5: flt-semantics id=k06 role=button tabindex=0 | Focus: unlabelled | Enter added ", k06 key" | Space added ", k06 key"
+tab 6: flt-semantics id=k08 role=button tabindex=0 | Focus: unlabelled | Enter added "" | Space added ""
+tab 7: flt-semantics id=k09 role=button tabindex=0 | Focus: unlabelled | Enter added ", k09 key" | Space added ", k09 key"
+tab 8: flt-semantics id=k11 role=button tabindex=0 | Focus: unlabelled | Enter added "" | Space added ", k11 tap"
+tab 9: flt-semantics id=k12 role=button tabindex=0 | Focus: unlabelled | Enter added ", k12 tap" | Space added ", k12 tap"
+tab 10: flt-semantics id=k13 role=button tabindex=0 | Focus: unlabelled | Enter added "" | Space added ", k13 key"
+tab 11: flt-semantics id=- role=button tabindex=0 | Focus: unlabelled | Enter added ", k14 key" | Space added ", k14 key"
+tab 12: body id=- role=null tabindex=null | Focus: unlabelled | Enter added "" | Space added ""
+tab 13: flutter-view id=- role=null tabindex=-1 | Focus: unlabelled | Enter added "" | Space added ""
+tab 14: flt-semantics id=k01 role=button tabindex=0 | Focus: unlabelled | Enter added ", k01 tap" | Space added ", k01 tap"
+tab 15: flt-semantics id=- role=button tabindex=0 | Focus: unlabelled | Enter added ", k02 tap" | Space added ", k02 tap"
+tab 16: flt-semantics id=k03 role=button tabindex=0 | Focus: unlabelled | Enter added ", k03 tap" | Space added ", k03 tap"
+  ✓  2 i99_probe.spec.js:46:1 › tab order, Enter and Space (9.2s)
+slide off k01: on down "" | after ""
+slide off k06: on down "" | after ""
+slide off k09: on down "" | after ""
+slide off k10: on down "" | after "10 pointerup"
+slide off k04: on down "" | after ""
+slide off k07: on down "" | after ""
+click event on k04: ", k04 tap"
+click event on k07: ", k07 tap"
+click event on k10: ""
+click event on k13: ", k13 semantics"
+  ✓  3 i99_probe.spec.js:65:1 › pointer: press and slide off (6.5s)
+hold k09: 100ms "" 300ms "09 down" 600ms "09 down" 1200ms "09 down" | after up "09 down"
+hold 1.2 s then slide off k09: while held ", k09 down" | after ""
+hold k06: 100ms "" 300ms "" 600ms "" 1200ms "" | after up ", k06 tap"
+hold 1.2 s then slide off k06: while held "" | after ""
+hold k10: 100ms "" 300ms "" 600ms "" 1200ms "" | after up ", k10 pointerup"
+hold 1.2 s then slide off k10: while held "" | after ", k10 pointerup"
+  ✓  4 i99_probe.spec.js:89:1 › pointer: hold (10.9s)
+  4 passed (28.6s)

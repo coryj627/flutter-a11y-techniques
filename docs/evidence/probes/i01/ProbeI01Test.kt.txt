@@ -1,0 +1,52 @@
+// Throwaway I01 probe, second round. Not committed. Compares the ways a
+// test can press a key, read from the probe's key log and focus line.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.util.Log
+import android.view.KeyEvent
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeI01Test : TechniqueTest("I01") {
+    private fun text(prefix: String): String =
+        all().firstOrNull { it.name().startsWith(prefix) }?.name() ?: "($prefix not found)"
+
+    private fun state() = "${text("Focus: ")} | ${text("Keys: ")} | ${text("Log: ")}"
+
+    @Test
+    fun probe() {
+        val intent = inst.targetContext.packageManager.getLaunchIntentForPackage(inst.targetContext.packageName)!!
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        device.wait(Until.hasObject(By.res("k14")), 20_000)
+        device.waitForIdle()
+        Thread.sleep(1_500)
+        Log.i("I01PROBE", "start: ${state()}")
+        val ways = listOf<Pair<String, () -> Unit>>(
+            "UiDevice.pressKeyCode(TAB)" to { device.pressKeyCode(KeyEvent.KEYCODE_TAB) },
+            "UiDevice.pressKeyCode(TAB) again" to { device.pressKeyCode(KeyEvent.KEYCODE_TAB) },
+            "Instrumentation.sendKeyDownUpSync(TAB)" to { inst.sendKeyDownUpSync(KeyEvent.KEYCODE_TAB) },
+            "shell input keyevent TAB" to { device.executeShellCommand("input keyevent KEYCODE_TAB") },
+            "UiDevice.pressKeyCode(TAB, META_SHIFT_ON)" to {
+                device.pressKeyCode(KeyEvent.KEYCODE_TAB, KeyEvent.META_SHIFT_ON or KeyEvent.META_SHIFT_LEFT_ON)
+            },
+            "shell input keycombination SHIFT_LEFT TAB" to {
+                device.executeShellCommand("input keycombination KEYCODE_SHIFT_LEFT KEYCODE_TAB")
+            },
+            "shell input keyevent ENTER" to { device.executeShellCommand("input keyevent KEYCODE_ENTER") },
+            "UiDevice.pressEnter()" to { device.pressEnter() },
+            "shell input keyevent SPACE" to { device.executeShellCommand("input keyevent KEYCODE_SPACE") },
+            "UiDevice.pressKeyCode(SPACE)" to { device.pressKeyCode(KeyEvent.KEYCODE_SPACE) },
+            "shell input keyevent DPAD_DOWN" to { device.executeShellCommand("input keyevent KEYCODE_DPAD_DOWN") },
+        )
+        for ((name, press) in ways) {
+            press()
+            Thread.sleep(800)
+            Log.i("I01PROBE", "$name: ${state()}")
+        }
+    }
+}

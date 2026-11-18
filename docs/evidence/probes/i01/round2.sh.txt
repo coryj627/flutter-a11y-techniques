@@ -1,0 +1,21 @@
+#!/bin/sh
+# I01 probe round 2, both platforms, under tool/with_devices.py. Run from the worktree root.
+ROOT=$(pwd)
+echo "== android"
+adb logcat -c
+(cd android && ./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+  -Ptarget=lib/probe.dart \
+  -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.ProbeI01Test 2>&1 | grep -E "FAILED|BUILD|tests completed|Tests on" )
+adb logcat -d -s I01PROBE:I | grep I01PROBE
+echo "== ios"
+cd "$ROOT/ios" || exit 1
+run() {
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/I01ProbeUITests/$1" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "I01PROBE|error:|passed|failed" | grep -v "Test Suite"
+}
+run testKeyNames
+run testFullKeyboardAccess
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0
