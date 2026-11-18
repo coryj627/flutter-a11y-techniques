@@ -176,7 +176,7 @@ final class I02FocusOrderUITests: XCTestCase, CountedTechniqueUITest {
   // one column, then the other, in every example. The keyboard's order is
   // not heard: bad-columns-mixed and bad-order-missing read like the good
   // examples. A checkbox is read as a switch (FL-035).
-  private static func box(_ name: String) -> String { "\(name) Switch button off Double tap to toggle" }
+  private static func box(_ name: String) -> String { "\(name) Switch button off Double tap to toggle setting." }
   private static let read = [
     "Pack", box("Map"), box("Water"), box("First aid"),
     "Send me", box("Weather"), box("Closures"), "Save plan Button",
