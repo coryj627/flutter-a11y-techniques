@@ -115,7 +115,9 @@ class F10SliderTest : TechniqueTest("F10") {
             // is (bad-indicator-label read "50%, Volume\n4" once), as only
             // the value is guessed. The tree does not always show it on the
             // very next read (seen on CI for bad-percent-value), so it is
-            // waited for, up to two seconds.
+            // waited for, up to two seconds. This shows the new value in
+            // the description, not that it got there before the app acted:
+            // the app's own update can arrive inside the wait (FL-038).
             val value = up.substringBefore(",")
             val end = System.currentTimeMillis() + 2_000
             while (System.currentTimeMillis() < end && !slider(slug).name().startsWith(value)) Thread.sleep(50)
