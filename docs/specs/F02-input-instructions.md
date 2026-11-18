@@ -122,9 +122,9 @@ affected).
 | L3 web | Every field: role `textbox`, accessible name, accessible description, `aria-description`, no `aria-describedby`, before and after typing; the instruction as visible text once; Tab reaches the field; in `good-before` the instruction precedes the `<input>`. Bad: no description; the placeholder only while focused and empty, in `aria-label` and `placeholder`; the whole of the cut-off instruction in the page (the cut itself is not visible to this layer) |
 | L3 Android | Every field: `EditText`, editable, the hint text "label, instruction" (or the label alone for `bad-helper-only`), no content description, before and after typing; the instruction as one node of its own that is not clickable; in `good-before` it is above the field. `bad-placeholder-format`: the hint text is the label until the field is clicked, then "label\nDD/MM/YYYY", then the label again after one character |
 | L3 iOS | Every field: type text field, label "Username", the value after typing, the instruction as static text once; in `good-before` it is above the field. XCUITest cannot read a hint. `bad-placeholder-format`: the label gains the placeholder while it is being edited and empty, and loses it after one character. The cut is not visible to this layer |
-| L4 TalkBack | What is read with focus on each field and each instruction, and for `good-helper` and `bad-helper-only` again with "abc" typed |
+| L4 TalkBack | What is read with focus on each field and each instruction, and for `good-helper` again with "abc" typed, as the last stop of the walk |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count, compared as a whole list, and the same for `good-helper` and `bad-helper-only` with "abc" typed. This is the only iOS layer that sees a hint |
-| L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit, and the same for `good-helper` and `bad-helper-only` with "abc" typed |
+| L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit, and the same for `good-helper`, `bad-helper-only` and `bad-placeholder-format` with "abc" typed |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -181,10 +181,15 @@ The probe that came first is in [evidence/probes/f02](../evidence/probes/f02/).
   secure text field while it is (probe, fixture 10;
   [FL-042](../flutter-limitations.md#fl-042)). F02 has no password
   example; that question is left to F03.
-- The TalkBack walk failed on its first run with "example
-  bad-placeholder-format did not open", the example after one whose field
-  had been typed into. The walk now looks for each example's count in
-  every window, as `I12AnnouncementsTest` does, and passed.
+- The TalkBack walk went wrong twice, each time on the example after the
+  second field that had been typed into (`bad-helper-only`, filled): once
+  "example bad-placeholder-format did not open" (the count was not in the
+  active window), and once TalkBack said nothing on that example and every
+  element after it, on all three walks of the run; the run between them
+  passed. The cause was not found. The walk now looks for each example's
+  count in every window, as `I12AnnouncementsTest` does, and types into one
+  field only, `good-helper`, as its last example. `bad-helper-only` filled
+  is still walked by VoiceOver on iOS and on the web.
 
 **Not done yet.** Instructions for a group of fields, given once at the
 start of a form (WCAG G184), are not built. Turning hints off in

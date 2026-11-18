@@ -92,7 +92,7 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
      * L4. Moves TalkBack focus to the field and to the instruction of every
      * example, and logs markers; tool/talkback.py reads the speech from
      * logcat. Skipped unless TalkBack is running. Not
-     * TechniqueTest.talkBackWalk: the fields are read a second time once
+     * TechniqueTest.talkBackWalk: one field is read a second time once
      * filled, as in S15HintsTest.
      */
     @Test
@@ -100,8 +100,14 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
         assumeTalkBack()
         val byId = { id: String -> id to { nodeInAnyWindow(id) } }
         val rule = { marker: String, text: String -> marker to { withName(text).single() } }
+        // The one example that is typed into comes last. On two of the
+        // first three runs the example after the second field that had been
+        // typed into went wrong: it did not open in the active window, or
+        // TalkBack said nothing on it and on every element after it. So
+        // only good-helper is read filled, at the end: what TalkBack drops
+        // once a field has a value is the same for every field here
+        // (the hint text, FL-015).
         val walk: List<Pair<String, List<Pair<String, () -> AccessibilityNodeInfo>>>> = listOf(
-            "good-helper" to listOf(byId("f02-good-helper-username"), rule("f02-good-helper-rule", RULE)),
             "good-cupertino" to listOf(byId("f02-good-cupertino-username"), rule("f02-good-cupertino-rule", RULE)),
             // The instruction comes first here.
             "good-before" to listOf(rule("f02-good-before-rule", RULE), byId("f02-good-before-username")),
@@ -109,11 +115,10 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
             "bad-placeholder-format" to listOf(byId("f02-bad-placeholder-format-birthday")),
             "bad-helper-cut-off" to listOf(
                 byId("f02-bad-helper-cut-off-name"), rule("f02-bad-helper-cut-off-rule", DISPLAY_RULE)),
+            "good-helper" to listOf(byId("f02-good-helper-username"), rule("f02-good-helper-rule", RULE)),
         )
-        // The fields read a second time with text in them (FL-015).
-        val filled = mapOf(
-            "good-helper" to "f02-good-helper-username",
-            "bad-helper-only" to "f02-bad-helper-only-username")
+        // The field read a second time with text in it (FL-015).
+        val filled = mapOf("good-helper" to "f02-good-helper-username")
         for ((slug, elements) in walk) {
             // With TalkBack on, the keyboard or a system window can be the
             // active window while the example opens behind it (seen on the

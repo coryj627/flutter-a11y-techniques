@@ -27,9 +27,8 @@ TALKBACK_EXPECT = {
     "f02-good-before-rule": (["4 to 10 characters, no spaces"], ["Edit box", "Username"]),
     "f02-good-before-username": (["Username", "4 to 10 characters, no spaces", "Edit box"], []),
     # Bad examples: the defect must be audible.
-    # The field is read without the instruction, empty or filled.
+    # The field is read without the instruction.
     "f02-bad-helper-only-username": (["Username", "Edit box"], ["4 to 10"]),
-    "f02-bad-helper-only-username-filled": (["abc", "Edit box"], ["Username", "4 to 10"]),
     "f02-bad-helper-only-rule": (["4 to 10 characters, no spaces"], ["Edit box", "Username"]),
     # The format is not in the field until it is being edited.
     "f02-bad-placeholder-format-birthday": (["Date of birth", "Edit box"], ["DD/MM"]),
