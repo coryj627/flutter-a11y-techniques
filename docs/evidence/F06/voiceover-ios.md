@@ -13,11 +13,11 @@ Result: PASS
 
 | Example | Spoken: on Send / after activation / forward / back / control |
 | --- | --- |
-| `good-form` | on Send: Send Button / after activation: Enter your name. / forward: Enter your name. / back: Name Text field Is editing Character mode insertion point at sta / then: Enter your name. / Email Text field Enter an email address with an @, like name@exa / control: Forms sent: 0 |
+| `good-form` | on Send: Send Button / after activation: Name Text field Is editing Character mode insertion point at sta / Enter your name. / forward: Enter your name. / back: Name Text field Is editing Character mode insertion point at sta / then: Enter your name. / Email Text field Enter an email address with an @, like name@exa / control: Forms sent: 0 |
 | `good-cupertino` | on Send: Send Button / after activation: Name Text field Is editing Character mode insertion point at sta / Enter your name. / forward: Enter your name. / back: Name Text field Is editing Character mode insertion point at sta / then: Enter your name. / Email Text field Enter an email address with an @, like name@exa / control: Forms sent: 0 |
 | `bad-color-only` | on Send: Send Button / after activation: Email Text field Is editing Character mode insertion point at st / forward: Send Button / back: Email Text field Is editing Character mode insertion point at st / control: Forms sent: 0 |
 | `bad-vague-message` | on Send: Send Button / after activation: Email Text field Is editing Character mode insertion point at st / Invalid. / forward: Invalid. / back: Email Text field Is editing Character mode insertion point at st / control: Forms sent: 0 |
 | `bad-not-announced` | on Send: Send Button / after activation:  / forward: Forms sent: 0 / back: Send Button / control: Forms sent: 0 |
-| `bad-merged-error` | on Send: Send Button / after activation: Email Enter an email address with an @, like name@example.com. T / Enter an email address with an @, like name@example.com. / forward: Send Button / back: Email Enter an email address with an @, like name@example.com. T / control: Forms sent: 0 |
+| `bad-merged-error` | on Send: Send Button / after activation: Email Text field Is editing Character mode insertion point at st / Enter an email address with an @, like name@example.com. / forward: Send Button / back: Email Enter an email address with an @, like name@example.com. T / control: Forms sent: 0 |
 | `good-form-sent-ok` | on Send: Send Button / after activation: Forms sent: 1 |
 | `good-cupertino-sent-ok` | on Send: Send Button / after activation: Forms sent: 1 |
