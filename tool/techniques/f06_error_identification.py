@@ -40,8 +40,8 @@ TALKBACK_EXPECT = {
     "f06-bad-vague-message-send": (["Send", "Button"], []),
     "f06-bad-vague-message-sent": (["Invalid.", "Edit box"], [_EMAIL]),
     "f06-bad-vague-message-email": (["Email", "Invalid.", "Edit box"], [_EMAIL]),
-    # The defect is on iOS and the web; on Android the error text is a live
-    # region and is announced. Focus stays on Send.
+    # The defect is on iOS and the web; on Android this field's error text
+    # is a live region and is announced. Focus stays on Send.
     "f06-bad-not-announced-send": (["Send", "Button"], []),
     "f06-bad-not-announced-sent": ([_EMAIL], ["Edit box"]),
     "f06-bad-not-announced-email": (["Email", _EMAIL, "Edit box"], []),

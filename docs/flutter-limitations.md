@@ -106,10 +106,10 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-140](#fl-140) | Material helper text is not tied to its field; inside `MergeSemantics` it joins the field's name | All | Confirmed |
 | [FL-141](#fl-141) | Material helper text is cut to one line by default | All | Confirmed |
 | [FL-142](#fl-142) | A Material placeholder beside a label is exposed only while the field is focused and empty, and then as part of its name | All | Confirmed |
-| [FL-180](#fl-180) | A text field in error has no error state on Android: TalkBack never says "error", and reads a filled field without its error | Android | Confirmed |
-| [FL-181](#fl-181) | On iOS and the web only validation run by a `Form` announces an error, and only the first; a field validated on its own, or an `errorText` set by hand, is silent there | iOS, Web | Confirmed |
-| [FL-182](#fl-182) | `CupertinoTextFormFieldRow`'s error is never announced on Android | Android | Confirmed |
-| [FL-183](#fl-183) | `MergeSemantics` around a field takes in its error: the error is in the name and read twice, and on Android the field becomes a live region | All | Confirmed |
+| [FL-180](#fl-180) | A text field in error has no error state on Android: TalkBack does not say "error", and reads a filled field without its error | Android | Confirmed |
+| [FL-181](#fl-181) | On iOS and the web an error is announced only when a `Form` validates on send or as the user types; `onUnfocus`, a field validated on its own, and a hand-set `errorText` are silent there | iOS, Web | Confirmed |
+| [FL-182](#fl-182) | `CupertinoTextFormFieldRow`'s error is not a live region, so on Android nothing announces it | Android | Confirmed |
+| [FL-183](#fl-183) | `MergeSemantics` around a field takes in its error: the error joins the field's name as well as its hint, and on Android the field becomes a live region | All | Confirmed |
 | [FL-184](#fl-184) | Keyboard focus moved to a field does not move VoiceOver's cursor on iOS | iOS | Observed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
@@ -492,11 +492,11 @@ yet), **Fixed in x.y** (verified on that version).
   not put the instruction back on the field.
 - The same goes for an error. `InputDecoration.errorText` is put in the
   field's semantics hint, which joins the label in the hint text ("Email,
-  Enter an email address…"), so a field in error that has a value is read
-  "abc, Edit box", with neither its label nor its error. Found in F06 and
-  asserted by `f06-good-form-email-filled` in
-  `docs/evidence/F06/talkback-android.md`; see
-  [FL-180](#fl-180) for why nothing else carries the error.
+  Enter an email address…"), so a field in error that has a value was
+  read "Editing.", "abc", "Edit box", with neither its label nor its
+  error. Found in F06 and asserted by `f06-good-form-email-filled` in
+  `docs/evidence/F06/talkback-android.md`; see [FL-180](#fl-180) for why
+  nothing else on the field carries the error.
 - Upstream issue: not searched yet.
 
 ## FL-016
@@ -1936,42 +1936,46 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-180
 
-**A text field in error has no error state on Android: TalkBack never says "error", and reads a filled field without its error.**
+**A text field in error has no error state on Android: TalkBack does not say "error", and reads a filled field without its error.**
 
 - Status: Confirmed, Flutter 3.47.5, Android 17 emulator, TalkBack 17.0.
-  Found in the F06 probe (`docs/evidence/probes/f06`) and asserted by
-  `F06ErrorIdentificationTest` (`node.error` empty and
+  Asserted by `F06ErrorIdentificationTest` (`node.error` empty and
   `isContentInvalid` false on every field in error) and by
-  `f06-good-form-email-filled` in `docs/evidence/F06/talkback-android.md`,
-  written to fail when the error starts to be spoken. Engine source read:
+  `f06-good-form-email-filled` in `docs/evidence/F06/talkback-android.md`
+  ("Editing. / abc / Edit box", with no label and no error), written to
+  fail when the error starts to be spoken. Engine source read:
   `AccessibilityBridge.java` calls neither `setError` nor
   `setContentInvalid` for a Flutter node; only `AccessibilityViewEmbedder`
-  copies them, for platform views.
+  copies them, for platform views. No F06 transcript or probe has TalkBack
+  saying "error" for a Flutter field.
 - What happens: a `TextFormField` in error has its message in the field's
   semantics hint (`InputDecorator` puts `errorText` there), and Android
   joins it to the label in the hint text: "Email, Enter an email address
-  …". While the field is empty TalkBack reads that ("Email, Enter an email
-  address …, Edit box"). Once the field has a value it reads the value
-  alone, "abc, Edit box", as it does for the label
-  ([FL-015](#fl-015)). The error is also a node of its own after the field
-  (a live region, so it is announced when it appears), which TalkBack
-  reaches as the next element; that order was not tested by swiping,
-  which the emulator walk cannot do.
+  …". While the field is empty TalkBack reads that
+  (`f06-good-form-email`: "Email, / / Enter an email address … / Edit
+  box"). Once the field has a value it reads the value alone, as it does
+  for the label ([FL-015](#fl-015)). The error is also a node of its own
+  after the field in the tree, and a live region (Android tree tests);
+  TalkBack announced it when it appeared in every recorded case where it
+  stayed a node of its own ([FL-181](#fl-181) lists them). Whether a swipe goes from
+  the field straight to it was not tested: the emulator walk forces focus.
 - Compared with a native control: an `android.widget.EditText` with
   `setError(…)` on the same emulator has its node's error set and is
-  content-invalid. TalkBack announces "Error: Enter a phone number using
-  digits only." when it is set, and reads the field "Error: Enter a phone
-  number using digits only.. abc. Edit box" with a value in it (probe,
-  `android-talkback-native.md` and `android-tree-native.txt`).
+  content-invalid. TalkBack announced "Error: Enter an email address." and
+  "Error: Enter a phone number using digits only." when they were set, and
+  read the filled field "Error: Enter a phone number using digits only..
+  abc. Edit box" (probe, `android-talkback-native.md` and
+  `android-tree-native.txt`).
 - `SemanticsProperties.validationResult`, which `FormField` sets, is read
   only by the web engine, where it becomes `aria-invalid` (source read:
-  `lib/web_ui`, `updateAriaInvalid`; nothing in the Android or iOS
-  engine reads it). iOS has no invalid state of its own to map it to, and
-  VoiceOver reads the hint with the value ("Phone abc Text field Enter a
-  phone number using digits only."), so iOS is not affected.
+  `lib/web_ui`, `updateAriaInvalid`; nothing in the Android or iOS engine
+  reads it). On iOS VoiceOver read the hint with the value in the probe
+  ("p02 Phone abc Text field Enter a phone number using digits only.",
+  `ios.txt`), so the reading on the field is not lost there; whether a
+  native iOS field has an invalid state to compare with was not checked.
 - Effect: a TalkBack user who comes back to a field they filled in wrongly
   hears their value and nothing else: not that the field is in error, nor
-  what the error is, until they move on to the message.
+  what the error is, unless they move on to the message.
 - Workaround: none in the SDK. Keep the error text as its own node right
   after the field, which `TextFormField` does unless it is merged
   ([FL-183](#fl-183)).
@@ -1981,103 +1985,175 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-181
 
-**On iOS and the web only validation run by a `Form` announces an error, and only the first; a field validated on its own, or an `errorText` set by hand, is silent there.**
+**On iOS and the web an error is announced only when a `Form` validates on send or as the user types; `onUnfocus`, a field validated on its own, and a hand-set `errorText` are silent there.**
+
+- In short: `validate()`, `validateGranularly()`, and the `Form`'s
+  `always`, `onUserInteraction`, and `onUserInteractionIfError` modes
+  announce the first error; the `Form`'s `onUnfocus` mode,
+  `FormFieldState.validate()`, a field's own `autovalidateMode`, and an
+  `errorText` set by hand do not.
 
 - Status: Confirmed, Flutter 3.47.5. Each statement below says whether it
   is asserted by a widget test, measured on a device, or read in the
   source only.
-- Read in the framework source: `widgets/form.dart`.
-  `FormState._validate` validates every field and, where
-  `MediaQuery.supportsAnnounceOf` is true, sends the first error with
-  `SemanticsService.sendAnnouncement`, assertive, a second later on iOS.
-  It is called by `validate()`, by `validateGranularly()`, and by
-  `FormState.build` when the `Form`'s own `autovalidateMode` is `always`,
-  `onUserInteraction` (after the user has changed a field), or
-  `onUserInteractionIfError`; a field's change rebuilds the `Form`
-  (`_fieldDidChange`). `FormFieldState.validate()`, and a field's own
-  `autovalidateMode`, validate that field only and announce nothing.
-  `material/input_decorator.dart`, `_buildError`, makes the error text
-  `Semantics(liveRegion: !MediaQuery.supportsAnnounceOf(context))`.
-- Asserted by the F06 widget tests (group "FL-181: who announces", with
-  announcements supported): a `Form` with `AutovalidateMode.onUserInteraction`
-  announced the error once when typing made the field invalid, once again
-  at the next change that left it invalid, and nothing once it was right,
-  on the Android path and on the iOS path (which waits a second);
-  `validateGranularly()` announced the first of two errors; a
-  `TextFormField` with its own `onUserInteraction` and no `Form`, the same
-  field inside a `Form` whose mode is disabled, and
-  `FormFieldState.validate()` on one field each showed the error and
-  announced nothing. Also asserted: `Form.validate()` in `good-form` and
-  `good-cupertino`, and `errorText` set with `setState` in
-  `bad-not-announced` (no announcement where supported, a live region
-  where not), in the widget tests, `web_tests/f06_error_identification.spec.js`,
-  and the F06 transcripts.
-- Measured on devices: in the F06 probe, fixture p03 (`errorText` set
-  with `setState`, no `Form`) and fixture p12 (a `TextFormField` with its
-  own `AutovalidateMode.onUserInteraction` and no `Form`, made invalid by
-  a button that adds text) were silent with VoiceOver on iOS and on the
-  web; on Android TalkBack read the error, a live region. `Form.validate()`
-  was announced on all three (p04 to p07, and the F06 transcripts). The
-  `Form`'s own autovalidate mode and `validateGranularly()` were not run
-  on a device.
+- Read in the framework source, `widgets/form.dart`:
+  - `FormState._validate` validates every registered field and, where
+    `MediaQuery.supportsAnnounceOf` is true, sends the first error with
+    `SemanticsService.sendAnnouncement`, assertive, a second later on
+    iOS. It is the only code in `form.dart` that announces.
+  - It is called by `validate()` and `validateGranularly()`, and by
+    `FormState.build` for the `Form`'s `always`, `onUserInteraction`
+    (once a field has been changed), and `onUserInteractionIfError` (once
+    a field has been changed and one has an error) modes. A field's change
+    rebuilds the `Form` (`_fieldDidChange`, `_forceRebuild`).
+  - `FormState.build` does nothing for `onUnfocus` or `disabled`. With the
+    `Form`'s mode `onUnfocus` (or the field's own), each field wraps
+    itself in a `Focus` whose loss calls the field's own `_validate()`,
+    which sets the error and announces nothing. `FormFieldState.validate()`
+    and a field's own `autovalidateMode` likewise validate that field only.
+  - `material/input_decorator.dart`, `_buildError`, makes the error text
+    `Semantics(liveRegion: !MediaQuery.supportsAnnounceOf(context))`.
+- Asserted by the F06 widget tests (group "FL-181: who announces",
+  announcements supported, each recording followed by the recorder's own
+  liveness check). What each showed:
+  - `onUserInteraction` on the `Form`: one announcement when typing made
+    the field invalid, one more at the next change that left it invalid,
+    none once it was right; on the Android path and on the iOS path,
+    which waits a second.
+  - `always` on the `Form`: the error was shown from the first frame and
+    not announced then (the `Form` validates in its build, before its
+    fields have registered); each change after that announced it.
+  - `onUserInteractionIfError` on the `Form`: typing an invalid value
+    showed and announced nothing, because no field had an error yet;
+    `validate()` then announced it twice; the next change that kept it
+    announced it once.
+  - `validate()` on a `Form` whose mode is `always` or
+    `onUserInteraction` announced the error twice: once from `validate()`
+    and once from the rebuild it causes. With the mode `disabled` (F06
+    `good-form`) it announced once.
+  - `onUnfocus` on the `Form`: the error appeared when the field lost
+    focus, and nothing was announced.
+  - `validateGranularly()`: the first of two errors, once.
+  - A `TextFormField` with its own `onUserInteraction` and no `Form`, the
+    same field inside a `Form` whose mode is disabled, and
+    `FormFieldState.validate()` on one field: the error shown, nothing
+    announced.
+  - `errorText` set with `setState` (`bad-not-announced`): nothing
+    announced where announcements are supported; the error text a live
+    region where they are not.
+- Measured on devices, F06 probe (`docs/evidence/probes/f06`) and F06
+  transcripts:
+  - p03, `errorText` set with `setState`, no `Form`, the field wrapped in
+    `TestId` (so merged, [FL-183](#fl-183)), field empty: silent with
+    VoiceOver on iOS (`ios.txt`: nothing after the double tap) and on the
+    web (`voiceover-web.md`: "(nothing)"). TalkBack announced the merged
+    field with its error: "p03 Email Enter an email address …, / / Enter
+    an email address …" (`android-talkback.md`, `f06-p03-after-submit`).
+  - p12, a `TextFormField` with its own `onUserInteraction`, no `Form`,
+    wrapped in `TestId`, made invalid by a button that adds "x": silent
+    on iOS and on the web. TalkBack said "x / Edit box" when the error
+    appeared and "x / Edit box …" when focus was put on the field
+    (`f06-p12-after-submit`, `f06-p12-stop-0`): the error was not spoken
+    on Android either. See below.
+  - `bad-not-announced` (the same as p03 without the merge): silent on
+    iOS and the web (`voiceover-ios.md`, `voiceover-web.md`); TalkBack
+    announced "Enter an email address with an @, like name@example.com."
+    (`talkback-android.md`, `f06-bad-not-announced-sent`).
+  - `Form.validate()`, mode disabled: announced on all three (probe p04
+    to p07 on all three, q01 to q03 on Android; the F06 transcripts for
+    `good-form` and `good-cupertino`).
+  - Not run on a device: the `Form`'s `always`, `onUserInteraction`,
+    `onUserInteractionIfError`, and `onUnfocus` modes,
+    `validateGranularly()`, and field-level autovalidation of a field that
+    is not merged.
 - What happens on Android: Flutter reports that announcements are not
-  supported there ([FL-018](#fl-018)), so `Form` sends nothing, and every
-  error text is a live region that TalkBack reads when it appears, however
-  the error was set. With two errors at once it read both, in no fixed
-  order (Email's first for `good-form` and in probe q01, Name's first for
-  `good-cupertino`).
+  supported there ([FL-018](#fl-018)), so `Form` sends nothing. A
+  Material field's error text is a live region (source; Android tree
+  tests). TalkBack announced it in every configuration recorded where the
+  error text was its own node: `Form.validate()` (q01 to q03,
+  `good-form`, `good-cupertino`, with both errors read, in no fixed
+  order) and `setState` (`bad-not-announced`). Where the field was
+  merged, its error was part of the field: TalkBack announced it with an
+  empty field (p03, p04, `bad-merged-error`), but in p12, where the field
+  held "x", it said only the value. That fits [FL-183](#fl-183) (the
+  merged field is the live region) and [FL-180](#fl-180) (a field with a
+  value is read as its value); the cause was not established. With two
+  merged fields in error at once (p05) TalkBack spoke only the second.
 - Effect: the same code announces an error on one platform and not on the
-  others. An error shown by a field's own validation, or by setting
-  `errorText`, while the user is elsewhere on the screen is a status
-  message that iOS and the web do not present (4.1.3). With the `Form`'s
-  own `onUserInteraction`, the first error is announced again at each
-  change that leaves it in error (widget test), which while typing is an
-  announcement per keystroke; how a screen reader handles that was not
-  measured.
-- Workaround: let the `Form` validate: `validate()` or
-  `validateGranularly()` on send (F06 `good-form`), or the `Form`'s own
-  `autovalidateMode`, not a field's. A form that does already announces;
-  do not add a second announcement to it. For an error shown outside a
-  `Form`, announce it with `SemanticsService.sendAnnouncement` where
-  `supportsAnnounceOf` is true, as `Form` does; I12's `good-announce`
-  shows the pattern.
+  others. An error shown by `onUnfocus`, a field's own validation, or a
+  hand-set `errorText`, while the user is elsewhere on the screen, is a
+  status message that iOS and the web do not present (4.1.3). The
+  `Form`'s `always`, `onUserInteraction`, and `onUserInteractionIfError`
+  modes announce the first error again at every change that leaves it in
+  error, which while typing is an announcement per keystroke, and
+  `validate()` on such a `Form` announces it twice (widget tests). How
+  screen readers handle either was not measured.
+- Workaround: validate with the `Form` on send, with its mode left
+  `disabled`: `validate()` or `validateGranularly()` (F06 `good-form`).
+  Such a form already announces; do not add a second announcement to it.
+  With `onUnfocus`, with a field's own validation, or for an error set by
+  hand, nothing announces on iOS and the web: announce it with
+  `SemanticsService.sendAnnouncement` where `supportsAnnounceOf` is true,
+  as `Form` does (I12's `good-announce` shows the pattern). None of these
+  workarounds was run on a device except `validate()`.
 - Upstream issue: not searched yet (D25).
 
 ## FL-182
 
-**`CupertinoTextFormFieldRow`'s error is never announced on Android.**
+**`CupertinoTextFormFieldRow`'s error is not a live region, so on Android nothing announces it.**
 
 - Status: Confirmed, Flutter 3.47.5. Asserted by the F06 widget test
-  "FL-182" (the error text has no live region). Seen in the F06 probe on
-  Android 17 with TalkBack 17.0: nothing was said when the error appeared
-  (fixture p09). Framework source read: `cupertino/form_row.dart` shows
-  `error` as plain text, and `Form` does not announce on Android
-  ([FL-181](#fl-181)).
-- What happens: on iOS and the web `Form.validate()` announces the first
-  error; on Android nothing does. The row's field also has no label of its
-  own ([FL-016](#fl-016)); merged with its row, it takes the prefix, the
-  placeholder, and the error as its name.
+  "FL-182" (no node is a live region after `validate()`). Framework source
+  read: `cupertino/form_row.dart` shows `error` as plain text, and `Form`
+  sends nothing on Android ([FL-181](#fl-181)). Seen once on a device, in
+  the F06 probe on Android 17 with TalkBack 17.0: fixture p09, the row
+  wrapped in `TestId`, nothing was said after `validate()`
+  (`android-talkback.md`, `f06-p09-after-submit`). An unmerged row was
+  not run on a device.
+- What happens: on iOS and the web `Form.validate()` announced the first
+  error (p09, `ios.txt` and `voiceover-web.md`); on Android nothing
+  announces it. The row's field also has no label of its own
+  ([FL-016](#fl-016)); merged with its row, it takes the prefix, the
+  placeholder, and the error as its name (p09: hint text "p09 Email\n
+  name@example.com\nEnter an email address …" on Android, name "p09 Email
+  name@example.com Enter an email address …" on the web).
 - Workaround: build the row from `FormField` and `CupertinoFormRow` and
   give each part what `InputDecorator` gives a Material field: the label
   and the error as the field's label and hint, its validation result, and
   the error text in a live region where `supportsAnnounceOf` is false. F06
-  `good-cupertino` does this.
+  `good-cupertino` does this, and TalkBack announced its errors
+  (`f06-good-cupertino-sent`).
 - Upstream issue: not searched yet (D25).
 
 ## FL-183
 
-**`MergeSemantics` around a field takes in its error: the error is in the name and read twice, and on Android the field becomes a live region.**
+**`MergeSemantics` around a field takes in its error: the error joins the field's name as well as its hint, and on Android the field becomes a live region.**
 
 - Status: Confirmed, Flutter 3.47.5, all platforms. Asserted by the F06
   widget, web, Android, and iOS tests of `bad-merged-error`.
 - What happens: the error text under a Material field is a node of its
   own (`Semantics(container: true)`), but `MergeSemantics` merges
-  containers too. The field's name becomes "Email" and the error on two
-  lines, and the error is its hint as well, so it is read twice: "Email
-  Enter an email address … Text field Enter an email address …" (VoiceOver
-  on iOS); a name and a description that both have it on the web. On
-  Android the error's live region is merged into the field, so the field
-  itself is a live region.
+  containers too. The field's label becomes "Email" and the error on two
+  lines (widget test, XCUITest, the web's accessible name), and the error
+  is its hint as well. What was heard:
+  - Web, VoiceOver in Chromium: the error twice, "Email Enter an email
+    address … Enter an email address … invalid data edit text"
+    (`voiceover-web.md`).
+  - Android: the hint text holds it twice ("Email\nEnter …, Enter …",
+    tree test), and after Send TalkBack read "Email Enter an email address
+    …, / / Enter an email address …" (`f06-bad-merged-error-sent`). The
+    field itself is a live region (tree test).
+  - iOS: VoiceOver began "Email Enter an email address with an @, like
+    name@example.com. T" (`voiceover-ios.md`); the test API's 64
+    characters end there, so whether it read the error a second time, as
+    the hint, was not seen.
+- On Android a merged field with a value: in probe p12 (a field in
+  `TestId` with its own `onUserInteraction`, holding "x") TalkBack said
+  only "x / Edit box" when the error appeared, and the error was not
+  spoken ([FL-181](#fl-181)). Merged, the error has no node of its own to
+  announce, and the field's live region and hint text are read as for any
+  field with a value ([FL-180](#fl-180)); that is a reading of the
+  results, not an established cause.
 - Why it matters here: the project's `TestId`
   (`lib/catalog/test_id.dart`) is a `MergeSemantics`. The F06 fields carry
   their identifier with `Semantics(identifier:)` instead, which joins the
@@ -2096,17 +2172,21 @@ yet), **Fixed in x.y** (verified on that version).
   the repository reproduces it: no example moves focus that way alone. The
   F06 VoiceOver test on iOS asserts that the workaround below works.
 - What happens: after `FocusNode.requestFocus()` on the first field in
-  error, the field has keyboard focus and the keyboard is up, but
-  VoiceOver's cursor stays on the button that sent the form; one move
-  forward goes into the keyboard. On Android TalkBack's focus moves to the
-  field (probe: the field had accessibility focus), and on the web the
-  field's `<input>` gets DOM focus, which VoiceOver follows.
+  error (p06), the keyboard was up, and VoiceOver's cursor was still on
+  the button that sent the form: one move forward read a key ("I
+  Button") and one back read "p06 Submit Button". On Android TalkBack's
+  focus moved to the field (probe p06 node dump; asserted by the F06
+  TalkBack walk). On the web the field's `<input>` got DOM focus, and
+  VoiceOver read it ("Name Enter your name. invalid data edit text",
+  `voiceover-web.md`).
 - Workaround: send a `FocusSemanticEvent` to the field as well. On iOS it
-  moves VoiceOver to the field (probe fixture p07: VoiceOver read "Name
-  Enter your name. Text field Enter your name."); it is documented for
-  Android and iOS only, and on the web the engine ignores it (source read:
-  `AccessibilityAnnouncements.handleMessage` acts only on a message with
-  text). F06 `good-form` and `good-cupertino` do both.
+  moved VoiceOver to the field (probe p07, a field in `TestId`: "p07 Name
+  Enter your name. Text field Enter your name. Double tap"; the F06
+  VoiceOver test: the cursor on "Name Text field …" after Send). It is
+  documented for Android and iOS only, and on the web the engine ignores
+  it (source read: `AccessibilityAnnouncements.handleMessage` acts only on
+  a message with text; probe p07 on the web: DOM focus stayed on the
+  button). F06 `good-form` and `good-cupertino` do both.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->

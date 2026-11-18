@@ -466,6 +466,131 @@ void main() {
         ..values.add(TargetPlatform.iOS),
     );
 
+    testWidgets('a Form with AutovalidateMode.always shows the error from the '
+        'start without announcing it, then announces it at each change', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      // The recorder goes in first: the announcement comes with the first
+      // frame.
+      final built = await _announcements(tester, () async {
+        await pump(
+          tester,
+          Form(
+            autovalidateMode: AutovalidateMode.always,
+            child: TextFormField(validator: _validateEmailLikeTheExamples),
+          ),
+        );
+        await tester.pumpAndSettle();
+      });
+      // The error is shown from the first frame but not announced: the
+      // Form validates in its build, before its fields have registered.
+      expect(find.text(_emailError), findsOneWidget);
+      expect(built, isEmpty);
+      final typed = await _announcements(tester, () async {
+        await tester.enterText(field(), 'a');
+        await tester.pumpAndSettle();
+      });
+      expect(typed, [(_emailError, Assertiveness.assertive.index)]);
+      handle.dispose();
+    });
+
+    testWidgets('a Form with AutovalidateMode.onUserInteractionIfError shows '
+        'and announces nothing until an error exists; validate() then '
+        'announces twice, and each change that keeps the error once', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      final form = GlobalKey<FormState>();
+      await pump(
+        tester,
+        Form(
+          key: form,
+          autovalidateMode: AutovalidateMode.onUserInteractionIfError,
+          child: TextFormField(validator: _validateEmailLikeTheExamples),
+        ),
+      );
+      final typed = await _announcements(tester, () async {
+        await tester.enterText(field(), 'a');
+        await tester.pumpAndSettle();
+      });
+      // No field has an error yet, so the Form does not validate.
+      expect(typed, isEmpty);
+      expect(find.text(_emailError), findsNothing);
+      final validated = await _announcements(tester, () async {
+        form.currentState!.validate();
+        await tester.pumpAndSettle();
+      });
+      // validate() announces, and the rebuild it causes validates and
+      // announces again: the same message twice.
+      expect(validated, [
+        (_emailError, Assertiveness.assertive.index),
+        (_emailError, Assertiveness.assertive.index),
+      ]);
+      final again = await _announcements(tester, () async {
+        await tester.enterText(field(), 'ab');
+        await tester.pumpAndSettle();
+      });
+      expect(again, [(_emailError, Assertiveness.assertive.index)]);
+      handle.dispose();
+    });
+
+    for (final mode in [
+      AutovalidateMode.always,
+      AutovalidateMode.onUserInteraction,
+    ]) {
+      testWidgets('validate() on a Form with AutovalidateMode.${mode.name} '
+          'announces the first error twice', (tester) async {
+        final handle = tester.ensureSemantics();
+        final form = GlobalKey<FormState>();
+        await pump(
+          tester,
+          Form(
+            key: form,
+            autovalidateMode: mode,
+            child: TextFormField(validator: _validateEmailLikeTheExamples),
+          ),
+        );
+        final sent = await _announcements(tester, () async {
+          form.currentState!.validate();
+          await tester.pumpAndSettle();
+        });
+        expect(sent, [
+          (_emailError, Assertiveness.assertive.index),
+          (_emailError, Assertiveness.assertive.index),
+        ]);
+        handle.dispose();
+      });
+    }
+
+    testWidgets('a Form with AutovalidateMode.onUnfocus shows the error when '
+        'the field loses focus and announces nothing', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pump(
+        tester,
+        Form(
+          autovalidateMode: AutovalidateMode.onUnfocus,
+          child: Column(
+            children: [
+              TextFormField(validator: _validateEmailLikeTheExamples),
+              TextFormField(),
+            ],
+          ),
+        ),
+      );
+      final sent = await _announcements(tester, () async {
+        await tester.enterText(field().first, 'a');
+        await tester.pumpAndSettle();
+        expect(find.text(_emailError), findsNothing);
+        // Focus moves to the second field: the first loses it.
+        await tester.tap(field().last);
+        await tester.pumpAndSettle();
+      });
+      expect(find.text(_emailError), findsOneWidget);
+      expect(sent, isEmpty);
+      handle.dispose();
+    });
+
     testWidgets('a TextFormField with its own AutovalidateMode and no Form '
         'shows the error and announces nothing', (tester) async {
       final handle = tester.ensureSemantics();

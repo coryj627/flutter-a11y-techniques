@@ -56,7 +56,7 @@ a button that makes the errors appear. Fields are wrapped in the project's
 | --- | --- | --- | --- | --- |
 | p01 | `TextField` with `errorText`, in `TestId`; Email empty, Phone "abc" | name "p01 Email Enter an email…", description the error again; `aria-invalid` absent | `EditText`, hint "p01 Email\nEnter…, Enter…", the field itself a live region; TalkBack "abc, Edit box" for Phone | label "p01 Email\nEnter…"; VoiceOver "p01 Email Enter an email address… Text fi…" |
 | p02 | the same with `Semantics(identifier:)`, not merged | name "p02 Email", description the error; the error a text of its own | hint "p02 Email, Enter…"; the error a child `View`, polite live region; TalkBack "p02 Email, Enter…" empty, "abc, Edit box" filled, the error read as its own stop | label "p02 Email", the error a static text; VoiceOver "p02 Email Text field Enter an email…", and filled "p02 Phone abc Text field Enter a phone number…" |
-| p03 | `errorText` set by a button with `setState`, no `Form` | nothing announced; focus stays on the button | the field (merged) is a live region; TalkBack announced it | nothing said after the double tap |
+| p03 | `errorText` set by a button with `setState`, no `Form`, in `TestId` | nothing announced; focus stays on the button | the field (merged) is a live region; TalkBack: "p03 Email Enter an email address …, / / Enter an email address …" | nothing said after the double tap |
 | p04 | `Form`, one `TextFormField`, `validate()` | assertive announcement of the error; `aria-invalid="true"` | live region announced | VoiceOver said the error |
 | p05 | `Form`, two fields, `validate()` | the first error only, assertive | (merged) only the second field's live region was spoken | the first error only |
 | p06 | p05 with `requestFocus()` on the first field in error | DOM focus on its `<input>`, first error announced | input focus and TalkBack focus on the field; keyboard up | the error announced; the cursor stayed on the button, keyboard up (one move forward reached a key) |
@@ -65,7 +65,7 @@ a button that makes the errors appear. Fields are wrapped in the project's
 | p09 | `CupertinoTextFormFieldRow`, in `TestId`, `validate()` (Space on the web) | assertive announcement; name "p09 Email name@example.com Enter…" | nothing said after the button; the error is not a live region | VoiceOver said the error |
 | p10 | a hand-drawn error `Text` in a live region, `validationResult` on the field | polite announcement; `aria-invalid="true"` on the field | announced | announced |
 | p11 | `Form`, two fields, and a summary of the errors in a live region | the first error (assertive) and the summary (polite) | the summary and one field announced | the summary, then the first error |
-| p12 | a `TextFormField` with its own `AutovalidateMode.onUserInteraction`, no `Form`; a button puts "x" in the field | nothing announced | TalkBack "x, Edit box", no error | nothing said |
+| p12 | a `TextFormField` with its own `AutovalidateMode.onUserInteraction`, no `Form`, in `TestId`; a button puts "x" in the field | nothing announced | the field (merged) a live region; TalkBack "x / Edit box" when the error appeared and again with focus on the field: the error was not spoken | nothing said |
 | p13 | a hand-built Cupertino row: `FormField`, the field named, the error in a live region always | announced twice: assertive and polite; `aria-invalid` on an element around the field, not on the field | announced | announced once |
 
 ## Second round
@@ -94,13 +94,20 @@ Android only. Fields identified with `Semantics(identifier:)`, not merged.
 - **`aria-invalid` comes only from a `FormField`** (its
   `validationResult`), and only on the web; a bare `TextField` with
   `errorText` has none (p01 to p03).
-- **Who announces differs by platform** (FL-181). On Android the error text
-  is a live region whatever set it. On iOS and the web `Form.validate()`
-  announced the first error only, assertively (p04 to p07). An `errorText`
-  set with `setState` (p03) and a field's own autovalidate mode with no
-  `Form` (p12) were silent there. The probe did not try the `Form`'s own
-  `autovalidateMode` or `validateGranularly()`; the source and the F06
-  widget tests show that both announce, like `validate()`.
+- **Who announces differs by platform** (FL-181). On Android a Material
+  field's error text is a live region however it was set; TalkBack
+  announced it where it was its own node (q01 to q05) and where it was
+  merged into an empty field (p03, p04; with two merged fields in error
+  only the second was spoken, p05 to p07), and did not speak it where it
+  was merged into a field holding "x" (p12). On iOS and the web
+  `Form.validate()` announced the first error only (p04 to p07); an
+  `errorText` set with `setState` (p03) and a field's own autovalidate
+  mode with no `Form` (p12) were silent there. The probe did not try the
+  `Form`'s own autovalidate modes or `validateGranularly()`; the source
+  and the F06 widget tests show that `validateGranularly()` and the
+  `always`, `onUserInteraction`, and `onUserInteractionIfError` modes
+  announce, and `onUnfocus` does not. An unmerged field with its own
+  autovalidate mode was not run on Android.
 - **`CupertinoTextFormFieldRow`'s error is silent on Android** (FL-182,
   p09).
 - **`MergeSemantics` (and so `TestId`) around a field takes in its error**

@@ -157,9 +157,9 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
 
     @Test
     fun badNotAnnouncedIsALiveRegionOnAndroid() {
-        // The defect is on iOS and the web. On Android the error text of a
-        // TextField is a live region whatever the app does, so this pins
-        // down that Android is not affected; it fails if that changes.
+        // The defect is on iOS and the web. On Android the error text of
+        // this unmerged TextField is a live region, so this pins down that
+        // Android is not affected; it fails if that changes.
         open("bad-not-announced")
         val id = "f06-bad-not-announced-email"
         send("bad-not-announced")

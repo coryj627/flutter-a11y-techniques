@@ -460,7 +460,7 @@ class _BadNotAnnouncedState extends State<BadNotAnnounced> {
         _sendButton('bad-not-announced', () {
           // Defect: the error is set with setState, outside a Form, and
           // focus stays on the button. Nothing announces it on iOS or the
-          // web (on Android the error text is a live region).
+          // web (on Android this field's error text is a live region).
           setState(() => _error = _validateEmail(_controller.text));
           if (_error == null) sent();
         }),
@@ -496,8 +496,8 @@ class _BadMergedErrorState extends State<BadMergedError> {
         Form(
           key: _form,
           // Defect: MergeSemantics around the field takes in its error
-          // text as well. The error becomes part of the field's name and is
-          // read twice, and on Android the whole field is a live region.
+          // text as well. The error becomes part of the field's name as well
+          // as its hint, and on Android the whole field is a live region.
           child: MergeSemantics(
             child: Semantics(
               identifier: 'f06-bad-merged-error-email',

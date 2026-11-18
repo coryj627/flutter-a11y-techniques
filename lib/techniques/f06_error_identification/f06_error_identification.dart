@@ -16,9 +16,10 @@ final f06ErrorIdentification = Technique(
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(
       note:
-          'Flutter gives a field no error state on Android: TalkBack never '
-          'says "error", and reads a field in error that has a value without '
-          'its message, which is the next element (limitation FL-180).',
+          'Flutter gives a field no error state on Android: TalkBack does '
+          'not say "error", and reads a field in error that has a value '
+          'without its message, which is a node of its own after the field '
+          '(limitation FL-180).',
     ),
     AppPlatform.ios: PlatformStatus.applies(
       note:
@@ -27,9 +28,11 @@ final f06ErrorIdentification = Technique(
     ),
     AppPlatform.web: PlatformStatus.applies(
       note:
-          'On the web and iOS an error is announced only when a Form runs '
-          'the validation; one set by a field on its own, or by hand, is '
-          'not (limitation FL-181).',
+          'On the web and iOS an error is announced only by Form.validate(), '
+          'validateGranularly(), or the Form\'s always, onUserInteraction, or '
+          'onUserInteractionIfError mode; onUnfocus, a field validated on its '
+          'own, and an errorText set by hand are not announced '
+          '(limitation FL-181).',
     ),
   },
   wcag: const [
@@ -116,8 +119,9 @@ final f06ErrorIdentification = Technique(
       title: 'Field merged with its error',
       variant: ExampleVariant.material,
       defect:
-          'The error becomes part of the field\'s name, so it is read twice, '
-          'and on Android the whole field becomes a live region.',
+          'The error becomes part of the field\'s name as well as its hint, '
+          'so it is heard twice, and on Android the whole field becomes a '
+          'live region.',
       builder: (_) => const BadMergedError(),
     ),
   ],

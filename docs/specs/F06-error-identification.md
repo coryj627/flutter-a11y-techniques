@@ -30,17 +30,24 @@ focus moves to the first field in error.
 
 Each platform has a gap that the good examples work around or that the
 user can get past. On Android Flutter gives a field no error state, so
-TalkBack never says "error", and a field in error that has a value is
-read without its message; the message is the next element and is
-announced when it appears ([FL-180](../flutter-limitations.md#fl-180)).
+TalkBack does not say "error", and a field in error that has a value is
+read without its message; the message is a node of its own after the
+field, and TalkBack announced it when it appeared in every recorded case
+where it was not merged into the field
+([FL-180](../flutter-limitations.md#fl-180),
+[FL-181](../flutter-limitations.md#fl-181)).
 Whether that makes Android a limitation for this entry is a decision for
 review (see section 7). On iOS moving keyboard focus does not move
 VoiceOver, and a `FocusSemanticEvent` does
 ([FL-184](../flutter-limitations.md#fl-184)). On iOS and the web an error
-is announced only when a `Form` runs the validation (`validate()`,
-`validateGranularly()`, or the `Form`'s own `autovalidateMode`), and only
-the first; a field validated on its own, or an `errorText` set by hand, is
-silent there ([FL-181](../flutter-limitations.md#fl-181)).
+is announced only when a `Form` validates on send or as the user types
+(`validate()`, `validateGranularly()`, or the `Form`'s `always`,
+`onUserInteraction`, or `onUserInteractionIfError` mode), and only the
+first; the `Form`'s `onUnfocus` mode, a field validated on its own, and an
+`errorText` set by hand are silent there
+([FL-181](../flutter-limitations.md#fl-181)). Only `validate()` and the
+two silent field cases were run on a device; the rest is widget tests and
+source.
 
 ## 3. WCAG 2.2 success criteria
 
@@ -113,8 +120,8 @@ not a bad example either.
 | --- | --- | --- | --- |
 | `bad-color-only` | The validator returns an empty message. The field turns red and is marked invalid, and nothing says what is wrong | R1 | 3.3.1, all platforms |
 | `bad-vague-message` | The message is "Invalid.": it says that something is wrong, not what to enter, though the app knows | R1 | 3.3.3, all platforms |
-| `bad-not-announced` | `errorText` set with `setState` outside a `Form`, focus left on Send. On iOS and the web nothing announces the error ([FL-181](../flutter-limitations.md#fl-181)); on Android its live region does | R4 | 4.1.3 on iOS and the web; none on Android |
-| `bad-merged-error` | `MergeSemantics` around the field takes in its error text: the error is part of the name and is read twice, and on Android the whole field becomes a live region ([FL-183](../flutter-limitations.md#fl-183)) | R2 | none: the error is still identified, described, and announced, and the name still has the label |
+| `bad-not-announced` | `errorText` set with `setState` outside a `Form`, focus left on Send. On iOS and the web nothing announces the error ([FL-181](../flutter-limitations.md#fl-181)); on Android its live region does (TalkBack: "Enter an email address with an @, like name@example.com.", `f06-bad-not-announced-sent`) | R4 | 4.1.3 on iOS and the web; none on Android, for this unmerged field |
+| `bad-merged-error` | `MergeSemantics` around the field takes in its error text: the error is part of the name as well as the hint (read twice by VoiceOver on the web and by TalkBack), and on Android the whole field becomes a live region ([FL-183](../flutter-limitations.md#fl-183)) | R2 | none here: with the field empty the error is still identified, described, and announced on all three, and the name still has the label. With a value in a merged field TalkBack did not speak the error in probe p12 (FL-183); that case is not this example |
 
 `bad-merged-error` fails nothing as the criteria are written. It is here
 because `TestId`, which every other technique wraps its controls in, is a
@@ -153,34 +160,47 @@ The probe that came first, with a native comparison on Android, is in
   makes it a node of its own, and puts it in the field's hint; `FormField`
   sets `validationResult`; `Form.validate()` announces the first error.
   On the web that is `aria-invalid="true"` and an `aria-description`, and
-  VoiceOver reads "Name Enter your name. invalid data edit text". On iOS
-  VoiceOver reads the hint after the role, with or without a value. On
-  Android the label and the error are joined in the hint text.
+  VoiceOver read "Name Enter your name. invalid data edit text". On iOS
+  VoiceOver read the hint after the role, on an empty field ("Email Text
+  field Enter an email address …", F06 transcript) and on one with a value
+  (probe p02). On Android the label and the error are joined in the hint
+  text.
 - **Android has no error state for a Flutter field**
   ([FL-180](../flutter-limitations.md#fl-180)). Neither `setError` nor
-  `setContentInvalid` is used, so TalkBack never says "error", and a field
-  in error that has a value is read "abc, Edit box": the hint text that
-  holds the label and the error is not read once there is a value
+  `setContentInvalid` is used, and TalkBack did not say "error" in any
+  recording; a field in error that has a value was read "Editing.", "abc",
+  "Edit box" (`f06-good-form-email-filled`): the hint text that holds the
+  label and the error is not read once there is a value
   ([FL-015](../flutter-limitations.md#fl-015)). A native `EditText` with
-  `setError` is read "Error: … abc. Edit box". The message is the next
-  element and is announced when it appears, so the error is not lost, but
-  a user coming back to a field does not hear it there. No workaround in
-  the SDK. **Decision for review:** F01 records the same mechanism for the
-  label as `PlatformStatus.limitation` on Android; F06 records Android as
-  applying, with a note, because the error is identified, described, and
-  announced there and only the reading on the field is missing.
+  `setError` was read "Error: … abc. Edit box". The message is a node of
+  its own after the field, announced when it appeared in the examples, so
+  the error is not lost there, but a user coming back to a field does not
+  hear it on the field. No workaround in the SDK. **Decision for review:**
+  F01 records the same mechanism for the label as
+  `PlatformStatus.limitation` on Android; F06 records Android as applying,
+  with a note, because in the examples the error is identified, described,
+  and announced there and only the reading on the field is missing.
 - **Who announces depends on the platform**
-  ([FL-181](../flutter-limitations.md#fl-181)). On Android every error text
-  is a live region, whatever set it; TalkBack read both errors when two
-  appeared together, in no fixed order. On iOS and the web only
-  validation run by the `Form` announces, the first error only,
-  assertively: `validate()` (the examples), and, by widget test,
-  `validateGranularly()` and the `Form`'s own `autovalidateMode`. A field
-  validated on its own (its own `autovalidateMode`, or
-  `FormFieldState.validate()`), or an `errorText` set with `setState`
-  (`bad-not-announced`), is silent there. On devices only the last two
-  kinds were probed (p03, p12); the `Form`'s own autovalidate mode was
-  not run on a device.
+  ([FL-181](../flutter-limitations.md#fl-181)). On Android a Material
+  field's error text is a live region however it was set (source, tree
+  tests); TalkBack announced it in each recorded case where it was its own
+  node (`Form.validate()`: both errors, in no fixed order; `setState`:
+  `bad-not-announced`). Merged into its field it was announced with the
+  field empty (p03, p04) and not with a value in it (p12, field-level
+  autovalidation; [FL-183](../flutter-limitations.md#fl-183)); an
+  unmerged field validated on its own was not run on a device. On iOS and
+  the web only validation by the `Form` announces, the first error only,
+  assertively: `validate()` (the examples, on devices), and, by widget
+  test only, `validateGranularly()` and the `Form`'s `always`,
+  `onUserInteraction`, and `onUserInteractionIfError` modes. The `Form`'s
+  `onUnfocus` mode, a field validated on its own (its own
+  `autovalidateMode`, or `FormFieldState.validate()`), and an `errorText`
+  set with `setState` are silent there (widget tests; on devices p03,
+  p12, and `bad-not-announced`). The three autovalidating modes announce
+  again at every change that leaves the error, and `validate()` on a
+  `Form` in `always` or `onUserInteraction` mode announces it twice
+  (widget tests). The examples leave the mode `disabled` and validate on
+  Send.
 - **Keyboard focus is not enough on iOS**
   ([FL-184](../flutter-limitations.md#fl-184)). `requestFocus()` moves
   TalkBack and the web's DOM focus, and VoiceOver on the web follows it;
@@ -194,19 +214,23 @@ The probe that came first, with a native comparison on Android, is in
   field's own node. This is a departure from the guide ("Wrap a control in
   `TestId`"), recorded here for review; `TestId` itself is unchanged.
 - **The Cupertino field has to be built.** `CupertinoTextFormFieldRow`'s
-  error is never announced on Android
-  ([FL-182](../flutter-limitations.md#fl-182)) and its field has no label
-  ([FL-016](../flutter-limitations.md#fl-016)). `good-cupertino` gives a
-  `CupertinoTextField` what `InputDecorator` gives a Material one. A live
-  region used on every platform was announced twice on the web, by itself
-  and by `Form` (probe p13); `good-cupertino` uses one only where
-  `supportsAnnounceOf` is false, as `InputDecorator` does.
+  error is not a live region, so nothing announces it on Android
+  ([FL-182](../flutter-limitations.md#fl-182); probe p09: nothing said),
+  and its field has no label ([FL-016](../flutter-limitations.md#fl-016)).
+  `good-cupertino` gives a `CupertinoTextField` what `InputDecorator`
+  gives a Material one. A live region used on every platform put the
+  error in both of the web's announcer elements, the polite one and
+  `Form`'s assertive one (probe p13, `web.txt`; VoiceOver was heard
+  saying it once, `voiceover-web.md`); `good-cupertino` uses one only
+  where `supportsAnnounceOf` is false, as `InputDecorator` does.
 - **A second hint repeats the error.** The iOS reference adds the error
   as an `accessibilityHint`; `TextFormField` already does, and adding
-  `Semantics(hint:)` around it makes the hint say it twice (probe p08).
+  `Semantics(hint:)` around it makes the hint say it twice (probe p08:
+  the web description holds it twice, and VoiceOver on the web read it
+  three times with the merged label).
 - **`errorMaxLines` is needed.** The default is one line with an
-  ellipsis; at 200% text on a 320 wide screen the email message takes six
-  lines, and `good-form` allows eight.
+  ellipsis; at 200% text on a 320 wide screen the email message needs
+  more than five lines (widget test), and `good-form` allows eight.
 - **`validationResult` is web only** (source read): nothing in the Android
   or iOS engine reads it.
 
@@ -217,15 +241,18 @@ an announcement from code with a fallback, the status and alert roles, and
 assertiveness ([FL-017](../flutter-limitations.md#fl-017),
 [FL-018](../flutter-limitations.md#fl-018)). F06 uses what `Form` and
 `InputDecorator` already do and adds no announcement of its own. Not done
-in either: an error summary at the top of a long form (probed, p11: on the
-web and iOS it is announced together with `Form`'s first error, and on
-Android with one field's live region; not built), and errors that appear
-while typing. With the `Form`'s own `AutovalidateMode.onUserInteraction`
-the first error is announced again at every change that leaves it in
-error (widget test; not run with a screen reader), which is the flood
-I12's `bad-chatty-live-region` shows; with a field's own autovalidate mode
-nothing is announced on iOS and the web (widget test, and probe p12 on
-both devices). Neither is built.
+in either: an error summary at the top of a long form (probed, p11: on
+iOS VoiceOver said the summary and then `Form`'s first error; on the web
+both went to the announcer elements and VoiceOver was heard saying the
+summary; on Android TalkBack said the summary and one merged field's
+error; not built), and errors that appear while typing or on leaving a
+field. With the `Form`'s `onUserInteraction` (or `always`, or
+`onUserInteractionIfError`) the first error is announced again at every
+change that leaves it in error (widget test; not run with a screen
+reader), the kind of flood I12's `bad-chatty-live-region` shows. With the
+`Form`'s `onUnfocus`, or a field's own autovalidate mode, nothing is
+announced on iOS and the web (widget tests; probe p12 on both devices for
+the field's own mode). Neither is built.
 
 **Not done yet.** Errors on checkboxes, radio buttons, switches, and
 pickers. An error summary. Errors shown while typing. Clearing an error as
