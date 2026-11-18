@@ -1,0 +1,88 @@
+// Throwaway: workarounds for FL-422. Not committed.
+import 'dart:ui' show Tristate;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'support/examples.dart';
+
+Widget _list(String mode) {
+  Widget body = SingleChildScrollView(
+    child: Column(
+      children: [
+        for (var i = 1; i <= 12; i++)
+          SizedBox(
+            height: 48,
+            child: TextButton(onPressed: () {}, child: Text('B$i')),
+          ),
+      ],
+    ),
+  );
+  PreferredSizeWidget bar = AppBar(title: const Text('List'));
+  if (mode == 'group') body = FocusTraversalGroup(child: body);
+  Widget page = Scaffold(appBar: bar, body: body);
+  if (mode == 'ordered') {
+    page = Scaffold(
+      appBar: PreferredSize(
+        preferredSize: bar.preferredSize,
+        child: FocusTraversalOrder(order: const NumericFocusOrder(1), child: bar),
+      ),
+      body: FocusTraversalOrder(
+        order: const NumericFocusOrder(2),
+        child: FocusTraversalGroup(child: body),
+      ),
+    );
+    page = FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: page);
+  }
+  if (mode == 'groups-both') {
+    page = Scaffold(
+      appBar: PreferredSize(
+        preferredSize: bar.preferredSize,
+        child: FocusTraversalGroup(child: bar),
+      ),
+      body: FocusTraversalGroup(child: body),
+    );
+    page = FocusTraversalGroup(policy: WidgetOrderTraversalPolicy(), child: page);
+  }
+  return page;
+}
+
+void main() {
+  for (final mode in ['none', 'group', 'ordered', 'groups-both']) {
+    testWidgets('FL-422 workaround $mode', (tester) async {
+      tester.view.physicalSize = const Size(400, 400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        MaterialApp(
+          initialRoute: '/list',
+          routes: {'/': (_) => const Scaffold(), '/list': (_) => _list(mode)},
+        ),
+      );
+      await tester.pumpAndSettle();
+      String focused() => semanticsNodes(tester)
+          .where((d) => d.flagsCollection.isFocused == Tristate.isTrue)
+          .map((d) => d.tooltip == 'Back' ? 'Back' : d.label)
+          .single;
+      Future<List<String>> press(int n, {bool shift = false}) async {
+        final out = <String>[];
+        for (var i = 0; i < n; i++) {
+          if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+          await tester.pumpAndSettle();
+          out.add(focused());
+        }
+        return out;
+      }
+
+      final a = await press(14);
+      final b = await press(12);
+      final c = await press(16, shift: true);
+      debugPrint('WORK $mode: tab ${a.join(' ')} | more ${b.join(' ')} | shift ${c.join(' ')}');
+      handle.dispose();
+    });
+  }
+}

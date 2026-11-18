@@ -1,0 +1,41 @@
+== keyboard device: /dev/input/event12
+Success
+-- after 11 Tabs (input keyevent)
+"Focus: b-alerts"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab"
+-- sendevent on /dev/input/event12: Tab down, sync, Tab up, sync
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+"Focus: b-alerts"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab"
+-- sendevent on /dev/input/event12: Shift down, sync, Tab down, sync, Tab up, sync, Shift up, sync
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+"Focus: b-alerts"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab"
+-- the same again
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+sendevent: /dev/input/event12: Permission denied
+"Focus: b-alerts"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab"
+-- adb emu event send with EV_SYN after each key
+OK
+"Focus: b-alerts"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab"
+-- DPAD_DOWN from there (input keyevent)
+"Focus: b-closures"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Down"
