@@ -1197,8 +1197,12 @@ yet), **Fixed in x.y** (verified on that version).
   node already reads the new value, "50%, Volume", before the app has
   acted. Only the value is guessed: for F10 `bad-indicator-label`, whose
   name holds the number too, one run read "50%, Volume\n4" at that
-  moment. Asserted by `F10SliderTest.everySliderIsASeekBarWithItsValueAndName`,
-  which also shows the other side: a test that waits for the description
+  moment, which is what shows the value arriving ahead of the app's own
+  update; no test holds the app back to prove that order.
+  `F10SliderTest.everySliderIsASeekBarWithItsValueAndName` asserts that
+  the new value is in the description (it waits up to two seconds for the
+  tree to show it, since one CI run still read the old one on the next
+  line), and shows the other side: a test that waits for the description
   to change cannot tell that the app has acted, and has to wait for the
   app's own change count. At the last value `Slider` repeats the value as
   `increasedValue`, so an increase there shows the same value. The F10
