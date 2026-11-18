@@ -129,8 +129,8 @@ or by what Space does there (iOS, where XCUITest cannot see focus).
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640. Every example: five named checkboxes, not checked and not focused, and a "Save plan" button; a tap changes each box and Save plan counts; the semantics order is the column order. Tab from the start, stop by stop, then round to Back; Shift+Tab the same backwards from the last stop and round; Space at each stop changes the box that has focus and no other. The arrow keys, as on Android and iOS: Down, Up, Left, and Right each move to the control on that side. The SDK alone (FL-420): two columns of buttons with neither, either, or both of `FocusTraversalGroup` and a semantics container: the group sets the Tab order and not the semantics order, the container the reverse. `OrderedTraversalPolicy` puts a control with no order last |
-| L3 web | Every example: five checkboxes with names, `aria-checked="false"`, and `tabindex="0"`, and a button "Save plan"; the controls are in the document in the column order. Tab from the start, stop by stop; Shift+Tab backwards; Space at each stop changes only the box with focus (`aria-checked`). Past Save plan, Tab leaves the page's content, except in `bad-order-missing`, where Tab past First aid goes round Weather, Closures, Save plan, and First aid twice and never leaves, and Shift+Tab gets out (FL-421). The arrow keys leave focus where it is |
+| L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640. Every example: five named checkboxes, not checked and not focused, and a "Save plan" button; a tap changes each box and Save plan counts; the semantics order is the column order. Tab from the start, stop by stop, then round to Back; Shift+Tab the same backwards from the last stop and round; Space at each stop changes the box that has focus and no other. The arrow keys, as on Android and iOS: Down, Up, Left, and Right each move to the control on that side. The SDK alone (FL-420): two columns of buttons with neither, either, or both of `FocusTraversalGroup` and a semantics container: the group sets the Tab order and not the semantics order, the container the reverse. `OrderedTraversalPolicy` puts a control with no order last. FL-422: a long scrolled list under an app bar takes Back in among its buttons, and does not with a `FocusTraversalGroup` around the scrolling view. On an 800 by 120 screen, where the example scrolls until Map is above the top of the screen: each good example's Tab order stop by stop, round to Back, and Shift+Tab from Save plan back to Back; `bad-columns-mixed` goes round from Save plan to Back, which needs `PageScaffold`'s group |
+| L3 web | Every example: five checkboxes with names, `aria-checked="false"`, and `tabindex="0"`, and a button "Save plan"; the controls are in the document in the column order. Tab from the start, stop by stop; Shift+Tab backwards; Space at each stop changes only the box with focus (`aria-checked`). Past Save plan, Tab leaves the page's content, except in `bad-order-missing`, where Tab past First aid goes round Weather, Closures, Save plan, and First aid twice and never leaves, and Shift+Tab gets out (FL-421). The arrow keys leave focus where it is. On an 800 by 120 page, where the example scrolls until Map is above the top of the page, each good example's Tab and Shift+Tab orders stop by stop |
 | L3 Android | Every example: the five checkboxes (`CheckBox`, checkable, not checked, not focused) and the button; the controls are in the tree in the column order. Tab (`input keyevent`) stop by stop from Back, then round to Back; Shift+Tab (four events through `Instrumentation.sendKeySync`) backwards and round; Space at each stop changes only the box with focus; the D-pad arrows each move to the control on that side |
 | L3 iOS | Every example: the five checkboxes (switches to XCUITest, FL-035, value "0") and the button. Tab (`typeKey`) stop by stop, each named by the one box Space changes or by the count, then round to Back (Space leaves the screen); Shift+Tab the same backwards; the arrow keys each move to the control on that side |
 | L4 TalkBack | Each control: its name and "Check box" (no state, FL-045) or "Button". The walk puts TalkBack's focus on each control, so it records speech, not order |
@@ -184,8 +184,17 @@ output of each platform.
   first control of the list and skips Back. Found on the web, reproduced
   in a widget test, and seen on Android and iOS as the skipped Back. A
   `FocusTraversalGroup` around the scrolling view fixes it in the widget
-  test. The I02 examples do not scroll on the screens tested. This
-  app's own `PageScaffold` has no such group yet.
+  test, and the app's `PageScaffold` now has one
+  (`test/app/page_scaffold_focus_test.dart`). On an 800 by 120 screen,
+  where each example scrolls until Map is above the top of the screen,
+  the good examples keep their order forwards, round to Back, and
+  backwards (widget tests; and on the web, Chromium at the same size,
+  forwards and backwards). They kept it with the scaffold's group taken
+  out as well: each of their `FocusTraversalGroup`s is tall enough to
+  reach down into Back's row, so Back stays first (read in the source:
+  the bands of `ReadingOrderTraversalPolicy`). `bad-columns-mixed`, whose
+  controls are in no group, is the one that needs the scaffold's group:
+  without it, Tab past Save plan went round to Map and skipped Back.
 - **The arrow keys move by position on Android and iOS**, within and
   across groups, and in every example go to the control on that side.
   Where nothing is in line, they can leave a group: in the probe's cross
@@ -242,9 +251,10 @@ for screen reader navigation. They meet in four places:
 Handed on:
 
 - **I03 Focus management**: where focus goes after a route opens or
-  closes; FL-422 (Back taken into the order on a scrolled screen) and the
-  `PageScaffold` fix, since moving focus within a long screen will meet
-  it; and `TraversalEdgeBehavior` (`leaveFlutterView` on the web,
+  closes; FL-422 (Back taken into the order on a scrolled screen), which
+  the app's `PageScaffold` now avoids with a `FocusTraversalGroup` around
+  its scrolling view, but which a screen with a scrolling view of its own,
+  or a dialog, will meet again; and `TraversalEdgeBehavior` (`leaveFlutterView` on the web,
   `parentScope` elsewhere) for dialogs.
 - **I04 Keyboard actions and shortcuts**: on the web the arrow keys
   scroll. Flutter has no per-control counterpart of Android's

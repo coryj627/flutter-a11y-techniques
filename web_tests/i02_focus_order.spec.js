@@ -176,3 +176,29 @@ test.describe('arrow keys', () => {
     });
   }
 });
+
+// FL-422. On a screen so short that the example scrolls past the top of
+// the screen, the order stays the same: Back is not taken in among the
+// controls scrolled away above. PageScaffold's FocusTraversalGroup around
+// its scrolling view keeps Back out of a scrolled body's order.
+test.describe('on a screen short enough to scroll', () => {
+  const mapAboveScreen = async (page, slug) => {
+    const box = await control(page, slug, 'map').boundingBox();
+    return box !== null && box.y + box.height <= 0;
+  };
+
+  for (const slug of good) {
+    const order = tabOrder[slug];
+
+    test(`${slug}: Tab goes ${order.join(', ')} and Shift+Tab back to Back while the screen scrolls`, async ({ page }) => {
+      await page.setViewportSize({ width: 800, height: 120 });
+      await open(page, slug);
+      expect(await walk(page, slug, order.length)).toEqual(order);
+      // Let the scroll to Save plan finish before measuring.
+      await page.waitForTimeout(500);
+      expect(await mapAboveScreen(page, slug), 'Map is above the screen when Save plan has focus').toBe(true);
+      const back = [...order].reverse().slice(1);
+      expect(await walk(page, slug, back.length, 'Shift+Tab')).toEqual(back);
+    });
+  }
+});
