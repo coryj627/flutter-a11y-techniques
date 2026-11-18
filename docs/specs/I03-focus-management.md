@@ -45,9 +45,9 @@ measured.
 How the bad examples fail, as the criteria are written:
 
 - `bad-focus-left-behind` fails 2.4.3 by technique
-  [F85](https://www.w3.org/WAI/WCAG22/Techniques/failures/F85), "using
-  dialogs or menus that are not adjacent to their trigger control in the
-  sequential navigation order", on both of its tests. Activated from the
+  [F85](https://www.w3.org/WAI/WCAG22/Techniques/failures/F85), dialogs
+  that are not next to their trigger in the sequential navigation order,
+  on both of its tests. Activated from the
   keyboard, the dialog does not take focus, and the next Tab does not
   reach it: it goes to the control behind the dialog, and the dialog's
   buttons come only after the last control of the screen (F85's example
@@ -58,10 +58,10 @@ How the bad examples fail, as the criteria are written:
   (section 7).
 - `bad-opens-on-focus` fails 3.2.1 in the way of the failure example in
   [Understanding 3.2.1](https://www.w3.org/WAI/WCAG22/Understanding/on-focus.html):
-  "when a field receives focus, a help dialog window ... opens", moving
-  focus away "every time the user attempts to tab past". Moving focus to
-  another component is one of the changes of context the Understanding
-  document lists. Measured with the keyboard on all three platforms; on
+  a help dialog that opens when a field receives focus, and takes focus
+  away from it each time the user tabs onto it. Moving focus to another
+  component is one of the changes of context the Understanding document
+  lists. Measured with the keyboard on all three platforms; on
   the web a screen reader's cursor sets it off too (section 7).
 
 Neither bad example fails 2.1.1 or 2.1.2: every control can still be
