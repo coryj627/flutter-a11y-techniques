@@ -1,0 +1,37 @@
+// F09 probe (throwaway, not committed): the tree and VoiceOver for lib/probe.dart.
+import XCTest
+
+final class F09ProbeUITests: XCTestCase {
+  func testProbe() throws {
+    let app = XCUIApplication()
+    app.launch()
+    XCTAssertTrue(app.switches.firstMatch.waitForExistence(timeout: 60))
+    sleep(2)
+    print("F09PROBE TREE BEGIN")
+    for element in app.descendants(matching: .any).allElementsBoundByIndex {
+      let type = element.elementType
+      if type == .other && element.label.isEmpty { continue }
+      if type == .window || type == .application { continue }
+      print("F09PROBE EL type=\(type.rawValue) label=\(element.label.debugDescription) value=\(String(describing: element.value)) enabled=\(element.isEnabled) selected=\(element.isSelected) frame=\(element.frame)")
+    }
+    print("F09PROBE TREE END")
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { return }
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    try voiceOver.enable()
+    defer { try? voiceOver.disable() }
+    var last = ""
+    var repeats = 0
+    for _ in 0..<45 {
+      do {
+        let said = try voiceOver.moveForward().utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
+        print("F09PROBE VO \(said)")
+        if said == last { repeats += 1; if repeats > 2 { break } } else { repeats = 0 }
+        last = said
+      } catch {
+        print("F09PROBE VO (error \(error))")
+      }
+    }
+    #endif
+  }
+}

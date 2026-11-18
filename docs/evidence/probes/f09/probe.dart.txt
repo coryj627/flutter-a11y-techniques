@@ -1,0 +1,120 @@
+// F09 probe (throwaway, not committed): switches.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+/// Holds one on/off value for a fixture, so every fixture can be operated.
+class _Hold extends StatefulWidget {
+  const _Hold({required this.initial, required this.builder});
+
+  final bool initial;
+  final Widget Function(bool on, VoidCallback flip) builder;
+
+  @override
+  State<_Hold> createState() => _HoldState();
+}
+
+class _HoldState extends State<_Hold> {
+  late bool _on = widget.initial;
+
+  @override
+  Widget build(BuildContext context) =>
+      widget.builder(_on, () => setState(() => _on = !_on));
+}
+
+Widget _face(String text, bool on) => ExcludeSemantics(
+  child: SizedBox(
+    width: 220,
+    height: 48,
+    child: Row(
+      children: [
+        Expanded(child: Text(text)),
+        Container(
+          width: 40,
+          height: 24,
+          alignment: on ? Alignment.centerRight : Alignment.centerLeft,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(width: 2),
+            color: on ? Colors.blue : Colors.white,
+          ),
+          child: Container(
+            width: 18,
+            height: 18,
+            margin: const EdgeInsets.all(1),
+            decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+          ),
+        ),
+      ],
+    ),
+  ),
+);
+
+class ProbeScreen extends StatelessWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 01 SwitchListTile, on
+              _Hold(initial: true, builder: (on, flip) => SwitchListTile(value: on, onChanged: (_) => flip(), title: const Text('w01 Wi-Fi'))),
+              // 02 SwitchListTile, off
+              _Hold(initial: false, builder: (on, flip) => SwitchListTile(value: on, onChanged: (_) => flip(), title: const Text('w02 Wi-Fi'))),
+              // 03 bare Switch beside a Text, not joined
+              _Hold(initial: false, builder: (on, flip) => Row(children: [const Text('w03 Wi-Fi'), Switch(value: on, onChanged: (_) => flip())])),
+              // 04 MergeSemantics around a GestureDetector, Text and Switch
+              _Hold(initial: false, builder: (on, flip) => MergeSemantics(child: GestureDetector(onTap: flip, child: Row(children: [const Text('w04 Wi-Fi'), Switch(value: on, onChanged: (_) => flip())])))),
+              // 05 MergeSemantics around CupertinoListTile with trailing CupertinoSwitch (the SDK's own sample)
+              _Hold(initial: false, builder: (on, flip) => MergeSemantics(child: CupertinoListTile(title: const Text('w05 Wi-Fi'), trailing: CupertinoSwitch(value: on, onChanged: (_) => flip()), onTap: flip))),
+              // 06 the same with no MergeSemantics
+              _Hold(initial: false, builder: (on, flip) => CupertinoListTile(title: const Text('w06 Wi-Fi'), trailing: CupertinoSwitch(value: on, onChanged: (_) => flip()), onTap: flip)),
+              // 07 SwitchListTile.adaptive
+              _Hold(initial: false, builder: (on, flip) => SwitchListTile.adaptive(value: on, onChanged: (_) => flip(), title: const Text('w07 Wi-Fi'))),
+              // 08 custom: Semantics(toggled, enabled, label, onTap)
+              _Hold(initial: false, builder: (on, flip) => Semantics(container: true, toggled: on, enabled: true, label: 'w08 Wi-Fi', onTap: flip, child: GestureDetector(onTap: flip, child: _face('w08', on)))),
+              // 09 custom: Semantics(checked) for comparison
+              _Hold(initial: false, builder: (on, flip) => Semantics(container: true, checked: on, enabled: true, label: 'w09 Wi-Fi', onTap: flip, child: GestureDetector(onTap: flip, child: _face('w09', on)))),
+              // 10 SwitchListTile disabled, on
+              const SwitchListTile(value: true, onChanged: null, title: Text('w10 Wi-Fi')),
+              // 11 title that is the state
+              _Hold(initial: false, builder: (on, flip) => SwitchListTile(value: on, onChanged: (_) => flip(), title: Text(on ? 'w11 Notifications on' : 'w11 Notifications off'))),
+              // 12 Semantics(label:) around a bare Switch
+              _Hold(initial: false, builder: (on, flip) => Semantics(label: 'w12 Wi-Fi', child: Switch(value: on, onChanged: (_) => flip()))),
+              // 13 bare Switch, nothing else
+              _Hold(initial: false, builder: (on, flip) => Switch(value: on, onChanged: (_) => flip())),
+              // 14 group: labelled container around two tiles
+              _Hold(initial: false, builder: (on, flip) => Semantics(
+                container: true,
+                explicitChildNodes: true,
+                label: 'w14 Notify me about',
+                child: Column(children: [
+                  SwitchListTile(value: on, onChanged: (_) => flip(), title: const Text('w14 Messages')),
+                  SwitchListTile(value: !on, onChanged: (_) => flip(), title: const Text('w14 Reminders')),
+                ]),
+              )),
+              // 15 tile with a subtitle
+              _Hold(initial: false, builder: (on, flip) => SwitchListTile(value: on, onChanged: (_) => flip(), title: const Text('w15 Wi-Fi'), subtitle: const Text('Finds networks nearby'))),
+              // 16 ListTile with onTap and a trailing Switch, no merge
+              _Hold(initial: false, builder: (on, flip) => ListTile(title: const Text('w16 Wi-Fi'), trailing: Switch(value: on, onChanged: (_) => flip()), onTap: flip)),
+              // 17 custom, toggled with no enabled (FL-033)
+              _Hold(initial: false, builder: (on, flip) => Semantics(container: true, toggled: on, label: 'w17 Wi-Fi', onTap: flip, child: GestureDetector(onTap: flip, child: _face('w17', on)))),
+              // 18 CupertinoSwitch disabled, off, merged with text
+              const MergeSemantics(child: CupertinoListTile(title: Text('w18 Wi-Fi'), trailing: CupertinoSwitch(value: false, onChanged: null))),
+              const SizedBox(height: 40),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
