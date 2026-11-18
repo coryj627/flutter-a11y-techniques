@@ -88,6 +88,9 @@ Future<(int, int)> _pressAndSlideOff(WidgetTester tester, String slug) async {
   return (held, _count(tester, slug));
 }
 
+/// Whether the last press of the FL-402 test was let go over the control.
+bool _letGoInside = false;
+
 void main() {
   test('the technique has the examples named in the spec', () {
     expect(i01FocusableControls.examples.map((e) => e.slug), _all);
@@ -312,6 +315,46 @@ void main() {
         await gesture.up();
         await tester.pumpAndSettle();
         expect(_count(tester, slug), 1);
+      });
+    }
+
+    // FL-402: a tap is given up by how far the pointer has moved since the
+    // press (kTouchSlop, 18 logical pixels), not by whether it is still over
+    // the control. Written to fail when either half changes.
+    for (final slug in _good) {
+      testWidgets('$slug (FL-402): let go just outside the edge after a short '
+          'move, it still acts; after a longer move inside it, it does not', (
+        tester,
+      ) async {
+        await _open(tester, slug);
+        final rect = tester.getRect(byId(_id(slug)));
+
+        Future<int> pressMoveLetGo(Offset from, Offset by) async {
+          final before = _count(tester, slug);
+          final gesture = await tester.startGesture(from);
+          await tester.pump(const Duration(milliseconds: 300));
+          await gesture.moveBy(by);
+          await tester.pump();
+          final end = from + by;
+          await gesture.up();
+          await tester.pumpAndSettle();
+          expect(_count(tester, slug) - before, anyOf(0, 1));
+          // Where the pointer was let go, for the checks below.
+          _letGoInside = rect.contains(end);
+          return _count(tester, slug) - before;
+        }
+
+        // Pressed 4 inside the bottom edge, moved 10 down: let go 6 outside.
+        final nearEdge = Offset(rect.center.dx, rect.bottom - 4);
+        expect(await pressMoveLetGo(nearEdge, const Offset(0, 10)), 1);
+        expect(_letGoInside, isFalse);
+        // The same press moved 19: past the slop, so it is given up.
+        expect(await pressMoveLetGo(nearEdge, const Offset(0, 19)), 0);
+        expect(_letGoInside, isFalse);
+        // Pressed at the centre, moved 40 sideways: still over the control,
+        // and given up all the same.
+        expect(await pressMoveLetGo(rect.center, const Offset(40, 0)), 0);
+        expect(_letGoInside, isTrue);
       });
     }
 

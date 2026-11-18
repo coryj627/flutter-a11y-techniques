@@ -19,8 +19,8 @@ A control that answers a tap or click also takes keyboard focus in the
 Tab order, does the same thing when Enter or Space is pressed on it, and
 can be activated by a screen reader or switch access through the
 platform's activate action. Assistive technology is told that it is a
-control. It acts when the pointer is released over it, so that a press
-can be taken back by moving off it before letting go.
+control. It acts when the pointer is released, so that a press can be
+taken back by moving the pointer away before letting go.
 
 ## 2. Platforms
 
@@ -163,6 +163,13 @@ of each platform.
   a press on a tappable element back for up to 200 ms before passing it on
   (read in the source: `ClickDebouncer`), so a press that moves off sooner
   never acts; one held longer does, as the test holds it.
+- **A tap is given up by distance, not by the control's edge**
+  ([FL-402](../flutter-limitations.md#fl-402)): `onTap` does not run once
+  the pointer has moved more than 18 logical pixels from the press, and
+  does not look at where it is released. In the widget tests a press 4
+  pixels inside the edge released 6 outside still acts, and a press at
+  the centre moved 40 pixels and released over the control does not. Not
+  measured on a device.
 - **A screen reader does not need keyboard focus**: a semantics tap, a
   click event on the web element, and VoiceOver's double tap all activate
   `bad-no-focus`. TalkBack, VoiceOver on iOS, and VoiceOver on the web read

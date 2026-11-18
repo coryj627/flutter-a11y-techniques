@@ -108,6 +108,7 @@ yet), **Fixed in x.y** (verified on that version).
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
+| [FL-402](#fl-402) | A tap is given up by how far the pointer has moved, not by whether it has left the control | All (widget test only) | Confirmed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -1850,6 +1851,37 @@ yet), **Fixed in x.y** (verified on that version).
   with `onTap`, which is a button by itself (I01 `good-material`).
 - Upstream issue: not searched yet (D25). This may be intended: `InkWell`
   is an ink response and not a control of a given kind.
+
+## FL-402
+
+**A tap is given up by how far the pointer has moved, not by whether it has left the control.**
+
+- Status: Confirmed in a widget test, Flutter 3.47.5. The gesture code is
+  the framework's and is the same on every platform (read in the source:
+  `gestures/tap.dart`, `gestures/recognizer.dart`
+  (`PrimaryPointerGestureRecognizer`), and `gestures/constants.dart`,
+  `kTouchSlop`); it was not measured on a device. Asserted by the I01
+  widget tests "FL-402" for `good-material`, `good-cupertino`, and
+  `good-custom`, written to fail when either half changes.
+- WCAG: none failed. 2.5.2 Pointer Cancellation asks for a way to abort,
+  and moving the pointer far enough is one.
+- What happens: `onTap` runs when the pointer is released, unless the
+  pointer has moved more than 18 logical pixels from where it was pressed
+  (`kTouchSlop`). Where the pointer is when it is released is not checked.
+  - Pressed 4 pixels inside the control's edge, moved 10 pixels out, and
+    released 6 pixels outside it: the control acts.
+  - Pressed at its centre, moved 40 pixels sideways, and released still
+    over it: the control does not act.
+  A web page's `click` needs the press and the release over the same
+  element ([UI Events: click](https://www.w3.org/TR/uievents/#event-type-click)),
+  so there a press released outside a button does nothing however short
+  the move.
+- Effect: someone who presses the wrong control near its edge and slides
+  just off it still activates it; to take a press back they have to move
+  further than 18 pixels, in any direction.
+- Workaround: none tried. A control could check the release position
+  itself (`onTapUp` gives it) before acting.
+- Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->
 
