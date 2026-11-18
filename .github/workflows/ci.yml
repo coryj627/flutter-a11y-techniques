@@ -108,10 +108,12 @@ jobs:
       # Flutter build generates it and warms the Gradle cache.
       - run: flutter build apk --debug
       - name: Enable KVM
+        # The emulator needs /dev/kvm, readable and writable by the runner's
+        # user. Fails here, with a clear message, if the machine has none.
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+          test -e /dev/kvm || { echo "::error::this runner has no /dev/kvm"; exit 1; }
+          sudo chmod a+rw /dev/kvm
+          ls -l /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -156,8 +158,32 @@ jobs:
       - name: UI tests
         working-directory: ios
         run: |
-          DEVICE=$(xcrun simctl list devices available | grep -m1 -o 'iPhone [^(]*' | sed 's/ *$//')
-          echo "Using simulator: $DEVICE"
+          # The image has simulators for several iOS versions. Take an
+          # iPhone on the newest one this Xcode's SDK can run, by its id: a
+          # name alone means "that name on the latest iOS", which may not
+          # exist.
+          SDK=$(xcrun --sdk iphonesimulator --show-sdk-version)
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, re, sys
+          sdk = tuple(int(n) for n in sys.argv[1].split("."))
+          best = None
+          for runtime, devices in json.load(sys.stdin)["devices"].items():
+              m = re.search(r"SimRuntime\.iOS-(\d+)-(\d+)", runtime)
+              if not m:
+                  continue
+              version = (int(m.group(1)), int(m.group(2)))
+              if version > sdk[:2]:
+                  continue
+              phones = sorted(d["name"] for d in devices if d["name"].startswith("iPhone"))
+              if phones and (best is None or version > best[0]):
+                  name = phones[0]
+                  best = (version, next(d["udid"] for d in devices if d["name"] == name), name)
+          if best is None:
+              sys.exit("no iPhone simulator for an iOS this SDK can run")
+          print(best[1])
+          print("Using simulator: %s, iOS %d.%d" % (best[2], *best[0]), file=sys.stderr)
+          ' "$SDK")
+          xcodebuild -version
           xcodebuild test -workspace Runner.xcworkspace -scheme Runner -configuration Debug \
-            -destination "platform=iOS Simulator,name=$DEVICE" \
+            -destination "platform=iOS Simulator,id=$UDID" \
             -only-testing:RunnerUITests
