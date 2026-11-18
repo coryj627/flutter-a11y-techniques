@@ -107,7 +107,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-141](#fl-141) | Material helper text is cut to one line by default | All | Confirmed |
 | [FL-142](#fl-142) | A Material placeholder beside a label is exposed only while the field is focused and empty, and then as part of its name | All | Confirmed |
 | [FL-180](#fl-180) | A text field in error has no error state on Android: TalkBack never says "error", and reads a filled field without its error | Android | Confirmed |
-| [FL-181](#fl-181) | `InputDecoration.errorText` is announced by itself on Android only; on iOS and the web only `Form.validate()` announces, and only the first error | iOS, Web | Confirmed |
+| [FL-181](#fl-181) | On iOS and the web only validation run by a `Form` announces an error, and only the first; a field validated on its own, or an `errorText` set by hand, is silent there | iOS, Web | Confirmed |
 | [FL-182](#fl-182) | `CupertinoTextFormFieldRow`'s error is never announced on Android | Android | Confirmed |
 | [FL-183](#fl-183) | `MergeSemantics` around a field takes in its error: the error is in the name and read twice, and on Android the field becomes a live region | All | Confirmed |
 | [FL-184](#fl-184) | Keyboard focus moved to a field does not move VoiceOver's cursor on iOS | iOS | Observed |
@@ -1981,34 +1981,66 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-181
 
-**`InputDecoration.errorText` is announced by itself on Android only; on iOS and the web only `Form.validate()` announces, and only the first error.**
+**On iOS and the web only validation run by a `Form` announces an error, and only the first; a field validated on its own, or an `errorText` set by hand, is silent there.**
 
-- Status: Confirmed, Flutter 3.47.5. Framework source read:
-  `material/input_decorator.dart`, `_buildError`, which makes the error
-  text `Semantics(liveRegion: !MediaQuery.supportsAnnounceOf(context))`,
-  and `widgets/form.dart`, `FormState._validate`, which sends the first
-  error with `SemanticsService.sendAnnouncement` (assertive, and a second
-  later on iOS) only where `supportsAnnounceOf` is true. Asserted by the
-  F06 widget tests (both branches), `web_tests/f06_error_identification.spec.js`,
-  and the F06 transcripts for `bad-not-announced`.
-- What happens: on Android, where Flutter reports that announcements are
-  not supported ([FL-018](#fl-018)), every error text is a live region and
-  TalkBack reads each one when it appears, however the error was set; with
-  two errors at once it read both, in no fixed order (Email's first for
-  `good-form` and in probe q01, Name's first for `good-cupertino`). On iOS and
-  the web the error text is not a live region, so an error set any other
-  way than through `Form.validate()` is silent: `setState` on `errorText`,
-  `AutovalidateMode.onUserInteraction` while typing, or
-  `FormFieldState.validate()` on one field (probe fixtures p03 and p12 on
-  both). Through `Form.validate()` only the first error is announced.
+- Status: Confirmed, Flutter 3.47.5. Each statement below says whether it
+  is asserted by a widget test, measured on a device, or read in the
+  source only.
+- Read in the framework source: `widgets/form.dart`.
+  `FormState._validate` validates every field and, where
+  `MediaQuery.supportsAnnounceOf` is true, sends the first error with
+  `SemanticsService.sendAnnouncement`, assertive, a second later on iOS.
+  It is called by `validate()`, by `validateGranularly()`, and by
+  `FormState.build` when the `Form`'s own `autovalidateMode` is `always`,
+  `onUserInteraction` (after the user has changed a field), or
+  `onUserInteractionIfError`; a field's change rebuilds the `Form`
+  (`_fieldDidChange`). `FormFieldState.validate()`, and a field's own
+  `autovalidateMode`, validate that field only and announce nothing.
+  `material/input_decorator.dart`, `_buildError`, makes the error text
+  `Semantics(liveRegion: !MediaQuery.supportsAnnounceOf(context))`.
+- Asserted by the F06 widget tests (group "FL-181: who announces", with
+  announcements supported): a `Form` with `AutovalidateMode.onUserInteraction`
+  announced the error once when typing made the field invalid, once again
+  at the next change that left it invalid, and nothing once it was right,
+  on the Android path and on the iOS path (which waits a second);
+  `validateGranularly()` announced the first of two errors; a
+  `TextFormField` with its own `onUserInteraction` and no `Form`, the same
+  field inside a `Form` whose mode is disabled, and
+  `FormFieldState.validate()` on one field each showed the error and
+  announced nothing. Also asserted: `Form.validate()` in `good-form` and
+  `good-cupertino`, and `errorText` set with `setState` in
+  `bad-not-announced` (no announcement where supported, a live region
+  where not), in the widget tests, `web_tests/f06_error_identification.spec.js`,
+  and the F06 transcripts.
+- Measured on devices: in the F06 probe, fixture p03 (`errorText` set
+  with `setState`, no `Form`) and fixture p12 (a `TextFormField` with its
+  own `AutovalidateMode.onUserInteraction` and no `Form`, made invalid by
+  a button that adds text) were silent with VoiceOver on iOS and on the
+  web; on Android TalkBack read the error, a live region. `Form.validate()`
+  was announced on all three (p04 to p07, and the F06 transcripts). The
+  `Form`'s own autovalidate mode and `validateGranularly()` were not run
+  on a device.
+- What happens on Android: Flutter reports that announcements are not
+  supported there ([FL-018](#fl-018)), so `Form` sends nothing, and every
+  error text is a live region that TalkBack reads when it appears, however
+  the error was set. With two errors at once it read both, in no fixed
+  order (Email's first for `good-form` and in probe q01, Name's first for
+  `good-cupertino`).
 - Effect: the same code announces an error on one platform and not on the
-  others. An error that appears while the user is elsewhere on the screen
-  is a status message, and on iOS and the web it is not presented (4.1.3).
-- Workaround: call `Form.validate()` to show errors, and move focus to the
-  first field in error so the rest are reached from there (F06
-  `good-form`). For an error shown outside a `Form`, announce it with
-  `SemanticsService.sendAnnouncement` where `supportsAnnounceOf` is true,
-  as `Form` does; I12's `good-announce` shows the pattern.
+  others. An error shown by a field's own validation, or by setting
+  `errorText`, while the user is elsewhere on the screen is a status
+  message that iOS and the web do not present (4.1.3). With the `Form`'s
+  own `onUserInteraction`, the first error is announced again at each
+  change that leaves it in error (widget test), which while typing is an
+  announcement per keystroke; how a screen reader handles that was not
+  measured.
+- Workaround: let the `Form` validate: `validate()` or
+  `validateGranularly()` on send (F06 `good-form`), or the `Form`'s own
+  `autovalidateMode`, not a field's. A form that does already announces;
+  do not add a second announcement to it. For an error shown outside a
+  `Form`, announce it with `SemanticsService.sendAnnouncement` where
+  `supportsAnnounceOf` is true, as `Form` does; I12's `good-announce`
+  shows the pattern.
 - Upstream issue: not searched yet (D25).
 
 ## FL-182

@@ -27,8 +27,9 @@ final f06ErrorIdentification = Technique(
     ),
     AppPlatform.web: PlatformStatus.applies(
       note:
-          'An errorText set outside Form.validate() is not announced on the '
-          'web or iOS (limitation FL-181).',
+          'On the web and iOS an error is announced only when a Form runs '
+          'the validation; one set by a field on its own, or by hand, is '
+          'not (limitation FL-181).',
     ),
   },
   wcag: const [

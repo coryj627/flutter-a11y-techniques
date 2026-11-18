@@ -1,6 +1,7 @@
 import 'dart:ui' show Tristate;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -55,6 +56,12 @@ const _fields = {
     ('f06-good-cupertino-email', 'Email', _emailError),
   ],
 };
+
+/// The examples' email rule, for the tests that build a form of their own.
+String? _validateEmailLikeTheExamples(String? value) =>
+    RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value ?? '')
+    ? null
+    : _emailError;
 
 int _count(WidgetTester tester, String slug) =>
     countOf(tester, 'f06-$slug-count');
@@ -398,6 +405,153 @@ void main() {
         handle.dispose();
       });
     }
+  });
+
+  // What announces an error, pinned for FL-181: validation run by the Form
+  // (validate(), validateGranularly(), the Form's own autovalidateMode)
+  // sends the first error; validation of one field alone does not. Each
+  // recording ends with the recorder's own liveness check.
+  group('FL-181: who announces', () {
+    /// Pumps [child] in a bare app where announcements are supported.
+    Future<void> pump(WidgetTester tester, Widget child) async {
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(supportsAnnounce: true);
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      await tester.pumpWidget(MaterialApp(home: Scaffold(body: child)));
+    }
+
+    Finder field() => find.byType(EditableText);
+
+    // Form announces at once on every platform but iOS, where it waits a
+    // second; the web takes the first path.
+    testWidgets(
+      'a Form with AutovalidateMode.onUserInteraction announces the first '
+      'error as typing makes it invalid, and again at each change',
+      (tester) async {
+        final platform = defaultTargetPlatform;
+        final handle = tester.ensureSemantics();
+        await pump(
+          tester,
+          Form(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: TextFormField(validator: _validateEmailLikeTheExamples),
+          ),
+        );
+        // Form waits a second before announcing on iOS.
+        final settle = platform == TargetPlatform.iOS
+            ? const Duration(seconds: 2)
+            : Duration.zero;
+        final first = await _announcements(tester, () async {
+          await tester.enterText(field(), 'a');
+          await tester.pump(settle);
+          await tester.pumpAndSettle();
+        });
+        expect(first, [(_emailError, Assertiveness.assertive.index)]);
+        final second = await _announcements(tester, () async {
+          await tester.enterText(field(), 'ab');
+          await tester.pump(settle);
+          await tester.pumpAndSettle();
+        });
+        // Every change that leaves the field invalid announces it again.
+        expect(second, [(_emailError, Assertiveness.assertive.index)]);
+        final fixed = await _announcements(tester, () async {
+          await tester.enterText(field(), 'a@b.co');
+          await tester.pump(settle);
+          await tester.pumpAndSettle();
+        });
+        expect(fixed, isEmpty);
+        handle.dispose();
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android)
+        ..values.add(TargetPlatform.iOS),
+    );
+
+    testWidgets('a TextFormField with its own AutovalidateMode and no Form '
+        'shows the error and announces nothing', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pump(
+        tester,
+        TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: _validateEmailLikeTheExamples,
+        ),
+      );
+      final sent = await _announcements(tester, () async {
+        await tester.enterText(field(), 'a');
+        await tester.pumpAndSettle();
+      });
+      expect(find.text(_emailError), findsOneWidget);
+      expect(sent, isEmpty);
+      handle.dispose();
+    });
+
+    testWidgets('a TextFormField with its own AutovalidateMode inside a Form '
+        'whose mode is disabled announces nothing', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pump(
+        tester,
+        Form(
+          child: TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: _validateEmailLikeTheExamples,
+          ),
+        ),
+      );
+      final sent = await _announcements(tester, () async {
+        await tester.enterText(field(), 'a');
+        await tester.pumpAndSettle();
+      });
+      expect(find.text(_emailError), findsOneWidget);
+      expect(sent, isEmpty);
+      handle.dispose();
+    });
+
+    testWidgets('FormFieldState.validate() on one field inside a Form shows '
+        'the error and announces nothing', (tester) async {
+      final handle = tester.ensureSemantics();
+      final field = GlobalKey<FormFieldState<String>>();
+      await pump(
+        tester,
+        Form(
+          child: TextFormField(
+            key: field,
+            validator: _validateEmailLikeTheExamples,
+          ),
+        ),
+      );
+      final sent = await _announcements(tester, () async {
+        expect(field.currentState!.validate(), isFalse);
+        await tester.pumpAndSettle();
+      });
+      expect(find.text(_emailError), findsOneWidget);
+      expect(sent, isEmpty);
+      handle.dispose();
+    });
+
+    testWidgets('FormState.validateGranularly() announces the first error', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      final form = GlobalKey<FormState>();
+      await pump(
+        tester,
+        Form(
+          key: form,
+          child: Column(
+            children: [
+              TextFormField(validator: (v) => _nameError),
+              TextFormField(validator: _validateEmailLikeTheExamples),
+            ],
+          ),
+        ),
+      );
+      final sent = await _announcements(tester, () async {
+        expect(form.currentState!.validateGranularly(), hasLength(2));
+        await tester.pumpAndSettle();
+      });
+      expect(sent, [(_nameError, Assertiveness.assertive.index)]);
+      handle.dispose();
+    });
   });
 
   // A Flutter limitation pinned here, written to fail when it is fixed.

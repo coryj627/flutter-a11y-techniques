@@ -37,8 +37,10 @@ Whether that makes Android a limitation for this entry is a decision for
 review (see section 7). On iOS moving keyboard focus does not move
 VoiceOver, and a `FocusSemanticEvent` does
 ([FL-184](../flutter-limitations.md#fl-184)). On iOS and the web an error
-is announced only through `Form.validate()`
-([FL-181](../flutter-limitations.md#fl-181)).
+is announced only when a `Form` runs the validation (`validate()`,
+`validateGranularly()`, or the `Form`'s own `autovalidateMode`), and only
+the first; a field validated on its own, or an `errorText` set by hand, is
+silent there ([FL-181](../flutter-limitations.md#fl-181)).
 
 ## 3. WCAG 2.2 success criteria
 
@@ -171,8 +173,14 @@ The probe that came first, with a native comparison on Android, is in
   ([FL-181](../flutter-limitations.md#fl-181)). On Android every error text
   is a live region, whatever set it; TalkBack read both errors when two
   appeared together, in no fixed order. On iOS and the web only
-  `Form.validate()` announces, the first error only, assertively; an
-  `errorText` set any other way is silent there (`bad-not-announced`).
+  validation run by the `Form` announces, the first error only,
+  assertively: `validate()` (the examples), and, by widget test,
+  `validateGranularly()` and the `Form`'s own `autovalidateMode`. A field
+  validated on its own (its own `autovalidateMode`, or
+  `FormFieldState.validate()`), or an `errorText` set with `setState`
+  (`bad-not-announced`), is silent there. On devices only the last two
+  kinds were probed (p03, p12); the `Form`'s own autovalidate mode was
+  not run on a device.
 - **Keyboard focus is not enough on iOS**
   ([FL-184](../flutter-limitations.md#fl-184)). `requestFocus()` moves
   TalkBack and the web's DOM focus, and VoiceOver on the web follows it;
@@ -211,11 +219,13 @@ assertiveness ([FL-017](../flutter-limitations.md#fl-017),
 `InputDecorator` already do and adds no announcement of its own. Not done
 in either: an error summary at the top of a long form (probed, p11: on the
 web and iOS it is announced together with `Form`'s first error, and on
-Android with one field's live region; not built), and announcing an error
-that appears while typing (`AutovalidateMode.onUserInteraction`, silent on
-iOS and the web, probe p12), which needs a rate limit like I12's
-`bad-chatty-live-region` warns about. I12's spec says error messages on
-form fields are F04; they are this entry, F06.
+Android with one field's live region; not built), and errors that appear
+while typing. With the `Form`'s own `AutovalidateMode.onUserInteraction`
+the first error is announced again at every change that leaves it in
+error (widget test; not run with a screen reader), which is the flood
+I12's `bad-chatty-live-region` shows; with a field's own autovalidate mode
+nothing is announced on iOS and the web (widget test, and probe p12 on
+both devices). Neither is built.
 
 **Not done yet.** Errors on checkboxes, radio buttons, switches, and
 pickers. An error summary. Errors shown while typing. Clearing an error as

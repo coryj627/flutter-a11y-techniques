@@ -65,7 +65,7 @@ a button that makes the errors appear. Fields are wrapped in the project's
 | p09 | `CupertinoTextFormFieldRow`, in `TestId`, `validate()` (Space on the web) | assertive announcement; name "p09 Email name@example.com Enter…" | nothing said after the button; the error is not a live region | VoiceOver said the error |
 | p10 | a hand-drawn error `Text` in a live region, `validationResult` on the field | polite announcement; `aria-invalid="true"` on the field | announced | announced |
 | p11 | `Form`, two fields, and a summary of the errors in a live region | the first error (assertive) and the summary (polite) | the summary and one field announced | the summary, then the first error |
-| p12 | `AutovalidateMode.onUserInteraction`; a button puts "x" in the field | nothing announced | TalkBack "x, Edit box", no error | nothing said |
+| p12 | a `TextFormField` with its own `AutovalidateMode.onUserInteraction`, no `Form`; a button puts "x" in the field | nothing announced | TalkBack "x, Edit box", no error | nothing said |
 | p13 | a hand-built Cupertino row: `FormField`, the field named, the error in a live region always | announced twice: assertive and polite; `aria-invalid` on an element around the field, not on the field | announced | announced once |
 
 ## Second round
@@ -95,9 +95,12 @@ Android only. Fields identified with `Semantics(identifier:)`, not merged.
   `validationResult`), and only on the web; a bare `TextField` with
   `errorText` has none (p01 to p03).
 - **Who announces differs by platform** (FL-181). On Android the error text
-  is a live region whatever set it. On iOS and the web only
-  `Form.validate()` announces, the first error only, assertively; an error
-  set any other way (p03, p12) is silent there.
+  is a live region whatever set it. On iOS and the web `Form.validate()`
+  announced the first error only, assertively (p04 to p07). An `errorText`
+  set with `setState` (p03) and a field's own autovalidate mode with no
+  `Form` (p12) were silent there. The probe did not try the `Form`'s own
+  `autovalidateMode` or `validateGranularly()`; the source and the F06
+  widget tests show that both announce, like `validate()`.
 - **`CupertinoTextFormFieldRow`'s error is silent on Android** (FL-182,
   p09).
 - **`MergeSemantics` (and so `TestId`) around a field takes in its error**
