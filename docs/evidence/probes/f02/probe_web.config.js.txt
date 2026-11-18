@@ -1,0 +1,16 @@
+// F02 probe (throwaway, not committed): the config probe_web.js.txt ran
+// with, as web_tests/probe_f02.config.js beside web_tests/probe_f02.js:
+// `npx playwright test -c probe_f02.config.js` in web_tests/, after
+// `fvm flutter build web -t lib/probe.dart`.
+import { defineConfig } from '@playwright/test';
+import { ports, webServer } from './support/ports.js';
+
+const port = ports().app;
+export default defineConfig({
+  testDir: '.',
+  testMatch: /probe_f02\.js$/,
+  reporter: 'list',
+  use: { baseURL: `http://127.0.0.1:${port}` },
+  projects: [{ name: 'chromium', use: { browserName: 'chromium' } }, { name: 'webkit', use: { browserName: 'webkit' } }],
+  webServer: webServer('build/web', port),
+});

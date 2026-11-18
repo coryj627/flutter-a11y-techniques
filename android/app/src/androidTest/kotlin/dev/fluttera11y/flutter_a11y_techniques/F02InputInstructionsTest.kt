@@ -1,0 +1,150 @@
+// L3 (tree) and L4 (TalkBack walk) for F02 Input instructions on Android.
+// Spec: docs/specs/F02-input-instructions.md.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.By
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import org.junit.runner.RunWith
+
+private const val EDIT_TEXT = "android.widget.EditText"
+private const val USERNAME = "Username"
+private const val RULE = "4 to 10 characters, no spaces."
+private const val DISPLAY_RULE = "Shown on your posts. 2 to 30 letters or numbers."
+
+@RunWith(AndroidJUnit4::class)
+class F02InputInstructionsTest : TechniqueTest("F02") {
+    private fun open(slug: String) = openExample(slug, By.res("f02-$slug-count"))
+
+    override val countName: String get() = "change count"
+
+    /** The nodes that read [text] as their name: the instruction as text. */
+    private fun withName(text: String) = all().filter { it.name() == text }
+
+    private fun hint(id: String): String = node(id).hintText?.toString().orEmpty()
+
+    // Android has no description for a field. Flutter's bridge writes the
+    // label and the hint into the node's hint text, "label, hint"
+    // (FL-039, FL-015), so that is where the instruction is looked for.
+    // slug, identifier, hint text, instruction on the screen.
+    private val fields = listOf(
+        listOf("good-helper", "f02-good-helper-username", "$USERNAME, $RULE", RULE),
+        listOf("good-cupertino", "f02-good-cupertino-username", "$USERNAME, $RULE", RULE),
+        listOf("good-before", "f02-good-before-username", "$USERNAME, $RULE", RULE),
+        listOf("bad-helper-only", "f02-bad-helper-only-username", USERNAME, RULE),
+        listOf("bad-helper-cut-off", "f02-bad-helper-cut-off-name", "Display name, $DISPLAY_RULE", DISPLAY_RULE),
+    )
+
+    @Test
+    fun fieldsHaveTheirLabelAndInstructionInTheHintTextBeforeAndAfterTyping() {
+        for ((slug, id, hintText, rule) in fields) {
+            open(slug)
+            val field = node(id)
+            assertEquals(slug, EDIT_TEXT, field.type())
+            assertTrue(slug, field.isEditable)
+            assertEquals(slug, hintText, hint(id))
+            assertTrue(slug, field.name().isEmpty())
+            // The instruction on the screen is an element of its own, and
+            // the only node that reads it as its name.
+            assertEquals(slug, 1, withName(rule).size)
+            assertFalse(slug, withName(rule).single().isClickable)
+            type(id, "abc")
+            assertEquals(slug, "abc", node(id).text?.toString())
+            // Still only in the hint text, which TalkBack does not read for
+            // a field with a value (FL-015); the walk records that.
+            assertEquals(slug, hintText, hint(id))
+            assertEquals(slug, 1, withName(rule).size)
+            waitForCount(slug, 3)
+        }
+    }
+
+    @Test
+    fun goodBeforeHasTheInstructionAboveTheField() {
+        open("good-before")
+        val ruleTop = android.graphics.Rect().also { withName(RULE).single().getBoundsInScreen(it) }
+        val fieldTop = android.graphics.Rect().also { node("f02-good-before-username").getBoundsInScreen(it) }
+        assertTrue("$ruleTop above $fieldTop", ruleTop.bottom <= fieldTop.top)
+    }
+
+    @Test
+    fun badPlaceholderFormatIsInTheHintTextOnlyWhileEditingAnEmptyField() {
+        open("bad-placeholder-format")
+        val id = "f02-bad-placeholder-format-birthday"
+        assertEquals("Date of birth", hint(id))
+        assertEquals(0, all().count { "DD/MM" in it.name() || "DD/MM" in it.text?.toString().orEmpty() })
+        // Editing and empty: the placeholder joins the label in the hint text.
+        assertTrue(node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end && hint(id) == "Date of birth") Thread.sleep(100)
+        assertEquals("Date of birth\nDD/MM/YYYY", hint(id))
+        // One character in, and it is gone.
+        type(id, "1")
+        assertEquals("Date of birth", hint(id))
+        waitForCount("bad-placeholder-format", 1)
+    }
+
+    /**
+     * L4. Moves TalkBack focus to the field and to the instruction of every
+     * example, and logs markers; tool/talkback.py reads the speech from
+     * logcat. Skipped unless TalkBack is running. Not
+     * TechniqueTest.talkBackWalk: the fields are read a second time once
+     * filled, as in S15HintsTest.
+     */
+    @Test
+    fun talkBackWalk() {
+        assumeTalkBack()
+        val byId = { id: String -> id to { nodeInAnyWindow(id) } }
+        val rule = { marker: String, text: String -> marker to { withName(text).single() } }
+        val walk: List<Pair<String, List<Pair<String, () -> AccessibilityNodeInfo>>>> = listOf(
+            "good-helper" to listOf(byId("f02-good-helper-username"), rule("f02-good-helper-rule", RULE)),
+            "good-cupertino" to listOf(byId("f02-good-cupertino-username"), rule("f02-good-cupertino-rule", RULE)),
+            // The instruction comes first here.
+            "good-before" to listOf(rule("f02-good-before-rule", RULE), byId("f02-good-before-username")),
+            "bad-helper-only" to listOf(byId("f02-bad-helper-only-username"), rule("f02-bad-helper-only-rule", RULE)),
+            "bad-placeholder-format" to listOf(byId("f02-bad-placeholder-format-birthday")),
+            "bad-helper-cut-off" to listOf(
+                byId("f02-bad-helper-cut-off-name"), rule("f02-bad-helper-cut-off-rule", DISPLAY_RULE)),
+        )
+        // The fields read a second time with text in them (FL-015).
+        val filled = mapOf(
+            "good-helper" to "f02-good-helper-username",
+            "bad-helper-only" to "f02-bad-helper-only-username")
+        for ((slug, elements) in walk) {
+            // With TalkBack on, the keyboard or a system window can be the
+            // active window while the example opens behind it (seen on the
+            // first run), so its count is looked for in every window.
+            openExampleInAnyWindow(slug) { it.viewIdResourceName == "f02-$slug-count" }
+            // Let TalkBack finish announcing the new screen first.
+            Thread.sleep(8_000)
+            for ((marker, find) in elements) {
+                Log.i(talkBackTag, "FOCUS $marker")
+                talkBackFocus(marker, find)
+                Thread.sleep(6_000)
+            }
+            val field = filled[slug]
+            if (field != null) {
+                // Move focus away, fill the field, and read it again.
+                Log.i(talkBackTag, "END $slug")
+                type(field, "abc")
+                // Put the keyboard away: with it up, TalkBack said nothing,
+                // or only "Editing", when its focus came back to the field
+                // (S15).
+                device.pressBack()
+                Thread.sleep(5_000)
+                // Typing leaves TalkBack on the field, and focusing a node
+                // that already has focus says nothing. Move away first.
+                talkBackFocus("the Example heading") { all().first { it.name() == "Example" } }
+                Thread.sleep(4_000)
+                Log.i(talkBackTag, "FOCUS $field-filled")
+                talkBackFocus("$field (filled)") { node(field) }
+                Thread.sleep(6_000)
+            }
+            Log.i(talkBackTag, "END $slug")
+        }
+    }
+}
