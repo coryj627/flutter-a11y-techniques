@@ -85,16 +85,26 @@ final class I01FocusableControlsUITests: XCTestCase, CountedTechniqueUITest {
     }
   }
 
+  /// Waits up to 5 seconds for the example `slug` to leave the screen, as it
+  /// does when Back is activated.
+  private func expectScreenLeft(_ slug: String, _ why: String, file: StaticString = #filePath, line: UInt = #line) {
+    let deadline = Date().addingTimeInterval(5)
+    while countElement(slug).exists && Date() < deadline { usleep(100_000) }
+    XCTAssertFalse(countElement(slug).exists, why, file: file, line: line)
+  }
+
   func testBadNoFocusIsNeverReachedByTab() {
     open("bad-no-focus")
-    for _ in 0..<3 { press(Self.tab) }
-    // Focus is on Back, the only control on the screen that takes it, so
-    // Space leaves the screen. Had Tab reached the card, Space would have
-    // activated it.
+    // Two Tabs: the number at which the good examples' control has focus.
+    // The card cannot take it, so the second Tab goes round to Back, and
+    // Space there leaves the screen. Had the card been reached, Space would
+    // have activated it and the screen would have stayed. Had no key
+    // arrived, nothing would have happened and the screen would have
+    // stayed too, so the test fails then as well.
+    press(Self.tab)
+    press(Self.tab)
     press(Self.space)
-    let gone = NSPredicate(format: "exists == false")
-    expectation(for: gone, evaluatedWith: countElement("bad-no-focus"))
-    waitForExpectations(timeout: 5)
+    expectScreenLeft("bad-no-focus", "Space after two Tabs did not act on Back")
   }
 
   private func badNoKeyActionIgnores(_ key: String, _ name: String) {
@@ -105,6 +115,12 @@ final class I01FocusableControlsUITests: XCTestCase, CountedTechniqueUITest {
     expectCountStays("bad-no-key-action", 0)
     // Still on the screen: focus was on the card, not on Back.
     XCTAssertTrue(countElement("bad-no-key-action").exists, "\(name) left the screen")
+    // The control, in the same launch: Tab goes on, round to Back, and the
+    // same key there leaves the screen. If keys were not arriving, the
+    // screen would stay and this would fail.
+    press(Self.tab)
+    press(key)
+    expectScreenLeft("bad-no-key-action", "\(name) on Back did nothing, so keys may not have arrived")
   }
 
   func testBadNoKeyActionTakesFocusAndEnterDoesNothing() {

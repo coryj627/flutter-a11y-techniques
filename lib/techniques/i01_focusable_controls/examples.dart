@@ -150,8 +150,9 @@ class GoodMaterial extends StatelessWidget {
 
 // #region good-cupertino
 /// A `CupertinoListTile` with `onTap` answers a tap only: it takes no
-/// keyboard focus and has no button role (docs/flutter-limitations.md,
-/// FL-400). The keyboard half and the role are added around it.
+/// keyboard focus on any platform, and it sets no button flag, so it is not
+/// a button on Android and iOS (docs/flutter-limitations.md, FL-400). The
+/// keyboard half and the flag are added around it.
 class GoodCupertino extends StatelessWidget {
   const GoodCupertino({super.key});
 
@@ -234,8 +235,9 @@ class BadInkWellNoRole extends StatelessWidget {
         TestId(
           'i01-bad-inkwell-no-role-trail',
           // Defect: an InkWell is focusable, answers Enter and Space, and
-          // has a tap action, but it is not a button. On Android and iOS
-          // nothing says that the card can be activated.
+          // has a tap action, but sets no button flag. On Android and iOS
+          // nothing says that the card can be activated. (On the web the
+          // engine makes anything with a tap action a button, FL-006.)
           child: Card(
             margin: EdgeInsets.zero,
             child: InkWell(

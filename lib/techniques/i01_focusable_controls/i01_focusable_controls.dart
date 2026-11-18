@@ -14,9 +14,28 @@ final i01FocusableControls = Technique(
       'technology, and it acts when the pointer is released over it, not '
       'when it goes down.',
   platforms: const {
-    AppPlatform.android: PlatformStatus.applies(),
-    AppPlatform.ios: PlatformStatus.applies(),
-    AppPlatform.web: PlatformStatus.applies(),
+    AppPlatform.android: PlatformStatus.applies(
+      note:
+          'A CupertinoListTile with onTap takes no keyboard focus and is not '
+          'a button, and an InkWell is not a button (limitations FL-400 and '
+          'FL-401). Shift+Tab could not be sent from the tests, so it is not '
+          'verified here.',
+    ),
+    AppPlatform.ios: PlatformStatus.applies(
+      note:
+          'A CupertinoListTile with onTap takes no keyboard focus and is not '
+          'a button, and an InkWell is not a button (limitations FL-400 and '
+          'FL-401). The keyboard was checked with a hardware keyboard and '
+          'Full Keyboard Access off; with Full Keyboard Access on it is not '
+          'verified.',
+    ),
+    AppPlatform.web: PlatformStatus.applies(
+      note:
+          'A CupertinoListTile with onTap takes no keyboard focus '
+          '(limitation FL-400). It, and an InkWell, are buttons here anyway, '
+          'because the web makes anything with a tap action a button '
+          '(limitation FL-006).',
+    ),
   },
   wcag: const [
     WcagCriterion('2.1.1', 'Keyboard', 'keyboard'),

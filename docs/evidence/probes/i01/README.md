@@ -172,9 +172,11 @@ and had by 300 ms; a press that moved off sooner did not act at all.
 
 ## What it shows
 
-- **A `CupertinoListTile` with `onTap` cannot be reached by the keyboard
-  and is not a button** on any platform (FL-400). `FocusableActionDetector`
-  and `Semantics(button: true)` around it fix both (k05).
+- **A `CupertinoListTile` with `onTap` cannot be reached by the keyboard**
+  on any platform, **and is not a button on Android and iOS** (FL-400). On
+  the web it has `role="button"`, from its tap action (FL-006), and no
+  `tabindex`. `FocusableActionDetector` and `Semantics(button: true)`
+  around it fix both (k05).
 - **An `InkWell` is focusable and keyboard operable and is not a button**
   on Android and iOS (FL-401). `Semantics(button: true)` (k03) or a
   `ListTile` (k01) fixes it.

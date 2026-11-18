@@ -127,6 +127,27 @@ class I01FocusableControlsTest : TechniqueTest("I01") {
         assertEquals(0, count("bad-no-focus"))
     }
 
+    /**
+     * The control for a key that did nothing: Tab on to Back, in the same
+     * launch, and require [name] to act there, which leaves the screen. If
+     * the key were not arriving, the screen would stay and this would fail.
+     */
+    private fun expectKeyActsOnBack(slug: String, name: String) {
+        var onBack = false
+        for (i in 0 until 3) {
+            key("TAB")
+            if (focused()?.name() == "Back") { onBack = true; break }
+        }
+        assertTrue("Tab did not reach Back after the card", onBack)
+        key(name)
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end && anyWindowHas { it.viewIdResourceName == "i01-$slug-count" }) {
+            Thread.sleep(200)
+        }
+        assertFalse("$name on Back did not leave the screen, so the key may not have arrived",
+            anyWindowHas { it.viewIdResourceName == "i01-$slug-count" })
+    }
+
     @Test
     fun badNoKeyActionTakesFocusAndEnterDoesNothing() {
         open("bad-no-key-action")
@@ -134,6 +155,7 @@ class I01FocusableControlsTest : TechniqueTest("I01") {
         key("ENTER")
         expectCountStays("bad-no-key-action", 0)
         assertTrue("focus stays after Enter", trail("bad-no-key-action").isFocused)
+        expectKeyActsOnBack("bad-no-key-action", "ENTER")
     }
 
     @Test
@@ -143,6 +165,7 @@ class I01FocusableControlsTest : TechniqueTest("I01") {
         key("SPACE")
         expectCountStays("bad-no-key-action", 0)
         assertTrue("focus stays after Space", trail("bad-no-key-action").isFocused)
+        expectKeyActsOnBack("bad-no-key-action", "SPACE")
     }
 
     @Test

@@ -5,10 +5,11 @@
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
 
-const { open, expectCount } = technique('I01', { countLabel: 'Activations' });
+const { open, count, expectCount } = technique('I01', { countLabel: 'Activations' });
 
 const trail = 'Ridge trail';
 const control = (page, slug) => byId(page, `i01-${slug}-trail`);
+const back = (page) => page.getByRole('button', { name: 'Back' });
 const isActive = (locator) => locator.evaluate((e) => e === document.activeElement);
 
 const good = ['good-material', 'good-cupertino', 'good-custom'];
@@ -73,8 +74,17 @@ test.describe('keyboard', () => {
     await open(page, 'bad-no-focus');
     const element = control(page, 'bad-no-focus');
     await expect(element).not.toHaveAttribute('tabindex', /.*/);
-    // Enter and Space are not pressed: focus may be on Back.
-    expect(await tabTo(page, element, 8), 'Tab never reaches the control').toBe(false);
+    // The keys arrive: the first Tab puts focus on Back, as on every
+    // example screen. Enter and Space are not pressed while it is there.
+    expect(await tabTo(page, back(page), 1), 'the first Tab reaches Back').toBe(true);
+    // The second Tab is where a control that can take focus gets it (the
+    // keyboard tests above); here focus leaves Back and is not on the card.
+    // Then six more never reach it.
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(100);
+    expect(await isActive(back(page)), 'the second Tab left Back').toBe(false);
+    expect(await isActive(element), 'the second Tab did not reach the card').toBe(false);
+    expect(await tabTo(page, element, 6), 'Tab never reaches the control').toBe(false);
     await expectCount(page, 'bad-no-focus', 0);
   });
 
@@ -88,6 +98,13 @@ test.describe('keyboard', () => {
       await page.waitForTimeout(500);
       await expectCount(page, 'bad-no-key-action', 0);
       expect(await isActive(element), `focus is still on the control after ${key}`).toBe(true);
+      // The control, in the same page: Shift+Tab back to Back, and the same
+      // key there leaves the screen, so the key was arriving.
+      await page.keyboard.press('Shift+Tab');
+      await page.waitForTimeout(100);
+      expect(await isActive(back(page)), 'Shift+Tab reaches Back').toBe(true);
+      await page.keyboard.press(key);
+      await expect(count(page, 'bad-no-key-action'), `${key} on Back leaves the screen`).toHaveCount(0);
     });
   }
 });

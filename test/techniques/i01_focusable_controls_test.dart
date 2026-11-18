@@ -43,6 +43,34 @@ const _trail = 'Ridge trail';
 
 Tristate _focused(String slug) => dataById(_id(slug)).flagsCollection.isFocused;
 
+/// Whether the widget with keyboard focus is inside the Back button.
+bool _focusOnBack() {
+  final focus = FocusManager.instance.primaryFocus?.context;
+  if (focus == null) return false;
+  return find
+      .ancestor(
+        of: find.byElementPredicate((e) => e == focus),
+        matching: find.byType(BackButton),
+      )
+      .evaluate()
+      .isNotEmpty;
+}
+
+/// The control for a key that did nothing on the card: Tab on, round to
+/// Back, and require [key] to act there, which leaves the example screen.
+Future<void> _expectKeyActsOnBack(
+  WidgetTester tester,
+  String slug,
+  LogicalKeyboardKey key,
+) async {
+  await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+  await tester.pumpAndSettle();
+  expect(_focusOnBack(), isTrue, reason: 'Tab from the card reaches Back');
+  await tester.sendKeyEvent(key);
+  await tester.pumpAndSettle();
+  expect(byId('i01-$slug-count'), findsNothing, reason: '$key on Back');
+}
+
 /// Where on the screen the control of [slug] is.
 Offset _centre(WidgetTester tester, String slug) =>
     tester.getCenter(byId(_id(slug)));
@@ -187,7 +215,14 @@ void main() {
         ),
         findsNothing,
       );
-      for (var i = 0; i < 6; i++) {
+      // The first Tab reaches Back, and the second, where a control that
+      // can take focus would get it, goes round to Back again.
+      for (var i = 0; i < 2; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        expect(_focusOnBack(), isTrue, reason: 'Tab ${i + 1} is on Back');
+      }
+      for (var i = 0; i < 4; i++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pump();
         expect(_focused('bad-no-focus'), Tristate.none);
@@ -220,6 +255,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-no-key-action'), 0);
       expect(_focused('bad-no-key-action'), Tristate.isTrue);
+      await _expectKeyActsOnBack(
+        tester,
+        'bad-no-key-action',
+        LogicalKeyboardKey.enter,
+      );
       handle.dispose();
     });
 
@@ -233,6 +273,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(_count(tester, 'bad-no-key-action'), 0);
       expect(_focused('bad-no-key-action'), Tristate.isTrue);
+      await _expectKeyActsOnBack(
+        tester,
+        'bad-no-key-action',
+        LogicalKeyboardKey.space,
+      );
       handle.dispose();
     });
 
@@ -326,8 +371,10 @@ void main() {
       await tester.pumpAndSettle();
     }
 
+    // The missing button flag makes the tile not a button on Android and
+    // iOS; on the web the engine makes it one from the tap action (FL-006).
     testWidgets('FL-400: a CupertinoListTile with onTap takes no keyboard '
-        'focus and is not a button', (tester) async {
+        'focus and has no button flag', (tester) async {
       final handle = tester.ensureSemantics();
       var taps = 0;
       await pumpAlone(
