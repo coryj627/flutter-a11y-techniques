@@ -16,9 +16,10 @@ final f02InputInstructions = Technique(
     AppPlatform.android: PlatformStatus.applies(
       note:
           'TalkBack reads a field\'s label and instructions only while the '
-          'field is empty (limitation FL-015). Once it has a value they are '
-          'reached as the visible text beside the field, which is why that '
-          'text is kept as an element of its own.',
+          'field is empty (limitation FL-015). Once it has a value the '
+          'instruction is left in the visible text beside the field, which is '
+          'kept as an element of its own; TalkBack reads it when focus is put '
+          'on it.',
     ),
     AppPlatform.ios: PlatformStatus.applies(),
     AppPlatform.web: PlatformStatus.applies(),

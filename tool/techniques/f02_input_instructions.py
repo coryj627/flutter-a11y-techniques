@@ -22,9 +22,9 @@ TALKBACK_EXPECT = {
     "f02-good-helper-username-filled": (["abc", "Edit box"], ["Username", "4 to 10"]),
     # The helper text is read as text of its own.
     "f02-good-helper-rule": (["4 to 10 characters, no spaces"], ["Edit box", "Username"]),
-    # And it is still there to be read once the field has a value, which is
-    # how the instruction is reached on Android then (FL-015). The whole
-    # instruction is required.
+    # And it is still read, whole, with focus put on it after the field has
+    # a value, when the field itself no longer gives the instruction
+    # (FL-015). Whether a swipe reaches it is not tested (see the spec).
     "f02-good-helper-rule-filled": (["4 to 10 characters, no spaces."], ["Edit box", "Username"]),
     "f02-good-cupertino-username": (["Username", "4 to 10 characters, no spaces", "Edit box"], []),
     "f02-good-cupertino-rule": (["4 to 10 characters, no spaces"], ["Edit box", "Username"]),

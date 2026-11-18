@@ -133,7 +133,7 @@ affected).
 | L3 web | Every field: role `textbox`, accessible name, accessible description, `aria-description`, no `aria-describedby`, before and after typing; the instruction as visible text once; Tab reaches the field; in `good-before` the instruction precedes the `<input>`. Bad: no description; the placeholder only while focused and empty, in `aria-label` and `placeholder`; the whole of the cut-off instruction in the page (the cut itself is not visible to this layer) |
 | L3 Android | Every field: `EditText`, editable, the hint text "label, instruction" (or the label alone for `bad-helper-only`), no content description, before and after typing; the instruction as one node of its own that is not clickable; in `good-before` it is above the field. `bad-placeholder-format`: the hint text is the label until the field is clicked, then "label\nDD/MM/YYYY", then the label again after one character |
 | L3 iOS | Every field: type text field, label "Username", the value after typing, the instruction as static text once; in `good-before` it is above the field. XCUITest cannot read a hint. `bad-placeholder-format`: the label gains the placeholder while it is being edited and empty, and loses it after one character. The cut is not visible to this layer |
-| L4 TalkBack | What is read with focus on each field and each instruction, and for `good-helper` again with "abc" typed: the field, then its helper text, as the last two stops of the walk |
+| L4 TalkBack | What is read with focus on each field and each instruction, and for `good-helper` again with "abc" typed: the field, then its helper text, as the last two stops of the walk. Focus is put on each node by action; what a swipe reaches is not tested |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count, compared as a whole list, and the same for `good-helper` and `bad-helper-only` with "abc" typed. This is the only iOS layer that sees a hint |
 | L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit, and the same for `good-helper`, `bad-helper-only` and `bad-placeholder-format` with "abc" typed |
 
@@ -159,10 +159,15 @@ The probe that came first is in [evidence/probes/f02](../evidence/probes/f02/).
   examples carry their identifier on a plain `Semantics`.
 - **TalkBack drops the instruction once the field has a value**, with the
   label ([FL-015](../flutter-limitations.md#fl-015)): "Editing.", "abc",
-  "Edit box". VoiceOver on iOS and on the web still read it. The helper
-  text kept as an element is the way to reach it there: with "abc" typed,
-  TalkBack reads it whole as the next stop, "4 to 10 characters, no
-  spaces." (`f02-good-helper-rule-filled`). That is why no
+  "Edit box". VoiceOver on iOS and on the web still read it. On Android
+  the instruction is then left only in the helper text, which is still an
+  element of its own in the tree: with "abc" typed, TalkBack reads it
+  whole, "4 to 10 characters, no spaces.", when focus is put on it by the
+  test (`f02-good-helper-rule-filled`). Whether a swipe from the filled
+  field lands on it was not tested: a `UiDevice.swipe`, `input swipe`,
+  and `input keycombination` with Alt or Meta and an arrow key, sent from
+  the filled field, all left TalkBack's focus on the field (tried once in
+  F02, as S03 found). That is why no
   example hides the visible text from the semantics (probe, fixture 04).
   The good examples are read twice on iOS and the web, once on the field
   and once as text; the iOS reference does the same.
@@ -203,6 +208,15 @@ The probe that came first is in [evidence/probes/f02](../evidence/probes/f02/).
   count in every window, as `I12AnnouncementsTest` does, and types into one
   field only, `good-helper`, as its last example. `bad-helper-only` filled
   is still walked by VoiceOver on iOS and on the web.
+- On CI's emulator (320 by 640 at 160 dpi, no hardware keyboard) the
+  Android tree test failed after typing into `bad-helper-only`: its count
+  was not in the tree. The soft keyboard was up (the window dump has an
+  `InputMethod` window). A widget test at that size, with a
+  keyboard-sized inset, showed the count of the bad examples scrolled out
+  of view and marked hidden, which is the likely cause; it was not shown
+  on the device. The test now puts the keyboard away after typing, only
+  while it is up, and waits for the count before reading it. What it
+  asserts is unchanged.
 
 **Not done yet.** Instructions for a group of fields, given once at the
 start of a form (WCAG G184), are not built. Turning hints off in

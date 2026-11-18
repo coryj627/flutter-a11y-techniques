@@ -4,8 +4,10 @@ package dev.fluttera11y.flutter_a11y_techniques
 
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -27,6 +29,31 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
     private fun withName(text: String) = all().filter { it.name() == text }
 
     private fun hint(id: String): String = node(id).hintText?.toString().orEmpty()
+
+    private fun keyboardUp(): Boolean =
+        automation.windows.any { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }
+
+    /**
+     * Puts the soft keyboard away if it is up, then waits up to 5 seconds
+     * for the example's count to be in the tree again. CI's emulator is 320
+     * by 640 at 160 dpi with no hardware keyboard: there the soft keyboard
+     * came up after typing and the count of `bad-helper-only` was then
+     * missing from the tree (run 44261623828). A widget test at that size,
+     * with a keyboard-sized inset at the bottom, showed the count of the
+     * bad examples, below their longer description, scrolled out of view and
+     * marked hidden; that this is what happened on CI is likely, not shown.
+     * Back is pressed only while the keyboard is up, so it never leaves the
+     * example.
+     */
+    private fun closeKeyboard(slug: String) {
+        if (keyboardUp()) {
+            device.pressBack()
+            val end = System.currentTimeMillis() + 3_000
+            while (System.currentTimeMillis() < end && keyboardUp()) Thread.sleep(100)
+        }
+        assertTrue("the count of $slug is in the tree",
+            device.wait(Until.hasObject(By.res("f02-$slug-count")), 5_000))
+    }
 
     // Android has no description for a field. Flutter's bridge writes the
     // label and the hint into the node's hint text, "label, hint"
@@ -54,6 +81,7 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
             assertEquals(slug, 1, withName(rule).size)
             assertFalse(slug, withName(rule).single().isClickable)
             type(id, "abc")
+            closeKeyboard(slug)
             assertEquals(slug, "abc", node(id).text?.toString())
             // Still only in the hint text, which TalkBack does not read for
             // a field with a value (FL-015); the walk records that.
@@ -84,6 +112,7 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
         assertEquals("Date of birth\nDD/MM/YYYY", hint(id))
         // One character in, and it is gone.
         type(id, "1")
+        closeKeyboard("bad-placeholder-format")
         assertEquals("Date of birth", hint(id))
         waitForCount("bad-placeholder-format", 1)
     }
@@ -129,6 +158,9 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
             for ((marker, find) in elements) {
                 Log.i(talkBackTag, "FOCUS $marker")
                 talkBackFocus(marker, find)
+                // Fixed waits, kept as in the other walks: the speech is read
+                // from TalkBack's log afterwards, so each wait is the window
+                // in which an element's speech is heard.
                 Thread.sleep(6_000)
             }
             val field = filled[slug]
@@ -139,7 +171,7 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
                 // Put the keyboard away: with it up, TalkBack said nothing,
                 // or only "Editing", when its focus came back to the field
                 // (S15).
-                device.pressBack()
+                closeKeyboard(slug)
                 Thread.sleep(5_000)
                 // Typing leaves TalkBack on the field, and focusing a node
                 // that already has focus says nothing. Move away first.
@@ -149,8 +181,12 @@ class F02InputInstructionsTest : TechniqueTest("F02") {
                 talkBackFocus("$field (filled)") { node(field) }
                 Thread.sleep(6_000)
                 // The field no longer gives the instruction; the helper text
-                // next to it is still there to be read. This is the
-                // workaround for FL-015 that the doc relies on.
+                // is still an element of its own, and TalkBack reads it whole
+                // when focus is put on it. Focus is moved by action: a swipe,
+                // Alt or Meta with an arrow key, and `input swipe` from the
+                // filled field did not move TalkBack focus on the emulator
+                // (tried in F02 as in S03), so whether a swipe lands here is
+                // not tested.
                 Log.i(talkBackTag, "FOCUS f02-$slug-rule-filled")
                 talkBackFocus("the rule of $slug (filled)") { withName(RULE).single() }
                 Thread.sleep(6_000)

@@ -478,12 +478,13 @@ yet), **Fixed in x.y** (verified on that version).
   or the instruction starts being spoken). VoiceOver on iOS and on the web
   still read the hint of a filled field. What F02 does about it: the
   visible instruction is kept as an element of its own (helper text, a
-  form row's help text, or a `Text`), which TalkBack reads as a stop next
-  to the field, whole, before and after the field has a value
-  (`f02-good-helper-rule` and `f02-good-helper-rule-filled`, read straight
-  after the filled field). That reaches the instruction; it does not put
-  it back on the field, and a user has to move on past the field to hear
-  it.
+  form row's help text, or a `Text`). It is still an element of its own
+  in the tree after the field has a value, and TalkBack reads the whole
+  instruction when focus is put on it (`f02-good-helper-rule` and
+  `f02-good-helper-rule-filled`). Whether a swipe from the filled field
+  lands on it was not tested: swipes and Alt or Meta arrow-key commands
+  did not move TalkBack focus on the emulator, in F02 as in S03. It does
+  not put the instruction back on the field.
 - Upstream issue: not searched yet.
 
 ## FL-016
@@ -1841,9 +1842,9 @@ yet), **Fixed in x.y** (verified on that version).
   the field in `MergeSemantics`:
   `Semantics(hint: rule, child: TextField(decoration: InputDecoration(helperText: rule, ...)))`
   (`/t/F02/good-helper`). The field is read with its instruction on all
-  three platforms, and the helper stays an element of its own, which on
-  Android is the only way to reach the instruction once the field has a
-  value. To give such a field a test identifier, put `identifier:` on that
+  three platforms, and the helper stays an element of its own. On Android
+  that is where the instruction is left once the field has a value
+  (TalkBack reads it when focus is put on it; see [FL-015](#fl-015)). To give such a field a test identifier, put `identifier:` on that
   same `Semantics`; it joins the field's node
   ([FL-043](#fl-043) does not affect a `TextField`).
 - How to read this entry: Flutter has not added this yet. The comment in
