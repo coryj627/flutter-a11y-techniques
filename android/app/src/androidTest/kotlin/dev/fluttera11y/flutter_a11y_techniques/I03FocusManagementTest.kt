@@ -44,6 +44,11 @@ private val NAMES = mapOf(
 
 // Enter on Remove Lake loop: the stop it leaves focus on ("none" while it
 // is on the question's own scope, which has no node), and the next Tab's.
+// How long the walk listens after TalkBack's focus has settled. When a
+// route closes TalkBack first reads the screen's title, which takes a few
+// seconds, and only then the control its focus is on.
+private const val SPEECH_MILLIS = 8_000L
+
 private val OPENS = mapOf(
     "good-material" to ("none" to "cancel"),
     "good-cupertino" to ("none" to "confirm"),
@@ -318,17 +323,17 @@ class I03FocusManagementTest : TechniqueTest("I03") {
             Thread.sleep(8_000)
             activate("i03-$slug-remove-lake", "i03-$slug-opened")
             val opened = talkBackSettlesOn(5_000) { inQuestion(slug, it) }
-            Thread.sleep(2_000)
+            Thread.sleep(SPEECH_MILLIS)
             Log.i(talkBackTag, "END $slug-opened")
             activate("i03-$slug-cancel", "i03-$slug-cancelled")
             val cancelled = talkBackSettlesOn(6_000) { it == "i03-$slug-remove-lake" }
-            Thread.sleep(2_000)
+            Thread.sleep(SPEECH_MILLIS)
             Log.i(talkBackTag, "END $slug-cancelled")
             activate("i03-$slug-remove-lake")
             Thread.sleep(3_000)
             activate("i03-$slug-confirm", "i03-$slug-removed")
             val removed = talkBackSettlesOn(8_000) { it == "i03-$slug-remove-summit" }
-            Thread.sleep(2_000)
+            Thread.sleep(SPEECH_MILLIS)
             Log.i(talkBackTag, "END $slug")
             Log.i("I03FOCUS", "$slug | opened: $opened | cancelled: $cancelled | removed: $removed")
             assertTrue("$slug: TalkBack went into the question, to $opened",

@@ -2293,8 +2293,12 @@ yet), **Fixed in x.y** (verified on that version).
   the row and moving focus (probe `s2`), or move keyboard focus at once
   and send a `FocusSemanticEvent` to the next row's button a second later
   (probe `s3`). The I03 good examples do the second; verified in the I03
-  TalkBack walk. Both depend on timing, since the framework gives no
-  signal when its request has been sent.
+  TalkBack walk, where TalkBack read the screen's title and then the next
+  button. Both depend on timing, since the framework gives no signal when
+  its request has been sent. On iOS, where `requestFocus` does not move
+  VoiceOver at all, the same event put VoiceOver on the next button too
+  (the I03 VoiceOver walk on iOS); whether an earlier event would be
+  undone there was not measured.
 - How to read this entry: Flutter has not added a way to tell the
   Navigator where the screen reader should go when a route closes, or to
   stop its request, yet.

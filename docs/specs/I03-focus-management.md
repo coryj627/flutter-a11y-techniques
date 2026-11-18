@@ -115,9 +115,9 @@ opened the dialog can be gone when it closes.
 
 | Slug | Variant | What it shows | Mechanism | Reqs |
 | --- | --- | --- | --- | --- |
-| `good-material` | Material | The question in an `AlertDialog`; after a removal, focus on the next trail's button | `showDialog`: the route takes focus when it opens and the screen gives it back to the button when it closes; `FocusNode.requestFocus` on the next button after a removal | R1 to R5 |
-| `good-cupertino` | Cupertino | The same in a `CupertinoActionSheet`, the Cupertino way to confirm a removal | `showCupertinoModalPopup`, the same `requestFocus`; Enter added on the web where the Cupertino controls handle Space only ([FL-002](../flutter-limitations.md#fl-002)) | R1 to R5 |
-| `good-widgets` | Widgets layer | The question drawn by hand in a general dialog, with focus put on Cancel when it opens | `showGeneralDialog`, `autofocus` on Cancel, the same `requestFocus` | R1 to R5 |
+| `good-material` | Material | The question in an `AlertDialog`; after a removal, focus on the next trail's button | `showDialog`: the route takes focus when it opens and the screen gives it back to the button when it closes; `FocusNode.requestFocus` on the next button after a removal, and a `FocusSemanticEvent` to it a second later, once the framework has made its own request ([FL-442](../flutter-limitations.md#fl-442)) | R1 to R5 |
+| `good-cupertino` | Cupertino | The same in a `CupertinoActionSheet`, the Cupertino way to confirm a removal | `showCupertinoModalPopup`, the same `requestFocus` and event; Enter added on the web where the Cupertino controls handle Space only ([FL-002](../flutter-limitations.md#fl-002)) | R1 to R5 |
+| `good-widgets` | Widgets layer | The question drawn by hand in a general dialog, with focus put on Cancel when it opens | `showGeneralDialog`, `autofocus` on Cancel, the same `requestFocus` and event | R1 to R5 |
 
 A `CupertinoAlertDialog` is not used: its actions take no keyboard focus
 ([FL-440](../flutter-limitations.md#fl-440)), so a keyboard user cannot
@@ -160,7 +160,7 @@ about that trail.
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good: guidelines in light and dark, with and without the question open; 200% text at 320 by 640 with the question open. Every example: three named Remove buttons, not focused, and "Saved: 3"; a tap asks and Remove removes. 3.2.1: Tab onto each Remove button asks nothing, and Enter asks (the positive control); in `bad-opens-on-focus` the Tab onto Remove Ridge trail alone asks, after a Tab onto Back that did not, and focus coming back from Cancel does not ask again. 2.4.3: Enter on Remove Lake loop puts focus in the question (the route's scope, then the first control; Cancel itself in `good-widgets`); Cancel puts it back on Remove Lake loop and Tab goes on to Remove Summit path; Remove puts it on Remove Summit path, and on the button before when the last trail goes. `bad-focus-left-behind`: focus stays on Remove Lake loop's node, the next Tab goes to Remove Summit path's, then Cancel; after Cancel focus is on the screen and on no control, and Tab goes to Back. The screen reader, as far as a widget test can see it: on Android and iOS, after Cancel the framework sends the platform a request to put the screen reader's focus on Remove Lake loop. The SDK alone: a `CupertinoAlertDialog`'s actions take no focus (FL-440); a removed control hands focus to the control focused before it, past its neighbour |
+| L1 widget tests | Good: guidelines in light and dark, with and without the question open; 200% text at 320 by 640 with the question open. Every example: three named Remove buttons, not focused, and "Saved: 3"; a tap asks and Remove removes. 3.2.1: Tab onto each Remove button asks nothing, and Enter asks (the positive control); in `bad-opens-on-focus` the Tab onto Remove Ridge trail alone asks, after a Tab onto Back that did not, and focus coming back from Cancel does not ask again. 2.4.3: Enter on Remove Lake loop puts focus in the question (the route's scope, then the first control; Cancel itself in `good-widgets`); Cancel puts it back on Remove Lake loop and Tab goes on to Remove Summit path; Remove puts it on Remove Summit path, and on the button before when the last trail goes. `bad-focus-left-behind`: focus stays on Remove Lake loop's node, the next Tab goes to Remove Summit path's, then Cancel; after Cancel focus is on the screen and on no control, and Tab goes to Back. The screen reader, as far as a widget test can see it: on Android and iOS, after Cancel the framework sends the platform a request to put the screen reader's focus on Remove Lake loop; after Remove, that request, for a button that is gone, and then the example's own for Remove Summit path. The SDK alone: a `CupertinoAlertDialog`'s actions take no focus (FL-440); a removed control hands focus to the control focused before it, past its neighbour; a `CupertinoActionSheetAction` has no action for the web's Enter (FL-002) and `good-cupertino`'s do; an action sheet's own text colours fail the contrast check (FL-441) |
 | L3 web | The same keyboard stops from `document.activeElement`; where the DOM focus is when each question opens (the dialog's title, nothing for the action sheet, Cancel for the general dialog); a stop behind the question named by Enter; focus put on an element and a click, as VoiceOver gives them, bring focus back to Remove Lake loop and on to Remove Summit path; in `bad-opens-on-focus` DOM focus alone asks |
 | L3 Android | Names, class, and count; the same keyboard stops by `isFocused`, with Shift+Tab after a removal; a stop behind the question named by Enter |
 | L3 iOS | Labels, type, and count; every stop named by what Space does |
@@ -194,16 +194,22 @@ screen reader's focus was measured.
   `_RouteEntry.handleDidPopNext`; the request is asserted in the widget
   tests). It is the screen reader's own last position that comes back:
   on iOS, with the keyboard opening and closing a dialog, VoiceOver went
-  back to where it had been, not to the button the keyboard used.
+  back to where it had been, not to the button the keyboard used. What
+  they said (the transcripts): when the question opened TalkBack read the
+  route's name ("Alert"; nothing for the general dialog, which has none)
+  and the title, and when it closed the screen's title and then the
+  button; VoiceOver on iOS read the title, then the button.
 - **On the web the screen reader follows DOM focus, and DOM focus follows
   Flutter's keyboard focus** (VoiceOver in Chromium). There is no
-  separate request: the Navigator sends none on the web. When a dialog
-  opened, the web engine put DOM focus on its title, since no node asked
+  separate request: the Navigator sends none on the web. When a dialog with
+  no `autofocus` opened, the web engine put DOM focus on its title, since no node asked
   for it (`SemanticRouteBase._setDefaultFocus`, read in the source), and
   VoiceOver read the dialog; for the action sheet it put it nowhere and
   VoiceOver moved onto the sheet as a whole; for a bottom sheet, onto its
   barrier, "Scrim" (C10). When the dialog closed, DOM focus came back to
-  the button with Flutter's focus, and VoiceOver with it.
+  the button with Flutter's focus, and VoiceOver with it. After a removal
+  it went to the next button with keyboard focus; in `good-widgets` it
+  read the top of the page first (transcript).
 - **When the control with focus is removed, Flutter gives keyboard focus
   to the control focused before it in the same screen**, not to a
   neighbour (keyboard; widget test, web, Android; read in the source:
