@@ -1,0 +1,170 @@
+
+
+==== DOM
+flt-semantics {} [0,0 1280x720] pe=none
+  flt-semantics {} [0,0 1280x720] pe=none
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=auto
+    flt-semantics {} [0,0 1280x720] pe=none
+      flt-semantics {} [0,0 1280x720] pe=none
+        flt-semantics {"role":"group"} [0,0 1280x696] pe=none
+          flt-semantics {"aria-label":"p01 Volume","flt-semantics-identifier":"p01"} [0,0 1280x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,2 1280x44] pe=
+          flt-semantics {} [0,62 110x20] pe=auto
+            span {} [0,62 110x20] pe=none text="p02 Volume"
+          flt-semantics {"aria-label":"p02 Volume","flt-semantics-identifier":"p02"} [110,48 1170x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [112,50 1170x44] pe=
+          flt-semantics {} [0,110 110x20] pe=auto
+            span {} [0,110 110x20] pe=none text="p03 Volume"
+          flt-semantics {"flt-semantics-identifier":"p03"} [110,96 1170x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [112,98 1170x44] pe=
+          flt-semantics {"aria-label":"p04 Volume\n4","flt-semantics-identifier":"p04"} [0,144 1280x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,146 1280x44] pe=
+          flt-semantics {} [0,206 110x20] pe=auto
+            span {} [0,206 110x20] pe=none text="p04b"
+          flt-semantics {"aria-label":"4","flt-semantics-identifier":"p04b"} [110,192 1170x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [112,194 1170x44] pe=
+          flt-semantics {"aria-label":"p05 Volume","flt-semantics-identifier":"p05"} [0,240 1280x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"4 of 10","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,242 1280x44] pe=
+          flt-semantics {"aria-label":"p06 Volume","flt-semantics-identifier":"p06"} [0,288 1280x44] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,290 1280x40] pe=
+          flt-semantics {} [0,346 110x20] pe=auto
+            span {} [0,346 110x20] pe=none text="p07"
+          flt-semantics {"aria-label":"p07 Volume","flt-semantics-identifier":"p07"} [110,332 1170x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [112,334 1170x44] pe=
+          flt-semantics {} [0,394 110x20] pe=auto
+            span {} [0,394 110x20] pe=none text="p08"
+          flt-semantics {"aria-label":"p08 Volume","flt-semantics-identifier":"p08"} [110,380 1170x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [112,382 1170x44] pe=
+          flt-semantics {"tabindex":"0","flt-semantics-identifier":"p09"} [0,428 1280x48] pe=auto
+            span {} [0,428 1275x48] pe=none text="p09 Volume 40%"
+          flt-semantics {"aria-label":"p10 Price","flt-semantics-identifier":"p10"} [0,476 1280x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"20%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,478 1280x44] pe=
+          flt-semantics {"aria-label":"p11 Rating","flt-semantics-identifier":"p11"} [0,524 1280x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,526 1280x44] pe=
+          flt-semantics {"aria-label":"p12 Volume","flt-semantics-identifier":"p12"} [0,572 1280x48] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,574 1280x44] pe=
+          flt-semantics {"aria-label":"p13 Volume","flt-semantics-identifier":"p13"} [0,620 1280x44] pe=all
+            input {"type":"range","role":"slider","tabindex":"0","aria-valuenow":"1","aria-valuetext":"40%","max":"2","aria-valuemax":"2","min":"0","aria-valuemin":"0"} [2,622 1280x40] pe=
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p14"} [0,664 123x32] pe=all text="p14 Press 0"
+    flt-semantics {} [0,0 1280x720] pe=auto
+==== ARIA snapshot
+- group:
+  - slider: "1"
+  - text: p02 Volume
+  - slider: "1"
+  - text: p03 Volume
+  - slider: "1"
+  - slider: "1"
+  - text: p04b
+  - slider: "1"
+  - slider: "1"
+  - slider: "1"
+  - text: p07
+  - slider: "1"
+  - text: p08
+  - slider: "1"
+  - text: p09 Volume 40%
+  - slider: "1"
+  - slider: "1"
+  - slider: "1"
+  - slider: "1"
+  - button "p14 Press 0"
+p01: 1 slider(s)
+p02: 1 slider(s)
+p03: 1 slider(s)
+p04: 1 slider(s)
+p04b: 1 slider(s)
+p05: 1 slider(s)
+p06: 1 slider(s)
+p07: 1 slider(s)
+p08: 1 slider(s)
+p09: 0 slider(s)
+p10: 1 slider(s)
+p11: 1 slider(s)
+p12: 1 slider(s)
+p13: 1 slider(s)
+==== full-screen leaf elements: 10
+<flt-semantics id="flt-semantic-node-72" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 10; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+<flt-semantics id="flt-semantic-node-71" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 9; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+<flt-semantics id="flt-semantic-node-70" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 8; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+<flt-semantics id="flt-semantic-node-69" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 7; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+<flt-semantics id="flt-semantic-node-68" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 6; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+<flt-semantics id="flt-semantic-node-67" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 5; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+<flt-semantics id="flt-semantic-node-66" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 4; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+<flt-semantics id="flt-semantic-node-65" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 3; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+<flt-semantics id="flt-semantic-node-64" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 2; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+<flt-semantics id="flt-semantic-node-73" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 11; width: 1280px; height: 720px; top: 0px; left: 0px;"></flt-semantics>
+elementFromPoint at p14: FLT-SEMANTICS  role=null <flt-semantics id="flt-semantic-node-73" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 11
+elementFromPoint at p01: FLT-SEMANTICS  role=null <flt-semantics id="flt-semantic-node-73" style="position: absolute; overflow: visible; pointer-events: auto; z-index: 11
+AX group name="" value=undefined {}
+AX generic name="p01 Volume" value=undefined {}
+AX generic name="p02 Volume" value=undefined {}
+AX generic name="p04 Volume 4" value=undefined {}
+AX generic name="4" value=undefined {}
+AX generic name="p05 Volume" value=undefined {}
+AX generic name="p06 Volume" value=undefined {}
+AX generic name="p07 Volume" value=undefined {}
+AX generic name="p08 Volume" value=undefined {}
+AX generic name="p10 Price" value=undefined {}
+AX generic name="p11 Rating" value=undefined {}
+AX generic name="p12 Volume" value=undefined {}
+AX generic name="p13 Volume" value=undefined {}
+AX button name="p14 Press 0" value=undefined {"focusable":true}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+AX slider name="" value=1 {"invalid":"false","focusable":true,"settable":true,"orientation":"horizontal","valuemin":0,"valuemax":2,"valuetext":"1"}
+checked click on p14: locator.click: Timeout 3000ms exceeded. | Call log: |   - waiting for locator('[flt-semantics-identifier="p14"]') |     - locator resolved to <flt-semantics tabindex="0" role="button" flt-tappable="" id="flt-semantic-node-61" flt-semantics-identifier="p14">p14 Press 0</flt-semantics> |   - attempting click action |     2 × waiting for element to be visible, enabled and stable
+after checked click: p14 Press 0 / null
+after mouse click: p14 Press 1
+after DOM click: p14 Press 2
+p01 after track click at 80%: 80% disabled=false
+p01 input disabled 1.4 s after the click: false
+after Tab: INPUT role=slider p01
+p01 ArrowRight: 80% -> 90% (focus INPUT role=slider p01)
+p01 ArrowUp: 90% -> 100% (focus INPUT role=slider p01)
+p01 ArrowLeft: 100% -> 90% (focus INPUT role=slider p01)
+p01 ArrowDown: 90% -> 80% (focus INPUT role=slider p01)
+p01 Home: 80% -> 70% (focus INPUT role=slider p01)
+p01 End: 70% -> 80% (focus INPUT role=slider p01)
+p01 PageUp: 80% -> 80% (focus INPUT role=slider p01)
+p01 PageDown: 80% -> 80% (focus INPUT role=slider p01)
+tab 0: INPUT role=slider p02
+tab 1: INPUT role=slider p03
+tab 2: INPUT role=slider p04
+tab 3: INPUT role=slider p04b
+tab 4: INPUT role=slider p05
+tab 5: INPUT role=slider p10
+tab 6: INPUT role=slider p10
+tab 7: INPUT role=slider p11
+tab 8: INPUT role=slider p12
+tab 9: FLT-SEMANTICS role=button p14
+tab 10: BODY role=null null
+tab 11: FLUTTER-VIEW role=null null
+tab 12: INPUT role=slider p01
+tab 13: INPUT role=slider p02
+tab 14: INPUT role=slider p03
+tab 15: INPUT role=slider p04
+p07 ArrowRight on focused input: 40% -> 50% min=1 now=2 max=3
+p08 ArrowRight on focused input: 40% -> 50% min=1 now=2 max=3
+p06 ArrowRight on focused input: 40% -> 50% min=1 now=2 max=3
+p05 ArrowRight on focused input: 4 of 10 -> 5 of 10 min=0 now=1 max=2
+p11 ArrowRight on focused input: 40% -> 50% min=0 now=1 max=2
+

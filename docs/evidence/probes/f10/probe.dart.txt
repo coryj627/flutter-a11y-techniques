@@ -1,0 +1,159 @@
+// F10 probe (throwaway, not committed): sliders.
+//
+// Every fixture is identified "pNN" and its visible text starts with "pNN".
+// The Material sliders have ten divisions and start at 40%, so one step is
+// 10%.
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+import 'catalog/test_id.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  final Map<String, double> v = {};
+  RangeValues range = const RangeValues(0.2, 0.6);
+  int presses = 0;
+
+  double d(String k, [double start = 0.4]) => v[k] ?? start;
+  void set(String k, double x) => setState(() => v[k] = x);
+
+  Widget row(String text, Widget control) => Row(
+    children: [
+      SizedBox(width: 110, child: Text(text)),
+      Expanded(child: control),
+    ],
+  );
+
+  Widget slider(String k, {String? label, SemanticFormatterCallback? fmt, bool enabled = true}) => Slider(
+    value: d(k),
+    divisions: 10,
+    label: label,
+    semanticFormatterCallback: fmt,
+    onChanged: enabled ? (x) => set(k, x) : null,
+  );
+
+  // A drawn bar: a track and a filled part, no semantics of its own.
+  Widget bar(double value) => ExcludeSemantics(
+    child: SizedBox(
+      height: 48,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: FractionallySizedBox(
+          widthFactor: value,
+          child: Container(height: 8, color: Colors.blue),
+        ),
+      ),
+    ),
+  );
+
+  Widget custom(String k, String label, {required bool sliderFlag}) {
+    final value = d(k);
+    String pct(double x) => '${(x.clamp(0, 1) * 100).round()}%';
+    return Semantics(
+      slider: sliderFlag ? true : null,
+      label: label,
+      value: pct(value),
+      increasedValue: pct(value + 0.1),
+      decreasedValue: pct(value - 0.1),
+      onIncrease: () => set(k, (value + 0.1).clamp(0, 1)),
+      onDecrease: () => set(k, (value - 0.1).clamp(0, 1)),
+      child: bar(value),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 01 Material Slider merged with its text
+              TestId('p01', child: MergeSemantics(child: row('p01 Volume', slider('01')))),
+              // 02 Semantics(label:) around a Slider, the text excluded
+              row(
+                'p02 Volume',
+                TestId('p02', child: Semantics(label: 'p02 Volume', child: slider('02'))),
+              ),
+              // 03 a bare Slider, the text beside it not joined
+              row('p03 Volume', TestId('p03', child: slider('03'))),
+              // 04 Slider.label (the value indicator text) and the text merged
+              TestId('p04', child: MergeSemantics(child: row('p04 Volume', slider('04', label: '${(d('04') * 10).round()}')))),
+              // 04b Slider.label alone, no text
+              row('p04b', TestId('p04b', child: slider('04b', label: '${(d('04b') * 10).round()}'))),
+              // 05 semanticFormatterCallback, merged
+              TestId('p05', child: MergeSemantics(child: row('p05 Volume', slider('05', fmt: (x) => '${(x * 10).round()} of 10')))),
+              // 06 CupertinoSlider merged with its text
+              TestId(
+                'p06',
+                child: MergeSemantics(
+                  child: row('p06 Volume', CupertinoSlider(value: d('06'), divisions: 10, onChanged: (x) => set('06', x))),
+                ),
+              ),
+              // 07 custom: Semantics(slider: true, label, value, increased, decreased, onIncrease, onDecrease)
+              row('p07', TestId('p07', child: custom('07', 'p07 Volume', sliderFlag: true))),
+              // 08 the same without slider: true
+              row('p08', TestId('p08', child: custom('08', 'p08 Volume', sliderFlag: false))),
+              // 09 disabled Slider, merged
+              TestId('p09', child: MergeSemantics(child: row('p09 Volume', slider('09', enabled: false)))),
+              // 10 RangeSlider, merged
+              TestId(
+                'p10',
+                child: MergeSemantics(
+                  child: row(
+                    'p10 Price',
+                    RangeSlider(values: range, divisions: 10, onChanged: (r) => setState(() => range = r)),
+                  ),
+                ),
+              ),
+              // 11 0 to 10 slider with no formatter: the value is a percentage
+              TestId(
+                'p11',
+                child: MergeSemantics(
+                  child: row('p11 Rating', Slider(value: d('11', 4), max: 10, divisions: 10, onChanged: (x) => set('11', x))),
+                ),
+              ),
+              // 12 value indicator never shown
+              TestId(
+                'p12',
+                child: MergeSemantics(
+                  child: row(
+                    'p12 Volume',
+                    SliderTheme(
+                      data: const SliderThemeData(showValueIndicator: ShowValueIndicator.never),
+                      child: slider('12'),
+                    ),
+                  ),
+                ),
+              ),
+              // 13 Slider.adaptive merged
+              TestId('p13', child: MergeSemantics(child: row('p13 Volume', Slider.adaptive(value: d('13'), divisions: 10, onChanged: (x) => set('13', x))))),
+              // 14 a button beside the sliders, with a count
+              TestId(
+                'p14',
+                child: FilledButton(
+                  onPressed: () => setState(() => presses++),
+                  child: Text('p14 Press $presses'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

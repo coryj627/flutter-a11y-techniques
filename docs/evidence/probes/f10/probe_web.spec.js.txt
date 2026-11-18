@@ -1,0 +1,136 @@
+// Throwaway: F10 probe dump. Not committed.
+import { test, expect } from '@playwright/test';
+
+const id = (page, x) => page.locator(`[flt-semantics-identifier="${x}"]`);
+
+async function dump(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const host = document.querySelector('flt-semantics-host');
+    const walk = (el, depth) => {
+      const attrs = {};
+      for (const a of el.attributes) if (!['style', 'id'].includes(a.name)) attrs[a.name] = a.value;
+      const r = el.getBoundingClientRect();
+      const pe = el.style.pointerEvents;
+      const text = el.childElementCount === 0 && el.textContent ? ` text="${el.textContent}"` : '';
+      out.push(`${'  '.repeat(depth)}${el.tagName.toLowerCase()} ${JSON.stringify(attrs)} [${Math.round(r.x)},${Math.round(r.y)} ${Math.round(r.width)}x${Math.round(r.height)}] pe=${pe}${el.disabled ? ' DISABLED' : ''}${text}`);
+      for (const c of el.children) walk(c, depth + 1);
+    };
+    for (const c of host.children) walk(c, 0);
+    return out.join('\n');
+  });
+}
+
+test('dump', async ({ page }) => {
+  await page.goto('/');
+  await id(page, 'p14').waitFor();
+  await page.waitForTimeout(500);
+  console.log('==== DOM\n' + (await dump(page)));
+  console.log('==== ARIA snapshot\n' + (await page.locator('flt-semantics-host').ariaSnapshot()));
+  for (const x of ['p01', 'p02', 'p03', 'p04', 'p04b', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10', 'p11', 'p12', 'p13']) {
+    const sliders = page.locator(`[flt-semantics-identifier="${x}"] [role="slider"], [flt-semantics-identifier="${x}"][role="slider"]`);
+    const n = await sliders.count();
+    const names = [];
+    for (let i = 0; i < n; i++) {
+      const s = sliders.nth(i);
+      names.push(JSON.stringify({ name: await s.evaluate((e) => e.getAttribute('aria-label')), acc: await page.evaluate(() => null) }));
+    }
+    console.log(`${x}: ${n} slider(s)`);
+  }
+  // Full-screen empty elements.
+  const big = await page.evaluate(() => [...document.querySelectorAll('flt-semantics')].filter((e) => {
+    const r = e.getBoundingClientRect();
+    return r.width >= window.innerWidth - 1 && r.height >= window.innerHeight - 1 && e.childElementCount === 0;
+  }).map((e) => e.outerHTML.slice(0, 200)));
+  console.log(`==== full-screen leaf elements: ${big.length}\n${big.join('\n')}`);
+  // Hit testing at the centre of the button and of the first slider.
+  for (const x of ['p14', 'p01']) {
+    const box = await id(page, x).boundingBox();
+    const hit = await page.evaluate(([cx, cy]) => {
+      const e = document.elementFromPoint(cx, cy);
+      return e ? `${e.tagName} ${e.getAttribute('flt-semantics-identifier') ?? ''} role=${e.getAttribute('role')} ${e.outerHTML.slice(0, 120)}` : null;
+    }, [box.x + box.width / 2, box.y + box.height / 2]);
+    console.log(`elementFromPoint at ${x}: ${hit}`);
+  }
+});
+
+test('accessible names', async ({ page }) => {
+  await page.goto('/');
+  await id(page, 'p14').waitFor();
+  const snap = await page.accessibility?.snapshot?.();
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  for (const n of nodes) {
+    const role = n.role?.value;
+    if (role === 'slider' || role === 'group' || role === 'button' || role === 'generic' && n.name?.value) {
+      const props = Object.fromEntries((n.properties ?? []).map((p) => [p.name, p.value?.value]));
+      console.log(`AX ${role} name=${JSON.stringify(n.name?.value)} value=${JSON.stringify(n.value?.value)} ${JSON.stringify(props)}`);
+    }
+  }
+});
+
+test('pointer and keyboard', async ({ page }) => {
+  await page.goto('/');
+  await id(page, 'p14').waitFor();
+  await page.waitForTimeout(500);
+  // A checked click on the button.
+  let checked = 'ok';
+  try {
+    await id(page, 'p14').click({ timeout: 3000 });
+  } catch (e) {
+    checked = e.message.split('\n').slice(0, 6).join(' | ');
+  }
+  console.log(`checked click on p14: ${checked}`);
+  console.log(`after checked click: ${await id(page, 'p14').textContent()} / ${await id(page, 'p14').getAttribute('aria-label')}`);
+  // A real mouse click at the button's position.
+  const box = await id(page, 'p14').boundingBox();
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await page.waitForTimeout(500);
+  console.log(`after mouse click: ${await page.locator('flt-semantics-host').getByRole('button').last().textContent()}`);
+  // A DOM click event on the button element, as a screen reader's press sends.
+  await id(page, 'p14').dispatchEvent('click');
+  await page.waitForTimeout(500);
+  console.log(`after DOM click: ${await page.locator('flt-semantics-host').getByRole('button').last().textContent()}`);
+  // Mouse click on the slider track at 80%.
+  const sbox = await id(page, 'p01').boundingBox();
+  await page.mouse.click(sbox.x + 110 + (sbox.width - 110) * 0.8, sbox.y + sbox.height / 2);
+  await page.waitForTimeout(600);
+  console.log(`p01 after track click at 80%: ${await id(page, 'p01').locator('input').getAttribute('aria-valuetext')} disabled=${await id(page, 'p01').locator('input').evaluate((e) => e.disabled)}`);
+  await page.waitForTimeout(800);
+  console.log(`p01 input disabled 1.4 s after the click: ${await id(page, 'p01').locator('input').evaluate((e) => e.disabled)}`);
+  // Keyboard: Tab to the first slider, then keys.
+  await page.keyboard.press('Tab');
+  await page.waitForTimeout(200);
+  const active = () => page.evaluate(() => {
+    const e = document.activeElement;
+    return `${e.tagName} role=${e.getAttribute('role')} ${e.parentElement?.getAttribute('flt-semantics-identifier') ?? e.getAttribute('flt-semantics-identifier')}`;
+  });
+  console.log(`after Tab: ${await active()}`);
+  for (const key of ['ArrowRight', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown']) {
+    const before = await id(page, 'p01').locator('input').getAttribute('aria-valuetext');
+    await page.keyboard.press(key);
+    await page.waitForTimeout(300);
+    console.log(`p01 ${key}: ${before} -> ${await id(page, 'p01').locator('input').getAttribute('aria-valuetext')} (focus ${await active()})`);
+  }
+  // Tab through everything.
+  for (let i = 0; i < 16; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(150);
+    console.log(`tab ${i}: ${await active()}`);
+  }
+});
+
+test('custom sliders by keyboard', async ({ page }) => {
+  await page.goto('/');
+  await id(page, 'p14').waitFor();
+  for (const x of ['p07', 'p08', 'p06', 'p05', 'p11']) {
+    const input = id(page, x).locator('input').first();
+    if ((await input.count()) === 0) { console.log(`${x}: no input`); continue; }
+    await input.focus();
+    await page.waitForTimeout(200);
+    const before = await input.getAttribute('aria-valuetext');
+    await page.keyboard.press('ArrowRight');
+    await page.waitForTimeout(300);
+    console.log(`${x} ArrowRight on focused input: ${before} -> ${await input.getAttribute('aria-valuetext')} min=${await input.getAttribute('aria-valuemin')} now=${await input.getAttribute('aria-valuenow')} max=${await input.getAttribute('aria-valuemax')}`);
+  }
+});

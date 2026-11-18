@@ -71,8 +71,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-025](#fl-025) | iOS accessibility APIs and settings with no Flutter counterpart | iOS | Confirmed |
 | [FL-026](#fl-026) | No semantics roles for grid, tree, treegrid, feed, separator, meter, or math | All | Confirmed |
 | [FL-027](#fl-027) | A progress indicator whose value has a percent sign reports an empty range on Android | Android | Observed |
-| [FL-028](#fl-028) | A slider has no accessible name on web | Web | Confirmed |
-| [FL-029](#fl-029) | A Material `Slider` adds an empty full-screen element that takes pointer events on web | Web | Observed |
+| [FL-028](#fl-028) | A slider has no accessible name on web | Web | Confirmed; fixed in 3.50 by its source, not verified |
+| [FL-029](#fl-029) | A Material `Slider` adds an empty full-screen element that takes pointer events on web | Web | Confirmed |
 | [FL-030](#fl-030) | A label on an `Image` inside a button does not name the button | Android, iOS | Confirmed (source read) |
 | [FL-031](#fl-031) | An `Image` left in a button's semantics makes the button an image as well | Android, iOS | Confirmed |
 | [FL-032](#fl-032) | `Semantics(link: true)` without `linkUrl` is a link on iOS only | Android, Web | Observed (source read) |
@@ -95,6 +95,14 @@ yet), **Fixed in x.y** (verified on that version).
 | **FL-070 to FL-099** | Wave 10, the limitation entries | | |
 | **FL-100 to FL-199** | Wave 1, forms | | |
 | [FL-100](#fl-100) | TalkBack says "checked" as well as "on" for a switch that is on | Android | Confirmed; cause not found |
+| [FL-120](#fl-120) | A `CupertinoSlider` takes no keyboard focus | All | Confirmed |
+| [FL-121](#fl-121) | A `CupertinoSlider` moves only when its thumb is dragged | All | Confirmed |
+| [FL-122](#fl-122) | A Material `Slider` has no Home or End keys, and on the web those keys move it one step | All | Confirmed |
+| [FL-123](#fl-123) | `Slider.label`, the text shown above the thumb, is added to the slider's name | All | Confirmed |
+| [FL-124](#fl-124) | A disabled slider is not a slider | All | Confirmed (source read) |
+| [FL-125](#fl-125) | On the web a slider's minimum, maximum, and current value are stand-ins | Web | Confirmed |
+| [FL-126](#fl-126) | A `RangeSlider` has two unnamed sliders on the web and one value on Android when merged | Android, iOS, Web | Observed |
+| [FL-127](#fl-127) | On the web a slider is disabled for half a second after any pointer event, and VoiceOver calls it "dimmed" | Web | Confirmed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
@@ -747,8 +755,10 @@ yet), **Fixed in x.y** (verified on that version).
 
 - Status: Confirmed, Flutter 3.47.5. Found in the S01 probe
   (`docs/evidence/probes/s01/`); asserted by
-  `web_tests/s01_accessible_names.spec.js` (`bad-slider-name-web`) and heard
-  in `docs/evidence/S01/voiceover-web.md`. Engine source read:
+  `web_tests/s01_accessible_names.spec.js` (`bad-slider-name-web`) and, for
+  every F10 example, by `web_tests/f10_slider.spec.js` ("every slider"),
+  and heard in `docs/evidence/S01/voiceover-web.md` and
+  `docs/evidence/F10/voiceover-web.md`. Engine source read:
   `lib/web_ui/lib/src/engine/semantics/incrementable.dart`.
 - WCAG: 4.1.2 Name, Role, Value; 1.3.1 Info and Relationships.
 - What happens: the framework gives the slider's node its label. On web the
@@ -758,7 +768,10 @@ yet), **Fixed in x.y** (verified on that version).
   the value, and it gets no `aria-label` and no `aria-labelledby`. Chromium
   computes an empty accessible name for the slider. The same happens for
   `Semantics(label:)` around a `Slider`, for `MergeSemantics` around a
-  `Slider` and its text, and for `CupertinoSlider`.
+  `Slider` and its text, for `CupertinoSlider`, and (F10 probe) for a
+  slider built from `Semantics(slider: true, label:, onIncrease:, ...)`
+  with or without the slider flag: every node with an increase or
+  decrease action.
 - Not affected: Android (`SeekBar` with description "40%, Volume") and iOS
   (label "Volume", value "40%"). Checkbox, switch, and radio elements on web
   carry `aria-label` on the element that has the role.
@@ -768,47 +781,89 @@ yet), **Fixed in x.y** (verified on that version).
   in Chromium, moving with the VoiceOver cursor: "Volume group" as one stop,
   then "40% dimmed slider". What is spoken when Tab lands on the slider was
   not recorded.
-- Also seen, not followed up here: VoiceOver calls the slider "dimmed". The
-  engine disables the `input` while the browser is in pointer mode
-  (`incrementable.dart`). To check in the slider technique (F10).
-- How to reproduce: `/t/S01/bad-slider-name-web` in the app, on web.
-- Workaround: none found in the SDK. Not tried: putting the name in the value
-  text with `Slider.semanticFormatterCallback`, which would also change what
-  Android and iOS say.
+- "Dimmed": see [FL-127](#fl-127). The input was found disabled after
+  each walk that read a slider; whether it is disabled at the moment
+  VoiceOver speaks was not established.
+- With a label on the input, as in plain HTML, VoiceOver in Chromium
+  reads "40% Volume slider" (F10 web VoiceOver control,
+  `plain-labelled-input`).
+- Fixed in Flutter 3.50.0, by its source, not verified: 3.50.0's
+  `incrementable.dart` copies the wrapper's `aria-label` onto the input.
+  The pin is 3.47.5 (D21); re-run the F10 and S01 web tests on the
+  upgrade, which are written to fail when the name arrives.
+- How to reproduce: `/t/S01/bad-slider-name-web` or any `/t/F10/` example,
+  on web.
+- Workaround: none found in the SDK. Tried in F10: none of the ways of
+  giving the label changes where it lands. Not a workaround: putting the
+  name in the value text with `semanticFormatterCallback`, which makes it
+  part of `aria-valuetext` and not a name, and would change what Android
+  and iOS say.
 - Upstream issue: not searched yet (D25).
 
 ## FL-029
 
 **A Material `Slider` adds an empty full-screen element that takes pointer events on web.**
 
-- Status: Observed, Flutter 3.47.5, while recording VoiceOver for
-  `/t/S01/bad-slider-name-web`. No test in the repo asserts it. Cause not
-  read in the SDK source.
-- What happens: on the screen with a `Slider`, the semantics DOM has one more
-  `flt-semantics` element than the other S01 screens: no role, no label, no
-  children, the size of the whole view (1280 by 720 in the test), with
+- Status: Confirmed, Flutter 3.47.5, web. First seen while recording
+  VoiceOver for `/t/S01/bad-slider-name-web`; asserted by
+  `web_tests/f10_slider.spec.js` ("the empty element over the page").
+  Framework source read: `material/slider.dart`, `widgets/overlay.dart`,
+  and `semantics/semantics.dart`; engine source read:
+  `lib/web_ui/lib/src/engine/semantics/semantics.dart`.
+- Cause: every `Slider` keeps an `OverlayPortal` shown for its value
+  indicator ("Always keep the ValueIndicator visible on the Overlay"). The
+  portal's child is laid out in the `Overlay` at the size of the whole
+  overlay by a `_DeferredLayout` render object, which marks its semantics
+  with `traversalChildIdentifier` and so makes a node of its own, with
+  nothing in it. Off the web the framework grafts such a node under its
+  traversal parent; on the web it keeps the paint order, so the node stays
+  in the overlay, last, the size of the view. The engine gives a leaf node
+  with no role `pointer-events: auto`.
+- What happens: one empty `flt-semantics` element per Material `Slider`
+  on the screen (ten sliders, ten elements, in the F10 probe), with no
+  role, label, or children, the size of the whole view, with
   `pointer-events: auto`, after the other nodes in document order. It is
-  there with and without `divisions`. The other seven S01 example screens,
-  which have no slider, have no such element.
-- Effect seen: Playwright refuses to click any other semantics element on
-  that screen, because this element is on top of it ("intercepts pointer
-  events"). Keyboard operation of the slider is not affected (asserted in
-  the S01 web test). Whether a person using a mouse, touch, or a screen
-  reader's click is affected was not tested.
-- Seen on the same screen, not a finding: with Playwright's WebKit build,
-  VoiceOver's cursor usually left the page content after the screen title
-  and did not reach the slider, with and without a mouse click to put focus
-  in the page first. It walked the other seven S01 screens normally, and in
-  Chromium it reached the slider. The test cannot tell a fault of the page
-  from the test harness losing focus, so this is recorded in
-  `docs/evidence/S01/voiceover-web.md` and nothing is asserted. The WebKit
-  build is not Safari; Safari was not tried.
+  there with and without `divisions`, with
+  `showValueIndicator: ShowValueIndicator.never`, inside `Overlay.wrap`,
+  for a disabled `Slider`, and for `Slider.adaptive` where it draws a
+  `CupertinoSlider`. A `CupertinoSlider` itself, a `RangeSlider`, and a
+  slider built on `Semantics` add none. Android and iOS have no such node
+  (F10 probe).
+- Effect, tested in F10: `document.elementFromPoint` anywhere on the page
+  finds the empty element, not the control under the pointer, so
+  anything that finds an element by position gets nothing: Playwright
+  refuses to click any other semantics element ("intercepts pointer
+  events"). Whether touch exploration by a screen reader in a phone's
+  browser, which also finds elements by position, is affected was not
+  tested. A real mouse click still works,
+  because Flutter takes pointer events for the whole view and hit-tests
+  them itself: the Back button beside a slider goes back. A click event
+  sent to the button element, as a screen reader's activation is, works
+  too, and so does VoiceOver's own press (F10 web VoiceOver test).
+  Keyboard operation is not affected.
+- Seen on the same screens, cause not proven: with Playwright's WebKit
+  build, VoiceOver's cursor leaves the page content on a screen with a
+  Material `Slider`, and walks screens without one normally. Moving on
+  from the Back button, which it has just read, it reads at most the
+  screen title and then only the page's web area, "<document title> web
+  content", again and again with empty phrases between, and never the
+  example. In F10 that held for all five Material
+  screens on every walk recorded, and for none of the four others
+  (`docs/evidence/F10/voiceover-web.md`); S01 and S14 saw the same. The
+  F10 web VoiceOver spec requires VoiceOver to read Back before the walk,
+  the web area at least twice and nothing else during it, and Back again
+  when it is focused after it, so a walk that heard nothing fails instead
+  of passing. It is
+  written to fail when the cursor starts reaching the slider. The empty
+  element is the only difference found between the two kinds of screen;
+  the test cannot rule out the harness. The WebKit build is not Safari;
+  Safari was not tried.
 - How it is handled here: `walkFromBack` in `web_tests/vo/vo_helpers.js`
-  takes a `clickAtPoint` flag for this screen, which clicks with the mouse
-  at a position and skips Playwright's check.
-- To do in the slider technique (F10): find the widget that creates the
-  element, and test pointer and screen reader activation of controls beside
-  a slider.
+  takes a `clickAtPoint` flag for these screens, which clicks with the
+  mouse at a position and skips Playwright's check.
+- Workaround: none in the SDK for a Material `Slider`. Tried in F10:
+  `showValueIndicator: never` and `Overlay.wrap` around the slider. A
+  `CupertinoSlider` or a custom slider has no such element.
 - Upstream issue: not searched yet (D25).
 
 ## FL-030
@@ -1074,6 +1129,10 @@ yet), **Fixed in x.y** (verified on that version).
   `aria-description` would be one candidate.
 - Workaround: none needed for reading. In tests, find the control by its
   identifier and assert the whole name.
+- Sliders (F10): an enabled slider is adjustable and keeps its value in
+  `aria-valuetext`. A disabled one is not adjustable, so its value is
+  appended to its name like any other node's: "Volume 40%" as plain text
+  (F10 probe; [FL-124](#fl-124)).
 - Upstream issue: not searched yet (D25).
 
 ## FL-038
@@ -1103,6 +1162,17 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround: always give `increasedValue` and `decreasedValue` with
   `onIncrease` and `onDecrease`, computed from the current value, as
   `good-rating` does.
+- Sliders (F10): the SDK's `Slider` and `CupertinoSlider` compute both
+  from the value, so the guess is right: straight after the action the
+  node already reads the new value, "50%, Volume", before the app has
+  acted. Only the value is guessed: for F10 `bad-indicator-label`, whose
+  name holds the number too, one run read "50%, Volume\n4" at that
+  moment. Asserted by `F10SliderTest.everySliderIsASeekBarWithItsValueAndName`,
+  which also shows the other side: a test that waits for the description
+  to change cannot tell that the app has acted, and has to wait for the
+  app's own change count. At the last value `Slider` repeats the value as
+  `increasedValue`, so an increase there shows the same value. The F10
+  custom sliders do the same.
 - Upstream issue: not searched yet (D25). This is probably intended.
 
 ## FL-039
@@ -1480,6 +1550,217 @@ yet), **Fixed in x.y** (verified on that version).
   instead of replacing anything.
 - How to read this entry: Flutter has not added this yet. Re-check when
   the pinned version changes.
+## FL-120
+
+**A `CupertinoSlider` takes no keyboard focus.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the F10 probe
+  (`docs/evidence/probes/f10`, fixtures 06 and 13 of the first probe):
+  Tab went past it on the web. Asserted by the F10 widget test "FL-120".
+  Framework source read: `cupertino/slider.dart`, which has no `Focus`,
+  `FocusableActionDetector`, or shortcuts, where `material/slider.dart`
+  has all three.
+- What happens: the slider has the slider flag, a value, and the increase
+  and decrease actions, so a screen reader can read and adjust it, but it
+  is never in the focus order. Tab goes past it, and the arrow keys do
+  nothing. `Slider.adaptive` is a `CupertinoSlider` on iOS and macOS, so
+  it has the same gap there; in a browser on a Mac it is the Cupertino one
+  (probe, fixture 13).
+- On the web: the slider's `<input type="range">` can take focus. Flutter's
+  focus order skips it, but when nothing Flutter can focus comes after it,
+  the browser's own Tab order lands on it, and the browser's arrow keys
+  then move it one step at a time (seen with F10 `bad-no-keyboard`, which
+  has the same gap on a custom slider).
+- Effect: a keyboard user, or a switch user who moves by focus, cannot
+  reach the slider (2.1.1).
+- Workaround: wrap it in `FocusableActionDetector` with the APG keys
+  mapped to steps, inside the same `MergeSemantics` as its text, as F10
+  `good-cupertino` does. Verified in the widget tests and on the web: Tab
+  reaches the slider, the arrow keys, Home, and End work, and focus is on
+  the slider's `<input>`.
+- How to read this entry: Flutter has not added keyboard support to the
+  Cupertino slider yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-121
+
+**A `CupertinoSlider` moves only when its thumb is dragged.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Asserted by the F10
+  widget test "FL-121" and by the F10 web, Android, and iOS tests of
+  `good-cupertino`, each written to fail when a tap on the track starts
+  to work. Framework source read: `cupertino/slider.dart`, whose render
+  object has only a `HorizontalDragGestureRecognizer` and hit-tests only
+  within a thumb's radius of the thumb.
+- What happens: a tap or click on the track away from the thumb does
+  nothing. A Material `Slider` moves to the point tapped.
+- Effect: a person who cannot drag, or who uses a pointer that cannot
+  drag, cannot set the slider by pointer (2.5.7 Dragging Movements; the
+  iOS reference asks for "single tap alternatives").
+- Workaround: put buttons beside it that move it a step, as F10
+  `good-cupertino` does ("Volume down", "Volume up").
+- Upstream issue: not searched yet (D25).
+
+## FL-122
+
+**A Material `Slider` has no Home or End keys, and on the web those keys move it one step.**
+
+- Status: Confirmed, Flutter 3.47.5. Asserted by the F10 widget test
+  "FL-122" (no effect off the web) and by the F10 web tests of
+  `bad-no-keyboard` (one step on the web). Seen in the F10 probe (fixture
+  01: Home went from 80% to 70%, End from 70% to 80%). Framework source
+  read: `material/slider.dart`, whose shortcuts are the four arrow keys
+  only; engine source read: `incrementable.dart`.
+- What happens: the APG slider pattern sets Home to the first value and
+  End to the last. `Slider` maps only the arrow keys. Off the web, Home
+  and End do nothing. On the web the focused element is an
+  `<input type="range">` whose range is a stand-in one step either side
+  of the value ([FL-125](#fl-125)), so the browser's own Home and End
+  move the input to that stand-in's end, which the engine turns into one
+  increase or decrease.
+- Workaround: `CallbackShortcuts` around the `Slider` for Home and End, as
+  the F10 Material examples do (`_HomeAndEnd`). The `Slider` leaves those
+  keys unhandled, so they reach the shortcuts above it; on the web the
+  framework then takes the key and the browser does not move the input as
+  well. Verified in the widget tests and on the web. The same for a
+  custom slider through `FocusableActionDetector` (F10 `good-custom`).
+  Page Up and Page Down, which the APG makes optional, are not built.
+- Upstream issue: not searched yet (D25).
+
+## FL-123
+
+**`Slider.label`, the text shown above the thumb, is added to the slider's name.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Asserted by the F10
+  widget, web, Android, and iOS tests of `bad-indicator-label`. Framework
+  source read: `material/slider.dart`, `describeSemanticsConfiguration`,
+  which sets `config.label` to the widget's `label`.
+- What happens: `label` is documented as the text of the value indicator
+  that appears while the slider is used. It is also put in the slider's
+  semantics label. With the visible text "Volume" merged in, the name is
+  "Volume" and the number, on two lines ("Volume\n4"); with nothing else,
+  the name is the number alone. Usually that number is the value, so it
+  is read twice in two forms ("40%, Volume 4" on Android), and the name
+  changes at every step.
+- Effect: the name carries a number that is not the label and changes
+  at every step. TalkBack reads "40%", "Volume 4", "Slider", and after a
+  step "50%", "Volume 5" (F10 transcript): the value twice, once inside
+  the name. The name still contains the visible label, so this is a
+  naming fault and not a failure of 2.5.3 Label in Name. Anything that finds
+  the control by name has to know its value.
+- Workaround: none that keeps the indicator text out of the name. Leave
+  `label` unset, or accept the longer name; give the value its words with
+  `semanticFormatterCallback`.
+- Upstream issue: not searched yet (D25).
+
+## FL-124
+
+**A disabled slider is not a slider.**
+
+- Status: Confirmed (source read), Flutter 3.47.5, all platforms. Seen in
+  the F10 probe (first probe fixture 09, second probe fixtures 07 and
+  08) on all three platforms; asserted by the F10 widget test "FL-124".
+  Engine source read: the web's `isIncrementable` in `semantics.dart`
+  (an element is a slider only if it has the increase or decrease
+  action) and the iOS `accessibilityTraits` in `SemanticsObject.mm` (the
+  adjustable trait only with those actions).
+- What happens: a `Slider` or `CupertinoSlider` with `onChanged: null`
+  keeps the slider flag and drops the increase and decrease actions, and
+  each engine decides the role from the actions. On the web it is plain
+  text, "Volume 40%", focusable (the value is appended to the name as in
+  [FL-037](#fl-037)); on Android an `android.view.View`, not enabled,
+  "40%, Volume"; on iOS an element read "Volume 40% dimmed" with no
+  "adjustable". A disabled `CupertinoSlider` also has no value at all.
+- Effect: a disabled slider is announced as text, and the user is not
+  told that there is a control here that is off. A native disabled
+  `<input type="range">` is still a slider, marked disabled.
+- Workaround: none in the SDK.
+- Upstream issue: not searched yet (D25).
+
+## FL-125
+
+**On the web a slider's minimum, maximum, and current value are stand-ins.**
+
+- Status: Confirmed, Flutter 3.47.5, web. Asserted by
+  `web_tests/f10_slider.spec.js` ("every slider"). Engine source read:
+  `incrementable.dart`, `_updateInputValues`.
+- What happens: whatever the slider's own range, the engine gives the
+  `<input type="range">` `aria-valuemin="0"`, `aria-valuenow="1"`, and
+  `aria-valuemax="2"`, moving the three up or down by one after each
+  change, and the real value only in `aria-valuetext`. A slider at its
+  last value still has a maximum one above it, because `Slider` repeats
+  the last value as its `increasedValue`. Chromium's own tree (read over
+  the DevTools protocol) gives the value text as "1", the stand-in; what
+  VoiceOver reads is the `aria-valuetext` (F10 transcripts).
+- Effect: assistive technology that reads the numbers, or shows the
+  slider's position as a proportion, gets a slider always in the middle of
+  a range of three. Screen readers that speak `aria-valuetext` are not
+  affected.
+- Workaround: none. Give every slider value words that make sense alone
+  (`semanticFormatterCallback`), since those are all that is real.
+- Upstream issue: not searched yet (D25).
+
+## FL-126
+
+**A `RangeSlider` has two unnamed sliders on the web and one value on Android when merged.**
+
+- Status: Observed, Flutter 3.47.5, in the F10 probe only (first probe
+  fixture 10, second probe fixture 02). No example and no test; the
+  range slider is not built in F10.
+- What happens: on the web an unmerged `RangeSlider` is two
+  `<input type="range">` elements, one per thumb, with no name and no
+  label on any element around them. Inside `MergeSemantics` with its text,
+  Android and iOS read one slider with the first thumb's value only
+  ("20%, Price"), and the web shows one slider.
+- Effect: the two values cannot both be read when the range slider is
+  joined to its text, and cannot be told apart when it is not.
+- Workaround: not looked for. To do in a technique that builds a range
+  slider.
+- Upstream issue: not searched yet (D25).
+
+## FL-127
+
+**On the web a slider is disabled for half a second after any pointer event, and VoiceOver calls it "dimmed".**
+
+- Status: Confirmed, Flutter 3.47.5, web. Each statement below says
+  whether it was measured or read in the source.
+- Read in the engine source: `incrementable.dart` sets `disabled` on the
+  slider's `<input type="range">` whenever the gesture mode is pointer
+  events, and its `change` listener returns without acting while the input
+  is disabled; `_temporarilyDisableBrowserGestureMode` in `semantics.dart`
+  switches to that mode for 500 ms on any pointer, mouse, touch, or wheel
+  event. The purpose given there is to keep the browser from handling a
+  drag that Flutter handles.
+- Measured, and asserted by `web_tests/f10_slider.spec.js` (Chromium, no
+  screen reader): straight after the mouse moves, the input is disabled; a
+  change through the input then, as a screen reader's adjust command makes
+  it, does nothing; with no more pointer events the input is enabled again
+  within three seconds and the same change moves the slider. The 500 ms
+  itself was not measured.
+- Measured, and asserted by `web_tests/vo/f10_slider_vo.spec.js` in both
+  Playwright builds: during every VoiceOver walk of an F10 example the page
+  received pointer events, and after every walk that read the slider its
+  input was disabled when read straight after the walk. VoiceOver read
+  every F10 slider it reached "dimmed slider". On the WebKit walks that leave the
+  page ([FL-029](#fl-029)) the notes show the input disabled and enabled
+  again many times, and at the end of the walk it was found either way, so
+  nothing is asserted about it there. A plain HTML copy of Flutter's markup was read "40% slider"
+  with the input enabled and "40% dimmed slider" with it disabled. The
+  numbers from the run whose transcript is committed are in
+  `docs/evidence/probes/f10/voiceover-web-notes.txt`, written by that
+  spec: 20 to 24 pointer and mouse events per walk in Chromium, where the
+  test itself clicks once, and 26 to 46 in WebKit, where it clicks twice;
+  and every change of `disabled` in order. The counts are recorded, not
+  asserted.
+- Not established: whether the input is disabled at the very moment
+  VoiceOver speaks the slider (it is read just after the walk, not at each
+  move), and
+  which part of the system sends the pointer events during a walk.
+- Effect: a VoiceOver user is told that an enabled slider is unavailable.
+  An adjustment that reaches the input in the half second after a pointer
+  event is lost (measured as above). First noticed in S01
+  ([FL-028](#fl-028)).
+- Workaround: none in the SDK.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->

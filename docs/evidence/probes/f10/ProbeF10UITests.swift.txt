@@ -1,0 +1,54 @@
+// Throwaway F10 probe dump. Not committed.
+import XCTest
+
+final class ProbeF10UITests: XCTestCase {
+  let app = XCUIApplication()
+
+  private func describe(_ e: XCUIElement) -> String {
+    "\(e.elementType.rawValue) id=\(e.identifier) label=\(e.label.debugDescription) value=\(String(describing: e.value)) enabled=\(e.isEnabled) selected=\(e.isSelected) frame=\(e.frame)"
+  }
+
+  private func dump(_ tag: String) {
+    print("F10PROBE ==== \(tag)")
+    for e in app.descendants(matching: .any).allElementsBoundByIndex where e.elementType != .window && e.elementType != .application {
+      print("F10PROBE \(describe(e))")
+    }
+  }
+
+  func testProbe() throws {
+    app.launch()
+    XCTAssertTrue(app.buttons.firstMatch.waitForExistence(timeout: 30))
+    sleep(2)
+    dump("start")
+    print("F10PROBE sliders: \(app.sliders.count), adjustable others: \(app.otherElements.count)")
+    for id in ["p01", "p02", "p03", "p06", "p07", "p08", "p09", "q01", "q04", "q06", "q07", "q08"] {
+      let q = app.descendants(matching: .any).matching(identifier: id)
+      guard q.count > 0 else { continue }
+      print("F10PROBE \(id) matches: \(q.count): " + q.allElementsBoundByIndex.map { describe($0) }.joined(separator: " || "))
+      let e = q.firstMatch
+      // A tap on the track at 80% of its width, away from the thumb.
+      e.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.75)).tap()
+      sleep(1)
+      print("F10PROBE \(id) after a tap at 85%: \(describe(e))")
+    }
+    let button = app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH 'p14' OR label BEGINSWITH 'q09'")).firstMatch
+    button.tap()
+    sleep(1)
+    print("F10PROBE after tap: \(describe(button))")
+    #if compiler(>=6.4)
+    if #available(iOS 27.0, *) {
+      let vo = XCUIDevice.shared.voiceOverService
+      try vo.enable()
+      defer { try? vo.disable() }
+      var last = ""
+      for _ in 0..<40 {
+        guard let u = try? vo.moveForward().utterance else { print("F10PROBE VO (no speech)"); continue }
+        let text = u.replacingOccurrences(of: "\n", with: " ")
+        if text == last { break }
+        last = text
+        print("F10PROBE VO \(text)")
+      }
+    }
+    #endif
+  }
+}
