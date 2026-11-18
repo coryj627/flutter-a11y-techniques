@@ -34,4 +34,4 @@ Result: PASS
 | `f06-bad-not-announced-email` | Email, /   / Enter an email address with an @, like name@example.com. / Edit box |
 | `f06-bad-merged-error-send` | Send / Button / Double-tap to activate |
 | `f06-bad-merged-error-sent` | Email Enter an email address with an @, like name@example.com., /   / Enter an email address with an @, like name@example.com. |
-| `f06-bad-merged-error-email` | Email Enter an email address with an @, like name@example.com., |
+| `f06-bad-merged-error-email` | keyboard hidden / Email Enter an email address with an @, like name@example.com., |
