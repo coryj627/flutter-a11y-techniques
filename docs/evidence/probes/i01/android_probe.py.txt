@@ -1,0 +1,159 @@
+"""I01 probe on Android: install the probe build, then drive the keyboard
+with `adb shell input keyevent` and read the tree with uiautomator dump.
+Run under tool/with_devices.py. Writes the raw output to stdout."""
+import re
+import subprocess
+import sys
+import time
+
+PKG = "dev.fluttera11y.flutter_a11y_techniques"
+APK = sys.argv[1]
+
+
+def adb(*args, check=True):
+    r = subprocess.run(["adb", *args], capture_output=True, text=True)
+    if check and r.returncode != 0:
+        print("ADB FAILED", args, r.stdout, r.stderr)
+    return r.stdout
+
+
+def dump():
+    for _ in range(3):
+        out = adb("exec-out", "uiautomator", "dump", "/dev/tty")
+        if "<hierarchy" in out:
+            return out
+        time.sleep(1)
+    return out
+
+
+NODE = re.compile(r"<node [^>]*>")
+
+
+def attrs(tag):
+    return dict(re.findall(r'(\S+?)="([^"]*)"', tag))
+
+
+def summary(xml, every=False):
+    lines = []
+    log = focus = ""
+    for tag in NODE.findall(xml):
+        a = attrs(tag)
+        rid = a.get("resource-id", "")
+        desc = a.get("content-desc", "")
+        if desc.startswith("Log: "):
+            log = desc
+        if desc.startswith("Focus: "):
+            focus = desc
+        if every and re.fullmatch(r"k\d\d", rid):
+            lines.append(f"  {rid} class={a.get('class')} desc={desc!r} clickable={a.get('clickable')} "
+                         f"focusable={a.get('focusable')} focused={a.get('focused')} bounds={a.get('bounds')}")
+        elif not every and a.get("focused") == "true":
+            lines.append(f"  focused node: {rid or '-'} class={a.get('class')} desc={desc[:40]!r}")
+    return log, focus, lines
+
+
+def bounds(xml, rid):
+    for tag in NODE.findall(xml):
+        a = attrs(tag)
+        if a.get("resource-id") == rid:
+            x1, y1, x2, y2 = map(int, re.findall(r"\d+", a["bounds"]))
+            return x1, y1, x2, y2
+    return None
+
+
+def show(step):
+    xml = dump()
+    log, focus, lines = summary(xml)
+    print(f"{step}: {focus} | {log}")
+    for line in lines:
+        print(line)
+    return xml
+
+
+print("== input devices (keyboards)")
+for line in adb("shell", "dumpsys", "input").splitlines():
+    if re.search(r"^\s+\d+: |KeyboardType|Sources:", line):
+        print(line.rstrip())
+print("== settings")
+print("show_ime_with_hard_keyboard:", adb("shell", "settings", "get", "secure", "show_ime_with_hard_keyboard").strip())
+print("emulator hw keyboard prop qemu.hw.mainkeys:", adb("shell", "getprop", "qemu.hw.mainkeys").strip())
+print(adb("shell", "getprop", "ro.build.version.release").strip(), "API", adb("shell", "getprop", "ro.build.version.sdk").strip())
+
+adb("install", "-r", APK)
+adb("shell", "am", "force-stop", PKG)
+adb("shell", "monkey", "-p", PKG, "1")
+time.sleep(8)
+xml = dump()
+print("== tree at start")
+log, focus, lines = summary(xml, every=True)
+print(focus, "|", log)
+for line in lines:
+    print(line)
+
+print("== Tab by adb shell input keyevent KEYCODE_TAB")
+for i in range(1, 14):
+    adb("shell", "input", "keyevent", "KEYCODE_TAB")
+    time.sleep(0.8)
+    show(f"tab {i}")
+
+print("== Enter and Space where focus is now")
+adb("shell", "input", "keyevent", "KEYCODE_ENTER")
+time.sleep(0.8)
+show("enter")
+adb("shell", "input", "keyevent", "KEYCODE_SPACE")
+time.sleep(0.8)
+show("space")
+
+print("== Shift+Tab back twice (keycombination)")
+for i in range(2):
+    adb("shell", "input", "keycombination", "KEYCODE_SHIFT_LEFT", "KEYCODE_TAB")
+    time.sleep(0.8)
+    show(f"shift-tab {i + 1}")
+
+print("== the same Tab with the keyboard source")
+adb("shell", "input", "keyboard", "keyevent", "KEYCODE_TAB")
+time.sleep(0.8)
+show("keyboard tab")
+
+print("== Tab to each fixture, Enter, then Space")
+# Restart for a clean log.
+adb("shell", "am", "force-stop", PKG)
+adb("shell", "monkey", "-p", PKG, "1")
+time.sleep(8)
+for i in range(1, 12):
+    adb("shell", "input", "keyevent", "KEYCODE_TAB")
+    time.sleep(0.6)
+    xml = dump()
+    _, focus, _ = summary(xml)
+    adb("shell", "input", "keyevent", "KEYCODE_ENTER")
+    time.sleep(0.6)
+    log_enter, _, _ = summary(dump())
+    adb("shell", "input", "keyevent", "KEYCODE_SPACE")
+    time.sleep(0.6)
+    log_space, _, _ = summary(dump())
+    print(f"tab {i}: {focus} | after Enter: {log_enter} | after Space: {log_space}")
+
+print("== pointer: press on a fixture and slide off before release")
+adb("shell", "am", "force-stop", PKG)
+adb("shell", "monkey", "-p", PKG, "1")
+time.sleep(8)
+xml = dump()
+for rid in ("k01", "k06", "k09", "k10", "k04"):
+    b = bounds(xml, rid)
+    if not b:
+        print(rid, "no bounds")
+        continue
+    x, y = (b[0] + b[2]) // 2, (b[1] + b[3]) // 2
+    adb("shell", "input", "swipe", str(x), str(y), str(x), str(y + 900), "600")
+    time.sleep(1)
+    log, _, _ = summary(dump())
+    print(f"slide off {rid} from {x},{y}: {log}")
+print("== plain taps")
+for rid in ("k04", "k07", "k10"):
+    b = bounds(xml, rid)
+    x, y = (b[0] + b[2]) // 2, (b[1] + b[3]) // 2
+    adb("shell", "input", "tap", str(x), str(y))
+    time.sleep(1)
+    log, _, _ = summary(dump())
+    print(f"tap {rid}: {log}")
+adb("shell", "am", "force-stop", PKG)
