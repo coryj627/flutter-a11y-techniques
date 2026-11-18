@@ -2156,8 +2156,13 @@ yet), **Fixed in x.y** (verified on that version).
   - Tab past the last control goes round to the control highest on the
     screen, which is the first of the list and not Back, and on down the
     list Back comes once in the middle.
-  The I02 examples are short enough not to scroll on the screens tested,
-  and are not affected there.
+  This app's `PageScaffold` now has the workaround below. On an 800 by
+  120 screen, where the I02 examples scroll until their first control is
+  above the top of the screen, I02 `bad-columns-mixed`, whose controls
+  are in no group, went round from Save plan to Map and skipped Back
+  without it; the good examples kept their order with and without it,
+  because each of their tall groups reaches down into Back's row (read in
+  the source: the bands of `ReadingOrderTraversalPolicy`).
 - Effect: moving backwards through a long page, a keyboard user is sent
   to the top of the screen at every step or two.
 - Workaround, in the SDK: a `FocusTraversalGroup` around the scrolling
@@ -2165,7 +2170,14 @@ yet), **Fixed in x.y** (verified on that version).
   own rectangle, the part of the screen the list shows, which is always
   below the app bar; inside it the controls keep their order. Verified in
   the I02 widget test "FL-422 workaround": Tab goes Back, B1 to B12, Back,
-  and Shift+Tab the same backwards. Not verified on the devices. Also
+  and Shift+Tab the same backwards. Applied in the app's `PageScaffold`
+  (`lib/app/widgets.dart`) and asserted by
+  `test/app/page_scaffold_focus_test.dart` and by the I02 widget test
+  "bad-columns-mixed: Tab past Save plan goes round to Back", which fails
+  without it. The I02 web tests at 800 by 120 show the good examples'
+  order on a scrolled screen in Chromium, but they pass without the group
+  too, so they do not verify it there. Not verified on Android or iOS.
+  Also
   tried in the probe, with the same result in a widget test: an
   `OrderedTraversalPolicy` over the screen with the app bar ordered first
   and the grouped body second.

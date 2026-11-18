@@ -187,7 +187,7 @@ void main() {
       testWidgets('$slug does not overflow at 200% text on a phone', (
         tester,
       ) async {
-        tester.view.physicalSize = const Size(320, 640);
+        tester.view.physicalSize = const Size(640, 320);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.reset);
         await _open(tester, slug, textScale: 2);
@@ -301,6 +301,90 @@ void main() {
         handle.dispose();
       });
     }
+  });
+
+  // FL-422. On a screen so short that the example scrolls right past the
+  // top of the screen, the default order, which is by position, can put
+  // the app bar's Back among the controls scrolled away above it.
+  // PageScaffold puts a FocusTraversalGroup around its scrolling view to
+  // keep Back out (lib/app/widgets.dart).
+  //
+  // The good examples keep their order here with or without that group
+  // (checked by taking it out): their FocusTraversalGroups are tall, and a
+  // group is placed by its whole rectangle, which still reaches down into
+  // Back's row, so Back stays first (read in the source:
+  // ReadingOrderTraversalPolicy's bands). These tests guard their order on
+  // a scrolled screen. The last test, on bad-columns-mixed, whose controls
+  // are not in groups, is the one that fails without PageScaffold's group.
+  group('on a screen short enough to scroll', () {
+    Future<void> openShort(WidgetTester tester, String slug) async {
+      tester.view.physicalSize = const Size(800, 120);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await _open(tester, slug);
+    }
+
+    /// The top of the screen. A control whose bottom is above it is higher
+    /// on the screen than Back.
+    double viewTop(WidgetTester tester) => 0;
+
+    for (final slug in _good) {
+      final order = _tabOrder[slug]!;
+
+      testWidgets('$slug: Tab goes ${order.join(', ')}, then round to Back, '
+          'while the screen scrolls', (tester) async {
+        final handle = tester.ensureSemantics();
+        await openShort(tester, slug);
+        final stops = <String>[];
+        var scrolledAway = false;
+        for (var i = 0; i < order.length; i++) {
+          await _key(tester, LogicalKeyboardKey.tab);
+          stops.add(_stop(tester, slug));
+          if (tester.getRect(byId(_id(slug, 'map'))).bottom <=
+              viewTop(tester)) {
+            scrolledAway = true;
+          }
+        }
+        expect(stops, order);
+        // The screen really scrolled: on the way to Save plan, Map went
+        // above the top of the screen, higher than Back.
+        expect(scrolledAway, isTrue, reason: 'Map never left the screen');
+        expect(await _walk(tester, slug, 1), ['back']);
+        handle.dispose();
+      });
+
+      testWidgets('$slug: Shift+Tab goes backwards from Save plan to Back, '
+          'while the screen scrolls', (tester) async {
+        final handle = tester.ensureSemantics();
+        await openShort(tester, slug);
+        await _tabTo(tester, slug, order.last);
+        expect(
+          tester.getRect(byId(_id(slug, 'map'))).bottom,
+          lessThanOrEqualTo(viewTop(tester)),
+          reason: 'Map is above the screen when Save plan has focus',
+        );
+        final back = order.reversed.skip(1).toList();
+        expect(await _walk(tester, slug, back.length, shift: true), back);
+        handle.dispose();
+      });
+    }
+
+    // Without PageScaffold's group, Tab past Save plan went round to Map,
+    // the control highest on the screen, and skipped Back.
+    testWidgets('bad-columns-mixed: Tab past Save plan goes round to Back, '
+        'not to Map, while the screen scrolls', (tester) async {
+      final handle = tester.ensureSemantics();
+      await openShort(tester, 'bad-columns-mixed');
+      final order = _tabOrder['bad-columns-mixed']!;
+      expect(await _walk(tester, 'bad-columns-mixed', order.length), order);
+      expect(
+        tester.getRect(byId(_id('bad-columns-mixed', 'map'))).bottom,
+        lessThanOrEqualTo(viewTop(tester)),
+        reason: 'Map is above the screen when Save plan has focus',
+      );
+      expect(await _walk(tester, 'bad-columns-mixed', 2), ['back', 'map']);
+      handle.dispose();
+    });
   });
 
   group('arrow keys (Android and iOS; on the web they scroll)', () {
