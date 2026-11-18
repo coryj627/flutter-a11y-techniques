@@ -78,6 +78,25 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
         }
     }
 
+    /**
+     * Waits up to 8 seconds for the count of [slug] to be readable and equal
+     * to [expected]. With focus on a field the keyboard can come up again
+     * on CI's small screen and take the count out of the tree after it was
+     * seen there (one CI run: "no node with id f06-good-form-count" at this
+     * point), so the keyboard is put away again on every try.
+     */
+    private fun waitForCountWithKeyboardAway(slug: String, expected: Int) {
+        val end = System.currentTimeMillis() + 8_000
+        var last: Int? = null
+        while (System.currentTimeMillis() < end) {
+            hideKeyboard()
+            last = try { count(slug) } catch (e: AssertionError) { null }
+            if (last == expected) return
+            Thread.sleep(250)
+        }
+        assertEquals("$countName for $slug (null: not in the tree)", expected, last)
+    }
+
     private val good = mapOf(
         "good-form" to listOf(
             Triple("f06-good-form-name", "Name", NAME_ERROR),
@@ -115,7 +134,7 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
                 assertEquals(error, View.ACCESSIBILITY_LIVE_REGION_POLITE, message.liveRegion)
                 assertFalse(error, message.isEditable)
             }
-            waitForCount(slug, 0)
+            waitForCountWithKeyboardAway(slug, 0)
         }
     }
 
