@@ -1,0 +1,582 @@
+npm notice run npx
+npm notice run 'playwright' test f06_probe.spec.js --workers=1
+
+Running 13 tests using 1 worker
+
+==== p01 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p01 fixture"
+        flt-semantics {"role":"group"}
+          flt-semantics {"flt-semantics-identifier":"p01-email"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p01 Email\nEnter an email address, like name@example.com.","aria-description":"Enter an email address, like name@example.com.","type":"text"} value=""
+          flt-semantics {"flt-semantics-identifier":"p01-phone"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p01 Phone\nEnter a phone number using digits only.","aria-description":"Enter a phone number using digits only.","type":"text"} value=""
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p01-end"} text="p01 End"
+==== p01 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX button name="p01 End" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p01 fixture" description="" value="" {}
+AX textbox name="p01 Email Enter an email address, like name@example.com." description="Enter an email address, like name@example.com." value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p01 Phone Enter a phone number using digits only." description="Enter a phone number using digits only." value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p01 End" description="" value="" {}
+  ✓   1 f06_probe.spec.js:70:3 › probe p01 (2.0s)
+==== p02 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p02 fixture"
+        flt-semantics {"role":"group"}
+          flt-semantics {"flt-semantics-identifier":"p02-email"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p02 Email","aria-description":"Enter an email address, like name@example.com.","type":"text"} value=""
+            flt-semantics {}
+              span {} text="Enter an email address, like name@example.com."
+          flt-semantics {"flt-semantics-identifier":"p02-phone"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p02 Phone","aria-description":"Enter a phone number using digits only.","type":"text"} value=""
+            flt-semantics {}
+              span {} text="Enter a phone number using digits only."
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p02-end"} text="p02 End"
+==== p02 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX button name="p02 End" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p02 fixture" description="" value="" {}
+AX textbox name="p02 Email" description="Enter an email address, like name@example.com." value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p02 Phone" description="Enter a phone number using digits only." value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p02 End" description="" value="" {}
+AX StaticText name="Enter an email address, like name@example.com." description="" value="" {}
+AX StaticText name="Enter a phone number using digits only." description="" value="" {}
+  ✓   2 f06_probe.spec.js:70:3 › probe p02 (2.0s)
+==== p03 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p03 fixture"
+        flt-semantics {"role":"group"}
+          flt-semantics {"flt-semantics-identifier":"p03-email"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p03 Email","type":"text"} value=""
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p03-submit"} text="p03 Check"
+==== p03 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX button name="p03 Check" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p03 fixture" description="" value="" {}
+AX textbox name="p03 Email" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p03 Check" description="" value="" {}
+==== p03 focus before: flt-semantics aria-label=null in=p03-submit
+==== p03 announcer after submit: []
+==== p03 focus after: flt-semantics aria-label=null in=p03-submit
+==== p03 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p03 fixture"
+        flt-semantics {"role":"group"}
+          flt-semantics {"flt-semantics-identifier":"p03-email"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p03 Email\nEnter an email address, like name@example.com.","type":"text","aria-description":"Enter an email address, like name@example.com."} value=""
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p03-submit"} text="p03 Check"
+==== p03 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX button name="p03 Check" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p03 fixture" description="" value="" {}
+AX textbox name="p03 Email Enter an email address, like name@example.com." description="Enter an email address, like name@example.com." value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p03 Check" description="" value="" {}
+  ✓   3 f06_probe.spec.js:70:3 › probe p03 (4.8s)
+==== p04 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p04 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p04-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p04 Email","type":"text"} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p04-submit"} text="p04 Submit"
+==== p04 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p04 fixture" description="" value="" {}
+AX button name="p04 Submit" description="" value="" {"focusable":true}
+AX textbox name="p04 Email" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p04 Submit" description="" value="" {}
+==== p04 focus before: flt-semantics aria-label=null in=p04-submit
+==== p04 announcer after submit: ["flt-announcement-assertive: \"Enter an email address, like name@example.com.\"","flt-announcement-assertive: \"\""]
+==== p04 focus after: flt-semantics aria-label=null in=p04-submit
+==== p04 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p04 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p04-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p04 Email\nEnter an email address, like name@example.com.","type":"text","aria-description":"Enter an email address, like name@example.com."} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p04-submit"} text="p04 Submit"
+==== p04 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p04 fixture" description="" value="" {}
+AX button name="p04 Submit" description="" value="" {"focusable":true,"focused":true}
+AX textbox name="p04 Email Enter an email address, like name@example.com." description="Enter an email address, like name@example.com." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p04 Submit" description="" value="" {}
+  ✓   4 f06_probe.spec.js:70:3 › probe p04 (4.8s)
+==== p05 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p05 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p05-name"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p05 Name","type":"text"} value=""
+            flt-semantics {"flt-semantics-identifier":"p05-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p05 Email","type":"text"} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p05-submit"} text="p05 Submit"
+==== p05 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p05 fixture" description="" value="" {}
+AX button name="p05 Submit" description="" value="" {"focusable":true}
+AX textbox name="p05 Name" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p05 Email" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p05 Submit" description="" value="" {}
+==== p05 focus before: flt-semantics aria-label=null in=p05-submit
+==== p05 announcer after submit: ["flt-announcement-assertive: \"Enter your name.\"","flt-announcement-assertive: \"\""]
+==== p05 focus after: flt-semantics aria-label=null in=p05-submit
+==== p05 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p05 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p05-name"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p05 Name\nEnter your name.","type":"text","aria-description":"Enter your name."} value=""
+            flt-semantics {"flt-semantics-identifier":"p05-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p05 Email\nEnter an email address, like name@example.com.","type":"text","aria-description":"Enter an email address, like name@example.com."} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p05-submit"} text="p05 Submit"
+==== p05 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p05 fixture" description="" value="" {}
+AX button name="p05 Submit" description="" value="" {"focusable":true,"focused":true}
+AX textbox name="p05 Name Enter your name." description="Enter your name." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p05 Email Enter an email address, like name@example.com." description="Enter an email address, like name@example.com." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p05 Submit" description="" value="" {}
+  ✓   5 f06_probe.spec.js:70:3 › probe p05 (4.8s)
+==== p06 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p06 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p06-name"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p06 Name","type":"text"} value=""
+            flt-semantics {"flt-semantics-identifier":"p06-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p06 Email","type":"text"} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p06-submit"} text="p06 Submit"
+==== p06 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p06 fixture" description="" value="" {}
+AX button name="p06 Submit" description="" value="" {"focusable":true}
+AX textbox name="p06 Name" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p06 Email" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p06 Submit" description="" value="" {}
+==== p06 focus before: flt-semantics aria-label=null in=p06-submit
+==== p06 announcer after submit: ["flt-announcement-assertive: \"Enter your name.\"","flt-announcement-assertive: \"\""]
+==== p06 focus after: input aria-label="p06 Name\nEnter your name." in=p06-name
+==== p06 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p06 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p06-name"}
+              input {"spellcheck":"false","autocorrect":"on","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p06 Name\nEnter your name.","type":"text","aria-description":"Enter your name."} value=""
+            flt-semantics {"flt-semantics-identifier":"p06-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p06 Email\nEnter an email address, like name@example.com.","type":"text","aria-description":"Enter an email address, like name@example.com."} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p06-submit"} text="p06 Submit"
+==== p06 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p06 fixture" description="" value="" {}
+AX button name="p06 Submit" description="" value="" {"focusable":true}
+AX textbox name="p06 Name Enter your name." description="Enter your name." value="" {"invalid":"true","focusable":true,"focused":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p06 Email Enter an email address, like name@example.com." description="Enter an email address, like name@example.com." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p06 Submit" description="" value="" {}
+  ✓   6 f06_probe.spec.js:70:3 › probe p06 (4.7s)
+==== p07 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p07 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p07-name"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p07 Name","type":"text"} value=""
+            flt-semantics {"flt-semantics-identifier":"p07-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p07 Email","type":"text"} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p07-submit"} text="p07 Submit"
+==== p07 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p07 fixture" description="" value="" {}
+AX button name="p07 Submit" description="" value="" {"focusable":true}
+AX textbox name="p07 Name" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p07 Email" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p07 Submit" description="" value="" {}
+==== p07 focus before: flt-semantics aria-label=null in=p07-submit
+==== p07 announcer after submit: ["flt-announcement-assertive: \"Enter your name.\"","flt-announcement-assertive: \"\""]
+==== p07 focus after: flt-semantics aria-label=null in=p07-submit
+==== p07 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p07 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p07-name"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p07 Name\nEnter your name.","type":"text","aria-description":"Enter your name."} value=""
+            flt-semantics {"flt-semantics-identifier":"p07-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p07 Email\nEnter an email address, like name@example.com.","type":"text","aria-description":"Enter an email address, like name@example.com."} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p07-submit"} text="p07 Submit"
+==== p07 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p07 fixture" description="" value="" {}
+AX button name="p07 Submit" description="" value="" {"focusable":true,"focused":true}
+AX textbox name="p07 Name Enter your name." description="Enter your name." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p07 Email Enter an email address, like name@example.com." description="Enter an email address, like name@example.com." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p07 Submit" description="" value="" {}
+  ✓   7 f06_probe.spec.js:70:3 › probe p07 (4.8s)
+==== p08 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p08 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p08-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p08 Email","type":"text"} value=""
+            flt-semantics {"flt-semantics-identifier":"p08-phone"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p08 Phone","type":"text"} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p08-submit"} text="p08 Submit"
+==== p08 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p08 fixture" description="" value="" {}
+AX button name="p08 Submit" description="" value="" {"focusable":true}
+AX textbox name="p08 Email" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p08 Phone" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p08 Submit" description="" value="" {}
+==== p08 focus before: flt-semantics aria-label=null in=p08-submit
+==== p08 announcer after submit: ["flt-announcement-assertive: \"Enter an email address, like name@example.com.\"","flt-announcement-assertive: \"\""]
+==== p08 focus after: flt-semantics aria-label=null in=p08-submit
+==== p08 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p08 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p08-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p08 Email\nEnter an email address, like name@example.com.","type":"text","aria-description":"Enter an email address, like name@example.com.\nEnter an email address, like name@example.com."} value=""
+            flt-semantics {"flt-semantics-identifier":"p08-phone"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p08 Phone\nEnter a phone number using digits only.","type":"text","aria-description":"Enter a phone number using digits only.\nEnter a phone number using digits only."} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p08-submit"} text="p08 Submit"
+==== p08 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p08 fixture" description="" value="" {}
+AX button name="p08 Submit" description="" value="" {"focusable":true,"focused":true}
+AX textbox name="p08 Email Enter an email address, like name@example.com." description="Enter an email address, like name@example.com. Enter an email address, like name@example.com." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p08 Phone Enter a phone number using digits only." description="Enter a phone number using digits only. Enter a phone number using digits only." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p08 Submit" description="" value="" {}
+  ✓   8 f06_probe.spec.js:70:3 › probe p08 (4.8s)
+==== p09 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p09 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p09-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p09 Email\nname@example.com","type":"text"} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p09-submit"} text="p09 Submit"
+==== p09 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p09 fixture" description="" value="" {}
+AX button name="p09 Submit" description="" value="" {"focusable":true}
+AX textbox name="p09 Email name@example.com" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p09 Submit" description="" value="" {}
+==== p09 focus before: flt-semantics aria-label=null in=p09-submit
+==== p09 announcer after submit: ["flt-announcement-assertive: \"Enter an email address, like name@example.com.\"","flt-announcement-assertive: \"\""]
+==== p09 focus after: flt-semantics aria-label=null in=p09-submit
+==== p09 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p09 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p09-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p09 Email\nname@example.com\nEnter an email address, like name@example.com.","type":"text"} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p09-submit"} text="p09 Submit"
+==== p09 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p09 fixture" description="" value="" {}
+AX button name="p09 Submit" description="" value="" {"focusable":true,"focused":true}
+AX textbox name="p09 Email name@example.com Enter an email address, like name@example.com." description="" value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p09 Submit" description="" value="" {}
+  ✓   9 f06_probe.spec.js:70:3 › probe p09 (4.7s)
+==== p10 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p10 fixture"
+        flt-semantics {"role":"group"}
+          flt-semantics {"flt-semantics-identifier":"p10-email"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p10 Email","type":"text"} value=""
+          flt-semantics {"flt-semantics-identifier":"p10-error"}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p10-submit"} text="p10 Submit"
+==== p10 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX button name="p10 Submit" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p10 fixture" description="" value="" {}
+AX textbox name="p10 Email" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p10 Submit" description="" value="" {}
+==== p10 focus before: flt-semantics aria-label=null in=p10-submit
+==== p10 announcer after submit: ["flt-announcement-polite: \"Enter an email address, like name@example.com.\"","flt-announcement-polite: \"\""]
+==== p10 focus after: flt-semantics aria-label=null in=p10-submit
+==== p10 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p10 fixture"
+        flt-semantics {"role":"group"}
+          flt-semantics {"flt-semantics-identifier":"p10-email"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p10 Email","type":"text","aria-invalid":"true"} value=""
+          flt-semantics {"flt-semantics-identifier":"p10-error"}
+            span {} text="Enter an email address, like name@example.com."
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p10-submit"} text="p10 Submit"
+==== p10 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX button name="p10 Submit" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p10 fixture" description="" value="" {}
+AX textbox name="p10 Email" description="" value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="Enter an email address, like name@example.com." description="" value="" {}
+AX StaticText name="p10 Submit" description="" value="" {}
+  ✓  10 f06_probe.spec.js:70:3 › probe p10 (4.8s)
+==== p11 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p11 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p11-summary"}
+            flt-semantics {"flt-semantics-identifier":"p11-name"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p11 Name","type":"text"} value=""
+            flt-semantics {"flt-semantics-identifier":"p11-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p11 Email","type":"text"} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p11-submit"} text="p11 Submit"
+==== p11 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p11 fixture" description="" value="" {}
+AX button name="p11 Submit" description="" value="" {"focusable":true}
+AX textbox name="p11 Name" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p11 Email" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p11 Submit" description="" value="" {}
+==== p11 focus before: flt-semantics aria-label=null in=p11-submit
+==== p11 announcer after submit: ["flt-announcement-assertive: \"Enter your name.\"","flt-announcement-polite: \"p11 2 errors. Name: Enter your name. Email: Enter an email address, like name@example.com. \"","flt-announcement-assertive: \"\"","flt-announcement-polite: \"\""]
+==== p11 focus after: flt-semantics aria-label=null in=p11-submit
+==== p11 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p11 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"flt-semantics-identifier":"p11-summary"}
+              span {} text="p11 2 errors. Name: Enter your name. Email: Enter an email address, like name@example.com."
+            flt-semantics {"flt-semantics-identifier":"p11-name"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p11 Name\nEnter your name.","type":"text","aria-description":"Enter your name."} value=""
+            flt-semantics {"flt-semantics-identifier":"p11-email"}
+              input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p11 Email\nEnter an email address, like name@example.com.","type":"text","aria-description":"Enter an email address, like name@example.com."} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p11-submit"} text="p11 Submit"
+==== p11 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p11 fixture" description="" value="" {}
+AX button name="p11 Submit" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="p11 2 errors. Name: Enter your name. Email: Enter an email address, like name@example.com." description="" value="" {}
+AX textbox name="p11 Name Enter your name." description="Enter your name." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX textbox name="p11 Email Enter an email address, like name@example.com." description="Enter an email address, like name@example.com." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p11 Submit" description="" value="" {}
+  ✓  11 f06_probe.spec.js:70:3 › probe p11 (4.7s)
+==== p12 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p12 fixture"
+        flt-semantics {"role":"group"}
+          flt-semantics {"flt-semantics-identifier":"p12-email"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"false","aria-label":"p12 Email","type":"text"} value=""
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p12-submit"} text="p12 Type x"
+==== p12 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX button name="p12 Type x" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p12 fixture" description="" value="" {}
+AX textbox name="p12 Email" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p12 Type x" description="" value="" {}
+==== p12 focus before: flt-semantics aria-label=null in=p12-submit
+==== p12 announcer after submit: []
+==== p12 focus after: flt-semantics aria-label=null in=p12-submit
+==== p12 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p12 fixture"
+        flt-semantics {"role":"group"}
+          flt-semantics {"flt-semantics-identifier":"p12-email"}
+            input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-invalid":"true","aria-label":"p12 Email\nEnter an email address, like name@example.com.","type":"text","aria-description":"Enter an email address, like name@example.com."} value=""
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p12-submit"} text="p12 Type x"
+==== p12 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX button name="p12 Type x" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p12 fixture" description="" value="" {}
+AX textbox name="p12 Email Enter an email address, like name@example.com." description="Enter an email address, like name@example.com." value="" {"invalid":"true","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="p12 Type x" description="" value="" {}
+  ✓  12 f06_probe.spec.js:70:3 › probe p12 (4.7s)
+==== p13 start DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p13 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"aria-invalid":"false"}
+              flt-semantics {"flt-semantics-identifier":"p13-email"}
+                input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p13 Email\nname@example.com","type":"text"} value=""
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p13-submit"} text="p13 Submit"
+==== p13 start AX
+AX button name="Back" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p13 fixture" description="" value="" {}
+AX generic name="" description="" value="" {"invalid":"false"}
+AX button name="p13 Submit" description="" value="" {"focusable":true}
+AX StaticText name="p13 Submit" description="" value="" {}
+AX textbox name="p13 Email name@example.com" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+==== p13 focus before: flt-semantics aria-label=null in=p13-submit
+==== p13 announcer after submit: ["flt-announcement-assertive: \"Enter an email address, like name@example.com.\"","flt-announcement-polite: \"Enter an email address, like name@example.com. \"","flt-announcement-assertive: \"\"","flt-announcement-polite: \"\""]
+==== p13 focus after: flt-semantics aria-label=null in=p13-submit
+==== p13 after DOM
+flt-semantics {}
+  flt-semantics {}
+    flt-semantics {}
+      flt-semantics {}
+        flt-semantics {}
+          flt-semantics {"role":"button","tabindex":"0","flt-tappable":""} text="Back"
+          h2 {} text="p13 fixture"
+        flt-semantics {"role":"group"}
+          form {}
+            flt-semantics {"aria-invalid":"true"}
+              flt-semantics {"flt-semantics-identifier":"p13-email"}
+                input {"spellcheck":"false","autocorrect":"off","autocomplete":"off","data-semantics-role":"text-field","aria-label":"p13 Email\nname@example.com","type":"text"} value=""
+              flt-semantics {"flt-semantics-identifier":"p13-error"}
+                span {} text="Enter an email address, like name@example.com."
+            flt-semantics {"role":"button","tabindex":"0","flt-tappable":"","flt-semantics-identifier":"p13-submit"} text="p13 Submit"
+==== p13 after AX
+AX button name="Back" description="" value="" {"focusable":true}
+AX StaticText name="Back" description="" value="" {}
+AX StaticText name="p13 fixture" description="" value="" {}
+AX generic name="" description="" value="" {"invalid":"true"}
+AX button name="p13 Submit" description="" value="" {"focusable":true,"focused":true}
+AX StaticText name="p13 Submit" description="" value="" {}
+AX textbox name="p13 Email name@example.com" description="" value="" {"invalid":"false","focusable":true,"editable":"plaintext","settable":true,"multiline":false,"readonly":false,"required":false}
+AX StaticText name="Enter an email address, like name@example.com." description="" value="" {}
+  ✓  13 f06_probe.spec.js:70:3 › probe p13 (4.7s)
+
+  13 passed (56.7s)

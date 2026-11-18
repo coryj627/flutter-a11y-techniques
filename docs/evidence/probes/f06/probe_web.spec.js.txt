@@ -1,0 +1,92 @@
+// F06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/f06/probe_web.spec.js.txt): the DOM, Chromium's
+// accessibility tree, the announcer elements, and DOM focus for each
+// fixture of lib/probe.dart, before and after its submit button.
+import { test } from '@playwright/test';
+
+const id = (page, x) => page.locator(`[flt-semantics-identifier="${x}"]`);
+const all = ['p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10', 'p11', 'p12', 'p13'];
+const dynamic = new Set(all.slice(2));
+
+async function dump(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const host = document.querySelector('flt-semantics-host');
+    const walk = (el, depth) => {
+      const attrs = {};
+      for (const a of el.attributes) if (!['style', 'id'].includes(a.name)) attrs[a.name] = a.value;
+      const text = el.childElementCount === 0 && el.textContent ? ` text="${el.textContent}"` : '';
+      const value = el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' ? ` value="${el.value}"` : '';
+      out.push(`${'  '.repeat(depth)}${el.tagName.toLowerCase()} ${JSON.stringify(attrs)}${value}${text}`);
+      for (const c of el.children) walk(c, depth + 1);
+    };
+    for (const c of host.children) walk(c, 0);
+    return out.join('\n');
+  });
+}
+
+async function ax(page) {
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const out = [];
+  for (const n of nodes) {
+    if (n.ignored) continue;
+    const role = n.role?.value;
+    const name = n.name?.value ?? '';
+    const description = n.description?.value ?? '';
+    const props = Object.fromEntries((n.properties ?? []).map((p) => [p.name, p.value?.value]));
+    if (['textbox', 'button', 'StaticText', 'status', 'alert', 'generic', 'group'].includes(role) &&
+        (name || description || props.invalid)) {
+      out.push(`AX ${role} name=${JSON.stringify(name)} description=${JSON.stringify(description)} ` +
+        `value=${JSON.stringify(n.value?.value ?? '')} ${JSON.stringify(props)}`);
+    }
+  }
+  return out.join('\n');
+}
+
+async function record(page) {
+  await page.evaluate(() => {
+    window.__f06 = [];
+    const watch = (sel) => {
+      const el = document.querySelector(sel);
+      if (!el) return;
+      new MutationObserver(() => window.__f06.push(`${sel}: "${el.textContent}"`))
+        .observe(el, { childList: true, subtree: true, characterData: true });
+    };
+    watch('flt-announcement-polite');
+    watch('flt-announcement-assertive');
+  });
+}
+
+const focused = (page) => page.evaluate(() => {
+  const e = document.activeElement;
+  if (!e) return 'none';
+  const holder = e.closest('[flt-semantics-identifier]');
+  return `${e.tagName.toLowerCase()} aria-label=${JSON.stringify(e.getAttribute('aria-label'))} ` +
+    `in=${holder?.getAttribute('flt-semantics-identifier') ?? '-'}`;
+});
+
+for (const f of all) {
+  test(`probe ${f}`, async ({ page }) => {
+    await page.goto('about:blank');
+    await page.goto(`/#/${f}`);
+    await page.locator(`[flt-semantics-identifier^="${f}-"]`).first().waitFor();
+    await page.waitForTimeout(1500);
+    console.log(`==== ${f} start DOM\n${await dump(page)}`);
+    console.log(`==== ${f} start AX\n${await ax(page)}`);
+    if (!dynamic.has(f)) return;
+    await record(page);
+    const submit = id(page, `${f}-submit`);
+    // The keyboard, as a screen reader user would: focus, then Enter.
+    await submit.focus();
+    await page.waitForTimeout(300);
+    console.log(`==== ${f} focus before: ${await focused(page)}`);
+    // Enter does not activate a CupertinoButton on the web (FL-002): Space.
+    await page.keyboard.press(f === 'p09' || f === 'p13' ? 'Space' : 'Enter');
+    await page.waitForTimeout(2500);
+    console.log(`==== ${f} announcer after submit: ${JSON.stringify(await page.evaluate(() => window.__f06))}`);
+    console.log(`==== ${f} focus after: ${await focused(page)}`);
+    console.log(`==== ${f} after DOM\n${await dump(page)}`);
+    console.log(`==== ${f} after AX\n${await ax(page)}`);
+  });
+}

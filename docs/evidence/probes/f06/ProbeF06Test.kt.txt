@@ -1,0 +1,204 @@
+// F06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/f06/ProbeF06Test.kt.txt). Runs against lib/probe.dart
+// (Gradle -Ptarget=lib/probe.dart). probe() dumps every node of each fixture
+// before and after its submit button is pressed; talkBackWalk() does the same
+// with TalkBack on, logging markers that tool/talkback.py's parser reads.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeF06Test : TechniqueTest("F06") {
+    private val tag = "F06PROBE"
+
+    // Fixtures with a button that makes the errors appear.
+    private val dynamic = listOf("p03", "p04", "p05", "p06", "p07", "p08", "p09", "p10", "p11", "p12", "p13",
+        "q01", "q02", "q03", "q04", "q05", "q06")
+    private val first = listOf("p01", "p02") + dynamic.filter { it.startsWith("p") }
+    private val second = dynamic.filter { it.startsWith("q") }
+
+    private fun launch(fixture: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", "/$fixture")
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.viewIdResourceName?.startsWith("$fixture-") == true }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("$fixture did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = android.graphics.Rect().also { n.getBoundsInScreen(it) }
+        val actions = n.actionList.joinToString(",") { a ->
+            when (a.id) {
+                AccessibilityNodeInfo.ACTION_CLICK -> "click"
+                AccessibilityNodeInfo.ACTION_FOCUS -> "focus"
+                AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS -> "a11yfocus"
+                AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS -> "clra11y"
+                AccessibilityNodeInfo.ACTION_SET_TEXT -> "settext"
+                else -> a.id.toString()
+            }
+        }
+        return "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"${n.name()}\" text=\"${n.text ?: ""}\" " +
+            "hint=\"${n.hintText ?: ""}\" showingHint=${n.isShowingHintText} error=\"${n.error ?: ""}\" " +
+            "contentInvalid=${n.isContentInvalid} live=${n.liveRegion} state=\"${n.stateDescription ?: ""}\" " +
+            "editable=${n.isEditable} focused=${n.isFocused} a11yFocused=${n.isAccessibilityFocused} " +
+            "visible=${n.isVisibleToUser} $r [$actions] children=${n.childCount}"
+    }
+
+    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
+        if (root == null) return
+        out.add(root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), out)
+    }
+
+    private fun appNodes(): List<AccessibilityNodeInfo> {
+        val out = mutableListOf<AccessibilityNodeInfo>()
+        for (w in automation.windows) if (w.type == AccessibilityWindowInfo.TYPE_APPLICATION) collect(w.root, out)
+        return out
+    }
+
+    private fun dump(label: String) {
+        Log.i(tag, "==== $label")
+        for (n in appNodes()) Log.i(tag, describe(n))
+        val ime = automation.windows.any { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }
+        Log.i(tag, "keyboard window: $ime")
+        for (w in automation.windows) {
+            val f = w.root?.let { findFocus(it) }
+            if (f != null) Log.i(tag, "a11y focus in window ${w.type}: ${describe(f)}")
+        }
+    }
+
+    private fun findFocus(root: AccessibilityNodeInfo): AccessibilityNodeInfo? =
+        root.findFocus(AccessibilityNodeInfo.FOCUS_ACCESSIBILITY)
+
+    private fun submit(fixture: String): AccessibilityNodeInfo = nodeInAnyWindow("$fixture-submit")
+
+    private fun hideKeyboard() {
+        if (automation.windows.any { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }) {
+            device.pressBack()
+            Thread.sleep(1_500)
+        }
+    }
+
+    @Test
+    fun probe() = probeOf(first)
+
+    @Test
+    fun probe2() = probeOf(second)
+
+    private fun probeOf(all: List<String>) {
+        for (fixture in all) {
+            launch(fixture)
+            dump("$fixture start")
+            if (fixture in dynamic) {
+                submit(fixture).performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                Thread.sleep(2_500)
+                dump("$fixture after submit")
+                if (fixture == "p12") {
+                    submit(fixture).performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    Thread.sleep(2_500)
+                    dump("$fixture after a second x")
+                }
+            }
+        }
+    }
+
+    /** The nodes a TalkBack user could stop on, in tree order. */
+    private fun stops(fixture: String): List<String> =
+        appNodes().filter { n ->
+            n.isVisibleToUser && (n.name().isNotEmpty() || (n.text?.isNotEmpty() == true) || n.isEditable) &&
+                !n.name().endsWith("fixture") && n.name() != "Back"
+        }.map { describe(it) }
+
+    @Test
+    fun talkBackWalk() = walkOf(first)
+
+    @Test
+    fun talkBackWalk2() = walkOf(second)
+
+    private fun openNative() {
+        val intent = Intent(inst.targetContext, ProbeNativeActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        Thread.sleep(7_000)
+    }
+
+    private fun native(text: String): AccessibilityNodeInfo =
+        appNodes().first { (it.hintText?.toString() ?: "").equals(text, true) || (it.text?.toString() ?: "").equals(text, true) }
+
+    /** The native comparison screen without TalkBack: before and after Submit. */
+    @Test
+    fun probeNative() {
+        openNative()
+        dump("native start")
+        native("n03 Submit").performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(2_000)
+        dump("native after submit")
+    }
+
+    /** The same with TalkBack. */
+    @Test
+    fun talkBackWalkNative() {
+        assumeTalkBack()
+        openNative()
+        dump("native start")
+        Log.i(talkBackTag, "FOCUS f06-native-submit")
+        talkBackFocus("native submit") { native("n03 Submit") }
+        Thread.sleep(3_000)
+        Log.i(talkBackTag, "FOCUS f06-native-after-submit")
+        native("n03 Submit").performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(6_000)
+        dump("native after submit")
+        Log.i(talkBackTag, "FOCUS f06-native-email")
+        talkBackFocus("native email") { appNodes().filter { it.isEditable }[0] }
+        Thread.sleep(5_000)
+        Log.i(talkBackTag, "FOCUS f06-native-phone")
+        talkBackFocus("native phone") { appNodes().filter { it.isEditable }[1] }
+        Thread.sleep(5_000)
+        Log.i(talkBackTag, "END native")
+    }
+
+    private fun walkOf(all: List<String>) {
+        assumeTalkBack()
+        for (fixture in all) {
+            launch(fixture)
+            Thread.sleep(7_000)
+            if (fixture in dynamic) {
+                Log.i(talkBackTag, "FOCUS f06-$fixture-submit")
+                talkBackFocus("$fixture submit") { submit(fixture) }
+                Thread.sleep(3_000)
+                Log.i(talkBackTag, "FOCUS f06-$fixture-after-submit")
+                submit(fixture).performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                Thread.sleep(8_000)
+                dump("$fixture after submit, TalkBack on")
+                Log.i(talkBackTag, "END $fixture-submit")
+                hideKeyboard()
+            }
+            // Every stop, one at a time, forced: this proves speech, not order.
+            val described = stops(fixture)
+            for ((i, line) in described.withIndex()) Log.i(tag, "$fixture stop $i: $line")
+            for (i in described.indices) {
+                Log.i(talkBackTag, "FOCUS f06-$fixture-stop-$i")
+                talkBackFocus("$fixture stop $i") {
+                    appNodes().filter { n ->
+                        n.isVisibleToUser && (n.name().isNotEmpty() || (n.text?.isNotEmpty() == true) || n.isEditable) &&
+                            !n.name().endsWith("fixture") && n.name() != "Back"
+                    }[i]
+                }
+                Thread.sleep(5_500)
+            }
+            Log.i(talkBackTag, "END $fixture")
+        }
+    }
+}
