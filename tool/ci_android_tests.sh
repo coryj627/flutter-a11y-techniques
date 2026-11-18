@@ -525,6 +525,12 @@ say "$(host_line)"
 
 # Wait for the device first: a reader started while it is away stops.
 timeout 120 adb wait-for-device || say "the emulator is not attached to adb after 120 seconds"
+# No "isn't responding" or "has stopped" dialogs. On a slow runner a system
+# app can stop answering while the emulator starts ("Pixel Launcher isn't
+# responding"), and its dialog stays over the app, so no example opens and
+# every test after it fails. A test still fails if the app itself stops.
+timeout 30 adb shell settings put global hide_error_dialogs 1 > /dev/null 2>&1 \
+  || say "could not turn off the system's error dialogs; one can cover the app"
 # A larger log on the device, so that it still holds the whole run when a
 # reader is restarted or a line is missing. Not every image allows it.
 timeout 30 adb logcat -G 16M > /dev/null 2>&1 || say "could not enlarge the device's log; it keeps its own size"
