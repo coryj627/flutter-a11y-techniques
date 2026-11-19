@@ -185,11 +185,11 @@ The probe that came first, with a native comparison on Android, is in
   `setError` was read "Error: … abc. Edit box". The message is a node of
   its own after the field, announced when it appeared in the examples, so
   the error is not lost there, but a user coming back to a field does not
-  hear it on the field. No workaround in the SDK. **Decision for review:**
-  F01 records the same mechanism for the label as
-  `PlatformStatus.limitation` on Android; F06 records Android as applying,
-  with a note, because in the examples the error is identified, described,
-  and announced there and only the reading on the field is missing.
+  hear it on the field. No workaround in the SDK. F01 records the same
+  mechanism for the label as `PlatformStatus.limitation` on Android; F06
+  records Android as applying, with this limitation, because in the
+  examples the error is identified, described, and announced there and
+  only the reading on the field is missing.
 - **Who announces depends on the platform**
   ([FL-181](../flutter-limitations.md#fl-181)). On Android a Material
   field's error text is a live region however it was set (source, tree
