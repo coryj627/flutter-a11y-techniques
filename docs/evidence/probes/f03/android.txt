@@ -1,0 +1,1422 @@
+settings autofill_service=com.google.android.gms/.autofill.service.AutofillService default_input_method=com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME
+==== page 1
+android:id/content | android.widget.FrameLayout | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 289)
+ | android.view.View | desc="F03 probe, page 1" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(42, 179 - 500, 252)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 289 - 1080, 2361)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 289 - 1080, 2361)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 321 - 1049, 447)
+ | android.widget.Button | desc="Page 1" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 321 - 273, 447)
+ | android.widget.Button | desc="Page 2" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(294, 321 - 535, 447)
+ | android.widget.Button | desc="Page 3" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(556, 321 - 797, 447)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 447 - 1049, 478)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 478 - 1049, 604)
+p01 | android.widget.EditText | desc="" hint="p01 Name" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 478 - 1049, 604)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 604 - 1049, 630)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 630 - 1049, 756)
+p02 | android.widget.EditText | desc="" hint="p02 Email" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 630 - 1049, 756)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 756 - 1049, 783)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 783 - 1049, 909)
+p03 | android.widget.EditText | desc="" hint="p03 Phone" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 783 - 1049, 909)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 909 - 1049, 935)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 935 - 1049, 1061)
+p04 | android.widget.EditText | desc="" hint="p04 Website" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 935 - 1049, 1061)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1061 - 1049, 1087)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1087 - 1049, 1213)
+p05 | android.widget.EditText | desc="" hint="p05 Amount" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 1087 - 1049, 1213)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1213 - 1049, 1239)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1239 - 1049, 1365)
+p06 | android.widget.EditText | desc="" hint="p06 Count" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 1239 - 1049, 1365)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1365 - 1049, 1392)
+---- input_method page 1, nothing focused
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=false
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=com.android.internal.policy.DecorView{e05699f V.E...... R....... 0,0-1080,2424 aid=1073741824}[MainActivity]
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+---- input_method p01
+IME inputType=0xa061 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0xa061 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0xa061 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0xa061 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(79)=[Open features menu, Clipboard, Translate, Settings, Use voice typing, q, 1, w, 2, e, 3, r, 4, t, 5, y, 6, u, 7, i, 8, o, 9, p, 0, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Emoji button, Space, Period, ., Next, Back]
+---- autofill p01 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=-1901458805
+AUTOFILL root/child0 autofillHints=[personName]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,509 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p01 | android.widget.EditText | desc="" hint="p01 Name" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 478 - 1049, 604)
+keyboard closed, still up=false
+---- input_method p02
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(79)=[Open features menu, Clipboard, Translate, Settings, Use voice typing, q, 1, w, 2, e, 3, r, 4, t, 5, y, 6, u, 7, i, 8, o, 9, p, 0, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, @, Emoji button, Space, Period, ., Next, Back]
+---- autofill p02 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=-517108484
+AUTOFILL root/child0 autofillHints=[emailAddress]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,661 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p02 | android.widget.EditText | desc="" hint="p02 Email" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 630 - 1049, 756)
+keyboard closed, still up=false
+---- input_method p03
+IME inputType=0x3 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x3 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x3 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x3 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(45)=[Open features menu, Clipboard, This text field does not support translate, Settings, Voice typing disabled, 1,  , 2, ABC, 3, DEF, Dash, −, 4, GHI, 5, JKL, 6, MNO, Space, 7, PQRS, 8, TUV, 9, WXYZ, Delete, Symbol keyboard, * #, 0, +, Period, ., Next, Back]
+---- autofill p03 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=1510372435
+AUTOFILL root/child0 autofillHints=[phoneNumber]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,814 934x63
+AUTOFILL root/child0 autofillValue=
+FOCUSED p03 | android.widget.EditText | desc="" hint="p03 Phone" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 783 - 1049, 909)
+keyboard closed, still up=false
+---- input_method p04
+IME inputType=0x8011 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x8011 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8011 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x8011 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(79)=[Open features menu, Clipboard, Translate, Settings, Use voice typing, q, 1, w, 2, e, 3, r, 4, t, 5, y, 6, u, 7, i, 8, o, 9, p, 0, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, slash, /, Emoji button, Space, Period, ., Next, Back]
+---- autofill p04 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=385757564
+AUTOFILL root/child0 autofillHints=[url]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,966 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p04 | android.widget.EditText | desc="" hint="p04 Website" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 935 - 1049, 1061)
+keyboard closed, still up=false
+---- input_method p05
+IME inputType=0x2002 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x2002 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x2002 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x2002 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(35)=[Open features menu, Clipboard, This text field does not support translate, Settings, Voice typing disabled, 1, 2, 3, Dash, −, 4, 5, 6, Space, 7, 8, 9, Delete, ,, 0, Period, ., Done, Back]
+---- autofill p05 (5 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=1061424282
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,1118 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p05 | android.widget.EditText | desc="" hint="p05 Amount" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 1087 - 1049, 1213)
+keyboard closed, still up=false
+---- input_method p06
+IME inputType=0x2 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x2 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x2 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x2 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(35)=[Open features menu, Clipboard, This text field does not support translate, Settings, Voice typing disabled, 1, 2, 3, Dash, −, 4, 5, 6, Space, 7, 8, 9, Delete, ,, 0, Period, ., Done, Back]
+---- autofill p06 (5 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=-292353829
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,1270 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p06 | android.widget.EditText | desc="" hint="p06 Count" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 1239 - 1049, 1365)
+keyboard closed, still up=false
+==== page 2
+android:id/content | android.widget.FrameLayout | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 289)
+ | android.view.View | desc="F03 probe, page 2" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(42, 179 - 500, 252)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 289 - 1080, 2361)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 289 - 1080, 2361)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 321 - 1049, 447)
+ | android.widget.Button | desc="Page 1" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 321 - 273, 447)
+ | android.widget.Button | desc="Page 2" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(294, 321 - 535, 447)
+ | android.widget.Button | desc="Page 3" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(556, 321 - 797, 447)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 447 - 1049, 478)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 478 - 1049, 604)
+p07 | android.widget.EditText | desc="" hint="p07 Email" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 478 - 1049, 604)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 604 - 1049, 630)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 630 - 1049, 756)
+p08 | android.widget.EditText | desc="" hint="p08 Name" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 630 - 1049, 756)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 756 - 1049, 783)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 783 - 1049, 909)
+p09 | android.widget.EditText | desc="" hint="p09 Email" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 783 - 1049, 909)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 909 - 1049, 935)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 935 - 1049, 1024)
+p10 | android.widget.EditText | desc="" hint="p10 Email" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 935 - 1049, 1024)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1024 - 1049, 1050)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1050 - 1049, 1155)
+p11 | android.widget.EditText | desc="" hint="p11 Amount" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 1050 - 1049, 1155)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1155 - 1049, 1182)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1182 - 1049, 1434)
+p12 | android.widget.EditText | desc="" hint="p12 Message" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 1182 - 1049, 1434)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1434 - 1049, 1460)
+---- input_method page 2, nothing focused
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=false
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+---- input_method p07
+IME inputType=0x8001 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x8001 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8001 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x8001 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(79)=[Open features menu, Clipboard, Translate, Settings, Use voice typing, q, 1, w, 2, e, 3, r, 4, t, 5, y, 6, u, 7, i, 8, o, 9, p, 0, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Emoji button, Space, Period, ., Done, Back]
+---- autofill p07 (5 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=568136350
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,509 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p07 | android.widget.EditText | desc="" hint="p07 Email" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 478 - 1049, 604)
+keyboard closed, still up=false
+---- input_method p08
+IME inputType=0x8001 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x8001 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8001 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x8001 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(79)=[Open features menu, Clipboard, Translate, Settings, Use voice typing, q, 1, w, 2, e, 3, r, 4, t, 5, y, 6, u, 7, i, 8, o, 9, p, 0, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Emoji button, Space, Period, ., Done, Back]
+---- autofill p08 (0 calls)
+FOCUSED p08 | android.widget.EditText | desc="" hint="p08 Name" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 630 - 1049, 756)
+keyboard closed, still up=false
+---- input_method p09
+IME inputType=0x880b1 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x880b1 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x880b1 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x880b1 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(79)=[Open features menu, Clipboard, Translate, Settings, Use voice typing, q, 1, w, 2, e, 3, r, 4, t, 5, y, 6, u, 7, i, 8, o, 9, p, 0, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Emoji button, Space, Period, ., Done, Back]
+---- autofill p09 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=1521026334
+AUTOFILL root/child0 autofillHints=[emailAddress]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,814 934x63
+AUTOFILL root/child0 autofillValue=
+FOCUSED p09 | android.widget.EditText | desc="" hint="p09 Email" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 783 - 1049, 909)
+keyboard closed, still up=false
+---- input_method p10
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(79)=[Open features menu, Clipboard, Translate, Settings, Use voice typing, q, 1, w, 2, e, 3, r, 4, t, 5, y, 6, u, 7, i, 8, o, 9, p, 0, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, @, Emoji button, Space, Period, ., Next, Back]
+---- autofill p10 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=-439789608
+AUTOFILL root/child0 autofillHints=[emailAddress]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=49,953 982x53
+AUTOFILL root/child0 autofillValue=
+FOCUSED p10 | android.widget.EditText | desc="" hint="p10 Email" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 935 - 1049, 1024)
+keyboard closed, still up=false
+---- input_method p11
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=false
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x8021 imeOptions=0x2000005 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+---- autofill p11 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=-439789608
+AUTOFILL root/child0 autofillHints=[emailAddress]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=49,953 982x53
+AUTOFILL root/child0 autofillValue=
+FOCUSED p11 | android.widget.EditText | desc="" hint="p11 Amount" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 1050 - 1049, 1155)
+no keyboard to close
+---- input_method p12
+IME inputType=0x28001 imeOptions=0x2000001 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x28001 imeOptions=0x2000001 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x28001 imeOptions=0x2000001 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x28001 imeOptions=0x2000001 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(79)=[Open features menu, Clipboard, Translate, Settings, Use voice typing, q, 1, w, 2, e, 3, r, 4, t, 5, y, 6, u, 7, i, 8, o, 9, p, 0, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Emoji button, Space, Period, ., Enter, Back]
+---- autofill p12 (5 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=1017689290
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,1213 934x189
+AUTOFILL root/child0 autofillValue=
+FOCUSED p12 | android.widget.EditText | desc="" hint="p12 Message" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 1182 - 1049, 1434)
+keyboard closed, still up=false
+==== page 3
+android:id/content | android.widget.FrameLayout | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 289)
+ | android.view.View | desc="F03 probe, page 3" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(42, 179 - 500, 252)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 289 - 1080, 2361)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 289 - 1080, 2361)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 321 - 1049, 447)
+ | android.widget.Button | desc="Page 1" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 321 - 273, 447)
+ | android.widget.Button | desc="Page 2" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(294, 321 - 535, 447)
+ | android.widget.Button | desc="Page 3" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(556, 321 - 797, 447)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 447 - 1049, 478)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 478 - 1049, 604)
+p13 | android.widget.EditText | desc="" hint="p13 Password" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=false Rect(32, 478 - 1049, 604)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 604 - 1049, 630)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 630 - 1049, 756)
+p14 | android.widget.EditText | desc="" hint="p14 PIN" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=false Rect(32, 630 - 1049, 756)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 756 - 1049, 783)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 783 - 1049, 872)
+p15 | android.widget.EditText | desc="" hint="p15 Password" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=false Rect(32, 783 - 1049, 872)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 872 - 1049, 898)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 898 - 1049, 1024)
+p16 | android.widget.EditText | desc="" hint="p16 New password" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=false Rect(32, 898 - 1049, 1024)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1024 - 1049, 1050)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1050 - 1049, 1176)
+p17 | android.widget.EditText | desc="" hint="p17 Code" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 1050 - 1049, 1176)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1176 - 1049, 1203)
+---- input_method page 3, nothing focused
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+IME inputType=0xa061 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=false
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x0 imeOptions=0x0 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=0 fieldId=0 fieldName=null
+---- input_method p13
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1452 - 1080, 2424) keys(88)=[Open features menu, Clipboard, This text field does not support translate, Settings, Voice typing disabled, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, q, w, e, r, t, y, u, i, o, p, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Space, Period, ., Done, Back]
+---- autofill p13 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=927624287
+AUTOFILL root/child0 autofillHints=[password]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,509 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p13 | android.widget.EditText | desc="" hint="p13 Password" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=true Rect(32, 478 - 1049, 604)
+keyboard closed, still up=false
+---- input_method p14
+IME inputType=0x2 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x3 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x2 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x2 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x2 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1541 - 1080, 2424) keys(35)=[Open features menu, Clipboard, This text field does not support translate, Settings, Voice typing disabled, 1, 2, 3, Dash, −, 4, 5, 6, Space, 7, 8, 9, Delete, ,, 0, Period, ., Done, Back]
+---- autofill p14 (5 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=-1711013123
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,661 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p14 | android.widget.EditText | desc="" hint="p14 PIN" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=true Rect(32, 630 - 1049, 756)
+keyboard closed, still up=false
+---- input_method p15
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8011 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1452 - 1080, 2424) keys(88)=[Open features menu, Clipboard, This text field does not support translate, Settings, Voice typing disabled, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, q, w, e, r, t, y, u, i, o, p, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Space, Period, ., Done, Back]
+---- autofill p15 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=-339529727
+AUTOFILL root/child0 autofillHints=[password]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=49,800 982x54
+AUTOFILL root/child0 autofillValue=
+FOCUSED p15 | android.widget.EditText | desc="" hint="p15 Password" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=true Rect(32, 783 - 1049, 872)
+keyboard closed, still up=false
+---- input_method p16
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2002 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1452 - 1080, 2424) keys(88)=[Open features menu, Clipboard, This text field does not support translate, Settings, Voice typing disabled, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, q, w, e, r, t, y, u, i, o, p, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Space, Period, ., Done, Back]
+---- autofill p16 (6 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=1223227171
+AUTOFILL root/child0 autofillHints=[newPassword]
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,929 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p16 | android.widget.EditText | desc="" hint="p16 New password" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=true Rect(32, 898 - 1049, 1024)
+keyboard closed, still up=false
+---- input_method p17
+IME inputType=0x8091 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8091 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x8091 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x8091 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x8091 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1452 - 1080, 2424) keys(88)=[Open features menu, Clipboard, This text field does not support translate, Settings, Voice typing disabled, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, q, w, e, r, t, y, u, i, o, p, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Space, Period, ., Done, Back]
+---- autofill p17 (5 calls)
+AUTOFILL root addChildCount 1
+AUTOFILL root/child0 virtualId=324607677
+AUTOFILL root/child0 autofillType=1
+AUTOFILL root/child0 dimens=73,1081 934x64
+AUTOFILL root/child0 autofillValue=
+FOCUSED p17 | android.widget.EditText | desc="" hint="p17 Code" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=true Rect(32, 1050 - 1049, 1176)
+keyboard closed, still up=false
+TYPED editing p13 | android.widget.EditText | desc="" hint="p13 Password" text="•••" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=true Rect(32, 478 - 1049, 604)
+---- input_method p13 typed
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8001 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x880b1 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8021 imeOptions=0x2000005 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x28001 imeOptions=0x2000001 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x2 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8091 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x8091 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x0 imeOptions=0x0 fieldId=0x0 fieldName=null actionId=0 actionLabel=null
+IME inputType=0x80081 imeOptions=0x2000006 fieldId=0x1 fieldName=null actionId=0 actionLabel=null
+IME mInputShown=true
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.tts
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.marvin.talkback
+IME packageName=com.google.android.inputmethod.latin
+IME packageName=com.google.android.inputmethod.latin
+IME mServedView=io.flutter.embedding.android.FlutterView{e769aec VFED..... .F...... 0,0-1080,2424 #1 aid=1073741825}
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IME mIsInputViewShown=true mStatusIcon=0
+IME inputType=0x80081 imeOptions=0x2000006 privateImeOptions=null
+IME hintText=null label=null
+IME packageName=dev.fluttera11y.flutter_a11y_techniques autofillId=1073741825 fieldId=1 fieldName=null
+IMEWINDOW Rect(0, 1452 - 1080, 2424) keys(88)=[Open features menu, Clipboard, This text field does not support translate, Settings, Voice typing disabled, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, q, w, e, r, t, y, u, i, o, p, a, s, d, f, g, h, j, k, l, Shift, z, x, c, v, b, n, m, Delete, Symbol keyboard, ?123, ,, Space, Period, ., Done, Back]
+keyboard closed, still up=false
+TYPED keyboard away p13 | android.widget.EditText | desc="" hint="p13 Password" text="•••" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=true Rect(32, 478 - 1049, 604)
+==== page 3, p13 typed, keyboard away
+android:id/content | android.widget.FrameLayout | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 2424)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 0 - 1080, 289)
+ | android.view.View | desc="F03 probe, page 3" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(42, 179 - 500, 252)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 289 - 1080, 2361)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(0, 289 - 1080, 2361)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 321 - 1049, 447)
+ | android.widget.Button | desc="Page 1" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 321 - 273, 447)
+ | android.widget.Button | desc="Page 2" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(294, 321 - 535, 447)
+ | android.widget.Button | desc="Page 3" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(556, 321 - 797, 447)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 447 - 1049, 478)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 478 - 1049, 604)
+p13 | android.widget.EditText | desc="" hint="p13 Password" text="•••" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=true Rect(32, 478 - 1049, 604)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 604 - 1049, 630)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 630 - 1049, 756)
+p14 | android.widget.EditText | desc="" hint="p14 PIN" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=false Rect(32, 630 - 1049, 756)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 756 - 1049, 783)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 783 - 1049, 872)
+p15 | android.widget.EditText | desc="" hint="p15 Password" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=false Rect(32, 783 - 1049, 872)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 872 - 1049, 898)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 898 - 1049, 1024)
+p16 | android.widget.EditText | desc="" hint="p16 New password" text="" showingHint=false password=true inputType=0x0 editable=true multiLine=false focused=false Rect(32, 898 - 1049, 1024)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1024 - 1049, 1050)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1050 - 1049, 1176)
+p17 | android.widget.EditText | desc="" hint="p17 Code" text="" showingHint=false password=false inputType=0x0 editable=true multiLine=false focused=false Rect(32, 1050 - 1049, 1176)
+ | android.view.View | desc="" hint="" text="" showingHint=false password=false inputType=0x0 editable=false multiLine=false focused=false Rect(32, 1176 - 1049, 1203)

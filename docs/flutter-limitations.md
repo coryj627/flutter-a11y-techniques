@@ -85,7 +85,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-039](#fl-039) | On Android a hint is the end of the content description, not a hint | Android | Confirmed (source read) |
 | [FL-040](#fl-040) | `Semantics(hint:)` around a Material button stays on a node of its own | All | Confirmed |
 | [FL-041](#fl-041) | On web a hint on a node with no label is not rendered, unless the node is a text field | Web | Confirmed (source read) |
-| [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed in the S15 build and the F02 probe; no test yet |
+| [FL-042](#fl-042) | On iOS an obscured text field is a secure text field only while it is being edited | iOS | Confirmed |
 | [FL-043](#fl-043) | `Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS | All | Confirmed |
 | [FL-044](#fl-044) | A mixed checkbox is exposed as not checked on the web, on iOS, and on Android before 16, and TalkBack says no state for it | All | Confirmed |
 | [FL-045](#fl-045) | TalkBack says no state for a checkbox or radio button that is not checked | Android | Confirmed; cause not found |
@@ -106,6 +106,15 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-140](#fl-140) | Material helper text is not tied to its field; inside `MergeSemantics` it joins the field's name | All | Confirmed |
 | [FL-141](#fl-141) | Material helper text is cut to one line by default | All | Confirmed |
 | [FL-142](#fl-142) | A Material placeholder beside a label is exposed only while the field is focused and empty, and then as part of its name | All | Confirmed |
+| [FL-160](#fl-160) | On Android, turning suggestions off on an email field replaces the email keyboard with one that has no "@" | Android | Confirmed |
+| [FL-161](#fl-161) | On the web autofill hints do not reach `autocomplete`, except on an obscured field once it is focused | Web | Confirmed |
+| [FL-162](#fl-162) | On the web the number and decimal keyboard types leave nothing in the page, so a phone's browser shows its general keyboard | Web | Confirmed |
+| [FL-163](#fl-163) | On iOS the number, decimal, and phone pads have no return key, and a tap outside the field does not end editing | iOS | Confirmed |
+| [FL-180](#fl-180) | A text field in error has no error state on Android: TalkBack does not say "error", and reads a filled field without its error | Android | Confirmed |
+| [FL-181](#fl-181) | On iOS and the web an error is announced only when a `Form` validates on send or as the user types; `onUnfocus`, a field validated on its own, and a hand-set `errorText` are silent there | iOS, Web | Confirmed |
+| [FL-182](#fl-182) | `CupertinoTextFormFieldRow`'s error is not a live region, so on Android nothing announces it | Android | Confirmed |
+| [FL-183](#fl-183) | `MergeSemantics` around a field takes in its error: the error joins the field's name as well as its hint, and on Android the field becomes a live region | All | Confirmed |
+| [FL-184](#fl-184) | Keyboard focus moved to a field does not move VoiceOver's cursor on iOS | iOS | Observed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
@@ -122,6 +131,10 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-440](#fl-440) | A `CupertinoAlertDialog`'s actions take no keyboard focus | All | Confirmed |
 | [FL-441](#fl-441) | A `CupertinoActionSheet`'s title and message fail text contrast in light mode | All (widget test only) | Confirmed (widget test only) |
 | [FL-442](#fl-442) | When a route closes, the framework sends the screen reader back to where it was, after the app's own move, even when that control has been removed | Android | Confirmed in the source; its effect Observed |
+| [FL-480](#fl-480) | A route closes on Escape only when its barrier can be dismissed, and on Back and VoiceOver's escape gesture whether it can or not | All | Confirmed |
+| [FL-481](#fl-481) | Nothing closes an overlay that is not a route, and Back pops the screen under it | All | Confirmed |
+| [FL-482](#fl-482) | On the web, Escape does not hide a tooltip while the page has no keyboard focus | Web | Confirmed |
+| [FL-483](#fl-483) | A `ModalBarrier` in an `OverlayPortal`'s overlay takes the whole screen out of the semantics tree, the overlay with it | All (widget test only) | Confirmed (widget test only) |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -507,6 +520,13 @@ yet), **Fixed in x.y** (verified on that version).
   lands on it was not tested: swipes and Alt or Meta arrow-key commands
   did not move TalkBack focus on the emulator, in F02 as in S03. It does
   not put the instruction back on the field.
+- The same goes for an error. `InputDecoration.errorText` is put in the
+  field's semantics hint, which joins the label in the hint text ("Email,
+  Enter an email address…"), so a field in error that has a value was
+  read "Editing.", "abc", "Edit box", with neither its label nor its
+  error. Found in F06 and asserted by `f06-good-form-email-filled` in
+  `docs/evidence/F06/talkback-android.md`; see [FL-180](#fl-180) for why
+  nothing else on the field carries the error.
 - Upstream issue: not searched yet.
 
 ## FL-016
@@ -1332,37 +1352,51 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-042
 
-**An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS.**
+**On iOS an obscured text field is a secure text field only while it is being edited.**
 
-- Status: Observed, Flutter 3.47.5, iOS 27.0 simulator: first in the first
-  build of the S15 field examples, which were password fields (those
-  examples were changed to an ordinary field), and again in the F02 probe,
-  whose fixture is kept (below). No test in the repository yet.
-- What was seen: for `TextField(obscureText: true)` with VoiceOver's cursor
-  moved onto it and the field not being edited, XCUITest reported
-  `XCUIElementType.textField` (not `.secureTextField`) and VoiceOver said
-  "Password, Text field". On the web the same field was a secure field to
-  VoiceOver ("This is a secure text field"), and TalkBack read "password.
-  Edit box".
-- What is not known: what the field is while it is being edited. Flutter's
-  iOS text input plugin sets `secureTextEntry` from `obscureText`, and a
-  focused field is represented by the plugin's input view, so the role and
-  what VoiceOver echoes may differ there. That was not tested.
-- Why it could matter: "secure" tells a VoiceOver user that what they type
-  will not be echoed or shown.
-- Probed again in F02 (2026-11-18, iOS 27.0 simulator,
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator. First seen once
+  in S15's first build; settled by the F03 probe
+  (`docs/evidence/probes/f03`, fixtures 13 to 16) and asserted on
+  `/t/F03/good-sign-in` by `F03KeyboardTypesUITests` (the tree, before,
+  during, and after editing) and by its VoiceOver walk, each written to
+  fail when the field is secure before it is edited. Engine source read:
+  `TextInputSemanticsObject.mm`, which presents a text field's
+  accessibility through the plugin's input view while the field is
+  focused and through a plain stand-in (`FlutterInactiveTextInput`, which
+  has no secure entry) otherwise; `FlutterTextInputPlugin.mm` sets
+  `secureTextEntry` on the input view from `obscureText`.
+- What happens: `TextField(obscureText: true)` that is not being edited is
+  `XCUIElementType.textField`, and VoiceOver reads it "Password Text field
+  Double tap to edit.", as it reads any field. Once it is tapped it is a
+  `.secureTextField`, and VoiceOver reads "Password Secure text field Is
+  editing •••" with "abc" typed. When editing moves to another field it
+  is a `.textField` again, with "•••" as its value. Its text is never
+  exposed: the value is bullets before, during, and after editing.
+- On the other platforms (F03): Android gives the node its password flag
+  at all times, and TalkBack reads "Password", "password. Edit box", and
+  with "abc" typed "password. 3 characters"
+  (`docs/evidence/F03/talkback-android.md`). The web has
+  `<input type="password">` at all times, and VoiceOver on macOS reads
+  "Password secure text field" before anything is typed; with "abc"
+  typed, "3 characters contents selected Password secure text field" in
+  Chromium and "•••" in WebKit (`docs/evidence/F03/voiceover-web.md`).
+- Effect: a VoiceOver user moving through a form on iOS is not told that a
+  field is a password field until they start to edit it. The label still
+  says "Password", and what is typed is not read out. Not counted as a
+  WCAG failure here: the field's role, a text field, is right, and the
+  secure state is there whenever text is entered.
+- Workaround: none needed for the text; none in the SDK for the state.
+  `Semantics(obscured:)` sets the same flag `obscureText` does, and the
+  iOS engine does not read that flag anywhere (read in the source, not
+  tried).
+- How to read this entry: Flutter has not yet exposed an obscured field
+  as secure on iOS before it is edited. Re-check when the pinned version
+  changes.
+- Also seen in the F02 probe (2026-11-18,
   [F02 probe](evidence/probes/f02/README.md), fixture 10): an obscured
-  field with a label and a hint, not being edited, was
-  `XCUIElementType.textField` and VoiceOver read "i10 Password Text field
-  8 characters minimum, …", with no "secure". While it was being edited,
-  with "abc" typed, XCUITest reported `.secureTextField` with the value
-  "•••". So the element type follows editing; what VoiceOver says during
-  editing was not captured (the probe's walk began on the next element).
-  Still no test in the repository: F02's examples have no password field,
-  to keep this out of a technique about instructions.
-- Next: this belongs to F03 (keyboard and input types), which needs a
-  password example: VoiceOver's speech for the field while it is being
-  edited, and whether "secure" is ever said.
+  field with a label and a hint was `XCUIElementType.textField` and read
+  with no "secure" while not being edited, and `.secureTextField` with
+  the value "•••" while being edited.
 - Upstream issue: not searched yet (D25).
 
 ## FL-043
@@ -1960,6 +1994,432 @@ yet), **Fixed in x.y** (verified on that version).
   [F02](techniques/F02.md) `good-helper` does ([FL-140](#fl-140)).
 - Upstream issue: not searched yet (D25).
 
+## FL-160
+
+**On Android, turning suggestions off on an email field replaces the email keyboard with one that has no "@".**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator, Gboard. Found
+  in the F03 probe (`docs/evidence/probes/f03`, fixture 09) and asserted
+  by `F03KeyboardTypesTest.fieldsAskForTheirKeyboardAndPurpose` on
+  `/t/F03/bad-email-no-suggestions`, written to fail when the email
+  variation is kept. Engine source read:
+  `inputTypeFromTextInputType` in `TextInputPlugin.java`.
+- What happens: `TextField(keyboardType: TextInputType.emailAddress,
+  enableSuggestions: false)` asks the input method for input type
+  `0x800b1`. The engine starts from the email variation (`0x20`) and, for
+  `enableSuggestions: false`, adds `TYPE_TEXT_FLAG_NO_SUGGESTIONS` and
+  `TYPE_TEXT_VARIATION_VISIBLE_PASSWORD` (`0x90`) with a bitwise or. A
+  variation is a number, not a set of flags: `0x20 | 0x90` is `0xb0`,
+  `TYPE_TEXT_VARIATION_FILTER`. Gboard then shows its general keyboard,
+  with "," where the email keyboard has "@" (the keys are read from the
+  keyboard's window in the same test; the probe's screenshots, not kept,
+  show the same). The same field with suggestions on asks for `0x21` and
+  gets the "@" key.
+- Read in the source, not measured: the same or applies to the other text
+  variations. A URL field with suggestions off becomes a visible password
+  field (`0x10 | 0x90` is `0x90`), and a name field gets `0xf0`, which is
+  no defined variation. An obscured field is not affected, because the
+  suggestions branch is not taken for it.
+- iOS and the web keep the email keyboard: iOS shows "@" (the F03 iOS
+  test), and the web's `inputmode="email"` is unchanged.
+- Effect: a person typing an address has to switch to the symbols page
+  for "@". That is extra work, and real work for someone who types slowly
+  or with a switch; it fails no WCAG criterion as written. What else the
+  filter variation changes in Gboard was not looked at.
+- Workaround: leave `enableSuggestions` on for an email field and turn
+  off only `autocorrect`, which on its own does not touch the variation
+  (`good-contact`'s email field, input type `0x21`).
+- How to read this entry: Flutter has not made `enableSuggestions` keep a
+  field's keyboard variation yet. Re-check when the pinned version
+  changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-161
+
+**On the web autofill hints do not reach `autocomplete`, except on an obscured field once it is focused.**
+
+- Status: Confirmed, Flutter 3.47.5, web (Chromium and WebKit builds of
+  Playwright, desktop, and with a phone's user agent and platform).
+  Found in the F03 probe (`docs/evidence/probes/f03`, `web.txt` and
+  `web2.txt`) and asserted on every F03 field by
+  `web_tests/f03_keyboard_types.spec.js`, written to fail when a hint
+  arrives. Engine source read: `semantics/text_field.dart` and
+  `text_editing/text_editing.dart`.
+- What happens: a field's `<input>` is created with `autocomplete="off"`.
+  When editing starts, the text editing code writes the field's first
+  autofill hint as `autocomplete`, `name`, and `id` (`AutofillInfo.
+  applyToDomElement`). The semantics code then sets `autocomplete="off"`
+  again on every update of the field's node (`_updateInputType`), which
+  happens straight away and at every key. Measured: a field with
+  `AutofillHints.name`, `telephoneNumber`, `username`, or `url` has
+  `autocomplete="off"` before, while, and after it is edited, and
+  `name="name"` (or `tel`, `username`, `url`) from the first edit on.
+  Two exceptions, both from the same function:
+  - a field with `keyboardType: TextInputType.emailAddress` has
+    `autocomplete="email"` and `inputmode="email"` at all times, whatever
+    its hints, set by the semantics code from the field's input type;
+  - an obscured field is given `type="password"` and its `autocomplete`
+    is left alone, so it has "off" until it is first focused and then its
+    hint, such as `current-password` or `new-password`.
+  A multi-line field gets "on" once focused.
+- Effect: on the web the purpose of a name, a phone number, a username,
+  or any other field that is not an email address or a password cannot be
+  programmatically determined, so it fails 1.3.5 Identify Input Purpose
+  however the app is written. A browser can still guess from the `name`
+  attribute; a guess is not what 1.3.5 or H98 ask for. Before a password
+  field has been focused, nothing says it is one either.
+- Workaround: none in the SDK. For an email field, the email keyboard
+  type is what gives it `autocomplete="email"`; an email field without it
+  loses its purpose (`/t/F03/bad-default-keyboard`). A native `<input>`
+  through `HtmlElementView` would be a D32 workaround; the catalog has no
+  workaround kind yet, and none is built.
+- How to read this entry: Flutter has not yet kept a field's autofill
+  hint on the web. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-162
+
+**On the web the number and decimal keyboard types leave nothing in the page, so a phone's browser shows its general keyboard.**
+
+- Status: Confirmed, Flutter 3.47.5, web, Playwright's Chromium with an
+  Android phone's user agent and platform. Found in the F03 probe
+  (`docs/evidence/probes/f03/web2.txt`) and asserted by
+  `web_tests/f03_keyboard_types.spec.js` ("as on an Android phone"),
+  written to fail when `inputmode="numeric"` or `"decimal"` arrives.
+  Engine source read: `semantics/text_field.dart` and
+  `text_editing/input_type.dart`.
+- What happens: on a phone the text editing code can write `inputmode`
+  for a number (`numeric`), decimal (`decimal`), or phone (`tel`) field,
+  and `enterkeyhint` for its action; on a desktop browser it writes
+  neither. But the semantics code removes `inputmode` on every update of
+  the field's node and puts back only what it knows: `inputmode="email"`
+  for an email field, `type="tel"` for a phone field, `type="url"` for a
+  URL field, `type="search"` for a search field. Measured with a phone's
+  user agent and platform: a number and a decimal field have no
+  `inputmode` and `type="text"`; email, phone, and URL fields have their
+  attributes; and every field has the `enterkeyhint` of its action
+  (`next`, `done`, `enter` for a multi-line field), which the semantics
+  code does not touch.
+- Effect: in a phone's browser an amount or a count field gets the
+  general keyboard, and the digits are on its second page. A name field
+  that asks for the number keyboard (`bad-number-for-name`) is not
+  harmed on the web, for the same reason.
+- Not measured: a real phone. Playwright's emulation is what was run;
+  Flutter decides that it is on a phone from `navigator.platform` and the
+  user agent, and both were set as a phone's.
+- Workaround: none in the SDK. A phone field keeps `type="tel"`, which
+  MDN describes as bringing up a telephone keypad on its own; that was
+  not seen on a phone here.
+- How to read this entry: Flutter has not yet kept `inputmode` for the
+  number keyboard types on the web. Re-check when the pinned version
+  changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-163
+
+**On iOS the number, decimal, and phone pads have no return key, and a tap outside the field does not end editing.**
+
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator. Asserted by
+  `F03KeyboardTypesUITests.testEveryFieldGetsItsKeyboard` (no return key
+  on the pads of `good-contact`'s phone field, `good-amount`, and
+  `bad-number-for-name`) and `testAPhonePadCannotBePutAwayFromTheScreen`
+  (the keyboard is still up after a tap on the "Example" heading), both
+  written to fail when that changes. Framework source read:
+  `_EditableTextTapOutsideAction` in `widgets/editable_text.dart`, which
+  ends editing on a touch outside the field only on the web, and
+  `FlutterTextInputPlugin.mm`, which sets no input accessory view.
+- What happens: iOS's number pad, decimal pad, and phone pad have no
+  return key, so a field's `textInputAction` (`done`, `next`) has no key
+  there. Native apps put a bar with "Done" above such a pad; Flutter's
+  text input plugin adds none and has no API for one. A tap elsewhere on
+  the screen leaves the field focused and the keyboard up.
+- Effect: once a number or phone field has focus, the keyboard covers
+  the lower half of the screen until something in the app takes focus
+  away. A person cannot put it away to see or reach what it covers, and
+  "next" never moves on from such a field. The Android pads have a Done
+  or Next key (the F03 Android test).
+- Workaround, not built here: end editing on a tap outside the field,
+  `TextField(onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus())`,
+  or put a button that does so beside the field. Neither has been tested
+  with VoiceOver.
+- How to read this entry: Flutter has not added a way to give an iOS pad
+  a Done key yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-180
+
+**A text field in error has no error state on Android: TalkBack does not say "error", and reads a filled field without its error.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator, TalkBack 17.0.
+  Asserted by `F06ErrorIdentificationTest` (`node.error` empty and
+  `isContentInvalid` false on every field in error) and by
+  `f06-good-form-email-filled` in `docs/evidence/F06/talkback-android.md`
+  ("Editing. / abc / Edit box", with no label and no error), written to
+  fail when the error starts to be spoken. Engine source read:
+  `AccessibilityBridge.java` calls neither `setError` nor
+  `setContentInvalid` for a Flutter node; only `AccessibilityViewEmbedder`
+  copies them, for platform views. No F06 transcript or probe has TalkBack
+  saying "error" for a Flutter field.
+- What happens: a `TextFormField` in error has its message in the field's
+  semantics hint (`InputDecorator` puts `errorText` there), and Android
+  joins it to the label in the hint text: "Email, Enter an email address
+  …". While the field is empty TalkBack reads that
+  (`f06-good-form-email`: "Email, / / Enter an email address … / Edit
+  box"). Once the field has a value it reads the value alone, as it does
+  for the label ([FL-015](#fl-015)). The error is also a node of its own
+  after the field in the tree, and a live region (Android tree tests);
+  TalkBack announced it when it appeared in every recorded case where it
+  stayed a node of its own ([FL-181](#fl-181) lists them). Whether a swipe goes from
+  the field straight to it was not tested: the emulator walk forces focus.
+- Compared with a native control: an `android.widget.EditText` with
+  `setError(…)` on the same emulator has its node's error set and is
+  content-invalid. TalkBack announced "Error: Enter an email address." and
+  "Error: Enter a phone number using digits only." when they were set, and
+  read the filled field "Error: Enter a phone number using digits only..
+  abc. Edit box" (probe, `android-talkback-native.md` and
+  `android-tree-native.txt`).
+- `SemanticsProperties.validationResult`, which `FormField` sets, is read
+  only by the web engine, where it becomes `aria-invalid` (source read:
+  `lib/web_ui`, `updateAriaInvalid`; nothing in the Android or iOS engine
+  reads it). On iOS VoiceOver read the hint with the value in the probe
+  ("p02 Phone abc Text field Enter a phone number using digits only.",
+  `ios.txt`), so the reading on the field is not lost there; whether a
+  native iOS field has an invalid state to compare with was not checked.
+- Effect: a TalkBack user who comes back to a field they filled in wrongly
+  hears their value and nothing else: not that the field is in error, nor
+  what the error is, unless they move on to the message.
+- Workaround: none in the SDK. Keep the error text as its own node right
+  after the field, which `TextFormField` does unless it is merged
+  ([FL-183](#fl-183)).
+- How to read this entry: Flutter has not added an error state for
+  Android yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-181
+
+**On iOS and the web an error is announced only when a `Form` validates on send or as the user types; `onUnfocus`, a field validated on its own, and a hand-set `errorText` are silent there.**
+
+- In short: `validate()`, `validateGranularly()`, and the `Form`'s
+  `always`, `onUserInteraction`, and `onUserInteractionIfError` modes
+  announce the first error; the `Form`'s `onUnfocus` mode,
+  `FormFieldState.validate()`, a field's own `autovalidateMode`, and an
+  `errorText` set by hand do not.
+
+- Status: Confirmed, Flutter 3.47.5. Each statement below says whether it
+  is asserted by a widget test, measured on a device, or read in the
+  source only.
+- Read in the framework source, `widgets/form.dart`:
+  - `FormState._validate` validates every registered field and, where
+    `MediaQuery.supportsAnnounceOf` is true, sends the first error with
+    `SemanticsService.sendAnnouncement`, assertive, a second later on
+    iOS. It is the only code in `form.dart` that announces.
+  - It is called by `validate()` and `validateGranularly()`, and by
+    `FormState.build` for the `Form`'s `always`, `onUserInteraction`
+    (once a field has been changed), and `onUserInteractionIfError` (once
+    a field has been changed and one has an error) modes. A field's change
+    rebuilds the `Form` (`_fieldDidChange`, `_forceRebuild`).
+  - `FormState.build` does nothing for `onUnfocus` or `disabled`. With the
+    `Form`'s mode `onUnfocus` (or the field's own), each field wraps
+    itself in a `Focus` whose loss calls the field's own `_validate()`,
+    which sets the error and announces nothing. `FormFieldState.validate()`
+    and a field's own `autovalidateMode` likewise validate that field only.
+  - `material/input_decorator.dart`, `_buildError`, makes the error text
+    `Semantics(liveRegion: !MediaQuery.supportsAnnounceOf(context))`.
+- Asserted by the F06 widget tests (group "FL-181: who announces",
+  announcements supported, each recording followed by the recorder's own
+  liveness check). What each showed:
+  - `onUserInteraction` on the `Form`: one announcement when typing made
+    the field invalid, one more at the next change that left it invalid,
+    none once it was right; on the Android path and on the iOS path,
+    which waits a second.
+  - `always` on the `Form`: the error was shown from the first frame and
+    not announced then (the `Form` validates in its build, before its
+    fields have registered); each change after that announced it.
+  - `onUserInteractionIfError` on the `Form`: typing an invalid value
+    showed and announced nothing, because no field had an error yet;
+    `validate()` then announced it twice; the next change that kept it
+    announced it once.
+  - `validate()` on a `Form` whose mode is `always` or
+    `onUserInteraction` announced the error twice: once from `validate()`
+    and once from the rebuild it causes. With the mode `disabled` (F06
+    `good-form`) it announced once.
+  - `onUnfocus` on the `Form`: the error appeared when the field lost
+    focus, and nothing was announced.
+  - `validateGranularly()`: the first of two errors, once.
+  - A `TextFormField` with its own `onUserInteraction` and no `Form`, the
+    same field inside a `Form` whose mode is disabled, and
+    `FormFieldState.validate()` on one field: the error shown, nothing
+    announced.
+  - `errorText` set with `setState` (`bad-not-announced`): nothing
+    announced where announcements are supported; the error text a live
+    region where they are not.
+- Measured on devices, F06 probe (`docs/evidence/probes/f06`) and F06
+  transcripts:
+  - p03, `errorText` set with `setState`, no `Form`, the field wrapped in
+    `TestId` (so merged, [FL-183](#fl-183)), field empty: silent with
+    VoiceOver on iOS (`ios.txt`: nothing after the double tap) and on the
+    web (`voiceover-web.md`: "(nothing)"). TalkBack announced the merged
+    field with its error: "p03 Email Enter an email address …, / / Enter
+    an email address …" (`android-talkback.md`, `f06-p03-after-submit`).
+  - p12, a `TextFormField` with its own `onUserInteraction`, no `Form`,
+    wrapped in `TestId`, made invalid by a button that adds "x": silent
+    on iOS and on the web. TalkBack said "x / Edit box" when the error
+    appeared and "x / Edit box …" when focus was put on the field
+    (`f06-p12-after-submit`, `f06-p12-stop-0`): the error was not spoken
+    on Android either. See below.
+  - `bad-not-announced` (the same as p03 without the merge): silent on
+    iOS and the web (`voiceover-ios.md`, `voiceover-web.md`); TalkBack
+    announced "Enter an email address with an @, like name@example.com."
+    (`talkback-android.md`, `f06-bad-not-announced-sent`).
+  - `Form.validate()`, mode disabled: announced on all three (probe p04
+    to p07 on all three, q01 to q03 on Android; the F06 transcripts for
+    `good-form` and `good-cupertino`).
+  - Not run on a device: the `Form`'s `always`, `onUserInteraction`,
+    `onUserInteractionIfError`, and `onUnfocus` modes,
+    `validateGranularly()`, and field-level autovalidation of a field that
+    is not merged.
+- On iOS a corrected error can still be announced after the form goes
+  through. Read in the source: `_validate` takes the first error's text,
+  then, on iOS only, waits `_kIOSAnnouncementDelayDuration` (one second)
+  in an unawaited `Future` and sends that text without validating again or
+  checking that the error is still there; nothing can cancel it. Asserted
+  by the F06 widget tests on the iOS path: `validate()` failed, the field
+  was put right and `validate()` passed 300 ms later, and the recorder
+  had nothing when the form went through and then the old error, a second
+  after the first send. With the second send 1.5 s after the first, the
+  error came once, before it, and nothing after. On the other platforms'
+  path the error is sent at once, so nothing comes after a quick success.
+  What a user would hear in F06, where a form that goes through is
+  announced by a live count: "Forms sent: 1", then "Enter an email address
+  …" for a field that is no longer in error. It needs a send that fails
+  and a send that goes through less than a second apart. Not measured on a
+  device: the F06 walks put the fields right several seconds after the
+  failed send. No workaround in the app: the queued announcement has no
+  handle. It is recorded here and not as an entry of its own because it
+  is the same code as the rest of this entry.
+- What happens on Android: Flutter reports that announcements are not
+  supported there ([FL-018](#fl-018)), so `Form` sends nothing. A
+  Material field's error text is a live region (source; Android tree
+  tests). TalkBack announced it in every configuration recorded where the
+  error text was its own node: `Form.validate()` (q01 to q03,
+  `good-form`, `good-cupertino`, with both errors read, in no fixed
+  order) and `setState` (`bad-not-announced`). Where the field was
+  merged, its error was part of the field: TalkBack announced it with an
+  empty field (p03, p04, `bad-merged-error`), but in p12, where the field
+  held "x", it said only the value. That fits [FL-183](#fl-183) (the
+  merged field is the live region) and [FL-180](#fl-180) (a field with a
+  value is read as its value); the cause was not established. With two
+  merged fields in error at once (p05) TalkBack spoke only the second.
+- Effect: the same code announces an error on one platform and not on the
+  others. An error shown by `onUnfocus`, a field's own validation, or a
+  hand-set `errorText`, while the user is elsewhere on the screen, is a
+  status message that iOS and the web do not present (4.1.3). The
+  `Form`'s `always`, `onUserInteraction`, and `onUserInteractionIfError`
+  modes announce the first error again at every change that leaves it in
+  error, which while typing is an announcement per keystroke, and
+  `validate()` on such a `Form` announces it twice (widget tests). How
+  screen readers handle either was not measured.
+- Workaround: validate with the `Form` on send, with its mode left
+  `disabled`: `validate()` or `validateGranularly()` (F06 `good-form`).
+  Such a form already announces; do not add a second announcement to it.
+  With `onUnfocus`, with a field's own validation, or for an error set by
+  hand, nothing announces on iOS and the web: announce it with
+  `SemanticsService.sendAnnouncement` where `supportsAnnounceOf` is true,
+  as `Form` does (I12's `good-announce` shows the pattern). None of these
+  workarounds was run on a device except `validate()`.
+- Upstream issue: not searched yet (D25).
+
+## FL-182
+
+**`CupertinoTextFormFieldRow`'s error is not a live region, so on Android nothing announces it.**
+
+- Status: Confirmed, Flutter 3.47.5. Asserted by the F06 widget test
+  "FL-182" (no node is a live region after `validate()`). Framework source
+  read: `cupertino/form_row.dart` shows `error` as plain text, and `Form`
+  sends nothing on Android ([FL-181](#fl-181)). Seen once on a device, in
+  the F06 probe on Android 17 with TalkBack 17.0: fixture p09, the row
+  wrapped in `TestId`, nothing was said after `validate()`
+  (`android-talkback.md`, `f06-p09-after-submit`). An unmerged row was
+  not run on a device.
+- What happens: on iOS and the web `Form.validate()` announced the first
+  error (p09, `ios.txt` and `voiceover-web.md`); on Android nothing
+  announces it. The row's field also has no label of its own
+  ([FL-016](#fl-016)); merged with its row, it takes the prefix, the
+  placeholder, and the error as its name (p09: hint text "p09 Email\n
+  name@example.com\nEnter an email address …" on Android, name "p09 Email
+  name@example.com Enter an email address …" on the web).
+- Workaround: build the row from `FormField` and `CupertinoFormRow` and
+  give each part what `InputDecorator` gives a Material field: the label
+  and the error as the field's label and hint, its validation result, and
+  the error text in a live region where `supportsAnnounceOf` is false. F06
+  `good-cupertino` does this, and TalkBack announced its errors
+  (`f06-good-cupertino-sent`).
+- Upstream issue: not searched yet (D25).
+
+## FL-183
+
+**`MergeSemantics` around a field takes in its error: the error joins the field's name as well as its hint, and on Android the field becomes a live region.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Asserted by the F06
+  widget, web, Android, and iOS tests of `bad-merged-error`.
+- What happens: the error text under a Material field is a node of its
+  own (`Semantics(container: true)`), but `MergeSemantics` merges
+  containers too. The field's label becomes "Email" and the error on two
+  lines (widget test, XCUITest, the web's accessible name), and the error
+  is its hint as well. What was heard:
+  - Web, VoiceOver in Chromium: the error twice, "Email Enter an email
+    address … Enter an email address … invalid data edit text"
+    (`voiceover-web.md`).
+  - Android: the hint text holds it twice ("Email\nEnter …, Enter …",
+    tree test), and after Send TalkBack read "Email Enter an email address
+    …, / / Enter an email address …" (`f06-bad-merged-error-sent`). The
+    field itself is a live region (tree test).
+  - iOS: VoiceOver began "Email Enter an email address with an @, like
+    name@example.com. T" (`voiceover-ios.md`); the test API's 64
+    characters end there, so whether it read the error a second time, as
+    the hint, was not seen.
+- On Android a merged field with a value: in probe p12 (a field in
+  `TestId` with its own `onUserInteraction`, holding "x") TalkBack said
+  only "x / Edit box" when the error appeared, and the error was not
+  spoken ([FL-181](#fl-181)). Merged, the error has no node of its own to
+  announce, and the field's live region and hint text are read as for any
+  field with a value ([FL-180](#fl-180)); that is a reading of the
+  results, not an established cause.
+- Why it matters here: the project's `TestId`
+  (`lib/catalog/test_id.dart`) is a `MergeSemantics`. The F06 fields carry
+  their identifier with `Semantics(identifier:)` instead, which joins the
+  text field's node without merging anything ([FL-043](#fl-043): a
+  `TextField` is not a container).
+- Workaround: do not merge a field with its decoration. Put an identifier
+  on it with `Semantics(identifier:)`.
+- Upstream issue: not searched yet (D25). Merging is by design.
+
+## FL-184
+
+**Keyboard focus moved to a field does not move VoiceOver's cursor on iOS.**
+
+- Status: Observed, Flutter 3.47.5, iOS 27.0 simulator, in the F06 probe
+  (fixtures p06 and p07, `docs/evidence/probes/f06/ios.txt`). No test in
+  the repository reproduces it: no example moves focus that way alone. The
+  F06 VoiceOver test on iOS asserts that the workaround below works.
+- What happens: after `FocusNode.requestFocus()` on the first field in
+  error (p06), the keyboard was up, and VoiceOver's cursor was still on
+  the button that sent the form: one move forward read a key ("I
+  Button") and one back read "p06 Submit Button". On Android TalkBack's
+  focus moved to the field (probe p06 node dump; asserted by the F06
+  TalkBack walk). On the web the field's `<input>` got DOM focus, and
+  VoiceOver read it ("Name Enter your name. invalid data edit text",
+  `voiceover-web.md`).
+- Workaround: send a `FocusSemanticEvent` to the field as well. On iOS it
+  moved VoiceOver to the field (probe p07, a field in `TestId`: "p07 Name
+  Enter your name. Text field Enter your name. Double tap"; the F06
+  VoiceOver test: the cursor on "Name Text field …" after Send). It is
+  documented for Android and iOS only, and on the web the engine ignores
+  it (source read: `AccessibilityAnnouncements.handleMessage` acts only on
+  a message with text; probe p07 on the web: DOM focus stayed on the
+  button). F06 `good-form` and `good-cupertino` do both.
+- Upstream issue: not searched yet (D25).
+
 <!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
@@ -2446,6 +2906,21 @@ yet), **Fixed in x.y** (verified on that version).
   screen reader is not affected: each action is a button with a tap
   action. Escape did not close the dialog either, in the widget test and
   on the web (not tried on Android or iOS); that is I08's subject.
+- Added in I08 (2026-11-19): Escape does nothing because
+  `showCupertinoDialog`'s barrier cannot be dismissed by default
+  ([FL-480](#fl-480)); in the I08 probe (`docs/evidence/probes/i08/`,
+  fixture `e3`) Escape left it open in a widget test and on the web. On
+  the Android emulator Escape was not measured on it (no key sent to the
+  app reached Flutter in the rounds that opened it); the Back key, the
+  global Back action, and the keyboard's Meta+Escape and Meta+Left closed
+  it (`android_round3.txt`, `android_round4.txt`). So a keyboard user who
+  opens one is trapped on iOS (2.1.2), by the widget test and the source:
+  Tab reaches nothing, and no key closes it. On Android the keyboard's
+  Back gets them out, which nothing tells them; on the web Tab leaves the
+  page for the browser's own controls (FL-440 above). With
+  `barrierDismissible: true` (fixture `e4`) Escape closed it in the widget
+  test and on the web, so the dialog can be left, though still not
+  answered.
 - Effect: a keyboard or switch user who opens a Cupertino alert can
   neither answer it nor, unless the dialog can be dismissed some other
   way, get out of it.
@@ -2567,6 +3042,204 @@ yet), **Fixed in x.y** (verified on that version).
 - How to read this entry: Flutter has not added a way to tell the
   Navigator where the screen reader should go when a route closes, or to
   stop its request, yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-480
+
+**A route closes on Escape only when its barrier can be dismissed, and on Back and VoiceOver's escape gesture whether it can or not.**
+
+- Status: Confirmed, Flutter 3.47.5. Framework source read:
+  `widgets/routes.dart`, where every `ModalRoute` puts an action for
+  `DismissIntent`, the intent `WidgetsApp` maps Escape to, around its
+  content, and that action is enabled only when the route's
+  `barrierDismissible` is true; Android's Back and the global Back action
+  send `popRoute`, which pops the route on top through
+  `Navigator.maybePop` without looking at the barrier (read in the source:
+  `widgets/binding.dart`, `handlePopRoute`). On iOS VoiceOver's escape
+  gesture, when no element on its way up has the dismiss action, reaches
+  the engine's view controller, which sends the same `popRoute` (read in
+  the engine source: `accessibilityPerformEscape` in
+  `FlutterViewController.mm`; not measured, see I08's spec). Found in the
+  I08 probe (`docs/evidence/probes/i08/`, fixtures `e1` to `e6`, `e16` to
+  `e19`, and `e22`); where each was measured:
+  - Escape: every one of those fixtures in a widget test as Android and as
+    iOS, and on the web in Chromium (`flutter_test.txt`,
+    `web_round2.txt`); on the Android emulator `e1`, `e2`, `e5`, `e6`,
+    `e18`, and `e19` (`android.txt`; in rounds 3 and 4 no key sent to the
+    app reached Flutter, so their Escape rows for `e3`, `e4`, `e16`, `e17`,
+    and `e22` show nothing); on the iOS simulator `e1`, with Escape sent
+    as Command+period (`ios_round3.txt`).
+  - Back (the Back key and the global Back action): every one of them on
+    the Android emulator (`android.txt`, `android_round3.txt`,
+    `android_round4.txt`), and `popRoute` in the widget test. On the web
+    the browser's Back, as its history event, closed I08's sheets,
+    dismissible or not (`web_back.txt`; the web engine sends `popRoute`
+    for it, read in the source: `SingleEntryBrowserHistory`).
+  - A hardware keyboard's Back (Meta+Escape and Meta+Left): `e1`, `e2`,
+    `e3`, `e6`, `e17`, and `e19` on the Android emulator
+    (`android_round3.txt`, `android_round4.txt`).
+  Asserted by the I08 widget tests "the SDK on its own", by every I08
+  layer's tests of `bad-not-dismissible`, and by the I08 Android tests of
+  Back, the global Back action, and the keyboard's Back.
+- WCAG: 2.1.2 No Keyboard Trap, when the route has no control that
+  closes it.
+- What happens:
+  - `showDialog`, `showModalBottomSheet`, `showGeneralDialog`,
+    `showCupertinoModalPopup`, a popup menu, a dropdown, and the date
+    picker close on Escape when their barrier can be dismissed; with
+    `barrierDismissible: false` (or `isDismissible: false`), Escape does
+    nothing. `showCupertinoDialog`, `showGeneralDialog`, and
+    `showCupertinoSheet` cannot be dismissed by default, so Escape does
+    nothing to them unless the app says so.
+  - The Back key and the global Back action closed every one of them on
+    the Android emulator, those that cannot be dismissed included, and so
+    did Meta+Escape and Meta+Left on the fixtures they were tried on:
+    Android's system shortcuts turn those chords into Back before the app
+    sees them (AOSP `InputGestureManager` in `android16-release`; in
+    `android15-release`, `PhoneWindowManager`, which also turns
+    Meta+Backspace into Back; Meta+Backspace did nothing on the API 37
+    emulator). Only a `PopScope` with `canPop: false` stopped them (fixture
+    `e19`, which also kept Escape and the barrier's dismiss action from
+    closing it).
+  - A route whose barrier cannot be dismissed has no node with the dismiss
+    action either: a screen reader's Dismiss action has nothing to act
+    on (fixtures `e2`, `e6`, `e17`).
+  - An Escape that nothing handled did not become Back on the Android
+    emulator (the probe's `backControl`, and `e2` and `e6` in
+    `android.txt`): the screen stayed. Escape alone is not Back there;
+    Meta+Escape is.
+  - On the iOS simulator the Escape key typed from XCUITest never reached
+    Flutter, with VoiceOver on or off, while Tab in the same launch did
+    (`ios.txt`, `ios_round2.txt`); Command+period, iOS's own key for
+    cancel, arrived as Escape and closed `e1` and the probe's own overlay
+    that handles Escape (`ios_round3.txt`), on iOS 27.0. On CI's iOS 26.5
+    simulator it did not close the I08 layers every time, even with
+    keyboard focus shown in them: in every place in one run, in one of
+    three in the next (`ci_ios_26_5.txt`, `ci_ios_26_5_rerun.txt`; I08's
+    spec, section 7), so I08's iOS Escape checks run on iOS 27 only.
+    Whether this is XCUITest's or iOS's was not found. Whether a hardware
+    keyboard's Escape key reaches the app was not tried.
+- Effect: a sheet or dialog made not dismissible, so that a stray tap
+  does not close it, is closed by Back and by a screen reader's gesture
+  but not by Escape. If it has no button that closes it, a keyboard user
+  on iOS cannot leave it: Tab goes round its controls (I08
+  `bad-not-dismissible`; measured on the iOS 27.0 simulator, with Escape
+  sent as Command+period; on earlier iOS Escape is not verified). On Android the keyboard's Back, Meta+Escape,
+  still closes it, but nothing tells the user so, and Escape, the key the
+  rest of the app answers, does nothing. On the web the browser's Back
+  closes it the same way (measured as the history event, `page.goBack()`,
+  in I08's web tests; the browser's keyboard shortcut itself was not
+  sent), and Tab leaves the page for the browser's own controls, then
+  comes back to it.
+- Workaround, in the SDK: leave the barrier dismissible, as I08
+  `good-material` and `good-cupertino` do; or, where it must not be, give
+  the route a button that closes it, which Tab reaches.
+- How to read this entry: this is how the SDK is written, and
+  `barrierDismissible` is documented as being about a tap on the barrier;
+  it is logged because one flag decides both a tap and the standard
+  keyboard exit, and three of the SDK's dialog functions default to no
+  keyboard exit at all.
+- Upstream issue: not searched yet (D25).
+
+## FL-481
+
+**Nothing closes an overlay that is not a route, and Back pops the screen under it.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the I08 probe
+  (`docs/evidence/probes/i08/`, fixtures `e14`, an `OverlayEntry`, and
+  `e15`, an `OverlayPortal`): in a widget test as Android and as iOS, on
+  the web (Escape), on the Android emulator (`e14`: Escape, Back, the
+  global Back action, Meta+Escape, and Meta+Left; `e15`: Back and the
+  global Back action, `android_round3.txt` and `android_round4.txt`). Asserted by the
+  I08 widget tests "an OverlayPortal: Escape is not handled, and popRoute
+  pops the screen under it" and "an OverlayEntry stays on after popRoute
+  pops its screen", and by every I08 layer's tests of `bad-no-escape` and
+  `bad-back-leaves`.
+- WCAG: 2.1.2 No Keyboard Trap, when the overlay keeps keyboard focus
+  and has no control that closes it.
+- What happens: an `OverlayEntry` or `OverlayPortal` has no route, so
+  nothing in it answers `DismissIntent`: Escape is not handled. Back, and
+  VoiceOver's escape gesture when nothing takes it on the way (read in
+  the source, FL-480), pop the route on top, which is the screen the
+  overlay was shown from. An `OverlayPortal` goes with its screen; an
+  `OverlayEntry` inserted from a screen is not part of it and stays on,
+  over the screen before (the probe's Home screen on Android, and the
+  widget test). No node of the overlay has the dismiss action unless the
+  app gives it one.
+- Effect: a menu, popover, or panel drawn by hand ignores Escape; on
+  Android, Back takes the user off the screen and can leave the panel
+  floating over another one. On the web the browser's Back, as its
+  history event, did the same in I08 `bad-back-leaves` (`web_back.txt`).
+- Workaround, in the SDK, verified at every I08 layer in `good-widgets`:
+  an `Actions` with an action for `DismissIntent` around the overlay,
+  where keyboard focus is, for Escape; a `PopScope` on the screen, with
+  `canPop` false while the overlay is shown and `onPopInvokedWithResult`
+  closing it, for Back and the escape gesture at the root;
+  `Semantics(onDismiss:)` on the overlay, for TalkBack's Dismiss action
+  and for VoiceOver's escape gesture made inside it (read in the source:
+  `accessibilityPerformEscape` in the iOS engine's `SemanticsObject.mm`).
+  Or show it as a route (`showGeneralDialog`), which does the first two
+  by itself (FL-480).
+- How to read this entry: an overlay is documented as a stack of
+  entries with no navigation of its own; it is logged because the usual
+  way to draw a custom menu or popover gets none of what a route gets.
+- Upstream issue: not searched yet (D25).
+
+## FL-482
+
+**On the web, Escape does not hide a tooltip while the page has no keyboard focus.**
+
+- Status: Confirmed, Flutter 3.47.5, web (Chromium, Playwright). Found
+  in the I08 probe (`docs/evidence/probes/i08/web_round2.txt`, fixture
+  `e10`): a `Tooltip` shown by hovering, with no element of the page
+  focused, stayed after Escape, and stayed while the pointer stayed;
+  with DOM focus on the tooltip's own button, Escape hid it. Framework
+  source read: `widgets/app.dart`, where `WidgetsApp` hides tooltips on
+  Escape from a `Focus` of its own, which a key reaches only on its way
+  up from the focused node, and `widgets/view.dart`, where a view that
+  loses focus parks focus on the root scope, above `WidgetsApp`, "so
+  that no descendant node will be given focus, and there's no widget
+  that can receive keyboard events". Asserted by the I08 widget test "a
+  tooltip: Escape hides it while focus is in the app, and not while focus
+  is above it", which sends the view's loss of focus.
+- WCAG: 1.4.13 Content on Hover or Focus, for content shown on hover that
+  must be dismissible without moving the pointer.
+- Also seen, on the Android emulator: a tooltip shown by the long-click
+  accessibility action, with focus on the screen, stayed after Escape
+  (`docs/evidence/probes/i08/android.txt`, `tooltip`); the cause was not
+  looked into. In the widget test, as Android, a tooltip shown by a
+  long press was hidden by Escape. On the iOS simulator the probe's
+  Escape did not reach Flutter at all (FL-480), so the tooltip stayed;
+  Command+period was not tried on it.
+- The plan (section 2.6) says Escape on tooltips on the web needs
+  Flutter 3.50. On the pinned 3.47.5 Escape does hide a tooltip on the web
+  when focus is in the page; what 3.50 changes was not checked.
+- Workaround: none tried. The tooltip itself is C12's.
+- Upstream issue: not searched yet (D25).
+
+## FL-483
+
+**A `ModalBarrier` in an `OverlayPortal`'s overlay takes the whole screen out of the semantics tree, the overlay with it.**
+
+- Status: Confirmed in a widget test only, Flutter 3.47.5. Found while
+  building I08 `good-widgets`, whose layers were first an `OverlayPortal`
+  with a barrier behind them: the semantics tree held only its root.
+  Asserted by the I08 widget tests "a ModalBarrier in an OverlayPortal
+  empties the semantics tree" and its control "a ModalBarrier in an
+  OverlayEntry keeps the panel in the semantics tree".
+- What happens: an `OverlayPortal` paints its overlay child in the
+  overlay, but in the semantics tree the child sits where the portal
+  is, inside the screen (seen in the semantics dump). A `ModalBarrier`
+  builds a `BlockSemantics` (read in the source:
+  `widgets/modal_barrier.dart`), which is documented to drop the
+  semantics of what was painted before it in the same semantics
+  container; there, the panel painted after it went too. Why was not
+  looked into. In an `OverlayEntry` the
+  same barrier hides only the screen.
+- Effect, if it holds on devices: a hand-made modal built this way is
+  silent to a screen reader. Not checked on a device.
+- Workaround, in the SDK: put the barrier and the panel in an
+  `OverlayEntry`, as I08 `good-widgets` does.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->

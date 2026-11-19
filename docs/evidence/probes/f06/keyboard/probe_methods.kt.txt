@@ -1,0 +1,99 @@
+    // PROBE-START
+    // F06 probe (throwaway; inserted into F06ErrorIdentificationTest for one
+    // run, kept as docs/evidence/probes/f06/keyboard/probe_method.kt.txt):
+    // a form that goes through while the keyboard is still up.
+    private fun countState(): String {
+        var found: AccessibilityNodeInfo? = null
+        anyWindowHas { n -> (n.viewIdResourceName == "f06-good-form-count").also { if (it) found = n } }
+        val keyboard = automation.windows.any { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }
+        val count = found?.let { "present, visible=${it.isVisibleToUser}, desc=\"${it.name()}\"" } ?: "not in the tree"
+        return "keyboard up=$keyboard; count: $count"
+    }
+
+    private fun treeState(): String {
+        val ids = mutableListOf<String>()
+        anyWindowHas { n ->
+            val id = n.viewIdResourceName
+            if (id != null && id.startsWith("f06-")) ids.add("$id(visible=${n.isVisibleToUser})")
+            val d = n.name()
+            if (d.isNotEmpty() && n.viewIdResourceName == null && ids.size < 40) ids.add("\"${d.take(30)}\"")
+            false
+        }
+        val windows = automation.windows.joinToString(",") { "${it.type}" }
+        return "windows=[$windows] nodes=${ids.joinToString(" ")}"
+    }
+
+    /** Without TalkBack: what is in the tree after a failed send, and after Back. */
+    @Test
+    fun probeKeyboardAfterFailedSend() {
+        for (slug in listOf("good-form", "bad-color-only")) {
+            open(slug)
+            Log.i("F06KB", " $slug opened: ${treeState()}")
+            send(slug)
+            Thread.sleep(3_000)
+            Log.i("F06KB", " $slug after the failed send: ${treeState()}")
+            if (automation.windows.any { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }) {
+                device.pressBack()
+                Thread.sleep(3_000)
+                Log.i("F06KB", " $slug after Back: ${treeState()}")
+            }
+        }
+    }
+
+    /** With TalkBack: the keyboard left up, Send reached by scrolling. */
+    @Test
+    fun probeSuccessScrolledWithKeyboardUp() {
+        assumeTalkBack()
+        val slug = "good-form"
+        openWithTalkBack(slug)
+        Thread.sleep(8_000)
+        send(slug)
+        waitFor("errors shown") { withText(NAME_ERROR) != null }
+        Thread.sleep(4_000)
+        type("f06-good-form-name", "Ana")
+        type("f06-good-form-email", "ana@example.com")
+        Log.i("F06KB", " scrolled: after typing: ${treeState()}")
+        for (i in 0 until 6) {
+            var sendNode: AccessibilityNodeInfo? = null
+            anyWindowHas { n -> (n.viewIdResourceName == "f06-good-form-send").also { if (it) sendNode = n } }
+            if (sendNode != null) break
+            var scroller: AccessibilityNodeInfo? = null
+            anyWindowHas { n ->
+                (n.actionList.any { it.id == AccessibilityNodeInfo.ACTION_SCROLL_FORWARD }).also { if (it) scroller = n }
+            }
+            Log.i("F06KB", " scrolled: scroll forward ${scroller?.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)}")
+            Thread.sleep(1_500)
+        }
+        Log.i("F06KB", " scrolled: before Send: ${treeState()}")
+        talkBackFocus("Send") { nodeInAnyWindow("f06-good-form-send") }
+        Thread.sleep(4_000)
+        Log.i(talkBackTag, "FOCUS f06-kb-scrolled-sent-ok")
+        send(slug)
+        Thread.sleep(7_000)
+        Log.i("F06KB", " scrolled: after Send: ${treeState()}")
+        Log.i(talkBackTag, "END kb-scrolled")
+    }
+
+    @Test
+    fun probeSuccessWithKeyboardUp() {
+        assumeTalkBack()
+        val slug = "good-form"
+        openWithTalkBack(slug)
+        Thread.sleep(8_000)
+        send(slug)
+        waitFor("errors shown") { withText(NAME_ERROR) != null }
+        Thread.sleep(4_000)
+        Log.i("F06KB", " after the failed send: ${countState()}")
+        type("f06-good-form-name", "Ana")
+        type("f06-good-form-email", "ana@example.com")
+        Log.i("F06KB", " after typing: ${countState()}")
+        talkBackFocus("Send") { nodeInAnyWindow("f06-good-form-send") }
+        Thread.sleep(4_000)
+        Log.i("F06KB", " TalkBack on Send: ${countState()}")
+        Log.i(talkBackTag, "FOCUS f06-kb-sent-ok")
+        send(slug)
+        Thread.sleep(7_000)
+        Log.i("F06KB", " after Send: ${countState()}")
+        Log.i(talkBackTag, "END kb")
+    }
+    // PROBE-END

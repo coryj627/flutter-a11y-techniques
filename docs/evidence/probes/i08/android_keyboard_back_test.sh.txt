@@ -1,0 +1,13 @@
+#!/bin/sh
+# I08's keyboardBackClosesTheLayers, twice, under tool/with_devices.py, with
+# the test's own log and the system's lines about Back and key gestures.
+ADB=$HOME/Library/Android/sdk/platform-tools/adb
+PKG=dev.fluttera11y.flutter_a11y_techniques
+for n in 1 2; do
+  echo "== run $n"
+  $ADB logcat -c
+  (cd android && ./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+    -Pandroid.testInstrumentationRunnerArguments.class=$PKG.I08DismissAndEscapeTest#keyboardBackClosesTheLayers 2>&1 \
+    | grep -E "FAILED|BUILD|AssertionError" | head -5)
+  $ADB logcat -d | grep -E "I08KEYS|KeyGesture|injectBack|BackNavigation|onBackPressed|Back gesture" | sed 's/^.\{19\}//' | head -120
+done

@@ -1,0 +1,30 @@
+#!/bin/sh
+# Runs the F06 Android class (and, with "talkback", the TalkBack walk) with
+# the emulator at CI's size, 320x640 at 160 dpi, and always restores the
+# size and density. Run under tool/with_devices.py.
+# Usage: small_screen.sh <out-dir> [talkback]
+REPO=/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ad7488433f1f8065c
+OUT=$1
+ADB=~/Library/Android/sdk/platform-tools/adb
+restore() {
+  $ADB shell wm size reset
+  $ADB shell wm density reset
+  echo "restored: $($ADB shell wm size | tr '\n' ' ') $($ADB shell wm density | tr '\n' ' ')" >> "$OUT/small.log"
+}
+trap restore EXIT INT TERM
+$ADB shell wm size 320x640
+$ADB shell wm density 160
+echo "set: $($ADB shell wm size | tr '\n' ' ') $($ADB shell wm density | tr '\n' ' ')" > "$OUT/small.log"
+sleep 5
+cd "$REPO/android" || exit 1
+./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.F06ErrorIdentificationTest \
+  > "$OUT/small-android.log" 2>&1
+echo "android class exit $?" >> "$OUT/small.log"
+if [ "$2" = "talkback" ]; then
+  cd "$REPO" || exit 1
+  python3 tool/talkback.py F06 > "$OUT/small-talkback.log" 2>&1
+  echo "talkback exit $?" >> "$OUT/small.log"
+  cp docs/evidence/F06/talkback-android.md "$OUT/small-talkback-android.md"
+  git -C "$REPO" checkout docs/evidence/F06/talkback-android.md
+fi

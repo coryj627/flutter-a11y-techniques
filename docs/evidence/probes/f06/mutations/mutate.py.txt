@@ -1,0 +1,23 @@
+"""Writes a mutated copy of the F06 iOS UI test. Usage: mutate.py <clean> <out> throw|empty|stale
+After Send is activated, currentSpeech() is replaced by: an error (throw), an
+empty utterance (empty), or the utterance from before Send (stale)."""
+import sys
+
+clean, out, kind = sys.argv[1:4]
+s = open(clean).read()
+body = {
+    "throw": 'throw NSError(domain: "F06Mutation", code: 1)',
+    "empty": 'return ""',
+    "stale": 'return "Send Button"',
+}[kind]
+s = s.replace(
+    "    func current() throws -> String { norm(try voiceOver.currentSpeech().utterance) }",
+    "    var broken = false  // MUTATION\n"
+    "    func current() throws -> String {\n"
+    f"      if broken {{ {body} }}  // MUTATION\n"
+    "      return norm(try voiceOver.currentSpeech().utterance)\n"
+    "    }", 1)
+s = s.replace("      sendButton.doubleTap()\n", "      sendButton.doubleTap()\n      broken = true  // MUTATION\n", 1)
+s = s.replace("      try voiceOver.enable()\n", "      broken = false  // MUTATION\n      try voiceOver.enable()\n", 1)
+assert s.count("MUTATION") == 4, s.count("MUTATION")
+open(out, "w").write(s)

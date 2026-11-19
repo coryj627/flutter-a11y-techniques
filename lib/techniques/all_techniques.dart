@@ -4,6 +4,8 @@ import '../catalog/technique.dart';
 import 'c01_button/c01_button.dart';
 import 'f01_text_fields/f01_text_fields.dart';
 import 'f02_input_instructions/f02_input_instructions.dart';
+import 'f03_keyboard_types/f03_keyboard_types.dart';
+import 'f06_error_identification/f06_error_identification.dart';
 import 'f07_checkbox/f07_checkbox.dart';
 import 'f08_radio_group/f08_radio_group.dart';
 import 'f09_switch/f09_switch.dart';
@@ -11,6 +13,7 @@ import 'f10_slider/f10_slider.dart';
 import 'i01_focusable_controls/i01_focusable_controls.dart';
 import 'i02_focus_order/i02_focus_order.dart';
 import 'i03_focus_management/i03_focus_management.dart';
+import 'i08_dismiss_and_escape/i08_dismiss_and_escape.dart';
 import 'i12_announcements/i12_announcements.dart';
 import 's01_accessible_names/s01_accessible_names.dart';
 import 's02_informative_images/s02_informative_images.dart';
@@ -29,6 +32,8 @@ final List<Technique> allTechniques = [
   c01Button,
   f01TextFields,
   f02InputInstructions,
+  f03KeyboardTypes,
+  f06ErrorIdentification,
   f07Checkbox,
   f08RadioGroup,
   f09Switch,
@@ -36,6 +41,7 @@ final List<Technique> allTechniques = [
   i01FocusableControls,
   i02FocusOrder,
   i03FocusManagement,
+  i08DismissAndEscape,
   i12Announcements,
   s01AccessibleNames,
   s02InformativeImages,
