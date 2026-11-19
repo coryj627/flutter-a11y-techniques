@@ -1,0 +1,40 @@
+web	UNKNOWN STEP	2026-11-19T06:31:07.0985567Z (node:2620) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulner
+android	UNKNOWN STEP	2026-11-19T06:33:34.6893074Z   avd-name: test
+android	UNKNOWN STEP	2026-11-19T06:33:34.6893210Z   force-avd-creation: true
+android	UNKNOWN STEP	2026-11-19T06:33:34.6894628Z   enable-hw-keyboard: false
+android	UNKNOWN STEP	2026-11-19T06:33:35.3058738Z API level: 35
+android	UNKNOWN STEP	2026-11-19T06:33:35.3058966Z System image API level: 35
+android	UNKNOWN STEP	2026-11-19T06:33:35.3061385Z force avd creation: true
+android	UNKNOWN STEP	2026-11-19T06:33:47.8536512Z [command]/usr/bin/sh -c \sdkmanager --install 'system-images;android-35;google_apis;x86_64' --channel=0 > /dev/null
+android	UNKNOWN STEP	2026-11-19T06:34:19.7859413Z [command]/usr/bin/sh -c \echo no | avdmanager create avd --force -n test --package 'system-images;android-35;google_apis;x86_64'
+android	UNKNOWN STEP	2026-11-19T06:34:20.5296660Z Do you wish to create a custom hardware profile? [no] [command]/usr/bin/sh -c \printf 'hw.cpu.ncore=2\n' >> /home/runner/.android/avd/test.avd/config.ini
+android	UNKNOWN STEP	2026-11-19T06:34:20.5332382Z [command]/usr/bin/sh -c \/usr/local/lib/android/sdk/emulator/emulator -port 5554 -avd test -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
+android	UNKNOWN STEP	2026-11-19T06:34:20.5438012Z INFO         | Found systemPath /usr/local/lib/android/sdk/system-images/android-35/google_apis/x86_64/
+android	UNKNOWN STEP	2026-11-19T06:34:20.5858739Z INFO         |      Ok: Disk space requirements to run avd: `test` are met
+android	UNKNOWN STEP	2026-11-19T06:34:20.5860361Z INFO         |      Ok: System requirements to run avd: `test` are met
+android	UNKNOWN STEP	2026-11-19T06:34:20.8844470Z INFO         | Graphics API Version OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)
+android	UNKNOWN STEP	2026-11-19T06:34:20.8846804Z INFO         | Graphics API Extensions GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_
+android	UNKNOWN STEP	2026-11-19T06:34:20.8913397Z INFO         |   androidboot.qemu.avd_name=test
+android	UNKNOWN STEP	2026-11-19T06:35:29.4316747Z w: file:///home/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/android/app/src/androidTest/kotlin/dev/fluttera11y/flutter_a11y_techniques/I04KeyboardActionsTest.kt:305:42 'var isChecked: Boolean' i
+android	UNKNOWN STEP	2026-11-19T06:35:29.4407923Z w: file:///home/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/android/app/src/androidTest/kotlin/dev/fluttera11y/flutter_a11y_techniques/I04KeyboardActionsTest.kt:308:60 'var isChecked: Boolean' i
+android	UNKNOWN STEP	2026-11-19T06:35:29.4410059Z w: file:///home/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/android/app/src/androidTest/kotlin/dev/fluttera11y/flutter_a11y_techniques/I04KeyboardActionsTest.kt:334:59 'var isChecked: Boolean' i
+android	UNKNOWN STEP	2026-11-19T06:42:57.7987401Z WATCHDOG 06:42:57 batch 3: I02FocusOrderTest I03FocusManagementTest I04KeyboardActionsTest I12AnnouncementsTest
+android	UNKNOWN STEP	2026-11-19T06:43:13.3391711Z emulator-5554 - 15 Tests 0/39 completed. (0 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:44:03.3486196Z emulator-5554 - 15 Tests 1/39 completed. (0 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:44:13.3390387Z emulator-5554 - 15 Tests 2/39 completed. (0 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:44:33.3391173Z emulator-5554 - 15 Tests 3/39 completed. (0 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:46:33.3392495Z emulator-5554 - 15 Tests 4/39 completed. (0 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:47:03.3390936Z emulator-5554 - 15 Tests 5/39 completed. (0 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:47:53.4391911Z emulator-5554 - 15 Tests 8/39 completed. (1 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:48:03.3389507Z emulator-5554 - 15 Tests 9/39 completed. (1 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:48:13.3388873Z emulator-5554 - 15 Tests 10/39 completed. (1 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:48:33.4390537Z emulator-5554 - 15 Tests 11/39 completed. (1 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:48:53.4395226Z emulator-5554 - 15 Tests 12/39 completed. (1 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:49:13.3389820Z emulator-5554 - 15 Tests 13/39 completed. (1 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:49:23.3388344Z emulator-5554 - 15 Tests 14/39 completed. (1 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:49:43.4389362Z emulator-5554 - 15 Tests 15/39 completed. (1 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:50:03.4392625Z emulator-5554 - 15 Tests 19/39 completed. (2 skipped) (0 failed)
+android	UNKNOWN STEP	2026-11-19T06:50:09.1396808Z dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest > badPageShortcutOnAndroidTheNoteStillGetsItsF[emulator-5554 - 15] ^[[31mFAILED ^[[0m
+android	UNKNOWN STEP	2026-11-19T06:50:13.4391275Z emulator-5554 - 15 Tests 20/39 completed. (2 skipped) (1 failed)
+android	UNKNOWN STEP	2026-11-19T06:50:53.4388183Z emulator-5554 - 15 Tests 21/39 completed. (2 skipped) (1 failed)
+android	UNKNOWN STEP	2026-11-19T06:51:23.3392492Z emulator-5554 - 15 Tests 22/39 completed. (2 skipped) (1 failed)

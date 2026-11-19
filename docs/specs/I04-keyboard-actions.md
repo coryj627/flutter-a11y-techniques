@@ -64,11 +64,16 @@ How the bad examples fail, as the criteria are written:
 
 - `bad-page-shortcut` fails 2.1.4 on every platform: F acts wherever focus
   is in the example, not only on the strip it acts on, and nothing turns
-  it off or remaps it. On the web and on iOS it also takes the f from the
-  note field ([FL-460](../flutter-limitations.md#fl-460)), so a note with
-  an f in it cannot be typed from a hardware keyboard at all: 2.1.1 on
-  those two. On Android the note gets its f (section 7), so 2.1.1 is not
-  failed there.
+  it off or remaps it. What follows from it in the note field is the
+  harm 2.1.4 is about, not a second failure: a lowercase f typed there is
+  taken by the shortcut, adds a favourite, and does not appear, on the web
+  and iOS ([FL-460](../flutter-limitations.md#fl-460)); on Android it
+  depended on the device (section 7). It does not fail 2.1.1: other keys
+  still put an f in the note. Measured on the web: Shift+F types a
+  capital F, and an f pasted with Control or Command+V goes in. On iOS:
+  an f sent the way an on-screen keyboard's text arrives (`typeText`)
+  goes in, and Shift+F and Command+V are tested in the iOS suite (section
+  7 says what those showed).
 - `bad-no-arrow-keys` fails 2.1.1 on every platform: Tab reaches only the
   thumbnail of the photo shown, and nothing moves along the strip from
   there, so three of the four photos cannot be shown from the keyboard.
@@ -161,7 +166,7 @@ technique is about.
 
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
-| `bad-page-shortcut` | `good-on-focus` with F taken off the strip and put in a `CallbackShortcuts` around the whole example. F acts wherever focus is, nothing turns it off or changes it, and on the web and iOS typing "Leafy" in the note gives "Leay" and a favourite ([FL-460](../flutter-limitations.md#fl-460)) | R4, R6 | 2.1.4; 2.1.1 on the web and iOS |
+| `bad-page-shortcut` | `good-on-focus` with F taken off the strip and put in a `CallbackShortcuts` around the whole example. F acts wherever focus is, and nothing turns it off or changes it. As a result, on the web and iOS typing "Leafy" in the note gives "Leay" and a favourite ([FL-460](../flutter-limitations.md#fl-460)); a capital F, a pasted f, and an on-screen keyboard's f still go in | R4, R6 | 2.1.4 |
 | `bad-no-arrow-keys` | `good-on-focus` without the arrow keys, Home, and End. Tab reaches only the thumbnail of the photo shown, and the arrow keys do nothing there, so the other photos cannot be shown from the keyboard | R3 | 2.1.1 |
 
 Not built:
@@ -199,9 +204,9 @@ on.
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Good: guidelines in light and dark, no overflow at 200% text at 320 by 640. On a 320 by 640 screen, each thumbnail the strip's keys reach is in view. Every example: "Showing: Trailhead, 1 of 4"; four thumbnails named for their photos, buttons, Trailhead alone selected, none focused; "Add to favourites", a button; the note, a text field named "Note"; a tap and the semantics tap show any photo; the favourite button adds and removes and its name says which; the note's action key is Done (the text input configuration), the action saves the note, empties the field, and leaves no control with focus (FL-461), and a blank note is not saved; Tab goes Back, Trailhead, the favourite button, the setting where there is one, the note, round to Back, and with Ridge shown, Shift+Tab from the favourite button reaches Ridge and then Back. The strip's keys: Right, Right, Left, End, Right (stays), Home, Left (stays) each show the photo and put focus on its thumbnail, and a repeated Right goes on. Down leaves the strip. `bad-no-arrow-keys`: Right, Left, End, and Home, each alone from Bridge, leave Bridge shown and reach no other thumbnail; F then acts there and Down moves focus down out of the strip; ten Tabs and ten Shift+Tabs never reach Bridge, Ridge, or Summit. F: `good-on-focus` acts on the strip only and is not handled in the note; `good-turn-off` and `good-remap` act on the strip, the favourite button, and the setting, and not in the note; `good-turn-off`'s switch off stops it on the switch and the strip while the strip's arrows still work, and on again it acts; `good-remap`'s Control+F does nothing until the switch is on, then F does nothing and Control+F acts, in the note too; `bad-page-shortcut`'s F acts on the strip, the button, and in the note, and the screen has no setting |
-| L3 web | Every example: the thumbnails are buttons with their names, `aria-current` true on Trailhead alone (the engine's attribute for a selected button), `tabindex="0"`; the favourite button and the note's name; a click and a click event show any photo; Tab order as above, and Shift+Tab back to Ridge; Enter in the note saves "Muddy", empties the field, leaves no element of the example with focus, and the next Tab goes to Back. The strip's keys as in L1. `bad-no-arrow-keys`: Right, Left, End, and Home alone, from Bridge, change nothing; then F acts there, and in the note Left moves the caret ("Mud", Left, "x" gives "Muxd"); six Tabs and six Shift+Tabs never reach the other thumbnails. F as in L1, with "Leafy" typed in the note: whole in the good examples, "Leay" with a favourite added in `bad-page-shortcut` |
-| L3 Android | The same parts, by class (`Button`, `EditText`), name, `isSelected`, and `isFocused`; the click action shows any photo; Tab order and Shift+Tab to Ridge; the D-pad Right and Left, Home (`MOVE_HOME`), and End (`MOVE_END`) on the strip; `bad-no-arrow-keys`, each key alone, then F and Down; Tab and Shift+Tab never reach the other thumbnails; Enter in the note saves and empties it, a letter typed then goes nowhere, and the next Tab goes to Back; F as in L1, with Control+F as four key events; and in `bad-page-shortcut` the note gets the whole of "Leafy" typed with `sendStringSync`, no favourite is added, and F away from the field acts in the same launch |
-| L3 iOS | The thumbnails (buttons, `isSelected` on Trailhead), the favourite button, the note (a text field labelled "Note"); a tap shows any photo; Tab order, each stop named by what a key does there (an arrow on the strip, Space on the favourite button and the switch, a letter in the note); Right and Left along the strip, and Shift+Tab back to it from the favourite button; `bad-no-arrow-keys`, Right and Left alone, each in a launch where the same arrow first moves the caret in the note and F then acts on the strip; the stop after the strip is the favourite button; Enter in the note saves, a letter typed then goes nowhere, and the next Tab goes to Back (Space leaves the screen); F as in L1, typed one key at a time, with "Leay" in `bad-page-shortcut`. Home and End are not sent: they never reached Flutter from XCUITest |
+| L3 web | Every example: the thumbnails are buttons with their names, `aria-current` true on Trailhead alone (the engine's attribute for a selected button), `tabindex="0"`; the favourite button and the note's name; a click and a click event show any photo; Tab order as above, and Shift+Tab back to Ridge; Enter in the note saves "Muddy", empties the field, leaves no element of the example with focus, and the next Tab goes to Back. The strip's keys as in L1. `bad-no-arrow-keys`: Right, Left, End, and Home alone, from Bridge, change nothing; then F acts there, and in the note Left moves the caret ("Mud", Left, "x" gives "Muxd"); six Tabs and six Shift+Tabs never reach the other thumbnails. F as in L1, with "Leafy" typed in the note: whole in the good examples, "Leay" with a favourite added in `bad-page-shortcut`; there, after a plain f has been lost in the same page, Shift+F types a capital F, and an f pasted with Control or Command+V goes in |
+| L3 Android | The same parts, by class (`Button`, `EditText`), name, `isSelected`, and `isFocused`; the click action shows any photo; Tab order and Shift+Tab to Ridge; the D-pad Right and Left, Home (`MOVE_HOME`), and End (`MOVE_END`) on the strip; `bad-no-arrow-keys`, each key alone, then F and Down; Tab and Shift+Tab never reach the other thumbnails; Enter in the note saves and empties it, a letter typed then goes nowhere, and the next Tab goes to Back; F as in L1, with Control+F as four key events; and in `bad-page-shortcut`, for each of `sendStringSync` and `input keyevent` in its own launch: once the note and the favourites have settled, either the note got the f and no favourite was added or the shortcut took it and one was, whichever happened is logged, and then the same way of sending an f on the favourite button changes the favourites |
+| L3 iOS | The thumbnails (buttons, `isSelected` on Trailhead), the favourite button, the note (a text field labelled "Note"); a tap shows any photo; Tab order, each stop named by what a key does there (an arrow on the strip, Space on the favourite button and the switch, a letter in the note); Right and Left along the strip, and Shift+Tab back to it from the favourite button; `bad-no-arrow-keys`, Right and Left alone, each in a launch where the same arrow first moves the caret in the note and F then acts on the strip; the stop after the strip is the favourite button; Enter in the note saves, a letter typed then goes nowhere, and the next Tab goes to Back (Space leaves the screen); F as in L1, typed one key at a time, with "Leay" in `bad-page-shortcut`; there, after a plain f has been lost in the same launch, Shift+F types a capital F, Command+V pastes an f, and `typeText` puts an f in. Home and End are not sent: they never reached Flutter from XCUITest |
 | L4 TalkBack | Each thumbnail: its name and "Button", and "selected" for Trailhead alone; "Add to favourites" and "Button"; the setting: its label, "Switch", and "on" or "off" (never the other); the note: "Note" and "Edit box". The walk puts TalkBack's focus on each part, so it records speech, not order |
 | L4 VoiceOver iOS | Everything between the "Example" heading and the count, in VoiceOver's own swipe order |
 | L4 VoiceOver web | The same with VoiceOver's cursor; and, with VoiceOver on, keys pressed through the system on `bad-page-shortcut`: Right moves along the strip, F adds a favourite, and "Leafy" typed in the note gives "Leay" |
@@ -217,12 +222,22 @@ The probe that came first is in
 of each platform.
 
 - **A shortcut above a text field takes its letter on the web and on
-  iOS, and not on Android** ([FL-460](../flutter-limitations.md#fl-460)).
-  Flutter gives each key to the framework before the platform's text
-  input, as `EditableText`'s documentation says. On the Android emulator
-  the input method had the letter keys first while a field was being
-  edited, so the shortcut never ran there and the field got every
-  letter. `DoNothingAndStopPropagationIntent` for the key, in a
+  iOS, and on Android it depends on the device**
+  ([FL-460](../flutter-limitations.md#fl-460)). Flutter gives each key to
+  the framework before the platform's text input, as `EditableText`'s
+  documentation says. On the local Android emulator (Android 17, Gboard, a
+  hardware keyboard in its settings) the input method had the letter keys
+  first while a field was being edited, so the shortcut never ran there
+  and the field got every letter. On CI's emulator (API 35, the
+  `google_apis` image, no hardware keyboard in its settings) the same
+  test, typing with `Instrumentation.sendStringSync`, got "Leay": the
+  shortcut took the f (CI run 44472632084,
+  [the lines kept](../evidence/probes/i04/ci_android_44472632084.txt)).
+  The Android tests now accept either result, require the two to be
+  consistent (an f either typed or taken, never both or neither), and log
+  which, for each way of sending keys (section 6). The lost letter is the
+  consequence of the 2.1.4 failure; other keys still enter an f on the web
+  (Shift+F, a paste) and iOS (an on-screen keyboard's text). `DoNothingAndStopPropagationIntent` for the key, in a
   `Shortcuts` around the field, gives the key back to the field on all
   three. A shortcut put on the control it acts on never meets a field at
   all, which is why `good-on-focus` needs no such guard.
@@ -300,10 +315,15 @@ of each platform.
 - **Found on the way**: an adjustable control has no accessible name on
   the web ([FL-028](../flutter-limitations.md#fl-028)), which is why the
   strip is made of buttons; a `PageView` takes no focus
-  ([FL-463](../flutter-limitations.md#fl-463)); a
-  `CupertinoSlidingSegmentedControl` took focus and ignored Space in a
-  widget test ([FL-462](../flutter-limitations.md#fl-462)), which is why
-  `good-turn-off` uses a switch.
+  ([FL-463](../flutter-limitations.md#fl-463)). A
+  `CupertinoSlidingSegmentedControl` was looked at as a way to choose the
+  shortcut and has no keyboard gap: in a widget test, as Android and as
+  iOS, it is one Tab stop, the arrow keys select the next or previous
+  segment and go round at the ends, and Space on the segment already
+  selected changes nothing, as in a radio group (the SDK builds it on
+  `RadioGroup`) ([probe output](../evidence/probes/i04/probe_segmented.txt)).
+  `good-turn-off` uses a switch because turning a shortcut off is a
+  yes-or-no choice.
 
 **Not done yet.** The on-screen keyboard's action key on a device; Full
 Keyboard Access on iOS; Home and End on iOS; what a browser keeps for
@@ -332,4 +352,3 @@ text above the strip.
   `aria-orientation`, the tab roles) are theirs.
 - **F03 Keyboard and input types**: the on-screen keyboard's action key,
   which no test here could press.
-- **A component technique for segmented controls**: FL-462.

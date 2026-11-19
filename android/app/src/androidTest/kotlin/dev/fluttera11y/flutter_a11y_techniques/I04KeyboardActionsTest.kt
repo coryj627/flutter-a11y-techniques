@@ -22,7 +22,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -352,26 +351,67 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
     }
 
     /**
-     * What happens to an f typed in the note of bad-page-shortcut on
-     * Android: the input method has the letter keys first while a field is
-     * being edited, so the shortcut never sees them, and the letter is typed
-     * (docs/evidence/probes/i04/README.md). The web and iOS lose the letter
-     * (web and iOS tests).
+     * [read] once it has stopped changing: two reads 500 ms apart that
+     * agree, within 5 seconds. Fails if it never settles, so a reading
+     * taken while the screen is still catching up cannot pass or fail.
      */
-    @Test
-    fun badPageShortcutOnAndroidTheNoteStillGetsItsF() {
+    private fun settled(what: String, read: () -> String): String {
+        var last = read()
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end) {
+            Thread.sleep(500)
+            val now = read()
+            if (now == last) return now
+            last = now
+        }
+        throw AssertionError("$what was still changing after 5 seconds, last \"$last\"")
+    }
+
+    /**
+     * What happens to letters typed in the note of bad-page-shortcut on
+     * Android, by one way of sending them. Which way it goes depends on the
+     * device: on the local emulator (Android 17, Gboard, a hardware
+     * keyboard in its settings) the input method had the letter keys
+     * first and the field got every letter; on CI's emulator (Android 15,
+     * Gboard with its on-screen keyboard showing) the shortcut took the f,
+     * as on the web and iOS (CI run 44472632084,
+     * docs/evidence/probes/i04/ci_android_44472632084.txt). So the test
+     * does not choose one: it waits for the note and the favourites to
+     * settle, requires one of the two consistent results (the field got
+     * the f and no favourite was added, or the shortcut took it and one
+     * was), and logs which. Then, in the same launch and with the same way
+     * of sending keys, it requires an f away from the field to change the
+     * favourites, so the keys did arrive.
+     */
+    private fun badPageNoteThenControl(how: String, type: (String) -> Unit, typed: String, lost: String) {
         val slug = "bad-page-shortcut"
         open(slug)
         tabTo(slug, "note")
-        inst.sendStringSync("Leafy")
-        waitFor("$slug note", "Leafy") { note(slug) }
-        expectStays("$slug favourites", "Favourites: none") { favourites(slug) }
-        // The control, in the same launch: F away from the field acts.
+        type(typed)
+        val note = settled("$slug note") { note(slug) }
+        val favourites = settled("$slug favourites") { favourites(slug) }
+        android.util.Log.i("I04KEYS", "$how in the note: note=\"$note\" $favourites")
+        val fieldGotIt = note == typed && favourites == "Favourites: none"
+        val shortcutTookIt = note == lost && favourites == "Favourites: Trailhead"
+        assertTrue("$how: note \"$note\" with $favourites is neither result", fieldGotIt || shortcutTookIt)
+        // The control: the same keys away from the field act.
         shiftTab()
-        assertNotEquals("note", stop(slug))
-        key("F")
-        expectFavourites(slug, "Trailhead")
+        assertEquals("favourite", stop(slug))
+        type("f")
+        val expected = if (shortcutTookIt) "none" else "Trailhead"
+        expectFavourites(slug, expected)
+        android.util.Log.i("I04KEYS", "$how on the favourite button: Favourites: $expected")
     }
+
+    @Test
+    fun badPageShortcutSendStringSyncInTheNoteThenOnTheButton() =
+        badPageNoteThenControl("sendStringSync", { inst.sendStringSync(it) }, "Leafy", "Leay")
+
+    @Test
+    fun badPageShortcutInputKeyeventInTheNoteThenOnTheButton() =
+        badPageNoteThenControl("input keyevent", { text ->
+            for (c in text) key(c.uppercaseChar().toString())
+        }, "leafy", "leay")
 
     /**
      * L4. Moves TalkBack focus to each part and logs markers;

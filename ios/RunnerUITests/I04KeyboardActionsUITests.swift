@@ -344,6 +344,54 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
     XCTAssertFalse(part(slug, "setting").exists)
   }
 
+  // What the lost letter leaves: other keyboard ways to put an f in the
+  // note, each after a plain f has been shown to be lost in the same
+  // launch. Shift+F types a capital, which CharacterActivator('f') does not
+  // match; an f pasted with Command+V goes in through the text field's own
+  // paste; and typeText, the way an on-screen keyboard's text arrives,
+  // never meets the shortcut at all (docs/evidence/probes/i04/README.md).
+  private func badPageNoteLosesItsF(_ slug: String) {
+    open(slug)
+    tabToStrip()
+    press(Self.tab)
+    press(Self.tab)
+    type("Lea")
+    press("f")
+    waitFor("\(slug) note after f", "Lea", { self.note(slug) })
+    expectFavourites(slug, "Trailhead")
+  }
+
+  func testBadPageShortcutShiftFTypesACapitalF() {
+    let slug = "bad-page-shortcut"
+    badPageNoteLosesItsF(slug)
+    press("f", .shift)
+    waitFor("\(slug) note after Shift+F", "LeaF", { self.note(slug) })
+    expectFavourites(slug, "Trailhead")
+  }
+
+  func testBadPageShortcutAnFPastedWithCommandVGoesIn() {
+    let slug = "bad-page-shortcut"
+    UIPasteboard.general.string = "f"
+    badPageNoteLosesItsF(slug)
+    press("v", .command)
+    // iOS may ask whether the app may paste what another app copied.
+    let allow = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Allow Paste"]
+    if allow.waitForExistence(timeout: 2) {
+      print("I04KEYS paste: iOS asked to allow the paste")
+      allow.tap()
+    }
+    waitFor("\(slug) note after Command+V", "Leaf", { self.note(slug) })
+    expectFavourites(slug, "Trailhead")
+  }
+
+  func testBadPageShortcutTypeTextPutsTheFIn() {
+    let slug = "bad-page-shortcut"
+    badPageNoteLosesItsF(slug)
+    app.typeText("f")
+    waitFor("\(slug) note after typeText", "Leaf", { self.note(slug) })
+    expectFavourites(slug, "Trailhead")
+  }
+
   // L4. Everything VoiceOver says between the "Example" heading and the
   // count of notes saved, the last element of every example. The keys are
   // not heard: every example's strip reads the same. The API cuts each

@@ -118,9 +118,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-440](#fl-440) | A `CupertinoAlertDialog`'s actions take no keyboard focus | All | Confirmed |
 | [FL-441](#fl-441) | A `CupertinoActionSheet`'s title and message fail text contrast in light mode | All (widget test only) | Confirmed (widget test only) |
 | [FL-442](#fl-442) | When a route closes, the framework sends the screen reader back to where it was, after the app's own move, even when that control has been removed | Android | Confirmed in the source; its effect Observed |
-| [FL-460](#fl-460) | A shortcut above a text field takes its key before the field can type it, on the web and on iOS | Web, iOS (Android: not with the emulator's input method) | Confirmed |
+| [FL-460](#fl-460) | A shortcut above a text field takes its key before the field can type it, on the web and on iOS, and on Android depending on the device | Web, iOS; Android on CI's emulator, not on the local one | Confirmed |
 | [FL-461](#fl-461) | A text field's done, go, search, or send action takes keyboard focus away and gives it to no control | All | Confirmed |
-| [FL-462](#fl-462) | A `CupertinoSlidingSegmentedControl` takes keyboard focus, and Space does not change it | All (widget test only) | Observed |
 | [FL-463](#fl-463) | A `PageView` takes no keyboard focus and has no keys | Android, iOS, Web | Observed |
 | [FL-464](#fl-464) | A `Shortcuts`, `CallbackShortcuts`, or `Focus` around plain text makes that text the name of a node holding every control inside it | Web, iOS (Android not looked at) | Confirmed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
@@ -2352,7 +2351,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-460
 
-**A shortcut above a text field takes its key before the field can type it, on the web and on iOS.**
+**A shortcut above a text field takes its key before the field can type it, on the web and on iOS, and on Android depending on the device.**
 
 - Status: Confirmed, Flutter 3.47.5. Documented: `EditableText`'s
   documentation, "Interactions Between Shortcuts and Text Input", says a
@@ -2363,10 +2362,10 @@ yet), **Fixed in x.y** (verified on that version).
   Asserted by the I04 web and iOS tests of `bad-page-shortcut` ("Leafy"
   typed in the note becomes "Leay", and a favourite is added), by the I04
   widget test (the key is handled in the note), and by the I04 Android
-  test, which shows the other result there (below).
-- WCAG: 2.1.4 Character Key Shortcuts. Where nothing turns the shortcut
-  off, the letter cannot be typed into the field from a hardware keyboard
-  at all, which is 2.1.1 Keyboard too.
+  tests, which accept either result there and log which (below).
+- WCAG: 2.1.4 Character Key Shortcuts: the lost letter is what a shortcut
+  that is always on does to someone typing. Not 2.1.1: other keys still
+  enter the letter (below).
 - What happens: key events reach the framework first, and go on to the
   platform's text input only if nothing handled them. A `CallbackShortcuts`
   or `Shortcuts` binding for F anywhere above the focused field, or a
@@ -2382,15 +2381,32 @@ yet), **Fixed in x.y** (verified on that version).
     VoiceOver off and with it on. `typeText` put the letters into the field
     without any key event, past the shortcut, as an on-screen keyboard
     would; an on-screen keyboard itself was not tried.
-  - Android (emulator, Gboard as the input method): no letter typed into a
-    field reached the framework as a key event, through `input text` in
-    the probe or `Instrumentation.sendStringSync` in the I04 tests; the
-    field got every letter and no shortcut ran. Read as the input method
-    having the keys first while a field is being edited; not confirmed in
-    the Android source. Another input method may differ; not tried.
+  - Android, the local emulator (Android 17, Gboard, `hw.keyboard=yes`):
+    no letter typed into a field reached the framework as a key event,
+    through `input text` in the probe or `Instrumentation.sendStringSync`
+    in the I04 tests; the field got every letter and no shortcut ran.
+    Read as the input method having the keys first while a field is being
+    edited; not confirmed in the Android source. What `input keyevent`
+    letters do in a field is in the I04 Android test's log
+    (`badPageShortcutInputKeyeventInTheNoteThenOnTheButton`); in probe
+    round 2 they reached neither the framework nor the field.
+  - Android, CI's emulator (API 35, `google_apis` image, no hardware
+    keyboard in its AVD): the I04 test typing "Leafy" with
+    `sendStringSync` got "Leay", so the shortcut took the f there (CI run
+    44472632084, `docs/evidence/probes/i04/ci_android_44472632084.txt`).
+    Which input method it had, and whether its on-screen keyboard was
+    showing, was not recorded.
   The same shortcut away from the field works on all three platforms.
+- Other ways to the letter, under a shortcut for a lowercase f, measured
+  with `bad-page-shortcut`: on the web Shift+F types a capital F (a
+  `CharacterActivator('f')` does not match "F"), and an f pasted with
+  Control or Command+V goes in through the browser's own paste (I04 web
+  tests). On iOS `typeText`, which sends text the way an on-screen
+  keyboard does, puts an f in (probe), and the I04 iOS suite tests
+  Shift+F and Command+V.
 - Effect: someone typing a note on a hardware keyboard sets off the
-  shortcut with every f, and the note never gets one.
+  shortcut with every f, and the f does not appear; they have to type a
+  capital or paste the letter in.
 - Workaround, in the SDK and documented: a `Shortcuts` around the field
   that maps the same key to `DoNothingAndStopPropagationIntent`, so the
   shortcut stops there and the key is left for the field (I04
@@ -2400,8 +2416,9 @@ yet), **Fixed in x.y** (verified on that version).
   acts on, so it is never above a field (I04 `good-on-focus`).
 - How to read this entry: this is how Flutter is documented to work, not
   a defect in it. It is logged because a page-wide shortcut, the usual way
-  to add one, breaks typing on two platforms and not on the third, so
-  testing on Android alone would not find it.
+  to add one, breaks typing on the web and iOS and on some Android
+  devices and not others, so testing on one Android device may not find
+  it.
 - Upstream issue: not searched yet (D25).
 
 ## FL-461
@@ -2438,23 +2455,6 @@ yet), **Fixed in x.y** (verified on that version).
   taking focus away. Not applied in the I04 examples, which keep the
   default and its documented on-screen keyboard behaviour; where focus
   should go after an action is I03's subject.
-- Upstream issue: not searched yet (D25).
-
-## FL-462
-
-**A `CupertinoSlidingSegmentedControl` takes keyboard focus, and Space does not change it.**
-
-- Status: Observed, Flutter 3.47.5, in a widget test only (the I04 probe,
-  `docs/evidence/probes/i04/probe_test.dart.txt`, as Android and as iOS).
-  No example and no test in the repo.
-- What happens: Tab stops on the control, and Space on it changes nothing;
-  a Material `SegmentedButton` beside it took a Tab stop per segment and
-  Space selected one. Enter and the arrow keys were not tried.
-- Effect, if it holds on devices: a keyboard user can reach the control
-  and cannot use it (2.1.1).
-- Why it is here: I04 looked for a Cupertino control to change a shortcut
-  with and found this; I04 uses a `CupertinoSwitch` instead. Left to the
-  technique for segmented controls.
 - Upstream issue: not searched yet (D25).
 
 ## FL-463

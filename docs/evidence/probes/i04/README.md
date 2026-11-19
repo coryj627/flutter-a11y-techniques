@@ -37,7 +37,10 @@ kept):
 - Flutter test: `probe_test.dart.txt`, as Android and as iOS: Tab and
   Space over a `CupertinoSlidingSegmentedControl`, a `SegmentedButton`,
   and a `CupertinoSwitch`; whether a page-wide shortcut handles F in a
-  field. Output: `flutter_test.txt`.
+  field. Output: `flutter_test.txt`. Round 3, after review:
+  `probe_segmented_test.dart.txt`, every key on a
+  `CupertinoSlidingSegmentedControl`. Output: `probe_segmented.txt` (its
+  "focusable" column prints the segment's focused state).
 - Web: Chromium on macOS, Playwright, `probe_web.spec.js.txt`. Output:
   `web.txt` (four runs, one after the other as fixtures were added).
   `html_control.spec.js.txt` is a plain HTML page with no Flutter, for
@@ -152,7 +155,8 @@ was not measured.
 ## What it shows
 
 - **A shortcut above a text field takes its letter on the web and on
-  iOS, not on Android** (FL-460). `DoNothingAndStopPropagationIntent`
+  iOS, not on this Android emulator** (FL-460; CI's emulator, measured
+  later by the I04 tests, lost it). `DoNothingAndStopPropagationIntent`
   around the field gives it back everywhere.
 - **Keys a control does not handle fall through to the defaults**, which
   differ between the web and the rest: arrows scroll on the web and move
@@ -161,9 +165,16 @@ was not measured.
   a done, go, search, or send action leaves focus on no control (FL-461).
 - **XCUITest cannot send Home, End, Page Up, or Page Down** to the
   simulator; those keys are not verified on iOS.
-- An adjustable control has no name on the web (FL-028), a `PageView`
-  takes no focus (FL-463), and a `CupertinoSlidingSegmentedControl` did
-  not answer Space in a widget test (FL-462).
+- An adjustable control has no name on the web (FL-028), and a
+  `PageView` takes no focus (FL-463).
+- **A `CupertinoSlidingSegmentedControl` works from the keyboard.** The
+  first round pressed Space only, on the segment already selected, which
+  does nothing by design. Round 3 (`probe_segmented.txt`): one Tab stop;
+  Right and Down select the next segment and Left and Up the previous,
+  going round at the ends, with focus on the segment selected; Space and
+  Enter on the selected one change nothing; Tab leaves the control. The
+  segments are in a mutually exclusive group, as radio buttons. No
+  limitation; an entry FL-462 drafted from round 1 was removed.
 
 ## Kept from the build
 

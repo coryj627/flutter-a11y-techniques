@@ -277,4 +277,38 @@ test.describe('the F shortcut', () => {
     await expectFavourites(page, slug, 'Trailhead');
     await expect(part(page, slug, 'setting')).toHaveCount(0);
   });
+
+  // What the lost letter leaves: other keyboard ways to put an f in the
+  // note. Shift+F types a capital, which CharacterActivator('f') does not
+  // match; and an f pasted from the clipboard with the keyboard goes in
+  // through the browser's own paste. Each is checked on its own, after a
+  // plain f has been shown to be lost in the same page.
+  test('bad-page-shortcut: Shift+F types a capital F in the note', async ({ page }) => {
+    const slug = 'bad-page-shortcut';
+    await open(page, slug);
+    await page.waitForTimeout(600);
+    await tabToPart(page, slug, 'note');
+    await page.keyboard.type('Lea', { delay: 50 });
+    await key(page, 'f');
+    await expect(note(page, slug)).toHaveValue('Lea');
+    await expectFavourites(page, slug, 'Trailhead');
+    await key(page, 'Shift+F');
+    await expect(note(page, slug)).toHaveValue('LeaF');
+    await expectFavourites(page, slug, 'Trailhead');
+  });
+
+  test('bad-page-shortcut: an f pasted with the keyboard goes into the note', async ({ page, context }) => {
+    const slug = 'bad-page-shortcut';
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await open(page, slug);
+    await page.waitForTimeout(600);
+    await page.evaluate(() => navigator.clipboard.writeText('f'));
+    await tabToPart(page, slug, 'note');
+    await page.keyboard.type('Lea', { delay: 50 });
+    await key(page, 'f');
+    await expect(note(page, slug)).toHaveValue('Lea');
+    await key(page, 'ControlOrMeta+V', 500);
+    await expect(note(page, slug)).toHaveValue('Leaf');
+    await expectFavourites(page, slug, 'Trailhead');
+  });
 });
