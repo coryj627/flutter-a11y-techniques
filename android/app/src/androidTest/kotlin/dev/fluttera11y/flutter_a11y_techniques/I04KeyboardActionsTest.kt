@@ -249,8 +249,13 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
             key("ENTER")
             waitForCount(slug, 1)
             waitFor("$slug note after Enter", "") { note(slug) }
-            // FL-461: the field gives focus up to no control.
-            waitFor("$slug focus after Enter", "none") { stop(slug) }
+            // FL-461: the field gives focus up to no control. The tree
+            // still reported isFocused on the field after Enter (first
+            // run), so what is asserted is what the keys do: a letter
+            // typed now goes nowhere, though the field took "Muddy" a
+            // moment ago, and the next Tab goes to Back.
+            inst.sendStringSync("x")
+            expectStays("$slug note after a letter", "") { note(slug) }
             key("TAB")
             assertEquals("$slug: the next Tab starts from the top", "back", stop(slug))
         }

@@ -178,24 +178,29 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
     }
   }
 
+  /// bad-no-arrow-keys, one arrow per launch. With Bridge shown, four
+  /// Tabs reach the note: there the arrow moves the caret, so it arrives
+  /// and acts. Two more Tabs go round, past Back, to the strip's stop:
+  /// there F acts, so keys reach the strip, and the same arrow then does
+  /// not move along it. Where focus goes after it is not asserted: an
+  /// arrow the strip leaves alone is the app's default, directional focus.
   private func badNoArrowKeysIgnores(_ key: String, _ name: String) {
     let slug = "bad-no-arrow-keys"
     open(slug)
     part(slug, "bridge").tap()
     expectShowing(slug, "Bridge")
-    tabToStrip()
-    press(key)
-    expectStays("\(slug) showing after \(name)", "Showing: Bridge, 2 of 4", { self.part(slug, "showing").label })
-    // The controls, in the same launch: F acts on the strip, so keys reach
-    // it; and in the note the same arrow moves the caret.
-    press("f")
-    expectFavourites(slug, "Bridge")
-    press(Self.tab)
-    press(Self.tab)
+    for _ in 0..<4 { press(Self.tab) }
     type("Mud")
     press(Self.left)
+    if key == Self.right { press(Self.right) }
     type("x")
-    waitFor("\(slug) note", "Muxd", { self.note(slug) })
+    waitFor("\(slug) note", key == Self.right ? "Mudx" : "Muxd", { self.note(slug) })
+    press(Self.tab)
+    press(Self.tab)
+    press("f")
+    expectFavourites(slug, "Bridge")
+    press(key)
+    expectStays("\(slug) showing after \(name)", "Showing: Bridge, 2 of 4", { self.part(slug, "showing").label })
   }
 
   func testBadNoArrowKeysRightDoesNotMove() { badNoArrowKeysIgnores(Self.right, "Right") }
@@ -222,11 +227,17 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
       press(Self.tab)
       type("Muddy")
       waitFor("\(slug) note", "Muddy", { self.note(slug) })
+      // iOS can still be composing the word (it autocorrected "ab" to "an"
+      // on Enter in the probe); a pause lets that settle first.
+      sleep(1)
       press(Self.enter)
       expectCount(slug, 1)
       waitFor("\(slug) note after Enter", "", { self.note(slug) })
-      // FL-461: focus left the field for no control, so the next Tab goes
-      // to Back, where Space leaves the screen.
+      // FL-461: focus left the field for no control. A letter typed now
+      // goes nowhere, though the field took "Muddy" a moment ago, and the
+      // next Tab goes to Back, where Space leaves the screen.
+      press("x")
+      expectStays("\(slug) note after a letter", "", { self.note(slug) })
       press(Self.tab)
       press(Self.space)
       expectScreenLeft(slug, "Tab after Enter did not land on Back")
@@ -332,18 +343,19 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
 
   // L4. Everything VoiceOver says between the "Example" heading and the
   // count of notes saved, the last element of every example. The keys are
-  // not heard: every example's strip reads the same.
+  // not heard: every example's strip reads the same. The API cuts each
+  // utterance at 64 characters, so the expected ones are cut the same way.
   private static let hintGood = "In the photos: Left and Right arrows for the previous and next photo, Home and End for the first and last, F to add or remove a favourite."
   private static let hintPage = "In the photos: Left and Right arrows for the previous and next photo, Home and End for the first and last. Anywhere here: F to add or remove a favourite."
   private static func content(_ hint: String, setting: [String] = []) -> [String] {
-    ["Showing: Trailhead, 1 of 4", "Selected, Trailhead, Button", "Bridge, Button", "Ridge, Button",
-     "Summit, Button", hint, "Add to favourites, Button"] + setting
-      + ["Note, Text Field", "Favourites: none"]
+    (["Showing: Trailhead, 1 of 4", hint, "selected Trailhead Button", "Bridge Button", "Ridge Button",
+      "Summit Button", "Add to favourites Button"] + setting
+      + ["Note Text field Double tap to edit.", "Favourites: none"]).map { String($0.prefix(64)) }
   }
   private let speech: [(slug: String, content: [String])] = [
     ("good-on-focus", content(hintGood)),
-    ("good-turn-off", content(hintPage, setting: ["Single-key shortcuts, Switch button, On"])),
-    ("good-remap", content(hintPage, setting: ["Use Control+F for favourites, Switch button, Off"])),
+    ("good-turn-off", content(hintPage, setting: ["Single-key shortcuts Switch button on Double tap to toggle setting."])),
+    ("good-remap", content(hintPage, setting: ["Use Control+F for favourites Switch button off Double tap to toggle setting."])),
     ("bad-page-shortcut", content(hintPage)),
     ("bad-no-arrow-keys", content("In the photos: F to add or remove a favourite.")),
   ]

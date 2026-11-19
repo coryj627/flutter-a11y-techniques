@@ -10,22 +10,25 @@ WEB_VO_SPEC = "i04_keyboard_actions_vo.spec.js"
 
 _ALL = ("good-on-focus", "good-turn-off", "good-remap", "bad-page-shortcut", "bad-no-arrow-keys")
 _SETTINGS = {
-    "good-turn-off": ("Single-key shortcuts", "Switch"),
-    "good-remap": ("Use Control+F for favourites", "Switch"),
+    "good-turn-off": ("Single-key shortcuts", "on"),
+    "good-remap": ("Use Control+F for favourites", "off"),
 }
 
 
 def _expect(slug):
-    # "Button" and "Switch" are matched as whole sentences, so a name cannot
-    # supply them. The keys are not heard: TalkBack reads every example's
-    # strip the same way, which is what these lines record.
+    # "Button", "Switch", "on", and "off" are matched as words of their own,
+    # so a name cannot supply them. The thumbnail of the photo shown is
+    # "selected" and the others are not. The keys are not heard: TalkBack
+    # reads every example's strip the same way, which is what these lines
+    # record.
     out = {}
-    for name in ("Trailhead", "Bridge", "Ridge", "Summit"):
-        out[f"i04-{slug}-{name.lower()}"] = ([name, "Button"], [])
+    for i, name in enumerate(("Trailhead", "Bridge", "Ridge", "Summit")):
+        out[f"i04-{slug}-{name.lower()}"] = (
+            ([name, "Button", "selected"], []) if i == 0 else ([name, "Button"], ["selected"]))
     out[f"i04-{slug}-favourite"] = (["Add to favourites", "Button"], [])
     if slug in _SETTINGS:
-        label, role = _SETTINGS[slug]
-        out[f"i04-{slug}-setting"] = ([label, role], [])
+        label, state = _SETTINGS[slug]
+        out[f"i04-{slug}-setting"] = ([label, "Switch", state], ["off" if state == "on" else "on"])
     out[f"i04-{slug}-note"] = (["Note", "Edit box"], [])
     return out
 

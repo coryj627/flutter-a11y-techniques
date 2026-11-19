@@ -212,7 +212,7 @@ class _StripState extends State<_Strip> {
   }
 }
 
-/// The keys of the strip, in words, under it.
+/// The keys of the strip, in words, above it, so that they are met first.
 class _KeysHint extends StatelessWidget {
   const _KeysHint(this.text);
 
@@ -375,6 +375,11 @@ class GoodOnFocus extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 12,
         children: [
+          const _KeysHint(
+            'In the photos: Left and Right arrows for the previous and next '
+            'photo, Home and End for the first and last, F to add or remove '
+            'a favourite.',
+          ),
           _Strip(
             slug: 'good-on-focus',
             album: album,
@@ -382,11 +387,6 @@ class GoodOnFocus extends StatelessWidget {
               ..._stripKeys,
               CharacterActivator('f'): _FavouriteIntent(),
             }, strip),
-          ),
-          const _KeysHint(
-            'In the photos: Left and Right arrows for the previous and next '
-            'photo, Home and End for the first and last, F to add or remove '
-            'a favourite.',
           ),
           _FavouriteButton(slug: 'good-on-focus', album: album),
           _NoteField(slug: 'good-on-focus', album: album),
@@ -447,6 +447,11 @@ class _GoodTurnOffState extends State<GoodTurnOff> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
           children: [
+            _KeysHint(
+              'In the photos: Left and Right arrows for the previous and '
+              'next photo, Home and End for the first and last. '
+              '${_shortcuts ? 'Anywhere here: F to add or remove a favourite.' : 'Single-key shortcuts are off.'}',
+            ),
             _Strip(
               slug: 'good-turn-off',
               album: album,
@@ -458,11 +463,6 @@ class _GoodTurnOffState extends State<GoodTurnOff> {
                 onKeyEvent: (_, event) => _stripKey(moves, event),
                 child: strip,
               ),
-            ),
-            _KeysHint(
-              'In the photos: Left and Right arrows for the previous and '
-              'next photo, Home and End for the first and last. '
-              '${_shortcuts ? 'Anywhere here: F to add or remove a favourite.' : 'Single-key shortcuts are off.'}',
             ),
             _FavouriteButton(slug: 'good-turn-off', album: album),
             TestId(
@@ -540,6 +540,12 @@ class _GoodRemapState extends State<GoodRemap> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
           children: [
+            _KeysHint(
+              'In the photos: Left and Right arrows for the previous and '
+              'next photo, Home and End for the first and last. Anywhere '
+              'here: ${_control ? 'Control+F' : 'F'} to add or remove a '
+              'favourite.',
+            ),
             _Strip(
               slug: 'good-remap',
               album: album,
@@ -554,12 +560,6 @@ class _GoodRemapState extends State<GoodRemap> {
                 },
                 child: strip,
               ),
-            ),
-            _KeysHint(
-              'In the photos: Left and Right arrows for the previous and '
-              'next photo, Home and End for the first and last. Anywhere '
-              'here: ${_control ? 'Control+F' : 'F'} to add or remove a '
-              'favourite.',
             ),
             _FavouriteButton(slug: 'good-remap', album: album),
             TestId(
@@ -601,16 +601,16 @@ class BadPageShortcut extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
           children: [
+            const _KeysHint(
+              'In the photos: Left and Right arrows for the previous and '
+              'next photo, Home and End for the first and last. Anywhere '
+              'here: F to add or remove a favourite.',
+            ),
             _Strip(
               slug: 'bad-page-shortcut',
               album: album,
               keys: (moves, strip) =>
                   _withShortcuts(album, moves, _stripKeys, strip),
-            ),
-            const _KeysHint(
-              'In the photos: Left and Right arrows for the previous and '
-              'next photo, Home and End for the first and last. Anywhere '
-              'here: F to add or remove a favourite.',
             ),
             _FavouriteButton(slug: 'bad-page-shortcut', album: album),
             _NoteField(slug: 'bad-page-shortcut', album: album),
@@ -635,6 +635,7 @@ class BadNoArrowKeys extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 12,
         children: [
+          const _KeysHint('In the photos: F to add or remove a favourite.'),
           _Strip(
             slug: 'bad-no-arrow-keys',
             album: album,
@@ -645,7 +646,6 @@ class BadNoArrowKeys extends StatelessWidget {
               CharacterActivator('f'): _FavouriteIntent(),
             }, strip),
           ),
-          const _KeysHint('In the photos: F to add or remove a favourite.'),
           _FavouriteButton(slug: 'bad-no-arrow-keys', album: album),
           _NoteField(slug: 'bad-no-arrow-keys', album: album),
         ],

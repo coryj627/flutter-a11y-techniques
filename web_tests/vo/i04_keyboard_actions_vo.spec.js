@@ -16,9 +16,9 @@ const HINT_PAGE = 'In the photos: Left and Right arrows for the previous and nex
 const HINT_NONE = 'In the photos: F to add or remove a favourite.';
 
 const strip = (hint, setting = []) => [
-  'Showing: Trailhead, 1 of 4',
+  'Showing: Trailhead, 1 of 4', hint,
   'Trailhead current button', 'Bridge button', 'Ridge button', 'Summit button',
-  hint, 'Add to favourites button', ...setting, 'Note edit text', 'Favourites: none',
+  'Add to favourites button', ...setting, 'Note edit text', 'Favourites: none',
 ];
 
 // slug -> everything VoiceOver speaks after the "Example" heading and before
