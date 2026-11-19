@@ -1,0 +1,19 @@
+#!/bin/sh
+# V13 Android suite at CI's emulator size (320 by 640 at 160 dpi), one run,
+# under tool/with_devices.py. Run from the worktree root. The size and
+# density are reset whatever happens.
+reset() {
+  adb shell wm size reset
+  adb shell wm density reset
+  echo "== reset: $(adb shell wm size | tr '\n' ' ') $(adb shell wm density | tr '\n' ' ')"
+}
+trap reset EXIT INT TERM
+adb shell wm size 320x640
+adb shell wm density 160
+echo "== set: $(adb shell wm size | tr '\n' ' ') $(adb shell wm density | tr '\n' ' ')"
+sleep 5
+cd android || exit 1
+./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.V13TouchTargetSizeTest \
+  2>&1 | grep -E "Tests [0-9]+/[0-9]+ completed|FAILED|AssertionError|BUILD|Exception" | tail -15
+exit 0
