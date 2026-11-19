@@ -463,8 +463,14 @@ class I08DismissAndEscapeTest : TechniqueTest("I08") {
             talkBackFocus(opener) { nodeInAnyWindow(opener) }
             Thread.sleep(3_000)
             assertTrue("click $opener", nodeInAnyWindow(opener).performAction(AccessibilityNodeInfo.ACTION_CLICK))
-            Thread.sleep(3_000)
-            for (part in listOf("contours", "campsites")) {
+            // Let TalkBack finish what it reads where its focus goes when
+            // the layers open, which is logged.
+            Thread.sleep(7_000)
+            Log.i("I08FOCUS", "$slug | when the layers open: ${talkBackOn()}")
+            // Campsites first: when the layers open, TalkBack's focus can
+            // already be on Contour lines, and a move to where it is says
+            // nothing new.
+            for (part in listOf("campsites", "contours")) {
                 val id = "i08-$slug-$part"
                 Log.i(talkBackTag, "FOCUS $id")
                 talkBackFocus(id) { nodeInAnyWindow(id) }

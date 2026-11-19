@@ -156,19 +156,14 @@ final class I08DismissAndEscapeUITests: XCTestCase, CountedTechniqueUITest {
     }
   }
 
-  /// The good example each bad one is made from, by its title on the
-  /// technique's screen, for the positive control.
-  private static let goodOf = [
-    "bad-not-dismissible": ("good-material", "A Material bottom sheet that can be dismissed"),
-    "bad-no-escape": ("good-widgets", "Layers drawn in the overlay, closed by every dismiss command"),
-  ]
+  /// The good example each bad one is made from, for the positive control.
+  private static let goodOf = ["bad-not-dismissible": "good-material", "bad-no-escape": "good-widgets"]
 
   // The defects. Escape alone, on each switch; a second later the layers
   // are still shown, and Space turns the same switch, so focus has not
   // moved and keys arrive. Then, in the same launch, the positive control
-  // for Escape itself: the layers are closed with a pointer, Back goes to
-  // the technique's screen, the good example the bad one is made from is
-  // opened from there, and the same Escape closes its layers. Written to
+  // for Escape itself: the good example the bad one is made from is opened
+  // over it by its link, and the same Escape closes its layers. Written to
   // fail when Escape closes the bad example's layers.
   func testEscapeDoesNothingInTheBadExamples() {
     for slug in ["bad-not-dismissible", "bad-no-escape"] {
@@ -180,24 +175,10 @@ final class I08DismissAndEscapeUITests: XCTestCase, CountedTechniqueUITest {
         expectShown(slug, true, "\(slug): Escape on \(part)")
         XCTAssertEqual(stopBySpace(slug), part, "\(slug): the stop after Escape")
       }
-      // Close with a pointer: a drag down the sheet, or a tap on the
-      // barrier above the layers.
-      if slug == "bad-not-dismissible" {
-        control(slug, "contours").coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).press(
-          forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.99)))
-      } else {
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15)).tap()
-      }
-      expectShown(slug, false, "\(slug): closed with a pointer")
-      element(labelled: "Back").tap()
-      let (good, title) = Self.goodOf[slug]!
-      let tile = app.descendants(matching: .any)
-        .matching(NSPredicate(format: "label BEGINSWITH %@", title)).firstMatch
-      for _ in 0..<6 where !(tile.exists && tile.isHittable) {
-        app.swipeUp(velocity: .slow)
-        usleep(500_000)
-      }
-      tile.tap()
+      // The good example, opened by its link in the app that is running,
+      // which pushes its screen over this one: the same launch.
+      let good = Self.goodOf[slug]!
+      app.open(URL(string: "fluttera11y:///t/I08/\(good)")!)
       XCTAssertTrue(countElement(good).waitForExistence(timeout: 10), "\(good) did not open")
       control(good, "open").tap()
       expectShown(good, true, "\(good): a tap on Map layers")

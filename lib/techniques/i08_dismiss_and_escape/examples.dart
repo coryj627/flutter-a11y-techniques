@@ -33,6 +33,9 @@ class _Map extends StatefulWidget {
 class _MapState extends State<_Map> {
   /// The layers that are on; the switches read and change it.
   final ValueNotifier<Set<String>> on = ValueNotifier({'contours'});
+
+  /// The focus node of Map layers, the button that shows the layers.
+  final FocusNode opener = FocusNode();
   int _closed = 0;
 
   /// The test identifier of the part [part] of this example.
@@ -41,6 +44,7 @@ class _MapState extends State<_Map> {
   @override
   void dispose() {
     on.dispose();
+    opener.dispose();
     super.dispose();
   }
 
@@ -71,6 +75,7 @@ class _MapState extends State<_Map> {
         TestId(
           id('open'),
           child: OutlinedButton(
+            focusNode: opener,
             onPressed: _show,
             child: const Text('Map layers'),
           ),
@@ -259,7 +264,7 @@ class _OverlayState extends State<_Overlay> {
   );
   OverlayEntry? _entry;
   Completer<void>? _shown;
-  FocusNode? _opener;
+  _MapState? _map;
 
   @override
   void dispose() {
@@ -270,7 +275,7 @@ class _OverlayState extends State<_Overlay> {
   }
 
   Future<void> _show(BuildContext context, _MapState map) {
-    _opener = FocusManager.instance.primaryFocus;
+    _map = map;
     _entry = OverlayEntry(builder: (context) => _layers(context, map));
     Overlay.of(context).insert(_entry!);
     setState(() {});
@@ -289,8 +294,9 @@ class _OverlayState extends State<_Overlay> {
     entry.remove();
     entry.dispose();
     if (mounted) setState(() {});
-    // Keyboard focus goes back to the button that showed the layers.
-    _opener?.requestFocus();
+    // Keyboard focus goes back to the button that showed the layers, and
+    // TalkBack with it (I03).
+    _map?.opener.requestFocus();
     _shown?.complete();
   }
 

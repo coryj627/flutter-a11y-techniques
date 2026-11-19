@@ -45,7 +45,9 @@ escape gesture), VoiceOver on macOS in Chromium (Escape on the keyboard;
 it has no gesture of its own for this). VoiceOver's escape gesture on iOS
 cannot be made from XCUITest (section 7), so what it does is read in the
 engine's source and checked in the widget tests through the messages it
-sends, and not verified on a device.
+sends, and not verified on a device. On the iOS simulator the Escape key
+typed from XCUITest never reached Flutter; Command+period, which arrives
+as Escape, is what the iOS tests send.
 
 ## 3. WCAG 2.2 success criteria
 
@@ -179,7 +181,8 @@ switch). Each test that says a key or a command does nothing sends it
 alone, reads the layers and the stop again a second later, and shows in
 the same launch that keys arrive (Space turns the switch the stop names);
 for Escape, the same launch then goes to the good example the bad one is
-made from, through the app's own screens, and the same key closes its
+made from (through the app's own screens; on iOS by its link, opened in
+the app that is running), and the same key closes its
 layers. The layers are identified by both switches, the example's screen
 by its count, and the technique's own screen by its title (by its list of
 examples in the widget tests).
@@ -189,7 +192,7 @@ examples in the widget tests).
 | L1 widget tests | Good: guidelines in light and dark, with and without the layers shown; 200% text at 320 by 640 with them shown. Every example: Map layers is a button, the count is 0, "Showing: Contour lines"; the switches are named and Contour lines alone is on; Enter on Map layers puts keyboard focus in the layers (the route's scope, then the first switch on Tab, or the first switch at once) and Space turns it; Tab and Shift+Tab go round the two switches. Escape, as Android and as iOS: it closes the layers in the good examples and `bad-back-leaves`, the count goes to 1 and focus is back on Map layers; in `bad-not-dismissible` and `bad-no-escape` it is not handled, from either switch, the layers stay with focus where it was after a second, Space turns the switch, twenty Tabs and Shift+Tabs never leave the two, and the good example the bad one is made from then closes on the same key. `popRoute` (Back, and the escape gesture at the root): closes the layers on the example's screen in every example but `bad-back-leaves`, where, after Escape has closed them once in the same test, it takes the user to the technique's own screen. The dismiss action: which nodes have it ("Scrim", "Dismiss", "Close map layers", and the overlay's own node), and each one closes the layers; in `bad-not-dismissible` no node has it, and the same search finds `good-material`'s. Where VoiceOver's escape gesture on a switch is taken: by the layers' own node in the overlay examples, by no node in the route examples. The SDK on its own: `showDialog` with and without `barrierDismissible` (FL-480); an `OverlayPortal` that Escape does not close and `popRoute` pops the screen under, and an `OverlayEntry` that stays after it (FL-481); a trap made each of the three ways keeps Tab and Shift+Tab and lets no Escape out; a tooltip that Escape hides while focus is in the app and not after the view loses focus (FL-482); a `ModalBarrier` in an `OverlayPortal` that empties the semantics tree, and in an `OverlayEntry` that does not (FL-483) |
 | L3 web | Every example: Map layers is a button with its name, the count, and each switch is `role="switch"` with its name and `aria-checked`; Enter shows the layers and Space turns a switch. Tab and Shift+Tab: round the two switches in the overlay examples; in the route examples round the two and out of the page for the browser's own stops, and back to the first switch. Escape: closes the layers, the count is 1 and DOM focus is on Map layers, in the good examples and `bad-back-leaves`; does nothing in the other two, from either switch, with the positive controls as above; in `bad-no-escape` twenty Tabs and Shift+Tabs never leave the switches |
 | L3 Android | The same parts by class (`Button`, `Switch`), name, and `isChecked`; Tab and Shift+Tab round the two switches by `isFocused`; Escape as on the web, with the positive controls; the Back key and the global Back action close the layers on the example's screen in every example but `bad-back-leaves`, where both take the app to the technique's screen with the app still in front, after Escape has closed the layers in the same launch; `ACTION_DISMISS` on the barrier, and on the overlay's own node, closes the layers; in `bad-not-dismissible` the read that holds the layers has no node with it |
-| L3 iOS | Map layers (a button) and the switches (`.switch`, named, values "1" and "0"); Tab and Shift+Tab round the two switches, each stop named by what Space turns; Escape, sent as Command+period, closes the layers in the good examples and `bad-back-leaves`, and Space then shows them again from Map layers; it does nothing in the other two, with the positive controls as above (the layers closed with a pointer, Back, the good example opened from the technique's screen). Not asserted: the Escape key itself, which XCUITest cannot send to Flutter; Back, which iOS has no key for; the escape gesture |
+| L3 iOS | Map layers (a button) and the switches (`.switch`, named, values "1" and "0"); Tab and Shift+Tab round the two switches, each stop named by what Space turns; Escape, sent as Command+period, closes the layers in the good examples and `bad-back-leaves`, and Space then shows them again from Map layers; it does nothing in the other two, with the positive controls as above (the good example opened over the bad one by its link, in the same launch). Not asserted: the Escape key itself, which XCUITest cannot send to Flutter; Back, which iOS has no key for; the escape gesture |
 | L4 TalkBack | Map layers, then, with the layers open, each switch (name, "Switch", and its state) and the barrier, by what TalkBack reads; then TalkBack's Back gesture (the global Back action) from a switch: the layers close and TalkBack's focus is on Map layers for the last two seconds of the window; in `bad-back-leaves` the app goes to the technique's screen and TalkBack is no longer on the example |
 | L4 VoiceOver iOS | VoiceOver's cursor on Map layers and a double tap; what VoiceOver says, then each element forward until the barrier: both switches with "Switch button", and the barrier in every example but `bad-not-dismissible`, where neither "Scrim" nor "Dismiss" is read |
 | L4 VoiceOver web | VoiceOver's own activation on Map layers shows the layers and VoiceOver speaks; Escape pressed through the system closes them in the good examples and `bad-back-leaves`, and leaves them in the other two, where VoiceOver's activation on the focused switch then turns it |
@@ -265,11 +268,21 @@ output of each platform.
   engine source (`accessibilityPerformEscape` in `SemanticsObject.mm` and
   `FlutterViewController.mm`) and asserted, as messages, in the widget
   tests; on a device it is not verified.
-- **TalkBack** (the transcript): it reads each switch with its name,
-  "Switch", and its state; the barrier as "Scrim", "Dismiss", or "Close
-  map layers"; and after its Back gesture, the layers closed and TalkBack
-  went back to Map layers. In `bad-back-leaves` it read the technique's
-  screen instead. See the transcript for exact speech.
+- **TalkBack** ([transcript](../evidence/I08/talkback-android.md)): it
+  reads each switch with its state, its name, and "Switch"; the barrier as
+  "Scrim", "Dismiss", or "Close map layers", with "Actions available"; and
+  after its Back gesture the layers closed and TalkBack read Map layers,
+  "Button" (after the screen's title, for the routes, as I03 found), and
+  its focus stayed there. In `bad-back-leaves` the gesture left the
+  screen: TalkBack read the technique's title, "Dismiss and escape", and
+  Back. In the overlay examples TalkBack's focus followed keyboard focus
+  into the layers, to Contour lines; VoiceOver on iOS went to the
+  barrier, "Close map layers", the first element of the overlay
+  ([transcript](../evidence/I08/voiceover-ios.md)), and in the routes to
+  the title. When the overlay closes, keyboard focus is put back on Map
+  layers, and TalkBack follows it; where VoiceOver on iOS goes then was
+  not measured (it does not follow keyboard focus, I03), and is I03's
+  subject.
 - **A `ModalBarrier` in an `OverlayPortal` silences the screen in a
   widget test** ([FL-483](../flutter-limitations.md#fl-483)): the examples
   were first built that way; they use an `OverlayEntry`.
