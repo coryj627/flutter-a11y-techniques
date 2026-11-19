@@ -234,7 +234,7 @@ examples in the widget tests).
 | L1 widget tests | Good: guidelines in light and dark, with and without the layers shown; 200% text at 320 by 640 with them shown. Every example: Map layers is a button, the count is 0, "Showing: Contour lines"; the switches are named and Contour lines alone is on; Enter on Map layers puts keyboard focus in the layers (the route's scope, then the first switch on Tab, or the first switch at once) and Space turns it; Tab and Shift+Tab go round the two switches. Escape, as Android and as iOS: it closes the layers in the good examples and `bad-back-leaves`, the count goes to 1 and focus is back on Map layers; in `bad-not-dismissible` and `bad-no-escape` it is not handled, from either switch, the layers stay with focus where it was after a second, Space turns the switch, twenty Tabs and Shift+Tabs never leave the two, and the good example the bad one is made from then closes on the same key. `popRoute` (Back, and the escape gesture at the root): closes the layers on the example's screen in every example but `bad-back-leaves`, where, after Escape has closed them once in the same test, it takes the user to the technique's own screen. The dismiss action: which nodes have it ("Scrim", "Dismiss", "Close map layers", and the overlay's own node), and each one closes the layers; in `bad-not-dismissible` no node has it, and the same search finds `good-material`'s. Where VoiceOver's escape gesture on a switch is taken: by the layers' own node in the overlay examples, by no node in the route examples. The SDK on its own: `showDialog` with and without `barrierDismissible` (FL-480); an `OverlayPortal` that Escape does not close and `popRoute` pops the screen under, and an `OverlayEntry` that stays after it (FL-481); a trap made each of the three ways keeps Tab and Shift+Tab and lets no Escape out; a tooltip that Escape hides while focus is in the app and not after the view loses focus (FL-482); a `ModalBarrier` in an `OverlayPortal` that empties the semantics tree, and in an `OverlayEntry` that does not (FL-483) |
 | L3 web | Every example: Map layers is a button with its name, the count, and each switch is `role="switch"` with its name and `aria-checked`; Enter shows the layers and Space turns a switch. Tab and Shift+Tab: round the two switches in the overlay examples; in the route examples round the two and out of the page for the browser's own stops, and back to the first switch. Escape: closes the layers, the count is 1 and DOM focus is on Map layers, in the good examples and `bad-back-leaves`; does nothing in the other two, from either switch, with the positive controls as above; in `bad-no-escape` twenty Tabs and Shift+Tabs never leave the switches. The browser's Back, as its history event (`page.goBack()`; its keyboard shortcuts cannot be sent from Playwright): from each switch, it closes the layers in every example but `bad-back-leaves` (both switches gone, the count at 1, DOM focus on Map layers, the URL still the example's), and in `bad-back-leaves` it brings back the technique's screen |
 | L3 Android | The same parts by class (`Button`, `Switch`), name, and `isChecked`; Tab and Shift+Tab round the two switches by `isFocused`; Escape as on the web, with the positive controls; the Back key, the global Back action, and the keyboard's Back (Meta+Escape and Meta+Left, sent as key events) close the layers on the example's screen, keyboard focus back on Map layers, in every example but `bad-back-leaves`, where all four take the app to the technique's screen with the app still in front, after Escape has closed the layers in the same launch; `ACTION_DISMISS` on the barrier, and on the overlay's own node, closes the layers; in `bad-not-dismissible` the read that holds the layers has no node with it |
-| L3 iOS | Map layers (a button) and the switches (`.switch`, named, values "1" and "0"); Tab and Shift+Tab round the two switches, each stop named by what Space turns; Escape, sent as Command+period once Space twice has shown keyboard focus on Contour lines, closes the layers in the good examples and `bad-back-leaves` (both switches gone, the count at 1), and Space then shows them again from Map layers; it does nothing in the other two, with the positive controls as above (the good example opened over the bad one by its link, in the same launch). Not asserted: the Escape key itself, which XCUITest cannot send to Flutter; Back, which iOS has no key for; the escape gesture |
+| L3 iOS | Map layers (a button) and the switches (`.switch`, named, values "1" and "0"); Tab and Shift+Tab round the two switches, each stop named by what Space turns; Escape, on iOS 27 and later (section 7), sent as Command+period once Space twice has shown keyboard focus on Contour lines, closes the layers in the good examples and `bad-back-leaves` (both switches gone, the count at 1), and Space then shows them again from Map layers; it does nothing in the other two, with the positive controls as above (the good example opened over the bad one by its link, in the same launch). Not asserted: the Escape key itself, which XCUITest cannot send to Flutter; Back, which iOS has no key for; the escape gesture |
 | L4 TalkBack | Map layers, then, with the layers open, each switch (name, "Switch", and its state) and the barrier, by what TalkBack reads; then TalkBack's Back gesture (the global Back action) from a switch: the layers close and TalkBack's focus is on Map layers for the last two seconds of the window; in `bad-back-leaves` the app goes to the technique's screen and TalkBack is no longer on the example |
 | L4 VoiceOver iOS | VoiceOver's cursor on Map layers and a double tap; what VoiceOver says, then each element forward until the barrier: both switches with "Switch button", and the barrier in every example but `bad-not-dismissible`, where neither "Scrim" nor "Dismiss" is read |
 | L4 VoiceOver web | VoiceOver's own activation on Map layers shows the layers and VoiceOver speaks; Escape pressed through the system closes them in the good examples and `bad-back-leaves`, and leaves them in the other two, where VoiceOver's activation on the focused switch then turns it |
@@ -312,7 +312,8 @@ output of each platform.
   Escape closes (probe `ios_round3.txt`). The iOS tests send Escape that
   way. Whether a hardware keyboard's Escape key reaches the app was not
   tried; neither was Full Keyboard Access.
-- **On CI's simulator Command+period did not close the layers twice**
+- **On CI's simulator, iOS 26.5, Command+period did not arrive as Escape
+  every time, so the iOS Escape checks run on iOS 27 only**
   (run 44502222902: GitHub's macOS runner, Xcode 26.6, an iPhone 17 Pro
   simulator with iOS 26.5; here, Xcode 27.1 and iOS 27.0). It closed them
   in `good-material` and `good-cupertino`, where it was sent after a Tab;
@@ -330,15 +331,23 @@ output of each platform.
   `docs/evidence/probes/i08/ci_ios_26_5.txt`) Command+period closed the
   layers in `good-material`, `good-cupertino`, `good-widgets` and
   `bad-back-leaves`, and in `bad-not-dismissible` it left them shown from
-  both switches. So on iOS 26.5 too Command+period arrives as Escape, and
-  the earlier failures were timing: the checks are not limited to iOS 27.
-  That run failed one check, the positive control's wait for
-  `good-material` opened by its link: it waited ten seconds, and on that
-  runner a screen opened by its link took up to 30 seconds to appear (in
-  the next test, a fresh launch on `good-material`). The wait is now 30
-  seconds, as for every other screen. The log shows no Terminate step
-  before that link was opened, as it does before every fresh launch, but
-  whether the app's process stayed the same was not checked.
+  both switches. That run failed one check, the positive control's wait
+  for `good-material` opened by its link: it waited ten seconds, and on
+  that runner a screen opened by its link took up to 30 seconds to appear
+  (in the next test, a fresh launch on `good-material`). The wait is now
+  30 seconds, as for every other screen. On the next run, with only that
+  wait changed (run 44595763702, attempt 2, the same runner and iOS 26.5;
+  `docs/evidence/probes/i08/ci_ios_26_5_rerun.txt`), Command+period closed
+  the layers in `good-material` and then not in `good-cupertino`, nor in
+  the positive control's `good-material`, each time after Space twice had
+  shown keyboard focus on Contour lines. So on iOS 26.5 Command+period
+  does not arrive as Escape every time, and a check that fails there says
+  nothing about the app: the two iOS tests that send Escape
+  (`testEscapeClosesTheLayers`, `testEscapeDoesNothingInTheBadExamples`)
+  run on iOS 27 and later and are skipped before it, as CI's are until
+  its image has iOS 27. On iOS 27.0 here they passed in every run
+  (`ios_suite_x3.txt`). Why Command+period is lost on iOS 26.5 was not
+  found; there is no iOS 26 simulator here.
 - **VoiceOver's escape gesture could not be made from a test**: neither
   `XCUIVoiceOverService` nor XCUITest has a two-finger scrub, and Escape
   typed with VoiceOver on did nothing (probe). What it does is read in the

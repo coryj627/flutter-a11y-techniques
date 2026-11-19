@@ -2890,9 +2890,11 @@ yet), **Fixed in x.y** (verified on that version).
     (`ios.txt`, `ios_round2.txt`); Command+period, iOS's own key for
     cancel, arrived as Escape and closed `e1` and the probe's own overlay
     that handles Escape (`ios_round3.txt`), on iOS 27.0. On CI's iOS 26.5
-    simulator it did not close the I08 layers when sent straight after
-    they appeared, and did once keyboard focus was known to be in them
-    (`ci_ios_26_5.txt`; I08's spec, section 7). Whether a hardware
+    simulator it did not close the I08 layers every time, even with
+    keyboard focus shown in them: in every place in one run, in one of
+    three in the next (`ci_ios_26_5.txt`, `ci_ios_26_5_rerun.txt`; I08's
+    spec, section 7), so I08's iOS Escape checks run on iOS 27 only.
+    Whether this is XCUITest's or iOS's was not found. Whether a hardware
     keyboard's Escape key reaches the app was not tried.
 - Effect: a sheet or dialog made not dismissible, so that a stray tap
   does not close it, is closed by Back and by a screen reader's gesture

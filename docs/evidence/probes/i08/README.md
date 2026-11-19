@@ -249,7 +249,13 @@ simulator with iOS 26.5), cut from the job's log as its header says.
 Command+period closed the layers in every example where Escape closes
 them, and left them shown in `bad-not-dismissible` from both switches;
 the one failure is the positive control's ten-second wait for
-`good-material` opened by its link.
+`good-material` opened by its link. `ci_ios_26_5_rerun.txt` is the next
+run, on the same runner and iOS, with that wait made 30 seconds and
+nothing else changed: Command+period closed the layers in `good-material`,
+then not in `good-cupertino`, nor in the positive control's
+`good-material`, each time after Space twice had shown keyboard focus on
+Contour lines. After it, the iOS tests that send Escape run on iOS 27 and
+later only.
 
 `android_keyboard_back_test.txt` is the I08 Android test of the
 keyboard's Back (`keyboardBackClosesTheLayers`) run twice, with the
