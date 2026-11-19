@@ -1,0 +1,37 @@
+== device: Android 17, Physical size: 1080x2424
+== settings before: enabled_accessibility_services=[null] accessibility_enabled=[0]
+== without TalkBack
+BUILD SUCCESSFUL in 4m 5s
+keyboard p1 Dialog | reached=true | after Enter: KF scope:Alert / SR: none / A11Y none | Tab until close: node:p1 Other > node:p1 Close | close by Tab: true | after close: KF node:p1 Dialog / SR: none / A11Y none | Tab: node:p2 Autofocus dialog
+keyboard p2 Autofocus dialog | reached=true | after Enter: KF node:p2 OK / SR: none / A11Y none | Tab until close: node:p2 Cancel > node:p2 OK | close by Tab: true | after close: KF node:p2 Autofocus dialog / SR: none / A11Y none | Tab: node:p3 Sheet
+keyboard p3 Sheet | reached=true | after Enter: KF scope:Dialog / SR: none / A11Y none | Tab until close: node:p3 Other > node:p3 Close | close by Tab: true | after close: KF node:p3 Sheet / SR: none / A11Y none | Tab: node:p4 Page
+keyboard p4 Page | reached=true | after Enter: KF scope:p4 Body / SR: none / A11Y none | Tab until close: node:Back > node:p4 Done | close by Tab: true | after close: KF node:p4 Page / SR: none / A11Y none | Tab: node:p5 Cupertino dialog
+keyboard p5 Cupertino dialog | reached=true | after Enter: KF scope:Alert / SR: none / A11Y none | Tab until close: scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert > scope:Alert | close by Tab: false | after close: KF node:p5 Cupertino dialog / SR: none / A11Y none | Tab: node:p6 Action sheet
+keyboard p6 Action sheet | reached=true | after Enter: KF scope:Alert / SR: none / A11Y none | Tab until close: node:p6 Other > node:p6 Close | close by Tab: true | after close: KF node:p6 Action sheet / SR: none / A11Y none | Tab: node:p7 Cupertino page
+keyboard p7 Cupertino page | reached=true | after Enter: KF scope:p7 Body / SR: none / A11Y none | Tab until close: node:Back > node:p7 Done | close by Tab: true | after close: KF node:p7 Cupertino page / SR: none / A11Y none | Tab: node:p8 General dialog
+keyboard p8 General dialog | reached=true | after Enter: KF scope:p8 Title / SR: none / A11Y none | Tab until close: node:p8 Other > node:p8 Close | close by Tab: true | after close: KF node:p8 General dialog / SR: none / A11Y none | Tab: node:p9 Overlay
+keyboard p9 Overlay | reached=true | after Enter: KF node:p9 Overlay / SR: none / A11Y none | Tab until close: node:p10 Inline > node:p11 Inline managed > node:p12 Inline a11y event > node:p13 Remove A > node:p13 Remove B > node:p13 Remove C > node:p14 Remove A > node:p14 Remove B > node:p14 Remove C > node:p17 Remove A > node:p17 Remove B > node:p17 Remove C > node:p15 Go > node:p16 Last > node:p9 Other > node:p9 Close | close by Tab: true | after close: KF scope:p0 Start / SR: none / A11Y none | Tab: node:Back
+keyboard p10 Inline | reached=true | after Enter: KF node:p10 Inline / SR: none / A11Y none | Tab until close: node:p10 Close | close by Tab: true | after close: KF node:p10 Inline / SR: none / A11Y none | Tab: node:p11 Inline managed
+keyboard p11 Inline managed | reached=true | after Enter: KF node:p11 Close / SR: none / A11Y none | Tab until close: node:p12 Inline a11y event > node:p13 Remove A > node:p13 Remove B > node:p13 Remove C > node:p14 Remove A > node:p14 Remove B > node:p14 Remove C > node:p17 Remove A > node:p17 Remove B > node:p17 Remove C > node:p15 Go > node:p16 Last > node:Back > node:p0 Start > node:p1 Dialog > node:p2 Autofocus dialog > node:p3 Sheet > node:p4 Page > node:p5 Cupertino dialog > node:p6 Action sheet > node:p7 Cupertino page > node:p8 General dialog > node:p9 Overlay > node:p10 Inline > node:p11 Inline managed > node:p11 Close | close by Tab: true | after close: KF node:p11 Inline managed / SR: none / A11Y none | Tab: node:p12 Inline a11y event
+keyboard p12 Inline a11y event | reached=true | after Enter: KF node:p12 Inline a11y event / SR: none / A11Y none | Tab until close: node:p12 Close | close by Tab: true | after close: KF node:p12 Inline a11y event / SR: none / A11Y none | Tab: node:p13 Remove A
+BUILD SUCCESSFUL in 37s
+keyboard removal p13 Remove B | after: KF node:p13 Remove A / SR: none / A11Y none | Tab: node:p13 Remove C
+keyboard removal p14 Remove B | after: KF node:p14 Remove C / SR: none / A11Y none | Tab: node:p17 Remove A
+keyboard removal p17 Remove B | after: KF node:p17 Remove B / SR: none / A11Y none | Tab: node:p15 Go
+BUILD SUCCESSFUL in 39s
+keyboard p15 one Tab from Before | KF scope:Alert / SR: none / A11Y none | Log: p15 focused, opening
+== with TalkBack
+> Task :app:compileFlutterBuildDebug FAILED
+Target kernel_snapshot_program failed: Exception
+BUILD FAILED in 5s
+> Task :app:compileFlutterBuildDebug FAILED
+Target kernel_snapshot_program failed: Exception
+BUILD FAILED in 4s
+> Task :app:compileFlutterBuildDebug FAILED
+Target kernel_snapshot_program failed: Exception
+BUILD FAILED in 4s
+> Task :app:compileFlutterBuildDebug FAILED
+Target kernel_snapshot_program failed: Exception
+BUILD FAILED in 4s
+Deleted 1 rows
+== settings restored: enabled_accessibility_services=[null] accessibility_enabled=[0]
