@@ -71,9 +71,12 @@ How the bad examples fail, as the criteria are written:
   depended on the device (section 7). It does not fail 2.1.1: other keys
   still put an f in the note. Measured on the web: Shift+F types a
   capital F, and an f pasted with Control or Command+V goes in. On iOS:
-  an f sent the way an on-screen keyboard's text arrives (`typeText`)
-  goes in, and Shift+F and Command+V are tested in the iOS suite (section
-  7 says what those showed).
+  Shift+F types a capital F, an f pasted with Command+V goes in (iOS
+  first asks whether the app may paste what another app copied, and the
+  test allows it), and an f sent the way an on-screen keyboard's text
+  arrives (`typeText`) goes in ([test outcomes](../evidence/probes/i04/review_evidence_run.txt)).
+  Each was checked after a plain f had been lost in the same launch. On Android no alternative was needed on the
+  local emulator, and none was measured on CI's.
 - `bad-no-arrow-keys` fails 2.1.1 on every platform: Tab reaches only the
   thumbnail of the photo shown, and nothing moves along the strip from
   there, so three of the four photos cannot be shown from the keyboard.

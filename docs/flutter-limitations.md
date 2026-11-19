@@ -2408,9 +2408,12 @@ yet), **Fixed in x.y** (verified on that version).
   with `bad-page-shortcut`: on the web Shift+F types a capital F (a
   `CharacterActivator('f')` does not match "F"), and an f pasted with
   Control or Command+V goes in through the browser's own paste (I04 web
-  tests). On iOS `typeText`, which sends text the way an on-screen
-  keyboard does, puts an f in (probe), and the I04 iOS suite tests
-  Shift+F and Command+V.
+  tests). On iOS Shift+F types a capital F, an f pasted with Command+V
+  goes in once iOS's question whether the app may paste is answered, and
+  `typeText`, which sends text the way an on-screen keyboard does, puts
+  an f in (I04 iOS tests; outcomes in
+  `docs/evidence/probes/i04/review_evidence_run.txt`). Each after a plain
+  f had been lost in the same launch.
 - Effect: someone typing a note on a hardware keyboard sets off the
   shortcut with every f, and the f does not appear; they have to type a
   capital or paste the letter in.
