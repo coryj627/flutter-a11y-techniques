@@ -115,7 +115,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-410](#fl-410) | A control's semantics node can be bigger than the area that takes taps, and the tap target guidelines read the node | Android, iOS, test framework | Confirmed |
 | [FL-411](#fl-411) | On the web a click is taken by the element of the node under it, and by its label text where that runs out of the element | Web | Confirmed |
 | [FL-412](#fl-412) | In a desktop browser the Material theme does not pad controls to 48 by 48, and is compact | Web (desktop browser) | Confirmed |
-| [FL-413](#fl-413) | The text around a `WidgetSpan` is one node that leaves the widget out, and the widget's node comes after it | All | Confirmed on iOS and the web; Android from the tree |
+| [FL-413](#fl-413) | The text around a `WidgetSpan` is one node that leaves the widget out, and the widget's node comes after it | All | Confirmed; workaround verified |
 | [FL-420](#fl-420) | Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets | All | Confirmed |
 | [FL-421](#fl-421) | On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever | Web | Confirmed |
 | [FL-422](#fl-422) | On a scrolled screen the default focus order puts the app bar's Back button among the content | All | Confirmed |
@@ -2226,36 +2226,66 @@ yet), **Fixed in x.y** (verified on that version).
 
 **The text around a `WidgetSpan` is one node that leaves the widget out, and the widget's node comes after it.**
 
-- Status: Confirmed on iOS and the web, Flutter 3.47.5; on Android seen in
-  the tree only. Found in V13 `/t/V13/good-inline-link`, a sentence "Read
-  the trail rules before you set off." whose link is a `WidgetSpan`.
-  Asserted by the V13 VoiceOver tests on iOS
-  (`ios/RunnerUITests/V13TouchTargetSizeUITests.swift`) and the web
-  (`web_tests/vo/v13_touch_target_size_vo.spec.js`), written to fail when
-  the sentence is read in order. Source not read.
-- What happens:
-  - iOS: VoiceOver reads "Read the before you set off." and then "trail
-    rules Link" (`docs/evidence/V13/voiceover-ios.md`).
-  - Web: the sentence is a `group` whose `aria-label` is "Read the before
-    you set off.", with the link inside it; VoiceOver reads "Read the
-    before you set off. group", "link trail rules", "end of Read the
+- Status: Confirmed, Flutter 3.47.5, with a workaround verified on all
+  three platforms. Found in the first build of V13
+  `/t/V13/good-inline-link`, a sentence "Read the trail rules before you
+  set off." whose link is a `WidgetSpan`. Asserted on the SDK alone by the
+  V13 widget test "FL-413", written to fail when it is fixed. Framework
+  source read: `rendering/paragraph.dart`
+  (`RenderParagraph.describeSemanticsConfiguration` and
+  `assembleSemanticsNode`).
+- What happens, in that first build (the transcripts are kept in
+  `docs/evidence/probes/v13/`):
+  - iOS: VoiceOver read "Read the before you set off." and then "trail
+    rules Link" (`voiceover_ios_round1_widgetspan.md.txt`).
+  - Web: the sentence was a `group` whose `aria-label` was "Read the
+    before you set off.", with the link inside it; VoiceOver read "Read
+    the before you set off. group", "link trail rules", "end of Read the
     before you set off. group" in Chromium and in Playwright's WebKit
-    (`docs/evidence/V13/voiceover-web.md`).
-  - Android: the paragraph's node is "Read the", a line break, and
-    "before you set off.", and the link's node follows it
-    (`docs/evidence/probes/v13/android_link_dump.txt`, a `uiautomator`
-    dump). What TalkBack reads when it moves on its own was not tested:
-    its walk on the emulator moves focus by node.
-- WCAG: not judged here; V13 does not claim it. 1.3.2 Meaningful Sequence
-  is the candidate where the words only make sense with the widget, as
-  here. Left to C04 Links inline with text.
+    (`voiceover_web_round1_widgetspan.md.txt`).
+  - Android: the paragraph's node was "Read the", a line break, and
+    "before you set off.", and the link's node followed it
+    (`android_link_dump.txt`, a `uiautomator` dump). What TalkBack reads
+    when it moves on its own was not tested.
+- Cause (source read): a paragraph gives each run of its text a node of
+  its own only when some span has a recognizer or a
+  `semanticsIdentifier`. Otherwise it puts all its text in one label and
+  leaves each `WidgetSpan`'s nodes as children after it. When it does
+  split the text, it gives the runs sort keys `OrdinalSortKey(0)`,
+  `OrdinalSortKey(1)`, and so on, and gives the `WidgetSpan`'s node none,
+  so the widget is still read first (round 2 probe, fixtures `q3` and
+  `q4`, `docs/evidence/probes/v13/flutter_test_round2.txt`).
+- WCAG: 1.3.2 Meaningful Sequence is the candidate where the words only
+  make sense with the widget, as here; not claimed by V13. Left to C04
+  Links inline with text.
 - Why it matters: a `WidgetSpan` is how a focusable control goes in a line
-  of text (a `TextSpan` with a recognizer takes no keyboard focus), so a
-  link that the keyboard can reach is read out of its sentence.
-- Workaround: none tried. Whether a `TextSpan` with a recognizer, which has
-  no keyboard focus, is read in its place was not checked here.
+  of text. A `TextSpan` with a recognizer keeps its place in the
+  semantics tree (round 2 probe, fixture `q2`, in `flutter_test` only) but
+  takes no keyboard focus, so with the SDK's
+  plain parts a link in text is either read out of its sentence or out of
+  the keyboard's reach.
+- Workaround, in the SDK, verified in V13 `good-inline-link` on all three
+  platforms: give one of the sentence's `TextSpan`s a
+  `semanticsIdentifier`, so that the paragraph splits its text into runs;
+  and put the `WidgetSpan`'s widget in `Semantics(container: true,
+  sortKey: OrdinalSortKey(0.5))`, a key between those of the runs before
+  and after it. Not inside `MergeSemantics`, which drops the sort key
+  (round 2 probe, fixture `q6`). The link then keeps its keyboard focus,
+  and is read in its place: VoiceOver on iOS reads "Read the", "trail
+  rules Link", "before you set off."
+  (`docs/evidence/V13/voiceover-ios.md`), and VoiceOver on the web reads
+  "Read the", "link trail rules", "before you set off." in Chromium and in
+  Playwright's WebKit (`docs/evidence/V13/voiceover-web.md`); on the web
+  the sentence is three elements in that order
+  (`docs/evidence/probes/v13/web_round4.txt`). Tab reaches the link and
+  Enter and Space activate it in the widget tests, in Chromium, on the
+  Android emulator, and on the iOS simulator (the V13 tests on each).
+  The widget test "good-inline-link: the sentence is read in order" and
+  the web tree test of the same name assert the order. The key has to
+  match the run's position: by the source, a link after the second run of
+  text would need a key between 1 and 2 (not tested).
 - How to read this entry: Flutter has not added a way to read a
-  `WidgetSpan` in its place in the text yet.
+  `WidgetSpan` in its place in the text without help yet.
 - Upstream issue: not searched yet (D25).
 
 ## FL-420

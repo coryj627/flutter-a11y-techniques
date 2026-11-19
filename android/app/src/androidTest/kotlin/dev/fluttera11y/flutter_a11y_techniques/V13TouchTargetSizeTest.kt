@@ -194,6 +194,35 @@ class V13TouchTargetSizeTest : TechniqueTest("V13") {
         }
     }
 
+    /** Presses a key on the emulator's keyboard and gives Flutter time to act (as in I01). */
+    private fun key(name: String) {
+        device.executeShellCommand("input keyevent KEYCODE_$name")
+        Thread.sleep(600)
+    }
+
+    /**
+     * The link takes keyboard focus and Enter and Space activate it. The
+     * emulator has a hardware keyboard; the first Tab after launch can be
+     * used up leaving touch mode, so Tab is pressed until the link has
+     * focus (I01's probe). isFocused follows Flutter's keyboard focus.
+     */
+    @Test
+    fun tabReachesTheLinkAndEnterAndSpaceActivateIt() {
+        open(LINK)
+        val id = "v13-$LINK-rules"
+        var reached = false
+        for (i in 0 until 6) {
+            key("TAB")
+            if (revealed(id).isFocused) { reached = true; break }
+        }
+        assertTrue("Tab reaches the link", reached)
+        key("ENTER")
+        waitForCount(LINK, 1)
+        key("SPACE")
+        waitForCount(LINK, 2)
+        assertTrue("focus stays on the link", revealed(id).isFocused)
+    }
+
     @Test
     fun theLinkTakesATapAndNotOneJustBelowIt() {
         open(LINK)

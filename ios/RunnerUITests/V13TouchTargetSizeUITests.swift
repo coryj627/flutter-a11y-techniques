@@ -164,6 +164,25 @@ final class V13TouchTargetSizeUITests: XCTestCase, CountedTechniqueUITest {
     }
   }
 
+  /// The link takes keyboard focus and Enter and Space activate it. XCUITest
+  /// cannot see Flutter's focus (I01), so it is shown by what the keys do:
+  /// the first Tab goes to Back and the second to the link, the only other
+  /// thing on the screen that takes focus; Enter (typed as "\n") and then
+  /// Space each press it. Had a key not arrived, or had focus been on Back,
+  /// the count would not reach 1 and 2.
+  func testTabReachesTheLinkAndEnterAndSpaceActivateIt() {
+    open(Self.link)
+    app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+    usleep(700_000)
+    app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+    usleep(700_000)
+    app.typeKey("\n", modifierFlags: [])
+    expectCount(Self.link, 1)
+    app.typeKey(XCUIKeyboardKey.space.rawValue, modifierFlags: [])
+    expectCount(Self.link, 2)
+    XCTAssertTrue(countElement(Self.link).exists, "still on the example screen")
+  }
+
   func testTheLinkTakesATapAndNotOneJustBelowIt() {
     open(Self.link)
     let id = "v13-\(Self.link)-rules"

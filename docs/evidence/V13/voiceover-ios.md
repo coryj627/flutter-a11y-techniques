@@ -20,4 +20,4 @@ Result: PASS
 | `bad-zero-padding-web` | Previous Button / Play Button / Next Button |
 | `bad-cupertino-small` | Previous Button / Play Button / Next Button |
 | `bad-custom-small` | Previous Button / Play Button / Next Button |
-| `good-inline-link` | Read the before you set off. / trail rules Link |
+| `good-inline-link` | Read the / trail rules Link / before you set off. |

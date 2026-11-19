@@ -179,6 +179,38 @@ edges too; that is not explained and is not used. Round 3 found that one
 touch tap at a fixture's centre acts once, with the platform macOS or
 Android, so the double count is not a tap giving two activations.
 
+## Round 2: an inline link read in its sentence that takes keyboard focus
+
+After review of the first build, whose `good-inline-link` was read out of
+its sentence (FL-413; that build's VoiceOver transcripts are kept here as
+`voiceover_ios_round1_widgetspan.md.txt` and
+`voiceover_web_round1_widgetspan.md.txt`). `probe2_test.dart.txt` under
+`flutter_test`, as Android, prints each fixture's semantics nodes in
+traversal order and what two Tabs, Enter, and Space do (output:
+`flutter_test_round2.txt`). Its last line per fixture also counts a tap at
+the paragraph's centre, which is not on the link, so for `q2` it says 0;
+ignore that count.
+
+| # | Fixture | Order in the tree | Keyboard |
+| --- | --- | --- | --- |
+| q1 | `WidgetSpan` with the link (no `MergeSemantics`) | one node, "Read the", the link text, "before you set off.", that is the link | Tab reaches it; Enter and Space act |
+| q2 | `TextSpan` with a `TapGestureRecognizer` | "Read the ", link, " before you set off.": in order | Tab never reaches it; Enter does nothing |
+| q3 | q1 with a `semanticsIdentifier` on the text before the link | link first, then "Read the ", then " before you set off." | reaches and acts |
+| q4 | the same with the identifier on the text after | link first, as q3 | reaches and acts |
+| q5 | q3 with the link in `Semantics(container: true, sortKey: OrdinalSortKey(0.5))` | "Read the ", link, " before you set off.": in order | reaches and acts |
+| q6 | q5 with `MergeSemantics` around it, as `TestId` builds it | link first: the sort key is lost | reaches and acts |
+| q7 | q5 with the test identifier on the same container | in order, the identifier on the link | reaches and acts |
+
+The first build's `good-inline-link` was a `WidgetSpan` inside `TestId`,
+which is like q1 with `MergeSemantics`: there the paragraph's own node
+kept the text and the link was a separate node after it.
+
+q7 became `good-inline-link`. On the web (`web_round4.spec.js.txt`, output
+`web_round4.txt`) its sentence is three elements in order, the text before,
+the `<a>` link, and the text after; Chromium's tree has the link and the
+two runs of text; and the second Tab focuses the link. The example's own
+tests and transcripts on every platform are the rest of the evidence.
+
 ## What it shows
 
 - **The rect each platform's accessibility tree reports is Flutter's

@@ -106,7 +106,7 @@ difference from a good one.
 | `good-material` | Material | Tonal icon buttons, 40 across, in a 48 by 48 target on Android and iOS; 40 by 40 in a desktop browser | `IconButton.filledTonal` with the theme's `MaterialTapTargetSize.padded` | R1, R2, R4 |
 | `good-cupertino` | Cupertino | Tinted buttons 48 by 48 everywhere | `CupertinoButton.tinted(padding: EdgeInsets.zero, minimumSize: Size.square(48))`; the default minimum, 44, would meet Apple's size and 2.5.8 but not Android's 48, which the widget tests check | R1, R2, R3 |
 | `good-custom` | Widgets layer | A 24 pixel icon in a 48 by 48 box that takes taps all over | `GestureDetector(behavior: HitTestBehavior.opaque)` around `SizedBox.square(dimension: 48)`, inside `Semantics(button: true)` and the same `FocusableActionDetector` as I01 | R1, R2, R3 |
-| `good-inline-link` | Widgets layer | A link in a sentence, as tall as its line of text (20 pixels at the default size) | A `WidgetSpan` holding `Semantics(link: true)` and an opaque `GestureDetector` around the link's text, with a `FocusableActionDetector`. A `WidgetSpan` because a `TextSpan` with a recognizer takes no keyboard focus | R5 |
+| `good-inline-link` | Widgets layer | A link in a sentence, as tall as its line of text (20 pixels at the default size) | A `WidgetSpan` holding `Semantics(link: true)` and an opaque `GestureDetector` around the link's text, with a `FocusableActionDetector`. A `WidgetSpan` because a `TextSpan` with a recognizer takes no keyboard focus. To keep it in its place for screen readers ([FL-413](../flutter-limitations.md#fl-413)): a `semanticsIdentifier` on the text before it, and `Semantics(container: true, sortKey: OrdinalSortKey(0.5))` around it | R5 |
 
 ### Bad
 
@@ -144,13 +144,13 @@ Not built:
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | The 2.5.8 check itself on known rects (a lone 20 pixel target passes, two 2 apart fail, 30 by 20 is undersized). Good: the four guidelines in light and dark; 200% text at 320 by 640; Tab reaches each control and Enter and Space press it, and `ButtonActivateIntent` is handled. Every control: name, button (or link) flag, tap action, and the node's size in logical pixels, as Android. 2.5.8 as Android and iOS: good and `bad-zero-padding-web` have no target under 24; the three other bad ones are 18 by 18, 4 apart, every one fails, and a 24 pixel `MinimumTapTargetGuideline` and `androidTapTargetGuideline` fail them; the link is under 24 high inside its sentence. 2.5.8 as macOS, Linux, and Windows (a desktop browser): `bad-zero-padding-web` is 18 by 18 and fails, the good examples are 40, 48, and 48 and pass; as Android, iOS, and Fuchsia it is 48 by 48. Taps: every control takes a tap at its centre and 2 pixels inside its bottom edge and not 2 outside it, and nothing 2 pixels right of the last one, each followed by a tap at the centre; `good-material` takes a tap in its padding, outside the drawn circle; `good-custom` outside its icon. SDK alone: FL-410 (two node-bigger-than-hit-area cases pass `androidTapTargetGuideline` and a tap inside the node misses; a text link's node is its text plus 4 and the guideline skips it), FL-412 (an `IconButton` as each platform, and the theme's values) |
-| L3 web | Every control: role and name (the link is an `<a>` and a link in Chromium's tree), and the element's size in CSS pixels with a desktop platform. 2.5.8: good pass, bad are 18 by 18, 4 apart, all fail; the link is under 24 high inside its sentence's element. Clicks: centre and 2 inside the bottom edge act, 2 below does not; nothing 2 right of the last good control; FL-411: 2 right of the last bad button presses it and the element there is its own, 2 below the link presses it, 2 above does not. Keyboard: Tab, Enter, and Space on every good control |
-| L3 Android | Every control: name, class `Button`, clickable, and size in dp (bounds divided by the density); 2.5.8 as in L1 for Android, in dp; the link under 24 dp high. Taps with `UiDevice.click` at points worked out in dp: centre and 2 dp inside the bottom edge act, 2 dp below and 2 dp right of the last control do not, each followed by a tap at the centre |
-| L3 iOS | The same in points: label, type (`button`, `link`), frame size, 2.5.8, and taps with `XCUICoordinate` |
+| L1 widget tests | The 2.5.8 check itself on known rects (a lone 20 pixel target passes, two 2 apart fail, 30 by 20 is undersized). Good: the four guidelines in light and dark; 200% text at 320 by 640; Tab reaches each control and Enter and Space press it, and `ButtonActivateIntent` is handled. Every control: name, button (or link) flag, tap action, and the node's size in logical pixels, as Android. 2.5.8 as Android and iOS: good and `bad-zero-padding-web` have no target under 24; the three other bad ones are 18 by 18, 4 apart, every one fails, and a 24 pixel `MinimumTapTargetGuideline` and `androidTapTargetGuideline` fail them; the link is under 24 high inside its sentence, and the paragraph's nodes are "Read the ", the link, and " before you set off." in that order. 2.5.8 as macOS, Linux, and Windows (a desktop browser): `bad-zero-padding-web` is 18 by 18 and fails, the good examples are 40, 48, and 48 and pass; as Android, iOS, and Fuchsia it is 48 by 48. Taps: every control takes a tap at its centre and 2 pixels inside its bottom edge and not 2 outside it, and nothing 2 pixels right of the last one, each followed by a tap at the centre; `good-material` takes a tap in its padding, outside the drawn circle; `good-custom` outside its icon. SDK alone: FL-410 (two node-bigger-than-hit-area cases pass `androidTapTargetGuideline` and a tap inside the node misses; a text link's node is its text plus 4 and the guideline skips it), FL-412 (an `IconButton` as each platform, and the theme's values, and `materialTapTargetSize: padded` in the theme as macOS), FL-413 (a `WidgetSpan` link with no help: the paragraph's text is one node without it, and the link is its only child) |
+| L3 web | Every control: role and name (the link is an `<a>` and a link in Chromium's tree), and the element's size in CSS pixels with a desktop platform. 2.5.8: good pass, bad are 18 by 18, 4 apart, all fail; the link is under 24 high with the sentence's text either side on its line, and the sentence's elements are the text before, the `<a>`, and the text after, in that order. Clicks: centre and 2 inside the bottom edge act, 2 below does not; nothing 2 right of the last good control; FL-411: 2 right of the last bad button presses it and the element there is its own, 2 below the link presses it, 2 above does not. Keyboard: Tab, Enter, and Space on every good control |
+| L3 Android | Every control: name, class `Button`, clickable, and size in dp (bounds divided by the density); 2.5.8 as in L1 for Android, in dp; the link under 24 dp high. Taps with `UiDevice.click` at points worked out in dp: centre and 2 dp inside the bottom edge act, 2 dp below and 2 dp right of the last control do not, each followed by a tap at the centre. The link: Tab (`input keyevent`) gives it focus (`isFocused`), and Enter and Space each press it |
+| L3 iOS | The same in points: label, type (`button`, `link`), frame size, 2.5.8, and taps with `XCUICoordinate`. The link: two Tabs (Back, then the link) and Enter, then Space, each press it |
 | L4 TalkBack | Each control: its name, "Button", "Double-tap to activate"; the link is read as a button too ([FL-032](../flutter-limitations.md#fl-032)) |
-| L4 VoiceOver iOS | Every utterance between the "Example" heading and the count: "Previous Button", "Play Button", "Next Button" for every player; for the link, the sentence without it and then "trail rules Link" ([FL-413](../flutter-limitations.md#fl-413)) |
-| L4 VoiceOver web | Every stop between the "Example" heading and the count, in Chromium and WebKit: "Previous button", "Play button", "Next button"; for the link, the sentence's group named without it, the link inside it, and the group's end (FL-413) |
+| L4 VoiceOver iOS | Every utterance between the "Example" heading and the count: "Previous Button", "Play Button", "Next Button" for every player; for the link, the sentence in order: "Read the", "trail rules Link", "before you set off." ([FL-413](../flutter-limitations.md#fl-413)'s workaround) |
+| L4 VoiceOver web | Every stop between the "Example" heading and the count, in Chromium and WebKit: "Previous button", "Play button", "Next button"; for the link, the sentence in order: "Read the", "link trail rules", "before you set off." (FL-413's workaround) |
 
 Size is not heard: TalkBack and VoiceOver read the 18 pixel buttons as
 they read the 48 pixel ones, and the screen reader layers record that.
@@ -197,11 +197,17 @@ iOS simulator, and Chromium.
   Playwright's role check does not ([FL-032](../flutter-limitations.md#fl-032)),
   and a link to XCUITest; TalkBack reads it as a button. What it is and
   how it is named is C04's.
-- **The sentence around the link is read without it**, on iOS and the web,
-  and the link after it; on Android the tree has the same order
-  ([FL-413](../flutter-limitations.md#fl-413)). It comes from the
-  `WidgetSpan`, which is there so that the link takes keyboard focus. Not
-  claimed against any criterion by V13; it is C04's.
+- **In the first build the sentence around the link was read without
+  it**, on iOS and the web, and the link after it; on Android the tree had
+  the same order ([FL-413](../flutter-limitations.md#fl-413)). It came
+  from the `WidgetSpan`, which is there so that the link takes keyboard
+  focus. A `TextSpan` with a recognizer keeps its place but takes no
+  keyboard focus. The second round of the probe found a way to have both
+  (a `semanticsIdentifier` on a run of the sentence, and a sort key on the
+  link), and `good-inline-link` now uses it: the sentence is read in order
+  on iOS and the web, the web tree has the three parts in order, and Tab,
+  Enter, and Space work on every platform. How to build a link in text in
+  general, and its role, are C04's.
 
 **Not done yet.** A phone's browser itself (only imitated in Chromium);
 Safari and Firefox; the desktop platforms as apps (read in the source
