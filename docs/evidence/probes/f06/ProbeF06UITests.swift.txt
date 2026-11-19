@@ -1,0 +1,116 @@
+// F06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/f06/ProbeF06UITests.swift.txt): the tree and VoiceOver
+// for lib/probe.dart, one fixture at a time, opened by URL.
+import XCTest
+
+final class ProbeF06UITests: XCTestCase {
+  let app = XCUIApplication()
+  let dynamic = ["p03", "p04", "p05", "p06", "p07", "p08", "p09", "p10", "p11", "p12", "p13",
+                 "q01", "q02", "q03", "q04", "q05", "q06"]
+  var first: [String] { ["p01", "p02"] + dynamic.filter { $0.hasPrefix("p") } }
+  var second: [String] { dynamic.filter { $0.hasPrefix("q") } }
+
+  func log(_ s: String) { print("F06PROBE \(s)") }
+
+  func marker(_ fixture: String) -> XCUIElement {
+    app.descendants(matching: .any)
+      .matching(NSPredicate(format: "identifier BEGINSWITH %@", "\(fixture)-")).firstMatch
+  }
+
+  func open(_ fixture: String) {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///\(fixture)")!)
+      if marker(fixture).waitForExistence(timeout: 30) { sleep(2); return }
+    }
+    XCTFail("\(fixture) did not open")
+  }
+
+  func dump(_ label: String) {
+    log("==== \(label)")
+    for e in app.descendants(matching: .any).allElementsBoundByIndex {
+      let t = e.elementType
+      if t == .window || t == .application { continue }
+      if t == .other && e.label.isEmpty && e.identifier.isEmpty { continue }
+      let focus = (e.value(forKey: "hasKeyboardFocus") as? Bool) ?? false
+      log("EL type=\(t.rawValue) id=\(e.identifier) label=\(e.label.debugDescription) value=\(String(describing: e.value)) placeholder=\(String(describing: e.placeholderValue)) enabled=\(e.isEnabled) keyboardFocus=\(focus) frame=\(e.frame)")
+    }
+    log("keyboard shown: \(app.keyboards.count > 0)")
+  }
+
+  func testTree() { tree(first) }
+  func testTree2() { tree(second) }
+  func testVoiceOver() throws { try voiceOver(first) }
+  func testVoiceOver2() throws { try voiceOver(second) }
+
+  func tree(_ all: [String]) {
+    for f in all {
+      open(f)
+      dump("\(f) start")
+      if dynamic.contains(f) {
+        app.descendants(matching: .any)["\(f)-submit"].tap()
+        sleep(3)
+        dump("\(f) after submit")
+      }
+    }
+  }
+
+  func voiceOver(_ all: [String]) throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func current() -> String { norm((try? vo.currentSpeech().utterance) ?? "") }
+    func say(_ forward: Bool) -> String {
+      do {
+        let u = forward ? try vo.moveForward().utterance : try vo.moveBackward().utterance
+        return norm(u)
+      } catch { return "(error \((error as NSError).code))" }
+    }
+    for f in all {
+      open(f)
+      try vo.enable()
+      defer { try? vo.disable() }
+      if dynamic.contains(f) {
+        let submit = app.descendants(matching: .any)["\(f)-submit"]
+        var before = ""
+        for _ in 0..<5 {
+          submit.tap()
+          usleep(1_500_000)
+          before = current()
+          if before.contains("Submit") || before.contains("Check") || before.contains("Type x") { break }
+          if before.contains("Submit") { break }
+        }
+        log("VO \(f) on submit: \(before)")
+        submit.doubleTap()
+        var heard: [String] = []
+        let end = Date().addingTimeInterval(9)
+        while Date() < end {
+          let now = current()
+          if now != (heard.last ?? before) { heard.append(now) }
+          usleep(200_000)
+        }
+        log("VO \(f) after activate: \(heard.joined(separator: " / "))")
+        log("VO \(f) keyboard shown: \(app.keyboards.count > 0)")
+        let next = say(true)
+        let back = say(false)
+        log("VO \(f) cursor check: forward=\(next) back=\(back)")
+      }
+      // Back to the top, then forward to the end.
+      var last = ""
+      for _ in 0..<15 {
+        let s = say(false)
+        if s == last { break }
+        last = s
+      }
+      var walk: [String] = []
+      for _ in 0..<25 {
+        let s = say(true)
+        if s == walk.last { break }
+        walk.append(s)
+      }
+      log("VO \(f) walk: \(walk.joined(separator: " / "))")
+    }
+    #endif
+  }
+}

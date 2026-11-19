@@ -1,0 +1,366 @@
+I/F06PROBE(26271): p01 stop 0: p01-email | android.widget.EditText | desc="" text="" hint="p01 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p01 stop 1: p01-phone | android.widget.EditText | desc="" text="abc" hint="p01 Phone
+I/F06PROBE(26271): Enter a phone number using digits only., Enter a phone number using digits only." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=0
+I/F06PROBE(26271): p01 stop 2: p01-end | android.widget.Button | desc="p01 End" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 814 - 1038, 940) [a11yfocus,click] children=0
+I/F06TB   (26271): FOCUS f06-p01-stop-0
+I/F06TB   (26271): FOCUS f06-p01-stop-1
+I/F06TB   (26271): FOCUS f06-p01-stop-2
+I/F06TB   (26271): END p01
+I/F06PROBE(26271): p02 stop 0: p02-email | android.widget.EditText | desc="" text="" hint="p02 Email, Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=0 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=1
+I/F06PROBE(26271): p02 stop 1:  | android.view.View | desc="Enter an email address, like name@example.com." text="" hint="" showingHint=false error="" contentInvalid=false live=1 state="" editable=false focused=false a11yFocused=false visible=true Rect(84, 489 - 827, 531) [a11yfocus] children=0
+I/F06PROBE(26271): p02 stop 2: p02-phone | android.widget.EditText | desc="" text="abc" hint="p02 Phone, Enter a phone number using digits only." showingHint=false error="" contentInvalid=false live=0 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=1
+I/F06PROBE(26271): p02 stop 3:  | android.view.View | desc="Enter a phone number using digits only." text="" hint="" showingHint=false error="" contentInvalid=false live=1 state="" editable=false focused=false a11yFocused=false visible=true Rect(84, 730 - 675, 772) [a11yfocus] children=0
+I/F06PROBE(26271): p02 stop 4: p02-end | android.widget.Button | desc="p02 End" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 814 - 1038, 940) [a11yfocus,click] children=0
+I/F06TB   (26271): FOCUS f06-p02-stop-0
+I/F06TB   (26271): FOCUS f06-p02-stop-1
+I/F06TB   (26271): FOCUS f06-p02-stop-2
+I/F06TB   (26271): FOCUS f06-p02-stop-3
+I/F06TB   (26271): FOCUS f06-p02-stop-4
+I/F06TB   (26271): END p02
+I/F06TB   (26271): FOCUS f06-p03-submit
+I/F06TB   (26271): FOCUS f06-p03-after-submit
+I/F06PROBE(26271): ==== p03 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p03 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 741) [a11yfocus] children=2
+I/F06PROBE(26271): p03-email | android.widget.EditText | desc="" text="" hint="p03 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p03-submit | android.widget.Button | desc="p03 Check" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p03-submit | android.widget.Button | desc="p03 Check" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): END p03-submit
+I/F06PROBE(26271): p03 stop 0: p03-email | android.widget.EditText | desc="" text="" hint="p03 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p03 stop 1: p03-submit | android.widget.Button | desc="p03 Check" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): FOCUS f06-p03-stop-0
+I/F06TB   (26271): FOCUS f06-p03-stop-1
+I/F06TB   (26271): END p03
+I/F06TB   (26271): FOCUS f06-p04-submit
+I/F06TB   (26271): FOCUS f06-p04-after-submit
+I/F06PROBE(26271): ==== p04 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p04 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 741) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 699) [a11yfocus] children=2
+I/F06PROBE(26271): p04-email | android.widget.EditText | desc="" text="" hint="p04 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p04-submit | android.widget.Button | desc="p04 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p04-submit | android.widget.Button | desc="p04 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): END p04-submit
+I/F06PROBE(26271): p04 stop 0: p04-email | android.widget.EditText | desc="" text="" hint="p04 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p04 stop 1: p04-submit | android.widget.Button | desc="p04 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): FOCUS f06-p04-stop-0
+I/F06TB   (26271): FOCUS f06-p04-stop-1
+I/F06TB   (26271): END p04
+I/F06TB   (26271): FOCUS f06-p05-submit
+I/F06TB   (26271): FOCUS f06-p05-after-submit
+I/F06PROBE(26271): ==== p05 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p05 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 982) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 940) [a11yfocus] children=3
+I/F06PROBE(26271): p05-name | android.widget.EditText | desc="" text="" hint="p05 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p05-email | android.widget.EditText | desc="" text="" hint="p05 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=0
+I/F06PROBE(26271): p05-submit | android.widget.Button | desc="p05 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 814 - 1038, 940) [clra11y,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p05-submit | android.widget.Button | desc="p05 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 814 - 1038, 940) [clra11y,click] children=0
+I/F06TB   (26271): END p05-submit
+I/F06PROBE(26271): p05 stop 0: p05-name | android.widget.EditText | desc="" text="" hint="p05 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p05 stop 1: p05-email | android.widget.EditText | desc="" text="" hint="p05 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=0
+I/F06PROBE(26271): p05 stop 2: p05-submit | android.widget.Button | desc="p05 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 814 - 1038, 940) [clra11y,click] children=0
+I/F06TB   (26271): FOCUS f06-p05-stop-0
+I/F06TB   (26271): FOCUS f06-p05-stop-1
+I/F06TB   (26271): FOCUS f06-p05-stop-2
+I/F06TB   (26271): END p05
+I/F06TB   (26271): FOCUS f06-p06-submit
+I/F06TB   (26271): FOCUS f06-p06-after-submit
+I/F06PROBE(26271): ==== p06 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=true a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p06 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 982) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 940) [a11yfocus] children=3
+I/F06PROBE(26271): p06-name | android.widget.EditText | desc="" text="" hint="p06 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=true a11yFocused=true visible=true Rect(42, 331 - 1038, 531) [clra11y,131072,settext,click] children=0
+I/F06PROBE(26271): p06-email | android.widget.EditText | desc="" text="" hint="p06 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=0
+I/F06PROBE(26271): p06-submit | android.widget.Button | desc="p06 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 814 - 1038, 940) [a11yfocus,click] children=0
+I/F06PROBE(26271): keyboard window: true
+I/F06PROBE(26271): a11y focus in window 1: p06-name | android.widget.EditText | desc="" text="" hint="p06 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=true a11yFocused=true visible=true Rect(42, 331 - 1038, 531) [clra11y,131072,settext,click] children=0
+I/F06TB   (26271): END p06-submit
+I/F06PROBE(26271): p06 stop 0: p06-name | android.widget.EditText | desc="" text="" hint="p06 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=true a11yFocused=true visible=true Rect(42, 331 - 1038, 531) [clra11y,131072,settext,click] children=0
+I/F06PROBE(26271): p06 stop 1: p06-email | android.widget.EditText | desc="" text="" hint="p06 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=0
+I/F06PROBE(26271): p06 stop 2: p06-submit | android.widget.Button | desc="p06 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 814 - 1038, 940) [a11yfocus,click] children=0
+I/F06TB   (26271): FOCUS f06-p06-stop-0
+I/F06TB   (26271): FOCUS f06-p06-stop-1
+I/F06TB   (26271): FOCUS f06-p06-stop-2
+I/F06TB   (26271): END p06
+I/F06TB   (26271): FOCUS f06-p07-submit
+I/F06TB   (26271): FOCUS f06-p07-after-submit
+I/F06PROBE(26271): ==== p07 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p07 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 982) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 940) [a11yfocus] children=3
+I/F06PROBE(26271): p07-name | android.widget.EditText | desc="" text="" hint="p07 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=true visible=true Rect(42, 331 - 1038, 531) [clra11y,click] children=0
+I/F06PROBE(26271): p07-email | android.widget.EditText | desc="" text="" hint="p07 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=0
+I/F06PROBE(26271): p07-submit | android.widget.Button | desc="p07 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 814 - 1038, 940) [a11yfocus,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p07-name | android.widget.EditText | desc="" text="" hint="p07 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=true visible=true Rect(42, 331 - 1038, 531) [clra11y,click] children=0
+I/F06TB   (26271): END p07-submit
+I/F06PROBE(26271): p07 stop 0: p07-name | android.widget.EditText | desc="" text="" hint="p07 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=true visible=true Rect(42, 331 - 1038, 531) [clra11y,click] children=0
+I/F06PROBE(26271): p07 stop 1: p07-email | android.widget.EditText | desc="" text="" hint="p07 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=0
+I/F06PROBE(26271): p07 stop 2: p07-submit | android.widget.Button | desc="p07 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 814 - 1038, 940) [a11yfocus,click] children=0
+I/F06TB   (26271): FOCUS f06-p07-stop-0
+I/F06TB   (26271): FOCUS f06-p07-stop-1
+I/F06TB   (26271): FOCUS f06-p07-stop-2
+I/F06TB   (26271): END p07
+I/F06TB   (26271): FOCUS f06-p08-submit
+I/F06TB   (26271): FOCUS f06-p08-after-submit
+I/F06PROBE(26271): ==== p08 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p08 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 982) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 940) [a11yfocus] children=3
+I/F06PROBE(26271): p08-email | android.widget.EditText | desc="" text="" hint="p08 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com.
+I/F06PROBE(26271): Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p08-phone | android.widget.EditText | desc="" text="abc" hint="p08 Phone
+I/F06PROBE(26271): Enter a phone number using digits only., Enter a phone number using digits only.
+I/F06PROBE(26271): Enter a phone number using digits only." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=0
+I/F06PROBE(26271): p08-submit | android.widget.Button | desc="p08 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 814 - 1038, 940) [clra11y,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p08-submit | android.widget.Button | desc="p08 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 814 - 1038, 940) [clra11y,click] children=0
+I/F06TB   (26271): END p08-submit
+I/F06PROBE(26271): p08 stop 0: p08-email | android.widget.EditText | desc="" text="" hint="p08 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com.
+I/F06PROBE(26271): Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p08 stop 1: p08-phone | android.widget.EditText | desc="" text="abc" hint="p08 Phone
+I/F06PROBE(26271): Enter a phone number using digits only., Enter a phone number using digits only.
+I/F06PROBE(26271): Enter a phone number using digits only." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 573 - 1038, 772) [a11yfocus,click] children=0
+I/F06PROBE(26271): p08 stop 2: p08-submit | android.widget.Button | desc="p08 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 814 - 1038, 940) [clra11y,click] children=0
+I/F06TB   (26271): FOCUS f06-p08-stop-0
+I/F06TB   (26271): FOCUS f06-p08-stop-1
+I/F06TB   (26271): FOCUS f06-p08-stop-2
+I/F06TB   (26271): END p08
+I/F06TB   (26271): FOCUS f06-p09-submit
+I/F06TB   (26271): FOCUS f06-p09-after-submit
+I/F06PROBE(26271): ==== p09 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p09 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 741) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 699) [a11yfocus] children=2
+I/F06PROBE(26271): p09-email | android.widget.EditText | desc="" text="" hint="p09 Email
+I/F06PROBE(26271): name@example.com
+I/F06PROBE(26271): Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=0 state="" editable=true focused=false a11yFocused=false visible=true Rect(95, 331 - 985, 494) [a11yfocus,click] children=0
+I/F06PROBE(26271): p09-submit | android.widget.Button | desc="p09 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 562 - 1038, 699) [clra11y,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p09-submit | android.widget.Button | desc="p09 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 562 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): END p09-submit
+I/F06PROBE(26271): p09 stop 0: p09-email | android.widget.EditText | desc="" text="" hint="p09 Email
+I/F06PROBE(26271): name@example.com
+I/F06PROBE(26271): Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=0 state="" editable=true focused=false a11yFocused=false visible=true Rect(95, 331 - 985, 494) [a11yfocus,click] children=0
+I/F06PROBE(26271): p09 stop 1: p09-submit | android.widget.Button | desc="p09 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 562 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): FOCUS f06-p09-stop-0
+I/F06TB   (26271): FOCUS f06-p09-stop-1
+I/F06TB   (26271): END p09
+I/F06TB   (26271): FOCUS f06-p10-submit
+I/F06TB   (26271): FOCUS f06-p10-after-submit
+I/F06PROBE(26271): ==== p10 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p10 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 741) [a11yfocus] children=3
+I/F06PROBE(26271): p10-email | android.widget.EditText | desc="" text="" hint="p10 Email" showingHint=false error="" contentInvalid=false live=0 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 478) [a11yfocus,click] children=0
+I/F06PROBE(26271): p10-error | android.view.View | desc="Enter an email address, like name@example.com." text="" hint="" showingHint=false error="" contentInvalid=false live=1 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 478 - 1038, 531) [a11yfocus] children=0
+I/F06PROBE(26271): p10-submit | android.widget.Button | desc="p10 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p10-submit | android.widget.Button | desc="p10 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): END p10-submit
+I/F06PROBE(26271): p10 stop 0: p10-email | android.widget.EditText | desc="" text="" hint="p10 Email" showingHint=false error="" contentInvalid=false live=0 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 478) [a11yfocus,click] children=0
+I/F06PROBE(26271): p10 stop 1: p10-error | android.view.View | desc="Enter an email address, like name@example.com." text="" hint="" showingHint=false error="" contentInvalid=false live=1 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 478 - 1038, 531) [a11yfocus] children=0
+I/F06PROBE(26271): p10 stop 2: p10-submit | android.widget.Button | desc="p10 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): FOCUS f06-p10-stop-0
+I/F06TB   (26271): FOCUS f06-p10-stop-1
+I/F06TB   (26271): FOCUS f06-p10-stop-2
+I/F06TB   (26271): END p10
+I/F06TB   (26271): FOCUS f06-p11-submit
+I/F06TB   (26271): FOCUS f06-p11-after-submit
+I/F06PROBE(26271): ==== p11 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p11 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 1129) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 1087) [a11yfocus] children=4
+I/F06PROBE(26271): p11-summary | android.view.View | desc="p11 2 errors. Name: Enter your name. Email: Enter an email address, like name@example.com." text="" hint="" showingHint=false error="" contentInvalid=false live=1 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 436) [a11yfocus] children=0
+I/F06PROBE(26271): p11-name | android.widget.EditText | desc="" text="" hint="p11 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 478 - 1038, 678) [a11yfocus,click] children=0
+I/F06PROBE(26271): p11-email | android.widget.EditText | desc="" text="" hint="p11 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 720 - 1038, 919) [a11yfocus,click] children=0
+I/F06PROBE(26271): p11-submit | android.widget.Button | desc="p11 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 961 - 1038, 1087) [clra11y,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p11-submit | android.widget.Button | desc="p11 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 961 - 1038, 1087) [clra11y,click] children=0
+I/F06TB   (26271): END p11-submit
+I/F06PROBE(26271): p11 stop 0: p11-summary | android.view.View | desc="p11 2 errors. Name: Enter your name. Email: Enter an email address, like name@example.com." text="" hint="" showingHint=false error="" contentInvalid=false live=1 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 436) [a11yfocus] children=0
+I/F06PROBE(26271): p11 stop 1: p11-name | android.widget.EditText | desc="" text="" hint="p11 Name
+I/F06PROBE(26271): Enter your name., Enter your name." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 478 - 1038, 678) [a11yfocus,click] children=0
+I/F06PROBE(26271): p11 stop 2: p11-email | android.widget.EditText | desc="" text="" hint="p11 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 720 - 1038, 919) [a11yfocus,click] children=0
+I/F06PROBE(26271): p11 stop 3: p11-submit | android.widget.Button | desc="p11 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 961 - 1038, 1087) [clra11y,click] children=0
+I/F06TB   (26271): FOCUS f06-p11-stop-0
+I/F06TB   (26271): FOCUS f06-p11-stop-1
+I/F06TB   (26271): FOCUS f06-p11-stop-2
+I/F06TB   (26271): FOCUS f06-p11-stop-3
+I/F06TB   (26271): END p11
+I/F06TB   (26271): FOCUS f06-p12-submit
+I/F06TB   (26271): FOCUS f06-p12-after-submit
+I/F06PROBE(26271): ==== p12 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p12 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 741) [a11yfocus] children=2
+I/F06PROBE(26271): p12-email | android.widget.EditText | desc="" text="x" hint="p12 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p12-submit | android.widget.Button | desc="p12 Type x" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p12-submit | android.widget.Button | desc="p12 Type x" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): END p12-submit
+I/F06PROBE(26271): p12 stop 0: p12-email | android.widget.EditText | desc="" text="x" hint="p12 Email
+I/F06PROBE(26271): Enter an email address, like name@example.com., Enter an email address, like name@example.com." showingHint=false error="" contentInvalid=false live=1 state="" editable=true focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 531) [a11yfocus,click] children=0
+I/F06PROBE(26271): p12 stop 1: p12-submit | android.widget.Button | desc="p12 Type x" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 573 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): FOCUS f06-p12-stop-0
+I/F06TB   (26271): FOCUS f06-p12-stop-1
+I/F06TB   (26271): END p12
+I/F06TB   (26271): FOCUS f06-p13-submit
+I/F06TB   (26271): FOCUS f06-p13-after-submit
+I/F06PROBE(26271): ==== p13 after submit, TalkBack on
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.LinearLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): android:id/content | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+I/F06PROBE(26271): - | android.widget.FrameLayout | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.widget.Button | desc="Back" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+I/F06PROBE(26271):  | android.view.View | desc="p13 fixture" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(189, 179 - 462, 252) [a11yfocus] children=0
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(0, 289 - 1080, 741) [a11yfocus] children=1
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 699) [a11yfocus] children=2
+I/F06PROBE(26271):  | android.view.View | desc="" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=false visible=true Rect(42, 331 - 1038, 520) [a11yfocus] children=2
+I/F06PROBE(26271): p13-email | android.widget.EditText | desc="" text="" hint="p13 Email
+I/F06PROBE(26271): name@example.com" showingHint=false error="" contentInvalid=false live=0 state="" editable=true focused=false a11yFocused=false visible=true Rect(334, 347 - 970, 436) [a11yfocus,click] children=0
+I/F06PROBE(26271): p13-error | android.view.View | desc="Enter an email address, like name@example.com." text="" hint="" showingHint=false error="" contentInvalid=false live=1 state="" editable=false focused=false a11yFocused=false visible=true Rect(147, 436 - 963, 478) [a11yfocus] children=0
+I/F06PROBE(26271): p13-submit | android.widget.Button | desc="p13 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 562 - 1038, 699) [clra11y,click] children=0
+I/F06PROBE(26271): keyboard window: false
+I/F06PROBE(26271): a11y focus in window 1: p13-submit | android.widget.Button | desc="p13 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 562 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): END p13-submit
+I/F06PROBE(26271): p13 stop 0: p13-email | android.widget.EditText | desc="" text="" hint="p13 Email
+I/F06PROBE(26271): name@example.com" showingHint=false error="" contentInvalid=false live=0 state="" editable=true focused=false a11yFocused=false visible=true Rect(334, 347 - 970, 436) [a11yfocus,click] children=0
+I/F06PROBE(26271): p13 stop 1: p13-error | android.view.View | desc="Enter an email address, like name@example.com." text="" hint="" showingHint=false error="" contentInvalid=false live=1 state="" editable=false focused=false a11yFocused=false visible=true Rect(147, 436 - 963, 478) [a11yfocus] children=0
+I/F06PROBE(26271): p13 stop 2: p13-submit | android.widget.Button | desc="p13 Submit" text="" hint="" showingHint=false error="" contentInvalid=false live=0 state="" editable=false focused=false a11yFocused=true visible=true Rect(42, 562 - 1038, 699) [clra11y,click] children=0
+I/F06TB   (26271): FOCUS f06-p13-stop-0
+I/F06TB   (26271): FOCUS f06-p13-stop-1
+I/F06TB   (26271): FOCUS f06-p13-stop-2
+I/F06TB   (26271): END p13

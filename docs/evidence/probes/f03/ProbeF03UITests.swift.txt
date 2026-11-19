@@ -1,0 +1,109 @@
+// F03 probe (throwaway, not committed): the tree, the keyboard, and VoiceOver
+// for lib/probe.dart. Kept as docs/evidence/probes/f03/ProbeF03UITests.swift.txt.
+import XCTest
+
+final class ProbeF03UITests: XCTestCase {
+  let app = XCUIApplication()
+
+  private func describe(_ e: XCUIElement) -> String {
+    "type=\(e.elementType.rawValue) id=\(e.identifier) label=\(e.label.debugDescription) value=\(String(describing: e.value)) placeholder=\(String(describing: e.placeholderValue)) focus=\(e.hasFocus)"
+  }
+
+  private func tree(_ title: String) {
+    print("F03PROBE TREE \(title)")
+    for element in app.descendants(matching: .any).allElementsBoundByIndex {
+      let type = element.elementType
+      if type == .other && element.label.isEmpty && element.identifier.isEmpty { continue }
+      if type == .window || type == .application || type == .keyboard || type == .key { continue }
+      print("F03PROBE EL \(describe(element))")
+    }
+  }
+
+  private func keyboard(_ title: String) {
+    let keyboards = app.keyboards
+    print("F03PROBE KB \(title) keyboards=\(keyboards.count)")
+    guard keyboards.count > 0 else { return }
+    let kb = keyboards.firstMatch
+    let keys = kb.keys.allElementsBoundByIndex.map { $0.label }
+    let buttons = kb.buttons.allElementsBoundByIndex.map { $0.label }
+    print("F03PROBE KB \(title) keys(\(keys.count))=\(keys)")
+    print("F03PROBE KB \(title) buttons=\(buttons)")
+    // Anything else above the keyboard (the QuickType bar, Passwords).
+    let others = app.descendants(matching: .any).allElementsBoundByIndex
+      .filter { $0.frame.minY >= kb.frame.minY - 60 && $0.frame.maxY <= kb.frame.minY + 2 && !$0.label.isEmpty }
+      .map { "\($0.elementType.rawValue):\($0.label)" }
+    print("F03PROBE KB \(title) above=\(others)")
+  }
+
+  private func walk(_ title: String, moves: Int = 16) throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { return }
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    try voiceOver.enable()
+    defer { try? voiceOver.disable() }
+    sleep(2)
+    print("F03PROBE VO \(title)")
+    var last = ""
+    var repeats = 0
+    for _ in 0..<moves {
+      do {
+        let said = try voiceOver.moveForward().utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
+        print("F03PROBE VO \(said)")
+        if said == last { repeats += 1; if repeats > 1 { break } } else { repeats = 0 }
+        last = said
+      } catch {
+        print("F03PROBE VO (error \(error))")
+        repeats += 1
+        if repeats > 2 { break }
+      }
+    }
+    #endif
+  }
+
+  private func field(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id].firstMatch }
+
+  private func page(_ n: Int) {
+    app.buttons["Page \(n)"].tap()
+    sleep(2)
+  }
+
+  func testProbe() throws {
+    app.launch()
+    XCTAssertTrue(app.buttons["Page 2"].waitForExistence(timeout: 90))
+    sleep(2)
+    let pages: [(Int, [String])] = [
+      (1, ["p01", "p02", "p03", "p04", "p05", "p06"]),
+      (2, ["p07", "p08", "p09", "p10", "p11", "p12"]),
+      (3, ["p13", "p14", "p15", "p16", "p17"]),
+    ]
+    for (n, ids) in pages {
+      page(n)
+      tree("page \(n)")
+      try walk("page \(n)")
+      for id in ids {
+        field(id).tap()
+        sleep(2)
+        print("F03PROBE FOCUSED \(id) \(describe(field(id)))")
+        keyboard(id)
+      }
+      // Leave the page with the keyboard up; the next page's fields are new.
+    }
+    // A password being edited, with text typed.
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(app.buttons["Page 3"].waitForExistence(timeout: 90))
+    page(3)
+    field("p13").tap()
+    sleep(1)
+    app.typeText("abc")
+    sleep(1)
+    print("F03PROBE TYPED editing \(describe(field("p13")))")
+    tree("page 3, p13 typed, editing")
+    try walk("page 3, p13 typed, editing", moves: 8)
+    // Focus moved to the next field, so p13 is no longer being edited.
+    field("p16").tap()
+    sleep(2)
+    print("F03PROBE TYPED not editing \(describe(field("p13")))")
+    try walk("page 3, p13 typed, p16 editing", moves: 8)
+  }
+}

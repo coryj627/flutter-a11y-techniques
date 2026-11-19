@@ -85,7 +85,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-039](#fl-039) | On Android a hint is the end of the content description, not a hint | Android | Confirmed (source read) |
 | [FL-040](#fl-040) | `Semantics(hint:)` around a Material button stays on a node of its own | All | Confirmed |
 | [FL-041](#fl-041) | On web a hint on a node with no label is not rendered, unless the node is a text field | Web | Confirmed (source read) |
-| [FL-042](#fl-042) | An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS | iOS | Observed in the S15 build and the F02 probe; no test yet |
+| [FL-042](#fl-042) | On iOS an obscured text field is a secure text field only while it is being edited | iOS | Confirmed |
 | [FL-043](#fl-043) | `Semantics(identifier:)` around a Material button stays on a node of its own, in a different place on iOS | All | Confirmed |
 | [FL-044](#fl-044) | A mixed checkbox is exposed as not checked on the web, on iOS, and on Android before 16, and TalkBack says no state for it | All | Confirmed |
 | [FL-045](#fl-045) | TalkBack says no state for a checkbox or radio button that is not checked | Android | Confirmed; cause not found |
@@ -106,6 +106,15 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-140](#fl-140) | Material helper text is not tied to its field; inside `MergeSemantics` it joins the field's name | All | Confirmed |
 | [FL-141](#fl-141) | Material helper text is cut to one line by default | All | Confirmed |
 | [FL-142](#fl-142) | A Material placeholder beside a label is exposed only while the field is focused and empty, and then as part of its name | All | Confirmed |
+| [FL-160](#fl-160) | On Android, turning suggestions off on an email field replaces the email keyboard with one that has no "@" | Android | Confirmed |
+| [FL-161](#fl-161) | On the web autofill hints do not reach `autocomplete`, except on an obscured field once it is focused | Web | Confirmed |
+| [FL-162](#fl-162) | On the web the number and decimal keyboard types leave nothing in the page, so a phone's browser shows its general keyboard | Web | Confirmed |
+| [FL-163](#fl-163) | On iOS the number, decimal, and phone pads have no return key, and a tap outside the field does not end editing | iOS | Confirmed |
+| [FL-180](#fl-180) | A text field in error has no error state on Android: TalkBack does not say "error", and reads a filled field without its error | Android | Confirmed |
+| [FL-181](#fl-181) | On iOS and the web an error is announced only when a `Form` validates on send or as the user types; `onUnfocus`, a field validated on its own, and a hand-set `errorText` are silent there | iOS, Web | Confirmed |
+| [FL-182](#fl-182) | `CupertinoTextFormFieldRow`'s error is not a live region, so on Android nothing announces it | Android | Confirmed |
+| [FL-183](#fl-183) | `MergeSemantics` around a field takes in its error: the error joins the field's name as well as its hint, and on Android the field becomes a live region | All | Confirmed |
+| [FL-184](#fl-184) | Keyboard focus moved to a field does not move VoiceOver's cursor on iOS | iOS | Observed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
@@ -507,6 +516,13 @@ yet), **Fixed in x.y** (verified on that version).
   lands on it was not tested: swipes and Alt or Meta arrow-key commands
   did not move TalkBack focus on the emulator, in F02 as in S03. It does
   not put the instruction back on the field.
+- The same goes for an error. `InputDecoration.errorText` is put in the
+  field's semantics hint, which joins the label in the hint text ("Email,
+  Enter an email address…"), so a field in error that has a value was
+  read "Editing.", "abc", "Edit box", with neither its label nor its
+  error. Found in F06 and asserted by `f06-good-form-email-filled` in
+  `docs/evidence/F06/talkback-android.md`; see [FL-180](#fl-180) for why
+  nothing else on the field carries the error.
 - Upstream issue: not searched yet.
 
 ## FL-016
@@ -1320,37 +1336,51 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-042
 
-**An obscured text field that is not being edited was read as a plain text field by VoiceOver on iOS.**
+**On iOS an obscured text field is a secure text field only while it is being edited.**
 
-- Status: Observed, Flutter 3.47.5, iOS 27.0 simulator: first in the first
-  build of the S15 field examples, which were password fields (those
-  examples were changed to an ordinary field), and again in the F02 probe,
-  whose fixture is kept (below). No test in the repository yet.
-- What was seen: for `TextField(obscureText: true)` with VoiceOver's cursor
-  moved onto it and the field not being edited, XCUITest reported
-  `XCUIElementType.textField` (not `.secureTextField`) and VoiceOver said
-  "Password, Text field". On the web the same field was a secure field to
-  VoiceOver ("This is a secure text field"), and TalkBack read "password.
-  Edit box".
-- What is not known: what the field is while it is being edited. Flutter's
-  iOS text input plugin sets `secureTextEntry` from `obscureText`, and a
-  focused field is represented by the plugin's input view, so the role and
-  what VoiceOver echoes may differ there. That was not tested.
-- Why it could matter: "secure" tells a VoiceOver user that what they type
-  will not be echoed or shown.
-- Probed again in F02 (2026-11-18, iOS 27.0 simulator,
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator. First seen once
+  in S15's first build; settled by the F03 probe
+  (`docs/evidence/probes/f03`, fixtures 13 to 16) and asserted on
+  `/t/F03/good-sign-in` by `F03KeyboardTypesUITests` (the tree, before,
+  during, and after editing) and by its VoiceOver walk, each written to
+  fail when the field is secure before it is edited. Engine source read:
+  `TextInputSemanticsObject.mm`, which presents a text field's
+  accessibility through the plugin's input view while the field is
+  focused and through a plain stand-in (`FlutterInactiveTextInput`, which
+  has no secure entry) otherwise; `FlutterTextInputPlugin.mm` sets
+  `secureTextEntry` on the input view from `obscureText`.
+- What happens: `TextField(obscureText: true)` that is not being edited is
+  `XCUIElementType.textField`, and VoiceOver reads it "Password Text field
+  Double tap to edit.", as it reads any field. Once it is tapped it is a
+  `.secureTextField`, and VoiceOver reads "Password Secure text field Is
+  editing •••" with "abc" typed. When editing moves to another field it
+  is a `.textField` again, with "•••" as its value. Its text is never
+  exposed: the value is bullets before, during, and after editing.
+- On the other platforms (F03): Android gives the node its password flag
+  at all times, and TalkBack reads "Password", "password. Edit box", and
+  with "abc" typed "password. 3 characters"
+  (`docs/evidence/F03/talkback-android.md`). The web has
+  `<input type="password">` at all times, and VoiceOver on macOS reads
+  "Password secure text field" before anything is typed; with "abc"
+  typed, "3 characters contents selected Password secure text field" in
+  Chromium and "•••" in WebKit (`docs/evidence/F03/voiceover-web.md`).
+- Effect: a VoiceOver user moving through a form on iOS is not told that a
+  field is a password field until they start to edit it. The label still
+  says "Password", and what is typed is not read out. Not counted as a
+  WCAG failure here: the field's role, a text field, is right, and the
+  secure state is there whenever text is entered.
+- Workaround: none needed for the text; none in the SDK for the state.
+  `Semantics(obscured:)` sets the same flag `obscureText` does, and the
+  iOS engine does not read that flag anywhere (read in the source, not
+  tried).
+- How to read this entry: Flutter has not yet exposed an obscured field
+  as secure on iOS before it is edited. Re-check when the pinned version
+  changes.
+- Also seen in the F02 probe (2026-11-18,
   [F02 probe](evidence/probes/f02/README.md), fixture 10): an obscured
-  field with a label and a hint, not being edited, was
-  `XCUIElementType.textField` and VoiceOver read "i10 Password Text field
-  8 characters minimum, …", with no "secure". While it was being edited,
-  with "abc" typed, XCUITest reported `.secureTextField` with the value
-  "•••". So the element type follows editing; what VoiceOver says during
-  editing was not captured (the probe's walk began on the next element).
-  Still no test in the repository: F02's examples have no password field,
-  to keep this out of a technique about instructions.
-- Next: this belongs to F03 (keyboard and input types), which needs a
-  password example: VoiceOver's speech for the field while it is being
-  edited, and whether "secure" is ever said.
+  field with a label and a hint was `XCUIElementType.textField` and read
+  with no "secure" while not being edited, and `.secureTextField` with
+  the value "•••" while being edited.
 - Upstream issue: not searched yet (D25).
 
 ## FL-043
@@ -1946,6 +1976,432 @@ yet), **Fixed in x.y** (verified on that version).
   it is being edited.
 - Workaround: put the format in helper text and in the field's hint, as
   [F02](techniques/F02.md) `good-helper` does ([FL-140](#fl-140)).
+- Upstream issue: not searched yet (D25).
+
+## FL-160
+
+**On Android, turning suggestions off on an email field replaces the email keyboard with one that has no "@".**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator, Gboard. Found
+  in the F03 probe (`docs/evidence/probes/f03`, fixture 09) and asserted
+  by `F03KeyboardTypesTest.fieldsAskForTheirKeyboardAndPurpose` on
+  `/t/F03/bad-email-no-suggestions`, written to fail when the email
+  variation is kept. Engine source read:
+  `inputTypeFromTextInputType` in `TextInputPlugin.java`.
+- What happens: `TextField(keyboardType: TextInputType.emailAddress,
+  enableSuggestions: false)` asks the input method for input type
+  `0x800b1`. The engine starts from the email variation (`0x20`) and, for
+  `enableSuggestions: false`, adds `TYPE_TEXT_FLAG_NO_SUGGESTIONS` and
+  `TYPE_TEXT_VARIATION_VISIBLE_PASSWORD` (`0x90`) with a bitwise or. A
+  variation is a number, not a set of flags: `0x20 | 0x90` is `0xb0`,
+  `TYPE_TEXT_VARIATION_FILTER`. Gboard then shows its general keyboard,
+  with "," where the email keyboard has "@" (the keys are read from the
+  keyboard's window in the same test; the probe's screenshots, not kept,
+  show the same). The same field with suggestions on asks for `0x21` and
+  gets the "@" key.
+- Read in the source, not measured: the same or applies to the other text
+  variations. A URL field with suggestions off becomes a visible password
+  field (`0x10 | 0x90` is `0x90`), and a name field gets `0xf0`, which is
+  no defined variation. An obscured field is not affected, because the
+  suggestions branch is not taken for it.
+- iOS and the web keep the email keyboard: iOS shows "@" (the F03 iOS
+  test), and the web's `inputmode="email"` is unchanged.
+- Effect: a person typing an address has to switch to the symbols page
+  for "@". That is extra work, and real work for someone who types slowly
+  or with a switch; it fails no WCAG criterion as written. What else the
+  filter variation changes in Gboard was not looked at.
+- Workaround: leave `enableSuggestions` on for an email field and turn
+  off only `autocorrect`, which on its own does not touch the variation
+  (`good-contact`'s email field, input type `0x21`).
+- How to read this entry: Flutter has not made `enableSuggestions` keep a
+  field's keyboard variation yet. Re-check when the pinned version
+  changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-161
+
+**On the web autofill hints do not reach `autocomplete`, except on an obscured field once it is focused.**
+
+- Status: Confirmed, Flutter 3.47.5, web (Chromium and WebKit builds of
+  Playwright, desktop, and with a phone's user agent and platform).
+  Found in the F03 probe (`docs/evidence/probes/f03`, `web.txt` and
+  `web2.txt`) and asserted on every F03 field by
+  `web_tests/f03_keyboard_types.spec.js`, written to fail when a hint
+  arrives. Engine source read: `semantics/text_field.dart` and
+  `text_editing/text_editing.dart`.
+- What happens: a field's `<input>` is created with `autocomplete="off"`.
+  When editing starts, the text editing code writes the field's first
+  autofill hint as `autocomplete`, `name`, and `id` (`AutofillInfo.
+  applyToDomElement`). The semantics code then sets `autocomplete="off"`
+  again on every update of the field's node (`_updateInputType`), which
+  happens straight away and at every key. Measured: a field with
+  `AutofillHints.name`, `telephoneNumber`, `username`, or `url` has
+  `autocomplete="off"` before, while, and after it is edited, and
+  `name="name"` (or `tel`, `username`, `url`) from the first edit on.
+  Two exceptions, both from the same function:
+  - a field with `keyboardType: TextInputType.emailAddress` has
+    `autocomplete="email"` and `inputmode="email"` at all times, whatever
+    its hints, set by the semantics code from the field's input type;
+  - an obscured field is given `type="password"` and its `autocomplete`
+    is left alone, so it has "off" until it is first focused and then its
+    hint, such as `current-password` or `new-password`.
+  A multi-line field gets "on" once focused.
+- Effect: on the web the purpose of a name, a phone number, a username,
+  or any other field that is not an email address or a password cannot be
+  programmatically determined, so it fails 1.3.5 Identify Input Purpose
+  however the app is written. A browser can still guess from the `name`
+  attribute; a guess is not what 1.3.5 or H98 ask for. Before a password
+  field has been focused, nothing says it is one either.
+- Workaround: none in the SDK. For an email field, the email keyboard
+  type is what gives it `autocomplete="email"`; an email field without it
+  loses its purpose (`/t/F03/bad-default-keyboard`). A native `<input>`
+  through `HtmlElementView` would be a D32 workaround; the catalog has no
+  workaround kind yet, and none is built.
+- How to read this entry: Flutter has not yet kept a field's autofill
+  hint on the web. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-162
+
+**On the web the number and decimal keyboard types leave nothing in the page, so a phone's browser shows its general keyboard.**
+
+- Status: Confirmed, Flutter 3.47.5, web, Playwright's Chromium with an
+  Android phone's user agent and platform. Found in the F03 probe
+  (`docs/evidence/probes/f03/web2.txt`) and asserted by
+  `web_tests/f03_keyboard_types.spec.js` ("as on an Android phone"),
+  written to fail when `inputmode="numeric"` or `"decimal"` arrives.
+  Engine source read: `semantics/text_field.dart` and
+  `text_editing/input_type.dart`.
+- What happens: on a phone the text editing code can write `inputmode`
+  for a number (`numeric`), decimal (`decimal`), or phone (`tel`) field,
+  and `enterkeyhint` for its action; on a desktop browser it writes
+  neither. But the semantics code removes `inputmode` on every update of
+  the field's node and puts back only what it knows: `inputmode="email"`
+  for an email field, `type="tel"` for a phone field, `type="url"` for a
+  URL field, `type="search"` for a search field. Measured with a phone's
+  user agent and platform: a number and a decimal field have no
+  `inputmode` and `type="text"`; email, phone, and URL fields have their
+  attributes; and every field has the `enterkeyhint` of its action
+  (`next`, `done`, `enter` for a multi-line field), which the semantics
+  code does not touch.
+- Effect: in a phone's browser an amount or a count field gets the
+  general keyboard, and the digits are on its second page. A name field
+  that asks for the number keyboard (`bad-number-for-name`) is not
+  harmed on the web, for the same reason.
+- Not measured: a real phone. Playwright's emulation is what was run;
+  Flutter decides that it is on a phone from `navigator.platform` and the
+  user agent, and both were set as a phone's.
+- Workaround: none in the SDK. A phone field keeps `type="tel"`, which
+  MDN describes as bringing up a telephone keypad on its own; that was
+  not seen on a phone here.
+- How to read this entry: Flutter has not yet kept `inputmode` for the
+  number keyboard types on the web. Re-check when the pinned version
+  changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-163
+
+**On iOS the number, decimal, and phone pads have no return key, and a tap outside the field does not end editing.**
+
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator. Asserted by
+  `F03KeyboardTypesUITests.testEveryFieldGetsItsKeyboard` (no return key
+  on the pads of `good-contact`'s phone field, `good-amount`, and
+  `bad-number-for-name`) and `testAPhonePadCannotBePutAwayFromTheScreen`
+  (the keyboard is still up after a tap on the "Example" heading), both
+  written to fail when that changes. Framework source read:
+  `_EditableTextTapOutsideAction` in `widgets/editable_text.dart`, which
+  ends editing on a touch outside the field only on the web, and
+  `FlutterTextInputPlugin.mm`, which sets no input accessory view.
+- What happens: iOS's number pad, decimal pad, and phone pad have no
+  return key, so a field's `textInputAction` (`done`, `next`) has no key
+  there. Native apps put a bar with "Done" above such a pad; Flutter's
+  text input plugin adds none and has no API for one. A tap elsewhere on
+  the screen leaves the field focused and the keyboard up.
+- Effect: once a number or phone field has focus, the keyboard covers
+  the lower half of the screen until something in the app takes focus
+  away. A person cannot put it away to see or reach what it covers, and
+  "next" never moves on from such a field. The Android pads have a Done
+  or Next key (the F03 Android test).
+- Workaround, not built here: end editing on a tap outside the field,
+  `TextField(onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus())`,
+  or put a button that does so beside the field. Neither has been tested
+  with VoiceOver.
+- How to read this entry: Flutter has not added a way to give an iOS pad
+  a Done key yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-180
+
+**A text field in error has no error state on Android: TalkBack does not say "error", and reads a filled field without its error.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator, TalkBack 17.0.
+  Asserted by `F06ErrorIdentificationTest` (`node.error` empty and
+  `isContentInvalid` false on every field in error) and by
+  `f06-good-form-email-filled` in `docs/evidence/F06/talkback-android.md`
+  ("Editing. / abc / Edit box", with no label and no error), written to
+  fail when the error starts to be spoken. Engine source read:
+  `AccessibilityBridge.java` calls neither `setError` nor
+  `setContentInvalid` for a Flutter node; only `AccessibilityViewEmbedder`
+  copies them, for platform views. No F06 transcript or probe has TalkBack
+  saying "error" for a Flutter field.
+- What happens: a `TextFormField` in error has its message in the field's
+  semantics hint (`InputDecorator` puts `errorText` there), and Android
+  joins it to the label in the hint text: "Email, Enter an email address
+  …". While the field is empty TalkBack reads that
+  (`f06-good-form-email`: "Email, / / Enter an email address … / Edit
+  box"). Once the field has a value it reads the value alone, as it does
+  for the label ([FL-015](#fl-015)). The error is also a node of its own
+  after the field in the tree, and a live region (Android tree tests);
+  TalkBack announced it when it appeared in every recorded case where it
+  stayed a node of its own ([FL-181](#fl-181) lists them). Whether a swipe goes from
+  the field straight to it was not tested: the emulator walk forces focus.
+- Compared with a native control: an `android.widget.EditText` with
+  `setError(…)` on the same emulator has its node's error set and is
+  content-invalid. TalkBack announced "Error: Enter an email address." and
+  "Error: Enter a phone number using digits only." when they were set, and
+  read the filled field "Error: Enter a phone number using digits only..
+  abc. Edit box" (probe, `android-talkback-native.md` and
+  `android-tree-native.txt`).
+- `SemanticsProperties.validationResult`, which `FormField` sets, is read
+  only by the web engine, where it becomes `aria-invalid` (source read:
+  `lib/web_ui`, `updateAriaInvalid`; nothing in the Android or iOS engine
+  reads it). On iOS VoiceOver read the hint with the value in the probe
+  ("p02 Phone abc Text field Enter a phone number using digits only.",
+  `ios.txt`), so the reading on the field is not lost there; whether a
+  native iOS field has an invalid state to compare with was not checked.
+- Effect: a TalkBack user who comes back to a field they filled in wrongly
+  hears their value and nothing else: not that the field is in error, nor
+  what the error is, unless they move on to the message.
+- Workaround: none in the SDK. Keep the error text as its own node right
+  after the field, which `TextFormField` does unless it is merged
+  ([FL-183](#fl-183)).
+- How to read this entry: Flutter has not added an error state for
+  Android yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-181
+
+**On iOS and the web an error is announced only when a `Form` validates on send or as the user types; `onUnfocus`, a field validated on its own, and a hand-set `errorText` are silent there.**
+
+- In short: `validate()`, `validateGranularly()`, and the `Form`'s
+  `always`, `onUserInteraction`, and `onUserInteractionIfError` modes
+  announce the first error; the `Form`'s `onUnfocus` mode,
+  `FormFieldState.validate()`, a field's own `autovalidateMode`, and an
+  `errorText` set by hand do not.
+
+- Status: Confirmed, Flutter 3.47.5. Each statement below says whether it
+  is asserted by a widget test, measured on a device, or read in the
+  source only.
+- Read in the framework source, `widgets/form.dart`:
+  - `FormState._validate` validates every registered field and, where
+    `MediaQuery.supportsAnnounceOf` is true, sends the first error with
+    `SemanticsService.sendAnnouncement`, assertive, a second later on
+    iOS. It is the only code in `form.dart` that announces.
+  - It is called by `validate()` and `validateGranularly()`, and by
+    `FormState.build` for the `Form`'s `always`, `onUserInteraction`
+    (once a field has been changed), and `onUserInteractionIfError` (once
+    a field has been changed and one has an error) modes. A field's change
+    rebuilds the `Form` (`_fieldDidChange`, `_forceRebuild`).
+  - `FormState.build` does nothing for `onUnfocus` or `disabled`. With the
+    `Form`'s mode `onUnfocus` (or the field's own), each field wraps
+    itself in a `Focus` whose loss calls the field's own `_validate()`,
+    which sets the error and announces nothing. `FormFieldState.validate()`
+    and a field's own `autovalidateMode` likewise validate that field only.
+  - `material/input_decorator.dart`, `_buildError`, makes the error text
+    `Semantics(liveRegion: !MediaQuery.supportsAnnounceOf(context))`.
+- Asserted by the F06 widget tests (group "FL-181: who announces",
+  announcements supported, each recording followed by the recorder's own
+  liveness check). What each showed:
+  - `onUserInteraction` on the `Form`: one announcement when typing made
+    the field invalid, one more at the next change that left it invalid,
+    none once it was right; on the Android path and on the iOS path,
+    which waits a second.
+  - `always` on the `Form`: the error was shown from the first frame and
+    not announced then (the `Form` validates in its build, before its
+    fields have registered); each change after that announced it.
+  - `onUserInteractionIfError` on the `Form`: typing an invalid value
+    showed and announced nothing, because no field had an error yet;
+    `validate()` then announced it twice; the next change that kept it
+    announced it once.
+  - `validate()` on a `Form` whose mode is `always` or
+    `onUserInteraction` announced the error twice: once from `validate()`
+    and once from the rebuild it causes. With the mode `disabled` (F06
+    `good-form`) it announced once.
+  - `onUnfocus` on the `Form`: the error appeared when the field lost
+    focus, and nothing was announced.
+  - `validateGranularly()`: the first of two errors, once.
+  - A `TextFormField` with its own `onUserInteraction` and no `Form`, the
+    same field inside a `Form` whose mode is disabled, and
+    `FormFieldState.validate()` on one field: the error shown, nothing
+    announced.
+  - `errorText` set with `setState` (`bad-not-announced`): nothing
+    announced where announcements are supported; the error text a live
+    region where they are not.
+- Measured on devices, F06 probe (`docs/evidence/probes/f06`) and F06
+  transcripts:
+  - p03, `errorText` set with `setState`, no `Form`, the field wrapped in
+    `TestId` (so merged, [FL-183](#fl-183)), field empty: silent with
+    VoiceOver on iOS (`ios.txt`: nothing after the double tap) and on the
+    web (`voiceover-web.md`: "(nothing)"). TalkBack announced the merged
+    field with its error: "p03 Email Enter an email address …, / / Enter
+    an email address …" (`android-talkback.md`, `f06-p03-after-submit`).
+  - p12, a `TextFormField` with its own `onUserInteraction`, no `Form`,
+    wrapped in `TestId`, made invalid by a button that adds "x": silent
+    on iOS and on the web. TalkBack said "x / Edit box" when the error
+    appeared and "x / Edit box …" when focus was put on the field
+    (`f06-p12-after-submit`, `f06-p12-stop-0`): the error was not spoken
+    on Android either. See below.
+  - `bad-not-announced` (the same as p03 without the merge): silent on
+    iOS and the web (`voiceover-ios.md`, `voiceover-web.md`); TalkBack
+    announced "Enter an email address with an @, like name@example.com."
+    (`talkback-android.md`, `f06-bad-not-announced-sent`).
+  - `Form.validate()`, mode disabled: announced on all three (probe p04
+    to p07 on all three, q01 to q03 on Android; the F06 transcripts for
+    `good-form` and `good-cupertino`).
+  - Not run on a device: the `Form`'s `always`, `onUserInteraction`,
+    `onUserInteractionIfError`, and `onUnfocus` modes,
+    `validateGranularly()`, and field-level autovalidation of a field that
+    is not merged.
+- On iOS a corrected error can still be announced after the form goes
+  through. Read in the source: `_validate` takes the first error's text,
+  then, on iOS only, waits `_kIOSAnnouncementDelayDuration` (one second)
+  in an unawaited `Future` and sends that text without validating again or
+  checking that the error is still there; nothing can cancel it. Asserted
+  by the F06 widget tests on the iOS path: `validate()` failed, the field
+  was put right and `validate()` passed 300 ms later, and the recorder
+  had nothing when the form went through and then the old error, a second
+  after the first send. With the second send 1.5 s after the first, the
+  error came once, before it, and nothing after. On the other platforms'
+  path the error is sent at once, so nothing comes after a quick success.
+  What a user would hear in F06, where a form that goes through is
+  announced by a live count: "Forms sent: 1", then "Enter an email address
+  …" for a field that is no longer in error. It needs a send that fails
+  and a send that goes through less than a second apart. Not measured on a
+  device: the F06 walks put the fields right several seconds after the
+  failed send. No workaround in the app: the queued announcement has no
+  handle. It is recorded here and not as an entry of its own because it
+  is the same code as the rest of this entry.
+- What happens on Android: Flutter reports that announcements are not
+  supported there ([FL-018](#fl-018)), so `Form` sends nothing. A
+  Material field's error text is a live region (source; Android tree
+  tests). TalkBack announced it in every configuration recorded where the
+  error text was its own node: `Form.validate()` (q01 to q03,
+  `good-form`, `good-cupertino`, with both errors read, in no fixed
+  order) and `setState` (`bad-not-announced`). Where the field was
+  merged, its error was part of the field: TalkBack announced it with an
+  empty field (p03, p04, `bad-merged-error`), but in p12, where the field
+  held "x", it said only the value. That fits [FL-183](#fl-183) (the
+  merged field is the live region) and [FL-180](#fl-180) (a field with a
+  value is read as its value); the cause was not established. With two
+  merged fields in error at once (p05) TalkBack spoke only the second.
+- Effect: the same code announces an error on one platform and not on the
+  others. An error shown by `onUnfocus`, a field's own validation, or a
+  hand-set `errorText`, while the user is elsewhere on the screen, is a
+  status message that iOS and the web do not present (4.1.3). The
+  `Form`'s `always`, `onUserInteraction`, and `onUserInteractionIfError`
+  modes announce the first error again at every change that leaves it in
+  error, which while typing is an announcement per keystroke, and
+  `validate()` on such a `Form` announces it twice (widget tests). How
+  screen readers handle either was not measured.
+- Workaround: validate with the `Form` on send, with its mode left
+  `disabled`: `validate()` or `validateGranularly()` (F06 `good-form`).
+  Such a form already announces; do not add a second announcement to it.
+  With `onUnfocus`, with a field's own validation, or for an error set by
+  hand, nothing announces on iOS and the web: announce it with
+  `SemanticsService.sendAnnouncement` where `supportsAnnounceOf` is true,
+  as `Form` does (I12's `good-announce` shows the pattern). None of these
+  workarounds was run on a device except `validate()`.
+- Upstream issue: not searched yet (D25).
+
+## FL-182
+
+**`CupertinoTextFormFieldRow`'s error is not a live region, so on Android nothing announces it.**
+
+- Status: Confirmed, Flutter 3.47.5. Asserted by the F06 widget test
+  "FL-182" (no node is a live region after `validate()`). Framework source
+  read: `cupertino/form_row.dart` shows `error` as plain text, and `Form`
+  sends nothing on Android ([FL-181](#fl-181)). Seen once on a device, in
+  the F06 probe on Android 17 with TalkBack 17.0: fixture p09, the row
+  wrapped in `TestId`, nothing was said after `validate()`
+  (`android-talkback.md`, `f06-p09-after-submit`). An unmerged row was
+  not run on a device.
+- What happens: on iOS and the web `Form.validate()` announced the first
+  error (p09, `ios.txt` and `voiceover-web.md`); on Android nothing
+  announces it. The row's field also has no label of its own
+  ([FL-016](#fl-016)); merged with its row, it takes the prefix, the
+  placeholder, and the error as its name (p09: hint text "p09 Email\n
+  name@example.com\nEnter an email address …" on Android, name "p09 Email
+  name@example.com Enter an email address …" on the web).
+- Workaround: build the row from `FormField` and `CupertinoFormRow` and
+  give each part what `InputDecorator` gives a Material field: the label
+  and the error as the field's label and hint, its validation result, and
+  the error text in a live region where `supportsAnnounceOf` is false. F06
+  `good-cupertino` does this, and TalkBack announced its errors
+  (`f06-good-cupertino-sent`).
+- Upstream issue: not searched yet (D25).
+
+## FL-183
+
+**`MergeSemantics` around a field takes in its error: the error joins the field's name as well as its hint, and on Android the field becomes a live region.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Asserted by the F06
+  widget, web, Android, and iOS tests of `bad-merged-error`.
+- What happens: the error text under a Material field is a node of its
+  own (`Semantics(container: true)`), but `MergeSemantics` merges
+  containers too. The field's label becomes "Email" and the error on two
+  lines (widget test, XCUITest, the web's accessible name), and the error
+  is its hint as well. What was heard:
+  - Web, VoiceOver in Chromium: the error twice, "Email Enter an email
+    address … Enter an email address … invalid data edit text"
+    (`voiceover-web.md`).
+  - Android: the hint text holds it twice ("Email\nEnter …, Enter …",
+    tree test), and after Send TalkBack read "Email Enter an email address
+    …, / / Enter an email address …" (`f06-bad-merged-error-sent`). The
+    field itself is a live region (tree test).
+  - iOS: VoiceOver began "Email Enter an email address with an @, like
+    name@example.com. T" (`voiceover-ios.md`); the test API's 64
+    characters end there, so whether it read the error a second time, as
+    the hint, was not seen.
+- On Android a merged field with a value: in probe p12 (a field in
+  `TestId` with its own `onUserInteraction`, holding "x") TalkBack said
+  only "x / Edit box" when the error appeared, and the error was not
+  spoken ([FL-181](#fl-181)). Merged, the error has no node of its own to
+  announce, and the field's live region and hint text are read as for any
+  field with a value ([FL-180](#fl-180)); that is a reading of the
+  results, not an established cause.
+- Why it matters here: the project's `TestId`
+  (`lib/catalog/test_id.dart`) is a `MergeSemantics`. The F06 fields carry
+  their identifier with `Semantics(identifier:)` instead, which joins the
+  text field's node without merging anything ([FL-043](#fl-043): a
+  `TextField` is not a container).
+- Workaround: do not merge a field with its decoration. Put an identifier
+  on it with `Semantics(identifier:)`.
+- Upstream issue: not searched yet (D25). Merging is by design.
+
+## FL-184
+
+**Keyboard focus moved to a field does not move VoiceOver's cursor on iOS.**
+
+- Status: Observed, Flutter 3.47.5, iOS 27.0 simulator, in the F06 probe
+  (fixtures p06 and p07, `docs/evidence/probes/f06/ios.txt`). No test in
+  the repository reproduces it: no example moves focus that way alone. The
+  F06 VoiceOver test on iOS asserts that the workaround below works.
+- What happens: after `FocusNode.requestFocus()` on the first field in
+  error (p06), the keyboard was up, and VoiceOver's cursor was still on
+  the button that sent the form: one move forward read a key ("I
+  Button") and one back read "p06 Submit Button". On Android TalkBack's
+  focus moved to the field (probe p06 node dump; asserted by the F06
+  TalkBack walk). On the web the field's `<input>` got DOM focus, and
+  VoiceOver read it ("Name Enter your name. invalid data edit text",
+  `voiceover-web.md`).
+- Workaround: send a `FocusSemanticEvent` to the field as well. On iOS it
+  moved VoiceOver to the field (probe p07, a field in `TestId`: "p07 Name
+  Enter your name. Text field Enter your name. Double tap"; the F06
+  VoiceOver test: the cursor on "Name Text field …" after Send). It is
+  documented for Android and iOS only, and on the web the engine ignores
+  it (source read: `AccessibilityAnnouncements.handleMessage` acts only on
+  a message with text; probe p07 on the web: DOM focus stayed on the
+  button). F06 `good-form` and `good-cupertino` do both.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->

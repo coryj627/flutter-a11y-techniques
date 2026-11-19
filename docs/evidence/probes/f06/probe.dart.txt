@@ -1,0 +1,936 @@
+// F06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/f06/probe.dart.txt): what Flutter exposes, and what
+// screen readers say, for a text field with an error. One screen per
+// fixture, opened by route: /p01 ... /p13. Every fixture's text starts with
+// its id.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+import 'catalog/test_id.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  if (kIsWeb) SemanticsBinding.instance.ensureSemantics();
+}
+
+const _emailError = 'Enter an email address, like name@example.com.';
+const _nameError = 'Enter your name.';
+const _phoneError = 'Enter a phone number using digits only.';
+
+String? _required(String? v, String error) =>
+    (v == null || v.trim().isEmpty) ? error : null;
+
+String? _email(String? v) =>
+    (v == null || !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v))
+    ? _emailError
+    : null;
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'F06 probe',
+      onGenerateRoute: (settings) {
+        final name = settings.name ?? '/';
+        final builder = _fixtures[name];
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => builder == null
+              ? const _Index()
+              : _Screen(title: '${name.substring(1)} fixture', child: builder()),
+        );
+      },
+    );
+  }
+}
+
+final Map<String, Widget Function()> _fixtures = {
+  '/p01': () => const _StaticError(merged: true),
+  '/p02': () => const _StaticError(merged: false),
+  '/p03': () => const _ButtonSetsError(),
+  '/p04': () => const _FormOne(),
+  '/p05': () => const _FormTwo(id: 'p05', focus: _Focus.none),
+  '/p06': () => const _FormTwo(id: 'p06', focus: _Focus.input),
+  '/p07': () => const _FormTwo(id: 'p07', focus: _Focus.semanticsEvent),
+  '/p08': () => const _FormHint(),
+  '/p09': () => const _CupertinoRow(),
+  '/p10': () => const _WidgetsLayer(),
+  '/p11': () => const _FormSummary(),
+  '/p12': () => const _AutovalidateWhileTyping(),
+  '/p13': () => const _CupertinoHandBuilt(),
+  // Second round, after the first showed what MergeSemantics does to a
+  // field's error: the identifier straight on the field, not merged.
+  '/q01': () => const _Unmerged(id: 'q01', focus: false, filled: false),
+  '/q02': () => const _Unmerged(id: 'q02', focus: true, filled: false),
+  '/q03': () => const _Unmerged(id: 'q03', focus: true, filled: true),
+  '/q04': () => const _CupertinoCandidate(),
+  '/q05': () => const _DetachedError(),
+  '/q06': () => const _ColorOnly(),
+};
+
+/// q01 to q03: Form with Name and Email, identifiers by Semantics(identifier:)
+/// only. q03 starts with Name "Ana" and Email "abc".
+class _Unmerged extends StatefulWidget {
+  const _Unmerged({required this.id, required this.focus, required this.filled});
+
+  final String id;
+  final bool focus;
+  final bool filled;
+
+  @override
+  State<_Unmerged> createState() => _UnmergedState();
+}
+
+class _UnmergedState extends State<_Unmerged> {
+  final _form = GlobalKey<FormState>();
+  final _nameKey = GlobalKey<FormFieldState<String>>();
+  final _nameFocus = FocusNode();
+  final _emailFocus = FocusNode();
+  late final _name = TextEditingController(text: widget.filled ? 'Ana' : '');
+  late final _mail = TextEditingController(text: widget.filled ? 'abc' : '');
+
+  @override
+  void dispose() {
+    _nameFocus.dispose();
+    _emailFocus.dispose();
+    _name.dispose();
+    _mail.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (_form.currentState!.validate() || !widget.focus) return;
+    (_nameKey.currentState!.hasError ? _nameFocus : _emailFocus).requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = widget.id;
+    return Form(
+      key: _form,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Semantics(
+            identifier: '$p-name',
+            child: TextFormField(
+              key: _nameKey,
+              controller: _name,
+              focusNode: _nameFocus,
+              decoration: InputDecoration(
+                labelText: '$p Name',
+                border: const OutlineInputBorder(),
+              ),
+              validator: (v) => _required(v, _nameError),
+            ),
+          ),
+          _gap(),
+          Semantics(
+            identifier: '$p-email',
+            child: TextFormField(
+              controller: _mail,
+              focusNode: _emailFocus,
+              decoration: InputDecoration(
+                labelText: '$p Email',
+                border: const OutlineInputBorder(),
+              ),
+              validator: _email,
+            ),
+          ),
+          _gap(),
+          TestId(
+            '$p-submit',
+            child: FilledButton(onPressed: _submit, child: Text('$p Submit')),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// q04: a Cupertino field built the way InputDecorator does it: the error
+/// is the field's hint and its validation result, and the visible error is a
+/// live region only where announcements are not supported. Focus moves to
+/// the field.
+class _CupertinoCandidate extends StatefulWidget {
+  const _CupertinoCandidate();
+
+  @override
+  State<_CupertinoCandidate> createState() => _CupertinoCandidateState();
+}
+
+class _CupertinoCandidateState extends State<_CupertinoCandidate> {
+  final _form = GlobalKey<FormState>();
+  final _focus = FocusNode();
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _form,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FormField<String>(
+            validator: _email,
+            builder: (field) => CupertinoFormSection.insetGrouped(
+              children: [
+                CupertinoFormRow(
+                  prefix: const ExcludeSemantics(child: Text('q04 Email')),
+                  error: field.errorText == null
+                      ? null
+                      : Semantics(
+                          container: true,
+                          liveRegion: !MediaQuery.supportsAnnounceOf(context),
+                          child: Text(field.errorText!),
+                        ),
+                  child: Semantics(
+                    identifier: 'q04-email',
+                    label: 'q04 Email',
+                    hint: field.errorText,
+                    validationResult: field.hasError
+                        ? SemanticsValidationResult.invalid
+                        : SemanticsValidationResult.valid,
+                    child: CupertinoTextField.borderless(
+                      focusNode: _focus,
+                      placeholder: 'name@example.com',
+                      onChanged: field.didChange,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _gap(),
+          TestId(
+            'q04-submit',
+            child: CupertinoButton.filled(
+              onPressed: () {
+                if (!_form.currentState!.validate()) _focus.requestFocus();
+              },
+              child: const Text('q04 Submit'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// q05: the error is a Text below the field, in a live region, and nothing
+/// ties it to the field.
+class _DetachedError extends StatefulWidget {
+  const _DetachedError();
+
+  @override
+  State<_DetachedError> createState() => _DetachedErrorState();
+}
+
+class _DetachedErrorState extends State<_DetachedError> {
+  String _error = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          identifier: 'q05-email',
+          child: const TextField(
+            decoration: InputDecoration(
+              labelText: 'q05 Email',
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+        Semantics(
+          identifier: 'q05-error',
+          liveRegion: true,
+          child: Text(_error, style: const TextStyle(color: Colors.red)),
+        ),
+        _gap(),
+        TestId(
+          'q05-submit',
+          child: FilledButton(
+            onPressed: () => setState(() => _error = _emailError),
+            child: const Text('q05 Submit'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// q06: errorText '' turns the field red with no message.
+class _ColorOnly extends StatefulWidget {
+  const _ColorOnly();
+
+  @override
+  State<_ColorOnly> createState() => _ColorOnlyState();
+}
+
+class _ColorOnlyState extends State<_ColorOnly> {
+  String? _error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          identifier: 'q06-email',
+          child: TextField(
+            decoration: InputDecoration(
+              labelText: 'q06 Email',
+              errorText: _error,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+        ),
+        _gap(),
+        TestId(
+          'q06-submit',
+          child: FilledButton(
+            onPressed: () => setState(() => _error = ''),
+            child: const Text('q06 Submit'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Index extends StatelessWidget {
+  const _Index();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('F06 probe')),
+      body: ListView(
+        children: [
+          for (final name in _fixtures.keys)
+            ListTile(
+              title: Text(name),
+              onTap: () => Navigator.of(context).pushNamed(name),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Screen extends StatelessWidget {
+  const _Screen({required this.title, required this.child});
+
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: child,
+      ),
+    );
+  }
+}
+
+Widget _gap() => const SizedBox(height: 16);
+
+/// p01 (merged with TestId) and p02 (identifier only): Material fields with
+/// an error from the start. Email is empty; Phone holds "abc".
+class _StaticError extends StatefulWidget {
+  const _StaticError({required this.merged});
+
+  final bool merged;
+
+  @override
+  State<_StaticError> createState() => _StaticErrorState();
+}
+
+class _StaticErrorState extends State<_StaticError> {
+  final _phone = TextEditingController(text: 'abc');
+
+  @override
+  void dispose() {
+    _phone.dispose();
+    super.dispose();
+  }
+
+  Widget _wrap(String id, Widget child) => widget.merged
+      ? TestId(id, child: child)
+      : Semantics(identifier: id, child: child);
+
+  @override
+  Widget build(BuildContext context) {
+    final p = widget.merged ? 'p01' : 'p02';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _wrap(
+          '$p-email',
+          TextField(
+            decoration: InputDecoration(
+              labelText: '$p Email',
+              errorText: _emailError,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+        ),
+        _gap(),
+        _wrap(
+          '$p-phone',
+          TextField(
+            controller: _phone,
+            decoration: InputDecoration(
+              labelText: '$p Phone',
+              errorText: _phoneError,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+        ),
+        _gap(),
+        TestId(
+          '$p-end',
+          child: FilledButton(onPressed: () {}, child: Text('$p End')),
+        ),
+      ],
+    );
+  }
+}
+
+/// p03: no Form. A button sets errorText with setState; focus stays on it.
+class _ButtonSetsError extends StatefulWidget {
+  const _ButtonSetsError();
+
+  @override
+  State<_ButtonSetsError> createState() => _ButtonSetsErrorState();
+}
+
+class _ButtonSetsErrorState extends State<_ButtonSetsError> {
+  String? _error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TestId(
+          'p03-email',
+          child: TextField(
+            decoration: InputDecoration(
+              labelText: 'p03 Email',
+              errorText: _error,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+        ),
+        _gap(),
+        TestId(
+          'p03-submit',
+          child: FilledButton(
+            onPressed: () => setState(() => _error = _emailError),
+            child: const Text('p03 Check'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// p04: Form with one required field; Submit calls validate().
+class _FormOne extends StatefulWidget {
+  const _FormOne();
+
+  @override
+  State<_FormOne> createState() => _FormOneState();
+}
+
+class _FormOneState extends State<_FormOne> {
+  final _form = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _form,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TestId(
+            'p04-email',
+            child: TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'p04 Email',
+                border: OutlineInputBorder(),
+              ),
+              validator: _email,
+            ),
+          ),
+          _gap(),
+          TestId(
+            'p04-submit',
+            child: FilledButton(
+              onPressed: () => _form.currentState!.validate(),
+              child: const Text('p04 Submit'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+enum _Focus { none, input, semanticsEvent }
+
+/// p05 to p07: Form with two required fields; Submit validates, then moves
+/// nothing (p05), input focus (p06), or sends a FocusSemanticEvent (p07)
+/// to the first field in error.
+class _FormTwo extends StatefulWidget {
+  const _FormTwo({required this.id, required this.focus});
+
+  final String id;
+  final _Focus focus;
+
+  @override
+  State<_FormTwo> createState() => _FormTwoState();
+}
+
+class _FormTwoState extends State<_FormTwo> {
+  final _form = GlobalKey<FormState>();
+  final _nameKey = GlobalKey<FormFieldState<String>>();
+  final _emailKey = GlobalKey<FormFieldState<String>>();
+  final _nameFocus = FocusNode();
+  final _emailFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _nameFocus.dispose();
+    _emailFocus.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final ok = _form.currentState!.validate();
+    if (ok) return;
+    final first = _nameKey.currentState!.hasError ? _nameKey : _emailKey;
+    switch (widget.focus) {
+      case _Focus.none:
+        break;
+      case _Focus.input:
+        (first == _nameKey ? _nameFocus : _emailFocus).requestFocus();
+      case _Focus.semanticsEvent:
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          first.currentContext?.findRenderObject()?.sendSemanticsEvent(
+            const FocusSemanticEvent(),
+          );
+        });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = widget.id;
+    return Form(
+      key: _form,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TestId(
+            '$p-name',
+            child: TextFormField(
+              key: _nameKey,
+              focusNode: _nameFocus,
+              decoration: InputDecoration(
+                labelText: '$p Name',
+                border: const OutlineInputBorder(),
+              ),
+              validator: (v) => _required(v, _nameError),
+            ),
+          ),
+          _gap(),
+          TestId(
+            '$p-email',
+            child: TextFormField(
+              key: _emailKey,
+              focusNode: _emailFocus,
+              decoration: InputDecoration(
+                labelText: '$p Email',
+                border: const OutlineInputBorder(),
+              ),
+              validator: _email,
+            ),
+          ),
+          _gap(),
+          TestId(
+            '$p-submit',
+            child: FilledButton(
+              onPressed: _submit,
+              child: Text('$p Submit'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// p08: the error is also the field's hint (the iOS reference's
+/// accessibilityHint). Phone holds "abc".
+class _FormHint extends StatefulWidget {
+  const _FormHint();
+
+  @override
+  State<_FormHint> createState() => _FormHintState();
+}
+
+class _FormHintState extends State<_FormHint> {
+  final _form = GlobalKey<FormState>();
+  final _phone = TextEditingController(text: 'abc');
+  String? _emailErr;
+  String? _phoneErr;
+
+  @override
+  void dispose() {
+    _phone.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    setState(() {
+      _emailErr = _email('');
+      _phoneErr = RegExp(r'^\d+$').hasMatch(_phone.text) ? null : _phoneError;
+    });
+    _form.currentState!.validate();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _form,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TestId(
+            'p08-email',
+            child: Semantics(
+              hint: _emailErr,
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'p08 Email',
+                  border: OutlineInputBorder(),
+                ),
+                validator: _email,
+              ),
+            ),
+          ),
+          _gap(),
+          TestId(
+            'p08-phone',
+            child: Semantics(
+              hint: _phoneErr,
+              child: TextFormField(
+                controller: _phone,
+                decoration: const InputDecoration(
+                  labelText: 'p08 Phone',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (v) =>
+                    RegExp(r'^\d+$').hasMatch(v ?? '') ? null : _phoneError,
+              ),
+            ),
+          ),
+          _gap(),
+          TestId(
+            'p08-submit',
+            child: FilledButton(
+              onPressed: _submit,
+              child: const Text('p08 Submit'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// p09: CupertinoTextFormFieldRow as the SDK gives it.
+class _CupertinoRow extends StatefulWidget {
+  const _CupertinoRow();
+
+  @override
+  State<_CupertinoRow> createState() => _CupertinoRowState();
+}
+
+class _CupertinoRowState extends State<_CupertinoRow> {
+  final _form = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _form,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          CupertinoFormSection.insetGrouped(
+            children: [
+              TestId(
+                'p09-email',
+                child: CupertinoTextFormFieldRow(
+                  prefix: const Text('p09 Email'),
+                  placeholder: 'name@example.com',
+                  validator: _email,
+                ),
+              ),
+            ],
+          ),
+          _gap(),
+          TestId(
+            'p09-submit',
+            child: CupertinoButton.filled(
+              onPressed: () => _form.currentState!.validate(),
+              child: const Text('p09 Submit'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// p10: widgets layer. The error is drawn by hand in a live region, and the
+/// field carries validationResult.
+class _WidgetsLayer extends StatefulWidget {
+  const _WidgetsLayer();
+
+  @override
+  State<_WidgetsLayer> createState() => _WidgetsLayerState();
+}
+
+class _WidgetsLayerState extends State<_WidgetsLayer> {
+  String? _error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TestId(
+          'p10-email',
+          child: Semantics(
+            label: 'p10 Email',
+            validationResult: _error == null
+                ? SemanticsValidationResult.none
+                : SemanticsValidationResult.invalid,
+            child: const TextField(
+              decoration: InputDecoration(border: OutlineInputBorder()),
+            ),
+          ),
+        ),
+        Semantics(
+          identifier: 'p10-error',
+          liveRegion: true,
+          child: Text(_error ?? '', style: const TextStyle(color: Colors.red)),
+        ),
+        _gap(),
+        TestId(
+          'p10-submit',
+          child: FilledButton(
+            onPressed: () => setState(() => _error = _emailError),
+            child: const Text('p10 Submit'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// p11: Form with two fields and a summary of the errors in a live region.
+class _FormSummary extends StatefulWidget {
+  const _FormSummary();
+
+  @override
+  State<_FormSummary> createState() => _FormSummaryState();
+}
+
+class _FormSummaryState extends State<_FormSummary> {
+  final _form = GlobalKey<FormState>();
+  String _summary = '';
+
+  void _submit() {
+    final invalid = _form.currentState!.validateGranularly();
+    setState(() {
+      _summary = invalid.isEmpty
+          ? ''
+          : 'p11 ${invalid.length} errors. Name: $_nameError Email: $_emailError';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _form,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Semantics(
+            identifier: 'p11-summary',
+            liveRegion: true,
+            child: Text(_summary),
+          ),
+          _gap(),
+          TestId(
+            'p11-name',
+            child: TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'p11 Name',
+                border: OutlineInputBorder(),
+              ),
+              validator: (v) => _required(v, _nameError),
+            ),
+          ),
+          _gap(),
+          TestId(
+            'p11-email',
+            child: TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'p11 Email',
+                border: OutlineInputBorder(),
+              ),
+              validator: _email,
+            ),
+          ),
+          _gap(),
+          TestId(
+            'p11-submit',
+            child: FilledButton(
+              onPressed: _submit,
+              child: const Text('p11 Submit'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// p12: autovalidate on user interaction. A button puts "x" in the field as
+/// if typed, which makes the error appear without validate().
+class _AutovalidateWhileTyping extends StatefulWidget {
+  const _AutovalidateWhileTyping();
+
+  @override
+  State<_AutovalidateWhileTyping> createState() =>
+      _AutovalidateWhileTypingState();
+}
+
+class _AutovalidateWhileTypingState extends State<_AutovalidateWhileTyping> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TestId(
+          'p12-email',
+          child: TextFormField(
+            controller: _controller,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            decoration: const InputDecoration(
+              labelText: 'p12 Email',
+              border: OutlineInputBorder(),
+            ),
+            validator: _email,
+          ),
+        ),
+        _gap(),
+        TestId(
+          'p12-submit',
+          child: FilledButton(
+            onPressed: () => _controller.text = '${_controller.text}x',
+            child: const Text('p12 Type x'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// p13: Cupertino built by hand: a FormField around a CupertinoFormRow,
+/// the field named with Semantics(label:), the prefix excluded, and the
+/// error in a live region.
+class _CupertinoHandBuilt extends StatefulWidget {
+  const _CupertinoHandBuilt();
+
+  @override
+  State<_CupertinoHandBuilt> createState() => _CupertinoHandBuiltState();
+}
+
+class _CupertinoHandBuiltState extends State<_CupertinoHandBuilt> {
+  final _form = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _form,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FormField<String>(
+            validator: _email,
+            builder: (field) => CupertinoFormSection.insetGrouped(
+              children: [
+                CupertinoFormRow(
+                  prefix: const ExcludeSemantics(child: Text('p13 Email')),
+                  error: field.errorText == null
+                      ? null
+                      : Semantics(
+                          identifier: 'p13-error',
+                          liveRegion: true,
+                          child: Text(field.errorText!),
+                        ),
+                  child: TestId(
+                    'p13-email',
+                    child: Semantics(
+                      label: 'p13 Email',
+                      child: CupertinoTextField.borderless(
+                        placeholder: 'name@example.com',
+                        onChanged: field.didChange,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _gap(),
+          TestId(
+            'p13-submit',
+            child: CupertinoButton.filled(
+              onPressed: () => _form.currentState!.validate(),
+              child: const Text('p13 Submit'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
