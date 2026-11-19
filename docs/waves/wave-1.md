@@ -15,7 +15,8 @@ that were left.
 | F03 Keyboard types | 170 | FL-160 to FL-163 |
 | F06 Error identification and announcement | 175 | FL-180 to FL-184 |
 
-Decisions the owner made during the wave, recorded in the specs:
+Decisions the owner made on 2026-11-19, in answer to the principal, and
+recorded in the specs:
 
 - F03: the web is a limitation with no workaround for autofill purpose
   (FL-161), and the spec says so outright. `bad-no-purpose` and
@@ -36,9 +37,10 @@ Decisions the owner made during the wave, recorded in the specs:
   for the new value (176).
 - The shared Android helper that reads an example's count scrolls to it when
   it is out of view (179).
-- Until 2026-12-01 a pull request merges on an approving Codex review of its
-  final commit and a green CI run on that commit. From that date it needs
-  Codoki's "safe to merge" as well, as before.
+- Codoki's review quota ran out during the wave. The owner allowed merges
+  on the Codex approval and green CI alone until 2026-12-01, and
+  [Working in parallel](../parallel-work.md) now says so. The checklist and
+  the guide still list all three gates, which is the rule from that date.
 
 ## Test-tool findings
 
