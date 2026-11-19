@@ -1,0 +1,63 @@
+// F03 probe (throwaway, not committed): what the framework gives the engine.
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  testWidgets('probe', (tester) async {
+    final handle = tester.ensureSemantics();
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.6;
+    await tester.pumpWidget(const MaterialApp(home: ProbeScreen()));
+    for (final page in [1, 2, 3]) {
+      await tester.tap(find.text('Page $page'));
+      await tester.pumpAndSettle();
+      final ids = <String>[];
+      void visit(SemanticsNode n) {
+        final d = n.getSemanticsData();
+        if (d.identifier.startsWith('p') && !n.isMergedIntoParent) {
+          ids.add(d.identifier);
+        }
+        n.visitChildren((c) {
+          visit(c);
+          return true;
+        });
+      }
+
+      visit(tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!);
+      for (final id in ids.toSet()) {
+        final node = find.semantics.byPredicate(
+          (n) => !n.isMergedIntoParent && n.getSemanticsData().identifier == id,
+        );
+        final d = node.evaluate().single.getSemanticsData();
+        // ignore: avoid_print
+        print(
+          'F03PROBE L1 $id label=${jsonEncode(d.label)} value=${jsonEncode(d.value)} '
+          'textField=${d.flagsCollection.isTextField} obscured=${d.flagsCollection.isObscured} '
+          'multiline=${d.flagsCollection.isMultiline} inputType=${d.inputType.name}',
+        );
+        final editable = find.descendant(
+          of: find.byWidgetPredicate(
+            (w) => w is Semantics && w.properties.identifier == id,
+          ),
+          matching: find.byType(EditableText),
+        );
+        await tester.showKeyboard(editable);
+        await tester.pump();
+        // ignore: avoid_print
+        print('F03PROBE L1 $id config=${jsonEncode(tester.testTextInput.setClientArgs)}');
+        await tester.enterText(editable, 'abc');
+        await tester.pump();
+        final after = node.evaluate().single.getSemanticsData();
+        // ignore: avoid_print
+        print('F03PROBE L1 $id typed value=${jsonEncode(after.value)} label=${jsonEncode(after.label)}');
+        FocusManager.instance.primaryFocus?.unfocus();
+        await tester.pumpAndSettle();
+      }
+    }
+    handle.dispose();
+  });
+}

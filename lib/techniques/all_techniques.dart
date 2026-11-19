@@ -4,6 +4,7 @@ import '../catalog/technique.dart';
 import 'c01_button/c01_button.dart';
 import 'f01_text_fields/f01_text_fields.dart';
 import 'f02_input_instructions/f02_input_instructions.dart';
+import 'f03_keyboard_types/f03_keyboard_types.dart';
 import 'f07_checkbox/f07_checkbox.dart';
 import 'f08_radio_group/f08_radio_group.dart';
 import 'f09_switch/f09_switch.dart';
@@ -28,6 +29,7 @@ final List<Technique> allTechniques = [
   c01Button,
   f01TextFields,
   f02InputInstructions,
+  f03KeyboardTypes,
   f07Checkbox,
   f08RadioGroup,
   f09Switch,
