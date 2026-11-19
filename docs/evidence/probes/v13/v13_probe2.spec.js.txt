@@ -1,0 +1,40 @@
+// Throwaway: V13 probe round 2 on the web. Not committed; kept as
+// docs/evidence/probes/v13/v13_probe2.spec.js.txt. What is under the
+// pointer just outside the small fixtures' elements, and their DOM.
+import { test } from '@playwright/test';
+
+test('what is under the pointer', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/');
+  await page.locator('[flt-semantics-identifier="geo"]').waitFor();
+  await page.waitForTimeout(1500);
+  const out = await page.evaluate(() => {
+    const lines = [];
+    const describe = (e) => {
+      if (!e) return 'null';
+      const r = e.getBoundingClientRect();
+      const cs = getComputedStyle(e);
+      return `<${e.tagName.toLowerCase()} role=${e.getAttribute('role')} aria-label=${e.getAttribute('aria-label')} flt-tappable=${e.hasAttribute('flt-tappable')} text=${JSON.stringify((e.textContent ?? '').slice(0, 20))} box=${r.x.toFixed(1)},${r.y.toFixed(1)},${r.width.toFixed(1)}x${r.height.toFixed(1)} transform=${cs.transform} pointer-events=${cs.pointerEvents} overflow=${cs.overflow}>`;
+    };
+    for (const e of document.querySelectorAll('flt-semantics')) {
+      const name = (e.getAttribute('aria-label') ?? (e.childElementCount === 0 ? e.textContent : '') ?? '').trim();
+      if (!/^p(04|13|14|16|18)/.test(name)) continue;
+      const r = e.getBoundingClientRect();
+      lines.push(`${name}: ${describe(e)}`);
+      for (const c of e.querySelectorAll('*')) lines.push(`   child ${describe(c)}`);
+      const y = r.y + r.height / 2;
+      for (const dx of [-2, 2, 6, 12, 20]) {
+        const x = r.right + dx;
+        lines.push(`   at right${dx >= 0 ? '+' : ''}${dx} (${x.toFixed(1)},${y.toFixed(1)}): ${describe(document.elementFromPoint(x, y))}`);
+      }
+      const cx = r.x + r.width / 2;
+      for (const dy of [-2, 2]) {
+        const yy = r.bottom + dy;
+        lines.push(`   at bottom${dy >= 0 ? '+' : ''}${dy} (${cx.toFixed(1)},${yy.toFixed(1)}): ${describe(document.elementFromPoint(cx, yy))}`);
+      }
+    }
+    for (const a of document.querySelectorAll('flt-semantics a')) lines.push(`link: ${describe(a)} parent ${describe(a.parentElement)}`);
+    return lines;
+  });
+  for (const l of out) console.log(l);
+});

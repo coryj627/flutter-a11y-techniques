@@ -1,0 +1,127 @@
+== android scale 1.0: dpr=3.0 size=430.0x932.0 scale=1.0 textScaler=SystemTextScaler (no scaling) platform=android tapTargetSize=padded density=VisualDensity#9887c(h: 0.0, v: 0.0)
+p01 lay=48.0x48.0 vis=24.0x24.0 shp=40.0x40.0 sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p02 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p03 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x40.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p04 lay=48.0x48.0 vis=18.0x18.0 shp=18.0x18.0 sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p05 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p06 lay=66.3x48.0 vis=42.3x20.0 shp=66.3x40.0 sem=66.3x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p07 lay=42.3x20.0 vis=42.3x20.0 shp=42.3x20.0 sem=42.3x20.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p08 lay=48.0x48.0 vis=- shp=48.0x48.0 sem=48.0x48.0 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p09 lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p10 lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p11 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p12 lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p13 lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p14 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p15 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p16 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p17 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p18 lay=199.5x20.0 vis=199.5x20.0 shp=- sem=109.0x23.0 semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p19 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p20 lay=90.3x48.0 vis=42.3x20.0 shp=90.3x40.0 sem=90.3x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+== android scale 2.0: dpr=3.0 size=430.0x932.0 scale=2.0 textScaler=linear (2.0x) platform=android tapTargetSize=padded density=VisualDensity#9887c(h: 0.0, v: 0.0)
+p01 lay=48.0x48.0 vis=24.0x24.0 shp=40.0x40.0 sem=48.0x48.0 
+p02 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 
+p03 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x40.0 
+p04 lay=48.0x48.0 vis=18.0x18.0 shp=18.0x18.0 sem=48.0x48.0 
+p05 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p06 lay=100.3x48.0 vis=84.3x40.0 shp=100.3x40.0 sem=100.3x48.0 
+p07 lay=84.3x40.0 vis=84.3x40.0 shp=84.3x40.0 sem=84.3x40.0 
+p08 lay=48.0x48.0 vis=- shp=48.0x48.0 sem=48.0x48.0 
+p09 lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 
+p10 lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 
+p11 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p12 lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 
+p13 lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 
+p14 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p15 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p16 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p17 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p18 lay=395.5x40.0 vis=395.5x40.0 shp=- sem=207.0x37.0 
+p19 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p20 lay=108.3x48.0 vis=84.3x40.0 shp=108.3x40.0 sem=108.3x48.0 
+== iOS scale 1.0: dpr=3.0 size=430.0x932.0 scale=1.0 textScaler=SystemTextScaler (no scaling) platform=iOS tapTargetSize=padded density=VisualDensity#9887c(h: 0.0, v: 0.0)
+p01 lay=48.0x48.0 vis=24.0x24.0 shp=40.0x40.0 sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p02 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p03 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x40.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p04 lay=48.0x48.0 vis=18.0x18.0 shp=18.0x18.0 sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p05 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p06 lay=66.3x48.0 vis=42.3x20.0 shp=66.3x40.0 sem=66.3x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p07 lay=42.3x20.0 vis=42.3x20.0 shp=42.3x20.0 sem=42.3x20.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p08 lay=48.0x48.0 vis=- shp=48.0x48.0 sem=48.0x48.0 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p09 lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p10 lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p11 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p12 lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p13 lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p14 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p15 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p16 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p17 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p18 lay=199.5x20.0 vis=199.5x20.0 shp=- sem=109.0x23.0 semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p19 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p20 lay=90.3x48.0 vis=42.3x20.0 shp=90.3x40.0 sem=90.3x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+== iOS scale 2.0: dpr=3.0 size=430.0x932.0 scale=2.0 textScaler=linear (2.0x) platform=iOS tapTargetSize=padded density=VisualDensity#9887c(h: 0.0, v: 0.0)
+p01 lay=48.0x48.0 vis=24.0x24.0 shp=40.0x40.0 sem=48.0x48.0 
+p02 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 
+p03 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x40.0 
+p04 lay=48.0x48.0 vis=18.0x18.0 shp=18.0x18.0 sem=48.0x48.0 
+p05 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p06 lay=100.3x48.0 vis=84.3x40.0 shp=100.3x40.0 sem=100.3x48.0 
+p07 lay=84.3x40.0 vis=84.3x40.0 shp=84.3x40.0 sem=84.3x40.0 
+p08 lay=48.0x48.0 vis=- shp=48.0x48.0 sem=48.0x48.0 
+p09 lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 
+p10 lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 
+p11 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p12 lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 
+p13 lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 
+p14 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p15 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p16 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p17 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p18 lay=395.5x40.0 vis=395.5x40.0 shp=- sem=207.0x37.0 
+p19 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p20 lay=108.3x48.0 vis=84.3x40.0 shp=108.3x40.0 sem=108.3x48.0 
+== macOS scale 1.0: dpr=3.0 size=430.0x932.0 scale=1.0 textScaler=SystemTextScaler (no scaling) platform=macOS tapTargetSize=shrinkWrap density=VisualDensity#67914(h: -2.0, v: -2.0)(horizontal: -2.0, vertical: -2.0)
+p01 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p02 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p03 lay=40.0x32.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x32.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p04 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p05 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p06 lay=66.3x32.0 vis=42.3x20.0 shp=66.3x32.0 sem=66.3x32.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p07 lay=42.3x20.0 vis=42.3x20.0 shp=42.3x20.0 sem=42.3x20.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p08 lay=40.0x40.0 vis=- shp=40.0x40.0 sem=40.0x40.0 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p09 lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p10 lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p11 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p12 lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p13 lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p14 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p15 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p16 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p17 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p18 lay=199.5x20.0 vis=199.5x20.0 shp=- sem=109.0x23.0 semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p19 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p20 lay=90.3x32.0 vis=42.3x20.0 shp=90.3x32.0 sem=90.3x32.0 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+== macOS scale 2.0: dpr=3.0 size=430.0x932.0 scale=2.0 textScaler=linear (2.0x) platform=macOS tapTargetSize=shrinkWrap density=VisualDensity#67914(h: -2.0, v: -2.0)(horizontal: -2.0, vertical: -2.0)
+p01 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 
+p02 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 
+p03 lay=40.0x32.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x32.0 
+p04 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p05 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p06 lay=100.3x40.0 vis=84.3x40.0 shp=100.3x40.0 sem=100.3x40.0 
+p07 lay=84.3x40.0 vis=84.3x40.0 shp=84.3x40.0 sem=84.3x40.0 
+p08 lay=40.0x40.0 vis=- shp=40.0x40.0 sem=40.0x40.0 
+p09 lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 
+p10 lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 
+p11 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p12 lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 
+p13 lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 
+p14 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p15 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p16 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p17 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 
+p18 lay=395.5x40.0 vis=395.5x40.0 shp=- sem=207.0x37.0 
+p19 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 
+p20 lay=108.3x40.0 vis=84.3x40.0 shp=108.3x40.0 sem=108.3x40.0 
+00:03 +6: All tests passed!

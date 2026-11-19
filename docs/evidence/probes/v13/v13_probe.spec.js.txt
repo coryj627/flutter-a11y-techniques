@@ -1,0 +1,160 @@
+// Throwaway: V13 probe on the web. Not committed; kept as
+// docs/evidence/probes/v13/v13_probe.spec.js.txt. Reads Flutter's own
+// geometry from the probe's "geo" element, each fixture's element box as the
+// browser lays it out (CSS pixels) and its node in Chromium's accessibility
+// tree, and clicks at points 2 CSS pixels inside and outside the right and
+// bottom edges of what is painted (vis), the button's shape (shp), and the
+// node (sem), each followed by a click at the fixture's centre, the positive
+// control. Then the same page as a phone browser (Pixel 7 user agent and
+// touch), where Flutter's platform is Android.
+import { test, devices } from '@playwright/test';
+
+const byId = (page, x) => page.locator(`[flt-semantics-identifier="${x}"]`);
+
+async function start(page) {
+  await page.goto('about:blank');
+  await page.goto('/');
+  await byId(page, 'geo').waitFor();
+  await page.waitForTimeout(1500);
+}
+
+async function geo(page) {
+  const text = (await byId(page, 'geo').textContent()) ?? '';
+  const parts = text.split(' | ');
+  const fixtures = {};
+  for (const part of parts.slice(1)) {
+    const words = part.split(' ');
+    const rects = {};
+    for (const w of words.slice(1)) {
+      const [k, v] = w.split('=');
+      if (v === '-') continue;
+      const [x, y, wd, ht] = v.split(',').map(Number);
+      rects[k] = { x, y, r: x + wd, b: y + ht };
+    }
+    fixtures[words[0]] = rects;
+  }
+  return { header: parts[0], fixtures };
+}
+
+async function elements(page) {
+  return page.evaluate(() => {
+    const out = {};
+    for (const e of document.querySelectorAll('flt-semantics')) {
+      const name = e.getAttribute('aria-label') ?? (e.childElementCount === 0 ? e.textContent : '') ?? '';
+      const m = /^(p\d\d)/.exec(name.trim());
+      if (!m || out[m[1]]) continue;
+      const r = e.getBoundingClientRect();
+      out[m[1]] = {
+        box: `${r.x.toFixed(1)},${r.y.toFixed(1)},${r.width.toFixed(1)}x${r.height.toFixed(1)}`,
+        tag: e.tagName.toLowerCase(),
+        role: e.getAttribute('role'),
+        name,
+      };
+    }
+    // Links and other elements Flutter renders inside flt-semantics.
+    for (const e of document.querySelectorAll('flt-semantics a, flt-semantics span')) {
+      const m = /^(p\d\d)/.exec((e.textContent ?? '').trim());
+      if (!m || out[`${m[1]}-inner`]) continue;
+      const r = e.getBoundingClientRect();
+      out[`${m[1]}-inner`] = { box: `${r.x.toFixed(1)},${r.y.toFixed(1)},${r.width.toFixed(1)}x${r.height.toFixed(1)}`, tag: e.tagName.toLowerCase(), role: e.getAttribute('role'), name: e.textContent };
+    }
+    return out;
+  });
+}
+
+async function logCount(page) {
+  const text = (await byId(page, 'log').textContent()) ?? '';
+  const m = /Log\((\d+)\):\s*(.*)$/.exec(text);
+  return m ? { n: Number(m[1]), entries: m[2].trim().split(/\s+/).filter(Boolean) } : { n: -1, entries: [] };
+}
+
+async function axNodes(page) {
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  await cdp.detach();
+  const out = {};
+  for (const n of nodes) {
+    const name = n.name?.value ?? '';
+    const m = /^(p\d\d)/.exec(name);
+    if (m && !out[m[1]]) out[m[1]] = `${n.role?.value} "${name}"`;
+  }
+  return out;
+}
+
+const fmt = (r) => `${(r.r - r.x).toFixed(1)}x${(r.b - r.y).toFixed(1)}`;
+
+async function report(page, label) {
+  const { header, fixtures } = await geo(page);
+  const els = await elements(page);
+  const ax = await axNodes(page);
+  console.log(`== ${label}: ${header}`);
+  console.log(`window.devicePixelRatio=${await page.evaluate(() => window.devicePixelRatio)} viewport=${JSON.stringify(page.viewportSize())}`);
+  for (const [id, rects] of Object.entries(fixtures)) {
+    const sizes = ['lay', 'vis', 'shp', 'sem'].map((k) => `${k}=${rects[k] ? fmt(rects[k]) : '-'}`).join(' ');
+    const e = els[id];
+    const inner = els[`${id}-inner`];
+    const s = rects.sem;
+    console.log(`${id} flutter ${sizes} sem at ${s.x.toFixed(1)},${s.y.toFixed(1)} | web ${e ? `<${e.tag} role=${e.role}> box=${e.box}` : 'no element'}${inner ? ` inner <${inner.tag}> box=${inner.box}` : ''} | ax ${ax[id] ?? '-'}`);
+  }
+  return fixtures;
+}
+
+async function taps(page, fixtures, tap) {
+  for (const [id, rects] of Object.entries(fixtures)) {
+    const sem = rects.sem;
+    const vis = rects.vis ?? rects.shp;
+    const centre = [(sem.x + sem.r) / 2, (sem.y + sem.b) / 2];
+    const cx = id === 'p18' ? centre[0] : (vis.x + vis.r) / 2;
+    const cy = id === 'p18' ? centre[1] : (vis.y + vis.b) / 2;
+    const results = [];
+    for (const k of ['vis', 'shp', 'sem']) {
+      const e = rects[k];
+      if (!e || (id === 'p18' && k === 'vis')) continue;
+      for (const [name, [px, py]] of [['R-2', [e.r - 2, cy]], ['R+2', [e.r + 2, cy]], ['B-2', [cx, e.b - 2]], ['B+2', [cx, e.b + 2]]]) {
+        const before = (await logCount(page)).n;
+        await tap(px, py);
+        await page.waitForTimeout(400);
+        await tap(centre[0], centre[1]);
+        let after = await logCount(page);
+        for (let i = 0; i < 20 && after.n <= before; i++) {
+          await page.waitForTimeout(100);
+          after = await logCount(page);
+        }
+        await page.waitForTimeout(200);
+        after = await logCount(page);
+        const added = after.n - before;
+        const last = after.entries.slice(-Math.max(0, Math.min(added, 3)));
+        const control = last[last.length - 1] === id;
+        const first = control ? last.slice(0, -1) : last;
+        const what = first.length === 0 ? 'miss' : first.join(',') === id ? 'HIT' : `HIT:${first.join(',')}`;
+        results.push(`${k}${name}=${what}${control ? '' : `(control FAILED ${last.join(',')})`}`);
+      }
+    }
+    console.log(`TAPS ${id} ${results.join(' ')}`);
+  }
+}
+
+test.describe('desktop Chromium', () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+  test('geometry, tree, and clicks', async ({ page }) => {
+    test.setTimeout(600_000);
+    await start(page);
+    const fixtures = await report(page, 'desktop Chromium on macOS');
+    await taps(page, fixtures, (x, y) => page.mouse.click(x, y));
+    // 200%: the probe's own linear text scale.
+    await page.getByRole('button', { name: /Scale/ }).click();
+    await page.waitForTimeout(1500);
+    await report(page, 'desktop Chromium, probe text scale 2');
+  });
+});
+
+test.describe('phone browser', () => {
+  const { defaultBrowserType, ...pixel } = devices['Pixel 7'];
+  test.use(pixel);
+  test('geometry, tree, and touches', async ({ page }) => {
+    test.setTimeout(600_000);
+    await start(page);
+    const fixtures = await report(page, 'Chromium as a Pixel 7 (Android user agent, touch)');
+    await taps(page, fixtures, (x, y) => page.touchscreen.tap(x, y));
+  });
+});

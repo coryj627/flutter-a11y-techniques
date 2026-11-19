@@ -1,0 +1,301 @@
+// V13 probe (throwaway, not committed; kept as
+// docs/evidence/probes/v13/probe.dart.txt): how big the tappable area of a
+// control is, and what each platform's accessibility tree says it is.
+//
+// Every fixture sits alone in the middle of a 104 by 104 cell, with nothing
+// tappable around it, so a tap that misses it hits nothing. Its label
+// starts with its id. Each activation prints "V13PROBE TAP pNN" and is
+// added to the log at the top. After every frame the probe works out, in
+// logical pixels from the top left of the Flutter view, for each fixture:
+//
+// - lay: the box the fixture takes in the layout (its root render box)
+// - vis: what is painted that the eye sees as the control: the icon or the
+//   text
+// - shp: the button's own shape where it has one (the inner Material of a
+//   Material button, the painted area of a Checkbox, the DecoratedBox of a
+//   CupertinoButton)
+// - sem: the rect of the fixture's semantics node, through every transform,
+//   as androidTapTargetGuideline reads it
+//
+// and prints it ("V13PROBE GEO ...") and shows it in the "geo" text, which
+// the device probes read.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatefulWidget {
+  const ProbeApp({super.key});
+
+  @override
+  State<ProbeApp> createState() => _ProbeAppState();
+}
+
+class _ProbeAppState extends State<ProbeApp> {
+  double _scale = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: Builder(
+        // Scale 1 leaves the platform's text size alone, so the device's
+        // own font size setting shows; scale 2 is a linear 200%.
+        builder: (context) => MediaQuery(
+          data: _scale == 1
+              ? MediaQuery.of(context)
+              : MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(_scale)),
+          child: ProbeScreen(
+            scale: _scale,
+            onScale: () => setState(() => _scale = _scale == 1 ? 2 : 1),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key, required this.scale, required this.onScale});
+
+  final double scale;
+  final VoidCallback onScale;
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+const _ids = [
+  'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10', //
+  'p11', 'p12', 'p13', 'p14', 'p15', 'p16', 'p17', 'p18', 'p19', 'p20',
+];
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  final List<String> _log = [];
+  final Map<String, GlobalKey> _keys = {for (final id in _ids) id: GlobalKey()};
+  final Map<String, bool> _checks = {'p08': false, 'p09': false};
+  String _geo = '';
+  late final TapGestureRecognizer _link = TapGestureRecognizer()
+    ..onTap = () => _hit('p18');
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(_measure);
+  }
+
+  @override
+  void dispose() {
+    _link.dispose();
+    super.dispose();
+  }
+
+  void _hit(String id) {
+    debugPrint('V13PROBE TAP $id');
+    setState(() => _log.add(id));
+  }
+
+  String _r(Rect? r) => r == null
+      ? '-'
+      : '${r.left.toStringAsFixed(1)},${r.top.toStringAsFixed(1)},'
+            '${r.width.toStringAsFixed(1)},${r.height.toStringAsFixed(1)}';
+
+  Rect? _rectOf(RenderObject? o) {
+    if (o is! RenderBox || !o.hasSize) return null;
+    return o.localToGlobal(Offset.zero) & o.size;
+  }
+
+  /// The first descendant element of [root] whose widget [match] accepts.
+  Element? _find(Element root, bool Function(Widget) match) {
+    Element? found;
+    void visit(Element e) {
+      if (found != null) return;
+      if (match(e.widget)) {
+        found = e;
+        return;
+      }
+      e.visitChildElements(visit);
+    }
+
+    root.visitChildElements(visit);
+    return found;
+  }
+
+  /// The rect of the topmost semantics node whose label or tooltip starts
+  /// with [id], through every transform, in logical pixels.
+  Rect? _semRect(String id) {
+    final view = WidgetsBinding.instance.renderViews.first;
+    final root = view.owner?.semanticsOwner?.rootSemanticsNode;
+    if (root == null) return null;
+    Rect? found;
+    void visit(SemanticsNode node) {
+      if (found != null) return;
+      final data = node.getSemanticsData();
+      if (!node.isMergedIntoParent &&
+          (data.label.startsWith(id) || data.tooltip.startsWith(id))) {
+        var rect = node.rect;
+        SemanticsNode? current = node;
+        while (current != null) {
+          final t = current.transform;
+          if (t != null) rect = MatrixUtils.transformRect(t, rect);
+          current = current.parent;
+        }
+        final d = view.flutterView.devicePixelRatio;
+        found = Rect.fromLTRB(
+          rect.left / d,
+          rect.top / d,
+          rect.right / d,
+          rect.bottom / d,
+        );
+        return;
+      }
+      node.visitChildren((c) {
+        visit(c);
+        return found == null;
+      });
+    }
+
+    visit(root);
+    return found;
+  }
+
+  void _measure(Duration _) {
+    if (!mounted) return;
+    final lines = <String>[];
+    final mq = MediaQuery.of(context);
+    lines.add(
+      'dpr=${View.of(context).devicePixelRatio} '
+      'size=${mq.size.width.toStringAsFixed(1)}x${mq.size.height.toStringAsFixed(1)} '
+      'scale=${widget.scale} textScaler=${mq.textScaler} platform=${Theme.of(context).platform.name} '
+      'tapTargetSize=${Theme.of(context).materialTapTargetSize.name} '
+      'density=${Theme.of(context).visualDensity}',
+    );
+    for (final id in _ids) {
+      final ctx = _keys[id]!.currentContext;
+      if (ctx == null) continue;
+      final element = ctx as Element;
+      final lay = _rectOf(ctx.findRenderObject());
+      final vis = _find(element, (w) => w is Icon || w is RichText);
+      final shp = _find(
+        element,
+        (w) =>
+            w is Material ||
+            (w is CustomPaint && w.painter != null) ||
+            (w is DecoratedBox &&
+                w.decoration is ShapeDecoration &&
+                id.compareTo('p10') >= 0 &&
+                id.compareTo('p12') <= 0),
+      );
+      lines.add(
+        '$id lay=${_r(lay)} vis=${_r(_rectOf(vis?.findRenderObject()))} '
+        'shp=${_r(_rectOf(shp?.findRenderObject()))} sem=${_r(_semRect(id))}',
+      );
+    }
+    final geo = lines.join(' | ');
+    if (geo != _geo) {
+      for (final l in lines) {
+        debugPrint('V13PROBE GEO $l');
+      }
+      setState(() => _geo = geo);
+    }
+    WidgetsBinding.instance.addPostFrameCallback(_measure);
+  }
+
+  Widget _cell(String id, Widget child) => ConstrainedBox(
+    constraints: const BoxConstraints(minWidth: 104, minHeight: 104),
+    child: Center(
+      widthFactor: 1,
+      heightFactor: 1,
+      child: KeyedSubtree(key: _keys[id], child: child),
+    ),
+  );
+
+  Icon _icon(String id, {double? size}) =>
+      Icon(Icons.add, semanticLabel: id, size: size);
+
+  @override
+  Widget build(BuildContext context) {
+    final shrink = IconButton.styleFrom(
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  OutlinedButton(
+                    onPressed: widget.onScale,
+                    child: Text('Scale ${widget.scale}'),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Semantics(
+                      identifier: 'log',
+                      child: Text(
+                        'Log(${_log.length}): ${_log.reversed.take(3).toList().reversed.join(' ')}',
+                        maxLines: 1,
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Semantics(
+                identifier: 'geo',
+                child: Text(
+                  _geo,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 6),
+                ),
+              ),
+              Wrap(
+                children: [
+                  // Material icon buttons.
+                  _cell('p01', IconButton(icon: _icon('p01'), onPressed: () => _hit('p01'))),
+                  _cell('p02', IconButton(style: shrink, icon: _icon('p02'), onPressed: () => _hit('p02'))),
+                  _cell('p03', IconButton(visualDensity: VisualDensity.compact, icon: _icon('p03'), onPressed: () => _hit('p03'))),
+                  _cell('p04', IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), iconSize: 18, icon: _icon('p04'), onPressed: () => _hit('p04'))),
+                  _cell('p05', IconButton(style: shrink, padding: EdgeInsets.zero, constraints: const BoxConstraints(), iconSize: 18, icon: _icon('p05'), onPressed: () => _hit('p05'))),
+                  // Material text buttons.
+                  _cell('p06', TextButton(onPressed: () => _hit('p06'), child: const Text('p06'))),
+                  _cell('p07', TextButton(style: TextButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap, minimumSize: Size.zero, padding: EdgeInsets.zero, visualDensity: VisualDensity.compact), onPressed: () => _hit('p07'), child: const Text('p07'))),
+                  // Material checkboxes.
+                  _cell('p08', Checkbox(semanticLabel: 'p08', value: _checks['p08'], onChanged: (v) { _checks['p08'] = v!; _hit('p08'); })),
+                  _cell('p09', Checkbox(semanticLabel: 'p09', materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, visualDensity: VisualDensity.compact, value: _checks['p09'], onChanged: (v) { _checks['p09'] = v!; _hit('p09'); })),
+                  // Cupertino buttons.
+                  _cell('p10', CupertinoButton(onPressed: () => _hit('p10'), child: const Icon(CupertinoIcons.add, semanticLabel: 'p10'))),
+                  _cell('p11', CupertinoButton(padding: EdgeInsets.zero, minimumSize: const Size(18, 18), onPressed: () => _hit('p11'), child: const Icon(CupertinoIcons.add, size: 18, semanticLabel: 'p11'))),
+                  _cell('p12', CupertinoButton(sizeStyle: CupertinoButtonSize.small, onPressed: () => _hit('p12'), child: const Icon(CupertinoIcons.add, semanticLabel: 'p12'))),
+                  // Hand-made controls.
+                  _cell('p13', Semantics(button: true, child: GestureDetector(onTap: () => _hit('p13'), child: _icon('p13', size: 18)))),
+                  _cell('p14', Semantics(button: true, child: Padding(padding: const EdgeInsets.all(15), child: GestureDetector(onTap: () => _hit('p14'), child: _icon('p14', size: 18))))),
+                  _cell('p15', Semantics(button: true, child: GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _hit('p15'), child: SizedBox(width: 48, height: 48, child: Center(child: _icon('p15', size: 18)))))),
+                  _cell('p16', Semantics(button: true, child: GestureDetector(onTap: () => _hit('p16'), child: SizedBox(width: 48, height: 48, child: Center(child: _icon('p16', size: 18)))))),
+                  _cell('p17', Material(type: MaterialType.transparency, child: InkWell(onTap: () => _hit('p17'), child: _icon('p17', size: 18)))),
+                  // An inline link.
+                  _cell('p18', Text.rich(TextSpan(text: 'Go ', children: [TextSpan(text: 'p18link', style: const TextStyle(decoration: TextDecoration.underline), recognizer: _link), const TextSpan(text: ' now')]))),
+                  // The hit area of a GestureDetector with padding inside it.
+                  _cell('p19', Semantics(button: true, child: GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _hit('p19'), child: Padding(padding: const EdgeInsets.all(15), child: _icon('p19', size: 18))))),
+                  // A ListTile-sized row is not needed; a plain ElevatedButton for comparison.
+                  _cell('p20', ElevatedButton(onPressed: () => _hit('p20'), child: const Text('p20'))),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

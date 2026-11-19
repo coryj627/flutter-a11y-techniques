@@ -1,0 +1,32 @@
+npm notice run npx
+npm notice run 'playwright' test -c v13probe.config.js v13_probe3
+Running 2 tests using 1 worker
+== Pixel 7 with navigator.platform "Linux armv8l": dpr=2.625 size=412.0x839.0 scale=1 textScaler=SystemTextScaler (no scaling) platform=android tapTargetSize=padded density=<optimized out>#fae4b(h: 0.0, v: 0.0)
+p01 lay=48.0x48.0 vis=24.0x24.0 shp=40.0x40.0 sem=48.0x48.0
+p02 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0
+p03 lay=40.0x40.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x40.0
+p04 lay=48.0x48.0 vis=18.0x18.0 shp=18.0x18.0 sem=48.0x48.0
+p05 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0
+p06 lay=64.0x48.0 vis=23.9x20.0 shp=64.0x40.0 sem=64.0x48.0
+p07 lay=23.9x20.0 vis=23.9x20.0 shp=23.9x20.0 sem=23.9x20.0
+p08 lay=48.0x48.0 vis=- shp=48.0x48.0 sem=48.0x48.0
+p09 lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0
+p10 lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4
+p11 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0
+p12 lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0
+p13 lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0
+p14 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0
+p15 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0
+p16 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0
+p17 lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0
+p18 lay=99.4x20.0 vis=99.4x20.0 shp=- sem=56.0x26.0
+p19 lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0
+p20 lay=71.9x48.0 vis=23.9x20.0 shp=71.9x40.0 sem=71.9x48.0
+phone platform, mouse click: activations from one tap at each centre: p01+1 p02+1 p03+1 p04+1 p05+1 p06+1 p07+1 p08+1 p09+1 p10+1 p11+1 p12+1 p13+1 p14+1 p15+1 p16+1 p17+1 p18+1 p19+1 p20+1
+phone platform, touch tap: activations from one tap at each centre: p01+1 p02+1 p03+1 p04+1 p05+1 p06+1 p07+1 p08+1 p09+1 p10+1 p11+1 p12+1 p13+1 p14+1 p15+1 p16+1 p17+1 p18+1 p19+1 p20+1
+  ✓  1 v13_probe3.spec.js:70:3 › phone platform › geometry and clicks (38.5s)
+== Pixel 7, navigator.platform "MacIntel": dpr=2.625 size=412.0x839.0 scale=1 textScaler=SystemTextScaler (no scaling) platform=macOS tapTargetSize=shrinkWrap density=<optimized out>#8d84b(h: -2.0, v: -2.0)
+desktop platform, touch tap: activations from one tap at each centre: p01+1 p02+1 p03+1 p04+1 p05+1 p06+1 p07+1 p08+1 p09+1 p10+1 p11+1 p12+1 p13+1 p14+1 p15+1 p16+1 p17+1 p18+1 p19+1 p20+1
+desktop platform, mouse click: activations from one tap at each centre: p01+1 p02+1 p03+1 p04+1 p05+1 p06+1 p07+1 p08+1 p09+1 p10+1 p11+1 p12+1 p13+1 p14+1 p15+1 p16+1 p17+1 p18+1 p19+1 p20+1
+  ✓  2 v13_probe3.spec.js:85:3 › desktop platform with touch › one touch at each centre (38.4s)
+  2 passed (1.3m)

@@ -1,0 +1,12 @@
+#!/bin/sh
+# V13 probe on iOS, under tool/with_devices.py. Run from the worktree root,
+# after `fvm flutter build ios --simulator --debug -t lib/probe.dart` and
+# `xcodebuild build-for-testing` into build/ios_uitest.
+xcrun simctl list devices booted | grep -i "iphone"
+cd ios || exit 1
+xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+  -destination "platform=iOS Simulator,name=iPhone 17" \
+  -only-testing:"RunnerUITests/V13ProbeUITests/testGeometryAndTaps" \
+  -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "V13PROBE|error:|passed|failed" | grep -v "Test Suite"
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

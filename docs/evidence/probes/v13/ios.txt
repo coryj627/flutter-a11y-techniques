@@ -1,0 +1,45 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+2026-11-19 05:23:49.585 xcodebuild[3012:19805491] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V13PROBE == dpr=3.0 size=402.0x874.0 scale=1.0 textScaler=SystemTextScaler (no scaling) platform=iOS tapTargetSize=padded density=VisualDensity#c7ecf(h: 0.0, v: 0.0)
+V13PROBE window frame (0.0, 0.0, 402.0, 874.0)
+V13PROBE p01 flutter lay=48.0x48.0 vis=24.0x24.0 shp=40.0x40.0 sem=48.0x48.0 at 28.0,147.0 | ios frame=28.0,147.0,48.0x48.0pt type=9 label=p01
+V13PROBE p02 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 at 136.0,151.0 | ios frame=136.0,151.0,40.0x40.0pt type=9 label=p02
+V13PROBE p03 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x40.0 at 240.0,151.0 | ios frame=240.0,151.0,40.0x40.0pt type=9 label=p03
+V13PROBE p04 flutter lay=48.0x48.0 vis=18.0x18.0 shp=18.0x18.0 sem=48.0x48.0 at 28.0,251.0 | ios frame=28.0,251.0,48.0x48.0pt type=9 label=p04
+V13PROBE p05 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 at 147.0,266.0 | ios frame=147.0,266.0,18.0x18.0pt type=9 label=p05
+V13PROBE p06 flutter lay=64.0x48.0 vis=27.2x20.0 shp=64.0x40.0 sem=64.0x48.0 at 228.0,251.0 | ios frame=228.0,251.0,64.0x48.0pt type=9 label=p06
+V13PROBE p07 flutter lay=26.0x20.0 vis=26.0x20.0 shp=26.0x20.0 sem=26.0x20.0 at 39.0,369.0 | ios frame=39.0,369.0,26.0x20.0pt type=9 label=p07
+V13PROBE p08 flutter lay=48.0x48.0 vis=- shp=48.0x48.0 sem=48.0x48.0 at 132.0,355.0 | ios frame=132.0,355.0,48.0x48.0pt type=40 label=p08
+V13PROBE p09 flutter lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 at 244.0,363.0 | ios frame=244.0,363.0,32.0x32.0pt type=40 label=p09
+V13PROBE p10 flutter lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 at 21.8,456.8 | ios frame=21.8,456.8,60.4x52.4pt type=9 label=p10
+V13PROBE p11 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 at 147.0,474.0 | ios frame=147.0,474.0,18.0x18.0pt type=9 label=p11
+V13PROBE p12 flutter lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 at 239.0,468.0 | ios frame=239.0,468.0,42.0x30.0pt type=9 label=p12
+V13PROBE p13 flutter lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 at 43.0,578.0 | ios frame=43.0,578.0,18.0x18.0pt type=9 label=p13
+V13PROBE p14 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 at 132.0,563.0 | ios frame=132.0,563.0,48.0x48.0pt type=9 label=p14
+V13PROBE p15 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 at 236.0,563.0 | ios frame=236.0,563.0,48.0x48.0pt type=9 label=p15
+V13PROBE p16 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 at 28.0,667.0 | ios frame=28.0,667.0,48.0x48.0pt type=9 label=p16
+V13PROBE p17 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 at 147.0,682.0 | ios frame=147.0,682.0,18.0x18.0pt type=48 label=p17
+V13PROBE p18 flutter lay=103.5x20.0 vis=103.5x20.0 shp=- sem=57.0x26.0 at 227.2,678.0 | ios frame=227.2,678.0,57.0x26.0pt type=42 label=p18link
+V13PROBE p19 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 at 28.0,771.0 | ios frame=28.0,771.0,48.0x48.0pt type=9 label=p19
+V13PROBE p20 flutter lay=74.7x48.0 vis=26.7x20.0 shp=74.7x40.0 sem=74.7x48.0 at 118.6,771.0 | ios frame=118.6,771.0,74.7x48.0pt type=9 label=p20
+V13PROBE TAPS p01 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p02 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p03 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p04 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p05 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p06 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p07 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p08 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p09 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p10 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p11 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p12 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p13 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p14 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+V13PROBE TAPS p15 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p16 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+V13PROBE TAPS p17 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p18 semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+V13PROBE TAPS p19 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+V13PROBE TAPS p20 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+Test Case '-[RunnerUITests.V13ProbeUITests testGeometryAndTaps]' passed (297.661 seconds).

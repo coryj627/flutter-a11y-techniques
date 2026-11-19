@@ -1,0 +1,72 @@
+sdk_gphone16k_arm64 Android 17 API 37
+wm size: Physical size: 1080x2424
+wm density: Physical density: 420
+font_scale before: 1.0
+Success
+== font scale 1: dpr=2.625 size=411.4x923.4 scale=1.0 textScaler=SystemTextScaler (no scaling) platform=android tapTargetSize=padded density=VisualDensity#5d599(h: 0.0, v: 0.0)
+view offset on screen: 0.5,-0.1 px; density 2.625
+p01 flutter lay=48.0x48.0 vis=24.0x24.0 shp=40.0x40.0 sem=48.0x48.0 | android bounds=74,365,200,491 = 126x126px = 48.0x48.0dp (flutter sem in px (74, 365, 200, 491)) class=android.widget.Button desc='p01' clickable=true
+p02 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 | android bounds=357,376,462,481 = 105x105px = 40.0x40.0dp (flutter sem in px (358, 376, 462, 480)) class=android.widget.Button desc='p02' clickable=true
+p03 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x40.0 | android bounds=630,376,735,481 = 105x105px = 40.0x40.0dp (flutter sem in px (630, 376, 736, 480)) class=android.widget.Button desc='p03' clickable=true
+p04 flutter lay=48.0x48.0 vis=18.0x18.0 shp=18.0x18.0 sem=48.0x48.0 | android bounds=74,638,200,764 = 126x126px = 48.0x48.0dp (flutter sem in px (74, 638, 200, 764)) class=android.widget.Button desc='p04' clickable=true
+p05 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 | android bounds=386,678,433,725 = 47x47px = 17.9x17.9dp (flutter sem in px (386, 677, 434, 725)) class=android.widget.Button desc='p05' clickable=true
+p06 flutter lay=64.0x48.0 vis=24.1x20.0 shp=64.0x40.0 sem=64.0x48.0 | android bounds=599,638,767,764 = 168x126px = 64.0x48.0dp (flutter sem in px (599, 638, 767, 764)) class=android.widget.Button desc='p06' clickable=true
+p07 flutter lay=24.1x20.0 vis=24.1x20.0 shp=24.1x20.0 sem=24.1x20.0 | android bounds=105,948,168,1000 = 63x52px = 24.0x19.8dp (flutter sem in px (106, 948, 169, 1000)) class=android.widget.Button desc='p07' clickable=true
+p08 flutter lay=48.0x48.0 vis=- shp=48.0x48.0 sem=48.0x48.0 | android bounds=347,911,473,1037 = 126x126px = 48.0x48.0dp (flutter sem in px (347, 911, 473, 1037)) class=android.widget.CheckBox desc='p08' clickable=true
+p09 flutter lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 | android bounds=641,932,725,1016 = 84x84px = 32.0x32.0dp (flutter sem in px (641, 932, 725, 1016)) class=android.widget.CheckBox desc='p09' clickable=true
+p10 flutter lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 | android bounds=57,1178,216,1316 = 159x138px = 60.6x52.6dp (flutter sem in px (58, 1178, 216, 1316)) class=android.widget.Button desc='p10' clickable=true
+p11 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 | android bounds=386,1224,433,1271 = 47x47px = 17.9x17.9dp (flutter sem in px (386, 1223, 434, 1271)) class=android.widget.Button desc='p11' clickable=true
+p12 flutter lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 | android bounds=627,1208,738,1287 = 111x79px = 42.3x30.1dp (flutter sem in px (628, 1208, 738, 1286)) class=android.widget.Button desc='p12' clickable=true
+p13 flutter lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 | android bounds=113,1497,160,1544 = 47x47px = 17.9x17.9dp (flutter sem in px (113, 1496, 161, 1544)) class=android.widget.Button desc='p13' clickable=true
+p14 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 | android bounds=347,1457,473,1583 = 126x126px = 48.0x48.0dp (flutter sem in px (347, 1457, 473, 1583)) class=android.widget.Button desc='p14' clickable=true
+p15 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 | android bounds=620,1457,746,1583 = 126x126px = 48.0x48.0dp (flutter sem in px (620, 1457, 746, 1583)) class=android.widget.Button desc='p15' clickable=true
+p16 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 | android bounds=74,1730,200,1856 = 126x126px = 48.0x48.0dp (flutter sem in px (74, 1730, 200, 1856)) class=android.widget.Button desc='p16' clickable=true
+p17 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 | android bounds=386,1770,433,1817 = 47x47px = 17.9x17.9dp (flutter sem in px (386, 1769, 434, 1817)) class=android.view.View desc='p17' clickable=true
+p18 flutter lay=99.4x20.0 vis=99.4x20.0 shp=- sem=56.0x26.0 | android bounds=597,1759,744,1827 = 147x68px = 56.0x25.9dp (flutter sem in px (597, 1759, 744, 1827)) class=android.widget.Button desc='p18link' clickable=true
+p19 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 | android bounds=74,2003,200,2129 = 126x126px = 48.0x48.0dp (flutter sem in px (74, 2003, 200, 2129)) class=android.widget.Button desc='p19' clickable=true
+p20 flutter lay=72.1x48.0 vis=24.1x20.0 shp=72.1x40.0 sem=72.1x48.0 | android bounds=315,2003,504,2129 = 189x126px = 72.0x48.0dp (flutter sem in px (316, 2003, 505, 2129)) class=android.widget.Button desc='p20' clickable=true
+== taps (logical points converted to px; each followed by a tap at the centre)
+p01 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p02 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p03 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p04 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p05 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p06 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p07 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p08 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p09 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p10 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p11 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p12 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p13 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p14 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p15 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p16 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p17 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p18 semR-2=miss semR+2=miss semB-2=miss semB+2=miss
+p19 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+p20 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+== font_scale 2.0
+== device font_scale 2.0: dpr=2.625 size=411.4x923.4 scale=1.0 textScaler=SystemTextScaler (2.0x) platform=android tapTargetSize=padded density=VisualDensity#ad9aa(h: 0.0, v: 0.0)
+view offset on screen: 0.5,-0.1 px; density 2.625
+p01 flutter lay=48.0x48.0 vis=24.0x24.0 shp=40.0x40.0 sem=48.0x48.0 | android bounds=74,386,200,512 = 126x126px = 48.0x48.0dp (flutter sem in px (74, 386, 200, 512)) class=android.widget.Button desc='p01' clickable=true
+p02 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 | android bounds=357,397,462,502 = 105x105px = 40.0x40.0dp (flutter sem in px (358, 396, 462, 502)) class=android.widget.Button desc='p02' clickable=true
+p03 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x40.0 | android bounds=630,397,735,502 = 105x105px = 40.0x40.0dp (flutter sem in px (630, 396, 736, 502)) class=android.widget.Button desc='p03' clickable=true
+p04 flutter lay=48.0x48.0 vis=18.0x18.0 shp=18.0x18.0 sem=48.0x48.0 | android bounds=74,659,200,785 = 126x126px = 48.0x48.0dp (flutter sem in px (74, 659, 200, 785)) class=android.widget.Button desc='p04' clickable=true
+p05 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 | android bounds=386,699,433,746 = 47x47px = 17.9x17.9dp (flutter sem in px (386, 698, 434, 746)) class=android.widget.Button desc='p05' clickable=true
+p06 flutter lay=64.0x48.0 vis=44.5x37.0 shp=64.0x40.0 sem=64.0x48.0 | android bounds=599,659,767,785 = 168x126px = 64.0x48.0dp (flutter sem in px (599, 659, 767, 785)) class=android.widget.Button desc='p06' clickable=true
+p07 flutter lay=44.5x37.0 vis=44.5x37.0 shp=44.5x37.0 sem=44.5x37.0 | android bounds=78,947,195,1044 = 117x97px = 44.6x37.0dp (flutter sem in px (79, 946, 196, 1044)) class=android.widget.Button desc='p07' clickable=true
+p08 flutter lay=48.0x48.0 vis=- shp=48.0x48.0 sem=48.0x48.0 | android bounds=347,932,473,1058 = 126x126px = 48.0x48.0dp (flutter sem in px (347, 932, 473, 1058)) class=android.widget.CheckBox desc='p08' clickable=true
+p09 flutter lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 | android bounds=641,953,725,1037 = 84x84px = 32.0x32.0dp (flutter sem in px (641, 953, 725, 1037)) class=android.widget.CheckBox desc='p09' clickable=true
+p10 flutter lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 | android bounds=57,1199,216,1337 = 159x138px = 60.6x52.6dp (flutter sem in px (58, 1199, 216, 1337)) class=android.widget.Button desc='p10' clickable=true
+p11 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 | android bounds=386,1245,433,1292 = 47x47px = 17.9x17.9dp (flutter sem in px (386, 1244, 434, 1292)) class=android.widget.Button desc='p11' clickable=true
+p12 flutter lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 | android bounds=627,1229,738,1308 = 111x79px = 42.3x30.1dp (flutter sem in px (628, 1229, 738, 1307)) class=android.widget.Button desc='p12' clickable=true
+p13 flutter lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 | android bounds=113,1518,160,1565 = 47x47px = 17.9x17.9dp (flutter sem in px (113, 1517, 161, 1565)) class=android.widget.Button desc='p13' clickable=true
+p14 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 | android bounds=347,1478,473,1604 = 126x126px = 48.0x48.0dp (flutter sem in px (347, 1478, 473, 1604)) class=android.widget.Button desc='p14' clickable=true
+p15 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 | android bounds=620,1478,746,1604 = 126x126px = 48.0x48.0dp (flutter sem in px (620, 1478, 746, 1604)) class=android.widget.Button desc='p15' clickable=true
+p16 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 | android bounds=74,1751,200,1877 = 126x126px = 48.0x48.0dp (flutter sem in px (74, 1751, 200, 1877)) class=android.widget.Button desc='p16' clickable=true
+p17 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 | android bounds=386,1791,433,1838 = 47x47px = 17.9x17.9dp (flutter sem in px (386, 1790, 434, 1838)) class=android.view.View desc='p17' clickable=true
+p18 flutter lay=181.7x37.0 vis=181.7x37.0 shp=- sem=95.0x39.0 | android bounds=638,1763,887,1865 = 249x102px = 94.9x38.9dp (flutter sem in px (638, 1763, 888, 1865)) class=android.widget.Button desc='p18link' clickable=true
+p19 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 | android bounds=74,2024,200,2150 = 126x126px = 48.0x48.0dp (flutter sem in px (74, 2024, 200, 2150)) class=android.widget.Button desc='p19' clickable=true
+p20 flutter lay=71.9x48.0 vis=44.5x37.0 shp=71.9x40.0 sem=71.9x48.0 | android bounds=315,2024,504,2150 = 189x126px = 72.0x48.0dp (flutter sem in px (316, 2024, 504, 2150)) class=android.widget.Button desc='p20' clickable=true
+font_scale restored: 1.0

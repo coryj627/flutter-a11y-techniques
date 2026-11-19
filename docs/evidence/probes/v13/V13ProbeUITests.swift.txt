@@ -1,0 +1,104 @@
+// Throwaway: V13 probe on iOS. Not committed; kept as
+// docs/evidence/probes/v13/V13ProbeUITests.swift.txt. Reads Flutter's own
+// geometry from the probe's "geo" text, each fixture's frame as XCUITest
+// sees it (points), and taps at points 2 points inside and outside the right
+// and bottom edges of what is painted (vis), the button's shape (shp), and
+// the node (sem), each followed by a tap at the fixture's centre, the
+// positive control. Which fixture acted is read from the probe's log text.
+import XCTest
+
+final class V13ProbeUITests: XCTestCase {
+  let app = XCUIApplication()
+
+  private func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+
+  private func logCount() -> (Int, [String]) {
+    let label = el("log").label
+    guard let open = label.firstIndex(of: "("), let close = label.firstIndex(of: ")") else { return (-1, []) }
+    let n = Int(label[label.index(after: open)..<close]) ?? -1
+    let entries = label[label.index(after: close)...].dropFirst(1).split(separator: " ").map(String.init)
+    return (n, entries)
+  }
+
+  typealias R = (x: Double, y: Double, r: Double, b: Double)
+
+  private func parseGeo() -> (String, [(String, [String: R])]) {
+    let parts = el("geo").label.components(separatedBy: " | ")
+    var out: [(String, [String: R])] = []
+    for part in parts.dropFirst() {
+      let words = part.split(separator: " ").map(String.init)
+      var rects: [String: R] = [:]
+      for w in words.dropFirst() {
+        let kv = w.split(separator: "=").map(String.init)
+        if kv.count == 2, kv[1] != "-" {
+          let v = kv[1].split(separator: ",").compactMap { Double($0) }
+          rects[kv[0]] = (v[0], v[1], v[0] + v[2], v[1] + v[3])
+        }
+      }
+      out.append((words[0], rects))
+    }
+    return (parts.first ?? "", out)
+  }
+
+  private func tapAt(_ x: Double, _ y: Double) {
+    app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0)).withOffset(CGVector(dx: x, dy: y)).tap()
+  }
+
+  private func fmt(_ v: Double) -> String { String(format: "%.1f", v) }
+
+  func testGeometryAndTaps() {
+    app.launch()
+    XCTAssertTrue(el("geo").waitForExistence(timeout: 30))
+    sleep(3)
+    let (header, fixtures) = parseGeo()
+    print("V13PROBE == \(header)")
+    let window = app.windows.firstMatch.frame
+    print("V13PROBE window frame \(window)")
+    for (id, rects) in fixtures {
+      func size(_ k: String) -> String {
+        guard let r = rects[k] else { return "-" }
+        return "\(fmt(r.r - r.x))x\(fmt(r.b - r.y))"
+      }
+      let node = app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@", id)).firstMatch
+      var ios = "no element"
+      if node.exists {
+        let f = node.frame
+        ios = "frame=\(fmt(f.minX)),\(fmt(f.minY)),\(fmt(f.width))x\(fmt(f.height))pt type=\(node.elementType.rawValue) label=\(node.label)"
+      }
+      let s = rects["sem"]!
+      print("V13PROBE \(id) flutter lay=\(size("lay")) vis=\(size("vis")) shp=\(size("shp")) sem=\(size("sem")) at \(fmt(s.x)),\(fmt(s.y)) | ios \(ios)")
+    }
+    for (id, rects) in fixtures {
+      guard let sem = rects["sem"] else { continue }
+      let vis = rects["vis"] ?? rects["shp"]!
+      let centre = ((sem.x + sem.r) / 2, (sem.y + sem.b) / 2)
+      let cx = id == "p18" ? centre.0 : (vis.x + vis.r) / 2
+      let cy = id == "p18" ? centre.1 : (vis.y + vis.b) / 2
+      var results: [String] = []
+      for k in ["vis", "shp", "sem"] {
+        guard let e = rects[k], !(id == "p18" && k == "vis") else { continue }
+        for (name, p) in [("R-2", (e.r - 2, cy)), ("R+2", (e.r + 2, cy)), ("B-2", (cx, e.b - 2)), ("B+2", (cx, e.b + 2))] {
+          let (before, _) = logCount()
+          tapAt(p.0, p.1)
+          usleep(400_000)
+          tapAt(centre.0, centre.1)
+          var after = logCount()
+          let deadline = Date().addingTimeInterval(3)
+          while after.0 <= before && Date() < deadline {
+            usleep(150_000)
+            after = logCount()
+          }
+          usleep(300_000)
+          after = logCount()
+          let added = after.0 - before
+          let last = after.1.suffix(max(0, min(added, 3)))
+          let control = last.last == id
+          let first = control ? Array(last.dropLast()) : Array(last)
+          let what = first.isEmpty ? "miss" : (first == [id] ? "HIT" : "HIT:" + first.joined(separator: ","))
+          results.append("\(k)\(name)=\(what)\(control ? "" : "(control FAILED \(last))")")
+        }
+      }
+      print("V13PROBE TAPS \(id) " + results.joined(separator: " "))
+    }
+  }
+}

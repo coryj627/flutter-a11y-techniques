@@ -1,0 +1,174 @@
+"""V13 probe on Android (throwaway; kept as
+docs/evidence/probes/v13/android_probe.py.txt). Run under tool/with_devices.py
+from the worktree root, with the probe build at build/app/outputs/flutter-apk.
+
+For each fixture of lib/probe.dart: the node's bounds from uiautomator dump
+(pixels), the same in dp (divided by the density the device reports), and
+Flutter's own numbers (logical pixels, printed by the probe); then taps with
+`adb shell input tap` at points 2 logical pixels (2 x density pixels) inside
+and outside the right and bottom edges of what is painted (vis), the button's
+shape (shp), and the node (sem), each followed by a tap at the fixture's
+centre, the positive control. Which fixture acted is read from the probe's
+"V13PROBE TAP" lines in logcat. Then the same geometry with the device's
+font size at 2.0, which is put back afterwards.
+"""
+import re
+import subprocess
+import sys
+import time
+
+PKG = "dev.fluttera11y.flutter_a11y_techniques"
+APK = "build/app/outputs/flutter-apk/app-debug.apk"
+
+
+def adb(*args):
+    return subprocess.run(["adb", *args], capture_output=True, text=True).stdout
+
+
+def dump():
+    for _ in range(5):
+        out = adb("exec-out", "uiautomator", "dump", "/dev/tty")
+        if "<hierarchy" in out:
+            return out
+        time.sleep(1)
+    return ""
+
+
+def geo_lines():
+    out = adb("logcat", "-d", "-s", "flutter:I")
+    lines = [l.split("V13PROBE GEO ", 1)[1] for l in out.splitlines() if "V13PROBE GEO " in l]
+    return lines
+
+
+def parse_geo(lines):
+    """The last full set of GEO lines: header and fixtures."""
+    header_idx = max(i for i, l in enumerate(lines) if l.startswith("dpr="))
+    header = lines[header_idx]
+    fixtures = {}
+    for l in lines[header_idx + 1:]:
+        words = l.split()
+        if not re.fullmatch(r"p\d\d", words[0]):
+            continue
+        rects = {}
+        for w in words[1:]:
+            k, v = w.split("=")
+            if v != "-":
+                x, y, wd, ht = map(float, v.split(","))
+                rects[k] = (x, y, x + wd, y + ht)
+        fixtures[words[0]] = rects
+    return header, fixtures
+
+
+def nodes(xml):
+    found = {}
+    for tag in re.findall(r"<node [^>]*>", xml):
+        a = dict(re.findall(r'(\S+?)="([^"]*)"', tag))
+        desc = a.get("content-desc", "") or a.get("text", "")
+        m = re.match(r"(p\d\d)", desc)
+        if m and m.group(1) not in found:
+            x1, y1, x2, y2 = map(int, re.findall(r"\d+", a["bounds"]))
+            found[m.group(1)] = (x1, y1, x2, y2, a.get("class"), desc, a.get("clickable"))
+    return found
+
+
+def taps(fixture_rects, ox, oy, d):
+    log = []
+    for fid, rects in fixture_rects.items():
+        sem = rects.get("sem")
+        if sem is None:
+            continue
+        vis = rects.get("vis") or rects.get("shp")
+        centre = ((sem[0] + sem[2]) / 2, (sem[1] + sem[3]) / 2)
+        cx = centre[0] if fid == "p18" else (vis[0] + vis[2]) / 2
+        cy = centre[1] if fid == "p18" else (vis[1] + vis[3]) / 2
+        results = []
+        for k in ("vis", "shp", "sem"):
+            e = rects.get(k)
+            if e is None or (fid == "p18" and k == "vis"):
+                continue
+            for name, (px, py) in (("R-2", (e[2] - 2, cy)), ("R+2", (e[2] + 2, cy)),
+                                   ("B-2", (cx, e[3] - 2)), ("B+2", (cx, e[3] + 2))):
+                adb("logcat", "-c")
+                adb("shell", "input", "tap", str(round(ox + px * d)), str(round(oy + py * d)))
+                time.sleep(0.4)
+                adb("shell", "input", "tap", str(round(ox + centre[0] * d)), str(round(oy + centre[1] * d)))
+                hits = []
+                for _ in range(15):
+                    time.sleep(0.2)
+                    hits = re.findall(r"V13PROBE TAP (p\d\d)", adb("logcat", "-d", "-s", "flutter:I"))
+                    if hits and hits[-1] == fid:
+                        break
+                control = bool(hits) and hits[-1] == fid
+                first = hits[:-1] if control else hits
+                what = "miss" if not first else ("HIT" if first == [fid] else "HIT:" + ",".join(first))
+                results.append(f"{k}{name}={what}{'' if control else '(control FAILED: ' + ','.join(hits) + ')'}")
+        log.append(f"{fid} " + " ".join(results))
+    return log
+
+
+def measure(label):
+    xml = dump()
+    header, fixtures = parse_geo(geo_lines())
+    found = nodes(xml)
+    d = float(re.search(r"dpr=([\d.]+)", header).group(1))
+    print(f"== {label}: {header}")
+    # The offset of the Flutter view on the screen, from p01: its node's
+    # bounds against Flutter's own rect for it.
+    s = fixtures["p01"]["sem"]
+    b = found["p01"]
+    ox, oy = b[0] - s[0] * d, b[1] - s[1] * d
+    print(f"view offset on screen: {ox:.1f},{oy:.1f} px; density {d}")
+    for fid, rects in fixtures.items():
+        def size(k):
+            r = rects.get(k)
+            return "-" if r is None else f"{r[2] - r[0]:.1f}x{r[3] - r[1]:.1f}"
+        n = found.get(fid)
+        if n is None:
+            print(f"{fid} flutter lay={size('lay')} vis={size('vis')} shp={size('shp')} sem={size('sem')} | android: no node")
+            continue
+        w, h = n[2] - n[0], n[3] - n[1]
+        sem = rects["sem"]
+        exp = (round(ox + sem[0] * d), round(oy + sem[1] * d), round(ox + sem[2] * d), round(oy + sem[3] * d))
+        print(f"{fid} flutter lay={size('lay')} vis={size('vis')} shp={size('shp')} sem={size('sem')} | "
+              f"android bounds={n[0]},{n[1]},{n[2]},{n[3]} = {w}x{h}px = {w / d:.1f}x{h / d:.1f}dp "
+              f"(flutter sem in px {exp}) class={n[4]} desc={n[5]!r} clickable={n[6]}")
+    return fixtures, ox, oy, d
+
+
+def main():
+    print(adb("shell", "getprop", "ro.product.model").strip(), "Android",
+          adb("shell", "getprop", "ro.build.version.release").strip(),
+          "API", adb("shell", "getprop", "ro.build.version.sdk").strip())
+    print("wm size:", adb("shell", "wm", "size").strip().replace("\n", "; "))
+    print("wm density:", adb("shell", "wm", "density").strip().replace("\n", "; "))
+    font_before = adb("shell", "settings", "get", "system", "font_scale").strip()
+    print("font_scale before:", font_before)
+    print(adb("install", "-r", APK).strip().splitlines()[-1])
+    adb("logcat", "-c")
+    adb("shell", "am", "start", "-n", f"{PKG}/.MainActivity")
+    time.sleep(8)
+    fixtures, ox, oy, d = measure("font scale 1")
+    print("== taps (logical points converted to px; each followed by a tap at the centre)")
+    for line in taps(fixtures, ox, oy, d):
+        print(line)
+    print("== font_scale 2.0")
+    try:
+        adb("shell", "settings", "put", "system", "font_scale", "2.0")
+        time.sleep(4)
+        adb("logcat", "-c")
+        # Restart so the probe measures afresh.
+        adb("shell", "am", "force-stop", PKG)
+        adb("shell", "am", "start", "-n", f"{PKG}/.MainActivity")
+        time.sleep(8)
+        measure("device font_scale 2.0")
+    finally:
+        if font_before in ("null", ""):
+            adb("shell", "settings", "delete", "system", "font_scale")
+        else:
+            adb("shell", "settings", "put", "system", "font_scale", font_before)
+        print("font_scale restored:", adb("shell", "settings", "get", "system", "font_scale").strip())
+        adb("shell", "am", "force-stop", PKG)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

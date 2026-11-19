@@ -1,0 +1,16 @@
+// Throwaway: serves the V13 probe build (build/web_probe) for
+// v13_probe.spec.js. Not committed; kept as
+// docs/evidence/probes/v13/v13probe.config.js.txt.
+import { defineConfig } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = Number(process.env.V13_PORT ?? 29813);
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: /v13_probe[23]?\.spec\.js$/,
+  reporter: 'list',
+  workers: 1,
+  use: { baseURL: `http://127.0.0.1:${port}` },
+  webServer: webServer('build/web_probe', port),
+});
