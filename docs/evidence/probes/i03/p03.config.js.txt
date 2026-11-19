@@ -1,0 +1,14 @@
+// Throwaway: serves the I03 round 2 probe build (build/web_r2) for
+// p03_probe2.spec.js. Not committed.
+import { defineConfig } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = Number(process.env.P03_PORT ?? 29901);
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: /p03_probe[23]\.spec\.js$/,
+  reporter: 'list',
+  use: { baseURL: `http://127.0.0.1:${port}` },
+  webServer: webServer(process.env.P03_BUILD ?? 'build/web', port),
+});

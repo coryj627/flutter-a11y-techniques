@@ -1,0 +1,15 @@
+I03PROBE web round3 click s1 | after removing B: KF node:s1 Remove C / DOM s1 Remove C | Tab: KF node:s2 Remove A / DOM s2 Remove A
+I03PROBE web round3 click s2 | after removing B: KF node:s2 Remove C / DOM s2 Remove C | Tab: KF node:s3 Remove A / DOM s3 Remove A
+I03PROBE web round3 click s3 | after removing B: KF node:s3 Remove C / DOM s3 Remove C | Tab: KF node:s4 Remove A / DOM s4 Remove A
+I03PROBE web round3 click s4 | after removing B: KF node:s4 Remove C / DOM s4 Remove C | Tab: KF node:t Remove A / DOM t Remove A
+I03PROBE web round3 click t | after removing B: KF node:t Remove C / DOM t Remove C | Tab: KF node:u Remove A / DOM u Remove A
+I03PROBE web round3 click u | after removing B: KF node:u Remove C / DOM u Remove C | Tab: KF node:v Remove A / DOM v Remove A
+I03PROBE web round3 click v | after removing B: KF scope:s1 Remove A / DOM BackRound 3s1 Remove As1 Remov | Tab: KF node:? / DOM Back
+I03PROBE web round3 keyboard s1 | after removing B: KF node:s1 Remove C / DOM s1 Remove C | Tab: KF node:s2 Remove A / DOM s2 Remove A
+I03PROBE web round3 keyboard s2 | after removing B: KF node:s2 Remove C / DOM s2 Remove C | Tab: KF node:s3 Remove A / DOM s3 Remove A
+I03PROBE web round3 keyboard s3 | after removing B: KF node:s3 Remove C / DOM s3 Remove C | Tab: KF node:s4 Remove A / DOM s4 Remove A
+I03PROBE web round3 keyboard s4 | after removing B: KF node:s4 Remove C / DOM s4 Remove C | Tab: KF node:t Remove A / DOM t Remove A
+I03PROBE web round3 keyboard t | after removing B: KF node:t Remove C / DOM t Remove C | Tab: KF node:u Remove A / DOM u Remove A
+I03PROBE web round3 keyboard u | after removing B: KF node:u Remove C / DOM u Remove C | Tab: KF node:v Remove A / DOM v Remove A
+I03PROBE web round3 keyboard v | after removing B: KF node:v Remove A / DOM v Remove A | Tab: KF node:v Remove C / DOM v Remove C
+I03PROBE web round3 w: DOM focus() on it | KF scope:w Title / DOM w Title | Log: w focused, opening
