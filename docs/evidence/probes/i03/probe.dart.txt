@@ -1,0 +1,856 @@
+// I03 probe (throwaway, not committed; kept as
+// docs/evidence/probes/i03/probe.dart.txt): where keyboard focus and screen
+// reader focus go when a dialog, sheet, or route opens and closes, when the
+// focused control is removed, and when focus is moved from code.
+//
+// Every control's text starts with its fixture id. A status bar at the
+// bottom of the screen, outside the Navigator so that no dialog hides it
+// from the semantics tree, shows:
+//   "KF: node:p1 Close"   the node with Flutter's keyboard focus, named by
+//                         the first text under it ("scope:..." for a
+//                         FocusScopeNode with no focused child);
+//   "SR: p1 Close"        the semantics node the platform last said has
+//                         accessibility focus (the "didGainFocus" message,
+//                         Android and iOS only), named by its label;
+//   "Log: ..."            what the fixtures did;
+//   "Keys: ..."           the last keys that reached the framework.
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+final ValueNotifier<List<String>> probeLog = ValueNotifier<List<String>>([]);
+
+void log(String text) => probeLog.value = [...probeLog.value, text];
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      initialRoute: '/probe',
+      routes: {
+        '/': (_) => const Scaffold(body: Center(child: Text('Home'))),
+        '/probe': (_) => const ProbeScreen(),
+        '/round2': (_) => const Round2Screen(),
+        '/round3': (_) => const Round3Screen(),
+      },
+      // The status bar comes after the Navigator, so a modal barrier, which
+      // hides only what was painted before it, does not hide it.
+      builder: (context, child) => Column(
+        children: [
+          Expanded(child: child!),
+          const Material(child: StatusBar()),
+        ],
+      ),
+    );
+  }
+}
+
+/// The first text under [element], or a tooltip or semantics label.
+String? firstText(Element element) {
+  String? found;
+  void visit(Element e) {
+    if (found != null) return;
+    final w = e.widget;
+    if (w is Text && w.data != null) {
+      found = w.data;
+    } else if (w is Tooltip && w.message != null) {
+      found = w.message;
+    } else if (w is Semantics && w.properties.label != null) {
+      found = w.properties.label;
+    } else {
+      e.visitChildren(visit);
+    }
+  }
+
+  visit(element);
+  return found;
+}
+
+String describeFocus(FocusNode? node) {
+  if (node == null) return 'none';
+  final kind = node is FocusScopeNode ? 'scope' : 'node';
+  final ctx = node.context;
+  final text = ctx is Element ? firstText(ctx) : null;
+  return '$kind:${text ?? '?'}';
+}
+
+String? labelOfSemanticsNode(int id) {
+  String? found;
+  for (final view in WidgetsBinding.instance.renderViews) {
+    final root = view.owner?.semanticsOwner?.rootSemanticsNode;
+    if (root == null) continue;
+    bool visit(SemanticsNode n) {
+      if (n.id == id) {
+        final d = n.getSemanticsData();
+        found = d.label.isNotEmpty
+            ? d.label
+            : (d.tooltip.isNotEmpty ? d.tooltip : 'node $id');
+        return false;
+      }
+      n.visitChildren(visit);
+      return found == null;
+    }
+
+    visit(root);
+  }
+  return found;
+}
+
+class StatusBar extends StatefulWidget {
+  const StatusBar({super.key});
+
+  @override
+  State<StatusBar> createState() => _StatusBarState();
+}
+
+class _StatusBarState extends State<StatusBar> {
+  String _kf = 'none';
+  String _sr = 'none';
+  final List<String> _keys = [];
+
+  @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addListener(_focus);
+    ServicesBinding.instance.accessibilityFocus.addListener(_a11y);
+    HardwareKeyboard.instance.addHandler(_key);
+    probeLog.addListener(_changed);
+  }
+
+  @override
+  void dispose() {
+    FocusManager.instance.removeListener(_focus);
+    ServicesBinding.instance.accessibilityFocus.removeListener(_a11y);
+    HardwareKeyboard.instance.removeHandler(_key);
+    probeLog.removeListener(_changed);
+    super.dispose();
+  }
+
+  void _changed() {
+    if (mounted) setState(() {});
+  }
+
+  void _focus() {
+    final next = describeFocus(FocusManager.instance.primaryFocus);
+    if (next != _kf && mounted) setState(() => _kf = next);
+  }
+
+  void _a11y() {
+    final id = ServicesBinding.instance.accessibilityFocus.value;
+    final next = id == null ? 'none' : (labelOfSemanticsNode(id) ?? 'gone $id');
+    if (mounted) setState(() => _sr = next);
+  }
+
+  bool _key(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      final shift = HardwareKeyboard.instance.isShiftPressed ? 'shift+' : '';
+      final name = event.logicalKey.keyLabel.isEmpty
+          ? event.logicalKey.debugName ?? '?'
+          : event.logicalKey.keyLabel;
+      setState(() {
+        _keys.add('$shift$name');
+        if (_keys.length > 8) _keys.removeAt(0);
+      });
+    }
+    return false;
+  }
+
+  Widget _line(String id, String text) => Semantics(
+    identifier: id,
+    label: text,
+    container: true,
+    child: ExcludeSemantics(
+      child: Text(text, style: const TextStyle(fontSize: 11)),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    // The lines are not focusable and have no actions.
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _line('kf', 'KF: $_kf'),
+          _line('sr', 'SR: $_sr'),
+          _line('log', 'Log: ${probeLog.value.join(', ')}'),
+          _line('keys', 'Keys: ${_keys.join(' ')}'),
+        ],
+      ),
+    );
+  }
+}
+
+Widget button(String text, VoidCallback onPressed, {FocusNode? focusNode}) =>
+    Semantics(
+      identifier: text,
+      child: TextButton(
+        focusNode: focusNode,
+        onPressed: onPressed,
+        child: Text(text),
+      ),
+    );
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  bool _p10 = false;
+  bool _p11 = false;
+  bool _p12 = false;
+  final _p11Trigger = FocusNode();
+  final _p11Close = FocusNode();
+  final _p12Title = GlobalKey();
+  final _p12Trigger = GlobalKey();
+  final List<String> _p13 = ['A', 'B', 'C'];
+  final List<String> _p14 = ['A', 'B', 'C'];
+  final List<String> _p17 = ['A', 'B', 'C'];
+  final Map<String, FocusNode> _p14Nodes = {
+    for (final k in ['A', 'B', 'C']) k: FocusNode(),
+  };
+  OverlayEntry? _p9;
+
+  @override
+  void dispose() {
+    _p11Trigger.dispose();
+    _p11Close.dispose();
+    for (final n in _p14Nodes.values) {
+      n.dispose();
+    }
+    super.dispose();
+  }
+
+  void _sendFocusEvent(GlobalKey key) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      key.currentContext?.findRenderObject()?.sendSemanticsEvent(
+        const FocusSemanticEvent(),
+      );
+    });
+  }
+
+  Future<void> _p1() async {
+    log('p1 open');
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('p1 Title'),
+        content: const Text('p1 Body'),
+        actions: [
+          button('p1 Other', () {}),
+          button('p1 Close', () => Navigator.pop(context)),
+        ],
+      ),
+    );
+    log('p1 closed');
+  }
+
+  Future<void> _p2() async {
+    log('p2 open');
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('p2 Title'),
+        content: const Text('p2 Body'),
+        actions: [
+          button('p2 Cancel', () => Navigator.pop(context)),
+          Semantics(
+            identifier: 'p2 OK',
+            child: TextButton(
+              autofocus: true,
+              onPressed: () => Navigator.pop(context),
+              child: const Text('p2 OK'),
+            ),
+          ),
+        ],
+      ),
+    );
+    log('p2 closed');
+  }
+
+  Future<void> _p3() async {
+    log('p3 open');
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('p3 Sheet title'),
+            button('p3 Other', () {}),
+            button('p3 Close', () => Navigator.pop(context)),
+          ],
+        ),
+      ),
+    );
+    log('p3 closed');
+  }
+
+  Future<void> _p4() async {
+    log('p4 open');
+    await Navigator.push<void>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(title: const Text('p4 Title')),
+          body: Column(
+            children: [
+              const Text('p4 Body'),
+              button('p4 Done', () => Navigator.pop(context)),
+            ],
+          ),
+        ),
+      ),
+    );
+    log('p4 closed');
+  }
+
+  Future<void> _p5() async {
+    log('p5 open');
+    await showCupertinoDialog<void>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('p5 Title'),
+        content: const Text('p5 Body'),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () {},
+            child: const Text('p5 Other'),
+          ),
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('p5 Close'),
+          ),
+        ],
+      ),
+    );
+    log('p5 closed');
+  }
+
+  Future<void> _p6() async {
+    log('p6 open');
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: const Text('p6 Title'),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {},
+            child: const Text('p6 Other'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('p6 Close'),
+          ),
+        ],
+      ),
+    );
+    log('p6 closed');
+  }
+
+  Future<void> _p7() async {
+    log('p7 open');
+    await Navigator.push<void>(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => CupertinoPageScaffold(
+          navigationBar: const CupertinoNavigationBar(middle: Text('p7 Title')),
+          child: SafeArea(
+            child: Column(
+              children: [
+                const Text('p7 Body'),
+                CupertinoButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('p7 Done'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    log('p7 closed');
+  }
+
+  Future<void> _p8() async {
+    log('p8 open');
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'p8 Barrier',
+      pageBuilder: (context, _, _) => Center(
+        child: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('p8 Title'),
+              button('p8 Other', () {}),
+              button('p8 Close', () => Navigator.pop(context)),
+            ],
+          ),
+        ),
+      ),
+    );
+    log('p8 closed');
+  }
+
+  void _p9Open() {
+    log('p9 open');
+    _p9 = OverlayEntry(
+      builder: (context) => Center(
+        child: Material(
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('p9 Title'),
+                button('p9 Other', () {}),
+                button('p9 Close', () {
+                  _p9?.remove();
+                  _p9 = null;
+                  log('p9 closed');
+                }),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    Overlay.of(context).insert(_p9!);
+  }
+
+  Widget _panel(
+    String id,
+    VoidCallback close, {
+    FocusNode? closeNode,
+    Key? titleKey,
+  }) => Container(
+    margin: const EdgeInsets.symmetric(horizontal: 16),
+    padding: const EdgeInsets.all(8),
+    color: Colors.amber.shade100,
+    child: Column(
+      children: [
+        Text('$id Title', key: titleKey),
+        button('$id Close', close, focusNode: closeNode),
+      ],
+    ),
+  );
+
+  Widget _p15() => Semantics(
+    identifier: 'p15 Opens on focus',
+    child: TextButton(
+      onFocusChange: (focused) {
+        if (!focused) return;
+        log('p15 focused, opening');
+        showDialog<void>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('p15 Title'),
+            actions: [button('p15 Close', () => Navigator.pop(context))],
+          ),
+        ).then((_) => log('p15 closed'));
+      },
+      onPressed: () => log('p15 pressed'),
+      child: const Text('p15 Opens on focus'),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Probe I03')),
+      body: FocusTraversalGroup(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              button(
+                'r00 Round 3',
+                () => Navigator.pushNamed(context, '/round3'),
+              ),
+              button(
+                'r0 Round 2',
+                () => Navigator.pushNamed(context, '/round2'),
+              ),
+              button('p0 Start', () => log('p0 pressed')),
+              button('p1 Dialog', _p1),
+              button('p2 Autofocus dialog', _p2),
+              button('p3 Sheet', _p3),
+              button('p4 Page', _p4),
+              button('p5 Cupertino dialog', _p5),
+              button('p6 Action sheet', _p6),
+              button('p7 Cupertino page', _p7),
+              button('p8 General dialog', _p8),
+              button('p9 Overlay', _p9Open),
+              button('p10 Inline', () {
+                log('p10 open');
+                setState(() => _p10 = true);
+              }),
+              if (_p10)
+                _panel('p10', () {
+                  log('p10 closed');
+                  setState(() => _p10 = false);
+                }),
+              button('p11 Inline managed', () {
+                log('p11 open');
+                setState(() => _p11 = true);
+                WidgetsBinding.instance.addPostFrameCallback(
+                  (_) => _p11Close.requestFocus(),
+                );
+              }, focusNode: _p11Trigger),
+              if (_p11)
+                _panel('p11', () {
+                  log('p11 closed');
+                  _p11Trigger.requestFocus();
+                  setState(() => _p11 = false);
+                }, closeNode: _p11Close),
+              KeyedSubtree(
+                key: _p12Trigger,
+                child: button('p12 Inline a11y event', () {
+                  log('p12 open');
+                  setState(() => _p12 = true);
+                  _sendFocusEvent(_p12Title);
+                }),
+              ),
+              if (_p12)
+                _panel('p12', () {
+                  log('p12 closed');
+                  setState(() => _p12 = false);
+                  _sendFocusEvent(_p12Trigger);
+                }, titleKey: _p12Title),
+              for (final k in _p13)
+                KeyedSubtree(
+                  key: ValueKey('p13$k'),
+                  child: button('p13 Remove $k', () {
+                    log('p13 removed $k');
+                    setState(() => _p13.remove(k));
+                  }),
+                ),
+              for (final k in _p14)
+                KeyedSubtree(
+                  key: ValueKey('p14$k'),
+                  child: button('p14 Remove $k', () {
+                    log('p14 removed $k');
+                    final i = _p14.indexOf(k);
+                    final rest = [..._p14]..remove(k);
+                    if (rest.isNotEmpty) {
+                      _p14Nodes[rest[i < rest.length ? i : rest.length - 1]]!
+                          .requestFocus();
+                    }
+                    setState(() => _p14.remove(k));
+                  }, focusNode: _p14Nodes[k]),
+                ),
+              // No keys: the element of a removed row is reused for the row
+              // after it.
+              for (final k in _p17)
+                button('p17 Remove $k', () {
+                  log('p17 removed $k');
+                  setState(() => _p17.remove(k));
+                }),
+              button(
+                'p15 Go',
+                () => Navigator.push<void>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Scaffold(
+                      appBar: AppBar(title: const Text('p15 Page')),
+                      body: Column(
+                        children: [
+                          button('p15 Before', () => log('p15 before pressed')),
+                          _p15(),
+                          button('p15 After', () => log('p15 after pressed')),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              button('p16 Last', () => log('p16 pressed')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Round 2: a list whose rows each open a confirmation dialog, and the row
+// is removed when it is confirmed. r1: keyboard focus moved to the next
+// row (FocusNode.requestFocus). r2: that, and a FocusSemanticEvent sent to
+// the next row after the frame. r3: nothing done. r5: as r2 with the event
+// one second later. r4: a dialog shown with requestFocus: false.
+class Round2Screen extends StatefulWidget {
+  const Round2Screen({super.key});
+
+  @override
+  State<Round2Screen> createState() => _Round2ScreenState();
+}
+
+class _Round2ScreenState extends State<Round2Screen> {
+  final Map<String, List<String>> _rows = {
+    for (final l in ['r1', 'r2', 'r3', 'r5']) l: ['A', 'B', 'C'],
+  };
+  final Map<String, FocusNode> _nodes = {};
+  final Map<String, GlobalKey> _keys = {};
+
+  FocusNode _node(String id) => _nodes.putIfAbsent(id, FocusNode.new);
+  GlobalKey _key(String id) => _keys.putIfAbsent(id, GlobalKey.new);
+
+  @override
+  void dispose() {
+    for (final n in _nodes.values) {
+      n.dispose();
+    }
+    super.dispose();
+  }
+
+  Future<void> _confirm(String list, String row) async {
+    log('$list open $row');
+    final yes = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('$list Remove $row?'),
+        actions: [
+          button('$list Cancel', () => Navigator.pop(context, false)),
+          button('$list Confirm', () => Navigator.pop(context, true)),
+        ],
+      ),
+    );
+    log('$list closed ${yes == true ? 'confirm' : 'cancel'}');
+    if (yes != true) return;
+    final rows = _rows[list]!;
+    final i = rows.indexOf(row);
+    final rest = [...rows]..remove(row);
+    final next = rest.isEmpty
+        ? null
+        : rest[i < rest.length ? i : rest.length - 1];
+    setState(() => rows.remove(row));
+    if (next == null || list == 'r3') return;
+    _node('$list$next').requestFocus();
+    if (list == 'r2' || list == 'r5') {
+      Future<void>.delayed(Duration(milliseconds: list == 'r5' ? 1000 : 0), () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _key('$list$next').currentContext
+              ?.findRenderObject()
+              ?.sendSemanticsEvent(const FocusSemanticEvent());
+        });
+        WidgetsBinding.instance.scheduleFrame();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Round 2')),
+      body: FocusTraversalGroup(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final list in ['r1', 'r2', 'r3', 'r5'])
+                for (final row in _rows[list]!)
+                  KeyedSubtree(
+                    key: _key('$list$row'),
+                    child: button(
+                      '$list Remove $row',
+                      () => _confirm(list, row),
+                      focusNode: _node('$list$row'),
+                    ),
+                  ),
+              button('r4 Dialog without focus', () async {
+                log('r4 open');
+                await showDialog<void>(
+                  context: context,
+                  requestFocus: false,
+                  builder: (context) => AlertDialog(
+                    title: const Text('r4 Title'),
+                    actions: [button('r4 Close', () => Navigator.pop(context))],
+                  ),
+                );
+                log('r4 closed');
+              }),
+              button('r9 Last', () => log('r9 pressed')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Round 3: where the screen reader goes when a row is removed, with each
+// way of moving focus to the next row. Each row's button is merged with its
+// identifier, as TestId does, so a FocusSemanticEvent sent from the row's
+// key goes to the button's own node.
+//   s1: confirm, then at once remove and requestFocus the next row.
+//   s2: confirm, wait until the dialog route has animated out and 400 ms
+//       more, then remove and requestFocus the next row.
+//   s3: as s1, and a FocusSemanticEvent to the next row one second later.
+//   s4: as s2, and a FocusSemanticEvent to the next row after the frame.
+//   t:  no dialog; remove and requestFocus the next row.
+//   u:  as t, and a FocusSemanticEvent to the next row after the frame.
+//   v:  no dialog; remove, nothing else.
+class Round3Screen extends StatefulWidget {
+  const Round3Screen({super.key});
+
+  @override
+  State<Round3Screen> createState() => _Round3ScreenState();
+}
+
+class _Round3ScreenState extends State<Round3Screen> {
+  static const _lists = ['s1', 's2', 's3', 's4', 't', 'u', 'v'];
+  final Map<String, List<String>> _rows = {
+    for (final l in _lists) l: ['A', 'B', 'C'],
+  };
+  final Map<String, FocusNode> _nodes = {};
+  final Map<String, GlobalKey> _keys = {};
+
+  FocusNode _node(String id) => _nodes.putIfAbsent(id, FocusNode.new);
+  GlobalKey _key(String id) => _keys.putIfAbsent(id, GlobalKey.new);
+
+  @override
+  void dispose() {
+    for (final n in _nodes.values) {
+      n.dispose();
+    }
+    super.dispose();
+  }
+
+  void _event(String id) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _key(id).currentContext
+          ?.findRenderObject()
+          ?.sendSemanticsEvent(const FocusSemanticEvent());
+      log('event $id');
+    });
+    WidgetsBinding.instance.scheduleFrame();
+  }
+
+  Future<void> _press(String list, String row) async {
+    final dialog = list.startsWith('s');
+    if (dialog) {
+      log('$list open $row');
+      final route = DialogRoute<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('$list Remove $row?'),
+          actions: [
+            button('$list Cancel', () => Navigator.pop(context, false)),
+            button('$list Confirm', () => Navigator.pop(context, true)),
+          ],
+        ),
+      );
+      final yes = await Navigator.of(context).push(route);
+      log('$list closed ${yes == true ? 'confirm' : 'cancel'}');
+      if (yes != true) return;
+      if (list == 's2' || list == 's4') {
+        final animation = route.animation!;
+        if (!animation.isDismissed) {
+          final done = Completer<void>();
+          void listener(AnimationStatus status) {
+            if (status.isDismissed) {
+              animation.removeStatusListener(listener);
+              done.complete();
+            }
+          }
+
+          animation.addStatusListener(listener);
+          await done.future;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      }
+    }
+    final rows = _rows[list]!;
+    final i = rows.indexOf(row);
+    final rest = [...rows]..remove(row);
+    final next = rest.isEmpty
+        ? null
+        : rest[i < rest.length ? i : rest.length - 1];
+    setState(() => rows.remove(row));
+    log('$list removed $row');
+    if (next == null || list == 'v') return;
+    _node('$list$next').requestFocus();
+    if (list == 's4' || list == 'u') _event('$list$next');
+    if (list == 's3') {
+      Future<void>.delayed(
+        const Duration(seconds: 1),
+        () => _event('$list$next'),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Round 3')),
+      body: FocusTraversalGroup(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final list in _lists)
+                for (final row in _rows[list]!)
+                  KeyedSubtree(
+                    key: _key('$list$row'),
+                    child: MergeSemantics(
+                      child: Semantics(
+                        identifier: '$list Remove $row',
+                        child: TextButton(
+                          focusNode: _node('$list$row'),
+                          onPressed: () => _press(list, row),
+                          child: Text('$list Remove $row'),
+                        ),
+                      ),
+                    ),
+                  ),
+              button('w Before', () => log('w before pressed')),
+              Semantics(
+                identifier: 'w Opens on focus',
+                child: TextButton(
+                  onFocusChange: (focused) {
+                    if (!focused) return;
+                    log('w focused, opening');
+                    showDialog<void>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('w Title'),
+                        actions: [
+                          button('w Close', () => Navigator.pop(context)),
+                        ],
+                      ),
+                    );
+                  },
+                  onPressed: () => log('w pressed'),
+                  child: const Text('w Opens on focus'),
+                ),
+              ),
+              button('s9 Last', () => log('s9 pressed')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

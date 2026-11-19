@@ -1,0 +1,56 @@
+== device: Android 17, Physical size: 1080x2424
+== settings before: enabled_accessibility_services=[null] accessibility_enabled=[0]
+== without TalkBack
+BUILD SUCCESSFUL in 1m 16s
+keyboard round2 r1 | after Enter: scope:Alert | after Cancel on A: KF node:r1 Remove A / SR: none / A11Y none | after Confirm on B: KF node:r1 Remove C / SR: none / A11Y none | Tab: node:r2 Remove A
+keyboard round2 r2 | after Enter: scope:Alert | after Cancel on A: KF node:r2 Remove A / SR: none / A11Y none | after Confirm on B: KF node:r2 Remove C / SR: none / A11Y none | Tab: node:r3 Remove A
+keyboard round2 r3 | after Enter: scope:Alert | after Cancel on A: KF node:r3 Remove A / SR: none / A11Y none | after Confirm on B: KF node:r3 Remove A / SR: none / A11Y none | Tab: node:r3 Remove C
+keyboard round2 r5 | after Enter: scope:Alert | after Cancel on A: KF node:r5 Remove A / SR: none / A11Y none | after Confirm on B: KF node:r5 Remove C / SR: none / A11Y none | Tab: node:r4 Dialog without focus
+keyboard round2 r4 | after Enter: KF node:r4 Dialog without focus / SR: none / A11Y none | Tab x4: node:r9 Last > node:r4 Close > node:r4 Close > node:r4 Close
+== with TalkBack
+BUILD SUCCESSFUL in 4m 1s
+talkback p1 Dialog | before: KF scope:r0 Round 2 / SR: p1 Dialog / A11Y p1 Dialog | after open: KF scope:Alert / SR: p1 Title / A11Y p1 Title | after close: KF scope:r0 Round 2 / SR: p1 Dialog / A11Y p1 Dialog
+talkback p2 Autofocus dialog | before: KF scope:r0 Round 2 / SR: p2 Autofocus dialog / A11Y p2 Autofocus dialog | after open: KF node:p2 OK / SR: p2 Title / A11Y p2 Title | after close: KF scope:r0 Round 2 / SR: p2 Autofocus dialog / A11Y p2 Autofocus dialog
+talkback p3 Sheet | before: KF scope:r0 Round 2 / SR: p3 Sheet / A11Y p3 Sheet | after open: KF scope:Dialog / SR: p3 Sheet title / A11Y p3 Sheet title | after close: KF scope:r0 Round 2 / SR: p3 Sheet / A11Y p3 Sheet
+talkback p4 Page | before: KF scope:r0 Round 2 / SR: p4 Page / A11Y p4 Page | after open: KF scope:p4 Body / SR: Back / A11Y Back | after close: KF scope:r0 Round 2 / SR: KF: scope:r0 Round 2 / A11Y KF: scope:r0 Round 2
+talkback p5 Cupertino dialog | before: KF scope:r0 Round 2 / SR: p5 Cupertino dialog / A11Y p5 Cupertino dialog | after open: KF scope:Alert / SR: p5 Title / A11Y p5 Title | after close: KF scope:r0 Round 2 / SR: p5 Cupertino dialog / A11Y p5 Cupertino dialog
+talkback p6 Action sheet | before: KF scope:r0 Round 2 / SR: p6 Action sheet / A11Y p6 Action sheet | after open: KF scope:Alert / SR: p6 Title / A11Y p6 Title | after close: KF scope:r0 Round 2 / SR: p6 Action sheet / A11Y p6 Action sheet
+talkback p7 Cupertino page | before: KF scope:r0 Round 2 / SR: p7 Cupertino page / A11Y p7 Cupertino page | after open: KF scope:p7 Body / SR: Back / A11Y Back | after close: KF scope:r0 Round 2 / SR: p7 Cupertino page / A11Y p7 Cupertino page
+talkback p8 General dialog | before: KF scope:r0 Round 2 / SR: p8 General dialog / A11Y p8 General dialog | after open: KF scope:p8 Title / SR: p8 Title / A11Y p8 Title | after close: KF scope:r0 Round 2 / SR: p8 General dialog / A11Y p8 General dialog
+talkback p9 Overlay | before: KF scope:r0 Round 2 / SR: p9 Overlay / A11Y p9 Overlay | after open: KF scope:r0 Round 2 / SR: p9 Overlay / A11Y p9 Overlay | after close: KF scope:r0 Round 2 / SR: Back / A11Y Back
+talkback p10 Inline | before: KF scope:r0 Round 2 / SR: p10 Inline / A11Y p10 Inline | after open: KF scope:r0 Round 2 / SR: p10 Inline / A11Y p10 Inline | after close: KF scope:r0 Round 2 / SR: Back / A11Y Back
+talkback p11 Inline managed | before: KF scope:r0 Round 2 / SR: p11 Inline managed / A11Y p11 Inline managed | after open: KF node:p11 Close / SR: p11 Close / A11Y p11 Close | after close: KF node:p11 Inline managed / SR: p11 Inline managed / A11Y p11 Inline managed
+talkback p12 Inline a11y event | before: KF scope:r0 Round 2 / SR: p12 Inline a11y event / A11Y p12 Inline a11y event | after open: KF scope:r0 Round 2 / SR: p12 Title / A11Y p12 Title | after close: KF scope:r0 Round 2 / SR: Back / A11Y Back
+dev.fluttera11y.flutter_a11y_techniques.ProbeI03Test > talkBackRemoval[Pixel_10a(AVD) - 17] [31mFAILED [0m
+	java.lang.NullPointerException
+Execute dev.fluttera11y.flutter_a11y_techniques.ProbeI03Test.talkBackRemoval: FAILED
+java.lang.NullPointerException
+at dev.fluttera11y.flutter_a11y_techniques.ProbeI03Test.talkBackRemoval$lambda$0(ProbeI03Test.kt: java.lang.NullPointerException
+java.lang.NullPointerException
+> Task :app:connectedDebugAndroidTest FAILED
+BUILD FAILED in 29s
+talkback removal p13 Remove B | after: KF scope:r0 Round 2 / SR: Back / A11Y Back
+BUILD SUCCESSFUL in 3m 9s
+talkback+keyboard p1 Dialog | reached=true | on trigger: KF node:p1 Dialog / SR: p1 Dialog / A11Y p1 Dialog | after Enter: KF scope:Alert / SR: p1 Title / A11Y p1 Title | on close (by Tab: true): KF node:p1 Close / SR: p1 Close / A11Y p1 Close | after Enter on close: KF node:p1 Dialog / SR: p1 Dialog / A11Y p1 Dialog
+talkback+keyboard p2 Autofocus dialog | reached=true | on trigger: KF node:p2 Autofocus dialog / SR: p2 Autofocus dialog / A11Y p2 Autofocus dialog | after Enter: KF node:p2 OK / SR: p2 Title / A11Y p2 Title | on close (by Tab: true): KF node:p2 OK / SR: p2 OK / A11Y p2 OK | after Enter on close: KF node:p2 Autofocus dialog / SR: p2 Autofocus dialog / A11Y p2 Autofocus dialog
+talkback+keyboard p10 Inline | reached=true | on trigger: KF node:p10 Inline / SR: p10 Inline / A11Y p10 Inline | after Enter: KF node:p10 Inline / SR: p10 Inline / A11Y p10 Inline | on close (by Tab: true): KF node:p10 Close / SR: p10 Close / A11Y p10 Close | after Enter on close: KF node:p10 Inline / SR: p10 Inline / A11Y p10 Inline
+talkback+keyboard p11 Inline managed | reached=true | on trigger: KF node:p11 Inline managed / SR: p11 Inline managed / A11Y p11 Inline managed | after Enter: KF node:p11 Close / SR: p11 Close / A11Y p11 Close | on close (by Tab: true): KF node:p11 Close / SR: p11 Close / A11Y p11 Close | after Enter on close: KF node:p11 Inline managed / SR: p11 Inline managed / A11Y p11 Inline managed
+talkback+keyboard p12 Inline a11y event | reached=true | on trigger: KF node:p12 Inline a11y event / SR: p12 Inline a11y event / A11Y p12 Inline a11y event | after Enter: KF node:p12 Inline a11y event / SR: p12 Title / A11Y p12 Title | on close (by Tab: true): KF node:p12 Close / SR: p12 Close / A11Y p12 Close | after Enter on close: KF node:p12 Inline a11y event / SR: p12 Inline a11y event / A11Y p12 Inline a11y event
+talkback+keyboard removal p13 Remove B | on it: KF node:p13 Remove B / SR: p13 Remove B / A11Y p13 Remove B | after Enter: KF node:p13 Remove A / SR: p13 Remove A / A11Y p13 Remove A
+talkback+keyboard removal p14 Remove B | on it: KF node:p14 Remove B / SR: p14 Remove B / A11Y p14 Remove B | after Enter: KF node:p14 Remove C / SR: p14 Remove C / A11Y p14 Remove C
+dev.fluttera11y.flutter_a11y_techniques.ProbeI03Test > talkBackP15[Pixel_10a(AVD) - 17] [31mFAILED [0m
+	java.lang.NullPointerException
+Execute dev.fluttera11y.flutter_a11y_techniques.ProbeI03Test.talkBackP15: FAILED
+java.lang.NullPointerException
+at dev.fluttera11y.flutter_a11y_techniques.ProbeI03Test.talkBackP15$lambda$0(ProbeI03Test.kt: java.lang.NullPointerException
+java.lang.NullPointerException
+> Task :app:connectedDebugAndroidTest FAILED
+BUILD FAILED in 23s
+BUILD SUCCESSFUL in 1m 44s
+talkback round2 r1 | after opening on A: KF scope:Alert / SR: r1 Remove A? / A11Y r1 Remove A? | after Cancel: KF scope:r1 Remove A / SR: r1 Remove A / A11Y r1 Remove A | after Confirm on B: KF node:r1 Remove C / SR: r1 Remove A / A11Y r1 Remove A
+talkback round2 r2 | after opening on A: KF scope:Alert / SR: r2 Remove A? / A11Y r2 Remove A? | after Cancel: KF node:r1 Remove C / SR: r2 Remove A / A11Y r2 Remove A | after Confirm on B: KF node:r2 Remove C / SR: r2 Remove A / A11Y r2 Remove A
+talkback round2 r3 | after opening on A: KF scope:Alert / SR: r3 Remove A? / A11Y r3 Remove A? | after Cancel: KF node:r2 Remove C / SR: r3 Remove A / A11Y r3 Remove A | after Confirm on B: KF node:r2 Remove C / SR: r3 Remove A / A11Y r3 Remove A
+talkback round2 r5 | after opening on A: KF scope:Alert / SR: r5 Remove A? / A11Y r5 Remove A? | after Cancel: KF node:r2 Remove C / SR: r5 Remove A / A11Y r5 Remove A | after Confirm on B: KF node:r5 Remove C / SR: r5 Remove A / A11Y r5 Remove A
+talkback round2 r4 | after open: KF node:r5 Remove C / SR: r4 Title / A11Y r4 Title
+Deleted 1 rows
+== settings restored: enabled_accessibility_services=[null] accessibility_enabled=[0]

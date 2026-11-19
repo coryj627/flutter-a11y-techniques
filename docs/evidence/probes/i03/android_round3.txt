@@ -1,0 +1,38 @@
+== device: Android 17, Physical size: 1080x2424
+== settings before: enabled_accessibility_services=[null] accessibility_enabled=[0]
+== without TalkBack
+BUILD SUCCESSFUL in 2m 56s
+keyboard round3 s1 | after removing B: KF node:s1 Remove C / SR: none / A11Y none | Tab: node:s2 Remove A
+keyboard round3 s2 | after removing B: KF node:s2 Remove C / SR: none / A11Y none | Tab: node:s3 Remove A
+keyboard round3 s3 | after removing B: KF node:s3 Remove C / SR: none / A11Y none | Tab: node:s4 Remove A
+keyboard round3 s4 | after removing B: KF node:s4 Remove C / SR: none / A11Y none | Tab: node:t Remove A
+keyboard round3 t | after removing B: KF node:t Remove C / SR: none / A11Y none | Tab: node:u Remove A
+keyboard round3 u | after removing B: KF node:u Remove C / SR: none / A11Y none | Tab: node:v Remove A
+keyboard round3 v | after removing B: KF node:v Remove A / SR: none / A11Y none | Tab: node:v Remove C
+keyboard round3 w: one Tab from Before | KF scope:Alert / SR: none / A11Y none | Log: w focused, opening
+== with TalkBack
+dev.fluttera11y.flutter_a11y_techniques.ProbeI03Test > round3TalkBack[Pixel_10a(AVD) - 17] [31mFAILED [0m
+	java.lang.NullPointerException
+Execute dev.fluttera11y.flutter_a11y_techniques.ProbeI03Test.round3TalkBack: FAILED
+java.lang.NullPointerException
+at dev.fluttera11y.flutter_a11y_techniques.ProbeI03Test.round3TalkBack$lambda$0(ProbeI03Test.kt: java.lang.NullPointerException
+java.lang.NullPointerException
+> Task :app:connectedDebugAndroidTest FAILED
+BUILD FAILED in 2m 42s
+talkback round3 s1 | after opening on B: KF scope:Alert / SR: s1 Remove B? / A11Y s1 Remove B? | confirm found: true | after Confirm: KF node:s1 Remove C / SR: Back / A11Y Back | Log: s1 open B, s1 closed confirm, s1 removed B
+talkback round3 s2 | after opening on B: KF scope:Alert / SR: s2 Remove B? / A11Y s2 Remove B? | confirm found: true | after Confirm: KF node:s2 Remove C / SR: s2 Remove C / A11Y s2 Remove C | Log: s2 open B, s2 closed confirm, s2 removed B
+talkback round3 s3 | after opening on B: KF scope:Alert / SR: s3 Remove B? / A11Y s3 Remove B? | confirm found: true | after Confirm: KF node:s3 Remove C / SR: s3 Remove C / A11Y s3 Remove C | Log: s3 open B, s3 closed confirm, s3 removed B, event s3C
+talkback round3 s4 | after opening on B: KF scope:Alert / SR: s4 Remove B? / A11Y s4 Remove B? | confirm found: true | after Confirm: KF node:s4 Remove C / SR: s4 Remove C / A11Y s4 Remove C | Log: s4 open B, s4 closed confirm, s4 removed B, event s4C
+talkback round3 t | after Remove B: KF node:t Remove C / SR: t Remove C / A11Y t Remove C | Log: t removed B
+talkback round3 u | after Remove B: KF scope:s1 Remove A / SR: Back / A11Y Back | Log: 
+talkback round3 v | after Remove B: KF scope:s1 Remove A / SR: Back / A11Y Back | Log: 
+BUILD SUCCESSFUL in 3m 23s
+talkback+keyboard round3 s1 | after removing B: KF node:s1 Remove C / SR: s1 Remove C / A11Y s1 Remove C | Log: s1 open B, s1 closed confirm, s1 removed B
+talkback+keyboard round3 s2 | after removing B: KF node:s2 Remove C / SR: s2 Remove C / A11Y s2 Remove C | Log: s2 open B, s2 closed confirm, s2 removed B
+talkback+keyboard round3 s3 | after removing B: KF node:s3 Remove C / SR: s3 Remove C / A11Y s3 Remove C | Log: s3 open B, s3 closed confirm, s3 removed B, event s3C
+talkback+keyboard round3 s4 | after removing B: KF node:s4 Remove C / SR: s4 Remove C / A11Y s4 Remove C | Log: s4 open B, s4 closed confirm, s4 removed B, event s4C
+talkback+keyboard round3 t | after removing B: KF node:t Remove C / SR: t Remove C / A11Y t Remove C | Log: t removed B
+talkback+keyboard round3 u | after removing B: KF node:u Remove C / SR: u Remove C / A11Y u Remove C | Log: u removed B, event uC
+talkback+keyboard round3 v | after removing B: KF node:v Remove A / SR: v Remove A / A11Y v Remove A | Log: v removed B
+Deleted 1 rows
+== settings restored: enabled_accessibility_services=[null] accessibility_enabled=[0]
