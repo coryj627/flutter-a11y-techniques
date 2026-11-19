@@ -120,11 +120,33 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
      */
     private fun tabTo(slug: String, name: String, max: Int = 9) {
         for (i in 0 until max) {
-            key("TAB")
-            if (stop(slug) == name) return
+            if (tab(slug) == name) return
         }
         throw AssertionError("$slug: Tab did not reach $name; focus is on ${stop(slug)}")
     }
+
+    /**
+     * Runs [press] and returns where focus is once it has moved: the tree
+     * is read every 100 ms for up to 2 seconds until it names a stop other
+     * than the one before. On a 320 by 640 screen a read straight after the
+     * key could still show the old stop, or none, while the screen
+     * scrolled to the new one. Returns the stop before if it never moves.
+     */
+    private fun moved(slug: String, press: () -> Unit): String {
+        val before = stop(slug)
+        press()
+        val end = System.currentTimeMillis() + 2_000
+        var now = stop(slug)
+        while (now == before && System.currentTimeMillis() < end) {
+            Thread.sleep(100)
+            now = stop(slug)
+        }
+        return now
+    }
+
+    private fun tab(slug: String) = moved(slug) { key("TAB") }
+
+    private fun backTab(slug: String) = moved(slug) { shiftTab() }
 
     /** Shows [photo] the way a screen reader would, with the click action. */
     private fun clickThumb(slug: String, photo: String) {
@@ -172,14 +194,12 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
             tabTo(slug, "back", 3)
             val order = listOf("trailhead", "favourite") + (if (slug in WITH_SETTING) listOf("setting") else emptyList()) + "note"
             for (expected in order) {
-                key("TAB")
-                assertEquals(slug, expected, stop(slug))
+                assertEquals(slug, expected, tab(slug))
             }
             // With another photo shown, its thumbnail is the strip's stop.
             clickThumb(slug, "Ridge")
             tabTo(slug, "favourite")
-            shiftTab()
-            assertEquals(slug, "ridge", stop(slug))
+            assertEquals(slug, "ridge", backTab(slug))
         }
     }
 
@@ -212,13 +232,12 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
         tabTo(slug, "bridge")
         key(name)
         expectStays("$slug showing after $name", "Bridge") { showing(slug) }
-        val after = stop(slug)
+        val after = settled("$slug focus after $name") { stop(slug) }
         assertFalse("$name moved to $after", after in listOf("trailhead", "ridge", "summit"))
         if (after != "bridge") tabTo(slug, "bridge")
         key("F")
         expectFavourites(slug, "Bridge")
-        key("DPAD_DOWN")
-        val below = stop(slug)
+        val below = moved(slug) { key("DPAD_DOWN") }
         assertTrue("Down did not leave the strip: $below", below in listOf("favourite", "note"))
     }
 
@@ -232,8 +251,8 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
         val slug = "bad-no-arrow-keys"
         open(slug)
         val seen = mutableListOf<String>()
-        for (i in 0 until 7) { key("TAB"); seen += stop(slug) }
-        for (i in 0 until 6) { shiftTab(); seen += stop(slug) }
+        for (i in 0 until 7) seen += tab(slug)
+        for (i in 0 until 6) seen += backTab(slug)
         assertTrue("seen: $seen", seen.containsAll(listOf("back", "trailhead", "favourite", "note")))
         for (other in listOf("bridge", "ridge", "summit")) assertFalse("seen: $seen", other in seen)
     }
@@ -255,8 +274,7 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
             // moment ago, and the next Tab goes to Back.
             inst.sendStringSync("x")
             expectStays("$slug note after a letter", "") { note(slug) }
-            key("TAB")
-            assertEquals("$slug: the next Tab starts from the top", "back", stop(slug))
+            assertEquals("$slug: the next Tab starts from the top", "back", tab(slug))
         }
     }
 
@@ -307,9 +325,8 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
         waitFor("switch", "false") { part(slug, "setting").isChecked.toString() }
         key("F")
         expectStays("favourites after F on the switch", "Favourites: none") { favourites(slug) }
-        shiftTab()
-        shiftTab()
-        assertEquals("trailhead", stop(slug))
+        backTab(slug)
+        assertEquals("trailhead", backTab(slug))
         key("F")
         expectStays("favourites after F on the strip", "Favourites: none") { favourites(slug) }
         // The keys arrive: the strip's own keys still act.
@@ -395,8 +412,7 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
         val shortcutTookIt = note == lost && favourites == "Favourites: Trailhead"
         assertTrue("$how: note \"$note\" with $favourites is neither result", fieldGotIt || shortcutTookIt)
         // The control: the same keys away from the field act.
-        shiftTab()
-        assertEquals("favourite", stop(slug))
+        assertEquals("favourite", backTab(slug))
         type("f")
         val expected = if (shortcutTookIt) "none" else "Trailhead"
         expectFavourites(slug, expected)

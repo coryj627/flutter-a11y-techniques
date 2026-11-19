@@ -1,0 +1,33 @@
+== device: Android 17, IME com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME, show_ime_with_hard_keyboard=0
+== set: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+== whole suite, run 1
+Finished 19 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 5m 25s
+11-19 03:28:35.752 27868 29991 I I04KEYS : sendStringSync in the note: note="Leafy" Favourites: none
+11-19 03:28:36.591 27868 29991 I I04KEYS : sendStringSync on the favourite button: Favourites: Trailhead
+11-19 03:30:04.723 27868 31268 I I04KEYS : input keyevent in the note: note="leafy" Favourites: none
+11-19 03:30:06.134 27868 31268 I I04KEYS : input keyevent on the favourite button: Favourites: Trailhead
+== whole suite, run 2
+Finished 19 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 5m 24s
+11-19 03:34:00.686   544  3759 I I04KEYS : sendStringSync in the note: note="Leafy" Favourites: none
+11-19 03:34:01.488   544  3759 I I04KEYS : sendStringSync on the favourite button: Favourites: Trailhead
+11-19 03:35:30.018   544  5280 I I04KEYS : input keyevent in the note: note="leafy" Favourites: none
+11-19 03:35:31.356   544  5280 I I04KEYS : input keyevent on the favourite button: Favourites: Trailhead
+== whole suite, run 3
+Finished 19 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 5m 25s
+11-19 03:39:26.035  6960  9064 I I04KEYS : sendStringSync in the note: note="Leafy" Favourites: none
+11-19 03:39:26.908  6960  9064 I I04KEYS : sendStringSync on the favourite button: Favourites: Trailhead
+11-19 03:40:55.483  6960 10321 I I04KEYS : input keyevent in the note: note="leafy" Favourites: none
+11-19 03:40:57.016  6960 10321 I I04KEYS : input keyevent on the favourite button: Favourites: Trailhead
+== the note tests with show_ime_with_hard_keyboard=1
+Finished 1 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 21s
+11-19 03:42:36.849 12038 12060 I I04KEYS : sendStringSync in the note: note="Leafy" Favourites: none
+11-19 03:42:37.959 12038 12060 I I04KEYS : sendStringSync on the favourite button: Favourites: Trailhead
+Finished 1 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 24s
+11-19 03:43:02.208 12537 12556 I I04KEYS : input keyevent in the note: note="leafy" Favourites: none
+11-19 03:43:03.704 12537 12556 I I04KEYS : input keyevent on the favourite button: Favourites: Trailhead
+== reset: Physical size: 1080x2424  Physical density: 420  show_ime_with_hard_keyboard=0 (was 0)

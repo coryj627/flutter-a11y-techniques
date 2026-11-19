@@ -2386,16 +2386,23 @@ yet), **Fixed in x.y** (verified on that version).
     through `input text` in the probe or `Instrumentation.sendStringSync`
     in the I04 tests; the field got every letter and no shortcut ran.
     Read as the input method having the keys first while a field is being
-    edited; not confirmed in the Android source. What `input keyevent`
-    letters do in a field is in the I04 Android test's log
-    (`badPageShortcutInputKeyeventInTheNoteThenOnTheButton`); in probe
-    round 2 they reached neither the framework nor the field.
+    edited; not confirmed in the Android source. The I04 Android tests
+    send the letters both ways, `sendStringSync` and `input keyevent`, each
+    in its own launch: in every run on this emulator, at 320 by 640, the
+    note got every letter and no favourite was added, and the same way of
+    sending an f on the favourite button added one. The same with the
+    on-screen keyboard shown beside the hardware one
+    (`show_ime_with_hard_keyboard` set to 1 for that run and put back to
+    0). Output: `docs/evidence/probes/i04/android_review_*.txt`. (In probe
+    round 2, `input keyevent` letters reached neither the framework nor
+    the field; not seen again.)
   - Android, CI's emulator (API 35, `google_apis` image, no hardware
     keyboard in its AVD): the I04 test typing "Leafy" with
     `sendStringSync` got "Leay", so the shortcut took the f there (CI run
     44472632084, `docs/evidence/probes/i04/ci_android_44472632084.txt`).
     Which input method it had, and whether its on-screen keyboard was
-    showing, was not recorded.
+    showing, was not recorded. Not reproduced on the local emulator, whose
+    hardware keyboard setting in its AVD was not changed: it is shared.
   The same shortcut away from the field works on all three platforms.
 - Other ways to the letter, under a shortcut for a lowercase f, measured
   with `bad-page-shortcut`: on the web Shift+F types a capital F (a
