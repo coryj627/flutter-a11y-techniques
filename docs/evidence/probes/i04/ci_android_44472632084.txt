@@ -38,3 +38,9 @@ android	UNKNOWN STEP	2026-11-19T06:50:09.1396808Z dev.fluttera11y.flutter_a11y_t
 android	UNKNOWN STEP	2026-11-19T06:50:13.4391275Z emulator-5554 - 15 Tests 20/39 completed. (2 skipped) (1 failed)
 android	UNKNOWN STEP	2026-11-19T06:50:53.4388183Z emulator-5554 - 15 Tests 21/39 completed. (2 skipped) (1 failed)
 android	UNKNOWN STEP	2026-11-19T06:51:23.3392492Z emulator-5554 - 15 Tests 22/39 completed. (2 skipped) (1 failed)
+
+The assertion lines of the failed test, from the same job's log (job 135385550688), added later:
+android	UNKNOWN STEP	2026-11-19T06:50:09.1405258Z 	org.junit.ComparisonFailure: bad-page-shortcut note expected:<Lea[f]y> but was:<Lea[]y>
+android	UNKNOWN STEP	2026-11-19T06:54:36.1525270Z Execute dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest.badPageShortcutOnAndroidTheNoteStillGetsItsF: FAILED
+android	UNKNOWN STEP	2026-11-19T06:54:36.1541633Z org.junit.ComparisonFailure: org.junit.ComparisonFailure: bad-page-shortcut note expected:<Lea[f]y> but was:<Lea[]y>
+android	UNKNOWN STEP	2026-11-19T06:54:36.1636148Z org.junit.ComparisonFailure: bad-page-shortcut note expected:<Lea[f]y> but was:<Lea[]y>

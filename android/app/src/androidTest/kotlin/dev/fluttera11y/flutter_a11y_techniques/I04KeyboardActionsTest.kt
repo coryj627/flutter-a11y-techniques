@@ -390,9 +390,10 @@ class I04KeyboardActionsTest : TechniqueTest("I04") {
      * device: on the local emulator (Android 17, Gboard, a hardware
      * keyboard in its settings) the input method had the letter keys
      * first and the field got every letter; on CI's emulator (Android 15,
-     * Gboard with its on-screen keyboard showing) the shortcut took the f,
-     * as on the web and iOS (CI run 44472632084,
-     * docs/evidence/probes/i04/ci_android_44472632084.txt). So the test
+     * no hardware keyboard in its settings) the f did not reach the note
+     * (CI run 44472632084,
+     * docs/evidence/probes/i04/ci_android_44472632084.txt; the favourites
+     * line was not recorded in that run). So the test
      * does not choose one: it waits for the note and the favourites to
      * settle, requires one of the two consistent results (the field got
      * the f and no favourite was added, or the shortcut took it and one

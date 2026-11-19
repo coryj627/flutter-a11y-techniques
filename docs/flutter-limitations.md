@@ -2855,8 +2855,11 @@ yet), **Fixed in x.y** (verified on that version).
     the field; not seen again.)
   - Android, CI's emulator (API 35, `google_apis` image, no hardware
     keyboard in its AVD): the I04 test typing "Leafy" with
-    `sendStringSync` got "Leay", so the shortcut took the f there (CI run
-    44472632084, `docs/evidence/probes/i04/ci_android_44472632084.txt`).
+    `sendStringSync` got "Leay": the f did not reach the note there (CI run
+    44472632084, `docs/evidence/probes/i04/ci_android_44472632084.txt`,
+    which has the assertion's text). That run did not record the
+    favourites line, so that the shortcut took the f, as it does on the
+    web and iOS, is inferred and was not seen.
     Which input method it had, and whether its on-screen keyboard was
     showing, was not recorded. Not reproduced on the local emulator, whose
     hardware keyboard setting in its AVD was not changed: it is shared.

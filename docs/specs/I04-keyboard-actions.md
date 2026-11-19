@@ -233,9 +233,11 @@ of each platform.
   first while a field was being edited, so the shortcut never ran there
   and the field got every letter. On CI's emulator (API 35, the
   `google_apis` image, no hardware keyboard in its settings) the same
-  test, typing with `Instrumentation.sendStringSync`, got "Leay": the
-  shortcut took the f (CI run 44472632084,
+  test, typing with `Instrumentation.sendStringSync`, got "Leay": the f
+  did not reach the note (CI run 44472632084,
   [the lines kept](../evidence/probes/i04/ci_android_44472632084.txt)).
+  The favourites line was not recorded in that run, so that the shortcut
+  took the f is inferred and was not seen.
   The local emulator kept every f in every later run, with
   `sendStringSync` and with `input keyevent`, and also with its on-screen
   keyboard shown beside the hardware one (a setting turned on for one run
