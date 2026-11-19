@@ -115,6 +115,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-410](#fl-410) | A control's semantics node can be bigger than the area that takes taps, and the tap target guidelines read the node | Android, iOS, test framework | Confirmed |
 | [FL-411](#fl-411) | On the web a click is taken by the element of the node under it, and by its label text where that runs out of the element | Web | Confirmed |
 | [FL-412](#fl-412) | In a desktop browser the Material theme does not pad controls to 48 by 48, and is compact | Web (desktop browser) | Confirmed |
+| [FL-413](#fl-413) | The text around a `WidgetSpan` is one node that leaves the widget out, and the widget's node comes after it | All | Confirmed on iOS and the web; Android from the tree |
 | [FL-420](#fl-420) | Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets | All | Confirmed |
 | [FL-421](#fl-421) | On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever | Web | Confirmed |
 | [FL-422](#fl-422) | On a scrolled screen the default focus order puts the app bar's Back button among the content | All | Confirmed |
@@ -1020,6 +1021,18 @@ yet), **Fixed in x.y** (verified on that version).
 - Why it matters: `link: true` reads as the way to give a custom control the
   link role, as `button: true` gives the button role. On two of three
   platforms it does not.
+- Also seen in V13 (2026-11-19), `/t/V13/good-inline-link`:
+  `Semantics(link: true)` around a `GestureDetector`, in a `WidgetSpan`,
+  with no `linkUrl`. iOS: XCUITest's type is link, and VoiceOver reads
+  "trail rules Link" (`docs/evidence/V13/voiceover-ios.md`). Android:
+  TalkBack reads "trail rules / Button / Double-tap to activate"
+  (`docs/evidence/V13/talkback-android.md`). Web: the `<a>` with no
+  `href`; Chromium's own accessibility tree, read over the DevTools
+  protocol, gives it the role link (asserted in
+  `web_tests/v13_touch_target_size.spec.js`), where HTML-AAM maps an `a`
+  with no `href` to generic and Playwright's role check finds no link.
+  What VoiceOver says for it on the web is in
+  `docs/evidence/V13/voiceover-web.md`.
 - Workaround: give `linkUrl` as well, and handle [FL-013](#fl-013) on the
   web. To be built and verified in C03 Stand-alone link.
 - Upstream issue: not searched yet (D25).
@@ -2207,6 +2220,42 @@ yet), **Fixed in x.y** (verified on that version).
 - How to read this entry: this is Flutter's chosen density for desktop
   platforms, not a fault; it is here because the web gets it from the
   browser's operating system.
+- Upstream issue: not searched yet (D25).
+
+## FL-413
+
+**The text around a `WidgetSpan` is one node that leaves the widget out, and the widget's node comes after it.**
+
+- Status: Confirmed on iOS and the web, Flutter 3.47.5; on Android seen in
+  the tree only. Found in V13 `/t/V13/good-inline-link`, a sentence "Read
+  the trail rules before you set off." whose link is a `WidgetSpan`.
+  Asserted by the V13 VoiceOver tests on iOS
+  (`ios/RunnerUITests/V13TouchTargetSizeUITests.swift`) and the web
+  (`web_tests/vo/v13_touch_target_size_vo.spec.js`), written to fail when
+  the sentence is read in order. Source not read.
+- What happens:
+  - iOS: VoiceOver reads "Read the before you set off." and then "trail
+    rules Link" (`docs/evidence/V13/voiceover-ios.md`).
+  - Web: the sentence is a `group` whose `aria-label` is "Read the before
+    you set off.", with the link inside it; VoiceOver reads "Read the
+    before you set off. group", "link trail rules", "end of Read the
+    before you set off. group" in Chromium and in Playwright's WebKit
+    (`docs/evidence/V13/voiceover-web.md`).
+  - Android: the paragraph's node is "Read the", a line break, and
+    "before you set off.", and the link's node follows it
+    (`docs/evidence/probes/v13/android_link_dump.txt`, a `uiautomator`
+    dump). What TalkBack reads when it moves on its own was not tested:
+    its walk on the emulator moves focus by node.
+- WCAG: not judged here; V13 does not claim it. 1.3.2 Meaningful Sequence
+  is the candidate where the words only make sense with the widget, as
+  here. Left to C04 Links inline with text.
+- Why it matters: a `WidgetSpan` is how a focusable control goes in a line
+  of text (a `TextSpan` with a recognizer takes no keyboard focus), so a
+  link that the keyboard can reach is read out of its sentence.
+- Workaround: none tried. Whether a `TextSpan` with a recognizer, which has
+  no keyboard focus, is read in its place was not checked here.
+- How to read this entry: Flutter has not added a way to read a
+  `WidgetSpan` in its place in the text yet.
 - Upstream issue: not searched yet (D25).
 
 ## FL-420

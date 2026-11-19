@@ -148,9 +148,9 @@ Not built:
 | L3 web | Every control: role and name (the link is an `<a>` and a link in Chromium's tree), and the element's size in CSS pixels with a desktop platform. 2.5.8: good pass, bad are 18 by 18, 4 apart, all fail; the link is under 24 high inside its sentence's element. Clicks: centre and 2 inside the bottom edge act, 2 below does not; nothing 2 right of the last good control; FL-411: 2 right of the last bad button presses it and the element there is its own, 2 below the link presses it, 2 above does not. Keyboard: Tab, Enter, and Space on every good control |
 | L3 Android | Every control: name, class `Button`, clickable, and size in dp (bounds divided by the density); 2.5.8 as in L1 for Android, in dp; the link under 24 dp high. Taps with `UiDevice.click` at points worked out in dp: centre and 2 dp inside the bottom edge act, 2 dp below and 2 dp right of the last control do not, each followed by a tap at the centre |
 | L3 iOS | The same in points: label, type (`button`, `link`), frame size, 2.5.8, and taps with `XCUICoordinate` |
-| L4 TalkBack | Each control: its name, "Button", "Double-tap to activate"; the link: "trail rules" |
-| L4 VoiceOver iOS | Every utterance between the "Example" heading and the count |
-| L4 VoiceOver web | Every stop between the "Example" heading and the count |
+| L4 TalkBack | Each control: its name, "Button", "Double-tap to activate"; the link is read as a button too ([FL-032](../flutter-limitations.md#fl-032)) |
+| L4 VoiceOver iOS | Every utterance between the "Example" heading and the count: "Previous Button", "Play Button", "Next Button" for every player; for the link, the sentence without it and then "trail rules Link" ([FL-413](../flutter-limitations.md#fl-413)) |
+| L4 VoiceOver web | Every stop between the "Example" heading and the count, in Chromium and WebKit: "Previous button", "Play button", "Next button"; for the link, the sentence's group named without it, the link inside it, and the group's end (FL-413) |
 
 Size is not heard: TalkBack and VoiceOver read the 18 pixel buttons as
 they read the 48 pixel ones, and the screen reader layers record that.
@@ -195,7 +195,13 @@ iOS simulator, and Chromium.
 - **The link in `good-inline-link`** is an `<a>` with no `href` on the
   web, which Chromium's own accessibility tree calls a link and
   Playwright's role check does not ([FL-032](../flutter-limitations.md#fl-032)),
-  and a link to XCUITest. What it is and how it is named is C04's.
+  and a link to XCUITest; TalkBack reads it as a button. What it is and
+  how it is named is C04's.
+- **The sentence around the link is read without it**, on iOS and the web,
+  and the link after it; on Android the tree has the same order
+  ([FL-413](../flutter-limitations.md#fl-413)). It comes from the
+  `WidgetSpan`, which is there so that the link takes keyboard focus. Not
+  claimed against any criterion by V13; it is C04's.
 
 **Not done yet.** A phone's browser itself (only imitated in Chromium);
 Safari and Firefox; the desktop platforms as apps (read in the source

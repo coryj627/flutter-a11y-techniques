@@ -19,7 +19,9 @@ _PLAYERS = ("good-material", "good-cupertino", "good-custom", "bad-shrinkwrap",
 TALKBACK_EXPECT = {
     **{f"v13-{slug}-{control}": ([name, "Button", "Double-tap to activate"], [])
        for slug in _PLAYERS for control, name in _PLAYER},
-    "v13-good-inline-link-rules": (["trail rules", "Double-tap to activate"], []),
+    # Semantics(link: true) with no linkUrl is a button on Android (FL-032);
+    # what a link is belongs to C03 and C04. This records what is said.
+    "v13-good-inline-link-rules": (["trail rules", "Button", "Double-tap to activate"], []),
 }
 
 # tool/voiceover_ios.py: (how the speech was captured, heading of the

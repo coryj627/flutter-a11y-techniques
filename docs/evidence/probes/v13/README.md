@@ -58,7 +58,10 @@ How each platform was looked at, and the raw output:
   `uiautomator dump`, taps with `adb shell input tap`, activations read
   from logcat. Then the device's font size was set to 2.0 with
   `settings put system font_scale 2.0`, measured, and put back to 1.0 (the
-  last line of the output). Output: `android.txt`.
+  last line of the output). Output: `android.txt`. After the examples were
+  built, `android_link_dump.sh.txt` dumped the tree of
+  `/t/V13/good-inline-link` once, for the order of its nodes (FL-413).
+  Output: `android_link_dump.txt`.
 - iOS: iPhone 17 simulator, iOS 27.0, `V13ProbeUITests.swift.txt` (run by
   `ios_probe.sh.txt`): frames from XCUITest, taps with
   `XCUICoordinate.tap()`, activations read from the probe's log text.
