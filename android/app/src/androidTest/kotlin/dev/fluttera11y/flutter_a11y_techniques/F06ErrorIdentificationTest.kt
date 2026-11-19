@@ -192,8 +192,14 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
         // Compare with the keyboard away, so that nothing is out of view.
         closeKeyboardAndWaitForCount("bad-color-only")
         // The field is in error and focused, and nothing new can be read.
+        // What can be read now is compared with what could be read before
+        // for anything added, not for being the same: on a 320 by 640 screen
+        // putting the keyboard away and scrolling to the count leaves
+        // different parts of the page in view from one run to the next (CI
+        // runs 44580353546 and 44615147153 each lacked a different line that
+        // was there before).
         assertEquals("Email", hint(id))
-        assertEquals(before, all().map { it.name() }.toSet())
+        assertEquals(emptySet<String>(), all().map { it.name() }.toSet() - before)
     }
 
     @Test
