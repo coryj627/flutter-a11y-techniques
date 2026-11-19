@@ -49,6 +49,29 @@ async function heardAfter(page, action, ms = 4000) {
 const shown = async (page, slug) =>
   (await control(page, slug, 'contours').count()) === 1 && (await control(page, slug, 'campsites').count()) === 1;
 
+/**
+ * Whether the layers are closed on `slug`'s own screen: both switches
+ * gone, its count there and at `closed`, and DOM focus back on its Map
+ * layers. Waits up to five seconds for it. A page that shows nothing of
+ * the example cannot pass.
+ */
+async function closed(page, slug, closedCount) {
+  const read = async () => ({
+    switches: (await control(page, slug, 'contours').count()) + (await control(page, slug, 'campsites').count()),
+    count: (await control(page, slug, 'count').count()) === 1 ? (await control(page, slug, 'count').textContent()).trim() : '(no count)',
+    focus: await page.evaluate(() =>
+      document.activeElement?.closest('[flt-semantics-identifier]')?.getAttribute('flt-semantics-identifier') ?? '(none)'),
+  });
+  const ok = (r) => r.switches === 0 && r.count === `Closed: ${closedCount}` && r.focus === `i08-${slug}-open`;
+  const end = Date.now() + 5000;
+  let r = await read();
+  while (!ok(r) && Date.now() < end) {
+    await page.waitForTimeout(250);
+    r = await read();
+  }
+  return { ok: ok(r), ...r };
+}
+
 for (const slug of all) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
     test.skip(browserName === 'webkit', 'measured in Chromium only');
@@ -67,12 +90,12 @@ for (const slug of all) {
     // next Escape is the user's.
     const escaped = await heardAfter(page, () => voiceOver.press('Escape'), 3000);
     const stillShown = await shown(page, slug);
-    console.log(`I08VO ${browserName} ${slug} | opened: ${opened.join(' / ')} [shown: ${isShown}] | Escape: ${escaped.join(' / ') || '(nothing new)'} [shown: ${stillShown}]`);
+    const after = escapeCloses.includes(slug) ? await closed(page, slug, 1) : null;
+    console.log(`I08VO ${browserName} ${slug} | opened: ${opened.join(' / ')} [shown: ${isShown}] | Escape: ${escaped.join(' / ') || '(nothing new)'} [shown: ${stillShown}${after ? `; ${after.count}; focus on ${after.focus}` : ''}]`);
     expect(isShown, `${slug}: VoiceOver's activation shows the layers`).toBe(true);
     expect(opened.length, `${slug}: VoiceOver said something when the layers opened`).toBeGreaterThan(0);
     if (escapeCloses.includes(slug)) {
-      expect(stillShown, `${slug}: Escape closed the layers`).toBe(false);
-      await expect(control(page, slug, 'count')).toHaveText('Closed: 1');
+      expect(after.ok, `${slug}: Escape closed the layers on the example's screen, count 1, focus on Map layers: ${JSON.stringify(after)}`).toBe(true);
     } else {
       // The defect, with VoiceOver on: Escape leaves the layers shown. The
       // positive control, on the same page: VoiceOver's cursor on Contour
@@ -85,9 +108,9 @@ for (const slug of all) {
       const before = await contours.getAttribute('aria-checked');
       await voiceOver.act();
       await page.waitForTimeout(1500);
-      const after = await contours.getAttribute('aria-checked');
-      console.log(`I08VO ${browserName} ${slug}-control | VO-Space on Contour lines: ${before} to ${after}`);
-      expect(after, `${slug}: VoiceOver's activation turned the switch`).not.toBe(before);
+      const turned = await contours.getAttribute('aria-checked');
+      console.log(`I08VO ${browserName} ${slug}-control | VO-Space on Contour lines: ${before} to ${turned}`);
+      expect(turned, `${slug}: VoiceOver's activation turned the switch`).not.toBe(before);
       // And for Escape itself, on the same page: the layers closed with the
       // mouse, Back to the technique's screen, the good example the bad one
       // is made from opened from there, and the same Escape, pressed
@@ -107,13 +130,15 @@ for (const slug of all) {
       const [good, title] = goodOf[slug];
       await page.getByRole('button', { name: new RegExp(`^${title}`) }).click();
       await expect(control(page, good, 'count')).toBeVisible();
-      await control(page, good, 'open').click();
+      await control(page, good, 'open').focus();
+      await waitUntilQuiet(page, 2000, 10000);
+      await voiceOver.act();
       await expect(control(page, good, 'contours')).toHaveCount(1);
+      await expect(control(page, good, 'campsites')).toHaveCount(1);
       await voiceOver.press('Escape');
-      await page.waitForTimeout(1500);
-      const goodClosed = !(await shown(page, good));
-      console.log(`I08VO ${browserName} ${slug}-escape-control | Escape in ${good}, on the same page: ${goodClosed ? 'closed' : 'still shown'}`);
-      expect(goodClosed, `${good}: Escape, the positive control on the page of ${slug}`).toBe(true);
+      const goodClosed = await closed(page, good, 1);
+      console.log(`I08VO ${browserName} ${slug}-escape-control | Escape in ${good}, on the same page: ${goodClosed.ok ? 'closed' : 'not closed'}; ${goodClosed.count}; focus on ${goodClosed.focus}`);
+      expect(goodClosed.ok, `${good}: Escape, the positive control on the page of ${slug}: ${JSON.stringify(goodClosed)}`).toBe(true);
     }
   });
 }

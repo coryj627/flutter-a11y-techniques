@@ -90,7 +90,12 @@ after.
   name, opened, and Escape left them open; the status bar did not log
   keys yet, so whether Escape arrived there is not known) and
   `android.txt` (round 2: the button found by name, the key log, and ten
-  fixtures).
+  fixtures), `android_round3.txt` and `android_round4.txt` (the other
+  fixtures, and `keyboardBack`, the keyboard's Back chords; round 4 also
+  reads the key log after each Escape and sends F10 after each chord, to
+  see whether keys reach the app). The probe test as it ran last is
+  `ProbeI08Test.kt.txt`; round 3 and 4 ran `android_probe3.sh.txt`, which
+  also prints the API level.
 - iOS: iPhone 17 simulator, iOS 27.0 (`I08ProbeUITests.swift.txt`, run by
   `ios_probe.sh.txt`). Each fixture opened with a tap, then Escape
   (`typeKey(XCUIKeyboardKey.escape)`). With VoiceOver on, through
@@ -104,12 +109,28 @@ after.
 ## What it showed
 
 The same in the widget test, on the web (Escape only), and on the Android
-emulator unless a line says otherwise; Android's round 2 ran `e1`, `e2`,
-`e5`, `e6`, `e9`, `e10`, `e14`, `e18`, `e19`, `e20`, and `e21`, and the
-other rows are the widget test's and the web's. "Back" is `popRoute` in the
-widget test, and the Back key and the global Back action on Android, which
-did the same in every fixture. The dismiss action is the widget test's and
-Android's; the web has none.
+emulator unless a line says otherwise. On Android:
+
+- Escape was measured in round 2 only (`android.txt`: `e1`, `e2`, `e5`,
+  `e6`, `e9`, `e10`, `e14`, `e18`, `e19`, `e20`, and `e21`). In rounds 3
+  and 4 (`android_round3.txt`, `android_round4.txt`, the other fixtures)
+  no key sent to the app reached Flutter at all: the probe's key log
+  stayed empty, the F12 and F11 sent at each launch and the F10 sent after
+  each keyboard Back included, so those rounds' Escape rows show only that
+  the keys were lost, and the Escape column for `e3`, `e4`, `e7`, `e8`,
+  `e11`, `e12`, `e13`, `e15`, `e16`, `e17`, and `e22` is the widget test's
+  and the web's. Why the keys were lost was not found; the emulator is
+  shared, and the I08 Android tests, run between rounds 2 and 3, had
+  their keys arrive.
+- Back (the Back key and the global Back action, which did the same in
+  every fixture) and the dismiss action were measured for every fixture:
+  round 2 for its list, rounds 3 and 4 for the rest. They do not go
+  through the app's keys.
+- The keyboard's Back, Meta+Escape and Meta+Left, in rounds 3 and 4 (see
+  below).
+
+"Back" is `popRoute` in the widget test. The dismiss action is the widget
+test's and Android's; the web has none.
 
 | Fixture | Escape | Back (`popRoute`) | Dismiss action |
 | --- | --- | --- | --- |
@@ -143,6 +164,20 @@ Android's; the web has none.
 - **An Escape that nothing handles is not Back on Android.** With nothing
   open, or with a fixture that ignores Escape open, the key log shows
   `unhandled Escape` and the screen stayed (`android.txt`).
+- **A hardware keyboard's Back on Android** (`android_round3.txt`,
+  `android_round4.txt`; API 37 emulator). Meta+Escape and Meta+Left, each
+  sent as four key events (Meta down, the key down and up, Meta up)
+  through `Instrumentation.sendKeySync`, acted as Back: with nothing open
+  the probe screen went back to Home (the positive control, and `popRoute`
+  in the log), and they closed `e1`, `e2`, `e3`, `e6`, and `e17`, the
+  overlay that handles Back (`e20`), popped the screen under `e14`, and
+  were stopped by `e19`'s `PopScope`, exactly as the Back key. The app's
+  key log never showed them: the system takes the chord before the app.
+  Meta+Backspace did nothing, with nothing open either. This matches the
+  AOSP sources: `InputGestureManager` in `android16-release` maps
+  Meta+Escape and Meta+Left to Back (and `main` adds Meta+Backspace);
+  `PhoneWindowManager` in `android15-release` turns Meta+Escape,
+  Meta+Left, and Meta+Backspace into Back.
 - **Nothing closes an overlay with no route, and Back pops the screen
   under it** ([FL-481](../../../flutter-limitations.md#fl-481)): `e14`
   and `e15`. `e20` shows the three things that make one close: an action

@@ -2230,14 +2230,18 @@ yet), **Fixed in x.y** (verified on that version).
 - Added in I08 (2026-11-19): Escape does nothing because
   `showCupertinoDialog`'s barrier cannot be dismissed by default
   ([FL-480](#fl-480)); in the I08 probe (`docs/evidence/probes/i08/`,
-  fixture `e3`) Escape left it open in a widget test, on the web, and on
-  the Android emulator. With both, a keyboard user who opens one is
-  trapped (2.1.2): Tab reaches nothing and no key closes it. Measured on
-  Android; on iOS the probe's Escape never reached Flutter (FL-480), so
-  there it rests on the widget test and the source. On the web Tab leaves
-  the page for the browser's own controls (FL-440 above). Back and the global Back action closed it on the Android
-  emulator; with `barrierDismissible: true` (fixture `e4`) Escape closed
-  it, so the dialog can be left, though still not answered.
+  fixture `e3`) Escape left it open in a widget test and on the web. On
+  the Android emulator Escape was not measured on it (no key sent to the
+  app reached Flutter in the rounds that opened it); the Back key, the
+  global Back action, and the keyboard's Meta+Escape and Meta+Left closed
+  it (`android_round3.txt`, `android_round4.txt`). So a keyboard user who
+  opens one is trapped on iOS (2.1.2), by the widget test and the source:
+  Tab reaches nothing, and no key closes it. On Android the keyboard's
+  Back gets them out, which nothing tells them; on the web Tab leaves the
+  page for the browser's own controls (FL-440 above). With
+  `barrierDismissible: true` (fixture `e4`) Escape closed it in the widget
+  test and on the web, so the dialog can be left, though still not
+  answered.
 - Effect: a keyboard or switch user who opens a Cupertino alert can
   neither answer it nor, unless the dialog can be dismissed some other
   way, get out of it.
@@ -2377,13 +2381,24 @@ yet), **Fixed in x.y** (verified on that version).
   the engine's view controller, which sends the same `popRoute` (read in
   the engine source: `accessibilityPerformEscape` in
   `FlutterViewController.mm`; not measured, see I08's spec). Found in the
-  I08 probe (`docs/evidence/probes/i08/`): fixtures `e1` to `e6`, `e16`
-  to `e19`, and `e22`, in a widget test as Android and as iOS, on the web
-  in Chromium, and on the Android emulator; on the iOS simulator, with
-  Escape sent as Command+period (below), for `e1` (`ios_round3.txt`).
-  Asserted by the I08 widget tests "the SDK on its
-  own", by every I08 layer's tests of `bad-not-dismissible`, and by the
-  I08 Android tests of Back and the global Back action.
+  I08 probe (`docs/evidence/probes/i08/`, fixtures `e1` to `e6`, `e16` to
+  `e19`, and `e22`); where each was measured:
+  - Escape: every one of those fixtures in a widget test as Android and as
+    iOS, and on the web in Chromium (`flutter_test.txt`,
+    `web_round2.txt`); on the Android emulator `e1`, `e2`, `e5`, `e6`,
+    `e18`, and `e19` (`android.txt`; in rounds 3 and 4 no key sent to the
+    app reached Flutter, so their Escape rows for `e3`, `e4`, `e16`, `e17`,
+    and `e22` show nothing); on the iOS simulator `e1`, with Escape sent
+    as Command+period (`ios_round3.txt`).
+  - Back (the Back key and the global Back action): every one of them on
+    the Android emulator (`android.txt`, `android_round3.txt`,
+    `android_round4.txt`), and `popRoute` in the widget test.
+  - A hardware keyboard's Back (Meta+Escape and Meta+Left): `e1`, `e2`,
+    `e3`, `e6`, `e17`, and `e19` on the Android emulator
+    (`android_round3.txt`, `android_round4.txt`).
+  Asserted by the I08 widget tests "the SDK on its own", by every I08
+  layer's tests of `bad-not-dismissible`, and by the I08 Android tests of
+  Back, the global Back action, and the keyboard's Back.
 - WCAG: 2.1.2 No Keyboard Trap, when the route has no control that
   closes it.
 - What happens:
@@ -2395,15 +2410,22 @@ yet), **Fixed in x.y** (verified on that version).
     `showCupertinoSheet` cannot be dismissed by default, so Escape does
     nothing to them unless the app says so.
   - The Back key and the global Back action closed every one of them on
-    the Android emulator, those that cannot be dismissed included; only a
-    `PopScope` with `canPop: false` stopped them (fixture `e19`, which
-    also kept Escape and the barrier's dismiss action from closing it).
+    the Android emulator, those that cannot be dismissed included, and so
+    did Meta+Escape and Meta+Left on the fixtures they were tried on:
+    Android's system shortcuts turn those chords into Back before the app
+    sees them (AOSP `InputGestureManager` in `android16-release`; in
+    `android15-release`, `PhoneWindowManager`, which also turns
+    Meta+Backspace into Back; Meta+Backspace did nothing on the API 37
+    emulator). Only a `PopScope` with `canPop: false` stopped them (fixture
+    `e19`, which also kept Escape and the barrier's dismiss action from
+    closing it).
   - A route whose barrier cannot be dismissed has no node with the dismiss
     action either: a screen reader's Dismiss action has nothing to act
     on (fixtures `e2`, `e6`, `e17`).
   - An Escape that nothing handled did not become Back on the Android
-    emulator (the probe's `backControl` and the fixtures that cannot be
-    dismissed): the screen stayed.
+    emulator (the probe's `backControl`, and `e2` and `e6` in
+    `android.txt`): the screen stayed. Escape alone is not Back there;
+    Meta+Escape is.
   - On the iOS simulator the Escape key typed from XCUITest never reached
     Flutter, with VoiceOver on or off, while Tab in the same launch did
     (`ios.txt`, `ios_round2.txt`); Command+period, iOS's own key for
@@ -2413,9 +2435,11 @@ yet), **Fixed in x.y** (verified on that version).
 - Effect: a sheet or dialog made not dismissible, so that a stray tap
   does not close it, is closed by Back and by a screen reader's gesture
   but not by Escape. If it has no button that closes it, a keyboard user
-  cannot leave it: Tab goes round its controls (I08 `bad-not-dismissible`,
-  on Android and iOS; on the web Tab leaves the page for the browser's own
-  controls, then comes back to it).
+  on iOS cannot leave it: Tab goes round its controls (I08
+  `bad-not-dismissible`). On Android the keyboard's Back, Meta+Escape,
+  still closes it, but nothing tells the user so, and Escape, the key the
+  rest of the app answers, does nothing. On the web Tab leaves the page
+  for the browser's own controls, then comes back to it.
 - Workaround, in the SDK: leave the barrier dismissible, as I08
   `good-material` and `good-cupertino` do; or, where it must not be, give
   the route a button that closes it, which Tab reaches.
@@ -2434,7 +2458,8 @@ yet), **Fixed in x.y** (verified on that version).
   (`docs/evidence/probes/i08/`, fixtures `e14`, an `OverlayEntry`, and
   `e15`, an `OverlayPortal`): in a widget test as Android and as iOS, on
   the web (Escape), on the Android emulator (`e14`: Escape, Back, the
-  global Back action). Asserted by the
+  global Back action, Meta+Escape, and Meta+Left; `e15`: Back and the
+  global Back action, `android_round3.txt` and `android_round4.txt`). Asserted by the
   I08 widget tests "an OverlayPortal: Escape is not handled, and popRoute
   pops the screen under it" and "an OverlayEntry stays on after popRoute
   pops its screen", and by every I08 layer's tests of `bad-no-escape` and

@@ -183,7 +183,11 @@ test.describe('Escape (2.1.2)', () => {
       await control(page, good, 'open').click();
       await expectShown(page, good, true);
       await press(page, 'Escape');
+      // Closed on the good example's own screen: both switches gone, its
+      // count at 1, and DOM focus back on its Map layers.
       await expectShown(page, good, false);
+      await expectCount(page, good, 1);
+      expect(await stop(page, good)).toBe('open');
     });
   }
 

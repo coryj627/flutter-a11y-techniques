@@ -103,10 +103,52 @@ final class I08DismissAndEscapeUITests: XCTestCase, CountedTechniqueUITest {
   /// tabs on to the first switch where Enter left focus on a route's scope.
   private func showByKeyboard(_ slug: String) {
     open(slug)
+    tabToLayers(slug)
+  }
+
+  /// From an example's screen as it opens: Tab to Map layers (Back first),
+  /// Enter, and Tab on to the first switch where Enter left focus on a
+  /// route's scope.
+  private func tabToLayers(_ slug: String) {
     press(Self.tab, times: 2)
     press(Self.enter)
     expectShown(slug, true, "\(slug): Enter on Map layers")
     if Self.routes.contains(slug) { press(Self.tab) }
+  }
+
+  /// Before Escape is sent: keyboard focus must be on Contour lines, named
+  /// by Space twice (it turns Contour lines, then turns it back). On CI's
+  /// simulator, Escape sent at once after the layers appeared, with no key
+  /// between, did not close them (run 44502222902); this waits for focus
+  /// to be where the key is meant for.
+  private func expectFocusOnContours(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
+    for _ in 0..<2 {
+      XCTAssertEqual(stopBySpace(slug, file: file, line: line), "contours",
+                     "\(slug): the stop before Escape", file: file, line: line)
+    }
+  }
+
+  /// Expects the layers closed on `slug`'s own screen: both switches gone,
+  /// its count present and at `closed`, and keyboard focus back on Map
+  /// layers, from which Space then shows the layers again. Waits up to ten
+  /// seconds for the first two.
+  private func expectClosed(
+    _ slug: String, _ closed: Int, _ context: String, file: StaticString = #filePath, line: UInt = #line
+  ) {
+    let count = countElement(slug)
+    let expected = "\(Self.countLabel): \(closed)"
+    func done() -> Bool {
+      !control(slug, "contours").exists && !control(slug, "campsites").exists
+        && count.exists && count.label == expected
+    }
+    let deadline = Date().addingTimeInterval(10)
+    while !done() && Date() < deadline { usleep(200_000) }
+    XCTAssertFalse(control(slug, "contours").exists, "\(context): Contour lines is still there", file: file, line: line)
+    XCTAssertFalse(control(slug, "campsites").exists, "\(context): Campsites is still there", file: file, line: line)
+    XCTAssertTrue(count.exists, "\(context): \(slug)'s count is not on the screen", file: file, line: line)
+    XCTAssertEqual(count.label, expected, context, file: file, line: line)
+    press(Self.space)
+    expectShown(slug, true, "\(context): Space after it, on Map layers", file: file, line: line)
   }
 
   func testEveryExampleHasItsButtonAndSwitches() {
@@ -147,12 +189,9 @@ final class I08DismissAndEscapeUITests: XCTestCase, CountedTechniqueUITest {
   func testEscapeClosesTheLayers() {
     for slug in Self.escapeCloses {
       showByKeyboard(slug)
+      expectFocusOnContours(slug)
       escape()
-      expectShown(slug, false, "\(slug): Escape")
-      expectCount(slug, 1)
-      // Space shows the layers again: focus is back on Map layers.
-      press(Self.space)
-      expectShown(slug, true, "\(slug): Space after Escape")
+      expectClosed(slug, 1, "\(slug): Escape")
     }
   }
 
@@ -168,6 +207,7 @@ final class I08DismissAndEscapeUITests: XCTestCase, CountedTechniqueUITest {
   func testEscapeDoesNothingInTheBadExamples() {
     for slug in ["bad-not-dismissible", "bad-no-escape"] {
       showByKeyboard(slug)
+      expectFocusOnContours(slug)
       for part in ["contours", "campsites"] {
         if part == "campsites" { press(Self.tab) }
         escape()
@@ -180,10 +220,10 @@ final class I08DismissAndEscapeUITests: XCTestCase, CountedTechniqueUITest {
       let good = Self.goodOf[slug]!
       app.open(URL(string: "fluttera11y:///t/I08/\(good)")!)
       XCTAssertTrue(countElement(good).waitForExistence(timeout: 10), "\(good) did not open")
-      control(good, "open").tap()
-      expectShown(good, true, "\(good): a tap on Map layers")
+      tabToLayers(good)
+      expectFocusOnContours(good)
       escape()
-      expectShown(good, false, "\(good): Escape, the positive control in the launch of \(slug)")
+      expectClosed(good, 1, "\(good): Escape, the positive control in the launch of \(slug)")
     }
   }
 

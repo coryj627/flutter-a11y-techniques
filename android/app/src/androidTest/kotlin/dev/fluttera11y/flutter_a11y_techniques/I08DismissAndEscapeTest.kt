@@ -157,6 +157,28 @@ class I08DismissAndEscapeTest : TechniqueTest("I08") {
     }
 
     /**
+     * A hardware keyboard's own Back: Meta and [code] together, which
+     * Android's system shortcuts turn into Back (Meta+Escape and Meta+Left
+     * in AOSP's InputGestureManager; measured on this emulator in docs/
+     * evidence/probes/i08/android_round4.txt). Sent as four key events, as
+     * Shift+Tab is.
+     */
+    private fun metaChord(code: Int) {
+        val t = SystemClock.uptimeMillis()
+        val meta = KeyEvent.META_META_ON or KeyEvent.META_META_LEFT_ON
+        fun event(time: Long, action: Int, key: Int, state: Int) = KeyEvent(
+            time, time, action, key, 0, state, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
+            InputDevice.SOURCE_KEYBOARD)
+        inst.sendKeySync(event(t, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_META_LEFT, meta))
+        inst.sendKeySync(event(t + 10, KeyEvent.ACTION_DOWN, code, meta))
+        inst.sendKeySync(event(t + 20, KeyEvent.ACTION_UP, code, meta))
+        inst.sendKeySync(event(t + 30, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_META_LEFT, 0))
+        Thread.sleep(700)
+    }
+
+    private val keyboardBacks = listOf("Meta+Escape" to KeyEvent.KEYCODE_ESCAPE, "Meta+Left" to KeyEvent.KEYCODE_DPAD_LEFT)
+
+    /**
      * The control with keyboard focus, from one read of the screen: "back",
      * a part of the example by the last part of its identifier, or "none".
      * Fails if two nodes have it.
@@ -318,10 +340,17 @@ class I08DismissAndEscapeTest : TechniqueTest("I08") {
             val (good, title) = goodOf.getValue(slug)
             assertTrue("open $good", tile(slug, title).performAction(AccessibilityNodeInfo.ACTION_CLICK))
             assertTrue("$good opens", device.wait(androidx.test.uiautomator.Until.hasObject(By.res("i08-$good-count")), 10_000))
-            assertTrue("$good: click", revealed("i08-$good-open").performAction(AccessibilityNodeInfo.ACTION_CLICK))
+            // Shown from the keyboard, as in the bad example, and closed on
+            // its own screen: both switches gone, its count at 1, keyboard
+            // focus back on its Map layers.
+            revealed("i08-$good-open")
+            assertTrue("$good: Tab reaches Map layers", tabTo(good, "open"))
+            key("ENTER")
             assertEquals(good, "layers", showingWhen(good, "layers"))
+            if (good in ROUTES) key("TAB")
+            assertEquals(good, "contours", stopWhen(good, "contours"))
             key("ESCAPE")
-            assertEquals("$good: Escape, the positive control in the launch of $slug", "screen", showingWhen(good, "screen"))
+            expectClosed(good, "Escape, the positive control in the launch of $slug")
         }
     }
 
@@ -354,6 +383,20 @@ class I08DismissAndEscapeTest : TechniqueTest("I08") {
         }
     }
 
+    // A hardware keyboard's Back closes the layers where Back does, the
+    // two bad examples that ignore Escape included: on Android a keyboard
+    // user can leave them.
+    @Test
+    fun keyboardBackClosesTheLayers() {
+        for (slug in BACK_CLOSES) {
+            for ((name, code) in keyboardBacks) {
+                showByKeyboard(slug)
+                metaChord(code)
+                expectClosed(slug, name)
+            }
+        }
+    }
+
     // The defect. First the positive control, in the same launch: Escape
     // closes the layers on the example's screen. Then Back with the layers
     // shown leaves the screen: the technique's own screen is read, and the
@@ -361,7 +404,9 @@ class I08DismissAndEscapeTest : TechniqueTest("I08") {
     @Test
     fun badBackLeavesTheScreen() {
         val slug = "bad-back-leaves"
-        for (back in listOf({ key("BACK") }, { globalBack() })) {
+        val backs = listOf({ key("BACK") }, { globalBack() }) +
+            keyboardBacks.map { (_, code) -> { metaChord(code) } }
+        for (back in backs) {
             showByKeyboard(slug)
             key("ESCAPE")
             expectClosed(slug, "Escape")

@@ -89,8 +89,9 @@ final i08DismissAndEscape = Technique(
       title: 'A bottom sheet that cannot be dismissed',
       variant: ExampleVariant.material,
       defect:
-          'Escape does nothing, so from a keyboard the layers cannot be '
-          'closed: Tab only goes round the two switches.',
+          'Escape does nothing, and Tab only goes round the two switches. '
+          'On iOS no key closes the layers; on Android only the system\'s '
+          'keyboard Back, Meta+Escape, does, and nothing says so.',
       builder: (_) => const BadNotDismissible(),
     ),
     TechniqueExample.bad(
@@ -99,7 +100,9 @@ final i08DismissAndEscape = Technique(
       variant: ExampleVariant.widgets,
       defect:
           'Escape does nothing, and Tab and Shift+Tab only go round the two '
-          'switches, so no key leaves the layers.',
+          'switches. On iOS and the web no key leaves the layers; on Android '
+          'only the system\'s keyboard Back, Meta+Escape, does, and nothing '
+          'says so.',
       builder: (_) => const BadNoEscape(),
     ),
     TechniqueExample.bad(
@@ -107,8 +110,9 @@ final i08DismissAndEscape = Technique(
       title: 'Layers drawn in the overlay that Back goes past',
       variant: ExampleVariant.widgets,
       defect:
-          'On Android, Back, and TalkBack\'s Back gesture, leave the screen '
-          'with the layers still open, instead of closing them.',
+          'On Android, Back (the Back key, TalkBack\'s Back gesture, or '
+          'Meta+Escape on a keyboard) leaves the screen with the layers '
+          'still open, instead of closing them.',
       builder: (_) => const BadBackLeaves(),
     ),
   ],

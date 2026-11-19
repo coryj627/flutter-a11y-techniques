@@ -90,6 +90,7 @@ class ProbeI08Test : TechniqueTest("I08") {
         // A key nothing uses, so that the first key that matters is not the
         // one lost after launch.
         key("F12")
+        key("F11")
     }
 
     private fun key(name: String) {
@@ -158,7 +159,7 @@ class ProbeI08Test : TechniqueTest("I08") {
                     }
                 }
                 Thread.sleep(1_500)
-                row += "$how: ${state()}"
+                row += "$how: ${state()} | ${line("keys")}"
             }
             Log.i(TAG, "$id | ${row.joinToString(" | ")}")
         }
@@ -200,6 +201,50 @@ class ProbeI08Test : TechniqueTest("I08") {
         val esc = state()
         key("ESCAPE")
         Log.i(TAG, "control | Escape with nothing open: $esc | Escape again: ${state()}")
+    }
+
+    /**
+     * Round 3: a hardware keyboard's own Back. Android's system shortcuts
+     * (InputGestureManager in AOSP) map Meta+Escape and Meta+Left, and in
+     * newer sources Meta+Backspace, to Back. Each chord is sent as key
+     * events through Instrumentation.sendKeySync, as Shift+Tab is: Meta
+     * down, the key down and up, Meta up, from a physical-keyboard source.
+     */
+    private fun chord(code: Int) {
+        val t = SystemClock.uptimeMillis()
+        val meta = KeyEvent.META_META_ON or KeyEvent.META_META_LEFT_ON
+        fun event(time: Long, action: Int, key: Int, state: Int) = KeyEvent(
+            time, time, action, key, 0, state, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
+            InputDevice.SOURCE_KEYBOARD)
+        inst.sendKeySync(event(t, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_META_LEFT, meta))
+        inst.sendKeySync(event(t + 10, KeyEvent.ACTION_DOWN, code, meta))
+        inst.sendKeySync(event(t + 20, KeyEvent.ACTION_UP, code, meta))
+        inst.sendKeySync(event(t + 30, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_META_LEFT, 0))
+        Thread.sleep(1_500)
+    }
+
+    @Test
+    fun keyboardBack() {
+        val chords = listOf(
+            "Meta+Escape" to KeyEvent.KEYCODE_ESCAPE,
+            "Meta+Left" to KeyEvent.KEYCODE_DPAD_LEFT,
+            "Meta+Backspace" to KeyEvent.KEYCODE_DEL,
+        )
+        for ((name, code) in chords) {
+            // The positive control: with nothing open, Back pops the probe
+            // screen to Home.
+            start()
+            chord(code)
+            Log.i(TAG, "keyboard back $name | nothing open: ${state()}")
+            for ((id, trigger) in FIXTURES.filter { it.first in listOf("e1", "e2", "e3", "e6", "e14", "e17", "e19", "e20") }) {
+                start()
+                val opened = open(trigger)
+                chord(code)
+                val after = state()
+                key("F10")
+                Log.i(TAG, "keyboard back $name | $id | opened: $opened | after: $after | then F10, keys: ${line("keys")}")
+            }
+        }
     }
 
     @Test

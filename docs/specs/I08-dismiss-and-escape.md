@@ -38,8 +38,9 @@ or the arrow keys, the user is told what it is.
 | Applies | Applies, the escape gesture not verified | Applies |
 
 Keyboard: a hardware keyboard on Android and iOS, the browser's on the
-web. Android's Back: the Back key, and the global Back action that
-TalkBack's Back gesture calls. Screen readers: TalkBack (its Back gesture
+web. Android's Back: the Back key, the global Back action that TalkBack's
+Back gesture calls, and a hardware keyboard's Back, Meta+Escape or
+Meta+Left (section 3). Screen readers: TalkBack (its Back gesture
 and its Dismiss action), VoiceOver on iOS (its two-finger scrub, the
 escape gesture), VoiceOver on macOS in Chromium (Escape on the keyboard;
 it has no gesture of its own for this). VoiceOver's escape gesture on iOS
@@ -66,27 +67,49 @@ keyboard, and gives as its example a modal dialog that keeps Tab inside it
 and is closed by its buttons or by Escape. A modal with a standard way out
 is not a trap; the three good examples are that.
 
+Android has a keyboard way out of its own. Its system shortcuts turn
+Meta+Escape and Meta+Left on a hardware keyboard into Back (AOSP's
+`InputGestureManager`, in the `android16-release` and `main` sources;
+`main` also lists Meta+Backspace), before the app sees the keys. On the
+API 37 emulator both chords acted as Back, and Meta+Backspace did not
+(probe `android_round4.txt`). Back closes a route whether its barrier can
+be dismissed or not, and closes layers in the overlay when the screen has
+a `PopScope` that closes them (section 7). The Understanding document
+leaves "standard exit methods" to the platform; Back from the keyboard is
+Android's, so it counts on Android. iOS has no such shortcut for an app:
+Command+[ reached Flutter as itself and did nothing (probe
+`ios_round3.txt`); Full Keyboard Access was not tried.
+
 How the bad examples fail, as the criterion is written:
 
-- `bad-no-escape` fails 2.1.2 on every platform. Enter on Map layers moves
-  keyboard focus into the layers; there Tab and Shift+Tab go round the two
-  switches, Escape does nothing, and no other key closes the layers or
-  moves focus out of them. Nothing on the screen says how to leave.
-- `bad-not-dismissible` fails 2.1.2 on Android and iOS: the same, in a
-  bottom sheet that cannot be dismissed. On the web it does not fail as
-  written: Tab past the last switch leaves the page for the browser's own
-  controls, which moves focus away from the sheet (the next Tab comes back
-  to it, and the page behind it cannot be reached until the sheet is
-  closed with a pointer).
+- `bad-no-escape` fails 2.1.2 on iOS and the web. Enter on Map layers
+  moves keyboard focus into the layers; there Tab and Shift+Tab go round
+  the two switches, Escape does nothing, and no other key closes the
+  layers or moves focus out of them. Nothing on the screen says how to
+  leave. On Android it does not fail as written: the keyboard's Back
+  (Meta+Escape) closes the layers through the screen's `PopScope`. What
+  goes wrong there is that Escape, the key the good examples and the other
+  platforms answer, does nothing, and nothing says the way out is
+  Meta+Escape; no criterion is claimed for that.
+- `bad-not-dismissible` fails 2.1.2 on iOS only: the same, in a bottom
+  sheet that cannot be dismissed. On Android the keyboard's Back closes
+  it, as Back closes any route; what goes wrong there is the same as in
+  `bad-no-escape`. On the web it does not fail as written: Tab past the
+  last switch leaves the page for the browser's own controls, which moves
+  focus away from the sheet (the next Tab comes back to it, and the page
+  behind it cannot be reached until the sheet is closed with a pointer).
 - `bad-back-leaves` fails nothing: Escape closes its layers. Its defect is
-  for Android's Back, which is not a keyboard key, and for TalkBack's Back
-  gesture. The iOS reference's own bad example, a dialog with no escape
-  action, has no WCAG criterion either ("N/A" in its document).
+  for Android's Back, in every form: the Back key, TalkBack's Back
+  gesture, and the keyboard's Meta+Escape and Meta+Left all take the user
+  off the screen with the layers open. Leaving the screen moves focus
+  away, so it is not a trap. The iOS reference's own bad example, a
+  dialog with no escape action, has no WCAG criterion either ("N/A" in its
+  document).
 
-Android's Back and the screen readers' gestures are not a keyboard
-interface, so a surface that ignores them fails no criterion as written;
-the reference repository and the HTML standard (section 4) treat them as
-the same request as Escape.
+The navigation bar's Back and the screen readers' gestures are not a
+keyboard interface, so a surface that ignores them fails no criterion as
+written; the reference repository and the HTML standard (section 4) treat
+them as the same request as Escape.
 
 ## 4. Source requirements
 
@@ -146,9 +169,9 @@ only in what lets the user out.
 
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
-| `bad-not-dismissible` | `good-material` with `isDismissible: false`. Escape does nothing, so from a keyboard the layers cannot be closed: Tab only goes round the two switches (and, on the web, out of the page and back) | R1, R4 | 2.1.2 on Android and iOS |
-| `bad-no-escape` | `good-widgets` without its action for `DismissIntent`. Escape does nothing, Tab and Shift+Tab only go round the two switches, and no key leaves the layers | R1, R4 | 2.1.2 |
-| `bad-back-leaves` | `good-widgets` without its `PopScope`. On Android, Back and TalkBack's Back gesture take the user off the screen, with the layers still open, instead of closing them | R3 | — |
+| `bad-not-dismissible` | `good-material` with `isDismissible: false`. Escape does nothing, and Tab only goes round the two switches (on the web, out of the page and back): on iOS no key closes the layers, and on Android only the system's keyboard Back, Meta+Escape, which nothing on the screen mentions | R1, R4 | 2.1.2 on iOS |
+| `bad-no-escape` | `good-widgets` without its action for `DismissIntent`. Escape does nothing, and Tab and Shift+Tab only go round the two switches: on iOS and the web no key leaves the layers, and on Android only the system's keyboard Back, Meta+Escape | R1, R4 | 2.1.2 on iOS and the web |
+| `bad-back-leaves` | `good-widgets` without its `PopScope`. On Android, Back (the Back key, TalkBack's Back gesture, or Meta+Escape on a keyboard) takes the user off the screen, with the layers still open, instead of closing them | R3 | — |
 
 Not built:
 
@@ -164,9 +187,11 @@ Not built:
   only where it is handled. The widget tests show all three; the examples
   use `closedLoop`, the SDK's own setting for it.
 - **A `CupertinoAlertDialog` shown with `showCupertinoDialog`.** With the
-  SDK's defaults it is a keyboard trap on Android and iOS: its actions take
-  no focus ([FL-440](../flutter-limitations.md#fl-440)) and its barrier
-  cannot be dismissed, so Escape does nothing. A good Cupertino dialog
+  SDK's defaults it is a keyboard trap on iOS: its actions take no focus
+  ([FL-440](../flutter-limitations.md#fl-440)) and its barrier cannot be
+  dismissed, so Escape does nothing (on Android the keyboard's Back,
+  Meta+Escape, closed it in the probe, and on the web Tab leaves the
+  page). A good Cupertino dialog
   would need both fixed; `good-cupertino` uses a modal popup.
 - **A tooltip.** Escape hides it on the pinned SDK, except on the web when
   the page has no keyboard focus
@@ -191,7 +216,7 @@ examples in the widget tests).
 | --- | --- |
 | L1 widget tests | Good: guidelines in light and dark, with and without the layers shown; 200% text at 320 by 640 with them shown. Every example: Map layers is a button, the count is 0, "Showing: Contour lines"; the switches are named and Contour lines alone is on; Enter on Map layers puts keyboard focus in the layers (the route's scope, then the first switch on Tab, or the first switch at once) and Space turns it; Tab and Shift+Tab go round the two switches. Escape, as Android and as iOS: it closes the layers in the good examples and `bad-back-leaves`, the count goes to 1 and focus is back on Map layers; in `bad-not-dismissible` and `bad-no-escape` it is not handled, from either switch, the layers stay with focus where it was after a second, Space turns the switch, twenty Tabs and Shift+Tabs never leave the two, and the good example the bad one is made from then closes on the same key. `popRoute` (Back, and the escape gesture at the root): closes the layers on the example's screen in every example but `bad-back-leaves`, where, after Escape has closed them once in the same test, it takes the user to the technique's own screen. The dismiss action: which nodes have it ("Scrim", "Dismiss", "Close map layers", and the overlay's own node), and each one closes the layers; in `bad-not-dismissible` no node has it, and the same search finds `good-material`'s. Where VoiceOver's escape gesture on a switch is taken: by the layers' own node in the overlay examples, by no node in the route examples. The SDK on its own: `showDialog` with and without `barrierDismissible` (FL-480); an `OverlayPortal` that Escape does not close and `popRoute` pops the screen under, and an `OverlayEntry` that stays after it (FL-481); a trap made each of the three ways keeps Tab and Shift+Tab and lets no Escape out; a tooltip that Escape hides while focus is in the app and not after the view loses focus (FL-482); a `ModalBarrier` in an `OverlayPortal` that empties the semantics tree, and in an `OverlayEntry` that does not (FL-483) |
 | L3 web | Every example: Map layers is a button with its name, the count, and each switch is `role="switch"` with its name and `aria-checked`; Enter shows the layers and Space turns a switch. Tab and Shift+Tab: round the two switches in the overlay examples; in the route examples round the two and out of the page for the browser's own stops, and back to the first switch. Escape: closes the layers, the count is 1 and DOM focus is on Map layers, in the good examples and `bad-back-leaves`; does nothing in the other two, from either switch, with the positive controls as above; in `bad-no-escape` twenty Tabs and Shift+Tabs never leave the switches |
-| L3 Android | The same parts by class (`Button`, `Switch`), name, and `isChecked`; Tab and Shift+Tab round the two switches by `isFocused`; Escape as on the web, with the positive controls; the Back key and the global Back action close the layers on the example's screen in every example but `bad-back-leaves`, where both take the app to the technique's screen with the app still in front, after Escape has closed the layers in the same launch; `ACTION_DISMISS` on the barrier, and on the overlay's own node, closes the layers; in `bad-not-dismissible` the read that holds the layers has no node with it |
+| L3 Android | The same parts by class (`Button`, `Switch`), name, and `isChecked`; Tab and Shift+Tab round the two switches by `isFocused`; Escape as on the web, with the positive controls; the Back key, the global Back action, and the keyboard's Back (Meta+Escape and Meta+Left, sent as key events) close the layers on the example's screen, keyboard focus back on Map layers, in every example but `bad-back-leaves`, where all four take the app to the technique's screen with the app still in front, after Escape has closed the layers in the same launch; `ACTION_DISMISS` on the barrier, and on the overlay's own node, closes the layers; in `bad-not-dismissible` the read that holds the layers has no node with it |
 | L3 iOS | Map layers (a button) and the switches (`.switch`, named, values "1" and "0"); Tab and Shift+Tab round the two switches, each stop named by what Space turns; Escape, sent as Command+period, closes the layers in the good examples and `bad-back-leaves`, and Space then shows them again from Map layers; it does nothing in the other two, with the positive controls as above (the good example opened over the bad one by its link, in the same launch). Not asserted: the Escape key itself, which XCUITest cannot send to Flutter; Back, which iOS has no key for; the escape gesture |
 | L4 TalkBack | Map layers, then, with the layers open, each switch (name, "Switch", and its state) and the barrier, by what TalkBack reads; then TalkBack's Back gesture (the global Back action) from a switch: the layers close and TalkBack's focus is on Map layers for the last two seconds of the window; in `bad-back-leaves` the app goes to the technique's screen and TalkBack is no longer on the example |
 | L4 VoiceOver iOS | VoiceOver's cursor on Map layers and a double tap; what VoiceOver says, then each element forward until the barrier: both switches with "Switch button", and the barrier in every example but `bad-not-dismissible`, where neither "Scrim" nor "Dismiss" is read |
@@ -219,18 +244,26 @@ output of each platform.
 - **A route closes on Escape only when its barrier can be dismissed**
   ([FL-480](../flutter-limitations.md#fl-480)). `barrierDismissible:
   false` (`isDismissible: false` for a sheet) turns off Escape, and the
-  barrier's dismiss action, but not Back: Back closed every route on the
-  Android emulator, and only `PopScope(canPop: false)` stopped it. So a
-  sheet that cannot be dismissed leaves a keyboard user its buttons, if
-  it has any, and leaves a screen reader user Back and the escape
-  gesture, but not TalkBack's Dismiss action. `showCupertinoDialog`,
+  barrier's dismiss action, but not Back: the Back key and the global Back
+  action closed every route the probe opened on the Android emulator, and
+  the keyboard's Meta+Escape and Meta+Left every one it was tried on; only
+  `PopScope(canPop: false)` stopped them. So a sheet that cannot be
+  dismissed leaves a keyboard user its buttons, if it has any, and on
+  Android the keyboard's Back; and leaves a screen reader user Back and
+  the escape gesture, but not TalkBack's Dismiss action. `showCupertinoDialog`,
   `showGeneralDialog`, and `showCupertinoSheet` are not dismissible by
   default; with a `CupertinoAlertDialog`, whose actions take no focus,
-  that makes `showCupertinoDialog`'s defaults a keyboard trap
+  that makes `showCupertinoDialog`'s defaults a keyboard trap on iOS
   ([FL-440](../flutter-limitations.md#fl-440)).
-- **An Escape that nothing handles did not become Back on Android**: the
-  screen stayed (the probe's key log). So on Android a missing Escape is
-  not covered by the system.
+- **On Android, Escape alone is not Back; Meta+Escape is.** An Escape
+  that nothing in the app handled left the screen where it was (the
+  probe's key log, `android.txt`). Meta+Escape and Meta+Left, sent as
+  key events, acted as Back before the app saw them, on the probe screen
+  with nothing open (it went back to Home) and on every fixture they were
+  tried on (`android_round4.txt`); Meta+Backspace did nothing on this API
+  37 emulator. So on Android a keyboard user always has Back; a surface
+  that ignores Escape leaves them a way out they have to know, which
+  nothing on the screen tells them.
 - **Nothing closes an overlay with no route**
   ([FL-481](../flutter-limitations.md#fl-481)). An `OverlayEntry` or
   `OverlayPortal` ignores Escape, has no dismiss action, and Back pops the
@@ -294,7 +327,7 @@ output of each platform.
 
 **Not done yet.** The hardware Escape key on iOS (the tests use
 Command+period); Full Keyboard Access; VoiceOver's escape gesture on a
-device; a real Android keyboard (the tests use `input keyevent`); Switch
+device; a real Android keyboard (the tests use `input keyevent` and key events sent through `Instrumentation`), and Meta+Escape on other Android versions; Switch
 Access and Switch Control; VoiceOver in WebKit; the browser's own Back
 with something open on the web; a trap whose way out is not standard and
 is told (section 5); and every component of the probe's table as an
