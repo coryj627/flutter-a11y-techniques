@@ -20,8 +20,8 @@
 // 26.5, CI run 44502528898) a capital typed with typeKey("M") arrived as
 // "m", in two tests; and after Tab and Shift+Tab from the strip, Left did
 // nothing, as if focus had not come back to the strip. Locally, with the
-// text in lower case, letters typed into bad-page-shortcut's note were now
-// and then lost besides its f (see typeInNote). None of these causes was
+// text in lower case, letters typed into the note were now and then lost
+// (see typeInNote). None of these causes was
 // established. So text goes into the note through typeInNote, which waits
 // for each letter.
 import XCTest
@@ -69,11 +69,13 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
   /// seconds is logged and sent again, at most three times in all; a
   /// letter in `lost` is the one a shortcut takes, so after it the note
   /// must stay as it was for a second, and it is never sent again. Locally
-  /// a letter typed into bad-page-shortcut's note was sometimes lost
-  /// besides the f (round two: "ea" for "lea", "ud" for "mud", "mudy" for
-  /// "muddy"), and in no other example; the cause was not found, so the
-  /// tests wait for each letter instead of reading once at the end. If
-  /// focus is not on the note, nothing appears and the test fails.
+  /// a typed letter was now and then lost: three times in
+  /// bad-page-shortcut's note besides its f ("ea" for "lea", "ud" for
+  /// "mud", "mudy" for "muddy"), and once in bad-no-arrow-keys' note, the
+  /// first letter after the note was tapped (logged, sent again, then
+  /// typed). The cause was not found, so the tests wait for each letter
+  /// instead of reading once at the end. If focus is not on the note,
+  /// nothing appears and the test fails.
   private func typeInNote(_ slug: String, _ text: String, lost: Set<Character> = [],
                           file: StaticString = #filePath, line: UInt = #line) {
     var expected = note(slug)
