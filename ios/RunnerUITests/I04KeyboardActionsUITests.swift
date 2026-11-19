@@ -178,18 +178,21 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
     }
   }
 
-  /// bad-no-arrow-keys, one arrow per launch. With Bridge shown, four
-  /// Tabs reach the note: there the arrow moves the caret, so it arrives
-  /// and acts. Two more Tabs go round, past Back, to the strip's stop:
-  /// there F acts, so keys reach the strip, and the same arrow then does
-  /// not move along it. Where focus goes after it is not asserted: an
+  /// bad-no-arrow-keys, one arrow per launch. With Bridge shown (a tap),
+  /// a tap on the note gives it focus: there the arrow moves the caret, so
+  /// it arrives and acts. Two Tabs go on, round past Back, to the strip's
+  /// stop: there F acts, so keys reach the strip, and the same arrow then
+  /// does not move along it. Where focus goes after it is not asserted: an
   /// arrow the strip leaves alone is the app's default, directional focus.
+  /// (After a tap on a thumbnail, four Tabs did not reach the note in the
+  /// first run, so the note is tapped instead.)
   private func badNoArrowKeysIgnores(_ key: String, _ name: String) {
     let slug = "bad-no-arrow-keys"
     open(slug)
     part(slug, "bridge").tap()
     expectShowing(slug, "Bridge")
-    for _ in 0..<4 { press(Self.tab) }
+    part(slug, "note").tap()
+    usleep(800_000)
     type("Mud")
     press(Self.left)
     if key == Self.right { press(Self.right) }

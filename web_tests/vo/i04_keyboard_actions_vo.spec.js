@@ -17,7 +17,7 @@ const HINT_NONE = 'In the photos: F to add or remove a favourite.';
 
 const strip = (hint, setting = []) => [
   'Showing: Trailhead, 1 of 4', hint,
-  'Trailhead current button', 'Bridge button', 'Ridge button', 'Summit button',
+  'Trailhead current item button', 'Bridge button', 'Ridge button', 'Summit button',
   'Add to favourites button', ...setting, 'Note edit text', 'Favourites: none',
 ];
 
@@ -36,7 +36,9 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
     await page.goto(`/#/t/I04/${slug}`, { waitUntil: 'load' });
     await expect(page.locator(`[flt-semantics-identifier="i04-${slug}-count"]`)).toBeVisible();
-    const { stops, reachedEnd } = await walkToEnd(page, voiceOver, browserName, 40);
+    // VoiceOver's help for a text field can come in place of the field's
+    // own phrase; the phrase it logged for the move is used then.
+    const { stops, reachedEnd } = await walkToEnd(page, voiceOver, browserName, 40, { loggedForHelp: true });
     console.log(`I04VO ${browserName} ${slug} | ${stops.join(' / ')}`);
     expect(reachedEnd, `${slug}: the walk reached the end of the screen`).toBe(true);
     const start = stops.indexOf(EXAMPLE);

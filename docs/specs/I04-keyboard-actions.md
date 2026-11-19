@@ -124,8 +124,8 @@ control that had focus last; here the strip's stop is the photo shown.
 ## 5. Examples
 
 Every example is the same screen: a photo of a trail with its name
-("Showing: Trailhead, 1 of 4"), a strip of four thumbnail buttons that
-show a photo (Trailhead, Bridge, Ridge, Summit), the keys in words, a
+("Showing: Trailhead, 1 of 4"), the keys in words, a strip of four
+thumbnail buttons that show a photo (Trailhead, Bridge, Ridge, Summit), a
 button that adds the photo shown to the favourites or takes it out, a
 note field whose Enter saves the note, and two lines at the end, the
 favourites and the count of notes saved.
@@ -199,7 +199,7 @@ on.
 | L3 web | Every example: the thumbnails are buttons with their names, `aria-current` true on Trailhead alone (the engine's attribute for a selected button), `tabindex="0"`; the favourite button and the note's name; a click and a click event show any photo; Tab order as above, and Shift+Tab back to Ridge; Enter in the note saves "Muddy", empties the field, leaves no element of the example with focus, and the next Tab goes to Back. The strip's keys as in L1. `bad-no-arrow-keys`: Right, Left, End, and Home alone, from Bridge, change nothing; then F acts there, and in the note Left moves the caret ("Mud", Left, "x" gives "Muxd"); six Tabs and six Shift+Tabs never reach the other thumbnails. F as in L1, with "Leafy" typed in the note: whole in the good examples, "Leay" with a favourite added in `bad-page-shortcut` |
 | L3 Android | The same parts, by class (`Button`, `EditText`), name, `isSelected`, and `isFocused`; the click action shows any photo; Tab order and Shift+Tab to Ridge; the D-pad Right and Left, Home (`MOVE_HOME`), and End (`MOVE_END`) on the strip; `bad-no-arrow-keys`, each key alone, then F and Down; Tab and Shift+Tab never reach the other thumbnails; Enter in the note saves and empties it, a letter typed then goes nowhere, and the next Tab goes to Back; F as in L1, with Control+F as four key events; and in `bad-page-shortcut` the note gets the whole of "Leafy" typed with `sendStringSync`, no favourite is added, and F away from the field acts in the same launch |
 | L3 iOS | The thumbnails (buttons, `isSelected` on Trailhead), the favourite button, the note (a text field labelled "Note"); a tap shows any photo; Tab order, each stop named by what a key does there (an arrow on the strip, Space on the favourite button and the switch, a letter in the note); Right and Left along the strip, and Shift+Tab back to it from the favourite button; `bad-no-arrow-keys`, Right and Left alone, each in a launch where the same arrow first moves the caret in the note and F then acts on the strip; the stop after the strip is the favourite button; Enter in the note saves, a letter typed then goes nowhere, and the next Tab goes to Back (Space leaves the screen); F as in L1, typed one key at a time, with "Leay" in `bad-page-shortcut`. Home and End are not sent: they never reached Flutter from XCUITest |
-| L4 TalkBack | Each thumbnail: its name and "Button"; the favourite button; the setting and its role; the note and "Edit box" |
+| L4 TalkBack | Each thumbnail: its name and "Button", and "selected" for Trailhead alone; "Add to favourites" and "Button"; the setting: its label, "Switch", and "on" or "off" (never the other); the note: "Note" and "Edit box". The walk puts TalkBack's focus on each part, so it records speech, not order |
 | L4 VoiceOver iOS | Everything between the "Example" heading and the count, in VoiceOver's own swipe order |
 | L4 VoiceOver web | The same with VoiceOver's cursor; and, with VoiceOver on, keys pressed through the system on `bad-page-shortcut`: Right moves along the strip, F adds a favourite, and "Leafy" typed in the note gives "Leay" |
 
@@ -272,6 +272,18 @@ of each platform.
 - **On the web the thumbnails' selected state is `aria-current`**, not
   `aria-selected` (read in the DOM); every thumbnail has `tabindex="0"`,
   and Flutter's own Tab handling is what keeps the strip one stop.
+- **A shortcut around plain text renames what a screen reader hears**
+  ([FL-464](../flutter-limitations.md#fl-464)). `Shortcuts`,
+  `CallbackShortcuts`, and `Focus` each add a semantics node, which takes
+  the plain text inside it as its name and holds the controls inside it.
+  In the first recordings, the three examples with a `CallbackShortcuts`
+  around the whole example were a group named by the line of keys on the
+  web ([first web transcript](../evidence/probes/i04/voiceover-web-first-run.md.txt)),
+  and VoiceOver on iOS read that line before the strip it was written
+  under ([first iOS transcript](../evidence/probes/i04/voiceover-ios-first-run.md.txt)).
+  The line is now a node of its own (`Semantics(container: true)`) and
+  above the strip in every example, where it is met before the keys it
+  describes.
 - **Found on the way**: an adjustable control has no accessible name on
   the web ([FL-028](../flutter-limitations.md#fl-028)), which is why the
   strip is made of buttons; a `PageView` takes no focus
@@ -287,7 +299,7 @@ Control+F reaches the page in a person's browser is not established); a
 hardware keyboard's own keys with VoiceOver's Quick Nav on; other Android
 input methods than Gboard; shortcuts with more than one key in sequence;
 and a shortcut list or a way to discover shortcuts beyond the line of
-text under the strip.
+text above the strip.
 
 ## 8. Handed on
 

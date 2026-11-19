@@ -119,6 +119,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-461](#fl-461) | A text field's done, go, search, or send action takes keyboard focus away and gives it to no control | All | Confirmed |
 | [FL-462](#fl-462) | A `CupertinoSlidingSegmentedControl` takes keyboard focus, and Space does not change it | All (widget test only) | Observed |
 | [FL-463](#fl-463) | A `PageView` takes no keyboard focus and has no keys | Android, iOS, Web | Observed |
+| [FL-464](#fl-464) | A `Shortcuts`, `CallbackShortcuts`, or `Focus` around plain text makes that text the name of a node holding every control inside it | Web, iOS (Android not looked at) | Confirmed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -2314,6 +2315,47 @@ yet), **Fixed in x.y** (verified on that version).
   with Left and Right mapped to the controller's `previousPage` and
   `nextPage`, as the I04 examples do for their strip of photos. Left to
   I14 Scrolling regions and C17 Carousel.
+- Upstream issue: not searched yet (D25).
+
+## FL-464
+
+**A `Shortcuts`, `CallbackShortcuts`, or `Focus` around plain text makes that text the name of a node holding every control inside it.**
+
+- Status: Confirmed, Flutter 3.47.5. Asserted by the I04 widget tests
+  "the SDK on its own (FL-464)", written to fail when the wrapper stops
+  adding a node. Framework source read: `widgets/focus_scope.dart`
+  (`Focus` wraps its child in `Semantics(focusable: ...)` when
+  `includeSemantics` is true, the default) and `widgets/shortcuts.dart`
+  (`Shortcuts` and `CallbackShortcuts` are each a `Focus` that takes no
+  focus; `Shortcuts` passes on its own `includeSemantics`, which is true by
+  default, and `CallbackShortcuts` has no such parameter). Found in the
+  I04 build.
+- What happens: the wrapper's `Semantics` forms a node. Text inside it
+  that has no node of its own is merged into that node as its name, and
+  every control inside it becomes its child. In a widget test, a `Text`
+  and a button inside any of the three give one node named by the text,
+  with the button under it; without the wrapper, or with the text in a
+  `Semantics(container: true)` of its own, they are side by side.
+- Seen with VoiceOver, in the I04 examples before the workaround, where a
+  `CallbackShortcuts` around the whole example held the line of keys as
+  plain text (first transcripts, kept in `docs/evidence/probes/i04/`):
+  - Web, Chromium and WebKit: VoiceOver read the line of keys followed by
+    "group", then the controls, then "end of" the line and "group": the
+    whole example became a group named by that line
+    (`voiceover-web-first-run.md.txt`).
+  - iOS: VoiceOver read the line before the strip it was written under,
+    in those three examples only (`voiceover-ios-first-run.md.txt`).
+  - Android: not looked at (the TalkBack walk moves TalkBack's focus to
+    each control, not along the tree).
+- WCAG: none failed in the I04 examples; on the web a group with a
+  misleading name is 1.3.1 Info and Relationships territory.
+- Effect: adding a shortcut around a screen can rename and regroup what
+  a screen reader hears, with no change to how it looks.
+- Workaround, in the SDK: give plain text inside a shortcut its own node,
+  `Semantics(container: true)` (I04 `_KeysHint`). Verified in the I04
+  widget tests and in the second web and iOS VoiceOver transcripts, where
+  the line of keys is a stop of its own before the strip. Not tried:
+  `includeSemantics: false` on `Shortcuts` or `Focus`.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->

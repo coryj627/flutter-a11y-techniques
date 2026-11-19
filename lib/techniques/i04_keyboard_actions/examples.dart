@@ -213,15 +213,22 @@ class _StripState extends State<_Strip> {
 }
 
 /// The keys of the strip, in words, above it, so that they are met first.
+/// It is a semantics node of its own: a `Shortcuts`, `CallbackShortcuts`,
+/// or `Focus` around plain text otherwise takes the text as the name of a
+/// node that holds every control inside it, a group named by this line on
+/// the web (docs/flutter-limitations.md, FL-464).
 class _KeysHint extends StatelessWidget {
   const _KeysHint(this.text);
 
   final String text;
 
   @override
-  Widget build(BuildContext context) => Text(
-    text,
-    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+  Widget build(BuildContext context) => Semantics(
+    container: true,
+    child: Text(
+      text,
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+    ),
   );
 }
 

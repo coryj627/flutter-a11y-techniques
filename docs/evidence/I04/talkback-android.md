@@ -13,7 +13,7 @@ Result: PASS
 
 | Element | Spoken |
 | --- | --- |
-| `i04-good-on-focus-trailhead` | selected.  / Trailhead / Button |
+| `i04-good-on-focus-trailhead` | selected.  / Trailhead / Button / Double-tap to activate |
 | `i04-good-on-focus-bridge` | Bridge / Button / Double-tap to activate |
 | `i04-good-on-focus-ridge` | Ridge / Button / Double-tap to activate |
 | `i04-good-on-focus-summit` | Summit / Button / Double-tap to activate |

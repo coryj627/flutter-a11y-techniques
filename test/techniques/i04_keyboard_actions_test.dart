@@ -520,4 +520,96 @@ void main() {
       handle.dispose();
     });
   });
+
+  group('the line of keys', () {
+    for (final slug in _all) {
+      testWidgets('$slug: the line of keys is a node of its own, with no '
+          'control under it', (tester) async {
+        final handle = tester.ensureSemantics();
+        await _open(tester, slug);
+        final hint = semanticsNodes(tester)
+            .where((n) => n.label.startsWith('In the photos:'))
+            .toList();
+        expect(hint, hasLength(1));
+        final node = find.semantics
+            .byPredicate((n) => n.label.startsWith('In the photos:'))
+            .evaluate()
+            .single;
+        expect(node.childrenCount, 0);
+        handle.dispose();
+      });
+    }
+  });
+
+  // FL-464: a Shortcuts, a CallbackShortcuts, or a Focus that takes no
+  // focus adds a semantics node, which takes the text inside it that has no
+  // node of its own as its name and holds the controls inside it as its
+  // children. Written to fail when the wrapper stops adding a node.
+  group('the SDK on its own (FL-464)', () {
+    final wrappers = <String, Widget Function(Widget)>{
+      'CallbackShortcuts': (c) =>
+          CallbackShortcuts(bindings: const {}, child: c),
+      'Shortcuts': (c) => Shortcuts(shortcuts: const {}, child: c),
+      'Focus': (c) => Focus(canRequestFocus: false, child: c),
+    };
+    for (final MapEntry(key: name, value: wrap) in wrappers.entries) {
+      for (final container in [false, true]) {
+        testWidgets('$name around text${container ? ' in its own node' : ''} '
+            'and a button', (tester) async {
+          final handle = tester.ensureSemantics();
+          const text = Text('Press F');
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(
+                body: wrap(
+                  Column(
+                    children: [
+                      if (container)
+                        Semantics(container: true, child: text)
+                      else
+                        text,
+                      ElevatedButton(onPressed: () {}, child: const Text('Go')),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+          final node = find.semantics
+              .byPredicate((n) => n.label == 'Press F')
+              .evaluate()
+              .single;
+          final children = <String>[];
+          node.visitChildren((c) {
+            children.add(c.getSemanticsData().label);
+            return true;
+          });
+          expect(children, container ? isEmpty : ['Go']);
+          handle.dispose();
+        });
+      }
+    }
+    testWidgets('with nothing around them, the text and the button are '
+        'side by side', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                const Text('Press F'),
+                ElevatedButton(onPressed: () {}, child: const Text('Go')),
+              ],
+            ),
+          ),
+        ),
+      );
+      final node = find.semantics
+          .byPredicate((n) => n.label == 'Press F')
+          .evaluate()
+          .single;
+      expect(node.childrenCount, 0);
+      handle.dispose();
+    });
+  });
 }
