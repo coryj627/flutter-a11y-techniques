@@ -1,0 +1,27 @@
+"""F06 probe helper (kept as docs/evidence/probes/f06/parse_tb.py.txt).
+Writes the TalkBack speech per marker of a logcat capture, parsed with
+tool/talkback.py's parse_speech. The round 1 capture was in logcat's brief
+format, so its prefixes are normalised to the default format first (a no-op
+for a capture already in the default format).
+
+Usage: python3 parse_tb.py <repo> <log> <out.md> <title>"""
+import re
+import sys
+
+sys.path.insert(0, sys.argv[1] + "/tool")
+import talkback  # noqa: E402
+
+log = open(sys.argv[2], errors='replace').read()
+log = re.sub(r'SpeechControllerImpl\(\s*\d+\): ', 'SpeechControllerImpl: ', log)
+log = re.sub(r'(F06TB)\s*\(\s*\d+\): ', r'\1 : ', log)
+out = [f"# {sys.argv[4]}", "",
+       "Speech per marker of ProbeF06Test, parsed from logcat with tool/talkback.py's "
+       "parse_speech. Each stop's focus was forced by the test (ACTION_ACCESSIBILITY_FOCUS), "
+       "so this shows what is spoken, not the order a swipe would take. TalkBack 17.0, "
+       "Android 17 emulator, Flutter 3.47.5, 2026-11-18. A line break inside one spoken "
+       "text is shown as a space.", "",
+       "| Marker | TalkBack spoke |", "| --- | --- |"]
+for k, v in talkback.parse_speech(log).items():
+    out.append(f"| `{k}` | {' / '.join(x.replace(chr(10), ' ') for x in v) or '(nothing)'} |")
+open(sys.argv[3], "w").write("\n".join(out) + "\n")
+print("\n".join(out))

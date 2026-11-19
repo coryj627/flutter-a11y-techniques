@@ -1,0 +1,213 @@
+// Throwaway F03 probe. Not committed; kept as docs/evidence/probes/f03/ProbeF03Test.kt.txt.
+// Runs against `-Ptarget=lib/probe.dart`.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.graphics.Matrix
+import android.os.Bundle
+import android.os.LocaleList
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewStructure
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import android.view.autofill.AutofillId
+import android.view.autofill.AutofillValue
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
+import androidx.test.runner.lifecycle.Stage
+import io.flutter.embedding.android.FlutterView
+import org.junit.Test
+import org.junit.runner.RunWith
+
+/** Records what Flutter gives the autofill framework, as an autofill service would see it. */
+private class Recorder(val name: String, val parentId: AutofillId?, val out: MutableList<String>) : ViewStructure() {
+    private val children = mutableListOf<Recorder>()
+    private fun log(s: String) = out.add("$name $s")
+    override fun addChildCount(num: Int): Int { log("addChildCount $num"); return 0 }
+    override fun asyncCommit() {}
+    override fun asyncNewChild(index: Int): ViewStructure = newChild(index)
+    override fun getAutofillId(): AutofillId? = parentId
+    override fun getChildCount(): Int = children.size
+    override fun getExtras(): Bundle = Bundle()
+    override fun getHint(): CharSequence? = null
+    override fun getText(): CharSequence? = null
+    override fun getTextSelectionEnd(): Int = 0
+    override fun getTextSelectionStart(): Int = 0
+    override fun hasExtras(): Boolean = false
+    override fun newChild(index: Int): ViewStructure =
+        Recorder("$name/child$index", null, out).also { children.add(it) }
+    override fun newHtmlInfoBuilder(tagName: String): HtmlInfo.Builder? = null
+    override fun setAccessibilityFocused(state: Boolean) {}
+    override fun setActivated(state: Boolean) {}
+    override fun setAlpha(alpha: Float) {}
+    override fun setAutofillHints(hints: Array<out String>?) { log("autofillHints=${hints?.toList()}") }
+    override fun setAutofillId(id: AutofillId) {}
+    override fun setAutofillId(parentId: AutofillId, virtualId: Int) { log("virtualId=$virtualId") }
+    override fun setAutofillOptions(options: Array<out CharSequence>?) {}
+    override fun setAutofillType(type: Int) { log("autofillType=$type") }
+    override fun setAutofillValue(value: AutofillValue?) { log("autofillValue=${value?.textValue}") }
+    override fun setCheckable(state: Boolean) {}
+    override fun setChecked(state: Boolean) {}
+    override fun setChildCount(num: Int) {}
+    override fun setClassName(className: String?) {}
+    override fun setClickable(state: Boolean) {}
+    override fun setContentDescription(contentDescription: CharSequence?) {}
+    override fun setContextClickable(state: Boolean) {}
+    override fun setDataIsSensitive(sensitive: Boolean) {}
+    override fun setDimens(left: Int, top: Int, scrollX: Int, scrollY: Int, width: Int, height: Int) {
+        log("dimens=$left,$top ${width}x$height")
+    }
+    override fun setElevation(elevation: Float) {}
+    override fun setEnabled(state: Boolean) {}
+    override fun setFocusable(state: Boolean) {}
+    override fun setFocused(state: Boolean) {}
+    override fun setHint(hint: CharSequence?) { log("hint=$hint") }
+    override fun setHtmlInfo(htmlInfo: HtmlInfo) {}
+    override fun setId(id: Int, packageName: String?, typeName: String?, entryName: String?) {}
+    override fun setInputType(inputType: Int) { log("inputType=0x${Integer.toHexString(inputType)}") }
+    override fun setLocaleList(localeList: LocaleList?) {}
+    override fun setLongClickable(state: Boolean) {}
+    override fun setOpaque(opaque: Boolean) {}
+    override fun setSelected(state: Boolean) {}
+    override fun setText(text: CharSequence?) {}
+    override fun setText(text: CharSequence?, selectionStart: Int, selectionEnd: Int) {}
+    override fun setTextLines(charOffsets: IntArray?, baselines: IntArray?) {}
+    override fun setTextStyle(size: Float, fgColor: Int, bgColor: Int, style: Int) {}
+    override fun setTransformation(matrix: Matrix?) {}
+    override fun setVisibility(visibility: Int) {}
+    override fun setWebDomain(domain: String?) {}
+}
+
+@RunWith(AndroidJUnit4::class)
+class ProbeF03Test : TechniqueTest("F03") {
+    private val tag = "F03PROBE"
+
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = android.graphics.Rect().also { n.getBoundsInScreen(it) }
+        return "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"${n.name()}\" hint=\"${n.hintText ?: ""}\" " +
+            "text=\"${n.text ?: ""}\" showingHint=${n.isShowingHintText} password=${n.isPassword} " +
+            "inputType=0x${Integer.toHexString(n.inputType)} editable=${n.isEditable} " +
+            "multiLine=${n.isMultiLine} focused=${n.isFocused} $r"
+    }
+
+    private fun dump(title: String) {
+        Log.i(tag, "==== $title")
+        for (n in all()) if (n.viewIdResourceName != null || n.isEditable) Log.i(tag, describe(n))
+    }
+
+    private fun shell(command: String): String {
+        val pfd = automation.executeShellCommand(command)
+        return android.os.ParcelFileDescriptor.AutoCloseInputStream(pfd).bufferedReader().readText()
+    }
+
+    private fun keyboard(title: String) {
+        val ime = shell("dumpsys input_method")
+        Log.i(tag, "---- input_method $title")
+        for (line in ime.lines()) {
+            val t = line.trim()
+            if (t.startsWith("inputType=") || t.startsWith("hintText=") || t.startsWith("mInputShown") ||
+                t.startsWith("mCurEditorInfo") || t.contains("imeOptions=") || t.startsWith("packageName=") ||
+                t.startsWith("mServedView") || t.startsWith("mIsInputViewShown") || t.contains("isInputViewShown")) {
+                Log.i(tag, "IME $t")
+            }
+        }
+        // The keyboard's own window, and what its nodes say.
+        for (w in automation.windows) {
+            if (w.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD) {
+                val r = android.graphics.Rect().also { w.getBoundsInScreen(it) }
+                val labels = mutableListOf<String>()
+                fun walk(n: AccessibilityNodeInfo?) {
+                    if (n == null) return
+                    val l = (n.contentDescription ?: n.text)?.toString()
+                    if (!l.isNullOrEmpty()) labels.add(l)
+                    for (i in 0 until n.childCount) walk(n.getChild(i))
+                }
+                walk(w.root)
+                Log.i(tag, "IMEWINDOW $r keys(${labels.size})=${labels.distinct()}")
+            }
+        }
+    }
+
+    private fun flutterView(): FlutterView {
+        var found: FlutterView? = null
+        inst.runOnMainSync {
+            val activity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED).first()
+            fun find(v: View) {
+                if (v is FlutterView) found = v
+                if (v is ViewGroup) for (i in 0 until v.childCount) find(v.getChildAt(i))
+            }
+            find(activity.window.decorView)
+        }
+        return found!!
+    }
+
+    private fun autofill(title: String) {
+        val out = mutableListOf<String>()
+        val view = flutterView()
+        inst.runOnMainSync {
+            view.onProvideAutofillVirtualStructure(Recorder("root", view.autofillId, out), 0)
+        }
+        Log.i(tag, "---- autofill $title (${out.size} calls)")
+        for (line in out) Log.i(tag, "AUTOFILL $line")
+    }
+
+    private fun focusField(id: String) {
+        node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(2_000)
+        keyboard(id)
+        autofill(id)
+        shell("screencap -p /sdcard/Download/f03probe_$id.png")
+        Log.i(tag, "FOCUSED " + describe(node(id)))
+    }
+
+    private fun imeUp() = automation.windows.any { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }
+
+    /** Back closes the keyboard; with no keyboard it would leave the app. */
+    private fun closeKeyboard() {
+        if (!imeUp()) { Log.i(tag, "no keyboard to close"); return }
+        device.pressBack()
+        Thread.sleep(1_500)
+        Log.i(tag, "keyboard closed, still up=${imeUp()}")
+    }
+
+    private fun page(n: Int) {
+        named("Page $n").performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(2_000)
+    }
+
+    @Test
+    fun probe() {
+        val intent = inst.targetContext.packageManager.getLaunchIntentForPackage(inst.targetContext.packageName)!!
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        Thread.sleep(8_000)
+        Log.i(tag, "settings autofill_service=" + shell("settings get secure autofill_service").trim() +
+            " default_input_method=" + shell("settings get secure default_input_method").trim())
+        val pages = mapOf(
+            1 to listOf("p01", "p02", "p03", "p04", "p05", "p06"),
+            2 to listOf("p07", "p08", "p09", "p10", "p11", "p12"),
+            3 to listOf("p13", "p14", "p15", "p16", "p17"),
+        )
+        for ((p, ids) in pages) {
+            page(p)
+            dump("page $p")
+            keyboard("page $p, nothing focused")
+            for (id in ids) {
+                focusField(id)
+                closeKeyboard()
+            }
+        }
+        // A password typed into, while editing and after.
+        page(3)
+        node("p13").performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(1_500)
+        inst.sendStringSync("abc")
+        Thread.sleep(1_500)
+        Log.i(tag, "TYPED editing " + describe(node("p13")))
+        keyboard("p13 typed")
+        closeKeyboard()
+        Log.i(tag, "TYPED keyboard away " + describe(node("p13")))
+        dump("page 3, p13 typed, keyboard away")
+    }
+}

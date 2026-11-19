@@ -1,0 +1,228 @@
+// F03 probe (throwaway, not committed): keyboard types, input purpose, and
+// password fields.
+//
+// Every fixture's label starts with its number ("p01 Name"), and each
+// carries the identifier `pNN` on a plain `Semantics` around it, which joins
+// a text field's node (FL-043 does not affect a text field). The screen has
+// three pages, so that each fits on a phone with the keyboard down and the
+// iOS walk never scrolls; the buttons at the top switch between them.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+Widget _id(String id, Widget child) =>
+    Semantics(key: ValueKey(id), identifier: id, child: child);
+
+Widget _field(
+  String id,
+  String label, {
+  TextInputType? keyboardType,
+  Iterable<String>? autofillHints = const <String>[],
+  TextInputAction? action,
+  bool obscure = false,
+  bool enableSuggestions = true,
+  TextCapitalization capitalization = TextCapitalization.none,
+  int? maxLines = 1,
+}) => _id(
+  id,
+  TextField(
+    keyboardType: keyboardType,
+    autofillHints: autofillHints,
+    textInputAction: action,
+    obscureText: obscure,
+    enableSuggestions: enableSuggestions,
+    textCapitalization: capitalization,
+    maxLines: maxLines,
+    decoration: InputDecoration(
+      labelText: '$id $label',
+      border: const OutlineInputBorder(),
+      isDense: true,
+    ),
+  ),
+);
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  int _page = 1;
+  final _custom = TextEditingController();
+  final _customFocus = FocusNode();
+
+  List<Widget> _page1() => [
+    // 01 A name: the name keyboard, capital letters, the name purpose.
+    _field(
+      'p01',
+      'Name',
+      keyboardType: TextInputType.name,
+      autofillHints: const [AutofillHints.name],
+      capitalization: TextCapitalization.words,
+      action: TextInputAction.next,
+    ),
+    // 02 An email address.
+    _field(
+      'p02',
+      'Email',
+      keyboardType: TextInputType.emailAddress,
+      autofillHints: const [AutofillHints.email],
+      action: TextInputAction.next,
+    ),
+    // 03 A phone number.
+    _field(
+      'p03',
+      'Phone',
+      keyboardType: TextInputType.phone,
+      autofillHints: const [AutofillHints.telephoneNumber],
+      action: TextInputAction.next,
+    ),
+    // 04 A web address.
+    _field(
+      'p04',
+      'Website',
+      keyboardType: TextInputType.url,
+      autofillHints: const [AutofillHints.url],
+      action: TextInputAction.next,
+    ),
+    // 05 An amount with a decimal point, not about the user.
+    _field(
+      'p05',
+      'Amount',
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      action: TextInputAction.done,
+    ),
+    // 06 A whole number.
+    _field('p06', 'Count', keyboardType: TextInputType.number),
+  ];
+
+  List<Widget> _page2() => [
+    // 07 An email field with everything left at the default.
+    _field('p07', 'Email'),
+    // 08 A name field with autofill hints set to null.
+    _field('p08', 'Name', autofillHints: null),
+    // 09 An email field with suggestions turned off.
+    _field(
+      'p09',
+      'Email',
+      keyboardType: TextInputType.emailAddress,
+      autofillHints: const [AutofillHints.email],
+      enableSuggestions: false,
+    ),
+    // 10 A Cupertino field named with Semantics (FL-016).
+    _id(
+      'p10',
+      Semantics(
+        label: 'p10 Email',
+        child: const CupertinoTextField(
+          keyboardType: TextInputType.emailAddress,
+          autofillHints: [AutofillHints.email],
+          textInputAction: TextInputAction.next,
+        ),
+      ),
+    ),
+    // 11 A field built on EditableText alone.
+    _id(
+      'p11',
+      Semantics(
+        label: 'p11 Amount',
+        child: Container(
+          height: 40,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(border: Border.all()),
+          child: EditableText(
+            controller: _custom,
+            focusNode: _customFocus,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textInputAction: TextInputAction.done,
+            style: const TextStyle(fontSize: 16, color: Colors.black),
+            cursorColor: Colors.black,
+            backgroundCursorColor: Colors.grey,
+          ),
+        ),
+      ),
+    ),
+    // 12 Several lines.
+    _field(
+      'p12',
+      'Message',
+      keyboardType: TextInputType.multiline,
+      maxLines: 3,
+    ),
+  ];
+
+  List<Widget> _page3() => [
+    // 13 A password: obscured, the password purpose.
+    _field(
+      'p13',
+      'Password',
+      obscure: true,
+      autofillHints: const [AutofillHints.password],
+      action: TextInputAction.done,
+    ),
+    // 14 A PIN: obscured, the number keyboard.
+    _field('p14', 'PIN', obscure: true, keyboardType: TextInputType.number),
+    // 15 A Cupertino password.
+    _id(
+      'p15',
+      Semantics(
+        label: 'p15 Password',
+        child: const CupertinoTextField(
+          obscureText: true,
+          autofillHints: [AutofillHints.password],
+        ),
+      ),
+    ),
+    // 16 A new password.
+    _field(
+      'p16',
+      'New password',
+      obscure: true,
+      autofillHints: const [AutofillHints.newPassword],
+    ),
+    // 17 A visible password keyboard, not obscured.
+    _field(
+      'p17',
+      'Code',
+      keyboardType: TextInputType.visiblePassword,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final fields = switch (_page) {
+      1 => _page1(),
+      2 => _page2(),
+      _ => _page3(),
+    };
+    return Scaffold(
+      appBar: AppBar(title: Text('F03 probe, page $_page')),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(12),
+          children: [
+            Wrap(
+              spacing: 8,
+              children: [
+                for (final p in [1, 2, 3])
+                  OutlinedButton(
+                    onPressed: () => setState(() => _page = p),
+                    child: Text('Page $p'),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            for (final f in fields) ...[f, const SizedBox(height: 10)],
+          ],
+        ),
+      ),
+    );
+  }
+}

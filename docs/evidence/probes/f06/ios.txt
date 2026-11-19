@@ -1,0 +1,295 @@
+F06PROBE ==== p01 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p01 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(152.638671875, 76.0, 96.72265625, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 264.0)
+F06PROBE EL type=49 id=p01-email label="p01 Email\nEnter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 76.0)
+F06PROBE EL type=49 id=p01-phone label="p01 Phone\nEnter a phone number using digits only." value=Optional(abc) placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 76.0)
+F06PROBE EL type=9 id=p01-end label="p01 End" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 318.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p02 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p02 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(151.29052734375, 76.0, 99.4189453125, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 264.0)
+F06PROBE EL type=9 id=p02-end label="p02 End" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 318.0, 370.0, 48.0)
+F06PROBE EL type=49 id=p02-email label="p02 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 76.0)
+F06PROBE EL type=48 id= label="Enter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(32.0, 194.0, 296.6265462239583, 16.0)
+F06PROBE EL type=49 id=p02-phone label="p02 Phone" value=Optional(abc) placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 76.0)
+F06PROBE EL type=48 id= label="Enter a phone number using digits only." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(32.0, 286.0, 238.91835530598962, 16.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p03 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p03 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.8984375, 76.0, 100.203125, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 152.0)
+F06PROBE EL type=49 id=p03-email label="p03 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 56.0)
+F06PROBE EL type=9 id=p03-submit label="p03 Check" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 206.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p03 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p03 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.8984375, 76.0, 100.203125, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 172.0)
+F06PROBE EL type=49 id=p03-email label="p03 Email\nEnter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 76.0)
+F06PROBE EL type=9 id=p03-submit label="p03 Check" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p04 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p04 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.7587890625, 76.0, 100.482421875, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 152.0)
+F06PROBE EL type=49 id=p04-email label="p04 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 56.0)
+F06PROBE EL type=9 id=p04-submit label="p04 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 206.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p04 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p04 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.7587890625, 76.0, 100.482421875, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 172.0)
+F06PROBE EL type=49 id=p04-email label="p04 Email\nEnter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 76.0)
+F06PROBE EL type=9 id=p04-submit label="p04 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p05 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p05 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.9736328125, 76.0, 100.052734375, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 224.0)
+F06PROBE EL type=49 id=p05-name label="p05 Name" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 56.0)
+F06PROBE EL type=49 id=p05-email label="p05 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 206.0, 370.0, 56.0)
+F06PROBE EL type=9 id=p05-submit label="p05 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 278.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p05 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p05 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.9736328125, 76.0, 100.052734375, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 264.0)
+F06PROBE EL type=49 id=p05-name label="p05 Name\nEnter your name." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 76.0)
+F06PROBE EL type=49 id=p05-email label="p05 Email\nEnter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 76.0)
+F06PROBE EL type=9 id=p05-submit label="p05 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 318.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p06 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p06 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.619140625, 76.0, 100.76171875, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 224.0)
+F06PROBE EL type=49 id=p06-name label="p06 Name" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 56.0)
+F06PROBE EL type=49 id=p06-email label="p06 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 206.0, 370.0, 56.0)
+F06PROBE EL type=9 id=p06-submit label="p06 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 278.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p06 after submit
+F06PROBE EL type=1 id=inputView label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 546.0, 402.0, 328.0)
+F06PROBE EL type=1 id=SystemInputAssistantView label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 546.0, 402.0, 44.0)
+F06PROBE EL type=19 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 590.0, 402.0, 226.0)
+F06PROBE EL type=9 id= label="Emoji" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(8.47726568115926, 805.6989567998571, 68.0852958475086, 68.73516393505099)
+F06PROBE EL type=9 id=dictation label="Dictate" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(325.43743847133214, 805.3656234665237, 68.08529584750863, 68.7351639350511)
+F06PROBE EL type=1 id=CenterPageView label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 546.0, 402.0, 44.0)
+F06PROBE EL type=48 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(8.47726568115926, 805.6989567998571, 0.0, 0.0)
+F06PROBE EL type=48 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(325.43743847133214, 805.3656234665239, 0.0, 0.0)
+F06PROBE EL type=1 id=UIKeyboardLayoutStar Preview label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 590.0, 402.0, 226.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 546.0, 402.0, 44.0)
+F06PROBE EL type=20 id= label="Padding-Left" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 590.0, 0.0, 0.0)
+F06PROBE EL type=20 id= label="q" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.666666666666657, 597.0, 39.333333333333336, 54.0)
+F06PROBE EL type=20 id= label="w" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(44.0, 597.0, 39.66666666666666, 54.0)
+F06PROBE EL type=20 id= label="e" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(83.66666666666666, 597.0, 39.33333333333334, 54.0)
+F06PROBE EL type=20 id= label="r" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(122.99999999999999, 597.0, 39.66666666666667, 54.0)
+F06PROBE EL type=20 id= label="t" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(162.66666666666666, 597.0, 39.33333333333334, 54.0)
+F06PROBE EL type=20 id= label="y" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(202.0, 597.0, 39.66666666666666, 54.0)
+F06PROBE EL type=20 id= label="u" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(241.66666666666666, 597.0, 39.33333333333334, 54.0)
+F06PROBE EL type=20 id= label="i" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(281.0, 597.0, 39.666666666666686, 54.0)
+F06PROBE EL type=20 id= label="o" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(320.66666666666663, 597.0, 39.333333333333314, 54.0)
+F06PROBE EL type=20 id= label="p" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(360.0, 597.0, 39.666666666666686, 54.0)
+F06PROBE EL type=20 id= label="Padding-Right" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 590.0, 0.0, 0.0)
+F06PROBE EL type=20 id= label="Padding-Left" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 590.0, 0.0, 0.0)
+F06PROBE EL type=20 id= label="a" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(24.333333333333318, 651.0, 39.33333333333334, 54.0)
+F06PROBE EL type=20 id= label="s" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(63.66666666666666, 651.0, 39.66666666666666, 54.0)
+F06PROBE EL type=20 id= label="d" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(103.33333333333331, 651.0, 39.33333333333334, 54.0)
+F06PROBE EL type=20 id= label="f" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(142.66666666666666, 651.0, 39.666666666666686, 54.0)
+F06PROBE EL type=20 id= label="g" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(182.33333333333334, 651.0, 39.333333333333314, 54.0)
+F06PROBE EL type=20 id= label="h" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(221.66666666666666, 651.0, 39.66666666666666, 54.0)
+F06PROBE EL type=20 id= label="j" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(261.33333333333326, 651.0, 39.333333333333314, 54.0)
+F06PROBE EL type=20 id= label="k" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(300.66666666666663, 651.0, 39.666666666666686, 54.0)
+F06PROBE EL type=20 id= label="l" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(340.33333333333326, 651.0, 39.333333333333314, 54.0)
+F06PROBE EL type=20 id= label="Padding-Right" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 590.0, 0.0, 0.0)
+F06PROBE EL type=9 id=shift label="shift" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.666666666666657, 705.0, 51.333333333333336, 54.0)
+F06PROBE EL type=20 id= label="Padding-Left" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 590.0, 0.0, 0.0)
+F06PROBE EL type=20 id= label="z" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(63.66666666666666, 705.0, 39.66666666666666, 54.0)
+F06PROBE EL type=20 id= label="x" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(103.33333333333331, 705.0, 39.33333333333334, 54.0)
+F06PROBE EL type=20 id= label="c" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(142.66666666666666, 705.0, 39.666666666666686, 54.0)
+F06PROBE EL type=20 id= label="v" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(182.33333333333334, 705.0, 39.333333333333314, 54.0)
+F06PROBE EL type=20 id= label="b" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(221.66666666666666, 705.0, 39.66666666666666, 54.0)
+F06PROBE EL type=20 id= label="n" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(261.33333333333326, 705.0, 39.333333333333314, 54.0)
+F06PROBE EL type=20 id= label="m" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(300.66666666666663, 705.0, 39.666666666666686, 54.0)
+F06PROBE EL type=20 id= label="Padding-Right" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 590.0, 0.0, 0.0)
+F06PROBE EL type=20 id=delete label="delete" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(348.0, 705.0, 51.666666666666686, 54.0)
+F06PROBE EL type=20 id=more label="numbers" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.666666666666657, 759.0, 98.66666666666667, 54.0)
+F06PROBE EL type=20 id=space label="space" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(103.3333333333333, 759.0, 197.33333333333331, 54.0)
+F06PROBE EL type=9 id=Done label="done" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(300.66666666666663, 759.0, 99.00000000000006, 54.0)
+F06PROBE EL type=1 id= label="Typing Predictions" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 546.0, 402.0, 44.0)
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p06 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.619140625, 76.0, 100.76171875, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 264.0)
+F06PROBE EL type=49 id=p06-name label="p06 Name\nEnter your name." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=true frame=(16.0, 134.0, 370.0, 76.0)
+F06PROBE EL type=49 id=p06-email label="p06 Email\nEnter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 76.0)
+F06PROBE EL type=9 id=p06-submit label="p06 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 318.0, 370.0, 48.0)
+F06PROBE EL type=9 id= label="I" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 546.0, 134.0, 44.0)
+F06PROBE EL type=9 id= label="The" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(134.0, 546.0, 134.0, 44.0)
+F06PROBE EL type=9 id= label="I’m" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(268.0, 546.0, 134.0, 44.0)
+F06PROBE keyboard shown: true
+F06PROBE ==== p07 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p07 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(151.607421875, 76.0, 98.78515625, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 224.0)
+F06PROBE EL type=49 id=p07-name label="p07 Name" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 56.0)
+F06PROBE EL type=49 id=p07-email label="p07 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 206.0, 370.0, 56.0)
+F06PROBE EL type=9 id=p07-submit label="p07 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 278.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p07 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p07 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(151.607421875, 76.0, 98.78515625, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 264.0)
+F06PROBE EL type=49 id=p07-name label="p07 Name\nEnter your name." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 76.0)
+F06PROBE EL type=49 id=p07-email label="p07 Email\nEnter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 76.0)
+F06PROBE EL type=9 id=p07-submit label="p07 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 318.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p08 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p08 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.8125, 76.0, 100.375, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 224.0)
+F06PROBE EL type=49 id=p08-email label="p08 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 56.0)
+F06PROBE EL type=49 id=p08-phone label="p08 Phone" value=Optional(abc) placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 206.0, 370.0, 56.0)
+F06PROBE EL type=9 id=p08-submit label="p08 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 278.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p08 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p08 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.8125, 76.0, 100.375, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 264.0)
+F06PROBE EL type=49 id=p08-email label="p08 Email\nEnter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 76.0)
+F06PROBE EL type=49 id=p08-phone label="p08 Phone\nEnter a phone number using digits only." value=Optional(abc) placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 76.0)
+F06PROBE EL type=9 id=p08-submit label="p08 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 318.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p09 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p09 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.619140625, 76.0, 100.76171875, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 156.0)
+F06PROBE EL type=49 id=p09-email label="p09 Email\nname@example.com" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(36.0, 134.0, 330.0, 46.0)
+F06PROBE EL type=9 id=p09-submit label="p09 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 206.0, 370.0, 52.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p09 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p09 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(150.619140625, 76.0, 100.76171875, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 190.0)
+F06PROBE EL type=49 id=p09-email label="p09 Email\nname@example.com\nEnter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(36.0, 134.0, 330.0, 80.0)
+F06PROBE EL type=9 id=p09-submit label="p09 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 240.0, 370.0, 52.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p10 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p10 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(152.6923828125, 76.0, 96.615234375, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 172.0)
+F06PROBE EL type=49 id=p10-email label="p10 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 56.0)
+F06PROBE EL type=1 id=p10-error label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 190.0, 370.0, 20.0)
+F06PROBE EL type=9 id=p10-submit label="p10 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p10 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p10 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(152.6923828125, 76.0, 96.615234375, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 172.0)
+F06PROBE EL type=49 id=p10-email label="p10 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 56.0)
+F06PROBE EL type=1 id=p10-error label="Enter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 190.0, 370.0, 20.0)
+F06PROBE EL type=9 id=p10-submit label="p10 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p11 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p11 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(154.486328125, 76.0, 93.02734375, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 260.0)
+F06PROBE EL type=1 id=p11-summary label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 20.0)
+F06PROBE EL type=49 id=p11-name label="p11 Name" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 170.0, 370.0, 56.0)
+F06PROBE EL type=49 id=p11-email label="p11 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 242.0, 370.0, 56.0)
+F06PROBE EL type=9 id=p11-submit label="p11 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 314.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p11 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p11 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(154.486328125, 76.0, 93.02734375, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 320.0)
+F06PROBE EL type=1 id=p11-summary label="p11 2 errors. Name: Enter your name. Email: Enter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 40.0)
+F06PROBE EL type=49 id=p11-name label="p11 Name\nEnter your name." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 190.0, 370.0, 76.0)
+F06PROBE EL type=49 id=p11-email label="p11 Email\nEnter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 282.0, 370.0, 76.0)
+F06PROBE EL type=9 id=p11-submit label="p11 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 374.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p12 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p12 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(153.13818359375, 76.0, 95.7236328125, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 152.0)
+F06PROBE EL type=49 id=p12-email label="p12 Email" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 56.0)
+F06PROBE EL type=9 id=p12-submit label="p12 Type x" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 206.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p12 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p12 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(153.13818359375, 76.0, 95.7236328125, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 172.0)
+F06PROBE EL type=49 id=p12-email label="p12 Email\nEnter an email address, like name@example.com." value=Optional(x) placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 134.0, 370.0, 76.0)
+F06PROBE EL type=9 id=p12-submit label="p12 Type x" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 226.0, 370.0, 48.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p13 start
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p13 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(152.853515625, 76.0, 96.29296875, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 156.0)
+F06PROBE EL type=9 id=p13-submit label="p13 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 206.0, 370.0, 52.0)
+F06PROBE EL type=49 id=p13-email label="p13 Email\nname@example.com" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(128.39495849609375, 140.0, 231.60504150390625, 34.0)
+F06PROBE keyboard shown: false
+F06PROBE ==== p13 after submit
+F06PROBE EL type=9 id= label="Back" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(4.0, 66.0, 48.0, 48.0)
+F06PROBE EL type=48 id= label="p13 fixture" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(152.853515625, 76.0, 96.29296875, 28.0)
+F06PROBE EL type=46 id= label="" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(0.0, 118.0, 402.0, 190.0)
+F06PROBE EL type=9 id=p13-submit label="p13 Submit" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(16.0, 240.0, 370.0, 52.0)
+F06PROBE EL type=49 id=p13-email label="p13 Email\nname@example.com" value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(128.39495849609375, 140.0, 231.60504150390625, 34.0)
+F06PROBE EL type=1 id=p13-error label="Enter an email address, like name@example.com." value=Optional() placeholder=Optional("") enabled=true keyboardFocus=false frame=(56.0, 174.0, 304.0, 34.0)
+F06PROBE keyboard shown: false
+F06PROBE VO p01 walk: p01 fixture / p01 Email Enter an email address, like name@example.com. Text fi / p01 Phone Enter a phone number using digits only. abc Text field / p01 End Button
+F06PROBE VO p02 walk: p02 fixture / p02 Email Text field Enter an email address, like name@example.c / Enter an email address, like name@example.com. / p02 Phone abc Text field Enter a phone number using digits only. / Enter a phone number using digits only. / p02 End Button
+F06PROBE VO p03 on submit: p03 Check Button
+F06PROBE VO p03 after activate: 
+F06PROBE VO p03 keyboard shown: false
+F06PROBE VO p03 cursor check: forward=p03 Check Button back=p03 Email Enter an email address, like name@example.com. Text fi
+F06PROBE VO p03 walk: p03 fixture / p03 Email Enter an email address, like name@example.com. Text fi / p03 Check Button
+F06PROBE VO p04 on submit: p04 Submit Button
+F06PROBE VO p04 after activate: Enter an email address, like name@example.com.
+F06PROBE VO p04 keyboard shown: false
+F06PROBE VO p04 cursor check: forward=p04 Submit Button back=p04 Email Enter an email address, like name@example.com. Text fi
+F06PROBE VO p04 walk: p04 fixture / p04 Email Enter an email address, like name@example.com. Text fi / p04 Submit Button
+F06PROBE VO p05 on submit: p05 Submit Button
+F06PROBE VO p05 after activate: Enter your name.
+F06PROBE VO p05 keyboard shown: false
+F06PROBE VO p05 cursor check: forward=p05 Submit Button back=p05 Email Enter an email address, like name@example.com. Text fi
+F06PROBE VO p05 walk: p05 fixture / p05 Name Enter your name. Text field Enter your name. Double tap / p05 Email Enter an email address, like name@example.com. Text fi / p05 Submit Button
+F06PROBE VO p06 on submit: p06 Submit Button
+F06PROBE VO p06 after activate: Enter your name.
+F06PROBE VO p06 keyboard shown: true
+F06PROBE VO p06 cursor check: forward=I Button back=p06 Submit Button
+F06PROBE VO p06 walk: p06 fixture / p06 Name Enter your name. Text field Is editing Character mode i / p06 Email Enter an email address, like name@example.com. Text fi / p06 Submit Button / I Button / The Button / I’m Button / q Quebec / w Whiskey / e Echo / r Romeo / t Tango / y Yankee / u Uniform / i India / o Oscar / p Papa / a Alpha / s Sierra / d Delta / f Fox trot / g Golf / h Hotel / j Juliet / k Kilo
+F06PROBE VO p07 on submit: p07 Submit Button
+F06PROBE VO p07 after activate: p07 Name Enter your name. Text field Enter your name. Double tap / Enter your name.
+F06PROBE VO p07 keyboard shown: false
+F06PROBE VO p07 cursor check: forward=p07 Email Enter an email address, like name@example.com. Text fi back=p07 Name Enter your name. Text field Enter your name. Double tap
+F06PROBE VO p07 walk: p07 fixture / p07 Name Enter your name. Text field Enter your name. Double tap / p07 Email Enter an email address, like name@example.com. Text fi / p07 Submit Button
+F06PROBE VO p08 on submit: p08 Submit Button
+F06PROBE VO p08 after activate: Enter an email address, like name@example.com.
+F06PROBE VO p08 keyboard shown: false
+F06PROBE VO p08 cursor check: forward=p08 Submit Button back=p08 Phone Enter a phone number using digits only. abc Text field
+F06PROBE VO p08 walk: p08 fixture / p08 Email Enter an email address, like name@example.com. Text fi / p08 Phone Enter a phone number using digits only. abc Text field / p08 Submit Button
+F06PROBE VO p09 on submit: p09 Submit Button
+F06PROBE VO p09 after activate: Enter an email address, like name@example.com.
+F06PROBE VO p09 keyboard shown: false
+F06PROBE VO p09 cursor check: forward=p09 Submit Button back=p09 Email name@example.com Enter an email address, like name@exa
+F06PROBE VO p09 walk: p09 fixture / p09 Email name@example.com Enter an email address, like name@exa / p09 Submit Button
+F06PROBE VO p10 on submit: p10 Submit Button
+F06PROBE VO p10 after activate: Enter an email address, like name@example.com.
+F06PROBE VO p10 keyboard shown: false
+F06PROBE VO p10 cursor check: forward=p10 Submit Button back=p10 Email Text field Double tap to edit.
+F06PROBE VO p10 walk: p10 fixture / p10 Email Text field Double tap to edit. / p10 Submit Button
+F06PROBE VO p11 on submit: p11 Submit Button
+F06PROBE VO p11 after activate: p11 2 errors. Name: Enter your name. Email: Enter an email addre / Enter your name.
+F06PROBE VO p11 keyboard shown: false
+F06PROBE VO p11 cursor check: forward=p11 Submit Button back=p11 Email Enter an email address, like name@example.com. Text fi
+F06PROBE VO p11 walk: p11 fixture / p11 2 errors. Name: Enter your name. Email: Enter an email addre / p11 Name Enter your name. Text field Enter your name. Double tap / p11 Email Enter an email address, like name@example.com. Text fi / p11 Submit Button
+F06PROBE VO p12 on submit: p12 Type x Button
+F06PROBE VO p12 after activate: 
+F06PROBE VO p12 keyboard shown: false
+F06PROBE VO p12 cursor check: forward=p12 Type x Button back=p12 Email Enter an email address, like name@example.com. x Text
+F06PROBE VO p12 walk: p12 fixture / p12 Email Enter an email address, like name@example.com. x Text / p12 Type x Button
+F06PROBE VO p13 on submit: p13 Submit Button
+F06PROBE VO p13 after activate: Enter an email address, like name@example.com.
+F06PROBE VO p13 keyboard shown: false
+F06PROBE VO p13 cursor check: forward=p13 Submit Button back=p13 Email name@example.com Text field Double tap to edit.
+F06PROBE VO p13 walk: p13 fixture / p13 Email name@example.com Text field Double tap to edit. / p13 Submit Button

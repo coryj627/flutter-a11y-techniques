@@ -1,0 +1,80 @@
+// F03 probe (throwaway, not committed): the attributes of each field's
+// <input>, before focus, while focused, after typing, and after focus left.
+import { test } from '@playwright/test';
+
+const ATTRS = ['type', 'inputmode', 'autocomplete', 'enterkeyhint', 'autocapitalize', 'autocorrect',
+  'spellcheck', 'name', 'id', 'aria-label', 'placeholder'];
+
+async function attrs(page, id) {
+  return page.evaluate(([id, ATTRS]) => {
+    const el = document.querySelector(`[flt-semantics-identifier="${id}"] input, [flt-semantics-identifier="${id}"] textarea`);
+    if (!el) return `no input (inputs on page: ${document.querySelectorAll('input,textarea').length})`;
+    const parts = [el.tagName.toLowerCase()];
+    for (const a of ATTRS) if (el.hasAttribute(a)) parts.push(`${a}=${JSON.stringify(el.getAttribute(a))}`);
+    parts.push(`focused=${document.activeElement === el}`);
+    return parts.join(' ');
+  }, [id, ATTRS]);
+}
+
+async function ax(page, browserName, title) {
+  if (browserName !== 'chromium') return;
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  for (const n of nodes) {
+    const name = n.name?.value ?? '';
+    if (n.ignored || !/^p\d\d /.test(name)) continue;
+    const props = (n.properties || []).map((p) => `${p.name}=${JSON.stringify(p.value?.value)}`).join(' ');
+    console.log(`F03PROBE AX ${title} role=${n.role?.value} name=${JSON.stringify(name)} ${props}`);
+  }
+  await cdp.detach();
+}
+
+const PAGES = {
+  1: ['p01', 'p02', 'p03', 'p04', 'p05', 'p06'],
+  2: ['p07', 'p08', 'p09', 'p10', 'p11', 'p12'],
+  3: ['p13', 'p14', 'p15', 'p16', 'p17'],
+};
+
+test('probe', async ({ page }, info) => {
+  const project = info.project.name;
+  const browserName = project.startsWith('webkit') ? 'webkit' : 'chromium';
+  // Playwright's device emulation keeps navigator.platform "MacIntel",
+  // which Flutter reads first and takes for macOS; give it the platform a
+  // real phone reports.
+  const platform = { 'chromium-android': 'Linux armv8l', 'webkit-iphone': 'iPhone' }[project];
+  if (platform) {
+    await page.addInitScript((p) => Object.defineProperty(Navigator.prototype, 'platform', { get: () => p }), platform);
+  }
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Page 2' }).waitFor();
+  await page.waitForTimeout(800);
+  const env = await page.evaluate(() => `platform=${navigator.platform} maxTouchPoints=${navigator.maxTouchPoints} ua=${navigator.userAgent}`);
+  console.log(`F03PROBE ${project} ENV ${env}`);
+  for (const [n, ids] of Object.entries(PAGES)) {
+    await page.getByRole('button', { name: `Page ${n}` }).click();
+    await page.waitForTimeout(800);
+    await ax(page, browserName, `page ${n}`);
+    for (const id of ids) {
+      const before = await attrs(page, id);
+      const input = page.locator(`[flt-semantics-identifier="${id}"]`).locator('input,textarea');
+      // A bare EditableText (p11) never takes focus from a click; give up
+      // on it quickly rather than wait for Playwright's timeout.
+      const clicked = await input.click({ timeout: 3000 }).then(() => true, () => false);
+      await page.waitForTimeout(400);
+      const focused = (clicked ? '' : 'CLICK FAILED ') + await attrs(page, id);
+      if (clicked) await page.keyboard.type('abc', { delay: 30 });
+      await page.waitForTimeout(400);
+      const typed = await attrs(page, id);
+      const value = await input.inputValue().catch(() => '?');
+      // Leave the field: focus the page button.
+      await page.getByRole('button', { name: `Page ${n}` }).focus({ timeout: 3000 }).catch(() => {});
+      await page.waitForTimeout(400);
+      const after = await attrs(page, id);
+      console.log(`F03PROBE ${project} ${id} BEFORE ${before}`);
+      console.log(`F03PROBE ${project} ${id} FOCUSED ${focused}`);
+      console.log(`F03PROBE ${project} ${id} TYPED value=${JSON.stringify(value)} ${typed}`);
+      console.log(`F03PROBE ${project} ${id} LEFT ${after}`);
+    }
+    await ax(page, browserName, `page ${n} typed`);
+  }
+});

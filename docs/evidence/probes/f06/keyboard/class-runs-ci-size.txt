@@ -1,0 +1,19 @@
+Run 1, the committed test before the fix, at 320x640 and 160 dpi:
+set: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+android class exit 0
+talkback exit 1
+restored: Physical size: 1080x2424  Physical density: 420 
+Pixel_10a(AVD) - 17 Tests 2/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 5/7 completed. (0 skipped) (0 failed)
+BUILD SUCCESSFUL in 1m 4s
+
+Run 2, the first fix (waiting with UI Automator's Until.hasObject), same size:
+set: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+android class exit 1
+restored: Physical size: 1080x2424  Physical density: 420 
+	java.lang.AssertionError: the count of bad-color-only is in the tree
+	java.lang.AssertionError: the count of good-form is in the tree
+java.lang.AssertionError: java.lang.AssertionError: the count of bad-color-only is in the tree
+java.lang.AssertionError: the count of bad-color-only is in the tree
+java.lang.AssertionError: java.lang.AssertionError: the count of good-form is in the tree
+java.lang.AssertionError: the count of good-form is in the tree
