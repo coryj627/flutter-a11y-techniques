@@ -2430,8 +2430,10 @@ yet), **Fixed in x.y** (verified on that version).
     Flutter, with VoiceOver on or off, while Tab in the same launch did
     (`ios.txt`, `ios_round2.txt`); Command+period, iOS's own key for
     cancel, arrived as Escape and closed `e1` and the probe's own overlay
-    that handles Escape (`ios_round3.txt`). Whether a hardware keyboard's
-    Escape key reaches the app was not tried.
+    that handles Escape (`ios_round3.txt`), on iOS 27.0. On CI's iOS 26.5
+    simulator it did not close the I08 layers in two of four places
+    (I08's spec, section 7). Whether a hardware keyboard's Escape key
+    reaches the app was not tried.
 - Effect: a sheet or dialog made not dismissible, so that a stray tap
   does not close it, is closed by Back and by a screen reader's gesture
   but not by Escape. If it has no button that closes it, a keyboard user

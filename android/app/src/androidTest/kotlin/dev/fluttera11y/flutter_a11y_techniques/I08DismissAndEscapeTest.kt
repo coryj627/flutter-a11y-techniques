@@ -231,6 +231,13 @@ class I08DismissAndEscapeTest : TechniqueTest("I08") {
      */
     private fun showByKeyboard(slug: String) {
         open(slug)
+        // The app's window must be the active one: a key sent to another
+        // window acts there. Says which window it is when it is not.
+        val end = System.currentTimeMillis() + 5_000
+        while (automation.rootInActiveWindow?.packageName?.toString() != inst.targetContext.packageName &&
+            System.currentTimeMillis() < end) Thread.sleep(250)
+        assertEquals("$slug: the active window's app; windows: ${automation.windows.map { "${it.title} (${it.type})" }}",
+            inst.targetContext.packageName, automation.rootInActiveWindow?.packageName?.toString())
         revealed("i08-$slug-open")
         assertTrue("$slug: Tab reaches Map layers", tabTo(slug, "open"))
         key("ENTER")

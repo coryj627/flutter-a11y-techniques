@@ -237,3 +237,8 @@ on 2026-11-19; the script set the size and density and put both back at
 the end (its first and last lines; the script is `android_320x640.sh.txt`). Its output lists only failed and
 skipped tests: none failed, and the TalkBack walk was skipped, as TalkBack
 was off.
+
+`ios_suite_x3.txt` is the I08 iOS test class (not the probe, and without
+its VoiceOver walk) run three times in a row on 2026-11-19, after the iOS
+tests were changed to show keyboard focus in the layers before sending
+Escape (I08's spec, section 7): 15 tests passed, none failed.
