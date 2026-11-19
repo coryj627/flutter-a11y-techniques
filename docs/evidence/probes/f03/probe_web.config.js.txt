@@ -1,0 +1,21 @@
+// F03 probe (throwaway, not committed): run with `npx playwright test -c probe_f03.config.js`
+// after `fvm flutter build web -t lib/probe.dart`.
+import { defineConfig, devices } from '@playwright/test';
+import { ports, webServer } from './support/ports.js';
+
+const port = ports().app;
+export default defineConfig({
+  testDir: '.',
+  testMatch: /probe_f03\.js$/,
+  reporter: 'list',
+  workers: 1,
+  timeout: 240000,
+  use: { baseURL: `http://127.0.0.1:${port}`, actionTimeout: 5000 },
+  projects: [
+    { name: 'chromium', use: { browserName: 'chromium' } },
+    { name: 'webkit', use: { browserName: 'webkit' } },
+    { name: 'chromium-android', use: { ...devices['Pixel 7'] } },
+    { name: 'webkit-iphone', use: { ...devices['iPhone 15'] } },
+  ],
+  webServer: webServer('build/web', port),
+});
