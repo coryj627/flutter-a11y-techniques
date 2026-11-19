@@ -402,7 +402,7 @@ class I03FocusManagementTest : TechniqueTest("I03") {
      * where it should, listens while TalkBack speaks, and then requires its
      * focus to stay there for the last interval. On Android the examples
      * only move keyboard focus after a removal, and TalkBack follows it. In
-     * good-material the test then removes Ridge trail and at once moves
+     * good-material the test then removes Ridge trail and about 400 ms later moves
      * keyboard focus on to Back: TalkBack must follow it, and not be pulled
      * back to Remove Summit path. In bad-opens-on-focus
      * TalkBack's focus on Remove Ridge trail asks nothing, and the click
@@ -455,8 +455,8 @@ class I03FocusManagementTest : TechniqueTest("I03") {
             if (slug == "good-material") {
                 // Ridge trail and Summit path are left. Removing Ridge trail
                 // puts keyboard focus on Summit path, and the examples send
-                // nothing more on Android. While the question is still
-                // going, Shift+Tab moves keyboard focus to Back: TalkBack
+                // nothing more on Android. About 400 ms after the question's
+                // Remove, Shift+Tab moves keyboard focus to Back: TalkBack
                 // follows it there, and nothing may pull it back to Summit
                 // path. Its focus must be on Back itself for the last
                 // interval: lost focus ("none"), or focus anywhere else,

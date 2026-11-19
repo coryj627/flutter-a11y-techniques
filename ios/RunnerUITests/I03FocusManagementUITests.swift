@@ -251,6 +251,25 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
     return (back, again)
   }
 
+  /// What VoiceOver reads one move forward, and then one move back again.
+  /// Used where VoiceOver is on a question's title: one move back from the
+  /// title stays on it, so it would show nothing, and the element after
+  /// the question's last button is the barrier ("Dismiss"), which one move
+  /// forward from a cursor moved there reads again.
+  @available(iOS 27.0, *)
+  private func aroundForward(_ voiceOver: XCUIVoiceOverService) -> (String, String) {
+    let forward = VoiceOverWalk.normalized((try? voiceOver.moveForward().utterance) ?? VoiceOverWalk.silent)
+    let again = VoiceOverWalk.normalized((try? voiceOver.moveBackward().utterance) ?? VoiceOverWalk.silent)
+    return (forward, again)
+  }
+
+  /// Whether `said`, an element VoiceOver read, is part of the question
+  /// about Lake loop: its title, its message, or one of its two buttons.
+  private static func inQuestion(_ said: String) -> Bool {
+    said.hasPrefix("Remove Lake loop?") || said.hasPrefix("It goes from your saved trails")
+      || said == "Cancel Button" || said == "Remove Button"
+  }
+
   /// Polls currentSpeech() for up to `seconds` until it starts with `prefix`.
   @available(iOS 27.0, *)
   private func waitForSpeech(_ voiceOver: XCUIVoiceOverService, startingWith prefix: String, _ seconds: Double = 6) -> String {
@@ -331,6 +350,11 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
       sleep(2)
       activate(control(slug, "remove-lake"))
       let opened = waitForSpeech(voiceOver, startingWith: "Remove Lake loop?")
+      // Where the cursor is a few seconds later, before any control is
+      // touched: one move forward and one back again must both be in the
+      // question.
+      sleep(3)
+      let (inOpened, openedAgain) = aroundForward(voiceOver)
       activate(control(slug, "cancel"))
       let cancelled = waitForSpeech(voiceOver, startingWith: "Remove Lake loop Button")
       // Where the cursor is a few seconds later, so that a later move,
@@ -352,7 +376,7 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
       try voiceOver.disable()
       let heardAt = String(format: "%.2f", movedOn.heardAfter)
       let movedAt = String(format: "%.2f", movedOn.movedAfter)
-      print("I03VO \(slug) | opened: \(opened) / cancelled: \(cancelled) (back: \(beforeLake), forward: \(lakeAgain)) / removed: \(removed) (back: \(beforeSummit), forward: \(summitAgain)) / moved on: first heard \(heardAt) s after the double tap: \(movedOn.heard); one move back, done \(movedAt) s after: \(movedOn.moved); 3 s later: \(movedOn.later) (forward: \(movedOn.forward), back: \(movedOn.backAgain))")
+      print("I03VO \(slug) | opened: \(opened) (forward: \(inOpened), back: \(openedAgain)) / cancelled: \(cancelled) (back: \(beforeLake), forward: \(lakeAgain)) / removed: \(removed) (back: \(beforeSummit), forward: \(summitAgain)) / moved on: first heard \(heardAt) s after the double tap: \(movedOn.heard); one move back, done \(movedAt) s after: \(movedOn.moved); 3 s later: \(movedOn.later) (forward: \(movedOn.forward), back: \(movedOn.backAgain))")
       XCTAssertEqual(movedOn.heard, "Remove Ridge trail Button", "\(slug): what VoiceOver first said after the removal")
       XCTAssertEqual(movedOn.moved, "Saved trails", "\(slug): one move back from Remove Ridge trail")
       XCTAssertEqual(movedOn.later, movedOn.moved, "\(slug): VoiceOver was moved after the user's move")
@@ -361,6 +385,8 @@ final class I03FocusManagementUITests: XCTestCase, CountedTechniqueUITest {
       // there.
       XCTAssertTrue(opened.hasPrefix("Remove Lake loop?") || opened.hasPrefix("It goes from your saved trails"),
                     "\(slug): VoiceOver did not go into the question: \(opened)")
+      XCTAssertTrue(Self.inQuestion(inOpened), "\(slug): one move forward from where VoiceOver went left the question: \(inOpened)")
+      XCTAssertTrue(Self.inQuestion(openedAgain), "\(slug): the cursor is not in the question: \(openedAgain)")
       XCTAssertEqual(cancelled, "Remove Lake loop Button", "\(slug): after Cancel")
       XCTAssertEqual(beforeLake, "Remove Ridge trail Button", "\(slug): the cursor is not on Remove Lake loop")
       XCTAssertEqual(lakeAgain, "Remove Lake loop Button", slug)

@@ -99,3 +99,29 @@ happened as an extra failure line so that it shows in the log.
 A reading of `"none"` was not produced on the device (m6a), so that case
 rests on the check itself: it names one value, Back, and `"none"` is not
 it.
+
+## Round four: where VoiceOver is when the question opens
+
+Run on 2026-11-18, after the review of the branch replayed on main. The
+VoiceOver walk on iOS checked the opening of the question only through
+what VoiceOver said; the next step touches Cancel, which itself moves the
+cursor, so a cursor that had gone elsewhere after the announcement would
+have passed. The walk now waits three seconds after the announcement and,
+before any control is touched, makes one move forward and one move back:
+both must read a part of the question (its title, its message, Cancel or
+Remove). In every example the committed run read "It goes from your saved
+trails." and then "Remove Lake loop?" again.
+
+| Run | Change | What happened |
+| --- | --- | --- |
+| m7a | Test: one move back first, from where VoiceOver went | Not a displacement: one move back from the title read "Remove Lake loop?" again in every example, and the walk passed (`m7a_voiceover_ios.txt`). Nothing comes before the title in VoiceOver's order |
+| m7b | App: a text, "Outside the question", added to the question's route above the dialog, and a `FocusSemanticEvent` sent to it two seconds after the question was built | VoiceOver went to the text first, when the question opened, and the walk failed on what it said: "VoiceOver did not go into the question: Outside the question"; the new check's readings were "Remove Lake loop?" forward and "Outside the question" back (`m7b_voiceover_ios.txt`). This tests the announcement check, not a displacement after it |
+| m7 | Test: after the announcement, four moves forward with VoiceOver's own command | The moves read "It goes from your saved trails.", "Cancel Button", "Remove Button", then "Dismiss", the barrier behind the question. The new check failed where it should: "good-material: one move forward from where VoiceOver went left the question: Dismiss" (one move forward from the barrier read "Dismiss" again, one back "Remove Button") (`m7_voiceover_ios.txt`). The run stops at its first failure |
+
+What it shows, and what it does not: the check rejects a cursor moved out
+of the question after the announcement, to the only element outside it
+that VoiceOver reaches. It relies on the move forward: from the barrier
+one move back reads the question's last button, so the move back alone
+would not have caught it. A cursor on the question's last button would
+fail the check too (its move forward is the barrier), though it is in the
+question; no example's cursor was there.
