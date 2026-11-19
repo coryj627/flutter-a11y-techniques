@@ -1,0 +1,149 @@
+// Throwaway: I02 probe under flutter_test. Not committed.
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart' as probe;
+import 'package:flutter_test/flutter_test.dart';
+
+String _focus() => FocusManager.instance.primaryFocus?.debugLabel ?? 'other';
+
+Future<List<String>> _walk(
+  WidgetTester tester,
+  LogicalKeyboardKey key, {
+  int n = 60,
+  bool shift = false,
+}) async {
+  final out = <String>[];
+  for (var i = 0; i < n; i++) {
+    if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(key);
+    if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pumpAndSettle();
+    out.add(_focus());
+  }
+  return out;
+}
+
+/// Identifiers of semantics nodes in traversal order (what a screen reader
+/// moving forward meets), depth first.
+List<String> _readingOrder(WidgetTester tester) {
+  final out = <String>[];
+  void visit(SemanticsNode node) {
+    final d = node.getSemanticsData();
+    if (!node.isMergedIntoParent && d.identifier.isNotEmpty) {
+      out.add(d.identifier);
+    }
+    for (final child in node.debugListChildrenInOrder(
+      DebugSemanticsDumpOrder.traversalOrder,
+    )) {
+      visit(child);
+    }
+  }
+
+  visit(
+    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
+  );
+  return out;
+}
+
+String _pressedFocus(WidgetTester tester) {
+  final f = FocusManager.instance.primaryFocus;
+  final ctx = f?.context;
+  if (ctx == null) return 'none';
+  final text = find.descendant(of: find.byElementPredicate((e) => e == ctx), matching: find.byType(Text));
+  if (text.evaluate().isNotEmpty) return (tester.widget<Text>(text.first).data ?? '?');
+  return 'other(${f.runtimeType})';
+}
+
+void main() {
+  for (final route in ['/scroll', '/scroll-groups']) {
+    testWidgets('round 2 $route at 1280 by 720', (tester) async {
+      tester.view.physicalSize = const Size(1280, 720);
+      tester.view.devicePixelRatio = 1;
+      probe.main();
+      await tester.pumpAndSettle();
+      final nav = tester.state<NavigatorState>(find.byType(Navigator));
+      nav.pushNamed(route);
+      await tester.pumpAndSettle();
+      final fwd = <String>[];
+      for (var i = 0; i < 42; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pumpAndSettle();
+        fwd.add(_pressedFocus(tester));
+      }
+      debugPrint('I02PROBE test $route tab: ${fwd.join(' ')}');
+      final back = <String>[];
+      for (var i = 0; i < 42; i++) {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.pumpAndSettle();
+        back.add(_pressedFocus(tester));
+      }
+      debugPrint('I02PROBE test $route shift+tab: ${back.join(' ')}');
+    });
+  }
+
+  testWidgets('probe at 1280 by 720, backward from f-down', (tester) async {
+    tester.view.physicalSize = const Size(1280, 720);
+    tester.view.devicePixelRatio = 1;
+    probe.main();
+    await tester.pumpAndSettle();
+    FocusManager.instance.rootScope.descendants
+        .firstWhere((n) => n.debugLabel == 'f-down')
+        .requestFocus();
+    await tester.pumpAndSettle();
+    final back = await _walk(tester, LogicalKeyboardKey.tab, n: 30, shift: true);
+    debugPrint('I02PROBE 1280x720 shift+tab from f-down: ${back.join(' ')}');
+    final fwd = await _walk(tester, LogicalKeyboardKey.tab, n: 30);
+    debugPrint('I02PROBE 1280x720 tab from there: ${fwd.join(' ')}');
+  });
+
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets('probe as ${platform.name}', (tester) async {
+      debugDefaultTargetPlatformOverride = platform;
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.6;
+      final handle = tester.ensureSemantics();
+      probe.main();
+      await tester.pumpAndSettle();
+      debugPrint('I02PROBE ${platform.name} reading order: ${_readingOrder(tester).join(' ')}');
+      final forward = await _walk(tester, LogicalKeyboardKey.tab, n: 50);
+      debugPrint('I02PROBE ${platform.name} tab: ${forward.join(' ')}');
+      final back = await _walk(tester, LogicalKeyboardKey.tab, n: 50, shift: true);
+      debugPrint('I02PROBE ${platform.name} shift+tab: ${back.join(' ')}');
+      // Arrows from each start.
+      for (final start in [
+        'a-map',
+        'b-map',
+        'b-water',
+        'b-alerts',
+        'f-up',
+        'f-left',
+        'f-right',
+        'f-down',
+        'g-map',
+      ]) {
+        for (final (name, key) in [
+          ('down', LogicalKeyboardKey.arrowDown),
+          ('up', LogicalKeyboardKey.arrowUp),
+          ('left', LogicalKeyboardKey.arrowLeft),
+          ('right', LogicalKeyboardKey.arrowRight),
+        ]) {
+          final node = FocusManager.instance.rootScope.descendants.firstWhere(
+            (n) => n.debugLabel == start,
+          );
+          node.requestFocus();
+          await tester.pumpAndSettle();
+          await tester.sendKeyEvent(key);
+          await tester.pumpAndSettle();
+          debugPrint('I02PROBE ${platform.name} arrow $start $name -> ${_focus()}');
+        }
+      }
+      handle.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
+}

@@ -1,0 +1,29 @@
+#!/bin/sh
+# I02 probe on Android, round 2: Shift+Tab through the emulator's own
+# keyboard device, under tool/with_devices.py. Run from the worktree root.
+PKG=dev.fluttera11y.flutter_a11y_techniques
+lines() { adb exec-out uiautomator dump /dev/tty 2>/dev/null | grep -o 'content-desc="\(Focus\|Keys\): [^"]*"' | sed 's/content-desc=//' | cut -c1-300; }
+DEV=$(adb shell getevent -pl 2>/dev/null | grep -B1 '"qwerty2"' | grep -o '/dev/input/event[0-9]*' | head -1)
+echo "== keyboard device: $DEV"
+adb install -r build/app/outputs/flutter-apk/app-debug.apk | tail -1
+adb shell monkey -p $PKG 1 >/dev/null 2>&1
+sleep 8
+for i in 1 2 3 4 5 6 7 8 9 10 11; do adb shell input keyevent KEYCODE_TAB; sleep 0.4; done
+sleep 1
+echo "-- after 11 Tabs (input keyevent)"; lines
+echo "-- sendevent on $DEV: Tab down, sync, Tab up, sync"
+adb shell "sendevent $DEV 1 15 1; sendevent $DEV 0 0 0; sendevent $DEV 1 15 0; sendevent $DEV 0 0 0"
+sleep 1.5; lines
+echo "-- sendevent on $DEV: Shift down, sync, Tab down, sync, Tab up, sync, Shift up, sync"
+adb shell "sendevent $DEV 1 42 1; sendevent $DEV 0 0 0; sendevent $DEV 1 15 1; sendevent $DEV 0 0 0; sendevent $DEV 1 15 0; sendevent $DEV 0 0 0; sendevent $DEV 1 42 0; sendevent $DEV 0 0 0"
+sleep 1.5; lines
+echo "-- the same again"
+adb shell "sendevent $DEV 1 42 1; sendevent $DEV 0 0 0; sendevent $DEV 1 15 1; sendevent $DEV 0 0 0; sendevent $DEV 1 15 0; sendevent $DEV 0 0 0; sendevent $DEV 1 42 0; sendevent $DEV 0 0 0"
+sleep 1.5; lines
+echo "-- adb emu event send with EV_SYN after each key"
+adb emu event send EV_KEY:KEY_LEFTSHIFT:1 EV_SYN:0:0 EV_KEY:KEY_TAB:1 EV_SYN:0:0 EV_KEY:KEY_TAB:0 EV_SYN:0:0 EV_KEY:KEY_LEFTSHIFT:0 EV_SYN:0:0 2>&1
+sleep 1.5; lines
+echo "-- DPAD_DOWN from there (input keyevent)"
+adb shell input keyevent KEYCODE_DPAD_DOWN; sleep 1; lines
+adb shell am force-stop $PKG
+exit 0

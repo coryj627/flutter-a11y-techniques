@@ -1,0 +1,277 @@
+// I01 probe (throwaway, not committed): focusable and clickable controls.
+// Every fixture's text starts with its id. Each activation is appended to
+// the log at the top ("k01 tap", "k09 down"), and the widget with primary
+// focus is shown under it, so keys can be checked from any tree.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  final List<String> _log = [];
+  String _focus = 'none';
+  // Second round: every key that reaches the framework, in order.
+  final List<String> _keys = [];
+
+  bool _key(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      final shift = HardwareKeyboard.instance.isShiftPressed ? 'shift+' : '';
+      setState(() => _keys.add('$shift${event.logicalKey.keyLabel.isEmpty ? event.logicalKey.debugName : event.logicalKey.keyLabel}'));
+    }
+    return false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addListener(_focusChanged);
+    HardwareKeyboard.instance.addHandler(_key);
+  }
+
+  @override
+  void dispose() {
+    FocusManager.instance.removeListener(_focusChanged);
+    HardwareKeyboard.instance.removeHandler(_key);
+    super.dispose();
+  }
+
+  void _focusChanged() {
+    final label = FocusManager.instance.primaryFocus?.debugLabel ?? 'unlabelled';
+    if (label != _focus) setState(() => _focus = label);
+  }
+
+  Object? _hit(String id, [String how = 'tap']) {
+    setState(() => _log.add('$id $how'));
+    return null;
+  }
+
+  FocusNode _node(String id) => _nodes.putIfAbsent(id, () => FocusNode(debugLabel: id));
+  final Map<String, FocusNode> _nodes = {};
+
+  Widget _id(String id, Widget child) => MergeSemantics(
+    child: Semantics(identifier: id, child: child),
+  );
+
+  Widget _face(String text, ColorScheme colors) => Container(
+    constraints: const BoxConstraints(minHeight: 44, minWidth: 220),
+    alignment: Alignment.centerLeft,
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    decoration: BoxDecoration(
+      border: Border.all(color: colors.outline),
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Text(text),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 4,
+              children: [
+                Semantics(
+                  identifier: 'log',
+                  container: true,
+                  child: Text('Log: ${_log.isEmpty ? '-' : _log.join(', ')}'),
+                ),
+                Semantics(
+                  identifier: 'keys',
+                  container: true,
+                  child: Text('Keys: ${_keys.isEmpty ? '-' : _keys.join(' ')}'),
+                ),
+                Semantics(
+                  identifier: 'focus',
+                  container: true,
+                  child: Text('Focus: $_focus'),
+                ),
+                // k01: a Material ListTile with onTap, in a Card.
+                _id('k01', Card(
+                  margin: EdgeInsets.zero,
+                  child: ListTile(
+                    focusNode: _node('k01'),
+                    dense: true,
+                    title: const Text('k01 ListTile'),
+                    onTap: () => _hit('k01'),
+                  ),
+                )),
+                // k02: an InkWell with onTap around text, no role.
+                _id('k02', Material(
+                  child: InkWell(
+                    focusNode: _node('k02'),
+                    onTap: () => _hit('k02'),
+                    child: _face('k02 InkWell', colors),
+                  ),
+                )),
+                // k03: Semantics(button: true) around an InkWell.
+                _id('k03', Semantics(
+                  button: true,
+                  child: Material(
+                    child: InkWell(
+                      focusNode: _node('k03'),
+                      onTap: () => _hit('k03'),
+                      child: _face('k03 InkWell button', colors),
+                    ),
+                  ),
+                )),
+                // k04: a CupertinoListTile with onTap.
+                _id('k04', CupertinoListTile(
+                  title: const Text('k04 CupertinoListTile'),
+                  onTap: () => _hit('k04'),
+                )),
+                // k05: the same inside FocusableActionDetector and
+                // Semantics(button: true).
+                _id('k05', FocusableActionDetector(
+                  focusNode: _node('k05'),
+                  actions: {
+                    ActivateIntent: CallbackAction<ActivateIntent>(
+                      onInvoke: (_) => _hit('k05', 'key'),
+                    ),
+                    ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+                      onInvoke: (_) => _hit('k05', 'key'),
+                    ),
+                  },
+                  child: Semantics(
+                    button: true,
+                    child: CupertinoListTile(
+                      title: const Text('k05 CupertinoListTile in FAD'),
+                      onTap: () => _hit('k05'),
+                    ),
+                  ),
+                )),
+                // k06: FocusableActionDetector, Semantics(button: true),
+                // GestureDetector(onTap:).
+                _id('k06', FocusableActionDetector(
+                  focusNode: _node('k06'),
+                  actions: {
+                    ActivateIntent: CallbackAction<ActivateIntent>(
+                      onInvoke: (_) => _hit('k06', 'key'),
+                    ),
+                    ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+                      onInvoke: (_) => _hit('k06', 'key'),
+                    ),
+                  },
+                  child: Semantics(
+                    button: true,
+                    child: GestureDetector(
+                      onTap: () => _hit('k06'),
+                      child: _face('k06 FAD tile', colors),
+                    ),
+                  ),
+                )),
+                // k07: Semantics(button: true) and GestureDetector, no Focus.
+                _id('k07', Semantics(
+                  button: true,
+                  child: GestureDetector(
+                    onTap: () => _hit('k07'),
+                    child: _face('k07 gesture button', colors),
+                  ),
+                )),
+                // k08: Focus around it, and no actions for the keys.
+                _id('k08', Focus(
+                  focusNode: _node('k08'),
+                  child: Semantics(
+                    button: true,
+                    child: GestureDetector(
+                      onTap: () => _hit('k08'),
+                      child: _face('k08 Focus, no actions', colors),
+                    ),
+                  ),
+                )),
+                // k09: as k06 but acting on onTapDown.
+                _id('k09', FocusableActionDetector(
+                  focusNode: _node('k09'),
+                  actions: {
+                    ActivateIntent: CallbackAction<ActivateIntent>(
+                      onInvoke: (_) => _hit('k09', 'key'),
+                    ),
+                    ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+                      onInvoke: (_) => _hit('k09', 'key'),
+                    ),
+                  },
+                  child: Semantics(
+                    button: true,
+                    child: GestureDetector(
+                      onTapDown: (_) => _hit('k09', 'down'),
+                      child: _face('k09 onTapDown', colors),
+                    ),
+                  ),
+                )),
+                // k10: a raw Listener(onPointerUp:), the counterpart of an
+                // Android onTouchListener, with Semantics(button: true).
+                _id('k10', Semantics(
+                  button: true,
+                  child: Listener(
+                    onPointerUp: (_) => _hit('k10', 'pointerup'),
+                    child: _face('k10 Listener', colors),
+                  ),
+                )),
+                // k11: a CupertinoButton, for comparison.
+                _id('k11', CupertinoButton(
+                  focusNode: _node('k11'),
+                  onPressed: () => _hit('k11'),
+                  child: const Text('k11 CupertinoButton'),
+                )),
+                // k12: a TextButton, for comparison.
+                _id('k12', TextButton(
+                  focusNode: _node('k12'),
+                  onPressed: () => _hit('k12'),
+                  child: const Text('k12 TextButton'),
+                )),
+                // k13: Semantics(onTap:) with a Focus and the keys, and no
+                // gesture: the keyboard and assistive technology only.
+                _id('k13', FocusableActionDetector(
+                  focusNode: _node('k13'),
+                  actions: {
+                    ActivateIntent: CallbackAction<ActivateIntent>(
+                      onInvoke: (_) => _hit('k13', 'key'),
+                    ),
+                  },
+                  child: Semantics(
+                    button: true,
+                    onTap: () => _hit('k13', 'semantics'),
+                    child: _face('k13 keys and semantics only', colors),
+                  ),
+                )),
+                // k14: a GestureDetector with Focus whose actions are in
+                // the semantics but are keyboard-only, no Semantics(button).
+                _id('k14', FocusableActionDetector(
+                  focusNode: _node('k14'),
+                  actions: {
+                    ActivateIntent: CallbackAction<ActivateIntent>(
+                      onInvoke: (_) => _hit('k14', 'key'),
+                    ),
+                    ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+                      onInvoke: (_) => _hit('k14', 'key'),
+                    ),
+                  },
+                  child: GestureDetector(
+                    onTap: () => _hit('k14'),
+                    child: _face('k14 FAD, no button role', colors),
+                  ),
+                )),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

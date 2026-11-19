@@ -1,0 +1,195 @@
+// I01 probe (throwaway, not committed): the tree, hardware keys, and a
+// press that slides off, for lib/probe.dart.
+import XCTest
+
+final class I01ProbeUITests: XCTestCase {
+  let app = XCUIApplication()
+  let ids = (1...14).map { String(format: "k%02d", $0) }
+
+  private func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+  private func log() -> String { el("log").label }
+  private func focus() -> String { el("focus").label }
+
+  private func focusedElements() -> String {
+    app.descendants(matching: .any).allElementsBoundByIndex
+      .filter { $0.hasFocus }
+      .map { "\($0.identifier.isEmpty ? "-" : $0.identifier)(\($0.elementType.rawValue)) \($0.label.prefix(30))" }
+      .joined(separator: "; ")
+  }
+
+  private func launch() {
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(el("k14").waitForExistence(timeout: 60))
+    sleep(2)
+  }
+
+  func testTree() {
+    launch()
+    for id in ids {
+      let e = el(id)
+      print("I01PROBE EL \(id) type=\(e.elementType.rawValue) label=\(e.label.debugDescription) enabled=\(e.isEnabled) hasFocus=\(e.hasFocus) hittable=\(e.isHittable) frame=\(e.frame)")
+    }
+  }
+
+  func testKeys() {
+    launch()
+    print("I01PROBE start: \(focus()) | \(log()) | focused: \(focusedElements())")
+    for i in 1...12 {
+      app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+      usleep(600_000)
+      let f = focus()
+      let before = log()
+      app.typeKey(XCUIKeyboardKey.return.rawValue, modifierFlags: [])
+      usleep(500_000)
+      let afterEnter = log()
+      app.typeKey(XCUIKeyboardKey.space.rawValue, modifierFlags: [])
+      usleep(500_000)
+      let afterSpace = log()
+      print("I01PROBE tab \(i): \(f) | Enter added \(afterEnter.dropFirst(before.count).debugDescription) | Space added \(afterSpace.dropFirst(afterEnter.count).debugDescription) | focused: \(focusedElements())")
+    }
+  }
+
+  func testPressAndSlideOff() {
+    launch()
+    for id in ["k01", "k06", "k09", "k10", "k04", "k07"] {
+      let before = log()
+      el(id).press(forDuration: 0.6, thenDragTo: el("log"))
+      usleep(800_000)
+      print("I01PROBE slide off \(id): \(log().dropFirst(before.count).debugDescription)")
+    }
+    for id in ["k04", "k07", "k10", "k13"] {
+      let before = log()
+      el(id).tap()
+      usleep(800_000)
+      print("I01PROBE tap \(id): \(log().dropFirst(before.count).debugDescription)")
+    }
+  }
+
+  // Second round: what each key arrives as, read from the probe's key log.
+  private func keys() -> String { el("keys").label }
+
+  func testKeyNames() {
+    launch()
+    let presses: [(String, String, XCUIElement.KeyModifierFlags)] = [
+      ("tab", XCUIKeyboardKey.tab.rawValue, []),
+      ("return", XCUIKeyboardKey.return.rawValue, []),
+      ("enter (keypad)", XCUIKeyboardKey.enter.rawValue, []),
+      ("newline", "\n", []),
+      ("space", XCUIKeyboardKey.space.rawValue, []),
+      ("shift+tab", XCUIKeyboardKey.tab.rawValue, [.shift]),
+      ("escape", XCUIKeyboardKey.escape.rawValue, []),
+      ("right arrow", XCUIKeyboardKey.rightArrow.rawValue, []),
+    ]
+    for (name, key, flags) in presses {
+      let before = keys()
+      let beforeLog = log()
+      app.typeKey(key, modifierFlags: flags)
+      usleep(700_000)
+      print("I01PROBE2 \(name): keys added \(keys().dropFirst(before.count).debugDescription) | \(focus()) | log added \(log().dropFirst(beforeLog.count).debugDescription)")
+    }
+  }
+
+  /// Turns Full Keyboard Access on or off in the Settings app. Returns
+  /// whether the switch ended in the state asked for.
+  private func setFullKeyboardAccess(_ on: Bool) -> Bool {
+    let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
+    settings.terminate()
+    settings.launch()
+    func tapCell(containing text: String) -> Bool {
+      let match = settings.descendants(matching: .any)
+        .matching(NSPredicate(format: "label CONTAINS[c] %@ AND (elementType == %d OR elementType == %d OR elementType == %d)", text,
+                              XCUIElement.ElementType.cell.rawValue, XCUIElement.ElementType.button.rawValue, XCUIElement.ElementType.staticText.rawValue))
+        .firstMatch
+      for _ in 0..<6 {
+        if match.exists && match.isHittable { match.tap(); sleep(2); return true }
+        settings.swipeUp()
+      }
+      print("I01PROBE2 FKA could not find \(text); labels: \(settings.descendants(matching: .any).allElementsBoundByIndex.prefix(80).map { $0.label }.filter { !$0.isEmpty })")
+      return false
+    }
+    guard tapCell(containing: "Accessibility") else { return false }
+    guard tapCell(containing: "Keyboard") else { return false }
+    guard tapCell(containing: "Full Keyboard Access") else { return false }
+    let toggle = settings.switches.firstMatch
+    guard toggle.waitForExistence(timeout: 5) else {
+      print("I01PROBE2 FKA no switch")
+      return false
+    }
+    let isOn = (toggle.value as? String) == "1"
+    print("I01PROBE2 FKA switch \(toggle.label.debugDescription) was \(isOn ? "on" : "off")")
+    if isOn != on {
+      // A plain tap on the switch did not change it in the first try.
+      toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+      sleep(3)
+      print("I01PROBE2 FKA after tap: value \(String(describing: settings.switches.firstMatch.value)); alerts \(settings.alerts.count); sheets \(settings.sheets.count); buttons \(settings.buttons.allElementsBoundByIndex.prefix(20).map { $0.label })")
+      // Turning it on can ask for confirmation.
+      for label in ["Continue", "OK", "Turn On", "Yes"] where settings.buttons[label].exists {
+        settings.buttons[label].tap()
+        sleep(2)
+      }
+    }
+    let now = (settings.switches.firstMatch.value as? String) == "1"
+    print("I01PROBE2 FKA switch now \(now ? "on" : "off")")
+    settings.terminate()
+    return now == on
+  }
+
+  func testFullKeyboardAccessOff() {
+    XCTAssertTrue(setFullKeyboardAccess(false))
+    // Read it back from a fresh launch of Settings.
+    XCTAssertTrue(setFullKeyboardAccess(false))
+  }
+
+  func testFullKeyboardAccess() {
+    guard setFullKeyboardAccess(true) else {
+      _ = setFullKeyboardAccess(false)
+      XCTFail("could not turn Full Keyboard Access on")
+      return
+    }
+    defer { print("I01PROBE2 FKA restored off: \(setFullKeyboardAccess(false))") }
+    launch()
+    sleep(2)
+    print("I01PROBE2 FKA start: \(focus()) | keys \(keys()) | focused: \(focusedElements())")
+    for i in 1...14 {
+      let before = log()
+      app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+      usleep(900_000)
+      let f = focus()
+      let focusedNow = focusedElements()
+      app.typeKey(XCUIKeyboardKey.space.rawValue, modifierFlags: [])
+      usleep(900_000)
+      print("I01PROBE2 FKA tab \(i): flutter \(f) | XCUITest hasFocus: \(focusedNow) | Space added \(log().dropFirst(before.count).debugDescription) | keys \(keys().suffix(40).debugDescription)")
+    }
+  }
+
+  func testVoiceOverActivate() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    launch()
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    try voiceOver.enable()
+    defer { try? voiceOver.disable() }
+    for _ in 0..<40 {
+      let said: String
+      do {
+        said = try voiceOver.moveForward().utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
+      } catch {
+        print("I01PROBE VO (error \(error))")
+        continue
+      }
+      print("I01PROBE VO \(said)")
+      if said.hasPrefix("k14") { break }
+    }
+    // Activate k10 (no tap action) and k07 with a VoiceOver double tap.
+    for id in ["k10", "k07", "k04"] {
+      let before = log()
+      el(id).tap()  // moves the VoiceOver cursor
+      usleep(800_000)
+      el(id).doubleTap()
+      usleep(1_200_000)
+      print("I01PROBE VO double tap \(id): \(log().dropFirst(before.count).debugDescription)")
+    }
+    #endif
+  }
+}

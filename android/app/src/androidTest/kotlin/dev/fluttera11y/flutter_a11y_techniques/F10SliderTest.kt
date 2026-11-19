@@ -56,7 +56,20 @@ class F10SliderTest : TechniqueTest("F10") {
      * focus ring; its track is the bottom 48 logical pixels inside the ring.
      */
     private fun trackPoint(slug: String, along: Double): Pair<Int, Int> {
-        val r = bounds(slider(slug))
+        // The slider's place on the screen once it has stopped moving. A
+        // tap on CI once left the value unchanged; a point worked out while
+        // the screen was still arriving would miss the track, which is the
+        // likely cause (not confirmed).
+        var r = bounds(slider(slug))
+        val end = System.currentTimeMillis() + 5_000
+        var settled = false
+        while (!settled && System.currentTimeMillis() < end) {
+            Thread.sleep(250)
+            val next = bounds(slider(slug))
+            settled = next == r
+            r = next
+        }
+        if (!settled) throw AssertionError("$slug: the slider was still moving after 5 seconds, last at $r")
         val density = inst.targetContext.resources.displayMetrics.density
         return if (slug.contains("custom") || slug.contains("no-keyboard") || slug.contains("drag-only")) {
             val ring = (8 * density).toInt()
@@ -100,10 +113,17 @@ class F10SliderTest : TechniqueTest("F10") {
             // (FL-038); an SDK slider and these custom ones compute it from
             // the value, so it is the right one.
             increase(slug)
-            // Read at once, the value is the new one; the rest of the
-            // description can still be the old one (bad-indicator-label
-            // read "50%, Volume\n4" once), as only the value is guessed.
-            assertTrue(slug, slider(slug).name().startsWith(up.substringBefore(",")))
+            // The value is the new one before the rest of the description
+            // is (bad-indicator-label read "50%, Volume\n4" once), as only
+            // the value is guessed. The tree does not always show it on the
+            // very next read (seen on CI for bad-percent-value), so it is
+            // waited for, up to two seconds. This shows the new value in
+            // the description, not that it got there before the app acted:
+            // the app's own update can arrive inside the wait (FL-038).
+            val value = up.substringBefore(",")
+            val end = System.currentTimeMillis() + 2_000
+            while (System.currentTimeMillis() < end && !slider(slug).name().startsWith(value)) Thread.sleep(50)
+            assertTrue("$slug: \"${slider(slug).name()}\" starts with $value", slider(slug).name().startsWith(value))
             waitForCount(slug, 1)
             waitForName(slug, up)
             // Each change is waited for in the app's count: the description
