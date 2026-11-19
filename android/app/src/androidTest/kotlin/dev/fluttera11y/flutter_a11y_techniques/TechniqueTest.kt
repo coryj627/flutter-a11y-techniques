@@ -113,9 +113,35 @@ abstract class TechniqueTest(private val technique: String) {
     protected fun buttons(): List<AccessibilityNodeInfo> =
         all().filter { it.type() == BUTTON && it.name() != "Back" }
 
-    /** The number at the end of the example's count, "Activations: 2" or "Changes: 2". */
+    /**
+     * The node of the active window with the test identifier [id], scrolling
+     * the screen to it if it is not in the tree: forward first, then back.
+     * A node scrolled out of view is not in the tree, and on CI's 320 by 640
+     * emulator an example can be taller than the screen, more so with the
+     * soft keyboard up. Scrolling moves no keyboard focus. Nothing is
+     * scrolled when the node is already there.
+     */
+    protected fun revealed(id: String): AccessibilityNodeInfo {
+        fun find() = first(automation.rootInActiveWindow) { it.viewIdResourceName == id }
+        find()?.let { return it }
+        for (action in listOf(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD, AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)) {
+            for (i in 0 until 8) {
+                val view = first(automation.rootInActiveWindow) { it.isScrollable } ?: break
+                if (!view.performAction(action)) break
+                Thread.sleep(500)
+                find()?.let { return it }
+            }
+        }
+        throw AssertionError("no node with id $id, even after scrolling")
+    }
+
+    /**
+     * The number at the end of the example's count, "Activations: 2" or
+     * "Changes: 2". The count is the last thing in an example, so it is the
+     * node most often out of view: it is scrolled to if it has to be.
+     */
     protected fun count(slug: String): Int =
-        node("${technique.lowercase()}-$slug-count").name().substringAfter(": ").toInt()
+        revealed("${technique.lowercase()}-$slug-count").name().substringAfter(": ").toInt()
 
     /** What a failure message of [waitForCount] calls the count. */
     protected open val countName: String get() = "activation count"
