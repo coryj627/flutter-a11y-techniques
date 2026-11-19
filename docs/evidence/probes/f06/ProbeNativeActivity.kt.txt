@@ -1,0 +1,28 @@
+// Throwaway native comparison for the F06 probe. Not committed; kept as
+// docs/evidence/probes/f06/ProbeNativeActivity.kt.txt.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.Activity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+
+class ProbeNativeActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 200, 40, 40) }
+        val empty = EditText(this).apply { hint = "n01 Email"; contentDescription = null }
+        val filled = EditText(this).apply { hint = "n02 Phone"; setText("abc") }
+        column.addView(empty)
+        column.addView(filled)
+        column.addView(Button(this).apply {
+            text = "n03 Submit"
+            setOnClickListener {
+                empty.error = "Enter an email address."
+                filled.error = "Enter a phone number using digits only."
+            }
+        })
+        setContentView(column)
+    }
+}

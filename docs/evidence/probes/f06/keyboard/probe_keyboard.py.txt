@@ -1,0 +1,113 @@
+"""F06 at CI's screen size with TalkBack (kept as
+docs/evidence/probes/f06/keyboard/probe_keyboard.py.txt). Run under
+tool/with_devices.py.
+
+Usage: probe_keyboard.py <repo> <out-dir>
+
+tool/talkback.py could not run at 320x640: it drives TalkBack's settings
+screen to set the log level, and at that size it did not find "Advanced
+settings". So this uses its run_with_talkback at the emulator's own size,
+which sets and later restores the log level and the services, and inside it
+switches the emulator to 320x640 at 160 dpi only for the instrumented runs,
+resetting size and density before returning, however they end. With
+TalkBack on, at both sizes it runs:
+  - F06ErrorIdentificationTest#probeSuccessWithKeyboardUp (a form sent with
+    the keyboard still up), and
+  - at CI size only, F06ErrorIdentificationTest#talkBackWalk, checked with
+    tool/talkback.py's own problems() against tool/techniques/f06_*.py.
+"""
+import os
+import subprocess
+import sys
+import time
+
+ROOT, OUT = sys.argv[1], sys.argv[2]
+sys.path.insert(0, os.path.join(ROOT, "tool"))
+import talkback  # noqa: E402
+from evidence_common import GRADLE_UNSHARED, stop_android_tests  # noqa: E402
+
+PKG = "dev.fluttera11y.flutter_a11y_techniques"
+CLASS = f"{PKG}.F06ErrorIdentificationTest"
+
+
+def gradle(method, log_path):
+    talkback.adb("logcat", "-c")
+    with open(log_path, "w") as log:
+        reader = subprocess.Popen([talkback.ADB, "logcat"], stdout=log, stderr=subprocess.DEVNULL)
+        try:
+            run = subprocess.run(
+                ["./gradlew", *GRADLE_UNSHARED, "app:connectedDebugAndroidTest",
+                 f"-Pandroid.testInstrumentationRunnerArguments.class={CLASS}#{method}"],
+                cwd=os.path.join(ROOT, "android"), capture_output=True, text=True, timeout=25 * 60)
+        finally:
+            time.sleep(2)
+            reader.terminate()
+            reader.wait()
+    with open(log_path + ".gradle.txt", "w") as f:
+        f.write(run.stdout[-5000:] + run.stderr[-5000:])
+    with open(log_path) as f:
+        return run, f.read()
+
+
+def table(spoken):
+    rows = ["| Marker | TalkBack spoke |", "| --- | --- |"]
+    for ident, fragments in spoken.items():
+        rows.append(f"| `{ident}` | {' / '.join(x.replace(chr(10), ' ') for x in fragments) or '(nothing)'} |")
+    return rows
+
+
+def sizes(name):
+    with open(os.path.join(OUT, f"size-{name}.txt"), "a") as f:
+        f.write(talkback.adb("shell", "wm", "size") + talkback.adb("shell", "wm", "density"))
+
+
+def runs():
+    results = {}
+    for name, small in (("normal", False), ("ci", True)):
+        try:
+            if small:
+                talkback.adb("shell", "wm", "size", "320x640")
+                talkback.adb("shell", "wm", "density", "160")
+                time.sleep(5)
+            sizes(name)
+            results[f"keyboard-{name}"] = gradle(
+                "probeSuccessWithKeyboardUp", os.path.join(OUT, f"logcat-keyboard-{name}.txt"))
+            stop_android_tests()
+            if small:
+                results["walk-ci"] = gradle("talkBackWalk", os.path.join(OUT, "logcat-walk-ci.txt"))
+                stop_android_tests()
+        finally:
+            talkback.adb("shell", "wm", "size", "reset")
+            talkback.adb("shell", "wm", "density", "reset")
+            sizes(name + "-after-reset")
+    return results
+
+
+def main():
+    os.makedirs(OUT, exist_ok=True)
+    talkback.exit_on_termination_signals()
+    if not stop_android_tests():
+        sys.exit("emulator not clean")
+    results = talkback.run_with_talkback(runs)
+    for key, (run, log) in results.items():
+        spoken = talkback.parse_speech(log)
+        lines = [f"# F06 at {'320x640, 160 dpi' if key.endswith('ci') else 'the emulator size'}: {key}",
+                 "", f"Gradle exit status: {run.returncode}", ""] + table(spoken)
+        if key == "walk-ci":
+            failures = []
+            for ident in talkback.EXPECT:
+                if ident.startswith("f06-"):
+                    failures += ([f"{ident}: never focused"] if ident not in spoken
+                                 else talkback.problems(ident, spoken[ident]))
+            lines += ["", "Failures against tool/techniques/f06_error_identification.py:", ""]
+            lines += [f"- {f}" for f in failures] or ["- none"]
+        node_lines = [l.split("F06KB", 1)[1] for l in log.splitlines() if "F06KB" in l]
+        if node_lines:
+            lines += ["", "Node lines:", ""] + ["    " + l for l in node_lines]
+        with open(os.path.join(OUT, f"{key}.md"), "w") as f:
+            f.write("\n".join(lines) + "\n")
+        print("\n".join(lines))
+
+
+if __name__ == "__main__":
+    main()

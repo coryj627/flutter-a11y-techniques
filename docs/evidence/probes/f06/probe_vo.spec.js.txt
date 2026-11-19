@@ -1,0 +1,65 @@
+// F06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/f06/probe_vo.spec.js.txt). Run only through
+// `python3 tool/voiceover_web.py F06` with a temporary registration pointing
+// here and build/web built from lib/probe.dart. For each fixture: in
+// Chromium, what VoiceOver is given after the submit button is pressed with
+// the keyboard; in both browsers, every stop from the Back button to the end
+// of the screen once the errors are showing.
+import { voiceOverTest as test } from '@guidepup/playwright';
+import { activateBrowser, cursorBounds, heardAfter, lastPhrase, waitUntilQuiet } from './vo_helpers.js';
+
+const all = ['p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10', 'p11', 'p12', 'p13'];
+const dynamic = new Set(all.slice(2));
+const clean = (s) => (s ?? '').replace(/\s+/g, ' ').trim();
+
+for (const f of all) {
+  test(`voiceover probe ${f}`, async ({ page, voiceOver, browserName }) => {
+    await page.goto(`/#/${f}`, { waitUntil: 'load' });
+    await page.locator(`[flt-semantics-identifier^="${f}-"]`).first().waitFor();
+    await page.waitForTimeout(1500);
+    await activateBrowser(browserName);
+    await page.bringToFront();
+    await page.getByText(`${f} fixture`).click();
+    if (dynamic.has(f)) {
+      const submit = page.locator(`[flt-semantics-identifier="${f}-submit"]`);
+      await submit.focus();
+      const quiet = await waitUntilQuiet(page, 3000, 15000);
+      const heard = await heardAfter(page, () => page.keyboard.press(f === 'p09' || f === 'p13' ? 'Space' : 'Enter'), quiet, 8000);
+      const active = await page.evaluate(() => {
+        const e = document.activeElement;
+        return `${e?.tagName?.toLowerCase()} in=${e?.closest('[flt-semantics-identifier]')?.getAttribute('flt-semantics-identifier') ?? '-'}`;
+      });
+      if (browserName === 'chromium') {
+        console.log(`F06VO ${browserName} ${f}-announced | on submit: ${clean(quiet)} / after Enter: ${heard.map(clean).join(' / ') || '(nothing)'} / DOM focus: ${active}`);
+      }
+      // What VoiceOver's cursor is on now, by moving it once each way.
+      await voiceOver.next();
+      await page.waitForTimeout(800);
+      const next = clean(await lastPhrase());
+      await voiceOver.previous();
+      await page.waitForTimeout(800);
+      const back = clean(await lastPhrase());
+      console.log(`F06VO ${browserName} ${f}-cursor | next: ${next} / back: ${back}`);
+    }
+    // Every stop from the Back button to the end.
+    await page.getByRole('button', { name: 'Back' }).focus();
+    await waitUntilQuiet(page, 2000, 10000);
+    const stops = [];
+    let position = await cursorBounds();
+    let still = 0;
+    for (let i = 0; i < 20 && still < 2; i++) {
+      await voiceOver.next();
+      await page.waitForTimeout(700);
+      const phrase = clean(await lastPhrase());
+      const now = await cursorBounds();
+      if (now === position && phrase === stops[stops.length - 1]) {
+        still++;
+        continue;
+      }
+      still = 0;
+      position = now;
+      stops.push(phrase);
+    }
+    console.log(`F06VO ${browserName} ${f}-walk | ${stops.join(' / ')}`);
+  });
+}

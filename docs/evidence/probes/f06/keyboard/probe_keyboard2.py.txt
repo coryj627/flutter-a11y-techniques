@@ -1,0 +1,56 @@
+"""F06 at CI's screen size, second probe (kept as
+docs/evidence/probes/f06/keyboard/probe_keyboard2.py.txt). Run under
+tool/with_devices.py. Usage: probe_keyboard2.py <repo> <out-dir>
+
+At 320x640 and 160 dpi: probeKeyboardAfterFailedSend without TalkBack (what
+is in the tree after a failed send, and after Back), then, with TalkBack on
+through tool/talkback.py's run_with_talkback (driven at the emulator's own
+size, which its settings screen needs), probeSuccessScrolledWithKeyboardUp.
+Size and density are reset however each run ends.
+"""
+import os
+import sys
+import time
+
+ROOT, OUT = sys.argv[1], sys.argv[2]
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import probe_keyboard as pk  # noqa: E402
+
+talkback = pk.talkback
+
+
+def small(method, name):
+    try:
+        talkback.adb("shell", "wm", "size", "320x640")
+        talkback.adb("shell", "wm", "density", "160")
+        time.sleep(5)
+        pk.sizes(name)
+        return pk.gradle(method, os.path.join(OUT, f"logcat-{name}.txt"))
+    finally:
+        talkback.adb("shell", "wm", "size", "reset")
+        talkback.adb("shell", "wm", "density", "reset")
+        pk.sizes(name + "-after-reset")
+        pk.stop_android_tests()
+
+
+def main():
+    pk.OUT = OUT
+    os.makedirs(OUT, exist_ok=True)
+    talkback.exit_on_termination_signals()
+    results = {"tree-ci": small("probeKeyboardAfterFailedSend", "tree-ci")}
+    results["scrolled-ci"] = talkback.run_with_talkback(
+        lambda: small("probeSuccessScrolledWithKeyboardUp", "scrolled-ci"))
+    for key, (run, log) in results.items():
+        spoken = talkback.parse_speech(log)
+        lines = [f"# F06 at 320x640, 160 dpi: {key}", "", f"Gradle exit status: {run.returncode}", ""]
+        if spoken:
+            lines += pk.table(spoken)
+        lines += ["", "Node lines:", ""]
+        lines += ["    " + l.split("F06KB", 1)[1] for l in log.splitlines() if "F06KB" in l]
+        with open(os.path.join(OUT, f"{key}.md"), "w") as f:
+            f.write("\n".join(lines) + "\n")
+        print("\n".join(lines))
+
+
+if __name__ == "__main__":
+    main()
