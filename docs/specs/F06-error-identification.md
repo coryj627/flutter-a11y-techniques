@@ -222,7 +222,7 @@ The probe that came first, with a native comparison on Android, is in
   Android the whole field becomes a live region (`bad-merged-error`). The
   fields carry `Semantics(identifier:)` instead, which joins the text
   field's own node. This is a departure from the guide ("Wrap a control in
-  `TestId`"), recorded here for review; `TestId` itself is unchanged.
+  `TestId`"), which the owner accepted; `TestId` itself is unchanged.
 - **The Cupertino field has to be built.** `CupertinoTextFormFieldRow`'s
   error is not a live region, so nothing announces it on Android
   ([FL-182](../flutter-limitations.md#fl-182); probe p09: nothing said),
