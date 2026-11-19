@@ -40,14 +40,8 @@ final class I02FocusOrderUITests: XCTestCase, CountedTechniqueUITest {
     "bad-order-missing": ["map", "water", "weather", "closures", "save", "aid"],
   ]
 
-  /// Opens the example and waits a second before any key. On CI a Tab sent
-  /// as soon as the count was in the tree was lost twice (runs 44447792016
-  /// and 44521548016): the next Tab then put focus on Back, and Space left
-  /// the screen. Why that Tab is lost is not established; the screen is
-  /// still arriving when the count first exists.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
     open(slug, waitingFor: countElement(slug), file: file, line: line)
-    sleep(1)
   }
 
   private func control(_ slug: String, _ c: String) -> XCUIElement { element("i02-\(slug)-\(c)") }
@@ -159,26 +153,67 @@ final class I02FocusOrderUITests: XCTestCase, CountedTechniqueUITest {
     }
   }
 
+  // On CI the first Shift+Tab of a launch has arrived as a plain Tab in
+  // two runs (44447792016 in bad-columns-mixed, 44521548016 in
+  // good-ordered): the forward walk had passed, then Space after the first
+  // Shift+Tab left the screen, which is what Space does on Back, the stop
+  // after Save. Why Shift is dropped there is not established. So the
+  // screen leaving at that one step sends the example round once more, and
+  // is a failure the second time. Any other outcome at that step, and every
+  // later step, fails at once.
   func testShiftTabGoesTheSameWayBackwards() {
     for slug in Self.all {
-      let order = Self.tabOrder[slug]!
-      open(slug)
-      // Forward to the last stop, checking each box on the way.
-      press(Self.tab)  // Back
-      var on = Set<String>()
-      var saves = 0
-      for stop in order {
-        press(Self.tab)
-        expectStop(slug, stop, on: &on, saves: &saves)
-      }
-      // Then backwards: Space at each stop unchecks the box that has focus.
-      for stop in order.reversed().dropFirst() {
-        press(Self.tab, .shift)
-        expectStop(slug, stop, on: &on, saves: &saves)
-      }
-      press(Self.tab, .shift)
-      expectBack(slug)
+      var tries = 0
+      while !shiftTabWalk(slug, lastTry: tries == 1) { tries += 1 }
     }
+  }
+
+  /// One walk forward and back in `slug`. False if the screen left at the
+  /// first Shift+Tab and `lastTry` is false; that is a failure otherwise.
+  private func shiftTabWalk(_ slug: String, lastTry: Bool) -> Bool {
+    let order = Self.tabOrder[slug]!
+    open(slug)
+    // Forward to the last stop, checking each box on the way.
+    press(Self.tab)  // Back
+    var on = Set<String>()
+    var saves = 0
+    for stop in order {
+      press(Self.tab)
+      expectStop(slug, stop, on: &on, saves: &saves)
+    }
+    // Then backwards: Space at each stop unchecks the box that has focus.
+    var first = true
+    for stop in order.reversed().dropFirst() {
+      press(Self.tab, .shift)
+      if first {
+        first = false
+        press(Self.space)
+        let gone = NSPredicate(format: "exists == false")
+        let left = XCTNSPredicateExpectation(predicate: gone, object: countElement(slug))
+        if XCTWaiter().wait(for: [left], timeout: 2) == .completed {
+          if lastTry {
+            XCTFail("\(slug): Space after the first Shift+Tab left the screen twice: focus was on Back")
+            return true
+          }
+          print("I02 \(slug): Space after the first Shift+Tab left the screen; walking the example once more")
+          return false
+        }
+        // The screen stayed: the same check expectStop makes after Space.
+        if stop == "save" {
+          saves += 1
+          expectCount(slug, saves)
+          expectChecked(slug, on, "after Space on Save plan")
+        } else {
+          if on.contains(stop) { on.remove(stop) } else { on.insert(stop) }
+          expectChecked(slug, on, "after Space on \(stop)")
+        }
+        continue
+      }
+      expectStop(slug, stop, on: &on, saves: &saves)
+    }
+    press(Self.tab, .shift)
+    expectBack(slug)
+    return true
   }
 
   func testEachArrowMovesToTheControlOnThatSide() {
