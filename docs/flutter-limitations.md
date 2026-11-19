@@ -117,6 +117,9 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
 | [FL-402](#fl-402) | A tap is given up by how far the pointer has moved, not by whether it has left the control | All (widget test only) | Confirmed |
+| [FL-420](#fl-420) | Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets | All | Confirmed |
+| [FL-421](#fl-421) | On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever | Web | Confirmed |
+| [FL-422](#fl-422) | On a scrolled screen the default focus order puts the app bar's Back button among the content | All | Confirmed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -1206,8 +1209,12 @@ yet), **Fixed in x.y** (verified on that version).
   node already reads the new value, "50%, Volume", before the app has
   acted. Only the value is guessed: for F10 `bad-indicator-label`, whose
   name holds the number too, one run read "50%, Volume\n4" at that
-  moment. Asserted by `F10SliderTest.everySliderIsASeekBarWithItsValueAndName`,
-  which also shows the other side: a test that waits for the description
+  moment, which is what shows the value arriving ahead of the app's own
+  update; no test holds the app back to prove that order.
+  `F10SliderTest.everySliderIsASeekBarWithItsValueAndName` asserts that
+  the new value is in the description (it waits up to two seconds for the
+  tree to show it, since one CI run still read the old one on the next
+  line), and shows the other side: a test that waits for the description
   to change cannot tell that the app has acted, and has to wait for the
   app's own change count. At the last value `Slider` repeats the value as
   `increasedValue`, so an increase there shows the same value. The F10
@@ -2330,6 +2337,140 @@ yet), **Fixed in x.y** (verified on that version).
   device was not measured.
 - Workaround: none tried. A control could check the release position
   itself (`onTapUp` gives it) before acting.
+- Upstream issue: not searched yet (D25).
+
+## FL-420
+
+**Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the I02 probe
+  (`docs/evidence/probes/i02/`, fixtures `a` to `d`). Asserted by the I02
+  widget tests "FL-420" (the SDK alone) and by every I02 layer's tests of
+  `bad-columns-mixed`, written to fail when Tab starts to go down a column
+  by itself. Framework source read: `widgets/focus_traversal.dart`
+  (`ReadingOrderTraversalPolicy`, `FocusTraversalGroup`) and
+  `semantics/semantics.dart` (`_childrenInDefaultOrder`).
+- WCAG: 2.4.3 Focus Order; for screen readers, 1.3.2 Meaningful Sequence.
+- What happens: `WidgetsApp` puts the whole app in one
+  `FocusTraversalGroup` with `ReadingOrderTraversalPolicy`, which orders
+  controls by position: the highest first, then any others whose
+  rectangle overlaps its row, in reading direction, and so on. Two lists
+  side by side whose rows are level are reached row by row, back and forth
+  between the lists. Android Views and Compose go by the order of the
+  layout tree, and HTML by the order of the document, so on those a
+  column written as one block is reached as one: in Flutter it is not.
+  - The keyboard's order changes only with focus widgets:
+    `FocusTraversalGroup` around each column makes Tab go down one, then
+    the other. It has no effect on the semantics tree
+    (`includeSemantics: false`, read in the source).
+  - The screen reader's order changes only with semantics:
+    `Semantics(container: true)` around each column makes screen readers
+    read one, then the other, and does nothing for Tab. Without it, the
+    framework sorts the nodes by position too, in its own way: rows that
+    touch or overlap form one band and are read down by column, rows apart
+    from each other are read across (read in the source; in the probe both
+    happened on different screen sizes). A layout's screen reader order
+    can therefore change with the screen size.
+- Effect: a keyboard user moves through two lists mixed together, as in
+  the failing example of Understanding 2.4.3; and a fix made for one of
+  keyboard or screen reader users leaves the other as it was.
+- Workaround, in the SDK: a `FocusTraversalGroup` and a semantics
+  container around each column (I02 `good-material` and
+  `good-cupertino`). Where no widget holds a column, an
+  `OrderedTraversalPolicy` with a `FocusTraversalOrder` on every control,
+  and an `OrdinalSortKey` with the same numbers (I02 `good-ordered`).
+  Verified at every I02 layer.
+- How to read this entry: this is how Flutter's default policy is
+  documented to work, not a defect in it. It is logged because it differs
+  from the platforms Flutter runs on, and because nothing ties the two
+  orders together.
+- Upstream issue: not searched yet (D25).
+
+## FL-421
+
+**On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever.**
+
+- Status: Confirmed, Flutter 3.47.5, web (Chromium, Playwright). Found in
+  the I02 probe (fixture `i`); asserted by `web_tests/i02_focus_order.spec.js`
+  ("Tab past First aid goes round"), written to fail when Tab leaves the
+  page. Framework source read: `widgets/app.dart` (the root route's
+  `routeTraversalEdgeBehavior` is `TraversalEdgeBehavior.leaveFlutterView`
+  on the web) and `widgets/focus_traversal.dart`; engine source read:
+  `lib/web_ui/lib/src/engine/semantics/focusable.dart`.
+- WCAG: 2.4.3 Focus Order.
+- What happens: on the web every focusable node is an element with
+  `tabindex="0"`, in the document in the semantics order. Flutter handles
+  Tab itself and moves focus in its own order. At the last control of
+  that order it unfocuses and lets the browser have the key, so that Tab
+  can leave the page. The browser then moves to the next element in the
+  document. When Flutter's last control is not the document's last, that
+  next element is one of Flutter's: the engine passes the element's focus
+  to the framework, and Flutter's order carries on from there. In I02
+  `bad-order-missing` Flutter's last stop is First aid, which comes before
+  Weather in the document: Tab goes First aid, Weather, Closures, Save
+  plan, First aid, and round again, and never leaves the page. Shift+Tab
+  is not affected. Android and iOS go round to the first control, by
+  design.
+- Effect: on the web, a keyboard user can never Tab out of the page to
+  the browser's own controls, and goes round a part of the screen.
+- Workaround, in the SDK: keep the last control of the focus order last
+  in the semantics order, which is the document's: give every control
+  its place in both orders (FL-420), as I02 `good-ordered` does; there,
+  Tab past Save plan leaves the page.
+- Upstream issue: not searched yet (D25).
+
+## FL-422
+
+**On a scrolled screen the default focus order puts the app bar's Back button among the content.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the I02 probe
+  (`docs/evidence/probes/i02/`): on the web (round 2, forty buttons in a
+  `SingleChildScrollView` under an `AppBar`), in a widget test of the same
+  screen, and on the Android emulator and the iOS simulator, where Tab
+  past the last control of the long probe screen went round to the first
+  control of the content and not to Back. Asserted by the I02 widget test
+  "FL-422", written to fail when Back stops coming between the buttons.
+  Framework source read: `widgets/focus_traversal.dart`.
+- WCAG: 2.4.3 Focus Order.
+- What happens: `ReadingOrderTraversalPolicy`, the default, sorts the
+  controls by their rectangles on the screen at the moment the key is
+  pressed (`FocusNode.rect`, in the screen's coordinates), and controls
+  scrolled out of view keep rectangles above or below the view. Once a
+  list has scrolled, the controls scrolled away above are "higher" than
+  the app bar, and the app bar's Back button sorts among the content:
+  - Shift+Tab up the list stops on Back between two buttons, and the next
+    Shift+Tab goes on from where it was. In the widget test: B10, B9, B8,
+    B7, B6, Back, B5, Back, B4, Back, and so on. On the web: s20, Back,
+    s19, Back. With each four buttons in a `FocusTraversalGroup`, Back
+    came between groups.
+  - Tab past the last control goes round to the control highest on the
+    screen, which is the first of the list and not Back, and on down the
+    list Back comes once in the middle.
+  This app's `PageScaffold` now has the workaround below. On an 800 by
+  120 screen, where the I02 examples scroll until their first control is
+  above the top of the screen, I02 `bad-columns-mixed`, whose controls
+  are in no group, went round from Save plan to Map and skipped Back
+  without it; the good examples kept their order with and without it,
+  because each of their tall groups reaches down into Back's row (read in
+  the source: the bands of `ReadingOrderTraversalPolicy`).
+- Effect: moving backwards through a long page, a keyboard user is sent
+  to the top of the screen at every step or two.
+- Workaround, in the SDK: a `FocusTraversalGroup` around the scrolling
+  view (outside it, not inside). The group is sorted against Back by its
+  own rectangle, the part of the screen the list shows, which is always
+  below the app bar; inside it the controls keep their order. Verified in
+  the I02 widget test "FL-422 workaround": Tab goes Back, B1 to B12, Back,
+  and Shift+Tab the same backwards. Applied in the app's `PageScaffold`
+  (`lib/app/widgets.dart`) and asserted by
+  `test/app/page_scaffold_focus_test.dart` and by the I02 widget test
+  "bad-columns-mixed: Tab past Save plan goes round to Back", which fails
+  without it. The I02 web tests at 800 by 120 show the good examples'
+  order on a scrolled screen in Chromium, but they pass without the group
+  too, so they do not verify it there. Not verified on Android or iOS.
+  Also
+  tried in the probe, with the same result in a widget test: an
+  `OrderedTraversalPolicy` over the screen with the app bar ordered first
+  and the grouped body second.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->

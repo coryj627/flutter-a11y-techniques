@@ -1,0 +1,136 @@
+// Throwaway: I02 probe on the web. Not committed.
+import { test } from '@playwright/test';
+
+const id = (page, x) => page.locator(`[flt-semantics-identifier="${x}"]`);
+const text = async (page, x) => (await id(page, x).textContent()) ?? '';
+const active = (page) => page.evaluate(() => {
+  const e = document.activeElement;
+  if (!e) return 'none';
+  const ident = e.getAttribute('flt-semantics-identifier') ?? e.closest('[flt-semantics-identifier]')?.getAttribute('flt-semantics-identifier');
+  if (ident) return ident;
+  return `${e.tagName.toLowerCase()}{role=${e.getAttribute('role')},label=${e.getAttribute('aria-label')},text=${(e.textContent ?? '').slice(0, 30)}}`;
+});
+
+async function start(page) {
+  await page.goto('about:blank');
+  await page.goto('/#/probe');
+  await id(page, 'i-save').waitFor();
+  await page.waitForTimeout(800);
+}
+
+test('dom order and attributes', async ({ page }) => {
+  await start(page);
+  const order = await page.evaluate(() => [...document.querySelectorAll('[flt-semantics-identifier]')]
+    .map((e) => `${e.getAttribute('flt-semantics-identifier')}${e.hasAttribute('tabindex') ? '(t' + e.getAttribute('tabindex') + ')' : ''}`));
+  console.log(`I02PROBE web DOM order: ${order.join(' ')}`);
+  const tabbables = await page.evaluate(() => [...document.querySelectorAll('[tabindex]')]
+    .map((e) => `${e.tagName.toLowerCase()}:${e.getAttribute('flt-semantics-identifier') ?? e.getAttribute('aria-label') ?? '-'}(t${e.getAttribute('tabindex')})`));
+  console.log(`I02PROBE web tabindex elements in DOM order: ${tabbables.join(' ')}`);
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const named = nodes.filter((n) => /^[a-i] /.test(n.name?.value ?? '') && !n.ignored).map((n) => `${n.role?.value}:${n.name.value}`);
+  console.log(`I02PROBE web AX order: ${named.join(' | ')}`);
+});
+
+test('tab and shift+tab', async ({ page }) => {
+  await start(page);
+  const fwd = [];
+  for (let i = 0; i < 56; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(120);
+    fwd.push(`${await active(page)}`);
+  }
+  console.log(`I02PROBE web tab (activeElement): ${fwd.join(' ')}`);
+  console.log(`I02PROBE web tab (Flutter ${await text(page, 'path')})`);
+  const back = [];
+  for (let i = 0; i < 56; i++) {
+    await page.keyboard.press('Shift+Tab');
+    await page.waitForTimeout(120);
+    back.push(`${await active(page)}`);
+  }
+  console.log(`I02PROBE web shift+tab (activeElement): ${back.join(' ')}`);
+  console.log(`I02PROBE web keys: ${await text(page, 'keys')}`);
+});
+
+test('shift+tab slowly from f-down', async ({ page }) => {
+  await start(page);
+  await id(page, 'f-down').focus();
+  await page.waitForTimeout(500);
+  const back = [];
+  for (let i = 0; i < 30; i++) {
+    await page.keyboard.press('Shift+Tab');
+    await page.waitForTimeout(600);
+    back.push(`${await active(page)} [${await text(page, 'focus')}]`);
+  }
+  console.log(`I02PROBE web slow shift+tab from f-down: ${back.join(' ')}`);
+});
+
+test('the end of the order', async ({ page }) => {
+  await start(page);
+  // Focus i-save by Flutter's order, then Tab on past the end.
+  for (let i = 0; i < 60; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(120);
+    if ((await active(page)) === 'i-save') break;
+  }
+  const after = [];
+  for (let i = 0; i < 8; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(150);
+    after.push(`${await active(page)} [${await text(page, 'focus')}]`);
+  }
+  console.log(`I02PROBE web after i-save: ${after.join(' , ')}`);
+});
+
+test('arrows', async ({ page }) => {
+  await start(page);
+  for (const start of ['b-map', 'f-up', 'f-left']) {
+    for (const key of ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft']) {
+      await id(page, start).focus();
+      await page.waitForTimeout(150);
+      const before = `${await active(page)} [${await text(page, 'focus')}]`;
+      const scrollBefore = await page.evaluate(() => [...document.querySelectorAll('flt-semantics')].map((e) => e.scrollTop).reduce((a, b) => a + b, 0));
+      await page.keyboard.press(key);
+      await page.waitForTimeout(300);
+      const scrollAfter = await page.evaluate(() => [...document.querySelectorAll('flt-semantics')].map((e) => e.scrollTop).reduce((a, b) => a + b, 0));
+      console.log(`I02PROBE web arrow ${start} ${key}: before ${before} after ${await active(page)} [${await text(page, 'focus')}] scroll ${scrollBefore}->${scrollAfter}`);
+    }
+  }
+});
+
+test('space toggles where focus is', async ({ page }) => {
+  await start(page);
+  for (let i = 0; i < 4; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(120);
+  }
+  await page.keyboard.press('Space');
+  await page.waitForTimeout(200);
+  console.log(`I02PROBE web after 4 tabs and space: ${await active(page)} ${await text(page, 'log')}`);
+});
+
+for (const route of ['scroll', 'scroll-groups']) {
+  test(`round 2: shift+tab up a long ${route} list`, async ({ page }) => {
+    test.setTimeout(120000);
+    await page.goto('about:blank');
+    await page.goto(`/#/${route}`);
+    await id(page, 's01').waitFor();
+    await page.waitForTimeout(800);
+    const fwd = [];
+    for (let i = 0; i < 42; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(400);
+      fwd.push(await active(page));
+    }
+    console.log(`I02PROBE web ${route} tab: ${fwd.join(' ')}`);
+    await id(page, 's40').focus();
+    await page.waitForTimeout(500);
+    const back = [];
+    for (let i = 0; i < 42; i++) {
+      await page.keyboard.press('Shift+Tab');
+      await page.waitForTimeout(400);
+      back.push(await active(page));
+    }
+    console.log(`I02PROBE web ${route} shift+tab from s40: ${back.join(' ')}`);
+  });
+}

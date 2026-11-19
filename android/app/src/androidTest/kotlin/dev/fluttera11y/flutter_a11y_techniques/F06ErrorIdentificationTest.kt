@@ -73,8 +73,12 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
      */
     private fun closeKeyboardAndWaitForCount(slug: String) {
         hideKeyboard()
-        waitFor("the count of $slug is in the tree") {
-            anyWindowHas { it.viewIdResourceName == "f06-$slug-count" }
+        // On CI the count was once still missing five seconds after the
+        // keyboard was put away (run 44417692327, attempt 2), so it is also
+        // scrolled to: the shared count() does that when it is not in the
+        // tree.
+        waitFor("the count of $slug can be read") {
+            try { count(slug); true } catch (e: AssertionError) { false }
         }
     }
 

@@ -56,9 +56,23 @@ class I01FocusableControlsTest : TechniqueTest("I01") {
         return false
     }
 
+    /**
+     * The middle of the control once it has stopped moving. A tap on CI
+     * twice did nothing (the count stayed 0); a point worked out while the
+     * screen was still arriving would miss the control, which is the likely
+     * cause (not confirmed). F10's slider test waits the same way.
+     */
     private fun centre(slug: String): Pair<Int, Int> {
-        val r = Rect().also { trail(slug).getBoundsInScreen(it) }
-        return r.centerX() to r.centerY()
+        fun bounds() = Rect().also { trail(slug).getBoundsInScreen(it) }
+        var r = bounds()
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end) {
+            Thread.sleep(250)
+            val next = bounds()
+            if (next == r) return r.centerX() to r.centerY()
+            r = next
+        }
+        throw AssertionError("$slug: the control was still moving after 5 seconds, last at $r")
     }
 
     /** Wait a little, then expect the count of [slug] still to be [expected]. */

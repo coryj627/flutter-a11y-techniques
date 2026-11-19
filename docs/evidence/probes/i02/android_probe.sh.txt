@@ -1,0 +1,36 @@
+#!/bin/sh
+# I02 probe on Android, under tool/with_devices.py. Run from the worktree root.
+PKG=dev.fluttera11y.flutter_a11y_techniques
+lines() { adb exec-out uiautomator dump /dev/tty 2>/dev/null | grep -o 'content-desc="\(Focus\|Keys\|Path\): [^"]*"' | sed 's/content-desc=//' | cut -c1-400; }
+echo "== device"
+adb shell getprop ro.build.version.release; adb shell getprop ro.build.type; adb shell getprop ro.debuggable
+echo "== input devices (getevent -pl, names only)"
+adb shell getevent -pl 2>&1 | grep -E "add device|name:" | head -20
+echo "== shell part: install and open the probe"
+adb install -r build/app/outputs/flutter-apk/app-debug.apk | tail -1
+adb shell monkey -p $PKG 1 >/dev/null 2>&1
+sleep 8
+for i in 1 2 3 4 5 6 7 8 9 10 11; do adb shell input keyevent KEYCODE_TAB; sleep 0.4; done
+sleep 1
+echo "-- after 11 Tabs"; lines
+echo "-- adb emu event send: Shift down, Tab down, Tab up, Shift up"
+adb emu event send EV_KEY:KEY_LEFTSHIFT:1 EV_KEY:KEY_TAB:1 EV_KEY:KEY_TAB:0 EV_KEY:KEY_LEFTSHIFT:0 2>&1
+sleep 1.5; lines
+echo "-- adb emu event send again"
+adb emu event send EV_KEY:KEY_LEFTSHIFT:1 EV_KEY:KEY_TAB:1 EV_KEY:KEY_TAB:0 EV_KEY:KEY_LEFTSHIFT:0 2>&1
+sleep 1.5; lines
+echo "-- adb emu event send: Tab alone"
+adb emu event send EV_KEY:KEY_TAB:1 EV_KEY:KEY_TAB:0 2>&1
+sleep 1.5; lines
+echo "-- sendevent (needs write access to /dev/input)"
+adb shell 'ls -l /dev/input/ | head -5; id' 2>&1
+echo "-- uiautomator dump of the whole tree, child order"
+adb exec-out uiautomator dump /dev/tty 2>/dev/null | grep -o 'resource-id="[a-z]-[a-z]*"\|content-desc="Back"' | tr '\n' ' '; echo
+adb shell am force-stop $PKG
+echo "== instrumented part"
+adb logcat -c
+(cd android && ./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+  -Ptarget=lib/probe.dart \
+  -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.ProbeI02Test 2>&1 | grep -E "FAILED|BUILD|tests completed|Tests on|Exception" )
+adb logcat -d -s I02PROBE:I | grep I02PROBE
+exit 0

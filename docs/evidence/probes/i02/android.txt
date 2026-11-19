@@ -1,0 +1,92 @@
+== device
+17
+user
+0
+== input devices (getevent -pl, names only)
+add device 1: /dev/input/event12
+  name:     "qwerty2"
+add device 2: /dev/input/event11
+  name:     "virtio_input_multi_touch_11"
+add device 3: /dev/input/event10
+  name:     "virtio_input_multi_touch_10"
+add device 4: /dev/input/event9
+  name:     "virtio_input_multi_touch_9"
+add device 5: /dev/input/event8
+  name:     "virtio_input_multi_touch_8"
+add device 6: /dev/input/event7
+  name:     "virtio_input_multi_touch_7"
+add device 7: /dev/input/event6
+  name:     "virtio_input_multi_touch_6"
+add device 8: /dev/input/event5
+  name:     "virtio_input_multi_touch_5"
+add device 9: /dev/input/event4
+  name:     "virtio_input_multi_touch_4"
+add device 10: /dev/input/event3
+  name:     "virtio_input_multi_touch_3"
+== shell part: install and open the probe
+Success
+-- after 11 Tabs
+"Focus: b-aid"
+"Path: other(FocusScopeNode) other(FocusNode) a-map a-alerts a-water a-closures a-aid a-save b-map b-water b-aid"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab"
+-- adb emu event send: Shift down, Tab down, Tab up, Shift up
+OK
+"Focus: b-aid"
+"Path: other(FocusScopeNode) other(FocusNode) a-map a-alerts a-water a-closures a-aid a-save b-map b-water b-aid"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab"
+-- adb emu event send again
+OK
+"Focus: b-aid"
+"Path: other(FocusScopeNode) other(FocusNode) a-map a-alerts a-water a-closures a-aid a-save b-map b-water b-aid"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab"
+-- adb emu event send: Tab alone
+OK
+"Focus: b-aid"
+"Path: other(FocusScopeNode) other(FocusNode) a-map a-alerts a-water a-closures a-aid a-save b-map b-water b-aid"
+"Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab"
+-- sendevent (needs write access to /dev/input)
+total 0
+crw-rw---- 1 root input 13,  64 2026-09-27 11:31 event0
+crw-rw---- 1 root input 13,  65 2026-09-27 11:31 event1
+crw-rw---- 1 root input 13,  74 2026-09-27 11:31 event10
+crw-rw---- 1 root input 13,  75 2026-09-27 11:31 event11
+uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats),3009(readproc),3011(uhid),3012(readtracefs) context=u:r:shell:s0
+-- uiautomator dump of the whole tree, child order
+content-desc="Back" resource-id="a-map" resource-id="a-alerts" resource-id="a-water" resource-id="a-closures" resource-id="a-aid" resource-id="a-save" resource-id="b-map" resource-id="b-alerts" resource-id="b-water" resource-id="b-closures" resource-id="b-aid" resource-id="b-save" resource-id="c-map" resource-id="c-water" resource-id="c-aid" resource-id="c-alerts" resource-id="c-closures" 
+== instrumented part
+BUILD SUCCESSFUL in 5m 5s
+11-18 04:28:01.336 16470 16485 I I02PROBE: arrow f-up DPAD_DOWN: reached=true after=f-down
+11-18 04:28:31.347 16470 16485 I I02PROBE: arrow f-left DPAD_DOWN: reached=true after=g-map
+11-18 04:29:00.942 16470 16485 I I02PROBE: arrow f-left DPAD_RIGHT: reached=true after=f-right
+11-18 04:29:01.874 16470 16485 I I02PROBE: arrow f-right DPAD_DOWN: reached=true after=g-alerts
+11-18 04:29:15.316 16470 16485 I I02PROBE: arrow b-map DPAD_DOWN: reached=true after=b-water
+11-18 04:29:45.306 16470 16485 I I02PROBE: arrow b-map DPAD_RIGHT: reached=true after=b-alerts
+11-18 04:29:46.315 16470 16485 I I02PROBE: arrow b-alerts DPAD_LEFT: reached=true after=b-map
+11-18 04:29:47.875 16470 16485 I I02PROBE: arrow b-water DPAD_UP: reached=true after=b-map
+11-18 04:30:27.776 16470 16485 I I02PROBE: after 60 Tabs: Path: other(FocusScopeNode) other(FocusNode) a-map a-alerts a-water a-closures a-aid a-save b-map b-water b-aid b-alerts b-closures b-save c-map c-water c-aid c-alerts c-closures c-save d-map d-alerts d-water d-closures d-aid d-save e-map e-water e-alerts e-save f-up f-left f-right f-down g-map g-water g-aid g-alerts g-closures g-save h-map h-water h-aid h-alerts h-closures h-save i-map i-water i-alerts i-closures i-save i-aid a-map a-alerts a-water a-closures a-aid a-save b-map b-water b-aid
+11-18 04:30:27.777 16470 16485 I I02PROBE: keys: Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device -1 'Virtual' virtual=true external=false keyboardType=2 sources=0x301
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 0 'qwerty2' virtual=false external=false keyboardType=2 sources=0x301
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 2 'gpio-keys' virtual=false external=false keyboardType=1 sources=0x101
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 3 'virtio_input_multi_touch_1' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 4 'virtio_input_multi_touch_2' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 5 'virtio_input_multi_touch_3' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 6 'virtio_input_multi_touch_4' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 7 'virtio_input_multi_touch_5' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 8 'virtio_input_multi_touch_6' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 9 'virtio_input_multi_touch_7' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 10 'virtio_input_multi_touch_8' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 11 'virtio_input_multi_touch_9' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 12 'virtio_input_multi_touch_10' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: input device 13 'virtio_input_multi_touch_11' virtual=false external=false keyboardType=1 sources=0x80005103
+11-18 04:30:33.889 16470 16485 I I02PROBE: hardware keyboard used: 0 'qwerty2'
+11-18 04:30:42.194 16470 16485 I I02PROBE: UiDevice.pressKeyCode(TAB, META_SHIFT_ON | META_SHIFT_LEFT_ON): reached=true before=b-closures after=b-save keys=Tab Tab Tab Tab Tab Tab
+11-18 04:31:12.125 16470 16485 I I02PROBE: Instrumentation.sendKeySync: Shift down, Tab down/up with shift meta, Shift up; device -1 (virtual): reached=true before=b-closures after=b-alerts keys=Tab Tab Tab shift+Shift Left shift+Tab
+11-18 04:31:14.123 16470 16485 I I02PROBE: UiAutomation.injectInputEvent: the same four events, device -1: reached=true before=b-closures after=b-alerts keys=Left shift+Tab Tab shift+Shift Left shift+Tab
+11-18 04:31:15.624 16470 16485 I I02PROBE: shell input keycombination KEYCODE_SHIFT_LEFT KEYCODE_TAB: reached=true before=b-closures after=b-save keys=Left shift+Tab Tab shift+Shift Left Tab
+11-18 04:31:46.066 16470 16485 I I02PROBE: shell input keyevent --longpress KEYCODE_SHIFT_LEFT KEYCODE_TAB: reached=true before=b-closures after=c-map keys=Tab shift+Shift Left shift+Shift Left Tab
+11-18 04:32:15.190 16470 16485 I I02PROBE: Instrumentation.sendKeySync: the same four events, device 0 (qwerty2): reached=true before=b-closures after=b-alerts keys=Tab Tab Tab shift+Shift Left shift+Tab
+11-18 04:32:16.943 16470 16485 I I02PROBE: UiAutomation.injectInputEvent: the same four events, device 0: reached=true before=b-closures after=b-alerts keys=Left shift+Tab Tab shift+Shift Left shift+Tab
+11-18 04:32:18.331 16470 16485 I I02PROBE: Instrumentation.sendKeySync: Tab down/up only with shift meta, device 0: reached=true before=b-closures after=b-save keys=Tab shift+Shift Left shift+Tab Tab Tab
+11-18 04:32:24.699 16470 16485 I I02PROBE: child order: android:id/content(FrameLayout) (View) (View) (View) (View) (View) (Button) (View) focus(View) path(View) log(View) keys(View) (ScrollView) (View) (View) (View) a-map(CheckBox) a-alerts(CheckBox) a-water(CheckBox) a-closures(CheckBox) a-aid(CheckBox) a-save(Button) (View) (View) (View) b-map(CheckBox) b-alerts(CheckBox) b-water(CheckBox) b-closures(CheckBox) b-aid(CheckBox) b-save(Button) (View) (View) c-map(CheckBox) c-water(CheckBox) c-aid(CheckBox) (View) c-alerts(CheckBox) c-closures(CheckBox) c-save(Button)
+11-18 04:32:24.700 16470 16485 I I02PROBE: named nodes in order: Back | I02 probe | Focus: other(FocusScopeNode) | Path: other(FocusScopeNode) | Log: - | Keys: - | a: two columns, no groups | a Pack | a Send me | a Map | a Weather alerts | a Water | a Trail closures | a First aid kit | a Save | b: a group per column | b Pack | b Send me | b Map | b Weather alerts | b Water | b Trail closures | b First aid kit | b Save | c: a group and a semantics container per column | c Pack | c Map | c Water | c First aid kit | c Send me | c Weather alerts | c Trail closures | c Save
