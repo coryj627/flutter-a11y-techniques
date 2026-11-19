@@ -91,7 +91,8 @@ final i08DismissAndEscape = Technique(
       defect:
           'Escape does nothing, and Tab only goes round the two switches. '
           'On iOS no key closes the layers; on Android only the system\'s '
-          'keyboard Back, Meta+Escape, does, and nothing says so.',
+          'keyboard Back (Meta+Escape) does, and on the web the browser\'s '
+          'Back, and nothing says so.',
       builder: (_) => const BadNotDismissible(),
     ),
     TechniqueExample.bad(
@@ -100,9 +101,9 @@ final i08DismissAndEscape = Technique(
       variant: ExampleVariant.widgets,
       defect:
           'Escape does nothing, and Tab and Shift+Tab only go round the two '
-          'switches. On iOS and the web no key leaves the layers; on Android '
-          'only the system\'s keyboard Back, Meta+Escape, does, and nothing '
-          'says so.',
+          'switches. On iOS no key leaves the layers; on Android only the '
+          'system\'s keyboard Back (Meta+Escape) does, and on the web the '
+          'browser\'s Back, and nothing says so.',
       builder: (_) => const BadNoEscape(),
     ),
     TechniqueExample.bad(
@@ -110,9 +111,9 @@ final i08DismissAndEscape = Technique(
       title: 'Layers drawn in the overlay that Back goes past',
       variant: ExampleVariant.widgets,
       defect:
-          'On Android, Back (the Back key, TalkBack\'s Back gesture, or '
-          'Meta+Escape on a keyboard) leaves the screen with the layers '
-          'still open, instead of closing them.',
+          'Back (on Android the Back key, TalkBack\'s Back gesture, or '
+          'Meta+Escape on a keyboard; on the web the browser\'s Back) leaves '
+          'the screen with the layers still open, instead of closing them.',
       builder: (_) => const BadBackLeaves(),
     ),
   ],

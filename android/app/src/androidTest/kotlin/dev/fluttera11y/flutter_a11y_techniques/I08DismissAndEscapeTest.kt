@@ -362,7 +362,8 @@ class I08DismissAndEscapeTest : TechniqueTest("I08") {
         }
     }
 
-    // bad-no-escape: no key leaves the layers. Ten Tabs and ten Shift+Tabs.
+    // bad-no-escape: Tab and Shift+Tab never leave the layers (the keyboard's
+    // Back does: keyboardBackClosesTheLayers). Ten of each.
     @Test
     fun badNoEscapeNoKeyLeavesTheLayers() {
         val slug = "bad-no-escape"

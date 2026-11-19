@@ -80,28 +80,45 @@ Android's, so it counts on Android. iOS has no such shortcut for an app:
 Command+[ reached Flutter as itself and did nothing (probe
 `ios_round3.txt`); Full Keyboard Access was not tried.
 
+The web has one too: the browser's Back, whose keyboard shortcuts are
+Alt+Left and, on a Mac, Command+[. The history event it makes reaches
+Flutter as `popRoute`, the same as Android's Back (read in the source:
+`SingleEntryBrowserHistory.onPopState` in the web engine). Measured as
+that event, through Playwright's `page.goBack()`: it closed the layers of
+every example but `bad-back-leaves`, with the count up by one, DOM focus
+back on Map layers, and the example's screen still there (probe
+`web_back.txt`; asserted in `web_tests/i08_dismiss_and_escape.spec.js`).
+The shortcuts themselves could not be sent: Playwright's keys go to the
+page, not to the browser's own shortcuts, and neither chord went back. So
+on the web the key is not measured, only the event it makes; the verdicts
+below take the browser's Back as the web's standard way back, by the same
+reasoning as Android's, and say so.
+
 How the bad examples fail, as the criterion is written:
 
-- `bad-no-escape` fails 2.1.2 on iOS and the web. Enter on Map layers
-  moves keyboard focus into the layers; there Tab and Shift+Tab go round
-  the two switches, Escape does nothing, and no other key closes the
-  layers or moves focus out of them. Nothing on the screen says how to
-  leave. On Android it does not fail as written: the keyboard's Back
-  (Meta+Escape) closes the layers through the screen's `PopScope`. What
-  goes wrong there is that Escape, the key the good examples and the other
-  platforms answer, does nothing, and nothing says the way out is
-  Meta+Escape; no criterion is claimed for that.
+- `bad-no-escape` fails 2.1.2 on iOS only. Enter on Map layers moves
+  keyboard focus into the layers; there Tab and Shift+Tab go round the two
+  switches, Escape does nothing, and no other key closes the layers or
+  moves focus out of them. Nothing on the screen says how to leave. On
+  Android it does not fail as written: the keyboard's Back (Meta+Escape)
+  closes the layers through the screen's `PopScope`. On the web it does
+  not either, with the caveat above: the browser's Back closes them
+  through the same `PopScope` (measured as the history event, not as the
+  key). What goes wrong on those two is that Escape, the key the good
+  examples answer, does nothing, and nothing says the way out is the
+  platform's Back; no criterion is claimed for that.
 - `bad-not-dismissible` fails 2.1.2 on iOS only: the same, in a bottom
   sheet that cannot be dismissed. On Android the keyboard's Back closes
   it, as Back closes any route; what goes wrong there is the same as in
-  `bad-no-escape`. On the web it does not fail as written: Tab past the
-  last switch leaves the page for the browser's own controls, which moves
-  focus away from the sheet (the next Tab comes back to it, and the page
-  behind it cannot be reached until the sheet is closed with a pointer).
+  `bad-no-escape`. On the web it does not fail as written: the browser's
+  Back closes it (the history event, as above), and Tab past the last
+  switch also leaves the page for the browser's own controls, which moves
+  focus away from the sheet (the next Tab comes back to it).
 - `bad-back-leaves` fails nothing: Escape closes its layers. Its defect is
   for Android's Back, in every form: the Back key, TalkBack's Back
   gesture, and the keyboard's Meta+Escape and Meta+Left all take the user
-  off the screen with the layers open. Leaving the screen moves focus
+  off the screen with the layers open; and on the web the browser's Back
+  does the same (the history event). Leaving the screen moves focus
   away, so it is not a trap. The iOS reference's own bad example, a
   dialog with no escape action, has no WCAG criterion either ("N/A" in its
   document).
@@ -169,9 +186,9 @@ only in what lets the user out.
 
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
-| `bad-not-dismissible` | `good-material` with `isDismissible: false`. Escape does nothing, and Tab only goes round the two switches (on the web, out of the page and back): on iOS no key closes the layers, and on Android only the system's keyboard Back, Meta+Escape, which nothing on the screen mentions | R1, R4 | 2.1.2 on iOS |
-| `bad-no-escape` | `good-widgets` without its action for `DismissIntent`. Escape does nothing, and Tab and Shift+Tab only go round the two switches: on iOS and the web no key leaves the layers, and on Android only the system's keyboard Back, Meta+Escape | R1, R4 | 2.1.2 on iOS and the web |
-| `bad-back-leaves` | `good-widgets` without its `PopScope`. On Android, Back (the Back key, TalkBack's Back gesture, or Meta+Escape on a keyboard) takes the user off the screen, with the layers still open, instead of closing them | R3 | — |
+| `bad-not-dismissible` | `good-material` with `isDismissible: false`. Escape does nothing, and Tab only goes round the two switches (on the web, out of the page and back): on iOS no key closes the layers; on Android only the system's keyboard Back, Meta+Escape, and on the web the browser's Back, which nothing on the screen mentions | R1, R4 | 2.1.2 on iOS |
+| `bad-no-escape` | `good-widgets` without its action for `DismissIntent`. Escape does nothing, and Tab and Shift+Tab only go round the two switches: on iOS no key leaves the layers; on Android only the system's keyboard Back, Meta+Escape, and on the web only the browser's Back, which nothing on the screen mentions | R1, R4 | 2.1.2 on iOS |
+| `bad-back-leaves` | `good-widgets` without its `PopScope`. On Android, Back (the Back key, TalkBack's Back gesture, or Meta+Escape on a keyboard), and the browser's Back on the web, take the user off the screen, with the layers still open, instead of closing them | R3 | — |
 
 Not built:
 
@@ -215,7 +232,7 @@ examples in the widget tests).
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Good: guidelines in light and dark, with and without the layers shown; 200% text at 320 by 640 with them shown. Every example: Map layers is a button, the count is 0, "Showing: Contour lines"; the switches are named and Contour lines alone is on; Enter on Map layers puts keyboard focus in the layers (the route's scope, then the first switch on Tab, or the first switch at once) and Space turns it; Tab and Shift+Tab go round the two switches. Escape, as Android and as iOS: it closes the layers in the good examples and `bad-back-leaves`, the count goes to 1 and focus is back on Map layers; in `bad-not-dismissible` and `bad-no-escape` it is not handled, from either switch, the layers stay with focus where it was after a second, Space turns the switch, twenty Tabs and Shift+Tabs never leave the two, and the good example the bad one is made from then closes on the same key. `popRoute` (Back, and the escape gesture at the root): closes the layers on the example's screen in every example but `bad-back-leaves`, where, after Escape has closed them once in the same test, it takes the user to the technique's own screen. The dismiss action: which nodes have it ("Scrim", "Dismiss", "Close map layers", and the overlay's own node), and each one closes the layers; in `bad-not-dismissible` no node has it, and the same search finds `good-material`'s. Where VoiceOver's escape gesture on a switch is taken: by the layers' own node in the overlay examples, by no node in the route examples. The SDK on its own: `showDialog` with and without `barrierDismissible` (FL-480); an `OverlayPortal` that Escape does not close and `popRoute` pops the screen under, and an `OverlayEntry` that stays after it (FL-481); a trap made each of the three ways keeps Tab and Shift+Tab and lets no Escape out; a tooltip that Escape hides while focus is in the app and not after the view loses focus (FL-482); a `ModalBarrier` in an `OverlayPortal` that empties the semantics tree, and in an `OverlayEntry` that does not (FL-483) |
-| L3 web | Every example: Map layers is a button with its name, the count, and each switch is `role="switch"` with its name and `aria-checked`; Enter shows the layers and Space turns a switch. Tab and Shift+Tab: round the two switches in the overlay examples; in the route examples round the two and out of the page for the browser's own stops, and back to the first switch. Escape: closes the layers, the count is 1 and DOM focus is on Map layers, in the good examples and `bad-back-leaves`; does nothing in the other two, from either switch, with the positive controls as above; in `bad-no-escape` twenty Tabs and Shift+Tabs never leave the switches |
+| L3 web | Every example: Map layers is a button with its name, the count, and each switch is `role="switch"` with its name and `aria-checked`; Enter shows the layers and Space turns a switch. Tab and Shift+Tab: round the two switches in the overlay examples; in the route examples round the two and out of the page for the browser's own stops, and back to the first switch. Escape: closes the layers, the count is 1 and DOM focus is on Map layers, in the good examples and `bad-back-leaves`; does nothing in the other two, from either switch, with the positive controls as above; in `bad-no-escape` twenty Tabs and Shift+Tabs never leave the switches. The browser's Back, as its history event (`page.goBack()`; its keyboard shortcuts cannot be sent from Playwright): from each switch, it closes the layers in every example but `bad-back-leaves` (both switches gone, the count at 1, DOM focus on Map layers, the URL still the example's), and in `bad-back-leaves` it brings back the technique's screen |
 | L3 Android | The same parts by class (`Button`, `Switch`), name, and `isChecked`; Tab and Shift+Tab round the two switches by `isFocused`; Escape as on the web, with the positive controls; the Back key, the global Back action, and the keyboard's Back (Meta+Escape and Meta+Left, sent as key events) close the layers on the example's screen, keyboard focus back on Map layers, in every example but `bad-back-leaves`, where all four take the app to the technique's screen with the app still in front, after Escape has closed the layers in the same launch; `ACTION_DISMISS` on the barrier, and on the overlay's own node, closes the layers; in `bad-not-dismissible` the read that holds the layers has no node with it |
 | L3 iOS | Map layers (a button) and the switches (`.switch`, named, values "1" and "0"); Tab and Shift+Tab round the two switches, each stop named by what Space turns; Escape, sent as Command+period once Space twice has shown keyboard focus on Contour lines, closes the layers in the good examples and `bad-back-leaves` (both switches gone, the count at 1), and Space then shows them again from Map layers; it does nothing in the other two, with the positive controls as above (the good example opened over the bad one by its link, in the same launch). Not asserted: the Escape key itself, which XCUITest cannot send to Flutter; Back, which iOS has no key for; the escape gesture |
 | L4 TalkBack | Map layers, then, with the layers open, each switch (name, "Switch", and its state) and the barrier, by what TalkBack reads; then TalkBack's Back gesture (the global Back action) from a switch: the layers close and TalkBack's focus is on Map layers for the last two seconds of the window; in `bad-back-leaves` the app goes to the technique's screen and TalkBack is no longer on the example |
@@ -343,8 +360,9 @@ output of each platform.
 **Not done yet.** The hardware Escape key on iOS (the tests use
 Command+period); Full Keyboard Access; VoiceOver's escape gesture on a
 device; a real Android keyboard (the tests use `input keyevent` and key events sent through `Instrumentation`), and Meta+Escape on other Android versions; Switch
-Access and Switch Control; VoiceOver in WebKit; the browser's own Back
-with something open on the web; a trap whose way out is not standard and
+Access and Switch Control; VoiceOver in WebKit; the browser's Back
+shortcuts themselves (Alt+Left, Command+[), as opposed to the history
+event they make, which is measured; a trap whose way out is not standard and
 is told (section 5); and every component of the probe's table as an
 example of its own, which are C08 to C14.
 

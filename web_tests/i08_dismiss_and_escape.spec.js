@@ -191,7 +191,8 @@ test.describe('Escape (2.1.2)', () => {
     });
   }
 
-  // The defect: no key leaves bad-no-escape's layers, on the web too.
+  // Tab and Shift+Tab never leave bad-no-escape's layers on the web
+  // either; the browser's Back does (below).
   test('bad-no-escape: ten Tabs and ten Shift+Tabs never leave the two switches', async ({ page }) => {
     const slug = 'bad-no-escape';
     await showByKeyboard(page, slug);
@@ -199,3 +200,40 @@ test.describe('Escape (2.1.2)', () => {
     expect([...new Set(stops)].sort()).toEqual(['campsites', 'contours']);
   });
 });
+
+// The browser's Back. Its keyboard shortcut (Alt+Left, Command+[) could not
+// be sent: Playwright's keys go to the page and bypass the browser's own
+// shortcuts, and in the I08 probe neither chord went back
+// (docs/evidence/probes/i08/web_back.txt). So what is measured is the
+// history event the browser's Back makes, through page.goBack(), and not
+// the key. Flutter's web engine answers it with popRoute (read in the
+// source: SingleEntryBrowserHistory.onPopState), as Android's Back.
+test.describe('the browser\'s Back (the history event)', () => {
+  for (const slug of [...good, 'bad-not-dismissible', 'bad-no-escape']) {
+    for (const part of ['contours', 'campsites']) {
+      test(`${slug}: history back from ${part} closes the layers and the screen stays`, async ({ page }) => {
+        await showByKeyboard(page, slug);
+        if (part === 'campsites') expect(await tabs(page, slug, 1)).toEqual(['campsites']);
+        await page.goBack({ waitUntil: 'commit' });
+        await expectShown(page, slug, false);
+        await expectCount(page, slug, 1);
+        expect(await stop(page, slug)).toBe('open');
+        expect(page.url()).toMatch(new RegExp(`#/t/I08/${slug}$`));
+      });
+    }
+  }
+
+  // The defect, on the web too: history back with the layers shown leaves
+  // the example's screen for the technique's. Written to fail when it
+  // closes the layers instead.
+  test('bad-back-leaves: history back leaves the screen with the layers shown', async ({ page }) => {
+    const slug = 'bad-back-leaves';
+    await showByKeyboard(page, slug);
+    await page.goBack({ waitUntil: 'commit' });
+    await expect(page.getByRole('heading', { name: 'Dismiss and escape', level: 1 })).toBeVisible();
+    await expect(control(page, slug, 'count')).toHaveCount(0);
+    await expectShown(page, slug, false);
+    expect(page.url()).toMatch(/#\/t\/I08$/);
+  });
+});
+

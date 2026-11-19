@@ -2848,7 +2848,10 @@ yet), **Fixed in x.y** (verified on that version).
     as Command+period (`ios_round3.txt`).
   - Back (the Back key and the global Back action): every one of them on
     the Android emulator (`android.txt`, `android_round3.txt`,
-    `android_round4.txt`), and `popRoute` in the widget test.
+    `android_round4.txt`), and `popRoute` in the widget test. On the web
+    the browser's Back, as its history event, closed I08's sheets,
+    dismissible or not (`web_back.txt`; the web engine sends `popRoute`
+    for it, read in the source: `SingleEntryBrowserHistory`).
   - A hardware keyboard's Back (Meta+Escape and Meta+Left): `e1`, `e2`,
     `e3`, `e6`, `e17`, and `e19` on the Android emulator
     (`android_round3.txt`, `android_round4.txt`).
@@ -2896,8 +2899,11 @@ yet), **Fixed in x.y** (verified on that version).
   on iOS cannot leave it: Tab goes round its controls (I08
   `bad-not-dismissible`). On Android the keyboard's Back, Meta+Escape,
   still closes it, but nothing tells the user so, and Escape, the key the
-  rest of the app answers, does nothing. On the web Tab leaves the page
-  for the browser's own controls, then comes back to it.
+  rest of the app answers, does nothing. On the web the browser's Back
+  closes it the same way (measured as the history event, `page.goBack()`,
+  in I08's web tests; the browser's keyboard shortcut itself was not
+  sent), and Tab leaves the page for the browser's own controls, then
+  comes back to it.
 - Workaround, in the SDK: leave the barrier dismissible, as I08
   `good-material` and `good-cupertino` do; or, where it must not be, give
   the route a button that closes it, which Tab reaches.
@@ -2935,7 +2941,8 @@ yet), **Fixed in x.y** (verified on that version).
   app gives it one.
 - Effect: a menu, popover, or panel drawn by hand ignores Escape; on
   Android, Back takes the user off the screen and can leave the panel
-  floating over another one.
+  floating over another one. On the web the browser's Back, as its
+  history event, did the same in I08 `bad-back-leaves` (`web_back.txt`).
 - Workaround, in the SDK, verified at every I08 layer in `good-widgets`:
   an `Actions` with an action for `DismissIntent` around the overlay,
   where keyboard focus is, for Escape; a `PopScope` on the screen, with

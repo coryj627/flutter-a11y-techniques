@@ -252,3 +252,28 @@ not on the screen. Each chord gave one Back, and with the test now
 waiting three seconds after each and checking that the example's screen
 is still there, both runs passed; what took the screen away before was
 not found.
+
+## Round 5: the browser's Back on the web
+
+`probe_web_back.spec.js.txt`, served by `p08back.config.js.txt` from the
+app's own web build (Chromium, Playwright, 2026-11-19); output
+`web_back.txt`. In `bad-no-escape`, `bad-not-dismissible`, `good-widgets`,
+`good-material`, and `bad-back-leaves`, the layers were shown from the
+keyboard and, from each switch, the test went back in one of three ways:
+
+- Alt+Left and Command+[, the browser's own keyboard shortcuts for Back,
+  pressed through Playwright: nothing happened in any example (layers
+  shown, focus on the switch, URL unchanged). Playwright's keys go to the
+  page and not to the browser's own shortcuts, so this shows nothing about
+  the shortcuts themselves.
+- `page.goBack()`, the history event the browser's Back makes: in every
+  example but `bad-back-leaves` both switches went, the count went to 1,
+  DOM focus went back to Map layers, and the URL stayed the example's.
+  The web engine answers the event with `popRoute` (read in the source:
+  `SingleEntryBrowserHistory.onPopState`), so the sheet's route closes,
+  or the screen's `PopScope` closes the overlay. In `bad-back-leaves` the
+  technique's screen came back, with the URL `#/t/I08`.
+
+What was measured is the history event, not the key. That Alt+Left or
+Command+[ in a person's browser makes that event while Flutter has
+keyboard focus was not measured.

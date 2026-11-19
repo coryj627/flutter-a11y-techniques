@@ -330,8 +330,8 @@ void main() {
     // arrive and focus is where the test says. Written to fail when Escape
     // starts to close the layers.
     for (final slug in ['bad-not-dismissible', 'bad-no-escape']) {
-      testWidgets('$slug: Escape does nothing, from either switch, and no '
-          'key leaves the layers', (tester) async {
+      testWidgets('$slug: Escape does nothing, from either switch, and '
+          'Tab and Shift+Tab never leave the layers', (tester) async {
         final handle = tester.ensureSemantics();
         await _showByKeyboard(tester, slug);
         expect(await _key(tester, LogicalKeyboardKey.escape), isFalse);

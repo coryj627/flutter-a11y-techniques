@@ -369,8 +369,9 @@ class BadNotDismissible extends StatelessWidget {
         context: context,
         // Defect: the sheet cannot be dismissed, so Escape does nothing,
         // and Tab only goes round the two switches. On iOS no key closes
-        // it; on Android only the system's keyboard Back, Meta+Escape,
-        // which nothing on the screen mentions.
+        // it; on Android only the system's keyboard Back, Meta+Escape, and
+        // on the web the browser's Back, which nothing on the screen
+        // mentions.
         isDismissible: false,
         builder: (context) => _layersPanel(context, map),
       ),
@@ -384,8 +385,9 @@ class BadNoEscape extends StatelessWidget {
   const BadNoEscape({super.key});
 
   // Defect: no action for Escape. Tab and Shift+Tab go round the two
-  // switches; on iOS and the web no key leaves them, and on Android only
-  // the system's keyboard Back, Meta+Escape, does.
+  // switches; on iOS no key leaves them, and on Android only the
+  // system's keyboard Back, Meta+Escape, does, and on the web the
+  // browser's Back.
   @override
   Widget build(BuildContext context) =>
       const _Overlay(slug: 'bad-no-escape', escape: false, back: true);
@@ -397,8 +399,8 @@ class BadBackLeaves extends StatelessWidget {
   const BadBackLeaves({super.key});
 
   // Defect: no PopScope. Android's Back, from the Back key, TalkBack's
-  // Back gesture, or Meta+Escape on a keyboard, pops the screen under the
-  // layers, and takes the user off it.
+  // Back gesture, or Meta+Escape on a keyboard, and the browser's Back on
+  // the web, pop the screen under the layers, and take the user off it.
   @override
   Widget build(BuildContext context) =>
       const _Overlay(slug: 'bad-back-leaves', escape: true, back: false);
