@@ -1,0 +1,26 @@
+# CI's iOS 26.5 and Control+F: the lines of testGoodRemapTheSwitchMovesFToControlF from three jobs (the runner's path to the repository removed)
+
+## run 44578213569, attempt 1, job 135751393934: passed
+2026-11-19T17:34:57.1707280Z { platform:iOS Simulator, arch:arm64, id:FCC5F673-7BEC-4A7D-8F2A-4DC35E2668EC, OS:26.5, name:iPhone 17 Pro }
+2026-11-19T18:16:18.3080000Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' started.
+2026-11-19T18:16:34.1863140Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' passed (15.890 seconds).
+
+## run 44578213569, attempt 2, job 135787634077: failed
+2026-11-19T18:31:51.4246510Z { platform:iOS Simulator, arch:arm64, id:CDC7077E-2206-4FEC-B03A-52EB15B2CAD4, OS:26.5, name:iPhone 17 Pro }
+2026-11-19T19:21:17.9831700Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' started.
+2026-11-19T19:21:30.2970160Z ios/RunnerUITests/I04KeyboardActionsUITests.swift:370: error: -[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF] : XCTAssertEqual failed: ("Favourites: Trailhead") is not equal to ("Favourites: none") - favourites after Control+F while the key is F
+2026-11-19T19:21:33.3219250Z ios/RunnerUITests/I04KeyboardActionsUITests.swift:374: error: -[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF] : XCTAssertEqual failed: ("Favourites: Trailhead") is not equal to ("Favourites: none") - favourites after F
+2026-11-19T19:21:36.3508310Z ios/RunnerUITests/I04KeyboardActionsUITests.swift:376: error: -[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF] : XCTAssertEqual failed: ("Favourites: none") is not equal to ("Favourites: Trailhead") - good-remap favourites
+2026-11-19T19:21:36.5811150Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' failed (18.617 seconds).
+
+## run 44615147153, attempt 1, job 135881728105: failed
+2026-11-19T21:07:26.2346230Z { platform:iOS Simulator, arch:arm64, id:FCC5F673-7BEC-4A7D-8F2A-4DC35E2668EC, OS:26.5, name:iPhone 17 Pro }
+2026-11-19T22:15:26.4014960Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' started.
+2026-11-19T22:15:38.9418220Z ios/RunnerUITests/I04KeyboardActionsUITests.swift:370: error: -[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF] : XCTAssertEqual failed: ("Favourites: Trailhead") is not equal to ("Favourites: none") - favourites after Control+F while the key is F
+2026-11-19T22:15:42.0296950Z ios/RunnerUITests/I04KeyboardActionsUITests.swift:374: error: -[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF] : XCTAssertEqual failed: ("Favourites: Trailhead") is not equal to ("Favourites: none") - favourites after F
+2026-11-19T22:15:45.1714750Z ios/RunnerUITests/I04KeyboardActionsUITests.swift:376: error: -[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF] : XCTAssertEqual failed: ("Favourites: none") is not equal to ("Favourites: Trailhead") - good-remap favourites
+2026-11-19T22:15:45.4072240Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' failed (19.015 seconds).
+
+## run 44578213569, attempt 3
+
+The ios job passed; its log was not kept here.

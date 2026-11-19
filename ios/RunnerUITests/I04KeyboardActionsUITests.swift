@@ -360,7 +360,16 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
     expectFavourites(slug, "Bridge")
   }
 
-  func testGoodRemapTheSwitchMovesFToControlF() {
+  /// On CI's iOS 26.5 a Control+F sent by `typeKey` acted as a plain F in
+  /// two of four runs of this test (the favourite was added while the key
+  /// was still F); on iOS 27.0 it has not. Whether the modifier is lost by
+  /// the test tool or by the system there is not established, so the test
+  /// runs on iOS 27 and later only
+  /// (docs/evidence/probes/i04/ci_ios_26_5_control_f.txt; spec, section 7).
+  func testGoodRemapTheSwitchMovesFToControlF() throws {
+    if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 27 {
+      throw XCTSkip("Control+F did not arrive with its modifier every time before iOS 27")
+    }
     let slug = "good-remap"
     open(slug)
     tabToStrip()
