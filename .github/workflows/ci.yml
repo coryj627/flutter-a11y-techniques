@@ -13,10 +13,23 @@ env:
   # Keep in step with .fvmrc.
   FLUTTER_VERSION: 3.47.5
 
+# Every job runs on a Namespace runner (namespace.so), not a GitHub-hosted
+# one, through a runner profile of this repository's own:
+#   fa11y-linux    4 vCPU,  8 GB, Ubuntu 26.04   analysis and web tests
+#   fa11y-android  8 vCPU, 16 GB, Ubuntu 26.04   the Android emulator
+#   fa11y-ios      6 vCPU, 14 GB, macOS Tahoe    the iOS simulator
+# The hosted Linux runner left the emulator about 2 GB of memory, and device
+# tests failed on timing there.
+#
+# The profiles have Namespace's Restricted access level: a job gets no
+# access to the Namespace workspace. Keep it that way, and do not use a
+# direct nscloud-* machine label here: this repository is public, a pull
+# request's code runs in these jobs, and a direct label runs with the
+# workspace's default access.
 jobs:
   # L1: analysis and widget tests, for the app and the Widgetbook.
   analyze-test:
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-fa11y-linux
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -38,7 +51,7 @@ jobs:
 
   # L3 on web: the browser accessibility tree, for the app and the Widgetbook.
   web:
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-fa11y-linux
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -85,7 +98,7 @@ jobs:
   # itself because TalkBack is not enabled here; speech runs are local
   # (python3 tool/talkback.py <ID>).
   android:
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-fa11y-android
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
@@ -103,10 +116,12 @@ jobs:
       # Flutter build generates it and warms the Gradle cache.
       - run: flutter build apk --debug
       - name: Enable KVM
+        # The emulator needs /dev/kvm, readable and writable by the runner's
+        # user. Fails here, with a clear message, if the machine has none.
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+          test -e /dev/kvm || { echo "::error::this runner has no /dev/kvm"; exit 1; }
+          sudo chmod a+rw /dev/kvm
+          ls -l /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -138,7 +153,7 @@ jobs:
   # is only checked locally (python3 tool/voiceover_ios.py <ID>) until the hosted image
   # has them.
   ios:
-    runs-on: macos-latest
+    runs-on: namespace-profile-fa11y-ios
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -151,8 +166,32 @@ jobs:
       - name: UI tests
         working-directory: ios
         run: |
-          DEVICE=$(xcrun simctl list devices available | grep -m1 -o 'iPhone [^(]*' | sed 's/ *$//')
-          echo "Using simulator: $DEVICE"
+          # The image has simulators for several iOS versions. Take an
+          # iPhone on the newest one this Xcode's SDK can run, by its id: a
+          # name alone means "that name on the latest iOS", which may not
+          # exist.
+          SDK=$(xcrun --sdk iphonesimulator --show-sdk-version)
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, re, sys
+          sdk = tuple(int(n) for n in sys.argv[1].split("."))
+          best = None
+          for runtime, devices in json.load(sys.stdin)["devices"].items():
+              m = re.search(r"SimRuntime\.iOS-(\d+)-(\d+)", runtime)
+              if not m:
+                  continue
+              version = (int(m.group(1)), int(m.group(2)))
+              if version > sdk[:2]:
+                  continue
+              phones = sorted(d["name"] for d in devices if d["name"].startswith("iPhone"))
+              if phones and (best is None or version > best[0]):
+                  name = phones[0]
+                  best = (version, next(d["udid"] for d in devices if d["name"] == name), name)
+          if best is None:
+              sys.exit("no iPhone simulator for an iOS this SDK can run")
+          print(best[1])
+          print("Using simulator: %s, iOS %d.%d" % (best[2], *best[0]), file=sys.stderr)
+          ' "$SDK")
+          xcodebuild -version
           xcodebuild test -workspace Runner.xcworkspace -scheme Runner -configuration Debug \
-            -destination "platform=iOS Simulator,name=$DEVICE" \
+            -destination "platform=iOS Simulator,id=$UDID" \
             -only-testing:RunnerUITests
