@@ -1,0 +1,17 @@
+#!/bin/sh
+# I08's Android tests at CI's screen size, 320 by 640 at 160 dpi, under
+# tool/with_devices.py. The size and density are put back however the run
+# ends.
+ADB=$HOME/Library/Android/sdk/platform-tools/adb
+reset() {
+  $ADB shell wm size reset
+  $ADB shell wm density reset
+  echo "== reset: $($ADB shell wm size | tr '\n' ' ') $($ADB shell wm density | tr '\n' ' ')"
+}
+trap reset EXIT
+$ADB shell wm size 320x640
+$ADB shell wm density 160
+echo "== set: $($ADB shell wm size | tr '\n' ' ') $($ADB shell wm density | tr '\n' ' ')"
+cd android && ./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.I08DismissAndEscapeTest 2>&1 \
+  | grep -E "FAILED|BUILD|tests completed|AssertionError|> [a-zA-Z]+\[|at dev.fluttera11y.flutter_a11y_techniques.I08" | head -60
