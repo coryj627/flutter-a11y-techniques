@@ -1,0 +1,26 @@
+== set: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+== run 1
+Pixel_10a(AVD) - 17 Tests 0/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 1/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 2/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 3/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 4/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 5/7 completed. (0 skipped) (0 failed)
+BUILD SUCCESSFUL in 3m 48s
+== run 2
+Pixel_10a(AVD) - 17 Tests 0/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 1/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 2/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 4/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 5/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 8/7 completed. (1 skipped) (0 failed)
+BUILD SUCCESSFUL in 4m
+== run 3
+Pixel_10a(AVD) - 17 Tests 0/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 1/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 2/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 4/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 5/7 completed. (0 skipped) (0 failed)
+Pixel_10a(AVD) - 17 Tests 6/7 completed. (0 skipped) (0 failed)
+BUILD SUCCESSFUL in 4m
+== reset: Physical size: 1080x2424  Physical density: 420 
