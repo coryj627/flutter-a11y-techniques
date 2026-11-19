@@ -1,0 +1,207 @@
+// I08 probe in a widget test (throwaway; kept as
+// docs/evidence/probes/i08/probe_test.dart.txt). For each fixture of
+// lib/probe.dart, as Android and as iOS: open it, then one of Escape, a
+// popRoute (what Android's Back and, at the root, VoiceOver's escape send),
+// or the semantics dismiss action on each node that has it, and record
+// whether it is still open and whether the probe screen is still there.
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+final _out = <String>[];
+
+Future<void> _start(WidgetTester tester) async {
+  probeLog.value = [];
+  openNow.value = {};
+  tester.view.physicalSize = const Size(800, 3000);
+  tester.view.devicePixelRatio = 1;
+  // A fresh app each time: the same const widget would keep its state.
+  await tester.pumpWidget(const SizedBox());
+  await tester.pump(const Duration(seconds: 31));
+  probeLog.value = [];
+  openNow.value = {};
+  await tester.pumpWidget(const ProbeApp());
+  await tester.pumpAndSettle();
+}
+
+Future<void> _open(WidgetTester tester, String id) async {
+  if (id == 'e10') {
+    await tester.longPress(find.text('e10 Tooltip'));
+  } else if (id == 'e9') {
+    await tester.tap(find.text('e9 PopupMenuButton'));
+  } else if (id == 'e21') {
+    await tester.tap(find.text('e21 DropdownButton'));
+  } else {
+    await tester.tap(find.textContaining(RegExp('^$id ')).first);
+  }
+  await tester.pump();
+  await tester.pump(const Duration(seconds: 1));
+}
+
+bool _isOpen(String id) => switch (id) {
+  'e10' => find.text('e10 tooltip text').evaluate().isNotEmpty,
+  'e21' => find.text('e21 One').evaluate().isNotEmpty,
+  'e11' => scaffoldKey.currentState?.isDrawerOpen ?? false,
+  _ => openNow.value.contains(id),
+};
+
+String _state(String id) {
+  final page = find.text('I08 probe').evaluate().isNotEmpty
+      ? 'page'
+      : 'NO PAGE';
+  return '${_isOpen(id) ? 'OPEN' : 'closed'}, $page';
+}
+
+List<SemanticsNode> _dismissable(WidgetTester tester) {
+  final out = <SemanticsNode>[];
+  void visit(SemanticsNode n) {
+    if (n.getSemanticsData().hasAction(SemanticsAction.dismiss)) out.add(n);
+    n.visitChildren((c) {
+      visit(c);
+      return true;
+    });
+  }
+
+  visit(
+    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
+  );
+  return out;
+}
+
+String _label(SemanticsNode n) {
+  final d = n.getSemanticsData();
+  return d.label.isNotEmpty
+      ? d.label
+      : (d.tooltip.isNotEmpty ? d.tooltip : 'node ${n.id}');
+}
+
+const _fixtures = [
+  'e1',
+  'e2',
+  'e3',
+  'e4',
+  'e5',
+  'e6',
+  'e7',
+  'e8',
+  'e9',
+  'e10',
+  'e11',
+  'e12',
+  'e13',
+  'e14',
+  'e15',
+  'e16',
+  'e17',
+  'e18',
+  'e19',
+  'e20',
+  'e21',
+  'e22',
+];
+
+void main() {
+  tearDownAll(() {
+    // ignore: avoid_print
+    print(_out.join('\n'));
+  });
+
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    for (final id in _fixtures) {
+      testWidgets('${platform.name} $id', (tester) async {
+        debugDefaultTargetPlatformOverride = platform;
+        final handle = tester.ensureSemantics();
+        final row = <String>[];
+
+        await _start(tester);
+        await _open(tester, id);
+        row.add(
+          'opened: ${_state(id)}; KF ${describeFocus(FocusManager.instance.primaryFocus)}',
+        );
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+        row.add('Escape: ${_state(id)} [${probeLog.value.join(', ')}]');
+
+        await _start(tester);
+        await _open(tester, id);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        row.add('popRoute: ${_state(id)} [${probeLog.value.join(', ')}]');
+
+        await _start(tester);
+        await _open(tester, id);
+        final nodes = _dismissable(tester);
+        row.add(
+          'dismiss on: ${nodes.isEmpty ? 'none' : nodes.map(_label).join(' | ')}',
+        );
+        if (nodes.isNotEmpty) {
+          tester.binding.pipelineOwner.semanticsOwner!.performAction(
+            nodes.last.id,
+            SemanticsAction.dismiss,
+          );
+          await tester.pumpAndSettle();
+          row.add(
+            'dismiss(${_label(nodes.last)}): ${_state(id)} [${probeLog.value.join(', ')}]',
+          );
+        }
+        _out.add('${platform.name} $id | ${row.join(' | ')}');
+        handle.dispose();
+        await tester.pumpWidget(const SizedBox());
+        await tester.pump(const Duration(seconds: 31));
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
+
+    testWidgets('${platform.name} traps', (tester) async {
+      debugDefaultTargetPlatformOverride = platform;
+      await _start(tester);
+      await tester.tap(find.text('e0 traps screen'));
+      await tester.pumpAndSettle();
+      String kf() => describeFocus(FocusManager.instance.primaryFocus);
+      for (final t in ['t1', 't2', 't3', 't4', 't5']) {
+        Focus.of(tester.element(find.text('$t A'))).requestFocus();
+        await tester.pumpAndSettle();
+        final seq = <String>[kf()];
+        for (var i = 0; i < 4; i++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pumpAndSettle();
+          seq.add(kf());
+        }
+        final back = <String>[];
+        for (var i = 0; i < 4; i++) {
+          await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+          await tester.pumpAndSettle();
+          back.add(kf());
+        }
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+        final page = find.text('I08 traps').evaluate().isNotEmpty
+            ? 'traps page'
+            : 'NO traps page';
+        _out.add(
+          '${platform.name} $t | Tab: ${seq.join(' > ')} | Shift+Tab: ${back.join(' > ')} | Escape: ${kf()}, $page',
+        );
+        if (page != 'traps page') {
+          await tester.tap(find.text('e0 traps screen'));
+          await tester.pumpAndSettle();
+        }
+      }
+      // Tab from before into t1: does Tab get in?
+      Focus.of(tester.element(find.text('t0 before'))).requestFocus();
+      await tester.pumpAndSettle();
+      final seq = <String>[];
+      for (var i = 0; i < 4; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pumpAndSettle();
+        seq.add(kf());
+      }
+      _out.add('${platform.name} from t0 | Tab: ${seq.join(' > ')}');
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
+}

@@ -36,8 +36,8 @@ field, and TalkBack announced it when it appeared in every recorded case
 where it was not merged into the field
 ([FL-180](../flutter-limitations.md#fl-180),
 [FL-181](../flutter-limitations.md#fl-181)).
-Whether that makes Android a limitation for this entry is a decision for
-review (see section 7). On iOS moving keyboard focus does not move
+The owner decided on 2026-11-19 that Android is recorded as applying,
+with this limitation (see section 7). On iOS moving keyboard focus does not move
 VoiceOver, and a `FocusSemanticEvent` does
 ([FL-184](../flutter-limitations.md#fl-184)). On iOS and the web an error
 is announced only when a `Form` validates on send or as the user types
@@ -222,7 +222,8 @@ The probe that came first, with a native comparison on Android, is in
   Android the whole field becomes a live region (`bad-merged-error`). The
   fields carry `Semantics(identifier:)` instead, which joins the text
   field's own node. This is a departure from the guide ("Wrap a control in
-  `TestId`"), recorded here for review; `TestId` itself is unchanged.
+  `TestId`"), which the owner accepted on 2026-11-19; `TestId` itself is
+  unchanged.
 - **The Cupertino field has to be built.** `CupertinoTextFormFieldRow`'s
   error is not a live region, so nothing announces it on Android
   ([FL-182](../flutter-limitations.md#fl-182); probe p09: nothing said),

@@ -131,6 +131,10 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-461](#fl-461) | A text field's done, go, search, or send action takes keyboard focus away and gives it to no control | All | Confirmed |
 | [FL-463](#fl-463) | A `PageView` takes no keyboard focus and has no keys | Android, iOS, Web | Observed |
 | [FL-464](#fl-464) | A `Shortcuts`, `CallbackShortcuts`, or `Focus` around plain text makes that text the name of a node holding every control inside it | Web, iOS (Android not looked at) | Confirmed |
+| [FL-480](#fl-480) | A route closes on Escape only when its barrier can be dismissed, and on Back and VoiceOver's escape gesture whether it can or not | All | Confirmed |
+| [FL-481](#fl-481) | Nothing closes an overlay that is not a route, and Back pops the screen under it | All | Confirmed |
+| [FL-482](#fl-482) | On the web, Escape does not hide a tooltip while the page has no keyboard focus | Web | Confirmed |
+| [FL-483](#fl-483) | A `ModalBarrier` in an `OverlayPortal`'s overlay takes the whole screen out of the semantics tree, the overlay with it | All (widget test only) | Confirmed (widget test only) |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -2683,6 +2687,21 @@ yet), **Fixed in x.y** (verified on that version).
   screen reader is not affected: each action is a button with a tap
   action. Escape did not close the dialog either, in the widget test and
   on the web (not tried on Android or iOS); that is I08's subject.
+- Added in I08 (2026-11-19): Escape does nothing because
+  `showCupertinoDialog`'s barrier cannot be dismissed by default
+  ([FL-480](#fl-480)); in the I08 probe (`docs/evidence/probes/i08/`,
+  fixture `e3`) Escape left it open in a widget test and on the web. On
+  the Android emulator Escape was not measured on it (no key sent to the
+  app reached Flutter in the rounds that opened it); the Back key, the
+  global Back action, and the keyboard's Meta+Escape and Meta+Left closed
+  it (`android_round3.txt`, `android_round4.txt`). So a keyboard user who
+  opens one is trapped on iOS (2.1.2), by the widget test and the source:
+  Tab reaches nothing, and no key closes it. On Android the keyboard's
+  Back gets them out, which nothing tells them; on the web Tab leaves the
+  page for the browser's own controls (FL-440 above). With
+  `barrierDismissible: true` (fixture `e4`) Escape closed it in the widget
+  test and on the web, so the dialog can be left, though still not
+  answered.
 - Effect: a keyboard or switch user who opens a Cupertino alert can
   neither answer it nor, unless the dialog can be dismissed some other
   way, get out of it.
@@ -2984,6 +3003,204 @@ yet), **Fixed in x.y** (verified on that version).
   widget tests and in the second web and iOS VoiceOver transcripts, where
   the line of keys is a stop of its own before the strip. Not tried:
   `includeSemantics: false` on `Shortcuts` or `Focus`.
+- Upstream issue: not searched yet (D25).
+
+## FL-480
+
+**A route closes on Escape only when its barrier can be dismissed, and on Back and VoiceOver's escape gesture whether it can or not.**
+
+- Status: Confirmed, Flutter 3.47.5. Framework source read:
+  `widgets/routes.dart`, where every `ModalRoute` puts an action for
+  `DismissIntent`, the intent `WidgetsApp` maps Escape to, around its
+  content, and that action is enabled only when the route's
+  `barrierDismissible` is true; Android's Back and the global Back action
+  send `popRoute`, which pops the route on top through
+  `Navigator.maybePop` without looking at the barrier (read in the source:
+  `widgets/binding.dart`, `handlePopRoute`). On iOS VoiceOver's escape
+  gesture, when no element on its way up has the dismiss action, reaches
+  the engine's view controller, which sends the same `popRoute` (read in
+  the engine source: `accessibilityPerformEscape` in
+  `FlutterViewController.mm`; not measured, see I08's spec). Found in the
+  I08 probe (`docs/evidence/probes/i08/`, fixtures `e1` to `e6`, `e16` to
+  `e19`, and `e22`); where each was measured:
+  - Escape: every one of those fixtures in a widget test as Android and as
+    iOS, and on the web in Chromium (`flutter_test.txt`,
+    `web_round2.txt`); on the Android emulator `e1`, `e2`, `e5`, `e6`,
+    `e18`, and `e19` (`android.txt`; in rounds 3 and 4 no key sent to the
+    app reached Flutter, so their Escape rows for `e3`, `e4`, `e16`, `e17`,
+    and `e22` show nothing); on the iOS simulator `e1`, with Escape sent
+    as Command+period (`ios_round3.txt`).
+  - Back (the Back key and the global Back action): every one of them on
+    the Android emulator (`android.txt`, `android_round3.txt`,
+    `android_round4.txt`), and `popRoute` in the widget test. On the web
+    the browser's Back, as its history event, closed I08's sheets,
+    dismissible or not (`web_back.txt`; the web engine sends `popRoute`
+    for it, read in the source: `SingleEntryBrowserHistory`).
+  - A hardware keyboard's Back (Meta+Escape and Meta+Left): `e1`, `e2`,
+    `e3`, `e6`, `e17`, and `e19` on the Android emulator
+    (`android_round3.txt`, `android_round4.txt`).
+  Asserted by the I08 widget tests "the SDK on its own", by every I08
+  layer's tests of `bad-not-dismissible`, and by the I08 Android tests of
+  Back, the global Back action, and the keyboard's Back.
+- WCAG: 2.1.2 No Keyboard Trap, when the route has no control that
+  closes it.
+- What happens:
+  - `showDialog`, `showModalBottomSheet`, `showGeneralDialog`,
+    `showCupertinoModalPopup`, a popup menu, a dropdown, and the date
+    picker close on Escape when their barrier can be dismissed; with
+    `barrierDismissible: false` (or `isDismissible: false`), Escape does
+    nothing. `showCupertinoDialog`, `showGeneralDialog`, and
+    `showCupertinoSheet` cannot be dismissed by default, so Escape does
+    nothing to them unless the app says so.
+  - The Back key and the global Back action closed every one of them on
+    the Android emulator, those that cannot be dismissed included, and so
+    did Meta+Escape and Meta+Left on the fixtures they were tried on:
+    Android's system shortcuts turn those chords into Back before the app
+    sees them (AOSP `InputGestureManager` in `android16-release`; in
+    `android15-release`, `PhoneWindowManager`, which also turns
+    Meta+Backspace into Back; Meta+Backspace did nothing on the API 37
+    emulator). Only a `PopScope` with `canPop: false` stopped them (fixture
+    `e19`, which also kept Escape and the barrier's dismiss action from
+    closing it).
+  - A route whose barrier cannot be dismissed has no node with the dismiss
+    action either: a screen reader's Dismiss action has nothing to act
+    on (fixtures `e2`, `e6`, `e17`).
+  - An Escape that nothing handled did not become Back on the Android
+    emulator (the probe's `backControl`, and `e2` and `e6` in
+    `android.txt`): the screen stayed. Escape alone is not Back there;
+    Meta+Escape is.
+  - On the iOS simulator the Escape key typed from XCUITest never reached
+    Flutter, with VoiceOver on or off, while Tab in the same launch did
+    (`ios.txt`, `ios_round2.txt`); Command+period, iOS's own key for
+    cancel, arrived as Escape and closed `e1` and the probe's own overlay
+    that handles Escape (`ios_round3.txt`), on iOS 27.0. On CI's iOS 26.5
+    simulator it did not close the I08 layers every time, even with
+    keyboard focus shown in them: in every place in one run, in one of
+    three in the next (`ci_ios_26_5.txt`, `ci_ios_26_5_rerun.txt`; I08's
+    spec, section 7), so I08's iOS Escape checks run on iOS 27 only.
+    Whether this is XCUITest's or iOS's was not found. Whether a hardware
+    keyboard's Escape key reaches the app was not tried.
+- Effect: a sheet or dialog made not dismissible, so that a stray tap
+  does not close it, is closed by Back and by a screen reader's gesture
+  but not by Escape. If it has no button that closes it, a keyboard user
+  on iOS cannot leave it: Tab goes round its controls (I08
+  `bad-not-dismissible`; measured on the iOS 27.0 simulator, with Escape
+  sent as Command+period; on earlier iOS Escape is not verified). On Android the keyboard's Back, Meta+Escape,
+  still closes it, but nothing tells the user so, and Escape, the key the
+  rest of the app answers, does nothing. On the web the browser's Back
+  closes it the same way (measured as the history event, `page.goBack()`,
+  in I08's web tests; the browser's keyboard shortcut itself was not
+  sent), and Tab leaves the page for the browser's own controls, then
+  comes back to it.
+- Workaround, in the SDK: leave the barrier dismissible, as I08
+  `good-material` and `good-cupertino` do; or, where it must not be, give
+  the route a button that closes it, which Tab reaches.
+- How to read this entry: this is how the SDK is written, and
+  `barrierDismissible` is documented as being about a tap on the barrier;
+  it is logged because one flag decides both a tap and the standard
+  keyboard exit, and three of the SDK's dialog functions default to no
+  keyboard exit at all.
+- Upstream issue: not searched yet (D25).
+
+## FL-481
+
+**Nothing closes an overlay that is not a route, and Back pops the screen under it.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the I08 probe
+  (`docs/evidence/probes/i08/`, fixtures `e14`, an `OverlayEntry`, and
+  `e15`, an `OverlayPortal`): in a widget test as Android and as iOS, on
+  the web (Escape), on the Android emulator (`e14`: Escape, Back, the
+  global Back action, Meta+Escape, and Meta+Left; `e15`: Back and the
+  global Back action, `android_round3.txt` and `android_round4.txt`). Asserted by the
+  I08 widget tests "an OverlayPortal: Escape is not handled, and popRoute
+  pops the screen under it" and "an OverlayEntry stays on after popRoute
+  pops its screen", and by every I08 layer's tests of `bad-no-escape` and
+  `bad-back-leaves`.
+- WCAG: 2.1.2 No Keyboard Trap, when the overlay keeps keyboard focus
+  and has no control that closes it.
+- What happens: an `OverlayEntry` or `OverlayPortal` has no route, so
+  nothing in it answers `DismissIntent`: Escape is not handled. Back, and
+  VoiceOver's escape gesture when nothing takes it on the way (read in
+  the source, FL-480), pop the route on top, which is the screen the
+  overlay was shown from. An `OverlayPortal` goes with its screen; an
+  `OverlayEntry` inserted from a screen is not part of it and stays on,
+  over the screen before (the probe's Home screen on Android, and the
+  widget test). No node of the overlay has the dismiss action unless the
+  app gives it one.
+- Effect: a menu, popover, or panel drawn by hand ignores Escape; on
+  Android, Back takes the user off the screen and can leave the panel
+  floating over another one. On the web the browser's Back, as its
+  history event, did the same in I08 `bad-back-leaves` (`web_back.txt`).
+- Workaround, in the SDK, verified at every I08 layer in `good-widgets`:
+  an `Actions` with an action for `DismissIntent` around the overlay,
+  where keyboard focus is, for Escape; a `PopScope` on the screen, with
+  `canPop` false while the overlay is shown and `onPopInvokedWithResult`
+  closing it, for Back and the escape gesture at the root;
+  `Semantics(onDismiss:)` on the overlay, for TalkBack's Dismiss action
+  and for VoiceOver's escape gesture made inside it (read in the source:
+  `accessibilityPerformEscape` in the iOS engine's `SemanticsObject.mm`).
+  Or show it as a route (`showGeneralDialog`), which does the first two
+  by itself (FL-480).
+- How to read this entry: an overlay is documented as a stack of
+  entries with no navigation of its own; it is logged because the usual
+  way to draw a custom menu or popover gets none of what a route gets.
+- Upstream issue: not searched yet (D25).
+
+## FL-482
+
+**On the web, Escape does not hide a tooltip while the page has no keyboard focus.**
+
+- Status: Confirmed, Flutter 3.47.5, web (Chromium, Playwright). Found
+  in the I08 probe (`docs/evidence/probes/i08/web_round2.txt`, fixture
+  `e10`): a `Tooltip` shown by hovering, with no element of the page
+  focused, stayed after Escape, and stayed while the pointer stayed;
+  with DOM focus on the tooltip's own button, Escape hid it. Framework
+  source read: `widgets/app.dart`, where `WidgetsApp` hides tooltips on
+  Escape from a `Focus` of its own, which a key reaches only on its way
+  up from the focused node, and `widgets/view.dart`, where a view that
+  loses focus parks focus on the root scope, above `WidgetsApp`, "so
+  that no descendant node will be given focus, and there's no widget
+  that can receive keyboard events". Asserted by the I08 widget test "a
+  tooltip: Escape hides it while focus is in the app, and not while focus
+  is above it", which sends the view's loss of focus.
+- WCAG: 1.4.13 Content on Hover or Focus, for content shown on hover that
+  must be dismissible without moving the pointer.
+- Also seen, on the Android emulator: a tooltip shown by the long-click
+  accessibility action, with focus on the screen, stayed after Escape
+  (`docs/evidence/probes/i08/android.txt`, `tooltip`); the cause was not
+  looked into. In the widget test, as Android, a tooltip shown by a
+  long press was hidden by Escape. On the iOS simulator the probe's
+  Escape did not reach Flutter at all (FL-480), so the tooltip stayed;
+  Command+period was not tried on it.
+- The plan (section 2.6) says Escape on tooltips on the web needs
+  Flutter 3.50. On the pinned 3.47.5 Escape does hide a tooltip on the web
+  when focus is in the page; what 3.50 changes was not checked.
+- Workaround: none tried. The tooltip itself is C12's.
+- Upstream issue: not searched yet (D25).
+
+## FL-483
+
+**A `ModalBarrier` in an `OverlayPortal`'s overlay takes the whole screen out of the semantics tree, the overlay with it.**
+
+- Status: Confirmed in a widget test only, Flutter 3.47.5. Found while
+  building I08 `good-widgets`, whose layers were first an `OverlayPortal`
+  with a barrier behind them: the semantics tree held only its root.
+  Asserted by the I08 widget tests "a ModalBarrier in an OverlayPortal
+  empties the semantics tree" and its control "a ModalBarrier in an
+  OverlayEntry keeps the panel in the semantics tree".
+- What happens: an `OverlayPortal` paints its overlay child in the
+  overlay, but in the semantics tree the child sits where the portal
+  is, inside the screen (seen in the semantics dump). A `ModalBarrier`
+  builds a `BlockSemantics` (read in the source:
+  `widgets/modal_barrier.dart`), which is documented to drop the
+  semantics of what was painted before it in the same semantics
+  container; there, the panel painted after it went too. Why was not
+  looked into. In an `OverlayEntry` the
+  same barrier hides only the screen.
+- Effect, if it holds on devices: a hand-made modal built this way is
+  silent to a screen reader. Not checked on a device.
+- Workaround, in the SDK: put the barrier and the panel in an
+  `OverlayEntry`, as I08 `good-widgets` does.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->

@@ -1,0 +1,6 @@
+== simulator:     iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+== testEscapeVariants
+I08PROBE escape e20 typeKey(XCUIKeyboardKey.escape) | Tab first: Keys: Tab | opened: Open: e20 / probe page / KF: node:e20 Close / Log:  | after: Open: e20 / probe page / KF: node:e20 Close / Log:  | Keys: Tab
+I08PROBE escape e20 typeKey("\u{1b}") | Tab first: Keys: Tab | opened: Open: e20 / probe page / KF: node:e20 Close / Log:  | after: Open: e20 / probe page / KF: node:e20 Close / Log:  | Keys: Tab
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a23bd0706c8e97747/ios/RunnerUITests/I08ProbeUITests.swift:134: error: -[RunnerUITests.I08ProbeUITests testEscapeVariants] : Failed to synthesize event: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: Application, pid: 93234, label: 'Flutter A11Y Techniques'
+Test Case '-[RunnerUITests.I08ProbeUITests testEscapeVariants]' failed (43.842 seconds).

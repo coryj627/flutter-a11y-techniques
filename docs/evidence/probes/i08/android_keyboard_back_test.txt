@@ -1,0 +1,124 @@
+== run 1
+BUILD SUCCESSFUL in 1m 45s
+27699 27715 I I08KEYS : good-material | opened: screen
+  660  1132 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{161644788 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@78f1298, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{3f69f81 u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@4a00285, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@c3c8da, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1132 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : good-material Meta+Escape | 3 s after: screen
+27699 27715 I I08KEYS : good-material | opened: screen
+  660  2219 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{144652035 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@3563727, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{c07f6dc u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@fe47e60, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@10b3f19, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  2370 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : good-material Meta+Left | 3 s after: screen
+27699 27715 I I08KEYS : good-cupertino | opened: screen
+  660  1432 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{206045291 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@9c78e93, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{7c5c137 u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@1836a16, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@24b0f97, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  2325 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : good-cupertino Meta+Escape | 3 s after: screen
+27699 27715 I I08KEYS : good-cupertino | opened: screen
+  660  2130 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{230184355 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@1f679f5, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{98bcfef u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@347408b, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@1830568, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  2130 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : good-cupertino Meta+Left | 3 s after: screen
+27699 27715 I I08KEYS : good-widgets | opened: screen
+  660   743 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{34311301 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@54e9190, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{9b85771 u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@bcda99, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@659e15e, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660   743 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : good-widgets Meta+Escape | 3 s after: screen
+27699 27715 I I08KEYS : good-widgets | opened: screen
+  660  1230 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{101284859 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@cfe598d, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{f85a9c7 u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@5620717, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@bb03704, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1515 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : good-widgets Meta+Left | 3 s after: screen
+27699 27715 I I08KEYS : bad-not-dismissible | opened: screen
+  660  1432 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{75977562 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@f029051, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{54c18eb u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@59055f8, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@e765ad1, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  2370 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : bad-not-dismissible Meta+Escape | 3 s after: screen
+27699 27715 I I08KEYS : bad-not-dismissible | opened: screen
+  660  1230 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{226301142 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@20b48ee, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{c74ee12 u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@bf2a66e, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@c1a910f, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1230 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : bad-not-dismissible Meta+Left | 3 s after: screen
+27699 27715 I I08KEYS : bad-no-escape | opened: screen
+  660  1515 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{132163811 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@255909b, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{ac6672f u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@9c79494, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@7b78b3d, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1432 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : bad-no-escape Meta+Escape | 3 s after: screen
+27699 27715 I I08KEYS : bad-no-escape | opened: screen
+  660   743 D CoreBackPreview: startBackNavigation currentTask=Task{e33701d #1187 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{137036977 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1187}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@af42793, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{eacb95d u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@6e9f8db, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@fd3df78, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660   743 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+27699 27715 I I08KEYS : bad-no-escape Meta+Left | 3 s after: screen
+== run 2
+BUILD SUCCESSFUL in 1m 45s
+29330 29345 I I08KEYS : good-material | opened: screen
+  660  2133 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{165917810 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@95f2836, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{fa8a30b u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@2acd555, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@154eb6a, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  2133 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : good-material Meta+Escape | 3 s after: screen
+29330 29345 I I08KEYS : good-material | opened: screen
+  660   674 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{267627801 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@876167a, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{9a6959a u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@4d7bbb3, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@a7da570, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660   674 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : good-material Meta+Left | 3 s after: screen
+29330 29345 I I08KEYS : good-cupertino | opened: screen
+  660  1205 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{28633512 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@105cc00, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{73f1e84 u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@88bc701, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@5ec39a6, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1014 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : good-cupertino Meta+Escape | 3 s after: screen
+29330 29345 I I08KEYS : good-cupertino | opened: screen
+  660  1433 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{196373869 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@d37aa65, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{45708d9 u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@935c98c, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@d97a8d5, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1433 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : good-cupertino Meta+Left | 3 s after: screen
+29330 29345 I I08KEYS : good-widgets | opened: screen
+  660  1205 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{38289369 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@fb54251, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{ad73905 u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@6fb02a2, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@ef9ab33, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1205 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : good-widgets Meta+Escape | 3 s after: screen
+29330 29345 I I08KEYS : good-widgets | opened: screen
+  660  1205 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{140208715 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@4daf531, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{b9fa117 u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@4eb1914, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@335f5bd, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  2132 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : good-widgets Meta+Left | 3 s after: screen
+29330 29345 I I08KEYS : bad-not-dismissible | opened: screen
+  660  2036 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{205628019 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@278eebb, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{ab32dbf u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@28d375b, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@8607bf8, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  2036 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : bad-not-dismissible Meta+Escape | 3 s after: screen
+29330 29345 I I08KEYS : bad-not-dismissible | opened: screen
+  660  1205 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{188987454 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@bd58db2, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{37aa9fa u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@6d337e9, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@a2dfc6e, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1205 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : bad-not-dismissible Meta+Left | 3 s after: screen
+29330 29345 I I08KEYS : bad-no-escape | opened: screen
+  660  1134 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{228410529 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@28f4e5, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{d04a44d u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@c179a94, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@99e193d, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1433 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : bad-no-escape Meta+Escape | 3 s after: screen
+29330 29345 I I08KEYS : bad-no-escape | opened: screen
+  660  2132 D CoreBackPreview: startBackNavigation currentTask=Task{91ac0c3 #1188 type=standard I=dev.fluttera11y.flutter_a11y_techniques/.MainActivity}, topRunningActivity=ActivityRecord{262639694 u0 dev.fluttera11y.flutter_a11y_techniques/.MainActivity t1188}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@85d5161, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}, currentFocus=Window{558570a u0 dev.fluttera11y.flutter_a11y_techniques/dev.fluttera11y.flutter_a11y_techniques.MainActivity}, embedded=false
+ 1137  1219 D ShellBackPreview: Received backNavigationInfo:BackNavigationInfo{mType=TYPE_CALLBACK (4), mOnBackNavigationDone=android.os.RemoteCallback@a46f6db, mOnBackInvokedCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@7d00578, mPrepareRemoteAnimation=false, mAnimationCallback=true, mCustomizeAnimationInfo=null}
+ 1137  1219 D ShellBackPreview: BackAnimationController: finishBackNavigation()
+  660  1433 D CoreBackPreview: onBackNavigationDone backType=4, triggerBack=true
+29330 29345 I I08KEYS : bad-no-escape Meta+Left | 3 s after: screen

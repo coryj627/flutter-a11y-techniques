@@ -1,0 +1,817 @@
+// I08 probe (throwaway, not committed; kept as
+// docs/evidence/probes/i08/probe.dart.txt): what Escape, Back, and the
+// screen readers' dismiss commands do to each temporary surface the SDK
+// offers, and what Tab and Shift+Tab do in a focus trap made three ways.
+//
+// Every control's text starts with its fixture id. A status bar at the
+// bottom of the screen, outside the Navigator so that no barrier hides it
+// from the semantics tree, shows:
+//   "Open: e1"            the fixtures open now;
+//   "KF: node:e1 Close"   the node with Flutter's keyboard focus, named by
+//                         the first text under it ("scope:..." for a
+//                         FocusScopeNode with no focused child);
+//   "Log: ..."            what happened: "e1 closed", "popRoute",
+//                         "didPop e1" (a route the Navigator popped);
+//   "Keys: ..."           the last keys that reached the framework.
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Registered before the app's own observer, so it sees every popRoute
+  // first; it handles none.
+  WidgetsBinding.instance.addObserver(_PopLogger());
+  // Above the app, so it sees every key that nothing in the app handled,
+  // the app's own shortcuts included.
+  runApp(
+    Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent)
+          log('unhandled ${event.logicalKey.keyLabel}');
+        return KeyEventResult.ignored;
+      },
+      child: const ProbeApp(),
+    ),
+  );
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+final ValueNotifier<List<String>> probeLog = ValueNotifier<List<String>>([]);
+final ValueNotifier<Set<String>> openNow = ValueNotifier<Set<String>>({});
+
+void log(String text) {
+  final next = [...probeLog.value, text];
+  probeLog.value = next.length > 8 ? next.sublist(next.length - 8) : next;
+}
+
+void opened(String id) => openNow.value = {...openNow.value, id};
+
+void closed(String id, [String how = '']) {
+  openNow.value = {...openNow.value}..remove(id);
+  log('$id closed$how');
+}
+
+class _PopLogger with WidgetsBindingObserver {
+  @override
+  Future<bool> didPopRoute() async {
+    log('popRoute');
+    return false;
+  }
+}
+
+class _NavLog extends NavigatorObserver {
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    log('didPop ${route.settings.name ?? route.runtimeType}');
+  }
+}
+
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+/// The probe's own keys (see _StatusBarState._key): filled in by the trap
+/// screen while it is up.
+final Map<LogicalKeyboardKey, FocusNode> trapKeys = {};
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      initialRoute: '/probe',
+      navigatorObservers: [_NavLog()],
+      routes: {
+        '/': (_) => const Scaffold(body: Center(child: Text('Home'))),
+        '/probe': (_) => const ProbeScreen(),
+        '/traps': (_) => const TrapScreen(),
+      },
+      builder: (context, child) => Column(
+        children: [
+          Expanded(child: child!),
+          const Material(child: StatusBar()),
+        ],
+      ),
+    );
+  }
+}
+
+String? firstText(Element element) {
+  String? found;
+  void visit(Element e) {
+    if (found != null) return;
+    final w = e.widget;
+    if (w is Text && w.data != null) {
+      found = w.data;
+    } else if (w is Tooltip && w.message != null) {
+      found = w.message;
+    } else if (w is Semantics && w.properties.label != null) {
+      found = w.properties.label;
+    } else {
+      e.visitChildren(visit);
+    }
+  }
+
+  visit(element);
+  return found;
+}
+
+String describeFocus(FocusNode? node) {
+  if (node == null) return 'none';
+  final kind = node is FocusScopeNode ? 'scope' : 'node';
+  final ctx = node.context;
+  final text = ctx is Element ? firstText(ctx) : null;
+  return '$kind:${text ?? '?'}';
+}
+
+class StatusBar extends StatefulWidget {
+  const StatusBar({super.key});
+
+  @override
+  State<StatusBar> createState() => _StatusBarState();
+}
+
+class _StatusBarState extends State<StatusBar> {
+  String _kf = 'none';
+  final List<String> _keys = [];
+
+  @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addListener(_focus);
+    HardwareKeyboard.instance.addHandler(_key);
+    probeLog.addListener(_changed);
+    openNow.addListener(_changed);
+  }
+
+  @override
+  void dispose() {
+    FocusManager.instance.removeListener(_focus);
+    HardwareKeyboard.instance.removeHandler(_key);
+    probeLog.removeListener(_changed);
+    openNow.removeListener(_changed);
+    super.dispose();
+  }
+
+  void _changed() {
+    if (mounted) setState(() {});
+  }
+
+  void _focus() {
+    final next = describeFocus(FocusManager.instance.primaryFocus);
+    if (next != _kf && mounted) setState(() => _kf = next);
+  }
+
+  bool _key(KeyEvent event) {
+    // The probe's own keys, for the device runs: F1 to F5 put focus on the
+    // first button of trap t1 to t5, F6 on "t0 before". They are taken
+    // here, before any focus handler sees them.
+    if (event is KeyDownEvent) {
+      final target = trapKeys[event.logicalKey];
+      if (target != null) {
+        target.requestFocus();
+        return true;
+      }
+    }
+    if (event is KeyDownEvent) {
+      final shift = HardwareKeyboard.instance.isShiftPressed ? 'shift+' : '';
+      final name = event.logicalKey.keyLabel.isEmpty
+          ? event.logicalKey.debugName ?? '?'
+          : event.logicalKey.keyLabel;
+      setState(() {
+        _keys.add('$shift$name');
+        if (_keys.length > 8) _keys.removeAt(0);
+      });
+    }
+    return false;
+  }
+
+  Widget _line(String id, String text) => Semantics(
+    identifier: id,
+    label: text,
+    container: true,
+    child: ExcludeSemantics(
+      child: Text(text, style: const TextStyle(fontSize: 11)),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final open = openNow.value.toList()..sort();
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _line('open', 'Open: ${open.isEmpty ? '-' : open.join(' ')}'),
+          _line('kf', 'KF: $_kf'),
+          _line('log', 'Log: ${probeLog.value.join(', ')}'),
+          _line('keys', 'Keys: ${_keys.join(' ')}'),
+        ],
+      ),
+    );
+  }
+}
+
+Widget button(String text, VoidCallback? onPressed, {FocusNode? focusNode}) =>
+    Semantics(
+      identifier: text,
+      child: TextButton(
+        focusNode: focusNode,
+        onPressed: onPressed,
+        child: Text(text),
+      ),
+    );
+
+/// Runs [show], marks [id] open, and closed when the future completes.
+Future<void> track(String id, Future<Object?> Function() show) async {
+  opened(id);
+  final result = await show();
+  closed(id, result == null ? '' : ' ($result)');
+}
+
+Widget panel(String id, List<Widget> children) => Material(
+  elevation: 8,
+  child: Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [Text('$id title'), ...children],
+    ),
+  ),
+);
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  OverlayEntry? _e14;
+  final _e14Close = FocusNode();
+  final _e15 = OverlayPortalController();
+  final _e15Close = FocusNode();
+  final _e20 = OverlayPortalController();
+  final _e20Close = FocusNode();
+  final _e20Opener = FocusNode();
+  final _e8 = MenuController();
+
+  @override
+  void dispose() {
+    _e14?.remove();
+    _e14Close.dispose();
+    _e15Close.dispose();
+    _e20Close.dispose();
+    _e20Opener.dispose();
+    super.dispose();
+  }
+
+  void _openE14() {
+    opened('e14');
+    _e14 = OverlayEntry(
+      builder: (_) => Positioned(
+        left: 40,
+        top: 120,
+        child: panel('e14', [
+          button('e14 Close', _closeE14, focusNode: _e14Close),
+        ]),
+      ),
+    );
+    Overlay.of(context).insert(_e14!);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _e14Close.requestFocus(),
+    );
+  }
+
+  void _closeE14() {
+    _e14?.remove();
+    _e14 = null;
+    closed('e14');
+  }
+
+  void _closeE20(String how) {
+    if (!_e20.isShowing) return;
+    _e20.hide();
+    closed('e20', ' $how');
+    _e20Opener.requestFocus();
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final items = <Widget>[
+      button('e1 showDialog', () {
+        track(
+          'e1',
+          () => showDialog<String>(
+            context: context,
+            builder: (c) => AlertDialog(
+              title: const Text('e1 title'),
+              actions: [button('e1 Close', () => Navigator.pop(c, 'button'))],
+            ),
+          ),
+        );
+      }),
+      button('e2 showDialog not dismissible', () {
+        track(
+          'e2',
+          () => showDialog<String>(
+            context: context,
+            barrierDismissible: false,
+            builder: (c) => AlertDialog(
+              title: const Text('e2 title'),
+              actions: [button('e2 Close', () => Navigator.pop(c, 'button'))],
+            ),
+          ),
+        );
+      }),
+      button('e3 showCupertinoDialog', () {
+        track(
+          'e3',
+          () => showCupertinoDialog<String>(
+            context: context,
+            builder: (c) => CupertinoAlertDialog(
+              title: const Text('e3 title'),
+              actions: [
+                CupertinoDialogAction(
+                  onPressed: () => Navigator.pop(c, 'button'),
+                  child: const Text('e3 OK'),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+      button('e4 showCupertinoDialog dismissible', () {
+        track(
+          'e4',
+          () => showCupertinoDialog<String>(
+            context: context,
+            barrierDismissible: true,
+            builder: (c) => CupertinoAlertDialog(
+              title: const Text('e4 title'),
+              actions: [
+                CupertinoDialogAction(
+                  onPressed: () => Navigator.pop(c, 'button'),
+                  child: const Text('e4 OK'),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+      button('e5 showModalBottomSheet', () {
+        track(
+          'e5',
+          () => showModalBottomSheet<String>(
+            context: context,
+            builder: (c) => panel('e5', [
+              button('e5 Close', () => Navigator.pop(c, 'button')),
+            ]),
+          ),
+        );
+      }),
+      button('e6 showModalBottomSheet not dismissible', () {
+        track(
+          'e6',
+          () => showModalBottomSheet<String>(
+            context: context,
+            isDismissible: false,
+            builder: (c) => panel('e6', [
+              button('e6 Close', () => Navigator.pop(c, 'button')),
+            ]),
+          ),
+        );
+      }),
+      Builder(
+        builder: (inner) => button('e7 persistent sheet', () {
+          opened('e7');
+          final controller = Scaffold.of(inner).showBottomSheet(
+            (c) => panel('e7', [button('e7 Close', () => Navigator.pop(c))]),
+          );
+          controller.closed.then((_) => closed('e7'));
+        }),
+      ),
+      MenuAnchor(
+        controller: _e8,
+        onOpen: () => opened('e8'),
+        onClose: () => closed('e8'),
+        menuChildren: [
+          MenuItemButton(
+            onPressed: () => log('e8 one'),
+            child: const Text('e8 One'),
+          ),
+          MenuItemButton(
+            onPressed: () => log('e8 two'),
+            child: const Text('e8 Two'),
+          ),
+        ],
+        builder: (c, controller, _) => button(
+          'e8 MenuAnchor',
+          () => controller.isOpen ? controller.close() : controller.open(),
+        ),
+      ),
+      PopupMenuButton<String>(
+        tooltip: 'e9 PopupMenuButton',
+        onOpened: () => opened('e9'),
+        onCanceled: () => closed('e9', ' cancelled'),
+        onSelected: (v) => closed('e9', ' $v'),
+        itemBuilder: (_) => const [
+          PopupMenuItem(value: 'one', child: Text('e9 One')),
+          PopupMenuItem(value: 'two', child: Text('e9 Two')),
+        ],
+        child: const Padding(
+          padding: EdgeInsets.all(12),
+          child: Text('e9 PopupMenuButton'),
+        ),
+      ),
+      Tooltip(
+        message: 'e10 tooltip text',
+        child: button('e10 Tooltip', () => log('e10 pressed')),
+      ),
+      button('e11 open drawer', () {
+        opened('e11');
+        scaffoldKey.currentState!.openDrawer();
+      }),
+      button('e12 SnackBar', () {
+        opened('e12');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
+              SnackBar(
+                content: const Text('e12 snack text'),
+                duration: const Duration(seconds: 30),
+                action: SnackBarAction(label: 'e12 Undo', onPressed: () {}),
+              ),
+            )
+            .closed
+            .then((r) => closed('e12', ' ${r.name}'));
+      }),
+      button('e13 showDatePicker', () {
+        track(
+          'e13',
+          () => showDatePicker(
+            context: context,
+            firstDate: DateTime(2026),
+            lastDate: DateTime(2027),
+            initialDate: DateTime(2026, 11, 19),
+          ),
+        );
+      }),
+      button('e14 OverlayEntry', _openE14),
+      OverlayPortal(
+        controller: _e15,
+        overlayChildBuilder: (_) => Positioned(
+          left: 40,
+          top: 200,
+          child: panel('e15', [
+            button('e15 Close', () {
+              _e15.hide();
+              closed('e15');
+              setState(() {});
+            }, focusNode: _e15Close),
+          ]),
+        ),
+        child: button('e15 OverlayPortal', () {
+          _e15.show();
+          opened('e15');
+          setState(() {});
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _e15Close.requestFocus(),
+          );
+        }),
+      ),
+      button('e16 showGeneralDialog', () {
+        track(
+          'e16',
+          () => showGeneralDialog<String>(
+            context: context,
+            barrierDismissible: true,
+            barrierLabel: 'e16 barrier',
+            pageBuilder: (c, _, _) => Center(
+              child: panel('e16', [
+                button('e16 Close', () => Navigator.pop(c, 'button')),
+              ]),
+            ),
+          ),
+        );
+      }),
+      button('e17 showGeneralDialog not dismissible', () {
+        track(
+          'e17',
+          () => showGeneralDialog<String>(
+            context: context,
+            pageBuilder: (c, _, _) => Center(
+              child: panel('e17', [
+                button('e17 Close', () => Navigator.pop(c, 'button')),
+              ]),
+            ),
+          ),
+        );
+      }),
+      button('e18 showCupertinoModalPopup', () {
+        track(
+          'e18',
+          () => showCupertinoModalPopup<String>(
+            context: context,
+            builder: (c) => CupertinoActionSheet(
+              title: const Text('e18 title'),
+              actions: [
+                CupertinoActionSheetAction(
+                  onPressed: () => Navigator.pop(c, 'button'),
+                  child: const Text('e18 OK'),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+      button('e19 showDialog PopScope', () {
+        track(
+          'e19',
+          () => showDialog<String>(
+            context: context,
+            builder: (c) => PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, _) =>
+                  log('e19 pop blocked (didPop $didPop)'),
+              child: AlertDialog(
+                title: const Text('e19 title'),
+                actions: [
+                  button('e19 Close', () => Navigator.of(c).pop('button')),
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
+      PopScope(
+        canPop: !_e20.isShowing,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _closeE20('by back');
+        },
+        child: OverlayPortal(
+          controller: _e20,
+          overlayChildBuilder: (_) => Positioned(
+            left: 40,
+            top: 260,
+            child: Actions(
+              actions: {
+                DismissIntent: CallbackAction<DismissIntent>(
+                  onInvoke: (_) {
+                    _closeE20('by Escape');
+                    return null;
+                  },
+                ),
+              },
+              child: Semantics(
+                onDismiss: () => _closeE20('by dismiss'),
+                child: panel('e20', [
+                  button(
+                    'e20 Close',
+                    () => _closeE20('by button'),
+                    focusNode: _e20Close,
+                  ),
+                ]),
+              ),
+            ),
+          ),
+          child: button('e20 OverlayPortal handled', () {
+            _e20.show();
+            opened('e20');
+            setState(() {});
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => _e20Close.requestFocus(),
+            );
+          }, focusNode: _e20Opener),
+        ),
+      ),
+      DropdownButton<String>(
+        hint: const Text('e21 DropdownButton'),
+        onTap: () => opened('e21'),
+        items: const [
+          DropdownMenuItem(value: 'one', child: Text('e21 One')),
+          DropdownMenuItem(value: 'two', child: Text('e21 Two')),
+        ],
+        onChanged: (v) => closed('e21', ' $v'),
+      ),
+      button('e22 showCupertinoSheet', () {
+        track(
+          'e22',
+          () => showCupertinoSheet<String>(
+            context: context,
+            builder: (c) => CupertinoPageScaffold(
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    const Text('e22 title'),
+                    CupertinoButton(
+                      onPressed: () => Navigator.pop(c, 'button'),
+                      child: const Text('e22 Close'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
+      button('e0 traps screen', () => Navigator.pushNamed(context, '/traps')),
+    ];
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: AppBar(title: const Text('I08 probe')),
+      onDrawerChanged: (open) {
+        if (!open) closed('e11');
+      },
+      drawer: Drawer(
+        child: SafeArea(
+          child: Column(
+            children: [
+              const Text('e11 drawer'),
+              Builder(
+                builder: (c) =>
+                    button('e11 Close', () => Navigator.of(c).pop()),
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: ListView(children: items),
+    );
+  }
+}
+
+/// A policy that keeps Tab and Shift+Tab inside its group: next and
+/// previous go round the group's own controls.
+class _CyclePolicy extends WidgetOrderTraversalPolicy {
+  @override
+  bool next(FocusNode currentNode) => _move(currentNode, 1);
+
+  @override
+  bool previous(FocusNode currentNode) => _move(currentNode, -1);
+
+  bool _move(FocusNode current, int by) {
+    final group = FocusTraversalGroup.maybeOfNode(current);
+    final scope = current.nearestScope;
+    if (scope == null) return false;
+    final nodes = sortDescendants(
+      scope.traversalDescendants,
+      current,
+    ).where((n) => FocusTraversalGroup.maybeOfNode(n) == group).toList();
+    final i = nodes.indexOf(current);
+    if (nodes.isEmpty || i < 0) return false;
+    nodes[(i + by) % nodes.length].requestFocus();
+    return true;
+  }
+}
+
+class TrapScreen extends StatefulWidget {
+  const TrapScreen({super.key});
+
+  @override
+  State<TrapScreen> createState() => _TrapScreenState();
+}
+
+class _TrapScreenState extends State<TrapScreen> {
+  final _t1a = FocusNode();
+  final _t1b = FocusNode();
+  final _t2a = FocusNode();
+  final _t2b = FocusNode();
+  final _after = FocusNode();
+  final _t0 = FocusNode();
+  final _t3a = FocusNode();
+  final _t4a = FocusNode();
+  final _t5a = FocusNode();
+  final _t4 = FocusScopeNode(
+    traversalEdgeBehavior: TraversalEdgeBehavior.closedLoop,
+  );
+  final _t5 = FocusScopeNode(
+    traversalEdgeBehavior: TraversalEdgeBehavior.closedLoop,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    trapKeys.addAll({
+      LogicalKeyboardKey.f1: _t1a,
+      LogicalKeyboardKey.f2: _t2a,
+      LogicalKeyboardKey.f3: _t3a,
+      LogicalKeyboardKey.f4: _t4a,
+      LogicalKeyboardKey.f5: _t5a,
+      LogicalKeyboardKey.f6: _t0,
+    });
+  }
+
+  @override
+  void dispose() {
+    trapKeys.clear();
+    for (final n in [
+      _t1a,
+      _t1b,
+      _t2a,
+      _t2b,
+      _after,
+      _t0,
+      _t3a,
+      _t4a,
+      _t5a,
+      _t4,
+      _t5,
+    ]) {
+      n.dispose();
+    }
+    super.dispose();
+  }
+
+  /// t1 and t2: an onKeyEvent that takes Tab and Shift+Tab and moves
+  /// between its two buttons. t2 also takes Escape and moves on.
+  Widget _keyTrap(String id, FocusNode a, FocusNode b, {required bool escape}) {
+    return Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      onKeyEvent: (node, event) {
+        if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+          return KeyEventResult.ignored;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.tab) {
+          (a.hasPrimaryFocus ? b : a).requestFocus();
+          return KeyEventResult.handled;
+        }
+        if (escape && event.logicalKey == LogicalKeyboardKey.escape) {
+          _after.requestFocus();
+          log('$id escaped');
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Row(
+        children: [
+          button('$id A', () => log('$id A'), focusNode: a),
+          button('$id B', () => log('$id B'), focusNode: b),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('I08 traps')),
+      body: ListView(
+        children: [
+          button('t0 before', () => log('t0'), focusNode: _t0),
+          _keyTrap('t1', _t1a, _t1b, escape: false),
+          _keyTrap('t2', _t2a, _t2b, escape: true),
+          FocusTraversalGroup(
+            policy: _CyclePolicy(),
+            child: Row(
+              children: [
+                button('t3 A', () => log('t3 A'), focusNode: _t3a),
+                button('t3 B', () => log('t3 B')),
+              ],
+            ),
+          ),
+          FocusScope(
+            node: _t4,
+            child: Row(
+              children: [
+                button('t4 A', () => log('t4 A'), focusNode: _t4a),
+                button('t4 B', () => log('t4 B')),
+              ],
+            ),
+          ),
+          Actions(
+            actions: {
+              DismissIntent: CallbackAction<DismissIntent>(
+                onInvoke: (_) {
+                  _after.requestFocus();
+                  log('t5 escaped');
+                  return null;
+                },
+              ),
+            },
+            child: FocusScope(
+              node: _t5,
+              child: Row(
+                children: [
+                  button('t5 A', () => log('t5 A'), focusNode: _t5a),
+                  button('t5 B', () => log('t5 B')),
+                ],
+              ),
+            ),
+          ),
+          button('t9 after', () => log('t9'), focusNode: _after),
+        ],
+      ),
+    );
+  }
+}

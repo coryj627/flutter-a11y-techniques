@@ -16,7 +16,9 @@ contain, and nothing here changes that.
   review until it approves, opens the pull request, answers Codoki, and
   merges when CI is green on the head commit and Codoki says "Safe to merge".
   The principal merges a wave's pull requests one at a time and rebases the
-  next one.
+  next one. Until 2026-12-01, when Codoki's review quota starts again, the
+  owner has allowed a merge on the Codex approval and green CI alone. From
+  that date Codoki's "Safe to merge" is needed again.
 - **The coordinator** starts the waves and talks to the owner.
 
 ## Setting up a worktree

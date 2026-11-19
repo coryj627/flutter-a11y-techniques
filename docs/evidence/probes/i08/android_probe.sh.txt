@@ -1,0 +1,20 @@
+#!/bin/sh
+# I08 probe on Android, under tool/with_devices.py. Run from the worktree
+# root after `flutter build apk --debug -t lib/probe.dart` and
+# `./gradlew app:assembleDebugAndroidTest -Ptarget=lib/probe.dart`.
+# Installs both and runs each probe test method, printing its log lines.
+# No device setting is changed.
+ADB=$HOME/Library/Android/sdk/platform-tools/adb
+PKG=dev.fluttera11y.flutter_a11y_techniques
+echo "== device: Android $($ADB shell getprop ro.build.version.release | tr -d '\r'), $($ADB shell wm size | tr -d '\r'), density $($ADB shell wm density | tr -d '\r')"
+echo "== input method: $($ADB shell settings get secure default_input_method | tr -d '\r'); accessibility services: [$($ADB shell settings get secure enabled_accessibility_services | tr -d '\r')]"
+$ADB install -r build/app/outputs/flutter-apk/app-debug.apk >/dev/null && echo "== installed app"
+$ADB install -r build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk >/dev/null && echo "== installed test"
+for m in ${METHODS:-backControl surfaces tooltip traps}; do
+  echo "== $m"
+  $ADB logcat -c
+  $ADB shell am instrument -w ${ONLY:+-e only $ONLY} -e class $PKG.ProbeI08Test#$m $PKG.test/androidx.test.runner.AndroidJUnitRunner 2>&1 | grep -E "FAIL|Error|OK \(|Tests run" | head -5
+  $ADB logcat -d -s I08PROBE:I | grep I08PROBE | sed 's/^.*I08PROBE: //'
+done
+$ADB uninstall $PKG.test >/dev/null; $ADB uninstall $PKG >/dev/null
+echo "== uninstalled"
