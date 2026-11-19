@@ -2124,6 +2124,7 @@ yet), **Fixed in x.y** (verified on that version).
   with VoiceOver.
 - How to read this entry: Flutter has not added a way to give an iOS pad
   a Done key yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
 
 ## FL-180
 
