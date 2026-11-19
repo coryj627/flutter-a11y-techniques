@@ -182,6 +182,13 @@ test.describe('Escape (2.1.2)', () => {
       await expect(control(page, good, 'count')).toBeVisible();
       await control(page, good, 'open').click();
       await expectShown(page, good, true);
+      // Escape from the same stop as in the bad example, Contour lines,
+      // once keyboard focus is known to be in the layers: a route's own
+      // scope ('outside'), then Tab; the overlay's first switch at once.
+      // On CI, Escape pressed straight after the click once did not close
+      // good-material's sheet.
+      await expect.poll(() => stop(page, good)).toBe(routes.includes(good) ? 'outside' : 'contours');
+      if (routes.includes(good)) expect(await tabs(page, good, 1)).toEqual(['contours']);
       await press(page, 'Escape');
       // Closed on the good example's own screen: both switches gone, its
       // count at 1, and DOM focus back on its Map layers.
