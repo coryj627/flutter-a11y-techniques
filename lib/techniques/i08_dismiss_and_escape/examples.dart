@@ -368,8 +368,9 @@ class BadNotDismissible extends StatelessWidget {
       show: (context, map) => showModalBottomSheet<void>(
         context: context,
         // Defect: the sheet cannot be dismissed, so Escape does nothing,
-        // and Tab only goes round the two switches. On iOS no key closes
-        // it; on Android only the system's keyboard Back, Meta+Escape, and
+        // and Tab only goes round the two switches. On iOS 27.0 no key
+        // closed it (earlier iOS not tested); on Android only the system's
+        // keyboard Back, Meta+Escape, and
         // on the web the browser's Back, which nothing on the screen
         // mentions.
         isDismissible: false,
@@ -385,9 +386,9 @@ class BadNoEscape extends StatelessWidget {
   const BadNoEscape({super.key});
 
   // Defect: no action for Escape. Tab and Shift+Tab go round the two
-  // switches; on iOS no key leaves them, and on Android only the
-  // system's keyboard Back, Meta+Escape, does, and on the web the
-  // browser's Back.
+  // switches; on iOS 27.0 no key left them (earlier iOS not tested), and
+  // on Android only the system's keyboard Back, Meta+Escape, does, and on
+  // the web the browser's Back.
   @override
   Widget build(BuildContext context) =>
       const _Overlay(slug: 'bad-no-escape', escape: false, back: true);

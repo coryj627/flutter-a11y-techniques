@@ -17,8 +17,9 @@ final i08DismissAndEscape = Technique(
     AppPlatform.android: PlatformStatus.applies(),
     AppPlatform.ios: PlatformStatus.applies(
       note:
-          'VoiceOver\'s escape gesture could not be performed from a test, '
-          'so what it does is read in the source and not verified.',
+          'Escape was measured on iOS 27.0 only. VoiceOver\'s escape '
+          'gesture could not be performed from a test, so what it does is '
+          'read in the source and not verified.',
     ),
     AppPlatform.web: PlatformStatus.applies(),
   },
@@ -90,9 +91,9 @@ final i08DismissAndEscape = Technique(
       variant: ExampleVariant.material,
       defect:
           'Escape does nothing, and Tab only goes round the two switches. '
-          'On iOS no key closes the layers; on Android only the system\'s '
-          'keyboard Back (Meta+Escape) does, and on the web the browser\'s '
-          'Back, and nothing says so.',
+          'On iOS 27.0 no key closed the layers (earlier iOS not tested); on '
+          'Android only the system\'s keyboard Back (Meta+Escape) does, and '
+          'on the web the browser\'s Back, and nothing says so.',
       builder: (_) => const BadNotDismissible(),
     ),
     TechniqueExample.bad(
@@ -101,9 +102,10 @@ final i08DismissAndEscape = Technique(
       variant: ExampleVariant.widgets,
       defect:
           'Escape does nothing, and Tab and Shift+Tab only go round the two '
-          'switches. On iOS no key leaves the layers; on Android only the '
-          'system\'s keyboard Back (Meta+Escape) does, and on the web the '
-          'browser\'s Back, and nothing says so.',
+          'switches. On iOS 27.0 no key left the layers (earlier iOS not '
+          'tested); on Android only the system\'s keyboard Back '
+          '(Meta+Escape) does, and on the web the browser\'s Back, and '
+          'nothing says so.',
       builder: (_) => const BadNoEscape(),
     ),
     TechniqueExample.bad(

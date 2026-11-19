@@ -35,7 +35,7 @@ or the arrow keys, the user is told what it is.
 
 | Android | iOS | Web |
 | --- | --- | --- |
-| Applies | Applies, the escape gesture not verified | Applies |
+| Applies | Applies; Escape measured on iOS 27.0 only, the escape gesture not verified | Applies |
 
 Keyboard: a hardware keyboard on Android and iOS, the browser's on the
 web. Android's Back: the Back key, the global Back action that TalkBack's
@@ -48,7 +48,8 @@ cannot be made from XCUITest (section 7), so what it does is read in the
 engine's source and checked in the widget tests through the messages it
 sends, and not verified on a device. On the iOS simulator the Escape key
 typed from XCUITest never reached Flutter; Command+period, which arrives
-as Escape, is what the iOS tests send.
+as Escape on iOS 27.0, is what the iOS tests send, on iOS 27 and later
+only (section 7).
 
 ## 3. WCAG 2.2 success criteria
 
@@ -76,9 +77,9 @@ API 37 emulator both chords acted as Back, and Meta+Backspace did not
 be dismissed or not, and closes layers in the overlay when the screen has
 a `PopScope` that closes them (section 7). The Understanding document
 leaves "standard exit methods" to the platform; Back from the keyboard is
-Android's, so it counts on Android. iOS has no such shortcut for an app:
-Command+[ reached Flutter as itself and did nothing (probe
-`ios_round3.txt`); Full Keyboard Access was not tried.
+Android's, so it counts on Android. On iOS no such shortcut was
+found: on iOS 27.0, Command+[ reached Flutter as itself and did nothing
+(probe `ios_round3.txt`); Full Keyboard Access was not tried.
 
 The web has one too: the browser's Back, whose keyboard shortcuts are
 Alt+Left and, on a Mac, Command+[. The history event it makes reaches
@@ -94,9 +95,19 @@ on the web the key is not measured, only the event it makes; the verdicts
 below take the browser's Back as the web's standard way back, by the same
 reasoning as Android's, and say so.
 
-How the bad examples fail, as the criterion is written:
+How the bad examples fail, as the criterion is written. The iOS verdicts
+rest on what was measured on the iOS 27.0 simulator, with Escape sent as
+Command+period (`ios_round3.txt`, `ios_suite_x3.txt`). On earlier iOS,
+Escape is not verified: on CI's iOS 26.5 Command+period did not arrive as
+Escape every time (section 7), so nothing was measured there, which is
+not the same as the layers staying open; the Escape checks are skipped
+before iOS 27. Tab and Shift+Tab going round the two switches was
+measured on both iOS 27.0 and CI's iOS 26.5. That no other key gets out
+rests on the probe on iOS 27.0 (Command+[ reached Flutter as itself and
+did nothing); other shortcuts and Full Keyboard Access were not tried.
 
-- `bad-no-escape` fails 2.1.2 on iOS only. Enter on Map layers moves
+- `bad-no-escape` fails 2.1.2 on iOS (measured on iOS 27.0; earlier iOS
+  not verified). Enter on Map layers moves
   keyboard focus into the layers; there Tab and Shift+Tab go round the two
   switches, Escape does nothing, and no other key closes the layers or
   moves focus out of them. Nothing on the screen says how to leave. On
@@ -107,7 +118,8 @@ How the bad examples fail, as the criterion is written:
   key). What goes wrong on those two is that Escape, the key the good
   examples answer, does nothing, and nothing says the way out is the
   platform's Back; no criterion is claimed for that.
-- `bad-not-dismissible` fails 2.1.2 on iOS only: the same, in a bottom
+- `bad-not-dismissible` fails 2.1.2 on iOS (measured on iOS 27.0; earlier
+  iOS not verified): the same, in a bottom
   sheet that cannot be dismissed. On Android the keyboard's Back closes
   it, as Back closes any route; what goes wrong there is the same as in
   `bad-no-escape`. On the web it does not fail as written: the browser's
@@ -186,8 +198,8 @@ only in what lets the user out.
 
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
-| `bad-not-dismissible` | `good-material` with `isDismissible: false`. Escape does nothing, and Tab only goes round the two switches (on the web, out of the page and back): on iOS no key closes the layers; on Android only the system's keyboard Back, Meta+Escape, and on the web the browser's Back, which nothing on the screen mentions | R1, R4 | 2.1.2 on iOS |
-| `bad-no-escape` | `good-widgets` without its action for `DismissIntent`. Escape does nothing, and Tab and Shift+Tab only go round the two switches: on iOS no key leaves the layers; on Android only the system's keyboard Back, Meta+Escape, and on the web only the browser's Back, which nothing on the screen mentions | R1, R4 | 2.1.2 on iOS |
+| `bad-not-dismissible` | `good-material` with `isDismissible: false`. Escape does nothing, and Tab only goes round the two switches (on the web, out of the page and back): on iOS 27.0 no key closed the layers (earlier iOS not verified); on Android only the system's keyboard Back, Meta+Escape, and on the web the browser's Back, which nothing on the screen mentions | R1, R4 | 2.1.2 on iOS (measured on iOS 27.0, section 3) |
+| `bad-no-escape` | `good-widgets` without its action for `DismissIntent`. Escape does nothing, and Tab and Shift+Tab only go round the two switches: on iOS 27.0 no key left the layers (earlier iOS not verified); on Android only the system's keyboard Back, Meta+Escape, and on the web only the browser's Back, which nothing on the screen mentions | R1, R4 | 2.1.2 on iOS (measured on iOS 27.0, section 3) |
 | `bad-back-leaves` | `good-widgets` without its `PopScope`. On Android, Back (the Back key, TalkBack's Back gesture, or Meta+Escape on a keyboard), and the browser's Back on the web, take the user off the screen, with the layers still open, instead of closing them | R3 | — |
 
 Not built:
@@ -204,11 +216,13 @@ Not built:
   only where it is handled. The widget tests show all three; the examples
   use `closedLoop`, the SDK's own setting for it.
 - **A `CupertinoAlertDialog` shown with `showCupertinoDialog`.** With the
-  SDK's defaults it is a keyboard trap on iOS: its actions take no focus
-  ([FL-440](../flutter-limitations.md#fl-440)) and its barrier cannot be
-  dismissed, so Escape does nothing (on Android the keyboard's Back,
-  Meta+Escape, closed it in the probe, and on the web Tab leaves the
-  page). A good Cupertino dialog
+  SDK's defaults it traps the keyboard on iOS: its actions take no focus
+  ([FL-440](../flutter-limitations.md#fl-440), measured on the iOS
+  simulator in I03) and its barrier cannot be dismissed, so Escape does
+  nothing (the widget test, as iOS, and the source; Escape on it was not
+  measured on an iOS device or simulator). On Android the keyboard's
+  Back, Meta+Escape, closed it in the probe, and on the web Tab leaves the
+  page. A good Cupertino dialog
   would need both fixed; `good-cupertino` uses a modal popup.
 - **A tooltip.** Escape hides it on the pinned SDK, except on the web when
   the page has no keyboard focus
@@ -271,7 +285,10 @@ output of each platform.
   `showGeneralDialog`, and `showCupertinoSheet` are not dismissible by
   default; with a `CupertinoAlertDialog`, whose actions take no focus,
   that makes `showCupertinoDialog`'s defaults a keyboard trap on iOS
-  ([FL-440](../flutter-limitations.md#fl-440)).
+  ([FL-440](../flutter-limitations.md#fl-440)): concluded from FL-440,
+  measured on the iOS simulator in I03, and from Escape on a barrier
+  that cannot be dismissed (the widget test, as iOS); not measured as a
+  whole on iOS.
 - **On Android, Escape alone is not Back; Meta+Escape is.** An Escape
   that nothing in the app handled left the screen where it was (the
   probe's key log, `android.txt`). Meta+Escape and Meta+Left, sent as
@@ -378,8 +395,9 @@ output of each platform.
   Escape on tooltips on the web needs 3.50 is right for that case only; on
   Android, one shown by the long-click action stayed after Escape.
 
-**Not done yet.** The hardware Escape key on iOS (the tests use
-Command+period); Full Keyboard Access; VoiceOver's escape gesture on a
+**Not done yet.** Escape on iOS before 27 (on CI's iOS 26.5
+Command+period did not arrive every time, so nothing was measured); the
+hardware Escape key on iOS (the tests use Command+period); Full Keyboard Access; VoiceOver's escape gesture on a
 device; a real Android keyboard (the tests use `input keyevent` and key events sent through `Instrumentation`), and Meta+Escape on other Android versions; Switch
 Access and Switch Control; VoiceOver in WebKit; the browser's Back
 shortcuts themselves (Alt+Left, Command+[), as opposed to the history

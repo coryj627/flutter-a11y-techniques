@@ -2900,7 +2900,8 @@ yet), **Fixed in x.y** (verified on that version).
   does not close it, is closed by Back and by a screen reader's gesture
   but not by Escape. If it has no button that closes it, a keyboard user
   on iOS cannot leave it: Tab goes round its controls (I08
-  `bad-not-dismissible`). On Android the keyboard's Back, Meta+Escape,
+  `bad-not-dismissible`; measured on the iOS 27.0 simulator, with Escape
+  sent as Command+period; on earlier iOS Escape is not verified). On Android the keyboard's Back, Meta+Escape,
   still closes it, but nothing tells the user so, and Escape, the key the
   rest of the app answers, does nothing. On the web the browser's Back
   closes it the same way (measured as the history event, `page.goBack()`,
