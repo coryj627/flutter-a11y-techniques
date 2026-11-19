@@ -63,7 +63,11 @@ DIAG_DIR=${DIAG_DIR:-$PWD/../build/android-diagnostics}
 STALL_SECONDS=${STALL_SECONDS:-300}
 # Before a batch's first test starts Gradle compiles and installs; allow longer.
 FIRST_TEST_SECONDS=${FIRST_TEST_SECONDS:-600}
-LIMIT_SECONDS=${LIMIT_SECONDS:-1800}
+# With 22 test classes a run with no failure took 23 minutes on the hosted
+# runner (run 44599240554). With 23, and two batches that failed, a run was
+# stopped at the old limit of 30 minutes with two batches still to go
+# (run 44578213569, attempt 3). Every technique adds a class.
+LIMIT_SECONDS=${LIMIT_SECONDS:-3000}
 MIN_AVAILABLE_MB=${MIN_AVAILABLE_MB:-600}
 BATCH_CLASSES=${BATCH_CLASSES:-4}
 POLL_SECONDS=${POLL_SECONDS:-10}
