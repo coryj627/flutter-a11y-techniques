@@ -120,6 +120,9 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-420](#fl-420) | Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets | All | Confirmed |
 | [FL-421](#fl-421) | On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever | Web | Confirmed |
 | [FL-422](#fl-422) | On a scrolled screen the default focus order puts the app bar's Back button among the content | All | Confirmed |
+| [FL-440](#fl-440) | A `CupertinoAlertDialog`'s actions take no keyboard focus | All | Confirmed |
+| [FL-441](#fl-441) | A `CupertinoActionSheet`'s title and message fail text contrast in light mode | All (widget test only) | Confirmed (widget test only) |
+| [FL-442](#fl-442) | When a route closes, the framework sends the screen reader back to where it was, after the app's own move, even when that control has been removed | Android | Confirmed in the source; its effect Observed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -183,6 +186,15 @@ yet), **Fixed in x.y** (verified on that version).
   (2026-11-17) asserts it: `web_tests/f09_switch.spec.js` requires Enter to
   leave `/t/F09/good-cupertino` unchanged, written to fail when it is
   fixed, and Enter toggles the Material and custom switches there.
+- Also seen in I03 (2026-11-18), the same mechanism: a
+  `CupertinoActionSheetAction` registers an action for `ActivateIntent`
+  only (`cupertino/dialog.dart`, read in the source). In the I03 probe on
+  the web (`docs/evidence/probes/i03/web_round2.txt`, fixture `p6`) Enter
+  on one left the sheet open and Space then closed it. The I03 widget test
+  "FL-002" asserts that the plain action has no action for
+  `ButtonActivateIntent`, written to fail when it has; `/t/I03/good-cupertino`
+  wraps each action and its Remove buttons the same way as C01, and
+  `web_tests/i03_focus_management.spec.js` presses Enter on them.
 - Upstream issue: not found. To be filed.
 
 ## FL-003
@@ -2471,6 +2483,153 @@ yet), **Fixed in x.y** (verified on that version).
   tried in the probe, with the same result in a widget test: an
   `OrderedTraversalPolicy` over the screen with the app bar ordered first
   and the grouped body second.
+- Upstream issue: not searched yet (D25).
+
+## FL-440
+
+**A `CupertinoAlertDialog`'s actions take no keyboard focus.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the I03
+  probe (`docs/evidence/probes/i03/`, fixture `p5`): in a widget test as
+  Android and as iOS (`flutter_test.txt`), on the web in Chromium
+  (`web.txt`), on the Android emulator (`android.txt`), and on the iOS
+  simulator (`ios.txt`). Asserted by the I03 widget test "FL-440",
+  written to fail when Tab reaches an action. Framework source read:
+  `cupertino/dialog.dart`, where `CupertinoDialogAction` is a
+  `GestureDetector` with `Semantics(button: true, onTap:)` and no `Focus`,
+  `FocusableActionDetector`, or actions for the keys.
+  `CupertinoActionSheetAction` in the same file has a
+  `FocusableActionDetector`.
+- WCAG: 2.1.1 Keyboard.
+- What happens: `showCupertinoDialog` puts keyboard focus on the dialog
+  route's own scope, as every dialog route does, and Tab then finds no
+  control in it: focus stays on the scope on Android and iOS, and on the
+  web Tab goes back and forth between leaving the page and the dialog's
+  scope. Neither action can be reached or pressed from the keyboard. A
+  screen reader is not affected: each action is a button with a tap
+  action. Escape did not close the dialog either, in the widget test and
+  on the web (not tried on Android or iOS); that is I08's subject.
+- Effect: a keyboard or switch user who opens a Cupertino alert can
+  neither answer it nor, unless the dialog can be dismissed some other
+  way, get out of it.
+- Workaround, in the SDK: for a confirmation, a `CupertinoActionSheet`
+  shown with `showCupertinoModalPopup`, whose actions take focus, as I03
+  `good-cupertino` does; verified at every I03 layer. On the web its
+  actions, like `CupertinoButton`, answer Space and not Enter
+  ([FL-002](#fl-002)), so the example adds Enter.
+- How to read this entry: Flutter has not added keyboard support to
+  `CupertinoDialogAction` yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-441
+
+**A `CupertinoActionSheet`'s title and message fail text contrast in light mode.**
+
+- Status: Confirmed in widget tests only, Flutter 3.47.5: Flutter's
+  `textContrastGuideline` finds the title and message of a
+  `CupertinoActionSheet` with its own colours under 4.5:1 in light mode
+  (3.38:1 for the title when I03 `good-cupertino` was first written).
+  Asserted by the I03 widget test "FL-441", written to fail when the
+  sheet's text passes. Not checked on a device or by eye; the guideline
+  reads the colours it can find in the layer tree, and the sheet's
+  background is translucent and blurred, so the number is the
+  guideline's, not a measurement of the screen. Framework source read:
+  `cupertino/dialog.dart`, where the title and message take
+  `_kActionSheetContentTextColor`, a grey with an alpha of 0x85 in light
+  mode and 0x96 in dark mode. In dark mode the guideline passed.
+- WCAG: 1.4.3 Contrast (Minimum).
+- Effect: the question an action sheet asks may be too faint to read.
+- Workaround, in the SDK: give the title and message a style with
+  `CupertinoColors.label`, as I03 `good-cupertino` does; with it the
+  widget tests' contrast check passes in light and dark mode.
+- This entry belongs with the contrast techniques of wave 5, visual
+  preferences, which should measure it properly. It is not verified on a
+  device.
+- Upstream issue: not searched yet (D25).
+
+## FL-442
+
+**When a route closes, the framework sends the screen reader back to where it was, after the app's own move, even when that control has been removed.**
+
+- Status: the framework's request is Confirmed, Flutter 3.47.5 (source
+  read: `widgets/navigator.dart`; the I03 widget test "after Remove, on
+  iOS the last request is for Remove Summit path, after the framework's;
+  on Android there is only the framework's" records it, on Android and
+  iOS as the framework sees them). Its effect is Observed on Android only,
+  in the I03 probe (`docs/evidence/probes/i03/`, round 2 row `r1`,
+  `android_round2.txt`, and round 3 row `s1`, `android_round3.txt`), and
+  was not reproduced in the I03 examples' own TalkBack walk
+  (`docs/evidence/probes/i03/mutations/`, runs m1 to m3). What makes the
+  difference was not found.
+- What happens: the Navigator listens for the engine's `didGainFocus`
+  messages and records, for the route on top, the semantics node the
+  screen reader is on. When a route above it closes, it sends that node a
+  `FocusSemanticEvent` once the closed route has gone (when
+  `Route.dispose` runs): at once on iOS, and on Android after another
+  300 ms (`_kAndroidRefocusingDelayDuration`). The web is left out; there
+  the screen reader follows DOM focus. This is what brings the screen
+  reader back to the button that opened a dialog. But the request is made
+  whatever the app has done since the dialog returned its answer: if the
+  app removed that button and moved focus to the next one, the request
+  comes after the move, for a node that no longer exists. In the probe,
+  TalkBack activated Remove in a confirmation dialog, the app removed the
+  row and called `requestFocus` on the next row's button at once:
+  keyboard focus was on the next row, and TalkBack ended on Back, the top
+  of the screen (round 3, `s1`), or on the row above (round 2, `r1`);
+  waiting, or a `FocusSemanticEvent` to the next row a second later, put
+  it on the next row (`s2` to `s4`). In the I03 examples, the same
+  `requestFocus` with no event of the app's took TalkBack to the next
+  button, and so did an event sent 250 ms after the removal, before the
+  framework's request (mutation runs m1 and m2).
+- Effect, where it happens: a TalkBack user who confirms a removal is
+  sent to the top of the screen, or to the wrong row, and has to find
+  their place again.
+- On iOS the case is a different one: VoiceOver does not follow
+  `requestFocus` at all (probe rows `t`, `s1`, `s2`, `p11`, `p14`), so
+  the app has to send a `FocusSemanticEvent` to move it after a removal,
+  and it has to come after the framework's request, or the framework's
+  is the one VoiceOver is left with. The widget test above shows the
+  order: an event sent when `ModalRoute.completed` completes goes before
+  the framework's (that future completes in the same `dispose` call,
+  first), and one sent a frame later goes after it.
+- Workaround, in the SDK: on Android, move keyboard focus with
+  `requestFocus` and send nothing more; TalkBack follows it (the I03
+  TalkBack walk: TalkBack reads the screen's title, then the next button,
+  and stays there). On iOS, also note the question's route
+  (`ModalRoute.of` in its builder), wait for its `completed` future and
+  then for `WidgetsBinding.instance.endOfFrame`, and send the
+  `FocusSemanticEvent` to the next button then, unless keyboard focus has
+  left it. There is no fixed delay: until the route has gone the page
+  under it is hidden from the screen reader by the route's barrier (read
+  in the source: `ModalBarrier` builds a `BlockSemantics`; and seen in
+  the I03 widget test "on iOS a request still to come is dropped", where
+  the next button is out of the semantics tree while the question is
+  closing), so the event is sent one frame after the page is back in the
+  tree, before a user can have moved on to it; VoiceOver then takes time
+  of its own to act on it (see what is not known, below). Verified in the
+  I03 VoiceOver walk on iOS, in all four examples that ask on a press:
+  VoiceOver reads the next button and is still on it three seconds
+  later; and in `moved on`, VoiceOver's first speech after the double
+  tap on Remove is the next button, 1.4 to 1.7 s after it, and a move
+  of VoiceOver's own made at once (`moveBackward()`, as a swipe left) is
+  still where it went three seconds later. On the web nothing is sent:
+  the event does nothing there (read in the source: the web engine's
+  handler for `flutter/accessibility` acts only on announcements), and
+  VoiceOver follows DOM focus, which follows `requestFocus` (the I03
+  VoiceOver walk on the web).
+- What is not known: VoiceOver speaks the next button 1.4 to 1.7 s after
+  the double tap (the question's closing animation, 150 to 335 ms, is
+  part of it), and the walk cannot see when in that time the route has
+  gone. A move of VoiceOver's own made about 0.9 s after the double tap,
+  before VoiceOver had said anything, ended on the next button
+  (`docs/evidence/probes/i03/mutations/`, run `v2`): either it was made while
+  the question was still closing, and the event then did what it is
+  for, or it was made on the page and undone. A user who moves on that
+  fast, before hearing where they are, may be moved again. No slow
+  device was measured.
+- How to read this entry: Flutter has not added a way to tell the
+  Navigator where the screen reader should go when a route closes, or to
+  stop its request, yet.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->

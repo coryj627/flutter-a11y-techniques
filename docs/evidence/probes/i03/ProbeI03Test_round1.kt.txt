@@ -1,0 +1,224 @@
+// Throwaway I03 probe. Not committed; kept as
+// docs/evidence/probes/i03/ProbeI03Test.kt.txt. Reads the probe's status
+// bar (KF: Flutter's keyboard focus; SR: the node the platform last said
+// has accessibility focus) and, with TalkBack running, the node Android
+// reports as accessibility focused, after each step.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
+import org.junit.Test
+import org.junit.runner.RunWith
+
+private const val TAG = "I03PROBE"
+
+private val FIXTURES = listOf(
+    "p1 Dialog" to "p1 Close",
+    "p2 Autofocus dialog" to "p2 OK",
+    "p3 Sheet" to "p3 Close",
+    "p4 Page" to "p4 Done",
+    "p5 Cupertino dialog" to "p5 Close",
+    "p6 Action sheet" to "p6 Close",
+    "p7 Cupertino page" to "p7 Done",
+    "p8 General dialog" to "p8 Close",
+    "p9 Overlay" to "p9 Close",
+    "p10 Inline" to "p10 Close",
+    "p11 Inline managed" to "p11 Close",
+    "p12 Inline a11y event" to "p12 Close",
+)
+
+@RunWith(AndroidJUnit4::class)
+class ProbeI03Test : TechniqueTest("I03") {
+    private fun line(id: String): String =
+        all().firstOrNull { it.viewIdResourceName == id }?.name() ?: "($id not found)"
+
+    private fun kf() = line("kf").removePrefix("KF: ")
+
+    /** The node Android says has accessibility focus, by name; "none" without one. */
+    private fun a11y(): String {
+        val n = automation.findFocus(AccessibilityNodeInfo.FOCUS_ACCESSIBILITY) ?: return "none"
+        val name = n.name().ifEmpty { n.text?.toString().orEmpty() }
+        return name.ifEmpty { "(${n.type().substringAfterLast('.')} ${n.viewIdResourceName ?: ""})" }.take(40)
+    }
+
+    private fun where(): String = "KF ${kf()} / ${line("sr")} / A11Y ${a11y()}"
+
+    private fun start() {
+        val intent = inst.targetContext.packageManager.getLaunchIntentForPackage(inst.targetContext.packageName)!!
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        device.wait(Until.hasObject(By.res("kf")), 20_000)
+        device.waitForIdle()
+        Thread.sleep(2_000)
+    }
+
+    private fun key(name: String) {
+        device.executeShellCommand("input keyevent KEYCODE_$name")
+        Thread.sleep(600)
+    }
+
+    private fun tabUntil(label: String, max: Int = 50): Boolean {
+        for (i in 0 until max) {
+            if (kf() == "node:$label") return true
+            key("TAB")
+        }
+        return kf() == "node:$label"
+    }
+
+    private fun nodeNamed(name: String): AccessibilityNodeInfo? {
+        for (i in 0 until 20) {
+            all().firstOrNull { it.name() == name }?.let { return it }
+            Thread.sleep(250)
+        }
+        return null
+    }
+
+    @Test
+    fun keyboard() {
+        for ((trigger, close) in FIXTURES) {
+            start()
+            val reached = tabUntil(trigger)
+            key("ENTER")
+            Thread.sleep(1_000)
+            val afterOpen = where()
+            val path = mutableListOf<String>()
+            var closeReached = false
+            for (i in 0 until 40) {
+                key("TAB")
+                path += kf()
+                if (kf() == "node:$close") { closeReached = true; break }
+            }
+            if (closeReached) key("ENTER") else nodeNamed(close)?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(1_500)
+            val afterClose = where()
+            key("TAB")
+            val next = kf()
+            Log.i(TAG, "keyboard $trigger | reached=$reached | after Enter: $afterOpen | Tab until close: ${path.joinToString(" > ")} | close by Tab: $closeReached | after close: $afterClose | Tab: $next")
+        }
+    }
+
+    @Test
+    fun removalByKeyboard() {
+        start()
+        for (list in listOf("p13", "p14", "p17")) {
+            tabUntil("$list Remove B")
+            key("ENTER")
+            Thread.sleep(1_000)
+            val after = where()
+            key("TAB")
+            Log.i(TAG, "keyboard removal $list Remove B | after: $after | Tab: ${kf()}")
+        }
+    }
+
+    /**
+     * With TalkBack running: TalkBack's focus on the trigger, activate it
+     * as a double tap does (the click action on the focused node), and see
+     * where TalkBack's focus is; then the same for the control that closes.
+     */
+    @Test
+    fun talkBack() {
+        assumeTalkBack()
+        for ((trigger, close) in FIXTURES) {
+            start()
+            Thread.sleep(4_000)
+            val t = nodeNamed(trigger)
+            if (t == null) { Log.i(TAG, "talkback $trigger | trigger not found"); continue }
+            talkBackFocus(trigger) { nodeNamed(trigger)!! }
+            Thread.sleep(2_000)
+            val before = where()
+            nodeNamed(trigger)!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(4_000)
+            val afterOpen = where()
+            val c = nodeNamed(close)
+            if (c == null) { Log.i(TAG, "talkback $trigger | before: $before | after open: $afterOpen | $close not found"); continue }
+            talkBackFocus(close) { nodeNamed(close)!! }
+            Thread.sleep(2_000)
+            nodeNamed(close)!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(4_000)
+            val afterClose = where()
+            Log.i(TAG, "talkback $trigger | before: $before | after open: $afterOpen | after close: $afterClose")
+        }
+    }
+
+    @Test
+    fun talkBackRemoval() {
+        assumeTalkBack()
+        start()
+        Thread.sleep(4_000)
+        for (list in listOf("p13", "p14", "p17")) {
+            val name = "$list Remove B"
+            talkBackFocus(name) { nodeNamed(name)!! }
+            Thread.sleep(2_000)
+            nodeNamed(name)!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(4_000)
+            Log.i(TAG, "talkback removal $name | after: ${where()}")
+        }
+    }
+
+    /** With TalkBack running: does TalkBack follow keyboard focus? */
+    @Test
+    fun talkBackWithKeyboard() {
+        assumeTalkBack()
+        for ((trigger, close) in FIXTURES.filter { it.first in setOf("p1 Dialog", "p2 Autofocus dialog", "p10 Inline", "p11 Inline managed", "p12 Inline a11y event") }) {
+            start()
+            Thread.sleep(4_000)
+            val reached = tabUntil(trigger)
+            Thread.sleep(1_500)
+            val onTrigger = where()
+            key("ENTER")
+            Thread.sleep(4_000)
+            val afterOpen = where()
+            var closeReached = false
+            for (i in 0 until 40) {
+                key("TAB")
+                if (kf() == "node:$close") { closeReached = true; break }
+            }
+            Thread.sleep(1_500)
+            val onClose = where()
+            if (closeReached) key("ENTER")
+            Thread.sleep(4_000)
+            val afterClose = where()
+            Log.i(TAG, "talkback+keyboard $trigger | reached=$reached | on trigger: $onTrigger | after Enter: $afterOpen | on close (by Tab: $closeReached): $onClose | after Enter on close: $afterClose")
+        }
+        start()
+        Thread.sleep(4_000)
+        for (list in listOf("p13", "p14")) {
+            tabUntil("$list Remove B")
+            Thread.sleep(1_500)
+            val on = where()
+            key("ENTER")
+            Thread.sleep(4_000)
+            Log.i(TAG, "talkback+keyboard removal $list Remove B | on it: $on | after Enter: ${where()}")
+        }
+    }
+
+    @Test
+    fun p15() {
+        start()
+        tabUntil("p15 Go")
+        key("ENTER")
+        Thread.sleep(1_500)
+        tabUntil("p15 Before")
+        key("TAB")
+        Thread.sleep(1_000)
+        Log.i(TAG, "keyboard p15 one Tab from Before | ${where()} | ${line("log")}")
+    }
+
+    @Test
+    fun talkBackP15() {
+        assumeTalkBack()
+        start()
+        Thread.sleep(4_000)
+        talkBackFocus("p15 Go") { nodeNamed("p15 Go")!! }
+        nodeNamed("p15 Go")!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(4_000)
+        talkBackFocus("p15 Before") { nodeNamed("p15 Before")!! }
+        Thread.sleep(2_000)
+        talkBackFocus("p15 Opens on focus") { nodeNamed("p15 Opens on focus")!! }
+        Thread.sleep(3_000)
+        Log.i(TAG, "talkback p15 TalkBack focus on it | ${where()} | ${line("log")}")
+    }
+}

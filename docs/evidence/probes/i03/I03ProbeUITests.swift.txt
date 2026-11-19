@@ -1,0 +1,273 @@
+// Throwaway: I03 probe on iOS. Not committed; kept as
+// docs/evidence/probes/i03/I03ProbeUITests.swift.txt. The probe's status
+// bar says where Flutter's keyboard focus is (KF) and which node iOS last
+// said VoiceOver's cursor is on (SR), which XCUITest cannot see itself.
+import XCTest
+
+final class I03ProbeUITests: XCTestCase {
+  let app = XCUIApplication()
+
+  static let fixtures: [(String, String)] = [
+    ("p1 Dialog", "p1 Close"), ("p2 Autofocus dialog", "p2 OK"), ("p3 Sheet", "p3 Close"),
+    ("p4 Page", "p4 Done"), ("p5 Cupertino dialog", "p5 Close"), ("p6 Action sheet", "p6 Close"),
+    ("p7 Cupertino page", "p7 Done"), ("p8 General dialog", "p8 Close"), ("p9 Overlay", "p9 Close"),
+    ("p10 Inline", "p10 Close"), ("p11 Inline managed", "p11 Close"),
+    ("p12 Inline a11y event", "p12 Close"),
+  ]
+
+  private func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+  private func named(_ label: String) -> XCUIElement {
+    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
+  }
+  private func kf() -> String { el("kf").label.replacingOccurrences(of: "KF: ", with: "") }
+  private func sr() -> String { el("sr").label }
+  private func log() -> String { el("log").label }
+
+  private func launch() {
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(el("kf").waitForExistence(timeout: 30))
+    sleep(2)
+  }
+
+  private func press(_ key: String, _ flags: XCUIElement.KeyModifierFlags = []) {
+    app.typeKey(key, modifierFlags: flags)
+    usleep(600_000)
+  }
+
+  private func tabUntil(_ label: String, max: Int = 50) -> Bool {
+    for _ in 0..<max {
+      if kf() == "node:\(label)" { return true }
+      press(XCUIKeyboardKey.tab.rawValue)
+    }
+    return kf() == "node:\(label)"
+  }
+
+  func testKeyboard() {
+    for (trigger, close) in Self.fixtures {
+      launch()
+      let reached = tabUntil(trigger)
+      press("\n")
+      sleep(1)
+      let afterOpen = kf()
+      var path: [String] = []
+      var closeReached = false
+      for _ in 0..<40 {
+        press(XCUIKeyboardKey.tab.rawValue)
+        path.append(kf())
+        if kf() == "node:\(close)" { closeReached = true; break }
+      }
+      if closeReached { press("\n") } else { named(close).tap() }
+      sleep(1)
+      let afterClose = kf()
+      press(XCUIKeyboardKey.tab.rawValue)
+      print("I03PROBE keyboard \(trigger) | reached=\(reached) | after Enter: \(afterOpen) | Tab until close: \(path.joined(separator: " > ")) | close by Tab: \(closeReached) | after close: \(afterClose) | Tab: \(kf())")
+    }
+  }
+
+  func testRemovalByKeyboard() {
+    launch()
+    for list in ["p13", "p14", "p17"] {
+      _ = tabUntil("\(list) Remove B")
+      press("\n")
+      sleep(1)
+      let after = kf()
+      press(XCUIKeyboardKey.tab.rawValue)
+      print("I03PROBE keyboard removal \(list) Remove B | after: \(after) | Tab: \(kf())")
+    }
+  }
+
+  #if compiler(>=6.4)
+  @available(iOS 27.0, *)
+  private func speech(_ vo: XCUIVoiceOverService) -> String {
+    ((try? vo.currentSpeech().utterance) ?? "(no speech)").split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
+  }
+
+  @available(iOS 27.0, *)
+  private func where_(_ vo: XCUIVoiceOverService) -> String {
+    "KF \(kf()) / \(sr()) / speech \(speech(vo))"
+  }
+
+  /// Where VoiceOver's cursor is: one move back and one forward, which
+  /// lands on the same element again.
+  @available(iOS 27.0, *)
+  private func around(_ vo: XCUIVoiceOverService) -> String {
+    let back = (try? vo.moveBackward().utterance) ?? "(no speech)"
+    let fwd = (try? vo.moveForward().utterance) ?? "(no speech)"
+    return "back: \(back.prefix(40)) / forward again: \(fwd.prefix(40))"
+  }
+  #endif
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    for (trigger, close) in Self.fixtures {
+      launch()
+      try vo.enable()
+      sleep(2)
+      named(trigger).tap()  // moves VoiceOver's cursor with VoiceOver on
+      sleep(2)
+      let before = where_(vo)
+      named(trigger).doubleTap()
+      sleep(4)
+      let afterOpen = where_(vo)
+      let aroundOpen = around(vo)
+      let c = named(close)
+      if !c.exists {
+        print("I03PROBE voiceover \(trigger) | before: \(before) | after open: \(afterOpen) | \(aroundOpen) | \(close) not found")
+        try vo.disable()
+        continue
+      }
+      c.tap()
+      sleep(2)
+      c.doubleTap()
+      sleep(4)
+      let afterClose = where_(vo)
+      let aroundClose = around(vo)
+      print("I03PROBE voiceover \(trigger) | before: \(before) | after open: \(afterOpen) | \(aroundOpen) | after close: \(afterClose) | \(aroundClose)")
+      try vo.disable()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+
+  func testVoiceOverRemovalAndFocus() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    launch()
+    try vo.enable()
+    defer { try? vo.disable() }
+    sleep(2)
+    for list in ["p13", "p14", "p17"] {
+      let b = named("\(list) Remove B")
+      b.tap()
+      sleep(2)
+      b.doubleTap()
+      sleep(4)
+      print("I03PROBE voiceover removal \(list) Remove B | after: \(where_(vo)) | \(around(vo))")
+    }
+    // VoiceOver with the keyboard: does its cursor follow keyboard focus?
+    for (trigger, close) in [("p1 Dialog", "p1 Close"), ("p11 Inline managed", "p11 Close")] {
+      named("p0 Start").tap()
+      sleep(2)
+      let reached = tabUntil(trigger)
+      sleep(2)
+      let on = where_(vo)
+      press("\n")
+      sleep(4)
+      let afterOpen = where_(vo)
+      var closeReached = false
+      for _ in 0..<40 {
+        press(XCUIKeyboardKey.tab.rawValue)
+        if kf() == "node:\(close)" { closeReached = true; break }
+      }
+      sleep(2)
+      let onClose = where_(vo)
+      if closeReached { press("\n") }
+      sleep(4)
+      print("I03PROBE voiceover+keyboard \(trigger) | reached=\(reached) | on trigger: \(on) | after Enter: \(afterOpen) | on close (by Tab: \(closeReached)): \(onClose) | after Enter on close: \(where_(vo))")
+    }
+    // p15: VoiceOver's cursor onto the control that opens on focus.
+    named("p15 Go").tap()
+    sleep(1)
+    named("p15 Go").doubleTap()
+    sleep(3)
+    named("p15 Before").tap()
+    sleep(2)
+    named("p15 Opens on focus").tap()
+    sleep(3)
+    print("I03PROBE voiceover p15 cursor on it | \(where_(vo)) | \(log())")
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+
+  /// Round 2 and 3 with VoiceOver: open by a double tap, Cancel, Confirm.
+  func testVoiceOverRound3() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    launch()
+    named("r00 Round 3").tap()
+    sleep(3)
+    try vo.enable()
+    defer { try? vo.disable() }
+    sleep(2)
+    func activate(_ name: String) -> Bool {
+      let e = named(name)
+      guard e.exists else { return false }
+      e.tap()
+      sleep(2)
+      e.doubleTap()
+      return true
+    }
+    // Cancel: back to the button that opened it.
+    _ = activate("s1 Remove A")
+    sleep(3)
+    let openA = where_(vo)
+    _ = activate("s1 Cancel")
+    sleep(4)
+    print("I03PROBE voiceover round3 s1 cancel | after opening on A: \(openA) | after Cancel: \(where_(vo)) | \(around(vo))")
+    for list in ["s1", "s2", "s3", "s4"] {
+      _ = activate("\(list) Remove B")
+      sleep(3)
+      let open = where_(vo)
+      let found = activate("\(list) Confirm")
+      sleep(5)
+      print("I03PROBE voiceover round3 \(list) | after opening on B: \(open) | confirm found: \(found) | after Confirm: \(where_(vo)) | \(around(vo)) | \(log())")
+    }
+    for list in ["t", "u", "v"] {
+      _ = activate("\(list) Remove B")
+      sleep(5)
+      print("I03PROBE voiceover round3 \(list) | after Remove B: \(where_(vo)) | \(around(vo)) | \(log())")
+    }
+    named("w Before").tap()
+    sleep(2)
+    named("w Opens on focus").tap()
+    sleep(3)
+    print("I03PROBE voiceover round3 w: cursor on it | \(where_(vo)) | \(log())")
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+
+  func testKeyboardRound3() {
+    for list in ["s1", "s2", "s3", "s4", "t", "u", "v"] {
+      launch()
+      named("r00 Round 3").tap()
+      sleep(3)
+      _ = tabUntil("\(list) Remove B")
+      press("\n")
+      sleep(1)
+      if list.hasPrefix("s") {
+        _ = tabUntil("\(list) Confirm", max: 6)
+        press("\n")
+      }
+      sleep(3)
+      let after = kf()
+      press(XCUIKeyboardKey.tab.rawValue)
+      print("I03PROBE keyboard round3 \(list) | after removing B: KF \(after) / \(sr()) | Tab: \(kf())")
+    }
+    launch()
+    named("r00 Round 3").tap()
+    sleep(3)
+    _ = tabUntil("w Before")
+    press(XCUIKeyboardKey.tab.rawValue)
+    sleep(2)
+    print("I03PROBE keyboard round3 w: one Tab from Before | KF \(kf()) | \(log())")
+  }
+
+  func testP15Keyboard() {
+    launch()
+    _ = tabUntil("p15 Go")
+    press("\n")
+    sleep(2)
+    _ = tabUntil("p15 Before")
+    press(XCUIKeyboardKey.tab.rawValue)
+    sleep(1)
+    print("I03PROBE keyboard p15 one Tab from Before | KF \(kf()) | \(log())")
+  }
+}
