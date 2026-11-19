@@ -1,0 +1,144 @@
+// Throwaway I02 probe. Not committed. Reads the probe's Focus, Path, and
+// Keys lines after each key, and tries every way found to send Shift+Tab.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.os.SystemClock
+import android.util.Log
+import android.view.InputDevice
+import android.view.KeyEvent
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeI02Test : TechniqueTest("I02") {
+    private fun text(prefix: String): String =
+        all().firstOrNull { it.name().startsWith(prefix) }?.name() ?: "($prefix not found)"
+
+    private fun focus() = text("Focus: ").removePrefix("Focus: ")
+
+    private fun lastKeys(): String = text("Keys: ").split(" ").takeLast(6).joinToString(" ")
+
+    private fun start() {
+        val intent = inst.targetContext.packageManager.getLaunchIntentForPackage(inst.targetContext.packageName)!!
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        device.wait(Until.hasObject(By.res("path")), 20_000)
+        device.waitForIdle()
+        Thread.sleep(1_500)
+    }
+
+    private fun key(name: String) {
+        device.executeShellCommand("input keyevent KEYCODE_$name")
+        Thread.sleep(500)
+    }
+
+    private fun tabUntil(label: String, max: Int = 60): Boolean {
+        for (i in 0 until max) {
+            if (focus() == label) return true
+            key("TAB")
+        }
+        return focus() == label
+    }
+
+    @Test
+    fun tree() {
+        start()
+        val order = all().mapNotNull { n ->
+            n.viewIdResourceName?.let { "$it${if (n.isFocused) "*" else ""}(${n.type().substringAfterLast('.')})" }
+        }
+        Log.i("I02PROBE", "child order: ${order.joinToString(" ")}")
+        // Back has no identifier: where is it?
+        val named = all().filter { it.name().isNotEmpty() }.map { it.name() }
+        Log.i("I02PROBE", "named nodes in order: ${named.joinToString(" | ")}")
+    }
+
+    @Test
+    fun forward() {
+        start()
+        for (i in 0 until 60) key("TAB")
+        Log.i("I02PROBE", "after 60 Tabs: ${text("Path: ")}")
+        Log.i("I02PROBE", "keys: ${text("Keys: ")}")
+    }
+
+    private fun keyEvent(action: Int, code: Int, meta: Int, deviceId: Int, time: Long) =
+        KeyEvent(time, time, action, code, 0, meta, deviceId, 0, 0, InputDevice.SOURCE_KEYBOARD)
+
+    /** Shift down, Tab down, Tab up, Shift up, each with the given meta state while Shift is down. */
+    private fun shiftTabEvents(deviceId: Int): List<KeyEvent> {
+        val t = SystemClock.uptimeMillis()
+        val meta = KeyEvent.META_SHIFT_ON or KeyEvent.META_SHIFT_LEFT_ON
+        return listOf(
+            keyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT, meta, deviceId, t),
+            keyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB, meta, deviceId, t + 10),
+            keyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_TAB, meta, deviceId, t + 20),
+            keyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT, 0, deviceId, t + 30),
+        )
+    }
+
+    @Test
+    fun shiftTab() {
+        start()
+        val keyboards = InputDevice.getDeviceIds().map { InputDevice.getDevice(it) }.filterNotNull()
+        for (d in keyboards) {
+            Log.i("I02PROBE", "input device ${d.id} '${d.name}' virtual=${d.isVirtual} external=${d.isExternal} keyboardType=${d.keyboardType} sources=0x${Integer.toHexString(d.sources)}")
+        }
+        val real = keyboards.firstOrNull { !it.isVirtual && it.keyboardType == InputDevice.KEYBOARD_TYPE_ALPHABETIC }
+        Log.i("I02PROBE", "hardware keyboard used: ${real?.id} '${real?.name}'")
+        val ways = mutableListOf<Pair<String, () -> Unit>>(
+            "UiDevice.pressKeyCode(TAB, META_SHIFT_ON | META_SHIFT_LEFT_ON)" to {
+                device.pressKeyCode(KeyEvent.KEYCODE_TAB, KeyEvent.META_SHIFT_ON or KeyEvent.META_SHIFT_LEFT_ON)
+            },
+            "Instrumentation.sendKeySync: Shift down, Tab down/up with shift meta, Shift up; device -1 (virtual)" to {
+                shiftTabEvents(-1).forEach { inst.sendKeySync(it) }
+            },
+            "UiAutomation.injectInputEvent: the same four events, device -1" to {
+                shiftTabEvents(-1).forEach { automation.injectInputEvent(it, true) }
+            },
+            "shell input keycombination KEYCODE_SHIFT_LEFT KEYCODE_TAB" to {
+                device.executeShellCommand("input keycombination KEYCODE_SHIFT_LEFT KEYCODE_TAB")
+            },
+            "shell input keyevent --longpress KEYCODE_SHIFT_LEFT KEYCODE_TAB" to {
+                device.executeShellCommand("input keyevent --longpress KEYCODE_SHIFT_LEFT KEYCODE_TAB")
+            },
+        )
+        if (real != null) {
+            ways += "Instrumentation.sendKeySync: the same four events, device ${real.id} (${real.name})" to {
+                shiftTabEvents(real.id).forEach { inst.sendKeySync(it) }
+            }
+            ways += "UiAutomation.injectInputEvent: the same four events, device ${real.id}" to {
+                shiftTabEvents(real.id).forEach { automation.injectInputEvent(it, true) }
+            }
+            ways += "Instrumentation.sendKeySync: Tab down/up only with shift meta, device ${real.id}" to {
+                val t = SystemClock.uptimeMillis()
+                val meta = KeyEvent.META_SHIFT_ON or KeyEvent.META_SHIFT_LEFT_ON
+                inst.sendKeySync(keyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB, meta, real.id, t))
+                inst.sendKeySync(keyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_TAB, meta, real.id, t + 10))
+            }
+        }
+        for ((name, press) in ways) {
+            val reached = tabUntil("b-closures")
+            val before = focus()
+            press()
+            Thread.sleep(800)
+            Log.i("I02PROBE", "$name: reached=$reached before=$before after=${focus()} keys=${lastKeys()}")
+        }
+    }
+
+    @Test
+    fun arrows() {
+        start()
+        for ((from, keyName) in listOf(
+            "f-up" to "DPAD_DOWN", "f-left" to "DPAD_DOWN", "f-left" to "DPAD_RIGHT",
+            "f-right" to "DPAD_DOWN", "b-map" to "DPAD_DOWN", "b-map" to "DPAD_RIGHT",
+            "b-alerts" to "DPAD_LEFT", "b-water" to "DPAD_UP",
+        )) {
+            val reached = tabUntil(from)
+            key(keyName)
+            Thread.sleep(300)
+            Log.i("I02PROBE", "arrow $from $keyName: reached=$reached after=${focus()}")
+        }
+    }
+}

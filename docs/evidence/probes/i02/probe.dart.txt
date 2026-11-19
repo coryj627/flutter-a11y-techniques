@@ -1,0 +1,436 @@
+// I02 probe (throwaway, not committed): keyboard focus order.
+// Every control's text starts with its fixture letter. The widget with
+// primary focus is shown at the top ("Focus: b-water"), and every focus it
+// has had since the screen opened ("Path: a-map a-alerts ..."), and every
+// key that reached the framework, so the order can be read from any
+// platform's tree, even where the tree does not say where focus is. Every
+// checkbox change is logged ("Log: a-map on").
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      initialRoute: '/probe',
+      routes: {
+        '/': (_) => const Scaffold(body: Center(child: Text('Home'))),
+        '/probe': (_) => const ProbeScreen(),
+        '/scroll': (_) => const ScrollScreen(groups: false),
+        '/scroll-groups': (_) => const ScrollScreen(groups: true),
+      },
+    ),
+  );
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  final List<String> _log = [];
+  final List<String> _path = [];
+  final List<String> _keys = [];
+  String _focus = 'none';
+  final Map<String, bool> _on = {};
+  final Map<String, FocusNode> _nodes = {};
+
+  FocusNode _node(String id) =>
+      _nodes.putIfAbsent(id, () => FocusNode(debugLabel: id));
+
+  bool _key(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      final shift = HardwareKeyboard.instance.isShiftPressed ? 'shift+' : '';
+      final name = event.logicalKey.keyLabel.isEmpty
+          ? event.logicalKey.debugName
+          : event.logicalKey.keyLabel;
+      setState(() => _keys.add('$shift$name'));
+    }
+    return false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addListener(_focusChanged);
+    HardwareKeyboard.instance.addHandler(_key);
+  }
+
+  @override
+  void dispose() {
+    FocusManager.instance.removeListener(_focusChanged);
+    HardwareKeyboard.instance.removeHandler(_key);
+    super.dispose();
+  }
+
+  void _focusChanged() {
+    // debugLabel is kept in debug builds only, so look the node up.
+    final primary = FocusManager.instance.primaryFocus;
+    final label = primary == null
+        ? 'none'
+        : _nodes.entries
+                  .where((e) => e.value == primary)
+                  .map((e) => e.key)
+                  .firstOrNull ??
+              'other(${primary.runtimeType})';
+    if (label != _focus) {
+      setState(() {
+        _focus = label;
+        _path.add(label);
+      });
+    }
+  }
+
+  void _toggle(String id) => setState(() {
+    _on[id] = !(_on[id] ?? false);
+    _log.add('$id ${_on[id]! ? 'on' : 'off'}');
+  });
+
+  Widget _id(String id, Widget child) => MergeSemantics(
+    child: Semantics(identifier: id, child: child),
+  );
+
+  /// A Material checkbox row with its text.
+  Widget _box(String id, String text) => _id(
+    id,
+    CheckboxListTile(
+      focusNode: _node(id),
+      dense: true,
+      contentPadding: EdgeInsets.zero,
+      controlAffinity: ListTileControlAffinity.leading,
+      value: _on[id] ?? false,
+      onChanged: (_) => _toggle(id),
+      title: Text(text),
+    ),
+  );
+
+  /// A Cupertino checkbox with its text, as F07 good-cupertino.
+  Widget _cbox(String id, String text) => _id(
+    id,
+    GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _toggle(id),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 44),
+        child: Row(
+          children: [
+            CupertinoCheckbox(
+              focusNode: _node(id),
+              value: _on[id] ?? false,
+              onChanged: (_) => _toggle(id),
+            ),
+            Flexible(child: Text(text)),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _button(String id, String text) => _id(
+    id,
+    OutlinedButton(
+      focusNode: _node(id),
+      onPressed: () => setState(() => _log.add('$id pressed')),
+      child: Text(text),
+    ),
+  );
+
+  Widget _ordered(double order, Widget child) =>
+      FocusTraversalOrder(order: NumericFocusOrder(order), child: child);
+
+  Widget _title(String text) => Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
+  );
+
+  /// Two columns side by side: Pack (map, water, first aid kit) and Send me
+  /// (weather alerts, trail closures), then a Save button.
+  Widget _columns(
+    String f, {
+    bool groups = false,
+    bool containers = false,
+    bool sortKeys = false,
+  }) {
+    Widget column(List<Widget> children, double sort) {
+      Widget c = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      );
+      if (containers) c = Semantics(container: true, child: c);
+      if (sortKeys) {
+        c = Semantics(container: true, sortKey: OrdinalSortKey(sort), child: c);
+      }
+      if (groups) c = FocusTraversalGroup(child: c);
+      return Expanded(child: c);
+    }
+
+    return FocusTraversalGroup(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              column([
+                Text('$f Pack'),
+                _box('$f-map', '$f Map'),
+                _box('$f-water', '$f Water'),
+                _box('$f-aid', '$f First aid kit'),
+              ], sortKeys ? 2 : 1),
+              const SizedBox(width: 8),
+              column([
+                Text('$f Send me'),
+                _box('$f-alerts', '$f Weather alerts'),
+                _box('$f-closures', '$f Trail closures'),
+              ], sortKeys ? 1 : 2),
+            ],
+          ),
+          _button('$f-save', '$f Save'),
+        ],
+      ),
+    );
+  }
+
+  /// The same five checkboxes laid out row by row, so no widget holds a
+  /// column, ordered by number. [numberAid] false leaves the first aid kit
+  /// without a number.
+  Widget _rows(String f, {bool numberAid = true, bool sortKeys = false}) {
+    Widget cell(double n, Widget child) {
+      Widget c = _ordered(n, child);
+      if (sortKeys) {
+        c = Semantics(container: true, sortKey: OrdinalSortKey(n), child: c);
+      }
+      return Expanded(child: c);
+    }
+
+    return FocusTraversalGroup(
+      policy: OrderedTraversalPolicy(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              cell(1, _box('$f-map', '$f Map')),
+              cell(4, _box('$f-alerts', '$f Weather alerts')),
+            ],
+          ),
+          Row(
+            children: [
+              cell(2, _box('$f-water', '$f Water')),
+              cell(5, _box('$f-closures', '$f Trail closures')),
+            ],
+          ),
+          Row(
+            children: [
+              numberAid
+                  ? cell(3, _box('$f-aid', '$f First aid kit'))
+                  : Expanded(child: _box('$f-aid', '$f First aid kit')),
+              const Expanded(child: SizedBox()),
+            ],
+          ),
+          _ordered(6, _button('$f-save', '$f Save')),
+        ],
+      ),
+    );
+  }
+
+  /// Cupertino checkboxes in two grouped columns.
+  Widget _cupertino(String f) => FocusTraversalGroup(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: FocusTraversalGroup(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('$f Pack'),
+                    _cbox('$f-map', '$f Map'),
+                    _cbox('$f-water', '$f Water'),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: FocusTraversalGroup(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('$f Send me'),
+                    _cbox('$f-alerts', '$f Weather alerts'),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        _id(
+          '$f-save',
+          CupertinoButton.filled(
+            focusNode: _node('$f-save'),
+            onPressed: () => setState(() => _log.add('$f-save pressed')),
+            child: Text('$f Save'),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  /// A cross of four buttons: Up on top, Left and Right below it, Down at
+  /// the bottom, as in the Android View arrow key example.
+  Widget _cross(String f) => FocusTraversalGroup(
+    child: SizedBox(
+      width: 300,
+      child: Column(
+        children: [
+          _button('$f-up', '$f Up'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _button('$f-left', '$f Left'),
+              _button('$f-right', '$f Right'),
+            ],
+          ),
+          _button('$f-down', '$f Down'),
+        ],
+      ),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('I02 probe')),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Semantics(
+              identifier: 'focus',
+              container: true,
+              child: Text('Focus: $_focus'),
+            ),
+            Semantics(
+              identifier: 'path',
+              container: true,
+              child: Text('Path: ${_path.join(' ')}'),
+            ),
+            Semantics(
+              identifier: 'log',
+              container: true,
+              child: Text('Log: ${_log.isEmpty ? '-' : _log.join(', ')}'),
+            ),
+            Semantics(
+              identifier: 'keys',
+              container: true,
+              child: Text('Keys: ${_keys.isEmpty ? '-' : _keys.join(' ')}'),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _title('a: two columns, no groups'),
+                    _columns('a'),
+                    _title('b: a group per column'),
+                    _columns('b', groups: true),
+                    _title('c: a group and a semantics container per column'),
+                    _columns('c', groups: true, containers: true),
+                    _title(
+                      'd: containers with sort keys putting Send me first, no focus groups',
+                    ),
+                    _columns('d', sortKeys: true),
+                    _title('e: cupertino, a group per column'),
+                    _cupertino('e'),
+                    _title('f: arrow-key cross'),
+                    _cross('f'),
+                    _title('g: rows, every control numbered'),
+                    _rows('g'),
+                    _title('h: rows, numbered, with sort keys'),
+                    _rows('h', sortKeys: true),
+                    _title('i: rows, first aid kit not numbered (last)'),
+                    _rows('i', numberAid: false),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Second round: a long scrolling list of buttons, s01 to s40, in groups of
+/// four when [groups], to see whether Shift+Tab on the web stops on Back
+/// when the previous button is scrolled out of view.
+class ScrollScreen extends StatefulWidget {
+  const ScrollScreen({super.key, required this.groups});
+
+  final bool groups;
+
+  @override
+  State<ScrollScreen> createState() => _ScrollScreenState();
+}
+
+class _ScrollScreenState extends State<ScrollScreen> {
+  final List<String> _pressed = [];
+
+  Widget _b(int i) {
+    final id = 's${i.toString().padLeft(2, '0')}';
+    return MergeSemantics(
+      child: Semantics(
+        identifier: id,
+        child: OutlinedButton(
+          onPressed: () => setState(() => _pressed.add(id)),
+          child: Text(id),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final buttons = [for (var i = 1; i <= 40; i++) _b(i)];
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.groups ? 'groups' : 'no groups')),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Semantics(
+            identifier: 'pressed',
+            container: true,
+            child: Text('Pressed: ${_pressed.join(' ')}'),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.groups
+                    ? [
+                        for (var g = 0; g < 10; g++)
+                          FocusTraversalGroup(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: buttons.sublist(g * 4, g * 4 + 4),
+                            ),
+                          ),
+                      ]
+                    : buttons,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

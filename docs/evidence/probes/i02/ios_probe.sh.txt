@@ -1,0 +1,18 @@
+#!/bin/sh
+# I02 probe on iOS, under tool/with_devices.py. Run from the worktree root.
+cd ios || exit 1
+run() {
+  echo "== $1"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/I02ProbeUITests/$1" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "I02PROBE|error:|passed|failed" | grep -v "Test Suite"
+}
+run testTree
+run testForward
+run testShiftTab
+run testArrows
+run testSpaceToggles
+run testVoiceOverOrder
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

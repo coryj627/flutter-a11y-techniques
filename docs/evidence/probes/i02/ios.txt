@@ -1,0 +1,27 @@
+== testTree
+I02PROBE element order: focus(48) path(48) log(48) keys(48) a-map(40) a-alerts(40) a-water(40) a-closures(40) a-aid(40) a-save(9) b-map(40) b-alerts(40) b-water(40) b-closures(40) b-aid(40) b-save(9) c-save(9) d-save(9) e-map(40) e-alerts(40) e-water(40) e-save(9) f-up(9) f-left(9) f-right(9) f-down(9) g-map(40) g-alerts(40) g-water(40) g-closures(40) g-aid(40) g-save(9) h-save(9) i-map(40) i-alerts(40) i-water(40) i-closures(40) i-aid(40) i-save(9) c-map(40) c-water(40) c-aid(40) c-alerts(40) c-closures(40) d-alerts(40) d-closures(40) d-map(40) d-water(40) d-aid(40) h-map(40) h-water(40) h-aid(40) h-alerts(40) h-closures(40)
+Test Case '-[RunnerUITests.I02ProbeUITests testTree]' passed (10.527 seconds).
+== testForward
+I02PROBE after 60 Tabs: Path: other(FocusScopeNode) other(FocusNode) a-map a-alerts a-water a-closures a-aid a-save b-map b-water b-aid b-alerts b-closures b-save c-map c-water c-aid c-alerts c-closures c-save d-map d-alerts d-water d-closures d-aid d-save e-map e-water e-alerts e-save f-up f-left f-right f-down g-map g-water g-aid g-alerts g-closures g-save h-map h-water h-aid h-alerts h-closures h-save i-map i-water i-alerts i-closures i-save i-aid a-map a-alerts a-water a-closures a-aid a-save b-map b-water b-aid
+Test Case '-[RunnerUITests.I02ProbeUITests testForward]' passed (60.579 seconds).
+== testShiftTab
+I02PROBE typeKey(tab, .shift): reached=true before=b-closures after=b-alerts keys=Tab Tab Tab shift+Shift Left shift+Tab
+I02PROBE typeKey(tab, .shift) again: after=b-aid
+I02PROBE 54 Shift+Tabs from i-save:  i-closures i-alerts i-water i-map h-save h-closures h-alerts h-aid h-water h-map g-save g-closures g-alerts g-aid g-water g-map f-down f-right f-left f-up e-save e-alerts e-water e-map d-save d-aid d-closures d-water d-alerts d-map c-save c-closures c-alerts c-aid c-water c-map b-save b-closures b-alerts b-aid b-water b-map a-save a-aid a-closures a-water a-alerts a-map other(FocusNode) i-aid i-save i-closures i-alerts i-water
+Test Case '-[RunnerUITests.I02ProbeUITests testShiftTab]' passed (104.504 seconds).
+== testArrows
+I02PROBE arrow f-up down: reached=true after=f-down
+I02PROBE arrow f-left down: reached=true after=g-map
+I02PROBE arrow f-left right: reached=true after=f-right
+I02PROBE arrow f-right down: reached=true after=g-alerts
+I02PROBE arrow b-map down: reached=true after=b-water
+I02PROBE arrow b-map right: reached=true after=b-alerts
+I02PROBE arrow b-alerts left: reached=true after=b-map
+I02PROBE arrow b-water up: reached=true after=b-map
+Test Case '-[RunnerUITests.I02ProbeUITests testArrows]' passed (194.752 seconds).
+== testSpaceToggles
+I02PROBE space on b-water: Log: b-water on
+Test Case '-[RunnerUITests.I02ProbeUITests testSpaceToggles]' passed (16.548 seconds).
+== testVoiceOverOrder
+I02PROBE VoiceOver forward: I02 probe / Focus: other(FocusScopeNode) / Path: other( / Log: - / Keys: - / (no speech) / a: two columns, no groups / a Pack / a Send me / a Map Switch button off Double tap to toggle setting. / a Weather alerts Switch button off Double tap to toggle setting. / a Water Switch button off Double tap to toggle setting. / a Trail closures Switch button off Double tap to toggle setting. / a First aid kit Switch button off Double tap to toggle setting. / a Save Button / b: a group per column / b Pack / b Send me / b Map Switch button off Double tap to toggle setting. / b Weather alerts Switch button off Double tap to toggle setting. / b Water Switch button off Double tap to toggle setting. / b Trail closures Switch button off Double tap to toggle setting. / b First aid kit Switch button off Double tap to toggle setting. / b Save Button / c: a group and a semantics container per column / c Pack / c Map Switch button off Double tap to toggle setting. / c Water Switch button off Double tap to toggle setting. / c First aid kit Switch button off Double tap to toggle setting. / c Send me / c Weather alerts Switch button off Double tap to toggle setting. / c Trail closures Switch button off Double tap to toggle setting. / c Trail closures Switch button off Double tap to toggle setting. / c Trail closures Switch button off Double tap to toggle setting. / c Trail closures Switch button off Double tap to toggle setting. / c Trail closures Switch button off Double tap to toggle setting. / c Trail closures Switch button off Double tap to toggle setting. / c Trail closures Switch button off Double tap to toggle setting. / c Trail closures Switch button off Double tap to toggle setting. / c Trail closures Switch button off Double tap to toggle setting.
+Test Case '-[RunnerUITests.I02ProbeUITests testVoiceOverOrder]' passed (57.915 seconds).
