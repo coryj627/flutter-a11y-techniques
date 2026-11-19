@@ -40,8 +40,14 @@ final class I02FocusOrderUITests: XCTestCase, CountedTechniqueUITest {
     "bad-order-missing": ["map", "water", "weather", "closures", "save", "aid"],
   ]
 
+  /// Opens the example and waits a second before any key. On CI a Tab sent
+  /// as soon as the count was in the tree was lost twice (runs 44447792016
+  /// and 44521548016): the next Tab then put focus on Back, and Space left
+  /// the screen. Why that Tab is lost is not established; the screen is
+  /// still arriving when the count first exists.
   private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
     open(slug, waitingFor: countElement(slug), file: file, line: line)
+    sleep(1)
   }
 
   private func control(_ slug: String, _ c: String) -> XCUIElement { element("i02-\(slug)-\(c)") }
