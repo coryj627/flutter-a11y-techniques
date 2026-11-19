@@ -14,9 +14,9 @@ F02 Input instructions (in review, so not linked) handed on with
 (addresses, card numbers, a wrong hint, autofill services and password
 managers) is F04 Autofill and input purpose, which the
 [coverage inventory](../coverage-inventory.md) also maps to 1.3.5; this
-spec sets hints the way the keyboard type references do, and
-`bad-no-purpose` and `good-sign-in` could move to F04 if the wave decides
-so. Error messages are F06. Focus order is I02 and keyboard actions in
+spec sets hints the way the keyboard type references do. The owner
+decided on 2026-11-19 that `bad-no-purpose` and `good-sign-in` stay in
+F03. Error messages are F06. Focus order is I02 and keyboard actions in
 general I04; this spec checks only that Next moves to the next field.
 
 ## 1. Rule
@@ -40,8 +40,8 @@ one with the email keyboard type, which has `autocomplete="email"`. An
 obscured field gets its hint (`current-password`) once it has been
 focused. No SDK API sets `autocomplete`, so the purpose of a name, a
 phone number, or a username cannot be made programmatically determinable
-on the web. This is recorded as a limitation with no workaround; the
-wave's principal has been asked to confirm it.
+on the web. This is recorded as a limitation with no workaround, which
+the owner accepted on 2026-11-19.
 
 On iOS the hints become the field's text content type while it is being
 edited, according to the engine source. No test here can read a content
