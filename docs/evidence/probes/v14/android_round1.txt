@@ -1,0 +1,19 @@
+# V14 probe on Android, round 1: android_probe.sh.txt, Tab by 'adb shell input keyevent'. Stopped by hand after 16 lines,
+# once it was clear that the highlight mode stayed 'h' (touch) after Tab; round 2 replaced it. The PNGs were not analysed.
+== device: Android 17, Physical size: 1080x2424 , Physical density: 420 
+android-light-m1 box=[63 352 353 210] flutter=[24 80 0 152 dpr=1.0] | u: S m1 f=0 m=h n=2 k=0 | tab: S m1 f=1 m=h n=3 k=1 | touch elsewhere: S m1 f=1 m=h n=3 k=1 | tap: S m1 f=0 m=h n=2 k=0
+android-dark-m1 box=[63 352 353 210] flutter=[24 80 0 152 dpr=1.0] | u: S m1 f=0 m=h n=2 k=0 | tab: S m1 f=1 m=h n=3 k=2 | touch elsewhere: S m1 f=1 m=h n=3 k=2 | tap: S m1 f=0 m=h n=2 k=0
+android-light-m2 box=[63 352 353 210] flutter=[24 80 0 152 dpr=1.0] | u: S m2 f=0 m=h n=2 k=0 | tab: S m2 f=1 m=h n=3 k=1 | touch elsewhere: S m2 f=1 m=h n=3 k=1 | tap: S m2 f=0 m=h n=2 k=0
+android-dark-m2 box=[63 352 353 210] flutter=[24 80 0 152 dpr=1.0] | u: S m2 f=0 m=h n=2 k=0 | tab: S m2 f=1 m=h n=3 k=2 | touch elsewhere: S m2 f=1 m=h n=3 k=2 | tap: S m2 f=0 m=h n=2 k=0
+android-light-m3 box=[63 352 353 210] flutter=[24 80 0 152 dpr=1.0] | u: S m3 f=0 m=h n=2 k=0 | tab: S m3 f=1 m=h n=3 k=1 | touch elsewhere: S m3 f=1 m=h n=3 k=1 | tap: S m3 f=0 m=h n=2 k=0
+android-dark-m3 box=[63 352 353 210] flutter=[24 80 0 152 dpr=1.0] | u: S m3 f=0 m=h n=2 k=0 | tab: S m3 f=1 m=h n=3 k=2 | touch elsewhere: S m3 f=1 m=h n=3 k=2 | tap: S m3 f=0 m=h n=2 k=0
+android-light-m4 box=[63 352 290 210] flutter=[24 80 0 168 dpr=1.0] | u: S m4 f=0 m=h n=2 k=0 | tab: S m4 f=1 m=h n=3 k=1 | touch elsewhere: S m4 f=1 m=h n=3 k=1 | tap: S m4 f=0 m=h n=2 k=0
+android-dark-m4 box=[63 352 290 210] flutter=[24 80 0 168 dpr=1.0] | u: S m4 f=0 m=h n=2 k=0 | tab: S m4 f=1 m=h n=3 k=2 | touch elsewhere: S m4 f=1 m=h n=3 k=2 | tap: S m4 f=0 m=h n=2 k=0
+android-light-m5 box=[63 352 210 210] flutter=[24 80 0 80 dpr=1.0] | u: S m5 f=0 m=h n=2 k=0 | tab: S m5 f=1 m=h n=3 k=1 | touch elsewhere: S m5 f=1 m=h n=3 k=1 | tap: S m5 f=0 m=h n=2 k=0
+android-dark-m5 box=[63 352 210 210] flutter=[24 80 0 80 dpr=1.0] | u: S m5 f=0 m=h n=2 k=0 | tab: S m5 f=1 m=h n=3 k=2 | touch elsewhere: S m5 f=1 m=h n=3 k=2 | tap: S m5 f=0 m=h n=2 k=0
+android-light-m6 box=[63 352 714 231] flutter=[24 80 0 88 dpr=1.0] | u: S m6 f=0 m=h n=2 k=0 | tab: S m6 f=1 m=h n=3 k=1 | touch elsewhere: S m6 f=1 m=h n=3 k=1 | tap: S m6 f=1 m=h n=3 k=0
+android-dark-m6 box=[63 352 714 231] flutter=[24 80 0 88 dpr=1.0] | u: S m6 f=0 m=h n=2 k=0 | tab: S m6 f=1 m=h n=3 k=2 | touch elsewhere: S m6 f=1 m=h n=3 k=2 | tap: S m6 f=1 m=h n=3 k=0
+android-light-m7 box=[63 352 714 231] flutter=[24 80 0 88 dpr=1.0] | u: S m7 f=0 m=h n=2 k=0 | tab: S m7 f=1 m=h n=3 k=1 | touch elsewhere: S m7 f=1 m=h n=3 k=1 | tap: S m7 f=1 m=h n=3 k=0
+android-dark-m7 box=[63 352 714 231] flutter=[24 80 0 88 dpr=1.0] | u: S m7 f=0 m=h n=2 k=0 | tab: S m7 f=1 m=h n=3 k=2 | touch elsewhere: S m7 f=1 m=h n=3 k=2 | tap: S m7 f=1 m=h n=3 k=0
+android-light-m8 box=[63 352 210 210] flutter=[24 80 0 80 dpr=1.0] | u: S m8 f=0 m=h n=2 k=0 | tab: S m8 f=1 m=h n=3 k=1 | touch elsewhere: S m8 f=1 m=h n=3 k=1 | tap: S m8 f=0 m=h n=2 k=0
+android-dark-m8 box=[63 352 210 210] flutter=[24 80 0 80 dpr=1.0] | u: S m8 f=0 m=h n=2 k=0 | tab: S m8 f=1 m=h n=3 k=2 | touch elsewhere: S m8 f=1 m=h n=3 k=2 | tap: S m8 f=0 m=h n=2 k=0

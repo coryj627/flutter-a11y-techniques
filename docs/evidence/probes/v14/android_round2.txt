@@ -1,0 +1,258 @@
+# V14 probe on Android, round 2: ProbeV14Test.kt.txt#controls, #otherDeviceIds, #obscure, run by android_probe2.sh.txt.
+# Tab sent with Instrumentation.sendKeySync and the device id given.
+# NOT VALID: every 'android2-dark-*' line. The test did not wait for the dark screen to replace the light one, so its
+# 'u' capture is the light screen (page #FFFFFF or #DBDBDC, the previous screen). Round 3 put the theme in the status line
+# to wait for it. The light lines are valid.
+== device: Android 17, Physical size: 1080x2424 , Physical density: 420 
+== controls
+OK (1 test)
+input devices: -1:Virtual:virtual=true:kb=2, 0:qwerty2:virtual=false:kb=2, 2:gpio-keys:virtual=false:kb=1, 3:virtio_input_multi_touch_1:virtual=false:kb=1, 4:virtio_input_multi_touch_2:virtual=false:kb=1, 5:virtio_input_multi_touch_3:virtual=false:kb=1, 6:virtio_input_multi_touch_4:virtual=false:kb=1, 7:virtio_input_multi_touch_5:virtual=false:kb=1, 8:virtio_input_multi_touch_6:virtual=false:kb=1, 9:virtio_input_multi_touch_7:virtual=false:kb=1, 10:virtio_input_multi_touch_8:virtual=false:kb=1, 11:virtio_input_multi_touch_9:virtual=false:kb=1, 12:virtio_input_multi_touch_10:virtual=false:kb=1, 13:virtio_input_multi_touch_11:virtual=false:kb=1
+keyboard device id: 0
+android2-light-m1 tabs=2 box=Rect(63, 352 - 416, 562) | u: S m1 f=0 m=h n=2 k=0 | tab: S m1 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m1 tabs=1 box=Rect(63, 352 - 416, 562) | u: S m1 f=0 m=h n=2 k=0 | tab: S m1 f=1 m=h n=3 k=2 | changed=74130 unstable=0 page=#DBDBDC #121318 61% ratio-to-page 13.41, #1B1B21 32% ratio-to-page 12.39, #111217 1% ratio-to-page 13.52
+android2-light-m2 tabs=1 box=Rect(63, 352 - 416, 562) | u: S m2 f=0 m=h n=2 k=0 | tab: S m2 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m2 tabs=1 box=Rect(63, 352 - 416, 562) | u: S m2 f=0 m=h n=2 k=0 | tab: S m2 f=1 m=h n=3 k=2 | changed=74130 unstable=0 page=#FFFFFF #121318 65% ratio-to-page 18.55, #BAC3FF 32% ratio-to-page 1.70, #222C61 1% ratio-to-page 13.12
+android2-light-m3 tabs=1 box=Rect(63, 352 - 416, 562) | u: S m3 f=0 m=h n=2 k=0 | tab: S m3 f=1 m=h n=3 k=1 | changed=1657 unstable=0 page=#FBF8FF #515B92 100% ratio-to-page 6.12
+android2-dark-m3 tabs=1 box=Rect(63, 352 - 416, 562) | u: S m3 f=0 m=h n=2 k=0 | tab: S m3 f=1 m=h n=3 k=2 | changed=74130 unstable=0 page=#FFFFFF #121318 95% ratio-to-page 18.55, #BAC3FF 3% ratio-to-page 1.70, #595E7A 0% ratio-to-page 6.35
+android2-light-m4 tabs=1 box=Rect(63, 352 - 353, 562) | u: S m4 f=0 m=h n=2 k=0 | tab: S m4 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m4 tabs=1 box=Rect(63, 352 - 353, 562) | u: S m4 f=0 m=h n=2 k=0 | tab: S m4 f=1 m=h n=3 k=2 | changed=60900 unstable=0 page=#FFFFFF #121318 97% ratio-to-page 18.55, #BAC3FF 1% ratio-to-page 1.70, #16171D 0% ratio-to-page 17.88
+android2-light-m5 tabs=1 box=Rect(63, 352 - 273, 562) | u: S m5 f=0 m=h n=2 k=0 | tab: S m5 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m5 tabs=1 box=Rect(63, 352 - 273, 562) | u: S m5 f=0 m=h n=2 k=0 | tab: S m5 f=1 m=h n=3 k=2 | changed=44100 unstable=0 page=#DBDBDC #121318 97% ratio-to-page 13.41, #0A84FF 1% ratio-to-page 2.64, #121319 0% ratio-to-page 13.40
+android2-light-m6 tabs=1 box=Rect(63, 352 - 777, 583) | u: S m6 f=0 m=h n=2 k=0 | tab: S m6 f=1 m=h n=3 k=1 | changed=10201 unstable=0 page=#FBF8FF #515B92 71% ratio-to-page 6.12, #FBF8FF 22% ratio-to-page 1.00, #A7AAC9 0% ratio-to-page 2.16
+android2-dark-m6 tabs=1 box=Rect(63, 352 - 777, 583) | u: S m6 f=0 m=h n=2 k=0 | tab: S m6 f=1 m=h n=3 k=2 | changed=164934 unstable=0 page=#FFFFFF #121318 95% ratio-to-page 18.55, #BAC3FF 4% ratio-to-page 1.70, #656A8A 0% ratio-to-page 5.27
+android2-light-m7 tabs=1 box=Rect(63, 352 - 777, 583) | u: S m7 f=0 m=h n=2 k=0 | tab: S m7 f=1 m=h n=3 k=1 | changed=6103 unstable=0 page=#FBF8FF #515B92 60% ratio-to-page 6.12, #FBF8FF 30% ratio-to-page 1.00, #A7AAC9 0% ratio-to-page 2.16
+android2-dark-m7 tabs=1 box=Rect(63, 352 - 777, 583) | u: S m7 f=0 m=h n=2 k=0 | tab: S m7 f=1 m=h n=3 k=2 | changed=164934 unstable=0 page=#FFFFFF #121318 97% ratio-to-page 18.55, #BAC3FF 2% ratio-to-page 1.70, #656A8A 0% ratio-to-page 5.27
+android2-light-m8 tabs=1 box=Rect(63, 352 - 273, 562) | u: S m8 f=0 m=h n=2 k=0 | tab: S m8 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m8 tabs=1 box=Rect(63, 352 - 273, 562) | u: S m8 f=0 m=h n=2 k=0 | tab: S m8 f=1 m=h n=3 k=2 | changed=44100 unstable=0 page=#FFFFFF #121318 97% ratio-to-page 18.55, #C7C5D0 2% ratio-to-page 1.70
+android2-light-m9 tabs=1 box=Rect(63, 352 - 273, 562) | u: S m9 f=0 m=h n=2 k=0 | tab: S m9 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m9 tabs=1 box=Rect(63, 352 - 273, 562) | u: S m9 f=0 m=h n=2 k=0 | tab: S m9 f=1 m=h n=3 k=2 | changed=44100 unstable=0 page=#FFFFFF #121318 94% ratio-to-page 18.55, #BAC3FF 4% ratio-to-page 1.70, #222C61 0% ratio-to-page 13.12
+android2-light-m10 tabs=1 box=Rect(63, 352 - 305, 562) | u: S m10 f=0 m=h n=2 k=0 | tab: S m10 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m10 tabs=1 box=Rect(63, 352 - 305, 562) | u: S m10 f=0 m=h n=2 k=0 | tab: S m10 f=1 m=h n=3 k=2 | changed=50820 unstable=0 page=#FFFFFF #121318 80% ratio-to-page 18.55, #34343A 13% ratio-to-page 12.37, #90909A 6% ratio-to-page 3.16
+android2-light-m11 tabs=1 box=Rect(63, 352 - 273, 562) | u: S m11 f=0 m=h n=2 k=0 | tab: S m11 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m11 tabs=1 box=Rect(63, 352 - 273, 562) | u: S m11 f=0 m=h n=2 k=0 | tab: S m11 f=1 m=h n=3 k=2 | changed=44100 unstable=0 page=#FFFFFF #121318 98% ratio-to-page 18.55, #C7C5D0 1% ratio-to-page 1.70, #131419 0% ratio-to-page 18.39
+android2-light-m12 tabs=1 box=Rect(63, 352 - 777, 583) | u: S m12 f=0 m=h n=2 k=0 | tab: S m12 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m12 tabs=1 box=Rect(63, 352 - 777, 583) | u: S m12 f=0 m=h n=2 k=0 | tab: S m12 f=1 m=h n=3 k=2 | changed=164934 unstable=0 page=#FFFFFF #121318 97% ratio-to-page 18.55, #E4E1E9 1% ratio-to-page 1.29, #191A1F 0% ratio-to-page 17.37
+android2-light-m13 tabs=1 box=Rect(63, 352 - 487, 573) | u: S m13 f=0 m=h n=2 k=0 | tab: S m13 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m13 tabs=1 box=Rect(63, 352 - 487, 573) | u: S m13 f=0 m=h n=2 k=0 | tab: S m13 f=1 m=h n=3 k=2 | changed=93704 unstable=0 page=#FFFFFF #121318 47% ratio-to-page 18.55, #1B1B21 46% ratio-to-page 17.14, #E4E1E9 1% ratio-to-page 1.29
+android2-light-m14 tabs=1 box=Rect(63, 352 - 418, 562) | u: S m14 f=0 m=h n=2 k=0 | tab: S m14 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m14 tabs=1 box=Rect(63, 352 - 418, 562) | u: S m14 f=0 m=h n=2 k=0 | tab: S m14 f=1 m=h n=3 k=2 | changed=74550 unstable=0 page=#FFFFFF #121318 94% ratio-to-page 18.55, #46464F 2% ratio-to-page 9.34, #C7C5D0 1% ratio-to-page 1.70
+android2-light-m15 tabs=1 box=Rect(63, 352 - 777, 562) | u: S m15 f=0 m=h n=2 k=0 | tab: S m15 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m15 tabs=1 box=Rect(63, 352 - 777, 562) | u: S m15 f=0 m=h n=2 k=0 | tab: S m15 f=1 m=h n=3 k=2 | changed=149940 unstable=0 page=#FFFFFF #121318 94% ratio-to-page 18.55, #BAC3FF 3% ratio-to-page 1.70, #34343A 1% ratio-to-page 12.37
+android2-light-c1 tabs=1 box=Rect(63, 352 - 399, 573) | u: S c1 f=0 m=h n=2 k=0 | tab: S c1 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-c1 tabs=1 box=Rect(63, 352 - 399, 573) | u: S c1 f=0 m=h n=2 k=0 | tab: S c1 f=1 m=h n=3 k=2 | changed=74256 unstable=0 page=#FFFFFF #121318 97% ratio-to-page 18.55, #0A84FF 1% ratio-to-page 3.65, #111F30 0% ratio-to-page 16.63
+android2-light-c2 tabs=1 box=Rect(63, 352 - 399, 573) | u: S c2 f=0 m=h n=2 k=0 | tab: S c2 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-c2 tabs=1 box=Rect(63, 352 - 399, 573) | u: S c2 f=0 m=h n=2 k=0 | tab: S c2 f=1 m=h n=3 k=2 | changed=73272 unstable=0 page=#FFFFFF #121318 55% ratio-to-page 18.55, #0A84FF 43% ratio-to-page 3.65, #0B84FF 0% ratio-to-page 3.65
+android2-light-c3 tabs=1 box=Rect(63, 352 - 302, 538) | u: S c3 f=0 m=h n=2 k=0 | tab: S c3 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-c3 tabs=1 box=Rect(63, 352 - 302, 538) | u: S c3 f=0 m=h n=2 k=0 | tab: S c3 f=1 m=h n=3 k=2 | changed=40311 unstable=0 page=#FFFFFF #121318 86% ratio-to-page 18.55, #323339 6% ratio-to-page 12.59, #313238 1% ratio-to-page 12.77
+android2-light-c4 tabs=1 box=Rect(63, 352 - 263, 552) | u: S c4 f=0 m=h n=2 k=0 | tab: S c4 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-c4 tabs=1 box=Rect(63, 352 - 263, 552) | u: S c4 f=0 m=h n=2 k=0 | tab: S c4 f=1 m=h n=3 k=2 | changed=40000 unstable=0 page=#FFFFFF #121318 96% ratio-to-page 18.55, #47484B 0% ratio-to-page 9.14, #454549 0% ratio-to-page 9.54
+android2-light-c5 tabs=1 box=Rect(63, 352 - 777, 525) | u: S c5 f=0 m=h n=2 k=0 | tab: S c5 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-c5 tabs=1 box=Rect(63, 352 - 777, 525) | u: S c5 f=0 m=h n=2 k=0 | tab: S c5 f=1 m=h n=3 k=2 | changed=123265 unstable=257 page=#FFFFFF #121318 54% ratio-to-page 18.55, #000000 42% ratio-to-page 21.00, #464649 0% ratio-to-page 9.41
+android2-light-w1 tabs=1 box=Rect(63, 352 - 461, 573) | u: S w1 f=0 m=h n=2 k=0 | tab: S w1 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-w1 tabs=1 box=Rect(63, 352 - 461, 573) | u: S w1 f=0 m=h n=2 k=0 | tab: S w1 f=1 m=h n=3 k=2 | changed=0 unstable=0 page=#121318 
+android2-light-w2 tabs=1 box=Rect(63, 352 - 466, 578) | u: S w2 f=0 m=h n=2 k=0 | tab: S w2 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-w2 tabs=1 box=Rect(63, 352 - 466, 578) | u: S w2 f=0 m=h n=2 k=0 | tab: S w2 f=1 m=h n=3 k=2 | changed=91078 unstable=0 page=#FFFFFF #121318 51% ratio-to-page 18.55, #34343A 43% ratio-to-page 12.37, #90909A 2% ratio-to-page 3.16
+android2-light-w3 tabs=1 box=Rect(63, 352 - 466, 578) | u: S w3 f=0 m=h n=2 k=0 | tab: S w3 f=1 m=h n=3 k=1 | changed=13244 unstable=0 page=#FBF8FF #1B1B21 60% ratio-to-page 16.30, #E4E1E9 31% ratio-to-page 1.23, #9D9BA2 0% ratio-to-page 2.61
+android2-dark-w3 tabs=1 box=Rect(63, 352 - 466, 578) | u: S w3 f=0 m=h n=2 k=0 | tab: S w3 f=1 m=h n=3 k=2 | changed=91078 unstable=0 page=#FFFFFF #121318 45% ratio-to-page 18.55, #34343A 43% ratio-to-page 12.37, #E4E1E9 8% ratio-to-page 1.29
+android2-light-x1 tabs=1 box=Rect(63, 352 - 403, 562) | u: S x1 f=0 m=h n=2 k=0 | tab: S x1 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-x1 tabs=1 box=Rect(63, 352 - 403, 562) | u: S x1 f=0 m=h n=2 k=0 | tab: S x1 f=1 m=h n=3 k=2 | changed=0 unstable=0 page=#121318 
+android2-light-x2 tabs=1 box=Rect(63, 352 - 451, 573) | u: S x2 f=0 m=h n=2 k=0 | tab: S x2 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-x2 tabs=1 box=Rect(63, 352 - 451, 573) | u: S x2 f=0 m=h n=2 k=0 | tab: S x2 f=1 m=h n=3 k=2 | changed=85748 unstable=0 page=#FFFFFF #121318 48% ratio-to-page 18.55, #1B1B21 44% ratio-to-page 17.14, #111217 1% ratio-to-page 18.70
+android2-light-x3 tabs=1 box=Rect(63, 352 - 340, 562) | u: S x3 f=0 m=h n=2 k=0 | tab: S x3 f=1 m=h n=3 k=1 | changed=3703 unstable=0 page=#FBF8FF #1B1B21 100% ratio-to-page 16.30
+android2-dark-x3 tabs=1 box=Rect(63, 352 - 340, 562) | u: S x3 f=0 m=h n=2 k=0 | tab: S x3 f=1 m=h n=3 k=2 | changed=58170 unstable=0 page=#FFFFFF #121318 91% ratio-to-page 18.55, #E4E1E9 6% ratio-to-page 1.29, #BAC3FF 1% ratio-to-page 1.70
+android2-light-x4 tabs=1 box=Rect(63, 352 - 403, 562) | u: S x4 f=0 m=h n=2 k=0 | tab: S x4 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-x4 tabs=1 box=Rect(63, 352 - 403, 562) | u: S x4 f=0 m=h n=2 k=0 | tab: S x4 f=1 m=h n=3 k=2 | changed=71400 unstable=0 page=#FFFFFF #121318 62% ratio-to-page 18.55, #1B1B21 32% ratio-to-page 17.14, #111217 1% ratio-to-page 18.70
+android2-light-x5 tabs=1 box=Rect(63, 352 - 398, 573) | u: S x5 f=0 m=h n=2 k=0 | tab: S x5 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-x5 tabs=1 box=Rect(63, 352 - 398, 573) | u: S x5 f=0 m=h n=2 k=0 | tab: S x5 f=1 m=h n=3 k=2 | changed=74035 unstable=0 page=#FFFFFF #121318 97% ratio-to-page 18.55, #0A84FF 1% ratio-to-page 3.65, #121319 0% ratio-to-page 18.54
+== otherDeviceIds
+OK (1 test)
+device id 9999
+android2-light-m1 tabs=1 box=Rect(63, 352 - 416, 562) | u: S m1 f=0 m=h n=2 k=0 | tab: S m1 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m1 tabs=1 box=Rect(63, 352 - 416, 562) | u: S m1 f=0 m=h n=2 k=0 | tab: S m1 f=1 m=h n=3 k=2 | changed=74130 unstable=0 page=#FFFFFF #121318 61% ratio-to-page 18.55, #1B1B21 32% ratio-to-page 17.14, #111217 1% ratio-to-page 18.70
+android2-light-c1 tabs=1 box=Rect(63, 352 - 399, 573) | u: S c1 f=0 m=h n=2 k=0 | tab: S c1 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-c1 tabs=1 box=Rect(63, 352 - 399, 573) | u: S c1 f=0 m=h n=2 k=0 | tab: S c1 f=1 m=h n=3 k=2 | changed=74256 unstable=0 page=#FFFFFF #121318 97% ratio-to-page 18.55, #0A84FF 1% ratio-to-page 3.65, #111F30 0% ratio-to-page 16.63
+device id -1
+android2-light-m1 tabs=1 box=Rect(63, 352 - 416, 562) | u: S m1 f=0 m=h n=2 k=0 | tab: S m1 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-m1 tabs=1 box=Rect(63, 352 - 416, 562) | u: S m1 f=0 m=h n=2 k=0 | tab: S m1 f=1 m=h n=3 k=2 | changed=74130 unstable=0 page=#DADADB #121318 61% ratio-to-page 13.28, #1B1B21 32% ratio-to-page 12.27, #111217 1% ratio-to-page 13.39
+android2-light-c1 tabs=1 box=Rect(63, 352 - 399, 573) | u: S c1 f=0 m=h n=2 k=0 | tab: S c1 f=1 m=h n=3 k=1 | changed=0 unstable=0 page=#FBF8FF 
+android2-dark-c1 tabs=1 box=Rect(63, 352 - 399, 573) | u: S c1 f=0 m=h n=2 k=0 | tab: S c1 f=1 m=h n=3 k=2 | changed=74256 unstable=0 page=#FFFFFF #121318 97% ratio-to-page 18.55, #0A84FF 1% ratio-to-page 3.65, #111F30 0% ratio-to-page 16.63
+== obscure
+OK (1 test)
+== o1 start: S o1 f=none
+input devices: -1:Virtual:virtual=true:kb=2, 0:qwerty2:virtual=false:kb=2, 2:gpio-keys:virtual=false:kb=1, 3:virtio_input_multi_touch_1:virtual=false:kb=1, 4:virtio_input_multi_touch_2:virtual=false:kb=1, 5:virtio_input_multi_touch_3:virtual=false:kb=1, 6:virtio_input_multi_touch_4:virtual=false:kb=1, 7:virtio_input_multi_touch_5:virtual=false:kb=1, 8:virtio_input_multi_touch_6:virtual=false:kb=1, 9:virtio_input_multi_touch_7:virtual=false:kb=1, 10:virtio_input_multi_touch_8:virtual=false:kb=1, 11:virtio_input_multi_touch_9:virtual=false:kb=1, 12:virtio_input_multi_touch_10:virtual=false:kb=1, 13:virtio_input_multi_touch_11:virtual=false:kb=1
+  Tab 1: S o1 f=b1 vis=1.00 top=130 bottom=178 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 2: S o1 f=b2 vis=1.00 top=186 bottom=234 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 3: S o1 f=b3 vis=1.00 top=242 bottom=290 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 4: S o1 f=b4 vis=1.00 top=298 bottom=346 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 5: S o1 f=b5 vis=0.00 top=354 bottom=402 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 6: S o1 f=b6 vis=0.00 top=382 bottom=430 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 7: S o1 f=b7 vis=0.00 top=382 bottom=430 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 8: S o1 f=b8 vis=0.00 top=382 bottom=430 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 9: S o1 f=b9 vis=0.00 top=382 bottom=430 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 10: S o1 f=b10 vis=0.00 top=382 bottom=430 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 11: S o1 f=b11 vis=0.00 top=382 bottom=430 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 12: S o1 f=b12 vis=0.00 top=382 bottom=430 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 13: S o1 f=b1 vis=0.00 top=-234 bottom=-186 port=126-426 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+== o2 start: S o2 f=none
+  Tab 1: S o2 f=b1 vis=1.00 top=130 bottom=178 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 2: S o2 f=b2 vis=1.00 top=186 bottom=234 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 3: S o2 f=b3 vis=1.00 top=242 bottom=290 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 4: S o2 f=b4 vis=1.00 top=298 bottom=346 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 5: S o2 f=b5 vis=0.92 top=310 bottom=358 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 6: S o2 f=b6 vis=0.92 top=310 bottom=358 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 7: S o2 f=b7 vis=0.92 top=310 bottom=358 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 8: S o2 f=b8 vis=0.92 top=310 bottom=358 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 9: S o2 f=b9 vis=0.92 top=310 bottom=358 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 10: S o2 f=b10 vis=0.92 top=310 bottom=358 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 11: S o2 f=b11 vis=0.92 top=310 bottom=358 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 12: S o2 f=b12 vis=0.92 top=310 bottom=358 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 13: S o2 f=b1 vis=0.00 top=-306 bottom=-258 port=126-354 over=354-426 | node=null bounds=Rect(0, 0 - 0, 0)
+== o3 start: S o3 f=none
+  Tab 1: S o3 f=none | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 2: S o3 f=b1 vis=1.00 top=202 bottom=250 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 3: S o3 f=b2 vis=1.00 top=258 bottom=306 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 4: S o3 f=b3 vis=1.00 top=314 bottom=362 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 5: S o3 f=b4 vis=1.00 top=370 bottom=418 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 6: S o3 f=b5 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 7: S o3 f=b6 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 8: S o3 f=b7 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 9: S o3 f=b8 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 10: S o3 f=b9 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 11: S o3 f=b10 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 12: S o3 f=b11 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 13: S o3 f=b12 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+== o4 start: S o4 f=none
+  Tab 1: S o4 f=b1 vis=0.00 top=130 bottom=178 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 2: S o4 f=b2 vis=0.75 top=186 bottom=234 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 3: S o4 f=b3 vis=1.00 top=242 bottom=290 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 4: S o4 f=b4 vis=1.00 top=298 bottom=346 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 5: S o4 f=b5 vis=1.00 top=354 bottom=402 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 6: S o4 f=b6 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 7: S o4 f=b7 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 8: S o4 f=b8 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 9: S o4 f=b9 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 10: S o4 f=b10 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 11: S o4 f=b11 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 12: S o4 f=b12 vis=0.92 top=382 bottom=430 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 13: S o4 f=b1 vis=0.00 top=-234 bottom=-186 port=126-426 over=126-198 | node=null bounds=Rect(0, 0 - 0, 0)
+== o5 start: S o5 f=none
+  Tab 1: S o5 f=b1 vis=1.00 top=130 bottom=178 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 2: S o5 f=b2 vis=1.00 top=186 bottom=234 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 3: S o5 f=b3 vis=1.00 top=242 bottom=290 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 4: S o5 f=b4 vis=1.00 top=298 bottom=346 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 5: S o5 f=b5 vis=0.00 top=354 bottom=402 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 6: S o5 f=b6 vis=0.00 top=382 bottom=430 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 7: S o5 f=b7 vis=0.00 top=382 bottom=430 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 8: S o5 f=b8 vis=0.00 top=382 bottom=430 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 9: S o5 f=b9 vis=0.00 top=382 bottom=430 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 10: S o5 f=b10 vis=0.00 top=382 bottom=430 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 11: S o5 f=b11 vis=0.00 top=382 bottom=430 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 12: S o5 f=b12 vis=0.00 top=382 bottom=430 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+  Tab 13: S o5 f=b3 vis=0.00 top=-122 bottom=-74 port=126-426 over=346-426 | node=null bounds=Rect(0, 0 - 0, 0)
+/sdcard/Android/data/dev.fluttera11y.flutter_a11y_techniques/files/./: 280 files pulled, 0 skipped. 9.7 MB/s (6304467 bytes in 0.622s)
+
+# Pixel analysis by analyse.py.txt of the light PNGs (the dark ones were deleted unanalysed, see above).
+== android2-light-c1  u: S c1 f=0 m=h n=2 k=0 | tab: S c1 f=1 m=h n=3 k=1
+   changed=0 of 74256 unstable=0
+   page=#FBF8FF
+== android2-light-c2  u: S c2 f=0 m=h n=2 k=0 | tab: S c2 f=1 m=h n=3 k=1
+   changed=0 of 74256 unstable=0
+   page=#FBF8FF
+== android2-light-c3  u: S c3 f=0 m=h n=2 k=0 | tab: S c3 f=1 m=h n=3 k=1
+   changed=0 of 44454 unstable=0
+   page=#FBF8FF
+== android2-light-c4  u: S c4 f=0 m=h n=2 k=0 | tab: S c4 f=1 m=h n=3 k=1
+   changed=0 of 40000 unstable=0
+   page=#FBF8FF
+== android2-light-c5  u: S c5 f=0 m=h n=2 k=0 | tab: S c5 f=1 m=h n=3 k=1
+   changed=0 of 123522 unstable=0
+   page=#FBF8FF
+== android2-light-m1  u: S m1 f=0 m=h n=2 k=0 | tab: S m1 f=1 m=h n=3 k=1
+   changed=0 of 74130 unstable=0
+   page=#FBF8FF
+== android2-light-m10  u: S m10 f=0 m=h n=2 k=0 | tab: S m10 f=1 m=h n=3 k=1
+   changed=0 of 50820 unstable=0
+   page=#FBF8FF
+== android2-light-m11  u: S m11 f=0 m=h n=2 k=0 | tab: S m11 f=1 m=h n=3 k=1
+   changed=0 of 44100 unstable=0
+   page=#FBF8FF
+== android2-light-m12  u: S m12 f=0 m=h n=2 k=0 | tab: S m12 f=1 m=h n=3 k=1
+   changed=0 of 164934 unstable=0
+   page=#FBF8FF
+== android2-light-m13  u: S m13 f=0 m=h n=2 k=0 | tab: S m13 f=1 m=h n=3 k=1
+   changed=0 of 93704 unstable=0
+   page=#FBF8FF
+== android2-light-m14  u: S m14 f=0 m=h n=2 k=0 | tab: S m14 f=1 m=h n=3 k=1
+   changed=0 of 74550 unstable=0
+   page=#FBF8FF
+== android2-light-m15  u: S m15 f=0 m=h n=2 k=0 | tab: S m15 f=1 m=h n=3 k=1
+   changed=0 of 149940 unstable=0
+   page=#FBF8FF
+== android2-light-m2  u: S m2 f=0 m=h n=2 k=0 | tab: S m2 f=1 m=h n=3 k=1
+   changed=0 of 74130 unstable=0
+   page=#FBF8FF
+== android2-light-m3  u: S m3 f=0 m=h n=2 k=0 | tab: S m3 f=1 m=h n=3 k=1
+   changed=1657 of 74130 unstable=0
+   bbox=(42,53)-(310,157) box=353x210
+   indicator=#515B92 (100% of changed) replaced=#767680 change-ratio=1.43
+   new colours: #515B92 100%
+   adjacent: #FBF8FF 100% ratio 6.12
+   page=#FBF8FF
+== android2-light-m4  u: S m4 f=0 m=h n=2 k=0 | tab: S m4 f=1 m=h n=3 k=1
+   changed=0 of 60900 unstable=0
+   page=#FBF8FF
+== android2-light-m5  u: S m5 f=0 m=h n=2 k=0 | tab: S m5 f=1 m=h n=3 k=1
+   changed=0 of 44100 unstable=0
+   page=#FBF8FF
+== android2-light-m6  u: S m6 f=0 m=h n=2 k=0 | tab: S m6 f=1 m=h n=3 k=1
+   changed=10201 of 164934 unstable=0
+   bbox=(42,32)-(671,188) box=714x231
+   indicator=#515B92 (71% of changed) replaced=#767680 change-ratio=1.43
+   new colours: #515B92 71%, #FBF8FF 22%, #A7AAC9 0%, #CCCDE1 0%
+   adjacent: #FBF8FF 96% ratio 6.12; #F1EFF9 0% ratio 5.66; #F8F6FD 0% ratio 6.01; #F3F1FA 0% ratio 5.76; #FAF7FF 0% ratio 6.08
+   page=#FBF8FF
+== android2-light-m7  u: S m7 f=0 m=h n=2 k=0 | tab: S m7 f=1 m=h n=3 k=1
+   changed=6103 of 164934 unstable=0
+   bbox=(42,67)-(671,188) box=714x231
+   indicator=#515B92 (60% of changed) replaced=#FBF8FF change-ratio=6.12
+   new colours: #515B92 60%, #FBF8FF 30%, #A7AAC9 0%, #CCCDE1 0%
+   adjacent: #FBF8FF 95% ratio 6.12; #F1EFF9 0% ratio 5.66; #F8F6FD 0% ratio 6.01; #F3F1FA 0% ratio 5.76; #F0EEF8 0% ratio 5.61
+   page=#FBF8FF
+== android2-light-m8  u: S m8 f=0 m=h n=2 k=0 | tab: S m8 f=1 m=h n=3 k=1
+   changed=0 of 44100 unstable=0
+   page=#FBF8FF
+== android2-light-m9  u: S m9 f=0 m=h n=2 k=0 | tab: S m9 f=1 m=h n=3 k=1
+   changed=0 of 44100 unstable=0
+   page=#FBF8FF
+== android2-light-w1  u: S w1 f=0 m=h n=2 k=0 | tab: S w1 f=1 m=h n=3 k=1
+   changed=0 of 87958 unstable=0
+   page=#FBF8FF
+== android2-light-w2  u: S w2 f=0 m=h n=2 k=0 | tab: S w2 f=1 m=h n=3 k=1
+   changed=0 of 91078 unstable=0
+   page=#FBF8FF
+== android2-light-w3  u: S w3 f=0 m=h n=2 k=0 | tab: S w3 f=1 m=h n=3 k=1
+   changed=13244 of 91078 unstable=0
+   bbox=(42,42)-(370,193) box=403x226
+   indicator=#1B1B21 (60% of changed) replaced=#FBF8FF change-ratio=16.30
+   new colours: #1B1B21 60%, #E4E1E9 31%, #9D9BA2 0%, #434349 0%
+   adjacent: #E4E1E9 65% ratio 13.26; #FBF8FF 23% ratio 16.30; #1B1B21 4% ratio 1.00; #DFDCE4 0% ratio 12.65; #E1DEE6 0% ratio 12.89
+   page=#FBF8FF
+== android2-light-x1  u: S x1 f=0 m=h n=2 k=0 | tab: S x1 f=1 m=h n=3 k=1
+   changed=0 of 71400 unstable=0
+   page=#FBF8FF
+== android2-light-x2  u: S x2 f=0 m=h n=2 k=0 | tab: S x2 f=1 m=h n=3 k=1
+   changed=0 of 85748 unstable=0
+   page=#FBF8FF
+== android2-light-x3  u: S x3 f=0 m=h n=2 k=0 | tab: S x3 f=1 m=h n=3 k=1
+   changed=3703 of 58170 unstable=0
+   bbox=(42,53)-(234,157) box=277x210
+   indicator=#1B1B21 (100% of changed) replaced=#FBF8FF change-ratio=16.30
+   new colours: #1B1B21 100%
+   adjacent: #FBF8FF 100% ratio 16.30
+   page=#FBF8FF
+== android2-light-x4  u: S x4 f=0 m=h n=2 k=0 | tab: S x4 f=1 m=h n=3 k=1
+   changed=0 of 71400 unstable=0
+   page=#FBF8FF
+== android2-light-x5  u: S x5 f=0 m=h n=2 k=0 | tab: S x5 f=1 m=h n=3 k=1
+   changed=0 of 74035 unstable=0
+   page=#FBF8FF

@@ -1,0 +1,606 @@
+# V14 probe on iOS: iPhone 17 simulator, iOS 27.0, V14ProbeUITests.swift.txt run by ios_probe.sh.txt.
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+== testControls
+V14PROBE ios-light-m1 box=[72.0 426.0 406.8123779296875 240.0 1] | u: S m1 f=0 m=h n=1 k=0 | tab: S m1 f=1 m=t n=2 k=2 | touch elsewhere: S m1 f=1 m=h n=2 k=2 | tap: S m1 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m1 box=[72.0 426.0 406.8123779296875 240.0 1] | u: S m1 f=0 m=h n=1 k=0 | tab: S m1 f=1 m=t n=2 k=2 | touch elsewhere: S m1 f=1 m=h n=2 k=2 | tap: S m1 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m2 box=[72.0 426.0 413.9285888671875 240.0 1] | u: S m2 f=0 m=h n=1 k=0 | tab: S m2 f=1 m=t n=2 k=2 | touch elsewhere: S m2 f=1 m=h n=2 k=2 | tap: S m2 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m2 box=[72.0 426.0 413.9285888671875 240.0 1] | u: S m2 f=0 m=h n=1 k=0 | tab: S m2 f=1 m=t n=2 k=2 | touch elsewhere: S m2 f=1 m=h n=2 k=2 | tap: S m2 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m3 box=[72.0 426.0 414.9471130371094 240.0 1] | u: S m3 f=0 m=h n=1 k=0 | tab: S m3 f=1 m=t n=2 k=2 | touch elsewhere: S m3 f=1 m=h n=2 k=2 | tap: S m3 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m3 box=[72.0 426.0 414.9471130371094 240.0 1] | u: S m3 f=0 m=h n=1 k=0 | tab: S m3 f=1 m=t n=2 k=2 | touch elsewhere: S m3 f=1 m=h n=2 k=2 | tap: S m3 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m4 box=[72.0 426.0 343.6648864746094 240.0 1] | u: S m4 f=0 m=h n=1 k=0 | tab: S m4 f=1 m=t n=2 k=2 | touch elsewhere: S m4 f=1 m=h n=2 k=2 | tap: S m4 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m4 box=[72.0 426.0 343.6648864746094 240.0 1] | u: S m4 f=0 m=h n=1 k=0 | tab: S m4 f=1 m=t n=2 k=2 | touch elsewhere: S m4 f=1 m=h n=2 k=2 | tap: S m4 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m5 box=[72.0 426.0 240.0 240.0 1] | u: S m5 f=0 m=h n=1 k=0 | tab: S m5 f=1 m=t n=2 k=2 | touch elsewhere: S m5 f=1 m=h n=2 k=2 | tap: S m5 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m5 box=[72.0 426.0 240.0 240.0 1] | u: S m5 f=0 m=h n=1 k=0 | tab: S m5 f=1 m=t n=2 k=2 | touch elsewhere: S m5 f=1 m=h n=2 k=2 | tap: S m5 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m6 box=[72.0 426.0 816.0 264.0 1] | u: S m6 f=0 m=h n=1 k=0 | tab: S m6 f=1 m=t n=2 k=2 | touch elsewhere: S m6 f=1 m=t n=2 k=2 | tap: S m6 f=1 m=h n=2 k=0 | 
+V14PROBE ios-dark-m6 box=[72.0 426.0 816.0 264.0 1] | u: S m6 f=0 m=h n=1 k=0 | tab: S m6 f=1 m=t n=2 k=2 | touch elsewhere: S m6 f=1 m=t n=2 k=2 | tap: S m6 f=1 m=h n=2 k=0 | 
+V14PROBE ios-light-m7 box=[72.0 426.0 816.0 264.0 1] | u: S m7 f=0 m=h n=1 k=0 | tab: S m7 f=1 m=t n=2 k=2 | touch elsewhere: S m7 f=1 m=t n=2 k=2 | tap: S m7 f=1 m=h n=2 k=0 | 
+V14PROBE ios-dark-m7 box=[72.0 426.0 816.0 264.0 1] | u: S m7 f=0 m=h n=1 k=0 | tab: S m7 f=1 m=t n=2 k=2 | touch elsewhere: S m7 f=1 m=t n=2 k=2 | tap: S m7 f=1 m=h n=2 k=0 | 
+V14PROBE ios-light-m8 box=[72.0 426.0 240.0 240.0 1] | u: S m8 f=0 m=h n=1 k=0 | tab: S m8 f=1 m=t n=2 k=2 | touch elsewhere: S m8 f=1 m=h n=2 k=2 | tap: S m8 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m8 box=[72.0 426.0 240.0 240.0 1] | u: S m8 f=0 m=h n=1 k=0 | tab: S m8 f=1 m=t n=2 k=2 | touch elsewhere: S m8 f=1 m=h n=2 k=2 | tap: S m8 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m9 box=[72.0 426.0 240.0 240.0 1] | u: S m9 f=0 m=h n=1 k=0 | tab: S m9 f=1 m=t n=2 k=2 | touch elsewhere: S m9 f=1 m=h n=2 k=2 | tap: S m9 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m9 box=[72.0 426.0 240.0 240.0 1] | u: S m9 f=0 m=h n=1 k=0 | tab: S m9 f=1 m=t n=2 k=2 | touch elsewhere: S m9 f=1 m=h n=2 k=2 | tap: S m9 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m10 box=[72.0 426.0 276.0 240.0 1] | u: S m10 f=0 m=h n=1 k=0 | tab: S m10 f=1 m=t n=2 k=2 | touch elsewhere: S m10 f=1 m=h n=2 k=2 | tap: S m10 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m10 box=[72.0 426.0 276.0 240.0 1] | u: S m10 f=0 m=h n=1 k=0 | tab: S m10 f=1 m=t n=2 k=2 | touch elsewhere: S m10 f=1 m=h n=2 k=2 | tap: S m10 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m11 box=[72.0 426.0 240.0 240.0 1] | u: S m11 f=0 m=h n=1 k=0 | tab: S m11 f=1 m=t n=2 k=2 | touch elsewhere: S m11 f=1 m=h n=2 k=2 | tap: S m11 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m11 box=[72.0 426.0 240.0 240.0 1] | u: S m11 f=0 m=h n=1 k=0 | tab: S m11 f=1 m=t n=2 k=2 | touch elsewhere: S m11 f=1 m=h n=2 k=2 | tap: S m11 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m12 box=[72.0 426.0 816.0 264.0 1] | u: S m12 f=0 m=h n=1 k=0 | tab: S m12 f=1 m=t n=2 k=2 | touch elsewhere: S m12 f=1 m=h n=2 k=2 | tap: S m12 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m12 box=[72.0 426.0 816.0 264.0 1] | u: S m12 f=0 m=h n=1 k=0 | tab: S m12 f=1 m=t n=2 k=2 | touch elsewhere: S m12 f=1 m=h n=2 k=2 | tap: S m12 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m13 box=[72.0 426.0 496.224609375 252.0 1] | u: S m13 f=0 m=h n=1 k=0 | tab: S m13 f=1 m=t n=2 k=2 | touch elsewhere: S m13 f=1 m=h n=2 k=2 | tap: S m13 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m13 box=[72.0 426.0 496.224609375 252.0 1] | u: S m13 f=0 m=h n=1 k=0 | tab: S m13 f=1 m=t n=2 k=2 | touch elsewhere: S m13 f=1 m=h n=2 k=2 | tap: S m13 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m14 box=[72.0 426.0 415.5848693847656 240.0 1] | u: S m14 f=0 m=h n=1 k=0 | tab: S m14 f=1 m=t n=2 k=2 | touch elsewhere: S m14 f=1 m=h n=2 k=2 | tap: S m14 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m14 box=[72.0 426.0 415.5848693847656 240.0 1] | u: S m14 f=0 m=h n=1 k=0 | tab: S m14 f=1 m=t n=2 k=2 | touch elsewhere: S m14 f=1 m=h n=2 k=2 | tap: S m14 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-m15 box=[72.0 426.0 816.0 240.0 1] | u: S m15 f=0 m=h n=1 k=0 | tab: S m15 f=1 m=t n=2 k=2 | touch elsewhere: S m15 f=1 m=h n=2 k=2 | tap: S m15 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-m15 box=[72.0 426.0 816.0 240.0 1] | u: S m15 f=0 m=h n=1 k=0 | tab: S m15 f=1 m=t n=2 k=2 | touch elsewhere: S m15 f=1 m=h n=2 k=2 | tap: S m15 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-c1 box=[72.0 426.0 389.3514404296875 252.0 1] | u: S c1 f=0 m=h n=1 k=0 | tab: S c1 f=1 m=t n=2 k=2 | touch elsewhere: S c1 f=1 m=h n=2 k=2 | tap: S c1 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-c1 box=[72.0 426.0 389.3514404296875 252.0 1] | u: S c1 f=0 m=h n=1 k=0 | tab: S c1 f=1 m=t n=2 k=2 | touch elsewhere: S c1 f=1 m=h n=2 k=2 | tap: S c1 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-c2 box=[72.0 426.0 396.4735107421875 252.0 1] | u: S c2 f=0 m=h n=1 k=0 | tab: S c2 f=1 m=t n=2 k=2 | touch elsewhere: S c2 f=1 m=h n=2 k=2 | tap: S c2 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-c2 box=[72.0 426.0 396.4735107421875 252.0 1] | u: S c2 f=0 m=h n=1 k=0 | tab: S c2 f=1 m=t n=2 k=2 | touch elsewhere: S c2 f=1 m=h n=2 k=2 | tap: S c2 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-c3 box=[72.0 426.0 273.0 213.0 1] | u: S c3 f=0 m=h n=1 k=0 | tab: S c3 f=1 m=t n=2 k=2 | touch elsewhere: S c3 f=1 m=h n=2 k=2 | tap: S c3 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-c3 box=[72.0 426.0 273.0 213.0 1] | u: S c3 f=0 m=h n=1 k=0 | tab: S c3 f=1 m=t n=2 k=2 | touch elsewhere: S c3 f=1 m=h n=2 k=2 | tap: S c3 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-c4 box=[72.0 426.0 228.0 228.0 1] | u: S c4 f=0 m=h n=1 k=0 | tab: S c4 f=1 m=t n=2 k=2 | touch elsewhere: S c4 f=1 m=h n=2 k=2 | tap: S c4 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-c4 box=[72.0 426.0 228.0 228.0 1] | u: S c4 f=0 m=h n=1 k=0 | tab: S c4 f=1 m=t n=2 k=2 | touch elsewhere: S c4 f=1 m=h n=2 k=2 | tap: S c4 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-c5 box=[72.0 426.0 816.0 198.0 1] | u: S c5 f=0 m=h n=1 k=0 | tab: S c5 f=1 m=t n=2 k=2 | touch elsewhere: S c5 f=1 m=t n=2 k=2 | tap: S c5 f=1 m=h n=2 k=0 | 
+V14PROBE ios-dark-c5 box=[72.0 426.0 816.0 198.0 1] | u: S c5 f=0 m=h n=1 k=0 | tab: S c5 f=1 m=t n=2 k=2 | touch elsewhere: S c5 f=1 m=t n=2 k=2 | tap: S c5 f=1 m=h n=2 k=0 | 
+V14PROBE ios-light-w1 box=[72.0 426.0 466.763671875 252.0 1] | u: S w1 f=0 m=h n=1 k=0 | tab: S w1 f=1 m=t n=2 k=2 | touch elsewhere: S w1 f=1 m=h n=2 k=2 | tap: S w1 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-w1 box=[72.0 426.0 466.763671875 252.0 1] | u: S w1 f=0 m=h n=1 k=0 | tab: S w1 f=1 m=t n=2 k=2 | touch elsewhere: S w1 f=1 m=h n=2 k=2 | tap: S w1 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-w2 box=[72.0 426.0 478.62890625 258.0 1] | u: S w2 f=0 m=h n=1 k=0 | tab: S w2 f=1 m=t n=2 k=2 | touch elsewhere: S w2 f=1 m=h n=2 k=2 | tap: S w2 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-w2 box=[72.0 426.0 478.62890625 258.0 1] | u: S w2 f=0 m=h n=1 k=0 | tab: S w2 f=1 m=t n=2 k=2 | touch elsewhere: S w2 f=1 m=h n=2 k=2 | tap: S w2 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-w3 box=[72.0 426.0 479.61328125 258.0 1] | u: S w3 f=0 m=h n=1 k=0 | tab: S w3 f=1 m=t n=2 k=2 | touch elsewhere: S w3 f=1 m=h n=2 k=2 | tap: S w3 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-w3 box=[72.0 426.0 479.61328125 258.0 1] | u: S w3 f=0 m=h n=1 k=0 | tab: S w3 f=1 m=t n=2 k=2 | touch elsewhere: S w3 f=1 m=h n=2 k=2 | tap: S w3 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-x1 box=[72.0 426.0 393.57794189453125 240.0 1] | u: S x1 f=0 m=h n=1 k=0 | tab: S x1 f=1 m=t n=2 k=2 | touch elsewhere: S x1 f=1 m=h n=2 k=2 | tap: S x1 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-x1 box=[72.0 426.0 393.57794189453125 240.0 1] | u: S x1 f=0 m=h n=1 k=0 | tab: S x1 f=1 m=t n=2 k=2 | touch elsewhere: S x1 f=1 m=h n=2 k=2 | tap: S x1 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-x2 box=[72.0 426.0 462.12890625 252.0 1] | u: S x2 f=0 m=h n=1 k=0 | tab: S x2 f=1 m=t n=2 k=2 | touch elsewhere: S x2 f=1 m=h n=2 k=2 | tap: S x2 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-x2 box=[72.0 426.0 462.12890625 252.0 1] | u: S x2 f=0 m=h n=1 k=0 | tab: S x2 f=1 m=t n=2 k=2 | touch elsewhere: S x2 f=1 m=h n=2 k=2 | tap: S x2 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-x3 box=[72.0 426.0 328.3455200195312 240.0 1] | u: S x3 f=0 m=h n=1 k=0 | tab: S x3 f=1 m=t n=2 k=2 | touch elsewhere: S x3 f=1 m=h n=2 k=2 | tap: S x3 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-x3 box=[72.0 426.0 328.3455200195312 240.0 1] | u: S x3 f=0 m=h n=1 k=0 | tab: S x3 f=1 m=t n=2 k=2 | touch elsewhere: S x3 f=1 m=h n=2 k=2 | tap: S x3 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-x4 box=[72.0 426.0 400.37969970703125 240.0 1] | u: S x4 f=0 m=h n=1 k=0 | tab: S x4 f=1 m=t n=2 k=2 | touch elsewhere: S x4 f=1 m=h n=2 k=2 | tap: S x4 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-x4 box=[72.0 426.0 400.37969970703125 240.0 1] | u: S x4 f=0 m=h n=1 k=0 | tab: S x4 f=1 m=t n=2 k=2 | touch elsewhere: S x4 f=1 m=h n=2 k=2 | tap: S x4 f=0 m=h n=1 k=0 | 
+V14PROBE ios-light-x5 box=[72.0 426.0 395.4276123046875 252.0 1] | u: S x5 f=0 m=h n=1 k=0 | tab: S x5 f=1 m=t n=2 k=2 | touch elsewhere: S x5 f=1 m=h n=2 k=2 | tap: S x5 f=0 m=h n=1 k=0 | 
+V14PROBE ios-dark-x5 box=[72.0 426.0 395.4276123046875 252.0 1] | u: S x5 f=0 m=h n=1 k=0 | tab: S x5 f=1 m=t n=2 k=2 | touch elsewhere: S x5 f=1 m=h n=2 k=2 | tap: S x5 f=0 m=h n=1 k=0 | 
+Test Case '-[RunnerUITests.V14ProbeUITests testControls]' passed (1127.218 seconds).
+== testObscure
+V14PROBE == o1 start: S o1 f=none
+V14PROBE   Tab 1: S o1 f=b1 vis=1.00 top=138 bottom=186 port=134-434 over=362-434
+V14PROBE   Tab 2: S o1 f=b2 vis=1.00 top=194 bottom=242 port=134-434 over=362-434
+V14PROBE   Tab 3: S o1 f=b3 vis=1.00 top=250 bottom=298 port=134-434 over=362-434
+V14PROBE   Tab 4: S o1 f=b4 vis=1.00 top=306 bottom=354 port=134-434 over=362-434
+V14PROBE   Tab 5: S o1 f=b5 vis=0.00 top=362 bottom=410 port=134-434 over=362-434
+V14PROBE   Tab 6: S o1 f=b6 vis=0.00 top=390 bottom=438 port=134-434 over=362-434
+V14PROBE   Tab 7: S o1 f=b7 vis=0.00 top=390 bottom=438 port=134-434 over=362-434
+V14PROBE   Tab 8: S o1 f=b8 vis=0.00 top=390 bottom=438 port=134-434 over=362-434
+V14PROBE   Tab 9: S o1 f=b9 vis=0.00 top=390 bottom=438 port=134-434 over=362-434
+V14PROBE   Tab 10: S o1 f=b10 vis=0.00 top=390 bottom=438 port=134-434 over=362-434
+V14PROBE   Tab 11: S o1 f=b11 vis=0.00 top=390 bottom=438 port=134-434 over=362-434
+V14PROBE   Tab 12: S o1 f=b12 vis=0.00 top=390 bottom=438 port=134-434 over=362-434
+V14PROBE   Tab 13: S o1 f=b1 vis=0.00 top=-226 bottom=-178 port=134-434 over=362-434
+V14PROBE == o2 start: S o2 f=none
+V14PROBE   Tab 1: S o2 f=b1 vis=1.00 top=138 bottom=186 port=134-362 over=362-434
+V14PROBE   Tab 2: S o2 f=b2 vis=1.00 top=194 bottom=242 port=134-362 over=362-434
+V14PROBE   Tab 3: S o2 f=b3 vis=1.00 top=250 bottom=298 port=134-362 over=362-434
+V14PROBE   Tab 4: S o2 f=b4 vis=1.00 top=306 bottom=354 port=134-362 over=362-434
+V14PROBE   Tab 5: S o2 f=b5 vis=0.92 top=318 bottom=366 port=134-362 over=362-434
+V14PROBE   Tab 6: S o2 f=b6 vis=0.92 top=318 bottom=366 port=134-362 over=362-434
+V14PROBE   Tab 7: S o2 f=b7 vis=0.92 top=318 bottom=366 port=134-362 over=362-434
+V14PROBE   Tab 8: S o2 f=b8 vis=0.92 top=318 bottom=366 port=134-362 over=362-434
+V14PROBE   Tab 9: S o2 f=b9 vis=0.92 top=318 bottom=366 port=134-362 over=362-434
+V14PROBE   Tab 10: S o2 f=b10 vis=0.92 top=318 bottom=366 port=134-362 over=362-434
+V14PROBE   Tab 11: S o2 f=b11 vis=0.92 top=318 bottom=366 port=134-362 over=362-434
+V14PROBE   Tab 12: S o2 f=b12 vis=0.92 top=318 bottom=366 port=134-362 over=362-434
+V14PROBE   Tab 13: S o2 f=b1 vis=0.00 top=-298 bottom=-250 port=134-362 over=362-434
+V14PROBE == o3 start: S o3 f=none
+V14PROBE   Tab 1: S o3 f=none
+V14PROBE   Tab 2: S o3 f=b1 vis=1.00 top=210 bottom=258 port=134-434 over=134-206
+V14PROBE   Tab 3: S o3 f=b2 vis=1.00 top=266 bottom=314 port=134-434 over=134-206
+V14PROBE   Tab 4: S o3 f=b3 vis=1.00 top=322 bottom=370 port=134-434 over=134-206
+V14PROBE   Tab 5: S o3 f=b4 vis=1.00 top=378 bottom=426 port=134-434 over=134-206
+V14PROBE   Tab 6: S o3 f=b5 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 7: S o3 f=b6 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 8: S o3 f=b7 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 9: S o3 f=b8 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 10: S o3 f=b9 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 11: S o3 f=b10 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 12: S o3 f=b11 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 13: S o3 f=b12 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE == o4 start: S o4 f=none
+V14PROBE   Tab 1: S o4 f=b1 vis=0.00 top=138 bottom=186 port=134-434 over=134-206
+V14PROBE   Tab 2: S o4 f=b2 vis=0.75 top=194 bottom=242 port=134-434 over=134-206
+V14PROBE   Tab 3: S o4 f=b3 vis=1.00 top=250 bottom=298 port=134-434 over=134-206
+V14PROBE   Tab 4: S o4 f=b4 vis=1.00 top=306 bottom=354 port=134-434 over=134-206
+V14PROBE   Tab 5: S o4 f=b5 vis=1.00 top=362 bottom=410 port=134-434 over=134-206
+V14PROBE   Tab 6: S o4 f=b6 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 7: S o4 f=b7 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 8: S o4 f=b8 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 9: S o4 f=b9 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 10: S o4 f=b10 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 11: S o4 f=b11 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 12: S o4 f=b12 vis=0.92 top=390 bottom=438 port=134-434 over=134-206
+V14PROBE   Tab 13: S o4 f=b1 vis=0.00 top=-226 bottom=-178 port=134-434 over=134-206
+V14PROBE == o5 start: S o5 f=none
+V14PROBE   Tab 1: S o5 f=b1 vis=1.00 top=138 bottom=186 port=134-434 over=354-434
+V14PROBE   Tab 2: S o5 f=b2 vis=1.00 top=194 bottom=242 port=134-434 over=354-434
+V14PROBE   Tab 3: S o5 f=b3 vis=1.00 top=250 bottom=298 port=134-434 over=354-434
+V14PROBE   Tab 4: S o5 f=b4 vis=1.00 top=306 bottom=354 port=134-434 over=354-434
+V14PROBE   Tab 5: S o5 f=b5 vis=0.00 top=362 bottom=410 port=134-434 over=354-434
+V14PROBE   Tab 6: S o5 f=b6 vis=0.00 top=390 bottom=438 port=134-434 over=354-434
+V14PROBE   Tab 7: S o5 f=b7 vis=0.00 top=390 bottom=438 port=134-434 over=354-434
+V14PROBE   Tab 8: S o5 f=b8 vis=0.00 top=390 bottom=438 port=134-434 over=354-434
+V14PROBE   Tab 9: S o5 f=b9 vis=0.00 top=390 bottom=438 port=134-434 over=354-434
+V14PROBE   Tab 10: S o5 f=b10 vis=0.00 top=390 bottom=438 port=134-434 over=354-434
+V14PROBE   Tab 11: S o5 f=b11 vis=0.00 top=390 bottom=438 port=134-434 over=354-434
+V14PROBE   Tab 12: S o5 f=b12 vis=0.00 top=390 bottom=438 port=134-434 over=354-434
+V14PROBE   Tab 13: S o5 f=b3 vis=0.00 top=-114 bottom=-66 port=134-434 over=354-434
+Test Case '-[RunnerUITests.V14ProbeUITests testObscure]' passed (130.951 seconds).
+
+# Pixel analysis by analyse.py.txt of the XCUIScreen PNGs (not committed). Boxes are in pixels, 3 to a point.
+== ios-dark-c1  u: S c1 f=0 m=h n=1 k=0 | tab: S c1 f=1 m=t n=2 k=2 | touch elsewhere: S c1 f=1 m=h n=2 k=2 | tap: S c1 f=0 m=h n=1 k=0
+   changed=9663 of 98028 unstable=0
+   bbox=(37,37)-(351,214) box=389x252
+   indicator=#5C8EC6 (88% of changed) replaced=#121318 change-ratio=5.42
+   new colours: #5C8EC6 88%, #37516F 6%, #4A6F9B 2%, #253244 2%
+   adjacent: #121318 100% ratio 5.42
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-c2  u: S c2 f=0 m=h n=1 k=0 | tab: S c2 f=1 m=t n=2 k=2 | touch elsewhere: S c2 f=1 m=h n=2 k=2 | tap: S c2 f=0 m=h n=1 k=0
+   changed=9807 of 99792 unstable=0
+   bbox=(37,37)-(358,214) box=396x252
+   indicator=#5C91C6 (88% of changed) replaced=#121318 change-ratio=5.58
+   new colours: #5C91C6 88%, #37526F 5%, #253344 1%, #338BE3 1%
+   adjacent: #121318 52% ratio 5.58; #0A84FF 47% ratio 1.10
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-c3  u: S c3 f=0 m=h n=1 k=0 | tab: S c3 f=1 m=t n=2 k=2 | touch elsewhere: S c3 f=1 m=h n=2 k=2 | tap: S c3 f=0 m=h n=1 k=0
+   changed=4960 of 58149 unstable=0
+   bbox=(49,49)-(223,163) box=273x213
+   indicator=#5CC577 (88% of changed) replaced=#121318 change-ratio=8.58
+   new colours: #5CC577 88%, #376C48 4%, #254030 1%, #4A995F 1%
+   adjacent: #121318 54% ratio 8.58; #323339 19% ratio 5.82; #303137 5% ratio 5.99; #313238 3% ratio 5.91; #2C2D31 2% ratio 6.36
+   page=#121318
+   e: 0 changed vs u
+   t: 11541 changed vs u
+== ios-dark-c4  u: S c4 f=0 m=h n=1 k=0 | tab: S c4 f=1 m=t n=2 k=2 | touch elsewhere: S c4 f=1 m=h n=2 k=2 | tap: S c4 f=0 m=h n=1 k=0
+   changed=2192 of 51984 unstable=0
+   bbox=(90,90)-(137,137) box=228x228
+   indicator=#40485B (1% of changed) replaced=#121318 change-ratio=2.03
+   new colours: #40485B 1%, #2B3755 1%, #4C556B 1%, #57627C 1%
+   adjacent: #121318 95% ratio 2.03; #151820 2% ratio 1.94; #161922 1% ratio 1.92; #161921 1% ratio 1.92
+   page=#121318
+   e: 0 changed vs u
+   t: 1656 changed vs u
+== ios-dark-c5  u: S c5 f=0 m=h n=1 k=0 | tab: S c5 f=1 m=t n=2 k=2 | touch elsewhere: S c5 f=1 m=t n=2 k=2 | tap: S c5 f=1 m=h n=2 k=0
+   changed=0 of 161568 unstable=392
+   page=#121318
+   e: 2463 changed vs u
+   t: 392 changed vs u
+== ios-dark-m1  u: S m1 f=0 m=h n=1 k=0 | tab: S m1 f=1 m=t n=2 k=2 | touch elsewhere: S m1 f=1 m=h n=2 k=2 | tap: S m1 f=0 m=h n=1 k=0
+   changed=32741 of 97680 unstable=0
+   bbox=(48,60)-(358,179) box=407x240
+   indicator=#2B2C38 (98% of changed) replaced=#1B1B21 change-ratio=1.24
+   new colours: #2B2C38 98%, #24252F 0%, #5A5D79 0%, #252630 0%
+   adjacent: #BAC3FF 25% ratio 8.12; #111217 14% ratio 1.35; #0E0F13 11% ratio 1.39; #1D1E26 4% ratio 1.20; #1E1F27 2% ratio 1.19
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-m10  u: S m10 f=0 m=h n=1 k=0 | tab: S m10 f=1 m=t n=2 k=2 | touch elsewhere: S m10 f=1 m=h n=2 k=2 | tap: S m10 f=0 m=h n=1 k=0
+   changed=10016 of 66240 unstable=0
+   bbox=(48,60)-(167,179) box=276x240
+   indicator=#46464C (53% of changed) replaced=#34343A change-ratio=1.32
+   new colours: #46464C 53%, #27282D 24%, #C7C5D0 17%, #706F77 0%
+   adjacent: #9998A2 43% ratio 3.29; #121318 11% ratio 1.98; #1A1B20 5% ratio 1.83; #84848D 4% ratio 2.53; #7D7C85 4% ratio 2.27
+   page=#121318
+   e: 0 changed vs u
+   t: 13088 changed vs u
+== ios-dark-m11  u: S m11 f=0 m=h n=1 k=0 | tab: S m11 f=1 m=t n=2 k=2 | touch elsewhere: S m11 f=1 m=h n=2 k=2 | tap: S m11 f=0 m=h n=1 k=0
+   changed=11296 of 57600 unstable=0
+   bbox=(60,60)-(179,179) box=240x240
+   indicator=#27282D (88% of changed) replaced=#121318 change-ratio=1.26
+   new colours: #27282D 88%, #E4E1E9 6%, #26272C 0%, #292A2F 0%
+   adjacent: #121318 31% ratio 1.26; #1A1B20 16% ratio 1.17; #191A1F 10% ratio 1.18; #15161B 6% ratio 1.23; #131419 6% ratio 1.25
+   page=#121318
+   e: 0 changed vs u
+   t: 1576 changed vs u
+== ios-dark-m12  u: S m12 f=0 m=h n=1 k=0 | tab: S m12 f=1 m=t n=2 k=2 | touch elsewhere: S m12 f=1 m=h n=2 k=2 | tap: S m12 f=0 m=h n=1 k=0
+   changed=118114 of 215424 unstable=0
+   bbox=(48,48)-(767,215) box=816x264
+   indicator=#2F3034 (98% of changed) replaced=#121318 change-ratio=1.41
+   new colours: #2F3034 98%, #3E3F43 0%, #5C5C61 0%, #919096 0%
+   adjacent: #121318 47% ratio 1.41; #E4E1E9 30% ratio 10.20; #C7C5CC 3% ratio 7.71; #ACAAB1 1% ratio 5.74; #CECBD3 1% ratio 8.23
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-m13  u: S m13 f=0 m=h n=1 k=0 | tab: S m13 f=1 m=t n=2 k=2 | touch elsewhere: S m13 f=1 m=h n=2 k=2 | tap: S m13 f=0 m=h n=1 k=0
+   changed=60250 of 124992 unstable=0
+   bbox=(48,48)-(447,203) box=496x252
+   indicator=#37373C (96% of changed) replaced=#1B1B21 change-ratio=1.45
+   new colours: #37373C 96%, #2F3034 0%, #2E2F33 0%, #515156 0%
+   adjacent: #E4E1E9 34% ratio 9.16; #111217 12% ratio 1.58; #0E0F13 11% ratio 1.62; #121318 4% ratio 1.57; #101115 3% ratio 1.59
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-m14  u: S m14 f=0 m=h n=1 k=0 | tab: S m14 f=1 m=t n=2 k=2 | touch elsewhere: S m14 f=1 m=h n=2 k=2 | tap: S m14 f=0 m=h n=1 k=0
+   changed=31750 of 99840 unstable=0
+   bbox=(51,66)-(364,175) box=416x240
+   indicator=#2F3034 (96% of changed) replaced=#121318 change-ratio=1.41
+   new colours: #2F3034 96%, #3B3B42 0%, #333438 0%, #3F3F44 0%
+   adjacent: #46464F 39% ratio 1.41; #C7C5D0 38% ratio 7.74; #404148 2% ratio 1.30; #94939B 1% ratio 4.33; #97969F 0% ratio 4.51
+   page=#121318
+   e: 0 changed vs u
+   t: 39369 changed vs u
+== ios-dark-m15  u: S m15 f=0 m=h n=1 k=0 | tab: S m15 f=1 m=t n=2 k=2 | touch elsewhere: S m15 f=1 m=h n=2 k=2 | tap: S m15 f=0 m=h n=1 k=0
+   changed=12694 of 195840 unstable=0
+   bbox=(337,48)-(479,191) box=816x240
+   indicator=#232530 (57% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 57%, #22242F 8%, #23252F 3%, #22242E 3%
+   adjacent: #121318 15% ratio 1.22; #BAC3FF 8% ratio 8.95; #14151B 5% ratio 1.20; #16171D 5% ratio 1.17; #131419 4% ratio 1.21
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-m2  u: S m2 f=0 m=h n=1 k=0 | tab: S m2 f=1 m=t n=2 k=2 | touch elsewhere: S m2 f=1 m=h n=2 k=2 | tap: S m2 f=0 m=h n=1 k=0
+   changed=33179 of 99360 unstable=0
+   bbox=(48,60)-(365,179) box=414x240
+   indicator=#ABB4EF (98% of changed) replaced=#BAC3FF change-ratio=1.17
+   new colours: #ABB4EF 98%, #A9B2ED 0%, #9EA7E1 0%, #969FD9 0%
+   adjacent: #121318 24% ratio 9.28; #222C61 11% ratio 6.56; #858CB9 8% ratio 1.63; #5F6484 8% ratio 2.88; #383B4E 4% ratio 5.52
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-m3  u: S m3 f=0 m=h n=1 k=0 | tab: S m3 f=1 m=t n=2 k=2 | touch elsewhere: S m3 f=1 m=h n=2 k=2 | tap: S m3 f=0 m=h n=1 k=0
+   changed=33804 of 99600 unstable=0
+   bbox=(48,60)-(366,179) box=415x240
+   indicator=#232530 (90% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 90%, #BAC3FF 6%, #494D64 0%, #6F7498 0%
+   adjacent: #121318 45% ratio 1.22; #BAC3FF 26% ratio 8.95; #757AA0 1% ratio 3.66; #878EB9 1% ratio 4.79; #8C93C0 0% ratio 5.11
+   page=#121318
+   e: 2578 changed vs u
+   t: 0 changed vs u
+== ios-dark-m4  u: S m4 f=0 m=h n=1 k=0 | tab: S m4 f=1 m=t n=2 k=2 | touch elsewhere: S m4 f=1 m=h n=2 k=2 | tap: S m4 f=0 m=h n=1 k=0
+   changed=25071 of 82560 unstable=0
+   bbox=(48,60)-(295,179) box=344x240
+   indicator=#232530 (97% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 97%, #1F212A 0%, #2D303E 0%, #5D6280 0%
+   adjacent: #BAC3FF 27% ratio 8.95; #121318 25% ratio 1.22; #1B1C24 11% ratio 1.11; #16181E 6% ratio 1.16; #949BCB 1% ratio 5.66
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-m5  u: S m5 f=0 m=h n=1 k=0 | tab: S m5 f=1 m=t n=2 k=2 | touch elsewhere: S m5 f=1 m=h n=2 k=2 | tap: S m5 f=0 m=h n=1 k=0
+   changed=10294 of 57600 unstable=0
+   bbox=(60,60)-(179,179) box=240x240
+   indicator=#111F30 (96% of changed) replaced=#121318 change-ratio=1.12
+   new colours: #111F30 96%, #111C2A 0%, #112032 0%, #11243B 0%
+   adjacent: #121924 19% ratio 1.06; #121318 19% ratio 1.12; #0A84FF 14% ratio 4.56; #12161E 13% ratio 1.09; #0D5299 1% ratio 2.13
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-m6  u: S m6 f=0 m=h n=1 k=0 | tab: S m6 f=1 m=t n=2 k=2 | touch elsewhere: S m6 f=1 m=t n=2 k=2 | tap: S m6 f=1 m=h n=2 k=0
+   changed=13605 of 215424 unstable=464
+   bbox=(48,39)-(767,215) box=816x264
+   indicator=#BAC3FF (73% of changed) replaced=#121318 change-ratio=10.90
+   new colours: #BAC3FF 73%, #121318 20%, #9097C5 0%, #3C3F52 0%
+   adjacent: #121318 96% ratio 10.90; #131419 0% ratio 10.81; #222537 0% ratio 8.89; #17181E 0% ratio 10.40; #14151B 0% ratio 10.70
+   page=#121318
+   e: 13706 changed vs u
+   t: 13657 changed vs u
+== ios-dark-m7  u: S m7 f=0 m=h n=1 k=0 | tab: S m7 f=1 m=t n=2 k=2 | touch elsewhere: S m7 f=1 m=t n=2 k=2 | tap: S m7 f=1 m=h n=2 k=0
+   changed=7999 of 215424 unstable=464
+   bbox=(48,78)-(767,215) box=816x264
+   indicator=#BAC3FF (62% of changed) replaced=#121318 change-ratio=10.90
+   new colours: #BAC3FF 62%, #121318 28%, #9097C5 0%, #50546D 0%
+   adjacent: #121318 95% ratio 10.90; #131419 0% ratio 10.81; #222537 0% ratio 8.89; #17181E 0% ratio 10.40; #181920 0% ratio 10.29
+   page=#121318
+   e: 8171 changed vs u
+   t: 8463 changed vs u
+== ios-dark-m8  u: S m8 f=0 m=h n=1 k=0 | tab: S m8 f=1 m=t n=2 k=2 | touch elsewhere: S m8 f=1 m=h n=2 k=2 | tap: S m8 f=0 m=h n=1 k=0
+   changed=11296 of 57600 unstable=0
+   bbox=(60,60)-(179,179) box=240x240
+   indicator=#27282D (88% of changed) replaced=#121318 change-ratio=1.26
+   new colours: #27282D 88%, #E4E1E9 9%, #26272C 0%, #222328 0%
+   adjacent: #121318 31% ratio 1.26; #1A1B20 16% ratio 1.17; #191A1F 10% ratio 1.18; #15161B 6% ratio 1.23; #131419 6% ratio 1.25
+   page=#121318
+   e: 0 changed vs u
+   t: 2892 changed vs u
+== ios-dark-m9  u: S m9 f=0 m=h n=1 k=0 | tab: S m9 f=1 m=t n=2 k=2 | touch elsewhere: S m9 f=1 m=h n=2 k=2 | tap: S m9 f=0 m=h n=1 k=0
+   changed=8416 of 57600 unstable=0
+   bbox=(60,60)-(179,179) box=240x240
+   indicator=#232530 (97% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 97%, #23252F 0%, #1F212A 0%, #22242E 0%
+   adjacent: #BAC3FF 25% ratio 8.95; #121318 22% ratio 1.22; #191A21 5% ratio 1.14; #181A21 5% ratio 1.14; #181920 4% ratio 1.15
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-w1  u: S w1 f=0 m=h n=1 k=0 | tab: S w1 f=1 m=t n=2 k=2 | touch elsewhere: S w1 f=1 m=h n=2 k=2 | tap: S w1 f=0 m=h n=1 k=0
+   changed=0 of 117684 unstable=0
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-w2  u: S w2 f=0 m=h n=1 k=0 | tab: S w2 f=1 m=t n=2 k=2 | touch elsewhere: S w2 f=1 m=h n=2 k=2 | tap: S w2 f=0 m=h n=1 k=0
+   changed=17639 of 123582 unstable=0
+   bbox=(48,48)-(442,221) box=479x258
+   indicator=#E4E1E9 (59% of changed) replaced=#121318 change-ratio=14.35
+   new colours: #E4E1E9 59%, #34343A 30%, #B0AEB5 0%, #605F66 0%
+   adjacent: #34343A 62% ratio 9.57; #121318 22% ratio 14.35; #E4E1E9 4% ratio 1.00; #35353B 1% ratio 9.42; #3F3F45 1% ratio 8.09
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-w3  u: S w3 f=0 m=h n=1 k=0 | tab: S w3 f=1 m=t n=2 k=2 | touch elsewhere: S w3 f=1 m=h n=2 k=2 | tap: S w3 f=0 m=h n=1 k=0
+   changed=17711 of 123840 unstable=0
+   bbox=(48,48)-(443,221) box=480x258
+   indicator=#E4E1E9 (59% of changed) replaced=#121318 change-ratio=14.35
+   new colours: #E4E1E9 59%, #34343A 30%, #7B7A81 1%, #8C8B92 0%
+   adjacent: #34343A 63% ratio 9.57; #121318 22% ratio 14.35; #E4E1E9 4% ratio 1.00; #35353B 1% ratio 9.42; #3F3F45 1% ratio 8.09
+   page=#121318
+   e: 17711 changed vs u
+   t: 0 changed vs u
+== ios-dark-x1  u: S x1 f=0 m=h n=1 k=0 | tab: S x1 f=1 m=t n=2 k=2 | touch elsewhere: S x1 f=1 m=h n=2 k=2 | tap: S x1 f=0 m=h n=1 k=0
+   changed=0 of 94560 unstable=0
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-x2  u: S x2 f=0 m=h n=1 k=0 | tab: S x2 f=1 m=t n=2 k=2 | touch elsewhere: S x2 f=1 m=h n=2 k=2 | tap: S x2 f=0 m=h n=1 k=0
+   changed=0 of 116424 unstable=0
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-x3  u: S x3 f=0 m=h n=1 k=0 | tab: S x3 f=1 m=t n=2 k=2 | touch elsewhere: S x3 f=1 m=h n=2 k=2 | tap: S x3 f=0 m=h n=1 k=0
+   changed=23544 of 78720 unstable=0
+   bbox=(48,60)-(280,179) box=328x240
+   indicator=#232530 (74% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 74%, #E0DEEB 20%, #797982 0%, #82828E 0%
+   adjacent: #121318 41% ratio 1.22; #BAC3FF 24% ratio 8.95; #B7BFFA 1% ratio 8.59; #AFB8F0 1% ratio 7.93; #ABB3EB 1% ratio 7.53
+   page=#121318
+   e: 5397 changed vs u
+   t: 0 changed vs u
+== ios-dark-x4  u: S x4 f=0 m=h n=1 k=0 | tab: S x4 f=1 m=t n=2 k=2 | touch elsewhere: S x4 f=1 m=h n=2 k=2 | tap: S x4 f=0 m=h n=1 k=0
+   changed=32428 of 96000 unstable=0
+   bbox=(48,60)-(352,179) box=400x240
+   indicator=#807E85 (96% of changed) replaced=#1B1B21 change-ratio=4.28
+   new colours: #807E85 96%, #49484E 0%, #646369 0%, #9C9FC0 0%
+   adjacent: #BAC3FF 45% ratio 2.35; #111217 19% ratio 4.67; #0E0F13 11% ratio 4.78; #0F1014 6% ratio 4.74; #111216 2% ratio 4.67
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-dark-x5  u: S x5 f=0 m=h n=1 k=0 | tab: S x5 f=1 m=t n=2 k=2 | touch elsewhere: S x5 f=1 m=h n=2 k=2 | tap: S x5 f=0 m=h n=1 k=0
+   changed=9787 of 99540 unstable=0
+   bbox=(37,37)-(357,214) box=395x252
+   indicator=#FFFFFF (88% of changed) replaced=#121318 change-ratio=18.55
+   new colours: #FFFFFF 88%, #89898C 6%, #4D4E52 2%, #C4C4C5 1%
+   adjacent: #121318 100% ratio 18.55
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-c1  u: S c1 f=0 m=h n=1 k=0 | tab: S c1 f=1 m=t n=2 k=2 | touch elsewhere: S c1 f=1 m=h n=2 k=2 | tap: S c1 f=0 m=h n=1 k=0
+   changed=9663 of 98028 unstable=0
+   bbox=(37,37)-(351,214) box=389x252
+   indicator=#8ABCF5 (88% of changed) replaced=#FBF8FF change-ratio=1.89
+   new colours: #8ABCF5 88%, #C3DAFA 6%, #A6CBF8 2%, #DFE9FD 2%
+   adjacent: #FBF8FF 100% ratio 1.89
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-c2  u: S c2 f=0 m=h n=1 k=0 | tab: S c2 f=1 m=t n=2 k=2 | touch elsewhere: S c2 f=1 m=h n=2 k=2 | tap: S c2 f=0 m=h n=1 k=0
+   changed=9781 of 99792 unstable=0
+   bbox=(37,37)-(358,214) box=396x252
+   indicator=#8ABCF5 (88% of changed) replaced=#FBF8FF change-ratio=1.89
+   new colours: #8ABCF5 88%, #C3DAFA 5%, #DFE9FD 1%, #459BFA 1%
+   adjacent: #FBF8FF 51% ratio 1.89; #007AFF 45% ratio 2.03; #3995FA 3% ratio 1.55
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-c3  u: S c3 f=0 m=h n=1 k=0 | tab: S c3 f=1 m=t n=2 k=2 | touch elsewhere: S c3 f=1 m=h n=2 k=2 | tap: S c3 f=0 m=h n=1 k=0
+   changed=4960 of 58149 unstable=0
+   bbox=(49,49)-(223,163) box=273x213
+   indicator=#8AF3A5 (88% of changed) replaced=#FBF8FF change-ratio=1.29
+   new colours: #8AF3A5 88%, #C3F6D2 4%, #DFF7E9 1%, #A6F4BC 1%
+   adjacent: #FBF8FF 54% ratio 1.29; #E6E4EB 16% ratio 1.08; #DFDDE4 2% ratio 1.01; #DEDCE3 1% ratio 1.00; #E5E3EA 1% ratio 1.07
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 11526 changed vs u
+== ios-light-c4  u: S c4 f=0 m=h n=1 k=0 | tab: S c4 f=1 m=t n=2 k=2 | touch elsewhere: S c4 f=1 m=h n=2 k=2 | tap: S c4 f=0 m=h n=1 k=0
+   changed=2044 of 51984 unstable=0
+   bbox=(84,84)-(143,143) box=228x228
+   indicator=#8ABCF5 (70% of changed) replaced=#FBF8FF change-ratio=1.89
+   new colours: #8ABCF5 70%, #8BBDF5 11%, #DFE9FD 5%, #E2EFFD 5%
+   adjacent: #FBF8FF 62% ratio 1.89; #FFFFFF 37% ratio 1.98
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 1436 changed vs u
+== ios-light-c5  u: S c5 f=0 m=h n=1 k=0 | tab: S c5 f=1 m=t n=2 k=2 | touch elsewhere: S c5 f=1 m=t n=2 k=2 | tap: S c5 f=1 m=h n=2 k=0
+   changed=0 of 161568 unstable=392
+   page=#FBF8FF
+   e: 2389 changed vs u
+   t: 392 changed vs u
+== ios-light-m1  u: S m1 f=0 m=h n=1 k=0 | tab: S m1 f=1 m=t n=2 k=2 | touch elsewhere: S m1 f=1 m=h n=2 k=2 | tap: S m1 f=0 m=h n=1 k=0
+   changed=32502 of 97680 unstable=0
+   bbox=(48,60)-(358,179) box=407x240
+   indicator=#E4E3EF (98% of changed) replaced=#F5F2FA change-ratio=1.15
+   new colours: #E4E3EF 98%, #DEDEEB 0%, #E2E1ED 0%, #D6D6E6 0%
+   adjacent: #515B92 12% ratio 5.07; #F2EFF6 11% ratio 1.12; #CAC8CD 10% ratio 1.31; #B4B7D1 2% ratio 1.55; #9DA1C2 1% ratio 1.99
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-m10  u: S m10 f=0 m=h n=1 k=0 | tab: S m10 f=1 m=t n=2 k=2 | touch elsewhere: S m10 f=1 m=h n=2 k=2 | tap: S m10 f=0 m=h n=1 k=0
+   changed=10048 of 66240 unstable=0
+   bbox=(48,60)-(167,179) box=276x240
+   indicator=#D0CDD5 (53% of changed) replaced=#E4E1E9 change-ratio=1.21
+   new colours: #D0CDD5 53%, #E4E1E8 24%, #46464F 17%, #9F9DA6 0%
+   adjacent: #6D6D76 48% ratio 3.26; #FBF8FF 11% ratio 1.49; #86858E 4% ratio 2.32; #E4E1E9 3% ratio 1.21; #F2EFF6 3% ratio 1.38
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 13028 changed vs u
+== ios-light-m11  u: S m11 f=0 m=h n=1 k=0 | tab: S m11 f=1 m=t n=2 k=2 | touch elsewhere: S m11 f=1 m=h n=2 k=2 | tap: S m11 f=0 m=h n=1 k=0
+   changed=11296 of 57600 unstable=0
+   bbox=(60,60)-(179,179) box=240x240
+   indicator=#E4E1E8 (88% of changed) replaced=#FBF8FF change-ratio=1.23
+   new colours: #E4E1E8 88%, #1B1B21 6%, #E5E2E9 0%, #E6E3EA 0%
+   adjacent: #FBF8FF 31% ratio 1.23; #F2EFF6 10% ratio 1.14; #F3F0F7 6% ratio 1.15; #F1EEF5 6% ratio 1.13; #F4F1F8 6% ratio 1.16
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 1592 changed vs u
+== ios-light-m12  u: S m12 f=0 m=h n=1 k=0 | tab: S m12 f=1 m=t n=2 k=2 | touch elsewhere: S m12 f=1 m=h n=2 k=2 | tap: S m12 f=0 m=h n=1 k=0
+   changed=118165 of 215424 unstable=0
+   bbox=(48,48)-(767,215) box=816x264
+   indicator=#DCDAE0 (98% of changed) replaced=#FBF8FF change-ratio=1.32
+   new colours: #DCDAE0 98%, #CCCAD0 0%, #ACAAB0 0%, #D8D6DC 0%
+   adjacent: #FBF8FF 47% ratio 1.32; #1B1B21 32% ratio 12.36; #3A3A40 3% ratio 8.15; #57565C 1% ratio 5.24; #323238 1% ratio 9.19
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-m13  u: S m13 f=0 m=h n=1 k=0 | tab: S m13 f=1 m=t n=2 k=2 | touch elsewhere: S m13 f=1 m=h n=2 k=2 | tap: S m13 f=0 m=h n=1 k=0
+   changed=60286 of 124992 unstable=0
+   bbox=(48,48)-(447,203) box=496x252
+   indicator=#D7D5DC (96% of changed) replaced=#F5F2FA change-ratio=1.31
+   new colours: #D7D5DC 96%, #DCDAE0 0%, #DCD9DF 0%, #BAB9BF 0%
+   adjacent: #1B1B21 36% ratio 11.78; #F2EFF6 11% ratio 1.28; #CAC8CD 11% ratio 1.14; #DFDDE3 2% ratio 1.08; #DCDAE0 2% ratio 1.05
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-m14  u: S m14 f=0 m=h n=1 k=0 | tab: S m14 f=1 m=t n=2 k=2 | touch elsewhere: S m14 f=1 m=h n=2 k=2 | tap: S m14 f=0 m=h n=1 k=0
+   changed=31761 of 99840 unstable=0
+   bbox=(51,66)-(364,175) box=416x240
+   indicator=#DCDAE0 (96% of changed) replaced=#FBF8FF change-ratio=1.32
+   new colours: #DCDAE0 96%, #D2D0D8 0%, #D9D7DD 0%, #D6D4DA 0%
+   adjacent: #46464F 39% ratio 6.73; #C7C5D0 39% ratio 1.23; #CCCAD4 2% ratio 1.17; #797880 1% ratio 3.15; #7C7B83 1% ratio 3.02
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 41300 changed vs u
+== ios-light-m15  u: S m15 f=0 m=h n=1 k=0 | tab: S m15 f=1 m=t n=2 k=2 | touch elsewhere: S m15 f=1 m=h n=2 k=2 | tap: S m15 f=0 m=h n=1 k=0
+   changed=12502 of 195840 unstable=0
+   bbox=(337,48)-(479,191) box=816x240
+   indicator=#EAE8F4 (41% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #EAE8F4 41%, #E9E7F3 10%, #E8E6F2 5%, #E7E5F1 3%
+   adjacent: #FBF8FF 6% ratio 1.15; #FAF7FE 6% ratio 1.14; #515B92 4% ratio 5.32; #F7F4FC 3% ratio 1.11; #EFEDF7 3% ratio 1.04
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-m2  u: S m2 f=0 m=h n=1 k=0 | tab: S m2 f=1 m=t n=2 k=2 | touch elsewhere: S m2 f=1 m=h n=2 k=2 | tap: S m2 f=0 m=h n=1 k=0
+   changed=33352 of 99360 unstable=0
+   bbox=(48,60)-(365,179) box=414x240
+   indicator=#636C9D (98% of changed) replaced=#515B92 change-ratio=1.28
+   new colours: #636C9D 98%, #898FB6 0%, #656E9F 0%, #646D9D 0%
+   adjacent: #FBF8FF 31% ratio 4.80; #FFFFFF 14% ratio 5.05; #AFB2CE 9% ratio 2.42; #D5D5E7 6% ratio 3.48; #CFD2E1 1% ratio 3.35
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-m3  u: S m3 f=0 m=h n=1 k=0 | tab: S m3 f=1 m=t n=2 k=2 | touch elsewhere: S m3 f=1 m=h n=2 k=2 | tap: S m3 f=0 m=h n=1 k=0
+   changed=33496 of 99600 unstable=0
+   bbox=(48,60)-(366,179) box=415x240
+   indicator=#EAE8F4 (91% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #EAE8F4 91%, #515B92 6%, #C4C5DC 0%, #9EA2C3 0%
+   adjacent: #FBF8FF 38% ratio 1.15; #515B92 11% ratio 5.32; #D1D1E4 6% ratio 1.24; #AFB2CE 1% ratio 1.72; #858BB3 1% ratio 2.74
+   page=#FBF8FF
+   e: 2389 changed vs u
+   t: 0 changed vs u
+== ios-light-m4  u: S m4 f=0 m=h n=1 k=0 | tab: S m4 f=1 m=t n=2 k=2 | touch elsewhere: S m4 f=1 m=h n=2 k=2 | tap: S m4 f=0 m=h n=1 k=0
+   changed=24833 of 82560 unstable=0
+   bbox=(48,60)-(295,179) box=344x240
+   indicator=#EAE8F4 (98% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #EAE8F4 98%, #EEECF7 0%, #E8E6F3 0%, #E0DFEE 0%
+   adjacent: #FBF8FF 25% ratio 1.15; #515B92 13% ratio 5.32; #F3F0FA 11% ratio 1.08; #F7F4FC 6% ratio 1.11; #777EAB 1% ratio 3.24
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-m5  u: S m5 f=0 m=h n=1 k=0 | tab: S m5 f=1 m=t n=2 k=2 | touch elsewhere: S m5 f=1 m=h n=2 k=2 | tap: S m5 f=0 m=h n=1 k=0
+   changed=10414 of 57600 unstable=0
+   bbox=(60,60)-(179,179) box=240x240
+   indicator=#E1EBFF (95% of changed) replaced=#FBF8FF change-ratio=1.14
+   new colours: #E1EBFF 95%, #EEF2FF 0%, #E8EEFF 0%, #D6E5FF 0%
+   adjacent: #FBF8FF 37% ratio 1.14; #007AFF 18% ratio 3.35; #F5F5FF 14% ratio 1.11; #5EA9FF 1% ratio 2.04; #56A5FF 1% ratio 2.13
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-m6  u: S m6 f=0 m=h n=1 k=0 | tab: S m6 f=1 m=t n=2 k=2 | touch elsewhere: S m6 f=1 m=t n=2 k=2 | tap: S m6 f=1 m=h n=2 k=0
+   changed=13580 of 215424 unstable=464
+   bbox=(48,39)-(767,215) box=816x264
+   indicator=#515B92 (73% of changed) replaced=#FBF8FF change-ratio=6.12
+   new colours: #515B92 73%, #FBF8FF 20%, #7C82AD 0%, #BCBED7 0%
+   adjacent: #FBF8FF 96% ratio 6.12; #FAF7FF 0% ratio 6.08; #A6A9C8 0% ratio 2.80; #D1D1E4 0% ratio 4.28; #F6F4FC 0% ratio 5.91
+   page=#FBF8FF
+   e: 13681 changed vs u
+   t: 14044 changed vs u
+== ios-light-m7  u: S m7 f=0 m=h n=1 k=0 | tab: S m7 f=1 m=t n=2 k=2 | touch elsewhere: S m7 f=1 m=t n=2 k=2 | tap: S m7 f=1 m=h n=2 k=0
+   changed=7991 of 215424 unstable=464
+   bbox=(48,78)-(767,215) box=816x264
+   indicator=#515B92 (62% of changed) replaced=#FBF8FF change-ratio=6.12
+   new colours: #515B92 62%, #FBF8FF 28%, #7C82AD 0%, #BCBED7 0%
+   adjacent: #FBF8FF 95% ratio 6.12; #FAF7FF 0% ratio 6.08; #F6F4FC 0% ratio 5.91; #F5F3FB 0% ratio 5.86; #F9F6FE 0% ratio 6.02
+   page=#FBF8FF
+   e: 8163 changed vs u
+   t: 8455 changed vs u
+== ios-light-m8  u: S m8 f=0 m=h n=1 k=0 | tab: S m8 f=1 m=t n=2 k=2 | touch elsewhere: S m8 f=1 m=h n=2 k=2 | tap: S m8 f=0 m=h n=1 k=0
+   changed=11296 of 57600 unstable=0
+   bbox=(60,60)-(179,179) box=240x240
+   indicator=#E4E1E8 (88% of changed) replaced=#FBF8FF change-ratio=1.23
+   new colours: #E4E1E8 88%, #1B1B21 9%, #E5E2E9 0%, #E6E3EA 0%
+   adjacent: #FBF8FF 31% ratio 1.23; #F2EFF6 10% ratio 1.14; #F3F0F7 6% ratio 1.15; #F1EEF5 6% ratio 1.13; #F4F1F8 6% ratio 1.16
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 2608 changed vs u
+== ios-light-m9  u: S m9 f=0 m=h n=1 k=0 | tab: S m9 f=1 m=t n=2 k=2 | touch elsewhere: S m9 f=1 m=h n=2 k=2 | tap: S m9 f=0 m=h n=1 k=0
+   changed=8360 of 57600 unstable=0
+   bbox=(60,60)-(179,179) box=240x240
+   indicator=#EAE8F4 (98% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #EAE8F4 98%, #EBE9F5 0%, #EEECF6 0%, #EDEBF6 0%
+   adjacent: #515B92 25% ratio 5.32; #FBF8FF 14% ratio 1.15; #F4F2FB 6% ratio 1.09; #EFEDF7 5% ratio 1.04; #F5F3FB 4% ratio 1.10
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-w1  u: S w1 f=0 m=h n=1 k=0 | tab: S w1 f=1 m=t n=2 k=2 | touch elsewhere: S w1 f=1 m=h n=2 k=2 | tap: S w1 f=0 m=h n=1 k=0
+   changed=0 of 117684 unstable=0
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-w2  u: S w2 f=0 m=h n=1 k=0 | tab: S w2 f=1 m=t n=2 k=2 | touch elsewhere: S w2 f=1 m=h n=2 k=2 | tap: S w2 f=0 m=h n=1 k=0
+   changed=17821 of 123582 unstable=0
+   bbox=(48,48)-(442,221) box=479x258
+   indicator=#1B1B21 (59% of changed) replaced=#FBF8FF change-ratio=16.30
+   new colours: #1B1B21 59%, #E4E1E9 30%, #535259 0%, #B2B0B7 0%
+   adjacent: #E4E1E9 64% ratio 13.26; #FBF8FF 22% ratio 16.30; #1B1B21 4% ratio 1.00; #E2DFE7 1% ratio 13.01; #E3E0E8 1% ratio 13.13
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-w3  u: S w3 f=0 m=h n=1 k=0 | tab: S w3 f=1 m=t n=2 k=2 | touch elsewhere: S w3 f=1 m=h n=2 k=2 | tap: S w3 f=0 m=h n=1 k=0
+   changed=17893 of 123840 unstable=0
+   bbox=(48,48)-(443,221) box=480x258
+   indicator=#1B1B21 (59% of changed) replaced=#FBF8FF change-ratio=16.30
+   new colours: #1B1B21 59%, #E4E1E9 30%, #8B8A90 0%, #807E85 0%
+   adjacent: #E4E1E9 65% ratio 13.26; #FBF8FF 22% ratio 16.30; #1B1B21 4% ratio 1.00; #E3E0E8 1% ratio 13.13; #E2DFE7 0% ratio 13.01
+   page=#FBF8FF
+   e: 17893 changed vs u
+   t: 0 changed vs u
+== ios-light-x1  u: S x1 f=0 m=h n=1 k=0 | tab: S x1 f=1 m=t n=2 k=2 | touch elsewhere: S x1 f=1 m=h n=2 k=2 | tap: S x1 f=0 m=h n=1 k=0
+   changed=0 of 94560 unstable=0
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-x2  u: S x2 f=0 m=h n=1 k=0 | tab: S x2 f=1 m=t n=2 k=2 | touch elsewhere: S x2 f=1 m=h n=2 k=2 | tap: S x2 f=0 m=h n=1 k=0
+   changed=0 of 116424 unstable=0
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-x3  u: S x3 f=0 m=h n=1 k=0 | tab: S x3 f=1 m=t n=2 k=2 | touch elsewhere: S x3 f=1 m=h n=2 k=2 | tap: S x3 f=0 m=h n=1 k=0
+   changed=23365 of 78720 unstable=0
+   bbox=(48,60)-(280,179) box=328x240
+   indicator=#EAE8F4 (75% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #EAE8F4 75%, #21222D 21%, #8E8D96 0%, #868591 0%
+   adjacent: #FBF8FF 41% ratio 1.15; #515B92 12% ratio 5.32; #C4C5DC 1% ratio 1.40; #B5B7D2 1% ratio 1.63; #5C6599 1% ratio 4.59
+   page=#FBF8FF
+   e: 5397 changed vs u
+   t: 0 changed vs u
+== ios-light-x4  u: S x4 f=0 m=h n=1 k=0 | tab: S x4 f=1 m=t n=2 k=2 | touch elsewhere: S x4 f=1 m=h n=2 k=2 | tap: S x4 f=0 m=h n=1 k=0
+   changed=32439 of 96000 unstable=0
+   bbox=(48,60)-(352,179) box=400x240
+   indicator=#88868D (96% of changed) replaced=#F5F2FA change-ratio=3.25
+   new colours: #88868D 96%, #6D718F 0%, #87858D 0%, #84838D 0%
+   adjacent: #515B92 46% ratio 1.79; #F2EFF6 11% ratio 3.16; #CAC8CD 10% ratio 2.17; #565F92 1% ratio 1.69; #555E92 1% ratio 1.72
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== ios-light-x5  u: S x5 f=0 m=h n=1 k=0 | tab: S x5 f=1 m=t n=2 k=2 | touch elsewhere: S x5 f=1 m=h n=2 k=2 | tap: S x5 f=0 m=h n=1 k=0
+   changed=9787 of 99540 unstable=0
+   bbox=(37,37)-(357,214) box=395x252
+   indicator=#000000 (88% of changed) replaced=#FBF8FF change-ratio=19.97
+   new colours: #000000 88%, #7E7C80 6%, #BCBABF 2%, #3F3E40 1%
+   adjacent: #FBF8FF 100% ratio 19.97
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u

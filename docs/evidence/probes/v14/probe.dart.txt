@@ -1,0 +1,628 @@
+// V14 probe (throwaway, not committed; kept as
+// docs/evidence/probes/v14/probe.dart.txt): what Flutter draws when a
+// control takes keyboard focus, and whether a focused control can end up
+// under content drawn over a scrolling view.
+//
+// Route `/c/<id>` shows one control fixture, `/c/<id>/dark` the same in the
+// dark theme. The control sits alone in a box, identifier `v14-box`, with 16
+// logical pixels of the page's background round it, so that an indicator
+// drawn outside the control is inside the box. Nothing else on the screen
+// takes focus. A status line at the top, identifier `v14-status`, says:
+//   "S <id> f=<1 if focus is inside the box> m=<t traditional, h touch>
+//    n=<focus changes> k=<keys seen>"
+//
+// Route `/o/<id>` shows an obscuring fixture: twelve buttons in a scrolling
+// view 300 pixels tall, with something drawn over or beside it. After every
+// focus change the status line says, for the focused button, how much of it
+// is inside the scrolling view and not under the overlay:
+//   "S <id> f=<button> vis=<fraction> top=<y> bottom=<y> port=<top>-<bottom>
+//    over=<top>-<bottom>"
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        brightness: Brightness.dark,
+      ),
+      themeMode: ThemeMode.light,
+      initialRoute: '/c/m1',
+      onGenerateRoute: (settings) {
+        final parts = (settings.name ?? '').split('/')
+          ..removeWhere((p) => p.isEmpty);
+        Widget screen = const Scaffold(body: Center(child: Text('probe')));
+        if (parts.length >= 2 && parts[0] == 'c') {
+          final dark = parts.length > 2 && parts[2] == 'dark';
+          screen = Theme(
+            data: ThemeData(
+              colorSchemeSeed: Colors.indigo,
+              brightness: dark ? Brightness.dark : Brightness.light,
+            ),
+            child: CupertinoTheme(
+              data: CupertinoThemeData(
+                brightness: dark ? Brightness.dark : Brightness.light,
+              ),
+              child: ControlScreen(id: parts[1]),
+            ),
+          );
+        } else if (parts.length >= 2 && parts[0] == 'o') {
+          screen = ObscureScreen(id: parts[1]);
+        }
+        return PageRouteBuilder<void>(
+          settings: settings,
+          pageBuilder: (_, _, _) => screen,
+        );
+      },
+    );
+  }
+}
+
+/// The keys that reached the framework since the screen opened.
+int keysSeen = 0;
+
+/// The Android device id of the last raw key event (round 3).
+String lastDevice = '-';
+
+class ControlScreen extends StatefulWidget {
+  const ControlScreen({super.key, required this.id});
+
+  final String id;
+
+  @override
+  State<ControlScreen> createState() => _ControlScreenState();
+}
+
+class _ControlScreenState extends State<ControlScreen> {
+  final _box = GlobalKey();
+  int _changes = 0;
+  bool _check = false;
+  bool _on = false;
+  int? _radio;
+  double _slider = 0.5;
+  String _last = '';
+
+  @override
+  void initState() {
+    super.initState();
+    keysSeen = 0;
+    FocusManager.instance.addListener(_changed);
+    FocusManager.instance.addHighlightModeListener(_mode);
+    HardwareKeyboard.instance.addHandler(_key);
+    // ignore: deprecated_member_use
+    RawKeyboard.instance.addListener(_raw);
+    // The box's rectangle in physical pixels of the view, for the device
+    // scripts.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final box = _box.currentContext?.findRenderObject() as RenderBox?;
+      if (box == null || !box.hasSize || !mounted) return;
+      final dpr = View.of(context).devicePixelRatio;
+      final r = (box.localToGlobal(Offset.zero) & box.size);
+      debugPrint(
+        'V14B ${(r.left * dpr).round()} ${(r.top * dpr).round()} '
+        '${(r.width * dpr).round()} ${(r.height * dpr).round()} dpr=$dpr',
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    FocusManager.instance.removeListener(_changed);
+    FocusManager.instance.removeHighlightModeListener(_mode);
+    HardwareKeyboard.instance.removeHandler(_key);
+    // ignore: deprecated_member_use
+    RawKeyboard.instance.removeListener(_raw);
+    super.dispose();
+  }
+
+  bool _key(KeyEvent event) {
+    if (event is KeyDownEvent) setState(() => keysSeen++);
+    return false;
+  }
+
+  // ignore: deprecated_member_use
+  void _raw(RawKeyEvent event) {
+    final data = event.data;
+    // ignore: deprecated_member_use
+    if (data is RawKeyEventDataAndroid) {
+      setState(() => lastDevice = '${data.deviceId}/${data.flags}');
+    }
+  }
+
+  void _changed() => setState(() => _changes++);
+  void _mode(FocusHighlightMode _) => setState(() {});
+
+  bool get _focusInBox {
+    final focus = FocusManager.instance.primaryFocus?.context;
+    final box = _box.currentContext;
+    if (focus == null || box == null) return false;
+    var inside = false;
+    focus.visitAncestorElements((e) {
+      if (e == box) inside = true;
+      return !inside;
+    });
+    return inside;
+  }
+
+  Widget _ring({required Widget Function(bool, ValueChanged<bool>) builder}) =>
+      _RingHolder(builder: builder);
+
+  Widget _control(BuildContext context) {
+    final id = widget.id;
+    final colors = Theme.of(context).colorScheme;
+    void noop() {}
+    switch (id) {
+      case 'm1':
+        return ElevatedButton(onPressed: noop, child: const Text('m1 Save'));
+      case 'm2':
+        return FilledButton(onPressed: noop, child: const Text('m2 Save'));
+      case 'm3':
+        return OutlinedButton(onPressed: noop, child: const Text('m3 Save'));
+      case 'm4':
+        return TextButton(onPressed: noop, child: const Text('m4 Save'));
+      case 'm5':
+        return IconButton(
+          onPressed: noop,
+          tooltip: 'm5 Favourite',
+          icon: const Icon(Icons.favorite_border),
+        );
+      case 'm6':
+        return const SizedBox(
+          width: 240,
+          child: TextField(
+            decoration: InputDecoration(
+              labelText: 'm6 Name',
+              border: OutlineInputBorder(),
+            ),
+          ),
+        );
+      case 'm7':
+        return const SizedBox(
+          width: 240,
+          child: TextField(decoration: InputDecoration(labelText: 'm7 Name')),
+        );
+      case 'm8':
+        return Checkbox(
+          value: _check,
+          onChanged: (v) => setState(() => _check = v!),
+        );
+      case 'm9':
+        return Checkbox(value: true, onChanged: (_) {});
+      case 'm10':
+        return Switch(value: _on, onChanged: (v) => setState(() => _on = v));
+      case 'm11':
+        return RadioGroup<int>(
+          groupValue: _radio,
+          onChanged: (v) => setState(() => _radio = v),
+          child: const Radio<int>(value: 1),
+        );
+      case 'm12':
+        return SizedBox(
+          width: 240,
+          child: ListTile(title: const Text('m12 Ridge trail'), onTap: noop),
+        );
+      case 'm13':
+        return Card(
+          margin: EdgeInsets.zero,
+          child: InkWell(
+            onTap: noop,
+            child: const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('m13 Ridge trail'),
+            ),
+          ),
+        );
+      case 'm14':
+        return FilterChip(
+          label: const Text('m14 Water'),
+          selected: _check,
+          onSelected: (v) => setState(() => _check = v),
+        );
+      case 'm15':
+        return SizedBox(
+          width: 240,
+          child: Slider(
+            value: _slider,
+            onChanged: (v) => setState(() => _slider = v),
+          ),
+        );
+      case 'c1':
+        return CupertinoButton(onPressed: noop, child: const Text('c1 Save'));
+      case 'c2':
+        return CupertinoButton.filled(
+          onPressed: noop,
+          child: const Text('c2 Save'),
+        );
+      case 'c3':
+        return CupertinoSwitch(
+          value: _on,
+          onChanged: (v) => setState(() => _on = v),
+        );
+      case 'c4':
+        return CupertinoCheckbox(
+          value: _check,
+          onChanged: (v) => setState(() => _check = v!),
+        );
+      case 'c5':
+        return const SizedBox(
+          width: 240,
+          child: CupertinoTextField(placeholder: 'c5 Name'),
+        );
+      case 'w1':
+        // A bare Focus: takes focus and draws nothing.
+        return Focus(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            color: colors.surfaceContainerHighest,
+            child: const Text('w1 Ridge trail'),
+          ),
+        );
+      case 'w2':
+        // FocusableActionDetector, ring from onShowFocusHighlight.
+        return _ring(
+          builder: (show, set) => FocusableActionDetector(
+            onShowFocusHighlight: set,
+            child: _RingBox(show: show, label: 'w2 Ridge trail'),
+          ),
+        );
+      case 'w3':
+        // Focus with onFocusChange, ring whenever it has focus.
+        return _ring(
+          builder: (show, set) => Focus(
+            onFocusChange: set,
+            child: _RingBox(show: show, label: 'w3 Ridge trail'),
+          ),
+        );
+      case 'x1':
+        // An ElevatedButton whose focused overlay is made transparent: the
+        // indicator removed.
+        return ElevatedButton(
+          style: const ButtonStyle(
+            overlayColor: WidgetStatePropertyAll(Colors.transparent),
+          ),
+          onPressed: noop,
+          child: const Text('x1 Save'),
+        );
+      case 'x2':
+        // An InkWell with a transparent focusColor: removed.
+        return Card(
+          margin: EdgeInsets.zero,
+          child: InkWell(
+            onTap: noop,
+            focusColor: Colors.transparent,
+            child: const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('x2 Ridge trail'),
+            ),
+          ),
+        );
+      case 'x3':
+        // A TextButton with a focused side: a ring of the theme's onSurface.
+        return TextButton(
+          style: ButtonStyle(
+            side: WidgetStateProperty.resolveWith(
+              (s) => s.contains(WidgetState.focused)
+                  ? BorderSide(color: colors.onSurface, width: 3)
+                  : null,
+            ),
+          ),
+          onPressed: noop,
+          child: const Text('x3 Save'),
+        );
+      case 'x4':
+        // An ElevatedButton with a strong overlay for the focused state.
+        return ElevatedButton(
+          style: ButtonStyle(
+            overlayColor: WidgetStateProperty.resolveWith(
+              (s) => s.contains(WidgetState.focused)
+                  ? colors.onSurface.withValues(alpha: 0.5)
+                  : null,
+            ),
+          ),
+          onPressed: noop,
+          child: const Text('x4 Save'),
+        );
+      case 'x5':
+        // A CupertinoButton with a focusColor of the label colour.
+        return CupertinoButton(
+          focusColor: CupertinoColors.label.resolveFrom(context),
+          onPressed: noop,
+          child: const Text('x5 Save'),
+        );
+    }
+    return Text('unknown $id');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional
+        ? 't'
+        : 'h';
+    final status =
+        'S ${widget.id} f=${_focusInBox ? 1 : 0} m=$mode n=$_changes k=$keysSeen '
+        'd=$lastDevice th=${Theme.of(context).brightness == Brightness.dark ? 'd' : 'l'} mouse=${RendererBinding.instance.mouseTracker.mouseIsConnected ? 1 : 0}';
+    if (status != _last) {
+      _last = status;
+      debugPrint('V14S $status');
+    }
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Semantics(
+              container: true,
+              identifier: 'v14-status',
+              child: Container(
+                height: 40,
+                padding: const EdgeInsets.all(8),
+                child: Text(status),
+              ),
+            ),
+            const SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.only(left: 24),
+              child: Semantics(
+                container: true,
+                identifier: 'v14-box',
+                child: Container(
+                  key: _box,
+                  padding: const EdgeInsets.all(16),
+                  child: _control(context),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Holds whether a hand-drawn ring is shown, for fixtures w2 and w3.
+class _RingHolder extends StatefulWidget {
+  const _RingHolder({required this.builder});
+
+  final Widget Function(bool show, ValueChanged<bool> set) builder;
+
+  @override
+  State<_RingHolder> createState() => _RingHolderState();
+}
+
+class _RingHolderState extends State<_RingHolder> {
+  bool _show = false;
+  void set(bool v) => setState(() => _show = v);
+
+  @override
+  Widget build(BuildContext context) => widget.builder(_show, set);
+}
+
+class _RingBox extends StatelessWidget {
+  const _RingBox({required this.show, required this.label});
+
+  final bool show;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: show ? colors.onSurface : colors.outline,
+          width: show ? 3 : 1,
+        ),
+      ),
+      child: Text(label),
+    );
+  }
+}
+
+class ObscureScreen extends StatefulWidget {
+  const ObscureScreen({super.key, required this.id});
+
+  final String id;
+
+  @override
+  State<ObscureScreen> createState() => _ObscureScreenState();
+}
+
+class _ObscureScreenState extends State<ObscureScreen> {
+  final _port = GlobalKey();
+  final _over = GlobalKey();
+  final _buttons = [for (var i = 0; i < 12; i++) GlobalKey()];
+  String _status = 'S start';
+
+  @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addListener(_changed);
+  }
+
+  @override
+  void dispose() {
+    FocusManager.instance.removeListener(_changed);
+    super.dispose();
+  }
+
+  Rect? _rect(GlobalKey key) {
+    final box = key.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || !box.attached) return null;
+    return box.localToGlobal(Offset.zero) & box.size;
+  }
+
+  void _changed() {
+    // Measure after the frame in which ensureVisible has scrolled.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final focus = FocusManager.instance.primaryFocus?.context;
+      var which = -1;
+      for (var i = 0; i < _buttons.length; i++) {
+        final c = _buttons[i].currentContext;
+        if (c == null || focus == null) continue;
+        var inside = false;
+        focus.visitAncestorElements((e) {
+          if (e == c) inside = true;
+          return !inside;
+        });
+        if (inside || focus == c) which = i;
+      }
+      if (which < 0) {
+        setState(() => _status = 'S ${widget.id} f=none');
+        return;
+      }
+      final b = _rect(_buttons[which])!;
+      final port = _rect(_port)!;
+      final over = _rect(_over);
+      final inPort = b.intersect(port);
+      var visible = inPort.isEmpty ? 0.0 : inPort.height;
+      if (over != null && !inPort.isEmpty) {
+        final hidden = inPort.intersect(over);
+        if (!hidden.isEmpty && hidden.width > 0) visible -= hidden.height;
+      }
+      final frac = (visible / b.height).clamp(0, 1).toStringAsFixed(2);
+      String f(double v) => v.toStringAsFixed(0);
+      setState(() {
+        _status =
+            'S ${widget.id} f=b${which + 1} vis=$frac '
+            'top=${f(b.top)} bottom=${f(b.bottom)} '
+            'port=${f(port.top)}-${f(port.bottom)} '
+            'over=${over == null ? 'none' : '${f(over.top)}-${f(over.bottom)}'}';
+        debugPrint('V14S $_status');
+      });
+    });
+  }
+
+  List<Widget> get _items => [
+    for (var i = 0; i < 12; i++)
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: OutlinedButton(
+          key: _buttons[i],
+          onPressed: () {},
+          child: Text('${widget.id} Trail ${i + 1}'),
+        ),
+      ),
+  ];
+
+  Widget _banner(String text) => Container(
+    key: _over,
+    height: 72,
+    alignment: Alignment.center,
+    color: Colors.indigo.shade900,
+    child: Text(text, style: const TextStyle(color: Colors.white)),
+  );
+
+  Widget _fixture() {
+    switch (widget.id) {
+      case 'o1':
+        // A banner drawn over the bottom of the scrolling view.
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              key: _port,
+              child: Column(children: _items),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _banner('o1 We use cookies'),
+            ),
+          ],
+        );
+      case 'o2':
+        // The same banner below the scrolling view, not over it.
+        return Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                key: _port,
+                child: Column(children: _items),
+              ),
+            ),
+            _banner('o2 We use cookies'),
+          ],
+        );
+      case 'o3':
+        // A pinned header in the scrolling view.
+        return CustomScrollView(
+          key: _port,
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              toolbarHeight: 72,
+              title: SizedBox(
+                key: _over,
+                height: 72,
+                child: const Center(child: Text('o3 Header')),
+              ),
+            ),
+            SliverList.list(children: _items),
+          ],
+        );
+      case 'o4':
+        // A header drawn over the top of the scrolling view.
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              key: _port,
+              child: Column(children: _items),
+            ),
+            Positioned(left: 0, right: 0, top: 0, child: _banner('o4 Header')),
+          ],
+        );
+      case 'o5':
+        // Scaffold with extendBody and a bottom app bar over the body.
+        return Scaffold(
+          extendBody: true,
+          body: ListView(key: _port, children: _items),
+          bottomNavigationBar: BottomAppBar(
+            key: _over,
+            child: const Text('o5 Bar'),
+          ),
+        );
+    }
+    return Text('unknown ${widget.id}');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Semantics(
+              container: true,
+              identifier: 'v14-status',
+              child: Container(
+                height: 72,
+                padding: const EdgeInsets.all(8),
+                child: Text(_status, style: const TextStyle(fontSize: 11)),
+              ),
+            ),
+            SizedBox(height: 300, child: _fixture()),
+          ],
+        ),
+      ),
+    );
+  }
+}

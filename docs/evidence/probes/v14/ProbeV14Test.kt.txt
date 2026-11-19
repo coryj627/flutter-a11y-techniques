@@ -1,0 +1,257 @@
+// V14 probe, round 2, on Android (throwaway, not committed; kept as
+// docs/evidence/probes/v14/ProbeV14Test.kt.txt). Round 1 pressed Tab with
+// `input keyevent`, which Flutter takes for a virtual keyboard's key and
+// which leaves the highlight mode on touch. Here Tab is sent through
+// Instrumentation.sendKeySync with the device id of a keyboard, so that it
+// arrives as a hardware keyboard's key. For each fixture: screenshots
+// through UiAutomation.takeScreenshot (u, f1, f2), the status, and the
+// pixels compared in the test itself; the PNGs are written to the app's
+// files folder for analyse.py.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Rect
+import android.os.SystemClock
+import android.util.Log
+import android.view.InputDevice
+import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.accessibility.AccessibilityNodeInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.File
+import java.io.FileOutputStream
+
+private const val TAG = "V14PROBE"
+
+@RunWith(AndroidJUnit4::class)
+class ProbeV14Test {
+    private val inst = InstrumentationRegistry.getInstrumentation()
+    private val automation = inst.uiAutomation
+    private val device = UiDevice.getInstance(inst)
+    private val out = inst.targetContext.getExternalFilesDir(null)!!
+
+    private fun log(s: String) = Log.i(TAG, s)
+
+    /** A keyboard's device id: the first input device that is a full keyboard and not virtual. */
+    private val keyboardId: Int by lazy {
+        val ids = InputDevice.getDeviceIds().toList()
+        val found = ids.firstOrNull {
+            val d = InputDevice.getDevice(it)
+            d != null && !d.isVirtual && d.keyboardType == InputDevice.KEYBOARD_TYPE_ALPHABETIC
+        }
+        log("input devices: " + ids.joinToString { "$it:${InputDevice.getDevice(it)?.name}:virtual=${InputDevice.getDevice(it)?.isVirtual}:kb=${InputDevice.getDevice(it)?.keyboardType}" })
+        found ?: 1
+    }
+
+    private fun key(code: Int, id: Int = keyboardId) {
+        val t = SystemClock.uptimeMillis()
+        fun ev(a: Int) = KeyEvent(t, t, a, code, 0, 0, id, 0, 0, InputDevice.SOURCE_KEYBOARD)
+        inst.sendKeySync(ev(KeyEvent.ACTION_DOWN))
+        inst.sendKeySync(ev(KeyEvent.ACTION_UP))
+    }
+
+    private fun all(): List<AccessibilityNodeInfo> {
+        val list = mutableListOf<AccessibilityNodeInfo>()
+        fun walk(n: AccessibilityNodeInfo?) {
+            if (n == null) return
+            list.add(n)
+            for (i in 0 until n.childCount) walk(n.getChild(i))
+        }
+        walk(automation.rootInActiveWindow)
+        return list
+    }
+
+    private fun node(id: String) = all().firstOrNull { it.viewIdResourceName == id }
+
+    private fun status(): String = node("v14-status")?.let { (it.contentDescription ?: it.text)?.toString() } ?: "(no status)"
+
+    private fun open(route: String, id: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", route)
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        val theme = if (route.endsWith("/dark")) "th=d" else "th=l"
+        Thread.sleep(1_000)
+        while (System.currentTimeMillis() < end && !(status().startsWith("S $id ") && status().contains(theme))) Thread.sleep(250)
+        device.waitForIdle()
+        Thread.sleep(1_500)
+    }
+
+    private fun shot(): Bitmap {
+        val b = automation.takeScreenshot()!!
+        return if (b.config == Bitmap.Config.HARDWARE) b.copy(Bitmap.Config.ARGB_8888, false) else b
+    }
+
+    private fun save(b: Bitmap, name: String) {
+        FileOutputStream(File(out, "$name.png")).use { b.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    private fun lin(c: Int): Double { val v = c / 255.0; return if (v <= 0.04045) v / 12.92 else Math.pow((v + 0.055) / 1.055, 2.4) }
+    private fun lum(p: Int) = 0.2126 * lin((p shr 16) and 255) + 0.7152 * lin((p shr 8) and 255) + 0.0722 * lin(p and 255)
+    private fun ratio(a: Int, b: Int): Double { val x = lum(a); val y = lum(b); return (maxOf(x, y) + 0.05) / (minOf(x, y) + 0.05) }
+    private fun diff(a: Int, b: Int) = maxOf(Math.abs(((a shr 16) and 255) - ((b shr 16) and 255)), Math.abs(((a shr 8) and 255) - ((b shr 8) and 255)), Math.abs((a and 255) - (b and 255)))
+    private fun hex(p: Int) = String.format("#%06X", p and 0xFFFFFF)
+
+    private fun compare(r: Rect, u: Bitmap, f1: Bitmap, f2: Bitmap): String {
+        var changed = 0
+        var unstable = 0
+        val colours = HashMap<Int, Int>()
+        for (y in r.top until r.bottom) for (x in r.left until r.right) {
+            val a = u.getPixel(x, y); val b = f1.getPixel(x, y); val c = f2.getPixel(x, y)
+            if (diff(a, b) > 12 && diff(a, c) > 12) {
+                if (diff(b, c) <= 12) { changed++; colours.merge(b, 1, Int::plus) } else unstable++
+            } else if (diff(a, b) > 12 || diff(a, c) > 12) unstable++
+        }
+        val page = u.getPixel(r.left + 1, r.top + 1)
+        val top = colours.entries.sortedByDescending { it.value }.take(3)
+        return "changed=$changed unstable=$unstable page=${hex(page)} " + top.joinToString { "${hex(it.key)} ${100 * it.value / maxOf(changed, 1)}% ratio-to-page ${"%.2f".format(ratio(it.key, page))}" }
+    }
+
+    private fun run(ids: List<String>, keyId: () -> Int) {
+        for (id in ids) for (theme in listOf("light", "dark")) {
+            val tag = "android2-$theme-$id"
+            val route = "/c/$id" + if (theme == "dark") "/dark" else ""
+            open(route, id)
+            val box = Rect().also { node("v14-box")!!.getBoundsInScreen(it) }
+            val s0 = status()
+            val u = shot()
+            var tabs = 0
+            while (tabs < 4 && !status().contains("f=1")) { key(KeyEvent.KEYCODE_TAB, keyId()); tabs++; Thread.sleep(800) }
+            Thread.sleep(1_200)
+            val f1 = shot()
+            val s1 = status()
+            Thread.sleep(700)
+            val f2 = shot()
+            save(u, "$tag-u"); save(f1, "$tag-f1"); save(f2, "$tag-f2")
+            File(out, "$tag-u.box").writeText("${box.left} ${box.top} ${box.width()} ${box.height()} 1\n")
+            File(out, "$tag.status").writeText("u: $s0\ntab: $s1\n")
+            log("$tag tabs=$tabs box=$box | u: $s0 | tab: $s1 | ${compare(box, u, f1, f2)}")
+        }
+    }
+
+    @Test
+    fun controls() {
+        log("keyboard device id: $keyboardId")
+        run(listOf("m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10", "m11", "m12", "m13", "m14", "m15",
+            "c1", "c2", "c3", "c4", "c5", "w1", "w2", "w3", "x1", "x2", "x3", "x4", "x5")) { keyboardId }
+    }
+
+    /** The same with a device id no device has, and with -1, the virtual keyboard's. */
+    @Test
+    fun otherDeviceIds() {
+        for (id in listOf(9999, -1)) {
+            log("device id $id")
+            run(listOf("m1", "c1")) { id }
+        }
+    }
+
+    /** Round 3: which way of pressing Tab turns Flutter's highlights on. */
+    @Test
+    fun round3() {
+        val h = device.displayHeight
+        val ways: List<Pair<String, () -> Unit>> = listOf(
+            "input keyevent" to { device.executeShellCommand("input keyevent KEYCODE_TAB") },
+            "sendKeySync device 0" to { key(KeyEvent.KEYCODE_TAB, 0) },
+            "UiAutomation.injectInputEvent device 0" to {
+                val t = SystemClock.uptimeMillis()
+                for (a in listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP)) {
+                    automation.injectInputEvent(KeyEvent(t, t, a, KeyEvent.KEYCODE_TAB, 0, 0, 0, 0, 0, InputDevice.SOURCE_KEYBOARD), true)
+                }
+            },
+            "mouse hover first, then sendKeySync device 0" to {
+                if (!status().contains("mouse=1")) hover(5f, h - 300f)
+                key(KeyEvent.KEYCODE_TAB, 0)
+            },
+        )
+        for ((name, press) in ways) for (id in listOf("m1", "c1", "w2")) {
+            open("/c/$id", id)
+            val box = Rect().also { node("v14-box")!!.getBoundsInScreen(it) }
+            val u = shot()
+            var tabs = 0
+            while (tabs < 4 && !status().contains("f=1")) { press(); tabs++; Thread.sleep(800) }
+            Thread.sleep(1_200)
+            val f1 = shot()
+            Thread.sleep(700)
+            val f2 = shot()
+            log("round3 [$name] $id tabs=$tabs | ${status()} | ${compare(box, u, f1, f2)}")
+        }
+    }
+
+    /** Round 4: which way of moving a mouse makes Flutter count one as connected. */
+    @Test
+    fun round4() {
+        val w = device.displayWidth
+        val h = device.displayHeight
+        val ways: List<Pair<String, () -> String>> = listOf(
+            "UiAutomation hover enter and move" to {
+                val a = hoverEvent(MotionEvent.ACTION_HOVER_ENTER, 40f, h - 400f)
+                val b = hoverEvent(MotionEvent.ACTION_HOVER_MOVE, 50f, h - 400f)
+                "injected=$a,$b"
+            },
+            "input mouse tap" to { device.executeShellCommand("input mouse tap 50 ${h - 400}") },
+            "input mouse motionevent MOVE" to { device.executeShellCommand("input mouse motionevent MOVE 50 ${h - 400}") },
+            "input mouse swipe" to { device.executeShellCommand("input mouse swipe 50 ${h - 400} 60 ${h - 400} 100") },
+        )
+        for ((name, move) in ways) {
+            open("/c/m1", "m1")
+            val box = Rect().also { node("v14-box")!!.getBoundsInScreen(it) }
+            val u = shot()
+            val r = move()
+            Thread.sleep(800)
+            var tabs = 0
+            while (tabs < 4 && !status().contains("f=1")) { device.executeShellCommand("input keyevent KEYCODE_TAB"); tabs++; Thread.sleep(800) }
+            Thread.sleep(1_200)
+            val f1 = shot()
+            Thread.sleep(700)
+            val f2 = shot()
+            log("round4 [$name] result=[${r.trim()}] w=$w h=$h tabs=$tabs | ${status()} | ${compare(box, u, f1, f2)}")
+        }
+    }
+
+    private fun hoverEvent(action: Int, x: Float, y: Float): Boolean {
+        val t = SystemClock.uptimeMillis()
+        val props = MotionEvent.PointerProperties().apply { id = 0; toolType = MotionEvent.TOOL_TYPE_MOUSE }
+        val coords = MotionEvent.PointerCoords().apply { this.x = x; this.y = y }
+        val e = MotionEvent.obtain(t, t, action, 1, arrayOf(props), arrayOf(coords),
+            0, 0, 1f, 1f, 0, 0, InputDevice.SOURCE_MOUSE, 0)
+        val ok = automation.injectInputEvent(e, true)
+        e.recycle()
+        return ok
+    }
+
+    private fun hover(x: Float, y: Float) {
+        val t = SystemClock.uptimeMillis()
+        val props = MotionEvent.PointerProperties().apply { id = 0; toolType = MotionEvent.TOOL_TYPE_MOUSE }
+        val coords = MotionEvent.PointerCoords().apply { this.x = x; this.y = y }
+        val e = MotionEvent.obtain(t, t, MotionEvent.ACTION_HOVER_MOVE, 1, arrayOf(props), arrayOf(coords),
+            0, 0, 1f, 1f, 0, 0, InputDevice.SOURCE_MOUSE, 0)
+        automation.injectInputEvent(e, true)
+        e.recycle()
+        Thread.sleep(500)
+    }
+
+    @Test
+    fun obscure() {
+        for (id in listOf("o1", "o2", "o3", "o4", "o5")) {
+            val intent = Intent(inst.targetContext, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .putExtra("route", "/o/$id")
+            inst.targetContext.startActivity(intent)
+            Thread.sleep(5_000)
+            log("== $id start: ${status()}")
+            for (i in 1..13) {
+                key(KeyEvent.KEYCODE_TAB)
+                Thread.sleep(900)
+                val focused = all().firstOrNull { it.isFocused && it.viewIdResourceName == null && !it.contentDescription.isNullOrEmpty() }
+                val b = Rect().also { focused?.getBoundsInScreen(it) }
+                log("  Tab $i: ${status()} | node=${focused?.contentDescription} bounds=$b")
+            }
+        }
+    }
+}
