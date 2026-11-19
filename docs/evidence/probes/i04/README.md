@@ -164,3 +164,15 @@ was not measured.
 - An adjustable control has no name on the web (FL-028), a `PageView`
   takes no focus (FL-463), and a `CupertinoSlidingSegmentedControl` did
   not answer Space in a widget test (FL-462).
+
+## Kept from the build
+
+- `voiceover-ios-first-run.md.txt` and `voiceover-web-first-run.md.txt`:
+  the first VoiceOver transcripts of the I04 examples, written by
+  `tool/voiceover_ios.py` and `tool/voiceover_web.py` and copied here
+  before later runs replaced them. They show FL-464: with the line of
+  keys as plain text inside a `CallbackShortcuts`, the web read the
+  example as a group named by that line, and VoiceOver on iOS read the
+  line before the strip it was written under. Their expected phrases
+  were first guesses and fail for that reason too; the speech is what
+  matters here.
