@@ -19,8 +19,11 @@
 // Tab; Shift+Tab is in the web and Android tests. On CI (Xcode 26.6, iOS
 // 26.5, CI run 44502528898) a capital typed with typeKey("M") arrived as
 // "m", in two tests; and after Tab and Shift+Tab from the strip, Left did
-// nothing, as if focus had not come back to the strip. Read as Shift not
-// reaching the app there; not established. Locally neither happened.
+// nothing, as if focus had not come back to the strip. Locally, with the
+// text in lower case, letters typed into bad-page-shortcut's note were now
+// and then lost besides its f (see typeInNote). None of these causes was
+// established. So text goes into the note through typeInNote, which waits
+// for each letter.
 import XCTest
 
 final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
@@ -59,6 +62,38 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
   /// Types `text` one key at a time, as a hardware keyboard does.
   private func type(_ text: String) {
     for ch in text { press(String(ch)) }
+  }
+
+  /// Types `text` into the note one key at a time, waiting after each
+  /// key until the note shows it. A letter that does not appear within 2
+  /// seconds is logged and sent again, at most three times in all; a
+  /// letter in `lost` is the one a shortcut takes, so after it the note
+  /// must stay as it was for a second, and it is never sent again. Locally
+  /// a letter typed into bad-page-shortcut's note was sometimes lost
+  /// besides the f (round two: "ea" for "lea", "ud" for "mud", "mudy" for
+  /// "muddy"), and in no other example; the cause was not found, so the
+  /// tests wait for each letter instead of reading once at the end. If
+  /// focus is not on the note, nothing appears and the test fails.
+  private func typeInNote(_ slug: String, _ text: String, lost: Set<Character> = [],
+                          file: StaticString = #filePath, line: UInt = #line) {
+    var expected = note(slug)
+    for ch in text {
+      if lost.contains(ch) {
+        press(String(ch))
+        expectStays("\(slug) note after \(ch)", expected, { self.note(slug) }, file: file, line: line)
+        continue
+      }
+      let want = expected + String(ch)
+      for attempt in 1...3 {
+        press(String(ch))
+        let deadline = Date().addingTimeInterval(2)
+        while note(slug) != want && Date() < deadline { usleep(100_000) }
+        if note(slug) == want { break }
+        print("I04KEYS \(slug): \"\(ch)\" did not reach the note (attempt \(attempt)); it shows \"\(note(slug))\"")
+      }
+      XCTAssertEqual(note(slug), want, "\(slug): typing \"\(text)\"", file: file, line: line)
+      expected = note(slug)
+    }
   }
 
   private func waitFor(_ what: String, _ expected: String, _ read: () -> String,
@@ -160,7 +195,7 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
       }
       // The note: a letter is typed.
       press(Self.tab)
-      type("mud")
+      typeInNote(slug, "mud")
       waitFor("\(slug) note", "mud", { self.note(slug) })
     }
   }
@@ -199,7 +234,7 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
     expectShowing(slug, "Bridge")
     part(slug, "note").tap()
     usleep(800_000)
-    type("mud")
+    typeInNote(slug, "mud")
     press(Self.left)
     if key == Self.right { press(Self.right) }
     type("x")
@@ -234,7 +269,7 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
       press(Self.tab)
       if Self.withSetting.contains(slug) { press(Self.tab) }
       press(Self.tab)
-      type("muddy")
+      typeInNote(slug, "muddy")
       waitFor("\(slug) note", "muddy", { self.note(slug) })
       // iOS can still be composing the word (it autocorrected "ab" to "an"
       // on Enter in the probe); a pause lets that settle first.
@@ -266,7 +301,7 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
     press(Self.space)
     expectFavourites(slug, "none")
     press(Self.tab)
-    type("leafy")
+    typeInNote(slug, "leafy")
     waitFor("\(slug) note", "leafy", { self.note(slug) })
     XCTAssertEqual(part(slug, "favourites").label, "Favourites: none")
   }
@@ -285,7 +320,7 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
       press("f")
       expectFavourites(slug, "Trailhead")
       press(Self.tab)
-      type("leafy")
+      typeInNote(slug, "leafy")
       waitFor("\(slug) note", "leafy", { self.note(slug) })
       XCTAssertEqual(part(slug, "favourites").label, "Favourites: Trailhead", slug)
     }
@@ -344,7 +379,7 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
     press("f")
     expectFavourites(slug, "none")
     press(Self.tab)
-    type("leafy")
+    typeInNote(slug, "leafy", lost: ["f"])
     waitFor("\(slug) note", "leay", { self.note(slug) })
     expectFavourites(slug, "Trailhead")
     XCTAssertFalse(part(slug, "setting").exists)
@@ -361,7 +396,7 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
     tabToStrip()
     press(Self.tab)
     press(Self.tab)
-    type("lea")
+    typeInNote(slug, "lea")
     press("f")
     waitFor("\(slug) note after f", "lea", { self.note(slug) })
     expectFavourites(slug, "Trailhead")
