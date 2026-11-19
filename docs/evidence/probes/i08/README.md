@@ -231,7 +231,7 @@ behind them; in a widget test the semantics tree then held only its root
 
 The iOS tests send Escape as Command+period, from `ios_round3.txt`.
 
-`android_320x640.txt` is the I08 Android test class (not the probe) run
+`android_320x640.txt` is the I08 Android test class (not the probe), as it is after review round one, run
 at CI's screen size, 320 by 640 at 160 dpi, through `tool/with_devices.py`
 on 2026-11-19; the script set the size and density and put both back at
 the end (its first and last lines; the script is `android_320x640.sh.txt`). Its output lists only failed and

@@ -1,4 +1,4 @@
 == set: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
 dev.fluttera11y.flutter_a11y_techniques.I08DismissAndEscapeTest > talkBackWalk[Pixel_10a(AVD) - 17] [33mSKIPPED [0m
-BUILD SUCCESSFUL in 4m 29s
+BUILD SUCCESSFUL in 6m 14s
 == reset: Physical size: 1080x2424  Physical density: 420 
