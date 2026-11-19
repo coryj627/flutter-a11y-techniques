@@ -318,6 +318,42 @@ void main() {
         handle.dispose();
       });
 
+      // On CI's Android screen, 320 by 640, the strip wraps onto two rows
+      // and bad-page-shortcut's longer defect text puts the second row
+      // below the screen; FocusNode.requestFocus does not scroll, so the
+      // strip scrolls the thumbnail it moves focus to into view.
+      testWidgets('$slug: on a 320 by 640 screen, the thumbnail that the '
+          'arrows move focus to is in view', (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final handle = tester.ensureSemantics();
+        await _open(tester, slug);
+        await _tabTo(tester, slug, 'trailhead');
+        final screen = Offset.zero & const Size(320, 640);
+        for (final (key, thumb) in [
+          (LogicalKeyboardKey.arrowRight, 'bridge'),
+          (LogicalKeyboardKey.arrowRight, 'ridge'),
+          (LogicalKeyboardKey.arrowRight, 'summit'),
+          (LogicalKeyboardKey.home, 'trailhead'),
+          (LogicalKeyboardKey.end, 'summit'),
+          (LogicalKeyboardKey.arrowLeft, 'ridge'),
+        ]) {
+          await _key(tester, key);
+          expect(_stop(slug), thumb);
+          // The button is drawn 40 pixels high inside its 48-pixel target;
+          // the drawn part is what is scrolled into view.
+          final rect = tester.getRect(byId(_id(slug, thumb)));
+          final shown = rect.intersect(screen);
+          expect(
+            shown.height >= 40 && shown.width == rect.width,
+            isTrue,
+            reason: '$thumb at $rect after $key',
+          );
+        }
+        handle.dispose();
+      });
+
       testWidgets('$slug: Down leaves the strip for the control below, as '
           'the default directional focus does', (tester) async {
         final handle = tester.ensureSemantics();

@@ -166,7 +166,26 @@ class _Strip extends StatefulWidget {
 
 class _StripState extends State<_Strip> {
   final _nodes = [for (final photo in _photos) FocusNode(debugLabel: photo)];
-  late final _moves = _Moves(widget.album, (i) => _nodes[i].requestFocus());
+  late final _moves = _Moves(widget.album, _focus);
+
+  /// Moves focus to the thumbnail [index] and scrolls it into view.
+  /// `requestFocus` does not scroll, as Tab and the arrow keys' own focus
+  /// moves do, so on a short screen the thumbnail that has focus could be
+  /// out of sight.
+  void _focus(int index) {
+    final forward = index > _nodes.indexWhere((node) => node.hasFocus);
+    _nodes[index].requestFocus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = _nodes[index].context;
+      if (context == null || !context.mounted) return;
+      Scrollable.ensureVisible(
+        context,
+        alignmentPolicy: forward
+            ? ScrollPositionAlignmentPolicy.keepVisibleAtEnd
+            : ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+      );
+    });
+  }
 
   @override
   void dispose() {

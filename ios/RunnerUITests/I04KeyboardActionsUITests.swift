@@ -184,8 +184,8 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
   /// stop: there F acts, so keys reach the strip, and the same arrow then
   /// does not move along it. Where focus goes after it is not asserted: an
   /// arrow the strip leaves alone is the app's default, directional focus.
-  /// (After a tap on a thumbnail, four Tabs did not reach the note in the
-  /// first run, so the note is tapped instead.)
+  /// (A tap on a thumbnail also puts keyboard focus on it, so Tabs counted
+  /// from the top would not reach the note; the note is tapped instead.)
   private func badNoArrowKeysIgnores(_ key: String, _ name: String) {
     let slug = "bad-no-arrow-keys"
     open(slug)
