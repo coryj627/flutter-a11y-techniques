@@ -243,6 +243,14 @@ its VoiceOver walk) run three times in a row on 2026-11-19, after the iOS
 tests were changed to show keyboard focus in the layers before sending
 Escape (I08's spec, section 7): 15 tests passed, none failed.
 
+`ci_ios_26_5.txt` is the same class on CI (run 44580353546, job
+135759006880: GitHub's macOS runner, Xcode 26.6, an iPhone 17 Pro
+simulator with iOS 26.5), cut from the job's log as its header says.
+Command+period closed the layers in every example where Escape closes
+them, and left them shown in `bad-not-dismissible` from both switches;
+the one failure is the positive control's ten-second wait for
+`good-material` opened by its link.
+
 `android_keyboard_back_test.txt` is the I08 Android test of the
 keyboard's Back (`keyboardBackClosesTheLayers`) run twice, with the
 system's log of each Back (`CoreBackPreview`, `ShellBackPreview`), by

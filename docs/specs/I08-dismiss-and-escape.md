@@ -325,8 +325,20 @@ output of each platform.
   tests now name the stop with Space twice, on Contour lines, before
   Escape is sent, and wait up to ten seconds for the closed state; three
   runs of the suite in a row passed here
-  (`docs/evidence/probes/i08/ios_suite_x3.txt`). If CI still fails, the
-  iOS Escape checks are better kept to iOS 27 and the reason recorded.
+  (`docs/evidence/probes/i08/ios_suite_x3.txt`). On CI's next run with
+  that change (run 44580353546, the same runner, Xcode and iOS 26.5;
+  `docs/evidence/probes/i08/ci_ios_26_5.txt`) Command+period closed the
+  layers in `good-material`, `good-cupertino`, `good-widgets` and
+  `bad-back-leaves`, and in `bad-not-dismissible` it left them shown from
+  both switches. So on iOS 26.5 too Command+period arrives as Escape, and
+  the earlier failures were timing: the checks are not limited to iOS 27.
+  That run failed one check, the positive control's wait for
+  `good-material` opened by its link: it waited ten seconds, and on that
+  runner a screen opened by its link took up to 30 seconds to appear (in
+  the next test, a fresh launch on `good-material`). The wait is now 30
+  seconds, as for every other screen. The log shows no Terminate step
+  before that link was opened, as it does before every fresh launch, but
+  whether the app's process stayed the same was not checked.
 - **VoiceOver's escape gesture could not be made from a test**: neither
   `XCUIVoiceOverService` nor XCUITest has a two-finger scrub, and Escape
   typed with VoiceOver on did nothing (probe). What it does is read in the

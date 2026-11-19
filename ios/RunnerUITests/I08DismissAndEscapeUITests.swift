@@ -218,8 +218,10 @@ final class I08DismissAndEscapeUITests: XCTestCase, CountedTechniqueUITest {
       // The good example, opened by its link in the app that is running,
       // which pushes its screen over this one: the same launch.
       let good = Self.goodOf[slug]!
+      // 30 seconds, as for every other screen: on the hosted iOS 26.5
+      // runner a screen opened by its link took up to 30 seconds to appear.
       app.open(URL(string: "fluttera11y:///t/I08/\(good)")!)
-      XCTAssertTrue(countElement(good).waitForExistence(timeout: 10), "\(good) did not open")
+      XCTAssertTrue(countElement(good).waitForExistence(timeout: 30), "\(good) did not open")
       tabToLayers(good)
       expectFocusOnContours(good)
       escape()

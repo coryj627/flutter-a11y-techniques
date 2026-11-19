@@ -2890,9 +2890,10 @@ yet), **Fixed in x.y** (verified on that version).
     (`ios.txt`, `ios_round2.txt`); Command+period, iOS's own key for
     cancel, arrived as Escape and closed `e1` and the probe's own overlay
     that handles Escape (`ios_round3.txt`), on iOS 27.0. On CI's iOS 26.5
-    simulator it did not close the I08 layers in two of four places
-    (I08's spec, section 7). Whether a hardware keyboard's Escape key
-    reaches the app was not tried.
+    simulator it did not close the I08 layers when sent straight after
+    they appeared, and did once keyboard focus was known to be in them
+    (`ci_ios_26_5.txt`; I08's spec, section 7). Whether a hardware
+    keyboard's Escape key reaches the app was not tried.
 - Effect: a sheet or dialog made not dismissible, so that a stray tap
   does not close it, is closed by Back and by a screen reader's gesture
   but not by Escape. If it has no button that closes it, a keyboard user
