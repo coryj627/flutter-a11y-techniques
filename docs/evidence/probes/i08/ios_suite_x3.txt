@@ -1,0 +1,27 @@
+== run 1
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testBadNoEscapeNoKeyLeavesTheLayers]' passed (34.864 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeClosesTheLayers]' passed (55.630 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeDoesNothingInTheBadExamples]' passed (63.191 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEveryExampleHasItsButtonAndSwitches]' passed (34.456 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testTabAndShiftTabGoRoundTheSwitches]' passed (141.067 seconds).
+	 Executed 5 tests, with 0 failures (0 unexpected) in 329.208 (329.212) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 329.208 (329.213) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 329.208 (329.214) seconds
+== run 2
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testBadNoEscapeNoKeyLeavesTheLayers]' passed (34.624 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeClosesTheLayers]' passed (54.701 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeDoesNothingInTheBadExamples]' passed (63.228 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEveryExampleHasItsButtonAndSwitches]' passed (34.845 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testTabAndShiftTabGoRoundTheSwitches]' passed (141.283 seconds).
+	 Executed 5 tests, with 0 failures (0 unexpected) in 328.681 (328.685) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 328.681 (328.685) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 328.681 (328.686) seconds
+== run 3
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testBadNoEscapeNoKeyLeavesTheLayers]' passed (34.617 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeClosesTheLayers]' passed (54.846 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeDoesNothingInTheBadExamples]' passed (63.267 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEveryExampleHasItsButtonAndSwitches]' passed (34.706 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testTabAndShiftTabGoRoundTheSwitches]' passed (141.341 seconds).
+	 Executed 5 tests, with 0 failures (0 unexpected) in 328.777 (328.781) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 328.777 (328.782) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 328.777 (328.783) seconds

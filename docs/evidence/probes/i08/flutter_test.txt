@@ -1,0 +1,57 @@
+android e1 | opened: OPEN, page; KF scope:Alert | Escape: closed, page [didPop DialogRoute<String>, e1 closed] | popRoute: closed, page [didPop DialogRoute<String>, e1 closed] | dismiss on: Dismiss | dismiss(Dismiss): closed, page [didPop DialogRoute<String>, e1 closed]
+android e2 | opened: OPEN, page; KF scope:Alert | Escape: OPEN, page [] | popRoute: closed, page [didPop DialogRoute<String>, e2 closed] | dismiss on: none
+android e3 | opened: OPEN, page; KF scope:Alert | Escape: OPEN, page [] | popRoute: closed, page [didPop CupertinoDialogRoute<String>, e3 closed] | dismiss on: none
+android e4 | opened: OPEN, page; KF scope:Alert | Escape: closed, page [didPop CupertinoDialogRoute<String>, e4 closed] | popRoute: closed, page [didPop CupertinoDialogRoute<String>, e4 closed] | dismiss on: Dismiss | dismiss(Dismiss): closed, page [didPop CupertinoDialogRoute<String>, e4 closed]
+android e5 | opened: OPEN, page; KF scope:Dialog | Escape: closed, page [didPop ModalBottomSheetRoute<String>, e5 closed] | popRoute: closed, page [didPop ModalBottomSheetRoute<String>, e5 closed] | dismiss on: Scrim | dismiss(Scrim): closed, page [didPop ModalBottomSheetRoute<String>, e5 closed]
+android e6 | opened: OPEN, page; KF scope:Dialog | Escape: OPEN, page [] | popRoute: closed, page [didPop ModalBottomSheetRoute<String>, e6 closed] | dismiss on: none
+android e7 | opened: OPEN, page; KF scope:e1 showDialog | Escape: OPEN, page [] | popRoute: closed, page [e7 closed] | dismiss on: e7 title | dismiss(e7 title): closed, page [e7 closed]
+android e8 | opened: OPEN, page; KF scope:e1 showDialog | Escape: OPEN, page [] | popRoute: OPEN, NO PAGE [didPop /probe] | dismiss on: none
+android e9 | opened: OPEN, page; KF scope:Popup menu | Escape: closed, page [didPop _PopupMenuRoute<String?>, e9 closed cancelled] | popRoute: closed, page [didPop _PopupMenuRoute<String?>, e9 closed cancelled] | dismiss on: Dismiss menu | dismiss(Dismiss menu): closed, page [didPop _PopupMenuRoute<String?>, e9 closed cancelled]
+android e10 | opened: OPEN, page; KF scope:e1 showDialog | Escape: closed, page [] | popRoute: closed, NO PAGE [didPop /probe] | dismiss on: none
+android e11 | opened: OPEN, page; KF scope:Navigation menu | Escape: closed, page [e11 closed] | popRoute: closed, page [e11 closed] | dismiss on: none
+android e12 | opened: OPEN, page; KF scope:e1 showDialog | Escape: OPEN, page [] | popRoute: OPEN, NO PAGE [didPop /probe] | dismiss on: e12 snack text | dismiss(e12 snack text): closed, page [e12 closed dismiss]
+android e13 | opened: OPEN, page; KF scope:Select date | Escape: closed, page [didPop DialogRoute<DateTime>, e13 closed] | popRoute: closed, page [didPop DialogRoute<DateTime>, e13 closed] | dismiss on: Dismiss | dismiss(Dismiss): closed, page [didPop DialogRoute<DateTime>, e13 closed]
+android e14 | opened: OPEN, page; KF node:e14 Close | Escape: OPEN, page [] | popRoute: OPEN, NO PAGE [didPop /probe] | dismiss on: none
+android e15 | opened: OPEN, page; KF node:e15 Close | Escape: OPEN, page [] | popRoute: OPEN, NO PAGE [didPop /probe] | dismiss on: none
+android e16 | opened: OPEN, page; KF scope:e16 title | Escape: closed, page [didPop RawDialogRoute<String>, e16 closed] | popRoute: closed, page [didPop RawDialogRoute<String>, e16 closed] | dismiss on: e16 barrier | dismiss(e16 barrier): closed, page [didPop RawDialogRoute<String>, e16 closed]
+android e17 | opened: OPEN, page; KF scope:e17 title | Escape: OPEN, page [] | popRoute: closed, page [didPop RawDialogRoute<String>, e17 closed] | dismiss on: none
+android e18 | opened: OPEN, page; KF scope:Alert | Escape: closed, page [didPop CupertinoModalPopupRoute<String>, e18 closed] | popRoute: closed, page [didPop CupertinoModalPopupRoute<String>, e18 closed] | dismiss on: none
+android e19 | opened: OPEN, page; KF scope:Alert | Escape: OPEN, page [e19 pop blocked (didPop false)] | popRoute: OPEN, page [e19 pop blocked (didPop false)] | dismiss on: Dismiss | dismiss(Dismiss): OPEN, page [e19 pop blocked (didPop false)]
+android e20 | opened: OPEN, page; KF node:e20 Close | Escape: closed, page [e20 closed by Escape] | popRoute: closed, page [e20 closed by back] | dismiss on: e20 title | dismiss(e20 title): closed, page [e20 closed by dismiss]
+android e21 | opened: OPEN, page; KF node:e21 One | Escape: closed, page [didPop _DropdownRoute<String>] | popRoute: closed, page [didPop _DropdownRoute<String>] | dismiss on: Dismiss | dismiss(Dismiss): closed, page [didPop _DropdownRoute<String>]
+android e22 | opened: OPEN, page; KF scope:e22 title | Escape: OPEN, page [] | popRoute: closed, page [didPop CupertinoSheetRoute<String>, e22 closed] | dismiss on: none
+android t1 | Tab: node:t1 A > node:t1 B > node:t1 A > node:t1 B > node:t1 A | Shift+Tab: node:t1 B > node:t1 A > node:t1 B > node:t1 A | Escape: node:t1 A, traps page
+android t2 | Tab: node:t2 A > node:t2 B > node:t2 A > node:t2 B > node:t2 A | Shift+Tab: node:t2 B > node:t2 A > node:t2 B > node:t2 A | Escape: node:t9 after, traps page
+android t3 | Tab: node:t3 A > node:t3 B > node:t3 A > node:t3 B > node:t3 A | Shift+Tab: node:t3 B > node:t3 A > node:t3 B > node:t3 A | Escape: node:t3 A, traps page
+android t4 | Tab: node:t4 A > node:t4 B > node:t4 A > node:t4 B > node:t4 A | Shift+Tab: node:t4 B > node:t4 A > node:t4 B > node:t4 A | Escape: node:t4 A, traps page
+android t5 | Tab: node:t5 A > node:t5 B > node:t5 A > node:t5 B > node:t5 A | Shift+Tab: node:t5 B > node:t5 A > node:t5 B > node:t5 A | Escape: node:t9 after, traps page
+android from t0 | Tab: node:t1 A > node:t1 B > node:t1 A > node:t1 B
+iOS e1 | opened: OPEN, page; KF scope:e1 title | Escape: closed, page [didPop DialogRoute<String>, e1 closed] | popRoute: closed, page [didPop DialogRoute<String>, e1 closed] | dismiss on: Dismiss | dismiss(Dismiss): closed, page [didPop DialogRoute<String>, e1 closed]
+iOS e2 | opened: OPEN, page; KF scope:e2 title | Escape: OPEN, page [] | popRoute: closed, page [didPop DialogRoute<String>, e2 closed] | dismiss on: none
+iOS e3 | opened: OPEN, page; KF scope:Alert | Escape: OPEN, page [] | popRoute: closed, page [didPop CupertinoDialogRoute<String>, e3 closed] | dismiss on: none
+iOS e4 | opened: OPEN, page; KF scope:Alert | Escape: closed, page [didPop CupertinoDialogRoute<String>, e4 closed] | popRoute: closed, page [didPop CupertinoDialogRoute<String>, e4 closed] | dismiss on: Dismiss | dismiss(Dismiss): closed, page [didPop CupertinoDialogRoute<String>, e4 closed]
+iOS e5 | opened: OPEN, page; KF scope: | Escape: closed, page [didPop ModalBottomSheetRoute<String>, e5 closed] | popRoute: closed, page [didPop ModalBottomSheetRoute<String>, e5 closed] | dismiss on: Scrim | dismiss(Scrim): closed, page [didPop ModalBottomSheetRoute<String>, e5 closed]
+iOS e6 | opened: OPEN, page; KF scope: | Escape: OPEN, page [] | popRoute: closed, page [didPop ModalBottomSheetRoute<String>, e6 closed] | dismiss on: none
+iOS e7 | opened: OPEN, page; KF scope:e1 showDialog | Escape: OPEN, page [] | popRoute: closed, page [e7 closed] | dismiss on: e7 title | dismiss(e7 title): closed, page [e7 closed]
+iOS e8 | opened: OPEN, page; KF scope:e1 showDialog | Escape: OPEN, page [] | popRoute: OPEN, NO PAGE [didPop /probe] | dismiss on: none
+iOS e9 | opened: OPEN, page; KF scope:e9 One | Escape: closed, page [didPop _PopupMenuRoute<String?>, e9 closed cancelled] | popRoute: closed, page [didPop _PopupMenuRoute<String?>, e9 closed cancelled] | dismiss on: Dismiss menu | dismiss(Dismiss menu): closed, page [didPop _PopupMenuRoute<String?>, e9 closed cancelled]
+iOS e10 | opened: OPEN, page; KF scope:e1 showDialog | Escape: closed, page [] | popRoute: closed, NO PAGE [didPop /probe] | dismiss on: none
+iOS e11 | opened: OPEN, page; KF scope:e11 drawer | Escape: closed, page [e11 closed] | popRoute: closed, page [e11 closed] | dismiss on: none
+iOS e12 | opened: OPEN, page; KF scope:e1 showDialog | Escape: OPEN, page [] | popRoute: OPEN, NO PAGE [didPop /probe] | dismiss on: e12 snack text | dismiss(e12 snack text): closed, page [e12 closed dismiss]
+iOS e13 | opened: OPEN, page; KF scope:Select date | Escape: closed, page [didPop DialogRoute<DateTime>, e13 closed] | popRoute: closed, page [didPop DialogRoute<DateTime>, e13 closed] | dismiss on: Dismiss | dismiss(Dismiss): closed, page [didPop DialogRoute<DateTime>, e13 closed]
+iOS e14 | opened: OPEN, page; KF node:e14 Close | Escape: OPEN, page [] | popRoute: OPEN, NO PAGE [didPop /probe] | dismiss on: none
+iOS e15 | opened: OPEN, page; KF node:e15 Close | Escape: OPEN, page [] | popRoute: OPEN, NO PAGE [didPop /probe] | dismiss on: none
+iOS e16 | opened: OPEN, page; KF scope:e16 title | Escape: closed, page [didPop RawDialogRoute<String>, e16 closed] | popRoute: closed, page [didPop RawDialogRoute<String>, e16 closed] | dismiss on: e16 barrier | dismiss(e16 barrier): closed, page [didPop RawDialogRoute<String>, e16 closed]
+iOS e17 | opened: OPEN, page; KF scope:e17 title | Escape: OPEN, page [] | popRoute: closed, page [didPop RawDialogRoute<String>, e17 closed] | dismiss on: none
+iOS e18 | opened: OPEN, page; KF scope:Alert | Escape: closed, page [didPop CupertinoModalPopupRoute<String>, e18 closed] | popRoute: closed, page [didPop CupertinoModalPopupRoute<String>, e18 closed] | dismiss on: none
+iOS e19 | opened: OPEN, page; KF scope:e19 title | Escape: OPEN, page [e19 pop blocked (didPop false)] | popRoute: OPEN, page [e19 pop blocked (didPop false)] | dismiss on: Dismiss | dismiss(Dismiss): OPEN, page [e19 pop blocked (didPop false)]
+iOS e20 | opened: OPEN, page; KF node:e20 Close | Escape: closed, page [e20 closed by Escape] | popRoute: closed, page [e20 closed by back] | dismiss on: e20 title | dismiss(e20 title): closed, page [e20 closed by dismiss]
+iOS e21 | opened: OPEN, page; KF node:e21 One | Escape: closed, page [didPop _DropdownRoute<String>] | popRoute: closed, page [didPop _DropdownRoute<String>] | dismiss on: Dismiss | dismiss(Dismiss): closed, page [didPop _DropdownRoute<String>]
+iOS e22 | opened: OPEN, page; KF scope:e22 title | Escape: OPEN, page [] | popRoute: closed, page [didPop CupertinoSheetRoute<String>, e22 closed] | dismiss on: none
+iOS t1 | Tab: node:t1 A > node:t1 B > node:t1 A > node:t1 B > node:t1 A | Shift+Tab: node:t1 B > node:t1 A > node:t1 B > node:t1 A | Escape: node:t1 A, traps page
+iOS t2 | Tab: node:t2 A > node:t2 B > node:t2 A > node:t2 B > node:t2 A | Shift+Tab: node:t2 B > node:t2 A > node:t2 B > node:t2 A | Escape: node:t9 after, traps page
+iOS t3 | Tab: node:t3 A > node:t3 B > node:t3 A > node:t3 B > node:t3 A | Shift+Tab: node:t3 B > node:t3 A > node:t3 B > node:t3 A | Escape: node:t3 A, traps page
+iOS t4 | Tab: node:t4 A > node:t4 B > node:t4 A > node:t4 B > node:t4 A | Shift+Tab: node:t4 B > node:t4 A > node:t4 B > node:t4 A | Escape: node:t4 A, traps page
+iOS t5 | Tab: node:t5 A > node:t5 B > node:t5 A > node:t5 B > node:t5 A | Shift+Tab: node:t5 B > node:t5 A > node:t5 B > node:t5 A | Escape: node:t9 after, traps page
+iOS from t0 | Tab: node:t1 A > node:t1 B > node:t1 A > node:t1 B
+00:04 +46: All tests passed!
