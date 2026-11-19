@@ -1,12 +1,12 @@
 # What the V14 web test (web_tests/v14_focus_indicators.spec.js) measured, from the last evidence.py run,
 # Chromium, Playwright's default 1280 by 720 at a scale of 1, light mode.
-V14 web good-material alerts: changed 32649, unstable 0, marks 32277, page #FBF8FF, commonest mark #DCDAE0 (1.32), 3:1 or more: 4356 (#1B1B21, 16.30)
-V14 web good-material save: changed 2758, unstable 0, marks 648, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 600 (#1B1B21, 16.30)
-V14 web good-cupertino alerts: changed 628, unstable 0, marks 596, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 560 (#000000, 19.97)
-V14 web good-cupertino save: changed 1027, unstable 0, marks 969, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 909 (#000000, 19.97)
-V14 web good-widgets trail: changed 2427, unstable 0, marks 2008, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 1781 (#1B1B21, 16.30)
-V14 web bad-indicator-removed back: changed 1202, unstable 0, marks 1172, page #FBF8FF, commonest mark #E4E2E8 (1.22), 3:1 or more: 0
-V14 web bad-indicator-removed save: changed 0, unstable 0, marks 0, page #FBF8FF, commonest mark none (1.00), 3:1 or more: 0
-V14 web bad-checkbox-halo: changed 1256, unstable 0, marks 1128, page #FBF8FF, commonest mark #E4E2E8 (1.22), 3:1 or more: 0
-V14 web bad-cupertino-ring: changed 1025, unstable 0, marks 928, page #FBF8FF, commonest mark #8A9AF5 (2.49), 3:1 or more: 0
+V14 web good-material alerts: changed 32649, unstable 0, swapped 46, indicator 32649, 3:1 or more: 4316, page #FBF8FF; 27760 px #DCDAE0 on the page 1.32 against #FBF8FF; 4308 px #1B1B21 on the page 16.30 against #FBF8FF; 16 px #D8D6DC on the page 1.37 against #FBF8FF
+V14 web good-material save: changed 2758, unstable 0, swapped 0, indicator 2758, 3:1 or more: 2526, page #FBF8FF; 2016 px #636C9D on the control 3.40 against #1B1B21; 498 px #1B1B21 on the page 16.30 against #FBF8FF; 8 px #1D1C22 on the page 16.09 against #FBF8FF
+V14 web good-cupertino alerts: changed 628, unstable 0, swapped 4, indicator 628, 3:1 or more: 394, page #FBF8FF; 394 px #000000 on the page 19.97 against #FBF8FF
+V14 web good-cupertino save: changed 1027, unstable 0, swapped 0, indicator 1027, 3:1 or more: 710, page #FBF8FF; 709 px #000000 on the page 19.97 against #FBF8FF; 1 px #000000 on the control 3.26 against #FBF8FF, #515B92
+V14 web good-widgets trail: changed 1620, unstable 0, swapped 0, indicator 1620, 3:1 or more: 1516, page #FBF8FF; 1500 px #1B1B21 on the control 13.26 against #E4E1E9, #FBF8FF; 16 px #1C1C22 on the control 12.75 against #E1DEE6, #FBF8FF
+V14 web bad-indicator-removed back: changed 1202, unstable 0, swapped 0, indicator 1202, 3:1 or more: 0, page #FBF8FF; 1096 px #E4E2E8 on the page 1.22 against #FBF8FF; 16 px #E6E3E9 on the page 1.21 against #FBF8FF; 8 px #E8E5EC on the page 1.19 against #FBF8FF
+V14 web bad-indicator-removed save: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
+V14 web bad-checked-checkbox: changed 900, unstable 0, swapped 0, indicator 900, 3:1 or more: 0, page #FBF8FF; 860 px #E9E8F4 on the page 1.15 against #FBF8FF; 16 px #EAE9F5 on the page 1.14 against #FBF8FF; 8 px #ECEAF6 on the page 1.13 against #FBF8FF
+V14 web bad-cupertino-ring: changed 1025, unstable 0, swapped 0, indicator 1025, 3:1 or more: 0, page #FBF8FF; 709 px #8A9AF5 on the page 2.49 against #FBF8FF
 V14 web bad-notice-over-list visible: 1.00 1.00 0.88 0.00 0.00 0.00

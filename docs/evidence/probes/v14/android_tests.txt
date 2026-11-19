@@ -1,33 +1,33 @@
-# What the V14 Android test (V14FocusIndicatorsTest.kt) measured, from its log (tag V14), 2026-11-19.
-# Pixel 10a emulator, Android 17, light mode. Keys from a USB keyboard registered with the shell's uinput tool;
-# the FL-433 lines compare Tab from 'input keyevent' with Shift from that keyboard.
+# What the V14 Android test (V14FocusIndicatorsTest.kt) measured, from its log (tag V14), 2026-11-19, with the measure
+# of the V14 spec, section 6. Pixel 10a emulator, Android 17, light mode. Keys from a USB keyboard registered with the
+# shell's uinput tool; the FL-433 lines compare Tab from 'input keyevent' with Shift from that keyboard.
 
 ## At the emulator's own size, 1080 by 2424 at 420 dpi (evidence.py V14 --only android)
-11-19 14:52:25.567 23896 24381 I V14     : android bad-notice-over-list visible: 1.00, 1.00, 0.87, 0.00, 0.00, 0.00
-11-19 14:52:35.262 23896 24610 I V14     : android bad-indicator-removed back: changed 8226, unstable 0, marks 8128, page #FBF8FF, commonest mark #E4E1E8 (1.23), 3:1 or more: 0
-11-19 14:52:37.070 23896 24610 I V14     : android bad-indicator-removed save: changed 0, unstable 0, marks 0, page #FBF8FF, commonest mark none (1.00), 3:1 or more: 0
-11-19 14:52:48.023 23896 24749 I V14     : android bad-cupertino-ring: changed 5899, unstable 0, marks 5877, page #FBF8FF, commonest mark #8A9AF5 (2.49), 3:1 or more: 0
-11-19 14:52:59.435 23896 24890 I V14     : android good-material alerts: changed 143271, unstable 0, marks 142392, page #FBF8FF, commonest mark #DCDAE0 (1.32), 3:1 or more: 16826 (#1B1B21, 16.30)
-11-19 14:53:01.472 23896 24890 I V14     : android good-material save: changed 22762, unstable 0, marks 4315, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 4315 (#1B1B21, 16.30)
-11-19 14:53:10.249 23896 24890 I V14     : android good-cupertino alerts: changed 3550, unstable 0, marks 3550, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 3550 (#000000, 19.97)
-11-19 14:53:12.318 23896 24890 I V14     : android good-cupertino save: changed 5899, unstable 0, marks 5899, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 5899 (#000000, 19.97)
-11-19 14:53:21.265 23896 24890 I V14     : android good-widgets trail: changed 15163, unstable 0, marks 13994, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 12213 (#1B1B21, 16.30)
-11-19 14:53:33.597 23896 25262 I V14     : android bad-checkbox-halo: changed 8644, unstable 0, marks 7753, page #FBF8FF, commonest mark #E4E1E8 (1.23), 3:1 or more: 0
-11-19 14:53:49.174 23896 25402 I V14     : android good-notice-below visible: 1.00, 1.00, 1.00, 1.00, 1.00, 1.00
-11-19 14:54:01.025 23896 25582 I V14     : android FL-433 after input keyevent: changed 0, unstable 0, marks 0, page #FBF8FF, commonest mark none (1.00), 3:1 or more: 0
-11-19 14:54:02.808 23896 25582 I V14     : android FL-433 after Shift from the registered keyboard: changed 15163, unstable 0, marks 13994, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 12213 (#1B1B21, 16.30)
+11-19 17:31:52.033 29428 29927 I V14     : android bad-notice-over-list visible: 1.00, 1.00, 0.87, 0.00, 0.00, 0.00
+11-19 17:32:01.863 29428 30176 I V14     : android bad-indicator-removed back: changed 8226, unstable 0, swapped 0, indicator 8226, 3:1 or more: 0, page #FBF8FF; 8078 px #E4E1E8 on the page 1.23 against #FBF8FF; 1 px #D9D6DD on the page 1.37 against #FBF8FF; 1 px #D7D4DB on the control 1.13 against #1B1B21, #E4E1E8
+11-19 17:32:03.480 29428 30176 I V14     : android bad-indicator-removed save: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
+11-19 17:32:14.355 29428 30322 I V14     : android bad-cupertino-ring: changed 5899, unstable 0, swapped 0, indicator 5899, 3:1 or more: 0, page #FBF8FF; 5877 px #8A9AF5 on the page 2.49 against #FBF8FF
+11-19 17:32:30.790 29428 30468 I V14     : android good-material alerts: changed 143271, unstable 0, swapped 107, indicator 143271, 3:1 or more: 16826, page #FBF8FF; 125352 px #DCDAE0 on the page 1.32 against #FBF8FF; 16826 px #1B1B21 on the page 16.30 against #FBF8FF; 25 px #DBD9DF on the page 1.33 against #FBF8FF
+11-19 17:32:33.146 29428 30468 I V14     : android good-material save: changed 22762, unstable 0, swapped 33, indicator 22762, 3:1 or more: 22623, page #FBF8FF; 18275 px #636C9D on the control 3.40 against #1B1B21; 4315 px #1B1B21 on the page 16.30 against #FBF8FF; 11 px #646D9D on the control 3.44 against #FFFFFF, #1B1B21
+11-19 17:32:41.459 29428 30468 I V14     : android good-cupertino alerts: changed 3550, unstable 0, swapped 0, indicator 3550, 3:1 or more: 3550, page #FBF8FF; 3548 px #000000 on the page 19.97 against #FBF8FF; 2 px #000000 on the control 16.66 against #FBF8FF, #E6E4EB
+11-19 17:32:43.785 29428 30468 I V14     : android good-cupertino save: changed 5899, unstable 0, swapped 0, indicator 5899, 3:1 or more: 5899, page #FBF8FF; 5877 px #000000 on the page 19.97 against #FBF8FF; 22 px #000000 on the control 3.26 against #515B92, #FBF8FF
+11-19 17:32:52.178 29428 30468 I V14     : android good-widgets trail: changed 10322, unstable 0, swapped 0, indicator 10322, 3:1 or more: 10322, page #FBF8FF; 10319 px #1B1B21 on the control 13.26 against #FBF8FF, #E4E1E9; 3 px #1B1B21 on the page 16.30 against #FBF8FF
+11-19 17:33:08.387 29428 30895 I V14     : android good-notice-below visible: 1.00, 1.00, 1.00, 1.00, 1.00, 1.00
+11-19 17:33:19.656 29428 31078 I V14     : android FL-433 after input keyevent: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
+11-19 17:33:21.480 29428 31078 I V14     : android FL-433 after Shift from the registered keyboard: changed 10322, unstable 0, swapped 0, indicator 10322, 3:1 or more: 10322, page #FBF8FF; 10319 px #1B1B21 on the control 13.26 against #FBF8FF, #E4E1E9; 3 px #1B1B21 on the page 16.30 against #FBF8FF
+11-19 17:33:32.635 29428 31257 I V14     : android bad-checked-checkbox: changed 6368, unstable 0, swapped 0, indicator 6368, 3:1 or more: 0, page #FBF8FF; 6256 px #EAE8F4 on the page 1.15 against #FBF8FF; 28 px #EBE9F5 on the page 1.14 against #FBF8FF; 20 px #ECEAF5 on the page 1.13 against #FBF8FF
 
 ## At CI's size, 320 by 640 at 160 dpi (wm size and wm density, reset afterwards)
-11-19 14:45:55.953 19328 19348 I V14     : android bad-notice-over-list visible: 1.00, 1.00, 0.88, 0.00, 0.00, 0.00
-11-19 14:46:05.644 19328 19348 I V14     : android bad-indicator-removed back: changed 1194, unstable 0, marks 1164, page #FBF8FF, commonest mark #E4E1E8 (1.23), 3:1 or more: 0
-11-19 14:46:07.315 19328 19348 I V14     : android bad-indicator-removed save: changed 0, unstable 0, marks 0, page #FBF8FF, commonest mark none (1.00), 3:1 or more: 0
-11-19 14:46:17.788 19328 19348 I V14     : android bad-cupertino-ring: changed 782, unstable 0, marks 777, page #FBF8FF, commonest mark #8A9AF5 (2.49), 3:1 or more: 0
-11-19 14:46:28.795 19328 19348 I V14     : android good-material alerts: changed 15723, unstable 0, marks 15391, page #FBF8FF, commonest mark #DCDAE0 (1.32), 3:1 or more: 2000 (#1B1B21, 16.30)
-11-19 14:46:31.025 19328 19348 I V14     : android good-material save: changed 3293, unstable 0, marks 637, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 637 (#1B1B21, 16.30)
-11-19 14:46:39.280 19328 19348 I V14     : android good-cupertino alerts: changed 514, unstable 0, marks 514, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 514 (#000000, 19.97)
-11-19 14:46:41.441 19328 19348 I V14     : android good-cupertino save: changed 782, unstable 0, marks 782, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 782 (#000000, 19.97)
-11-19 14:46:49.462 19328 19348 I V14     : android good-widgets trail: changed 2372, unstable 0, marks 2098, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 1834 (#1B1B21, 16.30)
-11-19 14:47:01.726 19328 19348 I V14     : android bad-checkbox-halo: changed 1256, unstable 0, marks 1132, page #FBF8FF, commonest mark #E4E1E8 (1.23), 3:1 or more: 0
-11-19 14:47:16.857 19328 19348 I V14     : android good-notice-below visible: 1.00, 1.00, 1.00, 1.00, 1.00, 1.00
-11-19 14:47:28.252 19328 19348 I V14     : android FL-433 after input keyevent: changed 0, unstable 0, marks 0, page #FBF8FF, commonest mark none (1.00), 3:1 or more: 0
-11-19 14:47:30.037 19328 19348 I V14     : android FL-433 after Shift from the registered keyboard: changed 2372, unstable 0, marks 2098, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 1834 (#1B1B21, 16.30)
+11-19 17:28:56.290 26917 26946 I V14     : android bad-notice-over-list visible: 1.00, 1.00, 0.88, 0.00, 0.00, 0.00
+11-19 17:29:05.518 26917 26946 I V14     : android bad-indicator-removed back: changed 1194, unstable 0, swapped 0, indicator 1194, 3:1 or more: 0, page #FBF8FF; 1160 px #E4E1E8 on the page 1.23 against #FBF8FF; 2 px #E2DFE6 on the page 1.25 against #FBF8FF
+11-19 17:29:07.149 26917 26946 I V14     : android bad-indicator-removed save: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
+11-19 17:29:17.460 26917 26946 I V14     : android bad-cupertino-ring: changed 782, unstable 0, swapped 0, indicator 782, 3:1 or more: 0, page #FBF8FF; 777 px #8A9AF5 on the page 2.49 against #FBF8FF
+11-19 17:29:28.445 26917 26946 I V14     : android good-material alerts: changed 15723, unstable 0, swapped 29, indicator 15723, 3:1 or more: 2000, page #FBF8FF; 13265 px #DCDAE0 on the page 1.32 against #FBF8FF; 2000 px #1B1B21 on the page 16.30 against #FBF8
+11-19 17:29:30.464 26917 26946 I V14     : android good-material save: changed 3293, unstable 0, swapped 12, indicator 3293, 3:1 or more: 3215, page #FBF8FF; 2563 px #636C9D on the control 3.40 against #1B1B21; 637 px #1B1B21 on the page 16.30 against #FBF8FF;
+11-19 17:29:38.487 26917 26946 I V14     : android good-cupertino alerts: changed 514, unstable 0, swapped 0, indicator 514, 3:1 or more: 514, page #FBF8FF; 514 px #000000 on the page 19.97 against #FBF8FF
+11-19 17:29:40.462 26917 26946 I V14     : android good-cupertino save: changed 782, unstable 0, swapped 0, indicator 782, 3:1 or more: 782, page #FBF8FF; 777 px #000000 on the page 19.97 against #FBF8FF; 5 px #000000 on the control 3.26 against #515B92, #FBF8
+11-19 17:29:48.198 26917 26946 I V14     : android good-widgets trail: changed 1560, unstable 0, swapped 0, indicator 1560, 3:1 or more: 1560, page #FBF8FF; 1552 px #1B1B21 on the control 13.26 against #FBF8FF, #E4E1E9; 8 px #1B1B21 on the page 16.30 against #
+11-19 17:30:03.843 26917 26946 I V14     : android good-notice-below visible: 1.00, 1.00, 1.00, 1.00, 1.00, 1.00
+11-19 17:30:14.681 26917 26946 I V14     : android FL-433 after input keyevent: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
+11-19 17:30:16.270 26917 26946 I V14     : android FL-433 after Shift from the registered keyboard: changed 1560, unstable 0, swapped 0, indicator 1560, 3:1 or more: 1560, page #FBF8FF; 1552 px #1B1B21 on the control 13.26 against #FBF8FF, #E4E1E9; 8 px #1B1B2
+11-19 17:30:26.771 26917 26946 I V14     : android bad-checked-checkbox: changed 912, unstable 0, swapped 0, indicator 912, 3:1 or more: 0, page #FBF8FF; 880 px #EAE8F4 on the page 1.15 against #FBF8FF; 16 px #EBEAF5 on the page 1.13 against #FBF8FF; 8 px #EEE

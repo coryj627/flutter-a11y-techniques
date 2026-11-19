@@ -18,6 +18,6 @@ Result: PASS
 | `good-widgets` | Ridge trail Button |
 | `good-notice-below` | (no speech) / Ridge trail Button / Lake loop Button / Summit path Button / Trail conditions are updated every morning. |
 | `bad-indicator-removed` | Save Button |
-| `bad-checkbox-halo` | Weather alerts Switch button off Double tap to toggle setting. |
+| `bad-checked-checkbox` | Weather alerts Switch button on Double tap to toggle setting. |
 | `bad-cupertino-ring` | Save Button |
 | `bad-notice-over-list` | (no speech) / Ridge trail Button / Lake loop Button / Summit path Button / Forest walk Button / River run Button / Trail conditions are updated every morning. |

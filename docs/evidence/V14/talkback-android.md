@@ -19,7 +19,7 @@ Result: PASS
 | `v14-good-cupertino-save` | Save / Button / Double-tap to activate |
 | `v14-good-widgets-trail` | Ridge trail / Button / Double-tap to activate |
 | `v14-bad-indicator-removed-save` | Save / Button / Double-tap to activate |
-| `v14-bad-checkbox-halo-alerts` | Weather alerts / Check box / Double-tap to toggle |
+| `v14-bad-checked-checkbox-alerts` | checked.  / Weather alerts / Check box |
 | `v14-bad-cupertino-ring-save` | Save / Button / Double-tap to activate |
 | `v14-good-notice-below-trail1` | Ridge trail / Button / Double-tap to activate |
 | `v14-good-notice-below-trail3` | Summit path / Button / Double-tap to activate |

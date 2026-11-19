@@ -1,13 +1,18 @@
 # What the V14 iOS test (V14FocusIndicatorsUITests.swift) measured, from the last evidence.py run,
 # iPhone 17 simulator, iOS 27.0, light mode. Pixels are the screenshot's (3 to a point).
-V14 ios bad-checkbox-halo: changed 11296, unstable 0, marks 10172, page #FBF8FF, commonest mark #E4E1E8 (1.23), 3:1 or more: 0
-V14 ios bad-cupertino-ring: changed 8256, unstable 0, marks 7912, page #FBF8FF, commonest mark #8A9AF5 (2.49), 3:1 or more: 0
-V14 ios bad-indicator-removed back: changed 10716, unstable 0, marks 10600, page #FBF8FF, commonest mark #E4E1E8 (1.23), 3:1 or more: 0
-V14 ios bad-indicator-removed save: changed 0, unstable 0, marks 0, page #FBF8FF, commonest mark none (1.00), 3:1 or more: 0
+V14 ios bad-checked-checkbox: changed 8360, unstable 0, swapped 0, indicator 8360, 3:1 or more: 0, page #FBF8FF; 8228 px #EAE8F4 on the page 1.15 against #FBF8FF; 32 px #EBE9F5 on the page 1.14 against #FBF8FF; 24 px #EEECF6 on the page 1.11 against #FBF8FF
+V14 ios bad-cupertino-ring: changed 8256, unstable 0, swapped 0, indicator 8256, 3:1 or more: 0, page #FBF8FF; 7305 px #8A9AF5 on the page 2.49 against #FBF8FF
+V14 ios bad-indicator-removed back: changed 10716, unstable 0, swapped 11, indicator 10716, 3:1 or more: 0, page #FBF8FF; 10492 px #E4E1E8 on the page 1.23 against #FBF8FF; 10 px #E3E0E7 on the page 1.24 against #FBF8FF
+V14 ios bad-indicator-removed save: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
 V14 ios bad-notice-over-list visible: 1.00 1.00 0.88 0.00 0.00 0.00
-V14 ios good-material alerts: changed 182651, unstable 0, marks 181429, page #FBF8FF, commonest mark #DCDAE0 (1.32), 3:1 or more: 22400 (#1B1B21, 16.30)
-V14 ios good-material save: changed 30935, unstable 0, marks 6022, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 5940 (#1B1B21, 16.30)
-V14 ios good-cupertino alerts: changed 4958, unstable 0, marks 4909, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 4826 (#000000, 19.97)
-V14 ios good-cupertino save: changed 8256, unstable 0, marks 8153, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 8042 (#000000, 19.97)
-V14 ios good-widgets trail: changed 20183, unstable 0, marks 18860, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 16467 (#1B1B21, 16.30)
+V14 ios good-material alerts: changed 182651, unstable 0, swapped 175, indicator 182651, 3:1 or more: 22288, page #FBF8FF; 158733 px #DCDAE0 on the page 1.32 against #FBF8FF; 22288 px #1B1B21 on the page 16.30 against #FBF8FF; 53 px #DBD9DF on the page 1.33 against #FBF8FF
+V14 ios good-material save: changed 30935, unstable 0, swapped 63, indicator 30935, 3:1 or more: 30118, page #FBF8FF; 24514 px #636C9D on the control 3.40 against #1B1B21; 5541 px #1B1B21 on the page 16.30 against #FBF8FF; 20 px #656E9F on the control 3.50 against #FFFFFF, #1B1B21
+V14 ios good-material alerts after focus left: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
+V14 ios good-material save after focus left: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
+V14 ios good-cupertino alerts: changed 4958, unstable 0, swapped 0, indicator 4958, 3:1 or more: 4374, page #FBF8FF; 4373 px #000000 on the page 19.97 against #FBF8FF; 1 px #000000 on the control 12.24 against #FBF8FF, #C6C5CA
+V14 ios good-cupertino save: changed 8256, unstable 0, swapped 0, indicator 8256, 3:1 or more: 7329, page #FBF8FF; 7305 px #000000 on the page 19.97 against #FBF8FF; 24 px #000000 on the control 3.26 against #515B92, #FBF8FF
+V14 ios good-cupertino alerts after focus left: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
+V14 ios good-cupertino save after focus left: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
+V14 ios good-widgets trail: changed 14216, unstable 0, swapped 0, indicator 14216, 3:1 or more: 13936, page #FBF8FF; 13936 px #1B1B21 on the control 13.26 against #FBF8FF, #E4E1E9
+V14 ios good-widgets trail after focus left: changed 0, unstable 0, swapped 0, indicator 0, 3:1 or more: 0, page #FBF8FF; 
 V14 ios good-notice-below visible: 1.00 1.00 1.00 1.00 1.00 1.00
