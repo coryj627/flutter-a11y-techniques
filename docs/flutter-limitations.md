@@ -124,11 +124,11 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-420](#fl-420) | Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets | All | Confirmed |
 | [FL-421](#fl-421) | On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever | Web | Confirmed |
 | [FL-422](#fl-422) | On a scrolled screen the default focus order puts the app bar's Back button among the content | All | Confirmed |
-| [FL-430](#fl-430) | A Material `Checkbox`, `Radio`, or `Switch` shows keyboard focus with a halo under 3:1 against the page | iOS, Web (Android: widget tests only, FL-433) | Confirmed |
-| [FL-431](#fl-431) | A `CupertinoButton`, `CupertinoSwitch`, or `CupertinoCheckbox` shows keyboard focus with a ring under 3:1 against a light page | iOS, Web (Android: widget tests only, FL-433) | Confirmed |
+| [FL-430](#fl-430) | A Material `Checkbox`, `Radio`, or `Switch` shows keyboard focus with a halo under 3:1 against the page | All | Confirmed |
+| [FL-431](#fl-431) | A `CupertinoButton`, `CupertinoSwitch`, or `CupertinoCheckbox` shows keyboard focus with a ring under 3:1 against a light page | All | Confirmed |
 | [FL-432](#fl-432) | A control that takes keyboard focus is scrolled into its view without regard to anything drawn over the view, and can end up entirely hidden | All | Confirmed |
-| [FL-433](#fl-433) | On Android, a key from the virtual keyboard device does not turn focus highlights on, and every key a test can send is one | Android | Confirmed (source read; effect measured on test keys) |
-| [FL-434](#fl-434) | Material's default focus indicator on buttons, list tiles, chips, sliders, and `InkWell` is a tint of 1.1:1 to 1.5:1 | iOS, Web (Android: widget tests only, FL-433) | Confirmed |
+| [FL-433](#fl-433) | On Android, a key from the virtual keyboard device does not turn focus highlights on, and `input keyevent` and Instrumentation's keys all come from it | Android | Confirmed |
+| [FL-434](#fl-434) | Material's default focus indicator on buttons, list tiles, chips, sliders, and `InkWell` is a tint of 1.1:1 to 1.5:1 | All | Confirmed |
 | [FL-435](#fl-435) | A `CupertinoTextField` shows keyboard focus only by its caret | iOS, Web (Android: no caret either; not looked into) | Observed |
 | [FL-440](#fl-440) | A `CupertinoAlertDialog`'s actions take no keyboard focus | All | Confirmed |
 | [FL-441](#fl-441) | A `CupertinoActionSheet`'s title and message fail text contrast in light mode | All (widget test only) | Confirmed (widget test only) |
@@ -2668,12 +2668,13 @@ yet), **Fixed in x.y** (verified on that version).
 - Status: Confirmed, Flutter 3.47.5. Measured in the V14 probe
   (`docs/evidence/probes/v14/`): in widget tests as Android and as iOS,
   on the web in Chromium (`web.txt`), and on the iOS simulator
-  (`ios.txt`), with the same colours on all three. Not measured on an
-  Android device: the tests there cannot turn Flutter's focus highlights
-  on ([FL-433](#fl-433)), and with them off no halo is drawn. Asserted by
-  V14 `bad-checkbox-halo` in the widget tests (light and dark), the web
-  test, and the iOS test, written to fail when the halo reaches 1.5:1 or
-  draws anything at 3:1. Framework source read: `material/checkbox.dart`,
+  (`ios.txt`), and, for the checkbox, on the Android emulator with a
+  `uinput` keyboard (`android_round6.txt`, fixture m8; with `input
+  keyevent` nothing is drawn, [FL-433](#fl-433)), with the same colours on
+  all four. Radio and switch were not probed on an Android device. Asserted by V14
+  `bad-checkbox-halo` in the widget tests (light and dark), the web test,
+  the iOS test, and the Android test, written to fail when the halo
+  reaches 1.5:1 or draws anything at 3:1. Framework source read: `material/checkbox.dart`,
   `_CheckboxDefaultsM3.overlayColor` (`onSurface` at an opacity of 0.1 when
   focused and not checked, `primary` at 0.1 when checked); `radio.dart`
   and `switch.dart` have the same pattern.
@@ -2708,11 +2709,14 @@ yet), **Fixed in x.y** (verified on that version).
 **A `CupertinoButton`, `CupertinoSwitch`, or `CupertinoCheckbox` shows keyboard focus with a ring under 3:1 against a light page.**
 
 - Status: Confirmed, Flutter 3.47.5, light mode. Measured in the V14 probe
-  in widget tests as Android and as iOS, on the web, and on the iOS
-  simulator, with the same colours on all three. Not measured on an
-  Android device ([FL-433](#fl-433)). Asserted by V14 `bad-cupertino-ring`
-  in the widget tests, the web test, and the iOS test, written to fail
-  when the ring reaches 3:1 in light mode. Framework source read:
+  in widget tests as Android and as iOS, on the web, on the iOS
+  simulator, and, for the button, on the Android emulator with a
+  `uinput` keyboard (`android_round6.txt`, fixture c1), with the same
+  colours on all four. The switch and checkbox were not probed on an
+  Android device. Asserted by
+  V14 `bad-cupertino-ring` in the widget tests (light mode under 3:1, dark
+  mode over it), the web test, the iOS test, and the Android test,
+  written to fail when the ring reaches 3:1 in light mode. Framework source read:
   `cupertino/button.dart` (the ring is the button's colour at an opacity
   of 0.80, its HSL lightness set to 0.69 and saturation to 0.835:
   `kCupertinoFocusColorOpacity`, `kCupertinoFocusColorBrightness`, and
@@ -2735,7 +2739,7 @@ yet), **Fixed in x.y** (verified on that version).
   `CupertinoColors.label.resolveFrom(context)`, as V14 `good-cupertino`
   does for a `CupertinoSwitch` and a `CupertinoButton.filled` (19.97:1 in
   light, 18.55:1 in dark). Verified in the V14 widget tests, on the web,
-  and on iOS; not on Android (FL-433).
+  on iOS, and on Android.
 - How to read this entry: Flutter has not made the Cupertino focus ring
   meet 3:1 on a light page yet. Re-check when the pinned version changes.
 - Upstream issue: not searched yet (D25).
@@ -2790,15 +2794,13 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-433
 
-**On Android, a key from the virtual keyboard device does not turn focus highlights on, and every key a test can send is one.**
+**On Android, a key from the virtual keyboard device does not turn focus highlights on, and `input keyevent` and Instrumentation's keys all come from it.**
 
-- Status: Confirmed, Flutter 3.47.5, Android 17 emulator: the framework's
-  rule read in the source, and its effect on keys sent by tests measured
-  in the V14 probe (`docs/evidence/probes/v14/`, Android rounds 1 to 5)
-  and asserted by the V14 Android test. What it does to someone using an
-  on-screen keyboard's keys was not measured; what a real hardware
-  keyboard does on Android was not observed either, as none could be
-  driven. Framework source read: `widgets/focus_manager.dart`,
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator. The framework's
+  rule read in the source; its effect measured in the V14 probe
+  (`docs/evidence/probes/v14/`, Android rounds 1 to 6) and asserted by
+  the V14 Android test "keysFromTheVirtualKeyboardLeaveTheHighlightsOff".
+  Framework source read: `widgets/focus_manager.dart`,
   `_HighlightModeManager.handleKeyMessage`, which does not change the
   highlight mode for a key that `_isKeyMessageFromAndroidIME` finds to
   come from an input method: one with the soft keyboard flag, or from
@@ -2806,43 +2808,45 @@ yet), **Fixed in x.y** (verified on that version).
   that Backspace from an on-screen keyboard does not turn highlights on,
   and cites flutter/flutter issue 180746.
 - WCAG: none failed as written. 2.4.7 asks for a mode in which the focus
-  indicator is visible, and a hardware keyboard turns it on (by the source;
-  not observed).
+  indicator is visible, and a keyboard of its own turns it on (below).
 - What happens: Flutter shows most focus indicators (Material's tints and
   halos, Cupertino's rings, and anything drawn from
   `FocusableActionDetector.onShowFocusHighlight`) only in its traditional
-  highlight mode, which a key turns on. On Android the key's device id is
-  checked first. In the probe every way of sending Tab from a test arrived
-  with device id -1, whatever id it was sent with: `adb shell input
-  keyevent`, `Instrumentation.sendKeySync` and
-  `UiAutomation.injectInputEvent` with device 0 (the emulator's own
-  keyboard) and with 9999; keys sent through the emulator console did not
-  reach the app (round 5). Focus moved, and the mode stayed touch:
-  nothing that follows the mode was drawn. A mouse would also turn the
-  mode on (the default mode is traditional when a mouse is connected),
-  but none of four ways of moving one reached Flutter as a mouse (round
-  4). Indicators that Flutter draws from the focused state itself are not
-  affected: a `TextField`'s border, an `OutlinedButton`'s outline,
-  `ButtonStyle.side` for the focused state, and a ring drawn from
-  `Focus.onFocusChange`.
-- Effect: for testing, an Android test cannot check an indicator that
-  follows the highlight mode; V14 checks those in the widget tests, on the
-  web, and on iOS, and on Android checks only `good-material`, whose rings
-  come from the focused state. The V14 Android test asserts the rule
-  itself: with Tab, the checkbox tile's ring is drawn and the tile's own
-  focus tint is not. For users: by the source, someone moving focus with
-  an on-screen keyboard's Tab or arrow keys sees no highlight that follows
-  the mode (not measured).
-- Workaround: draw the indicator from the focused state rather than the
-  highlight mode, with `ButtonStyle.side` or `Focus.onFocusChange`, as V14
-  `good-material` does; it then also shows when focus comes from a touch
-  or from code. Verified on Android in the V14 test. An app can also set
-  `FocusManager.instance.highlightStrategy` to
+  highlight mode, which a key turns on, unless the key is from device -1.
+  - Every key a test sent through Android's injection arrived with device
+    id -1, whatever id it was sent with: `adb shell input keyevent`,
+    `Instrumentation.sendKeySync` and `UiAutomation.injectInputEvent` with
+    device 0 (the emulator's own keyboard) and with 9999 (rounds 1 to 3).
+    Focus moved, and the mode stayed touch: nothing that follows the mode
+    was drawn. Keys through the emulator console did not reach the app
+    (round 5), and no way of moving a mouse, which would also have turned
+    the mode on, reached Flutter as a mouse (round 4).
+  - A keyboard registered with the shell's `uinput` tool, which goes
+    through the kernel as a real USB keyboard does, arrived with a device
+    id of its own (24 to 27 in round 6), and its first key turned the
+    mode traditional: every indicator was drawn, with the colours the
+    widget tests, the web, and iOS give. A hardware keyboard's keys
+    therefore turn highlights on, as the source says.
+  - Indicators that Flutter draws from the focused state itself are not
+    affected either way: a `TextField`'s border, an `OutlinedButton`'s
+    outline, `ButtonStyle.side` for the focused state, a ring drawn from
+    `Focus.onFocusChange`.
+- Effect: for users, by the source, someone who moves focus with an
+  on-screen keyboard's Tab or arrow keys sees no highlight that follows
+  the mode (not measured with a real input method). For tests: a test
+  that presses keys with `input keyevent` or Instrumentation does not see
+  what a keyboard user sees. The V14 Android test registers a `uinput`
+  keyboard instead (verified at the emulator's own size and at CI's 320
+  by 640 at 160 dpi).
+- Workaround: for users, draw the indicator from the focused state, with
+  `ButtonStyle.side` or `Focus.onFocusChange`, as V14 `good-material`
+  does; or set `FocusManager.instance.highlightStrategy` to
   `FocusHighlightStrategy.alwaysTraditional`, which shows every highlight
-  after a touch as well; not tried.
-- How to read this entry: this is the framework's chosen behaviour, and
-  the effect on tests is a test-tool gap as much as a framework one; it is
-  logged here because it decides what can be verified on Android.
+  after a touch as well (not tried). For tests, a `uinput` keyboard (the
+  V14 Android test's `Keyboard`).
+- How to read this entry: this is the framework's chosen behaviour; it is
+  logged because it decides what a test's keys show and what an
+  on-screen keyboard's keys show.
 - Upstream issue: not searched yet (D25).
 
 ## FL-434
@@ -2850,11 +2854,12 @@ yet), **Fixed in x.y** (verified on that version).
 **Material's default focus indicator on buttons, list tiles, chips, sliders, and `InkWell` is a tint of 1.1:1 to 1.5:1.**
 
 - Status: Confirmed, Flutter 3.47.5. Measured in the V14 probe in widget
-  tests as Android and as iOS, on the web, and on the iOS simulator, with
-  the same colours on all three; on the Android emulator the tint was not
-  drawn ([FL-433](#fl-433)). Asserted by the V14 widget test of
+  tests as Android and as iOS, on the web, on the iOS simulator, and on
+  the Android emulator with a `uinput` keyboard (`android_round6.txt`,
+  the `ElevatedButton`, fixture m1; with `input keyevent` the tint is not
+  drawn, [FL-433](#fl-433)), with the same colours on all four. Asserted by the V14 widget test of
   `good-material`, where the checkbox tile's own tint is the commonest
-  change, at 1.32:1. Framework source read: the M3 defaults of
+  change, at 1.32:1; the web, iOS, and Android tests log the same. Framework source read: the M3 defaults of
   `filled_button.dart`, `elevated_button.dart`, `outlined_button.dart`,
   `text_button.dart`, and `icon_button.dart` (`overlayColor` of the
   foreground colour at an opacity of 0.1 when focused), and

@@ -36,9 +36,12 @@ a banner, a bar, or a header pinned over a scrolling view.
 Keyboard focus from a hardware keyboard on Android and iOS, and from the
 browser's keyboard on the web. Flutter shows most of its indicators only
 when it judges that the keyboard is in use (its highlight mode, section
-7); the tests put it in that mode the way a user's keyboard does where
-they can, and say so where they cannot (Android, section 7 and
-[FL-433](../flutter-limitations.md#fl-433)). The simulator and the
+7). The tests put it in that mode the way a user's keyboard does: on
+iOS with XCUITest's hardware keys, on the web with the browser's keys, and
+on Android with a keyboard the test registers through the shell's `uinput`
+tool, because the keys Android's own injection sends (`input keyevent`,
+Instrumentation) count as the on-screen keyboard's and leave the mode as
+it is ([FL-433](../flutter-limitations.md#fl-433)). The simulator and the
 emulator are in light mode; dark mode is measured in the widget tests
 and the probe.
 
@@ -70,9 +73,16 @@ written:
   one on the component's border, with both. The criterion does not
   compare the focused and unfocused states, and a change of background
   colour within the component "is not in scope". `bad-checkbox-halo` and
-  `bad-cupertino-ring` fail it: both indicators are drawn outside the
-  control, on the page, at 1.22:1 to 1.26:1 and 2.49:1 against it
-  (section 7). Material's default overlay on a button or a list tile, a
+  `bad-cupertino-ring` (in light mode) fail it: both indicators are
+  drawn outside the control, on the page, at 1.22:1 to 1.26:1 and, in
+  light mode, 2.49:1 against it (section 7). The checkbox shows focus in
+  one more way, which does not change the verdict: its box's 2 pixel
+  border turns from `onSurfaceVariant`, `#46464F`, to `onSurface`,
+  `#1B1B21`, a change of 1.82:1 between the two states; both colours are
+  9:1 or more against the page, so the border identifies the box in
+  either state and not which state it is in. What identifies the focused
+  state is the halo, at 1.23:1 (read in the source,
+  `_CheckboxDefaultsM3.side`; the colours measured in the probe). Material's default overlay on a button or a list tile, a
   tint of the control's own background at 1.14:1 to 1.45:1 against what
   it replaced, is a change of background within the component and so is
   not a 1.4.11 failure; it is weak, and is recorded as such
@@ -185,9 +195,9 @@ caret (section 7, [FL-435](../flutter-limitations.md#fl-435)).
 
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
-| `bad-indicator-removed` | A `FilledButton` with `overlayColor: WidgetStatePropertyAll(Colors.transparent)`, as is done to be rid of the tint a press leaves. The overlay is all a `FilledButton` changes for focus: Tab reaches the button and nothing on the screen changes | R1 | 2.4.7, all platforms (on Android not measured on the device: FL-433; the same drawing code, by the widget tests as Android) |
-| `bad-checkbox-halo` | A Material `Checkbox` and its label, with the checkbox's default focus indicator: a disc of the text colour at a tenth of its strength round the box. 1.22:1 to 1.23:1 against the page in light mode, 1.26:1 in dark. Radio buttons and switches have the same halo ([FL-430](../flutter-limitations.md#fl-430)) | R2 | 1.4.11, all platforms (on Android not measured on the device: FL-433; the same drawing code, by the widget tests as Android) |
-| `bad-cupertino-ring` | A `CupertinoButton.filled` with its default focus ring, a pale tint made from the button's colour: 2.49:1 against the page in light mode. In dark mode it is 3.79:1 and passes ([FL-431](../flutter-limitations.md#fl-431)) | R2, R4 | 1.4.11 in light mode, all platforms (on Android not measured on the device: FL-433; the same drawing code, by the widget tests as Android) |
+| `bad-indicator-removed` | A `FilledButton` with `overlayColor: WidgetStatePropertyAll(Colors.transparent)`, as is done to be rid of the tint a press leaves. The overlay is all a `FilledButton` changes for focus: Tab reaches the button and nothing on the screen changes | R1 | 2.4.7, all platforms |
+| `bad-checkbox-halo` | A Material `Checkbox` and its label, with the checkbox's default focus indicator: a disc of the text colour at a tenth of its strength round the box. 1.22:1 to 1.23:1 against the page in light mode, 1.26:1 in dark. Radio buttons and switches have the same halo ([FL-430](../flutter-limitations.md#fl-430)) | R2 | 1.4.11, all platforms. The box's border also darkens on focus, 1.82:1 between the states (section 3) |
+| `bad-cupertino-ring` | A `CupertinoButton.filled` with its default focus ring, a pale tint made from the button's colour: 2.49:1 against the page in light mode. In dark mode it is 3.79:1 and passes ([FL-431](../flutter-limitations.md#fl-431)) | R2, R4 | 1.4.11 in light mode, all platforms; passes in dark mode (3.79:1, asserted in the widget tests) |
 | `bad-notice-over-list` | `good-notice-below` with the notice drawn over the bottom of the scrolling box (a `Stack` and `Positioned`). Tab reaches trails 4, 5, and 6 while they are entirely under the notice ([FL-432](../flutter-limitations.md#fl-432)) | R5 | 2.4.11, all platforms |
 
 Not built:
@@ -245,7 +255,7 @@ shows the change was focus's.
 | --- | --- |
 | L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640. Every control: its name and role (checkbox, switch, button), not focused at first, reached by Tab in order after Back (each stop named by the node that is focused), and used by Space. Pixels, from the app's own layer tree at a device pixel ratio of 1, in light and dark: each good control has strong marks, and the last one's area returns to `u` when focus moves on; `bad-indicator-removed` changes nothing, after Back, the positive control, has marks; `bad-checkbox-halo`'s marks are wider than the box and under 1.5:1, with no strong ones, in both themes; `bad-cupertino-ring`'s are under 3:1 in light mode and pass in dark. 2.4.11: at each of the six stops, how much of the focused trail is inside the scrolling box and not under the notice: all of it in `good-notice-below`; in `bad-notice-over-list` trails 1 and 2 all (the positive control), trails 4 to 6 none, and the pixels where trail 6 is are only the notice's colours. A pinned `SliverAppBar` keeps every button below it as Shift+Tab goes up. The highlight mode: a touch hides `good-widgets`' ring with focus where it was, and Shift alone brings it back |
 | L3 web | The same: role, name, Tab order by `document.activeElement`, Space; the focused element is inside one with `filter: opacity(0%)`, so the browser's outline is not seen; the same pixel measure on Chromium's screenshots; the same 2.4.11 measure from the elements' rectangles |
-| L3 Android | Name and class (`CheckBox`, `Switch`, `Button`) through UI Automator; stops by `isFocused`, with Tab reaching every control of every example. Pixels, from `UiAutomation.takeScreenshot`, for `good-material` only: each control has strong marks, the commonest mark is the ring (the tile's own tint, which follows the highlight mode, is not drawn: FL-433, on the same screen and through the same measure), and the last control's area returns to `u`. The other examples' pixels are not asserted on Android, because the tests' keys cannot turn Flutter's highlights on (section 7). The same 2.4.11 measure from `getBoundsInScreen` |
+| L3 Android | Name and class (`CheckBox`, `Switch`, `Button`) through UI Automator; stops by `isFocused`, with Tab reaching every control of every example. Keys from a keyboard registered through `uinput` (section 7). The same pixel measure on `UiAutomation.takeScreenshot`, for every example as in the widget tests, with Back as the positive control for `bad-indicator-removed`. FL-433: in one launch, Tab from `input keyevent` puts focus on `good-widgets`' card with nothing drawn, and Shift alone from the registered keyboard then draws its ring. The same 2.4.11 measure from `getBoundsInScreen`, with a trail scrolled out of its list found by scrolling the list itself. Run at the emulator's own size and at 320 by 640 at 160 dpi |
 | L3 iOS | Label and type (a checkbox is a switch to XCUITest, FL-035); every stop shown by Space and the "Last used" line; the same pixel measure on `XCUIScreen` screenshots drawn into sRGB; the same 2.4.11 measure from the elements' frames |
 | L4 TalkBack | Each control's name and role; a trail under the notice is read like any other |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the "Last used" line |
@@ -288,18 +298,17 @@ read from pixels; "read in the source" marks what was not measured.
   to the page):
   - `good-material`: the tile's ring `#1B1B21`, 16.30:1 (dark `#E4E1E9`,
     14.35:1); its own tint is the commonest change, at 1.32:1, where
-    highlights are on. The button's ring the same colours. Android: the
-    rings, with no tint (FL-433).
+    highlights are on. The button's ring the same colours.
   - `good-cupertino`: black rings, 19.97:1; white in dark, 18.55:1.
   - `good-widgets`: the border `#1B1B21`, 16.30:1; dark 14.35:1.
-  - `bad-indicator-removed`: no pixel changed, on the widget tests, the
-    web, and iOS, while the Back button's tint, the positive control, was
-    found (1.22:1 to 1.23:1, over a thousand pixels at a device pixel
-    ratio of 1).
+  - `bad-indicator-removed`: no pixel changed, on every layer, while the
+    Back button's tint, the positive control, was found (1.22:1 to
+    1.23:1, over a thousand pixels at a device pixel ratio of 1).
   - `bad-checkbox-halo`: `#E4E1E8`, 1.23:1 (web `#E4E2E8`, 1.22:1); dark
     `#27282D`, 1.26:1; no mark at 3:1.
-  - `bad-cupertino-ring`: `#8A9AF5`, 2.49:1, no mark at 3:1; dark
-    `#5C69C6`, 3.79:1.
+  - `bad-cupertino-ring`: in light mode `#8A9AF5`, 2.49:1, no mark at
+    3:1; in dark mode `#5C69C6`, 3.79:1 (widget tests, asserted to be 3:1
+    or more).
   - `bad-notice-over-list`: the share of each focused trail in sight was
     1, 1, 0.88, 0, 0, 0 on every layer (0.87 for trail 3 on Android);
     in `good-notice-below`, 1 for each.
@@ -314,19 +323,35 @@ read from pixels; "read in the source" marks what was not measured.
   On the web a tap on a button gave it focus and drew nothing. Before any
   input the mode is touch on Android and iOS and traditional on the web
   in Chromium on macOS. This meets 2.4.7.
-- **On Android a test cannot turn highlights on**
-  ([FL-433](../flutter-limitations.md#fl-433)). Every way of sending Tab
-  that was tried (five) reached Flutter with device id -1, the virtual
-  keyboard's, which Flutter does not let change the mode; no way of
-  moving a mouse (four) reached Flutter as a mouse; the emulator's own
-  keyboard through its console reached nothing. So on the Android
-  emulator only indicators drawn from the focused state appear with the
-  tests' keys, and `good-material` is the one example whose indicators are
-  measured there; the other examples' keys and stops are checked, and
-  their pixels are not (they are in the widget tests, on the web, and on
-  iOS). The test asserts the rule on `good-material`'s screen: its rings
-  are drawn and the tile's tint is not. What a real hardware keyboard
-  does on Android is by the source only.
+- **On Android, keys from Android's own injection do not turn highlights
+  on; keys from a registered keyboard do**
+  ([FL-433](../flutter-limitations.md#fl-433)). Every key sent with `input
+  keyevent`, `Instrumentation.sendKeySync`, or
+  `UiAutomation.injectInputEvent` reached Flutter with device id -1, the
+  virtual keyboard's, whatever id it was sent with, and Flutter does not
+  let a key from that device change the mode: focus moved and only the
+  indicators drawn from the focused state appeared (probe rounds 1 to 3).
+  The emulator console's keys did not reach the app, and no way of moving
+  a mouse reached Flutter as a mouse (rounds 4 and 5). A USB keyboard
+  registered with the shell's `uinput` tool did work (round 6): its keys
+  arrived with a device id of its own (24 to 27), the first one turned the
+  mode traditional, and every indicator was drawn with the same colours as
+  in the widget tests, on the web, and on iOS. The V14 Android test
+  registers such a keyboard for its keys (`Keyboard` in the test file, a
+  `uinput` session opened with `UiAutomation.executeShellCommandRw` and
+  closed after each test, which removes the device), and passed with it
+  at the emulator's own size and at 320 by 640 at 160 dpi; it does not
+  depend on the emulator's hardware keyboard setting, as the keyboard is
+  a device of its own. Its FL-433 test shows both in one launch: Tab from
+  `input keyevent` reaches `good-widgets`' card and nothing is drawn;
+  Shift alone from the registered keyboard then draws the ring. While a
+  registered keyboard had been used, Android drew a 4 pixel lime frame
+  round the edges of the screen and a small icon in the status bar
+  (round 6); the measured regions do not reach the edges. The other
+  wave 4 techniques' Android tests send `input keyevent` and
+  Instrumentation keys, so they see what an on-screen keyboard's user
+  sees, not a hardware keyboard's; a `uinput` keyboard would let them see
+  the second (not changed here).
 - **A focused control can be scrolled under content drawn over its view**
   ([FL-432](../flutter-limitations.md#fl-432)), on every platform: a
   banner over the bottom (probe o1 and `bad-notice-over-list`), a header
@@ -344,8 +369,9 @@ read from pixels; "read in the source" marks what was not measured.
   silent stop before the first trail (the transcript); Tab reaches every
   trail. Not looked into; handed to I14 (section 8).
 
-**Not done yet.** Indicators that follow the highlight mode on an Android
-device (FL-433), and a real hardware keyboard on Android; Full Keyboard
+**Not done yet.** A physical keyboard on a physical Android device (the
+`uinput` keyboard is a kernel input device on the emulator); a real
+on-screen keyboard's Tab key (FL-433, by the source); Full Keyboard
 Access on iOS, which draws a ring of the system's own; forced colours and
 Windows High Contrast on the web; dark mode on the devices (the widget
 tests and the probe cover it); text fields as examples; WebKit and
@@ -362,6 +388,12 @@ of later waves.
 - **V01 Colour contrast, V02, and V03 (wave 5)**: the contrast of
   text, including labels that change colour on focus (a Material text
   field's label turns `primary`), and FL-441's action sheet text.
+- **I01 to I03 and the later keyboard techniques**: their Android tests
+  press keys with `input keyevent` and Instrumentation, which Flutter
+  takes for the on-screen keyboard's (FL-433). Where what is drawn, or
+  anything that follows the highlight mode, matters, a keyboard
+  registered through `uinput`, as V14's Android test does, gives what a
+  hardware keyboard's user sees. Not changed in those techniques.
 - **I03 Focus management**: whether a control focused from code shows its
   ring. The rings drawn from the focused state show at once; those that
   follow the highlight mode show only if the last input was a key.

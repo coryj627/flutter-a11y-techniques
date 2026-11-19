@@ -78,6 +78,9 @@ ratios are WCAG's.
   `android_probe2.sh.txt` (screenshots by `UiAutomation.takeScreenshot`):
   `android_round2.txt` to `android_round4.txt`. Round 5,
   `android_probe5.sh.txt` (the emulator console): `android_round5.txt`.
+  Round 6, `android_probe6.sh.txt` (a USB keyboard registered with the
+  shell's `uinput` tool, Tab through it, `screencap`):
+  `android_round6.txt`.
 
 The V14 tests' own measurements, which the spec and the technique doc
 cite alongside the probe's, are in `widget_tests.txt`, `web_tests.txt`,
@@ -87,10 +90,12 @@ size and at CI's 320 by 640 at 160 dpi).
 ## What is drawn
 
 The widget tests, the web, and iOS give the same colours to the last
-digit for every fixture (Flutter paints the same pixels everywhere); the
-figures below are those, light then dark, against the page (`#FBF8FF`
-light, `#121318` dark), unless said otherwise. Android differs because the
-probe's keys could not turn highlights on there (next section).
+digit for every fixture (Flutter paints the same pixels everywhere), and
+so did Android for the four fixtures measured with a `uinput` keyboard in
+round 6 (m1, m8, c1, w2); the figures below are those, light then dark,
+against the page (`#FBF8FF` light, `#121318` dark), unless said otherwise.
+With Android's own injected keys most of them are not drawn at all (next
+section).
 
 **Material, the default: a tint, a halo, or a border.**
 
@@ -179,8 +184,9 @@ desktop platforms.
 - Web: the mode was traditional when the page opened (the platform is
   macOS) and after Tab; a touch made it touch. A tap on a button gave it
   focus (DOM focus follows the tap) with nothing drawn.
-- **Android: no way found for a test to turn highlights on** (rounds 1 to
-  5). After every Tab the mode stayed touch and nothing that follows it
+- **Android: injected keys leave highlights off; a registered keyboard's
+  keys turn them on** (rounds 1 to 6). With injected keys, after every Tab
+  the mode stayed touch and nothing that follows it
   was drawn (`changed=0` for m1, c1, w2 and the other overlays and rings),
   while the indicators drawn from the focused state were (m3's outline,
   m6, m7, w3, x3). Round 3 shows why: whatever device id the key was sent
@@ -195,9 +201,23 @@ desktop platforms.
   A mouse would also do (the default mode is traditional when a mouse is
   connected), but none of four ways of moving one reached Flutter as a
   mouse (round 4, `mouse=0`), and keys sent through the emulator's console
-  did not reach the app at all (round 5). A real hardware keyboard's keys
-  carry that keyboard's own device id (not observed: no such key could be
-  produced here). FL-433.
+  did not reach the app at all (round 5). Round 6: a USB keyboard
+  registered with the shell's `uinput` tool (it is on the emulator's
+  image, `/system/bin/uinput`, and runs as the shell user on this `user`
+  build) appeared in `dumpsys input` as an external keyboard; its Tab
+  reached Flutter with device id 24 to 27 (one per session), and the mode
+  became traditional (`m=t`). Every indicator was then drawn with the same
+  colours as elsewhere: m1's tint `#E4E3EF` (1.15:1), m8's halo `#E4E1E8`
+  (1.23:1), c1's ring `#8ABCF5` (1.89:1), w2's ring `#1B1B21` (16.30:1).
+  In w2, the first session's first Tab switched the mode and did not move
+  focus (the first-Tab-lost effect of I01); the second did. Closing the
+  session removed the device (`dumpsys input` no longer listed it). Once
+  the keyboard had been used, Android drew a 4 pixel lime frame
+  (`#AAD42C`) round the edges of the screen, the status bar included, and
+  a small icon in the status bar; no soft keyboard and no dialog appeared.
+  `adb root` and `sendevent`, the other route considered, were not tried,
+  since `uinput` worked (the local image is a `user` build,
+  `android_round6.txt`). FL-433.
 
 ## Hidden under content drawn over the view
 
@@ -239,9 +259,11 @@ The same on every platform (widget test, web, Android, iOS):
   (FL-435).
 - A ring from `ButtonStyle.side`, from `Focus.onFocusChange`, or from
   `onShowFocusHighlight` reaches 13:1 to 20:1.
-- Flutter shows most indicators only in its traditional highlight mode,
-  and on Android a test cannot reach that mode: only indicators drawn from
-  the focused state can be checked on the Android emulator (FL-433).
+- Flutter shows most indicators only in its traditional highlight mode.
+  On Android, keys injected with `input keyevent` or Instrumentation never
+  reach it (they come from the virtual keyboard, device -1); keys from a
+  keyboard registered with `uinput` do, and the V14 Android test uses one
+  (FL-433).
 - A focused control can be scrolled under content drawn over its view
   (FL-432); content laid out beside the view, or a pinned sliver in it,
   does not hide it.

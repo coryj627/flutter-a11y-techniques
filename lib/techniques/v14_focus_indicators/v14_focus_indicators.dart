@@ -19,12 +19,10 @@ final v14FocusIndicators = Technique(
           'halo that is too faint, Cupertino controls with a ring that is too '
           'pale in light mode, and Flutter scrolls a focused control into '
           'view without regard to anything drawn over the view (limitations '
-          'FL-430, FL-431, and FL-432). Keys a test sends arrive as the '
-          'virtual keyboard\'s, which do not turn Flutter\'s focus highlights '
-          'on (FL-433): only the indicators drawn from the focused state, '
-          'those of the Material example, are verified here; the Cupertino '
-          'and custom ones and the bad examples\' defaults are not verified '
-          'on Android.',
+          'FL-430, FL-431, and FL-432). Keys Android reports as coming from '
+          'the virtual keyboard, such as an on-screen keyboard\'s, do not '
+          'turn Flutter\'s focus highlights on (FL-433). Checked with a USB '
+          'keyboard registered on the emulator.',
     ),
     AppPlatform.ios: PlatformStatus.applies(
       note:

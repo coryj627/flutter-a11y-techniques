@@ -1,0 +1,65 @@
+# V14 probe on Android, round 6: android_probe6.sh.txt. A USB keyboard registered with the shell's uinput tool
+# (session.json in the script); Tab injected through it. d= is the raw key event's device id and flags as Flutter got them.
+# 'uinput --help' printed nothing. Screen: once the keyboard had been used, a 4 pixel lime frame (#AAD42C) appeared at the
+# edges of the screen, over the status bar too, and stayed after the device was removed (seen in the PNGs: absent in
+# w2's first capture, present from w2's f1 on); a small gear icon appeared in the status bar. No soft keyboard showed.
+# The frame was gone at the end of the later test run at 320 by 640 (android_tests.txt).
+== device: Android 17, build type user, Physical size: 1080x2424 
+== which uinput: /system/bin/uinput
+== uinput --help:
+== w2 before: S w2 f=0 m=h n=2 k=0 d=- th=l mouse=0
+  registered:     24: V14 probe keyboard       Classes: KEYBOARD | EXTERNAL       Path: /dev/input/event13       Enabled: true 
+  after Tab 1: S w2 f=0 m=t n=2 k=0 d=24/8 th=l mouse=0
+  after Tab 2: S w2 f=1 m=t n=3 k=1 d=24/520 th=l mouse=0
+  uinput said: 
+  after the session: S w2 f=1 m=t n=3 k=1 d=24/520 th=l mouse=0; device still listed: 0
+== m1 before: S m1 f=0 m=h n=2 k=0 d=- th=l mouse=0
+  registered:     25: V14 probe keyboard       Classes: KEYBOARD | EXTERNAL       Path: /dev/input/event13       Enabled: true 
+  after Tab 1: S m1 f=1 m=t n=3 k=1 d=25/520 th=l mouse=0
+  after Tab 2: S m1 f=1 m=t n=3 k=2 d=25/520 th=l mouse=0
+  uinput said: 
+  after the session: S m1 f=1 m=t n=3 k=2 d=25/520 th=l mouse=0; device still listed: 0
+== c1 before: S c1 f=0 m=h n=2 k=0 d=- th=l mouse=0
+  registered:     26: V14 probe keyboard       Classes: KEYBOARD | EXTERNAL       Path: /dev/input/event13       Enabled: true 
+  after Tab 1: S c1 f=1 m=t n=3 k=1 d=26/520 th=l mouse=0
+  after Tab 2: S c1 f=1 m=t n=3 k=2 d=26/520 th=l mouse=0
+  uinput said: 
+  after the session: S c1 f=1 m=t n=3 k=2 d=26/520 th=l mouse=0; device still listed: 0
+== m8 before: S m8 f=0 m=h n=2 k=0 d=- th=l mouse=0
+  registered:     27: V14 probe keyboard       Classes: KEYBOARD | EXTERNAL       Path: /dev/input/event13       Enabled: true 
+  after Tab 1: S m8 f=1 m=t n=3 k=1 d=27/520 th=l mouse=0
+  after Tab 2: S m8 f=1 m=t n=3 k=2 d=27/520 th=l mouse=0
+  uinput said: 
+  after the session: S m8 f=1 m=t n=3 k=2 d=27/520 th=l mouse=0; device still listed: 0
+== soft keyboard setting show_ime_with_hard_keyboard: 0
+== notifications mentioning keyboard: 3
+
+# Pixel analysis by analyse.py.txt of the PNGs (not committed).
+== android6-light-c1  
+   changed=6968 of 74256 unstable=0
+   bbox=(33,33)-(303,187) box=336x221
+   indicator=#8ABCF5 (100% of changed) replaced=#FBF8FF change-ratio=1.89
+   new colours: #8ABCF5 100%
+   adjacent: #FBF8FF 100% ratio 1.89
+   page=#FBF8FF
+== android6-light-m1  
+   changed=24586 of 74130 unstable=0
+   bbox=(42,53)-(310,157) box=353x210
+   indicator=#E4E3EF (98% of changed) replaced=#F5F2FA change-ratio=1.15
+   new colours: #E4E3EF 98%, #DFDEEC 0%, #C5C6DB 0%, #E3E2EF 0%
+   adjacent: #515B92 13% ratio 5.07; #F0EDF4 12% ratio 1.10; #CECCD1 11% ratio 1.25; #A6A9C8 1% ratio 1.81; #7F86AF 1% ratio 2.79
+   page=#FBF8FF
+== android6-light-m8  
+   changed=8628 of 44100 unstable=0
+   bbox=(53,53)-(156,156) box=210x210
+   indicator=#E4E1E8 (87% of changed) replaced=#FBF8FF change-ratio=1.23
+   new colours: #E4E1E8 87%, #1B1B21 11%, #E5E2E9 0%, #E7E4EB 0%
+   adjacent: #F1EEF5 23% ratio 1.13; #FBF8FF 23% ratio 1.23; #FAF7FE 13% ratio 1.22; #F8F5FC 9% ratio 1.20; #F0EDF4 7% ratio 1.12
+   page=#FBF8FF
+== android6-light-w2  
+   changed=13240 of 97468 unstable=0
+   bbox=(42,42)-(370,193) box=413x236
+   indicator=#1B1B21 (60% of changed) replaced=#FBF8FF change-ratio=16.30
+   new colours: #1B1B21 60%, #E4E1E9 31%, #9D9BA2 0%, #434349 0%
+   adjacent: #E4E1E9 66% ratio 13.26; #FBF8FF 23% ratio 16.30; #1B1B21 4% ratio 1.00; #DFDCE4 0% ratio 12.65; #E2DFE7 0% ratio 13.01
+   page=#FBF8FF

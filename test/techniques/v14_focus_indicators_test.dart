@@ -474,8 +474,9 @@ void main() {
             expect(ind.strong, greaterThan(150), reason: '$c: $ind');
             if (slug == 'good-material' && c == 'alerts') {
               // With highlights on, the tile's own focus tint is drawn as
-              // well, and is most of what changes; on Android, where the
-              // tests' keys leave highlights off (FL-433), only the ring is.
+              // well, and is most of what changes. With highlights off, as
+              // after a key from Android's virtual keyboard (FL-433), only
+              // the ring would be.
               expect(ind.ratio, lessThan(1.5), reason: '$c: $ind');
             }
           }
