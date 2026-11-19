@@ -115,6 +115,10 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-420](#fl-420) | Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets | All | Confirmed |
 | [FL-421](#fl-421) | On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever | Web | Confirmed |
 | [FL-422](#fl-422) | On a scrolled screen the default focus order puts the app bar's Back button among the content | All | Confirmed |
+| [FL-460](#fl-460) | A shortcut above a text field takes its key before the field can type it, on the web and on iOS | Web, iOS (Android: not with the emulator's input method) | Confirmed |
+| [FL-461](#fl-461) | A text field's done, go, search, or send action takes keyboard focus away and gives it to no control | All | Confirmed |
+| [FL-462](#fl-462) | A `CupertinoSlidingSegmentedControl` takes keyboard focus, and Space does not change it | All (widget test only) | Observed |
+| [FL-463](#fl-463) | A `PageView` takes no keyboard focus and has no keys | Android, iOS, Web | Observed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -2185,6 +2189,131 @@ yet), **Fixed in x.y** (verified on that version).
   tried in the probe, with the same result in a widget test: an
   `OrderedTraversalPolicy` over the screen with the app bar ordered first
   and the grouped body second.
+- Upstream issue: not searched yet (D25).
+
+## FL-460
+
+**A shortcut above a text field takes its key before the field can type it, on the web and on iOS.**
+
+- Status: Confirmed, Flutter 3.47.5. Documented: `EditableText`'s
+  documentation, "Interactions Between Shortcuts and Text Input", says a
+  `Shortcuts` widget above a field that maps a letter keeps the field from
+  receiving it, because the framework is given each key as a key event
+  before the platform's text input is. Found in the I04 probe
+  (`docs/evidence/probes/i04/`, fixtures `q01`, `q02`, and `q04`).
+  Asserted by the I04 web and iOS tests of `bad-page-shortcut` ("Leafy"
+  typed in the note becomes "Leay", and a favourite is added), by the I04
+  widget test (the key is handled in the note), and by the I04 Android
+  test, which shows the other result there (below).
+- WCAG: 2.1.4 Character Key Shortcuts. Where nothing turns the shortcut
+  off, the letter cannot be typed into the field from a hardware keyboard
+  at all, which is 2.1.1 Keyboard too.
+- What happens: key events reach the framework first, and go on to the
+  platform's text input only if nothing handled them. A `CallbackShortcuts`
+  or `Shortcuts` binding for F anywhere above the focused field, or a
+  `ShortcutRegistry` entry for the whole app, handles the F key, so the
+  shortcut runs and no "f" is typed. Measured:
+  - Web (Chromium, Playwright's keys): the shortcut ran and the letter was
+    lost, for a `CharacterActivator('f')`, a
+    `SingleActivator(LogicalKeyboardKey.keyG)`, and a `ShortcutRegistry`
+    entry for H. A plain HTML page whose document key handler calls
+    `preventDefault` for F loses the letter the same way (the probe's HTML
+    control); in Flutter every handled shortcut does that.
+  - iOS (simulator, XCUITest's `typeKey`, one key at a time): the same, with
+    VoiceOver off and with it on. `typeText` put the letters into the field
+    without any key event, past the shortcut, as an on-screen keyboard
+    would; an on-screen keyboard itself was not tried.
+  - Android (emulator, Gboard as the input method): no letter typed into a
+    field reached the framework as a key event, through `input text` in
+    the probe or `Instrumentation.sendStringSync` in the I04 tests; the
+    field got every letter and no shortcut ran. Read as the input method
+    having the keys first while a field is being edited; not confirmed in
+    the Android source. Another input method may differ; not tried.
+  The same shortcut away from the field works on all three platforms.
+- Effect: someone typing a note on a hardware keyboard sets off the
+  shortcut with every f, and the note never gets one.
+- Workaround, in the SDK and documented: a `Shortcuts` around the field
+  that maps the same key to `DoNothingAndStopPropagationIntent`, so the
+  shortcut stops there and the key is left for the field (I04
+  `good-turn-off` and `good-remap`, `_TypeF`). Verified in the I04 widget,
+  web, and iOS tests: "Leafy" is typed whole and the shortcut still works
+  on every other control. Better still, put the shortcut on the control it
+  acts on, so it is never above a field (I04 `good-on-focus`).
+- How to read this entry: this is how Flutter is documented to work, not
+  a defect in it. It is logged because a page-wide shortcut, the usual way
+  to add one, breaks typing on two platforms and not on the third, so
+  testing on Android alone would not find it.
+- Upstream issue: not searched yet (D25).
+
+## FL-461
+
+**A text field's done, go, search, or send action takes keyboard focus away and gives it to no control.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Framework source read:
+  `widgets/editable_text.dart` (`_finalizeEditing`): unless the field has
+  an `onEditingComplete`, these actions call `FocusNode.unfocus()`, which
+  leaves focus on the screen's scope; `next` and `previous` move focus to
+  the next or previous control instead. Found in the I04 probe (fixtures
+  `q09`, `q12`, and `q13`, on the web, Android, and iOS), and asserted by
+  the I04 tests of every example on every layer: after Enter saves the
+  note, no control has focus, and the next Tab goes to Back.
+- WCAG: none failed as written. A keyboard user loses their place.
+- What happens: Enter on a hardware keyboard in a single-line field
+  arrives as the field's action, so `onSubmitted` runs, on all three
+  platforms (the probe; a multi-line field adds a line instead). The field
+  then gives up focus to nothing. With an on-screen keyboard that is what
+  hides the keyboard. With a hardware keyboard, focus is nowhere until the
+  next Tab, which starts again from the top of the screen.
+  - Android's own text field does not do this: for the done action it
+    hides the on-screen keyboard and leaves focus on the field (read in
+    the Android source: `TextView.onEditorAction`).
+  - HTML: Enter in a form's text field submits the form, and the HTML
+    standard's implicit submission says nothing of moving focus. In
+    Chromium, a plain HTML form's input kept focus after Enter (the
+    probe's HTML control).
+- Effect: after each note, a hardware keyboard user has to Tab back down
+  from the top of the screen to the field.
+- Workaround, in the SDK: an `onEditingComplete` that does the work (or
+  does nothing, leaving it to `onSubmitted`) keeps focus on the field; the
+  on-screen keyboard then stays up as well, since Flutter hides it by
+  taking focus away. Not applied in the I04 examples, which keep the
+  default and its documented on-screen keyboard behaviour; where focus
+  should go after an action is I03's subject.
+- Upstream issue: not searched yet (D25).
+
+## FL-462
+
+**A `CupertinoSlidingSegmentedControl` takes keyboard focus, and Space does not change it.**
+
+- Status: Observed, Flutter 3.47.5, in a widget test only (the I04 probe,
+  `docs/evidence/probes/i04/probe_test.dart.txt`, as Android and as iOS).
+  No example and no test in the repo.
+- What happens: Tab stops on the control, and Space on it changes nothing;
+  a Material `SegmentedButton` beside it took a Tab stop per segment and
+  Space selected one. Enter and the arrow keys were not tried.
+- Effect, if it holds on devices: a keyboard user can reach the control
+  and cannot use it (2.1.1).
+- Why it is here: I04 looked for a Cupertino control to change a shortcut
+  with and found this; I04 uses a `CupertinoSwitch` instead. Left to the
+  technique for segmented controls.
+- Upstream issue: not searched yet (D25).
+
+## FL-463
+
+**A `PageView` takes no keyboard focus and has no keys.**
+
+- Status: Observed, Flutter 3.47.5, in the I04 probe (fixture `q07`): in
+  the Tab order recorded on the web, Android, and iOS, Tab never stopped
+  on the page view. No example and no test in the repo.
+- What happens: the pages change with a swipe. Nothing in the page view
+  takes focus, so no key can reach it; a screen reader's scroll actions
+  were not tried.
+- Effect: a keyboard user cannot turn the pages (2.1.1), unless the app
+  adds a control or keys for it.
+- Workaround, not built: a `FocusableActionDetector` around the page view
+  with Left and Right mapped to the controller's `previousPage` and
+  `nextPage`, as the I04 examples do for their strip of photos. Left to
+  I14 Scrolling regions and C17 Carousel.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->

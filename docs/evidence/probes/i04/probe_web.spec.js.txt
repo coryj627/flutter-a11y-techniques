@@ -1,0 +1,204 @@
+// Throwaway I04 probe on the web (Chromium). Not committed: kept as
+// docs/evidence/probes/i04/probe_web.spec.js.txt. Runs against
+// `flutter build web -t lib/probe.dart`.
+import { test } from '@playwright/test';
+
+const status = async (page, id) =>
+  ((await page.locator(`[flt-semantics-identifier="${id}"]`).first().textContent()) ?? '').trim();
+const focus = async (page) => (await status(page, 'focus')).replace('Focus: ', '');
+const say = (...parts) => console.log('I04PROBE', ...parts);
+
+async function snapshot(page, what) {
+  const active = await page.evaluate(() => {
+    const e = document.activeElement;
+    return e ? `${e.tagName.toLowerCase()}${e.getAttribute('flt-semantics-identifier') ? '#' + e.getAttribute('flt-semantics-identifier') : ''}` : 'null';
+  });
+  say(`${what} | focus=${await focus(page)} | active=${active} | ${await status(page, 'log')} | ${await status(page, 'texts')} | ${await status(page, 'scroll')} | ${await status(page, 'keys')}`);
+}
+
+async function open(page) {
+  await page.goto('about:blank');
+  await page.goto('/#/probe');
+  await page.locator('[flt-semantics-identifier="focus"]').waitFor();
+  await page.waitForTimeout(800);
+}
+
+async function tabTo(page, label, max = 60) {
+  for (let i = 0; i < max; i++) {
+    if ((await focus(page)) === label) return true;
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(80);
+  }
+  return (await focus(page)) === label;
+}
+
+async function press(page, key, wait = 250) {
+  await page.keyboard.press(key);
+  await page.waitForTimeout(wait);
+}
+
+test('tab path', async ({ page }) => {
+  await open(page);
+  const path = [];
+  for (let i = 0; i < 40; i++) {
+    await press(page, 'Tab', 100);
+    path.push(await focus(page));
+  }
+  say('tab path:', path.join(' '));
+});
+
+test('q01 and q02: letter shortcuts around a field', async ({ page }) => {
+  for (const id of ['q01', 'q02']) {
+    await open(page);
+    say(id, 'reached', await tabTo(page, id));
+    await page.keyboard.type('afg b', { delay: 60 });
+    await page.waitForTimeout(300);
+    await snapshot(page, `${id} typed "afg b" in the field`);
+    say(id, 'reached button', await tabTo(page, `${id}-btn`));
+    await press(page, 'f');
+    await press(page, 'g');
+    await press(page, 'Shift+F');
+    await snapshot(page, `${id} f, g, Shift+F on the button`);
+  }
+});
+
+test('q04: app-wide registry h', async ({ page }) => {
+  await open(page);
+  await press(page, 'h');
+  await snapshot(page, 'q04 h with no focus');
+  await tabTo(page, 'q01-btn');
+  await press(page, 'h');
+  await snapshot(page, 'q04 h on q01-btn');
+  await tabTo(page, 'q09');
+  await page.keyboard.type('hi', { delay: 60 });
+  await page.waitForTimeout(300);
+  await snapshot(page, 'q04 typed "hi" in q09');
+});
+
+test('q05 and q06: viewers', async ({ page }) => {
+  for (const id of ['q05', 'q06']) {
+    await open(page);
+    say(id, 'reached', await tabTo(page, id));
+    await snapshot(page, `${id} reached`);
+    for (const key of ['ArrowRight', 'ArrowRight', 'ArrowLeft', 'End', 'Home', 'f', 'ArrowDown', 'ArrowUp', 'PageDown']) {
+      await press(page, key);
+      await snapshot(page, `${id} ${key}`);
+    }
+    await page.keyboard.down('ArrowRight');
+    await page.waitForTimeout(1500);
+    await page.keyboard.up('ArrowRight');
+    await page.waitForTimeout(300);
+    await snapshot(page, `${id} ArrowRight held 1.5 s`);
+  }
+});
+
+test('q07 and q08: PageView and CarouselView', async ({ page }) => {
+  await open(page);
+  say('q08 reached something', await tabTo(page, 'q09'));
+  await open(page);
+  await tabTo(page, 'q06');
+  for (let i = 0; i < 6; i++) {
+    await press(page, 'Tab');
+    await snapshot(page, `after q06, Tab ${i + 1}`);
+  }
+  for (const key of ['ArrowRight', 'Enter', 'Space']) {
+    await press(page, key);
+    await snapshot(page, `then ${key}`);
+  }
+});
+
+test('q09 to q13: text fields and Enter', async ({ page }) => {
+  for (const id of ['q09', 'q10', 'q11', 'q12', 'q13']) {
+    await open(page);
+    say(id, 'reached', await tabTo(page, id));
+    await page.keyboard.type('ab', { delay: 60 });
+    await press(page, 'Enter', 400);
+    await snapshot(page, `${id} "ab" Enter`);
+    await page.keyboard.type('c', { delay: 60 });
+    await page.waitForTimeout(300);
+    await snapshot(page, `${id} then "c"`);
+    await press(page, 'Tab', 300);
+    await snapshot(page, `${id} then Tab`);
+  }
+  await open(page);
+  await tabTo(page, 'q09');
+  await page.keyboard.type('ab', { delay: 60 });
+  await press(page, 'NumpadEnter', 400);
+  await snapshot(page, 'q09 "ab" NumpadEnter');
+  await open(page);
+  await tabTo(page, 'q09');
+  await page.keyboard.type('ab', { delay: 60 });
+  for (const key of ['ArrowLeft', 'Home', 'Space', 'ArrowDown']) {
+    await press(page, key);
+    await snapshot(page, `q09 "ab" then ${key}`);
+  }
+});
+
+test('q08: carousel items', async ({ page }) => {
+  await open(page);
+  await tabTo(page, 'q06');
+  await press(page, 'Tab');
+  const role = await page.evaluate(() => {
+    const e = document.activeElement;
+    return e ? `${e.tagName} role=${e.getAttribute('role')} name=${e.getAttribute('aria-label') ?? e.textContent}` : 'null';
+  });
+  say('q08 first carousel stop element:', role);
+  for (const key of ['Enter', 'Space', 'ArrowRight', 'ArrowLeft', 'Tab', 'Enter']) {
+    await press(page, key, 400);
+    await snapshot(page, `q08 ${key}`);
+  }
+});
+
+test('q16 and q17: adjustable viewers', async ({ page }) => {
+  for (const id of ['q16', 'q17']) {
+    await open(page);
+    say(id, 'reached', await tabTo(page, id));
+    const tag = await page.evaluate(() => {
+      const e = document.activeElement;
+      return e ? `${e.tagName.toLowerCase()} type=${e.getAttribute('type')} role=${e.getAttribute('role')} valuetext=${e.getAttribute('aria-valuetext')} value=${e.value}` : 'null';
+    });
+    say(id, 'active element:', tag);
+    for (const key of ['ArrowRight', 'ArrowRight', 'ArrowLeft', 'ArrowUp', 'End', 'Home', 'PageDown']) {
+      await press(page, key, 400);
+      await snapshot(page, `${id} ${key}`);
+    }
+  }
+});
+
+test('q18 and q19: multiline send fields', async ({ page }) => {
+  for (const id of ['q18', 'q19']) {
+    await open(page);
+    say(id, 'reached', await tabTo(page, id));
+    await page.keyboard.type('ab', { delay: 60 });
+    await press(page, 'Enter', 400);
+    await snapshot(page, `${id} "ab" Enter`);
+    await press(page, 'Shift+Enter', 400);
+    await snapshot(page, `${id} then Shift+Enter`);
+  }
+});
+
+test('q14: modifier shortcuts', async ({ page }) => {
+  await open(page);
+  say('q14 reached', await tabTo(page, 'q14-btn'));
+  for (const key of ['Control+f', 'Alt+f', 'Meta+f', 'Control+Shift+F', 'f']) {
+    await press(page, key);
+    await snapshot(page, `q14 ${key}`);
+  }
+});
+
+test('q15: scrolling keys', async ({ page }) => {
+  await open(page);
+  say('q15 reached', await tabTo(page, 'q15-btn'));
+  await snapshot(page, 'q15-btn reached');
+  for (const key of ['PageDown', 'PageUp', 'ArrowDown', 'ArrowDown', 'Control+ArrowDown', 'Space', 'End', 'Home']) {
+    await press(page, key, 500);
+    await snapshot(page, `q15-btn ${key}`);
+  }
+  await open(page);
+  say('q15-focus reached', await tabTo(page, 'q15-focus'));
+  await snapshot(page, 'q15-focus reached');
+  for (const key of ['Space', 'Enter', 'PageDown']) {
+    await press(page, key, 500);
+    await snapshot(page, `q15-focus ${key}`);
+  }
+});

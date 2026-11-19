@@ -1,0 +1,39 @@
+#!/bin/sh
+# I04 probe on Android, under tool/with_devices.py. Run from the worktree root.
+# Installs the probe app and its test APK, runs ProbeI04Test's methods with
+# `am instrument`, then runs underScreenReader with TalkBack on, and puts
+# the accessibility settings back as they were.
+PKG=dev.fluttera11y.flutter_a11y_techniques
+RUNNER=$PKG.test/androidx.test.runner.AndroidJUnitRunner
+TB=com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService
+echo "== device"
+adb shell getprop ro.build.version.release
+adb shell wm size; adb shell wm density
+adb install -r build/app/outputs/apk/debug/app-debug.apk | tail -1
+adb install -r build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk | tail -1
+run() {
+  adb logcat -c
+  adb shell am instrument -w -e class "$PKG.ProbeI04Test#$1" $RUNNER | grep -E "OK|FAIL|Error|Exception" | head -5
+  adb logcat -d -s I04PROBE:I | grep I04PROBE | sed 's/^.*I04PROBE: //'
+}
+for m in round2 underScreenReader; do
+  echo "== $m (TalkBack off)"
+  run $m
+done
+SERVICES=$(adb shell settings get secure enabled_accessibility_services | tr -d '\r')
+ENABLED=$(adb shell settings get secure accessibility_enabled | tr -d '\r')
+echo "== saved settings: services='$SERVICES' enabled='$ENABLED'"
+restore() {
+  if [ "$SERVICES" = "null" ]; then adb shell settings delete secure enabled_accessibility_services; else adb shell settings put secure enabled_accessibility_services "${SERVICES:-\"\"}"; fi
+  if [ "$ENABLED" = "null" ]; then adb shell settings delete secure accessibility_enabled; else adb shell settings put secure accessibility_enabled "$ENABLED"; fi
+  echo "== restored: $(adb shell settings get secure enabled_accessibility_services | tr -d '\r') / $(adb shell settings get secure accessibility_enabled | tr -d '\r')"
+}
+trap restore EXIT INT TERM
+adb shell settings put secure enabled_accessibility_services "$TB"
+adb shell settings put secure accessibility_enabled 1
+sleep 8
+echo "== TalkBack bound? $(adb shell dumpsys accessibility | grep -c 'talkback.TalkBackService') lines name it; touch exploration: $(adb shell dumpsys accessibility | grep -o 'touchExplorationEnabled=[a-z]*' | head -1)"
+echo "== underScreenReader (TalkBack on)"
+run underScreenReader
+adb shell am force-stop $PKG
+adb uninstall $PKG.test | tail -1

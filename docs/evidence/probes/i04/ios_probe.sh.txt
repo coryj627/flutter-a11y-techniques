@@ -1,0 +1,13 @@
+#!/bin/sh
+# I04 probe on iOS, under tool/with_devices.py. Run from the worktree root.
+cd ios || exit 1
+run() {
+  echo "== $1"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/I04ProbeUITests/$1" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "I04PROBE|error:|passed|failed|skipped" | grep -v "Test Suite"
+}
+for t in testTabPath testLetters testRegistry testViewers testCarousel testFields testModifiers testScrolling testUnderVoiceOver; do run $t; done
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0
