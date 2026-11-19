@@ -1,0 +1,12 @@
+# What the V14 web test (web_tests/v14_focus_indicators.spec.js) measured, from the last evidence.py run,
+# Chromium, Playwright's default 1280 by 720 at a scale of 1, light mode.
+V14 web good-material alerts: changed 32649, unstable 0, marks 32277, page #FBF8FF, commonest mark #DCDAE0 (1.32), 3:1 or more: 4356 (#1B1B21, 16.30)
+V14 web good-material save: changed 2758, unstable 0, marks 648, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 600 (#1B1B21, 16.30)
+V14 web good-cupertino alerts: changed 628, unstable 0, marks 596, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 560 (#000000, 19.97)
+V14 web good-cupertino save: changed 1027, unstable 0, marks 969, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 909 (#000000, 19.97)
+V14 web good-widgets trail: changed 2427, unstable 0, marks 2008, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 1781 (#1B1B21, 16.30)
+V14 web bad-indicator-removed back: changed 1202, unstable 0, marks 1172, page #FBF8FF, commonest mark #E4E2E8 (1.22), 3:1 or more: 0
+V14 web bad-indicator-removed save: changed 0, unstable 0, marks 0, page #FBF8FF, commonest mark none (1.00), 3:1 or more: 0
+V14 web bad-checkbox-halo: changed 1256, unstable 0, marks 1128, page #FBF8FF, commonest mark #E4E2E8 (1.22), 3:1 or more: 0
+V14 web bad-cupertino-ring: changed 1025, unstable 0, marks 928, page #FBF8FF, commonest mark #8A9AF5 (2.49), 3:1 or more: 0
+V14 web bad-notice-over-list visible: 1.00 1.00 0.88 0.00 0.00 0.00

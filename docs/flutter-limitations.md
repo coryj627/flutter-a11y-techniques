@@ -124,6 +124,12 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-420](#fl-420) | Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets | All | Confirmed |
 | [FL-421](#fl-421) | On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever | Web | Confirmed |
 | [FL-422](#fl-422) | On a scrolled screen the default focus order puts the app bar's Back button among the content | All | Confirmed |
+| [FL-430](#fl-430) | A Material `Checkbox`, `Radio`, or `Switch` shows keyboard focus with a halo under 3:1 against the page | iOS, Web (Android: widget tests only, FL-433) | Confirmed |
+| [FL-431](#fl-431) | A `CupertinoButton`, `CupertinoSwitch`, or `CupertinoCheckbox` shows keyboard focus with a ring under 3:1 against a light page | iOS, Web (Android: widget tests only, FL-433) | Confirmed |
+| [FL-432](#fl-432) | A control that takes keyboard focus is scrolled into its view without regard to anything drawn over the view, and can end up entirely hidden | All | Confirmed |
+| [FL-433](#fl-433) | On Android, a key from the virtual keyboard device does not turn focus highlights on, and every key a test can send is one | Android | Confirmed (source read; effect measured on test keys) |
+| [FL-434](#fl-434) | Material's default focus indicator on buttons, list tiles, chips, sliders, and `InkWell` is a tint of 1.1:1 to 1.5:1 | iOS, Web (Android: widget tests only, FL-433) | Confirmed |
+| [FL-435](#fl-435) | A `CupertinoTextField` shows keyboard focus only by its caret | iOS, Web (Android: no caret either; not looked into) | Observed |
 | [FL-440](#fl-440) | A `CupertinoAlertDialog`'s actions take no keyboard focus | All | Confirmed |
 | [FL-441](#fl-441) | A `CupertinoActionSheet`'s title and message fail text contrast in light mode | All (widget test only) | Confirmed (widget test only) |
 | [FL-442](#fl-442) | When a route closes, the framework sends the screen reader back to where it was, after the app's own move, even when that control has been removed | Android | Confirmed in the source; its effect Observed |
@@ -2653,6 +2659,251 @@ yet), **Fixed in x.y** (verified on that version).
   tried in the probe, with the same result in a widget test: an
   `OrderedTraversalPolicy` over the screen with the app bar ordered first
   and the grouped body second.
+- Upstream issue: not searched yet (D25).
+
+## FL-430
+
+**A Material `Checkbox`, `Radio`, or `Switch` shows keyboard focus with a halo under 3:1 against the page.**
+
+- Status: Confirmed, Flutter 3.47.5. Measured in the V14 probe
+  (`docs/evidence/probes/v14/`): in widget tests as Android and as iOS,
+  on the web in Chromium (`web.txt`), and on the iOS simulator
+  (`ios.txt`), with the same colours on all three. Not measured on an
+  Android device: the tests there cannot turn Flutter's focus highlights
+  on ([FL-433](#fl-433)), and with them off no halo is drawn. Asserted by
+  V14 `bad-checkbox-halo` in the widget tests (light and dark), the web
+  test, and the iOS test, written to fail when the halo reaches 1.5:1 or
+  draws anything at 3:1. Framework source read: `material/checkbox.dart`,
+  `_CheckboxDefaultsM3.overlayColor` (`onSurface` at an opacity of 0.1 when
+  focused and not checked, `primary` at 0.1 when checked); `radio.dart`
+  and `switch.dart` have the same pattern.
+- WCAG: 1.4.11 Non-text Contrast. The halo is the focused state's
+  indicator, drawn outside the control on the page, which is what
+  Understanding 1.4.11 says it must contrast with. The criterion's user
+  agent exception does not cover it (V14 spec, section 3).
+- What happens: with keyboard focus, the control draws a disc 40 pixels
+  across round its 18 pixel box, in the theme's text colour at a tenth of
+  its strength. Against the page: `Checkbox` and `Radio` 1.23:1 in light
+  mode (`#E4E1E8` on `#FBF8FF`; 1.22:1 on the web) and 1.26:1 in dark;
+  `Switch` 1.21:1 against its track and 1.49:1 at most against the page.
+  The checkbox's border also turns from `onSurfaceVariant` to
+  `onSurface`, a change of 1.82:1 between two colours that are both 9:1
+  or more against the page, so it does not tell focused from unfocused.
+- Effect: someone using a keyboard can hardly see which checkbox, radio
+  button, or switch they are on.
+- Workaround, in the SDK: draw a ring round the control while it has
+  focus. V14 `good-material` puts a `CheckboxListTile` in a `Focus` that
+  takes no focus itself and draws a 3 pixel ring of `onSurface` from
+  `onFocusChange` (16.30:1 against the page, 14.35:1 in dark). Verified
+  in the V14 widget tests, on the web, on iOS, and on Android. Making the
+  halo itself strong (`overlayColor` for the focused state) is not a
+  workaround: a halo dark enough for 3:1 against the page hides the box's
+  own border, which is the same colour.
+- How to read this entry: Flutter has not given these controls a focus
+  indicator of 3:1 yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-431
+
+**A `CupertinoButton`, `CupertinoSwitch`, or `CupertinoCheckbox` shows keyboard focus with a ring under 3:1 against a light page.**
+
+- Status: Confirmed, Flutter 3.47.5, light mode. Measured in the V14 probe
+  in widget tests as Android and as iOS, on the web, and on the iOS
+  simulator, with the same colours on all three. Not measured on an
+  Android device ([FL-433](#fl-433)). Asserted by V14 `bad-cupertino-ring`
+  in the widget tests, the web test, and the iOS test, written to fail
+  when the ring reaches 3:1 in light mode. Framework source read:
+  `cupertino/button.dart` (the ring is the button's colour at an opacity
+  of 0.80, its HSL lightness set to 0.69 and saturation to 0.835:
+  `kCupertinoFocusColorOpacity`, `kCupertinoFocusColorBrightness`, and
+  `kCupertinoFocusColorSaturation` in `cupertino/constants.dart`), and the
+  same rule in `switch.dart` and `checkbox.dart`.
+- WCAG: 1.4.11 Non-text Contrast, in light mode. The ring is drawn
+  outside the control, on the page. In dark mode the same rule passes.
+- What happens: with keyboard focus, the control draws a ring 3.5 pixels
+  wide outside itself, a pale tint of its own colour. In light mode, with
+  the default blue: `#8ABCF5`, 1.89:1 against the page (probe fixtures
+  c1, c2, c4); a `CupertinoSwitch`'s green gives `#8AF3A5`, 1.29:1 (c3).
+  In this app, where the Cupertino primary colour is the Material theme's
+  `primary`, a filled button's ring is `#8A9AF5`, 2.49:1 (V14
+  `bad-cupertino-ring`). In dark mode: 5.42:1 with the default blue,
+  8.58:1 for the switch, 3.79:1 in this app.
+- Effect: on a light page someone using a keyboard can hardly see which
+  Cupertino control they are on.
+- Workaround, in the SDK: `focusColor` on the control, in a colour with
+  3:1 against the page in both modes, such as
+  `CupertinoColors.label.resolveFrom(context)`, as V14 `good-cupertino`
+  does for a `CupertinoSwitch` and a `CupertinoButton.filled` (19.97:1 in
+  light, 18.55:1 in dark). Verified in the V14 widget tests, on the web,
+  and on iOS; not on Android (FL-433).
+- How to read this entry: Flutter has not made the Cupertino focus ring
+  meet 3:1 on a light page yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-432
+
+**A control that takes keyboard focus is scrolled into its view without regard to anything drawn over the view, and can end up entirely hidden.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Measured in the V14
+  probe (fixtures o1, o4, o5) in a widget test, on the web, on the
+  Android emulator, and on the iOS simulator, with the same result on all.
+  Asserted by V14 `bad-notice-over-list` at every layer, written to fail
+  when a focused trail is no longer entirely under the notice. Framework
+  source read: `widgets/focus_traversal.dart`
+  (`defaultTraversalRequestFocusCallback` calls `Scrollable.ensureVisible`
+  on the newly focused control) and `rendering/viewport.dart`
+  (`getOffsetToReveal`, which allows for pinned slivers before the
+  control, `maxScrollObstructionExtentBefore`, and for nothing outside
+  the viewport).
+- WCAG: 2.4.11 Focus Not Obscured (Minimum), where the content drawn over
+  the view is the app's and the control is entirely hidden (F110).
+- What happens: Tab scrolls the newly focused control just far enough to
+  be inside the scrolling view's own rectangle, and does not move one
+  that is inside it already. Anything drawn over that rectangle is not
+  allowed for:
+  - a banner `Positioned` over the bottom of the view in a `Stack` (o1,
+    V14 `bad-notice-over-list`): every control that comes to rest under
+    it is entirely hidden; in the V14 example, three of six trails;
+  - a header over the top of the view in a `Stack` (o4): the first
+    control is under it when the screen opens, and Shift+Tab up the list
+    puts each control under it;
+  - a `Scaffold` with `extendBody: true` and a bottom bar (o5): the body
+    runs under the bar, and controls are scrolled to the body's edge,
+    under the bar, although the `ListView` pads its end by the bar's
+    height.
+  Not affected: content laid out beside the view (o2, V14
+  `good-notice-below`), and a pinned `SliverAppBar` or other pinned
+  sliver in the same `CustomScrollView` (o3, and the V14 widget test).
+- Effect: someone using a keyboard moves to a control they cannot see,
+  and may activate it without knowing what it is.
+- Workaround, in the SDK: lay what would be pinned over the view out
+  beside it instead (a `Column` with the scrolling view `Expanded`), as
+  V14 `good-notice-below` does; or, for a header, make it a pinned sliver
+  of the same scrolling view. Verified at every V14 layer for the first.
+  Flutter has no counterpart to CSS `scroll-padding`, the web's way to
+  keep focused content clear of a sticky bar (technique C43); a custom
+  `FocusTraversalPolicy.requestFocusCallback` that scrolls with an
+  `alignment` could serve, and was not tried.
+- How to read this entry: Flutter has not added a way to tell scrolling
+  what part of a view is covered yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-433
+
+**On Android, a key from the virtual keyboard device does not turn focus highlights on, and every key a test can send is one.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator: the framework's
+  rule read in the source, and its effect on keys sent by tests measured
+  in the V14 probe (`docs/evidence/probes/v14/`, Android rounds 1 to 5)
+  and asserted by the V14 Android test. What it does to someone using an
+  on-screen keyboard's keys was not measured; what a real hardware
+  keyboard does on Android was not observed either, as none could be
+  driven. Framework source read: `widgets/focus_manager.dart`,
+  `_HighlightModeManager.handleKeyMessage`, which does not change the
+  highlight mode for a key that `_isKeyMessageFromAndroidIME` finds to
+  come from an input method: one with the soft keyboard flag, or from
+  device id -1, Android's virtual keyboard. The source says this is so
+  that Backspace from an on-screen keyboard does not turn highlights on,
+  and cites flutter/flutter issue 180746.
+- WCAG: none failed as written. 2.4.7 asks for a mode in which the focus
+  indicator is visible, and a hardware keyboard turns it on (by the source;
+  not observed).
+- What happens: Flutter shows most focus indicators (Material's tints and
+  halos, Cupertino's rings, and anything drawn from
+  `FocusableActionDetector.onShowFocusHighlight`) only in its traditional
+  highlight mode, which a key turns on. On Android the key's device id is
+  checked first. In the probe every way of sending Tab from a test arrived
+  with device id -1, whatever id it was sent with: `adb shell input
+  keyevent`, `Instrumentation.sendKeySync` and
+  `UiAutomation.injectInputEvent` with device 0 (the emulator's own
+  keyboard) and with 9999; keys sent through the emulator console did not
+  reach the app (round 5). Focus moved, and the mode stayed touch:
+  nothing that follows the mode was drawn. A mouse would also turn the
+  mode on (the default mode is traditional when a mouse is connected),
+  but none of four ways of moving one reached Flutter as a mouse (round
+  4). Indicators that Flutter draws from the focused state itself are not
+  affected: a `TextField`'s border, an `OutlinedButton`'s outline,
+  `ButtonStyle.side` for the focused state, and a ring drawn from
+  `Focus.onFocusChange`.
+- Effect: for testing, an Android test cannot check an indicator that
+  follows the highlight mode; V14 checks those in the widget tests, on the
+  web, and on iOS, and on Android checks only `good-material`, whose rings
+  come from the focused state. The V14 Android test asserts the rule
+  itself: with Tab, the checkbox tile's ring is drawn and the tile's own
+  focus tint is not. For users: by the source, someone moving focus with
+  an on-screen keyboard's Tab or arrow keys sees no highlight that follows
+  the mode (not measured).
+- Workaround: draw the indicator from the focused state rather than the
+  highlight mode, with `ButtonStyle.side` or `Focus.onFocusChange`, as V14
+  `good-material` does; it then also shows when focus comes from a touch
+  or from code. Verified on Android in the V14 test. An app can also set
+  `FocusManager.instance.highlightStrategy` to
+  `FocusHighlightStrategy.alwaysTraditional`, which shows every highlight
+  after a touch as well; not tried.
+- How to read this entry: this is the framework's chosen behaviour, and
+  the effect on tests is a test-tool gap as much as a framework one; it is
+  logged here because it decides what can be verified on Android.
+- Upstream issue: not searched yet (D25).
+
+## FL-434
+
+**Material's default focus indicator on buttons, list tiles, chips, sliders, and `InkWell` is a tint of 1.1:1 to 1.5:1.**
+
+- Status: Confirmed, Flutter 3.47.5. Measured in the V14 probe in widget
+  tests as Android and as iOS, on the web, and on the iOS simulator, with
+  the same colours on all three; on the Android emulator the tint was not
+  drawn ([FL-433](#fl-433)). Asserted by the V14 widget test of
+  `good-material`, where the checkbox tile's own tint is the commonest
+  change, at 1.32:1. Framework source read: the M3 defaults of
+  `filled_button.dart`, `elevated_button.dart`, `outlined_button.dart`,
+  `text_button.dart`, and `icon_button.dart` (`overlayColor` of the
+  foreground colour at an opacity of 0.1 when focused), and
+  `ThemeData.focusColor` (black or white at 0.12) for `InkWell` and
+  `ListTile`.
+- WCAG: none failed as written. The tint is a change of background within
+  the control, which Understanding 1.4.11 puts out of its scope, and 2.4.7
+  sets no contrast. It would not meet 2.4.13 Focus Appearance (AAA), which
+  asks for a change of 3:1.
+- What happens: with keyboard focus the control's background, or on an
+  `IconButton` a disc where the page was, is overlaid with a tenth of the
+  foreground colour. Against what it replaced: 1.15:1 for
+  `ElevatedButton`, `OutlinedButton`, and `TextButton`, 1.28:1 for
+  `FilledButton`, 1.14:1 for `IconButton`, 1.32:1 for `ListTile` and
+  `FilterChip`, 1.31:1 for an `InkWell` card, 1.15:1 for a `Slider`'s
+  thumb; 1.11:1 to 1.45:1 in dark mode. An `OutlinedButton`'s outline also
+  turns `primary`.
+- Effect: the focused control is visible to someone who looks closely,
+  and easy to lose for someone with low vision. The reference
+  repositories say the same of Android's own defaults ("generally
+  low-contrast").
+- Workaround, in the SDK: a ring from `ButtonStyle.side` for the focused
+  state, drawn outside the shape (V14 `good-material`, 16.30:1), or a
+  stronger `overlayColor` for the focused state (probe fixture x4, a
+  change of 3.25:1). The first is verified at every V14 layer.
+- How to read this entry: this is the Material 3 specification's state
+  layer as Flutter implements it, not a defect in it; it is logged because
+  it is the default most Flutter apps show.
+- Upstream issue: not searched yet (D25).
+
+## FL-435
+
+**A `CupertinoTextField` shows keyboard focus only by its caret.**
+
+- Status: Observed, Flutter 3.47.5, in the V14 probe (fixture c5) in widget
+  tests, on the web, and on the iOS simulator: when Tab put focus in the
+  field, no pixel changed but the blinking caret's. On the Android
+  emulator nothing changed at all, not even a caret (round 2); not looked
+  into. No V14 example uses the field, and no test in the repository
+  asserts this.
+- WCAG: none failed as written: Understanding 1.4.11 accepts a text
+  field's caret as its focus indicator, and asks for 3:1 only for a caret
+  the author styled. The caret is the theme's primary colour.
+- What happens: unlike a Material `TextField`, whose border turns
+  `primary` and 2 pixels wide (6.12:1 against the page), a
+  `CupertinoTextField` keeps its border when it takes focus.
+- Effect: the field is found only by its caret, which blinks.
+- Workaround, in the SDK: give the field a `decoration` with a stronger
+  border while its `FocusNode` has focus. Not tried.
 - Upstream issue: not searched yet (D25).
 
 ## FL-440

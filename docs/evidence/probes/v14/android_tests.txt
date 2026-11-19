@@ -1,0 +1,14 @@
+# What the V14 Android test (V14FocusIndicatorsTest.kt) measured, from its log (tag V14), 2026-11-19.
+# Pixel 10a emulator, Android 17, light mode. Keys by 'adb shell input keyevent' (FL-433).
+
+## At the emulator's own size, 1080 by 2424 at 420 dpi (evidence.py V14 --only android)
+11-19 13:39:32.335  1618  2269 I V14     : android bad-notice-over-list visible: 1.00, 1.00, 0.87, 0.00, 0.00, 0.00
+11-19 13:39:40.598  1618  2490 I V14     : android good-material alerts: changed 16826, unstable 0, marks 16826, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 16826 (#1B1B21, 16.30)
+11-19 13:39:42.822  1618  2490 I V14     : android good-material save: changed 4321, unstable 0, marks 4315, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 4315 (#1B1B21, 16.30)
+11-19 13:40:26.391  1618  3140 I V14     : android good-notice-below visible: 1.00, 1.00, 1.00, 1.00, 1.00, 1.00
+
+## At CI's size, 320 by 640 at 160 dpi (wm size and wm density, reset afterwards)
+11-19 14:14:15.639 27574 27591 I V14     : android bad-notice-over-list visible: 1.00, 1.00, 0.88, 0.00, 0.00, 0.00
+11-19 14:14:24.098 27574 27591 I V14     : android good-material alerts: changed 2000, unstable 0, marks 2000, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 2000 (#1B1B21, 16.30)
+11-19 14:14:26.184 27574 27591 I V14     : android good-material save: changed 641, unstable 0, marks 637, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 637 (#1B1B21, 16.30)
+11-19 14:15:11.477 27574 27591 I V14     : android good-notice-below visible: 1.00, 1.00, 1.00, 1.00, 1.00, 1.00

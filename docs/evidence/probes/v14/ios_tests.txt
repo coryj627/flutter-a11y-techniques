@@ -1,0 +1,13 @@
+# What the V14 iOS test (V14FocusIndicatorsUITests.swift) measured, from the last evidence.py run,
+# iPhone 17 simulator, iOS 27.0, light mode. Pixels are the screenshot's (3 to a point).
+V14 ios bad-checkbox-halo: changed 11296, unstable 0, marks 10172, page #FBF8FF, commonest mark #E4E1E8 (1.23), 3:1 or more: 0
+V14 ios bad-cupertino-ring: changed 8256, unstable 0, marks 7912, page #FBF8FF, commonest mark #8A9AF5 (2.49), 3:1 or more: 0
+V14 ios bad-indicator-removed back: changed 10716, unstable 0, marks 10600, page #FBF8FF, commonest mark #E4E1E8 (1.23), 3:1 or more: 0
+V14 ios bad-indicator-removed save: changed 0, unstable 0, marks 0, page #FBF8FF, commonest mark none (1.00), 3:1 or more: 0
+V14 ios bad-notice-over-list visible: 1.00 1.00 0.88 0.00 0.00 0.00
+V14 ios good-material alerts: changed 182651, unstable 0, marks 181429, page #FBF8FF, commonest mark #DCDAE0 (1.32), 3:1 or more: 22400 (#1B1B21, 16.30)
+V14 ios good-material save: changed 30935, unstable 0, marks 6022, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 5940 (#1B1B21, 16.30)
+V14 ios good-cupertino alerts: changed 4958, unstable 0, marks 4909, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 4826 (#000000, 19.97)
+V14 ios good-cupertino save: changed 8256, unstable 0, marks 8153, page #FBF8FF, commonest mark #000000 (19.97), 3:1 or more: 8042 (#000000, 19.97)
+V14 ios good-widgets trail: changed 20183, unstable 0, marks 18860, page #FBF8FF, commonest mark #1B1B21 (16.30), 3:1 or more: 16467 (#1B1B21, 16.30)
+V14 ios good-notice-below visible: 1.00 1.00 1.00 1.00 1.00 1.00

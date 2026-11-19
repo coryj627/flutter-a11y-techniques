@@ -79,6 +79,11 @@ ratios are WCAG's.
   `android_round2.txt` to `android_round4.txt`. Round 5,
   `android_probe5.sh.txt` (the emulator console): `android_round5.txt`.
 
+The V14 tests' own measurements, which the spec and the technique doc
+cite alongside the probe's, are in `widget_tests.txt`, `web_tests.txt`,
+`ios_tests.txt`, and `android_tests.txt` (the last at the emulator's own
+size and at CI's 320 by 640 at 160 dpi).
+
 ## What is drawn
 
 The widget tests, the web, and iOS give the same colours to the last
