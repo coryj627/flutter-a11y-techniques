@@ -15,8 +15,9 @@
 // What focus draws is read from UiAutomation.takeScreenshot: one screenshot
 // before Tab reaches a control and two after, 700 ms apart once the screen
 // has stopped changing. The pixels round the control that changed in both
-// and agree are what focus drew; contrast is worked out from those pixels,
-// never from the theme. Each stop is the node that reports isFocused.
+// and agree are what focus drew, and their contrast is taken against the
+// colours next to them in the focused screenshot (compare, below), never
+// from the theme. Each stop is the node that reports isFocused.
 package dev.fluttera11y.flutter_a11y_techniques
 
 import android.app.UiAutomation
@@ -45,7 +46,7 @@ private val CONTROLS = mapOf(
     "good-cupertino" to listOf(Triple("alerts", "Weather alerts", SWITCH), Triple("save", "Save", BUTTON)),
     "good-widgets" to listOf(Triple("trail", "Ridge trail", BUTTON)),
     "bad-indicator-removed" to listOf(Triple("save", "Save", BUTTON)),
-    "bad-checkbox-halo" to listOf(Triple("alerts", "Weather alerts", CHECKBOX)),
+    "bad-checked-checkbox" to listOf(Triple("alerts", "Weather alerts", CHECKBOX)),
     "bad-cupertino-ring" to listOf(Triple("save", "Save", BUTTON)),
 )
 private val TRAILS = listOf("Ridge trail", "Lake loop", "Summit path", "Forest walk", "River run", "Canyon climb")
@@ -66,47 +67,124 @@ private fun channelDiff(a: Int, b: Int) = maxOf(
 
 private fun hex(c: Int) = String.format("#%06X", c and 0xFFFFFF)
 
-/**
- * What focus drew in a region. Changed pixels differ from before focus in
- * both captures and agree; a mark is a changed pixel drawn where the page
- * was, or 3:1 or more from the colour it replaced (a tinted fill or a border
- * a shade darker is not one); strong marks are 3:1 or more against the
- * page, whose colour is the commonest along the region's edge, before focus.
- */
-private class Indicator(
-    val changed: Int, val unstable: Int, val marks: Int, val strong: Int,
-    val page: Int, val colour: Int?, val strongColour: Int?,
-) {
-    val ratio: Double get() = colour?.let { contrast(it, page) } ?: 1.0
-    override fun toString() = "changed $changed, unstable $unstable, marks $marks, page ${hex(page)}, " +
-        "commonest mark ${colour?.let { hex(it) } ?: "none"} (${"%.2f".format(ratio)}), 3:1 or more: $strong" +
-        (strongColour?.let { " (${hex(it)}, ${"%.2f".format(contrast(it, page))})" } ?: "")
+/** Two colours are one flat colour if no channel differs by more than this. */
+private const val FLAT = 4
+
+/** One colour of what focus drew, and where: on the page (where the page was before focus) or on the control. */
+private class Band(val colour: Int, val onPage: Boolean, val pixels: Int, val contrast: Double, val against: List<Int>) {
+    override fun toString() = "$pixels px ${hex(colour)} ${if (onPage) "on the page" else "on the control"} " +
+        "${"%.2f".format(contrast)} against ${against.joinToString { hex(it) }}"
 }
 
-private fun compare(u: Bitmap, f1: Bitmap, f2: Bitmap, region: Rect): Indicator {
+/** What focus drew in a region (see [compare]). */
+private class Indicator(
+    val changed: Int, val unstable: Int, val swapped: Int, val strong: Int, val page: Int, val bands: List<Band>,
+) {
+    /** Every changed pixel, whatever it replaced. */
+    val indicator: Int get() = changed
+
+    /**
+     * The drawing moved rather than focus adding to it: half or more of the
+     * colours the changed pixels took were there before, among them.
+     */
+    val moved: Boolean get() = changed > 0 && swapped * 2 >= changed
+
+    /** The largest band's contrast, or 1 if nothing was drawn. */
+    val ratio: Double get() = bands.firstOrNull()?.contrast ?: 1.0
+
+    override fun toString() = "changed $changed, unstable $unstable, swapped $swapped, indicator $changed, " +
+        "3:1 or more: $strong, page ${hex(page)}; ${bands.take(3).joinToString("; ")}"
+}
+
+/** A screenshot's pixels, as 0xRRGGBB. */
+private class Pixels(b: Bitmap) {
+    val width = b.width
+    val height = b.height
+    private val data = IntArray(width * height).also { b.getPixels(it, 0, width, 0, 0, width, height) }
+    fun at(x: Int, y: Int) = data[y * width + x] and 0xFFFFFF
+}
+
+/**
+ * What focus drew in [region], given the screenshot before focus [u] and two
+ * after it, [f1] and [f2].
+ *
+ * A pixel has changed if it differs from [u] in both and [f1] and [f2]
+ * agree. Every changed pixel is part of the indicator, whatever it replaced:
+ * Understanding 1.4.11 does not compare the focused and unfocused states.
+ * (What replaced what is used once, to tell a drawing that moved from one
+ * that focus added to: [Indicator.moved].) The indicator is split into
+ * bands, one per flat colour (pixels that share their colour with a
+ * horizontal and a vertical neighbour; anti-aliased edges are left out), and
+ * each band is taken against the colours adjacent to it in [f1], read across
+ * at most four pixels of anti-aliased edge. A band drawn where the page was,
+ * outside the control, must contrast with the page; a band drawn on the
+ * control, inside it or on its border, must contrast with every colour that
+ * makes up a fifth or more of what is next to it (with the page, if nothing
+ * does). The page's colour is the commonest along the region's edge in [u].
+ */
+private fun compare(ub: Bitmap, f1b: Bitmap, f2b: Bitmap, region: Rect): Indicator {
+    val u = Pixels(ub); val f1 = Pixels(f1b); val f2 = Pixels(f2b)
     val l = maxOf(0, region.left); val t = maxOf(0, region.top)
     val r = minOf(u.width, region.right); val b = minOf(u.height, region.bottom)
+    fun inside(x: Int, y: Int) = x >= l && x < r && y >= t && y < b
     val edge = HashMap<Int, Int>()
-    for (x in l until r) for (y in listOf(t, t + 1, b - 2, b - 1)) edge.merge(u.getPixel(x, y) and 0xFFFFFF, 1, Int::plus)
+    for (x in l until r) for (y in listOf(t, t + 1, b - 2, b - 1)) edge.merge(u.at(x, y), 1, Int::plus)
     val page = edge.maxByOrNull { it.value }!!.key
-    var changed = 0; var unstable = 0; var marks = 0; var strong = 0
-    val colours = HashMap<Int, Int>(); val strongColours = HashMap<Int, Int>()
-    val ratios = HashMap<Long, Double>()
-    fun ratio(a: Int, c: Int) = ratios.getOrPut((a.toLong() shl 32) or c.toLong()) { contrast(a, c) }
+    fun same(x: Int, y: Int, c: Int) = inside(x, y) && channelDiff(f1.at(x, y), c) <= FLAT
+    fun solid(x: Int, y: Int): Boolean {
+        val c = f1.at(x, y)
+        return (same(x - 1, y, c) || same(x + 1, y, c)) && (same(x, y - 1, c) || same(x, y + 1, c))
+    }
+    fun across(x0: Int, y0: Int, dx: Int, dy: Int, colour: Int): Int? {
+        var x = x0; var y = y0
+        while (same(x + dx, y + dy, colour)) { x += dx; y += dy }
+        repeat(4) {
+            x += dx; y += dy
+            if (!inside(x, y)) return null
+            val c = f1.at(x, y)
+            if (channelDiff(c, colour) > THRESHOLD && solid(x, y)) return c
+        }
+        return null
+    }
+    var changed = 0; var unstable = 0
+    val groups = HashMap<Pair<Int, Boolean>, MutableList<Int>>()
+    val newColours = HashMap<Int, Int>(); val oldColours = HashMap<Int, Int>()
     for (y in t until b) for (x in l until r) {
-        val a = u.getPixel(x, y) and 0xFFFFFF; val p = f1.getPixel(x, y) and 0xFFFFFF; val q = f2.getPixel(x, y) and 0xFFFFFF
+        val a = u.at(x, y); val p = f1.at(x, y); val q = f2.at(x, y)
         val d1 = channelDiff(a, p) > THRESHOLD; val d2 = channelDiff(a, q) > THRESHOLD
         if (d1 && d2 && channelDiff(p, q) <= THRESHOLD) {
             changed++
-            if (channelDiff(p, page) > THRESHOLD && (channelDiff(a, page) <= THRESHOLD || ratio(p, a) >= 3)) {
-                marks++
-                colours.merge(p, 1, Int::plus)
-                if (ratio(p, page) >= 3) { strong++; strongColours.merge(p, 1, Int::plus) }
-            }
+            newColours.merge(p, 1, Int::plus); oldColours.merge(a, 1, Int::plus)
+            if (!solid(x, y)) continue
+            groups.getOrPut(p to (channelDiff(a, page) <= THRESHOLD)) { mutableListOf() }.add(y * u.width + x)
         } else if (d1 || d2) unstable++
     }
-    return Indicator(changed, unstable, marks, strong, page,
-        colours.maxByOrNull { it.value }?.key, strongColours.maxByOrNull { it.value }?.key)
+    val ratios = HashMap<Long, Double>()
+    fun ratio(a: Int, c: Int) = ratios.getOrPut((a.toLong() shl 32) or c.toLong()) { contrast(a, c) }
+    val bands = mutableListOf<Band>()
+    var strong = 0
+    for ((key, pixels) in groups) {
+        val (colour, onPage) = key
+        val next = HashMap<Int, Int>()
+        for (i in pixels) {
+            val x = i % u.width; val y = i / u.width
+            for ((dx, dy) in listOf(1 to 0, -1 to 0, 0 to 1, 0 to -1)) {
+                across(x, y, dx, dy, colour)?.let { next.merge(it, 1, Int::plus) }
+            }
+        }
+        val total = next.values.sum()
+        var against = listOf(page)
+        if (!onPage && total > 0) {
+            val major = next.filter { it.value * 5 >= total }.keys.toList()
+            if (major.isNotEmpty()) against = major
+        }
+        val c = against.minOf { ratio(colour, it) }
+        if (c >= 3) strong += pixels.size
+        bands.add(Band(colour, onPage, pixels.size, c, against))
+    }
+    bands.sortByDescending { it.pixels }
+    val swapped = newColours.entries.sumOf { (c, n) -> minOf(n, oldColours[c] ?: 0) }
+    return Indicator(changed, unstable, swapped, strong, page, bands)
 }
 
 /**
@@ -283,13 +361,24 @@ class V14FocusIndicatorsTest : TechniqueTest("V14") {
         throw AssertionError("the screen did not settle")
     }
 
-    /** Tabs to [c] (one Tab on from where focus is) and measures what changed round [id] against [before]. */
+    /**
+     * Tabs to [c] (one Tab on from where focus is) and measures what changed
+     * round [id] against [before]. The control must be wholly on the screen
+     * and must not move: a control that moved (scrolled into view by Tab,
+     * say) would show its own drawing moved as a change, so the test fails
+     * instead, and so it does if what changed is a drawing that moved.
+     */
     private fun measureAfterTab(slug: String, c: String, id: String, before: Bitmap): Indicator {
+        val where = bounds(id)
+        assertTrue("$id is wholly on the screen: $where", where.top >= 0 && where.bottom <= device.displayHeight)
         tabTo(slug, c, 1)
-        val r = region(id)
+        assertEquals("$id did not move", where, bounds(id))
+        val r = Rect(where).apply { val m = (8 * density).toInt(); inset(-m, -m) }
         val f1 = settled(r)
         Thread.sleep(700)
-        return compare(before, f1, shot(), r)
+        val ind = compare(before, f1, shot(), r)
+        assertTrue("the drawing moved: $ind", !ind.moved)
+        return ind
     }
 
     @Test
@@ -358,7 +447,7 @@ class V14FocusIndicatorsTest : TechniqueTest("V14") {
             .apply { val m = (8 * density).toInt(); inset(-m, -m) }
         val onBack = compare(before, settled(backRegion), shot(), backRegion)
         Log.i("V14", "android $slug back: $onBack")
-        assertTrue("Back: $onBack", onBack.marks > area(100))
+        assertTrue("Back: $onBack", onBack.indicator > area(100))
         val onSave = measureAfterTab(slug, "save", saveId, before)
         Log.i("V14", "android $slug save: $onSave")
         // Written to fail if a FilledButton starts to show focus some other way.
@@ -375,23 +464,27 @@ class V14FocusIndicatorsTest : TechniqueTest("V14") {
     }
 
     @Test
-    fun badCheckboxHaloIsUnder3To1() {
-        val ind = measureFirst("bad-checkbox-halo", "alerts")
-        Log.i("V14", "android bad-checkbox-halo: $ind")
-        assertTrue("$ind", ind.marks > area(500))
-        // Written to fail if Flutter makes the halo stand out.
+    fun badCheckedCheckboxHaloIsUnder3To1() {
+        val ind = measureFirst("bad-checked-checkbox", "alerts")
+        Log.i("V14", "android bad-checked-checkbox: $ind")
+        assertTrue("$ind", ind.indicator > area(500))
+        assertTrue("the halo is on the page: $ind", ind.bands.first().onPage)
+        // Written to fail if Flutter makes the halo stand out, or adds
+        // anything else at 3:1.
         assertTrue("$ind", ind.ratio < 1.5)
-        assertTrue("$ind", ind.strong < ind.marks * 0.02)
+        assertTrue("$ind", ind.strong < ind.indicator * 0.02)
     }
 
     @Test
     fun badCupertinoRingIsUnder3To1() {
         val ind = measureFirst("bad-cupertino-ring", "save")
         Log.i("V14", "android bad-cupertino-ring: $ind")
-        assertTrue("$ind", ind.marks > area(500))
-        // Written to fail if Flutter darkens the ring.
+        assertTrue("$ind", ind.indicator > area(500))
+        assertTrue("the ring is on the page: $ind", ind.bands.first().onPage)
+        // Written to fail if Flutter darkens the ring, or adds anything
+        // else at 3:1.
         assertTrue("$ind", ind.ratio < 3)
-        assertTrue("$ind", ind.strong < ind.marks * 0.02)
+        assertTrue("$ind", ind.strong < ind.indicator * 0.02)
     }
 
     /**

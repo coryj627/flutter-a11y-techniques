@@ -70,23 +70,37 @@ written:
   [Understanding 1.4.11](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html),
   an indicator drawn outside a component must contrast with the
   background the component is on; one inside it, with the colours inside;
-  one on the component's border, with both. The criterion does not
-  compare the focused and unfocused states, and a change of background
-  colour within the component "is not in scope". `bad-checkbox-halo` and
-  `bad-cupertino-ring` (in light mode) fail it: both indicators are
-  drawn outside the control, on the page, at 1.22:1 to 1.26:1 and, in
-  light mode, 2.49:1 against it (section 7). The checkbox shows focus in
-  one more way, which does not change the verdict: its box's 2 pixel
-  border turns from `onSurfaceVariant`, `#46464F`, to `onSurface`,
-  `#1B1B21`, a change of 1.82:1 between the two states; both colours are
-  9:1 or more against the page, so the border identifies the box in
-  either state and not which state it is in. What identifies the focused
-  state is the halo, at 1.23:1 (read in the source,
-  `_CheckboxDefaultsM3.side`; the colours measured in the probe). Material's default overlay on a button or a list tile, a
-  tint of the control's own background at 1.14:1 to 1.45:1 against what
-  it replaced, is a change of background within the component and so is
-  not a 1.4.11 failure; it is weak, and is recorded as such
-  ([FL-434](../flutter-limitations.md#fl-434)).
+  one on the component's border, with both. The criterion "does not
+  directly compare the focused and unfocused states", and a change of
+  background colour within the component "is not in scope". So the
+  measure (section 6) counts every pixel focus changes, whatever it
+  replaced, and takes each part against what is next to it in the focused
+  state. As written:
+  - `bad-checked-checkbox` fails it: a checked box shows focus with a halo
+    outside the box, on the page, at 1.15:1 (1.22:1 in dark), and nothing
+    else changes ([FL-430](../flutter-limitations.md#fl-430)).
+  - `bad-cupertino-ring` fails it in light mode: the ring is outside the
+    button, on the page, at 2.49:1. In dark mode it passes, at 3.79:1
+    (asserted in the widget tests).
+  - An unchecked Material checkbox meets it, and so do a radio button and
+    a switch: besides the faint halo (1.23:1), the box's 2 pixel border
+    turns from `onSurfaceVariant`, `#46464F`, to `onSurface`, `#1B1B21`,
+    and that border is 13.25:1 against the halo next to it (dark
+    11.38:1); a radio button's ring does the same, and a switch's thumb
+    is 5.95:1 against its tinted track
+    ([FL-434](../flutter-limitations.md#fl-434)). The border is dark in
+    both states: the darkening is a change of 1.82:1 between two colours
+    that are both 9:1 or more against the page. Whether a user notices
+    that is the question of 2.4.13 Focus Appearance (AAA), and recorded
+    here as an observation, not as a 1.4.11 failure.
+  - Material's default tint on a control with a container (a
+    `FilledButton`, an `InkWell` card, a chip) is a change of background
+    within the component and out of 1.4.11's scope. On a control with no
+    visible container (a `TextButton`, an `IconButton`, a `ListTile`) the
+    tint lies where the page shows, outside what can be seen of the
+    control, and is under 3:1 against it, so this spec counts it as a
+    failure ([FL-430](../flutter-limitations.md#fl-430), which also gives
+    the other reading).
 - **The 1.4.11 exception** for a component whose appearance "is
   determined by the user agent and not modified by the author" does not
   cover Flutter's default indicators, on any platform:
@@ -121,8 +135,9 @@ written:
 - 2.4.13 Focus Appearance is AAA and not in scope. For reference: it asks
   for a change of contrast of 3:1 between the focused and unfocused
   states over an area at least as large as a 2 pixel perimeter. Material's
-  default overlay (a change of 1.14:1 to 1.45:1) and the halo would not
-  meet it; the good examples' rings, a change of 13:1 to 20:1, would.
+  default tints (a change of 1.14:1 to 1.45:1), the halos, and a
+  checkbox's border going a shade darker (1.82:1) would not meet it; the
+  good examples' rings, a change of 13:1 to 20:1, would.
 
 ## 4. Source requirements
 
@@ -196,12 +211,21 @@ caret (section 7, [FL-435](../flutter-limitations.md#fl-435)).
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
 | `bad-indicator-removed` | A `FilledButton` with `overlayColor: WidgetStatePropertyAll(Colors.transparent)`, as is done to be rid of the tint a press leaves. The overlay is all a `FilledButton` changes for focus: Tab reaches the button and nothing on the screen changes | R1 | 2.4.7, all platforms |
-| `bad-checkbox-halo` | A Material `Checkbox` and its label, with the checkbox's default focus indicator: a disc of the text colour at a tenth of its strength round the box. 1.22:1 to 1.23:1 against the page in light mode, 1.26:1 in dark. Radio buttons and switches have the same halo ([FL-430](../flutter-limitations.md#fl-430)) | R2 | 1.4.11, all platforms. The box's border also darkens on focus, 1.82:1 between the states (section 3) |
+| `bad-checked-checkbox` | A Material `Checkbox`, checked, and its label, with the checkbox's default focus indicator: a disc of `primary` at a tenth of its strength round the box, on the page, 1.15:1 against it in light mode and 1.22:1 in dark; nothing else changes ([FL-430](../flutter-limitations.md#fl-430)). Not checked, the same checkbox meets 1.4.11: its border darkens, and is 13:1 against the halo (section 3) | R2 | 1.4.11, all platforms, in light and dark mode |
 | `bad-cupertino-ring` | A `CupertinoButton.filled` with its default focus ring, a pale tint made from the button's colour: 2.49:1 against the page in light mode. In dark mode it is 3.79:1 and passes ([FL-431](../flutter-limitations.md#fl-431)) | R2, R4 | 1.4.11 in light mode, all platforms; passes in dark mode (3.79:1, asserted in the widget tests) |
 | `bad-notice-over-list` | `good-notice-below` with the notice drawn over the bottom of the scrolling box (a `Stack` and `Positioned`). Tab reaches trails 4, 5, and 6 while they are entirely under the notice ([FL-432](../flutter-limitations.md#fl-432)) | R5 | 2.4.11, all platforms |
 
 Not built:
 
+- An unchecked Material checkbox with its default halo, which was this
+  spec's first bad example: it does not fail 1.4.11 as written (section
+  3). The checked one, whose halo is all that changes, took its place.
+- A `TextButton` or an `IconButton` with its default tint: under 3:1 on
+  the page with nothing else changing, like the checked checkbox, but
+  with no visible edge of its own, so its verdict depends on where its
+  boundary is taken to be ([FL-430](../flutter-limitations.md#fl-430)).
+  The app's Back button is one; the tests measure it as the positive
+  control of `bad-indicator-removed`.
 - A bare `Focus` round a control that draws nothing (probe fixture `w1`):
   the same defect as `bad-indicator-removed`, from the widgets layer.
 - An `InkWell` with `focusColor: Colors.transparent` (probe `x2`), the
@@ -219,44 +243,69 @@ Not built:
 How focus visibility is asserted, on every layer, with the same rules
 (implemented once per layer, in that layer's test file):
 
-1. Capture the screen with the control unfocused (`u`), press Tab, check
-   that the stop is that control, wait until two captures 300 ms apart
-   differ in no more than 1% of the area (at most 3 s), and capture it
-   twice, 700 ms apart (`f1`, `f2`). The area is the control's rectangle
-   and 8 logical pixels round it, where a ring drawn outside it lies.
+1. Make sure the control is wholly on the screen, read its rectangle,
+   capture the screen (`u`), press Tab, check that the stop is that
+   control and that its rectangle has not moved (a control that moved,
+   scrolled into view by Tab say, fails the test), wait until two captures
+   300 ms apart differ in no more than 1% of the area (at most 3 s), and
+   capture it twice, 700 ms apart (`f1`, `f2`). The area is the control's
+   rectangle and 8 logical pixels round it, where a ring drawn outside it
+   lies.
 2. A pixel has changed if it differs from `u` by more than 12 in some
    channel in both `f1` and `f2`, and `f1` and `f2` agree. A pixel that
    differs in one capture only is unstable (a caret, an animation still
    running) and is not counted.
-3. The page's colour is the commonest along the edge of the area in `u`.
-   A changed pixel is a mark if it is drawn where the page was, or is 3:1
-   or more from the colour it replaced: a ring is a mark, a tinted fill
-   or a border a shade darker is not. A mark is strong if it is 3:1 or
-   more against the page. Colours are read from the pixels and the ratio
-   is WCAG's relative luminance formula, checked against known pairs.
-4. A good control passes if it has more than 150 strong marks per square
+3. Every changed pixel is part of the indicator, whatever it replaced:
+   1.4.11 does not compare the states. The indicator is split into bands,
+   one per flat colour (pixels that share their colour with a horizontal
+   and a vertical neighbour; anti-aliased edges are left out). Each band
+   is taken against the colours next to it in `f1`, read across at most
+   four pixels of anti-aliased edge. A band drawn where the page was (`u`
+   there is the page's colour, the commonest along the area's edge) is
+   outside the control and must be 3:1 against the page; a band drawn on
+   the control, inside it or on its border, must be 3:1 against every
+   colour that makes up a fifth or more of what is next to it. Those are
+   Understanding 1.4.11's three cases. A pixel in a band that meets its
+   rule is strong. Colours are read from the pixels and the ratio is
+   WCAG's relative luminance formula, checked against known pairs.
+4. What replaced what is used once more: if half or more of the colours
+   the changed pixels took were there before among them, the drawing
+   moved (a label, an icon, or an edge shifted) and the test fails, as no
+   indicator was measured.
+5. A good control passes if it has more than 150 strong pixels per square
    logical pixel of the screen's scale (a line all round a control is
-   several hundred). A bad halo or ring must have more than 500 marks, a
-   commonest mark under the limit, and almost no strong marks (under 2%).
-   "Nothing drawn" is zero changed and zero unstable pixels.
+   several hundred). A bad halo or ring must have more than 500 indicator
+   pixels, a largest band drawn on the page and under the limit, and
+   almost no strong pixels (under 2%). "Nothing drawn" is zero changed and
+   zero unstable pixels.
 
-What would make them fail: an unchanged image (no marks), a change
-elsewhere than round the control (outside the area), a change that comes
-and goes (unstable, not counted), a tint inside the control (not a
-mark), or a ring under 3:1 (not strong). A change from something other
-than focus is kept out by pressing only Tab: no tap, no pointer over the
-page, nothing moving on the screen. A test that says nothing is drawn
-first finds the Back button's indicator through the same measure in the
-same launch (the positive control). After the last good control, Tab
-moves on and its area must be as it was in `u`, pixel for pixel, which
-shows the change was focus's.
+The measure has tests of its own, in the widget tests and the web spec,
+on pictures made up for them: Understanding 1.4.11's figures (an inner
+yellow ring on a blue button passes, an outer yellow ring on white fails,
+an outer green one passes, the button's edge turning green fails, an
+inner white border inside a black one passes and a dark green one fails),
+a square moved four pixels (fails as moved, though its new edge is
+21:1), nothing drawn, and a mark in one capture only (unstable).
+
+What would make the device tests fail: an unchanged image (no indicator),
+a control that moved, a drawing that moved, a change elsewhere than round
+the control (outside the area), a change that comes and goes (unstable),
+or a part under 3:1 against what it must contrast with (not strong). A
+change from something other than focus is kept out by pressing only the
+keyboard: no tap, no pointer over the page. A test that says nothing is
+drawn first finds the Back button's indicator through the same measure in
+the same launch (the positive control). When Tab moves on, the control's
+area must be as it was in `u`, pixel for pixel: for the last good control
+of each example in the widget tests, on the web, and on Android, and for
+every good control on iOS (where a second Space first puts a switch or a
+checkbox back as it was).
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640. Every control: its name and role (checkbox, switch, button), not focused at first, reached by Tab in order after Back (each stop named by the node that is focused), and used by Space. Pixels, from the app's own layer tree at a device pixel ratio of 1, in light and dark: each good control has strong marks, and the last one's area returns to `u` when focus moves on; `bad-indicator-removed` changes nothing, after Back, the positive control, has marks; `bad-checkbox-halo`'s marks are wider than the box and under 1.5:1, with no strong ones, in both themes; `bad-cupertino-ring`'s are under 3:1 in light mode and pass in dark. 2.4.11: at each of the six stops, how much of the focused trail is inside the scrolling box and not under the notice: all of it in `good-notice-below`; in `bad-notice-over-list` trails 1 and 2 all (the positive control), trails 4 to 6 none, and the pixels where trail 6 is are only the notice's colours. A pinned `SliverAppBar` keeps every button below it as Shift+Tab goes up. The highlight mode: a touch hides `good-widgets`' ring with focus where it was, and Shift alone brings it back |
-| L3 web | The same: role, name, Tab order by `document.activeElement`, Space; the focused element is inside one with `filter: opacity(0%)`, so the browser's outline is not seen; the same pixel measure on Chromium's screenshots; the same 2.4.11 measure from the elements' rectangles |
+| L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640. Every control: its name and role (checkbox, switch, button), not focused at first, reached by Tab in order after Back (each stop named by the node that is focused), and used by Space. Pixels, from the app's own layer tree at a device pixel ratio of 1, in light and dark: each good control has strong pixels, does not move, and the last one's area returns to `u` when focus moves on; `bad-indicator-removed` changes nothing, after Back, the positive control, has an indicator; `bad-checked-checkbox`'s halo is on the page and under 1.5:1, with no strong pixels, in both themes, and an unchecked `Checkbox` on its own has a border band of 3:1 or more beside its halo; `bad-cupertino-ring`'s ring is on the page and under 3:1 in light mode, and passes in dark. The measure's own tests, above. 2.4.11: at each of the six stops, how much of the focused trail is inside the scrolling box and not under the notice: all of it in `good-notice-below`; in `bad-notice-over-list` trails 1 and 2 all (the positive control), trails 4 to 6 none, and the pixels where trail 6 is are only the notice's colours. A pinned `SliverAppBar` keeps every button below it as Shift+Tab goes up. The highlight mode: a touch hides `good-widgets`' ring with focus where it was, and Shift alone brings it back |
+| L3 web | The same: role, name, Tab order by `document.activeElement`, Space; the focused element is inside one with `filter: opacity(0%)`, so the browser's outline is not seen; the same pixel measure on Chromium's screenshots, and its own tests; the same 2.4.11 measure from the elements' rectangles |
 | L3 Android | Name and class (`CheckBox`, `Switch`, `Button`) through UI Automator; stops by `isFocused`, with Tab reaching every control of every example. Keys from a keyboard registered through `uinput` (section 7). The same pixel measure on `UiAutomation.takeScreenshot`, for every example as in the widget tests, with Back as the positive control for `bad-indicator-removed`. FL-433: in one launch, Tab from `input keyevent` puts focus on `good-widgets`' card with nothing drawn, and Shift alone from the registered keyboard then draws its ring. The same 2.4.11 measure from `getBoundsInScreen`, with a trail scrolled out of its list found by scrolling the list itself. Run at the emulator's own size and at 320 by 640 at 160 dpi |
-| L3 iOS | Label and type (a checkbox is a switch to XCUITest, FL-035); every stop shown by Space and the "Last used" line; the same pixel measure on `XCUIScreen` screenshots drawn into sRGB; the same 2.4.11 measure from the elements' frames |
+| L3 iOS | Label and type (a checkbox is a switch to XCUITest, FL-035); every stop shown by Space and the "Last used" line; the same pixel measure on `XCUIScreen` screenshots drawn into sRGB, with each good control's area as it was once Tab moves on; the same 2.4.11 measure from the elements' frames |
 | L4 TalkBack | Each control's name and role; a trail under the notice is read like any other |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the "Last used" line |
 | L4 VoiceOver web | Every stop between the "Example" heading and the "Last used" line |
@@ -278,34 +327,52 @@ read from pixels; "read in the source" marks what was not measured.
   the web the element the browser focuses is transparent (the engine's
   `filter: opacity(0%)`, read in the source and asserted by the web
   test), so the browser's outline is never what is seen.
-- **Material's defaults** (probe fixtures m1 to m15): most controls tint
-  their own background with a tenth of the foreground colour, a change of
-  1.14:1 to 1.32:1 in light mode and 1.11:1 to 1.45:1 in dark
-  ([FL-434](../flutter-limitations.md#fl-434)); checkboxes, radio
-  buttons, and switches draw a halo outside the control at 1.21:1 to
-  1.49:1 ([FL-430](../flutter-limitations.md#fl-430)); a `TextField`'s
-  border turns 2 pixels of `primary`, 6.12:1 (10.9:1 in dark), whenever it
-  has focus; an `OutlinedButton`'s outline turns `primary` as well as
-  tinting.
-- **Cupertino's defaults** (c1 to c5): a ring outside the control, a pale
-  tint of the control's colour: 1.89:1 with the default blue and 1.29:1
-  for a switch in light mode, 5.42:1 and 8.58:1 in dark; 2.49:1 in this
-  app, whose Cupertino primary colour is the Material theme's
-  ([FL-431](../flutter-limitations.md#fl-431)). A `CupertinoTextField`
+- **Material's defaults** (probe fixtures m1 to m15, measured again with
+  the measure of section 6 at a device pixel ratio of 3,
+  `flutter_test_measure2.txt`): most controls tint their own background,
+  or the page round them, with a tenth of the foreground colour, a change
+  of 1.14:1 to 1.32:1 in light mode and 1.11:1 to 1.45:1 in dark.
+  Checkboxes, radio buttons, and switches add a halo outside the control
+  at 1.23:1 (1.26:1 in dark); when they are not checked or on, the box's
+  border, the ring, or the thumb also changes, and that part is 5.50:1 to
+  13.25:1 against what is next to it, so they meet 1.4.11
+  ([FL-434](../flutter-limitations.md#fl-434)). A checked checkbox, a
+  `TextButton`, an `IconButton`, and a `ListTile` change nothing but the
+  tint, under 3:1 on the page ([FL-430](../flutter-limitations.md#fl-430)).
+  A `TextField`'s border turns 2 pixels of `primary`, 6.12:1 (10.9:1 in
+  dark), whenever it has focus; an `OutlinedButton`'s outline turns
+  `primary` as well as tinting. A `Slider`'s thumb gains a black ring,
+  19.97:1 in light mode and 1.13:1 in dark, beside its halo (probe only,
+  not an example; no verdict is drawn for it here beyond the figures).
+- **Cupertino's defaults** (c1 to c5), against the page, control by
+  control ([FL-431](../flutter-limitations.md#fl-431)): `CupertinoButton`
+  with the default blue 1.89:1 in light mode and 5.42:1 in dark, and in
+  this app, whose Cupertino primary colour is the Material theme's, 2.49:1
+  and 3.79:1; `CupertinoSwitch` 1.29:1 and 8.58:1; `CupertinoCheckbox`
+  1.89:1 in light mode, and in dark a ring of shades over the box's edge
+  of which none reaches 3:1 against what is next to it (1.63:1 to 1.91:1
+  for its largest bands; widget tests only). A `CupertinoTextField`
   draws nothing but its caret ([FL-435](../flutter-limitations.md#fl-435)).
 - **What the examples measured**, light mode on every layer and dark mode
-  in the widget tests (marks of 3:1 or more, with their colour and ratio
-  to the page):
+  in the widget tests (the strong part, with its colour and its contrast
+  against what it must contrast with):
   - `good-material`: the tile's ring `#1B1B21`, 16.30:1 (dark `#E4E1E9`,
     14.35:1); its own tint is the commonest change, at 1.32:1, where
     highlights are on. The button's ring the same colours.
   - `good-cupertino`: black rings, 19.97:1; white in dark, 18.55:1.
-  - `good-widgets`: the border `#1B1B21`, 16.30:1; dark 14.35:1.
+  - `good-widgets`: the border `#1B1B21` over the card's edge, 13.26:1
+    against the card and 16.30:1 against the page; dark `#E4E1E9`,
+    9.57:1 and 14.35:1. An earlier version of the card thickened its own
+    border, which made the card 4 pixels wider and moved its contents; the
+    check that the control does not move caught it, and the ring is now a
+    foreground decoration over the edge.
   - `bad-indicator-removed`: no pixel changed, on every layer, while the
     Back button's tint, the positive control, was found (1.22:1 to
     1.23:1, over a thousand pixels at a device pixel ratio of 1).
-  - `bad-checkbox-halo`: `#E4E1E8`, 1.23:1 (web `#E4E2E8`, 1.22:1); dark
-    `#27282D`, 1.26:1; no mark at 3:1.
+  - `bad-checked-checkbox`: the halo `#EAE8F4` on the page, 1.15:1 (web
+    `#E9E8F4`); dark `#232530`, 1.22:1; nothing at 3:1. The unchecked
+    checkbox of the widget test: the halo at 1.23:1 and its border
+    `#1B1B21` at 13.25:1 against the halo (dark `#E4E1E9`, 11.38:1).
   - `bad-cupertino-ring`: in light mode `#8A9AF5`, 2.49:1, no mark at
     3:1; in dark mode `#5C69C6`, 3.79:1 (widget tests, asserted to be 3:1
     or more).

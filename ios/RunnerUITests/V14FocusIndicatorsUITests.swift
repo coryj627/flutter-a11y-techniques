@@ -12,8 +12,9 @@
 // What focus draws is read from XCUIScreen screenshots, drawn into an sRGB
 // buffer: one before Tab reaches a control and two after, 700 ms apart once
 // the screen has stopped changing. The pixels round the control that
-// changed in both and agree are what focus drew. Contrast is worked out from
-// those pixels, never from the theme. The simulator is in light mode; dark
+// changed in both and agree are what focus drew, and their contrast is taken
+// against the colours next to them in the focused screenshot (compare,
+// below), never from the theme. The simulator is in light mode; dark
 // mode is measured in the widget tests and the probe.
 import XCTest
 
@@ -59,7 +60,7 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
     "good-cupertino": [("alerts", "Weather alerts", .switch), ("save", "Save", .button)],
     "good-widgets": [("trail", "Ridge trail", .button)],
     "bad-indicator-removed": [("save", "Save", .button)],
-    "bad-checkbox-halo": [("alerts", "Weather alerts", .switch)],
+    "bad-checked-checkbox": [("alerts", "Weather alerts", .switch)],
     "bad-cupertino-ring": [("save", "Save", .button)],
   ]
   private static let trails = ["Ridge trail", "Lake loop", "Summit path", "Forest walk", "River run", "Canyon climb"]
@@ -116,72 +117,127 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
 
   private static func hex(_ c: UInt32) -> String { String(format: "#%06X", c) }
   private static let threshold = 12
+  /// Two colours are one flat colour if no channel differs by more than this.
+  private static let flat = 4
+
+  /// One colour of what focus drew, and where: on the page (where the page
+  /// was before focus) or on the control.
+  struct Band: CustomStringConvertible {
+    let colour: UInt32
+    let onPage: Bool
+    let pixels: Int
+    let contrast: Double
+    let against: [UInt32]
+    var description: String {
+      "\(pixels) px \(V14FocusIndicatorsUITests.hex(colour)) \(onPage ? "on the page" : "on the control") "
+        + "\(String(format: "%.2f", contrast)) against \(against.map { V14FocusIndicatorsUITests.hex($0) }.joined(separator: ", "))"
+    }
+  }
 
   struct Indicator: CustomStringConvertible {
-    var changed = 0, unstable = 0, marks = 0, strong = 0
+    var changed = 0, unstable = 0, swapped = 0, strong = 0
     var page: UInt32 = 0
-    var colour: UInt32?
-    var strongColour: UInt32?
-    var ratio: Double { colour.map { V14FocusIndicatorsUITests.ratio($0, page) } ?? 1 }
+    var bands: [Band] = []
+    /// Every changed pixel, whatever it replaced.
+    var indicator: Int { changed }
+    /// The drawing moved rather than focus adding to it: half or more of
+    /// the colours the changed pixels took were there before, among them.
+    var moved: Bool { changed > 0 && swapped * 2 >= changed }
+    /// The largest band's contrast, or 1 if nothing was drawn.
+    var ratio: Double { bands.first?.contrast ?? 1 }
     var description: String {
-      "changed \(changed), unstable \(unstable), marks \(marks), page \(V14FocusIndicatorsUITests.hex(page)), "
-        + "commonest mark \(colour.map { V14FocusIndicatorsUITests.hex($0) } ?? "none") (\(String(format: "%.2f", ratio))), "
-        + "3:1 or more: \(strong)"
-        + (strongColour.map { " (\(V14FocusIndicatorsUITests.hex($0)), \(String(format: "%.2f", V14FocusIndicatorsUITests.ratio($0, page))))" } ?? "")
+      "changed \(changed), unstable \(unstable), swapped \(swapped), indicator \(changed), "
+        + "3:1 or more: \(strong), page \(V14FocusIndicatorsUITests.hex(page)); "
+        + bands.prefix(3).map { $0.description }.joined(separator: "; ")
     }
   }
 
   /// What focus drew in `region` (in pixels), given the screenshot before
-  /// focus and two after. Changed pixels differ from before in both and
-  /// agree; a mark is a changed pixel drawn where the page was, or 3:1 or
-  /// more from the colour it replaced (a tinted fill or a border a shade
-  /// darker is not one); strong marks are 3:1 or more against the page,
-  /// whose colour is the commonest along the region's edge.
+  /// focus and two after.
+  ///
+  /// A pixel has changed if it differs from `u` in both and `f1` and `f2`
+  /// agree. Every changed pixel is part of the indicator, whatever it
+  /// replaced: Understanding 1.4.11 does not compare the focused and
+  /// unfocused states. (What replaced what is used once, to tell a drawing
+  /// that moved from one that focus added to: `Indicator.moved`.) The
+  /// indicator is split into bands, one per flat colour (pixels that share
+  /// their colour with a horizontal and a vertical neighbour; anti-aliased
+  /// edges are left out), and each band is taken against the colours
+  /// adjacent to it in `f1`, read across at most four pixels of anti-aliased
+  /// edge. A band drawn where the page was, outside the control, must
+  /// contrast with the page; a band drawn on the control, inside it or on
+  /// its border, must contrast with every colour that makes up a fifth or
+  /// more of what is next to it (with the page, if nothing does). The page's
+  /// colour is the commonest along the region's edge in `u`.
   static func compare(_ u: Shot, _ f1: Shot, _ f2: Shot, _ region: CGRect) -> Indicator {
     let l = max(0, Int(region.minX)), t = max(0, Int(region.minY))
     let r = min(u.width, Int(region.maxX.rounded(.up))), b = min(u.height, Int(region.maxY.rounded(.up)))
+    func inside(_ x: Int, _ y: Int) -> Bool { x >= l && x < r && y >= t && y < b }
     var edge: [UInt32: Int] = [:]
     for x in l..<r { for y in [t, t + 1, b - 2, b - 1] { edge[u.at(x, y), default: 0] += 1 } }
     var result = Indicator()
-    result.page = edge.max { $0.value < $1.value }!.key
-    var colours: [UInt32: Int] = [:], strongColours: [UInt32: Int] = [:]
-    var ratios: [UInt64: Double] = [:]
-    func cachedRatio(_ a: UInt32, _ b: UInt32) -> Double {
-      let key = UInt64(a) << 32 | UInt64(b)
-      if let v = ratios[key] { return v }
-      let v = ratio(a, b)
-      ratios[key] = v
-      return v
+    let page = edge.max { $0.value < $1.value }!.key
+    result.page = page
+    func same(_ x: Int, _ y: Int, _ c: UInt32) -> Bool { inside(x, y) && channelDiff(f1.at(x, y), c) <= flat }
+    func solid(_ x: Int, _ y: Int) -> Bool {
+      let c = f1.at(x, y)
+      return (same(x - 1, y, c) || same(x + 1, y, c)) && (same(x, y - 1, c) || same(x, y + 1, c))
     }
+    func across(_ x0: Int, _ y0: Int, _ dx: Int, _ dy: Int, _ colour: UInt32) -> UInt32? {
+      var x = x0, y = y0
+      while same(x + dx, y + dy, colour) { x += dx; y += dy }
+      for _ in 0..<4 {
+        x += dx; y += dy
+        if !inside(x, y) { return nil }
+        let c = f1.at(x, y)
+        if channelDiff(c, colour) > threshold && solid(x, y) { return c }
+      }
+      return nil
+    }
+    struct Key: Hashable { let colour: UInt32; let onPage: Bool }
+    var groups: [Key: [(Int, Int)]] = [:]
+    var newColours: [UInt32: Int] = [:], oldColours: [UInt32: Int] = [:]
     for y in t..<b {
       for x in l..<r {
         let a = u.at(x, y), p = f1.at(x, y), q = f2.at(x, y)
         let d1 = channelDiff(a, p) > threshold, d2 = channelDiff(a, q) > threshold
         if d1 && d2 && channelDiff(p, q) <= threshold {
           result.changed += 1
-          if channelDiff(p, result.page) > threshold
-            && (channelDiff(a, result.page) <= threshold || cachedRatio(p, a) >= 3) {
-            result.marks += 1
-            colours[p, default: 0] += 1
-            if cachedRatio(p, result.page) >= 3 {
-              result.strong += 1
-              strongColours[p, default: 0] += 1
-            }
-          }
+          newColours[p, default: 0] += 1
+          oldColours[a, default: 0] += 1
+          if !solid(x, y) { continue }
+          groups[Key(colour: p, onPage: channelDiff(a, page) <= threshold), default: []].append((x, y))
         } else if d1 || d2 {
           result.unstable += 1
         }
       }
     }
-    result.colour = colours.max { $0.value < $1.value }?.key
-    result.strongColour = strongColours.max { $0.value < $1.value }?.key
+    for (key, pixels) in groups {
+      var next: [UInt32: Int] = [:]
+      for (x, y) in pixels {
+        for (dx, dy) in [(1, 0), (-1, 0), (0, 1), (0, -1)] {
+          if let c = across(x, y, dx, dy, key.colour) { next[c, default: 0] += 1 }
+        }
+      }
+      let total = next.values.reduce(0, +)
+      var against = [page]
+      if !key.onPage && total > 0 {
+        let major = next.filter { $0.value * 5 >= total }.map { $0.key }
+        if !major.isEmpty { against = major }
+      }
+      let contrast = against.map { ratio(key.colour, $0) }.min()!
+      if contrast >= 3 { result.strong += pixels.count }
+      result.bands.append(Band(colour: key.colour, onPage: key.onPage, pixels: pixels.count, contrast: contrast, against: against))
+    }
+    result.bands.sort { $0.pixels > $1.pixels }
+    result.swapped = newColours.reduce(0) { $0 + min($1.value, oldColours[$1.key] ?? 0) }
     return result
   }
 
-  /// The element's frame, 8 points larger on every side, in pixels.
-  private func region(_ e: XCUIElement, _ scale: CGFloat) -> CGRect {
-    let f = e.frame.insetBy(dx: -8, dy: -8)
-    return CGRect(x: f.minX * scale, y: f.minY * scale, width: f.width * scale, height: f.height * scale)
+  /// A frame, 8 points larger on every side, in pixels.
+  private func region(_ f: CGRect, _ scale: CGFloat) -> CGRect {
+    let g = f.insetBy(dx: -8, dy: -8)
+    return CGRect(x: g.minX * scale, y: g.minY * scale, width: g.width * scale, height: g.height * scale)
   }
 
   /// Waits, at most 3 s, for two screenshots 300 ms apart that differ in no
@@ -191,7 +247,7 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
     for _ in 0..<10 {
       usleep(300_000)
       let next = shot()
-      let area = region(e, next.scale)
+      let area = region(e.frame, next.scale)
       let c = Self.compare(last, next, next, area)
       last = next
       if Double(c.changed + c.unstable) <= Double(area.width * area.height) * 0.01 { return last }
@@ -200,13 +256,22 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
     return last
   }
 
-  /// Presses Tab and measures what changed round `e` against `before`.
-  private func tabAndMeasure(_ e: XCUIElement, _ before: Shot) -> Indicator {
+  /// Presses Tab and measures what changed round `e` against `before`. The
+  /// element must be wholly on the screen and must not move: one that moved
+  /// (scrolled into view by Tab, say) would show its own drawing moved as a
+  /// change, so the test fails instead, and so it does if what changed is a
+  /// drawing that moved.
+  private func tabAndMeasure(_ e: XCUIElement, _ before: Shot, file: StaticString = #filePath, line: UInt = #line) -> Indicator {
+    let where_ = e.frame
+    XCTAssertTrue(app.frame.contains(where_), "\(e.identifier) is wholly on the screen", file: file, line: line)
     press(Self.tab)
+    XCTAssertEqual(e.frame, where_, "\(e.identifier) did not move", file: file, line: line)
     let f1 = settled(e)
     usleep(700_000)
     let f2 = shot()
-    return Self.compare(before, f1, f2, region(e, f1.scale))
+    let ind = Self.compare(before, f1, f2, region(where_, f1.scale))
+    XCTAssertFalse(ind.moved, "the drawing moved: \(ind)", file: file, line: line)
+    return ind
   }
 
   // MARK: Tests
@@ -233,19 +298,36 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
     }
   }
 
-  func testGoodControlsDrawAnIndicatorOf3To1() {
+  /// For each good control: Tab draws an indicator of 3:1 or more; Space
+  /// shows the stop was that control, and a second Space puts a switch or a
+  /// checkbox back as it was; and when Tab moves on, with no Shift, the
+  /// control's region is as it was before it had focus. Every control is
+  /// measured against one screenshot, taken with focus on Back.
+  func testGoodControlsDrawAnIndicatorOf3To1WhichGoesWhenFocusMovesOn() {
     for slug in ["good-material", "good-cupertino", "good-widgets"] {
       open(slug)
       press(Self.tab)  // Back
-      for (c, name, _) in Self.controls[slug]! {
-        let e = control(slug, c)
-        let before = settled(e)
-        let ind = tabAndMeasure(e, before)
-        let s2 = before.scale * before.scale
-        print("V14 ios \(slug) \(c): \(ind)")
-        XCTAssertGreaterThan(Double(ind.strong), 150 * s2, "\(slug) \(c): \(ind)")
-        expectStop(slug, name)
+      let controls = Self.controls[slug]!
+      let base = settled(control(slug, controls[0].0))
+      var previous: (String, XCUIElement)?
+      func expectGone(_ c: String, _ e: XCUIElement) {
+        let off = settled(e)
+        let gone = Self.compare(base, off, off, region(e.frame, off.scale))
+        print("V14 ios \(slug) \(c) after focus left: \(gone)")
+        XCTAssertEqual(gone.changed, 0, "\(slug) \(c) after focus left: \(gone)")
       }
+      for (c, name, _) in controls {
+        let e = control(slug, c)
+        let ind = tabAndMeasure(e, base)
+        print("V14 ios \(slug) \(c): \(ind)")
+        XCTAssertGreaterThan(Double(ind.strong), 150 * base.scale * base.scale, "\(slug) \(c): \(ind)")
+        if let (pc, pe) = previous { expectGone(pc, pe) }
+        expectStop(slug, name)
+        press(Self.space)
+        previous = (c, e)
+      }
+      press(Self.tab)
+      if let (pc, pe) = previous { expectGone(pc, pe) }
     }
   }
 
@@ -259,7 +341,7 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
     // round it, through the same measure.
     let onBack = tabAndMeasure(backButton, before)
     print("V14 ios \(slug) back: \(onBack)")
-    XCTAssertGreaterThan(Double(onBack.marks), 100 * before.scale * before.scale, "Back: \(onBack)")
+    XCTAssertGreaterThan(Double(onBack.indicator), 100 * before.scale * before.scale, "Back: \(onBack)")
     let onSave = tabAndMeasure(save, before)
     print("V14 ios \(slug) save: \(onSave)")
     // Written to fail if a FilledButton starts to show focus some other way.
@@ -268,17 +350,19 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
     expectStop(slug, "Save")
   }
 
-  func testBadCheckboxHaloIsUnder3To1() {
-    let slug = "bad-checkbox-halo"
+  func testBadCheckedCheckboxHaloIsUnder3To1() {
+    let slug = "bad-checked-checkbox"
     open(slug)
     press(Self.tab)  // Back
     let e = control(slug, "alerts")
     let ind = tabAndMeasure(e, settled(e))
     print("V14 ios \(slug): \(ind)")
-    XCTAssertGreaterThan(Double(ind.marks), 500, "\(ind)")
-    // Written to fail if Flutter makes the halo stand out.
+    XCTAssertGreaterThan(Double(ind.indicator), 500, "\(ind)")
+    XCTAssertEqual(ind.bands.first?.onPage, true, "the halo is on the page: \(ind)")
+    // Written to fail if Flutter makes the halo stand out, or adds anything
+    // else at 3:1.
     XCTAssertLessThan(ind.ratio, 1.5, "\(ind)")
-    XCTAssertLessThan(Double(ind.strong), Double(ind.marks) * 0.02, "\(ind)")
+    XCTAssertLessThan(Double(ind.strong), Double(ind.indicator) * 0.02, "\(ind)")
     expectStop(slug, "Weather alerts")
   }
 
@@ -289,10 +373,12 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
     let e = control(slug, "save")
     let ind = tabAndMeasure(e, settled(e))
     print("V14 ios \(slug): \(ind)")
-    XCTAssertGreaterThan(Double(ind.marks), 500, "\(ind)")
-    // Written to fail if Flutter darkens the ring.
+    XCTAssertGreaterThan(Double(ind.indicator), 500, "\(ind)")
+    XCTAssertEqual(ind.bands.first?.onPage, true, "the ring is on the page: \(ind)")
+    // Written to fail if Flutter darkens the ring, or adds anything else at
+    // 3:1.
     XCTAssertLessThan(ind.ratio, 3, "\(ind)")
-    XCTAssertLessThan(Double(ind.strong), Double(ind.marks) * 0.02, "\(ind)")
+    XCTAssertLessThan(Double(ind.strong), Double(ind.indicator) * 0.02, "\(ind)")
     expectStop(slug, "Save")
   }
 
@@ -353,7 +439,7 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
     // spec hands it on.
     ("good-notice-below", [VoiceOverWalk.silent, "Ridge trail Button", "Lake loop Button", "Summit path Button", "Trail conditions are updated every morning."]),
     ("bad-indicator-removed", ["Save Button"]),
-    ("bad-checkbox-halo", ["Weather alerts Switch button off Double tap to toggle setting."]),
+    ("bad-checked-checkbox", ["Weather alerts Switch button on Double tap to toggle setting."]),
     ("bad-cupertino-ring", ["Save Button"]),
     // A trail under the notice is read like any other; only Canyon climb,
     // scrolled out of the box, is not reached.

@@ -124,11 +124,11 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-420](#fl-420) | Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets | All | Confirmed |
 | [FL-421](#fl-421) | On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever | Web | Confirmed |
 | [FL-422](#fl-422) | On a scrolled screen the default focus order puts the app bar's Back button among the content | All | Confirmed |
-| [FL-430](#fl-430) | A Material `Checkbox`, `Radio`, or `Switch` shows keyboard focus with a halo under 3:1 against the page | All | Confirmed |
-| [FL-431](#fl-431) | A `CupertinoButton`, `CupertinoSwitch`, or `CupertinoCheckbox` shows keyboard focus with a ring under 3:1 against a light page | All | Confirmed |
+| [FL-430](#fl-430) | A Material control with nothing of its own to change shows keyboard focus only with a tint on the page under 3:1: a checked `Checkbox`, a `TextButton`, an `IconButton`, a `ListTile` | All | Confirmed for the checked `Checkbox`; the others in the probe |
+| [FL-431](#fl-431) | Cupertino's default focus ring is under 3:1 on a light page, and a `CupertinoCheckbox`'s in dark mode as well | All (the dark-mode checkbox: widget tests only) | Confirmed for `CupertinoButton`; the others in the probe |
 | [FL-432](#fl-432) | A control that takes keyboard focus is scrolled into its view without regard to anything drawn over the view, and can end up entirely hidden | All | Confirmed |
 | [FL-433](#fl-433) | On Android, a key from the virtual keyboard device does not turn focus highlights on, and `input keyevent` and Instrumentation's keys all come from it | Android | Confirmed |
-| [FL-434](#fl-434) | Material's default focus indicator on buttons, list tiles, chips, sliders, and `InkWell` is a tint of 1.1:1 to 1.5:1 | All | Confirmed |
+| [FL-434](#fl-434) | Material's default focus indicator on a control with a container, a border, or a thumb of its own is a faint tint or halo beside a change that does meet 3:1, or a tint of the container; not a 1.4.11 failure as written | All | Confirmed |
 | [FL-435](#fl-435) | A `CupertinoTextField` shows keyboard focus only by its caret | iOS, Web (Android: no caret either; not looked into) | Observed |
 | [FL-440](#fl-440) | A `CupertinoAlertDialog`'s actions take no keyboard focus | All | Confirmed |
 | [FL-441](#fl-441) | A `CupertinoActionSheet`'s title and message fail text contrast in light mode | All (widget test only) | Confirmed (widget test only) |
@@ -2663,85 +2663,94 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-430
 
-**A Material `Checkbox`, `Radio`, or `Switch` shows keyboard focus with a halo under 3:1 against the page.**
+**A Material control with nothing of its own to change shows keyboard focus only with a tint on the page under 3:1: a checked `Checkbox`, a `TextButton`, an `IconButton`, a `ListTile`.**
 
-- Status: Confirmed, Flutter 3.47.5. Measured in the V14 probe
-  (`docs/evidence/probes/v14/`): in widget tests as Android and as iOS,
-  on the web in Chromium (`web.txt`), and on the iOS simulator
-  (`ios.txt`), and, for the checkbox, on the Android emulator with a
-  `uinput` keyboard (`android_round6.txt`, fixture m8; with `input
-  keyevent` nothing is drawn, [FL-433](#fl-433)), with the same colours on
-  all four. Radio and switch were not probed on an Android device. Asserted by V14
-  `bad-checkbox-halo` in the widget tests (light and dark), the web test,
-  the iOS test, and the Android test, written to fail when the halo
-  reaches 1.5:1 or draws anything at 3:1. Framework source read: `material/checkbox.dart`,
-  `_CheckboxDefaultsM3.overlayColor` (`onSurface` at an opacity of 0.1 when
-  focused and not checked, `primary` at 0.1 when checked); `radio.dart`
-  and `switch.dart` have the same pattern.
-- WCAG: 1.4.11 Non-text Contrast. The halo is the focused state's
-  indicator, drawn outside the control on the page, which is what
-  Understanding 1.4.11 says it must contrast with. The criterion's user
-  agent exception does not cover it (V14 spec, section 3).
-- What happens: with keyboard focus, the control draws a disc 40 pixels
-  across round its 18 pixel box, in the theme's text colour at a tenth of
-  its strength. Against the page: `Checkbox` and `Radio` 1.23:1 in light
-  mode (`#E4E1E8` on `#FBF8FF`; 1.22:1 on the web) and 1.26:1 in dark;
-  `Switch` 1.21:1 against its track and 1.49:1 at most against the page.
-  The checkbox's border also turns from `onSurfaceVariant` to
-  `onSurface`, a change of 1.82:1 between two colours that are both 9:1
-  or more against the page, so it does not tell focused from unfocused.
-- Effect: someone using a keyboard can hardly see which checkbox, radio
-  button, or switch they are on.
-- Workaround, in the SDK: draw a ring round the control while it has
-  focus. V14 `good-material` puts a `CheckboxListTile` in a `Focus` that
-  takes no focus itself and draws a 3 pixel ring of `onSurface` from
-  `onFocusChange` (16.30:1 against the page, 14.35:1 in dark). Verified
-  in the V14 widget tests, on the web, on iOS, and on Android. Making the
-  halo itself strong (`overlayColor` for the focused state) is not a
-  workaround: a halo dark enough for 3:1 against the page hides the box's
-  own border, which is the same colour.
+- Status: Confirmed, Flutter 3.47.5, for the checked `Checkbox`: asserted
+  by V14 `bad-checked-checkbox` in the widget tests (light and dark), on
+  the web, on iOS, and on Android (with a `uinput` keyboard), written to
+  fail when the halo reaches 1.5:1 or anything focus draws reaches 3:1.
+  The other three measured in the V14 probe only, in widget tests at a
+  device pixel ratio of 3 (`flutter_test_measure2.txt`, fixtures m4, m5,
+  m12); the app's Back button, an `IconButton`, is measured as the
+  positive control of V14 `bad-indicator-removed` on every layer, with the
+  same result. Framework source read: `material/checkbox.dart`
+  (`_CheckboxDefaultsM3`: `overlayColor` is `primary` at an opacity of 0.1
+  when the box is checked and focused, and the checked box has no border
+  to darken), and the M3 defaults of `text_button.dart` and
+  `icon_button.dart` (an overlay of the foreground colour at 0.1).
+- WCAG: 1.4.11 Non-text Contrast. Measured as V14 measures (the spec,
+  section 6): every pixel focus changes, whatever it replaced, taken
+  against what is next to it; a tint drawn where the page was is outside
+  the control and must contrast with the page.
+- What happens: with keyboard focus, each of these draws a tint of a
+  tenth of the foreground colour where the page shows round it, and
+  nothing else changes. Against the page, light then dark mode: checked
+  `Checkbox` 1.15:1 (`#EAE8F4` on `#FBF8FF`) and 1.22:1; `TextButton`
+  1.15:1 and 1.22:1; `IconButton` 1.23:1 for the app's Back button
+  (1.14:1 and 1.12:1 in the probe's theme); `ListTile` 1.32:1 and 1.41:1.
+- How sure the verdict is: for the checked checkbox it rests on nothing
+  but the measure, as the box is plainly visible and the halo plainly
+  outside it. For the other three it also rests on where the control's
+  edge is: they have no visible container, so their tint is read as drawn
+  outside them, on the page. If their invisible shape were taken as their
+  boundary, the tint would be a change of background within the
+  component, which Understanding 1.4.11 puts out of its scope; they would
+  then fail nothing as written, and only 2.4.13 (AAA).
+- Not the same: an unchecked `Checkbox` or a `Radio` also darkens its
+  border or ring with focus, and a `Switch` its thumb, and those are 3:1
+  or more against what is next to them, so they meet 1.4.11 as written
+  ([FL-434](#fl-434)).
+- Effect: someone using a keyboard can hardly see which of these controls
+  they are on. Every screen of this app has an `IconButton` so: the app
+  bar's Back button.
+- Workaround, in the SDK: a ring of the text colour drawn outside the
+  control while it has focus, from `ButtonStyle.side` for the focused
+  state or from a `Focus` that hears the focus change, as V14
+  `good-material` does for a `FilledButton` and a `CheckboxListTile`
+  (16.30:1 against the page, 14.35:1 in dark). Verified at every V14
+  layer.
 - How to read this entry: Flutter has not given these controls a focus
   indicator of 3:1 yet. Re-check when the pinned version changes.
 - Upstream issue: not searched yet (D25).
 
 ## FL-431
 
-**A `CupertinoButton`, `CupertinoSwitch`, or `CupertinoCheckbox` shows keyboard focus with a ring under 3:1 against a light page.**
+**Cupertino's default focus ring is under 3:1 on a light page, and a `CupertinoCheckbox`'s in dark mode as well.**
 
-- Status: Confirmed, Flutter 3.47.5, light mode. Measured in the V14 probe
-  in widget tests as Android and as iOS, on the web, on the iOS
-  simulator, and, for the button, on the Android emulator with a
-  `uinput` keyboard (`android_round6.txt`, fixture c1), with the same
-  colours on all four. The switch and checkbox were not probed on an
-  Android device. Asserted by
-  V14 `bad-cupertino-ring` in the widget tests (light mode under 3:1, dark
-  mode over it), the web test, the iOS test, and the Android test,
-  written to fail when the ring reaches 3:1 in light mode. Framework source read:
-  `cupertino/button.dart` (the ring is the button's colour at an opacity
-  of 0.80, its HSL lightness set to 0.69 and saturation to 0.835:
+- Status: Confirmed, Flutter 3.47.5, for `CupertinoButton` in light mode:
+  asserted by V14 `bad-cupertino-ring` in the widget tests (light under
+  3:1, dark 3:1 or more), on the web, on iOS, and on Android. The switch
+  and the checkbox measured in the V14 probe only (widget tests;
+  `flutter_test_measure2.txt`, fixtures c3 and c4, and the earlier
+  probe's `flutter_test.txt`, `web.txt`, and `ios.txt`). Framework source
+  read: `cupertino/button.dart` (the ring is the control's colour at an
+  opacity of 0.80, its HSL lightness set to 0.69 and saturation to 0.835:
   `kCupertinoFocusColorOpacity`, `kCupertinoFocusColorBrightness`, and
   `kCupertinoFocusColorSaturation` in `cupertino/constants.dart`), and the
   same rule in `switch.dart` and `checkbox.dart`.
-- WCAG: 1.4.11 Non-text Contrast, in light mode. The ring is drawn
-  outside the control, on the page. In dark mode the same rule passes.
-- What happens: with keyboard focus, the control draws a ring 3.5 pixels
-  wide outside itself, a pale tint of its own colour. In light mode, with
-  the default blue: `#8ABCF5`, 1.89:1 against the page (probe fixtures
-  c1, c2, c4); a `CupertinoSwitch`'s green gives `#8AF3A5`, 1.29:1 (c3).
-  In this app, where the Cupertino primary colour is the Material theme's
-  `primary`, a filled button's ring is `#8A9AF5`, 2.49:1 (V14
-  `bad-cupertino-ring`). In dark mode: 5.42:1 with the default blue,
-  8.58:1 for the switch, 3.79:1 in this app.
+- WCAG: 1.4.11 Non-text Contrast: each ring is drawn outside the control,
+  on the page, and must contrast with the page. Control by control, as
+  measured (against the page):
+
+  | Control | Light mode | Dark mode |
+  | --- | --- | --- |
+  | `CupertinoButton`, default blue | `#8ABCF5`, 1.89:1, fails | `#5C8EC6`, 5.42:1, passes |
+  | `CupertinoButton.filled` in this app (primary `#515B92`) | `#8A9AF5`, 2.49:1, fails | `#5C69C6`, 3.79:1, passes |
+  | `CupertinoSwitch` | `#8AF3A5`, 1.29:1, fails | `#5CC577`, 8.58:1, passes |
+  | `CupertinoCheckbox` | `#8ABCF5`, 1.89:1, fails | a ring of shades over the box's edge, `#424A5D` to `#525C74`; none reaches 3:1 against what is next to it (the largest bands 1.63:1 to 1.91:1), fails |
+
+  Nothing else changes with focus on any of them. The dark-mode checkbox
+  was measured in the widget tests only, not on a device.
 - Effect: on a light page someone using a keyboard can hardly see which
-  Cupertino control they are on.
+  Cupertino control they are on; on a dark page, which checkbox.
 - Workaround, in the SDK: `focusColor` on the control, in a colour with
   3:1 against the page in both modes, such as
   `CupertinoColors.label.resolveFrom(context)`, as V14 `good-cupertino`
   does for a `CupertinoSwitch` and a `CupertinoButton.filled` (19.97:1 in
   light, 18.55:1 in dark). Verified in the V14 widget tests, on the web,
-  on iOS, and on Android.
+  on iOS, and on Android. Not tried on a `CupertinoCheckbox`.
 - How to read this entry: Flutter has not made the Cupertino focus ring
-  meet 3:1 on a light page yet. Re-check when the pinned version changes.
+  meet 3:1 yet. Re-check when the pinned version changes.
 - Upstream issue: not searched yet (D25).
 
 ## FL-432
@@ -2851,40 +2860,59 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-434
 
-**Material's default focus indicator on buttons, list tiles, chips, sliders, and `InkWell` is a tint of 1.1:1 to 1.5:1.**
+**Material's default focus indicator on a control with a container, a border, or a thumb of its own is a faint tint or halo beside a change that does meet 3:1, or a tint of the container; not a 1.4.11 failure as written.**
 
 - Status: Confirmed, Flutter 3.47.5. Measured in the V14 probe in widget
-  tests as Android and as iOS, on the web, on the iOS simulator, and on
-  the Android emulator with a `uinput` keyboard (`android_round6.txt`,
-  the `ElevatedButton`, fixture m1; with `input keyevent` the tint is not
-  drawn, [FL-433](#fl-433)), with the same colours on all four. Asserted by the V14 widget test of
-  `good-material`, where the checkbox tile's own tint is the commonest
-  change, at 1.32:1; the web, iOS, and Android tests log the same. Framework source read: the M3 defaults of
-  `filled_button.dart`, `elevated_button.dart`, `outlined_button.dart`,
-  `text_button.dart`, and `icon_button.dart` (`overlayColor` of the
-  foreground colour at an opacity of 0.1 when focused), and
-  `ThemeData.focusColor` (black or white at 0.12) for `InkWell` and
-  `ListTile`.
-- WCAG: none failed as written. The tint is a change of background within
-  the control, which Understanding 1.4.11 puts out of its scope, and 2.4.7
-  sets no contrast. It would not meet 2.4.13 Focus Appearance (AAA), which
-  asks for a change of 3:1.
-- What happens: with keyboard focus the control's background, or on an
-  `IconButton` a disc where the page was, is overlaid with a tenth of the
-  foreground colour. Against what it replaced: 1.15:1 for
-  `ElevatedButton`, `OutlinedButton`, and `TextButton`, 1.28:1 for
-  `FilledButton`, 1.14:1 for `IconButton`, 1.32:1 for `ListTile` and
-  `FilterChip`, 1.31:1 for an `InkWell` card, 1.15:1 for a `Slider`'s
-  thumb; 1.11:1 to 1.45:1 in dark mode. An `OutlinedButton`'s outline also
-  turns `primary`.
+  tests at a device pixel ratio of 3 (`flutter_test_measure2.txt`) and,
+  for the same fixtures, in the earlier probe on the web and on iOS, with
+  the same colours; on Android with a `uinput` keyboard for the
+  `ElevatedButton` and the unchecked `Checkbox` (`android_round6.txt`).
+  Asserted by the V14 widget test "a Checkbox that is not checked", which
+  finds the darker border at 3:1 or more against the halo next to it, and
+  by the `good-material` widget test, where the checkbox tile's own tint
+  is the largest change, at 1.32:1. Framework source read: the M3
+  defaults of `checkbox.dart` and `radio.dart` (`side` and `fillColor`
+  turn from `onSurfaceVariant` to `onSurface` when focused), `switch.dart`
+  (an unfocused thumb that is off is `outline`, a focused one
+  `onSurfaceVariant`), and the buttons' and `InkWell`'s overlays (the
+  foreground colour at an opacity of 0.1, or `ThemeData.focusColor`).
+- WCAG: none failed as written. Understanding 1.4.11 does not compare the
+  focused and unfocused states, and puts a change of background within
+  the component out of its scope; 2.4.7 sets no contrast. None of these
+  would meet 2.4.13 Focus Appearance (AAA), which asks for a change of 3:1
+  between the states.
+- What happens, measured against what is next to each part in the focused
+  state, light then dark mode:
+  - Unchecked `Checkbox`: a halo on the page, 1.23:1 and 1.26:1, and the
+    box's 2 pixel border, which darkens from `#46464F` to `#1B1B21`: 13.25:1
+    against the halo round it (dark 11.38:1). The darkening itself is a
+    change of 1.82:1 between the two states, between two colours that are
+    both 9:1 or more against the page.
+  - `Radio`, not selected: the same halo and a ring darkened the same way,
+    13.25:1 against the halo (dark 11.38:1).
+  - `Switch`, off: a halo, 1.23:1 on the page, which also tints the
+    track, and the thumb, which darkens to `#46464F`: 5.95:1 against the
+    tinted track (dark: lightens to `#C7C5D0`, 5.50:1).
+  - `FilledButton`: its fill tinted from `#515B92` to `#636C9D`, a change
+    of 1.28:1, within its container.
+  - `OutlinedButton`: a tint inside its outline, 1.15:1, and the outline
+    turning `primary`, 5.32:1 against the tint and 6.12:1 against the page.
+  - An `InkWell` card, a `FilterChip`: a tint of the card or chip, 1.31:1
+    to 1.38:1 against the page, within the container.
+  - `ElevatedButton`: a tint of 1.21:1 within a container that is itself
+    1.05:1 against the page and shows its edge by its shadow; the probe's
+    measure finds the tint where the page's colour was. This spec takes
+    the container as its boundary; read otherwise, it belongs with
+    [FL-430](#fl-430).
 - Effect: the focused control is visible to someone who looks closely,
-  and easy to lose for someone with low vision. The reference
-  repositories say the same of Android's own defaults ("generally
-  low-contrast").
+  and easy to lose for someone with low vision: what meets 3:1 is a part
+  that was nearly as dark before focus. The reference repositories say
+  the same of Android's own defaults ("generally low-contrast").
 - Workaround, in the SDK: a ring from `ButtonStyle.side` for the focused
-  state, drawn outside the shape (V14 `good-material`, 16.30:1), or a
-  stronger `overlayColor` for the focused state (probe fixture x4, a
-  change of 3.25:1). The first is verified at every V14 layer.
+  state, drawn outside the shape, or one from `Focus.onFocusChange` (V14
+  `good-material`, 16.30:1), verified at every V14 layer; or a stronger
+  `overlayColor` for the focused state (probe fixture x4, 3.42:1 against
+  the page).
 - How to read this entry: this is the Material 3 specification's state
   layer as Flutter implements it, not a defect in it; it is logged because
   it is the default most Flutter apps show.

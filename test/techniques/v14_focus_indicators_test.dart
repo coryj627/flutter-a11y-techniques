@@ -16,11 +16,10 @@ import '../support/examples.dart';
 /// What a focus indicator is, here, is read from the pixels Flutter draws:
 /// the screen is captured before a control has focus and twice after Tab
 /// has put focus on it, and the indicator is every pixel round the control
-/// that changed in both captures and is the same in both. Its colour is the
-/// commonest of those pixels, and the page's colour the commonest along the
-/// edge of the area looked at, before focus; the contrast ratio is worked
-/// out from those two colours, never from the theme. The other layers do
-/// the same with the platform's own screenshots.
+/// that changed in both captures, is the same in both, and is not now the
+/// page's colour. Its contrast is taken against the colours next to it in
+/// the focused capture (see [_compare]), never from the theme. The other
+/// layers do the same with the platform's own screenshots.
 final _open = exampleOpener(v14FocusIndicators);
 
 const _good = [
@@ -31,7 +30,7 @@ const _good = [
 ];
 const _bad = [
   'bad-indicator-removed',
-  'bad-checkbox-halo',
+  'bad-checked-checkbox',
   'bad-cupertino-ring',
   'bad-notice-over-list',
 ];
@@ -44,7 +43,7 @@ const _controls = <String, List<(String, String)>>{
   'good-cupertino': [('alerts', 'Weather alerts'), ('save', 'Save')],
   'good-widgets': [('trail', 'Ridge trail')],
   'bad-indicator-removed': [('save', 'Save')],
-  'bad-checkbox-halo': [('alerts', 'Weather alerts')],
+  'bad-checked-checkbox': [('alerts', 'Weather alerts')],
   'bad-cupertino-ring': [('save', 'Save')],
 };
 
@@ -100,21 +99,24 @@ Future<void> _openForPixels(
   await _open(tester, slug, brightness: brightness);
 }
 
-/// A capture of the whole screen, as RGBA bytes.
+/// A capture of the screen, or a picture made up for a test of the measure.
 class _Shot {
-  _Shot(this.bytes, this.width, this.height);
+  _Shot(this.width, this.height, this.at);
 
-  final ByteData bytes;
+  /// A capture as RGBA bytes.
+  factory _Shot.rgba(ByteData bytes, int width, int height) =>
+      _Shot(width, height, (x, y) {
+        final o = (y * width + x) * 4;
+        return bytes.getUint8(o) << 16 |
+            bytes.getUint8(o + 1) << 8 |
+            bytes.getUint8(o + 2);
+      });
+
   final int width;
   final int height;
 
   /// The colour at (x, y), as 0xRRGGBB.
-  int at(int x, int y) {
-    final o = (y * width + x) * 4;
-    return bytes.getUint8(o) << 16 |
-        bytes.getUint8(o + 1) << 8 |
-        bytes.getUint8(o + 2);
-  }
+  final int Function(int x, int y) at;
 }
 
 Future<_Shot> _shot(WidgetTester tester) async {
@@ -124,7 +126,7 @@ Future<_Shot> _shot(WidgetTester tester) async {
   final bytes = await tester.runAsync(
     () => image.toByteData(format: ui.ImageByteFormat.rawRgba),
   );
-  final shot = _Shot(bytes!, image.width, image.height);
+  final shot = _Shot.rgba(bytes!, image.width, image.height);
   image.dispose();
   return shot;
 }
@@ -158,31 +160,39 @@ double _ratio(int a, int b) {
 
 String _hex(int c) => '#${c.toRadixString(16).padLeft(6, '0').toUpperCase()}';
 
-/// What focus drew in [region].
+/// One colour of what focus drew, and where: on the page (where the page
+/// was before focus) or on the control.
+class _Band {
+  _Band(this.colour, this.onPage, this.pixels, this.contrast, this.against);
+
+  final int colour;
+  final bool onPage;
+  final int pixels;
+
+  /// Its contrast with what it must contrast with (see [_compare]).
+  final double contrast;
+
+  /// The colours it was measured against.
+  final List<int> against;
+
+  @override
+  String toString() =>
+      '$pixels px ${_hex(colour)} ${onPage ? 'on the page' : 'on the control'} '
+      '${contrast.toStringAsFixed(2)} against '
+      '${against.map(_hex).join(', ')}';
+}
+
+/// What focus drew in a region.
 class _Indicator {
   _Indicator({
     required this.changed,
     required this.unstable,
-    required this.drawn,
-    required this.page,
-    required this.colour,
-    required this.share,
-    required this.bounds,
+    required this.swapped,
+    required this.indicator,
     required this.strong,
-    required this.strongColour,
-    required this.marks,
+    required this.page,
+    required this.bands,
   });
-
-  /// Drawn pixels that are marks focus made: drawn where the page was, or
-  /// 3:1 or more from the colour they replaced.
-  final int marks;
-
-  /// [marks] whose colour is 3:1 or more against [page]: the part of the
-  /// indicator that meets 1.4.11.
-  final int strong;
-
-  /// The commonest colour of the [strong] pixels, or null if none.
-  final int? strongColour;
 
   /// Pixels that differ from before focus in both captures, and agree.
   final int changed;
@@ -190,44 +200,68 @@ class _Indicator {
   /// Pixels that differ in one capture only, or between the two.
   final int unstable;
 
-  /// Changed pixels that are not now the page's colour: what was drawn,
-  /// as against what was uncovered.
-  final int drawn;
+  /// How many of the changed pixels' new colours are their old colours
+  /// elsewhere: what moving the same drawing would give.
+  final int swapped;
 
-  /// The page's colour: the commonest along the edge of the region,
-  /// before focus.
+  /// Every changed pixel, whatever it replaced: what focus drew.
+  final int indicator;
+
+  /// Indicator pixels in bands of 3:1 or more against what they must
+  /// contrast with.
+  final int strong;
+
+  /// The page's colour: the commonest along the edge of the region, before
+  /// focus.
   final int page;
 
-  /// The commonest colour of the drawn pixels, or null if none.
-  final int? colour;
+  /// The bands of flat colour in what was drawn, largest first.
+  final List<_Band> bands;
 
-  /// The share of the drawn pixels that are [colour].
-  final double share;
+  /// Whether the drawing moved rather than focus adding to it: half or more
+  /// of the colours the changed pixels took were there before, among the
+  /// changed pixels, and went (a shifted label, icon, or edge).
+  bool get moved => changed > 0 && swapped * 2 >= changed;
 
-  /// The rectangle round the drawn pixels.
-  final Rect? bounds;
-
-  double get ratio => colour == null ? 1 : _ratio(colour!, page);
+  /// The largest band's contrast, or 1 if nothing was drawn.
+  double get ratio => bands.isEmpty ? 1 : bands.first.contrast;
 
   @override
   String toString() =>
-      'changed $changed, unstable $unstable, drawn $drawn, page ${_hex(page)}, '
-      'indicator ${colour == null ? 'none' : _hex(colour!)} '
-      '(${(share * 100).round()}% of drawn), '
-      'ratio ${ratio.toStringAsFixed(2)}, bounds $bounds; marks $marks, '
-      '3:1 or more: '
-      '$strong${strongColour == null ? '' : ' (${_hex(strongColour!)}, '
-                '${_ratio(strongColour!, page).toStringAsFixed(2)})'}';
+      'changed $changed, unstable $unstable, swapped $swapped, '
+      'indicator $indicator, 3:1 or more: $strong, page ${_hex(page)}; '
+      '${bands.take(3).join('; ')}';
 }
 
-/// The pixels a change of a channel by more than this does not count as.
+/// A change of a channel by this much or less is no change.
 const _threshold = 12;
 
+/// Two colours are one flat colour if no channel differs by more than this.
+const _flat = 4;
+
+/// What focus drew in [region], given the capture before focus [u] and two
+/// after it, [f1] and [f2].
+///
+/// A pixel has changed if it differs from [u] in both and [f1] and [f2]
+/// agree. Every changed pixel is part of the indicator, whatever it
+/// replaced: Understanding 1.4.11 does not compare the focused and
+/// unfocused states. (What replaced what is used once, to tell a drawing
+/// that moved from one that focus added to: see [_Indicator.moved].) The indicator is split into
+/// bands, one per flat colour (pixels that share their colour with a
+/// horizontal and a vertical neighbour; anti-aliased edges are left out),
+/// and each band is taken against the colours adjacent to it in [f1], read
+/// across at most four pixels of anti-aliased edge. A band drawn where the
+/// page was, outside the control, must contrast with the page; a band drawn
+/// on the control, inside it or on its border, must contrast with every
+/// colour that makes up a fifth or more of what is next to it (with the
+/// page, if nothing does). Those are the three cases of Understanding
+/// 1.4.11's section on focus indicators.
 _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
   final l = math.max(0, region.left.floor());
   final t = math.max(0, region.top.floor());
   final r = math.min(u.width, region.right.ceil());
   final b = math.min(u.height, region.bottom.ceil());
+  bool inside(int x, int y) => x >= l && x < r && y >= t && y < b;
   final edge = <int, int>{};
   for (var x = l; x < r; x++) {
     for (final y in [t, t + 1, b - 2, b - 1]) {
@@ -236,10 +270,32 @@ _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
   }
   final page =
       (edge.entries.toList()..sort((a, b) => b.value - a.value)).first.key;
-  var changed = 0, unstable = 0, marks = 0;
-  final drawn = <int, int>{};
-  final strong = <int, int>{};
-  var minX = r, minY = b, maxX = l, maxY = t;
+  bool same(int x, int y, int c) =>
+      inside(x, y) && _channelDiff(f1.at(x, y), c) <= _flat;
+  bool solid(int x, int y) {
+    final c = f1.at(x, y);
+    return (same(x - 1, y, c) || same(x + 1, y, c)) &&
+        (same(x, y - 1, c) || same(x, y + 1, c));
+  }
+
+  int? across(int x, int y, int dx, int dy, int colour) {
+    while (same(x + dx, y + dy, colour)) {
+      x += dx;
+      y += dy;
+    }
+    for (var i = 0; i < 4; i++) {
+      x += dx;
+      y += dy;
+      if (!inside(x, y)) return null;
+      final c = f1.at(x, y);
+      if (_channelDiff(c, colour) > _threshold && solid(x, y)) return c;
+    }
+    return null;
+  }
+
+  var changed = 0, unstable = 0, indicator = 0;
+  final groups = <(int, bool), List<int>>{};
+  final newColours = <int, int>{}, oldColours = <int, int>{};
   for (var y = t; y < b; y++) {
     for (var x = l; x < r; x++) {
       final a = u.at(x, y), p = f1.at(x, y), q = f2.at(x, y);
@@ -247,77 +303,85 @@ _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
       final d2 = _channelDiff(a, q) > _threshold;
       if (d1 && d2 && _channelDiff(p, q) <= _threshold) {
         changed++;
-        if (_channelDiff(p, page) > _threshold) {
-          drawn.update(p, (n) => n + 1, ifAbsent: () => 1);
-          // A mark focus made: drawn where the page was, or standing out
-          // 3:1 from what was there. A colour shift inside the control,
-          // such as a tinted fill or a border a shade darker, is not one.
-          final onPage = _channelDiff(a, page) <= _threshold;
-          if (onPage || _ratio(p, a) >= 3) {
-            marks++;
-            if (_ratio(p, page) >= 3) {
-              strong.update(p, (n) => n + 1, ifAbsent: () => 1);
-            }
-          }
-          if (x < minX) minX = x;
-          if (y < minY) minY = y;
-          if (x > maxX) maxX = x;
-          if (y > maxY) maxY = y;
-        }
+        indicator++;
+        newColours.update(p, (n) => n + 1, ifAbsent: () => 1);
+        oldColours.update(a, (n) => n + 1, ifAbsent: () => 1);
+        if (!solid(x, y)) continue;
+        final onPage = _channelDiff(a, page) <= _threshold;
+        groups.putIfAbsent((p, onPage), () => []).add(y * u.width + x);
       } else if (d1 || d2) {
         unstable++;
       }
     }
   }
-  final total = drawn.values.fold(0, (a, b) => a + b);
-  final top = total == 0
-      ? null
-      : (drawn.entries.toList()..sort((a, b) => b.value - a.value)).first;
-  final strongTotal = strong.values.fold(0, (a, b) => a + b);
-  final strongTop = strongTotal == 0
-      ? null
-      : (strong.entries.toList()..sort((a, b) => b.value - a.value)).first;
+  final bands = <_Band>[];
+  var strong = 0;
+  for (final MapEntry(key: (colour, onPage), value: pixels) in groups.entries) {
+    final next = <int, int>{};
+    for (final i in pixels) {
+      final x = i % u.width, y = i ~/ u.width;
+      for (final (dx, dy) in [(1, 0), (-1, 0), (0, 1), (0, -1)]) {
+        final c = across(x, y, dx, dy, colour);
+        if (c != null) next.update(c, (n) => n + 1, ifAbsent: () => 1);
+      }
+    }
+    final total = next.values.fold(0, (a, b) => a + b);
+    var against = [page];
+    if (!onPage && total > 0) {
+      final major = [
+        for (final MapEntry(key: c, value: n) in next.entries)
+          if (n * 5 >= total) c,
+      ];
+      if (major.isNotEmpty) against = major;
+    }
+    final contrast = against.map((c) => _ratio(colour, c)).reduce(math.min);
+    if (contrast >= 3) strong += pixels.length;
+    bands.add(_Band(colour, onPage, pixels.length, contrast, against));
+  }
+  bands.sort((a, b) => b.pixels - a.pixels);
+  var swapped = 0;
+  for (final MapEntry(key: c, value: n) in newColours.entries) {
+    swapped += math.min(n, oldColours[c] ?? 0);
+  }
   return _Indicator(
-    strong: strongTotal,
-    marks: marks,
-    strongColour: strongTop?.key,
     changed: changed,
     unstable: unstable,
-    drawn: total,
+    swapped: swapped,
+    indicator: indicator,
+    strong: strong,
     page: page,
-    colour: top?.key,
-    share: top == null ? 0 : top.value / total,
-    bounds: total == 0
-        ? null
-        : Rect.fromLTRB(
-            minX - region.left,
-            minY - region.top,
-            maxX - region.left + 1,
-            maxY - region.top + 1,
-          ),
+    bands: bands,
   );
 }
 
 /// The area looked at round a control: its rectangle and 8 pixels more on
 /// every side, which is where a ring drawn outside it lies.
-Rect _region(WidgetTester tester, Finder control) =>
-    tester.getRect(control).inflate(8);
+Rect _region(Rect control) => control.inflate(8);
 
-/// Captures [region], presses Tab, checks that the stop is [stop], and
-/// captures it twice more, 700 ms apart; returns what changed.
+/// Brings [control] wholly into view, captures the screen, presses Tab,
+/// checks that the stop is [stop] and that the control has not moved, and
+/// captures it twice more, 700 ms apart; returns what changed round it. A
+/// control that moved (scrolled into view by Tab, say) would show its own
+/// drawing moved as a change, so the test fails instead.
 Future<_Indicator> _tabAndMeasure(
   WidgetTester tester,
   String slug,
   String stop,
-  Rect Function() region,
+  Finder control,
 ) async {
+  await tester.ensureVisible(control);
+  await tester.pumpAndSettle();
+  final where = tester.getRect(control);
   final before = await _shot(tester);
   await _tab(tester);
   expect(_stop(tester, slug), stop, reason: 'Tab stops on $stop');
+  expect(tester.getRect(control), where, reason: '$stop did not move');
   final f1 = await _shot(tester);
   await tester.pump(const Duration(milliseconds: 700));
   final f2 = await _shot(tester);
-  return _compare(before, f1, f2, region());
+  final ind = _compare(before, f1, f2, _region(where));
+  expect(ind.moved, isFalse, reason: 'the drawing moved: $ind');
+  return ind;
 }
 
 /// Tabs until the stop before [control], so that the next Tab reaches it.
@@ -347,6 +411,115 @@ void main() {
     expect(_ratio(0xFFFFFF, 0x000000), closeTo(21, 0.001));
     expect(_ratio(0x767676, 0xFFFFFF), closeTo(4.54, 0.01));
     expect(_ratio(0x949494, 0xFFFFFF), closeTo(3.03, 0.01));
+  });
+
+  // The measure itself, on pictures made up for the purpose, among them
+  // the pass and fail figures of Understanding 1.4.11's section on focus
+  // indicators: a blue button (#4189B9) on a white page.
+  group('the measure', () {
+    const white = 0xFFFFFF, blue = 0x4189B9, black = 0x000000;
+    const region = Rect.fromLTWH(0, 0, 60, 60);
+    bool within(int x, int y, int l, int t, int r, int b) =>
+        x >= l && x < r && y >= t && y < b;
+    int button(int x, int y) => within(x, y, 15, 20, 45, 40) ? blue : white;
+    _Shot picture(int Function(int x, int y) at) => _Shot(60, 60, at);
+    _Indicator focus(int Function(int x, int y) focused) {
+      final f = picture(focused);
+      return _compare(picture(button), f, f, region);
+    }
+
+    /// [colour] on a band [width] wide, [gap] outside the rectangle
+    /// l, t, r, b (a negative gap is inside it), and [rest] elsewhere.
+    int Function(int, int) ring(
+      int l,
+      int t,
+      int r,
+      int b,
+      int gap,
+      int width,
+      int colour,
+      int Function(int, int) rest,
+    ) => (x, y) {
+      final outer = within(
+        x,
+        y,
+        l - gap - width,
+        t - gap - width,
+        r + gap + width,
+        b + gap + width,
+      );
+      final inner = within(x, y, l - gap, t - gap, r + gap, b + gap);
+      return outer && !inner ? colour : rest(x, y);
+    };
+
+    test('an inner yellow ring on the blue button passes (3.55:1 against '
+        'the blue)', () {
+      final ind = focus(ring(15, 20, 45, 40, -6, 3, 0xFFFF00, button));
+      expect(ind.bands.single.onPage, isFalse);
+      expect(ind.ratio, closeTo(3.55, 0.05));
+      expect(ind.strong, ind.indicator);
+    });
+
+    test('an outer yellow ring on the white page fails (1.07:1)', () {
+      final ind = focus(ring(15, 20, 45, 40, 2, 3, 0xFFFF00, button));
+      expect(ind.bands.single.onPage, isTrue);
+      expect(ind.ratio, lessThan(1.1));
+      expect(ind.strong, 0);
+    });
+
+    test('an outer green ring on the white page passes (5.14:1)', () {
+      final ind = focus(ring(15, 20, 45, 40, 2, 3, 0x008000, button));
+      expect(ind.ratio, closeTo(5.14, 0.05));
+      expect(ind.strong, ind.indicator);
+    });
+
+    test('the button\'s edge turning green (#4B933A) fails: it is on the '
+        'control and does not contrast with the blue inside', () {
+      final ind = focus(ring(15, 20, 45, 40, -3, 3, 0x4B933A, button));
+      expect(ind.bands.single.onPage, isFalse);
+      expect(ind.strong, 0);
+    });
+
+    test('with a black border, an inner white border passes and an inner '
+        'dark green one fails', () {
+      final bordered = ring(15, 20, 45, 40, -2, 2, black, button);
+      for (final (colour, passes) in [(white, true), (0x008000, false)]) {
+        final f = picture(ring(15, 20, 45, 40, -4, 2, colour, bordered));
+        final ind = _compare(picture(bordered), f, f, region);
+        expect(
+          ind.strong == ind.indicator && ind.indicator > 0,
+          passes,
+          reason: '${_hex(colour)}: $ind',
+        );
+      }
+    });
+
+    test('artwork that moves is not an indicator: the drawing moved', () {
+      int Function(int, int) at(int dx) =>
+          (x, y) => within(x, y, 20 + dx, 20, 30 + dx, 30) ? black : white;
+      final moved = picture(at(4));
+      final ind = _compare(picture(at(0)), moved, moved, region);
+      // The square's new edge is black on the page, 21:1: without this
+      // check it would pass as a ring.
+      expect(ind.strong, greaterThan(0));
+      expect(ind.moved, isTrue);
+    });
+
+    test('nothing drawn is no indicator', () {
+      final ind = focus(button);
+      expect(ind.changed, 0);
+      expect(ind.strong, 0);
+    });
+
+    test('a mark in one capture only (a blinking caret) is unstable, not '
+        'an indicator', () {
+      final caret = picture(
+        (x, y) => x == 30 && y >= 22 && y < 38 ? black : button(x, y),
+      );
+      final ind = _compare(picture(button), caret, picture(button), region);
+      expect(ind.changed, 0);
+      expect(ind.unstable, greaterThan(0));
+    });
   });
 
   group('good examples', () {
@@ -385,7 +558,8 @@ void main() {
         await _open(tester, slug);
         for (final (c, name) in controls) {
           final data = dataById(_id(slug, c));
-          expect(data.label, name);
+          // An IconButton's name is its tooltip.
+          expect(data.label.isEmpty ? data.tooltip : data.label, name);
           expect(data.flagsCollection.isFocused, Tristate.isFalse);
         }
         await _tab(tester);
@@ -425,7 +599,7 @@ void main() {
     for (final (slug, c, role) in [
       ('good-material', 'alerts', 'checkbox'),
       ('good-cupertino', 'alerts', 'switch'),
-      ('bad-checkbox-halo', 'alerts', 'checkbox'),
+      ('bad-checked-checkbox', 'alerts', 'checked checkbox'),
       ('good-material', 'save', 'button'),
       ('good-cupertino', 'save', 'button'),
       ('good-widgets', 'trail', 'button'),
@@ -437,6 +611,8 @@ void main() {
         await _open(tester, slug);
         final flags = dataById(_id(slug, c)).flagsCollection;
         switch (role) {
+          case 'checked checkbox':
+            expect(flags.isChecked, CheckedState.isTrue);
           case 'checkbox':
             expect(flags.isChecked, CheckedState.isFalse);
           case 'switch':
@@ -464,13 +640,18 @@ void main() {
           await _tabToBefore(tester, slug, controls.first.$1);
           _Shot? lastBefore;
           for (final (c, _) in controls) {
-            Rect region() => _region(tester, byId(_id(slug, c)));
             lastBefore = await _shot(tester);
-            final ind = await _tabAndMeasure(tester, slug, c, region);
+            final ind = await _tabAndMeasure(
+              tester,
+              slug,
+              c,
+              byId(_id(slug, c)),
+            );
             debugPrint('V14 $slug ${brightness.name} $c: $ind');
             // What is drawn includes a ring (and, on the checkbox tile, the
             // tile's own faint tint as well): enough pixels of 3:1 or more
-            // against the page for a line all round the control.
+            // against what is next to them for a line all round the
+            // control.
             expect(ind.strong, greaterThan(150), reason: '$c: $ind');
             if (slug == 'good-material' && c == 'alerts') {
               // With highlights on, the tile's own focus tint is drawn as
@@ -489,7 +670,7 @@ void main() {
             lastBefore!,
             off,
             off,
-            _region(tester, byId(_id(slug, controls.last.$1))),
+            _region(tester.getRect(byId(_id(slug, controls.last.$1)))),
           );
           expect(gone.changed, 0, reason: 'after focus left: $gone');
           handle.dispose();
@@ -506,15 +687,15 @@ void main() {
         tester,
         'bad-indicator-removed',
         'back',
-        () => _region(tester, back),
+        back,
       );
       debugPrint('V14 bad-indicator-removed back: $onBack');
-      expect(onBack.drawn, greaterThan(100), reason: 'Back: $onBack');
+      expect(onBack.indicator, greaterThan(100), reason: 'Back: $onBack');
       final onSave = await _tabAndMeasure(
         tester,
         'bad-indicator-removed',
         'save',
-        () => _region(tester, byId(_id('bad-indicator-removed', 'save'))),
+        byId(_id('bad-indicator-removed', 'save')),
       );
       debugPrint('V14 bad-indicator-removed save: $onSave');
       // Written to fail if a FilledButton starts to show focus some other
@@ -529,30 +710,82 @@ void main() {
     });
 
     for (final brightness in Brightness.values) {
-      testWidgets('bad-checkbox-halo (${brightness.name}): the halo is drawn '
-          'outside the box and is under 3:1 against the page', (tester) async {
+      testWidgets('bad-checked-checkbox (${brightness.name}): the halo is '
+          'drawn on the page, under 3:1 against it, and nothing else changes', (
+        tester,
+      ) async {
         final handle = tester.ensureSemantics();
         await _openForPixels(
           tester,
-          'bad-checkbox-halo',
+          'bad-checked-checkbox',
           brightness: brightness,
         );
-        await _tabToBefore(tester, 'bad-checkbox-halo', 'alerts');
+        await _tabToBefore(tester, 'bad-checked-checkbox', 'alerts');
         final ind = await _tabAndMeasure(
           tester,
-          'bad-checkbox-halo',
+          'bad-checked-checkbox',
           'alerts',
-          () => _region(tester, find.byType(Checkbox)),
+          find.byType(Checkbox),
         );
-        debugPrint('V14 bad-checkbox-halo ${brightness.name}: $ind');
-        expect(ind.drawn, greaterThan(500), reason: '$ind');
-        // The halo is wider than the box (18 pixels): it lies on the page.
-        expect(ind.bounds!.width, greaterThan(30), reason: '$ind');
-        // Written to fail if Flutter makes the halo stand out: nothing it
-        // draws is 3:1 against the page.
+        debugPrint('V14 bad-checked-checkbox ${brightness.name}: $ind');
+        expect(ind.indicator, greaterThan(500), reason: '$ind');
+        // The halo is drawn where the page was, round the box.
+        expect(ind.bands.first.onPage, isTrue, reason: '$ind');
+        // Written to fail if Flutter makes the halo stand out, or adds
+        // anything else at 3:1 (as it does, a darker border, when the box
+        // is not checked: the test below).
         expect(ind.ratio, lessThan(1.5), reason: '$ind');
-        expect(ind.strong, lessThan(ind.marks * 0.02), reason: '$ind');
+        expect(ind.strong, lessThan(ind.indicator * 0.02), reason: '$ind');
         handle.dispose();
+      });
+
+      testWidgets('a Checkbox that is not checked (${brightness.name}): its '
+          'border, darker with focus, is 3:1 or more against the halo next '
+          'to it', (tester) async {
+        var value = false;
+        tester.view.physicalSize = const Size(400, 400);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(colorSchemeSeed: Colors.indigo),
+            darkTheme: ThemeData(
+              colorSchemeSeed: Colors.indigo,
+              brightness: Brightness.dark,
+            ),
+            themeMode: brightness == Brightness.light
+                ? ThemeMode.light
+                : ThemeMode.dark,
+            home: Scaffold(
+              body: Center(
+                child: StatefulBuilder(
+                  builder: (context, set) => Checkbox(
+                    value: value,
+                    onChanged: (v) => set(() => value = v!),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        final box = find.byType(Checkbox);
+        final where = tester.getRect(box);
+        final before = await _shot(tester);
+        await _tab(tester);
+        final f1 = await _shot(tester);
+        await tester.pump(const Duration(milliseconds: 700));
+        final f2 = await _shot(tester);
+        expect(tester.getRect(box), where);
+        final ind = _compare(before, f1, f2, _region(where));
+        debugPrint('V14 unchecked Checkbox ${brightness.name}: $ind');
+        expect(ind.moved, isFalse, reason: '$ind');
+        // The halo is still the largest band, under 3:1 on the page ...
+        expect(ind.bands.first.onPage, isTrue, reason: '$ind');
+        expect(ind.ratio, lessThan(1.5), reason: '$ind');
+        // ... and the border, on the control, is 3:1 or more against what
+        // is next to it: 1.4.11 is met as written (FL-434).
+        final border = ind.bands.where((b) => !b.onPage && b.contrast >= 3);
+        expect(border, isNotEmpty, reason: '$ind');
       });
 
       testWidgets('bad-cupertino-ring (${brightness.name}): the ring is '
@@ -569,14 +802,16 @@ void main() {
           tester,
           'bad-cupertino-ring',
           'save',
-          () => _region(tester, byId(_id('bad-cupertino-ring', 'save'))),
+          byId(_id('bad-cupertino-ring', 'save')),
         );
         debugPrint('V14 bad-cupertino-ring ${brightness.name}: $ind');
-        expect(ind.drawn, greaterThan(500), reason: '$ind');
+        expect(ind.indicator, greaterThan(500), reason: '$ind');
+        expect(ind.bands.first.onPage, isTrue, reason: '$ind');
         if (brightness == Brightness.light) {
-          // The defect. Written to fail if Flutter darkens the ring.
+          // The defect. Written to fail if Flutter darkens the ring, or
+          // adds anything else at 3:1.
           expect(ind.ratio, lessThan(3), reason: '$ind');
-          expect(ind.strong, lessThan(ind.marks * 0.02), reason: '$ind');
+          expect(ind.strong, lessThan(ind.indicator * 0.02), reason: '$ind');
         } else {
           // In dark mode the same ring passes; recorded, not the defect.
           expect(ind.ratio, greaterThanOrEqualTo(3), reason: '$ind');
@@ -751,9 +986,9 @@ void main() {
         tester,
         'good-widgets',
         'trail',
-        () => _region(tester, control),
+        control,
       );
-      expect(ind.drawn, greaterThan(150));
+      expect(ind.strong, greaterThan(150));
       final focused = await _shot(tester);
       // A touch on an empty part of the screen.
       await tester.tapAt(const Offset(790, 990));
@@ -765,7 +1000,7 @@ void main() {
         focused,
         touched,
         touched,
-        _region(tester, control),
+        _region(tester.getRect(control)),
       );
       expect(
         hidden.changed,
@@ -780,7 +1015,12 @@ void main() {
         FocusHighlightMode.traditional,
       );
       final back = await _shot(tester);
-      final again = _compare(focused, back, back, _region(tester, control));
+      final again = _compare(
+        focused,
+        back,
+        back,
+        _region(tester.getRect(control)),
+      );
       expect(again.changed, 0, reason: 'the ring is back as it was: $again');
       handle.dispose();
     });

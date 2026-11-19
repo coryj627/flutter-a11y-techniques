@@ -23,7 +23,7 @@ const EXAMPLES = {
   'good-widgets': ['Ridge trail button'],
   'good-notice-below': [...TRAILS, NOTICE],
   'bad-indicator-removed': ['Save button'],
-  'bad-checkbox-halo': ['Weather alerts unchecked checkbox'],
+  'bad-checked-checkbox': ['Weather alerts checked checkbox'],
   'bad-cupertino-ring': ['Save button'],
   'bad-notice-over-list': [...TRAILS, NOTICE],
 };

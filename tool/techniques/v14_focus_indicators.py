@@ -24,7 +24,7 @@ TALKBACK_EXPECT = {
     "v14-good-notice-below-trail1": (["Ridge trail", "Button"], []),
     "v14-good-notice-below-trail3": (["Summit path", "Button"], []),
     "v14-bad-indicator-removed-save": (["Save", "Button"], []),
-    "v14-bad-checkbox-halo-alerts": (["Weather alerts", "Check box"], ["checked"]),
+    "v14-bad-checked-checkbox-alerts": (["checked", "Weather alerts", "Check box"], ["not checked"]),
     "v14-bad-cupertino-ring-save": (["Save", "Button"], []),
     "v14-bad-notice-over-list-trail1": (["Ridge trail", "Button"], []),
     # Under the notice, and read all the same: a screen reader is not

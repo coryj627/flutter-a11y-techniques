@@ -129,13 +129,14 @@ final v14FocusIndicators = Technique(
       builder: (_) => const BadIndicatorRemoved(),
     ),
     TechniqueExample.bad(
-      slug: 'bad-checkbox-halo',
-      title: 'Checkbox with its default focus halo',
+      slug: 'bad-checked-checkbox',
+      title: 'Checked checkbox with its default focus halo',
       variant: ExampleVariant.material,
       defect:
-          'The faint halo that shows focus is hard to see: it is about 1.2 '
-          'to 1 against the page, where a focus indicator needs 3 to 1.',
-      builder: (_) => const BadCheckboxHalo(),
+          'The checkbox is checked, and only a faint halo round it shows '
+          'focus: about 1.2 to 1 against the page, where a focus indicator '
+          'needs 3 to 1.',
+      builder: (_) => const BadCheckedCheckbox(),
     ),
     TechniqueExample.bad(
       slug: 'bad-cupertino-ring',

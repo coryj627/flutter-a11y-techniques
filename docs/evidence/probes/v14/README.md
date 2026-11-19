@@ -87,6 +87,25 @@ cite alongside the probe's, are in `widget_tests.txt`, `web_tests.txt`,
 `ios_tests.txt`, and `android_tests.txt` (the last at the emulator's own
 size and at CI's 320 by 640 at 160 dpi).
 
+## Two measures
+
+The first analysis, `analyse.py.txt`, reported the commonest changed
+colour and its contrast against the page and against the colour it
+replaced; the V14 tests' first version also left out of the indicator
+any changed pixel under 3:1 from the colour it replaced, unless that was
+the page. That second rule compared the focused and unfocused states,
+which 1.4.11 does not do, and it left out a checkbox's border that
+darkens with focus. The review found it, and the measure was changed
+(the V14 spec, section 6): every changed pixel is part of the indicator,
+split into bands of flat colour, and each band is taken against what is
+next to it in the focused capture: against the page if it is drawn where
+the page was, against the colours on both sides of it if it is drawn on
+the control. `analyse2.py.txt` applies that measure to the widget-test
+captures again, rendered at a device pixel ratio of 3 so that 1 pixel
+lines are flat bands (`probe_test.dart.txt` with `V14_DPR=3`); its output
+is `flutter_test_measure2.txt`, which is what the verdicts rest on. The
+colours below are the same in both; what changed is which parts count.
+
 ## What is drawn
 
 The widget tests, the web, and iOS give the same colours to the last
@@ -109,7 +128,12 @@ section).
   the tint is a disc where the page was. An `OutlinedButton`'s outline
   also turns from `outline` to `primary` (round 2 on Android, where the
   tint was off: 1657 pixels of `#515B92`).
-- `Checkbox` (m8, m9), `Radio` (m11): a halo, a disc 40 pixels across
+- `Checkbox` (m8, m9), `Radio` (m11), measured again
+  (`flutter_test_measure2.txt`): unchecked or not selected, the halo and
+  a border or ring that darkens to `#1B1B21`, 13.25:1 against the halo
+  next to it (dark `#E4E1E9`, 11.38:1); checked (m9), the halo alone,
+  `#EAE8F4`, 1.15:1 on the page (dark 1.22:1). The earlier description
+  follows. A halo, a disc 40 pixels across
   round the 18 pixel box, outside it, of the text colour (or `primary`,
   when checked) at a tenth of its strength: `#E4E1E8`, 1.23:1 against the
   page (web 1.22:1, `#E4E2E8`), and 1.26:1 in dark. The box's border also
@@ -118,7 +142,10 @@ section).
   in the source: `material/checkbox.dart`, `_CheckboxDefaultsM3`,
   `overlayColor` (`onSurface.withOpacity(0.1)` for the focused state) and
   `side` (`onSurface` when focused).
-- `Switch` (m10): the same halo round the thumb, partly over the track:
+- `Switch` (m10), measured again: the thumb darkens to `#46464F`, 5.95:1
+  against the tinted track (dark: `#C7C5D0`, 5.50:1), beside the halo.
+  The earlier description: the same halo round the thumb, partly over the
+  track:
   `#D0CDD5` against the track `#E4E1E9`, 1.21:1; 1.49:1 at most against
   the page.
 - `TextField` (m6, m7): the border or underline turns 2 pixels of
@@ -250,13 +277,21 @@ The same on every platform (widget test, web, Android, iOS):
 - Flutter draws its own focus indicators everywhere; on the web the
   browser's is hidden. What it draws is the same on every platform.
 - Material shows focus on most controls with a tint at about 1.1:1 to
-  1.45:1 against what it replaced: visible, faint, and inside the control,
-  where 1.4.11 does not apply (FL-434). On a checkbox, radio button, or
-  switch the halo is outside the control at 1.2:1 to 1.5:1 (FL-430).
+  1.45:1 against what it replaced: visible and faint. Inside a control's
+  container 1.4.11 does not apply to it; where a control has no
+  container, or nothing else of its own changes (a checked checkbox, a
+  `TextButton`, an `IconButton`, a `ListTile`), the tint is all there is,
+  under 3:1 on the page (FL-430). An unchecked checkbox, a radio button,
+  and a switch add a halo and darken a border, ring, or thumb that is
+  then 5.5:1 to 13:1 against what is next to it, which meets 1.4.11 as
+  written (FL-434). A `Slider`'s thumb gains a black ring, 19.97:1 in
+  light mode and 1.13:1 in dark (m15).
 - Cupertino's default ring is under 3:1 in light mode: 1.89:1 for a
-  button with the default blue, 1.29:1 for a switch (FL-431). A
-  `focusColor` fixes it. `CupertinoTextField` shows only its caret
-  (FL-435).
+  button with the default blue, 1.29:1 for a switch, 1.89:1 for a
+  checkbox; in dark mode the button (5.42:1) and the switch (8.58:1)
+  pass and the checkbox does not (its largest bands 1.63:1 to 1.91:1)
+  (FL-431). A `focusColor` fixes the button and the switch.
+  `CupertinoTextField` shows only its caret (FL-435).
 - A ring from `ButtonStyle.side`, from `Focus.onFocusChange`, or from
   `onShowFocusHighlight` reaches 13:1 to 20:1.
 - Flutter shows most indicators only in its traditional highlight mode.

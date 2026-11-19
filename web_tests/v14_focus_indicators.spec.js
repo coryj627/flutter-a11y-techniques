@@ -8,8 +8,9 @@
 // outline is never what is seen. The indicator is measured from pixels: a
 // screenshot before Tab reaches a control and two after, 700 ms apart once
 // the drawing has stopped changing; the pixels round the control that
-// changed in both and agree are what focus drew. Its contrast is worked out
-// from the colours in the screenshots, never from the theme.
+// changed in both and agree are what focus drew, and its contrast is taken
+// against the colours next to it in the focused screenshot (compare, below),
+// never from the theme.
 import zlib from 'node:zlib';
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
@@ -26,7 +27,7 @@ const CONTROLS = {
   'good-cupertino': [['alerts', 'Weather alerts', 'switch'], ['save', 'Save', 'button']],
   'good-widgets': [['trail', 'Ridge trail', 'button']],
   'bad-indicator-removed': [['save', 'Save', 'button']],
-  'bad-checkbox-halo': [['alerts', 'Weather alerts', 'checkbox']],
+  'bad-checked-checkbox': [['alerts', 'Weather alerts', 'checkbox']],
   'bad-cupertino-ring': [['save', 'Save', 'button']],
 };
 const TRAILS = ['Ridge trail', 'Lake loop', 'Summit path', 'Forest walk', 'River run', 'Canyon climb'];
@@ -119,53 +120,103 @@ const ratio = (a, b) => {
 };
 const hex = (c) => `#${c.toString(16).padStart(6, '0').toUpperCase()}`;
 const THRESHOLD = 12;
+// Two colours are one flat colour if no channel differs by more than this.
+const FLAT = 4;
 
 /**
  * What focus drew in `region` ({x, y, width, height} in pixels), given the
- * screenshot before focus `u` and two after, `f1` and `f2`. Changed pixels
- * differ from `u` in both and agree; a mark is a changed pixel drawn where
- * the page was, or 3:1 or more from the colour it replaced (a tinted fill
- * or a border a shade darker is not one); strong marks are 3:1 or more
- * against the page, whose colour is the commonest along the region's edge.
+ * screenshot before focus `u` and two after, `f1` and `f2`.
+ *
+ * A pixel has changed if it differs from `u` in both and `f1` and `f2`
+ * agree. Every changed pixel is part of the indicator, whatever it
+ * replaced: Understanding 1.4.11 does not compare the focused and unfocused
+ * states. (What replaced what is used once, to tell a drawing that moved
+ * from one that focus added to: `moved`.) The indicator is split into
+ * bands, one per flat colour (pixels that share their colour with a
+ * horizontal and a vertical neighbour; anti-aliased edges are left out),
+ * and each band is taken against the colours adjacent to it in `f1`, read
+ * across at most four pixels of anti-aliased edge. A band drawn where the
+ * page was, outside the control, must contrast with the page; a band drawn
+ * on the control, inside it or on its border, must contrast with every
+ * colour that makes up a fifth or more of what is next to it (with the
+ * page, if nothing does). The page's colour is the commonest along the
+ * region's edge in `u`.
  */
 function compare(u, f1, f2, region) {
   const l = Math.max(0, Math.floor(region.x)), t = Math.max(0, Math.floor(region.y));
   const r = Math.min(u.width, Math.ceil(region.x + region.width));
   const b = Math.min(u.height, Math.ceil(region.y + region.height));
+  const inside = (x, y) => x >= l && x < r && y >= t && y < b;
   const edge = new Map();
   for (let x = l; x < r; x++) for (const y of [t, t + 1, b - 2, b - 1]) edge.set(u.at(x, y), (edge.get(u.at(x, y)) ?? 0) + 1);
   const page = [...edge.entries()].sort((p, q) => q[1] - p[1])[0][0];
-  let changed = 0, unstable = 0, marks = 0, strong = 0;
-  const colours = new Map();
-  const strongColours = new Map();
+  const same = (x, y, c) => inside(x, y) && channelDiff(f1.at(x, y), c) <= FLAT;
+  const solid = (x, y) => {
+    const c = f1.at(x, y);
+    return (same(x - 1, y, c) || same(x + 1, y, c)) && (same(x, y - 1, c) || same(x, y + 1, c));
+  };
+  const across = (x, y, dx, dy, colour) => {
+    while (same(x + dx, y + dy, colour)) { x += dx; y += dy; }
+    for (let i = 0; i < 4; i++) {
+      x += dx; y += dy;
+      if (!inside(x, y)) return undefined;
+      const c = f1.at(x, y);
+      if (channelDiff(c, colour) > THRESHOLD && solid(x, y)) return c;
+    }
+    return undefined;
+  };
+  let changed = 0, unstable = 0;
+  const groups = new Map();
+  const newColours = new Map(), oldColours = new Map();
   for (let y = t; y < b; y++) {
     for (let x = l; x < r; x++) {
       const a = u.at(x, y), p = f1.at(x, y), q = f2.at(x, y);
       const d1 = channelDiff(a, p) > THRESHOLD, d2 = channelDiff(a, q) > THRESHOLD;
       if (d1 && d2 && channelDiff(p, q) <= THRESHOLD) {
         changed++;
-        if (channelDiff(p, page) > THRESHOLD && (channelDiff(a, page) <= THRESHOLD || ratio(p, a) >= 3)) {
-          marks++;
-          colours.set(p, (colours.get(p) ?? 0) + 1);
-          if (ratio(p, page) >= 3) {
-            strong++;
-            strongColours.set(p, (strongColours.get(p) ?? 0) + 1);
-          }
-        }
+        newColours.set(p, (newColours.get(p) ?? 0) + 1);
+        oldColours.set(a, (oldColours.get(a) ?? 0) + 1);
+        if (!solid(x, y)) continue;
+        const onPage = channelDiff(a, page) <= THRESHOLD;
+        const key = `${p}:${onPage}`;
+        if (!groups.has(key)) groups.set(key, { colour: p, onPage, pixels: [] });
+        groups.get(key).pixels.push([x, y]);
       } else if (d1 || d2) unstable++;
     }
   }
-  const top = [...colours.entries()].sort((p, q) => q[1] - p[1])[0];
-  const strongTop = [...strongColours.entries()].sort((p, q) => q[1] - p[1])[0];
-  const colour = top?.[0];
+  const bands = [];
+  let strong = 0;
+  for (const { colour, onPage, pixels } of groups.values()) {
+    const next = new Map();
+    for (const [x, y] of pixels) {
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const c = across(x, y, dx, dy, colour);
+        if (c !== undefined) next.set(c, (next.get(c) ?? 0) + 1);
+      }
+    }
+    const total = [...next.values()].reduce((s, n) => s + n, 0);
+    let against = [page];
+    if (!onPage && total > 0) {
+      const major = [...next.entries()].filter(([, n]) => n * 5 >= total).map(([c]) => c);
+      if (major.length) against = major;
+    }
+    const contrast = Math.min(...against.map((c) => ratio(colour, c)));
+    if (contrast >= 3) strong += pixels.length;
+    bands.push({ colour, onPage, pixels: pixels.length, contrast, against });
+  }
+  bands.sort((p, q) => q.pixels - p.pixels);
+  let swapped = 0;
+  for (const [c, n] of newColours) swapped += Math.min(n, oldColours.get(c) ?? 0);
   const result = {
-    changed, unstable, marks, strong, page,
-    colour, ratio: colour === undefined ? 1 : ratio(colour, page),
-    strongColour: strongTop?.[0],
+    changed, unstable, swapped, indicator: changed, strong, page, bands,
+    // The drawing moved rather than focus adding to it: half or more of the
+    // colours the changed pixels took were there before, among them.
+    moved: changed > 0 && swapped * 2 >= changed,
+    ratio: bands.length ? bands[0].contrast : 1,
   };
-  result.text = `changed ${changed}, unstable ${unstable}, marks ${marks}, page ${hex(page)}, `
-    + `commonest mark ${colour === undefined ? 'none' : hex(colour)} (${result.ratio.toFixed(2)}), `
-    + `3:1 or more: ${strong}${strongTop ? ` (${hex(strongTop[0])}, ${ratio(strongTop[0], page).toFixed(2)})` : ''}`;
+  const band = (d) => `${d.pixels} px ${hex(d.colour)} ${d.onPage ? 'on the page' : 'on the control'} ${d.contrast.toFixed(2)} against ${d.against.map(hex).join(', ')}`;
+  result.text = `changed ${changed}, unstable ${unstable}, swapped ${swapped}, indicator ${changed}, `
+    + `3:1 or more: ${strong}, page ${hex(page)}; ${bands.slice(0, 3).map(band).join('; ')}`;
   return result;
 }
 
@@ -189,17 +240,24 @@ async function settled(page, region) {
 }
 
 /**
- * Presses Tab, expects the stop to be `c`, waits for the drawing to settle,
- * and measures what changed round `locator` against `before`.
+ * Presses Tab, expects the stop to be `c` and the control not to have
+ * moved, waits for the drawing to settle, and measures what changed round
+ * `locator` against `before`. A control that moved (scrolled into view by
+ * Tab, say) would show its own drawing moved as a change, so the test fails
+ * instead; and so it does if what changed is a drawing that moved.
  */
 async function tabAndMeasure(page, slug, c, locator, before) {
+  const where = await locator.boundingBox();
   await tab(page);
   expect(await stop(page, slug), `Tab stops on ${c}`).toBe(c);
-  const region = inflate(await locator.boundingBox());
+  expect(await locator.boundingBox(), `${c} did not move`).toEqual(where);
+  const region = inflate(where);
   const f1 = await settled(page, region);
   await page.waitForTimeout(700);
   const f2 = await shot(page);
-  return compare(before, f1, f2, region);
+  const ind = compare(before, f1, f2, region);
+  expect(ind.moved, `the drawing moved: ${ind.text}`).toBe(false);
+  return ind;
 }
 
 /** Tabs from the top of the screen until the stop before `c`. */
@@ -216,6 +274,85 @@ async function tabToBefore(page, slug, c) {
 }
 
 // --- Tests --------------------------------------------------------------
+
+// The measure itself, on pictures made up for the purpose, among them the
+// pass and fail figures of Understanding 1.4.11's section on focus
+// indicators: a blue button (#4189B9) on a white page.
+test.describe('the measure', () => {
+  const WHITE = 0xffffff, BLUE = 0x4189b9, BLACK = 0x000000;
+  const region = { x: 0, y: 0, width: 60, height: 60 };
+  const within = (x, y, l, t, r, b) => x >= l && x < r && y >= t && y < b;
+  const button = (x, y) => (within(x, y, 15, 20, 45, 40) ? BLUE : WHITE);
+  const picture = (at) => ({ width: 60, height: 60, at });
+  // `colour` on a band `width` wide, `gap` outside the rectangle (a
+  // negative gap is inside it), and `rest` elsewhere.
+  const ring = (gap, width, colour, rest) => (x, y) => {
+    const outer = within(x, y, 15 - gap - width, 20 - gap - width, 45 + gap + width, 40 + gap + width);
+    const inner = within(x, y, 15 - gap, 20 - gap, 45 + gap, 40 + gap);
+    return outer && !inner ? colour : rest(x, y);
+  };
+  const focus = (at) => compare(picture(button), picture(at), picture(at), region);
+
+  test('an inner yellow ring on the blue button passes (3.55:1 against the blue)', () => {
+    const ind = focus(ring(-6, 3, 0xffff00, button));
+    expect(ind.bands).toHaveLength(1);
+    expect(ind.bands[0].onPage).toBe(false);
+    expect(ind.ratio).toBeCloseTo(3.55, 1);
+    expect(ind.strong).toBe(ind.indicator);
+  });
+
+  test('an outer yellow ring on the white page fails (1.07:1)', () => {
+    const ind = focus(ring(2, 3, 0xffff00, button));
+    expect(ind.bands[0].onPage).toBe(true);
+    expect(ind.ratio).toBeLessThan(1.1);
+    expect(ind.strong).toBe(0);
+  });
+
+  test('an outer green ring on the white page passes (5.14:1)', () => {
+    const ind = focus(ring(2, 3, 0x008000, button));
+    expect(ind.ratio).toBeCloseTo(5.14, 1);
+    expect(ind.strong).toBe(ind.indicator);
+  });
+
+  test('the button\'s edge turning green (#4B933A) fails: it is on the control and does not contrast with the blue inside', () => {
+    const ind = focus(ring(-3, 3, 0x4b933a, button));
+    expect(ind.bands[0].onPage).toBe(false);
+    expect(ind.strong).toBe(0);
+  });
+
+  test('with a black border, an inner white border passes and an inner dark green one fails', () => {
+    const bordered = ring(-2, 2, BLACK, button);
+    for (const [colour, passes] of [[WHITE, true], [0x008000, false]]) {
+      const f = picture(ring(-4, 2, colour, bordered));
+      const ind = compare(picture(bordered), f, f, region);
+      expect(ind.strong === ind.indicator && ind.indicator > 0, `${hex(colour)}: ${ind.text}`).toBe(passes);
+    }
+  });
+
+  test('artwork that moves is not an indicator: the drawing moved', () => {
+    const at = (dx) => (x, y) => (within(x, y, 20 + dx, 20, 30 + dx, 30) ? BLACK : WHITE);
+    const moved = picture(at(4));
+    const ind = compare(picture(at(0)), moved, moved, region);
+    // The square's new edge is black on the page, 21:1: without this check
+    // it would pass as a ring.
+    expect(ind.strong).toBeGreaterThan(0);
+    expect(ind.moved).toBe(true);
+  });
+
+  test('nothing drawn is no indicator', () => {
+    const ind = focus(button);
+    expect(ind.changed).toBe(0);
+    expect(ind.strong).toBe(0);
+  });
+
+  test('a mark in one capture only (a blinking caret) is unstable, not an indicator', () => {
+    const caret = picture((x, y) => (x === 30 && y >= 22 && y < 38 ? BLACK : button(x, y)));
+    const ind = compare(picture(button), caret, picture(button), region);
+    expect(ind.changed).toBe(0);
+    expect(ind.unstable).toBeGreaterThan(0);
+  });
+});
+
 
 test('the contrast ratio is WCAG\'s', () => {
   expect(ratio(0xffffff, 0x000000)).toBeCloseTo(21, 3);
@@ -307,7 +444,7 @@ test.describe('focus indicators, measured from the pixels', () => {
     const before = await settled(page, inflate(await save.boundingBox()));
     const onBack = await tabAndMeasure(page, slug, 'back', back(page), before);
     console.log(`V14 web ${slug} back: ${onBack.text}`);
-    expect(onBack.marks, onBack.text).toBeGreaterThan(100);
+    expect(onBack.indicator, onBack.text).toBeGreaterThan(100);
     const onSave = await tabAndMeasure(page, slug, 'save', save, before);
     console.log(`V14 web ${slug} save: ${onSave.text}`);
     // Written to fail if a FilledButton starts to show focus some other way.
@@ -317,18 +454,20 @@ test.describe('focus indicators, measured from the pixels', () => {
     await expectCount(page, slug, 'Save');
   });
 
-  test('bad-checkbox-halo: the halo is drawn outside the box and is under 3:1 against the page', async ({ page }) => {
-    const slug = 'bad-checkbox-halo';
+  test('bad-checked-checkbox: the halo is drawn on the page, under 3:1 against it, and nothing else changes', async ({ page }) => {
+    const slug = 'bad-checked-checkbox';
     await open(page, slug);
     const locator = control(page, slug, 'alerts');
     const before = await settled(page, inflate(await locator.boundingBox()));
     await tabToBefore(page, slug, 'alerts');
     const ind = await tabAndMeasure(page, slug, 'alerts', locator, before);
     console.log(`V14 web ${slug}: ${ind.text}`);
-    expect(ind.marks, ind.text).toBeGreaterThan(500);
-    // Written to fail if Flutter makes the halo stand out.
+    expect(ind.indicator, ind.text).toBeGreaterThan(500);
+    expect(ind.bands[0].onPage, ind.text).toBe(true);
+    // Written to fail if Flutter makes the halo stand out, or adds anything
+    // else at 3:1.
     expect(ind.ratio, ind.text).toBeLessThan(1.5);
-    expect(ind.strong, ind.text).toBeLessThan(ind.marks * 0.02);
+    expect(ind.strong, ind.text).toBeLessThan(ind.indicator * 0.02);
   });
 
   test('bad-cupertino-ring: in light mode the ring is under 3:1 against the page', async ({ page }) => {
@@ -339,10 +478,12 @@ test.describe('focus indicators, measured from the pixels', () => {
     await tabToBefore(page, slug, 'save');
     const ind = await tabAndMeasure(page, slug, 'save', locator, before);
     console.log(`V14 web ${slug}: ${ind.text}`);
-    expect(ind.marks, ind.text).toBeGreaterThan(500);
-    // Written to fail if Flutter darkens the ring.
+    expect(ind.indicator, ind.text).toBeGreaterThan(500);
+    expect(ind.bands[0].onPage, ind.text).toBe(true);
+    // Written to fail if Flutter darkens the ring, or adds anything else
+    // at 3:1.
     expect(ind.ratio, ind.text).toBeLessThan(3);
-    expect(ind.strong, ind.text).toBeLessThan(ind.marks * 0.02);
+    expect(ind.strong, ind.text).toBeLessThan(ind.indicator * 0.02);
   });
 });
 

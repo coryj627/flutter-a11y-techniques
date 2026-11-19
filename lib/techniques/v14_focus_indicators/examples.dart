@@ -298,8 +298,8 @@ class _GoodCupertinoState extends State<GoodCupertino> {
 // #region good-widgets
 /// A card drawn by hand. `FocusableActionDetector` gives it focus, Enter
 /// and Space, and tells it when to show its focus: only when the keyboard
-/// is in use, as Flutter's own controls do. The card then draws its border
-/// 3 pixels wide in the theme's text colour.
+/// is in use, as Flutter's own controls do. The card then draws a border 3
+/// pixels wide in the theme's text colour over its edge.
 class GoodWidgets extends StatefulWidget {
   const GoodWidgets({super.key});
 
@@ -352,11 +352,19 @@ class _GoodWidgetsState extends State<GoodWidgets> {
                     decoration: BoxDecoration(
                       color: colors.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _showFocus ? colors.onSurface : colors.outline,
-                        width: _showFocus ? 3 : 1,
-                      ),
+                      border: Border.all(color: colors.outline),
                     ),
+                    // Drawn over the card's edge, so that the card's size
+                    // and its contents stay where they are.
+                    foregroundDecoration: _showFocus
+                        ? BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: colors.onSurface,
+                              width: 3,
+                            ),
+                          )
+                        : null,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       spacing: 12,
@@ -435,21 +443,21 @@ class BadIndicatorRemoved extends StatelessWidget {
 }
 // #endregion
 
-// #region bad-checkbox-halo
-class BadCheckboxHalo extends StatefulWidget {
-  const BadCheckboxHalo({super.key});
+// #region bad-checked-checkbox
+class BadCheckedCheckbox extends StatefulWidget {
+  const BadCheckedCheckbox({super.key});
 
   @override
-  State<BadCheckboxHalo> createState() => _BadCheckboxHaloState();
+  State<BadCheckedCheckbox> createState() => _BadCheckedCheckboxState();
 }
 
-class _BadCheckboxHaloState extends State<BadCheckboxHalo> {
-  bool _on = false;
+class _BadCheckedCheckboxState extends State<BadCheckedCheckbox> {
+  bool _on = true;
 
   @override
   Widget build(BuildContext context) {
     return _Demo(
-      slug: 'bad-checkbox-halo',
+      slug: 'bad-checked-checkbox',
       builder: (context, used) {
         void toggle() {
           setState(() => _on = !_on);
@@ -458,15 +466,17 @@ class _BadCheckboxHaloState extends State<BadCheckboxHalo> {
 
         return [
           TestId(
-            'v14-bad-checkbox-halo-alerts',
+            'v14-bad-checked-checkbox-alerts',
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Defect: a Checkbox shows focus with its default halo, a
-                // disc of the theme's text colour at a tenth of its
-                // strength round the box. On the page it is about 1.2:1,
-                // far from the 3:1 a focus indicator needs
-                // (docs/flutter-limitations.md, FL-430).
+                // Defect: a checked Checkbox shows focus with nothing but
+                // its default halo, a disc of the theme's primary colour at
+                // a tenth of its strength round the box, on the page. It is
+                // about 1.2:1 against the page, under the 3:1 a focus
+                // indicator needs (docs/flutter-limitations.md, FL-430).
+                // (When the box is not checked its border also darkens,
+                // and that border is 13:1 against the halo next to it.)
                 Checkbox(value: _on, onChanged: (_) => toggle()),
                 GestureDetector(
                   excludeFromSemantics: true,
