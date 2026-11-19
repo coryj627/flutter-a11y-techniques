@@ -66,9 +66,10 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
 
   /// Types `text` into the note one key at a time, waiting after each
   /// key until the note shows it. A letter that does not appear within 2
-  /// seconds is logged and sent again, at most three times in all; a
-  /// letter in `lost` is the one a shortcut takes, so after it the note
-  /// must stay as it was for a second, and it is never sent again. Locally
+  /// seconds is logged and sent again, at most three times in all, unless
+  /// it is f, the shortcut's letter, which is sent once in every example;
+  /// a letter in `lost` is the one a shortcut takes, so after it the note
+  /// must stay as it was for a second. Locally
   /// a typed letter was now and then lost: three times in
   /// bad-page-shortcut's note besides its f ("ea" for "lea", "ud" for
   /// "mud", "mudy" for "muddy"), and once in bad-no-arrow-keys' note, the
@@ -86,7 +87,11 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
         continue
       }
       let want = expected + String(ch)
-      for attempt in 1...3 {
+      // The shortcut's own letter is sent once everywhere: a second f could
+      // undo what a first, taken as the shortcut, had done to the
+      // favourites, and the test would not see it.
+      let tries = (ch == "f" || ch == "F") ? 1 : 3
+      for attempt in 1...tries {
         press(String(ch))
         let deadline = Date().addingTimeInterval(2)
         while note(slug) != want && Date() < deadline { usleep(100_000) }
