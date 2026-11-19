@@ -242,3 +242,13 @@ was off.
 its VoiceOver walk) run three times in a row on 2026-11-19, after the iOS
 tests were changed to show keyboard focus in the layers before sending
 Escape (I08's spec, section 7): 15 tests passed, none failed.
+
+`android_keyboard_back_test.txt` is the I08 Android test of the
+keyboard's Back (`keyboardBackClosesTheLayers`) run twice, with the
+system's log of each Back (`CoreBackPreview`, `ShellBackPreview`), by
+`android_keyboard_back_test.sh.txt`. Before it, that test had failed in
+two of three runs: the next example opened, and its Map layers was then
+not on the screen. Each chord gave one Back, and with the test now
+waiting three seconds after each and checking that the example's screen
+is still there, both runs passed; what took the screen away before was
+not found.

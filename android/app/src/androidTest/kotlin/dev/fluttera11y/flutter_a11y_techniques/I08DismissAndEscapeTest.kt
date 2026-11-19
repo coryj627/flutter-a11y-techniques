@@ -231,6 +231,7 @@ class I08DismissAndEscapeTest : TechniqueTest("I08") {
      */
     private fun showByKeyboard(slug: String) {
         open(slug)
+        Log.i("I08KEYS", "$slug | opened: ${showing(slug)}")
         // The app's window must be the active one: a key sent to another
         // window acts there. Says which window it is when it is not.
         val end = System.currentTimeMillis() + 5_000
@@ -400,6 +401,11 @@ class I08DismissAndEscapeTest : TechniqueTest("I08") {
                 showByKeyboard(slug)
                 metaChord(code)
                 expectClosed(slug, name)
+                // One Back, not two: three seconds later the example's
+                // screen is still there, with the layers closed.
+                Thread.sleep(3_000)
+                Log.i("I08KEYS", "$slug $name | 3 s after: ${showing(slug)}")
+                assertEquals("$slug: three seconds after $name", "screen", showing(slug))
             }
         }
     }
