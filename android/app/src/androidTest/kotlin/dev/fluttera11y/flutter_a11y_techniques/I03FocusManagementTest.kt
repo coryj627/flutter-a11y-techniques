@@ -185,6 +185,21 @@ class I03FocusManagementTest : TechniqueTest("I03") {
     }
 
     /**
+     * The stop once it is [expected], or the last one read after three
+     * seconds. Focus is reported a little after the screen that holds it:
+     * one read straight after a question opens or closes can come too soon.
+     */
+    private fun stopWhen(slug: String, expected: String): String {
+        val end = System.currentTimeMillis() + 3_000
+        var last = stop(slug)
+        while (last != expected && System.currentTimeMillis() < end) {
+            Thread.sleep(200)
+            last = stop(slug)
+        }
+        return last
+    }
+
+    /**
      * Presses Tab until [part] has focus, at most [max] times. The first Tab
      * after the app opens is lost (docs/evidence/probes/i01/README.md), so
      * this allows for one more than the order needs.
@@ -253,7 +268,7 @@ class I03FocusManagementTest : TechniqueTest("I03") {
         assertTrue(tabTo(slug, "cancel", 4))
         key("ENTER")
         assertTrue(waitForNoQuestion(slug))
-        assertEquals("remove-ridge", stop(slug))
+        assertEquals("remove-ridge", stopWhen(slug, "remove-ridge"))
         assertNothingAsked(slug, "focus back on Remove Ridge trail")
         key("TAB")
         assertTrue("Tab onto Remove Lake loop asks", waitForQuestion(slug, "Remove Lake loop?"))
@@ -265,7 +280,7 @@ class I03FocusManagementTest : TechniqueTest("I03") {
             openAtLake(slug)
             key("ENTER")
             assertTrue("$slug: the question opens", waitForQuestion(slug, "Remove Lake loop?"))
-            assertEquals(slug, stops.first, stop(slug))
+            assertEquals(slug, stops.first, stopWhen(slug, stops.first))
             assertEquals(slug, listOf(stops.second), walk(slug, 1) { key("TAB") })
         }
     }
@@ -308,7 +323,7 @@ class I03FocusManagementTest : TechniqueTest("I03") {
             assertTrue("$slug: Tab reaches Cancel", tabTo(slug, "cancel", 4))
             key("ENTER")
             assertTrue(waitForNoQuestion(slug))
-            assertEquals(slug, "remove-lake", stop(slug))
+            assertEquals(slug, "remove-lake", stopWhen(slug, "remove-lake"))
             assertEquals(slug, listOf("remove-summit"), walk(slug, 1) { key("TAB") })
         }
     }
@@ -337,7 +352,7 @@ class I03FocusManagementTest : TechniqueTest("I03") {
             assertTrue("$slug: Tab reaches Remove", tabTo(slug, "confirm", 4))
             key("ENTER")
             waitForCount(slug, 2)
-            assertEquals(slug, "remove-summit", stop(slug))
+            assertEquals(slug, "remove-summit", stopWhen(slug, "remove-summit"))
             assertEquals(slug, listOf("remove-ridge"), walk(slug, 1) { shiftTab() })
         }
     }
