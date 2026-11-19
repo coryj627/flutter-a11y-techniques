@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart' show OrdinalSortKey;
 
 import '../../catalog/test_id.dart';
 
@@ -243,9 +244,15 @@ class GoodCustom extends StatelessWidget {
 
 // #region good-inline-link
 /// A link in a sentence is exempt from the minimum size: it is as tall as
-/// the line of text it sits in. It is a `WidgetSpan`, so that it can take
-/// keyboard focus, which a `TextSpan` with a recognizer cannot. Flutter's
-/// tap target guidelines skip links.
+/// the line of text it sits in. Flutter's tap target guidelines skip links.
+///
+/// It is a `WidgetSpan`, so that it can take keyboard focus, which a
+/// `TextSpan` with a recognizer cannot. Two things keep it in its place in
+/// the sentence for screen readers (docs/flutter-limitations.md, FL-413):
+/// a `semanticsIdentifier` on the text before it, which makes the paragraph
+/// give each run of text a node of its own, in order, rather than one label
+/// without the link; and a sort key between the ones the paragraph gives
+/// those runs (0 and 1), so that the link's node is read between them.
 class GoodInlineLink extends StatelessWidget {
   const GoodInlineLink({super.key});
 
@@ -257,12 +264,20 @@ class GoodInlineLink extends StatelessWidget {
       builder: (context, press) => Text.rich(
         TextSpan(
           children: [
-            const TextSpan(text: 'Read the '),
+            const TextSpan(
+              text: 'Read the ',
+              semanticsIdentifier: 'v13-good-inline-link-sentence',
+            ),
             WidgetSpan(
               alignment: PlaceholderAlignment.baseline,
               baseline: TextBaseline.alphabetic,
-              child: TestId(
-                'v13-good-inline-link-rules',
+              // Not TestId: its MergeSemantics would drop the sort key. The
+              // identifier goes on the same node instead.
+              child: Semantics(
+                key: const ValueKey<String>('v13-good-inline-link-rules'),
+                container: true,
+                identifier: 'v13-good-inline-link-rules',
+                sortKey: const OrdinalSortKey(0.5),
                 child: _Keyboard(
                   onActivate: press,
                   builder: (focused) => Semantics(

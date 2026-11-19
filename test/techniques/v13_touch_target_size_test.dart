@@ -329,6 +329,26 @@ void main() {
       });
     }
 
+    // FL-413's workaround: the sentence's runs of text and the link are
+    // separate nodes, in the sentence's order.
+    testWidgets('$_link: the sentence is read in order, with the link in '
+        'its place', (tester) async {
+      final handle = tester.ensureSemantics();
+      await _open(tester, _link);
+      final link = nodeById('v13-$_link-rules').evaluate().single;
+      final paragraph = link.parent!;
+      expect(
+        paragraph
+            .debugListChildrenInOrder(DebugSemanticsDumpOrder.traversalOrder)
+            .map((n) => n.getSemanticsData().label),
+        ['Read the ', 'trail rules', ' before you set off.'],
+      );
+      final data = link.getSemanticsData();
+      expect(data.flagsCollection.isLink, isTrue);
+      expect(data.hasAction(SemanticsAction.tap), isTrue);
+      handle.dispose();
+    });
+
     testWidgets('$_link: under 24 high, in a sentence, so the inline '
         'exception applies; the guidelines skip links', (tester) async {
       final handle = tester.ensureSemantics();
@@ -508,6 +528,62 @@ void main() {
   });
 
   group('the SDK on its own', () {
+    // FL-413. Written to fail when a WidgetSpan is read in its place
+    // without help.
+    testWidgets('FL-413: the text around a WidgetSpan is one node without '
+        "it, and the widget's node comes after", (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(text: 'Read the '),
+                    WidgetSpan(
+                      child: MergeSemantics(
+                        child: Semantics(
+                          link: true,
+                          identifier: 'link',
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: const Text('trail rules'),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const TextSpan(text: ' before you set off.'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final link = find.semantics
+          .byPredicate(
+            (n) =>
+                !n.isMergedIntoParent &&
+                n.getSemanticsData().identifier == 'link',
+          )
+          .evaluate()
+          .single;
+      final paragraph = link.parent!;
+      expect(
+        paragraph.getSemanticsData().label.replaceAll('\n', '|'),
+        'Read the | before you set off.',
+      );
+      expect(
+        paragraph
+            .debugListChildrenInOrder(DebugSemanticsDumpOrder.traversalOrder)
+            .map((n) => n.getSemanticsData().label),
+        ['trail rules'],
+      );
+      handle.dispose();
+    });
+
     Future<int Function()> pump(
       WidgetTester tester,
       Widget Function(VoidCallback) build,

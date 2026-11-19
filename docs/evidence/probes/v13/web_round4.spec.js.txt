@@ -1,0 +1,31 @@
+// Throwaway (V13 round 2), deleted after use; kept as
+// docs/evidence/probes/v13/web_round4.spec.js.txt.
+import { test } from '@playwright/test';
+
+test('inline link DOM, tree, and keyboard', async ({ page }) => {
+  await page.goto('/#/t/V13/good-inline-link');
+  await page.locator('[flt-semantics-identifier="v13-good-inline-link-count"]').waitFor();
+  await page.waitForTimeout(800);
+  const out = await page.evaluate(() => {
+    const lines = [];
+    const walk = (e, depth) => {
+      const r = e.getBoundingClientRect();
+      if (r.y > 150 && r.y < 260) {
+        lines.push(`${'  '.repeat(depth)}<${e.tagName.toLowerCase()} id=${e.getAttribute('flt-semantics-identifier')} role=${e.getAttribute('role')} aria-label=${JSON.stringify(e.getAttribute('aria-label'))} tabindex=${e.getAttribute('tabindex')} text=${JSON.stringify(e.childElementCount ? '' : e.textContent)} box=${r.x.toFixed(1)},${r.y.toFixed(1)},${r.width.toFixed(1)}x${r.height.toFixed(1)}>`);
+      }
+      for (const c of e.children) walk(c, depth + 1);
+    };
+    walk(document.querySelector('flt-semantics-host') ?? document.body, 0);
+    return lines;
+  });
+  for (const l of out) console.log(l);
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  for (const n of nodes) if (/trail|Read|before/.test(n.name?.value ?? '')) console.log(`ax ${n.role?.value} "${n.name?.value}"`);
+  const link = page.locator('[flt-semantics-identifier="v13-good-inline-link-rules"]');
+  for (let i = 0; i < 4; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(150);
+    console.log(`Tab ${i + 1}: link focused = ${await link.evaluate((e) => e === document.activeElement)}`);
+  }
+});

@@ -175,11 +175,11 @@ final class V13TouchTargetSizeUITests: XCTestCase, CountedTechniqueUITest {
   // count, the last element of every example. Size is not heard: the small
   // buttons are read as the large ones.
   private static let player = ["Previous Button", "Play Button", "Next Button"]
-  // The sentence is read whole, without the link, and the link after it
-  // (FL-413): a WidgetSpan's node comes after the text around it.
+  // The sentence is read in its order, the link in its place (FL-413's
+  // workaround in good-inline-link).
   private var speech: [(slug: String, content: [String])] {
     (Self.good + Self.bad).map { ($0, Self.player) }
-      + [(Self.link, ["Read the before you set off.", "trail rules Link"])]
+      + [(Self.link, ["Read the", "trail rules Link", "before you set off."])]
   }
 
   func testVoiceOverSpeech() throws {

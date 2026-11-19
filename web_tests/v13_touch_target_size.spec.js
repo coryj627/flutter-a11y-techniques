@@ -148,14 +148,22 @@ test.describe('WCAG 2.5.8', () => {
     await open(page, link);
     const b = await box(byId(page, `v13-${link}-rules`));
     expect(b.h).toBeLessThan(MINIMUM);
-    // It is in the sentence: the sentence's element holds the text before
-    // and after it, and spans it.
-    const sentence = page.locator('flt-semantics[role="group"][aria-label]', { has: byId(page, `v13-${link}-rules`) });
-    await expect(sentence).toHaveCount(1);
-    expect((await sentence.getAttribute('aria-label')).replace(/\s+/g, ' ')).toBe('Read the before you set off.');
-    const s = await box(sentence);
-    expect(s.x).toBeLessThan(b.x);
-    expect(s.r).toBeGreaterThan(b.r);
+    // The text before it and after it are on the same line, either side.
+    const before = await box(byId(page, `v13-${link}-sentence`));
+    const after = await box(page.locator('flt-semantics', { hasText: /^ before you set off\.$/ }).last());
+    expect(before.x).toBeLessThan(b.x);
+    expect(after.r).toBeGreaterThan(b.r);
+    expect(Math.abs(before.y - after.y)).toBeLessThan(1);
+  });
+
+  // FL-413's workaround: the sentence is three elements in its own order,
+  // the link between the text before and after it.
+  test(`${link}: the sentence is read in order, with the link in its place`, async ({ page }) => {
+    await open(page, link);
+    const parent = byId(page, `v13-${link}-rules`).locator('..');
+    const children = await parent.evaluate((p) => [...p.children].map((c) => `${c.tagName.toLowerCase()}:${c.textContent}`));
+    expect(children).toEqual(['flt-semantics:Read the ', 'a:trail rules', 'flt-semantics: before you set off.']);
+    expect(await axNodes(page, 'trail rules')).toContain('link');
   });
 });
 

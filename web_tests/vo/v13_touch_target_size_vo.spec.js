@@ -18,9 +18,9 @@ const EXAMPLES = {
   'good-material': PLAYER,
   'good-cupertino': PLAYER,
   'good-custom': PLAYER,
-  // The sentence is one group named without its link, and the link is read
-  // inside it, after its name (FL-413).
-  'good-inline-link': ['Read the before you set off. group', 'link trail rules', 'end of Read the before you set off. group'],
+  // The sentence is read in its order, the link in its place (FL-413's
+  // workaround in good-inline-link).
+  'good-inline-link': ['Read the', 'link trail rules', 'before you set off.'],
   'bad-shrinkwrap': PLAYER,
   'bad-zero-padding-web': PLAYER,
   'bad-cupertino-small': PLAYER,
