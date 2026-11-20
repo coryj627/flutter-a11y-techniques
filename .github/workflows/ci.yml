@@ -101,6 +101,19 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
+      # The runner has 16 GB. android/gradle.properties gives Gradle 8 GB
+      # of heap, for building on a developer's machine; here the emulator
+      # needs the room. When a run was stopped for low memory (run
+      # 44578213569, attempt 2) the emulator held 8.0 GB, Gradle's daemon
+      # 5.0 GB, and two Kotlin compiler daemons 1.7 GB. The file in Gradle's
+      # user home is read after the project's and replaces its values.
+      - name: Give Gradle less memory on the runner
+        run: |
+          mkdir -p ~/.gradle
+          cat >> ~/.gradle/gradle.properties <<'EOF'
+          org.gradle.jvmargs=-Xmx4G -XX:MaxMetaspaceSize=1G -XX:ReservedCodeCacheSize=256m
+          kotlin.compiler.execution.strategy=in-process
+          EOF
       # android/gradlew is not committed (Flutter's default .gitignore); a
       # Flutter build generates it and warms the Gradle cache.
       - run: flutter build apk --debug

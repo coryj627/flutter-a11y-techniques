@@ -182,18 +182,65 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
 
     // VAL-3: each bad example is asserted to have its named defect.
 
+    /**
+     * Every name on the page, top to bottom: the page is scrolled back to
+     * its start, then forward a step at a time to its end, and the names in
+     * the tree at each step are gathered. A node scrolled out of view is not
+     * in the tree, and on a 320 by 640 screen this page can be taller than
+     * the screen, so one reading of the tree is only what happens to be in
+     * view.
+     *
+     * Fails unless both ends were reached. The scrolling view says so
+     * itself: it offers the scroll-backward action only while there is more
+     * above, and scroll-forward only while there is more below. [first] and
+     * [last], the first and last lines that scroll with the page, must also
+     * be in the tree at the start and at the end.
+     */
+    private fun everyName(first: String, last: String): Set<String> {
+        fun scrollView() = all().firstOrNull { it.isScrollable }
+        fun offers(action: AccessibilityNodeInfo.AccessibilityAction) =
+            scrollView()?.actionList?.contains(action) == true
+        fun names() = all().map { it.name() }.filter { it.isNotEmpty() }
+        val back = AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD
+        val forward = AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD
+        for (i in 0 until 12) {
+            if (!offers(back) || scrollView()?.performAction(back.id) != true) break
+            Thread.sleep(500)
+        }
+        assertFalse("the page is at its start", offers(back))
+        val atStart = names()
+        assertTrue("\"$first\" is at the start of the page: $atStart", atStart.contains(first))
+        val seen = atStart.toMutableSet()
+        var atEnd = atStart
+        for (i in 0 until 12) {
+            if (!offers(forward) || scrollView()?.performAction(forward.id) != true) break
+            Thread.sleep(500)
+            atEnd = names()
+            seen.addAll(atEnd)
+        }
+        assertFalse("the page is at its end", offers(forward))
+        assertTrue("\"$last\" is at the end of the page: $atEnd", atEnd.contains(last))
+        return seen
+    }
+
     @Test
     fun badColorOnlyHasNoWordsForTheError() {
         open("bad-color-only")
         val id = "f06-bad-color-only-email"
-        val before = all().map { it.name() }.toSet()
+        // The first and last lines of the scrolling part of the page: Back
+        // and the title are in the app bar, which does not scroll.
+        val first = "Bad example for Error identification and announcement. Material."
+        val before = everyName(first, "Forms sent: 0")
         send("bad-color-only")
-        waitFor("field focused") { node(id).isFocused }
-        // Compare with the keyboard away, so that nothing is out of view.
-        closeKeyboardAndWaitForCount("bad-color-only")
-        // The field is in error and focused, and nothing new can be read.
+        waitFor("field focused") { nodeInAnyWindow(id).isFocused }
+        hideKeyboard()
+        // The field is in error and focused, and nothing new can be read
+        // anywhere on the page. The whole page is read, before and after: on
+        // a 320 by 640 screen one reading of the tree had a different part of
+        // the page each time (CI runs 44580353546 and 44615147153), and an
+        // error scrolled out of view would not be in it.
+        assertEquals(before, everyName(first, "Forms sent: 0"))
         assertEquals("Email", hint(id))
-        assertEquals(before, all().map { it.name() }.toSet())
     }
 
     @Test
