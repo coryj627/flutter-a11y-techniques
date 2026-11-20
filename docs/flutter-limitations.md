@@ -127,7 +127,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-440](#fl-440) | A `CupertinoAlertDialog`'s actions take no keyboard focus | All | Confirmed |
 | [FL-441](#fl-441) | A `CupertinoActionSheet`'s title and message fail text contrast in light mode | All (widget test only) | Confirmed (widget test only) |
 | [FL-442](#fl-442) | When a route closes, the framework sends the screen reader back to where it was, after the app's own move, even when that control has been removed | Android | Confirmed in the source; its effect Observed |
-| [FL-460](#fl-460) | A shortcut above a text field takes its key before the field can type it, on the web and on iOS, and on Android depending on the device | Web, iOS; Android on CI's emulator, not on the local one | Confirmed |
+| [FL-460](#fl-460) | A shortcut above a text field takes its key before the field can type it, on the web and on iOS; on Android not on the local emulator, and not shown on CI's, where the letter was lost | Web, iOS; Android not shown | Confirmed |
 | [FL-461](#fl-461) | A text field's done, go, search, or send action takes keyboard focus away and gives it to no control | All | Confirmed |
 | [FL-463](#fl-463) | A `PageView` takes no keyboard focus and has no keys | Android, iOS, Web | Observed |
 | [FL-464](#fl-464) | A `Shortcuts`, `CallbackShortcuts`, or `Focus` around plain text makes that text the name of a node holding every control inside it | Web, iOS (Android not looked at) | Confirmed |
@@ -2827,7 +2827,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-460
 
-**A shortcut above a text field takes its key before the field can type it, on the web and on iOS, and on Android depending on the device.**
+**A shortcut above a text field takes its key before the field can type it, on the web and on iOS; on Android not on the local emulator, and not shown on CI's, where the letter was lost.**
 
 - Status: Confirmed, Flutter 3.47.5. Documented: `EditableText`'s
   documentation, "Interactions Between Shortcuts and Text Input", says a

@@ -115,8 +115,10 @@ final i04KeyboardActions = Technique(
       defect:
           'F adds the photo to the favourites wherever focus is on the '
           'screen, and nothing turns it off or changes it. So a lowercase f '
-          'typed in the note adds a favourite instead, and does not appear: '
-          'on the web, on iOS, and on some Android devices.',
+          'typed in the note adds a favourite instead, and does not appear, '
+          'on the web and on iOS. On Android it depended on the device: on '
+          'one emulator the f was typed, and on another it did not reach '
+          'the note.',
       builder: (_) => const BadPageShortcut(),
     ),
     TechniqueExample.bad(
