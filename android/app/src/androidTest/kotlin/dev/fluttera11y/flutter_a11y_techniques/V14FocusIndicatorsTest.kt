@@ -31,6 +31,8 @@ import androidx.test.uiautomator.By
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
+import org.json.JSONArray
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -70,10 +72,34 @@ private fun hex(c: Int) = String.format("#%06X", c and 0xFFFFFF)
 /** Two colours are one flat colour if no channel differs by more than this. */
 private const val FLAT = 4
 
-/** One colour of what focus drew, and where: on the page (where the page was before focus) or on the control. */
-private class Band(val colour: Int, val onPage: Boolean, val pixels: Int, val contrast: Double, val against: List<Int>) {
-    override fun toString() = "$pixels px ${hex(colour)} ${if (onPage) "on the page" else "on the control"} " +
-        "${"%.2f".format(contrast)} against ${against.joinToString { hex(it) }}"
+/** An anti-aliased edge is read across at most this many pixels. */
+private const val BLUR = 4
+
+/**
+ * How many strong pixels, at a density of 1, a good control's indicator must
+ * have in these tests: about a line one pixel wide round a 40 by 40 control.
+ * The tests' own threshold, kept apart from the contrast measure: 1.4.11 sets
+ * no size (2.4.13, AAA, does).
+ */
+private const val OUR_MINIMUM = 150
+
+/**
+ * One band of what focus drew: a connected area of one flat colour (or of
+ * shades each within [FLAT] of the next), drawn mostly where the page was
+ * before focus or mostly on the control. [contrast] is its lowest against any
+ * neighbour it must contrast with, [lowest] that neighbour, and [next] its
+ * commonest neighbours with how many of its edge's pixels touch them.
+ */
+private class Band(
+    val colour: Int, val onPage: Boolean, val pixels: Int, val contrast: Double, val lowest: Int,
+    val next: List<Pair<Int, Int>>,
+) {
+    override fun toString(): String {
+        val total = maxOf(1, next.sumOf { it.second })
+        return "$pixels px ${hex(colour)} ${if (onPage) "on the page" else "on the control"} " +
+            "${"%.2f".format(contrast)} against ${hex(lowest)}; next to it " +
+            next.take(2).joinToString { "${hex(it.first)} ${"%.2f".format(contrast(colour, it.first))} ${100 * it.second / total}%" }
+    }
 }
 
 /** What focus drew in a region (see [compare]). */
@@ -82,6 +108,9 @@ private class Indicator(
 ) {
     /** Every changed pixel, whatever it replaced. */
     val indicator: Int get() = changed
+
+    /** Indicator pixels in bands: all but anti-aliased edges. */
+    val flat: Int get() = bands.sumOf { it.pixels }
 
     /**
      * The drawing moved rather than focus adding to it: half or more of the
@@ -93,99 +122,464 @@ private class Indicator(
     val ratio: Double get() = bands.firstOrNull()?.contrast ?: 1.0
 
     override fun toString() = "changed $changed, unstable $unstable, swapped $swapped, indicator $changed, " +
-        "3:1 or more: $strong, page ${hex(page)}; ${bands.take(3).joinToString("; ")}"
+        "in bands $flat, 3:1 or more: $strong, page ${hex(page)}; ${bands.take(3).joinToString("; ")}"
 }
 
-/** A screenshot's pixels, as 0xRRGGBB. */
-private class Pixels(b: Bitmap) {
-    val width = b.width
-    val height = b.height
-    private val data = IntArray(width * height).also { b.getPixels(it, 0, width, 0, 0, width, height) }
+/** A screenshot's pixels, or a picture made up for a case of the measure, as 0xRRGGBB. */
+private class Pixels(val width: Int, val height: Int, private val data: IntArray) {
+    constructor(b: Bitmap) : this(b.width, b.height, IntArray(b.width * b.height).also { b.getPixels(it, 0, b.width, 0, 0, b.width, b.height) })
     fun at(x: Int, y: Int) = data[y * width + x] and 0xFFFFFF
 }
 
+private fun compare(ub: Bitmap, f1b: Bitmap, f2b: Bitmap, region: Rect): Indicator =
+    compare(Pixels(ub), Pixels(f1b), Pixels(f2b), region)
+
 /**
  * What focus drew in [region], given the screenshot before focus [u] and two
- * after it, [f1] and [f2].
+ * after it, [f1] and [f2]. The measure of the V14 spec, section 6, which
+ * lists what it is known not to do; the widget tests' _compare is the same,
+ * step for step.
  *
- * A pixel has changed if it differs from [u] in both and [f1] and [f2]
- * agree. Every changed pixel is part of the indicator, whatever it replaced:
+ * A pixel has changed if it differs from [u] in both and [f1] and [f2] agree.
+ * Every changed pixel is part of the indicator, whatever it replaced:
  * Understanding 1.4.11 does not compare the focused and unfocused states.
  * (What replaced what is used once, to tell a drawing that moved from one
- * that focus added to: [Indicator.moved].) The indicator is split into
- * bands, one per flat colour (pixels that share their colour with a
- * horizontal and a vertical neighbour; anti-aliased edges are left out), and
- * each band is taken against the colours adjacent to it in [f1], read across
- * at most four pixels of anti-aliased edge. A band drawn where the page was,
- * outside the control, must contrast with the page; a band drawn on the
- * control, inside it or on its border, must contrast with every colour that
- * makes up a fifth or more of what is next to it (with the page, if nothing
- * does). The page's colour is the commonest along the region's edge in [u].
+ * that focus added to: [Indicator.moved].)
+ *
+ * A pixel of [f1] is solid if it has a 4-neighbour of its colour (within
+ * [FLAT]) and is not anti-aliasing: a pixel whose colour lies between the
+ * colours either side of it, across or down or on a diagonal, where those two
+ * differ. A one pixel line is solid. Solid changed pixels are joined into
+ * bands: 4-connected, each within [FLAT] of the next. A band is on the page if
+ * most of it was drawn where the page was before focus, and on the control if
+ * not.
+ *
+ * Each band is taken against its neighbours, spatially: from every pixel on
+ * its edge, outward, across pixels of the edge pixel's own colour and at most
+ * [BLUR] pixels of an anti-aliased edge being crossed (each between the pixels
+ * before and after it on the way), to the first solid pixel (or the last of
+ * those [BLUR], so that no neighbour is passed over for being blurred, unless
+ * focus drew it). A walk that meets a blurred pixel that is not between them
+ * is going along an edge, not across it, and finds nothing. A band on the control, inside it or on its border, must
+ * contrast with every neighbour found, whatever it is (Understanding: both
+ * adjacent colours). A band on the page, outside the control, must contrast
+ * with the background: the walk goes on across the rest of what focus drew,
+ * and a neighbour that was not the page before focus (the control itself) is
+ * not one it must contrast with. A band's contrast is its lowest against any
+ * of them (with none, against the page): the least contrasting part decides.
+ * Its pixels are strong if that is 3:1 or more. The page's colour is the
+ * commonest along the region's top and bottom edges in [u].
  */
-private fun compare(ub: Bitmap, f1b: Bitmap, f2b: Bitmap, region: Rect): Indicator {
-    val u = Pixels(ub); val f1 = Pixels(f1b); val f2 = Pixels(f2b)
+private fun compare(u: Pixels, f1: Pixels, f2: Pixels, region: Rect): Indicator {
     val l = maxOf(0, region.left); val t = maxOf(0, region.top)
     val r = minOf(u.width, region.right); val b = minOf(u.height, region.bottom)
+    val w = r - l; val h = b - t
     fun inside(x: Int, y: Int) = x >= l && x < r && y >= t && y < b
+    fun at(x: Int, y: Int) = (y - t) * w + (x - l)
     val edge = HashMap<Int, Int>()
     for (x in l until r) for (y in listOf(t, t + 1, b - 2, b - 1)) edge.merge(u.at(x, y), 1, Int::plus)
-    val page = edge.maxByOrNull { it.value }!!.key
-    fun same(x: Int, y: Int, c: Int) = inside(x, y) && channelDiff(f1.at(x, y), c) <= FLAT
-    fun solid(x: Int, y: Int): Boolean {
-        val c = f1.at(x, y)
-        return (same(x - 1, y, c) || same(x + 1, y, c)) && (same(x, y - 1, c) || same(x, y + 1, c))
-    }
-    fun across(x0: Int, y0: Int, dx: Int, dy: Int, colour: Int): Int? {
-        var x = x0; var y = y0
-        while (same(x + dx, y + dy, colour)) { x += dx; y += dy }
-        repeat(4) {
-            x += dx; y += dy
-            if (!inside(x, y)) return null
-            val c = f1.at(x, y)
-            if (channelDiff(c, colour) > THRESHOLD && solid(x, y)) return c
-        }
-        return null
-    }
+    var page = 0; var most = -1
+    for ((c, n) in edge) if (n > most || (n == most && c < page)) { page = c; most = n }
+    val isChanged = BooleanArray(w * h)
     var changed = 0; var unstable = 0
-    val groups = HashMap<Pair<Int, Boolean>, MutableList<Int>>()
     val newColours = HashMap<Int, Int>(); val oldColours = HashMap<Int, Int>()
     for (y in t until b) for (x in l until r) {
         val a = u.at(x, y); val p = f1.at(x, y); val q = f2.at(x, y)
         val d1 = channelDiff(a, p) > THRESHOLD; val d2 = channelDiff(a, q) > THRESHOLD
         if (d1 && d2 && channelDiff(p, q) <= THRESHOLD) {
             changed++
+            isChanged[at(x, y)] = true
             newColours.merge(p, 1, Int::plus); oldColours.merge(a, 1, Int::plus)
-            if (!solid(x, y)) continue
-            groups.getOrPut(p to (channelDiff(a, page) <= THRESHOLD)) { mutableListOf() }.add(y * u.width + x)
         } else if (d1 || d2) unstable++
+    }
+    fun same(x: Int, y: Int, c: Int) = inside(x, y) && channelDiff(f1.at(x, y), c) <= FLAT
+    fun between(c: Int, a: Int, z: Int) = listOf(16, 8, 0).all { s ->
+        val v = (c shr s) and 255; val p = (a shr s) and 255; val q = (z shr s) and 255
+        v >= minOf(p, q) - FLAT && v <= maxOf(p, q) + FLAT
+    }
+    // Whether (x, y) lies between the pixels either side of it along (dx, dy):
+    // a pixel of an anti-aliased edge crossed that way.
+    fun blendAlong(x: Int, y: Int, dx: Int, dy: Int): Boolean {
+        if (!inside(x - dx, y - dy) || !inside(x + dx, y + dy)) return false
+        val c = f1.at(x, y); val a = f1.at(x - dx, y - dy); val z = f1.at(x + dx, y + dy)
+        return channelDiff(a, z) > THRESHOLD && channelDiff(c, a) > FLAT && channelDiff(c, z) > FLAT && between(c, a, z)
+    }
+    fun blend(x: Int, y: Int) =
+        blendAlong(x, y, 1, 0) || blendAlong(x, y, 0, 1) || blendAlong(x, y, 1, 1) || blendAlong(x, y, 1, -1)
+    val solidAt = BooleanArray(w * h)
+    for (y in t until b) for (x in l until r) {
+        val c = f1.at(x, y)
+        solidAt[at(x, y)] = (same(x - 1, y, c) || same(x + 1, y, c) || same(x, y - 1, c) || same(x, y + 1, c)) && !blend(x, y)
+    }
+    fun onPageAt(x: Int, y: Int) = channelDiff(u.at(x, y), page) <= THRESHOLD
+    // The neighbour of the edge pixel (x0, y0) in the direction (dx, dy).
+    fun neighbour(x0: Int, y0: Int, dx: Int, dy: Int, onPage: Boolean): Int? {
+        val c0 = f1.at(x0, y0)
+        var x = x0; var y = y0; var blurred = 0
+        while (true) {
+            x += dx; y += dy
+            if (!inside(x, y)) return null
+            if (channelDiff(f1.at(x, y), c0) <= FLAT) continue
+            if (onPage && isChanged[at(x, y)]) continue
+            if (solidAt[at(x, y)]) return if (onPage && !onPageAt(x, y)) null else f1.at(x, y)
+            // A blurred pixel not between those before and after it is the side
+            // of an edge that runs along the way, not one being crossed: the
+            // neighbour beyond that edge is found by the walks that cross it.
+            if (!blendAlong(x, y, dx, dy)) return null
+            if (++blurred == BLUR) {
+                // Blurred all the way: what is there, if focus did not draw it.
+                return if (isChanged[at(x, y)] || (onPage && !onPageAt(x, y))) null else f1.at(x, y)
+            }
+        }
     }
     val ratios = HashMap<Long, Double>()
     fun ratio(a: Int, c: Int) = ratios.getOrPut((a.toLong() shl 32) or c.toLong()) { contrast(a, c) }
-    val bands = mutableListOf<Band>()
+    val steps = listOf(1 to 0, -1 to 0, 0 to 1, 0 to -1)
+    val bandOf = IntArray(w * h) { -1 }
+    val bands = mutableListOf<Pair<Band, Int>>()
     var strong = 0
-    for ((key, pixels) in groups) {
-        val (colour, onPage) = key
-        val next = HashMap<Int, Int>()
-        for (i in pixels) {
-            val x = i % u.width; val y = i / u.width
-            for ((dx, dy) in listOf(1 to 0, -1 to 0, 0 to 1, 0 to -1)) {
-                across(x, y, dx, dy, colour)?.let { next.merge(it, 1, Int::plus) }
+    for (y0 in t until b) for (x0 in l until r) {
+        val i0 = at(x0, y0)
+        if (!isChanged[i0] || !solidAt[i0] || bandOf[i0] >= 0) continue
+        val id = bands.size
+        val pixels = mutableListOf(x0 to y0)
+        bandOf[i0] = id
+        var k = 0
+        while (k < pixels.size) {
+            val (x, y) = pixels[k++]
+            for ((dx, dy) in steps) {
+                val nx = x + dx; val ny = y + dy
+                if (!inside(nx, ny)) continue
+                val j = at(nx, ny)
+                if (!isChanged[j] || !solidAt[j] || bandOf[j] >= 0) continue
+                if (channelDiff(f1.at(nx, ny), f1.at(x, y)) > FLAT) continue
+                bandOf[j] = id
+                pixels.add(nx to ny)
             }
         }
-        val total = next.values.sum()
-        var against = listOf(page)
-        if (!onPage && total > 0) {
-            val major = next.filter { it.value * 5 >= total }.keys.toList()
-            if (major.isNotEmpty()) against = major
+        val onPage = pixels.count { (x, y) -> onPageAt(x, y) } * 2 > pixels.size
+        var contrast = Double.POSITIVE_INFINITY; var lowest = page
+        val next = HashMap<Int, Int>()
+        for ((x, y) in pixels) for ((dx, dy) in steps) {
+            if (inside(x + dx, y + dy) && bandOf[at(x + dx, y + dy)] == id) continue
+            val n = neighbour(x, y, dx, dy, onPage) ?: continue
+            next.merge(n, 1, Int::plus)
+            val c = ratio(f1.at(x, y), n)
+            if (c < contrast) { contrast = c; lowest = n }
         }
-        val c = against.minOf { ratio(colour, it) }
-        if (c >= 3) strong += pixels.size
-        bands.add(Band(colour, onPage, pixels.size, c, against))
+        val counts = HashMap<Int, Int>()
+        for ((x, y) in pixels) counts.merge(f1.at(x, y), 1, Int::plus)
+        var colour = 0; var top = -1
+        for ((c, n) in counts) if (n > top || (n == top && c < colour)) { colour = c; top = n }
+        if (next.isEmpty()) { contrast = ratio(colour, page); lowest = page }
+        if (contrast >= 3) strong += pixels.size
+        val sorted = next.entries.sortedWith(compareByDescending<Map.Entry<Int, Int>> { it.value }.thenBy { it.key })
+        bands.add(Band(colour, onPage, pixels.size, contrast, lowest, sorted.take(3).map { it.key to it.value }) to id)
     }
-    bands.sortByDescending { it.pixels }
+    bands.sortWith(compareByDescending<Pair<Band, Int>> { it.first.pixels }.thenBy { it.second })
     val swapped = newColours.entries.sumOf { (c, n) -> minOf(n, oldColours[c] ?: 0) }
-    return Indicator(changed, unstable, swapped, strong, page, bands)
+    return Indicator(changed, unstable, swapped, strong, page, bands.map { it.first })
 }
+
+/** A case's picture: its [layers] painted in order on white at pixel ratio [s] (the case file says how). */
+private fun paint(layers: JSONArray, width: Int, height: Int, s: Int): Pixels {
+    val px = IntArray(width * height) { 0xFFFFFF }
+    fun colourOf(h: String) = h.substring(1).toInt(16)
+    for (i in 0 until layers.length()) {
+        val layer = layers.getJSONObject(i)
+        val rect = layer.optJSONArray("rect")
+        val l = rect?.getInt(0)?.times(s) ?: 0; val t = rect?.getInt(1)?.times(s) ?: 0
+        val r = rect?.getInt(2)?.times(s) ?: width; val b = rect?.getInt(3)?.times(s) ?: height
+        val ring = layer.optInt("ring", 0) * s
+        val byY = layer.optString("axis") == "y"
+        for (y in t until b) for (x in l until r) {
+            if (ring > 0 && x >= l + ring && x < r - ring && y >= t + ring && y < b - ring) continue
+            val along = if (byY) y - t else x - l
+            val length = if (byY) b - t else r - l
+            val c = when {
+                layer.has("stripes") -> {
+                    val stripes = layer.getJSONArray("stripes")
+                    colourOf(stripes.getString((along / (layer.getInt("period") * s)) % stripes.length()))
+                }
+                layer.has("gradient") -> {
+                    val ends = layer.getJSONArray("gradient")
+                    val a = colourOf(ends.getString(0)); val z = colourOf(ends.getString(1))
+                    val n = length - 1
+                    listOf(16, 8, 0).fold(0) { acc, sh ->
+                        acc or ((((a shr sh) and 255) * (n - along) + ((z shr sh) and 255) * along + n / 2) / n shl sh)
+                    }
+                }
+                else -> colourOf(if (layer.has("colour")) layer.getString("colour") else layer.getString("fill"))
+            }
+            px[y * width + x] = c
+        }
+    }
+    return Pixels(width, height, px)
+}
+
+/** What a case's measure at pixel ratio [s] gets wrong: none, if it passes. */
+private fun checkCase(c: JSONObject, s: Int): List<String> {
+    val size = c.getJSONArray("size")
+    val w = size.getInt(0) * s; val h = size.getInt(1) * s
+    val u = paint(c.getJSONArray("before"), w, h, s)
+    val f1 = paint(c.getJSONArray("after"), w, h, s)
+    val f2 = if (c.has("after2")) paint(c.getJSONArray("after2"), w, h, s) else f1
+    val ind = compare(u, f1, f2, Rect(0, 0, w, h))
+    val e = c.getJSONObject("expect")
+    val problems = mutableListOf<String>()
+    fun want(ok: Boolean, what: String) { if (!ok) problems.add("$what: $ind") }
+    fun some(v: String, n: Int) = if (v == "none") n == 0 else n > 0
+    if (e.has("changed")) want(some(e.getString("changed"), ind.changed), "changed ${e.getString("changed")}")
+    if (e.has("unstable")) want(some(e.getString("unstable"), ind.unstable), "unstable ${e.getString("unstable")}")
+    if (e.has("moved")) want(ind.moved == e.getBoolean("moved"), "moved ${e.getBoolean("moved")}")
+    when (e.optString("strong")) {
+        "all" -> want(ind.flat > 0 && ind.strong == ind.flat, "strong all")
+        "none" -> want(ind.strong == 0, "strong none")
+        "some" -> want(ind.strong > 0 && ind.strong < ind.flat, "strong some")
+    }
+    if (e.has("strongPixels")) want(ind.strong == e.getInt("strongPixels") * s * s, "strong pixels ${e.getInt("strongPixels") * s * s}")
+    e.optJSONArray("ratio")?.let { want(Math.abs(ind.ratio - it.getDouble(0)) <= it.getDouble(1), "ratio ${it.getDouble(0)}") }
+    if (e.has("ratioBelow")) want(ind.ratio < e.getDouble("ratioBelow"), "ratio below ${e.getDouble("ratioBelow")}")
+    if (e.has("onPage")) want(ind.bands.isNotEmpty() && ind.bands[0].onPage == e.getBoolean("onPage"), "on the page ${e.getBoolean("onPage")}")
+    return problems
+}
+
+/**
+ * The measure's cases: a copy of test/techniques/v14_focus_indicators_measure_cases.json,
+ * which the widget tests check is the same (the device cannot read the repository).
+ */
+private const val CASES = """
+{
+  "about": [
+    "The cases of V14's pixel measure (docs/specs/V14-focus-indicators.md, section 6), on pictures made up for the purpose.",
+    "The widget tests, the web spec, the iOS UI tests, and the probe analyser read this file; the Android test holds a copy, which the widget tests check is the same.",
+    "A picture is its layers painted in order on white: fill, a rectangle [left, top, right, bottom], the outer 'ring' pixels of one, 'stripes' of colours one after another every 'period' pixels along an 'axis', or a 'gradient' from one colour to another along an 'axis'.",
+    "Each case is measured at each of its 'scales' (pixel ratios; every length is multiplied), with 'before' as the capture before focus and 'after' as both captures after it, unless 'after2' is given. The region is the whole picture.",
+    "expect: 'changed' and 'unstable' are 'none' or 'some'; 'strong' is 'all' (every pixel of every band is in a band of 3:1 or more, and there is one), 'none', or 'some'; 'strongPixels' is the strong count at a pixel ratio of 1 (times the ratio squared); 'ratio' [value, tolerance], 'ratioBelow', and 'onPage' are of the largest band.",
+    "Cases named 'known limit' show what the measure does where it is known to depart from 1.4.11; the spec lists them."
+  ],
+  "cases": [
+    {
+      "name": "Understanding figure 8: an inner yellow ring on the blue button passes, 3.55:1 against the blue",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [21, 26, 39, 34], "ring": 3, "colour": "#FFFF00"}],
+      "expect": {"strong": "all", "ratio": [3.55, 0.05], "onPage": false}
+    },
+    {
+      "name": "an outer yellow ring on the white page fails, 1.07:1",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [10, 15, 50, 45], "ring": 3, "colour": "#FFFF00"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1, "onPage": true}
+    },
+    {
+      "name": "an outer green ring on the white page passes, 5.14:1",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [10, 15, 50, 45], "ring": 3, "colour": "#008000"}],
+      "expect": {"strong": "all", "ratio": [5.14, 0.05], "onPage": true}
+    },
+    {
+      "name": "Understanding figure 12: the button's edge turning green (#4B933A) fails: it is on the control and does not contrast with the blue inside",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 3, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "with a black border, an inner white border passes",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 2, "colour": "#000000"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 2, "colour": "#000000"}, {"rect": [17, 22, 43, 38], "ring": 2, "colour": "#FFFFFF"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "with a black border, an inner dark green border fails against the blue",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 2, "colour": "#000000"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 2, "colour": "#000000"}, {"rect": [17, 22, 43, 38], "ring": 2, "colour": "#008000"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "artwork that moves is not an indicator: the drawing moved",
+      "size": [60, 60], "scales": [1],
+      "before": [{"rect": [20, 20, 30, 30], "colour": "#000000"}],
+      "after": [{"rect": [24, 20, 34, 30], "colour": "#000000"}],
+      "expect": {"moved": true, "changed": "some"}
+    },
+    {
+      "name": "nothing drawn is no indicator",
+      "size": [60, 60], "scales": [1],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "expect": {"changed": "none", "strong": "none", "moved": false}
+    },
+    {
+      "name": "a mark in one capture only (a blinking caret) is unstable, not an indicator",
+      "size": [60, 60], "scales": [1],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [30, 22, 31, 38], "colour": "#000000"}],
+      "after2": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "expect": {"changed": "none", "unstable": "some"}
+    },
+    {
+      "name": "the first review's reproduction: a 3 pixel border of #4B933A round an inside of three near-identical shades, in thirds, fails against them",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "x", "period": 67}],
+      "after": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "x", "period": 67}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1, "onPage": false}
+    },
+    {
+      "name": "the same border round the same shades dithered pixel by pixel across fails",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "x", "period": 1}],
+      "after": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "x", "period": 1}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1}
+    },
+    {
+      "name": "the same border round the same shades dithered row by row fails",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "y", "period": 1}],
+      "after": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "y", "period": 1}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1}
+    },
+    {
+      "name": "a thick border, 8 pixels of #4B933A on the blue, fails",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 8, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "a thick black border, 8 pixels on the blue, passes against the page and the blue",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 8, "colour": "#000000"}],
+      "expect": {"strong": "all", "ratio": [5.5, 0.05], "onPage": false}
+    },
+    {
+      "name": "a grey (#767676) inner ring on a button shaded from white to blue fails: its least contrasting neighbour, near the blue end, is 1.24:1, though near the white end it is 4.2:1 or more",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "gradient": ["#FFFFFF", "#4189B9"], "axis": "x"}],
+      "after": [{"rect": [8, 8, 208, 68], "gradient": ["#FFFFFF", "#4189B9"], "axis": "x"}, {"rect": [14, 14, 202, 62], "ring": 3, "colour": "#767676"}],
+      "expect": {"strong": "none", "ratioBelow": 1.3, "onPage": false}
+    },
+    {
+      "name": "a black inner ring on the same shaded button passes against every shade",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "gradient": ["#FFFFFF", "#4189B9"], "axis": "x"}],
+      "after": [{"rect": [8, 8, 208, 68], "gradient": ["#FFFFFF", "#4189B9"], "axis": "x"}, {"rect": [14, 14, 202, 62], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "an inner black ring that contrasts with the page but not with the navy button it is on fails, 1.47:1",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}, {"rect": [11, 11, 205, 65], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "none", "ratioBelow": 1.5, "onPage": false}
+    },
+    {
+      "name": "a faint halo on the page round a black box does not take the box's contrast: it fails against the page",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [88, 18, 128, 58], "colour": "#000000"}],
+      "after": [{"rect": [78, 8, 138, 68], "colour": "#EAE8F4"}, {"rect": [88, 18, 128, 58], "colour": "#000000"}],
+      "expect": {"strong": "none", "ratioBelow": 1.5, "onPage": true}
+    },
+    {
+      "name": "a faint tint on the page inside a black ring does not take the ring's contrast: the ring passes and the tint fails",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [60, 28, 156, 48], "colour": "#4189B9"}],
+      "after": [{"rect": [20, 10, 196, 66], "ring": 2, "colour": "#000000"}, {"rect": [22, 12, 194, 64], "colour": "#EAE8F4"}, {"rect": [60, 28, 156, 48], "colour": "#4189B9"}],
+      "expect": {"strong": "some", "strongPixels": 912, "ratioBelow": 1.5, "onPage": true}
+    },
+    {
+      "name": "a two-colour ring on the page: the black outer part passes and the yellow inner part fails against the page",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [10, 10, 206, 66], "colour": "#4189B9"}],
+      "after": [{"rect": [10, 10, 206, 66], "colour": "#4189B9"}, {"rect": [4, 4, 212, 72], "ring": 2, "colour": "#000000"}, {"rect": [6, 6, 210, 70], "ring": 2, "colour": "#FFFF00"}],
+      "expect": {"strong": "some", "strongPixels": 1088, "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "a one pixel black underline below a button passes, 21:1 against the page",
+      "size": [216, 76], "scales": [1, 2, 3],
+      "before": [{"rect": [8, 8, 208, 60], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 60], "colour": "#4189B9"}, {"rect": [8, 63, 208, 64], "colour": "#000000"}],
+      "expect": {"strong": "all", "strongPixels": 200, "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "a one pixel black outline round a button passes, 21:1 against the page",
+      "size": [216, 76], "scales": [1, 2, 3],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [5, 5, 211, 71], "ring": 1, "colour": "#000000"}],
+      "expect": {"strong": "all", "strongPixels": 540, "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "an outer ring that touches a navy button passes on the page, though it does not contrast with the button",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}, {"rect": [5, 5, 211, 71], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "all", "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "a black border made thicker passes: the part of the same colour that was there is not a neighbour",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 1, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "a black ring with anti-aliased grey edges passes; the grey edge pixels are left out",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [2, 2, 214, 74], "ring": 1, "colour": "#808080"}, {"rect": [3, 3, 213, 73], "ring": 3, "colour": "#000000"}, {"rect": [6, 6, 210, 70], "ring": 1, "colour": "#808080"}],
+      "expect": {"strong": "all", "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "at a pixel ratio of 1, a black line on a button's top edge passes, though the edge's anti-aliased ramp runs on from its end: a walk along a ramp, not across it, finds nothing",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 9, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 100, 9], "colour": "#4189B9"}, {"rect": [100, 8, 132, 9], "gradient": ["#000000", "#4189B9"], "axis": "x"}],
+      "after": [{"rect": [8, 9, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 100, 9], "colour": "#000000"}, {"rect": [100, 8, 132, 9], "gradient": ["#000000", "#4189B9"], "axis": "x"}],
+      "expect": {"strong": "all", "strongPixels": 92, "onPage": false}
+    },
+    {
+      "name": "known limit: a change of the control's own background is measured like any other part, though 1.4.11 leaves it out",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [60, 30, 156, 46], "colour": "#FFFFFF"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#2E6A94"}, {"rect": [60, 30, 156, 46], "colour": "#FFFFFF"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "known limit: at a pixel ratio of 1, a one pixel strip along the top and bottom whose colour lies between the colours either side of it is read as anti-aliasing, and the ring is taken against the blue beyond it",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}, {"rect": [16, 15, 200, 16], "colour": "#2A5A7A"}, {"rect": [16, 60, 200, 61], "colour": "#2A5A7A"}],
+      "expect": {"strong": "all", "strongPixels": 1428, "onPage": false}
+    },
+    {
+      "name": "at a pixel ratio of 2 the same strips are two pixels wide and are measured: the ring fails against them, 2.84:1",
+      "size": [216, 76], "scales": [2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}, {"rect": [16, 15, 200, 16], "colour": "#2A5A7A"}, {"rect": [16, 60, 200, 61], "colour": "#2A5A7A"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "known limit: the least contrasting neighbour decides a whole band: an inner ring that meets a small navy mark for 4 pixels fails all round",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [100, 15, 104, 17], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [100, 15, 104, 17], "colour": "#1F2A44"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "known limit: the page is one colour: a ring outside a control but on a grey card is held to a border's rule, and fails against the navy control",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [4, 4, 212, 72], "colour": "#E0E0E0"}, {"rect": [12, 12, 204, 64], "colour": "#1F2A44"}],
+      "after": [{"rect": [4, 4, 212, 72], "colour": "#E0E0E0"}, {"rect": [12, 12, 204, 64], "colour": "#1F2A44"}, {"rect": [9, 9, 207, 67], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "none", "onPage": false}
+    }
+  ]
+}
+"""
 
 /**
  * A USB keyboard registered with the shell's `uinput` tool for as long as
@@ -387,6 +781,25 @@ class V14FocusIndicatorsTest : TechniqueTest("V14") {
         assertEquals(4.54, contrast(0x767676, 0xFFFFFF), 0.01)
     }
 
+    /** The measure on its cases, the same list as the widget tests and the web spec run. */
+    @Test
+    fun theMeasuresCases() {
+        val cases = JSONObject(CASES).getJSONArray("cases")
+        val problems = mutableListOf<String>()
+        var run = 0
+        for (i in 0 until cases.length()) {
+            val c = cases.getJSONObject(i)
+            val scales = c.getJSONArray("scales")
+            for (k in 0 until scales.length()) {
+                val s = scales.getInt(k)
+                run++
+                checkCase(c, s).forEach { problems.add("${c.getString("name")} (pixel ratio $s): $it") }
+            }
+        }
+        Log.i("V14", "android the measure: $run cases run, ${problems.size} problems")
+        assertTrue(problems.joinToString("\n"), problems.isEmpty())
+    }
+
     @Test
     fun everyControlHasItsNameAndClass() {
         for ((slug, controls) in CONTROLS) {
@@ -420,7 +833,7 @@ class V14FocusIndicatorsTest : TechniqueTest("V14") {
                 lastBefore = settled(region(id))
                 val ind = measureAfterTab(slug, c, id, lastBefore)
                 Log.i("V14", "android $slug $c: $ind")
-                assertTrue("$slug $c: $ind", ind.strong > area(150))
+                assertTrue("$slug $c: $ind", ind.strong > area(OUR_MINIMUM))
             }
             // Off again: Tab on from the last control, and its region is as
             // it was before it had focus.
@@ -513,7 +926,7 @@ class V14FocusIndicatorsTest : TechniqueTest("V14") {
         Thread.sleep(700)
         val on = compare(before, f1, shot(), r)
         Log.i("V14", "android FL-433 after Shift from the registered keyboard: $on")
-        assertTrue("$on", on.strong > area(150))
+        assertTrue("$on", on.strong > area(OUR_MINIMUM))
     }
 
     /** How much of trail [i] is in sight: inside the screen and the list, and not under the notice. */

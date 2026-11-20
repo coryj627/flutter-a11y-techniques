@@ -87,7 +87,7 @@ cite alongside the probe's, are in `widget_tests.txt`, `web_tests.txt`,
 `ios_tests.txt`, and `android_tests.txt` (the last at the emulator's own
 size and at CI's 320 by 640 at 160 dpi).
 
-## Two measures
+## Three measures
 
 The first analysis, `analyse.py.txt`, reported the commonest changed
 colour and its contrast against the page and against the colour it
@@ -103,8 +103,73 @@ the page was, against the colours on both sides of it if it is drawn on
 the control. `analyse2.py.txt` applies that measure to the widget-test
 captures again, rendered at a device pixel ratio of 3 so that 1 pixel
 lines are flat bands (`probe_test.dart.txt` with `V14_DPR=3`); its output
-is `flutter_test_measure2.txt`, which is what the verdicts rest on. The
-colours below are the same in both; what changed is which parts count.
+is `flutter_test_measure2.txt`. The colours below are the same in both;
+what changed is which parts count.
+
+The second review found two faults in that second measure. A band on the
+control was taken only against the exact colours that made up a fifth or
+more of what was next to it, so a border round an inside of three
+near-identical shades was taken against none of them and passed at 3.79:1
+against the page; and a pixel was flat only with a neighbour of its
+colour both across and down, so a one pixel line had no pixel that
+counted. The measure was changed again (the V14 spec, section 6, which
+also lists what it is known not to do): a one pixel line is solid and an
+anti-aliased pixel is told by its colour, between the colours either
+side of it; bands are connected areas; and each band is taken against its
+neighbours where they are, from every pixel of its edge, the least
+contrasting deciding. `analyse3.py.txt` applies it, step for step as the
+tests do (it also runs the measure's cases), to new widget-test captures
+at a device pixel ratio of 3 (`probe_test.dart.txt` with `V14_DPR=3`,
+run again); its output is `flutter_test_measure3.txt`, which is what the
+verdicts rest on now. Each band is printed with its lowest contrast and
+with its contrast against its commonest neighbours; the figures below are
+against the commonest, and "Measured again", below, says where the
+lowest differs.
+
+### Measured again
+
+Against its commonest neighbour, every figure below is what the second
+measure gave, to the last digit, but one: the dark-mode
+`CupertinoCheckbox` (c4), whose ring of shades is now one band,
+`#424A5D` the commonest, 1.31:1 and 1.68:1 against the shades next to it
+(1.44:1 the lowest at its edge), where the second measure gave its
+largest bands as 1.63:1 to 1.91:1. It fails either way.
+
+Which fixtures have strong pixels changed in one place: the
+`FilledButton`'s tint (m2), which the second measure counted as strong
+(4.80:1 against the page and 5.05:1 against the label, the colours that
+made up a fifth or more of what was next to it), and the third does not:
+taken against every neighbour, its lowest is 2.90:1, against a pale
+anti-aliased pixel at its edge, `#C1C3DA` (dark 1.38:1). The tint is a change of
+background within the container, which section 3 of the spec already
+treats as out of 1.4.11's scope, so no verdict rests on it. Every other
+fixture that had strong pixels has them, every one that had none has
+none (but m13, below), and the parts that meet 3:1 are the same parts:
+the unchecked checkbox's border and the radio's ring, 13.25:1 against
+the halo, dark 11.38:1; the switch's thumb, 5.95:1, dark 5.50:1; the
+outlined button's outline, 5.32:1 against its tint; the text fields'
+borders; the rings of w2, w3, x3, and x5, x4's overlay, and the slider's
+ring in light mode. The switch's track, tinted, is no longer counted
+with its thumb, nor in dark mode a band of the text fields (m6, m7), as
+each touches something under 3:1. The lowest figures sit a little under the commonest, where an edge
+pixel of a band is a shade lighter or darker than its commonest colour:
+12.67:1 for the radio's ring, 5.36:1 for the switch's thumb, 1.07:1 for
+the checked checkbox's halo.
+
+A walk from a band's edge stops, with no neighbour, at a blurred pixel
+that is not between the pixels before and after it, which is where it
+runs along an anti-aliased edge rather than across it; before that rule,
+such walks along the start of a rounded corner took a pixel of the
+corner's anti-aliasing as a neighbour, and the lowest figures of w2 and
+w3 (3.85:1), x5 (18.13:1), and the `FilledButton`'s tint (1.37:1) came
+from those pixels.
+
+One thing is new: on the `InkWell` card (m13) the tint behind the label
+also changes the label's anti-aliased pixels, and two bands of them, 80
+pixels in all, pass as solid and are 3.17:1 against the glyphs; the spec
+lists that among the measure's known limits. Android and iOS give the
+same output for every fixture but the three text fields (c5, m6, m7), as
+before.
 
 ## What is drawn
 
@@ -129,7 +194,8 @@ section).
   also turns from `outline` to `primary` (round 2 on Android, where the
   tint was off: 1657 pixels of `#515B92`).
 - `Checkbox` (m8, m9), `Radio` (m11), measured again
-  (`flutter_test_measure2.txt`): unchecked or not selected, the halo and
+  (`flutter_test_measure2.txt`, and the same in
+  `flutter_test_measure3.txt`): unchecked or not selected, the halo and
   a border or ring that darkens to `#1B1B21`, 13.25:1 against the halo
   next to it (dark `#E4E1E9`, 11.38:1); checked (m9), the halo alone,
   `#EAE8F4`, 1.15:1 on the page (dark 1.22:1). The earlier description

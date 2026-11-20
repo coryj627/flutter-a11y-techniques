@@ -2670,7 +2670,7 @@ yet), **Fixed in x.y** (verified on that version).
   the web, on iOS, and on Android (with a `uinput` keyboard), written to
   fail when the halo reaches 1.5:1 or anything focus draws reaches 3:1.
   The other three measured in the V14 probe only, in widget tests at a
-  device pixel ratio of 3 (`flutter_test_measure2.txt`, fixtures m4, m5,
+  device pixel ratio of 3 (`flutter_test_measure3.txt`, fixtures m4, m5,
   m12); the app's Back button, an `IconButton`, is measured as the
   positive control of V14 `bad-indicator-removed` on every layer, with the
   same result. Framework source read: `material/checkbox.dart`
@@ -2721,7 +2721,7 @@ yet), **Fixed in x.y** (verified on that version).
   asserted by V14 `bad-cupertino-ring` in the widget tests (light under
   3:1, dark 3:1 or more), on the web, on iOS, and on Android. The switch
   and the checkbox measured in the V14 probe only (widget tests;
-  `flutter_test_measure2.txt`, fixtures c3 and c4, and the earlier
+  `flutter_test_measure3.txt`, fixtures c3 and c4, and the earlier
   probe's `flutter_test.txt`, `web.txt`, and `ios.txt`). Framework source
   read: `cupertino/button.dart` (the ring is the control's colour at an
   opacity of 0.80, its HSL lightness set to 0.69 and saturation to 0.835:
@@ -2737,7 +2737,7 @@ yet), **Fixed in x.y** (verified on that version).
   | `CupertinoButton`, default blue | `#8ABCF5`, 1.89:1, fails | `#5C8EC6`, 5.42:1, passes |
   | `CupertinoButton.filled` in this app (primary `#515B92`) | `#8A9AF5`, 2.49:1, fails | `#5C69C6`, 3.79:1, passes |
   | `CupertinoSwitch` | `#8AF3A5`, 1.29:1, fails | `#5CC577`, 8.58:1, passes |
-  | `CupertinoCheckbox` | `#8ABCF5`, 1.89:1, fails | a ring of shades over the box's edge, `#424A5D` to `#525C74`; none reaches 3:1 against what is next to it (the largest bands 1.63:1 to 1.91:1), fails |
+  | `CupertinoCheckbox` | `#8ABCF5`, 1.89:1, fails | a ring of shades over the box's edge, `#424A5D` the commonest; 1.31:1 and 1.68:1 against the shades next to it, 1.44:1 the lowest at its edge (with the measure before the second review, 1.63:1 to 1.91:1 for its largest bands), fails |
 
   Nothing else changes with focus on any of them. The dark-mode checkbox
   was measured in the widget tests only, not on a device.
@@ -2863,7 +2863,7 @@ yet), **Fixed in x.y** (verified on that version).
 **Material's default focus indicator on a control with a container, a border, or a thumb of its own is a faint tint or halo beside a change that does meet 3:1, or a tint of the container; not a 1.4.11 failure as written.**
 
 - Status: Confirmed, Flutter 3.47.5. Measured in the V14 probe in widget
-  tests at a device pixel ratio of 3 (`flutter_test_measure2.txt`) and,
+  tests at a device pixel ratio of 3 (`flutter_test_measure3.txt`) and,
   for the same fixtures, in the earlier probe on the web and on iOS, with
   the same colours; on Android with a `uinput` keyboard for the
   `ElevatedButton` and the unchecked `Checkbox` (`android_round6.txt`).

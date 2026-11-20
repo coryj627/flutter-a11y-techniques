@@ -256,36 +256,130 @@ How focus visibility is asserted, on every layer, with the same rules
    differs in one capture only is unstable (a caret, an animation still
    running) and is not counted.
 3. Every changed pixel is part of the indicator, whatever it replaced:
-   1.4.11 does not compare the states. The indicator is split into bands,
-   one per flat colour (pixels that share their colour with a horizontal
-   and a vertical neighbour; anti-aliased edges are left out). Each band
-   is taken against the colours next to it in `f1`, read across at most
-   four pixels of anti-aliased edge. A band drawn where the page was (`u`
-   there is the page's colour, the commonest along the area's edge) is
-   outside the control and must be 3:1 against the page; a band drawn on
-   the control, inside it or on its border, must be 3:1 against every
-   colour that makes up a fifth or more of what is next to it. Those are
-   Understanding 1.4.11's three cases. A pixel in a band that meets its
-   rule is strong. Colours are read from the pixels and the ratio is
-   WCAG's relative luminance formula, checked against known pairs.
-4. What replaced what is used once more: if half or more of the colours
+   1.4.11 does not compare the states. A pixel of `f1` is solid if it has
+   a neighbour (across or down) of its own colour, within 4 in every
+   channel, and is not anti-aliasing: a pixel whose colour lies between
+   the colours either side of it, across, down, or on a diagonal, where
+   those two differ. A one pixel line is solid; the blended edge of a
+   shape is not. Solid changed pixels are joined into bands, each a
+   connected area whose neighbouring pixels are within 4 of each other (so
+   a band may be a gradient). A band is on the page if most of it was
+   drawn where the page was before focus (the page's colour is the
+   commonest along the area's top and bottom edges in `u`), and on the
+   control if not.
+4. Each band is taken against its neighbours where they are: from every
+   pixel on the band's edge, outward, across pixels of that pixel's own
+   colour and at most 4 pixels of an anti-aliased edge being crossed (each
+   between the pixels before and after it on the way), to the first solid
+   pixel; if all 4 are blurred, the fourth is the neighbour unless focus
+   drew it, so a neighbour is not passed over for being blurred. A walk
+   that meets a blurred pixel that is not between them is going along an
+   edge, not across it (at the start of a rounded corner, say), and finds
+   nothing there; the walks that cross that edge find what is beyond it. A band on the control, inside it or on its border, must
+   be 3:1 against every neighbour found, of whatever colour and however
+   few pixels of its edge it touches (Understanding 1.4.11: an indicator
+   inside the component contrasts with the colours inside; one on its
+   border, with both adjacent colours). A band on the page, outside the
+   control, must be 3:1 against the background (Understanding: an
+   indicator outside contrasts with the background the component is on):
+   its walk goes on across the rest of what focus drew, and a neighbour
+   that was not the page before focus (the control itself) is not one it
+   must contrast with; if it finds none, the page. A band's contrast is
+   the lowest against any neighbour it must contrast with, so the least
+   contrasting part decides (Understanding's test of a gradient or of
+   several colours: "choose the least contrasting area"). The pixels of a
+   band of 3:1 or more are strong. Colours are read from the pixels and
+   the ratio is WCAG's relative luminance formula, checked against known
+   pairs. Each band is reported with that lowest figure and with its
+   contrast against its commonest neighbour, which is the figure quoted
+   in section 7 and in the technique doc.
+5. What replaced what is used once more: if half or more of the colours
    the changed pixels took were there before among them, the drawing
    moved (a label, an icon, or an edge shifted) and the test fails, as no
    indicator was measured.
-5. A good control passes if it has more than 150 strong pixels per square
-   logical pixel of the screen's scale (a line all round a control is
-   several hundred). A bad halo or ring must have more than 500 indicator
-   pixels, a largest band drawn on the page and under the limit, and
-   almost no strong pixels (under 2%). "Nothing drawn" is zero changed and
-   zero unstable pixels.
+6. The contrast measure has no size in it: 1.4.11 sets none (2.4.13, AAA,
+   does). The tests add a size of their own, which is not WCAG's: a good
+   control passes if it has more than 150 strong pixels per square
+   logical pixel of the screen's scale (about a line one pixel wide round
+   a 40 by 40 control). A bad halo or ring must have more than 500
+   indicator pixels, a largest band drawn on the page and under the
+   limit, and almost no strong pixels (under 2%). "Nothing drawn" is zero
+   changed and zero unstable pixels.
 
-The measure has tests of its own, in the widget tests and the web spec,
-on pictures made up for them: Understanding 1.4.11's figures (an inner
-yellow ring on a blue button passes, an outer yellow ring on white fails,
-an outer green one passes, the button's edge turning green fails, an
-inner white border inside a black one passes and a dark green one fails),
-a square moved four pixels (fails as moved, though its new edge is
-21:1), nothing drawn, and a mark in one capture only (unstable).
+The measure is the test of these examples, not a general check of
+conformance. It has cases of its own, on pictures made up for them, in
+one file, `test/techniques/v14_focus_indicators_measure_cases.json`, which
+the widget tests, the web spec, the iOS UI tests, and the probe analyser
+run, and which the Android test holds a copy of (the widget tests check
+the copy is the same): 31 cases, 57 runs at pixel ratios 1, 2, and 3.
+
+- Understanding 1.4.11's figures: an inner yellow ring on a blue button
+  passes (3.55:1 against the blue), an outer yellow ring on white fails
+  (1.07:1), an outer green one passes (5.14:1), the button's edge turning
+  green fails, an inner white border inside a black one passes and a dark
+  green one fails.
+- What could pass wrongly (an indicator under 3:1 against a real
+  neighbour), each expected to fail: the first review's reproduction, a 3
+  pixel `#4B933A` border round an inside of three near-identical shades
+  (in thirds, dithered across, dithered down), which the measure before
+  passed at 3.79:1 against the page; an 8 pixel border of the same green;
+  a grey ring on a button shaded from white to blue (4.2:1 or more near
+  the white end, 1.24:1 near the blue); a black ring inside a navy button
+  (1.47:1); a faint halo round a black box (the box's contrast is not the
+  halo's); a faint tint inside a black ring on the page (the ring's
+  contrast is not the tint's); and a square moved four pixels (moved).
+- What could fail wrongly (an indicator of 3:1 or more against every
+  neighbour), each expected to pass: a one pixel black underline and a
+  one pixel black outline, at pixel ratios 1, 2, and 3, which the measure
+  before left out entirely (a one pixel line had no pixel it counted); a
+  black ring touching a navy button, on the page; a black border made
+  thicker in the same colour; a black ring with anti-aliased grey edges;
+  a black ring on the shaded button; an 8 pixel black border on blue
+  (5.50:1 against the blue); and a black line on a button's top edge
+  where the edge's anti-aliased ramp runs on from its end (the walk along
+  the ramp finds nothing; before that rule it took a pixel of the ramp as
+  a neighbour and failed the line, and in the probe it brought a
+  `FilledButton`'s tint down to 1.37:1). A two-colour ring on the page passes on its black part
+  only.
+- Nothing drawn, and a mark in one capture only (unstable).
+
+Known limits (the first four each with a case that shows what the
+measure does):
+
+- A change of the control's own background is measured like any other
+  band, though Understanding 1.4.11 leaves it out of scope: a button
+  whose fill darkens to 5.8:1 against the page and its label passes. In
+  `good-material` the `FilledButton`'s own tint is counted so on the web
+  and on Android at 160 dpi (3.40:1 against the ring, 5.05:1 against the
+  label), and not in the widget tests, on iOS, or on Android at 420 dpi,
+  where an anti-aliased pixel at its edge is under 3:1; the ring outside
+  it passes on every layer either way. The verdicts in
+  section 3 on Material's tints do not rest on the measure for that
+  reason.
+- At a pixel ratio of 1, a one pixel strip whose colour lies between the
+  colours on either side of it is read as anti-aliasing: a black ring
+  with such a strip (2.84:1) inside it is taken against the blue beyond
+  and passes. At a pixel ratio of 2 the strip is two pixels wide, is
+  measured, and the ring fails.
+- The least contrasting neighbour decides a whole band: an inner ring
+  that touches a small navy mark for 4 pixels fails all round. This one
+  leans to failing an indicator; the two above lean to passing one.
+- The page is one colour: an indicator outside a control but over a card
+  of another colour is held to a border's rule, against the control as
+  well, and can fail where 1.4.11 asks only for contrast with the card.
+- A gradient band is taken pixel by pixel against what is next to each
+  pixel; a soft glow whose shades each differ by more than 4 from the
+  next is many small bands, and its blurred edge is left out.
+- A part of the control within 12 of the page's colour counts as the
+  page.
+- A walk that runs along an anti-aliased ramp steep enough that each of
+  its pixels lies between the next and the one before (more than 6 a
+  channel a pixel) is read as crossing a blurred edge, and after 4 pixels
+  takes one of the ramp as a neighbour.
+- When a tint changes behind a label, the label's anti-aliased pixels
+  change too, and those that pass as solid are measured against the
+  glyphs: on the probe's `InkWell` card, 80 pixels at 3.17:1, under the
+  tests' minimum.
 
 What would make the device tests fail: an unchanged image (no indicator),
 a control that moved, a drawing that moved, a change elsewhere than round
@@ -302,10 +396,10 @@ checkbox back as it was).
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640. Every control: its name and role (checkbox, switch, button), not focused at first, reached by Tab in order after Back (each stop named by the node that is focused), and used by Space. Pixels, from the app's own layer tree at a device pixel ratio of 1, in light and dark: each good control has strong pixels, does not move, and the last one's area returns to `u` when focus moves on; `bad-indicator-removed` changes nothing, after Back, the positive control, has an indicator; `bad-checked-checkbox`'s halo is on the page and under 1.5:1, with no strong pixels, in both themes, and an unchecked `Checkbox` on its own has a border band of 3:1 or more beside its halo; `bad-cupertino-ring`'s ring is on the page and under 3:1 in light mode, and passes in dark. The measure's own tests, above. 2.4.11: at each of the six stops, how much of the focused trail is inside the scrolling box and not under the notice: all of it in `good-notice-below`; in `bad-notice-over-list` trails 1 and 2 all (the positive control), trails 4 to 6 none, and the pixels where trail 6 is are only the notice's colours. A pinned `SliverAppBar` keeps every button below it as Shift+Tab goes up. The highlight mode: a touch hides `good-widgets`' ring with focus where it was, and Shift alone brings it back |
-| L3 web | The same: role, name, Tab order by `document.activeElement`, Space; the focused element is inside one with `filter: opacity(0%)`, so the browser's outline is not seen; the same pixel measure on Chromium's screenshots, and its own tests; the same 2.4.11 measure from the elements' rectangles |
-| L3 Android | Name and class (`CheckBox`, `Switch`, `Button`) through UI Automator; stops by `isFocused`, with Tab reaching every control of every example. Keys from a keyboard registered through `uinput` (section 7). The same pixel measure on `UiAutomation.takeScreenshot`, for every example as in the widget tests, with Back as the positive control for `bad-indicator-removed`. FL-433: in one launch, Tab from `input keyevent` puts focus on `good-widgets`' card with nothing drawn, and Shift alone from the registered keyboard then draws its ring. The same 2.4.11 measure from `getBoundsInScreen`, with a trail scrolled out of its list found by scrolling the list itself. Run at the emulator's own size and at 320 by 640 at 160 dpi |
-| L3 iOS | Label and type (a checkbox is a switch to XCUITest, FL-035); every stop shown by Space and the "Last used" line; the same pixel measure on `XCUIScreen` screenshots drawn into sRGB, with each good control's area as it was once Tab moves on; the same 2.4.11 measure from the elements' frames |
+| L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640. Every control: its name and role (checkbox, switch, button), not focused at first, reached by Tab in order after Back (each stop named by the node that is focused), and used by Space. Pixels, from the app's own layer tree at a device pixel ratio of 1, in light and dark: each good control has strong pixels, does not move, and the last one's area returns to `u` when focus moves on; `bad-indicator-removed` changes nothing, after Back, the positive control, has an indicator; `bad-checked-checkbox`'s halo is on the page and under 1.5:1, with no strong pixels, in both themes, and an unchecked `Checkbox` on its own has a border band of 3:1 or more beside its halo; `bad-cupertino-ring`'s ring is on the page and under 3:1 in light mode, and passes in dark. The measure's cases, above, and that the Android test's copy of them is the same. 2.4.11: at each of the six stops, how much of the focused trail is inside the scrolling box and not under the notice: all of it in `good-notice-below`; in `bad-notice-over-list` trails 1 and 2 all (the positive control), trails 4 to 6 none, and the pixels where trail 6 is are only the notice's colours. A pinned `SliverAppBar` keeps every button below it as Shift+Tab goes up. The highlight mode: a touch hides `good-widgets`' ring with focus where it was, and Shift alone brings it back |
+| L3 web | The same: role, name, Tab order by `document.activeElement`, Space; the focused element is inside one with `filter: opacity(0%)`, so the browser's outline is not seen; the same pixel measure on Chromium's screenshots, and the measure's cases; the same 2.4.11 measure from the elements' rectangles |
+| L3 Android | Name and class (`CheckBox`, `Switch`, `Button`) through UI Automator; stops by `isFocused`, with Tab reaching every control of every example. Keys from a keyboard registered through `uinput` (section 7). The same pixel measure on `UiAutomation.takeScreenshot`, for every example as in the widget tests, with Back as the positive control for `bad-indicator-removed`, and the measure's cases from the test's copy of the case file. FL-433: in one launch, Tab from `input keyevent` puts focus on `good-widgets`' card with nothing drawn, and Shift alone from the registered keyboard then draws its ring. The same 2.4.11 measure from `getBoundsInScreen`, with a trail scrolled out of its list found by scrolling the list itself. Run at the emulator's own size and at 320 by 640 at 160 dpi |
+| L3 iOS | Label and type (a checkbox is a switch to XCUITest, FL-035); every stop shown by Space and the "Last used" line; the same pixel measure on `XCUIScreen` screenshots drawn into sRGB, with each good control's area as it was once Tab moves on, and the measure's cases, read from the case file in the repository; the same 2.4.11 measure from the elements' frames |
 | L4 TalkBack | Each control's name and role; a trail under the notice is read like any other |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the "Last used" line |
 | L4 VoiceOver web | Every stop between the "Example" heading and the "Last used" line |
@@ -329,7 +423,8 @@ read from pixels; "read in the source" marks what was not measured.
   test), so the browser's outline is never what is seen.
 - **Material's defaults** (probe fixtures m1 to m15, measured again with
   the measure of section 6 at a device pixel ratio of 3,
-  `flutter_test_measure2.txt`): most controls tint their own background,
+  `flutter_test_measure3.txt`; figures against each part's commonest
+  neighbour): most controls tint their own background,
   or the page round them, with a tenth of the foreground colour, a change
   of 1.14:1 to 1.32:1 in light mode and 1.11:1 to 1.45:1 in dark.
   Checkboxes, radio buttons, and switches add a halo outside the control
@@ -349,13 +444,14 @@ read from pixels; "read in the source" marks what was not measured.
   with the default blue 1.89:1 in light mode and 5.42:1 in dark, and in
   this app, whose Cupertino primary colour is the Material theme's, 2.49:1
   and 3.79:1; `CupertinoSwitch` 1.29:1 and 8.58:1; `CupertinoCheckbox`
-  1.89:1 in light mode, and in dark a ring of shades over the box's edge
-  of which none reaches 3:1 against what is next to it (1.63:1 to 1.91:1
-  for its largest bands; widget tests only). A `CupertinoTextField`
+  1.89:1 in light mode, and in dark a ring of shades over the box's edge,
+  1.31:1 and 1.68:1 against the shades next to it (1.44:1 the lowest;
+  widget tests only). A `CupertinoTextField`
   draws nothing but its caret ([FL-435](../flutter-limitations.md#fl-435)).
 - **What the examples measured**, light mode on every layer and dark mode
   in the widget tests (the strong part, with its colour and its contrast
-  against what it must contrast with):
+  against its commonest neighbour among those it must contrast with; the
+  logs give each band's lowest as well, in `docs/evidence/probes/v14`):
   - `good-material`: the tile's ring `#1B1B21`, 16.30:1 (dark `#E4E1E9`,
     14.35:1); its own tint is the commonest change, at 1.32:1, where
     highlights are on. The button's ring the same colours.

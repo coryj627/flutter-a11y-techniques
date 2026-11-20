@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'dart:ui' show CheckedState, Tristate;
@@ -16,10 +18,10 @@ import '../support/examples.dart';
 /// What a focus indicator is, here, is read from the pixels Flutter draws:
 /// the screen is captured before a control has focus and twice after Tab
 /// has put focus on it, and the indicator is every pixel round the control
-/// that changed in both captures, is the same in both, and is not now the
-/// page's colour. Its contrast is taken against the colours next to it in
-/// the focused capture (see [_compare]), never from the theme. The other
-/// layers do the same with the platform's own screenshots.
+/// that changed in both captures and is the same in both. Its contrast is
+/// taken against the colours next to it in the focused capture (see
+/// [_compare]), never from the theme. The other layers do the same with the
+/// platform's own screenshots.
 final _open = exampleOpener(v14FocusIndicators);
 
 const _good = [
@@ -160,26 +162,43 @@ double _ratio(int a, int b) {
 
 String _hex(int c) => '#${c.toRadixString(16).padLeft(6, '0').toUpperCase()}';
 
-/// One colour of what focus drew, and where: on the page (where the page
-/// was before focus) or on the control.
+/// One band of what focus drew: a connected area of one flat colour (or of
+/// shades each within [_flat] of the next), drawn mostly where the page was
+/// before focus or mostly on the control.
 class _Band {
-  _Band(this.colour, this.onPage, this.pixels, this.contrast, this.against);
+  _Band(
+    this.colour,
+    this.onPage,
+    this.pixels,
+    this.contrast,
+    this.lowest,
+    this.next,
+  );
 
+  /// Its commonest colour.
   final int colour;
   final bool onPage;
   final int pixels;
 
-  /// Its contrast with what it must contrast with (see [_compare]).
+  /// Its contrast: the lowest against any neighbour it must contrast with
+  /// (see [_compare]).
   final double contrast;
 
-  /// The colours it was measured against.
-  final List<int> against;
+  /// The neighbour that gave [contrast].
+  final int lowest;
+
+  /// Its commonest neighbours, by how many of its edge's pixels touch
+  /// them, with their counts.
+  final List<(int, int)> next;
 
   @override
-  String toString() =>
-      '$pixels px ${_hex(colour)} ${onPage ? 'on the page' : 'on the control'} '
-      '${contrast.toStringAsFixed(2)} against '
-      '${against.map(_hex).join(', ')}';
+  String toString() {
+    final total = next.fold(0, (s, n) => s + n.$2);
+    return '$pixels px ${_hex(colour)} '
+        '${onPage ? 'on the page' : 'on the control'} '
+        '${contrast.toStringAsFixed(2)} against ${_hex(lowest)}; next to it '
+        '${next.take(2).map((n) => '${_hex(n.$1)} ${_ratio(colour, n.$1).toStringAsFixed(2)} ${100 * n.$2 ~/ math.max(total, 1)}%').join(', ')}';
+  }
 }
 
 /// What focus drew in a region.
@@ -188,7 +207,6 @@ class _Indicator {
     required this.changed,
     required this.unstable,
     required this.swapped,
-    required this.indicator,
     required this.strong,
     required this.page,
     required this.bands,
@@ -205,18 +223,21 @@ class _Indicator {
   final int swapped;
 
   /// Every changed pixel, whatever it replaced: what focus drew.
-  final int indicator;
+  int get indicator => changed;
 
-  /// Indicator pixels in bands of 3:1 or more against what they must
-  /// contrast with.
+  /// Indicator pixels in bands of 3:1 or more against every neighbour they
+  /// must contrast with.
   final int strong;
 
   /// The page's colour: the commonest along the edge of the region, before
   /// focus.
   final int page;
 
-  /// The bands of flat colour in what was drawn, largest first.
+  /// The bands of what was drawn, largest first.
   final List<_Band> bands;
+
+  /// Indicator pixels in bands: all but anti-aliased edges.
+  int get flat => bands.fold(0, (s, b) => s + b.pixels);
 
   /// Whether the drawing moved rather than focus adding to it: half or more
   /// of the colours the changed pixels took were there before, among the
@@ -229,8 +250,8 @@ class _Indicator {
   @override
   String toString() =>
       'changed $changed, unstable $unstable, swapped $swapped, '
-      'indicator $indicator, 3:1 or more: $strong, page ${_hex(page)}; '
-      '${bands.take(3).join('; ')}';
+      'indicator $changed, in bands $flat, 3:1 or more: $strong, '
+      'page ${_hex(page)}; ${bands.take(3).join('; ')}';
 }
 
 /// A change of a channel by this much or less is no change.
@@ -239,62 +260,71 @@ const _threshold = 12;
 /// Two colours are one flat colour if no channel differs by more than this.
 const _flat = 4;
 
+/// An anti-aliased edge is read across at most this many pixels.
+const _blur = 4;
+
+/// How many strong pixels, at a device pixel ratio of 1, a good control's
+/// indicator must have in these tests: about a line one pixel wide round a
+/// 40 by 40 control. This is the tests' own threshold, kept apart from the
+/// contrast measure: 1.4.11 sets no size (2.4.13, AAA, does).
+const _ourMinimum = 150;
+
 /// What focus drew in [region], given the capture before focus [u] and two
-/// after it, [f1] and [f2].
+/// after it, [f1] and [f2]. The measure of the V14 spec, section 6, which
+/// lists what it is known not to do.
 ///
 /// A pixel has changed if it differs from [u] in both and [f1] and [f2]
 /// agree. Every changed pixel is part of the indicator, whatever it
 /// replaced: Understanding 1.4.11 does not compare the focused and
 /// unfocused states. (What replaced what is used once, to tell a drawing
-/// that moved from one that focus added to: see [_Indicator.moved].) The indicator is split into
-/// bands, one per flat colour (pixels that share their colour with a
-/// horizontal and a vertical neighbour; anti-aliased edges are left out),
-/// and each band is taken against the colours adjacent to it in [f1], read
-/// across at most four pixels of anti-aliased edge. A band drawn where the
-/// page was, outside the control, must contrast with the page; a band drawn
-/// on the control, inside it or on its border, must contrast with every
-/// colour that makes up a fifth or more of what is next to it (with the
-/// page, if nothing does). Those are the three cases of Understanding
-/// 1.4.11's section on focus indicators.
+/// that moved from one that focus added to: see [_Indicator.moved].)
+///
+/// A pixel of [f1] is solid if it has a 4-neighbour of its colour (within
+/// [_flat]) and is not anti-aliasing: a pixel whose colour lies between the
+/// colours either side of it, across or down or on a diagonal, where those
+/// two differ. A one pixel line is solid. Solid changed pixels are joined
+/// into bands: 4-connected, each within [_flat] of the next. A band is on
+/// the page if most of it was drawn where the page was before focus, and
+/// on the control if not.
+///
+/// Each band is taken against its neighbours, spatially: from every pixel
+/// on its edge, outward, across pixels of the edge pixel's own colour and
+/// at most [_blur] pixels of an anti-aliased edge being crossed (each
+/// between the pixels before and after it on the way), to the first solid
+/// pixel (or the last of those [_blur], so that no neighbour is passed over
+/// for being blurred, unless focus drew it). A walk that meets a blurred
+/// pixel that is not between them is going along an edge, not across it,
+/// and finds nothing. A band on the control, inside it
+/// or on its border, must contrast with every neighbour found, whatever it
+/// is (Understanding: both adjacent colours). A band on the page, outside
+/// the control, must contrast with the background: the walk goes on across
+/// the rest of what focus drew, and a neighbour that was not the page
+/// before focus (the control itself) is not one it must contrast with. A
+/// band's
+/// contrast is its lowest against any of them (with none, against the
+/// page): the least contrasting part decides. Its pixels are strong if that
+/// is 3:1 or more. The page's colour is the commonest along the region's
+/// top and bottom edges in [u].
 _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
   final l = math.max(0, region.left.floor());
   final t = math.max(0, region.top.floor());
   final r = math.min(u.width, region.right.ceil());
   final b = math.min(u.height, region.bottom.ceil());
+  final w = r - l, h = b - t;
   bool inside(int x, int y) => x >= l && x < r && y >= t && y < b;
+  int at(int x, int y) => (y - t) * w + (x - l);
   final edge = <int, int>{};
   for (var x = l; x < r; x++) {
     for (final y in [t, t + 1, b - 2, b - 1]) {
       edge.update(u.at(x, y), (n) => n + 1, ifAbsent: () => 1);
     }
   }
-  final page =
-      (edge.entries.toList()..sort((a, b) => b.value - a.value)).first.key;
-  bool same(int x, int y, int c) =>
-      inside(x, y) && _channelDiff(f1.at(x, y), c) <= _flat;
-  bool solid(int x, int y) {
-    final c = f1.at(x, y);
-    return (same(x - 1, y, c) || same(x + 1, y, c)) &&
-        (same(x, y - 1, c) || same(x, y + 1, c));
+  var page = 0, most = -1;
+  for (final MapEntry(key: c, value: n) in edge.entries) {
+    if (n > most || (n == most && c < page)) (page, most) = (c, n);
   }
-
-  int? across(int x, int y, int dx, int dy, int colour) {
-    while (same(x + dx, y + dy, colour)) {
-      x += dx;
-      y += dy;
-    }
-    for (var i = 0; i < 4; i++) {
-      x += dx;
-      y += dy;
-      if (!inside(x, y)) return null;
-      final c = f1.at(x, y);
-      if (_channelDiff(c, colour) > _threshold && solid(x, y)) return c;
-    }
-    return null;
-  }
-
-  var changed = 0, unstable = 0, indicator = 0;
-  final groups = <(int, bool), List<int>>{};
+  final isChanged = List<bool>.filled(w * h, false);
+  var changed = 0, unstable = 0;
   final newColours = <int, int>{}, oldColours = <int, int>{};
   for (var y = t; y < b; y++) {
     for (var x = l; x < r; x++) {
@@ -303,42 +333,149 @@ _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
       final d2 = _channelDiff(a, q) > _threshold;
       if (d1 && d2 && _channelDiff(p, q) <= _threshold) {
         changed++;
-        indicator++;
+        isChanged[at(x, y)] = true;
         newColours.update(p, (n) => n + 1, ifAbsent: () => 1);
         oldColours.update(a, (n) => n + 1, ifAbsent: () => 1);
-        if (!solid(x, y)) continue;
-        final onPage = _channelDiff(a, page) <= _threshold;
-        groups.putIfAbsent((p, onPage), () => []).add(y * u.width + x);
       } else if (d1 || d2) {
         unstable++;
       }
     }
   }
-  final bands = <_Band>[];
-  var strong = 0;
-  for (final MapEntry(key: (colour, onPage), value: pixels) in groups.entries) {
-    final next = <int, int>{};
-    for (final i in pixels) {
-      final x = i % u.width, y = i ~/ u.width;
-      for (final (dx, dy) in [(1, 0), (-1, 0), (0, 1), (0, -1)]) {
-        final c = across(x, y, dx, dy, colour);
-        if (c != null) next.update(c, (n) => n + 1, ifAbsent: () => 1);
+  bool same(int x, int y, int c) =>
+      inside(x, y) && _channelDiff(f1.at(x, y), c) <= _flat;
+  bool between(int c, int a, int b) {
+    for (final s in [16, 8, 0]) {
+      final v = (c >> s) & 255, p = (a >> s) & 255, q = (b >> s) & 255;
+      if (v < math.min(p, q) - _flat || v > math.max(p, q) + _flat) {
+        return false;
       }
     }
-    final total = next.values.fold(0, (a, b) => a + b);
-    var against = [page];
-    if (!onPage && total > 0) {
-      final major = [
-        for (final MapEntry(key: c, value: n) in next.entries)
-          if (n * 5 >= total) c,
-      ];
-      if (major.isNotEmpty) against = major;
-    }
-    final contrast = against.map((c) => _ratio(colour, c)).reduce(math.min);
-    if (contrast >= 3) strong += pixels.length;
-    bands.add(_Band(colour, onPage, pixels.length, contrast, against));
+    return true;
   }
-  bands.sort((a, b) => b.pixels - a.pixels);
+
+  /// Whether (x, y) lies between the pixels either side of it along
+  /// (dx, dy): a pixel of an anti-aliased edge crossed that way.
+  bool blendAlong(int x, int y, int dx, int dy) {
+    if (!inside(x - dx, y - dy) || !inside(x + dx, y + dy)) return false;
+    final c = f1.at(x, y);
+    final a = f1.at(x - dx, y - dy), z = f1.at(x + dx, y + dy);
+    return _channelDiff(a, z) > _threshold &&
+        _channelDiff(c, a) > _flat &&
+        _channelDiff(c, z) > _flat &&
+        between(c, a, z);
+  }
+
+  bool blend(int x, int y) =>
+      blendAlong(x, y, 1, 0) ||
+      blendAlong(x, y, 0, 1) ||
+      blendAlong(x, y, 1, 1) ||
+      blendAlong(x, y, 1, -1);
+
+  final solidAt = List<bool>.filled(w * h, false);
+  for (var y = t; y < b; y++) {
+    for (var x = l; x < r; x++) {
+      final c = f1.at(x, y);
+      solidAt[at(x, y)] =
+          (same(x - 1, y, c) ||
+              same(x + 1, y, c) ||
+              same(x, y - 1, c) ||
+              same(x, y + 1, c)) &&
+          !blend(x, y);
+    }
+  }
+  bool onPageAt(int x, int y) => _channelDiff(u.at(x, y), page) <= _threshold;
+
+  /// The neighbour of the edge pixel (x, y) in the direction (dx, dy).
+  int? neighbour(int x, int y, int dx, int dy, bool onPage) {
+    final c0 = f1.at(x, y);
+    var blurred = 0;
+    while (true) {
+      x += dx;
+      y += dy;
+      if (!inside(x, y)) return null;
+      if (_channelDiff(f1.at(x, y), c0) <= _flat) continue;
+      if (onPage && isChanged[at(x, y)]) continue;
+      if (solidAt[at(x, y)]) {
+        return onPage && !onPageAt(x, y) ? null : f1.at(x, y);
+      }
+      // A blurred pixel not between those before and after it is the side
+      // of an edge that runs along the way, not one being crossed: the
+      // neighbour beyond that edge is found by the walks that cross it.
+      if (!blendAlong(x, y, dx, dy)) return null;
+      if (++blurred == _blur) {
+        // Blurred all the way: what is there, if focus did not draw it.
+        return isChanged[at(x, y)] || (onPage && !onPageAt(x, y))
+            ? null
+            : f1.at(x, y);
+      }
+    }
+  }
+
+  const steps = [(1, 0), (-1, 0), (0, 1), (0, -1)];
+  final bandOf = List<int>.filled(w * h, -1);
+  final bands = <(_Band, int)>[];
+  var strong = 0;
+  for (var y0 = t; y0 < b; y0++) {
+    for (var x0 = l; x0 < r; x0++) {
+      final i0 = at(x0, y0);
+      if (!isChanged[i0] || !solidAt[i0] || bandOf[i0] >= 0) continue;
+      final id = bands.length;
+      final pixels = <(int, int)>[(x0, y0)];
+      bandOf[i0] = id;
+      for (var k = 0; k < pixels.length; k++) {
+        final (x, y) = pixels[k];
+        for (final (dx, dy) in steps) {
+          final nx = x + dx, ny = y + dy;
+          if (!inside(nx, ny)) continue;
+          final j = at(nx, ny);
+          if (!isChanged[j] || !solidAt[j] || bandOf[j] >= 0) continue;
+          if (_channelDiff(f1.at(nx, ny), f1.at(x, y)) > _flat) continue;
+          bandOf[j] = id;
+          pixels.add((nx, ny));
+        }
+      }
+      final onPage =
+          pixels.where((p) => onPageAt(p.$1, p.$2)).length * 2 > pixels.length;
+      var contrast = double.infinity, lowest = page;
+      final next = <int, int>{};
+      for (final (x, y) in pixels) {
+        for (final (dx, dy) in steps) {
+          if (inside(x + dx, y + dy) && bandOf[at(x + dx, y + dy)] == id) {
+            continue;
+          }
+          final n = neighbour(x, y, dx, dy, onPage);
+          if (n == null) continue;
+          next.update(n, (k) => k + 1, ifAbsent: () => 1);
+          final c = _ratio(f1.at(x, y), n);
+          if (c < contrast) (contrast, lowest) = (c, n);
+        }
+      }
+      final counts = <int, int>{};
+      for (final (x, y) in pixels) {
+        counts.update(f1.at(x, y), (n) => n + 1, ifAbsent: () => 1);
+      }
+      var colour = 0, top = -1;
+      for (final MapEntry(key: c, value: n) in counts.entries) {
+        if (n > top || (n == top && c < colour)) (colour, top) = (c, n);
+      }
+      if (next.isEmpty) (contrast, lowest) = (_ratio(colour, page), page);
+      if (contrast >= 3) strong += pixels.length;
+      final sorted = next.entries.toList()
+        ..sort(
+          (p, q) => q.value != p.value ? q.value - p.value : p.key - q.key,
+        );
+      bands.add((
+        _Band(colour, onPage, pixels.length, contrast, lowest, [
+          for (final e in sorted.take(3)) (e.key, e.value),
+        ]),
+        id,
+      ));
+    }
+  }
+  bands.sort(
+    (p, q) =>
+        q.$1.pixels != p.$1.pixels ? q.$1.pixels - p.$1.pixels : p.$2 - q.$2,
+  );
   var swapped = 0;
   for (final MapEntry(key: c, value: n) in newColours.entries) {
     swapped += math.min(n, oldColours[c] ?? 0);
@@ -347,16 +484,119 @@ _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
     changed: changed,
     unstable: unstable,
     swapped: swapped,
-    indicator: indicator,
     strong: strong,
     page: page,
-    bands: bands,
+    bands: [for (final (band, _) in bands) band],
   );
 }
 
 /// The area looked at round a control: its rectangle and 8 pixels more on
 /// every side, which is where a ring drawn outside it lies.
 Rect _region(Rect control) => control.inflate(8);
+
+/// The measure's cases, shared with the other layers.
+const _casesFile = 'test/techniques/v14_focus_indicators_measure_cases.json';
+const _androidFile =
+    'android/app/src/androidTest/kotlin/dev/fluttera11y/'
+    'flutter_a11y_techniques/V14FocusIndicatorsTest.kt';
+
+int _colour(dynamic hex) => int.parse((hex as String).substring(1), radix: 16);
+
+/// A case's picture, its [layers] painted in order on white at pixel ratio
+/// [s] (the case file says how).
+_Shot _paint(List<dynamic> layers, int width, int height, int s) {
+  final px = List<int>.filled(width * height, 0xFFFFFF);
+  for (final layer in layers.cast<Map<String, dynamic>>()) {
+    final rect = [
+      for (final v in (layer['rect'] as List<dynamic>? ?? [0, 0, 0, 0]))
+        (v as int) * s,
+    ];
+    final (l, t) = layer.containsKey('rect') ? (rect[0], rect[1]) : (0, 0);
+    final (r, b) = layer.containsKey('rect')
+        ? (rect[2], rect[3])
+        : (width, height);
+    final ring = ((layer['ring'] as int?) ?? 0) * s;
+    for (var y = t; y < b; y++) {
+      for (var x = l; x < r; x++) {
+        if (ring > 0 &&
+            x >= l + ring &&
+            x < r - ring &&
+            y >= t + ring &&
+            y < b - ring) {
+          continue;
+        }
+        final along = layer['axis'] == 'y' ? y - t : x - l;
+        final length = layer['axis'] == 'y' ? b - t : r - l;
+        int c;
+        if (layer['stripes'] case final List<dynamic> stripes) {
+          final period = (layer['period'] as int) * s;
+          c = _colour(stripes[(along ~/ period) % stripes.length]);
+        } else if (layer['gradient'] case final List<dynamic> ends) {
+          final a = _colour(ends[0]), z = _colour(ends[1]);
+          final n = length - 1;
+          c = 0;
+          for (final sh in [16, 8, 0]) {
+            final v =
+                (((a >> sh) & 255) * (n - along) +
+                    ((z >> sh) & 255) * along +
+                    n ~/ 2) ~/
+                n;
+            c |= v << sh;
+          }
+        } else {
+          c = _colour(layer['colour'] ?? layer['fill']);
+        }
+        px[y * width + x] = c;
+      }
+    }
+  }
+  return _Shot(width, height, (x, y) => px[y * width + x]);
+}
+
+/// What a case's measure at pixel ratio [s] gets wrong: none, if it passes.
+List<String> _checkCase(Map<String, dynamic> c, int s) {
+  final size = (c['size'] as List<dynamic>).cast<int>();
+  final w = size[0] * s, h = size[1] * s;
+  final u = _paint(c['before'] as List<dynamic>, w, h, s);
+  final f1 = _paint(c['after'] as List<dynamic>, w, h, s);
+  final f2 = c.containsKey('after2')
+      ? _paint(c['after2'] as List<dynamic>, w, h, s)
+      : f1;
+  final ind = _compare(u, f1, f2, Rect.fromLTWH(0, 0, w * 1.0, h * 1.0));
+  final e = c['expect'] as Map<String, dynamic>;
+  final problems = <String>[];
+  void want(bool ok, String what) {
+    if (!ok) problems.add('$what: $ind');
+  }
+
+  bool some(String v, int n) => v == 'none' ? n == 0 : n > 0;
+  if (e['changed'] case final String v) {
+    want(some(v, ind.changed), 'changed $v');
+  }
+  if (e['unstable'] case final String v) {
+    want(some(v, ind.unstable), 'unstable $v');
+  }
+  if (e['moved'] case final bool v) want(ind.moved == v, 'moved $v');
+  switch (e['strong']) {
+    case 'all':
+      want(ind.flat > 0 && ind.strong == ind.flat, 'strong all');
+    case 'none':
+      want(ind.strong == 0, 'strong none');
+    case 'some':
+      want(ind.strong > 0 && ind.strong < ind.flat, 'strong some');
+  }
+  if (e['strongPixels'] case final int n) {
+    want(ind.strong == n * s * s, 'strong pixels ${n * s * s}');
+  }
+  if (e['ratio'] case [final num v, final num tolerance]) {
+    want((ind.ratio - v).abs() <= tolerance, 'ratio $v');
+  }
+  if (e['ratioBelow'] case final num v) want(ind.ratio < v, 'ratio below $v');
+  if (e['onPage'] case final bool v) {
+    want(ind.bands.isNotEmpty && ind.bands.first.onPage == v, 'on the page $v');
+  }
+  return problems;
+}
 
 /// Brings [control] wholly into view, captures the screen, presses Tab,
 /// checks that the stop is [stop] and that the control has not moved, and
@@ -413,112 +653,33 @@ void main() {
     expect(_ratio(0x949494, 0xFFFFFF), closeTo(3.03, 0.01));
   });
 
-  // The measure itself, on pictures made up for the purpose, among them
-  // the pass and fail figures of Understanding 1.4.11's section on focus
-  // indicators: a blue button (#4189B9) on a white page.
+  // The measure itself, on the cases of
+  // v14_focus_indicators_measure_cases.json, which the web spec, the iOS
+  // UI tests, and the probe analyser read too, and the Android test holds
+  // a copy of: among them the pass and fail figures of Understanding
+  // 1.4.11's section on focus indicators, the first review's reproductions,
+  // and the measure's known limits.
   group('the measure', () {
-    const white = 0xFFFFFF, blue = 0x4189B9, black = 0x000000;
-    const region = Rect.fromLTWH(0, 0, 60, 60);
-    bool within(int x, int y, int l, int t, int r, int b) =>
-        x >= l && x < r && y >= t && y < b;
-    int button(int x, int y) => within(x, y, 15, 20, 45, 40) ? blue : white;
-    _Shot picture(int Function(int x, int y) at) => _Shot(60, 60, at);
-    _Indicator focus(int Function(int x, int y) focused) {
-      final f = picture(focused);
-      return _compare(picture(button), f, f, region);
+    final cases =
+        (jsonDecode(File(_casesFile).readAsStringSync())
+                as Map<String, dynamic>)['cases']
+            as List<dynamic>;
+    for (final c in cases.cast<Map<String, dynamic>>()) {
+      for (final s in (c['scales'] as List<dynamic>).cast<int>()) {
+        test('${c['name']} (pixel ratio $s)', () {
+          expect(_checkCase(c, s), isEmpty);
+        });
+      }
     }
 
-    /// [colour] on a band [width] wide, [gap] outside the rectangle
-    /// l, t, r, b (a negative gap is inside it), and [rest] elsewhere.
-    int Function(int, int) ring(
-      int l,
-      int t,
-      int r,
-      int b,
-      int gap,
-      int width,
-      int colour,
-      int Function(int, int) rest,
-    ) => (x, y) {
-      final outer = within(
-        x,
-        y,
-        l - gap - width,
-        t - gap - width,
-        r + gap + width,
-        b + gap + width,
+    test('the Android test holds the same cases', () {
+      final kotlin = File(_androidFile).readAsStringSync();
+      final from = kotlin.indexOf('CASES = """') + 'CASES = """'.length;
+      final to = kotlin.indexOf('"""', from);
+      expect(
+        kotlin.substring(from, to).trim(),
+        File(_casesFile).readAsStringSync().trim(),
       );
-      final inner = within(x, y, l - gap, t - gap, r + gap, b + gap);
-      return outer && !inner ? colour : rest(x, y);
-    };
-
-    test('an inner yellow ring on the blue button passes (3.55:1 against '
-        'the blue)', () {
-      final ind = focus(ring(15, 20, 45, 40, -6, 3, 0xFFFF00, button));
-      expect(ind.bands.single.onPage, isFalse);
-      expect(ind.ratio, closeTo(3.55, 0.05));
-      expect(ind.strong, ind.indicator);
-    });
-
-    test('an outer yellow ring on the white page fails (1.07:1)', () {
-      final ind = focus(ring(15, 20, 45, 40, 2, 3, 0xFFFF00, button));
-      expect(ind.bands.single.onPage, isTrue);
-      expect(ind.ratio, lessThan(1.1));
-      expect(ind.strong, 0);
-    });
-
-    test('an outer green ring on the white page passes (5.14:1)', () {
-      final ind = focus(ring(15, 20, 45, 40, 2, 3, 0x008000, button));
-      expect(ind.ratio, closeTo(5.14, 0.05));
-      expect(ind.strong, ind.indicator);
-    });
-
-    test('the button\'s edge turning green (#4B933A) fails: it is on the '
-        'control and does not contrast with the blue inside', () {
-      final ind = focus(ring(15, 20, 45, 40, -3, 3, 0x4B933A, button));
-      expect(ind.bands.single.onPage, isFalse);
-      expect(ind.strong, 0);
-    });
-
-    test('with a black border, an inner white border passes and an inner '
-        'dark green one fails', () {
-      final bordered = ring(15, 20, 45, 40, -2, 2, black, button);
-      for (final (colour, passes) in [(white, true), (0x008000, false)]) {
-        final f = picture(ring(15, 20, 45, 40, -4, 2, colour, bordered));
-        final ind = _compare(picture(bordered), f, f, region);
-        expect(
-          ind.strong == ind.indicator && ind.indicator > 0,
-          passes,
-          reason: '${_hex(colour)}: $ind',
-        );
-      }
-    });
-
-    test('artwork that moves is not an indicator: the drawing moved', () {
-      int Function(int, int) at(int dx) =>
-          (x, y) => within(x, y, 20 + dx, 20, 30 + dx, 30) ? black : white;
-      final moved = picture(at(4));
-      final ind = _compare(picture(at(0)), moved, moved, region);
-      // The square's new edge is black on the page, 21:1: without this
-      // check it would pass as a ring.
-      expect(ind.strong, greaterThan(0));
-      expect(ind.moved, isTrue);
-    });
-
-    test('nothing drawn is no indicator', () {
-      final ind = focus(button);
-      expect(ind.changed, 0);
-      expect(ind.strong, 0);
-    });
-
-    test('a mark in one capture only (a blinking caret) is unstable, not '
-        'an indicator', () {
-      final caret = picture(
-        (x, y) => x == 30 && y >= 22 && y < 38 ? black : button(x, y),
-      );
-      final ind = _compare(picture(button), caret, picture(button), region);
-      expect(ind.changed, 0);
-      expect(ind.unstable, greaterThan(0));
     });
   });
 
@@ -626,9 +787,9 @@ void main() {
   });
 
   group('focus indicators, measured from the pixels', () {
-    // Every good control: Tab draws something round it whose commonest
-    // colour is at least 3:1 against the page, in light and dark; and it
-    // goes when Tab moves on.
+    // Every good control: Tab draws a band of 3:1 or more against what it
+    // must contrast with, of the tests' minimum size, in light and dark;
+    // and it goes when Tab moves on.
     for (final slug in ['good-material', 'good-cupertino', 'good-widgets']) {
       for (final brightness in Brightness.values) {
         testWidgets('$slug (${brightness.name}): each control draws an '
@@ -652,7 +813,7 @@ void main() {
             // tile's own faint tint as well): enough pixels of 3:1 or more
             // against what is next to them for a line all round the
             // control.
-            expect(ind.strong, greaterThan(150), reason: '$c: $ind');
+            expect(ind.strong, greaterThan(_ourMinimum), reason: '$c: $ind');
             if (slug == 'good-material' && c == 'alerts') {
               // With highlights on, the tile's own focus tint is drawn as
               // well, and is most of what changes. With highlights off, as
@@ -815,7 +976,7 @@ void main() {
         } else {
           // In dark mode the same ring passes; recorded, not the defect.
           expect(ind.ratio, greaterThanOrEqualTo(3), reason: '$ind');
-          expect(ind.strong, greaterThan(150), reason: '$ind');
+          expect(ind.strong, greaterThan(_ourMinimum), reason: '$ind');
         }
         handle.dispose();
       });
@@ -988,7 +1149,7 @@ void main() {
         'trail',
         control,
       );
-      expect(ind.strong, greaterThan(150));
+      expect(ind.strong, greaterThan(_ourMinimum));
       final focused = await _shot(tester);
       // A touch on an empty part of the screen.
       await tester.tapAt(const Offset(790, 990));

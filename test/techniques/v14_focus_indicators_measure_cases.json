@@ -1,0 +1,230 @@
+{
+  "about": [
+    "The cases of V14's pixel measure (docs/specs/V14-focus-indicators.md, section 6), on pictures made up for the purpose.",
+    "The widget tests, the web spec, the iOS UI tests, and the probe analyser read this file; the Android test holds a copy, which the widget tests check is the same.",
+    "A picture is its layers painted in order on white: fill, a rectangle [left, top, right, bottom], the outer 'ring' pixels of one, 'stripes' of colours one after another every 'period' pixels along an 'axis', or a 'gradient' from one colour to another along an 'axis'.",
+    "Each case is measured at each of its 'scales' (pixel ratios; every length is multiplied), with 'before' as the capture before focus and 'after' as both captures after it, unless 'after2' is given. The region is the whole picture.",
+    "expect: 'changed' and 'unstable' are 'none' or 'some'; 'strong' is 'all' (every pixel of every band is in a band of 3:1 or more, and there is one), 'none', or 'some'; 'strongPixels' is the strong count at a pixel ratio of 1 (times the ratio squared); 'ratio' [value, tolerance], 'ratioBelow', and 'onPage' are of the largest band.",
+    "Cases named 'known limit' show what the measure does where it is known to depart from 1.4.11; the spec lists them."
+  ],
+  "cases": [
+    {
+      "name": "Understanding figure 8: an inner yellow ring on the blue button passes, 3.55:1 against the blue",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [21, 26, 39, 34], "ring": 3, "colour": "#FFFF00"}],
+      "expect": {"strong": "all", "ratio": [3.55, 0.05], "onPage": false}
+    },
+    {
+      "name": "an outer yellow ring on the white page fails, 1.07:1",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [10, 15, 50, 45], "ring": 3, "colour": "#FFFF00"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1, "onPage": true}
+    },
+    {
+      "name": "an outer green ring on the white page passes, 5.14:1",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [10, 15, 50, 45], "ring": 3, "colour": "#008000"}],
+      "expect": {"strong": "all", "ratio": [5.14, 0.05], "onPage": true}
+    },
+    {
+      "name": "Understanding figure 12: the button's edge turning green (#4B933A) fails: it is on the control and does not contrast with the blue inside",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 3, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "with a black border, an inner white border passes",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 2, "colour": "#000000"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 2, "colour": "#000000"}, {"rect": [17, 22, 43, 38], "ring": 2, "colour": "#FFFFFF"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "with a black border, an inner dark green border fails against the blue",
+      "size": [60, 60], "scales": [1, 3],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 2, "colour": "#000000"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [15, 20, 45, 40], "ring": 2, "colour": "#000000"}, {"rect": [17, 22, 43, 38], "ring": 2, "colour": "#008000"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "artwork that moves is not an indicator: the drawing moved",
+      "size": [60, 60], "scales": [1],
+      "before": [{"rect": [20, 20, 30, 30], "colour": "#000000"}],
+      "after": [{"rect": [24, 20, 34, 30], "colour": "#000000"}],
+      "expect": {"moved": true, "changed": "some"}
+    },
+    {
+      "name": "nothing drawn is no indicator",
+      "size": [60, 60], "scales": [1],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "expect": {"changed": "none", "strong": "none", "moved": false}
+    },
+    {
+      "name": "a mark in one capture only (a blinking caret) is unstable, not an indicator",
+      "size": [60, 60], "scales": [1],
+      "before": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "after": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}, {"rect": [30, 22, 31, 38], "colour": "#000000"}],
+      "after2": [{"rect": [15, 20, 45, 40], "colour": "#4189B9"}],
+      "expect": {"changed": "none", "unstable": "some"}
+    },
+    {
+      "name": "the first review's reproduction: a 3 pixel border of #4B933A round an inside of three near-identical shades, in thirds, fails against them",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "x", "period": 67}],
+      "after": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "x", "period": 67}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1, "onPage": false}
+    },
+    {
+      "name": "the same border round the same shades dithered pixel by pixel across fails",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "x", "period": 1}],
+      "after": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "x", "period": 1}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1}
+    },
+    {
+      "name": "the same border round the same shades dithered row by row fails",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "y", "period": 1}],
+      "after": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "y", "period": 1}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1}
+    },
+    {
+      "name": "a thick border, 8 pixels of #4B933A on the blue, fails",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 8, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "a thick black border, 8 pixels on the blue, passes against the page and the blue",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 8, "colour": "#000000"}],
+      "expect": {"strong": "all", "ratio": [5.5, 0.05], "onPage": false}
+    },
+    {
+      "name": "a grey (#767676) inner ring on a button shaded from white to blue fails: its least contrasting neighbour, near the blue end, is 1.24:1, though near the white end it is 4.2:1 or more",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "gradient": ["#FFFFFF", "#4189B9"], "axis": "x"}],
+      "after": [{"rect": [8, 8, 208, 68], "gradient": ["#FFFFFF", "#4189B9"], "axis": "x"}, {"rect": [14, 14, 202, 62], "ring": 3, "colour": "#767676"}],
+      "expect": {"strong": "none", "ratioBelow": 1.3, "onPage": false}
+    },
+    {
+      "name": "a black inner ring on the same shaded button passes against every shade",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "gradient": ["#FFFFFF", "#4189B9"], "axis": "x"}],
+      "after": [{"rect": [8, 8, 208, 68], "gradient": ["#FFFFFF", "#4189B9"], "axis": "x"}, {"rect": [14, 14, 202, 62], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "an inner black ring that contrasts with the page but not with the navy button it is on fails, 1.47:1",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}, {"rect": [11, 11, 205, 65], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "none", "ratioBelow": 1.5, "onPage": false}
+    },
+    {
+      "name": "a faint halo on the page round a black box does not take the box's contrast: it fails against the page",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [88, 18, 128, 58], "colour": "#000000"}],
+      "after": [{"rect": [78, 8, 138, 68], "colour": "#EAE8F4"}, {"rect": [88, 18, 128, 58], "colour": "#000000"}],
+      "expect": {"strong": "none", "ratioBelow": 1.5, "onPage": true}
+    },
+    {
+      "name": "a faint tint on the page inside a black ring does not take the ring's contrast: the ring passes and the tint fails",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [60, 28, 156, 48], "colour": "#4189B9"}],
+      "after": [{"rect": [20, 10, 196, 66], "ring": 2, "colour": "#000000"}, {"rect": [22, 12, 194, 64], "colour": "#EAE8F4"}, {"rect": [60, 28, 156, 48], "colour": "#4189B9"}],
+      "expect": {"strong": "some", "strongPixels": 912, "ratioBelow": 1.5, "onPage": true}
+    },
+    {
+      "name": "a two-colour ring on the page: the black outer part passes and the yellow inner part fails against the page",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [10, 10, 206, 66], "colour": "#4189B9"}],
+      "after": [{"rect": [10, 10, 206, 66], "colour": "#4189B9"}, {"rect": [4, 4, 212, 72], "ring": 2, "colour": "#000000"}, {"rect": [6, 6, 210, 70], "ring": 2, "colour": "#FFFF00"}],
+      "expect": {"strong": "some", "strongPixels": 1088, "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "a one pixel black underline below a button passes, 21:1 against the page",
+      "size": [216, 76], "scales": [1, 2, 3],
+      "before": [{"rect": [8, 8, 208, 60], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 60], "colour": "#4189B9"}, {"rect": [8, 63, 208, 64], "colour": "#000000"}],
+      "expect": {"strong": "all", "strongPixels": 200, "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "a one pixel black outline round a button passes, 21:1 against the page",
+      "size": [216, 76], "scales": [1, 2, 3],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [5, 5, 211, 71], "ring": 1, "colour": "#000000"}],
+      "expect": {"strong": "all", "strongPixels": 540, "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "an outer ring that touches a navy button passes on the page, though it does not contrast with the button",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}, {"rect": [5, 5, 211, 71], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "all", "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "a black border made thicker passes: the part of the same colour that was there is not a neighbour",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 1, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "a black ring with anti-aliased grey edges passes; the grey edge pixels are left out",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [2, 2, 214, 74], "ring": 1, "colour": "#808080"}, {"rect": [3, 3, 213, 73], "ring": 3, "colour": "#000000"}, {"rect": [6, 6, 210, 70], "ring": 1, "colour": "#808080"}],
+      "expect": {"strong": "all", "ratio": [21, 0.01], "onPage": true}
+    },
+    {
+      "name": "at a pixel ratio of 1, a black line on a button's top edge passes, though the edge's anti-aliased ramp runs on from its end: a walk along a ramp, not across it, finds nothing",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 9, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 100, 9], "colour": "#4189B9"}, {"rect": [100, 8, 132, 9], "gradient": ["#000000", "#4189B9"], "axis": "x"}],
+      "after": [{"rect": [8, 9, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 100, 9], "colour": "#000000"}, {"rect": [100, 8, 132, 9], "gradient": ["#000000", "#4189B9"], "axis": "x"}],
+      "expect": {"strong": "all", "strongPixels": 92, "onPage": false}
+    },
+    {
+      "name": "known limit: a change of the control's own background is measured like any other part, though 1.4.11 leaves it out",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [60, 30, 156, 46], "colour": "#FFFFFF"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#2E6A94"}, {"rect": [60, 30, 156, 46], "colour": "#FFFFFF"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "known limit: at a pixel ratio of 1, a one pixel strip along the top and bottom whose colour lies between the colours either side of it is read as anti-aliasing, and the ring is taken against the blue beyond it",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}, {"rect": [16, 15, 200, 16], "colour": "#2A5A7A"}, {"rect": [16, 60, 200, 61], "colour": "#2A5A7A"}],
+      "expect": {"strong": "all", "strongPixels": 1428, "onPage": false}
+    },
+    {
+      "name": "at a pixel ratio of 2 the same strips are two pixels wide and are measured: the ring fails against them, 2.84:1",
+      "size": [216, 76], "scales": [2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}, {"rect": [16, 15, 200, 16], "colour": "#2A5A7A"}, {"rect": [16, 60, 200, 61], "colour": "#2A5A7A"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "known limit: the least contrasting neighbour decides a whole band: an inner ring that meets a small navy mark for 4 pixels fails all round",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [100, 15, 104, 17], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [100, 15, 104, 17], "colour": "#1F2A44"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "known limit: the page is one colour: a ring outside a control but on a grey card is held to a border's rule, and fails against the navy control",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [4, 4, 212, 72], "colour": "#E0E0E0"}, {"rect": [12, 12, 204, 64], "colour": "#1F2A44"}],
+      "after": [{"rect": [4, 4, 212, 72], "colour": "#E0E0E0"}, {"rect": [12, 12, 204, 64], "colour": "#1F2A44"}, {"rect": [9, 9, 207, 67], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "none", "onPage": false}
+    }
+  ]
+}

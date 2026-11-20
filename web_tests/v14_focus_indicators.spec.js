@@ -11,6 +11,7 @@
 // changed in both and agree are what focus drew, and its contrast is taken
 // against the colours next to it in the focused screenshot (compare, below),
 // never from the theme.
+import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
@@ -122,51 +123,65 @@ const hex = (c) => `#${c.toString(16).padStart(6, '0').toUpperCase()}`;
 const THRESHOLD = 12;
 // Two colours are one flat colour if no channel differs by more than this.
 const FLAT = 4;
+// An anti-aliased edge is read across at most this many pixels.
+const BLUR = 4;
+// How many strong pixels a good control's indicator must have in these
+// tests: about a line one pixel wide round a 40 by 40 control. The tests'
+// own threshold, kept apart from the contrast measure: 1.4.11 sets no size
+// (2.4.13, AAA, does).
+const OUR_MINIMUM = 150;
 
 /**
  * What focus drew in `region` ({x, y, width, height} in pixels), given the
- * screenshot before focus `u` and two after, `f1` and `f2`.
+ * screenshot before focus `u` and two after, `f1` and `f2`. The measure of
+ * the V14 spec, section 6, which lists what it is known not to do; the
+ * widget tests' _compare is the same, step for step.
  *
  * A pixel has changed if it differs from `u` in both and `f1` and `f2`
  * agree. Every changed pixel is part of the indicator, whatever it
  * replaced: Understanding 1.4.11 does not compare the focused and unfocused
  * states. (What replaced what is used once, to tell a drawing that moved
- * from one that focus added to: `moved`.) The indicator is split into
- * bands, one per flat colour (pixels that share their colour with a
- * horizontal and a vertical neighbour; anti-aliased edges are left out),
- * and each band is taken against the colours adjacent to it in `f1`, read
- * across at most four pixels of anti-aliased edge. A band drawn where the
- * page was, outside the control, must contrast with the page; a band drawn
- * on the control, inside it or on its border, must contrast with every
- * colour that makes up a fifth or more of what is next to it (with the
- * page, if nothing does). The page's colour is the commonest along the
- * region's edge in `u`.
+ * from one that focus added to: `moved`.)
+ *
+ * A pixel of `f1` is solid if it has a 4-neighbour of its colour (within
+ * FLAT) and is not anti-aliasing: a pixel whose colour lies between the
+ * colours either side of it, across or down or on a diagonal, where those
+ * two differ. A one pixel line is solid. Solid changed pixels are joined
+ * into bands: 4-connected, each within FLAT of the next. A band is on the
+ * page if most of it was drawn where the page was before focus, and on the
+ * control if not.
+ *
+ * Each band is taken against its neighbours, spatially: from every pixel
+ * on its edge, outward, across pixels of the edge pixel's own colour and at
+ * most BLUR pixels of an anti-aliased edge being crossed (each between the
+ * pixels before and after it on the way), to the first solid pixel (or the
+ * last of those BLUR, so that no neighbour is passed over for being
+ * blurred, unless focus drew it). A walk that meets a blurred pixel that is
+ * not between them is going along an edge, not across it, and finds
+ * nothing. A band on the control, inside it or on
+ * its border, must contrast with every neighbour found, whatever it is
+ * (Understanding: both adjacent colours). A band on the page, outside the
+ * control, must contrast with the background: the walk goes on across the
+ * rest of what focus drew, and a neighbour that was not the page before
+ * focus (the control itself) is not one it must contrast with. A band's
+ * contrast is its lowest against any of them (with none, against the
+ * page): the least contrasting part decides. Its pixels are strong if that
+ * is 3:1 or more. The page's colour is the commonest along the region's
+ * top and bottom edges in `u`.
  */
 function compare(u, f1, f2, region) {
   const l = Math.max(0, Math.floor(region.x)), t = Math.max(0, Math.floor(region.y));
   const r = Math.min(u.width, Math.ceil(region.x + region.width));
   const b = Math.min(u.height, Math.ceil(region.y + region.height));
+  const w = r - l, h = b - t;
   const inside = (x, y) => x >= l && x < r && y >= t && y < b;
+  const at = (x, y) => (y - t) * w + (x - l);
   const edge = new Map();
   for (let x = l; x < r; x++) for (const y of [t, t + 1, b - 2, b - 1]) edge.set(u.at(x, y), (edge.get(u.at(x, y)) ?? 0) + 1);
-  const page = [...edge.entries()].sort((p, q) => q[1] - p[1])[0][0];
-  const same = (x, y, c) => inside(x, y) && channelDiff(f1.at(x, y), c) <= FLAT;
-  const solid = (x, y) => {
-    const c = f1.at(x, y);
-    return (same(x - 1, y, c) || same(x + 1, y, c)) && (same(x, y - 1, c) || same(x, y + 1, c));
-  };
-  const across = (x, y, dx, dy, colour) => {
-    while (same(x + dx, y + dy, colour)) { x += dx; y += dy; }
-    for (let i = 0; i < 4; i++) {
-      x += dx; y += dy;
-      if (!inside(x, y)) return undefined;
-      const c = f1.at(x, y);
-      if (channelDiff(c, colour) > THRESHOLD && solid(x, y)) return c;
-    }
-    return undefined;
-  };
+  let page = 0, most = -1;
+  for (const [c, n] of edge) if (n > most || (n === most && c < page)) { page = c; most = n; }
+  const isChanged = new Uint8Array(w * h);
   let changed = 0, unstable = 0;
-  const groups = new Map();
   const newColours = new Map(), oldColours = new Map();
   for (let y = t; y < b; y++) {
     for (let x = l; x < r; x++) {
@@ -174,48 +189,116 @@ function compare(u, f1, f2, region) {
       const d1 = channelDiff(a, p) > THRESHOLD, d2 = channelDiff(a, q) > THRESHOLD;
       if (d1 && d2 && channelDiff(p, q) <= THRESHOLD) {
         changed++;
+        isChanged[at(x, y)] = 1;
         newColours.set(p, (newColours.get(p) ?? 0) + 1);
         oldColours.set(a, (oldColours.get(a) ?? 0) + 1);
-        if (!solid(x, y)) continue;
-        const onPage = channelDiff(a, page) <= THRESHOLD;
-        const key = `${p}:${onPage}`;
-        if (!groups.has(key)) groups.set(key, { colour: p, onPage, pixels: [] });
-        groups.get(key).pixels.push([x, y]);
       } else if (d1 || d2) unstable++;
     }
   }
-  const bands = [];
-  let strong = 0;
-  for (const { colour, onPage, pixels } of groups.values()) {
-    const next = new Map();
-    for (const [x, y] of pixels) {
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-        const c = across(x, y, dx, dy, colour);
-        if (c !== undefined) next.set(c, (next.get(c) ?? 0) + 1);
+  const same = (x, y, c) => inside(x, y) && channelDiff(f1.at(x, y), c) <= FLAT;
+  const between = (c, a, z) => [16, 8, 0].every((s) => {
+    const v = (c >> s) & 255, p = (a >> s) & 255, q = (z >> s) & 255;
+    return v >= Math.min(p, q) - FLAT && v <= Math.max(p, q) + FLAT;
+  });
+  // Whether (x, y) lies between the pixels either side of it along
+  // (dx, dy): a pixel of an anti-aliased edge crossed that way.
+  const blendAlong = (x, y, dx, dy) => {
+    if (!inside(x - dx, y - dy) || !inside(x + dx, y + dy)) return false;
+    const c = f1.at(x, y), a = f1.at(x - dx, y - dy), z = f1.at(x + dx, y + dy);
+    return channelDiff(a, z) > THRESHOLD && channelDiff(c, a) > FLAT && channelDiff(c, z) > FLAT && between(c, a, z);
+  };
+  const blend = (x, y) => blendAlong(x, y, 1, 0) || blendAlong(x, y, 0, 1) || blendAlong(x, y, 1, 1) || blendAlong(x, y, 1, -1);
+  const solidAt = new Uint8Array(w * h);
+  for (let y = t; y < b; y++) {
+    for (let x = l; x < r; x++) {
+      const c = f1.at(x, y);
+      solidAt[at(x, y)] = (same(x - 1, y, c) || same(x + 1, y, c) || same(x, y - 1, c) || same(x, y + 1, c)) && !blend(x, y) ? 1 : 0;
+    }
+  }
+  const onPageAt = (x, y) => channelDiff(u.at(x, y), page) <= THRESHOLD;
+  // The neighbour of the edge pixel (x, y) in the direction (dx, dy).
+  const neighbour = (x, y, dx, dy, onPage) => {
+    const c0 = f1.at(x, y);
+    let blurred = 0;
+    for (;;) {
+      x += dx; y += dy;
+      if (!inside(x, y)) return undefined;
+      if (channelDiff(f1.at(x, y), c0) <= FLAT) continue;
+      if (onPage && isChanged[at(x, y)]) continue;
+      if (solidAt[at(x, y)]) return onPage && !onPageAt(x, y) ? undefined : f1.at(x, y);
+      // A blurred pixel not between those before and after it is the side
+      // of an edge that runs along the way, not one being crossed: the
+      // neighbour beyond that edge is found by the walks that cross it.
+      if (!blendAlong(x, y, dx, dy)) return undefined;
+      if (++blurred === BLUR) {
+        // Blurred all the way: what is there, if focus did not draw it.
+        return isChanged[at(x, y)] || (onPage && !onPageAt(x, y)) ? undefined : f1.at(x, y);
       }
     }
-    const total = [...next.values()].reduce((s, n) => s + n, 0);
-    let against = [page];
-    if (!onPage && total > 0) {
-      const major = [...next.entries()].filter(([, n]) => n * 5 >= total).map(([c]) => c);
-      if (major.length) against = major;
+  };
+  const steps = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  const bandOf = new Int32Array(w * h).fill(-1);
+  const bands = [];
+  let strong = 0;
+  for (let y0 = t; y0 < b; y0++) {
+    for (let x0 = l; x0 < r; x0++) {
+      const i0 = at(x0, y0);
+      if (!isChanged[i0] || !solidAt[i0] || bandOf[i0] >= 0) continue;
+      const id = bands.length;
+      const pixels = [[x0, y0]];
+      bandOf[i0] = id;
+      for (let k = 0; k < pixels.length; k++) {
+        const [x, y] = pixels[k];
+        for (const [dx, dy] of steps) {
+          const nx = x + dx, ny = y + dy;
+          if (!inside(nx, ny)) continue;
+          const j = at(nx, ny);
+          if (!isChanged[j] || !solidAt[j] || bandOf[j] >= 0) continue;
+          if (channelDiff(f1.at(nx, ny), f1.at(x, y)) > FLAT) continue;
+          bandOf[j] = id;
+          pixels.push([nx, ny]);
+        }
+      }
+      const onPage = pixels.filter(([x, y]) => onPageAt(x, y)).length * 2 > pixels.length;
+      let contrast = Infinity, lowest = page;
+      const next = new Map();
+      for (const [x, y] of pixels) {
+        for (const [dx, dy] of steps) {
+          if (inside(x + dx, y + dy) && bandOf[at(x + dx, y + dy)] === id) continue;
+          const n = neighbour(x, y, dx, dy, onPage);
+          if (n === undefined) continue;
+          next.set(n, (next.get(n) ?? 0) + 1);
+          const c = ratio(f1.at(x, y), n);
+          if (c < contrast) { contrast = c; lowest = n; }
+        }
+      }
+      const counts = new Map();
+      for (const [x, y] of pixels) counts.set(f1.at(x, y), (counts.get(f1.at(x, y)) ?? 0) + 1);
+      let colour = 0, top = -1;
+      for (const [c, n] of counts) if (n > top || (n === top && c < colour)) { colour = c; top = n; }
+      if (next.size === 0) { contrast = ratio(colour, page); lowest = page; }
+      if (contrast >= 3) strong += pixels.length;
+      const sorted = [...next.entries()].sort((p, q) => (q[1] !== p[1] ? q[1] - p[1] : p[0] - q[0]));
+      bands.push({ colour, onPage, pixels: pixels.length, contrast, lowest, next: sorted.slice(0, 3), id });
     }
-    const contrast = Math.min(...against.map((c) => ratio(colour, c)));
-    if (contrast >= 3) strong += pixels.length;
-    bands.push({ colour, onPage, pixels: pixels.length, contrast, against });
   }
-  bands.sort((p, q) => q.pixels - p.pixels);
+  bands.sort((p, q) => (q.pixels !== p.pixels ? q.pixels - p.pixels : p.id - q.id));
   let swapped = 0;
   for (const [c, n] of newColours) swapped += Math.min(n, oldColours.get(c) ?? 0);
+  const flat = bands.reduce((s, d) => s + d.pixels, 0);
   const result = {
-    changed, unstable, swapped, indicator: changed, strong, page, bands,
+    changed, unstable, swapped, indicator: changed, strong, flat, page, bands,
     // The drawing moved rather than focus adding to it: half or more of the
     // colours the changed pixels took were there before, among them.
     moved: changed > 0 && swapped * 2 >= changed,
     ratio: bands.length ? bands[0].contrast : 1,
   };
-  const band = (d) => `${d.pixels} px ${hex(d.colour)} ${d.onPage ? 'on the page' : 'on the control'} ${d.contrast.toFixed(2)} against ${d.against.map(hex).join(', ')}`;
-  result.text = `changed ${changed}, unstable ${unstable}, swapped ${swapped}, indicator ${changed}, `
+  const band = (d) => {
+    const total = d.next.reduce((s, [, n]) => s + n, 0);
+    return `${d.pixels} px ${hex(d.colour)} ${d.onPage ? 'on the page' : 'on the control'} ${d.contrast.toFixed(2)} against ${hex(d.lowest)}; next to it `
+      + d.next.slice(0, 2).map(([c, n]) => `${hex(c)} ${ratio(d.colour, c).toFixed(2)} ${Math.floor((100 * n) / Math.max(total, 1))}%`).join(', ');
+  };
+  result.text = `changed ${changed}, unstable ${unstable}, swapped ${swapped}, indicator ${changed}, in bands ${flat}, `
     + `3:1 or more: ${strong}, page ${hex(page)}; ${bands.slice(0, 3).map(band).join('; ')}`;
   return result;
 }
@@ -275,84 +358,73 @@ async function tabToBefore(page, slug, c) {
 
 // --- Tests --------------------------------------------------------------
 
-// The measure itself, on pictures made up for the purpose, among them the
-// pass and fail figures of Understanding 1.4.11's section on focus
-// indicators: a blue button (#4189B9) on a white page.
-test.describe('the measure', () => {
-  const WHITE = 0xffffff, BLUE = 0x4189b9, BLACK = 0x000000;
-  const region = { x: 0, y: 0, width: 60, height: 60 };
-  const within = (x, y, l, t, r, b) => x >= l && x < r && y >= t && y < b;
-  const button = (x, y) => (within(x, y, 15, 20, 45, 40) ? BLUE : WHITE);
-  const picture = (at) => ({ width: 60, height: 60, at });
-  // `colour` on a band `width` wide, `gap` outside the rectangle (a
-  // negative gap is inside it), and `rest` elsewhere.
-  const ring = (gap, width, colour, rest) => (x, y) => {
-    const outer = within(x, y, 15 - gap - width, 20 - gap - width, 45 + gap + width, 40 + gap + width);
-    const inner = within(x, y, 15 - gap, 20 - gap, 45 + gap, 40 + gap);
-    return outer && !inner ? colour : rest(x, y);
-  };
-  const focus = (at) => compare(picture(button), picture(at), picture(at), region);
+// The measure itself, on the cases of
+// test/techniques/v14_focus_indicators_measure_cases.json, which the widget
+// tests, the iOS UI tests, and the probe analyser read too, and the Android
+// test holds a copy of: among them the pass and fail figures of
+// Understanding 1.4.11's section on focus indicators, the first review's
+// reproductions, and the measure's known limits.
+const CASES = JSON.parse(fs.readFileSync(new URL('../test/techniques/v14_focus_indicators_measure_cases.json', import.meta.url), 'utf8')).cases;
+const colourOf = (h) => parseInt(h.slice(1), 16);
 
-  test('an inner yellow ring on the blue button passes (3.55:1 against the blue)', () => {
-    const ind = focus(ring(-6, 3, 0xffff00, button));
-    expect(ind.bands).toHaveLength(1);
-    expect(ind.bands[0].onPage).toBe(false);
-    expect(ind.ratio).toBeCloseTo(3.55, 1);
-    expect(ind.strong).toBe(ind.indicator);
-  });
-
-  test('an outer yellow ring on the white page fails (1.07:1)', () => {
-    const ind = focus(ring(2, 3, 0xffff00, button));
-    expect(ind.bands[0].onPage).toBe(true);
-    expect(ind.ratio).toBeLessThan(1.1);
-    expect(ind.strong).toBe(0);
-  });
-
-  test('an outer green ring on the white page passes (5.14:1)', () => {
-    const ind = focus(ring(2, 3, 0x008000, button));
-    expect(ind.ratio).toBeCloseTo(5.14, 1);
-    expect(ind.strong).toBe(ind.indicator);
-  });
-
-  test('the button\'s edge turning green (#4B933A) fails: it is on the control and does not contrast with the blue inside', () => {
-    const ind = focus(ring(-3, 3, 0x4b933a, button));
-    expect(ind.bands[0].onPage).toBe(false);
-    expect(ind.strong).toBe(0);
-  });
-
-  test('with a black border, an inner white border passes and an inner dark green one fails', () => {
-    const bordered = ring(-2, 2, BLACK, button);
-    for (const [colour, passes] of [[WHITE, true], [0x008000, false]]) {
-      const f = picture(ring(-4, 2, colour, bordered));
-      const ind = compare(picture(bordered), f, f, region);
-      expect(ind.strong === ind.indicator && ind.indicator > 0, `${hex(colour)}: ${ind.text}`).toBe(passes);
+/** A case's picture, its `layers` painted in order on white at pixel ratio `s`. */
+function paint(layers, width, height, s) {
+  const px = new Int32Array(width * height).fill(0xffffff);
+  for (const layer of layers) {
+    const [l, t, r, b] = layer.rect ? layer.rect.map((v) => v * s) : [0, 0, width, height];
+    const ring = (layer.ring ?? 0) * s;
+    for (let y = t; y < b; y++) {
+      for (let x = l; x < r; x++) {
+        if (ring > 0 && x >= l + ring && x < r - ring && y >= t + ring && y < b - ring) continue;
+        const along = layer.axis === 'y' ? y - t : x - l;
+        const length = layer.axis === 'y' ? b - t : r - l;
+        let c;
+        if (layer.stripes) c = colourOf(layer.stripes[Math.floor(along / (layer.period * s)) % layer.stripes.length]);
+        else if (layer.gradient) {
+          const a = colourOf(layer.gradient[0]), z = colourOf(layer.gradient[1]);
+          const n = length - 1;
+          c = 0;
+          for (const sh of [16, 8, 0]) c |= Math.floor((((a >> sh) & 255) * (n - along) + ((z >> sh) & 255) * along + Math.floor(n / 2)) / n) << sh;
+        } else c = colourOf(layer.colour ?? layer.fill);
+        px[y * width + x] = c;
+      }
     }
-  });
+  }
+  return { width, height, at: (x, y) => px[y * width + x] };
+}
 
-  test('artwork that moves is not an indicator: the drawing moved', () => {
-    const at = (dx) => (x, y) => (within(x, y, 20 + dx, 20, 30 + dx, 30) ? BLACK : WHITE);
-    const moved = picture(at(4));
-    const ind = compare(picture(at(0)), moved, moved, region);
-    // The square's new edge is black on the page, 21:1: without this check
-    // it would pass as a ring.
-    expect(ind.strong).toBeGreaterThan(0);
-    expect(ind.moved).toBe(true);
-  });
+/** What a case's measure at pixel ratio `s` gets wrong: none, if it passes. */
+function checkCase(c, s) {
+  const w = c.size[0] * s, h = c.size[1] * s;
+  const u = paint(c.before, w, h, s), f1 = paint(c.after, w, h, s);
+  const f2 = c.after2 ? paint(c.after2, w, h, s) : f1;
+  const ind = compare(u, f1, f2, { x: 0, y: 0, width: w, height: h });
+  const e = c.expect;
+  const problems = [];
+  const want = (ok, what) => { if (!ok) problems.push(`${what}: ${ind.text}`); };
+  const some = (v, n) => (v === 'none' ? n === 0 : n > 0);
+  if (e.changed) want(some(e.changed, ind.changed), `changed ${e.changed}`);
+  if (e.unstable) want(some(e.unstable, ind.unstable), `unstable ${e.unstable}`);
+  if (e.moved !== undefined) want(ind.moved === e.moved, `moved ${e.moved}`);
+  if (e.strong === 'all') want(ind.flat > 0 && ind.strong === ind.flat, 'strong all');
+  if (e.strong === 'none') want(ind.strong === 0, 'strong none');
+  if (e.strong === 'some') want(ind.strong > 0 && ind.strong < ind.flat, 'strong some');
+  if (e.strongPixels !== undefined) want(ind.strong === e.strongPixels * s * s, `strong pixels ${e.strongPixels * s * s}`);
+  if (e.ratio) want(Math.abs(ind.ratio - e.ratio[0]) <= e.ratio[1], `ratio ${e.ratio[0]}`);
+  if (e.ratioBelow !== undefined) want(ind.ratio < e.ratioBelow, `ratio below ${e.ratioBelow}`);
+  if (e.onPage !== undefined) want(ind.bands.length > 0 && ind.bands[0].onPage === e.onPage, `on the page ${e.onPage}`);
+  return problems;
+}
 
-  test('nothing drawn is no indicator', () => {
-    const ind = focus(button);
-    expect(ind.changed).toBe(0);
-    expect(ind.strong).toBe(0);
-  });
-
-  test('a mark in one capture only (a blinking caret) is unstable, not an indicator', () => {
-    const caret = picture((x, y) => (x === 30 && y >= 22 && y < 38 ? BLACK : button(x, y)));
-    const ind = compare(picture(button), caret, picture(button), region);
-    expect(ind.changed).toBe(0);
-    expect(ind.unstable).toBeGreaterThan(0);
-  });
+test.describe('the measure', () => {
+  for (const c of CASES) {
+    for (const s of c.scales) {
+      test(`${c.name} (pixel ratio ${s})`, () => {
+        expect(checkCase(c, s)).toEqual([]);
+      });
+    }
+  }
 });
-
 
 test('the contrast ratio is WCAG\'s', () => {
   expect(ratio(0xffffff, 0x000000)).toBeCloseTo(21, 3);
@@ -424,7 +496,7 @@ test.describe('focus indicators, measured from the pixels', () => {
         lastBefore = await settled(page, inflate(await locator.boundingBox()));
         const ind = await tabAndMeasure(page, slug, c, locator, lastBefore);
         console.log(`V14 web ${slug} ${c}: ${ind.text}`);
-        expect(ind.strong, `${c}: ${ind.text}`).toBeGreaterThan(150);
+        expect(ind.strong, `${c}: ${ind.text}`).toBeGreaterThan(OUR_MINIMUM);
       }
       // Off again: Tab on, and the last control's region is as it was.
       await tab(page);
