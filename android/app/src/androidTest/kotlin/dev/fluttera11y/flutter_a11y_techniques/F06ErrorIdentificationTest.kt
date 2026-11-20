@@ -192,33 +192,53 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
      *
      * Fails unless both ends were reached. The scrolling view says so
      * itself: it offers the scroll-backward action only while there is more
-     * above, and scroll-forward only while there is more below. [first] and
+     * above, and scroll-forward only while there is more below. A tree with
+     * no scrolling view in it counts only when the first and the last line
+     * are both in it, which is a page that fits the screen. [first] and
      * [last], the first and last lines that scroll with the page, must also
      * be in the tree at the start and at the end.
      */
     private fun everyName(first: String, last: String): Set<String> {
         fun scrollView() = all().firstOrNull { it.isScrollable }
-        fun offers(action: AccessibilityNodeInfo.AccessibilityAction) =
-            scrollView()?.actionList?.contains(action) == true
         fun names() = all().map { it.name() }.filter { it.isNotEmpty() }
-        val back = AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD
-        val forward = AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD
-        for (i in 0 until 12) {
-            if (!offers(back) || scrollView()?.performAction(back.id) != true) break
-            Thread.sleep(500)
+        val seen = mutableSetOf<String>()
+
+        // Scrolls with [action] until the page is at that end on four
+        // readings in a row, half a second apart. It is at an end when the
+        // scrolling view has stopped offering the action, or when the tree
+        // has no scrolling view and has both the first and the last line in
+        // it, which is a page that fits the screen. One reading is not
+        // enough: while the keyboard goes away the action is for a moment
+        // not offered or refused, and on CI the loop then stopped before
+        // the end (run 44684166461).
+        fun scrollToEnd(action: AccessibilityNodeInfo.AccessibilityAction, what: String): List<String> {
+            var settled = 0
+            var steps = 0
+            val deadline = System.currentTimeMillis() + 30_000
+            while (System.currentTimeMillis() < deadline) {
+                val view = scrollView()
+                val now = names()
+                val there = if (view != null) !view.actionList.contains(action)
+                else now.contains(first) && now.contains(last)
+                if (there) {
+                    seen.addAll(now)
+                    if (++settled == 4) return now
+                } else {
+                    settled = 0
+                    if (view != null && steps < 40 && view.performAction(action.id)) steps++
+                }
+                Thread.sleep(500)
+                seen.addAll(names())
+            }
+            throw AssertionError("the page is at its $what: not after 30 seconds and $steps scrolls")
         }
-        assertFalse("the page is at its start", offers(back))
-        val atStart = names()
+
+        val atStart = scrollToEnd(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD, "start")
         assertTrue("\"$first\" is at the start of the page: $atStart", atStart.contains(first))
-        val seen = atStart.toMutableSet()
-        var atEnd = atStart
-        for (i in 0 until 12) {
-            if (!offers(forward) || scrollView()?.performAction(forward.id) != true) break
-            Thread.sleep(500)
-            atEnd = names()
-            seen.addAll(atEnd)
-        }
-        assertFalse("the page is at its end", offers(forward))
+        // Only what is read from the start onwards counts.
+        seen.clear()
+        seen.addAll(atStart)
+        val atEnd = scrollToEnd(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD, "end")
         assertTrue("\"$last\" is at the end of the page: $atEnd", atEnd.contains(last))
         return seen
     }
