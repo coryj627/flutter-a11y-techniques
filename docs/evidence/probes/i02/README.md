@@ -54,6 +54,9 @@ How each platform was looked at, and the raw output:
   `ios_probe.sh.txt`: the tree, sixty Tabs, Shift+Tab, the arrows, Space,
   and VoiceOver's own moves. Output: `ios.txt`. Full Keyboard Access was
   not turned on.
+- iOS on CI (iPhone 17 Pro simulator, iOS 26.5): the lines of the
+  technique's Shift+Tab test from two CI jobs where it failed, in
+  `ci_ios_26_5_shift_tab.txt`. Not a probe run: kept from the job logs.
 
 ## The order
 
