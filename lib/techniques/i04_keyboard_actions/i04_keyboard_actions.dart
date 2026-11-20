@@ -16,10 +16,10 @@ final i04KeyboardActions = Technique(
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(
       note:
-          'Whether a single-key shortcut takes a letter typed in a text '
-          'field depends on the device: on one emulator the input method had '
-          'the letter keys first, on another the letter did not reach the '
-          'field. The on-screen '
+          'A single-key shortcut was not shown to take a letter typed in a '
+          'field: on one emulator the input method had the letter keys '
+          'first; on another the letter was lost, and why was not '
+          'recorded. The on-screen '
           "keyboard's action key was not pressed by the tests; Enter on a "
           'hardware keyboard was.',
     ),
@@ -115,10 +115,8 @@ final i04KeyboardActions = Technique(
       defect:
           'F adds the photo to the favourites wherever focus is on the '
           'screen, and nothing turns it off or changes it. So a lowercase f '
-          'typed in the note adds a favourite instead, and does not appear, '
-          'on the web and on iOS. On Android it depended on the device: on '
-          'one emulator the f was typed, and on another it did not reach '
-          'the note.',
+          'typed in the note adds a favourite instead, and does not appear: '
+          'on the web and iOS; not shown on Android.',
       builder: (_) => const BadPageShortcut(),
     ),
     TechniqueExample.bad(

@@ -3189,9 +3189,10 @@ yet), **Fixed in x.y** (verified on that version).
   acts on, so it is never above a field (I04 `good-on-focus`).
 - How to read this entry: this is how Flutter is documented to work, not
   a defect in it. It is logged because a page-wide shortcut, the usual way
-  to add one, breaks typing on the web and iOS and on some Android
-  devices and not others, so testing on one Android device may not find
-  it.
+  to add one, breaks typing on the web and iOS. On Android it was not
+  shown to: the local emulator (Android 17) typed the f, and CI's
+  (Android 15) lost it in a run that did not record whether a favourite
+  was added.
 - Upstream issue: not searched yet (D25).
 
 ## FL-461

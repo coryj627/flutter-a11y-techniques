@@ -67,8 +67,8 @@ How the bad examples fail, as the criteria are written:
   it off or remaps it. What follows from it in the note field is the
   harm 2.1.4 is about, not a second failure: a lowercase f typed there is
   taken by the shortcut, adds a favourite, and does not appear, on the web
-  and iOS ([FL-460](../flutter-limitations.md#fl-460)); on Android it
-  depended on the device (section 7). It does not fail 2.1.1: other keys
+  and iOS ([FL-460](../flutter-limitations.md#fl-460)); on Android that
+  was not shown (section 7). It does not fail 2.1.1: other keys
   still put an f in the note. Measured on the web: Shift+F types a
   capital F, and an f pasted with Control or Command+V goes in. On iOS:
   Shift+F types a capital F, an f pasted with Command+V goes in (iOS
@@ -225,7 +225,7 @@ The probe that came first is in
 of each platform.
 
 - **A shortcut above a text field takes its letter on the web and on
-  iOS, and on Android it depends on the device**
+  iOS; on Android that was not shown**
   ([FL-460](../flutter-limitations.md#fl-460)). Flutter gives each key to
   the framework before the platform's text input, as `EditableText`'s
   documentation says. On the local Android emulator (Android 17, Gboard, a
