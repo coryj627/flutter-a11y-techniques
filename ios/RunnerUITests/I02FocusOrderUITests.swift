@@ -159,7 +159,7 @@ final class I02FocusOrderUITests: XCTestCase, CountedTechniqueUITest {
   /// I04 and I08 skip their modifier-key tests there too.
   func testShiftTabGoesTheSameWayBackwards() throws {
     if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 27 {
-      throw XCTSkip("Shift+Tab did not arrive with its modifier every time before iOS 27")
+      throw XCTSkip("on CI's iOS 26.5 this test failed in some runs, cause not found: docs/evidence/probes/i02/ci_ios_26_5_shift_tab.txt")
     }
     for slug in Self.all {
       let order = Self.tabOrder[slug]!
