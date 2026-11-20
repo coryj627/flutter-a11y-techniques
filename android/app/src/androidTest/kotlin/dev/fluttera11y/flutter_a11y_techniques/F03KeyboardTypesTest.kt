@@ -303,11 +303,20 @@ class F03KeyboardTypesTest : TechniqueTest("F03") {
      */
     private fun startEditing(e: Expected): Triple<Pair<Int, Int>?, Set<String>, List<AutofillEntry>> {
         assertTrue("${e.id} click", node(e.id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
-        val end = System.currentTimeMillis() + 8_000
+        val start = System.currentTimeMillis()
+        val end = start + 20_000
         var info = editorInfo()
         var keys = keyLabels()
+        var askedAgain = false
         while (System.currentTimeMillis() < end &&
             (info?.first != e.inputType || (gboard && !e.keys.all { shows(keys, it) }) || !node(e.id).isFocused)) {
+            // On CI the keyboard now and then did not come up at all in
+            // eight seconds (runs 44669968108 and 44737768811). Its coming
+            // up is not what is tested: ask for it once more.
+            if (!askedAgain && keyboardWindow() == null && System.currentTimeMillis() - start > 6_000) {
+                askedAgain = true
+                node(e.id).performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            }
             Thread.sleep(250)
             info = editorInfo()
             keys = keyLabels()

@@ -281,7 +281,14 @@ class I03FocusManagementTest : TechniqueTest("I03") {
             key("ENTER")
             assertTrue("$slug: the question opens", waitForQuestion(slug, "Remove Lake loop?"))
             assertEquals(slug, stops.first, stopWhen(slug, stops.first))
-            assertEquals(slug, listOf(stops.second), walk(slug, 1) { key("TAB") })
+            // Where the question takes no focus there is nothing to wait
+            // for, and on CI the Tab was pressed while the question was
+            // still coming in and no stop followed it (run 44737768811).
+            // The Tab is pressed once; only the read after it waits.
+            device.waitForIdle()
+            Thread.sleep(1_000)
+            key("TAB")
+            assertEquals(slug, stops.second, stopWhen(slug, stops.second))
         }
     }
 
