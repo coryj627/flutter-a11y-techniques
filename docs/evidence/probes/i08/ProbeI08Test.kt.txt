@@ -1,0 +1,276 @@
+// Throwaway I08 probe. Not committed; kept as
+// docs/evidence/probes/i08/ProbeI08Test.kt.txt. For each fixture of
+// lib/probe.dart: open it with the click action, then one of: Escape from
+// the keyboard (`input keyevent`), the Back key (`input keyevent`),
+// Android's global Back action (what TalkBack's Back gesture calls), or the
+// dismiss action on the last node that has one; and read the probe's status
+// bar ("Open:", "KF:", "Log:"), whether the probe screen is still there,
+// and whether the app is still in front. Then the traps.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.accessibilityservice.AccessibilityService
+import android.os.SystemClock
+import android.util.Log
+import android.view.InputDevice
+import android.view.KeyCharacterMap
+import android.view.KeyEvent
+import android.view.accessibility.AccessibilityNodeInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
+import org.junit.Test
+import org.junit.runner.RunWith
+
+private const val TAG = "I08PROBE"
+
+private val FIXTURES = listOf(
+    "e1" to "e1 showDialog",
+    "e2" to "e2 showDialog not dismissible",
+    "e3" to "e3 showCupertinoDialog",
+    "e4" to "e4 showCupertinoDialog dismissible",
+    "e5" to "e5 showModalBottomSheet",
+    "e6" to "e6 showModalBottomSheet not dismissible",
+    "e7" to "e7 persistent sheet",
+    "e8" to "e8 MenuAnchor",
+    "e9" to "e9 PopupMenuButton",
+    "e11" to "e11 open drawer",
+    "e12" to "e12 SnackBar",
+    "e13" to "e13 showDatePicker",
+    "e14" to "e14 OverlayEntry",
+    "e15" to "e15 OverlayPortal",
+    "e16" to "e16 showGeneralDialog",
+    "e17" to "e17 showGeneralDialog not dismissible",
+    "e18" to "e18 showCupertinoModalPopup",
+    "e19" to "e19 showDialog PopScope",
+    "e20" to "e20 OverlayPortal handled",
+    "e21" to "e21 DropdownButton",
+    "e22" to "e22 showCupertinoSheet",
+)
+
+@RunWith(AndroidJUnit4::class)
+class ProbeI08Test : TechniqueTest("I08") {
+    private val pkg get() = inst.targetContext.packageName
+
+    private fun nodes(): List<AccessibilityNodeInfo> {
+        val out = mutableListOf<AccessibilityNodeInfo>()
+        fun visit(n: AccessibilityNodeInfo?) {
+            if (n == null) return
+            out.add(n)
+            for (i in 0 until n.childCount) visit(n.getChild(i))
+        }
+        val roots = listOfNotNull(automation.rootInActiveWindow) + automation.windows.mapNotNull { it.root }
+        roots.forEach { visit(it) }
+        return out
+    }
+
+    private fun line(id: String): String =
+        nodes().firstOrNull { it.viewIdResourceName == id }?.name() ?: "($id not found)"
+
+    private fun state(): String {
+        val front = device.currentPackageName == pkg
+        val ns = nodes()
+        val page = when {
+            ns.any { it.name() == "I08 probe" || it.text?.toString() == "I08 probe" } -> "probe page"
+            ns.any { it.name() == "I08 traps" || it.text?.toString() == "I08 traps" } -> "traps page"
+            ns.any { it.name() == "Home" || it.text?.toString() == "Home" } -> "HOME page"
+            else -> "no page"
+        }
+        return if (!front) "APP NOT IN FRONT (${device.currentPackageName})"
+        else "${line("open")} / $page / ${line("kf")} / ${line("log")}"
+    }
+
+    private fun start() {
+        val intent = inst.targetContext.packageManager.getLaunchIntentForPackage(pkg)!!
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        device.wait(Until.hasObject(By.res("kf")), 20_000)
+        device.waitForIdle()
+        Thread.sleep(1_500)
+        // A key nothing uses, so that the first key that matters is not the
+        // one lost after launch.
+        key("F12")
+        key("F11")
+    }
+
+    private fun key(name: String) {
+        device.executeShellCommand("input keyevent KEYCODE_$name")
+        Thread.sleep(700)
+    }
+
+    private fun shiftTab() {
+        val t = SystemClock.uptimeMillis()
+        val shift = KeyEvent.META_SHIFT_ON or KeyEvent.META_SHIFT_LEFT_ON
+        fun event(time: Long, action: Int, code: Int, meta: Int) = KeyEvent(
+            time, time, action, code, 0, meta, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
+            InputDevice.SOURCE_KEYBOARD)
+        inst.sendKeySync(event(t, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT, shift))
+        inst.sendKeySync(event(t + 10, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB, shift))
+        inst.sendKeySync(event(t + 20, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_TAB, shift))
+        inst.sendKeySync(event(t + 30, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT, 0))
+        Thread.sleep(700)
+    }
+
+    /** The node named [name] (by identifier or name), scrolling the list to it. */
+    private fun reveal(name: String): AccessibilityNodeInfo? {
+        // The control itself, not the identifier's own node around it
+        // (FL-043): the clickable node named by the text.
+        fun find() = nodes().firstOrNull { (it.name() == name || it.name().startsWith(name)) && it.isClickable }
+            ?: nodes().firstOrNull { it.name() == name || it.name().startsWith(name) }
+        find()?.let { return it }
+        for (action in listOf(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD, AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)) {
+            for (i in 0 until 10) {
+                val view = nodes().firstOrNull { it.isScrollable } ?: break
+                if (!view.performAction(action)) break
+                Thread.sleep(500)
+                find()?.let { return it }
+            }
+        }
+        return null
+    }
+
+    private fun open(trigger: String): String {
+        val node = reveal(trigger) ?: return "TRIGGER NOT FOUND"
+        node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(1_500)
+        return state()
+    }
+
+    private fun dismissable(): List<AccessibilityNodeInfo> =
+        nodes().filter { n -> n.actionList.any { it.id == AccessibilityNodeInfo.ACTION_DISMISS } }
+
+    @Test
+    fun surfaces() {
+        val only = InstrumentationRegistry.getArguments().getString("only")?.split(",")
+        for ((id, trigger) in FIXTURES.filter { only == null || it.first in only }) {
+            val row = mutableListOf<String>()
+            for (how in listOf("ESCAPE", "BACK", "GLOBAL_BACK", "DISMISS")) {
+                start()
+                val opened = open(trigger)
+                if (how == "ESCAPE") row += "opened: $opened"
+                when (how) {
+                    "ESCAPE", "BACK" -> key(how)
+                    "GLOBAL_BACK" -> { automation.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK); Thread.sleep(700) }
+                    "DISMISS" -> {
+                        val ds = dismissable()
+                        row += "dismiss on: ${ds.map { it.name().ifEmpty { it.text?.toString() ?: "?" }.take(30) }}"
+                        if (ds.isEmpty()) continue
+                        ds.last().performAction(AccessibilityNodeInfo.ACTION_DISMISS)
+                    }
+                }
+                Thread.sleep(1_500)
+                row += "$how: ${state()} | ${line("keys")}"
+            }
+            Log.i(TAG, "$id | ${row.joinToString(" | ")}")
+        }
+    }
+
+    @Test
+    fun tooltip() {
+        for (how in listOf("ESCAPE", "BACK")) {
+            start()
+            val node = reveal("e10 Tooltip")!!
+            val lp = node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
+            Thread.sleep(1_000)
+            var shown = nodes().any { it.name().contains("e10 tooltip text") || it.text?.toString()?.contains("e10 tooltip text") == true }
+            if (!shown) {
+                val r = android.graphics.Rect()
+                node.getBoundsInScreen(r)
+                device.swipe(r.centerX(), r.centerY(), r.centerX(), r.centerY(), 200)
+                Thread.sleep(500)
+                shown = nodes().any { it.name().contains("e10 tooltip text") || it.text?.toString()?.contains("e10 tooltip text") == true }
+            }
+            key(how)
+            Thread.sleep(500)
+            val after = nodes().any { it.name().contains("e10 tooltip text") || it.text?.toString()?.contains("e10 tooltip text") == true }
+            Log.i(TAG, "e10 | long click action $lp | shown $shown | $how: tooltip ${if (after) "SHOWN" else "gone"} / ${state()}")
+        }
+    }
+
+    @Test
+    fun backControl() {
+        start()
+        val before = state()
+        key("BACK")
+        val once = state()
+        key("BACK")
+        val twice = state()
+        Log.i(TAG, "control | before: $before | Back: $once | Back again: $twice")
+        start()
+        key("ESCAPE")
+        val esc = state()
+        key("ESCAPE")
+        Log.i(TAG, "control | Escape with nothing open: $esc | Escape again: ${state()}")
+    }
+
+    /**
+     * Round 3: a hardware keyboard's own Back. Android's system shortcuts
+     * (InputGestureManager in AOSP) map Meta+Escape and Meta+Left, and in
+     * newer sources Meta+Backspace, to Back. Each chord is sent as key
+     * events through Instrumentation.sendKeySync, as Shift+Tab is: Meta
+     * down, the key down and up, Meta up, from a physical-keyboard source.
+     */
+    private fun chord(code: Int) {
+        val t = SystemClock.uptimeMillis()
+        val meta = KeyEvent.META_META_ON or KeyEvent.META_META_LEFT_ON
+        fun event(time: Long, action: Int, key: Int, state: Int) = KeyEvent(
+            time, time, action, key, 0, state, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
+            InputDevice.SOURCE_KEYBOARD)
+        inst.sendKeySync(event(t, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_META_LEFT, meta))
+        inst.sendKeySync(event(t + 10, KeyEvent.ACTION_DOWN, code, meta))
+        inst.sendKeySync(event(t + 20, KeyEvent.ACTION_UP, code, meta))
+        inst.sendKeySync(event(t + 30, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_META_LEFT, 0))
+        Thread.sleep(1_500)
+    }
+
+    @Test
+    fun keyboardBack() {
+        val chords = listOf(
+            "Meta+Escape" to KeyEvent.KEYCODE_ESCAPE,
+            "Meta+Left" to KeyEvent.KEYCODE_DPAD_LEFT,
+            "Meta+Backspace" to KeyEvent.KEYCODE_DEL,
+        )
+        for ((name, code) in chords) {
+            // The positive control: with nothing open, Back pops the probe
+            // screen to Home.
+            start()
+            chord(code)
+            Log.i(TAG, "keyboard back $name | nothing open: ${state()}")
+            for ((id, trigger) in FIXTURES.filter { it.first in listOf("e1", "e2", "e3", "e6", "e14", "e17", "e19", "e20") }) {
+                start()
+                val opened = open(trigger)
+                chord(code)
+                val after = state()
+                key("F10")
+                Log.i(TAG, "keyboard back $name | $id | opened: $opened | after: $after | then F10, keys: ${line("keys")}")
+            }
+        }
+    }
+
+    @Test
+    fun traps() {
+        start()
+        reveal("e0 traps screen")!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(1_500)
+        key("F6")
+        val fromT0 = mutableListOf(line("kf"))
+        repeat(4) { key("TAB"); fromT0 += line("kf") }
+        Log.i(TAG, "traps from t0 | ${fromT0.joinToString(" > ")}")
+        for ((t, f) in listOf("t1" to "F1", "t2" to "F2", "t3" to "F3", "t4" to "F4", "t5" to "F5")) {
+            key(f)
+            val fwd = mutableListOf(line("kf"))
+            repeat(4) { key("TAB"); fwd += line("kf") }
+            val back = mutableListOf<String>()
+            repeat(4) { shiftTab(); back += line("kf") }
+            key("ESCAPE")
+            Thread.sleep(800)
+            val esc = state()
+            Log.i(TAG, "traps $t | Tab: ${fwd.joinToString(" > ")} | Shift+Tab: ${back.joinToString(" > ")} | Escape: $esc | ${line("keys")}")
+            if (!esc.contains("traps page")) {
+                start()
+                reveal("e0 traps screen")!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                Thread.sleep(1_500)
+            }
+        }
+    }
+}

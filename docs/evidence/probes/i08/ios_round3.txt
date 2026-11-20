@@ -1,0 +1,11 @@
+== simulator:     iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+== testEscapeVariants
+I08PROBE escape e20 typeKey(XCUIKeyboardKey.escape) | Tab first: Keys: Tab | opened: Open: e20 / probe page / KF: node:e20 Close / Log:  | after: Open: e20 / probe page / KF: node:e20 Close / Log:  | Keys: Tab
+I08PROBE escape e20 typeKey("\u{1b}") | Tab first: Keys: Tab | opened: Open: e20 / probe page / KF: node:e20 Close / Log:  | after: Open: e20 / probe page / KF: node:e20 Close / Log:  | Keys: Tab
+I08PROBE escape e20 typeKey(".", command) | Tab first: Keys: Tab | opened: Open: e20 / probe page / KF: node:e20 Close / Log:  | after: Open: - / probe page / KF: node:e20 OverlayPortal handled / Log: unhandled Meta Left, e20 closed by Escape | Keys: Tab Meta Left Escape
+I08PROBE escape e20 typeKey("[", command) | Tab first: Keys: Tab | opened: Open: e20 / probe page / KF: node:e20 Close / Log:  | after: Open: e20 / probe page / KF: node:e20 Close / Log: unhandled Meta Left, unhandled [ | Keys: Tab Meta Left [
+I08PROBE escape e1 typeKey(XCUIKeyboardKey.escape) | Tab first: Keys: Tab | opened: Open: e1 / no page / KF: scope:e1 title / Log:  | after: Open: e1 / no page / KF: scope:e1 title / Log:  | Keys: Tab
+I08PROBE escape e1 typeKey("\u{1b}") | Tab first: Keys: Tab | opened: Open: e1 / no page / KF: scope:e1 title / Log:  | after: Open: e1 / no page / KF: scope:e1 title / Log:  | Keys: Tab
+I08PROBE escape e1 typeKey(".", command) | Tab first: Keys: Tab | opened: Open: e1 / no page / KF: scope:e1 title / Log:  | after: Open: - / probe page / KF: node:? / Log: unhandled Meta Left, didPop DialogRoute<String>, e1 closed | Keys: Tab Meta Left Escape
+I08PROBE escape e1 typeKey("[", command) | Tab first: Keys: Tab | opened: Open: e1 / no page / KF: scope:e1 title / Log:  | after: Open: e1 / no page / KF: scope:e1 title / Log: unhandled Meta Left, unhandled [ | Keys: Tab Meta Left [
+Test Case '-[RunnerUITests.I08ProbeUITests testEscapeVariants]' passed (111.582 seconds).

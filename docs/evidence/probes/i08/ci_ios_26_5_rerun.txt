@@ -1,0 +1,121 @@
+# I08's iOS UI tests on CI: run 44595763702 (attempt 2), job 135815215756,
+# head 0da58ab (GitHub's macOS runner, Xcode 26.6, iPhone 17 Pro simulator,
+# iOS 26.5). The two Escape tests' part of the job's log, with each line's
+# timestamp cut and the lines XCUITest repeats inside every step (idle
+# waits, existence checks, event synthesis, debug descriptions,
+# launch-parameter warnings) left out; nothing else is changed. The other
+# I08 tests in that job: testBadNoEscapeNoKeyLeavesTheLayers,
+# testEveryExampleHasItsButtonAndSwitches and
+# testTabAndShiftTabGoRoundTheSwitches passed; testVoiceOverSpeech was
+# skipped (no iOS 27).
+
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeClosesTheLayers]' started.
+    t =     0.00s Start Test at 2026-11-19 19:48:57.025
+    t =     0.02s Set Up
+    t =     0.02s     Terminate dev.fluttera11y.flutterA11yTechniques:19005
+    t =     1.05s     Open dev.fluttera11y.flutterA11yTechniques with URL fluttera11y:///t/I08/good-material
+    t =     1.05s         Launch dev.fluttera11y.flutterA11yTechniques
+    t =     1.26s             Setting up automation session
+    t =     4.22s     Waiting 30.0s for "i08-good-material-count" Any to exist
+    t =     5.27s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =     6.35s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =     7.43s     Type '
+' key with no modifiers
+    t =     8.57s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =     9.64s     Find the "i08-good-material-contours" Any
+    t =     9.65s     Find the "i08-good-material-campsites" Any
+    t =     9.67s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    10.75s     Find the "i08-good-material-campsites" Any
+    t =    10.76s     Find the "i08-good-material-contours" Any
+    t =    10.77s     Find the "i08-good-material-contours" Any
+    t =    10.78s     Find the "i08-good-material-campsites" Any
+    t =    10.80s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    11.88s     Find the "i08-good-material-campsites" Any
+    t =    11.89s     Find the "i08-good-material-contours" Any
+    t =    11.90s     Type '.' key with modifiers '⌘' (0x10)
+    t =    13.03s     Find the "i08-good-material-count" Any
+    t =    13.07s     Find the "i08-good-material-count" StaticText
+    t =    13.08s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    14.21s     Terminate dev.fluttera11y.flutterA11yTechniques:21218
+    t =    15.29s     Open dev.fluttera11y.flutterA11yTechniques with URL fluttera11y:///t/I08/good-cupertino
+    t =    15.29s         Launch dev.fluttera11y.flutterA11yTechniques
+    t =    15.51s             Setting up automation session
+    t =    18.47s     Waiting 30.0s for "i08-good-cupertino-count" Any to exist
+    t =    19.54s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =    20.64s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =    21.74s     Type '
+' key with no modifiers
+    t =    23.04s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =    24.18s     Find the "i08-good-cupertino-contours" Any
+    t =    24.19s     Find the "i08-good-cupertino-campsites" Any
+    t =    24.20s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    25.29s     Find the "i08-good-cupertino-campsites" Any
+    t =    25.30s     Find the "i08-good-cupertino-contours" Any
+    t =    25.31s     Find the "i08-good-cupertino-contours" Any
+    t =    25.32s     Find the "i08-good-cupertino-campsites" Any
+    t =    25.33s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    26.41s     Find the "i08-good-cupertino-campsites" Any
+    t =    26.42s     Find the "i08-good-cupertino-contours" Any
+    t =    26.43s     Type '.' key with modifiers '⌘' (0x10)
+/Users/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/ios/RunnerUITests/I08DismissAndEscapeUITests.swift:194: error: -[RunnerUITests.I08DismissAndEscapeUITests testEscapeClosesTheLayers] : XCTAssertFalse failed - good-cupertino: Escape: Contour lines is still there
+    t =    37.68s Tear Down
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeClosesTheLayers]' failed (37.905 seconds).
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeDoesNothingInTheBadExamples]' started.
+    t =     0.00s Start Test at 2026-11-19 19:49:34.931
+    t =     0.04s Set Up
+    t =     0.04s     Terminate dev.fluttera11y.flutterA11yTechniques:22381
+    t =     1.04s     Open dev.fluttera11y.flutterA11yTechniques with URL fluttera11y:///t/I08/bad-not-dismissible
+    t =     1.05s         Launch dev.fluttera11y.flutterA11yTechniques
+    t =     1.27s             Setting up automation session
+    t =     4.29s     Waiting 30.0s for "i08-bad-not-dismissible-count" Any to exist
+    t =     5.34s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =     6.41s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =     7.50s     Type '
+' key with no modifiers
+    t =     8.64s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =     9.73s     Find the "i08-bad-not-dismissible-contours" Any
+    t =     9.75s     Find the "i08-bad-not-dismissible-campsites" Any
+    t =     9.76s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    10.83s     Find the "i08-bad-not-dismissible-campsites" Any
+    t =    10.84s     Find the "i08-bad-not-dismissible-contours" Any
+    t =    10.85s     Find the "i08-bad-not-dismissible-contours" Any
+    t =    10.86s     Find the "i08-bad-not-dismissible-campsites" Any
+    t =    10.87s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    11.95s     Find the "i08-bad-not-dismissible-campsites" Any
+    t =    11.96s     Find the "i08-bad-not-dismissible-contours" Any
+    t =    11.97s     Type '.' key with modifiers '⌘' (0x10)
+    t =    14.11s     Find the "i08-bad-not-dismissible-contours" Any
+    t =    14.12s     Find the "i08-bad-not-dismissible-campsites" Any
+    t =    14.13s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    15.21s     Find the "i08-bad-not-dismissible-campsites" Any
+    t =    15.23s     Find the "i08-bad-not-dismissible-contours" Any
+    t =    15.24s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =    16.31s     Type '.' key with modifiers '⌘' (0x10)
+    t =    18.48s     Find the "i08-bad-not-dismissible-contours" Any
+    t =    18.49s     Find the "i08-bad-not-dismissible-campsites" Any
+    t =    18.50s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    19.60s     Find the "i08-bad-not-dismissible-campsites" Any
+    t =    19.61s     Find the "i08-bad-not-dismissible-contours" Any
+    t =    19.62s     Open dev.fluttera11y.flutterA11yTechniques with URL fluttera11y:///t/I08/good-material
+    t =    19.63s         Launch dev.fluttera11y.flutterA11yTechniques
+    t =    20.06s             Setting up automation session
+    t =    22.90s     Waiting 30.0s for "i08-good-material-count" Any to exist
+    t =    23.93s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =    25.03s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =    26.14s     Type '
+' key with no modifiers
+    t =    27.34s     Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+    t =    28.43s     Find the "i08-good-material-contours" Any
+    t =    28.45s     Find the "i08-good-material-campsites" Any
+    t =    28.46s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    29.56s     Find the "i08-good-material-contours" Any
+    t =    29.58s     Find the "i08-good-material-campsites" Any
+    t =    29.59s     Find the "i08-good-material-contours" Any
+    t =    29.61s     Find the "i08-good-material-campsites" Any
+    t =    29.62s     Type ' ' key (XCUIKeyboardKeySpace) with no modifiers
+    t =    30.72s     Find the "i08-good-material-contours" Any
+    t =    30.74s     Find the "i08-good-material-campsites" Any
+    t =    30.75s     Type '.' key with modifiers '⌘' (0x10)
+/Users/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/ios/RunnerUITests/I08DismissAndEscapeUITests.swift:228: error: -[RunnerUITests.I08DismissAndEscapeUITests testEscapeDoesNothingInTheBadExamples] : XCTAssertFalse failed - good-material: Escape, the positive control in the launch of bad-not-dismissible: Contour lines is still there
+    t =    41.99s Tear Down
+Test Case '-[RunnerUITests.I08DismissAndEscapeUITests testEscapeDoesNothingInTheBadExamples]' failed (42.228 seconds).

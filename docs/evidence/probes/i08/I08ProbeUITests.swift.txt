@@ -1,0 +1,176 @@
+// Throwaway: I08 probe on iOS. Not committed; kept as
+// docs/evidence/probes/i08/I08ProbeUITests.swift.txt. For each fixture of
+// lib/probe.dart: open it with a tap, press Escape on the hardware keyboard
+// (XCUITest's typeKey), and read the probe's status bar ("Open:", "KF:",
+// "Log:"). Then the same with VoiceOver on: its cursor on the fixture's
+// button, a double tap, and Escape typed with VoiceOver running. Then the
+// traps and the tooltip.
+import XCTest
+
+final class I08ProbeUITests: XCTestCase {
+  let app = XCUIApplication()
+
+  static let fixtures: [(String, String)] = [
+    ("e1", "e1 showDialog"), ("e2", "e2 showDialog not dismissible"),
+    ("e3", "e3 showCupertinoDialog"), ("e4", "e4 showCupertinoDialog dismissible"),
+    ("e5", "e5 showModalBottomSheet"), ("e6", "e6 showModalBottomSheet not dismissible"),
+    ("e7", "e7 persistent sheet"), ("e8", "e8 MenuAnchor"),
+    ("e11", "e11 open drawer"), ("e12", "e12 SnackBar"), ("e13", "e13 showDatePicker"),
+    ("e14", "e14 OverlayEntry"), ("e15", "e15 OverlayPortal"), ("e16", "e16 showGeneralDialog"),
+    ("e17", "e17 showGeneralDialog not dismissible"), ("e18", "e18 showCupertinoModalPopup"),
+    ("e19", "e19 showDialog PopScope"), ("e20", "e20 OverlayPortal handled"),
+    ("e22", "e22 showCupertinoSheet"),
+  ]
+
+  private func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+  private func named(_ label: String) -> XCUIElement {
+    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
+  }
+  private func line(_ id: String) -> String { el(id).exists ? el(id).label : "(\(id) not found)" }
+
+  private func state() -> String {
+    let page: String
+    if named("I08 probe").exists { page = "probe page" }
+    else if named("I08 traps").exists { page = "traps page" }
+    else if named("Home").exists { page = "HOME page" }
+    else { page = "no page" }
+    let front = app.state == .runningForeground ? "" : "APP NOT IN FRONT / "
+    return "\(front)\(line("open")) / \(page) / \(line("kf")) / \(line("log"))"
+  }
+
+  private func launch() {
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(el("kf").waitForExistence(timeout: 30))
+    sleep(2)
+  }
+
+  private func press(_ key: String, _ flags: XCUIElement.KeyModifierFlags = []) {
+    app.typeKey(key, modifierFlags: flags)
+    usleep(700_000)
+  }
+
+  /// The button `name`, swiping the list up until it is hittable.
+  private func reveal(_ name: String) -> XCUIElement {
+    // The button by its label: the identifier the probe puts around a
+    // Material button lands somewhere else on iOS (FL-043).
+    let e = app.buttons.matching(NSPredicate(format: "label == %@", name)).firstMatch
+    for _ in 0..<8 {
+      if e.exists && e.isHittable { return e }
+      app.swipeUp(velocity: .slow)
+      usleep(500_000)
+    }
+    return e
+  }
+
+  func testSurfaces() {
+    for (id, trigger) in Self.fixtures {
+      launch()
+      reveal(trigger).tap()
+      sleep(2)
+      let opened = state()
+      press(XCUIKeyboardKey.escape.rawValue)
+      sleep(1)
+      print("I08PROBE \(id) | opened: \(opened) | Escape: \(state())")
+    }
+  }
+
+  func testTooltip() {
+    launch()
+    reveal("e10 Tooltip").press(forDuration: 1.2)
+    usleep(300_000)
+    let shown = app.staticTexts["e10 tooltip text"].exists || named("e10 tooltip text").exists
+    press(XCUIKeyboardKey.escape.rawValue)
+    let after = app.staticTexts["e10 tooltip text"].exists || named("e10 tooltip text").exists
+    print("I08PROBE e10 | long press: tooltip shown \(shown) | Escape: tooltip \(after ? "SHOWN" : "gone") / \(state())")
+  }
+
+  func testTraps() {
+    launch()
+    reveal("e0 traps screen").tap()
+    sleep(2)
+    press(XCUIKeyboardKey.F6.rawValue)
+    var fromT0 = [line("kf")]
+    for _ in 0..<4 { press(XCUIKeyboardKey.tab.rawValue); fromT0.append(line("kf")) }
+    print("I08PROBE traps from t0 | \(fromT0.joined(separator: " > "))")
+    let keys: [(String, XCUIKeyboardKey)] = [("t1", .F1), ("t2", .F2), ("t3", .F3), ("t4", .F4), ("t5", .F5)]
+    for (t, f) in keys {
+      press(f.rawValue)
+      var fwd = [line("kf")]
+      for _ in 0..<4 { press(XCUIKeyboardKey.tab.rawValue); fwd.append(line("kf")) }
+      var back: [String] = []
+      for _ in 0..<4 { press(XCUIKeyboardKey.tab.rawValue, .shift); back.append(line("kf")) }
+      press(XCUIKeyboardKey.escape.rawValue)
+      sleep(1)
+      let esc = state()
+      print("I08PROBE traps \(t) | Tab: \(fwd.joined(separator: " > ")) | Shift+Tab: \(back.joined(separator: " > ")) | Escape: \(esc) | \(line("keys"))")
+      if !esc.contains("traps page") {
+        launch()
+        reveal("e0 traps screen").tap()
+        sleep(2)
+      }
+    }
+  }
+
+  /// Round 2: Escape typed in other ways, on e20, whose overlay closes on
+  /// Escape, and on e1, a dialog; and Tab first, the positive control that
+  /// keys from XCUITest reach Flutter in this launch (the Keys line).
+  func testEscapeVariants() {
+    let variants: [(String, () -> Void)] = [
+      ("typeKey(XCUIKeyboardKey.escape)", { self.app.typeKey(XCUIKeyboardKey.escape.rawValue, modifierFlags: []) }),
+      ("typeKey(\"\\u{1b}\")", { self.app.typeKey("\u{1b}", modifierFlags: []) }),
+      // typeText("\u{1b}") was tried in round 2 and stopped the test:
+      // XCUITest types text only into an element with keyboard focus.
+      ("typeKey(\".\", command)", { self.app.typeKey(".", modifierFlags: .command) }),
+      ("typeKey(\"[\", command)", { self.app.typeKey("[", modifierFlags: .command) }),
+    ]
+    for (id, trigger) in [("e20", "e20 OverlayPortal handled"), ("e1", "e1 showDialog")] {
+      for (name, send) in variants {
+        launch()
+        press(XCUIKeyboardKey.tab.rawValue)
+        let afterTab = line("keys")
+        reveal(trigger).tap()
+        sleep(2)
+        let opened = state()
+        send()
+        sleep(2)
+        print("I08PROBE escape \(id) \(name) | Tab first: \(afterTab) | opened: \(opened) | after: \(state()) | \(line("keys"))")
+      }
+    }
+  }
+
+  func testBackControl() {
+    launch()
+    let before = state()
+    press(XCUIKeyboardKey.escape.rawValue)
+    sleep(1)
+    print("I08PROBE control | before: \(before) | Escape with nothing open: \(state())")
+  }
+
+  #if compiler(>=6.4)
+  /// With VoiceOver on: its cursor on the trigger (tap), a double tap to
+  /// open, then Escape on the hardware keyboard, with VoiceOver running.
+  func testVoiceOverEscapeKey() throws {
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    for (id, trigger) in Self.fixtures where ["e1", "e2", "e3", "e5", "e6", "e14", "e17", "e18", "e19", "e20", "e22"].contains(id) {
+      launch()
+      let button = reveal(trigger)
+      try voiceOver.enable()
+      defer { try? voiceOver.disable() }
+      sleep(2)
+      button.tap()
+      sleep(2)
+      button.doubleTap()
+      sleep(3)
+      let opened = state()
+      let said = (try? voiceOver.currentSpeech().utterance) ?? "(no speech)"
+      press(XCUIKeyboardKey.escape.rawValue)
+      sleep(2)
+      let after = state()
+      try voiceOver.disable()
+      print("I08PROBE vo \(id) | opened: \(opened) | VO said: \(said.replacingOccurrences(of: "\n", with: " ")) | Escape with VoiceOver on: \(after)")
+    }
+  }
+  #endif
+}

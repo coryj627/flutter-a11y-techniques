@@ -1,0 +1,49 @@
+== simulator:     iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+== testBackControl
+I08PROBE control | before: Open: - / probe page / KF: scope:Open navigation menu / Log:  | Escape with nothing open: Open: - / probe page / KF: scope:Open navigation menu / Log: 
+Test Case '-[RunnerUITests.I08ProbeUITests testBackControl]' passed (10.325 seconds).
+== testSurfaces
+I08PROBE e1 | opened: Open: e1 / no page / KF: scope:e1 title / Log:  | Escape: Open: e1 / no page / KF: scope:e1 title / Log: 
+I08PROBE e2 | opened: Open: e2 / no page / KF: scope:e2 title / Log:  | Escape: Open: e2 / no page / KF: scope:e2 title / Log: 
+I08PROBE e3 | opened: Open: e3 / no page / KF: scope:Alert / Log:  | Escape: Open: e3 / no page / KF: scope:Alert / Log: 
+I08PROBE e4 | opened: Open: e4 / no page / KF: scope:Alert / Log:  | Escape: Open: e4 / no page / KF: scope:Alert / Log: 
+I08PROBE e5 | opened: Open: e5 / no page / KF: scope: / Log:  | Escape: Open: e5 / no page / KF: scope: / Log: 
+I08PROBE e6 | opened: Open: e6 / no page / KF: scope: / Log:  | Escape: Open: e6 / no page / KF: scope: / Log: 
+I08PROBE e7 | opened: Open: e7 / probe page / KF: scope:Open navigation menu / Log:  | Escape: Open: e7 / probe page / KF: scope:Open navigation menu / Log: 
+I08PROBE e8 | opened: Open: e8 / probe page / KF: scope:Open navigation menu / Log:  | Escape: Open: e8 / probe page / KF: scope:Open navigation menu / Log: 
+I08PROBE e11 | opened: Open: e11 / no page / KF: scope:? / Log:  | Escape: Open: e11 / no page / KF: scope:? / Log: 
+I08PROBE e12 | opened: Open: e12 / probe page / KF: scope:Open navigation menu / Log:  | Escape: Open: e12 / probe page / KF: scope:Open navigation menu / Log: 
+I08PROBE e13 | opened: Open: e13 / no page / KF: scope:Select date / Log:  | Escape: Open: e13 / no page / KF: scope:Select date / Log: 
+I08PROBE e14 | opened: Open: e14 / probe page / KF: node:e14 Close / Log:  | Escape: Open: e14 / probe page / KF: node:e14 Close / Log: 
+I08PROBE e15 | opened: Open: e15 / probe page / KF: node:e15 Close / Log:  | Escape: Open: e15 / probe page / KF: node:e15 Close / Log: 
+I08PROBE e16 | opened: Open: e16 / no page / KF: scope:e16 title / Log:  | Escape: Open: e16 / no page / KF: scope:e16 title / Log: 
+I08PROBE e17 | opened: Open: e17 / no page / KF: scope:e17 title / Log:  | Escape: Open: e17 / no page / KF: scope:e17 title / Log: 
+I08PROBE e18 | opened: Open: e18 / no page / KF: scope:Alert / Log:  | Escape: Open: e18 / no page / KF: scope:Alert / Log: 
+I08PROBE e19 | opened: Open: e19 / no page / KF: scope:e19 title / Log:  | Escape: Open: e19 / no page / KF: scope:e19 title / Log: 
+I08PROBE e20 | opened: Open: e20 / probe page / KF: node:e20 Close / Log:  | Escape: Open: e20 / probe page / KF: node:e20 Close / Log: 
+I08PROBE e22 | opened: Open: e22 / no page / KF: scope:e22 title / Log:  | Escape: Open: e22 / no page / KF: scope:e22 title / Log: 
+Test Case '-[RunnerUITests.I08ProbeUITests testSurfaces]' passed (233.338 seconds).
+== testTooltip
+I08PROBE e10 | long press: tooltip shown true | Escape: tooltip SHOWN / Open: - / probe page / KF: scope:Open navigation menu / Log: 
+Test Case '-[RunnerUITests.I08ProbeUITests testTooltip]' passed (9.933 seconds).
+== testTraps
+I08PROBE traps from t0 | KF: node:t5 A > KF: node:t5 B > KF: node:t5 A > KF: node:t5 B > KF: node:t5 A
+I08PROBE traps t1 | Tab: KF: node:t5 A > KF: node:t5 B > KF: node:t5 A > KF: node:t5 B > KF: node:t5 A | Shift+Tab: KF: node:t5 B > KF: node:t5 A > KF: node:t5 B > KF: node:t5 A | Escape: Open: - / traps page / KF: node:t5 A / Log: unhandled F5, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left | Keys: shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab
+I08PROBE traps t2 | Tab: KF: node:t1 A > KF: node:t1 B > KF: node:t1 A > KF: node:t1 B > KF: node:t1 A | Shift+Tab: KF: node:t1 B > KF: node:t1 A > KF: node:t1 B > KF: node:t1 A | Escape: Open: - / traps page / KF: node:t1 A / Log: unhandled Shift Left, unhandled Shift Left, unhandled Shift Left, unhandled F1, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left | Keys: shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab
+I08PROBE traps t3 | Tab: KF: node:t2 A > KF: node:t2 B > KF: node:t2 A > KF: node:t2 B > KF: node:t2 A | Shift+Tab: KF: node:t2 B > KF: node:t2 A > KF: node:t2 B > KF: node:t2 A | Escape: Open: - / traps page / KF: node:t2 A / Log: unhandled Shift Left, unhandled Shift Left, unhandled Shift Left, unhandled F2, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left | Keys: shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab
+I08PROBE traps t4 | Tab: KF: node:t3 A > KF: node:t3 B > KF: node:t3 A > KF: node:t3 B > KF: node:t3 A | Shift+Tab: KF: node:t3 B > KF: node:t3 A > KF: node:t3 B > KF: node:t3 A | Escape: Open: - / traps page / KF: node:t3 A / Log: unhandled Shift Left, unhandled Shift Left, unhandled Shift Left, unhandled F3, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left | Keys: shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab
+I08PROBE traps t5 | Tab: KF: node:t4 A > KF: node:t4 B > KF: node:t4 A > KF: node:t4 B > KF: node:t4 A | Shift+Tab: KF: node:t4 B > KF: node:t4 A > KF: node:t4 B > KF: node:t4 A | Escape: Open: - / traps page / KF: node:t4 A / Log: unhandled Shift Left, unhandled Shift Left, unhandled Shift Left, unhandled F4, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left, unhandled Shift Left | Keys: shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab shift+Shift Left shift+Tab
+Test Case '-[RunnerUITests.I08ProbeUITests testTraps]' passed (76.841 seconds).
+== testVoiceOverEscapeKey
+I08PROBE vo e1 | opened: Open: e1 / no page / KF: scope:e1 title / Log:  | VO said: e1 title | Escape with VoiceOver on: Open: e1 / no page / KF: scope:e1 title / Log: 
+I08PROBE vo e2 | opened: Open: e2 / no page / KF: scope:e2 title / Log:  | VO said: e2 title | Escape with VoiceOver on: Open: e2 / no page / KF: scope:e2 title / Log: 
+I08PROBE vo e3 | opened: Open: e3 / no page / KF: scope:Alert / Log:  | VO said: e3 title | Escape with VoiceOver on: Open: e3 / no page / KF: scope:Alert / Log: 
+I08PROBE vo e5 | opened: Open: e5 / no page / KF: scope: / Log:  | VO said: e5 title | Escape with VoiceOver on: Open: e5 / no page / KF: scope: / Log: 
+I08PROBE vo e6 | opened: Open: e6 / no page / KF: scope: / Log:  | VO said: e6 title | Escape with VoiceOver on: Open: e6 / no page / KF: scope: / Log: 
+I08PROBE vo e14 | opened: Open: e14 / probe page / KF: node:e14 Close / Log:  | VO said: e14 OverlayEntry Button | Escape with VoiceOver on: Open: e14 / probe page / KF: node:e14 Close / Log: 
+I08PROBE vo e17 | opened: Open: e17 / no page / KF: scope:e17 title / Log:  | VO said: e17 title | Escape with VoiceOver on: Open: e17 / no page / KF: scope:e17 title / Log: 
+I08PROBE vo e18 | opened: Open: e18 / no page / KF: scope:Alert / Log:  | VO said: e18 title | Escape with VoiceOver on: Open: e18 / no page / KF: scope:Alert / Log: 
+I08PROBE vo e19 | opened: Open: e19 / no page / KF: scope:e19 title / Log:  | VO said: e19 title | Escape with VoiceOver on: Open: e19 / no page / KF: scope:e19 title / Log: 
+I08PROBE vo e20 | opened: Open: e20 / probe page / KF: node:e20 Close / Log:  | VO said: e20 OverlayPortal handled Button | Escape with VoiceOver on: Open: e20 / probe page / KF: node:e20 Close / Log: 
+I08PROBE vo e22 | opened: Open: e22 / no page / KF: scope:e22 title / Log:  | VO said: e22 title | Escape with VoiceOver on: Open: e22 / no page / KF: scope:e22 title / Log: 
+Test Case '-[RunnerUITests.I08ProbeUITests testVoiceOverEscapeKey]' passed (396.436 seconds).
