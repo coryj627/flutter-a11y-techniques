@@ -1,0 +1,48 @@
+// V14 probe, round 2, in a widget test (throwaway, not committed; kept as
+// docs/evidence/probes/v14/probe2_test.dart.txt): the obscuring fixtures
+// o1 to o5 of lib/probe.dart. Tab down the twelve buttons, then Shift+Tab
+// back up, printing the probe's status after each key.
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+String status(WidgetTester tester) => tester
+    .widget<Text>(
+      find.descendant(
+        of: find.byWidgetPredicate(
+          (w) => w is Semantics && w.properties.identifier == 'v14-status',
+        ),
+        matching: find.byType(Text),
+      ),
+    )
+    .data!;
+
+void main() {
+  for (final id in ['o1', 'o2', 'o3', 'o4', 'o5']) {
+    testWidgets(id, (tester) async {
+      tester.view.physicalSize = const Size(400, 500);
+      tester.view.devicePixelRatio = 1;
+      tester.binding.platformDispatcher.defaultRouteNameTestValue = '/o/$id';
+      await tester.pumpWidget(const ProbeApp());
+      await tester.pumpAndSettle();
+      final lines = <String>[];
+      for (var i = 0; i < 13; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pumpAndSettle();
+        lines.add('Tab: ${status(tester)}');
+      }
+      for (var i = 0; i < 13; i++) {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.pumpAndSettle();
+        lines.add('Shift+Tab: ${status(tester)}');
+      }
+      // ignore: avoid_print
+      print('V14O $id\n  ${lines.join('\n  ')}');
+      tester.binding.platformDispatcher.clearDefaultRouteNameTestValue();
+      tester.view.reset();
+    });
+  }
+}

@@ -1,0 +1,18 @@
+# V14 probe on Android, round 3: ProbeV14Test.kt.txt#round3. Four ways of pressing Tab. d= is the raw key event's
+# Android device id and flags as Flutter received them (RawKeyEventDataAndroid); mouse= is mouseIsConnected.
+== device: Android 17, Physical size: 1080x2424 , Physical density: 420 
+== round3
+OK (1 test)
+round3 [input keyevent] m1 tabs=1 | S m1 f=1 m=h n=3 k=1 d=-1/512 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [input keyevent] c1 tabs=1 | S c1 f=1 m=h n=3 k=1 d=-1/512 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [input keyevent] w2 tabs=1 | S w2 f=1 m=h n=3 k=1 d=-1/512 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [sendKeySync device 0] m1 tabs=1 | S m1 f=1 m=h n=3 k=1 d=-1/520 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [sendKeySync device 0] c1 tabs=1 | S c1 f=1 m=h n=3 k=1 d=-1/520 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [sendKeySync device 0] w2 tabs=1 | S w2 f=1 m=h n=3 k=1 d=-1/520 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [UiAutomation.injectInputEvent device 0] m1 tabs=1 | S m1 f=1 m=h n=3 k=1 d=-1/512 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [UiAutomation.injectInputEvent device 0] c1 tabs=1 | S c1 f=1 m=h n=3 k=1 d=-1/512 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [UiAutomation.injectInputEvent device 0] w2 tabs=1 | S w2 f=1 m=h n=3 k=1 d=-1/512 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [mouse hover first, then sendKeySync device 0] m1 tabs=1 | S m1 f=1 m=h n=3 k=1 d=-1/520 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [mouse hover first, then sendKeySync device 0] c1 tabs=1 | S c1 f=1 m=h n=3 k=1 d=-1/520 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+round3 [mouse hover first, then sendKeySync device 0] w2 tabs=1 | S w2 f=1 m=h n=3 k=1 d=-1/520 th=l mouse=0 | changed=0 unstable=0 page=#FBF8FF 
+/sdcard/Android/data/dev.fluttera11y.flutter_a11y_techniques/files/./: 0 files pulled, 0 skipped.

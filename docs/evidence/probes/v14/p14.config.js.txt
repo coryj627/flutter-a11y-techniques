@@ -1,0 +1,15 @@
+// Throwaway: serves the V14 probe build (build/web_probe) for
+// p14_probe.spec.js. Not committed.
+import { defineConfig } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = Number(process.env.P14_PORT ?? 29911);
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: /p14_probe\.spec\.js$/,
+  reporter: 'list',
+  timeout: 600_000,
+  use: { baseURL: `http://127.0.0.1:${port}`, hasTouch: true },
+  webServer: webServer('build/web_probe', port),
+});

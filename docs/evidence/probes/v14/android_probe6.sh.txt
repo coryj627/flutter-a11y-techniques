@@ -1,0 +1,64 @@
+#!/bin/sh
+# V14 probe round 6 on Android, under tool/with_devices.py (throwaway; kept
+# as docs/evidence/probes/v14/android_probe6.sh.txt). Can a keyboard
+# registered with the shell's `uinput` tool send Tab with a device id of its
+# own, and does that switch Flutter's highlight mode to traditional?
+ADB=$HOME/Library/Android/sdk/platform-tools/adb
+PKG=dev.fluttera11y.flutter_a11y_techniques
+OUT=$1
+mkdir -p "$OUT"
+echo "== device: Android $($ADB shell getprop ro.build.version.release | tr -d '\r'), build type $($ADB shell getprop ro.build.type | tr -d '\r'), $($ADB shell wm size | tr -d '\r' | tr '\n' ' ')"
+echo "== which uinput: $($ADB shell which uinput | tr -d '\r')"
+echo "== uinput --help:"; $ADB shell uinput --help 2>&1 | head -30
+$ADB install -r build/app/outputs/flutter-apk/app-debug.apk >/dev/null || exit 1
+status() { $ADB exec-out uiautomator dump /dev/tty 2>/dev/null | python3 -c '
+import re, sys
+x = sys.stdin.read()
+s = re.findall(r"(?:content-desc|text)=\"(S [^\"]*)\"", x)
+print(s[0] if s else "(no status)")'; }
+open() {
+  $ADB shell am force-stop $PKG
+  $ADB shell am start -W -n $PKG/.MainActivity --es route "$1" >/dev/null
+  sleep 4
+}
+# The commands for one uinput session: register a USB keyboard, wait for
+# Android to configure it, then Tab, wait, Tab, wait (the host reads the
+# screen in the waits), and end, which removes the device.
+cat > "$OUT/session.json" <<'EOF'
+{"id":1,"command":"register","name":"V14 probe keyboard","vid":4660,"pid":22136,"bus":"usb","configuration":[{"type":"UI_SET_EVBIT","data":["EV_KEY","EV_SYN"]},{"type":"UI_SET_KEYBIT","data":["KEY_TAB","KEY_SPACE","KEY_ENTER","KEY_UP","KEY_DOWN","KEY_LEFT","KEY_RIGHT","KEY_LEFTSHIFT","KEY_A"]}]}
+{"id":1,"command":"delay","duration":4000}
+{"id":1,"command":"inject","events":["EV_KEY","KEY_TAB",1,"EV_SYN","SYN_REPORT",0,"EV_KEY","KEY_TAB",0,"EV_SYN","SYN_REPORT",0]}
+{"id":1,"command":"delay","duration":6000}
+{"id":1,"command":"inject","events":["EV_KEY","KEY_TAB",1,"EV_SYN","SYN_REPORT",0,"EV_KEY","KEY_TAB",0,"EV_SYN","SYN_REPORT",0]}
+{"id":1,"command":"delay","duration":6000}
+EOF
+for fixture in w2 m1 c1 m8; do
+  open "/c/$fixture"
+  echo "== $fixture before: $(status)"
+  $ADB exec-out screencap -p > "$OUT/android6-light-$fixture-u.png"
+  $ADB shell uinput - < "$OUT/session.json" > "$OUT/uinput-$fixture.log" 2>&1 &
+  UPID=$!
+  sleep 2.5
+  echo "  registered: $($ADB shell dumpsys input | grep -A3 'V14 probe keyboard' | tr -d '\r' | head -4 | tr '\n' ' ' | cut -c1-300)"
+  sleep 4
+  echo "  after Tab 1: $(status)"
+  sleep 1.5
+  $ADB exec-out screencap -p > "$OUT/android6-light-$fixture-f1.png"
+  sleep 0.7
+  $ADB exec-out screencap -p > "$OUT/android6-light-$fixture-f2.png"
+  sleep 3
+  echo "  after Tab 2: $(status)"
+  wait $UPID
+  echo "  uinput said: $(tr -d '\r' < "$OUT/uinput-$fixture.log" | tr '\n' ' ' | cut -c1-300)"
+  echo "  after the session: $(status); device still listed: $($ADB shell dumpsys input | grep -c 'V14 probe keyboard' | tr -d '\r')"
+  B=$($ADB exec-out uiautomator dump /dev/tty 2>/dev/null | python3 -c '
+import re, sys
+x = sys.stdin.read()
+m = re.search(r"resource-id=\"v14-box\"[^>]*bounds=\"\[(\d+),(\d+)\]\[(\d+),(\d+)\]\"", x)
+print(*((int(m.group(1)), int(m.group(2)), int(m.group(3)) - int(m.group(1)), int(m.group(4)) - int(m.group(2))) if m else ()))')
+  echo "$B 1" > "$OUT/android6-light-$fixture-u.box"
+done
+echo "== soft keyboard setting show_ime_with_hard_keyboard: $($ADB shell settings get secure show_ime_with_hard_keyboard | tr -d '\r')"
+echo "== notifications mentioning keyboard: $($ADB shell dumpsys notification --noredact 2>/dev/null | grep -i -c 'keyboard' | tr -d '\r')"
+$ADB shell am force-stop $PKG
+exit 0
