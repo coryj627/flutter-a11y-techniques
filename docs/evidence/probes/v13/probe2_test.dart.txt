@@ -1,0 +1,187 @@
+// V13 probe round 2 under flutter_test (throwaway; kept as
+// docs/evidence/probes/v13/probe2_test.dart.txt): an inline link that is
+// read in its sentence and takes keyboard focus. Prints each fixture's
+// semantics nodes in traversal order and what Tab, Enter, and Space do.
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+int taps = 0;
+
+Widget link(String id) => FocusableActionDetector(
+  actions: {
+    ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => taps++),
+    ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+      onInvoke: (_) => taps++,
+    ),
+  },
+  child: Semantics(
+    link: true,
+    child: GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => taps++,
+      child: Text('$id rules'),
+    ),
+  ),
+);
+
+/// q1: a WidgetSpan link, as V13 good-inline-link was built.
+/// q2: a TextSpan with a TapGestureRecognizer.
+/// q3: q1 with a semanticsIdentifier on the text before the link.
+/// q4: q1 with a semanticsIdentifier on the WidgetSpan's own TextSpan
+///     sibling after the link.
+Map<String, Widget Function()> fixtures(TapGestureRecognizer r) => {
+  'q1': () => Text.rich(
+    TextSpan(
+      children: [
+        const TextSpan(text: 'Read the '),
+        WidgetSpan(child: link('q1')),
+        const TextSpan(text: ' before you set off.'),
+      ],
+    ),
+  ),
+  'q2': () => Text.rich(
+    TextSpan(
+      children: [
+        const TextSpan(text: 'Read the '),
+        TextSpan(text: 'q2 rules', recognizer: r),
+        const TextSpan(text: ' before you set off.'),
+      ],
+    ),
+  ),
+  'q3': () => Text.rich(
+    TextSpan(
+      children: [
+        const TextSpan(text: 'Read the ', semanticsIdentifier: 'q3-before'),
+        WidgetSpan(child: link('q3')),
+        const TextSpan(text: ' before you set off.'),
+      ],
+    ),
+  ),
+  // q5: q3 with the link given a sort key between the paragraph's own
+  // ordinals for the text before (0) and after (1) it.
+  'q5': () => Text.rich(
+    TextSpan(
+      children: [
+        const TextSpan(text: 'Read the ', semanticsIdentifier: 'q5-before'),
+        WidgetSpan(
+          child: Semantics(
+            container: true,
+            sortKey: const OrdinalSortKey(0.5),
+            child: link('q5'),
+          ),
+        ),
+        const TextSpan(text: ' before you set off.'),
+      ],
+    ),
+  ),
+  // q6: q5 inside a MergeSemantics with an identifier, as TestId builds it.
+  'q6': () => Text.rich(
+    TextSpan(
+      children: [
+        const TextSpan(text: 'Read the ', semanticsIdentifier: 'q6-before'),
+        WidgetSpan(
+          child: MergeSemantics(
+            child: Semantics(
+              identifier: 'q6-link',
+              sortKey: const OrdinalSortKey(0.5),
+              child: link('q6'),
+            ),
+          ),
+        ),
+        const TextSpan(text: ' before you set off.'),
+      ],
+    ),
+  ),
+  // q7: q5 with the test identifier on the link's container.
+  'q7': () => Text.rich(
+    TextSpan(
+      children: [
+        const TextSpan(text: 'Read the ', semanticsIdentifier: 'q7-before'),
+        WidgetSpan(
+          child: Semantics(
+            container: true,
+            identifier: 'q7-link',
+            sortKey: const OrdinalSortKey(0.5),
+            child: link('q7'),
+          ),
+        ),
+        const TextSpan(text: ' before you set off.'),
+      ],
+    ),
+  ),
+  'q4': () => Text.rich(
+    TextSpan(
+      children: [
+        const TextSpan(text: 'Read the '),
+        WidgetSpan(child: link('q4')),
+        const TextSpan(text: ' before you set off.', semanticsIdentifier: 'q4-after'),
+      ],
+    ),
+  ),
+};
+
+void main() {
+  for (final id in ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7']) {
+    testWidgets('$id', (tester) async {
+      final handle = tester.ensureSemantics();
+      final r = TapGestureRecognizer()..onTap = () => taps++;
+      addTearDown(r.dispose);
+      taps = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                TextButton(onPressed: () {}, child: const Text('Before')),
+                fixtures(r)[id]!(),
+                TextButton(onPressed: () {}, child: const Text('After')),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final order = <String>[];
+      void visit(SemanticsNode n, int depth) {
+        final d = n.getSemanticsData();
+        if (d.label.isNotEmpty || d.identifier.isNotEmpty) {
+          order.add(
+            '${'  ' * depth}"${d.label.replaceAll('\n', r'\n')}"'
+            '${d.flagsCollection.isLink ? ' link' : ''}'
+            '${d.flagsCollection.isButton ? ' button' : ''}'
+            '${d.hasAction(SemanticsAction.tap) ? ' tap' : ''}'
+            '${d.flagsCollection.isFocused.toString().contains('none') ? '' : ' focusable'}'
+            '${d.identifier.isEmpty ? '' : ' id=${d.identifier}'}',
+          );
+        }
+        // Traversal order, as the platforms get it.
+        for (final c in n.debugListChildrenInOrder(DebugSemanticsDumpOrder.traversalOrder)) {
+          visit(c, depth + 1);
+        }
+      }
+
+      visit(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!, 0);
+      // Keyboard: Tab from Before, then Enter and Space.
+      final keys = <String>[];
+      for (var i = 0; i < 2; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        keys.add(FocusManager.instance.primaryFocus?.toStringShort() ?? 'none');
+      }
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+      final afterEnter = taps;
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pump();
+      // A tap on the link text.
+      await tester.tap(find.textContaining('$id rules', findRichText: true).last, warnIfMissed: false);
+      await tester.pump();
+      debugPrint('== $id\n${order.join('\n')}\nTab twice: ${keys.join(' -> ')}; '
+          'Enter: $afterEnter activations; then Space and a tap: $taps');
+      handle.dispose();
+    });
+  }
+}

@@ -1,0 +1,38 @@
+npm notice run npx
+npm notice run 'playwright' test -c v13probe.config.js v13_probe2
+Running 1 test using 1 worker
+p04: <flt-semantics role=button aria-label=null flt-tappable=true text="p04" box=355.0,84.0,18.0x18.0 transform=matrix(1, 0, 0, 1, 355, 84) pointer-events=all overflow=visible>
+   at right-2 (371.0,93.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p04" box=355.0,84.0,18.0x18.0 transform=matrix(1, 0, 0, 1, 355, 84) pointer-events=all overflow=visible>
+   at right+2 (375.0,93.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p04" box=355.0,84.0,18.0x18.0 transform=matrix(1, 0, 0, 1, 355, 84) pointer-events=all overflow=visible>
+   at right+6 (379.0,93.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+12 (385.0,93.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+20 (393.0,93.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at bottom-2 (364.0,100.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p04" box=355.0,84.0,18.0x18.0 transform=matrix(1, 0, 0, 1, 355, 84) pointer-events=all overflow=visible>
+   at bottom+2 (364.0,104.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+p13: <flt-semantics role=button aria-label=null flt-tappable=true text="p13" box=43.0,188.0,18.0x18.0 transform=matrix(1, 0, 0, 1, 43, 188) pointer-events=all overflow=visible>
+   at right-2 (59.0,197.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p13" box=43.0,188.0,18.0x18.0 transform=matrix(1, 0, 0, 1, 43, 188) pointer-events=all overflow=visible>
+   at right+2 (63.0,197.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p13" box=43.0,188.0,18.0x18.0 transform=matrix(1, 0, 0, 1, 43, 188) pointer-events=all overflow=visible>
+   at right+6 (67.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+12 (73.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+20 (81.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at bottom-2 (52.0,204.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p13" box=43.0,188.0,18.0x18.0 transform=matrix(1, 0, 0, 1, 43, 188) pointer-events=all overflow=visible>
+   at bottom+2 (52.0,208.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+p14: <flt-semantics role=button aria-label=null flt-tappable=true text="p14" box=132.0,173.0,48.0x48.0 transform=matrix(1, 0, 0, 1, 132, 173) pointer-events=all overflow=visible>
+   at right-2 (178.0,197.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p14" box=132.0,173.0,48.0x48.0 transform=matrix(1, 0, 0, 1, 132, 173) pointer-events=all overflow=visible>
+   at right+2 (182.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+6 (186.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+12 (192.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+20 (200.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at bottom-2 (156.0,219.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p14" box=132.0,173.0,48.0x48.0 transform=matrix(1, 0, 0, 1, 132, 173) pointer-events=all overflow=visible>
+   at bottom+2 (156.0,223.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+p16: <flt-semantics role=button aria-label=null flt-tappable=true text="p16" box=340.0,173.0,48.0x48.0 transform=matrix(1, 0, 0, 1, 340, 173) pointer-events=all overflow=visible>
+   at right-2 (386.0,197.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p16" box=340.0,173.0,48.0x48.0 transform=matrix(1, 0, 0, 1, 340, 173) pointer-events=all overflow=visible>
+   at right+2 (390.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+6 (394.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+12 (400.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at right+20 (408.0,197.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+   at bottom-2 (364.0,219.0): <flt-semantics role=button aria-label=null flt-tappable=true text="p16" box=340.0,173.0,48.0x48.0 transform=matrix(1, 0, 0, 1, 340, 173) pointer-events=all overflow=visible>
+   at bottom+2 (364.0,223.0): <flutter-view role=null aria-label=null flt-tappable=false text="Scale 1Log(0): dpr=1" box=0.0,0.0,1280.0x900.0 transform=none pointer-events=auto overflow=visible>
+link: <a role=null aria-label=null flt-tappable=true text="p18link" box=539.3,184.0,56.0x26.0 transform=matrix(1, 0, 0, 1, 17, -3) pointer-events=all overflow=visible> parent <flt-semantics role=null aria-label=null flt-tappable=false text="Go p18link now" box=522.3,187.0,99.4x20.0 transform=matrix(1, 0, 0, 1, 522.313, 187) pointer-events=none overflow=visible>
+  ✓  1 v13_probe2.spec.js:6:1 › what is under the pointer (2.0s)
+  1 passed (2.4s)

@@ -1,0 +1,20 @@
+            <flt-semantics id=null role=null aria-label=null tabindex=null text="" box=296.0,172.0,242.4x20.0>
+              <flt-semantics id=v13-good-inline-link-sentence role=null aria-label=null tabindex=null text="" box=292.0,169.0,69.0x26.0>
+                <span id=null role=null aria-label=null tabindex=null text="Read the " box=292.0,169.0,69.5x26.0>
+              <a id=v13-good-inline-link-rules role=null aria-label=null tabindex=0 text="trail rules" box=356.6,172.0,60.1x20.0>
+              <flt-semantics id=null role=null aria-label=null tabindex=null text="" box=412.0,169.0,131.0x26.0>
+                <span id=null role=null aria-label=null tabindex=null text=" before you set off." box=412.0,169.0,131.0x26.0>
+            <flt-semantics id=v13-good-inline-link-count role=null aria-label=null tabindex=null text="" box=296.0,208.0,67.1x20.0>
+              <span id=null role=null aria-label=null tabindex=null text="Presses: 0" box=296.0,208.0,66.7x20.0>
+ax link "trail rules"
+ax StaticText "Read the"
+ax StaticText "trail rules"
+ax StaticText "before you set off."
+ax InlineTextBox "Read the"
+ax InlineTextBox "trail "
+ax InlineTextBox "before you set off."
+Tab 1: link focused = false
+Tab 2: link focused = true
+Tab 3: link focused = false
+Tab 4: link focused = false
+  1 passed (2.4s)

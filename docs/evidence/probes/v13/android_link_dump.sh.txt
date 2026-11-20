@@ -1,0 +1,10 @@
+#!/bin/sh
+# V13: the Android tree of /t/V13/good-inline-link, as uiautomator dumps it,
+# under tool/with_devices.py. Run from the worktree root after
+# `fvm flutter build apk --debug`. Prints the raw dump.
+adb install -r build/app/outputs/flutter-apk/app-debug.apk | tail -1
+adb shell am start -n dev.fluttera11y.flutter_a11y_techniques/.MainActivity --es route /t/V13/good-inline-link
+sleep 8
+adb exec-out uiautomator dump /dev/tty
+echo
+adb shell am force-stop dev.fluttera11y.flutter_a11y_techniques

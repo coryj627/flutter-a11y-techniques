@@ -121,6 +121,10 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
 | [FL-402](#fl-402) | A tap is given up by how far the pointer has moved, not by whether it has left the control | All (widget test only) | Confirmed |
+| [FL-410](#fl-410) | A control's semantics node can be bigger than the area that takes taps, and the tap target guidelines read the node | Android, iOS, test framework | Confirmed |
+| [FL-411](#fl-411) | On the web a click is taken by the element of the node under it, and by its label text where that runs out of the element | Web | Confirmed |
+| [FL-412](#fl-412) | In a desktop browser the Material theme does not pad controls to 48 by 48, and is compact | Web (desktop browser) | Confirmed |
+| [FL-413](#fl-413) | The text around a `WidgetSpan` is one node that leaves the widget out, and the widget's node comes after it | All | Confirmed; workaround verified |
 | [FL-420](#fl-420) | Tab crosses side-by-side columns row by row by default, and the keyboard's order and the screen reader's are set by separate widgets | All | Confirmed |
 | [FL-421](#fl-421) | On the web, Tab past Flutter's last control continues in the document's order, and can go round for ever | Web | Confirmed |
 | [FL-422](#fl-422) | On a scrolled screen the default focus order puts the app bar's Back button among the content | All | Confirmed |
@@ -1047,6 +1051,18 @@ yet), **Fixed in x.y** (verified on that version).
 - Why it matters: `link: true` reads as the way to give a custom control the
   link role, as `button: true` gives the button role. On two of three
   platforms it does not.
+- Also seen in V13 (2026-11-19), `/t/V13/good-inline-link`:
+  `Semantics(link: true)` around a `GestureDetector`, in a `WidgetSpan`,
+  with no `linkUrl`. iOS: XCUITest's type is link, and VoiceOver reads
+  "trail rules Link" (`docs/evidence/V13/voiceover-ios.md`). Android:
+  TalkBack reads "trail rules / Button / Double-tap to activate"
+  (`docs/evidence/V13/talkback-android.md`). Web: the `<a>` with no
+  `href`; Chromium's own accessibility tree, read over the DevTools
+  protocol, gives it the role link (asserted in
+  `web_tests/v13_touch_target_size.spec.js`), where HTML-AAM maps an `a`
+  with no `href` to generic and Playwright's role check finds no link.
+  What VoiceOver says for it on the web is in
+  `docs/evidence/V13/voiceover-web.md`.
 - Workaround: give `linkUrl` as well, and handle [FL-013](#fl-013) on the
   web. To be built and verified in C03 Stand-alone link.
 - Upstream issue: not searched yet (D25).
@@ -2533,6 +2549,213 @@ yet), **Fixed in x.y** (verified on that version).
   device was not measured.
 - Workaround: none tried. A control could check the release position
   itself (`onTapUp` gives it) before acting.
+- Upstream issue: not searched yet (D25).
+
+## FL-410
+
+**A control's semantics node can be bigger than the area that takes taps, and the tap target guidelines read the node.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the V13 probe
+  (`docs/evidence/probes/v13/`, fixtures `p14`, `p16`, and `p18`), and
+  asserted by the V13 widget tests "FL-410", written to fail when the node
+  and the area agree or the guideline starts to look at the area.
+  Framework source read: `flutter_test/lib/src/accessibility.dart`
+  (`MinimumTapTargetGuideline`, which measures `SemanticsNode.rect`
+  through its transforms and skips links), `rendering/proxy_box.dart` and
+  `widgets/gesture_detector.dart` (`HitTestBehavior`), and
+  `rendering/paragraph.dart` (`assembleSemanticsNode`).
+- Platforms: Android and iOS, where a tap is taken by Flutter's hit test;
+  and `flutter_test`. On the web a click on the node's element is the
+  node's ([FL-411](#fl-411)), so there the node is the target.
+- WCAG: none failed by this alone. It makes a check of 2.5.8 Target Size
+  (Minimum), which counts the area that takes the pointer, wrong in the
+  direction that passes.
+- What happens: the node's rect is the box of the widget that made it; the
+  area that takes taps is wherever the hit test finds a render object that
+  answers. They differ in three cases seen in the probe, with an 18 pixel
+  icon:
+  - `Semantics(button: true)` around `Padding(all: 15)` around a
+    `GestureDetector` (padding outside the detector): the node is 48 by 48;
+    a tap 2 pixels inside its edge does nothing on Android and iOS.
+  - `Semantics(button: true)` around a `GestureDetector` with the default
+    `HitTestBehavior.deferToChild` around a 48 by 48 `SizedBox` with the
+    icon in a `Center`: the node is 48 by 48; only the icon takes taps,
+    because an empty `SizedBox` and `Center` do not answer the hit test.
+  - A `TextSpan` with a `TapGestureRecognizer`: its node is its text's box,
+    floored and ceiled, plus 4 pixels on each side (56 by 26 on Android and
+    the web, 57 by 26 on iOS, for a word whose line is 20 high); a tap 2 pixels inside the node's bottom edge,
+    below the text, does nothing on Android and iOS.
+  Android's bounds and XCUITest's frames are the node, so TalkBack's and
+  VoiceOver's focus outline and any tool that reads the tree show the
+  bigger area. `androidTapTargetGuideline` and `iOSTapTargetGuideline` read
+  48 by 48 for the first two and pass them, and skip links altogether.
+- Why it matters: the guidelines in `flutter_test` are the check most
+  Flutter projects have for target size, and they pass a control that
+  takes taps only on its 18 pixel icon. Laid out in a row of 48 by 48
+  nodes, such controls still pass 2.5.8 by spacing; the harm is that the
+  check cannot be trusted, and that a person aiming at the edge of what the
+  screen reader outlines misses.
+- Workaround, in the SDK: put the padding inside the `GestureDetector`, or
+  give it `HitTestBehavior.opaque`, as V13 `good-custom` does; then the
+  node and the area are the same box. To test the area, tap at points
+  inside and outside the edges, as the V13 tests do on every layer.
+- How to read this entry: Flutter has not added a check of where a control
+  takes taps to its tap target guidelines yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-411
+
+**On the web a click is taken by the element of the node under it, and by its label text where that runs out of the element.**
+
+- Status: Confirmed, Flutter 3.47.5, Chromium on macOS. Found in the V13
+  probe (`docs/evidence/probes/v13/web.txt` and `web_round2.txt`) and
+  asserted by `web_tests/v13_touch_target_size.spec.js` ("FL-411"),
+  written to fail when the label stops taking clicks outside the element.
+  Engine source read: `lib/web_ui/lib/src/engine/pointer_binding.dart`
+  (`ClickDebouncer`) and `semantics/tappable.dart`.
+- Platforms: web. On Android and iOS a tap goes to Flutter's hit test
+  (V13 probe).
+- WCAG: none failed by this alone.
+- What happens: with semantics on, which this app turns on at start on the
+  web (`lib/main.dart`), a `pointerdown` on an element marked
+  `flt-tappable` is held back, and when the browser's `click` follows the
+  engine sends `SemanticsAction.tap` to that element's node and drops the
+  pointer events. So a click is the node's wherever the browser finds that
+  element under the pointer, whatever Flutter's own hit test would find
+  there:
+  - a click anywhere in the node acts, also where Flutter's hit test would
+    miss ([FL-410](#fl-410)'s first two cases act on a click 2 pixels
+    inside their 48 pixel node on the web, and not on Android and iOS);
+  - the element's label is its text content, and the element lets it run
+    out (`overflow: visible`). The probe's 18 by 18 fixtures (`p04`,
+    `p05`, `p11`, `p13`, `p17`, labelled with their ids) and the Next
+    button of each V13 bad example, also 18 by 18, took a click 2 pixels
+    to the right of their box, where `document.elementFromPoint` still
+    finds the button's element; for `p04` and `p13`, 6 pixels to the right
+    it no longer did. The link of V13 `good-inline-link`, an `<a>`, took a
+    click 2 pixels below its box in the same way. A click 2 pixels below
+    an 18 pixel button, and 2 pixels above the link, did not act.
+- Why it matters: on the web the area that takes a click is the node's box
+  and some of its label text, not what is drawn. The text is not drawn, so
+  a click beside a small control can press it with nothing to show it
+  would. Whether a label that runs over a neighbouring control takes that
+  control's clicks was not tested. A check of target size on the web that
+  reads element boxes misses the overflow.
+- Workaround: none tried for the overflow. Controls at least 24 by 24 with
+  labels that fit them are not affected in V13's good examples.
+- How to read this entry: this is how the web engine handles clicks with
+  semantics on; Flutter has not made the label text fit its element yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-412
+
+**In a desktop browser the Material theme does not pad controls to 48 by 48, and is compact.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the V13 probe
+  (`docs/evidence/probes/v13/web.txt`, `web_round3.txt`, and
+  `flutter_test.txt`), and asserted by the V13 widget tests "FL-412" and
+  the tests of `bad-zero-padding-web` on every layer. Framework source
+  read: `material/theme_data.dart` (`materialTapTargetSize` and
+  `VisualDensity.defaultDensityForPlatform`); engine source read:
+  `lib/web_ui/lib/ui_web/src/ui_web/browser_detection.dart`.
+- Platforms: the web in a desktop browser, measured in Chromium on macOS.
+  By the same source the macOS, Linux, and Windows apps are the same; they
+  are not built here.
+- WCAG: 2.5.8 Target Size (Minimum), on the web in a desktop browser, for a
+  control whose own size is under 24 by 24 and that relies on the padding:
+  `bad-zero-padding-web`. Default controls stay over it: in the probe an
+  `IconButton` was 40 by 40, a `TextButton` 56 by 32, a `Checkbox` 40 by 40.
+- What happens: `ThemeData` sets `materialTapTargetSize` to `padded` and
+  `visualDensity` to standard on Android, iOS, and Fuchsia, and to
+  `shrinkWrap` and compact on macOS, Linux, and Windows. A web build takes
+  its platform from the browser: the engine reads `navigator.platform`
+  first ("MacIntel" is macOS, unless the device has more than two touch
+  points, which is an iPad and so iOS), then the user agent for Android.
+  So an `IconButton` with `padding: EdgeInsets.zero` and
+  `constraints: BoxConstraints()` is 48 by 48 on a phone and the size of
+  its icon, 18 by 18, in a desktop browser. In Chromium with
+  `navigator.platform` "Linux armv8l" and an Android phone's user agent the
+  platform was Android and the padding came back (48 by 48); with the
+  user agent alone it stayed macOS.
+- Why it matters: a layout checked on a phone, where the padding hides
+  small controls, can be under the minimum in a desktop browser, which
+  includes laptops with touch screens. Flutter's guidelines in a widget
+  test run as Android unless told otherwise, so they do not see it.
+- Workaround, in the SDK: give small controls a minimum size of their own
+  (an `IconButton`'s `constraints` or `style.minimumSize`), or set
+  `materialTapTargetSize: MaterialTapTargetSize.padded` in the app's
+  `ThemeData`; the V13 widget test "FL-412: padded in ThemeData" shows the
+  second gives 48 by 48 as macOS. Widget tests can run as a desktop
+  platform with `debugDefaultTargetPlatformOverride`, as V13's do.
+- How to read this entry: this is Flutter's chosen density for desktop
+  platforms, not a fault; it is here because the web gets it from the
+  browser's operating system.
+- Upstream issue: not searched yet (D25).
+
+## FL-413
+
+**The text around a `WidgetSpan` is one node that leaves the widget out, and the widget's node comes after it.**
+
+- Status: Confirmed, Flutter 3.47.5, with a workaround verified on all
+  three platforms. Found in the first build of V13
+  `/t/V13/good-inline-link`, a sentence "Read the trail rules before you
+  set off." whose link is a `WidgetSpan`. Asserted on the SDK alone by the
+  V13 widget test "FL-413", written to fail when it is fixed. Framework
+  source read: `rendering/paragraph.dart`
+  (`RenderParagraph.describeSemanticsConfiguration` and
+  `assembleSemanticsNode`).
+- What happens, in that first build (the transcripts are kept in
+  `docs/evidence/probes/v13/`):
+  - iOS: VoiceOver read "Read the before you set off." and then "trail
+    rules Link" (`voiceover_ios_round1_widgetspan.md.txt`).
+  - Web: the sentence was a `group` whose `aria-label` was "Read the
+    before you set off.", with the link inside it; VoiceOver read "Read
+    the before you set off. group", "link trail rules", "end of Read the
+    before you set off. group" in Chromium and in Playwright's WebKit
+    (`voiceover_web_round1_widgetspan.md.txt`).
+  - Android: the paragraph's node was "Read the", a line break, and
+    "before you set off.", and the link's node followed it
+    (`android_link_dump.txt`, a `uiautomator` dump). What TalkBack reads
+    when it moves on its own was not tested.
+- Cause (source read): a paragraph gives each run of its text a node of
+  its own only when some span has a recognizer or a
+  `semanticsIdentifier`. Otherwise it puts all its text in one label and
+  leaves each `WidgetSpan`'s nodes as children after it. When it does
+  split the text, it gives the runs sort keys `OrdinalSortKey(0)`,
+  `OrdinalSortKey(1)`, and so on, and gives the `WidgetSpan`'s node none,
+  so the widget is still read first (round 2 probe, fixtures `q3` and
+  `q4`, `docs/evidence/probes/v13/flutter_test_round2.txt`).
+- WCAG: 1.3.2 Meaningful Sequence is the candidate where the words only
+  make sense with the widget, as here; not claimed by V13. Left to C04
+  Links inline with text.
+- Why it matters: a `WidgetSpan` is how a focusable control goes in a line
+  of text. A `TextSpan` with a recognizer keeps its place in the
+  semantics tree (round 2 probe, fixture `q2`, in `flutter_test` only) but
+  takes no keyboard focus, so with the SDK's
+  plain parts a link in text is either read out of its sentence or out of
+  the keyboard's reach.
+- Workaround, in the SDK, verified in V13 `good-inline-link` on all three
+  platforms: give one of the sentence's `TextSpan`s a
+  `semanticsIdentifier`, so that the paragraph splits its text into runs;
+  and put the `WidgetSpan`'s widget in `Semantics(container: true,
+  sortKey: OrdinalSortKey(0.5))`, a key between those of the runs before
+  and after it. Not inside `MergeSemantics`, which drops the sort key
+  (round 2 probe, fixture `q6`). The link then keeps its keyboard focus,
+  and is read in its place: VoiceOver on iOS reads "Read the", "trail
+  rules Link", "before you set off."
+  (`docs/evidence/V13/voiceover-ios.md`), and VoiceOver on the web reads
+  "Read the", "link trail rules", "before you set off." in Chromium and in
+  Playwright's WebKit (`docs/evidence/V13/voiceover-web.md`); on the web
+  the sentence is three elements in that order
+  (`docs/evidence/probes/v13/web_round4.txt`). Tab reaches the link and
+  Enter and Space activate it in the widget tests, in Chromium, on the
+  Android emulator, and on the iOS simulator (the V13 tests on each).
+  The widget test "good-inline-link: the sentence is read in order" and
+  the web tree test of the same name assert the order. The key has to
+  match the run's position: by the source, a link after the second run of
+  text would need a key between 1 and 2 (not tested).
+- How to read this entry: Flutter has not added a way to read a
+  `WidgetSpan` in its place in the text without help yet.
 - Upstream issue: not searched yet (D25).
 
 ## FL-420

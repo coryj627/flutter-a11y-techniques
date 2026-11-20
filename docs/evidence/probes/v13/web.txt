@@ -1,0 +1,112 @@
+npm notice run npx
+npm notice run 'playwright' test -c v13probe.config.js
+Running 2 tests using 1 worker
+== desktop Chromium on macOS: dpr=1 size=1280.0x900.0 scale=1 textScaler=SystemTextScaler (no scaling) platform=macOS tapTargetSize=shrinkWrap density=<optimized out>#1644e(h: -2.0, v: -2.0)
+window.devicePixelRatio=1 viewport={"width":1280,"height":900}
+p01 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 sem at 32.0,73.0 | web <flt-semantics role=button> box=32.0,73.0,40.0x40.0 | ax button "p01"
+p02 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 sem at 136.0,73.0 | web <flt-semantics role=button> box=136.0,73.0,40.0x40.0 | ax button "p02"
+p03 flutter lay=40.0x32.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x32.0 sem at 240.0,77.0 | web <flt-semantics role=button> box=240.0,77.0,40.0x32.0 | ax button "p03"
+p04 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 355.0,84.0 | web <flt-semantics role=button> box=355.0,84.0,18.0x18.0 | ax button "p04"
+p05 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 459.0,84.0 | web <flt-semantics role=button> box=459.0,84.0,18.0x18.0 | ax button "p05"
+p06 flutter lay=56.0x32.0 vis=23.9x20.0 shp=56.0x32.0 sem=56.0x32.0 sem at 544.0,77.0 | web <flt-semantics role=button> box=544.0,77.0,56.0x32.0 | ax button "p06"
+p07 flutter lay=23.9x20.0 vis=23.9x20.0 shp=23.9x20.0 sem=23.9x20.0 sem at 664.1,83.0 | web <flt-semantics role=button> box=664.1,83.0,23.9x20.0 | ax button "p07"
+p08 flutter lay=40.0x40.0 vis=- shp=40.0x40.0 sem=40.0x40.0 sem at 760.0,73.0 | web <flt-semantics role=checkbox> box=760.0,73.0,40.0x40.0 | ax checkbox "p08"
+p09 flutter lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 sem at 868.0,77.0 | web <flt-semantics role=checkbox> box=868.0,77.0,32.0x32.0 | ax checkbox "p09"
+p10 flutter lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 sem at 957.8,66.8 | web <flt-semantics role=button> box=957.8,66.8,60.4x52.4 | ax button "p10"
+p11 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 1083.0,84.0 | web <flt-semantics role=button> box=1083.0,84.0,18.0x18.0 | ax button "p11"
+p12 flutter lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 sem at 1175.0,78.0 | web <flt-semantics role=button> box=1175.0,78.0,42.0x30.0 | ax button "p12"
+p13 flutter lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 sem at 43.0,188.0 | web <flt-semantics role=button> box=43.0,188.0,18.0x18.0 | ax button "p13"
+p14 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 132.0,173.0 | web <flt-semantics role=button> box=132.0,173.0,48.0x48.0 | ax button "p14"
+p15 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 236.0,173.0 | web <flt-semantics role=button> box=236.0,173.0,48.0x48.0 | ax button "p15"
+p16 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 340.0,173.0 | web <flt-semantics role=button> box=340.0,173.0,48.0x48.0 | ax button "p16"
+p17 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 459.0,188.0 | web <flt-semantics role=button> box=459.0,188.0,18.0x18.0 | ax button "p17"
+p18 flutter lay=99.4x20.0 vis=99.4x20.0 shp=- sem=56.0x26.0 sem at 539.3,184.0 | web no element inner <a> box=539.3,184.0,56.0x26.0 | ax link "p18link"
+p19 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 652.0,173.0 | web <flt-semantics role=button> box=652.0,173.0,48.0x48.0 | ax button "p19"
+p20 flutter lay=71.9x32.0 vis=23.9x20.0 shp=71.9x32.0 sem=71.9x32.0 sem at 744.1,181.0 | web <flt-semantics role=button> box=744.1,181.0,71.9x32.0 | ax button "p20"
+TAPS p01 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p02 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p03 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p04 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=HIT semB-2=HIT semB+2=miss
+TAPS p05 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=HIT semB-2=HIT semB+2=miss
+TAPS p06 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p07 visR-2=HIT visR+2=miss visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p08 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p09 shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p10 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p11 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=HIT semB-2=HIT semB+2=miss
+TAPS p12 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p13 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=miss semR-2=HIT semR+2=HIT semB-2=HIT semB+2=miss
+TAPS p14 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p15 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p16 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p17 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=miss shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=HIT semB-2=HIT semB+2=miss
+TAPS p18 semR-2=miss semR+2=miss semB-2=HIT semB+2=miss
+TAPS p19 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+TAPS p20 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=miss shpB-2=HIT shpB+2=miss semR-2=HIT semR+2=miss semB-2=HIT semB+2=miss
+== desktop Chromium, probe text scale 2: dpr=1 size=1280.0x900.0 scale=2 textScaler=linear (2x) platform=macOS tapTargetSize=shrinkWrap density=<optimized out>#1644e(h: -2.0, v: -2.0)
+window.devicePixelRatio=1 viewport={"width":1280,"height":900}
+p01 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 sem at 32.0,89.0 | web <flt-semantics role=button> box=32.0,89.0,40.0x40.0 | ax button "p01"
+p02 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 sem at 136.0,89.0 | web <flt-semantics role=button> box=136.0,89.0,40.0x40.0 | ax button "p02"
+p03 flutter lay=40.0x32.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x32.0 sem at 240.0,93.0 | web <flt-semantics role=button> box=240.0,93.0,40.0x32.0 | ax button "p03"
+p04 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 355.0,100.0 | web <flt-semantics role=button> box=355.0,100.0,18.0x18.0 | ax button "p04"
+p05 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 459.0,100.0 | web <flt-semantics role=button> box=459.0,100.0,18.0x18.0 | ax button "p05"
+p06 flutter lay=63.5x40.0 vis=47.5x40.0 shp=63.5x40.0 sem=63.5x40.0 sem at 540.3,89.0 | web <flt-semantics role=button> box=540.3,89.0,63.5x40.0 | ax button "p06"
+p07 flutter lay=47.5x40.0 vis=47.5x40.0 shp=47.5x40.0 sem=47.5x40.0 sem at 652.3,89.0 | web <flt-semantics role=button> box=652.3,89.0,47.5x40.0 | ax button "p07"
+p08 flutter lay=40.0x40.0 vis=- shp=40.0x40.0 sem=40.0x40.0 sem at 760.0,89.0 | web <flt-semantics role=checkbox> box=760.0,89.0,40.0x40.0 | ax checkbox "p08"
+p09 flutter lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 sem at 868.0,93.0 | web <flt-semantics role=checkbox> box=868.0,93.0,32.0x32.0 | ax checkbox "p09"
+p10 flutter lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 sem at 957.8,82.8 | web <flt-semantics role=button> box=957.8,82.8,60.4x52.4 | ax button "p10"
+p11 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 1083.0,100.0 | web <flt-semantics role=button> box=1083.0,100.0,18.0x18.0 | ax button "p11"
+p12 flutter lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 sem at 1175.0,94.0 | web <flt-semantics role=button> box=1175.0,94.0,42.0x30.0 | ax button "p12"
+p13 flutter lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 sem at 43.0,204.0 | web <flt-semantics role=button> box=43.0,204.0,18.0x18.0 | ax button "p13"
+p14 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 132.0,189.0 | web <flt-semantics role=button> box=132.0,189.0,48.0x48.0 | ax button "p14"
+p15 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 236.0,189.0 | web <flt-semantics role=button> box=236.0,189.0,48.0x48.0 | ax button "p15"
+p16 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 340.0,189.0 | web <flt-semantics role=button> box=340.0,189.0,48.0x48.0 | ax button "p16"
+p17 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 459.0,204.0 | web <flt-semantics role=button> box=459.0,204.0,18.0x18.0 | ax button "p17"
+p18 flutter lay=195.2x40.0 vis=195.2x40.0 shp=- sem=101.0x42.0 sem at 558.0,192.0 | web no element inner <a> box=558.0,192.0,101.0x42.0 | ax link "p18link"
+p19 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 743.2,189.0 | web <flt-semantics role=button> box=743.2,189.0,48.0x48.0 | ax button "p19"
+p20 flutter lay=71.5x40.0 vis=47.5x40.0 shp=71.5x40.0 sem=71.5x40.0 sem at 835.5,193.0 | web <flt-semantics role=button> box=835.5,193.0,71.5x40.0 | ax button "p20"
+  ✓  1 v13_probe.spec.js:139:3 › desktop Chromium › geometry, tree, and clicks (2.2m)
+== Chromium as a Pixel 7 (Android user agent, touch): dpr=2.625 size=412.0x839.0 scale=1 textScaler=SystemTextScaler (no scaling) platform=macOS tapTargetSize=shrinkWrap density=<optimized out>#13a12(h: -2.0, v: -2.0)
+window.devicePixelRatio=2.625 viewport={"width":412,"height":839}
+p01 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 sem at 32.0,73.0 | web <flt-semantics role=button> box=32.0,73.0,40.0x40.0 | ax button "p01"
+p02 flutter lay=40.0x40.0 vis=24.0x24.0 shp=40.0x40.0 sem=40.0x40.0 sem at 136.0,73.0 | web <flt-semantics role=button> box=136.0,73.0,40.0x40.0 | ax button "p02"
+p03 flutter lay=40.0x32.0 vis=24.0x24.0 shp=40.0x32.0 sem=40.0x32.0 sem at 240.0,77.0 | web <flt-semantics role=button> box=240.0,77.0,40.0x32.0 | ax button "p03"
+p04 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 43.0,188.0 | web <flt-semantics role=button> box=43.0,188.0,18.0x18.0 | ax button "p04"
+p05 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 147.0,188.0 | web <flt-semantics role=button> box=147.0,188.0,18.0x18.0 | ax button "p05"
+p06 flutter lay=56.0x32.0 vis=23.9x20.0 shp=56.0x32.0 sem=56.0x32.0 sem at 232.0,181.0 | web <flt-semantics role=button> box=232.0,181.0,56.0x32.0 | ax button "p06"
+p07 flutter lay=23.9x20.0 vis=23.9x20.0 shp=23.9x20.0 sem=23.9x20.0 sem at 40.1,291.0 | web <flt-semantics role=button> box=40.1,291.0,23.9x20.0 | ax button "p07"
+p08 flutter lay=40.0x40.0 vis=- shp=40.0x40.0 sem=40.0x40.0 sem at 136.0,281.0 | web <flt-semantics role=checkbox> box=136.0,281.0,40.0x40.0 | ax checkbox "p08"
+p09 flutter lay=32.0x32.0 vis=- shp=32.0x32.0 sem=32.0x32.0 sem at 244.0,285.0 | web <flt-semantics role=checkbox> box=244.0,285.0,32.0x32.0 | ax checkbox "p09"
+p10 flutter lay=60.4x52.4 vis=20.4x20.4 shp=60.4x52.4 sem=60.4x52.4 sem at 21.8,378.8 | web <flt-semantics role=button> box=21.8,378.8,60.4x52.4 | ax button "p10"
+p11 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 147.0,396.0 | web <flt-semantics role=button> box=147.0,396.0,18.0x18.0 | ax button "p11"
+p12 flutter lay=42.0x30.0 vis=18.0x18.0 shp=42.0x30.0 sem=42.0x30.0 sem at 239.0,390.0 | web <flt-semantics role=button> box=239.0,390.0,42.0x30.0 | ax button "p12"
+p13 flutter lay=18.0x18.0 vis=18.0x18.0 shp=- sem=18.0x18.0 sem at 43.0,500.0 | web <flt-semantics role=button> box=43.0,500.0,18.0x18.0 | ax button "p13"
+p14 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 132.0,485.0 | web <flt-semantics role=button> box=132.0,485.0,48.0x48.0 | ax button "p14"
+p15 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 236.0,485.0 | web <flt-semantics role=button> box=236.0,485.0,48.0x48.0 | ax button "p15"
+p16 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 28.0,589.0 | web <flt-semantics role=button> box=28.0,589.0,48.0x48.0 | ax button "p16"
+p17 flutter lay=18.0x18.0 vis=18.0x18.0 shp=18.0x18.0 sem=18.0x18.0 sem at 147.0,604.0 | web <flt-semantics role=button> box=147.0,604.0,18.0x18.0 | ax button "p17"
+p18 flutter lay=99.4x20.0 vis=99.4x20.0 shp=- sem=56.0x26.0 sem at 227.3,600.0 | web no element inner <a> box=227.3,600.0,56.0x26.0 | ax link "p18link"
+p19 flutter lay=48.0x48.0 vis=18.0x18.0 shp=- sem=48.0x48.0 sem at 28.0,693.0 | web <flt-semantics role=button> box=28.0,693.0,48.0x48.0 | ax button "p19"
+p20 flutter lay=71.9x32.0 vis=23.9x20.0 shp=71.9x32.0 sem=71.9x32.0 sem at 120.1,701.0 | web <flt-semantics role=button> box=120.1,701.0,71.9x32.0 | ax button "p20"
+TAPS p01 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p02 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p03 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p04 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p05 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p06 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p07 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p08 shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p09 shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p10 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p11 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p12 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p13 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p14 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p15 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p16 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p17 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p18 semR-2=miss semR+2=miss semB-2=HIT semB+2=HIT
+TAPS p19 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+TAPS p20 visR-2=HIT visR+2=HIT visB-2=HIT visB+2=HIT shpR-2=HIT shpR+2=HIT shpB-2=HIT shpB+2=HIT semR-2=HIT semR+2=HIT semB-2=HIT semB+2=HIT
+  ✓  2 v13_probe.spec.js:154:3 › phone browser › geometry, tree, and touches (2.2m)
+  2 passed (4.4m)

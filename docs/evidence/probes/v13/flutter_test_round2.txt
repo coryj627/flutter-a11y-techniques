@@ -1,0 +1,50 @@
+Downloading packages...
+== q1
+        "Before" button tap focusable
+        "Read the \nq1 rules\n before you set off." link tap focusable
+        "After" button tap focusable
+Tab twice: FocusNode#4bed8([PRIMARY FOCUS]) -> FocusNode#1cf08([PRIMARY FOCUS]); Enter: 1 activations; then Space and a tap: 3
+== q2
+        "Before" button tap focusable
+          "Read the "
+          "q2 rules" link tap
+          " before you set off."
+        "After" button tap focusable
+Tab twice: FocusNode#7e709([PRIMARY FOCUS]) -> FocusNode#69a39([PRIMARY FOCUS]); Enter: 0 activations; then Space and a tap: 0
+== q3
+        "Before" button tap focusable
+          "q3 rules" link tap focusable
+          "Read the " id=q3-before
+          " before you set off."
+        "After" button tap focusable
+Tab twice: FocusNode#e568a([PRIMARY FOCUS]) -> FocusNode#654ad([PRIMARY FOCUS]); Enter: 1 activations; then Space and a tap: 3
+== q4
+        "Before" button tap focusable
+          "q4 rules" link tap focusable
+          "Read the "
+          " before you set off." id=q4-after
+        "After" button tap focusable
+Tab twice: FocusNode#9c971([PRIMARY FOCUS]) -> FocusNode#759b0([PRIMARY FOCUS]); Enter: 1 activations; then Space and a tap: 3
+== q5
+        "Before" button tap focusable
+          "Read the " id=q5-before
+          "q5 rules" link tap focusable
+          " before you set off."
+        "After" button tap focusable
+Tab twice: FocusNode#850fd([PRIMARY FOCUS]) -> FocusNode#e3f98([PRIMARY FOCUS]); Enter: 1 activations; then Space and a tap: 3
+== q6
+        "Before" button tap focusable
+          "q6 rules" link tap focusable id=q6-link
+            "q6 rules" link tap focusable id=q6-link
+          "Read the " id=q6-before
+          " before you set off."
+        "After" button tap focusable
+Tab twice: FocusNode#88a86([PRIMARY FOCUS]) -> FocusNode#7ce6f([PRIMARY FOCUS]); Enter: 1 activations; then Space and a tap: 3
+== q7
+        "Before" button tap focusable
+          "Read the " id=q7-before
+          "q7 rules" link tap focusable id=q7-link
+          " before you set off."
+        "After" button tap focusable
+Tab twice: FocusNode#5e5ab([PRIMARY FOCUS]) -> FocusNode#4ac71([PRIMARY FOCUS]); Enter: 1 activations; then Space and a tap: 3
+00:00 +7: All tests passed!

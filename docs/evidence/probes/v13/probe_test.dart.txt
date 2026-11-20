@@ -1,0 +1,143 @@
+// V13 probe under flutter_test (throwaway, not committed; kept as
+// docs/evidence/probes/v13/probe_test.dart.txt). Pumps lib/probe.dart as
+// Android, iOS, and macOS (what the web build is in a browser on a Mac),
+// prints each fixture's geometry, and taps at the same points as the device
+// probes: 2 logical pixels inside and outside the right and bottom edges of
+// what is painted (vis), the button's shape (shp), and the semantics node
+// (sem), each followed by a tap at the fixture's centre as the positive
+// control.
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+Rect _parse(String s) {
+  final v = s.split(',').map(double.parse).toList();
+  return Rect.fromLTWH(v[0], v[1], v[2], v[3]);
+}
+
+Map<String, Map<String, Rect>> _geo(WidgetTester tester) {
+  final text = tester
+      .widget<Text>(
+        find.descendant(
+          of: find.bySemanticsIdentifier('geo'),
+          matching: find.byType(Text),
+        ),
+      )
+      .data!;
+  final out = <String, Map<String, Rect>>{};
+  for (final part in text.split(' | ').skip(1)) {
+    final words = part.split(' ');
+    out[words.first] = {
+      for (final w in words.skip(1))
+        if (!w.endsWith('=-')) w.split('=')[0]: _parse(w.split('=')[1]),
+    };
+  }
+  return out;
+}
+
+int _logCount(WidgetTester tester) {
+  final text = tester
+      .widget<Text>(
+        find.descendant(
+          of: find.bySemanticsIdentifier('log'),
+          matching: find.byType(Text),
+        ),
+      )
+      .data!;
+  return int.parse(text.substring(4, text.indexOf(')')));
+}
+
+String _lastLog(WidgetTester tester) {
+  final text = tester
+      .widget<Text>(
+        find.descendant(
+          of: find.bySemanticsIdentifier('log'),
+          matching: find.byType(Text),
+        ),
+      )
+      .data!;
+  return text.split(' ').last;
+}
+
+void main() {
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+  ]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('geometry and taps as ${platform.name} at $scale', (
+        tester,
+      ) async {
+        debugDefaultTargetPlatformOverride = platform;
+        tester.view.physicalSize = const Size(1290, 2796);
+        tester.view.devicePixelRatio = 3;
+        addTearDown(tester.view.reset);
+        final handle = tester.ensureSemantics();
+        await tester.pumpWidget(const ProbeApp());
+        await tester.pumpAndSettle();
+        if (scale == 2) {
+          await tester.tap(find.text('Scale 1.0'));
+          await tester.pumpAndSettle();
+        }
+        await tester.pump();
+        final geo = _geo(tester);
+        final header = tester
+            .widget<Text>(
+              find.descendant(
+                of: find.bySemanticsIdentifier('geo'),
+                matching: find.byType(Text),
+              ),
+            )
+            .data!
+            .split(' | ')
+            .first;
+        debugPrint('== ${platform.name} scale $scale: $header');
+        for (final MapEntry(key: id, value: rects) in geo.entries) {
+          String size(String k) => rects[k] == null
+              ? '-'
+              : '${rects[k]!.width.toStringAsFixed(1)}x${rects[k]!.height.toStringAsFixed(1)}';
+          final results = <String>[];
+          final centre = rects['sem']!.center;
+          if (scale == 1) {
+            final vis = rects['vis'] ?? rects['shp']!;
+            final cy = id == 'p18' ? rects['sem']!.center.dy : vis.center.dy;
+            final cx = id == 'p18' ? rects['sem']!.center.dx : vis.center.dx;
+            for (final k in ['vis', 'shp', 'sem']) {
+              final e = rects[k];
+              if (e == null) continue;
+              if (id == 'p18' && k == 'vis') continue;
+              for (final (name, p) in [
+                ('R-2', Offset(e.right - 2, cy)),
+                ('R+2', Offset(e.right + 2, cy)),
+                ('B-2', Offset(cx, e.bottom - 2)),
+                ('B+2', Offset(cx, e.bottom + 2)),
+              ]) {
+                final before = _logCount(tester);
+                await tester.tapAt(p);
+                await tester.pumpAndSettle(const Duration(milliseconds: 400));
+                final mid = _logCount(tester);
+                final hitWhat = mid > before ? _lastLog(tester) : '';
+                await tester.tapAt(centre);
+                await tester.pumpAndSettle(const Duration(milliseconds: 400));
+                final after = _logCount(tester);
+                final control = after == mid + 1 && _lastLog(tester) == id;
+                results.add(
+                  '$k$name=${mid > before ? (hitWhat == id ? 'HIT' : 'HIT:$hitWhat') : 'miss'}'
+                  '${control ? '' : '(control FAILED)'}',
+                );
+              }
+            }
+          }
+          debugPrint(
+            '$id lay=${size('lay')} vis=${size('vis')} shp=${size('shp')} '
+            'sem=${size('sem')} ${results.join(' ')}',
+          );
+        }
+        handle.dispose();
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
+  }
+}
