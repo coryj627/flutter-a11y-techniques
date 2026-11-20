@@ -217,16 +217,35 @@ function compare(u, f1, f2, region) {
     }
   }
   const onPageAt = (x, y) => channelDiff(u.at(x, y), page) <= THRESHOLD;
-  // The neighbour of the edge pixel (x, y) in the direction (dx, dy).
-  const neighbour = (x, y, dx, dy, onPage) => {
+  const steps = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  const bandOf = new Int32Array(w * h).fill(-1);
+  // The neighbour of the edge pixel (x, y) of band `id` in the direction
+  // (dx, dy), or undefined if the walk finds none it must contrast with.
+  const neighbour = (x, y, dx, dy, onPage, id) => {
     const c0 = f1.at(x, y);
-    let blurred = 0;
+    // How thick the band is here, along the way.
+    let thick = 0;
+    for (let bx = x, by = y; inside(bx, by) && bandOf[at(bx, by)] === id; bx -= dx, by -= dy) thick++;
+    let same = 0, blurred = 0;
     for (;;) {
       x += dx; y += dy;
       if (!inside(x, y)) return undefined;
-      if (channelDiff(f1.at(x, y), c0) <= FLAT) continue;
-      if (onPage && isChanged[at(x, y)]) continue;
-      if (solidAt[at(x, y)]) return onPage && !onPageAt(x, y) ? undefined : f1.at(x, y);
+      const i = at(x, y), c = f1.at(x, y);
+      // The band itself, or a pixel of its colour that focus also drew.
+      if (bandOf[i] === id) continue;
+      if (isChanged[i] && channelDiff(c, c0) <= FLAT) continue;
+      // On the page, the rest of what focus drew is crossed: the band is
+      // taken against the background.
+      if (onPage && isChanged[i]) continue;
+      const ours = !(onPage && !onPageAt(x, y));
+      if (!isChanged[i] && c === c0) {
+        // A run of exactly the band's colour that was there before, no
+        // wider than the band: the same shape made thicker. A wider one is
+        // a neighbour, at 1:1.
+        if (++same <= thick) continue;
+        return ours ? c : undefined;
+      }
+      if (solidAt[i]) return ours ? c : undefined;
       if (!blendAlong(x, y, dx, dy)) {
         // A blend some other way is the side of an anti-aliased edge that
         // runs along the way, not one being crossed: the neighbour beyond
@@ -234,16 +253,14 @@ function compare(u, f1, f2, region) {
         if (blend(x, y)) return undefined;
         // A blend no way is texture (a dither, a pattern), not
         // anti-aliasing: it is the neighbour.
-        return onPage && !onPageAt(x, y) ? undefined : f1.at(x, y);
+        return ours ? c : undefined;
       }
-      if (++blurred === BLUR) {
-        // Blurred all the way: what is there, if focus did not draw it.
-        return isChanged[at(x, y)] || (onPage && !onPageAt(x, y)) ? undefined : f1.at(x, y);
-      }
+      // Blurred all the way: what is there is the neighbour, unless focus
+      // drew it (the indicator's own anti-aliased edge is not a neighbour
+      // of it).
+      if (++blurred === BLUR) return ours && !isChanged[i] ? c : undefined;
     }
   };
-  const steps = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-  const bandOf = new Int32Array(w * h).fill(-1);
   const bands = [];
   let strong = 0;
   for (let y0 = t; y0 < b; y0++) {
@@ -271,7 +288,7 @@ function compare(u, f1, f2, region) {
       for (const [x, y] of pixels) {
         for (const [dx, dy] of steps) {
           if (inside(x + dx, y + dy) && bandOf[at(x + dx, y + dy)] === id) continue;
-          const n = neighbour(x, y, dx, dy, onPage);
+          const n = neighbour(x, y, dx, dy, onPage, id);
           if (n === undefined) continue;
           next.set(n, (next.get(n) ?? 0) + 1);
           const c = ratio(f1.at(x, y), n);
@@ -282,7 +299,9 @@ function compare(u, f1, f2, region) {
       for (const [x, y] of pixels) counts.set(f1.at(x, y), (counts.get(f1.at(x, y)) ?? 0) + 1);
       let colour = 0, top = -1;
       for (const [c, n] of counts) if (n > top || (n === top && c < colour)) { colour = c; top = n; }
-      if (next.size === 0) { contrast = ratio(colour, page); lowest = page; }
+      // Nothing found to measure against: on the page, the page; on the
+      // control, the measure is inconclusive and the band is not strong.
+      if (next.size === 0) { contrast = onPage ? ratio(colour, page) : 1; lowest = onPage ? page : colour; }
       if (contrast >= 3) strong += pixels.length;
       const sorted = [...next.entries()].sort((p, q) => (q[1] !== p[1] ? q[1] - p[1] : p[0] - q[0]));
       bands.push({ colour, onPage, pixels: pixels.length, contrast, lowest, next: sorted.slice(0, 3), id });

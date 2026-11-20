@@ -262,16 +262,37 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
       }
     }
     func onPageAt(_ x: Int, _ y: Int) -> Bool { channelDiff(u.at(x, y), page) <= threshold }
-    // The neighbour of the edge pixel (x0, y0) in the direction (dx, dy).
-    func neighbour(_ x0: Int, _ y0: Int, _ dx: Int, _ dy: Int, _ onPage: Bool) -> UInt32? {
+    let steps = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    var bandOf = [Int](repeating: -1, count: w * h)
+    // The neighbour of the edge pixel (x0, y0) of band `id` in the direction
+    // (dx, dy), or nil if the walk finds none it must contrast with.
+    func neighbour(_ x0: Int, _ y0: Int, _ dx: Int, _ dy: Int, _ onPage: Bool, _ id: Int) -> UInt32? {
       let c0 = f1.at(x0, y0)
-      var x = x0, y = y0, blurred = 0
+      // How thick the band is here, along the way.
+      var thick = 0
+      var bx = x0, by = y0
+      while inside(bx, by) && bandOf[at(bx, by)] == id { thick += 1; bx -= dx; by -= dy }
+      var x = x0, y = y0, same = 0, blurred = 0
       while true {
         x += dx; y += dy
         if !inside(x, y) { return nil }
-        if channelDiff(f1.at(x, y), c0) <= flat { continue }
-        if onPage && isChanged[at(x, y)] { continue }
-        if solidAt[at(x, y)] { return onPage && !onPageAt(x, y) ? nil : f1.at(x, y) }
+        let i = at(x, y), c = f1.at(x, y)
+        // The band itself, or a pixel of its colour that focus also drew.
+        if bandOf[i] == id { continue }
+        if isChanged[i] && channelDiff(c, c0) <= flat { continue }
+        // On the page, the rest of what focus drew is crossed: the band is
+        // taken against the background.
+        if onPage && isChanged[i] { continue }
+        let ours = !(onPage && !onPageAt(x, y))
+        if !isChanged[i] && c == c0 {
+          // A run of exactly the band's colour that was there before, no
+          // wider than the band: the same shape made thicker. A wider one is
+          // a neighbour, at 1:1.
+          same += 1
+          if same <= thick { continue }
+          return ours ? c : nil
+        }
+        if solidAt[i] { return ours ? c : nil }
         if !blendAlong(x, y, dx, dy) {
           // A blend some other way is the side of an anti-aliased edge that
           // runs along the way, not one being crossed: the neighbour beyond
@@ -279,17 +300,15 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
           if blend(x, y) { return nil }
           // A blend no way is texture (a dither, a pattern), not
           // anti-aliasing: it is the neighbour.
-          return onPage && !onPageAt(x, y) ? nil : f1.at(x, y)
+          return ours ? c : nil
         }
+        // Blurred all the way: what is there is the neighbour, unless focus
+        // drew it (the indicator's own anti-aliased edge is not a neighbour
+        // of it).
         blurred += 1
-        if blurred == blur {
-          // Blurred all the way: what is there, if focus did not draw it.
-          return isChanged[at(x, y)] || (onPage && !onPageAt(x, y)) ? nil : f1.at(x, y)
-        }
+        if blurred == blur { return ours && !isChanged[i] ? c : nil }
       }
     }
-    let steps = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-    var bandOf = [Int](repeating: -1, count: w * h)
     var bands: [(Band, Int)] = []
     for y0 in t..<b {
       for x0 in l..<r {
@@ -318,7 +337,7 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
         for (x, y) in pixels {
           for (dx, dy) in steps {
             if inside(x + dx, y + dy) && bandOf[at(x + dx, y + dy)] == id { continue }
-            guard let n = neighbour(x, y, dx, dy, onPage) else { continue }
+            guard let n = neighbour(x, y, dx, dy, onPage, id) else { continue }
             next[n, default: 0] += 1
             let c = ratio(f1.at(x, y), n)
             if c < contrast { contrast = c; lowest = n }
@@ -328,7 +347,9 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
         for (x, y) in pixels { counts[f1.at(x, y), default: 0] += 1 }
         var colour: UInt32 = 0, top = -1
         for (c, n) in counts where n > top || (n == top && c < colour) { colour = c; top = n }
-        if next.isEmpty { contrast = ratio(colour, page); lowest = page }
+        // Nothing found to measure against: on the page, the page; on the
+        // control, the measure is inconclusive and the band is not strong.
+        if next.isEmpty { contrast = onPage ? ratio(colour, page) : 1; lowest = onPage ? page : colour }
         if contrast >= 3 { result.strong += pixels.count }
         let sorted = next.sorted { $0.value != $1.value ? $0.value > $1.value : $0.key < $1.key }
         bands.append((

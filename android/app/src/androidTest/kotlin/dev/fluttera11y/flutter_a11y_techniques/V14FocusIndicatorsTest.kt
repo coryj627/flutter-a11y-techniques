@@ -214,16 +214,38 @@ private fun compare(u: Pixels, f1: Pixels, f2: Pixels, region: Rect): Indicator 
         solidAt[at(x, y)] = (same(x - 1, y, c) || same(x + 1, y, c) || same(x, y - 1, c) || same(x, y + 1, c)) && !blend(x, y)
     }
     fun onPageAt(x: Int, y: Int) = channelDiff(u.at(x, y), page) <= THRESHOLD
-    // The neighbour of the edge pixel (x0, y0) in the direction (dx, dy).
-    fun neighbour(x0: Int, y0: Int, dx: Int, dy: Int, onPage: Boolean): Int? {
+    val ratios = HashMap<Long, Double>()
+    fun ratio(a: Int, c: Int) = ratios.getOrPut((a.toLong() shl 32) or c.toLong()) { contrast(a, c) }
+    val steps = listOf(1 to 0, -1 to 0, 0 to 1, 0 to -1)
+    val bandOf = IntArray(w * h) { -1 }
+    // The neighbour of the edge pixel (x0, y0) of band [id] in the direction
+    // (dx, dy), or null if the walk finds none it must contrast with.
+    fun neighbour(x0: Int, y0: Int, dx: Int, dy: Int, onPage: Boolean, id: Int): Int? {
         val c0 = f1.at(x0, y0)
-        var x = x0; var y = y0; var blurred = 0
+        // How thick the band is here, along the way.
+        var thick = 0
+        var bx = x0; var by = y0
+        while (inside(bx, by) && bandOf[at(bx, by)] == id) { thick++; bx -= dx; by -= dy }
+        var x = x0; var y = y0; var same = 0; var blurred = 0
         while (true) {
             x += dx; y += dy
             if (!inside(x, y)) return null
-            if (channelDiff(f1.at(x, y), c0) <= FLAT) continue
-            if (onPage && isChanged[at(x, y)]) continue
-            if (solidAt[at(x, y)]) return if (onPage && !onPageAt(x, y)) null else f1.at(x, y)
+            val i = at(x, y); val c = f1.at(x, y)
+            // The band itself, or a pixel of its colour that focus also drew.
+            if (bandOf[i] == id) continue
+            if (isChanged[i] && channelDiff(c, c0) <= FLAT) continue
+            // On the page, the rest of what focus drew is crossed: the band is
+            // taken against the background.
+            if (onPage && isChanged[i]) continue
+            val ours = !(onPage && !onPageAt(x, y))
+            if (!isChanged[i] && c == c0) {
+                // A run of exactly the band's colour that was there before, no
+                // wider than the band: the same shape made thicker. A wider one is
+                // a neighbour, at 1:1.
+                if (++same <= thick) continue
+                return if (ours) c else null
+            }
+            if (solidAt[i]) return if (ours) c else null
             if (!blendAlong(x, y, dx, dy)) {
                 // A blend some other way is the side of an anti-aliased edge that
                 // runs along the way, not one being crossed: the neighbour beyond it
@@ -231,18 +253,14 @@ private fun compare(u: Pixels, f1: Pixels, f2: Pixels, region: Rect): Indicator 
                 if (blend(x, y)) return null
                 // A blend no way is texture (a dither, a pattern), not
                 // anti-aliasing: it is the neighbour.
-                return if (onPage && !onPageAt(x, y)) null else f1.at(x, y)
+                return if (ours) c else null
             }
-            if (++blurred == BLUR) {
-                // Blurred all the way: what is there, if focus did not draw it.
-                return if (isChanged[at(x, y)] || (onPage && !onPageAt(x, y))) null else f1.at(x, y)
-            }
+            // Blurred all the way: what is there is the neighbour, unless focus
+            // drew it (the indicator's own anti-aliased edge is not a neighbour
+            // of it).
+            if (++blurred == BLUR) return if (ours && !isChanged[i]) c else null
         }
     }
-    val ratios = HashMap<Long, Double>()
-    fun ratio(a: Int, c: Int) = ratios.getOrPut((a.toLong() shl 32) or c.toLong()) { contrast(a, c) }
-    val steps = listOf(1 to 0, -1 to 0, 0 to 1, 0 to -1)
-    val bandOf = IntArray(w * h) { -1 }
     val bands = mutableListOf<Pair<Band, Int>>()
     var strong = 0
     for (y0 in t until b) for (x0 in l until r) {
@@ -269,7 +287,7 @@ private fun compare(u: Pixels, f1: Pixels, f2: Pixels, region: Rect): Indicator 
         val next = HashMap<Int, Int>()
         for ((x, y) in pixels) for ((dx, dy) in steps) {
             if (inside(x + dx, y + dy) && bandOf[at(x + dx, y + dy)] == id) continue
-            val n = neighbour(x, y, dx, dy, onPage) ?: continue
+            val n = neighbour(x, y, dx, dy, onPage, id) ?: continue
             next.merge(n, 1, Int::plus)
             val c = ratio(f1.at(x, y), n)
             if (c < contrast) { contrast = c; lowest = n }
@@ -278,7 +296,9 @@ private fun compare(u: Pixels, f1: Pixels, f2: Pixels, region: Rect): Indicator 
         for ((x, y) in pixels) counts.merge(f1.at(x, y), 1, Int::plus)
         var colour = 0; var top = -1
         for ((c, n) in counts) if (n > top || (n == top && c < colour)) { colour = c; top = n }
-        if (next.isEmpty()) { contrast = ratio(colour, page); lowest = page }
+        // Nothing found to measure against: on the page, the page; on the
+        // control, the measure is inconclusive and the band is not strong.
+        if (next.isEmpty()) { contrast = if (onPage) ratio(colour, page) else 1.0; lowest = if (onPage) page else colour }
         if (contrast >= 3) strong += pixels.size
         val sorted = next.entries.sortedWith(compareByDescending<Map.Entry<Int, Int>> { it.value }.thenBy { it.key })
         bands.add(Band(colour, onPage, pixels.size, contrast, lowest, sorted.take(3).map { it.key to it.value }) to id)
@@ -471,6 +491,20 @@ private const val CASES = """
       "expect": {"strong": "all", "onPage": false}
     },
     {
+      "name": "the fourth review's reproduction: a black border round a #4189B9 button turning #458DBD, within 4 in every channel of the inside it does not change, fails against that inside (1.05:1)",
+      "size": [216, 76], "scales": [1, 2, 3],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#458DBD"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1, "onPage": false}
+    },
+    {
+      "name": "a black border turning exactly the colour of the inside it does not change fails against it (1:1): a run of the band's own colour wider than the band is a neighbour",
+      "size": [216, 76], "scales": [1, 2, 3],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "expect": {"strong": "none", "ratioBelow": 1.01, "onPage": false}
+    },
+    {
       "name": "a thick border, 8 pixels of #4B933A on the blue, fails",
       "size": [216, 76], "scales": [1, 2],
       "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
@@ -595,6 +629,41 @@ private const val CASES = """
       "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [100, 15, 104, 17], "colour": "#1F2A44"}],
       "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [100, 15, 104, 17], "colour": "#1F2A44"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}],
       "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "known limit: a 3 pixel black border made 1 pixel thicker fails: the old border, of the same colour, is wider than the new part and is taken as a neighbour at 1:1",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 4, "colour": "#000000"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "known limit: a border and the inside changing together to colours within 4 of each other are one indicator, taken against the page (3.62:1), though the border does not contrast with the inside (1.05:1)",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#2A70A0"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#458DBD"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "known limit: a neighbour that touches a band only at a corner is not measured: a black inner ring passes beside a navy pixel at its outer corner",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [11, 11, 12, 12], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [11, 11, 12, 12], "colour": "#1F2A44"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "known limit: past more than 4 pixels of the indicator's own blur a walk finds nothing: a black bar along a navy control's top edge, fading over 8 pixels into the navy, is taken against the page only and passes, though black against the navy is 1.47:1",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}, {"rect": [8, 8, 208, 11], "colour": "#000000"}, {"rect": [8, 11, 208, 19], "gradient": ["#000000", "#1F2A44"], "axis": "y"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "known limit: an indicator that is itself a one pixel dither has no solid pixels and so no bands: a ring checkered black and white is not measured, and cannot pass",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [3, 3, 213, 73], "checker": ["#000000", "#FFFFFF"], "period": 1}, {"rect": [5, 5, 211, 71], "colour": "#FFFFFF"}, {"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "expect": {"changed": "some", "strong": "none"}
     },
     {
       "name": "known limit: the page is one colour: a ring outside a control but on a grey card is held to a border's rule, and fails against the navy control",

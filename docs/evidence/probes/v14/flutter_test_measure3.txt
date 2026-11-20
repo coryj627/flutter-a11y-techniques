@@ -1,11 +1,12 @@
 # V14 probe, round 3 of the measure: probe_test.dart.txt run again with V14_DPR=3 (a device pixel ratio of 3,
 # 1200 by 1200 pixels), as Android and as iOS, light and dark, analysed by analyse3.py.txt, the measure of the
-# V14 spec, section 6, after the third review: solid pixels (a one pixel line among them; anti-aliasing told by
+# V14 spec, section 6, after the fourth review: solid pixels (a one pixel line among them; anti-aliasing told by
 # its colour), connected bands, each taken against its neighbours from every pixel of its edge (on the page:
-# the background only; on the control: every neighbour), the lowest deciding; a walk crosses anti-aliasing,
-# stops at an anti-aliased edge that runs along it, and measures texture. The five largest bands of each fixture
-# are printed, and every other band of 3:1 or more, each with its lowest contrast and its contrast against its
-# commonest neighbours. The probe's own theme differs from the app's in its text colour (#000000 here).
+# the background only; on the control: every neighbour), the lowest deciding; a walk crosses only the band, what
+# else focus drew within 4 of its colour, anti-aliasing being crossed, and a run of exactly its colour no wider
+# than it; it measures every other pixel focus did not draw, texture among them. The five largest bands of each
+# fixture are printed, and every other band of 3:1 or more, each with its lowest contrast and its contrast
+# against its commonest neighbours. The probe's own theme differs from the app's in its text colour (#000000).
 == android-dark-c1
    changed=13959 unstable=0 swapped=0 in bands=11773 strong=11773 page=#121318
       11773 px #5C8EC6 on the page: contrast 5.20 (lowest, against #13151B); next to it: #121318 5.42 97%, #13151B 5.34 1%, #121319 5.42 0%
@@ -55,15 +56,15 @@
 == android-dark-m14
    changed=36545 unstable=0 swapped=0 in bands=36417 strong=0 page=#121318
       36407 px #2F3034 on the page: contrast 1.41 (lowest, against #121318); next to it: 
-          1 px #44444B on the control: contrast 1.07 (lowest, against #484851); next to it: #121318 1.92 33%, #2F3034 1.36 33%, #323238 1.32 33%
-          1 px #45454C on the control: contrast 1.06 (lowest, against #484951); next to it: #2F3034 1.39 50%, #121318 1.95 25%, #484951 1.06 25%
-          1 px #45464D on the control: contrast 1.36 (lowest, against #323237); next to it: #121318 1.98 50%, #2F3034 1.40 25%, #323237 1.36 25%
-          1 px #46464E on the control: contrast 1.41 (lowest, against #2F3034); next to it: #121318 1.98 66%, #2F3034 1.41 33%
+          1 px #44444B on the control: contrast 1.03 (lowest, against #46464F); next to it: #2F3034 1.36 33%, #323238 1.32 33%, #46464F 1.03 33%
+          1 px #45454C on the control: contrast 1.02 (lowest, against #46464F); next to it: #2F3034 1.39 50%, #46464F 1.02 25%, #484951 1.06 25%
+          1 px #45464D on the control: contrast 1.01 (lowest, against #46464F); next to it: #2F3034 1.40 33%, #323237 1.36 33%, #46464F 1.01 33%
+          1 px #46464E on the control: contrast 1.00 (lowest, against #46464F); next to it: #2F3034 1.41 33%, #46464F 1.00 33%, #494951 1.05 33%
 == android-dark-m15
    changed=12299 unstable=0 swapped=3 in bands=12065 strong=0 page=#121318
        4026 px #232530 on the page: contrast 1.14 (lowest, against #15161C); next to it: #121318 1.22 82%, #14151B 1.20 8%, #15161C 1.19 8%
        4019 px #232530 on the page: contrast 1.15 (lowest, against #14151B); next to it: #121318 1.22 82%, #15161C 1.19 9%, #14151A 1.20 8%
-       3734 px #000000 on the page: contrast 1.11 (lowest, against #121318); next to it: #121318 1.13 86%, #15161C 1.16 7%, #14151B 1.15 6%
+       3734 px #000000 on the page: contrast 1.11 (lowest, against #121318); next to it: #121318 1.13 86%, #15161C 1.16 7%, #14151B 1.15 5%
         286 px #42434E on the control: contrast 1.19 (lowest, against #34343A); next to it: #232530 1.56 67%, #000000 2.14 16%, #34343A 1.26 16%
 == android-dark-m2
    changed=38566 unstable=0 swapped=0 in bands=38509 strong=0 page=#121318
@@ -80,26 +81,23 @@
        8117 px #111F30 on the page: contrast 1.07 (lowest, against #12151C); next to it: #121318 1.12 86%, #121319 1.11 7%, #121419 1.11 5%
        1190 px #111F30 on the page: contrast 1.12 (lowest, against #121318); next to it: 
 == android-dark-m6
-   changed=31406 unstable=432 swapped=11893 in bands=30925 strong=21239 page=#121318
-       9651 px #121318 on the control: contrast 2.27 (lowest, against #4A4E65); next to it: #BAC3FF 10.90 99%, #B9C2FE 10.79 0%, #4A4E65 2.27 0%
+   changed=31406 unstable=432 swapped=11893 in bands=30925 strong=16504 page=#121318
+       9651 px #121318 on the control: contrast 1.00 (lowest, against #121318); next to it: #121318 1.00 68%, #BAC3FF 10.90 31%, #B9C2FE 10.79 0%
        8661 px #BAC3FF on the control: contrast 8.84 (lowest, against #242630); next to it: #121318 10.90 99%, #242630 8.84 0%
-       4555 px #121318 on the control: contrast 5.40 (lowest, against #8288B2); next to it: #BAC3FF 10.90 99%, #8288B2 5.40 0%, #B9C2FE 10.79 0%
+       4555 px #121318 on the control: contrast 1.00 (lowest, against #121318); next to it: #121318 1.00 59%, #BAC3FF 10.90 39%, #8288B2 5.40 0%
        1296 px #BAC3FF on the page: contrast 10.79 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.79 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.79 (lowest, against #121318); next to it: #121318 10.90 100%
        1260 px #BAC3FF on the page: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
-        111 px #121318 on the control: contrast 10.90 (lowest, against #BAC3FF); next to it: #BAC3FF 10.90 100%
-         36 px #121318 on the control: contrast 10.90 (lowest, against #BAC3FF); next to it: #BAC3FF 10.90 100%
          35 px #6F7598 on the page: contrast 4.13 (lowest, against #121318); next to it: #121318 4.13 100%
          34 px #8288B2 on the page: contrast 5.40 (lowest, against #121318); next to it: #121318 5.40 100%
          34 px #8288B2 on the page: contrast 5.40 (lowest, against #121318); next to it: #121318 5.40 100%
-         33 px #121318 on the control: contrast 10.90 (lowest, against #BAC3FF); next to it: #BAC3FF 10.90 100%
 == android-dark-m7
-   changed=26672 unstable=432 swapped=10225 in bands=26299 strong=16723 page=#121318
-       9541 px #121318 on the control: contrast 2.27 (lowest, against #4A4E65); next to it: #BAC3FF 10.90 99%, #B9C2FE 10.79 0%, #4A4E65 2.27 0%
-       4560 px #121318 on the control: contrast 5.40 (lowest, against #8288B2); next to it: #BAC3FF 10.90 98%, #B9C2FE 10.79 1%, #8288B2 5.40 0%
+   changed=26672 unstable=432 swapped=10225 in bands=26299 strong=12163 page=#121318
+       9541 px #121318 on the control: contrast 1.00 (lowest, against #121318); next to it: #121318 1.00 75%, #BAC3FF 10.90 24%, #B9C2FE 10.79 0%
+       4560 px #121318 on the control: contrast 1.00 (lowest, against #121318); next to it: #121318 1.00 70%, #BAC3FF 10.90 28%, #B9C2FE 10.79 0%
        4320 px #BAC3FF on the control: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.79 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
@@ -121,25 +119,19 @@
 == android-dark-w1
    changed=0 unstable=0 swapped=0 in bands=0 strong=0 page=#121318
 == android-dark-w2
-   changed=29234 unstable=0 swapped=13530 in bands=27960 strong=23622 page=#121318
+   changed=29234 unstable=0 swapped=13530 in bands=27960 strong=14847 page=#121318
       14847 px #E4E1E9 on the page: contrast 13.58 (lowest, against #14151A); next to it: #121318 14.35 98%, #14151A 14.10 1%, #131419 14.23 0%
-       5022 px #34343A on the control: contrast 9.15 (lowest, against #E4E1E9); next to it: #E4E1E9 9.57 98%, #E3E0E8 9.48 0%, #E2DFE7 9.39 0%
-       1506 px #34343A on the control: contrast 7.01 (lowest, against #C4C2C9); next to it: #E4E1E9 9.57 99%, #E3E0E8 9.48 0%, #C4C2C9 7.01 0%
-       1506 px #34343A on the control: contrast 7.01 (lowest, against #C4C2C9); next to it: #E4E1E9 9.57 98%, #E3E0E8 9.48 0%, #C4C2C9 7.01 0%
-        738 px #34343A on the control: contrast 9.48 (lowest, against #E3E0E8); next to it: #E4E1E9 9.57 99%, #E3E0E8 9.48 0%
-          1 px #35353B on the control: contrast 9.16 (lowest, against #E1DEE6); next to it: #E4E1E9 9.42 75%, #E1DEE6 9.16 25%
-          1 px #34343A on the control: contrast 9.57 (lowest, against #E4E1E9); next to it: #E4E1E9 9.57 100%
-          1 px #34343A on the control: contrast 9.48 (lowest, against #E3E0E8); next to it: #E4E1E9 9.57 75%, #E3E0E8 9.48 25%
+       5022 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #E4E1E9 9.57 50%, #34343A 1.00 49%, #E3E0E8 9.48 0%
+       1506 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 50%, #E4E1E9 9.57 49%, #E3E0E8 9.48 0%
+       1506 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 50%, #E4E1E9 9.57 48%, #E3E0E8 9.48 0%
+        738 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 52%, #E4E1E9 9.57 46%, #E3E0E8 9.48 0%
 == android-dark-w3
-   changed=29234 unstable=0 swapped=13530 in bands=27960 strong=23622 page=#121318
+   changed=29234 unstable=0 swapped=13530 in bands=27960 strong=14847 page=#121318
       14847 px #E4E1E9 on the page: contrast 13.58 (lowest, against #14151A); next to it: #121318 14.35 98%, #14151A 14.10 1%, #131419 14.23 0%
-       5022 px #34343A on the control: contrast 9.15 (lowest, against #E4E1E9); next to it: #E4E1E9 9.57 98%, #E3E0E8 9.48 0%, #E2DFE7 9.39 0%
-       1506 px #34343A on the control: contrast 7.01 (lowest, against #C4C2C9); next to it: #E4E1E9 9.57 99%, #E3E0E8 9.48 0%, #C4C2C9 7.01 0%
-       1506 px #34343A on the control: contrast 7.01 (lowest, against #C4C2C9); next to it: #E4E1E9 9.57 98%, #E3E0E8 9.48 0%, #C4C2C9 7.01 0%
-        738 px #34343A on the control: contrast 9.48 (lowest, against #E3E0E8); next to it: #E4E1E9 9.57 99%, #E3E0E8 9.48 0%
-          1 px #35353B on the control: contrast 9.16 (lowest, against #E1DEE6); next to it: #E4E1E9 9.42 75%, #E1DEE6 9.16 25%
-          1 px #34343A on the control: contrast 9.57 (lowest, against #E4E1E9); next to it: #E4E1E9 9.57 100%
-          1 px #34343A on the control: contrast 9.48 (lowest, against #E3E0E8); next to it: #E4E1E9 9.57 75%, #E3E0E8 9.48 25%
+       5022 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #E4E1E9 9.57 50%, #34343A 1.00 49%, #E3E0E8 9.48 0%
+       1506 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 50%, #E4E1E9 9.57 49%, #E3E0E8 9.48 0%
+       1506 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 50%, #E4E1E9 9.57 48%, #E3E0E8 9.48 0%
+        738 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 52%, #E4E1E9 9.57 46%, #E3E0E8 9.48 0%
 == android-dark-x1
    changed=0 unstable=0 swapped=0 in bands=0 strong=0 page=#121318
 == android-dark-x2
@@ -166,10 +158,10 @@
 == android-light-c4
    changed=2067 unstable=0 swapped=0 in bands=1747 strong=0 page=#FBF8FF
        1681 px #8ABCF5 on the page: contrast 1.81 (lowest, against #F7F6FF); next to it: #FBF8FF 1.89 55%, #FFFFFF 1.98 38%, #F7F6FF 1.85 6%
-         17 px #FFFFFF on the control: contrast 1.94 (lowest, against #8CBEF5); next to it: #8BBDF5 1.96 87%, #8ABCF5 1.98 6%, #8CBEF5 1.94 6%
-         17 px #FFFFFF on the control: contrast 1.94 (lowest, against #8CBEF5); next to it: #8BBDF5 1.96 87%, #8ABCF5 1.98 6%, #8CBEF5 1.94 6%
-         16 px #FFFFFF on the control: contrast 1.96 (lowest, against #8BBDF5); next to it: #8BBDF5 1.96 90%, #8ABCF5 1.98 6%, #8ABDF5 1.97 3%
-         16 px #FFFFFF on the control: contrast 1.96 (lowest, against #8BBDF5); next to it: #8BBDF5 1.96 90%, #8ABCF5 1.98 6%, #8ABDF5 1.97 3%
+         17 px #FFFFFF on the control: contrast 1.00 (lowest, against #FFFFFF); next to it: #FFFFFF 1.00 51%, #8BBDF5 1.96 45%, #8ABCF5 1.98 3%
+         17 px #FFFFFF on the control: contrast 1.00 (lowest, against #FFFFFF); next to it: #FFFFFF 1.00 53%, #8BBDF5 1.96 43%, #8ABCF5 1.98 3%
+         16 px #FFFFFF on the control: contrast 1.00 (lowest, against #FFFFFF); next to it: #FFFFFF 1.00 51%, #8BBDF5 1.96 44%, #8ABCF5 1.98 3%
+         16 px #FFFFFF on the control: contrast 1.00 (lowest, against #FFFFFF); next to it: #FFFFFF 1.00 50%, #8BBDF5 1.96 46%, #8ABCF5 1.98 3%
 == android-light-c5
    changed=0 unstable=302 swapped=0 in bands=0 strong=0 page=#FBF8FF
 == android-light-m1
@@ -204,16 +196,16 @@
 == android-light-m14
    changed=36887 unstable=0 swapped=1 in bands=36430 strong=0 page=#FBF8FF
       36407 px #DCDAE0 on the page: contrast 1.32 (lowest, against #FBF8FF); next to it: 
-          3 px #C6C4CD on the control: contrast 1.04 (lowest, against #C6C4CD); next to it: #FBF8FF 1.64 50%, #DCDAE0 1.24 37%, #C6C4CD 1.00 12%
-          3 px #C6C4CD on the control: contrast 1.05 (lowest, against #C6C4CD); next to it: #FBF8FF 1.64 50%, #DCDAE0 1.24 37%, #C6C4CD 1.00 12%
-          2 px #C7C6CF on the control: contrast 1.05 (lowest, against #C6C4CE); next to it: #DCDAE0 1.22 40%, #FBF8FF 1.61 40%, #C6C4CE 1.02 20%
-          2 px #C7C6CE on the control: contrast 1.05 (lowest, against #C6C4CF); next to it: #DCDAE0 1.22 40%, #FBF8FF 1.61 40%, #C6C4CF 1.02 20%
+          3 px #C6C4CD on the control: contrast 1.01 (lowest, against #C7C5D0); next to it: #C7C5D0 1.01 42%, #DCDAE0 1.24 42%, #C4C3CD 1.01 14%
+          3 px #C6C4CD on the control: contrast 1.01 (lowest, against #C7C5D0); next to it: #C7C5D0 1.01 42%, #DCDAE0 1.24 42%, #C4C2CD 1.02 14%
+          2 px #C7C6CF on the control: contrast 1.01 (lowest, against #C7C5D0); next to it: #C7C5D0 1.01 40%, #DCDAE0 1.22 40%, #C4C2CC 1.04 20%
+          2 px #C7C6CE on the control: contrast 1.01 (lowest, against #C7C5D0); next to it: #C7C5D0 1.01 40%, #DCDAE0 1.22 40%, #C4C2CC 1.04 20%
 == android-light-m15
    changed=12434 unstable=0 swapped=6 in bands=12108 strong=3776 page=#FBF8FF
-       4029 px #EAE8F4 on the page: contrast 1.07 (lowest, against #F7F4FC); next to it: #FBF8FF 1.15 73%, #F9F6FE 1.13 14%, #FAF7FE 1.14 11%
-       4021 px #EAE8F4 on the page: contrast 1.07 (lowest, against #F7F4FC); next to it: #FBF8FF 1.15 72%, #FAF7FE 1.14 16%, #F9F6FE 1.13 11%
+       4029 px #EAE8F4 on the page: contrast 1.08 (lowest, against #F8F5FD); next to it: #FBF8FF 1.15 73%, #F9F6FE 1.13 14%, #FAF7FE 1.14 11%
+       4021 px #EAE8F4 on the page: contrast 1.08 (lowest, against #F8F5FD); next to it: #FBF8FF 1.15 72%, #FAF7FE 1.14 16%, #F9F6FE 1.13 11%
        3776 px #000000 on the page: contrast 19.07 (lowest, against #F7F4FC); next to it: #FBF8FF 19.97 79%, #F9F6FE 19.64 10%, #FAF7FE 19.80 9%
-        282 px #D5D3E0 on the control: contrast 1.12 (lowest, against #E4E1E9); next to it: #EAE8F4 1.22 66%, #000000 14.22 18%, #E4E1E9 1.14 15%
+        282 px #D5D3E0 on the control: contrast 1.01 (lowest, against #D8D6E2); next to it: #EAE8F4 1.22 68%, #000000 14.22 18%, #E4E1E9 1.14 12%
 == android-light-m2
    changed=38599 unstable=0 swapped=22 in bands=38523 strong=0 page=#FBF8FF
       38523 px #636C9D on the control: contrast 2.90 (lowest, against #C1C3DA); next to it: #FBF8FF 4.80 61%, #FFFFFF 5.05 38%, #F9F6FE 4.72 0%
@@ -229,28 +221,25 @@
        8108 px #E1EBFF on the page: contrast 1.09 (lowest, against #F7F6FF); next to it: #FBF8FF 1.14 84%, #FAF8FF 1.14 9%, #FAF7FF 1.13 6%
        1190 px #E1EBFF on the page: contrast 1.14 (lowest, against #FBF8FF); next to it: 
 == android-light-m6
-   changed=31297 unstable=432 swapped=11890 in bands=30832 strong=30694 page=#FBF8FF
+   changed=31297 unstable=432 swapped=11890 in bands=30832 strong=16402 page=#FBF8FF
        8662 px #515B92 on the control: contrast 5.11 (lowest, against #ECEAF6); next to it: #FBF8FF 6.12 99%, #E9E7F3 5.27 0%, #ECEAF6 5.42 0%
-       4802 px #FBF8FF on the control: contrast 5.93 (lowest, against #545D94); next to it: #515B92 6.12 99%, #545D94 5.93 0%
-       4802 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
-       2401 px #FBF8FF on the control: contrast 5.93 (lowest, against #545D94); next to it: #515B92 6.12 99%, #545D94 5.93 0%
-       2107 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
+       4802 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 67%, #515B92 6.12 32%, #545D94 5.93 0%
+       4802 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 96%, #515B92 6.12 3%
+       2401 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 62%, #515B92 6.12 36%, #545D94 5.93 0%
+       2107 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 77%, #515B92 6.12 22%
        1296 px #515B92 on the page: contrast 5.93 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 5.93 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 5.93 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1260 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
-        111 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
-         36 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
-         33 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
 == android-light-m7
-   changed=26576 unstable=432 swapped=10223 in bands=26205 strong=26067 page=#FBF8FF
-       4790 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
-       4704 px #FBF8FF on the control: contrast 5.93 (lowest, against #545D94); next to it: #515B92 6.12 98%, #545D94 5.93 1%
+   changed=26576 unstable=432 swapped=10223 in bands=26205 strong=12060 page=#FBF8FF
+       4790 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 95%, #515B92 6.12 4%
+       4704 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 66%, #515B92 6.12 32%, #545D94 5.93 0%
        4320 px #515B92 on the control: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
-       2377 px #FBF8FF on the control: contrast 5.93 (lowest, against #545D94); next to it: #515B92 6.12 97%, #545D94 5.93 2%
-       2136 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
+       2377 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 85%, #515B92 6.12 13%, #545D94 5.93 1%
+       2136 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 74%, #515B92 6.12 25%
        1296 px #515B92 on the page: contrast 5.93 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
@@ -268,39 +257,27 @@
 == android-light-w1
    changed=0 unstable=0 swapped=0 in bands=0 strong=0 page=#FBF8FF
 == android-light-w2
-   changed=29240 unstable=0 swapped=13518 in bands=27964 strong=25118 page=#FBF8FF
+   changed=29240 unstable=0 swapped=13518 in bands=27964 strong=15007 page=#FBF8FF
       14847 px #1B1B21 on the page: contrast 15.19 (lowest, against #F8F5FC); next to it: #FBF8FF 16.30 98%, #F8F5FC 15.88 1%, #FAF7FE 16.16 0%
-       5028 px #E4E1E9 on the control: contrast 12.68 (lowest, against #1F1F25); next to it: #1B1B21 13.26 98%, #1D1D23 12.97 1%, #1C1C22 13.12 0%
-       1506 px #E4E1E9 on the control: contrast 3.85 (lowest, against #706F75); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%, #706F75 3.85 0%
-       1506 px #E4E1E9 on the control: contrast 3.85 (lowest, against #706F75); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%, #706F75 3.85 0%
-        738 px #E4E1E9 on the control: contrast 5.80 (lowest, against #55545A); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%
-        467 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 75%, #706F75 3.44 24%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 51%, #706F75 3.44 48%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 75%, #706F75 3.44 24%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 51%, #706F75 3.44 48%
+       5028 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #1B1B21 13.26 50%, #E4E1E9 1.00 48%, #1D1D23 12.97 0%
+       1506 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 50%, #1B1B21 13.26 49%, #55545A 5.80 0%
+       1506 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 50%, #1B1B21 13.26 49%, #55545A 5.80 0%
+        738 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 52%, #1B1B21 13.26 47%, #55545A 5.80 0%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
-          1 px #E3E0E8 on the control: contrast 12.71 (lowest, against #1E1E24); next to it: #1B1B21 13.13 75%, #1E1E24 12.71 25%
-          1 px #E4E1E9 on the control: contrast 13.26 (lowest, against #1B1B21); next to it: #1B1B21 13.26 100%
 == android-light-w3
-   changed=29240 unstable=0 swapped=13518 in bands=27964 strong=25118 page=#FBF8FF
+   changed=29240 unstable=0 swapped=13518 in bands=27964 strong=15007 page=#FBF8FF
       14847 px #1B1B21 on the page: contrast 15.19 (lowest, against #F8F5FC); next to it: #FBF8FF 16.30 98%, #F8F5FC 15.88 1%, #FAF7FE 16.16 0%
-       5028 px #E4E1E9 on the control: contrast 12.68 (lowest, against #1F1F25); next to it: #1B1B21 13.26 98%, #1D1D23 12.97 1%, #1C1C22 13.12 0%
-       1506 px #E4E1E9 on the control: contrast 3.85 (lowest, against #706F75); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%, #706F75 3.85 0%
-       1506 px #E4E1E9 on the control: contrast 3.85 (lowest, against #706F75); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%, #706F75 3.85 0%
-        738 px #E4E1E9 on the control: contrast 5.80 (lowest, against #55545A); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%
-        467 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 75%, #706F75 3.44 24%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 51%, #706F75 3.44 48%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 75%, #706F75 3.44 24%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 51%, #706F75 3.44 48%
+       5028 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #1B1B21 13.26 50%, #E4E1E9 1.00 48%, #1D1D23 12.97 0%
+       1506 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 50%, #1B1B21 13.26 49%, #55545A 5.80 0%
+       1506 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 50%, #1B1B21 13.26 49%, #55545A 5.80 0%
+        738 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 52%, #1B1B21 13.26 47%, #55545A 5.80 0%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
-          1 px #E3E0E8 on the control: contrast 12.71 (lowest, against #1E1E24); next to it: #1B1B21 13.13 75%, #1E1E24 12.71 25%
-          1 px #E4E1E9 on the control: contrast 13.26 (lowest, against #1B1B21); next to it: #1B1B21 13.26 100%
 == android-light-x1
    changed=0 unstable=0 swapped=0 in bands=0 strong=0 page=#FBF8FF
 == android-light-x2
@@ -366,15 +343,15 @@
 == iOS-dark-m14
    changed=36545 unstable=0 swapped=0 in bands=36417 strong=0 page=#121318
       36407 px #2F3034 on the page: contrast 1.41 (lowest, against #121318); next to it: 
-          1 px #44444B on the control: contrast 1.07 (lowest, against #484851); next to it: #121318 1.92 33%, #2F3034 1.36 33%, #323238 1.32 33%
-          1 px #45454C on the control: contrast 1.06 (lowest, against #484951); next to it: #2F3034 1.39 50%, #121318 1.95 25%, #484951 1.06 25%
-          1 px #45464D on the control: contrast 1.36 (lowest, against #323237); next to it: #121318 1.98 50%, #2F3034 1.40 25%, #323237 1.36 25%
-          1 px #46464E on the control: contrast 1.41 (lowest, against #2F3034); next to it: #121318 1.98 66%, #2F3034 1.41 33%
+          1 px #44444B on the control: contrast 1.03 (lowest, against #46464F); next to it: #2F3034 1.36 33%, #323238 1.32 33%, #46464F 1.03 33%
+          1 px #45454C on the control: contrast 1.02 (lowest, against #46464F); next to it: #2F3034 1.39 50%, #46464F 1.02 25%, #484951 1.06 25%
+          1 px #45464D on the control: contrast 1.01 (lowest, against #46464F); next to it: #2F3034 1.40 33%, #323237 1.36 33%, #46464F 1.01 33%
+          1 px #46464E on the control: contrast 1.00 (lowest, against #46464F); next to it: #2F3034 1.41 33%, #46464F 1.00 33%, #494951 1.05 33%
 == iOS-dark-m15
    changed=12299 unstable=0 swapped=3 in bands=12065 strong=0 page=#121318
        4026 px #232530 on the page: contrast 1.14 (lowest, against #15161C); next to it: #121318 1.22 82%, #14151B 1.20 8%, #15161C 1.19 8%
        4019 px #232530 on the page: contrast 1.15 (lowest, against #14151B); next to it: #121318 1.22 82%, #15161C 1.19 9%, #14151A 1.20 8%
-       3734 px #000000 on the page: contrast 1.11 (lowest, against #121318); next to it: #121318 1.13 86%, #15161C 1.16 7%, #14151B 1.15 6%
+       3734 px #000000 on the page: contrast 1.11 (lowest, against #121318); next to it: #121318 1.13 86%, #15161C 1.16 7%, #14151B 1.15 5%
         286 px #42434E on the control: contrast 1.19 (lowest, against #34343A); next to it: #232530 1.56 67%, #000000 2.14 16%, #34343A 1.26 16%
 == iOS-dark-m2
    changed=38566 unstable=0 swapped=0 in bands=38509 strong=0 page=#121318
@@ -391,26 +368,23 @@
        8117 px #111F30 on the page: contrast 1.07 (lowest, against #12151C); next to it: #121318 1.12 86%, #121319 1.11 7%, #121419 1.11 5%
        1190 px #111F30 on the page: contrast 1.12 (lowest, against #121318); next to it: 
 == iOS-dark-m6
-   changed=31406 unstable=464 swapped=11893 in bands=30925 strong=16684 page=#121318
-       9651 px #121318 on the control: contrast 2.27 (lowest, against #4A4E65); next to it: #BAC3FF 10.90 88%, #515B92 2.88 10%, #B9C2FE 10.79 0%
+   changed=31406 unstable=464 swapped=11893 in bands=30925 strong=16504 page=#121318
+       9651 px #121318 on the control: contrast 1.00 (lowest, against #121318); next to it: #121318 1.00 68%, #BAC3FF 10.90 21%, #515B92 2.88 10%
        8661 px #BAC3FF on the control: contrast 8.84 (lowest, against #242630); next to it: #121318 10.90 99%, #242630 8.84 0%
-       4555 px #121318 on the control: contrast 2.88 (lowest, against #515B92); next to it: #BAC3FF 10.90 80%, #515B92 2.88 19%, #8288B2 5.40 0%
+       4555 px #121318 on the control: contrast 1.00 (lowest, against #121318); next to it: #121318 1.00 59%, #BAC3FF 10.90 22%, #515B92 2.88 17%
        1296 px #BAC3FF on the page: contrast 10.79 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.79 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.79 (lowest, against #121318); next to it: #121318 10.90 100%
        1260 px #BAC3FF on the page: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
-        111 px #121318 on the control: contrast 10.90 (lowest, against #BAC3FF); next to it: #BAC3FF 10.90 100%
-         36 px #121318 on the control: contrast 10.90 (lowest, against #BAC3FF); next to it: #BAC3FF 10.90 100%
          35 px #6F7598 on the page: contrast 4.13 (lowest, against #121318); next to it: #121318 4.13 100%
          34 px #8288B2 on the page: contrast 5.40 (lowest, against #121318); next to it: #121318 5.40 100%
          34 px #8288B2 on the page: contrast 5.40 (lowest, against #121318); next to it: #121318 5.40 100%
-         33 px #121318 on the control: contrast 10.90 (lowest, against #BAC3FF); next to it: #BAC3FF 10.90 100%
 == iOS-dark-m7
    changed=26656 unstable=464 swapped=10225 in bands=26281 strong=12163 page=#121318
-       9541 px #121318 on the control: contrast 2.27 (lowest, against #4A4E65); next to it: #BAC3FF 10.90 88%, #515B92 2.88 11%, #B9C2FE 10.79 0%
-       4542 px #121318 on the control: contrast 2.88 (lowest, against #515B92); next to it: #BAC3FF 10.90 77%, #515B92 2.88 21%, #B9C2FE 10.79 0%
+       9541 px #121318 on the control: contrast 1.00 (lowest, against #121318); next to it: #121318 1.00 69%, #BAC3FF 10.90 22%, #515B92 2.88 8%
+       4542 px #121318 on the control: contrast 1.00 (lowest, against #121318); next to it: #121318 1.00 59%, #BAC3FF 10.90 25%, #515B92 2.88 15%
        4320 px #BAC3FF on the control: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.79 (lowest, against #121318); next to it: #121318 10.90 100%
        1296 px #BAC3FF on the page: contrast 10.90 (lowest, against #121318); next to it: #121318 10.90 100%
@@ -432,25 +406,19 @@
 == iOS-dark-w1
    changed=0 unstable=0 swapped=0 in bands=0 strong=0 page=#121318
 == iOS-dark-w2
-   changed=29234 unstable=0 swapped=13530 in bands=27960 strong=23622 page=#121318
+   changed=29234 unstable=0 swapped=13530 in bands=27960 strong=14847 page=#121318
       14847 px #E4E1E9 on the page: contrast 13.58 (lowest, against #14151A); next to it: #121318 14.35 98%, #14151A 14.10 1%, #131419 14.23 0%
-       5022 px #34343A on the control: contrast 9.15 (lowest, against #E4E1E9); next to it: #E4E1E9 9.57 98%, #E3E0E8 9.48 0%, #E2DFE7 9.39 0%
-       1506 px #34343A on the control: contrast 7.01 (lowest, against #C4C2C9); next to it: #E4E1E9 9.57 99%, #E3E0E8 9.48 0%, #C4C2C9 7.01 0%
-       1506 px #34343A on the control: contrast 7.01 (lowest, against #C4C2C9); next to it: #E4E1E9 9.57 98%, #E3E0E8 9.48 0%, #C4C2C9 7.01 0%
-        738 px #34343A on the control: contrast 9.48 (lowest, against #E3E0E8); next to it: #E4E1E9 9.57 99%, #E3E0E8 9.48 0%
-          1 px #35353B on the control: contrast 9.16 (lowest, against #E1DEE6); next to it: #E4E1E9 9.42 75%, #E1DEE6 9.16 25%
-          1 px #34343A on the control: contrast 9.57 (lowest, against #E4E1E9); next to it: #E4E1E9 9.57 100%
-          1 px #34343A on the control: contrast 9.48 (lowest, against #E3E0E8); next to it: #E4E1E9 9.57 75%, #E3E0E8 9.48 25%
+       5022 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #E4E1E9 9.57 50%, #34343A 1.00 49%, #E3E0E8 9.48 0%
+       1506 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 50%, #E4E1E9 9.57 49%, #E3E0E8 9.48 0%
+       1506 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 50%, #E4E1E9 9.57 48%, #E3E0E8 9.48 0%
+        738 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 52%, #E4E1E9 9.57 46%, #E3E0E8 9.48 0%
 == iOS-dark-w3
-   changed=29234 unstable=0 swapped=13530 in bands=27960 strong=23622 page=#121318
+   changed=29234 unstable=0 swapped=13530 in bands=27960 strong=14847 page=#121318
       14847 px #E4E1E9 on the page: contrast 13.58 (lowest, against #14151A); next to it: #121318 14.35 98%, #14151A 14.10 1%, #131419 14.23 0%
-       5022 px #34343A on the control: contrast 9.15 (lowest, against #E4E1E9); next to it: #E4E1E9 9.57 98%, #E3E0E8 9.48 0%, #E2DFE7 9.39 0%
-       1506 px #34343A on the control: contrast 7.01 (lowest, against #C4C2C9); next to it: #E4E1E9 9.57 99%, #E3E0E8 9.48 0%, #C4C2C9 7.01 0%
-       1506 px #34343A on the control: contrast 7.01 (lowest, against #C4C2C9); next to it: #E4E1E9 9.57 98%, #E3E0E8 9.48 0%, #C4C2C9 7.01 0%
-        738 px #34343A on the control: contrast 9.48 (lowest, against #E3E0E8); next to it: #E4E1E9 9.57 99%, #E3E0E8 9.48 0%
-          1 px #35353B on the control: contrast 9.16 (lowest, against #E1DEE6); next to it: #E4E1E9 9.42 75%, #E1DEE6 9.16 25%
-          1 px #34343A on the control: contrast 9.57 (lowest, against #E4E1E9); next to it: #E4E1E9 9.57 100%
-          1 px #34343A on the control: contrast 9.48 (lowest, against #E3E0E8); next to it: #E4E1E9 9.57 75%, #E3E0E8 9.48 25%
+       5022 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #E4E1E9 9.57 50%, #34343A 1.00 49%, #E3E0E8 9.48 0%
+       1506 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 50%, #E4E1E9 9.57 49%, #E3E0E8 9.48 0%
+       1506 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 50%, #E4E1E9 9.57 48%, #E3E0E8 9.48 0%
+        738 px #34343A on the control: contrast 1.00 (lowest, against #34343A); next to it: #34343A 1.00 52%, #E4E1E9 9.57 46%, #E3E0E8 9.48 0%
 == iOS-dark-x1
    changed=0 unstable=0 swapped=0 in bands=0 strong=0 page=#121318
 == iOS-dark-x2
@@ -477,10 +445,10 @@
 == iOS-light-c4
    changed=2067 unstable=0 swapped=0 in bands=1747 strong=0 page=#FBF8FF
        1681 px #8ABCF5 on the page: contrast 1.81 (lowest, against #F7F6FF); next to it: #FBF8FF 1.89 55%, #FFFFFF 1.98 38%, #F7F6FF 1.85 6%
-         17 px #FFFFFF on the control: contrast 1.94 (lowest, against #8CBEF5); next to it: #8BBDF5 1.96 87%, #8ABCF5 1.98 6%, #8CBEF5 1.94 6%
-         17 px #FFFFFF on the control: contrast 1.94 (lowest, against #8CBEF5); next to it: #8BBDF5 1.96 87%, #8ABCF5 1.98 6%, #8CBEF5 1.94 6%
-         16 px #FFFFFF on the control: contrast 1.96 (lowest, against #8BBDF5); next to it: #8BBDF5 1.96 90%, #8ABCF5 1.98 6%, #8ABDF5 1.97 3%
-         16 px #FFFFFF on the control: contrast 1.96 (lowest, against #8BBDF5); next to it: #8BBDF5 1.96 90%, #8ABCF5 1.98 6%, #8ABDF5 1.97 3%
+         17 px #FFFFFF on the control: contrast 1.00 (lowest, against #FFFFFF); next to it: #FFFFFF 1.00 51%, #8BBDF5 1.96 45%, #8ABCF5 1.98 3%
+         17 px #FFFFFF on the control: contrast 1.00 (lowest, against #FFFFFF); next to it: #FFFFFF 1.00 53%, #8BBDF5 1.96 43%, #8ABCF5 1.98 3%
+         16 px #FFFFFF on the control: contrast 1.00 (lowest, against #FFFFFF); next to it: #FFFFFF 1.00 51%, #8BBDF5 1.96 44%, #8ABCF5 1.98 3%
+         16 px #FFFFFF on the control: contrast 1.00 (lowest, against #FFFFFF); next to it: #FFFFFF 1.00 50%, #8BBDF5 1.96 46%, #8ABCF5 1.98 3%
 == iOS-light-c5
    changed=0 unstable=342 swapped=0 in bands=0 strong=0 page=#FBF8FF
 == iOS-light-m1
@@ -515,16 +483,16 @@
 == iOS-light-m14
    changed=36887 unstable=0 swapped=1 in bands=36430 strong=0 page=#FBF8FF
       36407 px #DCDAE0 on the page: contrast 1.32 (lowest, against #FBF8FF); next to it: 
-          3 px #C6C4CD on the control: contrast 1.04 (lowest, against #C6C4CD); next to it: #FBF8FF 1.64 50%, #DCDAE0 1.24 37%, #C6C4CD 1.00 12%
-          3 px #C6C4CD on the control: contrast 1.05 (lowest, against #C6C4CD); next to it: #FBF8FF 1.64 50%, #DCDAE0 1.24 37%, #C6C4CD 1.00 12%
-          2 px #C7C6CF on the control: contrast 1.05 (lowest, against #C6C4CE); next to it: #DCDAE0 1.22 40%, #FBF8FF 1.61 40%, #C6C4CE 1.02 20%
-          2 px #C7C6CE on the control: contrast 1.05 (lowest, against #C6C4CF); next to it: #DCDAE0 1.22 40%, #FBF8FF 1.61 40%, #C6C4CF 1.02 20%
+          3 px #C6C4CD on the control: contrast 1.01 (lowest, against #C7C5D0); next to it: #C7C5D0 1.01 42%, #DCDAE0 1.24 42%, #C4C3CD 1.01 14%
+          3 px #C6C4CD on the control: contrast 1.01 (lowest, against #C7C5D0); next to it: #C7C5D0 1.01 42%, #DCDAE0 1.24 42%, #C4C2CD 1.02 14%
+          2 px #C7C6CF on the control: contrast 1.01 (lowest, against #C7C5D0); next to it: #C7C5D0 1.01 40%, #DCDAE0 1.22 40%, #C4C2CC 1.04 20%
+          2 px #C7C6CE on the control: contrast 1.01 (lowest, against #C7C5D0); next to it: #C7C5D0 1.01 40%, #DCDAE0 1.22 40%, #C4C2CC 1.04 20%
 == iOS-light-m15
    changed=12434 unstable=0 swapped=6 in bands=12108 strong=3776 page=#FBF8FF
-       4029 px #EAE8F4 on the page: contrast 1.07 (lowest, against #F7F4FC); next to it: #FBF8FF 1.15 73%, #F9F6FE 1.13 14%, #FAF7FE 1.14 11%
-       4021 px #EAE8F4 on the page: contrast 1.07 (lowest, against #F7F4FC); next to it: #FBF8FF 1.15 72%, #FAF7FE 1.14 16%, #F9F6FE 1.13 11%
+       4029 px #EAE8F4 on the page: contrast 1.08 (lowest, against #F8F5FD); next to it: #FBF8FF 1.15 73%, #F9F6FE 1.13 14%, #FAF7FE 1.14 11%
+       4021 px #EAE8F4 on the page: contrast 1.08 (lowest, against #F8F5FD); next to it: #FBF8FF 1.15 72%, #FAF7FE 1.14 16%, #F9F6FE 1.13 11%
        3776 px #000000 on the page: contrast 19.07 (lowest, against #F7F4FC); next to it: #FBF8FF 19.97 79%, #F9F6FE 19.64 10%, #FAF7FE 19.80 9%
-        282 px #D5D3E0 on the control: contrast 1.12 (lowest, against #E4E1E9); next to it: #EAE8F4 1.22 66%, #000000 14.22 18%, #E4E1E9 1.14 15%
+        282 px #D5D3E0 on the control: contrast 1.01 (lowest, against #D8D6E2); next to it: #EAE8F4 1.22 68%, #000000 14.22 18%, #E4E1E9 1.14 12%
 == iOS-light-m2
    changed=38599 unstable=0 swapped=22 in bands=38523 strong=0 page=#FBF8FF
       38523 px #636C9D on the control: contrast 2.90 (lowest, against #C1C3DA); next to it: #FBF8FF 4.80 61%, #FFFFFF 5.05 38%, #F9F6FE 4.72 0%
@@ -540,28 +508,25 @@
        8108 px #E1EBFF on the page: contrast 1.09 (lowest, against #F7F6FF); next to it: #FBF8FF 1.14 84%, #FAF8FF 1.14 9%, #FAF7FF 1.13 6%
        1190 px #E1EBFF on the page: contrast 1.14 (lowest, against #FBF8FF); next to it: 
 == iOS-light-m6
-   changed=31297 unstable=468 swapped=11890 in bands=30832 strong=30694 page=#FBF8FF
+   changed=31297 unstable=468 swapped=11890 in bands=30832 strong=16402 page=#FBF8FF
        8662 px #515B92 on the control: contrast 5.11 (lowest, against #ECEAF6); next to it: #FBF8FF 6.12 99%, #E9E7F3 5.27 0%, #ECEAF6 5.42 0%
-       4802 px #FBF8FF on the control: contrast 5.93 (lowest, against #545D94); next to it: #515B92 6.12 99%, #545D94 5.93 0%
-       4802 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
-       2401 px #FBF8FF on the control: contrast 5.93 (lowest, against #545D94); next to it: #515B92 6.12 99%, #545D94 5.93 0%
-       2107 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
+       4802 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 50%, #515B92 6.12 48%, #545D94 5.93 0%
+       4802 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 79%, #515B92 6.12 20%
+       2401 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 62%, #515B92 6.12 36%, #545D94 5.93 0%
+       2107 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 50%, #515B92 6.12 49%
        1296 px #515B92 on the page: contrast 5.93 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 5.93 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 5.93 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1260 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
-        111 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
-         36 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
-         33 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
 == iOS-light-m7
-   changed=26558 unstable=468 swapped=10223 in bands=26187 strong=24789 page=#FBF8FF
-       4790 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
-       4704 px #FBF8FF on the control: contrast 5.93 (lowest, against #545D94); next to it: #515B92 6.12 99%, #545D94 5.93 0%
+   changed=26558 unstable=468 swapped=10223 in bands=26187 strong=10800 page=#FBF8FF
+       4790 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 82%, #515B92 6.12 17%
+       4704 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 53%, #515B92 6.12 45%, #545D94 5.93 0%
        4320 px #515B92 on the control: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
-       2377 px #FBF8FF on the control: contrast 5.93 (lowest, against #545D94); next to it: #515B92 6.12 98%, #545D94 5.93 1%
-       2118 px #FBF8FF on the control: contrast 6.12 (lowest, against #515B92); next to it: #515B92 6.12 100%
+       2377 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 65%, #515B92 6.12 33%, #545D94 5.93 1%
+       2118 px #FBF8FF on the control: contrast 1.00 (lowest, against #FBF8FF); next to it: #FBF8FF 1.00 50%, #515B92 6.12 49%
        1296 px #515B92 on the page: contrast 5.93 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
        1296 px #515B92 on the page: contrast 6.12 (lowest, against #FBF8FF); next to it: #FBF8FF 6.12 100%
@@ -578,39 +543,27 @@
 == iOS-light-w1
    changed=0 unstable=0 swapped=0 in bands=0 strong=0 page=#FBF8FF
 == iOS-light-w2
-   changed=29240 unstable=0 swapped=13518 in bands=27964 strong=25118 page=#FBF8FF
+   changed=29240 unstable=0 swapped=13518 in bands=27964 strong=15007 page=#FBF8FF
       14847 px #1B1B21 on the page: contrast 15.19 (lowest, against #F8F5FC); next to it: #FBF8FF 16.30 98%, #F8F5FC 15.88 1%, #FAF7FE 16.16 0%
-       5028 px #E4E1E9 on the control: contrast 12.68 (lowest, against #1F1F25); next to it: #1B1B21 13.26 98%, #1D1D23 12.97 1%, #1C1C22 13.12 0%
-       1506 px #E4E1E9 on the control: contrast 3.85 (lowest, against #706F75); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%, #706F75 3.85 0%
-       1506 px #E4E1E9 on the control: contrast 3.85 (lowest, against #706F75); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%, #706F75 3.85 0%
-        738 px #E4E1E9 on the control: contrast 5.80 (lowest, against #55545A); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%
-        467 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 75%, #706F75 3.44 24%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 51%, #706F75 3.44 48%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 75%, #706F75 3.44 24%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 51%, #706F75 3.44 48%
+       5028 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #1B1B21 13.26 50%, #E4E1E9 1.00 48%, #1D1D23 12.97 0%
+       1506 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 50%, #1B1B21 13.26 49%, #55545A 5.80 0%
+       1506 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 50%, #1B1B21 13.26 49%, #55545A 5.80 0%
+        738 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 52%, #1B1B21 13.26 47%, #55545A 5.80 0%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
-          1 px #E3E0E8 on the control: contrast 12.71 (lowest, against #1E1E24); next to it: #1B1B21 13.13 75%, #1E1E24 12.71 25%
-          1 px #E4E1E9 on the control: contrast 13.26 (lowest, against #1B1B21); next to it: #1B1B21 13.26 100%
 == iOS-light-w3
-   changed=29240 unstable=0 swapped=13518 in bands=27964 strong=25118 page=#FBF8FF
+   changed=29240 unstable=0 swapped=13518 in bands=27964 strong=15007 page=#FBF8FF
       14847 px #1B1B21 on the page: contrast 15.19 (lowest, against #F8F5FC); next to it: #FBF8FF 16.30 98%, #F8F5FC 15.88 1%, #FAF7FE 16.16 0%
-       5028 px #E4E1E9 on the control: contrast 12.68 (lowest, against #1F1F25); next to it: #1B1B21 13.26 98%, #1D1D23 12.97 1%, #1C1C22 13.12 0%
-       1506 px #E4E1E9 on the control: contrast 3.85 (lowest, against #706F75); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%, #706F75 3.85 0%
-       1506 px #E4E1E9 on the control: contrast 3.85 (lowest, against #706F75); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%, #706F75 3.85 0%
-        738 px #E4E1E9 on the control: contrast 5.80 (lowest, against #55545A); next to it: #1B1B21 13.26 99%, #55545A 5.80 0%
-        467 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 75%, #706F75 3.44 24%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 51%, #706F75 3.44 48%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 75%, #706F75 3.44 24%
-        288 px #1B1B21 on the control: contrast 3.44 (lowest, against #706F75); next to it: #E4E1E9 13.26 51%, #706F75 3.44 48%
+       5028 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #1B1B21 13.26 50%, #E4E1E9 1.00 48%, #1D1D23 12.97 0%
+       1506 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 50%, #1B1B21 13.26 49%, #55545A 5.80 0%
+       1506 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 50%, #1B1B21 13.26 49%, #55545A 5.80 0%
+        738 px #E4E1E9 on the control: contrast 1.00 (lowest, against #E4E1E9); next to it: #E4E1E9 1.00 52%, #1B1B21 13.26 47%, #55545A 5.80 0%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
          40 px #706F75 on the control: contrast 3.44 (lowest, against #1B1B21); next to it: #1B1B21 3.44 97%, #E4E1E9 3.85 2%
-          1 px #E3E0E8 on the control: contrast 12.71 (lowest, against #1E1E24); next to it: #1B1B21 13.13 75%, #1E1E24 12.71 25%
-          1 px #E4E1E9 on the control: contrast 13.26 (lowest, against #1B1B21); next to it: #1B1B21 13.26 100%
 == iOS-light-x1
    changed=0 unstable=0 swapped=0 in bands=0 strong=0 page=#FBF8FF
 == iOS-light-x2

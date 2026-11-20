@@ -1,19 +1,19 @@
 # What the V14 Android test (V14FocusIndicatorsTest.kt) measured, from its log (tag V14), 2026-11-19, with the measure
-# of the V14 spec, section 6, after the third review. Pixel 10a emulator, Android 17, light mode. Keys from a USB
+# of the V14 spec, section 6, after the fourth review. Pixel 10a emulator, Android 17, light mode. Keys from a USB
 # keyboard registered with the shell's uinput tool; the FL-433 lines compare Tab from 'input keyevent' with Shift from
 # that keyboard. Each band: its pixels, colour, where drawn, its lowest contrast and the neighbour that gave it, then
 # its contrast against its two commonest neighbours.
 
 ## At the emulator's own size, 1080 by 2424 at 420 dpi (evidence.py V14)
+android bad-checked-checkbox: changed 6368, unstable 0, swapped 0, indicator 6368, in bands 6368, 3:1 or more: 0, page #FBF8FF; 6368 px #EAE8F4 on the page 1.08 against #F8F5FD; next to it #FBF8FF 1.15 83%, #F8F5FD 1.12 9%
 android bad-indicator-removed back: changed 8226, unstable 0, swapped 0, indicator 8226, in bands 8080, 3:1 or more: 0, page #FBF8FF; 8080 px #E4E1E8 on the page 1.23 against #FBF8FF; next to it #FBF8FF 1.23 100%
 android bad-indicator-removed save: changed 0, unstable 0, swapped 0, indicator 0, in bands 0, 3:1 or more: 0, page #FBF8FF;
-android bad-cupertino-ring: changed 5899, unstable 0, swapped 0, indicator 5899, in bands 5877, 3:1 or more: 0, page #FBF8FF; 5877 px #8A9AF5 on the page 2.49 against #FBF8FF; next to it #FBF8FF 2.49 100%
-android bad-checked-checkbox: changed 6368, unstable 0, swapped 0, indicator 6368, in bands 6368, 3:1 or more: 0, page #FBF8FF; 6368 px #EAE8F4 on the page 1.08 against #F8F5FD; next to it #FBF8FF 1.15 83%, #F8F5FD 1.12 9%
 android bad-notice-over-list visible: 1.00, 1.00, 0.87, 0.00, 0.00, 0.00
+android bad-cupertino-ring: changed 5899, unstable 0, swapped 0, indicator 5899, in bands 5877, 3:1 or more: 0, page #FBF8FF; 5877 px #8A9AF5 on the page 2.49 against #FBF8FF; next to it #FBF8FF 2.49 100%
 android good-notice-below visible: 1.00, 1.00, 1.00, 1.00, 1.00, 1.00
 android FL-433 after input keyevent: changed 0, unstable 0, swapped 0, indicator 0, in bands 0, 3:1 or more: 0, page #FBF8FF;
 android FL-433 after Shift from the registered keyboard: changed 10322, unstable 0, swapped 0, indicator 10322, in bands 10322, 3:1 or more: 10322, page #FBF8FF; 10322 px #1B1B21 on the control 13.26 against #E4E1E9; next to it #FBF8FF 16.30 51%, #E4E1E9 13.26 48%
-android the measure: 62 cases run, 0 problems
+android the measure: 75 cases run, 0 problems
 android good-material alerts: changed 143271, unstable 0, swapped 107, indicator 143271, in bands 142250, 3:1 or more: 16826, page #FBF8FF; 123510 px #DCDAE0 on the page 1.32 against #FBF8FF; next to it #FBF8FF 1.32 100%; 16826 px #1B1B21 on the page 16.30 against #FBF8FF; next to it #FBF8FF 16.30 100%; 1332 px #DCDAE0 on the page 1.32 against #FBF8FF; next to it
 android good-material save: changed 22762, unstable 0, swapped 33, indicator 22762, in bands 22624, 3:1 or more: 4364, page #FBF8FF; 18260 px #636C9D on the control 2.94 against #C1C5D8; next to it #1B1B21 3.40 59%, #FFFFFF 5.05 39%; 4315 px #1B1B21 on the page 16.30 against #FBF8FF; next to it #FBF8FF 16.30 86%, #FFFFFF 17.14 13%; 26 px #636C9D on the control 4.91 against #FFFFFF; next to it #FFFFFF 5.05 100%
 android good-cupertino alerts: changed 3550, unstable 0, swapped 0, indicator 3550, in bands 3550, 3:1 or more: 3550, page #FBF8FF; 3550 px #000000 on the page 19.97 against #FBF8FF; next to it #FBF8FF 19.97 100%
@@ -34,4 +34,4 @@ android good-notice-below visible: 1.00, 1.00, 1.00, 1.00, 1.00, 1.00
 android FL-433 after input keyevent: changed 0, unstable 0, swapped 0, indicator 0, in bands 0, 3:1 or more: 0, page #FBF8FF; 
 android FL-433 after Shift from the registered keyboard: changed 1560, unstable 0, swapped 0, indicator 1560, in bands 1560, 3:1 or more: 1560, page #FBF8FF; 1560 px #1B1B21 on the control 13.26 against #E4E1E9; next 
 android bad-checked-checkbox: changed 912, unstable 0, swapped 0, indicator 912, in bands 912, 3:1 or more: 0, page #FBF8FF; 912 px #EAE8F4 on the page 1.11 against #FBF8FF; next to it #FBF8FF 1.15 64%, #F9F6FE 1.13 2
-android the measure: 62 cases run, 0 problems
+android the measure: 75 cases run, 0 problems

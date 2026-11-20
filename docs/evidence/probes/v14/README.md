@@ -167,6 +167,19 @@ and is measured: the third review found that without that, a border
 round a one pixel checkerboard was taken against the page alone. That
 rule changes none of the 112 fixtures' output.
 
+The fourth review found that the walk also crossed any pixel within 4 of
+the band's colour, so a border turning to within 4 of an inside it did
+not change was taken against the page alone. A walk now crosses only the
+band, what else focus drew within 4 of it, anti-aliasing, and a run of
+exactly its colour no wider than the band; every other pixel focus did
+not draw is measured. In the probe that takes away the strong pixels of
+bands drawn in a colour that already lay next to them, which are now
+measured against it at 1:1: in w2 and w3 the card's own fill where the
+card moved under its thicker border (strong pixels 25118 to 15007 in
+light mode), and in the text fields (m6, m7) the field's fill (light m6,
+30694 to 16402). The rings and borders of those fixtures are as strong
+as before, and no other fixture's strong pixels changed.
+
 One thing is new: on the `InkWell` card (m13) the tint behind the label
 also changes the label's anti-aliased pixels, and two bands of them, 80
 pixels in all, pass as solid and are 3.17:1 against the glyphs (printed

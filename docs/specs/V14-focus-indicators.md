@@ -268,20 +268,32 @@ How focus visibility is asserted, on every layer, with the same rules
    commonest along the area's top and bottom edges in `u`), and on the
    control if not.
 4. Each band is taken against its neighbours where they are: from every
-   pixel on the band's edge, outward, across pixels of that pixel's own
-   colour and at most 4 pixels of an anti-aliased edge being crossed (each
-   between the pixels before and after it on the way), to the first solid
-   pixel; if all 4 are blurred, the fourth is the neighbour unless focus
-   drew it, so a neighbour is not passed over for being blurred. A
-   blurred pixel that is not between the pixels before and after it on
-   the way is one of two things. If it is a blend some other way (between
-   the pixels either side of it across, down, or on a diagonal), it is
-   the side of an anti-aliased edge that runs along the way, not one
-   being crossed (at the start of a rounded corner, say), and the walk
-   finds nothing there; the walks that cross that edge find what is
-   beyond it. If it is a blend no way, it is texture (a dither, a
-   pattern of pixels each unlike the next), not anti-aliasing, and it is
-   the neighbour, measured like any other. A band on the control, inside it or on its border, must
+   pixel on the band's edge, outward, one pixel at a time, until a pixel
+   is measured as the neighbour or the walk is given up. On the way:
+   - a pixel of the band itself, or one that focus also drew within 4 of
+     the edge pixel's colour, is part of the indicator and is crossed;
+   - for a band on the page, any other pixel focus drew is crossed too
+     (the band is taken against the background, not against the rest of
+     the indicator);
+   - a pixel that focus did not draw is measured, even when its colour
+     is within 4 of the band's, with one exception: a run of exactly the
+     band's colour that was there before, no wider than the band is
+     thick at that point, is crossed as the same shape made thicker (a
+     wider run is the neighbour, at 1:1);
+   - a solid pixel is the neighbour;
+   - a blurred pixel between the pixels before and after it on the way
+     is anti-aliasing being crossed, at most 4 of them; if all 4 are
+     blurred, the fourth is the neighbour unless focus drew it;
+   - a blurred pixel that is not between them, but is a blend some other
+     way (across, down, or on a diagonal), is the side of an
+     anti-aliased edge that runs along the way (the start of a rounded
+     corner, say): the walk is given up there, and the walks that cross
+     that edge find what is beyond it;
+   - a blurred pixel that is a blend no way is texture (a dither, a
+     pattern of pixels each unlike the next): it is the neighbour;
+   - a walk that leaves the area is given up.
+   A band on the control with no neighbour at all is inconclusive, and
+   not strong. A band on the control, inside it or on its border, must
    be 3:1 against every neighbour found, of whatever colour and however
    few pixels of its edge it touches (Understanding 1.4.11: an indicator
    inside the component contrasts with the colours inside; one on its
@@ -317,7 +329,7 @@ conformance. It has cases of its own, on pictures made up for them, in
 one file, `test/techniques/v14_focus_indicators_measure_cases.json`, which
 the widget tests, the web spec, the iOS UI tests, and the probe analyser
 run, and which the Android test holds a copy of (the widget tests check
-the copy is the same): 33 cases, 62 runs at pixel ratios 1, 2, and 3.
+the copy is the same): 40 cases, 75 runs at pixel ratios 1, 2, and 3.
 
 - Understanding 1.4.11's figures: an inner yellow ring on a blue button
   passes (3.55:1 against the blue), an outer yellow ring on white fails
@@ -332,7 +344,13 @@ the copy is the same): 33 cases, 62 runs at pixel ratios 1, 2, and 3.
   the same border round a one pixel checkerboard of `#4189B9` and
   `#4783BF` (1.01:1 and 1.05:1), at pixel ratios 1, 2, and 3, which the
   measure of the second review passed at 3.79:1, as every pixel of the
-  checkerboard was read as anti-aliasing and passed over; an 8 pixel border of the same green;
+  checkerboard was read as anti-aliasing and passed over; the fourth
+  review's reproduction, a black border round a `#4189B9` button turning
+  `#458DBD`, within 4 of the inside it does not change (1.05:1), at
+  pixel ratios 1, 2, and 3, which the measure of the third review passed
+  at 3.62:1, as it crossed every pixel within 4 of the band's colour; a
+  border turning exactly the colour of the inside (1:1), at the same
+  ratios; an 8 pixel border of the same green;
   a grey ring on a button shaded from white to blue (4.2:1 or more near
   the white end, 1.24:1 near the blue); a black ring inside a navy button
   (1.47:1); a faint halo round a black box (the box's contrast is not the
@@ -353,8 +371,10 @@ the copy is the same): 33 cases, 62 runs at pixel ratios 1, 2, and 3.
   page passes on its black part only.
 - Nothing drawn, and a mark in one capture only (unstable).
 
-Known limits (the first four each with a case that shows what the
-measure does):
+Known limits. A case shows what the measure does for the first four,
+and for the run of the band's colour, the pixels within 4, the
+indicator's own blur, the corner, and the dither; the others are stated
+only:
 
 - A change of the control's own background is measured like any other
   band, though Understanding 1.4.11 leaves it out of scope: a button
@@ -382,6 +402,22 @@ measure does):
   next is many small bands, and its blurred edge is left out.
 - A part of the control within 12 of the page's colour counts as the
   page.
+- A run of exactly a band's colour that was there before is crossed only
+  for as wide as the band is thick: a 3 pixel black border made 1 pixel
+  thicker fails, against its own old border at 1:1.
+- Pixels that focus drew within 4 of a band's colour are taken as part
+  of it: a border and the inside changing together to colours within 4
+  of each other are one indicator, taken against the page (3.62:1),
+  though the border does not contrast with the inside (1.05:1). This is
+  the background-change limit above, from the other side.
+- Past more than 4 pixels of the indicator's own blur, a walk is given
+  up: a black bar fading over 8 pixels into a navy control is taken
+  against the page only, and passes, though black against the navy is
+  1.47:1.
+- A neighbour that touches a band only at a corner is not walked to: a
+  black ring passes beside a navy pixel at its outer corner.
+- The area is the control and 8 logical pixels round it; a walk that
+  leaves it is given up, and what lies beyond is not seen.
 - A walk that runs along an anti-aliased ramp steep enough that each of
   its pixels lies between the next and the one before (more than 6 a
   channel a pixel) is read as crossing a blurred edge, and after 4 pixels

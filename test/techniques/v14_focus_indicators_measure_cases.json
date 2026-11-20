@@ -108,6 +108,20 @@
       "expect": {"strong": "all", "onPage": false}
     },
     {
+      "name": "the fourth review's reproduction: a black border round a #4189B9 button turning #458DBD, within 4 in every channel of the inside it does not change, fails against that inside (1.05:1)",
+      "size": [216, 76], "scales": [1, 2, 3],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#458DBD"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1, "onPage": false}
+    },
+    {
+      "name": "a black border turning exactly the colour of the inside it does not change fails against it (1:1): a run of the band's own colour wider than the band is a neighbour",
+      "size": [216, 76], "scales": [1, 2, 3],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "expect": {"strong": "none", "ratioBelow": 1.01, "onPage": false}
+    },
+    {
       "name": "a thick border, 8 pixels of #4B933A on the blue, fails",
       "size": [216, 76], "scales": [1, 2],
       "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
@@ -232,6 +246,41 @@
       "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [100, 15, 104, 17], "colour": "#1F2A44"}],
       "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [100, 15, 104, 17], "colour": "#1F2A44"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}],
       "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "known limit: a 3 pixel black border made 1 pixel thicker fails: the old border, of the same colour, is wider than the new part and is taken as a neighbour at 1:1",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 4, "colour": "#000000"}],
+      "expect": {"strong": "none", "onPage": false}
+    },
+    {
+      "name": "known limit: a border and the inside changing together to colours within 4 of each other are one indicator, taken against the page (3.62:1), though the border does not contrast with the inside (1.05:1)",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#2A70A0"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#458DBD"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "known limit: a neighbour that touches a band only at a corner is not measured: a black inner ring passes beside a navy pixel at its outer corner",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [11, 11, 12, 12], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [11, 11, 12, 12], "colour": "#1F2A44"}, {"rect": [12, 12, 204, 64], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "known limit: past more than 4 pixels of the indicator's own blur a walk finds nothing: a black bar along a navy control's top edge, fading over 8 pixels into the navy, is taken against the page only and passes, though black against the navy is 1.47:1",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#1F2A44"}, {"rect": [8, 8, 208, 11], "colour": "#000000"}, {"rect": [8, 11, 208, 19], "gradient": ["#000000", "#1F2A44"], "axis": "y"}],
+      "expect": {"strong": "all", "onPage": false}
+    },
+    {
+      "name": "known limit: an indicator that is itself a one pixel dither has no solid pixels and so no bands: a ring checkered black and white is not measured, and cannot pass",
+      "size": [216, 76], "scales": [1],
+      "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "after": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [3, 3, 213, 73], "checker": ["#000000", "#FFFFFF"], "period": 1}, {"rect": [5, 5, 211, 71], "colour": "#FFFFFF"}, {"rect": [8, 8, 208, 68], "colour": "#4189B9"}],
+      "expect": {"changed": "some", "strong": "none"}
     },
     {
       "name": "known limit: the page is one colour: a ring outside a control but on a grey card is held to a border's rule, and fails against the navy control",

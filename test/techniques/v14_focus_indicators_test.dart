@@ -386,19 +386,44 @@ _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
   }
   bool onPageAt(int x, int y) => _channelDiff(u.at(x, y), page) <= _threshold;
 
-  /// The neighbour of the edge pixel (x, y) in the direction (dx, dy).
-  int? neighbour(int x, int y, int dx, int dy, bool onPage) {
+  const steps = [(1, 0), (-1, 0), (0, 1), (0, -1)];
+  final bandOf = List<int>.filled(w * h, -1);
+
+  /// The neighbour of the edge pixel (x, y) of band [id] in the direction
+  /// (dx, dy), or null if the walk finds none it must contrast with.
+  int? neighbour(int x, int y, int dx, int dy, bool onPage, int id) {
     final c0 = f1.at(x, y);
-    var blurred = 0;
+    // How thick the band is here, along the way.
+    var thick = 0;
+    for (
+      var bx = x, by = y;
+      inside(bx, by) && bandOf[at(bx, by)] == id;
+      bx -= dx, by -= dy
+    ) {
+      thick++;
+    }
+    var same = 0, blurred = 0;
     while (true) {
       x += dx;
       y += dy;
       if (!inside(x, y)) return null;
-      if (_channelDiff(f1.at(x, y), c0) <= _flat) continue;
-      if (onPage && isChanged[at(x, y)]) continue;
-      if (solidAt[at(x, y)]) {
-        return onPage && !onPageAt(x, y) ? null : f1.at(x, y);
+      final i = at(x, y);
+      final c = f1.at(x, y);
+      // The band itself, or a pixel of its colour that focus also drew.
+      if (bandOf[i] == id) continue;
+      if (isChanged[i] && _channelDiff(c, c0) <= _flat) continue;
+      // On the page, the rest of what focus drew is crossed: the band is
+      // taken against the background.
+      if (onPage && isChanged[i]) continue;
+      final ours = !(onPage && !onPageAt(x, y));
+      if (!isChanged[i] && c == c0) {
+        // A run of exactly the band's colour that was there before, no
+        // wider than the band: the same shape made thicker. A wider one is
+        // a neighbour, at 1:1.
+        if (++same <= thick) continue;
+        return ours ? c : null;
       }
+      if (solidAt[i]) return ours ? c : null;
       if (!blendAlong(x, y, dx, dy)) {
         // A blend some other way is the side of an anti-aliased edge that
         // runs along the way, not one being crossed: the neighbour beyond
@@ -406,19 +431,15 @@ _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
         if (blend(x, y)) return null;
         // A blend no way is texture (a dither, a pattern), not
         // anti-aliasing: it is the neighbour.
-        return onPage && !onPageAt(x, y) ? null : f1.at(x, y);
+        return ours ? c : null;
       }
-      if (++blurred == _blur) {
-        // Blurred all the way: what is there, if focus did not draw it.
-        return isChanged[at(x, y)] || (onPage && !onPageAt(x, y))
-            ? null
-            : f1.at(x, y);
-      }
+      // Blurred all the way: what is there is the neighbour, unless focus
+      // drew it (the indicator's own anti-aliased edge is not a neighbour
+      // of it).
+      if (++blurred == _blur) return ours && !isChanged[i] ? c : null;
     }
   }
 
-  const steps = [(1, 0), (-1, 0), (0, 1), (0, -1)];
-  final bandOf = List<int>.filled(w * h, -1);
   final bands = <(_Band, int)>[];
   var strong = 0;
   for (var y0 = t; y0 < b; y0++) {
@@ -449,7 +470,7 @@ _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
           if (inside(x + dx, y + dy) && bandOf[at(x + dx, y + dy)] == id) {
             continue;
           }
-          final n = neighbour(x, y, dx, dy, onPage);
+          final n = neighbour(x, y, dx, dy, onPage, id);
           if (n == null) continue;
           next.update(n, (k) => k + 1, ifAbsent: () => 1);
           final c = _ratio(f1.at(x, y), n);
@@ -464,7 +485,13 @@ _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
       for (final MapEntry(key: c, value: n) in counts.entries) {
         if (n > top || (n == top && c < colour)) (colour, top) = (c, n);
       }
-      if (next.isEmpty) (contrast, lowest) = (_ratio(colour, page), page);
+      if (next.isEmpty) {
+        // Nothing found to measure against: on the page, the page; on the
+        // control, the measure is inconclusive and the band is not strong.
+        (contrast, lowest) = onPage
+            ? (_ratio(colour, page), page)
+            : (1, colour);
+      }
       if (contrast >= 3) strong += pixels.length;
       final sorted = next.entries.toList()
         ..sort(

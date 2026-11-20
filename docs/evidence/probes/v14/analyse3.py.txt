@@ -125,32 +125,48 @@ def compare(u, f1, f2, l, t, r, b):
     def on_page_at(x, y):
         return diff(u(x, y), page) <= T
 
-    def neighbour(x, y, dx, dy, on_page):
+    steps = ((1, 0), (-1, 0), (0, 1), (0, -1))
+    band_of = [-1] * (w * (b - t))
+
+    def neighbour(x, y, dx, dy, on_page, bid):
         c0 = f1(x, y)
-        blurred = 0
+        # How thick the band is here, along the way.
+        thick, bx, by = 0, x, y
+        while inside(bx, by) and band_of[at(bx, by)] == bid:
+            thick, bx, by = thick + 1, bx - dx, by - dy
+        same = blurred = 0
         while True:
             x, y = x + dx, y + dy
             if not inside(x, y):
                 return None
-            if diff(f1(x, y), c0) <= FLAT:
+            i, c = at(x, y), f1(x, y)
+            # The band itself, or a pixel of its colour that focus also drew.
+            if band_of[i] == bid or (changed_at[i] and diff(c, c0) <= FLAT):
                 continue
-            if on_page and changed_at[at(x, y)]:
+            # On the page: across the rest of what focus drew.
+            if on_page and changed_at[i]:
                 continue
-            if solid_at[at(x, y)]:
-                return None if on_page and not on_page_at(x, y) else f1(x, y)
+            ours = not (on_page and not on_page_at(x, y))
+            if not changed_at[i] and c == c0:
+                # Exactly the band's colour, there before: crossed for no
+                # more than the band is thick, then a neighbour at 1:1.
+                same += 1
+                if same <= thick:
+                    continue
+                return c if ours else None
+            if solid_at[i]:
+                return c if ours else None
             if not blend_along(x, y, dx, dy):
                 # A blend some other way: going along an anti-aliased edge,
                 # not across it: nothing. A blend no way: texture (a dither),
                 # and the neighbour.
                 if blend(x, y):
                     return None
-                return None if on_page and not on_page_at(x, y) else f1(x, y)
+                return c if ours else None
             blurred += 1
             if blurred == BLUR:
-                return None if changed_at[at(x, y)] or (on_page and not on_page_at(x, y)) else f1(x, y)
-
-    steps = ((1, 0), (-1, 0), (0, 1), (0, -1))
-    band_of = [-1] * (w * (b - t))
+                # The neighbour, unless focus drew it.
+                return c if ours and not changed_at[i] else None
     bands, strong = [], 0
     for y0 in range(t, b):
         for x0 in range(l, r):
@@ -182,7 +198,7 @@ def compare(u, f1, f2, l, t, r, b):
                 for dx, dy in steps:
                     if inside(x + dx, y + dy) and band_of[at(x + dx, y + dy)] == bid:
                         continue
-                    n = neighbour(x, y, dx, dy, on_page)
+                    n = neighbour(x, y, dx, dy, on_page, bid)
                     if n is None:
                         continue
                     nxt[n] += 1
@@ -195,7 +211,9 @@ def compare(u, f1, f2, l, t, r, b):
                 if n > top or (n == top and c < colour):
                     colour, top = c, n
             if not nxt:
-                contrast, lowest = ratio(colour, page), page
+                # Nothing to measure against: on the page, the page; on the
+                # control, inconclusive, and not strong.
+                contrast, lowest = (ratio(colour, page), page) if on_page else (1.0, colour)
             if contrast >= 3:
                 strong += len(pixels)
             near = sorted(nxt.items(), key=lambda e: (-e[1], e[0]))[:3]
