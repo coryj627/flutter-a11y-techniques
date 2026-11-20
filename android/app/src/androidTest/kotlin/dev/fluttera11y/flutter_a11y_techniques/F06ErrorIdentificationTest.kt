@@ -182,24 +182,51 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
 
     // VAL-3: each bad example is asserted to have its named defect.
 
+    /**
+     * Every name on the page, top to bottom: the page is scrolled back to
+     * its start, then forward a step at a time to its end, and the names in
+     * the tree at each step are gathered. A node scrolled out of view is not
+     * in the tree, and on a 320 by 640 screen this page is taller than the
+     * screen, so one reading of the tree is only what happens to be in view.
+     * Fails unless both ends of the page were seen: [first] at the start and
+     * [last] at the end.
+     */
+    private fun everyName(first: String, last: String): Set<String> {
+        fun scrollView() = all().firstOrNull { it.isScrollable }
+        fun names() = all().map { it.name() }.filter { it.isNotEmpty() }
+        for (i in 0 until 12) {
+            if (scrollView()?.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD) != true) break
+            Thread.sleep(500)
+        }
+        val atStart = names()
+        assertTrue("\"$first\" is at the start of the page: $atStart", atStart.contains(first))
+        val seen = atStart.toMutableSet()
+        var atEnd = atStart
+        for (i in 0 until 12) {
+            if (scrollView()?.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) != true) break
+            Thread.sleep(500)
+            atEnd = names()
+            seen.addAll(atEnd)
+        }
+        assertTrue("\"$last\" is at the end of the page: $atEnd", atEnd.contains(last))
+        return seen
+    }
+
     @Test
     fun badColorOnlyHasNoWordsForTheError() {
         open("bad-color-only")
         val id = "f06-bad-color-only-email"
-        val before = all().map { it.name() }.toSet()
+        val before = everyName("Back", "Forms sent: 0")
         send("bad-color-only")
-        waitFor("field focused") { node(id).isFocused }
-        // Compare with the keyboard away, so that nothing is out of view.
-        closeKeyboardAndWaitForCount("bad-color-only")
-        // The field is in error and focused, and nothing new can be read.
-        // What can be read now is compared with what could be read before
-        // for anything added, not for being the same: on a 320 by 640 screen
-        // putting the keyboard away and scrolling to the count leaves
-        // different parts of the page in view from one run to the next (CI
-        // runs 44580353546 and 44615147153 each lacked a different line that
-        // was there before).
+        waitFor("field focused") { nodeInAnyWindow(id).isFocused }
+        hideKeyboard()
+        // The field is in error and focused, and nothing new can be read
+        // anywhere on the page. The whole page is read, before and after: on
+        // a 320 by 640 screen one reading of the tree had a different part of
+        // the page each time (CI runs 44580353546 and 44615147153), and an
+        // error scrolled out of view would not be in it.
+        assertEquals(before, everyName("Back", "Forms sent: 0"))
         assertEquals("Email", hint(id))
-        assertEquals(emptySet<String>(), all().map { it.name() }.toSet() - before)
     }
 
     @Test
