@@ -1,0 +1,18 @@
+#!/bin/sh
+# I04 round two: the I04 iOS tree suite three times, under
+# tool/with_devices.py, from the worktree root, after
+# `fvm flutter build ios --simulator --debug` and `xcodebuild build-for-testing`
+# into build/ios_uitest. The VoiceOver test is left out, as evidence.py does.
+cd ios || exit 1
+for run in 1 2 3; do
+  echo "== run $run"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner -configuration Debug \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:RunnerUITests/I04KeyboardActionsUITests \
+    -skip-testing:RunnerUITests/I04KeyboardActionsUITests/testVoiceOverSpeech \
+    -derivedDataPath ../build/ios_uitest 2>&1 \
+    | grep -E "error:|' (passed|failed)|Executed [0-9]+ tests|TEST (SUCCEEDED|FAILED)|I04KEYS" \
+    | sed -E 's/^.*Test Case //' | grep -v "^Test Suite"
+done
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

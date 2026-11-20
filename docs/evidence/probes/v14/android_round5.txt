@@ -1,0 +1,10 @@
+# V14 probe on Android, round 5: android_probe5.sh.txt. Keys through the emulator console.
+== emulator: Pixel_10a, hw.keyboard: hw.keyboard=yes
+start: S w2 f=0 m=h n=2 k=0 d=- th=l mouse=0
+adb emu event send EV_KEY:KEY_TAB:1 EV_KEY:KEY_TAB:0: OK 
+  after: S w2 f=0 m=h n=2 k=0 d=- th=l mouse=0
+adb emu event send EV_KEY:KEY_TAB:1 EV_SYN:SYN_REPORT:0 EV_KEY:KEY_TAB:0 EV_SYN:SYN_REPORT:0: KO: invalid event code in 'EV_SYN:SYN_REPORT:0', try 'event list codes <type>' for valid values 
+  after: S w2 f=0 m=h n=2 k=0 d=- th=l mouse=0
+adb emu event codes: KO: argument missing, try 'event codes <type>' 
+input keyevent TAB:
+  after: S w2 f=1 m=h n=3 k=1 d=-1/512 th=l mouse=0

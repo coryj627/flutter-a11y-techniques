@@ -1,0 +1,31 @@
+  cupertino_icons 1.0.9 (2.0.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+I04PROBE3 TargetPlatform.android
+  Tab -> value=0 focus=CupertinoSlidingSegmentedControl<int>[0]
+  Space (on the selected segment) -> value=0 focus=CupertinoSlidingSegmentedControl<int>[0]
+  Right -> value=1 focus=CupertinoSlidingSegmentedControl<int>[1]
+  Right -> value=2 focus=CupertinoSlidingSegmentedControl<int>[2]
+  Right (from the last) -> value=0 focus=CupertinoSlidingSegmentedControl<int>[0]
+  Left -> value=2 focus=CupertinoSlidingSegmentedControl<int>[2]
+  Down -> value=0 focus=CupertinoSlidingSegmentedControl<int>[0]
+  Up -> value=2 focus=CupertinoSlidingSegmentedControl<int>[2]
+  Enter -> value=2 focus=CupertinoSlidingSegmentedControl<int>[2]
+  Tab -> value=2 focus=FocusNode
+  log: [changed 1, changed 2, changed 0, changed 2, changed 0, changed 2]
+  semantics: A: inMutuallyExclusiveGroup=true checked=CheckedState.none selected=Tristate.isFalse focusable=Tristate.isFalse | B: inMutuallyExclusiveGroup=true checked=CheckedState.none selected=Tristate.isFalse focusable=Tristate.isFalse | C: inMutuallyExclusiveGroup=true checked=CheckedState.none selected=Tristate.isTrue focusable=Tristate.isFalse
+I04PROBE3 TargetPlatform.iOS
+  Tab -> value=0 focus=CupertinoSlidingSegmentedControl<int>[0]
+  Space (on the selected segment) -> value=0 focus=CupertinoSlidingSegmentedControl<int>[0]
+  Right -> value=1 focus=CupertinoSlidingSegmentedControl<int>[1]
+  Right -> value=2 focus=CupertinoSlidingSegmentedControl<int>[2]
+  Right (from the last) -> value=0 focus=CupertinoSlidingSegmentedControl<int>[0]
+  Left -> value=2 focus=CupertinoSlidingSegmentedControl<int>[2]
+  Down -> value=0 focus=CupertinoSlidingSegmentedControl<int>[0]
+  Up -> value=2 focus=CupertinoSlidingSegmentedControl<int>[2]
+  Enter -> value=2 focus=CupertinoSlidingSegmentedControl<int>[2]
+  Tab -> value=2 focus=FocusNode
+  log: [changed 1, changed 2, changed 0, changed 2, changed 0, changed 2]
+  semantics: A: inMutuallyExclusiveGroup=true checked=CheckedState.none selected=Tristate.isFalse focusable=Tristate.isFalse | B: inMutuallyExclusiveGroup=true checked=CheckedState.none selected=Tristate.isFalse focusable=Tristate.isFalse | C: inMutuallyExclusiveGroup=true checked=CheckedState.none selected=Tristate.isTrue focusable=Tristate.isFalse

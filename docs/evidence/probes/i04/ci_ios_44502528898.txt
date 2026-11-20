@@ -1,0 +1,57 @@
+# CI run 44502528898, job ios: the I04 lines (cut to 330 characters)
+
+ios	UI tests	2026-11-19T10:09:15.1915150Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test -workspace Runner.xcworkspace -scheme Runner -configuration Debug -destination "platform=iOS Simulator,name=iPhone 17 Pro" "-only-testing:RunnerUITests"
+ios	UI tests	2026-11-19T10:09:17.6626170Z { platform:iOS Simulator, arch:arm64, id:FCC5F673-7BEC-4A7D-8F2A-4DC35E2668EC, OS:26.5, name:iPhone 17 Pro }
+
+## I04 test results
+ios	UI tests	2026-11-19T10:57:42.5305730Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testAPageWideFActsWhereverFocusIsAndTypesInTheNote]' passed (54.962 seconds).
+ios	UI tests	2026-11-19T10:58:20.3890740Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testATapShowsAnyPhoto]' passed (37.981 seconds).
+ios	UI tests	2026-11-19T10:58:43.2361570Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysLeftDoesNotMove]' passed (22.841 seconds).
+ios	UI tests	2026-11-19T10:59:03.8794210Z /Users/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/ios/RunnerUITests/I04KeyboardActionsUITests.swift:200: error: -[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove] : XCTAssertEqual failed: ("mudx") is not equal to ("Mudx") - bad-no-arrow-keys no
+ios	UI tests	2026-11-19T10:59:09.5060380Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove]' failed (26.277 seconds).
+ios	UI tests	2026-11-19T10:59:20.8763720Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysTheStopAfterTheStripIsTheFavouriteButton]' passed (11.370 seconds).
+ios	UI tests	2026-11-19T11:00:46.8457150Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutAnFPastedWithCommandVGoesIn]' passed (85.966 seconds).
+ios	UI tests	2026-11-19T11:01:18.2420150Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutFActsWhereverFocusIsAndTakesTheFOfTheNote]' passed (31.362 seconds).
+ios	UI tests	2026-11-19T11:01:48.8765140Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF]' passed (30.545 seconds).
+ios	UI tests	2026-11-19T11:02:10.3825470Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutTypeTextPutsTheFIn]' passed (21.621 seconds).
+ios	UI tests	2026-11-19T11:04:30.0652300Z /Users/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/ios/RunnerUITests/I04KeyboardActionsUITests.swift:232: error: -[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop] : XCTAssertEqual failed: ("muddy") is not equal to ("Muddy") 
+ios	UI tests	2026-11-19T11:04:37.9731020Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop]' failed (147.572 seconds).
+ios	UI tests	2026-11-19T11:07:40.9899950Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testEveryPartHasItsLabelAndType]' passed (183.022 seconds).
+ios	UI tests	2026-11-19T11:09:19.4678970Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testGoodOnFocusFActsInTheStripOnly]' passed (98.054 seconds).
+ios	UI tests	2026-11-19T11:09:43.7189120Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' passed (24.541 seconds).
+ios	UI tests	2026-11-19T11:10:25.2551840Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testGoodTurnOffTheSwitchTurnsFOff]' passed (41.599 seconds).
+ios	UI tests	2026-11-19T11:12:20.3412570Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testTabGoesTheStripTheFavouriteButtonThenTheNote]' passed (114.744 seconds).
+ios	UI tests	2026-11-19T11:13:00.0828600Z /Users/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/ios/RunnerUITests/I04KeyboardActionsUITests.swift:177: error: -[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt] : XCTAssertEqual failed: ("Showing: Ridge, 3 of 4") is not equal to 
+ios	UI tests	2026-11-19T11:13:37.0392160Z Test Case '-[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt]' failed (77.121 seconds).
+ios	UI tests	2026-11-19T11:13:37.3332970Z Test Suite 'I04KeyboardActionsUITests' failed at 2026-11-19 11:13:37.160.
+
+## Keys and checks before the failure at line 177 (good-turn-off)
+ios	UI tests	2026-11-19T11:12:36.7244290Z     t =    16.81s Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+ios	UI tests	2026-11-19T11:12:37.7158740Z     t =    17.80s Type '⇥' key (XCUIKeyboardKeyTab) with modifiers '⇧' (0x02)
+ios	UI tests	2026-11-19T11:12:38.6879460Z     t =    18.77s Type '←' key (XCUIKeyboardKeyLeftArrow) with no modifiers
+ios	UI tests	2026-11-19T11:12:40.7981210Z 2026-11-19 11:12:40.797 xcodebuild[4404:17226] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ios	UI tests	2026-11-19T11:12:45.7466840Z     t =    25.82s Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+ios	UI tests	2026-11-19T11:12:46.7420810Z     t =    26.82s Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+ios	UI tests	2026-11-19T11:12:47.7421370Z     t =    27.82s Type '→' key (XCUIKeyboardKeyRightArrow) with no modifiers
+ios	UI tests	2026-11-19T11:12:48.7874880Z     t =    28.87s Type '→' key (XCUIKeyboardKeyRightArrow) with no modifiers
+ios	UI tests	2026-11-19T11:12:49.8162810Z     t =    29.90s Type '←' key (XCUIKeyboardKeyLeftArrow) with no modifiers
+ios	UI tests	2026-11-19T11:12:50.8204280Z     t =    30.90s Type '→' key (XCUIKeyboardKeyRightArrow) with no modifiers
+ios	UI tests	2026-11-19T11:12:51.8374340Z     t =    31.92s Type '→' key (XCUIKeyboardKeyRightArrow) with no modifiers
+ios	UI tests	2026-11-19T11:12:52.8708940Z     t =    32.95s Type '→' key (XCUIKeyboardKeyRightArrow) with no modifiers
+ios	UI tests	2026-11-19T11:12:53.9291890Z     t =    34.01s Type '←' key (XCUIKeyboardKeyLeftArrow) with no modifiers
+ios	UI tests	2026-11-19T11:12:54.9339080Z     t =    35.02s Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers
+ios	UI tests	2026-11-19T11:12:55.9148610Z     t =    35.99s Type '⇥' key (XCUIKeyboardKeyTab) with modifiers '⇧' (0x02)
+ios	UI tests	2026-11-19T11:12:56.8967850Z     t =    36.97s Type '←' key (XCUIKeyboardKeyLeftArrow) with no modifiers
+ios	UI tests	2026-11-19T11:13:00.0828600Z /Users/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/ios/RunnerUITests/I04KeyboardActionsUITests.swift:177: error: -[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt] : XCTAssertEqual failed: ("Showing: Ridge, 3 of 4") is not equal to 
+
+## Keys before the failure at line 200 (bad-no-arrow-keys, Right)
+ios	UI tests	2026-11-19T10:58:49.9799820Z     t =     6.75s Tap "i04-bad-no-arrow-keys-bridge" Any
+ios	UI tests	2026-11-19T10:58:50.4632210Z     t =     7.23s Tap "i04-bad-no-arrow-keys-note" Any
+ios	UI tests	2026-11-19T10:58:51.7467610Z     t =     8.43s Type 'M' key with no modifiers
+ios	UI tests	2026-11-19T10:58:53.1623450Z     t =     9.93s Type 'u' key with no modifiers
+ios	UI tests	2026-11-19T10:58:54.2841480Z     t =    11.05s Type 'd' key with no modifiers
+ios	UI tests	2026-11-19T10:58:56.5980840Z     t =    13.30s Type '←' key (XCUIKeyboardKeyLeftArrow) with no modifiers
+ios	UI tests	2026-11-19T10:58:58.8962350Z     t =    15.61s Type '→' key (XCUIKeyboardKeyRightArrow) with no modifiers
+ios	UI tests	2026-11-19T10:58:59.9871600Z     t =    16.74s Type 'x' key with no modifiers
+ios	UI tests	2026-11-19T10:59:03.8794210Z /Users/runner/work/flutter-a11y-techniques/flutter-a11y-techniques/ios/RunnerUITests/I04KeyboardActionsUITests.swift:200: error: -[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove] : XCTAssertEqual failed: ("mudx") is not equal to ("Mudx") - bad-no-arrow-keys no
+ios	UI tests	2026-11-19T10:59:03.9056050Z     t =    20.61s Type '⇥' key (XCUIKeyboardKeyTab) with no modifiers

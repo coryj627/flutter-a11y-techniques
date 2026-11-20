@@ -1,0 +1,519 @@
+// I04 probe (throwaway, not committed): keyboard actions and shortcuts.
+// Every fixture's text starts with its id, q01 to q15. At the top of the
+// screen, outside the scrolling part:
+//   "Focus: q05" the widget with Flutter's primary focus,
+//   "Keys: ..."  every key-down that reached the framework, with its
+//                modifiers and its character ("f'f'", "ctrl+F'\x06'"),
+//   "Log: ..."   every shortcut, action, page change, and submit,
+//   "Texts: ..." the text in each field,
+//   "Scroll: n"  the offset of the scrolling part,
+// so that what a key did can be read from any platform's tree.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      initialRoute: '/probe',
+      routes: {
+        '/': (_) => const Scaffold(body: Center(child: Text('Home'))),
+        '/probe': (_) => const ProbeScreen(),
+      },
+    ),
+  );
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> {
+  final List<String> _log = [];
+  final List<String> _keys = [];
+  String _focus = 'none';
+  final Map<String, FocusNode> _nodes = {};
+  final Map<String, TextEditingController> _texts = {};
+  final ScrollController _scroll = ScrollController();
+  ShortcutRegistryEntry? _registry;
+  int _q05 = 1, _q06 = 1, _q16 = 1, _q17 = 1;
+  bool _q05fav = false, _q06fav = false;
+  final PageController _q07 = PageController();
+
+  FocusNode _node(String id) =>
+      _nodes.putIfAbsent(id, () => FocusNode(debugLabel: id));
+
+  TextEditingController _text(String id) =>
+      _texts.putIfAbsent(id, TextEditingController.new);
+
+  void _add(String entry) => setState(() => _log.add(entry));
+
+  bool _key(KeyEvent event) {
+    if (event is KeyDownEvent || event is KeyRepeatEvent) {
+      final k = HardwareKeyboard.instance;
+      final mods = [
+        if (k.isControlPressed) 'ctrl',
+        if (k.isAltPressed) 'alt',
+        if (k.isMetaPressed) 'meta',
+        if (k.isShiftPressed) 'shift',
+      ];
+      final name = event.logicalKey.keyLabel.isEmpty
+          ? event.logicalKey.debugName
+          : event.logicalKey.keyLabel;
+      final ch = event.character == null
+          ? ''
+          : "'${event.character!.codeUnits.map((c) => c < 32 ? '^$c' : String.fromCharCode(c)).join()}'";
+      final rep = event is KeyRepeatEvent ? '(rep)' : '';
+      setState(() => _keys.add('${[...mods, name].join('+')}$ch$rep'));
+    }
+    return false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addListener(_focusChanged);
+    HardwareKeyboard.instance.addHandler(_key);
+    _scroll.addListener(() => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _registry = ShortcutRegistry.of(context).addAll({
+        const CharacterActivator('h'): VoidCallbackIntent(
+          () => _add('q04 registry-h'),
+        ),
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _registry?.dispose();
+    FocusManager.instance.removeListener(_focusChanged);
+    HardwareKeyboard.instance.removeHandler(_key);
+    super.dispose();
+  }
+
+  void _focusChanged() {
+    final primary = FocusManager.instance.primaryFocus;
+    final label = primary == null
+        ? 'none'
+        : _nodes.entries
+                  .where((e) => e.value == primary)
+                  .map((e) => e.key)
+                  .firstOrNull ??
+              'other(${primary.debugLabel ?? primary.runtimeType})';
+    if (label != _focus) setState(() => _focus = label);
+  }
+
+  Widget _id(String id, Widget child) =>
+      MergeSemantics(child: Semantics(identifier: id, child: child));
+
+  Widget _status(String id, String text) => Semantics(
+    identifier: id,
+    child: Text(text, style: const TextStyle(fontSize: 11)),
+  );
+
+  Widget _field(String id, {TextInputAction? action, int maxLines = 1}) =>
+      _id(
+        id,
+        TextField(
+          focusNode: _node(id),
+          controller: _text(id),
+          textInputAction: action,
+          maxLines: maxLines,
+          keyboardType: maxLines > 1 ? TextInputType.multiline : null,
+          onChanged: (_) => setState(() {}),
+          onSubmitted: (v) => _add('$id submit "$v"'),
+          decoration: InputDecoration(labelText: '$id field'),
+        ),
+      );
+
+  Widget _button(String id) => _id(
+    id,
+    OutlinedButton(
+      focusNode: _node(id),
+      onPressed: () => _add('$id pressed'),
+      child: Text('$id button'),
+    ),
+  );
+
+  Widget _section(String title, List<Widget> children) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [Text(title), ...children],
+    ),
+  );
+
+  Map<ShortcutActivator, VoidCallback> _letterBindings(String id) => {
+    const CharacterActivator('f'): () => _add('$id char-f'),
+    const SingleActivator(LogicalKeyboardKey.keyG): () => _add('$id key-g'),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final texts = _texts.entries
+        .map((e) => '${e.key}=${e.value.text.replaceAll('\n', r'\n')}')
+        .join(' | ');
+    return Scaffold(
+      appBar: AppBar(title: const Text('I04 probe')),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _status('focus', 'Focus: $_focus'),
+          _status(
+            'keys',
+            'Keys: ${_keys.length > 14 ? _keys.sublist(_keys.length - 14).join(' ') : _keys.join(' ')}',
+          ),
+          _status(
+            'log',
+            'Log: ${_log.length > 8 ? _log.sublist(_log.length - 8).join(' / ') : _log.join(' / ')}',
+          ),
+          _status('texts', 'Texts: $texts'),
+          _status(
+            'scroll',
+            'Scroll: ${_scroll.hasClients ? _scroll.offset.round() : 0}',
+          ),
+          Expanded(
+            child: FocusTraversalGroup(
+              child: SingleChildScrollView(
+                controller: _scroll,
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _section('q01 CallbackShortcuts f (char) and g (key) around a field and a button', [
+                      CallbackShortcuts(
+                        bindings: _letterBindings('q01'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [_field('q01'), _button('q01-btn')],
+                        ),
+                      ),
+                    ]),
+                    _section('q02 the same, field maps f and g to DoNothingAndStopPropagationIntent', [
+                      CallbackShortcuts(
+                        bindings: _letterBindings('q02'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Shortcuts(
+                              shortcuts: const {
+                                CharacterActivator('f'):
+                                    DoNothingAndStopPropagationIntent(),
+                                SingleActivator(LogicalKeyboardKey.keyG):
+                                    DoNothingAndStopPropagationIntent(),
+                              },
+                              child: _field('q02'),
+                            ),
+                            _button('q02-btn'),
+                          ],
+                        ),
+                      ),
+                    ]),
+                    _section('q05 viewer: FocusableActionDetector, arrows Home End f', [
+                      _id(
+                        'q05',
+                        FocusableActionDetector(
+                          focusNode: _node('q05'),
+                          shortcuts: const {
+                            SingleActivator(LogicalKeyboardKey.arrowLeft):
+                                _Step(-1),
+                            SingleActivator(LogicalKeyboardKey.arrowRight):
+                                _Step(1),
+                            SingleActivator(LogicalKeyboardKey.home): _Step(-9),
+                            SingleActivator(LogicalKeyboardKey.end): _Step(9),
+                            CharacterActivator('f'): _Fav(),
+                          },
+                          actions: {
+                            _Step: CallbackAction<_Step>(
+                              onInvoke: (s) => setState(() {
+                                _q05 = (_q05 + s.by).clamp(1, 4);
+                                _log.add('q05 photo $_q05');
+                              }),
+                            ),
+                            _Fav: CallbackAction<_Fav>(
+                              onInvoke: (_) => setState(() {
+                                _q05fav = !_q05fav;
+                                _log.add('q05 fav $_q05fav');
+                              }),
+                            ),
+                          },
+                          child: Semantics(
+                            label: 'q05 viewer',
+                            value: 'Photo $_q05 of 4',
+                            child: Container(
+                              height: 48,
+                              color: Colors.black12,
+                              child: Text('q05 Photo $_q05 of 4 fav $_q05fav'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                    _section('q06 viewer: Focus.onKeyEvent, arrows (down and repeat) and f by character', [
+                      _id(
+                        'q06',
+                        Focus(
+                          focusNode: _node('q06'),
+                          onKeyEvent: (node, event) {
+                            if (event is KeyUpEvent) {
+                              return KeyEventResult.ignored;
+                            }
+                            if (event.logicalKey ==
+                                LogicalKeyboardKey.arrowLeft) {
+                              setState(() {
+                                _q06 = (_q06 - 1).clamp(1, 4);
+                                _log.add('q06 photo $_q06');
+                              });
+                              return KeyEventResult.handled;
+                            }
+                            if (event.logicalKey ==
+                                LogicalKeyboardKey.arrowRight) {
+                              setState(() {
+                                _q06 = (_q06 + 1).clamp(1, 4);
+                                _log.add('q06 photo $_q06');
+                              });
+                              return KeyEventResult.handled;
+                            }
+                            if (event.character == 'f' &&
+                                event is KeyDownEvent) {
+                              setState(() {
+                                _q06fav = !_q06fav;
+                                _log.add('q06 fav $_q06fav');
+                              });
+                              return KeyEventResult.handled;
+                            }
+                            return KeyEventResult.ignored;
+                          },
+                          child: Semantics(
+                            label: 'q06 viewer',
+                            value: 'Photo $_q06 of 4',
+                            child: Container(
+                              height: 48,
+                              color: Colors.black12,
+                              child: Text('q06 Photo $_q06 of 4 fav $_q06fav'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                    _section('q07 PageView, no keys', [
+                      SizedBox(
+                        height: 48,
+                        child: _id(
+                          'q07',
+                          PageView(
+                            controller: _q07,
+                            onPageChanged: (p) => _add('q07 page ${p + 1}'),
+                            children: [
+                              for (var i = 1; i <= 4; i++)
+                                Container(
+                                  color: Colors.black12,
+                                  child: Text('q07 page $i'),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]),
+                    _section('q08 CarouselView', [
+                      SizedBox(
+                        height: 64,
+                        child: CarouselView(
+                          itemExtent: 120,
+                          onTap: (i) => _add('q08 tap ${i + 1}'),
+                          children: [
+                            for (var i = 1; i <= 4; i++)
+                              Container(
+                                color: Colors.black12,
+                                child: Text('q08 item $i'),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ]),
+                    _section('q09 search field', [
+                      _field('q09', action: TextInputAction.search),
+                    ]),
+                    _section('q10 next field, then q10b', [
+                      _field('q10', action: TextInputAction.next),
+                      _field('q10b'),
+                    ]),
+                    _section('q11 multiline field', [
+                      _field('q11', maxLines: 3),
+                    ]),
+                    _section('q12 CupertinoTextField search', [
+                      _id(
+                        'q12',
+                        CupertinoTextField(
+                          focusNode: _node('q12'),
+                          controller: _text('q12'),
+                          placeholder: 'q12 field',
+                          textInputAction: TextInputAction.search,
+                          onChanged: (_) => setState(() {}),
+                          onSubmitted: (v) => _add('q12 submit "$v"'),
+                        ),
+                      ),
+                    ]),
+                    _section('q13 field inside a FocusableActionDetector with the activate intents', [
+                      FocusableActionDetector(
+                        actions: {
+                          ActivateIntent: CallbackAction<ActivateIntent>(
+                            onInvoke: (_) => _add('q13 activate'),
+                          ),
+                          ButtonActivateIntent:
+                              CallbackAction<ButtonActivateIntent>(
+                                onInvoke: (_) => _add('q13 button-activate'),
+                              ),
+                        },
+                        child: _field('q13'),
+                      ),
+                    ]),
+                    _section('q14 modifier shortcuts on F around a button', [
+                      CallbackShortcuts(
+                        bindings: {
+                          const SingleActivator(
+                            LogicalKeyboardKey.keyF,
+                            control: true,
+                          ): () =>
+                              _add('q14 ctrl-f'),
+                          const SingleActivator(
+                            LogicalKeyboardKey.keyF,
+                            alt: true,
+                          ): () =>
+                              _add('q14 alt-f'),
+                          const SingleActivator(
+                            LogicalKeyboardKey.keyF,
+                            meta: true,
+                          ): () =>
+                              _add('q14 meta-f'),
+                          const SingleActivator(
+                            LogicalKeyboardKey.keyF,
+                            control: true,
+                            shift: true,
+                          ): () =>
+                              _add('q14 ctrl-shift-f'),
+                          const CharacterActivator('f', alt: true): () =>
+                              _add('q14 char-alt-f'),
+                        },
+                        child: _button('q14-btn'),
+                      ),
+                    ]),
+                    _section('q15 a button and a plain focus node, for scrolling keys', [
+                      _button('q15-btn'),
+                      _id(
+                        'q15-focus',
+                        Focus(
+                          focusNode: _node('q15-focus'),
+                          child: const Text('q15 focus node'),
+                        ),
+                      ),
+                    ]),
+                    _section('q16 adjustable viewer, Focus only, no keys', [
+                      _id(
+                        'q16',
+                        Focus(
+                          focusNode: _node('q16'),
+                          child: Semantics(
+                            label: 'q16 viewer',
+                            value: 'Photo $_q16 of 4',
+                            onIncrease: () => setState(() {
+                              _q16 = (_q16 + 1).clamp(1, 4);
+                              _log.add('q16 increase $_q16');
+                            }),
+                            onDecrease: () => setState(() {
+                              _q16 = (_q16 - 1).clamp(1, 4);
+                              _log.add('q16 decrease $_q16');
+                            }),
+                            child: Container(
+                              height: 48,
+                              color: Colors.black12,
+                              child: Text('q16 Photo $_q16 of 4'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                    _section('q17 adjustable viewer with keys', [
+                      _id(
+                        'q17',
+                        FocusableActionDetector(
+                          focusNode: _node('q17'),
+                          shortcuts: const {
+                            SingleActivator(LogicalKeyboardKey.arrowLeft):
+                                _Step(-1),
+                            SingleActivator(LogicalKeyboardKey.arrowRight):
+                                _Step(1),
+                            SingleActivator(LogicalKeyboardKey.home): _Step(-9),
+                            SingleActivator(LogicalKeyboardKey.end): _Step(9),
+                          },
+                          actions: {
+                            _Step: CallbackAction<_Step>(
+                              onInvoke: (s) => setState(() {
+                                _q17 = (_q17 + s.by).clamp(1, 4);
+                                _log.add('q17 key $_q17');
+                              }),
+                            ),
+                          },
+                          child: Semantics(
+                            label: 'q17 viewer',
+                            value: 'Photo $_q17 of 4',
+                            onIncrease: () => setState(() {
+                              _q17 = (_q17 + 1).clamp(1, 4);
+                              _log.add('q17 increase $_q17');
+                            }),
+                            onDecrease: () => setState(() {
+                              _q17 = (_q17 - 1).clamp(1, 4);
+                              _log.add('q17 decrease $_q17');
+                            }),
+                            child: Container(
+                              height: 48,
+                              color: Colors.black12,
+                              child: Text('q17 Photo $_q17 of 4'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                    _section('q18 multiline field, send action', [
+                      _field('q18', action: TextInputAction.send, maxLines: 3),
+                    ]),
+                    _section('q19 multiline field, send action, Enter mapped to send', [
+                      CallbackShortcuts(
+                        bindings: {
+                          const SingleActivator(LogicalKeyboardKey.enter): () {
+                            _add('q19 enter-shortcut "${_text('q19').text}"');
+                          },
+                        },
+                        child: _field(
+                          'q19',
+                          action: TextInputAction.send,
+                          maxLines: 3,
+                        ),
+                      ),
+                    ]),
+                    const SizedBox(height: 1200, child: Text('q99 filler')),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Step extends Intent {
+  const _Step(this.by);
+  final int by;
+}
+
+class _Fav extends Intent {
+  const _Fav();
+}

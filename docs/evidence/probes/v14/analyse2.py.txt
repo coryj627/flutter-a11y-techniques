@@ -1,0 +1,132 @@
+"""V14 probe analyser, round 2 of the measure (throwaway; kept as
+docs/evidence/probes/v14/analyse2.py.txt). Reads the same captures as
+analyse.py (<tag>-u.png unfocused, <tag>-f1.png and <tag>-f2.png focused,
+<tag>-u.box the region) and applies the measure the V14 tests use after the
+first review:
+
+- changed: differs from u by more than 12 in some channel in f1 and in f2,
+  and f1 and f2 agree;
+- swapped: how many changed pixels took a colour that changed pixels had
+  before (what moving one drawing gives); the drawing moved if that is half
+  of the changed pixels or more, and the result is not an indicator;
+- indicator: every changed pixel, whatever it replaced;
+- each indicator pixel is grouped by its colour in f1 and by where it was
+  drawn: on the page (u there was the page's colour) or on the control;
+- a group's contrast is taken against the colours adjacent to it in f1
+  (4-neighbours of a different colour): for a group on the page, against
+  the page (Understanding 1.4.11: an indicator outside the component
+  contrasts with the background it is on); for a group on the control,
+  against every colour that makes up a fifth or more of what is next to it
+  (inside the component, or on its border, it contrasts with what is on
+  both sides);
+- strong: indicator pixels in groups whose contrast is 3:1 or more.
+
+Prints the totals and the largest groups with their adjacent colours.
+"""
+import collections
+import glob
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from analyse import read_png, ratio, hexc, diff, region  # noqa: E402
+
+T = 12
+
+
+def measure(tag):
+    x0, y0, w, h = region(tag)
+    _, _, u = read_png(tag + "-u.png")
+    _, _, f1 = read_png(tag + "-f1.png")
+    _, _, f2 = read_png(tag + "-f2.png")
+    edge = collections.Counter()
+    for x in range(x0, x0 + w):
+        for y in (y0, y0 + 1, y0 + h - 2, y0 + h - 1):
+            edge[u(x, y)] += 1
+    page = edge.most_common(1)[0][0]
+    changed, unstable = {}, 0
+    for y in range(y0, y0 + h):
+        for x in range(x0, x0 + w):
+            a, b, c = u(x, y), f1(x, y), f2(x, y)
+            d1, d2 = diff(a, b) > T, diff(a, c) > T
+            if d1 and d2 and diff(b, c) <= T:
+                changed[(x, y)] = b
+            elif d1 or d2:
+                unstable += 1
+
+    def inside(q):
+        return x0 <= q[0] < x0 + w and y0 <= q[1] < y0 + h
+
+    def solid(q):
+        # A pixel of a flat area: the same colour as a horizontal and a
+        # vertical neighbour. An anti-aliased edge pixel is not.
+        x, y = q
+        c = f1(x, y)
+        same = lambda r: inside(r) and diff(f1(*r), c) <= 4
+        return (same((x - 1, y)) or same((x + 1, y))) and (same((x, y - 1)) or same((x, y + 1)))
+
+    def across(q, dx, dy, colour):
+        # The first flat colour beyond the band of `colour` that q is in,
+        # read across at most 3 pixels of anti-aliased edge.
+        x, y = q
+        while inside((x + dx, y + dy)) and diff(f1(x + dx, y + dy), colour) <= 4:
+            x, y = x + dx, y + dy
+        for _ in range(4):
+            x, y = x + dx, y + dy
+            if not inside((x, y)):
+                return None
+            if diff(f1(x, y), colour) > T and solid((x, y)):
+                return f1(x, y)
+        return None
+
+    groups = collections.defaultdict(list)
+    for p, c in changed.items():
+        if not solid(p):
+            continue
+        on_page = diff(u(*p), page) <= T
+        groups[(c, on_page)].append(p)
+    rows, strong = [], 0
+    for (colour, on_page), pixels in groups.items():
+        nb = collections.Counter()
+        for p in pixels:
+            for d in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                c = across(p, d[0], d[1], colour)
+                if c is not None:
+                    nb[c] += 1
+        total = sum(nb.values())
+        if on_page or total == 0:
+            req = ratio(colour, page)
+            against = [(page, ratio(colour, page))]
+        else:
+            major = [(c, ratio(colour, c)) for c, n in nb.items() if n >= 0.2 * total]
+            req = min(r for _, r in major) if major else ratio(colour, page)
+            against = major
+        if req >= 3:
+            strong += len(pixels)
+        rows.append((len(pixels), colour, on_page, req, against, nb.most_common(3), total))
+    rows.sort(key=lambda r: -r[0])
+    new = collections.Counter(changed.values())
+    old = collections.Counter(u(*p) for p in changed)
+    swapped = sum(min(n, old[c]) for c, n in new.items())
+    moved = len(changed) > 0 and 2 * swapped >= len(changed)
+    flat = sum(len(p) for p in groups.values())
+    out = [f"changed={len(changed)} unstable={unstable} swapped={swapped}{' MOVED' if moved else ''} indicator={len(changed)} flat={flat} strong={strong} page={hexc(page)}"]
+    for n, colour, on_page, req, against, nbs, total in rows[:5]:
+        where = "on the page" if on_page else "on the control"
+        adj = ", ".join(f"{hexc(c)} {100 * k // max(total, 1)}%" for c, k in nbs)
+        ag = ", ".join(f"{hexc(c)} {r:.2f}" for c, r in against)
+        out.append(f"  {n:6d} px {hexc(colour)} {where}: contrast {req:.2f} (against {ag}); next to it: {adj}")
+    return out
+
+
+if __name__ == "__main__":
+    folder = sys.argv[1]
+    only = sys.argv[2:] or None
+    for box in sorted(glob.glob(os.path.join(folder, "*-u.box"))):
+        tag = box[:-6]
+        name = os.path.basename(tag)
+        if only and not any(name.endswith("-" + o) for o in only):
+            continue
+        print(f"== {name}")
+        for line in measure(tag):
+            print("   " + line)

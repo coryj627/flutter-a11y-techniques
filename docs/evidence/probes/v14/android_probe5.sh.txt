@@ -1,0 +1,35 @@
+#!/bin/sh
+# V14 probe round 5 on Android, under tool/with_devices.py (throwaway; kept
+# as docs/evidence/probes/v14/android_probe5.sh.txt). Does a key sent through
+# the emulator console, as the emulator's own keyboard, reach Flutter, and
+# with which device id? The probe's status line reports the raw key event's
+# device id and flags ("d=") and the highlight mode ("m=").
+ADB=$HOME/Library/Android/sdk/platform-tools/adb
+PKG=dev.fluttera11y.flutter_a11y_techniques
+$ADB install -r build/app/outputs/apk/debug/app-debug.apk >/dev/null || exit 1
+status() { $ADB exec-out uiautomator dump /dev/tty 2>/dev/null | python3 -c '
+import re, sys
+x = sys.stdin.read()
+m = re.search(r"resource-id=\"v14-status\"", x)
+s = re.findall(r"(?:content-desc|text)=\"(S [^\"]*)\"", x)
+print(s[0] if s else "(no status)")'; }
+open() {
+  $ADB shell am force-stop $PKG
+  $ADB shell am start -W -n $PKG/.MainActivity --es route /c/w2 >/dev/null
+  sleep 4
+}
+echo "== emulator: $($ADB emu avd name | head -1 | tr -d '\r'), hw.keyboard: $(grep -h hw.keyboard ~/.android/avd/*.avd/config.ini 2>/dev/null | head -1)"
+open
+echo "start: $(status)"
+for how in "EV_KEY:KEY_TAB:1 EV_KEY:KEY_TAB:0" "EV_KEY:KEY_TAB:1 EV_SYN:SYN_REPORT:0 EV_KEY:KEY_TAB:0 EV_SYN:SYN_REPORT:0"; do
+  echo "adb emu event send $how: $($ADB emu event send $how | tr -d '\r' | tr '\n' ' ')"
+  sleep 1.5
+  echo "  after: $(status)"
+done
+echo "adb emu event codes: $($ADB emu event codes 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-200)"
+echo "input keyevent TAB:"
+$ADB shell input keyevent KEYCODE_TAB
+sleep 1.5
+echo "  after: $(status)"
+$ADB shell am force-stop $PKG
+exit 0

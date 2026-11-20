@@ -1,0 +1,43 @@
+== device: Android 17, IME com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME, show_ime_with_hard_keyboard=0
+== set: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+== whole suite, run 1
+dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest > badPageShortcutSendStringSyncInTheNoteThenOnTheButton[Pixel_10a(AVD) - 17] [31mFAILED [0m
+	java.lang.AssertionError: bad-page-shortcut: Tab did not reach note; focus is on back
+dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest > tabGoesBackTheShownThumbnailTheFavouriteButtonThenTheNote[Pixel_10a(AVD) - 17] [31mFAILED [0m
+	org.junit.ComparisonFailure: good-remap expected:<no[t]e> but was:<no[n]e>
+Tests on Pixel_10a(AVD) - 17 failed: There was 2 failure(s).
+Finished 19 tests on Pixel_10a(AVD) - 17
+Execute dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest.badPageShortcutSendStringSyncInTheNoteThenOnTheButton: FAILED
+java.lang.AssertionError: java.lang.AssertionError: bad-page-shortcut: Tab did not reach note; focus is on back
+java.lang.AssertionError: bad-page-shortcut: Tab did not reach note; focus is on back
+Execute dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest.tabGoesBackTheShownThumbnailTheFavouriteButtonThenTheNote: FAILED
+org.junit.ComparisonFailure: org.junit.ComparisonFailure: good-remap expected:<no[t]e> but was:<no[n]e>
+org.junit.ComparisonFailure: good-remap expected:<no[t]e> but was:<no[n]e>
+> Task :app:connectedDebugAndroidTest FAILED
+BUILD FAILED in 5m 24s
+11-19 03:11:07.952 10417 13664 I I04KEYS : input keyevent in the note: note="leafy" Favourites: none
+11-19 03:11:09.371 10417 13664 I I04KEYS : input keyevent on the favourite button: Favourites: Trailhead
+== whole suite, run 2
+Finished 19 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 5m 23s
+11-19 03:15:04.615 15453 17515 I I04KEYS : sendStringSync in the note: note="Leafy" Favourites: none
+11-19 03:15:05.326 15453 17515 I I04KEYS : sendStringSync on the favourite button: Favourites: Trailhead
+11-19 03:16:33.043 15453 18791 I I04KEYS : input keyevent in the note: note="leafy" Favourites: none
+11-19 03:16:34.441 15453 18791 I I04KEYS : input keyevent on the favourite button: Favourites: Trailhead
+== whole suite, run 3
+Finished 19 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 5m 25s
+11-19 03:20:30.833 20601 22653 I I04KEYS : sendStringSync in the note: note="Leafy" Favourites: none
+11-19 03:20:31.608 20601 22653 I I04KEYS : sendStringSync on the favourite button: Favourites: Trailhead
+11-19 03:21:59.361 20601 23933 I I04KEYS : input keyevent in the note: note="leafy" Favourites: none
+11-19 03:22:00.840 20601 23933 I I04KEYS : input keyevent on the favourite button: Favourites: Trailhead
+== the note tests with show_ime_with_hard_keyboard=1
+Finished 1 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 21s
+11-19 03:23:39.893 25519 25552 I I04KEYS : sendStringSync in the note: note="Leafy" Favourites: none
+11-19 03:23:40.739 25519 25552 I I04KEYS : sendStringSync on the favourite button: Favourites: Trailhead
+Finished 1 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 24s
+11-19 03:24:04.145 26041 26078 I I04KEYS : input keyevent in the note: note="leafy" Favourites: none
+11-19 03:24:05.546 26041 26078 I I04KEYS : input keyevent on the favourite button: Favourites: Trailhead
+== reset: Physical size: 1080x2424  Physical density: 420  show_ime_with_hard_keyboard=0 (was 0)

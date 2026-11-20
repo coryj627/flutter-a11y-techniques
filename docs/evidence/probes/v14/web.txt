@@ -1,0 +1,601 @@
+# V14 probe on the web: Chromium (Playwright), 400 by 500, probe_web.spec.js.txt.
+V14WEB web-light-m1 | u: S m1 f=0 m=t n=2 k=0 | tab: S m1 f=1 m=t n=3 k=1 | touch elsewhere: S m1 f=1 m=h n=3 k=1 | tap: S m1 f=1 m=h n=3 k=0 | mouse click: S m1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m1 | u: S m1 f=0 m=t n=2 k=0 | tab: S m1 f=1 m=t n=3 k=2 | touch elsewhere: S m1 f=1 m=h n=3 k=2 | tap: S m1 f=1 m=h n=3 k=0 | mouse click: S m1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m2 | u: S m2 f=0 m=t n=2 k=0 | tab: S m2 f=1 m=t n=3 k=1 | touch elsewhere: S m2 f=1 m=h n=3 k=1 | tap: S m2 f=1 m=h n=3 k=0 | mouse click: S m2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m2 | u: S m2 f=0 m=t n=2 k=0 | tab: S m2 f=1 m=t n=3 k=2 | touch elsewhere: S m2 f=1 m=h n=3 k=2 | tap: S m2 f=1 m=h n=3 k=0 | mouse click: S m2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m3 | u: S m3 f=0 m=t n=2 k=0 | tab: S m3 f=1 m=t n=3 k=1 | touch elsewhere: S m3 f=1 m=h n=3 k=1 | tap: S m3 f=1 m=h n=3 k=0 | mouse click: S m3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m3 | u: S m3 f=0 m=t n=2 k=0 | tab: S m3 f=1 m=t n=3 k=2 | touch elsewhere: S m3 f=1 m=h n=3 k=2 | tap: S m3 f=1 m=h n=3 k=0 | mouse click: S m3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m4 | u: S m4 f=0 m=t n=2 k=0 | tab: S m4 f=1 m=t n=3 k=1 | touch elsewhere: S m4 f=1 m=h n=3 k=1 | tap: S m4 f=1 m=h n=3 k=0 | mouse click: S m4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m4 | u: S m4 f=0 m=t n=2 k=0 | tab: S m4 f=1 m=t n=3 k=2 | touch elsewhere: S m4 f=1 m=h n=3 k=2 | tap: S m4 f=1 m=h n=3 k=0 | mouse click: S m4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m5 | u: S m5 f=0 m=t n=2 k=0 | tab: S m5 f=1 m=t n=3 k=1 | touch elsewhere: S m5 f=1 m=h n=3 k=1 | tap: S m5 f=1 m=h n=3 k=0 | mouse click: S m5 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m5 | u: S m5 f=0 m=t n=2 k=0 | tab: S m5 f=1 m=t n=3 k=2 | touch elsewhere: S m5 f=1 m=h n=3 k=2 | tap: S m5 f=1 m=h n=3 k=0 | mouse click: S m5 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m6 | u: S m6 f=0 m=t n=2 k=0 | tab: S m6 f=1 m=h n=3 k=1 | touch elsewhere: S m6 f=0 m=h n=4 k=1 | tap: S m6 f=1 m=h n=3 k=0 | mouse click: S m6 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m6 | u: S m6 f=0 m=t n=2 k=0 | tab: S m6 f=1 m=h n=3 k=2 | touch elsewhere: S m6 f=0 m=h n=4 k=2 | tap: S m6 f=1 m=h n=3 k=0 | mouse click: S m6 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m7 | u: S m7 f=0 m=t n=2 k=0 | tab: S m7 f=1 m=h n=3 k=1 | touch elsewhere: S m7 f=0 m=h n=4 k=1 | tap: S m7 f=1 m=h n=3 k=0 | mouse click: S m7 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m7 | u: S m7 f=0 m=t n=2 k=0 | tab: S m7 f=1 m=h n=3 k=2 | touch elsewhere: S m7 f=0 m=h n=4 k=2 | tap: S m7 f=1 m=h n=3 k=0 | mouse click: S m7 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m8 | u: S m8 f=0 m=t n=2 k=0 | tab: S m8 f=1 m=t n=3 k=1 | touch elsewhere: S m8 f=1 m=h n=3 k=1 | tap: S m8 f=1 m=h n=3 k=0 | mouse click: S m8 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m8 | u: S m8 f=0 m=t n=2 k=0 | tab: S m8 f=1 m=t n=3 k=2 | touch elsewhere: S m8 f=1 m=h n=3 k=2 | tap: S m8 f=1 m=h n=3 k=0 | mouse click: S m8 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m9 | u: S m9 f=0 m=t n=2 k=0 | tab: S m9 f=1 m=t n=3 k=1 | touch elsewhere: S m9 f=1 m=h n=3 k=1 | tap: S m9 f=1 m=h n=3 k=0 | mouse click: S m9 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m9 | u: S m9 f=0 m=t n=2 k=0 | tab: S m9 f=1 m=t n=3 k=2 | touch elsewhere: S m9 f=1 m=h n=3 k=2 | tap: S m9 f=1 m=h n=3 k=0 | mouse click: S m9 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m10 | u: S m10 f=0 m=t n=2 k=0 | tab: S m10 f=1 m=t n=3 k=1 | touch elsewhere: S m10 f=1 m=h n=3 k=1 | tap: S m10 f=1 m=h n=3 k=0 | mouse click: S m10 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=switch outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m10 | u: S m10 f=0 m=t n=2 k=0 | tab: S m10 f=1 m=t n=3 k=2 | touch elsewhere: S m10 f=1 m=h n=3 k=2 | tap: S m10 f=1 m=h n=3 k=0 | mouse click: S m10 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=switch outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m11 | u: S m11 f=0 m=t n=2 k=0 | tab: S m11 f=1 m=t n=3 k=1 | touch elsewhere: S m11 f=1 m=h n=3 k=1 | tap: S m11 f=1 m=h n=3 k=0 | mouse click: S m11 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=radiogroup outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m11 | u: S m11 f=0 m=t n=2 k=0 | tab: S m11 f=1 m=t n=3 k=2 | touch elsewhere: S m11 f=1 m=h n=3 k=2 | tap: S m11 f=1 m=h n=3 k=0 | mouse click: S m11 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=radiogroup outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m12 | u: S m12 f=0 m=t n=2 k=0 | tab: S m12 f=1 m=t n=3 k=1 | touch elsewhere: S m12 f=1 m=h n=3 k=1 | tap: S m12 f=1 m=h n=3 k=0 | mouse click: S m12 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m12 | u: S m12 f=0 m=t n=2 k=0 | tab: S m12 f=1 m=t n=3 k=2 | touch elsewhere: S m12 f=1 m=h n=3 k=2 | tap: S m12 f=1 m=h n=3 k=0 | mouse click: S m12 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m13 | u: S m13 f=0 m=t n=2 k=0 | tab: S m13 f=1 m=t n=3 k=1 | touch elsewhere: S m13 f=1 m=h n=3 k=1 | tap: S m13 f=1 m=h n=3 k=0 | mouse click: S m13 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m13 | u: S m13 f=0 m=t n=2 k=0 | tab: S m13 f=1 m=t n=3 k=2 | touch elsewhere: S m13 f=1 m=h n=3 k=2 | tap: S m13 f=1 m=h n=3 k=0 | mouse click: S m13 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m14 | u: S m14 f=0 m=t n=2 k=0 | tab: S m14 f=1 m=t n=3 k=1 | touch elsewhere: S m14 f=1 m=h n=3 k=1 | tap: S m14 f=1 m=h n=3 k=0 | mouse click: S m14 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m14 | u: S m14 f=0 m=t n=2 k=0 | tab: S m14 f=1 m=t n=3 k=2 | touch elsewhere: S m14 f=1 m=h n=3 k=2 | tap: S m14 f=1 m=h n=3 k=0 | mouse click: S m14 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-m15 | u: S m15 f=0 m=t n=2 k=0 | tab: S m15 f=1 m=t n=3 k=1 | touch elsewhere: S m15 f=1 m=h n=3 k=1 | tap: S m15 f=0 m=h n=2 k=0 | mouse click: S m15 f=0 m=t n=2 k=0 | active after Tab: input role=slider outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-m15 | u: S m15 f=0 m=t n=2 k=0 | tab: S m15 f=1 m=t n=3 k=2 | touch elsewhere: S m15 f=1 m=h n=3 k=2 | tap: S m15 f=0 m=h n=2 k=0 | mouse click: S m15 f=0 m=t n=2 k=0 | active after Tab: input role=slider outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-c1 | u: S c1 f=0 m=t n=2 k=0 | tab: S c1 f=1 m=t n=3 k=1 | touch elsewhere: S c1 f=1 m=h n=3 k=1 | tap: S c1 f=1 m=h n=3 k=0 | mouse click: S c1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-c1 | u: S c1 f=0 m=t n=2 k=0 | tab: S c1 f=1 m=t n=3 k=2 | touch elsewhere: S c1 f=1 m=h n=3 k=2 | tap: S c1 f=1 m=h n=3 k=0 | mouse click: S c1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-c2 | u: S c2 f=0 m=t n=2 k=0 | tab: S c2 f=1 m=t n=3 k=1 | touch elsewhere: S c2 f=1 m=h n=3 k=1 | tap: S c2 f=1 m=h n=3 k=0 | mouse click: S c2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-c2 | u: S c2 f=0 m=t n=2 k=0 | tab: S c2 f=1 m=t n=3 k=2 | touch elsewhere: S c2 f=1 m=h n=3 k=2 | tap: S c2 f=1 m=h n=3 k=0 | mouse click: S c2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-c3 | u: S c3 f=0 m=t n=2 k=0 | tab: S c3 f=1 m=t n=3 k=1 | touch elsewhere: S c3 f=1 m=h n=3 k=1 | tap: S c3 f=1 m=h n=3 k=0 | mouse click: S c3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=switch outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-c3 | u: S c3 f=0 m=t n=2 k=0 | tab: S c3 f=1 m=t n=3 k=2 | touch elsewhere: S c3 f=1 m=h n=3 k=2 | tap: S c3 f=1 m=h n=3 k=0 | mouse click: S c3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=switch outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-c4 | u: S c4 f=0 m=t n=2 k=0 | tab: S c4 f=1 m=t n=3 k=1 | touch elsewhere: S c4 f=1 m=h n=3 k=1 | tap: S c4 f=1 m=h n=3 k=0 | mouse click: S c4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-c4 | u: S c4 f=0 m=t n=2 k=0 | tab: S c4 f=1 m=t n=3 k=2 | touch elsewhere: S c4 f=1 m=h n=3 k=2 | tap: S c4 f=1 m=h n=3 k=0 | mouse click: S c4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-c5 | u: S c5 f=0 m=t n=2 k=0 | tab: S c5 f=1 m=h n=3 k=1 | touch elsewhere: S c5 f=0 m=h n=4 k=1 | tap: S c5 f=1 m=h n=3 k=0 | mouse click: S c5 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-c5 | u: S c5 f=0 m=t n=2 k=0 | tab: S c5 f=1 m=h n=3 k=2 | touch elsewhere: S c5 f=0 m=h n=4 k=2 | tap: S c5 f=1 m=h n=3 k=0 | mouse click: S c5 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-w1 | u: S w1 f=0 m=t n=2 k=0 | tab: S w1 f=1 m=t n=3 k=1 | touch elsewhere: S w1 f=1 m=h n=3 k=1 | tap: S w1 f=1 m=h n=3 k=0 | mouse click: S w1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-w1 | u: S w1 f=0 m=t n=2 k=0 | tab: S w1 f=1 m=t n=3 k=2 | touch elsewhere: S w1 f=1 m=h n=3 k=2 | tap: S w1 f=1 m=h n=3 k=0 | mouse click: S w1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-w2 | u: S w2 f=0 m=t n=2 k=0 | tab: S w2 f=1 m=t n=3 k=1 | touch elsewhere: S w2 f=1 m=h n=3 k=1 | tap: S w2 f=1 m=h n=3 k=0 | mouse click: S w2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-w2 | u: S w2 f=0 m=t n=2 k=0 | tab: S w2 f=1 m=t n=3 k=2 | touch elsewhere: S w2 f=1 m=h n=3 k=2 | tap: S w2 f=1 m=h n=3 k=0 | mouse click: S w2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-w3 | u: S w3 f=0 m=t n=2 k=0 | tab: S w3 f=1 m=t n=3 k=1 | touch elsewhere: S w3 f=1 m=h n=3 k=1 | tap: S w3 f=1 m=h n=3 k=0 | mouse click: S w3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-w3 | u: S w3 f=0 m=t n=2 k=0 | tab: S w3 f=1 m=t n=3 k=2 | touch elsewhere: S w3 f=1 m=h n=3 k=2 | tap: S w3 f=1 m=h n=3 k=0 | mouse click: S w3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-x1 | u: S x1 f=0 m=t n=2 k=0 | tab: S x1 f=1 m=t n=3 k=1 | touch elsewhere: S x1 f=1 m=h n=3 k=1 | tap: S x1 f=1 m=h n=3 k=0 | mouse click: S x1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-x1 | u: S x1 f=0 m=t n=2 k=0 | tab: S x1 f=1 m=t n=3 k=2 | touch elsewhere: S x1 f=1 m=h n=3 k=2 | tap: S x1 f=1 m=h n=3 k=0 | mouse click: S x1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-x2 | u: S x2 f=0 m=t n=2 k=0 | tab: S x2 f=1 m=t n=3 k=1 | touch elsewhere: S x2 f=1 m=h n=3 k=1 | tap: S x2 f=1 m=h n=3 k=0 | mouse click: S x2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-x2 | u: S x2 f=0 m=t n=2 k=0 | tab: S x2 f=1 m=t n=3 k=2 | touch elsewhere: S x2 f=1 m=h n=3 k=2 | tap: S x2 f=1 m=h n=3 k=0 | mouse click: S x2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-x3 | u: S x3 f=0 m=t n=2 k=0 | tab: S x3 f=1 m=t n=3 k=1 | touch elsewhere: S x3 f=1 m=h n=3 k=1 | tap: S x3 f=1 m=h n=3 k=0 | mouse click: S x3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-x3 | u: S x3 f=0 m=t n=2 k=0 | tab: S x3 f=1 m=t n=3 k=2 | touch elsewhere: S x3 f=1 m=h n=3 k=2 | tap: S x3 f=1 m=h n=3 k=0 | mouse click: S x3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-x4 | u: S x4 f=0 m=t n=2 k=0 | tab: S x4 f=1 m=t n=3 k=1 | touch elsewhere: S x4 f=1 m=h n=3 k=1 | tap: S x4 f=1 m=h n=3 k=0 | mouse click: S x4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-x4 | u: S x4 f=0 m=t n=2 k=0 | tab: S x4 f=1 m=t n=3 k=2 | touch elsewhere: S x4 f=1 m=h n=3 k=2 | tap: S x4 f=1 m=h n=3 k=0 | mouse click: S x4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-light-x5 | u: S x5 f=0 m=t n=2 k=0 | tab: S x5 f=1 m=t n=3 k=1 | touch elsewhere: S x5 f=1 m=h n=3 k=1 | tap: S x5 f=1 m=h n=3 k=0 | mouse click: S x5 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB web-dark-x5 | u: S x5 f=0 m=t n=2 k=0 | tab: S x5 f=1 m=t n=3 k=2 | touch elsewhere: S x5 f=1 m=h n=3 k=2 | tap: S x5 f=1 m=h n=3 k=0 | mouse click: S x5 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1 | 
+V14WEB == o1 start: S o1 f=none
+V14WEB   Tab 1: S o1 f=b1 vis=1.00 top=76 bottom=108 port=72-372 over=300-372
+V14WEB   Tab 2: S o1 f=b2 vis=1.00 top=116 bottom=148 port=72-372 over=300-372
+V14WEB   Tab 3: S o1 f=b3 vis=1.00 top=156 bottom=188 port=72-372 over=300-372
+V14WEB   Tab 4: S o1 f=b4 vis=1.00 top=196 bottom=228 port=72-372 over=300-372
+V14WEB   Tab 5: S o1 f=b5 vis=1.00 top=236 bottom=268 port=72-372 over=300-372
+V14WEB   Tab 6: S o1 f=b6 vis=0.75 top=276 bottom=308 port=72-372 over=300-372
+V14WEB   Tab 7: S o1 f=b7 vis=0.00 top=316 bottom=348 port=72-372 over=300-372
+V14WEB   Tab 8: S o1 f=b8 vis=0.00 top=340 bottom=372 port=72-372 over=300-372
+V14WEB   Tab 9: S o1 f=b9 vis=0.00 top=340 bottom=372 port=72-372 over=300-372
+V14WEB   Tab 10: S o1 f=b10 vis=0.00 top=340 bottom=372 port=72-372 over=300-372
+V14WEB   Tab 11: S o1 f=b11 vis=0.00 top=340 bottom=372 port=72-372 over=300-372
+V14WEB   Tab 12: S o1 f=b12 vis=0.00 top=340 bottom=372 port=72-372 over=300-372
+V14WEB   Tab 13: S o1 f=none
+V14WEB == o2 start: S o2 f=none
+V14WEB   Tab 1: S o2 f=b1 vis=1.00 top=76 bottom=108 port=72-300 over=300-372
+V14WEB   Tab 2: S o2 f=b2 vis=1.00 top=116 bottom=148 port=72-300 over=300-372
+V14WEB   Tab 3: S o2 f=b3 vis=1.00 top=156 bottom=188 port=72-300 over=300-372
+V14WEB   Tab 4: S o2 f=b4 vis=1.00 top=196 bottom=228 port=72-300 over=300-372
+V14WEB   Tab 5: S o2 f=b5 vis=1.00 top=236 bottom=268 port=72-300 over=300-372
+V14WEB   Tab 6: S o2 f=b6 vis=1.00 top=268 bottom=300 port=72-300 over=300-372
+V14WEB   Tab 7: S o2 f=b7 vis=1.00 top=268 bottom=300 port=72-300 over=300-372
+V14WEB   Tab 8: S o2 f=b8 vis=1.00 top=268 bottom=300 port=72-300 over=300-372
+V14WEB   Tab 9: S o2 f=b9 vis=1.00 top=268 bottom=300 port=72-300 over=300-372
+V14WEB   Tab 10: S o2 f=b10 vis=1.00 top=268 bottom=300 port=72-300 over=300-372
+V14WEB   Tab 11: S o2 f=b11 vis=1.00 top=268 bottom=300 port=72-300 over=300-372
+V14WEB   Tab 12: S o2 f=b12 vis=1.00 top=268 bottom=300 port=72-300 over=300-372
+V14WEB   Tab 13: S o2 f=none
+V14WEB == o3 start: S o3 f=none
+V14WEB   Tab 1: S o3 f=none
+V14WEB   Tab 2: S o3 f=b1 vis=1.00 top=148 bottom=180 port=72-372 over=72-144
+V14WEB   Tab 3: S o3 f=b2 vis=1.00 top=188 bottom=220 port=72-372 over=72-144
+V14WEB   Tab 4: S o3 f=b3 vis=1.00 top=228 bottom=260 port=72-372 over=72-144
+V14WEB   Tab 5: S o3 f=b4 vis=1.00 top=268 bottom=300 port=72-372 over=72-144
+V14WEB   Tab 6: S o3 f=b5 vis=1.00 top=308 bottom=340 port=72-372 over=72-144
+V14WEB   Tab 7: S o3 f=b6 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 8: S o3 f=b7 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 9: S o3 f=b8 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 10: S o3 f=b9 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 11: S o3 f=b10 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 12: S o3 f=b11 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 13: S o3 f=b12 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB == o4 start: S o4 f=none
+V14WEB   Tab 1: S o4 f=b1 vis=0.00 top=76 bottom=108 port=72-372 over=72-144
+V14WEB   Tab 2: S o4 f=b2 vis=0.13 top=116 bottom=148 port=72-372 over=72-144
+V14WEB   Tab 3: S o4 f=b3 vis=1.00 top=156 bottom=188 port=72-372 over=72-144
+V14WEB   Tab 4: S o4 f=b4 vis=1.00 top=196 bottom=228 port=72-372 over=72-144
+V14WEB   Tab 5: S o4 f=b5 vis=1.00 top=236 bottom=268 port=72-372 over=72-144
+V14WEB   Tab 6: S o4 f=b6 vis=1.00 top=276 bottom=308 port=72-372 over=72-144
+V14WEB   Tab 7: S o4 f=b7 vis=1.00 top=316 bottom=348 port=72-372 over=72-144
+V14WEB   Tab 8: S o4 f=b8 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 9: S o4 f=b9 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 10: S o4 f=b10 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 11: S o4 f=b11 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 12: S o4 f=b12 vis=1.00 top=340 bottom=372 port=72-372 over=72-144
+V14WEB   Tab 13: S o4 f=none
+V14WEB == o5 start: S o5 f=none
+V14WEB   Tab 1: S o5 f=b1 vis=1.00 top=76 bottom=108 port=72-372 over=292-372
+V14WEB   Tab 2: S o5 f=b2 vis=1.00 top=116 bottom=148 port=72-372 over=292-372
+V14WEB   Tab 3: S o5 f=b3 vis=1.00 top=156 bottom=188 port=72-372 over=292-372
+V14WEB   Tab 4: S o5 f=b4 vis=1.00 top=196 bottom=228 port=72-372 over=292-372
+V14WEB   Tab 5: S o5 f=b5 vis=1.00 top=236 bottom=268 port=72-372 over=292-372
+V14WEB   Tab 6: S o5 f=b6 vis=0.50 top=276 bottom=308 port=72-372 over=292-372
+V14WEB   Tab 7: S o5 f=b7 vis=0.00 top=316 bottom=348 port=72-372 over=292-372
+V14WEB   Tab 8: S o5 f=b8 vis=0.00 top=340 bottom=372 port=72-372 over=292-372
+V14WEB   Tab 9: S o5 f=b9 vis=0.00 top=340 bottom=372 port=72-372 over=292-372
+V14WEB   Tab 10: S o5 f=b10 vis=0.00 top=340 bottom=372 port=72-372 over=292-372
+V14WEB   Tab 11: S o5 f=b11 vis=0.00 top=340 bottom=372 port=72-372 over=292-372
+V14WEB   Tab 12: S o5 f=b12 vis=0.00 top=340 bottom=372 port=72-372 over=292-372
+V14WEB   Tab 13: S o5 f=none
+
+# Pixel analysis by analyse.py.txt of the screenshots (not committed). The mouse-click capture (mc) was not analysed.
+== web-dark-c1  u: S c1 f=0 m=t n=2 k=0 | tab: S c1 f=1 m=t n=3 k=2 | touch elsewhere: S c1 f=1 m=h n=3 k=2 | tap: S c1 f=1 m=h n=3 k=0 | mouse click: S c1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1176 of 10752 unstable=0
+   bbox=(12,12)-(115,71) box=128x84
+   indicator=#5C8EC6 (71% of changed) replaced=#121318 change-ratio=5.42
+   new colours: #5C8EC6 71%, #375170 20%, #243244 6%, #496F9B 2%
+   adjacent: #121318 100% ratio 5.42
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-c2  u: S c2 f=0 m=t n=2 k=0 | tab: S c2 f=1 m=t n=3 k=2 | touch elsewhere: S c2 f=1 m=h n=3 k=2 | tap: S c2 f=1 m=h n=3 k=0 | mouse click: S c2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1176 of 10752 unstable=0
+   bbox=(12,12)-(115,71) box=128x84
+   indicator=#5C91C6 (71% of changed) replaced=#121318 change-ratio=5.58
+   new colours: #5C91C6 71%, #375270 18%, #243344 3%, #2076CE 1%
+   adjacent: #121318 52% ratio 5.58; #0A84FF 47% ratio 1.10
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-c3  u: S c3 f=0 m=t n=2 k=0 | tab: S c3 f=1 m=t n=3 k=2 | touch elsewhere: S c3 f=1 m=h n=3 k=2 | tap: S c3 f=1 m=h n=3 k=0 | mouse click: S c3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=switch outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=644 of 6461 unstable=0
+   bbox=(16,16)-(74,54) box=91x71
+   indicator=#5CC677 (63% of changed) replaced=#121318 change-ratio=8.66
+   new colours: #5CC677 63%, #376C47 6%, #2F5A3D 2%, #254231 2%
+   adjacent: #121318 54% ratio 8.66; #323339 18% ratio 5.87; #313238 5% ratio 5.96; #33373A 2% ratio 5.60; #303137 1% ratio 6.05
+   page=#121318
+   e: 0 changed vs u
+   t: 1324 changed vs u
+== web-dark-c4  u: S c4 f=0 m=t n=2 k=0 | tab: S c4 f=1 m=t n=3 k=2 | touch elsewhere: S c4 f=1 m=h n=3 k=2 | tap: S c4 f=1 m=h n=3 k=0 | mouse click: S c4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=244 of 2116 unstable=0
+   bbox=(15,15)-(30,30) box=46x46
+   indicator=#4A5369 (5% of changed) replaced=#121318 change-ratio=2.41
+   new colours: #4A5369 5%, #4F5970 5%, #58637E 5%, #2C3856 3%
+   adjacent: #121318 75% ratio 2.41; #171A24 12% ratio 2.26; #15171F 6% ratio 2.33; #15171E 6% ratio 2.33
+   page=#121318
+   e: 0 changed vs u
+   t: 192 changed vs u
+== web-dark-c5  u: S c5 f=0 m=t n=2 k=0 | tab: S c5 f=1 m=h n=3 k=2 | touch elsewhere: S c5 f=0 m=h n=4 k=2 | tap: S c5 f=1 m=h n=3 k=0 | mouse click: S c5 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=0 of 17952 unstable=44
+   page=#121318
+   e: 0 changed vs u
+   t: 44 changed vs u
+== web-dark-m1  u: S m1 f=0 m=t n=2 k=0 | tab: S m1 f=1 m=t n=3 k=2 | touch elsewhere: S m1 f=1 m=h n=3 k=2 | tap: S m1 f=1 m=h n=3 k=0 | mouse click: S m1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2846 of 8576 unstable=0
+   bbox=(16,16)-(117,47) box=134x64
+   indicator=#2B2C38 (95% of changed) replaced=#1B1B21 change-ratio=1.24
+   new colours: #2B2C38 95%, #2B2C37 0%, #292A35 0%, #404356 0%
+   adjacent: #121318 16% ratio 1.34; #0F1014 12% ratio 1.38; #BAC3FF 2% ratio 8.12; #A9B1E8 2% ratio 6.67; #B7BFFA 2% ratio 7.79
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-m10  u: S m10 f=0 m=t n=2 k=0 | tab: S m10 f=1 m=t n=3 k=2 | touch elsewhere: S m10 f=1 m=h n=3 k=2 | tap: S m10 f=1 m=h n=3 k=0 | mouse click: S m10 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=switch outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1110 of 6624 unstable=0
+   bbox=(16,16)-(55,55) box=92x72
+   indicator=#46464C (50% of changed) replaced=#34343A change-ratio=1.32
+   new colours: #46464C 50%, #27282E 19%, #C7C5D0 15%, #26272C 1%
+   adjacent: #9898A2 30% ratio 3.28; #121318 16% ratio 1.98; #86868F 5% ratio 2.60; #1D1E24 3% ratio 1.77; #92929C 3% ratio 3.04
+   page=#121318
+   e: 0 changed vs u
+   t: 1464 changed vs u
+== web-dark-m11  u: S m11 f=0 m=t n=2 k=0 | tab: S m11 f=1 m=t n=3 k=2 | touch elsewhere: S m11 f=1 m=h n=3 k=2 | tap: S m11 f=1 m=h n=3 k=0 | mouse click: S m11 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=radiogroup outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1256 of 4096 unstable=0
+   bbox=(12,12)-(51,51) box=64x64
+   indicator=#27282E (82% of changed) replaced=#121318 change-ratio=1.26
+   new colours: #27282E 82%, #E4E1E9 3%, #26272C 1%, #1F1F25 1%
+   adjacent: #121318 50% ratio 1.26; #1C1D23 10% ratio 1.14; #1D1E24 10% ratio 1.13; #1A1B20 10% ratio 1.17; #14151A 10% ratio 1.24
+   page=#121318
+   e: 0 changed vs u
+   t: 196 changed vs u
+== web-dark-m12  u: S m12 f=0 m=t n=2 k=0 | tab: S m12 f=1 m=t n=3 k=2 | touch elsewhere: S m12 f=1 m=h n=3 k=2 | tap: S m12 f=1 m=h n=3 k=0 | mouse click: S m12 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=11042 of 21760 unstable=0
+   bbox=(16,16)-(255,63) box=272x80
+   indicator=#2F3034 (98% of changed) replaced=#121318 change-ratio=1.41
+   new colours: #2F3034 98%, #96959B 0%, #818086 0%, #848389 0%
+   adjacent: #121318 47% ratio 1.41; #E4E1E9 9% ratio 10.20; #D2CFD7 2% ratio 8.57; #DEDBE3 2% ratio 9.63; #DDDAE2 1% ratio 9.54
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-m13  u: S m13 f=0 m=t n=2 k=0 | tab: S m13 f=1 m=t n=3 k=2 | touch elsewhere: S m13 f=1 m=h n=3 k=2 | tap: S m13 f=1 m=h n=3 k=0 | mouse click: S m13 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=6318 of 13524 unstable=0
+   bbox=(16,16)-(144,67) box=161x84
+   indicator=#37373C (95% of changed) replaced=#1B1B21 change-ratio=1.45
+   new colours: #37373C 95%, #2F3034 1%, #88878D 0%, #6D6C72 0%
+   adjacent: #121318 17% ratio 1.57; #0F1014 11% ratio 1.61; #E4E1E9 7% ratio 9.16; #111217 3% ratio 1.58; #1D1E22 2% ratio 1.41
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-m14  u: S m14 f=0 m=t n=2 k=0 | tab: S m14 f=1 m=t n=3 k=2 | touch elsewhere: S m14 f=1 m=h n=3 k=2 | tap: S m14 f=1 m=h n=3 k=0 | mouse click: S m14 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2937 of 8910 unstable=0
+   bbox=(17,17)-(117,48) box=135x66
+   indicator=#2F3034 (94% of changed) replaced=#121318 change-ratio=1.41
+   new colours: #2F3034 94%, #35363B 0%, #46464B 0%, #606067 0%
+   adjacent: #46464F 30% ratio 1.41; #C7C5D0 6% ratio 7.74; #C3C1CC 5% ratio 7.42; #ABAAB3 3% ratio 5.73; #C2C0CB 2% ratio 7.34
+   page=#121318
+   e: 0 changed vs u
+   t: 3786 changed vs u
+== web-dark-m15  u: S m15 f=0 m=t n=2 k=0 | tab: S m15 f=1 m=t n=3 k=2 | touch elsewhere: S m15 f=1 m=h n=3 k=2 | tap: S m15 f=0 m=h n=2 k=0 | mouse click: S m15 f=0 m=t n=2 k=0 | active after Tab: input role=slider outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1404 of 21760 unstable=0
+   bbox=(112,16)-(159,63) box=272x80
+   indicator=#232530 (60% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 60%, #22242F 7%, #23252F 3%, #22242E 3%
+   adjacent: #121318 18% ratio 1.22; #BAC3FF 9% ratio 8.95; #181A21 5% ratio 1.14; #14151A 5% ratio 1.20; #1A1C23 5% ratio 1.12
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-m2  u: S m2 f=0 m=t n=2 k=0 | tab: S m2 f=1 m=t n=3 k=2 | touch elsewhere: S m2 f=1 m=h n=3 k=2 | tap: S m2 f=1 m=h n=3 k=0 | mouse click: S m2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2825 of 8576 unstable=0
+   bbox=(16,16)-(117,47) box=134x64
+   indicator=#AAB3EF (95% of changed) replaced=#BAC3FF change-ratio=1.19
+   new colours: #AAB3EF 95%, #A6AFEB 0%, #959ED9 0%, #A9B2ED 0%
+   adjacent: #121318 25% ratio 9.19; #222C61 4% ratio 6.50; #8E96C8 2% ratio 1.42; #303A6F 2% ratio 5.31; #7279A1 2% ratio 2.10
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-m3  u: S m3 f=0 m=t n=2 k=0 | tab: S m3 f=1 m=t n=3 k=2 | touch elsewhere: S m3 f=1 m=h n=3 k=2 | tap: S m3 f=1 m=h n=3 k=0 | mouse click: S m3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2879 of 8576 unstable=0
+   bbox=(16,16)-(118,47) box=134x64
+   indicator=#232530 (85% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 85%, #BAC3FF 5%, #2F3240 0%, #3A3D4F 0%
+   adjacent: #121318 42% ratio 1.22; #BAC3FF 3% ratio 8.95; #B6BFFA 2% ratio 8.57; #8C93C0 2% ratio 5.11; #B5BEF9 1% ratio 8.48
+   page=#121318
+   e: 310 changed vs u
+   t: 310 changed vs u
+== web-dark-m4  u: S m4 f=0 m=t n=2 k=0 | tab: S m4 f=1 m=t n=3 k=2 | touch elsewhere: S m4 f=1 m=h n=3 k=2 | tap: S m4 f=1 m=h n=3 k=0 | mouse click: S m4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2072 of 7040 unstable=0
+   bbox=(16,16)-(93,47) box=110x64
+   indicator=#232530 (92% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 92%, #23252F 0%, #22242E 0%, #545873 0%
+   adjacent: #121318 26% ratio 1.22; #15161C 3% ratio 1.19; #BAC3FF 3% ratio 8.95; #B6BFFA 3% ratio 8.57; #9EA6D9 2% ratio 6.46
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-m5  u: S m5 f=0 m=t n=2 k=0 | tab: S m5 f=1 m=t n=3 k=2 | touch elsewhere: S m5 f=1 m=h n=3 k=2 | tap: S m5 f=1 m=h n=3 k=0 | mouse click: S m5 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1150 of 5184 unstable=0
+   bbox=(16,16)-(55,55) box=72x72
+   indicator=#111E30 (87% of changed) replaced=#121318 change-ratio=1.11
+   new colours: #111E30 87%, #111B28 1%, #121A26 1%, #111D2E 1%
+   adjacent: #121318 29% ratio 1.11; #0A84FF 6% ratio 4.60; #12151B 5% ratio 1.09; #121721 5% ratio 1.07; #121823 5% ratio 1.06
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-m6  u: S m6 f=0 m=t n=2 k=0 | tab: S m6 f=1 m=h n=3 k=2 | touch elsewhere: S m6 f=0 m=h n=4 k=2 | tap: S m6 f=1 m=h n=3 k=0 | mouse click: S m6 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1711 of 21760 unstable=52
+   bbox=(16,12)-(255,63) box=272x80
+   indicator=#BAC3FF (59% of changed) replaced=#121318 change-ratio=10.90
+   new colours: #BAC3FF 59%, #121318 24%, #B5BDF8 1%, #2B2D3A 1%
+   adjacent: #121318 99% ratio 10.90; #17191F 0% ratio 10.32; #1A1B23 0% ratio 10.07; #15161C 0% ratio 10.60
+   page=#121318
+   e: 0 changed vs u
+   t: 1720 changed vs u
+== web-dark-m7  u: S m7 f=0 m=t n=2 k=0 | tab: S m7 f=1 m=h n=3 k=2 | touch elsewhere: S m7 f=0 m=h n=4 k=2 | tap: S m7 f=1 m=h n=3 k=0 | mouse click: S m7 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1117 of 21760 unstable=52
+   bbox=(16,21)-(255,63) box=272x80
+   indicator=#BAC3FF (44% of changed) replaced=#121318 change-ratio=10.90
+   new colours: #BAC3FF 44%, #121318 33%, #B5BDF8 1%, #2B2D3A 1%
+   adjacent: #121318 98% ratio 10.90; #1A1B23 0% ratio 10.07; #15161C 0% ratio 10.60; #17191F 0% ratio 10.32
+   page=#121318
+   e: 0 changed vs u
+   t: 1126 changed vs u
+== web-dark-m8  u: S m8 f=0 m=t n=2 k=0 | tab: S m8 f=1 m=t n=3 k=2 | touch elsewhere: S m8 f=1 m=h n=3 k=2 | tap: S m8 f=1 m=h n=3 k=0 | mouse click: S m8 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1256 of 5184 unstable=0
+   bbox=(16,16)-(55,55) box=72x72
+   indicator=#27282E (84% of changed) replaced=#121318 change-ratio=1.26
+   new colours: #27282E 84%, #E4E1E9 9%, #212227 1%, #26272C 1%
+   adjacent: #121318 50% ratio 1.26; #1D1E24 10% ratio 1.13; #1C1D23 10% ratio 1.14; #1A1B20 10% ratio 1.17; #14151A 10% ratio 1.24
+   page=#121318
+   e: 0 changed vs u
+   t: 324 changed vs u
+== web-dark-m9  u: S m9 f=0 m=t n=2 k=0 | tab: S m9 f=1 m=t n=3 k=2 | touch elsewhere: S m9 f=1 m=h n=3 k=2 | tap: S m9 f=1 m=h n=3 k=0 | mouse click: S m9 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=944 of 5184 unstable=0
+   bbox=(16,16)-(55,55) box=72x72
+   indicator=#232530 (91% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 91%, #1C1E26 1%, #22242E 1%, #1E2028 0%
+   adjacent: #121318 37% ratio 1.22; #BAC3FF 24% ratio 8.95; #AEB6EE 6% ratio 7.78; #14161B 6% ratio 1.19; #191A21 6% ratio 1.14
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-w1  u: S w1 f=0 m=t n=2 k=0 | tab: S w1 f=1 m=t n=3 k=2 | touch elsewhere: S w1 f=1 m=h n=3 k=2 | tap: S w1 f=1 m=h n=3 k=0 | mouse click: S w1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=0 of 12684 unstable=0
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-w2  u: S w2 f=0 m=t n=2 k=0 | tab: S w2 f=1 m=t n=3 k=2 | touch elsewhere: S w2 f=1 m=h n=3 k=2 | tap: S w2 f=1 m=h n=3 k=0 | mouse click: S w2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2227 of 13158 unstable=0
+   bbox=(16,16)-(141,73) box=153x86
+   indicator=#E4E1E9 (43% of changed) replaced=#121318 change-ratio=14.35
+   new colours: #E4E1E9 43%, #34343A 29%, #96949B 1%, #6E6D73 1%
+   adjacent: #34343A 60% ratio 9.57; #121318 29% ratio 14.35; #E1DEE6 1% ratio 1.03; #78777E 0% ratio 3.43; #D8D5DD 0% ratio 1.12
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-w3  u: S w3 f=0 m=t n=2 k=0 | tab: S w3 f=1 m=t n=3 k=2 | touch elsewhere: S w3 f=1 m=h n=3 k=2 | tap: S w3 f=1 m=h n=3 k=0 | mouse click: S w3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2225 of 13158 unstable=0
+   bbox=(16,16)-(141,73) box=153x86
+   indicator=#E4E1E9 (42% of changed) replaced=#121318 change-ratio=14.35
+   new colours: #E4E1E9 42%, #34343A 29%, #96949B 1%, #6E6D73 1%
+   adjacent: #34343A 60% ratio 9.57; #121318 29% ratio 14.35; #E1DEE6 1% ratio 1.03; #78777E 0% ratio 3.43; #D8D5DD 0% ratio 1.12
+   page=#121318
+   e: 2225 changed vs u
+   t: 2225 changed vs u
+== web-dark-x1  u: S x1 f=0 m=t n=2 k=0 | tab: S x1 f=1 m=t n=3 k=2 | touch elsewhere: S x1 f=1 m=h n=3 k=2 | tap: S x1 f=1 m=h n=3 k=0 | mouse click: S x1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=0 of 8256 unstable=0
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-x2  u: S x2 f=0 m=t n=2 k=0 | tab: S x2 f=1 m=t n=3 k=2 | touch elsewhere: S x2 f=1 m=h n=3 k=2 | tap: S x2 f=1 m=h n=3 k=0 | mouse click: S x2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=0 of 12432 unstable=0
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-x3  u: S x3 f=0 m=t n=2 k=0 | tab: S x3 f=1 m=t n=3 k=2 | touch elsewhere: S x3 f=1 m=h n=3 k=2 | tap: S x3 f=1 m=h n=3 k=0 | mouse click: S x3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1959 of 6720 unstable=0
+   bbox=(16,16)-(88,47) box=105x64
+   indicator=#232530 (64% of changed) replaced=#121318 change-ratio=1.22
+   new colours: #232530 64%, #E0DEEB 21%, #52535E 0%, #95949D 0%
+   adjacent: #121318 38% ratio 1.22; #BAC3FF 2% ratio 8.95; #B6BFFA 2% ratio 8.57; #B8C1FD 1% ratio 8.76; #B6BFF9 1% ratio 8.57
+   page=#121318
+   e: 596 changed vs u
+   t: 596 changed vs u
+== web-dark-x4  u: S x4 f=0 m=t n=2 k=0 | tab: S x4 f=1 m=t n=3 k=2 | touch elsewhere: S x4 f=1 m=h n=3 k=2 | tap: S x4 f=1 m=h n=3 k=0 | mouse click: S x4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2821 of 8256 unstable=0
+   bbox=(16,16)-(112,47) box=129x64
+   indicator=#7F7E85 (90% of changed) replaced=#1B1B21 change-ratio=4.26
+   new colours: #7F7E85 90%, #9597B2 0%, #9294AD 0%, #78777E 0%
+   adjacent: #121318 22% ratio 4.62; #0F1014 13% ratio 4.73; #BAC3FF 11% ratio 2.36; #B9C2FE 5% ratio 2.34; #B9C2FD 5% ratio 2.33
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-dark-x5  u: S x5 f=0 m=t n=2 k=0 | tab: S x5 f=1 m=t n=3 k=2 | touch elsewhere: S x5 f=1 m=h n=3 k=2 | tap: S x5 f=1 m=h n=3 k=0 | mouse click: S x5 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1171 of 10752 unstable=0
+   bbox=(12,12)-(114,71) box=128x84
+   indicator=#FFFFFF (71% of changed) replaced=#121318 change-ratio=18.55
+   new colours: #FFFFFF 71%, #89898C 19%, #4D4E52 5%, #C4C4C5 3%
+   adjacent: #121318 100% ratio 18.55
+   page=#121318
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-c1  u: S c1 f=0 m=t n=2 k=0 | tab: S c1 f=1 m=t n=3 k=1 | touch elsewhere: S c1 f=1 m=h n=3 k=1 | tap: S c1 f=1 m=h n=3 k=0 | mouse click: S c1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1176 of 10752 unstable=0
+   bbox=(12,12)-(115,71) box=128x84
+   indicator=#8ABCF5 (71% of changed) replaced=#FBF8FF change-ratio=1.89
+   new colours: #8ABCF5 71%, #C2DAFA 20%, #DFE9FC 6%, #A7CBF7 2%
+   adjacent: #FBF8FF 100% ratio 1.89
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-c2  u: S c2 f=0 m=t n=2 k=0 | tab: S c2 f=1 m=t n=3 k=1 | touch elsewhere: S c2 f=1 m=h n=3 k=1 | tap: S c2 f=1 m=h n=3 k=0 | mouse click: S c2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1135 of 10752 unstable=0
+   bbox=(12,12)-(115,71) box=128x84
+   indicator=#8ABCF5 (73% of changed) replaced=#FBF8FF change-ratio=1.89
+   new colours: #8ABCF5 73%, #C2DAFA 18%, #DFE9FC 3%, #A7CBF7 1%
+   adjacent: #FBF8FF 51% ratio 1.89; #007AFF 37% ratio 2.03; #77B4FA 5% ratio 1.09; #489EFC 5% ratio 1.40; #7AB7FC 0% ratio 1.06
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-c3  u: S c3 f=0 m=t n=2 k=0 | tab: S c3 f=1 m=t n=3 k=1 | touch elsewhere: S c3 f=1 m=h n=3 k=1 | tap: S c3 f=1 m=h n=3 k=0 | mouse click: S c3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=switch outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=626 of 6461 unstable=0
+   bbox=(16,16)-(74,54) box=91x71
+   indicator=#8AF4A5 (65% of changed) replaced=#FBF8FF change-ratio=1.28
+   new colours: #8AF4A5 65%, #C3F6D2 7%, #CEF6DB 2%, #DDF7E7 2%
+   adjacent: #FBF8FF 45% ratio 1.28; #E7E4EB 16% ratio 1.07; #F2F8F7 8% ratio 1.26; #E4E5EA 2% ratio 1.07; #E6E3EA 1% ratio 1.06
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 1320 changed vs u
+== web-light-c4  u: S c4 f=0 m=t n=2 k=0 | tab: S c4 f=1 m=t n=3 k=1 | touch elsewhere: S c4 f=1 m=h n=3 k=1 | tap: S c4 f=1 m=h n=3 k=0 | mouse click: S c4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=244 of 2116 unstable=0
+   bbox=(13,13)-(32,32) box=46x46
+   indicator=#8ABCF5 (52% of changed) replaced=#FBF8FF change-ratio=1.89
+   new colours: #8ABCF5 52%, #A6CBF8 13%, #A8CDF8 6%, #A8CEF8 6%
+   adjacent: #FBF8FF 62% ratio 1.89; #FFFFFF 37% ratio 1.98
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 176 changed vs u
+== web-light-c5  u: S c5 f=0 m=t n=2 k=0 | tab: S c5 f=1 m=h n=3 k=1 | touch elsewhere: S c5 f=0 m=h n=4 k=1 | tap: S c5 f=1 m=h n=3 k=0 | mouse click: S c5 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=0 of 17952 unstable=44
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 44 changed vs u
+== web-light-m1  u: S m1 f=0 m=t n=2 k=0 | tab: S m1 f=1 m=t n=3 k=1 | touch elsewhere: S m1 f=1 m=h n=3 k=1 | tap: S m1 f=1 m=h n=3 k=0 | mouse click: S m1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2839 of 8576 unstable=0
+   bbox=(16,16)-(117,47) box=134x64
+   indicator=#E4E2F0 (95% of changed) replaced=#F5F2FA change-ratio=1.15
+   new colours: #E4E2F0 95%, #DEDDEC 0%, #C9CADF 0%, #D3D3E5 0%
+   adjacent: #FBF8FF 13% ratio 1.22; #D2D0D5 12% ratio 1.20; #515B92 3% ratio 5.04; #5A6398 2% ratio 4.47; #7B81AD 2% ratio 2.94
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-m10  u: S m10 f=0 m=t n=2 k=0 | tab: S m10 f=1 m=t n=3 k=1 | touch elsewhere: S m10 f=1 m=h n=3 k=1 | tap: S m10 f=1 m=h n=3 k=0 | mouse click: S m10 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=switch outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1124 of 6624 unstable=0
+   bbox=(16,16)-(55,55) box=92x72
+   indicator=#D0CDD4 (49% of changed) replaced=#E4E1E9 change-ratio=1.22
+   new colours: #D0CDD4 49%, #E4E2E8 19%, #46464F 15%, #E6E3E9 1%
+   adjacent: #6D6D76 37% ratio 3.26; #FBF8FF 16% ratio 1.49; #82818A 5% ratio 2.45; #EFECF3 3% ratio 1.34; #74747D 3% ratio 2.95
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 1452 changed vs u
+== web-light-m11  u: S m11 f=0 m=t n=2 k=0 | tab: S m11 f=1 m=t n=3 k=1 | touch elsewhere: S m11 f=1 m=h n=3 k=1 | tap: S m11 f=1 m=h n=3 k=0 | mouse click: S m11 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=radiogroup outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1256 of 4096 unstable=0
+   bbox=(12,12)-(51,51) box=64x64
+   indicator=#E4E2E8 (82% of changed) replaced=#FBF8FF change-ratio=1.22
+   new colours: #E4E2E8 82%, #1B1B21 3%, #E6E3E9 1%, #EEEBF1 1%
+   adjacent: #FBF8FF 50% ratio 1.22; #F0EDF4 10% ratio 1.11; #EFECF3 10% ratio 1.10; #F2EFF6 10% ratio 1.13; #F9F6FD 10% ratio 1.20
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 204 changed vs u
+== web-light-m12  u: S m12 f=0 m=t n=2 k=0 | tab: S m12 f=1 m=t n=3 k=1 | touch elsewhere: S m12 f=1 m=h n=3 k=1 | tap: S m12 f=1 m=h n=3 k=0 | mouse click: S m12 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=11282 of 21760 unstable=0
+   bbox=(16,16)-(255,63) box=272x80
+   indicator=#DCDAE0 (96% of changed) replaced=#FBF8FF change-ratio=1.32
+   new colours: #DCDAE0 96%, #67676D 0%, #8E8D93 0%, #B7B5BB 0%
+   adjacent: #FBF8FF 49% ratio 1.32; #1B1B21 16% ratio 12.36; #45454B 3% ratio 6.87; #4B4A50 2% ratio 6.33; #535258 2% ratio 5.58
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-m13  u: S m13 f=0 m=t n=2 k=0 | tab: S m13 f=1 m=t n=3 k=1 | touch elsewhere: S m13 f=1 m=h n=3 k=1 | tap: S m13 f=1 m=h n=3 k=0 | mouse click: S m13 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=6527 of 13524 unstable=0
+   bbox=(16,16)-(144,67) box=161x84
+   indicator=#D7D5DC (92% of changed) replaced=#F5F2FA change-ratio=1.31
+   new colours: #D7D5DC 92%, #DCDAE0 1%, #D6D4DB 0%, #88878E 0%
+   adjacent: #FBF8FF 18% ratio 1.38; #D2D0D5 12% ratio 1.05; #1B1B21 10% ratio 11.78; #F3F0F7 3% ratio 1.29; #323238 3% ratio 8.76
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-m14  u: S m14 f=0 m=t n=2 k=0 | tab: S m14 f=1 m=t n=3 k=1 | touch elsewhere: S m14 f=1 m=h n=3 k=1 | tap: S m14 f=1 m=h n=3 k=0 | mouse click: S m14 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=3024 of 8910 unstable=0
+   bbox=(17,17)-(117,48) box=135x66
+   indicator=#DCDAE0 (91% of changed) replaced=#FBF8FF change-ratio=1.32
+   new colours: #DCDAE0 91%, #D6D4DA 0%, #D6D3DB 0%, #CBC9D0 0%
+   adjacent: #C7C5D0 30% ratio 1.23; #46464F 8% ratio 6.73; #C5C3CE 5% ratio 1.25; #828189 4% ratio 2.78; #4F4F58 3% ratio 5.84
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 4004 changed vs u
+== web-light-m15  u: S m15 f=0 m=t n=2 k=0 | tab: S m15 f=1 m=t n=3 k=1 | touch elsewhere: S m15 f=1 m=h n=3 k=1 | tap: S m15 f=0 m=h n=2 k=0 | mouse click: S m15 f=0 m=t n=2 k=0 | active after Tab: input role=slider outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1372 of 21760 unstable=0
+   bbox=(112,16)-(159,63) box=272x80
+   indicator=#E9E8F4 (51% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #E9E8F4 51%, #E8E7F3 6%, #E7E6F2 4%, #E5E4F0 2%
+   adjacent: #FBF8FF 13% ratio 1.15; #F1EFF9 11% ratio 1.07; #F3F1FA 11% ratio 1.08; #F5F2FB 8% ratio 1.10; #515B92 6% ratio 5.31
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-m2  u: S m2 f=0 m=t n=2 k=0 | tab: S m2 f=1 m=t n=3 k=1 | touch elsewhere: S m2 f=1 m=h n=3 k=1 | tap: S m2 f=1 m=h n=3 k=0 | mouse click: S m2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2756 of 8576 unstable=0
+   bbox=(16,16)-(117,47) box=134x64
+   indicator=#636C9D (97% of changed) replaced=#515B92 change-ratio=1.28
+   new colours: #636C9D 97%, #888FB4 0%, #636C9E 0%, #6C74A4 0%
+   adjacent: #FBF8FF 26% ratio 4.80; #FFFFFF 2% ratio 5.05; #7E85AF 2% ratio 1.41; #9A9EC1 2% ratio 1.93; #C2C5D9 1% ratio 2.95
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-m3  u: S m3 f=0 m=t n=2 k=0 | tab: S m3 f=1 m=t n=3 k=1 | touch elsewhere: S m3 f=1 m=h n=3 k=1 | tap: S m3 f=1 m=h n=3 k=0 | mouse click: S m3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2883 of 8576 unstable=0
+   bbox=(16,16)-(117,47) box=134x64
+   indicator=#E9E8F4 (85% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #E9E8F4 85%, #515B92 4%, #DEDDED 0%, #E3E2F0 0%
+   adjacent: #FBF8FF 37% ratio 1.15; #515B92 3% ratio 5.31; #DADAEA 2% ratio 1.14; #5B6498 2% ratio 4.65; #5E679A 2% ratio 4.46
+   page=#FBF8FF
+   e: 268 changed vs u
+   t: 268 changed vs u
+== web-light-m4  u: S m4 f=0 m=t n=2 k=0 | tab: S m4 f=1 m=t n=3 k=1 | touch elsewhere: S m4 f=1 m=h n=3 k=1 | tap: S m4 f=1 m=h n=3 k=0 | mouse click: S m4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2073 of 7040 unstable=0
+   bbox=(16,16)-(93,47) box=110x64
+   indicator=#E9E8F4 (92% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #E9E8F4 92%, #E3E2F0 0%, #EAE8F4 0%, #EBE9F5 0%
+   adjacent: #FBF8FF 22% ratio 1.15; #515B92 3% ratio 5.31; #5B6498 3% ratio 4.65; #F0EEF8 2% ratio 1.06; #F8F5FD 2% ratio 1.12
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-m5  u: S m5 f=0 m=t n=2 k=0 | tab: S m5 f=1 m=t n=3 k=1 | touch elsewhere: S m5 f=1 m=h n=3 k=1 | tap: S m5 f=1 m=h n=3 k=0 | mouse click: S m5 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1152 of 5184 unstable=0
+   bbox=(16,16)-(55,55) box=72x72
+   indicator=#E1EBFF (87% of changed) replaced=#FBF8FF change-ratio=1.14
+   new colours: #E1EBFF 87%, #E9EFFF 1%, #ECF0FF 1%, #E3EBFF 1%
+   adjacent: #FBF8FF 29% ratio 1.14; #007AFF 7% ratio 3.35; #F7F6FF 5% ratio 1.12; #F1F3FF 5% ratio 1.08; #EFF2FF 5% ratio 1.07
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-m6  u: S m6 f=0 m=t n=2 k=0 | tab: S m6 f=1 m=h n=3 k=1 | touch elsewhere: S m6 f=0 m=h n=4 k=1 | tap: S m6 f=1 m=h n=3 k=0 | mouse click: S m6 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1644 of 21760 unstable=52
+   bbox=(16,12)-(255,63) box=272x80
+   indicator=#515B92 (61% of changed) replaced=#FBF8FF change-ratio=6.12
+   new colours: #515B92 61%, #FBF8FF 24%, #60699B 1%, #E6E4F1 0%
+   adjacent: #FBF8FF 94% ratio 6.12; #F7F4FC 1% ratio 5.92; #F4F2FB 1% ratio 5.81; #F2F0F9 0% ratio 5.71; #F0EEF8 0% ratio 5.61
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 1653 changed vs u
+== web-light-m7  u: S m7 f=0 m=t n=2 k=0 | tab: S m7 f=1 m=h n=3 k=1 | touch elsewhere: S m7 f=0 m=h n=4 k=1 | tap: S m7 f=1 m=h n=3 k=0 | mouse click: S m7 f=1 m=h n=3 k=0 | active after Tab: input role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1038 of 21760 unstable=52
+   bbox=(16,21)-(255,63) box=272x80
+   indicator=#515B92 (48% of changed) replaced=#FBF8FF change-ratio=6.12
+   new colours: #515B92 48%, #FBF8FF 34%, #60699B 1%, #E6E4F1 1%
+   adjacent: #FBF8FF 90% ratio 6.12; #F4F2FB 2% ratio 5.81; #F7F4FC 1% ratio 5.92; #F0EEF8 1% ratio 5.61; #F2F0F9 0% ratio 5.71
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 1047 changed vs u
+== web-light-m8  u: S m8 f=0 m=t n=2 k=0 | tab: S m8 f=1 m=t n=3 k=1 | touch elsewhere: S m8 f=1 m=h n=3 k=1 | tap: S m8 f=1 m=h n=3 k=0 | mouse click: S m8 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1256 of 5184 unstable=0
+   bbox=(16,16)-(55,55) box=72x72
+   indicator=#E4E2E8 (84% of changed) replaced=#FBF8FF change-ratio=1.22
+   new colours: #E4E2E8 84%, #1B1B21 9%, #EBE9EF 1%, #E6E3E9 1%
+   adjacent: #FBF8FF 50% ratio 1.22; #EFECF3 10% ratio 1.10; #F0EDF4 10% ratio 1.11; #F2EFF6 10% ratio 1.13; #F9F6FD 10% ratio 1.20
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 300 changed vs u
+== web-light-m9  u: S m9 f=0 m=t n=2 k=0 | tab: S m9 f=1 m=t n=3 k=1 | touch elsewhere: S m9 f=1 m=h n=3 k=1 | tap: S m9 f=1 m=h n=3 k=0 | mouse click: S m9 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=checkbox outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=900 of 5184 unstable=0
+   bbox=(16,16)-(55,55) box=72x72
+   indicator=#E9E8F4 (95% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #E9E8F4 95%, #EAE9F5 1%, #ECEAF6 0%, #EAE8F4 0%
+   adjacent: #515B92 24% ratio 5.31; #F1EEF8 13% ratio 1.06; #EFEDF7 13% ratio 1.05; #FBF8FF 13% ratio 1.15; #F1EFF9 6% ratio 1.07
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-w1  u: S w1 f=0 m=t n=2 k=0 | tab: S w1 f=1 m=t n=3 k=1 | touch elsewhere: S w1 f=1 m=h n=3 k=1 | tap: S w1 f=1 m=h n=3 k=0 | mouse click: S w1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=0 of 12684 unstable=0
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-w2  u: S w2 f=0 m=t n=2 k=0 | tab: S w2 f=1 m=t n=3 k=1 | touch elsewhere: S w2 f=1 m=h n=3 k=1 | tap: S w2 f=1 m=h n=3 k=0 | mouse click: S w2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2197 of 13158 unstable=0
+   bbox=(16,16)-(141,73) box=153x86
+   indicator=#1B1B21 (43% of changed) replaced=#FBF8FF change-ratio=16.30
+   new colours: #1B1B21 43%, #E4E1E9 28%, #99979E 1%, #75737A 1%
+   adjacent: #E4E1E9 58% ratio 13.26; #FBF8FF 28% ratio 16.30; #E1DEE6 1% ratio 12.89; #E2DFE7 1% ratio 13.01; #E3E0E8 1% ratio 13.13
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-w3  u: S w3 f=0 m=t n=2 k=0 | tab: S w3 f=1 m=t n=3 k=1 | touch elsewhere: S w3 f=1 m=h n=3 k=1 | tap: S w3 f=1 m=h n=3 k=0 | mouse click: S w3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=null outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2195 of 13158 unstable=0
+   bbox=(16,16)-(141,73) box=153x86
+   indicator=#1B1B21 (43% of changed) replaced=#FBF8FF change-ratio=16.30
+   new colours: #1B1B21 43%, #E4E1E9 28%, #99979E 1%, #75737A 1%
+   adjacent: #E4E1E9 58% ratio 13.26; #FBF8FF 29% ratio 16.30; #E1DEE6 1% ratio 12.89; #E3E0E8 1% ratio 13.13; #E2DFE7 1% ratio 13.01
+   page=#FBF8FF
+   e: 2195 changed vs u
+   t: 2195 changed vs u
+== web-light-x1  u: S x1 f=0 m=t n=2 k=0 | tab: S x1 f=1 m=t n=3 k=1 | touch elsewhere: S x1 f=1 m=h n=3 k=1 | tap: S x1 f=1 m=h n=3 k=0 | mouse click: S x1 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=0 of 8256 unstable=0
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-x2  u: S x2 f=0 m=t n=2 k=0 | tab: S x2 f=1 m=t n=3 k=1 | touch elsewhere: S x2 f=1 m=h n=3 k=1 | tap: S x2 f=1 m=h n=3 k=0 | mouse click: S x2 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=0 of 12432 unstable=0
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-x3  u: S x3 f=0 m=t n=2 k=0 | tab: S x3 f=1 m=t n=3 k=1 | touch elsewhere: S x3 f=1 m=h n=3 k=1 | tap: S x3 f=1 m=h n=3 k=0 | mouse click: S x3 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1983 of 6720 unstable=0
+   bbox=(16,16)-(88,47) box=105x64
+   indicator=#E9E8F4 (64% of changed) replaced=#FBF8FF change-ratio=1.15
+   new colours: #E9E8F4 64%, #20212D 21%, #B8B6C3 0%, #706F7A 0%
+   adjacent: #FBF8FF 40% ratio 1.15; #515B92 2% ratio 5.31; #5B6498 1% ratio 4.65; #A3A7C7 1% ratio 1.94; #9A9EC1 1% ratio 2.15
+   page=#FBF8FF
+   e: 596 changed vs u
+   t: 596 changed vs u
+== web-light-x4  u: S x4 f=0 m=t n=2 k=0 | tab: S x4 f=1 m=t n=3 k=1 | touch elsewhere: S x4 f=1 m=h n=3 k=1 | tap: S x4 f=1 m=h n=3 k=0 | mouse click: S x4 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=2852 of 8256 unstable=0
+   bbox=(16,16)-(112,47) box=129x64
+   indicator=#88878E (89% of changed) replaced=#F5F2FA change-ratio=3.21
+   new colours: #88878E 89%, #82828E 0%, #80818F 0%, #83838E 0%
+   adjacent: #FBF8FF 22% ratio 3.38; #D2D0D5 14% ratio 2.32; #515B92 12% ratio 1.81; #555E92 7% ratio 1.73; #545E92 5% ratio 1.74
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u
+== web-light-x5  u: S x5 f=0 m=t n=2 k=0 | tab: S x5 f=1 m=t n=3 k=1 | touch elsewhere: S x5 f=1 m=h n=3 k=1 | tap: S x5 f=1 m=h n=3 k=0 | mouse click: S x5 f=1 m=h n=3 k=0 | active after Tab: flt-semantics role=button outline=auto 1px rgb(0, 95, 204) filter=none opacity=1
+   changed=1171 of 10752 unstable=0
+   bbox=(12,12)-(114,71) box=128x84
+   indicator=#000000 (71% of changed) replaced=#FBF8FF change-ratio=19.97
+   new colours: #000000 71%, #7D7C7F 19%, #BCBABF 5%, #3F3E40 3%
+   adjacent: #FBF8FF 100% ratio 19.97
+   page=#FBF8FF
+   e: 0 changed vs u
+   t: 0 changed vs u

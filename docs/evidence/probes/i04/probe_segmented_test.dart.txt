@@ -1,0 +1,97 @@
+// Throwaway I04 probe, round 3 (review): the keyboard on a
+// CupertinoSlidingSegmentedControl. Not committed as a test: kept as
+// docs/evidence/probes/i04/probe_segmented_test.dart.txt.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets('CupertinoSlidingSegmentedControl keys ($platform)', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = platform;
+      final handle = tester.ensureSemantics();
+      var value = 0;
+      final log = <String>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                StatefulBuilder(
+                  builder: (context, setState) =>
+                      CupertinoSlidingSegmentedControl<int>(
+                        groupValue: value,
+                        children: const {
+                          0: Text('A'),
+                          1: Text('B'),
+                          2: Text('C'),
+                        },
+                        onValueChanged: (v) => setState(() {
+                          value = v!;
+                          log.add('changed $v');
+                        }),
+                      ),
+                ),
+                ElevatedButton(onPressed: () {}, child: const Text('After')),
+              ],
+            ),
+          ),
+        ),
+      );
+      String focus() =>
+          FocusManager.instance.primaryFocus?.debugLabel ??
+          '${FocusManager.instance.primaryFocus?.runtimeType}';
+      final steps = <String>[];
+      Future<void> press(String name, LogicalKeyboardKey key) async {
+        await tester.sendKeyEvent(key);
+        await tester.pumpAndSettle();
+        steps.add('$name -> value=$value focus=${focus()}');
+      }
+
+      await press('Tab', LogicalKeyboardKey.tab);
+      await press('Space (on the selected segment)', LogicalKeyboardKey.space);
+      await press('Right', LogicalKeyboardKey.arrowRight);
+      await press('Right', LogicalKeyboardKey.arrowRight);
+      await press('Right (from the last)', LogicalKeyboardKey.arrowRight);
+      await press('Left', LogicalKeyboardKey.arrowLeft);
+      await press('Down', LogicalKeyboardKey.arrowDown);
+      await press('Up', LogicalKeyboardKey.arrowUp);
+      await press('Enter', LogicalKeyboardKey.enter);
+      await press('Tab', LogicalKeyboardKey.tab);
+      // The selected segment's semantics.
+      final nodes = <String>[];
+      void visit(SemanticsNode n) {
+        final d = n.getSemanticsData();
+        if (['A', 'B', 'C'].contains(d.label)) {
+          nodes.add(
+            '${d.label}: inMutuallyExclusiveGroup='
+            '${d.flagsCollection.isInMutuallyExclusiveGroup} '
+            'checked=${d.flagsCollection.isChecked} '
+            'selected=${d.flagsCollection.isSelected} '
+            'focusable=${d.flagsCollection.isFocused}',
+          );
+        }
+        n.visitChildren((c) {
+          visit(c);
+          return true;
+        });
+      }
+
+      visit(
+        tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
+      );
+      // ignore: avoid_print
+      print(
+        'I04PROBE3 $platform\n  ${steps.join('\n  ')}\n  log: $log\n  '
+        'semantics: ${nodes.join(' | ')}',
+      );
+      handle.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
+}

@@ -1,0 +1,152 @@
+== device
+17
+Physical size: 1080x2424
+Physical density: 420
+Success
+Success
+== tabPath (TalkBack off)
+OK (1 test)
+tab path: other(_ModalScopeState<dynamic> Focus Scope) other(FocusNode) q01 q01-btn q02 q02-btn q05 q06 other(FocusNode) other(FocusNode) other(FocusNode) other(FocusNode) q09 q10 q10b q11 q12 other(FocusNode) q13 q14-btn q15-btn q15-focus other(FocusNode) q01 q01-btn q02 q02-btn q05 q06 other(FocusNode)
+q09 node: class=android.widget.EditText editable=true actions=[64, 16]
+ACTION_IME_ENTER id=16908372
+== letters (TalkBack off)
+OK (1 test)
+q01 reached true
+q01 typed 'afg b' (input text) | focus=q01 | Log:  | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9'
+q01-btn reached true
+q01 F, G on the button | focus=q01-btn | Log: q01 char-f / q01 key-g | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' F'f' G'g'
+q02 reached true
+q02 typed 'afg b' (input text) | focus=q02 | Log:  | Texts: q01= | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q02-btn reached true
+q02 F, G on the button | focus=q02-btn | Log: q02 key-g | Texts: q01= | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' G'g'
+== registry (TalkBack off)
+OK (1 test)
+q04 H with no focus | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q04 registry-h | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=H'h'
+q04 H on q01-btn | focus=q01-btn | Log: q04 registry-h | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=H'h' Tab'^9' Tab'^9' Tab'^9'
+q04 typed 'hi' in q09 | focus=q09 | Log: q04 registry-h | Texts: q01= | q02= | q09=hi | q10= | q10b= | q11= | q12= | q13= | Scroll: 408 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+== viewers (TalkBack off)
+OK (1 test)
+q05 reached true
+q05 DPAD_RIGHT | focus=q05 | Log: q05 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right
+q05 DPAD_RIGHT | focus=q05 | Log: q05 photo 2 / q05 photo 3 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right Arrow Right
+q05 DPAD_LEFT | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Arrow Right Arrow Right Arrow Left
+q05 MOVE_END | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right Arrow Left End
+q05 MOVE_HOME | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Arrow Right Arrow Right Arrow Left End Home
+q05 F | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Right Arrow Right Arrow Left End Home F'f'
+q05 PAGE_DOWN | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 561 | keys=Right Arrow Left End Home F'f' Page Down
+q05 PAGE_UP | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Left End Home F'f' Page Down Page Up
+q05 longpress DPAD_RIGHT | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true / q05 photo 2 / q05 photo 3 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Page Down Page Up Arrow Right Arrow Right(rep)
+q05 DPAD_DOWN | focus=q06 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true / q05 photo 2 / q05 photo 3 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Page Up Arrow Right Arrow Right(rep) Arrow Down
+q06 reached true
+q06 DPAD_RIGHT | focus=q06 | Log: q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right
+q06 DPAD_RIGHT | focus=q06 | Log: q06 photo 2 / q06 photo 3 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right Arrow Right
+q06 DPAD_LEFT | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Arrow Right Arrow Right Arrow Left
+q06 MOVE_END | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right Arrow Left End
+q06 MOVE_HOME | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Arrow Right Arrow Right Arrow Left End Home
+q06 F | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Right Arrow Right Arrow Left End Home F'f'
+q06 PAGE_DOWN | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 574 | keys=Right Arrow Left End Home F'f' Page Down
+q06 PAGE_UP | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Left End Home F'f' Page Down Page Up
+q06 longpress DPAD_RIGHT | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true / q06 photo 3 / q06 photo 4 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Page Down Page Up Arrow Right Arrow Right(rep)
+q06 DPAD_DOWN | focus=other(FocusNode) | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true / q06 photo 3 / q06 photo 4 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Page Up Arrow Right Arrow Right(rep) Arrow Down
+== carousel (TalkBack off)
+OK (1 test)
+after q06, Tab 1 | focus=other(FocusNode) | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+  then DPAD_RIGHT | focus=other(FocusNode) | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right
+  then ENTER | focus=other(FocusNode) | Log: q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right Enter'^10'
+  then SPACE | focus=other(FocusNode) | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Arrow Right Enter'^10'  ' '
+after q06, Tab 2 | focus=other(FocusNode) | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Enter'^10'  ' ' Tab'^9'
+after q06, Tab 3 | focus=other(FocusNode) | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Arrow Right Enter'^10'  ' ' Tab'^9' Tab'^9'
+after q06, Tab 4 | focus=q09 | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 408 | keys=Right Enter'^10'  ' ' Tab'^9' Tab'^9' Tab'^9'
+after q06, Tab 5 | focus=q10 | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 496 | keys=Enter'^10'  ' ' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+after q06, Tab 6 | focus=q10b | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 552 | keys= ' ' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+== fields (TalkBack off)
+OK (1 test)
+q09 reached true
+q09 'ab' ENTER | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q09 submit "abc" | Texts: q01= | q02= | q09=abc | q10= | q10b= | q11= | q12= | q13= | Scroll: 408 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+q09 then 'c' | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q09 submit "abc" | Texts: q01= | q02= | q09=abc | q10= | q10b= | q11= | q12= | q13= | Scroll: 408 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10' C'c'
+q09 then TAB | focus=other(FocusNode) | Log: q09 submit "abc" | Texts: q01= | q02= | q09=abc | q10= | q10b= | q11= | q12= | q13= | Scroll: 408 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10' C'c' Tab'^9'
+q10 reached true
+q10 'ab' ENTER | focus=q10b | Log: q10 submit "abc" | Texts: q01= | q02= | q09= | q10=abc | q10b= | q11= | q12= | q13= | Scroll: 552 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+q10 then 'c' | focus=q10b | Log: q10 submit "abc" | Texts: q01= | q02= | q09= | q10=abc | q10b=c | q11= | q12= | q13= | Scroll: 552 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+q10 then TAB | focus=q11 | Log: q10 submit "abc" | Texts: q01= | q02= | q09= | q10=abc | q10b=c | q11= | q12= | q13= | Scroll: 649 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10' Tab'^9'
+q11 reached true
+q11 'ab' ENTER | focus=q11 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11=abc\n | q12= | q13= | Scroll: 664 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+q11 then 'c' | focus=q11 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11=abc\nc | q12= | q13= | Scroll: 664 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+q11 then TAB | focus=q12 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11=abc\nc | q12= | q13= | Scroll: 736 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10' Tab'^9'
+q12 reached true
+q12 'ab' ENTER | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q12 submit "abc" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12=abc | q13= | Scroll: 736 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+q12 then 'c' | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q12 submit "abc" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12=abc | q13= | Scroll: 736 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10' C'c'
+q12 then TAB | focus=other(FocusNode) | Log: q12 submit "abc" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12=abc | q13= | Scroll: 736 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10' C'c' Tab'^9'
+q13 reached true
+q13 'ab' ENTER | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q13 submit "abc" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13=abc | Scroll: 862 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+q13 then 'c' | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q13 submit "abc" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13=abc | Scroll: 862 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10' C'c'
+q13 then TAB | focus=other(FocusNode) | Log: q13 submit "abc" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13=abc | Scroll: 862 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10' C'c' Tab'^9'
+q09 'ab' NUMPAD_ENTER | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q09 submit "abc" | Texts: q01= | q02= | q09=abc | q10= | q10b= | q11= | q12= | q13= | Scroll: 442 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Numpad Enter'^10'
+q09 'ab' then DPAD_LEFT | focus=q09 | Log:  | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 408 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Left
+q09 'ab' then MOVE_HOME | focus=q09 | Log:  | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 408 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Left Home
+q09 'ab' then SPACE | focus=q09 | Log:  | Texts: q01= | q02= | q09= ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 408 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Left Home
+q09 'ab' then DPAD_DOWN | focus=q09 | Log:  | Texts: q01= | q02= | q09= ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 408 | keys=Tab'^9' Tab'^9' Tab'^9' Arrow Left Home Arrow Down
+== modifiers (TalkBack off)
+OK (1 test)
+q14 reached true
+q14 ctrl+F | focus=q14-btn | Log: q14 ctrl-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 894 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' ctrl+Control Left ctrl+F
+q14 alt+F | focus=q14-btn | Log: q14 ctrl-f / q14 alt-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 894 | keys=Tab'^9' Tab'^9' ctrl+Control Left ctrl+F alt+Alt Left alt+F
+q14 meta+F | focus=q14-btn | Log: q14 ctrl-f / q14 alt-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 894 | keys=Tab'^9' Tab'^9' ctrl+Control Left ctrl+F alt+Alt Left alt+F
+q14 F | focus=(focus not found) | (log not found) | (texts not found) | (scroll not found) | keys=(keys not found)
+== scrolling (TalkBack off)
+OK (1 test)
+q15 reached true
+q15-btn reached | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 899 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q15-btn PAGE_DOWN | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 1473 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Page Down
+q15-btn PAGE_UP | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 899 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Page Down Page Up
+q15-btn DPAD_DOWN | focus=q15-focus | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 899 | keys=Tab'^9' Tab'^9' Page Down Page Up Arrow Down
+q15-btn ctrl+DPAD_DOWN | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 952 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' ctrl+Control Left ctrl+Arrow Down
+q15-btn MOVE_END | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 952 | keys=Tab'^9' Tab'^9' Tab'^9' ctrl+Control Left ctrl+Arrow Down End
+q15-btn MOVE_HOME | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 952 | keys=Tab'^9' Tab'^9' ctrl+Control Left ctrl+Arrow Down End Home
+q15-btn SPACE | focus=q15-btn | Log: q15-btn pressed | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 952 | keys=Left ctrl+Arrow Down End Home  ' '
+q15-focus reached true
+q15-focus SPACE | focus=q15-focus | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 888 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'  ' '
+q15-focus ENTER | focus=q15-focus | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 888 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9'  ' ' Enter'^10'
+q15-focus PAGE_DOWN | focus=q15-focus | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 1462 | keys=Tab'^9' Tab'^9'  ' ' Enter'^10' Page Down
+== underScreenReader (TalkBack off)
+OK (1 test)
+SR two Tabs | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9'
+SR q01 reached true
+SR q01 typed 'afg b' | focus=q01 | Log:  | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9'
+SR q02 reached true
+SR q02 typed 'afg b' | focus=q02 | Log:  | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02-btn reached true
+SR q02-btn F | focus=q02-btn | Log:  | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02-btn H (registry) | focus=q02-btn | Log: q04 registry-h | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' H'h'
+SR q05 reached true
+SR q05 DPAD_RIGHT | focus=q05 | Log: q04 registry-h / q05 photo 2 | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' H'h' Tab'^9' Arrow Right
+SR q05 DPAD_RIGHT | focus=q05 | Log: q04 registry-h / q05 photo 2 / q05 photo 3 | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' H'h' Tab'^9' Arrow Right Arrow Right
+SR q05 MOVE_END | focus=q05 | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' H'h' Tab'^9' Arrow Right Arrow Right End
+SR q05 MOVE_HOME | focus=q05 | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 / q05 photo 1 | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=H'h' Tab'^9' Arrow Right Arrow Right End Home
+SR q05 F | focus=q05 | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 / q05 photo 1 / q05 fav true | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right End Home F'f'
+SR q09 reached true
+SR q09 'ab' ENTER | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 / q05 photo 1 / q05 fav true / q09 submit "ab" | Texts: q01=afg b | q02=afg b | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 424 | keys=F'f' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+SR alt+DPAD_RIGHT (TalkBack next?) | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 / q05 photo 1 / q05 fav true / q09 submit "ab" | Texts: q01=afg b | q02=afg b | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 424 | keys=Tab'^9' Tab'^9' Tab'^9' Enter'^10' alt+Alt Left alt+Arrow Right
+== saved settings: services='null' enabled='0'
+== underScreenReader (TalkBack on)
+OK (1 test)
+SR two Tabs | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9'
+SR q01 reached true
+SR q01 typed 'afg b' | focus=q01 | Log:  | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9'
+SR q02 reached true
+SR q02 typed 'afg b' | focus=q02 | Log:  | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02-btn reached true
+SR q02-btn F | focus=q02-btn | Log:  | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02-btn H (registry) | focus=q02-btn | Log: q04 registry-h | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' H'h'
+SR q05 reached true
+SR q05 DPAD_RIGHT | focus=q05 | Log: q04 registry-h / q05 photo 2 | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' H'h' Tab'^9' Arrow Right
+SR q05 DPAD_RIGHT | focus=q05 | Log: q04 registry-h / q05 photo 2 / q05 photo 3 | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' H'h' Tab'^9' Arrow Right Arrow Right
+SR q05 MOVE_END | focus=q05 | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' H'h' Tab'^9' Arrow Right Arrow Right End
+SR q05 MOVE_HOME | focus=q05 | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 / q05 photo 1 | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=H'h' Tab'^9' Arrow Right Arrow Right End Home
+SR q05 F | focus=q05 | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 / q05 photo 1 / q05 fav true | Texts: q01=afg b | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right End Home F'f'
+SR q09 reached true
+SR q09 'ab' ENTER | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 / q05 photo 1 / q05 fav true / q09 submit "ab" | Texts: q01=afg b | q02=afg b | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 424 | keys=F'f' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+SR alt+DPAD_RIGHT (TalkBack next?) | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q04 registry-h / q05 photo 2 / q05 photo 3 / q05 photo 4 / q05 photo 1 / q05 fav true / q09 submit "ab" | Texts: q01=afg b | q02=afg b | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 424 | keys=Tab'^9' Tab'^9' Tab'^9' Enter'^10' alt+Alt Left alt+Arrow Right
+Success
+Deleted 1 rows
+== restored: null / 0

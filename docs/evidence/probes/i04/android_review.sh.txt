@@ -1,0 +1,36 @@
+#!/bin/sh
+# I04 review: the whole Android suite three times on a 320 by 640, 160 dpi
+# screen, then the two note tests once more with the on-screen keyboard
+# shown beside the hardware one (show_ime_with_hard_keyboard=1). Run from the
+# worktree root under tool/with_devices.py. The size, the density, and the
+# setting are put back whatever happens.
+PKG=dev.fluttera11y.flutter_a11y_techniques
+IME_BEFORE=$(adb shell settings get secure show_ime_with_hard_keyboard | tr -d '\r')
+reset() {
+  if [ "$IME_BEFORE" = "null" ]; then adb shell settings delete secure show_ime_with_hard_keyboard >/dev/null
+  else adb shell settings put secure show_ime_with_hard_keyboard "$IME_BEFORE"; fi
+  adb shell wm size reset
+  adb shell wm density reset
+  echo "== reset: $(adb shell wm size | tr '\n' ' ') $(adb shell wm density | tr '\n' ' ') show_ime_with_hard_keyboard=$(adb shell settings get secure show_ime_with_hard_keyboard | tr -d '\r') (was $IME_BEFORE)"
+}
+trap reset EXIT INT TERM
+echo "== device: Android $(adb shell getprop ro.build.version.release | tr -d '\r'), IME $(adb shell settings get secure default_input_method | tr -d '\r'), show_ime_with_hard_keyboard=$IME_BEFORE"
+adb shell wm size 320x640
+adb shell wm density 160
+echo "== set: $(adb shell wm size | tr '\n' ' ') $(adb shell wm density | tr '\n' ' ')"
+run() {
+  adb logcat -c
+  (cd android && ./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+    "-Pandroid.testInstrumentationRunnerArguments.class=$PKG.I04KeyboardActionsTest$1" \
+    -Pandroid.testInstrumentationRunnerArguments.timeout_msec=180000 2>&1 \
+    | grep -E "FAILED|expected|Tests on|tests completed|Finished|BUILD|AssertionError|Exception")
+  adb logcat -d -s I04KEYS:I | grep I04KEYS | sed 's/^.*I04KEYS: /  I04KEYS /'
+}
+for i in 1 2 3; do
+  echo "== whole suite, run $i"
+  run ""
+done
+adb shell settings put secure show_ime_with_hard_keyboard 1
+echo "== the note tests with show_ime_with_hard_keyboard=1"
+run "#badPageShortcutSendStringSyncInTheNoteThenOnTheButton"
+run "#badPageShortcutInputKeyeventInTheNoteThenOnTheButton"

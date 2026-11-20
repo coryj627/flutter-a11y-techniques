@@ -1,0 +1,78 @@
+== device
+17
+Physical size: 1080x2424
+Physical density: 420
+Success
+Success
+== round2 (TalkBack off)
+OK (1 test)
+IME: com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME
+q01 reached true
+q01 keyevent A F G SPACE B in the field | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 801 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q02 reached false
+q02 keyevent A F G SPACE B in the field | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 365 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q16 reached false
+q16 node: class=null actions=null range=null
+q16 DPAD_RIGHT | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q16 DPAD_RIGHT | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q16 DPAD_LEFT | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q16 MOVE_END | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q16 MOVE_HOME | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q17 reached false
+q17 node: class=android.view.View actions=[64] range=null
+q17 DPAD_RIGHT | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 788 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q17 DPAD_RIGHT | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 788 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q17 DPAD_LEFT | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 788 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q17 MOVE_END | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 788 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q17 MOVE_HOME | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 788 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q18 reached false
+q18 'ab' ENTER | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q18 then shift+ENTER | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q19 reached true
+q19 'ab' ENTER | focus=q19 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 1232 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+q19 then shift+ENTER | focus=q19 | Log: q19 enter-shortcut "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19=ab\n | Scroll: 1445 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10' shift+Shift Left shift+Enter'^10'
+== underScreenReader (TalkBack off)
+OK (1 test)
+SR services=null touchExploration=false
+SR two Tabs | focus=(focus not found) | (log not found) | (texts not found) | (scroll not found) | keys=(keys not found)
+SR q01 reached true
+SR q01 typed 'afg b' | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 798 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02 reached false
+SR q02 typed 'afg b' | focus=q01 | Log:  | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 363 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02-btn reached false
+SR q02-btn F | focus=q12 | Log: q08 tap 4 | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 716 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02-btn H (registry) | focus=q12 | Log: q08 tap 4 | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 716 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 reached false
+SR q05 DPAD_RIGHT | focus=q01 | Log: q08 tap 4 / q04 registry-h | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 DPAD_RIGHT | focus=q01 | Log: q08 tap 4 / q04 registry-h | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 MOVE_END | focus=q01 | Log: q08 tap 4 / q04 registry-h | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 MOVE_HOME | focus=q01 | Log: q08 tap 4 / q04 registry-h | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 F | focus=q01 | Log: q08 tap 4 / q04 registry-h | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 58 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q09 reached false
+SR q09 'ab' ENTER | focus=q11 | Log: q08 tap 4 / q04 registry-h / q02 char-f | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11=ab\n | q12= | q13= | q18= | q19= | Scroll: 658 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+SR alt+DPAD_RIGHT (TalkBack next?) | focus=q11 | Log: q08 tap 4 / q04 registry-h / q02 char-f | Texts: q01=afg b | q02= | q09= | q10= | q10b= | q11=ab\n | q12= | q13= | q18= | q19= | Scroll: 658 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Enter'^10'
+== saved settings: services='null' enabled='0'
+== TalkBack bound? 2 lines name it; touch exploration: touchExplorationEnabled=true
+== underScreenReader (TalkBack on)
+OK (1 test)
+SR services=com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService touchExploration=true
+SR two Tabs | focus=(focus not found) | (log not found) | (texts not found) | (scroll not found) | keys=(keys not found)
+SR q01 reached true
+SR q01 typed 'afg b' | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 167 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02 reached false
+SR q02 typed 'afg b' | focus=q09 | Log:  | Texts: q01=afg b | q02= | q09=afg | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 385 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02-btn reached false
+SR q02-btn F | focus=q12 | Log:  | Texts: q01=afg b | q02= | q09=afg b | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 752 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q02-btn H (registry) | focus=q12 | Log:  | Texts: q01=afg b | q02= | q09=afg b | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 752 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 reached false
+SR q05 DPAD_RIGHT | focus=q01 | Log: q04 registry-h | Texts: q01=afg b | q02= | q09=afg b | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 1328 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 DPAD_RIGHT | focus=q01 | Log: q04 registry-h | Texts: q01=afg b | q02= | q09=afg b | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 1328 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 MOVE_END | focus=q01 | Log: q04 registry-h | Texts: q01=afg b | q02= | q09=afg b | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 1328 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 MOVE_HOME | focus=q01 | Log: q04 registry-h | Texts: q01=afg b | q02= | q09=afg b | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 1328 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q05 F | focus=q01 | Log: q04 registry-h | Texts: q01=afg b | q02= | q09=afg b | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 1328 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR q09 reached true
+SR q09 'ab' ENTER | focus=q09 | Log: q04 registry-h / q06 photo 2 / q06 photo 3 / q06 fav true | Texts: q01=afg b | q02= | q09=afg bab | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 392 | keys=End Home F'f' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+SR alt+DPAD_RIGHT (TalkBack next?) | focus=q09 | Log: q04 registry-h / q06 photo 2 / q06 photo 3 / q06 fav true | Texts: q01=afg b | q02= | q09=afg bab | q10= | q10b= | q11= | q12= | q13= | q18= | q19= | Scroll: 392 | keys=End Home F'f' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+Success
+Deleted 1 rows
+== restored: null / 0

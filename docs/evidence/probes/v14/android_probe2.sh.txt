@@ -1,0 +1,24 @@
+#!/bin/sh
+# V14 probe round 2 on Android, under tool/with_devices.py (throwaway; kept
+# as docs/evidence/probes/v14/android_probe2.sh.txt). Installs the probe app
+# and its test APK, runs ProbeV14Test with `am instrument` (not Gradle, which
+# would uninstall the app and its files at the end), pulls the PNGs, and
+# prints the test's log.
+ADB=$HOME/Library/Android/sdk/platform-tools/adb
+PKG=dev.fluttera11y.flutter_a11y_techniques
+OUT=$1
+mkdir -p "$OUT"
+$ADB install -r build/app/outputs/apk/debug/app-debug.apk >/dev/null || exit 1
+$ADB install -r build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk >/dev/null || exit 1
+echo "== device: Android $($ADB shell getprop ro.build.version.release | tr -d '\r'), $($ADB shell wm size | tr -d '\r' | tr '\n' ' '), $($ADB shell wm density | tr -d '\r' | tr '\n' ' ')"
+for t in ${TESTS:-controls otherDeviceIds obscure}; do
+  $ADB logcat -c
+  echo "== $t"
+  $ADB shell am instrument -w -e class $PKG.ProbeV14Test#$t $PKG.test/androidx.test.runner.AndroidJUnitRunner | grep -E "OK|FAIL|Error|Exception" | head -5
+  $ADB logcat -d -s V14PROBE:I | grep V14PROBE | sed 's/^.*V14PROBE: //'
+done
+$ADB pull /sdcard/Android/data/$PKG/files/. "$OUT" >/dev/null
+$ADB shell am force-stop $PKG
+$ADB uninstall $PKG.test >/dev/null
+$ADB uninstall $PKG >/dev/null
+exit 0
