@@ -1,0 +1,4 @@
+I04PROBE TargetPlatform.android tab+space path: CupertinoSlidingSegmentedControl<int>[0] space->null FocusNode space->null FocusNode space->material {1} FocusNode space->switch true CupertinoSlidingSegmentedControl<int>[0] space->switch true | log: [material {1}, switch true]
+I04PROBE TargetPlatform.iOS tab+space path: CupertinoSlidingSegmentedControl<int>[0] space->null FocusNode space->null FocusNode space->material {1} FocusNode space->switch true CupertinoSlidingSegmentedControl<int>[0] space->switch true | log: [material {1}, switch true]
+I04PROBE page-wide f: in field handled=true log=[char-f]; in protected field (field2) handled=false log=[char-f]
+00:00 +3: All tests passed!

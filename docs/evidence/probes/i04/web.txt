@@ -1,0 +1,137 @@
+I04PROBE tab path: other(minified:bU) q01 q01-btn q02 q02-btn q05 q06 other(minified:bU) other(minified:bU) other(minified:bU) other(minified:bU) q09 q10 q10b q11 q12 other(minified:bU) q13 q14-btn q15-btn q15-focus other(minified:jp) other(minified:jp) other(minified:bU) q01 q01-btn q02 q02-btn q05 q06 other(minified:bU) other(minified:bU) other(minified:bU) other(minified:bU) q09 q10 q10b q11 q12 other(minified:bU)
+I04PROBE q01 reached true
+I04PROBE q01 typed "afg b" in the field | focus=q01 | active=input | Log: q01 char-f / q01 key-g | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab A'a' F'f' G'g'  ' ' B'b'
+I04PROBE q01 reached button true
+I04PROBE q01 f, g, Shift+F on the button | focus=q01-btn | active=flt-semantics#q01-btn | Log: q01 char-f / q01 key-g / q01 char-f / q01 key-g | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab A'a' F'f' G'g'  ' ' B'b' Tab F'f' G'g' shift+Shift Left shift+F'F'
+I04PROBE q02 reached true
+I04PROBE q02 typed "afg b" in the field | focus=q02 | active=input | Log: | Texts: q01= | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab A'a' F'f' G'g'  ' ' B'b'
+I04PROBE q02 reached button true
+I04PROBE q02 f, g, Shift+F on the button | focus=q02-btn | active=flt-semantics#q02-btn | Log: q02 char-f / q02 key-g | Texts: q01= | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab A'a' F'f' G'g'  ' ' B'b' Tab F'f' G'g' shift+Shift Left shift+F'F'
+I04PROBE q04 h with no focus | focus=other(minified:jp) | active=flt-semantics | Log: q04 registry-h | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: H'h'
+I04PROBE q04 h on q01-btn | focus=q01-btn | active=flt-semantics#q01-btn | Log: q04 registry-h / q04 registry-h | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: H'h' Tab Tab Tab H'h'
+I04PROBE q04 typed "hi" in q09 | focus=q09 | active=input | Log: q04 registry-h / q04 registry-h / q04 registry-h | Texts: q01= | q02= | q09=i | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab H'h' Tab Tab Tab Tab Tab Tab Tab Tab Tab H'h' I'i'
+I04PROBE q05 reached true
+I04PROBE q05 reached | focus=q05 | active=flt-semantics#q05 | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab
+I04PROBE q05 ArrowRight | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Arrow Right
+I04PROBE q05 ArrowRight | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 / q05 photo 3 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right
+I04PROBE q05 ArrowLeft | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left
+I04PROBE q05 End | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End
+I04PROBE q05 Home | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home
+I04PROBE q05 f | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f'
+I04PROBE q05 ArrowDown | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 50 | Keys: Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f' Arrow Down
+I04PROBE q05 ArrowUp | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f' Arrow Down Arrow Up
+I04PROBE q05 PageDown | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 467 | Keys: Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f' Arrow Down Arrow Up Page Down
+I04PROBE q05 ArrowRight held 1.5 s | focus=q05 | active=flt-semantics#q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 photo 4 / q05 photo 1 / q05 fav true / q05 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 467 | Keys: Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f' Arrow Down Arrow Up Page Down Arrow Right
+I04PROBE q06 reached true
+I04PROBE q06 reached | focus=q06 | active=flt-semantics#q06 | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab
+I04PROBE q06 ArrowRight | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Arrow Right
+I04PROBE q06 ArrowRight | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 / q06 photo 3 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right
+I04PROBE q06 ArrowLeft | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left
+I04PROBE q06 End | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 1822 | Keys: Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End
+I04PROBE q06 Home | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home
+I04PROBE q06 f | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f'
+I04PROBE q06 ArrowDown | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 50 | Keys: Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f' Arrow Down
+I04PROBE q06 ArrowUp | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f' Arrow Down Arrow Up
+I04PROBE q06 PageDown | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 467 | Keys: Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f' Arrow Down Arrow Up Page Down
+I04PROBE q06 ArrowRight held 1.5 s | focus=q06 | active=flt-semantics#q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true / q06 photo 3 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 467 | Keys: Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left End Home F'f' Arrow Down Arrow Up Page Down Arrow Right
+I04PROBE q08 reached something true
+I04PROBE after q06, Tab 1 | focus=other(minified:bU) | active=flt-semantics | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 2 | focus=other(minified:bU) | active=flt-semantics | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 3 | focus=other(minified:bU) | active=flt-semantics | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 4 | focus=other(minified:bU) | active=flt-semantics | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 5 | focus=q09 | active=input | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 6 | focus=q10 | active=input | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 159 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE then ArrowRight | focus=q10 | active=input | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 159 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right
+I04PROBE then Enter | focus=q10b | active=input | Log: q10 submit "" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 207 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Enter
+I04PROBE then Space | focus=q10b | active=input | Log: q10 submit "" | Texts: q01= | q02= | q09= | q10= | q10b=  | q11= | q12= | q13= | Scroll: 207 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Enter  ' '
+I04PROBE q09 reached true
+I04PROBE q09 "ab" Enter | focus=other(minified:jp) | active=flutter-view | Log: q09 submit "ab" | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter
+I04PROBE q09 then "c" | focus=other(minified:jp) | active=flutter-view | Log: q09 submit "ab" | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c'
+I04PROBE q09 then Tab | focus=other(minified:bU) | active=flt-semantics | Log: q09 submit "ab" | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c' Tab
+I04PROBE q10 reached true
+I04PROBE q10 "ab" Enter | focus=q10b | active=input | Log: q10 submit "ab" | Texts: q01= | q02= | q09= | q10=ab | q10b= | q11= | q12= | q13= | Scroll: 207 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter
+I04PROBE q10 then "c" | focus=q10b | active=input | Log: q10 submit "ab" | Texts: q01= | q02= | q09= | q10=ab | q10b=c | q11= | q12= | q13= | Scroll: 207 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c'
+I04PROBE q10 then Tab | focus=q11 | active=textarea | Log: q10 submit "ab" | Texts: q01= | q02= | q09= | q10=ab | q10b=c | q11= | q12= | q13= | Scroll: 310 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c' Tab
+I04PROBE q11 reached true
+I04PROBE q11 "ab" Enter | focus=q11 | active=textarea | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11=ab\n | q12= | q13= | Scroll: 311 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter
+I04PROBE q11 then "c" | focus=q11 | active=textarea | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11=ab\nc | q12= | q13= | Scroll: 311 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c'
+I04PROBE q11 then Tab | focus=q12 | active=input | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11=ab\nc | q12= | q13= | Scroll: 398 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c' Tab
+I04PROBE q12 reached true
+I04PROBE q12 "ab" Enter | focus=other(minified:jp) | active=flutter-view | Log: q12 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12=ab | q13= | Scroll: 398 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter
+I04PROBE q12 then "c" | focus=other(minified:jp) | active=flutter-view | Log: q12 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12=ab | q13= | Scroll: 398 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c'
+I04PROBE q12 then Tab | focus=other(minified:bU) | active=flt-semantics | Log: q12 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12=ab | q13= | Scroll: 398 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c' Tab
+I04PROBE q13 reached true
+I04PROBE q13 "ab" Enter | focus=other(minified:jp) | active=flutter-view | Log: q13 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13=ab | Scroll: 481 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter
+I04PROBE q13 then "c" | focus=other(minified:jp) | active=flutter-view | Log: q13 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13=ab | Scroll: 481 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c'
+I04PROBE q13 then Tab | focus=other(minified:bU) | active=flt-semantics | Log: q13 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13=ab | Scroll: 481 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter C'c' Tab
+I04PROBE q09 "ab" NumpadEnter | focus=other(minified:jp) | active=flutter-view | Log: q09 submit "ab" | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter
+I04PROBE q09 "ab" then ArrowLeft | focus=q09 | active=input | Log: | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Arrow Left
+I04PROBE q09 "ab" then Home | focus=q09 | active=input | Log: | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Arrow Left Home
+I04PROBE q09 "ab" then Space | focus=q09 | active=input | Log: | Texts: q01= | q02= | q09=a b | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Arrow Left Home  ' '
+I04PROBE q09 "ab" then ArrowDown | focus=q09 | active=input | Log: | Texts: q01= | q02= | q09=a b | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Arrow Left Home  ' ' Arrow Down
+I04PROBE q14 reached true
+I04PROBE q14 Control+f | focus=q14-btn | active=flt-semantics#q14-btn | Log: q14 ctrl-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 524 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab ctrl+Control Left ctrl+F'f'
+I04PROBE q14 Alt+f | focus=q14-btn | active=flt-semantics#q14-btn | Log: q14 ctrl-f / q14 alt-f / q14 char-alt-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 524 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab ctrl+Control Left ctrl+F'f' alt+Alt Left alt+F'f'
+I04PROBE q14 Meta+f | focus=q14-btn | active=flt-semantics#q14-btn | Log: q14 ctrl-f / q14 alt-f / q14 char-alt-f / q14 meta-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 524 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab ctrl+Control Left ctrl+F'f' alt+Alt Left alt+F'f' meta+Meta Left meta+F'f'
+I04PROBE q14 Control+Shift+F | focus=q14-btn | active=flt-semantics#q14-btn | Log: q14 ctrl-f / q14 alt-f / q14 char-alt-f / q14 meta-f / q14 ctrl-shift-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 524 | Keys: Tab Tab Tab Tab Tab ctrl+Control Left ctrl+F'f' alt+Alt Left alt+F'f' meta+Meta Left meta+F'f' ctrl+Control Left ctrl+shift+Shift Left ctrl+shift+F'F'
+I04PROBE q14 f | focus=q14-btn | active=flt-semantics#q14-btn | Log: q14 ctrl-f / q14 alt-f / q14 char-alt-f / q14 meta-f / q14 ctrl-shift-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 524 | Keys: Tab Tab Tab Tab ctrl+Control Left ctrl+F'f' alt+Alt Left alt+F'f' meta+Meta Left meta+F'f' ctrl+Control Left ctrl+shift+Shift Left ctrl+shift+F'F' F'f'
+I04PROBE q15 reached true
+I04PROBE q15-btn reached | focus=q15-btn | active=flt-semantics#q15-btn | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 588 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE q15-btn PageDown | focus=q15-btn | active=flt-semantics#q15-btn | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 1055 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Page Down
+I04PROBE q15-btn PageUp | focus=q15-btn | active=flt-semantics#q15-btn | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 588 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Page Down Page Up
+I04PROBE q15-btn ArrowDown | focus=q15-btn | active=flt-semantics#q15-btn | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 638 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Page Down Page Up Arrow Down
+I04PROBE q15-btn ArrowDown | focus=q15-btn | active=flt-semantics#q15-btn | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 688 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Page Down Page Up Arrow Down Arrow Down
+I04PROBE q15-btn Control+ArrowDown | focus=q15-btn | active=flt-semantics#q15-btn | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 688 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Page Down Page Up Arrow Down Arrow Down ctrl+Control Left ctrl+Arrow Down
+I04PROBE q15-btn Space | focus=q15-btn | active=flt-semantics#q15-btn | Log: q15-btn pressed | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 688 | Keys: Tab Tab Tab Tab Tab Tab Tab Page Down Page Up Arrow Down Arrow Down ctrl+Control Left ctrl+Arrow Down  ' '
+I04PROBE q15-btn End | focus=q15-btn | active=flt-semantics#q15-btn | Log: q15-btn pressed | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 1822 | Keys: Tab Tab Tab Tab Tab Tab Page Down Page Up Arrow Down Arrow Down ctrl+Control Left ctrl+Arrow Down  ' ' End
+I04PROBE q15-btn Home | focus=q15-btn | active=flt-semantics#q15-btn | Log: q15-btn pressed | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Page Down Page Up Arrow Down Arrow Down ctrl+Control Left ctrl+Arrow Down  ' ' End Home
+I04PROBE q15-focus reached true
+I04PROBE q15-focus reached | focus=q15-focus | active=flt-semantics#q15-focus | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 608 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE q15-focus Space | focus=q15-focus | active=flt-semantics#q15-focus | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 1075 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab  ' '
+I04PROBE q15-focus Enter | focus=q15-focus | active=flt-semantics#q15-focus | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 1075 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab  ' ' Enter
+I04PROBE q15-focus PageDown | focus=q15-focus | active=flt-semantics#q15-focus | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 1542 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab  ' ' Enter Page Down
+  8 passed (1.3m)
+I04PROBE q08 reached something true
+I04PROBE after q06, Tab 1 | focus=other(minified:bU) | active=flt-semantics | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 2 | focus=other(minified:bU) | active=flt-semantics | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 3 | focus=other(minified:bU) | active=flt-semantics | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 4 | focus=other(minified:bU) | active=flt-semantics | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 5 | focus=q09 | active=input | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 79 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE after q06, Tab 6 | focus=q10 | active=input | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 159 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab
+I04PROBE then ArrowRight | focus=q10 | active=input | Log: | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 159 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right
+I04PROBE then Enter | focus=q10b | active=input | Log: q10 submit "" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 207 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Enter
+I04PROBE then Space | focus=q10b | active=input | Log: q10 submit "" | Texts: q01= | q02= | q09= | q10= | q10b=  | q11= | q12= | q13= | Scroll: 207 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Enter  ' '
+I04PROBE q08 first carousel stop element: FLT-SEMANTICS role=button name=q08 item 1
+I04PROBE q08 Enter | focus=other(minified:bU) | active=flt-semantics | Log: q08 tap 1 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Enter
+I04PROBE q08 Space | focus=other(minified:bU) | active=flt-semantics | Log: q08 tap 1 / q08 tap 1 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Enter  ' '
+I04PROBE q08 ArrowRight | focus=other(minified:bU) | active=flt-semantics | Log: q08 tap 1 / q08 tap 1 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Enter  ' ' Arrow Right
+I04PROBE q08 ArrowLeft | focus=other(minified:bU) | active=flt-semantics | Log: q08 tap 1 / q08 tap 1 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Enter  ' ' Arrow Right Arrow Left
+I04PROBE q08 Tab | focus=other(minified:bU) | active=flt-semantics | Log: q08 tap 1 / q08 tap 1 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Enter  ' ' Arrow Right Arrow Left Tab
+I04PROBE q08 Enter | focus=other(minified:bU) | active=flt-semantics | Log: q08 tap 1 / q08 tap 1 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Enter  ' ' Arrow Right Arrow Left Tab Enter
+  2 passed (12.1s)
+I04PROBE q16 reached true
+I04PROBE q16 active element: input type=range role=slider valuetext=null value=50
+I04PROBE q16 ArrowRight | focus=q16 | active=input | Log: | Scroll: 688 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right
+I04PROBE q16 ArrowRight | focus=q16 | active=input | Log: | Scroll: 688 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right
+I04PROBE q16 ArrowLeft | focus=q16 | active=input | Log: | Scroll: 688 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left
+I04PROBE q16 ArrowUp | focus=q16 | active=input | Log: | Scroll: 638 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left Arrow Up
+I04PROBE q16 End | focus=q16 | active=input | Log: q16 increase 2 | Scroll: 638 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left Arrow Up End
+I04PROBE q16 Home | focus=q16 | active=input | Log: q16 increase 2 | Scroll: 638 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left Arrow Up End Home
+I04PROBE q16 PageDown | focus=q16 | active=input | Log: q16 increase 2 | Scroll: 1105 | Keys: Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left Arrow Up End Home Page Down
+I04PROBE q17 reached true
+I04PROBE q17 active element: input type=range role=slider valuetext=null value=50
+I04PROBE q17 ArrowRight | focus=q17 | active=input | Log: q17 key 2 | Scroll: 768 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right
+I04PROBE q17 ArrowRight | focus=q17 | active=input | Log: q17 key 2 / q17 key 3 | Scroll: 768 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right
+I04PROBE q17 ArrowLeft | focus=q17 | active=input | Log: q17 key 2 / q17 key 3 / q17 key 2 | Scroll: 768 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left
+I04PROBE q17 ArrowUp | focus=q17 | active=input | Log: q17 key 2 / q17 key 3 / q17 key 2 | Scroll: 718 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left Arrow Up
+I04PROBE q17 End | focus=q17 | active=input | Log: q17 key 2 / q17 key 3 / q17 key 2 / q17 key 4 | Scroll: 718 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left Arrow Up End
+I04PROBE q17 Home | focus=q17 | active=input | Log: q17 key 2 / q17 key 3 / q17 key 2 / q17 key 4 / q17 key 1 | Scroll: 718 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left Arrow Up End Home
+I04PROBE q17 PageDown | focus=q17 | active=input | Log: q17 key 2 / q17 key 3 / q17 key 2 / q17 key 4 / q17 key 1 | Scroll: 1185 | Keys: Tab Tab Tab Tab Tab Tab Tab Arrow Right Arrow Right Arrow Left Arrow Up End Home Page Down
+  1 passed (13.1s)
+I04PROBE q18 reached true
+I04PROBE q18 "ab" Enter | focus=other(minified:jp) | active=flutter-view | Log: q18 submit "ab" | q18=ab | q19= | Scroll: 892 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter
+I04PROBE q18 then Shift+Enter | focus=other(minified:jp) | active=flutter-view | Log: q18 submit "ab" | q18=ab | q19= | Scroll: 892 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter shift+Shift Left shift+Enter
+I04PROBE q19 reached true
+I04PROBE q19 "ab" Enter | focus=q19 | active=textarea | Log: q19 enter-shortcut "ab" | q18= | q19=ab | Scroll: 1020 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter
+I04PROBE q19 then Shift+Enter | focus=other(minified:jp) | active=flutter-view | Log: q19 enter-shortcut "ab" / q19 submit "ab" | q18= | q19=ab | Scroll: 1020 | Keys: Tab Tab Tab Tab Tab Tab Tab Tab Tab A'a' B'b' Enter shift+Shift Left shift+Enter
+  1 passed (9.7s)

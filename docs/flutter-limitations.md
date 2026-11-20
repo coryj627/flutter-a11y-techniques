@@ -133,6 +133,10 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-440](#fl-440) | A `CupertinoAlertDialog`'s actions take no keyboard focus | All | Confirmed |
 | [FL-441](#fl-441) | A `CupertinoActionSheet`'s title and message fail text contrast in light mode | All (widget test only) | Confirmed (widget test only) |
 | [FL-442](#fl-442) | When a route closes, the framework sends the screen reader back to where it was, after the app's own move, even when that control has been removed | Android | Confirmed in the source; its effect Observed |
+| [FL-460](#fl-460) | A shortcut above a text field takes its key before the field can type it, on the web and on iOS; on Android not on the local emulator, and not shown on CI's, where the letter was lost | Web, iOS; Android not shown | Confirmed |
+| [FL-461](#fl-461) | A text field's done, go, search, or send action takes keyboard focus away and gives it to no control | All | Confirmed |
+| [FL-463](#fl-463) | A `PageView` takes no keyboard focus and has no keys | Android, iOS, Web | Observed |
+| [FL-464](#fl-464) | A `Shortcuts`, `CallbackShortcuts`, or `Focus` around plain text makes that text the name of a node holding every control inside it | Web, iOS (Android not looked at) | Confirmed |
 | [FL-480](#fl-480) | A route closes on Escape only when its barrier can be dismissed, and on Back and VoiceOver's escape gesture whether it can or not | All | Confirmed |
 | [FL-481](#fl-481) | Nothing closes an overlay that is not a route, and Back pops the screen under it | All | Confirmed |
 | [FL-482](#fl-482) | On the web, Escape does not hide a tooltip while the page has no keyboard focus | Web | Confirmed |
@@ -3103,6 +3107,187 @@ yet), **Fixed in x.y** (verified on that version).
 - How to read this entry: Flutter has not added a way to tell the
   Navigator where the screen reader should go when a route closes, or to
   stop its request, yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-460
+
+**A shortcut above a text field takes its key before the field can type it, on the web and on iOS; on Android not on the local emulator, and not shown on CI's, where the letter was lost.**
+
+- Status: Confirmed, Flutter 3.47.5. Documented: `EditableText`'s
+  documentation, "Interactions Between Shortcuts and Text Input", says a
+  `Shortcuts` widget above a field that maps a letter keeps the field from
+  receiving it, because the framework is given each key as a key event
+  before the platform's text input is. Found in the I04 probe
+  (`docs/evidence/probes/i04/`, fixtures `q01`, `q02`, and `q04`).
+  Asserted by the I04 web and iOS tests of `bad-page-shortcut` ("Leafy"
+  typed in the note becomes "Leay", and a favourite is added), by the I04
+  widget test (the key is handled in the note), and by the I04 Android
+  tests, which accept either result there and log which (below).
+- WCAG: 2.1.4 Character Key Shortcuts: the lost letter is what a shortcut
+  that is always on does to someone typing. Not 2.1.1: other keys still
+  enter the letter (below).
+- What happens: key events reach the framework first, and go on to the
+  platform's text input only if nothing handled them. A `CallbackShortcuts`
+  or `Shortcuts` binding for F anywhere above the focused field, or a
+  `ShortcutRegistry` entry for the whole app, handles the F key, so the
+  shortcut runs and no "f" is typed. Measured:
+  - Web (Chromium, Playwright's keys): the shortcut ran and the letter was
+    lost, for a `CharacterActivator('f')`, a
+    `SingleActivator(LogicalKeyboardKey.keyG)`, and a `ShortcutRegistry`
+    entry for H. A plain HTML page whose document key handler calls
+    `preventDefault` for F loses the letter the same way (the probe's HTML
+    control); in Flutter every handled shortcut does that.
+  - iOS (simulator, XCUITest's `typeKey`, one key at a time): the same, with
+    VoiceOver off and with it on. `typeText` put the letters into the field
+    without any key event, past the shortcut, as an on-screen keyboard
+    would; an on-screen keyboard itself was not tried.
+  - Android, the local emulator (Android 17, Gboard, `hw.keyboard=yes`):
+    no letter typed into a field reached the framework as a key event,
+    through `input text` in the probe or `Instrumentation.sendStringSync`
+    in the I04 tests; the field got every letter and no shortcut ran.
+    Read as the input method having the keys first while a field is being
+    edited; not confirmed in the Android source. The I04 Android tests
+    send the letters both ways, `sendStringSync` and `input keyevent`, each
+    in its own launch: in every run on this emulator, at 320 by 640, the
+    note got every letter and no favourite was added, and the same way of
+    sending an f on the favourite button added one. The same with the
+    on-screen keyboard shown beside the hardware one
+    (`show_ime_with_hard_keyboard` set to 1 for that run and put back to
+    0). Output: `docs/evidence/probes/i04/android_review_*.txt`. (In probe
+    round 2, `input keyevent` letters reached neither the framework nor
+    the field; not seen again.)
+  - Android, CI's emulator (API 35, `google_apis` image, no hardware
+    keyboard in its AVD): the I04 test typing "Leafy" with
+    `sendStringSync` got "Leay": the f did not reach the note there (CI run
+    44472632084, `docs/evidence/probes/i04/ci_android_44472632084.txt`,
+    which has the assertion's text). That run did not record the
+    favourites line, so that the shortcut took the f, as it does on the
+    web and iOS, is inferred and was not seen.
+    Which input method it had, and whether its on-screen keyboard was
+    showing, was not recorded. Not reproduced on the local emulator, whose
+    hardware keyboard setting in its AVD was not changed: it is shared.
+  The same shortcut away from the field works on all three platforms.
+- Other ways to the letter, under a shortcut for a lowercase f, measured
+  with `bad-page-shortcut`: on the web Shift+F types a capital F (a
+  `CharacterActivator('f')` does not match "F"), and an f pasted with
+  Control or Command+V goes in through the browser's own paste (I04 web
+  tests). On iOS Shift+F types a capital F, an f pasted with Command+V
+  goes in once iOS's question whether the app may paste is answered, and
+  `typeText`, which sends text the way an on-screen keyboard does, puts
+  an f in (I04 iOS tests; outcomes in
+  `docs/evidence/probes/i04/review_evidence_run.txt`). Each after a plain
+  f had been lost in the same launch.
+- Effect: someone typing a note on a hardware keyboard sets off the
+  shortcut with every f, and the f does not appear; they have to type a
+  capital or paste the letter in.
+- Workaround, in the SDK and documented: a `Shortcuts` around the field
+  that maps the same key to `DoNothingAndStopPropagationIntent`, so the
+  shortcut stops there and the key is left for the field (I04
+  `good-turn-off` and `good-remap`, `_TypeF`). Verified in the I04 widget,
+  web, and iOS tests: "Leafy" is typed whole and the shortcut still works
+  on every other control. Better still, put the shortcut on the control it
+  acts on, so it is never above a field (I04 `good-on-focus`).
+- How to read this entry: this is how Flutter is documented to work, not
+  a defect in it. It is logged because a page-wide shortcut, the usual way
+  to add one, breaks typing on the web and iOS. On Android it was not
+  shown to: the local emulator (Android 17) typed the f, and CI's
+  (Android 15) lost it in a run that did not record whether a favourite
+  was added.
+- Upstream issue: not searched yet (D25).
+
+## FL-461
+
+**A text field's done, go, search, or send action takes keyboard focus away and gives it to no control.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Framework source read:
+  `widgets/editable_text.dart` (`_finalizeEditing`): unless the field has
+  an `onEditingComplete`, these actions call `FocusNode.unfocus()`, which
+  leaves focus on the screen's scope; `next` and `previous` move focus to
+  the next or previous control instead. Found in the I04 probe (fixtures
+  `q09`, `q12`, and `q13`, on the web, Android, and iOS), and asserted by
+  the I04 tests of every example on every layer: after Enter saves the
+  note, no control has focus, and the next Tab goes to Back.
+- WCAG: none failed as written. A keyboard user loses their place.
+- What happens: Enter on a hardware keyboard in a single-line field
+  arrives as the field's action, so `onSubmitted` runs, on all three
+  platforms (the probe; a multi-line field adds a line instead). The field
+  then gives up focus to nothing. With an on-screen keyboard that is what
+  hides the keyboard. With a hardware keyboard, focus is nowhere until the
+  next Tab, which starts again from the top of the screen.
+  - Android's own text field does not do this: for the done action it
+    hides the on-screen keyboard and leaves focus on the field (read in
+    the Android source: `TextView.onEditorAction`).
+  - HTML: Enter in a form's text field submits the form, and the HTML
+    standard's implicit submission says nothing of moving focus. In
+    Chromium, a plain HTML form's input kept focus after Enter (the
+    probe's HTML control).
+- Effect: after each note, a hardware keyboard user has to Tab back down
+  from the top of the screen to the field.
+- Workaround, in the SDK: an `onEditingComplete` that does the work (or
+  does nothing, leaving it to `onSubmitted`) keeps focus on the field; the
+  on-screen keyboard then stays up as well, since Flutter hides it by
+  taking focus away. Not applied in the I04 examples, which keep the
+  default and its documented on-screen keyboard behaviour; where focus
+  should go after an action is I03's subject.
+- Upstream issue: not searched yet (D25).
+
+## FL-463
+
+**A `PageView` takes no keyboard focus and has no keys.**
+
+- Status: Observed, Flutter 3.47.5, in the I04 probe (fixture `q07`): in
+  the Tab order recorded on the web, Android, and iOS, Tab never stopped
+  on the page view. No example and no test in the repo.
+- What happens: the pages change with a swipe. Nothing in the page view
+  takes focus, so no key can reach it; a screen reader's scroll actions
+  were not tried.
+- Effect: a keyboard user cannot turn the pages (2.1.1), unless the app
+  adds a control or keys for it.
+- Workaround, not built: a `FocusableActionDetector` around the page view
+  with Left and Right mapped to the controller's `previousPage` and
+  `nextPage`, as the I04 examples do for their strip of photos. Left to
+  I14 Scrolling regions and C17 Carousel.
+- Upstream issue: not searched yet (D25).
+
+## FL-464
+
+**A `Shortcuts`, `CallbackShortcuts`, or `Focus` around plain text makes that text the name of a node holding every control inside it.**
+
+- Status: Confirmed, Flutter 3.47.5. Asserted by the I04 widget tests
+  "the SDK on its own (FL-464)", written to fail when the wrapper stops
+  adding a node. Framework source read: `widgets/focus_scope.dart`
+  (`Focus` wraps its child in `Semantics(focusable: ...)` when
+  `includeSemantics` is true, the default) and `widgets/shortcuts.dart`
+  (`Shortcuts` and `CallbackShortcuts` are each a `Focus` that takes no
+  focus; `Shortcuts` passes on its own `includeSemantics`, which is true by
+  default, and `CallbackShortcuts` has no such parameter). Found in the
+  I04 build.
+- What happens: the wrapper's `Semantics` forms a node. Text inside it
+  that has no node of its own is merged into that node as its name, and
+  every control inside it becomes its child. In a widget test, a `Text`
+  and a button inside any of the three give one node named by the text,
+  with the button under it; without the wrapper, or with the text in a
+  `Semantics(container: true)` of its own, they are side by side.
+- Seen with VoiceOver, in the I04 examples before the workaround, where a
+  `CallbackShortcuts` around the whole example held the line of keys as
+  plain text (first transcripts, kept in `docs/evidence/probes/i04/`):
+  - Web, Chromium and WebKit: VoiceOver read the line of keys followed by
+    "group", then the controls, then "end of" the line and "group": the
+    whole example became a group named by that line
+    (`voiceover-web-first-run.md.txt`).
+  - iOS: VoiceOver read the line before the strip it was written under,
+    in those three examples only (`voiceover-ios-first-run.md.txt`).
+  - Android: not looked at (the TalkBack walk moves TalkBack's focus to
+    each control, not along the tree).
+- WCAG: none failed in the I04 examples; on the web a group with a
+  misleading name is 1.3.1 Info and Relationships territory.
+- Effect: adding a shortcut around a screen can rename and regroup what
+  a screen reader hears, with no change to how it looks.
+- Workaround, in the SDK: give plain text inside a shortcut its own node,
+  `Semantics(container: true)` (I04 `_KeysHint`). Verified in the I04
+  widget tests and in the second web and iOS VoiceOver transcripts, where
+  the line of keys is a stop of its own before the strip. Not tried:
+  `includeSemantics: false` on `Shortcuts` or `Focus`.
 - Upstream issue: not searched yet (D25).
 
 ## FL-480

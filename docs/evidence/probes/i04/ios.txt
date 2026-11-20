@@ -1,0 +1,117 @@
+== testTabPath
+I04PROBE tab path: other(FocusNode) q01 q01-btn q02 q02-btn q05 q06 other(FocusNode) other(FocusNode) other(FocusNode) other(FocusNode) q09 q10 q10b q11 q12 other(FocusNode) q13 q14-btn q15-btn q15-focus other(FocusNode) q01 q01-btn q02 q02-btn q05 q06 other(FocusNode) other(FocusNode)
+Test Case '-[RunnerUITests.I04ProbeUITests testTabPath]' passed (32.310 seconds).
+== testLetters
+I04PROBE q01 reached true
+I04PROBE q01 typeKey 'afg b' one by one | focus=q01 | Log: q01 char-f / q01 key-g | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 57 | keys=Tab'^9' Tab'^9' A'a' F'f' G'g' ' ' B'b'
+I04PROBE q01 then typeText 'fg' | focus=q01 | Log: q01 char-f / q01 key-g | Texts: q01=a bfg | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 57 | keys=Tab'^9' Tab'^9' A'a' F'f' G'g' ' ' B'b'
+I04PROBE q01-btn reached true
+I04PROBE q01 f, g on the button | focus=q01-btn | Log: q01 char-f / q01 key-g / q01 char-f / q01 key-g | Texts: q01=a bfg | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 57 | keys=F'f' G'g' ' ' B'b' Tab'^9' F'f' G'g'
+I04PROBE q02 reached true
+I04PROBE q02 typeKey 'afg b' one by one | focus=q02 | Log:  | Texts: q01= | q02=afg b | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' A'a' F'f' G'g' ' ' B'b'
+I04PROBE q02 then typeText 'fg' | focus=q02 | Log:  | Texts: q01= | q02=afg bfg | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' A'a' F'f' G'g' ' ' B'b'
+I04PROBE q02-btn reached true
+I04PROBE q02 f, g on the button | focus=q02-btn | Log: q02 char-f / q02 key-g | Texts: q01= | q02=afg bfg | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=F'f' G'g' ' ' B'b' Tab'^9' F'f' G'g'
+Test Case '-[RunnerUITests.I04ProbeUITests testLetters]' passed (36.047 seconds).
+== testRegistry
+I04PROBE q04 h with no focus | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q04 registry-h | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=H'h'
+I04PROBE q04 h on q01-btn | focus=q01-btn | Log: q04 registry-h / q04 registry-h | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=H'h' Tab'^9' Tab'^9' Tab'^9' H'h'
+I04PROBE q04 typed 'hi' in q09 | focus=q09 | Log: q04 registry-h / q04 registry-h / q04 registry-h | Texts: q01= | q02= | q09=i | q10= | q10b= | q11= | q12= | q13= | Scroll: 453 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' H'h' I'i'
+Test Case '-[RunnerUITests.I04ProbeUITests testRegistry]' passed (20.749 seconds).
+== testViewers
+I04PROBE q05 reached true
+I04PROBE q05 right | focus=q05 | Log: q05 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right
+I04PROBE q05 right | focus=q05 | Log: q05 photo 2 / q05 photo 3 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right Arrow Right
+I04PROBE q05 left | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Arrow Right Arrow Right Arrow Left
+I04PROBE q05 end | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Arrow Right Arrow Right Arrow Left
+I04PROBE q05 home | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Arrow Right Arrow Right Arrow Left
+I04PROBE q05 f | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right Arrow Left F'f'
+I04PROBE q05 pageDown | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right Arrow Left F'f'
+I04PROBE q05 pageUp | focus=q05 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right Arrow Left F'f'
+I04PROBE q05 down | focus=q06 | Log: q05 photo 2 / q05 photo 3 / q05 photo 2 / q05 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Right Arrow Right Arrow Left F'f' Arrow Down
+I04PROBE q06 reached true
+I04PROBE q06 right | focus=q06 | Log: q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right
+I04PROBE q06 right | focus=q06 | Log: q06 photo 2 / q06 photo 3 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right Arrow Right
+I04PROBE q06 left | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Arrow Right Arrow Right Arrow Left
+I04PROBE q06 end | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Arrow Right Arrow Right Arrow Left
+I04PROBE q06 home | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' Arrow Right Arrow Right Arrow Left
+I04PROBE q06 f | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right Arrow Left F'f'
+I04PROBE q06 pageDown | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right Arrow Left F'f'
+I04PROBE q06 pageUp | focus=q06 | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Arrow Right Arrow Right Arrow Left F'f'
+I04PROBE q06 down | focus=other(FocusNode) | Log: q06 photo 2 / q06 photo 3 / q06 photo 2 / q06 fav true | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 26 | keys=Right Arrow Right Arrow Left F'f' Arrow Down
+Test Case '-[RunnerUITests.I04ProbeUITests testViewers]' passed (42.833 seconds).
+== testCarousel
+I04PROBE after q06, Tab 1 | focus=other(FocusNode) | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 57 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+I04PROBE   then right | focus=other(FocusNode) | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 57 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right
+I04PROBE   then Enter | focus=other(FocusNode) | Log: q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 57 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Right Enter'^13'
+I04PROBE   then Space | focus=other(FocusNode) | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 57 | keys=Tab'^9' Tab'^9' Tab'^9' Arrow Right Enter'^13' ' '
+I04PROBE after q06, Tab 2 | focus=other(FocusNode) | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 57 | keys=Tab'^9' Tab'^9' Arrow Right Enter'^13' ' ' Tab'^9'
+I04PROBE after q06, Tab 3 | focus=other(FocusNode) | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 57 | keys=Tab'^9' Arrow Right Enter'^13' ' ' Tab'^9' Tab'^9'
+I04PROBE after q06, Tab 4 | focus=q09 | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 459 | keys=Arrow Right Enter'^13' ' ' Tab'^9' Tab'^9' Tab'^9'
+I04PROBE after q06, Tab 5 | focus=q10 | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 545 | keys=Right Enter'^13' ' ' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+I04PROBE after q06, Tab 6 | focus=q10b | Log: q08 tap 2 / q08 tap 2 | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 603 | keys=Enter'^13' ' ' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+Test Case '-[RunnerUITests.I04ProbeUITests testCarousel]' passed (22.780 seconds).
+== testFields
+I04PROBE q09 reached true
+I04PROBE q09 'ab' Enter | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q09 submit "an" | Texts: q01= | q02= | q09=an | q10= | q10b= | q11= | q12= | q13= | Scroll: 459 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13'
+I04PROBE q09 then 'c' | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q09 submit "an" | Texts: q01= | q02= | q09=an | q10= | q10b= | q11= | q12= | q13= | Scroll: 459 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c'
+I04PROBE q09 then Tab | focus=other(FocusNode) | Log: q09 submit "an" | Texts: q01= | q02= | q09=an | q10= | q10b= | q11= | q12= | q13= | Scroll: 459 | keys=Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c' Tab'^9'
+I04PROBE q10 reached true
+I04PROBE q10 'ab' Enter | focus=q10b | Log: q10 submit "an" | Texts: q01= | q02= | q09= | q10=an | q10b= | q11= | q12= | q13= | Scroll: 603 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13'
+I04PROBE q10 then 'c' | focus=q10b | Log: q10 submit "an" | Texts: q01= | q02= | q09= | q10=an | q10b=c | q11= | q12= | q13= | Scroll: 603 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c'
+I04PROBE q10 then Tab | focus=q11 | Log: q10 submit "an" | Texts: q01= | q02= | q09= | q10=an | q10b=c | q11= | q12= | q13= | Scroll: 603 | keys=Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c' Tab'^9'
+I04PROBE q11 reached true
+I04PROBE q11 'ab' Enter | focus=q11 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11=ab\n | q12= | q13= | Scroll: 718 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13'
+I04PROBE q11 then 'c' | focus=q11 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11=ab\nc | q12= | q13= | Scroll: 718 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c'
+I04PROBE q11 then Tab | focus=q12 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11=ab\nc | q12= | q13= | Scroll: 801 | keys=Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c' Tab'^9'
+I04PROBE q12 reached true
+I04PROBE q12 'ab' Enter | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q12 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12=ab | q13= | Scroll: 806 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13'
+I04PROBE q12 then 'c' | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q12 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12=ab | q13= | Scroll: 806 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c'
+I04PROBE q12 then Tab | focus=other(FocusNode) | Log: q12 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12=ab | q13= | Scroll: 806 | keys=Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c' Tab'^9'
+I04PROBE q13 reached true
+I04PROBE q13 'ab' Enter | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q13 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13=ab | Scroll: 913 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13'
+I04PROBE q13 then 'c' | focus=other(_ModalScopeState<dynamic> Focus Scope) | Log: q13 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13=ab | Scroll: 913 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c'
+I04PROBE q13 then Tab | focus=other(FocusNode) | Log: q13 submit "ab" | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13=ab | Scroll: 913 | keys=Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Enter'^13' C'c' Tab'^9'
+I04PROBE q09 'ab' XCUIKeyboardKey.return | focus=q09 | Log:  | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 454 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b'
+I04PROBE q09 then XCUIKeyboardKey.enter | focus=q09 | Log:  | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 459 | keys=Tab'^9' Tab'^9' Tab'^9' A'a' B'b' ctrl+Control Left ctrl+C'^3'
+I04PROBE q09 'ab' then left | focus=q09 | Log:  | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 459 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Arrow Left
+I04PROBE q09 'ab' then home | focus=q09 | Log:  | Texts: q01= | q02= | q09=ab | q10= | q10b= | q11= | q12= | q13= | Scroll: 459 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' A'a' B'b' Arrow Left
+I04PROBE q09 'ab' then space | focus=q09 | Log:  | Texts: q01= | q02= | q09=a b | q10= | q10b= | q11= | q12= | q13= | Scroll: 459 | keys=Tab'^9' Tab'^9' A'a' B'b' Arrow Left ' '
+I04PROBE q09 'ab' then down | focus=q09 | Log:  | Texts: q01= | q02= | q09=a b | q10= | q10b= | q11= | q12= | q13= | Scroll: 459 | keys=A'a' B'b' Arrow Left ' ' Arrow Down
+Test Case '-[RunnerUITests.I04ProbeUITests testFields]' passed (171.245 seconds).
+== testModifiers
+I04PROBE q14 reached true
+I04PROBE q14 ctrl+f | focus=q14-btn | Log: q14 ctrl-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' ctrl+Control Left ctrl+F'^6'
+I04PROBE q14 option+f | focus=q14-btn | Log: q14 ctrl-f / q14 alt-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Tab'^9' Tab'^9' ctrl+Control Left ctrl+F'^6' alt+Alt Left alt+F'ƒ'
+I04PROBE q14 command+f | focus=q14-btn | Log: q14 ctrl-f / q14 alt-f / q14 meta-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Left ctrl+F'^6' alt+Alt Left alt+F'ƒ' meta+Meta Left meta+F'f'
+I04PROBE q14 ctrl+shift+f | focus=q14-btn | Log: q14 ctrl-f / q14 alt-f / q14 meta-f / q14 ctrl-shift-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=meta+Meta Left meta+F'f' shift+Shift Left ctrl+shift+Control Left ctrl+shift+F'^6'
+I04PROBE q14 f | focus=q14-btn | Log: q14 ctrl-f / q14 alt-f / q14 meta-f / q14 ctrl-shift-f | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Left meta+F'f' shift+Shift Left ctrl+shift+Control Left ctrl+shift+F'^6' F'f'
+Test Case '-[RunnerUITests.I04ProbeUITests testModifiers]' passed (28.515 seconds).
+== testScrolling
+I04PROBE q15 reached true
+I04PROBE q15-btn reached | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+I04PROBE q15-btn pageDown | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+I04PROBE q15-btn pageUp | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9'
+I04PROBE q15-btn down | focus=q15-focus | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Arrow Down
+I04PROBE q15-btn command+down | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 959 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' meta+Meta Left meta+Arrow Down
+I04PROBE q15-btn end | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 959 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' meta+Meta Left meta+Arrow Down
+I04PROBE q15-btn home | focus=q15-btn | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 959 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' meta+Meta Left meta+Arrow Down
+I04PROBE q15-btn space | focus=q15-btn | Log: q15-btn pressed | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 959 | keys=Tab'^9' Tab'^9' meta+Meta Left meta+Arrow Down ' '
+I04PROBE q15-focus reached true
+I04PROBE q15-focus space | focus=q15-focus | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' ' '
+I04PROBE q15-focus enter | focus=q15-focus | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' ' ' Enter'^13'
+I04PROBE q15-focus pageDown | focus=q15-focus | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 976 | keys=Tab'^9' Tab'^9' Tab'^9' Tab'^9' Tab'^9' ' ' Enter'^13'
+Test Case '-[RunnerUITests.I04ProbeUITests testScrolling]' passed (78.808 seconds).
+== testUnderVoiceOver
+I04PROBE VO on, focus was q01 | focus=q01 | Log:  | Texts: q01= | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9'
+I04PROBE VO q01 typed 'afg b' | focus=q01 | Log: q01 char-f / q01 key-g | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' A'a' F'f' G'g' ' ' B'b'
+I04PROBE VO three Tabs | focus=q02-btn | Log: q01 char-f / q01 key-g | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=F'f' G'g' ' ' B'b' Tab'^9' Tab'^9' Tab'^9'
+I04PROBE VO f, h | focus=q02-btn | Log: q01 char-f / q01 key-g / q02 char-f / q04 registry-h | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=' ' B'b' Tab'^9' Tab'^9' Tab'^9' F'f' H'h'
+I04PROBE VO q05 reached true
+I04PROBE VO q05 f | focus=q05 | Log: q01 char-f / q01 key-g / q02 char-f / q04 registry-h / q05 fav true | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=B'b' Tab'^9' Tab'^9' Tab'^9' F'f' H'h' Tab'^9' F'f'
+I04PROBE VO q05 end | focus=q05 | Log: q01 char-f / q01 key-g / q02 char-f / q04 registry-h / q05 fav true | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=B'b' Tab'^9' Tab'^9' Tab'^9' F'f' H'h' Tab'^9' F'f'
+I04PROBE VO right | focus=q05 | Log: q01 char-f / q01 key-g / q02 char-f / q04 registry-h / q05 fav true / q05 photo 2 | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' Tab'^9' F'f' H'h' Tab'^9' F'f' Arrow Right
+I04PROBE VO left | focus=q05 | Log: q01 char-f / q01 key-g / q02 char-f / q04 registry-h / q05 fav true / q05 photo 2 / q05 photo 1 | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=F'f' H'h' Tab'^9' F'f' Arrow Right Arrow Left
+I04PROBE VO space | focus=q05 | Log: q01 char-f / q01 key-g / q02 char-f / q04 registry-h / q05 fav true / q05 photo 2 / q05 photo 1 | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' F'f' Arrow Right Arrow Left ' '
+I04PROBE VO off again | focus=q05 | Log: q01 char-f / q01 key-g / q02 char-f / q04 registry-h / q05 fav true / q05 photo 2 / q05 photo 1 | Texts: q01=a b | q02= | q09= | q10= | q10b= | q11= | q12= | q13= | Scroll: 0 | keys=Tab'^9' F'f' Arrow Right Arrow Left ' '
+Test Case '-[RunnerUITests.I04ProbeUITests testUnderVoiceOver]' passed (40.255 seconds).

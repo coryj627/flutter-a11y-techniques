@@ -1,0 +1,29 @@
+// Throwaway I04 control (kept as docs/evidence/probes/i04/html_control.spec.js.txt):
+// plain HTML, no Flutter. Where focus is after Enter submits a form from a
+// text input, and whether a keydown handler for "f" on the document takes
+// the letter from an input.
+import { test } from '@playwright/test';
+
+test('plain HTML: Enter in a form input, and a document-wide f shortcut', async ({ page }) => {
+  await page.setContent(`
+    <form id="f" onsubmit="event.preventDefault(); document.title = 'submitted ' + (++window.n)">
+      <label>Note <input id="note"></label>
+    </form>
+    <button id="after">After</button>
+    <label>Other <input id="other"></label>
+    <script>
+      window.n = 0; window.f = 0;
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'f' && e.target.id === 'other') { e.preventDefault(); window.f++; }
+      });
+    </script>`);
+  await page.locator('#note').focus();
+  await page.keyboard.type('Muddy');
+  await page.keyboard.press('Enter');
+  const after = await page.evaluate(() => `${document.title}; active=${document.activeElement.id || document.activeElement.tagName}`);
+  console.log('I04CONTROL Enter in a form input:', after);
+  await page.locator('#other').focus();
+  await page.keyboard.type('Leafy');
+  const typed = await page.evaluate(() => `${document.getElementById('other').value}; shortcut ran ${window.f} time(s)`);
+  console.log('I04CONTROL document keydown handler for f that calls preventDefault, typing "Leafy":', typed);
+});

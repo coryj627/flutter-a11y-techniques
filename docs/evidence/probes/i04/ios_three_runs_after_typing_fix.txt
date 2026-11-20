@@ -1,0 +1,64 @@
+== run 1
+'-[RunnerUITests.I04KeyboardActionsUITests testAPageWideFActsWhereverFocusIsAndTypesInTheNote]' passed (42.518 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testATapShowsAnyPhoto]' passed (28.440 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysLeftDoesNotMove]' passed (18.021 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove]' passed (18.664 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysTheStopAfterTheStripIsTheFavouriteButton]' passed (9.509 seconds).
+I04KEYS paste: iOS asked to allow the paste
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutAnFPastedWithCommandVGoesIn]' passed (82.858 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutFActsWhereverFocusIsAndTakesTheFOfTheNote]' passed (19.513 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF]' passed (16.067 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutTypeTextPutsTheFIn]' passed (15.779 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop]' passed (113.680 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEveryPartHasItsLabelAndType]' passed (27.372 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodOnFocusFActsInTheStripOnly]' passed (20.939 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' passed (15.605 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodTurnOffTheSwitchTurnsFOff]' passed (23.142 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTabGoesTheStripTheFavouriteButtonThenTheNote]' passed (84.829 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt]' passed (81.343 seconds).
+	 Executed 16 tests, with 0 failures (0 unexpected) in 618.277 (618.285) seconds
+	 Executed 16 tests, with 0 failures (0 unexpected) in 618.277 (618.285) seconds
+	 Executed 16 tests, with 0 failures (0 unexpected) in 618.277 (618.286) seconds
+== run 2
+'-[RunnerUITests.I04KeyboardActionsUITests testAPageWideFActsWhereverFocusIsAndTypesInTheNote]' passed (41.830 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testATapShowsAnyPhoto]' passed (28.410 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysLeftDoesNotMove]' passed (17.734 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove]' passed (18.735 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysTheStopAfterTheStripIsTheFavouriteButton]' passed (9.510 seconds).
+I04KEYS paste: iOS asked to allow the paste
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutAnFPastedWithCommandVGoesIn]' passed (83.293 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutFActsWhereverFocusIsAndTakesTheFOfTheNote]' passed (19.394 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF]' passed (16.429 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutTypeTextPutsTheFIn]' passed (15.399 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop]' passed (116.287 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEveryPartHasItsLabelAndType]' passed (27.443 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodOnFocusFActsInTheStripOnly]' passed (20.076 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' passed (15.493 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodTurnOffTheSwitchTurnsFOff]' passed (22.882 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTabGoesTheStripTheFavouriteButtonThenTheNote]' passed (84.779 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt]' passed (81.042 seconds).
+	 Executed 16 tests, with 0 failures (0 unexpected) in 618.736 (618.744) seconds
+	 Executed 16 tests, with 0 failures (0 unexpected) in 618.736 (618.745) seconds
+	 Executed 16 tests, with 0 failures (0 unexpected) in 618.736 (618.746) seconds
+== run 3
+'-[RunnerUITests.I04KeyboardActionsUITests testAPageWideFActsWhereverFocusIsAndTypesInTheNote]' passed (42.677 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testATapShowsAnyPhoto]' passed (28.422 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysLeftDoesNotMove]' passed (17.729 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove]' passed (19.645 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysTheStopAfterTheStripIsTheFavouriteButton]' passed (9.502 seconds).
+I04KEYS paste: iOS asked to allow the paste
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutAnFPastedWithCommandVGoesIn]' passed (82.734 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutFActsWhereverFocusIsAndTakesTheFOfTheNote]' passed (19.437 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF]' passed (16.888 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutTypeTextPutsTheFIn]' passed (15.270 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop]' passed (113.567 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEveryPartHasItsLabelAndType]' passed (27.517 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodOnFocusFActsInTheStripOnly]' passed (20.415 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' passed (15.469 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodTurnOffTheSwitchTurnsFOff]' passed (23.155 seconds).
+I04KEYS bad-no-arrow-keys: "m" did not reach the note (attempt 1); it shows ""
+'-[RunnerUITests.I04KeyboardActionsUITests testTabGoesTheStripTheFavouriteButtonThenTheNote]' passed (89.266 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt]' passed (81.486 seconds).
+	 Executed 16 tests, with 0 failures (0 unexpected) in 623.180 (623.188) seconds
+	 Executed 16 tests, with 0 failures (0 unexpected) in 623.180 (623.189) seconds
+	 Executed 16 tests, with 0 failures (0 unexpected) in 623.180 (623.190) seconds

@@ -1,0 +1,30 @@
+== set: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest > theStripsKeysShowAPhotoAndMoveFocusToItsThumbnail[Pixel_10a(AVD) - 17] [31mFAILED [0m
+	org.junit.ComparisonFailure: bad-page-shortcut focus after DPAD_RIGHT expected:<[]ridge> but was:<[b]ridge>
+Tests on Pixel_10a(AVD) - 17 failed: There was 1 failure(s).
+Execute dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest.theStripsKeysShowAPhotoAndMoveFocusToItsThumbnail: FAILED
+org.junit.ComparisonFailure: org.junit.ComparisonFailure: bad-page-shortcut focus after DPAD_RIGHT expected:<[]ridge> but was:<[b]ridge>
+org.junit.ComparisonFailure: bad-page-shortcut focus after DPAD_RIGHT expected:<[]ridge> but was:<[b]ridge>
+> Task :app:connectedDebugAndroidTest FAILED
+BUILD FAILED in 4m 51s
+== reset: Physical size: 1080x2424  Physical density: 420 
+== set: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+== run 1
+dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest > theStripsKeysShowAPhotoAndMoveFocusToItsThumbnail[Pixel_10a(AVD) - 17] [31mFAILED [0m
+	org.junit.ComparisonFailure: bad-page-shortcut focus after DPAD_RIGHT expected:<[]ridge> but was:<[b]ridge>
+Tests on Pixel_10a(AVD) - 17 failed: There was 1 failure(s).
+Execute dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest.theStripsKeysShowAPhotoAndMoveFocusToItsThumbnail: FAILED
+org.junit.ComparisonFailure: org.junit.ComparisonFailure: bad-page-shortcut focus after DPAD_RIGHT expected:<[]ridge> but was:<[b]ridge>
+org.junit.ComparisonFailure: bad-page-shortcut focus after DPAD_RIGHT expected:<[]ridge> but was:<[b]ridge>
+> Task :app:connectedDebugAndroidTest FAILED
+BUILD FAILED in 51s
+== run 2
+dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest > theStripsKeysShowAPhotoAndMoveFocusToItsThumbnail[Pixel_10a(AVD) - 17] [31mFAILED [0m
+	org.junit.ComparisonFailure: bad-page-shortcut focus after DPAD_RIGHT expected:<[]ridge> but was:<[b]ridge>
+Tests on Pixel_10a(AVD) - 17 failed: There was 1 failure(s).
+Execute dev.fluttera11y.flutter_a11y_techniques.I04KeyboardActionsTest.theStripsKeysShowAPhotoAndMoveFocusToItsThumbnail: FAILED
+org.junit.ComparisonFailure: org.junit.ComparisonFailure: bad-page-shortcut focus after DPAD_RIGHT expected:<[]ridge> but was:<[b]ridge>
+org.junit.ComparisonFailure: bad-page-shortcut focus after DPAD_RIGHT expected:<[]ridge> but was:<[b]ridge>
+> Task :app:connectedDebugAndroidTest FAILED
+BUILD FAILED in 50s
+== reset: Physical size: 1080x2424  Physical density: 420 

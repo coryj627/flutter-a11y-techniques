@@ -1,0 +1,67 @@
+== run 1
+'-[RunnerUITests.I04KeyboardActionsUITests testAPageWideFActsWhereverFocusIsAndTypesInTheNote]' passed (39.334 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testATapShowsAnyPhoto]' passed (29.795 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysLeftDoesNotMove]' passed (18.664 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove]' passed (18.118 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysTheStopAfterTheStripIsTheFavouriteButton]' passed (9.542 seconds).
+I04KEYS paste: iOS asked to allow the paste
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutAnFPastedWithCommandVGoesIn]' passed (81.654 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutFActsWhereverFocusIsAndTakesTheFOfTheNote]' passed (17.479 seconds).
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aab7042f201789909/ios/RunnerUITests/I04KeyboardActionsUITests.swift:366: error: -[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF] : XCTAssertEqual failed: ("ea") is not equal to ("lea") - bad-page-shortcut note after f
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aab7042f201789909/ios/RunnerUITests/I04KeyboardActionsUITests.swift:374: error: -[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF] : XCTAssertEqual failed: ("eaF") is not equal to ("leaF") - bad-page-shortcut note after Shift+F
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF]' failed (19.811 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutTypeTextPutsTheFIn]' passed (14.524 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop]' passed (107.665 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEveryPartHasItsLabelAndType]' passed (27.964 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodOnFocusFActsInTheStripOnly]' passed (19.291 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' passed (15.546 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodTurnOffTheSwitchTurnsFOff]' passed (22.906 seconds).
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aab7042f201789909/ios/RunnerUITests/I04KeyboardActionsUITests.swift:164: error: -[RunnerUITests.I04KeyboardActionsUITests testTabGoesTheStripTheFavouriteButtonThenTheNote] : XCTAssertEqual failed: ("ud") is not equal to ("mud") - bad-page-shortcut note
+'-[RunnerUITests.I04KeyboardActionsUITests testTabGoesTheStripTheFavouriteButtonThenTheNote]' failed (83.342 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt]' passed (81.465 seconds).
+	 Executed 16 tests, with 3 failures (0 unexpected) in 607.099 (607.107) seconds
+	 Executed 16 tests, with 3 failures (0 unexpected) in 607.099 (607.108) seconds
+	 Executed 16 tests, with 3 failures (0 unexpected) in 607.099 (607.108) seconds
+== run 2
+'-[RunnerUITests.I04KeyboardActionsUITests testAPageWideFActsWhereverFocusIsAndTypesInTheNote]' passed (39.665 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testATapShowsAnyPhoto]' passed (28.372 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysLeftDoesNotMove]' passed (17.218 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove]' passed (18.635 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysTheStopAfterTheStripIsTheFavouriteButton]' passed (9.557 seconds).
+I04KEYS paste: iOS asked to allow the paste
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutAnFPastedWithCommandVGoesIn]' passed (82.941 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutFActsWhereverFocusIsAndTakesTheFOfTheNote]' passed (17.071 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF]' passed (15.189 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutTypeTextPutsTheFIn]' passed (14.712 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop]' passed (108.487 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEveryPartHasItsLabelAndType]' passed (27.503 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodOnFocusFActsInTheStripOnly]' passed (19.172 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' passed (15.575 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodTurnOffTheSwitchTurnsFOff]' passed (22.856 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTabGoesTheStripTheFavouriteButtonThenTheNote]' passed (81.726 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt]' passed (81.290 seconds).
+	 Executed 16 tests, with 0 failures (0 unexpected) in 599.965 (599.973) seconds
+	 Executed 16 tests, with 0 failures (0 unexpected) in 599.965 (599.974) seconds
+	 Executed 16 tests, with 0 failures (0 unexpected) in 599.965 (599.974) seconds
+== run 3
+'-[RunnerUITests.I04KeyboardActionsUITests testAPageWideFActsWhereverFocusIsAndTypesInTheNote]' passed (39.554 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testATapShowsAnyPhoto]' passed (28.483 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysLeftDoesNotMove]' passed (17.457 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove]' passed (19.690 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysTheStopAfterTheStripIsTheFavouriteButton]' passed (9.543 seconds).
+I04KEYS paste: iOS asked to allow the paste
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutAnFPastedWithCommandVGoesIn]' passed (82.321 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutFActsWhereverFocusIsAndTakesTheFOfTheNote]' passed (17.329 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF]' passed (15.641 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutTypeTextPutsTheFIn]' passed (14.506 seconds).
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aab7042f201789909/ios/RunnerUITests/I04KeyboardActionsUITests.swift:238: error: -[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop] : XCTAssertEqual failed: ("mudy") is not equal to ("muddy") - bad-page-shortcut note
+'-[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop]' failed (109.712 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEveryPartHasItsLabelAndType]' passed (27.265 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodOnFocusFActsInTheStripOnly]' passed (18.968 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' passed (15.521 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodTurnOffTheSwitchTurnsFOff]' passed (22.880 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTabGoesTheStripTheFavouriteButtonThenTheNote]' passed (81.317 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt]' passed (81.367 seconds).
+	 Executed 16 tests, with 1 failure (0 unexpected) in 601.552 (601.560) seconds
+	 Executed 16 tests, with 1 failure (0 unexpected) in 601.552 (601.561) seconds
+	 Executed 16 tests, with 1 failure (0 unexpected) in 601.552 (601.562) seconds

@@ -1,0 +1,209 @@
+// Throwaway: I04 probe on iOS. Not committed (kept as
+// docs/evidence/probes/i04/I04ProbeUITests.swift.txt). The probe's own
+// Focus, Keys, Log, Texts, and Scroll lines say what each key did.
+import XCTest
+
+final class I04ProbeUITests: XCTestCase {
+  let app = XCUIApplication()
+
+  private func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+  private func line(_ id: String) -> String { el(id).exists ? el(id).label : "(\(id) not found)" }
+  private func focus() -> String { line("focus").replacingOccurrences(of: "Focus: ", with: "") }
+  private func keys() -> String {
+    line("keys").replacingOccurrences(of: "Keys: ", with: "").split(separator: " ").suffix(8).joined(separator: " ")
+  }
+
+  private func snap(_ what: String) {
+    print("I04PROBE \(what) | focus=\(focus()) | \(line("log")) | \(line("texts")) | \(line("scroll")) | keys=\(keys())")
+  }
+
+  private func launch() {
+    app.launch()
+    XCTAssertTrue(el("focus").waitForExistence(timeout: 30))
+    sleep(2)
+  }
+
+  private func press(_ key: String, _ flags: XCUIElement.KeyModifierFlags = [], wait: useconds_t = 500_000) {
+    app.typeKey(key, modifierFlags: flags)
+    usleep(wait)
+  }
+
+  private func type(_ text: String) {
+    for ch in text { press(String(ch), wait: 250_000) }
+    usleep(400_000)
+  }
+
+  private func tabUntil(_ label: String, max: Int = 60) -> Bool {
+    for _ in 0..<max {
+      if focus() == label { return true }
+      press(XCUIKeyboardKey.tab.rawValue, wait: 300_000)
+    }
+    return focus() == label
+  }
+
+  private let tab = XCUIKeyboardKey.tab.rawValue
+
+  func testTabPath() {
+    launch()
+    var path: [String] = []
+    for _ in 0..<30 { press(tab, wait: 300_000); path.append(focus()) }
+    print("I04PROBE tab path: \(path.joined(separator: " "))")
+  }
+
+  func testLetters() {
+    for id in ["q01", "q02"] {
+      launch()
+      print("I04PROBE \(id) reached \(tabUntil(id))")
+      type("afg b")
+      snap("\(id) typeKey 'afg b' one by one")
+      app.typeText("fg")
+      usleep(600_000)
+      snap("\(id) then typeText 'fg'")
+      print("I04PROBE \(id)-btn reached \(tabUntil("\(id)-btn"))")
+      press("f"); press("g")
+      snap("\(id) f, g on the button")
+    }
+  }
+
+  func testRegistry() {
+    launch()
+    press("h")
+    snap("q04 h with no focus")
+    _ = tabUntil("q01-btn")
+    press("h")
+    snap("q04 h on q01-btn")
+    _ = tabUntil("q09")
+    type("hi")
+    snap("q04 typed 'hi' in q09")
+  }
+
+  func testViewers() {
+    let keys: [(String, String)] = [
+      ("right", XCUIKeyboardKey.rightArrow.rawValue), ("right", XCUIKeyboardKey.rightArrow.rawValue),
+      ("left", XCUIKeyboardKey.leftArrow.rawValue), ("end", XCUIKeyboardKey.end.rawValue),
+      ("home", XCUIKeyboardKey.home.rawValue), ("f", "f"),
+      ("pageDown", XCUIKeyboardKey.pageDown.rawValue), ("pageUp", XCUIKeyboardKey.pageUp.rawValue),
+      ("down", XCUIKeyboardKey.downArrow.rawValue),
+    ]
+    for id in ["q05", "q06"] {
+      launch()
+      print("I04PROBE \(id) reached \(tabUntil(id))")
+      for (name, key) in keys {
+        press(key)
+        snap("\(id) \(name)")
+        if name == "down" { break }
+      }
+    }
+  }
+
+  func testCarousel() {
+    launch()
+    _ = tabUntil("q06")
+    for i in 1...6 {
+      press(tab)
+      snap("after q06, Tab \(i)")
+      if i == 1 {
+        press(XCUIKeyboardKey.rightArrow.rawValue); snap("  then right")
+        press("\n"); snap("  then Enter")
+        press(XCUIKeyboardKey.space.rawValue); snap("  then Space")
+      }
+    }
+  }
+
+  func testFields() {
+    for id in ["q09", "q10", "q11", "q12", "q13"] {
+      launch()
+      print("I04PROBE \(id) reached \(tabUntil(id))")
+      type("ab")
+      press("\n", wait: 800_000)
+      snap("\(id) 'ab' Enter")
+      type("c")
+      snap("\(id) then 'c'")
+      press(tab)
+      snap("\(id) then Tab")
+    }
+    launch()
+    _ = tabUntil("q09")
+    type("ab")
+    press(XCUIKeyboardKey.return.rawValue, wait: 800_000)
+    snap("q09 'ab' XCUIKeyboardKey.return")
+    press(XCUIKeyboardKey.enter.rawValue, wait: 800_000)
+    snap("q09 then XCUIKeyboardKey.enter")
+    launch()
+    _ = tabUntil("q09")
+    type("ab")
+    for (name, key) in [("left", XCUIKeyboardKey.leftArrow.rawValue), ("home", XCUIKeyboardKey.home.rawValue),
+                        ("space", XCUIKeyboardKey.space.rawValue), ("down", XCUIKeyboardKey.downArrow.rawValue)] {
+      press(key)
+      snap("q09 'ab' then \(name)")
+    }
+  }
+
+  func testModifiers() {
+    launch()
+    print("I04PROBE q14 reached \(tabUntil("q14-btn"))")
+    press("f", .control); snap("q14 ctrl+f")
+    press("f", .option); snap("q14 option+f")
+    press("f", .command); snap("q14 command+f")
+    press("f", [.control, .shift]); snap("q14 ctrl+shift+f")
+    press("f"); snap("q14 f")
+  }
+
+  func testScrolling() {
+    launch()
+    print("I04PROBE q15 reached \(tabUntil("q15-btn"))")
+    snap("q15-btn reached")
+    for (name, key, flags) in [("pageDown", XCUIKeyboardKey.pageDown.rawValue, XCUIElement.KeyModifierFlags()),
+                               ("pageUp", XCUIKeyboardKey.pageUp.rawValue, []),
+                               ("down", XCUIKeyboardKey.downArrow.rawValue, []),
+                               ("command+down", XCUIKeyboardKey.downArrow.rawValue, .command),
+                               ("end", XCUIKeyboardKey.end.rawValue, []),
+                               ("home", XCUIKeyboardKey.home.rawValue, []),
+                               ("space", XCUIKeyboardKey.space.rawValue, [])] {
+      _ = tabUntil("q15-btn")
+      press(key, flags, wait: 800_000)
+      snap("q15-btn \(name)")
+    }
+    launch()
+    print("I04PROBE q15-focus reached \(tabUntil("q15-focus"))")
+    for (name, key) in [("space", XCUIKeyboardKey.space.rawValue), ("enter", "\n"), ("pageDown", XCUIKeyboardKey.pageDown.rawValue)] {
+      press(key, wait: 800_000)
+      snap("q15-focus \(name)")
+    }
+  }
+
+  func testUnderVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    launch()
+    _ = tabUntil("q01")
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    try voiceOver.enable()
+    defer { try? voiceOver.disable() }
+    sleep(3)
+    snap("VO on, focus was q01")
+    type("afg b")
+    snap("VO q01 typed 'afg b'")
+    press(tab); press(tab); press(tab)
+    snap("VO three Tabs")
+    press("f"); press("h")
+    snap("VO f, h")
+    print("I04PROBE VO q05 reached \(tabUntil("q05"))")
+    press("f")
+    snap("VO q05 f")
+    press(XCUIKeyboardKey.end.rawValue)
+    snap("VO q05 end")
+    press(XCUIKeyboardKey.rightArrow.rawValue)
+    snap("VO right")
+    press(XCUIKeyboardKey.leftArrow.rawValue)
+    snap("VO left")
+    press(XCUIKeyboardKey.space.rawValue)
+    snap("VO space")
+    try voiceOver.disable()
+    sleep(1)
+    snap("VO off again")
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}

@@ -1,0 +1,108 @@
+// Throwaway I04 probe in flutter_test. Not committed (kept as
+// docs/evidence/probes/i04/probe_test.dart.txt).
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  String focusName() =>
+      FocusManager.instance.primaryFocus?.debugLabel ??
+      FocusManager.instance.primaryFocus.runtimeType.toString();
+
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets('segmented controls and the keyboard ($platform)', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = platform;
+      var cupertino = 0;
+      var material = <int>{0};
+      final log = <String>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) => Column(
+                children: [
+                  CupertinoSlidingSegmentedControl<int>(
+                    groupValue: cupertino,
+                    children: const {0: Text('cA'), 1: Text('cB')},
+                    onValueChanged: (v) => setState(() {
+                      cupertino = v!;
+                      log.add('cupertino $v');
+                    }),
+                  ),
+                  SegmentedButton<int>(
+                    segments: const [
+                      ButtonSegment(value: 0, label: Text('mA')),
+                      ButtonSegment(value: 1, label: Text('mB')),
+                    ],
+                    selected: material,
+                    onSelectionChanged: (v) => setState(() {
+                      material = v;
+                      log.add('material $v');
+                    }),
+                  ),
+                  CupertinoSwitch(
+                    value: cupertino == 1,
+                    onChanged: (v) => log.add('switch $v'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      final path = <String>[];
+      for (var i = 0; i < 5; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        path.add(focusName());
+        await tester.sendKeyEvent(LogicalKeyboardKey.space);
+        await tester.pump();
+        path.add('space->${log.lastOrNull}');
+      }
+      // ignore: avoid_print
+      print('I04PROBE $platform tab+space path: ${path.join(' ')} | log: $log');
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
+
+  testWidgets('a page-wide CallbackShortcuts around a field', (tester) async {
+    final log = <String>[];
+    final controller = TextEditingController();
+    final node = FocusNode(debugLabel: 'field');
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CallbackShortcuts(
+            bindings: {
+              const CharacterActivator('f'): () => log.add('char-f'),
+            },
+            child: Column(
+              children: [
+                TextField(controller: controller, focusNode: node),
+                Shortcuts(
+                  shortcuts: const {
+                    CharacterActivator('f'): DoNothingAndStopPropagationIntent(),
+                  },
+                  child: TextField(focusNode: FocusNode(debugLabel: 'field2')),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    node.requestFocus();
+    await tester.pump();
+    final r1 = await tester.sendKeyEvent(LogicalKeyboardKey.keyF, character: 'f');
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    final r2 = await tester.sendKeyEvent(LogicalKeyboardKey.keyF, character: 'f');
+    // ignore: avoid_print
+    print('I04PROBE page-wide f: in field handled=$r1 log=$log; '
+        'in protected field (${focusName()}) handled=$r2 log=$log');
+  });
+}

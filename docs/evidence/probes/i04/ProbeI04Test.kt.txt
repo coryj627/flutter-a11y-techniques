@@ -1,0 +1,244 @@
+// Throwaway I04 probe. Not committed (kept as
+// docs/evidence/probes/i04/ProbeI04Test.kt.txt). Reads the probe's Focus,
+// Keys, Log, Texts, and Scroll lines after each key.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.os.SystemClock
+import android.util.Log
+import android.view.InputDevice
+import android.view.KeyCharacterMap
+import android.view.KeyEvent
+import android.view.accessibility.AccessibilityNodeInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeI04Test : TechniqueTest("I04") {
+    private fun text(id: String): String =
+        all().firstOrNull { it.viewIdResourceName == id }?.name() ?: "($id not found)"
+
+    private fun focus() = text("focus").removePrefix("Focus: ")
+
+    private fun lastKeys(): String = text("keys").removePrefix("Keys: ").split(" ").takeLast(8).joinToString(" ")
+
+    private fun snap(what: String) {
+        Log.i("I04PROBE", "$what | focus=${focus()} | ${text("log")} | ${text("texts")} | ${text("scroll")} | keys=${lastKeys()}")
+    }
+
+    private fun start() {
+        val intent = inst.targetContext.packageManager.getLaunchIntentForPackage(inst.targetContext.packageName)!!
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        device.wait(Until.hasObject(By.res("focus")), 20_000)
+        device.waitForIdle()
+        Thread.sleep(1_500)
+    }
+
+    private fun key(name: String, wait: Long = 500) {
+        device.executeShellCommand("input keyevent KEYCODE_$name")
+        Thread.sleep(wait)
+    }
+
+    private fun type(text: String) {
+        device.executeShellCommand("input text $text")
+        Thread.sleep(800)
+    }
+
+    private fun tabUntil(label: String, max: Int = 60): Boolean {
+        for (i in 0 until max) {
+            if (focus() == label) return true
+            key("TAB", 300)
+        }
+        return focus() == label
+    }
+
+    private fun chord(modifier: Int, modMeta: Int, code: Int) {
+        val t = SystemClock.uptimeMillis()
+        fun ev(time: Long, action: Int, c: Int, meta: Int) = KeyEvent(
+            time, time, action, c, 0, meta, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0, InputDevice.SOURCE_KEYBOARD)
+        inst.sendKeySync(ev(t, KeyEvent.ACTION_DOWN, modifier, modMeta))
+        inst.sendKeySync(ev(t + 10, KeyEvent.ACTION_DOWN, code, modMeta))
+        inst.sendKeySync(ev(t + 20, KeyEvent.ACTION_UP, code, modMeta))
+        inst.sendKeySync(ev(t + 30, KeyEvent.ACTION_UP, modifier, 0))
+        Thread.sleep(600)
+    }
+
+    private val ctrl = KeyEvent.META_CTRL_ON or KeyEvent.META_CTRL_LEFT_ON
+    private val alt = KeyEvent.META_ALT_ON or KeyEvent.META_ALT_LEFT_ON
+    private val meta = KeyEvent.META_META_ON or KeyEvent.META_META_LEFT_ON
+
+    @Test
+    fun tabPath() {
+        start()
+        val path = (0 until 30).map { key("TAB", 300); focus() }
+        Log.i("I04PROBE", "tab path: ${path.joinToString(" ")}")
+        // Which accessibility actions a text field offers (ACTION_IME_ENTER?)
+        val field = all().firstOrNull { it.viewIdResourceName == "q09" }
+        Log.i("I04PROBE", "q09 node: class=${field?.className} editable=${field?.isEditable} actions=${field?.actionList?.map { it.id.toString() + (it.label?.let { l -> "($l)" } ?: "") }}")
+        Log.i("I04PROBE", "ACTION_IME_ENTER id=${AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.id}")
+    }
+
+    @Test
+    fun letters() {
+        for (id in listOf("q01", "q02")) {
+            start()
+            Log.i("I04PROBE", "$id reached ${tabUntil(id)}")
+            type("afg%sb")
+            snap("$id typed 'afg b' (input text)")
+            Log.i("I04PROBE", "$id-btn reached ${tabUntil("$id-btn")}")
+            key("F"); key("G")
+            snap("$id F, G on the button")
+        }
+    }
+
+    @Test
+    fun registry() {
+        start()
+        key("H")
+        snap("q04 H with no focus")
+        tabUntil("q01-btn")
+        key("H")
+        snap("q04 H on q01-btn")
+        tabUntil("q09")
+        type("hi")
+        snap("q04 typed 'hi' in q09")
+    }
+
+    @Test
+    fun viewers() {
+        for (id in listOf("q05", "q06")) {
+            start()
+            Log.i("I04PROBE", "$id reached ${tabUntil(id)}")
+            for (k in listOf("DPAD_RIGHT", "DPAD_RIGHT", "DPAD_LEFT", "MOVE_END", "MOVE_HOME", "F", "PAGE_DOWN", "PAGE_UP")) {
+                key(k)
+                snap("$id $k")
+            }
+            tabUntil(id)
+            device.executeShellCommand("input keyevent --longpress KEYCODE_DPAD_RIGHT")
+            Thread.sleep(800)
+            snap("$id longpress DPAD_RIGHT")
+            key("DPAD_DOWN")
+            snap("$id DPAD_DOWN")
+        }
+    }
+
+    @Test
+    fun carousel() {
+        start()
+        tabUntil("q06")
+        for (i in 1..6) {
+            key("TAB")
+            snap("after q06, Tab $i")
+            if (i == 1) {
+                key("DPAD_RIGHT"); snap("  then DPAD_RIGHT")
+                key("ENTER"); snap("  then ENTER")
+                key("SPACE"); snap("  then SPACE")
+            }
+        }
+    }
+
+    @Test
+    fun fields() {
+        for (id in listOf("q09", "q10", "q11", "q12", "q13")) {
+            start()
+            Log.i("I04PROBE", "$id reached ${tabUntil(id)}")
+            type("ab")
+            key("ENTER", 800)
+            snap("$id 'ab' ENTER")
+            type("c")
+            snap("$id then 'c'")
+            key("TAB")
+            snap("$id then TAB")
+        }
+        start()
+        tabUntil("q09")
+        type("ab")
+        key("NUMPAD_ENTER", 800)
+        snap("q09 'ab' NUMPAD_ENTER")
+        start()
+        tabUntil("q09")
+        type("ab")
+        for (k in listOf("DPAD_LEFT", "MOVE_HOME", "SPACE", "DPAD_DOWN")) {
+            key(k)
+            snap("q09 'ab' then $k")
+        }
+    }
+
+    @Test
+    fun modifiers() {
+        start()
+        Log.i("I04PROBE", "q14 reached ${tabUntil("q14-btn")}")
+        chord(KeyEvent.KEYCODE_CTRL_LEFT, ctrl, KeyEvent.KEYCODE_F); snap("q14 ctrl+F")
+        chord(KeyEvent.KEYCODE_ALT_LEFT, alt, KeyEvent.KEYCODE_F); snap("q14 alt+F")
+        chord(KeyEvent.KEYCODE_META_LEFT, meta, KeyEvent.KEYCODE_F); snap("q14 meta+F")
+        key("F"); snap("q14 F")
+    }
+
+    @Test
+    fun scrolling() {
+        start()
+        Log.i("I04PROBE", "q15 reached ${tabUntil("q15-btn")}")
+        snap("q15-btn reached")
+        for (k in listOf("PAGE_DOWN", "PAGE_UP", "DPAD_DOWN")) { key(k, 800); snap("q15-btn $k") }
+        tabUntil("q15-btn")
+        chord(KeyEvent.KEYCODE_CTRL_LEFT, ctrl, KeyEvent.KEYCODE_DPAD_DOWN); snap("q15-btn ctrl+DPAD_DOWN")
+        for (k in listOf("MOVE_END", "MOVE_HOME", "SPACE")) { key(k, 800); snap("q15-btn $k") }
+        start()
+        Log.i("I04PROBE", "q15-focus reached ${tabUntil("q15-focus")}")
+        for (k in listOf("SPACE", "ENTER", "PAGE_DOWN")) { key(k, 800); snap("q15-focus $k") }
+    }
+
+    @Test
+    fun round2() {
+        Log.i("I04PROBE", "IME: ${device.executeShellCommand("settings get secure default_input_method").trim()}")
+        for (id in listOf("q01", "q02")) {
+            start()
+            Log.i("I04PROBE", "$id reached ${tabUntil(id)}")
+            for (k in listOf("A", "F", "G", "SPACE", "B")) key(k, 300)
+            snap("$id keyevent A F G SPACE B in the field")
+        }
+        for (id in listOf("q16", "q17")) {
+            start()
+            Log.i("I04PROBE", "$id reached ${tabUntil(id)}")
+            val n = all().firstOrNull { it.viewIdResourceName == id }
+            Log.i("I04PROBE", "$id node: class=${n?.className} actions=${n?.actionList?.map { it.id }} range=${n?.rangeInfo?.current}")
+            for (k in listOf("DPAD_RIGHT", "DPAD_RIGHT", "DPAD_LEFT", "MOVE_END", "MOVE_HOME")) { key(k); snap("$id $k") }
+        }
+        for (id in listOf("q18", "q19")) {
+            start()
+            Log.i("I04PROBE", "$id reached ${tabUntil(id)}")
+            type("ab")
+            key("ENTER", 800)
+            snap("$id 'ab' ENTER")
+            chord(KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.META_SHIFT_ON or KeyEvent.META_SHIFT_LEFT_ON, KeyEvent.KEYCODE_ENTER)
+            snap("$id then shift+ENTER")
+        }
+    }
+
+    /** Run with TalkBack on: which keys still reach Flutter. */
+    @Test
+    fun underScreenReader() {
+        start()
+        Thread.sleep(4_000)
+        Log.i("I04PROBE", "SR services=${android.provider.Settings.Secure.getString(inst.targetContext.contentResolver, android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)} touchExploration=${(inst.targetContext.getSystemService(android.content.Context.ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager).isTouchExplorationEnabled}")
+        key("TAB"); key("TAB")
+        snap("SR two Tabs")
+        Log.i("I04PROBE", "SR q01 reached ${tabUntil("q01")}")
+        type("afg%sb")
+        snap("SR q01 typed 'afg b'")
+        Log.i("I04PROBE", "SR q02 reached ${tabUntil("q02")}")
+        type("afg%sb")
+        snap("SR q02 typed 'afg b'")
+        Log.i("I04PROBE", "SR q02-btn reached ${tabUntil("q02-btn")}")
+        key("F"); snap("SR q02-btn F")
+        key("H"); snap("SR q02-btn H (registry)")
+        Log.i("I04PROBE", "SR q05 reached ${tabUntil("q05")}")
+        for (k in listOf("DPAD_RIGHT", "DPAD_RIGHT", "MOVE_END", "MOVE_HOME", "F")) { key(k); snap("SR q05 $k") }
+        Log.i("I04PROBE", "SR q09 reached ${tabUntil("q09")}")
+        type("ab"); key("ENTER", 800); snap("SR q09 'ab' ENTER")
+        chord(KeyEvent.KEYCODE_ALT_LEFT, alt, KeyEvent.KEYCODE_DPAD_RIGHT); snap("SR alt+DPAD_RIGHT (TalkBack next?)")
+    }
+}

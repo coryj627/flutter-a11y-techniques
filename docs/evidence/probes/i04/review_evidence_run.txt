@@ -1,0 +1,35 @@
+# I04 review: test outcomes from `python3 tool/evidence.py I04 --only android,ios,web` (2026-11-19)
+
+## iOS (from build/evidence/I04/ios.log)
+'-[RunnerUITests.I04KeyboardActionsUITests testAPageWideFActsWhereverFocusIsAndTypesInTheNote]' passed (40.445 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testATapShowsAnyPhoto]' passed (28.378 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysLeftDoesNotMove]' passed (17.208 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysRightDoesNotMove]' passed (18.355 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadNoArrowKeysTheStopAfterTheStripIsTheFavouriteButton]' passed (9.496 seconds).
+I04KEYS paste: iOS asked to allow the paste
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutAnFPastedWithCommandVGoesIn]' passed (82.311 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutFActsWhereverFocusIsAndTakesTheFOfTheNote]' passed (17.012 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutShiftFTypesACapitalF]' passed (15.422 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testBadPageShortcutTypeTextPutsTheFIn]' passed (14.559 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEnterInTheNoteSavesItAndTheNextTabStartsFromTheTop]' passed (107.239 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testEveryPartHasItsLabelAndType]' passed (27.298 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodOnFocusFActsInTheStripOnly]' passed (19.216 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodRemapTheSwitchMovesFToControlF]' passed (15.552 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testGoodTurnOffTheSwitchTurnsFOff]' passed (21.594 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTabGoesTheStripTheFavouriteButtonThenTheNote]' passed (81.120 seconds).
+'-[RunnerUITests.I04KeyboardActionsUITests testTheStripsArrowsShowAPhotoAndMoveFocusWithIt]' passed (69.537 seconds).
+Test Suite 'I04KeyboardActionsUITests' passed at 2026-11-19 04:46:32.709.
+Test Suite 'RunnerUITests.xctest' passed at 2026-11-19 04:46:32.709.
+Test Suite 'Selected tests' passed at 2026-11-19 04:46:32.710.
+
+## Android (from build/evidence/I04/android.log)
+Finished 19 tests on Pixel_10a(AVD) - 17
+BUILD SUCCESSFUL in 5m 25s
+
+## Summary
+I04:
+  android        PASS     327 s
+  ios            PASS     667 s
+  web            PASS     78 s
+
+Result: PASS

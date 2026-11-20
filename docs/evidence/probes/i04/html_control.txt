@@ -1,0 +1,3 @@
+I04CONTROL Enter in a form input: submitted 1; active=note
+I04CONTROL document keydown handler for f that calls preventDefault, typing "Leafy": Leay; shortcut ran 1 time(s)
+  1 passed (693ms)
