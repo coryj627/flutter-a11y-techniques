@@ -65,21 +65,25 @@ files with theirs.
   size, which the wave 1 notes ask for, is not the same as a CI run: the
   F03 and I03 failures steadied in 189 never happened here at that size.
 
-## Failures on CI not caused by a change
+## Failures on CI that passed on a re-run
 
-Each of these passed when the failed job was run again.
+Each of these failed in one attempt and passed when the failed job was run
+again, with no change in between. That does not show a change did not
+cause them. Where a cause was looked for, it is given; the rest are
+unknown.
 
 - Android emulator "device offline".
 - A Gradle build that failed in about 30 seconds, twice. The one looked
   at was HTTP 429 from Maven Central while resolving a plugin.
-- F03 on Android: a key read before the keyboard was up. Steadied in 189.
-- I03 on Android: focus was not where Tab should have put it after a
-  dialog opened. Steadied in 189.
+- F03 on Android: the test found no keys in the keyboard window. The
+  cause was not found; 189 changed the test (below).
+- I03 on Android: after Tab in an open dialog, focus was read as on no
+  stop. The cause was not found; 189 changed the test (below).
 - F10 on Android: `aTapOnTheTrackSetsTheValue`, once. Not looked into.
 - I04 on iOS: `testBadNoArrowKeysLeftDoesNotMove` read "muxch" where
   "muxd" was typed, once. Not looked into.
 - I02 on iOS: the Shift+Tab test, in the first attempt of two runs on
-  2026-11-20. Skipped below iOS 27 in 195.
+  2026-11-20. The cause was not found. Skipped below iOS 27 in 195.
 - `gh` calls timing out in the TLS handshake. No effect on a result.
 
 ## V14's measure
@@ -106,8 +110,19 @@ helpers were shared in wave 0, has not been done.
   equal.
 - Keep text in the app no longer than it has to be. When a review asks for
   more words in an example, run it at CI's screen size before pushing.
-- Every fix to a CI-only failure this wave was a bounded wait for the
-  expected state, in place of a single reading or a fixed pause.
+- The changes made to tests after CI-only failures this wave were of
+  five kinds:
+  - a bounded wait for the expected state in place of a single reading
+    (I01's tap point in 177; F06's end of the page in 188);
+  - a different reading: F06 reads the whole page, scrolling, where it
+    read one screen (187);
+  - a longer wait and one more try of a setup step: F03 waits 20 seconds
+    for the keyboard and taps the field once more if no keyboard window
+    has come (189);
+  - a fixed pause: I03 waits a second after the dialog's first stop
+    before Tab (189);
+  - a skip by version, which gives up coverage on CI: I02's Shift+Tab,
+    I04's Control+F, and I08's Escape tests below iOS 27.
 - When a test fails on CI and passes here, keep the log lines in the
   technique's probe folder and cite them from the spec.
 
