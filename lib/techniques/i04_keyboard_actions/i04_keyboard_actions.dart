@@ -18,8 +18,8 @@ final i04KeyboardActions = Technique(
       note:
           'Whether a single-key shortcut takes a letter typed in a text '
           'field depends on the device: on one emulator the input method had '
-          'the letter keys first, on another the shortcut took them. The '
-          'on-screen '
+          'the letter keys first, on another the letter did not reach the '
+          'field. The on-screen '
           "keyboard's action key was not pressed by the tests; Enter on a "
           'hardware keyboard was.',
     ),
@@ -28,7 +28,10 @@ final i04KeyboardActions = Technique(
           'Home, End, Page Up, and Page Down could not be sent from the '
           'tests, so those keys are not verified here. The on-screen '
           "keyboard's action key was not pressed by the tests; Enter on a "
-          'hardware keyboard was. Full Keyboard Access is not verified.',
+          'hardware keyboard was. Full Keyboard Access is not verified. The '
+          'remapped shortcut, Control+F, was measured on iOS 27.0 only: on '
+          'iOS 26.5 a Control+F sent by the tests sometimes acted as a plain '
+          'F, and why is not known.',
     ),
     AppPlatform.web: PlatformStatus.applies(
       note:
