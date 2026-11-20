@@ -1,0 +1,347 @@
+"""V14 probe analyser, round 3 of the measure (throwaway; kept as
+docs/evidence/probes/v14/analyse3.py.txt). Reads the same captures as
+analyse.py (<tag>-u.png unfocused, <tag>-f1.png and <tag>-f2.png focused,
+<tag>-u.box the region) and applies the measure the V14 tests use after the
+second review (the V14 spec, section 6), step for step as the widget tests'
+_compare:
+
+- changed: differs from u by more than 12 in some channel in f1 and in f2,
+  and f1 and f2 agree; every changed pixel is part of the indicator;
+- swapped: how many changed pixels took a colour that changed pixels had
+  before; the drawing moved if that is half of the changed pixels or more;
+- solid: a pixel with a 4-neighbour of its colour (within 4) that is not
+  anti-aliasing (its colour between the colours either side of it, across,
+  down, or on a diagonal, where those differ by more than 12); a one pixel
+  line is solid;
+- bands: solid changed pixels, 4-connected, each within 4 of the next; on
+  the page if most were drawn where the page was, on the control if not;
+- each band is taken against its neighbours, spatially, from every pixel
+  of its edge outward, across its own colour and at most 4 pixels of an
+  anti-aliased edge being crossed (each between the pixels before and
+  after it; a walk that meets a blurred pixel that is not, but is a blend
+  some other way, goes along an edge and finds nothing; a blurred pixel
+  that is a blend no way is texture, and the neighbour): a band on the control against every neighbour; a band on the
+  page against the background only (across the rest of what focus drew,
+  and not against the control); its contrast is the lowest of them;
+- strong: pixels of bands of 3:1 or more.
+
+Run as `analyse3.py <folder> [fixture ...]` for the captures, or
+`analyse3.py --cases <cases.json>` to run the measure's cases
+(test/techniques/v14_focus_indicators_measure_cases.json), as the widget
+tests, the web spec, and the device tests do.
+"""
+import collections
+import glob
+import json
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from analyse import read_png, region  # noqa: E402
+
+T, FLAT, BLUR = 12, 4, 4
+
+
+def lin(v):
+    s = v / 255
+    return s / 12.92 if s <= 0.04045 else ((s + 0.055) / 1.055) ** 2.4
+
+
+def ratio(a, b):
+    def lum(c):
+        return 0.2126 * lin((c >> 16) & 255) + 0.7152 * lin((c >> 8) & 255) + 0.0722 * lin(c & 255)
+    x, y = lum(a), lum(b)
+    return (max(x, y) + 0.05) / (min(x, y) + 0.05)
+
+
+def hexc(c):
+    return "#%06X" % c
+
+
+def diff(a, b):
+    return max(abs(((a >> s) & 255) - ((b >> s) & 255)) for s in (16, 8, 0))
+
+
+def compare(u, f1, f2, l, t, r, b):
+    """u, f1, f2: functions (x, y) -> 0xRRGGBB. The region is l <= x < r, t <= y < b."""
+    w = r - l
+
+    def inside(x, y):
+        return l <= x < r and t <= y < b
+
+    def at(x, y):
+        return (y - t) * w + (x - l)
+
+    edge = collections.Counter()
+    for x in range(l, r):
+        for y in (t, t + 1, b - 2, b - 1):
+            edge[u(x, y)] += 1
+    page, most = 0, -1
+    for c, n in edge.items():
+        if n > most or (n == most and c < page):
+            page, most = c, n
+    changed_at = bytearray(w * (b - t))
+    changed = unstable = 0
+    new, old = collections.Counter(), collections.Counter()
+    for y in range(t, b):
+        for x in range(l, r):
+            a, p, q = u(x, y), f1(x, y), f2(x, y)
+            d1, d2 = diff(a, p) > T, diff(a, q) > T
+            if d1 and d2 and diff(p, q) <= T:
+                changed += 1
+                changed_at[at(x, y)] = 1
+                new[p] += 1
+                old[a] += 1
+            elif d1 or d2:
+                unstable += 1
+
+    def same(x, y, c):
+        return inside(x, y) and diff(f1(x, y), c) <= FLAT
+
+    def between(c, a, z):
+        for s in (16, 8, 0):
+            v, p, q = (c >> s) & 255, (a >> s) & 255, (z >> s) & 255
+            if v < min(p, q) - FLAT or v > max(p, q) + FLAT:
+                return False
+        return True
+
+    def blend_along(x, y, dx, dy):
+        # (x, y) lies between the pixels either side of it along (dx, dy).
+        if not inside(x - dx, y - dy) or not inside(x + dx, y + dy):
+            return False
+        c, a, z = f1(x, y), f1(x - dx, y - dy), f1(x + dx, y + dy)
+        return diff(a, z) > T and diff(c, a) > FLAT and diff(c, z) > FLAT and between(c, a, z)
+
+    def blend(x, y):
+        return any(blend_along(x, y, dx, dy) for dx, dy in ((1, 0), (0, 1), (1, 1), (1, -1)))
+
+    solid_at = bytearray(w * (b - t))
+    for y in range(t, b):
+        for x in range(l, r):
+            c = f1(x, y)
+            solid_at[at(x, y)] = (same(x - 1, y, c) or same(x + 1, y, c) or same(x, y - 1, c)
+                                  or same(x, y + 1, c)) and not blend(x, y)
+
+    def on_page_at(x, y):
+        return diff(u(x, y), page) <= T
+
+    steps = ((1, 0), (-1, 0), (0, 1), (0, -1))
+    band_of = [-1] * (w * (b - t))
+
+    def neighbour(x, y, dx, dy, on_page, bid):
+        c0 = f1(x, y)
+        # How thick the band is here, along the way.
+        thick, bx, by = 0, x, y
+        while inside(bx, by) and band_of[at(bx, by)] == bid:
+            thick, bx, by = thick + 1, bx - dx, by - dy
+        same = blurred = 0
+        while True:
+            x, y = x + dx, y + dy
+            if not inside(x, y):
+                return None
+            i, c = at(x, y), f1(x, y)
+            # The band itself, or a pixel of its colour that focus also drew.
+            if band_of[i] == bid or (changed_at[i] and diff(c, c0) <= FLAT):
+                continue
+            # On the page: across the rest of what focus drew.
+            if on_page and changed_at[i]:
+                continue
+            ours = not (on_page and not on_page_at(x, y))
+            if not changed_at[i] and c == c0:
+                # Exactly the band's colour, there before: crossed for no
+                # more than the band is thick, then a neighbour at 1:1.
+                same += 1
+                if same <= thick:
+                    continue
+                return c if ours else None
+            if solid_at[i]:
+                return c if ours else None
+            if not blend_along(x, y, dx, dy):
+                # A blend some other way: going along an anti-aliased edge,
+                # not across it: nothing. A blend no way: texture (a dither),
+                # and the neighbour.
+                if blend(x, y):
+                    return None
+                return c if ours else None
+            blurred += 1
+            if blurred == BLUR:
+                # The neighbour, unless focus drew it.
+                return c if ours and not changed_at[i] else None
+    bands, strong = [], 0
+    for y0 in range(t, b):
+        for x0 in range(l, r):
+            i0 = at(x0, y0)
+            if not changed_at[i0] or not solid_at[i0] or band_of[i0] >= 0:
+                continue
+            bid = len(bands)
+            pixels = [(x0, y0)]
+            band_of[i0] = bid
+            k = 0
+            while k < len(pixels):
+                x, y = pixels[k]
+                k += 1
+                for dx, dy in steps:
+                    nx, ny = x + dx, y + dy
+                    if not inside(nx, ny):
+                        continue
+                    j = at(nx, ny)
+                    if not changed_at[j] or not solid_at[j] or band_of[j] >= 0:
+                        continue
+                    if diff(f1(nx, ny), f1(x, y)) > FLAT:
+                        continue
+                    band_of[j] = bid
+                    pixels.append((nx, ny))
+            on_page = sum(1 for x, y in pixels if on_page_at(x, y)) * 2 > len(pixels)
+            contrast, lowest = float("inf"), page
+            nxt = collections.Counter()
+            for x, y in pixels:
+                for dx, dy in steps:
+                    if inside(x + dx, y + dy) and band_of[at(x + dx, y + dy)] == bid:
+                        continue
+                    n = neighbour(x, y, dx, dy, on_page, bid)
+                    if n is None:
+                        continue
+                    nxt[n] += 1
+                    c = ratio(f1(x, y), n)
+                    if c < contrast:
+                        contrast, lowest = c, n
+            counts = collections.Counter(f1(x, y) for x, y in pixels)
+            colour, top = 0, -1
+            for c, n in counts.items():
+                if n > top or (n == top and c < colour):
+                    colour, top = c, n
+            if not nxt:
+                # Nothing to measure against: on the page, the page; on the
+                # control, inconclusive, and not strong.
+                contrast, lowest = (ratio(colour, page), page) if on_page else (1.0, colour)
+            if contrast >= 3:
+                strong += len(pixels)
+            near = sorted(nxt.items(), key=lambda e: (-e[1], e[0]))[:3]
+            bands.append(dict(colour=colour, on_page=on_page, pixels=len(pixels), contrast=contrast,
+                              lowest=lowest, next=near, id=bid))
+    bands.sort(key=lambda d: (-d["pixels"], d["id"]))
+    swapped = sum(min(n, old[c]) for c, n in new.items())
+    return dict(changed=changed, unstable=unstable, swapped=swapped, strong=strong, page=page, bands=bands,
+                flat=sum(d["pixels"] for d in bands), moved=changed > 0 and 2 * swapped >= changed,
+                ratio=bands[0]["contrast"] if bands else 1.0)
+
+
+def text(ind, top=5):
+    out = [f"changed={ind['changed']} unstable={ind['unstable']} swapped={ind['swapped']}"
+           f"{' MOVED' if ind['moved'] else ''} in bands={ind['flat']} strong={ind['strong']} page={hexc(ind['page'])}"]
+    # The largest bands, and every other band of 3:1 or more.
+    shown = [d for i, d in enumerate(ind["bands"]) if i < top or d["contrast"] >= 3]
+    for d in shown:
+        total = max(1, sum(n for _, n in d["next"]))
+        where = "on the page" if d["on_page"] else "on the control"
+        adj = ", ".join(f"{hexc(c)} {ratio(d['colour'], c):.2f} {100 * n // total}%" for c, n in d["next"])
+        out.append(f"  {d['pixels']:6d} px {hexc(d['colour'])} {where}: contrast {d['contrast']:.2f} "
+                   f"(lowest, against {hexc(d['lowest'])}); next to it: {adj}")
+    return out
+
+
+def measure(tag):
+    x0, y0, w, h = region(tag)
+    pics = []
+    for name in ("u", "f1", "f2"):
+        _, _, px = read_png(f"{tag}-{name}.png")
+        cache = {}
+
+        def at(x, y, px=px, cache=cache):
+            k = (x, y)
+            if k not in cache:
+                r, g, b = px(x, y)
+                cache[k] = (r << 16) | (g << 8) | b
+            return cache[k]
+        pics.append(at)
+    return text(compare(pics[0], pics[1], pics[2], x0, y0, x0 + w, y0 + h))
+
+
+def paint(layers, width, height, s):
+    px = [0xFFFFFF] * (width * height)
+    colour_of = lambda h: int(h[1:], 16)  # noqa: E731
+    for layer in layers:
+        l, t, r, b = [v * s for v in layer["rect"]] if "rect" in layer else (0, 0, width, height)
+        ring = layer.get("ring", 0) * s
+        by_y = layer.get("axis") == "y"
+        for y in range(t, b):
+            for x in range(l, r):
+                if ring > 0 and l + ring <= x < r - ring and t + ring <= y < b - ring:
+                    continue
+                along = y - t if by_y else x - l
+                length = b - t if by_y else r - l
+                if "checker" in layer:
+                    p = layer["period"] * s
+                    c = colour_of(layer["checker"][((x - l) // p + (y - t) // p) % 2])
+                elif "stripes" in layer:
+                    c = colour_of(layer["stripes"][(along // (layer["period"] * s)) % len(layer["stripes"])])
+                elif "gradient" in layer:
+                    a, z = colour_of(layer["gradient"][0]), colour_of(layer["gradient"][1])
+                    n = length - 1
+                    c = 0
+                    for sh in (16, 8, 0):
+                        c |= ((((a >> sh) & 255) * (n - along) + ((z >> sh) & 255) * along + n // 2) // n) << sh
+                else:
+                    c = colour_of(layer.get("colour", layer.get("fill")))
+                px[y * width + x] = c
+    return lambda x, y: px[y * width + x]
+
+
+def check_case(c, s):
+    w, h = c["size"][0] * s, c["size"][1] * s
+    u, f1 = paint(c["before"], w, h, s), paint(c["after"], w, h, s)
+    f2 = paint(c["after2"], w, h, s) if "after2" in c else f1
+    ind = compare(u, f1, f2, 0, 0, w, h)
+    e, problems = c["expect"], []
+    summary = "; ".join(text(ind, 3))
+
+    def want(ok, what):
+        if not ok:
+            problems.append(f"{what}: {summary}")
+    some = lambda v, n: n == 0 if v == "none" else n > 0  # noqa: E731
+    if "changed" in e:
+        want(some(e["changed"], ind["changed"]), f"changed {e['changed']}")
+    if "unstable" in e:
+        want(some(e["unstable"], ind["unstable"]), f"unstable {e['unstable']}")
+    if "moved" in e:
+        want(ind["moved"] == e["moved"], f"moved {e['moved']}")
+    st = e.get("strong")
+    if st == "all":
+        want(ind["flat"] > 0 and ind["strong"] == ind["flat"], "strong all")
+    elif st == "none":
+        want(ind["strong"] == 0, "strong none")
+    elif st == "some":
+        want(0 < ind["strong"] < ind["flat"], "strong some")
+    if "strongPixels" in e:
+        want(ind["strong"] == e["strongPixels"] * s * s, f"strong pixels {e['strongPixels'] * s * s}")
+    if "ratio" in e:
+        want(abs(ind["ratio"] - e["ratio"][0]) <= e["ratio"][1], f"ratio {e['ratio'][0]}")
+    if "ratioBelow" in e:
+        want(ind["ratio"] < e["ratioBelow"], f"ratio below {e['ratioBelow']}")
+    if "onPage" in e:
+        want(bool(ind["bands"]) and ind["bands"][0]["on_page"] == e["onPage"], f"on the page {e['onPage']}")
+    return problems
+
+
+if __name__ == "__main__":
+    if sys.argv[1] == "--cases":
+        cases = json.load(open(sys.argv[2]))["cases"]
+        run = bad = 0
+        for c in cases:
+            for s in c["scales"]:
+                run += 1
+                for p in check_case(c, s):
+                    bad += 1
+                    print(f"FAIL {c['name']} (pixel ratio {s}): {p}")
+        print(f"{run} cases run, {bad} problems")
+        sys.exit(1 if bad else 0)
+    folder = sys.argv[1]
+    only = sys.argv[2:] or None
+    for box in sorted(glob.glob(os.path.join(folder, "*-u.box"))):
+        tag = box[:-6]
+        name = os.path.basename(tag)
+        if only and not any(name.endswith("-" + o) for o in only):
+            continue
+        print(f"== {name}")
+        for line in measure(tag):
+            print("   " + line)

@@ -1,0 +1,95 @@
+// V14 probe on iOS (throwaway, not committed; kept as
+// docs/evidence/probes/v14/V14ProbeUITests.swift.txt). For each control
+// fixture of lib/probe.dart, light and dark: opens it, screenshots the
+// screen (u), types Tab until the probe's status says focus is in the box,
+// waits and screenshots twice (f1, f2), taps an empty part of the screen
+// (e), then opens it again and taps the control (t). Writes the PNGs and
+// the box's frame, in screenshot pixels, to the folder below. Then Tab
+// through the obscuring fixtures, printing the status after each.
+import XCTest
+
+final class V14ProbeUITests: XCTestCase {
+  let app = XCUIApplication()
+  let out = "/private/tmp/claude-501/-Users-cory-dev-flutter-a11y-techniques--claude-worktrees-wave0-prep-51ac0e/18a0fc9d-6a75-4c6c-bf6e-8c96fa8f6ae7/scratchpad/v14eng/ios"
+
+  func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+
+  func status() -> String {
+    let s = el("v14-status")
+    return s.label.isEmpty ? (s.value as? String ?? "") : s.label
+  }
+
+  func open(_ route: String, _ id: String) {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y://\(route)")!)
+      let deadline = Date().addingTimeInterval(30)
+      while Date() < deadline {
+        if el("v14-status").exists && status().hasPrefix("S \(id) ") { sleep(2); return }
+        usleep(300_000)
+      }
+    }
+    XCTFail("did not open \(route): \(status())")
+  }
+
+  func shot(_ name: String) -> CGFloat {
+    let s = XCUIScreen.main.screenshot()
+    try! s.pngRepresentation.write(to: URL(fileURLWithPath: "\(out)/\(name).png"))
+    return s.image.size.width * s.image.scale / XCUIScreen.main.screenshot().image.size.width
+  }
+
+  func testControls() throws {
+    try FileManager.default.createDirectory(atPath: out, withIntermediateDirectories: true)
+    let ids = (ProcessInfo.processInfo.environment["V14_FIXTURES"] ?? "m1 m2 m3 m4 m5 m6 m7 m8 m9 m10 m11 m12 m13 m14 m15 c1 c2 c3 c4 c5 w1 w2 w3 x1 x2 x3 x4 x5").split(separator: " ").map(String.init)
+    for id in ids {
+      for theme in ["light", "dark"] {
+        let tag = "ios-\(theme)-\(id)"
+        let route = "/c/\(id)" + (theme == "dark" ? "/dark" : "")
+        open(route, id)
+        let s0 = status()
+        let image = XCUIScreen.main.screenshot().image
+        let scale = image.scale
+        let f = el("v14-box").frame
+        let box = "\(f.minX * scale) \(f.minY * scale) \(f.width * scale) \(f.height * scale) 1\n"
+        try box.write(toFile: "\(out)/\(tag)-u.box", atomically: true, encoding: .utf8)
+        _ = shot("\(tag)-u")
+        for _ in 1...4 {
+          app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+          usleep(800_000)
+          if status().contains("f=1") { break }
+        }
+        usleep(1_200_000)
+        _ = shot("\(tag)-f1")
+        let s1 = status()
+        usleep(700_000)
+        _ = shot("\(tag)-f2")
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.75)).tap()
+        usleep(1_500_000)
+        _ = shot("\(tag)-e")
+        let s2 = status()
+        open(route, id)
+        el("v14-box").tap()
+        usleep(1_500_000)
+        _ = shot("\(tag)-t")
+        let s3 = status()
+        let text = "u: \(s0)\ntab: \(s1)\ntouch elsewhere: \(s2)\ntap: \(s3)\n"
+        try text.write(toFile: "\(out)/\(tag).status", atomically: true, encoding: .utf8)
+        print("V14PROBE \(tag) box=[\(box.trimmingCharacters(in: .newlines))] | \(text.replacingOccurrences(of: "\n", with: " | "))")
+      }
+    }
+  }
+
+  func testObscure() {
+    for id in ["o1", "o2", "o3", "o4", "o5"] {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///o/\(id)")!)
+      sleep(5)
+      print("V14PROBE == \(id) start: \(status())")
+      for i in 1...13 {
+        app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+        usleep(900_000)
+        print("V14PROBE   Tab \(i): \(status())")
+      }
+    }
+  }
+}

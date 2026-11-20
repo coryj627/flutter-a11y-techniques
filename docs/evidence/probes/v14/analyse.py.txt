@@ -1,0 +1,173 @@
+"""V14 probe analyser (throwaway; kept as docs/evidence/probes/v14/analyse.py.txt).
+
+For each capture set <tag>-u.png (unfocused), <tag>-f1.png and <tag>-f2.png
+(focused, 700 ms apart), <tag>-e.png (focused, after a touch elsewhere) and
+<tag>-t.png (after a tap on the control in a fresh launch), and <tag>.box
+(x y w h scale of the fixture's box, in the PNG's pixels after scaling),
+prints:
+
+- changed: pixels of the box that differ from the unfocused capture in both
+  focused captures and agree between the two (so a blinking caret or an
+  animation still running is not counted), and their bounding box;
+- the indicator colour (most common colour among those pixels, in f1) and
+  the colour it replaced (most common in u);
+- the colours adjacent to the changed region (unchanged pixels next to it in
+  f1), with their share and the indicator's contrast ratio against each;
+- whether e and t differ from u (as "e: N changed").
+
+Colours are read from the pixels; contrast is WCAG's relative luminance.
+"""
+import collections
+import glob
+import os
+import struct
+import sys
+import zlib
+
+
+def read_png(path):
+    data = open(path, "rb").read()
+    assert data[:8] == b"\x89PNG\r\n\x1a\n", path
+    pos, idat, w = 8, b"", None
+    while pos < len(data):
+        n, = struct.unpack(">I", data[pos:pos + 4])
+        kind = data[pos + 4:pos + 8]
+        body = data[pos + 8:pos + 8 + n]
+        pos += 12 + n
+        if kind == b"IHDR":
+            w, h, depth, ctype, _, _, interlace = struct.unpack(">IIBBBBB", body)
+            assert depth == 8 and interlace == 0, (path, depth, interlace)
+            channels = {2: 3, 6: 4}[ctype]
+        elif kind == b"IDAT":
+            idat += body
+        elif kind == b"IEND":
+            break
+    raw = zlib.decompress(idat)
+    stride = w * channels
+    rows, prev = [], bytearray(stride)
+    i = 0
+    for _ in range(h):
+        f = raw[i]
+        line = bytearray(raw[i + 1:i + 1 + stride])
+        i += 1 + stride
+        for x in range(stride):
+            a = line[x - channels] if x >= channels else 0
+            b = prev[x]
+            c = prev[x - channels] if x >= channels else 0
+            if f == 1:
+                line[x] = (line[x] + a) & 255
+            elif f == 2:
+                line[x] = (line[x] + b) & 255
+            elif f == 3:
+                line[x] = (line[x] + (a + b) // 2) & 255
+            elif f == 4:
+                p = a + b - c
+                pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+                pr = a if pa <= pb and pa <= pc else (b if pb <= pc else c)
+                line[x] = (line[x] + pr) & 255
+        rows.append(bytes(line))
+        prev = line
+    def px(x, y):
+        r = rows[y]
+        o = x * channels
+        return (r[o], r[o + 1], r[o + 2])
+    return w, h, px
+
+
+def lin(c):
+    c /= 255
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def lum(rgb):
+    r, g, b = rgb
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+
+
+def ratio(a, b):
+    la, lb = lum(a), lum(b)
+    hi, lo = max(la, lb), min(la, lb)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def hexc(c):
+    return "#%02X%02X%02X" % c
+
+
+def diff(a, b):
+    return max(abs(a[i] - b[i]) for i in range(3))
+
+
+T = 12  # a channel must move by more than this to count as changed
+
+
+def region(tag):
+    box = open(tag + "-u.box").read().split()
+    x, y, w, h, scale = (float(v) for v in box)
+    return int(round(x * scale)), int(round(y * scale)), int(round(w * scale)), int(round(h * scale))
+
+
+def analyse(tag):
+    x0, y0, w, h = region(tag)
+    _, _, u = read_png(tag + "-u.png")
+    _, _, f1 = read_png(tag + "-f1.png")
+    _, _, f2 = read_png(tag + "-f2.png")
+    changed = set()
+    flicker = 0
+    for y in range(y0, y0 + h):
+        for x in range(x0, x0 + w):
+            a, b, c = u(x, y), f1(x, y), f2(x, y)
+            if diff(a, b) > T and diff(a, c) > T:
+                if diff(b, c) <= T:
+                    changed.add((x, y))
+                else:
+                    flicker += 1
+            elif diff(a, b) > T or diff(a, c) > T:
+                flicker += 1
+    out = [f"changed={len(changed)} of {w * h} unstable={flicker}"]
+    if changed:
+        xs = [p[0] for p in changed]
+        ys = [p[1] for p in changed]
+        out.append(f"bbox=({min(xs) - x0},{min(ys) - y0})-({max(xs) - x0},{max(ys) - y0}) box={w}x{h}")
+        new = collections.Counter(f1(*p) for p in changed)
+        old = collections.Counter(u(*p) for p in changed)
+        ind, n_ind = new.most_common(1)[0]
+        rep, _ = old.most_common(1)[0]
+        out.append(f"indicator={hexc(ind)} ({100 * n_ind // len(changed)}% of changed) replaced={hexc(rep)} change-ratio={ratio(ind, rep):.2f}")
+        top = ", ".join(f"{hexc(c)} {100 * n // len(changed)}%" for c, n in new.most_common(4))
+        out.append(f"new colours: {top}")
+        adj = collections.Counter()
+        for (x, y) in changed:
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                q = (x + dx, y + dy)
+                if q in changed or not (x0 <= q[0] < x0 + w and y0 <= q[1] < y0 + h):
+                    continue
+                adj[f1(*q)] += 1
+        total = sum(adj.values()) or 1
+        parts = []
+        for c, n in adj.most_common(5):
+            parts.append(f"{hexc(c)} {100 * n // total}% ratio {ratio(ind, c):.2f}")
+        out.append("adjacent: " + "; ".join(parts))
+    bg = u(x0 + 1, y0 + 1)
+    out.append(f"page={hexc(bg)}")
+    for extra in ("e", "t"):
+        path = f"{tag}-{extra}.png"
+        if not os.path.exists(path):
+            continue
+        _, _, g = read_png(path)
+        n = sum(1 for y in range(y0, y0 + h) for x in range(x0, x0 + w) if diff(u(x, y), g(x, y)) > T)
+        out.append(f"{extra}: {n} changed vs u")
+    return out
+
+
+if __name__ == "__main__":
+    folder = sys.argv[1]
+    for box in sorted(glob.glob(os.path.join(folder, "*-u.box"))):
+        tag = box[:-6]
+        if not os.path.exists(tag + "-u.png"):
+            continue
+        name = os.path.basename(tag)
+        status = open(tag + ".status").read().strip().replace("\n", " | ") if os.path.exists(tag + ".status") else ""
+        print(f"== {name}  {status}")
+        for line in analyse(tag):
+            print("   " + line)
