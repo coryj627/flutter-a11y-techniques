@@ -182,18 +182,85 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
 
     // VAL-3: each bad example is asserted to have its named defect.
 
+    /**
+     * Every name on the page, top to bottom: the page is scrolled back to
+     * its start, then forward a step at a time to its end, and the names in
+     * the tree at each step are gathered. A node scrolled out of view is not
+     * in the tree, and on a 320 by 640 screen this page can be taller than
+     * the screen, so one reading of the tree is only what happens to be in
+     * view.
+     *
+     * Fails unless both ends were reached. The scrolling view says so
+     * itself: it offers the scroll-backward action only while there is more
+     * above, and scroll-forward only while there is more below. A tree with
+     * no scrolling view in it counts only when the first and the last line
+     * are both in it, which is a page that fits the screen. [first] and
+     * [last], the first and last lines that scroll with the page, must also
+     * be in the tree at the start and at the end.
+     */
+    private fun everyName(first: String, last: String): Set<String> {
+        fun scrollView() = all().firstOrNull { it.isScrollable }
+        fun names() = all().map { it.name() }.filter { it.isNotEmpty() }
+        val seen = mutableSetOf<String>()
+
+        // Scrolls with [action] until the page is at that end on four
+        // readings in a row, half a second apart. It is at an end when the
+        // scrolling view has stopped offering the action, or when the tree
+        // has no scrolling view and has both the first and the last line in
+        // it, which is a page that fits the screen. One reading is not
+        // enough: while the keyboard goes away the action is for a moment
+        // not offered or refused, and on CI the loop then stopped before
+        // the end (run 44684166461).
+        fun scrollToEnd(action: AccessibilityNodeInfo.AccessibilityAction, what: String): List<String> {
+            var settled = 0
+            var steps = 0
+            val deadline = System.currentTimeMillis() + 30_000
+            while (System.currentTimeMillis() < deadline) {
+                val view = scrollView()
+                val now = names()
+                val there = if (view != null) !view.actionList.contains(action)
+                else now.contains(first) && now.contains(last)
+                if (there) {
+                    seen.addAll(now)
+                    if (++settled == 4) return now
+                } else {
+                    settled = 0
+                    if (view != null && steps < 40 && view.performAction(action.id)) steps++
+                }
+                Thread.sleep(500)
+                seen.addAll(names())
+            }
+            throw AssertionError("the page is at its $what: not after 30 seconds and $steps scrolls")
+        }
+
+        val atStart = scrollToEnd(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD, "start")
+        assertTrue("\"$first\" is at the start of the page: $atStart", atStart.contains(first))
+        // Only what is read from the start onwards counts.
+        seen.clear()
+        seen.addAll(atStart)
+        val atEnd = scrollToEnd(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD, "end")
+        assertTrue("\"$last\" is at the end of the page: $atEnd", atEnd.contains(last))
+        return seen
+    }
+
     @Test
     fun badColorOnlyHasNoWordsForTheError() {
         open("bad-color-only")
         val id = "f06-bad-color-only-email"
-        val before = all().map { it.name() }.toSet()
+        // The first and last lines of the scrolling part of the page: Back
+        // and the title are in the app bar, which does not scroll.
+        val first = "Bad example for Error identification and announcement. Material."
+        val before = everyName(first, "Forms sent: 0")
         send("bad-color-only")
-        waitFor("field focused") { node(id).isFocused }
-        // Compare with the keyboard away, so that nothing is out of view.
-        closeKeyboardAndWaitForCount("bad-color-only")
-        // The field is in error and focused, and nothing new can be read.
+        waitFor("field focused") { nodeInAnyWindow(id).isFocused }
+        hideKeyboard()
+        // The field is in error and focused, and nothing new can be read
+        // anywhere on the page. The whole page is read, before and after: on
+        // a 320 by 640 screen one reading of the tree had a different part of
+        // the page each time (CI runs 44580353546 and 44615147153), and an
+        // error scrolled out of view would not be in it.
+        assertEquals(before, everyName(first, "Forms sent: 0"))
         assertEquals("Email", hint(id))
-        assertEquals(before, all().map { it.name() }.toSet())
     }
 
     @Test
