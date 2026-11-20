@@ -137,8 +137,8 @@ largest bands as 1.63:1 to 1.91:1. It fails either way.
 
 Which fixtures have strong pixels changed in one place: the
 `FilledButton`'s tint (m2), which the second measure counted as strong
-(4.80:1 against the page and 5.05:1 against the label, the colours that
-made up a fifth or more of what was next to it), and the third does not:
+(4.80:1 against the page, the colour that made up a fifth or more of what
+was next to it), and the third does not:
 taken against every neighbour, its lowest is 2.90:1, against a pale
 anti-aliased pixel at its edge, `#C1C3DA` (dark 1.38:1). The tint is a change of
 background within the container, which section 3 of the spec already
@@ -156,18 +156,22 @@ pixel of a band is a shade lighter or darker than its commonest colour:
 12.67:1 for the radio's ring, 5.36:1 for the switch's thumb, 1.07:1 for
 the checked checkbox's halo.
 
-A walk from a band's edge stops, with no neighbour, at a blurred pixel
-that is not between the pixels before and after it, which is where it
-runs along an anti-aliased edge rather than across it; before that rule,
-such walks along the start of a rounded corner took a pixel of the
-corner's anti-aliasing as a neighbour, and the lowest figures of w2 and
-w3 (3.85:1), x5 (18.13:1), and the `FilledButton`'s tint (1.37:1) came
-from those pixels.
+A walk from a band's edge crosses a blurred pixel that lies between the
+pixels before and after it (anti-aliasing being crossed). It stops, with
+no neighbour, at a blurred pixel that is a blend some other way, which is
+where it runs along an anti-aliased edge rather than across it (the start
+of a rounded corner); an earlier draft took a pixel of such a corner as a
+neighbour, which lowered the lowest figures of w2, w3, x5, and m2 (those
+runs were not kept). A blurred pixel that is a blend no way is texture,
+and is measured: the third review found that without that, a border
+round a one pixel checkerboard was taken against the page alone. That
+rule changes none of the 112 fixtures' output.
 
 One thing is new: on the `InkWell` card (m13) the tint behind the label
 also changes the label's anti-aliased pixels, and two bands of them, 80
-pixels in all, pass as solid and are 3.17:1 against the glyphs; the spec
-lists that among the measure's known limits. Android and iOS give the
+pixels in all, pass as solid and are 3.17:1 against the glyphs (printed
+in `flutter_test_measure3.txt` with the other bands of 3:1 or more); the
+spec lists that among the measure's known limits. Android and iOS give the
 same output for every fixture but the three text fields (c5, m6, m7), as
 before.
 

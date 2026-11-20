@@ -196,8 +196,9 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
   /// between the pixels before and after it on the way), to the first solid
   /// pixel (or the last of those, so that no neighbour is passed over for
   /// being blurred, unless focus drew it). A walk that meets a blurred pixel
-  /// that is not between them is going along an edge, not across it, and
-  /// finds nothing. A band on the control, inside it or on
+  /// that is not between them, but is a blend some other way, is going along
+  /// an edge, not across it, and finds nothing; a blurred pixel that is a
+  /// blend no way is texture (a dither), and is the neighbour. A band on the control, inside it or on
   /// its border, must contrast with every neighbour found, whatever it is
   /// (Understanding: both adjacent colours). A band on the page, outside
   /// the control, must contrast with the background: the walk goes on across
@@ -271,10 +272,15 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
         if channelDiff(f1.at(x, y), c0) <= flat { continue }
         if onPage && isChanged[at(x, y)] { continue }
         if solidAt[at(x, y)] { return onPage && !onPageAt(x, y) ? nil : f1.at(x, y) }
-        // A blurred pixel not between those before and after it is the side
-        // of an edge that runs along the way, not one being crossed: the
-        // neighbour beyond that edge is found by the walks that cross it.
-        if !blendAlong(x, y, dx, dy) { return nil }
+        if !blendAlong(x, y, dx, dy) {
+          // A blend some other way is the side of an anti-aliased edge that
+          // runs along the way, not one being crossed: the neighbour beyond
+          // it is found by the walks that cross it.
+          if blend(x, y) { return nil }
+          // A blend no way is texture (a dither, a pattern), not
+          // anti-aliasing: it is the neighbour.
+          return onPage && !onPageAt(x, y) ? nil : f1.at(x, y)
+        }
         blurred += 1
         if blurred == blur {
           // Blurred all the way: what is there, if focus did not draw it.
@@ -360,7 +366,10 @@ final class V14FocusIndicatorsUITests: XCTestCase, TechniqueUITest {
           let along = byY ? y - t : x - l
           let length = byY ? b - t : r - l
           var c: UInt32
-          if let stripes = layer["stripes"] as? [String] {
+          if let pair = layer["checker"] as? [String] {
+            let p = (layer["period"] as! Int) * s
+            c = colourOf(pair[((x - l) / p + (y - t) / p) % 2])
+          } else if let stripes = layer["stripes"] as? [String] {
             c = colourOf(stripes[(along / ((layer["period"] as! Int) * s)) % stripes.count])
           } else if let ends = layer["gradient"] as? [String] {
             let a = Int(colourOf(ends[0])), z = Int(colourOf(ends[1]))

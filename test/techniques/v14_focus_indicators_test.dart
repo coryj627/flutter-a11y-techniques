@@ -293,8 +293,9 @@ const _ourMinimum = 150;
 /// between the pixels before and after it on the way), to the first solid
 /// pixel (or the last of those [_blur], so that no neighbour is passed over
 /// for being blurred, unless focus drew it). A walk that meets a blurred
-/// pixel that is not between them is going along an edge, not across it,
-/// and finds nothing. A band on the control, inside it
+/// pixel that is not between them, but is a blend some other way, is going
+/// along an edge, not across it, and finds nothing; a blurred pixel that
+/// is a blend no way is texture (a dither), and is the neighbour. A band on the control, inside it
 /// or on its border, must contrast with every neighbour found, whatever it
 /// is (Understanding: both adjacent colours). A band on the page, outside
 /// the control, must contrast with the background: the walk goes on across
@@ -398,10 +399,15 @@ _Indicator _compare(_Shot u, _Shot f1, _Shot f2, Rect region) {
       if (solidAt[at(x, y)]) {
         return onPage && !onPageAt(x, y) ? null : f1.at(x, y);
       }
-      // A blurred pixel not between those before and after it is the side
-      // of an edge that runs along the way, not one being crossed: the
-      // neighbour beyond that edge is found by the walks that cross it.
-      if (!blendAlong(x, y, dx, dy)) return null;
+      if (!blendAlong(x, y, dx, dy)) {
+        // A blend some other way is the side of an anti-aliased edge that
+        // runs along the way, not one being crossed: the neighbour beyond
+        // it is found by the walks that cross it.
+        if (blend(x, y)) return null;
+        // A blend no way is texture (a dither, a pattern), not
+        // anti-aliasing: it is the neighbour.
+        return onPage && !onPageAt(x, y) ? null : f1.at(x, y);
+      }
       if (++blurred == _blur) {
         // Blurred all the way: what is there, if focus did not draw it.
         return isChanged[at(x, y)] || (onPage && !onPageAt(x, y))
@@ -528,7 +534,10 @@ _Shot _paint(List<dynamic> layers, int width, int height, int s) {
         final along = layer['axis'] == 'y' ? y - t : x - l;
         final length = layer['axis'] == 'y' ? b - t : r - l;
         int c;
-        if (layer['stripes'] case final List<dynamic> stripes) {
+        if (layer['checker'] case final List<dynamic> pair) {
+          final period = (layer['period'] as int) * s;
+          c = _colour(pair[((x - l) ~/ period + (y - t) ~/ period) % 2]);
+        } else if (layer['stripes'] case final List<dynamic> stripes) {
           final period = (layer['period'] as int) * s;
           c = _colour(stripes[(along ~/ period) % stripes.length]);
         } else if (layer['gradient'] case final List<dynamic> ends) {

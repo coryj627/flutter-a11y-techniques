@@ -272,10 +272,16 @@ How focus visibility is asserted, on every layer, with the same rules
    colour and at most 4 pixels of an anti-aliased edge being crossed (each
    between the pixels before and after it on the way), to the first solid
    pixel; if all 4 are blurred, the fourth is the neighbour unless focus
-   drew it, so a neighbour is not passed over for being blurred. A walk
-   that meets a blurred pixel that is not between them is going along an
-   edge, not across it (at the start of a rounded corner, say), and finds
-   nothing there; the walks that cross that edge find what is beyond it. A band on the control, inside it or on its border, must
+   drew it, so a neighbour is not passed over for being blurred. A
+   blurred pixel that is not between the pixels before and after it on
+   the way is one of two things. If it is a blend some other way (between
+   the pixels either side of it across, down, or on a diagonal), it is
+   the side of an anti-aliased edge that runs along the way, not one
+   being crossed (at the start of a rounded corner, say), and the walk
+   finds nothing there; the walks that cross that edge find what is
+   beyond it. If it is a blend no way, it is texture (a dither, a
+   pattern of pixels each unlike the next), not anti-aliasing, and it is
+   the neighbour, measured like any other. A band on the control, inside it or on its border, must
    be 3:1 against every neighbour found, of whatever colour and however
    few pixels of its edge it touches (Understanding 1.4.11: an indicator
    inside the component contrasts with the colours inside; one on its
@@ -311,7 +317,7 @@ conformance. It has cases of its own, on pictures made up for them, in
 one file, `test/techniques/v14_focus_indicators_measure_cases.json`, which
 the widget tests, the web spec, the iOS UI tests, and the probe analyser
 run, and which the Android test holds a copy of (the widget tests check
-the copy is the same): 31 cases, 57 runs at pixel ratios 1, 2, and 3.
+the copy is the same): 33 cases, 62 runs at pixel ratios 1, 2, and 3.
 
 - Understanding 1.4.11's figures: an inner yellow ring on a blue button
   passes (3.55:1 against the blue), an outer yellow ring on white fails
@@ -322,7 +328,11 @@ the copy is the same): 31 cases, 57 runs at pixel ratios 1, 2, and 3.
   neighbour), each expected to fail: the first review's reproduction, a 3
   pixel `#4B933A` border round an inside of three near-identical shades
   (in thirds, dithered across, dithered down), which the measure before
-  passed at 3.79:1 against the page; an 8 pixel border of the same green;
+  passed at 3.79:1 against the page; the third review's reproduction,
+  the same border round a one pixel checkerboard of `#4189B9` and
+  `#4783BF` (1.01:1 and 1.05:1), at pixel ratios 1, 2, and 3, which the
+  measure of the second review passed at 3.79:1, as every pixel of the
+  checkerboard was read as anti-aliasing and passed over; an 8 pixel border of the same green;
   a grey ring on a button shaded from white to blue (4.2:1 or more near
   the white end, 1.24:1 near the blue); a black ring inside a navy button
   (1.47:1); a faint halo round a black box (the box's contrast is not the
@@ -335,12 +345,12 @@ the copy is the same): 31 cases, 57 runs at pixel ratios 1, 2, and 3.
   black ring touching a navy button, on the page; a black border made
   thicker in the same colour; a black ring with anti-aliased grey edges;
   a black ring on the shaded button; an 8 pixel black border on blue
-  (5.50:1 against the blue); and a black line on a button's top edge
-  where the edge's anti-aliased ramp runs on from its end (the walk along
-  the ramp finds nothing; before that rule it took a pixel of the ramp as
-  a neighbour and failed the line, and in the probe it brought a
-  `FilledButton`'s tint down to 1.37:1). A two-colour ring on the page passes on its black part
-  only.
+  (5.50:1 against the blue); a black border round the checkerboard; and
+  an olive line on a navy button's top edge where the edge's anti-aliased
+  fade, a blend of the page and the navy, runs on from its end at about
+  1.1:1 against the line (a walk along the fade finds nothing; measured
+  as a neighbour, the fade would fail the line). A two-colour ring on the
+  page passes on its black part only.
 - Nothing drawn, and a mark in one capture only (unstable).
 
 Known limits (the first four each with a case that shows what the
@@ -348,12 +358,12 @@ measure does):
 
 - A change of the control's own background is measured like any other
   band, though Understanding 1.4.11 leaves it out of scope: a button
-  whose fill darkens to 5.8:1 against the page and its label passes. In
-  `good-material` the `FilledButton`'s own tint is counted so on the web
-  and on Android at 160 dpi (3.40:1 against the ring, 5.05:1 against the
-  label), and not in the widget tests, on iOS, or on Android at 420 dpi,
-  where an anti-aliased pixel at its edge is under 3:1; the ring outside
-  it passes on every layer either way. The verdicts in
+  whose fill darkens to 5.82:1 against the page and its label passes. In
+  `good-material` the `FilledButton`'s own tint is counted so on Android
+  at 160 dpi (its lowest, 3.40:1, against the ring), and not
+  in the widget tests, on the web, on iOS, or on Android at 420 dpi, where
+  a pixel at its edge is under 3:1; the ring outside it passes on every
+  layer either way. The verdicts in
   section 3 on Material's tints do not rest on the measure for that
   reason.
 - At a pixel ratio of 1, a one pixel strip whose colour lies between the
@@ -376,6 +386,13 @@ measure does):
   its pixels lies between the next and the one before (more than 6 a
   channel a pixel) is read as crossing a blurred edge, and after 4 pixels
   takes one of the ramp as a neighbour.
+- Anti-aliasing and texture are told apart pixel by pixel: a texture
+  pixel that happens to lie between two of its neighbours is read as the
+  side of an edge and passed over. A pattern made only of such pixels
+  could still be passed over; none of the cases is one, and no example
+  draws one.
+- An indicator that is itself a dither has no solid pixels and so no
+  bands: it is not measured, and cannot pass.
 - When a tint changes behind a label, the label's anti-aliased pixels
   change too, and those that pass as solid are measured against the
   glyphs: on the probe's `InkWell` card, 80 pixels at 3.17:1, under the

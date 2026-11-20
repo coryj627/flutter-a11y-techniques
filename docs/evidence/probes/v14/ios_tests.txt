@@ -1,7 +1,7 @@
 # What the V14 iOS test (V14FocusIndicatorsUITests.swift) measured, from the last evidence.py run, with the measure
-# of the V14 spec, section 6, after the second review. iPhone 17 simulator, iOS 27.0, light mode. Pixels are the
+# of the V14 spec, section 6, after the third review. iPhone 17 simulator, iOS 27.0, light mode. Pixels are the
 # screenshot's (3 to a point). Each band: its pixels, colour, where drawn, its lowest contrast and the neighbour
-# that gave it, then its contrast against its two commonest neighbours. testMeasuresCases ran every case with no failure.
+# that gave it, then its contrast against its two commonest neighbours. testMeasuresCases ran all 62 case runs with no failure.
 V14 ios bad-checked-checkbox: changed 8360, unstable 0, swapped 0, indicator 8360, in bands 8356, 3:1 or more: 0, page #FBF8FF; 8356 px #EAE8F4 on the page 1.08 against #F8F5FD; next to it #FBF8FF 1.15 82%, #FAF7FE 1.14 9%
 V14 ios bad-cupertino-ring: changed 8256, unstable 0, swapped 0, indicator 8256, in bands 7305, 3:1 or more: 0, page #FBF8FF; 7305 px #8A9AF5 on the page 2.49 against #FBF8FF; next to it #FBF8FF 2.49 100%
 V14 ios bad-indicator-removed back: changed 10716, unstable 0, swapped 11, indicator 10716, in bands 10502, 3:1 or more: 0, page #FBF8FF; 10502 px #E4E1E8 on the page 1.23 against #FBF8FF; next to it #FBF8FF 1.23 100%
@@ -14,8 +14,8 @@ V14 ios good-cupertino save: changed 8256, unstable 0, swapped 0, indicator 8256
 V14 ios good-material alerts after focus left: changed 0, unstable 0, swapped 0, indicator 0, in bands 0, 3:1 or more: 0, page #FBF8FF; 
 V14 ios good-material alerts: changed 182651, unstable 0, swapped 175, indicator 182651, in bands 181130, 3:1 or more: 22288, page #FBF8FF; 156319 px #DCDAE0 on the page 1.32 against #FBF8FF; next to it #FBF8FF 1.32 100%; 22288 px #1B1B21 on the page 16.30 against #FBF8FF; next to it #FBF8FF 16.30 100%; 1764 px #DCDAE0 on the page 1.32 against #FBF8FF; next to it 
 V14 ios good-material save after focus left: changed 0, unstable 0, swapped 0, indicator 0, in bands 0, 3:1 or more: 0, page #FBF8FF; 
-V14 ios good-material save: changed 30935, unstable 0, swapped 63, indicator 30935, in bands 30123, 3:1 or more: 5616, page #FBF8FF; 24507 px #636C9D on the control 2.20 against #A5AAC6; next to it #1B1B21 3.40 57%, #FFFFFF 5.05 42%; 5541 px #1B1B21 on the page 16.30 against #FBF8FF; next to it #FBF8FF 16.30 86%, #FFFFFF 17.14 13%; 40 px #636C9D on the control 4.78 against #FFFFFF; next to it #FFFFFF 5.05 100%
+V14 ios good-material save: changed 30935, unstable 0, swapped 63, indicator 30935, in bands 30123, 3:1 or more: 5616, page #FBF8FF; 24507 px #636C9D on the control 1.22 against #777B97; next to it #1B1B21 3.40 56%, #FFFFFF 5.05 41%; 5541 px #1B1B21 on the page 16.30 against #FBF8FF; next to it #FBF8FF 16.30 86%, #FFFFFF 17.14 13%; 40 px #636C9D on the control 4.78 against #FFFFFF; next to it #FFFFFF 5.05 100%
 V14 ios good-notice-below visible: 1.00 1.00 1.00 1.00 1.00 1.00
 V14 ios good-widgets trail after focus left: changed 0, unstable 0, swapped 0, indicator 0, in bands 0, 3:1 or more: 0, page #FBF8FF; 
 V14 ios good-widgets trail: changed 14216, unstable 0, swapped 0, indicator 14216, in bands 13936, 3:1 or more: 13936, page #FBF8FF; 13936 px #1B1B21 on the control 13.26 against #E4E1E9; next to it #FBF8FF 16.30 50%, #E4E1E9 13.26 49%
-V14 ios the measure: 57 cases run
+V14 ios the measure: 62 cases run

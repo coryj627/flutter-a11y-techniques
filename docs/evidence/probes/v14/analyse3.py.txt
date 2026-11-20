@@ -18,8 +18,9 @@ _compare:
 - each band is taken against its neighbours, spatially, from every pixel
   of its edge outward, across its own colour and at most 4 pixels of an
   anti-aliased edge being crossed (each between the pixels before and
-  after it; a walk that meets a blurred pixel that is not goes along an
-  edge and finds nothing): a band on the control against every neighbour; a band on the
+  after it; a walk that meets a blurred pixel that is not, but is a blend
+  some other way, goes along an edge and finds nothing; a blurred pixel
+  that is a blend no way is texture, and the neighbour): a band on the control against every neighbour; a band on the
   page against the background only (across the rest of what focus drew,
   and not against the control); its contrast is the lowest of them;
 - strong: pixels of bands of 3:1 or more.
@@ -137,9 +138,13 @@ def compare(u, f1, f2, l, t, r, b):
                 continue
             if solid_at[at(x, y)]:
                 return None if on_page and not on_page_at(x, y) else f1(x, y)
-            # Going along an edge, not across it: nothing.
             if not blend_along(x, y, dx, dy):
-                return None
+                # A blend some other way: going along an anti-aliased edge,
+                # not across it: nothing. A blend no way: texture (a dither),
+                # and the neighbour.
+                if blend(x, y):
+                    return None
+                return None if on_page and not on_page_at(x, y) else f1(x, y)
             blurred += 1
             if blurred == BLUR:
                 return None if changed_at[at(x, y)] or (on_page and not on_page_at(x, y)) else f1(x, y)
@@ -206,7 +211,9 @@ def compare(u, f1, f2, l, t, r, b):
 def text(ind, top=5):
     out = [f"changed={ind['changed']} unstable={ind['unstable']} swapped={ind['swapped']}"
            f"{' MOVED' if ind['moved'] else ''} in bands={ind['flat']} strong={ind['strong']} page={hexc(ind['page'])}"]
-    for d in ind["bands"][:top]:
+    # The largest bands, and every other band of 3:1 or more.
+    shown = [d for i, d in enumerate(ind["bands"]) if i < top or d["contrast"] >= 3]
+    for d in shown:
         total = max(1, sum(n for _, n in d["next"]))
         where = "on the page" if d["on_page"] else "on the control"
         adj = ", ".join(f"{hexc(c)} {ratio(d['colour'], c):.2f} {100 * n // total}%" for c, n in d["next"])
@@ -245,7 +252,10 @@ def paint(layers, width, height, s):
                     continue
                 along = y - t if by_y else x - l
                 length = b - t if by_y else r - l
-                if "stripes" in layer:
+                if "checker" in layer:
+                    p = layer["period"] * s
+                    c = colour_of(layer["checker"][((x - l) // p + (y - t) // p) % 2])
+                elif "stripes" in layer:
                     c = colour_of(layer["stripes"][(along // (layer["period"] * s)) % len(layer["stripes"])])
                 elif "gradient" in layer:
                     a, z = colour_of(layer["gradient"][0]), colour_of(layer["gradient"][1])

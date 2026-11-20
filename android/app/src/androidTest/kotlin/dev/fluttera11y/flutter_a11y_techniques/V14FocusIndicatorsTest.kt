@@ -159,8 +159,10 @@ private fun compare(ub: Bitmap, f1b: Bitmap, f2b: Bitmap, region: Rect): Indicat
  * [BLUR] pixels of an anti-aliased edge being crossed (each between the pixels
  * before and after it on the way), to the first solid pixel (or the last of
  * those [BLUR], so that no neighbour is passed over for being blurred, unless
- * focus drew it). A walk that meets a blurred pixel that is not between them
- * is going along an edge, not across it, and finds nothing. A band on the control, inside it or on its border, must
+ * focus drew it). A walk that meets a blurred pixel that is not between them,
+ * but is a blend some other way, is going along an edge, not across it, and
+ * finds nothing; a blurred pixel that is a blend no way is texture (a dither),
+ * and is the neighbour. A band on the control, inside it or on its border, must
  * contrast with every neighbour found, whatever it is (Understanding: both
  * adjacent colours). A band on the page, outside the control, must contrast
  * with the background: the walk goes on across the rest of what focus drew,
@@ -222,10 +224,15 @@ private fun compare(u: Pixels, f1: Pixels, f2: Pixels, region: Rect): Indicator 
             if (channelDiff(f1.at(x, y), c0) <= FLAT) continue
             if (onPage && isChanged[at(x, y)]) continue
             if (solidAt[at(x, y)]) return if (onPage && !onPageAt(x, y)) null else f1.at(x, y)
-            // A blurred pixel not between those before and after it is the side
-            // of an edge that runs along the way, not one being crossed: the
-            // neighbour beyond that edge is found by the walks that cross it.
-            if (!blendAlong(x, y, dx, dy)) return null
+            if (!blendAlong(x, y, dx, dy)) {
+                // A blend some other way is the side of an anti-aliased edge that
+                // runs along the way, not one being crossed: the neighbour beyond it
+                // is found by the walks that cross it.
+                if (blend(x, y)) return null
+                // A blend no way is texture (a dither, a pattern), not
+                // anti-aliasing: it is the neighbour.
+                return if (onPage && !onPageAt(x, y)) null else f1.at(x, y)
+            }
             if (++blurred == BLUR) {
                 // Blurred all the way: what is there, if focus did not draw it.
                 return if (isChanged[at(x, y)] || (onPage && !onPageAt(x, y))) null else f1.at(x, y)
@@ -297,6 +304,11 @@ private fun paint(layers: JSONArray, width: Int, height: Int, s: Int): Pixels {
             val along = if (byY) y - t else x - l
             val length = if (byY) b - t else r - l
             val c = when {
+                layer.has("checker") -> {
+                    val pair = layer.getJSONArray("checker")
+                    val p = layer.getInt("period") * s
+                    colourOf(pair.getString(((x - l) / p + (y - t) / p) % 2))
+                }
                 layer.has("stripes") -> {
                     val stripes = layer.getJSONArray("stripes")
                     colourOf(stripes.getString((along / (layer.getInt("period") * s)) % stripes.length()))
@@ -353,7 +365,7 @@ private const val CASES = """
   "about": [
     "The cases of V14's pixel measure (docs/specs/V14-focus-indicators.md, section 6), on pictures made up for the purpose.",
     "The widget tests, the web spec, the iOS UI tests, and the probe analyser read this file; the Android test holds a copy, which the widget tests check is the same.",
-    "A picture is its layers painted in order on white: fill, a rectangle [left, top, right, bottom], the outer 'ring' pixels of one, 'stripes' of colours one after another every 'period' pixels along an 'axis', or a 'gradient' from one colour to another along an 'axis'.",
+    "A picture is its layers painted in order on white: fill, a rectangle [left, top, right, bottom], the outer 'ring' pixels of one, 'stripes' of colours one after another every 'period' pixels along an 'axis', a 'checker' of two colours in squares 'period' pixels wide, or a 'gradient' from one colour to another along an 'axis'.",
     "Each case is measured at each of its 'scales' (pixel ratios; every length is multiplied), with 'before' as the capture before focus and 'after' as both captures after it, unless 'after2' is given. The region is the whole picture.",
     "expect: 'changed' and 'unstable' are 'none' or 'some'; 'strong' is 'all' (every pixel of every band is in a band of 3:1 or more, and there is one), 'none', or 'some'; 'strongPixels' is the strong count at a pixel ratio of 1 (times the ratio squared); 'ratio' [value, tolerance], 'ratioBelow', and 'onPage' are of the largest band.",
     "Cases named 'known limit' show what the measure does where it is known to depart from 1.4.11; the spec lists them."
@@ -443,6 +455,20 @@ private const val CASES = """
       "before": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "y", "period": 1}],
       "after": [{"rect": [8, 8, 208, 68], "stripes": ["#4189B9", "#428ABA", "#438BBB"], "axis": "y", "period": 1}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#4B933A"}],
       "expect": {"strong": "none", "ratioBelow": 1.1}
+    },
+    {
+      "name": "the third review's reproduction: the same border round a one pixel checkerboard of #4189B9 and #4783BF fails against them (1.01:1 and 1.05:1): a texture is not anti-aliasing",
+      "size": [216, 76], "scales": [1, 2, 3],
+      "before": [{"rect": [8, 8, 208, 68], "checker": ["#4189B9", "#4783BF"], "period": 1}],
+      "after": [{"rect": [8, 8, 208, 68], "checker": ["#4189B9", "#4783BF"], "period": 1}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#4B933A"}],
+      "expect": {"strong": "none", "ratioBelow": 1.1, "onPage": false}
+    },
+    {
+      "name": "a black border round the same checkerboard passes against both its colours and the page",
+      "size": [216, 76], "scales": [1, 2],
+      "before": [{"rect": [8, 8, 208, 68], "checker": ["#4189B9", "#4783BF"], "period": 1}],
+      "after": [{"rect": [8, 8, 208, 68], "checker": ["#4189B9", "#4783BF"], "period": 1}, {"rect": [8, 8, 208, 68], "ring": 3, "colour": "#000000"}],
+      "expect": {"strong": "all", "onPage": false}
     },
     {
       "name": "a thick border, 8 pixels of #4B933A on the blue, fails",
@@ -536,14 +562,14 @@ private const val CASES = """
       "expect": {"strong": "all", "ratio": [21, 0.01], "onPage": true}
     },
     {
-      "name": "at a pixel ratio of 1, a black line on a button's top edge passes, though the edge's anti-aliased ramp runs on from its end: a walk along a ramp, not across it, finds nothing",
+      "name": "at a pixel ratio of 1, an olive line on a navy button's top edge passes against the page and the navy, though the edge's anti-aliased fade, a blend of the two, runs on from its end at about 1.1:1 against the line: a walk along the fade, not across it, finds nothing",
       "size": [216, 76], "scales": [1],
-      "before": [{"rect": [8, 9, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 100, 9], "colour": "#4189B9"}, {"rect": [100, 8, 132, 9], "gradient": ["#000000", "#4189B9"], "axis": "x"}],
-      "after": [{"rect": [8, 9, 208, 68], "colour": "#4189B9"}, {"rect": [8, 8, 100, 9], "colour": "#000000"}, {"rect": [100, 8, 132, 9], "gradient": ["#000000", "#4189B9"], "axis": "x"}],
+      "before": [{"rect": [8, 9, 208, 68], "colour": "#1F2A44"}, {"rect": [8, 8, 100, 9], "colour": "#1F2A44"}, {"rect": [100, 8, 122, 9], "gradient": ["#848A98", "#FFFFFF"], "axis": "x"}],
+      "after": [{"rect": [8, 9, 208, 68], "colour": "#1F2A44"}, {"rect": [8, 8, 100, 9], "colour": "#8A8A20"}, {"rect": [100, 8, 122, 9], "gradient": ["#848A98", "#FFFFFF"], "axis": "x"}],
       "expect": {"strong": "all", "strongPixels": 92, "onPage": false}
     },
     {
-      "name": "known limit: a change of the control's own background is measured like any other part, though 1.4.11 leaves it out",
+      "name": "known limit: a change of the control's own background is measured like any other part, though 1.4.11 leaves it out: a fill darkened to #2E6A94, 5.82:1 against the page and the white label, passes",
       "size": [216, 76], "scales": [1],
       "before": [{"rect": [8, 8, 208, 68], "colour": "#4189B9"}, {"rect": [60, 30, 156, 46], "colour": "#FFFFFF"}],
       "after": [{"rect": [8, 8, 208, 68], "colour": "#2E6A94"}, {"rect": [60, 30, 156, 46], "colour": "#FFFFFF"}],
