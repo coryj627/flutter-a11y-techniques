@@ -1,0 +1,14 @@
+Lines kept from the iOS job of two CI runs (Xcode 26.6, iOS 26.5, iPhone 17 Pro),
+first attempt of each. The re-run of the first passed.
+
+== CI run 44774465475, attempt 1
+Test Case '-[RunnerUITests.I02FocusOrderUITests testShiftTabGoesTheSameWayBackwards]' started.
+ios/RunnerUITests/I02FocusOrderUITests.swift:84: error: -[RunnerUITests.I02FocusOrderUITests testShiftTabGoesTheSameWayBackwards] : Failed to get matching snapshot: No matches found for Elements matching predicate '"i02-good-ordered-map" IN identifiers' from input {(
+Test Case '-[RunnerUITests.I02FocusOrderUITests testShiftTabGoesTheSameWayBackwards]' failed (110.588 seconds).
+	I02FocusOrderUITests.testShiftTabGoesTheSameWayBackwards()
+
+== CI run 44780831860, attempt 1
+Test Case '-[RunnerUITests.I02FocusOrderUITests testShiftTabGoesTheSameWayBackwards]' started.
+ios/RunnerUITests/I02FocusOrderUITests.swift:84: error: -[RunnerUITests.I02FocusOrderUITests testShiftTabGoesTheSameWayBackwards] : Failed to get matching snapshot: No matches found for Elements matching predicate '"i02-good-material-map" IN identifiers' from input {(
+Test Case '-[RunnerUITests.I02FocusOrderUITests testShiftTabGoesTheSameWayBackwards]' failed (27.591 seconds).
+	I02FocusOrderUITests.testShiftTabGoesTheSameWayBackwards()
