@@ -6,7 +6,9 @@ import { byId, tabTo, technique } from './support/techniques.js';
 // Pure logic, with no VoiceOver: imported here so that CI tests it.
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { EXAMPLE_HEADING, judgeControlWalk, judgeExampleWalk, runControlWalks, runWalks } from './vo/c02_vo_walks.js';
+import {
+  EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeControlWalk, judgeExampleWalk, runControlWalks, runWalks, screenStops,
+} from './vo/c02_vo_walks.js';
 
 const { open, expectCount } = technique('C02', { countLabel: 'Changes' });
 
@@ -147,7 +149,25 @@ test.describe('the VoiceOver comparison page is judged on every walk', () => {
     ['a partial walk: a button gone past without being read', walk(good.slice(1)), true, 'incomplete'],
     ['a partial walk: the end not reached', ['heading level 2 Example', 'Text styles', good[0]], false, 'incomplete'],
     ['a correct reading that did not reach the end', walk(good), false, 'incomplete'],
-    ['a walk that missed the stop before the buttons', ['', ...good, 'Changes: 0', 'end of main'], true, 'incomplete'],
+    // Without "Text styles" an empty first stop cannot be told from an
+    // empty button reading, so it is wrong.
+    ['a walk that missed the stop before the buttons, with an empty first stop', ['', ...good, 'Changes: 0', 'end of main'], true, 'wrong'],
+    ['a walk that missed the stop before the buttons', ['heading level 2 Example', ...good, 'Changes: 0', 'end of main'], true, 'incomplete'],
+    // Walks that did not read "Text styles": judged from the first stop,
+    // or after the heading.
+    ['no "Text styles", a nameless reading', ['heading level 2 Example', 'toggle button', good[1], 'Changes: 0'], true, 'wrong'],
+    ['no "Text styles", an empty reading', ['heading level 2 Example', good[0], '', 'Changes: 0'], true, 'wrong'],
+    ['no "Text styles", a stop that is not the page\'s', ['Back button'], false, 'wrong'],
+    ['no "Text styles", readings out of order', ['heading level 2 Example', good[1], good[0]], false, 'wrong'],
+    ['no "Text styles", the heading only', ['heading level 2 Example'], false, 'incomplete'],
+    ['"Text styles" read, readings out of order', walk([good[1], good[0], good[2]]), true, 'wrong'],
+    ['"Text styles" read, a reading twice', walk([good[0], good[0], good[1], good[2]]), true, 'wrong'],
+    // Found by trying to break the judge: the page's stops either side of
+    // the buttons are checked too.
+    ['a stop before "Text styles" that is not the heading', ['Changes: 0', 'Text styles', ...good, 'Changes: 0'], true, 'wrong'],
+    ['an unknown stop before "Text styles"', ['Back button', 'Text styles', ...good, 'Changes: 0'], true, 'wrong'],
+    ['a reading after the count', ['Text styles', ...good, 'Changes: 0', 'toggle button'], true, 'wrong'],
+    ['WebKit\'s empty heading before "Text styles"', ['', 'Text styles', ...good, 'Changes: 0', 'end of main'], true, 'complete'],
     // Truncated walks: the stop after the buttons was never reached.
     ['a truncated walk with a nameless reading', ['Text styles', 'toggle button', good[1]], false, 'wrong'],
     ['a truncated walk with an empty reading', ['Text styles', good[0], ''], false, 'wrong'],
@@ -175,6 +195,18 @@ test.describe('the VoiceOver comparison page is judged on every walk', () => {
     const { walkOnce, made } = walks(wrong, complete);
     expect((await runControlWalks(walkOnce)).verdict).toBe('wrong');
     expect(made()).toBe(1);
+  });
+
+  test('a wrong walk with no "Text styles" followed by a correct one fails, and no second walk is made', async () => {
+    const noBefore = { stops: ['heading level 2 Example', 'toggle button', good[1], good[2], 'Changes: 0'], reachedEnd: true };
+    const { walkOnce, made } = walks(noBefore, complete);
+    expect((await runControlWalks(walkOnce)).verdict).toBe('wrong');
+    expect(made()).toBe(1);
+  });
+
+  test('an empty walk followed by a correct one passes on the second', async () => {
+    const { walkOnce } = walks({ stops: [], reachedEnd: false }, complete);
+    expect(await runControlWalks(walkOnce)).toMatchObject({ verdict: 'complete', walks: 2 });
   });
 
   test('an incomplete walk followed by a correct one passes on the second', async () => {
@@ -228,13 +260,29 @@ test.describe('the VoiceOver comparison page is judged on every walk', () => {
   });
 });
 
+// The VoiceOver spec takes these texts as the only stops that may come
+// before an example's "Example" heading (EXAMPLE_SCREENS). Each screen must
+// show them, so that a change to a title or a defect is caught here.
+test.describe('the stops the VoiceOver spec expects above each example', () => {
+  for (const [slug, [title, ...lines]] of Object.entries(EXAMPLE_SCREENS)) {
+    test(`${slug} shows its title and its lines`, async ({ page }) => {
+      await open(page, slug);
+      await expect(page.getByRole('heading', { level: 1, name: title, exact: true })).toHaveCount(1);
+      for (const line of lines) {
+        await expect(page.locator('flt-semantics-host').getByText(line, { exact: true })).toHaveCount(1);
+      }
+    });
+  }
+});
+
 // How the web VoiceOver spec judges one walk of an example screen
 // (judgeExampleWalk), and repeats one that fell short (runWalks). The walks
 // here are made up; VoiceOver is not used.
 test.describe('the VoiceOver example walks are judged on every walk', () => {
   const before = ['Bold off switch', 'Changes: 0'];
   const after = ['Bold on switch', 'Changes: 1'];
-  const screen = (...content) => ['heading level 1 Icon button that stays pressed', EXAMPLE_HEADING, ...content];
+  const own = screenStops('good-icon-button');
+  const screen = (...content) => [...own, EXAMPLE_HEADING, ...content];
   const cases = [
     ['a correct walk', screen(...before), true, before, 'complete'],
     ['a correct walk after the change', screen(...after), true, after, 'complete'],
@@ -246,17 +294,37 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['a stop read twice', screen('Bold off switch', 'Bold off switch', 'Changes: 0'), true, before, 'wrong'],
     ['a wrong reading in a truncated walk', screen('Bold button'), false, before, 'wrong'],
     ['an empty walk', [], false, before, 'incomplete'],
-    ['a walk that never reached the heading', ['Back button'], false, before, 'incomplete'],
     ['a truncated walk', screen('Bold off switch'), false, before, 'incomplete'],
     ['a walk that went past a stop without reading it', screen('Changes: 0'), true, before, 'incomplete'],
+    // Walks that did not read the heading: judged after the screen's own stops.
+    ['a headingless walk with a wrong state', ['Bold on switch', 'Changes: 0'], true, before, 'wrong'],
+    ['a headingless walk with a nameless reading', [...own, 'switch', 'Changes: 0'], true, before, 'wrong'],
+    ['a headingless walk with an empty reading', [...own, '', 'Changes: 0'], true, before, 'wrong'],
+    ['a headingless walk with a stop that is not the screen\'s', ['Back button'], false, before, 'wrong'],
+    ['a headingless walk with a screen stop out of its place', [...own.slice(0, 1), 'Bold off switch', own[1]], false, before, 'wrong'],
+    ['a headingless walk of the screen\'s own stops only', [...own], false, before, 'incomplete'],
+    ['a headingless walk of the screen\'s stops and a right reading', [...own, 'Bold off switch', 'Changes: 0'], true, before, 'incomplete'],
+    ['a headingless walk with a right reading only', ['Bold off switch'], false, before, 'incomplete'],
+    ['a stale count in a headingless walk after the change', ['Bold on switch', 'Changes: 0'], true, after, 'wrong'],
+    // Found by trying to break the judge: what comes before the heading is
+    // checked too.
+    ['a wrong reading before the heading', ['Bold on switch', EXAMPLE_HEADING, ...before], true, before, 'wrong'],
+    ['the screen\'s own stops out of their order', [own[1], own[0], EXAMPLE_HEADING, ...before], true, before, 'wrong'],
+    ['a stop after the count', screen(...before, 'end of main'), true, before, 'wrong'],
   ];
   for (const [what, stops, reachedEnd, expected, verdict] of cases) {
     test(`${what}: ${verdict}`, () => {
-      expect(judgeExampleWalk(stops, reachedEnd, expected).verdict).toBe(verdict);
+      expect(judgeExampleWalk(stops, reachedEnd, expected, own).verdict).toBe(verdict);
     });
   }
 
-  const judge = (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, before);
+  test('a bad example\'s own stops include its defect', () => {
+    const stops = screenStops('bad-no-state');
+    expect(judgeExampleWalk(stops, false, ['Mute button', 'Changes: 0'], stops).verdict).toBe('incomplete');
+    expect(stops.at(-1)).toMatch(/^Defect: /);
+  });
+
+  const judge = (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, before, own);
   const sequence = (...list) => {
     let i = 0;
     return { walkOnce: async () => list[i++], made: () => i };
@@ -264,9 +332,17 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
   const right = { stops: screen(...before), reachedEnd: true };
   const wrong = { stops: screen('Bold on switch', 'Changes: 0'), reachedEnd: true };
   const short = { stops: screen('Bold off switch'), reachedEnd: false };
+  const headinglessWrong = { stops: ['Bold on switch', 'Changes: 0'], reachedEnd: true };
+  const empty = { stops: [], reachedEnd: false };
 
   test('a wrong walk followed by a right one fails, and no second walk is made', async () => {
     const { walkOnce, made } = sequence(wrong, right);
+    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+    expect(made()).toBe(1);
+  });
+
+  test('a wrong headingless walk followed by a right one fails, and no second walk is made', async () => {
+    const { walkOnce, made } = sequence(headinglessWrong, right);
     expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
     expect(made()).toBe(1);
   });
@@ -276,6 +352,11 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     const result = await runWalks(walkOnce, judge);
     expect(result).toMatchObject({ verdict: 'complete', walks: 2 });
     expect(made()).toBe(2);
+  });
+
+  test('an empty walk followed by a right one passes on the second', async () => {
+    const { walkOnce } = sequence(empty, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'complete', walks: 2 });
   });
 
   test('every try of an example walk is logged', async () => {

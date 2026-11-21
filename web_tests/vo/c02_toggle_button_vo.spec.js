@@ -15,7 +15,7 @@
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { walkToEnd } from './vo_helpers.js';
-import { CONTROL_HTML, EXAMPLE_HEADING, judgeExampleWalk, runControlWalks, runWalks } from './c02_vo_walks.js';
+import { CONTROL_HTML, EXAMPLE_HEADING, judgeExampleWalk, runControlWalks, runWalks, screenStops } from './c02_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
@@ -67,18 +67,22 @@ const EXAMPLES = {
 
 /**
  * Walks the screen until a walk is complete or wrong, at most three times,
- * judging each against `expected` (judgeExampleWalk) and logging each try
- * as `<label>-walk-<n>`: the stops after the "Example" heading, or every
- * stop if the heading was not reached, and the verdict.
+ * judging each against `expected` and the screen's own stops before the
+ * heading (judgeExampleWalk) and logging each try
+ * as `<label>-walk-<n>`: the stops after the "Example" heading for a
+ * complete walk, every stop for any other, and the verdict.
  */
-async function read(page, voiceOver, browserName, label, expected) {
+async function read(page, voiceOver, browserName, label, expected, screen) {
   const { verdict, reason, walks } = await runWalks(
     () => walkToEnd(page, voiceOver, browserName, 40),
-    (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected),
+    (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screen),
     {
       log: (walk, stops, judged) => {
+        // A complete walk read the screen's own stops before the heading
+        // exactly as listed, so only what follows the heading is shown;
+        // any other try is shown whole.
         const start = stops.indexOf(EXAMPLE_HEADING);
-        const shown = (start >= 0 ? stops.slice(start + 1) : stops).join(' / ') || '(nothing)';
+        const shown = (judged.verdict === 'complete' ? stops.slice(start + 1) : stops).join(' / ') || '(nothing)';
         console.log(`C02VO ${browserName} ${label}-walk-${walk} | ${shown} (${judged.verdict}: ${judged.reason})`);
       },
     });
@@ -90,12 +94,12 @@ for (const [slug, { control, before, after }] of Object.entries(EXAMPLES)) {
     await page.goto(`/#/t/C02/${slug}`, { waitUntil: 'load' });
     const count = page.locator(`[flt-semantics-identifier="c02-${slug}-count"]`);
     await expect(count).toBeVisible();
-    await read(page, voiceOver, browserName, slug, [...before, 'Changes: 0']);
+    await read(page, voiceOver, browserName, slug, [...before, 'Changes: 0'], screenStops(slug));
     await page.locator(`[flt-semantics-identifier="${control}"]`).click();
     await expect(count).toHaveText('Changes: 1');
     // The walk must end at the new count, so a reading from before the
     // change cannot pass: "Changes: 0" there is a wrong reading.
-    await read(page, voiceOver, browserName, `${slug}-changed`, [...after, 'Changes: 1']);
+    await read(page, voiceOver, browserName, `${slug}-changed`, [...after, 'Changes: 1'], screenStops(slug));
   });
 }
 

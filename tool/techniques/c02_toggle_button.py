@@ -75,8 +75,9 @@ VOICEOVER_WEB_METHOD = (
     "the last element of every example, must then read \"Changes: 1\". No test is "
     "retried by Playwright; a walk that fell short is walked again by the test itself, "
     "up to three times, and a walk with a wrong reading fails the test with no further "
-    "walk. Every try is a row of its own, `<slug>-walk-<n>`, with the stops after the "
-    "\"Example\" heading (every stop when the heading was not reached) and the verdict. "
+    "walk. Every stop of a walk is judged, the screen's own stops before the heading "
+    "included. Every try is a row of its own, `<slug>-walk-<n>`, with the verdict and "
+    "the stops after the \"Example\" heading for a complete walk, every stop for any other. "
     "The `control-html-walk-<n>` rows are a plain HTML page with no Flutter, each walk "
     "shown whole"
 )
