@@ -221,6 +221,12 @@ round: `android_320x640_round2.txt`.
 `contrast_on_test.dart.txt` (a throwaway widget test) measured each good
 example's control after one activation, in light and dark mode, before
 and after `good-cupertino`'s colours were changed: `contrast_on.txt`.
+That measures text only. `icon_foreground_test.dart.txt` (a second
+throwaway widget test, in the harness's default Android platform)
+measured the colours a `CupertinoButton` actually paints its text and
+icon in, with an unresolved dynamic `foregroundColor`, under a
+`MaterialApp` and under a `CupertinoApp`, light and dark, and
+`good-cupertino` as it is now: `icon_foreground.txt`.
 
 ## First run of the examples
 

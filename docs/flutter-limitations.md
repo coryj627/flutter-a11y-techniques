@@ -118,7 +118,7 @@ yet), **Fixed in x.y** (verified on that version).
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | [FL-200](#fl-200) | Flutter has no pressed state: a toggle button can only be a switch, a checkbox, or a button that is selected | All | Confirmed |
 | [FL-201](#fl-201) | `IconButton(isSelected:)` and a multi-select `SegmentedButton` say nothing while they are off, and on the web their state is `aria-current` | All (a 4.1.2 failure on the web only) | Confirmed |
-| [FL-202](#fl-202) | A `CupertinoButton` resolves its `color` for light and dark mode, and not its `foregroundColor` | All | Confirmed (source read) |
+| [FL-202](#fl-202) | A `CupertinoButton` resolves its `color` for light and dark mode, and not its `foregroundColor`, so dynamic text colour stays light in dark mode | All (widget tests only) | Confirmed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -2605,29 +2605,47 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-202
 
-**A `CupertinoButton` resolves its `color` for light and dark mode, and not its `foregroundColor`.**
+**A `CupertinoButton` resolves its `color` for light and dark mode, and not its `foregroundColor`, so dynamic text colour stays light in dark mode.**
 
-- Status: Confirmed (source read), Flutter 3.47.5, all platforms; its
-  effect seen in a widget test only. Source read:
-  `cupertino/button.dart`, `build`: the background is
-  `CupertinoDynamicColor.maybeResolve(widget.color, context)`, and the
-  foreground is `widget.foregroundColor` as given. Found in C02.
-- What happens: given a `CupertinoDynamicColor` such as
-  `CupertinoColors.systemBackground` as `foregroundColor`, the button
-  paints its text and icon in the colour's light value in dark mode too,
-  while a dynamic `color` beside it is resolved. In C02's
-  `good-cupertino`, with `color: CupertinoColors.label` and
-  `foregroundColor: CupertinoColors.systemBackground`, "Mute" was white on
-  white in dark mode (1.00:1) and the text contrast guideline failed; in
-  light mode it was white on black, 21:1
-  (`docs/evidence/probes/c02/contrast_on.txt`, from
-  `contrast_on_test.dart.txt`).
-- What the user gets: text and icons that can vanish in dark mode, on a
-  button whose code names a dynamic colour and looks right in light mode.
-  WCAG 1.4.3 and 1.4.11 where it happens.
+- Status: Confirmed, Flutter 3.47.5; measured in widget tests only (the
+  test harness, which reports the Android platform by default), not on a
+  device. Found in C02.
+- Read in the source (`cupertino/button.dart`, `build`): the background
+  is `CupertinoDynamicColor.maybeResolve(widget.color, context)`; the
+  foreground is `widget.foregroundColor` as given, used for the text
+  style and copied into the icon theme
+  (`IconTheme.of(context).copyWith(color: …)`). Whether the icon's colour
+  is then resolved depends on the icon theme above the button:
+  `IconTheme.of` calls the theme's `resolve`, which a
+  `CupertinoIconThemeData` uses to resolve a dynamic colour and a plain
+  `IconThemeData` does not (`cupertino/icon_theme_data.dart`,
+  `widgets/icon_theme.dart`, `widgets/icon_theme_data.dart`).
+- Measured (`docs/evidence/probes/c02/icon_foreground.txt`, from
+  `icon_foreground_test.dart.txt`): a `CupertinoButton` with
+  `color: CupertinoColors.label` and
+  `foregroundColor: CupertinoColors.systemBackground`, both unresolved,
+  with an icon and the text "Mute":
+  - In dark mode, under a `MaterialApp`: fill white, text white (1.00:1),
+    icon white (1.00:1); the icon theme at the icon is a plain
+    `IconThemeData`.
+  - In dark mode, under a `CupertinoApp`: fill white, text white (1.00:1),
+    icon black (21:1); the icon theme is a `CupertinoIconThemeData`.
+  - In light mode, under either: text and icon white on black, 21:1.
+  So the text keeps the light colour in dark mode under both apps; the
+  icon does under a `MaterialApp`, which C02's app is, and not under a
+  `CupertinoApp`.
+- Measured in C02 (`docs/evidence/probes/c02/contrast_on.txt`): the first
+  fix of `good-cupertino`, with that unresolved `foregroundColor`, had
+  "Mute" white on white in dark mode and failed the text contrast
+  guideline.
+- WCAG: 1.4.3 Contrast (Minimum) for the text, where a dynamic
+  `foregroundColor` is passed unresolved: measured above. No verdict is
+  given for the icon: whether 1.4.11 applies to it depends on whether it
+  is needed to understand the control, which was not judged.
 - Workaround: resolve the colour first,
   `foregroundColor: CupertinoDynamicColor.resolve(CupertinoColors.systemBackground, context)`
-  (C02 `good-cupertino`, whose L1 tests check text contrast with the
+  (C02 `good-cupertino`: text and icon 21:1 on the fill, light and dark,
+  in `icon_foreground.txt`; its L1 tests check text contrast with the
   button on, in light and dark).
 - Upstream issue: not searched yet (D25).
 

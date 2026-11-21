@@ -3,12 +3,21 @@
 // once. Needs Guidepup's setup and macOS automation permissions on the
 // machine. Run through `python3 tool/voiceover_web.py C02`, which also
 // writes the transcript.
+//
+// No test in this file is retried by the runner. The shared config retries
+// a failed test twice, and a retry that passes makes the run pass:
+// tool/voiceover_web.py reports PASS when Playwright exits 0, names the test
+// under "Walks that needed a retry", and keeps only the last attempt's rows,
+// so a wrong reading on the first attempt would be hidden. Each test
+// retries instead, itself, only a capture that fell short (runWalks in
+// c02_vo_walks.js): a walk with a wrong reading fails the test for good,
+// and every try is logged, so every attempt is in the transcript.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { walkToEnd } from './vo_helpers.js';
-import { CONTROL_HTML, runControlWalks } from './c02_control_html.js';
+import { CONTROL_HTML, EXAMPLE_HEADING, judgeExampleWalk, runControlWalks, runWalks } from './c02_vo_walks.js';
 
-const EXAMPLE = 'heading level 2 Example';
+test.describe.configure({ retries: 0 });
 
 // slug -> the identifier of the control that is changed once, and
 // everything VoiceOver speaks after the "Example" heading and before the
@@ -56,14 +65,24 @@ const EXAMPLES = {
   },
 };
 
-/** Walks the screen and returns the stops after the "Example" heading. */
-async function read(page, voiceOver, browserName, label) {
-  const { stops, reachedEnd } = await walkToEnd(page, voiceOver, browserName, 40);
-  const start = stops.indexOf(EXAMPLE);
-  console.log(`C02VO ${browserName} ${label} | ${(start >= 0 ? stops.slice(start + 1) : stops).join(' / ')}`);
-  expect(reachedEnd, `${label}: the walk reached the end of the screen`).toBe(true);
-  expect(start, `${label}: reached the example`).toBeGreaterThanOrEqual(0);
-  return stops.slice(start + 1);
+/**
+ * Walks the screen until a walk is complete or wrong, at most three times,
+ * judging each against `expected` (judgeExampleWalk) and logging each try
+ * as `<label>-walk-<n>`: the stops after the "Example" heading, or every
+ * stop if the heading was not reached, and the verdict.
+ */
+async function read(page, voiceOver, browserName, label, expected) {
+  const { verdict, reason, walks } = await runWalks(
+    () => walkToEnd(page, voiceOver, browserName, 40),
+    (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected),
+    {
+      log: (walk, stops, judged) => {
+        const start = stops.indexOf(EXAMPLE_HEADING);
+        const shown = (start >= 0 ? stops.slice(start + 1) : stops).join(' / ') || '(nothing)';
+        console.log(`C02VO ${browserName} ${label}-walk-${walk} | ${shown} (${judged.verdict}: ${judged.reason})`);
+      },
+    });
+  expect(verdict, `${label}, walk ${walks}: ${reason}`).toBe('complete');
 }
 
 for (const [slug, { control, before, after }] of Object.entries(EXAMPLES)) {
@@ -71,13 +90,12 @@ for (const [slug, { control, before, after }] of Object.entries(EXAMPLES)) {
     await page.goto(`/#/t/C02/${slug}`, { waitUntil: 'load' });
     const count = page.locator(`[flt-semantics-identifier="c02-${slug}-count"]`);
     await expect(count).toBeVisible();
-    expect(await read(page, voiceOver, browserName, slug), slug).toEqual([...before, 'Changes: 0']);
+    await read(page, voiceOver, browserName, slug, [...before, 'Changes: 0']);
     await page.locator(`[flt-semantics-identifier="${control}"]`).click();
     await expect(count).toHaveText('Changes: 1');
     // The walk must end at the new count, so a reading from before the
-    // change cannot pass.
-    expect(await read(page, voiceOver, browserName, `${slug}-changed`), `${slug} after one change`)
-      .toEqual([...after, 'Changes: 1']);
+    // change cannot pass: "Changes: 0" there is a wrong reading.
+    await read(page, voiceOver, browserName, `${slug}-changed`, [...after, 'Changes: 1']);
   });
 }
 
@@ -89,30 +107,20 @@ for (const [slug, { control, before, after }] of Object.entries(EXAMPLES)) {
 // now and then missed the heading or the first button (the third run, both
 // browsers: docs/evidence/probes/c02/README.md, "Native controls"). So the
 // page is walked up to three times, and every try is logged with its
-// verdict. Each walk is judged by judgeControlWalk (c02_control_html.js,
+// verdict. Each walk is judged by judgeControlWalk (c02_vo_walks.js,
 // tested on made-up walks in web_tests/c02_toggle_button.spec.js, which CI
 // runs): a button read in other words, however that is worded, fails the
 // test at once in whichever try; an empty or partial walk is a failed try;
-// the test passes only on a complete one.
-//
-// The config retries a failed test twice, and a retry that passes makes
-// the run pass (tool/voiceover_web.py reports PASS when Playwright exits 0,
-// lists the test under "Walks that needed a retry", and keeps the last
-// attempt's rows). So this test is not retried by the runner: its only
-// retry is its own, for incomplete walks, in runControlWalks, which stops
-// at the first wrong walk.
-test.describe('control-html', () => {
-  test.describe.configure({ retries: 0 });
-
-  test('voiceover reads control-html', async ({ page, voiceOver, browserName }) => {
-    await page.goto('about:blank');
-    await page.setContent(CONTROL_HTML);
-    const { verdict, reason, walks } = await runControlWalks(
-      () => walkToEnd(page, voiceOver, browserName, 40),
-      {
-        log: (walk, stops, judged) => console.log(
-          `C02VO ${browserName} control-html-walk-${walk} | ${stops.join(' / ') || '(nothing)'} (${judged.verdict}: ${judged.reason})`),
-      });
-    expect(verdict, `control-html, walk ${walks}: ${reason}`).toBe('complete');
-  });
+// the test passes only on a complete one. Like every test in this file it
+// is not retried by the runner (the configure call at the top).
+test('voiceover reads control-html', async ({ page, voiceOver, browserName }) => {
+  await page.goto('about:blank');
+  await page.setContent(CONTROL_HTML);
+  const { verdict, reason, walks } = await runControlWalks(
+    () => walkToEnd(page, voiceOver, browserName, 40),
+    {
+      log: (walk, stops, judged) => console.log(
+        `C02VO ${browserName} control-html-walk-${walk} | ${stops.join(' / ') || '(nothing)'} (${judged.verdict}: ${judged.reason})`),
+    });
+  expect(verdict, `control-html, walk ${walks}: ${reason}`).toBe('complete');
 });

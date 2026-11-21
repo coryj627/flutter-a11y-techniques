@@ -1,7 +1,7 @@
-// The comparison page of web_tests/vo/c02_toggle_button_vo.spec.js, and how
-// one VoiceOver walk of it is judged. Kept apart from the spec, with no
-// VoiceOver and no browser, so that web_tests/c02_toggle_button.spec.js can
-// test the judging on made-up walks in CI.
+// How web_tests/vo/c02_toggle_button_vo.spec.js judges and repeats its
+// VoiceOver walks: of the examples, and of its plain HTML comparison page.
+// Kept apart from the spec, with no VoiceOver and no browser, so that
+// web_tests/c02_toggle_button.spec.js can test it on made-up walks in CI.
 
 /** A plain HTML page with no Flutter: two toggle buttons and a button with aria-current. */
 export const CONTROL_HTML = `<main>
@@ -79,21 +79,67 @@ export function judgeControlWalk(stops, reachedEnd) {
   return { verdict: 'incomplete', reason: `between the neighbours: ${between.join(' / ') || '(nothing)'}` };
 }
 
+/** The heading every example screen has, as VoiceOver reads it. */
+export const EXAMPLE_HEADING = 'heading level 2 Example';
+
 /**
- * Walks the page up to `tries` times with `walkOnce()`, which resolves to
- * `{ stops, reachedEnd }`, and judges each walk. `log(walk, stops, judged)`
- * is called for every try. Stops at the first walk that is "wrong" or
- * "complete" and returns its verdict, with the number of walks made; if
- * no try was either, "incomplete". A wrong walk is never followed by
- * another try, so a later correct walk cannot hide it.
+ * Judges one walk of an example screen: `stops` in order, whether the walk
+ * reached the end, and `expected`, everything VoiceOver must say after the
+ * "Example" heading, in order, ending with the change count. Returns
+ * `{ verdict, reason }`, the verdict one of:
+ *
+ * - "wrong": after the heading, a stop that is not in `expected` (an empty
+ *   phrase included, or a count that is not the expected one), or the
+ *   expected stops out of order or read twice. This fails the test
+ *   whichever try it is in.
+ * - "complete": the end was reached and the stops after the heading are
+ *   exactly `expected`.
+ * - "incomplete": a capture that fell short and said nothing wrong: an
+ *   empty walk, a walk that never reached the heading, or one that read
+ *   only some of the expected stops, in order, or did not reach the end.
+ *   The walk may be tried again.
+ *
+ * Stops before the heading are the screen's own and are not judged.
  */
-export async function runControlWalks(walkOnce, { tries = 3, log = () => {} } = {}) {
+export function judgeExampleWalk(stops, reachedEnd, expected) {
+  if (stops.length === 0) return { verdict: 'incomplete', reason: 'nothing was read' };
+  const start = stops.indexOf(EXAMPLE_HEADING);
+  if (start < 0) return { verdict: 'incomplete', reason: 'the walk did not reach the "Example" heading' };
+  const content = stops.slice(start + 1);
+  const stray = content.find((stop) => !expected.includes(stop));
+  if (stray !== undefined) return { verdict: 'wrong', reason: `"${stray}" is not one of the expected readings` };
+  let at = -1;
+  for (const stop of content) {
+    const next = expected.indexOf(stop, at + 1);
+    if (next < 0) return { verdict: 'wrong', reason: `"${stop}" is out of order or read twice` };
+    at = next;
+  }
+  if (reachedEnd && content.length === expected.length) {
+    return { verdict: 'complete', reason: 'every expected stop, in order' };
+  }
+  if (!reachedEnd) return { verdict: 'incomplete', reason: 'the walk did not reach the end' };
+  return { verdict: 'incomplete', reason: `read ${content.length} of the ${expected.length} expected stops` };
+}
+
+/**
+ * Walks up to `tries` times with `walkOnce()`, which resolves to
+ * `{ stops, reachedEnd }`, and judges each walk with
+ * `judge(stops, reachedEnd)`. `log(walk, stops, judged)` is called for
+ * every try, so every attempt is kept. Stops at the first walk that is
+ * "wrong" or "complete" and returns its verdict, with the number of walks
+ * made; if no try was either, "incomplete". A wrong walk is never followed
+ * by another try, so a later correct walk cannot hide it.
+ */
+export async function runWalks(walkOnce, judge, { tries = 3, log = () => {} } = {}) {
   let judged = { verdict: 'incomplete', reason: 'no walk was made' };
   for (let walk = 1; walk <= tries; walk++) {
     const { stops, reachedEnd } = await walkOnce();
-    judged = judgeControlWalk(stops, reachedEnd);
+    judged = judge(stops, reachedEnd);
     log(walk, stops, judged);
     if (judged.verdict !== 'incomplete') return { ...judged, walks: walk };
   }
   return { ...judged, walks: tries };
 }
+
+/** runWalks for the comparison page, judged by judgeControlWalk. */
+export const runControlWalks = (walkOnce, options) => runWalks(walkOnce, judgeControlWalk, options);

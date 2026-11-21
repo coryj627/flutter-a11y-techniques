@@ -6,7 +6,7 @@ import { byId, tabTo, technique } from './support/techniques.js';
 // Pure logic, with no VoiceOver: imported here so that CI tests it.
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { judgeControlWalk, runControlWalks } from './vo/c02_control_html.js';
+import { EXAMPLE_HEADING, judgeControlWalk, judgeExampleWalk, runControlWalks, runWalks } from './vo/c02_vo_walks.js';
 
 const { open, expectCount } = technique('C02', { countLabel: 'Changes' });
 
@@ -206,12 +206,82 @@ test.describe('the VoiceOver comparison page is judged on every walk', () => {
   // The runner's own retries would let a later passing attempt hide a wrong
   // one, so the comparison test turns them off. The VoiceOver spec cannot be
   // loaded here (its guard stops it), so its source is read.
-  test('the VoiceOver comparison test is not retried by the runner', () => {
+  test('no test in the C02 VoiceOver spec is retried by the runner', () => {
     const source = fs.readFileSync(
       fileURLToPath(new URL('./vo/c02_toggle_button_vo.spec.js', import.meta.url)), 'utf8');
-    const block = source.slice(source.indexOf("test.describe('control-html'"));
-    expect(block.indexOf("test.describe('control-html'"), 'the comparison test has a describe of its own').toBe(0);
-    expect(block.split('\n')[1].trim()).toBe('test.describe.configure({ retries: 0 });');
-    expect(block).toContain("test('voiceover reads control-html'");
+    // Code only: comments may mention retries.
+    const code = source.split('\n').filter((line) => !line.trim().startsWith('//')).join('\n');
+    const configure = code.indexOf('test.describe.configure({ retries: 0 });');
+    expect(configure, 'the file turns runner retries off').toBeGreaterThan(-1);
+    // At the top level, before any test or describe, so it covers them all.
+    const firstTest = Math.min(...['test(', 'test.describe('].map((t) => {
+      const i = code.indexOf(t);
+      return i < 0 ? Infinity : i;
+    }));
+    expect(configure, 'the configure call comes before every test').toBeLessThan(firstTest);
+    expect(code.slice(0, configure).split('\n').every((line) => !line.startsWith(' ')),
+      'the configure call is at the top level').toBe(true);
+    // Nothing turns them on again.
+    expect(code.match(/retries\s*:/g), 'one retries setting in the file').toHaveLength(1);
+    expect(code).not.toMatch(/test\.(describe\.)?configure\(\{[^}]*retries:\s*[1-9]/);
+    expect(code).not.toMatch(/\.retry\(|test\.info\(\)\.retry/);
+  });
+});
+
+// How the web VoiceOver spec judges one walk of an example screen
+// (judgeExampleWalk), and repeats one that fell short (runWalks). The walks
+// here are made up; VoiceOver is not used.
+test.describe('the VoiceOver example walks are judged on every walk', () => {
+  const before = ['Bold off switch', 'Changes: 0'];
+  const after = ['Bold on switch', 'Changes: 1'];
+  const screen = (...content) => ['heading level 1 Icon button that stays pressed', EXAMPLE_HEADING, ...content];
+  const cases = [
+    ['a correct walk', screen(...before), true, before, 'complete'],
+    ['a correct walk after the change', screen(...after), true, after, 'complete'],
+    ['a wrong state', screen('Bold on switch', 'Changes: 0'), true, before, 'wrong'],
+    ['a wrong role', screen('Bold button', 'Changes: 0'), true, before, 'wrong'],
+    ['an empty reading', screen('', 'Changes: 0'), true, before, 'wrong'],
+    ['a stale count after the change', screen('Bold on switch', 'Changes: 0'), true, after, 'wrong'],
+    ['the expected stops out of order', screen('Changes: 0', 'Bold off switch'), true, before, 'wrong'],
+    ['a stop read twice', screen('Bold off switch', 'Bold off switch', 'Changes: 0'), true, before, 'wrong'],
+    ['a wrong reading in a truncated walk', screen('Bold button'), false, before, 'wrong'],
+    ['an empty walk', [], false, before, 'incomplete'],
+    ['a walk that never reached the heading', ['Back button'], false, before, 'incomplete'],
+    ['a truncated walk', screen('Bold off switch'), false, before, 'incomplete'],
+    ['a walk that went past a stop without reading it', screen('Changes: 0'), true, before, 'incomplete'],
+  ];
+  for (const [what, stops, reachedEnd, expected, verdict] of cases) {
+    test(`${what}: ${verdict}`, () => {
+      expect(judgeExampleWalk(stops, reachedEnd, expected).verdict).toBe(verdict);
+    });
+  }
+
+  const judge = (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, before);
+  const sequence = (...list) => {
+    let i = 0;
+    return { walkOnce: async () => list[i++], made: () => i };
+  };
+  const right = { stops: screen(...before), reachedEnd: true };
+  const wrong = { stops: screen('Bold on switch', 'Changes: 0'), reachedEnd: true };
+  const short = { stops: screen('Bold off switch'), reachedEnd: false };
+
+  test('a wrong walk followed by a right one fails, and no second walk is made', async () => {
+    const { walkOnce, made } = sequence(wrong, right);
+    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+    expect(made()).toBe(1);
+  });
+
+  test('an incomplete walk followed by a right one passes on the second', async () => {
+    const { walkOnce, made } = sequence(short, right);
+    const result = await runWalks(walkOnce, judge);
+    expect(result).toMatchObject({ verdict: 'complete', walks: 2 });
+    expect(made()).toBe(2);
+  });
+
+  test('every try of an example walk is logged', async () => {
+    const { walkOnce } = sequence(short, short, right);
+    const logged = [];
+    await runWalks(walkOnce, judge, { log: (n, stops, judged) => logged.push([n, judged.verdict]) });
+    expect(logged).toEqual([[1, 'incomplete'], [2, 'incomplete'], [3, 'complete']]);
   });
 });

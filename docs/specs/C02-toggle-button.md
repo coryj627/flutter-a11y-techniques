@@ -191,7 +191,7 @@ A multi-select `SegmentedButton` has the same defect as
 | L3 iOS | Every good toggle: type `.switch`, label, enabled, value "0", "1" after a tap, "0" after a second. Bad: a `.button` with no value, `isSelected` after one tap and not after two; a button with no value and not selected before and after use; a switch whose label changes |
 | L4 TalkBack | Each control on arriving, and again after it has been changed once, with focus away and back: the state words, the name, and the role, and the words that must not be there |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count, as each example opens and again after its first control was tapped once, compared as a whole list; the second walk must end at "Changes: 1" |
-| L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit, as each example opens and again after its first control was clicked once, compared as a whole list; the second walk must end at "Changes: 1". For comparison, a plain HTML page (`control-html`) with a `button` with `aria-pressed="false"`, one with `aria-pressed="true"`, and one with `aria-current="true"`: walked up to three times by `runControlWalks`, every try logged with its verdict, and the test is excluded from the runner's own retries (`test.describe.configure({ retries: 0 })`): the config retries a failed test twice, and `tool/voiceover_web.py` reports a run whose retry passed as PASS, so a runner retry could hide a wrong reading. Each walk is judged by `judgeControlWalk` (`web_tests/vo/c02_control_html.js`): a stop is a button's when it names the button, however it is worded, or when it comes after "Text styles", the page's stop before the buttons, and before "Changes: 0", the stop after them; in a walk cut off before "Changes: 0", every stop after "Text styles" but "end of main". Any such stop that is not that button's expected reading ("Bold toggle button", "Italic selected toggle button", "Underline current item button") fails the test at once, and no further walk is made. A walk that reached the end with exactly the three readings, in order, between the two neighbours passes; anything else (an empty walk, a walk that missed a button or did not reach the end) is a failed try. The judging and the tries are tested on made-up walks, with no VoiceOver, in `web_tests/c02_toggle_button.spec.js`, which CI runs: a correct walk, a bare name, a state word before the name, a button read as another, a reading with no name or an empty one between the neighbours, a wrong reading before the page, an empty walk, partial walks, truncated walks with a nameless, an empty, or a bare-name reading, a wrong walk followed by a correct one (fails, with no second walk), an incomplete one followed by a correct one (passes), and the VoiceOver spec's `retries: 0` on the comparison test (read from its source, which the guard keeps from loading). The example walks above have no such filter: each is compared with its whole expected list |
+| L4 VoiceOver web | In Chromium and WebKit. No test in the spec is retried by the runner (`test.describe.configure({ retries: 0 })` at the top of the file): the shared config retries a failed test twice, and `tool/voiceover_web.py` reports a run whose retry passed as PASS and keeps only the last attempt's rows, so a runner retry could hide a wrong reading. Each walk is instead repeated by the test itself (`runWalks` in `web_tests/vo/c02_vo_walks.js`), up to three times, only while it falls short, and every try is logged as its own transcript row (`<slug>-walk-<n>`) with its verdict. Each example is walked as it opens and again after its first control was clicked once, and each walk is judged by `judgeExampleWalk` against the whole expected list after the "Example" heading, ending with the change count: a stop not in the list (an empty one, or "Changes: 0" in the second walk, included) or the list's stops out of order or read twice fails the test at once, with no further walk; exactly the list, with the end reached, passes; an empty walk, one that never reached the heading, or one that read only some of the list in order or did not reach the end is a failed try. For comparison, a plain HTML page (`control-html`) with a `button` with `aria-pressed="false"`, one with `aria-pressed="true"`, and one with `aria-current="true"`, judged by `judgeControlWalk`: a stop is a button's when it names the button, however it is worded, or when it comes after "Text styles", the page's stop before the buttons, and before "Changes: 0", the stop after them; in a walk cut off before "Changes: 0", every stop after "Text styles" but "end of main". Any such stop that is not that button's expected reading ("Bold toggle button", "Italic selected toggle button", "Underline current item button") fails the test at once; exactly the three readings, in order, between the two neighbours, with the end reached, passes; anything else is a failed try. Both judges and the tries are tested on made-up walks, with no VoiceOver, in `web_tests/c02_toggle_button.spec.js`, which CI runs. For the examples: a correct walk before and after the change, a wrong state, a wrong role, an empty reading, a stale count, stops out of order, a stop read twice, a wrong reading in a truncated walk, an empty walk, a walk that never reached the heading, a truncated walk, and a walk that missed a stop; a wrong walk followed by a right one (fails, with no second walk), an incomplete one followed by a right one (passes), and every try logged. For the comparison page: a correct walk, a bare name, a state word before the name, a button read as another, a reading with no name or an empty one between the neighbours, a wrong reading before the page, an empty walk, partial walks, truncated walks with a nameless, an empty, or a bare-name reading, and the same three about tries. And a check of the VoiceOver spec's source, which its guard keeps from loading here: one top-level `retries: 0` before every test, and no other retries setting |
 
 What the tests leave out, and what that gives up:
 
@@ -223,13 +223,11 @@ What the tests leave out, and what that gives up:
   stop can be taken for a button's only by its name, so an empty or
   nameless reading there is not seen; such a walk is a failed try, and
   the test still needs a complete walk to pass.
-- The example walks on the web keep the shared VoiceOver config's runner
-  retries (two), as every technique's do: a test whose walk read wrong on
-  one attempt and right on a later one passes, and
-  `tool/voiceover_web.py` writes PASS with the test named under "Walks
-  that needed a retry" and the last attempt's rows. Only the comparison
-  test is excluded from them. A retry of an example walk can be seen in
-  the transcript; what the earlier attempt heard cannot.
+- The web VoiceOver walks repeat only a walk that fell short; what an
+  incomplete try read is in the transcript, but the test does not judge
+  it beyond "nothing wrong in it". A wrong reading is never retried.
+  Other techniques' VoiceOver specs still take the shared config's runner
+  retries; that is outside C02.
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -293,12 +291,20 @@ The probe that came first is in [evidence/probes/c02](../evidence/probes/c02/).
   guideline failed in both, where the L1 tests had checked only the off
   state ([measurements](../evidence/probes/c02/contrast_on.txt), from
   `contrast_on_test.dart.txt`). It now sets `foregroundColor` to
-  `CupertinoColors.systemBackground` as well, 21:1 in both. A
+  `CupertinoColors.systemBackground` as well, text and icon 21:1 in both
+  ([measured](../evidence/probes/c02/icon_foreground.txt)). A
   `CupertinoButton` resolves its `color` for the context and not its
-  `foregroundColor` (measured: unresolved, the text stayed white on white
-  in dark mode, 1.00:1), so the example resolves both itself. The other
-  good examples passed once on, before and after the change. The L1 tests
-  now check text contrast with each good example's first control on.
+  `foregroundColor` ([FL-202](../flutter-limitations.md#fl-202)). Measured
+  in widget tests: with `foregroundColor` unresolved the text stayed white
+  on white in dark mode, 1.00:1, under a `MaterialApp` and under a
+  `CupertinoApp`; the icon did too under a `MaterialApp`, and was resolved
+  under a `CupertinoApp`, whose Cupertino icon theme resolves it (read in
+  the source). So the example resolves both itself. The other good
+  examples passed text contrast once on, before and after the change.
+  The L1 tests now check text contrast with each good example's first
+  control on. Icon contrast (1.4.11) is measured above for
+  `good-cupertino` only and not judged against the criterion; it is not
+  checked by a test.
 
 **What the native fixtures set** (second version, the one the readings
 above come from; `ProbeNativeActivity2.kt.txt` and

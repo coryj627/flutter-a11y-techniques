@@ -277,7 +277,8 @@ class _GoodCupertinoState extends State<GoodCupertino> {
                   // and icon in the page's colour, so that they keep their
                   // contrast on the fill in light and dark mode. The
                   // button does not resolve a dynamic foreground colour
-                  // itself (FL-202), so both are resolved here.
+                  // for its text (FL-202), and under this MaterialApp not
+                  // for its icon either, so both are resolved here.
                   color: _on
                       ? CupertinoDynamicColor.resolve(
                           CupertinoColors.label,
