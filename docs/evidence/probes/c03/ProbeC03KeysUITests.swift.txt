@@ -1,0 +1,52 @@
+// C03 review probe (throwaway, not committed; kept as
+// docs/evidence/probes/c03/ProbeC03KeysUITests.swift.txt): where Tab and
+// Enter go on iOS on a C03 example screen. After the keys, the screen on
+// top is read; if it is the technique's page, one Back tells what is under
+// it: the example (the link was followed) or the catalog (Back was pressed).
+import XCTest
+
+final class ProbeC03KeysUITests: XCTestCase {
+  let app = XCUIApplication()
+
+  func open(_ slug: String) {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///t/C03/\(slug)")!)
+      if app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Example")).firstMatch
+        .waitForExistence(timeout: 30) { sleep(1); return }
+    }
+  }
+
+  func label(_ l: String) -> XCUIElement {
+    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", l)).firstMatch
+  }
+
+  func where_() -> String {
+    sleep(2)
+    if label("Stand-alone link").exists {
+      app.buttons["Back"].firstMatch.tap()
+      sleep(2)
+      let under = label("Example").exists ? "example" : (label("Flutter A11Y Techniques").exists ? "catalog" : "other")
+      return "technique page, with \(under) under it"
+    }
+    if label("About stand-alone links").exists { return "the tap handler's page" }
+    if label("Example").exists { return "still the example" }
+    return "other"
+  }
+
+  func testKeys() {
+    for slug in ["good-material", "bad-tap-handler"] {
+      for tabs in 0...3 {
+        for (key, name) in [("\n", "Enter"), (XCUIKeyboardKey.space.rawValue, "Space")] {
+          open(slug)
+          for _ in 0..<tabs {
+            app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+            usleep(700_000)
+          }
+          app.typeKey(key, modifierFlags: [])
+          print("C03KEYPROBE \(slug) \(tabs) Tab(s) then \(name): \(where_())")
+        }
+      }
+    }
+  }
+}

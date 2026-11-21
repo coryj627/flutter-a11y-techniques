@@ -1,0 +1,18 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+C03KEYPROBE good-material 0 Tab(s) then Enter: still the example
+C03KEYPROBE good-material 0 Tab(s) then Space: still the example
+C03KEYPROBE good-material 1 Tab(s) then Enter: other
+C03KEYPROBE good-material 1 Tab(s) then Space: other
+C03KEYPROBE good-material 2 Tab(s) then Enter: technique page, with example under it
+C03KEYPROBE good-material 2 Tab(s) then Space: technique page, with example under it
+C03KEYPROBE good-material 3 Tab(s) then Enter: other
+C03KEYPROBE good-material 3 Tab(s) then Space: other
+C03KEYPROBE bad-tap-handler 0 Tab(s) then Enter: still the example
+C03KEYPROBE bad-tap-handler 0 Tab(s) then Space: still the example
+C03KEYPROBE bad-tap-handler 1 Tab(s) then Enter: other
+C03KEYPROBE bad-tap-handler 1 Tab(s) then Space: other
+C03KEYPROBE bad-tap-handler 2 Tab(s) then Enter: other
+C03KEYPROBE bad-tap-handler 2 Tab(s) then Space: other
+C03KEYPROBE bad-tap-handler 3 Tab(s) then Enter: other
+C03KEYPROBE bad-tap-handler 3 Tab(s) then Space: other
+Test Case '-[RunnerUITests.ProbeC03KeysUITests testKeys]' passed (171.909 seconds).

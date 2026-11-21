@@ -1,0 +1,144 @@
+C03WEB p01 element <a id="flt-semantic-node-6" flt-tappable="">p01 link only</a>
+C03WEB p01 ax role=heading name="p01" props=level:2
+C03WEB p01 ax role=link name="p01 link only" props=
+C03WEB p01 aria "- button \"Back\"\n- heading \"p01\" [level=2]\n- group: \"Before p01 p01 link only p01 taps: 0\""
+C03WEB p01 click url=/#/p01 taps="p01 taps: 1" destination=false pages=1
+C03WEB p01 tab reaches it after 0 Tab(s)
+C03WEB p01 tab reaches it after 0 Tab(s)
+C03WEB p01 meta-click url=/#/p01 taps="p01 taps: 1" destination=false pages=1 other pages: 
+C03WEB p02 element <a id="flt-semantic-node-6" flt-tappable="" href="https://example.com/c03">p02 link url</a>
+C03WEB p02 ax role=heading name="p02" props=level:2
+C03WEB p02 ax role=link name="p02 link url" props=focusable:true,url:"https://example.com/c03"
+C03WEB p02 aria "- button \"Back\"\n- heading \"p02\" [level=2]\n- group:\n  - text: Before p02\n  - link \"p02 link url\":\n    - /url: https://example.com/c03\n  - text: \"p02 taps: 0\""
+C03WEB p02 click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p02 tab reaches it after 2 Tab(s)
+C03WEB p02 Enter url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p02 tab reaches it after 2 Tab(s)
+C03WEB p02 Space url=/#/p02 taps="p02 taps: 0" destination=false pages=1
+C03WEB p02 Space control click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p02 meta-click url=/#/p02 taps="p02 taps: 1" destination=false pages=2 other pages: https://example.com/c03
+C03WEB p03 element <a id="flt-semantic-node-6" flt-tappable="" href="#/dest">p03 link dest</a>
+C03WEB p03 ax role=heading name="p03" props=level:2
+C03WEB p03 ax role=link name="p03 link dest" props=focusable:true,url:"http://127.0.0.1:29833/#/dest"
+C03WEB p03 aria "- button \"Back\"\n- heading \"p03\" [level=2]\n- group:\n  - text: Before p03\n  - link \"p03 link dest\":\n    - /url: \"#/dest\"\n  - text: \"p03 taps: 0\""
+C03WEB p03 click url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p03 tab reaches it after 2 Tab(s)
+C03WEB p03 Enter url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p03 tab reaches it after 2 Tab(s)
+C03WEB p03 Space url=/#/p03 taps="p03 taps: 0" destination=false pages=1
+C03WEB p03 Space control click url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p03 meta-click url=/#/p03 taps="p03 taps: 1" destination=false pages=2 other pages: http://127.0.0.1:29833/#/dest
+C03WEB p04 element <a id="flt-semantic-node-6" tabindex="0" flt-tappable="" href="#/dest">p04 inkwell dest</a>
+C03WEB p04 ax role=heading name="p04" props=level:2
+C03WEB p04 ax role=link name="p04 inkwell dest" props=focusable:true,url:"http://127.0.0.1:29833/#/dest"
+C03WEB p04 aria "- button \"Back\"\n- heading \"p04\" [level=2]\n- group:\n  - text: Before p04\n  - link \"p04 inkwell dest\":\n    - /url: \"#/dest\"\n  - text: \"p04 taps: 0\""
+C03WEB p04 click url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p04 tab reaches it after 2 Tab(s)
+C03WEB p04 Enter url=/#/p04 taps="p04 taps: 1" destination=false pages=1
+C03WEB p04 Enter control click url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p04 tab reaches it after 2 Tab(s)
+C03WEB p04 Space url=/#/p04 taps="p04 taps: 1" destination=false pages=1
+C03WEB p04 Space control click url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p04 meta-click url=/#/p04 taps="p04 taps: 1" destination=false pages=2 other pages: http://127.0.0.1:29833/#/dest
+C03WEB p05 element <a id="flt-semantic-node-6" tabindex="0" flt-tappable="" href="#/dest">p05 focus dest</a>
+C03WEB p05 ax role=heading name="p05" props=level:2
+C03WEB p05 ax role=link name="p05 focus dest" props=focusable:true,url:"http://127.0.0.1:29833/#/dest"
+C03WEB p05 aria "- button \"Back\"\n- heading \"p05\" [level=2]\n- group:\n  - text: Before p05\n  - link \"p05 focus dest\":\n    - /url: \"#/dest\"\n  - text: \"p05 taps: 0\""
+C03WEB p05 click url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p05 tab reaches it after 2 Tab(s)
+C03WEB p05 Enter url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p05 tab reaches it after 2 Tab(s)
+C03WEB p05 Space url=/#/p05 taps="p05 taps: 0" destination=false pages=1
+C03WEB p05 Space control click url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p05 meta-click url=/#/p05 taps="p05 taps: 1" destination=false pages=2 other pages: http://127.0.0.1:29833/#/dest
+C03WEB p06 element <a id="flt-semantic-node-6" tabindex="0" flt-tappable="" href="#/dest">p06 inkwell keys to browser</a>
+C03WEB p06 ax role=heading name="p06" props=level:2
+C03WEB p06 ax role=link name="p06 inkwell keys to browser" props=focusable:true,url:"http://127.0.0.1:29833/#/dest"
+C03WEB p06 aria "- button \"Back\"\n- heading \"p06\" [level=2]\n- group:\n  - text: Before p06\n  - link \"p06 inkwell keys to browser\":\n    - /url: \"#/dest\"\n  - text: \"p06 taps: 0\""
+C03WEB p06 click url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p06 tab reaches it after 2 Tab(s)
+C03WEB p06 Enter url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p06 tab reaches it after 2 Tab(s)
+C03WEB p06 Space url=/#/p06 taps="p06 taps: 0" destination=false pages=1
+C03WEB p06 Space control click url=/#/dest taps="(gone)" destination=true pages=1
+C03WEB p06 meta-click url=/#/p06 taps="p06 taps: 1" destination=false pages=2 other pages: http://127.0.0.1:29833/#/dest
+C03WEB p07 element <flt-semantics id="flt-semantic-node-7" role="button" tabindex="0" flt-tappable="">p07 text button</flt-semantics>
+C03WEB p07 ax role=heading name="p07" props=level:2
+C03WEB p07 ax role=link name="p07 text button" props=focusable:true,url:"https://example.com/c03"
+C03WEB p07 ax role=button name="p07 text button" props=focusable:true
+C03WEB p07 aria "- button \"Back\"\n- heading \"p07\" [level=2]\n- group:\n  - text: Before p07\n  - link \"p07 text button\":\n    - /url: https://example.com/c03\n    - button \"p07 text button\"\n  - text: \"p07 taps: 0\""
+C03WEB p07 click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p07 tab reaches it after 2 Tab(s)
+C03WEB p07 Enter url=/#/p07 taps="p07 taps: 1" destination=false pages=1
+C03WEB p07 Enter control click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p07 tab reaches it after 2 Tab(s)
+C03WEB p07 Space url=/#/p07 taps="p07 taps: 1" destination=false pages=1
+C03WEB p07 Space control click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p07 meta-click url=/#/p07 taps="p07 taps: 1" destination=false pages=2 other pages: https://example.com/c03
+C03WEB p08 element <a id="flt-semantic-node-6" tabindex="0" flt-tappable="" href="https://example.com/c03">p08 cupertino button</a>
+C03WEB p08 ax role=heading name="p08" props=level:2
+C03WEB p08 ax role=link name="p08 cupertino button" props=focusable:true,url:"https://example.com/c03"
+C03WEB p08 aria "- button \"Back\"\n- heading \"p08\" [level=2]\n- group:\n  - text: Before p08\n  - link \"p08 cupertino button\":\n    - /url: https://example.com/c03\n  - text: \"p08 taps: 0\""
+C03WEB p08 click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p08 tab reaches it after 2 Tab(s)
+C03WEB p08 Enter url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p08 tab reaches it after 2 Tab(s)
+C03WEB p08 Space url=/#/p08 taps="p08 taps: 1" destination=false pages=1
+C03WEB p08 Space control click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p08 meta-click url=/#/p08 taps="p08 taps: 1" destination=false pages=2 other pages: https://example.com/c03
+C03WEB p09 element <a id="flt-semantic-node-6" tabindex="0" flt-tappable="" href="https://example.com/c03">p09 image link</a>
+C03WEB p09 ax role=heading name="p09" props=level:2
+C03WEB p09 ax role=link name="p09 image link" props=focusable:true,url:"https://example.com/c03"
+C03WEB p09 aria "- button \"Back\"\n- heading \"p09\" [level=2]\n- group:\n  - text: Before p09\n  - link \"p09 image link\":\n    - /url: https://example.com/c03\n  - text: \"p09 taps: 0\""
+C03WEB p09 click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p09 tab reaches it after 2 Tab(s)
+C03WEB p09 Enter url=/#/p09 taps="p09 taps: 1" destination=false pages=1
+C03WEB p09 Enter control click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p09 tab reaches it after 2 Tab(s)
+C03WEB p09 Space url=/#/p09 taps="p09 taps: 1" destination=false pages=1
+C03WEB p09 Space control click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p09 meta-click url=/#/p09 taps="p09 taps: 1" destination=false pages=2 other pages: https://example.com/c03
+C03WEB p10 element <flt-semantics id="flt-semantic-node-7" role="img" aria-label="p10 image label"></flt-semantics>
+C03WEB p10 ax role=heading name="p10" props=level:2
+C03WEB p10 ax role=link name="p10 image label" props=focusable:true,url:"https://example.com/c03"
+C03WEB p10 ax role=image name="p10 image label" props=
+C03WEB p10 aria "- button \"Back\"\n- heading \"p10\" [level=2]\n- group:\n  - text: Before p10\n  - link \"p10 image label\":\n    - /url: https://example.com/c03\n    - img \"p10 image label\"\n  - text: \"p10 taps: 0\""
+C03WEB p10 click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p10 tab reaches it after 0 Tab(s)
+C03WEB p10 tab reaches it after 0 Tab(s)
+C03WEB p10 meta-click url=/#/p10 taps="p10 taps: 1" destination=false pages=2 other pages: https://example.com/c03
+C03WEB p11 NO ELEMENT FOUND
+C03WEB p11 host <flt-semantics-host><flt-semantics id="flt-semantic-node-0"><flt-semantics id="flt-semantic-node-1"><flt-semantics id="flt-semantic-node-2"><flt-semantics id="flt-semantic-node-3"><flt-semantics id="flt-semantic-node-9"><flt-semantics id="flt-semantic-node-10" role="button" tabindex="0" flt-tappable="">Back</flt-semantics><h2 id="flt-semantic-node-11">p11</h2></flt-semantics><flt-semantics id="flt-semantic-node-4" role="group"><flt-semantics id="flt-semantic-node-5"><span>Before p11</span></flt-semantics><a id="flt-semantic-node-6" href="https://example.com/c03"><flt-semantics id="flt-semantic-node-7" role="button" tabindex="0" flt-tappable=""></flt-semantics></a><flt-semantics id="flt-semantic-node-8" flt-semantics-identifier="p11-taps"><span>p11 taps: 0</span></flt-semantics></flt-semantics></flt-semantics></flt-semantics></flt-semantics></flt-semantics></flt-semantics-host>
+C03WEB p12 element <a id="flt-semantic-node-6" tabindex="0" flt-tappable="" flt-semantics-identifier="link-1" href="https://example.com/c03">p12 url launcher link</a>
+C03WEB p12 ax role=heading name="p12" props=level:2
+C03WEB p12 ax role=link name="p12 url launcher link" props=focusable:true,url:"https://example.com/c03"
+C03WEB p12 aria "- button \"Back\"\n- heading \"p12\" [level=2]\n- group:\n  - text: Before p12\n  - link \"p12 url launcher link\":\n    - /url: https://example.com/c03\n  - text: \"p12 taps: 0\""
+C03WEB p12 click url=/#/p12 taps="p12 taps: 1" destination=false pages=2
+C03WEB p12 tab reaches it after 2 Tab(s)
+C03WEB p12 Enter url=/#/p12 taps="p12 taps: 1" destination=false pages=2
+C03WEB p12 Enter control click url=/#/p12 taps="p12 taps: 2" destination=false pages=2
+C03WEB p12 tab reaches it after 2 Tab(s)
+C03WEB p12 Space url=/#/p12 taps="p12 taps: 1" destination=false pages=2
+C03WEB p12 Space control click url=/#/p12 taps="p12 taps: 2" destination=false pages=2
+C03WEB p12 meta-click url=/#/p12 taps="p12 taps: 1" destination=false pages=2 other pages: https://example.com/c03
+C03WEB p13 element <a id="flt-semantic-node-6" tabindex="0" flt-tappable="" href="https://example.com/c03">p13 link tap hint</a>
+C03WEB p13 ax role=heading name="p13" props=level:2
+C03WEB p13 ax role=link name="p13 link tap hint" props=focusable:true,url:"https://example.com/c03"
+C03WEB p13 aria "- button \"Back\"\n- heading \"p13\" [level=2]\n- group:\n  - text: Before p13\n  - link \"p13 link tap hint\":\n    - /url: https://example.com/c03\n  - text: \"p13 taps: 0\""
+C03WEB p13 click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p13 tab reaches it after 2 Tab(s)
+C03WEB p13 Enter url=/#/p13 taps="p13 taps: 1" destination=false pages=1
+C03WEB p13 Enter control click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p13 tab reaches it after 2 Tab(s)
+C03WEB p13 Space url=/#/p13 taps="p13 taps: 1" destination=false pages=1
+C03WEB p13 Space control click url=https://example.com/c03 taps="" destination=false pages=1
+C03WEB p13 meta-click url=/#/p13 taps="p13 taps: 1" destination=false pages=2 other pages: https://example.com/c03
+C03WEB p14 element <flt-semantics id="flt-semantic-node-6" role="button" flt-tappable="">p14 looks like a link</flt-semantics>
+C03WEB p14 ax role=heading name="p14" props=level:2
+C03WEB p14 ax role=button name="p14 looks like a link" props=
+C03WEB p14 aria "- button \"Back\"\n- heading \"p14\" [level=2]\n- group:\n  - text: Before p14\n  - button \"p14 looks like a link\"\n  - text: \"p14 taps: 0\""
+C03WEB p14 click url=/#/p14 taps="p14 taps: 1" destination=false pages=1
+C03WEB p14 tab reaches it after 0 Tab(s)
+C03WEB p14 tab reaches it after 0 Tab(s)
+C03WEB p14 meta-click url=/#/p14 taps="p14 taps: 1" destination=false pages=1 other pages: 
+  14 passed (3.0m)

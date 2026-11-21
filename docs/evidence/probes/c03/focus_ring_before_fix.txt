@@ -1,0 +1,21 @@
+00:00 +0: good examples good-material: keyboard focus draws the ring, and it goes when focus leaves (dark)
+00:00 +1: good examples good-material: keyboard focus draws the ring, and it goes when focus leaves (light)
+00:00 +2: good examples good-cupertino: keyboard focus draws the ring, and it goes when focus leaves (dark)
+Expected: Color:<Color(alpha: 1.0000, red: 0.8941, green: 0.8824, blue: 0.9137, colorSpace:
+  Actual: Color:<Color(alpha: 0.0000, red: 0.0000, green: 0.0000, blue: 0.0000, colorSpace:
+00:00 +2 -1: good examples good-cupertino: keyboard focus draws the ring, and it goes when focus leaves (dark) [E]
+00:00 +2 -1: good examples good-cupertino: keyboard focus draws the ring, and it goes when focus leaves (light)
+Expected: Color:<Color(alpha: 1.0000, red: 0.1059, green: 0.1059, blue: 0.1294, colorSpace:
+  Actual: Color:<Color(alpha: 0.0000, red: 0.0000, green: 0.0000, blue: 0.0000, colorSpace:
+00:00 +2 -2: good examples good-cupertino: keyboard focus draws the ring, and it goes when focus leaves (light) [E]
+00:00 +2 -2: good examples good-custom: keyboard focus draws the ring, and it goes when focus leaves (dark)
+Expected: Color:<Color(alpha: 1.0000, red: 0.8941, green: 0.8824, blue: 0.9137, colorSpace:
+  Actual: Color:<Color(alpha: 0.0000, red: 0.0000, green: 0.0000, blue: 0.0000, colorSpace:
+00:00 +2 -3: good examples good-custom: keyboard focus draws the ring, and it goes when focus leaves (dark) [E]
+00:00 +2 -3: good examples good-custom: keyboard focus draws the ring, and it goes when focus leaves (light)
+Expected: Color:<Color(alpha: 1.0000, red: 0.1059, green: 0.1059, blue: 0.1294, colorSpace:
+  Actual: Color:<Color(alpha: 0.0000, red: 0.0000, green: 0.0000, blue: 0.0000, colorSpace:
+00:00 +2 -4: good examples good-custom: keyboard focus draws the ring, and it goes when focus leaves (light) [E]
+00:00 +2 -4: good examples good-image-link: keyboard focus draws the ring, and it goes when focus leaves (dark)
+00:00 +3 -4: good examples good-image-link: keyboard focus draws the ring, and it goes when focus leaves (light)
+00:01 +4 -4: Some tests failed.
