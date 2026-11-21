@@ -52,8 +52,13 @@ an inline link is its context ([G53](https://www.w3.org/WAI/WCAG22/Techniques/ge
 link text with the text of the enclosing sentence) wherever the platform
 relates the two, and context that is only seen and not related fails
 ([F63](https://www.w3.org/WAI/WCAG22/Techniques/failures/F63)). The
-criterion's exception, "ambiguous to users in general", is for a link whose
-purpose nobody can tell; it applies to no example here.
+criterion's exception, "ambiguous to users in general", covers a link whose
+purpose cannot be determined from the link and all the information
+presented with it: a vague link with nothing shown with it that gives its
+purpose falls under it and does not fail 2.4.4 (it fails 2.4.9, Level AAA,
+through F84). A 2.4.4 failure needs purpose-giving context that is shown
+but not related to the link in the accessibility tree (F63). The exception
+applies to no example here.
 
 Whether a Flutter sentence is related to its links, by platform, as
 measured:
@@ -74,7 +79,10 @@ measured:
 Every link here, `bad-out-of-order`'s included, has text that says where
 it goes on its own ("links in text", "stand-alone links"), so 2.4.4 is met
 from the link text alone and no example fails it: `bad-out-of-order` loses
-the sentence's order (1.3.2), not its links' purpose.
+the sentence's order (1.3.2), not its links' purpose. Under F63's logic as
+well: without the workaround the links are read apart from their sentence,
+but each link's own text gives its purpose, so nothing that gives the
+purpose is left unrelated to the link, and 2.4.4 does not fail.
 
 For 1.4.1, the Understanding document lists
 [G183](https://www.w3.org/WAI/WCAG22/Techniques/general/G183) (a 3:1
@@ -192,11 +200,14 @@ No example has vague link text, for three reasons. A vague link in a
 sentence that says where it goes ("Read about links in text [here]") meets
 2.4.4 through that sentence, which Flutter relates to it (section 3); it
 fails only 2.4.9 Link Purpose (Link Only), Level AAA and out of scope. A
-vague link whose purpose is given only by content not related to it fails
-2.4.4 (F63), but that is a matter of what sits round the sentence, not of a
-link in a sentence. And a link with no context at all is C03's
-`bad-vague-text`. An example that could not be shown to fail as this
-technique's own defect was not built.
+vague link whose purpose is given only by content shown but not related to
+it in the accessibility tree fails 2.4.4 (F63), but that is a matter of
+what sits round the sentence, not of a link in a sentence. And a vague link
+with nothing shown with it that gives its purpose is C03's
+`bad-vague-text`, which C03 records as none at level AA and a 2.4.9
+failure (F84): the "ambiguous to users in general" exception covers it. An
+example that could not be shown to fail 2.4.4 as this technique's own
+defect was not built.
 
 `bad-merged` has no `TestId`: it is the defect. Its sentence carries a
 plain `Semantics(identifier:)` under the `MergeSemantics`. The good
