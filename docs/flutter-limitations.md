@@ -75,7 +75,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-029](#fl-029) | A Material `Slider` adds an empty full-screen element that takes pointer events on web | Web | Confirmed |
 | [FL-030](#fl-030) | A label on an `Image` inside a button does not name the button | Android, iOS | Confirmed (source read) |
 | [FL-031](#fl-031) | An `Image` left in a button's semantics makes the button an image as well | Android, iOS | Confirmed |
-| [FL-032](#fl-032) | `Semantics(link: true)` without `linkUrl` is a link on iOS only | Android, Web | Observed (source read) |
+| [FL-032](#fl-032) | `Semantics(link: true)` without `linkUrl` is a link on iOS only | Android, Web | Confirmed |
 | [FL-033](#fl-033) | A switch or checkbox with no `enabled` flag is read as dimmed by VoiceOver on iOS | iOS | Confirmed (source read) |
 | [FL-034](#fl-034) | `Semantics(keyboardKey: true)` has no effect on any platform | All | Observed (source read) |
 | [FL-035](#fl-035) | A checkbox is a switch for VoiceOver on iOS | iOS | Confirmed (source read) |
@@ -116,6 +116,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-183](#fl-183) | `MergeSemantics` around a field takes in its error: the error joins the field's name as well as its hint, and on Android the field becomes a live region | All | Confirmed |
 | [FL-184](#fl-184) | Keyboard focus moved to a field does not move VoiceOver's cursor on iOS | iOS | Observed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
+| [FL-220](#fl-220) | On Android TalkBack says no role for a Flutter link, and the link's address is not offered to TalkBack as a native link's is | Android | Confirmed |
+| [FL-221](#fl-221) | Material and Cupertino have no link widget, and a link put round one of their buttons is a button as well | Android, iOS (`CupertinoButton`); All (`TextButton`, probe only) | Confirmed for `CupertinoButton` |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -464,8 +466,49 @@ yet), **Fixed in x.y** (verified on that version).
   `web_tests/c01_button.spec.js` asserts: click and Enter each end on the
   destination in this tab with no second tab; Ctrl/Command-click opens
   exactly one new tab and leaves this one alone; Space does nothing.
-- To examine in the links technique (S-group): whether `url_launcher`'s `Link`
-  widget is the better documented mechanism.
+- Measured again in C03 Stand-alone link (2026-11-20), with an address in
+  the app (`linkUrl: Uri.parse('#/t/C03')`) and a widget whose `onTap`
+  pushes the same route with `Navigator`, as an app does off the web
+  (`/t/C03/bad-app-also-follows`), with `InkWell`'s Enter and Space given to
+  the browser as in the workaround below. In Chromium, five runs out of five
+  for each:
+  - A mouse click, and Tab then Enter, navigate and end where they began:
+    the address goes to `#/t/C03` and back, the example stays on screen,
+    and the app's Back then goes to the technique's page and a second Back
+    to the catalog, as from an example opened by its address
+    (`docs/evidence/probes/c03/web_twice.txt`, `web_twice_enter.txt`).
+  - A DOM click with no pointer events, the kind assistive technology can
+    send, opens the technique's page twice, and the address bar keeps the
+    example's address: one Back leaves the technique's page on screen
+    (`web_twice_dispatch.txt`). What VoiceOver's own activation sends was
+    not measured.
+  - Why the two navigations end this way was not found. Asserted in
+    `web_tests/c03_stand_alone_link.spec.js`.
+  - So with the app following the link as well, Enter does not follow it,
+    a failure of WCAG 2.1.1 Keyboard on the web (Space was not tried on
+    that example).
+- Which keys reach the anchor, measured in the C03 probe
+  (`docs/evidence/probes/c03/web.txt`): Enter follows an `<a href>` only when
+  no Flutter widget takes the key. An `InkWell` or a `TextButton` takes it
+  (only `onTap` runs); a `Focus` with no actions, a `GestureDetector`, and a
+  `CupertinoButton` ([FL-002](#fl-002)) do not, and the browser follows the
+  link. Space never follows it, as for any link. An `<a href>` with no
+  `Focus` widget at all is still reached by Tab: the browser makes the
+  anchor focusable by itself, while Flutter's focus knows nothing of it.
+- The workaround with no plugin, verified in C03's good examples on every
+  layer: on the web the widget's `onTap` does nothing, and Enter and Space
+  are bound to `DoNothingAndStopPropagationIntent` above the `InkWell`,
+  which stops them in Flutter without handling them, so the browser gets
+  them. The browser then follows the link once on a click, on a DOM click,
+  and on Enter, and opens it in a new tab on Command- or Ctrl-click.
+- `url_launcher`'s `Link` widget, which this entry asked about, is a plugin,
+  which D30 rules out. Source read (`url_launcher` 6.3.3,
+  `url_launcher_web` 2.4.3): on the web it puts
+  `Semantics(link: true, linkUrl:)` round its builder's widget and a
+  platform view with an `<a>` of its own over it, and decides between the
+  browser and `launchUrl` per click; off the web it adds no semantics at
+  all, so its builder's `TextButton` is a button on Android and iOS (C03
+  probe fixture p12).
 - Upstream issue: not searched yet.
 
 ## FL-014
@@ -976,6 +1019,18 @@ yet), **Fixed in x.y** (verified on that version).
   element before it and the move forward again is silent too.) TalkBack,
   with focus moved to that node, said "Button" in two recordings and
   nothing in a third, and never the name (`bad-tap-gesture`).
+- The same for a link (C03, 2026-11-20, `/t/C03/bad-label-on-image`,
+  asserted in its widget, web, Android, and iOS tests): an `InkWell` in
+  `Semantics(link: true, linkUrl:)` with `Image(semanticLabel:)` inside is
+  a link node with no name and, as its child, an image with the name.
+  Android: a clickable `View` with no name and, because the address rides
+  on the name ([FL-220](#fl-220)), no `URLSpan` either, round an
+  `ImageView`; TalkBack reads the picture "Read about stand-alone links /
+  Image". iOS: a link with no label and an image; VoiceOver stops twice,
+  "Link", then "Read about stand-alone links Image". Web: an `<a href>`
+  holding a `role="img"`, which Chromium names the link from. The
+  workaround is the same: `Semantics(label:)` on the link and
+  `excludeFromSemantics: true` on the picture (C03 `good-image-link`).
 - Not affected: `Icon(semanticLabel:)`. An `Icon`'s label is not a container
   and becomes the name of the button around it on all three platforms
   (`good-icon-label`).
@@ -1028,10 +1083,10 @@ yet), **Fixed in x.y** (verified on that version).
 
 **`Semantics(link: true)` without `linkUrl` is a link on iOS only.**
 
-- Status: Observed, Flutter 3.47.5, in the S13 probe
+- Status: Confirmed, Flutter 3.47.5: first seen in the S13 probe
   (`docs/evidence/probes/s13/`, round 1, fixtures 02, 03, and 20; and
-  fixtures 08 and 09 of `docs/evidence/probes/s04/`). No test in the repo
-  yet. Engine source read:
+  fixtures 08 and 09 of `docs/evidence/probes/s04/`), asserted by C03
+  `bad-no-address` (below). Engine source read:
   `shell/platform/android/io/flutter/view/AccessibilityBridge.java`
   (`shouldBeTreatedAsButton`).
 - WCAG: 4.1.2 Name, Role, Value.
@@ -1063,8 +1118,21 @@ yet), **Fixed in x.y** (verified on that version).
   with no `href` to generic and Playwright's role check finds no link.
   What VoiceOver says for it on the web is in
   `docs/evidence/V13/voiceover-web.md`.
-- Workaround: give `linkUrl` as well, and handle [FL-013](#fl-013) on the
-  web. To be built and verified in C03 Stand-alone link.
+- Confirmed in C03 (2026-11-20), `/t/C03/bad-no-address`, asserted in its
+  widget, web, Android, and iOS tests: an `InkWell` in
+  `Semantics(link: true)` with no `linkUrl` is a `Button` on Android, which
+  TalkBack reads "Read about stand-alone links / Button / Double-tap to
+  open link" (the last words are the example's `onTapHint`), a link for
+  VoiceOver on iOS, and on the web an `<a>` with no `href` that
+  Playwright's role check does not find as a link, while VoiceOver says
+  "link Read about stand-alone links" in Chromium and WebKit
+  (`docs/evidence/C03/voiceover-web.md`): the browsers' own trees call
+  it a link, as V13 found for Chromium. With `linkUrl` (C03's probe p02 to
+  p06 and its good examples), TalkBack says no role at all
+  ([FL-220](#fl-220)).
+- Workaround, verified in C03's good examples on every layer: give
+  `linkUrl` as well, and on the web leave the following to the browser
+  ([FL-013](#fl-013)).
 - Upstream issue: not searched yet (D25).
 
 ## FL-033
@@ -2431,6 +2499,90 @@ yet), **Fixed in x.y** (verified on that version).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->
+
+## FL-220
+
+**On Android TalkBack says no role for a Flutter link, and the link's address is not offered to TalkBack as a native link's is.**
+
+- Status: Confirmed, Flutter 3.47.5, for what TalkBack says: asserted by
+  C03's TalkBack walk (`docs/evidence/C03/talkback-android.md`) and its
+  Android tree test (class `android.view.View`, the address in a `URLSpan`
+  on the content description). The comparison with native views was made
+  in the C03 probe only (`docs/evidence/probes/c03/`, fixtures p02 to p06
+  and p09, and the native screen `ProbeNativeActivity.kt.txt`). Engine
+  source read: `shell/platform/android/io/flutter/view/AccessibilityBridge.java`
+  (`shouldBeTreatedAsButton`; `getLabel` adds the URL as a `URLSpan` to the
+  label, which becomes the content description).
+- WCAG: 4.1.2 Name, Role, Value. Not failed as written: Android's
+  accessibility API has no link role for a node to expose, which the
+  Android Compose reference repository also says, and the native views
+  measured are read the same way.
+- What happens: `Semantics(link: true, linkUrl:)` gives an
+  `android.view.View` whose content description is the name with a
+  `URLSpan` over it. TalkBack, with focus moved to it, says the name and
+  "Double-tap to activate", and no role. Without `linkUrl` the node is an
+  `android.widget.Button` and TalkBack says "Button" ([FL-032](#fl-032)).
+  The address rides on the label: a link node with no label of its own has
+  no `URLSpan` at all, whether a child has the name or nothing has (probe
+  p07, p10, p11; C03 `bad-label-on-image` and `bad-image-no-name`, which
+  TalkBack then reads as "Button").
+- Native comparison (probe, Android 17 emulator, TalkBack's verbose log):
+  a clickable `View` whose content description has the `URLSpan`, Flutter's
+  shape, is read the same, "n02 native link description / Double-tap to
+  activate". A clickable `TextView` whose text has the `URLSpan` is read
+  "n03 native clickable link text / Double-tap to activate. Actions
+  available, use Tap with 3 fingers to view": TalkBack offers it more,
+  and still says no role. What its actions menu then lists was not looked
+  at. A `TextView` with the link in its text and no click listener (n01)
+  was not read at all in the 6 seconds after focus moved to it; why was
+  not found.
+- Why it matters: a TalkBack user cannot tell a Flutter link from any other
+  control with a name, and is not offered the address the way a native
+  link in text is.
+- Workaround, in the SDK: say what the link does in the tap hint, as the
+  Android Compose reference does with `onClickLabel`:
+  `Semantics(onTapHint: 'open link')` makes TalkBack say "Double-tap to
+  open link" in place of "Double-tap to activate" (C03's good examples).
+  `onTapHint` is ignored on iOS (framework source: `SemanticsHintOverrides`)
+  and not read by the web engine. Flutter has not added a way to put the
+  address where TalkBack offers it as a native link's text does.
+- Upstream issue: not searched yet (D25).
+
+## FL-221
+
+**Material and Cupertino have no link widget, and a link put round one of their buttons is a button as well.**
+
+- Status: Confirmed, Flutter 3.47.5, for `CupertinoButton`: asserted by C03
+  `bad-cupertino-button` in the widget, web, Android, and iOS tests and
+  heard in its transcripts. Material's `TextButton` measured in the C03
+  probe only (`docs/evidence/probes/c03/`, fixture p07; `CupertinoButton`
+  is p08). Framework source read: `cupertino/button.dart` wraps its child
+  in `Semantics(button: true)`, and no parameter turns that off.
+- WCAG: 4.1.2 Name, Role, Value. Not failed as written: the name is there
+  and so is a role; the role is the wrong one, or two at once.
+- What happens: Flutter has not added a link widget to Material or to
+  Cupertino. The obvious way to make one, `Semantics(link: true, linkUrl:)`
+  round a `TextButton` or a `CupertinoButton`, keeps the button:
+  - `CupertinoButton` (p08, `bad-cupertino-button`): one node with the link
+    and the button flags. iOS: XCUITest's type is button, and VoiceOver
+    says "p08 cupertino Button Link". Android: class `Button`, with the
+    address in a `URLSpan`; TalkBack says "Button". Web: one `<a href>`,
+    whose role is link, so the web is not affected.
+  - `TextButton` (p07): two nodes, a link with no name round a button.
+    iOS: VoiceOver stops once, on the button, "p07 text Button". Android:
+    a `View` with no name and no address round a `Button`; TalkBack says
+    "Button". Web: an `<a href>` with a `role="button"` inside it; Tab
+    reaches the button, and Enter runs the button and does not follow the
+    `href`, while a click does both.
+- Why it matters: the iOS reference repository's Links page says to remove
+  the button trait from a link because VoiceOver otherwise says "Button,
+  Link". In Flutter the trait cannot be removed from these widgets.
+- Workaround, in the SDK: build the link from a widget that is not a
+  button: `InkWell` (C03 `good-material`), `CupertinoListTile` with
+  keyboard focus added (`good-cupertino`), or a `GestureDetector` with
+  `FocusableActionDetector` (`good-custom`), each inside
+  `Semantics(link: true, linkUrl:)`.
+- Upstream issue: not searched yet (D25).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
 

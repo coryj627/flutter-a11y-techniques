@@ -62,6 +62,11 @@ click with no pointer events (`web_twice_dispatch.txt`), with
 level 1 heading and `history.length` over two and a half seconds, then
 what the app's Back does.
 
+Last, C03's own Android tree tests were run once at the CI emulator's size,
+320 by 640 at 160 dpi (`android_320x640.sh.txt`, which resets both after):
+twelve tests, no failure, `talkBackWalk` skipped with TalkBack off; the
+JUnit summary is at the end of `android_320x640.txt`.
+
 ## Web
 
 | # | Element | Chromium's role and name | Click | Enter | Space |

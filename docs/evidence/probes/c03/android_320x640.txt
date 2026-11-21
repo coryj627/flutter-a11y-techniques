@@ -1,0 +1,18 @@
+during the run: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+> Task :app:connectedDebugAndroidTest
+BUILD SUCCESSFUL in 2m 16s
+after reset: Physical size: 1080x2424  Physical density: 420 
+<testsuites tests="12" failures="0" errors="0" skipped="1" time="122.01" timestamp="2026-11-21T02:15:01" hostname="localhost">
+<testcase name="badVagueTextIsNamedReadMore" time="4.771"
+<testcase name="goodLinksAreFollowedOnceByTheClickAction" time="20.544"
+<testcase name="badLabelOnImageLeavesTheLinkUnnamed" time="2.092"
+<testcase name="badCupertinoButtonIsAButton" time="3.959"
+<testcase name="goodLinksAreReachedByTabAndFollowedByEnter" time="25.239"
+<testcase name="badTapHandlerHasNoAddressAndNoKeyboardFocus" time="8.129"
+<testcase name="badAppAlsoFollowsIsFollowedOnceOffTheWeb" time="5.514"
+<testcase name="badNoAddressIsAButton" time="2.057"
+<testcase name="goodLinksAreNamedNodesWithTheirAddressAndNoButtonClass" time="13.31"
+<testcase name="badImageNoNameHasNoNameAndNoAddress" time="2.875"
+<testcase name="goodLinksAreFollowedOnceByATap" time="20.826"
+<testcase name="talkBackWalk" time="0.002"
+<skipped

@@ -1,0 +1,241 @@
+// L3 (tree) and L4 (VoiceOver) for C03 Stand-alone link on iOS.
+// Spec: docs/specs/C03-stand-alone-link.md.
+//
+// Every link goes to the technique's page, whose title is "Stand-alone
+// link". "Followed once" is checked by one press of Back bringing the
+// example back. XCUITest cannot read traits: an element that is a link and
+// a button at once is shown by one type only, so roles are also checked
+// through what VoiceOver says.
+import XCTest
+
+final class C03StandAloneLinkUITests: XCTestCase, TechniqueUITest {
+  static let technique = "C03"
+  let app = XCUIApplication()
+  private static let name = "Read about stand-alone links"
+  private static let destination = "Stand-alone link"
+
+  override func setUp() {
+    continueAfterFailure = true
+  }
+
+  private static let titles = [
+    "good-material": "Material link",
+    "good-cupertino": "Cupertino link",
+    "good-custom": "Link built from Semantics",
+    "good-image-link": "Picture link named on the link",
+    "bad-vague-text": "Link that says \"Read more\"",
+    "bad-tap-handler": "Underlined text with a tap handler",
+    "bad-no-address": "Link with no address",
+    "bad-image-no-name": "Picture link with no name",
+    "bad-label-on-image": "Name put on the picture inside the link",
+    "bad-cupertino-button": "Link round a Cupertino button",
+    "bad-app-also-follows": "Link the app follows on the web too",
+  ]
+
+  private func title(_ slug: String) -> XCUIElement { element(labelled: Self.titles[slug]!) }
+
+  /// Opens an example and waits for its title, then for the picture, which
+  /// is decoded after the first frame.
+  private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
+    open(slug, waitingFor: title(slug), settle: 500_000, file: file, line: line)
+  }
+
+  private let good: [(slug: String, id: String)] = [
+    ("good-material", "c03-good-material-link"),
+    ("good-cupertino", "c03-good-cupertino-link"),
+    ("good-custom", "c03-good-custom-link"),
+    ("good-image-link", "c03-good-image-link-link"),
+  ]
+
+  /// Waits up to 5 seconds for the technique's page, then presses Back once
+  /// and waits for the example: the link opened one page, not two.
+  private func expectFollowedOnce(_ slug: String, _ how: String, file: StaticString = #filePath, line: UInt = #line) {
+    XCTAssertTrue(element(labelled: Self.destination).waitForExistence(timeout: 5),
+                  "\(slug): \(how) opens the technique's page", file: file, line: line)
+    XCTAssertFalse(title(slug).exists, "\(slug): the example is gone after \(how)", file: file, line: line)
+    app.buttons["Back"].firstMatch.tap()
+    XCTAssertTrue(title(slug).waitForExistence(timeout: 5),
+                  "\(slug): one Back after \(how) brings the example back", file: file, line: line)
+  }
+
+  func testGoodLinksAreNamedLinks() {
+    for example in good {
+      open(example.slug)
+      let e = element(example.id)
+      XCTAssertEqual(e.elementType, .link, example.id)
+      XCTAssertEqual(e.label, Self.name, example.id)
+      XCTAssertTrue(e.isEnabled, example.id)
+      XCTAssertTrue(app.links[Self.name].exists, "role and name query for \(example.id)")
+      XCTAssertEqual(app.buttons.allElementsBoundByIndex.filter { $0.label != "Back" }.count, 0,
+                     "\(example.slug): no button but Back")
+      XCTAssertEqual(app.images.count, 0, "\(example.slug): no image element")
+    }
+  }
+
+  func testGoodLinksAreFollowedOnceByATap() {
+    for example in good {
+      open(example.slug)
+      element(example.id).tap()
+      expectFollowedOnce(example.slug, "a tap")
+    }
+  }
+
+  /// XCUITest cannot see Flutter's focus (I01), so focus is shown by what
+  /// the keys do: the first Tab goes to Back and the second to the link,
+  /// the only other control on the screen; Enter (typed as "\n") then
+  /// follows it. Had focus been on Back, Enter would have left the
+  /// technique's page off the screen.
+  func testGoodLinksAreReachedByTabAndFollowedByEnter() {
+    for example in good {
+      open(example.slug)
+      app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+      usleep(700_000)
+      app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+      usleep(700_000)
+      app.typeKey("\n", modifierFlags: [])
+      expectFollowedOnce(example.slug, "Tab, Tab, Enter")
+    }
+  }
+
+  // Each bad example is asserted to have its named defect.
+
+  func testBadVagueTextIsNamedReadMore() {
+    open("bad-vague-text")
+    let e = element("c03-bad-vague-text-link")
+    XCTAssertEqual(e.elementType, .link)
+    XCTAssertEqual(e.label, "Read more")
+  }
+
+  func testBadTapHandlerIsTextAndNotALink() {
+    open("bad-tap-handler")
+    let e = element("c03-bad-tap-handler-link")
+    XCTAssertEqual(e.elementType, .staticText)
+    XCTAssertEqual(e.label, Self.name)
+    XCTAssertEqual(app.links.count, 0)
+    // Keyboard access is asserted in the widget tests, on Android, and on
+    // the web. It still works by touch, which is what hides the defect.
+    e.tap()
+    expectFollowedOnce("bad-tap-handler", "a tap")
+  }
+
+  func testBadNoAddressIsStillALinkOnIOS() {
+    // The defect is on Android and the web. iOS reads the link flag alone.
+    open("bad-no-address")
+    let e = element("c03-bad-no-address-link")
+    XCTAssertEqual(e.elementType, .link)
+    XCTAssertEqual(e.label, Self.name)
+  }
+
+  func testBadImageNoNameIsAnImageWithNoName() {
+    // The picture's image flag is merged into the link, and XCUITest shows
+    // the element as an image; whether VoiceOver hears the link trait is in
+    // testVoiceOverSpeech.
+    open("bad-image-no-name")
+    let e = element("c03-bad-image-no-name-link")
+    XCTAssertEqual(e.elementType, .image)
+    XCTAssertEqual(e.label, "")
+    XCTAssertEqual(app.links.count, 0)
+  }
+
+  func testBadLabelOnImageLeavesTheLinkUnnamed() {
+    open("bad-label-on-image")
+    XCTAssertEqual(app.links.count, 1)
+    XCTAssertEqual(app.links.firstMatch.label, "")
+    XCTAssertFalse(app.links[Self.name].exists)
+    // The name is on a second element, which is an image.
+    XCTAssertEqual(app.images.count, 1)
+    XCTAssertTrue(app.images[Self.name].exists)
+  }
+
+  func testBadCupertinoButtonIsAButtonInTheTree() {
+    // XCUITest shows one type: button. That it is a link as well is heard
+    // in testVoiceOverSpeech ("Button Link").
+    open("bad-cupertino-button")
+    let e = element("c03-bad-cupertino-button-link")
+    XCTAssertEqual(e.elementType, .button)
+    XCTAssertEqual(e.label, Self.name)
+    XCTAssertEqual(app.links.count, 0)
+  }
+
+  func testBadAppAlsoFollowsIsFollowedOnceOffTheWeb() {
+    // The defect is on the web only (web_tests/c03_stand_alone_link.spec.js).
+    open("bad-app-also-follows")
+    let e = element("c03-bad-app-also-follows-link")
+    XCTAssertEqual(e.elementType, .link)
+    e.tap()
+    expectFollowedOnce("bad-app-also-follows", "a tap")
+  }
+
+  // L4. Everything VoiceOver says after the "Example" heading, to the last
+  // element of the example, which is the last on the screen. The walk stops
+  // when it hears the expected last utterance; if that never comes, the walk
+  // does not finish and the test fails.
+  private let speech: [(slug: String, content: [String])] = [
+    ("good-material", ["Read about stand-alone links Link"]),
+    ("good-cupertino", ["Read about stand-alone links Link"]),
+    ("good-custom", ["Read about stand-alone links Link"]),
+    ("good-image-link", ["Read about stand-alone links Link"]),
+    // Bad examples: the defect must be audible.
+    ("bad-vague-text", ["Read more Link"]),
+    ("bad-tap-handler", ["Read about stand-alone links"]),
+    // iOS reads the link flag without an address: not a defect here.
+    ("bad-no-address", ["Read about stand-alone links Link"]),
+    ("bad-image-no-name", ["Link Image"]),
+    ("bad-label-on-image", ["Link", "Read about stand-alone links Image"]),
+    ("bad-cupertino-button", ["Read about stand-alone links Button Link"]),
+    ("bad-app-also-follows", ["Read about stand-alone links Link"]),
+  ]
+
+  func testVoiceOverSpeech() throws {
+    // XCUIVoiceOverService is in the iOS 27 SDK (Xcode 27, Swift 6.4). With an
+    // older Xcode the symbol does not exist, so an availability check alone
+    // would not compile; the body is compiled only where the SDK has it.
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    for example in speech {
+      open(example.slug)
+      let spoken = try VoiceOverWalk.forward(voiceOver, toUtteranceStartingWith: example.content.last!)
+      let content = VoiceOverWalk.content(spoken, endingWith: example.content.last!).map { $0 + [spoken.last!] }
+      print("C03VO \(example.slug) | \((content ?? spoken).joined(separator: " / "))")
+      XCTAssertNotNil(content, "\(example.slug): the walk did not run from the heading to the link: \(spoken)")
+      XCTAssertEqual(content, example.content, example.slug)
+    }
+    try doubleTapFollowsTheGoodLinks(voiceOver)
+    #else
+    throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
+    #endif
+  }
+
+  #if compiler(>=6.4)
+  /// VoiceOver's double tap follows each good link once: the cursor is put
+  /// on the link (with VoiceOver on, a tap only moves it), what VoiceOver
+  /// then says is checked to be the link, and a double tap follows it. One
+  /// Back, with VoiceOver off, brings the example back. Each line printed is
+  /// a row of the transcript.
+  @available(iOS 27.0, *)
+  private func doubleTapFollowsTheGoodLinks(_ voiceOver: XCUIVoiceOverService) throws {
+    for example in good {
+      open(example.slug)
+      try voiceOver.enable()
+      var on = true
+      defer { if on { try? voiceOver.disable() } }
+      let link = element(example.id)
+      link.tap()
+      usleep(1_500_000)
+      let cursor = VoiceOverWalk.normalized((try? voiceOver.currentSpeech().utterance) ?? "")
+      XCTAssertEqual(cursor, "Read about stand-alone links Link", "\(example.slug): the cursor is on the link")
+      XCTAssertTrue(title(example.slug).exists, "\(example.slug): moving the cursor followed nothing")
+      link.doubleTap()
+      let followed = element(labelled: Self.destination).waitForExistence(timeout: 5)
+      print("C03VO double-tap-\(example.slug) | cursor on \(cursor) / \(followed ? "the technique's page opened" : "nothing opened")")
+      XCTAssertTrue(followed, "\(example.slug): the double tap opens the technique's page")
+      try voiceOver.disable()
+      on = false
+      app.buttons["Back"].firstMatch.tap()
+      XCTAssertTrue(title(example.slug).waitForExistence(timeout: 5),
+                    "\(example.slug): one Back brings the example back")
+    }
+  }
+  #endif
+}
