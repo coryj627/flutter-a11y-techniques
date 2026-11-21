@@ -185,17 +185,22 @@ class KeyboardLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FocusableActionDetector(
-      mouseCursor: SystemMouseCursors.click,
-      actions: kIsWeb
-          ? const <Type, Action<Intent>>{}
-          : {
-              ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: _follow),
-              ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
-                onInvoke: _follow,
-              ),
-            },
-      child: FocusRing(
+    // The ring goes outside the detector: the detector's own focus node is
+    // the one that takes focus, and FocusRing hears only focus on itself or
+    // below it.
+    return FocusRing(
+      child: FocusableActionDetector(
+        mouseCursor: SystemMouseCursors.click,
+        actions: kIsWeb
+            ? const <Type, Action<Intent>>{}
+            : {
+                ActivateIntent: CallbackAction<ActivateIntent>(
+                  onInvoke: _follow,
+                ),
+                ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+                  onInvoke: _follow,
+                ),
+              },
         child: Semantics(
           link: true,
           linkUrl: linkAddress,
@@ -348,10 +353,11 @@ class BadTapHandler extends StatelessWidget {
     return TestId(
       'c03-bad-tap-handler-link',
       // Defect: underlined text with a tap handler is not a link. It has no
-      // link role and takes no keyboard focus. With no address the app must
-      // follow it on the web as well.
+      // link role and takes no keyboard focus.
       child: GestureDetector(
-        onTap: () => Navigator.of(context).pushNamed(linkRoute),
+        onTap: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const TapHandlerPage())),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 48),
           child: Align(
@@ -360,6 +366,27 @@ class BadTapHandler extends StatelessWidget {
             child: Text(linkText, style: linkStyle(context)),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The page that `bad-tap-handler` opens. Nothing else in the app opens it,
+/// so a keyboard that cannot reach the text cannot reach this page either.
+class TapHandlerPage extends StatelessWidget {
+  const TapHandlerPage({super.key});
+
+  static const title = 'About stand-alone links';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Semantics(headingLevel: 1, child: const Text(title)),
+      ),
+      body: const Padding(
+        padding: EdgeInsets.all(16),
+        child: Text('Only the underlined text on the last screen opens this.'),
       ),
     );
   }

@@ -25,6 +25,8 @@ private const val IMAGE = "android.widget.ImageView"
 private const val NAME = "Read about stand-alone links"
 private const val ADDRESS = "#/t/C03"
 private const val DESTINATION = "Stand-alone link"
+/** The page that only bad-tap-handler opens (TapHandlerPage). */
+private const val TAP_HANDLER_PAGE = "About stand-alone links"
 
 @RunWith(AndroidJUnit4::class)
 class C03StandAloneLinkTest : TechniqueTest("C03") {
@@ -99,6 +101,8 @@ class C03StandAloneLinkTest : TechniqueTest("C03") {
             // double tap does.
             assertEquals("$id click label", "open link", clickLabel(node))
             assertEquals("$id: no image node", 0, all().count { it.type() == IMAGE })
+            // The only control on the screen but Back.
+            assertEquals("$slug: clickable nodes but Back", 1, all().count { it.isClickable && it.name() != "Back" })
         }
     }
 
@@ -162,9 +166,32 @@ class C03StandAloneLinkTest : TechniqueTest("C03") {
             if (named("Back").isFocused) backFocused = true
         }
         assertTrue("Tab reached Back", backFocused)
-        // A click still follows it, which is what hides the defect.
+        // A click still opens its page, which is what hides the defect.
         assertTrue(node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
-        expectFollowedOnce("bad-tap-handler", "the click action")
+        waitFor("the click action opens the tap handler's page") { anyWindowHas { it.name() == TAP_HANDLER_PAGE } }
+    }
+
+    /**
+     * No key opens the page that only bad-tap-handler opens. Tab stops only on
+     * Back, so Back is the one control a key can act on: Enter and Space there
+     * go to the technique's page, and the tap handler's page does not open.
+     */
+    @Test
+    fun badTapHandlerPageIsOpenedByNoKey() {
+        val id = "c03-bad-tap-handler-link"
+        for (name in listOf("ENTER", "SPACE")) {
+            open("bad-tap-handler")
+            var backFocused = false
+            for (i in 0 until 6) {
+                key("TAB")
+                assertFalse("$name: Tab ${i + 1} gave the text focus", revealed(id).isFocused)
+                if (named("Back").isFocused) { backFocused = true; break }
+            }
+            assertTrue("$name: Tab reached Back", backFocused)
+            key(name)
+            waitFor("$name on Back opens the technique's page") { onDestination() }
+            assertFalse("$name: the tap handler's page did not open", anyWindowHas { it.name() == TAP_HANDLER_PAGE })
+        }
     }
 
     @Test

@@ -13,6 +13,8 @@ final class C03StandAloneLinkUITests: XCTestCase, TechniqueUITest {
   let app = XCUIApplication()
   private static let name = "Read about stand-alone links"
   private static let destination = "Stand-alone link"
+  /// The page that only bad-tap-handler opens (TapHandlerPage).
+  private static let tapHandlerPage = "About stand-alone links"
 
   override func setUp() {
     continueAfterFailure = true
@@ -66,6 +68,7 @@ final class C03StandAloneLinkUITests: XCTestCase, TechniqueUITest {
       XCTAssertEqual(e.label, Self.name, example.id)
       XCTAssertTrue(e.isEnabled, example.id)
       XCTAssertTrue(app.links[Self.name].exists, "role and name query for \(example.id)")
+      XCTAssertEqual(app.links.count, 1, "\(example.slug): the only link on the screen")
       XCTAssertEqual(app.buttons.allElementsBoundByIndex.filter { $0.label != "Back" }.count, 0,
                      "\(example.slug): no button but Back")
       XCTAssertEqual(app.images.count, 0, "\(example.slug): no image element")
@@ -112,10 +115,27 @@ final class C03StandAloneLinkUITests: XCTestCase, TechniqueUITest {
     XCTAssertEqual(e.elementType, .staticText)
     XCTAssertEqual(e.label, Self.name)
     XCTAssertEqual(app.links.count, 0)
-    // Keyboard access is asserted in the widget tests, on Android, and on
-    // the web. It still works by touch, which is what hides the defect.
+    // It still works by touch, which is what hides the defect: a tap opens
+    // the page that nothing else in the app opens.
     e.tap()
-    expectFollowedOnce("bad-tap-handler", "a tap")
+    XCTAssertTrue(element(labelled: Self.tapHandlerPage).waitForExistence(timeout: 5),
+                  "a tap opens the tap handler's page")
+  }
+
+  /// No key opens the tap handler's page. The first Tab goes to Back, the
+  /// only control on the screen (the text takes no focus, as the widget
+  /// tests, Android, and the web show); Enter or Space there opens the
+  /// technique's page, which shows the key arrived, and not the text's page.
+  func testBadTapHandlerPageIsOpenedByNoKey() {
+    for (key, name) in [("\n", "Enter"), (XCUIKeyboardKey.space.rawValue, "Space")] {
+      open("bad-tap-handler")
+      app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+      usleep(700_000)
+      app.typeKey(key, modifierFlags: [])
+      XCTAssertTrue(element(labelled: Self.destination).waitForExistence(timeout: 5),
+                    "\(name): the key acted on Back")
+      XCTAssertFalse(element(labelled: Self.tapHandlerPage).exists, "\(name): the tap handler's page did not open")
+    }
   }
 
   func testBadNoAddressIsStillALinkOnIOS() {
@@ -166,10 +186,9 @@ final class C03StandAloneLinkUITests: XCTestCase, TechniqueUITest {
     expectFollowedOnce("bad-app-also-follows", "a tap")
   }
 
-  // L4. Everything VoiceOver says after the "Example" heading, to the last
-  // element of the example, which is the last on the screen. The walk stops
-  // when it hears the expected last utterance; if that never comes, the walk
-  // does not finish and the test fails.
+  // L4. Everything VoiceOver says after the "Example" heading, to the end of
+  // the screen (C03Walk), compared as a whole list, so a stop after the
+  // expected link fails the test too.
   private let speech: [(slug: String, content: [String])] = [
     ("good-material", ["Read about stand-alone links Link"]),
     ("good-cupertino", ["Read about stand-alone links Link"]),
@@ -195,16 +214,40 @@ final class C03StandAloneLinkUITests: XCTestCase, TechniqueUITest {
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in speech {
       open(example.slug)
-      let spoken = try VoiceOverWalk.forward(voiceOver, toUtteranceStartingWith: example.content.last!)
-      let content = VoiceOverWalk.content(spoken, endingWith: example.content.last!).map { $0 + [spoken.last!] }
-      print("C03VO \(example.slug) | \((content ?? spoken).joined(separator: " / "))")
-      XCTAssertNotNil(content, "\(example.slug): the walk did not run from the heading to the link: \(spoken)")
+      let walk = try C03Walk.walk(voiceOver)
+      let content = C03Walk.content(walk)
+      print("C03VO \(example.slug) | \((content ?? walk.stops).joined(separator: " / "))")
+      XCTAssertNotNil(content, "\(example.slug): the walk did not run from the heading to the end: \(walk)")
       XCTAssertEqual(content, example.content, example.slug)
     }
     try doubleTapFollowsTheGoodLinks(voiceOver)
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
     #endif
+  }
+
+  /// C03Walk's end and content need no device. The regression case: an
+  /// element after the expected link must make the comparison fail.
+  func testWalkToTheEndSeesAnExtraStop() {
+    func run(_ utterances: [String]) -> C03Walk.Result {
+      var rest = utterances[...]
+      return C03Walk.collect { rest.isEmpty ? "(nothing left)" : rest.removeFirst() }
+    }
+    let link = "Read about stand-alone links Link"
+    let normal = run(["Back Button", "Example Heading", link, link, link])
+    XCTAssertTrue(normal.reachedEnd)
+    XCTAssertEqual(C03Walk.content(normal), [link])
+    // One more element after the link: seen, and the list no longer matches.
+    let extra = run(["Back Button", "Example Heading", link, "Extra", "Extra", "Extra"])
+    XCTAssertTrue(extra.reachedEnd)
+    XCTAssertEqual(C03Walk.content(extra), [link, "Extra"])
+    XCTAssertNotEqual(C03Walk.content(extra), [link])
+    // No end within the moves allowed: no content, so the test fails.
+    let endless = run((0..<40).map { "Item \($0)" })
+    XCTAssertFalse(endless.reachedEnd)
+    XCTAssertNil(C03Walk.content(endless))
+    // No heading: no content.
+    XCTAssertNil(C03Walk.content(run([link, link, link])))
   }
 
   #if compiler(>=6.4)
@@ -236,6 +279,71 @@ final class C03StandAloneLinkUITests: XCTestCase, TechniqueUITest {
       XCTAssertTrue(title(example.slug).waitForExistence(timeout: 5),
                     "\(example.slug): one Back brings the example back")
     }
+  }
+  #endif
+}
+
+/// The C03 VoiceOver walk: from the top of the screen to its end, which is
+/// where moving on gives the last element again, twice. A move with no
+/// speech is handled as VoiceOverWalk.forward does (afterNoSpeech). Two
+/// neighbouring elements that VoiceOver reads alike would count as one; no
+/// C03 example has two.
+enum C03Walk {
+  struct Result: Equatable {
+    var stops: [String]
+    var reachedEnd: Bool
+  }
+
+  /// Reads utterances from `next` until the same one has come three times
+  /// in a row (the last element, then two moves that found nothing after
+  /// it), at most `max` reads.
+  static func collect(max: Int = 24, _ next: () throws -> String) rethrows -> Result {
+    var stops: [String] = []
+    var repeats = 0
+    for _ in 0..<max {
+      let utterance = try next()
+      if utterance == stops.last {
+        repeats += 1
+        if repeats == 2 { return Result(stops: stops, reachedEnd: true) }
+      } else {
+        repeats = 0
+        stops.append(utterance)
+      }
+    }
+    return Result(stops: stops, reachedEnd: false)
+  }
+
+  /// Every stop after the last "Example Heading", to the end; nil when the
+  /// walk did not reach the end or never passed the heading.
+  static func content(_ result: Result) -> [String]? {
+    guard result.reachedEnd, let heading = result.stops.lastIndex(of: "Example Heading") else { return nil }
+    return Array(result.stops[(heading + 1)...])
+  }
+
+  #if compiler(>=6.4)
+  /// Switches VoiceOver on, walks to the end of the screen, and switches it
+  /// off.
+  @available(iOS 27.0, *)
+  static func walk(_ voiceOver: XCUIVoiceOverService) throws -> Result {
+    try voiceOver.enable()
+    defer { try? voiceOver.disable() }
+    var last: String?
+    let result = try collect {
+      let utterance: String
+      do {
+        utterance = VoiceOverWalk.normalized(try voiceOver.moveForward().utterance)
+      } catch let error as NSError where VoiceOverWalk.isNoSpeech(error) {
+        let back = VoiceOverWalk.normalized(try voiceOver.moveBackward().utterance)
+        var again: String? = nil
+        do {
+          again = VoiceOverWalk.normalized(try voiceOver.moveForward().utterance)
+        } catch let error as NSError where VoiceOverWalk.isNoSpeech(error) {}
+        utterance = VoiceOverWalk.afterNoSpeech(previous: last, back: back, again: again)
+      }
+      last = utterance
+      return utterance
+    }
+    return result
   }
   #endif
 }

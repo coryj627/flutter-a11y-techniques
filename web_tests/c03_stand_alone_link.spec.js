@@ -16,6 +16,8 @@ const exampleHeading = (page) => page.getByRole('heading', { name: 'Example', ex
 const { open } = technique('C03', { ready: exampleHeading, settle: 600 });
 
 const NAME = 'Read about stand-alone links';
+// The page only bad-tap-handler opens (TapHandlerPage).
+const TAP_HANDLER_PAGE = 'About stand-alone links';
 const DESTINATION = /#\/t\/C03$/;
 
 const good = {
@@ -56,6 +58,9 @@ test.describe('good examples', () => {
       await expect(link).toHaveAttribute('href', '#/t/C03');
       expect(await link.evaluate((e) => e.tagName)).toBe('A');
       await expect(page.getByRole('link', { name: NAME, exact: true })).toHaveCount(1);
+      // The only link on the screen, and no other control but Back.
+      await expect(page.getByRole('link')).toHaveCount(1);
+      await expect(page.getByRole('button')).toHaveCount(1);
       // Nothing inside it is a button or an image of its own.
       await expect(link.getByRole('button')).toHaveCount(0);
       await expect(page.getByRole('img')).toHaveCount(0);
@@ -131,10 +136,39 @@ test.describe('bad examples have their defect', () => {
     expect(await tabTo(page, page.getByRole('button', { name: 'Back' })), 'Tab reaches Back').toBe(true);
     await page.locator('body').click({ position: { x: 1, y: 1 } });
     expect(await tabTo(page, element), 'Tab skips the text').toBe(false);
-    // A click still follows it, which is what hides the defect.
+    // A click still opens its page, which is what hides the defect. Nothing
+    // else in the app opens that page.
     await element.click();
-    await expectDestination(page);
+    await expect(page.getByRole('heading', { name: TAP_HANDLER_PAGE, level: 1 })).toBeVisible();
   });
+
+  for (const key of ['Enter', 'Space']) {
+    test(`bad-tap-handler: no key opens its page; Tab stops only on Back, and ${key} there goes elsewhere`, async ({ page }) => {
+      await open(page, 'bad-tap-handler');
+      // Every control Tab stops on, eight presses: only Back, never the
+      // text. Stops outside the semantics tree (the page itself, when focus
+      // goes round, FL-421) are not controls and are left out.
+      const stops = new Set();
+      for (let i = 0; i < 8; i++) {
+        await page.keyboard.press('Tab');
+        await page.waitForTimeout(100);
+        stops.add(await page.evaluate(() => {
+          const e = document.activeElement;
+          // The body, the flutter-view element, or browser chrome: not a
+          // control of the page.
+          if (!e || !e.closest('flt-semantics-host')) return '(page)';
+          return e.getAttribute('flt-semantics-identifier') || e.getAttribute('aria-label') || e.textContent.trim() || e.tagName;
+        }));
+      }
+      expect([...stops].filter((s) => s !== '(page)'), 'Tab stops on the page').toEqual(['Back']);
+      // Put focus on Back, the one control a key can act on, and press it.
+      expect(await tabTo(page, page.getByRole('button', { name: 'Back' })), 'Tab reaches Back').toBe(true);
+      await page.keyboard.press(key);
+      // The key acted, on Back, and the text's page did not open.
+      await expect(page.getByRole('heading', { name: 'Stand-alone link', level: 1 })).toBeVisible();
+      await expect(page.getByRole('heading', { name: TAP_HANDLER_PAGE, level: 1 })).toHaveCount(0);
+    });
+  }
 
   test('bad-no-address: an <a> with no href, which is not a link', async ({ page }) => {
     await open(page, 'bad-no-address');

@@ -45,6 +45,20 @@ Future<void> _backToExample(WidgetTester tester, String slug) async {
   _expectOnExample(tester, slug);
 }
 
+/// The colour of the focus ring that [FocusRing] draws round the link [id],
+/// as it is rendered: the border of its foreground `DecoratedBox`.
+Color _ringColour(WidgetTester tester, String id) {
+  final ring = find.descendant(of: byId(id), matching: find.byType(FocusRing));
+  expect(ring, findsOneWidget, reason: '$id has one focus ring');
+  final box = tester.widget<DecoratedBox>(
+    find.descendant(of: ring, matching: find.byType(DecoratedBox)).first,
+  );
+  expect(box.position, DecorationPosition.foreground);
+  final border = (box.decoration as BoxDecoration).border! as Border;
+  expect(border.top.width, 3);
+  return border.top.color;
+}
+
 bool _focused(String id) =>
     dataById(id).flagsCollection.isFocused == Tristate.isTrue;
 
@@ -165,6 +179,24 @@ void main() {
           handle.dispose();
         });
       }
+
+      for (final brightness in Brightness.values) {
+        testWidgets('$slug: keyboard focus draws the ring, and it goes when '
+            'focus leaves (${brightness.name})', (tester) async {
+          final handle = tester.ensureSemantics();
+          await _open(tester, slug, brightness: brightness);
+          final colors = Theme.of(tester.element(byId(id))).colorScheme;
+          expect(_ringColour(tester, id), Colors.transparent, reason: 'before');
+          await tabTo(tester, id);
+          expect(_ringColour(tester, id), colors.onSurface, reason: 'focused');
+          // Tab on: focus leaves the link, the only control after Back.
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump();
+          expect(_focused(id), isFalse, reason: 'focus has left the link');
+          expect(_ringColour(tester, id), Colors.transparent, reason: 'after');
+          handle.dispose();
+        });
+      }
     }
   });
 
@@ -207,12 +239,45 @@ void main() {
         find.descendant(of: byId(id), matching: find.byType(Focus)),
         findsNothing,
       );
-      // A tap still follows it, which is what hides the defect.
+      // A tap still opens its page, which is what hides the defect.
       await tester.tap(byId(id));
       await tester.pumpAndSettle();
-      _expectOnDestination(tester, 'bad-tap-handler');
+      expect(find.text(TapHandlerPage.title), findsOneWidget);
+      expect(find.byType(ExampleScreen), findsNothing);
       handle.dispose();
     });
+
+    for (final (key, name) in [
+      (LogicalKeyboardKey.enter, 'Enter'),
+      (LogicalKeyboardKey.space, 'Space'),
+    ]) {
+      testWidgets('bad-tap-handler: no key opens its page: Tab reaches only '
+          'Back, and $name there goes to the technique page', (tester) async {
+        final handle = tester.ensureSemantics();
+        await _open(tester, 'bad-tap-handler');
+        const id = 'c03-bad-tap-handler-link';
+        // Every stop Tab makes on the screen, round twice: Back is the only
+        // one, so it is the only other way a key could act here.
+        final stops = <String>{};
+        for (var i = 0; i < 4; i++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump();
+          expect(_focused(id), isFalse, reason: 'after Tab ${i + 1}');
+          final focused = semanticsNodes(tester)
+              .where((n) => n.flagsCollection.isFocused == Tristate.isTrue);
+          stops.addAll(
+            focused.map((n) => n.tooltip.isNotEmpty ? n.tooltip : n.label),
+          );
+        }
+        expect(stops, {'Back'});
+        await tester.sendKeyEvent(key);
+        await tester.pumpAndSettle();
+        // The key acted (Back took it), and its page did not open.
+        expect(find.byType(TechniqueScreen), findsOneWidget, reason: name);
+        expect(find.text(TapHandlerPage.title), findsNothing, reason: name);
+        handle.dispose();
+      });
+    }
 
     testWidgets('bad-no-address: a link with no address', (tester) async {
       final handle = tester.ensureSemantics();

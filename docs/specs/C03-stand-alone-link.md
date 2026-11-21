@@ -116,15 +116,30 @@ left to the browser (`BrowserKeys`, `DoNothingAndStopPropagationIntent`).
 
 ### Bad
 
-| Slug | Defect | Violates | Fails |
+| Slug | Defect | Violates |
+| --- | --- | --- |
+| `bad-vague-text` | The link says "Read more" | R1 |
+| `bad-tap-handler` | Underlined text in a `GestureDetector`: no link role, and the keyboard cannot reach it. It opens a page of its own, `TapHandlerPage`, which nothing else in the app opens, so a keyboard user cannot reach that page at all | R2, R4, R5 |
+| `bad-no-address` | `Semantics(link: true)` with no `linkUrl`: a button on Android, and on the web an `<a>` with no `href`, which HTML gives no link role | R2 |
+| `bad-image-no-name` | A picture link with no name on the link or the picture | R6 |
+| `bad-label-on-image` | The name is the picture's `semanticLabel`: on Android and iOS the link has no name and the picture is a second element ([FL-030](../flutter-limitations.md#fl-030)) | R6 |
+| `bad-cupertino-button` | `Semantics(link: true, linkUrl:)` round a `CupertinoButton`: a link and a button at once ([FL-221](../flutter-limitations.md#fl-221)) | R3 |
+| `bad-app-also-follows` | The app follows the link on the web as well as the browser: a click and Enter leave the screen as it was, and a DOM click opens the page twice under the example's address ([FL-013](../flutter-limitations.md#fl-013)). Off the web it works as the good links do | R7 |
+
+What each fails, by platform, as the criteria are written:
+
+| Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `bad-vague-text` | The link says "Read more" | R1 | 2.4.4 (F84) |
-| `bad-tap-handler` | Underlined text in a `GestureDetector`: no link role, and the keyboard cannot reach it | R2, R4, R5 | 2.1.1 on all three; 4.1.2 on iOS, where it is static text with no role. On the web it is a button (FL-006), a role, if the wrong one; on Android the good links have no role either |
-| `bad-no-address` | `Semantics(link: true)` with no `linkUrl`: a button on Android, and on the web an `<a>` with no `href`, which HTML gives no link role | R2 | none as written: TalkBack reads a role (button); on the web VoiceOver says "link" in Chromium and WebKit, whose own trees call the `<a>` a link, though Playwright's role check, which follows HTML-AAM, finds none; iOS is not affected |
-| `bad-image-no-name` | A picture link with no name on the link or the picture | R6 | 1.1.1, 2.4.4, 4.1.2 (F89) |
-| `bad-label-on-image` | The name is the picture's `semanticLabel`: on Android and iOS the link has no name and the picture is a second element ([FL-030](../flutter-limitations.md#fl-030)) | R6 | 2.4.4 and 4.1.2 on Android and iOS; none on the web, where the browser names the link from the picture |
-| `bad-cupertino-button` | `Semantics(link: true, linkUrl:)` round a `CupertinoButton`: a link and a button at once ([FL-221](../flutter-limitations.md#fl-221)) | R3 | none as written: the name and a role are there |
-| `bad-app-also-follows` | The app follows the link on the web as well as the browser: a click and Enter leave the screen as it was, and a DOM click opens the page twice under the example's address ([FL-013](../flutter-limitations.md#fl-013)). Off the web it works as the good links do | R7 | 2.1.1 on the web: Enter ends where it began. Space was not tried on it; on the good links, with the same `BrowserKeys`, Space follows nothing. Not on Android or iOS |
+| `bad-vague-text` | 2.4.4 (F84) | 2.4.4 (F84) | 2.4.4 (F84) |
+| `bad-tap-handler` | 2.1.1: Tab never reaches it, and no key opens its page, which nothing else opens. 4.1.2 not settled: Android has no link role, and TalkBack says none for the good links either | 2.1.1: no key opened its page (one Tab, then Enter or Space). 4.1.2: static text, no role for a control | 2.1.1: Tab never reaches it, and no key opens its page. 4.1.2: a button, a role that does not say it is a link ([FL-006](../flutter-limitations.md#fl-006)) |
+| `bad-no-address` | 4.1.2 not settled: a button, which is the stand-in the Android Compose reference itself uses where Android has no link role | none: a link | none in Chromium and WebKit, where VoiceOver says "link"; HTML gives an `a` with no `href` no role, and other browsers were not measured |
+| `bad-image-no-name` | 1.1.1, 2.4.4, 4.1.2 (F89): no name, read as "Button" | 1.1.1, 2.4.4, 4.1.2 (F89): "Link Image" | 1.1.1, 2.4.4, 4.1.2 (F89): VoiceOver reads the address in place of a name |
+| `bad-label-on-image` | 2.4.4, 4.1.2: the link has no name ([FL-030](../flutter-limitations.md#fl-030)) | 2.4.4, 4.1.2: "Link", with no name | none: the browser names the link from the picture |
+| `bad-cupertino-button` | 4.1.2 not settled: a button, as for `bad-no-address` ([FL-221](../flutter-limitations.md#fl-221)) | 4.1.2 not settled: VoiceOver says "Button" and "Link"; the criterion does not say whether two roles identify the control | none: a link only |
+| `bad-app-also-follows` | none: works as the good links do | none: works as the good links do | 2.1.1 not shown: Enter does not follow it, but the page it goes to, the technique's page, is reached by keyboard through Back ([FL-013](../flutter-limitations.md#fl-013)) |
+
+"Not settled" means the evidence and the criterion as written do not decide
+it either way; nothing is claimed.
 
 `bad-label-on-image` has no `TestId`: its `MergeSemantics` would join the
 picture to the link and hide the defect. Its nodes are found by role and
@@ -140,12 +155,12 @@ Material `TextButton`, which has no example.
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640; link flag, `linkUrl`, name, no button or image flag, a tap action, the tap hint (a custom action that overrides tap), no image node; a tap and the tap action each open the technique's page, and one Back brings the example back; Tab reaches the link, and Enter and Space each follow it (off the web). Bad: the name "Read more"; no link flag and never focused after four Tabs, with a tap as the positive control; the link flag with no `linkUrl`; no name, with the image flag merged in and the labelled-tap-target guideline failing; the unnamed link with the named image under it; the link and button flags together; `bad-app-also-follows` followed once off the web. The tests run as Android, so the web-only code (`followLink` doing nothing, `BrowserKeys`) is not run here |
-| L3 web | Good: `<a href="#/t/C03">`, role link, name, nothing inside it a button or an image; a click, a DOM click with no pointer events (what assistive technology can send), and Tab then Enter each open the technique's page once (one Back brings the example back) in this tab; Space does not follow it, with Enter in the same load as the positive control; Command- or Ctrl-click opens it in a new tab and leaves this one. Bad: "Read more"; a button (FL-006) that Tab skips, with Tab reaching Back as the positive control; an `<a>` with no `href` and no link role, followed by the app on a click and on Enter; a link with an empty name; a link named from the image inside it; `bad-cupertino-button` a link only; `bad-app-also-follows`: a click, and Tab then Enter, each leave the screen as it was, with the positive control that the address was seen to pass through `#/t/C03` in the same load; a DOM click opens the technique's page with the example's address left in the address bar, and one Back leaves the technique's page on screen |
-| L3 Android | Good: class `android.view.View`, name, the address in a `URLSpan` on the content description, a click action labelled "open link", clickable, focusable; `ACTION_CLICK` (TalkBack's double tap), a tap, and Tab then Enter (`input keyevent`) each open the technique's page, and one Back brings the example back. Bad: "Read more"; no address, no click label, and no focus after six Tabs, with Back focused as the positive control; class `Button` with no address; no name, no address, class `ImageView`; the unnamed link and the named image; class `Button` with the address; `bad-app-also-follows` followed once |
-| L3 iOS | Good: element type link, label, no other button and no image; a tap, and Tab, Tab, Enter each open the technique's page once. Bad: link "Read more"; static text and no link; a link (iOS reads the flag alone); an image with no label and no link (the image flag is merged into the link); an unnamed link and a named image; type button, no link (the link trait is heard, not seen, in the tree); `bad-app-also-follows` followed once |
+| L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640; link flag, `linkUrl`, name, no button or image flag, a tap action, the tap hint (a custom action that overrides tap), no image node; a tap and the tap action each open the technique's page, and one Back brings the example back; Tab reaches the link, and Enter and Space each follow it (off the web); in light and dark, the focus ring is drawn in the page's text colour once Tab reaches the link and is clear before and after. Bad: the name "Read more"; no link flag and never focused after four Tabs, with a tap opening `TapHandlerPage` as the positive control; Tab stops only on Back, and Enter, then Space, there open the technique's page and not `TapHandlerPage`; the link flag with no `linkUrl`; no name, with the image flag merged in and the labelled-tap-target guideline failing; the unnamed link with the named image under it; the link and button flags together; `bad-app-also-follows` followed once off the web. The tests run as Android, so the web-only code (`followLink` doing nothing, `BrowserKeys`) is not run here |
+| L3 web | Good: `<a href="#/t/C03">`, role link, name, nothing inside it a button or an image; a click, a DOM click with no pointer events (what assistive technology can send), and Tab then Enter each open the technique's page once (one Back brings the example back) in this tab; Space does not follow it, with Enter in the same load as the positive control; Command- or Ctrl-click opens it in a new tab and leaves this one; the only link on the screen, and the only button Back. Bad: "Read more"; a button (FL-006) that Tab skips, with Tab reaching Back as the positive control, and a click opening `TapHandlerPage`; Tab stops only on Back, and Enter, then Space, there open the technique's page and not `TapHandlerPage`; an `<a>` with no `href` and no link role, followed by the app on a click and on Enter; a link with an empty name; a link named from the image inside it; `bad-cupertino-button` a link only; `bad-app-also-follows`: a click, and Tab then Enter, each leave the screen as it was, with the positive control that the address was seen to pass through `#/t/C03` in the same load; a DOM click opens the technique's page with the example's address left in the address bar, and one Back leaves the technique's page on screen |
+| L3 Android | Good: class `android.view.View`, name, the address in a `URLSpan` on the content description, a click action labelled "open link", clickable, focusable; `ACTION_CLICK` (TalkBack's double tap), a tap, and Tab then Enter (`input keyevent`) each open the technique's page, and one Back brings the example back; one clickable node but Back. Bad: "Read more"; no address, no click label, and no focus after six Tabs, with Back focused as the positive control and the click action opening `TapHandlerPage`; Tab to Back and Enter, then Space, open the technique's page and not `TapHandlerPage`; class `Button` with no address; no name, no address, class `ImageView`; the unnamed link and the named image; class `Button` with the address; `bad-app-also-follows` followed once |
+| L3 iOS | Good: element type link, label, the only link, no other button and no image; a tap, and Tab, Tab, Enter each open the technique's page once. Bad: link "Read more"; static text and no link, and a tap opening `TapHandlerPage`; one Tab and Enter, then Space, open the technique's page and not `TapHandlerPage`; a link (iOS reads the flag alone); an image with no label and no link (the image flag is merged into the link); an unnamed link and a named image; type button, no link (the link trait is heard, not seen, in the tree); `bad-app-also-follows` followed once |
 | L4 TalkBack | What is read with focus on each link; for `bad-label-on-image`, on the picture only (see section 7) |
-| L4 VoiceOver iOS | Every utterance from the "Example" heading to the example's link, compared as a whole list; for each good link, what is said with the cursor on it and that a double tap opens the technique's page |
+| L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list; for each good link, what is said with the cursor on it and that a double tap opens the technique's page |
 | L4 VoiceOver web | Every stop of VoiceOver's cursor after the "Example" heading to the end of the screen, compared as a whole list, in Chromium and WebKit |
 
 ## 7. What the build found (Flutter 3.47.5)
@@ -168,6 +183,13 @@ with a native comparison on Android and three runs on the web of how
   (`BrowserKeys`), because an `InkWell` takes both. Space then does nothing,
   as for any link. `KeyboardLink` registers no key actions on the web for
   the same reason.
+- **`bad-tap-handler` opens a page of its own.** Its first version went to
+  the technique's page, as every link does, and Back opens that page from
+  the keyboard too, so its 2.1.1 failure was not shown. It now opens
+  `TapHandlerPage`, which nothing else in the app opens, and every layer
+  tests that no key opens it: Tab stops only on Back (the widget tests,
+  Android, the web), and Enter and Space there open the technique's page,
+  which shows the key arrived, and not the tap handler's page.
 - **The app and the browser both following a link is not "twice" but
   depends on how it is followed** ([FL-013](../flutter-limitations.md#fl-013),
   extended): a click and Enter end where they began, and a DOM click with
@@ -177,8 +199,10 @@ with a native comparison on Android and three runs on the web of how
   not measured, so the DOM click stands in for it and is named as such.
 - **Android has no link role** ([FL-220](../flutter-limitations.md#fl-220)).
   TalkBack reads a Flutter link with an address by its name and "Double-tap
-  to activate", and reads native views with a `URLSpan` the same way
-  (probe). The good links set `onTapHint: 'open link'`, so TalkBack says
+  to activate", and reads a native view of the same shape, a clickable
+  `View` with the `URLSpan` on its content description, the same way
+  (probe). The probe's other two native views are not compared: one was
+  not read, and the other had no height on screen. The good links set `onTapHint: 'open link'`, so TalkBack says
   "Double-tap to open link", as the Android Compose reference does with
   `onClickLabel`. `bad-tap-handler` is then audibly different from them on
   Android ("Double-tap to activate") although neither has a role. On
@@ -219,9 +243,19 @@ Skips and what they give up, in the tests:
 - The widget tests run as Android (`kIsWeb` false), so the web-only branch
   of `followLink`, `BrowserKeys`, and `KeyboardLink` runs only in the web
   tests.
-- The iOS VoiceOver walk stops at the example's expected last utterance.
-  It gives up nothing: a different utterance never stops the walk, and the
-  walk then fails.
+- The iOS VoiceOver walk goes to the end of the screen, which it takes to
+  be where moving on gives the last utterance again, twice (`C03Walk`). It
+  gives up two neighbouring elements that VoiceOver reads alike, which it
+  would count as one; no example has two. Its end and its content are
+  tested with no device (`testWalkToTheEndSeesAnExtraStop`), including an
+  extra element after the link, which must change the list.
+- The web test of `bad-tap-handler`'s Tab stops leaves out stops outside
+  Flutter's semantics tree (the page itself, when focus goes round,
+  FL-421). It gives up nothing a key could act on in the app.
+- The Android TalkBack walk moves focus to each named node and so does not
+  see a stop it was not told of. The tree tests count the controls instead:
+  one clickable node but Back on Android, one link on iOS, one link and
+  one button (Back) on the web, for each good example.
 - The TalkBack walk leaves out the link node of `bad-label-on-image`, as
   above: it gives up what TalkBack says for a link with no name round a
   named picture.

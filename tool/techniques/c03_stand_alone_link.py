@@ -41,10 +41,10 @@ TALKBACK_EXPECT = {
 # tool/voiceover_ios.py: (how the speech was captured, heading of the
 # transcript column).
 VOICEOVER_IOS_METHOD = (
-    "`XCUIVoiceOverService.moveForward()` from the top of the screen until the "
-    "example's expected last utterance, its link, is heard; what is shown is "
-    "everything after the \"Example\" heading. A walk that never hears that "
-    "utterance does not finish and fails. Then, for each good example, the "
+    "`XCUIVoiceOverService.moveForward()` from the top of the screen to its "
+    "end, where moving on gives the last utterance again, twice; what is shown "
+    "is everything after the \"Example\" heading, and a walk that does not "
+    "reach the end fails. Then, for each good example, the "
     "cursor is put on the link, what VoiceOver says there is read, and a double "
     "tap with VoiceOver on is checked to open the technique's page "
     "(`double-tap-` rows)",

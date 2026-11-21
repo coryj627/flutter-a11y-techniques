@@ -116,7 +116,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-183](#fl-183) | `MergeSemantics` around a field takes in its error: the error joins the field's name as well as its hint, and on Android the field becomes a live region | All | Confirmed |
 | [FL-184](#fl-184) | Keyboard focus moved to a field does not move VoiceOver's cursor on iOS | iOS | Observed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
-| [FL-220](#fl-220) | On Android TalkBack says no role for a Flutter link, and the link's address is not offered to TalkBack as a native link's is | Android | Confirmed |
+| [FL-220](#fl-220) | On Android TalkBack says no role for a Flutter link | Android | Confirmed |
 | [FL-221](#fl-221) | Material and Cupertino have no link widget, and a link put round one of their buttons is a button as well | Android, iOS (`CupertinoButton`); All (`TextButton`, probe only) | Confirmed for `CupertinoButton` |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
@@ -484,9 +484,11 @@ yet), **Fixed in x.y** (verified on that version).
     not measured.
   - Why the two navigations end this way was not found. Asserted in
     `web_tests/c03_stand_alone_link.spec.js`.
-  - So with the app following the link as well, Enter does not follow it,
-    a failure of WCAG 2.1.1 Keyboard on the web (Space was not tried on
-    that example).
+  - So with the app following the link as well, Enter does not follow it.
+    That breaks the usual keyboard activation, but WCAG 2.1.1 Keyboard is
+    not shown to fail: the page the link goes to is the technique's own
+    page, which the screen's Back button also opens from the keyboard.
+    Space was not tried on that example.
 - Which keys reach the anchor, measured in the C03 probe
   (`docs/evidence/probes/c03/web.txt`): Enter follows an `<a href>` only when
   no Flutter widget takes the key. An `InkWell` or a `TextButton` takes it
@@ -2502,21 +2504,21 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-220
 
-**On Android TalkBack says no role for a Flutter link, and the link's address is not offered to TalkBack as a native link's is.**
+**On Android TalkBack says no role for a Flutter link.**
 
-- Status: Confirmed, Flutter 3.47.5, for what TalkBack says: asserted by
-  C03's TalkBack walk (`docs/evidence/C03/talkback-android.md`) and its
-  Android tree test (class `android.view.View`, the address in a `URLSpan`
-  on the content description). The comparison with native views was made
-  in the C03 probe only (`docs/evidence/probes/c03/`, fixtures p02 to p06
-  and p09, and the native screen `ProbeNativeActivity.kt.txt`). Engine
-  source read: `shell/platform/android/io/flutter/view/AccessibilityBridge.java`
+- Status: Confirmed, Flutter 3.47.5: asserted by C03's TalkBack walk
+  (`docs/evidence/C03/talkback-android.md`) and its Android tree test
+  (class `android.view.View`, the address in a `URLSpan` on the content
+  description). One native view was compared in the C03 probe only
+  (`docs/evidence/probes/c03/`, fixtures p02 to p06 and p09, and the
+  native screen `ProbeNativeActivity.kt.txt`). Engine source read:
+  `shell/platform/android/io/flutter/view/AccessibilityBridge.java`
   (`shouldBeTreatedAsButton`; `getLabel` adds the URL as a `URLSpan` to the
   label, which becomes the content description).
-- WCAG: 4.1.2 Name, Role, Value. Not failed as written: Android's
-  accessibility API has no link role for a node to expose, which the
-  Android Compose reference repository also says, and the native views
-  measured are read the same way.
+- WCAG: 4.1.2 Name, Role, Value. Not settled by the criterion as written:
+  Android's accessibility API has no link role for a node to declare,
+  which the Android Compose reference repository also says, so there is no
+  role here that a link could be missing.
 - What happens: `Semantics(link: true, linkUrl:)` gives an
   `android.view.View` whose content description is the name with a
   `URLSpan` over it. TalkBack, with focus moved to it, says the name and
@@ -2527,25 +2529,23 @@ yet), **Fixed in x.y** (verified on that version).
   p07, p10, p11; C03 `bad-label-on-image` and `bad-image-no-name`, which
   TalkBack then reads as "Button").
 - Native comparison (probe, Android 17 emulator, TalkBack's verbose log):
-  a clickable `View` whose content description has the `URLSpan`, Flutter's
-  shape, is read the same, "n02 native link description / Double-tap to
-  activate". A clickable `TextView` whose text has the `URLSpan` is read
-  "n03 native clickable link text / Double-tap to activate. Actions
-  available, use Tap with 3 fingers to view": TalkBack offers it more,
-  and still says no role. What its actions menu then lists was not looked
-  at. A `TextView` with the link in its text and no click listener (n01)
-  was not read at all in the 6 seconds after focus moved to it; why was
-  not found.
+  a clickable native `View` whose content description has the `URLSpan`,
+  Flutter's shape, is read the same, "n02 native link description /
+  Double-tap to activate". The probe's two other native views are not
+  compared: n01, a `TextView` with the link in its text and no click
+  listener, was not read in the 6 seconds after focus moved to it, why
+  was not found; n03 was laid out with no height below n02, which filled
+  the screen (`android-tree-native.txt`), so what was read for it is not
+  relied on. Whether TalkBack treats a link in a native view's text
+  differently was not measured.
 - Why it matters: a TalkBack user cannot tell a Flutter link from any other
-  control with a name, and is not offered the address the way a native
-  link in text is.
+  control with a name by its role.
 - Workaround, in the SDK: say what the link does in the tap hint, as the
   Android Compose reference does with `onClickLabel`:
   `Semantics(onTapHint: 'open link')` makes TalkBack say "Double-tap to
   open link" in place of "Double-tap to activate" (C03's good examples).
   `onTapHint` is ignored on iOS (framework source: `SemanticsHintOverrides`)
-  and not read by the web engine. Flutter has not added a way to put the
-  address where TalkBack offers it as a native link's text does.
+  and not read by the web engine.
 - Upstream issue: not searched yet (D25).
 
 ## FL-221
@@ -2558,8 +2558,17 @@ yet), **Fixed in x.y** (verified on that version).
   probe only (`docs/evidence/probes/c03/`, fixture p07; `CupertinoButton`
   is p08). Framework source read: `cupertino/button.dart` wraps its child
   in `Semantics(button: true)`, and no parameter turns that off.
-- WCAG: 4.1.2 Name, Role, Value. Not failed as written: the name is there
-  and so is a role; the role is the wrong one, or two at once.
+- WCAG: 4.1.2 Name, Role, Value, by platform:
+  - `CupertinoButton`: on iOS not settled, as VoiceOver says both "Button"
+    and "Link" and the criterion does not say whether two roles identify
+    the control; on Android not settled, as Android has no link role and
+    a button is the stand-in the Android Compose reference uses; on the
+    web none, a link only.
+  - `TextButton` (probe only): on iOS a failure, as VoiceOver stops on the
+    button alone, a role that does not identify a link, and the link round
+    it has no name; on Android not settled, for the same reason as above;
+    on the web not settled, as the link holds a button and what a screen
+    reader says for it was not measured.
 - What happens: Flutter has not added a link widget to Material or to
   Cupertino. The obvious way to make one, `Semantics(link: true, linkUrl:)`
   round a `TextButton` or a `CupertinoButton`, keeps the button:

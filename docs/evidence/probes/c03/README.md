@@ -67,6 +67,14 @@ Last, C03's own Android tree tests were run once at the CI emulator's size,
 twelve tests, no failure, `talkBackWalk` skipped with TalkBack off; the
 JUnit summary is at the end of `android_320x640.txt`.
 
+In the first review, the focus ring of `KeyboardLink` (`good-custom`,
+`good-cupertino`) was found never to show: `FocusRing` sat inside the
+`FocusableActionDetector`, whose own node takes focus, so the ring heard
+nothing. `focus_ring_before_fix.txt` is the widget test that confirmed it,
+run before the fix: the ring stayed transparent with focus on those two
+links, and showed on `good-material` and `good-image-link`. The ring now
+wraps the detector, and the same test passes for all four.
+
 ## Web
 
 | # | Element | Chromium's role and name | Click | Enter | Space |
@@ -118,12 +126,13 @@ Native comparison, the same way (`android-tree-native.txt`,
 | --- | --- | --- |
 | n01 | `TextView` whose whole text is a `URLSpan`, with `LinkMovementMethod`, no click listener | nothing in the 6 seconds after focus moved to it; why was not found |
 | n02 | clickable `View` whose content description has the `URLSpan`, the shape of Flutter's node | "n02 native link description / Double-tap to activate" |
-| n03 | clickable `TextView` whose text is a `URLSpan` | "n03 native clickable link text / Double-tap to activate. Actions available, use Tap with 3 fingers to view" |
+| n03 | clickable `TextView` whose text is a `URLSpan` | "n03 native clickable link text / Double-tap to activate. Actions available, use Tap with 3 fingers to view"; but n03 was laid out with no height (`Rect(40, 2384 - 1040, 2384)`), below n02, which filled the screen, so this reading is not relied on |
 
-So TalkBack says no role for a native link either, as the Android Compose
-reference says; a link in a native view's text is offered among TalkBack's
-actions, and the address in a content description, where Flutter puts it,
-is not. What the actions menu lists was not looked at.
+So TalkBack says no role for the native view of Flutter's shape (n02)
+either, as the Android Compose reference says Android has none. Nothing is
+concluded from n01 and n03; whether TalkBack treats a link in a native
+view's text differently was not measured, and its actions menu was not
+opened.
 
 ## iOS
 
@@ -165,7 +174,7 @@ found by its label (all but p11); neither opened `/dest`, whatever the
 - **Android has no link role in speech.** With `linkUrl` the node is a
   `View` with the address in a `URLSpan`, and TalkBack says the name and
   "Double-tap to activate", no role (p02 to p06, p09), as it does for the
-  native views (n02, n03). Without it, a `Button` (p01). `onTapHint`
+  native view of the same shape (n02). Without it, a `Button` (p01). `onTapHint`
   changes "activate" to the hint (p13), as the Android Compose reference
   does with `onClickLabel`. FL-220.
 - **On Android the address rides on the label.** A link node with no label
