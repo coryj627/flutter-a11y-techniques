@@ -215,6 +215,21 @@ void main() {
           handle.dispose();
         });
 
+        // With keyboard focus on a link, InkWell's focus tint and the ring
+        // are drawn: the text must keep its contrast in that state too.
+        for (var n = 1; n <= 2; n++) {
+          testWidgets('$slug: with focus on link $n the text still meets the '
+              'contrast guideline (${brightness.name})', (tester) async {
+            final handle = tester.ensureSemantics();
+            await _open(tester, slug, brightness: brightness);
+            await tabTo(tester, _linkId(slug, n));
+            await tester.pumpAndSettle();
+            expect(_focused(_linkId(slug, n)), isTrue);
+            await expectLater(tester, meetsGuideline(textContrastGuideline));
+            handle.dispose();
+          });
+        }
+
         testWidgets('$slug: the links are underlined, in a colour with 4.5:1 '
             'on the page (${brightness.name})', (tester) async {
           await _open(tester, slug, brightness: brightness);
@@ -577,6 +592,12 @@ void main() {
             _sentenceParagraph(tester).text.style!.fontStyle,
           );
           expect(_contrast(style.color!, words), lessThan(3), reason: '$n');
+          // The measured ratios the docs give: 2.66:1 in light, 1.32:1 in
+          // dark (also in docs/evidence/probes/c04/flutter_test.txt).
+          expect(
+            _contrast(style.color!, words),
+            closeTo(brightness == Brightness.light ? 2.66 : 1.32, 0.01),
+          );
           // The one defect: its contrast with the page is still enough.
           expect(_contrast(style.color!, page), greaterThanOrEqualTo(4.5));
         }

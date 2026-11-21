@@ -27,6 +27,14 @@ Android has no link role that a node can declare, and TalkBack says no role
 for a Flutter link ([FL-220](../flutter-limitations.md#fl-220)); the links
 say what they are in their double-tap hint, as in C03.
 
+iOS applies, with [FL-246](../flutter-limitations.md#fl-246): on the
+iPhone 17 screen the good examples' sentence takes two lines, and the node
+of its last words, " first.", covers both lines whole, over the links. A
+VoiceOver user who explores by touch and puts a finger on either link
+hears "first." and not the link. Swiping reaches each link, in order, and a
+double tap follows it; the keyboard reaches each link too. No workaround
+was found. No WCAG failure is claimed.
+
 ## 3. WCAG 2.2 success criteria
 
 | Criterion | Why it applies |
@@ -34,13 +42,39 @@ say what they are in their double-tap hint, as in C03.
 | [2.4.4 Link Purpose (In Context)](https://www.w3.org/TR/WCAG22/#link-purpose-in-context) | The link's name, alone or with its sentence, says where it goes |
 | [1.4.1 Use of Color](https://www.w3.org/TR/WCAG22/#use-of-color) | A link in running text is told from the text round it by more than colour |
 
-For 2.4.4, text in the same sentence is programmatically determined link
-context ([G53](https://www.w3.org/WAI/WCAG22/Techniques/general/G53); the
-Understanding document: "text in the same sentence, paragraph, list item,
-or table cell"). In Flutter the sentence's words and its links are sibling
-nodes of one paragraph node on every platform (section 7), so the sentence
-is that context. A link whose purpose is "ambiguous to users in general" is
-exempt, which is why there is no vague-text example here (section 5).
+For 2.4.4, a link's purpose must be determinable from its text alone or
+from its text "together with its programmatically determined link context",
+which WCAG defines as information "programmatically determined from
+relationships with a link"; in HTML, text in the same paragraph, list item,
+or table cell, and the Understanding document adds that screen readers "can
+also provide the context from the current sentence". So the sentence round
+an inline link is its context ([G53](https://www.w3.org/WAI/WCAG22/Techniques/general/G53),
+link text with the text of the enclosing sentence) wherever the platform
+relates the two, and context that is only seen and not related fails
+([F63](https://www.w3.org/WAI/WCAG22/Techniques/failures/F63)). The
+criterion's exception, "ambiguous to users in general", is for a link whose
+purpose nobody can tell; it applies to no example here.
+
+Whether a Flutter sentence is related to its links, by platform, as
+measured:
+
+- Web: with FL-413's workaround the words and the links are sibling
+  elements of one element, in the sentence's order (the tree test). Without
+  it (`bad-out-of-order`) the links are children of a `group` named by the
+  words alone, so the words stay related to the links but not in their
+  place.
+- Android: the same, as nodes: siblings of one node in order with the
+  workaround; children of the node named by the words without it (the tree
+  test).
+- iOS: VoiceOver reads the words and the links one after the other, in the
+  sentence's order with the workaround and words first without it (the
+  transcript). Which element holds which was not read: XCUITest gives no
+  hierarchy. On iOS the relation rests on that order alone.
+
+Every link here, `bad-out-of-order`'s included, has text that says where
+it goes on its own ("links in text", "stand-alone links"), so 2.4.4 is met
+from the link text alone and no example fails it: `bad-out-of-order` loses
+the sentence's order (1.3.2), not its links' purpose.
 
 For 1.4.1, the Understanding document lists
 [G183](https://www.w3.org/WAI/WCAG22/Techniques/general/G183) (a 3:1
@@ -140,20 +174,29 @@ the measurements):
 | --- | --- | --- | --- |
 | `bad-text-span` | 2.1.1: Tab never reaches the link, and no key opens its page, which nothing else opens | 2.1.1: no key opened its page (one Tab, then Enter or Space; in the probe one to three Tabs, then Enter) | 2.1.1: Tab never reaches it, and no key opens its page |
 | `bad-out-of-order` | 1.3.2: the sentence node is "Read about and first.", its links after it | 1.3.2: VoiceOver reads "Read about and first." and then the links | 1.3.2: a group named "Read about and first." holding the links |
-| `bad-colour-only` | 1.4.1 (F73) | 1.4.1 (F73) | 1.4.1 (F73) |
-| `bad-merged` | 4.1.2: the second link is not exposed as a link of its own; TalkBack's double tap follows the first | 4.1.2: the second link is not exposed as a link of its own; VoiceOver reads one link (what its double tap opens is recorded, not asserted: no page, in the probe) | 4.1.2: one `<a href="#/t/C04">`; a click anywhere on the sentence, and Enter after either Tab, follow the first link |
+| `bad-colour-only` | 1.4.1 (F73): told from the words by colour alone, with no underline and the same weight and style, and under 3:1 against them | 1.4.1 (F73), as on Android | 1.4.1 (F73), as on Android |
+| `bad-merged` | 4.1.2: the second link is not exposed as a link of its own; TalkBack's double tap follows the first | 4.1.2: the second link is not exposed as a link of its own; VoiceOver reads one link | 4.1.2: one `<a href="#/t/C04">`; a click on either link's words or on the first words, and Enter after two or three Tabs, follow the first link |
 
-`bad-colour-only`'s links are in the theme's primary colour of each mode:
-2.66:1 against the words in light, 1.32:1 in dark, and 6.12:1 and
-10.90:1 against the page, so its one defect is the missing cue.
+F73 fails a link only when colour alone tells it from the words round it
+and the colour has no lightness difference of 3:1 or more with them; an
+underline, or 3:1, would pass. `bad-colour-only`'s links are in the theme's
+primary colour of each mode, measured against the sentence's words: 2.66:1
+in light and 1.32:1 in dark (asserted to two places by the widget test
+"bad-colour-only: no underline, and under 3:1 against the words round it",
+and in `docs/evidence/probes/c04/flutter_test.txt`, "contrast"), with no
+underline and the words' own weight and style. Against the page they are
+6.12:1 and 10.90:1, so its one defect is the missing cue. The good links
+are underlined, which passes F73 at any ratio.
 
-No example has vague link text. C03's `bad-vague-text` covers a link that
-says "Read more". In a sentence, the sentence is the link's context, and a
-link whose sentence does not say where it goes either is "ambiguous to
-users in general", which 2.4.4 exempts; a failure as written would need the
-context to be visible and not programmatic, which a Flutter sentence does
-not give (its words and links share a parent on every platform). An
-example that could not be shown to fail was not built.
+No example has vague link text, for three reasons. A vague link in a
+sentence that says where it goes ("Read about links in text [here]") meets
+2.4.4 through that sentence, which Flutter relates to it (section 3); it
+fails only 2.4.9 Link Purpose (Link Only), Level AAA and out of scope. A
+vague link whose purpose is given only by content not related to it fails
+2.4.4 (F63), but that is a matter of what sits round the sentence, not of a
+link in a sentence. And a link with no context at all is C03's
+`bad-vague-text`. An example that could not be shown to fail as this
+technique's own defect was not built.
 
 `bad-merged` has no `TestId`: it is the defect. Its sentence carries a
 plain `Semantics(identifier:)` under the `MergeSemantics`. The good
@@ -164,13 +207,13 @@ key, because `TestId`'s `MergeSemantics` drops the sort key (FL-413).
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Every example, good and bad: at 200% text on a 320 by 640 screen, no layout overflow, no text that hits its line limit, no text-only paragraph shorter than its lines, and nothing wider than the screen. Good, in light and dark: the four guidelines; each link underlined, with 4.5:1 against the page. Good: each link a node of its own with the link flag, its address, its name, no button flag, a tap action, the tap hint, and the sort key `n - 0.5`; exactly two link nodes; the sentence read "Read about ", the first link, " and ", the second link, " first." at 800 by 640 and 320 by 640 at 100% and 200% text; a tap and the tap action each open the link's page, and one Back brings the example back; Tab goes Back, first link, second link; Tab to each link, then Enter or Space, opens its page; the focus ring shows on the focused link only, in the page's text colour (3:1 or more on the page), in light and dark, and goes when focus leaves; at 100% and 200% text the links' line height on screen is the words' (FL-241's fix), with the same font size. Bad: `bad-text-span`'s link has the link flag, no address, no focus, and is read in its place; four Tabs never focus it; its tap action and a tap on its words open `TextSpanPage`; Tab stops only on Back, and Enter, then Space, there open the technique's page and not `TextSpanPage`. `bad-out-of-order`: the sentence's label without the links, then the two links. `bad-colour-only`, light and dark: no underline, the same weight and style as the words, under 3:1 against them and 4.5:1 or more against the page. `bad-merged`: one link node, the whole sentence, the first link's address; its tap action opens the first link's page; the keyboard still reaches the second link (positive control). On the SDK alone: FL-241 (a `Text` in a `WidgetSpan` at 200% is twice the height of the words, and `withNoTextScaling` makes it the same) and FL-242 (`CupertinoColors.link` and `systemBlue` between 4:1 and 4.5:1 on white). The tests run as Android, so the web-only code (`followLink` doing nothing, `BrowserKeys`, `KeyboardInlineLink`'s empty actions) is not run here |
-| L3 web | Good: two `<a href>` with names, `#/t/C04` and `#/t/C03`, nothing inside them a button; two links and one button (Back) on the screen; the sentence's elements in the page's order: words, link, words, link, words; Tab goes Back, first link, second link; for each link: a click, a DOM click with no pointer events, and Tab then Enter each open its page once in this tab; Space does not follow it, with Enter in the same load as the positive control; Command- or Ctrl-click opens it in a new tab and leaves this one. Bad: `bad-text-span` an `<a>` with no `href` and no `tabindex`, no link found by role, skipped by Tab with Back reached as the positive control, a click opening `TextSpanPage`; Tab stops only on Back, and Enter, then Space, there open the technique's page and not `TextSpanPage`. `bad-out-of-order`: a group named "Read about and first." holding the two links. `bad-merged`: one link, named by the whole sentence, `href="#/t/C04"`; a click where the second link's words are drawn opens C04's page; Tab stops on the one element twice, and Enter then opens C04's page. `bad-colour-only` cannot be seen here (drawn on the canvas) |
+| L1 widget tests | Every example, good and bad: at 200% text on a 320 by 640 screen, no layout overflow, no text that hits its line limit, no text-only paragraph shorter than its lines, and nothing wider than the screen. Good, in light and dark: the four guidelines, and the text contrast guideline again with keyboard focus on each link (its focus tint and ring drawn); each link underlined, with 4.5:1 against the page. Good: each link a node of its own with the link flag, its address, its name, no button flag, a tap action, the tap hint, and the sort key `n - 0.5`; exactly two link nodes; the sentence read "Read about ", the first link, " and ", the second link, " first." at 800 by 640 and 320 by 640 at 100% and 200% text; a tap and the tap action each open the link's page, and one Back brings the example back; Tab goes Back, first link, second link; Tab to each link, then Enter or Space, opens its page; the focus ring shows on the focused link only, in the page's text colour (3:1 or more on the page), in light and dark, and goes when focus leaves; at 100% and 200% text the links' line height on screen is the words' (FL-241's fix), with the same font size. Bad: `bad-text-span`'s link has the link flag, no address, no focus, and is read in its place; four Tabs never focus it; its tap action and a tap on its words open `TextSpanPage`; Tab stops only on Back, and Enter, then Space, there open the technique's page and not `TextSpanPage`. `bad-out-of-order`: the sentence's label without the links, then the two links. `bad-colour-only`, light and dark: no underline, the same weight and style as the words, under 3:1 against them (2.66:1 in light and 1.32:1 in dark, to two places) and 4.5:1 or more against the page. `bad-merged`: one link node, the whole sentence, the first link's address; its tap action opens the first link's page; the keyboard still reaches the second link (positive control). On the SDK alone: FL-241 (a `Text` in a `WidgetSpan` at 200% is twice the height of the words, and `withNoTextScaling` makes it the same) and FL-242 (`CupertinoColors.link` and `systemBlue` between 4:1 and 4.5:1 on white). The tests run as Android, so the web-only code (`followLink` doing nothing, `BrowserKeys`, `KeyboardInlineLink`'s empty actions) is not run here |
+| L3 web | Good: two `<a href>` with names, `#/t/C04` and `#/t/C03`, nothing inside them a button; two links and one button (Back) on the screen; the sentence's elements in the page's order: words, link, words, link, words; Tab goes Back, first link, second link; for each link: a click, a DOM click with no pointer events, and Tab then Enter each open its page once in this tab; Space does not follow it, with Enter in the same load as the positive control; Command- or Ctrl-click opens it in a new tab and leaves this one. Bad: `bad-text-span` an `<a>` with no `href` and no `tabindex`, no link found by role, skipped by Tab with Back reached as the positive control, a click opening `TextSpanPage`; Tab stops only on Back, and Enter, then Space, there open the technique's page and not `TextSpanPage`. `bad-out-of-order`: a group named "Read about and first." holding the two links. `bad-merged`: one link, named by the whole sentence, `href="#/t/C04"`; a click where the first link's words, the second link's, and the first words are drawn each lands on the one element and opens C04's page; after two Tabs and after three, focus is on the one element (Back, then it, once for each link's focus node), and Enter opens C04's page. How the VoiceOver spec judges its walks (`web_tests/vo/c04_vo_walks.js`) is tested here on made-up walks: right, wrong, short, and empty walks, before and after the heading, and that a wrong walk is never followed by another try; and each screen is checked to show the title and lines the judge expects above its heading. `bad-colour-only` cannot be seen here (drawn on the canvas) |
 | L3 Android | Good: each link an `android.view.View` with its name, its address in a `URLSpan`, a click action labelled "open link", clickable and focusable; the sentence's node holds "Read about ", the first link, " and ", the second link, " first.", in that order; two clickable nodes but Back; for each link, `ACTION_CLICK`, a tap, and Tab then Enter (the second link one Tab after the first) each open its page, and one Back brings the example back. Bad: `bad-text-span` a `Button` with no address, in its place, never focused by six Tabs with Back focused as the positive control, its click action opening `TextSpanPage`; Tab to Back and Enter, then Space, open the technique's page and not `TextSpanPage`. `bad-out-of-order`: the sentence's node named "Read about \n and \n first.", holding the two links. `bad-merged`: one `View` named by the whole sentence, with one `URLSpan`, the first link's, no children, the only clickable node but Back; its click action opens C04's page. `bad-colour-only` cannot be seen here |
 | L3 iOS | Good: each link of element type link with its name; two links and no button but Back; the words as text; a tap on each link, and two or three Tabs then Enter, open its page once. Bad: `bad-text-span` a link that a tap follows to `TextSpanPage`; one Tab then Enter, and one Tab then Space, each take the example off the screen (Back acted) and do not open `TextSpanPage`. `bad-merged`: one link, named by the whole sentence, and no link named "stand-alone links". `bad-colour-only` cannot be seen here; `bad-out-of-order`'s order is in the VoiceOver walk, as XCUITest gives no order |
 | L4 TalkBack | What is read with focus moved to each part of each sentence: each word run, and each link with "Double-tap to open link" and no "Button"; `bad-text-span`'s link with "Button"; `bad-out-of-order`'s sentence node without the links' names; `bad-merged`'s one node with the whole sentence |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list; for each good link, with the cursor moved forward to it, what is said there and that a double tap opens its page; for `good-material`, that a tap at each link's centre puts the cursor on "first.", with one move back reaching the second link as the positive control (FL-246); for `bad-merged`, what a double tap on the sentence opens, recorded and not asserted |
-| L4 VoiceOver web | Every stop of VoiceOver's cursor after the "Example" heading to the end of the screen, compared as a whole list, in Chromium and WebKit, with no retry |
+| L4 VoiceOver web | Every stop of every walk judged (`judgeExampleWalk` in `web_tests/vo/c04_vo_walks.js`, as C02's): before the "Example" heading only the screen's own title and lines, in order; after it exactly the expected list, to the end of the screen. A wrong stop anywhere fails the test for good; only a walk that fell short with nothing wrong in it is walked again, up to three walks, and every walk is logged in the transcript. No runner retries. In Chromium and WebKit |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -283,6 +326,11 @@ Skips and what they give up, in the tests:
 - `talkback.py` walks an element again, up to three walks, when its speech
   fails its checks (a shared tool, unchanged); the transcript lists every
   element that needed it.
+- `bad-merged`'s VoiceOver double tap on iOS is recorded in the
+  transcript and not asserted: a claim that it does or does not follow a
+  link would need a positive control on the same element through the same
+  path, and the element has no other action. Nothing in the docs claims
+  what it does. What is asserted on iOS is the one link and its name.
 - The web's "Space does not follow it" waits one second; Enter in the same
   load is the positive control.
 - `bad-colour-only`'s defect is checked in the widget tests only: no tree

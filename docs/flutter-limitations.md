@@ -2735,10 +2735,8 @@ yet), **Fixed in x.y** (verified on that version).
     tap performs, follows the first link. TalkBack read the sentence and
     no role (probe `android-talkback.md`, r05).
   - iOS: one link named by the sentence (probe `ios.txt`); VoiceOver reads
-    it as one stop. A VoiceOver double tap on it, with the cursor put there
-    by a tap and by moving forward, opened no page in the second probe round
-    (`ios_round2.txt`); why was not found, and the C04 test records what it
-    opens without asserting it.
+    it as one stop. What VoiceOver's double tap on it does is not claimed:
+    the C04 test records it without asserting it.
   - Web: one `<a href>` with the first link's address. A click anywhere on
     the sentence, on the second link's words too, and Enter, follow the
     first link (`web_merged.txt`); Tab stops on the one element twice, as

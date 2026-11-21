@@ -14,6 +14,7 @@
 // tests assert it.
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
+import { EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeExampleWalk, runWalks, screenStops } from './vo/c04_vo_walks.js';
 
 const exampleHeading = (page) => page.getByRole('heading', { name: 'Example', exact: true, level: 2 });
 const { open } = technique('C04', { ready: exampleHeading, settle: 600 });
@@ -217,40 +218,139 @@ test.describe('bad examples have their defect', () => {
     await expect(page.getByRole('link')).toHaveCount(1);
   });
 
-  test('bad-merged: a click on the second link\'s words opens the first link\'s page', async ({ page }) => {
-    // Where the words "stand-alone links" are drawn, measured from the
-    // sentence's top left in good-material, whose sentence is laid out the
-    // same (docs/evidence/probes/c04/web_merged.txt).
-    await open(page, 'good-material');
-    const second = await byId(page, linkId('good-material', 2)).boundingBox();
-    const sentence = await byId(page, linkId('good-material', 1)).evaluate((e) => {
-      const r = e.parentElement.getBoundingClientRect();
-      return { x: r.x, y: r.y };
+  // Where the parts of the sentence are drawn, measured from the sentence's
+  // top left in good-material, whose sentence is laid out the same
+  // (docs/evidence/probes/c04/web_merged.txt): the first link's words, the
+  // second link's, and the first words, "Read about".
+  for (const part of ['the first link', 'the second link', 'the words "Read about"']) {
+    test(`bad-merged: a click on ${part} opens the first link's page`, async ({ page }) => {
+      await open(page, 'good-material');
+      const sentence = await byId(page, linkId('good-material', 1)).evaluate((e) => {
+        const r = e.parentElement.getBoundingClientRect();
+        return { x: r.x, y: r.y, height: r.height };
+      });
+      let box = { x: sentence.x, y: sentence.y, width: 20, height: Math.min(sentence.height, 24) };
+      if (part === 'the first link') box = await byId(page, linkId('good-material', 1)).boundingBox();
+      if (part === 'the second link') box = await byId(page, linkId('good-material', 2)).boundingBox();
+      await open(page, 'bad-merged');
+      const merged = await byId(page, 'c04-bad-merged-sentence').boundingBox();
+      const x = merged.x + (box.x - sentence.x) + box.width / 2;
+      const y = merged.y + (box.y - sentence.y) + box.height / 2;
+      // The point is on the one element, so the click is its.
+      expect(await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.getAttribute('flt-semantics-identifier'), [x, y]))
+        .toBe('c04-bad-merged-sentence');
+      await page.mouse.click(x, y);
+      await expectOn(page, LINKS[0]);
     });
-    await open(page, 'bad-merged');
-    const merged = await byId(page, 'c04-bad-merged-sentence').boundingBox();
-    const x = merged.x + (second.x - sentence.x) + second.width / 2;
-    const y = merged.y + (second.y - sentence.y) + second.height / 2;
-    // The point is on the one element, so the click is its.
-    expect(await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.getAttribute('flt-semantics-identifier'), [x, y]))
-      .toBe('c04-bad-merged-sentence');
-    await page.mouse.click(x, y);
-    await expectOn(page, LINKS[0]);
+  }
+
+  for (const tabs of [2, 3]) {
+    test(`bad-merged: after ${tabs} Tabs focus is on the one element, and Enter follows the first link`, async ({ page }) => {
+      await open(page, 'bad-merged');
+      const whole = 'Read about links in text and stand-alone links first.';
+      const stops = [];
+      for (let i = 0; i < tabs; i++) {
+        await page.keyboard.press('Tab');
+        await page.waitForTimeout(150);
+        stops.push(await focusedName(page));
+      }
+      // Back, then the one element once for each of the two links' focus
+      // nodes, which are still there. After three Tabs Flutter's focus is on
+      // the second link; the key goes to the browser, which follows the
+      // element's one href.
+      expect(stops).toEqual(['Back', ...Array(tabs - 1).fill(whole)]);
+      await page.keyboard.press('Enter');
+      await expectOn(page, LINKS[0]);
+    });
+  }
+});
+
+// The VoiceOver spec takes these texts as the only stops that may come
+// before an example's "Example" heading (EXAMPLE_SCREENS). Each screen must
+// show them, so that a change to a title or a defect is caught here.
+test.describe('the stops the VoiceOver spec expects above each example', () => {
+  for (const [slug, [title, ...lines]] of Object.entries(EXAMPLE_SCREENS)) {
+    test(`${slug} shows its title and its lines`, async ({ page }) => {
+      await open(page, slug);
+      await expect(page.getByRole('heading', { level: 1, name: title, exact: true })).toHaveCount(1);
+      for (const line of lines) {
+        await expect(page.locator('flt-semantics-host').getByText(line, { exact: true })).toHaveCount(1);
+      }
+    });
+  }
+});
+
+// How the web VoiceOver spec judges one walk of an example screen
+// (judgeExampleWalk), and repeats one that fell short (runWalks). The walks
+// here are made up; VoiceOver is not used.
+test.describe('the VoiceOver example walks are judged on every walk', () => {
+  const expected = ['Read about', 'link links in text', 'and', 'link stand-alone links', 'first.'];
+  const own = screenStops('good-material');
+  const screen = (...content) => [...own, EXAMPLE_HEADING, ...content];
+  const cases = [
+    ['a correct walk', screen(...expected), true, 'complete'],
+    ['a link with no role', screen('Read about', 'links in text', 'and', 'link stand-alone links', 'first.'), true, 'wrong'],
+    ['the sentence without its links, then the links', screen('Read about and first. group', 'link links in text', 'link stand-alone links'), true, 'wrong'],
+    ['one link for the whole sentence', screen('link Read about links in text and stand-alone links first.'), true, 'wrong'],
+    ['an empty reading', screen('', ...expected), true, 'wrong'],
+    ['the links swapped', screen('Read about', 'link stand-alone links', 'and', 'link links in text', 'first.'), true, 'wrong'],
+    ['a stop read twice', screen('Read about', 'link links in text', 'link links in text', 'and', 'link stand-alone links', 'first.'), true, 'wrong'],
+    ['a stop after the sentence', screen(...expected, 'end of main'), true, 'wrong'],
+    ['a wrong reading in a truncated walk', screen('Read about', 'links in text'), false, 'wrong'],
+    ['an empty walk', [], false, 'incomplete'],
+    ['a truncated walk', screen('Read about', 'link links in text'), false, 'incomplete'],
+    ['a walk that went past a stop without reading it', screen('Read about', 'and', 'link stand-alone links', 'first.'), true, 'incomplete'],
+    ['a headingless walk with a wrong reading', [...own, 'links in text'], false, 'wrong'],
+    ['a headingless walk with an empty reading', [...own, ''], false, 'wrong'],
+    ['a headingless walk with a stop that is not the screen\'s', ['Back button'], false, 'wrong'],
+    ['a headingless walk of the screen\'s own stops only', [...own], false, 'incomplete'],
+    ['a headingless walk with right readings', [...own, ...expected], true, 'incomplete'],
+    ['a wrong reading before the heading', ['link links in text', EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['the screen\'s own stops out of their order', [own[1], own[0], EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['an empty first stop for the title', ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'complete'],
+    ['an empty first stop and no heading', ['', ...own.slice(1), ...expected], true, 'wrong'],
+    ['an empty stop just before the heading', [...own, '', EXAMPLE_HEADING, ...expected], true, 'wrong'],
+  ];
+  for (const [what, stops, reachedEnd, verdict] of cases) {
+    test(`${what}: ${verdict}`, () => {
+      expect(judgeExampleWalk(stops, reachedEnd, expected, own).verdict).toBe(verdict);
+    });
+  }
+
+  test('a bad example\'s own stops include its defect', () => {
+    expect(screenStops('bad-merged').at(-1)).toMatch(/^Defect: /);
   });
 
-  test('bad-merged: two Tabs stay on the one element, and Enter there follows the first link', async ({ page }) => {
-    await open(page, 'bad-merged');
-    const stops = [];
-    for (let i = 0; i < 3; i++) {
-      await page.keyboard.press('Tab');
-      await page.waitForTimeout(150);
-      stops.push(await focusedName(page));
-    }
-    const whole = 'Read about links in text and stand-alone links first.';
-    expect(stops).toEqual(['Back', whole, whole]);
-    // Flutter's focus is on the second link now; the key goes to the
-    // browser, which follows the element's one href.
-    await page.keyboard.press('Enter');
-    await expectOn(page, LINKS[0]);
+  const judge = (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, own);
+  const sequence = (...list) => {
+    let i = 0;
+    return { walkOnce: async () => list[i++], made: () => i };
+  };
+  const right = { stops: screen(...expected), reachedEnd: true };
+  const wrong = { stops: screen('Read about', 'links in text'), reachedEnd: true };
+  const short = { stops: screen('Read about'), reachedEnd: false };
+
+  test('a wrong walk followed by a right one fails, and no second walk is made', async () => {
+    const { walkOnce, made } = sequence(wrong, right);
+    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+    expect(made()).toBe(1);
+  });
+
+  test('an incomplete walk followed by a right one passes on the second', async () => {
+    const { walkOnce, made } = sequence(short, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'complete', walks: 2 });
+    expect(made()).toBe(2);
+  });
+
+  test('three incomplete walks fail', async () => {
+    const { walkOnce } = sequence(short, short, short, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'incomplete', walks: 3 });
+  });
+
+  test('every try of an example walk is logged', async () => {
+    const { walkOnce } = sequence(short, short, right);
+    const logged = [];
+    await runWalks(walkOnce, judge, { log: (n, stops, judged) => logged.push([n, judged.verdict]) });
+    expect(logged).toEqual([[1, 'incomplete'], [2, 'incomplete'], [3, 'complete']]);
   });
 });

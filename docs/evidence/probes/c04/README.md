@@ -178,7 +178,10 @@ said "first." each time. `ProbeC04VOUITests.swift.txt`, run by
   "stand-alone links Link"), and a double tap on the link then opens its
   page.
 - `bad-merged`: with the cursor on the one element, by a tap or by moving
-  forward, a double tap on it opened no page; why was not found.
+  forward, the probe logged "(no page)" three seconds after a double tap on
+  it. That is one observation with no positive control on the element, and
+  nothing is claimed from it; the C04 test records the same step without
+  asserting it.
 
 ## C04's Android suite at CI's size
 

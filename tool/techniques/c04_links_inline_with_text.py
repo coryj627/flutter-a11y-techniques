@@ -75,5 +75,9 @@ VOICEOVER_WEB_METHOD = (
     "VoiceOver's last phrase and the position of its cursor are read over "
     "AppleScript after every move: a move that changes the position, or that "
     "speaks a different phrase, is a stop; two moves in a row that do neither are "
-    "the end. Every stop after the \"Example\" heading is compared, with no retry"
+    "the end. Every stop of every walk is judged (web_tests/vo/c04_vo_walks.js): "
+    "before the \"Example\" heading only the screen's own title and lines, after "
+    "it exactly the expected list; a wrong stop fails the test for good, and only "
+    "a walk that fell short with nothing wrong in it is walked again, up to three "
+    "walks, each shown as its own row (`-walk-<n>`). No runner retries"
 )
