@@ -1,0 +1,50 @@
+// Throwaway native comparison for the C03 probe. Not committed; kept as
+// docs/evidence/probes/c03/ProbeNativeActivity.kt.txt, declared for the run
+// in the debug manifest.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.Activity
+import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.URLSpan
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
+
+class ProbeNativeActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 200, 40, 40) }
+        fun linked(text: String) = SpannableString(text).apply {
+            setSpan(URLSpan("https://example.com/c03"), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        // n01: a TextView whose whole text is one URLSpan, with
+        // LinkMovementMethod, as Linkify or Html.fromHtml leave it.
+        column.addView(TextView(this).apply {
+            text = linked("n01 native link text")
+            movementMethod = LinkMovementMethod.getInstance()
+            textSize = 20f
+            setPadding(0, 40, 0, 40)
+        })
+        // n02: a clickable View whose contentDescription carries the
+        // URLSpan, the shape Flutter's node has with linkUrl.
+        column.addView(View(this).apply {
+            contentDescription = linked("n02 native link description")
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { }
+            minimumHeight = 120
+        })
+        // n03: a TextView with the link span and a click listener of its
+        // own, so the view as a whole is clickable as Flutter's node is.
+        column.addView(TextView(this).apply {
+            text = linked("n03 native clickable link text")
+            textSize = 20f
+            setPadding(0, 40, 0, 40)
+            setOnClickListener { }
+        })
+        setContentView(column)
+    }
+}

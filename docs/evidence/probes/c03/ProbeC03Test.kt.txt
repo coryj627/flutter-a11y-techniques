@@ -1,0 +1,160 @@
+// C03 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c03/ProbeC03Test.kt.txt). Runs against lib/probe.dart
+// (Gradle -Ptarget=lib/probe.dart). probe() dumps every node of each fixture,
+// then performs ACTION_CLICK on the fixture's node and dumps again;
+// talkBackWalk() moves TalkBack focus to each fixture, logging markers that
+// tool/talkback.py's parser reads.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.text.Spanned
+import android.text.style.ClickableSpan
+import android.text.style.URLSpan
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeC03Test : TechniqueTest("C03") {
+    private val tag = "C03PROBE"
+    private val ids = (1..14).map { "p%02d".format(it) }
+
+    private fun launch(fixture: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", "/$fixture")
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.viewIdResourceName == "$fixture-taps" }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("$fixture did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun spans(cs: CharSequence?): String {
+        if (cs !is Spanned) return "-"
+        return cs.getSpans(0, cs.length, Any::class.java).joinToString(",") { s ->
+            when (s) {
+                is URLSpan -> "URLSpan(${s.url})"
+                is ClickableSpan -> "ClickableSpan"
+                else -> s.javaClass.simpleName
+            }
+        }.ifEmpty { "-" }
+    }
+
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = android.graphics.Rect().also { n.getBoundsInScreen(it) }
+        val actions = n.actionList.joinToString(",") { a ->
+            val name = when (a.id) {
+                AccessibilityNodeInfo.ACTION_CLICK -> "click"
+                AccessibilityNodeInfo.ACTION_FOCUS -> "focus"
+                AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS -> "a11yfocus"
+                AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS -> "clra11y"
+                AccessibilityNodeInfo.ACTION_LONG_CLICK -> "longclick"
+                else -> a.id.toString()
+            }
+            if (a.label != null) "$name(${a.label})" else name
+        }
+        return "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"${n.name()}\" descSpans=${spans(n.contentDescription)} " +
+            "text=\"${n.text ?: ""}\" textSpans=${spans(n.text)} hint=\"${n.hintText ?: ""}\" " +
+            "role=\"${n.extras.getCharSequence("AccessibilityNodeInfo.roleDescription") ?: ""}\" " +
+            "clickable=${n.isClickable} focusable=${n.isFocusable} enabled=${n.isEnabled} " +
+            "$r [$actions] children=${n.childCount}"
+    }
+
+    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
+        if (root == null) return
+        out.add(root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), out)
+    }
+
+    private fun appNodes(): List<AccessibilityNodeInfo> {
+        val out = mutableListOf<AccessibilityNodeInfo>()
+        for (w in automation.windows) if (w.type == AccessibilityWindowInfo.TYPE_APPLICATION) collect(w.root, out)
+        return out
+    }
+
+    private fun dump(label: String) {
+        Log.i(tag, "==== $label")
+        for (n in appNodes()) Log.i(tag, describe(n))
+    }
+
+    /** The fixture's own node: the first whose name or text starts with "pNN " and is not its taps line. */
+    private fun fixtureNode(id: String): AccessibilityNodeInfo? =
+        appNodes().firstOrNull { n ->
+            val s = n.name().ifEmpty { n.text?.toString().orEmpty() }
+            s.startsWith("$id ") && !s.startsWith("$id taps")
+        } ?: appNodes().firstOrNull { n -> n.isClickable && n.name() != "Back" }
+
+    @Test
+    fun probe() {
+        for (id in ids) {
+            launch(id)
+            dump("$id start")
+            val node = fixtureNode(id)
+            if (node == null) {
+                Log.i(tag, "$id no fixture node")
+                continue
+            }
+            Log.i(tag, "$id fixture: ${describe(node)}")
+            val ok = node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(2_000)
+            val dest = anyWindowHas { it.name().startsWith("Arrived") || it.text?.startsWith("Arrived") == true }
+            val taps = appNodes().firstOrNull { it.viewIdResourceName == "$id-taps" }?.let { it.name().ifEmpty { it.text?.toString().orEmpty() } }
+            Log.i(tag, "$id ACTION_CLICK returned $ok; destination=$dest; taps=\"$taps\"")
+        }
+    }
+
+    private fun openNative() {
+        val intent = Intent(inst.targetContext, ProbeNativeActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.text?.startsWith("n01") == true }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("native screen did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun nativeNode(id: String): AccessibilityNodeInfo =
+        appNodes().first { (it.text?.toString() ?: it.name()).startsWith(id) }
+
+    @Test
+    fun nativeTree() {
+        openNative()
+        dump("native")
+    }
+
+    @Test
+    fun nativeTalkBack() {
+        assumeTalkBack()
+        openNative()
+        Thread.sleep(6_000)
+        for (id in listOf("n01", "n02", "n03")) {
+            Log.i(talkBackTag, "FOCUS c03-$id")
+            talkBackFocus(id) { nativeNode(id) }
+            Thread.sleep(6_000)
+            Log.i(talkBackTag, "END $id")
+        }
+    }
+
+    @Test
+    fun talkBackWalk() {
+        assumeTalkBack()
+        for (id in ids) {
+            launch(id)
+            Thread.sleep(6_000)
+            Log.i(talkBackTag, "FOCUS c03-$id")
+            talkBackFocus(id) { fixtureNode(id) ?: throw AssertionError("no $id") }
+            Thread.sleep(6_000)
+            Log.i(talkBackTag, "END $id")
+        }
+    }
+}
