@@ -134,8 +134,9 @@ const _mute = 'Mute';
 /// A Material icon button that stays pressed. Flutter has no pressed state,
 /// so `toggled` gives the state: on or off, said in both states on every
 /// platform, with the switch role (docs/flutter-limitations.md, FL-200).
-/// `TestId`'s `MergeSemantics` puts it on the button's own node, which a
-/// Material button keeps apart (FL-040). `isSelected` is left out: alone
+/// `MergeSemantics` puts it on the button's own node, which a Material
+/// button keeps apart (FL-040); `TestId` would do it too, but the example
+/// must not depend on the test's wrapper. `isSelected` is left out: alone
 /// it says nothing while the button is off (bad-selected-only, FL-201),
 /// and beside `toggled` TalkBack says "selected. checked. on." So the
 /// pressed look is drawn here: the filled icon on the primary colour.
@@ -156,16 +157,20 @@ class _GoodIconButtonState extends State<GoodIconButton> {
       builder: (context, changed) => [
         TestId(
           'c02-good-icon-button-bold',
-          child: Semantics(
-            toggled: _on,
-            child: IconButton(
-              tooltip: _bold,
-              style: _pressedLook(context, on: _on),
-              icon: Icon(_on ? Icons.format_bold : Icons.format_bold_outlined),
-              onPressed: () {
-                setState(() => _on = !_on);
-                changed();
-              },
+          child: MergeSemantics(
+            child: Semantics(
+              toggled: _on,
+              child: IconButton(
+                tooltip: _bold,
+                style: _pressedLook(context, on: _on),
+                icon: Icon(
+                  _on ? Icons.format_bold : Icons.format_bold_outlined,
+                ),
+                onPressed: () {
+                  setState(() => _on = !_on);
+                  changed();
+                },
+              ),
             ),
           ),
         ),
@@ -458,16 +463,18 @@ class _BadLabelChangesState extends State<BadLabelChanges> {
       builder: (context, changed) => [
         TestId(
           'c02-bad-label-changes-mute',
-          child: Semantics(
-            toggled: _on,
-            child: IconButton(
-              tooltip: _on ? 'Unmute' : _mute,
-              style: _pressedLook(context, on: _on),
-              icon: Icon(_on ? Icons.volume_off : Icons.volume_up),
-              onPressed: () {
-                setState(() => _on = !_on);
-                changed();
-              },
+          child: MergeSemantics(
+            child: Semantics(
+              toggled: _on,
+              child: IconButton(
+                tooltip: _on ? 'Unmute' : _mute,
+                style: _pressedLook(context, on: _on),
+                icon: Icon(_on ? Icons.volume_off : Icons.volume_up),
+                onPressed: () {
+                  setState(() => _on = !_on);
+                  changed();
+                },
+              ),
             ),
           ),
         ),

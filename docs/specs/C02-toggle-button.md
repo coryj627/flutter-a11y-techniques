@@ -45,12 +45,15 @@ change when its state does.
 
 Flutter has no pressed state ([FL-200](../flutter-limitations.md#fl-200)):
 no `aria-pressed` on the web, no toggle button class on Android, no toggle
-button trait on iOS. The good examples use the nearest states that are
-said in both states: `toggled` (the switch role) or, in `ToggleButtons`,
-`checked` (the checkbox role, a switch on iOS). That meets 4.1.2 as
-written on every platform (section 3), so no platform is recorded as a
+button trait on iOS. The good examples use the nearest states instead:
+`toggled` (the switch role, with the state said on and off on every
+platform) or, in `ToggleButtons`, `checked` (the checkbox role, a switch
+on iOS; TalkBack says no state while it is off,
+[FL-045](../flutter-limitations.md#fl-045)). That meets 4.1.2 as written
+on every platform (section 3), so no platform is recorded as a
 limitation; the role heard is "switch" or "checkbox" and not "toggle
-button".
+button". The native toggle buttons nearest to it are read as switches by
+TalkBack and by VoiceOver on iOS too (section 7).
 
 ## 3. WCAG 2.2 success criteria
 
@@ -104,7 +107,7 @@ that a control worked. Every toggle button starts off.
 
 | Slug | Variant | What it shows | Mechanism | Reqs |
 | --- | --- | --- | --- | --- |
-| `good-icon-button` | Material | A "Bold" icon button that stays pressed | `Semantics(toggled:)` around an `IconButton(tooltip: 'Bold')`, merged with its node by `TestId`; the pressed look (the filled icon on the primary colour) drawn with `style`, and `isSelected` left out | R1, R3, R4, R5 |
+| `good-icon-button` | Material | A "Bold" icon button that stays pressed | `Semantics(toggled:)` around an `IconButton(tooltip: 'Bold')`, inside `MergeSemantics`, which puts it on the button's node; the pressed look (the filled icon on the primary colour) drawn with `style`, and `isSelected` left out | R1, R3, R4, R5 |
 | `good-toggle-buttons` | Material | Bold, Italic, and Underline, each on or off | `ToggleButtons(isSelected:)`, each icon with a `semanticLabel` | R1, R3, R4, R5 |
 | `good-cupertino` | Cupertino | A "Mute" button that stays pressed | `Semantics(toggled:, enabled: true)` around a `CupertinoButton`, with an action for `ButtonActivateIntent` ([FL-002](../flutter-limitations.md#fl-002)) | R1, R3, R4, R5 |
 | `good-custom` | Widgets | The same drawn by hand | `Semantics(button: true, toggled:, enabled: true, label:, onTap:)`; Space and Enter through `FocusableActionDetector` | R1, R3, R4, R5 |
@@ -182,11 +185,16 @@ The probe that came first is in [evidence/probes/c02](../evidence/probes/c02/).
   in the engine source or in any of the 21 probe fixtures. What a toggle
   button can have is `selected`, `checked`, or `toggled`.
 - **`toggled` is said in both states on every platform**, as a switch:
-  "Bold off switch" and "Bold on switch" on the web, "Bold Switch button off" and "… on" on iOS,
-  "off. Bold. Switch" and "checked. on. Bold. Switch" on Android
-  ([FL-100](../flutter-limitations.md#fl-100) for the extra "checked").
-  Natively, TalkBack reads an `android.widget.ToggleButton` as a switch
-  too ("n02 Bold. Switch"), with no state word.
+  "Bold off switch" and "Bold on switch" on the web, "Bold Switch button
+  off" and "… on" on iOS, "off. Bold. Switch" and "checked. on. Bold.
+  Switch" on Android ([FL-100](../flutter-limitations.md#fl-100) for the
+  extra "checked"). The native toggle buttons nearest to it are read as
+  switches too, with no word for the state in the readings recorded:
+  TalkBack reads an `android.widget.ToggleButton` "n02 Bold. Switch", and
+  VoiceOver on iOS reads a UIKit button with the toggle button trait "n02
+  Bold Switch button" (probe README, "Native controls"). On the web
+  VoiceOver's reading of an HTML button with `aria-pressed` is the
+  `control-html` row of the transcript.
 - **The Material toggles use `selected` and `checked`.**
   `IconButton(isSelected:)` and a multi-select `SegmentedButton` are a
   button that is selected or not, which is silent while off
@@ -204,17 +212,18 @@ The probe that came first is in [evidence/probes/c02](../evidence/probes/c02/).
   `isSelected` out.
 - **`toggled` around a Material button needs `MergeSemantics`**: alone it
   makes a second node with no name (probe, fixtures t04 and t18; the same
-  mechanism as [FL-040](../flutter-limitations.md#fl-040)). `TestId`
-  merges it. Around a `CupertinoButton` it joins without help, and needs
-  `enabled: true` ([FL-033](../flutter-limitations.md#fl-033),
+  mechanism as [FL-040](../flutter-limitations.md#fl-040)); the examples
+  put `MergeSemantics` round it. Around a `CupertinoButton` it joins
+  without help, and needs `enabled: true`
+  ([FL-033](../flutter-limitations.md#fl-033),
   [FL-001](../flutter-limitations.md#fl-001)).
 - **Enter does not change a `CupertinoButton` on the web**
   ([FL-002](../flutter-limitations.md#fl-002)); APG requires it for a
   toggle button, so `good-cupertino` adds the action, and Space and Enter
   both work on every example.
 - **A name that changes with the state** changes on every platform and is
-  heard with the new state: "Unmute Switch button on" on iOS, "checked.
-  on. Unmute. Switch" on Android (first run).
+  heard with the new state: "Unmute on switch" on the web, "Unmute Switch
+  button on" on iOS, "checked. on. Unmute. Switch" on Android.
 
 **Not done yet.** A disabled toggle button is in the probe (fixture t16:
 marked disabled on all three, the state kept; VoiceOver on iOS did not

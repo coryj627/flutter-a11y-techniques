@@ -1333,12 +1333,13 @@ yet), **Fixed in x.y** (verified on that version).
   button's node has no toggled state, and a second node with the state and
   no name is made. On the web it is a `role="switch"` around the button,
   named by the button's text inside it; on Android a `Switch` with no
-  name with the same bounds as the `Button`, which has no state; on iOS a switch with no label at
-  the button's place, which VoiceOver did not stop on (it read only "t04
-  Bold Button"). Inside `MergeSemantics` both join the button's node
-  (fixtures t20 and t21); C02's `good-icon-button` and
-  `bad-label-changes` get that from `TestId`. The same wrapper around a
-  `CupertinoButton` reaches it without help (fixture t13).
+  name with the same bounds as the `Button`, which has no state; on iOS
+  a switch with no label at the button's place, which VoiceOver did not
+  stop on (it read only "t04 Bold Button"). Inside `MergeSemantics` both
+  join the button's node (fixtures t20 and t21); C02's
+  `good-icon-button` and `bad-label-changes` put `MergeSemantics` round
+  it. The same wrapper around a `CupertinoButton` reaches it without help
+  (fixture t13).
 - Upstream issue: not searched yet (D25). The container is deliberate; a
   `hint` (or `semanticHint`) parameter on the buttons has not been added.
 
