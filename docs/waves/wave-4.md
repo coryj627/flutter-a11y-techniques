@@ -110,26 +110,42 @@ helpers were shared in wave 0, has not been done.
   equal.
 - Keep text in the app no longer than it has to be. When a review asks for
   more words in an example, run it at CI's screen size before pushing.
-- The changes made to tests after CI-only failures this wave were of
-  six kinds:
-  - a bounded wait for the expected state in place of a single reading
-    (I01's tap point in 177; F06's end of the page in 188);
-  - a different reading: F06 reads the whole page, scrolling, where it
-    read one screen (187);
-  - a longer wait and one more try of a setup step: F03 waits 20 seconds
+- Tests were changed after CI-only failures in the ways below. The list
+  is what the specs and the pull requests named in these notes record; a
+  change recorded nowhere is not in it. A passing run shows only what the
+  changed test still checks.
+  - A bounded wait for the expected state in place of a single reading:
+    I01's tap point (177); F06's end of the page (188).
+  - A longer wait: I08's iOS waits for a closed layer and for a screen
+    opened by its link, ten and then 30 seconds (181).
+  - A different reading: F06 reads the whole page, scrolling, where it
+    read one screen (187). I02's Android tests scroll to any node out of
+    view (174).
+  - A longer wait and one more try of a setup step: F03 waits 20 seconds
     for the keyboard and taps the field once more if no keyboard window
-    has come (189);
-  - a fixed pause: I03 waits a second after the dialog's first stop
-    before Tab (189);
-  - a skip by version, which gives up coverage on CI: I02's Shift+Tab,
+    has come (189).
+  - A fixed pause: I03 waits a second after the dialog's first stop
+    before Tab (189).
+  - A check added before the key under test: I08's iOS tests name the
+    stop with Space before Escape is sent (181).
+  - A different input, which gives up coverage on every iOS version:
+    I04's iOS tests type lower-case text one key at a time, and go back
+    to the strip by Tab round and not by Shift+Tab, after capitals
+    arrived in lower case and Shift+Tab seemed not to come back on CI
+    (180). Shift is sent only for Shift+F. I04's Shift+Tab is tested on
+    the web and Android.
+  - A skip by version, which gives up coverage on CI: I02's Shift+Tab,
     I04's Control+F, and I08's Escape tests below iOS 27.
-  - a change to what a test accepts: I04's two Android tests that type
+  - A change to what a test accepts: I04's two Android tests that type
     in `bad-page-shortcut`'s note (180). On CI, "Leafy" typed there gave
     "Leay"; the local emulator kept every f. The CI log did not record
     the favourites line, so why the f was lost was not seen. The tests
     now accept either result, need the two readings to agree (an f typed
     or taken, never both or neither), and log which. A pass no longer
     shows which of the two happened.
+  - An example left out: V14 has no text field, because on CI's
+    emulator, which has no hardware keyboard, a focused field brings up
+    the on-screen keyboard over the example.
 - When a test fails on CI and passes here, keep the log lines in the
   technique's probe folder and cite them from the spec.
 
