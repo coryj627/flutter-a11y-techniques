@@ -1,0 +1,99 @@
+== c02_toggle_button_vo-voiceover-reads-control-html-chromium
+# Error details
+
+```
+Error: control-html
+
+expect(received).toEqual(expected) // deep equality
+
+- Expected  - 1
++ Received  + 0
+
+  Array [
+    "",
+-   "Bold toggle button",
+    "Italic selected toggle button",
+    "Underline current item button",
+    "Changes: 0",
+    "end of main",
+  ]
+```
+
+== c02_toggle_button_vo-voiceover-reads-control-html-chromium-retry1
+# Error details
+
+```
+Error: control-html: reached the example
+
+expect(received).toBeGreaterThanOrEqual(expected)
+
+Expected: >= 0
+Received:    -1
+```
+
+== c02_toggle_button_vo-voiceover-reads-control-html-chromium-retry2
+# Error details
+
+```
+Error: control-html: reached the example
+
+expect(received).toBeGreaterThanOrEqual(expected)
+
+Expected: >= 0
+Received:    -1
+```
+
+== c02_toggle_button_vo-voiceover-reads-control-html-webkit
+# Error details
+
+```
+Error: control-html
+
+expect(received).toEqual(expected) // deep equality
+
+- Expected  - 1
++ Received  + 0
+
+  Array [
+    "",
+-   "Bold toggle button",
+    "Italic selected toggle button",
+    "Underline current item button",
+    "Changes: 0",
+    "end of main",
+  ]
+```
+
+== c02_toggle_button_vo-voiceover-reads-control-html-webkit-retry1
+# Error details
+
+```
+Error: control-html: reached the example
+
+expect(received).toBeGreaterThanOrEqual(expected)
+
+Expected: >= 0
+Received:    -1
+```
+
+== c02_toggle_button_vo-voiceover-reads-control-html-webkit-retry2
+# Error details
+
+```
+Error: control-html
+
+expect(received).toEqual(expected) // deep equality
+
+- Expected  - 1
++ Received  + 0
+
+  Array [
+    "",
+-   "Bold toggle button",
+    "Italic selected toggle button",
+    "Underline current item button",
+    "Changes: 0",
+    "end of main",
+  ]
+```
+

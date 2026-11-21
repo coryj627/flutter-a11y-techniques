@@ -1,0 +1,47 @@
+== simulator:     iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+2026-11-21 00:02:00.942 xcodebuild[44576:31641087] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C02PROBE TREE native before
+C02PROBE EL type=9 label="n00 Start" value=Optional() enabled=true selected=false frame=(20.000000000000007, 102.00000000000001, 92.66666666666669, 29.999999999999986)
+C02PROBE EL type=40 label="n01 Bold" value=Optional() enabled=true selected=false frame=(20.000000000000007, 144.0, 92.66666666666669, 30.0)
+C02PROBE EL type=40 label="n02 Bold" value=Optional() enabled=true selected=true frame=(20.000000000000007, 186.0, 92.66666666666669, 30.0)
+C02PROBE EL type=9 label="n03 Bold" value=Optional() enabled=true selected=false frame=(20.000000000000007, 228.0, 92.66666666666669, 34.333333333333314)
+C02PROBE EL type=9 label="n04 Bold" value=Optional() enabled=true selected=true frame=(20.000000000000007, 274.3333333333333, 92.66666666666669, 30.0)
+C02PROBE EL type=40 label="n05 Bold" value=Optional() enabled=true selected=false frame=(20.000000000000007, 316.3333333333333, 92.66666666666669, 30.0)
+C02PROBE EL type=48 label="n00 Start" value=Optional() enabled=true selected=false frame=(34.00000000000001, 108.00000000000001, 65.0, 18.0)
+C02PROBE EL type=48 label="n01 Bold" value=Optional() enabled=true selected=false frame=(36.333333333333336, 150.0, 59.99999999999999, 18.0)
+C02PROBE EL type=48 label="n02 Bold" value=Optional() enabled=true selected=false frame=(35.33333333333334, 192.0, 61.999999999999986, 18.0)
+C02PROBE EL type=48 label="n03 Bold" value=Optional() enabled=true selected=false frame=(32.00000000000001, 235.0, 68.66666666666669, 20.333333333333343)
+C02PROBE EL type=48 label="n04 Bold" value=Optional() enabled=true selected=false frame=(35.33333333333334, 280.3333333333333, 61.999999999999986, 18.0)
+C02PROBE EL type=48 label="n05 Bold" value=Optional() enabled=true selected=false frame=(35.33333333333334, 322.3333333333333, 61.999999999999986, 18.0)
+C02PROBE VO native before
+C02PROBE VO n01 Bold Switch button Double tap to toggle setting.
+C02PROBE VO selected n02 Bold Switch button Double tap to toggle setting.
+C02PROBE VO n03 Bold Button
+C02PROBE VO selected n04 Bold Button
+C02PROBE VO n05 Bold Switch button Double tap to toggle setting.
+C02PROBE VO n05 Bold Switch button Double tap to toggle setting.
+C02PROBE VO n05 Bold Switch button Double tap to toggle setting.
+C02PROBE VO n05 Bold Switch button Double tap to toggle setting.
+C02PROBE TREE native after n01 and n03 tapped
+C02PROBE EL type=9 label="n00 Start" value=Optional() enabled=true selected=false frame=(20.000000000000007, 102.00000000000001, 92.66666666666669, 29.999999999999986)
+C02PROBE EL type=40 label="n01 Bold" value=Optional() enabled=true selected=true frame=(20.000000000000007, 144.0, 92.66666666666669, 30.0)
+C02PROBE EL type=40 label="n02 Bold" value=Optional() enabled=true selected=true frame=(20.000000000000007, 186.0, 92.66666666666669, 30.0)
+C02PROBE EL type=9 label="n03 Bold" value=Optional() enabled=true selected=true frame=(20.000000000000007, 228.0, 92.66666666666669, 34.333333333333314)
+C02PROBE EL type=9 label="n04 Bold" value=Optional() enabled=true selected=true frame=(20.000000000000007, 274.3333333333333, 92.66666666666669, 30.0)
+C02PROBE EL type=40 label="n05 Bold" value=Optional() enabled=true selected=false frame=(20.000000000000007, 316.3333333333333, 92.66666666666669, 30.0)
+C02PROBE EL type=48 label="n00 Start" value=Optional() enabled=true selected=false frame=(34.00000000000001, 108.00000000000001, 65.0, 18.0)
+C02PROBE EL type=48 label="n01 Bold" value=Optional() enabled=true selected=false frame=(36.333333333333336, 150.0, 59.99999999999999, 18.0)
+C02PROBE EL type=48 label="n02 Bold" value=Optional() enabled=true selected=false frame=(35.33333333333334, 192.0, 61.999999999999986, 18.0)
+C02PROBE EL type=48 label="n03 Bold" value=Optional() enabled=true selected=false frame=(32.00000000000001, 235.0, 68.66666666666669, 20.333333333333343)
+C02PROBE EL type=48 label="n04 Bold" value=Optional() enabled=true selected=false frame=(35.33333333333334, 280.3333333333333, 61.999999999999986, 18.0)
+C02PROBE EL type=48 label="n05 Bold" value=Optional() enabled=true selected=false frame=(35.33333333333334, 322.3333333333333, 61.999999999999986, 18.0)
+C02PROBE VO native after n01 and n03 tapped
+C02PROBE VO selected n01 Bold Switch button Double tap to toggle setting.
+C02PROBE VO selected n02 Bold Switch button Double tap to toggle setting.
+C02PROBE VO selected n03 Bold Button
+C02PROBE VO selected n04 Bold Button
+C02PROBE VO n05 Bold Switch button Double tap to toggle setting.
+C02PROBE VO n05 Bold Switch button Double tap to toggle setting.
+C02PROBE VO n05 Bold Switch button Double tap to toggle setting.
+C02PROBE VO n05 Bold Switch button Double tap to toggle setting.
+Test Case '-[RunnerUITests.C02ProbeUITests testNative]' passed (47.651 seconds).

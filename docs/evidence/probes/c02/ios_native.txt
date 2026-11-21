@@ -1,0 +1,21 @@
+== simulator:     iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+2026-11-20 19:57:28.006 xcodebuild[49172:29618925] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a27a10c0c83b4d8a2/ios/RunnerUITests/C02ProbeUITests.swift:45: error: -[RunnerUITests.C02ProbeUITests testNative] : XCTAssertTrue failed
+C02PROBE TREE native before
+C02PROBE EL type=40 label="n01 Bold" value=Optional() enabled=true selected=false frame=(20.000000000000007, 102.00000000000001, 92.66666666666669, 29.999999999999986)
+C02PROBE EL type=40 label="n02 Bold" value=Optional() enabled=true selected=false frame=(20.000000000000007, 144.0, 92.66666666666669, 30.0)
+C02PROBE EL type=9 label="n03 Bold" value=Optional() enabled=true selected=false frame=(20.000000000000007, 186.0, 92.66666666666669, 34.33333333333334)
+C02PROBE EL type=9 label="n04 Bold" value=Optional() enabled=true selected=true frame=(20.000000000000007, 232.33333333333337, 92.66666666666669, 30.0)
+C02PROBE EL type=48 label="n01 Bold" value=Optional() enabled=true selected=false frame=(36.333333333333336, 108.00000000000001, 59.99999999999999, 18.0)
+C02PROBE EL type=48 label="n02 Bold" value=Optional() enabled=true selected=false frame=(35.33333333333334, 150.0, 61.999999999999986, 18.0)
+C02PROBE EL type=48 label="n03 Bold" value=Optional() enabled=true selected=false frame=(32.00000000000001, 193.0, 68.66666666666669, 20.333333333333343)
+C02PROBE EL type=48 label="n04 Bold" value=Optional() enabled=true selected=false frame=(35.33333333333334, 238.33333333333337, 61.999999999999986, 18.0)
+C02PROBE VO native before
+C02PROBE VO n02 Bold Switch button Double tap to toggle setting.
+C02PROBE VO n03 Bold Button
+C02PROBE VO selected n04 Bold Button
+C02PROBE VO selected n04 Bold Button
+C02PROBE VO selected n04 Bold Button
+C02PROBE VO selected n04 Bold Button
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a27a10c0c83b4d8a2/ios/RunnerUITests/C02ProbeUITests.swift:50: error: -[RunnerUITests.C02ProbeUITests testNative] : Failed to tap "n01 Bold" Button: No matches found for Elements matching predicate '"n01 Bold" IN identifiers' from input {(
+Test Case '-[RunnerUITests.C02ProbeUITests testNative]' failed (56.017 seconds).

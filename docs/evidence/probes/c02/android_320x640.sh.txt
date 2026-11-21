@@ -1,0 +1,18 @@
+#!/bin/sh
+# C02's Android tree tests at CI's emulator size, under tool/with_devices.py.
+# Run from the worktree root. Sets the emulator to 320 by 640 at 160 dpi,
+# runs C02ToggleButtonTest (talkBackWalk skips itself with TalkBack off),
+# and puts the size and density back, whatever happened.
+restore() {
+  adb shell wm size reset
+  adb shell wm density reset
+  echo "== restored: $(adb shell wm size | tr '\n' ' ') $(adb shell wm density | tr '\n' ' ')"
+}
+trap restore EXIT INT TERM
+adb shell wm size 320x640
+adb shell wm density 160
+echo "== set: $(adb shell wm size | tr '\n' ' ') $(adb shell wm density | tr '\n' ' ')"
+cd android || exit 1
+./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.C02ToggleButtonTest \
+  2>&1 | grep -E "C02ToggleButtonTest|tests completed|FAILED|BUILD|Tests on|AssertionError|expected" | head -40

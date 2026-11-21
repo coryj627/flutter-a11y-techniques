@@ -303,13 +303,22 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['a headingless walk with a wrong reading', [...own, 'links in text'], false, 'wrong'],
     ['a headingless walk with an empty reading', [...own, ''], false, 'wrong'],
     ['a headingless walk with a stop that is not the screen\'s', ['Back button'], false, 'wrong'],
+    ['a headingless walk with a screen stop out of its place', [own[0], 'Read about', own[1]], false, 'wrong'],
     ['a headingless walk of the screen\'s own stops only', [...own], false, 'incomplete'],
     ['a headingless walk with right readings', [...own, ...expected], true, 'incomplete'],
+    ['a headingless walk with a right reading only', ['Read about'], false, 'incomplete'],
     ['a wrong reading before the heading', ['link links in text', EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['the screen\'s own stops out of their order', [own[1], own[0], EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    // WebKit read the screen's level 1 heading as an empty phrase in C02
+    // (its review round 4): allowed as the first stop only, in a walk that
+    // read the "Example" heading.
     ['an empty first stop for the title', ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'complete'],
     ['an empty first stop and no heading', ['', ...own.slice(1), ...expected], true, 'wrong'],
+    ['an empty first stop alone', [''], false, 'wrong'],
+    ['an empty stop after the title', [own[0], '', EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['an empty stop just before the heading', [...own, '', EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['two empty stops before the heading', ['', '', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['an empty first stop and the title read as well', ['', ...own, EXAMPLE_HEADING, ...expected], true, 'wrong'],
   ];
   for (const [what, stops, reachedEnd, verdict] of cases) {
     test(`${what}: ${verdict}`, () => {
@@ -334,6 +343,17 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     const { walkOnce, made } = sequence(wrong, right);
     expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
     expect(made()).toBe(1);
+  });
+
+  test('a wrong headingless walk followed by a right one fails, and no second walk is made', async () => {
+    const { walkOnce, made } = sequence({ stops: [...own, 'links in text'], reachedEnd: true }, right);
+    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+    expect(made()).toBe(1);
+  });
+
+  test('an empty walk followed by a right one passes on the second', async () => {
+    const { walkOnce } = sequence({ stops: [], reachedEnd: false }, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'complete', walks: 2 });
   });
 
   test('an incomplete walk followed by a right one passes on the second', async () => {

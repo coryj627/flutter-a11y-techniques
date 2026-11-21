@@ -1,0 +1,25 @@
+// Throwaway native comparison for the C02 probe. Not committed; kept as
+// docs/evidence/probes/c02/ProbeNativeActivity.kt.txt.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.Activity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ToggleButton
+
+class ProbeNativeActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 200, 40, 40) }
+        // android.widget.ToggleButton, with the same text on and off.
+        column.addView(ToggleButton(this).apply { textOn = "n01 Bold"; textOff = "n01 Bold"; isChecked = false })
+        column.addView(ToggleButton(this).apply { textOn = "n02 Bold"; textOff = "n02 Bold"; isChecked = true })
+        // A plain Button marked selected, and one not, as Flutter's `selected` is.
+        column.addView(Button(this).apply { text = "n03 Bold"; isSelected = true })
+        column.addView(Button(this).apply { text = "n04 Bold"; isSelected = false })
+        // A ToggleButton that is clicked during the run.
+        column.addView(ToggleButton(this).apply { textOn = "n05 Bold"; textOff = "n05 Bold"; isChecked = false })
+        setContentView(column)
+    }
+}

@@ -77,7 +77,10 @@ function outOfPlace(content, expected) {
  *   try it is in. Before the heading, in a walk that read it, only the
  *   screen's own stops may stand, each at most once and in their order; the
  *   one exception is an empty phrase as the first stop, in the place of the
- *   screen's level 1 heading, which WebKit was seen to read so in C02.
+ *   screen's level 1 heading, which WebKit was seen to read so in C02, and
+ *   only in a walk that read the "Example" heading. A walk that did not
+ *   read the heading is judged after the run of the screen's own stops it
+ *   began with, and an empty stop there is "wrong" (fail closed).
  * - "complete": the heading was read, the end was reached, and the stops
  *   after the heading are exactly `expected`.
  * - "incomplete": a walk that fell short with nothing unexplained in it: an
@@ -97,6 +100,13 @@ export function judgeExampleWalk(stops, reachedEnd, expected, screen = []) {
       from++;
     }
   } else {
+    // Before the heading, only the screen's own stops, in their order. The
+    // first of them, the screen's level 1 heading, may be read as an empty
+    // phrase: WebKit did so on three C02 screens in one run (C02's review
+    // round 4, docs/evidence/probes/c02/voiceover-web-round4-fail.md.txt),
+    // for a reason not known. Only as the first stop, in that heading's
+    // place, and only in a walk that read the "Example" heading; in a walk
+    // that did not read it, an empty stop is "wrong".
     let lead = stops.slice(0, heading);
     let own = screen;
     if (lead[0] === '') {

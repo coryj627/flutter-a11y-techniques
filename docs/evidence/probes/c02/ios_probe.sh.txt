@@ -1,0 +1,13 @@
+#!/bin/sh
+# C02 probe on iOS, under tool/with_devices.py. Run from the worktree root,
+# after `fvm flutter build ios --simulator --debug -t lib/probe.dart` and
+# `xcodebuild build-for-testing` into build/ios_uitest. VoiceOver is turned
+# on only inside each walk, through XCUIVoiceOverService, and off after it.
+cd ios || exit 1
+echo "== simulator: $(xcrun simctl list devices booted | grep -E 'Booted' | head -1)"
+xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+  -destination "platform=iOS Simulator,name=iPhone 17" \
+  -only-testing:"RunnerUITests/C02ProbeUITests/testProbe" \
+  -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "C02PROBE|error:|passed|failed|skipped" | grep -v "Test Suite"
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

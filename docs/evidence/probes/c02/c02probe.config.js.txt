@@ -1,0 +1,19 @@
+// Throwaway: serves the C02 probe build (build/web_probe) for
+// c02_probe.spec.js. Not committed.
+import { defineConfig, devices } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = Number(process.env.C02_PORT ?? 29871);
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: /c02_probe\.spec\.js$/,
+  reporter: 'list',
+  timeout: 600_000,
+  use: { baseURL: `http://127.0.0.1:${port}` },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  ],
+  webServer: webServer('build/web_probe', port),
+});
