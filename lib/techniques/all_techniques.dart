@@ -2,6 +2,7 @@
 // lib/techniques/. Do not edit: run dart run tool/technique_list.dart.
 import '../catalog/technique.dart';
 import 'c01_button/c01_button.dart';
+import 'c02_toggle_button/c02_toggle_button.dart';
 import 'f01_text_fields/f01_text_fields.dart';
 import 'f02_input_instructions/f02_input_instructions.dart';
 import 'f03_keyboard_types/f03_keyboard_types.dart';
@@ -32,6 +33,7 @@ import 'v14_focus_indicators/v14_focus_indicators.dart';
 /// The app and the Widgetbook show them in catalog order.
 final List<Technique> allTechniques = [
   c01Button,
+  c02ToggleButton,
   f01TextFields,
   f02InputInstructions,
   f03KeyboardTypes,

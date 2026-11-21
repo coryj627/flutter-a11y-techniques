@@ -1,0 +1,158 @@
+// L3 (tree) and L4 (VoiceOver) for C02 Toggle button on iOS.
+// Spec: docs/specs/C02-toggle-button.md.
+//
+// A Flutter node with a toggled or a checked state is backed by a native
+// UISwitch on iOS: XCUITest sees `.switch` with the value "0" or "1". A
+// button with `selected` is a `.button` whose isSelected follows it.
+import XCTest
+
+final class C02ToggleButtonUITests: XCTestCase, CountedTechniqueUITest {
+  static let technique = "C02"
+  static let countLabel = "Changes"
+  let app = XCUIApplication()
+
+  override func setUp() {
+    continueAfterFailure = true
+  }
+
+  /// Opens an example and waits for its count.
+  private func open(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
+    open(slug, waitingFor: countElement(slug), file: file, line: line)
+  }
+
+  private func value(_ element: XCUIElement) -> String { element.value as? String ?? "" }
+
+  /// Waits up to 5 seconds for `read` of the element to be `expected`.
+  private func expect<T: Equatable>(
+    _ element: @autoclosure () -> XCUIElement, _ read: (XCUIElement) -> T, _ expected: T, _ what: String,
+    file: StaticString = #filePath, line: UInt = #line
+  ) {
+    let deadline = Date().addingTimeInterval(5)
+    while read(element()) != expected && Date() < deadline { usleep(100_000) }
+    XCTAssertEqual(read(element()), expected, what, file: file, line: line)
+  }
+
+  // slug, identifier, label. Each starts off; every one is a switch here.
+  private let toggles: [(slug: String, id: String, label: String)] = [
+    ("good-icon-button", "c02-good-icon-button-bold", "Bold"),
+    ("good-toggle-buttons", "c02-good-toggle-buttons-bold", "Bold"),
+    ("good-toggle-buttons", "c02-good-toggle-buttons-italic", "Italic"),
+    ("good-toggle-buttons", "c02-good-toggle-buttons-underline", "Underline"),
+    ("good-cupertino", "c02-good-cupertino-mute", "Mute"),
+    ("good-custom", "c02-good-custom-mute", "Mute"),
+  ]
+
+  func testTogglesHaveTheirNameAndStateInBothStates() {
+    for toggle in toggles {
+      open(toggle.slug)
+      let element = element(toggle.id)
+      XCTAssertEqual(element.elementType, .switch, toggle.id)
+      XCTAssertEqual(element.label, toggle.label, toggle.id)
+      XCTAssertEqual(value(element), "0", toggle.id)
+      // Enabled: good-cupertino and good-custom have enabled: true, without
+      // which they would not be (FL-033).
+      XCTAssertTrue(element.isEnabled, toggle.id)
+      XCTAssertEqual(elements(labelled: toggle.label).count, 1, toggle.id)
+      element.tap()
+      expect(self.element(toggle.id), value, "1", "\(toggle.id) after one tap")
+      XCTAssertEqual(self.element(toggle.id).label, toggle.label, toggle.id)
+      self.element(toggle.id).tap()
+      expect(self.element(toggle.id), value, "0", "\(toggle.id) after two taps")
+      expectCount(toggle.slug, 2)
+    }
+  }
+
+  func testBadSelectedOnlyIsAButtonThatIsSelectedOrNot() {
+    open("bad-selected-only")
+    let id = "c02-bad-selected-only-bold"
+    XCTAssertEqual(app.switches.count, 0)
+    for (taps, on) in [(0, false), (1, true), (2, false)] {
+      expect(self.element(id), { $0.isSelected }, on, "selected after \(taps) taps")
+      XCTAssertEqual(element(id).elementType, .button)
+      XCTAssertEqual(element(id).label, "Bold")
+      XCTAssertEqual(value(element(id)), "")
+      expectCount("bad-selected-only", taps)
+      if taps < 2 { element(id).tap() }
+    }
+  }
+
+  func testBadNoStateIsAButtonWithNoState() {
+    open("bad-no-state")
+    let id = "c02-bad-no-state-mute"
+    XCTAssertEqual(app.switches.count, 0)
+    for taps in 0...2 {
+      expectCount("bad-no-state", taps)
+      XCTAssertEqual(element(id).elementType, .button)
+      XCTAssertEqual(element(id).label, "Mute")
+      XCTAssertEqual(value(element(id)), "")
+      XCTAssertFalse(element(id).isSelected)
+      if taps < 2 { element(id).tap() }
+    }
+  }
+
+  func testBadLabelChangesHasALabelThatChangesWithTheState() {
+    open("bad-label-changes")
+    let id = "c02-bad-label-changes-mute"
+    XCTAssertEqual(element(id).elementType, .switch)
+    XCTAssertEqual(element(id).label, "Mute")
+    XCTAssertEqual(value(element(id)), "0")
+    element(id).tap()
+    expect(self.element(id), value, "1", id)
+    XCTAssertEqual(element(id).label, "Unmute")
+    element(id).tap()
+    expect(self.element(id), { $0.label }, "Mute", "\(id) after two taps")
+    expectCount("bad-label-changes", 2)
+  }
+
+  // L4. Everything VoiceOver says between the "Example" heading and the
+  // change count, which is the last element of every example: once as the
+  // example opens, and again after `changed` has been tapped once, with
+  // VoiceOver off. Both walks are VoiceOverWalk.forward, from the top of
+  // the screen, so the second reads each control in its new state as
+  // VoiceOver arrives on it, not the moment it changes.
+  private static let off = "Switch button off Double tap to toggle setting."
+  private static let on = "Switch button on Double tap to toggle setting."
+  private let speech: [(slug: String, changed: String, before: [String], after: [String])] = [
+    ("good-icon-button", "c02-good-icon-button-bold", ["Bold \(off)"], ["Bold \(on)"]),
+    // A checked state is a switch on iOS too (FL-035).
+    ("good-toggle-buttons", "c02-good-toggle-buttons-bold",
+     ["Bold \(off)", "Italic \(off)", "Underline \(off)"],
+     ["Bold \(on)", "Italic \(off)", "Underline \(off)"]),
+    ("good-cupertino", "c02-good-cupertino-mute", ["Mute \(off)"], ["Mute \(on)"]),
+    ("good-custom", "c02-good-custom-mute", ["Mute \(off)"], ["Mute \(on)"]),
+    // Bad examples: the defect must be audible. Off is read as a plain
+    // button; on is "selected" (FL-201).
+    ("bad-selected-only", "c02-bad-selected-only-bold", ["Bold Button"], ["selected Bold Button"]),
+    ("bad-no-state", "c02-bad-no-state-mute", ["Mute Button"], ["Mute Button"]),
+    ("bad-label-changes", "c02-bad-label-changes-mute", ["Mute \(off)"], ["Unmute \(on)"]),
+  ]
+
+  func testVoiceOverSpeech() throws {
+    // XCUIVoiceOverService is in the iOS 27 SDK (Xcode 27, Swift 6.4). With an
+    // older Xcode the symbol does not exist, so an availability check alone
+    // would not compile; the body is compiled only where the SDK has it.
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    for example in speech {
+      open(example.slug)
+      let before = try VoiceOverWalk.forward(voiceOver, toUtteranceStartingWith: "Changes: 0")
+      let beforeContent = Self.exampleContent(before)
+      print("C02VO \(example.slug) | \((beforeContent ?? before).joined(separator: " / "))")
+      XCTAssertNotNil(beforeContent, "\(example.slug): the walk did not run from the heading to the count: \(before)")
+      XCTAssertEqual(beforeContent, example.before, example.slug)
+      element(example.changed).tap()
+      expectCount(example.slug, 1)
+      // The walk must end at the new count, so a walk that read the screen
+      // before the change cannot pass.
+      let after = try VoiceOverWalk.forward(voiceOver, toUtteranceStartingWith: "Changes: 1")
+      let afterContent = Self.exampleContent(after)
+      print("C02VO \(example.slug)-changed | \((afterContent ?? after).joined(separator: " / "))")
+      XCTAssertNotNil(afterContent, "\(example.slug) after: the walk did not run from the heading to the count: \(after)")
+      XCTAssertEqual(afterContent, example.after, "\(example.slug) after one change")
+    }
+    #else
+    throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
+    #endif
+  }
+}
