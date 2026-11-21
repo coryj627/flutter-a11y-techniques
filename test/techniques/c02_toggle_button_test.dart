@@ -110,6 +110,20 @@ void main() {
           await expectLater(tester, meetsGuideline(textContrastGuideline));
           handle.dispose();
         });
+
+        testWidgets('$slug meets the guidelines once its control is on '
+            '(${brightness.name})', (tester) async {
+          final handle = tester.ensureSemantics();
+          await _open(tester, slug, brightness: brightness);
+          final (_, id, _, kind) = _toggles.firstWhere((t) => t.$1 == slug);
+          await tester.tap(byId(id));
+          await tester.pumpAndSettle();
+          expect(_isOn(id, kind), isTrue);
+          await expectLater(tester, meetsGuideline(textContrastGuideline));
+          await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+          await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+          handle.dispose();
+        });
       }
 
       testWidgets('$slug does not overflow at 200% text on a phone', (

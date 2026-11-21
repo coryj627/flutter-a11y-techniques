@@ -212,7 +212,15 @@ the web has a toggle button role, which Flutter cannot give.
 emulator at 320 by 640 and 160 dpi, CI's size, and put the size and
 density back afterwards: `android_320x640.txt`. The build passed; Gradle
 prints only the skipped test (`talkBackWalk`, which skips itself with
-TalkBack off), so a pass is "BUILD SUCCESSFUL" with no failure.
+TalkBack off), so a pass is "BUILD SUCCESSFUL" with no failure. It was
+run again after `good-cupertino`'s colours changed in the second review
+round: `android_320x640_round2.txt`.
+
+## Contrast with the control on
+
+`contrast_on_test.dart.txt` (a throwaway widget test) measured each good
+example's control after one activation, in light and dark mode, before
+and after `good-cupertino`'s colours were changed: `contrast_on.txt`.
 
 ## First run of the examples
 

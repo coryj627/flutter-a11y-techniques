@@ -117,7 +117,7 @@ that a control worked. Every toggle button starts off.
 | --- | --- | --- | --- | --- |
 | `good-icon-button` | Material | A "Bold" icon button that stays pressed | `Semantics(toggled:)` around an `IconButton(tooltip: 'Bold')`, inside `MergeSemantics`, which puts it on the button's node; the pressed look (the filled icon on the primary colour) drawn with `style`, and `isSelected` left out | R1, R3, R4, R5 |
 | `good-toggle-buttons` | Material | Bold, Italic, and Underline, each on or off | `ToggleButtons(isSelected:)`, each icon with a `semanticLabel` | R1, R3, R4, R5 |
-| `good-cupertino` | Cupertino | A "Mute" button that stays pressed | `Semantics(toggled:, enabled: true)` around a `CupertinoButton`, with an action for `ButtonActivateIntent` ([FL-002](../flutter-limitations.md#fl-002)) | R1, R3, R4, R5 |
+| `good-cupertino` | Cupertino | A "Mute" button that stays pressed | `Semantics(toggled:, enabled: true)` around a `CupertinoButton`, with an action for `ButtonActivateIntent` ([FL-002](../flutter-limitations.md#fl-002)); when on, filled with `CupertinoColors.label` and its text and icon in `CupertinoColors.systemBackground`, both resolved for the context | R1, R3, R4, R5 |
 | `good-custom` | Widgets | The same drawn by hand | `Semantics(button: true, toggled:, enabled: true, label:, onTap:)`; Space and Enter through `FocusableActionDetector` | R1, R3, R4, R5 |
 
 Cupertino has no toggle button, so `good-cupertino` is a `CupertinoButton`
@@ -185,13 +185,13 @@ A multi-select `SegmentedButton` has the same defect as
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Every good toggle: its name on one node, a button with a `toggled` (for `ToggleButtons`, `checked`) state that is off, no state of the other kind, not in an exclusive group, enabled, with a tap action; a tap, the semantics tap action, Space, and Enter each change it, and the name stays. `good-icon-button` and `bad-label-changes` have no selected state, on or off, and draw the pressed look. Each `ToggleButtons` button changes only itself. Bad: a button whose only state is `selected`, false, then true, then false, with no toggled or checked state; a button with no state before and after use; a name that changes with the state. Guidelines in light and dark and 200% text for the good examples |
+| L1 widget tests | Every good toggle: its name on one node, a button with a `toggled` (for `ToggleButtons`, `checked`) state that is off, no state of the other kind, not in an exclusive group, enabled, with a tap action; a tap, the semantics tap action, Space, and Enter each change it, and the name stays. `good-icon-button` and `bad-label-changes` have no selected state, on or off, and draw the pressed look. Each `ToggleButtons` button changes only itself. Bad: a button whose only state is `selected`, false, then true, then false, with no toggled or checked state; a button with no state before and after use; a name that changes with the state. Guidelines in light and dark and 200% text for the good examples; and text contrast and the tap target guidelines again once each good example's first control is on, in light and dark |
 | L3 web | Every good toggle: role `switch` (`checkbox` for `ToggleButtons`), name, `aria-checked` false then true, no `aria-pressed`, `aria-current`, or `aria-selected` (written to fail when Flutter writes `aria-pressed`, FL-200); a click, Space, and Enter each change it, and the name stays. Bad: a `button` with `aria-current` false, true after a click, false after Space, and no `aria-pressed` or `aria-checked`; a `button` with no state attribute before and after use; a switch whose name changes |
 | L3 Android | Every good toggle: the `Switch` class (`CheckBox` for `ToggleButtons`), the name, checkable, not checked, checked after a click and not after a second, the name and class kept, enabled, clickable. `good-icon-button` is not selected, on or off. Bad: a `Button` that is not checkable and is selected after one click and not after two; a `Button` with no state before and after use; a `Switch` whose name changes |
 | L3 iOS | Every good toggle: type `.switch`, label, enabled, value "0", "1" after a tap, "0" after a second. Bad: a `.button` with no value, `isSelected` after one tap and not after two; a button with no value and not selected before and after use; a switch whose label changes |
 | L4 TalkBack | Each control on arriving, and again after it has been changed once, with focus away and back: the state words, the name, and the role, and the words that must not be there |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count, as each example opens and again after its first control was tapped once, compared as a whole list; the second walk must end at "Changes: 1" |
-| L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit, as each example opens and again after its first control was clicked once, compared as a whole list; the second walk must end at "Changes: 1". For comparison, a plain HTML page (`control-html`) with a `button` with `aria-pressed="false"`, one with `aria-pressed="true"`, and one with `aria-current="true"`: walked up to three times, every try logged with its verdict. Each walk is judged by `judgeControlWalk` (`web_tests/vo/c02_control_html.js`): a stop is a button's when it names the button, however it is worded, or when it lies between "Text styles" and "Changes: 0", the page's stops either side of the buttons; any such stop that is not that button's expected reading ("Bold toggle button", "Italic selected toggle button", "Underline current item button") fails the test at once, in whichever try. A walk that reached the end with exactly the three readings, in order, between the two neighbours passes; anything else (an empty walk, a walk that missed a button or did not reach the end) is a failed try. The judging is tested on made-up walks, with no VoiceOver, in `web_tests/c02_toggle_button.spec.js`, which CI runs: a correct walk, a bare name, a state word before the name, a button read as another, a reading with no name or an empty one between the neighbours, a wrong reading before the page, an empty walk, and partial walks. The example walks above have no such filter: each is compared with its whole expected list |
+| L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit, as each example opens and again after its first control was clicked once, compared as a whole list; the second walk must end at "Changes: 1". For comparison, a plain HTML page (`control-html`) with a `button` with `aria-pressed="false"`, one with `aria-pressed="true"`, and one with `aria-current="true"`: walked up to three times by `runControlWalks`, every try logged with its verdict, and the test is excluded from the runner's own retries (`test.describe.configure({ retries: 0 })`): the config retries a failed test twice, and `tool/voiceover_web.py` reports a run whose retry passed as PASS, so a runner retry could hide a wrong reading. Each walk is judged by `judgeControlWalk` (`web_tests/vo/c02_control_html.js`): a stop is a button's when it names the button, however it is worded, or when it comes after "Text styles", the page's stop before the buttons, and before "Changes: 0", the stop after them; in a walk cut off before "Changes: 0", every stop after "Text styles" but "end of main". Any such stop that is not that button's expected reading ("Bold toggle button", "Italic selected toggle button", "Underline current item button") fails the test at once, and no further walk is made. A walk that reached the end with exactly the three readings, in order, between the two neighbours passes; anything else (an empty walk, a walk that missed a button or did not reach the end) is a failed try. The judging and the tries are tested on made-up walks, with no VoiceOver, in `web_tests/c02_toggle_button.spec.js`, which CI runs: a correct walk, a bare name, a state word before the name, a button read as another, a reading with no name or an empty one between the neighbours, a wrong reading before the page, an empty walk, partial walks, truncated walks with a nameless, an empty, or a bare-name reading, a wrong walk followed by a correct one (fails, with no second walk), an incomplete one followed by a correct one (passes), and the VoiceOver spec's `retries: 0` on the comparison test (read from its source, which the guard keeps from loading). The example walks above have no such filter: each is compared with its whole expected list |
 
 What the tests leave out, and what that gives up:
 
@@ -219,7 +219,17 @@ What the tests leave out, and what that gives up:
   "Text styles" and "Changes: 0", and the end reached), and a wrong
   reading in any try fails the test; what it gives up is what the page's
   other stops say (the heading, an empty stop after it, "end of main"),
-  which is not checked.
+  which is not checked. In a walk that never passed "Text styles", a
+  stop can be taken for a button's only by its name, so an empty or
+  nameless reading there is not seen; such a walk is a failed try, and
+  the test still needs a complete walk to pass.
+- The example walks on the web keep the shared VoiceOver config's runner
+  retries (two), as every technique's do: a test whose walk read wrong on
+  one attempt and right on a later one passes, and
+  `tool/voiceover_web.py` writes PASS with the test named under "Walks
+  that needed a retry" and the last attempt's rows. Only the comparison
+  test is excluded from them. A retry of an example walk can be seen in
+  the transcript; what the earlier attempt heard cannot.
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -276,6 +286,19 @@ The probe that came first is in [evidence/probes/c02](../evidence/probes/c02/).
 - **A name that changes with the state** changes on every platform and is
   heard with the new state: "Unmute on switch" on the web, "Unmute Switch
   button on" on iOS, "checked. on. Unmute. Switch" on Android.
+- **A pressed look can lose its contrast.** The first `good-cupertino`
+  filled the button with `CupertinoColors.label` when on and left its
+  text and icon in the theme's primary colour: "Mute" was 3.26:1 on black
+  in light mode and 1.70:1 on white in dark mode, and the text contrast
+  guideline failed in both, where the L1 tests had checked only the off
+  state ([measurements](../evidence/probes/c02/contrast_on.txt), from
+  `contrast_on_test.dart.txt`). It now sets `foregroundColor` to
+  `CupertinoColors.systemBackground` as well, 21:1 in both. A
+  `CupertinoButton` resolves its `color` for the context and not its
+  `foregroundColor` (measured: unresolved, the text stayed white on white
+  in dark mode, 1.00:1), so the example resolves both itself. The other
+  good examples passed once on, before and after the change. The L1 tests
+  now check text contrast with each good example's first control on.
 
 **What the native fixtures set** (second version, the one the readings
 above come from; `ProbeNativeActivity2.kt.txt` and

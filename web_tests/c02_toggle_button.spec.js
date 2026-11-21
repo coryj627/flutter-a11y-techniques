@@ -4,7 +4,9 @@
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
 // Pure logic, with no VoiceOver: imported here so that CI tests it.
-import { judgeControlWalk } from './vo/c02_control_html.js';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { judgeControlWalk, runControlWalks } from './vo/c02_control_html.js';
 
 const { open, expectCount } = technique('C02', { countLabel: 'Changes' });
 
@@ -146,10 +148,70 @@ test.describe('the VoiceOver comparison page is judged on every walk', () => {
     ['a partial walk: the end not reached', ['heading level 2 Example', 'Text styles', good[0]], false, 'incomplete'],
     ['a correct reading that did not reach the end', walk(good), false, 'incomplete'],
     ['a walk that missed the stop before the buttons', ['', ...good, 'Changes: 0', 'end of main'], true, 'incomplete'],
+    // Truncated walks: the stop after the buttons was never reached.
+    ['a truncated walk with a nameless reading', ['Text styles', 'toggle button', good[1]], false, 'wrong'],
+    ['a truncated walk with an empty reading', ['Text styles', good[0], ''], false, 'wrong'],
+    ['a truncated walk with a bare name', ['Text styles', 'Bold'], false, 'wrong'],
+    ['a truncated walk that read its buttons right', ['Text styles', good[0], good[1]], false, 'incomplete'],
+    ['a walk that skipped the count and ended the page', ['Text styles', ...good, 'end of main'], true, 'incomplete'],
   ];
   for (const [what, stops, reachedEnd, verdict] of cases) {
     test(`${what}: ${verdict}`, () => {
       expect(judgeControlWalk(stops, reachedEnd).verdict).toBe(verdict);
     });
   }
+
+  // The tries of one test: made-up walks, handed out in order.
+  const walks = (...list) => {
+    let i = 0;
+    const walkOnce = async () => list[i++];
+    return { walkOnce, made: () => i };
+  };
+  const complete = { stops: walk(good), reachedEnd: true };
+  const wrong = { stops: walk(['Bold', ...good.slice(1)]), reachedEnd: true };
+  const partial = { stops: walk(good.slice(1)), reachedEnd: true };
+
+  test('a wrong walk followed by a correct one fails, and no second walk is made', async () => {
+    const { walkOnce, made } = walks(wrong, complete);
+    expect((await runControlWalks(walkOnce)).verdict).toBe('wrong');
+    expect(made()).toBe(1);
+  });
+
+  test('an incomplete walk followed by a correct one passes on the second', async () => {
+    const { walkOnce, made } = walks(partial, complete);
+    const result = await runControlWalks(walkOnce);
+    expect(result.verdict).toBe('complete');
+    expect(result.walks).toBe(2);
+    expect(made()).toBe(2);
+  });
+
+  test('an incomplete walk followed by a wrong one fails', async () => {
+    const { walkOnce } = walks(partial, wrong, complete);
+    expect((await runControlWalks(walkOnce)).verdict).toBe('wrong');
+  });
+
+  test('three incomplete walks fail', async () => {
+    const { walkOnce, made } = walks(partial, partial, partial, complete);
+    expect((await runControlWalks(walkOnce)).verdict).toBe('incomplete');
+    expect(made()).toBe(3);
+  });
+
+  test('every try is logged', async () => {
+    const { walkOnce } = walks(partial, complete);
+    const logged = [];
+    await runControlWalks(walkOnce, { log: (n, stops, judged) => logged.push([n, judged.verdict]) });
+    expect(logged).toEqual([[1, 'incomplete'], [2, 'complete']]);
+  });
+
+  // The runner's own retries would let a later passing attempt hide a wrong
+  // one, so the comparison test turns them off. The VoiceOver spec cannot be
+  // loaded here (its guard stops it), so its source is read.
+  test('the VoiceOver comparison test is not retried by the runner', () => {
+    const source = fs.readFileSync(
+      fileURLToPath(new URL('./vo/c02_toggle_button_vo.spec.js', import.meta.url)), 'utf8');
+    const block = source.slice(source.indexOf("test.describe('control-html'"));
+    expect(block.indexOf("test.describe('control-html'"), 'the comparison test has a describe of its own').toBe(0);
+    expect(block.split('\n')[1].trim()).toBe('test.describe.configure({ retries: 0 });');
+    expect(block).toContain("test('voiceover reads control-html'");
+  });
 });

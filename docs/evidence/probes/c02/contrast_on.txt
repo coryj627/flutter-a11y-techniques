@@ -1,0 +1,37 @@
+Output of contrast_on_test.dart.txt (run as test/probe_c02_contrast_test.dart with
+fvm flutter test, Flutter 3.47.5, as Android): each good example's control after
+one activation, light and dark. Ratios are WCAG's, from the button's resolved
+background colour and the colour of its "Mute" text.
+
+Before the fix, examples.dart at aa1bd38 (the run's lines, copied; the long
+colour descriptions shortened to their RGB values):
+
+C02CONTRAST good-icon-button dark textContrastGuideline after one activation: pass
+C02CONTRAST good-icon-button light textContrastGuideline after one activation: pass
+C02CONTRAST good-toggle-buttons dark textContrastGuideline after one activation: pass
+C02CONTRAST good-toggle-buttons light textContrastGuideline after one activation: pass
+C02CONTRAST good-cupertino dark text "Mute" color=(0.7294, 0.7647, 1.0000) background=label, resolved (1.0, 1.0, 1.0) ratio(text)=1.70
+C02CONTRAST good-cupertino dark textContrastGuideline after one activation: fail
+C02CONTRAST good-cupertino light text "Mute" color=(0.3176, 0.3569, 0.5725) background=label, resolved (0.0, 0.0, 0.0) ratio(text)=3.26
+C02CONTRAST good-cupertino light textContrastGuideline after one activation: fail
+C02CONTRAST good-custom dark textContrastGuideline after one activation: pass
+C02CONTRAST good-custom light textContrastGuideline after one activation: pass
+
+A first fix set foregroundColor: CupertinoColors.systemBackground without
+resolving it. CupertinoButton resolves its color but not its foregroundColor,
+so in dark mode the text stayed the light colour, white on white, ratio 1.00
+(guideline: fail; light: 21.00, pass).
+
+After the fix (color label and foregroundColor systemBackground, both resolved
+with CupertinoDynamicColor.resolve for the context):
+
+C02CONTRAST good-icon-button dark textContrastGuideline after one activation: pass
+C02CONTRAST good-icon-button light textContrastGuideline after one activation: pass
+C02CONTRAST good-toggle-buttons dark textContrastGuideline after one activation: pass
+C02CONTRAST good-toggle-buttons light textContrastGuideline after one activation: pass
+C02CONTRAST good-cupertino dark ratio(text)=21.00
+C02CONTRAST good-cupertino dark textContrastGuideline after one activation: pass
+C02CONTRAST good-cupertino light ratio(text)=21.00
+C02CONTRAST good-cupertino light textContrastGuideline after one activation: pass
+C02CONTRAST good-custom dark textContrastGuideline after one activation: pass
+C02CONTRAST good-custom light textContrastGuideline after one activation: pass
