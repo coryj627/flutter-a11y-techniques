@@ -1,0 +1,468 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../../catalog/test_id.dart';
+
+// #region shared
+/// Lays out one example and reports how many times its controls were
+/// operated, so people and tests can confirm that they worked.
+class _Demo extends StatefulWidget {
+  const _Demo({required this.slug, required this.builder});
+
+  final String slug;
+  final List<Widget> Function(BuildContext context, VoidCallback changed)
+  builder;
+
+  @override
+  State<_Demo> createState() => _DemoState();
+}
+
+class _DemoState extends State<_Demo> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16,
+      children: [
+        ...widget.builder(context, () => setState(() => _count++)),
+        Semantics(
+          key: ValueKey<String>('c02-${widget.slug}-count'),
+          identifier: 'c02-${widget.slug}-count',
+          liveRegion: true,
+          child: Text('Changes: $_count'),
+        ),
+      ],
+    );
+  }
+}
+
+/// The keyboard half of a custom control and its focus ring: Enter and Space
+/// call [onActivate]. It gives the control no role, no name, and no state.
+class _KeyboardOperable extends StatefulWidget {
+  const _KeyboardOperable({required this.onActivate, required this.child});
+
+  final VoidCallback onActivate;
+  final Widget child;
+
+  @override
+  State<_KeyboardOperable> createState() => _KeyboardOperableState();
+}
+
+class _KeyboardOperableState extends State<_KeyboardOperable> {
+  bool _focused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return FocusableActionDetector(
+      mouseCursor: SystemMouseCursors.click,
+      actions: {
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) => widget.onActivate(),
+        ),
+        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+          onInvoke: (_) => widget.onActivate(),
+        ),
+      },
+      onShowFocusHighlight: (value) => setState(() => _focused = value),
+      child: DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: _focused ? colors.onSurface : colors.surface,
+            width: 3,
+          ),
+        ),
+        child: Padding(padding: const EdgeInsets.all(5), child: widget.child),
+      ),
+    );
+  }
+}
+
+/// A toggle button drawn by hand: a box with a speaker and [text], filled
+/// and with the speaker crossed out when [on]. It has no semantics of its
+/// own.
+class _DrawnToggle extends StatelessWidget {
+  const _DrawnToggle({required this.text, required this.on});
+
+  final String text;
+  final bool on;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final foreground = on ? colors.onPrimary : colors.primary;
+    return Container(
+      constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: on ? colors.primary : colors.surface,
+        border: Border.all(color: colors.primary, width: 2),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 8,
+        children: [
+          Icon(on ? Icons.volume_off : Icons.volume_up, color: foreground),
+          Flexible(
+            child: Text(text, style: TextStyle(color: foreground)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+const _bold = 'Bold';
+const _mute = 'Mute';
+// #endregion
+
+// #region good-icon-button
+/// A Material icon button that stays pressed. `isSelected` gives the
+/// pressed look, but it reaches assistive technology as "selected", which
+/// says nothing while the button is out (see bad-selected-only). Flutter
+/// has no pressed state, so `toggled` gives the state instead: on or off,
+/// said in both states, on every platform, with the switch role
+/// (docs/flutter-limitations.md, FL-200). `TestId`'s `MergeSemantics` puts
+/// it on the button's own node.
+class GoodIconButton extends StatefulWidget {
+  const GoodIconButton({super.key});
+
+  @override
+  State<GoodIconButton> createState() => _GoodIconButtonState();
+}
+
+class _GoodIconButtonState extends State<GoodIconButton> {
+  bool _on = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Demo(
+      slug: 'good-icon-button',
+      builder: (context, changed) => [
+        TestId(
+          'c02-good-icon-button-bold',
+          child: Semantics(
+            toggled: _on,
+            child: IconButton(
+              isSelected: _on,
+              tooltip: _bold,
+              icon: const Icon(Icons.format_bold_outlined),
+              selectedIcon: const Icon(Icons.format_bold),
+              onPressed: () {
+                setState(() => _on = !_on);
+                changed();
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+// #endregion
+
+// #region good-toggle-buttons
+/// A row of Material toggle buttons. `ToggleButtons` gives each button a
+/// checked state, so each is a checkbox on Android and the web and a switch
+/// on iOS, with its state said on and off (on Android, only when on:
+/// FL-045). Each icon's `semanticLabel` is its button's name. The
+/// identifiers are on the icons, inside the buttons' own `MergeSemantics`,
+/// so that the three stay separate.
+class GoodToggleButtons extends StatefulWidget {
+  const GoodToggleButtons({super.key});
+
+  @override
+  State<GoodToggleButtons> createState() => _GoodToggleButtonsState();
+}
+
+class _GoodToggleButtonsState extends State<GoodToggleButtons> {
+  final _on = [false, false, false];
+
+  @override
+  Widget build(BuildContext context) {
+    Widget icon(String name, IconData data) {
+      final id = 'c02-good-toggle-buttons-${name.toLowerCase()}';
+      return Semantics(
+        key: ValueKey<String>(id),
+        identifier: id,
+        child: Icon(data, semanticLabel: name),
+      );
+    }
+
+    return _Demo(
+      slug: 'good-toggle-buttons',
+      builder: (context, changed) => [
+        ToggleButtons(
+          isSelected: _on,
+          onPressed: (index) {
+            setState(() => _on[index] = !_on[index]);
+            changed();
+          },
+          children: [
+            icon(_bold, Icons.format_bold),
+            icon('Italic', Icons.format_italic),
+            icon('Underline', Icons.format_underline),
+          ],
+        ),
+      ],
+    );
+  }
+}
+// #endregion
+
+// #region good-cupertino
+/// A Cupertino button that stays pressed. Cupertino has no toggle button,
+/// so the state is `toggled`, as in good-icon-button; a `CupertinoButton`
+/// has no node boundary of its own, so the state lands on its node. It
+/// needs `enabled: true` as well: a `CupertinoButton` sets no enabled
+/// state (FL-001), and VoiceOver on iOS reads a toggled node without one
+/// as dimmed (FL-033). Enter on the web needs an action of its own
+/// (FL-002).
+class GoodCupertino extends StatefulWidget {
+  const GoodCupertino({super.key});
+
+  @override
+  State<GoodCupertino> createState() => _GoodCupertinoState();
+}
+
+class _GoodCupertinoState extends State<GoodCupertino> {
+  bool _on = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Demo(
+      slug: 'good-cupertino',
+      builder: (context, changed) {
+        void toggle() {
+          setState(() => _on = !_on);
+          changed();
+        }
+
+        return [
+          TestId(
+            'c02-good-cupertino-mute',
+            child: Semantics(
+              toggled: _on,
+              enabled: true,
+              child: Actions(
+                actions: {
+                  ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+                    onInvoke: (_) {
+                      toggle();
+                      return null;
+                    },
+                  ),
+                },
+                child: CupertinoButton(
+                  color: _on ? CupertinoColors.label : null,
+                  onPressed: toggle,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: 8,
+                    children: [
+                      Icon(
+                        _on
+                            ? CupertinoIcons.speaker_slash_fill
+                            : CupertinoIcons.speaker_2_fill,
+                      ),
+                      const Text(_mute),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ];
+      },
+    );
+  }
+}
+// #endregion
+
+// #region good-custom
+/// A toggle button drawn by hand. Its name, its on or off state, and its
+/// tap action are on one `Semantics`. `enabled: true` is there because
+/// without it VoiceOver on iOS reads the control as dimmed (FL-033).
+class GoodCustom extends StatefulWidget {
+  const GoodCustom({super.key});
+
+  @override
+  State<GoodCustom> createState() => _GoodCustomState();
+}
+
+class _GoodCustomState extends State<GoodCustom> {
+  bool _on = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Demo(
+      slug: 'good-custom',
+      builder: (context, changed) {
+        void toggle() {
+          setState(() => _on = !_on);
+          changed();
+        }
+
+        return [
+          TestId(
+            'c02-good-custom-mute',
+            child: _KeyboardOperable(
+              onActivate: toggle,
+              child: Semantics(
+                button: true,
+                toggled: _on,
+                enabled: true,
+                label: _mute,
+                onTap: toggle,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: toggle,
+                  child: ExcludeSemantics(
+                    child: _DrawnToggle(text: _mute, on: _on),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ];
+      },
+    );
+  }
+}
+// #endregion
+
+// #region bad-selected-only
+/// A Material icon button that stays pressed, as it comes. `isSelected`
+/// reaches assistive technology as "selected": while the button is out a
+/// screen reader says only "Bold, button", the same as for a button that
+/// cannot be pressed in, and on the web VoiceOver calls it "current item"
+/// when it is in.
+class BadSelectedOnly extends StatefulWidget {
+  const BadSelectedOnly({super.key});
+
+  @override
+  State<BadSelectedOnly> createState() => _BadSelectedOnlyState();
+}
+
+class _BadSelectedOnlyState extends State<BadSelectedOnly> {
+  bool _on = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Demo(
+      slug: 'bad-selected-only',
+      builder: (context, changed) => [
+        TestId(
+          'c02-bad-selected-only-bold',
+          child: IconButton(
+            isSelected: _on,
+            tooltip: _bold,
+            icon: const Icon(Icons.format_bold_outlined),
+            selectedIcon: const Icon(Icons.format_bold),
+            onPressed: () {
+              setState(() => _on = !_on);
+              changed();
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+// #endregion
+
+// #region bad-no-state
+/// A toggle button drawn by hand and exposed as a plain button. It has a
+/// name and it works, and only its drawing changes: nothing says whether it
+/// is on.
+class BadNoState extends StatefulWidget {
+  const BadNoState({super.key});
+
+  @override
+  State<BadNoState> createState() => _BadNoStateState();
+}
+
+class _BadNoStateState extends State<BadNoState> {
+  bool _on = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Demo(
+      slug: 'bad-no-state',
+      builder: (context, changed) {
+        void toggle() {
+          setState(() => _on = !_on);
+          changed();
+        }
+
+        return [
+          TestId(
+            'c02-bad-no-state-mute',
+            child: _KeyboardOperable(
+              onActivate: toggle,
+              child: Semantics(
+                button: true,
+                enabled: true,
+                label: _mute,
+                onTap: toggle,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: toggle,
+                  child: ExcludeSemantics(
+                    child: _DrawnToggle(text: _mute, on: _on),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ];
+      },
+    );
+  }
+}
+// #endregion
+
+// #region bad-label-changes
+/// good-icon-button's mechanism with a name that says what the next press
+/// does: "Mute", then "Unmute". The state is right, but the name changes
+/// with it, and once the button is on a screen reader says "Unmute" and
+/// "on" together, which can be taken either way.
+class BadLabelChanges extends StatefulWidget {
+  const BadLabelChanges({super.key});
+
+  @override
+  State<BadLabelChanges> createState() => _BadLabelChangesState();
+}
+
+class _BadLabelChangesState extends State<BadLabelChanges> {
+  bool _on = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Demo(
+      slug: 'bad-label-changes',
+      builder: (context, changed) => [
+        TestId(
+          'c02-bad-label-changes-mute',
+          child: Semantics(
+            toggled: _on,
+            child: IconButton(
+              isSelected: _on,
+              tooltip: _on ? 'Unmute' : _mute,
+              icon: const Icon(Icons.volume_up),
+              selectedIcon: const Icon(Icons.volume_off),
+              onPressed: () {
+                setState(() => _on = !_on);
+                changed();
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+// #endregion

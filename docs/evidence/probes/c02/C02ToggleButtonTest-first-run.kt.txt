@@ -1,0 +1,184 @@
+// L3 (tree) and L4 (TalkBack walk) for C02 Toggle button on Android.
+// Spec: docs/specs/C02-toggle-button.md.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.view.accessibility.AccessibilityNodeInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.By
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import org.junit.runner.RunWith
+
+private const val BUTTON = "android.widget.Button"
+private const val CHECKBOX = "android.widget.CheckBox"
+private const val SWITCH = "android.widget.Switch"
+
+@RunWith(AndroidJUnit4::class)
+class C02ToggleButtonTest : TechniqueTest("C02") {
+    override val countName: String get() = "change count"
+
+    private fun open(slug: String) = openExample(slug, By.res("c02-$slug-count"))
+
+    @Suppress("DEPRECATION")
+    private fun isOn(node: AccessibilityNodeInfo): Boolean = node.isChecked
+
+    /** Waits up to 5 seconds for [read] of the node [find] returns to be [expected]. */
+    private fun <T> waitFor(find: () -> AccessibilityNodeInfo, read: (AccessibilityNodeInfo) -> T, expected: T, what: String) {
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end && read(find()) != expected) Thread.sleep(100)
+        assertEquals(what, expected, read(find()))
+    }
+
+    // slug, identifier, name, class. Each starts off.
+    private val toggles = listOf(
+        listOf("good-icon-button", "c02-good-icon-button-bold", "Bold", SWITCH),
+        listOf("good-toggle-buttons", "c02-good-toggle-buttons-bold", "Bold", CHECKBOX),
+        listOf("good-toggle-buttons", "c02-good-toggle-buttons-italic", "Italic", CHECKBOX),
+        listOf("good-toggle-buttons", "c02-good-toggle-buttons-underline", "Underline", CHECKBOX),
+        listOf("good-cupertino", "c02-good-cupertino-mute", "Mute", SWITCH),
+        listOf("good-custom", "c02-good-custom-mute", "Mute", SWITCH),
+    )
+
+    @Test
+    fun togglesHaveTheirNameRoleAndStateInBothStates() {
+        for ((slug, id, name, type) in toggles) {
+            // Each opening starts the example again, with every count at 0.
+            open(slug)
+            val node = node(id)
+            assertEquals(id, type, node.type())
+            assertEquals(id, name, node.name())
+            assertTrue(id, node.isCheckable)
+            assertFalse(id, isOn(node))
+            assertTrue(id, node.isEnabled)
+            assertTrue(id, node.isClickable)
+            // The name is on the control only.
+            assertEquals(id, 1, all().count { it.name() == name })
+            assertTrue(id, node.performAction(AccessibilityNodeInfo.ACTION_CLICK))
+            waitFor({ node(id) }, ::isOn, true, "state of $id after one click")
+            assertEquals(id, name, node(id).name())
+            assertEquals(id, type, node(id).type())
+            assertTrue(id, node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
+            waitFor({ node(id) }, ::isOn, false, "state of $id after two clicks")
+            waitForCount(slug, 2)
+        }
+    }
+
+    @Test
+    fun goodIconButtonIsAlsoSelectedWhenOn() {
+        // isSelected stays on the button for its look, and the merged node
+        // carries it beside the checked state.
+        open("good-icon-button")
+        val id = "c02-good-icon-button-bold"
+        assertFalse(node(id).isSelected)
+        assertTrue(node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        waitFor({ node(id) }, ::isOn, true, "state of $id")
+        assertTrue(node(id).isSelected)
+    }
+
+    @Test
+    fun badSelectedOnlyIsAButtonThatIsSelectedOrNot() {
+        open("bad-selected-only")
+        val id = "c02-bad-selected-only-bold"
+        for ((clicks, on) in listOf(0 to false, 1 to true, 2 to false)) {
+            waitFor({ node(id) }, { it.isSelected }, on, "selected after $clicks clicks")
+            val node = node(id)
+            assertEquals(BUTTON, node.type())
+            assertEquals("Bold", node.name())
+            assertFalse(node.isCheckable)
+            assertFalse(isOn(node))
+            assertTrue(node.stateDescription.isNullOrEmpty())
+            waitForCount("bad-selected-only", clicks)
+            if (clicks < 2) assertTrue(node.performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        }
+    }
+
+    @Test
+    fun badNoStateIsAButtonWithNoState() {
+        open("bad-no-state")
+        val id = "c02-bad-no-state-mute"
+        for (clicks in 0..2) {
+            waitForCount("bad-no-state", clicks)
+            val node = node(id)
+            assertEquals(BUTTON, node.type())
+            assertEquals("Mute", node.name())
+            assertFalse(node.isCheckable)
+            assertFalse(node.isSelected)
+            assertTrue(node.stateDescription.isNullOrEmpty())
+            if (clicks < 2) assertTrue(node.performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        }
+    }
+
+    @Test
+    fun badLabelChangesHasANameThatChangesWithTheState() {
+        open("bad-label-changes")
+        val id = "c02-bad-label-changes-mute"
+        assertEquals(SWITCH, node(id).type())
+        assertEquals("Mute", node(id).name())
+        assertFalse(isOn(node(id)))
+        assertTrue(node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        waitFor({ node(id) }, ::isOn, true, "state of $id")
+        assertEquals("Unmute", node(id).name())
+        assertTrue(node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        waitFor({ node(id) }, { it.name() }, "Mute", "name of $id after two clicks")
+        waitForCount("bad-label-changes", 2)
+    }
+
+    /**
+     * L4. Moves TalkBack focus to each control of every example and logs
+     * markers; tool/talkback.py reads the speech from logcat. To read the
+     * state after a change, focus goes to the count, the control is changed,
+     * and focus comes back to it. Skipped unless TalkBack is running.
+     */
+    @Test
+    fun talkBackWalk() {
+        fun byId(id: String) = Stop(id) { node(id) }
+        fun afterClick(id: String, slug: String) = Stop("$id-changed", {
+            node("c02-$slug-count").performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+            Thread.sleep(3_000)
+            node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(2_000)
+        }) { node(id) }
+        fun both(id: String, slug: String) = listOf(byId(id), afterClick(id, slug))
+        // Throwaway, for the probe: native controls on ProbeNativeActivity.
+        fun native(text: String) = first(text)
+        val walk: List<Pair<String, List<Stop>>> = listOf(
+            "good-icon-button" to both("c02-good-icon-button-bold", "good-icon-button"),
+            "good-toggle-buttons" to both("c02-good-toggle-buttons-bold", "good-toggle-buttons") +
+                byId("c02-good-toggle-buttons-italic"),
+            "good-cupertino" to both("c02-good-cupertino-mute", "good-cupertino"),
+            "good-custom" to both("c02-good-custom-mute", "good-custom"),
+            "bad-selected-only" to both("c02-bad-selected-only-bold", "bad-selected-only"),
+            "bad-no-state" to both("c02-bad-no-state-mute", "bad-no-state"),
+            "bad-label-changes" to both("c02-bad-label-changes-mute", "bad-label-changes"),
+            "native" to listOf(
+                Stop("c02-native-n01") { native("n01 Bold") },
+                Stop("c02-native-n02") { native("n02 Bold") },
+                Stop("c02-native-n03") { native("n03 Bold") },
+                Stop("c02-native-n04") { native("n04 Bold") },
+                Stop("c02-native-n05-changed", {
+                    native("n04 Bold").performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+                    Thread.sleep(3_000)
+                    native("n05 Bold").performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    Thread.sleep(2_000)
+                }) { native("n05 Bold") },
+            ),
+        )
+        talkBackWalk(walk, open = { slug ->
+            if (slug == "native") {
+                inst.targetContext.startActivity(
+                    Intent(inst.targetContext, ProbeNativeActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                Thread.sleep(3_000)
+            } else {
+                open(slug)
+            }
+        }, dwellMillis = { 6_000 })
+    }
+
+    /** Throwaway, for the probe: the first node whose text is [text]. */
+    private fun first(text: String): AccessibilityNodeInfo =
+        all().firstOrNull { it.text?.toString() == text } ?: throw AssertionError("no node with text $text")
+}

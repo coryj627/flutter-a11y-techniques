@@ -1,0 +1,100 @@
+// C02 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c02/probe_test.dart.txt): the semantics node of every
+// fixture in lib/probe.dart, before and after "Flip all", and what Tab,
+// Space, and Enter do to each, as Android and as iOS.
+import 'dart:ui' show CheckedState, Tristate;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+String _describe(SemanticsNode node) {
+  final d = node.getSemanticsData();
+  final f = d.flagsCollection;
+  final parts = <String>[
+    'label=${d.label.replaceAll('\n', r'\n')}',
+    if (d.tooltip.isNotEmpty) 'tooltip=${d.tooltip}',
+    if (d.value.isNotEmpty) 'value=${d.value}',
+    if (f.isButton) 'button',
+    if (f.isSelected != Tristate.none) 'selected=${f.isSelected.name}',
+    if (f.isToggled != Tristate.none) 'toggled=${f.isToggled.name}',
+    if (f.isChecked != CheckedState.none) 'checked=${f.isChecked.name}',
+    if (f.isInMutuallyExclusiveGroup) 'exclusive',
+    if (f.isEnabled != Tristate.none) 'enabled=${f.isEnabled.name}',
+    if (f.isFocused != Tristate.none) 'focusable',
+    if (d.hasAction(SemanticsAction.tap)) 'tap',
+    if (d.hasAction(SemanticsAction.focus)) 'focus-action',
+  ];
+  return parts.join(' ');
+}
+
+List<String> _dump(WidgetTester tester) {
+  final out = <String>[];
+  void visit(SemanticsNode node) {
+    final label = node.getSemanticsData().label + node.getSemanticsData().tooltip;
+    if (RegExp(r't\d\d').hasMatch(label) && !label.startsWith('State')) {
+      out.add('  ${_describe(node)}');
+    }
+    node.visitChildren((child) {
+      visit(child);
+      return true;
+    });
+  }
+
+  visit(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!);
+  return out;
+}
+
+String _state(WidgetTester tester) =>
+    tester.widget<Text>(find.textContaining('State:')).data!;
+
+void main() {
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets('C02PROBE tree $platform', (tester) async {
+      debugDefaultTargetPlatformOverride = platform;
+      tester.view.physicalSize = const Size(1200, 3000);
+      tester.view.devicePixelRatio = 1;
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(const MaterialApp(home: ProbeScreen()));
+      await tester.pumpAndSettle();
+      debugPrint('C02PROBE $platform before flip');
+      _dump(tester).forEach(debugPrint);
+      await tester.tap(find.text('Flip all'));
+      await tester.pumpAndSettle();
+      debugPrint('C02PROBE $platform after flip');
+      _dump(tester).forEach(debugPrint);
+
+      // Keyboard: Tab through the page; at each stop Space then Enter.
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(const MaterialApp(home: ProbeScreen()));
+      await tester.pumpAndSettle();
+      debugPrint('C02PROBE $platform keyboard');
+      for (var i = 0; i < 30; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pumpAndSettle();
+        final focus = FocusManager.instance.primaryFocus;
+        final before = _state(tester);
+        await tester.sendKeyEvent(LogicalKeyboardKey.space);
+        await tester.pumpAndSettle();
+        final afterSpace = _state(tester);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pumpAndSettle();
+        final afterEnter = _state(tester);
+        String diff(String a, String b) {
+          final x = a.split(' '), y = b.split(' ');
+          return [for (var j = 0; j < x.length && j < y.length; j++) if (x[j] != y[j]) y[j]].join(',');
+        }
+
+        debugPrint(
+          '  stop $i ${focus?.context?.widget.runtimeType} '
+          '${focus?.debugLabel ?? ''} | space: ${diff(before, afterSpace)} | enter: ${diff(afterSpace, afterEnter)}',
+        );
+      }
+      handle.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
+}

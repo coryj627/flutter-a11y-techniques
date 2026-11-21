@@ -1,0 +1,5 @@
+== device: Android 17, Physical size: 1080x2424, Physical density: 420
+Success
+== Flip all at 117 205
+== n05 at 540 767
+== done

@@ -1,0 +1,296 @@
+// C02 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c02/probe.dart.txt): toggle buttons.
+//
+// Every fixture's name starts with its number ("t01 Bold"). Each fixture
+// holds its own on/off state. "Flip all" at the top flips every fixture at
+// once, so each platform's tree can be read in both states. The line
+// "State: ..." gives every fixture's state as 0 or 1, so what a key did can
+// be read from any platform's tree.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ProbeScreen()));
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+final _flipAll = ValueNotifier<int>(0);
+final _states = ValueNotifier<Map<String, String>>({});
+
+void _report(String id, String state) {
+  _states.value = {..._states.value, id: state};
+}
+
+/// Holds one on/off value for a fixture.
+class _Hold extends StatefulWidget {
+  const _Hold({required this.id, required this.initial, required this.builder});
+
+  final String id;
+  final bool initial;
+  final Widget Function(bool on, VoidCallback flip) builder;
+
+  @override
+  State<_Hold> createState() => _HoldState();
+}
+
+class _HoldState extends State<_Hold> {
+  late bool _on = widget.initial;
+
+  @override
+  void initState() {
+    super.initState();
+    _flipAll.addListener(_flip);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _report(widget.id, _on ? '1' : '0'));
+  }
+
+  @override
+  void dispose() {
+    _flipAll.removeListener(_flip);
+    super.dispose();
+  }
+
+  void _flip() {
+    setState(() => _on = !_on);
+    _report(widget.id, _on ? '1' : '0');
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(_on, _flip);
+}
+
+/// Keyboard for a custom control: Enter and Space call [onActivate].
+Widget _keys(VoidCallback onActivate, Widget child) => FocusableActionDetector(
+  actions: {
+    ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => onActivate()),
+    ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(onInvoke: (_) => onActivate()),
+  },
+  child: child,
+);
+
+/// A drawn toggle button: a box with the text, filled when on.
+Widget _face(String text, bool on) => ExcludeSemantics(
+  child: Container(
+    constraints: const BoxConstraints(minHeight: 48, minWidth: 120),
+    alignment: Alignment.center,
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    decoration: BoxDecoration(
+      color: on ? Colors.indigo : Colors.white,
+      border: Border.all(width: 2, color: Colors.indigo),
+    ),
+    child: Text(text, style: TextStyle(color: on ? Colors.white : Colors.indigo)),
+  ),
+);
+
+/// A custom control: [semantics] wraps a tap target that draws [face].
+Widget _custom(String text, bool on, VoidCallback flip, Widget Function(Widget child) semantics) =>
+    _keys(
+      flip,
+      semantics(
+        GestureDetector(behavior: HitTestBehavior.opaque, onTap: flip, child: _face(text, on)),
+      ),
+    );
+
+class ProbeScreen extends StatelessWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                ElevatedButton(onPressed: () => _flipAll.value++, child: const Text('Flip all')),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ValueListenableBuilder(
+                    valueListenable: _states,
+                    builder: (context, states, _) => Semantics(
+                      identifier: 'state',
+                      child: Text(
+                        'State: ${(states.keys.toList()..sort()).map((k) => '$k=${states[k]}').join(' ')}',
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    // t01 IconButton(isSelected: false) with a tooltip
+                    _Hold(id: 't01', initial: false, builder: (on, flip) => IconButton(
+                      isSelected: on,
+                      tooltip: 't01 Bold',
+                      icon: const Icon(Icons.format_bold_outlined),
+                      selectedIcon: const Icon(Icons.format_bold),
+                      onPressed: flip,
+                    )),
+                    // t02 the same, starting on
+                    _Hold(id: 't02', initial: true, builder: (on, flip) => IconButton(
+                      isSelected: on,
+                      tooltip: 't02 Bold',
+                      icon: const Icon(Icons.format_bold_outlined),
+                      selectedIcon: const Icon(Icons.format_bold),
+                      onPressed: flip,
+                    )),
+                    // t03 IconButton(isSelected:) with no tooltip; the icons
+                    // have a semantic label
+                    _Hold(id: 't03', initial: false, builder: (on, flip) => IconButton(
+                      isSelected: on,
+                      icon: const Icon(Icons.format_bold_outlined, semanticLabel: 't03 Bold'),
+                      selectedIcon: const Icon(Icons.format_bold, semanticLabel: 't03 Bold'),
+                      onPressed: flip,
+                    )),
+                    // t04 IconButton(isSelected:) inside Semantics(toggled:)
+                    _Hold(id: 't04', initial: false, builder: (on, flip) => Semantics(
+                      toggled: on,
+                      enabled: true,
+                      child: IconButton(
+                        isSelected: on,
+                        tooltip: 't04 Bold',
+                        icon: const Icon(Icons.format_bold_outlined),
+                        selectedIcon: const Icon(Icons.format_bold),
+                        onPressed: flip,
+                      ),
+                    )),
+                    // t05 ToggleButtons, three buttons, the second on
+                    _Hold(id: 't05', initial: false, builder: (on, flip) => ToggleButtons(
+                      isSelected: [on, !on, false],
+                      onPressed: (i) { if (i < 2) flip(); },
+                      children: const [
+                        Icon(Icons.format_bold, semanticLabel: 't05a Bold'),
+                        Icon(Icons.format_italic, semanticLabel: 't05b Italic'),
+                        Icon(Icons.format_underline, semanticLabel: 't05c Underline'),
+                      ],
+                    )),
+                    // t06 SegmentedButton, several may be chosen, none needed
+                    _Hold(id: 't06', initial: false, builder: (on, flip) => SegmentedButton<String>(
+                      multiSelectionEnabled: true,
+                      emptySelectionAllowed: true,
+                      segments: const [
+                        ButtonSegment(value: 'b', label: Text('t06a Bold')),
+                        ButtonSegment(value: 'i', label: Text('t06b Italic')),
+                      ],
+                      selected: on ? {'b'} : {'i'},
+                      onSelectionChanged: (_) => flip(),
+                    )),
+                    // t07 SegmentedButton, one at a time (a radio group: F08)
+                    _Hold(id: 't07', initial: false, builder: (on, flip) => SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'd', label: Text('t07a Day')),
+                        ButtonSegment(value: 'w', label: Text('t07b Week')),
+                      ],
+                      selected: on ? {'w'} : {'d'},
+                      onSelectionChanged: (_) => flip(),
+                    )),
+                    // t08 custom: Semantics(button:, selected:)
+                    _Hold(id: 't08', initial: false, builder: (on, flip) => _custom('t08 Mute', on, flip, (child) => Semantics(
+                      container: true, button: true, selected: on, enabled: true, label: 't08 Mute', onTap: flip,
+                      child: ExcludeSemantics(child: child),
+                    ))),
+                    // t09 custom: Semantics(button:, toggled:)
+                    _Hold(id: 't09', initial: false, builder: (on, flip) => _custom('t09 Mute', on, flip, (child) => Semantics(
+                      container: true, button: true, toggled: on, enabled: true, label: 't09 Mute', onTap: flip,
+                      child: ExcludeSemantics(child: child),
+                    ))),
+                    // t10 custom: Semantics(button:, checked:)
+                    _Hold(id: 't10', initial: false, builder: (on, flip) => _custom('t10 Mute', on, flip, (child) => Semantics(
+                      container: true, button: true, checked: on, enabled: true, label: 't10 Mute', onTap: flip,
+                      child: ExcludeSemantics(child: child),
+                    ))),
+                    // t11 custom: a button with no state
+                    _Hold(id: 't11', initial: false, builder: (on, flip) => _custom('t11 Mute', on, flip, (child) => Semantics(
+                      container: true, button: true, enabled: true, label: 't11 Mute', onTap: flip,
+                      child: ExcludeSemantics(child: child),
+                    ))),
+                    // t12 custom: selected, and a name that changes with it
+                    _Hold(id: 't12', initial: false, builder: (on, flip) => _custom(on ? 't12 Unmute' : 't12 Mute', on, flip, (child) => Semantics(
+                      container: true, button: true, selected: on, enabled: true, label: on ? 't12 Unmute' : 't12 Mute', onTap: flip,
+                      child: ExcludeSemantics(child: child),
+                    ))),
+                    // t13 CupertinoButton inside Semantics(toggled:)
+                    _Hold(id: 't13', initial: false, builder: (on, flip) => Semantics(
+                      toggled: on,
+                      enabled: true,
+                      child: CupertinoButton(onPressed: flip, child: const Text('t13 Mute')),
+                    )),
+                    // t14 CupertinoButton inside Semantics(selected:)
+                    _Hold(id: 't14', initial: false, builder: (on, flip) => Semantics(
+                      selected: on,
+                      enabled: true,
+                      child: CupertinoButton(onPressed: flip, child: const Text('t14 Mute')),
+                    )),
+                    // t15 FilterChip (a chip; for comparison)
+                    _Hold(id: 't15', initial: false, builder: (on, flip) => FilterChip(
+                      label: const Text('t15 Bold'),
+                      selected: on,
+                      onSelected: (_) => flip(),
+                    )),
+                    // t16 IconButton(isSelected: true), disabled
+                    const IconButton(
+                      isSelected: true,
+                      tooltip: 't16 Bold',
+                      icon: Icon(Icons.format_bold_outlined),
+                      selectedIcon: Icon(Icons.format_bold),
+                      onPressed: null,
+                    ),
+                    // t17 IconButton(isSelected:) whose tooltip says the action
+                    _Hold(id: 't17', initial: false, builder: (on, flip) => IconButton(
+                      isSelected: on,
+                      tooltip: on ? 't17 Unmute' : 't17 Mute',
+                      icon: const Icon(Icons.volume_up),
+                      selectedIcon: const Icon(Icons.volume_off),
+                      onPressed: flip,
+                    )),
+                    // t18 OutlinedButton inside Semantics(toggled:)
+                    _Hold(id: 't18', initial: false, builder: (on, flip) => Semantics(
+                      toggled: on,
+                      enabled: true,
+                      child: OutlinedButton(onPressed: flip, child: const Text('t18 Mute')),
+                    )),
+                    // t19 custom: Semantics(button:, selected:) with no enabled
+                    _Hold(id: 't19', initial: false, builder: (on, flip) => _custom('t19 Mute', on, flip, (child) => Semantics(
+                      container: true, button: true, selected: on, label: 't19 Mute', onTap: flip,
+                      child: ExcludeSemantics(child: child),
+                    ))),
+                    // t20 t04 inside MergeSemantics
+                    _Hold(id: 't20', initial: false, builder: (on, flip) => MergeSemantics(
+                      child: Semantics(
+                        toggled: on,
+                        enabled: true,
+                        child: IconButton(
+                          isSelected: on,
+                          tooltip: 't20 Bold',
+                          icon: const Icon(Icons.format_bold_outlined),
+                          selectedIcon: const Icon(Icons.format_bold),
+                          onPressed: flip,
+                        ),
+                      ),
+                    )),
+                    // t21 t18 inside MergeSemantics
+                    _Hold(id: 't21', initial: false, builder: (on, flip) => MergeSemantics(
+                      child: Semantics(
+                        toggled: on,
+                        enabled: true,
+                        child: OutlinedButton(onPressed: flip, child: const Text('t21 Mute')),
+                      ),
+                    )),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
