@@ -111,7 +111,7 @@ helpers were shared in wave 0, has not been done.
 - Keep text in the app no longer than it has to be. When a review asks for
   more words in an example, run it at CI's screen size before pushing.
 - The changes made to tests after CI-only failures this wave were of
-  five kinds:
+  six kinds:
   - a bounded wait for the expected state in place of a single reading
     (I01's tap point in 177; F06's end of the page in 188);
   - a different reading: F06 reads the whole page, scrolling, where it
@@ -123,6 +123,13 @@ helpers were shared in wave 0, has not been done.
     before Tab (189);
   - a skip by version, which gives up coverage on CI: I02's Shift+Tab,
     I04's Control+F, and I08's Escape tests below iOS 27.
+  - a change to what a test accepts: I04's two Android tests that type
+    in `bad-page-shortcut`'s note (180). On CI, "Leafy" typed there gave
+    "Leay"; the local emulator kept every f. The CI log did not record
+    the favourites line, so why the f was lost was not seen. The tests
+    now accept either result, need the two readings to agree (an f typed
+    or taken, never both or neither), and log which. A pass no longer
+    shows which of the two happened.
 - When a test fails on CI and passes here, keep the log lines in the
   technique's probe folder and cite them from the spec.
 
