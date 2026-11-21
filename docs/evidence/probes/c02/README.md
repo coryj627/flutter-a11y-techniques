@@ -280,3 +280,18 @@ probe does not merge them; the examples do, through `TestId`.
 - **On the web `selected` on a button is `aria-current`.**
 - A name that changes with the state changes on every platform (t12,
   t17).
+
+## The stricter judge on a real run (review round 4)
+
+`voiceover-web-round4-fail.md.txt` is the one web VoiceOver run made with
+the judges of commit 22af231, which require every stop before an
+example's "Example" heading to be one of the screen's own texts. It
+failed 3 of 16 tests, all in WebKit: in `good-toggle-buttons`,
+`good-cupertino`, and `good-custom` the first stop was an empty phrase
+where the screen's level 1 heading stands, followed by the "Good example
+…" line, the "Example" heading, and the expected readings. The other
+examples, and all of them in Chromium, were complete, so their stops
+before the heading matched the screen's texts exactly. The tool lists the
+three under "Walks that needed a retry" because it counts every failed
+test line; with no runner retries none was retried. The transcript in
+`docs/evidence/C02/` was left as it was before this run.
