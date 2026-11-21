@@ -180,6 +180,13 @@ said "first." each time. `ProbeC04VOUITests.swift.txt`, run by
 - `bad-merged`: with the cursor on the one element, by a tap or by moving
   forward, a double tap on it opened no page; why was not found.
 
+## C04's Android suite at CI's size
+
+After the examples were built, C04's Android tree tests ran once at the CI
+emulator's size, 320 by 640 at 160 dpi (`android_320x640.sh.txt`, which
+resets both after): nine tests, no failure, `talkBackWalk` skipped with
+TalkBack off; the JUnit summary is at the end of `android_320x640.txt`.
+
 ## What it shows
 
 - **A `TextSpan` link is read well and the keyboard cannot reach it, on
