@@ -244,7 +244,8 @@ the cursor came back to the header.
   instead, so the good examples give iOS the value. On Android 17 the state
   is read (p07); before Android 16 the engine does not pass it (source
   read, [FL-261](../../../flutter-limitations.md#fl-261)), so the good
-  examples also set p13's tap hint, which TalkBack reads on every version.
+  examples also set p13's tap hint, which the engine passes on every version
+  (source read; heard here on Android 17 only).
   The value is iOS only: Android puts it before the name (p12) and the web
   in the name.
 - **The heading goes on the button's node on Android and iOS, and round it
@@ -263,3 +264,37 @@ the cursor came back to the header.
   a header, and each opened and closed the section (p10). TalkBack then
   adds "Actions available" to what it says. Before Android 16 the engine
   does not pass them ([FL-261](../../../flutter-limitations.md#fl-261)).
+
+## C05's first transcript runs
+
+Kept as they were, before the fixes they led to:
+
+- `talkback-first-run.md.txt`: the first TalkBack walk of the examples.
+  For `bad-no-state` and `bad-cupertino-expansion-tile` TalkBack said
+  nothing on the click, in three walks; and in
+  `bad-cupertino-expansion-tile` the panel's text has no node of its own
+  once open, so the walk's move to it, and back to the header, read
+  nothing. The walk now drops the speech on the click for those two and
+  moves to Back in place of the panel there.
+- `voiceover-ios-first-run.md.txt`: the first iOS VoiceOver run. Every
+  reading was as expected but one: open, `bad-cupertino-expansion-tile`'s
+  header and panel are one utterance longer than the 64 characters
+  `XCUIVoiceOverService` returns, and it was cut short. The second run
+  (`voiceover-ios-second-run.txt`, its lines from the evidence run's
+  output) read it the same way ("… Expanded double tap to collap"); the cut
+  falls before VoiceOver's line breaks are made spaces, so it is not the
+  first 64 characters of the reading as the test writes it. The
+  expectation is now that cut reading.
+  In the same run of the tree tests, XCUITest listed an open panel's
+  elements after the next header, which is not the reading order; that
+  test now checks the panel's place on screen.
+
+
+## C05's Android tests at CI's screen size
+
+C05's Android tree tests were run once at the CI emulator's size, 320 by
+640 at 160 dpi, on the local emulator (`android_320x640.sh.txt`, which
+resets both after): fifteen tests, none failed, `talkBackWalk` skipped with
+TalkBack off (`android_320x640.txt`, the JUnit summary at its end). The
+emulator is still Android 17 at that size, so this runs the Android 16 and
+later branch; the API 35 branch runs only on CI.

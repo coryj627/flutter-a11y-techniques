@@ -3,6 +3,7 @@
 import '../catalog/technique.dart';
 import 'c01_button/c01_button.dart';
 import 'c03_stand_alone_link/c03_stand_alone_link.dart';
+import 'c05_accordion/c05_accordion.dart';
 import 'f01_text_fields/f01_text_fields.dart';
 import 'f02_input_instructions/f02_input_instructions.dart';
 import 'f03_keyboard_types/f03_keyboard_types.dart';
@@ -34,6 +35,7 @@ import 'v14_focus_indicators/v14_focus_indicators.dart';
 final List<Technique> allTechniques = [
   c01Button,
   c03StandAloneLink,
+  c05Accordion,
   f01TextFields,
   f02InputInstructions,
   f03KeyboardTypes,
