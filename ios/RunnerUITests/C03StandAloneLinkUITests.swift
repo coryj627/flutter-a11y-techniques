@@ -122,18 +122,23 @@ final class C03StandAloneLinkUITests: XCTestCase, TechniqueUITest {
                   "a tap opens the tap handler's page")
   }
 
-  /// No key opens the tap handler's page. The first Tab goes to Back, the
-  /// only control on the screen (the text takes no focus, as the widget
-  /// tests, Android, and the web show); Enter or Space there opens the
-  /// technique's page, which shows the key arrived, and not the text's page.
+  /// No key opens the tap handler's page. XCUITest cannot see Flutter's
+  /// focus (I01); a probe showed where the keys go on this screen
+  /// (docs/evidence/probes/c03/ios_keys.txt): the first Tab goes to Back,
+  /// the only control, and a second Tab goes to Back again, as the text
+  /// takes no focus. So one Tab, then Enter or Space, sent once: the example
+  /// leaves the screen, which shows the key arrived and acted on Back, and
+  /// the tap handler's page does not open.
   func testBadTapHandlerPageIsOpenedByNoKey() {
     for (key, name) in [("\n", "Enter"), (XCUIKeyboardKey.space.rawValue, "Space")] {
       open("bad-tap-handler")
       app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
       usleep(700_000)
       app.typeKey(key, modifierFlags: [])
-      XCTAssertTrue(element(labelled: Self.destination).waitForExistence(timeout: 5),
-                    "\(name): the key acted on Back")
+      let left = NSPredicate(format: "exists == false")
+      let gone = XCTNSPredicateExpectation(predicate: left, object: title("bad-tap-handler"))
+      XCTAssertEqual(XCTWaiter().wait(for: [gone], timeout: 5), .completed,
+                     "\(name): the key acted on Back, and the example left the screen")
       XCTAssertFalse(element(labelled: Self.tapHandlerPage).exists, "\(name): the tap handler's page did not open")
     }
   }

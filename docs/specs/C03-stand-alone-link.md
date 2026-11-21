@@ -158,7 +158,7 @@ Material `TextButton`, which has no example.
 | L1 widget tests | Good: guidelines in light and dark, 200% text at 320 by 640; link flag, `linkUrl`, name, no button or image flag, a tap action, the tap hint (a custom action that overrides tap), no image node; a tap and the tap action each open the technique's page, and one Back brings the example back; Tab reaches the link, and Enter and Space each follow it (off the web); in light and dark, the focus ring is drawn in the page's text colour once Tab reaches the link and is clear before and after. Bad: the name "Read more"; no link flag and never focused after four Tabs, with a tap opening `TapHandlerPage` as the positive control; Tab stops only on Back, and Enter, then Space, there open the technique's page and not `TapHandlerPage`; the link flag with no `linkUrl`; no name, with the image flag merged in and the labelled-tap-target guideline failing; the unnamed link with the named image under it; the link and button flags together; `bad-app-also-follows` followed once off the web. The tests run as Android, so the web-only code (`followLink` doing nothing, `BrowserKeys`) is not run here |
 | L3 web | Good: `<a href="#/t/C03">`, role link, name, nothing inside it a button or an image; a click, a DOM click with no pointer events (what assistive technology can send), and Tab then Enter each open the technique's page once (one Back brings the example back) in this tab; Space does not follow it, with Enter in the same load as the positive control; Command- or Ctrl-click opens it in a new tab and leaves this one; the only link on the screen, and the only button Back. Bad: "Read more"; a button (FL-006) that Tab skips, with Tab reaching Back as the positive control, and a click opening `TapHandlerPage`; Tab stops only on Back, and Enter, then Space, there open the technique's page and not `TapHandlerPage`; an `<a>` with no `href` and no link role, followed by the app on a click and on Enter; a link with an empty name; a link named from the image inside it; `bad-cupertino-button` a link only; `bad-app-also-follows`: a click, and Tab then Enter, each leave the screen as it was, with the positive control that the address was seen to pass through `#/t/C03` in the same load; a DOM click opens the technique's page with the example's address left in the address bar, and one Back leaves the technique's page on screen |
 | L3 Android | Good: class `android.view.View`, name, the address in a `URLSpan` on the content description, a click action labelled "open link", clickable, focusable; `ACTION_CLICK` (TalkBack's double tap), a tap, and Tab then Enter (`input keyevent`) each open the technique's page, and one Back brings the example back; one clickable node but Back. Bad: "Read more"; no address, no click label, and no focus after six Tabs, with Back focused as the positive control and the click action opening `TapHandlerPage`; Tab to Back and Enter, then Space, open the technique's page and not `TapHandlerPage`; class `Button` with no address; no name, no address, class `ImageView`; the unnamed link and the named image; class `Button` with the address; `bad-app-also-follows` followed once |
-| L3 iOS | Good: element type link, label, the only link, no other button and no image; a tap, and Tab, Tab, Enter each open the technique's page once. Bad: link "Read more"; static text and no link, and a tap opening `TapHandlerPage`; one Tab and Enter, then Space, open the technique's page and not `TapHandlerPage`; a link (iOS reads the flag alone); an image with no label and no link (the image flag is merged into the link); an unnamed link and a named image; type button, no link (the link trait is heard, not seen, in the tree); `bad-app-also-follows` followed once |
+| L3 iOS | Good: element type link, label, the only link, no other button and no image; a tap, and Tab, Tab, Enter each open the technique's page once. Bad: link "Read more"; static text and no link, and a tap opening `TapHandlerPage`; one Tab and Enter, then Space, take the example off the screen (Back acted) and do not open `TapHandlerPage`; a link (iOS reads the flag alone); an image with no label and no link (the image flag is merged into the link); an unnamed link and a named image; type button, no link (the link trait is heard, not seen, in the tree); `bad-app-also-follows` followed once |
 | L4 TalkBack | What is read with focus on each link; for `bad-label-on-image`, on the picture only (see section 7) |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list; for each good link, what is said with the cursor on it and that a double tap opens the technique's page |
 | L4 VoiceOver web | Every stop of VoiceOver's cursor after the "Example" heading to the end of the screen, compared as a whole list, in Chromium and WebKit |
@@ -189,7 +189,8 @@ with a native comparison on Android and three runs on the web of how
   `TapHandlerPage`, which nothing else in the app opens, and every layer
   tests that no key opens it: Tab stops only on Back (the widget tests,
   Android, the web), and Enter and Space there open the technique's page,
-  which shows the key arrived, and not the tap handler's page.
+  which shows the key arrived, and not the tap handler's page (on iOS, the
+  example leaves the screen; see the skips below).
 - **The app and the browser both following a link is not "twice" but
   depends on how it is followed** ([FL-013](../flutter-limitations.md#fl-013),
   extended): a click and Enter end where they began, and a DOM click with
@@ -249,6 +250,16 @@ Skips and what they give up, in the tests:
   would count as one; no example has two. Its end and its content are
   tested with no device (`testWalkToTheEndSeesAnExtraStop`), including an
   extra element after the link, which must change the list.
+- The iOS test that no key opens `bad-tap-handler`'s page cannot see
+  Flutter's focus, so it relies on where a probe found the keys go
+  (`docs/evidence/probes/c03/ios_keys.txt`): one Tab and then Enter or
+  Space leave the example on both `good-material` and `bad-tap-handler`,
+  and two Tabs and Enter follow `good-material`'s link, so the first Tab
+  is on Back. The test sends one Tab and the key once; the example leaving
+  the screen is the positive control. Where Back then took the app was
+  not checked: neither the technique's page nor the tap handler's page was
+  on screen after it. That the text takes no focus is from the widget
+  tests, Android, and the web; iOS gives up seeing it directly.
 - The web test of `bad-tap-handler`'s Tab stops leaves out stops outside
   Flutter's semantics tree (the page itself, when focus goes round,
   FL-421). It gives up nothing a key could act on in the app.

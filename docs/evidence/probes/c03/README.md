@@ -64,7 +64,7 @@ what the app's Back does.
 
 Last, C03's own Android tree tests were run once at the CI emulator's size,
 320 by 640 at 160 dpi (`android_320x640.sh.txt`, which resets both after):
-twelve tests, no failure, `talkBackWalk` skipped with TalkBack off; the
+thirteen tests after the first review (twelve before), no failure, `talkBackWalk` skipped with TalkBack off; the
 JUnit summary is at the end of `android_320x640.txt`.
 
 In the first review, the focus ring of `KeyboardLink` (`good-custom`,
@@ -74,6 +74,21 @@ nothing. `focus_ring_before_fix.txt` is the widget test that confirmed it,
 run before the fix: the ring stayed transparent with focus on those two
 links, and showed on `good-material` and `good-image-link`. The ring now
 wraps the detector, and the same test passes for all four.
+
+In the first review's fixes, the iOS key test of `bad-tap-handler` found
+no key acting on Back after one Tab, as the test then expected. A probe,
+`ProbeC03KeysUITests.swift.txt` run by `ios_keys_probe.sh.txt`, pressed 0
+to 3 Tabs and then Enter or Space on `good-material` and
+`bad-tap-handler`, each from a fresh launch, and read the screen after
+(`ios_keys.txt`): with no Tab, nothing happened; after one Tab, both
+examples left the screen, and the screen then had none of the labels the
+probe looked for (the technique's page, the tap handler's page, the
+example), so where Back took the app was not found; after two Tabs,
+`good-material`'s link was followed (the technique's page, with the
+example under it), and `bad-tap-handler` left the screen as after one.
+So the first Tab is on Back, the second on `good-material`'s link, and
+`bad-tap-handler`'s text is passed over. The test now checks that the
+example leaves the screen, not that the technique's page opens.
 
 ## Web
 
