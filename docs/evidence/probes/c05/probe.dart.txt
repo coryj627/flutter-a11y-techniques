@@ -1,0 +1,434 @@
+// C05 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c05/probe.dart.txt): what the SDK's accordion widgets
+// and a hand-built accordion header expose, and what activates them. One
+// fixture per route, `/p01` to `/p16`; `/` lists them all.
+//
+// Every fixture is an accordion of two sections, "pNN Shipping" and
+// "pNN Returns", both collapsed at the start, between a "Before pNN" text and
+// a "pNN end" text. A section's panel holds the text "pNN Shipping panel" and
+// a button "pNN Shipping button". A change of a section's state prints
+// "C05PROBE pNN Shipping open" or "... closed".
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      onGenerateRoute: (settings) {
+        final name = (settings.name ?? '/').replaceFirst('/', '');
+        final page = fixtures.containsKey(name)
+            ? FixtureScreen(ids: [name])
+            : FixtureScreen(ids: fixtures.keys.toList());
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => page,
+        );
+      },
+    );
+  }
+}
+
+const sections = ['Shipping', 'Returns'];
+
+void note(String id, String section, bool open) =>
+    debugPrint('C05PROBE $id $section ${open ? 'open' : 'closed'}');
+
+Widget panel(String id, String section) => Padding(
+  padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('$id $section panel'),
+      TextButton(onPressed: () {}, child: Text('$id $section button')),
+    ],
+  ),
+);
+
+/// How a hand-built header carries a heading.
+enum Heading { none, merged, nested }
+
+/// A hand-built accordion: each header is `Semantics(button: true,
+/// expanded:)` round a `FocusableActionDetector` and a `GestureDetector`,
+/// merged into one node; its panel is built only while it is open.
+class HandBuilt extends StatefulWidget {
+  const HandBuilt({
+    super.key,
+    required this.id,
+    this.heading = Heading.none,
+    this.actions = false,
+    this.controls = false,
+    this.value = false,
+    this.tapHint = false,
+    this.cupertino = false,
+    this.startOpen = false,
+    this.controlsWhileOpen = false,
+  });
+
+  final String id;
+  final Heading heading;
+  final bool actions;
+  final bool controls;
+  final bool value;
+  final bool tapHint;
+  final bool cupertino;
+
+  /// Whether "Shipping" is open when the fixture opens.
+  final bool startOpen;
+
+  /// Whether `controlsNodes` is set only while the section is open.
+  final bool controlsWhileOpen;
+
+  @override
+  State<HandBuilt> createState() => _HandBuiltState();
+}
+
+class _HandBuiltState extends State<HandBuilt> {
+  late final open = <String>{if (widget.startOpen) 'Shipping'};
+
+  void toggle(String s) {
+    setState(() => open.contains(s) ? open.remove(s) : open.add(s));
+    note(widget.id, s, open.contains(s));
+  }
+
+  Widget header(String s) {
+    final isOpen = open.contains(s);
+    final label = '${widget.id} $s';
+    Widget face = widget.cupertino
+        ? CupertinoListTile(
+            title: Text(label),
+            trailing: Icon(
+              isOpen
+                  ? CupertinoIcons.chevron_down
+                  : CupertinoIcons.chevron_right,
+            ),
+            onTap: () => toggle(s),
+          )
+        : GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => toggle(s),
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 48),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(child: Text(label)),
+                  Icon(isOpen ? Icons.expand_less : Icons.expand_more),
+                ],
+              ),
+            ),
+          );
+    Widget node = Semantics(
+      button: true,
+      expanded: isOpen,
+      headingLevel: widget.heading == Heading.merged ? 3 : null,
+      value: widget.value ? (isOpen ? 'expanded' : 'collapsed') : null,
+      onTapHint: widget.tapHint ? (isOpen ? 'collapse' : 'expand') : null,
+      onExpand: widget.actions && !isOpen ? () => toggle(s) : null,
+      onCollapse: widget.actions && isOpen ? () => toggle(s) : null,
+      controlsNodes: widget.controls && (isOpen || !widget.controlsWhileOpen)
+          ? {'${widget.id}-$s-panel'}
+          : null,
+      child: FocusableActionDetector(
+        actions: {
+          ActivateIntent: CallbackAction<ActivateIntent>(
+            onInvoke: (_) => toggle(s),
+          ),
+          ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+            onInvoke: (_) => toggle(s),
+          ),
+        },
+        child: face,
+      ),
+    );
+    node = MergeSemantics(child: node);
+    if (widget.heading == Heading.nested) {
+      node = Semantics(headingLevel: 3, container: true, child: node);
+    }
+    return node;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final s in sections) ...[
+          header(s),
+          if (open.contains(s))
+            widget.controls
+                ? Semantics(
+                    identifier: '${widget.id}-$s-panel',
+                    container: true,
+                    child: panel(widget.id, s),
+                  )
+                : panel(widget.id, s),
+        ],
+      ],
+    );
+  }
+}
+
+/// p14: the widgets layer's own `Expansible`, with a hand-built header and
+/// its default `maintainState: true`.
+class ExpansibleFixture extends StatefulWidget {
+  const ExpansibleFixture({super.key});
+
+  @override
+  State<ExpansibleFixture> createState() => _ExpansibleFixtureState();
+}
+
+class _ExpansibleFixtureState extends State<ExpansibleFixture> {
+  final controllers = {for (final s in sections) s: ExpansibleController()};
+
+  @override
+  void dispose() {
+    for (final c in controllers.values) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final s in sections)
+          Expansible(
+            controller: controllers[s]!,
+            headerBuilder: (context, animation) {
+              final c = controllers[s]!;
+              void toggle() {
+                c.isExpanded ? c.collapse() : c.expand();
+                note('p14', s, c.isExpanded);
+              }
+
+              return MergeSemantics(
+                child: Semantics(
+                  button: true,
+                  expanded: c.isExpanded,
+                  child: FocusableActionDetector(
+                    actions: {
+                      ActivateIntent: CallbackAction<ActivateIntent>(
+                        onInvoke: (_) => toggle(),
+                      ),
+                    },
+                    child: GestureDetector(
+                      onTap: toggle,
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 48),
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text('p14 $s'),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+            bodyBuilder: (context, animation) => panel('p14', s),
+          ),
+      ],
+    );
+  }
+}
+
+/// p15: `ExpansionTile` with the button flag turned on and the state on its
+/// title.
+class TileWithState extends StatefulWidget {
+  const TileWithState({super.key});
+
+  @override
+  State<TileWithState> createState() => _TileWithStateState();
+}
+
+class _TileWithStateState extends State<TileWithState> {
+  final open = <String>{};
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final s in sections)
+          ExpansionTile(
+            internalAddSemanticForOnTap: true,
+            onExpansionChanged: (v) {
+              setState(() => v ? open.add(s) : open.remove(s));
+              note('p15', s, v);
+            },
+            title: Semantics(expanded: open.contains(s), child: Text('p15 $s')),
+            children: [panel('p15', s)],
+          ),
+      ],
+    );
+  }
+}
+
+/// p04 and p05: `ExpansionPanelList`.
+class PanelList extends StatefulWidget {
+  const PanelList({super.key, required this.id, required this.tapHeader});
+
+  final String id;
+  final bool tapHeader;
+
+  @override
+  State<PanelList> createState() => _PanelListState();
+}
+
+class _PanelListState extends State<PanelList> {
+  final open = <String>{};
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionPanelList(
+      expansionCallback: (i, isExpanded) {
+        final s = sections[i];
+        setState(() => isExpanded ? open.add(s) : open.remove(s));
+        note(widget.id, s, isExpanded);
+      },
+      children: [
+        for (final s in sections)
+          ExpansionPanel(
+            canTapOnHeader: widget.tapHeader,
+            isExpanded: open.contains(s),
+            headerBuilder: (context, isExpanded) =>
+                ListTile(title: Text('${widget.id} $s')),
+            body: panel(widget.id, s),
+          ),
+      ],
+    );
+  }
+}
+
+Widget tiles(String id, {bool maintainState = false, bool heading = false}) =>
+    Column(
+      children: [
+        for (final s in sections)
+          ExpansionTile(
+            maintainState: maintainState,
+            onExpansionChanged: (v) => note(id, s, v),
+            title: heading
+                ? Semantics(headingLevel: 3, child: Text('$id $s'))
+                : Text('$id $s'),
+            children: [panel(id, s)],
+          ),
+      ],
+    );
+
+final Map<String, (String, WidgetBuilder)> fixtures = {
+  'p01': ('ExpansionTile, default', (_) => tiles('p01')),
+  'p02': (
+    'ExpansionTile, maintainState: true',
+    (_) => tiles('p02', maintainState: true),
+  ),
+  'p03': (
+    'ExpansionTile, title in Semantics(headingLevel: 3)',
+    (_) => tiles('p03', heading: true),
+  ),
+  'p04': (
+    'ExpansionPanelList, default (canTapOnHeader false)',
+    (_) => const PanelList(id: 'p04', tapHeader: false),
+  ),
+  'p05': (
+    'ExpansionPanelList, canTapOnHeader true',
+    (_) => const PanelList(id: 'p05', tapHeader: true),
+  ),
+  'p06': (
+    'CupertinoExpansionTile, default',
+    (_) => Column(
+      children: [
+        for (final s in sections)
+          CupertinoExpansionTile(title: Text('p06 $s'), child: panel('p06', s)),
+      ],
+    ),
+  ),
+  'p07': (
+    'Hand-built: Semantics(button, expanded), no heading',
+    (_) => const HandBuilt(id: 'p07'),
+  ),
+  'p08': (
+    'Hand-built: heading level 3 on the same node',
+    (_) => const HandBuilt(id: 'p08', heading: Heading.merged),
+  ),
+  'p09': (
+    'Hand-built: heading level 3 node holding the button node',
+    (_) => const HandBuilt(id: 'p09', heading: Heading.nested),
+  ),
+  'p10': (
+    'Hand-built: with onExpand / onCollapse actions',
+    (_) => const HandBuilt(id: 'p10', actions: true),
+  ),
+  'p11': (
+    'Hand-built: with controlsNodes to the panel',
+    (_) => const HandBuilt(id: 'p11', controls: true),
+  ),
+  'p12': (
+    'Hand-built: with value "collapsed" / "expanded"',
+    (_) => const HandBuilt(id: 'p12', value: true),
+  ),
+  'p13': (
+    'Hand-built: with onTapHint "expand" / "collapse"',
+    (_) => const HandBuilt(id: 'p13', tapHint: true),
+  ),
+  'p14': (
+    'Expansible (widgets layer), default maintainState',
+    (_) => const ExpansibleFixture(),
+  ),
+  'p15': (
+    'ExpansionTile with internalAddSemanticForOnTap and expanded on title',
+    (_) => const TileWithState(),
+  ),
+  'p16': (
+    'Hand-built with a CupertinoListTile face',
+    (_) => const HandBuilt(id: 'p16', cupertino: true),
+  ),
+  'p17': (
+    'Hand-built: controlsNodes, Shipping open from the start',
+    (_) => const HandBuilt(id: 'p17', controls: true, startOpen: true),
+  ),
+  'p18': (
+    'Hand-built: controlsNodes set only while the section is open',
+    (_) => const HandBuilt(id: 'p18', controls: true, controlsWhileOpen: true),
+  ),
+};
+
+class FixtureScreen extends StatelessWidget {
+  const FixtureScreen({super.key, required this.ids});
+
+  final List<String> ids;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(ids.length == 1 ? ids.single : 'C05 probe')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final id in ids) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text('Before $id'),
+              ),
+              Builder(builder: fixtures[id]!.$2),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Semantics(identifier: '$id-end', child: Text('$id end')),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

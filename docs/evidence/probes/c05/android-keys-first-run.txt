@@ -1,0 +1,54 @@
+11-21 09:13:11.756  6316  6345 I C05PROBE: p01 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:13:19.359  6316  6345 I C05PROBE: p01 Enter: header not reached by Tab
+11-21 09:13:26.914  6316  6345 I C05PROBE: p01 Space: header not reached by Tab
+11-21 09:13:34.532  6316  6345 I C05PROBE: p02 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:13:41.967  6316  6345 I C05PROBE: p02 Enter: header not reached by Tab
+11-21 09:13:48.981  6316  6345 I C05PROBE: p02 Space: header not reached by Tab
+11-21 09:13:57.612  6316  6345 I C05PROBE: p03 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:14:04.449  6316  6345 I C05PROBE: p03 Enter: header not reached by Tab
+11-21 09:14:12.194  6316  6345 I C05PROBE: p03 Space: header not reached by Tab
+11-21 09:14:21.147  6316  6345 I C05PROBE: p04 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:14:29.748  6316  6345 I C05PROBE: p04 Enter: header not reached by Tab
+11-21 09:14:36.749  6316  6345 I C05PROBE: p04 Space: header not reached by Tab
+11-21 09:14:45.775  6316  6345 I C05PROBE: p05 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:14:53.177  6316  6345 I C05PROBE: p05 Enter: header not reached by Tab
+11-21 09:15:00.598  6316  6345 I C05PROBE: p05 Space: header not reached by Tab
+11-21 09:15:08.904  6316  6345 I C05PROBE: p06 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:15:16.031  6316  6345 I C05PROBE: p06 Enter: header not reached by Tab
+11-21 09:15:23.404  6316  6345 I C05PROBE: p06 Space: header not reached by Tab
+11-21 09:15:32.253  6316  6345 I C05PROBE: p07 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:15:39.164  6316  6345 I C05PROBE: p07 Enter: header not reached by Tab
+11-21 09:15:46.332  6316  6345 I C05PROBE: p07 Space: header not reached by Tab
+11-21 09:15:55.048  6316  6345 I C05PROBE: p08 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:16:02.292  6316  6345 I C05PROBE: p08 Enter: header not reached by Tab
+11-21 09:16:10.096  6316  6345 I C05PROBE: p08 Space: header not reached by Tab
+11-21 09:16:19.353  6316  6345 I C05PROBE: p09 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:16:26.554  6316  6345 I C05PROBE: p09 Enter: header not reached by Tab
+11-21 09:16:32.873  6316  6345 I C05PROBE: p09 Space: header not reached by Tab
+11-21 09:16:41.663  6316  6345 I C05PROBE: p10 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:16:49.151  6316  6345 I C05PROBE: p10 Enter: header not reached by Tab
+11-21 09:16:56.369  6316  6345 I C05PROBE: p10 Space: header not reached by Tab
+11-21 09:17:05.473  6316  6345 I C05PROBE: p11 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:17:12.802  6316  6345 I C05PROBE: p11 Enter: header not reached by Tab
+11-21 09:17:19.991  6316  6345 I C05PROBE: p11 Space: header not reached by Tab
+11-21 09:17:28.582  6316  6345 I C05PROBE: p12 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:17:36.002  6316  6345 I C05PROBE: p12 Enter: header not reached by Tab
+11-21 09:17:43.097  6316  6345 I C05PROBE: p12 Space: header not reached by Tab
+11-21 09:17:52.147  6316  6345 I C05PROBE: p13 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:17:59.404  6316  6345 I C05PROBE: p13 Enter: header not reached by Tab
+11-21 09:18:07.115  6316  6345 I C05PROBE: p13 Space: header not reached by Tab
+11-21 09:18:15.725  6316  6345 I C05PROBE: p14 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:18:22.700  6316  6345 I C05PROBE: p14 Enter: header not reached by Tab
+11-21 09:18:30.098  6316  6345 I C05PROBE: p14 Space: header not reached by Tab
+11-21 09:18:38.953  6316  6345 I C05PROBE: p15 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:18:46.194  6316  6345 I C05PROBE: p15 Enter: header not reached by Tab
+11-21 09:18:55.006  6316  6345 I C05PROBE: p15 Space: header not reached by Tab
+11-21 09:19:04.248  6316  6345 I C05PROBE: p16 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:19:11.400  6316  6345 I C05PROBE: p16 Enter: header not reached by Tab
+11-21 09:19:18.941  6316  6345 I C05PROBE: p16 Space: header not reached by Tab
+11-21 09:19:27.120  6316  6345 I C05PROBE: p17 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:19:34.326  6316  6345 I C05PROBE: p17 Enter: header not reached by Tab
+11-21 09:19:41.595  6316  6345 I C05PROBE: p17 Space: header not reached by Tab
+11-21 09:19:50.708  6316  6345 I C05PROBE: p18 Tab stops collapsed: "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout / "" android.widget.FrameLayout
+11-21 09:19:58.199  6316  6345 I C05PROBE: p18 Enter: header not reached by Tab
+11-21 09:20:05.836  6316  6345 I C05PROBE: p18 Space: header not reached by Tab

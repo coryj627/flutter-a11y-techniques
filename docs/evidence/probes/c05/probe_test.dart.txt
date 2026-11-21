@@ -1,0 +1,130 @@
+// C05 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c05/probe_test.dart.txt): the semantics tree of each
+// fixture of lib/probe.dart in the widget test harness, collapsed and after
+// a tap on its first header, and where Tab goes, for the Android and the iOS
+// target platform.
+import 'dart:ui' show CheckedState, Tristate;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+String describe(SemanticsNode n) {
+  final d = n.getSemanticsData();
+  final f = d.flagsCollection;
+  final flags = <String>[
+    if (f.isButton) 'button',
+    if (f.isHeader) 'header',
+    if (d.headingLevel > 0) 'h${d.headingLevel}',
+    if (f.isExpanded != Tristate.none)
+      'expanded=${f.isExpanded == Tristate.isTrue}',
+    if (f.isFocused != Tristate.none) 'focusable',
+    if (f.isFocused == Tristate.isTrue) 'FOCUSED',
+    if (f.isLiveRegion) 'liveRegion',
+    if (f.isSelected != Tristate.none)
+      'selected=${f.isSelected == Tristate.isTrue}',
+    if (f.isToggled != Tristate.none) 'toggled',
+    if (f.isChecked != CheckedState.none) 'checked',
+    if (f.isEnabled != Tristate.none)
+      'enabled=${f.isEnabled == Tristate.isTrue}',
+    if (f.isAccessibilityFocusBlocked) 'a11yFocusBlocked',
+    if (d.controlsNodes != null) 'controls=${d.controlsNodes}',
+    if (d.identifier.isNotEmpty) 'id=${d.identifier}',
+  ];
+  final actions = <String>[
+    for (final a in SemanticsAction.values)
+      if (d.hasAction(a)) a.name,
+  ];
+  String q(String s) => s.replaceAll('\n', r'\n');
+  return 'label="${q(d.label)}" value="${q(d.value)}" hint="${q(d.hint)}" '
+      'tapHint="${d.customSemanticsActionIds?.isNotEmpty == true ? 'custom' : ''}" '
+      '[${flags.join(',')}] {${actions.join(',')}}';
+}
+
+void dump(WidgetTester tester, String title) {
+  debugPrint('C05TEST ==== $title');
+  final root = tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+  void walk(SemanticsNode n, int depth) {
+    final d = n.getSemanticsData();
+    final interesting =
+        d.label.isNotEmpty ||
+        d.flagsCollection.isButton ||
+        d.headingLevel > 0 ||
+        d.flagsCollection.isExpanded != Tristate.none ||
+        d.identifier.isNotEmpty;
+    if (interesting) debugPrint('C05TEST ${'  ' * depth}${describe(n)}');
+    final kids = <SemanticsNode>[];
+    n.visitChildren((c) {
+      kids.add(c);
+      return true;
+    });
+    for (final c in kids) {
+      walk(c, depth + (interesting ? 1 : 0));
+    }
+  }
+
+  walk(root, 0);
+}
+
+String focused() {
+  final f = FocusManager.instance.primaryFocus;
+  final ctx = f?.context;
+  if (ctx == null) return '(none)';
+  final ro = ctx.findRenderObject();
+  // The nearest semantics node's label, to name the stop.
+  String label = '';
+  RenderObject? r = ro;
+  while (r != null && label.isEmpty) {
+    label = r.debugSemantics?.getSemanticsData().label ?? '';
+    r = r.parent;
+  }
+  final box = ro is RenderBox && ro.hasSize ? ro.size : null;
+  return '"$label" size=$box';
+}
+
+void main() {
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    for (final id in fixtures.keys) {
+      testWidgets('$id on ${platform.name}', (tester) async {
+        debugDefaultTargetPlatformOverride = platform;
+        final handle = tester.ensureSemantics();
+        await tester.pumpWidget(const ProbeApp());
+        await tester.pumpAndSettle();
+        // ProbeApp opens '/', which lists every fixture; open this one.
+        final nav = tester.state<NavigatorState>(find.byType(Navigator));
+        nav.pushNamed('/$id');
+        await tester.pumpAndSettle();
+        dump(tester, '$id ${platform.name} collapsed');
+        final tabs = <String>[];
+        for (var i = 0; i < 7; i++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pumpAndSettle();
+          tabs.add(focused());
+        }
+        debugPrint(
+          'C05TEST $id ${platform.name} Tab stops collapsed: ${tabs.join(' / ')}',
+        );
+        final first = find.text('$id Shipping').last;
+        await tester.tap(first, warnIfMissed: false);
+        await tester.pumpAndSettle();
+        dump(tester, '$id ${platform.name} after a tap on Shipping');
+        FocusManager.instance.primaryFocus?.unfocus();
+        await tester.pumpAndSettle();
+        tabs.clear();
+        for (var i = 0; i < 7; i++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pumpAndSettle();
+          tabs.add(focused());
+        }
+        debugPrint(
+          'C05TEST $id ${platform.name} Tab stops after: ${tabs.join(' / ')}',
+        );
+        handle.dispose();
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
+  }
+}
