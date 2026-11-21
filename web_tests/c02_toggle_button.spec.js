@@ -3,6 +3,8 @@
 // build in build/web.
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
+// Pure logic, with no VoiceOver: imported here so that CI tests it.
+import { judgeControlWalk } from './vo/c02_control_html.js';
 
 const { open, expectCount } = technique('C02', { countLabel: 'Changes' });
 
@@ -123,4 +125,31 @@ test.describe('bad examples have their defect', () => {
     await expect(page.getByRole('switch', { name: 'Mute', exact: true })).toHaveCount(0);
     await expectCount(page, 'bad-label-changes', 1);
   });
+});
+
+// How the web VoiceOver spec judges one walk of its plain HTML comparison
+// page (web_tests/vo/c02_toggle_button_vo.spec.js, `control-html`). The
+// walks here are made up; VoiceOver is not used.
+test.describe('the VoiceOver comparison page is judged on every walk', () => {
+  const good = ['Bold toggle button', 'Italic selected toggle button', 'Underline current item button'];
+  const walk = (buttons) => ['heading level 2 Example', 'Text styles', ...buttons, 'Changes: 0', 'end of main'];
+  const cases = [
+    ['a correct walk', walk(good), true, 'complete'],
+    ['a bare name', walk(['Bold', ...good.slice(1)]), true, 'wrong'],
+    ['a state word before the name', walk(['selected Bold toggle button', ...good.slice(1)]), true, 'wrong'],
+    ['a button read as another button', walk([good[0], 'Italic toggle button', good[2]]), true, 'wrong'],
+    ['a reading with no name, between the neighbours', walk([good[0], 'toggle button', good[2]]), true, 'wrong'],
+    ['an empty reading, between the neighbours', walk([good[0], '', good[2]]), true, 'wrong'],
+    ['a wrong reading before the page is reached', ['Bold', ...walk(good)], true, 'wrong'],
+    ['an empty walk', [], false, 'incomplete'],
+    ['a partial walk: a button gone past without being read', walk(good.slice(1)), true, 'incomplete'],
+    ['a partial walk: the end not reached', ['heading level 2 Example', 'Text styles', good[0]], false, 'incomplete'],
+    ['a correct reading that did not reach the end', walk(good), false, 'incomplete'],
+    ['a walk that missed the stop before the buttons', ['', ...good, 'Changes: 0', 'end of main'], true, 'incomplete'],
+  ];
+  for (const [what, stops, reachedEnd, verdict] of cases) {
+    test(`${what}: ${verdict}`, () => {
+      expect(judgeControlWalk(stops, reachedEnd).verdict).toBe(verdict);
+    });
+  }
 });

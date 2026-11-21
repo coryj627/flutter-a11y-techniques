@@ -1,0 +1,32 @@
+// Throwaway native comparison for the C02 probe, second version. Not
+// committed; kept as docs/evidence/probes/c02/ProbeNativeActivity2.kt.txt.
+//
+// Each ToggleButton keeps Android's own textOn and textOff (not set here),
+// so its state description is the platform's default for that state. Its
+// name is given by contentDescription. The fixture sets nothing else on a
+// ToggleButton but isChecked. n00, a plain Button, comes first, so that
+// TalkBack's first focus on the screen is not on a toggle button.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.Activity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ToggleButton
+
+class ProbeNativeActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 200, 40, 40) }
+        column.addView(Button(this).apply { text = "n00 Start" })
+        column.addView(ToggleButton(this).apply { contentDescription = "n01 Bold"; isChecked = false })
+        column.addView(ToggleButton(this).apply { contentDescription = "n02 Bold"; isChecked = true })
+        // A plain Button marked selected, and one not, as Flutter's `selected` is.
+        column.addView(Button(this).apply { text = "n03 Bold"; isSelected = true })
+        column.addView(Button(this).apply { text = "n04 Bold"; isSelected = false })
+        // The first version's fixture, for comparison: textOn and textOff
+        // both set to the name, which makes the name the state description.
+        column.addView(ToggleButton(this).apply { textOn = "n05 Bold"; textOff = "n05 Bold"; isChecked = true })
+        setContentView(column)
+    }
+}

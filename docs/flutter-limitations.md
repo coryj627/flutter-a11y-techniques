@@ -2491,26 +2491,38 @@ yet), **Fixed in x.y** (verified on that version).
   A node with `button: true` and a toggled or checked state is the switch
   or the checkbox on Android and the web; the button flag is not shown
   (on iOS it adds the button trait, which a switch has anyway).
-- Compared with native controls:
-  - Android: an `android.widget.ToggleButton` is checkable and checked
-    (`docs/evidence/probes/c02/android_nodes.txt`), and TalkBack 17 reads
-    it as a switch: "n02 Bold. Switch", with no word for the state, on or
-    off (`talkback-first-run.md.txt` in the probe folder). A `Button`
-    with `isSelected` is read "selected. n03 Bold. Button", the same as
-    Flutter's `selected`.
-  - iOS: a UIKit button with the toggle button trait is a switch to
-    XCUITest, and VoiceOver reads one that is selected "n02 Bold Switch
-    button", with no word for its state; a plain selected button is read
-    "selected n04 Bold Button", the same as Flutter's `selected`
-    (`docs/evidence/probes/c02/ios_native.txt`). The reading of one that
-    is off was not recorded.
+- Compared with native controls (the second native probe, files
+  `…native2…` in `docs/evidence/probes/c02`; the first version of the
+  fixtures removed the state on both platforms and its readings are not
+  used, see the probe README):
+  - Android: an `android.widget.ToggleButton` with Android's own
+    `textOn` and `textOff` (the fixture sets only `contentDescription`,
+    for the name, and `isChecked`) is a checkable `ToggleButton` whose
+    state description is "OFF" or "ON" (`android_native2_nodes.txt`).
+    TalkBack 17 reads it "OFF. n01 Bold. Switch", and "ON. n01 Bold.
+    Switch" after a click (`talkback-native2.md.txt`). Flutter's `toggled`
+    is read "off. Bold. Switch" and "checked. on. Bold. Switch": the same
+    role and the same state words, with the extra "checked" of
+    [FL-100](#fl-100). A `Button` with `isSelected` is read "selected.
+    n03 Bold. Button", the same as Flutter's `selected`.
+  - iOS: a UIKit button with the toggle button trait added to UIKit's own
+    traits is a switch to XCUITest, and VoiceOver reads it "n01 Bold
+    Switch button" while it is not selected and "selected n01 Bold Switch
+    button" once a tap has selected it (`ios_native2.txt`). Flutter's
+    `toggled` is read "Bold Switch button off" and "… on": the same role,
+    with the state in other words ("off" and "on", where UIKit says
+    nothing and "selected"). A plain button that is selected is read
+    "selected n04 Bold Button", the same as Flutter's `selected`; UIKit's
+    `changesSelectionAsPrimaryAction` button is read "n03 Bold Button",
+    then "selected n03 Bold Button", with no toggle trait.
   - Web: VoiceOver on macOS reads a plain HTML `button` with
     `aria-pressed="false"` "Bold toggle button" and one with
     `aria-pressed="true"` "Italic selected toggle button", in Chromium and
     WebKit (`control-html` in `docs/evidence/C02/voiceover-web.md`). No
     Flutter node can be read that way.
   So the nearest native toggle buttons are read as switches by TalkBack
-  and by VoiceOver on iOS, as Flutter's `toggled` is; only the web has a
+  and by VoiceOver on iOS, as Flutter's `toggled` is; on Android with the
+  same state words, on iOS with different ones. Only the web has a
   toggle button role that Flutter cannot reach.
 - What the user gets: the role heard is "switch" or "checkbox", not
   "toggle button". With `toggled` the state is said in both states on
@@ -2571,10 +2583,14 @@ yet), **Fixed in x.y** (verified on that version).
     on iOS XCUITest reports `isSelected` false or true (`ios.txt`), the
     engine setting the selected trait only while it is true, which is how
     UIKit represents a button that is not selected. A native button that
-    is selected or not reads the same on both (`android_native_before.xml`,
-    `talkback-first-run.md.txt`, `ios_native.txt` in the C02 probe
-    folder). The weakness is the one above: while off, nothing says the
-    control is a toggle.
+    is selected or not reads the same on both: "selected. n03 Bold.
+    Button" and "n04 Bold. Button" by TalkBack, "selected n04 Bold
+    Button" and "n03 Bold Button" by VoiceOver (`android_native2_nodes.txt`,
+    `talkback-native2.md.txt`, `ios_native2.txt` in the C02 probe folder;
+    these are plain buttons, which the first native fixtures did not set
+    up differently, and read the same there). The weakness is the one
+    above: while off, nothing says the control is a toggle. The nearest
+    native toggle buttons do say it, by their role (FL-200).
 - `ToggleButtons` is not affected: it sets `checked` (FL-200). A
   `FilterChip` sets `selected` on Android and iOS and `checked` on the
   web (`material/chip.dart`, whose comment gives the reason; probe,
