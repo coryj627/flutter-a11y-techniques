@@ -1,0 +1,25 @@
+00:00 +0: good-material: at 200% text on a phone nothing overflows and no text is cut short
+00:00 +1: good-cupertino: at 200% text on a phone nothing overflows and no text is cut short
+Expected: false
+  Actual: <true>
+"Read about stand-alone links" hit its line limit
+00:00 +1 -1: good-cupertino: at 200% text on a phone nothing overflows and no text is cut short [E]
+00:00 +1 -1: good-custom: at 200% text on a phone nothing overflows and no text is cut short
+00:00 +2 -1: good-image-link: at 200% text on a phone nothing overflows and no text is cut short
+Expected: non-empty
+  Actual: []
+00:00 +2 -2: good-image-link: at 200% text on a phone nothing overflows and no text is cut short [E]
+00:00 +2 -2: bad-vague-text: at 200% text on a phone nothing overflows and no text is cut short
+00:00 +3 -2: bad-tap-handler: at 200% text on a phone nothing overflows and no text is cut short
+00:00 +4 -2: bad-no-address: at 200% text on a phone nothing overflows and no text is cut short
+00:00 +5 -2: bad-image-no-name: at 200% text on a phone nothing overflows and no text is cut short
+Expected: non-empty
+  Actual: []
+00:00 +5 -3: bad-image-no-name: at 200% text on a phone nothing overflows and no text is cut short [E]
+00:00 +5 -3: bad-label-on-image: at 200% text on a phone nothing overflows and no text is cut short
+Expected: non-empty
+  Actual: []
+00:01 +5 -4: bad-label-on-image: at 200% text on a phone nothing overflows and no text is cut short [E]
+00:01 +5 -4: bad-cupertino-button: at 200% text on a phone nothing overflows and no text is cut short
+00:01 +6 -4: bad-app-also-follows: at 200% text on a phone nothing overflows and no text is cut short
+00:01 +7 -4: Some tests failed.

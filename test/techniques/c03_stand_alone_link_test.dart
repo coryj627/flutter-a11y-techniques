@@ -1,7 +1,7 @@
 import 'dart:ui' show Tristate;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_a11y_techniques/app/screens.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
@@ -59,6 +59,25 @@ Color _ringColour(WidgetTester tester, String id) {
   return border.top.color;
 }
 
+/// Every paragraph of text that the example's own widget draws, the app's
+/// screen round it left out.
+List<RenderParagraph> _exampleParagraphs(
+  WidgetTester tester,
+  TechniqueExample example,
+) {
+  final widget = example.builder(tester.element(find.byType(ExampleScreen)));
+  // The example's widget is on screen; a picture link has no text in it.
+  expect(find.byType(widget.runtimeType), findsOneWidget);
+  return tester
+      .renderObjectList<RenderParagraph>(
+        find.descendant(
+          of: find.byType(widget.runtimeType),
+          matching: find.byType(RichText),
+        ),
+      )
+      .toList();
+}
+
 bool _focused(String id) =>
     dataById(id).flagsCollection.isFocused == Tristate.isTrue;
 
@@ -106,16 +125,6 @@ void main() {
           handle.dispose();
         });
       }
-
-      testWidgets('$slug does not overflow at 200% text on a phone', (
-        tester,
-      ) async {
-        tester.view.physicalSize = const Size(320, 640);
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.reset);
-        await _open(tester, slug, textScale: 2);
-        expect(tester.takeException(), isNull);
-      });
 
       testWidgets('$slug: a link with its address and name, and nothing else', (
         tester,
@@ -199,6 +208,43 @@ void main() {
       }
     }
   });
+
+  // Every example, good and bad: at 200% text on a 320 by 640 screen no
+  // layout overflows, and no text in the example is cut short, by a line
+  // limit (an ellipsis) or by a box too small for its lines.
+  for (final example in c03StandAloneLink.examples) {
+    final slug = example.slug;
+    testWidgets('$slug: at 200% text on a phone nothing overflows and no '
+        'text is cut short', (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await _open(tester, slug, textScale: 2);
+      expect(tester.takeException(), isNull);
+      final paragraphs = _exampleParagraphs(tester, example);
+      for (final p in paragraphs) {
+        final text = p.text.toPlainText();
+        expect(
+          p.didExceedMaxLines,
+          isFalse,
+          reason: '"$text" hit its line limit',
+        );
+        // The box is as tall as the text's lines need, with no line limit.
+        final painter = TextPainter(
+          text: p.text,
+          textDirection: p.textDirection,
+          textScaler: p.textScaler,
+          textAlign: p.textAlign,
+        )..layout(maxWidth: p.size.width);
+        expect(
+          p.size.height,
+          greaterThanOrEqualTo(painter.height - 0.5),
+          reason: '"$text" is cut short in its box',
+        );
+        painter.dispose();
+      }
+    });
+  }
 
   group('bad examples have their defect', () {
     testWidgets('bad-vague-text: a link named "Read more"', (tester) async {

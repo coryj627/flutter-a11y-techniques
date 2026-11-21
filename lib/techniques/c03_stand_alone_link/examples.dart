@@ -266,7 +266,20 @@ class GoodCupertino extends StatelessWidget {
       child: KeyboardLink(
         onFollow: () => followLink(context),
         child: CupertinoListTile(
-          title: const Text(linkText),
+          // The tile cuts its title to one line with an ellipsis, through a
+          // DefaultTextStyle with maxLines: 1. A DefaultTextStyle of the
+          // title's own, with no line limit, lets the whole name wrap and
+          // the row grow at large text sizes.
+          title: Builder(
+            builder: (context) {
+              final tile = DefaultTextStyle.of(context);
+              return DefaultTextStyle(
+                style: tile.style,
+                textAlign: tile.textAlign,
+                child: const Text(linkText),
+              );
+            },
+          ),
           trailing: const CupertinoListTileChevron(),
           onTap: () => followLink(context),
         ),

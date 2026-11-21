@@ -90,6 +90,13 @@ So the first Tab is on Back, the second on `good-material`'s link, and
 `bad-tap-handler`'s text is passed over. The test now checks that the
 example leaves the screen, not that the technique's page opens.
 
+In the second review, `good-cupertino`'s title was found cut to one line
+with an ellipsis at 200% text on a 320 pixel screen.
+`text_cut_short_before_fix.txt` is the widget test that confirmed it before
+the fix ("Read about stand-alone links" hit its line limit). The three
+picture examples failed in that run too, but only on a check, since
+removed, that each example has text.
+
 ## Web
 
 | # | Element | Chromium's role and name | Click | Enter | Space |
