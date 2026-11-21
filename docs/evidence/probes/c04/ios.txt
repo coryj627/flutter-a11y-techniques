@@ -1,0 +1,205 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+content size before: large
+== testTree
+C04PROBE ==== r01 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r01" value=Optional() frame=(186.17041015625, 76.0, 29.6591796875, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 392.9443359375, 116.0)
+C04PROBE EL type=48 id= label="Before r01" value=Optional() frame=(16.0, 134.0, 70.435546875, 20.0)
+C04PROBE EL type=48 id=r01-taps label="r01 taps: first=0 second=0" value=Optional() frame=(16.0, 198.0, 181.3359375, 20.0)
+C04PROBE EL type=48 id= label="r01 Read about " value=Optional() frame=(12.0, 163.0, 116.0, 26.0)
+C04PROBE EL type=42 id= label="r01 first link" value=Optional() frame=(119.0, 163.0, 90.0, 26.0)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(200.0, 163.0, 42.0, 26.0)
+C04PROBE EL type=42 id= label="r01 second link" value=Optional() frame=(233.0, 163.0, 113.0, 26.0)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(337.0, 163.0, 45.0, 26.0)
+C04PROBE r01 first type=42 label="r01 first link"
+C04PROBE r01 first tap: taps="r01 taps: first=1 second=0" destination=false
+C04PROBE r01 second type=42 label="r01 second link"
+C04PROBE r01 second tap: taps="r01 taps: first=0 second=1" destination=false
+C04PROBE ==== r02 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r02" value=Optional() frame=(184.822265625, 76.0, 32.35546875, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 398.8095703125, 116.0)
+C04PROBE EL type=48 id= label="Before r02" value=Optional() frame=(16.0, 134.0, 72.390625, 20.0)
+C04PROBE EL type=48 id=r02-taps label="r02 taps: first=0 second=0" value=Optional() frame=(16.0, 198.0, 183.291015625, 20.0)
+C04PROBE EL type=1 id= label="r02 Read about \n and \n first." value=Optional() frame=(16.0, 166.0, 366.8095703125, 20.0)
+C04PROBE EL type=42 id= label="r02 first link" value=Optional() frame=(125.4013671875, 165.98001098632812, 82.810546875, 20.000010172526032)
+C04PROBE EL type=42 id= label="r02 second link" value=Optional() frame=(241.830078125, 165.98001098632812, 105.1953125, 20.000010172526032)
+C04PROBE r02 first type=42 label="r02 first link"
+C04PROBE r02 first tap: taps="(gone)" destination=true
+C04PROBE r02 second type=42 label="r02 second link"
+C04PROBE r02 second tap: taps="(gone)" destination=true
+C04PROBE ==== r03 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r03" value=Optional() frame=(184.43017578125, 76.0, 33.1396484375, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 399.7939453125, 116.0)
+C04PROBE EL type=48 id= label="Before r03" value=Optional() frame=(16.0, 134.0, 72.71875, 20.0)
+C04PROBE EL type=48 id=r03-taps label="r03 taps: first=0 second=0" value=Optional() frame=(16.0, 198.0, 183.619140625, 20.0)
+C04PROBE EL type=48 id=r03-run label="r03 Read about " value=Optional() frame=(12.0, 163.0, 118.0, 26.0)
+C04PROBE EL type=42 id= label="r03 first link" value=Optional() frame=(125.7294921875, 165.98001098632812, 83.138671875, 20.000010172526032)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(204.0, 163.0, 43.0, 26.0)
+C04PROBE EL type=42 id= label="r03 second link" value=Optional() frame=(242.486328125, 165.98001098632812, 105.5234375, 20.000010172526032)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(344.0, 163.0, 44.0, 26.0)
+C04PROBE r03 first type=42 label="r03 first link"
+C04PROBE r03 first tap: taps="(gone)" destination=true
+C04PROBE r03 second type=42 label="r03 second link"
+C04PROBE r03 second tap: taps="(gone)" destination=true
+C04PROBE ==== r04 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r04" value=Optional() frame=(184.29052734375, 76.0, 33.4189453125, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 400.4912109375, 116.0)
+C04PROBE EL type=48 id= label="Before r04" value=Optional() frame=(16.0, 134.0, 72.951171875, 20.0)
+C04PROBE EL type=48 id=r04-taps label="r04 taps: first=0 second=0" value=Optional() frame=(16.0, 198.0, 183.8515625, 20.0)
+C04PROBE EL type=48 id=r04-run label="r04 Read about " value=Optional() frame=(12.0, 163.0, 118.0, 26.0)
+C04PROBE EL type=42 id= label="r04 first link" value=Optional() frame=(125.9619140625, 165.98001098632812, 83.37109375, 20.000010172526032)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(205.0, 163.0, 42.0, 26.0)
+C04PROBE EL type=42 id= label="r04 second link" value=Optional() frame=(242.951171875, 165.98001098632812, 105.755859375, 20.000010172526032)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(344.0, 163.0, 45.0, 26.0)
+C04PROBE r04 first type=42 label="r04 first link"
+C04PROBE r04 first tap: taps="(gone)" destination=true
+C04PROBE r04 second type=42 label="r04 second link"
+C04PROBE r04 second tap: taps="(gone)" destination=true
+C04PROBE ==== r05 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r05" value=Optional() frame=(184.50537109375, 76.0, 32.9892578125, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 399.4248046875, 116.0)
+C04PROBE EL type=48 id= label="Before r05" value=Optional() frame=(16.0, 134.0, 72.595703125, 20.0)
+C04PROBE EL type=42 id=r05-run label="r05 Read about \nr05 first link\n and \nr05 second link\n first." value=Optional() frame=(16.0, 166.0, 367.4248046875, 20.0)
+C04PROBE EL type=48 id=r05-taps label="r05 taps: first=0 second=0" value=Optional() frame=(16.0, 198.0, 183.49609375, 20.0)
+C04PROBE r05 first: no element
+C04PROBE r05 second: no element
+C04PROBE ==== r06 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r06" value=Optional() frame=(184.15087890625, 76.0, 33.6982421875, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 176.0)
+C04PROBE EL type=48 id= label="Before r06" value=Optional() frame=(16.0, 134.0, 72.85546875, 20.0)
+C04PROBE EL type=48 id=r06-taps label="r06 taps: first=0 second=0" value=Optional() frame=(16.0, 258.0, 183.755859375, 20.0)
+C04PROBE EL type=48 id=r06-run label="r06 Read about " value=Optional() frame=(12.0, 163.0, 118.0, 26.0)
+C04PROBE EL type=42 id= label="r06 first link" value=Optional() frame=(125.8662109375, 165.98001098632812, 83.275390625, 20.000010172526032)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(205.0, 163.0, 42.0, 26.0)
+C04PROBE EL type=42 id= label="r06 second link, whose words run on for long enough to need a line" value=Optional() frame=(16.125, 186.0, 370.0, 40.0)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(12.0, 183.0, 379.0, 66.0)
+C04PROBE r06 first type=42 label="r06 first link"
+C04PROBE r06 first tap: taps="(gone)" destination=true
+C04PROBE r06 second type=42 label="r06 second link, whose words run on for long enough to need a line"
+C04PROBE r06 second tap: taps="(gone)" destination=true
+C04PROBE ==== r07 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r07" value=Optional() frame=(185.13916015625, 76.0, 31.7216796875, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 399.5537109375, 116.0)
+C04PROBE EL type=48 id= label="Before r07" value=Optional() frame=(16.0, 134.0, 71.638671875, 20.0)
+C04PROBE EL type=48 id=r07-taps label="r07 taps: first=0 second=0" value=Optional() frame=(16.0, 198.0, 182.5390625, 20.0)
+C04PROBE EL type=48 id= label="r07 Read about " value=Optional() frame=(12.0, 163.0, 117.0, 26.0)
+C04PROBE EL type=42 id= label="r07 first link" value=Optional() frame=(120.0, 163.0, 91.0, 26.0)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(202.0, 163.0, 43.0, 26.0)
+C04PROBE EL type=42 id= label="r07 second link" value=Optional() frame=(236.0, 163.0, 113.0, 26.0)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(340.0, 163.0, 45.0, 26.0)
+C04PROBE r07 first type=42 label="r07 first link"
+C04PROBE r07 first tap: taps="r07 taps: first=1 second=0" destination=false
+C04PROBE r07 second type=42 label="r07 second link"
+C04PROBE r07 second tap: taps="r07 taps: first=0 second=1" destination=false
+C04PROBE ==== r08 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r08" value=Optional() frame=(184.34423828125, 76.0, 33.3115234375, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 400.2861328125, 116.0)
+C04PROBE EL type=48 id= label="Before r08" value=Optional() frame=(16.0, 134.0, 72.8828125, 20.0)
+C04PROBE EL type=48 id= label="r08 Read about the two links first." value=Optional() frame=(16.0, 166.0, 368.2861328125, 20.0)
+C04PROBE EL type=48 id=r08-taps label="r08 taps: first=0 second=0" value=Optional() frame=(16.0, 198.0, 183.783203125, 20.0)
+C04PROBE r08 first: no element
+C04PROBE r08 second: no element
+C04PROBE ==== r09 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r09" value=Optional() frame=(184.15087890625, 76.0, 33.6982421875, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 156.0)
+C04PROBE EL type=48 id= label="Before r09" value=Optional() frame=(16.0, 134.0, 72.85546875, 20.0)
+C04PROBE EL type=48 id=r09-taps label="r09 taps: first=0 second=0" value=Optional() frame=(16.0, 238.0, 183.755859375, 20.0)
+C04PROBE EL type=48 id= label="r09 Read about " value=Optional() frame=(12.0, 163.0, 118.0, 26.0)
+C04PROBE EL type=42 id= label="r09 first link" value=Optional() frame=(121.0, 163.0, 93.0, 26.0)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(205.0, 163.0, 42.0, 26.0)
+C04PROBE EL type=42 id= label="r09 second link, whose words run on for long enough to need a line" value=Optional() frame=(12.0, 163.0, 354.0, 46.0)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(12.0, 183.0, 358.0, 46.0)
+C04PROBE r09 first type=42 label="r09 first link"
+C04PROBE r09 first tap: taps="r09 taps: first=1 second=0" destination=false
+C04PROBE r09 second type=42 label="r09 second link, whose words run on for long enough to need a line"
+C04PROBE r09 second tap: taps="r09 taps: first=0 second=0" destination=false
+C04PROBE ==== r10 start
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r10" value=Optional() frame=(186.06298828125, 76.0, 29.8740234375, 28.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 392.9443359375, 116.0)
+C04PROBE EL type=48 id= label="Before r10" value=Optional() frame=(16.0, 134.0, 70.435546875, 20.0)
+C04PROBE EL type=48 id=r10-taps label="r10 taps: first=0 second=0" value=Optional() frame=(16.0, 198.0, 181.3359375, 20.0)
+C04PROBE EL type=48 id=r10-run label="r10 Read about " value=Optional() frame=(12.0, 163.0, 116.0, 26.0)
+C04PROBE EL type=42 id= label="r10 first link" value=Optional() frame=(123.4462890625, 165.98001098632812, 80.85546875, 20.000010172526032)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(200.0, 163.0, 42.0, 26.0)
+C04PROBE EL type=42 id= label="r10 second link" value=Optional() frame=(237.919921875, 165.98001098632812, 103.240234375, 20.000010172526032)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(337.0, 163.0, 45.0, 26.0)
+C04PROBE r10 first type=42 label="r10 first link"
+C04PROBE r10 first tap: taps="(gone)" destination=true
+C04PROBE r10 second type=42 label="r10 second link"
+C04PROBE r10 second tap: taps="(gone)" destination=true
+Test Case '-[RunnerUITests.ProbeC04UITests testTree]' passed (239.634 seconds).
+== testKeys
+C04PROBE r01 1 Tab(s) then Enter: taps="r01 taps: first=0 second=0" destination=false
+C04PROBE r01 2 Tab(s) then Enter: taps="r01 taps: first=0 second=0" destination=false
+C04PROBE r01 3 Tab(s) then Enter: taps="r01 taps: first=0 second=0" destination=false
+C04PROBE r02 1 Tab(s) then Enter: taps="r02 taps: first=0 second=0" destination=false
+C04PROBE r02 2 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r02 3 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r03 1 Tab(s) then Enter: taps="r03 taps: first=0 second=0" destination=false
+C04PROBE r03 2 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r03 3 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r04 1 Tab(s) then Enter: taps="r04 taps: first=0 second=0" destination=false
+C04PROBE r04 2 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r04 3 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r05 1 Tab(s) then Enter: taps="r05 taps: first=0 second=0" destination=false
+C04PROBE r05 2 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r05 3 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r06 1 Tab(s) then Enter: taps="r06 taps: first=0 second=0" destination=false
+C04PROBE r06 2 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r06 3 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r07 1 Tab(s) then Enter: taps="r07 taps: first=0 second=0" destination=false
+C04PROBE r07 2 Tab(s) then Enter: taps="r07 taps: first=0 second=0" destination=false
+C04PROBE r07 3 Tab(s) then Enter: taps="r07 taps: first=0 second=0" destination=false
+C04PROBE r08 1 Tab(s) then Enter: taps="r08 taps: first=0 second=0" destination=false
+C04PROBE r08 2 Tab(s) then Enter: taps="r08 taps: first=0 second=0" destination=false
+C04PROBE r08 3 Tab(s) then Enter: taps="r08 taps: first=0 second=0" destination=false
+C04PROBE r09 1 Tab(s) then Enter: taps="r09 taps: first=0 second=0" destination=false
+C04PROBE r09 2 Tab(s) then Enter: taps="r09 taps: first=0 second=0" destination=false
+C04PROBE r09 3 Tab(s) then Enter: taps="r09 taps: first=0 second=0" destination=false
+C04PROBE r10 1 Tab(s) then Enter: taps="r10 taps: first=0 second=0" destination=false
+C04PROBE r10 2 Tab(s) then Enter: taps="(gone)" destination=true
+C04PROBE r10 3 Tab(s) then Enter: taps="(gone)" destination=true
+Test Case '-[RunnerUITests.ProbeC04UITests testKeys]' passed (329.366 seconds).
+== testVoiceOver
+C04PROBE VO r01 walk: r01 / Before r01 / r01 Read about / r01 first link Link / and / r01 second link Link / first. / r01 taps: first=0 second=0
+C04PROBE VO r01 first cursor on "r01 first link Link", double tap: taps="r01 taps: first=1 second=0" destination=false
+C04PROBE VO r01 second cursor on "r01 second link Link", double tap: taps="r01 taps: first=0 second=1" destination=false
+C04PROBE VO r02 walk: r02 / Before r02 / r02 Read about and first. / r02 first link Link / r02 second link Link / r02 taps: first=0 second=0
+C04PROBE VO r02 first cursor on "r02 first link Link", double tap: taps="(gone)" destination=true
+C04PROBE VO r02 second cursor on "r02 second link Link", double tap: taps="(gone)" destination=true
+C04PROBE VO r03 walk: r03 / Before r03 / r03 Read about / r03 first link Link / and / r03 second link Link / first. / r03 taps: first=0 second=0
+C04PROBE VO r03 first cursor on "r03 first link Link", double tap: taps="(gone)" destination=true
+C04PROBE VO r03 second cursor on "r03 second link Link", double tap: taps="(gone)" destination=true
+C04PROBE VO r04 walk: r04 / Before r04 / r04 Read about / r04 first link Link / and / r04 second link Link / first. / r04 taps: first=0 second=0
+C04PROBE VO r04 first cursor on "r04 first link Link", double tap: taps="(gone)" destination=true
+C04PROBE VO r04 second cursor on "r04 second link Link", double tap: taps="(gone)" destination=true
+C04PROBE VO r05 walk: r05 / Before r05 / r05 Read about r05 first link and r05 second link first. Lin / r05 taps: first=0 second=0
+C04PROBE VO r05 first: no element
+C04PROBE VO r05 second: no element
+C04PROBE VO r06 walk: r06 / Before r06 / r06 Read about / r06 first link Link / and / r06 second link, whose words run on for long enough to need a li / first. / r06 taps: first=0 second=0
+C04PROBE VO r06 first cursor on "r06 first link Link", double tap: taps="(gone)" destination=true
+C04PROBE VO r06 second cursor on "first.", double tap: taps="(gone)" destination=true
+C04PROBE VO r07 walk: r07 / Before r07 / (error 3) / r07 Read about / r07 first link Link / and / r07 second link Link / first. / r07 taps: first=0 second=0
+C04PROBE VO r07 first cursor on "r07 first link Link", double tap: taps="r07 taps: first=1 second=0" destination=false
+C04PROBE VO r07 second cursor on "r07 second link Link", double tap: taps="r07 taps: first=0 second=1" destination=false
+C04PROBE VO r08 walk: r08 / Before r08 / r08 Read about the two links first. / r08 taps: first=0 second=0
+C04PROBE VO r08 first: no element
+C04PROBE VO r08 second: no element
+C04PROBE VO r09 walk: r09 / Before r09 / r09 Read about / r09 first link Link / and / r09 second link, whose words run on for long enough to need a li / first. / r09 taps: first=0 second=0
+C04PROBE VO r09 first cursor on "r09 second link, whose words run on for long enough to need a li", double tap: taps="r09 taps: first=1 second=0" destination=false
+C04PROBE VO r09 second cursor on "first.", double tap: taps="r09 taps: first=0 second=0" destination=false
+C04PROBE VO r10 walk: r10 / Before r10 / r10 Read about / r10 first link Link / and / r10 second link Link / first. / r10 taps: first=0 second=0
+C04PROBE VO r10 first cursor on "r10 first link Link", double tap: taps="(gone)" destination=true
+C04PROBE VO r10 second cursor on "r10 second link Link", double tap: taps="(gone)" destination=true
+Test Case '-[RunnerUITests.ProbeC04UITests testVoiceOver]' passed (570.019 seconds).
+content size for testRects: accessibility-large

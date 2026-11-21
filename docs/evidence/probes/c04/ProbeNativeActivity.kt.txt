@@ -1,0 +1,37 @@
+// Throwaway native comparison for the C04 probe. Not committed; kept as
+// docs/evidence/probes/c04/ProbeNativeActivity.kt.txt, declared for the run
+// in the debug manifest.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.Activity
+import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.URLSpan
+import android.widget.LinearLayout
+import android.widget.TextView
+
+class ProbeNativeActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 200, 40, 40) }
+        column.addView(TextView(this).apply { text = "Before n01"; textSize = 18f })
+        // n01: a TextView with two URLSpans in its text and
+        // LinkMovementMethod, the Android View reference's way.
+        val text = "n01 Read about n01 first link and n01 second link first."
+        val s = SpannableString(text)
+        for (part in listOf("n01 first link", "n01 second link")) {
+            val start = text.indexOf(part)
+            s.setSpan(URLSpan("https://example.com/c04"), start, start + part.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        column.addView(TextView(this).apply {
+            this.text = s
+            movementMethod = LinkMovementMethod.getInstance()
+            textSize = 18f
+            setPadding(0, 40, 0, 40)
+        })
+        column.addView(TextView(this).apply { this.text = "After n01"; textSize = 18f })
+        setContentView(column)
+    }
+}

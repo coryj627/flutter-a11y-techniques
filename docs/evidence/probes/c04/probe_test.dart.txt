@@ -1,0 +1,408 @@
+// C04 probe under flutter_test (throwaway; kept as
+// docs/evidence/probes/c04/probe_test.dart.txt). For each fixture of
+// lib/probe.dart: its semantics nodes in traversal order, which stops Tab
+// makes, what Enter and Space do on each, and where each link is laid out at
+// 200% text on a 320 pixel screen. Then colour contrasts, and how the
+// paragraph counts its runs when the first run is two spans.
+import 'dart:math' as math;
+import 'dart:ui' show Tristate;
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void log(String s) => debugPrint('C04T $s');
+
+String describe(SemanticsNode n) {
+  final d = n.getSemanticsData();
+  final f = d.flagsCollection;
+  final parts = <String>[
+    '"${d.label.replaceAll('\n', r'\n')}"',
+    if (f.isLink) 'link',
+    if (f.isButton) 'button',
+    if (d.linkUrl != null) 'url=${d.linkUrl}',
+    if (d.hasAction(SemanticsAction.tap)) 'tap',
+    if (f.isFocused != Tristate.none) 'focusable',
+    if (d.identifier.isNotEmpty) 'id=${d.identifier}',
+    if (n.isMergedIntoParent) 'merged',
+    'rect=${n.rect}',
+  ];
+  return parts.join(' ');
+}
+
+double luminance(Color c) => c.computeLuminance();
+double contrast(Color a, Color b) {
+  final la = luminance(a), lb = luminance(b);
+  return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
+}
+
+Future<void> pumpFixture(WidgetTester tester, String id) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: FixtureScreen(ids: [id]),
+      routes: {'/dest': (_) => const Text('Arrived')},
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+// Which part of FL-413's workaround the order rests on: the identifier with
+// and without the sort keys, with and without the container, on one line
+// (800 wide) and wrapped (200 wide).
+void sortKeyProbe() {
+  for (final width in [800.0, 200.0]) {
+    for (final (container, keys) in [
+      (false, false),
+      (true, false),
+      (true, true),
+      (false, true),
+    ]) {
+      testWidgets('order: $width wide container=$container keys=$keys', (
+        tester,
+      ) async {
+        tester.view.physicalSize = Size(width, 600);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final handle = tester.ensureSemantics();
+        Widget link(String t, double k) {
+          Widget w = Semantics(
+            link: true,
+            child: GestureDetector(onTap: () {}, child: Text(t)),
+          );
+          if (container || keys) {
+            w = Semantics(
+              container: container,
+              sortKey: keys ? OrdinalSortKey(k) : null,
+              child: w,
+            );
+          }
+          return w;
+        }
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: 'Read about ',
+                      semanticsIdentifier: 's',
+                    ),
+                    WidgetSpan(child: link('first link', 0.5)),
+                    const TextSpan(text: ' and '),
+                    WidgetSpan(child: link('second link', 1.5)),
+                    const TextSpan(text: ' first.'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        final p = tester.getSemantics(find.byType(RichText).first);
+        final order = p
+            .debugListChildrenInOrder(DebugSemanticsDumpOrder.traversalOrder)
+            .map(
+              (c) =>
+                  '"${c.getSemanticsData().label}" top=${c.rect.top.toStringAsFixed(0)}',
+            )
+            .join(' | ');
+        log('order, $width wide, container=$container keys=$keys: $order');
+        handle.dispose();
+      });
+    }
+  }
+}
+
+void main() {
+  sortKeyProbe();
+  for (final id in fixtures.keys) {
+    testWidgets('tree $id', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pumpFixture(tester, id);
+      log('== $id: ${fixtures[id]!.$1}');
+      final root =
+          tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+      void visit(SemanticsNode n, int depth) {
+        final d = n.getSemanticsData();
+        if (d.label.isNotEmpty ||
+            d.identifier.isNotEmpty ||
+            d.flagsCollection.isLink) {
+          log('${'  ' * depth}${describe(n)}');
+        }
+        n.visitChildren((c) {
+          visit(c, depth + 1);
+          return true;
+        });
+      }
+
+      visit(root, 0);
+      // The order a screen reader goes in: depth first in traversal order.
+      final order = <String>[];
+      void walk(SemanticsNode n) {
+        final d = n.getSemanticsData();
+        if (!n.isMergedIntoParent && d.label.isNotEmpty) order.add(d.label);
+        for (final c in n.debugListChildrenInOrder(
+          DebugSemanticsDumpOrder.traversalOrder,
+        )) {
+          walk(c);
+        }
+      }
+
+      walk(root);
+      log(
+        '$id traversal: ${order.map((s) => s.replaceAll('\n', r'\n')).join(' | ')}',
+      );
+
+      // Tab stops, six presses.
+      final stops = <String>[];
+      for (var i = 0; i < 6; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        final f = FocusManager.instance.primaryFocus;
+        final focused = <String>[];
+        void find(SemanticsNode n) {
+          if (n.getSemanticsData().flagsCollection.isFocused ==
+              Tristate.isTrue) {
+            focused.add(n.getSemanticsData().label);
+          }
+          n.visitChildren((c) {
+            find(c);
+            return true;
+          });
+        }
+
+        find(root);
+        stops.add(
+          focused.isEmpty
+              ? '(${f?.debugLabel ?? f.runtimeType})'
+              : focused.join('+'),
+        );
+      }
+      log('$id Tab stops: ${stops.join(' -> ')}');
+      handle.dispose();
+    });
+
+    for (final key in [LogicalKeyboardKey.enter, LogicalKeyboardKey.space]) {
+      testWidgets('keys $id ${key.keyLabel}', (tester) async {
+        final handle = tester.ensureSemantics();
+        await pumpFixture(tester, id);
+        String taps() => tester
+            .widget<Text>(find.textContaining('$id taps', skipOffstage: false))
+            .data!;
+        // Tab until each link has focus in turn, and press the key there.
+        final results = <String>[];
+        for (var tabs = 1; tabs <= 4; tabs++) {
+          await tester.pumpWidget(const SizedBox());
+          await pumpFixture(tester, id);
+          for (var i = 0; i < tabs; i++) {
+            await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+            await tester.pump();
+          }
+          await tester.sendKeyEvent(key);
+          await tester.pumpAndSettle();
+          final arrived = find.textContaining('Arrived').evaluate().isNotEmpty;
+          results.add('$tabs Tab(s): ${taps()}${arrived ? ', navigated' : ''}');
+        }
+        log(
+          '$id ${key.keyLabel == ' ' ? 'Space' : key.keyLabel}: ${results.join('; ')}',
+        );
+        handle.dispose();
+      });
+    }
+
+    testWidgets('layout $id at 200% on 320', (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            size: Size(320, 640),
+            textScaler: TextScaler.linear(2),
+          ),
+          child: MaterialApp(
+            theme: ThemeData(colorSchemeSeed: Colors.indigo),
+            home: FixtureScreen(ids: [id]),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      log('$id layout exception: ${tester.takeException()}');
+      for (final p in tester.renderObjectList<RenderParagraph>(
+        find.byType(RichText),
+      )) {
+        final text = p.text.toPlainText();
+        if (!text.startsWith(id) && !text.contains('$id ')) continue;
+        final lines = p.getBoxesForSelection(
+          TextSelection(baseOffset: 0, extentOffset: text.length),
+        );
+        log(
+          '$id paragraph "${text.replaceAll('￼', '[W]')}" size=${p.size} '
+          'boxes=${lines.length} exceeded=${p.didExceedMaxLines}',
+        );
+      }
+      for (final which in ['first link', 'second link']) {
+        final f = find.textContaining('$id $which');
+        for (final e in f.evaluate()) {
+          final r = tester.getRect(find.byWidget(e.widget));
+          log('$id "$which" widget rect=$r');
+        }
+      }
+    });
+  }
+
+  testWidgets('r05: what the merged node does on the tap action', (
+    tester,
+  ) async {
+    final handle = tester.ensureSemantics();
+    await pumpFixture(tester, 'r05');
+    final merged = find.semantics.byPredicate(
+      (n) =>
+          n.getSemanticsData().label.startsWith('r05 Read about') &&
+          !n.isMergedIntoParent,
+    );
+    tester.semantics.tap(merged);
+    await tester.pumpAndSettle();
+    log(
+      'r05 tap action on the merged node: arrived=${find.textContaining('Arrived').evaluate().isNotEmpty}; '
+      'taps line=${tester.widget<Text>(find.textContaining('r05 taps', skipOffstage: false)).data}',
+    );
+    handle.dispose();
+  });
+
+  for (final id in ['r03', 'r10', 'r09']) {
+    testWidgets('scale of the link text at 200%: $id', (tester) async {
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            size: Size(800, 600),
+            textScaler: TextScaler.linear(2),
+          ),
+          child: MaterialApp(
+            theme: ThemeData(colorSchemeSeed: Colors.indigo),
+            home: FixtureScreen(ids: [id]),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final sentence = tester
+          .renderObjectList<RenderParagraph>(find.byType(RichText))
+          .firstWhere((p) => p.text.toPlainText().startsWith('$id Read'));
+      final run = sentence
+          .getBoxesForSelection(
+            const TextSelection(baseOffset: 0, extentOffset: 4),
+          )
+          .first;
+      log(
+        '$id: "$id " in the sentence is ${run.toRect().height.toStringAsFixed(1)} high, '
+        'sentence textScaler=${sentence.textScaler}',
+      );
+      for (final p in tester.renderObjectList<RenderParagraph>(
+        find.byType(RichText),
+      )) {
+        final t = p.text.toPlainText();
+        if (t.startsWith('$id first link')) {
+          final shown = MatrixUtils.transformRect(
+            p.getTransformTo(null),
+            Offset.zero & p.size,
+          );
+          log(
+            '$id: link paragraph laid out ${p.size}, textScaler=${p.textScaler}, shown on screen ${shown.size}',
+          );
+        }
+      }
+      for (final w in find.textContaining('$id first link').evaluate()) {
+        log(
+          '$id: widget rect of the text containing the first link ${tester.getRect(find.byWidget(w.widget))}',
+        );
+      }
+    });
+  }
+
+  testWidgets('contrast', (tester) async {
+    for (final b in Brightness.values) {
+      final s = ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        brightness: b,
+      ).colorScheme;
+      log(
+        '${b.name}: primary=${s.primary} onSurface=${s.onSurface} surface=${s.surface}',
+      );
+      log(
+        '${b.name}: primary vs surface ${contrast(s.primary, s.surface).toStringAsFixed(2)}, '
+        'primary vs onSurface ${contrast(s.primary, s.onSurface).toStringAsFixed(2)}, '
+        'onSurfaceVariant vs onSurface ${contrast(s.onSurfaceVariant, s.onSurface).toStringAsFixed(2)}',
+      );
+      for (final (name, c) in [
+        ('CupertinoColors.link', CupertinoColors.link),
+        ('CupertinoColors.systemBlue', CupertinoColors.systemBlue),
+      ]) {
+        final plain = b == Brightness.light ? c.color : c.darkColor;
+        final high = b == Brightness.light
+            ? c.highContrastColor
+            : c.darkHighContrastColor;
+        final bg = b == Brightness.light
+            ? CupertinoColors.white
+            : CupertinoColors.black;
+        log(
+          '${b.name}: $name $plain vs ${bg.toARGB32().toRadixString(16)} '
+          '${contrast(plain, bg).toStringAsFixed(2)}, vs surface ${contrast(plain, s.surface).toStringAsFixed(2)}; '
+          'high contrast $high ${contrast(high, bg).toStringAsFixed(2)}, vs surface ${contrast(high, s.surface).toStringAsFixed(2)}',
+        );
+      }
+    }
+  });
+
+  // How the runs are counted when the first run is two spans: the
+  // identifier's span is a run of its own, so the link after the plain span
+  // needs the key 1.5, not 0.5.
+  for (final key in [0.5, 1.5]) {
+    testWidgets('runs with two spans before the link, key $key', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(text: 'Read ', semanticsIdentifier: 'run'),
+                  const TextSpan(
+                    text: 'about ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  WidgetSpan(
+                    child: Semantics(
+                      container: true,
+                      sortKey: OrdinalSortKey(key),
+                      child: Semantics(
+                        link: true,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: const Text('the link'),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const TextSpan(text: ' first.'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      final paragraph = tester.getSemantics(find.byType(RichText).first);
+      log(
+        'two spans, key $key: ${paragraph.debugListChildrenInOrder(DebugSemanticsDumpOrder.traversalOrder).map((n) => n.getSemanticsData().label).join(' | ')}',
+      );
+      handle.dispose();
+    });
+  }
+}

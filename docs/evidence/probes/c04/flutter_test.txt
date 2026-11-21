@@ -1,0 +1,224 @@
+order, 800.0 wide, container=false keys=false: "first link" top=0 | "second link" top=0 | "Read about " top=1 | " and " top=1 | " first." top=1
+order, 800.0 wide, container=true keys=false: "first link" top=0 | "second link" top=0 | "Read about " top=1 | " and " top=1 | " first." top=1
+order, 800.0 wide, container=true keys=true: "Read about " top=1 | "first link" top=0 | " and " top=1 | "second link" top=0 | " first." top=1
+order, 800.0 wide, container=false keys=true: "Read about " top=1 | "first link" top=0 | " and " top=1 | "second link" top=0 | " first." top=1
+order, 200.0 wide, container=false keys=false: "Read about " top=-2 | "first link" top=0 | "second link" top=0 | " and " top=21 | " first." top=44
+order, 200.0 wide, container=true keys=false: "Read about " top=-2 | "first link" top=0 | "second link" top=0 | " and " top=21 | " first." top=44
+order, 200.0 wide, container=true keys=true: "Read about " top=-2 | "first link" top=0 | " and " top=21 | "second link" top=0 | " first." top=44
+order, 200.0 wide, container=false keys=true: "Read about " top=-2 | "first link" top=0 | " and " top=21 | "second link" top=0 | " first." top=44
+== r01: TextSpan links with TapGestureRecognizer
+          "Before r01" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+            "r01 Read about " rect=Rect.fromLTRB(-4.0, -2.0, 218.0, 21.0)
+            "r01 first link" link tap rect=Rect.fromLTRB(209.0, -2.0, 418.0, 21.0)
+            " and " rect=Rect.fromLTRB(409.0, -2.0, 489.0, 21.0)
+            "r01 second link" link tap rect=Rect.fromLTRB(480.0, -2.0, 703.0, 21.0)
+            " first." rect=Rect.fromLTRB(-4.0, -2.0, 717.0, 41.0)
+          "r01 taps: first=0 second=0" id=r01-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r01" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r01 traversal: r01 | Before r01 | r01 Read about  | r01 first link |  and  | r01 second link |  first. | r01 taps: first=0 second=0
+r01 Tab stops: (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope)
+r01 Enter: 1 Tab(s): r01 taps: first=0 second=0; 2 Tab(s): r01 taps: first=0 second=0; 3 Tab(s): r01 taps: first=0 second=0; 4 Tab(s): r01 taps: first=0 second=0
+r01 Space: 1 Tab(s): r01 taps: first=0 second=0; 2 Tab(s): r01 taps: first=0 second=0; 3 Tab(s): r01 taps: first=0 second=0; 4 Tab(s): r01 taps: first=0 second=0
+r01 layout exception: null
+r01 paragraph "r01 Read about r01 first link and r01 second link first." size=Size(288.0, 280.0) boxes=7 exceeded=false
+r01 paragraph "r01 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r01 paragraph "r01" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r01 "first link" widget rect=Rect.fromLTRB(16.0, 124.0, 304.0, 404.0)
+r01 "second link" widget rect=Rect.fromLTRB(16.0, 124.0, 304.0, 404.0)
+== r02: WidgetSpan InkWell links with linkUrl, no FL-413 workaround
+          "Before r02" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+          "r02 Read about \n and \n first." rect=Rect.fromLTRB(0.0, 0.0, 768.0, 40.0)
+            "r02 first link" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 199.5, 20.0)
+            "r02 second link" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 213.8, 20.0)
+          "r02 taps: first=0 second=0" id=r02-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r02" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r02 traversal: r02 | Before r02 | r02 Read about \n and \n first. | r02 first link | r02 second link | r02 taps: first=0 second=0
+r02 Tab stops: r02 first link -> r02 second link -> r02 first link -> r02 second link -> r02 first link -> r02 second link
+r02 Enter: 1 Tab(s): r02 taps: first=1 second=0, navigated; 2 Tab(s): r02 taps: first=0 second=1, navigated; 3 Tab(s): r02 taps: first=1 second=0, navigated; 4 Tab(s): r02 taps: first=0 second=1, navigated
+r02 Space: 1 Tab(s): r02 taps: first=1 second=0, navigated; 2 Tab(s): r02 taps: first=0 second=1, navigated; 3 Tab(s): r02 taps: first=1 second=0, navigated; 4 Tab(s): r02 taps: first=0 second=1, navigated
+r02 layout exception: null
+r02 paragraph "r02 Read about [W] and [W] first." size=Size(288.0, 720.0) boxes=8 exceeded=false
+r02 paragraph "r02 first link" size=Size(144.0, 120.0) boxes=3 exceeded=false
+r02 paragraph "r02 second link" size=Size(144.0, 160.0) boxes=4 exceeded=false
+r02 paragraph "r02 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r02 paragraph "r02" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r02 "first link" widget rect=Rect.fromLTRB(16.1, 204.0, 304.1, 444.0)
+r02 "second link" widget rect=Rect.fromLTRB(16.1, 484.0, 304.1, 804.0)
+== r03: WidgetSpan InkWell links with linkUrl and the FL-413 workaround
+          "Before r03" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+            "r03 Read about " id=r03-run rect=Rect.fromLTRB(-4.0, -2.0, 218.0, 21.0)
+            "r03 first link" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 199.5, 20.0)
+            " and " rect=Rect.fromLTRB(409.0, -2.0, 489.0, 21.0)
+            "r03 second link" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 213.8, 20.0)
+            " first." rect=Rect.fromLTRB(-4.0, -2.0, 717.0, 41.0)
+          "r03 taps: first=0 second=0" id=r03-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r03" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r03 traversal: r03 | Before r03 | r03 Read about  | r03 first link |  and  | r03 second link |  first. | r03 taps: first=0 second=0
+r03 Tab stops: r03 first link -> r03 second link -> r03 first link -> r03 second link -> r03 first link -> r03 second link
+r03 Enter: 1 Tab(s): r03 taps: first=1 second=0, navigated; 2 Tab(s): r03 taps: first=0 second=1, navigated; 3 Tab(s): r03 taps: first=1 second=0, navigated; 4 Tab(s): r03 taps: first=0 second=1, navigated
+r03 Space: 1 Tab(s): r03 taps: first=1 second=0, navigated; 2 Tab(s): r03 taps: first=0 second=1, navigated; 3 Tab(s): r03 taps: first=1 second=0, navigated; 4 Tab(s): r03 taps: first=0 second=1, navigated
+r03 layout exception: null
+r03 paragraph "r03 Read about [W] and [W] first." size=Size(288.0, 720.0) boxes=8 exceeded=false
+r03 paragraph "r03 first link" size=Size(144.0, 120.0) boxes=3 exceeded=false
+r03 paragraph "r03 second link" size=Size(144.0, 160.0) boxes=4 exceeded=false
+r03 paragraph "r03 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r03 paragraph "r03" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r03 "first link" widget rect=Rect.fromLTRB(16.1, 204.0, 304.1, 444.0)
+r03 "second link" widget rect=Rect.fromLTRB(16.1, 484.0, 304.1, 804.0)
+== r04: WidgetSpan FocusableActionDetector links, with the workaround
+          "Before r04" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+            "r04 Read about " id=r04-run rect=Rect.fromLTRB(-4.0, -2.0, 218.0, 21.0)
+            "r04 first link" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 199.5, 20.0)
+            " and " rect=Rect.fromLTRB(409.0, -2.0, 489.0, 21.0)
+            "r04 second link" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 213.8, 20.0)
+            " first." rect=Rect.fromLTRB(-4.0, -2.0, 717.0, 41.0)
+          "r04 taps: first=0 second=0" id=r04-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r04" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r04 traversal: r04 | Before r04 | r04 Read about  | r04 first link |  and  | r04 second link |  first. | r04 taps: first=0 second=0
+r04 Tab stops: r04 first link -> r04 second link -> r04 first link -> r04 second link -> r04 first link -> r04 second link
+r04 Enter: 1 Tab(s): r04 taps: first=1 second=0, navigated; 2 Tab(s): r04 taps: first=0 second=1, navigated; 3 Tab(s): r04 taps: first=1 second=0, navigated; 4 Tab(s): r04 taps: first=0 second=1, navigated
+r04 Space: 1 Tab(s): r04 taps: first=1 second=0, navigated; 2 Tab(s): r04 taps: first=0 second=1, navigated; 3 Tab(s): r04 taps: first=1 second=0, navigated; 4 Tab(s): r04 taps: first=0 second=1, navigated
+r04 layout exception: null
+r04 paragraph "r04 Read about [W] and [W] first." size=Size(288.0, 720.0) boxes=8 exceeded=false
+r04 paragraph "r04 first link" size=Size(144.0, 120.0) boxes=3 exceeded=false
+r04 paragraph "r04 second link" size=Size(144.0, 160.0) boxes=4 exceeded=false
+r04 paragraph "r04 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r04 paragraph "r04" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r04 "first link" widget rect=Rect.fromLTRB(16.1, 204.0, 304.1, 444.0)
+r04 "second link" widget rect=Rect.fromLTRB(16.1, 484.0, 304.1, 804.0)
+== r05: r03 inside MergeSemantics
+          "Before r05" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+          "r05 Read about \nr05 first link\n and \nr05 second link\n first." link url=#/dest tap focusable id=r05-run rect=Rect.fromLTRB(0.0, 0.0, 768.0, 40.0)
+              "r05 Read about " id=r05-run merged rect=Rect.fromLTRB(-4.0, -2.0, 218.0, 21.0)
+              "r05 first link" link url=#/dest tap focusable merged rect=Rect.fromLTRB(0.0, 0.0, 199.5, 20.0)
+              " and " merged rect=Rect.fromLTRB(409.0, -2.0, 489.0, 21.0)
+              "r05 second link" link url=#/dest tap focusable merged rect=Rect.fromLTRB(0.0, 0.0, 213.8, 20.0)
+              " first." merged rect=Rect.fromLTRB(-4.0, -2.0, 717.0, 41.0)
+          "r05 taps: first=0 second=0" id=r05-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r05" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r05 traversal: r05 | Before r05 | r05 Read about \nr05 first link\n and \nr05 second link\n first. | r05 taps: first=0 second=0
+r05 Tab stops: r05 Read about 
+r05 Enter: 1 Tab(s): r05 taps: first=1 second=0, navigated; 2 Tab(s): r05 taps: first=0 second=1, navigated; 3 Tab(s): r05 taps: first=1 second=0, navigated; 4 Tab(s): r05 taps: first=0 second=1, navigated
+r05 Space: 1 Tab(s): r05 taps: first=1 second=0, navigated; 2 Tab(s): r05 taps: first=0 second=1, navigated; 3 Tab(s): r05 taps: first=1 second=0, navigated; 4 Tab(s): r05 taps: first=0 second=1, navigated
+r05 layout exception: null
+r05 paragraph "r05 Read about [W] and [W] first." size=Size(288.0, 720.0) boxes=8 exceeded=false
+r05 paragraph "r05 first link" size=Size(144.0, 120.0) boxes=3 exceeded=false
+r05 paragraph "r05 second link" size=Size(144.0, 160.0) boxes=4 exceeded=false
+r05 paragraph "r05 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r05 paragraph "r05" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r05 "first link" widget rect=Rect.fromLTRB(16.1, 204.0, 304.1, 444.0)
+r05 "second link" widget rect=Rect.fromLTRB(16.1, 484.0, 304.1, 804.0)
+== r06: r03 with a second link long enough to wrap
+          "Before r06" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+            "r06 Read about " id=r06-run rect=Rect.fromLTRB(-4.0, -2.0, 218.0, 21.0)
+            "r06 first link" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 199.5, 20.0)
+            " and " rect=Rect.fromLTRB(409.0, -2.0, 489.0, 21.0)
+            "r06 second link, whose words run on for long enough to need a line" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 768.0, 40.0)
+            " first." rect=Rect.fromLTRB(-4.0, 19.0, 773.0, 81.0)
+          "r06 taps: first=0 second=0" id=r06-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r06" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r06 traversal: r06 | Before r06 | r06 Read about  | r06 first link |  and  | r06 second link, whose words run on for long enough to need a line |  first. | r06 taps: first=0 second=0
+r06 Tab stops: r06 first link -> r06 second link, whose words run on for long enough to need a line -> r06 first link -> r06 second link, whose words run on for long enough to need a line -> r06 first link -> r06 second link, whose words run on for long enough to need a line
+r06 Enter: 1 Tab(s): r06 taps: first=1 second=0, navigated; 2 Tab(s): r06 taps: first=0 second=1, navigated; 3 Tab(s): r06 taps: first=1 second=0, navigated; 4 Tab(s): r06 taps: first=0 second=1, navigated
+r06 Space: 1 Tab(s): r06 taps: first=1 second=0, navigated; 2 Tab(s): r06 taps: first=0 second=1, navigated; 3 Tab(s): r06 taps: first=1 second=0, navigated; 4 Tab(s): r06 taps: first=0 second=1, navigated
+r06 layout exception: null
+r06 paragraph "r06 Read about [W] and [W] first." size=Size(288.0, 1600.0) boxes=8 exceeded=false
+r06 paragraph "r06 first link" size=Size(144.0, 120.0) boxes=3 exceeded=false
+r06 paragraph "r06 second link, whose words run on for long enough to need a line" size=Size(144.0, 600.0) boxes=15 exceeded=false
+r06 paragraph "r06 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r06 paragraph "r06" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r06 "first link" widget rect=Rect.fromLTRB(16.1, 204.0, 304.1, 444.0)
+r06 "second link" widget rect=Rect.fromLTRB(16.1, 484.0, 304.1, 1684.0)
+== r07: SelectableText.rich with TextSpan links
+          "Before r07" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+              "r07 Read about " rect=Rect.fromLTRB(-4.0, -2.0, 218.0, 21.0)
+              "r07 first link" link tap rect=Rect.fromLTRB(209.0, -2.0, 418.0, 21.0)
+              " and " rect=Rect.fromLTRB(409.0, -2.0, 489.0, 21.0)
+              "r07 second link" link tap rect=Rect.fromLTRB(480.0, -2.0, 703.0, 21.0)
+              " first." rect=Rect.fromLTRB(-4.0, -2.0, 717.0, 41.0)
+          "r07 taps: first=0 second=0" id=r07-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r07" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r07 traversal: r07 | Before r07 | r07 Read about  | r07 first link |  and  | r07 second link |  first. | r07 taps: first=0 second=0
+r07 Tab stops: (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope)
+r07 Enter: 1 Tab(s): r07 taps: first=0 second=0; 2 Tab(s): r07 taps: first=0 second=0; 3 Tab(s): r07 taps: first=0 second=0; 4 Tab(s): r07 taps: first=0 second=0
+r07 Space: 1 Tab(s): r07 taps: first=0 second=0; 2 Tab(s): r07 taps: first=0 second=0; 3 Tab(s): r07 taps: first=0 second=0; 4 Tab(s): r07 taps: first=0 second=0
+r07 layout exception: null
+r07 paragraph "r07 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r07 paragraph "r07" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r07 "first link" widget rect=Rect.fromLTRB(16.0, 124.0, 304.0, 404.0)
+r07 "second link" widget rect=Rect.fromLTRB(16.0, 124.0, 304.0, 404.0)
+== r08: TextSpan links in a Text.rich with a semanticsLabel
+          "Before r08" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+          "r08 Read about the two links first." rect=Rect.fromLTRB(0.0, 0.0, 768.0, 40.0)
+          "r08 taps: first=0 second=0" id=r08-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r08" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r08 traversal: r08 | Before r08 | r08 Read about the two links first. | r08 taps: first=0 second=0
+r08 Tab stops: (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope)
+r08 Enter: 1 Tab(s): r08 taps: first=0 second=0; 2 Tab(s): r08 taps: first=0 second=0; 3 Tab(s): r08 taps: first=0 second=0; 4 Tab(s): r08 taps: first=0 second=0
+r08 Space: 1 Tab(s): r08 taps: first=0 second=0; 2 Tab(s): r08 taps: first=0 second=0; 3 Tab(s): r08 taps: first=0 second=0; 4 Tab(s): r08 taps: first=0 second=0
+r08 layout exception: null
+r08 paragraph "r08 Read about r08 first link and r08 second link first." size=Size(288.0, 280.0) boxes=7 exceeded=false
+r08 paragraph "r08 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r08 paragraph "r08" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r08 "first link" widget rect=Rect.fromLTRB(16.0, 124.0, 304.0, 404.0)
+r08 "second link" widget rect=Rect.fromLTRB(16.0, 124.0, 304.0, 404.0)
+== r10: r03 with each link text in MediaQuery.withNoTextScaling
+          "Before r10" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+            "r10 Read about " id=r10-run rect=Rect.fromLTRB(-4.0, -2.0, 218.0, 21.0)
+            "r10 first link" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 199.5, 20.0)
+            " and " rect=Rect.fromLTRB(409.0, -2.0, 489.0, 21.0)
+            "r10 second link" link url=#/dest tap focusable rect=Rect.fromLTRB(0.0, 0.0, 213.8, 20.0)
+            " first." rect=Rect.fromLTRB(-4.0, -2.0, 717.0, 41.0)
+          "r10 taps: first=0 second=0" id=r10-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r10" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r10 traversal: r10 | Before r10 | r10 Read about  | r10 first link |  and  | r10 second link |  first. | r10 taps: first=0 second=0
+r10 Tab stops: r10 first link -> r10 second link -> r10 first link -> r10 second link -> r10 first link -> r10 second link
+r10 Enter: 1 Tab(s): r10 taps: first=1 second=0, navigated; 2 Tab(s): r10 taps: first=0 second=1, navigated; 3 Tab(s): r10 taps: first=1 second=0, navigated; 4 Tab(s): r10 taps: first=0 second=1, navigated
+r10 Space: 1 Tab(s): r10 taps: first=1 second=0, navigated; 2 Tab(s): r10 taps: first=0 second=1, navigated; 3 Tab(s): r10 taps: first=1 second=0, navigated; 4 Tab(s): r10 taps: first=0 second=1, navigated
+r10 layout exception: null
+r10 paragraph "r10 Read about [W] and [W] first." size=Size(288.0, 320.0) boxes=8 exceeded=false
+r10 paragraph "r10 first link" size=Size(144.0, 40.0) boxes=2 exceeded=false
+r10 paragraph "r10 second link" size=Size(144.0, 40.0) boxes=2 exceeded=false
+r10 paragraph "r10 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r10 paragraph "r10" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r10 "first link" widget rect=Rect.fromLTRB(16.1, 204.0, 304.1, 284.0)
+r10 "second link" widget rect=Rect.fromLTRB(16.1, 324.0, 304.1, 404.0)
+== r09: TextSpan links with a second link long enough to wrap
+          "Before r09" rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+            "r09 Read about " rect=Rect.fromLTRB(-4.0, -2.0, 218.0, 21.0)
+            "r09 first link" link tap rect=Rect.fromLTRB(209.0, -2.0, 418.0, 21.0)
+            " and " rect=Rect.fromLTRB(409.0, -2.0, 489.0, 21.0)
+            "r09 second link, whose words run on for long enough to need a line" link tap rect=Rect.fromLTRB(-4.0, -2.0, 731.0, 41.0)
+            " first." rect=Rect.fromLTRB(-4.0, 18.0, 717.0, 61.0)
+          "r09 taps: first=0 second=0" id=r09-taps rect=Rect.fromLTRB(0.0, 0.0, 370.5, 20.0)
+          "r09" rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+r09 traversal: r09 | Before r09 | r09 Read about  | r09 first link |  and  | r09 second link, whose words run on for long enough to need a line |  first. | r09 taps: first=0 second=0
+r09 Tab stops: (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope) -> (_ModalScopeState<dynamic> Focus Scope)
+r09 Enter: 1 Tab(s): r09 taps: first=0 second=0; 2 Tab(s): r09 taps: first=0 second=0; 3 Tab(s): r09 taps: first=0 second=0; 4 Tab(s): r09 taps: first=0 second=0
+r09 Space: 1 Tab(s): r09 taps: first=0 second=0; 2 Tab(s): r09 taps: first=0 second=0; 3 Tab(s): r09 taps: first=0 second=0; 4 Tab(s): r09 taps: first=0 second=0
+r09 layout exception: null
+r09 paragraph "r09 Read about r09 first link and r09 second link, whose words run on for long enough to need a line first." size=Size(288.0, 560.0) boxes=14 exceeded=false
+r09 paragraph "r09 taps: first=0 second=0" size=Size(288.0, 120.0) boxes=3 exceeded=false
+r09 paragraph "r09" size=Size(88.4, 37.0) boxes=1 exceeded=false
+r09 "first link" widget rect=Rect.fromLTRB(16.0, 124.0, 304.0, 684.0)
+r09 "second link" widget rect=Rect.fromLTRB(16.0, 124.0, 304.0, 684.0)
+r05 tap action on the merged node: arrived=true; taps line=r05 taps: first=1 second=0
+r03: "r03 " in the sentence is 28.0 high, sentence textScaler=linear (2.0x)
+r03: link paragraph laid out Size(384.0, 80.0), textScaler=linear (2.0x), shown on screen Size(768.0, 160.0)
+r03: widget rect of the text containing the first link Rect.fromLTRB(16.1, 164.0, 784.1, 324.0)
+r10: "r10 " in the sentence is 28.0 high, sentence textScaler=linear (2.0x)
+r10: link paragraph laid out Size(199.5, 20.0), textScaler=no scaling, shown on screen Size(399.0, 40.0)
+r10: widget rect of the text containing the first link Rect.fromLTRB(16.1, 164.0, 415.1, 204.0)
+r09: "r09 " in the sentence is 28.0 high, sentence textScaler=linear (2.0x)
+r09: widget rect of the text containing the first link Rect.fromLTRB(16.0, 124.0, 784.0, 324.0)
+dark: primary=Color(alpha: 1.0000, red: 0.7294, green: 0.7647, blue: 1.0000, colorSpace: ColorSpace.sRGB) onSurface=Color(alpha: 1.0000, red: 0.8941, green: 0.8824, blue: 0.9137, colorSpace: ColorSpace.sRGB) surface=Color(alpha: 1.0000, red: 0.0706, green: 0.0745, blue: 0.0941, colorSpace: ColorSpace.sRGB)
+dark: primary vs surface 10.90, primary vs onSurface 1.32, onSurfaceVariant vs onSurface 1.32
+dark: CupertinoColors.link Color(alpha: 1.0000, red: 0.0353, green: 0.5176, blue: 1.0000, colorSpace: ColorSpace.sRGB) vs ff000000 5.76, vs surface 5.08; high contrast Color(alpha: 1.0000, red: 0.0353, green: 0.5176, blue: 1.0000, colorSpace: ColorSpace.sRGB) 5.76, vs surface 5.08
+dark: CupertinoColors.systemBlue Color(alpha: 1.0000, red: 0.0392, green: 0.5176, blue: 1.0000, colorSpace: ColorSpace.sRGB) vs ff000000 5.76, vs surface 5.09; high contrast Color(alpha: 1.0000, red: 0.2510, green: 0.6118, blue: 1.0000, colorSpace: ColorSpace.sRGB) 7.42, vs surface 6.55
+light: primary=Color(alpha: 1.0000, red: 0.3176, green: 0.3569, blue: 0.5725, colorSpace: ColorSpace.sRGB) onSurface=Color(alpha: 1.0000, red: 0.1059, green: 0.1059, blue: 0.1294, colorSpace: ColorSpace.sRGB) surface=Color(alpha: 1.0000, red: 0.9843, green: 0.9725, blue: 1.0000, colorSpace: ColorSpace.sRGB)
+light: primary vs surface 6.12, primary vs onSurface 2.66, onSurfaceVariant vs onSurface 1.84
+light: CupertinoColors.link Color(alpha: 1.0000, red: 0.0000, green: 0.4784, blue: 1.0000, colorSpace: ColorSpace.sRGB) vs ffffffff 4.02, vs surface 3.82; high contrast Color(alpha: 1.0000, red: 0.0000, green: 0.4784, blue: 1.0000, colorSpace: ColorSpace.sRGB) 4.02, vs surface 3.82
+light: CupertinoColors.systemBlue Color(alpha: 1.0000, red: 0.0000, green: 0.4784, blue: 1.0000, colorSpace: ColorSpace.sRGB) vs ffffffff 4.02, vs surface 3.82; high contrast Color(alpha: 1.0000, red: 0.0000, green: 0.2510, blue: 0.8667, colorSpace: ColorSpace.sRGB) 7.56, vs surface 7.19
+two spans, key 0.5: Read  | the link | about  |  first.
+two spans, key 1.5: Read  | about  | the link |  first.
+00:01 +55: All tests passed!
