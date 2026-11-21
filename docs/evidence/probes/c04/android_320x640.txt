@@ -1,0 +1,6 @@
+during the run: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+> Task :app:connectedDebugAndroidTest
+BUILD SUCCESSFUL in 2m 31s
+after reset: Physical size: 1080x2424  Physical density: 420 
+JUnit summary:
+<testsuite name="dev.fluttera11y.flutter_a11y_techniques.C04LinksInlineWithTextTest" tests="9" failures="0" errors="0" skipped="1" time="129.724" timestamp="2026-11-21T13:35:32" hostname="localhost">

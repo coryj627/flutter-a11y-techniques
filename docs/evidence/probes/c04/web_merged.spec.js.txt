@@ -1,0 +1,51 @@
+// Throwaway (kept as docs/evidence/probes/c04/web_merged.spec.js.txt): what a
+// click does on bad-merged's one element, at the first link's words, at the
+// second link's, and at the words between them, and a DOM click on it, each
+// from a fresh load, with every address the page passed through.
+import { test } from '@playwright/test';
+
+test('bad-merged clicks', async ({ page }) => {
+  const at = {};
+  await page.goto('/#/t/C04/good-material');
+  await page.getByRole('heading', { name: 'Example', exact: true, level: 2 }).waitFor();
+  await page.waitForTimeout(800);
+  for (const n of [1, 2]) {
+    at[`link ${n}`] = await page.locator(`[flt-semantics-identifier="c04-good-material-link-${n}"]`).boundingBox();
+  }
+  const sentence = await page.locator('[flt-semantics-identifier="c04-good-material-link-1"]').evaluate((e) => {
+    const r = e.parentElement.getBoundingClientRect();
+    return { x: r.x, y: r.y, width: r.width, height: r.height };
+  });
+  at['words "Read about"'] = { x: sentence.x, y: sentence.y, width: 20, height: sentence.height };
+  console.log('C04MERGED', 'good-material boxes:', JSON.stringify(at));
+  for (const how of [...Object.keys(at), 'DOM click']) {
+    await page.goto('about:blank');
+    const urls = [];
+    page.on('framenavigated', (f) => { if (f === page.mainFrame()) urls.push(f.url().replace(/^http:\/\/127\.0\.0\.1:\d+/, '')); });
+    await page.goto('/#/t/C04/bad-merged');
+    await page.getByRole('heading', { name: 'Example', exact: true, level: 2 }).waitFor();
+    await page.waitForTimeout(800);
+    urls.length = 0;
+    const el = page.locator('[flt-semantics-identifier="c04-bad-merged-sentence"]');
+    console.log('C04MERGED', how, 'merged element box:', JSON.stringify(await el.boundingBox()), 'pointer-events:', await el.evaluate((e) => getComputedStyle(e).pointerEvents));
+    if (how === 'DOM click') {
+      await el.dispatchEvent('click');
+    } else {
+      // The same place in the sentence as in good-material, whose sentence
+      // is laid out the same, measured from the sentence's left and top.
+      const m = await el.boundingBox();
+      const g = at[how];
+      const b = { x: m.x + (g.x - sentence.x), y: m.y + (g.y - sentence.y), width: g.width, height: g.height };
+      const hit = await page.evaluate(([x, y]) => {
+        const e = document.elementFromPoint(x, y);
+        return `${e?.tagName} ${e?.getAttribute('flt-semantics-identifier') ?? ''}`;
+      }, [b.x + b.width / 2, b.y + b.height / 2]);
+      console.log('C04MERGED', how, 'element under the point:', hit);
+      await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+    }
+    await page.waitForTimeout(2000);
+    const h1 = await page.getByRole('heading', { level: 1 }).allTextContents();
+    console.log('C04MERGED', how, '| addresses:', urls.join(' -> ') || '(none)', '| ends at', page.url().replace(/^http:\/\/127\.0\.0\.1:\d+/, ''), '| level 1 heading:', h1.join(','));
+    page.removeAllListeners('framenavigated');
+  }
+});

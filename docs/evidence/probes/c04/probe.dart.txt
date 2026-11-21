@@ -1,0 +1,340 @@
+// C04 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c04/probe.dart.txt): what links inside a sentence,
+// built from the SDK, expose, and what reaches and activates them. One
+// fixture per route, `/r01` to `/r09`; `/` lists them all; `/dest` is an
+// in-app destination that the fixtures with `linkUrl: '#/dest'` point to.
+//
+// Each fixture is a sentence "rNN Read about [rNN first link] and
+// [rNN second link] first." with two links, between a "Before rNN" text and
+// a "rNN taps: first=N second=M" text that counts the taps that reached each
+// link's handler. Off the web a tap on a fixture with an address also opens
+// `/dest`; on the web the browser follows the address itself. Opening
+// `/dest` prints "C04PROBE DEST" and how often it has been opened.
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+final dest = Uri.parse('#/dest');
+int destOpened = 0;
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      onGenerateRoute: (settings) {
+        final name = settings.name ?? '/';
+        Widget page;
+        if (name == '/dest') {
+          destOpened++;
+          debugPrint('C04PROBE DEST $destOpened');
+          page = Scaffold(
+            appBar: AppBar(title: const Text('Destination')),
+            body: Text('Arrived $destOpened'),
+          );
+        } else if (fixtures.containsKey(name.replaceFirst('/', ''))) {
+          page = FixtureScreen(ids: [name.replaceFirst('/', '')]);
+        } else {
+          page = FixtureScreen(ids: fixtures.keys.toList());
+        }
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => page,
+        );
+      },
+    );
+  }
+}
+
+/// What a fixture gets: the context, and the handler of each link (0 and 1).
+typedef Build = Widget Function(BuildContext context, void Function(int) tap);
+
+TextStyle linkStyle(BuildContext context) {
+  final c = Theme.of(context).colorScheme.primary;
+  return TextStyle(
+    color: c,
+    decoration: TextDecoration.underline,
+    decorationColor: c,
+  );
+}
+
+/// C03's `BrowserKeys`: on the web Enter and Space go to the browser.
+Widget browserKeys(Widget child) => kIsWeb
+    ? Shortcuts(
+        shortcuts: const {
+          SingleActivator(LogicalKeyboardKey.enter):
+              DoNothingAndStopPropagationIntent(),
+          SingleActivator(LogicalKeyboardKey.space):
+              DoNothingAndStopPropagationIntent(),
+        },
+        child: child,
+      )
+    : child;
+
+/// An `InkWell` link with an address, as C03's `MaterialLink` without its
+/// minimum height.
+Widget inkLink(
+  BuildContext c,
+  String text,
+  VoidCallback tap, {
+  bool noScaling = false,
+}) {
+  final label = Text(text, style: linkStyle(c));
+  return Semantics(
+    link: true,
+    linkUrl: dest,
+    onTapHint: 'open link',
+    child: browserKeys(
+      InkWell(
+        onTap: tap,
+        // A WidgetSpan scales its widget by the text scale as a whole, so
+        // text inside it that scales too is scaled twice (r10 undoes that).
+        child: noScaling ? MediaQuery.withNoTextScaling(child: label) : label,
+      ),
+    ),
+  );
+}
+
+/// A widgets-layer link: `FocusableActionDetector` round a
+/// `GestureDetector`, as C03's `KeyboardLink`.
+Widget keyLink(BuildContext c, String text, VoidCallback tap) =>
+    FocusableActionDetector(
+      actions: kIsWeb
+          ? const <Type, Action<Intent>>{}
+          : {
+              ActivateIntent: CallbackAction<ActivateIntent>(
+                onInvoke: (_) {
+                  tap();
+                  return null;
+                },
+              ),
+              ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+                onInvoke: (_) {
+                  tap();
+                  return null;
+                },
+              ),
+            },
+      child: Semantics(
+        link: true,
+        linkUrl: dest,
+        onTapHint: 'open link',
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: tap,
+          child: Text(text, style: linkStyle(c)),
+        ),
+      ),
+    );
+
+/// The sentence with two `WidgetSpan` links. With [fix], FL-413's
+/// workaround: an identifier on the first run, so that the paragraph splits
+/// its text, and sort keys 0.5 and 1.5 between the runs' 0, 1 and 2.
+Widget widgetSpanSentence(
+  BuildContext c,
+  String id,
+  Widget Function(BuildContext, String, VoidCallback) link,
+  void Function(int) tap, {
+  bool fix = true,
+  String? second,
+}) {
+  Widget place(Widget w, double key) => fix
+      ? Semantics(container: true, sortKey: OrdinalSortKey(key), child: w)
+      : w;
+  return Text.rich(
+    TextSpan(
+      children: [
+        TextSpan(
+          text: '$id Read about ',
+          semanticsIdentifier: fix ? '$id-run' : null,
+        ),
+        WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: place(link(c, '$id first link', () => tap(0)), 0.5),
+        ),
+        const TextSpan(text: ' and '),
+        WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: place(link(c, second ?? '$id second link', () => tap(1)), 1.5),
+        ),
+        const TextSpan(text: ' first.'),
+      ],
+    ),
+  );
+}
+
+/// The sentence with two `TextSpan` links, each with a tap recognizer.
+class SpanSentence extends StatefulWidget {
+  const SpanSentence({
+    super.key,
+    required this.id,
+    required this.tap,
+    this.selectable = false,
+    this.semanticsLabel,
+    this.second,
+  });
+
+  final String id;
+  final void Function(int) tap;
+  final bool selectable;
+  final String? semanticsLabel;
+  final String? second;
+
+  @override
+  State<SpanSentence> createState() => _SpanSentenceState();
+}
+
+class _SpanSentenceState extends State<SpanSentence> {
+  late final first = TapGestureRecognizer()..onTap = () => widget.tap(0);
+  late final second = TapGestureRecognizer()..onTap = () => widget.tap(1);
+
+  @override
+  void dispose() {
+    first.dispose();
+    second.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final id = widget.id;
+    final span = TextSpan(
+      children: [
+        TextSpan(text: '$id Read about '),
+        TextSpan(
+          text: '$id first link',
+          style: linkStyle(context),
+          recognizer: first,
+        ),
+        const TextSpan(text: ' and '),
+        TextSpan(
+          text: widget.second ?? '$id second link',
+          style: linkStyle(context),
+          recognizer: second,
+        ),
+        const TextSpan(text: ' first.'),
+      ],
+    );
+    if (widget.selectable) return SelectableText.rich(span);
+    return Text.rich(span, semanticsLabel: widget.semanticsLabel);
+  }
+}
+
+const long = 'second link, whose words run on for long enough to need a line';
+
+final Map<String, (String, Build)> fixtures = {
+  'r01': (
+    'TextSpan links with TapGestureRecognizer',
+    (c, tap) => SpanSentence(id: 'r01', tap: tap),
+  ),
+  'r02': (
+    'WidgetSpan InkWell links with linkUrl, no FL-413 workaround',
+    (c, tap) => widgetSpanSentence(c, 'r02', inkLink, tap, fix: false),
+  ),
+  'r03': (
+    'WidgetSpan InkWell links with linkUrl and the FL-413 workaround',
+    (c, tap) => widgetSpanSentence(c, 'r03', inkLink, tap),
+  ),
+  'r04': (
+    'WidgetSpan FocusableActionDetector links, with the workaround',
+    (c, tap) => widgetSpanSentence(c, 'r04', keyLink, tap),
+  ),
+  'r05': (
+    'r03 inside MergeSemantics',
+    (c, tap) =>
+        MergeSemantics(child: widgetSpanSentence(c, 'r05', inkLink, tap)),
+  ),
+  'r06': (
+    'r03 with a second link long enough to wrap',
+    (c, tap) => widgetSpanSentence(c, 'r06', inkLink, tap, second: 'r06 $long'),
+  ),
+  'r07': (
+    'SelectableText.rich with TextSpan links',
+    (c, tap) => SpanSentence(id: 'r07', tap: tap, selectable: true),
+  ),
+  'r08': (
+    'TextSpan links in a Text.rich with a semanticsLabel',
+    (c, tap) => SpanSentence(
+      id: 'r08',
+      tap: tap,
+      semanticsLabel: 'r08 Read about the two links first.',
+    ),
+  ),
+  'r10': (
+    'r03 with each link text in MediaQuery.withNoTextScaling',
+    (c, tap) => widgetSpanSentence(
+      c,
+      'r10',
+      (c, text, t) => inkLink(c, text, t, noScaling: true),
+      tap,
+    ),
+  ),
+  'r09': (
+    'TextSpan links with a second link long enough to wrap',
+    (c, tap) => SpanSentence(id: 'r09', tap: tap, second: 'r09 $long'),
+  ),
+};
+
+class FixtureScreen extends StatefulWidget {
+  const FixtureScreen({super.key, required this.ids});
+
+  final List<String> ids;
+
+  @override
+  State<FixtureScreen> createState() => _FixtureScreenState();
+}
+
+class _FixtureScreenState extends State<FixtureScreen> {
+  final taps = <String, List<int>>{};
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.ids.length == 1 ? widget.ids.single : 'C04 probe'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 12,
+          children: [
+            for (final id in widget.ids) ...[
+              Text('Before $id'),
+              Builder(
+                builder: (context) => fixtures[id]!.$2(context, (which) {
+                  debugPrint(
+                    'C04PROBE TAP $id ${which == 0 ? 'first' : 'second'}',
+                  );
+                  setState(() => (taps[id] ??= [0, 0])[which]++);
+                  final hasAddress = !{'r01', 'r07', 'r08', 'r09'}.contains(id);
+                  if (!kIsWeb && hasAddress) {
+                    Navigator.of(context).pushNamed('/dest');
+                  }
+                }),
+              ),
+              Semantics(
+                identifier: '$id-taps',
+                child: Text(
+                  '$id taps: first=${taps[id]?[0] ?? 0} '
+                  'second=${taps[id]?[1] ?? 0}',
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

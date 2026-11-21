@@ -1,0 +1,51 @@
+c04-r01-0 is "r01 Read about "
+c04-r01-1 is "r01 first link"
+c04-r01-2 is " and "
+c04-r01-3 is "r01 second link"
+c04-r01-4 is " first."
+c04-r02-0 is "r02 Read about \n and \n first."
+c04-r02-1 is "r02 first link"
+c04-r02-2 is "r02 second link"
+c04-r03-0 is "r03 Read about "
+c04-r03-1 is "r03 first link"
+c04-r03-2 is " and "
+c04-r03-3 is "r03 second link"
+c04-r03-4 is " first."
+c04-r04-0 is "r04 Read about "
+c04-r04-1 is "r04 first link"
+c04-r04-2 is " and "
+c04-r04-3 is "r04 second link"
+c04-r04-4 is " first."
+c04-r05-0 is "r05 Read about \nr05 first link\n and \nr05 second link\n first."
+c04-r06-0 is "r06 Read about "
+c04-r06-1 is "r06 first link"
+c04-r06-2 is " and "
+c04-r06-3 is "r06 second link, whose words run on for long enough to need a line"
+c04-r06-4 is " first."
+c04-r07-0 is "r07 Read about "
+c04-r07-1 is "r07 first link"
+c04-r07-2 is " and "
+c04-r07-3 is "r07 second link"
+c04-r07-4 is " first."
+c04-r08-0 is "r08 Read about the two links first."
+c04-r09-0 is "r09 Read about "
+c04-r09-1 is "r09 first link"
+c04-r09-2 is " and "
+c04-r09-3 is "r09 second link, whose words run on for long enough to need a line"
+c04-r09-4 is " first."
+c04-r10-0 is "r10 Read about "
+c04-r10-1 is "r10 first link"
+c04-r10-2 is " and "
+c04-r10-3 is "r10 second link"
+c04-r10-4 is " first."
+r01 swipe right from Before: Before r01 -> Before r01 -> Before r01 -> Before r01 -> Before r01 -> Before r01 -> Before r01 -> Before r01 -> Before r01
+r02 swipe right from Before: Before r02 -> Before r02 -> Before r02 -> Before r02 -> Before r02 -> Before r02 -> Before r02 -> Before r02 -> Before r02
+r03 swipe right from Before: Before r03 -> Before r03 -> Before r03 -> Before r03 -> Before r03 -> Before r03 -> Before r03 -> Before r03 -> Before r03
+r04 swipe right from Before: Before r04 -> Before r04 -> Before r04 -> Before r04 -> Before r04 -> Before r04 -> Before r04 -> Before r04 -> Before r04
+r05 swipe right from Before: Before r05 -> Before r05 -> Before r05 -> Before r05 -> Before r05 -> Before r05 -> Before r05 -> Before r05 -> Before r05
+r06 swipe right from Before: Before r06 -> Before r06 -> Before r06 -> Before r06 -> Before r06 -> Before r06 -> Before r06 -> Before r06 -> Before r06
+r07 swipe right from Before: Before r07 -> Before r07 -> Before r07 -> Before r07 -> Before r07 -> Before r07 -> Before r07 -> Before r07 -> Before r07
+r08 swipe right from Before: Before r08 -> Before r08 -> Before r08 -> Before r08 -> Before r08 -> Before r08 -> Before r08 -> Before r08 -> Before r08
+r09 swipe right from Before: Before r09 -> Before r09 -> Before r09 -> Before r09 -> Before r09 -> Before r09 -> Before r09 -> Before r09 -> Before r09
+r10 swipe right from Before: Before r10 -> Before r10 -> Before r10 -> Before r10 -> Before r10 -> Before r10 -> Before r10 -> Before r10 -> Before r10
+native swipe right from Before: Before n01 -> Before n01 -> Before n01 -> Before n01 -> Before n01

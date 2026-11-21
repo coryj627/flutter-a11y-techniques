@@ -1,0 +1,29 @@
+#!/bin/sh
+# C04 probe on iOS, under tool/with_devices.py (throwaway; kept as
+# docs/evidence/probes/c04/ios_probe.sh.txt). Run from the worktree root,
+# after `fvm flutter build ios --simulator --debug -t lib/probe.dart` and
+# `FLUTTER_TARGET=lib/probe.dart xcodebuild build-for-testing` into
+# build/ios_uitest. testRects runs with the simulator's text size at
+# accessibility-large, and the size is put back however the run ends.
+xcrun simctl list devices booted | grep -i "iphone"
+before=$(xcrun simctl ui booted content_size 2>/dev/null)
+echo "content size before: $before"
+reset() {
+  xcrun simctl ui booted content_size "${before:-large}"
+  echo "content size after: $(xcrun simctl ui booted content_size)"
+}
+trap reset EXIT
+cd ios || exit 1
+run() {
+  echo "== $1"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/ProbeC04UITests/$1" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "C04PROBE|error:|passed|failed|skipped" | grep -v "Test Suite"
+}
+for t in testTree testKeys testVoiceOver; do run $t; done
+xcrun simctl ui booted content_size accessibility-large
+echo "content size for testRects: $(xcrun simctl ui booted content_size)"
+run testRects
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

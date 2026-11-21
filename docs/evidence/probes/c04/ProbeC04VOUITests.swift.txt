@@ -1,0 +1,93 @@
+// C04 probe round 2 (throwaway, not committed; kept as
+// docs/evidence/probes/c04/ProbeC04VOUITests.swift.txt), against the app's
+// own build: where the elements of good-material's and bad-merged's
+// sentences are, what VoiceOver's cursor lands on after a tap at each
+// link's centre, and what a double tap does with the cursor put on the link
+// by moving forward instead.
+import XCTest
+
+final class ProbeC04VOUITests: XCTestCase, TechniqueUITest {
+  static let technique = "C04"
+  let app = XCUIApplication()
+
+  func log(_ s: String) { print("C04PROBE2 \(s)") }
+
+  private let titles = ["good-material": "Material links in a sentence", "bad-merged": "Sentence and links as one element"]
+
+  private func openSlug(_ slug: String) {
+    open(slug, waitingFor: element(labelled: titles[slug]!), settle: 300_000)
+  }
+
+  private func dump(_ slug: String) {
+    for e in app.descendants(matching: .any).allElementsBoundByIndex {
+      let t = e.elementType
+      if t == .window || t == .application { continue }
+      if t == .other && e.label.isEmpty && e.identifier.isEmpty { continue }
+      log("\(slug) EL type=\(t.rawValue) id=\(e.identifier) label=\(e.label.debugDescription) frame=\(e.frame)")
+    }
+  }
+
+  func testWhereTheCursorGoes() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func current() -> String { VoiceOverWalk.normalized((try? vo.currentSpeech().utterance) ?? "(error)") }
+    func forward() -> String { VoiceOverWalk.normalized((try? vo.moveForward().utterance) ?? "(error)") }
+    func page() -> String {
+      sleep(3)
+      for p in ["Links inline with text", "Stand-alone link"] where element(labelled: p).exists { return p }
+      return "(no page)"
+    }
+    for slug in ["good-material", "bad-merged"] {
+      openSlug(slug)
+      dump(slug)
+    }
+    // A tap at each link's centre with VoiceOver on, then a double tap there.
+    for n in 1...2 {
+      openSlug("good-material")
+      try vo.enable()
+      let e = element("c04-good-material-link-\(n)")
+      e.tap()
+      usleep(1_500_000)
+      log("good-material link \(n): tap at \(e.frame) puts the cursor on \"\(current())\"")
+      e.doubleTap()
+      log("good-material link \(n): then a double tap there opens \(page())")
+      try vo.disable()
+    }
+    // The cursor moved forward to each link, then a double tap on the link.
+    for n in 1...2 {
+      openSlug("good-material")
+      try vo.enable()
+      var on = ""
+      let want = n == 1 ? "links in text Link" : "stand-alone links Link"
+      for _ in 0..<12 {
+        on = forward()
+        if on == want { break }
+      }
+      log("good-material link \(n): moved forward to \"\(on)\"; current \"\(current())\"")
+      element("c04-good-material-link-\(n)").doubleTap()
+      log("good-material link \(n): a double tap on the link then opens \(page())")
+      try vo.disable()
+    }
+    for how in ["tap", "forward"] {
+      openSlug("bad-merged")
+      try vo.enable()
+      let e = element("c04-bad-merged-sentence")
+      if how == "tap" {
+        e.tap()
+        usleep(1_500_000)
+      } else {
+        for _ in 0..<12 {
+          if forward().hasPrefix("Read about") { break }
+        }
+      }
+      log("bad-merged (\(how)): cursor on \"\(current())\"")
+      e.doubleTap()
+      log("bad-merged (\(how)): a double tap on the sentence opens \(page())")
+      try vo.disable()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}

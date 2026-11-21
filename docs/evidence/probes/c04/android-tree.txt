@@ -1,0 +1,288 @@
+==== r01 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r01" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 984, 594) [a11yfocus] children=3
+                   | android.view.View | desc="Before r01" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                   | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(42, 415 - 942, 468) [a11yfocus] children=5
+                     | android.view.View | desc="r01 Read about " descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=false focusable=true focused=false Rect(32, 407 - 323, 475) [a11yfocus] children=0
+                     | android.widget.Button | desc="r01 first link" descSpans=LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(299, 407 - 525, 475) [a11yfocus,click] children=0
+                     | android.view.View | desc=" and " descSpans=LocaleSpan@0-5 text="" textSpans=- clickable=false focusable=true focused=false Rect(501, 407 - 606, 475) [a11yfocus] children=0
+                     | android.widget.Button | desc="r01 second link" descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(583, 407 - 866, 475) [a11yfocus,click] children=0
+                     | android.view.View | desc=" first." descSpans=LocaleSpan@0-7 text="" textSpans=- clickable=false focusable=true focused=false Rect(843, 407 - 956, 475) [a11yfocus] children=0
+                  r01-taps | android.view.View | desc="r01 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 499 - 487, 552) [a11yfocus] children=0
+r01 first: no node whose name starts with the link's text
+r01 second node:  | android.widget.Button | desc="r01 second link" descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(583, 407 - 866, 475) [a11yfocus,click] children=0
+11-21 06:49:21.709  7359  7359 I flutter : C04PROBE TAP r01 second
+r01 second ACTION_CLICK returned true; destination=false; r01 taps: first=0 second=1
+==== r02 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r02" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 984, 594) [a11yfocus] children=3
+                   | android.view.View | desc="Before r02" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                   | android.view.View | desc="r02 Read about \n and \n first." descSpans=LocaleSpan@0-29 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 415 - 942, 468) [a11yfocus] children=2
+                     | android.view.View | desc="r02 first link" descSpans=URLSpan(#/dest)@0-14,LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(310, 415 - 513, 467) [a11yfocus,click(open link),267386881] children=0
+                     | android.view.View | desc="r02 second link" descSpans=URLSpan(#/dest)@0-15,LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(596, 415 - 854, 467) [a11yfocus,click(open link),267386881] children=0
+                  r02-taps | android.view.View | desc="r02 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 499 - 487, 552) [a11yfocus] children=0
+r02 first: no node whose name starts with the link's text
+r02 second node:  | android.view.View | desc="r02 second link" descSpans=URLSpan(#/dest)@0-15,LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(596, 415 - 854, 467) [a11yfocus,click(open link),267386881] children=0
+11-21 06:49:34.144  7359  7359 I flutter : C04PROBE TAP r02 second
+11-21 06:49:34.145  7359  7359 I flutter : C04PROBE DEST 1
+r02 second ACTION_CLICK returned true; destination=true; (gone)
+==== r03 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r03" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 984, 594) [a11yfocus] children=3
+                   | android.view.View | desc="Before r03" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                   | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(42, 415 - 942, 468) [a11yfocus] children=5
+                    r03-run | android.view.View | desc="r03 Read about " descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=false focusable=true focused=false Rect(32, 407 - 323, 475) [a11yfocus] children=0
+                     | android.view.View | desc="r03 first link" descSpans=URLSpan(#/dest)@0-14,LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(310, 415 - 513, 467) [a11yfocus,click(open link),267386881] children=0
+                     | android.view.View | desc=" and " descSpans=LocaleSpan@0-5 text="" textSpans=- clickable=false focusable=true focused=false Rect(501, 407 - 606, 475) [a11yfocus] children=0
+                     | android.view.View | desc="r03 second link" descSpans=URLSpan(#/dest)@0-15,LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(596, 415 - 854, 467) [a11yfocus,click(open link),267386881] children=0
+                     | android.view.View | desc=" first." descSpans=LocaleSpan@0-7 text="" textSpans=- clickable=false focusable=true focused=false Rect(843, 407 - 956, 475) [a11yfocus] children=0
+                  r03-taps | android.view.View | desc="r03 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 499 - 487, 552) [a11yfocus] children=0
+r03 first node:  | android.view.View | desc="r03 first link" descSpans=URLSpan(#/dest)@0-14,LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(310, 415 - 513, 467) [a11yfocus,click(open link),267386881] children=0
+11-21 06:49:39.725  7359  7359 I flutter : C04PROBE TAP r03 first
+11-21 06:49:39.728  7359  7359 I flutter : C04PROBE DEST 1
+r03 first ACTION_CLICK returned true; destination=true; (gone)
+r03 second node:  | android.view.View | desc="r03 second link" descSpans=URLSpan(#/dest)@0-15,LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(596, 415 - 854, 467) [a11yfocus,click(open link),267386881] children=0
+11-21 06:49:44.286  7359  7359 I flutter : C04PROBE TAP r03 second
+11-21 06:49:44.287  7359  7359 I flutter : C04PROBE DEST 1
+r03 second ACTION_CLICK returned true; destination=true; (gone)
+==== r04 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r04" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 984, 594) [a11yfocus] children=3
+                   | android.view.View | desc="Before r04" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                   | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(42, 415 - 942, 468) [a11yfocus] children=5
+                    r04-run | android.view.View | desc="r04 Read about " descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=false focusable=true focused=false Rect(32, 407 - 323, 475) [a11yfocus] children=0
+                     | android.view.View | desc="r04 first link" descSpans=URLSpan(#/dest)@0-14,LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(310, 415 - 513, 467) [a11yfocus,click(open link),267386881] children=0
+                     | android.view.View | desc=" and " descSpans=LocaleSpan@0-5 text="" textSpans=- clickable=false focusable=true focused=false Rect(501, 407 - 606, 475) [a11yfocus] children=0
+                     | android.view.View | desc="r04 second link" descSpans=URLSpan(#/dest)@0-15,LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(596, 415 - 854, 467) [a11yfocus,click(open link),267386881] children=0
+                     | android.view.View | desc=" first." descSpans=LocaleSpan@0-7 text="" textSpans=- clickable=false focusable=true focused=false Rect(843, 407 - 956, 475) [a11yfocus] children=0
+                  r04-taps | android.view.View | desc="r04 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 499 - 487, 552) [a11yfocus] children=0
+r04 first node:  | android.view.View | desc="r04 first link" descSpans=URLSpan(#/dest)@0-14,LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(310, 431 - 513, 483) [a11yfocus,click(open link),267386881] children=0
+11-21 06:49:49.874  7359  7359 I flutter : C04PROBE TAP r04 first
+11-21 06:49:49.876  7359  7359 I flutter : C04PROBE DEST 1
+r04 first ACTION_CLICK returned true; destination=true; (gone)
+r04 second node:  | android.view.View | desc="r04 second link" descSpans=URLSpan(#/dest)@0-15,LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(596, 415 - 854, 467) [a11yfocus,click(open link),267386881] children=0
+11-21 06:49:56.143  7359  7359 I flutter : C04PROBE TAP r04 second
+11-21 06:49:56.144  7359  7359 I flutter : C04PROBE DEST 1
+r04 second ACTION_CLICK returned true; destination=true; (gone)
+==== r05 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r05" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 984, 594) [a11yfocus] children=3
+                   | android.view.View | desc="Before r05" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                  r05-run | android.view.View | desc="r05 Read about \nr05 first link\n and \nr05 second link\n first." descSpans=URLSpan(#/dest)@0-60,LocaleSpan@0-60 text="" textSpans=- clickable=true focusable=true focused=false Rect(42, 415 - 942, 468) [a11yfocus,click(open link),267386881] children=0
+                  r05-taps | android.view.View | desc="r05 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 499 - 487, 552) [a11yfocus] children=0
+r05 first: no node whose name starts with the link's text
+r05 second: no node whose name starts with the link's text
+==== r06 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r06" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 1080, 751) [a11yfocus] children=3
+                   | android.view.View | desc="Before r06" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                   | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(42, 415 - 1038, 625) [a11yfocus] children=5
+                    r06-run | android.view.View | desc="r06 Read about " descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=false focusable=true focused=false Rect(32, 407 - 323, 475) [a11yfocus] children=0
+                     | android.view.View | desc="r06 first link" descSpans=URLSpan(#/dest)@0-14,LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(310, 415 - 513, 467) [a11yfocus,click(open link),267386881] children=0
+                     | android.view.View | desc=" and " descSpans=LocaleSpan@0-5 text="" textSpans=- clickable=false focusable=true focused=false Rect(501, 407 - 606, 475) [a11yfocus] children=0
+                     | android.view.View | desc="r06 second link, whose words run on for long enough to need a line" descSpans=URLSpan(#/dest)@0-66,LocaleSpan@0-66 text="" textSpans=- clickable=true focusable=true focused=false Rect(42, 468 - 1038, 573) [a11yfocus,click(open link),267386881] children=0
+                     | android.view.View | desc=" first." descSpans=LocaleSpan@0-7 text="" textSpans=- clickable=false focusable=true focused=false Rect(32, 460 - 1050, 633) [a11yfocus] children=0
+                  r06-taps | android.view.View | desc="r06 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 657 - 487, 709) [a11yfocus] children=0
+r06 first: no node whose name starts with the link's text
+r06 second node:  | android.view.View | desc="r06 second link, whose words run on for long enough to need a line" descSpans=URLSpan(#/dest)@0-66,LocaleSpan@0-66 text="" textSpans=- clickable=true focusable=true focused=false Rect(42, 468 - 1038, 573) [a11yfocus,click(open link),267386881] children=0
+11-21 06:50:18.781  7359  7359 I flutter : C04PROBE TAP r06 second
+11-21 06:50:18.783  7359  7359 I flutter : C04PROBE DEST 1
+r06 second ACTION_CLICK returned true; destination=true; (gone)
+==== r07 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r07" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 992, 594) [a11yfocus] children=3
+                   | android.view.View | desc="Before r07" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                   | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 415 - 950, 468) [a11yfocus,longclick] children=1
+                     | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(42, 415 - 950, 468) [a11yfocus] children=5
+                       | android.view.View | desc="r07 Read about " descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=false focusable=true focused=false Rect(32, 407 - 323, 475) [a11yfocus] children=0
+                       | android.widget.Button | desc="r07 first link" descSpans=LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(299, 407 - 525, 475) [a11yfocus,click] children=0
+                       | android.view.View | desc=" and " descSpans=LocaleSpan@0-5 text="" textSpans=- clickable=false focusable=true focused=false Rect(501, 407 - 606, 475) [a11yfocus] children=0
+                       | android.widget.Button | desc="r07 second link" descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(583, 407 - 866, 475) [a11yfocus,click] children=0
+                       | android.view.View | desc=" first." descSpans=LocaleSpan@0-7 text="" textSpans=- clickable=false focusable=true focused=false Rect(843, 407 - 956, 475) [a11yfocus] children=0
+                  r07-taps | android.view.View | desc="r07 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 499 - 487, 552) [a11yfocus] children=0
+r07 first node:  | android.widget.Button | desc="r07 first link" descSpans=LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(299, 407 - 525, 475) [a11yfocus,click] children=0
+11-21 06:50:24.826  7359  7359 I flutter : C04PROBE TAP r07 first
+r07 first ACTION_CLICK returned true; destination=false; r07 taps: first=1 second=0
+r07 second: no node whose name starts with the link's text
+==== r08 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r08" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 984, 594) [a11yfocus] children=3
+                   | android.view.View | desc="Before r08" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                   | android.view.View | desc="r08 Read about the two links first." descSpans=LocaleSpan@0-35 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 415 - 942, 468) [a11yfocus] children=0
+                  r08-taps | android.view.View | desc="r08 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 499 - 487, 552) [a11yfocus] children=0
+r08 first: no node whose name starts with the link's text
+r08 second: no node whose name starts with the link's text
+==== r09 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r09" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 1080, 646) [a11yfocus] children=3
+                   | android.view.View | desc="Before r09" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                   | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(42, 415 - 1038, 520) [a11yfocus] children=5
+                     | android.view.View | desc="r09 Read about " descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=false focusable=true focused=false Rect(32, 407 - 323, 475) [a11yfocus] children=0
+                     | android.widget.Button | desc="r09 first link" descSpans=LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(299, 407 - 525, 475) [a11yfocus,click] children=0
+                     | android.view.View | desc=" and " descSpans=LocaleSpan@0-5 text="" textSpans=- clickable=false focusable=true focused=false Rect(501, 407 - 606, 475) [a11yfocus] children=0
+                     | android.widget.Button | desc="r09 second link, whose words run on for long enough to need a line" descSpans=LocaleSpan@0-66 text="" textSpans=- clickable=true focusable=true focused=false Rect(32, 407 - 1003, 528) [a11yfocus,click] children=0
+                     | android.view.View | desc=" first." descSpans=LocaleSpan@0-7 text="" textSpans=- clickable=false focusable=true focused=false Rect(764, 460 - 877, 528) [a11yfocus] children=0
+                  r09-taps | android.view.View | desc="r09 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 552 - 487, 604) [a11yfocus] children=0
+r09 first: no node whose name starts with the link's text
+r09 second node:  | android.widget.Button | desc="r09 second link, whose words run on for long enough to need a line" descSpans=LocaleSpan@0-66 text="" textSpans=- clickable=true focusable=true focused=false Rect(32, 407 - 1003, 528) [a11yfocus,click] children=0
+11-21 06:50:49.505  7359  7359 I flutter : C04PROBE TAP r09 second
+r09 second ACTION_CLICK returned true; destination=false; r09 taps: first=0 second=1
+==== r10 start
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=true focused=true Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" descSpans=LocaleSpan@0-4 text="" textSpans=- clickable=true focusable=true focused=false Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="r10" descSpans=LocaleSpan@0-3 text="" textSpans=- clickable=false focusable=true focused=false Rect(189, 179 - 273, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 289 - 984, 594) [a11yfocus] children=3
+                   | android.view.View | desc="Before r10" descSpans=LocaleSpan@0-10 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 331 - 219, 384) [a11yfocus] children=0
+                   | android.view.View | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(42, 415 - 942, 468) [a11yfocus] children=5
+                    r10-run | android.view.View | desc="r10 Read about " descSpans=LocaleSpan@0-15 text="" textSpans=- clickable=false focusable=true focused=false Rect(32, 407 - 323, 475) [a11yfocus] children=0
+                     | android.view.View | desc="r10 first link" descSpans=URLSpan(#/dest)@0-14,LocaleSpan@0-14 text="" textSpans=- clickable=true focusable=true focused=false Rect(310, 415 - 513, 467) [a11yfocus,click(open link),267386881] children=0
+                     | android.view.View | desc=" and " descSpans=LocaleSpan@0-5 text="" textSpans=- clickable=false focusable=true focused=false Rect(501, 407 - 606, 475) [a11yfocus] children=0
+                     | android.view.View | desc="r10 second link" descSpans=URLSpan(#/dest)@0-15,LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(596, 415 - 854, 467) [a11yfocus,click(open link),267386881] children=0
+                     | android.view.View | desc=" first." descSpans=LocaleSpan@0-7 text="" textSpans=- clickable=false focusable=true focused=false Rect(843, 407 - 956, 475) [a11yfocus] children=0
+                  r10-taps | android.view.View | desc="r10 taps: first=0 second=0" descSpans=LocaleSpan@0-26 text="" textSpans=- clickable=false focusable=true focused=false Rect(42, 499 - 487, 552) [a11yfocus] children=0
+r10 first: no node whose name starts with the link's text
+r10 second node:  | android.view.View | desc="r10 second link" descSpans=URLSpan(#/dest)@0-15,LocaleSpan@0-15 text="" textSpans=- clickable=true focusable=true focused=false Rect(596, 415 - 854, 467) [a11yfocus,click(open link),267386881] children=0
+11-21 06:51:01.939  7359  7359 I flutter : C04PROBE TAP r10 second
+11-21 06:51:01.942  7359  7359 I flutter : C04PROBE DEST 1
+r10 second ACTION_CLICK returned true; destination=true; (gone)
+r01 Tab stops:  ->  ->  ->  ->  -> 
+r01 first: Tab never reached it
+r01 second: Tab never reached it
+r02 Tab stops:  ->  ->  ->  ->  -> 
+r02 first: Tab never reached it
+r02 second: Tab never reached it
+r03 Tab stops:  ->  ->  ->  ->  -> 
+r03 first: Tab never reached it
+r03 second: Tab never reached it
+r04 Tab stops:  ->  ->  ->  ->  -> 
+r04 first: Tab never reached it
+r04 second: Tab never reached it
+r05 Tab stops:  ->  ->  ->  ->  -> 
+r05 first: Tab never reached it
+r05 second: Tab never reached it
+r06 Tab stops:  ->  ->  ->  ->  -> 
+r06 first: Tab never reached it
+r06 second: Tab never reached it
+r07 Tab stops:  ->  ->  ->  ->  -> 
+r07 first: Tab never reached it
+r07 second: Tab never reached it
+r08 Tab stops:  ->  ->  ->  ->  -> 
+r08 first: Tab never reached it
+r08 second: Tab never reached it
+r09 Tab stops:  ->  ->  ->  ->  -> 
+r09 first: Tab never reached it
+r09 second: Tab never reached it
+r10 Tab stops:  ->  ->  ->  ->  -> 
+r10 first: Tab never reached it
+r10 second: Tab never reached it
+==== native
+- | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  android:id/decor_content_parent | android.view.ViewGroup | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=2
+    android:id/content | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=3
+        - | android.widget.TextView | desc="" descSpans=- text="Before n01" textSpans=- clickable=false focusable=false focused=false Rect(40, 200 - 1040, 263) [4,8,a11yfocus,16908342,256,512,131072] children=0
+        - | android.widget.TextView | desc="" descSpans=- text="n01 Read about n01 first link and n01 second link first." textSpans=URLSpan(https://example.com/c04)@15-29,URLSpan(https://example.com/c04)@34-49 clickable=false focusable=true focused=true Rect(40, 263 - 1040, 462) [4,8,2,a11yfocus,16908342,256,512,131072] children=0
+        - | android.widget.TextView | desc="" descSpans=- text="After n01" textSpans=- clickable=false focusable=false focused=false Rect(40, 462 - 1040, 525) [4,8,a11yfocus,16908342,256,512,131072] children=0
+    android:id/action_bar_container | android.widget.FrameLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 0 - 1080, 289) [4,8,a11yfocus,16908342] children=1
+      android:id/action_bar | android.view.ViewGroup | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(0, 142 - 1080, 289) [4,8,a11yfocus,16908342] children=2
+        - | android.widget.TextView | desc="" descSpans=- text="Flutter A11Y Techniques" textSpans=- clickable=false focusable=false focused=false Rect(42, 180 - 623, 251) [4,8,a11yfocus,16908342,256,512,131072] children=0
+        - | android.widget.LinearLayout | desc="" descSpans=- text="" textSpans=- clickable=false focusable=false focused=false Rect(1080, 142 - 1080, 289) [4,8,a11yfocus,16908342] children=0
+native Tab stops: n01 Read about n01 first link and n01 second link first. -> n01 Read about n01 first link and n01 second link first. -> n01 Read about n01 first link and n01 second link first. -> n01 Read about n01 first link and n01 second link first. -> n01 Read about n01 first link and n01 second link first.

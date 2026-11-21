@@ -121,6 +121,13 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-202](#fl-202) | A `CupertinoButton` resolves its `color` for light and dark mode, and not its `foregroundColor`, so dynamic text colour stays light in dark mode | All (widget tests only) | Confirmed |
 | [FL-220](#fl-220) | On Android TalkBack says no role for a Flutter link | Android | Confirmed |
 | [FL-221](#fl-221) | Material and Cupertino have no link widget, and a link put round one of their buttons is a button as well | Android, iOS (`CupertinoButton`); All (`TextButton`, probe only) | Confirmed for `CupertinoButton` |
+| [FL-240](#fl-240) | A link in a `TextSpan` takes no keyboard focus, and cannot be given an address | All | Confirmed |
+| [FL-241](#fl-241) | Text inside a `WidgetSpan` is scaled twice by the text size setting | Android, iOS, test framework (web not measured) | Confirmed |
+| [FL-242](#fl-242) | `CupertinoColors.link` and `CupertinoColors.systemBlue` are 4.02:1 on white, under the 4.5:1 that text needs | All (widget test only) | Confirmed |
+| [FL-243](#fl-243) | `MergeSemantics` round a sentence with links makes one link, with the first link's address and action | All | Confirmed |
+| [FL-244](#fl-244) | A link in a `WidgetSpan` cannot break across lines with the text round it | Android, iOS, test framework (web not measured) | Confirmed |
+| [FL-245](#fl-245) | On the web `SelectableText` is an empty, disabled text field: its text and its links are not in the page | Web (Chromium) | Observed |
+| [FL-246](#fl-246) | A run of a paragraph's text that wraps has one node over the whole of its lines, which can lie over a link on the first line: on iOS a VoiceOver touch on the link finds the words | iOS (Android and web not measured) | Confirmed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -1135,6 +1142,11 @@ yet), **Fixed in x.y** (verified on that version).
   it a link, as V13 found for Chromium. With `linkUrl` (C03's probe p02 to
   p06 and its good examples), TalkBack says no role at all
   ([FL-220](#fl-220)).
+- Also in C04 (2026-11-21), `/t/C04/bad-text-span`: a `TextSpan` with a
+  `TapGestureRecognizer` gets the link flag and no address from the
+  framework, so it is an `android.widget.Button` that TalkBack reads "… /
+  Button / Double-tap to activate", and on the web an `<a>` with no `href`;
+  there is no way to give it one ([FL-240](#fl-240)).
 - Workaround, verified in C03's good examples on every layer: give
   `linkUrl` as well, and on the web leave the following to the browser
   ([FL-013](#fl-013)).
@@ -2810,6 +2822,239 @@ yet), **Fixed in x.y** (verified on that version).
   `Semantics(link: true, linkUrl:)`.
 - Upstream issue: not searched yet (D25).
 
+## FL-240
+
+**A link in a `TextSpan` takes no keyboard focus, and cannot be given an address.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by C04 `bad-text-span` in
+  the widget, web, Android, and iOS tests. Found in the C04 probe
+  (`docs/evidence/probes/c04/`, fixtures r01, r07, r09). Framework source
+  read: `rendering/paragraph.dart` (`assembleSemanticsNode`).
+- What happens: a `TextSpan` with a `TapGestureRecognizer`, the SDK's own
+  way of putting a link in text (and the example in `TextSpan.recognizer`'s
+  documentation), gets a semantics node of its own with the link flag and
+  the tap action, in its place in the sentence. That is all it gets: the
+  source sets `isLink` and `onTap` and nothing else, so it has no focus
+  node and no `linkUrl`, and no API on `TextSpan` adds either.
+  - Keyboard: Tab never reaches it, in the widget tests, in Chromium, on
+    the Android emulator (`input keyevent`), and on the iOS simulator (one
+    to three Tabs, then Enter: the link's handler never ran, probe
+    `ios.txt`). A tap and a screen reader's activation do follow it.
+  - With no address it is a link on iOS only ([FL-032](#fl-032)): an
+    `android.widget.Button`, which TalkBack reads "… / Button / Double-tap
+    to activate" (probe `android-talkback.md`), and on the web an `<a>` with
+    no `href` and no `tabindex`, which Chromium's own tree calls a link and
+    Playwright's role check does not. VoiceOver on the web reads it "link
+    links in text" in Chromium and WebKit, in its place between "Read
+    about" and "first." (`docs/evidence/C04/voiceover-web.md`), so on the
+    web the missing address is not heard; the keyboard is the defect.
+  - `SelectableText.rich` gives its spans the same nodes on Android and
+    iOS (r07), with the same keyboard result; on the web see
+    [FL-245](#fl-245).
+  - A recognizer span that wraps onto a second line has one node whose box
+    covers both lines whole, the words before and after it included
+    (r09: on iOS its frame starts at the paragraph's left edge on the first
+    line; on Android, `Rect(32, 554 - 1021, 851)` at 200%). XCUITest's tap
+    at the centre of that box missed the link on iOS (r09 "second tap",
+    `ios.txt`), and VoiceOver's cursor, put by a tap at either link, landed
+    on the other link or on the words after it; the same kind of node for
+    a run of words is [FL-246](#fl-246).
+- WCAG: 2.1.1 Keyboard, where no other keyboard path reaches the link's
+  destination (`bad-text-span` opens a page nothing else opens). By
+  platform: all three.
+- Why it matters: the recognizer span is the link that flows with the
+  text and is read in its place; it is the one a developer reaches for,
+  and the keyboard cannot use it. The iOS reference repository records the
+  same gap for SwiftUI's own inline links.
+- Workaround, in the SDK, verified in C04's good examples on every layer:
+  make each link a `WidgetSpan` holding a focusable link (an `InkWell` or a
+  `FocusableActionDetector` inside `Semantics(link: true, linkUrl:)`), with
+  [FL-413](#fl-413)'s workaround to keep it in its place, the text inside
+  it unscaled ([FL-241](#fl-241)), and the cost that it cannot break
+  across lines ([FL-244](#fl-244)).
+- How to read this entry: Flutter has not added keyboard focus or an
+  address to a link in a `TextSpan` yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-241
+
+**Text inside a `WidgetSpan` is scaled twice by the text size setting.**
+
+- Platforms: Android, iOS, and the test framework; the web was not
+  measured.
+- Status: Confirmed, Flutter 3.47.5: asserted on the SDK alone by the C04
+  widget test "FL-241", written to fail when it is fixed, and measured on
+  the Android emulator at a system font scale of 2.0 (probe
+  `android-rects-200.txt`) and on the iOS simulator at the text size
+  accessibility-large (probe `ios-rects.txt`). Framework source read:
+  `widgets/widget_span.dart` (`WidgetSpan.extractFromInlineSpan`,
+  `_AutoScaleInlineWidget`), which carries the comment "this shouldn't
+  happen automatically, at least there should be a way to opt out" and
+  points at flutter/flutter issue 126962 (read in the source, not opened).
+- What happens: a `WidgetSpan` lays its widget out at the paragraph's
+  width divided by the text scale and draws it scaled up by the text
+  scale. A `Text` inside the widget reads the same text scale from
+  `MediaQuery` and scales its own letters as well. At 200% the link's
+  letters are drawn at 400%: in the widget test a `Text` in a `WidgetSpan`
+  is twice the height of the words round it (`flutter_test.txt`, r03: the
+  link's paragraph laid out at 384 by 80 with a 2.0 text scaler, shown at
+  768 by 160). On the Android emulator at font scale 2.0, r03's links are
+  180 pixels tall where the words' line is 102 (`android-rects-200.txt`).
+- WCAG: none failed as written: no text is lost, and 1.4.4 asks for 200%
+  without loss of content or function.
+- Why it matters: a link in a sentence grows twice as fast as the words
+  round it, so at large text sizes each link takes a line of its own and
+  the sentence breaks up.
+- Workaround, in the SDK, verified in C04's good examples (widget test
+  "at 200% text the links are the size of the words round them") and on
+  the emulator (probe r10: links 98 pixels tall in a 102 pixel line): put
+  the text inside the `WidgetSpan` in `MediaQuery.withNoTextScaling`, so
+  that only the `WidgetSpan` scales it.
+- How to read this entry: Flutter has not added a way to opt a
+  `WidgetSpan` out of its scaling yet.
+- Upstream issue: not searched yet (D25); the framework source names
+  issue 126962, which was not opened.
+
+## FL-242
+
+**`CupertinoColors.link` and `CupertinoColors.systemBlue` are 4.02:1 on white, under the 4.5:1 that text needs.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by the C04 widget test
+  "FL-242". Framework source read: `cupertino/colors.dart`.
+- Platforms: all; it is a colour. Measured in the widget tests only.
+- What happens: both colours are `#007AFF` in light mode, 4.02:1 on white
+  and 3.82:1 on the Material page colour of this app's light theme
+  (`flutter_test.txt`, "contrast"). `CupertinoColors.link` has no
+  high-contrast variant (the same `#007AFF`); `systemBlue`'s is `#0040DD`,
+  7.56:1 on white. In dark mode both are 5.76:1 on black.
+- WCAG: 1.4.3 Contrast (Minimum) for link text at body size in light
+  mode, wherever the colour is used as given.
+- Why it matters: `CupertinoColors.link` is the colour named for links. The
+  iOS reference repository says the same of the system's default link
+  colour and asks for one with 4.5:1.
+- Workaround, in the SDK, in C04 `good-cupertino`: use
+  `CupertinoColors.systemBlue.highContrastColor` in light mode and its
+  `darkHighContrastColor` in dark.
+- How to read this entry: this is the platform's colour, copied; the SDK
+  does not resolve to the high-contrast variant unless the device asks for
+  more contrast.
+- Upstream issue: not searched yet (D25).
+
+## FL-243
+
+**`MergeSemantics` round a sentence with links makes one link, with the first link's address and action.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by C04 `bad-merged` in the
+  widget, web, Android, and iOS tests. Found in the C04 probe (fixture
+  r05).
+- What happens: the sentence, its words and both links, becomes one node
+  whose label is the whole sentence, with the link flag, and one
+  `linkUrl` and one tap action, the first link's:
+  - Android: one `View` named by the sentence, with one `URLSpan`, the
+    first link's, over all of it; `ACTION_CLICK`, what TalkBack's double
+    tap performs, follows the first link. TalkBack read the sentence and
+    no role (probe `android-talkback.md`, r05).
+  - iOS: one link named by the sentence (probe `ios.txt`); VoiceOver reads
+    it as one stop. What VoiceOver's double tap on it does is not claimed:
+    the C04 test records it without asserting it.
+  - Web: one `<a href>` with the first link's address. A click on the
+    first link's words, on the second link's, and on the first words, and
+    Enter after two Tabs and after three, follow the first link
+    (`web_merged.txt`, and C04's web tree tests); Tab stops on the one element twice, as
+    the two links' focus nodes are still there. VoiceOver reads one stop,
+    "link Read about links in text and stand-alone links first.", in
+    Chromium and WebKit (`docs/evidence/C04/voiceover-web.md`).
+  - Touch, off the web, still reaches each link: Flutter's own hit test is
+    not merged.
+- WCAG: 4.1.2 Name, Role, Value: the second link is a control with no name
+  and role of its own. By platform: all three. On the web 2.1.1 as well
+  only if nothing else reaches its page; in `bad-merged` C03's page is
+  reached through the app's own catalog, so 2.1.1 is not claimed.
+- Why it matters: `TestId`, which this project puts round controls, is a
+  `MergeSemantics`, and so is the usual way of making a row one stop. The
+  Android Compose reference merges its text for TalkBack, which then
+  offers the links in its links menu; a merged Flutter sentence has no
+  such menu, so the links after the first are lost.
+- Workaround: do not merge a sentence that has links. Put identifiers on
+  each link's own container (C04's good examples).
+- Upstream issue: not searched yet (D25).
+
+## FL-244
+
+**A link in a `WidgetSpan` cannot break across lines with the text round it.**
+
+- Status: Confirmed, Flutter 3.47.5, in the C04 probe (fixtures r03, r06,
+  r09, r10) on Android and iOS and in the widget tests; the C04 widget
+  tests check that nothing is cut short or overflows at 200% on a 320
+  pixel screen. Framework source read: `rendering/paragraph.dart` (a
+  placeholder is one box in the line).
+- What happens: the link is one box. If it does not fit what is left of
+  the line, the whole link goes to the next line; if it is wider than the
+  line, it wraps inside its own box, and the words after it start below
+  it. r06's long link is a block of its own on Android (`Rect(42, 739 -
+  1038, 1641)` at font scale 2.0) and on iOS (a 370 by 40 frame from the
+  paragraph's left edge, `ios.txt`), where the same words as a `TextSpan`
+  (r09) flow on from the end of the line.
+- WCAG: none failed as written.
+- Why it matters: the keyboard-reachable link ([FL-240](#fl-240)) does not
+  look like a link in running text once it is long or the text is large:
+  it leaves a gap at the end of the line before it.
+- Workaround: none in the SDK. Keep link text short.
+- How to read this entry: Flutter has not added a focusable span that
+  flows with the text yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-245
+
+**On the web `SelectableText` is an empty, disabled text field: its text and its links are not in the page.**
+
+- Status: Observed, Flutter 3.47.5, Chromium, in the C04 probe only
+  (fixture r07, `docs/evidence/probes/c04/web.txt`). On Android and iOS the
+  same fixture's words and links are nodes as a `Text.rich`'s are
+  ([FL-240](#fl-240)).
+- What happens: `SelectableText.rich` with two link spans is a
+  `<textarea disabled>` with an empty value in the semantics tree, which
+  Playwright's ARIA snapshot reads as "textbox [disabled]". No element has
+  its words or its links.
+- WCAG: 1.3.1 and 4.1.2 for its links, as candidates; nothing is claimed,
+  as no example was built and no screen reader was run on it.
+- Why it matters: selectable text with links in it is not exposed at all
+  on the web.
+- Workaround: none tried. C04's links are in a `Text.rich`, which is not
+  selectable.
+- Upstream issue: not searched yet (D25).
+
+## FL-246
+
+**A run of a paragraph's text that wraps has one node over the whole of its lines, which can lie over a link on the first line: on iOS a VoiceOver touch on the link finds the words.**
+
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator: asserted by the
+  C04 iOS VoiceOver test (`touchOnALinkFindsTheLastWords`), written to fail
+  when the cursor lands on the link; found in the C04 probe's second iOS
+  round (`docs/evidence/probes/c04/ios_round2.txt`). Framework source read:
+  `rendering/paragraph.dart` (`assembleSemanticsNode` makes a run's rect
+  the union of all its text boxes, each grown by 4 pixels).
+- Platforms: iOS. Android and the web were not measured.
+- What happens: in C04 `good-material` on the iPhone 17 simulator the
+  sentence takes two lines, and its last run, " first.", starts at the end
+  of the first line and ends on the second. Its node's frame is
+  (12, 256, 378 by 52), the whole width of both lines, so it lies over both
+  links, whose frames are 24 points tall on the first line. With VoiceOver
+  on, a tap at either link's centre puts the cursor on "first." and not on
+  the link. Moving the cursor by swiping reaches each link, and a double
+  tap there follows it (the same test). A double tap made at the link's
+  centre with the cursor on "first." also opened the link's page in the
+  probe; why was not found. A `TextSpan` link that wraps has the same kind
+  of node over its lines ([FL-240](#fl-240), probe r09).
+- WCAG: none claimed: swiping, the keyboard, and the double tap reach and
+  follow every link. A VoiceOver user who explores the screen by touch
+  does not find the link under their finger.
+- Workaround: none found in the SDK. Short sentences whose runs do not
+  wrap avoid it.
+- How to read this entry: Flutter has not given each line of a run a node
+  of its own yet.
+- Upstream issue: not searched yet (D25).
+
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->
@@ -3132,6 +3377,39 @@ yet), **Fixed in x.y** (verified on that version).
   the web tree test of the same name assert the order. The key has to
   match the run's position: by the source, a link after the second run of
   text would need a key between 1 and 2 (not tested).
+- Measured again in C04 Links inline with text (2026-11-21), with two
+  links in one sentence, "Read about [links in text] and [stand-alone
+  links] first.", each a `WidgetSpan` with an address:
+  - Two links with the keys 0.5 and 1.5 are read in place: the widget
+    tests (the sentence's nodes in traversal order, on one line and
+    wrapped, at 100% and 200% text), the web tree (the sentence's
+    elements in the page's order), the Android tree (the sentence node's
+    children in order), and the transcripts of C04's good examples. So the
+    "between 1 and 2" above is now tested.
+  - Without the keys the order rests on where the links land: in the
+    probe's widget test (`docs/evidence/probes/c04/flutter_test.txt`,
+    "order" lines) both links came first on one line and after the first
+    run when wrapped, with and without a container round them, while C04's
+    own sentence happened to come out right without them. The keys are
+    what makes it hold, and C04's widget tests check each link has its key.
+  - A span with the identifier is a run of its own, and the spans after it
+    up to the next `WidgetSpan` make one run, whatever their style: with
+    the identifier on "Read " and a bold "about " after it, a link after
+    them needs 1.5, and 0.5 puts it between the two ("two spans" lines;
+    framework source: `combineSemanticsInfo` in `painting/inline_span.dart`).
+  - With no workaround (C04 `bad-out-of-order`, probe r02) the sentence
+    node is "Read about \n and \n first." holding the links: on Android
+    its `View` with the two links as children, on the web a `group` with
+    that `aria-label` holding the two `<a href>`, on iOS an element with
+    that label and the two links after it (`ios.txt`). VoiceOver on the
+    web reads "Read about and first. group", "link links in text", "link
+    stand-alone links", "end of Read about and first. group" in Chromium and
+    WebKit, as in V13's first build (`docs/evidence/C04/voiceover-web.md`).
+    WCAG 1.3.2 Meaningful Sequence, claimed for `bad-out-of-order` on all
+    three.
+  - The workaround's links are boxes in the line and cannot break across
+    lines ([FL-244](#fl-244)), and their text is scaled twice unless told
+    not to be ([FL-241](#fl-241)).
 - How to read this entry: Flutter has not added a way to read a
   `WidgetSpan` in its place in the text without help yet.
 - Upstream issue: not searched yet (D25).
