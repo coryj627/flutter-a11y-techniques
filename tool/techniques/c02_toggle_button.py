@@ -78,6 +78,8 @@ VOICEOVER_WEB_METHOD = (
     "walk. Every stop of a walk is judged, the screen's own stops before the heading "
     "included. Every try is a row of its own, `<slug>-walk-<n>`, with the verdict and "
     "the stops after the \"Example\" heading for a complete walk, every stop for any other. "
+    "With no retries, a test the tool names under \"Walks that needed a retry\" failed and "
+    "was not retried. "
     "The `control-html-walk-<n>` rows are a plain HTML page with no Flutter, each walk "
     "shown whole"
 )

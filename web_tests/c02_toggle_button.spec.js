@@ -310,6 +310,17 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     // checked too.
     ['a wrong reading before the heading', ['Bold on switch', EXAMPLE_HEADING, ...before], true, before, 'wrong'],
     ['the screen\'s own stops out of their order', [own[1], own[0], EXAMPLE_HEADING, ...before], true, before, 'wrong'],
+    // WebKit read the screen's level 1 heading as an empty phrase (review
+    // round 4): allowed as the first stop only, in a walk that read the
+    // "Example" heading.
+    ['an empty first stop for the title, then the heading and right readings', ['', ...own.slice(1), EXAMPLE_HEADING, ...before], true, before, 'complete'],
+    ['an empty first stop and no heading', ['', ...own.slice(1), ...before], true, before, 'wrong'],
+    ['an empty first stop alone', [''], false, before, 'wrong'],
+    ['an empty stop after the title', [own[0], '', EXAMPLE_HEADING, ...before], true, before, 'wrong'],
+    ['an empty stop just before the heading', [...own, '', EXAMPLE_HEADING, ...before], true, before, 'wrong'],
+    ['two empty stops before the heading', ['', '', ...own.slice(1), EXAMPLE_HEADING, ...before], true, before, 'wrong'],
+    ['an empty first stop and the title read as well', ['', ...own, EXAMPLE_HEADING, ...before], true, before, 'wrong'],
+    ['an empty stop after the heading', screen('', ...before), true, before, 'wrong'],
     ['a stop after the count', screen(...before, 'end of main'), true, before, 'wrong'],
   ];
   for (const [what, stops, reachedEnd, expected, verdict] of cases) {
