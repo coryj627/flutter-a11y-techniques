@@ -72,5 +72,7 @@ VOICEOVER_WEB_METHOD = (
     "changes the position, or that speaks a different phrase, is a stop; two moves in "
     "a row that do neither are the end. Each example is walked as it opens, and again "
     "(\"-changed\") after its first control has been clicked once; the change count, "
-    "the last element of every example, must then read \"Changes: 1\""
+    "the last element of every example, must then read \"Changes: 1\". The "
+    "`control-html-walk-N` rows are a plain HTML page with no Flutter, walked up to "
+    "three times, each walk shown whole"
 )

@@ -2503,10 +2503,14 @@ yet), **Fixed in x.y** (verified on that version).
     "selected n04 Bold Button", the same as Flutter's `selected`
     (`docs/evidence/probes/c02/ios_native.txt`). The reading of one that
     is off was not recorded.
-  - Web: VoiceOver's reading of a plain HTML `button` with `aria-pressed`
-    is in the C02 transcript (`control-html`).
+  - Web: VoiceOver on macOS reads a plain HTML `button` with
+    `aria-pressed="false"` "Bold toggle button" and one with
+    `aria-pressed="true"` "Italic selected toggle button", in Chromium and
+    WebKit (`control-html` in `docs/evidence/C02/voiceover-web.md`). No
+    Flutter node can be read that way.
   So the nearest native toggle buttons are read as switches by TalkBack
-  and by VoiceOver on iOS, as Flutter's `toggled` is.
+  and by VoiceOver on iOS, as Flutter's `toggled` is; only the web has a
+  toggle button role that Flutter cannot reach.
 - What the user gets: the role heard is "switch" or "checkbox", not
   "toggle button". With `toggled` the state is said in both states on
   every platform, which is what 4.1.2 asks for. This is not counted as a
@@ -2544,9 +2548,11 @@ yet), **Fixed in x.y** (verified on that version).
   - iOS: a button with the selected trait or not. VoiceOver says "Bold
     Button" and "selected Bold Button".
   - Web: `role="button"` with `aria-current="false"` or `"true"`.
-    VoiceOver says "Bold button" and "Bold current item button" (the
-    wording for the S13 `good-selected` example, which has the same
-    attribute, is in `docs/evidence/S13/voiceover-web.md`).
+    VoiceOver says "Bold button" and "Bold current item button", in
+    Chromium and WebKit, the same as for a plain HTML button with
+    `aria-current="true"` ("Underline current item button", `control-html`
+    in the same transcript), and not what it says for `aria-pressed`
+    ("selected toggle button").
 - What the user gets: while the button is off, the same as for a button
   that does nothing more than act, so nothing says that it can be
   pressed in or that it is out. On the web "current item" is the wording

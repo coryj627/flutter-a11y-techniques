@@ -129,7 +129,20 @@ Native, for comparison:
 - **Web**: the C02 VoiceOver spec reads a plain HTML page with a
   `button` with `aria-pressed="false"`, one with `aria-pressed="true"`,
   and one with `aria-current="true"` (`control-html` in
-  `docs/evidence/C02/voiceover-web.md`). The first run's attempt at it
+  `docs/evidence/C02/voiceover-web.md`): "Bold toggle button", "Italic
+  selected toggle button", and "Underline current item button", in
+  Chromium and WebKit. It was first read in the second run of the
+  examples (`voiceover-web-second-run.md.txt`), where the test failed
+  only because its check had been written before the reading was known
+  (it expected the walk to end at "Changes: 0"; VoiceOver went on to "end
+  of main"). In the third run (`voiceover-web-third-run.md.txt`,
+  failures in `voiceover-web-third-run-control-errors.txt`) the check was
+  the exact list from the second run, and the walk was not steady on this
+  page: in some attempts it never reached the heading, and in others it
+  went past the Bold button without reading it, in both browsers. The
+  test now walks the page up to three times and requires each button to
+  be read, every time it is read, with the same words.
+  The first run's attempt at it
   failed before reading anything: it replaced the content of the Flutter
   page, and Flutter's view stayed over it and took the click that starts
   the walk (`voiceover-web-first-run.md.txt` and
@@ -139,6 +152,14 @@ So the native toggle buttons that are nearest are read as switches by
 both phone screen readers, and with no word for their state in the
 readings recorded here; Flutter's `toggled` is read as a switch with its
 state.
+
+## The Android suite at CI's size
+
+`android_320x640.sh.txt` ran `C02ToggleButtonTest` once with the
+emulator at 320 by 640 and 160 dpi, CI's size, and put the size and
+density back afterwards: `android_320x640.txt`. The build passed; Gradle
+prints only the skipped test (`talkBackWalk`, which skips itself with
+TalkBack off), so a pass is "BUILD SUCCESSFUL" with no failure.
 
 ## First run of the examples
 

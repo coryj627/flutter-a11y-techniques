@@ -174,6 +174,12 @@ What the tests leave out, and what that gives up:
   have leave out what the change announces
   (`tool/techniques/c02_toggle_button.py`). That the change happened is
   checked by the count reading 1 before the second reading.
+- The web VoiceOver spec's comparison page (`control-html`, plain HTML,
+  no Flutter) is walked up to three times and checked only for each
+  button's reading, not for the whole list of stops: on that page the
+  walk sometimes missed the heading or the first button (probe README,
+  "Native controls"). What it gives up: the order of the stops and
+  anything else on that page are not checked.
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -192,9 +198,11 @@ The probe that came first is in [evidence/probes/c02](../evidence/probes/c02/).
   switches too, with no word for the state in the readings recorded:
   TalkBack reads an `android.widget.ToggleButton` "n02 Bold. Switch", and
   VoiceOver on iOS reads a UIKit button with the toggle button trait "n02
-  Bold Switch button" (probe README, "Native controls"). On the web
-  VoiceOver's reading of an HTML button with `aria-pressed` is the
-  `control-html` row of the transcript.
+  Bold Switch button" (probe README, "Native controls"). Only the web
+  has a toggle button role of its own: VoiceOver reads a plain HTML
+  button with `aria-pressed` "Bold toggle button", and "Italic selected
+  toggle button" when it is pressed (`control-html` in the transcript),
+  which no Flutter node can give.
 - **The Material toggles use `selected` and `checked`.**
   `IconButton(isSelected:)` and a multi-select `SegmentedButton` are a
   button that is selected or not, which is silent while off

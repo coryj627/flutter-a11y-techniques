@@ -83,17 +83,39 @@ for (const [slug, { control, before, after }] of Object.entries(EXAMPLES)) {
 // For comparison, a plain HTML page with no Flutter: what VoiceOver says
 // for a toggle button with aria-pressed, off and on, and for a button with
 // aria-current, which is what Flutter writes for `selected`.
+//
+// The walk helpers are made for the app's screens, and on this page a walk
+// now and then missed the heading or the first button (two runs, both
+// browsers: docs/evidence/probes/c02/README.md). So the page is walked up
+// to three times, every walk is logged, and the test asks only for what
+// matters: across the walks, each button was read, and always the same
+// way.
 test('voiceover reads control-html', async ({ page, voiceOver, browserName }) => {
   await page.goto('about:blank');
   await page.setContent(`<main>
     <button>Back</button>
     <h2>Example</h2>
+    <p>Text styles</p>
     <button aria-pressed="false">Bold</button>
     <button aria-pressed="true">Italic</button>
     <button aria-current="true">Underline</button>
     <p>Changes: 0</p>
   </main>`);
-  const stops = await read(page, voiceOver, browserName, 'control-html');
-  expect(stops.length, 'control-html: the walk read the three buttons and the text').toBeGreaterThanOrEqual(4);
-  expect(stops.at(-1)).toBe('Changes: 0');
+  const expected = {
+    Bold: 'Bold toggle button',
+    Italic: 'Italic selected toggle button',
+    Underline: 'Underline current item button',
+  };
+  const heard = new Set();
+  for (let walk = 1; walk <= 3 && heard.size < 3; walk++) {
+    const { stops } = await walkToEnd(page, voiceOver, browserName, 40);
+    console.log(`C02VO ${browserName} control-html-walk-${walk} | ${stops.join(' / ')}`);
+    for (const [name, phrase] of Object.entries(expected)) {
+      const read = stops.filter((s) => s.startsWith(`${name} `));
+      // Whenever a button is read, it is read as expected.
+      expect(read.every((s) => s === phrase), `${name} in walk ${walk}: ${read}`).toBe(true);
+      if (read.length) heard.add(name);
+    }
+  }
+  expect([...heard].sort(), 'control-html: every button was read in some walk').toEqual(['Bold', 'Italic', 'Underline']);
 });
