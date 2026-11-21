@@ -1,0 +1,17 @@
+#!/bin/sh
+# C03 probe on iOS, under tool/with_devices.py (throwaway; kept as
+# docs/evidence/probes/c03/ios_probe.sh.txt). Run from the worktree root,
+# after `fvm flutter build ios --simulator --debug -t lib/probe.dart` and
+# `FLUTTER_TARGET=lib/probe.dart xcodebuild build-for-testing` into
+# build/ios_uitest.
+xcrun simctl list devices booted | grep -i "iphone"
+cd ios || exit 1
+for t in testTree testKeys testVoiceOver; do
+  echo "== $t"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/ProbeC03UITests/$t" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "C03PROBE|error:|passed|failed|skipped" | grep -v "Test Suite"
+done
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

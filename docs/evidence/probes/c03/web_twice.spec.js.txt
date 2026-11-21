@@ -1,0 +1,55 @@
+// Throwaway (kept as docs/evidence/probes/c03/web_twice.spec.js.txt): what
+// following bad-app-also-follows does over time, in the app's own build,
+// against good-material. C03_HOW chooses how it is followed: "click" (a
+// mouse click, the default), "dispatch" (a DOM click with no pointer events,
+// as assistive technology sends), or "enter" (Tab to it, then Enter).
+// Output: web_twice.txt, web_twice_dispatch.txt, web_twice_enter.txt.
+import { test } from '@playwright/test';
+
+const HOW = process.env.C03_HOW ?? 'click';
+
+async function sample(page, label) {
+  const h1 = await page.getByRole('heading', { level: 1 }).allTextContents();
+  const len = await page.evaluate(() => history.length);
+  console.log(`C03TWICE ${label} url=${page.url().replace(/^http:\/\/127\.0\.0\.1:\d+/, '')} h1=${JSON.stringify(h1)} history.length=${len}`);
+}
+
+const runs = [1, 2, 3, 4, 5].map((n) => ['bad-app-also-follows', n]).concat([['good-material', 1]]);
+for (const [slug, n] of runs) {
+  test(`${HOW} ${slug} run ${n}`, async ({ page }) => {
+    const urls = [];
+    page.on('framenavigated', (f) => { if (f === page.mainFrame()) urls.push(f.url().replace(/^http:\/\/127\.0\.0\.1:\d+/, '')); });
+    await page.goto('about:blank');
+    await page.goto(`/#/t/C03/${slug}`);
+    await page.getByRole('heading', { name: 'Example', exact: true }).waitFor();
+    await page.waitForTimeout(800);
+    await sample(page, `${slug} before`);
+    const link = page.locator(`[flt-semantics-identifier="c03-${slug}-link"]`);
+    if (HOW === 'dispatch') {
+      await link.dispatchEvent('click');
+    } else if (HOW === 'enter') {
+      let focused = false;
+      for (let i = 0; i < 8 && !focused; i++) {
+        await page.keyboard.press('Tab');
+        await page.waitForTimeout(150);
+        focused = await link.evaluate((e) => e === document.activeElement);
+      }
+      console.log(`C03TWICE ${slug} Tab reached the link: ${focused}`);
+      await page.keyboard.press('Enter');
+    } else {
+      await link.click();
+    }
+    for (const ms of [100, 300, 600, 1200, 2500]) {
+      await page.waitForTimeout(ms);
+      await sample(page, `${slug} +${ms}ms`);
+    }
+    console.log(`C03TWICE ${slug} navigations ${JSON.stringify(urls)}`);
+    for (let i = 1; i <= 3; i++) {
+      const back = page.getByRole('button', { name: 'Back' });
+      if (!(await back.count())) break;
+      await back.click();
+      await page.waitForTimeout(1000);
+      await sample(page, `${slug} after app Back ${i}`);
+    }
+  });
+}

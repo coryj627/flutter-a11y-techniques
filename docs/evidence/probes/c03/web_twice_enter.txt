@@ -1,0 +1,62 @@
+C03TWICE bad-app-also-follows before url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows Tab reached the link: true
+C03TWICE bad-app-also-follows +100ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +300ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +600ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +1200ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +2500ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows navigations ["about:blank","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03","/#/t/C03","/","/#/t/C03","/#/t/C03/bad-app-also-follows"]
+C03TWICE bad-app-also-follows after app Back 1 url=/#/t/C03 h1=["Stand-alone link"] history.length=3
+C03TWICE bad-app-also-follows after app Back 2 url=/ h1=["Flutter A11Y Techniques"] history.length=3
+C03TWICE bad-app-also-follows before url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows Tab reached the link: true
+C03TWICE bad-app-also-follows +100ms url=/#/t/C03/bad-app-also-follows h1=["Stand-alone link"] history.length=3
+C03TWICE bad-app-also-follows +300ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +600ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +1200ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +2500ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows navigations ["about:blank","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03","/#/t/C03","/","/#/t/C03","/#/t/C03/bad-app-also-follows"]
+C03TWICE bad-app-also-follows after app Back 1 url=/#/t/C03 h1=["Stand-alone link"] history.length=3
+C03TWICE bad-app-also-follows after app Back 2 url=/ h1=["Flutter A11Y Techniques"] history.length=3
+C03TWICE bad-app-also-follows before url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows Tab reached the link: true
+C03TWICE bad-app-also-follows +100ms url=/#/t/C03/bad-app-also-follows h1=["Stand-alone link"] history.length=3
+C03TWICE bad-app-also-follows +300ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +600ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +1200ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +2500ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows navigations ["about:blank","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03","/#/t/C03","/","/#/t/C03","/#/t/C03/bad-app-also-follows"]
+C03TWICE bad-app-also-follows after app Back 1 url=/#/t/C03 h1=["Stand-alone link"] history.length=3
+C03TWICE bad-app-also-follows after app Back 2 url=/ h1=["Flutter A11Y Techniques"] history.length=3
+C03TWICE bad-app-also-follows before url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows Tab reached the link: true
+C03TWICE bad-app-also-follows +100ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +300ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +600ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +1200ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +2500ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows navigations ["about:blank","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03","/#/t/C03","/","/#/t/C03","/#/t/C03/bad-app-also-follows"]
+C03TWICE bad-app-also-follows after app Back 1 url=/#/t/C03 h1=["Stand-alone link"] history.length=3
+C03TWICE bad-app-also-follows after app Back 2 url=/ h1=["Flutter A11Y Techniques"] history.length=3
+C03TWICE bad-app-also-follows before url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows Tab reached the link: true
+C03TWICE bad-app-also-follows +100ms url=/#/t/C03/bad-app-also-follows h1=["Stand-alone link"] history.length=3
+C03TWICE bad-app-also-follows +300ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +600ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +1200ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows +2500ms url=/#/t/C03/bad-app-also-follows h1=["Link the app follows on the web too"] history.length=3
+C03TWICE bad-app-also-follows navigations ["about:blank","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/","/#/t/C03/bad-app-also-follows","/#/t/C03/bad-app-also-follows","/#/t/C03","/#/t/C03","/","/#/t/C03","/#/t/C03/bad-app-also-follows"]
+C03TWICE bad-app-also-follows after app Back 1 url=/#/t/C03 h1=["Stand-alone link"] history.length=3
+C03TWICE bad-app-also-follows after app Back 2 url=/ h1=["Flutter A11Y Techniques"] history.length=3
+C03TWICE good-material before url=/#/t/C03/good-material h1=["Material link"] history.length=3
+C03TWICE good-material Tab reached the link: true
+C03TWICE good-material +100ms url=/#/t/C03 h1=["Stand-alone link"] history.length=4
+C03TWICE good-material +300ms url=/#/t/C03 h1=["Stand-alone link"] history.length=4
+C03TWICE good-material +600ms url=/#/t/C03 h1=["Stand-alone link"] history.length=4
+C03TWICE good-material +1200ms url=/#/t/C03 h1=["Stand-alone link"] history.length=4
+C03TWICE good-material +2500ms url=/#/t/C03 h1=["Stand-alone link"] history.length=4
+C03TWICE good-material navigations ["about:blank","/#/t/C03/good-material","/#/t/C03/good-material","/#/t/C03/good-material","/","/#/t/C03/good-material","/#/t/C03/good-material","/#/t/C03","/#/t/C03/good-material","/#/t/C03"]
+C03TWICE good-material after app Back 1 url=/#/t/C03/good-material h1=["Material link"] history.length=4
+C03TWICE good-material after app Back 2 url=/#/t/C03 h1=["Stand-alone link"] history.length=4
+C03TWICE good-material after app Back 3 url=/ h1=["Flutter A11Y Techniques"] history.length=4
+  6 passed (52.7s)

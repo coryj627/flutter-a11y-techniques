@@ -1,0 +1,111 @@
+// C03 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c03/ProbeC03UITests.swift.txt): the tree, a tap,
+// Tab and Enter, and VoiceOver for each fixture of lib/probe.dart, one
+// fixture at a time, opened by URL.
+import XCTest
+
+final class ProbeC03UITests: XCTestCase {
+  let app = XCUIApplication()
+  let ids = (1...14).map { String(format: "p%02d", $0) }
+
+  func log(_ s: String) { print("C03PROBE \(s)") }
+
+  func tapsElement(_ id: String) -> XCUIElement { app.descendants(matching: .any)["\(id)-taps"] }
+
+  func open(_ id: String) {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///\(id)")!)
+      if tapsElement(id).waitForExistence(timeout: 30) { sleep(1); return }
+    }
+    XCTFail("\(id) did not open")
+  }
+
+  /// The fixture's element: the first whose label starts with "pNN " and is
+  /// not its taps line.
+  func fixture(_ id: String) -> XCUIElement? {
+    app.descendants(matching: .any).allElementsBoundByIndex.first {
+      $0.label.hasPrefix("\(id) ") && !$0.label.hasPrefix("\(id) taps")
+    }
+  }
+
+  func state(_ id: String) -> String {
+    sleep(2)
+    let arrived = app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH 'Arrived'")).count > 0
+    let taps = tapsElement(id).exists ? tapsElement(id).label : "(gone)"
+    return "taps=\"\(taps)\" destination=\(arrived)"
+  }
+
+  func dump(_ label: String) {
+    log("==== \(label)")
+    for e in app.descendants(matching: .any).allElementsBoundByIndex {
+      let t = e.elementType
+      if t == .window || t == .application { continue }
+      if t == .other && e.label.isEmpty && e.identifier.isEmpty { continue }
+      log("EL type=\(t.rawValue) id=\(e.identifier) label=\(e.label.debugDescription) value=\(String(describing: e.value)) enabled=\(e.isEnabled) frame=\(e.frame)")
+    }
+  }
+
+  func testTree() {
+    for id in ids {
+      open(id)
+      dump("\(id) start")
+      guard let e = fixture(id) else { log("\(id) no fixture element"); continue }
+      log("\(id) fixture type=\(e.elementType.rawValue) label=\(e.label.debugDescription)")
+      e.tap()
+      log("\(id) tap: \(state(id))")
+    }
+  }
+
+  /// Tab twice (Back, then the next control) and Enter, then Space, each
+  /// from a fresh launch. A fixture that does not take focus leaves focus
+  /// elsewhere, so a result here is only read together with the others.
+  func testKeys() {
+    for id in ids {
+      for key in ["\n", XCUIKeyboardKey.space.rawValue] {
+        open(id)
+        app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+        usleep(700_000)
+        app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+        usleep(700_000)
+        app.typeKey(key, modifierFlags: [])
+        log("\(id) Tab Tab \(key == "\n" ? "Enter" : "Space"): \(state(id))")
+      }
+    }
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    for id in ids {
+      open(id)
+      try vo.enable()
+      defer { try? vo.disable() }
+      var walk: [String] = []
+      for _ in 0..<10 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix("\(id) taps") { break }
+      }
+      log("VO \(id) walk: \(walk.joined(separator: " / "))")
+      // Activate the fixture with VoiceOver: the cursor goes to it, then a
+      // double tap.
+      if let e = fixture(id) {
+        e.tap()
+        usleep(1_500_000)
+        let on = norm((try? vo.currentSpeech().utterance) ?? "")
+        e.doubleTap()
+        log("VO \(id) cursor on \"\(on)\", double tap: \(state(id))")
+      }
+      try vo.disable()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}

@@ -1,0 +1,281 @@
+// C03 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c03/probe.dart.txt): what a stand-alone link built
+// from the SDK exposes, and what activates it. One fixture per route,
+// `/p01` to `/p14`; `/` lists them all; `/dest` is an in-app destination
+// that the fixtures with `linkUrl: '#/dest'` point to.
+//
+// Every fixture's label starts with its id. A tap that reaches a fixture's
+// handler prints "C03PROBE TAP pNN" and adds one to the "pNN taps: N" text
+// under it. Opening `/dest` prints "C03PROBE DEST" and the number of times
+// it has been opened.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/link.dart' as ul;
+
+import 'techniques/s02_informative_images/example_image.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+final ext = Uri.parse('https://example.com/c03');
+final dest = Uri.parse('#/dest');
+int destOpened = 0;
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      onGenerateRoute: (settings) {
+        final name = settings.name ?? '/';
+        Widget page;
+        if (name == '/dest') {
+          destOpened++;
+          debugPrint('C03PROBE DEST $destOpened');
+          page = Scaffold(
+            appBar: AppBar(title: const Text('Destination')),
+            body: Text('Arrived $destOpened'),
+          );
+        } else if (fixtures.containsKey(name.replaceFirst('/', ''))) {
+          final id = name.replaceFirst('/', '');
+          page = FixtureScreen(ids: [id]);
+        } else {
+          page = FixtureScreen(ids: fixtures.keys.toList());
+        }
+        return MaterialPageRoute<void>(settings: settings, builder: (_) => page);
+      },
+    );
+  }
+}
+
+typedef Build = Widget Function(BuildContext context, VoidCallback tap);
+
+Widget _img({String? label, bool exclude = false}) => Image.memory(
+  sunrisePng,
+  width: 72,
+  height: 48,
+  fit: BoxFit.cover,
+  semanticLabel: label,
+  excludeFromSemantics: exclude,
+);
+
+TextStyle _linkStyle(BuildContext context) {
+  final c = Theme.of(context).colorScheme.primary;
+  return TextStyle(
+    color: c,
+    decoration: TextDecoration.underline,
+    decorationColor: c,
+  );
+}
+
+final Map<String, (String, Build)> fixtures = {
+  'p01': (
+    'Semantics(link) around GestureDetector, no linkUrl',
+    (c, tap) => Semantics(
+      link: true,
+      child: GestureDetector(
+        onTap: tap,
+        child: Text('p01 link only', style: _linkStyle(c)),
+      ),
+    ),
+  ),
+  'p02': (
+    'Semantics(link, linkUrl https) around GestureDetector',
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: ext,
+      child: GestureDetector(
+        onTap: tap,
+        child: Text('p02 link url', style: _linkStyle(c)),
+      ),
+    ),
+  ),
+  'p03': (
+    'Semantics(link, linkUrl #/dest) around GestureDetector',
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: dest,
+      child: GestureDetector(
+        onTap: tap,
+        child: Text('p03 link dest', style: _linkStyle(c)),
+      ),
+    ),
+  ),
+  'p04': (
+    'Semantics(link, linkUrl #/dest) around InkWell(onTap)',
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: dest,
+      child: InkWell(
+        onTap: tap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Text('p04 inkwell dest', style: _linkStyle(c)),
+        ),
+      ),
+    ),
+  ),
+  'p05': (
+    'Semantics(link, linkUrl #/dest) around Focus and GestureDetector',
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: dest,
+      child: Focus(
+        child: GestureDetector(
+          onTap: tap,
+          child: Text('p05 focus dest', style: _linkStyle(c)),
+        ),
+      ),
+    ),
+  ),
+  'p06': (
+    'p04 with Enter and Space mapped to DoNothingAndStopPropagationIntent',
+    (c, tap) => Shortcuts(
+      shortcuts: const {
+        SingleActivator(LogicalKeyboardKey.enter):
+            DoNothingAndStopPropagationIntent(),
+        SingleActivator(LogicalKeyboardKey.space):
+            DoNothingAndStopPropagationIntent(),
+      },
+      child: Semantics(
+        link: true,
+        linkUrl: dest,
+        child: InkWell(
+          onTap: tap,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text('p06 inkwell keys to browser', style: _linkStyle(c)),
+          ),
+        ),
+      ),
+    ),
+  ),
+  'p07': (
+    'Semantics(link, linkUrl https) around TextButton',
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: ext,
+      child: TextButton(onPressed: tap, child: const Text('p07 text button')),
+    ),
+  ),
+  'p08': (
+    'Semantics(link, linkUrl https) around CupertinoButton',
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: ext,
+      child: CupertinoButton(
+        onPressed: tap,
+        child: const Text('p08 cupertino button'),
+      ),
+    ),
+  ),
+  'p09': (
+    'Image link: Semantics(link, linkUrl, label) around InkWell, excluded Image',
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: ext,
+      label: 'p09 image link',
+      child: InkWell(onTap: tap, child: _img(exclude: true)),
+    ),
+  ),
+  'p10': (
+    'Image link: label on the Image inside Semantics(link, linkUrl) InkWell',
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: ext,
+      child: InkWell(onTap: tap, child: _img(label: 'p10 image label')),
+    ),
+  ),
+  'p11': (
+    'Image link: unlabelled Image, not excluded, no name',
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: ext,
+      child: InkWell(onTap: tap, child: _img()),
+    ),
+  ),
+  'p12': (
+    "url_launcher's Link with a TextButton builder",
+    (c, tap) => ul.Link(
+      uri: ext,
+      builder: (context, follow) => TextButton(
+        onPressed: () {
+          tap();
+          // Not followed off the web: it would open the browser app.
+          if (kIsWeb) follow?.call();
+        },
+        child: const Text('p12 url launcher link'),
+      ),
+    ),
+  ),
+  'p13': (
+    "Semantics(link, linkUrl https, onTapHint) around InkWell",
+    (c, tap) => Semantics(
+      link: true,
+      linkUrl: ext,
+      onTapHint: 'open in browser',
+      child: InkWell(
+        onTap: tap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Text('p13 link tap hint', style: _linkStyle(c)),
+        ),
+      ),
+    ),
+  ),
+  'p14': (
+    'Underlined Text in GestureDetector, no Semantics',
+    (c, tap) => GestureDetector(
+      onTap: tap,
+      child: Text('p14 looks like a link', style: _linkStyle(c)),
+    ),
+  ),
+};
+
+class FixtureScreen extends StatefulWidget {
+  const FixtureScreen({super.key, required this.ids});
+
+  final List<String> ids;
+
+  @override
+  State<FixtureScreen> createState() => _FixtureScreenState();
+}
+
+class _FixtureScreenState extends State<FixtureScreen> {
+  final taps = <String, int>{};
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.ids.length == 1 ? widget.ids.single : 'C03 probe')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 12,
+          children: [
+            for (final id in widget.ids) ...[
+              Text('Before $id'),
+              Builder(
+                builder: (context) => fixtures[id]!.$2(context, () {
+                  debugPrint('C03PROBE TAP $id');
+                  setState(() => taps[id] = (taps[id] ?? 0) + 1);
+                }),
+              ),
+              Semantics(
+                identifier: '$id-taps',
+                child: Text('$id taps: ${taps[id] ?? 0}'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
