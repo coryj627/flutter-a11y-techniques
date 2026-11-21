@@ -59,15 +59,14 @@ VOICEOVER_IOS_METHOD = (
     "`XCUIVoiceOverService.moveForward()` from the top of the screen to its "
     "end, where moving on gives the last utterance again, twice; what is shown "
     "is everything after the \"Example\" heading, and a walk that does not "
-    "reach the end fails. Then, for each link of each good example, in one "
-    "launch: the cursor is moved forward to the first words and a double tap "
-    "at an inert place below the example is checked to open nothing; then the "
-    "cursor is moved forward to the link, what VoiceOver says there is read, "
-    "and the same double tap is checked to open the link's page "
-    "(`double-tap-` rows); for good-material, a tap at each link's centre "
-    "with VoiceOver on and what the cursor lands on (`touch-` rows, FL-246); "
-    "and for bad-merged, what the double tap at the inert place opened with the "
-    "cursor on the sentence, recorded and not checked",
+    "reach the end fails. Then, for each link of each good example, the cursor "
+    "is moved forward to the link, what VoiceOver says there is read, and "
+    "XCUITest's double tap at the link's place, with VoiceOver on, is checked "
+    "to open the link's page (`tap-at-link-` rows). That is a tap at the link's "
+    "place, not VoiceOver's activation of the focused link, which XCUITest "
+    "cannot make (docs/evidence/probes/c04/ios_round3.txt). For good-material, "
+    "a tap at each link's centre with VoiceOver on and what the cursor lands on "
+    "(`touch-` rows, FL-246)",
     "Spoken, in swipe order",
 )
 

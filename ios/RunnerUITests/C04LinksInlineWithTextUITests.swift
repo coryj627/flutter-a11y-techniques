@@ -193,9 +193,8 @@ final class C04LinksInlineWithTextUITests: XCTestCase, TechniqueUITest {
       XCTAssertNotNil(content, "\(example.slug): the walk did not run from the heading to the end: \(walk)")
       XCTAssertEqual(content, example.content, example.slug)
     }
-    try doubleTapFollowsTheGoodLinks(voiceOver)
+    try tapAtTheLinkWithVoiceOverOnOpensIt(voiceOver)
     try touchOnALinkFindsTheLastWords(voiceOver)
-    try doubleTapOnTheMergedSentence(voiceOver)
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
     #endif
@@ -214,55 +213,34 @@ final class C04LinksInlineWithTextUITests: XCTestCase, TechniqueUITest {
     return said
   }
 
-  /// An inert place for VoiceOver's double tap: in the empty part of the
-  /// screen below the example, away from both links and from every other
-  /// element, so that a double tap there can only act through VoiceOver's
-  /// cursor and not as a tap on what is under it. A double tap at the link's
-  /// own place was seen to open the link with the cursor elsewhere
-  /// (docs/evidence/probes/c04/ios_round2.txt).
-  private func inertPoint() -> XCUICoordinate {
-    app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.9))
-  }
-
-  /// Whether either link's page is on screen.
-  private func anyLinkPage() -> [String] {
-    Self.links.map { $0.page }.filter { element(labelled: $0).exists }
-  }
-
-  /// VoiceOver's activation follows each good link once. In one launch: the
-  /// cursor is moved forward to the first words, "Read about", and a double
-  /// tap at the inert place opens nothing (the control); then the cursor is
-  /// moved forward to the link, what VoiceOver says is checked to be the
-  /// link, and the same double tap at the same place opens the link's page.
-  /// One Back, with VoiceOver off, brings the example back. The cursor is
-  /// moved by moving forward, not by a tap on the link, because a tap there
-  /// puts it on the last words (FL-246, `touchOnALinkFindsTheLastWords`).
-  /// Each line printed is a row of the transcript.
+  /// With VoiceOver on, the cursor reaches each good link by moving forward
+  /// and reads it as a link, and a tap at the link's own place opens its
+  /// page once. The tap is XCUITest's `doubleTap()` on the link's element.
+  /// That is not VoiceOver's activation of the focused link: XCUITest's
+  /// taps with VoiceOver on act on what is under them, and a double tap at
+  /// an inert place with the cursor on a link, or on the Back button, opened
+  /// nothing (docs/evidence/probes/c04/ios_round3.txt). XCUIVoiceOverService
+  /// has no activation (its methods: enable, disable, isEnabled,
+  /// moveForward, moveBackward, moveIn, moveOut, currentSpeech), so
+  /// VoiceOver's own activation is not measured here. One Back, with
+  /// VoiceOver off, brings the example back. Each line printed is a row of
+  /// the transcript.
   @available(iOS 27.0, *)
-  private func doubleTapFollowsTheGoodLinks(_ voiceOver: XCUIVoiceOverService) throws {
+  private func tapAtTheLinkWithVoiceOverOnOpensIt(_ voiceOver: XCUIVoiceOverService) throws {
     for slug in good {
       for (i, link) in Self.links.enumerated() {
         open(slug)
         try voiceOver.enable()
         var on = true
         defer { if on { try? voiceOver.disable() } }
-        let point = inertPoint()
-        _ = moveTo("Read about", voiceOver)
-        let words = VoiceOverWalk.normalized((try? voiceOver.currentSpeech().utterance) ?? "")
-        XCTAssertEqual(words, "Read about", "\(slug): the cursor is on the first words")
-        point.doubleTap()
-        sleep(3)
-        let control = anyLinkPage()
-        XCTAssertTrue(title(slug).exists && control.isEmpty,
-                      "\(slug): with the cursor on the words, a double tap at the inert place opens nothing: \(control)")
         _ = moveTo("\(link.name) Link", voiceOver)
         let cursor = VoiceOverWalk.normalized((try? voiceOver.currentSpeech().utterance) ?? "")
         XCTAssertEqual(cursor, "\(link.name) Link", "\(slug): the cursor is on link \(i + 1)")
         XCTAssertTrue(title(slug).exists, "\(slug): moving the cursor followed nothing")
-        point.doubleTap()
+        element(linkId(slug, i + 1)).doubleTap()
         let followed = element(labelled: link.page).waitForExistence(timeout: 5)
-        print("C04VO double-tap-\(slug)-link-\(i + 1) | cursor on \(words), double tap at the inert place: \(control.isEmpty ? "nothing opened" : control.joined(separator: ", ") + " opened") / cursor on \(cursor), the same double tap: \(followed ? "\(link.page) opened" : "nothing opened")")
-        XCTAssertTrue(followed, "\(slug): the double tap at the inert place opens \(link.page)")
+        print("C04VO tap-at-link-\(slug)-link-\(i + 1) | cursor moved to \(cursor) / XCUITest's double tap at the link's place: \(followed ? "\(link.page) opened" : "nothing opened")")
+        XCTAssertTrue(followed, "\(slug): a tap at link \(i + 1)'s place, with VoiceOver on, opens \(link.page)")
         try voiceOver.disable()
         on = false
         app.buttons["Back"].firstMatch.tap()
@@ -293,27 +271,6 @@ final class C04LinksInlineWithTextUITests: XCTestCase, TechniqueUITest {
       XCTAssertEqual(back, "stand-alone links Link", "one move back from the last words")
       try voiceOver.disable()
     }
-  }
-
-  /// bad-merged: the cursor is moved forward to the one element and a
-  /// double tap is made at the inert place. What opened is printed for the
-  /// transcript and not asserted. A claim that it does or does not follow a
-  /// link would need a positive control on the same element, which has no
-  /// other action.
-  @available(iOS 27.0, *)
-  private func doubleTapOnTheMergedSentence(_ voiceOver: XCUIVoiceOverService) throws {
-    open("bad-merged")
-    try voiceOver.enable()
-    defer { try? voiceOver.disable() }
-    let whole = "Read about links in text and stand-alone links first. Link"
-    _ = moveTo(whole, voiceOver)
-    let cursor = VoiceOverWalk.normalized((try? voiceOver.currentSpeech().utterance) ?? "")
-    XCTAssertEqual(cursor, whole, "bad-merged: the cursor is on the sentence")
-    inertPoint().doubleTap()
-    sleep(3)
-    let opened = anyLinkPage()
-    let what = opened.isEmpty ? "no page opened" : opened.joined(separator: ", ") + " opened"
-    print("C04VO double-tap-bad-merged | cursor on \(cursor) / \(what) (recorded, not asserted)")
   }
   #endif
 }

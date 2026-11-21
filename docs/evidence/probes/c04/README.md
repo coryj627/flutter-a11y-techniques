@@ -204,7 +204,13 @@ a double tap at the inert place opened nothing, in all six cases.
 
 So, as measured, XCUITest's double tap with VoiceOver on acts on what is
 under it and does not activate what VoiceOver's cursor is on, for a Flutter
-button as for a Flutter link. Whether VoiceOver's own double tap, made by
+button as for a Flutter link. That also explains round 2's double tap at a
+link opening it with the cursor on "first.", and means every "double tap"
+in the iOS table above and in round 2 was a tap at its place, not
+VoiceOver's activation. XCUIVoiceOverService in the Xcode 27.1 SDK
+(`XCUIAutomation.framework/Headers/XCUIVoiceOverService.h`) has `enable`,
+`disable`, `isEnabled`, `moveForward`, `moveBackward`, `moveIn`,
+`moveOut`, and `currentSpeech`, and no activation. Whether VoiceOver's own double tap, made by
 a person, activates the links was not measured. Nothing is concluded about
 Flutter from this.
 

@@ -2839,7 +2839,8 @@ yet), **Fixed in x.y** (verified on that version).
   - Keyboard: Tab never reaches it, in the widget tests, in Chromium, on
     the Android emulator (`input keyevent`), and on the iOS simulator (one
     to three Tabs, then Enter: the link's handler never ran, probe
-    `ios.txt`). A tap and a screen reader's activation do follow it.
+    `ios.txt`). A tap, and the tap action (the widget tests'; Android's
+    click action, what TalkBack's double tap performs), follow it.
   - With no address it is a link on iOS only ([FL-032](#fl-032)): an
     `android.widget.Button`, which TalkBack reads "… / Button / Double-tap
     to activate" (probe `android-talkback.md`), and on the web an `<a>` with
@@ -2955,8 +2956,8 @@ yet), **Fixed in x.y** (verified on that version).
     tap performs, follows the first link. TalkBack read the sentence and
     no role (probe `android-talkback.md`, r05).
   - iOS: one link named by the sentence (probe `ios.txt`); VoiceOver reads
-    it as one stop. What VoiceOver's double tap on it does is not claimed:
-    the C04 test records it without asserting it.
+    it as one stop. VoiceOver's own activation of it is not measured
+    (C04 probe round 3).
   - Web: one `<a href>` with the first link's address. A click on the
     first link's words, on the second link's, and on the first words, and
     Enter after two Tabs and after three, follow the first link
@@ -3041,14 +3042,15 @@ yet), **Fixed in x.y** (verified on that version).
   (12, 256, 378 by 52), the whole width of both lines, so it lies over both
   links, whose frames are 24 points tall on the first line. With VoiceOver
   on, a tap at either link's centre puts the cursor on "first." and not on
-  the link. Moving the cursor by swiping reaches each link, and a double
-  tap there follows it (the same test). A double tap made at the link's
-  centre with the cursor on "first." also opened the link's page in the
-  probe; why was not found. A `TextSpan` link that wraps has the same kind
+  the link. Moving the cursor by swiping reaches each link and reads it as
+  a link (the same test). VoiceOver's own activation of the focused link is
+  not measured: XCUITest's taps act on what is under them, and its
+  VoiceOver service has no activation (C04 probe round 3,
+  `docs/evidence/probes/c04/ios_round3.txt`). A `TextSpan` link that wraps has the same kind
   of node over its lines ([FL-240](#fl-240), probe r09).
-- WCAG: none claimed: swiping, the keyboard, and the double tap reach and
-  follow every link. A VoiceOver user who explores the screen by touch
-  does not find the link under their finger.
+- WCAG: none claimed: swiping reaches every link and the keyboard reaches
+  and follows it. A VoiceOver user who explores the screen by touch does
+  not find the link under their finger.
 - Workaround: none found in the SDK. Short sentences whose runs do not
   wrap avoid it.
 - How to read this entry: Flutter has not given each line of a run a node

@@ -31,9 +31,13 @@ iOS applies, with [FL-246](../flutter-limitations.md#fl-246): on the
 iPhone 17 screen the good examples' sentence takes two lines, and the node
 of its last words, " first.", covers both lines whole, over the links. A
 VoiceOver user who explores by touch and puts a finger on either link
-hears "first." and not the link. Swiping reaches each link, in order, and a
-double tap follows it; the keyboard reaches each link too. No workaround
-was found. No WCAG failure is claimed.
+hears "first." and not the link. Moving the cursor by swiping reaches
+each link, in order, and it is read as a link; a tap at the link's place,
+with VoiceOver on, opens it; the keyboard reaches each link too.
+VoiceOver's own activation of the focused link is not measured by this
+harness: XCUITest's taps act on what is under them, and XCUIVoiceOverService
+has no activation (probe round 3, `docs/evidence/probes/c04/ios_round3.txt`).
+No workaround was found. No WCAG failure is claimed.
 
 ## 3. WCAG 2.2 success criteria
 
@@ -228,7 +232,7 @@ key, because `TestId`'s `MergeSemantics` drops the sort key (FL-413).
 | L3 Android | Good: each link an `android.view.View` with its name, its address in a `URLSpan`, a click action labelled "open link", clickable and focusable; the sentence's node holds "Read about ", the first link, " and ", the second link, " first.", in that order; two clickable nodes but Back; for each link, `ACTION_CLICK`, a tap, and Tab then Enter (the second link one Tab after the first) each open its page, and one Back brings the example back. Bad: `bad-text-span` a `Button` with no address, in its place, never focused by six Tabs with Back focused as the positive control, its click action opening `TextSpanPage`; Tab to Back and Enter, then Space, open the technique's page and not `TextSpanPage`. `bad-out-of-order`: the sentence's node named "Read about \n and \n first.", holding the two links. `bad-merged`: one `View` named by the whole sentence, with one `URLSpan`, the first link's, no children, the only clickable node but Back; its click action opens C04's page. `bad-colour-only` cannot be seen here |
 | L3 iOS | Good: each link of element type link with its name; two links and no button but Back; the words as text; a tap on each link, and two or three Tabs then Enter, open its page once. Bad: `bad-text-span` a link that a tap follows to `TextSpanPage`; one Tab then Enter, and one Tab then Space, each take the example off the screen (Back acted) and do not open `TextSpanPage`. `bad-merged`: one link, named by the whole sentence, and no link named "stand-alone links". `bad-colour-only` cannot be seen here; `bad-out-of-order`'s order is in the VoiceOver walk, as XCUITest gives no order |
 | L4 TalkBack | What is read with focus moved to each part of each sentence: each word run, and each link with "Double-tap to open link" and no "Button"; `bad-text-span`'s link with "Button"; `bad-out-of-order`'s sentence node without the links' names; `bad-merged`'s one node with the whole sentence |
-| L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list; for each good link, in one launch: with the cursor moved forward to the first words, a double tap at an inert place below the example opens nothing (the control), and with the cursor moved forward to the link, what is said there and that the same double tap at the same place opens its page, so the activation is VoiceOver's and not a tap on the link; for `good-material`, that a tap at each link's centre puts the cursor on "first.", with one move back reaching the second link as the positive control (FL-246); for `bad-merged`, what the double tap at the inert place opens with the cursor on the sentence, recorded and not asserted |
+| L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list; for each good link, that the cursor moved forward reaches it and reads it as a link, and that XCUITest's double tap at the link's place, with VoiceOver on, opens its page once (`tap-at-link-` rows); this is a tap at the link's place, not VoiceOver's activation of the focused link, which this harness does not measure (probe round 3); for `good-material`, that a tap at each link's centre puts the cursor on "first.", with one move back reaching the second link as the positive control (FL-246) |
 | L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/c04_vo_walks.js`): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short before the end with every stop right so far is walked again, up to three walks, and every walk is logged in the transcript. No exception for an empty first stop, which C02 allows for WebKit: no C04 walk has shown it. No runner retries. In Chromium and WebKit |
 
 ## 7. What the build found (Flutter 3.47.5)
@@ -239,7 +243,9 @@ with a native comparison on Android.
 - **The SDK's own link in text cannot be reached by the keyboard**
   ([FL-240](../flutter-limitations.md#fl-240), new; `bad-text-span`). A
   `TextSpan` with a `TapGestureRecognizer` is read in its place, with the
-  link role on iOS, and a tap and a screen reader's activation follow it.
+  link role on iOS, and a tap and the tap action follow it (the widget
+  tests' tap action, Android's click action; VoiceOver's activation on iOS
+  is not measured, probe round 3).
   The source gives it the link flag and the tap action and nothing else: no
   focus node, and no address, so it is a `Button` on Android ("… / Button /
   Double-tap to activate") and an `<a>` with no `href` on the web
@@ -288,10 +294,24 @@ with a native comparison on Android.
   has one node over both whole lines, over the links. With VoiceOver on, a
   tap at either link's centre put the cursor on "first."; the first
   transcript run, which placed the cursor that way, failed on it, and the
-  second probe round (`ios_round2.txt`) found why. The double-tap test now
-  moves the cursor forward to each link, which works, and a test of its own
-  asserts what a touch finds. No WCAG failure is claimed: swiping, the
-  keyboard, and the double tap reach every link. No workaround was found.
+  second probe round (`ios_round2.txt`) found why. The test now moves the
+  cursor forward to each link, which reaches it, and a test of its own
+  asserts what a touch finds. No WCAG failure is claimed: swiping and the
+  keyboard reach every link. No workaround was found.
+- **This harness cannot activate what VoiceOver's cursor is on** (probe
+  round 3, `docs/evidence/probes/c04/ios_round3.txt`). Codex asked for the
+  activation to be made at an inert place, away from the links. With the
+  cursor on either link, or on the Back button, XCUITest's double tap there
+  opened nothing; on an element's own place it acts on that element,
+  wherever the cursor is (a double tap on the second link with the cursor
+  on "Read about" opened it). The failing run is kept as
+  `docs/evidence/probes/c04/voiceover-ios-inert-double-tap-fail.md.txt`.
+  XCUIVoiceOverService in the Xcode 27.1 SDK has `enable`, `disable`,
+  `isEnabled`, `moveForward`, `moveBackward`, `moveIn`, `moveOut`, and
+  `currentSpeech`, and no activation. So what is measured on iOS is that
+  the cursor reaches each link and reads it as a link, and that a tap at the
+  link's place opens it with VoiceOver on; VoiceOver's own activation of a
+  focused link is not measured, for the good links or for `bad-merged`.
 - **Native Android text is one TalkBack stop with a links menu** (the
   probe's `TextView` with two `URLSpan`s: "… Double-tap to open link.
   Actions available"), which is what both Android reference repositories
@@ -353,11 +373,10 @@ Skips and what they give up, in the tests:
 - `talkback.py` walks an element again, up to three walks, when its speech
   fails its checks (a shared tool, unchanged); the transcript lists every
   element that needed it.
-- `bad-merged`'s VoiceOver double tap on iOS is recorded in the
-  transcript and not asserted: a claim that it does or does not follow a
-  link would need a positive control on the same element through the same
-  path, and the element has no other action. Nothing in the docs claims
-  what it does. What is asserted on iOS is the one link and its name.
+- VoiceOver's own activation on iOS is not measured (above): the iOS
+  test asserts a tap at each good link's place with VoiceOver on, which
+  XCUITest makes on what is under it, and nothing for `bad-merged` but the
+  one link and its name.
 - The web's "Space does not follow it" waits one second; Enter in the same
   load is the positive control.
 - `bad-colour-only`'s defect is checked in the widget tests only: no tree
@@ -367,6 +386,7 @@ Skips and what they give up, in the tests:
 TalkBack's links menu, which a Flutter sentence does not offer; a link's
 hover cue and visited state; links out of the app (the SDK cannot open
 them off the web); a link at the start of a sentence, or two links with
-nothing between them; right-to-left text; text scaling on the web; and
+nothing between them; right-to-left text; text scaling on the web;
 what VoiceOver on the web sends when it activates a link (the web tests
-send a DOM click in its place).
+send a DOM click in its place); and VoiceOver's own activation of a
+focused link on iOS, which XCUITest cannot make (probe round 3).
