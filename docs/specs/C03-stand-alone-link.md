@@ -40,7 +40,7 @@ screen's "Example". So for 2.4.4 its name must say where it goes by itself.
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | The link's text says where it goes; "click here" and "read more" do not | [iOS Links](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Links.md) ("unique and specific label text"), [Android Compose Stand-alone Links](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/components/StandAloneLinks.md) ("Link text must convey its purpose"), [MDN `a`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a) (link text), [WCAG failure F84](https://www.w3.org/WAI/WCAG22/Techniques/failures/F84) |
+| R1 | The link's text says where it goes; "click here" and "read more" do not | [iOS Links](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Links.md) ("unique and specific label text"), [Android Compose Stand-alone Links](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/components/StandAloneLinks.md) ("Link text must convey its purpose"), [MDN `a`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a) (link text), [WCAG failure F84](https://www.w3.org/WAI/WCAG22/Techniques/failures/F84) (written for 2.4.9, the stricter criterion; cited for its description of a non-specific link) |
 | R2 | The element has the link role, from a native link element where there is one | [APG Link](https://www.w3.org/WAI/ARIA/apg/patterns/link/) ("strongly encouraged to use a native host language link element"), MDN `a` (an `a` without `href` has the generic role) |
 | R3 | A link is not also a button | iOS Links (remove the button trait, or VoiceOver says "Button, Link") |
 | R4 | Where the platform has no link role, say what the link does in another way | Android Compose Stand-alone Links (Android has no link role; the click label, such as "open in browser", or the icon's description carries it) |
@@ -130,7 +130,7 @@ What each fails, by platform, as the criteria are written:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `bad-vague-text` | 2.4.4 (F84) | 2.4.4 (F84) | 2.4.4 (F84) |
+| `bad-vague-text` | 2.4.4 | 2.4.4 | 2.4.4 |
 | `bad-tap-handler` | 2.1.1: Tab never reaches it, and no key opens its page, which nothing else opens. 4.1.2 not settled: Android has no link role, and TalkBack says none for the good links either | 2.1.1: no key opened its page (one Tab, then Enter or Space). 4.1.2: static text, no role for a control | 2.1.1: Tab never reaches it, and no key opens its page. 4.1.2: a button, a role that does not say it is a link ([FL-006](../flutter-limitations.md#fl-006)) |
 | `bad-no-address` | 4.1.2 not settled: a button, which is the stand-in the Android Compose reference itself uses where Android has no link role | none: a link | none in Chromium and WebKit, where VoiceOver says "link"; HTML gives an `a` with no `href` no role, and other browsers were not measured |
 | `bad-image-no-name` | 1.1.1, 2.4.4, 4.1.2 (F89): no name, read as "Button" | 1.1.1, 2.4.4, 4.1.2 (F89): "Link Image" | 1.1.1, 2.4.4, 4.1.2 (F89): VoiceOver reads the address in place of a name |
