@@ -1,0 +1,121 @@
+// C04 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c04/ProbeC04UITests.swift.txt): the tree and a tap on
+// each link, Tab then Enter, and VoiceOver for each fixture of lib/probe.dart,
+// one fixture at a time, opened by URL.
+import XCTest
+
+final class ProbeC04UITests: XCTestCase {
+  let app = XCUIApplication()
+  let ids = (1...10).map { String(format: "r%02d", $0) }
+
+  func log(_ s: String) { print("C04PROBE \(s)") }
+
+  func tapsElement(_ id: String) -> XCUIElement { app.descendants(matching: .any)["\(id)-taps"] }
+
+  func open(_ id: String) {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///\(id)")!)
+      if tapsElement(id).waitForExistence(timeout: 30) { sleep(1); return }
+    }
+    XCTFail("\(id) did not open")
+  }
+
+  func link(_ id: String, _ which: String) -> XCUIElement? {
+    app.descendants(matching: .any).allElementsBoundByIndex.first {
+      $0.label.hasPrefix("\(id) \(which) link")
+    }
+  }
+
+  func state(_ id: String) -> String {
+    sleep(2)
+    let arrived = app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH 'Arrived'")).count > 0
+    let taps = tapsElement(id).exists ? tapsElement(id).label : "(gone)"
+    return "taps=\"\(taps)\" destination=\(arrived)"
+  }
+
+  func dump(_ label: String) {
+    log("==== \(label)")
+    for e in app.descendants(matching: .any).allElementsBoundByIndex {
+      let t = e.elementType
+      if t == .window || t == .application { continue }
+      if t == .other && e.label.isEmpty && e.identifier.isEmpty { continue }
+      log("EL type=\(t.rawValue) id=\(e.identifier) label=\(e.label.debugDescription) value=\(String(describing: e.value)) frame=\(e.frame)")
+    }
+  }
+
+  func testTree() {
+    for id in ids {
+      open(id)
+      dump("\(id) start")
+      for which in ["first", "second"] {
+        open(id)
+        guard let e = link(id, which) else { log("\(id) \(which): no element"); continue }
+        log("\(id) \(which) type=\(e.elementType.rawValue) label=\(e.label.debugDescription)")
+        e.tap()
+        log("\(id) \(which) tap: \(state(id))")
+      }
+    }
+  }
+
+  /// 1 to 3 Tabs, then Enter, each from a fresh launch. XCUITest cannot see
+  /// Flutter's focus; which link the Enter reached is read from the taps
+  /// line, or from the destination opening.
+  func testKeys() {
+    for id in ids {
+      for tabs in 1...3 {
+        open(id)
+        for _ in 0..<tabs {
+          app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+          usleep(700_000)
+        }
+        app.typeKey("\n", modifierFlags: [])
+        log("\(id) \(tabs) Tab(s) then Enter: \(state(id))")
+      }
+    }
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    for id in ids {
+      open(id)
+      try vo.enable()
+      var walk: [String] = []
+      for _ in 0..<14 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix("\(id) taps") { break }
+      }
+      log("VO \(id) walk: \(walk.joined(separator: " / "))")
+      try vo.disable()
+      for which in ["first", "second"] {
+        open(id)
+        guard let e = link(id, which) else { log("VO \(id) \(which): no element"); continue }
+        try vo.enable()
+        e.tap()
+        usleep(1_500_000)
+        let on = norm((try? vo.currentSpeech().utterance) ?? "")
+        e.doubleTap()
+        log("VO \(id) \(which) cursor on \"\(on)\", double tap: \(state(id))")
+        try vo.disable()
+      }
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+
+  /// Frames only, for a run at a content size set from outside.
+  func testRects() {
+    for id in ["r03", "r06", "r09", "r10"] {
+      open(id)
+      dump("\(id) rects")
+    }
+  }
+}

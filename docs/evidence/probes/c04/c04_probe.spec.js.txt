@@ -1,0 +1,143 @@
+// C04 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/c04/c04_probe.spec.js.txt with c04probe.config.js.txt).
+// For each fixture of lib/probe.dart: the semantics DOM of its sentence,
+// Chromium's accessibility tree, every stop of eight Tabs, and, for each of
+// its two links, what a mouse click, a DOM click with no pointer events,
+// Enter, and Space do, each from a fresh load.
+import { test } from '@playwright/test';
+
+const ids = ['r01', 'r02', 'r03', 'r04', 'r05', 'r06', 'r07', 'r08', 'r09', 'r10'];
+
+function log(...a) {
+  console.log('C04WEB', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-taps"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+function clean(html) {
+  return html.replace(/ style="[^"]*"/g, '').replace(/ id="flt-semantic-node-\d+"/g, '');
+}
+
+// The element whose own text or label starts with the link's text, and the
+// nearest element round it with a role, an href, or a tabindex.
+async function linkElement(page, id, which) {
+  const handle = await page.evaluateHandle(([id, which]) => {
+    const all = [...document.querySelectorAll('flt-semantics-host *')];
+    const name = (e) => e.getAttribute('aria-label') || [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('');
+    const found = all.find((e) => name(e).startsWith(`${id} ${which} link`));
+    if (!found) return null;
+    let up = found;
+    while (up && up.tagName !== 'FLT-SEMANTICS-HOST') {
+      if (up.tagName === 'A' || up.getAttribute('role') || up.hasAttribute('tabindex')) return up;
+      up = up.parentElement;
+    }
+    return found;
+  }, [id, which]);
+  return handle.asElement();
+}
+
+async function state(page, id) {
+  await page.waitForTimeout(1200);
+  const url = page.url().replace(/^http:\/\/127\.0\.0\.1:\d+/, '');
+  const taps = await page.locator(`[flt-semantics-identifier="${id}-taps"]`).textContent({ timeout: 1000 }).catch(() => '(gone)');
+  const dest = (await page.getByText(/^Arrived/).count()) > 0;
+  return `url=${url} taps="${taps}" destination=${dest}`;
+}
+
+async function activeDescription(page) {
+  return page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e || !e.closest('flt-semantics-host')) return `(page: ${e?.tagName})`;
+    return `${e.tagName}${e.getAttribute('role') ? `[role=${e.getAttribute('role')}]` : ''} "${e.getAttribute('aria-label') || e.textContent.trim()}"`;
+  });
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of ids) {
+  test(`probe ${id}`, async ({ page, context }) => {
+    await fresh(page, id);
+    // The sentence's elements: the outermost ones holding text with the id,
+    // other than "Before rNN", the taps line, and the app bar's title.
+    const html = await page.evaluate((id) => {
+      const host = document.querySelector('flt-semantics-host');
+      const all = [...host.querySelectorAll('*')];
+      const text = (e) => (e.getAttribute('aria-label') || '') + [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('');
+      const hits = all.filter((e) => e.textContent.includes(`${id} `) || text(e).includes(`${id} `));
+      const own = hits.filter((e) => !text(e).startsWith(`Before ${id}`) && !text(e).startsWith(`${id} taps`));
+      const inner = own.filter((e) => ![...e.querySelectorAll('*')].some((c) => text(c).startsWith(`Before ${id}`) || text(c).startsWith(`${id} taps`)));
+      const outer = inner.filter((e) => !inner.some((o) => o !== e && o.contains(e)));
+      return outer.map((e) => e.outerHTML);
+    }, id);
+    for (const h of html) log(id, 'element', clean(h));
+    // A text field in the sentence's place (SelectableText): its element.
+    for (const f of await page.locator('flt-semantics-host input, flt-semantics-host textarea, flt-semantics-host [role=textbox]').all()) {
+      log(id, 'field', clean(await f.evaluate((e) => e.outerHTML)), 'value=', JSON.stringify(await f.evaluate((e) => e.value ?? '')));
+    }
+    const cdp = await context.newCDPSession(page);
+    const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+    for (const n of nodes) {
+      if (n.ignored) continue;
+      const name = n.name?.value ?? '';
+      if (!name.includes(id) || name.startsWith('Before') || name.startsWith(`${id} taps`)) continue;
+      if (['StaticText', 'InlineTextBox'].includes(n.role?.value)) continue;
+      log(id, 'ax', `role=${n.role?.value} name="${name}" props=${(n.properties ?? []).map((p) => `${p.name}:${JSON.stringify(p.value?.value)}`).join(',')}`);
+    }
+    log(id, 'aria', JSON.stringify(await page.locator('flt-semantics-host').ariaSnapshot()));
+    const stops = [];
+    for (let i = 0; i < 8; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      stops.push(await activeDescription(page));
+    }
+    log(id, 'tab stops', stops.join(' -> '));
+    for (const which of ['first', 'second']) {
+      const el = await linkElement(page, id, which);
+      if (!el) {
+        log(id, which, 'no element found');
+        continue;
+      }
+      log(id, which, 'box', JSON.stringify(await el.evaluate((e) => {
+        const r = e.getBoundingClientRect();
+        return { tag: e.tagName, x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) };
+      })));
+    }
+    for (const which of ['first', 'second']) {
+      for (const how of ['click', 'dispatch', 'Enter', 'Space']) {
+        await fresh(page, id);
+        const el = await linkElement(page, id, which);
+        if (!el) {
+          log(id, which, how, 'no element');
+          continue;
+        }
+        if (how === 'click') {
+          const b = await el.boundingBox();
+          await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+        } else if (how === 'dispatch') {
+          await el.evaluate((e) => e.click());
+        } else {
+          let reached = 0;
+          for (let i = 1; i <= 8; i++) {
+            await page.keyboard.press('Tab');
+            await page.waitForTimeout(150);
+            if (await el.evaluate((e) => e === document.activeElement || e.contains(document.activeElement))) {
+              reached = i;
+              break;
+            }
+          }
+          if (!reached) {
+            log(id, which, how, 'Tab never reached it');
+            continue;
+          }
+          await page.keyboard.press(how);
+        }
+        log(id, which, how, await state(page, id));
+      }
+    }
+  });
+}

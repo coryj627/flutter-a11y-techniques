@@ -1,0 +1,48 @@
+content size for testRects: accessibility-large
+== testRects
+C04PROBE ==== r03 rects
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r03" value=Optional() frame=(178.79644775390625, 71.5, 44.40712483723959, 37.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 439.0)
+C04PROBE EL type=48 id= label="Before r03" value=Optional() frame=(16.0, 134.0, 138.8070068359375, 39.0)
+C04PROBE EL type=48 id=r03-taps label="r03 taps: first=0 second=0" value=Optional() frame=(16.0, 502.0, 350.3194986979167, 39.0)
+C04PROBE EL type=48 id=r03-run label="r03 Read about " value=Optional() frame=(12.0, 184.0, 218.0, 41.0)
+C04PROBE EL type=42 id= label="r03 first link" value=Optional() frame=(16.125, 224.29412841796875, 306.8858642578125, 75.70587158203125)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(319.0, 250.0, 73.0, 42.0)
+C04PROBE EL type=42 id= label="r03 second link" value=Optional() frame=(16.125, 299.5882568359375, 370.0, 151.4117431640625)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(12.0, 326.0, 379.0, 165.0)
+C04PROBE ==== r06 rects
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r06" value=Optional() frame=(178.42218017578125, 71.5, 45.1556396484375, 37.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 742.0)
+C04PROBE EL type=48 id= label="Before r06" value=Optional() frame=(16.0, 134.0, 139.0724080403646, 39.0)
+C04PROBE EL type=48 id=r06-taps label="r06 taps: first=0 second=0" value=Optional() frame=(16.0, 805.0, 350.5848795572917, 39.0)
+C04PROBE EL type=48 id=r06-run label="r06 Read about " value=Optional() frame=(12.0, 184.0, 218.0, 41.0)
+C04PROBE EL type=42 id= label="r06 first link" value=Optional() frame=(16.125, 224.29412841796875, 307.40106201171875, 75.70587158203125)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(319.0, 250.0, 73.0, 42.0)
+C04PROBE EL type=42 id= label="r06 second link, whose words run on for long enough to need a line" value=Optional() frame=(16.125, 299.76470947265625, 370.0, 454.23527018229163)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(12.0, 326.0, 379.0, 468.0)
+C04PROBE ==== r09 rects
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r09" value=Optional() frame=(178.42218017578125, 71.5, 45.1556396484375, 37.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 290.0)
+C04PROBE EL type=48 id= label="Before r09" value=Optional() frame=(16.0, 134.0, 139.0724080403646, 39.0)
+C04PROBE EL type=48 id=r09-taps label="r09 taps: first=0 second=0" value=Optional() frame=(16.0, 353.0, 350.5848795572917, 39.0)
+C04PROBE EL type=48 id= label="r09 Read about " value=Optional() frame=(12.0, 184.0, 218.0, 41.0)
+C04PROBE EL type=42 id= label="r09 first link" value=Optional() frame=(221.0, 184.0, 167.0, 41.0)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(12.0, 184.0, 379.0, 80.0)
+C04PROBE EL type=42 id= label="r09 second link, whose words run on for long enough to need a line" value=Optional() frame=(12.0, 223.0, 375.0, 119.0)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(293.0, 301.0, 77.0, 41.0)
+C04PROBE ==== r10 rects
+C04PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE EL type=48 id= label="r10" value=Optional() frame=(180.98441569010416, 71.5, 40.03118896484375, 37.0)
+C04PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 212.0)
+C04PROBE EL type=48 id= label="Before r10" value=Optional() frame=(16.0, 134.0, 134.37490844726562, 39.0)
+C04PROBE EL type=48 id=r10-taps label="r10 taps: first=0 second=0" value=Optional() frame=(16.0, 275.0, 345.8873697916667, 39.0)
+C04PROBE EL type=48 id=r10-run label="r10 Read about " value=Optional() frame=(12.0, 184.0, 213.0, 41.0)
+C04PROBE EL type=42 id= label="r10 first link" value=Optional() frame=(220.9251708984375, 185.13765462239584, 156.9547119140625, 38.82352701822916)
+C04PROBE EL type=48 id= label=" and " value=Optional() frame=(12.0, 184.0, 378.0, 80.0)
+C04PROBE EL type=42 id= label="r10 second link" value=Optional() frame=(72.31393432617188, 224.13765462239584, 200.40751139322913, 38.82352701822916)
+C04PROBE EL type=48 id= label=" first." value=Optional() frame=(268.0, 223.0, 77.0, 41.0)
+Test Case '-[RunnerUITests.ProbeC04UITests testRects]' passed (28.565 seconds).
+content size after: large

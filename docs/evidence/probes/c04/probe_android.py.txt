@@ -1,0 +1,119 @@
+"""C04 probe runner for Android (throwaway; kept as
+docs/evidence/probes/c04/probe_android.py.txt). Run under the device lock:
+
+  python3 tool/with_devices.py --label "probe C04 android" -- python3 <this> <repo>
+
+Installs the probe build (lib/probe.dart, built beforehand with
+`flutter build apk --debug -t lib/probe.dart` and
+`./gradlew app:assembleDebugAndroidTest -Ptarget=lib/probe.dart`) and its test
+APK, then runs ProbeC04Test with `am instrument`:
+
+- probe, keys, nativeTree: without TalkBack; the C04PROBE log lines are kept
+  in android-tree.txt.
+- rects: with the system font scale at 2.0 (`settings put system font_scale`),
+  put back to what it was afterwards, however the run ends; android-rects-200.txt.
+- talkBackWalk, talkBackSwipe, nativeTalkBack: with TalkBack on through the
+  project's own helper (tool/talkback.py: run_with_talkback, which restores
+  the device); the speech per marker as parsed by tool/talkback.py's
+  parse_speech goes in android-talkback.md, the swipe lines in
+  android-swipe.txt.
+"""
+import os
+import subprocess
+import sys
+import time
+
+ROOT = sys.argv[1]
+OUT = os.path.join(ROOT, "docs", "evidence", "probes", "c04")
+SCRATCH = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(ROOT, "tool"))
+import talkback  # noqa: E402
+from evidence_common import stop_android_tests  # noqa: E402
+
+PKG = "dev.fluttera11y.flutter_a11y_techniques"
+APKS = [
+    os.path.join(ROOT, "build/app/outputs/apk/debug/app-debug.apk"),
+    os.path.join(ROOT, "build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk"),
+]
+
+
+def instrument(method):
+    talkback.adb("logcat", "-c")
+    log_path = os.path.join(SCRATCH, f"android-{method}-logcat.txt")
+    with open(log_path, "w") as log:
+        reader = subprocess.Popen([talkback.ADB, "logcat"], stdout=log, stderr=subprocess.DEVNULL)
+        try:
+            run = subprocess.run(
+                [talkback.ADB, "shell", "am", "instrument", "-w", "-e", "class",
+                 f"{PKG}.ProbeC04Test#{method}", f"{PKG}.test/androidx.test.runner.AndroidJUnitRunner"],
+                capture_output=True, text=True, timeout=40 * 60)
+        finally:
+            time.sleep(2)
+            reader.terminate()
+            reader.wait()
+    print(method, run.stdout[-1500:])
+    stop_android_tests()
+    with open(log_path, errors="replace") as f:
+        return f.read()
+
+
+def keep(logs, name):
+    lines = []
+    for log in logs:
+        lines += [l.split("C04PROBE: ", 1)[-1] for l in log.splitlines() if "C04PROBE" in l]
+    with open(os.path.join(OUT, name), "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+def main():
+    os.makedirs(OUT, exist_ok=True)
+    if not stop_android_tests():
+        sys.exit("emulator not clean")
+    for apk in APKS:
+        print(talkback.adb("install", "-r", "-t", apk)[-200:])
+    device = (talkback.adb("shell", "getprop", "ro.build.version.release").strip(),
+              talkback.adb("shell", "wm", "size").strip().replace("\n", " "),
+              talkback.adb("shell", "wm", "density").strip().replace("\n", " "))
+    print("device:", device)
+    header = f"device: Android {device[0]}; {device[1]}; {device[2]}"
+    if len(sys.argv) > 2 and sys.argv[2] == "round2":
+        # Round 2: probe() and keys() again, after the first round's finder
+        # read the screen too early and its focus reading took the Flutter
+        # view itself.
+        keep([instrument(m) for m in ("probe", "keys")], "android-tree-round2.txt")
+        talkback.adb("uninstall", f"{PKG}.test")
+        return
+    keep([instrument(m) for m in ("probe", "keys", "nativeTree")], "android-tree.txt")
+    scale = talkback.adb("shell", "settings", "get", "system", "font_scale").strip()
+    try:
+        talkback.adb("shell", "settings", "put", "system", "font_scale", "2.0")
+        time.sleep(2)
+        keep([instrument("rects")], "android-rects-200.txt")
+    finally:
+        if scale in ("", "null"):
+            talkback.adb("shell", "settings", "delete", "system", "font_scale")
+        else:
+            talkback.adb("shell", "settings", "put", "system", "font_scale", scale)
+        print("font_scale after:", talkback.adb("shell", "settings", "get", "system", "font_scale").strip(),
+              "(was", scale + ")")
+    talkback.exit_on_termination_signals()
+
+    def action():
+        return [instrument(m) for m in ("talkBackWalk", "talkBackSwipe", "nativeTalkBack")]
+
+    logs = talkback.run_with_talkback(action)
+    spoken = {}
+    for log in logs:
+        spoken.update(talkback.parse_speech(log))
+    out = [header, "", "| Marker | TalkBack spoke |", "| --- | --- |"]
+    for ident, fragments in spoken.items():
+        out.append(f"| `{ident}` | {' / '.join(fragments) or '(nothing)'} |")
+    with open(os.path.join(OUT, "android-talkback.md"), "w") as f:
+        f.write("\n".join(out) + "\n")
+    keep(logs, "android-talkback-markers.txt")
+    print("\n".join(out))
+    talkback.adb("uninstall", f"{PKG}.test")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,13 @@
+C04MERGED good-material boxes: {"link 1":{"x":386.578125,"y":172,"width":86.9375,"height":24},"link 2":{"x":510.5,"y":172,"width":128.875,"height":24},"words \"Read about\"":{"x":296,"y":172,"width":20,"height":24}}
+C04MERGED link 1 merged element box: {"x":296,"y":204,"width":688,"height":24} pointer-events: all
+C04MERGED link 1 element under the point: A c04-bad-merged-sentence
+C04MERGED link 1 | addresses: /#/t/C04 -> /#/t/C04/bad-merged -> /#/t/C04 | ends at /#/t/C04 | level 1 heading: Links inline with text
+C04MERGED link 2 merged element box: {"x":296,"y":204,"width":688,"height":24} pointer-events: all
+C04MERGED link 2 element under the point: A c04-bad-merged-sentence
+C04MERGED link 2 | addresses: /#/t/C04 -> /#/t/C04/bad-merged -> /#/t/C04 | ends at /#/t/C04 | level 1 heading: Links inline with text
+C04MERGED words "Read about" merged element box: {"x":296,"y":204,"width":688,"height":24} pointer-events: all
+C04MERGED words "Read about" element under the point: A c04-bad-merged-sentence
+C04MERGED words "Read about" | addresses: /#/t/C04 -> /#/t/C04/bad-merged -> /#/t/C04 | ends at /#/t/C04 | level 1 heading: Links inline with text
+C04MERGED DOM click merged element box: {"x":296,"y":204,"width":688,"height":24} pointer-events: all
+C04MERGED DOM click | addresses: /#/t/C04 -> /#/t/C04/bad-merged -> /#/t/C04 | ends at /#/t/C04 | level 1 heading: Links inline with text
+  1 passed (13.8s)
