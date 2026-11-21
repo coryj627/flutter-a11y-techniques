@@ -160,6 +160,26 @@ links of r03 are scaled twice, and r10's once, as on Android.
 `(error 3)` in r07's walk is one move after "Before r07" that gave no
 utterance; the walk went on to the words.
 
+### Round 2, after the first transcript run
+
+The first iOS VoiceOver transcript run of the examples failed: the test
+put the cursor on each good link with a tap, as C03's does, and VoiceOver
+said "first." each time. `ProbeC04VOUITests.swift.txt`, run by
+`ios_probe2.sh.txt` against the app's own build, looked at why
+(`ios_round2.txt`):
+
+- `good-material`'s sentence takes two lines on the iPhone 17 screen. The
+  last run, " first.", has the frame (12, 256, 378 by 52): both lines,
+  whole, over the two links (24 points tall, on the first line).
+- With VoiceOver on, a tap at either link's centre puts the cursor on
+  "first.". A double tap there then opened the link's own page; why was
+  not found.
+- Moving the cursor forward reaches each link ("links in text Link",
+  "stand-alone links Link"), and a double tap on the link then opens its
+  page.
+- `bad-merged`: with the cursor on the one element, by a tap or by moving
+  forward, a double tap on it opened no page; why was not found.
+
 ## What it shows
 
 - **A `TextSpan` link is read well and the keyboard cannot reach it, on
@@ -178,6 +198,9 @@ utterance; the walk went on to the words.
   miss it (r09 on iOS).
 - **Merging the sentence makes one link** with the first link's address
   (r05) on all three platforms. FL-243.
+- **A run of words that wraps has one node over all its lines**, and on
+  iOS a VoiceOver touch on a link under it finds the words (round 2).
+  FL-246.
 - **`semanticsLabel` on the paragraph hides its links** (r08): the label
   replaces the spans' nodes. Not an example; the label is the developer's
   choice.

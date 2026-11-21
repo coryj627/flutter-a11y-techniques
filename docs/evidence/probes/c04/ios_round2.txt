@@ -1,0 +1,32 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+Test Case '-[RunnerUITests.ProbeC04VOUITests testWhereTheCursorGoes]' started.
+C04PROBE2 good-material EL type=9 id= label="Back" frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE2 good-material EL type=1 id= label="Material links in a sentence" frame=(78.85595703125, 76.0, 244.2880859375, 28.0)
+C04PROBE2 good-material EL type=46 id= label="" frame=(0.0, 118.0, 402.0, 220.0)
+C04PROBE2 good-material EL type=48 id= label="Good example for Links inline with text. Material." frame=(16.0, 138.0, 370.0, 48.0)
+C04PROBE2 good-material EL type=1 id= label="Example" frame=(16.0, 206.0, 370.0, 28.0)
+C04PROBE2 good-material EL type=48 id=c04-good-material-sentence label="Read about " frame=(12.0, 256.0, 105.0, 28.0)
+C04PROBE2 good-material EL type=42 id=c04-good-material-link-1 label="links in text" frame=(112.0234375, 258.0, 91.6015625, 24.0)
+C04PROBE2 good-material EL type=48 id= label=" and " frame=(199.0, 256.0, 49.0, 28.0)
+C04PROBE2 good-material EL type=42 id=c04-good-material-link-2 label="stand-alone links" frame=(243.1171875, 258.0, 137.5390625, 24.0)
+C04PROBE2 good-material EL type=48 id= label=" first." frame=(12.0, 256.0, 378.0, 52.0)
+C04PROBE2 bad-merged EL type=9 id= label="Back" frame=(4.0, 66.0, 48.0, 48.0)
+C04PROBE2 bad-merged EL type=1 id= label="Sentence and links as one element" frame=(72.0, 76.0, 314.0, 28.0)
+C04PROBE2 bad-merged EL type=46 id= label="" frame=(0.0, 118.0, 402.0, 276.0)
+C04PROBE2 bad-merged EL type=48 id= label="Bad example for Links inline with text. Material." frame=(16.0, 138.0, 370.0, 48.0)
+C04PROBE2 bad-merged EL type=48 id= label="Defect: A screen reader finds the sentence as one link, and not the second link." frame=(16.0, 194.0, 370.0, 48.0)
+C04PROBE2 bad-merged EL type=1 id= label="Example" frame=(16.0, 262.0, 370.0, 28.0)
+C04PROBE2 bad-merged EL type=42 id=c04-bad-merged-sentence label="Read about \nlinks in text\n and \nstand-alone links\n first." frame=(16.0, 314.0, 370.0, 48.0)
+C04PROBE2 good-material link 1: tap at (112.0234375, 258.0, 91.6015625, 24.0) puts the cursor on "first."
+C04PROBE2 good-material link 1: then a double tap there opens Links inline with text
+C04PROBE2 good-material link 2: tap at (243.1171875, 258.0, 137.5390625, 24.0) puts the cursor on "first."
+C04PROBE2 good-material link 2: then a double tap there opens Stand-alone link
+C04PROBE2 good-material link 1: moved forward to "links in text Link"; current "links in text Link"
+C04PROBE2 good-material link 1: a double tap on the link then opens Links inline with text
+C04PROBE2 good-material link 2: moved forward to "stand-alone links Link"; current "stand-alone links Link"
+C04PROBE2 good-material link 2: a double tap on the link then opens Stand-alone link
+C04PROBE2 bad-merged (tap): cursor on "Read about links in text and stand-alone links first. Link"
+C04PROBE2 bad-merged (tap): a double tap on the sentence opens (no page)
+C04PROBE2 bad-merged (forward): cursor on "Read about links in text and stand-alone links first. Link"
+C04PROBE2 bad-merged (forward): a double tap on the sentence opens (no page)
+Test Case '-[RunnerUITests.ProbeC04VOUITests testWhereTheCursorGoes]' passed (138.963 seconds).
