@@ -1,0 +1,123 @@
+== simulator:     iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+2026-11-20 18:47:30.288 xcodebuild[49482:28954235] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C02PROBE TREE before flip
+C02PROBE EL type=9 label="Flip all" value=Optional() enabled=true selected=false frame=(0.0, 62.0, 92.23111979166667, 48.0)
+C02PROBE EL type=48 label="State: t01=0 t02=1 t03=0 t04=0 t05=0 t06=0 t07=0 t08=0 t09=0 t10=0 t11=0 t12=0 t13=0 t14=0 t15=0 t17=0 t18=0 t19=0 t20=0 t21=0" value=Optional() enabled=true selected=false frame=(100.23111979166667, 65.0, 301.7688802083333, 42.0)
+C02PROBE EL type=46 label="" value=Optional() enabled=true selected=false frame=(0.0, 110.0, 402.0, 730.0)
+C02PROBE EL type=9 label="t01 Bold" value=Optional() enabled=true selected=false frame=(0.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t02 Bold" value=Optional() enabled=true selected=true frame=(56.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t03 Bold" value=Optional() enabled=true selected=false frame=(112.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=40 label="t05a Bold" value=Optional(0) enabled=true selected=false frame=(224.0, 110.0, 49.0, 50.0)
+C02PROBE EL type=40 label="t05b Italic" value=Optional(1) enabled=true selected=false frame=(273.0, 110.0, 49.0, 50.0)
+C02PROBE EL type=40 label="t05c Underline" value=Optional(0) enabled=true selected=false frame=(322.0, 110.0, 50.0, 50.0)
+C02PROBE EL type=9 label="t06a Bold" value=Optional() enabled=true selected=false frame=(0.0, 164.0, 123.77067057291667, 48.0)
+C02PROBE EL type=9 label="t06b Italic" value=Optional() enabled=true selected=true frame=(123.77067057291667, 164.0, 123.77067057291667, 48.0)
+C02PROBE EL type=9 label="t07a Day" value=Optional() enabled=true selected=true frame=(0.0, 216.0, 113.97317504882812, 48.0)
+C02PROBE EL type=9 label="t07b Week" value=Optional() enabled=true selected=false frame=(113.97317504882812, 216.0, 113.97317504882812, 48.0)
+C02PROBE EL type=40 label="t13 Mute" value=Optional(0) enabled=true selected=false frame=(0.0, 528.0, 106.76199340820312, 52.0)
+C02PROBE EL type=9 label="t14 Mute" value=Optional() enabled=true selected=false frame=(114.76199340820312, 528.0, 107.04421997070312, 52.0)
+C02PROBE EL type=9 label="t15 Bold" value=Optional() enabled=true selected=false frame=(229.80621337890625, 528.0, 89.81235758463544, 48.0)
+C02PROBE EL type=9 label="t16 Bold" value=Optional() enabled=false selected=true frame=(327.6185709635417, 528.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t17 Mute" value=Optional() enabled=true selected=false frame=(0.0, 584.0, 48.0, 48.0)
+C02PROBE EL type=40 label="t20 Bold" value=Optional(0) enabled=true selected=false frame=(0.0, 688.0, 48.0, 48.0)
+C02PROBE EL type=40 label="t21 Mute" value=Optional(0) enabled=true selected=false frame=(56.0, 688.0, 107.42289225260419, 48.0)
+C02PROBE EL type=40 label="" value=Optional(0) enabled=true selected=false frame=(168.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t04 Bold" value=Optional() enabled=true selected=false frame=(168.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t08 Mute" value=Optional() enabled=true selected=false frame=(0.0, 268.0, 402.0, 48.0)
+C02PROBE EL type=40 label="t09 Mute" value=Optional(0) enabled=true selected=false frame=(0.0, 320.0, 402.0, 48.0)
+C02PROBE EL type=40 label="t10 Mute" value=Optional(0) enabled=true selected=false frame=(0.0, 372.0, 402.0, 48.0)
+C02PROBE EL type=9 label="t11 Mute" value=Optional() enabled=true selected=false frame=(0.0, 424.0, 402.0, 48.0)
+C02PROBE EL type=9 label="t12 Mute" value=Optional() enabled=true selected=false frame=(0.0, 476.0, 402.0, 48.0)
+C02PROBE EL type=40 label="" value=Optional(0) enabled=true selected=false frame=(56.0, 584.0, 107.98800659179688, 48.0)
+C02PROBE EL type=9 label="t18 Mute" value=Optional() enabled=true selected=false frame=(56.0, 584.0, 107.98800659179688, 48.0)
+C02PROBE EL type=9 label="t19 Mute" value=Optional() enabled=true selected=false frame=(0.0, 636.0, 402.0, 48.0)
+C02PROBE VO before flip
+C02PROBE VO State: t01=0 t02=1 t03=0 t04=0 t05=0 t06=0 t07=0 t08=0 t09=0 t10
+C02PROBE VO t01 Bold Button
+C02PROBE VO selected t02 Bold Button
+C02PROBE VO t03 Bold Button
+C02PROBE VO t04 Bold Button
+C02PROBE VO t05a Bold Switch button off Double tap to toggle setting.
+C02PROBE VO t05b Italic Switch button on Double tap to toggle setting.
+C02PROBE VO t05c Underline Switch button off Double tap to toggle setting.
+C02PROBE VO t06a Bold Button
+C02PROBE VO selected t06b Italic Button
+C02PROBE VO selected t07a Day Button
+C02PROBE VO t07b Week Button
+C02PROBE VO t08 Mute Button
+C02PROBE VO t09 Mute Switch button off Double tap to toggle setting.
+C02PROBE VO t10 Mute Switch button off Double tap to toggle setting.
+C02PROBE VO t11 Mute Button
+C02PROBE VO t12 Mute Button
+C02PROBE VO t13 Mute Switch button off Double tap to toggle setting.
+C02PROBE VO t14 Mute Button
+C02PROBE VO t15 Bold Button
+C02PROBE VO t17 Mute Button
+C02PROBE VO t18 Mute Button
+C02PROBE VO t19 Mute Button
+C02PROBE VO t20 Bold Switch button off Double tap to toggle setting.
+C02PROBE VO t21 Mute Switch button off Double tap to toggle setting.
+C02PROBE VO t21 Mute Switch button off Double tap to toggle setting.
+C02PROBE VO t21 Mute Switch button off Double tap to toggle setting.
+C02PROBE VO t21 Mute Switch button off Double tap to toggle setting.
+C02PROBE TREE after flip
+C02PROBE EL type=9 label="Flip all" value=Optional() enabled=true selected=false frame=(0.0, 62.0, 92.23111979166667, 48.0)
+C02PROBE EL type=48 label="State: t01=1 t02=0 t03=1 t04=1 t05=1 t06=1 t07=1 t08=1 t09=1 t10=1 t11=1 t12=1 t13=1 t14=1 t15=1 t17=1 t18=1 t19=1 t20=1 t21=1" value=Optional() enabled=true selected=false frame=(100.23111979166667, 65.0, 301.7688802083333, 42.0)
+C02PROBE EL type=46 label="" value=Optional() enabled=true selected=false frame=(0.0, 110.0, 402.0, 730.0)
+C02PROBE EL type=9 label="t01 Bold" value=Optional() enabled=true selected=true frame=(0.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t02 Bold" value=Optional() enabled=true selected=false frame=(56.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t03 Bold" value=Optional() enabled=true selected=true frame=(112.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=40 label="t05a Bold" value=Optional(1) enabled=true selected=false frame=(224.0, 110.0, 49.0, 50.0)
+C02PROBE EL type=40 label="t05b Italic" value=Optional(0) enabled=true selected=false frame=(273.0, 110.0, 49.0, 50.0)
+C02PROBE EL type=40 label="t05c Underline" value=Optional(0) enabled=true selected=false frame=(322.0, 110.0, 50.0, 50.0)
+C02PROBE EL type=9 label="t06a Bold" value=Optional() enabled=true selected=true frame=(0.0, 164.0, 120.43745930989583, 48.0)
+C02PROBE EL type=9 label="t06b Italic" value=Optional() enabled=true selected=false frame=(120.43745930989583, 164.0, 120.43745930989583, 48.0)
+C02PROBE EL type=9 label="t07a Day" value=Optional() enabled=true selected=false frame=(0.0, 216.0, 126.91109212239583, 48.0)
+C02PROBE EL type=9 label="t07b Week" value=Optional() enabled=true selected=true frame=(126.91109212239583, 216.0, 126.91109212239583, 48.0)
+C02PROBE EL type=40 label="t13 Mute" value=Optional(1) enabled=true selected=false frame=(0.0, 528.0, 106.76199340820312, 52.0)
+C02PROBE EL type=9 label="t14 Mute" value=Optional() enabled=true selected=true frame=(114.76199340820312, 528.0, 107.04421997070312, 52.0)
+C02PROBE EL type=9 label="t15 Bold" value=Optional() enabled=true selected=true frame=(229.80621337890625, 528.0, 109.81235758463544, 48.0)
+C02PROBE EL type=9 label="t16 Bold" value=Optional() enabled=false selected=true frame=(347.6185709635417, 528.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t17 Unmute" value=Optional() enabled=true selected=true frame=(0.0, 584.0, 48.0, 48.0)
+C02PROBE EL type=40 label="t20 Bold" value=Optional(1) enabled=true selected=false frame=(0.0, 688.0, 48.0, 48.0)
+C02PROBE EL type=40 label="t21 Mute" value=Optional(1) enabled=true selected=false frame=(56.0, 688.0, 107.42289225260419, 48.0)
+C02PROBE EL type=40 label="" value=Optional(1) enabled=true selected=false frame=(168.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t04 Bold" value=Optional() enabled=true selected=true frame=(168.0, 110.0, 48.0, 48.0)
+C02PROBE EL type=9 label="t08 Mute" value=Optional() enabled=true selected=true frame=(0.0, 268.0, 402.0, 48.0)
+C02PROBE EL type=40 label="t09 Mute" value=Optional(1) enabled=true selected=false frame=(0.0, 320.0, 402.0, 48.0)
+C02PROBE EL type=40 label="t10 Mute" value=Optional(1) enabled=true selected=false frame=(0.0, 372.0, 402.0, 48.0)
+C02PROBE EL type=9 label="t11 Mute" value=Optional() enabled=true selected=false frame=(0.0, 424.0, 402.0, 48.0)
+C02PROBE EL type=9 label="t12 Unmute" value=Optional() enabled=true selected=true frame=(0.0, 476.0, 402.0, 48.0)
+C02PROBE EL type=40 label="" value=Optional(1) enabled=true selected=false frame=(56.0, 584.0, 107.98800659179688, 48.0)
+C02PROBE EL type=9 label="t18 Mute" value=Optional() enabled=true selected=false frame=(56.0, 584.0, 107.98800659179688, 48.0)
+C02PROBE EL type=9 label="t19 Mute" value=Optional() enabled=true selected=true frame=(0.0, 636.0, 402.0, 48.0)
+C02PROBE VO after flip
+C02PROBE VO State: t01=1 t02=0 t03=1 t04=1 t05=1 t06=1 t07=1 t08=1 t09=1 t10
+C02PROBE VO selected t01 Bold Button
+C02PROBE VO t02 Bold Button
+C02PROBE VO selected t03 Bold Button
+C02PROBE VO selected t04 Bold Button
+C02PROBE VO t05a Bold Switch button on Double tap to toggle setting.
+C02PROBE VO t05b Italic Switch button off Double tap to toggle setting.
+C02PROBE VO t05c Underline Switch button off Double tap to toggle setting.
+C02PROBE VO selected t06a Bold Button
+C02PROBE VO t06b Italic Button
+C02PROBE VO t07a Day Button
+C02PROBE VO selected t07b Week Button
+C02PROBE VO selected t08 Mute Button
+C02PROBE VO t09 Mute Switch button on Double tap to toggle setting.
+C02PROBE VO t10 Mute Switch button on Double tap to toggle setting.
+C02PROBE VO t11 Mute Button
+C02PROBE VO selected t12 Unmute Button
+C02PROBE VO t13 Mute Switch button on Double tap to toggle setting.
+C02PROBE VO selected t14 Mute Button
+C02PROBE VO selected t15 Bold Button
+C02PROBE VO selected t17 Unmute Button
+C02PROBE VO t18 Mute Button
+C02PROBE VO selected t19 Mute Button
+C02PROBE VO t20 Bold Switch button on Double tap to toggle setting.
+C02PROBE VO t21 Mute Switch button on Double tap to toggle setting.
+C02PROBE VO t21 Mute Switch button on Double tap to toggle setting.
+C02PROBE VO t21 Mute Switch button on Double tap to toggle setting.
+C02PROBE VO t21 Mute Switch button on Double tap to toggle setting.
+Test Case '-[RunnerUITests.C02ProbeUITests testProbe]' passed (75.520 seconds).

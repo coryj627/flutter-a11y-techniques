@@ -1,0 +1,7 @@
+C02ICON unresolved foregroundColor, MaterialApp, dark | fill=(1.000, 1.000, 1.000) text=(1.000, 1.000, 1.000) ratio 1.00 | icon=(1.000, 1.000, 1.000) ratio 1.00 | icon theme at the icon: IconThemeData
+C02ICON unresolved foregroundColor, CupertinoApp, dark | fill=(1.000, 1.000, 1.000) text=(1.000, 1.000, 1.000) ratio 1.00 | icon=(0.000, 0.000, 0.000) ratio 21.00 | icon theme at the icon: CupertinoIconThemeData
+C02ICON good-cupertino now, on, app, dark | fill=(1.000, 1.000, 1.000) text=(0.000, 0.000, 0.000) ratio 21.00 | icon=(0.000, 0.000, 0.000) ratio 21.00 | icon theme at the icon: IconThemeData
+C02ICON unresolved foregroundColor, MaterialApp, light | fill=(0.000, 0.000, 0.000) text=(1.000, 1.000, 1.000) ratio 21.00 | icon=(1.000, 1.000, 1.000) ratio 21.00 | icon theme at the icon: IconThemeData
+C02ICON unresolved foregroundColor, CupertinoApp, light | fill=(0.000, 0.000, 0.000) text=(1.000, 1.000, 1.000) ratio 21.00 | icon=(1.000, 1.000, 1.000) ratio 21.00 | icon theme at the icon: CupertinoIconThemeData
+C02ICON good-cupertino now, on, app, light | fill=(0.000, 0.000, 0.000) text=(1.000, 1.000, 1.000) ratio 21.00 | icon=(1.000, 1.000, 1.000) ratio 21.00 | icon theme at the icon: IconThemeData
+00:00 +6: All tests passed!

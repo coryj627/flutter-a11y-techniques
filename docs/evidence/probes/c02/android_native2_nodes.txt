@@ -1,0 +1,14 @@
+as the screen opened | class=android.widget.Button text=n00 Start desc=null state=null checkable=false checked=false selected=false
+as the screen opened | class=android.widget.ToggleButton text=OFF desc=n01 Bold state=OFF checkable=true checked=false selected=false
+as the screen opened | class=android.widget.ToggleButton text=ON desc=n02 Bold state=ON checkable=true checked=true selected=false
+as the screen opened | class=android.widget.Button text=n03 Bold desc=null state=null checkable=false checked=false selected=true
+as the screen opened | class=android.widget.Button text=n04 Bold desc=null state=null checkable=false checked=false selected=false
+as the screen opened | class=android.widget.ToggleButton text=n05 Bold desc=null state=n05 Bold checkable=true checked=true selected=false
+as the screen opened | class=android.widget.TextView text=Flutter A11Y Techniques desc=null state=null checkable=false checked=false selected=false
+after the click on n01 | class=android.widget.Button text=n00 Start desc=null state=null checkable=false checked=false selected=false
+after the click on n01 | class=android.widget.ToggleButton text=ON desc=n01 Bold state=ON checkable=true checked=true selected=false
+after the click on n01 | class=android.widget.ToggleButton text=ON desc=n02 Bold state=ON checkable=true checked=true selected=false
+after the click on n01 | class=android.widget.Button text=n03 Bold desc=null state=null checkable=false checked=false selected=true
+after the click on n01 | class=android.widget.Button text=n04 Bold desc=null state=null checkable=false checked=false selected=false
+after the click on n01 | class=android.widget.ToggleButton text=n05 Bold desc=null state=n05 Bold checkable=true checked=true selected=false
+after the click on n01 | class=android.widget.TextView text=Flutter A11Y Techniques desc=null state=null checkable=false checked=false selected=false

@@ -1,0 +1,81 @@
+// Throwaway C02 probe on the web. Not committed: kept as
+// docs/evidence/probes/c02/probe_web.spec.js.txt. Runs against
+// `flutter build web -t lib/probe.dart -o build/web_probe` with
+// c02probe.config.js.
+import { test } from '@playwright/test';
+
+const say = (...parts) => console.log('C02PROBE', ...parts);
+
+async function open(page) {
+  await page.goto('about:blank');
+  await page.goto('/');
+  await page.locator('[flt-semantics-identifier="state"]').waitFor();
+  await page.waitForTimeout(1000);
+}
+
+const state = async (page) =>
+  ((await page.locator('[flt-semantics-identifier="state"]').textContent()) ?? '').trim();
+
+// Every element in the semantics tree whose name or text starts with a
+// fixture number, with its tag, role, and states.
+async function elements(page) {
+  return page.evaluate(() => {
+    const out = [];
+    for (const e of document.querySelectorAll('flt-semantics, flt-semantics *')) {
+      if (e.tagName.toLowerCase() === 'flt-semantics-container') continue;
+      const name = e.getAttribute('aria-label') ?? '';
+      const own = [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('').trim();
+      const text = name || own;
+      if (!/t\d\d/.test(text) || text.startsWith('State')) continue;
+      const attrs = [];
+      for (const a of e.getAttributeNames()) {
+        if (a.startsWith('aria-') || a === 'role' || a === 'tabindex' || a === 'disabled') {
+          attrs.push(`${a}=${JSON.stringify(e.getAttribute(a))}`);
+        }
+      }
+      out.push(`${e.tagName.toLowerCase()} text=${JSON.stringify(own)} ${attrs.join(' ')}`);
+    }
+    return out;
+  });
+}
+
+test('tree, before and after Flip all', async ({ page, browserName }) => {
+  await open(page);
+  say(browserName, 'before flip');
+  for (const line of await elements(page)) say('  ' + line);
+  say(browserName, 'aria snapshot before flip');
+  say((await page.locator('body').ariaSnapshot()).split('\n').filter((l) => /t\d\d/.test(l)).join('\n'));
+  await page.getByRole('button', { name: 'Flip all' }).click();
+  await page.waitForTimeout(800);
+  say(browserName, 'after flip');
+  for (const line of await elements(page)) say('  ' + line);
+  say(browserName, 'aria snapshot after flip');
+  say((await page.locator('body').ariaSnapshot()).split('\n').filter((l) => /t\d\d/.test(l)).join('\n'));
+});
+
+test('keyboard: Tab to each stop, then Space, then Enter', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium');
+  await open(page);
+  const diff = (a, b) => {
+    const x = a.split(' ');
+    const y = b.split(' ');
+    return y.filter((w, i) => w !== x[i]).join(',');
+  };
+  for (let i = 0; i < 30; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(150);
+    const active = await page.evaluate(() => {
+      const e = document.activeElement;
+      if (!e) return 'null';
+      return `${e.tagName.toLowerCase()} role=${e.getAttribute('role')} name=${JSON.stringify(e.getAttribute('aria-label') ?? e.textContent?.trim())}`;
+    });
+    const before = await state(page);
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(400);
+    const afterSpace = await state(page);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(400);
+    const afterEnter = await state(page);
+    say(`stop ${i} ${active} | space: ${diff(before, afterSpace)} | enter: ${diff(afterSpace, afterEnter)}`);
+  }
+});

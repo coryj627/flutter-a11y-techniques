@@ -1,0 +1,60 @@
+// L4 on web for C02 Toggle button: what VoiceOver on macOS speaks for each
+// example, before and after its control is changed. Needs Guidepup's setup
+// and macOS automation permissions on the machine. Run through
+// `python3 tool/voiceover_web.py C02`, which also writes the transcript.
+//
+// First run, for the probe: the speech is logged and only the walk is
+// checked. A plain HTML page with aria-pressed is read the same way, for
+// comparison.
+import { voiceOverTest as test } from '@guidepup/playwright';
+import { expect } from '@playwright/test';
+import { walkToEnd } from './vo_helpers.js';
+
+const EXAMPLE = 'heading level 2 Example';
+
+// slug -> the identifier of the control that is changed once.
+const EXAMPLES = {
+  'good-icon-button': 'c02-good-icon-button-bold',
+  'good-toggle-buttons': 'c02-good-toggle-buttons-bold',
+  'good-cupertino': 'c02-good-cupertino-mute',
+  'good-custom': 'c02-good-custom-mute',
+  'bad-selected-only': 'c02-bad-selected-only-bold',
+  'bad-no-state': 'c02-bad-no-state-mute',
+  'bad-label-changes': 'c02-bad-label-changes-mute',
+};
+
+async function read(page, voiceOver, browserName, label) {
+  const { stops, reachedEnd } = await walkToEnd(page, voiceOver, browserName, 40);
+  const start = stops.indexOf(EXAMPLE);
+  const content = start >= 0 ? stops.slice(start + 1) : stops;
+  console.log(`C02VO ${browserName} ${label} | ${content.join(' / ')}`);
+  expect(reachedEnd, `${label}: the walk reached the end of the screen`).toBe(true);
+  expect(start, `${label}: reached the example`).toBeGreaterThanOrEqual(0);
+  return content;
+}
+
+for (const [slug, control] of Object.entries(EXAMPLES)) {
+  test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
+    await page.goto(`/#/t/C02/${slug}`, { waitUntil: 'load' });
+    const count = page.locator(`[flt-semantics-identifier="c02-${slug}-count"]`);
+    await expect(count).toBeVisible();
+    await read(page, voiceOver, browserName, slug);
+    await page.locator(`[flt-semantics-identifier="${control}"]`).click();
+    await expect(count).toHaveText('Changes: 1');
+    await read(page, voiceOver, browserName, `${slug}-changed`);
+  });
+}
+
+// Throwaway, for the probe: plain HTML toggle buttons, no Flutter.
+test('voiceover reads native-html', async ({ page, voiceOver, browserName }) => {
+  await page.goto('/', { waitUntil: 'load' });
+  await page.setContent(`<main>
+    <button>Back</button>
+    <h2>Example</h2>
+    <button aria-pressed="false">n01 Bold</button>
+    <button aria-pressed="true">n02 Bold</button>
+    <button aria-current="true">n03 Bold</button>
+    <p>Changes: 0</p>
+  </main>`);
+  await read(page, voiceOver, browserName, 'native-html');
+});

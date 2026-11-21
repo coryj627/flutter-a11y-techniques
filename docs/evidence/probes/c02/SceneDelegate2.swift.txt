@@ -1,0 +1,80 @@
+import Flutter
+import UIKit
+
+class SceneDelegate: FlutterSceneDelegate {
+  // Throwaway, C02 probe (second version): not committed. With the launch
+  // argument -c02native the window shows native UIKit buttons instead of
+  // Flutter, for comparison.
+  override func scene(
+    _ scene: UIScene, willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
+    super.scene(scene, willConnectTo: session, options: connectionOptions)
+    if ProcessInfo.processInfo.arguments.contains("-c02native") {
+      window?.rootViewController = C02NativeProbeViewController()
+    }
+  }
+}
+
+/// A button that adds the toggle button trait to the traits UIKit gives it,
+/// and leaves the rest to UIKit (the selected trait among them, which
+/// UIButton derives from isSelected).
+final class C02ToggleTraitButton: UIButton {
+  override var accessibilityTraits: UIAccessibilityTraits {
+    get {
+      if #available(iOS 17.0, *) { return super.accessibilityTraits.union(.toggleButton) }
+      return super.accessibilityTraits
+    }
+    set { super.accessibilityTraits = newValue }
+  }
+}
+
+final class C02NativeProbeViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .systemBackground
+    let stack = UIStackView()
+    stack.axis = .vertical
+    stack.spacing = 12
+    stack.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(stack)
+    NSLayoutConstraint.activate([
+      stack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+      stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+    ])
+    // n00: a plain button first, so that VoiceOver does not start on a
+    // toggle button.
+    let start = UIButton(type: .system)
+    start.setTitle("n00 Start", for: .normal)
+    stack.addArrangedSubview(start)
+    // n01, n02: the toggle button trait added to UIKit's own traits, off
+    // and on. A tap toggles isSelected.
+    for (title, on) in [("n01 Bold", false), ("n02 Bold", true)] {
+      let button = C02ToggleTraitButton(type: .system)
+      button.setTitle(title, for: .normal)
+      button.isSelected = on
+      button.addAction(UIAction { [weak button] _ in button?.isSelected.toggle() }, for: .primaryActionTriggered)
+      stack.addArrangedSubview(button)
+    }
+    // n03: UIKit's own toggle, a button that changes its selection when
+    // used. Nothing is set on it but that.
+    var config = UIButton.Configuration.plain()
+    config.title = "n03 Bold"
+    let toggle = UIButton(configuration: config)
+    toggle.changesSelectionAsPrimaryAction = true
+    stack.addArrangedSubview(toggle)
+    // n04: a plain button that is selected, as Flutter's `selected` is.
+    let selected = UIButton(type: .system)
+    selected.setTitle("n04 Bold", for: .normal)
+    selected.isSelected = true
+    stack.addArrangedSubview(selected)
+    // n05: the first version's fixture, for comparison. Setting
+    // accessibilityTraits replaces the traits UIKit derives, the selected
+    // trait among them.
+    let old = UIButton(type: .system)
+    old.setTitle("n05 Bold", for: .normal)
+    if #available(iOS 17.0, *) { old.accessibilityTraits.insert(.toggleButton) }
+    old.isSelected = true
+    stack.addArrangedSubview(old)
+  }
+}

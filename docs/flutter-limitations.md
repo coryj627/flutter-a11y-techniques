@@ -116,6 +116,9 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-183](#fl-183) | `MergeSemantics` around a field takes in its error: the error joins the field's name as well as its hint, and on Android the field becomes a live region | All | Confirmed |
 | [FL-184](#fl-184) | Keyboard focus moved to a field does not move VoiceOver's cursor on iOS | iOS | Observed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
+| [FL-200](#fl-200) | Flutter has no pressed state: a toggle button can only be a switch, a checkbox, or a button that is selected | All | Confirmed |
+| [FL-201](#fl-201) | `IconButton(isSelected:)` and a multi-select `SegmentedButton` say nothing while they are off, and on the web their state is `aria-current` | All (a 4.1.2 failure on the web only) | Confirmed |
+| [FL-202](#fl-202) | A `CupertinoButton` resolves its `color` for light and dark mode, and not its `foregroundColor`, so dynamic text colour stays light in dark mode | All (widget tests only) | Confirmed |
 | [FL-220](#fl-220) | On Android TalkBack says no role for a Flutter link | Android | Confirmed |
 | [FL-221](#fl-221) | Material and Cupertino have no link widget, and a link put round one of their buttons is a button as well | Android, iOS (`CupertinoButton`); All (`TextButton`, probe only) | Confirmed for `CupertinoButton` |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
@@ -1394,6 +1397,21 @@ yet), **Fixed in x.y** (verified on that version).
   The project's `TestId` wrapper is a `MergeSemantics`, so a button inside
   one already gets the hint; `bad-hint-detached` has no `TestId` for that
   reason.
+- Also seen in C02 (2026-11-20), the same mechanism for a state. Observed:
+  seen in the probe only; no test asserts it.
+  `Semantics(toggled:, enabled: true)` around an `IconButton` or an
+  `OutlinedButton` does not reach the button (`docs/evidence/probes/c02`,
+  fixtures t04 and t18). The
+  button's node has no toggled state, and a second node with the state and
+  no name is made. On the web it is a `role="switch"` around the button,
+  named by the button's text inside it; on Android a `Switch` with no
+  name with the same bounds as the `Button`, which has no state; on iOS
+  a switch with no label at the button's place, which VoiceOver did not
+  stop on (it read only "t04 Bold Button"). Inside `MergeSemantics` both
+  join the button's node (fixtures t20 and t21); C02's
+  `good-icon-button` and `bad-label-changes` put `MergeSemantics` round
+  it. The same wrapper around a `CupertinoButton` reaches it without help
+  (fixture t13).
 - Upstream issue: not searched yet (D25). The container is deliberate; a
   `hint` (or `semanticHint`) parameter on the buttons has not been added.
 
@@ -2501,6 +2519,205 @@ yet), **Fixed in x.y** (verified on that version).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-200 to FL-299: Wave 2, links and simple components. Entries in this range go below, in id order. -->
+
+## FL-200
+
+**Flutter has no pressed state: a toggle button can only be a switch, a checkbox, or a button that is selected.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the C02
+  probe (`docs/evidence/probes/c02`) and asserted by the C02 tests: the
+  web spec requires that no good example has `aria-pressed`, and every
+  layer asserts the switch or checkbox role of the good examples, each
+  written to fail when that changes. Engine source read at the pinned
+  revision: the web engine's `semantics/` folder, the Android
+  `BaseRoleConfigurator.java`, and the iOS `SemanticsObject.mm` and
+  `accessibility_bridge.mm`.
+- What is missing: the toggle button's own state. HTML and APG have
+  `aria-pressed` on a button; Android has `android.widget.ToggleButton`;
+  iOS has had the toggle button trait since iOS 17
+  (`UIAccessibilityTraitToggleButton`, "used when the element should be
+  treated as a toggle", in UIKit's `UIAccessibilityConstants.h`).
+  `SemanticsProperties` has no pressed state and `SemanticsRole` has no
+  toggle button, and none of the engines writes one: `aria-pressed` does
+  not appear in the web engine's semantics source, the Android engine's
+  only checkable classes are `CheckBox`, `RadioButton`, and `Switch`, and
+  the iOS engine sets no toggle button trait.
+- What a toggle button can be given instead, and what each platform makes
+  of it (probe, fixtures t01 to t21):
+  - `selected` (`IconButton(isSelected:)`, a multi-select
+    `SegmentedButton`, `Semantics(button: true, selected:)`): a button
+    that is selected or not. On the web `role="button"` with
+    `aria-current`; on Android a `Button` with `isSelected`; on iOS a
+    button with the selected trait. Nothing is said for it while it is
+    off ([FL-201](#fl-201)).
+  - `checked` (`ToggleButtons`, `Semantics(checked:)`): a checkbox on
+    the web (`aria-checked`) and Android (`CheckBox`), and a switch on iOS
+    ([FL-035](#fl-035)). TalkBack says no state while it is off
+    ([FL-045](#fl-045)).
+  - `toggled` (`Semantics(toggled:)`): a switch on every platform,
+    `role="switch"` with `aria-checked`, `android.widget.Switch`, and a
+    switch on iOS. The state is said in both states: "off. Bold. Switch"
+    and "checked. on. Bold. Switch" ([FL-100](#fl-100)) by TalkBack,
+    "Bold Switch button off" by VoiceOver on iOS.
+  A node with `button: true` and a toggled or checked state is the switch
+  or the checkbox on Android and the web; the button flag is not shown
+  (on iOS it adds the button trait, which a switch has anyway).
+- Compared with native controls (the second native probe, files
+  `…native2…` in `docs/evidence/probes/c02`; the first version of the
+  fixtures removed the state on both platforms and its readings are not
+  used, see the probe README):
+  - Android: an `android.widget.ToggleButton` with Android's own
+    `textOn` and `textOff` (the fixture sets only `contentDescription`,
+    for the name, and `isChecked`) is a checkable `ToggleButton` whose
+    state description is "OFF" or "ON" (`android_native2_nodes.txt`).
+    TalkBack 17 reads it "OFF. n01 Bold. Switch", and "ON. n01 Bold.
+    Switch" after a click (`talkback-native2.md.txt`). Flutter's `toggled`
+    is read "off. Bold. Switch" and "checked. on. Bold. Switch": the same
+    role and the same state words, with the extra "checked" of
+    [FL-100](#fl-100). A `Button` with `isSelected` is read "selected.
+    n03 Bold. Button", the same as Flutter's `selected`.
+  - iOS: a UIKit button with the toggle button trait added to UIKit's own
+    traits is a switch to XCUITest, and VoiceOver reads it "n01 Bold
+    Switch button" while it is not selected and "selected n01 Bold Switch
+    button" once a tap has selected it (`ios_native2.txt`). Flutter's
+    `toggled` is read "Bold Switch button off" and "… on": the same role,
+    with the state in other words ("off" and "on", where UIKit says
+    nothing and "selected"). A plain button that is selected is read
+    "selected n04 Bold Button", the same as Flutter's `selected`; UIKit's
+    `changesSelectionAsPrimaryAction` button is read "n03 Bold Button",
+    then "selected n03 Bold Button", with no toggle trait.
+  - Web: VoiceOver on macOS reads a plain HTML `button` with
+    `aria-pressed="false"` "Bold toggle button" and one with
+    `aria-pressed="true"` "Italic selected toggle button", in Chromium and
+    WebKit (`control-html` in `docs/evidence/C02/voiceover-web.md`). No
+    Flutter node can be read that way.
+  So the nearest native toggle buttons are read as switches by TalkBack
+  and by VoiceOver on iOS, as Flutter's `toggled` is; on Android with the
+  same state words, on iOS with different ones. Only the web has a
+  toggle button role that Flutter cannot reach.
+- What the user gets: the role heard is "switch" or "checkbox", not
+  "toggle button". With `toggled` the state is said in both states on
+  every platform, which is what 4.1.2 asks for. This is not counted as a
+  WCAG failure here: 4.1.2 asks for a role that can be determined and for
+  the state, and does not name the toggle button role.
+- Workaround, in the SDK: give a toggle button `toggled` (with
+  `enabled: true` on a node that has no enabled state of its own,
+  [FL-033](#fl-033)), and on a Material button merge it with the
+  button's node ([FL-040](#fl-040)). C02 `good-icon-button`,
+  `good-cupertino`, and `good-custom`.
+- How to read this entry: Flutter has not added a pressed state yet.
+  Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-201
+
+**`IconButton(isSelected:)` and a multi-select `SegmentedButton` say nothing while they are off, and on the web their state is `aria-current`.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms (a 4.1.2 failure on the
+  web only). Found in the C02
+  probe (fixtures t01 to t03, t06); asserted by the C02 widget, web,
+  Android, and iOS tests (`bad-selected-only`) and heard in the C02
+  transcripts. Source read: `IconButton` wraps its icon in
+  `Semantics(selected: isSelected)` (`material/icon_button.dart`), and a
+  `SegmentedButton` segment is `Semantics(selected:)`, in a mutually
+  exclusive group only when one choice at a time is allowed
+  (`material/segmented_button.dart`); the web engine writes `selected` on
+  any role but row and tab as `aria-current` (`Selectable` in
+  `semantics/checkable.dart`).
+- What happens: these are the Material widgets for a button that stays
+  pressed, and they expose the pressed state as `selected`. Selected is
+  said only when it is true:
+  - Android: a `Button`, `isSelected` true or false. TalkBack says
+    "Bold. Button" while it is off and "selected. Bold. Button" while it
+    is on.
+  - iOS: a button with the selected trait or not. VoiceOver says "Bold
+    Button" and "selected Bold Button".
+  - Web: `role="button"` with `aria-current="false"` or `"true"`.
+    VoiceOver says "Bold button" and "Bold current item button", in
+    Chromium and WebKit, the same as for a plain HTML button with
+    `aria-current="true"` ("Underline current item button", `control-html`
+    in the same transcript), and not what it says for `aria-pressed`
+    ("selected toggle button").
+- What the user gets: while the button is off, the same as for a button
+  that does nothing more than act, so nothing says that it is a toggle,
+  that it can be pressed in, or that it is out. On the web "current item"
+  is the wording for the current page or step in a set, not for a pressed
+  button.
+- WCAG 4.1.2, by platform:
+  - Web: fails. The state is written as `aria-current`, a different state
+    from pressed (and from selected), so the state the user sets is not
+    exposed as itself.
+  - Android and iOS: no failure as written. The selected state can be
+    programmatically determined in both states: on Android the node is a
+    `Button` with `selected="false"` or `"true"`
+    (`docs/evidence/probes/c02/android_before.xml`, `android_after.xml`);
+    on iOS XCUITest reports `isSelected` false or true (`ios.txt`), the
+    engine setting the selected trait only while it is true, which is how
+    UIKit represents a button that is not selected. A native button that
+    is selected or not reads the same on both: "selected. n03 Bold.
+    Button" and "n04 Bold. Button" by TalkBack, "selected n04 Bold
+    Button" and "n03 Bold Button" by VoiceOver (`android_native2_nodes.txt`,
+    `talkback-native2.md.txt`, `ios_native2.txt` in the C02 probe folder;
+    these are plain buttons, which the first native fixtures did not set
+    up differently, and read the same there). The weakness is the one
+    above: while off, nothing says the control is a toggle. The nearest
+    native toggle buttons do say it, by their role (FL-200).
+- `ToggleButtons` is not affected: it sets `checked` (FL-200). A
+  `FilterChip` sets `selected` on Android and iOS and `checked` on the
+  web (`material/chip.dart`, whose comment gives the reason; probe,
+  fixture t15); chips are not covered by C02.
+- Workaround: give the button `toggled`, merged with its node, and leave
+  `isSelected` out, drawing the pressed look with `style` (C02
+  `good-icon-button`). With `isSelected` kept beside `toggled`, TalkBack
+  said the state three ways when it was on, "selected. checked. on. Bold.
+  Switch" (`talkback-first-run.md.txt` in the C02 probe folder).
+- Upstream issue: not searched yet (D25).
+
+## FL-202
+
+**A `CupertinoButton` resolves its `color` for light and dark mode, and not its `foregroundColor`, so dynamic text colour stays light in dark mode.**
+
+- Status: Confirmed, Flutter 3.47.5; measured in widget tests only (the
+  test harness, which reports the Android platform by default), not on a
+  device. Found in C02.
+- Read in the source (`cupertino/button.dart`, `build`): the background
+  is `CupertinoDynamicColor.maybeResolve(widget.color, context)`; the
+  foreground is `widget.foregroundColor` as given, used for the text
+  style and copied into the icon theme
+  (`IconTheme.of(context).copyWith(color: …)`). Whether the icon's colour
+  is then resolved depends on the icon theme above the button:
+  `IconTheme.of` calls the theme's `resolve`, which a
+  `CupertinoIconThemeData` uses to resolve a dynamic colour and a plain
+  `IconThemeData` does not (`cupertino/icon_theme_data.dart`,
+  `widgets/icon_theme.dart`, `widgets/icon_theme_data.dart`).
+- Measured (`docs/evidence/probes/c02/icon_foreground.txt`, from
+  `icon_foreground_test.dart.txt`): a `CupertinoButton` with
+  `color: CupertinoColors.label` and
+  `foregroundColor: CupertinoColors.systemBackground`, both unresolved,
+  with an icon and the text "Mute":
+  - In dark mode, under a `MaterialApp`: fill white, text white (1.00:1),
+    icon white (1.00:1); the icon theme at the icon is a plain
+    `IconThemeData`.
+  - In dark mode, under a `CupertinoApp`: fill white, text white (1.00:1),
+    icon black (21:1); the icon theme is a `CupertinoIconThemeData`.
+  - In light mode, under either: text and icon white on black, 21:1.
+  So the text keeps the light colour in dark mode under both apps; the
+  icon does under a `MaterialApp`, which C02's app is, and not under a
+  `CupertinoApp`.
+- Measured in C02 (`docs/evidence/probes/c02/contrast_on.txt`): the first
+  fix of `good-cupertino`, with that unresolved `foregroundColor`, had
+  "Mute" white on white in dark mode and failed the text contrast
+  guideline.
+- WCAG: 1.4.3 Contrast (Minimum) for the text, where a dynamic
+  `foregroundColor` is passed unresolved: measured above. No verdict is
+  given for the icon: whether 1.4.11 applies to it depends on whether it
+  is needed to understand the control, which was not judged.
+- Workaround: resolve the colour first,
+  `foregroundColor: CupertinoDynamicColor.resolve(CupertinoColors.systemBackground, context)`
+  (C02 `good-cupertino`: text and icon 21:1 on the fill, light and dark,
+  in `icon_foreground.txt`; its L1 tests check text contrast with the
+  button on, in light and dark).
+- Upstream issue: not searched yet (D25).
 
 ## FL-220
 

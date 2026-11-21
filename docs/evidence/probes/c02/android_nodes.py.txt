@@ -1,0 +1,18 @@
+# C02 probe: prints one line per node with a text or a description, from
+# the uiautomator dumps that android_probe.sh.txt writes. Run from the
+# worktree root: python3 -I docs/evidence/probes/c02/android_nodes.py.txt
+import re
+import sys
+
+OUT = "docs/evidence/probes/c02"
+KEYS = ("class", "text", "content-desc", "checkable", "checked", "selected", "clickable", "enabled", "focusable")
+
+for name in ("android_before", "android_after", "android_native_before", "android_native_after"):
+    print(f"== {name}.xml")
+    xml = open(f"{OUT}/{name}.xml", encoding="utf-8").read()
+    for node in re.findall(r"<node [^>]*>", xml):
+        attrs = dict(re.findall(r'([a-z-]+)="([^"]*)"', node))
+        if not (attrs.get("text") or attrs.get("content-desc")):
+            continue
+        print("  " + " ".join(f"{k}={attrs.get(k, '')!r}" for k in KEYS))
+sys.exit(0)
