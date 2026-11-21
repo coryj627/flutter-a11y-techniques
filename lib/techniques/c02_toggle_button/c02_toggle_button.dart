@@ -90,9 +90,9 @@ final c02ToggleButton = Technique(
       title: 'Icon button with isSelected alone',
       variant: ExampleVariant.material,
       defect:
-          'While the button is off a screen reader says only "Bold, button", '
-          'as for a button that cannot stay pressed. When it is on, the state '
-          'is "selected", and on the web VoiceOver says "current item".',
+          'While off it is read only "Bold, button": nothing says it is a '
+          'toggle. On, it is "selected", and on the web "current item", a '
+          'state that is not pressed.',
       builder: (_) => const BadSelectedOnly(),
     ),
     TechniqueExample.bad(

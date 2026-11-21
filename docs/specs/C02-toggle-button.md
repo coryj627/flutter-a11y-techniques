@@ -41,7 +41,7 @@ change when its state does.
 
 | Android | iOS | Web |
 | --- | --- | --- |
-| Applies | Applies | Applies |
+| Applies, with [FL-200](../flutter-limitations.md#fl-200): a switch, not a toggle button | Applies, with [FL-200](../flutter-limitations.md#fl-200): a switch, not a toggle button | Applies, with [FL-200](../flutter-limitations.md#fl-200): a switch, not a toggle button (no `aria-pressed`) |
 
 Flutter has no pressed state ([FL-200](../flutter-limitations.md#fl-200)):
 no `aria-pressed` on the web, no toggle button class on Android, no toggle
@@ -49,11 +49,19 @@ button trait on iOS. The good examples use the nearest states instead:
 `toggled` (the switch role, with the state said on and off on every
 platform) or, in `ToggleButtons`, `checked` (the checkbox role, a switch
 on iOS; TalkBack says no state while it is off,
-[FL-045](../flutter-limitations.md#fl-045)). That meets 4.1.2 as written
-on every platform (section 3), so no platform is recorded as a
-limitation; the role heard is "switch" or "checkbox" and not "toggle
-button". The native toggle buttons nearest to it are read as switches by
-TalkBack and by VoiceOver on iOS too (section 7).
+[FL-045](../flutter-limitations.md#fl-045)).
+
+On the web a Flutter toggle button cannot be read as a toggle button.
+HTML has one, a `button` with `aria-pressed`, which VoiceOver reads
+"Bold toggle button" when it is not pressed and "Italic selected toggle
+button" when it is (`control-html` in the transcript); Flutter writes no
+`aria-pressed`, so its toggle button is a switch ("Bold off switch",
+"Bold on switch") or a checkbox. This was accepted, and the web recorded
+as applying, because the role and the state can both be programmatically
+determined, which is what 4.1.2 asks for (section 3). On Android and iOS
+the native toggle buttons nearest to it are read as switches too, by
+TalkBack and by VoiceOver (section 7), so there the role heard is the
+platform's own.
 
 ## 3. WCAG 2.2 success criteria
 
@@ -124,7 +132,7 @@ control has an on and an off state, and only "not checked" is not said.
 
 | Slug | Defect | Violates | Fails |
 | --- | --- | --- | --- |
-| `bad-selected-only` | `IconButton(isSelected:)` as it comes. While off it is read "Bold, button", as a button with no state is; while on, "selected" (on the web, "current item") | R1 | 4.1.2 ([FL-201](../flutter-limitations.md#fl-201)) |
+| `bad-selected-only` | `IconButton(isSelected:)` as it comes. While off it is read "Bold, button", as a button with no state is; while on, "selected" (on the web, "current item") | R1 | 4.1.2 on the web; none as written on Android and iOS ([FL-201](../flutter-limitations.md#fl-201)) |
 | `bad-no-state` | A hand-drawn toggle button exposed as a plain button: "Mute, button" whether on or off | R1 | 4.1.2 |
 | `bad-label-changes` | `good-icon-button`'s mechanism with the name "Mute", then "Unmute": the name changes with the state, and "Unmute" with "on" can be taken either way | R3 | none |
 
@@ -132,20 +140,38 @@ Verdicts:
 
 - `bad-no-state` fails 4.1.2 on every platform: the state the user sets is
   not exposed at all.
-- `bad-selected-only` is judged to fail 4.1.2 on every platform: while
-  the button is off, its node is a plain button (`selected` false is what
-  every node that is not selected has), so the pressed state the user set
-  cannot be told from it; while it is on, the state exposed is "selected"
-  (on the web "current"), not pressed. This verdict rests on a reading of
-  the criterion, not on a missing role or name, and the native controls
-  that are nearest do the same: TalkBack reads a native `Button` that is
-  selected "selected. n03 Bold. Button", and VoiceOver reads UIKit's
-  selected button "selected n04 Bold Button" (probe README, "Native controls").
+- `bad-selected-only`, by platform:
+  - Web: fails 4.1.2. The state is written as `aria-current`, which
+    VoiceOver reads "current item": a different state from pressed (and
+    from selected), the one that marks the current item of a set. The
+    state the user sets is not exposed as itself.
+  - Android: none as written. The selected state can be programmatically
+    determined in both states: the node is a `Button` with
+    `selected="false"` while off and `selected="true"` while on
+    (`docs/evidence/probes/c02/android_before.xml` and
+    `android_after.xml`, fixtures t01 and t02; the C02 Android test), the
+    same as a native `Button` that is selected or not (n03 and n04 in
+    `android_native_before.xml`).
+  - iOS: none as written. XCUITest reports `isSelected` false while off
+    and true while on (`ios.txt`, t01 and t02; the C02 iOS test). The
+    engine sets the selected trait only while it is true and leaves it
+    off otherwise (source read, `SemanticsObject.mm`), which is how UIKit
+    represents a button that is not selected: a native button reads the
+    same, "n03 Bold Button" not selected and "selected n04 Bold Button"
+    selected (`ios_native.txt`).
+  - The weakness on all three, stated plainly: while the button is off,
+    nothing says that it is a toggle. It is read "Bold, button", the same
+    as a button that does nothing more than act, so a user cannot tell
+    that it stays pressed or that it is out without pressing it.
 - `bad-label-changes`: no criterion fails as written. The name can be
   programmatically determined at every moment and the state is exposed,
   so 4.1.2 is met; the defect is APG's rule that a toggle button's label
   does not change. It is kept as a bad example because what the user
-  hears is ambiguous ("Unmute, on").
+  hears is ambiguous ("Unmute, on"). F09's `bad-label-changes`, marked
+  4.1.2 there, differs in what the name says: there it is the state
+  itself ("Bluetooth off", then "Bluetooth on"), so the state is heard
+  twice; here it is the action ("Mute", then "Unmute"), and the state is
+  heard once.
 
 A multi-select `SegmentedButton` has the same defect as
 `bad-selected-only` (probe, fixture t06) and is left to F17.
@@ -160,7 +186,7 @@ A multi-select `SegmentedButton` has the same defect as
 | L3 iOS | Every good toggle: type `.switch`, label, enabled, value "0", "1" after a tap, "0" after a second. Bad: a `.button` with no value, `isSelected` after one tap and not after two; a button with no value and not selected before and after use; a switch whose label changes |
 | L4 TalkBack | Each control on arriving, and again after it has been changed once, with focus away and back: the state words, the name, and the role, and the words that must not be there |
 | L4 VoiceOver iOS | Every utterance between the "Example" heading and the change count, as each example opens and again after its first control was tapped once, compared as a whole list; the second walk must end at "Changes: 1" |
-| L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit, as each example opens and again after its first control was clicked once, compared as a whole list; the second walk must end at "Changes: 1" |
+| L4 VoiceOver web | Every stop between the "Example" heading and the change count, in Chromium and WebKit, as each example opens and again after its first control was clicked once, compared as a whole list; the second walk must end at "Changes: 1". For comparison, a plain HTML page (`control-html`) with a `button` with `aria-pressed="false"`, one with `aria-pressed="true"`, and one with `aria-current="true"`: walked up to three times, every try logged; it passes only on a walk that reached the end and read "Bold toggle button", "Italic selected toggle button", and "Underline current item button" one after the other and then "Changes: 0", and a button read in other words in any try fails it |
 
 What the tests leave out, and what that gives up:
 
@@ -175,11 +201,19 @@ What the tests leave out, and what that gives up:
   (`tool/techniques/c02_toggle_button.py`). That the change happened is
   checked by the count reading 1 before the second reading.
 - The web VoiceOver spec's comparison page (`control-html`, plain HTML,
-  no Flutter) is walked up to three times and checked only for each
-  button's reading, not for the whole list of stops: on that page the
-  walk sometimes missed the heading or the first button (probe README,
-  "Native controls"). What it gives up: the order of the stops and
-  anything else on that page are not checked.
+  no Flutter) is walked up to three times, because on that page the walk
+  was not steady: in the third run of the examples it never reached the
+  heading in some tries and went past the Bold button without reading it
+  in others, in both browsers
+  ([transcript](../evidence/probes/c02/voiceover-web-third-run.md.txt),
+  [failures](../evidence/probes/c02/voiceover-web-third-run-control-errors.txt)).
+  The second run's check failed for another reason, written before the
+  reading was known
+  ([transcript](../evidence/probes/c02/voiceover-web-second-run.md.txt)).
+  A try counts only if it is complete (the three buttons in order, then
+  the count, and the end reached); what it gives up is whatever the page's
+  own stops around the buttons say (the heading, "Text styles", "end of
+  main"), which is not checked.
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -233,9 +267,19 @@ The probe that came first is in [evidence/probes/c02](../evidence/probes/c02/).
   heard with the new state: "Unmute on switch" on the web, "Unmute Switch
   button on" on iOS, "checked. on. Unmute. Switch" on Android.
 
+**Not verified.**
+
+- What TalkBack says for a native `android.widget.ToggleButton` that is
+  off: n01 was not heard, because TalkBack focus was already on it, as in
+  the F07 and F09 native runs.
+- What VoiceOver on iOS says for a native toggle button that is off, and
+  for the `changesSelectionAsPrimaryAction` button (n03) after a tap: the
+  walk passed n01 without reading it, and the probe test then failed at
+  the tap, so its second walk did not run (probe README, "Native
+  controls").
+- What any screen reader says at the moment a toggle changes. The walks
+  read each control again after the change, as the reader arrives on it.
+
 **Not done yet.** A disabled toggle button is in the probe (fixture t16:
 marked disabled on all three, the state kept; VoiceOver on iOS did not
-stop on it) and not in an example. What a screen reader says at the
-moment a toggle changes is not recorded. The native Android toggle button
-that was off (n01) was not heard: TalkBack focus was already on it, as in
-the F07 and F09 native runs.
+stop on it) and not in an example.

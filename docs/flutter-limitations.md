@@ -117,7 +117,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-184](#fl-184) | Keyboard focus moved to a field does not move VoiceOver's cursor on iOS | iOS | Observed |
 | **FL-200 to FL-299** | Wave 2, links and simple components | | |
 | [FL-200](#fl-200) | Flutter has no pressed state: a toggle button can only be a switch, a checkbox, or a button that is selected | All | Confirmed |
-| [FL-201](#fl-201) | `IconButton(isSelected:)` and a multi-select `SegmentedButton` say nothing while they are off, and on the web their state is `aria-current` | All | Confirmed |
+| [FL-201](#fl-201) | `IconButton(isSelected:)` and a multi-select `SegmentedButton` say nothing while they are off, and on the web their state is `aria-current` | All (a 4.1.2 failure on the web only) | Confirmed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -1326,10 +1326,11 @@ yet), **Fixed in x.y** (verified on that version).
   The project's `TestId` wrapper is a `MergeSemantics`, so a button inside
   one already gets the hint; `bad-hint-detached` has no `TestId` for that
   reason.
-- Also seen in C02 (2026-11-20), the same mechanism for a state:
+- Also seen in C02 (2026-11-20), the same mechanism for a state. Observed:
+  seen in the probe only; no test asserts it.
   `Semantics(toggled:, enabled: true)` around an `IconButton` or an
   `OutlinedButton` does not reach the button (`docs/evidence/probes/c02`,
-  fixtures t04 and t18; seen in the probe, not asserted by a test). The
+  fixtures t04 and t18). The
   button's node has no toggled state, and a second node with the state and
   no name is made. On the web it is a `role="switch"` around the button,
   named by the button's text inside it; on Android a `Switch` with no
@@ -2529,7 +2530,8 @@ yet), **Fixed in x.y** (verified on that version).
 
 **`IconButton(isSelected:)` and a multi-select `SegmentedButton` say nothing while they are off, and on the web their state is `aria-current`.**
 
-- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the C02
+- Status: Confirmed, Flutter 3.47.5, all platforms (a 4.1.2 failure on the
+  web only). Found in the C02
   probe (fixtures t01 to t03, t06); asserted by the C02 widget, web,
   Android, and iOS tests (`bad-selected-only`) and heard in the C02
   transcripts. Source read: `IconButton` wraps its icon in
@@ -2554,23 +2556,34 @@ yet), **Fixed in x.y** (verified on that version).
     in the same transcript), and not what it says for `aria-pressed`
     ("selected toggle button").
 - What the user gets: while the button is off, the same as for a button
-  that does nothing more than act, so nothing says that it can be
-  pressed in or that it is out. On the web "current item" is the wording
-  for the current page or step in a set, not for a pressed button.
-- WCAG: 4.1.2. The off state the user sets is not exposed as a state of
-  the control on any platform: the node is a plain button with no state.
-  The on state is exposed as "selected" (on the web "current"), not as
-  pressed.
+  that does nothing more than act, so nothing says that it is a toggle,
+  that it can be pressed in, or that it is out. On the web "current item"
+  is the wording for the current page or step in a set, not for a pressed
+  button.
+- WCAG 4.1.2, by platform:
+  - Web: fails. The state is written as `aria-current`, a different state
+    from pressed (and from selected), so the state the user sets is not
+    exposed as itself.
+  - Android and iOS: no failure as written. The selected state can be
+    programmatically determined in both states: on Android the node is a
+    `Button` with `selected="false"` or `"true"`
+    (`docs/evidence/probes/c02/android_before.xml`, `android_after.xml`);
+    on iOS XCUITest reports `isSelected` false or true (`ios.txt`), the
+    engine setting the selected trait only while it is true, which is how
+    UIKit represents a button that is not selected. A native button that
+    is selected or not reads the same on both (`android_native_before.xml`,
+    `talkback-first-run.md.txt`, `ios_native.txt` in the C02 probe
+    folder). The weakness is the one above: while off, nothing says the
+    control is a toggle.
 - `ToggleButtons` is not affected: it sets `checked` (FL-200). A
   `FilterChip` sets `selected` on Android and iOS and `checked` on the
   web (`material/chip.dart`, whose comment gives the reason; probe,
   fixture t15); chips are not covered by C02.
-- Workaround: give the button `toggled` as well, merged with its node
-  (C02 `good-icon-button`). With `isSelected` kept, TalkBack then says
-  the state three ways when it is on, "selected. checked. on. Bold.
-  Switch" (`talkback-first-run.md.txt` in the C02 probe folder), so
-  `good-icon-button` draws the pressed look itself and leaves
-  `isSelected` out.
+- Workaround: give the button `toggled`, merged with its node, and leave
+  `isSelected` out, drawing the pressed look with `style` (C02
+  `good-icon-button`). With `isSelected` kept beside `toggled`, TalkBack
+  said the state three ways when it was on, "selected. checked. on. Bold.
+  Switch" (`talkback-first-run.md.txt` in the C02 probe folder).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->

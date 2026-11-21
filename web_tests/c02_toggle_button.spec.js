@@ -80,7 +80,9 @@ test.describe('bad examples have their defect', () => {
     for (const [clicks, current] of [[0, 'false'], [1, 'true'], [2, 'false']]) {
       await expect(control).toHaveRole('button');
       await expect(control).toHaveAccessibleName('Bold');
-      // Written to fail when Flutter writes a pressed or checked state here.
+      // aria-current is a different state from pressed: this is the web's
+      // 4.1.2 failure (FL-201). Written to fail when Flutter writes a
+      // pressed or checked state here.
       await expect(control).toHaveAttribute('aria-current', current);
       await expect(control).not.toHaveAttribute('aria-pressed', /.*/);
       await expect(control).not.toHaveAttribute('aria-checked', /.*/);

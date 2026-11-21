@@ -85,11 +85,13 @@ for (const [slug, { control, before, after }] of Object.entries(EXAMPLES)) {
 // aria-current, which is what Flutter writes for `selected`.
 //
 // The walk helpers are made for the app's screens, and on this page a walk
-// now and then missed the heading or the first button (two runs, both
-// browsers: docs/evidence/probes/c02/README.md). So the page is walked up
-// to three times, every walk is logged, and the test asks only for what
-// matters: across the walks, each button was read, and always the same
-// way.
+// now and then missed the heading or the first button (the third run, both
+// browsers: docs/evidence/probes/c02/README.md, "Native controls"). So the
+// page is walked up to three times, and every try is logged. The test
+// passes only on a complete walk: one that reached the end of the page and
+// read the three buttons one after the other, each exactly as expected,
+// and then "Changes: 0". An empty or partial walk is a failed try, and a
+// button read in any other words fails the test at once, in whichever try.
 test('voiceover reads control-html', async ({ page, voiceOver, browserName }) => {
   await page.goto('about:blank');
   await page.setContent(`<main>
@@ -106,16 +108,20 @@ test('voiceover reads control-html', async ({ page, voiceOver, browserName }) =>
     Italic: 'Italic selected toggle button',
     Underline: 'Underline current item button',
   };
-  const heard = new Set();
-  for (let walk = 1; walk <= 3 && heard.size < 3; walk++) {
-    const { stops } = await walkToEnd(page, voiceOver, browserName, 40);
-    console.log(`C02VO ${browserName} control-html-walk-${walk} | ${stops.join(' / ')}`);
+  const phrases = Object.values(expected);
+  let complete = false;
+  for (let walk = 1; walk <= 3 && !complete; walk++) {
+    const { stops, reachedEnd } = await walkToEnd(page, voiceOver, browserName, 40);
+    console.log(`C02VO ${browserName} control-html-walk-${walk} | ${stops.join(' / ') || '(nothing)'}`);
     for (const [name, phrase] of Object.entries(expected)) {
       const read = stops.filter((s) => s.startsWith(`${name} `));
       // Whenever a button is read, it is read as expected.
       expect(read.every((s) => s === phrase), `${name} in walk ${walk}: ${read}`).toBe(true);
-      if (read.length) heard.add(name);
     }
+    const at = phrases.map((phrase) => stops.indexOf(phrase));
+    complete = reachedEnd &&
+      at.every((i, n) => i >= 0 && (n === 0 || i === at[n - 1] + 1)) &&
+      stops[at[at.length - 1] + 1] === 'Changes: 0';
   }
-  expect([...heard].sort(), 'control-html: every button was read in some walk').toEqual(['Bold', 'Italic', 'Underline']);
+  expect(complete, 'control-html: a walk read the three buttons in order, then the count').toBe(true);
 });

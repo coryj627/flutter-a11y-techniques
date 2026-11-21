@@ -140,8 +140,10 @@ Native, for comparison:
   the exact list from the second run, and the walk was not steady on this
   page: in some attempts it never reached the heading, and in others it
   went past the Bold button without reading it, in both browsers. The
-  test now walks the page up to three times and requires each button to
-  be read, every time it is read, with the same words.
+  test now walks the page up to three times, logs every try, and passes
+  only on a complete walk: the three buttons read one after the other,
+  each in the expected words, then "Changes: 0", and the end reached. A
+  button read in other words in any try fails it.
   The first run's attempt at it
   failed before reading anything: it replaced the content of the Flutter
   page, and Flutter's view stayed over it and took the click that starts
