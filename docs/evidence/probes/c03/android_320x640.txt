@@ -1,19 +1,19 @@
 during the run: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
 > Task :app:connectedDebugAndroidTest
-BUILD SUCCESSFUL in 2m 15s
+BUILD SUCCESSFUL in 2m 28s
 after reset: Physical size: 1080x2424  Physical density: 420 
-<testsuites tests="13" failures="0" errors="0" skipped="1" time="125.293" timestamp="2026-11-21T07:10:29" hostname="localhost">
-<testcase name="badVagueTextIsNamedReadMore" time="4.897"
-<testcase name="goodLinksAreFollowedOnceByTheClickAction" time="18.912"
-<testcase name="badLabelOnImageLeavesTheLinkUnnamed" time="2.238"
-<testcase name="badCupertinoButtonIsAButton" time="2.722"
-<testcase name="goodLinksAreReachedByTabAndFollowedByEnter" time="25.093"
-<testcase name="badTapHandlerHasNoAddressAndNoKeyboardFocus" time="6.202"
-<testcase name="badAppAlsoFollowsIsFollowedOnceOffTheWeb" time="5.041"
-<testcase name="badNoAddressIsAButton" time="2.19"
-<testcase name="goodLinksAreNamedNodesWithTheirAddressAndNoButtonClass" time="13.623"
-<testcase name="badImageNoNameHasNoNameAndNoAddress" time="3.606"
-<testcase name="goodLinksAreFollowedOnceByATap" time="19.313"
-<testcase name="talkBackWalk" time="0.002"
+<testsuites tests="13" failures="0" errors="0" skipped="1" time="138.577" timestamp="2026-11-21T10:00:56" hostname="localhost">
+<testcase name="badVagueTextIsNamedReadMore" time="5.037"
+<testcase name="goodLinksAreFollowedOnceByTheClickAction" time="21.413"
+<testcase name="badLabelOnImageLeavesTheLinkUnnamed" time="2.08"
+<testcase name="badCupertinoButtonIsAButton" time="4.202"
+<testcase name="goodLinksAreReachedByTabAndFollowedByEnter" time="28.017"
+<testcase name="badTapHandlerHasNoAddressAndNoKeyboardFocus" time="6.358"
+<testcase name="badAppAlsoFollowsIsFollowedOnceOffTheWeb" time="5.898"
+<testcase name="badNoAddressIsAButton" time="2.052"
+<testcase name="goodLinksAreNamedNodesWithTheirAddressAndNoButtonClass" time="16.785"
+<testcase name="badImageNoNameHasNoNameAndNoAddress" time="4.155"
+<testcase name="goodLinksAreFollowedOnceByATap" time="21.268"
+<testcase name="talkBackWalk" time="0.001"
 <skipped
-<testcase name="badTapHandlerPageIsOpenedByNoKey" time="7.492"
+<testcase name="badTapHandlerPageIsOpenedByNoKey" time="7.37"
