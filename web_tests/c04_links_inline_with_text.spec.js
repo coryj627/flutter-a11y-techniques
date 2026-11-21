@@ -289,6 +289,7 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
   const screen = (...content) => [...own, EXAMPLE_HEADING, ...content];
   const cases = [
     ['a correct walk', screen(...expected), true, 'complete'],
+    // A stop read in other words, or out of its place: wrong at once.
     ['a link with no role', screen('Read about', 'links in text', 'and', 'link stand-alone links', 'first.'), true, 'wrong'],
     ['the sentence without its links, then the links', screen('Read about and first. group', 'link links in text', 'link stand-alone links'), true, 'wrong'],
     ['one link for the whole sentence', screen('link Read about links in text and stand-alone links first.'), true, 'wrong'],
@@ -296,29 +297,32 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['the links swapped', screen('Read about', 'link stand-alone links', 'and', 'link links in text', 'first.'), true, 'wrong'],
     ['a stop read twice', screen('Read about', 'link links in text', 'link links in text', 'and', 'link stand-alone links', 'first.'), true, 'wrong'],
     ['a stop after the sentence', screen(...expected, 'end of main'), true, 'wrong'],
-    ['a wrong reading in a truncated walk', screen('Read about', 'links in text'), false, 'wrong'],
-    ['an empty walk', [], false, 'incomplete'],
-    ['a truncated walk', screen('Read about', 'link links in text'), false, 'incomplete'],
-    ['a walk that went past a stop without reading it', screen('Read about', 'and', 'link stand-alone links', 'first.'), true, 'incomplete'],
-    ['a headingless walk with a wrong reading', [...own, 'links in text'], false, 'wrong'],
-    ['a headingless walk with an empty reading', [...own, ''], false, 'wrong'],
-    ['a headingless walk with a stop that is not the screen\'s', ['Back button'], false, 'wrong'],
-    ['a headingless walk with a screen stop out of its place', [own[0], 'Read about', own[1]], false, 'wrong'],
-    ['a headingless walk of the screen\'s own stops only', [...own], false, 'incomplete'],
-    ['a headingless walk with right readings', [...own, ...expected], true, 'incomplete'],
-    ['a headingless walk with a right reading only', ['Read about'], false, 'incomplete'],
-    ['a wrong reading before the heading', ['link links in text', EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['a wrong reading in a walk cut short', screen('Read about', 'links in text'), false, 'wrong'],
+    // A walk that reached the end with an expected stop not read: wrong,
+    // not a short capture to be walked again (Codex round 1, finding 1).
+    ['a walk that reached the end without the first link', screen('Read about', 'and', 'link stand-alone links', 'first.'), true, 'wrong'],
+    ['a walk that reached the end without the last words', screen('Read about', 'link links in text', 'and', 'link stand-alone links'), true, 'wrong'],
+    ['a walk that skipped the first link and was cut short', screen('Read about', 'and'), false, 'wrong'],
+    ['a walk with no title', [own[1], EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['a walk with no title and no description', [EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['a walk with no description', [own[0], EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['a walk with no heading', [...own, ...expected], true, 'wrong'],
+    ['a walk of the sentence alone', [...expected], true, 'wrong'],
+    ['a walk that reached the end having read nothing', [], true, 'wrong'],
+    ['a walk that reached the end after the screen\'s own stops', [...own], true, 'wrong'],
     ['the screen\'s own stops out of their order', [own[1], own[0], EXAMPLE_HEADING, ...expected], true, 'wrong'],
-    // WebKit read the screen's level 1 heading as an empty phrase in C02
-    // (its review round 4): allowed as the first stop only, in a walk that
-    // read the "Example" heading.
-    ['an empty first stop for the title', ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'complete'],
-    ['an empty first stop and no heading', ['', ...own.slice(1), ...expected], true, 'wrong'],
+    ['a stop that is not the screen\'s before the heading', ['Back button', ...own, EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    // No exception for an empty first stop in C04 (no C04 walk has shown it).
+    ['an empty first stop for the title', ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['an empty first stop alone', [''], false, 'wrong'],
-    ['an empty stop after the title', [own[0], '', EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['an empty stop just before the heading', [...own, '', EXAMPLE_HEADING, ...expected], true, 'wrong'],
-    ['two empty stops before the heading', ['', '', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'wrong'],
-    ['an empty first stop and the title read as well', ['', ...own, EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    // Cut short before the end, with every stop right so far: may be walked
+    // again.
+    ['an empty walk cut short', [], false, 'incomplete'],
+    ['a walk cut short after the title', [own[0]], false, 'incomplete'],
+    ['a walk cut short after the heading', [...own, EXAMPLE_HEADING], false, 'incomplete'],
+    ['a walk cut short after the first link', screen('Read about', 'link links in text'), false, 'incomplete'],
+    ['every stop read, but the end not reached', screen(...expected), false, 'incomplete'],
   ];
   for (const [what, stops, reachedEnd, verdict] of cases) {
     test(`${what}: ${verdict}`, () => {
@@ -336,33 +340,39 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     return { walkOnce: async () => list[i++], made: () => i };
   };
   const right = { stops: screen(...expected), reachedEnd: true };
-  const wrong = { stops: screen('Read about', 'links in text'), reachedEnd: true };
   const short = { stops: screen('Read about'), reachedEnd: false };
 
-  test('a wrong walk followed by a right one fails, and no second walk is made', async () => {
-    const { walkOnce, made } = sequence(wrong, right);
+  for (const [what, walk] of [
+    ['a wrong reading', { stops: screen('Read about', 'links in text'), reachedEnd: true }],
+    ['a walk that reached the end without the first link', { stops: screen('Read about', 'and', 'link stand-alone links', 'first.'), reachedEnd: true }],
+    ['a walk with no title', { stops: [own[1], EXAMPLE_HEADING, ...expected], reachedEnd: true }],
+    ['a walk with no heading', { stops: [...own, ...expected], reachedEnd: true }],
+  ]) {
+    test(`${what} followed by a right walk fails, and no second walk is made`, async () => {
+      const { walkOnce, made } = sequence(walk, right);
+      expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+      expect(made()).toBe(1);
+    });
+  }
+
+  test('a wrong walk after a short one still fails, and no third walk is made', async () => {
+    const { walkOnce, made } = sequence(short, { stops: screen('Read about', 'and', 'link stand-alone links', 'first.'), reachedEnd: true }, right);
     expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
-    expect(made()).toBe(1);
+    expect(made()).toBe(2);
   });
 
-  test('a wrong headingless walk followed by a right one fails, and no second walk is made', async () => {
-    const { walkOnce, made } = sequence({ stops: [...own, 'links in text'], reachedEnd: true }, right);
-    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
-    expect(made()).toBe(1);
-  });
-
-  test('an empty walk followed by a right one passes on the second', async () => {
+  test('an empty walk cut short, followed by a right one, passes on the second', async () => {
     const { walkOnce } = sequence({ stops: [], reachedEnd: false }, right);
     expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'complete', walks: 2 });
   });
 
-  test('an incomplete walk followed by a right one passes on the second', async () => {
+  test('a walk cut short followed by a right one passes on the second', async () => {
     const { walkOnce, made } = sequence(short, right);
     expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'complete', walks: 2 });
     expect(made()).toBe(2);
   });
 
-  test('three incomplete walks fail', async () => {
+  test('three walks cut short fail', async () => {
     const { walkOnce } = sequence(short, short, short, right);
     expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'incomplete', walks: 3 });
   });

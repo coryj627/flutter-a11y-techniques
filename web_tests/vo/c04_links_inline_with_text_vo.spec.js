@@ -6,10 +6,13 @@
 // No test in this file is retried by the runner. The shared config retries
 // a failed test twice, and a retry that passes makes the run pass, so a wrong
 // reading on the first attempt would be hidden. Each test retries instead,
-// itself, only a capture that fell short (runWalks in c04_vo_walks.js): a
-// walk with a wrong reading fails the test for good, every stop of every
-// walk is judged, before the "Example" heading as well as after it, and
-// every try is logged, so every attempt is in the transcript.
+// itself, only a walk cut short before the end of the screen with every stop
+// right so far (runWalks and judgeExampleWalk in c04_vo_walks.js). Every
+// walk must read the whole screen, the title and the description, the
+// "Example" heading, and every expected stop after it, each in its place:
+// a wrong stop, or a walk that reached the end with any expected stop not
+// read, fails the test for good, and every try is logged, so every attempt
+// is in the transcript.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { walkToEnd } from './vo_helpers.js';

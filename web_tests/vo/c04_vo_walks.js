@@ -47,95 +47,52 @@ export const screenStops = (slug) => {
 };
 
 /**
- * Whether `content` is made only of readings in `expected`, each at most
- * once and in the order of `expected`. Returns the first stop that breaks
- * that, or undefined.
- */
-function outOfPlace(content, expected) {
-  let at = -1;
-  for (const stop of content) {
-    const next = expected.indexOf(stop, at + 1);
-    if (next < 0) return stop;
-    at = next;
-  }
-  return undefined;
-}
-
-/**
  * Judges one walk of an example screen: `stops` in order, whether the walk
- * reached the end, `expected`, everything VoiceOver must say after the
- * "Example" heading to the end of the screen, in order, and `screen`, the
- * stops known to come before the heading (screenStops). Returns
- * `{ verdict, reason }`, the verdict one of:
+ * reached the end of the screen (two moves in a row that changed nothing),
+ * `expected`, everything VoiceOver must say after the "Example" heading to
+ * the end of the screen, in order, and `screen`, the stops the screen has
+ * before the heading (screenStops). The walk must read the whole screen:
+ * `screen`, then the heading, then `expected`, every stop in its place and
+ * nothing else. Returns `{ verdict, reason }`, the verdict one of:
  *
- * - "wrong": a stop that cannot be explained. The example's part of the
- *   walk is everything after the heading; in a walk that did not read the
- *   heading, everything after the run of `screen` stops it began with.
- *   Every stop there must be in `expected`, each at most once and in its
- *   order: anything else (an empty phrase, a stop read in other words, one
- *   of the screen's own stops out of its place) fails the test whichever
- *   try it is in. Before the heading, in a walk that read it, only the
- *   screen's own stops may stand, each at most once and in their order; the
- *   one exception is an empty phrase as the first stop, in the place of the
- *   screen's level 1 heading, which WebKit was seen to read so in C02, and
- *   only in a walk that read the "Example" heading. A walk that did not
- *   read the heading is judged after the run of the screen's own stops it
- *   began with, and an empty stop there is "wrong" (fail closed).
- * - "complete": the heading was read, the end was reached, and the stops
- *   after the heading are exactly `expected`.
- * - "incomplete": a walk that fell short with nothing unexplained in it: an
- *   empty walk, one that read only the screen's own stops, or one whose
- *   example part is some of `expected`, in order, without the heading or
- *   without reaching the end. The walk may be tried again.
+ * - "wrong": a stop that is not the one expected in its place (a stop read
+ *   in other words, an empty phrase, a stop skipped so that a later one
+ *   comes early, a stop after the last expected one), or a walk that
+ *   reached the end of the screen with any expected stop not read, the
+ *   title, the description, the heading, or a link included. This fails the
+ *   test whichever try it is in.
+ * - "complete": the walk reached the end and read exactly the whole screen.
+ * - "incomplete": a walk cut short before the end (it ran out of moves)
+ *   with nothing wrong so far: every stop it read is the expected one in
+ *   its place. Only such a walk may be walked again.
+ *
+ * There is no exception for an empty first stop. C02 measured WebKit
+ * reading a screen's level 1 heading as an empty phrase and allows it; no
+ * C04 walk has shown it (docs/evidence/C04/voiceover-web.md: every walk
+ * complete on its first try), so here it is a wrong stop like any other.
  */
 export function judgeExampleWalk(stops, reachedEnd, expected, screen = []) {
-  if (stops.length === 0) return { verdict: 'incomplete', reason: 'nothing was read' };
-  const heading = stops.indexOf(EXAMPLE_HEADING);
-  let from = heading + 1;
-  if (heading < 0) {
-    from = 0;
-    let at = -1;
-    while (from < stops.length && screen.indexOf(stops[from], at + 1) > at) {
-      at = screen.indexOf(stops[from], at + 1);
-      from++;
+  const whole = [...screen, EXAMPLE_HEADING, ...expected];
+  for (let i = 0; i < stops.length; i++) {
+    if (i >= whole.length) {
+      return { verdict: 'wrong', reason: `"${stops[i]}" was read after the last expected stop` };
     }
-  } else {
-    // Before the heading, only the screen's own stops, in their order. The
-    // first of them, the screen's level 1 heading, may be read as an empty
-    // phrase: WebKit did so on three C02 screens in one run (C02's review
-    // round 4, docs/evidence/probes/c02/voiceover-web-round4-fail.md.txt),
-    // for a reason not known. Only as the first stop, in that heading's
-    // place, and only in a walk that read the "Example" heading; in a walk
-    // that did not read it, an empty stop is "wrong".
-    let lead = stops.slice(0, heading);
-    let own = screen;
-    if (lead[0] === '') {
-      lead = lead.slice(1);
-      own = screen.slice(1);
-    }
-    const odd = outOfPlace(lead, own);
-    if (odd !== undefined) {
-      return { verdict: 'wrong', reason: `"${odd}" before the heading is not one of the screen's own stops in its place` };
+    if (stops[i] !== whole[i]) {
+      return { verdict: 'wrong', reason: `stop ${i + 1} was "${stops[i]}" where "${whole[i]}" was expected` };
     }
   }
-  const content = stops.slice(from);
-  const stray = outOfPlace(content, expected);
-  if (stray !== undefined) {
-    return { verdict: 'wrong', reason: `"${stray}" is not the next expected reading` };
+  if (stops.length === whole.length) {
+    return reachedEnd
+      ? { verdict: 'complete', reason: 'the whole screen, every stop in its place' }
+      : { verdict: 'incomplete', reason: 'every expected stop was read, but the walk did not reach the end' };
   }
-  if (heading < 0) {
+  if (reachedEnd) {
     return {
-      verdict: 'incomplete',
-      reason: content.length
-        ? 'the walk did not read the "Example" heading; what it read after the screen\'s own stops is right so far'
-        : 'the walk read only the screen\'s own stops',
+      verdict: 'wrong',
+      reason: `the walk reached the end after ${stops.length} of the ${whole.length} expected stops; "${whole[stops.length]}" was never read`,
     };
   }
-  if (reachedEnd && content.length === expected.length) {
-    return { verdict: 'complete', reason: 'every expected stop, in order' };
-  }
-  if (!reachedEnd) return { verdict: 'incomplete', reason: 'the walk did not reach the end' };
-  return { verdict: 'incomplete', reason: `read ${content.length} of the ${expected.length} expected stops` };
+  return { verdict: 'incomplete', reason: `the walk was cut short after ${stops.length} of the ${whole.length} expected stops, all right so far` };
 }
 
 /**

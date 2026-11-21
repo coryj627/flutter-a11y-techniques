@@ -183,6 +183,31 @@ said "first." each time. `ProbeC04VOUITests.swift.txt`, run by
   nothing is claimed from it; the C04 test records the same step without
   asserting it.
 
+### Round 3, after Codex round 1
+
+Codex asked that VoiceOver's activation be made at an inert place, away
+from both links, so that it cannot be a tap on the link. The iOS VoiceOver
+suite was run with that change (`voiceover-ios-inert-double-tap-fail.md.txt`,
+the tool's transcript of the run, kept here and not as the C04 transcript):
+the walks were as before, and with the cursor moved forward to each link,
+a double tap at the inert place opened nothing, in all six cases.
+`ProbeC04InertUITests.swift.txt`, run by `ios_probe3.sh.txt`
+(`ios_round3.txt`), looked at why, on `good-material`:
+
+- No element is at the inert place, (201, 786.6).
+- With the cursor on the app's Back button, where enabling VoiceOver puts
+  it, a double tap at the inert place did not go Back: the example stayed
+  on screen. Nor with the cursor on the title, or on either link.
+- `XCUIElement.doubleTap()` on the Back button, with the cursor on the
+  title, did go Back; and a double tap at the second link's place, with
+  the cursor on "Read about", opened the second link's page.
+
+So, as measured, XCUITest's double tap with VoiceOver on acts on what is
+under it and does not activate what VoiceOver's cursor is on, for a Flutter
+button as for a Flutter link. Whether VoiceOver's own double tap, made by
+a person, activates the links was not measured. Nothing is concluded about
+Flutter from this.
+
 ## C04's Android suite at CI's size
 
 After the examples were built, C04's Android tree tests ran once at the CI

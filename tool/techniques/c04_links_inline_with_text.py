@@ -59,13 +59,15 @@ VOICEOVER_IOS_METHOD = (
     "`XCUIVoiceOverService.moveForward()` from the top of the screen to its "
     "end, where moving on gives the last utterance again, twice; what is shown "
     "is everything after the \"Example\" heading, and a walk that does not "
-    "reach the end fails. Then, for each link of each good example, the cursor "
-    "is moved forward to the link, what VoiceOver says there is read, and a "
-    "double tap on the link with VoiceOver on is checked to open the link's "
-    "page (`double-tap-` rows); for good-material, a tap at each link's centre "
+    "reach the end fails. Then, for each link of each good example, in one "
+    "launch: the cursor is moved forward to the first words and a double tap "
+    "at an inert place below the example is checked to open nothing; then the "
+    "cursor is moved forward to the link, what VoiceOver says there is read, "
+    "and the same double tap is checked to open the link's page "
+    "(`double-tap-` rows); for good-material, a tap at each link's centre "
     "with VoiceOver on and what the cursor lands on (`touch-` rows, FL-246); "
-    "and for bad-merged, what a double tap on the sentence opened, recorded and "
-    "not checked",
+    "and for bad-merged, what the double tap at the inert place opened with the "
+    "cursor on the sentence, recorded and not checked",
     "Spoken, in swipe order",
 )
 
@@ -75,9 +77,11 @@ VOICEOVER_WEB_METHOD = (
     "VoiceOver's last phrase and the position of its cursor are read over "
     "AppleScript after every move: a move that changes the position, or that "
     "speaks a different phrase, is a stop; two moves in a row that do neither are "
-    "the end. Every stop of every walk is judged (web_tests/vo/c04_vo_walks.js): "
-    "before the \"Example\" heading only the screen's own title and lines, after "
-    "it exactly the expected list; a wrong stop fails the test for good, and only "
-    "a walk that fell short with nothing wrong in it is walked again, up to three "
-    "walks, each shown as its own row (`-walk-<n>`). No runner retries"
+    "the end. Every walk must read the whole screen, each stop in its place "
+    "(web_tests/vo/c04_vo_walks.js): the title and the description, the "
+    "\"Example\" heading, and the expected list after it. A wrong stop, or a walk "
+    "that reached the end with any expected stop not read, fails the test for "
+    "good; only a walk cut short before the end with every stop right so far is "
+    "walked again, up to three walks, each shown as its own row (`-walk-<n>`). "
+    "No runner retries"
 )

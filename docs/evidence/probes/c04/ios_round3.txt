@@ -1,0 +1,16 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+Test Case '-[RunnerUITests.ProbeC04InertUITests testInertDoubleTap]' started.
+C04PROBE3 inert point (201.0, 786.6); elements there: []
+C04PROBE3 1. cursor after enable: "Flutter A11Y Techniques Back Button"; first move: "Material links in a sentence Heading"; now on "Material links in a sentence Heading"
+C04PROBE3 1. heading: double tap at the inert place: the example is still on screen
+C04PROBE3 1b. cursor after enable: "Flutter A11Y Techniques Back Button"
+C04PROBE3 1b. Back: double tap at the inert place: the example is still on screen
+C04PROBE3 2. cursor on "Material links in a sentence Heading"
+C04PROBE3 2. Back: XCUIElement.doubleTap() on it: the example left the screen
+C04PROBE3 3. moved to "links in text Link"; current "links in text Link"
+C04PROBE3 3. links in text Link: double tap at the inert place: the example is still on screen
+C04PROBE3 3. moved to "stand-alone links Link"; current "stand-alone links Link"
+C04PROBE3 3. stand-alone links Link: double tap at the inert place: the example is still on screen
+C04PROBE3 4. moved to "Read about"
+C04PROBE3 4. double tap on the second link's place, cursor on the words: Stand-alone link opened
+Test Case '-[RunnerUITests.ProbeC04InertUITests testInertDoubleTap]' passed (115.467 seconds).

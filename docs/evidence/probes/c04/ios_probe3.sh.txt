@@ -1,0 +1,12 @@
+#!/bin/sh
+# C04 probe round 3 on iOS, under tool/with_devices.py (kept as
+# docs/evidence/probes/c04/ios_probe3.sh.txt), against the app's own build
+# after `xcodebuild build-for-testing` into build/ios_uitest.
+xcrun simctl list devices booted | grep -i "iphone"
+cd ios || exit 1
+xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+  -destination "platform=iOS Simulator,name=iPhone 17" \
+  -only-testing:"RunnerUITests/ProbeC04InertUITests/testInertDoubleTap" \
+  -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "C04PROBE3|error:|Test Case" | grep -v "Test Suite"
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0
