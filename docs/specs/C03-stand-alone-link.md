@@ -34,13 +34,14 @@ for a Flutter link; see section 7 and [FL-220](../flutter-limitations.md#fl-220)
 
 A stand-alone link here has no programmatic context: nothing in the same
 sentence, paragraph, list item, or table cell, and no heading but the
-screen's "Example". So for 2.4.4 its name must say where it goes by itself.
+screen's "Example". So its name must say where it goes by itself; what
+2.4.4 makes of a name that does not is under the verdict table in section 5.
 
 ## 4. Source requirements
 
 | # | Requirement | Source |
 | --- | --- | --- |
-| R1 | The link's text says where it goes; "click here" and "read more" do not | [iOS Links](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Links.md) ("unique and specific label text"), [Android Compose Stand-alone Links](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/components/StandAloneLinks.md) ("Link text must convey its purpose"), [MDN `a`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a) (link text), [WCAG failure F84](https://www.w3.org/WAI/WCAG22/Techniques/failures/F84) |
+| R1 | The link's text says where it goes; "click here" and "read more" do not | [iOS Links](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/Links.md) ("unique and specific label text"), [Android Compose Stand-alone Links](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/components/StandAloneLinks.md) ("Link text must convey its purpose"), [MDN `a`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a) (link text), [WCAG failure F84](https://www.w3.org/WAI/WCAG22/Techniques/failures/F84) (a failure of 2.4.9, the level AAA criterion, for a non-specific link whose purpose the text around it gives) |
 | R2 | The element has the link role, from a native link element where there is one | [APG Link](https://www.w3.org/WAI/ARIA/apg/patterns/link/) ("strongly encouraged to use a native host language link element"), MDN `a` (an `a` without `href` has the generic role) |
 | R3 | A link is not also a button | iOS Links (remove the button trait, or VoiceOver says "Button, Link") |
 | R4 | Where the platform has no link role, say what the link does in another way | Android Compose Stand-alone Links (Android has no link role; the click label, such as "open in browser", or the icon's description carries it) |
@@ -130,13 +131,27 @@ What each fails, by platform, as the criteria are written:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `bad-vague-text` | 2.4.4 (F84) | 2.4.4 (F84) | 2.4.4 (F84) |
+| `bad-vague-text` | none shown: poor practice (R1), under the exception that 2.4.4 and 2.4.9 share | same | same |
 | `bad-tap-handler` | 2.1.1: Tab never reaches it, and no key opens its page, which nothing else opens. 4.1.2 not settled: Android has no link role, and TalkBack says none for the good links either | 2.1.1: no key opened its page (one Tab, then Enter or Space). 4.1.2: static text, no role for a control | 2.1.1: Tab never reaches it, and no key opens its page. 4.1.2: a button, a role that does not say it is a link ([FL-006](../flutter-limitations.md#fl-006)) |
 | `bad-no-address` | 4.1.2 not settled: a button, which is the stand-in the Android Compose reference itself uses where Android has no link role | none: a link | none in Chromium and WebKit, where VoiceOver says "link"; HTML gives an `a` with no `href` no role, and other browsers were not measured |
 | `bad-image-no-name` | 1.1.1, 2.4.4, 4.1.2 (F89): no name, read as "Button" | 1.1.1, 2.4.4, 4.1.2 (F89): "Link Image" | 1.1.1, 2.4.4, 4.1.2 (F89): VoiceOver reads the address in place of a name |
 | `bad-label-on-image` | 2.4.4, 4.1.2: the link has no name ([FL-030](../flutter-limitations.md#fl-030)) | 2.4.4, 4.1.2: "Link", with no name | none: the browser names the link from the picture |
 | `bad-cupertino-button` | 4.1.2 not settled: a button, as for `bad-no-address` ([FL-221](../flutter-limitations.md#fl-221)) | 4.1.2 not settled: VoiceOver says "Button" and "Link"; the criterion does not say whether two roles identify the control | none: a link only |
 | `bad-app-also-follows` | none: works as the good links do | none: works as the good links do | 2.1.1 not shown: Enter does not follow it, but the page it goes to, the technique's page, is reached by keyboard through Back ([FL-013](../flutter-limitations.md#fl-013)) |
+
+`bad-vague-text` is not claimed as a failure of any criterion. 2.4.4 and
+2.4.9 Link Purpose (Link Only) both except a link whose purpose is "ambiguous
+to users in general", which WCAG defines as a purpose that cannot be
+determined from the link and all the information presented with it, and the
+example shows nothing with its link that says where "Read more" goes. So
+nobody is worse off than anybody else, and neither criterion as written is
+shown to fail. It is kept as poor practice: every source in R1 asks for a
+name that says where the link goes.
+[F84](https://www.w3.org/WAI/WCAG22/Techniques/failures/F84), a failure of
+2.4.9, is about a non-specific link whose purpose the text around it gives,
+and [F63](https://www.w3.org/WAI/WCAG22/Techniques/failures/F63), a failure
+of 2.4.4, is about context that is visible but not related to the link in the
+accessibility tree; no example here builds either.
 
 "Not settled" means the evidence and the criterion as written do not decide
 it either way; nothing is claimed.
