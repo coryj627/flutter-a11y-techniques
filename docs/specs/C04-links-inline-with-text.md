@@ -262,10 +262,21 @@ with a native comparison on Android.
 - **Merging a sentence loses its second link**
   ([FL-243](../flutter-limitations.md#fl-243), new; `bad-merged`). One
   node, the whole sentence, the first link's address and action, on all
-  three platforms. On the web every click on the sentence and Enter after
-  either Tab follow the first link; off the web a tap on the second link's
+  three platforms. On the web a click on either link's words or on the
+  first words, and Enter after two Tabs or three, follow the first link; off the web a tap on the second link's
   words still opens it (Flutter's hit test is not merged), so the defect
   there is the screen reader's.
+- **VoiceOver on the web read every example as expected, in Chromium and
+  WebKit, on the first walk** (`docs/evidence/C04/voiceover-web.md`, 14
+  walks). The good sentences: "Read about", "link links in text", "and",
+  "link stand-alone links", "first.". `bad-text-span`: "Read about", "link
+  links in text", "first.", one link, as its sentence has one, and read as
+  a link though its `<a>` has no `href` (as C03's `bad-no-address`); its
+  defect on the web is the keyboard. `bad-out-of-order`: "Read about and
+  first. group", "link links in text", "link stand-alone links", "end of
+  Read about and first. group". `bad-merged`: one stop, "link Read about
+  links in text and stand-alone links first.". `bad-colour-only` reads as
+  the good ones; its defect is in what is drawn.
 - **On iOS a VoiceOver touch on a link can find the words instead**
   ([FL-246](../flutter-limitations.md#fl-246), new). On the iPhone 17
   screen the good sentences take two lines, and the last run, " first.",

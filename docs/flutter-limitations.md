@@ -2844,7 +2844,10 @@ yet), **Fixed in x.y** (verified on that version).
     `android.widget.Button`, which TalkBack reads "… / Button / Double-tap
     to activate" (probe `android-talkback.md`), and on the web an `<a>` with
     no `href` and no `tabindex`, which Chromium's own tree calls a link and
-    Playwright's role check does not.
+    Playwright's role check does not. VoiceOver on the web reads it "link
+    links in text" in Chromium and WebKit, in its place between "Read
+    about" and "first." (`docs/evidence/C04/voiceover-web.md`), so on the
+    web the missing address is not heard; the keyboard is the defect.
   - `SelectableText.rich` gives its spans the same nodes on Android and
     iOS (r07), with the same keyboard result; on the web see
     [FL-245](#fl-245).
@@ -2954,10 +2957,13 @@ yet), **Fixed in x.y** (verified on that version).
   - iOS: one link named by the sentence (probe `ios.txt`); VoiceOver reads
     it as one stop. What VoiceOver's double tap on it does is not claimed:
     the C04 test records it without asserting it.
-  - Web: one `<a href>` with the first link's address. A click anywhere on
-    the sentence, on the second link's words too, and Enter, follow the
-    first link (`web_merged.txt`); Tab stops on the one element twice, as
-    the two links' focus nodes are still there.
+  - Web: one `<a href>` with the first link's address. A click on the
+    first link's words, on the second link's, and on the first words, and
+    Enter after two Tabs and after three, follow the first link
+    (`web_merged.txt`, and C04's web tree tests); Tab stops on the one element twice, as
+    the two links' focus nodes are still there. VoiceOver reads one stop,
+    "link Read about links in text and stand-alone links first.", in
+    Chromium and WebKit (`docs/evidence/C04/voiceover-web.md`).
   - Touch, off the web, still reaches each link: Flutter's own hit test is
     not merged.
 - WCAG: 4.1.2 Name, Role, Value: the second link is a control with no name
@@ -3395,8 +3401,12 @@ yet), **Fixed in x.y** (verified on that version).
     node is "Read about \n and \n first." holding the links: on Android
     its `View` with the two links as children, on the web a `group` with
     that `aria-label` holding the two `<a href>`, on iOS an element with
-    that label and the two links after it (`ios.txt`). WCAG 1.3.2
-    Meaningful Sequence, claimed for `bad-out-of-order` on all three.
+    that label and the two links after it (`ios.txt`). VoiceOver on the
+    web reads "Read about and first. group", "link links in text", "link
+    stand-alone links", "end of Read about and first. group" in Chromium and
+    WebKit, as in V13's first build (`docs/evidence/C04/voiceover-web.md`).
+    WCAG 1.3.2 Meaningful Sequence, claimed for `bad-out-of-order` on all
+    three.
   - The workaround's links are boxes in the line and cannot break across
     lines ([FL-244](#fl-244)), and their text is scaled twice unless told
     not to be ([FL-241](#fl-241)).
