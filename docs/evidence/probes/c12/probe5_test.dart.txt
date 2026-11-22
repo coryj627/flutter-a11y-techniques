@@ -1,0 +1,87 @@
+// C12 probe, fifth part (throwaway; kept as
+// docs/evidence/probes/c12/probe5_test.dart.txt, output in
+// flutter_test_overlap.txt): for each good example as committed in
+// 0fb10ae, the gap or overlap between the control and its shown tooltip,
+// below it (800 by 640, 100% text) and flipped above it (320 by 640, 200%
+// text); then, with the pointer in the overlapping strip if there is one,
+// else at the tooltip's edge nearest the control, Escape, and whether the
+// tooltip is drawn in each of the 30 frames after.
+import 'dart:ui' show PointerDeviceKind;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/techniques/c12_tooltip/c12_tooltip.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'support/examples.dart';
+
+final _open = exampleOpener(c12Tooltip);
+
+const _control = {
+  'good-material': 'c12-good-material-delete',
+  'good-cupertino': 'c12-good-cupertino-delete',
+  'good-description': 'c12-good-description-download',
+};
+
+Finder _box() => find
+    .byWidgetPredicate((w) => w.runtimeType.toString() == '_TooltipBox')
+    .first;
+
+bool _drawn(WidgetTester tester) {
+  final boxes = find.byWidgetPredicate(
+    (w) => w.runtimeType.toString() == '_TooltipBox',
+  );
+  if (boxes.evaluate().isEmpty) return false;
+  final fade = find.ancestor(
+    of: boxes.first,
+    matching: find.byType(FadeTransition),
+  );
+  return fade.evaluate().every(
+    (f) => (f.widget as FadeTransition).opacity.value > 0,
+  );
+}
+
+void main() {
+  for (final slug in _control.keys) {
+    for (final (width, scale) in [(800.0, 1.0), (320.0, 2.0)]) {
+      testWidgets('$slug ${width}x640 ${scale * 100}%', (tester) async {
+        tester.view.physicalSize = Size(width, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await _open(tester, slug, textScale: scale);
+        final control = tester.getRect(byId(_control[slug]!));
+        final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+        await mouse.addPointer(location: const Offset(1, 1));
+        addTearDown(mouse.removePointer);
+        await mouse.moveTo(control.center);
+        await tester.pumpAndSettle();
+        final box = tester.getRect(_box());
+        final below = box.top >= control.center.dy;
+        // Positive: a gap; negative: an overlap.
+        final gap = below ? box.top - control.bottom : control.top - box.bottom;
+        // The point: in the overlap if there is one, else on the tooltip's
+        // edge nearest the control; at the control's centre across.
+        final y = below
+            ? (gap < 0 ? (box.top + control.bottom) / 2 : box.top + 0.5)
+            : (gap < 0 ? (box.bottom + control.top) / 2 : box.bottom - 0.5);
+        final at = Offset(control.center.dx, y);
+        await mouse.moveTo(at);
+        await tester.pumpAndSettle();
+        final before = _drawn(tester);
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        final seen = <bool>[];
+        for (var i = 0; i < 30; i++) {
+          await tester.pump(const Duration(milliseconds: 16));
+          seen.add(_drawn(tester));
+        }
+        debugPrint(
+          'C12OVERLAP $slug ${width}x640 ${scale * 100}%: control $control, '
+          'tooltip $box, ${below ? 'below' : 'above'}, '
+          '${gap < 0 ? 'overlap ${(-gap).toStringAsFixed(1)}' : 'gap ${gap.toStringAsFixed(1)}'}; '
+          'pointer at $at, drawn before Escape: $before; after Escape, frame by frame: '
+          '${seen.map((d) => d ? 1 : 0).join()}; last: ${seen.last}',
+        );
+      });
+    }
+  }
+}

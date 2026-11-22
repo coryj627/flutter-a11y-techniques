@@ -1,0 +1,108 @@
+// C12 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c12/ProbeC12UITests.swift.txt): for each fixture of
+// lib/probe.dart, opened by URL: the XCUITest tree; the tree again 0.3 s,
+// 1.2 s and 2.5 s after a touch held 0.8 s on the control; one and two
+// Tabs and the tree after each; and a VoiceOver walk from the top.
+import XCTest
+
+final class ProbeC12UITests: XCTestCase {
+  let app = XCUIApplication()
+  let ids = (1...14).map { String(format: "t%02d", $0) }
+
+  func log(_ s: String) { print("C12PROBE \(s)") }
+
+  func tapsElement(_ id: String) -> XCUIElement { app.descendants(matching: .any)["\(id)-taps"] }
+
+  func open(_ id: String) {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///\(id)")!)
+      if tapsElement(id).waitForExistence(timeout: 30) { sleep(1); return }
+    }
+    XCTFail("\(id) did not open")
+  }
+
+  /// Every element of the fixture: its label has the id, or it is a button
+  /// other than Back, and it is not Before, the line under, or the taps.
+  func fixture(_ id: String) -> [XCUIElement] {
+    app.descendants(matching: .any).allElementsBoundByIndex.filter { e in
+      let t = e.elementType
+      if t == .window || t == .application { return false }
+      let l = e.label
+      let mine = l.contains(id) || (t == .button && l != "Back")
+      return mine && !l.hasPrefix("Before \(id)") && !l.hasPrefix("\(id) line") && !l.hasPrefix("\(id) taps")
+        && e.identifier != "\(id)-taps"
+    }
+  }
+
+  func dump(_ id: String, _ label: String) {
+    let els = fixture(id).map { e in
+      "type=\(e.elementType.rawValue) label=\(e.label.debugDescription) value=\(String(describing: e.value)) frame=\(e.frame)"
+    }
+    log("\(id) \(label): \(els.count) element(s): \(els.joined(separator: " | "))")
+  }
+
+  /// The control: the fixture's button, else its first element at its left.
+  func controlPoint(_ id: String) -> XCUICoordinate {
+    let els = fixture(id)
+    let base = app.coordinate(withNormalizedOffset: .zero)
+    if let b = els.last(where: { $0.elementType == .button }) {
+      let f = b.frame
+      return base.withOffset(CGVector(dx: f.midX, dy: f.midY))
+    }
+    let f = els.first!.frame
+    return base.withOffset(CGVector(dx: f.minX + 12, dy: f.midY))
+  }
+
+  func testTree() {
+    for id in ids {
+      open(id)
+      dump(id, "start")
+      let point = controlPoint(id)
+      point.press(forDuration: 0.8)
+      let t0 = Date()
+      for at in [0.3, 1.2, 2.5] {
+        let wait = at - Date().timeIntervalSince(t0)
+        if wait > 0 { usleep(UInt32(wait * 1_000_000)) }
+        dump(id, "\(at) s after a touch held 0.8 s")
+      }
+      log("\(id) taps after the touch: \(tapsElement(id).label)")
+    }
+  }
+
+  func testKeys() {
+    for id in ids {
+      open(id)
+      for tabs in 1...2 {
+        app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+        usleep(900_000)
+        dump(id, "after \(tabs) Tab(s)")
+      }
+    }
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    for id in ids {
+      open(id)
+      try vo.enable()
+      var walk: [String] = []
+      for _ in 0..<12 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix("\(id) taps") { break }
+      }
+      log("VO \(id) walk: \(walk.joined(separator: " / "))")
+      try vo.disable()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}

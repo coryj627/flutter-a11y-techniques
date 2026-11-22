@@ -1,0 +1,24 @@
+FilledButton dark focus=false hover=false: passes
+FilledButton dark focus=true hover=false: passes
+FilledButton dark focus=false hover=true: passes
+FilledButton dark focus=true hover=true: passes
+FilledButton light focus=false hover=false: passes
+FilledButton light focus=true hover=false: passes
+FilledButton light focus=false hover=true: passes
+FilledButton light focus=true hover=true: Expected contrast ratio of at least 4.5 but found 4.28 for a font size of 14.0.
+OutlinedButton dark focus=false hover=false: passes
+OutlinedButton dark focus=true hover=false: passes
+OutlinedButton dark focus=false hover=true: passes
+OutlinedButton dark focus=true hover=true: passes
+OutlinedButton light focus=false hover=false: passes
+OutlinedButton light focus=true hover=false: passes
+OutlinedButton light focus=false hover=true: passes
+OutlinedButton light focus=true hover=true: passes
+TextButton dark focus=false hover=false: passes
+TextButton dark focus=true hover=false: passes
+TextButton dark focus=false hover=true: passes
+TextButton dark focus=true hover=true: passes
+TextButton light focus=false hover=false: passes
+TextButton light focus=true hover=false: passes
+TextButton light focus=false hover=true: passes
+TextButton light focus=true hover=true: passes

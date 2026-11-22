@@ -1,0 +1,343 @@
+// C12 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c12/probe_test.dart.txt). Runs lib/probe.dart's
+// fixtures under `flutter test`, as Android, and prints C12TEST lines:
+// each fixture's semantics nodes, what a mouse hover, a move onto the
+// tooltip, ten seconds of hover, Escape, Tab, a long press, and a tap do to
+// whether the tooltip is shown, and the default tooltip's colours.
+import 'dart:math' as math;
+import 'dart:ui';
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void log(String s) => debugPrint('C12TEST $s'.replaceAll('\n', r'\n'));
+
+const messages = {
+  't01': 't01 Delete draft',
+  't02': 't02 Delete draft',
+  't03': 't03 Delete draft',
+  't04': 't04 Saves a PDF copy',
+  't05': 't05 Saves a PDF copy',
+  't06': 't06 Download',
+  't07': 't07 At least 8 characters',
+  't08': 't08 Delete draft',
+  't09': 't09 Delete draft',
+  't10': 't10 Delete draft',
+  't11': 't11 Saves a PDF copy',
+  't12': 't12 At least 8 characters',
+  't13': 't13 Delete draft',
+  't14': 't14 Delete draft',
+};
+
+/// Pumps frames 16 ms apart for [d], as a running app would draw them; one
+/// pump of the whole time would run the timers but not the animations they
+/// start.
+Future<void> frames(WidgetTester tester, Duration d) async {
+  final end = tester.binding.clock.now().add(d);
+  while (tester.binding.clock.now().isBefore(end)) {
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+}
+
+Future<void> open(WidgetTester tester, String id) async {
+  tester.view.physicalSize = const Size(800, 1200);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(Container());
+  await tester.pumpWidget(const ProbeApp());
+  final nav = tester.state<NavigatorState>(find.byType(Navigator));
+  nav.pushReplacementNamed('/$id');
+  await tester.pumpAndSettle();
+}
+
+/// The text of the tooltip in the overlay: a RichText whose text is the
+/// message and that is not inside the fixture's button (a FilledButton's
+/// own text can be the same, t06).
+Finder shownText(String id) => find.byWidgetPredicate(
+  (w) => w is RichText && w.text.toPlainText() == messages[id],
+);
+
+bool shown(WidgetTester tester, String id) {
+  for (final e in shownText(id).evaluate()) {
+    final inButton = find
+        .ancestor(
+          of: find.byWidget(e.widget),
+          matching: find.byType(FilledButton),
+        )
+        .evaluate()
+        .isNotEmpty;
+    if (!inButton) return true;
+  }
+  return false;
+}
+
+Rect tooltipBox(WidgetTester tester, String id) {
+  for (final e in shownText(id).evaluate()) {
+    final inButton = find
+        .ancestor(
+          of: find.byWidget(e.widget),
+          matching: find.byType(FilledButton),
+        )
+        .evaluate()
+        .isNotEmpty;
+    if (!inButton) {
+      final box = e.renderObject! as RenderBox;
+      return box.localToGlobal(Offset.zero) & box.size;
+    }
+  }
+  return Rect.zero;
+}
+
+Offset control(WidgetTester tester) => tester.getCenter(
+  find.byWidgetPredicate((w) => w is Tooltip || w is RawTooltip).first,
+);
+
+String nodes(WidgetTester tester) {
+  final out = <String>[];
+  void visit(SemanticsNode n, int depth) {
+    final d = n.getSemanticsData();
+    final interesting =
+        d.label.isNotEmpty ||
+        d.tooltip.isNotEmpty ||
+        d.hint.isNotEmpty ||
+        d.hasAction(SemanticsAction.tap);
+    if (interesting && !n.isMergedIntoParent) {
+      final flags = <String>[
+        if (d.flagsCollection.isButton) 'button',
+        if (d.flagsCollection.isFocused == Tristate.isTrue) 'focused',
+      ];
+      final actions = <String>[
+        if (d.hasAction(SemanticsAction.tap)) 'tap',
+        if (d.hasAction(SemanticsAction.longPress)) 'longPress',
+        if (d.hasAction(SemanticsAction.focus)) 'focus',
+        if (d.hasAction(SemanticsAction.dismiss)) 'dismiss',
+      ];
+      out.add(
+        '${'  ' * depth}#${n.id} label="${d.label}" tooltip="${d.tooltip}" hint="${d.hint}" '
+        'flags=$flags actions=$actions id="${d.identifier}" rect=${n.rect}',
+      );
+    }
+    n.visitChildren((c) {
+      visit(c, depth + 1);
+      return true;
+    });
+  }
+
+  visit(
+    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
+    0,
+  );
+  return out.join('\n');
+}
+
+double lum(Color c) {
+  double ch(double v) =>
+      v <= 0.03928 ? v / 12.92 : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+  return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+}
+
+double ratio(Color a, Color b) {
+  final la = lum(a), lb = lum(b);
+  final hi = la > lb ? la : lb, lo = la > lb ? lb : la;
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+Color over(Color top, Color bottom) => Color.from(
+  alpha: 1,
+  red: top.r * top.a + bottom.r * (1 - top.a),
+  green: top.g * top.a + bottom.g * (1 - top.a),
+  blue: top.b * top.a + bottom.b * (1 - top.a),
+);
+
+void main() {
+  for (final id in messages.keys) {
+    testWidgets('$id tree', (tester) async {
+      final h = tester.ensureSemantics();
+      await open(tester, id);
+      log('$id tree before:\n${nodes(tester)}');
+      h.dispose();
+    });
+
+    testWidgets('$id hover', (tester) async {
+      final h = tester.ensureSemantics();
+      await open(tester, id);
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouse.addPointer(location: Offset.zero);
+      addTearDown(mouse.removePointer);
+      await mouse.moveTo(control(tester));
+      await frames(tester, const Duration(milliseconds: 300));
+      log('$id hover: shown=${shown(tester, id)}');
+      if (shown(tester, id)) {
+        log('$id tree while shown by hover:\n${nodes(tester)}');
+        final box = tooltipBox(tester, id);
+        final c = tester.getRect(
+          find.byWidgetPredicate((w) => w is Tooltip || w is RawTooltip).first,
+        );
+        log('$id control rect=$c tooltip rect=$box');
+        // Move in steps from the control's centre straight to the tooltip's.
+        final from = control(tester);
+        final to = box.center;
+        for (var i = 1; i <= 10; i++) {
+          await mouse.moveTo(Offset.lerp(from, to, i / 10)!);
+          await frames(tester, const Duration(milliseconds: 16));
+        }
+        await frames(tester, const Duration(milliseconds: 500));
+        log(
+          '$id pointer moved onto the tooltip, 500 ms: shown=${shown(tester, id)}',
+        );
+        await tester.pumpAndSettle();
+        // Back on the control, ten seconds.
+        await mouse.moveTo(from);
+        await frames(tester, const Duration(milliseconds: 300));
+        await frames(tester, const Duration(seconds: 10));
+        log('$id hovered 10 s: shown=${shown(tester, id)}');
+        // Escape with no keyboard focus in the app (nothing focused).
+        final primary = FocusManager.instance.primaryFocus;
+        log('$id primary focus before Escape: $primary');
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+        log('$id Escape while hovered: shown=${shown(tester, id)}');
+        await frames(tester, const Duration(seconds: 3));
+        log(
+          '$id pointer still on the control 3 s after Escape: shown=${shown(tester, id)}',
+        );
+        // Pointer off: hidden?
+        await mouse.moveTo(Offset.zero);
+        await frames(tester, const Duration(milliseconds: 50));
+        log('$id 50 ms after the pointer left: shown=${shown(tester, id)}');
+        await tester.pumpAndSettle();
+        log('$id settled after the pointer left: shown=${shown(tester, id)}');
+      }
+      h.dispose();
+    });
+
+    testWidgets('$id keyboard', (tester) async {
+      final h = tester.ensureSemantics();
+      await open(tester, id);
+      final stops = <String>[];
+      for (var i = 0; i < 4; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await frames(tester, const Duration(milliseconds: 500));
+        final f = FocusManager.instance.primaryFocus;
+        stops.add(
+          '${f?.context?.widget.runtimeType}/${f?.debugLabel} shown=${shown(tester, id)}',
+        );
+      }
+      log('$id Tab stops: ${stops.join(' -> ')}');
+      // Tab to the fixture's control: the first stop after Back.
+      await open(tester, id);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await frames(tester, const Duration(milliseconds: 500));
+      log(
+        '$id two Tabs: focus=${FocusManager.instance.primaryFocus?.debugLabel} shown=${shown(tester, id)}',
+      );
+      if (shown(tester, id)) {
+        log('$id tree while shown by focus:\n${nodes(tester)}');
+        await frames(tester, const Duration(seconds: 10));
+        log('$id focused 10 s: shown=${shown(tester, id)}');
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+        log(
+          '$id Escape while focused: shown=${shown(tester, id)} focus still=${FocusManager.instance.primaryFocus?.debugLabel}',
+        );
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await frames(tester, const Duration(milliseconds: 500));
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab, platform: 'android');
+        await tester.pumpAndSettle();
+        log('$id after two more Tabs: shown=${shown(tester, id)}');
+      }
+      h.dispose();
+    });
+
+    testWidgets('$id touch', (tester) async {
+      final h = tester.ensureSemantics();
+      await open(tester, id);
+      final g = await tester.startGesture(control(tester));
+      await frames(tester, const Duration(milliseconds: 600));
+      log('$id long press held 600 ms: shown=${shown(tester, id)}');
+      if (shown(tester, id)) {
+        log('$id tree while shown by long press:\n${nodes(tester)}');
+      }
+      await g.up();
+      await frames(tester, const Duration(milliseconds: 1400));
+      log('$id 1.4 s after release: shown=${shown(tester, id)}');
+      await frames(tester, const Duration(milliseconds: 300));
+      await tester.pumpAndSettle();
+      log('$id 1.7 s after release: shown=${shown(tester, id)}');
+      await tester.pumpAndSettle();
+      // A tap.
+      await open(tester, id);
+      await tester.tapAt(control(tester));
+      await frames(tester, const Duration(milliseconds: 200));
+      log('$id tap: shown=${shown(tester, id)}');
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+      // The long-press semantics action, where there is one.
+      await open(tester, id);
+      final owner = tester.binding.renderViews.first.owner!.semanticsOwner!;
+      SemanticsNode? withLong;
+      void find0(SemanticsNode n) {
+        if (n.getSemanticsData().hasAction(SemanticsAction.longPress))
+          withLong ??= n;
+        n.visitChildren((c) {
+          find0(c);
+          return true;
+        });
+      }
+
+      find0(owner.rootSemanticsNode!);
+      log(
+        '$id node with a longPress action: ${withLong?.getSemanticsData().label ?? '(none)'}',
+      );
+      h.dispose();
+    });
+  }
+
+  for (final id in ['t02', 't13', 't14']) {
+    testWidgets('$id Escape with the view unfocused', (tester) async {
+      await open(tester, id);
+      tester.binding.handleViewFocusChanged(
+        ViewFocusEvent(
+          viewId: tester.view.viewId,
+          state: ViewFocusState.unfocused,
+          direction: ViewFocusDirection.undefined,
+        ),
+      );
+      await tester.pumpAndSettle();
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouse.addPointer(location: Offset.zero);
+      addTearDown(mouse.removePointer);
+      await mouse.moveTo(control(tester));
+      await frames(tester, const Duration(milliseconds: 300));
+      final root =
+          FocusManager.instance.primaryFocus == FocusManager.instance.rootScope;
+      log(
+        '$id view unfocused: focus on the root scope=$root shown=${shown(tester, id)}',
+      );
+      final handled = await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await frames(tester, const Duration(milliseconds: 300));
+      log(
+        '$id Escape with the view unfocused: handled=$handled shown=${shown(tester, id)}',
+      );
+    });
+  }
+
+  testWidgets('colours', (tester) async {
+    for (final b in Brightness.values) {
+      final theme = ThemeData(colorSchemeSeed: Colors.indigo, brightness: b);
+      final page = theme.colorScheme.surface;
+      final bg = b == Brightness.light
+          ? Colors.grey[700]!.withValues(alpha: 0.9)
+          : Colors.white.withValues(alpha: 0.9);
+      final fg = b == Brightness.light ? Colors.white : Colors.black;
+      final box = over(bg, page);
+      log(
+        'colours $b: page=$page box=$box text=$fg text/box=${ratio(fg, box).toStringAsFixed(2)} box/page=${ratio(box, page).toStringAsFixed(2)}',
+      );
+    }
+  });
+}

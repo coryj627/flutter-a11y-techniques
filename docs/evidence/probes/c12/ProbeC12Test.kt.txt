@@ -1,0 +1,323 @@
+// C12 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c12/ProbeC12Test.kt.txt). Runs against lib/probe.dart
+// (Gradle -Ptarget=lib/probe.dart). Whether a tooltip is drawn is read from
+// screenshots: the pixels of the band under the control that differ from a
+// screenshot taken just after the fixture opened (`drawn`).
+//
+// probe(): every node of each fixture (name, text, tooltip text, hint text,
+// class, actions); then, each from a fresh launch, the long-click action on
+// the control, a real touch held 800 ms, and a mouse hover injected through
+// UiAutomation, each followed by readings of the screen over four seconds.
+// keys(): Tab stops with `input keyevent`, whether the tooltip is drawn at
+// each, then Escape. talkBack(): TalkBack focus on each node of the fixture,
+// and the long-click action with TalkBack on.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Rect
+import android.os.SystemClock
+import android.util.Log
+import android.view.InputDevice
+import android.view.MotionEvent
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeC12Test : TechniqueTest("C12") {
+    private val tag = "C12PROBE"
+    private val ids = (1..14).map { "t%02d".format(it) }
+
+    private fun launch(fixture: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", "/$fixture")
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.viewIdResourceName == "$fixture-taps" }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("$fixture did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = Rect().also { n.getBoundsInScreen(it) }
+        val actions = n.actionList.joinToString(",") { a ->
+            val name = when (a.id) {
+                AccessibilityNodeInfo.ACTION_CLICK -> "click"
+                AccessibilityNodeInfo.ACTION_LONG_CLICK -> "longclick"
+                AccessibilityNodeInfo.ACTION_FOCUS -> "focus"
+                AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS -> "a11yfocus"
+                AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS -> "clra11y"
+                AccessibilityNodeInfo.AccessibilityAction.ACTION_SHOW_TOOLTIP.id -> "showtooltip"
+                AccessibilityNodeInfo.AccessibilityAction.ACTION_HIDE_TOOLTIP.id -> "hidetooltip"
+                else -> a.id.toString()
+            }
+            if (a.label != null) "$name(${a.label})" else name
+        }
+        fun q(s: CharSequence?) = (s?.toString() ?: "").replace("\n", "\\n")
+        return "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"${q(n.contentDescription)}\" text=\"${q(n.text)}\" " +
+            "tooltip=\"${q(n.tooltipText)}\" hint=\"${q(n.hintText)}\" state=\"${q(n.stateDescription)}\" " +
+            "clickable=${n.isClickable} longClickable=${n.isLongClickable} focusable=${n.isFocusable} focused=${n.isFocused} " +
+            "$r [$actions] children=${n.childCount}"
+    }
+
+    private fun collect(root: AccessibilityNodeInfo?, depth: Int, out: MutableList<Pair<Int, AccessibilityNodeInfo>>) {
+        if (root == null) return
+        out.add(depth to root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), depth + 1, out)
+    }
+
+    private fun appNodes(): List<Pair<Int, AccessibilityNodeInfo>> {
+        val out = mutableListOf<Pair<Int, AccessibilityNodeInfo>>()
+        for (w in automation.windows) if (w.type == AccessibilityWindowInfo.TYPE_APPLICATION) collect(w.root, 0, out)
+        return out
+    }
+
+    private fun label(n: AccessibilityNodeInfo) =
+        n.contentDescription?.toString() ?: n.text?.toString() ?: n.tooltipText?.toString() ?: ""
+
+    /** The fixture's own nodes: not Before, the line under, the taps. */
+    private fun fixtureNodes(id: String) = appNodes().map { it.second }.filter {
+        val all = "${it.contentDescription ?: ""}|${it.text ?: ""}|${it.tooltipText ?: ""}"
+        (all.contains(id) || (it.isClickable && it.type() == "android.widget.Button" && it.contentDescription?.toString() != "Back")) &&
+            !all.contains("Before $id") && !all.contains("$id line") && !all.contains("$id taps") &&
+            it.viewIdResourceName != "$id-taps"
+    }
+
+    private fun dump(id: String, label: String) {
+        Log.i(tag, "==== $id $label")
+        for (n in fixtureNodes(id)) Log.i(tag, "$id node ${describe(n)}")
+    }
+
+    /** The control's bounds: the clickable button of the fixture, else the
+     * fixture's own node at its left, where the 24 dp icon is. */
+    private fun control(id: String): Rect {
+        // The tree can be empty for a moment after a launch: wait for it.
+        val end = System.currentTimeMillis() + 10_000
+        var nodes = fixtureNodes(id)
+        while (nodes.isEmpty() && System.currentTimeMillis() < end) {
+            Thread.sleep(250)
+            nodes = fixtureNodes(id)
+        }
+        val button = nodes.lastOrNull { it.isClickable }
+        val r = Rect()
+        if (button != null) {
+            button.getBoundsInScreen(r)
+            return r
+        }
+        nodes.first().getBoundsInScreen(r)
+        val dp = inst.targetContext.resources.displayMetrics.density
+        return Rect(r.left, r.top, r.left + (24 * dp).toInt(), r.bottom)
+    }
+
+    private fun bandOf(c: Rect): IntArray {
+        val shot: Bitmap = automation.takeScreenshot()
+        val dp = inst.targetContext.resources.displayMetrics.density
+        val top = c.bottom
+        val bottom = minOf(shot.height - 1, c.bottom + (40 * dp).toInt())
+        val left = maxOf(0, c.left - (10 * dp).toInt())
+        val right = minOf(shot.width - 1, c.left + (300 * dp).toInt())
+        val out = IntArray((bottom - top) * (right - left))
+        shot.getPixels(out, 0, right - left, left, top, right - left, bottom - top)
+        return out
+    }
+
+    private fun drawn(c: Rect, base: IntArray): String {
+        val now = bandOf(c)
+        var n = 0
+        for (i in now.indices) {
+            val p = now[i]
+            val q = base[i]
+            val d = maxOf(
+                Math.abs(((p shr 16) and 255) - ((q shr 16) and 255)),
+                Math.abs(((p shr 8) and 255) - ((q shr 8) and 255)),
+                Math.abs((p and 255) - (q and 255)),
+            )
+            if (d > 40) n++
+        }
+        val dp = inst.targetContext.resources.displayMetrics.density
+        // A tooltip box is about 228 by 28 dp; a third of that is drawn.
+        val threshold = (2000 * dp * dp).toInt()
+        return "${if (n > threshold) "drawn" else "not drawn"} ($n px differ)"
+    }
+
+    /** Readings of the screen at the given times after `t0`, in ms. */
+    private fun watch(id: String, what: String, c: Rect, base: IntArray, t0: Long) {
+        val out = mutableListOf<String>()
+        for (at in listOf(300L, 1_000L, 1_500L, 2_000L, 3_000L, 4_000L)) {
+            val wait = t0 + at - SystemClock.uptimeMillis()
+            if (wait > 0) Thread.sleep(wait)
+            out.add("${at}ms ${drawn(c, base)}")
+        }
+        Log.i(tag, "$id $what: ${out.joinToString("; ")}")
+    }
+
+    private fun tooltipText(id: String) = when (id) {
+        "t04", "t05", "t11" -> "$id Saves a PDF copy"
+        "t06" -> "$id Download"
+        "t07", "t12" -> "$id At least 8 characters"
+        else -> "$id Delete draft"
+    }
+
+    /** Nodes whose text is the tooltip's and that are not the control: the
+     * tooltip's own text, if it reaches the tree. */
+    private fun tooltipTextNodes(id: String) = appNodes().map { it.second }.filter {
+        (it.text?.toString() == tooltipText(id) || it.contentDescription?.toString() == tooltipText(id)) &&
+            !it.isClickable && it.tooltipText == null
+    }.map { describe(it) }
+
+    private fun touch(c: Rect, holdMs: Long) {
+        val t = SystemClock.uptimeMillis()
+        val x = c.exactCenterX()
+        val y = c.exactCenterY()
+        val down = MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, x, y, 0).apply { source = InputDevice.SOURCE_TOUCHSCREEN }
+        automation.injectInputEvent(down, true)
+        Thread.sleep(holdMs)
+        val up = MotionEvent.obtain(t, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, x, y, 0).apply { source = InputDevice.SOURCE_TOUCHSCREEN }
+        automation.injectInputEvent(up, true)
+    }
+
+    private fun mouse(action: Int, x: Float, y: Float) {
+        val t = SystemClock.uptimeMillis()
+        val props = arrayOf(MotionEvent.PointerProperties().apply { id = 0; toolType = MotionEvent.TOOL_TYPE_MOUSE })
+        val coords = arrayOf(MotionEvent.PointerCoords().apply { this.x = x; this.y = y })
+        val e = MotionEvent.obtain(t, t, action, 1, props, coords, 0, 0, 1f, 1f, 0, 0, InputDevice.SOURCE_MOUSE, 0)
+        automation.injectInputEvent(e, true)
+    }
+
+    @Test
+    fun probe() {
+        for (id in ids) {
+            launch(id)
+            dump(id, "start")
+            // The long-click action, what TalkBack's double-tap-and-hold sends
+            // when the node offers it.
+            launch(id)
+            var c = control(id)
+            var base = bandOf(c)
+            val target = fixtureNodes(id).firstOrNull { it.isLongClickable }
+            if (target == null) {
+                Log.i(tag, "$id long-click action: no node offers it")
+            } else {
+                val t0 = SystemClock.uptimeMillis()
+                Log.i(tag, "$id long-click action returned ${target.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)}")
+                watch(id, "after the long-click action", c, base, t0)
+            }
+            // ACTION_SHOW_TOOLTIP, where offered.
+            val show = fixtureNodes(id).firstOrNull { n -> n.actionList.any { it.id == AccessibilityNodeInfo.AccessibilityAction.ACTION_SHOW_TOOLTIP.id } }
+            Log.i(tag, "$id show-tooltip action: ${show?.let { "offered by ${describe(it)}" } ?: "no node offers it"}")
+            // A real touch held 800 ms.
+            launch(id)
+            c = control(id)
+            base = bandOf(c)
+            touch(c, 800)
+            val t1 = SystemClock.uptimeMillis()
+            Log.i(tag, "$id touch held 800 ms at $c; tooltip text nodes now: ${tooltipTextNodes(id)}")
+            dump(id, "just after the touch was released")
+            watch(id, "after a touch held 800 ms was released", c, base, t1)
+            Log.i(tag, "$id taps after the touch: ${appNodes().map { it.second }.firstOrNull { it.viewIdResourceName == "$id-taps" }?.let { label(it) }}")
+            // A mouse hover.
+            launch(id)
+            c = control(id)
+            base = bandOf(c)
+            mouse(MotionEvent.ACTION_HOVER_ENTER, c.exactCenterX(), c.exactCenterY())
+            mouse(MotionEvent.ACTION_HOVER_MOVE, c.exactCenterX(), c.exactCenterY())
+            Thread.sleep(600)
+            Log.i(tag, "$id mouse hover 600 ms: ${drawn(c, base)}; tooltip text nodes: ${tooltipTextNodes(id)}")
+            Thread.sleep(5_000)
+            Log.i(tag, "$id mouse hover 5.6 s: ${drawn(c, base)}")
+            val dp = inst.targetContext.resources.displayMetrics.density
+            val steps = 10
+            for (i in 1..steps) {
+                mouse(MotionEvent.ACTION_HOVER_MOVE, c.exactCenterX() + 20 * dp * i / steps,
+                    c.exactCenterY() + (c.bottom + 16 * dp - c.exactCenterY()) * i / steps)
+                Thread.sleep(16)
+            }
+            Thread.sleep(500)
+            Log.i(tag, "$id mouse moved onto the tooltip, 500 ms: ${drawn(c, base)}")
+            mouse(MotionEvent.ACTION_HOVER_EXIT, 1f, 1f)
+            Thread.sleep(800)
+        }
+    }
+
+    private fun key(name: String) {
+        device.executeShellCommand("input keyevent KEYCODE_$name")
+        Thread.sleep(600)
+    }
+
+    private fun focusedLabel(): String {
+        val f = appNodes().map { it.second }.lastOrNull { it.isFocused } ?: return "(none)"
+        return label(f).replace("\n", "\\n").ifEmpty { "(${f.type()} no name)" }
+    }
+
+    @Test
+    fun keys() {
+        for (id in ids) {
+            launch(id)
+            val c = control(id)
+            val base = bandOf(c)
+            val stops = mutableListOf<String>()
+            var onControl = false
+            for (i in 0 until 4) {
+                key("TAB")
+                Thread.sleep(400)
+                val f = focusedLabel()
+                stops.add("$f ${drawn(c, base)}")
+                if (!onControl && f != "Back" && f != "(none)") {
+                    onControl = true
+                    Log.i(tag, "$id focused on the control: $f; ${drawn(c, base)}")
+                    Thread.sleep(5_000)
+                    Log.i(tag, "$id 5 s later: ${drawn(c, base)}")
+                    key("ESCAPE")
+                    Thread.sleep(400)
+                    Log.i(tag, "$id Escape with focus on the control: ${drawn(c, base)}; focus=${focusedLabel()}")
+                }
+            }
+            Log.i(tag, "$id Tab stops: ${stops.joinToString(" -> ")}")
+            // Escape after a long press, focus where launching left it.
+            launch(id)
+            val c2 = control(id)
+            val base2 = bandOf(c2)
+            touch(c2, 800)
+            Thread.sleep(300)
+            Log.i(tag, "$id after a touch held 800 ms: ${drawn(c2, base2)}; focus=${focusedLabel()}")
+            device.executeShellCommand("input keyevent KEYCODE_ESCAPE")
+            Thread.sleep(300)
+            Log.i(tag, "$id Escape 300 ms after the touch was released: ${drawn(c2, base2)}")
+        }
+    }
+
+    @Test
+    fun talkBack() {
+        assumeTalkBack()
+        for (id in ids) {
+            launch(id)
+            Thread.sleep(6_000)
+            val nodes = fixtureNodes(id)
+            nodes.forEachIndexed { i, n ->
+                val marker = "c12-$id-$i"
+                Log.i(tag, "$marker is ${describe(n)}")
+                Log.i(talkBackTag, "FOCUS $marker")
+                try {
+                    talkBackFocus(marker) { fixtureNodes(id)[i] }
+                } catch (e: AssertionError) {
+                    Log.i(tag, "$marker: TalkBack focus refused")
+                }
+                Thread.sleep(5_000)
+            }
+            val target = fixtureNodes(id).firstOrNull { it.isLongClickable }
+            if (target != null) {
+                Log.i(talkBackTag, "FOCUS c12-$id-longclick")
+                Log.i(tag, "c12-$id-longclick: long-click action returned ${target.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)}")
+                Thread.sleep(5_000)
+            }
+            Log.i(talkBackTag, "END $id")
+        }
+    }
+}
