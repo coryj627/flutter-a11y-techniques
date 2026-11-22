@@ -49,6 +49,13 @@ const _tip = {
   'bad-outside-button': 'Delete draft',
 };
 
+/// The line of text under each good example's control.
+const _line = {
+  'good-material': 'Drafts are kept for 30 days.',
+  'good-cupertino': 'Drafts are kept for 30 days.',
+  'good-description': 'The file is 2 MB.',
+};
+
 Future<void> _frames(WidgetTester tester, Duration d) async {
   final end = tester.binding.clock.now().add(d);
   while (tester.binding.clock.now().isBefore(end)) {
@@ -306,6 +313,67 @@ void main() {
         await _frames(tester, const Duration(milliseconds: 400));
         expect(_shown(tester, slug), isFalse, reason: 'the pointer left');
       });
+
+      // 1.4.13's dismissible condition has an exception for content that
+      // "does not obscure or replace other content". This tooltip covers
+      // other text in every layout measured: under the control when there
+      // is room below it (the line under it), above it when there is not
+      // (Material's positionDependentBox flips it; at 200% on a phone the
+      // control is low on the screen). Each reading is printed (C12GEOM)
+      // with every text the box lies over, for the spec.
+      for (final (width, scale) in [(800.0, 1.0), (320.0, 1.0), (320.0, 2.0)]) {
+        testWidgets('$slug: the shown tooltip lies over other text on the '
+            'screen ($width wide, ${scale * 100}% text)', (tester) async {
+          tester.view.physicalSize = Size(width, 640);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          await _open(tester, slug, textScale: scale);
+          final mouse = await _mouse(tester);
+          await mouse.moveTo(_controlCentre(tester, slug));
+          await tester.pumpAndSettle();
+          expect(_shown(tester, slug), isTrue);
+          final boxFinder = find
+              .byWidgetPredicate(
+                (w) => w.runtimeType.toString() == '_TooltipBox',
+              )
+              .first;
+          final box = tester.getRect(boxFinder);
+          // Every text on the screen outside the tooltip and the control,
+          // and how much of it the box covers.
+          final covered = <String>[];
+          for (final e in find.byType(RichText).evaluate()) {
+            final inBox = find
+                .ancestor(of: find.byWidget(e.widget), matching: boxFinder)
+                .evaluate()
+                .isNotEmpty;
+            if (inBox) continue;
+            final text = (e.widget as RichText).text.toPlainText();
+            final r = tester.getRect(find.byWidget(e.widget));
+            final o = box.intersect(r);
+            if (o.width > 0 && o.height > 0) {
+              covered.add(
+                '"$text" (${o.width.toStringAsFixed(0)} by '
+                '${o.height.toStringAsFixed(0)} of '
+                '${r.width.toStringAsFixed(0)} by ${r.height.toStringAsFixed(0)})',
+              );
+            }
+          }
+          final control = _controlRect(tester, slug);
+          debugPrint(
+            'C12GEOM $slug ${width}x640 ${scale * 100}%: control $control, '
+            'tooltip box $box (${box.top >= control.center.dy ? 'below' : 'above'} '
+            'the control), covers ${covered.join(', ')}',
+          );
+          expect(covered, isNotEmpty, reason: 'the box lies over other text');
+          if (box.top >= control.center.dy) {
+            expect(
+              covered.any((c) => c.startsWith('"${_line[slug]}"')),
+              isTrue,
+              reason: 'below the control, it covers the line under it',
+            );
+          }
+        });
+      }
 
       testWidgets('$slug: the pointer can move onto the tooltip, and it '
           'stays there', (tester) async {

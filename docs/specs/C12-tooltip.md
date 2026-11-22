@@ -32,18 +32,59 @@ the SDK. Whether any of these makes a platform `PlatformStatus.limitation`
 is the owner's decision (section 8); the catalog says "applies" with a note.
 
 - **All: it never shows on keyboard focus**
-  ([FL-248](../flutter-limitations.md#fl-248)). No 1.4.13 failure as
-  written, as nothing appears on focus; but a keyboard user never sees a
-  tooltip, and a sighted keyboard user does not see the words that are an
-  icon button's name.
+  ([FL-248](../flutter-limitations.md#fl-248)). The source asking for it
+  is APG's tooltip pattern, which shows the tooltip on focus; Flutter has
+  not added that, a Flutter limitation. No 1.4.13 failure as written:
+  1.4.13 covers content that does appear on focus, and does not require
+  any to. What a sighted keyboard-only user loses on an icon-only button
+  is the visible text of its name: they see the icon and never the words.
+  As written that fails no criterion: the icon's text alternative is the
+  button's name (1.1.1 met), 2.5.3 Label in Name applies to a visible text
+  label, which an icon-only button has not, and the button itself is
+  operated from the keyboard (2.1.1 met). So: none. Where the tooltip is
+  the only place information is, 2.1.1 fails (`bad-hover-only`).
 - **All: while shown, its text is read as one more item**
   ([FL-249](../flutter-limitations.md#fl-249)).
-- **Web: Escape does not hide it while the page has no keyboard focus**
-  ([FL-482](../flutter-limitations.md#fl-482)). Where the tooltip covers
-  content (every example here: it lies over the line under its control),
-  that fails 1.4.13's dismissible condition for a pointer user on a page
-  with no focus, on every Flutter tooltip, good examples included. With
-  focus in the page, Escape hides it.
+- **Web: Escape does not hide it while no element of the page has
+  keyboard focus** ([FL-482](../flutter-limitations.md#fl-482)). In that
+  state the good examples fail 1.4.13 on the web, and they are not good
+  on the web without that qualification. What was measured:
+  - *It obscures content.* The dismissible condition's exception is for
+    content that "does not obscure or replace other content". Every good
+    example's shown tooltip lies over other text on the screen, in every
+    layout measured (the widget tests "the shown tooltip lies over other
+    text on the screen", `docs/evidence/probes/c12/flutter_test_geometry.txt`):
+    at 800 and 320 wide with 100% text the box is just under the control
+    and covers the line under it ("Drafts are kept for 30 days.", "The
+    file is 2 MB."), 157 to 242 points of its width; at 320 wide with 200%
+    text the control is low on the screen, Material flips the box above
+    it, and it covers the "Example" heading. In `good-cupertino` it also
+    covers the bottom 2 points of the button itself. On the web the box is
+    drawn in the band under the control where that line is (the tree
+    spec's pixel reading). The default placement does this generally:
+    Material puts the box 24 under the control's centre, below a 48 high
+    control, and above it when there is no room below (source read:
+    `positionDependentBox`), over whatever is there.
+  - *Hover, then Escape, with no element focused: the tooltip stays.*
+    Every good example, `web_tests/c12_tooltip.spec.js` ("with no element
+    of the page focused, Escape does not hide the tooltip"). So it cannot
+    be dismissed without moving the pointer, and it obscures content: the
+    dismissible condition fails, with no exception that applies.
+  - *When Escape works:* whenever an element of the page has DOM focus,
+    which is focus in the app. On a freshly loaded example the Back button
+    has DOM focus (probe `web.txt`, "active element before anything"), and
+    a hover then Escape hid the tooltip (probe `web.txt`, "Escape, no
+    element focused (Back)": the row's label is wrong, the Back button had
+    focus). After a click anywhere in the Flutter view, focus is on the
+    view and Escape hides it (`web_round2.txt`; the tree spec's positive
+    control). With focus on the control, Escape hides it and focus stays
+    (the tree spec).
+  - *How a user gets to the failing state:* not measured. The tests reach
+    it only with `blur()`, which leaves `document.body` focused. A page
+    just loaded and used with the mouse only does not reach it, as
+    measured: Back has focus. Which real steps leave a Flutter page with
+    nothing focused (the focused element taken out of the page, focus
+    returned to the page's body by the browser) was not tried.
 - **iOS and the web: a tooltip is part of the control's name**, not its
   description ([FL-251](../flutter-limitations.md#fl-251)); on the web it
   comes first.
@@ -141,6 +182,10 @@ Material's `Tooltip`, whether given directly or through `IconButton.tooltip`.
 | `good-cupertino` | Cupertino | The same on an icon-only `CupertinoButton` | `Tooltip(message:, ignorePointer: false)` round a `CupertinoButton`, which is not a semantics container, so the tooltip is its name; `focusColor` (FL-431); C01's Enter action (FL-002) | R2, R3, R4 |
 | `good-description` | Material | A tooltip that describes a button with text, "Download" and "Saves a PDF copy" | `MergeSemantics` round `Tooltip(message:, ignorePointer: false)` round an `OutlinedButton` (FL-040; an `OutlinedButton` because a `FilledButton` is under 4.5:1 with focus and a hover, FL-253) | R2, R3, R4 |
 
+On the web each good example is good only with a qualification: while no
+element of the page has focus, Escape does not hide its tooltip, which
+covers other text, and it fails 1.4.13 there (section 2, FL-482).
+
 What none of them meets, as the framework has no way to: R1's keyboard
 focus (FL-248), R1's Escape on the web while the page has no focus
 (FL-482), R3's "once" while the tooltip is shown (FL-249), and R3's
@@ -177,6 +222,15 @@ press); a keyboard user has no way to the same result: the icon takes no
 focus, and Tab, Enter, and Space never show it (each tested alone, with
 Sign up's activation by the same keys as the positive control). TalkBack
 reads the rule, and so does the web's tree; VoiceOver on iOS does not.
+2.1.1's exception is for a function that needs input depending on the
+path of the user's movement and not only its endpoints. Showing this
+tooltip does not: a pointer resting anywhere on the icon shows it, and so
+does a press held in one place, so only the endpoint matters and the
+exception does not apply. A long press is not a keyboard path: it is a
+touch held on the screen (a pointer gesture, as is TalkBack's or
+VoiceOver's double-tap-and-hold, which sends one), not keystrokes through
+a keyboard interface. So no keyboard path reaches the rule, on any
+platform.
 
 `bad-repeats-name` fails nothing as written: the name holds the visible
 text (2.5.3) and is determinable (4.1.2). It is kept as poor practice, as
@@ -197,7 +251,7 @@ Not built:
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good, in light and dark: the four guidelines; the text contrast guideline again with keyboard focus on the control and the tooltip shown by a hover; the focus outline 3:1 or more on the page. Good: the control a button with a tap action, and its label, tooltip, and hint (`good-material` "Delete draft", "", ""; `good-cupertino` "", "Delete draft", ""; `good-description` "Download", "Saves a PDF copy", ""), and no other node with the tooltip's words; while shown by a hover, a node with the tooltip's text below the control in traversal order (FL-249); a hover shows it, and it stays ten seconds and goes when the pointer leaves; the pointer moved onto it in ten steps leaves it shown, five seconds; Tab to the control leaves it hidden three seconds, and a hover in the same launch shows it (FL-248); with focus on the control, Escape hides it with the pointer on the control and on the tooltip, focus stays, and it does not come back; with the view unfocused, Escape is not handled and the tooltip stays (FL-482); a long press shows it, it is there 1.3 s after the touch ends and gone 1.8 s after, and the control was not activated; a tap, the tap action, Enter, and Space each activate it once; Tab goes Back, then the control; at 200% text on 320 by 640 the tooltip is inside the screen, its text not cut, scaled once. Every example, at 200% text on 320 by 640: no overflow, no text at its line limit or shorter than its lines, nothing off the screen. Bad: `bad-not-hoverable` shown by a hover (positive control), gone 500 ms after the pointer reaches it, shown again back on the button; its name is its tooltip. `bad-hover-only`: the icon's node has the tooltip and no focus, role, or tap; four Tabs stop on Back and Sign up only, the tooltip never shown after any, nor after Enter and Space, which activate Sign up; a hover and a long press show it. `bad-repeats-name`: label and tooltip both "Download". `bad-outside-button`: the tooltip on a node that is not a button and has no tap; one button besides Back, with no label, tooltip, or hint. The SDK alone: `IconButton(tooltip:)` and `Tooltip(message:)` go when the pointer moves onto them, and do not show on Tab (a hover the positive control); `richMessage` and `ignorePointer: false` stay; a shown `IconButton` tooltip's text is a node below the button in traversal order and not its child; Escape with the view unfocused hides nothing; a `RawTooltip` by default covers its control from its centre, and Escape with the pointer there hides it for a frame only (FL-250). Tests run as Android |
+| L1 widget tests | Good, in light and dark: the four guidelines; the text contrast guideline again with keyboard focus on the control and the tooltip shown by a hover; the focus outline 3:1 or more on the page. Good: the control a button with a tap action, and its label, tooltip, and hint (`good-material` "Delete draft", "", ""; `good-cupertino` "", "Delete draft", ""; `good-description` "Download", "Saves a PDF copy", ""), and no other node with the tooltip's words; while shown by a hover, a node with the tooltip's text below the control in traversal order (FL-249); while shown, the box lies over other text on the screen at 800 and 320 wide with 100% text (the line under the control) and at 320 wide with 200% text (above the control, over the "Example" heading), each reading printed with what it covers; a hover shows it, and it stays ten seconds and goes when the pointer leaves; the pointer moved onto it in ten steps leaves it shown, five seconds; Tab to the control leaves it hidden three seconds, and a hover in the same launch shows it (FL-248); with focus on the control, Escape hides it with the pointer on the control and on the tooltip, focus stays, and it does not come back; with the view unfocused, Escape is not handled and the tooltip stays (FL-482); a long press shows it, it is there 1.3 s after the touch ends and gone 1.8 s after, and the control was not activated; a tap, the tap action, Enter, and Space each activate it once; Tab goes Back, then the control; at 200% text on 320 by 640 the tooltip is inside the screen, its text not cut, scaled once. Every example, at 200% text on 320 by 640: no overflow, no text at its line limit or shorter than its lines, nothing off the screen. Bad: `bad-not-hoverable` shown by a hover (positive control), gone 500 ms after the pointer reaches it, shown again back on the button; its name is its tooltip. `bad-hover-only`: the icon's node has the tooltip and no focus, role, or tap; four Tabs stop on Back and Sign up only, the tooltip never shown after any, nor after Enter and Space, which activate Sign up; a hover and a long press show it. `bad-repeats-name`: label and tooltip both "Download". `bad-outside-button`: the tooltip on a node that is not a button and has no tap; one button besides Back, with no label, tooltip, or hint. The SDK alone: `IconButton(tooltip:)` and `Tooltip(message:)` go when the pointer moves onto them, and do not show on Tab (a hover the positive control); `richMessage` and `ignorePointer: false` stay; a shown `IconButton` tooltip's text is a node below the button in traversal order and not its child; Escape with the view unfocused hides nothing; a `RawTooltip` by default covers its control from its centre, and Escape with the pointer there hides it for a frame only (FL-250). Tests run as Android |
 | L3 web | Good: one button besides Back, its name ("Delete draft", "Delete draft", "Saves a PDF copy Download"), no description; Chromium's own button names over the DevTools protocol the same before and while shown; a hover draws the tooltip (pixels), eight seconds, gone when the pointer leaves; while shown its text is one element of the page outside the control, and none once it has gone (FL-249); the pointer moved onto it leaves it drawn, three seconds; Tab to the control leaves it undrawn two seconds, with focus on it, and a hover then draws it (FL-248); with focus on the control, Escape hides the hovered tooltip and focus stays; with no element focused (`blur()`), Escape leaves it drawn, and after a click on an empty part of the page Escape hides it (FL-482); a click, Enter, and Space each activate once. Bad: `bad-not-hoverable` drawn by a hover, gone after the pointer moves onto it, drawn again back on the button. `bad-hover-only`: the icon's element has the rule as its text, no `tabindex`, no button role; three Tabs never focus it or draw it; Enter and Space on Sign up activate it and draw nothing; a hover draws it. `bad-repeats-name`: name "Download Download" (Playwright and Chromium), and while shown one more "Download" element outside it. `bad-outside-button`: an element named "Delete draft" that is not a button, round the one button besides Back, which has no name. The judge of the VoiceOver spec on made-up walks (as C04's); each screen shows the title and lines the judge expects |
 | L3 Android | Good: each control a `Button` with its name and tooltip text ("Delete draft" and none; "Delete draft" and "Delete draft"; "Download" and "Saves a PDF copy"), clickable and focusable, the only clickable node but Back; a touch held 800 ms draws the tooltip (pixels of the box's colour) and it is gone within 4 s of the touch's end, with no activation (also `bad-not-hoverable`); Tab to the control draws nothing in two seconds, and a long press then does (FL-248); a mouse hover draws it, it stays five seconds, and the pointer moved onto it leaves it drawn; it goes when the mouse leaves; the click action, a tap, and Tab then Enter each activate. Bad: `bad-not-hoverable` drawn by a hover, gone when the mouse moves onto it; a `Button` named by its tooltip. `bad-hover-only`: the icon's node named by the rule, with it as its tooltip text, not focusable or clickable; five Tabs never focus it or draw it, Enter on Sign up activates it, a long press draws it. `bad-repeats-name`: a `Button` named "Download" with tooltip text "Download". `bad-outside-button`: a node named "Delete draft", not clickable and not a `Button`, and one `Button` but Back, with no name |
 | L3 iOS | Good: each control a button with its label ("Delete draft"; "Delete draft"; "Download\nSaves a PDF copy"), one button but Back, and the tooltip's words once in the screen's labels; a touch held 0.8 s draws the tooltip (pixels of the box's colour), gone within 4 s, with no activation (also `bad-not-hoverable`); two Tabs and Enter activate the control and draw no tooltip, and a long press then does (FL-248); a tap activates. Bad: `bad-not-hoverable` a button labelled "Delete draft". `bad-hover-only`: the icon an element labelled by the rule, not a button; no tooltip drawn after two Tabs, nor after Enter, which activates Sign up; a long press draws it. `bad-repeats-name`: a button labelled "Download\nDownload". `bad-outside-button`: an element labelled "Delete draft" that is not a button, and one button but Back, with no label |
@@ -291,12 +345,21 @@ on a real Android keyboard; TalkBack's double-tap-and-hold, which would
 send a long press (not automatable here); text scaling on the web; and
 right-to-left placement.
 
-## 8. Decisions for the owner
+## 8. Decision for the owner
 
-- Whether FL-248 (no tooltip on keyboard focus, all platforms) and
-  FL-482 (no Escape on the web with no page focus, a 1.4.13 failure of
-  every Flutter tooltip there) make any platform
-  `PlatformStatus.limitation`. The catalog says "applies" with a note.
-- Whether C01's `good-icon`, `IconButton(tooltip: 'Close')`, stays good:
-  its tooltip cannot be hovered (FL-247), a 1.4.13 failure on the web and
-  on Android with a mouse.
+Whether FL-248 (no tooltip on keyboard focus, all platforms) and FL-482
+(no Escape on the web while nothing in the page has focus, a 1.4.13
+failure of the good examples there) make any platform
+`PlatformStatus.limitation`. The catalog says "applies" with a note until
+the owner decides.
+
+## 9. What is handed on
+
+- **C01 Button**: its `good-icon`, `IconButton(tooltip: 'Close')`, has a
+  tooltip that cannot be hovered (FL-247): in C12's measurement every
+  `IconButton.tooltip` goes when the pointer moves onto it, on the web and
+  on Android with a mouse (`bad-not-hoverable`, the same widget), which
+  fails 1.4.13 there. C01 is not changed here.
+- **C11 Popover**: TipKit's advice, a dismissable tip that gives focus
+  back to its control.
+- **I08 Dismiss and escape**: FL-482's new measurements.

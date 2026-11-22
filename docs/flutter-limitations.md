@@ -3130,12 +3130,16 @@ yet), **Fixed in x.y** (verified on that version).
   long press or a tap, and from `ensureTooltipVisible()`; nothing listens
   to focus.
 - WCAG: no failure of 1.4.13 as written, which covers content that does
-  appear on focus. Its Understanding document says content that a hover
-  can show "should also be able to be triggered by keyboard focus" and
-  points to 2.1.1 Keyboard; APG's tooltip appears on focus. Whether a
-  tooltip that only a pointer or a touch can show fails 2.1.1 depends on
-  what it carries: C12 `bad-hover-only`, where it is the only place a rule
-  is, does.
+  appear on focus and does not require any to. The source that asks for a
+  tooltip on focus is APG's tooltip pattern; its Understanding document
+  says content a hover can show "should also be able to be triggered by
+  keyboard focus" and points to 2.1.1. On an icon-only button whose
+  tooltip is its name, a sighted keyboard-only user loses the visible
+  text of the name and fails no criterion as written: the name is the
+  icon's text alternative (1.1.1), 2.5.3 is about a visible text label,
+  which the button has not, and the button works from the keyboard
+  (2.1.1). Where the tooltip is the only place information is, 2.1.1
+  fails (C12 `bad-hover-only`).
 - What users get: a keyboard user never sees a tooltip. Where the tooltip
   is an icon button's name, its words reach a screen reader as the name,
   and a sighted keyboard user does not see them.
@@ -4567,7 +4571,15 @@ yet), **Fixed in x.y** (verified on that version).
   C12 example the Back button had DOM focus (`web.txt`), so the state
   needs the page to lose focus, for example by a click outside it.
 - Where the tooltip covers content, this fails 1.4.13's dismissible
-  condition on the web for a pointer user on a page with no focus.
+  condition on the web while no element of the page has focus. Every C12
+  good example's tooltip does cover content (the widget tests "the shown
+  tooltip lies over other text on the screen",
+  `docs/evidence/probes/c12/flutter_test_geometry.txt`), so in that state
+  they fail 1.4.13 on the web. Escape does work whenever an element of the
+  page has focus: the Back button, which has it on a freshly loaded
+  example, the Flutter view after any click in it, or the control. The
+  tests reach the failing state only with `blur()`; how a real user
+  reaches it was not measured.
 - Workaround: none in the framework. Flutter has not added a way for
   Escape to reach its tooltips while the page has no focus. A key handler
   of the app's own (`HardwareKeyboard.addHandler` calling

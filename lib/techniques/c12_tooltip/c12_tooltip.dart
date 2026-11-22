@@ -25,9 +25,10 @@ final c12Tooltip = Technique(
     ),
     AppPlatform.web: PlatformStatus.applies(
       note:
-          'Escape does not hide a tooltip while the page has no keyboard '
-          'focus (FL-482), and a tooltip does not show on keyboard focus '
-          '(FL-248). No workaround in the SDK.',
+          'While no element of the page has focus, Escape does not hide a '
+          'tooltip (FL-482), so the good examples fail 1.4.13 in that '
+          'state. A tooltip does not show on keyboard focus (FL-248). No '
+          'workaround in the SDK.',
     ),
   },
   wcag: const [
