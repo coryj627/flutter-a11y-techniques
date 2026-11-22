@@ -3292,14 +3292,20 @@ yet), **Fixed in x.y** (verified on that version).
     double tap at the header opened it (the announcement; the gesture is a
     tap at its place, not VoiceOver's activation).
   - Web: `role="button"` ([FL-006](#fl-006)) with no `aria-expanded`;
-    "Collapsed" and "double tap to expand" are its `aria-description`
-    (accessible description starting "Collapsed", Chromium). VoiceOver on
-    macOS reads it "Shipping Collapsed double tap to expand button", in
-    Chromium and WebKit
+    the state is its `aria-description`, which depends on the platform
+    Flutter's engine finds from the browser's `navigator.platform`
+    (`detectOperatingSystem`, ui_web's `browser_detection.dart`; source
+    read). On macOS it is "Collapsed" and "double tap to expand"
+    (accessible description "Collapsed double tap to expand", Chromium);
+    on Linux and Windows "Collapsed" alone (C05's web tests, with
+    `navigator.platform` set in the page; on a real Linux browser, CI's
+    Chromium, the earlier test that the description starts "Collapsed"
+    passed). VoiceOver on macOS reads it "Shipping Collapsed double tap to
+    expand button", in Chromium and WebKit
     (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`): the
     state in words, phrased as a touch instruction on a desktop browser.
-    In a browser on another system the source gives "Collapsed" alone;
-    not measured.
+    In a browser on Android the source adds a live region; not
+    measured.
 - WCAG: 4.1.2 Name, Role, Value. On Android and iOS: no role that says it
   is a control. For the state, on every platform: not settled by the
   criterion as written. No expanded state is exposed (no `aria-expanded`
@@ -3327,8 +3333,9 @@ yet), **Fixed in x.y** (verified on that version).
   Android, and iOS tests. Framework source read:
   `cupertino/expansion_tile.dart` builds the header as a
   `CupertinoListTile` with `onTap` inside `Semantics(hint:, onTapHint:)`,
-  the hint only when `defaultTargetPlatform` is iOS or macOS (so in a
-  browser on a Mac too); a `CupertinoListTile` takes no focus and
+  the hint only when `defaultTargetPlatform` is iOS or macOS (on the web,
+  as Flutter's engine finds it from the browser's `navigator.platform`);
+  a `CupertinoListTile` takes no focus and
   is no button ([FL-400](#fl-400), the same mechanism).
 - What happens:
   - No keyboard focus, on every platform: Tab passes the headers (the
@@ -3338,13 +3345,17 @@ yet), **Fixed in x.y** (verified on that version).
     a button on the web ([FL-006](#fl-006)), with no `tabindex`.
   - No expanded state. On Android nothing says the state. On iOS the hint
     is "Collapsed double tap to expand" (VoiceOver, probe p06). On the web,
-    in a browser on a Mac, the same hint is the header's accessible
-    description (C05's web tests), which VoiceOver on macOS reads
-    "Shipping Collapsed double tap to expand button", in Chromium and
-    WebKit (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`):
+    where Flutter's engine finds macOS, the same hint is the header's
+    accessible description (C05's web tests), which VoiceOver on macOS
+    reads "Shipping Collapsed double tap to expand button", in Chromium
+    and WebKit (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`):
     the state in words, phrased as a touch instruction on a desktop
-    browser. Elsewhere on the web the source gives no hint; not measured.
-    Nothing announces the change.
+    browser. On Linux and Windows the header has no description and no
+    `aria-description`, so nothing gives its state (C05's web tests, with
+    `navigator.platform` set in the page; on a real Linux browser, CI's
+    Chromium, the earlier test that expected a description received an
+    empty one, `docs/evidence/probes/c05/web-platforms.txt`). Nothing
+    announces the change.
   - Once a section is open, its panel's text is merged into the header's
     node: "Shipping\nOrders ship in two days." on Android; on the web a
     group named "Shipping p06 Shipping panel" in the probe (p06, whose
@@ -3356,6 +3367,11 @@ yet), **Fixed in x.y** (verified on that version).
   - Its closed panel is `Offstage` and keeps keyboard focus
     ([FL-263](#fl-263)); C05's example has no button in it, so that this
     is not a second defect there.
+- WCAG, for what is not C05's named defect (2.1.1, above): 4.1.2 Name,
+  Role, Value. On Android and iOS no role that says it is a control. For
+  the state: where nothing gives it (Android; the web on Linux and
+  Windows), it fails as written; where it is only a hint (iOS; the web on
+  macOS), not settled by the criterion as written.
 - Closest achievable example: none with `CupertinoExpansionTile`'s own
   parameters. C05 `good-cupertino` builds the header from a
   `CupertinoListTile` given focus by `FocusableActionDetector`, inside

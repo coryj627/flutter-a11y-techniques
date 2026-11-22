@@ -399,3 +399,28 @@ their sections: the two SDK tiles' closed readings (round 1), the
 timeout of `bad-cupertino-expansion-tile`'s test after its closed walk
 (round 2), and that example's open walk in WebKit, which read only the
 page's web area (round 3).
+
+## The SDK tiles' web descriptions, by platform
+
+`web-platforms.txt` holds the measurements. CI's web job (Chromium on
+Linux) failed C05's test of `bad-cupertino-expansion-tile`, which expected
+its description to start "Collapsed" and received an empty one; every
+other C05 web test passed there, `bad-expansion-tile`'s description test
+included. Flutter's web engine takes `defaultTargetPlatform` from the
+browser's `navigator.platform` (source read), and both tiles choose their
+hint by it (source read). Run here with `navigator.platform` set before the
+app starts, the whole C05 tree spec failed only that test, with the same
+empty description; every other test, the Tab, Enter and Space tests
+included, passed. The headers' attributes, read here:
+
+- macOS (this Mac's own "MacIntel"): both tiles' `aria-description`
+  "Collapsed\n double tap to expand", and "Expanded\n double tap to
+  collapse" once open.
+- "Linux x86_64": `ExpansionTile` "Collapsed", then "Expanded";
+  `CupertinoExpansionTile` no `aria-description`. With "Win32" the tests
+  pass with the same expectations.
+
+The tree spec now reads the platform in the page and runs both tiles'
+tests also with "MacIntel", "Linux x86_64" and "Win32" set. Not run: a
+real browser on Windows, and on Linux anything after the change.
+

@@ -21,6 +21,9 @@ const RETURNS_ACTION = 'Start a return';
 
 const good = ['good-material', 'good-cupertino', 'good-custom'];
 const id = (slug, key) => `c05-${slug}-${key}`;
+// The values of navigator.platform the SDK tiles' tests also run with
+// (see browserPlatform).
+const EMULATED = ['MacIntel', 'Linux x86_64', 'Win32'];
 
 /** What has DOM focus: its role and its accessible name, or "(page)". */
 async function focused(page) {
@@ -231,17 +234,15 @@ test.describe('bad examples have their defect', () => {
   });
 
   test('bad-expansion-tile: a button with no aria-expanded; the state is in its description', async ({ page }) => {
-    await open(page, 'bad-expansion-tile');
-    const header = page.getByRole('button', { name: SHIPPING, exact: true });
-    await expect(header).toHaveCount(1);
-    await expect(header).not.toHaveAttribute('aria-expanded');
-    await expect(header).toHaveAccessibleDescription(/^Collapsed/);
-    await expect(page.getByRole('heading', { level: 3 })).toHaveCount(0);
-    await header.click();
-    await expect(page.getByText(SHIPPING_TEXT)).toHaveCount(1);
-    await expect(header).not.toHaveAttribute('aria-expanded');
-    await expect(header).toHaveAccessibleDescription(/^Expanded/);
+    await expansionTile(page);
   });
+
+  for (const platform of EMULATED) {
+    test(`bad-expansion-tile, navigator.platform "${platform}": no aria-expanded; the description for that platform`, async ({ page }) => {
+      await emulatePlatform(page, platform);
+      await expansionTile(page);
+    });
+  }
 
   for (const key of ['Enter', 'Space']) {
     test(`bad-cupertino-expansion-tile: Tab reaches only Back, and ${key} there leaves the example`, async ({ page }) => {
@@ -262,25 +263,108 @@ test.describe('bad examples have their defect', () => {
   }
 
   test('bad-cupertino-expansion-tile: the header takes no focus and has no aria-expanded; a click opens it', async ({ page }) => {
-    await open(page, 'bad-cupertino-expansion-tile');
-    const header = page.getByRole('button', { name: SHIPPING, exact: true });
-    await expect(header).toHaveCount(1);
-    await expect(header).not.toHaveAttribute('tabindex');
-    await expect(header).not.toHaveAttribute('aria-expanded');
-    // The state is text in its description, the tile's hint (on a macOS
-    // browser, where the tile gives one: FL-265).
-    await expect(header).toHaveAccessibleDescription(/^Collapsed/);
-    expect(await shown(page, SHIPPING_TEXT)).toBe(false);
-    await header.click();
-    await expect.poll(() => shown(page, SHIPPING_TEXT)).toBe(true);
-    // Open, the header is one button with the panel's text, still with no
-    // aria-expanded, its description now "Expanded".
-    const merged = page.getByRole('button', { name: `${SHIPPING} ${SHIPPING_TEXT}` });
-    await expect(merged).toHaveCount(1);
-    await expect(merged).not.toHaveAttribute('aria-expanded');
-    await expect(merged).toHaveAccessibleDescription(/^Expanded/);
+    await cupertinoExpansionTile(page);
   });
+
+  for (const platform of EMULATED) {
+    test(`bad-cupertino-expansion-tile, navigator.platform "${platform}": no focus, no aria-expanded; the description for that platform`, async ({ page }) => {
+      await emulatePlatform(page, platform);
+      await cupertinoExpansionTile(page);
+    });
+  }
 });
+
+/**
+ * The two SDK tiles' descriptions depend on the platform Flutter's web
+ * engine finds, which it takes from the browser's `navigator.platform`
+ * (`detectOperatingSystem` in ui_web's browser_detection.dart; source
+ * read): "Mac…" is macOS (iOS with more than two touch points), "iPhone",
+ * "iPad" or "iPod" is iOS, an Android user agent is Android, "Linux…" is
+ * Linux and "Win…" Windows. Both tiles add "double tap to expand" or
+ * "double tap to collapse" only on iOS and macOS; there `CupertinoExpansionTile`
+ * has its only description, and elsewhere none (FL-264, FL-265; source
+ * read, and measured here).
+ *
+ * Each test reads the platform in the page, as the engine does, and
+ * expects what that platform gives. A platform with no branch here (an
+ * Android browser) fails. Each test also runs with `navigator.platform`
+ * set before the app starts, so every branch runs on any machine: the
+ * real Linux branch is CI's, the real macOS branch a Mac's (EMULATED,
+ * at the top of this file).
+ */
+
+/** Sets `navigator.platform` to `platform` before the app starts. */
+async function emulatePlatform(page, platform) {
+  await page.addInitScript((value) => Object.defineProperty(Navigator.prototype, 'platform', { get: () => value }), platform);
+}
+
+/** 'apple', 'linux' or 'windows', as Flutter's engine would find it in this page. */
+async function browserPlatform(page) {
+  const os = await page.evaluate(() => {
+    const p = navigator.platform;
+    if (p.startsWith('Mac') || /iphone|ipad|ipod/i.test(p)) return 'apple';
+    if (navigator.userAgent.includes('Android')) return 'android';
+    if (p.startsWith('Linux')) return 'linux';
+    if (p.startsWith('Win')) return 'windows';
+    return `unknown (${p})`;
+  });
+  expect(['apple', 'linux', 'windows'], 'a platform these tests have a branch for').toContain(os);
+  return os;
+}
+
+/** `ExpansionTile`: a button, no aria-expanded; its state in the description, on every platform here. */
+async function expansionTile(page) {
+  await open(page, 'bad-expansion-tile');
+  const apple = (await browserPlatform(page)) === 'apple';
+  const header = page.getByRole('button', { name: SHIPPING, exact: true });
+  await expect(header).toHaveCount(1);
+  await expect(header).not.toHaveAttribute('aria-expanded');
+  // macOS: "Collapsed" and the touch instruction; Linux and Windows:
+  // "Collapsed" alone.
+  await expect(header).toHaveAccessibleDescription(apple ? 'Collapsed double tap to expand' : 'Collapsed');
+  await expect(page.getByRole('heading', { level: 3 })).toHaveCount(0);
+  await header.click();
+  await expect(page.getByText(SHIPPING_TEXT)).toHaveCount(1);
+  await expect(header).not.toHaveAttribute('aria-expanded');
+  await expect(header).toHaveAccessibleDescription(apple ? 'Expanded double tap to collapse' : 'Expanded');
+}
+
+/**
+ * `CupertinoExpansionTile`: a button with no tabindex and no aria-expanded.
+ * On macOS its state is in its description, the tile's hint; on Linux and
+ * Windows it has no description, so its state is in no attribute and no
+ * text of the header.
+ */
+async function cupertinoExpansionTile(page) {
+  await open(page, 'bad-cupertino-expansion-tile');
+  const apple = (await browserPlatform(page)) === 'apple';
+  const header = page.getByRole('button', { name: SHIPPING, exact: true });
+  await expect(header).toHaveCount(1);
+  await expect(header).not.toHaveAttribute('tabindex');
+  await expect(header).not.toHaveAttribute('aria-expanded');
+  if (apple) {
+    await expect(header).toHaveAccessibleDescription('Collapsed double tap to expand');
+  } else {
+    await expect(header).toHaveAccessibleDescription('');
+    await expect(header).not.toHaveAttribute('aria-description');
+    await expect(header).toHaveAccessibleName(SHIPPING);
+  }
+  expect(await shown(page, SHIPPING_TEXT)).toBe(false);
+  await header.click();
+  await expect.poll(() => shown(page, SHIPPING_TEXT)).toBe(true);
+  // Open, the header is one button with the panel's text, still with no
+  // aria-expanded.
+  const merged = page.getByRole('button', { name: `${SHIPPING} ${SHIPPING_TEXT}` });
+  await expect(merged).toHaveCount(1);
+  await expect(merged).not.toHaveAttribute('aria-expanded');
+  if (apple) {
+    await expect(merged).toHaveAccessibleDescription('Expanded double tap to collapse');
+  } else {
+    await expect(merged).toHaveAccessibleDescription('');
+    await expect(merged).not.toHaveAttribute('aria-description');
+    await expect(merged).toHaveAccessibleName(`${SHIPPING} ${SHIPPING_TEXT}`);
+  }
+}
 
 // Once a CupertinoExpansionTile has been opened, an empty element the size
 // of the view lies over the page and takes pointer events (FL-029,

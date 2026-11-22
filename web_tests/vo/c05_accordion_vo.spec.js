@@ -27,15 +27,20 @@ const SHIPPING_TEXT = 'Orders ship in two days.';
 const SHIPPING_ACTION = 'Track a parcel button';
 const COUNT = 'Presses: 0';
 
-// The SDK tiles' hint, as VoiceOver read it on a macOS browser.
+// The SDK tiles' hint, as VoiceOver read it on a macOS browser. These
+// readings hold only there: both tiles add the touch instruction only where
+// Flutter finds iOS or macOS (from navigator.platform), and
+// CupertinoExpansionTile gives no hint at all elsewhere (the tree spec
+// tests each platform). VoiceOver on macOS always runs on the macOS one.
 const CLOSED_TILE = (name) => `${name} Collapsed double tap to expand button`;
 const OPEN_HINT = 'Expanded double tap to collapse';
 
 // What VoiceOver is expected to say for a header, by what it is.
-// The first recording (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt)
-// heard every reading below for the good examples and the hand-built bad
-// ones, closed and open, in Chromium and WebKit; for the two SDK tiles it
-// heard the closed readings only (see below). The second
+// The fourth recording (docs/evidence/C05/voiceover-web.md) heard every
+// reading below, closed and open, in Chromium and WebKit. Before it, the
+// first (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt) heard
+// them for the good examples and the hand-built bad ones, and the two SDK
+// tiles' closed readings; the second
 // (docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt) heard
 // bad-expansion-tile open as well.
 const collapsed = (name) => `${name} collapsed button`;
@@ -69,19 +74,21 @@ const EXAMPLES = {
   },
   // A button on the web (FL-006); the defect, no button role, is on
   // Android and iOS. The state is in its description, the tile's hint,
-  // which on a macOS browser is a touch instruction: closed, as the first
-  // recording heard it in Chromium and WebKit
+  // which on a macOS browser is "Collapsed" and a touch instruction (on
+  // Linux and Windows "Collapsed" alone; the tree spec): closed, as the
+  // first recording heard it in Chromium and WebKit
   // (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt); open, as
   // the second heard it (voiceover-web-round2-fail.md.txt).
   'bad-expansion-tile': {
     closed: [CLOSED_TILE('Shipping'), CLOSED_TILE('Returns'), COUNT],
     open: [`Shipping ${OPEN_HINT} button`, SHIPPING_TEXT, CLOSED_TILE('Returns'), COUNT],
   },
-  // The defect is the keyboard (see the tree spec); the same description
-  // as bad-expansion-tile, closed, as heard. Open, the header and its
-  // panel's text are one button (the tree spec); not heard yet: the
-  // second recording's test ran into its timeout before the open walk
-  // (see walkToEndClickingAtPoint).
+  // The defect is the keyboard (see the tree spec). On a macOS browser,
+  // the only one where this tile gives a description (on Linux and Windows
+  // it has none, so nothing gives its state; the tree spec), the same
+  // description as bad-expansion-tile, closed, as heard. Open, the header
+  // and its panel's text are one button (the tree spec), as the third
+  // recording heard in Chromium and the fourth in both browsers.
   'bad-cupertino-expansion-tile': {
     closed: [CLOSED_TILE('Shipping'), CLOSED_TILE('Returns'), COUNT],
     open: [`Shipping ${SHIPPING_TEXT} ${OPEN_HINT} button`, CLOSED_TILE('Returns'), COUNT],

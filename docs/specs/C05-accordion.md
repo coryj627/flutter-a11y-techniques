@@ -179,27 +179,41 @@ are not judged in the table below:
 - `bad-expansion-tile`: no expanded state on any platform; "Collapsed" or
   "Expanded" is only text, at the end of the name on Android ("Shipping,
   Collapsed"), a hint on iOS, and the accessible description on the web;
-  on Android a live region announces the change (FL-264).
+  on Android a live region announces the change (FL-264). On the web the
+  description depends on the platform Flutter's engine finds from the
+  browser's `navigator.platform`: "Collapsed double tap to expand" on
+  macOS, "Collapsed" alone on Linux and Windows (the tile adds the touch
+  instruction only where `defaultTargetPlatform` is iOS or macOS; source
+  read, and measured in the web tests).
 - `bad-cupertino-expansion-tile`: no button role on Android (`View`) and
-  iOS (static text); no expanded state, with the state as hint text on
-  iOS and, in a browser on a Mac, as the accessible description on the
-  web (the tile adds the hint only where `defaultTargetPlatform` is iOS or
-  macOS; source read); once open, the panel's text joins the header's
-  name (FL-265).
+  iOS (static text); no expanded state. The state is hint text on iOS,
+  and on the web the accessible description only where Flutter's engine
+  finds macOS ("Collapsed double tap to expand"); on Linux and Windows the
+  header has no description, so its state is in no attribute and no text,
+  and on Android nothing says it either (the tile adds the hint only where
+  `defaultTargetPlatform` is iOS or macOS; source read, and measured in
+  the web tests). Once open, the panel's text joins the header's name
+  (FL-265).
 
 On the web, VoiceOver on macOS reads both tiles' closed headers "Shipping
 Collapsed double tap to expand button", in Chromium and WebKit
 (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`, and the
 passing transcript, `docs/evidence/C05/voiceover-web.md`): the tiles do
 give the state in words there, through the hint text, phrased as a touch
-instruction on a desktop browser. What that means for the web, as the
-criteria are written: the named defects' verdicts below do not change
-(`bad-expansion-tile` has none on the web, where it is a button;
-`bad-cupertino-expansion-tile` fails 2.1.1). For the state, 4.1.2 is not
-settled on the web: the tree tests show it as text in the accessible
-description and not as `aria-expanded`, and the criterion as written does
-not decide whether text in a description is the state being
-programmatically determined. Nothing more is claimed.
+instruction on a desktop browser. VoiceOver on macOS hears only a browser
+on macOS; on Linux and Windows the tree tests show `bad-expansion-tile`'s
+description as "Collapsed" alone and `bad-cupertino-expansion-tile` with
+none. What that means for the web, as the criteria are written: the named
+defects' verdicts below do not change, on any of those platforms
+(`bad-expansion-tile` has none on the web, where it is a button on each;
+`bad-cupertino-expansion-tile` fails 2.1.1, as its header takes no focus
+on each). For the state, which is not a named defect: where it is text in
+the accessible description and not `aria-expanded` (both tiles on macOS,
+`bad-expansion-tile` on Linux and Windows too), 4.1.2 is not settled, as
+the criterion as written does not decide whether text in a description is
+the state being programmatically determined; where nothing gives it
+(`bad-cupertino-expansion-tile` on Linux and Windows, as on Android), 4.1.2
+fails as written. Nothing more is claimed.
 
 Their panels hold text only, so that a closed panel has
 nothing to take focus (`CupertinoExpansionTile` keeps closed panels
@@ -241,7 +255,7 @@ it either way; nothing is claimed.
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Every example, closed and with both sections open: at 200% text on a 320 by 640 screen, no layout overflow and no text cut short (line limit or box); and in light and dark, the text contrast guideline. Good, closed and open, in light and dark: the four guidelines. Good: each header is a button, a level 3 heading, named by its title, collapsed, with a tap action and the tap hint "expand", and no value (Android); in iOS mode its value is "collapsed", then "expanded"; the reading order is Shipping, Returns, and after a tap Shipping, its text, its button, Returns, with Shipping expanded, its hint "collapse", and `controlsNodes` naming its panel; Tab stops are Back, Shipping, Returns, Back, and once open Back, Shipping, "Track a parcel", Returns, Back; the tap action opens and closes it; the expand action is offered while closed and the collapse action while open, and each opens or closes it; Tab to a header, then Enter, and in another test Space, each opens it, keeps focus on it, and closes it again; Tab into an open panel and Enter presses its button (the count); the focus ring is clear, drawn in the text colour on focus, and clear again after, closed and open, light and dark. Bad: `bad-no-state` has no expanded state or value before or after a tap that opens it; `bad-heading-on-button` is one node with heading, button, and state (the web shows the defect); `bad-no-heading` has no heading level, the title style of the good headers, and no level 3 heading on the screen; `bad-hidden-panel`'s closed panels are not in the tree, Tab stops after Returns twice on nodes no semantics node has, the first of them Shipping's button, and Enter there presses it while both stay closed; `bad-expansion-tile` is no button, no state, hint "Collapsed", then "Expanded" after a tap that opens it; `bad-cupertino-expansion-tile` is no button, no state, no focus state, opened by a tap, and Tab stops only on Back, where Enter, and in another test Space, take the app back (the key acted) |
-| L3 web | Good: each header is a `role="button"` named by its title with `aria-expanded="false"`, inside an `<h3>` (its parent element), and the heading holds that button; three buttons on the screen (two headers and Back) and two level 3 headings; no closed panel in the page; a click opens Shipping, sets `aria-expanded="true"` and `aria-controls` to the panel's element (none before, none on Returns), and the page reads Shipping, its text, its button, Returns; a second click closes it; a DOM click with no pointer events opens it; Tab reaches it and Enter, and in another test Space, opens it, keeps focus, and closes it; Tab stops are Back, Shipping, Returns, and once open Shipping, "Track a parcel", Returns; Shift+Tab back to the button and Enter press it. Bad: `bad-no-state` has no `aria-expanded` before or after a click that opens it; `bad-heading-on-button` is an `<h3>` with the heading role, no `aria-expanded`, no button inside it, and Back the only button, while a click opens it; `bad-no-heading` has buttons with `aria-expanded` and no level 3 heading, only the screen's two headings; `bad-hidden-panel` has no closed panel and no panel button in the page, Tab stops are Back, Shipping, Returns, Returns, Returns, and Enter then presses a hidden button while both stay closed, with Enter on a header opening it as the positive control; `bad-expansion-tile` is a button with no `aria-expanded` whose description starts "Collapsed", then "Expanded"; `bad-cupertino-expansion-tile`: Tab reaches only Back (stops on the page itself left out, FL-421), and Enter, and in another test Space, on Back leave the example; its header has no `tabindex` and no `aria-expanded` and a description starting "Collapsed", and a click opens it, after which it is one button with the panel's text, still with no `aria-expanded`, its description starting "Expanded". Also: the VoiceOver walk judge on made-up walks, and that each screen shows the texts the judge expects |
+| L3 web | Good: each header is a `role="button"` named by its title with `aria-expanded="false"`, inside an `<h3>` (its parent element), and the heading holds that button; three buttons on the screen (two headers and Back) and two level 3 headings; no closed panel in the page; a click opens Shipping, sets `aria-expanded="true"` and `aria-controls` to the panel's element (none before, none on Returns), and the page reads Shipping, its text, its button, Returns; a second click closes it; a DOM click with no pointer events opens it; Tab reaches it and Enter, and in another test Space, opens it, keeps focus, and closes it; Tab stops are Back, Shipping, Returns, and once open Shipping, "Track a parcel", Returns; Shift+Tab back to the button and Enter press it. Bad: `bad-no-state` has no `aria-expanded` before or after a click that opens it; `bad-heading-on-button` is an `<h3>` with the heading role, no `aria-expanded`, no button inside it, and Back the only button, while a click opens it; `bad-no-heading` has buttons with `aria-expanded` and no level 3 heading, only the screen's two headings; `bad-hidden-panel` has no closed panel and no panel button in the page, Tab stops are Back, Shipping, Returns, Returns, Returns, and Enter then presses a hidden button while both stay closed, with Enter on a header opening it as the positive control; `bad-expansion-tile` is a button with no `aria-expanded` whose description is "Collapsed double tap to expand", then "Expanded double tap to collapse", where Flutter's engine finds macOS, and "Collapsed", then "Expanded", on Linux and Windows; `bad-cupertino-expansion-tile`: Tab reaches only Back (stops on the page itself left out, FL-421), and Enter, and in another test Space, on Back leave the example; its header has no `tabindex` and no `aria-expanded`, on macOS the description "Collapsed double tap to expand" and on Linux and Windows no description (an empty one, and no `aria-description`), and a click opens it, after which it is one button with the panel's text, still with no `aria-expanded`, with "Expanded double tap to collapse" on macOS and no description on Linux and Windows. The two tiles' tests read the platform from `navigator.platform` in the page, as the engine does, and each also runs with it set to "MacIntel", "Linux x86_64" and "Win32" (section 7). Also: the VoiceOver walk judge on made-up walks, and that each screen shows the texts the judge expects |
 | L3 Android | Good: each header is a `Button` named by its title, a heading, clickable, focusable, click label "expand", and on Android 16 and later expanded state "collapsed", before 16 no expand or collapse action; two clickable nodes but Back; no closed panel; the reading order Shipping, Returns; `ACTION_CLICK` opens Shipping (state "full", label "collapse", Returns still collapsed, reading order with the panel after its header) and closes it again; on Android 16 and later `ACTION_EXPAND` opens it and `ACTION_COLLAPSE` closes it (skipped before 16); a tap opens it; Tab to it and Enter, then Space, each open it, keep focus, and close it; Tab after a closed Shipping reaches Returns, after an open one "Track a parcel" then Returns. Bad: `bad-no-state` has no expanded state ("undefined") and no click label before and after a click that opens it; `bad-heading-on-button` is a heading button with its state; `bad-no-heading`'s headers are buttons with their state and not headings; `bad-hidden-panel`'s closed panel is not in the tree; the Tab after Returns leaves the tree reporting Returns as focused, and Enter then presses a hidden button (the count) while both sections stay closed, which Enter on Returns would not do; Enter on Returns opening it is the positive control; `bad-expansion-tile` is a `View` named "Shipping, Collapsed", then "Shipping, Expanded", not a heading, click label "Expand for more details", no expanded state; `bad-cupertino-expansion-tile`: Tab never gives its header focus and reaches Back, where Enter, and then Space, leave the example; its header is a `View` with no expanded state, opened by the click action |
 | L3 iOS | Good: each header is a button named by its title, value "collapsed"; two buttons but Back; no closed panel on screen; a tap opens Shipping (value "expanded", Returns "collapsed", the panel's text and button between Shipping and Returns on screen; XCUITest's list of elements is not the reading order, which the VoiceOver walk checks) and a second closes it; two Tabs and Enter, and in another launch Space, open Shipping and stay on the example. Bad: `bad-no-state` has no value before or after a tap that opens it; `bad-heading-on-button` and `bad-no-heading` are buttons with the value (the heading is heard, not seen, in the tree); `bad-hidden-panel` shows no closed panel, four Tabs and Enter press a hidden button (the count) while both stay closed, and three Tabs and Enter open Returns, the positive control; `bad-expansion-tile` and `bad-cupertino-expansion-tile` are not buttons and have no value, and a tap opens them; for `bad-cupertino-expansion-tile`, one, two, and three Tabs and then Enter or Space never open a section and take the example off the screen (Back acted) |
 | L4 TalkBack | For each example but `bad-hidden-panel`: what is said with focus on Shipping's header, closed; on the click action with focus left there (not for `bad-no-state` and `bad-cupertino-expansion-tile`, see section 7); with focus on the panel's text (on Back for `bad-cupertino-expansion-tile`, whose open panel is part of its header); and on the header again, open |
@@ -385,11 +399,24 @@ Skips and what they give up, in the tests:
   walks, which start with the checked click, were right in all three
   recordings, and the probe tested this example only, so they are left as
   they are.
+- The web tests of the two SDK tiles expect what the platform gives,
+  read from `navigator.platform` in the page, from which Flutter's web
+  engine takes `defaultTargetPlatform` (`detectOperatingSystem` in ui_web's
+  `browser_detection.dart`; source read). Each also runs with
+  `navigator.platform` set to "MacIntel", "Linux x86_64" and "Win32" before
+  the app starts, so that every branch runs on any machine. A set value
+  gives Flutter's own choice for that platform; it is not a browser on
+  that system. On a real browser: macOS on this Mac, Linux on CI's
+  Chromium (whose first run of the earlier test, which expected a
+  description, received an empty one, as the Linux branch now expects;
+  `docs/evidence/probes/c05/web-platforms.txt`); Windows on none. A browser
+  on Android is not covered (the tests fail there): `ExpansionTile` adds a
+  live region there (source read), not measured on the web.
 - The web test of `bad-cupertino-expansion-tile`'s Tab stops leaves out
   stops outside Flutter's tree (the page itself, FL-421). It gives up
   nothing a key could act on in the app.
 
-**Not done yet.** Android before 16, measured
+**Not done yet.** The SDK tiles on the web in a real browser on Windows or Android (section 7); Android before 16, measured
 on a device; what VoiceOver on iOS says and does on its own double tap,
 made by a person (the tests' gesture is XCUITest's tap at the header's
 place); a real app and user journey built with the custom solution; what TalkBack's actions menu offers, and its swipe order
