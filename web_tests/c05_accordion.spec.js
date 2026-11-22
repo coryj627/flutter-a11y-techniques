@@ -8,7 +8,7 @@
 // the page.
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
-import { EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeWalk, runWalks, screenStops } from './vo/c05_vo_walks.js';
+import { EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeExampleWalk, runWalks, screenStops } from './vo/c05_vo_walks.js';
 
 const exampleHeading = (page) => page.getByRole('heading', { name: 'Example', exact: true, level: 2 });
 const { open, count } = technique('C05', { ready: exampleHeading, settle: 600 });
@@ -273,39 +273,99 @@ test.describe('bad examples have their defect', () => {
   });
 });
 
-// The VoiceOver spec's judge (web_tests/vo/c05_vo_walks.js), tested here on
-// made-up walks so that CI runs it: a wrong reading fails at once, a walk
-// that fell short may be tried again, and only a whole walk passes.
-test.describe('the VoiceOver walk judge', () => {
-  const screen = screenStops('good-custom');
-  const lead = ['heading level 1 Accordion built from Semantics', 'Good example for Accordion. Widgets layer.', EXAMPLE_HEADING];
-  const expected = ['A', 'B', 'Presses: 0'];
+// How the web VoiceOver spec judges one walk of an example screen
+// (judgeExampleWalk), and repeats one that fell short (runWalks), as C04's
+// does. The walks here are made up; VoiceOver is not used.
+test.describe('the VoiceOver example walks are judged on every walk', () => {
+  const expected = ['heading level 3 Shipping collapsed button', 'heading level 3 Returns collapsed button', 'Presses: 0'];
+  const own = screenStops('good-custom');
+  const screen = (...content) => [...own, EXAMPLE_HEADING, ...content];
+  const cases = [
+    ['a correct walk', screen(...expected), true, 'complete'],
+    // A stop read in other words, or out of its place: wrong at once.
+    ['a header with no state', screen('heading level 3 Shipping button', ...expected.slice(1)), true, 'wrong'],
+    ['the headers swapped', screen(expected[1], expected[0], expected[2]), true, 'wrong'],
+    ['an empty reading', screen('', ...expected), true, 'wrong'],
+    ['a stop read twice', screen(expected[0], ...expected), true, 'wrong'],
+    ['a stop after the count', screen(...expected, 'end of main'), true, 'wrong'],
+    ['a wrong reading in a walk cut short', screen('heading level 3 Shipping'), false, 'wrong'],
+    // A walk that reached the end with an expected stop not read: wrong,
+    // not a short capture to be walked again.
+    ['a walk that reached the end without the second header', screen(expected[0], expected[2]), true, 'wrong'],
+    ['a walk that reached the end without the count', screen(expected[0], expected[1]), true, 'wrong'],
+    ['a walk that skipped the first header and was cut short', screen(expected[1]), false, 'wrong'],
+    ['a walk with no title', [own[1], EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['a walk with no description', [own[0], EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['a walk with no heading', [...own, ...expected], true, 'wrong'],
+    ['a walk of the example alone', [...expected], true, 'wrong'],
+    ['a walk that reached the end having read nothing', [], true, 'wrong'],
+    ["a walk that reached the end after the screen's own stops", [...own], true, 'wrong'],
+    ["the screen's own stops out of their order", [own[1], own[0], EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ["a stop that is not the screen's before the heading", ['Back button', ...own, EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    // No exception for an empty first stop.
+    ['an empty first stop for the title', ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    ['an empty first stop alone', [''], false, 'wrong'],
+    ['an empty stop just before the heading', [...own, '', EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    // Cut short before the end, with every stop right so far: may be walked
+    // again.
+    ['an empty walk cut short', [], false, 'incomplete'],
+    ['a walk cut short after the title', [own[0]], false, 'incomplete'],
+    ['a walk cut short after the heading', [...own, EXAMPLE_HEADING], false, 'incomplete'],
+    ['a walk cut short after the first header', screen(expected[0]), false, 'incomplete'],
+    ['every stop read, but the end not reached', screen(...expected), false, 'incomplete'],
+  ];
+  for (const [what, stops, reachedEnd, verdict] of cases) {
+    test(`${what}: ${verdict}`, () => {
+      expect(judgeExampleWalk(stops, reachedEnd, expected, own).verdict).toBe(verdict);
+    });
+  }
 
-  test('a whole walk is complete; WebKit\'s empty title is accepted', () => {
-    expect(judgeWalk([...lead, ...expected], true, expected, screen).verdict).toBe('complete');
-    expect(judgeWalk(['', ...lead.slice(1), ...expected], true, expected, screen).verdict).toBe('complete');
+  test("a bad example's own stops include its defect", () => {
+    expect(screenStops('bad-no-state').at(-1)).toMatch(/^Defect: /);
   });
 
-  test('a stop that is not the next expected one is wrong, before or after the heading', () => {
-    expect(judgeWalk([...lead, 'A', 'X', 'Presses: 0'], true, expected, screen).verdict).toBe('wrong');
-    expect(judgeWalk([...lead, 'A', 'B', 'Presses: 0', 'Extra'], true, expected, screen).verdict).toBe('wrong');
-    expect(judgeWalk(['Stray', ...lead, ...expected], true, expected, screen).verdict).toBe('wrong');
-    expect(judgeWalk([...lead, 'A', 'B'], true, expected, screen).verdict).toBe('wrong');
-    expect(judgeWalk(['', '', ''], true, expected, screen).verdict).toBe('wrong');
+  const judge = (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, own);
+  const sequence = (...list) => {
+    let i = 0;
+    return { walkOnce: async () => list[i++], made: () => i };
+  };
+  const right = { stops: screen(...expected), reachedEnd: true };
+  const short = { stops: screen(expected[0]), reachedEnd: false };
+
+  for (const [what, walk] of [
+    ['a wrong reading', { stops: screen('heading level 3 Shipping button', ...expected.slice(1)), reachedEnd: true }],
+    ['a walk that reached the end without the second header', { stops: screen(expected[0], expected[2]), reachedEnd: true }],
+    ['a walk with no title', { stops: [own[1], EXAMPLE_HEADING, ...expected], reachedEnd: true }],
+    ['a walk with no heading', { stops: [...own, ...expected], reachedEnd: true }],
+  ]) {
+    test(`${what} followed by a right walk fails, and no second walk is made`, async () => {
+      const { walkOnce, made } = sequence(walk, right);
+      expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+      expect(made()).toBe(1);
+    });
+  }
+
+  test('a wrong walk after a short one still fails, and no third walk is made', async () => {
+    const { walkOnce, made } = sequence(short, { stops: screen(expected[0], expected[2]), reachedEnd: true }, right);
+    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+    expect(made()).toBe(2);
   });
 
-  test('a walk that fell short with nothing wrong may be tried again', () => {
-    expect(judgeWalk([], false, expected, screen).verdict).toBe('incomplete');
-    expect(judgeWalk(lead.slice(0, 1), false, expected, screen).verdict).toBe('incomplete');
-    expect(judgeWalk([...lead, 'A'], false, expected, screen).verdict).toBe('incomplete');
+  test('an empty walk cut short, followed by a right one, passes on the second', async () => {
+    const { walkOnce } = sequence({ stops: [], reachedEnd: false }, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'complete', walks: 2 });
   });
 
-  test('runWalks tries again only after a walk that fell short, and logs every try', async () => {
-    const walks = [{ stops: [], reachedEnd: false }, { stops: [...lead, 'A', 'X'], reachedEnd: true }, { stops: [...lead, ...expected], reachedEnd: true }];
+  test('three walks cut short fail', async () => {
+    const { walkOnce } = sequence(short, short, short, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'incomplete', walks: 3 });
+  });
+
+  test('every try of an example walk is logged', async () => {
+    const { walkOnce } = sequence(short, short, right);
     const logged = [];
-    const result = await runWalks(async () => walks.shift(), (s, e) => judgeWalk(s, e, expected, screen), { log: (n, s, j) => logged.push(`${n} ${j.verdict}`) });
-    expect(result.verdict).toBe('wrong');
-    expect(logged).toEqual(['1 incomplete', '2 wrong']);
+    await runWalks(walkOnce, judge, { log: (n, stops, judged) => logged.push([n, judged.verdict]) });
+    expect(logged).toEqual([[1, 'incomplete'], [2, 'incomplete'], [3, 'complete']]);
   });
 
   for (const [slug, [title, ...rest]] of Object.entries(EXAMPLE_SCREENS)) {

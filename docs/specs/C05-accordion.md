@@ -32,8 +32,8 @@ itself:
   ([FL-260](../flutter-limitations.md#fl-260)). The good examples give iOS
   the state as the header's value as well.
 - Android: Flutter passes it from Android 16 (API 36) only
-  ([FL-261](../flutter-limitations.md#fl-261)). Before that, by the engine
-  source, the node has no state and keeps only its click label, which
+  ([FL-261](../flutter-limitations.md#fl-261)). Not measured below
+  Android 16. Before that, by the engine source, the node has no state and keeps only its click label, which
   TalkBack reads "Double-tap to expand" or "to collapse" (heard on Android
   17). The local emulator is Android 17; CI's is API 35, where
   only the source and the tree tests' branch for it speak for what happens.
@@ -98,9 +98,9 @@ own.
 
 | Slug | Variant | What it shows | Mechanism | Reqs |
 | --- | --- | --- | --- | --- |
-| `good-material` | Material | Material list tiles as headers | `ListTile(onTap:)` with an arrow, inside `HeaderSemantics`; a 3 pixel focus ring (V14's, as the tile's tint is under 3:1, FL-430) | R1 to R8 |
-| `good-cupertino` | Cupertino | Cupertino list tiles as headers | `CupertinoListTile` with a chevron, given focus, Enter, and Space by `FocusableActionDetector` (`KeyboardHeader`; the tile takes none, FL-400), inside `HeaderSemantics`; the title in a `DefaultTextStyle` of its own so that it wraps | R1 to R8 |
-| `good-custom` | Widgets layer | Headers from the widgets layer | `GestureDetector` and `KeyboardHeader`, inside `HeaderSemantics` | R1 to R8 |
+| `good-material` | Material | Material list tiles as headers. Custom solution: not vetted by a real-world example | `ListTile(onTap:)` with an arrow, inside `HeaderSemantics`; a 3 pixel focus ring (V14's, as the tile's tint is under 3:1, FL-430) | R1 to R8 |
+| `good-cupertino` | Cupertino | Cupertino list tiles as headers. Custom solution: not vetted by a real-world example | `CupertinoListTile` with a chevron, given focus, Enter, and Space by `FocusableActionDetector` (`KeyboardHeader`; the tile takes none, FL-400), inside `HeaderSemantics`; the title in a `DefaultTextStyle` of its own so that it wraps | R1 to R8 |
+| `good-custom` | Widgets layer | Headers from the widgets layer. Custom solution: not vetted by a real-world example | `GestureDetector` and `KeyboardHeader`, inside `HeaderSemantics` | R1 to R8 |
 
 `HeaderSemantics` is one node, merged by `TestId`: `button: true`;
 `expanded: open`; `onTapHint: 'expand'` or `'collapse'`; `onExpand` while
@@ -120,6 +120,47 @@ good examples (`bad-expansion-tile`, `bad-cupertino-expansion-tile`).
 first was measured in the probe (FL-267), and the second's default is
 `bad-hidden-panel`'s defect.
 
+### Custom solutions
+
+Custom solution: not vetted by a real-world example. It is tested here in
+isolation, with screen-reader transcripts, but has not been built into a
+real app and tested in a user journey. Do not treat it as a vetted
+technique.
+
+This applies to `good-material`, `good-cupertino`, and `good-custom`. They
+are built by hand because no Flutter accordion widget meets the
+requirements through its own parameters: `ExpansionTile`'s header has no
+expanded state and, on Android and iOS, no button role
+([FL-264](../flutter-limitations.md#fl-264)); `CupertinoExpansionTile`'s
+header takes no keyboard focus and has no role or state
+([FL-265](../flutter-limitations.md#fl-265)); `ExpansionPanelList`'s
+buttons are all named "Expand" or "Collapse" and have no state
+([FL-267](../flutter-limitations.md#fl-267), probe only). They are what
+was built and measured here, nothing more.
+
+What is hand-built (all in `examples.dart`), the gap each piece fills, and
+where it comes from:
+
+| Piece | What it does | Gap it fills (measured) | Source |
+| --- | --- | --- | --- |
+| `Accordion`: the sections' state, and a panel built only while open | A closed panel is in neither the semantics tree nor the focus order | The SDK widgets give no role or state; kept with `Offstage` (`ExpansionTile(maintainState: true)`, and by default `CupertinoExpansionTile` and `Expansible`) a closed panel keeps keyboard focus ([FL-263](../flutter-limitations.md#fl-263)) | APG (`aria-expanded` false: the panel is hidden); Android View reference (`View.GONE`); Android Compose reference (content composed only while expanded) |
+| `HeaderSemantics`: `button: true` | The button role | `ExpansionTile` gives its header no button flag; a `CupertinoListTile` has none (FL-264, FL-265, [FL-400](../flutter-limitations.md#fl-400)) | APG (button role, required); Android View reference; Flutter `SemanticsProperties.button` |
+| `HeaderSemantics`: `expanded: open` | The state: `aria-expanded` on the web, the expanded state on Android 16 and later | No Flutter accordion widget sets `expanded`; they put the word in a hint (FL-264) | APG (`aria-expanded`); iOS reference (VoiceOver must hear "Expanded" and "Collapsed"); Flutter `SemanticsProperties.expanded` |
+| `iosStateValue`: `value: 'collapsed'` or `'expanded'`, on iOS only | VoiceOver reads the state | The iOS engine does not pass `expanded` ([FL-260](../flutter-limitations.md#fl-260)) | **No source.** Of this project's own design: not in APG, the reference repositories, or Flutter's documentation. UIKit and SwiftUI use `accessibilityExpandedStatus`, which Flutter cannot set |
+| `onTapHint: 'expand'` or `'collapse'` | TalkBack says "Double-tap to expand" or "to collapse" | Before Android 16 no state reaches Android ([FL-261](../flutter-limitations.md#fl-261), source read) | Android Compose reference (`onClickLabel`) |
+| `onExpand` while closed, `onCollapse` while open | Android's expand and collapse actions (Android 16 and later only, FL-261) | No Flutter accordion widget gives them | Android View reference (`ACTION_EXPAND`, `ACTION_COLLAPSE`); Android Compose reference (`expand()`, `collapse()`) |
+| The heading: `headingLevel: 3` on the button's node off the web, and on the web a `Semantics(headingLevel: 3, container: true)` round the button (by `kIsWeb`) | The heading | On the web a node that is both a heading and a button is a heading only ([FL-262](../flutter-limitations.md#fl-262)); no Flutter accordion widget has a heading | APG (a heading round the button, required); Android View and Compose references (mark section headings) |
+| `controls` and `panelId`: `controlsNodes` naming the panel, set only while it is open | `aria-controls` on the web | Set all along, the web engine never writes it ([FL-266](../flutter-limitations.md#fl-266)) | APG for `aria-controls`. **No source** for setting it only while open: of this project's own design |
+| `KeyboardHeader`: `FocusableActionDetector` with `ActivateIntent` and `ButtonActivateIntent` | Keyboard focus, Enter and Space | `CupertinoListTile` and `CupertinoExpansionTile` take no keyboard focus (FL-400, FL-265) | APG (Enter and Space); I01's workaround for FL-400 |
+| `FocusRing`: a 3 pixel ring in the text colour | A visible focus indicator | `ListTile`'s focus tint is under 3:1 ([FL-430](../flutter-limitations.md#fl-430)); `CupertinoListTile` shows none | V14, and C03's copy of it |
+| `wrappingTitle`: a `DefaultTextStyle` of the title's own | A `CupertinoListTile` title wraps at 200% text | The tile cuts its title to one line | C03 `good-cupertino`'s fix |
+| `plainHeader`: a `GestureDetector`, the title, and an arrow | The face of `good-custom`, and of the hand-built bad examples | None: it is the widgets-layer variant | None needed: the widgets layer itself |
+
+The hand-built bad examples (`bad-no-state`, `bad-heading-on-button`,
+`bad-no-heading`, `bad-hidden-panel`) are built from the same pieces, each
+with one taken away or changed; `bad-hidden-panel` copies `Expansible`'s
+default way of hiding a closed panel.
+
 ### Bad
 
 | Slug | Defect | Violates |
@@ -128,15 +169,22 @@ first was measured in the probe (FL-267), and the second's default is
 | `bad-heading-on-button` | The heading on the button's own node on the web too: there each header is an `<h3>` only, with no button role and no `aria-expanded` (FL-262). On Android and iOS it is as the good examples | R1, R2 (web) |
 | `bad-no-heading` | Drawn as section headings, in the title style, but not headings | R3 |
 | `bad-hidden-panel` | A closed panel kept with `Offstage`, as `Expansible` keeps it by default: out of the semantics tree, but its button keeps keyboard focus, so Tab goes to buttons that are not drawn, and Enter presses one (FL-263) | R6 |
-| `bad-expansion-tile` | Material's `ExpansionTile`, as it comes: no expanded state, and on Android and iOS no button role; the state is a hint (FL-264) | R1, R2 |
+| `bad-expansion-tile` | Material's `ExpansionTile`, as it comes: on Android and iOS its headers are not buttons (FL-264) | R1 |
 | `bad-cupertino-expansion-tile` | Cupertino's `CupertinoExpansionTile`, as it comes: its headers take no keyboard focus, so a keyboard opens nothing (FL-265) | R5 |
 
-The two SDK tiles are shown as they come, and each has more than the
-defect named: `ExpansionTile`'s lack of a role and of a state are one gap,
-that the header is not an expandable button; `CupertinoExpansionTile` also
-has no role and no state on Android and iOS, and once open its panel's
-text joins its name (FL-265). The table below gives every criterion each
-fails as measured. Their panels hold text only, so that a closed panel has
+The two SDK tiles are shown as they come, each with one named defect.
+Their other measured shortcomings, which are not their named defects and
+are not judged in the table below:
+
+- `bad-expansion-tile`: no expanded state on any platform; "Collapsed" or
+  "Expanded" is only text, at the end of the name on Android ("Shipping,
+  Collapsed"), a hint on iOS, and the description on the web; on Android
+  a live region announces the change (FL-264).
+- `bad-cupertino-expansion-tile`: no button role on Android (`View`) and
+  iOS (static text); no expanded state, with the state as a hint on iOS
+  only; once open, the panel's text joins the header's name (FL-265).
+
+Their panels hold text only, so that a closed panel has
 nothing to take focus (`CupertinoExpansionTile` keeps closed panels
 `Offstage`, FL-263). Their headers have no `TestId`: its `MergeSemantics`
 would merge the tile's panel into its header. They are found by text.
@@ -148,14 +196,25 @@ What each fails, by platform, as the criteria are written:
 | `bad-no-state` | 4.1.2: no state (on Android 16 and later; before 16 the good examples have none either, FL-261) | 4.1.2: no state | 4.1.2: no `aria-expanded` |
 | `bad-heading-on-button` | none: a heading button with its state | none: as the good examples | 4.1.2: a heading, with no button role and no state (FL-262) |
 | `bad-no-heading` | 1.3.1: drawn as a heading, not one | 1.3.1 | 1.3.1 |
-| `bad-hidden-panel` | 2.4.7 and 4.1.2: Tab puts focus on a button that is not drawn and has no node, and Enter presses it | 2.4.7 and 4.1.2: four Tabs and Enter press a hidden button | 2.4.7 and 4.1.2: as on Android; the page's focus stays on the last header |
-| `bad-expansion-tile` | 4.1.2: not a button (`View`), and no state; "Collapsed" is text in its name | 4.1.2: static text, and the state only in its hint | 4.1.2 not settled: a button ([FL-006](../flutter-limitations.md#fl-006)) whose state is only in its description |
-| `bad-cupertino-expansion-tile` | 2.1.1: no keyboard path opens a section. 4.1.2: not a button, no state | 2.1.1. 4.1.2: static text, the state only in its hint | 2.1.1. 4.1.2: a button with no state |
+| `bad-hidden-panel` | 4.1.2: Tab puts keyboard focus on a button that has no node, and Enter presses it | 4.1.2: four Tabs and Enter press a button that is not on screen | 4.1.2: as on Android; the page's focus stays on the last header |
+| `bad-expansion-tile` | 4.1.2: not a button (`View`) | 4.1.2: static text | none: a button ([FL-006](../flutter-limitations.md#fl-006)) |
+| `bad-cupertino-expansion-tile` | 2.1.1: the header takes no keyboard focus, so no key reaches it | 2.1.1 | 2.1.1 |
 
-2.4.3 Focus Order is not claimed for `bad-hidden-panel`: the visible stops
-keep their order. That its hidden button is not drawn is from the source
-(`RenderOffstage` paints nothing); no screenshot was taken. 2.4.7 and 2.1.1 are outside the entry's two criteria;
-they are claimed because each fails as written.
+For `bad-hidden-panel`, 2.4.7 Focus Visible and 2.4.3 Focus Order are
+not claimed: the tests show keyboard focus on a control with no node, not
+that no focus indicator is visible (that nothing is drawn is from the
+source, `RenderOffstage` paints nothing, and no screenshot was taken), and
+the visible stops keep their order.
+
+2.1.1 Keyboard, outside the entry's two criteria, is claimed for
+`bad-cupertino-expansion-tile` because it fails as written and the tests
+show that no keyboard path opens a section: the header has no focus state
+at all in the semantics tree (widget tests) and no `tabindex` on the web,
+so no key can reach it; Tab stops only on Back, where Enter and Space
+leave the example (widget tests, the web, Android); and on iOS one, two,
+or three Tabs and then Enter or Space never open a section. A section
+opens only by a pointer or a screen reader's tap action. 2.1.1's exception
+(input that depends on the path of the user's movement) does not apply.
 
 "Not settled" means the evidence and the criterion as written do not decide
 it either way; nothing is claimed.
@@ -169,8 +228,8 @@ it either way; nothing is claimed.
 | L3 Android | Good: each header is a `Button` named by its title, a heading, clickable, focusable, click label "expand", and on Android 16 and later expanded state "collapsed", before 16 no expand or collapse action; two clickable nodes but Back; no closed panel; the reading order Shipping, Returns; `ACTION_CLICK` opens Shipping (state "full", label "collapse", Returns still collapsed, reading order with the panel after its header) and closes it again; on Android 16 and later `ACTION_EXPAND` opens it and `ACTION_COLLAPSE` closes it (skipped before 16); a tap opens it; Tab to it and Enter, then Space, each open it, keep focus, and close it; Tab after a closed Shipping reaches Returns, after an open one "Track a parcel" then Returns. Bad: `bad-no-state` has no expanded state ("undefined") and no click label before and after a click that opens it; `bad-heading-on-button` is a heading button with its state; `bad-no-heading`'s headers are buttons with their state and not headings; `bad-hidden-panel`'s closed panel is not in the tree; the Tab after Returns leaves the tree reporting Returns as focused, and Enter then presses a hidden button (the count) while both sections stay closed, which Enter on Returns would not do; Enter on Returns opening it is the positive control; `bad-expansion-tile` is a `View` named "Shipping, Collapsed", then "Shipping, Expanded", not a heading, click label "Expand for more details", no expanded state; `bad-cupertino-expansion-tile`: Tab never gives its header focus and reaches Back, where Enter, and then Space, leave the example; its header is a `View` with no expanded state, opened by the click action |
 | L3 iOS | Good: each header is a button named by its title, value "collapsed"; two buttons but Back; no closed panel on screen; a tap opens Shipping (value "expanded", Returns "collapsed", the panel's text and button between Shipping and Returns on screen; XCUITest's list of elements is not the reading order, which the VoiceOver walk checks) and a second closes it; two Tabs and Enter, and in another launch Space, open Shipping and stay on the example. Bad: `bad-no-state` has no value before or after a tap that opens it; `bad-heading-on-button` and `bad-no-heading` are buttons with the value (the heading is heard, not seen, in the tree); `bad-hidden-panel` shows no closed panel, four Tabs and Enter press a hidden button (the count) while both stay closed, and three Tabs and Enter open Returns, the positive control; `bad-expansion-tile` and `bad-cupertino-expansion-tile` are not buttons and have no value, and a tap opens them; for `bad-cupertino-expansion-tile`, one, two, and three Tabs and then Enter or Space never open a section and take the example off the screen (Back acted) |
 | L4 TalkBack | For each example but `bad-hidden-panel`: what is said with focus on Shipping's header, closed; on the click action with focus left there (not for `bad-no-state` and `bad-cupertino-expansion-tile`, see section 7); with focus on the panel's text (on Back for `bad-cupertino-expansion-tile`, whose open panel is part of its header); and on the header again, open |
-| L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list, closed, and again after a double tap with VoiceOver on has opened Shipping; what VoiceOver says with its cursor on Shipping, and after the double tap |
-| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged, closed and after a click has opened Shipping, in Chromium and WebKit. Not recorded yet |
+| L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list, closed, and again after XCUITest's double tap at the header, with VoiceOver on, has opened Shipping; what VoiceOver says with its cursor on Shipping, and in the three seconds after that gesture. The gesture is a tap at the header's place, not VoiceOver's activation, which XCUIVoiceOverService has no way to make (C04 probe round 3, `docs/evidence/probes/c04/ios_round3.txt`) |
+| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C04's walks are (`judgeExampleWalk` in `web_tests/vo/c05_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened Shipping, in Chromium and WebKit. The judge is tested on made-up walks in `web_tests/c05_accordion.spec.js`. Not recorded yet |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -225,10 +284,13 @@ VoiceOver, and native comparisons on Android and iOS.
 
 What is said when a header is activated: on Android 17 TalkBack says
 "fully expanded" or "collapsed" by itself, from the expanded state's
-change. On iOS VoiceOver said nothing in the three seconds after a double
-tap, for the good examples and for UIKit's own button with an expanded
-status alike; the new state is read when the cursor comes back to the
-header. So the examples add no announcement of their own. `ExpansionTile`
+change. On iOS VoiceOver said nothing in the three seconds after
+XCUITest's double tap at the header, for the good examples and for UIKit's
+own button with an expanded status alike, and the new state was read when
+the cursor came back to the header. That gesture is a tap at the header's
+place and not VoiceOver's own activation (C04 probe round 3), so what
+VoiceOver says after its own double tap, made by a person, was not
+measured. The examples add no announcement of their own. `ExpansionTile`
 announces the change itself (source read: `sendAnnouncement` on iOS and the
 web, a live region on Android): "Expanded" was heard from VoiceOver on iOS
 and from TalkBack; on the web it was not listened for.
@@ -272,7 +334,9 @@ Skips and what they give up, in the tests:
   first recording decides them.
 
 **Not done yet.** The web VoiceOver recording; Android before 16, measured
-on a device; what TalkBack's actions menu offers, and its swipe order
+on a device; what VoiceOver on iOS says and does on its own double tap,
+made by a person (the tests' gesture is XCUITest's tap at the header's
+place); a real app and user journey built with the custom solution; what TalkBack's actions menu offers, and its swipe order
 through an open panel (the walk moves focus by action); arrow keys, Home,
 and End between headers, which APG does not list and Radix has; an
 accordion that keeps one section always open (APG's `aria-disabled` case);

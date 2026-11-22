@@ -222,8 +222,10 @@ final class C05AccordionUITests: XCTestCase, CountedTechniqueUITest {
 
   // L4. Everything VoiceOver says after the "Example" heading, to the end
   // of the screen (C05Walk), the count included, compared as a whole list:
-  // closed, then after
-  // Shipping has been opened by a double tap with VoiceOver on.
+  // closed, then after Shipping has been opened by XCUITest's double tap at
+  // its header with VoiceOver on. That is a tap at the header's place and
+  // not VoiceOver's own activation: XCUIVoiceOverService has no activation
+  // (C04 probe round 3, docs/evidence/probes/c04/ios_round3.txt).
   private let speech: [(slug: String, closed: [String], open: [String])] = {
     // From the probe (docs/evidence/probes/c05, ios.txt): VoiceOver reads
     // a value before the traits ("p12 Shipping collapsed Button") and a
@@ -310,9 +312,13 @@ final class C05AccordionUITests: XCTestCase, CountedTechniqueUITest {
 
   #if compiler(>=6.4)
   /// Puts VoiceOver's cursor on Shipping's header (with VoiceOver on, a tap
-  /// only moves it), checks what is said there, then double taps it and
-  /// checks the section opened. Logs what VoiceOver said after the double
-  /// tap, a row of the transcript.
+  /// only moves it), checks what is said there, then sends XCUITest's
+  /// double tap at the header's place and checks the section opened. As C04
+  /// measured (probe round 3), that gesture acts on what is under it and is
+  /// not VoiceOver's activation of what its cursor is on, which
+  /// XCUIVoiceOverService cannot make; so what VoiceOver's own double tap
+  /// does is not measured here. Logs what VoiceOver said after the gesture,
+  /// a row of the transcript.
   @available(iOS 27.0, *)
   private func doubleTapOpens(_ slug: String, _ voiceOver: XCUIVoiceOverService) throws {
     try voiceOver.enable()
@@ -331,8 +337,8 @@ final class C05AccordionUITests: XCTestCase, CountedTechniqueUITest {
       if heard.last != s { heard.append(s) }
     }
     let opened = shown(Self.shippingText)
-    print("C05VO double-tap-\(slug) | cursor on \(cursor) / then heard \(heard.joined(separator: " | ")) / \(opened ? "Shipping opened" : "nothing opened")")
-    XCTAssertTrue(opened, "\(slug): the double tap opens Shipping")
+    print("C05VO xcuitest-double-tap-\(slug) | cursor on \(cursor) / then heard \(heard.joined(separator: " | ")) / \(opened ? "Shipping opened" : "nothing opened")")
+    XCTAssertTrue(opened, "\(slug): XCUITest's double tap at the header opens Shipping")
   }
   #endif
 }

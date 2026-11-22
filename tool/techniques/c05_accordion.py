@@ -84,9 +84,12 @@ VOICEOVER_IOS_METHOD = (
     "`XCUIVoiceOverService.moveForward()` from the top of the screen to its end, where moving "
     "on gives the last utterance again, twice; what is shown is everything after the "
     "\"Example\" heading, and a walk that does not reach the end fails. Each example is walked "
-    "with both sections closed, then the cursor is put on Shipping and a double tap opens it "
-    "(`double-tap-` rows: what VoiceOver said there and after the double tap), then it is "
-    "walked again (`-open` rows)",
+    "with both sections closed; then the cursor is put on Shipping by a tap, and XCUITest's "
+    "`doubleTap()` at the header opens it (`xcuitest-double-tap-` rows: what VoiceOver said "
+    "with the cursor there, and in the three seconds after the gesture). That gesture is a "
+    "tap at the header's place, not VoiceOver's own activation, which XCUIVoiceOverService "
+    "cannot make (C04 probe round 3), so what VoiceOver's own double tap does is not "
+    "measured. Then the example is walked again (`-open` rows)",
     "Spoken, in swipe order",
 )
 

@@ -136,6 +136,10 @@ String headerId(String slug, Section section) => 'c05-$slug-${section.key}';
 /// `c05-good-material-shipping-panel`.
 String panelId(String header) => '$header-panel';
 
+/// Setting it only while open has no source: it is of this project's own
+/// design, measured but not taken from APG, the reference repositories, or
+/// Flutter's documentation. `aria-controls` itself is APG's.
+///
 /// What a header controls: its panel, while it is open. On the web this is
 /// `aria-controls`. The web engine writes it only if the panel's node is
 /// there when the header's `controlsNodes` is set, so it is set when the
@@ -144,6 +148,9 @@ String panelId(String header) => '$header-panel';
 Set<String>? controls(String header, bool open) =>
     open ? {panelId(header)} : null;
 
+/// No source: this is of this project's own design, measured but not taken
+/// from APG, the reference repositories, or Flutter's documentation.
+///
 /// What VoiceOver on iOS is given for the state. The iOS engine does not
 /// pass `expanded` to iOS (docs/flutter-limitations.md, FL-260), so on iOS
 /// the state goes in the header's value as well, which VoiceOver reads after
@@ -154,6 +161,9 @@ String? iosStateValue(bool open) =>
     ? (open ? 'expanded' : 'collapsed')
     : null;
 
+/// Part of the custom solution of the good examples (not vetted by a
+/// real-world example; docs/specs/C05-accordion.md, "Custom solutions").
+///
 /// What a header is to assistive technology: one node that is a button,
 /// with the section's title as its name, an expanded state, and the heading
 /// of its section.
@@ -343,6 +353,12 @@ Widget plainHeader(
 /// focus and takes Enter and Space, inside [HeaderSemantics]. Material's
 /// own `ExpansionTile` is not used: its header has no expanded state, and
 /// on Android and iOS no button role (`bad-expansion-tile`).
+///
+/// Custom solution: not vetted by a real-world example. It is tested here in
+/// isolation, with screen-reader transcripts, but has not been built into a
+/// real app and tested in a user journey. Do not treat it as a vetted
+/// technique. No Flutter accordion widget meets the requirements through its
+/// own parameters (docs/flutter-limitations.md, FL-264, FL-265, FL-267).
 class GoodMaterial extends StatelessWidget {
   const GoodMaterial({super.key});
 
@@ -373,6 +389,12 @@ class GoodMaterial extends StatelessWidget {
 /// none, FL-400), inside [HeaderSemantics]. Cupertino's own
 /// `CupertinoExpansionTile` is not used: a keyboard cannot reach its
 /// headers (`bad-cupertino-expansion-tile`).
+///
+/// Custom solution: not vetted by a real-world example. It is tested here in
+/// isolation, with screen-reader transcripts, but has not been built into a
+/// real app and tested in a user journey. Do not treat it as a vetted
+/// technique. No Flutter accordion widget meets the requirements through its
+/// own parameters (docs/flutter-limitations.md, FL-264, FL-265, FL-267).
 class GoodCupertino extends StatelessWidget {
   const GoodCupertino({super.key});
 
@@ -403,6 +425,12 @@ class GoodCupertino extends StatelessWidget {
 // #region good-custom
 /// Each header is built from the widgets layer ([plainHeader]) inside
 /// [HeaderSemantics].
+///
+/// Custom solution: not vetted by a real-world example. It is tested here in
+/// isolation, with screen-reader transcripts, but has not been built into a
+/// real app and tested in a user journey. Do not treat it as a vetted
+/// technique. No Flutter accordion widget meets the requirements through its
+/// own parameters (docs/flutter-limitations.md, FL-264, FL-265, FL-267).
 class GoodCustom extends StatelessWidget {
   const GoodCustom({super.key});
 
@@ -545,10 +573,11 @@ class BadExpansionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Accordion(
       slug: 'bad-expansion-tile',
-      // Defect: Material's ExpansionTile, as it comes. Its header has no
-      // expanded state, and on Android and iOS no button role; "Expanded"
-      // or "Collapsed" is only a hint (FL-264). The tile has its own panel,
-      // so the accordion's is not used.
+      // Defect: Material's ExpansionTile, as it comes. On Android and iOS
+      // its header is not a button (FL-264). It has other shortcomings,
+      // which the spec lists: no expanded state, only "Expanded" or
+      // "Collapsed" as a hint. The tile has its own panel, so the
+      // accordion's is not used.
       // No TestId: its MergeSemantics would take the tile's panel into the
       // header. The headers are found by their text.
       // The title keeps the tile's own text style: drawn as a section
@@ -593,7 +622,9 @@ class BadCupertinoExpansionTile extends StatelessWidget {
       slug: 'bad-cupertino-expansion-tile',
       // Defect: Cupertino's CupertinoExpansionTile, as it comes. Its header
       // is a CupertinoListTile, which takes no keyboard focus, so a
-      // keyboard cannot open a section (FL-265).
+      // keyboard cannot open a section (FL-265). Its other shortcomings,
+      // which the spec lists: no button role on Android and iOS, no
+      // expanded state, and once open its panel's text joins its name.
       // No TestId, as in bad-expansion-tile.
       // The tile's own text style, as in bad-expansion-tile.
       header: (context, section, open, toggle) => CupertinoExpansionTile(

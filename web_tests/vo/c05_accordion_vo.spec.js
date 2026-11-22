@@ -5,16 +5,21 @@
 // C05`, which also writes the transcript.
 //
 // No test in this file is retried by the runner (the configure call
-// below): tool/voiceover_web.py passes a run whose retry passed, and keeps
-// only the last attempt's rows, so a wrong reading on a first attempt would
-// be hidden. Each test retries instead, itself, only a walk that fell short
-// (runWalks and judgeWalk in c05_vo_walks.js, which
-// web_tests/c05_accordion.spec.js tests on made-up walks): a wrong reading
-// fails the test for good, and every try is logged.
+// below): the shared config retries a failed test twice, and a retry that
+// passes makes the run pass, so a wrong reading on a first attempt would be
+// hidden. Each test retries instead, itself, only a walk cut short before
+// the end of the screen with every stop right so far (runWalks and
+// judgeExampleWalk in c05_vo_walks.js, which
+// web_tests/c05_accordion.spec.js tests on made-up walks). Every walk must
+// read the whole screen, the title, the description (and a bad example's
+// defect), the "Example" heading, and every expected stop after it, each in
+// its place: a wrong stop, or a walk that reached the end with any expected
+// stop not read, fails the test for good, and every try is logged, so every
+// attempt is in the transcript.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { walkToEnd } from './vo_helpers.js';
-import { EXAMPLE_HEADING, judgeWalk, runWalks, screenStops } from './c05_vo_walks.js';
+import { EXAMPLE_HEADING, judgeExampleWalk, runWalks, screenStops } from './c05_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
@@ -55,7 +60,8 @@ const EXAMPLES = {
     closed: [inHeading(collapsed('Shipping')), inHeading(collapsed('Returns')), COUNT],
     open: [inHeading(expanded('Shipping')), SHIPPING_TEXT, SHIPPING_ACTION, inHeading(collapsed('Returns')), COUNT],
   },
-  // A button with its state only in its description.
+  // A button on the web (FL-006), with its state only in its
+  // description; the defect, no button role, is on Android and iOS.
   'bad-expansion-tile': {
     closed: ['Shipping button', 'Returns button', COUNT],
     open: ['Shipping button', SHIPPING_TEXT, 'Returns button', COUNT],
@@ -76,7 +82,7 @@ const tile = (slug) => slug.endsWith('expansion-tile');
 async function read(page, voiceOver, browserName, label, expected, screen) {
   const { verdict, reason, walks } = await runWalks(
     () => walkToEnd(page, voiceOver, browserName, 40),
-    (stops, reachedEnd) => judgeWalk(stops, reachedEnd, expected, screen),
+    (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screen),
     {
       log: (walk, stops, judged) => {
         const start = stops.indexOf(EXAMPLE_HEADING);

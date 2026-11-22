@@ -3083,9 +3083,11 @@ yet), **Fixed in x.y** (verified on that version).
 - What happens: `Semantics(button: true, expanded: false)` and the same
   node expanded read alike: "p07 Shipping Button", closed and open (probe
   `ios.txt`, p07, p09 to p11, p13, p14, p16 to p18). XCUITest shows no value
-  and no selected state for it. After a double tap that opened it,
-  VoiceOver said nothing more in the three seconds read (it said nothing
-  more for UIKit's own buttons either, below), and moving on read the panel.
+  and no selected state for it. After XCUITest's double tap at the header
+  opened it (a tap at its place with VoiceOver on, not VoiceOver's own
+  activation, which XCUIVoiceOverService cannot make: C04 probe round 3),
+  VoiceOver said nothing more in the three seconds read (nor for UIKit's own
+  buttons, below), and moving on read the panel.
   So a VoiceOver user cannot tell whether a section is open.
 - Native comparison (probe, `testNative`): a UIKit button with
   `accessibilityExpandedStatus` is read "n01 Shipping Button Collapsed
@@ -3095,7 +3097,9 @@ yet), **Fixed in x.y** (verified on that version).
   `DisclosureGroup`, which the iOS reference uses, "n03 Shipping Button
   Collapsed Double-tap to expand" (`ios.txt`, `testNative`). So iOS has a
   state for this, which VoiceOver reads, and Flutter does not set it.
-- Workaround, in the SDK: on iOS only, put the state in the header's value
+- Workaround, in the SDK, with no source (of this project's own design;
+  not in APG, the reference repositories, or Flutter's documentation).
+  Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions"). On iOS only, put the state in the header's value
   as well: `value: open ? 'expanded' : 'collapsed'` when
   `defaultTargetPlatform == TargetPlatform.iOS` and not on the web
   (C05 `iosStateValue`). VoiceOver then says "p12 Shipping collapsed Button" (probe
@@ -3192,7 +3196,7 @@ yet), **Fixed in x.y** (verified on that version).
   button's node: on Android the outer node of p09 is a heading with no name
   and the button is not a heading (`android-tree.txt`), and on iOS
   VoiceOver says "p09 Shipping Button", with no "Heading" (`ios.txt`).
-  C05's good examples do both, by `kIsWeb` (`HeaderSemantics`).
+  C05's good examples do both, by `kIsWeb` (`HeaderSemantics`). Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions").
 - How to read this entry: Flutter has not given a heading node the
   behaviours of a button on the web yet.
 - Upstream issue: not searched yet (D25).
@@ -3225,16 +3229,16 @@ yet), **Fixed in x.y** (verified on that version).
   p02 and p14), and on the web the page's focus stays on that header. Enter there
   presses the hidden button (C05's count goes up while every section stays
   closed).
-- WCAG, as written: 2.4.7 Focus Visible: keyboard focus is on a control
-  that is not drawn, so no focus indicator is visible (that nothing is
-  drawn is from the source, `RenderOffstage` paints nothing; no screenshot
-  was taken); and 4.1.2 Name,
-  Role, Value: a control that takes keyboard focus and is operated by
-  Enter has no name or role a screen reader can read. 2.4.3 Focus Order is
-  not claimed: the order of the visible stops is kept.
-- Workaround, in the SDK: build a closed panel not at all, as C05's good
-  examples do (`if (open) panel`), or pass `maintainState: false` to
-  `Expansible`. Keeping a hidden panel's state while taking its controls
+- WCAG, as written: 4.1.2 Name, Role, Value: a control that takes
+  keyboard focus and is operated by Enter has no name or role a screen
+  reader can read. 2.4.7 Focus Visible is not claimed: the tests show focus
+  on a control with no node, not that no focus indicator is visible (that
+  nothing is drawn is from the source, `RenderOffstage` paints nothing; no
+  screenshot was taken). 2.4.3 Focus Order is not claimed: the order of the
+  visible stops is kept.
+- Workaround, in the SDK: pass `maintainState: false` to `Expansible`
+  (its documented parameter; not measured), or build a closed panel not at
+  all, as C05's good examples do (`if (open) panel`; Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions").). Keeping a hidden panel's state while taking its controls
   out of the focus order, for example with `ExcludeFocus`, was not tried.
 - Upstream issue: not searched yet (D25).
 
@@ -3261,8 +3265,9 @@ yet), **Fixed in x.y** (verified on that version).
     Collapsed / Double-tap to Expand for more details", and "Expanded"
     when a click opens it.
   - iOS: static text to XCUITest. VoiceOver: "p01 Shipping Collapsed double tap to expand",
-    the state as a hint with no role, and "Expanded" after a double tap
-    opened it (the announcement).
+    the state as a hint with no role, and "Expanded" after XCUITest's
+    double tap at the header opened it (the announcement; the gesture is a
+    tap at its place, not VoiceOver's activation).
   - Web: `role="button"` ([FL-006](#fl-006)) with no `aria-expanded`;
     "Collapsed" and "double tap to expand" are its `aria-description`
     (accessible description `Collapsed`, Chromium).
@@ -3270,9 +3275,10 @@ yet), **Fixed in x.y** (verified on that version).
   is a control, and no state; the word in its name or hint is text, not a
   state. On the web the role is there and the state is text in its
   description: not settled by the criterion as written.
-- Workaround, in the SDK: build the header from a `ListTile` inside
-  `Semantics(button: true, expanded:)` and build the panel only while it
-  is open (C05 `good-material`). `ExpansionTile(internalAddSemanticForOnTap:
+- Closest achievable example: none with `ExpansionTile`'s own parameters
+  alone. C05 `good-material` builds the header from a `ListTile` inside
+  `Semantics(button: true, expanded:)` and builds the panel only while it
+  is open. Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions"). `ExpansionTile(internalAddSemanticForOnTap:
   true)` with its title in `Semantics(expanded:)` gives a button with the
   state (probe p15), but keeps the hint and the live region, so the state
   is said twice ("Expanded / fully expanded" from TalkBack), and relies on
@@ -3307,10 +3313,11 @@ yet), **Fixed in x.y** (verified on that version).
   - Its closed panel is `Offstage` and keeps keyboard focus
     ([FL-263](#fl-263)); C05's example has no button in it, so that this
     is not a second defect there.
-- Workaround, in the SDK: build the header from a `CupertinoListTile`
-  given focus by `FocusableActionDetector`, inside `Semantics(button:
-  true, expanded:)`, with the panel built only while open (C05
-  `good-cupertino`).
+- Closest achievable example: none with `CupertinoExpansionTile`'s own
+  parameters. C05 `good-cupertino` builds the header from a
+  `CupertinoListTile` given focus by `FocusableActionDetector`, inside
+  `Semantics(button: true, expanded:)`, with the panel built only while
+  open. Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions").
 - How to read this entry: Flutter has not given `CupertinoExpansionTile`
   keyboard focus, a button role, or an expanded state yet.
 - Upstream issue: not searched yet (D25).
@@ -3333,7 +3340,8 @@ yet), **Fixed in x.y** (verified on that version).
 - WCAG: none failed as written. APG's accordion pattern requires
   `aria-controls`; 1.3.1 and 4.1.2 are met by the panel coming straight
   after its header.
-- Workaround, in the SDK: set `controlsNodes` only while the panel is
+- Workaround, in the SDK, with no source (of this project's own design).
+  Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions"). Set `controlsNodes` only while the panel is
   open, so it changes in the update that builds the panel:
   `controlsNodes: open ? {panelId} : null` (p18; C05 `controls`). Then
   `aria-controls` names the open panel and is gone while it is closed.

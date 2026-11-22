@@ -1,16 +1,18 @@
-// How web_tests/vo/c05_accordion_vo.spec.js judges its VoiceOver walks.
-// Kept apart from the spec, with no VoiceOver and no browser, so that
-// web_tests/c05_accordion.spec.js can test it on made-up walks in CI.
+// How web_tests/vo/c05_accordion_vo.spec.js judges and repeats its
+// VoiceOver walks. Kept apart from the spec, with no VoiceOver and no
+// browser, so that web_tests/c05_accordion.spec.js can test it on made-up
+// walks in CI. Written after C04's c04_vo_walks.js (not imported: that file
+// is another technique's).
 
 /** The heading every example screen has, as VoiceOver reads it. */
 export const EXAMPLE_HEADING = 'heading level 2 Example';
 
 /**
- * What each C05 example screen shows above its "Example" heading: the
- * screen's title (a level 1 heading), the line that says whether it is a
- * good or a bad example, and a bad example's defect (ExampleScreen in
- * lib/app/screens.dart, with the titles and defects of
- * lib/techniques/c05_accordion/c05_accordion.dart).
+ * What each C05 example screen shows above its "Example" heading, as
+ * VoiceOver reads it: the screen's title as a level 1 heading, the line
+ * that says whether it is a good or a bad example, and a bad example's
+ * defect (ExampleScreen in lib/app/screens.dart, with the titles and
+ * defects of lib/techniques/c05_accordion/c05_accordion.dart).
  * web_tests/c05_accordion.spec.js checks that each screen shows these
  * texts, so that a change to them is caught.
  */
@@ -36,7 +38,7 @@ export const EXAMPLE_SCREENS = {
   ],
   'bad-expansion-tile': [
     'Material ExpansionTile', 'Bad example for Accordion. Material.',
-    'Defect: The headers have no open or closed state, and on Android and iOS are not buttons.',
+    'Defect: On Android and iOS the headers are not buttons.',
   ],
   'bad-cupertino-expansion-tile': [
     'CupertinoExpansionTile', 'Bad example for Accordion. Cupertino.',
@@ -44,72 +46,74 @@ export const EXAMPLE_SCREENS = {
   ],
 };
 
-/**
- * The readings VoiceOver may give for the screen's stops before the
- * "Example" heading: the title as a level 1 heading (WebKit has read it as
- * an empty phrase, C03's transcript), then the other lines as they are.
- */
-export function screenStops(slug) {
-  const [title, ...rest] = EXAMPLE_SCREENS[slug];
-  return { title: [`heading level 1 ${title}`, ''], rest };
-}
-
-const isPrefix = (part, whole) => part.length <= whole.length && part.every((s, i) => s === whole[i]);
+/** The stops VoiceOver reads above the "Example" heading of `slug`'s screen. */
+export const screenStops = (slug) => {
+  const [title, ...lines] = EXAMPLE_SCREENS[slug];
+  return [`heading level 1 ${title}`, ...lines];
+};
 
 /**
- * Judges one walk: `stops` in order from the Back button, whether the walk
- * reached the end of the screen, the `expected` stops after the "Example"
- * heading, to the end, and the screen's own stops before it (screenStops).
- * Every stop is judged. Returns `{ verdict, reason }`:
+ * Judges one walk of an example screen: `stops` in order, whether the walk
+ * reached the end of the screen (two moves in a row that changed nothing),
+ * `expected`, everything VoiceOver must say after the "Example" heading to
+ * the end of the screen, in order, and `screen`, the stops the screen has
+ * before the heading (screenStops). The walk must read the whole screen:
+ * `screen`, then the heading, then `expected`, every stop in its place and
+ * nothing else. Returns `{ verdict, reason }`, the verdict one of:
  *
- * - "complete": the stops before the heading are the screen's, the end was
- *   reached, and the stops after the heading are exactly `expected`.
- * - "incomplete": the walk fell short with nothing wrong in what it read:
- *   nothing read; only the start of the screen's stops; or the heading and
- *   then only the start of `expected` with the end not reached. It may be
- *   tried again.
- * - "wrong": anything else: a stop before the heading that is not the
- *   screen's, or after it that is not the next expected one, or a walk
- *   that reached the end with stops missing or extra. It fails the test
- *   whichever try it is in.
+ * - "wrong": a stop that is not the one expected in its place (a stop read
+ *   in other words, an empty phrase, a stop skipped so that a later one
+ *   comes early, a stop after the last expected one), or a walk that
+ *   reached the end of the screen with any expected stop not read. This
+ *   fails the test whichever try it is in.
+ * - "complete": the walk reached the end and read exactly the whole screen.
+ * - "incomplete": a walk cut short before the end (it ran out of moves)
+ *   with nothing wrong so far: every stop it read is the expected one in
+ *   its place. Only such a walk may be walked again.
+ *
+ * There is no exception for an empty first stop: as in C04, an empty
+ * phrase anywhere is a wrong stop. C05's walks have not been recorded yet.
  */
-export function judgeWalk(stops, reachedEnd, expected, screen) {
-  const lead = [screen.title, ...screen.rest.map((r) => [r])];
-  const fitsLead = (part) => part.length <= lead.length && part.every((s, i) => lead[i].includes(s));
-  const heading = stops.indexOf(EXAMPLE_HEADING);
-  if (heading < 0) {
-    if (stops.length === 0) return { verdict: 'incomplete', reason: 'nothing was read' };
-    if (fitsLead(stops) && !reachedEnd) return { verdict: 'incomplete', reason: 'the walk stopped before the Example heading' };
-    return { verdict: 'wrong', reason: `no Example heading in: ${stops.join(' / ')}` };
+export function judgeExampleWalk(stops, reachedEnd, expected, screen = []) {
+  const whole = [...screen, EXAMPLE_HEADING, ...expected];
+  for (let i = 0; i < stops.length; i++) {
+    if (i >= whole.length) {
+      return { verdict: 'wrong', reason: `"${stops[i]}" was read after the last expected stop` };
+    }
+    if (stops[i] !== whole[i]) {
+      return { verdict: 'wrong', reason: `stop ${i + 1} was "${stops[i]}" where "${whole[i]}" was expected` };
+    }
   }
-  const before = stops.slice(0, heading);
-  if (!(before.length === lead.length && fitsLead(before))) {
-    return { verdict: 'wrong', reason: `before the heading: ${before.join(' / ') || '(nothing)'}` };
+  if (stops.length === whole.length) {
+    return reachedEnd
+      ? { verdict: 'complete', reason: 'the whole screen, every stop in its place' }
+      : { verdict: 'incomplete', reason: 'every expected stop was read, but the walk did not reach the end' };
   }
-  const content = stops.slice(heading + 1);
-  if (!isPrefix(content, expected)) {
-    return { verdict: 'wrong', reason: `after the heading: ${content.join(' / ') || '(nothing)'}` };
+  if (reachedEnd) {
+    return {
+      verdict: 'wrong',
+      reason: `the walk reached the end after ${stops.length} of the ${whole.length} expected stops; "${whole[stops.length]}" was never read`,
+    };
   }
-  if (!reachedEnd) return { verdict: 'incomplete', reason: 'the walk did not reach the end' };
-  if (content.length !== expected.length) {
-    return { verdict: 'wrong', reason: `the end came after ${content.length} of ${expected.length} stops` };
-  }
-  return { verdict: 'complete', reason: 'every stop as expected, to the end' };
+  return { verdict: 'incomplete', reason: `the walk was cut short after ${stops.length} of the ${whole.length} expected stops, all right so far` };
 }
 
 /**
- * Runs `walk()` and judges it with `judge(stops, reachedEnd)`, again while
- * the verdict is "incomplete", at most `tries` times, calling
- * `log(try, stops, judged)` for every try. Returns the last verdict, its
- * reason, and the number of tries. A "wrong" verdict ends it at once.
+ * Walks up to `tries` times with `walkOnce()`, which resolves to
+ * `{ stops, reachedEnd }`, and judges each walk with
+ * `judge(stops, reachedEnd)`. `log(walk, stops, judged)` is called for
+ * every try, so every attempt is kept. Stops at the first walk that is
+ * "wrong" or "complete" and returns its verdict, with the number of walks
+ * made; if no try was either, "incomplete". A wrong walk is never followed
+ * by another try, so a later correct walk cannot hide it.
  */
-export async function runWalks(walk, judge, { tries = 3, log = () => {} } = {}) {
-  let judged = { verdict: 'incomplete', reason: 'not run' };
-  for (let n = 1; n <= tries; n++) {
-    const { stops, reachedEnd } = await walk();
+export async function runWalks(walkOnce, judge, { tries = 3, log = () => {} } = {}) {
+  let judged = { verdict: 'incomplete', reason: 'no walk was made' };
+  for (let walk = 1; walk <= tries; walk++) {
+    const { stops, reachedEnd } = await walkOnce();
     judged = judge(stops, reachedEnd);
-    log(n, stops, judged);
-    if (judged.verdict !== 'incomplete') return { ...judged, walks: n };
+    log(walk, stops, judged);
+    if (judged.verdict !== 'incomplete') return { ...judged, walks: walk };
   }
   return { ...judged, walks: tries };
 }

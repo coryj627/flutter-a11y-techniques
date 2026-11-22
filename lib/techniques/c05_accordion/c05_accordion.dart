@@ -10,13 +10,20 @@ final c05Accordion = Technique(
   summary:
       'Each header of an accordion is a heading and a button that says '
       'whether its section is open; a closed section is not read or focused, '
-      'and an open one comes straight after its header.',
+      'and an open one comes straight after its header. No Flutter accordion '
+      'widget does this through its own parameters (FL-264, FL-265, FL-267), '
+      'so the good examples are built by hand. '
+      'Custom solution: not vetted by a real-world example. It is tested here '
+      'in isolation, with screen-reader transcripts, but has not been built '
+      'into a real app and tested in a user journey. Do not treat it as a '
+      'vetted technique.',
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(
       note:
           'The expanded state reaches Android 16 and later only (FL-261, '
-          'source read; not measured before 16): before that, the headers '
-          'have only their tap hint, "expand" or "collapse".',
+          'source read). Not measured below Android 16: there, by the engine '
+          'source, the headers have only their tap hint, "expand" or '
+          '"collapse".',
     ),
     AppPlatform.ios: PlatformStatus.applies(
       note:
@@ -72,18 +79,24 @@ final c05Accordion = Technique(
     ),
   ],
   examples: [
+    // Custom solution: not vetted by a real-world example (see the
+    // summary, and the spec's section "Custom solutions").
     TechniqueExample.good(
       slug: 'good-material',
       title: 'Material accordion',
       variant: ExampleVariant.material,
       builder: (_) => const GoodMaterial(),
     ),
+    // Custom solution: not vetted by a real-world example (see the
+    // summary, and the spec's section "Custom solutions").
     TechniqueExample.good(
       slug: 'good-cupertino',
       title: 'Cupertino accordion',
       variant: ExampleVariant.cupertino,
       builder: (_) => const GoodCupertino(),
     ),
+    // Custom solution: not vetted by a real-world example (see the
+    // summary, and the spec's section "Custom solutions").
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Accordion built from Semantics',
@@ -124,9 +137,7 @@ final c05Accordion = Technique(
       slug: 'bad-expansion-tile',
       title: 'Material ExpansionTile',
       variant: ExampleVariant.material,
-      defect:
-          'The headers have no open or closed state, and on Android and iOS '
-          'are not buttons.',
+      defect: 'On Android and iOS the headers are not buttons.',
       builder: (_) => const BadExpansionTile(),
     ),
     TechniqueExample.bad(

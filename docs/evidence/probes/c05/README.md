@@ -63,7 +63,8 @@ How each platform was looked at, and the raw output:
 - iOS: iPhone 17 simulator, iOS 27.0, `ProbeC05UITests.swift.txt` run by
   the same script: the XCUITest tree and a tap; one to three Tabs and
   then Enter or Space, each from a fresh launch; with VoiceOver on, a walk
-  from the top, then the cursor put on Shipping and a double tap, what was
+  from the top, then the cursor put on Shipping and XCUITest's double tap
+  at it (see the note under "iOS (27.0)"), what was
   said after it, and four more moves. A native comparison, UIKit buttons
   with `accessibilityExpandedStatus` and SwiftUI's `DisclosureGroup`
   (`SceneDelegate.swift.txt`, launch argument `-c05native`), read by
@@ -185,7 +186,14 @@ n01 after its click and stopped, so n02 was not read.
 
 ## iOS (27.0)
 
-| # | Shipping's header to XCUITest | VoiceOver, closed | After a double tap | Two Tabs, then Enter or Space |
+Every "double tap" in this section, and in the probe's iOS source, is
+XCUITest's `doubleTap()` at the element with VoiceOver on. As C04 measured
+(probe round 3, `docs/evidence/probes/c04/ios_round3.txt`), that gesture
+acts on what is under it and is not VoiceOver's activation of what its
+cursor is on; `XCUIVoiceOverService` has no activation. So what VoiceOver's
+own double tap, made by a person, does or says here was not measured.
+
+| # | Shipping's header to XCUITest | VoiceOver, closed | After XCUITest's double tap | Two Tabs, then Enter or Space |
 | --- | --- | --- | --- | --- |
 | p01 | static text, no value | "p01 Shipping Collapsed double tap to expand" | "Expanded" (the tile's announcement) | opens it |
 | p02 | as p01 | as p01 | as p01 | opens it |
@@ -222,7 +230,7 @@ Native, UIKit and SwiftUI (`testNative`):
 | n02, the same with the header trait | "n02 Shipping Button Heading Collapsed Double-tap to expand" | "n02 Shipping Button Heading Expanded Double-tap to collapse" |
 | n03, SwiftUI `DisclosureGroup` | "n03 Shipping Button Collapsed Double-tap to expand" | "n03 Shipping Button Expanded Double-tap to collapse" |
 
-After the double tap that opened each, VoiceOver said nothing more in the
+After XCUITest's double tap that opened each, VoiceOver said nothing more in the
 three seconds read, as for Flutter's headers; the new state was read when
 the cursor came back to the header.
 
