@@ -6,7 +6,7 @@ import '../../catalog/test_id.dart';
 // Every example is Flutter's own `Tooltip`, configured only through its own
 // parameters. What it cannot do is in docs/flutter-limitations.md and is not
 // built here: it does not show on keyboard focus (FL-248); while it is shown
-// its text is read a second time (FL-249); and on the web Escape does not
+// its text is a node of its own (FL-249); and on the web Escape does not
 // hide it while the page has no focus (FL-482).
 
 // #region shared

@@ -130,7 +130,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-246](#fl-246) | A run of a paragraph's text that wraps has one node over the whole of its lines, which can lie over a link on the first line: on iOS a VoiceOver touch on the link finds the words | iOS (Android and web not measured) | Confirmed |
 | [FL-247](#fl-247) | A tooltip with a plain message, and every `IconButton.tooltip`, takes no pointer events, so the pointer cannot move onto it | Web, Android (with a mouse), widget tests; iOS not measured | Confirmed |
 | [FL-248](#fl-248) | No Flutter tooltip shows on keyboard focus | All | Confirmed |
-| [FL-249](#fl-249) | While a tooltip is shown, its text is a node of its own inside its control, read as one more item | All | Confirmed |
+| [FL-249](#fl-249) | While a tooltip is shown, its text is a node of its own inside its control | All | Confirmed |
 | [FL-250](#fl-250) | A `RawTooltip` is placed over its control by default, and Escape does not hide it while the pointer is on the control's lower half | Widget tests only | Confirmed (widget test only) |
 | [FL-251](#fl-251) | A tooltip is part of its control's name on iOS and the web, before the control's own text on the web; only Android treats it as separate text | iOS, Web | Confirmed |
 | [FL-252](#fl-252) | On iOS VoiceOver does not stop on a node whose only text is a tooltip | iOS | Confirmed |
@@ -370,9 +370,11 @@ yet), **Fixed in x.y** (verified on that version).
   the button once. The DOM for the button is a single
   `<flt-semantics role="button">Close</flt-semantics>`.
 - Cause: not investigated. Possibly the tooltip exposed as separate content.
-  C12 measured that a shown tooltip's text is an element of the page of
-  its own ([FL-249](#fl-249)); whether VoiceOver's cursor shows the
-  tooltip, and so reads it, was not measured.
+  C12 (2026-11-21) recorded VoiceOver in Chromium and WebKit on seven
+  Material tooltips, an `IconButton(tooltip:)` among them: each button was
+  read once, no tooltip was shown, and nothing was read twice
+  (`docs/evidence/probes/c12/voiceover-web-round1-fail.md.txt`). Why C01's
+  reading differed was not found.
 - Evidence: `docs/evidence/C01/voiceover-web.md`, `good-icon` and
   `bad-role-in-name` rows under chromium.
 - Workaround: none known.
@@ -3151,7 +3153,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-249
 
-**While a tooltip is shown, its text is a node of its own inside its control, read as one more item.**
+**While a tooltip is shown, its text is a node of its own inside its control.**
 
 - Status: Confirmed, Flutter 3.47.5. Widget tests: a shown tooltip's text
   is a semantics node whose traversal parent is its `OverlayPortal`, so in
@@ -3174,12 +3176,13 @@ yet), **Fixed in x.y** (verified on that version).
   `widgets/raw_tooltip.dart` builds the tooltip in an
   `OverlayPortal.overlayChildLayoutBuilder` and leaves its text in the
   semantics tree.
-- What users get: what a screen reader finds while a tooltip is shown is
-  the control and then its tooltip's words again. When the tooltip is
-  hidden the node goes. Not measured with a screen reader moving to it;
-  in C01's web VoiceOver transcript (Chromium) an `IconButton`'s tooltip
-  was read as a second item ([FL-008](#fl-008)), which this would
-  explain if VoiceOver's cursor shows the tooltip (not measured).
+- What users get: while a tooltip is shown, the tree has the control and
+  then its tooltip's words again, as a node a screen reader could stop on
+  (on Android a focusable one). When the tooltip is hidden the node goes.
+  Not measured with a screen reader while a
+  tooltip was shown: in C12's web VoiceOver walks no tooltip was shown,
+  and nothing was read twice in either browser
+  (`docs/evidence/probes/c12/voiceover-web-round1-fail.md.txt`).
 - Workaround: `Tooltip.excludeFromSemantics` leaves out the tooltip's
   semantics on its control, not the shown text. None in the framework for
   the shown text; Flutter has not added one yet.

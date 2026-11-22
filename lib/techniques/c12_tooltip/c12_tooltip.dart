@@ -15,7 +15,7 @@ final c12Tooltip = Technique(
     AppPlatform.android: PlatformStatus.applies(
       note:
           'A Flutter tooltip does not show on keyboard focus (FL-248), and '
-          'while it is shown its text is read a second time (FL-249).',
+          'while it is shown its text is a node of its own (FL-249).',
     ),
     AppPlatform.ios: PlatformStatus.applies(
       note:

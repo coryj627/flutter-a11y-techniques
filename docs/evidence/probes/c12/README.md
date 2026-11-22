@@ -123,3 +123,16 @@ After the examples were built, C12's Android tree tests ran once at the CI
 emulator's size, 320 by 640 at 160 dpi (`android_320x640.sh.txt`, which
 resets both after): the Gradle run ended "BUILD SUCCESSFUL", with
 `talkBackWalk` skipped as TalkBack was off (`android_320x640.txt`).
+
+## The first web VoiceOver recording
+
+Recorded by the principal on 2026-11-21 with `tool/voiceover_web.py C12`,
+against the examples as committed (17044b4 and 01a5023); kept as
+`voiceover-web-round1-fail.md.txt`, the tool's transcript. 7 of 14 walks
+failed, all on their expectations, which had been written as predictions
+before the recording. Chromium and WebKit read the same lists. No walk
+showed a tooltip, and nothing was read twice in either browser: the
+predicted extra stop for a shown tooltip (after C01's FL-008) did not
+happen. `bad-outside-button` was read "Delete draft group", "button",
+"Delete draft", "end of Delete draft group". The expectations are now what
+was read.

@@ -43,7 +43,7 @@ is the owner's decision (section 8); the catalog says "applies" with a note.
   label, which an icon-only button has not, and the button itself is
   operated from the keyboard (2.1.1 met). So: none. Where the tooltip is
   the only place information is, 2.1.1 fails (`bad-hover-only`).
-- **All: while shown, its text is read as one more item**
+- **All: while shown, its text is a node of its own** (not measured with a screen reader while shown)
   ([FL-249](../flutter-limitations.md#fl-249)).
 - **Web: Escape does not hide it while no element of the page has
   keyboard focus** ([FL-482](../flutter-limitations.md#fl-482)). In that
@@ -214,7 +214,7 @@ What each fails, by platform, as the criteria are written:
 | `bad-not-hoverable` | 1.4.13 (F95), with a mouse: the tooltip goes when the pointer moves onto it (the Android test injects a mouse hover) | none measured: XCUITest cannot hover; with touch, 1.4.13 does not apply | 1.4.13 (F95) |
 | `bad-hover-only` | 2.1.1: a long press and a mouse show the rule; no Tab stop, Enter, or Space does | 2.1.1, as on Android; VoiceOver passes over the icon (FL-252), so a VoiceOver user does not get the rule at all | 2.1.1: a hover shows it; no key does |
 | `bad-repeats-name` | none: TalkBack reads "Download" once (the probe's t06) | none: read "Download Download Button", poor practice | none: name "Download Download", poor practice |
-| `bad-outside-button` | 4.1.2: the button has no name; the tooltip is read on its own node before it | 4.1.2: the button has no name, and VoiceOver passes over the tooltip's node (FL-252) | 4.1.2: the button has no name |
+| `bad-outside-button` | 4.1.2: the button has no name; the tooltip is read on its own node before it | 4.1.2: the button has no name, and VoiceOver passes over the tooltip's node (FL-252) | 4.1.2: the button has no name (tree: Playwright's and Chromium's name for it is empty; VoiceOver read "button" inside a group named "Delete draft") |
 
 `bad-hover-only` and 2.1.1: the rule is information the screen gives only
 to a pointer or a touch, through a user action (the hover or the long
@@ -231,6 +231,17 @@ touch held on the screen (a pointer gesture, as is TalkBack's or
 VoiceOver's double-tap-and-hold, which sends one), not keystrokes through
 a keyboard interface. So no keyboard path reaches the rule, on any
 platform.
+
+`bad-outside-button` and 4.1.2, as written: the button is a user
+interface component, and its name must be programmatically determinable.
+On every platform the button's own name is empty (the web: Playwright's
+and Chromium's computed name for it; Android: its content description;
+iOS: its label), and the tooltip's words are the name of another node, a
+group on the web that holds the button. VoiceOver on the web reads the
+group's name and then "button" with no name; TalkBack reads "Delete draft"
+and then "Button"; VoiceOver on iOS reads "Button" alone. A name on a
+container round a control is not the control's name, so 4.1.2 fails on
+all three platforms.
 
 `bad-repeats-name` fails nothing as written: the name holds the visible
 text (2.5.3) and is determinable (4.1.2). It is kept as poor practice, as
@@ -257,7 +268,7 @@ Not built:
 | L3 iOS | Good: each control a button with its label ("Delete draft"; "Delete draft"; "Download\nSaves a PDF copy"), one button but Back, and the tooltip's words once in the screen's labels; a touch held 0.8 s draws the tooltip (pixels of the box's colour), gone within 4 s, with no activation (also `bad-not-hoverable`); two Tabs and Enter activate the control and draw no tooltip, and a long press then does (FL-248); a tap activates. Bad: `bad-not-hoverable` a button labelled "Delete draft". `bad-hover-only`: the icon an element labelled by the rule, not a button; no tooltip drawn after two Tabs, nor after Enter, which activates Sign up; a long press draws it. `bad-repeats-name`: a button labelled "Download\nDownload". `bad-outside-button`: an element labelled "Delete draft" that is not a button, and one button but Back, with no label |
 | L4 TalkBack | Focus moved to each control: the name and "Button", for `good-description` "Download", "Button", and "Saves a PDF copy"; `bad-hover-only`'s icon "At least 8 characters" with no "Button", and Sign up; `bad-repeats-name` "Download" and "Button"; `bad-outside-button`'s tooltip node "Delete draft" with no "Button", and its button "Button" without "Delete draft" |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list: the good examples and `bad-not-hoverable` "<name> Button", the line, the count; `bad-hover-only` without the rule (FL-252); `bad-repeats-name` "Download Download Button"; `bad-outside-button` "Button" |
-| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/c12_vo_walks.js`, as C04's), in Chromium and WebKit; no runner retries. The lists were written before any recording, as predictions (section 7) |
+| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/c12_vo_walks.js`, as C04's), in Chromium and WebKit; no runner retries. The lists are what the first recording read (section 7): the good examples and `bad-not-hoverable` "<name> button", `good-description` "Saves a PDF copy Download button", `bad-repeats-name` "Download Download button", `bad-hover-only` with the rule, `bad-outside-button` a group named "Delete draft" holding an unnamed "button" |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -271,11 +282,28 @@ The probe that came first is in [evidence/probes/c12](../evidence/probes/c12/REA
   it for a `Tooltip`; `IconButton` has no parameter for it.
 - **No Flutter tooltip shows on keyboard focus**
   ([FL-248](../flutter-limitations.md#fl-248), new), on any platform.
-- **A shown tooltip's text is read again**
+- **A shown tooltip's text is a node of its own**
   ([FL-249](../flutter-limitations.md#fl-249), new): a node in traversal
   order inside its control, an element of the page on the web, a
-  focusable `View` on Android, a text element on iOS. It may be what C01
-  heard as FL-008 (not measured).
+  focusable `View` on Android, a text element on iOS where nothing merges
+  it. In C12's web VoiceOver walks no tooltip was shown, and nothing was
+  read twice in either browser.
+- **VoiceOver on the web, first recording**
+  (`docs/evidence/probes/c12/voiceover-web-round1-fail.md.txt`, recorded by
+  the principal; 7 of 14 walks failed on the expectations, which had been
+  predictions). Chromium and WebKit read the same. The good examples and
+  `bad-not-hoverable`: "Delete draft button"; `good-description`: "Saves a
+  PDF copy Download button", the tooltip's words before the button's own
+  (FL-251); `bad-repeats-name`: "Download Download button";
+  `bad-hover-only`: "Password rules", "At least 8 characters", "Sign up
+  button". `bad-outside-button`: "Delete draft group", "button", "Delete
+  draft", "end of Delete draft group": an unnamed button inside a group
+  named by the tooltip, and the tooltip's words once more inside the group
+  (what that stop is was not measured; the page snapshot when the walk
+  ended showed no element with those words but the group). The predicted
+  extra stop for a shown tooltip did not happen: no walk showed a
+  tooltip, and nothing was read twice in either browser. The lists are now
+  what was read; the web VoiceOver transcript is to be recorded again.
 - **A tooltip joins its control's name on iOS and the web**
   ([FL-251](../flutter-limitations.md#fl-251), new), first on the web;
   Android gives it as tooltip text, which TalkBack reads after the role,
