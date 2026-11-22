@@ -1,0 +1,54 @@
+// C05 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c05/c05_probe_click.spec.js.txt): after a click opens
+// each example's Shipping, can the "Example" heading be clicked, as the web
+// VoiceOver walk's start does (startAtBack in web_tests/vo/vo_helpers.js:
+// heading.click(), then focus Back)? No VoiceOver. For each example: the
+// element at the heading's centre, and whether a checked click on the
+// heading succeeds within 5 seconds, before and after the open click.
+import { test } from '@playwright/test';
+
+const slugs = ['good-material', 'good-cupertino', 'good-custom', 'bad-no-state', 'bad-heading-on-button',
+  'bad-no-heading', 'bad-hidden-panel', 'bad-expansion-tile', 'bad-cupertino-expansion-tile'];
+
+const log = (...a) => console.log('C05CLICK', ...a);
+
+async function heading(page, slug, when) {
+  const h = page.getByRole('heading', { name: 'Example', exact: true, level: 2 });
+  const box = await h.boundingBox();
+  const atCentre = await page.evaluate(({ x, y }) => {
+    const e = document.elementFromPoint(x, y);
+    if (!e) return '(none)';
+    const tag = e.tagName.toLowerCase();
+    return `<${tag} role=${e.getAttribute('role')} id=${e.id}> "${(e.getAttribute('aria-label') || e.textContent || '').trim().slice(0, 40)}"`;
+  }, { x: box.x + box.width / 2, y: box.y + box.height / 2 });
+  let click = 'ok';
+  try {
+    await h.click({ timeout: 5000 });
+  } catch (e) {
+    click = `FAILED: ${e.message.split('\n').filter((l) => /intercepts|Timeout|not stable|outside/.test(l)).slice(0, 3).join(' | ')}`;
+  }
+  log(slug, when, `heading box=${JSON.stringify(box)} element at its centre: ${atCentre}; checked click: ${click}`);
+}
+
+for (const slug of slugs) {
+  test(`probe ${slug}`, async ({ page }) => {
+    test.setTimeout(60_000);
+    await page.goto('about:blank');
+    await page.goto(`/#/t/C05/${slug}`);
+    await page.getByRole('heading', { name: 'Example', exact: true, level: 2 }).waitFor();
+    await page.waitForTimeout(600);
+    await heading(page, slug, 'closed');
+    const header = slug.endsWith('expansion-tile')
+      ? page.getByRole('button', { name: 'Shipping', exact: true })
+      : page.locator(`[flt-semantics-identifier="c05-${slug}-shipping"]`);
+    await header.click();
+    await page.waitForTimeout(1500);
+    await heading(page, slug, 'open');
+    const host = await page.locator('flt-semantics-host').evaluate((e) =>
+      [...e.querySelectorAll('*')].filter((x) => {
+        const r = x.getBoundingClientRect();
+        return r.width > 300 && r.height > 300 && x.childElementCount === 0;
+      }).map((x) => `<${x.tagName.toLowerCase()} role=${x.getAttribute('role')} ${Math.round(x.getBoundingClientRect().width)}x${Math.round(x.getBoundingClientRect().height)}>`).join(' '));
+    log(slug, 'open: large leaf elements in the semantics tree:', host || '(none)');
+  });
+}

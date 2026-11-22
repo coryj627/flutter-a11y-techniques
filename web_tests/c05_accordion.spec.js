@@ -282,6 +282,64 @@ test.describe('bad examples have their defect', () => {
   });
 });
 
+// Once a CupertinoExpansionTile has been opened, an empty element the size
+// of the view lies over the page and takes pointer events (FL-029,
+// extended; found when the web VoiceOver walk's checked click on the
+// "Example" heading never succeeded). Written as F10's test of the same
+// element, to fail when it goes. The other examples have none.
+test.describe('the empty element over the page', () => {
+  const fullScreenEmpty = (page) =>
+    page.evaluate(() =>
+      [...document.querySelectorAll('flt-semantics')].filter((e) => {
+        const r = e.getBoundingClientRect();
+        return (
+          e.childElementCount === 0 &&
+          e.textContent === '' &&
+          e.attributes.length === 2 && // id and style only
+          r.width >= window.innerWidth - 1 &&
+          r.height >= window.innerHeight - 1
+        );
+      }).map((e) => e.style.pointerEvents));
+  const exampleHeadingIsHit = (page) =>
+    page.evaluate(() => {
+      const h = [...document.querySelectorAll('h2')].find((e) => e.textContent === 'Example');
+      const r = h.getBoundingClientRect();
+      return document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2) === h;
+    });
+  const openShipping = async (page, slug) => {
+    const header = slug.endsWith('expansion-tile')
+      ? page.getByRole('button', { name: SHIPPING, exact: true })
+      : byId(page, id(slug, 'shipping'));
+    await header.click();
+    await expect.poll(() => shown(page, SHIPPING_TEXT)).toBe(true);
+    await page.waitForTimeout(1000);
+  };
+
+  for (const slug of [...good, 'bad-no-state', 'bad-heading-on-button', 'bad-no-heading', 'bad-hidden-panel', 'bad-expansion-tile', 'bad-cupertino-expansion-tile']) {
+    const appears = slug === 'bad-cupertino-expansion-tile';
+    test(`${slug}: ${appears ? 'none while closed, one once opened' : 'none, closed or open'}`, async ({ page }) => {
+      await open(page, slug);
+      expect(await fullScreenEmpty(page)).toEqual([]);
+      expect(await exampleHeadingIsHit(page)).toBe(true);
+      await openShipping(page, slug);
+      expect(await fullScreenEmpty(page)).toEqual(appears ? ['auto'] : []);
+      expect(await exampleHeadingIsHit(page)).toBe(!appears);
+    });
+  }
+
+  test('bad-cupertino-expansion-tile: once opened, a checked click on the heading is refused, and a real mouse click still reaches Flutter', async ({ page }) => {
+    await open(page, 'bad-cupertino-expansion-tile');
+    await openShipping(page, 'bad-cupertino-expansion-tile');
+    const heading = exampleHeading(page);
+    await expect(heading.click({ timeout: 1500 })).rejects.toThrow(/intercepts pointer events|Timeout/);
+    // A real mouse click at the Returns header's place opens Returns.
+    const returns = page.getByRole('button', { name: RETURNS, exact: true });
+    const box = await returns.boundingBox();
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect.poll(() => shown(page, 'Return items within 30 days.')).toBe(true);
+  });
+});
+
 // How the web VoiceOver spec judges one walk of an example screen
 // (judgeExampleWalk), and repeats one that fell short (runWalks), as C04's
 // does. The walks here are made up; VoiceOver is not used.

@@ -997,9 +997,30 @@ yet), **Fixed in x.y** (verified on that version).
   element is the only difference found between the two kinds of screen;
   the test cannot rule out the harness. The WebKit build is not Safari;
   Safari was not tried.
+- Also seen in C05 (2026-11-21), for `CupertinoExpansionTile`: once any
+  of its sections has been opened, one empty `flt-semantics` element the
+  size of the view, with `pointer-events: auto`, lies over the page; before
+  that there is none (`docs/evidence/probes/c05/click_probe.txt`, from
+  `c05_probe_click.spec.js.txt`). Framework source read:
+  `cupertino/expansion_tile.dart` shows an `OverlayPortal` for its fade on
+  the first tap of a header (`_fadeController.show()`) and never hides it.
+  That its node is made the way the `Slider`'s is (`_DeferredLayout`) was
+  not traced. Asserted by `web_tests/c05_accordion.spec.js` ("the empty
+  element over the page"), written to fail when it goes: none on the other
+  C05 examples, closed or open; on `bad-cupertino-expansion-tile` none
+  while closed and one once opened, a hit test at the "Example" heading
+  finds it, Playwright's checked click on the heading is refused, and a
+  real mouse click on the Returns header still opens it. In C05's second
+  web VoiceOver recording the test of that example ran into its timeout
+  after its closed walk, with no open walk logged
+  (`docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt`); the open
+  walk begins with a checked click on the heading, which the probe shows
+  is refused there.
 - How it is handled here: `walkFromBack` in `web_tests/vo/vo_helpers.js`
   takes a `clickAtPoint` flag for these screens, which clicks with the
-  mouse at a position and skips Playwright's check.
+  mouse at a position and skips Playwright's check. C05's web VoiceOver
+  spec has its own `walkToEndClickingAtPoint`, `walkToEnd` with that click,
+  for the open Cupertino tile.
 - Workaround: none in the SDK for a Material `Slider`. Tried in F10:
   `showValueIndicator: never` and `Overlay.wrap` around the slider. A
   `CupertinoSlider` or a custom slider has no such element.
@@ -3325,8 +3346,13 @@ yet), **Fixed in x.y** (verified on that version).
     browser. Elsewhere on the web the source gives no hint; not measured.
     Nothing announces the change.
   - Once a section is open, its panel's text is merged into the header's
-    node: "Shipping\nOrders ship in two days." on Android, a group named
-    "Shipping Orders ship in two days." on the web (probe p06).
+    node: "Shipping\nOrders ship in two days." on Android; on the web a
+    group named "Shipping p06 Shipping panel" in the probe (p06, whose
+    panel has a button), and in C05's example, whose panel is text only, a
+    button named "Shipping Orders ship in two days." (C05's web tests).
+  - Once a section has been opened, an empty element the size of the view
+    lies over the page on the web and takes pointer events
+    ([FL-029](#fl-029), extended).
   - Its closed panel is `Offstage` and keeps keyboard focus
     ([FL-263](#fl-263)); C05's example has no button in it, so that this
     is not a second defect there.

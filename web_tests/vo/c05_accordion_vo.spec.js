@@ -18,7 +18,7 @@
 // attempt is in the transcript.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
-import { walkToEnd } from './vo_helpers.js';
+import { activateBrowser, cursorBounds, lastPhrase, stopsToEnd, untilQuiet, walkToEnd } from './vo_helpers.js';
 import { EXAMPLE_HEADING, judgeExampleWalk, runWalks, screenStops } from './c05_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
@@ -35,7 +35,9 @@ const OPEN_HINT = 'Expanded double tap to collapse';
 // The first recording (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt)
 // heard every reading below for the good examples and the hand-built bad
 // ones, closed and open, in Chromium and WebKit; for the two SDK tiles it
-// heard the closed readings only (see below).
+// heard the closed readings only (see below). The second
+// (docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt) heard
+// bad-expansion-tile open as well.
 const collapsed = (name) => `${name} collapsed button`;
 const expanded = (name) => `${name} expanded button`;
 const inHeading = (reading) => `heading level 3 ${reading}`;
@@ -69,15 +71,17 @@ const EXAMPLES = {
   // Android and iOS. The state is in its description, the tile's hint,
   // which on a macOS browser is a touch instruction: closed, as the first
   // recording heard it in Chromium and WebKit
-  // (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt). The open
-  // readings are not heard yet: that walk was never reached.
+  // (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt); open, as
+  // the second heard it (voiceover-web-round2-fail.md.txt).
   'bad-expansion-tile': {
     closed: [CLOSED_TILE('Shipping'), CLOSED_TILE('Returns'), COUNT],
     open: [`Shipping ${OPEN_HINT} button`, SHIPPING_TEXT, CLOSED_TILE('Returns'), COUNT],
   },
   // The defect is the keyboard (see the tree spec); the same description
   // as bad-expansion-tile, closed, as heard. Open, the header and its
-  // panel's text are one button (the tree spec); not heard yet.
+  // panel's text are one button (the tree spec); not heard yet: the
+  // second recording's test ran into its timeout before the open walk
+  // (see walkToEndClickingAtPoint).
   'bad-cupertino-expansion-tile': {
     closed: [CLOSED_TILE('Shipping'), CLOSED_TILE('Returns'), COUNT],
     open: [`Shipping ${SHIPPING_TEXT} ${OPEN_HINT} button`, CLOSED_TILE('Returns'), COUNT],
@@ -87,13 +91,52 @@ const EXAMPLES = {
 const tile = (slug) => slug.endsWith('expansion-tile');
 
 /**
+ * walkToEnd (vo_helpers.js), with its first click made with the mouse at
+ * the "Example" heading's place instead of Playwright's checked click on
+ * the heading, as walkFromBack's `clickAtPoint` does for FL-029.
+ *
+ * Why: once a section of `CupertinoExpansionTile` has been opened, an empty
+ * element the size of the view lies over the page in the semantics DOM and
+ * takes pointer events (FL-029, extended; measured without VoiceOver in
+ * docs/evidence/probes/c05/click_probe.txt). A checked click on the heading
+ * there is refused (the probe: "intercepts pointer events", then its
+ * timeout). In the second recording this example's test ran into the
+ * test's timeout after its closed walk, with no open walk logged
+ * (docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt); its output
+ * does not say which step was running.
+ * The click is only there to bring keyboard focus into the page; focus is
+ * then put on Back as walkToEnd does, and the walk is walkToEnd's, step for
+ * step (stopsToEnd over VoiceOver's last phrase and cursor position).
+ */
+async function walkToEndClickingAtPoint(page, voiceOver, browserName, max = 40) {
+  await activateBrowser(browserName);
+  await page.bringToFront();
+  const heading = page.getByRole('heading', { name: 'Example', exact: true, level: 2 });
+  const box = await heading.boundingBox();
+  if (!box) throw new Error(`The "Example" heading has no box to click on ${page.url()}`);
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await page.getByRole('button', { name: 'Back' }).focus();
+  const { phrase, quiet } = await untilQuiet({
+    read: lastPhrase, sleep: (ms) => page.waitForTimeout(ms), quietMs: 2000, limitMs: 10000 });
+  if (!quiet) {
+    throw new Error(`VoiceOver did not go quiet within 10 seconds of focusing Back; it last said "${phrase}"`);
+  }
+  const step = async () => {
+    await voiceOver.next();
+    return { phrase: await lastPhrase(), position: await cursorBounds() };
+  };
+  return stopsToEnd(step, await cursorBounds(), max);
+}
+
+/**
  * Walks the screen until a walk is complete or wrong, at most three times,
  * logging each try as `<label>-walk-<n>` with its verdict: the stops after
  * the "Example" heading for a complete walk, every stop for any other.
  */
-async function read(page, voiceOver, browserName, label, expected, screen) {
+async function read(page, voiceOver, browserName, label, expected, screen, { clickAtPoint = false } = {}) {
+  const walk = clickAtPoint ? walkToEndClickingAtPoint : walkToEnd;
   const { verdict, reason, walks } = await runWalks(
-    () => walkToEnd(page, voiceOver, browserName, 40),
+    () => walk(page, voiceOver, browserName, 40),
     (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screen),
     {
       log: (walk, stops, judged) => {
@@ -119,6 +162,9 @@ for (const [slug, { closed, open }] of Object.entries(EXAMPLES)) {
     // The walk must end with the panel's text read, so a reading from
     // before the click cannot pass.
     await expect(page.getByText(SHIPPING_TEXT).or(page.getByRole('button', { name: new RegExp(SHIPPING_TEXT) }))).toHaveCount(1);
-    await read(page, voiceOver, browserName, `${slug}-open`, open, screenStops(slug));
+    // Open, the Cupertino tile leaves an empty element over the page that
+    // takes pointer events (see walkToEndClickingAtPoint).
+    await read(page, voiceOver, browserName, `${slug}-open`, open, screenStops(slug),
+      { clickAtPoint: slug === 'bad-cupertino-expansion-tile' });
   });
 }

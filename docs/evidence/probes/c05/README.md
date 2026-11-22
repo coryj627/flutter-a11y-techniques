@@ -324,3 +324,29 @@ that needed a retry", while both its walks are logged complete on their
 first try; the transcript does not say why, and the run's error contexts
 are not kept here.
 
+## C05's second web VoiceOver recording
+
+`voiceover-web-round2-fail.md.txt` is the tool's transcript of the second
+recording, kept as it was; `voiceover-web-round2-error-context-chromium.md.txt`
+and `…-webkit.md.txt` are Playwright's error contexts for its two failures.
+Sixteen of eighteen tests passed, `bad-expansion-tile` closed and open
+among them. `bad-cupertino-expansion-tile` failed in both browsers: its
+closed walk was complete and as expected, then the test ran into its
+timeout ("Test timeout of 180000ms exceeded"), with no open walk logged.
+The page snapshot at the timeout shows the tile open. The error contexts
+do not say which step was running.
+
+The open walk begins as every walk does, with Playwright's checked click
+on the "Example" heading (`startAtBack` in `web_tests/vo/vo_helpers.js`).
+`c05_probe_click.spec.js.txt`, run in Chromium with no VoiceOver
+(`click_probe.txt`), made that click on every example, closed and after a
+click had opened Shipping: it succeeded everywhere but on the open
+`bad-cupertino-expansion-tile`, where an empty `flt-semantics` element the
+size of the view (1280 by 720) was at the heading's centre and
+"intercepts pointer events", so the click timed out. That is FL-029's
+element, extended. A checked click waits for the element to take the
+click, which here never happens; that this is where the VoiceOver test
+stopped is consistent with the snapshot and not shown by its own output.
+The open walk of that example now starts with a mouse click at the
+heading's place instead (`walkToEndClickingAtPoint` in the spec).
+

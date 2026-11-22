@@ -245,7 +245,7 @@ it either way; nothing is claimed.
 | L3 iOS | Good: each header is a button named by its title, value "collapsed"; two buttons but Back; no closed panel on screen; a tap opens Shipping (value "expanded", Returns "collapsed", the panel's text and button between Shipping and Returns on screen; XCUITest's list of elements is not the reading order, which the VoiceOver walk checks) and a second closes it; two Tabs and Enter, and in another launch Space, open Shipping and stay on the example. Bad: `bad-no-state` has no value before or after a tap that opens it; `bad-heading-on-button` and `bad-no-heading` are buttons with the value (the heading is heard, not seen, in the tree); `bad-hidden-panel` shows no closed panel, four Tabs and Enter press a hidden button (the count) while both stay closed, and three Tabs and Enter open Returns, the positive control; `bad-expansion-tile` and `bad-cupertino-expansion-tile` are not buttons and have no value, and a tap opens them; for `bad-cupertino-expansion-tile`, one, two, and three Tabs and then Enter or Space never open a section and take the example off the screen (Back acted) |
 | L4 TalkBack | For each example but `bad-hidden-panel`: what is said with focus on Shipping's header, closed; on the click action with focus left there (not for `bad-no-state` and `bad-cupertino-expansion-tile`, see section 7); with focus on the panel's text (on Back for `bad-cupertino-expansion-tile`, whose open panel is part of its header); and on the header again, open |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list, closed, and again after XCUITest's double tap at the header, with VoiceOver on, has opened Shipping; what VoiceOver says with its cursor on Shipping, and in the three seconds after that gesture. The gesture is a tap at the header's place, not VoiceOver's activation, which XCUIVoiceOverService has no way to make (C04 probe round 3, `docs/evidence/probes/c04/ios_round3.txt`) |
-| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C04's walks are (`judgeExampleWalk` in `web_tests/vo/c05_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened Shipping, in Chromium and WebKit. The judge is tested on made-up walks in `web_tests/c05_accordion.spec.js`. The first recording (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`) heard every walk of the good examples and of the four hand-built bad ones, closed and open, in both browsers, as expected; the two SDK tiles' closed readings were not as expected (their hint, above), so their open walks were not reached. Their expectations are now the closed readings heard, and open readings not heard yet. The transcript is to be recorded again |
+| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C04's walks are (`judgeExampleWalk` in `web_tests/vo/c05_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened Shipping, in Chromium and WebKit. The judge is tested on made-up walks in `web_tests/c05_accordion.spec.js`. The first recording (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`) heard every walk of the good examples and of the four hand-built bad ones, closed and open, in both browsers, as expected; the two SDK tiles' closed readings were not as expected (their hint, above), so their open walks were not reached. Their expectations are now the closed readings heard, and open readings not heard yet. The second recording (`docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt`) heard every walk as expected, the tiles' open walks included, but for `bad-cupertino-expansion-tile`, whose test ran into its timeout after the closed walk; its open walk now starts as described in section 7. The transcript is to be recorded again |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -290,6 +290,16 @@ VoiceOver, and native comparisons on Android and iOS.
   ([FL-263](../flutter-limitations.md#fl-263)), and `Expansible` keeps
   closed panels that way by default. The good examples build a closed
   panel not at all.
+- **An opened `CupertinoExpansionTile` leaves an empty element over the
+  page on the web** ([FL-029](../flutter-limitations.md#fl-029), extended):
+  the size of the view, taking pointer events, after a section has first
+  been opened. Playwright's checked click on anything under it is refused;
+  a real mouse click still reaches Flutter (web tests). The second web
+  VoiceOver recording's test of that example ran into its timeout after
+  the closed walk, with no open walk logged
+  (`docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt`); the open
+  walk began with a checked click on the "Example" heading, which the
+  probe shows is refused there (`click_probe.txt`).
 - **`aria-controls` needs `controlsNodes` set while the panel is there**
   ([FL-266](../flutter-limitations.md#fl-266)): the good examples set it
   only while open.
@@ -343,6 +353,14 @@ Skips and what they give up, in the tests:
   by `testWalkToTheEndSeesAnExtraStop`). It gives up two neighbouring
   elements that VoiceOver reads alike, which it would count as one; no
   example has two.
+- The web VoiceOver spec's open walk of `bad-cupertino-expansion-tile`
+  starts with a mouse click at the "Example" heading's place, not
+  Playwright's checked click on it (`walkToEndClickingAtPoint`, as
+  `walkFromBack`'s `clickAtPoint` does for FL-029): the empty element over
+  the page refuses the checked click. The click only brings keyboard focus
+  into the page; the walk is then `walkToEnd`'s. It gives up the check that
+  nothing covers the heading, which the tree spec makes instead ("the empty
+  element over the page").
 - The web test of `bad-cupertino-expansion-tile`'s Tab stops leaves out
   stops outside Flutter's tree (the page itself, FL-421). It gives up
   nothing a key could act on in the app.
