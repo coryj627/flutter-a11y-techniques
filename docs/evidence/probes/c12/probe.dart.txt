@@ -1,0 +1,318 @@
+// C12 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c12/probe.dart.txt): what Flutter's tooltips expose to
+// assistive technology, what shows them, and what hides them. One fixture
+// per route, `/t01` to `/t14`; `/` lists them all.
+//
+// Each fixture is "Before tNN", the control with its tooltip, a line
+// "tNN line under the control" that a tooltip shown below the control lies
+// over, and "tNN taps: N", which counts the control's activations. The
+// tooltip's text, when shown, is looked for in each platform's tree.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      onGenerateRoute: (settings) {
+        final name = (settings.name ?? '/').replaceFirst('/', '');
+        final ids = fixtures.containsKey(name)
+            ? [name]
+            : fixtures.keys.toList();
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => FixtureScreen(ids: ids),
+        );
+      },
+    );
+  }
+}
+
+/// A Material tooltip with the given arguments. With [rich] the message is a
+/// `TextSpan`, which makes it hoverable by Tooltip's own default.
+Widget tip(
+  String id, {
+  required String message,
+  bool? ignorePointer,
+  bool? excludeFromSemantics,
+  TooltipTriggerMode? triggerMode,
+  bool rich = false,
+  GlobalKey<TooltipState>? key,
+  required Widget child,
+}) {
+  return Tooltip(
+    key: key,
+    message: rich ? null : message,
+    richMessage: rich ? TextSpan(text: message) : null,
+    ignorePointer: ignorePointer,
+    excludeFromSemantics: excludeFromSemantics,
+    triggerMode: triggerMode,
+    child: child,
+  );
+}
+
+typedef Build = Widget Function(BuildContext context, VoidCallback tap);
+
+final Map<String, Build> fixtures = {
+  // The SDK's own: IconButton's tooltip, which is its name.
+  't01': (c, tap) => IconButton(
+    tooltip: 't01 Delete draft',
+    icon: const Icon(Icons.delete_outline),
+    onPressed: tap,
+  ),
+  // A Tooltip round an IconButton with no tooltip of its own.
+  't02': (c, tap) => tip(
+    't02',
+    message: 't02 Delete draft',
+    child: IconButton(icon: const Icon(Icons.delete_outline), onPressed: tap),
+  ),
+  // t02 inside MergeSemantics, as TestId puts it.
+  't03': (c, tap) => MergeSemantics(
+    child: tip(
+      't03',
+      message: 't03 Delete draft',
+      child: IconButton(icon: const Icon(Icons.delete_outline), onPressed: tap),
+    ),
+  ),
+  // A tooltip that adds to a button's text.
+  't04': (c, tap) => tip(
+    't04',
+    message: 't04 Saves a PDF copy',
+    child: FilledButton(onPressed: tap, child: const Text('t04 Download')),
+  ),
+  // t04 inside MergeSemantics.
+  't05': (c, tap) => MergeSemantics(
+    child: tip(
+      't05',
+      message: 't05 Saves a PDF copy',
+      child: FilledButton(onPressed: tap, child: const Text('t05 Download')),
+    ),
+  ),
+  // A tooltip that repeats the button's text, merged.
+  't06': (c, tap) => MergeSemantics(
+    child: tip(
+      't06',
+      message: 't06 Download',
+      child: FilledButton(onPressed: tap, child: const Text('t06 Download')),
+    ),
+  ),
+  // An information icon that takes no focus, its tooltip the only place
+  // the information is.
+  't07': (c, tap) => tip(
+    't07',
+    message: 't07 At least 8 characters',
+    child: const Icon(Icons.info_outline),
+  ),
+  // t02 with ignorePointer false: hoverable.
+  't08': (c, tap) => tip(
+    't08',
+    message: 't08 Delete draft',
+    ignorePointer: false,
+    child: IconButton(icon: const Icon(Icons.delete_outline), onPressed: tap),
+  ),
+  // A rich message: hoverable by Tooltip's own default.
+  't09': (c, tap) => tip(
+    't09',
+    message: 't09 Delete draft',
+    rich: true,
+    child: IconButton(icon: const Icon(Icons.delete_outline), onPressed: tap),
+  ),
+  // t08 shown while the button has keyboard focus too.
+  't10': (c, tap) => const _FocusTip(),
+  // A description as a hint, the tooltip left out of the semantics, merged.
+  't11': (c, tap) => MergeSemantics(
+    child: tip(
+      't11',
+      message: 't11 Saves a PDF copy',
+      excludeFromSemantics: true,
+      child: Semantics(
+        hint: 't11 Saves a PDF copy',
+        child: FilledButton(onPressed: tap, child: const Text('t11 Download')),
+      ),
+    ),
+  ),
+  // The information icon of t07, shown by a tap.
+  't12': (c, tap) => tip(
+    't12',
+    message: 't12 At least 8 characters',
+    triggerMode: TooltipTriggerMode.tap,
+    child: const Icon(Icons.info_outline),
+  ),
+  // t02 with a HardwareKeyboard handler that hides every tooltip on Escape,
+  // whatever has focus.
+  't13': (c, tap) => _EscapeAnywhere(
+    child: tip(
+      't13',
+      message: 't13 Delete draft',
+      child: IconButton(icon: const Icon(Icons.delete_outline), onPressed: tap),
+    ),
+  ),
+  // The widgets layer's RawTooltip on an icon-only CupertinoButton.
+  't14': (c, tap) => RawTooltip(
+    semanticsTooltip: 't14 Delete draft',
+    tooltipBuilder: (context, animation) => FadeTransition(
+      opacity: animation,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: CupertinoColors.label.resolveFrom(context),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          't14 Delete draft',
+          style: TextStyle(
+            color: CupertinoColors.systemBackground.resolveFrom(context),
+            fontSize: 14,
+          ),
+        ),
+      ),
+    ),
+    child: CupertinoButton(
+      onPressed: tap,
+      child: const Icon(CupertinoIcons.delete),
+    ),
+  ),
+};
+
+class _EscapeAnywhere extends StatefulWidget {
+  const _EscapeAnywhere({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_EscapeAnywhere> createState() => _EscapeAnywhereState();
+}
+
+class _EscapeAnywhereState extends State<_EscapeAnywhere> {
+  bool _onKey(KeyEvent event) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.escape) {
+      final hid = Tooltip.dismissAllToolTips();
+      debugPrint('C12PROBE t13 Escape handler: dismissed=$hid');
+      return hid;
+    }
+    return false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_onKey);
+  }
+
+  @override
+  void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onKey);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
+class _FocusTip extends StatefulWidget {
+  const _FocusTip();
+
+  @override
+  State<_FocusTip> createState() => _FocusTipState();
+}
+
+class _FocusTipState extends State<_FocusTip> {
+  final _key = GlobalKey<TooltipState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      onFocusChange: (focused) {
+        debugPrint('C12PROBE t10 focus $focused');
+        if (focused) {
+          _key.currentState?.ensureTooltipVisible();
+        } else {
+          Tooltip.dismissAllToolTips();
+        }
+      },
+      child: tip(
+        't10',
+        key: _key,
+        message: 't10 Delete draft',
+        ignorePointer: false,
+        child: IconButton(
+          icon: const Icon(Icons.delete_outline),
+          onPressed: () => TapsScope.of(context).tap('t10'),
+        ),
+      ),
+    );
+  }
+}
+
+class TapsScope extends InheritedWidget {
+  const TapsScope({super.key, required this.tap, required super.child});
+
+  final void Function(String id) tap;
+
+  static TapsScope of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<TapsScope>()!;
+
+  @override
+  bool updateShouldNotify(TapsScope oldWidget) => false;
+}
+
+class FixtureScreen extends StatefulWidget {
+  const FixtureScreen({super.key, required this.ids});
+
+  final List<String> ids;
+
+  @override
+  State<FixtureScreen> createState() => _FixtureScreenState();
+}
+
+class _FixtureScreenState extends State<FixtureScreen> {
+  final taps = <String, int>{};
+
+  void _tap(String id) {
+    setState(() => taps[id] = (taps[id] ?? 0) + 1);
+    debugPrint('C12PROBE $id tap ${taps[id]}');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TapsScope(
+      tap: _tap,
+      child: Scaffold(
+        appBar: AppBar(title: const Text('C12 probe')),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            for (final id in widget.ids) ...[
+              Text('Before $id'),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Builder(
+                  builder: (c) => fixtures[id]!(c, () => _tap(id)),
+                ),
+              ),
+              Text('$id line under the control'),
+              Semantics(
+                identifier: '$id-taps',
+                child: Text('$id taps: ${taps[id] ?? 0}'),
+              ),
+              const SizedBox(height: 24),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

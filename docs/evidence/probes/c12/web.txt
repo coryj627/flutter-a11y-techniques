@@ -1,0 +1,210 @@
+t01 element <flt-semantics role="button" tabindex="0" flt-tappable=""> text="t01 Delete draft"
+t01 ax role=button name="t01 Delete draft" description=""
+t01 control {"x":16,"y":92,"w":40,"h":40,"how":"button element"}
+t01 active element before anything FLT-SEMANTICS[role=button] "Back"
+t01 hover 400 ms: drawn (2164 px differ)
+t01 semantics elements while hovered: 2 ["<flt-semantics role=\"button\" tabindex=\"0\" flt-tappable=\"\" aria-owns=\"flt-semantic-node-16\"> text=\"t01 Delete draft\"","<span> text=\"t01 Delete draft\""]
+t01 hover 8 s: drawn (2164 px differ)
+t01 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t01 pointer away 600 ms: not drawn (0 px differ)
+t01 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t01 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "t01 Delete draft" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t01 focused for Escape: FLT-SEMANTICS[role=button] "t01 Delete draft"
+t01 hover with focus in the page: drawn (2164 px differ)
+t01 Escape with focus in the page: not drawn (0 px differ) active: FLT-SEMANTICS[role=button] "t01 Delete draft"
+t01 2 s later, pointer still there: not drawn (0 px differ)
+t02 element <flt-semantics aria-label="t02 Delete draft"> text="t02 Delete draft"
+t02 ax role=generic name="t02 Delete draft" description=""
+t02 control {"x":16,"y":92,"w":40,"h":40,"how":"button element"}
+t02 active element before anything FLT-SEMANTICS[role=button] "Back"
+t02 hover 400 ms: drawn (2153 px differ)
+t02 semantics elements while hovered: 2 ["<flt-semantics aria-label=\"t02 Delete draft\" aria-owns=\"flt-semantic-node-16\"> text=\"t02 Delete draft\"","<span> text=\"t02 Delete draft\""]
+t02 hover 8 s: drawn (2153 px differ)
+t02 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t02 pointer away 600 ms: not drawn (0 px differ)
+t02 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t02 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t02 focused for Escape: FLT-SEMANTICS[role=button] ""
+t02 hover with focus in the page: drawn (2153 px differ)
+t02 Escape with focus in the page: not drawn (0 px differ) active: FLT-SEMANTICS[role=button] ""
+t02 2 s later, pointer still there: not drawn (0 px differ)
+t03 element <flt-semantics role="button" tabindex="0" flt-tappable=""> text="t03 Delete draft"
+t03 ax role=button name="t03 Delete draft" description=""
+t03 control {"x":16,"y":92,"w":40,"h":40,"how":"button element"}
+t03 active element before anything FLT-SEMANTICS[role=button] "Back"
+t03 hover 400 ms: drawn (2151 px differ)
+t03 semantics elements while hovered: 2 ["<flt-semantics role=\"button\" tabindex=\"0\" flt-tappable=\"\" aria-owns=\"flt-semantic-node-17\"> text=\"t03 Delete draft\"","<span> text=\"t03 Delete draft\""]
+t03 hover 8 s: drawn (2151 px differ)
+t03 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t03 pointer away 600 ms: not drawn (0 px differ)
+t03 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t03 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "t03 Delete draft" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t03 focused for Escape: FLT-SEMANTICS[role=button] "t03 Delete draft"
+t03 hover with focus in the page: drawn (2151 px differ)
+t03 Escape with focus in the page: not drawn (0 px differ) active: FLT-SEMANTICS[role=button] "t03 Delete draft"
+t03 2 s later, pointer still there: not drawn (0 px differ)
+t04 element <flt-semantics aria-label="t04 Saves a PDF copy"> text="t04 Saves a PDF copy"
+t04 element <flt-semantics role="button" tabindex="0" flt-tappable=""> text="t04 Download"
+t04 ax role=generic name="t04 Saves a PDF copy" description=""
+t04 ax role=button name="t04 Download" description=""
+t04 control {"x":16,"y":92,"w":135.25,"h":32,"how":"button element"}
+t04 active element before anything FLT-SEMANTICS[role=button] "Back"
+t04 hover 400 ms: drawn (2982 px differ)
+t04 semantics elements while hovered: 3 ["<flt-semantics aria-label=\"t04 Saves a PDF copy\" aria-owns=\"flt-semantic-node-16\"> text=\"t04 Saves a PDF copy\"","<flt-semantics role=\"button\" tabindex=\"0\" flt-tappable=\"\"> text=\"t04 Download\"","<span> text=\"t04 Saves a PDF copy\""]
+t04 hover 8 s: drawn (2982 px differ)
+t04 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (105 px differ)
+t04 pointer away 600 ms: not drawn (0 px differ)
+t04 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t04 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "t04 Download" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t04 focused for Escape: FLT-SEMANTICS[role=button] "t04 Download"
+t04 hover with focus in the page: drawn (2982 px differ)
+t04 Escape with focus in the page: not drawn (105 px differ) active: FLT-SEMANTICS[role=button] "t04 Download"
+t04 2 s later, pointer still there: not drawn (105 px differ)
+t05 element <flt-semantics role="button" tabindex="0" flt-tappable=""> text="t05 Saves a PDF copy\nt05 Download"
+t05 ax role=button name="t05 Saves a PDF copy t05 Download" description=""
+t05 control {"x":16,"y":92,"w":135.25,"h":32,"how":"button element"}
+t05 active element before anything FLT-SEMANTICS[role=button] "Back"
+t05 hover 400 ms: drawn (2973 px differ)
+t05 semantics elements while hovered: 2 ["<flt-semantics role=\"button\" tabindex=\"0\" flt-tappable=\"\" aria-owns=\"flt-semantic-node-17\"> text=\"t05 Saves a PDF copy\nt05 Download\"","<span> text=\"t05 Saves a PDF copy\""]
+t05 hover 8 s: drawn (2973 px differ)
+t05 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (105 px differ)
+t05 pointer away 600 ms: not drawn (0 px differ)
+t05 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t05 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "t05 Saves a PDF copy\nt05 Download" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t05 focused for Escape: FLT-SEMANTICS[role=button] "t05 Saves a PDF copy\nt05 Download"
+t05 hover with focus in the page: drawn (2973 px differ)
+t05 Escape with focus in the page: not drawn (105 px differ) active: FLT-SEMANTICS[role=button] "t05 Saves a PDF copy\nt05 Download"
+t05 2 s later, pointer still there: not drawn (105 px differ)
+t06 element <flt-semantics role="button" tabindex="0" flt-tappable=""> text="t06 Download\nt06 Download"
+t06 ax role=button name="t06 Download t06 Download" description=""
+t06 control {"x":16,"y":92,"w":135.25,"h":32,"how":"button element"}
+t06 active element before anything FLT-SEMANTICS[role=button] "Back"
+t06 hover 400 ms: drawn (2036 px differ)
+t06 semantics elements while hovered: 2 ["<flt-semantics role=\"button\" tabindex=\"0\" flt-tappable=\"\" aria-owns=\"flt-semantic-node-17\"> text=\"t06 Download\nt06 Download\"","<span> text=\"t06 Download\""]
+t06 hover 8 s: drawn (2036 px differ)
+t06 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (105 px differ)
+t06 pointer away 600 ms: not drawn (0 px differ)
+t06 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t06 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "t06 Download\nt06 Download" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t06 focused for Escape: FLT-SEMANTICS[role=button] "t06 Download\nt06 Download"
+t06 hover with focus in the page: drawn (2036 px differ)
+t06 Escape with focus in the page: not drawn (105 px differ) active: FLT-SEMANTICS[role=button] "t06 Download\nt06 Download"
+t06 2 s later, pointer still there: not drawn (105 px differ)
+t07 element <span> text="t07 At least 8 characters"
+t07 control {"x":16,"y":92,"w":24,"h":24,"how":"row element, icon at its left"}
+t07 active element before anything FLT-SEMANTICS[role=button] "Back"
+t07 hover 400 ms: drawn (3321 px differ)
+t07 semantics elements while hovered: 2 ["<span> text=\"t07 At least 8 characters\"","<span> text=\"t07 At least 8 characters\""]
+t07 hover 8 s: drawn (3321 px differ)
+t07 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t07 pointer away 600 ms: not drawn (0 px differ)
+t07 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t07 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ)
+t07 focused for Escape: (page: FLUTTER-VIEW)
+t07 hover with focus in the page: drawn (3321 px differ)
+t07 Escape with focus in the page: not drawn (0 px differ) active: (page: FLUTTER-VIEW)
+t07 2 s later, pointer still there: not drawn (0 px differ)
+t08 element <flt-semantics aria-label="t08 Delete draft"> text="t08 Delete draft"
+t08 ax role=generic name="t08 Delete draft" description=""
+t08 control {"x":16,"y":92,"w":40,"h":40,"how":"button element"}
+t08 active element before anything FLT-SEMANTICS[role=button] "Back"
+t08 hover 400 ms: drawn (2138 px differ)
+t08 semantics elements while hovered: 2 ["<flt-semantics aria-label=\"t08 Delete draft\" aria-owns=\"flt-semantic-node-16\"> text=\"t08 Delete draft\"","<span> text=\"t08 Delete draft\""]
+t08 hover 8 s: drawn (2138 px differ)
+t08 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t08 pointer away 600 ms: not drawn (0 px differ)
+t08 pointer on the tooltip 500 ms: drawn (2138 px differ)
+t08 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t08 focused for Escape: FLT-SEMANTICS[role=button] ""
+t08 hover with focus in the page: drawn (2138 px differ)
+t08 Escape with focus in the page: not drawn (0 px differ) active: FLT-SEMANTICS[role=button] ""
+t08 2 s later, pointer still there: not drawn (0 px differ)
+t09 element <flt-semantics aria-label="t09 Delete draft"> text="t09 Delete draft"
+t09 ax role=generic name="t09 Delete draft" description=""
+t09 control {"x":16,"y":92,"w":40,"h":40,"how":"button element"}
+t09 active element before anything FLT-SEMANTICS[role=button] "Back"
+t09 hover 400 ms: drawn (2143 px differ)
+t09 semantics elements while hovered: 2 ["<flt-semantics aria-label=\"t09 Delete draft\" aria-owns=\"flt-semantic-node-16\"> text=\"t09 Delete draft\"","<span> text=\"t09 Delete draft\""]
+t09 hover 8 s: drawn (2143 px differ)
+t09 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t09 pointer away 600 ms: not drawn (0 px differ)
+t09 pointer on the tooltip 500 ms: drawn (2143 px differ)
+t09 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t09 focused for Escape: FLT-SEMANTICS[role=button] ""
+t09 hover with focus in the page: drawn (2143 px differ)
+t09 Escape with focus in the page: not drawn (0 px differ) active: FLT-SEMANTICS[role=button] ""
+t09 2 s later, pointer still there: not drawn (0 px differ)
+t10 element <flt-semantics aria-label="t10 Delete draft"> text="t10 Delete draft"
+t10 ax role=generic name="t10 Delete draft" description=""
+t10 control {"x":16,"y":92,"w":40,"h":40,"how":"button element"}
+t10 active element before anything FLT-SEMANTICS[role=button] "Back"
+t10 hover 400 ms: drawn (2159 px differ)
+t10 semantics elements while hovered: 2 ["<flt-semantics aria-label=\"t10 Delete draft\" aria-owns=\"flt-semantic-node-16\"> text=\"t10 Delete draft\"","<span> text=\"t10 Delete draft\""]
+t10 hover 8 s: drawn (2159 px differ)
+t10 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t10 pointer away 600 ms: not drawn (0 px differ)
+t10 pointer on the tooltip 500 ms: drawn (2159 px differ)
+t10 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "" drawn (2159 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t10 focused for Escape: FLT-SEMANTICS[role=button] ""
+t10 hover with focus in the page: drawn (2159 px differ)
+t10 Escape with focus in the page: not drawn (0 px differ) active: FLT-SEMANTICS[role=button] ""
+t10 2 s later, pointer still there: not drawn (0 px differ)
+t11 element <flt-semantics role="button" tabindex="0" aria-description="t11 Saves a PDF copy" flt-tappable=""> text="t11 Download"
+t11 ax role=button name="t11 Download" description="t11 Saves a PDF copy"
+t11 control {"x":16,"y":92,"w":135.25,"h":32,"how":"button element"}
+t11 active element before anything FLT-SEMANTICS[role=button] "Back"
+t11 hover 400 ms: drawn (3026 px differ)
+t11 semantics elements while hovered: 2 ["<flt-semantics role=\"button\" tabindex=\"0\" aria-description=\"t11 Saves a PDF copy\" flt-tappable=\"\" aria-owns=\"flt-semantic-node-17\"> text=\"t11 Download\"","<span> text=\"t11 Saves a PDF copy\""]
+t11 hover 8 s: drawn (3026 px differ)
+t11 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (105 px differ)
+t11 pointer away 600 ms: not drawn (0 px differ)
+t11 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t11 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "t11 Download" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t11 focused for Escape: FLT-SEMANTICS[role=button] "t11 Download"
+t11 hover with focus in the page: drawn (3026 px differ)
+t11 Escape with focus in the page: not drawn (105 px differ) active: FLT-SEMANTICS[role=button] "t11 Download"
+t11 2 s later, pointer still there: not drawn (105 px differ)
+t12 element <span> text="t12 At least 8 characters"
+t12 control {"x":16,"y":92,"w":24,"h":24,"how":"row element, icon at its left"}
+t12 active element before anything FLT-SEMANTICS[role=button] "Back"
+t12 hover 400 ms: drawn (3327 px differ)
+t12 semantics elements while hovered: 2 ["<span> text=\"t12 At least 8 characters\"","<span> text=\"t12 At least 8 characters\""]
+t12 hover 8 s: drawn (3327 px differ)
+t12 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t12 pointer away 600 ms: not drawn (0 px differ)
+t12 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t12 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ)
+t12 focused for Escape: (page: FLUTTER-VIEW)
+t12 hover with focus in the page: drawn (3327 px differ)
+t12 Escape with focus in the page: not drawn (0 px differ) active: (page: FLUTTER-VIEW)
+t12 2 s later, pointer still there: not drawn (0 px differ)
+t13 element <flt-semantics aria-label="t13 Delete draft"> text="t13 Delete draft"
+t13 ax role=generic name="t13 Delete draft" description=""
+t13 control {"x":16,"y":92,"w":40,"h":40,"how":"button element"}
+t13 active element before anything FLT-SEMANTICS[role=button] "Back"
+t13 hover 400 ms: drawn (2159 px differ)
+t13 semantics elements while hovered: 2 ["<flt-semantics aria-label=\"t13 Delete draft\" aria-owns=\"flt-semantic-node-16\"> text=\"t13 Delete draft\"","<span> text=\"t13 Delete draft\""]
+t13 hover 8 s: drawn (2159 px differ)
+t13 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t13 pointer away 600 ms: not drawn (0 px differ)
+t13 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t13 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "" not drawn (0 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t13 focused for Escape: FLT-SEMANTICS[role=button] ""
+t13 hover with focus in the page: drawn (2159 px differ)
+t13 Escape with focus in the page: not drawn (0 px differ) active: FLT-SEMANTICS[role=button] ""
+t13 2 s later, pointer still there: not drawn (0 px differ)
+t14 element <flt-semantics role="button" tabindex="0" flt-tappable=""> text="t14 Delete draft"
+t14 ax role=button name="t14 Delete draft" description=""
+t14 control {"x":16,"y":92,"w":768,"h":52.390625,"how":"button element"}
+t14 active element before anything FLT-SEMANTICS[role=button] "Back"
+t14 hover 400 ms: not drawn (0 px differ)
+t14 semantics elements while hovered: 1 ["<flt-semantics role=\"button\" tabindex=\"0\" flt-tappable=\"\"> text=\"t14 Delete draft\""]
+t14 hover 8 s: not drawn (0 px differ)
+t14 Escape, no element focused ( FLT-SEMANTICS[role=button] "Back" ): not drawn (0 px differ)
+t14 pointer away 600 ms: not drawn (0 px differ)
+t14 pointer on the tooltip 500 ms: not drawn (0 px differ)
+t14 Tab stops: FLT-SEMANTICS[role=button] "Back" not drawn (0 px differ) -> FLT-SEMANTICS[role=button] "t14 Delete draft" not drawn (200 px differ) -> (page: BODY) not drawn (0 px differ) -> (page: FLUTTER-VIEW) not drawn (0 px differ)
+t14 focused for Escape: FLT-SEMANTICS[role=button] "t14 Delete draft"
+t14 hover with focus in the page: not drawn (200 px differ)
+t14 Escape with focus in the page: not drawn (200 px differ) active: FLT-SEMANTICS[role=button] "t14 Delete draft"
+t14 2 s later, pointer still there: not drawn (200 px differ)

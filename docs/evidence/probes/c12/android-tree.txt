@@ -1,0 +1,282 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+==== t01 start
+t01 node  | android.widget.Button | desc="t01 Delete draft" text="" tooltip="t01 Delete draft" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t01 long-click action: no node offers it
+t01 show-tooltip action: no node offers it
+t01 touch held 800 ms at Rect(42, 419 - 168, 545); tooltip text nodes now: [ | android.view.View | desc="t01 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+==== t01 just after the touch was released
+t01 node  | android.widget.Button | desc="t01 Delete draft" text="" tooltip="t01 Delete draft" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=1
+t01 node  | android.view.View | desc="t01 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0
+t01 after a touch held 800 ms was released: 300ms drawn (17733 px differ); 1000ms drawn (17733 px differ); 1500ms drawn (17733 px differ); 2000ms not drawn (4917 px differ); 3000ms not drawn (4917 px differ); 4000ms not drawn (4917 px differ)
+t01 taps after the touch: t01 taps: 0
+t01 mouse hover 600 ms: not drawn (5588 px differ); tooltip text nodes: []
+t01 mouse hover 5.6 s: not drawn (5588 px differ)
+t01 mouse moved onto the tooltip, 500 ms: not drawn (5588 px differ)
+==== t02 start
+t02 node  | android.view.View | desc="t02 Delete draft" text="" tooltip="t02 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=1
+t02 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t02 long-click action: no node offers it
+t02 show-tooltip action: no node offers it
+t02 touch held 800 ms at Rect(42, 419 - 168, 545); tooltip text nodes now: [ | android.view.View | desc="t02 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+==== t02 just after the touch was released
+t02 node  | android.view.View | desc="t02 Delete draft" text="" tooltip="t02 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=2
+t02 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t02 node  | android.view.View | desc="t02 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0
+t02 after a touch held 800 ms was released: 300ms drawn (16191 px differ); 1000ms drawn (16191 px differ); 1500ms drawn (16191 px differ); 2000ms not drawn (2264 px differ); 3000ms not drawn (2264 px differ); 4000ms not drawn (2264 px differ)
+t02 taps after the touch: t02 taps: 0
+t02 mouse hover 600 ms: drawn (17397 px differ); tooltip text nodes: [ | android.view.View | desc="t02 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+t02 mouse hover 5.6 s: drawn (17397 px differ)
+t02 mouse moved onto the tooltip, 500 ms: not drawn (4433 px differ)
+==== t03 start
+t03 node  | android.widget.Button | desc="t03 Delete draft" text="" tooltip="t03 Delete draft" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t03 long-click action: no node offers it
+t03 show-tooltip action: no node offers it
+t03 touch held 800 ms at Rect(42, 400 - 168, 526); tooltip text nodes now: [ | android.view.View | desc="t03 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+==== t03 just after the touch was released
+t03 node  | android.widget.Button | desc="t03 Delete draft" text="" tooltip="t03 Delete draft" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=1
+t03 node  | android.view.View | desc="t03 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0
+t03 after a touch held 800 ms was released: 300ms drawn (24657 px differ); 1000ms drawn (24657 px differ); 1500ms drawn (24657 px differ); 2000ms not drawn (7680 px differ); 3000ms not drawn (7680 px differ); 4000ms not drawn (7680 px differ)
+t03 taps after the touch: t03 taps: 0
+t03 mouse hover 600 ms: drawn (20687 px differ); tooltip text nodes: [ | android.view.View | desc="t03 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+t03 mouse hover 5.6 s: drawn (20687 px differ)
+t03 mouse moved onto the tooltip, 500 ms: not drawn (2205 px differ)
+==== t04 start
+t04 node  | android.view.View | desc="t04 Saves a PDF copy" text="" tooltip="t04 Saves a PDF copy" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=1
+t04 node  | android.widget.Button | desc="t04 Download" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 398, 510) [a11yfocus,click] children=0
+t04 long-click action: no node offers it
+t04 show-tooltip action: no node offers it
+t04 touch held 800 ms at Rect(42, 401 - 398, 527); tooltip text nodes now: [ | android.view.View | desc="t04 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 434, 578) [a11yfocus] children=0]
+==== t04 just after the touch was released
+t04 node  | android.view.View | desc="t04 Saves a PDF copy" text="" tooltip="t04 Saves a PDF copy" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=2
+t04 node  | android.widget.Button | desc="t04 Download" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 398, 510) [a11yfocus,click] children=0
+t04 node  | android.view.View | desc="t04 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 434, 578) [a11yfocus] children=0
+t04 after a touch held 800 ms was released: 300ms drawn (25821 px differ); 1000ms drawn (25821 px differ); 1500ms drawn (25821 px differ); 2000ms not drawn (2123 px differ); 3000ms not drawn (2123 px differ); 4000ms not drawn (2123 px differ)
+t04 taps after the touch: t04 taps: 0
+t04 mouse hover 600 ms: drawn (32321 px differ); tooltip text nodes: [ | android.view.View | desc="t04 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 434, 578) [a11yfocus] children=0]
+t04 mouse hover 5.6 s: drawn (32321 px differ)
+t04 mouse moved onto the tooltip, 500 ms: not drawn (0 px differ)
+==== t05 start
+t05 node  | android.widget.Button | desc="t05 Download" text="" tooltip="t05 Saves a PDF copy" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 398, 510) [a11yfocus,click] children=0
+t05 long-click action: no node offers it
+t05 show-tooltip action: no node offers it
+t05 touch held 800 ms at Rect(42, 410 - 398, 536); tooltip text nodes now: [ | android.view.View | desc="t05 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 434, 578) [a11yfocus] children=0]
+==== t05 just after the touch was released
+t05 node  | android.widget.Button | desc="t05 Download" text="" tooltip="t05 Saves a PDF copy" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 398, 510) [a11yfocus,click] children=1
+t05 node  | android.view.View | desc="t05 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 434, 578) [a11yfocus] children=0
+t05 after a touch held 800 ms was released: 300ms drawn (25405 px differ); 1000ms drawn (25405 px differ); 1500ms drawn (25405 px differ); 2000ms not drawn (6463 px differ); 3000ms not drawn (6463 px differ); 4000ms not drawn (6463 px differ)
+t05 taps after the touch: t05 taps: 0
+t05 mouse hover 600 ms: drawn (27308 px differ); tooltip text nodes: [ | android.view.View | desc="t05 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 434, 578) [a11yfocus] children=0]
+t05 mouse hover 5.6 s: drawn (27308 px differ)
+t05 mouse moved onto the tooltip, 500 ms: not drawn (2286 px differ)
+==== t06 start
+t06 node  | android.widget.Button | desc="t06 Download" text="" tooltip="t06 Download" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 398, 510) [a11yfocus,click] children=0
+t06 long-click action: no node offers it
+t06 show-tooltip action: no node offers it
+t06 touch held 800 ms at Rect(42, 419 - 398, 545); tooltip text nodes now: [ | android.view.View | desc="t06 Download" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(103, 525 - 337, 578) [a11yfocus] children=0]
+==== t06 just after the touch was released
+t06 node  | android.widget.Button | desc="t06 Download" text="" tooltip="t06 Download" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 398, 510) [a11yfocus,click] children=1
+t06 node  | android.view.View | desc="t06 Download" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(103, 525 - 337, 578) [a11yfocus] children=0
+t06 after a touch held 800 ms was released: 300ms drawn (16687 px differ); 1000ms drawn (16687 px differ); 1500ms drawn (16687 px differ); 2000ms not drawn (5351 px differ); 3000ms not drawn (5351 px differ); 4000ms not drawn (5351 px differ)
+t06 taps after the touch: t06 taps: 0
+t06 mouse hover 600 ms: drawn (19548 px differ); tooltip text nodes: [ | android.view.View | desc="t06 Download" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(103, 525 - 337, 578) [a11yfocus] children=0]
+t06 mouse hover 5.6 s: drawn (19548 px differ)
+t06 mouse moved onto the tooltip, 500 ms: not drawn (0 px differ)
+==== t07 start
+t07 node  | android.view.View | desc="t07 At least 8 characters" text="" tooltip="t07 At least 8 characters" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 447) [a11yfocus] children=0
+t07 long-click action: no node offers it
+t07 show-tooltip action: no node offers it
+t07 touch held 800 ms at Rect(42, 405 - 105, 468); tooltip text nodes now: [ | android.view.View | desc="t07 At least 8 characters" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 494 - 484, 546) [a11yfocus] children=0]
+==== t07 just after the touch was released
+t07 node  | android.view.View | desc="t07 At least 8 characters" text="" tooltip="t07 At least 8 characters" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 447) [a11yfocus] children=1
+t07 node  | android.view.View | desc="t07 At least 8 characters" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 494 - 484, 546) [a11yfocus] children=0
+t07 after a touch held 800 ms was released: 300ms drawn (41187 px differ); 1000ms drawn (41187 px differ); 1500ms drawn (37329 px differ); 2000ms not drawn (7043 px differ); 3000ms not drawn (7043 px differ); 4000ms not drawn (7043 px differ)
+t07 taps after the touch: t07 taps: 0
+t07 mouse hover 600 ms: drawn (38239 px differ); tooltip text nodes: [ | android.view.View | desc="t07 At least 8 characters" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 494 - 484, 546) [a11yfocus] children=0]
+t07 mouse hover 5.6 s: drawn (38239 px differ)
+t07 mouse moved onto the tooltip, 500 ms: not drawn (6585 px differ)
+==== t08 start
+t08 node  | android.view.View | desc="t08 Delete draft" text="" tooltip="t08 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=1
+t08 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t08 long-click action: no node offers it
+t08 show-tooltip action: no node offers it
+t08 touch held 800 ms at Rect(42, 437 - 168, 563); tooltip text nodes now: [ | android.view.View | desc="t08 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+==== t08 just after the touch was released
+t08 node  | android.view.View | desc="t08 Delete draft" text="" tooltip="t08 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=2
+t08 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t08 node  | android.view.View | desc="t08 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0
+t08 after a touch held 800 ms was released: 300ms not drawn (11867 px differ); 1000ms not drawn (11867 px differ); 1500ms not drawn (11867 px differ); 2000ms not drawn (2426 px differ); 3000ms not drawn (2426 px differ); 4000ms not drawn (2426 px differ)
+t08 taps after the touch: t08 taps: 0
+t08 mouse hover 600 ms: drawn (26109 px differ); tooltip text nodes: [ | android.view.View | desc="t08 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+t08 mouse hover 5.6 s: drawn (26109 px differ)
+t08 mouse moved onto the tooltip, 500 ms: drawn (26109 px differ)
+==== t09 start
+t09 node  | android.view.View | desc="t09 Delete draft" text="" tooltip="t09 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=1
+t09 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t09 long-click action: no node offers it
+t09 show-tooltip action: no node offers it
+t09 touch held 800 ms at Rect(42, 384 - 168, 510); tooltip text nodes now: [ | android.view.View | desc="t09 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+==== t09 just after the touch was released
+t09 node  | android.view.View | desc="t09 Delete draft" text="" tooltip="t09 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=2
+t09 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t09 node  | android.view.View | desc="t09 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0
+t09 after a touch held 800 ms was released: 300ms drawn (26977 px differ); 1000ms drawn (26977 px differ); 1500ms drawn (26977 px differ); 2000ms not drawn (0 px differ); 3000ms not drawn (0 px differ); 4000ms not drawn (0 px differ)
+t09 taps after the touch: t09 taps: 0
+t09 mouse hover 600 ms: drawn (25532 px differ); tooltip text nodes: [ | android.view.View | desc="t09 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+t09 mouse hover 5.6 s: drawn (25532 px differ)
+t09 mouse moved onto the tooltip, 500 ms: drawn (25532 px differ)
+==== t10 start
+t10 node  | android.view.View | desc="t10 Delete draft" text="" tooltip="t10 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=1
+t10 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t10 long-click action: no node offers it
+t10 show-tooltip action: no node offers it
+t10 touch held 800 ms at Rect(42, 394 - 168, 520); tooltip text nodes now: [ | android.view.View | desc="t10 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+==== t10 just after the touch was released
+t10 node  | android.view.View | desc="t10 Delete draft" text="" tooltip="t10 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=2
+t10 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t10 node  | android.view.View | desc="t10 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0
+t10 after a touch held 800 ms was released: 300ms drawn (23459 px differ); 1000ms drawn (23459 px differ); 1500ms drawn (23459 px differ); 2000ms not drawn (5137 px differ); 3000ms not drawn (5137 px differ); 4000ms not drawn (5137 px differ)
+t10 taps after the touch: t10 taps: 0
+t10 mouse hover 600 ms: drawn (16173 px differ); tooltip text nodes: [ | android.view.View | desc="t10 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+t10 mouse hover 5.6 s: drawn (16173 px differ)
+t10 mouse moved onto the tooltip, 500 ms: drawn (16173 px differ)
+==== t11 start
+t11 node  | android.widget.Button | desc="t11 Download, t11 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 398, 510) [a11yfocus,click] children=0
+t11 long-click action: no node offers it
+t11 show-tooltip action: no node offers it
+t11 touch held 800 ms at Rect(42, 411 - 398, 537); tooltip text nodes now: [ | android.view.View | desc="t11 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 434, 578) [a11yfocus] children=0]
+==== t11 just after the touch was released
+t11 node  | android.widget.Button | desc="t11 Download, t11 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 398, 510) [a11yfocus,click] children=1
+t11 node  | android.view.View | desc="t11 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 434, 578) [a11yfocus] children=0
+t11 after a touch held 800 ms was released: 300ms drawn (24898 px differ); 1000ms drawn (24898 px differ); 1500ms drawn (24898 px differ); 2000ms not drawn (6027 px differ); 3000ms not drawn (6027 px differ); 4000ms not drawn (6027 px differ)
+t11 taps after the touch: t11 taps: 0
+t11 mouse hover 600 ms: drawn (13802 px differ); tooltip text nodes: [ | android.view.View | desc="t11 Saves a PDF copy" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 434, 578) [a11yfocus] children=0]
+t11 mouse hover 5.6 s: drawn (13802 px differ)
+t11 mouse moved onto the tooltip, 500 ms: not drawn (1688 px differ)
+==== t12 start
+t12 node  | android.view.View | desc="t12 At least 8 characters" text="" tooltip="t12 At least 8 characters" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 447) [a11yfocus] children=0
+t12 long-click action: no node offers it
+t12 show-tooltip action: no node offers it
+t12 touch held 800 ms at Rect(42, 397 - 105, 460); tooltip text nodes now: [ | android.view.View | desc="t12 At least 8 characters" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 494 - 484, 546) [a11yfocus] children=0]
+==== t12 just after the touch was released
+t12 node  | android.view.View | desc="t12 At least 8 characters" text="" tooltip="t12 At least 8 characters" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 447) [a11yfocus] children=1
+t12 node  | android.view.View | desc="t12 At least 8 characters" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 494 - 484, 546) [a11yfocus] children=0
+t12 after a touch held 800 ms was released: 300ms drawn (40763 px differ); 1000ms drawn (40763 px differ); 1500ms drawn (40763 px differ); 2000ms not drawn (6885 px differ); 3000ms not drawn (6885 px differ); 4000ms not drawn (6885 px differ)
+t12 taps after the touch: t12 taps: 0
+t12 mouse hover 600 ms: drawn (34311 px differ); tooltip text nodes: [ | android.view.View | desc="t12 At least 8 characters" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 494 - 484, 546) [a11yfocus] children=0]
+t12 mouse hover 5.6 s: drawn (34311 px differ)
+t12 mouse moved onto the tooltip, 500 ms: not drawn (0 px differ)
+==== t13 start
+t13 node  | android.view.View | desc="t13 Delete draft" text="" tooltip="t13 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=1
+t13 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t13 long-click action: no node offers it
+t13 show-tooltip action: no node offers it
+t13 touch held 800 ms at Rect(42, 405 - 168, 531); tooltip text nodes now: [ | android.view.View | desc="t13 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+==== t13 just after the touch was released
+t13 node  | android.view.View | desc="t13 Delete draft" text="" tooltip="t13 Delete draft" hint="" state="" clickable=false longClickable=false focusable=false focused=false Rect(42, 384 - 1038, 510) [a11yfocus] children=2
+t13 node  | android.widget.Button | desc="" text="" tooltip="" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t13 node  | android.view.View | desc="t13 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0
+t13 after a touch held 800 ms was released: 300ms drawn (20750 px differ); 1000ms drawn (20750 px differ); 1500ms drawn (20750 px differ); 2000ms not drawn (6121 px differ); 3000ms not drawn (6121 px differ); 4000ms not drawn (6121 px differ)
+t13 taps after the touch: t13 taps: 0
+t13 mouse hover 600 ms: drawn (22565 px differ); tooltip text nodes: [ | android.view.View | desc="t13 Delete draft" text="" tooltip="" hint="" state="" clickable=false longClickable=false focusable=true focused=false Rect(68, 525 - 331, 578) [a11yfocus] children=0]
+t13 mouse hover 5.6 s: drawn (22565 px differ)
+t13 mouse moved onto the tooltip, 500 ms: not drawn (6651 px differ)
+==== t14 start
+t14 node  | android.widget.Button | desc="t14 Delete draft" text="" tooltip="t14 Delete draft" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 1038, 521) [a11yfocus,click] children=0
+t14 long-click action: no node offers it
+t14 show-tooltip action: no node offers it
+t14 touch held 800 ms at Rect(42, 410 - 1038, 547); tooltip text nodes now: []
+==== t14 just after the touch was released
+t14 node  | android.widget.Button | desc="t14 Delete draft" text="" tooltip="t14 Delete draft" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 1038, 521) [a11yfocus,click] children=0
+t14 after a touch held 800 ms was released: 300ms not drawn (6364 px differ); 1000ms not drawn (6364 px differ); 1500ms not drawn (6364 px differ); 2000ms not drawn (6364 px differ); 3000ms not drawn (6364 px differ); 4000ms not drawn (6364 px differ)
+t14 taps after the touch: t14 taps: 0
+t14 mouse hover 600 ms: not drawn (4980 px differ); tooltip text nodes: []
+t14 mouse hover 5.6 s: not drawn (4980 px differ)
+t14 mouse moved onto the tooltip, 500 ms: not drawn (4980 px differ)
+t01 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t01 5 s later: not drawn (0 px differ)
+t01 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t01 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> t01 Delete draft not drawn (0 px differ) -> Back not drawn (0 px differ)
+t01 after a touch held 800 ms: drawn (24636 px differ); focus=(android.widget.FrameLayout no name)
+t01 Escape 300 ms after the touch was released: not drawn (7441 px differ)
+t02 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t02 5 s later: not drawn (0 px differ)
+t02 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t02 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> (android.widget.Button no name) not drawn (0 px differ) -> Back not drawn (0 px differ)
+t02 after a touch held 800 ms: not drawn (12087 px differ); focus=(android.widget.FrameLayout no name)
+t02 Escape 300 ms after the touch was released: not drawn (3119 px differ)
+t03 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t03 5 s later: not drawn (0 px differ)
+t03 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t03 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> t03 Delete draft not drawn (0 px differ) -> Back not drawn (0 px differ)
+t03 after a touch held 800 ms: drawn (24834 px differ); focus=(android.widget.FrameLayout no name)
+t03 Escape 300 ms after the touch was released: not drawn (0 px differ)
+t04 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t04 5 s later: not drawn (0 px differ)
+t04 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t04 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> t04 Download not drawn (0 px differ) -> Back not drawn (0 px differ)
+t04 after a touch held 800 ms: drawn (29528 px differ); focus=(android.widget.FrameLayout no name)
+t04 Escape 300 ms after the touch was released: not drawn (2206 px differ)
+t05 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t05 5 s later: not drawn (0 px differ)
+t05 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t05 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> t05 Download not drawn (0 px differ) -> Back not drawn (0 px differ)
+t05 after a touch held 800 ms: drawn (29191 px differ); focus=(android.widget.FrameLayout no name)
+t05 Escape 300 ms after the touch was released: not drawn (0 px differ)
+t06 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t06 5 s later: not drawn (0 px differ)
+t06 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t06 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> t06 Download not drawn (0 px differ) -> Back not drawn (0 px differ)
+t06 after a touch held 800 ms: drawn (22411 px differ); focus=(android.widget.FrameLayout no name)
+t06 Escape 300 ms after the touch was released: not drawn (6767 px differ)
+t07 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t07 5 s later: not drawn (0 px differ)
+t07 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t07 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> Back not drawn (0 px differ) -> Back not drawn (0 px differ)
+t07 after a touch held 800 ms: drawn (35264 px differ); focus=(android.widget.FrameLayout no name)
+t07 Escape 300 ms after the touch was released: not drawn (0 px differ)
+t08 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t08 5 s later: not drawn (0 px differ)
+t08 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t08 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> (android.widget.Button no name) not drawn (0 px differ) -> Back not drawn (0 px differ)
+t08 after a touch held 800 ms: drawn (25599 px differ); focus=(android.widget.FrameLayout no name)
+t08 Escape 300 ms after the touch was released: not drawn (0 px differ)
+t09 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t09 5 s later: not drawn (0 px differ)
+t09 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t09 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> (android.widget.Button no name) not drawn (0 px differ) -> Back not drawn (0 px differ)
+t09 after a touch held 800 ms: drawn (20536 px differ); focus=(android.widget.FrameLayout no name)
+t09 Escape 300 ms after the touch was released: not drawn (6479 px differ)
+t10 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t10 5 s later: not drawn (0 px differ)
+t10 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+11-21 19:43:02.145 10579 10579 I flutter : C12PROBE t10 focus true
+11-21 19:43:03.449 10579 10579 I flutter : C12PROBE t10 focus false
+t10 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> (android.widget.Button no name) drawn (27069 px differ) -> Back not drawn (0 px differ)
+t10 after a touch held 800 ms: drawn (24829 px differ); focus=(android.widget.FrameLayout no name)
+t10 Escape 300 ms after the touch was released: not drawn (6419 px differ)
+t11 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t11 5 s later: not drawn (0 px differ)
+t11 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t11 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> t11 Download, t11 Saves a PDF copy not drawn (0 px differ) -> Back not drawn (0 px differ)
+t11 after a touch held 800 ms: drawn (24475 px differ); focus=(android.widget.FrameLayout no name)
+t11 Escape 300 ms after the touch was released: not drawn (4296 px differ)
+t12 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t12 5 s later: not drawn (0 px differ)
+t12 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t12 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> Back not drawn (0 px differ) -> Back not drawn (0 px differ)
+t12 after a touch held 800 ms: drawn (40401 px differ); focus=(android.widget.FrameLayout no name)
+t12 Escape 300 ms after the touch was released: not drawn (5591 px differ)
+t13 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t13 5 s later: not drawn (0 px differ)
+11-21 19:43:57.705 10579 10579 I flutter : C12PROBE t13 Escape handler: dismissed=false
+t13 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t13 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> (android.widget.Button no name) not drawn (0 px differ) -> Back not drawn (0 px differ)
+t13 after a touch held 800 ms: drawn (22923 px differ); focus=(android.widget.FrameLayout no name)
+11-21 19:44:07.123 10579 10579 I flutter : C12PROBE t13 Escape handler: dismissed=true
+t13 Escape 300 ms after the touch was released: not drawn (6951 px differ)
+t14 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t14 5 s later: not drawn (0 px differ)
+t14 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t14 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> t14 Delete draft not drawn (0 px differ) -> Back not drawn (0 px differ)
+t14 after a touch held 800 ms: not drawn (7185 px differ); focus=(android.widget.FrameLayout no name)
+t14 Escape 300 ms after the touch was released: not drawn (7185 px differ)

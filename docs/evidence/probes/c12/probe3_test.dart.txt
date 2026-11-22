@@ -1,0 +1,35 @@
+// C12 probe, third part (throwaway; kept as
+// docs/evidence/probes/c12/probe3_test.dart.txt): the whole semantics tree
+// while t01's and t06's tooltips are shown by a hover, as debugDumpSemanticsTree
+// prints it, after the web showed the tooltip's text as an element of its own.
+import 'dart:ui';
+
+import 'package:flutter/rendering.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'probe_test.dart' as p;
+
+void main() {
+  for (final id in ['t01', 't06']) {
+    testWidgets('$id tree while shown', (tester) async {
+      final h = tester.ensureSemantics();
+      await p.open(tester, id);
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouse.addPointer(location: Offset.zero);
+      addTearDown(mouse.removePointer);
+      await mouse.moveTo(p.control(tester));
+      await tester.pumpAndSettle();
+      debugPrint('C12TEST $id shown=${p.shown(tester, id)}');
+      final owner =
+          tester.binding.renderViews.first.owner!.semanticsOwner!;
+      debugPrint(
+        owner.rootSemanticsNode!
+            .toStringDeep(childOrder: DebugSemanticsDumpOrder.traversalOrder)
+            .split('\n')
+            .map((l) => 'C12TEST $id $l')
+            .join('\n'),
+      );
+      h.dispose();
+    });
+  }
+}
