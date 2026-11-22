@@ -12,7 +12,7 @@
 import { test, expect } from '@playwright/test';
 import { byId, openExample } from './support/techniques.js';
 import {
-  EXAMPLE_HEADING, EXAMPLE_SCREENS, SHOWN_WALKS, judgeWalk, runWalks, screenStops,
+  EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeWalk, runWalks, screenStops, shownWalk,
 } from './vo/c13_vo_walks.js';
 
 const MESSAGE = {
@@ -309,7 +309,7 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
 // that fell short (runWalks). The walks here are made up; VoiceOver is not
 // used.
 test.describe('the VoiceOver walks are judged on every walk', () => {
-  const whole = SHOWN_WALKS['good-action'];
+  const whole = shownWalk('good-action', 'webkit');
   const own = screenStops('good-action');
   const cases = [
     ['a correct walk', whole, true, 'complete'],
@@ -337,8 +337,21 @@ test.describe('the VoiceOver walks are judged on every walk', () => {
     });
   }
 
+  test('the two browsers\' lists differ at Close alone, each exact', () => {
+    const chromium = shownWalk('good-action', 'chromium');
+    const webkit = shownWalk('good-action', 'webkit');
+    expect(chromium.length).toBe(webkit.length);
+    const differ = chromium.map((s, i) => (s === webkit[i] ? null : [s, webkit[i]])).filter(Boolean);
+    expect(differ).toEqual([['Close Close', 'Close button']]);
+    expect(shownWalk('good-banner', 'chromium')).toEqual(shownWalk('good-banner', 'webkit'));
+    // Each is judged exactly: the other browser's reading of Close is wrong.
+    expect(judgeWalk(webkit, true, chromium).verdict).toBe('wrong');
+    expect(judgeWalk(chromium, true, webkit).verdict).toBe('wrong');
+    expect(() => shownWalk('good-action', 'firefox')).toThrow();
+  });
+
   test('the banner\'s walk has the banner before the screen\'s description', () => {
-    const banner = SHOWN_WALKS['good-banner'];
+    const banner = shownWalk('good-banner', 'chromium');
     expect(banner.indexOf('Go online button')).toBeLessThan(banner.indexOf(screenStops('good-banner')[1]));
   });
 

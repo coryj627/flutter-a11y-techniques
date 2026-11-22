@@ -3209,10 +3209,28 @@ yet), **Fixed in x.y** (verified on that version).
   `web_tests/c13_snackbar.spec.js`). In C13's first web VoiceOver
   recording Chromium read that button "Close Close", with no role, and
   WebKit "Close button"
-  (`docs/evidence/probes/c13/voiceover-web-round1-fail.md.txt`). Whether
-  the tooltip was shown during that walk is not in the log, and the
-  missing role is not what the tree gives even with the tooltip shown; the
-  cause was not found.
+  (`docs/evidence/probes/c13/voiceover-web-round1-fail.md.txt`). The
+  second recording read the same, Chromium "Close Close" and WebKit "Close
+  button", and after each walk Close's tooltip was shown, in both browsers
+  (`voiceover-web-round2-fail.md.txt`, row
+  `good-action-close-tooltip-after-walk`). So a walk that reaches Close
+  leaves its tooltip shown, and Chromium's VoiceOver then reads the doubled
+  name with no role word; WebKit's reads the name once with its role. The
+  tree keeps the role, a button, while the tooltip is shown
+  (`close_probe.txt`), so the role is programmatically determinable: not a
+  4.1.2 failure as written. But a Chromium VoiceOver user does not hear
+  "button" on Close. What shows the tooltip during the walk (the pointer
+  following VoiceOver's cursor is the likeliest, and keyboard focus alone
+  does not), and why Chromium's speech drops the role, were not measured
+  beyond that correlation. `SnackBar` has no parameter for the close
+  icon's tooltip (read in the source: `material/snack_bar.dart` builds the
+  `IconButton` with `tooltip: MaterialLocalizations.of(context)
+  .closeButtonTooltip`), so an app cannot leave it out for one SnackBar;
+  only its words could be changed, app-wide, through `MaterialLocalizations`.
+  This is recorded here and not as an entry of its own because the doubled
+  name is this entry's mechanism, a shown tooltip's text owned by its
+  control; the dropped role word is VoiceOver's reading of that name in
+  Chromium.
 - Workaround: `Tooltip.excludeFromSemantics` leaves out the tooltip's
   semantics on its control, not the shown text. None in the framework for
   the shown text; Flutter has not added one yet.

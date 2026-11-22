@@ -17,7 +17,7 @@ import { expect } from '@playwright/test';
 import {
   activateBrowser, assertCaptureIsLive, heardAfter, waitUntilQuiet, walkToEnd,
 } from './vo_helpers.js';
-import { SHOWN_WALKS, judgeWalk, runWalks } from './c13_vo_walks.js';
+import { SHOWN_SLUGS, judgeWalk, runWalks, shownWalk } from './c13_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
@@ -68,9 +68,11 @@ for (const [slug, { must, mustNot }] of Object.entries(ANNOUNCED)) {
   });
 }
 
-for (const [slug, whole] of Object.entries(SHOWN_WALKS)) {
+for (const slug of SHOWN_SLUGS) {
   test(`voiceover reads ${slug} with its message shown`, async ({ page, voiceOver, browserName }) => {
     expect(voiceOver).toBeTruthy();
+    // Each browser's list is exact: they differ at Close (c13_vo_walks.js).
+    const whole = shownWalk(slug, browserName);
     await openAtButton(page, browserName, slug);
     await page.keyboard.press('Enter');
     await page.waitForTimeout(1500);
@@ -86,7 +88,8 @@ for (const [slug, whole] of Object.entries(SHOWN_WALKS)) {
       // A diagnostic, judged by nobody: whether Close's tooltip was shown
       // when the walk ended. While it is shown, the tree names Close
       // "Close Close" (FL-249; docs/specs/C13-snackbar.md, section 7). Read
-      // once, after the walk, not at Close's stop.
+      // once, after the walk, not at Close's stop. It was shown in both
+      // browsers in the second recording.
       const owns = await page.evaluate(() => [...document.querySelectorAll('flt-semantics[role="button"]')]
         .filter((e) => e.textContent.trim() === 'Close' && e.hasAttribute('aria-owns')).length);
       console.log(`C13VO ${browserName} ${slug}-close-tooltip-after-walk | ${owns ? 'shown' : 'not shown'}`);

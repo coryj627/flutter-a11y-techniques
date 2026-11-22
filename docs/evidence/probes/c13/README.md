@@ -158,3 +158,14 @@ on Close its tooltip is shown: the button owns the tooltip's element
 (`aria-owns`), in both browsers, and Chromium names it "Close Close",
 still a button. Tab to Close shows no tooltip. Whether the tooltip was
 shown during the recorded walk is not in the log.
+
+## The second web VoiceOver recording
+
+Recorded by the principal on 2026-11-22 against 45b9d7d; kept as
+`voiceover-web-round2-fail.md.txt`. One test of ten failed:
+`good-action`'s walk in Chromium, at Close, read "Close Close" again where
+"Close button" was expected. Everything else passed: `good-banner` in both
+browsers, `good-action` in WebKit (Close "Close button"), and the six
+announcements. The diagnostic row `good-action-close-tooltip-after-walk`
+said "shown" in both browsers: after the walk Close's tooltip was shown.
+The walks now expect each browser's reading exactly.

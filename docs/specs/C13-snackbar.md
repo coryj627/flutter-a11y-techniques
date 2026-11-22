@@ -160,7 +160,7 @@ What each meets, by platform, as the criteria are written:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `good-action` | 4.1.3: announced (TalkBack), focus not moved. 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium announced it (first recording); the walk's Close stop is open (section 7) |
+| `good-action` | 4.1.3: announced (TalkBack), focus not moved. 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium announced it. Qualification on the web, Chromium: with Close's tooltip shown, as a VoiceOver walk leaves it, VoiceOver reads Close "Close Close" with no role word (FL-249); the tree keeps the role, so not 4.1.2 as written (section 7) |
 | `good-message` | 4.1.3: announced. 2.2.1: its going sets no time limit, as its news is on the page (Understanding 2.2.1) | the same | the same |
 | `good-banner` | 4.1.3: announced. 2.2.1: no time limit | the same | the same |
 
@@ -222,7 +222,7 @@ Not built:
 | L3 iOS | Each message an element labelled by it, once; Undo and Close buttons, and Go online; `good-action` and `good-banner` stay 10 s; `good-message`, `bad-action-times-out`, and `bad-only-in-message` go within 6 s of being seen, their lines staying, Undo gone, and the code in no element. Three Tabs and Return undo; four Tabs and Return close, undoing nothing; two Tabs and Return close the banner (that a Tab reached a control is shown by what Return does; XCUITest cannot read Flutter's focus, nor a live region). No key with a modifier is sent, so Escape is not checked on iOS |
 | L4 TalkBack | Focus parked on the example's line, the button pressed with the click action: the message's words for every example but `bad-inline-banner`, which says nothing of "offline"; then focus on `good-action`'s message, Undo, and Close, on `good-banner`'s message and Go online, and on `bad-inline-banner`'s message, which is read when focus is put on it |
 | L4 VoiceOver iOS | The cursor on the button, `doubleTap()` at it: the message heard for every example but `bad-inline-banner`, where the button's utterance stays six seconds; one move back and one forward land on the button again; for `good-action`, `good-banner`, and `bad-inline-banner`, the moves forward from the button to where the last utterance repeats, as a whole list |
-| L4 VoiceOver web | Chromium only for the announcements (Playwright's WebKit build passes no live region changes): Enter on the button, VoiceOver's last phrase for six seconds must hold the message, or must not hold "offline" for `bad-inline-banner`, with capture shown live after. For `good-action` and `good-banner`, in Chromium and WebKit, the screen walked from Back with the message shown, judged against the whole list in order (`judgeWalk` in `web_tests/vo/c13_vo_walks.js`); no runner retries. The lists are what the first recording read in both browsers (section 7), with Close as "Close button"; after `good-action`'s walk, whether Close's tooltip is shown is logged, judged by nobody |
+| L4 VoiceOver web | Chromium only for the announcements (Playwright's WebKit build passes no live region changes): Enter on the button, VoiceOver's last phrase for six seconds must hold the message, or must not hold "offline" for `bad-inline-banner`, with capture shown live after. For `good-action` and `good-banner`, in Chromium and WebKit, the screen walked from Back with the message shown, judged against the whole list in order (`judgeWalk` in `web_tests/vo/c13_vo_walks.js`); no runner retries. The lists are what the first two recordings read (section 7): the same in both browsers but at Close, "Close Close" in Chromium and "Close button" in WebKit, each exact; after `good-action`'s walk, whether Close's tooltip is shown is logged, judged by nobody |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -276,19 +276,27 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
     what that stop was); here it did not.
   - `good-action`: "Archived: 1", "Message archived group", "Undo button",
     then Close, then "end of Message archived group". WebKit read Close
-    "Close button". Chromium read it "Close Close", with no role. The web
-    tree has no reason for it with no tooltip shown: Close is a button
-    with its text alone, named "Close", no description, as Undo is, which
-    Chromium read "Undo button" (`close_probe.txt`). With the pointer on
-    Close its tooltip is shown and the tree names it "Close Close", still
-    a button (FL-249); keyboard focus does not show it. Whether the
-    tooltip was shown during the walk is not in the log, and even then the
-    tree gives the role. The cause was not found. The list keeps "Close
-    button" for both browsers, as the tree gives it, and the spec logs
-    after the walk whether the tooltip was shown; the second recording
-    decides. If Chromium reads "Close Close" again, with no role, that is
-    what this spec will say for Chromium, and 4.1.2 for Close's role there
-    will be looked at.
+    "Close button" in both recordings; Chromium read it "Close Close",
+    with no role word, in both. After the second recording's walk Close's
+    tooltip was shown, in both browsers (`voiceover-web-round2-fail.md.txt`,
+    `good-action-close-tooltip-after-walk`). Close is the `IconButton` that
+    `showCloseIcon` adds, with the tooltip "Close". With no tooltip shown
+    the tree names it "Close", a button, as it names Undo; while its
+    tooltip is shown the button owns the tooltip's element and the tree
+    names it "Close Close", still a button (`close_probe.txt`; the tree
+    spec asserts both). So the walk leaves the tooltip shown, and
+    Chromium's VoiceOver reads the doubled name and leaves out the role
+    word, which WebKit's says. What shows the tooltip during the walk, and
+    why Chromium's speech drops the role, were not measured beyond that
+    correlation ([FL-249](../flutter-limitations.md#fl-249), extended).
+    4.1.2: the role is programmatically determinable (the tree has it), so
+    it is not a 4.1.2 failure as written; but a Chromium VoiceOver user
+    does not hear "button" on Close, and hears its name twice. Nothing in
+    the example can change it: `SnackBar` has no parameter for the close
+    icon's tooltip (read in the source: `material/snack_bar.dart`, the
+    `IconButton`'s `tooltip` is `MaterialLocalizations.closeButtonTooltip`).
+    The walks expect each browser's reading exactly: "Close Close" in
+    Chromium, "Close button" in WebKit.
   - `good-banner`: the title, then "You are offline. group", "Go online
     button", "end of You are offline. group", then the description, the
     "Example" heading, "Go offline button", "Status: offline".
