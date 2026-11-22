@@ -1,0 +1,17 @@
+// Throwaway: serves the C13 probe build (build/web_probe) for
+// c13_probe.spec.js. Not committed; kept as
+// docs/evidence/probes/c13/c13probe.config.js.txt.
+import { defineConfig } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = Number(process.env.C13_PORT ?? 29853);
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: /c13_probe\.spec\.js$/,
+  reporter: 'list',
+  workers: 2,
+  timeout: 180_000,
+  use: { baseURL: `http://127.0.0.1:${port}`, browserName: 'chromium' },
+  webServer: webServer(process.env.C13_BUILD ?? 'build/web_probe', port),
+});

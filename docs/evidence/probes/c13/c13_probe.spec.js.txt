@@ -1,0 +1,144 @@
+// C13 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/c13/c13_probe.spec.js.txt with c13probe.config.js.txt).
+// For each fixture of lib/probe.dart, in Chromium: the elements of the
+// message once shown, everything Flutter writes to its announcement
+// elements (a MutationObserver from before the show), where DOM focus is
+// after the show, the Tab stops after it, how long the message stays, and
+// Escape and Enter with focus on its action.
+import { test } from '@playwright/test';
+
+const ids = ['s01', 's02', 's03', 's04', 's05', 's06', 's07', 's08'];
+
+function log(...a) {
+  console.log('C13WEB', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await byId(page, `${id}-taps`).waitFor();
+  await page.waitForTimeout(900);
+  await page.evaluate(() => {
+    window.t0 = performance.now();
+    window.announced = [];
+    for (const politeness of ['polite', 'assertive']) {
+      const element = document.querySelector(`flt-announcement-${politeness}`);
+      new MutationObserver(() => {
+        const text = element.textContent.replace(/ /g, ' ').trim();
+        window.announced.push(`${Math.round(performance.now() - window.t0)} ms ${politeness}: "${text}"`);
+      }).observe(element, { childList: true, characterData: true, subtree: true });
+    }
+  });
+}
+
+const active = (page) =>
+  page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e) return 'none';
+    return `${e.tagName.toLowerCase()}${e.getAttribute('role') ? `[role=${e.getAttribute('role')}]` : ''} "${(e.getAttribute('aria-label') ?? e.textContent ?? '').trim().slice(0, 40)}"`;
+  });
+
+/** The semantics elements whose text holds the fixture's message, with their ancestors' roles. */
+const messageElements = (page, id) =>
+  page.evaluate((id) => {
+    const out = [];
+    for (const e of document.querySelectorAll('flt-semantics')) {
+      const own = [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('').trim();
+      const label = e.getAttribute('aria-label') ?? '';
+      const text = `${own} ${label}`;
+      if (!/(Message archived|Offline|Undo|Dismiss|Close)/.test(text)) continue;
+      if (!text.includes(id) && !/Close/.test(text)) continue;
+      if (e.querySelector('flt-semantics') && !label) continue;
+      const attrs = [...e.attributes]
+        .filter((a) => !['style', 'id'].includes(a.name))
+        .map((a) => `${a.name}=${a.value}`)
+        .join(' ');
+      out.push(`<${e.tagName.toLowerCase()} ${attrs}> own text "${own}"`);
+    }
+    return out;
+  }, id);
+
+const shown = (page, id) =>
+  page.evaluate((id) => [...document.querySelectorAll('flt-semantics')].some((e) => {
+    const text = `${e.textContent ?? ''} ${e.getAttribute('aria-label') ?? ''}`;
+    return text.includes(`${id} Message archived`) || text.includes(`${id} Offline`);
+  }), id);
+
+async function lifetime(page, id, max = 14000) {
+  const start = Date.now();
+  while (Date.now() - start < max) {
+    if (!(await shown(page, id))) return Date.now() - start;
+    await page.waitForTimeout(200);
+  }
+  return null;
+}
+
+const closedText = async (page, id) => (await byId(page, `${id}-closed`).textContent()) ?? '?';
+
+async function showByKeyboard(page, id) {
+  // Tab to the Show button and press Enter, as a keyboard user does.
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(150);
+    if ((await active(page)).includes(`${id} Show`)) break;
+  }
+  log(id, 'before Enter, focus on', await active(page));
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(800);
+}
+
+test.describe.configure({ retries: 0 });
+
+for (const id of ids) {
+  test(`${id}`, async ({ page }) => {
+    await fresh(page, id);
+    log(id, 'focus on load', await active(page));
+    await showByKeyboard(page, id);
+    log(id, 'shown', await shown(page, id), '| focus after the show', await active(page));
+    for (const e of await messageElements(page, id)) log(id, 'element', e);
+    const stops = [];
+    for (let i = 0; i < 5; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      stops.push(await active(page));
+    }
+    log(id, 'tab stops after the show', stops.join(' | '));
+    const gone = await lifetime(page, id);
+    log(id, 'gone', gone === null ? 'still shown at 14 s (from about 2 s after the show)' : `${gone} ms after the Tabs`, '|', await closedText(page, id));
+    log(id, 'announced', JSON.stringify(await page.evaluate(() => window.announced)));
+
+    // Focus on the action, then wait: does it stay, and where does focus go?
+    await fresh(page, id);
+    await showByKeyboard(page, id);
+    let reached = null;
+    for (let i = 0; i < 6; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      const a = await active(page);
+      if (a.startsWith('flt-semantics[role=button]') && /Undo|Dismiss|Close/.test(a)) {
+        reached = a;
+        break;
+      }
+    }
+    if (reached === null) {
+      log(id, 'no Tab reached an action');
+      return;
+    }
+    const t = await lifetime(page, id);
+    log(id, `focus on ${reached}:`, t === null ? 'still shown at 14 s' : `gone ${t} ms after focus reached it`, '| focus then', await active(page), '|', await closedText(page, id));
+    if (t !== null) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(200);
+      log(id, 'one Tab after it went:', await active(page));
+      return;
+    }
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(600);
+    log(id, `Escape on ${reached}: shown`, await shown(page, id), '|', await closedText(page, id), '| focus', await active(page));
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(1200);
+    log(id, `Enter on ${reached}: shown`, await shown(page, id), '|', await closedText(page, id), '|', await byId(page, `${id}-taps`).textContent(), '| focus', await active(page));
+  });
+}

@@ -1,0 +1,30 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+11-22 17:25:51.316 17682 17682 I flutter : C13PROBE s01 focus: Root Focus Scope
+11-22 17:25:51.319 17682 17682 I flutter : C13PROBE s01 focus: Before s01
+11-22 17:26:09.588 17682 17682 I flutter : C13PROBE s01 closed: timeout 4273 ms
+s01 talkBack: s01 nav: true | s01 closed: timeout 4273 ms
+11-22 17:26:10.614 17682 17682 I flutter : C13PROBE s02 focus: Root Focus Scope
+11-22 17:26:10.616 17682 17682 I flutter : C13PROBE s02 focus: Before s02
+s02 talkBack: s02 nav: true | s02 closed: open (still, 14 s after the show)
+11-22 17:26:49.937 17682 17682 I flutter : C13PROBE s03 focus: Root Focus Scope
+11-22 17:26:49.944 17682 17682 I flutter : C13PROBE s03 focus: Before s03
+11-22 17:27:08.138 17682 17682 I flutter : C13PROBE s03 closed: timeout 4278 ms
+s03 talkBack: s03 nav: true | s03 closed: timeout 4278 ms
+11-22 17:27:09.157 17682 17682 I flutter : C13PROBE s04 focus: Root Focus Scope
+11-22 17:27:09.159 17682 17682 I flutter : C13PROBE s04 focus: Before s04
+11-22 17:27:26.655 17682 17682 I flutter : C13PROBE s04 closed: timeout 4277 ms
+s04 talkBack: s04 nav: true | s04 closed: timeout 4277 ms
+11-22 17:27:27.687 17682 17682 I flutter : C13PROBE s05 focus: Root Focus Scope
+11-22 17:27:27.689 17682 17682 I flutter : C13PROBE s05 focus: Before s05
+s05 talkBack: s05 nav: true | s05 closed: open (still, 14 s after the show)
+11-22 17:28:07.125 17682 17682 I flutter : C13PROBE s06 focus: Root Focus Scope
+11-22 17:28:07.131 17682 17682 I flutter : C13PROBE s06 focus: Before s06
+s06 talkBack: s06 nav: true | s06 closed: open (still, 14 s after the show)
+11-22 17:28:47.334 17682 17682 I flutter : C13PROBE s07 focus: Root Focus Scope
+11-22 17:28:47.341 17682 17682 I flutter : C13PROBE s07 focus: Before s07
+11-22 17:29:11.638 17682 17682 I flutter : C13PROBE s07 closed: timeout 10276 ms
+s07 talkBack: s07 nav: true | s07 closed: timeout 10276 ms
+11-22 17:29:12.201 17682 17682 I flutter : C13PROBE s08 focus: Root Focus Scope
+11-22 17:29:12.204 17682 17682 I flutter : C13PROBE s08 focus: Before s08
+11-22 17:29:29.711 17682 17682 I flutter : C13PROBE s08 closed: timeout 4294 ms
+s08 talkBack: s08 nav: true | s08 closed: timeout 4294 ms
