@@ -6,6 +6,7 @@ import 'c02_toggle_button/c02_toggle_button.dart';
 import 'c03_stand_alone_link/c03_stand_alone_link.dart';
 import 'c04_links_inline_with_text/c04_links_inline_with_text.dart';
 import 'c12_tooltip/c12_tooltip.dart';
+import 'c13_snackbar/c13_snackbar.dart';
 import 'f01_text_fields/f01_text_fields.dart';
 import 'f02_input_instructions/f02_input_instructions.dart';
 import 'f03_keyboard_types/f03_keyboard_types.dart';
@@ -40,6 +41,7 @@ final List<Technique> allTechniques = [
   c03StandAloneLink,
   c04LinksInlineWithText,
   c12Tooltip,
+  c13Snackbar,
   f01TextFields,
   f02InputInstructions,
   f03KeyboardTypes,

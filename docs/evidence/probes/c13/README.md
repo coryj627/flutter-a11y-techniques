@@ -129,3 +129,10 @@ nothing on focus. In the C13 examples, with the action's `textColor` and
   SnackBar that stays after the page's own lines, about 12 s after the
   show (s02, s05); for every timed one the moves never reached it, but
   they began after six seconds of listening, when it had gone.
+
+## C13's Android suite at CI's size
+
+After the examples were built, C13's Android tree tests ran once at the
+CI emulator's size, 320 by 640 at 160 dpi (`android_320x640.sh.txt`, which
+resets both after): the Gradle run ended "BUILD SUCCESSFUL", with
+`talkBackWalk` skipped as TalkBack was off (`android_320x640.txt`).
