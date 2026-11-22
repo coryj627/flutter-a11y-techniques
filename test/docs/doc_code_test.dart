@@ -62,6 +62,26 @@ class B {}
       expect(sync(result, examples, path), result, reason: 'stable');
     });
 
+    test('labels the code of a custom solution, and only that', () {
+      const source =
+          '// #region good-a\nclass A {}\n// #endregion\n'
+          '// #region good-b\nclass B {}\n// #endregion\n';
+      final result = sync(
+        '$startMarker\n$endMarker',
+        source,
+        path,
+        custom: {'good-b'},
+      );
+      expect(
+        result,
+        contains(
+          '### `good-b`\n\n_${CustomSolution.firstSentence} See "Custom '
+          'solutions" near the top of this page._\n\n```dart\nclass B {}',
+        ),
+      );
+      expect(result, contains('### `good-a`\n\n```dart\nclass A {}'));
+    });
+
     test('puts shared regions first, under one heading', () {
       const source =
           '// #region good-a\nclass A {}\n// #endregion\n'

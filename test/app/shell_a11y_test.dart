@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_a11y_techniques/app/app.dart';
 import 'package:flutter_a11y_techniques/app/routes.dart';
+import 'package:flutter_a11y_techniques/app/widgets.dart';
 import 'package:flutter_a11y_techniques/catalog/registry.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +16,7 @@ const _routes = {
   'about': AppRoutes.about,
   'technique': '/t/C01',
   'good example': '/t/C01/good-text',
+  'custom solution': '/t/C01/good-custom',
   'not found': '/nowhere',
 };
 
@@ -195,6 +198,111 @@ void main() {
     await _pump(tester, '/t/C01/bad-thing');
     expect(find.text('Defect: It is broken.'), findsOneWidget);
     expect(find.textContaining('Bad example for Fake button'), findsOneWidget);
+  });
+
+  group('a custom solution', () {
+    final note = CustomSolutionNote.textFor(fakeCustomSolution);
+
+    testWidgets('is labelled in the list of examples, in words', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await _pump(tester, '/t/C01');
+      final tile = find.widgetWithText(ListTile, 'Hand-made button');
+      expect(
+        find.descendant(
+          of: tile,
+          matching: find.text('Widgets layer. ${CustomSolution.short}.'),
+        ),
+        findsOneWidget,
+      );
+      // The tile is one element, so the label is part of what is read.
+      expect(tester.getSemantics(tile).label, contains(CustomSolution.short));
+      // Only on the flagged example.
+      final plain = find.widgetWithText(ListTile, 'Text button');
+      expect(
+        find.descendant(of: plain, matching: find.text('Material')),
+        findsOneWidget,
+      );
+      expect(find.textContaining(CustomSolution.short), findsOneWidget);
+      handle.dispose();
+    });
+
+    testWidgets('has the whole label and its reason on its screen, as one '
+        'element of real text before the example', (tester) async {
+      final handle = tester.ensureSemantics();
+      await _pump(tester, '/t/C01/good-custom');
+      final text = find.text(note, findRichText: true);
+      expect(text, findsOneWidget);
+      expect(note, startsWith(CustomSolution.label));
+      expect(note, endsWith(fakeCustomSolution));
+      expect(tester.getSemantics(text).label, note);
+      // Shown as it is, not behind a tooltip.
+      expect(
+        find.ancestor(of: text, matching: find.byType(Tooltip)),
+        findsNothing,
+      );
+      // In the reading order: after the line that says what the example
+      // is, and before the "Example" heading and the example itself.
+      final kind = tester.getTopLeft(
+        find.text('Good example for Fake button. Widgets layer.'),
+      );
+      final at = tester.getTopLeft(text);
+      final heading = tester.getTopLeft(find.text('Example'));
+      final example = tester.getTopLeft(find.text('Send'));
+      expect(kind.dy, lessThan(at.dy));
+      expect(at.dy, lessThan(heading.dy));
+      expect(heading.dy, lessThan(example.dy));
+      handle.dispose();
+    });
+
+    for (final brightness in Brightness.values) {
+      testWidgets('label is drawn in the page\'s text colour '
+          '(${brightness.name})', (tester) async {
+        await _pump(tester, '/t/C01/good-custom', brightness: brightness);
+        final rich = tester.widget<RichText>(
+          find.descendant(
+            of: find.byType(CustomSolutionNote),
+            matching: find.byType(RichText),
+          ),
+        );
+        final context = tester.element(find.byType(CustomSolutionNote));
+        expect(rich.text.style?.color, Theme.of(context).colorScheme.onSurface);
+      });
+    }
+
+    testWidgets('label wraps at 200% text on a 320 wide screen', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await _pump(tester, '/t/C01/good-custom', textScale: 2);
+      expect(tester.takeException(), isNull);
+      final box = tester.getSize(find.byType(CustomSolutionNote));
+      expect(box.width, lessThanOrEqualTo(320));
+      // The whole label is laid out, over many lines, and none is cut off.
+      final paragraph = tester.renderObject<RenderParagraph>(
+        find.descendant(
+          of: find.byType(CustomSolutionNote),
+          matching: find.byType(RichText),
+        ),
+      );
+      expect(paragraph.didExceedMaxLines, isFalse);
+      expect(box.height, greaterThan(10 * 2 * 14.0));
+    });
+
+    testWidgets('is not labelled where nothing is flagged', (tester) async {
+      for (final route in ['/t/C01/good-text', '/t/C01/bad-thing']) {
+        await _pump(tester, route);
+        expect(find.byType(CustomSolutionNote), findsNothing, reason: route);
+        expect(
+          find.textContaining(CustomSolution.firstSentence),
+          findsNothing,
+          reason: route,
+        );
+      }
+    });
   });
 
   testWidgets('about screen carries the independence statement', (

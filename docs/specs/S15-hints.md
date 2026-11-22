@@ -81,6 +81,24 @@ artist are made up.
 | `good-custom` | Widgets | A button drawn by hand, with the hint "Moves this message out of the inbox." | `Semantics(button:, label:, hint:, onTap:)`; Enter and Space through `FocusableActionDetector` | R1, R2, R3 |
 | `good-field` | Material | A username field whose rule is text under the field and also the field's hint | `Semantics(hint:)` around `TextField`, and a `Text` | R6 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-cupertino`
+and `good-custom` are custom solutions. Each is tested here in isolation,
+with screen-reader transcripts, but has not been built into a real app and
+tested in a user journey. Do not treat them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-result` | Nothing is built: `Semantics(hint:)` round `FilledButton.icon`, in `MergeSemantics` so that the hint is on the button | `FilledButton.icon` | A hint round a Material button stays on a node of its own ([FL-040](../flutter-limitations.md#fl-040)), filled with the documented merge | R1, R2, R3, R4, R5: iOS Accessibility Hint, Apple: accessibilityHint | not custom |
+| `good-row` | Nothing: `Semantics(hint:)` round `ListTile(onTap:)` | `ListTile` | none | R1, R2, R3: iOS Accessibility Hint, Apple: accessibilityHint | not custom |
+| `good-cupertino` | An `Actions` for Enter on the web round the `CupertinoButton`; the hint itself is `Semantics(hint:)` | `CupertinoButton` | Enter on the web ([FL-002](../flutter-limitations.md#fl-002)) | R1, R2, R3: iOS Accessibility Hint, Apple: accessibilityHint | custom |
+| `good-custom` | A button drawn by hand: `Semantics(button: true, label:, hint:, onTap:)`, with Enter and Space from `FocusableActionDetector` and a focus ring of its own | None for a drawn control | none | R1, R2, R3: iOS Accessibility Hint, Apple: accessibilityHint | custom |
+| `good-field` | Nothing: `Semantics(hint:)` round a `TextField`, and the rule as text | `TextField` | none | R6: iOS Accessibility Hint, MDN: aria-description | not custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

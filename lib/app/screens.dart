@@ -108,7 +108,12 @@ class _ExampleTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(example.title),
-      subtitle: Text(example.variant.title),
+      // A custom solution says so in the list, in words, before it is opened.
+      subtitle: Text(
+        example.isCustomSolution
+            ? '${example.variant.title}. ${CustomSolution.short}.'
+            : example.variant.title,
+      ),
       trailing: const ExcludeSemantics(child: Icon(Icons.chevron_right)),
       onTap: () => Navigator.pushNamed(
         context,
@@ -136,6 +141,10 @@ class ExampleScreen extends StatelessWidget {
       children: [
         // Good or bad is stated in text, never by colour alone.
         BodyText('${e.kind.title} for ${technique.title}. ${e.variant.title}.'),
+        // Before the "Example" heading, so it is read before the example,
+        // and one element, so it adds one stop to a screen reader's walk.
+        if (e.customSolution case final reason?)
+          CustomSolutionNote(reason: reason),
         if (e.defect case final defect?) BodyText('Defect: $defect'),
         const SectionHeading('Example'),
         Padding(

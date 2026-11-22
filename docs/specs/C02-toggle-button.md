@@ -128,6 +128,24 @@ iOS), and TalkBack says nothing for one that is off
 F07's checkboxes, which were judged not to fail 4.1.2: the role says the
 control has an on and an off state, and only "not checked" is not said.
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-icon-button`,
+`good-cupertino` and `good-custom` are custom solutions. Each is tested here
+in isolation, with screen-reader transcripts, but has not been built into a
+real app and tested in a user journey. Do not treat them as vetted
+techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-icon-button` | The pressed state: `Semantics(toggled:)` round an `IconButton`, merged onto its node with `MergeSemantics`, in place of `isSelected`; the pressed look drawn with `style` | `IconButton(isSelected:)` | No pressed state ([FL-200](../flutter-limitations.md#fl-200)); `isSelected` says nothing while off ([FL-201](../flutter-limitations.md#fl-201)); the state stays off the button's node ([FL-040](../flutter-limitations.md#fl-040)) | R1, R3, R4, R5: APG Button, MDN aria-pressed, iOS Buttons | custom |
+| `good-toggle-buttons` | Nothing: `ToggleButtons(isSelected:)`, each icon with a `semanticLabel` | `ToggleButtons` | None filled (TalkBack says no state while off, [FL-045](../flutter-limitations.md#fl-045), is left as it is) | R1, R3, R4, R5: APG Button, MDN aria-pressed, iOS Buttons | not custom |
+| `good-cupertino` | `Semantics(toggled:, enabled: true)` round a `CupertinoButton`, an `Actions` for Enter on the web, and the colours of the on state | None: Cupertino has no toggle button; `CupertinoButton` is the closest | No pressed state ([FL-200](../flutter-limitations.md#fl-200)); no enabled state ([FL-001](../flutter-limitations.md#fl-001), [FL-033](../flutter-limitations.md#fl-033)); Enter on the web ([FL-002](../flutter-limitations.md#fl-002)); text colour in dark mode ([FL-202](../flutter-limitations.md#fl-202)) | R1, R3, R4, R5: APG Button, MDN aria-pressed, iOS Buttons | custom |
+| `good-custom` | A toggle button drawn by hand: `Semantics(button: true, toggled:, enabled: true, label:, onTap:)`; Space and Enter from `FocusableActionDetector`; a focus ring of its own | None for a drawn control | No pressed state ([FL-200](../flutter-limitations.md#fl-200)); dimmed without `enabled` ([FL-033](../flutter-limitations.md#fl-033)) | R1, R3, R4, R5: APG Button, MDN aria-pressed, iOS Buttons | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

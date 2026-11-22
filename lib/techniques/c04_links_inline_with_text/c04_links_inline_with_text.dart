@@ -80,18 +80,31 @@ final c04LinksInlineWithText = Technique(
       slug: 'good-material',
       title: 'Material links in a sentence',
       variant: ExampleVariant.material,
+      customSolution:
+          'An inline link built by hand: Semantics(link: true, linkUrl:) '
+          'round an InkWell in a WidgetSpan, with key bindings, a focus ring, '
+          'and sort keys; a TextSpan link takes no keyboard focus (FL-240).',
       builder: (_) => const GoodMaterial(),
     ),
     TechniqueExample.good(
       slug: 'good-cupertino',
       title: 'Cupertino links in a sentence',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'An inline link built by hand from FocusableActionDetector, '
+          'Semantics, and a GestureDetector in a WidgetSpan, in Cupertino\'s '
+          'blue; Flutter has no link widget (FL-221) and a TextSpan link '
+          'takes no focus (FL-240).',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Widgets-layer links in a sentence',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'An inline link built by hand from FocusableActionDetector, '
+          'Semantics, and a GestureDetector in a WidgetSpan; a TextSpan link '
+          'takes no keyboard focus (FL-240).',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.bad(

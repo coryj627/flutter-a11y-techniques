@@ -206,6 +206,19 @@ final class F06ErrorIdentificationUITests: XCTestCase, CountedTechniqueUITest {
       // during the window, to report them. A read that fails, stays empty,
       // or is stuck on an earlier utterance fails here.
       let control = "\(Self.countLabel): 0"
+      // The keyboard is up while a field is being edited, and the screen
+      // above it is short: below a custom solution's note
+      // (docs/custom-solutions.md) the count is under the keyboard, out of
+      // the tree, and the moves forward go on into the keyboard's keys
+      // ("y Yankee"). A person puts the keyboard away with its return key
+      // first: Name's goes on to Email, Email's ends editing. Typed with
+      // VoiceOver still on; the moves below start from wherever its cursor
+      // then is, and stop at the count.
+      for _ in 0..<2 where app.keyboards.count > 0 {
+        app.typeText("\n")
+        _ = app.keyboards.firstMatch.waitForNonExistence(timeout: 2)
+      }
+      XCTAssertEqual(app.keyboards.count, 0, "\(example.slug): the keyboard is still up before the control")
       for _ in 0..<10 {
         let said = norm((try? voiceOver.moveForward().utterance) ?? "")
         if said.hasPrefix(control) { break }

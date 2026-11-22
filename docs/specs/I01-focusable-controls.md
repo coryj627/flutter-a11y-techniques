@@ -78,6 +78,22 @@ difference from a good one.
 | `good-cupertino` | Cupertino | A Cupertino list tile, with the focus and keys it lacks everywhere, and the button role it lacks on Android and iOS, added ([FL-400](../flutter-limitations.md#fl-400)) | `CupertinoListTile(onTap:)` inside `Semantics(button: true)` and `FocusableActionDetector` with `ActivateIntent` and `ButtonActivateIntent`, and a ring drawn from `onShowFocusHighlight` | R1 to R5 |
 | `good-custom` | Widgets layer | A card drawn by hand | `GestureDetector(onTap:)` inside `Semantics(button: true)` inside the same `FocusableActionDetector` | R1 to R5 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-cupertino`
+and `good-custom` are custom solutions. Each is tested here in isolation,
+with screen-reader transcripts, but has not been built into a real app and
+tested in a user journey. Do not treat them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Nothing: `ListTile(onTap:)` in a `Card` | `ListTile` | none | R1, R2, R3, R4, R5: Android View: Focusable, Clickable Controls, MDN: Keyboard-navigable JavaScript widgets, Android View, MDN, APG Button, WCAG Understanding 2.5.2 | not custom |
+| `good-cupertino` | Focus, Enter, and Space from `FocusableActionDetector`, a focus ring from `onShowFocusHighlight`, and `Semantics(button: true)`, round a `CupertinoListTile` | `CupertinoListTile` | No keyboard focus and no button role ([FL-400](../flutter-limitations.md#fl-400)) | R1, R2, R3, R4, R5: Android View: Focusable, Clickable Controls, MDN: Keyboard-navigable JavaScript widgets, Android View, MDN, APG Button, WCAG Understanding 2.5.2 | custom |
+| `good-custom` | A card made a button: `GestureDetector(onTap:)` in `Semantics(button: true)` in the same `FocusableActionDetector` | None for a drawn control | none | R1, R2, R3, R4, R5: Android View: Focusable, Clickable Controls, MDN: Keyboard-navigable JavaScript widgets, Android View, MDN, APG Button, WCAG Understanding 2.5.2 | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

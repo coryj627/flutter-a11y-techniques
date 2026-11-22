@@ -61,18 +61,28 @@ final i03FocusManagement = Technique(
       slug: 'good-material',
       title: 'A Material dialog, and focus placed after a removal',
       variant: ExampleVariant.material,
+      customSolution:
+          'A focus move built by hand: after a removal, focus goes to the '
+          'next button, with a FocusSemanticEvent timed after the route has '
+          'gone so that the screen reader follows (FL-442).',
       builder: (_) => const GoodMaterial(),
     ),
     TechniqueExample.good(
       slug: 'good-cupertino',
       title: 'A Cupertino action sheet, and focus placed after a removal',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'The hand-built focus move of good-material, and an Actions so that '
+          'Enter works on the web round each action sheet button (FL-002).',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-widgets',
       title: 'A general dialog that puts focus on Cancel',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A question drawn by hand in showGeneralDialog, with the hand-built '
+          'focus move of good-material (FL-442).',
       builder: (_) => const GoodWidgets(),
     ),
     TechniqueExample.bad(

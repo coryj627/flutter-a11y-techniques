@@ -124,19 +124,40 @@ export function judgeControlWalk(stops, reachedEnd) {
 export const EXAMPLE_HEADING = 'heading level 2 Example';
 
 /**
+ * The note a custom solution shows above its "Example" heading
+ * (CustomSolutionNote in lib/app/widgets.dart): the label, then the
+ * example's own reason, its `customSolution` in
+ * lib/techniques/c02_toggle_button/c02_toggle_button.dart.
+ * docs/custom-solutions.md lists the custom solutions.
+ */
+const customSolution = (reason) => 'Custom solution: not vetted by a real-world example. '
+  + 'It is tested here in isolation, with screen-reader transcripts, but has not been built into a real app '
+  + `and tested in a user journey. Do not treat it as a vetted technique. Why it is flagged: ${reason}`;
+
+/**
  * What each C02 example screen shows above its "Example" heading, as
  * VoiceOver reads it: the screen's title as a level 1 heading, the line
- * that says whether it is a good or a bad example, and a bad example's
- * defect (ExampleScreen in lib/app/screens.dart, with the titles and
+ * that says whether it is a good or a bad example, a custom solution's
+ * note (customSolution, above), and a bad example's defect
+ * (ExampleScreen in lib/app/screens.dart, with the titles, reasons, and
  * defects of lib/techniques/c02_toggle_button/c02_toggle_button.dart).
  * web_tests/c02_toggle_button.spec.js checks that each screen shows these
  * texts, so that a change to them is caught.
  */
 export const EXAMPLE_SCREENS = {
-  'good-icon-button': ['Icon button that stays pressed', 'Good example for Toggle button. Material.'],
+  'good-icon-button': [
+    'Icon button that stays pressed', 'Good example for Toggle button. Material.',
+    customSolution('Hand-built toggle state: Semantics(toggled:) merged onto an IconButton in place of isSelected, which says nothing while it is off (FL-200, FL-201).'),
+  ],
   'good-toggle-buttons': ['Row of toggle buttons', 'Good example for Toggle button. Material.'],
-  'good-cupertino': ['Cupertino button that stays pressed', 'Good example for Toggle button. Cupertino.'],
-  'good-custom': ['Custom toggle button with an on or off state', 'Good example for Toggle button. Widgets layer.'],
+  'good-cupertino': [
+    'Cupertino button that stays pressed', 'Good example for Toggle button. Cupertino.',
+    customSolution('A toggle button built by hand from a CupertinoButton, with Semantics(toggled:, enabled: true) and an Actions for Enter on the web; Cupertino has no toggle button.'),
+  ],
+  'good-custom': [
+    'Custom toggle button with an on or off state', 'Good example for Toggle button. Widgets layer.',
+    customSolution('A toggle button drawn by hand, with its role, state, focus, keys, and focus ring built from Semantics and FocusableActionDetector.'),
+  ],
   'bad-selected-only': [
     'Icon button with isSelected alone', 'Bad example for Toggle button. Material.',
     'Defect: While off it is read only "Bold, button": nothing says it is a toggle. On, it is "selected", and on the web "current item", a state that is not pressed.',

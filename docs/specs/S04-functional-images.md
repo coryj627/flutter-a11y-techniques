@@ -80,6 +80,26 @@ or a test can tell that the control worked.
 | `good-custom` | Widgets | A picture made into a button without Material | `Semantics(button: true, label:)`, `FocusableActionDetector`, `GestureDetector`, excluded `Image` | R1, R2, R4 |
 | `good-image-regions` | Material | One picture with two regions that are buttons | `Stack`: an excluded `Image` under two `Semantics(button: true, label:)`, each with an `InkWell` on a transparent `Material` and a focus ring drawn above the picture | R6 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-cupertino`,
+`good-custom` and `good-image-regions` are custom solutions. Each is tested
+here in isolation, with screen-reader transcripts, but has not been built
+into a real app and tested in a user journey. Do not treat them as vetted
+techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-image-button` | Nothing: `IconButton(tooltip:)` with an excluded `Image` | `IconButton` | none | R1, R2, R4: iOS Functional Images, Android Compose Text Alternatives, Android View Text Alternatives, WAI Images Tutorial: Functional Images, MDN img, WCAG failure F65, WAI Functional Images, WCAG failure F30, iOS Functional Images sample code | not custom |
+| `good-icon-label` | Nothing: `IconButton` with `Icon(semanticLabel:)` | `IconButton` | none | R1, R2: iOS Functional Images, Android Compose Text Alternatives, Android View Text Alternatives, WAI Images Tutorial: Functional Images, MDN img, WCAG failure F65, WAI Functional Images, WCAG failure F30 | not custom |
+| `good-image-with-text` | Nothing: `TextButton` with an excluded `Image`; `FilledButton.icon` | `TextButton`, `FilledButton.icon` | none | R5: WAI Functional Images, Android Compose and View Text Alternatives | not custom |
+| `good-cupertino` | An `Actions` for `ButtonActivateIntent` round the `CupertinoButton`, so that Enter works on the web | `CupertinoButton` | Enter on the web ([FL-002](../flutter-limitations.md#fl-002)) | R1, R2: iOS Functional Images, Android Compose Text Alternatives, Android View Text Alternatives, WAI Images Tutorial: Functional Images, MDN img, WCAG failure F65, WAI Functional Images, WCAG failure F30 | custom |
+| `good-custom` | A picture made a button: `Semantics(button: true, label:)`, `FocusableActionDetector`, a `GestureDetector`, an excluded `Image`, a focus ring of its own | `IconButton`; none for a drawn control | none | R1, R2, R4: iOS Functional Images, Android Compose Text Alternatives, Android View Text Alternatives, WAI Images Tutorial: Functional Images, MDN img, WCAG failure F65, WAI Functional Images, WCAG failure F30, iOS Functional Images sample code | custom |
+| `good-image-regions` | An image map: two `Semantics(button: true, label:)` regions with an `InkWell` each on a transparent `Material`, over an excluded `Image`, each with a focus ring drawn above the picture | None: Flutter has no image map | none | R6: MDN area, MDN map | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

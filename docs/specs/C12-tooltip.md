@@ -74,8 +74,13 @@ is the owner's decision (section 8); the catalog says "applies" with a note.
     and covers the line under it ("Drafts are kept for 30 days.", "The
     file is 2 MB."), 157 to 242 points of its width; at 320 wide with 200%
     text the control is low on the screen, Material flips the box above
-    it, and it covers the "Example" heading. In `good-cupertino` it also
-    covers the bottom 2 points of the button itself. On the web the box is
+    it, and it covers the "Example" heading. `good-cupertino` is the
+    exception at 320 wide with 100% text: its screen has the
+    custom-solution note above the example, which leaves its button at the
+    bottom of the screen, so the box is flipped above it there too and
+    covers the lower 10 of the "Example" heading's 28 points. Its box is
+    1.8 off the button in every layout, below it and above it (FL-250,
+    below). On the web the box is
     drawn in the band under the control where that line is (the tree
     spec's pixel reading). The default placement does this generally:
     Material puts the box 24 under the control's centre, below a 48 high
@@ -232,6 +237,22 @@ Cupertino has no tooltip widget, so `good-cupertino` uses Material's
 `Tooltip`, the framework's only one that draws itself (`RawTooltip`, the
 widgets layer's, draws what the app gives it). No widgets-layer example is
 built, by the owner's rule: its tooltip would be built by hand.
+
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-cupertino` is
+a custom solution. It is tested here in isolation, with screen-reader
+transcripts, but has not been built into a real app and tested in a user
+journey. Do not treat it as a vetted technique.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Nothing: `Tooltip(message:, ignorePointer: false, excludeFromSemantics: true)` round an `IconButton` named by `Icon(semanticLabel:)`, and a focus outline through the button's own `style` | `Tooltip` | The pointer cannot reach a default tooltip ([FL-247](../flutter-limitations.md#fl-247)), filled with its own parameter; a faint focus tint ([FL-430](../flutter-limitations.md#fl-430)), filled with the button's `style` | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
+| `good-cupertino` | An `Actions` for `ButtonActivateIntent` round the `CupertinoButton`, so that Enter works on the web; the tooltip itself is Material's `Tooltip` through its parameters | None: Cupertino has no tooltip; Material's `Tooltip` is used, with `CupertinoButton` | Enter on the web ([FL-002](../flutter-limitations.md#fl-002)); the box over the button ([FL-250](../flutter-limitations.md#fl-250)) and the faint ring ([FL-431](../flutter-limitations.md#fl-431)), filled with parameters | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | custom |
+| `good-description` | Nothing is built: `MergeSemantics` round `Tooltip(message:, ignorePointer: false)` round an `OutlinedButton`, so that the tooltip is on the button | `Tooltip` | A tooltip round a Material button stays on a node of its own ([FL-040](../flutter-limitations.md#fl-040)), filled with the documented merge | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
 
 ### Bad
 

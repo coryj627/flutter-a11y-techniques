@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 
+export 'custom_solution.dart';
+
 /// Catalog groups, matching docs/coverage-inventory.md.
 enum TechniqueGroup {
   semantics('S', 'Semantics and content'),
@@ -102,11 +104,16 @@ enum ExampleVariant {
 /// One live example of a technique.
 @immutable
 class TechniqueExample {
+  /// A good example built by hand gives [customSolution]: one sentence on
+  /// what is hand-built and why. It is then shown with
+  /// [CustomSolution.label], and listed as custom in
+  /// docs/custom-solutions.md.
   const TechniqueExample.good({
     required this.slug,
     required this.title,
     required this.variant,
     required this.builder,
+    this.customSolution,
   }) : kind = ExampleKind.good,
        defect = null;
 
@@ -117,7 +124,8 @@ class TechniqueExample {
     required this.variant,
     required String this.defect,
     required this.builder,
-  }) : kind = ExampleKind.bad;
+  }) : kind = ExampleKind.bad,
+       customSolution = null;
 
   /// Stable route segment and test locator, for example `good-text`.
   final String slug;
@@ -125,7 +133,15 @@ class TechniqueExample {
   final ExampleKind kind;
   final ExampleVariant variant;
   final String? defect;
+
+  /// Why a good example is a custom solution, not vetted by a real-world
+  /// example: what is hand-built, and why. Null for every other example.
+  final String? customSolution;
+
   final WidgetBuilder builder;
+
+  /// Whether the example is a custom solution (see [customSolution]).
+  bool get isCustomSolution => customSolution != null;
 }
 
 /// One catalog entry.

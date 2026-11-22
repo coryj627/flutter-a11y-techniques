@@ -86,6 +86,24 @@ that a control worked.
 | `good-mixed` | Material | "Select all" over two boxes, mixed while one is checked | `CheckboxListTile(tristate: true, value: null)` | R4 |
 | `good-group` | Material | Two boxes under the question "Contact me by" | `Semantics(container: true, explicitChildNodes: true, label:)` around the boxes, with the visible question in `ExcludeSemantics` | R6 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-custom` is a
+custom solution. It is tested here in isolation, with screen-reader
+transcripts, but has not been built into a real app and tested in a user
+journey. Do not treat it as a vetted technique.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-tile` | Nothing: `CheckboxListTile` | `CheckboxListTile` | none | R1, R2, R3, R5, R7: Android Compose Checkbox Controls, iOS Checkboxes, MDN: input type=checkbox, APG Checkbox | not custom |
+| `good-cupertino` | The box and its text merged into one control (`MergeSemantics`, through `TestId`), and a `GestureDetector` so that a tap on the text changes the box | `CupertinoCheckbox`; Cupertino has no list tile for a checkbox, Material has `CheckboxListTile` | none | R1, R2, R3, R5, R7: Android Compose Checkbox Controls, iOS Checkboxes, MDN: input type=checkbox, APG Checkbox | borderline: The merge is what the `MergeSemantics` documentation describes for a checkbox and its text, and the box keeps its own role, state, and keys; but the labelled row, with a `GestureDetector` on the text, is assembled by hand where Material has a widget for it. |
+| `good-custom` | A checkbox drawn by hand: `Semantics(checked:, enabled: true, label:, onTap:)`; Space from `FocusableActionDetector`; a focus ring of its own | None for a drawn control | Dimmed without `enabled` ([FL-033](../flutter-limitations.md#fl-033)) | R1, R2, R3, R5, R7: Android Compose Checkbox Controls, iOS Checkboxes, MDN: input type=checkbox, APG Checkbox | custom |
+| `good-mixed` | Nothing: `CheckboxListTile(tristate: true, value: null)` | `CheckboxListTile` | None filled (the mixed state is lost on most platforms, [FL-044](../flutter-limitations.md#fl-044), and left as it is) | R4: APG Checkbox, MDN: input type=checkbox | not custom |
+| `good-group` | A named group: `Semantics(container: true, explicitChildNodes: true, label:)` round the boxes, the visible question in `ExcludeSemantics` | None for a named group of checkboxes | none | R6: iOS Checkboxes, APG Checkbox | borderline: Only a name is given, with documented `Semantics` properties, and nothing behaves differently; but it makes a group node, a structure no Flutter widget provides. |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

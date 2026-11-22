@@ -94,18 +94,29 @@ final i04KeyboardActions = Technique(
       slug: 'good-on-focus',
       title: 'Shortcut that works only on its control',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'Keys built by hand for a strip of thumbnails: a Shortcuts and '
+          'Actions for the arrows, Home, End, and F; no Flutter widget has '
+          'them.',
       builder: (_) => const GoodOnFocus(),
     ),
     TechniqueExample.good(
       slug: 'good-turn-off',
       title: 'Shortcut that can be turned off',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'Keys built by hand: a CallbackShortcuts for F that a switch turns '
+          'off, the strip\'s keys in Focus.onKeyEvent, and a binding that '
+          'keeps F for the text field (FL-460).',
       builder: (_) => const GoodTurnOff(),
     ),
     TechniqueExample.good(
       slug: 'good-remap',
       title: 'Shortcut that can be changed to use Control',
       variant: ExampleVariant.material,
+      customSolution:
+          'Keys built by hand: a CallbackShortcuts for F or Control+F, and '
+          'the strip\'s keys in a CallbackShortcuts (FL-460).',
       builder: (_) => const GoodRemap(),
     ),
     TechniqueExample.bad(

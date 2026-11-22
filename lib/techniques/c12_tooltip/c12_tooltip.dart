@@ -91,6 +91,10 @@ final c12Tooltip = Technique(
       slug: 'good-cupertino',
       title: 'Tooltip on a Cupertino button',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'An Actions built by hand round the CupertinoButton so that Enter '
+          'works on the web (FL-002); the tooltip itself is Material\'s '
+          'Tooltip, through its own parameters.',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(

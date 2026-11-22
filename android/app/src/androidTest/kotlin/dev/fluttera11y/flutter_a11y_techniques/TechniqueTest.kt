@@ -60,9 +60,31 @@ abstract class TechniqueTest(private val technique: String) {
      */
     protected fun openExample(slug: String, waitFor: BySelector, idle: Boolean = true, settleMillis: Long = 0) {
         launch(slug)
-        assertTrue("example $slug did not open", device.wait(Until.hasObject(waitFor), 20_000))
+        assertTrue("example $slug did not open", waitScrollingDown(waitFor, 20_000))
         if (idle) device.waitForIdle()
         if (settleMillis > 0) Thread.sleep(settleMillis)
+    }
+
+    /**
+     * Waits up to [timeoutMillis] for a node that [selector] finds. A node
+     * scrolled out of view is not in the tree, and what an example is waited
+     * for by is often its count, its last element: a custom solution's note
+     * above the example (docs/custom-solutions.md) takes about half of CI's
+     * 320 by 640 screen and leaves the count below the view. So once the
+     * screen is up and the node is not there, the screen is scrolled down a
+     * step at a time, as a person scrolls to it. Where the node is in view
+     * from the start, as on a large screen, nothing is scrolled.
+     */
+    private fun waitScrollingDown(selector: BySelector, timeoutMillis: Long): Boolean {
+        val end = System.currentTimeMillis() + timeoutMillis
+        while (System.currentTimeMillis() < end) {
+            if (device.wait(Until.hasObject(selector), 1_000)) return true
+            val view = first(automation.rootInActiveWindow) { it.isScrollable }
+            if (view != null && view.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)) {
+                device.waitForIdle()
+            }
+        }
+        return device.hasObject(selector)
     }
 
     /**
@@ -99,10 +121,15 @@ abstract class TechniqueTest(private val technique: String) {
         return null
     }
 
-    /** The first node of the active window with the test identifier [id]. */
-    protected fun node(id: String): AccessibilityNodeInfo =
-        first(automation.rootInActiveWindow) { it.viewIdResourceName == id }
-            ?: throw AssertionError("no node with id $id")
+    /**
+     * The first node of the active window with the test identifier [id].
+     * If it is not in the tree, the screen is scrolled to it, as [revealed]
+     * does: a node out of view is not in the tree, and below a custom
+     * solution's note (docs/custom-solutions.md) on CI's 320 by 640 emulator,
+     * more so with the soft keyboard up, much of an example is out of view.
+     * A node that is there is returned at once, with nothing scrolled.
+     */
+    protected fun node(id: String): AccessibilityNodeInfo = revealed(id)
 
     /** The first node of the active window whose name is [name]. */
     protected fun named(name: String): AccessibilityNodeInfo =
@@ -133,6 +160,23 @@ abstract class TechniqueTest(private val technique: String) {
             }
         }
         throw AssertionError("no node with id $id, even after scrolling")
+    }
+
+    /**
+     * Scrolls the screen to its end, as a person scrolls down to an example
+     * whose lines above it (its title, what it is, and for a custom solution
+     * its note, docs/custom-solutions.md) push it below the view: on CI's
+     * 320 by 640 emulator the note alone can take half the screen. Moves no
+     * keyboard focus; does nothing on a screen that does not scroll. Waits
+     * for the screen to settle, so bounds read afterwards are current.
+     */
+    protected fun scrollToEnd() {
+        for (i in 0 until 8) {
+            val view = first(automation.rootInActiveWindow) { it.isScrollable } ?: break
+            if (!view.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)) break
+            Thread.sleep(500)
+        }
+        device.waitForIdle()
     }
 
     /**

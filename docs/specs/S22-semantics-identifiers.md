@@ -68,6 +68,23 @@ own (`s22-<slug>-count`), so a test can tell that a control worked.
 | `good-custom` | Widgets | The same on a button drawn by hand | `TestId` around the focus handling and `Semantics(button:, label:, onTap:)` | R1, R2, R4 |
 | `good-field` | Material | A text field found by identifier that keeps its name | `TestId` around `TextField` | R1, R2, R3, R4 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-cupertino`
+and `good-custom` are custom solutions. Each is tested here in isolation,
+with screen-reader transcripts, but has not been built into a real app and
+tested in a user journey. Do not treat them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-merged` | `MergeSemantics` round `Semantics(identifier:)` round a `FilledButton`: the project's `TestId`, written out | `Semantics.identifier` | An identifier inside a button strips its name ([FL-007](../flutter-limitations.md#fl-007)) or stays on a node of its own ([FL-043](../flutter-limitations.md#fl-043)) | R1, R2, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | borderline: Two documented widgets and nothing that behaves; but the placement is the project's own rule for [FL-007](../flutter-limitations.md#fl-007) and [FL-043](../flutter-limitations.md#fl-043), the `TestId` that every example uses for its tests. |
+| `good-cupertino` | An `Actions` for Enter on the web round the `CupertinoButton` | `CupertinoButton` | Enter on the web ([FL-002](../flutter-limitations.md#fl-002)) | R1, R2, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | custom |
+| `good-custom` | A button drawn by hand: `Semantics(button: true, label:, onTap:)`, with focus, keys, and a focus ring of its own | None for a drawn control | none | R1, R2, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | custom |
+| `good-field` | `TestId` round a `TextField` | `Semantics.identifier` | As `good-merged` | R1, R2, R3, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | borderline: As `good-merged`: the project's `TestId` round a framework widget. |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_a11y_techniques/catalog/registry.dart';
 import 'package:flutter_a11y_techniques/catalog/technique.dart';
 
+/// Why the fake catalog's `good-custom` is a custom solution.
+const fakeCustomSolution =
+    'A button put together by hand for the shell tests, with no real-world '
+    'example.';
+
 /// A stand-in catalog so the shell can be tested before real techniques exist.
 TechniqueRegistry fakeRegistry() => TechniqueRegistry([
   Technique(
@@ -33,6 +38,14 @@ TechniqueRegistry fakeRegistry() => TechniqueRegistry([
         variant: ExampleVariant.material,
         builder: (_) =>
             FilledButton(onPressed: () {}, child: const Text('Save')),
+      ),
+      TechniqueExample.good(
+        slug: 'good-custom',
+        title: 'Hand-made button',
+        variant: ExampleVariant.widgets,
+        customSolution: fakeCustomSolution,
+        builder: (_) =>
+            FilledButton(onPressed: () {}, child: const Text('Send')),
       ),
       TechniqueExample.bad(
         slug: 'bad-thing',

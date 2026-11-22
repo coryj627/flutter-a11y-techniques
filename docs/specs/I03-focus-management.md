@@ -123,6 +123,23 @@ A `CupertinoAlertDialog` is not used: its actions take no keyboard focus
 ([FL-440](../flutter-limitations.md#fl-440)), so a keyboard user cannot
 answer it at all.
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-material`,
+`good-cupertino` and `good-widgets` are custom solutions. Each is tested
+here in isolation, with screen-reader transcripts, but has not been built
+into a real app and tested in a user journey. Do not treat them as vetted
+techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | After a removal, focus put on the next trail's button with `FocusNode.requestFocus`, and on iOS a `FocusSemanticEvent` sent one frame after the question's route has gone | `showDialog`, whose route gives focus back when it closes; nothing decides where it goes when the opener is gone | The framework sends the screen reader back after the app's own move ([FL-442](../flutter-limitations.md#fl-442)) | R1, R2, R3, R4, R5: iOS: Focus Management, Understanding 2.4.3, F85, Understanding 3.2.1, G107 | custom |
+| `good-cupertino` | The focus move of `good-material`, and an `Actions` for Enter on the web round each button of the action sheet | `showCupertinoModalPopup` with a `CupertinoActionSheet` | [FL-442](../flutter-limitations.md#fl-442); Enter on the web ([FL-002](../flutter-limitations.md#fl-002)) | R1, R2, R3, R4, R5: iOS: Focus Management, Understanding 2.4.3, F85, Understanding 3.2.1, G107 | custom |
+| `good-widgets` | The focus move of `good-material`, in a question drawn by hand in `showGeneralDialog` with `autofocus` on Cancel | `showGeneralDialog` | [FL-442](../flutter-limitations.md#fl-442) | R1, R2, R3, R4, R5: iOS: Focus Management, Understanding 2.4.3, F85, Understanding 3.2.1, G107 | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

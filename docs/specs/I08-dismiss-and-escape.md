@@ -194,6 +194,22 @@ only in what lets the user out.
 | `good-cupertino` | Cupertino | A Cupertino modal popup whose barrier a screen reader can use | `showCupertinoModalPopup` with `barrierDismissible` (true by default) and `semanticsDismissible: true` | R1 to R5 |
 | `good-widgets` | Widgets layer | The layers drawn by hand in the app's overlay, with no route | An `OverlayEntry` with a `ModalBarrier`; a `FocusScopeNode` with `TraversalEdgeBehavior.closedLoop`; an `Actions` for `DismissIntent` around the layers; `Semantics(onDismiss:)` on them; a `PopScope` on the screen that closes them on Back | R1 to R5 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-widgets` is a
+custom solution. It is tested here in isolation, with screen-reader
+transcripts, but has not been built into a real app and tested in a user
+journey. Do not treat it as a vetted technique.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Nothing: `showModalBottomSheet` | `showModalBottomSheet` | none | R1, R2, R3, R4, R5: APG: Dialog, Understanding 2.1.2, iOS: Escape Action, HTML: close requests, WCAG 2.2: 2.1.2, G21 | not custom |
+| `good-cupertino` | Nothing: `showCupertinoModalPopup(semanticsDismissible: true)` | `showCupertinoModalPopup` | none | R1, R2, R3, R4, R5: APG: Dialog, Understanding 2.1.2, iOS: Escape Action, HTML: close requests, WCAG 2.2: 2.1.2, G21 | not custom |
+| `good-widgets` | Dismissal for layers in an `OverlayEntry`: a `ModalBarrier`, a `FocusScopeNode` that keeps Tab in, an `Actions` for `DismissIntent`, `Semantics(onDismiss:)`, and a `PopScope` for Back | A route (`showModalBottomSheet`, `showDialog`); none for an overlay that is not a route | Nothing closes an overlay that is not a route ([FL-481](../flutter-limitations.md#fl-481)) | R1, R2, R3, R4, R5: APG: Dialog, Understanding 2.1.2, iOS: Escape Action, HTML: close requests, WCAG 2.2: 2.1.2, G21 | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

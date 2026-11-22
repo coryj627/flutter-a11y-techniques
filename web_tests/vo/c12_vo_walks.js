@@ -9,17 +9,32 @@
 export const EXAMPLE_HEADING = 'heading level 2 Example';
 
 /**
+ * The note a custom solution shows above its "Example" heading
+ * (CustomSolutionNote in lib/app/widgets.dart): the label, then the
+ * example's own reason, its `customSolution` in
+ * lib/techniques/c12_tooltip/c12_tooltip.dart.
+ * docs/custom-solutions.md lists the custom solutions.
+ */
+const customSolution = (reason) => 'Custom solution: not vetted by a real-world example. '
+  + 'It is tested here in isolation, with screen-reader transcripts, but has not been built into a real app '
+  + `and tested in a user journey. Do not treat it as a vetted technique. Why it is flagged: ${reason}`;
+
+/**
  * What each C12 example screen shows above its "Example" heading, as
  * VoiceOver reads it: the screen's title as a level 1 heading, the line
- * that says whether it is a good or a bad example, and a bad example's
- * defect (ExampleScreen in lib/app/screens.dart, with the titles and
+ * that says whether it is a good or a bad example, a custom solution's
+ * note (customSolution, above), and a bad example's defect
+ * (ExampleScreen in lib/app/screens.dart, with the titles, reasons, and
  * defects of lib/techniques/c12_tooltip/c12_tooltip.dart).
  * web_tests/c12_tooltip.spec.js checks that each screen shows these texts,
  * so that a change to them is caught.
  */
 export const EXAMPLE_SCREENS = {
   'good-material': ['Material tooltip', 'Good example for Tooltip. Material.'],
-  'good-cupertino': ['Tooltip on a Cupertino button', 'Good example for Tooltip. Cupertino.'],
+  'good-cupertino': [
+    'Tooltip on a Cupertino button', 'Good example for Tooltip. Cupertino.',
+    customSolution('An Actions built by hand round the CupertinoButton so that Enter works on the web (FL-002); the tooltip itself is Material\'s Tooltip, through its own parameters.'),
+  ],
   'good-description': ['Tooltip that describes a button', 'Good example for Tooltip. Material.'],
   'bad-not-hoverable': [
     'Tooltip the pointer cannot reach', 'Bad example for Tooltip. Material.',

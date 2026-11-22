@@ -66,12 +66,19 @@ final s15Hints = Technique(
       slug: 'good-cupertino',
       title: 'Hint on a Cupertino button',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'An Actions built by hand round the CupertinoButton so that Enter '
+          'works on the web (FL-002); the hint itself is Semantics(hint:).',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Hint on a custom button',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A button drawn by hand: Semantics(button: true, label:, hint:, '
+          'onTap:), with focus, keys, and a focus ring from '
+          'FocusableActionDetector.',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.good(

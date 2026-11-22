@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../catalog/custom_solution.dart';
+
 const appName = 'Flutter A11Y Techniques';
 
 /// Where relative links in bundled docs point.
@@ -108,6 +110,60 @@ class BodyText extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
+    );
+  }
+}
+
+/// The custom-solution label on a good example's own screen: the whole
+/// label, then the example's [reason]. Real text in the reading order,
+/// one element for assistive technology, drawn in the page's text colour in
+/// a box with an outline so that it stands apart from the lines around it.
+class CustomSolutionNote extends StatelessWidget {
+  const CustomSolutionNote({super.key, required this.reason});
+
+  /// What is hand-built in the example, and why
+  /// (`TechniqueExample.customSolution`).
+  final String reason;
+
+  /// The note's text, as it is read: the label, then the reason.
+  static String textFor(String reason) =>
+      '${CustomSolution.label} Why it is flagged: $reason';
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    // The label without its first sentence, which is drawn in bold.
+    final rest = textFor(reason).substring(CustomSolution.firstSentence.length);
+    // bodyMedium and little padding: the note comes before the example, so
+    // every line of it moves the example down the screen.
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(color: colors.outline),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          // One Text, so that the note is one element: the bold part is a
+          // span of it, not a node of its own.
+          child: Text.rich(
+            TextSpan(
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.onSurface,
+              ),
+              children: [
+                TextSpan(
+                  text: CustomSolution.firstSentence,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(text: rest),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

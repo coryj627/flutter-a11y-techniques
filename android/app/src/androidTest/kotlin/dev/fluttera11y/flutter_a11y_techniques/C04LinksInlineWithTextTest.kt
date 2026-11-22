@@ -59,6 +59,22 @@ class C04LinksInlineWithTextTest : TechniqueTest("C04") {
 
     private fun onPage(title: String): Boolean = anyWindowHas { it.name() == title }
 
+    /**
+     * The bounds of [id] on the screen once they have stopped changing: the
+     * same in two readings 250 ms apart, within 5 seconds.
+     */
+    private fun settledBounds(id: String): Rect {
+        var last = Rect().also { node(id).getBoundsInScreen(it) }
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end) {
+            Thread.sleep(250)
+            val now = Rect().also { node(id).getBoundsInScreen(it) }
+            if (now == last) return now
+            last = now
+        }
+        throw AssertionError("$id: its bounds were still changing after 5 seconds")
+    }
+
     private fun onExample(slug: String): Boolean = anyWindowHas { it.name() == c04Titles.getValue(slug) }
 
     /** Waits up to 5 seconds for [condition]. */
@@ -135,7 +151,17 @@ class C04LinksInlineWithTextTest : TechniqueTest("C04") {
         for (slug in good) {
             for ((i, link) in LINKS.withIndex()) {
                 open(slug)
-                val r = Rect().also { node(linkId(slug, i + 1)).getBoundsInScreen(it) }
+                // A person taps a link once it is in view and has stopped
+                // moving. On CI's 320 by 640 emulator a custom solution's
+                // note above the example (docs/custom-solutions.md) can
+                // leave the sentence at the bottom edge, so the screen is
+                // scrolled first. And the screen is still being laid out
+                // after it opens: on the local emulator the links of
+                // good-cupertino and good-custom were measured 21 and 10
+                // pixels lower when they were read than a moment later, so
+                // a tap at the centre of the first reading can miss.
+                scrollToEnd()
+                val r = settledBounds(linkId(slug, i + 1))
                 assertTrue(device.click(r.centerX(), r.centerY()))
                 expectFollowedOnce(slug, link, "a tap on link ${i + 1}")
             }

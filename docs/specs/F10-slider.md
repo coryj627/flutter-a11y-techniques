@@ -79,6 +79,24 @@ Every example ends with a count of changes. The volume sliders start at
 | `good-custom` | Widgets | A slider drawn by hand | `Semantics(slider: true, label:, value:, increasedValue:, decreasedValue:, onIncrease:, onDecrease:)` around a drawn track that answers a tap and a drag, inside `FocusableActionDetector` with the APG keys | R1 to R5 |
 | `good-value-text` | Material | A rating from 0 to 10 read as "4 out of 10" | `Slider(semanticFormatterCallback:)`; the visible value in `ExcludeSemantics` | R3 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-material`,
+`good-cupertino`, `good-custom` and `good-value-text` are custom solutions.
+Each is tested here in isolation, with screen-reader transcripts, but has
+not been built into a real app and tested in a user journey. Do not treat
+them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Home and End keys, from a `CallbackShortcuts` round the `Slider` | `Slider` | No Home or End keys ([FL-122](../flutter-limitations.md#fl-122)) | R1, R2, R3, R4, R5: iOS Sliders, Android Compose Slider and RangeSlider Controls, APG Slider, MDN: input type=range, MDN, Android Compose Slider, G216 | custom |
+| `good-cupertino` | The keyboard for a `CupertinoSlider`: `FocusableActionDetector` with the APG keys, a focus ring, and two buttons a step down and up | `CupertinoSlider` | No keyboard focus ([FL-120](../flutter-limitations.md#fl-120)); moves only when its thumb is dragged ([FL-121](../flutter-limitations.md#fl-121)) | R1, R2, R3, R4, R5: iOS Sliders, Android Compose Slider and RangeSlider Controls, APG Slider, MDN: input type=range, MDN, Android Compose Slider, G216 | custom |
+| `good-custom` | A slider drawn by hand: `Semantics(slider: true, label:, value:, increasedValue:, decreasedValue:, onIncrease:, onDecrease:)` round a track that takes a tap and a drag, with the APG keys from `FocusableActionDetector` | `Slider`, `CupertinoSlider`; none for a drawn slider | none | R1, R2, R3, R4, R5: iOS Sliders, Android Compose Slider and RangeSlider Controls, APG Slider, MDN: input type=range, MDN, Android Compose Slider, G216 | custom |
+| `good-value-text` | The Home and End keys of `good-material`; the value text itself is the slider's own `semanticFormatterCallback` | `Slider` | No Home or End keys ([FL-122](../flutter-limitations.md#fl-122)) | R3: APG Slider, Android Compose Slider | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

@@ -47,12 +47,18 @@ final s22SemanticsIdentifiers = Technique(
       slug: 'good-cupertino',
       title: 'Identifier on a Cupertino button',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'An Actions built by hand round the CupertinoButton so that Enter '
+          'works on the web (FL-002).',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Identifier on a custom button',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A button drawn by hand: Semantics(button: true, label:, onTap:), '
+          'with focus, keys, and a focus ring of its own.',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.good(

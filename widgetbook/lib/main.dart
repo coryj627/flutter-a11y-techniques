@@ -41,10 +41,9 @@ class TechniquesWidgetbook extends StatelessWidget {
                   useCases: [
                     for (final example in technique.examples)
                       WidgetbookUseCase(
-                        // Good or bad is in the name, never colour alone.
-                        name:
-                            '${example.title} '
-                            '(${example.kind == ExampleKind.good ? 'good' : 'bad'})',
+                        // Good or bad is in the name, never colour alone,
+                        // and so is the custom-solution label.
+                        name: useCaseName(example),
                         builder: (_) =>
                             UseCaseView(technique: technique, example: example),
                       ),
@@ -92,8 +91,18 @@ class TechniquesWidgetbook extends StatelessWidget {
   }
 }
 
-/// One example with what it is, its defect if it is a bad example, and the
-/// technique's documentation underneath.
+/// An example's entry in the navigation: its title, then "good" or "bad",
+/// and for a custom solution the short form of its label.
+String useCaseName(TechniqueExample example) {
+  final kind = example.kind == ExampleKind.good ? 'good' : 'bad';
+  final custom = example.isCustomSolution
+      ? ', ${CustomSolution.short.toLowerCase()}'
+      : '';
+  return '${example.title} ($kind$custom)';
+}
+
+/// One example with what it is, its custom-solution label or its defect,
+/// and the technique's documentation underneath.
 class UseCaseView extends StatelessWidget {
   const UseCaseView({
     super.key,
@@ -124,6 +133,8 @@ class UseCaseView extends StatelessWidget {
                     '${e.kind.title} for ${technique.title}. '
                     '${e.variant.title}.',
                   ),
+                  if (e.customSolution case final reason?)
+                    CustomSolutionNote(reason: reason),
                   if (e.defect case final defect?) BodyText('Defect: $defect'),
                   const SectionHeading('Example'),
                   Padding(
