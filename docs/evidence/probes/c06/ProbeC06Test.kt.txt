@@ -1,0 +1,214 @@
+// C06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c06/ProbeC06Test.kt.txt). Runs against lib/probe.dart
+// (Gradle -Ptarget=lib/probe.dart). probe() dumps every node of each
+// fixture, performs ACTION_CLICK on its "dNN Details" header, dumps again,
+// and clicks again; keys() sends Tab from a fresh launch and logs the node
+// with input focus after each, then Enter and Space on the header;
+// talkBackWalk() moves TalkBack focus to the header, activates it with
+// ACTION_CLICK with focus left there, moves focus to the panel's text (or to
+// Back where there is none) and back to the header, and activates it again,
+// logging markers that tool/talkback.py's parser reads.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.os.Build
+import android.util.Log
+import android.view.KeyEvent
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeC06Test : TechniqueTest("C06") {
+    private val tag = "C06PROBE"
+    private val ids = listOf("d01", "d02", "d03", "d04")
+
+    private fun launch(fixture: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", "/$fixture")
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.viewIdResourceName == "$fixture-end" }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("$fixture did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun expandedState(n: AccessibilityNodeInfo): String {
+        if (Build.VERSION.SDK_INT < 36) return "n/a"
+        return try {
+            when (n.javaClass.getMethod("getExpandedState").invoke(n) as Int) {
+                0 -> "undefined"
+                1 -> "collapsed"
+                2 -> "partial"
+                3 -> "full"
+                else -> "?"
+            }
+        } catch (e: Exception) {
+            "error ${e.javaClass.simpleName}"
+        }
+    }
+
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = android.graphics.Rect().also { n.getBoundsInScreen(it) }
+        val actions = n.actionList.joinToString(",") { a ->
+            val name = when (a.id) {
+                AccessibilityNodeInfo.ACTION_CLICK -> "click"
+                AccessibilityNodeInfo.ACTION_FOCUS -> "focus"
+                AccessibilityNodeInfo.ACTION_CLEAR_FOCUS -> "clearfocus"
+                AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS -> "a11yfocus"
+                AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS -> "clra11y"
+                AccessibilityNodeInfo.ACTION_LONG_CLICK -> "longclick"
+                AccessibilityNodeInfo.ACTION_EXPAND -> "EXPAND"
+                AccessibilityNodeInfo.ACTION_COLLAPSE -> "COLLAPSE"
+                else -> a.id.toString()
+            }
+            if (a.label != null) "$name(${a.label})" else name
+        }
+        return "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"${n.name().replace("\n", "\\n")}\" " +
+            "text=\"${(n.text ?: "").toString().replace("\n", "\\n")}\" hint=\"${n.hintText ?: ""}\" " +
+            "state=\"${n.stateDescription ?: ""}\" heading=${n.isHeading} expandedState=${expandedState(n)} " +
+            "clickable=${n.isClickable} focusable=${n.isFocusable} focused=${n.isFocused} selected=${n.isSelected} " +
+            "checkable=${n.isCheckable} screenReaderFocusable=${n.isScreenReaderFocusable} live=${n.liveRegion} " +
+            "$r [$actions] children=${n.childCount}"
+    }
+
+    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
+        if (root == null) return
+        out.add(root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), out)
+    }
+
+    private fun appNodes(): List<AccessibilityNodeInfo> {
+        val out = mutableListOf<AccessibilityNodeInfo>()
+        for (w in automation.windows) if (w.type == AccessibilityWindowInfo.TYPE_APPLICATION) collect(w.root, out)
+        return out
+    }
+
+    private fun dump(label: String) {
+        Log.i(tag, "==== $label")
+        for (n in appNodes()) Log.i(tag, describe(n))
+    }
+
+    private fun label(n: AccessibilityNodeInfo) = n.name().ifEmpty { n.text?.toString().orEmpty() }
+
+    /** The header node of "dNN Details": the first clickable node whose name starts with it, else any node. */
+    private fun header(id: String): AccessibilityNodeInfo? {
+        val named = appNodes().filter { label(it).startsWith("$id Details") }
+        return named.firstOrNull { it.isClickable } ?: named.firstOrNull()
+    }
+
+    private fun panelText(id: String): AccessibilityNodeInfo? =
+        appNodes().firstOrNull { label(it) == "$id panel text" }
+
+    private fun shown(id: String) = appNodes().any { label(it).contains("$id panel button") }
+
+    private fun focusedNode(): String {
+        // The Flutter view itself also reports input focus; the stop is the
+        // focused node inside it, which has a name or text.
+        val f = appNodes().firstOrNull { it.isFocused && label(it).isNotEmpty() } ?: return "(none)"
+        return "\"${label(f).replace("\n", "\\n")}\" ${f.type()}"
+    }
+
+    /** A key from the emulator's keyboard, sent as the technique tests send it (C03, I01). */
+    private fun key(code: Int) {
+        device.executeShellCommand("input keyevent $code")
+        Thread.sleep(700)
+    }
+
+    @Test
+    fun probe() {
+        Log.i(tag, "SDK_INT ${Build.VERSION.SDK_INT}")
+        for (id in ids) {
+            launch(id)
+            dump("$id collapsed")
+            val node = header(id)
+            if (node == null) {
+                Log.i(tag, "$id no header node")
+                continue
+            }
+            Log.i(tag, "$id header: ${describe(node)}")
+            val ok = node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(1_500)
+            Log.i(tag, "$id ACTION_CLICK returned $ok; panel shown=${shown(id)}")
+            dump("$id after ACTION_CLICK")
+            val again = header(id)
+            val ok2 = again?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(1_500)
+            Log.i(tag, "$id second ACTION_CLICK returned $ok2; panel shown=${shown(id)}")
+        }
+    }
+
+    @Test
+    fun keys() {
+        for (id in ids) {
+            launch(id)
+            val stops = mutableListOf<String>()
+            for (i in 1..4) {
+                key(KeyEvent.KEYCODE_TAB)
+                stops.add(focusedNode())
+            }
+            Log.i(tag, "$id Tab stops collapsed: ${stops.joinToString(" / ")}")
+            for ((name, code) in listOf("Enter" to KeyEvent.KEYCODE_ENTER, "Space" to KeyEvent.KEYCODE_SPACE)) {
+                launch(id)
+                var reached = 0
+                for (i in 1..4) {
+                    key(KeyEvent.KEYCODE_TAB)
+                    if (focusedNode().startsWith("\"$id Details")) { reached = i; break }
+                }
+                if (reached == 0) {
+                    Log.i(tag, "$id $name: header not reached by Tab")
+                    continue
+                }
+                key(code)
+                Thread.sleep(800)
+                val opened = shown(id)
+                Log.i(tag, "$id $name after $reached Tab(s): panel shown=$opened; focus ${focusedNode()}")
+                if (opened) {
+                    val stops2 = mutableListOf<String>()
+                    for (i in 1..2) {
+                        key(KeyEvent.KEYCODE_TAB)
+                        stops2.add(focusedNode())
+                    }
+                    Log.i(tag, "$id after $name, next Tabs: ${stops2.joinToString(" / ")}")
+                }
+            }
+        }
+    }
+
+    @Test
+    fun talkBackWalk() {
+        assumeTalkBack()
+        for (id in ids) {
+            launch(id)
+            Thread.sleep(6_000)
+            if (header(id) == null) {
+                Log.i(tag, "$id no header")
+                continue
+            }
+            Log.i(talkBackTag, "FOCUS $id-collapsed")
+            talkBackFocus(id) { header(id)!! }
+            Thread.sleep(5_000)
+            Log.i(talkBackTag, "FOCUS $id-activated")
+            header(id)!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(5_000)
+            Log.i(talkBackTag, "FOCUS $id-panel")
+            talkBackFocus(id) {
+                panelText(id) ?: appNodes().first { label(it) == "Back" }
+            }
+            Thread.sleep(5_000)
+            Log.i(talkBackTag, "FOCUS $id-expanded")
+            talkBackFocus(id) { header(id)!! }
+            Thread.sleep(5_000)
+            Log.i(talkBackTag, "FOCUS $id-closed")
+            header(id)!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(5_000)
+            Log.i(talkBackTag, "END $id")
+        }
+    }
+}

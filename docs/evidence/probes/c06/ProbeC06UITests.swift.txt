@@ -1,0 +1,135 @@
+// C06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c06/ProbeC06UITests.swift.txt): the tree, a tap,
+// Tab and Enter or Space, and VoiceOver for each fixture of lib/probe.dart,
+// one fixture at a time, opened by URL.
+import XCTest
+
+final class ProbeC06UITests: XCTestCase {
+  let app = XCUIApplication()
+  let ids = ["d01", "d02", "d03", "d04"]
+
+  func log(_ s: String) { print("C06PROBE \(s)") }
+
+  func endElement(_ id: String) -> XCUIElement { app.descendants(matching: .any)["\(id)-end"] }
+
+  func open(_ id: String) {
+    for _ in 1...3 {
+      app.terminate()
+      app.launchArguments = []
+      app.open(URL(string: "fluttera11y:///\(id)")!)
+      if endElement(id).waitForExistence(timeout: 30) { sleep(1); return }
+    }
+    XCTFail("\(id) did not open")
+  }
+
+  /// The header of "dNN Details": the first element whose label starts with it.
+  func header(_ id: String) -> XCUIElement? {
+    app.descendants(matching: .any).allElementsBoundByIndex.first { $0.label.hasPrefix("\(id) Details") }
+  }
+
+  func shown(_ id: String) -> Bool {
+    app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "\(id) panel button")).count > 0
+  }
+
+  func dump(_ label: String) {
+    log("==== \(label)")
+    for e in app.descendants(matching: .any).allElementsBoundByIndex {
+      let t = e.elementType
+      if t == .window || t == .application { continue }
+      if t == .other && e.label.isEmpty && e.identifier.isEmpty { continue }
+      log("EL type=\(t.rawValue) id=\(e.identifier) label=\(e.label.debugDescription) value=\(String(describing: e.value)) selected=\(e.isSelected) enabled=\(e.isEnabled) frame=\(e.frame)")
+    }
+  }
+
+  func testTree() {
+    for id in ids {
+      open(id)
+      dump("\(id) collapsed")
+      guard let e = header(id) else { log("\(id) no header element"); continue }
+      log("\(id) header type=\(e.elementType.rawValue) label=\(e.label.debugDescription) value=\(String(describing: e.value))")
+      e.tap()
+      sleep(2)
+      log("\(id) tap: panel shown=\(shown(id))")
+      dump("\(id) after a tap")
+      header(id)?.tap()
+      sleep(2)
+      log("\(id) second tap: panel shown=\(shown(id))")
+    }
+  }
+
+  /// One to three Tabs (Back first, then the header) and Enter or Space,
+  /// each from a fresh launch. XCUITest cannot see Flutter's keyboard focus,
+  /// so whether the panel opened, and whether the example is still on
+  /// screen (Back not taken), is the result.
+  func testKeys() {
+    for id in ids {
+      for tabs in 1...3 {
+        for key in ["\n", XCUIKeyboardKey.space.rawValue] {
+          open(id)
+          for _ in 0..<tabs {
+            app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+            usleep(700_000)
+          }
+          app.typeKey(key, modifierFlags: [])
+          sleep(2)
+          let onScreen = endElement(id).exists
+          log("\(id) \(tabs) Tab(s) then \(key == "\n" ? "Enter" : "Space"): panel shown=\(shown(id)) example still on screen=\(onScreen)")
+        }
+      }
+    }
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    for id in ids {
+      open(id)
+      try vo.enable()
+      defer { try? vo.disable() }
+      var walk: [String] = []
+      for _ in 0..<10 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix("\(id) end") { break }
+      }
+      log("VO \(id) walk collapsed: \(walk.joined(separator: " / "))")
+      guard let e = header(id) else { log("VO \(id) no header"); continue }
+      e.tap()
+      usleep(1_500_000)
+      let on = norm((try? vo.currentSpeech().utterance) ?? "")
+      // XCUITest's double tap at the header's place, with VoiceOver on: a
+      // tap at that place, not VoiceOver's activation of its cursor (C04
+      // probe round 3).
+      e.doubleTap()
+      var heard: [String] = []
+      for _ in 0..<8 {
+        usleep(500_000)
+        let s = norm((try? vo.currentSpeech().utterance) ?? "")
+        if heard.last != s { heard.append(s) }
+      }
+      log("VO \(id) cursor on \"\(on)\"; after XCUITest's double tap heard: \(heard.joined(separator: " | ")); panel shown=\(shown(id))")
+      var after: [String] = []
+      for _ in 0..<4 { after.append(say()) }
+      log("VO \(id) moving on from the header: \(after.joined(separator: " / "))")
+      try vo.disable()
+      // The whole screen again, open, from the top.
+      try vo.enable()
+      var walk2: [String] = []
+      for _ in 0..<10 {
+        let s = say()
+        walk2.append(s)
+        if s.hasPrefix("\(id) end") { break }
+      }
+      log("VO \(id) walk after: \(walk2.joined(separator: " / "))")
+      try vo.disable()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}
