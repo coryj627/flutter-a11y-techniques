@@ -477,6 +477,9 @@ final class I04KeyboardActionsUITests: XCTestCase, CountedTechniqueUITest {
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in speech {
       open(example.slug)
+      // Below a custom solution's note, "Notes saved", the end of the walk,
+      // is out of view, and the walk stopped on the last element in view.
+      scrollToEnd()
       let spoken = try VoiceOverWalk.forward(voiceOver, toUtteranceStartingWith: "Notes saved:")
       let content = Self.exampleContent(spoken)
       print("I04VO \(example.slug) | \((content ?? spoken).joined(separator: " / "))")
