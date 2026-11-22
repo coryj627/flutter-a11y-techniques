@@ -1,0 +1,13 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+==== t01 start
+t01 node  | android.widget.Button | desc="t01 Delete draft" text="" tooltip="t01 Delete draft" hint="" state="" clickable=true longClickable=false focusable=true focused=false Rect(42, 384 - 168, 510) [a11yfocus,click] children=0
+t01 focused on the control: t01 Delete draft; not drawn (0 px differ)
+t01 5 s later: not drawn (0 px differ)
+t01 Escape with focus on the control: not drawn (0 px differ); focus=t01 Delete draft
+t01 Tab stops: Back not drawn (0 px differ) -> t01 Delete draft not drawn (0 px differ) -> Back not drawn (0 px differ) -> t01 Delete draft not drawn (0 px differ)
+t01 after a touch held 800 ms: drawn (27122 px differ); focus=(android.widget.FrameLayout no name)
+t01 Escape 300 ms after the touch was released: not drawn (0 px differ)
+t02 focused on the control: (android.widget.FrameLayout no name); not drawn (0 px differ)
+t02 5 s later: not drawn (0 px differ)
+t02 Escape with focus on the control: not drawn (0 px differ); focus=(android.widget.FrameLayout no name)
+t02 Tab stops: (android.widget.FrameLayout no name) not drawn (0 px differ) -> Back not drawn (0 px differ) -> (android.widget.Button no name) not drawn (0 px differ) -> Back not drawn (0 px differ)

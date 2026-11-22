@@ -1,0 +1,362 @@
+C12TEST t01 tree before:\n            #88 label="Before t01" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="" tooltip="t01 Delete draft" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t01 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t01 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t01-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t02 step 1 at Offset(50.0, 120.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t02 step 2 at Offset(60.0, 124.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t02 step 3 at Offset(70.0, 128.0) shown=true mouse regions=[]
+C12TEST t02 step 4 at Offset(80.0, 132.0) shown=true mouse regions=[]
+C12TEST t02 step 5 at Offset(90.0, 136.0) shown=true mouse regions=[]
+C12TEST t02 step 6 at Offset(100.0, 140.0) shown=true mouse regions=[]
+C12TEST t02 step 7 at Offset(110.0, 144.0) shown=true mouse regions=[]
+C12TEST t02 step 8 at Offset(120.0, 148.0) shown=true mouse regions=[]
+C12TEST t02 step 9 at Offset(130.0, 152.0) shown=true mouse regions=[]
+C12TEST t02 step 10 at Offset(140.0, 156.0) shown=true mouse regions=[]
+C12TEST t02 500 ms on the tooltip: shown=false
+C12TEST t02 2.5 s on the tooltip: shown=false
+C12TEST t02 500 ms after moving to (700, 700): shown=false
+C12TEST t02 shown=true nodes, merged ones included: #88 merged=false label="Before t02" tooltip="" | #89 merged=false label="" tooltip="t02 Delete draft" | #91 merged=false label="t02 line under the control" tooltip="" | #93 merged=false label="t02 taps: 0" tooltip="" | #101 merged=false label="t02 Delete draft" tooltip=""
+C12TEST t01 hover: shown=true
+C12TEST t01 tree while shown by hover:\n            #88 label="Before t01" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="" tooltip="t01 Delete draft" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t01 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t01 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t01-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t01 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t01 control rect=Rect.fromLTRB(20.0, 96.0, 60.0, 136.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 254.0, 166.0)
+C12TEST t01 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t01 hovered 10 s: shown=true
+C12TEST t01 primary focus before Escape: FocusScopeNode#9c9f3(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t03 step 1 at Offset(50.0, 120.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t03 step 2 at Offset(60.0, 124.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t03 step 3 at Offset(70.0, 128.0) shown=true mouse regions=[]
+C12TEST t03 step 4 at Offset(80.0, 132.0) shown=true mouse regions=[]
+C12TEST t03 step 5 at Offset(90.0, 136.0) shown=true mouse regions=[]
+C12TEST t03 step 6 at Offset(100.0, 140.0) shown=true mouse regions=[]
+C12TEST t03 step 7 at Offset(110.0, 144.0) shown=true mouse regions=[]
+C12TEST t03 step 8 at Offset(120.0, 148.0) shown=true mouse regions=[]
+C12TEST t03 step 9 at Offset(130.0, 152.0) shown=true mouse regions=[]
+C12TEST t03 step 10 at Offset(140.0, 156.0) shown=true mouse regions=[]
+C12TEST t01 Escape while hovered: shown=false
+C12TEST t03 500 ms on the tooltip: shown=false
+C12TEST t01 pointer still on the control 3 s after Escape: shown=false
+C12TEST t03 2.5 s on the tooltip: shown=false
+C12TEST t03 500 ms after moving to (700, 700): shown=false
+C12TEST t01 50 ms after the pointer left: shown=false
+C12TEST t01 settled after the pointer left: shown=false
+C12TEST t03 shown=true nodes, merged ones included: #88 merged=false label="Before t03" tooltip="" | #90 merged=false label="" tooltip="t03 Delete draft" | #92 merged=false label="t03 line under the control" tooltip="" | #94 merged=false label="t03 taps: 0" tooltip="" | #102 merged=false label="t03 Delete draft" tooltip=""
+C12TEST t01 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t04 step 1 at Offset(129.0, 120.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t04 step 2 at Offset(133.4, 124.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t04 step 3 at Offset(137.8, 128.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t04 step 4 at Offset(142.2, 132.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t04 step 5 at Offset(146.5, 136.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t04 step 6 at Offset(150.9, 140.0) shown=true mouse regions=[]
+C12TEST t04 step 7 at Offset(155.3, 144.0) shown=true mouse regions=[]
+C12TEST t04 step 8 at Offset(159.7, 148.0) shown=true mouse regions=[]
+C12TEST t04 step 9 at Offset(164.1, 152.0) shown=true mouse regions=[]
+C12TEST t04 step 10 at Offset(168.5, 156.0) shown=true mouse regions=[]
+C12TEST t04 500 ms on the tooltip: shown=false
+C12TEST t04 2.5 s on the tooltip: shown=false
+C12TEST t04 500 ms after moving to (700, 700): shown=false
+C12TEST t04 shown=true nodes, merged ones included: #88 merged=false label="Before t04" tooltip="" | #89 merged=false label="" tooltip="t04 Saves a PDF copy" | #90 merged=false label="t04 Download" tooltip="" | #91 merged=false label="t04 line under the control" tooltip="" | #93 merged=false label="t04 taps: 0" tooltip="" | #101 merged=false label="t04 Saves a PDF copy" tooltip=""
+C12TEST t01 two Tabs: focus=null shown=false
+C12TEST t05 step 1 at Offset(129.0, 120.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t05 step 2 at Offset(133.4, 124.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t05 step 3 at Offset(137.8, 128.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t05 step 4 at Offset(142.2, 132.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t05 step 5 at Offset(146.5, 136.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t05 step 6 at Offset(150.9, 140.0) shown=true mouse regions=[]
+C12TEST t05 step 7 at Offset(155.3, 144.0) shown=true mouse regions=[]
+C12TEST t05 step 8 at Offset(159.7, 148.0) shown=true mouse regions=[]
+C12TEST t05 step 9 at Offset(164.1, 152.0) shown=true mouse regions=[]
+C12TEST t05 step 10 at Offset(168.5, 156.0) shown=true mouse regions=[]
+C12TEST t05 500 ms on the tooltip: shown=false
+C12TEST t05 2.5 s on the tooltip: shown=false
+C12TEST t05 500 ms after moving to (700, 700): shown=false
+C12TEST t05 shown=true nodes, merged ones included: #88 merged=false label="Before t05" tooltip="" | #90 merged=false label="t05 Download" tooltip="t05 Saves a PDF copy" | #91 merged=true label="t05 Download" tooltip="" | #92 merged=false label="t05 line under the control" tooltip="" | #94 merged=false label="t05 taps: 0" tooltip="" | #102 merged=false label="t05 Saves a PDF copy" tooltip=""
+C12TEST t01 long press held 600 ms: shown=true
+C12TEST t01 tree while shown by long press:\n            #88 label="Before t01" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="" tooltip="t01 Delete draft" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t01 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t01 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t01-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t01 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t01 1.4 s after release: shown=true
+C12TEST t01 1.7 s after release: shown=false
+C12TEST t07 step 1 at Offset(45.6, 108.0) shown=true mouse regions=[]
+C12TEST t07 step 2 at Offset(63.2, 112.0) shown=true mouse regions=[]
+C12TEST t07 step 3 at Offset(80.8, 116.0) shown=true mouse regions=[]
+C12TEST t07 step 4 at Offset(98.5, 120.0) shown=true mouse regions=[]
+C12TEST t07 step 5 at Offset(116.1, 124.0) shown=true mouse regions=[]
+C12TEST t07 step 6 at Offset(133.7, 128.0) shown=true mouse regions=[]
+C12TEST t07 step 7 at Offset(151.3, 132.0) shown=true mouse regions=[]
+C12TEST t07 step 8 at Offset(168.9, 136.0) shown=true mouse regions=[]
+C12TEST t07 step 9 at Offset(186.5, 140.0) shown=true mouse regions=[]
+C12TEST t07 step 10 at Offset(204.1, 144.0) shown=true mouse regions=[]
+C12TEST t07 500 ms on the tooltip: shown=false
+C12TEST t07 2.5 s on the tooltip: shown=false
+C12TEST t07 500 ms after moving to (700, 700): shown=false
+C12TEST t01 tap: shown=false
+C12TEST t07 shown=true nodes, merged ones included: #88 merged=false label="Before t07" tooltip="" | #89 merged=false label="" tooltip="t07 At least 8 characters" | #90 merged=false label="t07 line under the control" tooltip="" | #92 merged=false label="t07 taps: 0" tooltip="" | #100 merged=false label="t07 At least 8 characters" tooltip=""
+C12TEST t01 node with a longPress action: (none)
+C12TEST t08 step 1 at Offset(50.0, 120.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t08 step 2 at Offset(60.0, 124.0) shown=true mouse regions=[RenderMouseRegion, RenderMouseRegion, _RenderExclusiveMouseRegion]
+C12TEST t08 step 3 at Offset(70.0, 128.0) shown=true mouse regions=[]
+C12TEST t08 step 4 at Offset(80.0, 132.0) shown=true mouse regions=[]
+C12TEST t08 step 5 at Offset(90.0, 136.0) shown=true mouse regions=[]
+C12TEST t08 step 6 at Offset(100.0, 140.0) shown=true mouse regions=[_RenderExclusiveMouseRegion]
+C12TEST t08 step 7 at Offset(110.0, 144.0) shown=true mouse regions=[_RenderExclusiveMouseRegion]
+C12TEST t08 step 8 at Offset(120.0, 148.0) shown=true mouse regions=[_RenderExclusiveMouseRegion]
+C12TEST t08 step 9 at Offset(130.0, 152.0) shown=true mouse regions=[_RenderExclusiveMouseRegion]
+C12TEST t08 step 10 at Offset(140.0, 156.0) shown=true mouse regions=[_RenderExclusiveMouseRegion]
+C12TEST t08 500 ms on the tooltip: shown=true
+C12TEST t08 2.5 s on the tooltip: shown=true
+C12TEST t08 500 ms after moving to (700, 700): shown=false
+C12TEST t08 shown=true nodes, merged ones included: #88 merged=false label="Before t08" tooltip="" | #89 merged=false label="" tooltip="t08 Delete draft" | #91 merged=false label="t08 line under the control" tooltip="" | #93 merged=false label="t08 taps: 0" tooltip="" | #101 merged=false label="t08 Delete draft" tooltip=""
+C12TEST t02 tree before:\n            #88 label="Before t02" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t02 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t02 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t02 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t02-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t02 hover: shown=true
+C12TEST t02 tree while shown by hover:\n            #88 label="Before t02" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t02 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t02 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t02 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t02-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t02 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t02 control rect=Rect.fromLTRB(16.0, 92.0, 64.0, 140.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 254.0, 166.0)
+C12TEST t02 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t02 hovered 10 s: shown=true
+C12TEST t02 primary focus before Escape: FocusScopeNode#45419(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t02 Escape while hovered: shown=false
+C12TEST t02 pointer still on the control 3 s after Escape: shown=false
+C12TEST t02 50 ms after the pointer left: shown=false
+C12TEST t02 settled after the pointer left: shown=false
+C12TEST t02 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t02 two Tabs: focus=null shown=false
+C12TEST t02 long press held 600 ms: shown=true
+C12TEST t02 tree while shown by long press:\n            #88 label="Before t02" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t02 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t02 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t02 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t02-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t02 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t02 1.4 s after release: shown=true
+C12TEST t02 1.7 s after release: shown=false
+C12TEST t02 tap: shown=false
+C12TEST t02 node with a longPress action: (none)
+C12TEST t03 tree before:\n            #88 label="Before t03" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="" tooltip="t03 Delete draft" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #92 label="t03 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t03 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t03-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t03 hover: shown=true
+C12TEST t03 tree while shown by hover:\n            #88 label="Before t03" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="" tooltip="t03 Delete draft" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #92 label="t03 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t03 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t03-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #100 label="t03 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t03 control rect=Rect.fromLTRB(16.0, 92.0, 64.0, 140.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 254.0, 166.0)
+C12TEST t03 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t03 hovered 10 s: shown=true
+C12TEST t03 primary focus before Escape: FocusScopeNode#df4da(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t03 Escape while hovered: shown=false
+C12TEST t03 pointer still on the control 3 s after Escape: shown=false
+C12TEST t03 50 ms after the pointer left: shown=false
+C12TEST t03 settled after the pointer left: shown=false
+C12TEST t03 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t03 two Tabs: focus=null shown=false
+C12TEST t03 long press held 600 ms: shown=true
+C12TEST t03 tree while shown by long press:\n            #88 label="Before t03" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="" tooltip="t03 Delete draft" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #92 label="t03 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t03 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t03-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #100 label="t03 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t03 1.4 s after release: shown=true
+C12TEST t03 1.7 s after release: shown=false
+C12TEST t03 tap: shown=false
+C12TEST t03 node with a longPress action: (none)
+C12TEST t04 tree before:\n            #88 label="Before t04" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t04 Saves a PDF copy" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="t04 Download" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #91 label="t04 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t04 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t04-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t04 hover: shown=true
+C12TEST t04 tree while shown by hover:\n            #88 label="Before t04" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t04 Saves a PDF copy" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="t04 Download" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #91 label="t04 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t04 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t04-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t04 Saves a PDF copy" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 285.0, 20.0)
+C12TEST t04 control rect=Rect.fromLTRB(16.0, 92.0, 233.2, 140.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 311.0, 166.0)
+C12TEST t04 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t04 hovered 10 s: shown=true
+C12TEST t04 primary focus before Escape: FocusScopeNode#f35fd(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t04 Escape while hovered: shown=false
+C12TEST t04 pointer still on the control 3 s after Escape: shown=false
+C12TEST t04 50 ms after the pointer left: shown=false
+C12TEST t04 settled after the pointer left: shown=false
+C12TEST t04 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t04 two Tabs: focus=null shown=false
+C12TEST t04 long press held 600 ms: shown=true
+C12TEST t04 tree while shown by long press:\n            #88 label="Before t04" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t04 Saves a PDF copy" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="t04 Download" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #91 label="t04 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t04 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t04-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t04 Saves a PDF copy" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 285.0, 20.0)
+C12TEST t04 1.4 s after release: shown=true
+C12TEST t04 1.7 s after release: shown=false
+C12TEST t04 tap: shown=false
+C12TEST t04 node with a longPress action: (none)
+C12TEST t05 tree before:\n            #88 label="Before t05" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="t05 Download" tooltip="t05 Saves a PDF copy" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #92 label="t05 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t05 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t05-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t05 hover: shown=true
+C12TEST t05 tree while shown by hover:\n            #88 label="Before t05" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="t05 Download" tooltip="t05 Saves a PDF copy" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #92 label="t05 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t05 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t05-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #100 label="t05 Saves a PDF copy" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 285.0, 20.0)
+C12TEST t05 control rect=Rect.fromLTRB(16.0, 92.0, 233.2, 140.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 311.0, 166.0)
+C12TEST t05 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t05 hovered 10 s: shown=true
+C12TEST t05 primary focus before Escape: FocusScopeNode#ee7e9(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t05 Escape while hovered: shown=false
+C12TEST t05 pointer still on the control 3 s after Escape: shown=false
+C12TEST t05 50 ms after the pointer left: shown=false
+C12TEST t05 settled after the pointer left: shown=false
+C12TEST t05 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t05 two Tabs: focus=null shown=false
+C12TEST t05 long press held 600 ms: shown=true
+C12TEST t05 tree while shown by long press:\n            #88 label="Before t05" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="t05 Download" tooltip="t05 Saves a PDF copy" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #92 label="t05 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t05 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t05-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #100 label="t05 Saves a PDF copy" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 285.0, 20.0)
+C12TEST t05 1.4 s after release: shown=true
+C12TEST t05 1.7 s after release: shown=false
+C12TEST t05 tap: shown=false
+C12TEST t05 node with a longPress action: (none)
+C12TEST t06 tree before:\n            #88 label="Before t06" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="t06 Download" tooltip="t06 Download" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #92 label="t06 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t06 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t06-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t06 hover: shown=true
+C12TEST t06 tree while shown by hover:\n            #88 label="Before t06" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="t06 Download" tooltip="t06 Download" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #92 label="t06 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t06 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t06-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #100 label="t06 Download" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 171.0, 20.0)
+C12TEST t06 control rect=Rect.fromLTRB(16.0, 92.0, 233.2, 140.0) tooltip rect=Rect.fromLTRB(39.1, 146.0, 210.1, 166.0)
+C12TEST t06 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t06 hovered 10 s: shown=true
+C12TEST t06 primary focus before Escape: FocusScopeNode#5c69d(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t06 Escape while hovered: shown=false
+C12TEST t06 pointer still on the control 3 s after Escape: shown=false
+C12TEST t06 50 ms after the pointer left: shown=false
+C12TEST t06 settled after the pointer left: shown=false
+C12TEST t06 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t06 two Tabs: focus=null shown=false
+C12TEST t06 long press held 600 ms: shown=true
+C12TEST t06 tree while shown by long press:\n            #88 label="Before t06" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="t06 Download" tooltip="t06 Download" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #92 label="t06 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t06 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t06-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #100 label="t06 Download" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 171.0, 20.0)
+C12TEST t06 1.4 s after release: shown=true
+C12TEST t06 1.7 s after release: shown=false
+C12TEST t06 tap: shown=false
+C12TEST t06 node with a longPress action: (none)
+C12TEST t07 tree before:\n            #88 label="Before t07" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t07 At least 8 characters" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)\n            #90 label="t07 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #92 label="t07 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t07-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #96 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t07 hover: shown=true
+C12TEST t07 tree while shown by hover:\n            #88 label="Before t07" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t07 At least 8 characters" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)\n            #90 label="t07 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #92 label="t07 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t07-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #96 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #98 label="t07 At least 8 characters" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 356.3, 20.0)
+C12TEST t07 control rect=Rect.fromLTRB(16.0, 92.0, 40.0, 116.0) tooltip rect=Rect.fromLTRB(26.0, 134.0, 382.3, 154.0)
+C12TEST t07 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t07 hovered 10 s: shown=true
+C12TEST t07 primary focus before Escape: FocusScopeNode#7e798(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t07 Escape while hovered: shown=false
+C12TEST t07 pointer still on the control 3 s after Escape: shown=false
+C12TEST t07 50 ms after the pointer left: shown=false
+C12TEST t07 settled after the pointer left: shown=false
+C12TEST t07 Tab stops: _FocusScopeWithExternalFocusNode/_ModalScopeState<dynamic> Focus Scope shown=false -> _FocusScopeWithExternalFocusNode/_ModalScopeState<dynamic> Focus Scope shown=false -> _FocusScopeWithExternalFocusNode/_ModalScopeState<dynamic> Focus Scope shown=false -> _FocusScopeWithExternalFocusNode/_ModalScopeState<dynamic> Focus Scope shown=false
+C12TEST t07 two Tabs: focus=_ModalScopeState<dynamic> Focus Scope shown=false
+C12TEST t07 long press held 600 ms: shown=true
+C12TEST t07 tree while shown by long press:\n            #88 label="Before t07" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t07 At least 8 characters" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)\n            #90 label="t07 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #92 label="t07 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t07-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #96 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #98 label="t07 At least 8 characters" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 356.3, 20.0)
+C12TEST t07 1.4 s after release: shown=true
+C12TEST t07 1.7 s after release: shown=false
+C12TEST t07 tap: shown=false
+C12TEST t07 node with a longPress action: (none)
+C12TEST t08 tree before:\n            #88 label="Before t08" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t08 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t08 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t08 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t08-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t08 hover: shown=true
+C12TEST t08 tree while shown by hover:\n            #88 label="Before t08" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t08 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t08 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t08 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t08-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t08 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t08 control rect=Rect.fromLTRB(16.0, 92.0, 64.0, 140.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 254.0, 166.0)
+C12TEST t08 pointer moved onto the tooltip, 500 ms: shown=true
+C12TEST t08 hovered 10 s: shown=true
+C12TEST t08 primary focus before Escape: FocusScopeNode#56ef5(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t08 Escape while hovered: shown=false
+C12TEST t08 pointer still on the control 3 s after Escape: shown=false
+C12TEST t08 50 ms after the pointer left: shown=false
+C12TEST t08 settled after the pointer left: shown=false
+C12TEST t08 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t08 two Tabs: focus=null shown=false
+C12TEST t08 long press held 600 ms: shown=true
+C12TEST t08 tree while shown by long press:\n            #88 label="Before t08" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t08 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t08 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t08 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t08-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t08 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t08 1.4 s after release: shown=true
+C12TEST t08 1.7 s after release: shown=false
+C12TEST t08 tap: shown=false
+C12TEST t08 node with a longPress action: (none)
+C12TEST t09 tree before:\n            #88 label="Before t09" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t09 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t09 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t09 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t09-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t09 hover: shown=true
+C12TEST t09 tree while shown by hover:\n            #88 label="Before t09" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t09 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t09 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t09 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t09-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t09 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t09 control rect=Rect.fromLTRB(16.0, 92.0, 64.0, 140.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 254.0, 166.0)
+C12TEST t09 pointer moved onto the tooltip, 500 ms: shown=true
+C12TEST t09 hovered 10 s: shown=true
+C12TEST t09 primary focus before Escape: FocusScopeNode#90ad4(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t09 Escape while hovered: shown=false
+C12TEST t09 pointer still on the control 3 s after Escape: shown=false
+C12TEST t09 50 ms after the pointer left: shown=false
+C12TEST t09 settled after the pointer left: shown=false
+C12TEST t09 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t09 two Tabs: focus=null shown=false
+C12TEST t09 long press held 600 ms: shown=true
+C12TEST t09 tree while shown by long press:\n            #88 label="Before t09" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t09 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t09 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t09 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t09-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t09 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t09 1.4 s after release: shown=true
+C12TEST t09 1.7 s after release: shown=false
+C12TEST t09 tap: shown=false
+C12TEST t09 node with a longPress action: (none)
+C12TEST t10 tree before:\n            #88 label="Before t10" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t10 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t10 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t10 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t10-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t10 hover: shown=true
+C12TEST t10 tree while shown by hover:\n            #88 label="Before t10" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t10 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t10 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t10 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t10-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t10 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t10 control rect=Rect.fromLTRB(16.0, 92.0, 64.0, 140.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 254.0, 166.0)
+C12TEST t10 pointer moved onto the tooltip, 500 ms: shown=true
+C12TEST t10 hovered 10 s: shown=true
+C12TEST t10 primary focus before Escape: FocusScopeNode#43e8f(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t10 Escape while hovered: shown=false
+C12TEST t10 pointer still on the control 3 s after Escape: shown=false
+C12TEST t10 50 ms after the pointer left: shown=false
+C12TEST t10 settled after the pointer left: shown=false
+C12TEST t10 Tab stops: Focus/null shown=true -> Focus/null shown=true -> Focus/null shown=true -> Focus/null shown=true
+C12TEST t10 two Tabs: focus=null shown=true
+C12TEST t10 tree while shown by focus:\n            #187 label="Before t10" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #188 label="" tooltip="t10 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #189 label="" tooltip="" hint="" flags=[button, focused] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #190 label="t10 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #192 label="t10 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t10-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #196 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #198 label="t10 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t10 focused 10 s: shown=true
+C12TEST t10 Escape while focused: shown=false focus still=null
+C12TEST t10 after two more Tabs: shown=false
+C12TEST t10 long press held 600 ms: shown=true
+C12TEST t10 tree while shown by long press:\n            #88 label="Before t10" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t10 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t10 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t10 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t10-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t10 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t10 1.4 s after release: shown=true
+C12TEST t10 1.7 s after release: shown=false
+C12TEST t10 tap: shown=false
+C12TEST t10 node with a longPress action: (none)
+C12TEST t11 tree before:\n            #88 label="Before t11" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="t11 Download" tooltip="" hint="t11 Saves a PDF copy" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #92 label="t11 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t11 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t11-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t11 hover: shown=true
+C12TEST t11 tree while shown by hover:\n            #88 label="Before t11" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="t11 Download" tooltip="" hint="t11 Saves a PDF copy" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #92 label="t11 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t11 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t11-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #100 label="t11 Saves a PDF copy" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 285.0, 20.0)
+C12TEST t11 control rect=Rect.fromLTRB(16.0, 92.0, 233.2, 140.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 311.0, 166.0)
+C12TEST t11 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t11 hovered 10 s: shown=true
+C12TEST t11 primary focus before Escape: FocusScopeNode#e4c0a(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t11 Escape while hovered: shown=false
+C12TEST t11 pointer still on the control 3 s after Escape: shown=false
+C12TEST t11 50 ms after the pointer left: shown=false
+C12TEST t11 settled after the pointer left: shown=false
+C12TEST t11 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t11 two Tabs: focus=null shown=false
+C12TEST t11 long press held 600 ms: shown=true
+C12TEST t11 tree while shown by long press:\n            #88 label="Before t11" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #90 label="t11 Download" tooltip="" hint="t11 Saves a PDF copy" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 217.2, 48.0)\n            #92 label="t11 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #94 label="t11 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t11-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #98 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #100 label="t11 Saves a PDF copy" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 285.0, 20.0)
+C12TEST t11 1.4 s after release: shown=true
+C12TEST t11 1.7 s after release: shown=false
+C12TEST t11 tap: shown=false
+C12TEST t11 node with a longPress action: (none)
+C12TEST t12 tree before:\n            #88 label="Before t12" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t12 At least 8 characters" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)\n            #90 label="t12 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #92 label="t12 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t12-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #96 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t12 hover: shown=true
+C12TEST t12 tree while shown by hover:\n            #88 label="Before t12" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t12 At least 8 characters" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)\n            #90 label="t12 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #92 label="t12 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t12-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #96 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #98 label="t12 At least 8 characters" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 356.3, 20.0)
+C12TEST t12 control rect=Rect.fromLTRB(16.0, 92.0, 40.0, 116.0) tooltip rect=Rect.fromLTRB(26.0, 134.0, 382.3, 154.0)
+C12TEST t12 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t12 hovered 10 s: shown=true
+C12TEST t12 primary focus before Escape: FocusScopeNode#304f3(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t12 Escape while hovered: shown=false
+C12TEST t12 pointer still on the control 3 s after Escape: shown=false
+C12TEST t12 50 ms after the pointer left: shown=false
+C12TEST t12 settled after the pointer left: shown=false
+C12TEST t12 Tab stops: _FocusScopeWithExternalFocusNode/_ModalScopeState<dynamic> Focus Scope shown=false -> _FocusScopeWithExternalFocusNode/_ModalScopeState<dynamic> Focus Scope shown=false -> _FocusScopeWithExternalFocusNode/_ModalScopeState<dynamic> Focus Scope shown=false -> _FocusScopeWithExternalFocusNode/_ModalScopeState<dynamic> Focus Scope shown=false
+C12TEST t12 two Tabs: focus=_ModalScopeState<dynamic> Focus Scope shown=false
+C12TEST t12 long press held 600 ms: shown=false
+C12TEST t12 1.4 s after release: shown=true
+C12TEST t12 1.7 s after release: shown=false
+C12TEST t12 tap: shown=true
+C12TEST t12 node with a longPress action: (none)
+C12TEST t13 tree before:\n            #88 label="Before t13" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t13 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t13 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t13 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t13-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t13 hover: shown=true
+C12TEST t13 tree while shown by hover:\n            #88 label="Before t13" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t13 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t13 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t13 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t13-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t13 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t13 control rect=Rect.fromLTRB(16.0, 92.0, 64.0, 140.0) tooltip rect=Rect.fromLTRB(26.0, 146.0, 254.0, 166.0)
+C12TEST t13 pointer moved onto the tooltip, 500 ms: shown=false
+C12TEST t13 hovered 10 s: shown=true
+C12TEST t13 primary focus before Escape: FocusScopeNode#a3b55(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t13 Escape while hovered: shown=false
+C12TEST t13 pointer still on the control 3 s after Escape: shown=false
+C12TEST t13 50 ms after the pointer left: shown=false
+C12TEST t13 settled after the pointer left: shown=false
+C12TEST t13 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t13 two Tabs: focus=null shown=false
+C12TEST t13 long press held 600 ms: shown=true
+C12TEST t13 tree while shown by long press:\n            #88 label="Before t13" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t13 Delete draft" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)\n              #90 label="" tooltip="" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)\n            #91 label="t13 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #93 label="t13 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t13-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #97 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #99 label="t13 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t13 1.4 s after release: shown=true
+C12TEST t13 1.7 s after release: shown=false
+C12TEST t13 tap: shown=false
+C12TEST t13 node with a longPress action: (none)
+C12TEST t14 tree before:\n            #88 label="Before t14" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t14 Delete draft" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 52.4)\n            #90 label="t14 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #92 label="t14 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t14-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #96 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+C12TEST t14 hover: shown=true
+C12TEST t14 tree while shown by hover:\n            #88 label="Before t14" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t14 Delete draft" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 52.4)\n            #90 label="t14 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #92 label="t14 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t14-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #96 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #98 label="t14 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t14 control rect=Rect.fromLTRB(16.0, 92.0, 76.4, 144.4) tooltip rect=Rect.fromLTRB(18.0, 122.2, 246.0, 142.2)
+C12TEST t14 pointer moved onto the tooltip, 500 ms: shown=true
+C12TEST t14 hovered 10 s: shown=true
+C12TEST t14 primary focus before Escape: FocusScopeNode#c6981(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+C12TEST t14 Escape while hovered: shown=true
+C12TEST t14 pointer still on the control 3 s after Escape: shown=true
+C12TEST t14 50 ms after the pointer left: shown=true
+C12TEST t14 settled after the pointer left: shown=false
+C12TEST t14 Tab stops: Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false -> Focus/null shown=false
+C12TEST t14 two Tabs: focus=null shown=false
+C12TEST t14 long press held 600 ms: shown=true
+C12TEST t14 tree while shown by long press:\n            #88 label="Before t14" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n            #89 label="" tooltip="t14 Delete draft" hint="" flags=[button] actions=[tap, focus] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 52.4)\n            #90 label="t14 line under the control" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n              #92 label="t14 taps: 0" tooltip="" hint="" flags=[] actions=[] id="t14-taps" rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)\n          #96 label="C12 probe" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)\n      #98 label="t14 Delete draft" tooltip="" hint="" flags=[] actions=[] id="" rect=Rect.fromLTRB(0.0, 0.0, 228.0, 20.0)
+C12TEST t14 1.4 s after release: shown=true
+C12TEST t14 1.7 s after release: shown=false
+C12TEST t14 tap: shown=false
+C12TEST t14 node with a longPress action: (none)
+C12TEST t02 view unfocused: focus on the root scope=true shown=true
+C12TEST t02 Escape with the view unfocused: handled=false shown=true
+C12TEST t13 view unfocused: focus on the root scope=true shown=true
+C12TEST t13 Escape with the view unfocused: handled=true shown=false
+C12TEST t14 view unfocused: focus on the root scope=true shown=true
+C12TEST t14 Escape with the view unfocused: handled=false shown=true
+C12TEST colours Brightness.dark: page=Color(alpha: 1.0000, red: 0.0706, green: 0.0745, blue: 0.0941, colorSpace: ColorSpace.sRGB) box=Color(alpha: 1.0000, red: 0.9071, green: 0.9075, blue: 0.9094, colorSpace: ColorSpace.sRGB) text=Color(alpha: 1.0000, red: 0.0000, green: 0.0000, blue: 0.0000, colorSpace: ColorSpace.sRGB) text/box=17.05 box/page=15.06
+C12TEST colours Brightness.light: page=Color(alpha: 1.0000, red: 0.9843, green: 0.9725, blue: 1.0000, colorSpace: ColorSpace.sRGB) box=Color(alpha: 1.0000, red: 0.4408, green: 0.4396, blue: 0.4424, colorSpace: ColorSpace.sRGB) text=Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB) text/box=4.94 box/page=4.70
+00:03 +66: All tests passed!

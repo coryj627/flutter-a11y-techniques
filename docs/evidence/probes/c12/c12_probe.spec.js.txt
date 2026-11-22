@@ -1,0 +1,232 @@
+// C12 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/c12/c12_probe.spec.js.txt with c12probe.config.js.txt).
+// For each fixture of lib/probe.dart: its semantics elements, Chromium's
+// accessibility tree, Tab stops, and whether the tooltip is drawn after a
+// hover, after the pointer moves onto it, after eight seconds of hover,
+// after Escape with no element of the page focused and with the control
+// focused, and after Tab. Whether the tooltip is drawn is read from the
+// screen: the pixels of the band under the control that differ from a
+// screenshot taken before anything was done (`drawn`). The semantics DOM is
+// also compared before and while the tooltip is shown.
+import { test } from '@playwright/test';
+import zlib from 'node:zlib';
+
+const ids = ['t01', 't02', 't03', 't04', 't05', 't06', 't07', 't08', 't09', 't10', 't11', 't12', 't13', 't14'];
+
+function log(...a) {
+  console.log('C12WEB', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+function decodePng(buffer) {
+  let pos = 8;
+  let width, height, channels;
+  const idat = [];
+  while (pos < buffer.length) {
+    const length = buffer.readUInt32BE(pos);
+    const type = buffer.toString('ascii', pos + 4, pos + 8);
+    const body = buffer.subarray(pos + 8, pos + 8 + length);
+    pos += 12 + length;
+    if (type === 'IHDR') {
+      width = body.readUInt32BE(0);
+      height = body.readUInt32BE(4);
+      channels = { 2: 3, 6: 4 }[body[9]];
+    } else if (type === 'IDAT') idat.push(body);
+    else if (type === 'IEND') break;
+  }
+  const raw = zlib.inflateSync(Buffer.concat(idat));
+  const stride = width * channels;
+  const out = new Uint32Array(width * height);
+  let prev = new Uint8Array(stride);
+  for (let y = 0; y < height; y++) {
+    const filter = raw[y * (stride + 1)];
+    const line = Uint8Array.from(raw.subarray(y * (stride + 1) + 1, (y + 1) * (stride + 1)));
+    for (let x = 0; x < stride; x++) {
+      const a = x >= channels ? line[x - channels] : 0;
+      const b = prev[x];
+      const c = x >= channels ? prev[x - channels] : 0;
+      let p = 0;
+      if (filter === 1) p = a;
+      else if (filter === 2) p = b;
+      else if (filter === 3) p = (a + b) >> 1;
+      else if (filter === 4) {
+        const q = a + b - c;
+        const pa = Math.abs(q - a), pb = Math.abs(q - b), pc = Math.abs(q - c);
+        p = pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
+      }
+      line[x] = (line[x] + p) & 255;
+    }
+    for (let x = 0; x < width; x++) {
+      const o = x * channels;
+      out[y * width + x] = (line[o] << 16) | (line[o + 1] << 8) | line[o + 2];
+    }
+    prev = line;
+  }
+  return { width, height, at: (x, y) => out[y * width + x] };
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-taps"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+function clean(html) {
+  return html.replace(/ style="[^"]*"/g, '').replace(/ id="flt-semantic-node-\d+"/g, '');
+}
+
+async function elements(page, id) {
+  return page.evaluate((id) => {
+    const host = document.querySelector('flt-semantics-host');
+    const own = (e) => (e.getAttribute('aria-label') || '') + [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('');
+    return [...host.querySelectorAll('*')]
+      .filter((e) => own(e).includes(id) && !own(e).startsWith(`Before ${id}`) && !own(e).startsWith(`${id} taps`) && !own(e).startsWith(`${id} line`))
+      .map((e) => e.outerHTML.replace(/>[\s\S]*$/, '>') + ` text="${own(e)}"`);
+  }, id);
+}
+
+// The control: the innermost element with the button role in the fixture,
+// else the fixture's own element (whose box is the whole row) at its left,
+// where the 24 pixel icon is.
+async function controlBox(page, id) {
+  return page.evaluate((id) => {
+    const host = document.querySelector('flt-semantics-host');
+    const own = (e) => (e.getAttribute('aria-label') || '') + [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('');
+    const mine = [...host.querySelectorAll('*')].filter((e) => own(e).includes(id) && !own(e).startsWith(`Before ${id}`) && !own(e).startsWith(`${id} taps`) && !own(e).startsWith(`${id} line`));
+    const before = [...host.querySelectorAll('*')].find((e) => own(e) === `Before ${id}`);
+    let button = null;
+    for (const e of mine) {
+      const inner = e.querySelector('[role=button]');
+      if (e.getAttribute('role') === 'button') button = e;
+      else if (inner) button = inner;
+    }
+    if (!button && before) {
+      // An unnamed button after "Before" (t02's IconButton).
+      const all = [...host.querySelectorAll('[role=button]')].filter((e) => {
+        const r = e.getBoundingClientRect();
+        return r.y > before.getBoundingClientRect().y && r.y < before.getBoundingClientRect().y + 80;
+      });
+      if (all.length) button = all[0];
+    }
+    const box = (e) => {
+      const r = e.getBoundingClientRect();
+      return { x: r.x, y: r.y, w: r.width, h: r.height };
+    };
+    if (button) return { ...box(button), how: 'button element' };
+    const r = box(mine[0]);
+    return { x: r.x, y: r.y, w: 24, h: r.h, how: 'row element, icon at its left' };
+  }, id);
+}
+
+async function band(page, c) {
+  const png = decodePng(await page.screenshot());
+  const pixels = [];
+  const y0 = Math.round(c.y + c.h), y1 = Math.min(png.height - 1, Math.round(c.y + c.h + 40));
+  const x0 = Math.max(0, Math.round(c.x - 10)), x1 = Math.min(png.width - 1, Math.round(c.x + 300));
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) pixels.push(png.at(x, y));
+  return pixels;
+}
+
+function differs(a, b) {
+  let n = 0;
+  for (let i = 0; i < a.length; i++) {
+    const p = a[i], q = b[i];
+    const d = Math.max(Math.abs((p >> 16) - (q >> 16)), Math.abs(((p >> 8) & 255) - ((q >> 8) & 255)), Math.abs((p & 255) - (q & 255)));
+    if (d > 40) n++;
+  }
+  return n;
+}
+
+// Drawn: more than 1500 pixels of the band under the control differ from
+// the first screenshot (a tooltip box is about 228 by 28).
+async function drawn(page, c, base) {
+  const n = differs(await band(page, c), base);
+  return `${n > 1500 ? 'drawn' : 'not drawn'} (${n} px differ)`;
+}
+
+async function active(page) {
+  return page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e || !e.closest('flt-semantics-host')) return `(page: ${e?.tagName})`;
+    return `${e.tagName}${e.getAttribute('role') ? `[role=${e.getAttribute('role')}]` : ''} "${e.getAttribute('aria-label') || e.textContent.trim()}"`;
+  });
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of ids) {
+  test(`probe ${id}`, async ({ page, context }) => {
+    await page.setViewportSize({ width: 800, height: 900 });
+    await fresh(page, id);
+    for (const e of await elements(page, id)) log(id, 'element', clean(e));
+    const cdp = await context.newCDPSession(page);
+    const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+    for (const n of nodes) {
+      if (n.ignored) continue;
+      const name = n.name?.value ?? '';
+      const desc = (n.properties ?? []).find((p) => p.name === 'description')?.value?.value ?? n.description?.value ?? '';
+      if (!(name.includes(id) || desc.includes(id)) || name.startsWith('Before') || name.startsWith(`${id} taps`) || name.startsWith(`${id} line`)) continue;
+      if (['StaticText', 'InlineTextBox'].includes(n.role?.value)) continue;
+      log(id, 'ax', `role=${n.role?.value} name="${name}" description="${n.description?.value ?? ''}"`);
+    }
+    const c = await controlBox(page, id);
+    log(id, 'control', JSON.stringify(c));
+    const base = await band(page, c);
+    const cx = c.x + c.w / 2, cy = c.y + c.h / 2;
+    log(id, 'active element before anything', await active(page));
+
+    // Hover, from a fresh load: no element of the page has focus.
+    await page.mouse.move(cx, cy);
+    await page.waitForTimeout(400);
+    log(id, 'hover 400 ms:', await drawn(page, c, base));
+    const domWhileShown = await elements(page, id);
+    log(id, 'semantics elements while hovered:', domWhileShown.length, JSON.stringify(domWhileShown.map(clean)));
+    await page.waitForTimeout(8000);
+    log(id, 'hover 8 s:', await drawn(page, c, base));
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+    log(id, 'Escape, no element focused (', await active(page), '):', await drawn(page, c, base));
+    await page.mouse.move(5, 880);
+    await page.waitForTimeout(600);
+    log(id, 'pointer away 600 ms:', await drawn(page, c, base));
+
+    // Onto the tooltip: from the control's centre straight down to 16 px
+    // under its bottom edge, in ten steps.
+    await page.mouse.move(cx, cy);
+    await page.waitForTimeout(400);
+    await page.mouse.move(cx + 20, c.y + c.h + 16, { steps: 10 });
+    await page.waitForTimeout(500);
+    log(id, 'pointer on the tooltip 500 ms:', await drawn(page, c, base));
+    await page.mouse.move(5, 880);
+    await page.waitForTimeout(600);
+
+    // Keyboard: Tab stops, and whether the tooltip is drawn at each.
+    await fresh(page, id);
+    const stops = [];
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(500);
+      stops.push(`${await active(page)} ${await drawn(page, c, base)}`);
+    }
+    log(id, 'Tab stops:', stops.join(' -> '));
+
+    // Escape with the control focused and the tooltip hovered.
+    await fresh(page, id);
+    let reached = false;
+    for (let i = 0; i < 3 && !reached; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(300);
+      const a = await active(page);
+      reached = !a.includes('Back') && !a.startsWith('(page');
+    }
+    log(id, 'focused for Escape:', await active(page));
+    await page.mouse.move(cx, cy);
+    await page.waitForTimeout(400);
+    log(id, 'hover with focus in the page:', await drawn(page, c, base));
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+    log(id, 'Escape with focus in the page:', await drawn(page, c, base), 'active:', await active(page));
+    await page.waitForTimeout(2000);
+    log(id, '2 s later, pointer still there:', await drawn(page, c, base));
+  });
+}
