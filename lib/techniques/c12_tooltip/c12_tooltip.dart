@@ -14,21 +14,24 @@ final c12Tooltip = Technique(
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(
       note:
-          'A Flutter tooltip does not show on keyboard focus (FL-248), and '
-          'while it is shown its text is a node of its own (FL-249).',
+          'A Flutter tooltip does not show on keyboard focus (FL-248), so '
+          'good-description fails 2.1.1 for its description when used with '
+          'a keyboard. While shown, its text is a node of its own (FL-249).',
     ),
     AppPlatform.ios: PlatformStatus.applies(
       note:
-          'A Flutter tooltip does not show on keyboard focus (FL-248); a '
-          'tooltip on a node with nothing else is not reached by VoiceOver '
-          '(FL-252).',
+          'A Flutter tooltip does not show on keyboard focus (FL-248), so '
+          'good-description fails 2.1.1 for its description when used with '
+          'a keyboard. A tooltip on a node with nothing else is not reached '
+          'by VoiceOver (FL-252).',
     ),
     AppPlatform.web: PlatformStatus.applies(
       note:
           'While no element of the page has focus, Escape does not hide a '
           'tooltip (FL-482), so the good examples fail 1.4.13 in that '
-          'state. A tooltip does not show on keyboard focus (FL-248). No '
-          'workaround in the SDK.',
+          'state. A tooltip does not show on keyboard focus (FL-248), so '
+          'good-description fails 2.1.1 for its description. No workaround '
+          'in the SDK.',
     ),
   },
   wcag: const [

@@ -114,6 +114,11 @@ class GoodCupertino extends StatelessWidget {
         child: Tooltip(
           message: 'Delete draft',
           ignorePointer: false,
+          // A CupertinoButton is 52.4 high, so Material's default of 24
+          // from the centre puts the box 2.2 over the button's edge, and
+          // with the pointer there Escape does not hold (FL-250). 28 leaves
+          // a gap of 1.8, below and, flipped, above.
+          verticalOffset: 28,
           // Flutter 3.47.5: on the web Enter is ButtonActivateIntent, which
           // CupertinoButton does not handle (FL-002, as in C01's
           // good-cupertino); Space works.
@@ -146,7 +151,10 @@ class GoodCupertino extends StatelessWidget {
 /// saves a PDF copy. `MergeSemantics` puts the tooltip on the Material
 /// button (FL-040). TalkBack reads it after the button's role; on iOS and
 /// the web it joins the button's name, after it on iOS and before it on the
-/// web (FL-251).
+/// web (FL-251). Good with a qualification: the description is on screen
+/// only in the tooltip, which no key shows (FL-248), so a sighted keyboard
+/// user cannot get it, and it fails 2.1.1 for the description wherever a
+/// keyboard is used.
 class GoodDescription extends StatelessWidget {
   const GoodDescription({super.key});
 

@@ -107,7 +107,10 @@ though XCUITest lists it with the tooltip as its label.
   FL-247.
 - No tooltip shows on keyboard focus: FL-248.
 - While shown, a tooltip's text is a node of its own: FL-249.
-- A `RawTooltip` sits over its control by default: FL-250 (t14).
+- A `RawTooltip` sits over its control by default: FL-250 (t14). So did
+  Material's `Tooltip` on `good-cupertino`'s 52.4 high button as first
+  built (`probe5_test.dart.txt`, `flutter_test_overlap.txt`, after Codex
+  round 1): with the pointer on the overlap, Escape did not hold.
 - A tooltip is part of the name on iOS and the web: FL-251 (t05, t06).
 - VoiceOver on iOS passes over a node with only a tooltip: FL-252.
 - A `Tooltip` round a Material button misses it: FL-040, extended.

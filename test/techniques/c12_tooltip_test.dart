@@ -359,11 +359,19 @@ void main() {
             }
           }
           final control = _controlRect(tester, slug);
+          final below = box.top >= control.center.dy;
+          // Positive: a gap between the control and the box; negative: the
+          // box over the control's edge (FL-250).
+          final gap = below
+              ? box.top - control.bottom
+              : control.top - box.bottom;
           debugPrint(
             'C12GEOM $slug ${width}x640 ${scale * 100}%: control $control, '
-            'tooltip box $box (${box.top >= control.center.dy ? 'below' : 'above'} '
-            'the control), covers ${covered.join(', ')}',
+            'tooltip box $box (${below ? 'below' : 'above'} the control, '
+            '${gap < 0 ? 'over its edge by ${(-gap).toStringAsFixed(1)}' : 'a gap of ${gap.toStringAsFixed(1)}'}), '
+            'covers ${covered.join(', ')}',
           );
+          expect(gap, greaterThanOrEqualTo(0), reason: 'not over the control');
           expect(covered, isNotEmpty, reason: 'the box lies over other text');
           if (box.top >= control.center.dy) {
             expect(
@@ -373,6 +381,54 @@ void main() {
             );
           }
         });
+      }
+
+      // FL-250: where the box lay over the control's edge, Escape with the
+      // pointer there hid it for a few frames and the hover showed it again
+      // (docs/evidence/probes/c12/flutter_test_overlap.txt, good-cupertino
+      // before verticalOffset). With the pointer 0.5 inside the tooltip's
+      // edge nearest the control, and 0.5 inside the control's edge nearest
+      // the tooltip, below it and flipped above it, Escape hides it and it
+      // stays hidden for 30 frames.
+      for (final (width, scale) in [(800.0, 1.0), (320.0, 2.0)]) {
+        for (final edge in ['tooltip', 'control']) {
+          testWidgets('$slug: with the pointer at the $edge\'s edge nearest '
+              'the other, Escape hides the tooltip and it stays hidden '
+              '($width wide, ${scale * 100}% text)', (tester) async {
+            tester.view.physicalSize = Size(width, 640);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.reset);
+            await _open(tester, slug, textScale: scale);
+            final mouse = await _mouse(tester);
+            final control = _controlRect(tester, slug);
+            await mouse.moveTo(control.center);
+            await tester.pumpAndSettle();
+            final box = tester.getRect(
+              find
+                  .byWidgetPredicate(
+                    (w) => w.runtimeType.toString() == '_TooltipBox',
+                  )
+                  .first,
+            );
+            final below = box.top >= control.center.dy;
+            final y = switch ((edge, below)) {
+              ('tooltip', true) => box.top + 0.5,
+              ('tooltip', false) => box.bottom - 0.5,
+              (_, true) => control.bottom - 0.5,
+              (_, false) => control.top + 0.5,
+            };
+            await mouse.moveTo(Offset(control.center.dx, y));
+            await tester.pumpAndSettle();
+            expect(_shown(tester, slug), isTrue);
+            await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+            final seen = <bool>[];
+            for (var i = 0; i < 30; i++) {
+              await tester.pump(const Duration(milliseconds: 16));
+              seen.add(_shown(tester, slug));
+            }
+            expect(seen.skip(10), everyElement(isFalse), reason: '$seen');
+          });
+        }
       }
 
       testWidgets('$slug: the pointer can move onto the tooltip, and it '

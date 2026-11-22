@@ -131,7 +131,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-247](#fl-247) | A tooltip with a plain message, and every `IconButton.tooltip`, takes no pointer events, so the pointer cannot move onto it | Web, Android (with a mouse), widget tests; iOS not measured | Confirmed |
 | [FL-248](#fl-248) | No Flutter tooltip shows on keyboard focus | All | Confirmed |
 | [FL-249](#fl-249) | While a tooltip is shown, its text is a node of its own inside its control | All | Confirmed |
-| [FL-250](#fl-250) | A `RawTooltip` is placed over its control by default, and Escape does not hide it while the pointer is on the control's lower half | Widget tests only | Confirmed (widget test only) |
+| [FL-250](#fl-250) | A tooltip whose box lies over its control's edge does not stay hidden after Escape while the pointer is on that strip: a `RawTooltip` by default, and a Material `Tooltip` on a control taller than 48 | Widget tests only | Confirmed (widget test only) |
 | [FL-251](#fl-251) | A tooltip is part of its control's name on iOS and the web, before the control's own text on the web; only Android treats it as separate text | iOS, Web | Confirmed |
 | [FL-252](#fl-252) | On iOS VoiceOver does not stop on a node whose only text is a tooltip | iOS | Confirmed |
 | [FL-253](#fl-253) | A `FilledButton`'s text is under 4.5:1 in light mode while it has keyboard focus and a hover | All (widget test only) | Confirmed (widget test only) |
@@ -3133,15 +3133,22 @@ yet), **Fixed in x.y** (verified on that version).
   to focus.
 - WCAG: no failure of 1.4.13 as written, which covers content that does
   appear on focus and does not require any to. The source that asks for a
-  tooltip on focus is APG's tooltip pattern; its Understanding document
-  says content a hover can show "should also be able to be triggered by
-  keyboard focus" and points to 2.1.1. On an icon-only button whose
-  tooltip is its name, a sighted keyboard-only user loses the visible
-  text of the name and fails no criterion as written: the name is the
-  icon's text alternative (1.1.1), 2.5.3 is about a visible text label,
-  which the button has not, and the button works from the keyboard
-  (2.1.1). Where the tooltip is the only place information is, 2.1.1
-  fails (C12 `bad-hover-only`).
+  tooltip on focus is APG's tooltip pattern; the Understanding document
+  of 1.4.13 says content a hover can show "should also be able to be
+  triggered by keyboard focus" and points to 2.1.1. 2.1.1 fails wherever
+  the tooltip is the only place on screen its information is shown, on a
+  platform used with a keyboard: C12 `good-description` (its description,
+  "Saves a PDF copy", is on screen only in the tooltip; the button itself
+  works from the keyboard) and C12 `bad-hover-only` (a rule only in the
+  tooltip of an icon that takes no focus at all). A screen reader's
+  reading of the tooltip does not give a sighted keyboard user the
+  words. Not claimed failed: an icon-only button whose tooltip repeats
+  its name (C12 `good-material`, `good-cupertino`). There the button's
+  purpose is shown by its icon and given to assistive technology by its
+  name (1.1.1), the tooltip is a second showing of the same name, and
+  the button works from the keyboard; a sighted keyboard-only user loses
+  the visible words of the name, which 2.5.3 does not ask for (it is about
+  a visible text label, which the button has not).
 - What users get: a keyboard user never sees a tooltip. Where the tooltip
   is an icon button's name, its words reach a screen reader as the name,
   and a sighted keyboard user does not see them.
@@ -3190,24 +3197,45 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-250
 
-**A `RawTooltip` is placed over its control by default, and Escape does not hide it while the pointer is on the control's lower half.**
+**A tooltip whose box lies over its control's edge does not stay hidden after Escape while the pointer is on that strip: a `RawTooltip` by default, and a Material `Tooltip` on a control taller than 48.**
 
-- Status: Confirmed in the widget tests only, Flutter 3.47.5. Found in the
-  C12 probe (t14, `flutter_test.txt`, "Escape while hovered: shown=true"
-  and `probe2_test.dart.txt`, "Escape frame by frame": hidden for one
-  frame, then shown again). Asserted by the C12 widget test "RawTooltip by
-  default: placed over the control's lower half, and Escape with the
-  pointer there does not hold". Source read: `widgets/raw_tooltip.dart`,
-  `_TooltipPositionDelegate`, which calls `positionDependentBox` with no
-  vertical offset, so the box's top is the control's centre.
+- Status: Confirmed in the widget tests only, Flutter 3.47.5, in two
+  cases. Not measured on a device.
+  - `RawTooltip` with its defaults: found in the C12 probe (t14,
+    `flutter_test.txt`, "Escape while hovered: shown=true", and
+    `probe2_test.dart.txt`, "Escape frame by frame": hidden for one frame,
+    then shown again). Asserted by the C12 widget test "RawTooltip by
+    default: placed over the control's lower half, and Escape with the
+    pointer there does not hold". Source read: `widgets/raw_tooltip.dart`,
+    `_TooltipPositionDelegate`, which calls `positionDependentBox` with no
+    vertical offset, so the box's top is the control's centre.
+  - Material's `Tooltip` with its default `verticalOffset`, 24, round a
+    `CupertinoButton`, 52.4 high (C12 `good-cupertino` as first built):
+    the box lay 2.2 over the button's bottom edge, and flipped above at
+    200% text on a 320 wide screen, 2.2 over its top edge. With the
+    pointer in that strip, after Escape the tooltip faded out over five
+    frames, was gone for three, and from the ninth was shown again and
+    stayed
+    (`docs/evidence/probes/c12/flutter_test_overlap.txt`, from
+    `probe5_test.dart.txt`). Source read: Material's `Tooltip` places its
+    box `verticalOffset` from the control's centre, so any control taller
+    than twice that, 48 by default, is overlapped. On 48 high controls
+    (`good-material`, `good-description`) the gap is 0.0 in both
+    directions, and Escape held with the pointer on either side of the
+    edge.
 - WCAG: 1.4.13, dismissible, where the box covers content.
-- What happens: with the pointer at the control's centre the pointer is on
-  the box. Escape hides it, the pointer is then on the control, and the
-  hover shows it again in the next frame. Material's `Tooltip` places its
-  box 24 under the control's centre, below a 48 high control, and is not
-  affected.
-- Workaround, in the SDK: a `positionDelegate` that places the box off the
-  control, or Material's `Tooltip`. C12 uses Material's.
+- What happens: with the pointer on the strip where the box lies over the
+  control, the pointer is on the box. Escape hides it, the pointer is then
+  on the control, and the hover shows it again.
+- Workaround, in the SDK: place the box off the control. For Material's
+  `Tooltip`, a `verticalOffset` of at least half the control's height
+  (C12 `good-cupertino`: 28 on a 52.4 high button, a gap of 1.8 below and
+  above, asserted by the C12 widget tests "the shown tooltip lies over
+  other text on the screen", which require no overlap, and "with the
+  pointer at the tooltip's edge nearest the other, Escape hides the
+  tooltip and it stays hidden" and its counterpart at the control's edge,
+  which failed with the default offset); for a `RawTooltip`, a
+  `positionDelegate`.
 - Upstream issue: not searched yet (D25).
 
 ## FL-251
