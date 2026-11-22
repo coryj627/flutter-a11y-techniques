@@ -1,0 +1,19 @@
+#!/bin/sh
+# C12 probe on iOS, under tool/with_devices.py (throwaway; kept as
+# docs/evidence/probes/c12/ios_probe.sh.txt). Run from the worktree root,
+# after `fvm flutter build ios --simulator --debug -t lib/probe.dart` and
+# `FLUTTER_TARGET=lib/probe.dart xcodebuild build-for-testing` into
+# build/ios_uitest. Changes no simulator setting; testVoiceOver turns
+# VoiceOver on and off through XCUIVoiceOverService.
+xcrun simctl list devices booted | grep -i "iphone"
+cd ios || exit 1
+run() {
+  echo "== $1"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/ProbeC12UITests/$1" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "C12PROBE|error:|passed|failed|skipped" | grep -v "Test Suite"
+}
+for t in ${TESTS:-testTree testKeys testVoiceOver}; do run $t; done
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

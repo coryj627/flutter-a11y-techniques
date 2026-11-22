@@ -1,0 +1,80 @@
+t01 ax before: ["role=button name=\"t01 Delete draft\" description=\"\" parent=generic:\"\"","role=StaticText name=\"t01 Delete draft\" description=\"\" parent=button:\"t01 Delete draft\""]
+t01 tooltip text elements before: 1
+t01 tooltip text elements while hovered: 2
+t01 ax while hovered: ["role=button name=\"t01 Delete draft t01 Delete draft\" description=\"\" parent=generic:\"\"","role=StaticText name=\"t01 Delete draft\" description=\"\" parent=button:\"t01 Delete draft t01 Delete draft\"","role=StaticText name=\"t01 Delete draft\" description=\"\" parent=generic:\"\""]
+t01 after blur(): (page: BODY)
+t01 Escape with no element focused: tooltip text elements 2
+t01 2 s later, pointer still there: tooltip text elements 2
+t01 after a click on an empty part of the page: (page: FLUTTER-VIEW)
+t01 hovered again: tooltip text elements 2
+t01 Escape after the click: tooltip text elements 1 active: (page: FLUTTER-VIEW)
+t02 ax before: ["role=generic name=\"t02 Delete draft\" description=\"\" parent=group:\"\""]
+t02 tooltip text elements before: 0
+t02 tooltip text elements while hovered: 1
+t02 ax while hovered: ["role=generic name=\"t02 Delete draft\" description=\"\" parent=group:\"\"","role=StaticText name=\"t02 Delete draft\" description=\"\" parent=generic:\"\""]
+t02 after blur(): (page: BODY)
+t02 Escape with no element focused: tooltip text elements 1
+t02 2 s later, pointer still there: tooltip text elements 1
+t02 after a click on an empty part of the page: (page: FLUTTER-VIEW)
+t02 hovered again: tooltip text elements 1
+t02 Escape after the click: tooltip text elements 0 active: (page: FLUTTER-VIEW)
+t06 ax before: ["role=button name=\"t06 Download t06 Download\" description=\"\" parent=generic:\"\"","role=StaticText name=\"t06 Download t06 Download\" description=\"\" parent=button:\"t06 Download t06 Download\""]
+t06 tooltip text elements before: 0
+t06 tooltip text elements while hovered: 1
+t06 ax while hovered: ["role=button name=\"t06 Download t06 Download t06 Download\" description=\"\" parent=generic:\"\"","role=StaticText name=\"t06 Download t06 Download\" description=\"\" parent=button:\"t06 Download t06 Download t06 Download\"","role=StaticText name=\"t06 Download\" description=\"\" parent=generic:\"\""]
+t06 after blur(): (page: BODY)
+t06 Escape with no element focused: tooltip text elements 1
+t06 2 s later, pointer still there: tooltip text elements 1
+t06 after a click on an empty part of the page: (page: FLUTTER-VIEW)
+t06 hovered again: tooltip text elements 1
+t06 Escape after the click: tooltip text elements 0 active: (page: FLUTTER-VIEW)
+t08 ax before: ["role=generic name=\"t08 Delete draft\" description=\"\" parent=group:\"\""]
+t08 tooltip text elements before: 0
+t08 tooltip text elements while hovered: 1
+t08 ax while hovered: ["role=generic name=\"t08 Delete draft\" description=\"\" parent=group:\"\"","role=StaticText name=\"t08 Delete draft\" description=\"\" parent=generic:\"\""]
+t08 after blur(): (page: BODY)
+t08 Escape with no element focused: tooltip text elements 1
+t08 2 s later, pointer still there: tooltip text elements 1
+t08 after a click on an empty part of the page: (page: FLUTTER-VIEW)
+t08 hovered again: tooltip text elements 1
+t08 Escape after the click: tooltip text elements 0 active: (page: FLUTTER-VIEW)
+t10 ax before: ["role=generic name=\"t10 Delete draft\" description=\"\" parent=group:\"\""]
+t10 tooltip text elements before: 0
+t10 tooltip text elements while hovered: 1
+t10 ax while hovered: ["role=generic name=\"t10 Delete draft\" description=\"\" parent=group:\"\"","role=StaticText name=\"t10 Delete draft\" description=\"\" parent=generic:\"\""]
+t10 after blur(): (page: BODY)
+t10 Escape with no element focused: tooltip text elements 1
+t10 2 s later, pointer still there: tooltip text elements 1
+t10 after a click on an empty part of the page: (page: FLUTTER-VIEW)
+t10 hovered again: tooltip text elements 1
+t10 Escape after the click: tooltip text elements 0 active: (page: FLUTTER-VIEW)
+t11 ax before: ["role=button name=\"t11 Download\" description=\"t11 Saves a PDF copy\" parent=generic:\"\"","role=StaticText name=\"t11 Download\" description=\"\" parent=button:\"t11 Download\""]
+t11 tooltip text elements before: 0
+t11 tooltip text elements while hovered: 1
+t11 ax while hovered: ["role=button name=\"t11 Download t11 Saves a PDF copy\" description=\"t11 Saves a PDF copy\" parent=generic:\"\"","role=StaticText name=\"t11 Download\" description=\"\" parent=button:\"t11 Download t11 Saves a PDF copy\"","role=StaticText name=\"t11 Saves a PDF copy\" description=\"\" parent=generic:\"\""]
+t11 after blur(): (page: BODY)
+t11 Escape with no element focused: tooltip text elements 1
+t11 2 s later, pointer still there: tooltip text elements 1
+t11 after a click on an empty part of the page: (page: FLUTTER-VIEW)
+t11 hovered again: tooltip text elements 1
+t11 Escape after the click: tooltip text elements 0 active: (page: FLUTTER-VIEW)
+t13 ax before: ["role=generic name=\"t13 Delete draft\" description=\"\" parent=group:\"\""]
+t13 tooltip text elements before: 0
+t13 tooltip text elements while hovered: 1
+t13 ax while hovered: ["role=generic name=\"t13 Delete draft\" description=\"\" parent=group:\"\"","role=StaticText name=\"t13 Delete draft\" description=\"\" parent=generic:\"\""]
+t13 after blur(): (page: BODY)
+t13 Escape with no element focused: tooltip text elements 0
+t13 2 s later, pointer still there: tooltip text elements 0
+t13 after a click on an empty part of the page: (page: FLUTTER-VIEW)
+t13 hovered again: tooltip text elements 1
+t13 Escape after the click: tooltip text elements 0 active: (page: FLUTTER-VIEW)
+t14 ax before: ["role=button name=\"t14 Delete draft\" description=\"\" parent=group:\"\"","role=StaticText name=\"t14 Delete draft\" description=\"\" parent=button:\"t14 Delete draft\""]
+t14 tooltip text elements before: 1
+t14 tooltip text elements while hovered: 2
+t14 ax while hovered: ["role=button name=\"t14 Delete draft t14 Delete draft\" description=\"\" parent=group:\"\"","role=StaticText name=\"t14 Delete draft\" description=\"\" parent=button:\"t14 Delete draft t14 Delete draft\"","role=StaticText name=\"t14 Delete draft\" description=\"\" parent=generic:\"\""]
+t14 after blur(): (page: BODY)
+t14 Escape with no element focused: tooltip text elements 2
+t14 2 s later, pointer still there: tooltip text elements 2
+t14 after a click on an empty part of the page: (page: FLUTTER-VIEW)
+t14 hovered again: tooltip text elements 2
+t14 Escape after the click: tooltip text elements 1 active: (page: FLUTTER-VIEW)

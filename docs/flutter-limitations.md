@@ -128,6 +128,13 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-244](#fl-244) | A link in a `WidgetSpan` cannot break across lines with the text round it | Android, iOS, test framework (web not measured) | Confirmed |
 | [FL-245](#fl-245) | On the web `SelectableText` is an empty, disabled text field: its text and its links are not in the page | Web (Chromium) | Observed |
 | [FL-246](#fl-246) | A run of a paragraph's text that wraps has one node over the whole of its lines, which can lie over a link on the first line: on iOS a VoiceOver touch on the link finds the words | iOS (Android and web not measured) | Confirmed |
+| [FL-247](#fl-247) | A tooltip with a plain message, and every `IconButton.tooltip`, takes no pointer events, so the pointer cannot move onto it | Web, Android (with a mouse), widget tests; iOS not measured | Confirmed |
+| [FL-248](#fl-248) | No Flutter tooltip shows on keyboard focus, so showing one fails 2.1.1 wherever a keyboard is used | All | Confirmed |
+| [FL-249](#fl-249) | While a tooltip is shown, its text is a node of its own inside its control | All | Confirmed |
+| [FL-250](#fl-250) | A tooltip whose box lies over its control's edge does not stay hidden after Escape while the pointer is on that strip: a `RawTooltip` by default, and a Material `Tooltip` on a control taller than 48 | Widget tests only | Confirmed (widget test only) |
+| [FL-251](#fl-251) | A tooltip is part of its control's name on iOS and the web, before the control's own text on the web; only Android treats it as separate text | iOS, Web | Confirmed |
+| [FL-252](#fl-252) | On iOS VoiceOver does not stop on a node whose only text is a tooltip | iOS | Confirmed |
+| [FL-253](#fl-253) | A `FilledButton`'s text is under 4.5:1 in light mode while it has keyboard focus and a hover | All (widget test only) | Confirmed (widget test only) |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -363,6 +370,11 @@ yet), **Fixed in x.y** (verified on that version).
   the button once. The DOM for the button is a single
   `<flt-semantics role="button">Close</flt-semantics>`.
 - Cause: not investigated. Possibly the tooltip exposed as separate content.
+  C12 (2026-11-21) recorded VoiceOver in Chromium and WebKit on seven
+  Material tooltips, an `IconButton(tooltip:)` among them: each button was
+  read once, no tooltip was shown, and nothing was read twice
+  (`docs/evidence/probes/c12/voiceover-web-round1-fail.md.txt`). Why C01's
+  reading differed was not found.
 - Evidence: `docs/evidence/C01/voiceover-web.md`, `good-icon` and
   `bad-role-in-name` rows under chromium.
 - Workaround: none known.
@@ -1424,6 +1436,14 @@ yet), **Fixed in x.y** (verified on that version).
   `good-icon-button` and `bad-label-changes` put `MergeSemantics` round
   it. The same wrapper around a `CupertinoButton` reaches it without help
   (fixture t13).
+- Also seen in C12 (2026-11-21), the same mechanism for a tooltip:
+  `Tooltip(message:)` round an `IconButton` or a `FilledButton` puts the
+  tooltip on a node of its own outside the button, and the button has no
+  name of its own from it (`docs/evidence/probes/c12`, fixtures t02, t04,
+  t08 to t10, t13, on every platform; C12 `bad-outside-button`). TalkBack
+  read the outer node's tooltip and then "Button"; VoiceOver on iOS passed
+  over the outer node ([FL-252](#fl-252)). Inside `MergeSemantics` the
+  tooltip joins the button (t03, t05, t06; C12 `good-description`).
 - Upstream issue: not searched yet (D25). The container is deliberate; a
   `hint` (or `semanticHint`) parameter on the buttons has not been added.
 
@@ -3057,6 +3077,228 @@ yet), **Fixed in x.y** (verified on that version).
   of its own yet.
 - Upstream issue: not searched yet (D25).
 
+## FL-247
+
+**A tooltip with a plain message, and every `IconButton.tooltip`, takes no pointer events, so the pointer cannot move onto it.**
+
+- Status: Confirmed, Flutter 3.47.5. Widget tests, web (Chromium,
+  Playwright), Android (Pixel emulator, Android 17, a mouse hover injected
+  through UiAutomation). iOS not measured (XCUITest cannot hover). Found
+  in the C12 probe (`docs/evidence/probes/c12/`: `flutter_test.txt`,
+  "pointer moved onto the tooltip"; `web.txt`, "pointer on the tooltip";
+  `android-tree.txt`, "mouse moved onto the tooltip"): fixtures t01 to t07
+  and t11 to t13, all plain messages, went within 500 ms of the pointer
+  reaching the tooltip; t08 (`ignorePointer: false`) and t09
+  (`richMessage`) stayed. Asserted by the C12 widget tests "the SDK alone:
+  ... the tooltip goes when the pointer moves onto it" and by
+  `bad-not-hoverable` on the web (`web_tests/c12_tooltip.spec.js`) and on
+  Android (`C12TooltipTest.badNotHoverableGoesWhenThePointerMovesOntoIt`).
+  Source read: `material/tooltip.dart`, `ignorePointer: widget.ignorePointer
+  ?? widget.message != null`; `widgets/raw_tooltip.dart` wraps the shown
+  tooltip in `IgnorePointer`, so its own `MouseRegion` never sees the
+  pointer, and the pointer leaving the control hides it 100 ms later.
+- WCAG: 1.4.13 Content on Hover or Focus, the hoverable condition, which
+  has no exception for a tooltip drawn by the app (F95).
+- What happens: a `Tooltip(message:)` and the tooltip of `IconButton`,
+  and of every widget that builds `Tooltip(message: tooltip)` itself
+  (`ButtonStyleButton`, read in `material/button_style_button.dart`), goes
+  when the pointer moves from its control onto it. A large pointer, or a
+  screen magnifier that follows the pointer, cannot read it.
+- Workaround, in the SDK, for a `Tooltip` of your own: `ignorePointer:
+  false`, or a `richMessage`, whose default is false (C12's good
+  examples). `IconButton` and the other widgets with a `tooltip` parameter
+  have no way to pass it: Flutter has not added one yet. Leave their
+  `tooltip` unset and put a `Tooltip` round them, with the name given
+  another way (C12 `good-material`).
+- Upstream issue: not searched yet (D25).
+
+## FL-248
+
+**No Flutter tooltip shows on keyboard focus, so showing one fails 2.1.1 wherever a keyboard is used.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. In the C12 probe Tab
+  to each fixture's control showed none of the framework's tooltips: the
+  widget test (`flutter_test.txt`, "Tab stops"), the web (`web.txt`, "Tab
+  stops": the band under the control unchanged), Android (`android-tree.txt`,
+  "Tab stops"), iOS (`ios.txt`, "after 1 Tab(s)", "after 2 Tab(s)": no
+  tooltip text element). Asserted by the C12 widget tests "keyboard focus
+  does not show the tooltip" (the SDK alone and each good example), by
+  `web_tests/c12_tooltip.spec.js` ("Tab to the control does not show the
+  tooltip"), `C12TooltipTest.keyboardFocusDoesNotShowTheTooltip`, and
+  `C12TooltipUITests.testKeyboardFocusDoesNotShowTheTooltip`, each with a
+  hover or a long press in the same launch as the positive control, and
+  written to fail when focus does show it. Source read:
+  `widgets/raw_tooltip.dart` shows a tooltip on a mouse entering, on a
+  long press or a tap, and from `ensureTooltipVisible()`; nothing listens
+  to focus.
+- WCAG: 2.1.1 Keyboard fails wherever a keyboard is used, for every
+  tooltip: showing it is functionality, a hover or a long press performs
+  it, and no key does. That the control works from the keyboard, or has a
+  name for assistive technology, does not give a sighted keyboard user a
+  way to reveal the tooltip's words; 1.1.1 and 2.5.3 give no exemption.
+  The Understanding document for 1.4.13 says content a hover can show
+  "should also be able to be triggered by keyboard focus" and points to
+  2.1.1; APG's tooltip pattern shows the tooltip on focus. In C12 this is
+  every example, the three good ones included (their keyboard-focus tests
+  on every layer, above). No failure of 1.4.13 is claimed from it: 1.4.13
+  covers content that does appear on focus and does not require any to.
+- What users get: a keyboard user never sees a tooltip. Where the tooltip
+  is an icon button's name, its words reach a screen reader as the name,
+  and a sighted keyboard user cannot reveal them.
+- Workaround: none in the framework. Flutter has not added a way for a
+  tooltip to show on focus. (`TooltipState.ensureTooltipVisible()` exists;
+  calling it from a focus listener is code of the app's own, which C12
+  does not build.)
+- Upstream issue: not searched yet (D25).
+
+## FL-249
+
+**While a tooltip is shown, its text is a node of its own inside its control.**
+
+- Status: Confirmed, Flutter 3.47.5. Widget tests: a shown tooltip's text
+  is a semantics node whose traversal parent is its `OverlayPortal`, so in
+  traversal order it is inside the control, though not its child in the
+  tree (C12 widget tests "while shown, the tooltip's text is a node of its
+  own inside the control", for the SDK alone and each good example). Web
+  (Chromium): an element with the text, outside the control
+  (`web_tests/c12_tooltip.spec.js`, every good example and
+  `bad-repeats-name`); in the probe, where nothing came between a tooltip
+  and its button, the button owned it (`aria-owns`) and Chromium added it
+  to the button's name: "t01 Delete draft t01 Delete draft"
+  (`web_round2.txt`). Android: a focusable `View` named by the text
+  (`android-tree.txt`, "tooltip text nodes"). iOS: a static text element
+  in the probe, where nothing merged it (`ios.txt`, t01 after a touch, t10
+  after a Tab); in the C12 examples, each inside `TestId`'s
+  `MergeSemantics`, a long press drew the tooltip and left XCUITest's tree
+  as it was, no second element and no change to the control's label
+  (`C12TooltipUITests`, the `C12IOS` lines of its log). Whether VoiceOver
+  finds it there was not measured. Read in the source:
+  `widgets/raw_tooltip.dart` builds the tooltip in an
+  `OverlayPortal.overlayChildLayoutBuilder` and leaves its text in the
+  semantics tree.
+- What users get: while a tooltip is shown, the tree has the control and
+  then its tooltip's words again, as a node a screen reader could stop on
+  (on Android a focusable one). When the tooltip is hidden the node goes.
+  Not measured with a screen reader while a
+  tooltip was shown: in C12's web VoiceOver walks no tooltip was shown,
+  and nothing was read twice in either browser
+  (`docs/evidence/probes/c12/voiceover-web-round1-fail.md.txt`).
+- Workaround: `Tooltip.excludeFromSemantics` leaves out the tooltip's
+  semantics on its control, not the shown text. None in the framework for
+  the shown text; Flutter has not added one yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-250
+
+**A tooltip whose box lies over its control's edge does not stay hidden after Escape while the pointer is on that strip: a `RawTooltip` by default, and a Material `Tooltip` on a control taller than 48.**
+
+- Status: Confirmed in the widget tests only, Flutter 3.47.5, in two
+  cases. Not measured on a device.
+  - `RawTooltip` with its defaults: found in the C12 probe (t14,
+    `flutter_test.txt`, "Escape while hovered: shown=true", and
+    `probe2_test.dart.txt`, "Escape frame by frame": hidden for one frame,
+    then shown again). Asserted by the C12 widget test "RawTooltip by
+    default: placed over the control's lower half, and Escape with the
+    pointer there does not hold". Source read: `widgets/raw_tooltip.dart`,
+    `_TooltipPositionDelegate`, which calls `positionDependentBox` with no
+    vertical offset, so the box's top is the control's centre.
+  - Material's `Tooltip` with its default `verticalOffset`, 24, round a
+    `CupertinoButton`, 52.4 high (C12 `good-cupertino` as first built):
+    the box lay 2.2 over the button's bottom edge, and flipped above at
+    200% text on a 320 wide screen, 2.2 over its top edge. With the
+    pointer in that strip, after Escape the tooltip faded out over five
+    frames, was gone for three, and from the ninth was shown again and
+    stayed
+    (`docs/evidence/probes/c12/flutter_test_overlap.txt`, from
+    `probe5_test.dart.txt`). Source read: Material's `Tooltip` places its
+    box `verticalOffset` from the control's centre, so any control taller
+    than twice that, 48 by default, is overlapped. On 48 high controls
+    (`good-material`, `good-description`) the gap is 0.0 in both
+    directions, and Escape held with the pointer on either side of the
+    edge.
+- WCAG: 1.4.13, dismissible, where the box covers content.
+- What happens: with the pointer on the strip where the box lies over the
+  control, the pointer is on the box. Escape hides it, the pointer is then
+  on the control, and the hover shows it again.
+- Workaround, in the SDK: place the box off the control. For Material's
+  `Tooltip`, a `verticalOffset` of at least half the control's height
+  (C12 `good-cupertino`: 28 on a 52.4 high button, a gap of 1.8 below and
+  above, asserted by the C12 widget tests "the shown tooltip lies over
+  other text on the screen", which require no overlap, and "with the
+  pointer at the tooltip's edge nearest the other, Escape hides the
+  tooltip and it stays hidden" and its counterpart at the control's edge,
+  which failed with the default offset); for a `RawTooltip`, a
+  `positionDelegate`.
+- Upstream issue: not searched yet (D25).
+
+## FL-251
+
+**A tooltip is part of its control's name on iOS and the web, before the control's own text on the web; only Android treats it as separate text.**
+
+- Status: Confirmed, Flutter 3.47.5. The C12 probe, fixture t05 (a
+  `Tooltip` merged into a `FilledButton` with text): iOS label "t05
+  Download\nt05 Saves a PDF copy", read "t05 Download t05 Saves a PDF copy
+  Button" (`ios.txt`); web `aria-label` "t05 Saves a PDF copy\nt05
+  Download", Chromium name "t05 Saves a PDF copy t05 Download" (`web.txt`);
+  Android content description "t05 Download" and tooltip text "t05 Saves a
+  PDF copy", read "t05 Download / Button. t05 Saves a PDF copy"
+  (`android-talkback.md`). Asserted for `good-description` and
+  `bad-repeats-name` by every tree layer. Engine source read:
+  `SemanticsObject.mm` (iOS) appends the tooltip to the label after a line
+  break; `computeDomSemanticsLabel` in the web engine's
+  `label_and_value.dart` puts it first; `BaseRoleConfigurator.java`
+  (Android, API 28 and later) sets it as the node's tooltip text.
+- WCAG: none failed as written: the name holds the control's visible text
+  (2.5.3) and is determinable (4.1.2). APG's tooltip is the control's
+  description (`aria-describedby`), not its name.
+- What users get: on iOS and the web a tooltip that describes a control
+  is read as part of its name, and on the web before it. A tooltip that
+  repeats the control's text is read twice there (C12
+  `bad-repeats-name`); TalkBack reads it once.
+- Workaround: none in the framework for a description. Flutter has not
+  added a tooltip that is a description on iOS and the web.
+- Upstream issue: not searched yet (D25).
+
+## FL-252
+
+**On iOS VoiceOver does not stop on a node whose only text is a tooltip.**
+
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator. The C12 probe's
+  VoiceOver walks (`ios.txt`): t07 and t12, a `Tooltip` on an `Icon`, were
+  passed over ("Before t07 / t07 line under the control"), and so were the
+  nodes of t02, t04, t08 to t10, and t13, where the tooltip sat outside a
+  Material button: only "Button" or the button's own text was read.
+  XCUITest lists each of them with the tooltip as its label. Asserted by
+  the iOS VoiceOver walks of C12 `bad-hover-only` and `bad-outside-button`
+  (`C12TooltipUITests.testVoiceOverSpeech`). Engine source read:
+  `SemanticsObject.mm`, `isFocusable`, which makes a node an accessibility
+  element when it has a label, a value, a hint, or an action, and does not
+  look at its tooltip.
+- What users get: an information icon explained by a `Tooltip`, the
+  framework's way to explain an icon, is silent to VoiceOver on iOS. TalkBack
+  reads it, and so does the web's tree.
+- Workaround: give the node a label as well, for example
+  `Icon(semanticLabel:)` with `excludeFromSemantics: true` on the tooltip
+  (C12 `good-material` names its button this way).
+- Upstream issue: not searched yet (D25).
+
+## FL-253
+
+**A `FilledButton`'s text is under 4.5:1 in light mode while it has keyboard focus and a hover.**
+
+- Status: Confirmed in the widget tests only, Flutter 3.47.5, the app's
+  indigo seed. Found building C12 `good-description`, first a
+  `FilledButton`: the text contrast guideline gave 4.28:1. The probe
+  (`flutter_test_buttons.txt`, from `probe4_test.dart.txt`) ran the
+  guideline on a `FilledButton`, an `OutlinedButton`, and a `TextButton`
+  with focus, a hover, and both, in light and dark: only the
+  `FilledButton` with both, in light mode, failed. Not measured on a
+  device. Why was not looked into.
+- WCAG: 1.4.3 Contrast (Minimum), in that state.
+- Workaround: another button (C12 uses an `OutlinedButton`), or a
+  `style` whose overlay keeps the contrast. Not tried.
+- Upstream issue: not searched yet (D25).
+
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->
@@ -4341,7 +4583,32 @@ yet), **Fixed in x.y** (verified on that version).
 - The plan (section 2.6) says Escape on tooltips on the web needs
   Flutter 3.50. On the pinned 3.47.5 Escape does hide a tooltip on the web
   when focus is in the page; what 3.50 changes was not checked.
-- Workaround: none tried. The tooltip itself is C12's.
+- C12 (2026-11-21) measured it again. On the web, with no element of the
+  page focused (`blur()`), Escape left every Material tooltip of the probe
+  shown, and after a click on an empty part of the page, which gives
+  Flutter focus, Escape hid it (`docs/evidence/probes/c12/web_round2.txt`);
+  each C12 good example asserts both (`web_tests/c12_tooltip.spec.js`). On
+  the Android emulator Escape hid a tooltip shown by a touch held 800 ms,
+  300 ms after the touch ended (`android-tree.txt`, "Escape 300 ms after
+  the touch was released"), unlike the long-click action of the I08
+  probe; that was one reading per fixture, not asserted. On the load of a
+  C12 example the Back button had DOM focus (`web.txt`), so the state
+  needs the page to lose focus, for example by a click outside it.
+- Where the tooltip covers content, this fails 1.4.13's dismissible
+  condition on the web while no element of the page has focus. Every C12
+  good example's tooltip does cover content (the widget tests "the shown
+  tooltip lies over other text on the screen",
+  `docs/evidence/probes/c12/flutter_test_geometry.txt`), so in that state
+  they fail 1.4.13 on the web. Escape does work whenever an element of the
+  page has focus: the Back button, which has it on a freshly loaded
+  example, the Flutter view after any click in it, or the control. The
+  tests reach the failing state only with `blur()`; how a real user
+  reaches it was not measured.
+- Workaround: none in the framework. Flutter has not added a way for
+  Escape to reach its tooltips while the page has no focus. A key handler
+  of the app's own (`HardwareKeyboard.addHandler` calling
+  `Tooltip.dismissAllToolTips()`) did hide it in the probe (t13); it is
+  app code, and C12 does not build it.
 - Upstream issue: not searched yet (D25).
 
 ## FL-483

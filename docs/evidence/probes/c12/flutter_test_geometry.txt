@@ -1,0 +1,11 @@
+C12 widget tests, 'the shown tooltip lies over other text on the screen', Flutter 3.47.5, as Android (fvm flutter test test/techniques/c12_tooltip_test.dart --plain-name 'lies over other text'), after good-cupertino's verticalOffset: 28:
+good-material 800.0x640 100.0%: control Rect.fromLTRB(56.0, 172.0, 104.0, 220.0), tooltip box Rect.fromLTRB(10.0, 220.0, 213.0, 252.0) (below the control, a gap of 0.0), covers "Drafts are kept for 30 days." (157 by 20 of 399 by 20)
+good-material 320.0x640 100.0%: control Rect.fromLTRB(16.0, 220.0, 64.0, 268.0), tooltip box Rect.fromLTRB(10.0, 268.0, 213.0, 300.0) (below the control, a gap of 0.0), covers "Drafts are kept for 30 days." (197 by 24 of 288 by 40)
+good-material 320.0x640 200.0%: control Rect.fromLTRB(16.0, 520.0, 64.0, 568.0), tooltip box Rect.fromLTRB(0.0, 432.0, 320.0, 520.0) (above the control, a gap of 0.0), covers "Example" (288 by 64 of 288 by 112)
+good-cupertino 800.0x640 100.0%: control Rect.fromLTRB(56.0, 172.0, 116.4, 224.4), tooltip box Rect.fromLTRB(10.0, 226.2, 213.0, 258.2) (below the control, a gap of 1.8), covers "Drafts are kept for 30 days." (157 by 20 of 399 by 20)
+good-cupertino 320.0x640 100.0%: control Rect.fromLTRB(16.0, 220.0, 76.4, 272.4), tooltip box Rect.fromLTRB(10.0, 274.2, 213.0, 306.2) (below the control, a gap of 1.8), covers "Drafts are kept for 30 days." (197 by 26 of 288 by 40)
+good-cupertino 320.0x640 200.0%: control Rect.fromLTRB(16.0, 520.0, 76.4, 572.4), tooltip box Rect.fromLTRB(0.0, 430.2, 320.0, 518.2) (above the control, a gap of 1.8), covers "Example" (288 by 66 of 288 by 112)
+good-description 800.0x640 100.0%: control Rect.fromLTRB(56.0, 172.0, 216.8, 220.0), tooltip box Rect.fromLTRB(10.0, 220.0, 270.0, 252.0) (below the control, a gap of 0.0), covers "The file is 2 MB." (214 by 20 of 242 by 20)
+good-description 320.0x640 100.0%: control Rect.fromLTRB(16.0, 220.0, 176.8, 268.0), tooltip box Rect.fromLTRB(10.0, 268.0, 270.0, 300.0) (below the control, a gap of 0.0), covers "The file is 2 MB." (242 by 20 of 242 by 20)
+good-description 320.0x640 200.0%: control Rect.fromLTRB(16.0, 520.0, 264.8, 568.0), tooltip box Rect.fromLTRB(0.0, 432.0, 320.0, 520.0) (above the control, a gap of 0.0), covers "Example" (288 by 64 of 288 by 112)
+00:00 +9: All tests passed!

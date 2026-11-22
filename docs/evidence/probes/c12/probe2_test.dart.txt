@@ -1,0 +1,113 @@
+// C12 probe, second part (throwaway; kept as
+// docs/evidence/probes/c12/probe2_test.dart.txt): the hover path from a
+// control to its tooltip, step by step, with the mouse regions hit at each
+// step; and every semantics node that holds a fixture's text, merged ones
+// included, while its tooltip is shown.
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'probe_test.dart' as p;
+
+void main() {
+  for (final id in ['t08', 't14']) {
+    testWidgets('$id Escape frame by frame', (tester) async {
+      await p.open(tester, id);
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouse.addPointer(location: Offset.zero);
+      addTearDown(mouse.removePointer);
+      await mouse.moveTo(p.control(tester));
+      await p.frames(tester, const Duration(milliseconds: 300));
+      final handled = await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      final seen = <bool>[];
+      for (var i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        seen.add(p.shown(tester, id));
+      }
+      debugPrint(
+        'C12TEST $id Escape handled=$handled, shown frame by frame: $seen',
+      );
+      final dismissed = RawTooltip.dismissAllToolTips();
+      await p.frames(tester, const Duration(milliseconds: 300));
+      debugPrint(
+        'C12TEST $id dismissAllToolTips() returned $dismissed; shown=${p.shown(tester, id)}',
+      );
+    });
+  }
+
+  for (final id in ['t02', 't03', 't04', 't05', 't07', 't08']) {
+    testWidgets('$id path', (tester) async {
+      await p.open(tester, id);
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouse.addPointer(location: Offset.zero);
+      final from = p.control(tester);
+      await mouse.moveTo(from);
+      await p.frames(tester, const Duration(milliseconds: 300));
+      final box = p.tooltipBox(tester, id);
+      final to = box.center;
+      for (var i = 1; i <= 10; i++) {
+        final at = Offset.lerp(from, to, i / 10)!;
+        await mouse.moveTo(at);
+        await p.frames(tester, const Duration(milliseconds: 16));
+        final hits = tester
+            .hitTestOnBinding(at)
+            .path
+            .map((e) => e.target.runtimeType.toString())
+            .where((t) => t.contains('Mouse'))
+            .toList();
+        debugPrint(
+          'C12TEST $id step $i at $at shown=${p.shown(tester, id)} mouse regions=$hits',
+        );
+      }
+      await p.frames(tester, const Duration(milliseconds: 500));
+      debugPrint(
+        'C12TEST $id 500 ms on the tooltip: shown=${p.shown(tester, id)}',
+      );
+      await p.frames(tester, const Duration(seconds: 2));
+      debugPrint(
+        'C12TEST $id 2.5 s on the tooltip: shown=${p.shown(tester, id)}',
+      );
+      await mouse.moveTo(const Offset(700, 700));
+      await p.frames(tester, const Duration(milliseconds: 500));
+      debugPrint(
+        'C12TEST $id 500 ms after moving to (700, 700): shown=${p.shown(tester, id)}',
+      );
+      final h = tester.ensureSemantics();
+      await mouse.moveTo(Offset.zero);
+      await tester.pumpAndSettle();
+      await mouse.moveTo(from);
+      await p.frames(tester, const Duration(milliseconds: 300));
+      final all = <String>[];
+      void visit(SemanticsNode n) {
+        final d = n.getSemanticsData();
+        if (d.label.contains(id) || d.tooltip.contains(id)) {
+          all.add(
+            '#${n.id} merged=${n.isMergedIntoParent} label="${d.label}" tooltip="${d.tooltip}"',
+          );
+        }
+        n.visitChildren((c) {
+          visit(c);
+          return true;
+        });
+      }
+
+      visit(
+        tester
+            .binding
+            .renderViews
+            .first
+            .owner!
+            .semanticsOwner!
+            .rootSemanticsNode!,
+      );
+      debugPrint(
+        'C12TEST $id shown=${p.shown(tester, id)} nodes, merged ones included: ${all.join(' | ')}',
+      );
+      h.dispose();
+      await mouse.removePointer();
+    });
+  }
+}

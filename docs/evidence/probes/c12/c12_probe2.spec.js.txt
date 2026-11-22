@@ -1,0 +1,95 @@
+// C12 probe on the web, round 2 (throwaway, not committed; kept as
+// docs/evidence/probes/c12/c12_probe2.spec.js.txt; run with
+// c12probe.config.js, its testMatch widened to this file). Round 1 found
+// the Back button focused on load, so its "no element focused" rows were
+// not that. Here: Escape after `blur()` leaves no element focused; Chromium's
+// accessibility tree, every node with the fixture's text, while the
+// tooltip is shown and before; and t14 at its icon.
+import { test } from '@playwright/test';
+
+function log(...a) {
+  console.log('C12WEB2', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-taps"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+async function active(page) {
+  return page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e || !e.closest('flt-semantics-host')) return `(page: ${e?.tagName})`;
+    return `${e.tagName}${e.getAttribute('role') ? `[role=${e.getAttribute('role')}]` : ''} "${e.getAttribute('aria-label') || e.textContent.trim()}"`;
+  });
+}
+
+// Whether the tooltip's text is in the semantics DOM: an element whose own
+// text is the message, other than the control's own label.
+async function textInDom(page, message) {
+  return page.evaluate((m) => [...document.querySelectorAll('flt-semantics-host *')].filter((e) =>
+    [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent === m)).length, message);
+}
+
+async function axNodes(page, context, id) {
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const byId = new Map(nodes.map((n) => [n.nodeId, n]));
+  const out = [];
+  for (const n of nodes) {
+    if (n.ignored) continue;
+    const name = n.name?.value ?? '';
+    if (!name.includes(id) || name.startsWith('Before') || name.startsWith(`${id} taps`) || name.startsWith(`${id} line`)) continue;
+    if (n.role?.value === 'InlineTextBox') continue;
+    const parent = byId.get(n.parentId);
+    out.push(`role=${n.role?.value} name="${name}" description="${n.description?.value ?? ''}" parent=${parent?.role?.value}:"${parent?.name?.value ?? ''}"`);
+  }
+  return out;
+}
+
+const messages = {
+  t01: 't01 Delete draft', t02: 't02 Delete draft', t06: 't06 Download', t08: 't08 Delete draft',
+  t10: 't10 Delete draft', t11: 't11 Saves a PDF copy', t13: 't13 Delete draft', t14: 't14 Delete draft',
+};
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of Object.keys(messages)) {
+  test(`round 2 ${id}`, async ({ page, context }) => {
+    await page.setViewportSize({ width: 800, height: 900 });
+    await fresh(page, id);
+    // The control: 40 by 40 at (16, 92) in round 1 for the icon buttons;
+    // t14's CupertinoButton icon sits at the left of its row.
+    const at = id === 't14' ? { x: 46, y: 118 } : id === 't06' || id === 't11' ? { x: 84, y: 108 } : { x: 36, y: 112 };
+    log(id, 'ax before:', JSON.stringify(await axNodes(page, context, id)));
+    log(id, 'tooltip text elements before:', await textInDom(page, messages[id]));
+    await page.mouse.move(at.x, at.y);
+    await page.waitForTimeout(500);
+    log(id, 'tooltip text elements while hovered:', await textInDom(page, messages[id]));
+    log(id, 'ax while hovered:', JSON.stringify(await axNodes(page, context, id)));
+    // Escape with no element of the page focused.
+    await page.evaluate(() => document.activeElement?.blur());
+    await page.waitForTimeout(300);
+    log(id, 'after blur():', await active(page));
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(500);
+    log(id, 'Escape with no element focused: tooltip text elements', await textInDom(page, messages[id]));
+    await page.waitForTimeout(2000);
+    log(id, '2 s later, pointer still there: tooltip text elements', await textInDom(page, messages[id]));
+    // The positive control: a click elsewhere on the page gives Flutter
+    // focus; then Escape again with the pointer back on the control.
+    await page.mouse.move(400, 860);
+    await page.waitForTimeout(600);
+    await page.mouse.click(400, 860);
+    await page.waitForTimeout(300);
+    log(id, 'after a click on an empty part of the page:', await active(page));
+    await page.mouse.move(at.x, at.y);
+    await page.waitForTimeout(500);
+    log(id, 'hovered again: tooltip text elements', await textInDom(page, messages[id]));
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(500);
+    log(id, 'Escape after the click: tooltip text elements', await textInDom(page, messages[id]), 'active:', await active(page));
+  });
+}

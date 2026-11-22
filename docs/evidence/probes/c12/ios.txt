@@ -1,0 +1,48 @@
+t01 start: 1 element(s): type=9 label="t01 Delete draft" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t01 0.3 s after a touch held 0.8 s: 2 element(s): type=9 label="t01 Delete draft" value=Optional() frame=(16.0, 154.0, 48.0, 48.0) | type=48 label="t01 Delete draft" value=Optional() frame=(26.0, 208.0, 106.771484375, 20.0)
+t01 after 1 Tab(s): 1 element(s): type=9 label="t01 Delete draft" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t01 after 2 Tab(s): 1 element(s): type=9 label="t01 Delete draft" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t02 after 1 Tab(s): 2 element(s): type=1 label="t02 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t02 after 2 Tab(s): 2 element(s): type=1 label="t02 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t03 after 1 Tab(s): 1 element(s): type=9 label="t03 Delete draft" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t03 after 2 Tab(s): 1 element(s): type=9 label="t03 Delete draft" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t04 after 1 Tab(s): 2 element(s): type=1 label="t04 Saves a PDF copy" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="t04 Download" value=Optional() frame=(16.0, 154.0, 143.3914794921875, 48.0)
+t04 after 2 Tab(s): 2 element(s): type=1 label="t04 Saves a PDF copy" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="t04 Download" value=Optional() frame=(16.0, 154.0, 143.3914794921875, 48.0)
+t05 after 1 Tab(s): 1 element(s): type=9 label="t05 Download\nt05 Saves a PDF copy" value=Optional() frame=(16.0, 154.0, 143.04398600260416, 48.0)
+t05 after 2 Tab(s): 1 element(s): type=9 label="t05 Download\nt05 Saves a PDF copy" value=Optional() frame=(16.0, 154.0, 143.04398600260416, 48.0)
+t06 after 1 Tab(s): 1 element(s): type=9 label="t06 Download\nt06 Download" value=Optional() frame=(16.0, 154.0, 143.31173706054688, 48.0)
+t06 after 2 Tab(s): 1 element(s): type=9 label="t06 Download\nt06 Download" value=Optional() frame=(16.0, 154.0, 143.31173706054688, 48.0)
+t07 after 1 Tab(s): 1 element(s): type=48 label="t07 At least 8 characters" value=Optional() frame=(16.0, 154.0, 370.0, 24.0)
+t07 after 2 Tab(s): 1 element(s): type=48 label="t07 At least 8 characters" value=Optional() frame=(16.0, 154.0, 370.0, 24.0)
+t08 after 1 Tab(s): 2 element(s): type=1 label="t08 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t08 after 2 Tab(s): 2 element(s): type=1 label="t08 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t09 after 1 Tab(s): 2 element(s): type=1 label="t09 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t09 after 2 Tab(s): 2 element(s): type=1 label="t09 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t10 after 1 Tab(s): 2 element(s): type=1 label="t10 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t10 after 2 Tab(s): 3 element(s): type=1 label="t10 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0) | type=48 label="t10 Delete draft" value=Optional() frame=(26.0, 208.0, 106.771484375, 20.0)
+t11 after 1 Tab(s): 1 element(s): type=9 label="t11 Download" value=Optional() frame=(16.0, 154.0, 138.54025268554688, 48.0)
+t11 after 2 Tab(s): 1 element(s): type=9 label="t11 Download" value=Optional() frame=(16.0, 154.0, 138.54025268554688, 48.0)
+t12 after 1 Tab(s): 1 element(s): type=48 label="t12 At least 8 characters" value=Optional() frame=(16.0, 154.0, 370.0, 24.0)
+t12 after 2 Tab(s): 1 element(s): type=48 label="t12 At least 8 characters" value=Optional() frame=(16.0, 154.0, 370.0, 24.0)
+t13 after 1 Tab(s): 2 element(s): type=1 label="t13 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t13 after 2 Tab(s): 2 element(s): type=1 label="t13 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 48.0) | type=9 label="" value=Optional() frame=(16.0, 154.0, 48.0, 48.0)
+t14 after 1 Tab(s): 1 element(s): type=9 label="t14 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 52.40000406901041)
+t14 after 2 Tab(s): 1 element(s): type=9 label="t14 Delete draft" value=Optional() frame=(16.0, 154.0, 370.0, 52.40000406901041)
+VO t01 walk: C12 probe / Before t01 / t01 Delete draft Button / t01 line under the control / t01 taps: 0
+VO t02 walk: C12 probe / Before t02 / Button / t02 line under the control / t02 taps: 0
+VO t03 walk: C12 probe / Before t03 / t03 Delete draft Button / t03 line under the control / t03 taps: 0
+VO t04 walk: C12 probe / Before t04 / t04 Download Button / t04 line under the control / t04 taps: 0
+VO t05 walk: C12 probe / Before t05 / t05 Download t05 Saves a PDF copy Button / t05 line under the control / t05 taps: 0
+VO t06 walk: C12 probe / Before t06 / t06 Download t06 Download Button / t06 line under the control / t06 taps: 0
+VO t07 walk: C12 probe / Before t07 / t07 line under the control / t07 taps: 0
+VO t08 walk: C12 probe / Before t08 / Button / t08 line under the control / t08 taps: 0
+VO t09 walk: C12 probe / Before t09 / Button / t09 line under the control / t09 taps: 0
+VO t10 walk: C12 probe / Before t10 / Button / t10 line under the control / t10 taps: 0
+VO t11 walk: C12 probe / Before t11 / t11 Download Button t11 Saves a PDF copy / t11 line under the control / t11 taps: 0
+VO t12 walk: C12 probe / Before t12 / t12 line under the control / t12 taps: 0
+VO t13 walk: C12 probe / Before t13 / Button / t13 line under the control / t13 taps: 0
+VO t14 walk: C12 probe / Before t14 / t14 Delete draft Button / t14 line under the control / t14 taps: 0
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a0016ca0401fc9297/ios/RunnerUITests/ProbeC12UITests.swift:28: error: -[RunnerUITests.ProbeC12UITests testTree] : Failed to get matching snapshot: No matches found for Element at index 29 from input {(
+Test Case '-[RunnerUITests.ProbeC12UITests testTree]' failed (13.565 seconds).
+Test Case '-[RunnerUITests.ProbeC12UITests testKeys]' passed (141.154 seconds).
+Test Case '-[RunnerUITests.ProbeC12UITests testVoiceOver]' passed (229.303 seconds).
