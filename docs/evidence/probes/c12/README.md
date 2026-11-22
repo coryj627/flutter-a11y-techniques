@@ -116,3 +116,10 @@ though XCUITest lists it with the tooltip as its label.
   (`flutter_test_buttons.txt`).
 - The default tooltip box is 4.94:1 text on box in light mode and 17.05:1
   in dark (`flutter_test.txt`, "colours").
+
+## C12's Android suite at CI's size
+
+After the examples were built, C12's Android tree tests ran once at the CI
+emulator's size, 320 by 640 at 160 dpi (`android_320x640.sh.txt`, which
+resets both after): the Gradle run ended "BUILD SUCCESSFUL", with
+`talkBackWalk` skipped as TalkBack was off (`android_320x640.txt`).
