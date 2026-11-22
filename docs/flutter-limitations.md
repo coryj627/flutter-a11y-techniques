@@ -129,7 +129,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-245](#fl-245) | On the web `SelectableText` is an empty, disabled text field: its text and its links are not in the page | Web (Chromium) | Observed |
 | [FL-246](#fl-246) | A run of a paragraph's text that wraps has one node over the whole of its lines, which can lie over a link on the first line: on iOS a VoiceOver touch on the link finds the words | iOS (Android and web not measured) | Confirmed |
 | [FL-247](#fl-247) | A tooltip with a plain message, and every `IconButton.tooltip`, takes no pointer events, so the pointer cannot move onto it | Web, Android (with a mouse), widget tests; iOS not measured | Confirmed |
-| [FL-248](#fl-248) | No Flutter tooltip shows on keyboard focus | All | Confirmed |
+| [FL-248](#fl-248) | No Flutter tooltip shows on keyboard focus, so showing one fails 2.1.1 wherever a keyboard is used | All | Confirmed |
 | [FL-249](#fl-249) | While a tooltip is shown, its text is a node of its own inside its control | All | Confirmed |
 | [FL-250](#fl-250) | A tooltip whose box lies over its control's edge does not stay hidden after Escape while the pointer is on that strip: a `RawTooltip` by default, and a Material `Tooltip` on a control taller than 48 | Widget tests only | Confirmed (widget test only) |
 | [FL-251](#fl-251) | A tooltip is part of its control's name on iOS and the web, before the control's own text on the web; only Android treats it as separate text | iOS, Web | Confirmed |
@@ -3114,7 +3114,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-248
 
-**No Flutter tooltip shows on keyboard focus.**
+**No Flutter tooltip shows on keyboard focus, so showing one fails 2.1.1 wherever a keyboard is used.**
 
 - Status: Confirmed, Flutter 3.47.5, all platforms. In the C12 probe Tab
   to each fixture's control showed none of the framework's tooltips: the
@@ -3131,27 +3131,20 @@ yet), **Fixed in x.y** (verified on that version).
   `widgets/raw_tooltip.dart` shows a tooltip on a mouse entering, on a
   long press or a tap, and from `ensureTooltipVisible()`; nothing listens
   to focus.
-- WCAG: no failure of 1.4.13 as written, which covers content that does
-  appear on focus and does not require any to. The source that asks for a
-  tooltip on focus is APG's tooltip pattern; the Understanding document
-  of 1.4.13 says content a hover can show "should also be able to be
-  triggered by keyboard focus" and points to 2.1.1. 2.1.1 fails wherever
-  the tooltip is the only place on screen its information is shown, on a
-  platform used with a keyboard: C12 `good-description` (its description,
-  "Saves a PDF copy", is on screen only in the tooltip; the button itself
-  works from the keyboard) and C12 `bad-hover-only` (a rule only in the
-  tooltip of an icon that takes no focus at all). A screen reader's
-  reading of the tooltip does not give a sighted keyboard user the
-  words. Not claimed failed: an icon-only button whose tooltip repeats
-  its name (C12 `good-material`, `good-cupertino`). There the button's
-  purpose is shown by its icon and given to assistive technology by its
-  name (1.1.1), the tooltip is a second showing of the same name, and
-  the button works from the keyboard; a sighted keyboard-only user loses
-  the visible words of the name, which 2.5.3 does not ask for (it is about
-  a visible text label, which the button has not).
+- WCAG: 2.1.1 Keyboard fails wherever a keyboard is used, for every
+  tooltip: showing it is functionality, a hover or a long press performs
+  it, and no key does. That the control works from the keyboard, or has a
+  name for assistive technology, does not give a sighted keyboard user a
+  way to reveal the tooltip's words; 1.1.1 and 2.5.3 give no exemption.
+  The Understanding document for 1.4.13 says content a hover can show
+  "should also be able to be triggered by keyboard focus" and points to
+  2.1.1; APG's tooltip pattern shows the tooltip on focus. In C12 this is
+  every example, the three good ones included (their keyboard-focus tests
+  on every layer, above). No failure of 1.4.13 is claimed from it: 1.4.13
+  covers content that does appear on focus and does not require any to.
 - What users get: a keyboard user never sees a tooltip. Where the tooltip
   is an icon button's name, its words reach a screen reader as the name,
-  and a sighted keyboard user does not see them.
+  and a sighted keyboard user cannot reveal them.
 - Workaround: none in the framework. Flutter has not added a way for a
   tooltip to show on focus. (`TooltipState.ensureTooltipVisible()` exists;
   calling it from a focus listener is code of the app's own, which C12

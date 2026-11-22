@@ -31,31 +31,34 @@ What the framework's tooltip cannot do, by platform, with no workaround in
 the SDK. Whether any of these makes a platform `PlatformStatus.limitation`
 is the owner's decision (section 8); the catalog says "applies" with a note.
 
-- **All: it never shows on keyboard focus**
-  ([FL-248](../flutter-limitations.md#fl-248)). The source asking for it
-  is APG's tooltip pattern, which shows the tooltip on focus; Flutter has
-  not added that, a Flutter limitation. No 1.4.13 failure as written:
-  1.4.13 covers content that does appear on focus, and does not require
-  any to. 2.1.1 fails wherever the tooltip is the only place on screen
-  its information is shown, on a platform used with a keyboard:
-  `good-description` and `bad-hover-only` (section 5).
-  - *Icon-only buttons whose tooltip repeats the name* (`good-material`,
-    `good-cupertino`): what a sighted keyboard-only user loses is the
-    visible words of the name: they see the icon and never the words.
-    2.1.1 is not claimed failed: the purpose is shown by the icon and given
-    to assistive technology by the name (1.1.1 met); the tooltip is a
-    second showing of that name; 2.5.3 Label in Name is about a visible
-    text label, which an icon-only button has not; and the button is
-    operated from the keyboard. This holds as far as the icon shows what
-    the button does; words in the tooltip that the icon does not show
-    would be information on screen only in the tooltip, as in
-    `good-description`.
-  - *A tooltip that adds a description* (`good-description`): "Saves a
-    PDF copy" is on screen only in the tooltip, which only a hover or a
-    long press shows. A sighted keyboard user cannot get it; a screen
-    reader's reading of it does not give it to them. 2.1.1 fails for the
-    description, on Android, iOS, and the web wherever a keyboard is used.
-    The button itself works from the keyboard.
+- **All: it never shows on keyboard focus, so 2.1.1 fails for it**
+  ([FL-248](../flutter-limitations.md#fl-248)). One rule, for every
+  example, good and bad: showing a tooltip is functionality, which a
+  hover or a long press performs; no key performs it; so 2.1.1 Keyboard
+  fails for it wherever a keyboard is used, on Android, iOS, and the web,
+  with no workaround in the SDK. That a control works from the keyboard,
+  or has a name for assistive technology, does not give a sighted keyboard
+  user a way to reveal the tooltip's words, and an icon does not show the
+  words of a label such as "Delete draft"; 1.1.1 and 2.5.3 give no
+  exemption from 2.1.1. The Understanding document for 1.4.13 ties content
+  shown on hover to keyboard access (content a hover can show "should also
+  be able to be triggered by keyboard focus", pointing to 2.1.1), and
+  APG's tooltip pattern shows the tooltip on focus; Flutter has not added
+  that. No 1.4.13 failure is claimed from this: 1.4.13 covers content that
+  does appear on focus and does not require any to. Measured by
+  the widget test "<example>: keyboard focus does not show the tooltip; a
+  hover in the same launch does (FL-248)"; on the web,
+  `web_tests/c12_tooltip.spec.js` "<example>: Tab to the control does not
+  show the tooltip; a hover in the same load does"; on Android,
+  `C12TooltipTest.keyboardFocusDoesNotShowTheTooltip`; on iOS,
+  `C12TooltipUITests.testKeyboardFocusDoesNotShowTheTooltip`. Each runs
+  for `good-material`, `good-cupertino`, and `good-description`, and each
+  has a hover or a long press in the same launch as its positive
+  control. For the bad examples it rests on the same widgets: the widget
+  tests "the SDK alone:
+  IconButton(tooltip:): keyboard focus does not show the tooltip" and
+  "Tooltip(message:): keyboard focus does not show the tooltip", and
+  `bad-hover-only`'s own key tests on every layer.
 - **All: while shown, its text is a node of its own** (not measured with a screen reader while shown)
   ([FL-249](../flutter-limitations.md#fl-249)).
 - **Web: Escape does not hide it while no element of the page has
@@ -140,8 +143,8 @@ hidden,
   user agent and not modified by the author. That covers HTML's `title`
   tooltip; it does not cover a Flutter tooltip, which the app draws.
 
-Also used: 2.1.1 Keyboard, for `bad-hover-only`, where the tooltip is the
-only place a rule is (section 5).
+Also used: 2.1.1 Keyboard, for every example: no key shows a Flutter
+tooltip (section 2, FL-248).
 
 ## 4. Source requirements
 
@@ -200,22 +203,23 @@ has no way to remove:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `good-material`, `good-cupertino` | none | none | 1.4.13, dismissible, while no element of the page has focus (FL-482) |
-| `good-description` | 2.1.1 for the description, used with a keyboard (FL-248) | 2.1.1 for the description, used with a keyboard (FL-248) | 2.1.1 for the description (FL-248); and 1.4.13 as above (FL-482) |
+| `good-material`, `good-cupertino`, `good-description` | 2.1.1, used with a keyboard: no key shows the tooltip (FL-248) | 2.1.1, used with a keyboard (FL-248) | 2.1.1 (FL-248); and 1.4.13, dismissible, while no element of the page has focus (FL-482) |
 
 - 1.4.13 on the web: while no element of the page has focus, Escape does
   not hide the tooltip, which covers other text (section 2, FL-482).
-- 2.1.1 for `good-description`: its description is on screen only in the
-  tooltip, and no key shows it (FL-248). Measured by the widget test
-  "good-description: keyboard focus does not show the tooltip; a hover in
-  the same launch does (FL-248)"; on the web,
-  `web_tests/c12_tooltip.spec.js` "good-description: Tab to the control
-  does not show the tooltip; a hover in the same load does"; on Android,
+- 2.1.1: no key shows the tooltip of any of them (section 2, FL-248).
+  What a sighted keyboard user cannot reveal is "Delete draft" for the
+  icon buttons and "Saves a PDF copy" for `good-description`. Measured by
+  the widget test "<example>: keyboard focus does not show the tooltip; a
+  hover in the same launch does (FL-248)"; on the web,
+  `web_tests/c12_tooltip.spec.js` "<example>: Tab to the control does not
+  show the tooltip; a hover in the same load does"; on Android,
   `C12TooltipTest.keyboardFocusDoesNotShowTheTooltip`; on iOS,
-  `C12TooltipUITests.testKeyboardFocusDoesNotShowTheTooltip`, each run for
-  `good-description`.
-  Whether `good-description` stays a good example is the owner's
-  decision (section 8); it is kept as built.
+  `C12TooltipUITests.testKeyboardFocusDoesNotShowTheTooltip`. Each runs
+  for `good-material`, `good-cupertino`, and `good-description`, and each
+  has a hover or a long press in the same launch as its positive control.
+  Whether the examples are still called good is the owner's decision
+  (section 8); they are kept as built.
 
 What none of them meets, as the framework has no way to: R1's keyboard
 focus (FL-248), R1's Escape on the web while the page has no focus
@@ -238,23 +242,27 @@ built, by the owner's rule: its tooltip would be built by hand.
 | `bad-repeats-name` | A tooltip with the button's own text, "Download", merged into the button: its name is "Download Download" on iOS and the web | R3 |
 | `bad-outside-button` | `Tooltip(message:)` round an `IconButton` with no name of its own: the tooltip stays on a node outside the button (FL-040), and the button has no name | R4 |
 
-What each fails, by platform, as the criteria are written:
+What each fails, by platform, as the criteria are written. Every one
+of them also fails 2.1.1 under FL-248 wherever a keyboard is used, as the
+good examples do: its tooltip is shown by a hover or a long press and by no
+key (section 2). The table gives what each bad example shows beyond that.
+For `bad-hover-only` 2.1.1 is that same rule, and what it shows is where
+it leads when the tooltip is all there is.
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
 | `bad-not-hoverable` | 1.4.13 (F95), with a mouse: the tooltip goes when the pointer moves onto it (the Android test injects a mouse hover) | none measured: XCUITest cannot hover; with touch, 1.4.13 does not apply | 1.4.13 (F95) |
-| `bad-hover-only` | 2.1.1: a long press and a mouse show the rule; no Tab stop, Enter, or Space does | 2.1.1, as on Android; VoiceOver passes over the icon (FL-252), so a VoiceOver user does not get the rule at all | 2.1.1: a hover shows it; no key does |
+| `bad-hover-only` | 2.1.1 (the rule of section 2): a long press and a mouse show the rule; no Tab stop, Enter, or Space does, and the icon takes no focus at all | 2.1.1, as on Android; and VoiceOver passes over the icon (FL-252), so a VoiceOver user does not get the rule at all | 2.1.1: a hover shows it; no key does; the icon takes no focus |
 | `bad-repeats-name` | none: TalkBack reads "Download" once (the probe's t06) | none: read "Download Download Button", poor practice | none: name "Download Download", poor practice |
 | `bad-outside-button` | 4.1.2: the button has no name; the tooltip is read on its own node before it | 4.1.2: the button has no name, and VoiceOver passes over the tooltip's node (FL-252) | 4.1.2: the button has no name (tree: Playwright's and Chromium's name for it is empty; VoiceOver read "button" inside a group named "Delete draft") |
 
-`bad-hover-only` and `good-description` fail 2.1.1 for the same
-reason, information on screen only in a tooltip, and differ in what else a
-keyboard can do. `bad-hover-only` is the clear case: the icon takes no
-focus at all, so the keyboard has no route to the control, nothing to
-operate, and the only information it carries is lost; VoiceOver on iOS
-passes over it too. In `good-description` the button takes focus and works
-from the keyboard, and a screen reader gets the description; only a sighted
-keyboard user loses it.
+`bad-hover-only` fails 2.1.1 under the same rule as every other example,
+and is kept for what it shows beyond the rule: the rule is the only place
+the password rule is, the icon takes no focus at all, so a keyboard has no
+route to the control, and VoiceOver on iOS passes over it (FL-252). In the
+good examples the control takes focus, works from the keyboard, and gives
+its name to every screen reader; what a sighted keyboard user cannot
+reveal there is the tooltip's words.
 
 `bad-hover-only` and 2.1.1: the rule is information the screen gives only
 to a pointer or a touch, through a user action (the hover or the long
@@ -427,13 +435,13 @@ right-to-left placement.
 
 ## 8. Decision for the owner
 
-- Whether FL-248 (no tooltip on keyboard focus, all platforms) and FL-482
-  (no Escape on the web while nothing in the page has focus, a 1.4.13
-  failure of the good examples there) make any platform
-  `PlatformStatus.limitation`. The catalog says "applies" with a note
-  until the owner decides.
-- Whether `good-description` stays a good example, given that it fails
-  2.1.1 for its description wherever a keyboard is used (FL-248).
+Every good example fails 2.1.1 for keyboard users under FL-248, on every
+platform used with a keyboard, and on the web also 1.4.13 while nothing in
+the page has focus under FL-482; neither has a workaround in the SDK. The
+open question: whether C12 is recorded as a limitation
+(`PlatformStatus.limitation`) on the platforms used with a keyboard, and
+whether its examples are still called good. Until the owner decides, the
+catalogue says "applies" with a note on each platform.
 
 ## 9. What is handed on
 

@@ -67,6 +67,9 @@ ButtonStyle focusRing(ColorScheme colors) => ButtonStyle(
 /// it does not reach it (FL-040); the button is named by its icon's label,
 /// and `excludeFromSemantics: true` leaves Tooltip's own copy out, as its
 /// documentation says to when the app gives the label.
+/// Good with a qualification: no key shows the tooltip (FL-248), so it
+/// fails 2.1.1 for showing it wherever a keyboard is used; and on the web
+/// Escape does not hide it while nothing in the page has focus (FL-482).
 class GoodMaterial extends StatelessWidget {
   const GoodMaterial({super.key});
 
@@ -101,6 +104,9 @@ class GoodMaterial extends StatelessWidget {
 /// icon-only `CupertinoButton`. A `CupertinoButton` is not a semantics
 /// container, so the tooltip reaches it and is its name, as
 /// `IconButton.tooltip` names an `IconButton`.
+/// Good with a qualification: no key shows the tooltip (FL-248), so it
+/// fails 2.1.1 for showing it wherever a keyboard is used; and on the web
+/// Escape does not hide it while nothing in the page has focus (FL-482).
 class GoodCupertino extends StatelessWidget {
   const GoodCupertino({super.key});
 
@@ -151,10 +157,10 @@ class GoodCupertino extends StatelessWidget {
 /// saves a PDF copy. `MergeSemantics` puts the tooltip on the Material
 /// button (FL-040). TalkBack reads it after the button's role; on iOS and
 /// the web it joins the button's name, after it on iOS and before it on the
-/// web (FL-251). Good with a qualification: the description is on screen
-/// only in the tooltip, which no key shows (FL-248), so a sighted keyboard
-/// user cannot get it, and it fails 2.1.1 for the description wherever a
-/// keyboard is used.
+/// web (FL-251).
+/// Good with a qualification: no key shows the tooltip (FL-248), so it
+/// fails 2.1.1 for showing it wherever a keyboard is used; and on the web
+/// Escape does not hide it while nothing in the page has focus (FL-482).
 class GoodDescription extends StatelessWidget {
   const GoodDescription({super.key});
 
