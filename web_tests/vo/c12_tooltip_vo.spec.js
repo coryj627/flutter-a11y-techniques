@@ -17,6 +17,8 @@
 // tooltip's text as an extra stop, as C01's transcript had for an
 // IconButton (FL-008); no walk showed a tooltip, and nothing was read
 // twice in either browser, so seven walks failed on their expectations.
+// With these lists the second recording passed, every walk complete on
+// its first try (docs/evidence/C12/voiceover-web.md).
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { walkToEnd } from './vo_helpers.js';

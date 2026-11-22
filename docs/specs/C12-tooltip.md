@@ -302,8 +302,10 @@ The probe that came first is in [evidence/probes/c12](../evidence/probes/c12/REA
   (what that stop is was not measured; the page snapshot when the walk
   ended showed no element with those words but the group). The predicted
   extra stop for a shown tooltip did not happen: no walk showed a
-  tooltip, and nothing was read twice in either browser. The lists are now
-  what was read; the web VoiceOver transcript is to be recorded again.
+  tooltip, and nothing was read twice in either browser. The lists were
+  set to what was read, and the second recording passed, every walk
+  complete on its first try in both browsers
+  ([transcript](../evidence/C12/voiceover-web.md)).
 - **A tooltip joins its control's name on iOS and the web**
   ([FL-251](../flutter-limitations.md#fl-251), new), first on the web;
   Android gives it as tooltip text, which TalkBack reads after the role,
@@ -366,7 +368,7 @@ Skips and what they give up, in the tests:
   utterance again, twice; no example has two neighbouring elements read
   alike. Utterances are cut at 64 characters; the longest here is under 40.
 
-**Not done yet.** The web VoiceOver recording (ready to run); a real mouse
+**Not done yet.** A real mouse
 or trackpad on Android, and a pointer on iPad; Escape on iOS (FL-480: the
 iOS Escape tests of I08 use Command+period, skipped below iOS 27) and
 on a real Android keyboard; TalkBack's double-tap-and-hold, which would
