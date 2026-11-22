@@ -86,9 +86,9 @@ jobs:
   # (python3 tool/talkback.py <ID>).
   android:
     runs-on: ubuntu-latest
-    # tool/ci_android_tests.sh stops the tests after 50 minutes; the build
+    # tool/ci_android_tests.sh stops the tests after 90 minutes; the build
     # and the emulator's start take about 15 more.
-    timeout-minutes: 75
+    timeout-minutes: 115
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
