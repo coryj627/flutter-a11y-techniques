@@ -23,9 +23,6 @@ import { EXAMPLE_HEADING, judgeExampleWalk, runWalks, screenStops } from './c05_
 
 test.describe.configure({ retries: 0 });
 
-// Set only for the round 3 probe at the end of this file.
-const PROBE = process.env.C05_VO_PROBE === '1';
-
 const SHIPPING_TEXT = 'Orders ship in two days.';
 const SHIPPING_ACTION = 'Track a parcel button';
 const COUNT = 'Presses: 0';
@@ -151,14 +148,35 @@ async function read(page, voiceOver, browserName, label, expected, screen, { cli
   expect(verdict, `${label}, walk ${walks}: ${reason}`).toBe('complete');
 }
 
+/** Loads the example `slug` and waits for its count. */
+async function load(page, slug) {
+  await page.goto(`/#/t/C05/${slug}`, { waitUntil: 'load' });
+  await expect(page.locator(`[flt-semantics-identifier="c05-${slug}-count"]`)).toBeVisible();
+  await page.waitForTimeout(600);
+}
+
 for (const [slug, { closed, open }] of Object.entries(EXAMPLES)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
-    test.skip(PROBE, 'the round 3 probe is running instead');
-    await page.goto(`/#/t/C05/${slug}`, { waitUntil: 'load' });
-    const count = page.locator(`[flt-semantics-identifier="c05-${slug}-count"]`);
-    await expect(count).toBeVisible();
-    await page.waitForTimeout(600);
+    await load(page, slug);
     await read(page, voiceOver, browserName, slug, closed, screenStops(slug));
+    // bad-cupertino-expansion-tile: its open walk is made on a fresh load,
+    // so that it is the first walk on that page. In a WebKit probe of this
+    // example (docs/evidence/probes/c05/voiceover-web-round3-probe.md.txt,
+    // four ways of starting, two walks each on one load), every first walk
+    // walked the page, closed and open alike, and three of the four second
+    // walks did not: twice the start left VoiceOver's cursor where the
+    // walk before had ended, and once, with the click at a point, the
+    // first move went to the page's web area. That last start looked like
+    // the good ones (the same phrase and the same cursor position), so no
+    // check at the start would have told it apart, and none is made. The
+    // fresh load changes only where the walk starts. It is not a second
+    // try at a reading: the walk is judged as every walk is, a wrong
+    // reading fails the test for good with no further walk (runWalks), and
+    // only a walk cut short with every stop right so far is walked again.
+    if (slug === 'bad-cupertino-expansion-tile') {
+      await page.goto('about:blank');
+      await load(page, slug);
+    }
     const header = tile(slug)
       ? page.getByRole('button', { name: 'Shipping', exact: true })
       : page.locator(`[flt-semantics-identifier="c05-${slug}-shipping"]`);
@@ -171,78 +189,4 @@ for (const [slug, { closed, open }] of Object.entries(EXAMPLES)) {
     await read(page, voiceOver, browserName, `${slug}-open`, open, screenStops(slug),
       { clickAtPoint: slug === 'bad-cupertino-expansion-tile' });
   });
-}
-
-// ---------------------------------------------------------------------------
-// Probe (round 3), run only with C05_VO_PROBE=1 set, through the tool:
-//   C05_VO_PROBE=1 python3 tool/voiceover_web.py C05
-// With it set, the tests above are skipped and only these run, in WebKit
-// only. They judge nothing: each walk logs every stop (VoiceOver's last
-// phrase and its cursor's position), so that the third recording's WebKit
-// reading of the open bad-cupertino-expansion-tile, the page's web area as
-// its only stop (docs/evidence/probes/c05/voiceover-web-round3-fail.md.txt),
-// can be told apart: does it come from the screen once the tile is open,
-// or from how the walk starts (a mouse click at a point)? Four starts, each
-// on a fresh load and walked twice:
-//
-// - closed-keyboard: the tile closed; no click at all, Back focused by
-//   script after the browser is brought to the front.
-// - closed-point: the tile closed; the mouse click at the "Example"
-//   heading's place that the open walk uses (walkToEndClickingAtPoint).
-// - open-keyboard: the tile opened by a click on its header first; then as
-//   closed-keyboard.
-// - open-point: the tile opened; then as closed-point, as the third
-//   recording's open walk did.
-//
-// Each row also logs, before the first move, what VoiceOver last said and
-// where its cursor was once Back had been focused and VoiceOver went quiet.
-
-async function probeWalk(page, voiceOver, browserName, { clickAtPoint }) {
-  await activateBrowser(browserName);
-  await page.bringToFront();
-  if (clickAtPoint) {
-    const box = await page.getByRole('heading', { name: 'Example', exact: true, level: 2 }).boundingBox();
-    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-  }
-  await page.getByRole('button', { name: 'Back' }).focus();
-  const { phrase, quiet } = await untilQuiet({
-    read: lastPhrase, sleep: (ms) => page.waitForTimeout(ms), quietMs: 2000, limitMs: 10000 });
-  const start = { phrase, quiet, position: await cursorBounds() };
-  const moves = [];
-  const step = async () => {
-    await voiceOver.next();
-    const move = { phrase: await lastPhrase(), position: await cursorBounds() };
-    moves.push(move);
-    return move;
-  };
-  const { stops, reachedEnd } = await stopsToEnd(step, start.position, 40);
-  return { start, moves, stops, reachedEnd };
-}
-
-if (PROBE) {
-  const starts = [
-    ['closed-keyboard', false, false],
-    ['closed-point', false, true],
-    ['open-keyboard', true, false],
-    ['open-point', true, true],
-  ];
-  for (const [name, opened, clickAtPoint] of starts) {
-    test(`probe bad-cupertino-expansion-tile ${name}`, async ({ page, voiceOver, browserName }) => {
-      test.skip(browserName !== 'webkit', 'the probe is for WebKit only');
-      await page.goto('/#/t/C05/bad-cupertino-expansion-tile', { waitUntil: 'load' });
-      await expect(page.locator('[flt-semantics-identifier="c05-bad-cupertino-expansion-tile-count"]')).toBeVisible();
-      await page.waitForTimeout(600);
-      if (opened) {
-        await page.getByRole('button', { name: 'Shipping', exact: true }).click();
-        await expect(page.getByText(SHIPPING_TEXT)).toHaveCount(1);
-        await page.waitForTimeout(1000);
-      }
-      for (let n = 1; n <= 2; n++) {
-        const { start, moves, stops, reachedEnd } = await probeWalk(page, voiceOver, browserName, { clickAtPoint });
-        console.log(`C05VO ${browserName} probe-${name}-${n} | start: "${start.phrase}" ` +
-          `(quiet: ${start.quiet}) at ${start.position} / stops: ${stops.join(' / ') || '(none)'} ` +
-          `/ reached end: ${reachedEnd} / moves: ${moves.map((m) => `"${m.phrase}" at ${m.position}`).join('; ')}`);
-      }
-    });
-  }
 }

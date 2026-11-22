@@ -350,3 +350,40 @@ stopped is consistent with the snapshot and not shown by its own output.
 The open walk of that example now starts with a mouse click at the
 heading's place instead (`walkToEndClickingAtPoint` in the spec).
 
+## C05's third web VoiceOver recording, and a WebKit probe
+
+`voiceover-web-round3-fail.md.txt` is the third recording's transcript,
+and `voiceover-web-round3-error-context-webkit.md.txt` its one failure's
+error context. Every walk was as expected but the open walk of
+`bad-cupertino-expansion-tile` in WebKit, which logged one stop,
+"CupertinoExpansionTile - Flutter A11Y Techniques web content", where the
+screen's title was expected. In Chromium the same walk was complete and
+as expected. The walk is judged only once it has ended, and the log
+shows every stop of a walk that is not complete, so the walk itself
+ended after that stop: the next two moves changed neither the cursor's
+position nor the phrase (`stopsToEnd` in `web_tests/vo/vo_logic.js`).
+
+`voiceover-web-round3-probe.md.txt` is the output of a probe, run through
+the tool in WebKit only (`C05_VO_PROBE=1 python3 tool/voiceover_web.py
+C05`, with the spec as kept in `c05_accordion_vo_round3_probe.spec.js.txt`).
+It judges nothing. On `bad-cupertino-expansion-tile` it started walks four
+ways, each on a fresh load with two walks on that load: closed or opened
+first; with no click, or with the mouse click at the "Example" heading's
+place that the open walk uses. It logged where VoiceOver's cursor was
+after the start, then every move.
+
+- All four first walks walked the whole screen from the title to the
+  count, open ones included, and read it as the spec expects.
+- Three of the four second walks did not: closed with no click and open
+  with no click both started with the cursor still on "Presses: 0", where
+  the first walk had ended, and collected no stop; open with the click at
+  a point started with the cursor at Back's place and VoiceOver's help
+  message for a button, as the good walks did, and its first move went to
+  the page's web area, as in the third recording. Closed with the click at
+  a point walked the screen.
+
+So, in this probe, a walk failed only as the second walk on a load, closed
+or open, and never as the first; and one failing start could not be told
+from the good ones at the start. Why a second walk's start fails was not
+found. The spec now makes this example's open walk on a fresh load.
+

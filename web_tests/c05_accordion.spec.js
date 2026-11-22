@@ -412,6 +412,21 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     });
   }
 
+  // bad-cupertino-expansion-tile's open walk is made on a fresh load (the
+  // VoiceOver spec): that moves where a walk starts, and nothing else. A
+  // wrong reading on that walk still fails for good, with no further walk.
+  test('the open Cupertino tile: a wrong reading on the walk after a fresh load fails, and no second walk is made', async () => {
+    const tileOpen = ['Shipping Orders ship in two days. Expanded double tap to collapse button',
+      'Returns Collapsed double tap to expand button', 'Presses: 0'];
+    const tileScreen = screenStops('bad-cupertino-expansion-tile');
+    const whole = [...tileScreen, EXAMPLE_HEADING, ...tileOpen];
+    const webArea = ['CupertinoExpansionTile - Flutter A11Y Techniques web content'];
+    const { walkOnce, made } = sequence({ stops: webArea, reachedEnd: true }, { stops: whole, reachedEnd: true });
+    const tileJudge = (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, tileOpen, tileScreen);
+    expect((await runWalks(walkOnce, tileJudge)).verdict).toBe('wrong');
+    expect(made()).toBe(1);
+  });
+
   test('a wrong walk after a short one still fails, and no third walk is made', async () => {
     const { walkOnce, made } = sequence(short, { stops: screen(expected[0], expected[2]), reachedEnd: true }, right);
     expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');

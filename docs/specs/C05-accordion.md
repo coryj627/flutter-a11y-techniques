@@ -245,7 +245,7 @@ it either way; nothing is claimed.
 | L3 iOS | Good: each header is a button named by its title, value "collapsed"; two buttons but Back; no closed panel on screen; a tap opens Shipping (value "expanded", Returns "collapsed", the panel's text and button between Shipping and Returns on screen; XCUITest's list of elements is not the reading order, which the VoiceOver walk checks) and a second closes it; two Tabs and Enter, and in another launch Space, open Shipping and stay on the example. Bad: `bad-no-state` has no value before or after a tap that opens it; `bad-heading-on-button` and `bad-no-heading` are buttons with the value (the heading is heard, not seen, in the tree); `bad-hidden-panel` shows no closed panel, four Tabs and Enter press a hidden button (the count) while both stay closed, and three Tabs and Enter open Returns, the positive control; `bad-expansion-tile` and `bad-cupertino-expansion-tile` are not buttons and have no value, and a tap opens them; for `bad-cupertino-expansion-tile`, one, two, and three Tabs and then Enter or Space never open a section and take the example off the screen (Back acted) |
 | L4 TalkBack | For each example but `bad-hidden-panel`: what is said with focus on Shipping's header, closed; on the click action with focus left there (not for `bad-no-state` and `bad-cupertino-expansion-tile`, see section 7); with focus on the panel's text (on Back for `bad-cupertino-expansion-tile`, whose open panel is part of its header); and on the header again, open |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list, closed, and again after XCUITest's double tap at the header, with VoiceOver on, has opened Shipping; what VoiceOver says with its cursor on Shipping, and in the three seconds after that gesture. The gesture is a tap at the header's place, not VoiceOver's activation, which XCUIVoiceOverService has no way to make (C04 probe round 3, `docs/evidence/probes/c04/ios_round3.txt`) |
-| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C04's walks are (`judgeExampleWalk` in `web_tests/vo/c05_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened Shipping, in Chromium and WebKit. The judge is tested on made-up walks in `web_tests/c05_accordion.spec.js`. The first recording (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`) heard every walk of the good examples and of the four hand-built bad ones, closed and open, in both browsers, as expected; the two SDK tiles' closed readings were not as expected (their hint, above), so their open walks were not reached. Their expectations are now the closed readings heard, and open readings not heard yet. The second recording (`docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt`) heard every walk as expected, the tiles' open walks included, but for `bad-cupertino-expansion-tile`, whose test ran into its timeout after the closed walk; its open walk now starts as described in section 7. The transcript is to be recorded again |
+| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C04's walks are (`judgeExampleWalk` in `web_tests/vo/c05_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened Shipping, in Chromium and WebKit. The judge is tested on made-up walks in `web_tests/c05_accordion.spec.js`. The first recording (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`) heard every walk of the good examples and of the four hand-built bad ones, closed and open, in both browsers, as expected; the two SDK tiles' closed readings were not as expected (their hint, above), so their open walks were not reached. Their expectations are now the closed readings heard, and open readings not heard yet. The second recording (`docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt`) heard every walk as expected, the tiles' open walks included, but for `bad-cupertino-expansion-tile`, whose test ran into its timeout after the closed walk; its open walk now starts as described in section 7. The third (`voiceover-web-round3-fail.md.txt`) heard every walk as expected, that open walk included in Chromium, but in WebKit that open walk read only the page's web area; it is now made on a fresh load (section 7). The transcript is to be recorded again |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -361,6 +361,29 @@ Skips and what they give up, in the tests:
   into the page; the walk is then `walkToEnd`'s. It gives up the check that
   nothing covers the heading, which the tree spec makes instead ("the empty
   element over the page").
+- The web VoiceOver spec makes `bad-cupertino-expansion-tile`'s open walk
+  on a fresh load of the example, so that it is the first walk on that
+  page; every other example's open walk is the second walk on the page its
+  closed walk was made on. In the third recording that open walk, the
+  second on its page, read only the page's web area in WebKit and was
+  right in Chromium (`voiceover-web-round3-fail.md.txt`). A WebKit probe of
+  this example (`docs/evidence/probes/c05/voiceover-web-round3-probe.md.txt`,
+  from `c05_accordion_vo_round3_probe.spec.js.txt`) started walks four
+  ways, closed or open, with no click or with the click at a point, two
+  walks on each load: all four first walks walked the page, open ones
+  included; three of the four second walks did not, closed ones included.
+  In two of them the start left VoiceOver's cursor where the walk before
+  had ended ("Presses: 0"); in the third, with the click at a point, the
+  start looked as in the good walks (the same kind of phrase, the cursor
+  at the same place) and the first move went to the web area. So the
+  probe ties the failure to a second walk on one load, not to the open
+  screen, and gives no check at the start that would catch all of it;
+  none is made. The fresh load gives up nothing that is judged: the walk
+  is judged as every walk is, and a wrong reading fails for good. Why a
+  second walk's start fails was not found. The other examples' second
+  walks, which start with the checked click, were right in all three
+  recordings, and the probe tested this example only, so they are left as
+  they are.
 - The web test of `bad-cupertino-expansion-tile`'s Tab stops leaves out
   stops outside Flutter's tree (the page itself, FL-421). It gives up
   nothing a key could act on in the app.
