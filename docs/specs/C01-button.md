@@ -72,6 +72,25 @@ the native `<button>` as described by MDN.
 | `good-cupertino` | Cupertino | Text button, and a disabled one | `CupertinoButton`; the disabled one inside `Semantics(enabled: false)` (limitation 1) | R1, R4, R7 |
 | `good-custom` | Widgets layer | A custom-drawn button with role, state, and keyboard activation | `Semantics(button: true, enabled:, onTap:)` with `FocusableActionDetector` handling `ActivateIntent` | R6, R7 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-cupertino`
+and `good-custom` are custom solutions. Each is tested here in isolation,
+with screen-reader transcripts, but has not been built into a real app and
+tested in a user journey. Do not treat them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-text` | Nothing: `FilledButton`, `OutlinedButton`, and `TextButton` with a text child | Those buttons | none | R1, R7, R8: iOS Buttons, APG Button, MDN <button> | not custom |
+| `good-icon` | Nothing: `IconButton(tooltip:)` | `IconButton` | none | R5: Android Compose Interactive Control Labels | not custom |
+| `good-disabled` | Nothing: `onPressed: null` | The Material buttons | none | R4: iOS Buttons, APG Button | not custom |
+| `good-unique-names` | Nothing: `Text(semanticsLabel:)` on each button, and `Semantics(container: true)` to keep each row's text a node of its own | `TextButton` | none | R2: iOS Buttons | not custom |
+| `good-cupertino` | An `Actions` for `ButtonActivateIntent` round the `CupertinoButton`, so that Enter works on the web; `Semantics(enabled: false)` round the disabled one | `CupertinoButton` | Enter on the web ([FL-002](../flutter-limitations.md#fl-002)); the disabled state ([FL-001](../flutter-limitations.md#fl-001)) | R1, R4, R7: iOS Buttons, APG Button | custom |
+| `good-custom` | A button drawn by hand: role, state, and tap from `Semantics(button: true, enabled:, onTap:)`; focus, Enter, and Space from `FocusableActionDetector`; a focus ring of its own | None for a drawn control; the Material and Cupertino buttons are the framework's | none | R6, R7: Android View Focusable, Clickable Controls, APG Button | custom |
+
 ### Bad
 
 Each has one named defect, asserted by tests (VAL-3).

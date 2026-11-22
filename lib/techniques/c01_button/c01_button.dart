@@ -93,12 +93,19 @@ final c01Button = Technique(
       slug: 'good-cupertino',
       title: 'Cupertino buttons',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'Hand-built additions to CupertinoButton: an Actions so that Enter '
+          'works on the web (FL-002), and Semantics(enabled: false), which '
+          'the disabled button does not report (FL-001).',
       builder: (_) => const GoodCupertinoButtons(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Custom button',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A button drawn by hand, with its role, state, focus, keys, and '
+          'focus ring built from Semantics and FocusableActionDetector.',
       builder: (_) => const GoodCustomButton(),
     ),
     TechniqueExample.bad(

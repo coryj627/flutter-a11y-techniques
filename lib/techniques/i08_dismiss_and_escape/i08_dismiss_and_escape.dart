@@ -83,6 +83,11 @@ final i08DismissAndEscape = Technique(
       slug: 'good-widgets',
       title: 'Layers drawn in the overlay, closed by every dismiss command',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'Dismissal built by hand for layers in an OverlayEntry: a '
+          'ModalBarrier, a focus scope, Actions for DismissIntent, '
+          'Semantics(onDismiss:), and a PopScope; an overlay has none of '
+          'these (FL-481).',
       builder: (_) => const GoodWidgets(),
     ),
     TechniqueExample.bad(

@@ -79,18 +79,30 @@ final v13TouchTargetSize = Technique(
       slug: 'good-cupertino',
       title: 'Cupertino buttons at their minimum size',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'An Actions built by hand round each CupertinoButton so that Enter '
+          'works on the web (FL-002); the size itself is the button\'s own '
+          'minimumSize.',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Custom buttons that take taps over their whole box',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A button drawn by hand: an opaque 48 by 48 GestureDetector in '
+          'Semantics(button: true), with focus and keys from '
+          'FocusableActionDetector.',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.good(
       slug: 'good-inline-link',
       title: 'Link in a sentence',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'An inline link built by hand: Semantics(link: true) and a '
+          'GestureDetector in a WidgetSpan, with FocusableActionDetector and '
+          'a sort key to keep it in its sentence (FL-413).',
       builder: (_) => const GoodInlineLink(),
     ),
     TechniqueExample.bad(

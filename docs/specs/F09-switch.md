@@ -82,6 +82,23 @@ that a control worked. Every switch starts off.
 | `good-custom` | Widgets | The same drawn by hand | `Semantics(toggled:, enabled: true, label:, onTap:)`; Space and Enter through `FocusableActionDetector` | R1 to R5, R7 |
 | `good-group` | Material | Two switches under the question "Notify me about" | `Semantics(container: true, explicitChildNodes: true, label:)` around the switches, with the visible question in `ExcludeSemantics` | R6 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-custom` is a
+custom solution. It is tested here in isolation, with screen-reader
+transcripts, but has not been built into a real app and tested in a user
+journey. Do not treat it as a vetted technique.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-tile` | Nothing: `SwitchListTile` | `SwitchListTile` | none | R1, R2, R3, R4, R5, R7: Android Compose Switch Controls, iOS Toggles, APG Switch, MDN: ARIA switch role, MDN switch role | not custom |
+| `good-cupertino` | Nothing is built: `MergeSemantics` round a `CupertinoListTile` with a trailing `CupertinoSwitch` and `onTap`, as the `CupertinoSwitch` documentation shows | `CupertinoSwitch` in a `CupertinoListTile` | none | R1, R2, R3, R4, R5, R7: Android Compose Switch Controls, iOS Toggles, APG Switch, MDN: ARIA switch role, MDN switch role | not custom |
+| `good-custom` | A switch drawn by hand: `Semantics(toggled:, enabled: true, label:, onTap:)`; Space and Enter from `FocusableActionDetector`; a focus ring of its own | None for a drawn control | Dimmed without `enabled` ([FL-033](../flutter-limitations.md#fl-033)) | R1, R2, R3, R4, R5, R7: Android Compose Switch Controls, iOS Toggles, APG Switch, MDN: ARIA switch role, MDN switch role | custom |
+| `good-group` | A named group: `Semantics(container: true, explicitChildNodes: true, label:)` round the switches, the visible question in `ExcludeSemantics` | None for a named group of switches | none | R6: APG Switch | borderline: As F07 `good-group`: only a name, with documented properties, but a group node that no widget provides. |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

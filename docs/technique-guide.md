@@ -87,6 +87,19 @@ pushing. S01 failed CI here: the tests had passed against a stale build.
   written.
 - **Good examples use SDK APIs only**, and every mechanism traces to a source
   in the spec.
+- **Do not invent a mechanism or a solution.** Flutter's own widget for the
+  pattern comes first; where it falls short, that is a Flutter limitation,
+  recorded in [flutter-limitations.md](flutter-limitations.md), not a reason
+  to build one. A control or a mechanism put together by hand that is kept
+  all the same is a custom solution: give its `TechniqueExample.good` a
+  `customSolution:`, one sentence on what is hand-built and why, which shows
+  the label in the app and the Widgetbook, and enter it in
+  [custom-solutions.md](custom-solutions.md). Its technique doc then needs a
+  "Custom solutions" section near the top and the label on the example's
+  row, and its spec a "Custom solutions" section with the register's table;
+  call it what was built and measured, never the recommended way. Every good
+  example has a row in the register, custom or not, and `flutter test`
+  fails until it does.
 - **A bad example has one defect**, stated as what the user experiences, and
   every layer that can see the defect asserts it. Write those assertions so
   they fail if a Flutter upgrade fixes the defect.

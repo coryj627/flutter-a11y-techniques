@@ -173,6 +173,23 @@ button inside `Semantics(link: true)` (FL-221). So `good-cupertino` is the
 widgets-layer link in Cupertino's colour; what makes it Cupertino is the
 colour, and the spec says so rather than claim more.
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-material`,
+`good-cupertino` and `good-custom` are custom solutions. Each is tested here
+in isolation, with screen-reader transcripts, but has not been built into a
+real app and tested in a user journey. Do not treat them as vetted
+techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | `MaterialInlineLink`: `Semantics(link: true, linkUrl:, onTapHint:)` round an `InkWell` in a `WidgetSpan`; C03's `BrowserKeys`; a focus ring; a sort key and an identifier that keep it in its sentence | A `TextSpan` with a tap recognizer, which takes no keyboard focus ([FL-240](../flutter-limitations.md#fl-240)); no link widget ([FL-221](../flutter-limitations.md#fl-221)) | [FL-240](../flutter-limitations.md#fl-240); [FL-413](../flutter-limitations.md#fl-413) (read after its sentence); [FL-241](../flutter-limitations.md#fl-241) (scaled twice); [FL-013](../flutter-limitations.md#fl-013); [FL-221](../flutter-limitations.md#fl-221) | R1, R2, R3, R4, R5, R6, R7: APG Link, MDN a, iOS Links, G53, Android Compose, F73, G183, C03 R7 | custom |
+| `good-cupertino` | `KeyboardInlineLink`: `FocusableActionDetector` round `Semantics(link: true, linkUrl:, onTapHint:)` and a `GestureDetector` in a `WidgetSpan`; the high-contrast `systemBlue` | As `good-material`; Cupertino has no link widget either | [FL-240](../flutter-limitations.md#fl-240); [FL-413](../flutter-limitations.md#fl-413); [FL-241](../flutter-limitations.md#fl-241); [FL-242](../flutter-limitations.md#fl-242) (link colour under 4.5:1); [FL-221](../flutter-limitations.md#fl-221) | R1, R2, R3, R4, R5, R6, R7: APG Link, MDN a, iOS Links, G53, Android Compose, F73, G183, C03 R7 | custom |
+| `good-custom` | `KeyboardInlineLink` in the theme's primary colour | As `good-material` | [FL-240](../flutter-limitations.md#fl-240); [FL-413](../flutter-limitations.md#fl-413); [FL-241](../flutter-limitations.md#fl-241); [FL-221](../flutter-limitations.md#fl-221) | R1, R2, R3, R4, R5, R6, R7: APG Link, MDN a, iOS Links, G53, Android Compose, F73, G183, C03 R7 | custom |
+
 ### Bad
 
 | Slug | Defect | Violates |

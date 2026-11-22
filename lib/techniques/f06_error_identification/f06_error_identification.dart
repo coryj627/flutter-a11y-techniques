@@ -79,12 +79,21 @@ final f06ErrorIdentification = Technique(
       slug: 'good-form',
       title: 'Form with errors under each field',
       variant: ExampleVariant.material,
+      customSolution:
+          'A focus move built by hand: focus goes to the first field in '
+          'error, with a FocusSemanticEvent so that VoiceOver on iOS follows '
+          '(FL-184); Form moves no focus.',
       builder: (_) => const GoodForm(),
     ),
     TechniqueExample.good(
       slug: 'good-cupertino',
       title: 'Cupertino form with errors',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'A Cupertino error field built by hand: FormField, '
+          'Semantics(label:, hint:, validationResult:), a live region for the '
+          'error, and the focus move of good-form; CupertinoTextFormFieldRow '
+          'falls short (FL-182, FL-016).',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.bad(

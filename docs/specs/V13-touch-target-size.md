@@ -108,6 +108,24 @@ difference from a good one.
 | `good-custom` | Widgets layer | A 24 pixel icon in a 48 by 48 box that takes taps all over | `GestureDetector(behavior: HitTestBehavior.opaque)` around `SizedBox.square(dimension: 48)`, inside `Semantics(button: true)` and the same `FocusableActionDetector` as I01 | R1, R2, R3 |
 | `good-inline-link` | Widgets layer | A link in a sentence, as tall as its line of text (20 pixels at the default size) | A `WidgetSpan` holding `Semantics(link: true)` and an opaque `GestureDetector` around the link's text, with a `FocusableActionDetector`. A `WidgetSpan` because a `TextSpan` with a recognizer takes no keyboard focus. To keep it in its place for screen readers ([FL-413](../flutter-limitations.md#fl-413)): a `semanticsIdentifier` on the text before it, and `Semantics(container: true, sortKey: OrdinalSortKey(0.5))` around it | R5 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-cupertino`,
+`good-custom` and `good-inline-link` are custom solutions. Each is tested
+here in isolation, with screen-reader transcripts, but has not been built
+into a real app and tested in a user journey. Do not treat them as vetted
+techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Nothing: `IconButton.filledTonal` with the theme's `MaterialTapTargetSize.padded` | `IconButton` | None filled (no padding in a desktop browser, [FL-412](../flutter-limitations.md#fl-412), is left as it is) | R1, R2, R4: iOS: Touch Target Size, Android View: Minimum Touch Target Size, Android Compose: Minimum Touch Target Size, Android View and Android Compose, iOS, Android Compose | not custom |
+| `good-cupertino` | An `Actions` for Enter on the web round each `CupertinoButton`; the size is the button's own `minimumSize` | `CupertinoButton` | Enter on the web ([FL-002](../flutter-limitations.md#fl-002)) | R1, R2, R3: iOS: Touch Target Size, Android View: Minimum Touch Target Size, Android Compose: Minimum Touch Target Size, Android View and Android Compose, iOS, Android View, Android Compose | custom |
+| `good-custom` | A button drawn by hand: an opaque `GestureDetector` round a 48 by 48 box, in `Semantics(button: true)`, with I01's focus and keys | None for a drawn control | The node can be bigger than the area that takes taps ([FL-410](../flutter-limitations.md#fl-410)) | R1, R2, R3: iOS: Touch Target Size, Android View: Minimum Touch Target Size, Android Compose: Minimum Touch Target Size, Android View and Android Compose, iOS, Android View, Android Compose | custom |
+| `good-inline-link` | A link in a sentence: `Semantics(link: true)` and an opaque `GestureDetector` in a `WidgetSpan`, with `FocusableActionDetector`, a `semanticsIdentifier` on the text before it, and a sort key | None: a `TextSpan` link takes no focus ([FL-240](../flutter-limitations.md#fl-240)), and Flutter has no link widget ([FL-221](../flutter-limitations.md#fl-221)) | The link is read after its sentence ([FL-413](../flutter-limitations.md#fl-413)) | R5: iOS | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |
@@ -206,8 +224,8 @@ iOS simulator, and Chromium.
   (a `semanticsIdentifier` on a run of the sentence, and a sort key on the
   link), and `good-inline-link` now uses it: the sentence is read in order
   on iOS and the web, the web tree has the three parts in order, and Tab,
-  Enter, and Space work on every platform. How to build a link in text in
-  general, and its role, are C04's.
+  Enter, and Space work on every platform. Links in text in general, and
+  their role, are C04's subject.
 
 **Not done yet.** A phone's browser itself (only imitated in Chromium);
 Safari and Firefox; the desktop platforms as apps (read in the source

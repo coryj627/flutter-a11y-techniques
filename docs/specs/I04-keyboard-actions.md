@@ -165,6 +165,23 @@ The favourite button (an `IconButton`) and the thumbnails (each an
 widgets in all of them, so that the examples differ only in what the
 technique is about.
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-on-focus`,
+`good-turn-off` and `good-remap` are custom solutions. Each is tested here
+in isolation, with screen-reader transcripts, but has not been built into a
+real app and tested in a user journey. Do not treat them as vetted
+techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-on-focus` | The keys of a thumbnail strip: a `Shortcuts` mapping Left, Right, Home, End, and F to intents, and `Actions` for them | None: no widget has a strip with keys of its own | none | R1, R2, R3, R4, R5, R6: Android Compose: Keyboard Actions, MDN: Keyboard-navigable JavaScript widgets, APG: Toolbar, WCAG 2.2: 2.1.4, Understanding 2.1.4, WCAG 2.2 glossary, EditableText's documentation on shortcuts and text input | custom |
+| `good-turn-off` | A `CallbackShortcuts` for F that a switch turns off; the strip's keys in a `Focus(onKeyEvent:)`; a `Shortcuts` that keeps F for the text field | None | A shortcut above a text field takes its key ([FL-460](../flutter-limitations.md#fl-460)); [FL-464](../flutter-limitations.md#fl-464) | R1, R2, R3, R4, R5, R6: Android Compose: Keyboard Actions, MDN: Keyboard-navigable JavaScript widgets, APG: Toolbar, WCAG 2.2: 2.1.4, Understanding 2.1.4, WCAG 2.2 glossary, EditableText's documentation on shortcuts and text input | custom |
+| `good-remap` | A `CallbackShortcuts` bound to F or to Control+F; the strip's keys in a `CallbackShortcuts` | None | [FL-460](../flutter-limitations.md#fl-460); [FL-464](../flutter-limitations.md#fl-464) | R1, R2, R3, R4, R5, R6: Android Compose: Keyboard Actions, MDN: Keyboard-navigable JavaScript widgets, APG: Toolbar, WCAG 2.2: 2.1.4, Understanding 2.1.4, WCAG 2.2 glossary, EditableText's documentation on shortcuts and text input | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

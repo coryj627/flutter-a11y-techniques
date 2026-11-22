@@ -65,6 +65,10 @@ final c02ToggleButton = Technique(
       slug: 'good-icon-button',
       title: 'Icon button that stays pressed',
       variant: ExampleVariant.material,
+      customSolution:
+          'Hand-built toggle state: Semantics(toggled:) merged onto an '
+          'IconButton in place of isSelected, which says nothing while it is '
+          'off (FL-200, FL-201).',
       builder: (_) => const GoodIconButton(),
     ),
     TechniqueExample.good(
@@ -77,12 +81,19 @@ final c02ToggleButton = Technique(
       slug: 'good-cupertino',
       title: 'Cupertino button that stays pressed',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'A toggle button built by hand from a CupertinoButton, with '
+          'Semantics(toggled:, enabled: true) and an Actions for Enter on the '
+          'web; Cupertino has no toggle button.',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Custom toggle button with an on or off state',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A toggle button drawn by hand, with its role, state, focus, keys, '
+          'and focus ring built from Semantics and FocusableActionDetector.',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.bad(

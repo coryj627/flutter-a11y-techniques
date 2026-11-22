@@ -816,6 +816,18 @@ void main() {
       addTearDown(tester.view.reset);
       await _open(tester, slug);
       await _pressSend(tester, slug);
+      // A custom solution has its label above the example
+      // (docs/custom-solutions.md), many lines at this width, and the
+      // errors that Send shows then push the count below the view. The
+      // Android test scrolls to the count before it reads it (count() in
+      // TechniqueTest.kt), so it is scrolled to here as well, to the bottom
+      // of the view, where it is without the label. For an example with no
+      // label it is in view already, and this moves nothing.
+      await Scrollable.ensureVisible(
+        tester.element(byId('f06-$slug-count')),
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+      );
+      await tester.pumpAndSettle();
       bool hidden() => dataById('f06-$slug-count').flagsCollection.isHidden;
       expect(hidden(), isFalse);
       tester.view.viewInsets = const FakeViewPadding(bottom: 260);

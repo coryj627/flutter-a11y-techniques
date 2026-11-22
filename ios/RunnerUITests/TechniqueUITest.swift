@@ -50,6 +50,17 @@ extension TechniqueUITest {
     }
     XCTFail("\(slug) did not open after three attempts", file: file, line: line)
   }
+
+  /// Scrolls the screen to its end, with VoiceOver off, as a person scrolls
+  /// down to an example whose lines above it push its end below the view:
+  /// for a custom solution, its note (docs/custom-solutions.md). VoiceOver's
+  /// moves forward stop at the last element in view, so a walk to an
+  /// element below the view never reaches it. On a screen that does not
+  /// scroll this moves nothing.
+  func scrollToEnd() {
+    app.swipeUp()
+    usleep(1_000_000)
+  }
 }
 
 /// A technique whose examples each end with a count: an element identified

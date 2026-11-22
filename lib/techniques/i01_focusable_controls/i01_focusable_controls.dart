@@ -83,12 +83,18 @@ final i01FocusableControls = Technique(
       slug: 'good-cupertino',
       title: 'Cupertino list tile with focus and keys added',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'Focus, keys, a focus ring, and the button role built by hand round '
+          'a CupertinoListTile, which has none of them (FL-400).',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Custom card with focus, keys, and a button role',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A card made a button by hand from a GestureDetector, '
+          'Semantics(button: true), and FocusableActionDetector.',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.bad(
