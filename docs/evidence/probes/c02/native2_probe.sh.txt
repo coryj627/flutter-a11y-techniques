@@ -1,0 +1,30 @@
+#!/bin/sh
+# C02 probe, the native comparison, second version, under
+# tool/with_devices.py. Run from the worktree root with the throwaway
+# sources in place (ProbeNativeActivity2.kt.txt as the debug
+# ProbeNativeActivity and its manifest entry, the native stops added to
+# C02ToggleButtonTest's talkBackWalk as in C02ToggleButtonTest-native2.kt.txt,
+# their names in tool/techniques/c02_toggle_button.py, SceneDelegate2.swift.txt
+# and C02ProbeUITests2.swift.txt), after `xcodebuild build-for-testing` into
+# build/ios_uitest.
+#
+# 1. tool/talkback.py C02 walks the examples and the native screen with
+#    TalkBack (the tool turns TalkBack on and puts the settings back).
+#    Its transcript is copied to talkback-native2.md.txt.
+# 2. The node properties the walk logged under the tag C02NATIVE:
+#    android_native2_nodes.txt.
+# 3. The iOS native walk, VoiceOver on only inside each walk:
+#    ios_native2.txt.
+OUT=docs/evidence/probes/c02
+python3 tool/talkback.py C02 > $OUT/talkback-native2-run.txt 2>&1
+echo "talkback exit $?" >> $OUT/talkback-native2-run.txt
+cp docs/evidence/C02/talkback-android.md $OUT/talkback-native2.md.txt
+adb logcat -d -s C02NATIVE:I | grep C02NATIVE | sed 's/^.*C02NATIVE: //' > $OUT/android_native2_nodes.txt
+cd ios || exit 1
+echo "== simulator: $(xcrun simctl list devices booted | grep -E 'Booted' | head -1)" > ../$OUT/ios_native2.txt
+xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+  -destination "platform=iOS Simulator,name=iPhone 17" \
+  -only-testing:"RunnerUITests/C02ProbeUITests/testNative" \
+  -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "C02PROBE|error:|passed|failed|skipped" | grep -v "Test Suite" >> ../$OUT/ios_native2.txt
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

@@ -1,0 +1,262 @@
+npm notice run npx
+npm notice run 'playwright' test -c c02probe.config.js
+
+Running 4 tests using 2 workers
+
+chromium before flip
+  flt-semantics text="t01 Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t02 Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t03 Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t04 Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="" tabindex="0" aria-label="t05a Bold" role="checkbox" aria-checked="false"
+  flt-semantics text="" tabindex="0" aria-label="t05b Italic" role="checkbox" aria-checked="true"
+  flt-semantics text="" tabindex="0" aria-label="t05c Underline" role="checkbox" aria-checked="false"
+  flt-semantics text="t06a Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t06b Italic" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t07a Day" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t07b Week" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t08 Mute" role="button" aria-current="false"
+  flt-semantics text="" aria-label="t09 Mute" role="switch" aria-checked="false"
+  flt-semantics text="" aria-label="t10 Mute" role="checkbox" aria-checked="false"
+  flt-semantics text="t11 Mute" role="button"
+  flt-semantics text="t12 Mute" role="button" aria-current="false"
+  flt-semantics text="" tabindex="0" aria-label="t13 Mute" role="switch" aria-checked="false"
+  flt-semantics text="t14 Mute" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="" tabindex="0" aria-label="t15 Bold" role="checkbox" aria-checked="false"
+  flt-semantics text="t16 Bold" role="button" aria-current="true" aria-disabled="true"
+  flt-semantics text="t17 Mute" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t18 Mute" role="button" tabindex="0"
+  flt-semantics text="t19 Mute" role="button" aria-current="false"
+  flt-semantics text="" tabindex="0" aria-label="t20 Bold" role="switch" aria-checked="false"
+  flt-semantics text="" tabindex="0" aria-label="t21 Mute" role="switch" aria-checked="false"
+chromium aria snapshot before flip
+- text: "State: t01=0 t02=1 t03=0 t04=0 t05=0 t06=0 t07=0 t08=0 t09=0 t10=0 t11=0 t12=0 t13=0 t14=0 t15=0 t17=0 t18=0 t19=0 t20=0 t21=0"
+  - button "t01 Bold"
+  - button "t02 Bold"
+  - button "t03 Bold"
+  - switch "t04 Bold":
+    - button "t04 Bold"
+  - checkbox "t05a Bold"
+  - checkbox "t05b Italic" [checked]
+  - checkbox "t05c Underline"
+  - button "t06a Bold"
+  - button "t06b Italic"
+  - button "t07a Day"
+  - button "t07b Week"
+  - button "t08 Mute"
+  - switch "t09 Mute"
+  - checkbox "t10 Mute"
+  - button "t11 Mute"
+  - button "t12 Mute"
+  - switch "t13 Mute"
+  - button "t14 Mute"
+  - checkbox "t15 Bold"
+  - button "t16 Bold" [disabled]
+  - button "t17 Mute"
+  - switch "t18 Mute":
+    - button "t18 Mute"
+  - button "t19 Mute"
+  - switch "t20 Bold"
+  - switch "t21 Mute"
+webkit before flip
+  flt-semantics text="t01 Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t02 Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t03 Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t04 Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="" tabindex="0" aria-label="t05a Bold" role="checkbox" aria-checked="false"
+  flt-semantics text="" tabindex="0" aria-label="t05b Italic" role="checkbox" aria-checked="true"
+  flt-semantics text="" tabindex="0" aria-label="t05c Underline" role="checkbox" aria-checked="false"
+  flt-semantics text="t06a Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t06b Italic" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t07a Day" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t07b Week" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t08 Mute" role="button" aria-current="false"
+  flt-semantics text="" aria-label="t09 Mute" role="switch" aria-checked="false"
+  flt-semantics text="" aria-label="t10 Mute" role="checkbox" aria-checked="false"
+  flt-semantics text="t11 Mute" role="button"
+  flt-semantics text="t12 Mute" role="button" aria-current="false"
+  flt-semantics text="" tabindex="0" aria-label="t13 Mute" role="switch" aria-checked="false"
+  flt-semantics text="t14 Mute" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="" tabindex="0" aria-label="t15 Bold" role="checkbox" aria-checked="false"
+  flt-semantics text="t16 Bold" role="button" aria-current="true" aria-disabled="true"
+  flt-semantics text="t17 Mute" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t18 Mute" role="button" tabindex="0"
+  flt-semantics text="t19 Mute" role="button" aria-current="false"
+  flt-semantics text="" tabindex="0" aria-label="t20 Bold" role="switch" aria-checked="false"
+  flt-semantics text="" tabindex="0" aria-label="t21 Mute" role="switch" aria-checked="false"
+webkit aria snapshot before flip
+- text: "State: t01=0 t02=1 t03=0 t04=0 t05=0 t06=0 t07=0 t08=0 t09=0 t10=0 t11=0 t12=0 t13=0 t14=0 t15=0 t17=0 t18=0 t19=0 t20=0 t21=0"
+  - button "t01 Bold"
+  - button "t02 Bold"
+  - button "t03 Bold"
+  - switch "t04 Bold":
+    - button "t04 Bold"
+  - checkbox "t05a Bold"
+  - checkbox "t05b Italic" [checked]
+  - checkbox "t05c Underline"
+  - button "t06a Bold"
+  - button "t06b Italic"
+  - button "t07a Day"
+  - button "t07b Week"
+  - button "t08 Mute"
+  - switch "t09 Mute"
+  - checkbox "t10 Mute"
+  - button "t11 Mute"
+  - button "t12 Mute"
+  - switch "t13 Mute"
+  - button "t14 Mute"
+  - checkbox "t15 Bold"
+  - button "t16 Bold" [disabled]
+  - button "t17 Mute"
+  - switch "t18 Mute":
+    - button "t18 Mute"
+  - button "t19 Mute"
+  - switch "t20 Bold"
+  - switch "t21 Mute"
+chromium after flip
+  flt-semantics text="t01 Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t02 Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t03 Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t04 Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="" tabindex="0" aria-label="t05a Bold" role="checkbox" aria-checked="true"
+  flt-semantics text="" tabindex="0" aria-label="t05b Italic" role="checkbox" aria-checked="false"
+  flt-semantics text="" tabindex="0" aria-label="t05c Underline" role="checkbox" aria-checked="false"
+  flt-semantics text="t06a Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t06b Italic" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t07a Day" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t07b Week" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t08 Mute" role="button" aria-current="true"
+  flt-semantics text="" aria-label="t09 Mute" role="switch" aria-checked="true"
+  flt-semantics text="" aria-label="t10 Mute" role="checkbox" aria-checked="true"
+  flt-semantics text="t11 Mute" role="button"
+  flt-semantics text="t12 Unmute" role="button" aria-current="true"
+  flt-semantics text="" tabindex="0" aria-label="t13 Mute" role="switch" aria-checked="true"
+  flt-semantics text="t14 Mute" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="" tabindex="0" aria-label="t15 Bold" role="checkbox" aria-checked="true"
+  flt-semantics text="t16 Bold" role="button" aria-current="true" aria-disabled="true"
+  flt-semantics text="t17 Unmute" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t18 Mute" role="button" tabindex="0"
+  flt-semantics text="t19 Mute" role="button" aria-current="true"
+  flt-semantics text="" tabindex="0" aria-label="t20 Bold" role="switch" aria-checked="true"
+  flt-semantics text="" tabindex="0" aria-label="t21 Mute" role="switch" aria-checked="true"
+chromium aria snapshot after flip
+- text: "State: t01=1 t02=0 t03=1 t04=1 t05=1 t06=1 t07=1 t08=1 t09=1 t10=1 t11=1 t12=1 t13=1 t14=1 t15=1 t17=1 t18=1 t19=1 t20=1 t21=1"
+  - button "t01 Bold"
+  - button "t02 Bold"
+  - button "t03 Bold"
+  - switch "t04 Bold" [checked]:
+    - button "t04 Bold"
+  - checkbox "t05a Bold" [checked]
+  - checkbox "t05b Italic"
+  - checkbox "t05c Underline"
+  - button "t06a Bold"
+  - button "t06b Italic"
+  - button "t07a Day"
+  - button "t07b Week"
+  - button "t08 Mute"
+  - switch "t09 Mute" [checked]
+  - checkbox "t10 Mute" [checked]
+  - button "t11 Mute"
+  - button "t12 Unmute"
+  - switch "t13 Mute" [checked]
+  - button "t14 Mute"
+  - checkbox "t15 Bold" [checked]
+  - button "t16 Bold" [disabled]
+  - button "t17 Unmute"
+  - switch "t18 Mute" [checked]:
+    - button "t18 Mute"
+  - button "t19 Mute"
+  - switch "t20 Bold" [checked]
+  - switch "t21 Mute" [checked]
+  ✓  1 [chromium] › c02_probe.spec.js:42:1 › tree, before and after Flip all (2.5s)
+webkit after flip
+  flt-semantics text="t01 Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t02 Bold" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t03 Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t04 Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="" tabindex="0" aria-label="t05a Bold" role="checkbox" aria-checked="true"
+  flt-semantics text="" tabindex="0" aria-label="t05b Italic" role="checkbox" aria-checked="false"
+  flt-semantics text="" tabindex="0" aria-label="t05c Underline" role="checkbox" aria-checked="false"
+  flt-semantics text="t06a Bold" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t06b Italic" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t07a Day" role="button" tabindex="0" aria-current="false"
+  flt-semantics text="t07b Week" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t08 Mute" role="button" aria-current="true"
+  flt-semantics text="" aria-label="t09 Mute" role="switch" aria-checked="true"
+  flt-semantics text="" aria-label="t10 Mute" role="checkbox" aria-checked="true"
+  flt-semantics text="t11 Mute" role="button"
+  flt-semantics text="t12 Unmute" role="button" aria-current="true"
+  flt-semantics text="" tabindex="0" aria-label="t13 Mute" role="switch" aria-checked="true"
+  flt-semantics text="t14 Mute" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="" tabindex="0" aria-label="t15 Bold" role="checkbox" aria-checked="true"
+  flt-semantics text="t16 Bold" role="button" aria-current="true" aria-disabled="true"
+  flt-semantics text="t17 Unmute" role="button" tabindex="0" aria-current="true"
+  flt-semantics text="t18 Mute" role="button" tabindex="0"
+  flt-semantics text="t19 Mute" role="button" aria-current="true"
+  flt-semantics text="" tabindex="0" aria-label="t20 Bold" role="switch" aria-checked="true"
+  flt-semantics text="" tabindex="0" aria-label="t21 Mute" role="switch" aria-checked="true"
+webkit aria snapshot after flip
+- text: "State: t01=1 t02=0 t03=1 t04=1 t05=1 t06=1 t07=1 t08=1 t09=1 t10=1 t11=1 t12=1 t13=1 t14=1 t15=1 t17=1 t18=1 t19=1 t20=1 t21=1"
+  - button "t01 Bold"
+  - button "t02 Bold"
+  - button "t03 Bold"
+  - switch "t04 Bold" [checked]:
+    - button "t04 Bold"
+  - checkbox "t05a Bold" [checked]
+  - checkbox "t05b Italic"
+  - checkbox "t05c Underline"
+  - button "t06a Bold"
+  - button "t06b Italic"
+  - button "t07a Day"
+  - button "t07b Week"
+  - button "t08 Mute"
+  - switch "t09 Mute" [checked]
+  - checkbox "t10 Mute" [checked]
+  - button "t11 Mute"
+  - button "t12 Unmute"
+  - switch "t13 Mute" [checked]
+  - button "t14 Mute"
+  - checkbox "t15 Bold" [checked]
+  - button "t16 Bold" [disabled]
+  - button "t17 Unmute"
+  - switch "t18 Mute" [checked]:
+    - button "t18 Mute"
+  - button "t19 Mute"
+  - switch "t20 Bold" [checked]
+  - switch "t21 Mute" [checked]
+  ✓  2 [webkit] › c02_probe.spec.js:42:1 › tree, before and after Flip all (2.6s)
+  -  4 [webkit] › c02_probe.spec.js:56:1 › keyboard: Tab to each stop, then Space, then Enter
+stop 0 flt-semantics role=button name="Flip all" | space: t01=1,t02=0,t03=1,t04=1,t05=1,t06=1,t07=1,t08=1,t09=1,t10=1,t11=1,t12=1,t13=1,t14=1,t15=1,t17=1,t18=1,t19=1,t20=1,t21=1 | enter: t01=0,t02=1,t03=0,t04=0,t05=0,t06=0,t07=0,t08=0,t09=0,t10=0,t11=0,t12=0,t13=0,t14=0,t15=0,t17=0,t18=0,t19=0,t20=0,t21=0
+stop 1 flt-semantics role=button name="t01 Bold" | space: t01=1 | enter: t01=0
+stop 2 flt-semantics role=button name="t02 Bold" | space: t02=0 | enter: t02=1
+stop 3 flt-semantics role=button name="t03 Bold" | space: t03=1 | enter: t03=0
+stop 4 flt-semantics role=button name="t04 Bold" | space: t04=1 | enter: t04=0
+stop 5 flt-semantics role=checkbox name="t05a Bold" | space: t05=1 | enter: t05=0
+stop 6 flt-semantics role=checkbox name="t05b Italic" | space: t05=1 | enter: t05=0
+stop 7 flt-semantics role=checkbox name="t05c Underline" | space:  | enter: 
+stop 8 flt-semantics role=button name="t06a Bold" | space: t06=1 | enter: t06=0
+stop 9 flt-semantics role=button name="t06b Italic" | space: t06=1 | enter: t06=0
+stop 10 flt-semantics role=button name="t07a Day" | space:  | enter: 
+stop 11 flt-semantics role=button name="t07b Week" | space: t07=1 | enter: 
+stop 12 flt-semantics role=null name="t08 Mute" | space: t08=1 | enter: t08=0
+stop 13 flt-semantics role=null name="" | space: t09=1 | enter: t09=0
+stop 14 flt-semantics role=null name="" | space: t10=1 | enter: t10=0
+stop 15 flt-semantics role=null name="t11 Mute" | space: t11=1 | enter: t11=0
+stop 16 flt-semantics role=null name="t12 Mute" | space: t12=1 | enter: t12=0
+stop 17 flt-semantics role=switch name="t13 Mute" | space: t13=1 | enter: 
+stop 18 flt-semantics role=button name="t14 Mute" | space: t14=1 | enter: 
+stop 19 flt-semantics role=checkbox name="t15 Bold" | space: t15=1 | enter: t15=0
+stop 20 flt-semantics role=button name="t17 Mute" | space: t17=1 | enter: t17=0
+stop 21 flt-semantics role=button name="t18 Mute" | space: t18=1 | enter: t18=0
+stop 22 flt-semantics role=null name="t19 Mute" | space: t19=1 | enter: t19=0
+stop 23 flt-semantics role=switch name="t20 Bold" | space: t20=1 | enter: t20=0
+stop 24 flt-semantics role=switch name="t21 Mute" | space: t21=1 | enter: t21=0
+stop 25 body role=null name="flutter typography measurementFlip allState: t01=0 t02=1 t03=0 t04=0 t05=0 t06=0 t07=1 t08=0 t09=0 t10=0 t11=0 t12=0 t13=1 t14=1 t15=0 t17=0 t18=0 t19=0 t20=0 t21=0t01 Boldt02 Boldt03 Boldt04 Boldt06a Boldt06b Italict07a Dayt07b Weekt08 Mutet11 Mutet12 Mutet14 Mutet16 Boldt17 Mutet18 Mutet19 Muteflutter-view flt-scene-host {  font: normal normal 14px sans-serif;}flutte
+stop 26 flutter-view role=null name="Flip allState: t01=0 t02=1 t03=0 t04=0 t05=0 t06=0 t07=1 t08=0 t09=0 t10=0 t11=0 t12=0 t13=1 t14=1 t15=0 t17=0 t18=0 t19=0 t20=0 t21=0t01 Boldt02 Boldt03 Boldt04 Boldt06a Boldt06b Italict07a Dayt07b Weekt08 Mutet11 Mutet12 Mutet14 Mutet16 Boldt17 Mutet18 Mutet19 Muteflutter-view flt-scene-host {  font: normal normal 14px sans-serif;}flutter-view flt-semantics i
+stop 27 flt-semantics role=button name="Flip all" | space: t01=1,t02=0,t03=1,t04=1,t05=1,t06=1,t07=0,t08=1,t09=1,t10=1,t11=1,t12=1,t13=0,t14=0,t15=1,t17=1,t18=1,t19=1,t20=1,t21=1 | enter: t01=0,t02=1,t03=0,t04=0,t05=0,t06=0,t07=1,t08=0,t09=0,t10=0,t11=0,t12=0,t13=1,t14=1,t15=0,t17=0,t18=0,t19=0,t20=0,t21=0
+stop 28 flt-semantics role=button name="t01 Bold" | space: t01=1 | enter: t01=0
+stop 29 flt-semantics role=button name="t02 Bold" | space: t02=0 | enter: t02=1
+  ✓  3 [chromium] › c02_probe.spec.js:56:1 › keyboard: Tab to each stop, then Space, then Enter (31.1s)
+
+  1 skipped
+  3 passed (34.0s)

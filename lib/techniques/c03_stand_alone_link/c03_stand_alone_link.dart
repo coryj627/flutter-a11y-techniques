@@ -45,7 +45,7 @@ final c03StandAloneLink = Technique(
       'https://www.w3.org/WAI/WCAG22/Techniques/failures/F89',
     ),
     SourceLink(
-      'WCAG failure F84: a non-specific link such as "read more"',
+      'WCAG failure F84 (of 2.4.9): a non-specific link such as "read more"',
       'https://www.w3.org/WAI/WCAG22/Techniques/failures/F84',
     ),
     SourceLink(

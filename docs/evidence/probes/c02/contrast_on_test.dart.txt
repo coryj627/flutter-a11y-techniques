@@ -1,0 +1,72 @@
+// Throwaway, C02 review round 2 (kept as
+// docs/evidence/probes/c02/contrast_on_test.dart.txt): the colours of each
+// good example's control after one activation, light and dark, and
+// whether textContrastGuideline passes then.
+import 'dart:math' as math;
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_a11y_techniques/techniques/c02_toggle_button/c02_toggle_button.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'support/examples.dart';
+
+final _open = exampleOpener(c02ToggleButton);
+
+double _lum(Color c) {
+  double ch(double v) =>
+      v <= 0.03928 ? v / 12.92 : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+  return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+}
+
+double _ratio(Color a, Color b) {
+  final la = _lum(a), lb = _lum(b);
+  final hi = la > lb ? la : lb, lo = la > lb ? lb : la;
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+void main() {
+  const controls = {
+    'good-icon-button': 'c02-good-icon-button-bold',
+    'good-toggle-buttons': 'c02-good-toggle-buttons-bold',
+    'good-cupertino': 'c02-good-cupertino-mute',
+    'good-custom': 'c02-good-custom-mute',
+  };
+  for (final MapEntry(key: slug, value: id) in controls.entries) {
+    for (final brightness in Brightness.values) {
+      testWidgets('C02CONTRAST $slug ${brightness.name}', (tester) async {
+        final handle = tester.ensureSemantics();
+        await _open(tester, slug, brightness: brightness);
+        await tester.tap(byId(id));
+        await tester.pumpAndSettle();
+        final area = byId(id);
+        // Text colours, from the RichText the control paints.
+        for (final rt in tester.widgetList<RichText>(find.descendant(of: area, matching: find.byType(RichText)))) {
+          final style = rt.text.style;
+          debugPrint('C02CONTRAST $slug ${brightness.name} text "${rt.text.toPlainText()}" color=${style?.color}');
+        }
+        for (final icon in tester.widgetList<Icon>(find.descendant(of: area, matching: find.byType(Icon)))) {
+          final theme = IconTheme.of(tester.element(find.byWidget(icon)));
+          debugPrint('C02CONTRAST $slug ${brightness.name} icon color=${icon.color ?? theme.color}');
+        }
+        if (slug == 'good-cupertino') {
+          final button = tester.widget<CupertinoButton>(find.descendant(of: area, matching: find.byType(CupertinoButton)));
+          final ctx = tester.element(find.descendant(of: area, matching: find.byType(CupertinoButton)));
+          final bg = CupertinoDynamicColor.resolve(button.color!, ctx);
+          debugPrint("C02CONTRAST $slug ${brightness.name} foreground=${button.foregroundColor}");
+          final rt = tester.widget<RichText>(find.descendant(of: area, matching: find.byType(RichText)).first);
+          debugPrint('C02CONTRAST $slug ${brightness.name} background=$bg ratio(text)=${_ratio(rt.text.style!.color!, bg).toStringAsFixed(2)}');
+        }
+        var pass = true;
+        try {
+          await expectLater(tester, meetsGuideline(textContrastGuideline));
+        } on TestFailure catch (e) {
+          pass = false;
+          debugPrint('C02CONTRAST $slug ${brightness.name} guideline FAIL ${e.message?.split('\n').take(3).join(' | ')}');
+        }
+        debugPrint('C02CONTRAST $slug ${brightness.name} textContrastGuideline after one activation: ${pass ? 'pass' : 'fail'}');
+        handle.dispose();
+      });
+    }
+  }
+}

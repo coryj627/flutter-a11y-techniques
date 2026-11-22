@@ -1,0 +1,157 @@
+r01 element <flt-semantics><flt-semantics><span>r01 Read about </span></flt-semantics><a flt-tappable="">r01 first link</a><flt-semantics><span> and </span></flt-semantics><a flt-tappable="">r01 second link</a><flt-semantics><span> first.</span></flt-semantics></flt-semantics>
+r01 ax role=heading name="r01" props=level:2
+r01 ax role=link name="r01 first link" props=
+r01 ax role=link name="r01 second link" props=
+r01 aria "- button \"Back\"\n- heading \"r01\" [level=2]\n- group: \"Before r01 r01 Read about r01 first link and r01 second link first. r01 taps: first=0 second=0\""
+r01 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY)
+r01 first box {"tag":"A","x":114,"y":101,"w":86,"h":26}
+r01 second box {"tag":"A","x":222,"y":101,"w":108,"h":26}
+r01 first click url=/#/r01 taps="r01 taps: first=1 second=0" destination=false
+r01 first dispatch url=/#/r01 taps="r01 taps: first=1 second=0" destination=false
+r01 first Enter Tab never reached it
+r01 first Space Tab never reached it
+r01 second click url=/#/r01 taps="r01 taps: first=0 second=1" destination=false
+r01 second dispatch url=/#/r01 taps="r01 taps: first=0 second=1" destination=false
+r01 second Enter Tab never reached it
+r01 second Space Tab never reached it
+r02 element <flt-semantics role="group" aria-label="r02 Read about \n and \n first."><a tabindex="0" flt-tappable="" href="#/dest">r02 first link</a><a tabindex="0" flt-tappable="" href="#/dest">r02 second link</a></flt-semantics>
+r02 ax role=heading name="r02" props=level:2
+r02 ax role=group name="r02 Read about and first." props=
+r02 ax role=link name="r02 first link" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r02 ax role=link name="r02 second link" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r02 aria "- button \"Back\"\n- heading \"r02\" [level=2]\n- group:\n  - text: Before r02\n  - group \"r02 Read about and first.\":\n    - link \"r02 first link\":\n      - /url: \"#/dest\"\n    - link \"r02 second link\":\n      - /url: \"#/dest\"\n  - text: \"r02 taps: first=0 second=0\""
+r02 tab stops FLT-SEMANTICS[role=button] "Back" -> A "r02 first link" -> A "r02 second link" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> A "r02 first link" -> A "r02 second link"
+r02 first box {"tag":"A","x":118,"y":104,"w":77,"h":20}
+r02 second box {"tag":"A","x":227,"y":104,"w":98,"h":20}
+r02 first click url=/#/dest taps="(gone)" destination=true
+r02 first dispatch url=/#/dest taps="(gone)" destination=true
+r02 first Enter url=/#/dest taps="(gone)" destination=true
+r02 first Space url=/#/r02 taps="r02 taps: first=0 second=0" destination=false
+r02 second click url=/#/dest taps="(gone)" destination=true
+r02 second dispatch url=/#/dest taps="(gone)" destination=true
+r02 second Enter url=/#/dest taps="(gone)" destination=true
+r02 second Space url=/#/r02 taps="r02 taps: first=0 second=0" destination=false
+r03 element <flt-semantics><flt-semantics flt-semantics-identifier="r03-run"><span>r03 Read about </span></flt-semantics><a tabindex="0" flt-tappable="" href="#/dest">r03 first link</a><flt-semantics><span> and </span></flt-semantics><a tabindex="0" flt-tappable="" href="#/dest">r03 second link</a><flt-semantics><span> first.</span></flt-semantics></flt-semantics>
+r03 ax role=heading name="r03" props=level:2
+r03 ax role=link name="r03 first link" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r03 ax role=link name="r03 second link" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r03 aria "- button \"Back\"\n- heading \"r03\" [level=2]\n- group:\n  - text: Before r03 r03 Read about\n  - link \"r03 first link\":\n    - /url: \"#/dest\"\n  - text: and\n  - link \"r03 second link\":\n    - /url: \"#/dest\"\n  - text: \"first. r03 taps: first=0 second=0\""
+r03 tab stops FLT-SEMANTICS[role=button] "Back" -> A "r03 first link" -> A "r03 second link" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> A "r03 first link" -> A "r03 second link"
+r03 first box {"tag":"A","x":118,"y":104,"w":77,"h":20}
+r03 second box {"tag":"A","x":227,"y":104,"w":98,"h":20}
+r03 first click url=/#/dest taps="(gone)" destination=true
+r03 first dispatch url=/#/dest taps="(gone)" destination=true
+r03 first Enter url=/#/dest taps="(gone)" destination=true
+r03 first Space url=/#/r03 taps="r03 taps: first=0 second=0" destination=false
+r03 second click url=/#/dest taps="(gone)" destination=true
+r03 second dispatch url=/#/dest taps="(gone)" destination=true
+r03 second Enter url=/#/dest taps="(gone)" destination=true
+r03 second Space url=/#/r03 taps="r03 taps: first=0 second=0" destination=false
+r04 element <flt-semantics><flt-semantics flt-semantics-identifier="r04-run"><span>r04 Read about </span></flt-semantics><a tabindex="0" flt-tappable="" href="#/dest">r04 first link</a><flt-semantics><span> and </span></flt-semantics><a tabindex="0" flt-tappable="" href="#/dest">r04 second link</a><flt-semantics><span> first.</span></flt-semantics></flt-semantics>
+r04 ax role=heading name="r04" props=level:2
+r04 ax role=link name="r04 first link" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r04 ax role=link name="r04 second link" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r04 aria "- button \"Back\"\n- heading \"r04\" [level=2]\n- group:\n  - text: Before r04 r04 Read about\n  - link \"r04 first link\":\n    - /url: \"#/dest\"\n  - text: and\n  - link \"r04 second link\":\n    - /url: \"#/dest\"\n  - text: \"first. r04 taps: first=0 second=0\""
+r04 tab stops FLT-SEMANTICS[role=button] "Back" -> A "r04 first link" -> A "r04 second link" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> A "r04 first link" -> A "r04 second link"
+r04 first box {"tag":"A","x":118,"y":104,"w":77,"h":20}
+r04 second box {"tag":"A","x":227,"y":104,"w":98,"h":20}
+r04 first click url=/#/dest taps="(gone)" destination=true
+r04 first dispatch url=/#/dest taps="(gone)" destination=true
+r04 first Enter url=/#/dest taps="(gone)" destination=true
+r04 first Space url=/#/r04 taps="r04 taps: first=0 second=0" destination=false
+r04 second click url=/#/dest taps="(gone)" destination=true
+r04 second dispatch url=/#/dest taps="(gone)" destination=true
+r04 second Enter url=/#/dest taps="(gone)" destination=true
+r04 second Space url=/#/r04 taps="r04 taps: first=0 second=0" destination=false
+r05 element <a tabindex="0" flt-tappable="" flt-semantics-identifier="r05-run" href="#/dest">r05 Read about \nr05 first link\n and \nr05 second link\n first.</a>
+r05 ax role=heading name="r05" props=level:2
+r05 ax role=link name="r05 Read about r05 first link and r05 second link first." props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r05 aria "- button \"Back\"\n- heading \"r05\" [level=2]\n- group:\n  - text: Before r05\n  - link \"r05 Read about r05 first link and r05 second link first.\":\n    - /url: \"#/dest\"\n  - text: \"r05 taps: first=0 second=0\""
+r05 tab stops FLT-SEMANTICS[role=button] "Back" -> A "r05 Read about \nr05 first link\n and \nr05 second link\n first." -> A "r05 Read about \nr05 first link\n and \nr05 second link\n first." -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> A "r05 Read about \nr05 first link\n and \nr05 second link\n first." -> A "r05 Read about \nr05 first link\n and \nr05 second link\n first."
+r05 first no element found
+r05 second no element found
+r05 first click no element
+r05 first dispatch no element
+r05 first Enter no element
+r05 first Space no element
+r05 second click no element
+r05 second dispatch no element
+r05 second Enter no element
+r05 second Space no element
+r06 element <flt-semantics><flt-semantics flt-semantics-identifier="r06-run"><span>r06 Read about </span></flt-semantics><a tabindex="0" flt-tappable="" href="#/dest">r06 first link</a><flt-semantics><span> and </span></flt-semantics><a tabindex="0" flt-tappable="" href="#/dest">r06 second link, whose words run on for long enough to need a line</a><flt-semantics><span> first.</span></flt-semantics></flt-semantics>
+r06 ax role=heading name="r06" props=level:2
+r06 ax role=link name="r06 first link" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r06 ax role=link name="r06 second link, whose words run on for long enough to need a line" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r06 aria "- button \"Back\"\n- heading \"r06\" [level=2]\n- group:\n  - text: Before r06 r06 Read about\n  - link \"r06 first link\":\n    - /url: \"#/dest\"\n  - text: and\n  - link \"r06 second link, whose words run on for long enough to need a line\":\n    - /url: \"#/dest\"\n  - text: \"first. r06 taps: first=0 second=0\""
+r06 tab stops FLT-SEMANTICS[role=button] "Back" -> A "r06 first link" -> A "r06 second link, whose words run on for long enough to need a line" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> A "r06 first link" -> A "r06 second link, whose words run on for long enough to need a line"
+r06 first box {"tag":"A","x":118,"y":104,"w":77,"h":20}
+r06 second box {"tag":"A","x":227,"y":104,"w":430,"h":20}
+r06 first click url=/#/dest taps="(gone)" destination=true
+r06 first dispatch url=/#/dest taps="(gone)" destination=true
+r06 first Enter url=/#/dest taps="(gone)" destination=true
+r06 first Space url=/#/r06 taps="r06 taps: first=0 second=0" destination=false
+r06 second click url=/#/dest taps="(gone)" destination=true
+r06 second dispatch url=/#/dest taps="(gone)" destination=true
+r06 second Enter url=/#/dest taps="(gone)" destination=true
+r06 second Space url=/#/r06 taps="r06 taps: first=0 second=0" destination=false
+r07 field <textarea disabled="" spellcheck="false" autocorrect="off" autocomplete="off" data-semantics-role="text-field"></textarea> value= ""
+r07 ax role=heading name="r07" props=level:2
+r07 aria "- button \"Back\"\n- heading \"r07\" [level=2]\n- group:\n  - text: Before r07\n  - textbox [disabled]\n  - text: \"r07 taps: first=0 second=0\""
+r07 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY)
+r07 first no element found
+r07 second no element found
+r07 first click no element
+r07 first dispatch no element
+r07 first Enter no element
+r07 first Space no element
+r07 second click no element
+r07 second dispatch no element
+r07 second Enter no element
+r07 second Space no element
+r08 element <flt-semantics><span>r08 Read about the two links first.</span></flt-semantics>
+r08 ax role=heading name="r08" props=level:2
+r08 aria "- button \"Back\"\n- heading \"r08\" [level=2]\n- group: \"Before r08 r08 Read about the two links first. r08 taps: first=0 second=0\""
+r08 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY)
+r08 first no element found
+r08 second no element found
+r08 first click no element
+r08 first dispatch no element
+r08 first Enter no element
+r08 first Space no element
+r08 second click no element
+r08 second dispatch no element
+r08 second Enter no element
+r08 second Space no element
+r09 element <flt-semantics><flt-semantics><span>r09 Read about </span></flt-semantics><a flt-tappable="">r09 first link</a><flt-semantics><span> and </span></flt-semantics><a flt-tappable="">r09 second link, whose words run on for long enough to need a line</a><flt-semantics><span> first.</span></flt-semantics></flt-semantics>
+r09 ax role=heading name="r09" props=level:2
+r09 ax role=link name="r09 first link" props=
+r09 ax role=link name="r09 second link, whose words run on for long enough to need a line" props=
+r09 aria "- button \"Back\"\n- heading \"r09\" [level=2]\n- group: \"Before r09 r09 Read about r09 first link and r09 second link, whose words run on for long enough to need a line first. r09 taps: first=0 second=0\""
+r09 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY)
+r09 first box {"tag":"A","x":114,"y":101,"w":86,"h":26}
+r09 second box {"tag":"A","x":222,"y":101,"w":440,"h":26}
+r09 first click url=/#/r09 taps="r09 taps: first=1 second=0" destination=false
+r09 first dispatch url=/#/r09 taps="r09 taps: first=1 second=0" destination=false
+r09 first Enter Tab never reached it
+r09 first Space Tab never reached it
+r09 second click url=/#/r09 taps="r09 taps: first=0 second=1" destination=false
+r09 second dispatch url=/#/r09 taps="r09 taps: first=0 second=1" destination=false
+r09 second Enter Tab never reached it
+r09 second Space Tab never reached it
+r10 element <flt-semantics><flt-semantics flt-semantics-identifier="r10-run"><span>r10 Read about </span></flt-semantics><a tabindex="0" flt-tappable="" href="#/dest">r10 first link</a><flt-semantics><span> and </span></flt-semantics><a tabindex="0" flt-tappable="" href="#/dest">r10 second link</a><flt-semantics><span> first.</span></flt-semantics></flt-semantics>
+r10 ax role=heading name="r10" props=level:2
+r10 ax role=link name="r10 first link" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r10 ax role=link name="r10 second link" props=focusable:true,url:"http://127.0.0.1:29841/#/dest"
+r10 aria "- button \"Back\"\n- heading \"r10\" [level=2]\n- group:\n  - text: Before r10 r10 Read about\n  - link \"r10 first link\":\n    - /url: \"#/dest\"\n  - text: and\n  - link \"r10 second link\":\n    - /url: \"#/dest\"\n  - text: \"first. r10 taps: first=0 second=0\""
+r10 tab stops FLT-SEMANTICS[role=button] "Back" -> A "r10 first link" -> A "r10 second link" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> A "r10 first link" -> A "r10 second link"
+r10 first box {"tag":"A","x":118,"y":104,"w":77,"h":20}
+r10 second box {"tag":"A","x":227,"y":104,"w":98,"h":20}
+r10 first click url=/#/dest taps="(gone)" destination=true
+r10 first dispatch url=/#/dest taps="(gone)" destination=true
+r10 first Enter url=/#/dest taps="(gone)" destination=true
+r10 first Space url=/#/r10 taps="r10 taps: first=0 second=0" destination=false
+r10 second click url=/#/dest taps="(gone)" destination=true
+r10 second dispatch url=/#/dest taps="(gone)" destination=true
+r10 second Enter url=/#/dest taps="(gone)" destination=true
+r10 second Space url=/#/r10 taps="r10 taps: first=0 second=0" destination=false
+  10 passed (3.5m)

@@ -1,0 +1,211 @@
+  cupertino_icons 1.0.9 (2.0.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  url_launcher_android 6.3.33 (6.3.35 available)
+  vector_math 2.4.0 (2.4.4 available)
+00:00 +0: C02PROBE tree TargetPlatform.android
+C02PROBE TargetPlatform.android before flip
+  label= tooltip=t01 Bold button selected=isFalse enabled=isTrue focusable tap focus-action
+  label= tooltip=t02 Bold button selected=isTrue enabled=isTrue focusable tap focus-action
+  label=t03 Bold button selected=isFalse enabled=isTrue focusable tap focus-action
+  label= tooltip=t04 Bold button selected=isFalse enabled=isTrue focusable tap focus-action
+  label=t05a Bold button checked=isFalse enabled=isTrue focusable tap focus-action
+  label=t05a Bold button enabled=isTrue focusable tap focus-action
+  label=t05b Italic button checked=isTrue enabled=isTrue focusable tap focus-action
+  label=t05b Italic button enabled=isTrue focusable tap focus-action
+  label=t05c Underline button checked=isFalse enabled=isTrue focusable tap focus-action
+  label=t05c Underline button enabled=isTrue focusable tap focus-action
+  label=t06a Bold button selected=isFalse enabled=isTrue focusable tap focus-action
+  label=t06a Bold button enabled=isTrue focusable tap focus-action
+  label=t06b Italic button selected=isTrue enabled=isTrue focusable tap focus-action
+  label=t06b Italic button enabled=isTrue focusable tap focus-action
+  label=t07a Day button selected=isTrue exclusive enabled=isTrue focusable tap focus-action
+  label=t07a Day button enabled=isTrue focusable tap focus-action
+  label=t07b Week button selected=isFalse exclusive enabled=isTrue focusable tap focus-action
+  label=t07b Week button enabled=isTrue focusable tap focus-action
+  label=t08 Mute button selected=isFalse enabled=isTrue tap
+  label=t09 Mute button toggled=isFalse enabled=isTrue tap
+  label=t10 Mute button checked=isFalse enabled=isTrue tap
+  label=t11 Mute button enabled=isTrue tap
+  label=t12 Mute button selected=isFalse enabled=isTrue tap
+  label=t13 Mute button toggled=isFalse enabled=isTrue focusable tap focus-action
+  label=t14 Mute button selected=isFalse enabled=isTrue focusable tap focus-action
+  label=t15 Bold button selected=isFalse enabled=isTrue focusable tap focus-action
+  label= tooltip=t16 Bold button selected=isTrue enabled=isFalse
+  label= tooltip=t17 Mute button selected=isFalse enabled=isTrue focusable tap focus-action
+  label=t18 Mute button enabled=isTrue focusable tap focus-action
+  label=t19 Mute button selected=isFalse tap
+  label= tooltip=t20 Bold button selected=isFalse toggled=isFalse enabled=isTrue focusable tap focus-action
+  label= tooltip=t20 Bold button selected=isFalse enabled=isTrue focusable tap focus-action
+  label=t21 Mute button toggled=isFalse enabled=isTrue focusable tap focus-action
+  label=t21 Mute button enabled=isTrue focusable tap focus-action
+C02PROBE TargetPlatform.android after flip
+  label= tooltip=t01 Bold button selected=isTrue enabled=isTrue focusable tap focus-action
+  label= tooltip=t02 Bold button selected=isFalse enabled=isTrue focusable tap focus-action
+  label=t03 Bold button selected=isTrue enabled=isTrue focusable tap focus-action
+  label= tooltip=t04 Bold button selected=isTrue enabled=isTrue focusable tap focus-action
+  label=t05a Bold button checked=isTrue enabled=isTrue focusable tap focus-action
+  label=t05a Bold button enabled=isTrue focusable tap focus-action
+  label=t05b Italic button checked=isFalse enabled=isTrue focusable tap focus-action
+  label=t05b Italic button enabled=isTrue focusable tap focus-action
+  label=t05c Underline button checked=isFalse enabled=isTrue focusable tap focus-action
+  label=t05c Underline button enabled=isTrue focusable tap focus-action
+  label=t06a Bold button selected=isTrue enabled=isTrue focusable tap focus-action
+  label=t06a Bold button enabled=isTrue focusable tap focus-action
+  label=t06b Italic button selected=isFalse enabled=isTrue focusable tap focus-action
+  label=t06b Italic button enabled=isTrue focusable tap focus-action
+  label=t07a Day button selected=isFalse exclusive enabled=isTrue focusable tap focus-action
+  label=t07a Day button enabled=isTrue focusable tap focus-action
+  label=t07b Week button selected=isTrue exclusive enabled=isTrue focusable tap focus-action
+  label=t07b Week button enabled=isTrue focusable tap focus-action
+  label=t08 Mute button selected=isTrue enabled=isTrue tap
+  label=t09 Mute button toggled=isTrue enabled=isTrue tap
+  label=t10 Mute button checked=isTrue enabled=isTrue tap
+  label=t11 Mute button enabled=isTrue tap
+  label=t12 Unmute button selected=isTrue enabled=isTrue tap
+  label=t13 Mute button toggled=isTrue enabled=isTrue focusable tap focus-action
+  label=t14 Mute button selected=isTrue enabled=isTrue focusable tap focus-action
+  label=t15 Bold button selected=isTrue enabled=isTrue focusable tap focus-action
+  label= tooltip=t16 Bold button selected=isTrue enabled=isFalse
+  label= tooltip=t17 Unmute button selected=isTrue enabled=isTrue focusable tap focus-action
+  label=t18 Mute button enabled=isTrue focusable tap focus-action
+  label=t19 Mute button selected=isTrue tap
+  label= tooltip=t20 Bold button selected=isTrue toggled=isTrue enabled=isTrue focusable tap focus-action
+  label= tooltip=t20 Bold button selected=isTrue enabled=isTrue focusable tap focus-action
+  label=t21 Mute button toggled=isTrue enabled=isTrue focusable tap focus-action
+  label=t21 Mute button enabled=isTrue focusable tap focus-action
+C02PROBE TargetPlatform.android keyboard
+  stop 0 Focus  | space: t01=1,t02=0,t03=1,t04=1,t05=1,t06=1,t07=1,t08=1,t09=1,t10=1,t11=1,t12=1,t13=1,t14=1,t15=1,t17=1,t18=1,t19=1,t20=1,t21=1 | enter: t01=0,t02=1,t03=0,t04=0,t05=0,t06=0,t07=0,t08=0,t09=0,t10=0,t11=0,t12=0,t13=0,t14=0,t15=0,t17=0,t18=0,t19=0,t20=0,t21=0
+  stop 1 Focus  | space: t01=1 | enter: t01=0
+  stop 2 Focus  | space: t02=0 | enter: t02=1
+  stop 3 Focus  | space: t03=1 | enter: t03=0
+  stop 4 Focus  | space: t04=1 | enter: t04=0
+  stop 5 Focus  | space: t05=1 | enter: t05=0
+  stop 6 Focus  | space: t05=1 | enter: t05=0
+  stop 7 Focus  | space:  | enter: 
+  stop 8 Focus  | space: t06=1 | enter: t06=0
+  stop 9 Focus  | space: t06=1 | enter: t06=0
+  stop 10 Focus  | space:  | enter: 
+  stop 11 Focus  | space: t07=1 | enter: 
+  stop 12 Focus  | space: t08=1 | enter: t08=0
+  stop 13 Focus  | space: t09=1 | enter: t09=0
+  stop 14 Focus  | space: t10=1 | enter: t10=0
+  stop 15 Focus  | space: t11=1 | enter: t11=0
+  stop 16 Focus  | space: t12=1 | enter: t12=0
+  stop 17 Focus  | space: t13=1 | enter: t13=0
+  stop 18 Focus  | space: t14=1 | enter: t14=0
+  stop 19 Focus  | space: t15=1 | enter: t15=0
+  stop 20 Focus  | space: t17=1 | enter: t17=0
+  stop 21 Focus  | space: t18=1 | enter: t18=0
+  stop 22 Focus  | space: t19=1 | enter: t19=0
+  stop 23 Focus  | space: t20=1 | enter: t20=0
+  stop 24 Focus  | space: t21=1 | enter: t21=0
+  stop 25 Focus  | space: t01=1,t02=0,t03=1,t04=1,t05=1,t06=1,t07=0,t08=1,t09=1,t10=1,t11=1,t12=1,t13=1,t14=1,t15=1,t17=1,t18=1,t19=1,t20=1,t21=1 | enter: t01=0,t02=1,t03=0,t04=0,t05=0,t06=0,t07=1,t08=0,t09=0,t10=0,t11=0,t12=0,t13=0,t14=0,t15=0,t17=0,t18=0,t19=0,t20=0,t21=0
+  stop 26 Focus  | space: t01=1 | enter: t01=0
+  stop 27 Focus  | space: t02=0 | enter: t02=1
+  stop 28 Focus  | space: t03=1 | enter: t03=0
+  stop 29 Focus  | space: t04=1 | enter: t04=0
+00:00 +1: C02PROBE tree TargetPlatform.iOS
+C02PROBE TargetPlatform.iOS before flip
+  label= tooltip=t01 Bold button selected=isFalse enabled=isTrue focusable tap
+  label= tooltip=t02 Bold button selected=isTrue enabled=isTrue focusable tap
+  label=t03 Bold button selected=isFalse enabled=isTrue focusable tap
+  label= tooltip=t04 Bold button selected=isFalse enabled=isTrue focusable tap
+  label=t05a Bold button checked=isFalse enabled=isTrue focusable tap
+  label=t05a Bold button enabled=isTrue focusable tap
+  label=t05b Italic button checked=isTrue enabled=isTrue focusable tap
+  label=t05b Italic button enabled=isTrue focusable tap
+  label=t05c Underline button checked=isFalse enabled=isTrue focusable tap
+  label=t05c Underline button enabled=isTrue focusable tap
+  label=t06a Bold button selected=isFalse enabled=isTrue focusable tap
+  label=t06a Bold button enabled=isTrue focusable tap
+  label=t06b Italic button selected=isTrue enabled=isTrue focusable tap
+  label=t06b Italic button enabled=isTrue focusable tap
+  label=t07a Day button selected=isTrue exclusive enabled=isTrue focusable tap
+  label=t07a Day button enabled=isTrue focusable tap
+  label=t07b Week button selected=isFalse exclusive enabled=isTrue focusable tap
+  label=t07b Week button enabled=isTrue focusable tap
+  label=t08 Mute button selected=isFalse enabled=isTrue tap
+  label=t09 Mute button toggled=isFalse enabled=isTrue tap
+  label=t10 Mute button checked=isFalse enabled=isTrue tap
+  label=t11 Mute button enabled=isTrue tap
+  label=t12 Mute button selected=isFalse enabled=isTrue tap
+  label=t13 Mute button toggled=isFalse enabled=isTrue focusable tap
+  label=t14 Mute button selected=isFalse enabled=isTrue focusable tap
+  label=t15 Bold button selected=isFalse enabled=isTrue focusable tap
+  label= tooltip=t16 Bold button selected=isTrue enabled=isFalse
+  label= tooltip=t17 Mute button selected=isFalse enabled=isTrue focusable tap
+  label=t18 Mute button enabled=isTrue focusable tap
+  label=t19 Mute button selected=isFalse tap
+  label= tooltip=t20 Bold button selected=isFalse toggled=isFalse enabled=isTrue focusable tap
+  label= tooltip=t20 Bold button selected=isFalse enabled=isTrue focusable tap
+  label=t21 Mute button toggled=isFalse enabled=isTrue focusable tap
+  label=t21 Mute button enabled=isTrue focusable tap
+C02PROBE TargetPlatform.iOS after flip
+  label= tooltip=t01 Bold button selected=isTrue enabled=isTrue focusable tap
+  label= tooltip=t02 Bold button selected=isFalse enabled=isTrue focusable tap
+  label=t03 Bold button selected=isTrue enabled=isTrue focusable tap
+  label= tooltip=t04 Bold button selected=isTrue enabled=isTrue focusable tap
+  label=t05a Bold button checked=isTrue enabled=isTrue focusable tap
+  label=t05a Bold button enabled=isTrue focusable tap
+  label=t05b Italic button checked=isFalse enabled=isTrue focusable tap
+  label=t05b Italic button enabled=isTrue focusable tap
+  label=t05c Underline button checked=isFalse enabled=isTrue focusable tap
+  label=t05c Underline button enabled=isTrue focusable tap
+  label=t06a Bold button selected=isTrue enabled=isTrue focusable tap
+  label=t06a Bold button enabled=isTrue focusable tap
+  label=t06b Italic button selected=isFalse enabled=isTrue focusable tap
+  label=t06b Italic button enabled=isTrue focusable tap
+  label=t07a Day button selected=isFalse exclusive enabled=isTrue focusable tap
+  label=t07a Day button enabled=isTrue focusable tap
+  label=t07b Week button selected=isTrue exclusive enabled=isTrue focusable tap
+  label=t07b Week button enabled=isTrue focusable tap
+  label=t08 Mute button selected=isTrue enabled=isTrue tap
+  label=t09 Mute button toggled=isTrue enabled=isTrue tap
+  label=t10 Mute button checked=isTrue enabled=isTrue tap
+  label=t11 Mute button enabled=isTrue tap
+  label=t12 Unmute button selected=isTrue enabled=isTrue tap
+  label=t13 Mute button toggled=isTrue enabled=isTrue focusable tap
+  label=t14 Mute button selected=isTrue enabled=isTrue focusable tap
+  label=t15 Bold button selected=isTrue enabled=isTrue focusable tap
+  label= tooltip=t16 Bold button selected=isTrue enabled=isFalse
+  label= tooltip=t17 Unmute button selected=isTrue enabled=isTrue focusable tap
+  label=t18 Mute button enabled=isTrue focusable tap
+  label=t19 Mute button selected=isTrue tap
+  label= tooltip=t20 Bold button selected=isTrue toggled=isTrue enabled=isTrue focusable tap
+  label= tooltip=t20 Bold button selected=isTrue enabled=isTrue focusable tap
+  label=t21 Mute button toggled=isTrue enabled=isTrue focusable tap
+  label=t21 Mute button enabled=isTrue focusable tap
+C02PROBE TargetPlatform.iOS keyboard
+  stop 0 Focus  | space: t01=1,t02=0,t03=1,t04=1,t05=1,t06=1,t07=1,t08=1,t09=1,t10=1,t11=1,t12=1,t13=1,t14=1,t15=1,t17=1,t18=1,t19=1,t20=1,t21=1 | enter: t01=0,t02=1,t03=0,t04=0,t05=0,t06=0,t07=0,t08=0,t09=0,t10=0,t11=0,t12=0,t13=0,t14=0,t15=0,t17=0,t18=0,t19=0,t20=0,t21=0
+  stop 1 Focus  | space: t01=1 | enter: t01=0
+  stop 2 Focus  | space: t02=0 | enter: t02=1
+  stop 3 Focus  | space: t03=1 | enter: t03=0
+  stop 4 Focus  | space: t04=1 | enter: t04=0
+  stop 5 Focus  | space: t05=1 | enter: t05=0
+  stop 6 Focus  | space: t05=1 | enter: t05=0
+  stop 7 Focus  | space:  | enter: 
+  stop 8 Focus  | space: t06=1 | enter: t06=0
+  stop 9 Focus  | space: t06=1 | enter: t06=0
+  stop 10 Focus  | space:  | enter: 
+  stop 11 Focus  | space: t07=1 | enter: 
+  stop 12 Focus  | space: t08=1 | enter: t08=0
+  stop 13 Focus  | space: t09=1 | enter: t09=0
+  stop 14 Focus  | space: t10=1 | enter: t10=0
+  stop 15 Focus  | space: t11=1 | enter: t11=0
+  stop 16 Focus  | space: t12=1 | enter: t12=0
+  stop 17 Focus  | space: t13=1 | enter: t13=0
+  stop 18 Focus  | space: t14=1 | enter: t14=0
+  stop 19 Focus  | space: t15=1 | enter: t15=0
+  stop 20 Focus  | space: t17=1 | enter: t17=0
+  stop 21 Focus  | space: t18=1 | enter: t18=0
+  stop 22 Focus  | space: t19=1 | enter: t19=0
+  stop 23 Focus  | space: t20=1 | enter: t20=0
+  stop 24 Focus  | space: t21=1 | enter: t21=0
+  stop 25 Focus  | space: t01=1,t02=0,t03=1,t04=1,t05=1,t06=1,t07=0,t08=1,t09=1,t10=1,t11=1,t12=1,t13=1,t14=1,t15=1,t17=1,t18=1,t19=1,t20=1,t21=1 | enter: t01=0,t02=1,t03=0,t04=0,t05=0,t06=0,t07=1,t08=0,t09=0,t10=0,t11=0,t12=0,t13=0,t14=0,t15=0,t17=0,t18=0,t19=0,t20=0,t21=0
+  stop 26 Focus  | space: t01=1 | enter: t01=0
+  stop 27 Focus  | space: t02=0 | enter: t02=1
+  stop 28 Focus  | space: t03=1 | enter: t03=0
+  stop 29 Focus  | space: t04=1 | enter: t04=0
+00:01 +2: All tests passed!

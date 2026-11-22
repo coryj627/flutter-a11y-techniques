@@ -1,0 +1,53 @@
+import Flutter
+import UIKit
+
+class SceneDelegate: FlutterSceneDelegate {
+  // Throwaway, C02 probe: not committed. With the launch argument
+  // -c02native the window shows native UIKit toggle buttons instead of
+  // Flutter, for comparison.
+  override func scene(
+    _ scene: UIScene, willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
+    super.scene(scene, willConnectTo: session, options: connectionOptions)
+    if ProcessInfo.processInfo.arguments.contains("-c02native") {
+      window?.rootViewController = C02NativeProbeViewController()
+    }
+  }
+}
+
+final class C02NativeProbeViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .systemBackground
+    let stack = UIStackView()
+    stack.axis = .vertical
+    stack.spacing = 12
+    stack.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(stack)
+    NSLayoutConstraint.activate([
+      stack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+      stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+    ])
+    // n01, n02: a button with the toggle button trait (iOS 17), off and on.
+    for (title, on) in [("n01 Bold", false), ("n02 Bold", true)] {
+      let button = UIButton(type: .system)
+      button.setTitle(title, for: .normal)
+      if #available(iOS 17.0, *) { button.accessibilityTraits.insert(.toggleButton) }
+      button.isSelected = on
+      button.addAction(UIAction { [weak button] _ in button?.isSelected.toggle() }, for: .primaryActionTriggered)
+      stack.addArrangedSubview(button)
+    }
+    // n03: UIKit's own toggle, a button that changes its selection when used.
+    var config = UIButton.Configuration.plain()
+    config.title = "n03 Bold"
+    let toggle = UIButton(configuration: config)
+    toggle.changesSelectionAsPrimaryAction = true
+    stack.addArrangedSubview(toggle)
+    // n04: a plain button that is selected, as Flutter's `selected` is.
+    let selected = UIButton(type: .system)
+    selected.setTitle("n04 Bold", for: .normal)
+    selected.isSelected = true
+    stack.addArrangedSubview(selected)
+  }
+}

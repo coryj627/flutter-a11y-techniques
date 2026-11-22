@@ -1,0 +1,59 @@
+// C02 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c02/C02ProbeUITests2.swift.txt): the native UIKit
+// comparison, second version.
+import XCTest
+
+final class C02ProbeUITests: XCTestCase {
+  private func tree(_ app: XCUIApplication, _ what: String) {
+    print("C02PROBE TREE \(what)")
+    for element in app.descendants(matching: .any).allElementsBoundByIndex {
+      let type = element.elementType
+      if type == .window || type == .application { continue }
+      if element.label.isEmpty && element.identifier.isEmpty && type == .other { continue }
+      print("C02PROBE EL type=\(type.rawValue) label=\(element.label.debugDescription) value=\(String(describing: element.value)) enabled=\(element.isEnabled) selected=\(element.isSelected) frame=\(element.frame)")
+    }
+  }
+
+  private func walk(_ what: String) throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { return }
+    print("C02PROBE VO \(what)")
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    try voiceOver.enable()
+    defer { try? voiceOver.disable() }
+    sleep(2)
+    var last = ""
+    var repeats = 0
+    for _ in 0..<20 {
+      do {
+        let said = try voiceOver.moveForward().utterance.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
+        print("C02PROBE VO \(said)")
+        if said == last { repeats += 1; if repeats > 2 { break } } else { repeats = 0 }
+        last = said
+      } catch {
+        print("C02PROBE VO (error \(error))")
+      }
+    }
+    #endif
+  }
+
+  /// Native UIKit buttons (SceneDelegate, -c02native), for comparison.
+  func testNative() throws {
+    let app = XCUIApplication()
+    app.launchArguments = ["-c02native"]
+    app.launch()
+    let first = app.descendants(matching: .any)["n00 Start"].firstMatch
+    XCTAssertTrue(first.waitForExistence(timeout: 30))
+    sleep(1)
+    tree(app, "native before")
+    try walk("native before")
+    sleep(1)
+    // Found by label whatever type XCUITest gives them: a button with the
+    // toggle button trait is a switch to it.
+    app.descendants(matching: .any)["n01 Bold"].firstMatch.tap()
+    app.descendants(matching: .any)["n03 Bold"].firstMatch.tap()
+    sleep(1)
+    tree(app, "native after n01 and n03 tapped")
+    try walk("native after n01 and n03 tapped")
+  }
+}

@@ -1,0 +1,95 @@
+// C04 probe round 3 (throwaway, not committed; kept as
+// docs/evidence/probes/c04/ProbeC04InertUITests.swift.txt): whether
+// XCUITest's double tap at an inert place, with VoiceOver on, activates
+// what VoiceOver's cursor is on. Controls: the app's Back button (a Flutter
+// button) and each good-material link, the cursor moved by moving forward;
+// and, for comparison, XCUIElement.doubleTap() on the Back button itself and
+// a double tap on the link's own place with the cursor on the first words.
+import XCTest
+
+final class ProbeC04InertUITests: XCTestCase, TechniqueUITest {
+  static let technique = "C04"
+  let app = XCUIApplication()
+
+  func log(_ s: String) { print("C04PROBE3 \(s)") }
+
+  private var title: XCUIElement { element(labelled: "Material links in a sentence") }
+
+  private func openExample() { open("good-material", waitingFor: title, settle: 300_000) }
+
+  func testInertDoubleTap() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func current() -> String { VoiceOverWalk.normalized((try? vo.currentSpeech().utterance) ?? "(error)") }
+    func forward() -> String { VoiceOverWalk.normalized((try? vo.moveForward().utterance) ?? "(error)") }
+    func moveTo(_ want: String) -> String {
+      var said = ""
+      for _ in 0..<14 {
+        said = forward()
+        if said == want { break }
+      }
+      return said
+    }
+    func state() -> String {
+      sleep(3)
+      if title.exists { return "the example is still on screen" }
+      for p in ["Links inline with text", "Stand-alone link"] where element(labelled: p).exists { return "\(p) opened" }
+      return "the example left the screen"
+    }
+    let inert = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.9))
+    openExample()
+    let elementAtInert = app.descendants(matching: .any).allElementsBoundByIndex.filter {
+      $0.elementType != .application && $0.elementType != .window && $0.frame.contains(inert.screenPoint)
+        && !$0.frame.equalTo(app.frame)
+    }.map { "\($0.elementType.rawValue) \($0.label.debugDescription) \($0.frame)" }
+    log("inert point \(inert.screenPoint); elements there: \(elementAtInert)")
+
+    // 1. Cursor on Back, by moving forward from the start; double tap inert.
+    openExample()
+    try vo.enable()
+    log("1. cursor after enable: \"\(current())\"; first move: \"\(forward())\"; now on \"\(current())\"")
+    inert.doubleTap()
+    log("1. heading: double tap at the inert place: \(state())")
+    try vo.disable()
+
+    // 1b. Cursor left where enabling puts it, on Back; double tap inert.
+    openExample()
+    try vo.enable()
+    usleep(1_500_000)
+    log("1b. cursor after enable: \"\(current())\"")
+    inert.doubleTap()
+    log("1b. Back: double tap at the inert place: \(state())")
+    try vo.disable()
+
+    // 2. Cursor on Back, double tap on the Back button's own element.
+    openExample()
+    try vo.enable()
+    _ = forward()
+    log("2. cursor on \"\(current())\"")
+    app.buttons["Back"].firstMatch.doubleTap()
+    log("2. Back: XCUIElement.doubleTap() on it: \(state())")
+    try vo.disable()
+
+    // 3. Cursor on each link, double tap inert.
+    for want in ["links in text Link", "stand-alone links Link"] {
+      openExample()
+      try vo.enable()
+      log("3. moved to \"\(moveTo(want))\"; current \"\(current())\"")
+      inert.doubleTap()
+      log("3. \(want): double tap at the inert place: \(state())")
+      try vo.disable()
+    }
+
+    // 4. Cursor on the first words, double tap at the second link's place.
+    openExample()
+    try vo.enable()
+    log("4. moved to \"\(moveTo("Read about"))\"")
+    element("c04-good-material-link-2").doubleTap()
+    log("4. double tap on the second link's place, cursor on the words: \(state())")
+    try vo.disable()
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}

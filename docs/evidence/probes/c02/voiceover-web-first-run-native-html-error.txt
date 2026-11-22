@@ -1,0 +1,39 @@
+The start of web_tests/test-results/c02_toggle_button_vo-voiceover-reads-native-html-chromium/error-context.md
+from the first C02 VoiceOver run on the web (2026-11-20), copied by hand from the
+terminal before the folder was cleared by a later Playwright run. The WebKit run and
+both retries in each browser failed the same way.
+
+# Test info
+
+- Name: c02_toggle_button_vo.spec.js >> voiceover reads native-html
+- Location: c02_toggle_button_vo.spec.js:49:1
+
+# Error details
+
+```
+Test timeout of 180000ms exceeded.
+```
+
+```
+Error: locator.click: Test timeout of 180000ms exceeded.
+Call log:
+  - waiting for getByRole('heading', { name: 'Example', level: 2 })
+    - locator resolved to <h2>Example</h2>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <flutter-view tabindex="-1" flt-view-id="0">…</flutter-view> intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <flutter-view tabindex="-1" flt-view-id="0">…</flutter-view> intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    348 × waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
