@@ -12,11 +12,7 @@ final c05Accordion = Technique(
       'whether its section is open; a closed section is not read or focused, '
       'and an open one comes straight after its header. No Flutter accordion '
       'widget does this through its own parameters (FL-264, FL-265, FL-267), '
-      'so the good examples are built by hand. '
-      'Custom solution: not vetted by a real-world example. It is tested here '
-      'in isolation, with screen-reader transcripts, but has not been built '
-      'into a real app and tested in a user journey. Do not treat it as a '
-      'vetted technique.',
+      'so the good examples are built by hand.',
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(
       note:
@@ -79,29 +75,40 @@ final c05Accordion = Technique(
     ),
   ],
   examples: [
-    // Custom solution: not vetted by a real-world example (see the
-    // summary, and the spec's section "Custom solutions").
     TechniqueExample.good(
       slug: 'good-material',
       title: 'Material accordion',
       variant: ExampleVariant.material,
       builder: (_) => const GoodMaterial(),
+      customSolution:
+          'Headers built by hand: a ListTile inside Semantics(button: true, '
+          'expanded:) with a heading, an iOS value, and a focus ring of their '
+          'own, and panels built only while open; ExpansionTile has no '
+          'expanded state and, on Android and iOS, no button role (FL-264).',
     ),
-    // Custom solution: not vetted by a real-world example (see the
-    // summary, and the spec's section "Custom solutions").
     TechniqueExample.good(
       slug: 'good-cupertino',
       title: 'Cupertino accordion',
       variant: ExampleVariant.cupertino,
       builder: (_) => const GoodCupertino(),
+      customSolution:
+          'Headers built by hand: a CupertinoListTile given keyboard focus by '
+          'FocusableActionDetector, inside Semantics(button: true, expanded:) '
+          'with a heading, an iOS value, and a focus ring of their own; '
+          'CupertinoExpansionTile takes no keyboard focus and has no state '
+          '(FL-265).',
     ),
-    // Custom solution: not vetted by a real-world example (see the
-    // summary, and the spec's section "Custom solutions").
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Accordion built from Semantics',
       variant: ExampleVariant.widgets,
       builder: (_) => const GoodCustom(),
+      customSolution:
+          'Headers built by hand from the widgets layer: a GestureDetector and '
+          'FocusableActionDetector inside Semantics(button: true, expanded:) '
+          'with a heading and an iOS value, and panels built only while open; '
+          'no Flutter accordion widget gives the role and the state (FL-264, '
+          'FL-265).',
     ),
     TechniqueExample.bad(
       slug: 'bad-no-state',

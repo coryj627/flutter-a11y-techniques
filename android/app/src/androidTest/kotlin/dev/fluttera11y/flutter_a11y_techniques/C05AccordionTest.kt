@@ -29,6 +29,36 @@ private const val SHIPPING_ACTION = "Track a parcel"
 class C05AccordionTest : TechniqueTest("C05") {
     private fun open(slug: String) = openExample(slug, By.desc(c05Titles.getValue(slug)), settleMillis = 300)
 
+    /**
+     * Opens a good example and scrolls its screen to the end, as a person
+     * scrolls down to the example: each good example is a custom solution,
+     * whose note above the example (docs/custom-solutions.md) can leave the
+     * accordion below the view, on CI's 320 by 640 emulator all of it (in a
+     * widget test at that size, with the test font, the first header starts
+     * about 200 pixels below the screen). On a screen that does not scroll
+     * nothing moves.
+     */
+    private fun openGood(slug: String) {
+        open(slug)
+        scrollToEnd()
+    }
+
+    /**
+     * The bounds of [id] on the screen once they have stopped changing: the
+     * same in two readings 250 ms apart, within 5 seconds (as C04's test).
+     */
+    private fun settledBounds(id: String): android.graphics.Rect {
+        var last = android.graphics.Rect().also { node(id).getBoundsInScreen(it) }
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end) {
+            Thread.sleep(250)
+            val now = android.graphics.Rect().also { node(id).getBoundsInScreen(it) }
+            if (now == last) return now
+            last = now
+        }
+        throw AssertionError("$id: its bounds were still changing after 5 seconds")
+    }
+
     private fun id(slug: String, key: String) = "c05-$slug-$key"
 
     /** "collapsed", "full", or "undefined" on Android 16 and later; null before. */
@@ -58,8 +88,14 @@ class C05AccordionTest : TechniqueTest("C05") {
         assertTrue(what, condition())
     }
 
-    /** The names of the example's nodes in tree order, from the first header to the count. */
+    /**
+     * The names of the example's nodes in tree order, from the first header
+     * to the count. The screen is scrolled to its end first, so that the
+     * count, below the view under a custom solution's note, is in the tree
+     * with the headers (a node out of view is not).
+     */
     private fun reading(): List<String> {
+        scrollToEnd()
         val names = all().map { it.name().ifEmpty { it.text?.toString().orEmpty() } }.filter { it.isNotEmpty() }
         val start = names.indexOfFirst { it.startsWith(SHIPPING) }
         val end = names.indexOfFirst { it.startsWith("Presses: ") }
@@ -107,7 +143,7 @@ class C05AccordionTest : TechniqueTest("C05") {
     @Test
     fun goodHeadersAreHeadingButtonsThatSayTheyExpand() {
         for (slug in good) {
-            open(slug)
+            openGood(slug)
             for ((key, name) in listOf("shipping" to SHIPPING, "returns" to RETURNS)) {
                 val node = node(id(slug, key))
                 val what = "$slug $key"
@@ -132,7 +168,7 @@ class C05AccordionTest : TechniqueTest("C05") {
     fun goodHeadersOpenByTheClickActionStraightAfterTheHeader() {
         // ACTION_CLICK is what TalkBack performs on a double tap.
         for (slug in good) {
-            open(slug)
+            openGood(slug)
             val id = id(slug, "shipping")
             assertTrue("$slug click", node(id).performAction(AccessibilityNodeInfo.ACTION_CLICK))
             waitFor("$slug: the click action opens Shipping") { shown(SHIPPING_TEXT) }
@@ -152,7 +188,7 @@ class C05AccordionTest : TechniqueTest("C05") {
         // (FL-261), which expectState asserts.
         org.junit.Assume.assumeTrue("expand and collapse need Android 16", Build.VERSION.SDK_INT >= 36)
         for (slug in good) {
-            open(slug)
+            openGood(slug)
             val id = id(slug, "shipping")
             assertTrue("$slug expand", node(id).performAction(AccessibilityNodeInfo.ACTION_EXPAND))
             waitFor("$slug: ACTION_EXPAND opens Shipping") { shown(SHIPPING_TEXT) }
@@ -165,8 +201,10 @@ class C05AccordionTest : TechniqueTest("C05") {
     @Test
     fun goodHeadersOpenByATap() {
         for (slug in good) {
-            open(slug)
-            val r = android.graphics.Rect().also { node(id(slug, "shipping")).getBoundsInScreen(it) }
+            openGood(slug)
+            // A person taps the header once it is in view and has stopped
+            // moving (openGood scrolled to it).
+            val r = settledBounds(id(slug, "shipping"))
             assertTrue("$slug tap", device.click(r.centerX(), r.centerY()))
             waitFor("$slug: a tap opens Shipping") { shown(SHIPPING_TEXT) }
         }
@@ -176,7 +214,7 @@ class C05AccordionTest : TechniqueTest("C05") {
     fun goodHeadersAreReachedByTabAndOpenedByEnterAndBySpace() {
         for (slug in good) {
             for (name in listOf("ENTER", "SPACE")) {
-                open(slug)
+                openGood(slug)
                 val id = id(slug, "shipping")
                 tabTo(id)
                 key(name)
@@ -191,7 +229,7 @@ class C05AccordionTest : TechniqueTest("C05") {
     @Test
     fun goodPanelsAreInTheFocusOrderOnlyWhileOpen() {
         for (slug in good) {
-            open(slug)
+            openGood(slug)
             val shipping = id(slug, "shipping")
             tabTo(shipping)
             key("TAB")
@@ -359,7 +397,9 @@ class C05AccordionTest : TechniqueTest("C05") {
             } else {
                 { node(id(slug, "shipping")) }
             }
-            open(slug)
+            // A good example is scrolled to its end (openGood), before
+            // TalkBack's own announcement of the screen is waited out.
+            if (slug in good) openGood(slug) else open(slug)
             // Let TalkBack finish announcing the new screen first.
             Thread.sleep(8_000)
             android.util.Log.i(talkBackTag, "FOCUS c05-$slug-closed")

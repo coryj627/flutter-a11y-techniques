@@ -40,6 +40,16 @@ final class C05AccordionUITests: XCTestCase, CountedTechniqueUITest {
     open(slug, waitingFor: countElement(slug), settle: 300_000, file: file, line: line)
   }
 
+  /// Opens a good example and scrolls its screen to the end, as a person
+  /// scrolls down to the example: each good example is a custom solution,
+  /// whose note above the example (docs/custom-solutions.md) pushes the
+  /// accordion down the screen, and an open section can push its end below
+  /// the view. On a screen that does not scroll nothing moves.
+  private func openGood(_ slug: String, file: StaticString = #filePath, line: UInt = #line) {
+    open(slug, file: file, line: line)
+    scrollToEnd()
+  }
+
   private func header(_ slug: String, _ key: String) -> XCUIElement { element("c05-\(slug)-\(key)") }
 
   /// Whether the text `text` is on screen, as an element's label or part of one.
@@ -58,7 +68,7 @@ final class C05AccordionUITests: XCTestCase, CountedTechniqueUITest {
 
   func testGoodHeadersAreButtonsWithTheirStateInTheValue() {
     for slug in good {
-      open(slug)
+      openGood(slug)
       for (key, name) in [("shipping", Self.shipping), ("returns", Self.returns)] {
         let e = header(slug, key)
         XCTAssertEqual(e.elementType, .button, "\(slug) \(key)")
@@ -73,10 +83,13 @@ final class C05AccordionUITests: XCTestCase, CountedTechniqueUITest {
 
   func testGoodHeadersOpenByATapStraightAfterTheHeader() {
     for slug in good {
-      open(slug)
+      openGood(slug)
       let e = header(slug, "shipping")
       e.tap()
       waitFor("\(slug): a tap opens Shipping") { self.shown(Self.shippingText) }
+      // The open panel can push Returns below the view, out of the tree;
+      // scrolled to the end, the whole example is on screen again.
+      scrollToEnd()
       waitFor("\(slug): the value says expanded") { self.value(e) == "expanded" }
       XCTAssertEqual(value(header(slug, "returns")), "collapsed", slug)
       // The panel sits between its header and the next one on screen.
@@ -101,7 +114,7 @@ final class C05AccordionUITests: XCTestCase, CountedTechniqueUITest {
     for slug in good {
       for key in ["\n", XCUIKeyboardKey.space.rawValue] {
         let name = key == "\n" ? "Enter" : "Space"
-        open(slug)
+        openGood(slug)
         app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
         usleep(700_000)
         app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
@@ -268,13 +281,21 @@ final class C05AccordionUITests: XCTestCase, CountedTechniqueUITest {
     guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in speech {
-      open(example.slug)
+      // A good example's screen is scrolled to its end before each walk:
+      // VoiceOver's moves forward stop at the last element in view
+      // (scrollToEnd), and below a custom solution's note an open example's
+      // end can be below it. Scrolled to the end, the "Example" heading is
+      // still in view above the accordion; a walk that does not pass it
+      // gives no content and fails (C05Walk.content).
+      let isGood = good.contains(example.slug)
+      if isGood { openGood(example.slug) } else { open(example.slug) }
       let closed = try C05Walk.walk(voiceOver)
       let closedContent = C05Walk.content(closed)
       print("C05VO \(example.slug) | \((closedContent ?? closed.stops).joined(separator: " / "))")
       XCTAssertNotNil(closedContent, "\(example.slug): the walk did not run from the heading to the end: \(closed)")
       XCTAssertEqual(closedContent, example.closed, example.slug)
       try doubleTapOpens(example.slug, voiceOver)
+      if isGood { scrollToEnd() }
       let opened = try C05Walk.walk(voiceOver)
       let openContent = C05Walk.content(opened)
       print("C05VO \(example.slug)-open | \((openContent ?? opened.stops).joined(separator: " / "))")

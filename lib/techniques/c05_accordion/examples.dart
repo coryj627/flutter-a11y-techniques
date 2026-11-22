@@ -161,8 +161,7 @@ String? iosStateValue(bool open) =>
     ? (open ? 'expanded' : 'collapsed')
     : null;
 
-/// Part of the custom solution of the good examples (not vetted by a
-/// real-world example; docs/specs/C05-accordion.md, "Custom solutions").
+/// Part of the good examples' custom solution (docs/custom-solutions.md).
 ///
 /// What a header is to assistive technology: one node that is a button,
 /// with the section's title as its name, an expanded state, and the heading
@@ -353,12 +352,6 @@ Widget plainHeader(
 /// focus and takes Enter and Space, inside [HeaderSemantics]. Material's
 /// own `ExpansionTile` is not used: its header has no expanded state, and
 /// on Android and iOS no button role (`bad-expansion-tile`).
-///
-/// Custom solution: not vetted by a real-world example. It is tested here in
-/// isolation, with screen-reader transcripts, but has not been built into a
-/// real app and tested in a user journey. Do not treat it as a vetted
-/// technique. No Flutter accordion widget meets the requirements through its
-/// own parameters (docs/flutter-limitations.md, FL-264, FL-265, FL-267).
 class GoodMaterial extends StatelessWidget {
   const GoodMaterial({super.key});
 
@@ -389,12 +382,6 @@ class GoodMaterial extends StatelessWidget {
 /// none, FL-400), inside [HeaderSemantics]. Cupertino's own
 /// `CupertinoExpansionTile` is not used: a keyboard cannot reach its
 /// headers (`bad-cupertino-expansion-tile`).
-///
-/// Custom solution: not vetted by a real-world example. It is tested here in
-/// isolation, with screen-reader transcripts, but has not been built into a
-/// real app and tested in a user journey. Do not treat it as a vetted
-/// technique. No Flutter accordion widget meets the requirements through its
-/// own parameters (docs/flutter-limitations.md, FL-264, FL-265, FL-267).
 class GoodCupertino extends StatelessWidget {
   const GoodCupertino({super.key});
 
@@ -425,12 +412,6 @@ class GoodCupertino extends StatelessWidget {
 // #region good-custom
 /// Each header is built from the widgets layer ([plainHeader]) inside
 /// [HeaderSemantics].
-///
-/// Custom solution: not vetted by a real-world example. It is tested here in
-/// isolation, with screen-reader transcripts, but has not been built into a
-/// real app and tested in a user journey. Do not treat it as a vetted
-/// technique. No Flutter accordion widget meets the requirements through its
-/// own parameters (docs/flutter-limitations.md, FL-264, FL-265, FL-267).
 class GoodCustom extends StatelessWidget {
   const GoodCustom({super.key});
 

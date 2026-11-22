@@ -8,18 +8,39 @@
 export const EXAMPLE_HEADING = 'heading level 2 Example';
 
 /**
+ * The note a custom solution shows above its "Example" heading
+ * (CustomSolutionNote in lib/app/widgets.dart): the label, then the
+ * example's own reason, its `customSolution` in
+ * lib/techniques/c05_accordion/c05_accordion.dart.
+ * docs/custom-solutions.md lists the custom solutions.
+ */
+const customSolution = (reason) => 'Custom solution: not vetted by a real-world example. '
+  + 'It is tested here in isolation, with screen-reader transcripts, but has not been built into a real app '
+  + `and tested in a user journey. Do not treat it as a vetted technique. Why it is flagged: ${reason}`;
+
+/**
  * What each C05 example screen shows above its "Example" heading, as
  * VoiceOver reads it: the screen's title as a level 1 heading, the line
- * that says whether it is a good or a bad example, and a bad example's
- * defect (ExampleScreen in lib/app/screens.dart, with the titles and
- * defects of lib/techniques/c05_accordion/c05_accordion.dart).
+ * that says whether it is a good or a bad example, a custom solution's
+ * note (customSolution, above), and a bad example's defect (ExampleScreen
+ * in lib/app/screens.dart, with the titles, reasons, and defects of
+ * lib/techniques/c05_accordion/c05_accordion.dart).
  * web_tests/c05_accordion.spec.js checks that each screen shows these
  * texts, so that a change to them is caught.
  */
 export const EXAMPLE_SCREENS = {
-  'good-material': ['Material accordion', 'Good example for Accordion. Material.'],
-  'good-cupertino': ['Cupertino accordion', 'Good example for Accordion. Cupertino.'],
-  'good-custom': ['Accordion built from Semantics', 'Good example for Accordion. Widgets layer.'],
+  'good-material': [
+    'Material accordion', 'Good example for Accordion. Material.',
+    customSolution('Headers built by hand: a ListTile inside Semantics(button: true, expanded:) with a heading, an iOS value, and a focus ring of their own, and panels built only while open; ExpansionTile has no expanded state and, on Android and iOS, no button role (FL-264).'),
+  ],
+  'good-cupertino': [
+    'Cupertino accordion', 'Good example for Accordion. Cupertino.',
+    customSolution('Headers built by hand: a CupertinoListTile given keyboard focus by FocusableActionDetector, inside Semantics(button: true, expanded:) with a heading, an iOS value, and a focus ring of their own; CupertinoExpansionTile takes no keyboard focus and has no state (FL-265).'),
+  ],
+  'good-custom': [
+    'Accordion built from Semantics', 'Good example for Accordion. Widgets layer.',
+    customSolution('Headers built by hand from the widgets layer: a GestureDetector and FocusableActionDetector inside Semantics(button: true, expanded:) with a heading and an iOS value, and panels built only while open; no Flutter accordion widget gives the role and the state (FL-264, FL-265).'),
+  ],
   'bad-no-state': [
     'Headers with no state', 'Bad example for Accordion. Widgets layer.',
     'Defect: Nothing says whether a section is open or closed.',

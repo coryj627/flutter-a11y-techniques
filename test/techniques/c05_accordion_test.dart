@@ -68,9 +68,42 @@ List<String> _reading(WidgetTester tester) {
   return labels.sublist(start, end);
 }
 
+/// Taps the header of [section], scrolled into view first if it is not
+/// wholly on the screen, just far enough for it to be, at the bottom of the
+/// view, as a person scrolls to it: a custom solution's note above the
+/// example (docs/custom-solutions.md) can push Returns below an 800 by 600
+/// screen once Shipping is open. A header in view is not moved.
 Future<void> _tapHeader(WidgetTester tester, Section section) async {
+  await Scrollable.ensureVisible(
+    tester.element(find.text(section.title)),
+    alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+  );
+  await tester.pumpAndSettle();
   await tester.tap(find.text(section.title));
   await tester.pumpAndSettle();
+}
+
+/// Scrolls, if need be, until the example's count is at the bottom of the
+/// view, and checks that the whole example, from its first header to its
+/// count, is then in the view: a guideline checked after this covers all
+/// of the example, as when the example fitted under its title. A custom
+/// solution's note above the example (docs/custom-solutions.md) can push
+/// an open example's end below an 800 by 600 screen; the note itself is
+/// checked in test/app/shell_a11y_test.dart.
+Future<void> _showWholeExample(WidgetTester tester, String slug) async {
+  final count = byId('c05-$slug-count');
+  await Scrollable.ensureVisible(
+    tester.element(count),
+    alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+  );
+  await tester.pumpAndSettle();
+  final viewport = tester.getRect(
+    find.ancestor(of: count, matching: find.byType(Scrollable)).first,
+  );
+  final top = tester.getRect(find.text(_shipping.title)).top;
+  final bottom = tester.getRect(count).bottom;
+  expect(top, greaterThanOrEqualTo(viewport.top), reason: '$slug: header');
+  expect(bottom, lessThanOrEqualTo(viewport.bottom), reason: '$slug: count');
 }
 
 /// The colour of the focus ring round the header [id].
@@ -143,6 +176,7 @@ void main() {
               await _tapHeader(tester, _returns);
               expect(_readable(tester, _returns.text), isTrue);
             }
+            await _showWholeExample(tester, slug);
             await expectLater(
               tester,
               meetsGuideline(androidTapTargetGuideline),
@@ -360,6 +394,7 @@ void main() {
             await _tapHeader(tester, _returns);
             expect(find.text(_returns.text), findsOneWidget);
           }
+          await _showWholeExample(tester, example.slug);
           await expectLater(tester, meetsGuideline(textContrastGuideline));
           handle.dispose();
         });

@@ -98,9 +98,9 @@ own.
 
 | Slug | Variant | What it shows | Mechanism | Reqs |
 | --- | --- | --- | --- | --- |
-| `good-material` | Material | Material list tiles as headers. Custom solution: not vetted by a real-world example | `ListTile(onTap:)` with an arrow, inside `HeaderSemantics`; a 3 pixel focus ring (V14's, as the tile's tint is under 3:1, FL-430) | R1 to R8 |
-| `good-cupertino` | Cupertino | Cupertino list tiles as headers. Custom solution: not vetted by a real-world example | `CupertinoListTile` with a chevron, given focus, Enter, and Space by `FocusableActionDetector` (`KeyboardHeader`; the tile takes none, FL-400), inside `HeaderSemantics`; the title in a `DefaultTextStyle` of its own so that it wraps | R1 to R8 |
-| `good-custom` | Widgets layer | Headers from the widgets layer. Custom solution: not vetted by a real-world example | `GestureDetector` and `KeyboardHeader`, inside `HeaderSemantics` | R1 to R8 |
+| `good-material` | Material | Material list tiles as headers | `ListTile(onTap:)` with an arrow, inside `HeaderSemantics`; a 3 pixel focus ring (V14's, as the tile's tint is under 3:1, FL-430) | R1 to R8 |
+| `good-cupertino` | Cupertino | Cupertino list tiles as headers | `CupertinoListTile` with a chevron, given focus, Enter, and Space by `FocusableActionDetector` (`KeyboardHeader`; the tile takes none, FL-400), inside `HeaderSemantics`; the title in a `DefaultTextStyle` of its own so that it wraps | R1 to R8 |
+| `good-custom` | Widgets layer | Headers from the widgets layer | `GestureDetector` and `KeyboardHeader`, inside `HeaderSemantics` | R1 to R8 |
 
 `HeaderSemantics` is one node, merged by `TestId`: `button: true`;
 `expanded: open`; `onTapHint: 'expand'` or `'collapse'`; `onExpand` while
@@ -122,13 +122,14 @@ first was measured in the probe (FL-267), and the second's default is
 
 ### Custom solutions
 
-Custom solution: not vetted by a real-world example. It is tested here in
-isolation, with screen-reader transcripts, but has not been built into a
-real app and tested in a user journey. Do not treat it as a vetted
-technique.
+**Custom solution: not vetted by a real-world example.** `good-material`,
+`good-cupertino` and `good-custom` are custom solutions. Each is tested here
+in isolation, with screen-reader transcripts, but has not been built into a
+real app and tested in a user journey. Do not treat them as vetted
+techniques. The app shows the label, with each example's reason, on each
+of their screens.
 
-This applies to `good-material`, `good-cupertino`, and `good-custom`. They
-are built by hand because no Flutter accordion widget meets the
+They are built by hand because no Flutter accordion widget meets the
 requirements through its own parameters: `ExpansionTile`'s header has no
 expanded state and, on Android and iOS, no button role
 ([FL-264](../flutter-limitations.md#fl-264)); `CupertinoExpansionTile`'s
@@ -138,8 +139,19 @@ buttons are all named "Expand" or "Collapse" and have no state
 ([FL-267](../flutter-limitations.md#fl-267), probe only). They are what
 was built and measured here, nothing more.
 
-What is hand-built (all in `examples.dart`), the gap each piece fills, and
-where it comes from:
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | The accordion's state, with each panel built only while open; `HeaderSemantics` (`Semantics(button: true, expanded:)`, a heading, an iOS value, a tap hint, the expand and collapse actions, and `controlsNodes` while open) round a `ListTile`; a focus ring of its own | `ExpansionTile` | No expanded state and, on Android and iOS, no button role ([FL-264](../flutter-limitations.md#fl-264)); no state on iOS ([FL-260](../flutter-limitations.md#fl-260)); a heading that is a button on the web ([FL-262](../flutter-limitations.md#fl-262)); `aria-controls` ([FL-266](../flutter-limitations.md#fl-266)); a faint focus tint ([FL-430](../flutter-limitations.md#fl-430)) | R1 to R8: APG Accordion, iOS Accordions, Android View Accordion Controls, Android Compose Accordion Controls | custom |
+| `good-cupertino` | As `good-material`, round a `CupertinoListTile` given focus, Enter, and Space by `FocusableActionDetector`; its title in a `DefaultTextStyle` of its own, so that it wraps | `CupertinoExpansionTile` | No keyboard focus, no button role, and no state ([FL-265](../flutter-limitations.md#fl-265), [FL-400](../flutter-limitations.md#fl-400)); as `good-material` for [FL-260](../flutter-limitations.md#fl-260), [FL-262](../flutter-limitations.md#fl-262), and [FL-266](../flutter-limitations.md#fl-266) | R1 to R8: APG Accordion, iOS Accordions, Android View Accordion Controls, Android Compose Accordion Controls | custom |
+| `good-custom` | As `good-material`, round a header from the widgets layer: a `GestureDetector`, and focus, Enter, and Space from `FocusableActionDetector` | None for a drawn control; the SDK's accordions are `ExpansionTile`, `CupertinoExpansionTile`, and `ExpansionPanelList` ([FL-267](../flutter-limitations.md#fl-267)) | As `good-material` for [FL-260](../flutter-limitations.md#fl-260), [FL-262](../flutter-limitations.md#fl-262), and [FL-266](../flutter-limitations.md#fl-266) | R1 to R8: APG Accordion, iOS Accordions, Android View Accordion Controls, Android Compose Accordion Controls | custom |
+
+### What is hand-built
+
+Each piece (all in `examples.dart`), the gap it fills, and where it comes
+from:
 
 | Piece | What it does | Gap it fills (measured) | Source |
 | --- | --- | --- | --- |
@@ -260,7 +272,7 @@ it either way; nothing is claimed.
 | L3 iOS | Good: each header is a button named by its title, value "collapsed"; two buttons but Back; no closed panel on screen; a tap opens Shipping (value "expanded", Returns "collapsed", the panel's text and button between Shipping and Returns on screen; XCUITest's list of elements is not the reading order, which the VoiceOver walk checks) and a second closes it; two Tabs and Enter, and in another launch Space, open Shipping and stay on the example. Bad: `bad-no-state` has no value before or after a tap that opens it; `bad-heading-on-button` and `bad-no-heading` are buttons with the value (the heading is heard, not seen, in the tree); `bad-hidden-panel` shows no closed panel, four Tabs and Enter press a hidden button (the count) while both stay closed, and three Tabs and Enter open Returns, the positive control; `bad-expansion-tile` and `bad-cupertino-expansion-tile` are not buttons and have no value, and a tap opens them; for `bad-cupertino-expansion-tile`, one, two, and three Tabs and then Enter or Space never open a section and take the example off the screen (Back acted) |
 | L4 TalkBack | For each example but `bad-hidden-panel`: what is said with focus on Shipping's header, closed; on the click action with focus left there (not for `bad-no-state` and `bad-cupertino-expansion-tile`, see section 7); with focus on the panel's text (on Back for `bad-cupertino-expansion-tile`, whose open panel is part of its header); and on the header again, open |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list, closed, and again after XCUITest's double tap at the header, with VoiceOver on, has opened Shipping; what VoiceOver says with its cursor on Shipping, and in the three seconds after that gesture. The gesture is a tap at the header's place, not VoiceOver's activation, which XCUIVoiceOverService has no way to make (C04 probe round 3, `docs/evidence/probes/c04/ios_round3.txt`) |
-| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C04's walks are (`judgeExampleWalk` in `web_tests/vo/c05_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened Shipping, in Chromium and WebKit. The judge is tested on made-up walks in `web_tests/c05_accordion.spec.js`. The first recording (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`) heard every walk of the good examples and of the four hand-built bad ones, closed and open, in both browsers, as expected; the two SDK tiles' closed readings were not as expected (their hint, above), so their open walks were not reached. Their expectations are now the closed readings heard, and open readings not heard yet. The second recording (`docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt`) heard every walk as expected, the tiles' open walks included, but for `bad-cupertino-expansion-tile`, whose test ran into its timeout after the closed walk; its open walk now starts as described in section 7. The third (`voiceover-web-round3-fail.md.txt`) heard every walk as expected, that open walk included in Chromium, but in WebKit that open walk read only the page's web area; it is now made on a fresh load (section 7). The fourth (`docs/evidence/C05/voiceover-web.md`) passed: every walk, closed and open, in both browsers, complete and as expected on its first walk |
+| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C04's walks are (`judgeExampleWalk` in `web_tests/vo/c05_vo_walks.js`): the whole screen in order, the title, the description, a good example's custom-solution note, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened Shipping, in Chromium and WebKit. The judge is tested on made-up walks in `web_tests/c05_accordion.spec.js`. The first recording (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`) heard every walk of the good examples and of the four hand-built bad ones, closed and open, in both browsers, as expected; the two SDK tiles' closed readings were not as expected (their hint, above), so their open walks were not reached. Their expectations are now the closed readings heard, and open readings not heard yet. The second recording (`docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt`) heard every walk as expected, the tiles' open walks included, but for `bad-cupertino-expansion-tile`, whose test ran into its timeout after the closed walk; its open walk now starts as described in section 7. The third (`voiceover-web-round3-fail.md.txt`) heard every walk as expected, that open walk included in Chromium, but in WebKit that open walk read only the page's web area; it is now made on a fresh load (section 7). The fourth (`docs/evidence/C05/voiceover-web.md`) passed: every walk, closed and open, in both browsers, complete and as expected on its first walk. It was made before the good examples' screens showed the custom-solution note, which is now one more stop above their heading; it is to be recorded again |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -399,6 +411,18 @@ Skips and what they give up, in the tests:
   walks, which start with the checked click, were right in all three
   recordings, and the probe tested this example only, so they are left as
   they are.
+- Each good example's screen shows the custom-solution note above the
+  example (docs/custom-solutions.md), which makes it taller: in a widget
+  test at 320 by 640, with the test font, the first header starts about
+  200 pixels below the screen. The tests scroll as a person would, and
+  assert what they did before: the widget tests scroll a header into view
+  before a tap and, before the guidelines are checked with both sections
+  open, scroll until the count is at the bottom of the view and check that
+  the whole example, first header to count, is then in it; the Android
+  and iOS tests scroll a good example's screen to its end once it is open
+  (Android again before each reading of the tree, iOS again once a tap has
+  opened Shipping and before the open VoiceOver walk). The web tests need
+  no change: Playwright scrolls a control into view before it acts.
 - The web tests of the two SDK tiles expect what the platform gives,
   read from `navigator.platform` in the page, from which Flutter's web
   engine takes `defaultTargetPlatform` (`detectOperatingSystem` in ui_web's
