@@ -66,8 +66,12 @@ FIRST_TEST_SECONDS=${FIRST_TEST_SECONDS:-600}
 # With 22 test classes a run with no failure took 23 minutes on the hosted
 # runner (run 44599240554). With 23, and two batches that failed, a run was
 # stopped at the old limit of 30 minutes with two batches still to go
-# (run 44578213569, attempt 3). Every technique adds a class.
-LIMIT_SECONDS=${LIMIT_SECONDS:-3000}
+# (run 44578213569, attempt 3). Every technique adds a class. With 29
+# classes a run with no failure took 46 minutes with the build and the
+# emulator's start (run 44963677359), and with 30, and one batch that
+# failed, a run was stopped at the limit of 50 minutes (run 44974865777,
+# attempt 2). The limit is now 90 minutes, for the classes still to come.
+LIMIT_SECONDS=${LIMIT_SECONDS:-5400}
 MIN_AVAILABLE_MB=${MIN_AVAILABLE_MB:-600}
 BATCH_CLASSES=${BATCH_CLASSES:-4}
 POLL_SECONDS=${POLL_SECONDS:-10}
