@@ -3238,7 +3238,8 @@ yet), **Fixed in x.y** (verified on that version).
   visible stops is kept.
 - Workaround, in the SDK: pass `maintainState: false` to `Expansible`
   (its documented parameter; not measured), or build a closed panel not at
-  all, as C05's good examples do (`if (open) panel`; Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions").). Keeping a hidden panel's state while taking its controls
+  all, as C05's good examples do (`if (open) panel`; a custom solution, not vetted by a real-world
+  example: C05's spec, "Custom solutions"). Keeping a hidden panel's state while taking its controls
   out of the focus order, for example with `ExcludeFocus`, was not tried.
 - Upstream issue: not searched yet (D25).
 
@@ -3254,8 +3255,9 @@ yet), **Fixed in x.y** (verified on that version).
   parameter's default on `ExpansionTile`, documented as "a temporary
   flag"), so the header has no button flag; it sets no `expanded`; it
   puts "Collapsed" or "Expanded" (`MaterialLocalizations.expandedHint` and
-  `collapsedHint`) in the header's hint, on iOS with "double tap to
-  expand" or "to collapse" after it; on Android it wraps the header in a
+  `collapsedHint`) in the header's hint, with "double tap to expand" or
+  "to collapse" after it when `defaultTargetPlatform` is iOS or macOS
+  (which it is in a browser on a Mac); on Android it wraps the header in a
   live region whose label is the same word, to announce the change; on
   iOS and the web it announces the change with `sendAnnouncement`.
 - What each platform gets (probe and C05 tests):
@@ -3270,11 +3272,19 @@ yet), **Fixed in x.y** (verified on that version).
     tap at its place, not VoiceOver's activation).
   - Web: `role="button"` ([FL-006](#fl-006)) with no `aria-expanded`;
     "Collapsed" and "double tap to expand" are its `aria-description`
-    (accessible description `Collapsed`, Chromium).
+    (accessible description starting "Collapsed", Chromium). VoiceOver on
+    macOS reads it "Shipping Collapsed double tap to expand button", in
+    Chromium and WebKit
+    (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`): the
+    state in words, phrased as a touch instruction on a desktop browser.
+    In a browser on another system the source gives "Collapsed" alone;
+    not measured.
 - WCAG: 4.1.2 Name, Role, Value. On Android and iOS: no role that says it
-  is a control, and no state; the word in its name or hint is text, not a
-  state. On the web the role is there and the state is text in its
-  description: not settled by the criterion as written.
+  is a control. For the state, on every platform: not settled by the
+  criterion as written. No expanded state is exposed (no `aria-expanded`
+  on the web, no expanded state on Android, none on iOS), but the state is
+  text a screen reader reads: in the name on Android, the hint on iOS, and
+  the accessible description on the web.
 - Closest achievable example: none with `ExpansionTile`'s own parameters
   alone. C05 `good-material` builds the header from a `ListTile` inside
   `Semantics(button: true, expanded:)` and builds the panel only while it
@@ -3296,7 +3306,8 @@ yet), **Fixed in x.y** (verified on that version).
   Android, and iOS tests. Framework source read:
   `cupertino/expansion_tile.dart` builds the header as a
   `CupertinoListTile` with `onTap` inside `Semantics(hint:, onTapHint:)`,
-  the hint on iOS and macOS only; a `CupertinoListTile` takes no focus and
+  the hint only when `defaultTargetPlatform` is iOS or macOS (so in a
+  browser on a Mac too); a `CupertinoListTile` takes no focus and
   is no button ([FL-400](#fl-400), the same mechanism).
 - What happens:
   - No keyboard focus, on every platform: Tab passes the headers (the
@@ -3304,9 +3315,15 @@ yet), **Fixed in x.y** (verified on that version).
     section. WCAG 2.1.1 Keyboard: no other keyboard path opens it.
   - No button role on Android (`android.view.View`) and iOS (static text);
     a button on the web ([FL-006](#fl-006)), with no `tabindex`.
-  - No expanded state; on Android and the web nothing says the state, on
-    iOS the hint is "Collapsed double tap to expand" (VoiceOver,
-    probe p06), and nothing announces the change.
+  - No expanded state. On Android nothing says the state. On iOS the hint
+    is "Collapsed double tap to expand" (VoiceOver, probe p06). On the web,
+    in a browser on a Mac, the same hint is the header's accessible
+    description (C05's web tests), which VoiceOver on macOS reads
+    "Shipping Collapsed double tap to expand button", in Chromium and
+    WebKit (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`):
+    the state in words, phrased as a touch instruction on a desktop
+    browser. Elsewhere on the web the source gives no hint; not measured.
+    Nothing announces the change.
   - Once a section is open, its panel's text is merged into the header's
     node: "Shipping\nOrders ship in two days." on Android, a group named
     "Shipping Orders ship in two days." on the web (probe p06).

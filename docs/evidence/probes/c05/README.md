@@ -306,3 +306,21 @@ resets both after): fifteen tests, none failed, `talkBackWalk` skipped with
 TalkBack off (`android_320x640.txt`, the JUnit summary at its end). The
 emulator is still Android 17 at that size, so this runs the Android 16 and
 later branch; the API 35 branch runs only on CI.
+
+## C05's first web VoiceOver recording
+
+`voiceover-web-round1-fail.md.txt` is the tool's transcript of the first
+recording, kept as it was. Every walk of the good examples and of the four
+hand-built bad examples, closed and open, in Chromium and WebKit, was
+complete on its first walk. The two SDK tiles' closed walks were wrong at
+their first header, identically in both browsers: VoiceOver read
+"Shipping Collapsed double tap to expand button" (and the same for
+Returns) where the spec expected "Shipping button". That is the tile's
+hint, which is the header's accessible description in a browser on a Mac.
+Their expectations are now those readings; their open walks were not
+reached, and their open expectations are not yet heard. The transcript counts
+five failed tests and also lists `good-material` (Chromium) among "Walks
+that needed a retry", while both its walks are logged complete on their
+first try; the transcript does not say why, and the run's error contexts
+are not kept here.
+

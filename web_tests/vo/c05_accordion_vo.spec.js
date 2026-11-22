@@ -27,10 +27,15 @@ const SHIPPING_TEXT = 'Orders ship in two days.';
 const SHIPPING_ACTION = 'Track a parcel button';
 const COUNT = 'Presses: 0';
 
+// The SDK tiles' hint, as VoiceOver read it on a macOS browser.
+const CLOSED_TILE = (name) => `${name} Collapsed double tap to expand button`;
+const OPEN_HINT = 'Expanded double tap to collapse';
+
 // What VoiceOver is expected to say for a header, by what it is.
-// EXPECTED READINGS NOT YET RECORDED: the phrases below follow what
-// VoiceOver said for other controls in this project's transcripts and have
-// not been heard for an accordion. The first recording decides them.
+// The first recording (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt)
+// heard every reading below for the good examples and the hand-built bad
+// ones, closed and open, in Chromium and WebKit; for the two SDK tiles it
+// heard the closed readings only (see below).
 const collapsed = (name) => `${name} collapsed button`;
 const expanded = (name) => `${name} expanded button`;
 const inHeading = (reading) => `heading level 3 ${reading}`;
@@ -60,15 +65,22 @@ const EXAMPLES = {
     closed: [inHeading(collapsed('Shipping')), inHeading(collapsed('Returns')), COUNT],
     open: [inHeading(expanded('Shipping')), SHIPPING_TEXT, SHIPPING_ACTION, inHeading(collapsed('Returns')), COUNT],
   },
-  // A button on the web (FL-006), with its state only in its
-  // description; the defect, no button role, is on Android and iOS.
+  // A button on the web (FL-006); the defect, no button role, is on
+  // Android and iOS. The state is in its description, the tile's hint,
+  // which on a macOS browser is a touch instruction: closed, as the first
+  // recording heard it in Chromium and WebKit
+  // (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt). The open
+  // readings are not heard yet: that walk was never reached.
   'bad-expansion-tile': {
-    closed: ['Shipping button', 'Returns button', COUNT],
-    open: ['Shipping button', SHIPPING_TEXT, 'Returns button', COUNT],
+    closed: [CLOSED_TILE('Shipping'), CLOSED_TILE('Returns'), COUNT],
+    open: [`Shipping ${OPEN_HINT} button`, SHIPPING_TEXT, CLOSED_TILE('Returns'), COUNT],
   },
+  // The defect is the keyboard (see the tree spec); the same description
+  // as bad-expansion-tile, closed, as heard. Open, the header and its
+  // panel's text are one button (the tree spec); not heard yet.
   'bad-cupertino-expansion-tile': {
-    closed: ['Shipping button', 'Returns button', COUNT],
-    open: [`Shipping ${SHIPPING_TEXT} button`, 'Returns button', COUNT],
+    closed: [CLOSED_TILE('Shipping'), CLOSED_TILE('Returns'), COUNT],
+    open: [`Shipping ${SHIPPING_TEXT} ${OPEN_HINT} button`, CLOSED_TILE('Returns'), COUNT],
   },
 };
 

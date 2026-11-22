@@ -267,9 +267,18 @@ test.describe('bad examples have their defect', () => {
     await expect(header).toHaveCount(1);
     await expect(header).not.toHaveAttribute('tabindex');
     await expect(header).not.toHaveAttribute('aria-expanded');
+    // The state is text in its description, the tile's hint (on a macOS
+    // browser, where the tile gives one: FL-265).
+    await expect(header).toHaveAccessibleDescription(/^Collapsed/);
     expect(await shown(page, SHIPPING_TEXT)).toBe(false);
     await header.click();
     await expect.poll(() => shown(page, SHIPPING_TEXT)).toBe(true);
+    // Open, the header is one button with the panel's text, still with no
+    // aria-expanded, its description now "Expanded".
+    const merged = page.getByRole('button', { name: `${SHIPPING} ${SHIPPING_TEXT}` });
+    await expect(merged).toHaveCount(1);
+    await expect(merged).not.toHaveAttribute('aria-expanded');
+    await expect(merged).toHaveAccessibleDescription(/^Expanded/);
   });
 });
 
