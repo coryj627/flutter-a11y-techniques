@@ -65,6 +65,7 @@ example is added without a decision.
 | [C02 Toggle button](#c02-toggle-button) | 4 | 3 | 0 | 1 |
 | [C03 Stand-alone link](#c03-stand-alone-link) | 4 | 4 | 0 | 0 |
 | [C04 Links inline with text](#c04-links-inline-with-text) | 3 | 3 | 0 | 0 |
+| [C12 Tooltip](#c12-tooltip) | 3 | 1 | 0 | 2 |
 | [F01 Text fields and labels](#f01-text-fields-and-labels) | 3 | 0 | 0 | 3 |
 | [F02 Input instructions](#f02-input-instructions) | 3 | 0 | 0 | 3 |
 | [F03 Keyboard types](#f03-keyboard-types) | 4 | 0 | 0 | 4 |
@@ -90,7 +91,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 111 | 47 | 12 | 52 |
+| All | 114 | 48 | 12 | 54 |
 
 ## C01 Button
 
@@ -136,6 +137,16 @@ Flagged: `good-material`, `good-cupertino`, `good-custom`.
 | `good-material` | `MaterialInlineLink`: `Semantics(link: true, linkUrl:, onTapHint:)` round an `InkWell` in a `WidgetSpan`; C03's `BrowserKeys`; a focus ring; a sort key and an identifier that keep it in its sentence | A `TextSpan` with a tap recognizer, which takes no keyboard focus ([FL-240](flutter-limitations.md#fl-240)); no link widget ([FL-221](flutter-limitations.md#fl-221)) | [FL-240](flutter-limitations.md#fl-240); [FL-413](flutter-limitations.md#fl-413) (read after its sentence); [FL-241](flutter-limitations.md#fl-241) (scaled twice); [FL-013](flutter-limitations.md#fl-013); [FL-221](flutter-limitations.md#fl-221) | R1, R2, R3, R4, R5, R6, R7: APG Link, MDN a, iOS Links, G53, Android Compose, F73, G183, C03 R7 | custom |
 | `good-cupertino` | `KeyboardInlineLink`: `FocusableActionDetector` round `Semantics(link: true, linkUrl:, onTapHint:)` and a `GestureDetector` in a `WidgetSpan`; the high-contrast `systemBlue` | As `good-material`; Cupertino has no link widget either | [FL-240](flutter-limitations.md#fl-240); [FL-413](flutter-limitations.md#fl-413); [FL-241](flutter-limitations.md#fl-241); [FL-242](flutter-limitations.md#fl-242) (link colour under 4.5:1); [FL-221](flutter-limitations.md#fl-221) | R1, R2, R3, R4, R5, R6, R7: APG Link, MDN a, iOS Links, G53, Android Compose, F73, G183, C03 R7 | custom |
 | `good-custom` | `KeyboardInlineLink` in the theme's primary colour | As `good-material` | [FL-240](flutter-limitations.md#fl-240); [FL-413](flutter-limitations.md#fl-413); [FL-241](flutter-limitations.md#fl-241); [FL-221](flutter-limitations.md#fl-221) | R1, R2, R3, R4, R5, R6, R7: APG Link, MDN a, iOS Links, G53, Android Compose, F73, G183, C03 R7 | custom |
+
+## C12 Tooltip
+
+Flagged: `good-cupertino`.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Nothing: `Tooltip(message:, ignorePointer: false, excludeFromSemantics: true)` round an `IconButton` named by `Icon(semanticLabel:)`, and a focus outline through the button's own `style` | `Tooltip` | The pointer cannot reach a default tooltip ([FL-247](flutter-limitations.md#fl-247)), filled with its own parameter; a faint focus tint ([FL-430](flutter-limitations.md#fl-430)), filled with the button's `style` | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
+| `good-cupertino` | An `Actions` for `ButtonActivateIntent` round the `CupertinoButton`, so that Enter works on the web; the tooltip itself is Material's `Tooltip` through its parameters | None: Cupertino has no tooltip; Material's `Tooltip` is used, with `CupertinoButton` | Enter on the web ([FL-002](flutter-limitations.md#fl-002)); the box over the button ([FL-250](flutter-limitations.md#fl-250)) and the faint ring ([FL-431](flutter-limitations.md#fl-431)), filled with parameters | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | custom |
+| `good-description` | Nothing is built: `MergeSemantics` round `Tooltip(message:, ignorePointer: false)` round an `OutlinedButton`, so that the tooltip is on the button | `Tooltip` | A tooltip round a Material button stays on a node of its own ([FL-040](flutter-limitations.md#fl-040)), filled with the documented merge | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
 
 ## F01 Text fields and labels
 

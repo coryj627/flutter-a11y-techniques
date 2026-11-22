@@ -23,7 +23,33 @@ import '../support/examples.dart';
 /// 16 ms apart, as a running app draws them, because one pump of the whole
 /// time runs the timers and not the animations they start
 /// (docs/evidence/probes/c12/README.md).
-final _open = exampleOpener(c12Tooltip);
+final _openExample = exampleOpener(c12Tooltip);
+
+/// Opens [slug] and, if its control is not wholly on the screen, scrolls
+/// just far enough for it to be, at the bottom of the view, as a person
+/// scrolls to it. A custom solution's note above the example
+/// (docs/custom-solutions.md) can leave the control below a 320 by 640
+/// screen. Other screens are left as they open.
+Future<void> _open(
+  WidgetTester tester,
+  String slug, {
+  Brightness brightness = Brightness.light,
+  double textScale = 1,
+}) async {
+  await _openExample(
+    tester,
+    slug,
+    brightness: brightness,
+    textScale: textScale,
+  );
+  // Only a custom solution's screen has the note.
+  if (!c12Tooltip.example(slug)!.isCustomSolution) return;
+  await Scrollable.ensureVisible(
+    tester.element(byId(_control[slug]!)),
+    alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+  );
+  await tester.pumpAndSettle();
+}
 
 const _good = ['good-material', 'good-cupertino', 'good-description'];
 
