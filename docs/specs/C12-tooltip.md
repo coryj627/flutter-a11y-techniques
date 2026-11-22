@@ -74,8 +74,13 @@ is the owner's decision (section 8); the catalog says "applies" with a note.
     and covers the line under it ("Drafts are kept for 30 days.", "The
     file is 2 MB."), 157 to 242 points of its width; at 320 wide with 200%
     text the control is low on the screen, Material flips the box above
-    it, and it covers the "Example" heading. In `good-cupertino` it also
-    covers the bottom 2 points of the button itself. On the web the box is
+    it, and it covers the "Example" heading. `good-cupertino` is the
+    exception at 320 wide with 100% text: its screen has the
+    custom-solution note above the example, which leaves its button at the
+    bottom of the screen, so the box is flipped above it there too and
+    covers the lower 10 of the "Example" heading's 28 points. Its box is
+    1.8 off the button in every layout, below it and above it (FL-250,
+    below). On the web the box is
     drawn in the band under the control where that line is (the tree
     spec's pixel reading). The default placement does this generally:
     Material puts the box 24 under the control's centre, below a 48 high
