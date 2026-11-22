@@ -36,7 +36,7 @@ const CLOSED_TILE = (name) => `${name} Collapsed double tap to expand button`;
 const OPEN_HINT = 'Expanded double tap to collapse';
 
 // What VoiceOver is expected to say for a header, by what it is.
-// The fourth recording (docs/evidence/C05/voiceover-web.md) heard every
+// The fourth and fifth recordings (the fifth is docs/evidence/C05/voiceover-web.md) heard every
 // reading below, closed and open, in Chromium and WebKit. Before it, the
 // first (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt) heard
 // them for the good examples and the hand-built bad ones, and the two SDK

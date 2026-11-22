@@ -389,8 +389,11 @@ found. The spec now makes this example's open walk on a fresh load.
 
 ## C05's fourth web VoiceOver recording
 
-The fourth recording passed and is the transcript,
-`docs/evidence/C05/voiceover-web.md`: 18 tests passed, and every walk,
+The fourth recording passed and was the transcript,
+`docs/evidence/C05/voiceover-web.md`, until a fifth replaced it on
+2026-11-22, made once the good examples' screens showed the
+custom-solution note: it passed too, with the same readings. In the
+fourth, 18 tests passed, and every walk,
 closed and open, in Chromium and WebKit, was complete and as expected on
 its first walk, with none walked again. Chromium and WebKit logged the same
 readings. `bad-cupertino-expansion-tile`'s open walk was made on a fresh
