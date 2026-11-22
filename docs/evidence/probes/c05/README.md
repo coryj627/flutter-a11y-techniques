@@ -318,7 +318,7 @@ their first header, identically in both browsers: VoiceOver read
 Returns) where the spec expected "Shipping button". That is the tile's
 hint, which is the header's accessible description in a browser on a Mac.
 Their expectations are now those readings; their open walks were not
-reached, and their open expectations are not yet heard. The transcript counts
+reached in this recording. The transcript counts
 five failed tests and also lists `good-material` (Chromium) among "Walks
 that needed a retry", while both its walks are logged complete on their
 first try; the transcript does not say why, and the run's error contexts
@@ -387,3 +387,15 @@ or open, and never as the first; and one failing start could not be told
 from the good ones at the start. Why a second walk's start fails was not
 found. The spec now makes this example's open walk on a fresh load.
 
+## C05's fourth web VoiceOver recording
+
+The fourth recording passed and is the transcript,
+`docs/evidence/C05/voiceover-web.md`: 18 tests passed, and every walk,
+closed and open, in Chromium and WebKit, was complete and as expected on
+its first walk, with none walked again. Chromium and WebKit logged the same
+readings. `bad-cupertino-expansion-tile`'s open walk was made on a fresh
+load, as above. The first three recordings failed, for the reasons in
+their sections: the two SDK tiles' closed readings (round 1), the
+timeout of `bad-cupertino-expansion-tile`'s test after its closed walk
+(round 2), and that example's open walk in WebKit, which read only the
+page's web area (round 3).
