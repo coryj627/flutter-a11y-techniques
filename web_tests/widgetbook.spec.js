@@ -78,17 +78,21 @@ test('a SnackBar example shows and announces its message', async ({ page }) => {
 test('a custom solution is labelled in its name and on its use case', async ({ page }) => {
   await openUseCase(page, 'components/c01-button/custom-button-(good,-custom-solution,-not-vetted)');
   await expect(page).toHaveURL(/path=components\/c01-button\/custom-button-/);
-  const note = page.getByText(/^Custom solution: not vetted by a real-world example\. It is tested here in isolation/);
+  const note = page.getByText(/^Custom solution: not vetted by a real-world example\. It is tested here in isolation.* Why it is flagged: /);
   await expect(note).toHaveCount(1);
   await expect(note).toContainText('Do not treat it as a vetted technique. Why it is flagged: A button drawn by hand');
   // Before the example: the note is above the "Example" heading.
   const noteBox = await note.boundingBox();
   const headingBox = await page.getByRole('heading', { name: 'Example', level: 2 }).boundingBox();
   expect(noteBox.y).toBeLessThan(headingBox.y);
-  // An example that is not flagged has no note.
+  // An example that is not flagged has no note. The technique doc under it
+  // does name the label (its "Custom solutions" section and its code), so
+  // the note is told apart by its "Why it is flagged", which only the note
+  // has; the doc is waited for, so that it is there to be told apart.
   await openUseCase(page, 'components/c01-button/text-buttons-(good)');
   await expect(page.locator('[flt-semantics-identifier="c01-good-text-filled"]')).toBeAttached();
-  await expect(page.getByText(/^Custom solution: not vetted/)).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Custom solutions', level: 3 })).toBeAttached();
+  await expect(page.getByText(/Why it is flagged:/)).toHaveCount(0);
 });
 
 test('a bad use case states its defect in text', async ({ page }) => {
