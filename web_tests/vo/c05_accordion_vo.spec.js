@@ -23,6 +23,9 @@ import { EXAMPLE_HEADING, judgeExampleWalk, runWalks, screenStops } from './c05_
 
 test.describe.configure({ retries: 0 });
 
+// Set only for the round 3 probe at the end of this file.
+const PROBE = process.env.C05_VO_PROBE === '1';
+
 const SHIPPING_TEXT = 'Orders ship in two days.';
 const SHIPPING_ACTION = 'Track a parcel button';
 const COUNT = 'Presses: 0';
@@ -150,6 +153,7 @@ async function read(page, voiceOver, browserName, label, expected, screen, { cli
 
 for (const [slug, { closed, open }] of Object.entries(EXAMPLES)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
+    test.skip(PROBE, 'the round 3 probe is running instead');
     await page.goto(`/#/t/C05/${slug}`, { waitUntil: 'load' });
     const count = page.locator(`[flt-semantics-identifier="c05-${slug}-count"]`);
     await expect(count).toBeVisible();
@@ -167,4 +171,78 @@ for (const [slug, { closed, open }] of Object.entries(EXAMPLES)) {
     await read(page, voiceOver, browserName, `${slug}-open`, open, screenStops(slug),
       { clickAtPoint: slug === 'bad-cupertino-expansion-tile' });
   });
+}
+
+// ---------------------------------------------------------------------------
+// Probe (round 3), run only with C05_VO_PROBE=1 set, through the tool:
+//   C05_VO_PROBE=1 python3 tool/voiceover_web.py C05
+// With it set, the tests above are skipped and only these run, in WebKit
+// only. They judge nothing: each walk logs every stop (VoiceOver's last
+// phrase and its cursor's position), so that the third recording's WebKit
+// reading of the open bad-cupertino-expansion-tile, the page's web area as
+// its only stop (docs/evidence/probes/c05/voiceover-web-round3-fail.md.txt),
+// can be told apart: does it come from the screen once the tile is open,
+// or from how the walk starts (a mouse click at a point)? Four starts, each
+// on a fresh load and walked twice:
+//
+// - closed-keyboard: the tile closed; no click at all, Back focused by
+//   script after the browser is brought to the front.
+// - closed-point: the tile closed; the mouse click at the "Example"
+//   heading's place that the open walk uses (walkToEndClickingAtPoint).
+// - open-keyboard: the tile opened by a click on its header first; then as
+//   closed-keyboard.
+// - open-point: the tile opened; then as closed-point, as the third
+//   recording's open walk did.
+//
+// Each row also logs, before the first move, what VoiceOver last said and
+// where its cursor was once Back had been focused and VoiceOver went quiet.
+
+async function probeWalk(page, voiceOver, browserName, { clickAtPoint }) {
+  await activateBrowser(browserName);
+  await page.bringToFront();
+  if (clickAtPoint) {
+    const box = await page.getByRole('heading', { name: 'Example', exact: true, level: 2 }).boundingBox();
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  }
+  await page.getByRole('button', { name: 'Back' }).focus();
+  const { phrase, quiet } = await untilQuiet({
+    read: lastPhrase, sleep: (ms) => page.waitForTimeout(ms), quietMs: 2000, limitMs: 10000 });
+  const start = { phrase, quiet, position: await cursorBounds() };
+  const moves = [];
+  const step = async () => {
+    await voiceOver.next();
+    const move = { phrase: await lastPhrase(), position: await cursorBounds() };
+    moves.push(move);
+    return move;
+  };
+  const { stops, reachedEnd } = await stopsToEnd(step, start.position, 40);
+  return { start, moves, stops, reachedEnd };
+}
+
+if (PROBE) {
+  const starts = [
+    ['closed-keyboard', false, false],
+    ['closed-point', false, true],
+    ['open-keyboard', true, false],
+    ['open-point', true, true],
+  ];
+  for (const [name, opened, clickAtPoint] of starts) {
+    test(`probe bad-cupertino-expansion-tile ${name}`, async ({ page, voiceOver, browserName }) => {
+      test.skip(browserName !== 'webkit', 'the probe is for WebKit only');
+      await page.goto('/#/t/C05/bad-cupertino-expansion-tile', { waitUntil: 'load' });
+      await expect(page.locator('[flt-semantics-identifier="c05-bad-cupertino-expansion-tile-count"]')).toBeVisible();
+      await page.waitForTimeout(600);
+      if (opened) {
+        await page.getByRole('button', { name: 'Shipping', exact: true }).click();
+        await expect(page.getByText(SHIPPING_TEXT)).toHaveCount(1);
+        await page.waitForTimeout(1000);
+      }
+      for (let n = 1; n <= 2; n++) {
+        const { start, moves, stops, reachedEnd } = await probeWalk(page, voiceOver, browserName, { clickAtPoint });
+        console.log(`C05VO ${browserName} probe-${name}-${n} | start: "${start.phrase}" ` +
+          `(quiet: ${start.quiet}) at ${start.position} / stops: ${stops.join(' / ') || '(none)'} ` +
+          `/ reached end: ${reachedEnd} / moves: ${moves.map((m) => `"${m.phrase}" at ${m.position}`).join('; ')}`);
+      }
+    });
+  }
 }
