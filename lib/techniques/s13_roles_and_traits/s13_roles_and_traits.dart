@@ -78,24 +78,38 @@ final s13RolesAndTraits = Technique(
       slug: 'good-cupertino',
       title: 'Cupertino controls with the roles they come with',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'An Actions built by hand round the CupertinoButton so that Enter '
+          'works on the web (FL-002), and the switch merged with its text and '
+          'a GestureDetector.',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom-button',
       title: 'Custom control given the button role',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A button drawn by hand: Semantics(button: true, enabled: true) '
+          'round a GestureDetector, with focus, keys, and a focus ring of its '
+          'own.',
       builder: (_) => const GoodCustomButton(),
     ),
     TechniqueExample.good(
       slug: 'good-custom-switch',
       title: 'Custom on/off control given the switch role',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A switch drawn by hand: Semantics(toggled:, enabled: true) round a '
+          'GestureDetector, with focus, keys, and a focus ring of its own.',
       builder: (_) => const GoodCustomSwitch(),
     ),
     TechniqueExample.good(
       slug: 'good-selected',
       title: 'Custom buttons that mark the chosen one as selected',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'Three buttons drawn by hand with Semantics(button: true, '
+          'selected:), with focus, keys, and a focus ring of their own.',
       builder: (_) => const GoodSelected(),
     ),
     TechniqueExample.bad(

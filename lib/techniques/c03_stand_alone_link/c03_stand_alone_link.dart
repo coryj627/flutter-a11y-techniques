@@ -70,24 +70,40 @@ final c03StandAloneLink = Technique(
       slug: 'good-material',
       title: 'Material link',
       variant: ExampleVariant.material,
+      customSolution:
+          'A link built by hand: Semantics(link: true, linkUrl:) round an '
+          'InkWell, with key bindings for the web and a focus ring of its '
+          'own; Flutter has no link widget (FL-221).',
       builder: (_) => const GoodMaterial(),
     ),
     TechniqueExample.good(
       slug: 'good-cupertino',
       title: 'Cupertino link',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'A link built by hand round a CupertinoListTile, with focus, keys, '
+          'and the link role from FocusableActionDetector and Semantics; '
+          'Flutter has no link widget (FL-221) and the tile takes no focus '
+          '(FL-400).',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Link built from Semantics',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A link built from the widgets layer: Semantics(link: true, '
+          'linkUrl:), FocusableActionDetector, and a GestureDetector; Flutter '
+          'has no link widget (FL-221).',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.good(
       slug: 'good-image-link',
       title: 'Picture link named on the link',
       variant: ExampleVariant.material,
+      customSolution:
+          'The hand-built link of good-material round a picture, named on the '
+          'link; Flutter has no link widget (FL-221).',
       builder: (_) => const GoodImageLink(),
     ),
     TechniqueExample.bad(

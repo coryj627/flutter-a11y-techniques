@@ -80,6 +80,9 @@ final f09Switch = Technique(
       slug: 'good-custom',
       title: 'Custom switch with an on or off state',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A switch drawn by hand, with its role, state, focus, keys, and '
+          'focus ring built from Semantics and FocusableActionDetector.',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.good(

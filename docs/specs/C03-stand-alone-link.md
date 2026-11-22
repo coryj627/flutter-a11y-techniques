@@ -115,6 +115,24 @@ left to the browser (`BrowserKeys`, `DoNothingAndStopPropagationIntent`).
 | `good-custom` | Widgets layer | A text link with no Material | `KeyboardLink` round a `GestureDetector` | R1, R2, R4, R5, R7 |
 | `good-image-link` | Material | A picture that is the whole link | As `good-material`, with `Semantics(label:)` on the link and `Image(excludeFromSemantics: true)` | R6, R2 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-material`,
+`good-cupertino`, `good-custom` and `good-image-link` are custom solutions.
+Each is tested here in isolation, with screen-reader transcripts, but has
+not been built into a real app and tested in a user journey. Do not treat
+them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | A link: `Semantics(link: true, linkUrl:, onTapHint:)` round an `InkWell`; `BrowserKeys` (a `Shortcuts` with `DoNothingAndStopPropagationIntent`), so that the browser follows it on the web; a focus ring of its own | None: Flutter has no link widget ([FL-221](../flutter-limitations.md#fl-221)) | No link widget ([FL-221](../flutter-limitations.md#fl-221)); a link needs `linkUrl` ([FL-032](../flutter-limitations.md#fl-032)); no role on Android ([FL-220](../flutter-limitations.md#fl-220)); the browser follows it as well as the app ([FL-013](../flutter-limitations.md#fl-013)); a faint focus tint ([FL-430](../flutter-limitations.md#fl-430)) | R1, R2, R4, R5, R7: iOS Links, Android Compose Stand-alone Links, MDN a, WCAG failure F84, APG Link | custom |
+| `good-cupertino` | `KeyboardLink` round a `CupertinoListTile`: `FocusableActionDetector` for focus, Enter, and Space off the web; a focus ring; `Semantics(link: true, linkUrl:, onTapHint:)` | None: Flutter has no link widget ([FL-221](../flutter-limitations.md#fl-221)) | No link widget ([FL-221](../flutter-limitations.md#fl-221)); the tile takes no focus ([FL-400](../flutter-limitations.md#fl-400)); no role on Android ([FL-220](../flutter-limitations.md#fl-220)); [FL-013](../flutter-limitations.md#fl-013) | R1, R2, R3, R4, R5, R7: iOS Links, Android Compose Stand-alone Links, MDN a, WCAG failure F84, APG Link | custom |
+| `good-custom` | `KeyboardLink` round a `GestureDetector` | None: Flutter has no link widget ([FL-221](../flutter-limitations.md#fl-221)) | No link widget ([FL-221](../flutter-limitations.md#fl-221)); no role on Android ([FL-220](../flutter-limitations.md#fl-220)); [FL-013](../flutter-limitations.md#fl-013) | R1, R2, R4, R5, R7: iOS Links, Android Compose Stand-alone Links, MDN a, WCAG failure F84, APG Link | custom |
+| `good-image-link` | The link of `good-material`, round a picture: `Semantics(label:)` on the link, `Image(excludeFromSemantics: true)` | None: Flutter has no link widget ([FL-221](../flutter-limitations.md#fl-221)) | No link widget ([FL-221](../flutter-limitations.md#fl-221)); a label on an image in a control does not name it ([FL-030](../flutter-limitations.md#fl-030)) | R2, R6: APG Link, MDN a, WCAG failure F89 | custom |
+
 ### Bad
 
 | Slug | Defect | Violates |

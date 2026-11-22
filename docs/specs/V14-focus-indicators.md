@@ -206,6 +206,23 @@ which has no hardware keyboard, a focused field brings up the on-screen
 keyboard over the example. `CupertinoTextField` shows focus only by its
 caret (section 7, [FL-435](../flutter-limitations.md#fl-435)).
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-material` and
+`good-widgets` are custom solutions. Each is tested here in isolation, with
+screen-reader transcripts, but has not been built into a real app and tested
+in a user journey. Do not treat them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | The tile's focus ring: a `Focus` that takes no focus hears the `CheckboxListTile`'s focus change and draws a `DecoratedBox`; the button's ring is its own `ButtonStyle.side` | `CheckboxListTile`, which has no style for a focus ring | A faint focus tint ([FL-430](../flutter-limitations.md#fl-430)) | R1, R2, R3, R4: Android View: Custom Focus Indicators, Understanding 2.4.7, Android View and Android Compose: Custom Focus Indicators, Understanding 1.4.11, Android View, Android Compose | custom |
+| `good-cupertino` | Nothing: `focusColor` on the `CupertinoSwitch` and the `CupertinoButton` | `CupertinoSwitch`, `CupertinoButton` | A pale default ring ([FL-431](../flutter-limitations.md#fl-431)), filled with their own parameter | R1, R2, R3, R4: Android View: Custom Focus Indicators, Understanding 2.4.7, Android View and Android Compose: Custom Focus Indicators, Understanding 1.4.11, Android View, Android Compose | not custom |
+| `good-widgets` | A card drawn by hand: focus, Enter, and Space from `FocusableActionDetector`, and its border drawn from `onShowFocusHighlight` | None for a drawn control | none | R1, R2, R3, R4: Android View: Custom Focus Indicators, Understanding 2.4.7, Android View and Android Compose: Custom Focus Indicators, Understanding 1.4.11, Android View, Android Compose | custom |
+| `good-notice-below` | Nothing: the notice laid out under the scrolling box, and `TextButton`s with a focused `side` | `SingleChildScrollView`, `TextButton` | none | R5: Understanding 2.4.11, F110, C43 | not custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

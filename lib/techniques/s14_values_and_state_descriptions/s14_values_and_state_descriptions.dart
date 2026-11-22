@@ -65,6 +65,10 @@ final s14ValuesAndStateDescriptions = Technique(
       slug: 'good-rating',
       title: 'Star rating with a value that can be adjusted (no name on web)',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A rating control drawn by hand, adjustable through Semantics(value:, '
+          'onIncrease:, onDecrease:) and the arrow keys from '
+          'FocusableActionDetector.',
       builder: (_) => const GoodRating(),
     ),
     TechniqueExample.good(
@@ -77,6 +81,9 @@ final s14ValuesAndStateDescriptions = Technique(
       slug: 'good-button-value',
       title: 'Button with three modes that says which it is in',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A button with three modes drawn by hand: Semantics(button: true, '
+          'label:, value:), with focus, keys, and a focus ring of its own.',
       builder: (_) => const GoodButtonValue(),
     ),
     TechniqueExample.good(

@@ -9,19 +9,41 @@
 export const EXAMPLE_HEADING = 'heading level 2 Example';
 
 /**
+ * The note a custom solution shows above its "Example" heading
+ * (CustomSolutionNote in lib/app/widgets.dart): the label, then the
+ * example's own reason, its `customSolution` in
+ * lib/techniques/c04_links_inline_with_text/
+ * c04_links_inline_with_text.dart.
+ * docs/custom-solutions.md lists the custom solutions.
+ */
+const customSolution = (reason) => 'Custom solution: not vetted by a real-world example. '
+  + 'It is tested here in isolation, with screen-reader transcripts, but has not been built into a real app '
+  + `and tested in a user journey. Do not treat it as a vetted technique. Why it is flagged: ${reason}`;
+
+/**
  * What each C04 example screen shows above its "Example" heading, as
  * VoiceOver reads it: the screen's title as a level 1 heading, the line
- * that says whether it is a good or a bad example, and a bad example's
- * defect (ExampleScreen in lib/app/screens.dart, with the titles and
+ * that says whether it is a good or a bad example, a custom solution's
+ * note (customSolution, above), and a bad example's defect
+ * (ExampleScreen in lib/app/screens.dart, with the titles, reasons, and
  * defects of lib/techniques/c04_links_inline_with_text/
  * c04_links_inline_with_text.dart). web_tests/c04_links_inline_with_text.spec.js
  * checks that each screen shows these texts, so that a change to them is
  * caught.
  */
 export const EXAMPLE_SCREENS = {
-  'good-material': ['Material links in a sentence', 'Good example for Links inline with text. Material.'],
-  'good-cupertino': ['Cupertino links in a sentence', 'Good example for Links inline with text. Cupertino.'],
-  'good-custom': ['Widgets-layer links in a sentence', 'Good example for Links inline with text. Widgets layer.'],
+  'good-material': [
+    'Material links in a sentence', 'Good example for Links inline with text. Material.',
+    customSolution('An inline link built by hand: Semantics(link: true, linkUrl:) round an InkWell in a WidgetSpan, with key bindings, a focus ring, and sort keys; a TextSpan link takes no keyboard focus (FL-240).'),
+  ],
+  'good-cupertino': [
+    'Cupertino links in a sentence', 'Good example for Links inline with text. Cupertino.',
+    customSolution('An inline link built by hand from FocusableActionDetector, Semantics, and a GestureDetector in a WidgetSpan, in Cupertino\'s blue; Flutter has no link widget (FL-221) and a TextSpan link takes no focus (FL-240).'),
+  ],
+  'good-custom': [
+    'Widgets-layer links in a sentence', 'Good example for Links inline with text. Widgets layer.',
+    customSolution('An inline link built by hand from FocusableActionDetector, Semantics, and a GestureDetector in a WidgetSpan; a TextSpan link takes no keyboard focus (FL-240).'),
+  ],
   'bad-text-span': [
     'Link in a text span', 'Bad example for Links inline with text. Widgets layer.',
     'Defect: A keyboard cannot reach the link.',

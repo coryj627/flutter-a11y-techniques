@@ -95,6 +95,25 @@ role and no tap action; each example writes its own `Semantics` and
 | `good-custom-switch` | Widgets | A control drawn by hand that is a switch | `Semantics(toggled:, enabled: true)` around a `GestureDetector` | R1, R5 |
 | `good-selected` | Widgets | Three custom buttons that choose a view, one of them chosen | `Semantics(button: true, enabled: true, selected:)` | R1, R5 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-cupertino`,
+`good-custom-button`, `good-custom-switch` and `good-selected` are custom
+solutions. Each is tested here in isolation, with screen-reader transcripts,
+but has not been built into a real app and tested in a user journey. Do not
+treat them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-standard` | Nothing: `FilledButton`, `SwitchListTile`, `CheckboxListTile` | Those widgets | none | R2: iOS Accessibility Traits | not custom |
+| `good-cupertino` | An `Actions` for Enter on the web round the `CupertinoButton`; the switch merged with its text, with a `GestureDetector` | `CupertinoButton`, `CupertinoSwitch` | Enter on the web ([FL-002](../flutter-limitations.md#fl-002)) | R2: iOS Accessibility Traits | custom |
+| `good-custom-button` | A button drawn by hand: `Semantics(button: true, enabled: true)` round a `GestureDetector`, with focus, keys, and a focus ring of its own | None for a drawn control | none | R1, R4: iOS Accessibility Traits, WCAG technique ARIA4, WCAG failure F59, MDN: WAI-ARIA roles, Apple: UIAccessibilityTraits, Android: Role, iOS Accessibility Responds To User Interaction | custom |
+| `good-custom-switch` | A switch drawn by hand: `Semantics(toggled:, enabled: true)` round a `GestureDetector`, with focus, keys, and a focus ring of its own | None for a drawn control | Dimmed without `enabled` ([FL-033](../flutter-limitations.md#fl-033)) | R1, R5: iOS Accessibility Traits, WCAG technique ARIA4, WCAG failure F59, MDN: WAI-ARIA roles, Apple: UIAccessibilityTraits, Android: Role, WCAG 4.1.2 | custom |
+| `good-selected` | Three buttons drawn by hand: `Semantics(button: true, enabled: true, selected:)`, with focus, keys, and a focus ring of their own | `SegmentedButton` | none | R1, R5: iOS Accessibility Traits, WCAG technique ARIA4, WCAG failure F59, MDN: WAI-ARIA roles, Apple: UIAccessibilityTraits, Android: Role, WCAG 4.1.2 | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

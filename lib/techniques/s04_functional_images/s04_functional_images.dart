@@ -96,18 +96,28 @@ final s04FunctionalImages = Technique(
       slug: 'good-cupertino',
       title: 'Cupertino icon button',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'An Actions built by hand round a CupertinoButton so that Enter '
+          'works on the web, which the button does not handle (FL-002).',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Picture button built from Semantics',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A picture made a button by hand from Semantics(button: true, '
+          'label:), FocusableActionDetector, and a GestureDetector.',
       builder: (_) => const GoodCustomImageButton(),
     ),
     TechniqueExample.good(
       slug: 'good-image-regions',
       title: 'Picture with two regions that are buttons',
       variant: ExampleVariant.material,
+      customSolution:
+          'An image map built by hand: two named Semantics(button: true) '
+          'regions with InkWells over an excluded Image, each with a focus '
+          'ring; Flutter has no image map.',
       builder: (_) => const GoodImageRegions(),
     ),
     TechniqueExample.bad(

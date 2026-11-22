@@ -14,6 +14,12 @@ behind each one is in [the technique guide](technique-guide.md).
 
 - [ ] At least one good and one bad example
 - [ ] Good examples use SDK APIs only, and each mechanism traces to a source
+- [ ] No mechanism invented: Flutter's own widget for the pattern is used,
+      and where it falls short the gap is a limitation entry
+- [ ] Every good example has a row in
+      [custom-solutions.md](custom-solutions.md); a hand-built one that is
+      kept has `customSolution:`, the note near the top of the doc and the
+      label on its row, and the "Custom solutions" section in the spec
 - [ ] Each good example works on every platform that could be checked
 - [ ] Each bad example has one defect, stated as what the user experiences
 - [ ] Material, Cupertino, and widgets-layer variants are covered, or the spec

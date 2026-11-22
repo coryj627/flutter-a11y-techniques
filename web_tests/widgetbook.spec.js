@@ -73,6 +73,24 @@ test('a SnackBar example shows and announces its message', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.announced)).toContain('Message archived');
 });
 
+// A custom solution (docs/custom-solutions.md) says so in its entry's name
+// and, in full with its reason, above the example.
+test('a custom solution is labelled in its name and on its use case', async ({ page }) => {
+  await openUseCase(page, 'components/c01-button/custom-button-(good,-custom-solution,-not-vetted)');
+  await expect(page).toHaveURL(/path=components\/c01-button\/custom-button-/);
+  const note = page.getByText(/^Custom solution: not vetted by a real-world example\. It is tested here in isolation/);
+  await expect(note).toHaveCount(1);
+  await expect(note).toContainText('Do not treat it as a vetted technique. Why it is flagged: A button drawn by hand');
+  // Before the example: the note is above the "Example" heading.
+  const noteBox = await note.boundingBox();
+  const headingBox = await page.getByRole('heading', { name: 'Example', level: 2 }).boundingBox();
+  expect(noteBox.y).toBeLessThan(headingBox.y);
+  // An example that is not flagged has no note.
+  await openUseCase(page, 'components/c01-button/text-buttons-(good)');
+  await expect(page.locator('[flt-semantics-identifier="c01-good-text-filled"]')).toBeAttached();
+  await expect(page.getByText(/^Custom solution: not vetted/)).toHaveCount(0);
+});
+
 test('a bad use case states its defect in text', async ({ page }) => {
   await openUseCase(page, 'components/c01-button/icon-button-with-no-name-(bad)');
   await expect(page.getByText('Defect: The icon button has no accessible name.')).toBeAttached();

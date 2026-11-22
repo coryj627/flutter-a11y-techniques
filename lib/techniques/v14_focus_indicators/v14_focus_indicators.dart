@@ -99,6 +99,10 @@ final v14FocusIndicators = Technique(
       slug: 'good-material',
       title: 'Checkbox tile and button with a focus ring',
       variant: ExampleVariant.material,
+      customSolution:
+          'A focus ring drawn by hand round the CheckboxListTile, from a '
+          'Focus listener and a DecoratedBox, as the tile has no style for '
+          'one (FL-430).',
       builder: (_) => const GoodMaterial(),
     ),
     TechniqueExample.good(
@@ -111,6 +115,9 @@ final v14FocusIndicators = Technique(
       slug: 'good-widgets',
       title: 'Custom card that thickens its border on focus',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A card drawn by hand, with focus, keys, and a focus ring built '
+          'from FocusableActionDetector.',
       builder: (_) => const GoodWidgets(),
     ),
     TechniqueExample.good(

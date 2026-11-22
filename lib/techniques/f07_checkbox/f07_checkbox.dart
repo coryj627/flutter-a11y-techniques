@@ -82,6 +82,9 @@ final f07Checkbox = Technique(
       slug: 'good-custom',
       title: 'Custom checkbox with a checked state',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A checkbox drawn by hand, with its role, state, focus, keys, and '
+          'focus ring built from Semantics and FocusableActionDetector.',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.good(

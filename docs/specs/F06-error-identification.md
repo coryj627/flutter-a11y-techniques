@@ -124,6 +124,21 @@ with a validator, is not used: its error is never announced on Android
 ([FL-016](../flutter-limitations.md#fl-016)), two defects in one, so it is
 not a bad example either.
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-form` and
+`good-cupertino` are custom solutions. Each is tested here in isolation,
+with screen-reader transcripts, but has not been built into a real app and
+tested in a user journey. Do not treat them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-form` | The move to the first field in error: `FocusNode.requestFocus()`, then a `FocusSemanticEvent` a frame later so that VoiceOver on iOS follows | `Form` and `TextFormField`, which show, announce, and mark the error but move no focus | VoiceOver on iOS does not follow keyboard focus ([FL-184](../flutter-limitations.md#fl-184)) | R1, R2, R3, R4, R5, R6: iOS Error Validation, Android View Input Error Announcements, Android View, MDN: aria-invalid | custom |
+| `good-cupertino` | An error field assembled by hand: `FormField` round a `CupertinoFormRow`; `Semantics(label:, hint:, validationResult:)` on the field; the error a live region where announcements are not supported; the focus move of `good-form` | `CupertinoTextFormFieldRow`, not used: its error is not announced on Android ([FL-182](../flutter-limitations.md#fl-182)) and its field has no label ([FL-016](../flutter-limitations.md#fl-016)) | [FL-182](../flutter-limitations.md#fl-182); [FL-016](../flutter-limitations.md#fl-016); [FL-184](../flutter-limitations.md#fl-184) | R1, R2, R3, R4, R5, R6: iOS Error Validation, Android View Input Error Announcements, Android View, MDN: aria-invalid | custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

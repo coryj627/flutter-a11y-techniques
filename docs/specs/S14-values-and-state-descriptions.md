@@ -84,6 +84,23 @@ role carries.
 | `good-button-value` | Widgets | A button with three modes that says which it is in | `Semantics(button: true, label:, value:)` | R1, R3 |
 | `good-slider-format` | Material | A slider read in minutes, not percent | `Slider(semanticFormatterCallback:)` in a `MergeSemantics` row for its name | R2, R5, R6 |
 
+### Custom solutions
+
+**Custom solution: not vetted by a real-world example.** `good-rating` and
+`good-button-value` are custom solutions. Each is tested here in isolation,
+with screen-reader transcripts, but has not been built into a real app and
+tested in a user journey. Do not treat them as vetted techniques.
+
+The table is this technique's part of the register of custom solutions,
+[custom-solutions.md](../custom-solutions.md).
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-rating` | A star rating drawn by hand: `Semantics(label:, value:, increasedValue:, decreasedValue:, onIncrease:, onDecrease:)` round stars with no semantics, with the arrow keys from `FocusableActionDetector` | None: Flutter has no rating widget | No name on the web ([FL-028](../flutter-limitations.md#fl-028)), not filled | R1, R2, R3, R4: iOS Accessibility Value, Apple: accessibilityValue, MDN: aria-valuetext | custom |
+| `good-step` | A step indicator drawn by hand and described with `Semantics(label:, value:)`, its circles in `ExcludeSemantics`; it is not interactive | `Stepper` and the progress indicators (`semanticsValue:`) exist; none for this drawing | none | R1, R2, R3: iOS Accessibility Value, Apple: accessibilityValue, MDN: aria-valuetext | borderline: Like a label on an image, it only describes a drawing with documented properties, and nothing behaves; but it gives a hand-drawn indicator a value, where `Stepper` and the progress indicators have their own. |
+| `good-button-value` | A button with three modes drawn by hand: `Semantics(button: true, label:, value:)`, with focus, keys, and a focus ring of its own | None for a drawn control | none | R1, R3: iOS Accessibility Value, Apple: accessibilityValue | custom |
+| `good-slider-format` | Nothing: `Slider(semanticFormatterCallback:)`, merged with its text for its name | `Slider` | No name on the web ([FL-028](../flutter-limitations.md#fl-028)), not filled | R2, R5, R6: iOS Accessibility Value, MDN: aria-valuetext, Android Compose Custom State Descriptions, Android View Custom State Descriptions, Android: View.setStateDescription | not custom |
+
 ### Bad
 
 | Slug | Defect | Violates | Fails |

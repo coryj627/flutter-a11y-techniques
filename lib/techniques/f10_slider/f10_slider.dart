@@ -71,24 +71,39 @@ final f10Slider = Technique(
       slug: 'good-material',
       title: 'Material slider joined to its text',
       variant: ExampleVariant.material,
+      customSolution:
+          'Hand-built Home and End keys, a CallbackShortcuts round a Material '
+          'Slider, which has neither (FL-122).',
       builder: (_) => const GoodMaterial(),
     ),
     TechniqueExample.good(
       slug: 'good-cupertino',
       title: 'Cupertino slider with keys and step buttons',
       variant: ExampleVariant.cupertino,
+      customSolution:
+          'A keyboard built by hand for a CupertinoSlider, which takes no '
+          'focus (FL-120): FocusableActionDetector with the APG keys, and '
+          'buttons a step down and up.',
       builder: (_) => const GoodCupertino(),
     ),
     TechniqueExample.good(
       slug: 'good-custom',
       title: 'Custom slider on Semantics',
       variant: ExampleVariant.widgets,
+      customSolution:
+          'A slider drawn by hand on Semantics(slider: true, value:, '
+          'onIncrease:, onDecrease:), with focus and the APG keys from '
+          'FocusableActionDetector.',
       builder: (_) => const GoodCustom(),
     ),
     TechniqueExample.good(
       slug: 'good-value-text',
       title: 'Slider whose value is read in words',
       variant: ExampleVariant.material,
+      customSolution:
+          'The hand-built Home and End keys of good-material (FL-122) round a '
+          'Slider; the value text itself is the Slider\'s own '
+          'semanticFormatterCallback.',
       builder: (_) => const GoodValueText(),
     ),
     TechniqueExample.bad(
