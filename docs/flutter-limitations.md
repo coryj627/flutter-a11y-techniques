@@ -3199,6 +3199,20 @@ yet), **Fixed in x.y** (verified on that version).
   tooltip was shown: in C12's web VoiceOver walks no tooltip was shown,
   and nothing was read twice in either browser
   (`docs/evidence/probes/c12/voiceover-web-round1-fail.md.txt`).
+- C13 (2026-11-22) found the same on the close button that
+  `SnackBar.showCloseIcon` adds, an `IconButton` whose tooltip is
+  "Close", which the app cannot leave out: with the pointer on it, in
+  Chromium and WebKit, the button owns the tooltip's element (`aria-owns`)
+  and Chromium names it "Close Close", still a button; with keyboard focus
+  alone no tooltip is shown and it is named "Close"
+  (`docs/evidence/probes/c13/close_probe.txt`; asserted by
+  `web_tests/c13_snackbar.spec.js`). In C13's first web VoiceOver
+  recording Chromium read that button "Close Close", with no role, and
+  WebKit "Close button"
+  (`docs/evidence/probes/c13/voiceover-web-round1-fail.md.txt`). Whether
+  the tooltip was shown during that walk is not in the log, and the
+  missing role is not what the tree gives even with the tooltip shown; the
+  cause was not found.
 - Workaround: `Tooltip.excludeFromSemantics` leaves out the tooltip's
   semantics on its control, not the shown text. None in the framework for
   the shown text; Flutter has not added one yet.

@@ -138,6 +138,26 @@ test.describe('good examples', () => {
     await expect(group.getByRole('button', { name: 'Go online', exact: true })).toHaveCount(1);
   });
 
+  // FL-249: Close is an IconButton whose tooltip is "Close". With keyboard
+  // focus alone it is named "Close"; with the pointer on it the tooltip is
+  // shown, its text is an element the button owns, and the button is named
+  // "Close Close". Each is read in the same load.
+  test('good-action: Close is named "Close" with keyboard focus, and "Close Close" while the pointer shows its tooltip', async ({ page }) => {
+    await open(page, 'good-action');
+    await pressByKeyboard(page, 'good-action');
+    await tabToButton(page, 'Close');
+    await page.waitForTimeout(1500);
+    const close = page.locator('flt-semantics[role="button"]', { hasText: /^Close$/ });
+    await expect(close).toHaveCount(1);
+    await expect(close).toHaveAccessibleName('Close');
+    await expect(close).not.toHaveAttribute('aria-owns');
+    const box = await close.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(close).toHaveAttribute('aria-owns', /.+/);
+    await expect(close).toHaveAccessibleName('Close Close');
+    await expect(close).toHaveRole('button');
+  });
+
   test('good-action: after the show, Tab goes on to Undo, then Close', async ({ page }) => {
     await open(page, 'good-action');
     await pressByKeyboard(page, 'good-action');

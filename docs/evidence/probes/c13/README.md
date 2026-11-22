@@ -136,3 +136,25 @@ After the examples were built, C13's Android tree tests ran once at the
 CI emulator's size, 320 by 640 at 160 dpi (`android_320x640.sh.txt`, which
 resets both after): the Gradle run ended "BUILD SUCCESSFUL", with
 `talkBackWalk` skipped as TalkBack was off (`android_320x640.txt`).
+
+## The first web VoiceOver recording, and the Close button
+
+Recorded by the principal on 2026-11-22 with `tool/voiceover_web.py C13`,
+against the examples as committed in 3c59dba; kept as
+`voiceover-web-round1-fail.md.txt`, the tool's transcript. 4 of 10 tests
+failed, the four walks (`good-action` and `good-banner`, in Chromium and
+WebKit), each on its first walk, on expectations written as predictions:
+the message is the group's name and not a stop of its own inside it, and
+VoiceOver says "end of" the group on leaving it. The six announcements
+passed in Chromium. The two browsers read the same but at the SnackBar's
+Close: "Close button" in WebKit, "Close Close" with no role in Chromium.
+
+`c13_close_probe.spec.js.txt` (`close_probe.txt`), plain Playwright with
+no VoiceOver, in Chromium and WebKit, against the app's build, with
+`good-action`'s message shown: Close, Undo, and Back are each a button
+whose name is its text, with no `aria-label`, description, or `title`, and
+Chromium's own tree names them "Close", "Undo", "Back". With the pointer
+on Close its tooltip is shown: the button owns the tooltip's element
+(`aria-owns`), in both browsers, and Chromium names it "Close Close",
+still a button. Tab to Close shows no tooltip. Whether the tooltip was
+shown during the recorded walk is not in the log.

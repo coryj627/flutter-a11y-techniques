@@ -104,6 +104,9 @@ void _show(BuildContext context, SnackBar bar) {
 /// the action has no time limit. `showCloseIcon` gives it a Close button,
 /// because Escape does not close it (FL-291). It is a live region: shown, it
 /// is announced, and focus stays where it was.
+/// Good with a qualification: Close shows keyboard focus only by a faint
+/// tint, and no parameter changes it (FL-294), which fails 1.4.11 as FL-430
+/// reads it, wherever a keyboard is used.
 class GoodAction extends StatefulWidget {
   const GoodAction({super.key});
 

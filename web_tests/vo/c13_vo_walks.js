@@ -105,14 +105,22 @@ export async function runWalks(walkOnce, judge, { tries = 3, log = () => {} } = 
 
 /**
  * The whole screen of each example whose message stays, once it is shown,
- * as VoiceOver is expected to read it from the stop after Back. These are
- * predictions, from the tree (web_tests/c13_snackbar.spec.js: the
- * SnackBar's and the banner's message is a group named by the message,
- * holding its buttons; the banner comes before the screen's description)
- * and from how VoiceOver read a group holding a button in C12
- * (docs/evidence/C12/voiceover-web.md, bad-outside-button: the group's
- * name with "group", the button, the name again, then "end of" the
- * group). The first recording decides them.
+ * as VoiceOver reads it from the stop after Back, in Chromium and in
+ * WebKit alike. Set from the first recording (2026-11-22,
+ * docs/evidence/probes/c13/voiceover-web-round1-fail.md.txt): the message
+ * is the group's name, read with "group" on entering it, and is not a stop
+ * of its own inside it; VoiceOver says "end of" the group on leaving it.
+ * The banner is read straight after the screen's title, before its
+ * description, where it is drawn.
+ *
+ * Close: WebKit read "Close button", as the tree gives it with no tooltip
+ * shown; Chromium read "Close Close" with no role in that recording. The
+ * tree gives the button the name "Close Close" while its tooltip is shown
+ * (a pointer on it; FL-249), and keyboard focus does not show it
+ * (docs/evidence/probes/c13/close_probe.txt); whether the tooltip was shown
+ * during the walk is not in the log. The expectation is the reading the
+ * tree gives, for both browsers, and the second recording decides
+ * (docs/specs/C13-snackbar.md, section 7).
  */
 export const SHOWN_WALKS = {
   'good-action': [
@@ -123,14 +131,12 @@ export const SHOWN_WALKS = {
     'Message archived group',
     'Undo button',
     'Close button',
-    'Message archived',
     'end of Message archived group',
   ],
   'good-banner': [
     screenStops('good-banner')[0],
     'You are offline. group',
     'Go online button',
-    'You are offline.',
     'end of You are offline. group',
     ...screenStops('good-banner').slice(1),
     EXAMPLE_HEADING,

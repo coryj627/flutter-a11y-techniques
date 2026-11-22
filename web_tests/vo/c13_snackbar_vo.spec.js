@@ -82,6 +82,15 @@ for (const [slug, whole] of Object.entries(SHOWN_WALKS)) {
           console.log(`C13VO ${browserName} ${slug}-walk-${walk} | ${stops.join(' / ') || '(nothing)'} (${judged.verdict}: ${judged.reason})`);
         },
       });
+    if (slug === 'good-action') {
+      // A diagnostic, judged by nobody: whether Close's tooltip was shown
+      // when the walk ended. While it is shown, the tree names Close
+      // "Close Close" (FL-249; docs/specs/C13-snackbar.md, section 7). Read
+      // once, after the walk, not at Close's stop.
+      const owns = await page.evaluate(() => [...document.querySelectorAll('flt-semantics[role="button"]')]
+        .filter((e) => e.textContent.trim() === 'Close' && e.hasAttribute('aria-owns')).length);
+      console.log(`C13VO ${browserName} ${slug}-close-tooltip-after-walk | ${owns ? 'shown' : 'not shown'}`);
+    }
     expect(verdict, `${slug}, walk ${walks}: ${reason}`).toBe('complete');
   });
 }

@@ -56,7 +56,8 @@ qualification below. The catalog says "applies" with a note.
   [FL-430](../flutter-limitations.md#fl-430) reads an `IconButton`'s
   tint, wherever a keyboard is used (widget tests; not measured on a
   device). Without `showCloseIcon` a keyboard user could take the
-  message away only by using Undo; the owner may prefer that (section 8).
+  message away only by using Undo. The owner decided (2026-11-22) to keep
+  Close with this qualification (section 8).
 - **All: a message shown while one that stays is up waits unseen**
   ([FL-293](../flutter-limitations.md#fl-293)); every example takes the
   current message away first.
@@ -159,7 +160,7 @@ What each meets, by platform, as the criteria are written:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `good-action` | 4.1.3: announced (TalkBack), focus not moved. 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium: recording pending |
+| `good-action` | 4.1.3: announced (TalkBack), focus not moved. 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium announced it (first recording); the walk's Close stop is open (section 7) |
 | `good-message` | 4.1.3: announced. 2.2.1: its going sets no time limit, as its news is on the page (Understanding 2.2.1) | the same | the same |
 | `good-banner` | 4.1.3: announced. 2.2.1: no time limit | the same | the same |
 
@@ -208,20 +209,20 @@ Not built:
 - **A Cupertino example.** Cupertino has no widget for a transient
   message (section 4).
 - **A message with an action and no Close.** It would differ from
-  `good-action` only in Close, which is the qualification the owner is
-  asked about (section 8).
+  `good-action` only in Close, which the owner decided to keep (section
+  8).
 
 ## 6. Assertions by layer
 
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | The examples, all Material, none flagged. Good, in light and dark: the four guidelines before and while the message is shown; the text contrast guideline with keyboard focus on each control in turn; each control's focus change from screenshots: more than 100 pixels on and within 8 of it changed by 3:1 or more, except Close, where none is (FL-294, written to fail when it is); the message one live region with its words and the dismiss action, none before; Enter on the button shows it and focus stays on the button; Tab after the show goes Back, the button, Undo, Close, Back (`good-action`), Back, Go online, the button (`good-banner`); the dismiss action takes it away. `good-action` and `good-banner` stay 30 s with `accessibleNavigation` off and on; Enter and Space on Undo each undo and take it away; Enter on Close takes it away and undoes nothing; Enter on Go online closes the banner. `good-message` goes 2.9 to 4.5 s after the press's first second, off and on, and its news stays on the page. FL-291: Escape with focus on Undo or Go online leaves the message, focus, and the line, and Enter in the same launch acts; Back pops the example, the message stays on the technique's screen 30 s, and its action works there. Bad: `bad-action-times-out`'s Undo gone with the message in the same time, off and on (FL-290); with focus on Undo it still goes, then no node has focus and the next Tab goes to Back (FL-292). `bad-only-in-message`: the code shown, gone, and nowhere else; a live region with its words. `bad-inline-banner`: no live region and no dismiss action (FL-295), with `good-banner`'s live region in the same test; Go online closes it. FL-290: `accessibleNavigation` turned on while shown, and a mouse resting on it, change nothing. FL-293: a second SnackBar while `good-action`'s is up is not shown 10 s later, and comes, as a live region, when Close is pressed. Every example, at 200% text on 320 by 640 with the message shown: no overflow, no text at its line limit or cut short in its box, nothing off the screen, the message among the texts. Tests run as Android |
-| L3 web | Good: the message written once to `flt-announcement-polite`, nothing more 1.5 s later, and DOM focus still on the button; `good-action`'s message a group named "Message archived" holding exactly Undo and Close; `good-message`'s text alone, no control added; the banner a group named by it holding Go online, its Tab stop after Back and before the page's button; Tab after the show goes Undo, then Close; Enter and Space on Undo each undo and take it away; Enter on Close takes it away, undoing nothing; `good-action` and `good-banner` stay 10 s, and 5 s more with focus on their action; Escape there leaves the message, focus, and the line, and Enter in the same load acts; `good-message` goes 2 to 6 s after the line changed, the line staying. Bad: `bad-action-times-out` announced, Undo gone with it within 6 s; with focus on Undo, DOM focus is then on the page's button (FL-292). `bad-only-in-message` announced, gone, the code in no element's text or name before or after. `bad-inline-banner`: nothing announced, no `aria-live` in the semantics tree, and `good-banner`'s announcement heard by the same recorder in the same test. The stops the VoiceOver spec expects above each example's heading, on each screen; the walk judge on made-up walks (as C04's) |
+| L3 web | Good: the message written once to `flt-announcement-polite`, nothing more 1.5 s later, and DOM focus still on the button; `good-action`'s message a group named "Message archived" holding exactly Undo and Close; `good-message`'s text alone, no control added; the banner a group named by it holding Go online, its Tab stop after Back and before the page's button; Tab after the show goes Undo, then Close; Close named "Close" with keyboard focus and no tooltip shown, and, with the pointer on it in the same load, owning its tooltip's element and named "Close Close", still a button (FL-249); Enter and Space on Undo each undo and take it away; Enter on Close takes it away, undoing nothing; `good-action` and `good-banner` stay 10 s, and 5 s more with focus on their action; Escape there leaves the message, focus, and the line, and Enter in the same load acts; `good-message` goes 2 to 6 s after the line changed, the line staying. Bad: `bad-action-times-out` announced, Undo gone with it within 6 s; with focus on Undo, DOM focus is then on the page's button (FL-292). `bad-only-in-message` announced, gone, the code in no element's text or name before or after. `bad-inline-banner`: nothing announced, no `aria-live` in the semantics tree, and `good-banner`'s announcement heard by the same recorder in the same test. The stops the VoiceOver spec expects above each example's heading, on each screen; the walk judge on made-up walks (as C04's) |
 | L3 Android | Each SnackBar and the banner: one polite live region, named by the message, with the dismiss action, none before; Undo and Close `Button`s, and Go online; the dismiss action takes `good-action`'s and `good-banner`'s away; both stay 10 s; `good-message` goes within 6 s of being seen and its line stays; Tab to Undo and Enter undoes and takes it away; Tab to Close and Enter takes it away, undoing nothing; FL-291: Escape on Undo and on Go online leaves the message, focus, and the line, and Enter in the same launch acts. Bad: `bad-action-times-out`'s Undo gone with the message within 6 s; with focus on Undo, focus on the page's button once it has gone (FL-292); `bad-only-in-message`'s code gone and in no node; `bad-inline-banner` no live region and no dismiss action, and `good-banner`'s is one, in the same test |
 | L3 iOS | Each message an element labelled by it, once; Undo and Close buttons, and Go online; `good-action` and `good-banner` stay 10 s; `good-message`, `bad-action-times-out`, and `bad-only-in-message` go within 6 s of being seen, their lines staying, Undo gone, and the code in no element. Three Tabs and Return undo; four Tabs and Return close, undoing nothing; two Tabs and Return close the banner (that a Tab reached a control is shown by what Return does; XCUITest cannot read Flutter's focus, nor a live region). No key with a modifier is sent, so Escape is not checked on iOS |
 | L4 TalkBack | Focus parked on the example's line, the button pressed with the click action: the message's words for every example but `bad-inline-banner`, which says nothing of "offline"; then focus on `good-action`'s message, Undo, and Close, on `good-banner`'s message and Go online, and on `bad-inline-banner`'s message, which is read when focus is put on it |
 | L4 VoiceOver iOS | The cursor on the button, `doubleTap()` at it: the message heard for every example but `bad-inline-banner`, where the button's utterance stays six seconds; one move back and one forward land on the button again; for `good-action`, `good-banner`, and `bad-inline-banner`, the moves forward from the button to where the last utterance repeats, as a whole list |
-| L4 VoiceOver web | Chromium only for the announcements (Playwright's WebKit build passes no live region changes): Enter on the button, VoiceOver's last phrase for six seconds must hold the message, or must not hold "offline" for `bad-inline-banner`, with capture shown live after. For `good-action` and `good-banner`, in Chromium and WebKit, the screen walked from Back with the message shown, judged against the whole list in order (`judgeWalk` in `web_tests/vo/c13_vo_walks.js`); no runner retries |
+| L4 VoiceOver web | Chromium only for the announcements (Playwright's WebKit build passes no live region changes): Enter on the button, VoiceOver's last phrase for six seconds must hold the message, or must not hold "offline" for `bad-inline-banner`, with capture shown live after. For `good-action` and `good-banner`, in Chromium and WebKit, the screen walked from Back with the message shown, judged against the whole list in order (`judgeWalk` in `web_tests/vo/c13_vo_walks.js`); no runner retries. The lists are what the first recording read in both browsers (section 7), with Close as "Close button"; after `good-action`'s walk, whether Close's tooltip is shown is logged, judged by nobody |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -259,6 +260,51 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   first build put `Semantics(identifier:)` round each message, and the
   widget tests found the live region with no label. The tests now find a
   message by its words.
+- **VoiceOver on the web, first recording**
+  (`docs/evidence/probes/c13/voiceover-web-round1-fail.md.txt`, recorded
+  by the principal; 4 of 10 tests failed, every one a walk, on
+  expectations written as predictions; each failed on its first walk, so
+  none was walked again). Every announcement passed in Chromium: the
+  message's words, then VoiceOver's usage hint for the button that kept
+  focus; `bad-inline-banner` gave the hint alone. The walks, the same in
+  both browsers but at Close:
+  - The message is the group's name, read on entering it ("Message
+    archived group", "You are offline. group"), and is not a stop of its
+    own inside it; leaving it, VoiceOver says "end of" the group. The
+    lists predicted the name again inside the group, after C12's
+    `bad-outside-button`, where VoiceOver read it there (C12 did not find
+    what that stop was); here it did not.
+  - `good-action`: "Archived: 1", "Message archived group", "Undo button",
+    then Close, then "end of Message archived group". WebKit read Close
+    "Close button". Chromium read it "Close Close", with no role. The web
+    tree has no reason for it with no tooltip shown: Close is a button
+    with its text alone, named "Close", no description, as Undo is, which
+    Chromium read "Undo button" (`close_probe.txt`). With the pointer on
+    Close its tooltip is shown and the tree names it "Close Close", still
+    a button (FL-249); keyboard focus does not show it. Whether the
+    tooltip was shown during the walk is not in the log, and even then the
+    tree gives the role. The cause was not found. The list keeps "Close
+    button" for both browsers, as the tree gives it, and the spec logs
+    after the walk whether the tooltip was shown; the second recording
+    decides. If Chromium reads "Close Close" again, with no role, that is
+    what this spec will say for Chromium, and 4.1.2 for Close's role there
+    will be looked at.
+  - `good-banner`: the title, then "You are offline. group", "Go online
+    button", "end of You are offline. group", then the description, the
+    "Example" heading, "Go offline button", "Status: offline".
+- **The banner's reading order is its drawn order.** `showMaterialBanner`
+  puts the banner at the top of the `Scaffold`'s body, under the app bar
+  and above the page, so it is drawn after the title and before the
+  description; VoiceOver read it there, and Tab reaches Go online after
+  Back and before the page's button (web tree test, widget tests, the
+  probe on every platform). That is not a 1.3.2 failure: the order read
+  is the order shown, and nothing in the meaning depends on the banner
+  coming after the button that showed it. Nor 2.4.3: focus moves in the
+  order things are drawn, top to bottom, which keeps their meaning and
+  operation; a keyboard user on the button that showed the banner reaches
+  Go online by Shift+Tab, or by Tab round from Back, and is told of the
+  banner as it appears (4.1.3). It does mean that a screen reader user who
+  goes on from the button does not reach the banner: it is behind them.
 - **`accessibleNavigation` was true in every Android run**, TalkBack off
   as well as on (probe, `android-tree.txt`); why was not found. So on
   Android every lifetime measured is with it true; the widget tests
@@ -301,23 +347,28 @@ real Android keyboard; Android's dark mode and focus highlights on a
 device; FL-292 on iOS; VoiceOver's escape gesture inside a message;
 right-to-left.
 
-## 8. Decision for the owner
+## 8. Decisions
 
-`good-action` has `showCloseIcon: true` so that a keyboard user can take
-away a SnackBar that stays without using its action, since Escape closes
-nothing (FL-291). Its Close button shows keyboard focus only by a faint
-tint that no parameter changes (FL-294), which fails 1.4.11 as FL-430
-reads an `IconButton`'s tint. Without Close, no key but Undo removes the
-message. The owner's call: keep Close, with that qualification, as built;
-or drop it, and say that the message is removed from the keyboard only by
-its action.
+Made by the owner on 2026-11-22, in answer to the build:
+
+- **Close stays on `good-action`**, with its qualification stated on the
+  example. `good-action` has `showCloseIcon: true` so that a keyboard
+  user can take away a SnackBar that stays without using its action, since
+  Escape closes nothing (FL-291). Its Close button shows keyboard focus
+  only by a faint tint that no parameter changes (FL-294), which fails
+  1.4.11 as FL-430 reads an `IconButton`'s tint, wherever a keyboard is
+  used. The example's code comment, its row in the technique doc, and
+  section 5 say so.
+- **FL-292 stays an entry of its own.**
+- **I12 is left alone**; its `good-snackbar` (section 9) is noted for the
+  wave's notes.
 
 ## 9. What is handed on
 
 - **I12 Announcements**: its `good-snackbar` is a SnackBar with no action,
   whose news ("Message archived") is nowhere else on its page; by
   Understanding 2.2.1 its going is a time limit (FL-290). I12 is not
-  changed here.
+  changed here, by the owner's decision (section 8).
 - **I08 Dismiss and escape**: FL-291 measures what its probe's `e12`
   found, on every layer.
 - **V14 Focus indicators**: a `SnackBarAction`'s and Close's default
