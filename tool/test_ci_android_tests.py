@@ -273,6 +273,15 @@ class RunTest(unittest.TestCase):
         self.assertIn(f"class={PKG}.C01ButtonTest,{PKG}.F01FieldsTest -Pextra=1", calls[0])
         self.assertIn(f"class={PKG}.S01NamesTest -Pextra=1", calls[1])
 
+    def test_runs_each_class_in_a_batch_of_its_own_by_default(self):
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("3 test classes, in batches of 1", result.stdout)
+        self.assertEqual([call.split()[1] for call in self.batches()],
+                         [f"-Pandroid.testInstrumentationRunnerArguments.class={PKG}.{name}"
+                          for name in self.names])
+
     def test_fails_when_a_class_never_ran(self):
         self.space.finished("C01ButtonTest", "S01NamesTest")
         result = self.space.run()
@@ -397,8 +406,8 @@ class RunTest(unittest.TestCase):
         self.assertIn("restarts of the test runner's log reader: 1;", result.stdout)
 
     def mid_batch(self, *later):
-        """A batch that logs C01ButtonTest's test, then the classes
-        `later`, while the reader stops after the first."""
+        """One batch of all three classes that logs C01ButtonTest's test,
+        then the classes `later`, while the reader stops after the first."""
         self.space.adb(reader="stop_once_after C01ButtonTest", dump=self.space.marks)
         self.space.gradle(
             self.space.logs(f"finished: opens({PKG}.C01ButtonTest)", time=BATCH_TIME)
@@ -406,7 +415,7 @@ class RunTest(unittest.TestCase):
             + self.space.logs(*(f"finished: opens({PKG}.{name})" for name in later),
                               time=BATCH_TIME)
             + "exit 0")
-        return self.space.run()
+        return self.space.run(BATCH_CLASSES="3")
 
     def test_a_reader_that_stops_during_a_batch_goes_on_from_where_it_stopped(self):
         result = self.mid_batch("F01FieldsTest", "S01NamesTest")
@@ -419,6 +428,16 @@ class RunTest(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertIn("restart 1, from", result.stdout)
         self.assertIn("no test of F01FieldsTest finished", result.stdout)
+
+    def test_a_reader_that_stops_after_a_one_class_batch_goes_on_from_where_it_stopped(self):
+        # One class a batch: the reader stops after batch 1's line and is
+        # started again before batch 2 has written anything.
+        self.space.adb(reader="stop_once_after C01ButtonTest", dump=self.space.marks)
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assert_passed_once_each(result)
+        self.assertIn(f"restart 1, from {BATCH_TIME}, leaving out the lines it already has",
+                      result.stdout)
 
     def test_a_line_written_again_after_a_restart_in_the_sweep_is_left_out(self):
         # logcat repeats the sweep's start from the -T time; a second start
@@ -515,13 +534,13 @@ class RunTest(unittest.TestCase):
     # a batch's line that comes late ends up in the reader's log.
 
     def lost_batch_summary(self, sweep, dump=None):
-        """The reader leaves out the batch's last line and stops in the
-        sweep after its start."""
+        """One batch of all three classes. The reader leaves out the
+        batch's last line and stops in the sweep after its start."""
         self.space.adb(reader='read_lines "run finished: 3 tests" "run started"', dump=dump)
         self.space.finished(*self.names)
         self.space.gradle(self.space.logs("run finished: 3 tests, 0 failed, 0 ignored",
                                           time=BATCH_TIME) + "exit 0", sweep=sweep)
-        return self.space.run()
+        return self.space.run(BATCH_CLASSES="3")
 
     def empty_sweep_in_two_parts(self):
         return (self.space.logs(EMPTY_RUN[0]) + "sleep 1; "
@@ -593,8 +612,9 @@ class RunTest(unittest.TestCase):
 
     def late_dump(self, text):
         """A device's log that gives the lines with `text` in them only
-        from its fourth read on: not at the start, before the sweep or when
-        the sweep is checked, but at the class check."""
+        from its fourth read on. With one batch of every class, whose run
+        the reader has lines for, that is not at the start, before the sweep
+        or when the sweep is checked, but at the class check."""
         return (f'if [ "$d" -le 3 ]; then {self.space.marks}; '
                 f'grep -vF "{text}" "{self.space.runner_log}"; else {self.space.device}; fi')
 
@@ -605,11 +625,37 @@ class RunTest(unittest.TestCase):
         self.space.adb(reader=f'drop_lines "({PKG}.F01FieldsTest)"',
                        dump=self.late_dump(f"({PKG}.F01FieldsTest)"))
         self.space.finished(*self.names)
-        result = self.space.run()
+        result = self.space.run(BATCH_CLASSES="3")
         self.assert_passed_once_each(result)
         self.assertIn("a class has no finished test in the reader's log; checking the device's log",
                       result.stdout)
         self.assertIn("restarts of the test runner's log reader: 0,", result.stdout)
+
+    def test_a_one_class_batch_the_running_reader_left_out_is_taken_from_the_device(self):
+        # One class a batch: F01FieldsTest's batch has no line in the
+        # reader's log, so its line is taken from the device's log as soon
+        # as the batch ends.
+        self.space.adb(reader=f'drop_lines "({PKG}.F01FieldsTest)"')
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assert_passed_once_each(result)
+        self.assertIn("reader fault: Gradle passed batch 2, but the reader wrote no test "
+                      "runner line for it", result.stdout)
+        self.assertNotIn("reader fault: Gradle passed batch 1", result.stdout)
+        self.assertNotIn("a class has no finished test in the reader's log", result.stdout)
+
+    def test_a_one_class_batch_the_reader_and_the_device_both_lack_fails_its_class(self):
+        # Neither the reader nor the device's log ever has F01FieldsTest's
+        # line, though Gradle passed its batch.
+        self.space.adb(reader=f'drop_lines "({PKG}.F01FieldsTest)"',
+                       dump=f'{self.space.marks}; '
+                            f'grep -vF "({PKG}.F01FieldsTest)" "{self.space.runner_log}"')
+        self.space.finished(*self.names)
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("reader fault: Gradle passed batch 2", result.stdout)
+        self.assertIn("no test of F01FieldsTest finished", result.stdout)
+        self.assertNotIn("no test of C01ButtonTest finished", result.stdout)
 
     # A sweep that looks empty in the reader's log is still checked against
     # the device's: the reader can have left out a second run or a test.
@@ -709,11 +755,32 @@ class RunTest(unittest.TestCase):
             sweep=self.space.logs(*EMPTY_RUN)
             + f'echo "11-17 21:31:00.000{hidden}I TestRunner: started: opens({PKG}.MissedTest)" '
             f'>> "{self.space.runner_log}"; exit 0')
-        result = self.space.run()
+        result = self.space.run(BATCH_CLASSES="3")
         self.assertEqual(result.returncode, 1)
         self.assertIn("sweep: no test outside the list", result.stdout)
         self.assertIn("with the lines the device's log has just given, the sweep is not an "
                       "empty run", result.stdout)
+        self.assertIn(f"started: opens({PKG}.MissedTest)",
+                      result.stdout.split("The test runner logged:")[1])
+        self.assertNotIn("no test of F01FieldsTest finished", result.stdout)
+
+    def test_a_late_sweep_line_fails_the_sweep_with_one_class_a_batch(self):
+        # The same device as above, one class a batch: F01FieldsTest's batch
+        # has no line in the reader's log, so the device's log is read once
+        # more after it, and the hidden lines come when the sweep is checked.
+        hidden = "  9999  9999 "
+        self.space.adb(reader=f'drop_lines "{hidden}"', dump=self.late_dump(hidden))
+        self.space.finished("C01ButtonTest", "S01NamesTest")
+        self.space.gradle(
+            f'echo "{BATCH_TIME}{hidden}I TestRunner: finished: opens({PKG}.F01FieldsTest)" '
+            f'>> "{self.space.runner_log}"; exit 0',
+            sweep=self.space.logs(*EMPTY_RUN)
+            + f'echo "11-17 21:31:00.000{hidden}I TestRunner: started: opens({PKG}.MissedTest)" '
+            f'>> "{self.space.runner_log}"; exit 0')
+        result = self.space.run()
+        self.assertEqual(result.returncode, 1)
+        self.assertNotIn("sweep: no test outside the list", result.stdout)
+        self.assertIn("not an empty run", result.stdout)
         self.assertIn(f"started: opens({PKG}.MissedTest)",
                       result.stdout.split("The test runner logged:")[1])
         self.assertNotIn("no test of F01FieldsTest finished", result.stdout)
@@ -723,10 +790,15 @@ class RunTest(unittest.TestCase):
         stand_in = (self.space.bin / "adb").read_text().split("\n", 1)[1]
         self.space.tool("adb", 'case "$*" in "shell log"*_sweep_*) exit 1 ;; esac\n'
                         + stand_in)
-        result = self.space.run()
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("failed: could not mark the sweep's start", result.stdout)
-        self.assertEqual(len(self.calls()), 1)
+        for batch_classes, batches in (("1", 3), ("3", 1)):
+            with self.subTest(batch_classes=batch_classes):
+                (self.space.android / "calls").unlink(missing_ok=True)
+                result = self.space.run(BATCH_CLASSES=batch_classes)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("failed: could not mark the sweep's start", result.stdout)
+                # The batches ran; the sweep did not.
+                self.assertEqual(len(self.calls()), batches)
+                self.assertEqual(self.batches(), self.calls())
 
 
 if __name__ == "__main__":
