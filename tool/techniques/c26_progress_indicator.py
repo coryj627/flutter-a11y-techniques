@@ -35,10 +35,14 @@ TALKBACK_EXPECT = {
     "c26-bad-silent-end-bar": (["Report upload", "Progress bar"], []),
     "c26-bad-silent-end-start": (["Upload report", "Button"], []),
     # Nothing about the upload is announced, neither the status line nor the
-    # bar's changes (FL-254)...
-    "c26-bad-silent-end-run": ([], ["Upload started", "Half uploaded", "Upload complete"]),
-    # ...and the status line, with focus moved to it, says it is complete:
-    # the capture was live.
+    # bar's changes (FL-254). The walk is judged whole (talkback.STRICT),
+    # where a capture with nothing in it is incomplete, so after the nine
+    # seconds TalkBack focus is moved to the bar inside the same marker: it
+    # reads the bar at 100, which shows the capture live and the upload
+    # ended, and none of the status phrases may be in it.
+    "c26-bad-silent-end-run": (["100", "Progress bar"],
+                               ["Upload started", "Half uploaded", "Upload complete"]),
+    # Then the status line, with focus moved to it, says it is complete.
     "c26-bad-silent-end-status": (["Upload complete"], []),
     # FL-257 is on iOS and in a browser on a Mac: on Android the adaptive
     # spinner is Material's, and the status line is announced.
@@ -53,8 +57,9 @@ TALKBACK_METHOD = (
     "TalkBack focus moved to the example's bar, where it has one at rest (`-bar`), then to its "
     "button (`-start`); the button pressed with ACTION_CLICK with TalkBack focus left on it, and "
     "everything TalkBack said for nine seconds, the task taking four (`-run`); for "
-    "`bad-silent-end`, TalkBack focus then moved to the status line (`-status`). Speech read from "
-    "TalkBack's verbose log"
+    "`bad-silent-end`, TalkBack focus then moved to the bar inside that marker, and then to the "
+    "status line (`-status`). Speech read from TalkBack's verbose log. Each walk is judged whole: "
+    "a wrong reading fails for good, and only a walk shown to be incomplete is walked again"
 )
 
 # tool/voiceover_ios.py: (how the speech was captured, heading of the

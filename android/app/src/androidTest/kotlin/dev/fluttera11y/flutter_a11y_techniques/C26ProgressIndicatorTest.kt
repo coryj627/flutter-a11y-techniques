@@ -214,10 +214,11 @@ class C26ProgressIndicatorTest : TechniqueTest("C26") {
      * L4. For each example: TalkBack focus on its indicator, where it has
      * one at rest; then focus parked on the button and the button pressed
      * with the click action, and everything TalkBack says until the task
-     * has ended (`-run`); for bad-silent-end, focus then moved to the
-     * status line, which must be read, so that the silence before it is
-     * not an empty capture (`-status`). tool/talkback.py reads the speech
-     * between the markers.
+     * has ended (`-run`); for bad-silent-end, focus then moved to the bar
+     * inside the same marker, so that the capture that must hold none of
+     * the status phrases is shown live, and then to the status line
+     * (`-status`). tool/talkback.py reads the speech between the markers
+     * and judges the walk whole.
      */
     @Test
     fun talkBackWalk() {
@@ -241,6 +242,14 @@ class C26ProgressIndicatorTest : TechniqueTest("C26") {
             // speech ran into the next marker), so the capture runs on.
             Thread.sleep(9_000)
             if (slug == "bad-silent-end") {
+                // Still inside the -run marker: focus moved to the bar,
+                // which TalkBack reads at 100. The marker's capture is then
+                // never empty, and what it must not hold (any of the
+                // upload's status phrases) is judged on a capture shown to
+                // be live. The walk is judged whole (tool/talkback.py,
+                // walk_strictly), where an empty capture is incomplete.
+                talkBackFocus("c26-$slug-bar") { nodeInAnyWindow("c26-$slug-bar") }
+                Thread.sleep(4_000)
                 Log.i(talkBackTag, "FOCUS c26-$slug-status")
                 talkBackFocus(status(slug)) { nodeInAnyWindow(status(slug)) }
                 Thread.sleep(4_000)
