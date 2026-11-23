@@ -12,7 +12,7 @@
 import { test, expect } from '@playwright/test';
 import { byId, openExample } from './support/techniques.js';
 import {
-  EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeWalk, runWalks, screenStops, shownWalk,
+  EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeAfterAction, judgeWalk, runWalks, screenStops, shownWalk,
 } from './vo/c13_vo_walks.js';
 
 const MESSAGE = {
@@ -331,6 +331,27 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
       for (const text of lines) {
         await expect(page.locator('flt-semantics-host').getByText(text, { exact: true })).toHaveCount(1);
       }
+    });
+  }
+});
+
+// How the web VoiceOver spec judges an after-action recording
+// (judgeAfterAction, FL-297): it records, and fails only on a stale phrase
+// or an empty capture. Made-up readings; VoiceOver is not used.
+test.describe('the VoiceOver after-action rows are recorded, not judged on the message', () => {
+  const hint = 'You are currently on a button, inside of web content.';
+  const cases = [
+    ['the message heard (round 4, Undo)', 'Undo button', ['Back and 1 more item and 2 more items group', 'Archive undone', hint], 'Archive undone', 'recorded'],
+    ['Back heard and not the message (round 3, Undo)', 'Undo button', ['Back and 1 more item and 2 more items group', 'Back', hint], 'Archive undone', 'recorded'],
+    ['the page\'s button, then Back (round 4, Go online)', 'Go online button', ['Go offline button', 'Back', hint], 'You are online.', 'recorded'],
+    ['a stale phrase holding the message', 'Archive undone', ['Back'], 'Archive undone', 'wrong'],
+    ['a stale "Back"', 'Back', ['Archive undone'], 'Archive undone', 'wrong'],
+    ['an empty capture', 'Undo button', [], 'Archive undone', 'wrong'],
+    ['a capture of empty phrases', 'Undo button', ['', ''], 'Archive undone', 'wrong'],
+  ];
+  for (const [what, before, heard, said, verdict] of cases) {
+    test(`${what}: ${verdict}`, () => {
+      expect(judgeAfterAction(before, heard, said).verdict).toBe(verdict);
     });
   }
 });

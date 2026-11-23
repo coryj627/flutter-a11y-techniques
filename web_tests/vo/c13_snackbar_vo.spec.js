@@ -17,7 +17,7 @@ import { expect } from '@playwright/test';
 import {
   activateBrowser, assertCaptureIsLive, heardAfter, waitUntilQuiet, walkToEnd,
 } from './vo_helpers.js';
-import { SHOWN_SLUGS, judgeWalk, runWalks, shownWalk } from './c13_vo_walks.js';
+import { SHOWN_SLUGS, judgeAfterAction, judgeWalk, runWalks, shownWalk } from './c13_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
@@ -35,13 +35,13 @@ const ANNOUNCED = {
 };
 
 // slug -> the message's action, pressed after the announcement, and the
-// message that action shows. A measured reading, checked both ways
-// (FL-297; docs/specs/C13-snackbar.md, section 7): the fourth recording
-// heard VoiceOver in Chromium speak its cursor's move to Back, and not the
-// message, which Flutter writes to its announcer about 50 ms after Enter.
-// Each check requires the exact phrase "Back" among what is heard, and
-// that no phrase holds the message: if VoiceOver ever says it, the check
-// fails, so the finding cannot go stale unnoticed.
+// message that action shows. Recorded, not judged (FL-297;
+// docs/specs/C13-snackbar.md, section 7): whether VoiceOver in Chromium
+// says the message after Enter varied between recordings, so the row logs
+// every phrase heard and asserts nothing about the message or about Back.
+// It fails only on a stale phrase before the press, an empty capture, an
+// action that did not act, or a capture that is not live after it
+// (judgeAfterAction, assertCaptureIsLive).
 const DONE = {
   'good-action': { action: 'Undo', said: 'Archive undone' },
   'good-banner': { action: 'Go online', said: 'You are online.' },
@@ -87,16 +87,15 @@ for (const [slug, { must, mustNot }] of Object.entries(ANNOUNCED)) {
     // Keyboard focus, and VoiceOver, on the action; then Enter.
     await page.getByRole('button', { name: done.action, exact: true }).focus();
     const before = await waitUntilQuiet(page);
-    expect(before, `${slug}: the phrase before ${done.action}`).not.toContain(done.said);
-    expect(before, `${slug}: the phrase before ${done.action}`).not.toBe('Back');
     const after = await heardAfter(page, () => page.keyboard.press('Enter'), before, 6000);
-    console.log(`C13VO ${browserName} ${slug}-after-${done.action === 'Undo' ? 'undo' : 'go-online'} | ${after.join(' / ') || '(nothing)'}`);
+    const row = `${slug}-after-${done.action === 'Undo' ? 'undo' : 'go-online'}-recorded`;
+    console.log(`C13VO ${browserName} ${row} | ${after.join(' / ') || '(nothing)'}`);
+    const { verdict, reason } = judgeAfterAction(before, after, done.said);
+    expect(verdict, `${slug}: ${reason}`).toBe('recorded');
     // The action acted: the page's line changed back.
     await expect(page.locator(`[flt-semantics-identifier="c13-${slug}-count"]`)).toHaveText(/: 0$|online$/);
-    // FL-297, as measured: the move to Back is spoken ...
-    expect(after, `${slug}: VoiceOver spoke its cursor's move to Back`).toContain('Back');
-    // ... and the message the action showed is not heard.
-    expect(after.join(' | '), `${slug}: "${done.said}" heard: FL-297 no longer holds`).not.toContain(done.said);
+    // The capture is live after the six seconds.
+    await assertCaptureIsLive(page, voiceOver);
   });
 }
 

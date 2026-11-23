@@ -156,3 +156,30 @@ export function shownWalk(slug, browserName) {
 
 /** The examples whose screen is walked with the message shown. */
 export const SHOWN_SLUGS = ['good-action', 'good-banner'];
+
+/**
+ * Judges one after-action recording (FL-297): `before`, the phrase
+ * VoiceOver last said before Enter on the message's action; `heard`, every
+ * new phrase it gave in the six seconds after (heardAfter leaves out one
+ * equal to `before`); `said`, the message the action shows. It asserts
+ * nothing about whether `said` or the move to Back is heard: the recordings
+ * varied (docs/specs/C13-snackbar.md, section 7). Returns `{ verdict,
+ * reason }`:
+ *
+ * - "wrong": the phrase before the press already held the message, or was
+ *   "Back", so what follows could be stale; or nothing at all was heard,
+ *   an empty capture.
+ * - "recorded": anything else. The row is logged, and proves nothing
+ *   either way about whether VoiceOver presents the message.
+ *
+ * The spec also requires the page's line to have changed back (the action
+ * acted) and assertCaptureIsLive after the six seconds.
+ */
+export function judgeAfterAction(before, heard, said) {
+  if ((before ?? '').includes(said)) {
+    return { verdict: 'wrong', reason: `the phrase before the press, "${before}", already held "${said}"` };
+  }
+  if (before === 'Back') return { verdict: 'wrong', reason: 'the phrase before the press was already "Back"' };
+  if (!heard.length || heard.every((p) => !p)) return { verdict: 'wrong', reason: 'nothing was heard after the press' };
+  return { verdict: 'recorded', reason: `${heard.length} phrase(s) recorded; nothing is asserted about them` };
+}

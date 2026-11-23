@@ -29,8 +29,9 @@ final c13Snackbar = Technique(
     AppPlatform.web: PlatformStatus.applies(
       note:
           'A SnackBar\'s time limit is the app\'s alone (FL-290). Escape does '
-          'not close a message (FL-291). VoiceOver in Chromium did not say '
-          'what Undo or Go online did after Enter on it (FL-297).',
+          'not close a message (FL-291). VoiceOver in Chromium said what Undo '
+          'or Go online did in some recordings and not in others, so it may '
+          'not be presented (FL-297).',
     ),
   },
   wcag: const [

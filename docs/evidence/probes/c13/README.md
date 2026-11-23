@@ -209,4 +209,15 @@ emptied it about 300 ms later; DOM focus went to the page's button
 ("Archive message" after Undo, "Go offline" after Go online).
 
 The principal decided (2026-11-22) to keep the design and record the
-reading as FL-297; the spec now checks it both ways.
+reading as FL-297.
+
+## The fifth web VoiceOver recording
+
+Recorded by the principal at 90f0877; kept as
+`voiceover-web-round4-fail.md.txt`. 2 failed, 8 passed: the after-action
+checks of `good-action` and `bad-inline-banner`, which heard "Archive
+undone" and "You are online." this time, where the fourth recording heard
+neither; `good-banner`'s heard "Go offline button", "Back", the hint, and
+no message. The reading varied, so FL-297 now lists each recording, and
+the after-action rows record every phrase and assert nothing about the
+message (the principal's decision, 2026-11-22).
