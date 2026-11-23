@@ -69,8 +69,8 @@ and is closed by its buttons or by Escape. A modal with a standard way out
 is not a trap; the three good examples are that. On the web Escape can be
 taken first by a tooltip that counts as open
 ([FL-484](../flutter-limitations.md#fl-484)): seen in probes only, in
-`good-widgets`, for the first Escape pressed within half a second of the
-layers showing while the mouse rests on Back, and, with Chromium's CPU
+all three, for the first Escape pressed within about 400 ms of the
+layers being opened while the mouse rests on Back, and, with Chromium's CPU
 throttled, for every Escape after a tooltip was left open under the
 pushed screen. No criterion is claimed failed for it (the entry says
 why).
@@ -437,11 +437,16 @@ output of each platform.
   ([FL-484](../flutter-limitations.md#fl-484)). `WidgetsApp` hides
   tooltips on Escape from a `Focus` of its own that a key reaches before
   the app's `Shortcuts` (read in the source; the order also seen in the
-  probe's trace). In the probe (round 6) Escape on `good-widgets` failed
-  to close the layers in two states: the first Escape, sent as soon as
-  focus was on Contour lines while the mouse rested on Back with its
-  tooltip shown (38 of 38 runs; with 400 ms or more before it, 12 of 12
-  closed); and every Escape after the technique screen's Back tooltip was
+  probe's trace). In the probe (round 6) Escape failed to close the
+  layers in two states. The first Escape, with the mouse resting on Back
+  and its tooltip shown, sent with no added wait once focus was on
+  Contour lines, unthrottled, as Linux: in 20 of 20 runs of
+  `good-widgets` and of `good-material` (116 to 218 ms from Enter on Map
+  layers), and in `good-cupertino` in the 11 runs with Escape at 383 ms
+  or less and none of the 9 at 398 ms or more; with 400 ms or more
+  between focus reaching Contour lines and Escape, `good-widgets` closed
+  in 12 of 12. And every Escape on `good-widgets` after the technique
+  screen's Back tooltip was
   left in the list of open tooltips under the pushed example, which
   happened only with Chromium's CPU throttled and Flutter seeing Linux
   (about 15% of runs at four times). That second state is the one the

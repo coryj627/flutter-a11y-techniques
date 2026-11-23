@@ -362,22 +362,46 @@ its tooltip shows; with the mouse left there, Tab and Enter open the
 example, Tab and Enter show its layers, and Escape is sent once DOM focus
 is on Contour lines.
 
-- `good-widgets`, Escape at once: the first Escape left the layers shown
-  in 28 of 28 runs with Flutter seeing Linux and 10 of 10 seeing macOS. A
-  second Escape a second later closed them in all 28 where it was sent.
-  In the probe build (4 runs) the tooltip in the tree at the first Escape
-  was the example screen's own Back tooltip, in the current route under
-  the layers' barrier, and it was gone after that Escape. So this is the
-  same handler taking the key, but not the stuck state of the first part:
-  there a second Escape did nothing.
+- `good-widgets`, Escape within a 50 ms poll of focus reaching Contour
+  lines (the time from opening the layers not recorded in this version):
+  the first Escape left the layers shown in 28 of 28 runs with Flutter
+  seeing Linux and 10 of 10 seeing macOS. A second Escape a second later
+  closed them in all 28 where it was sent. In the probe build (4 runs, as
+  Linux, with a walk of the widget tree before Escape) the tooltip in the
+  tree at the first Escape was the example screen's own Back tooltip, in
+  the current route under the layers' barrier, and it was gone after that
+  Escape. So this is the same handler taking the key, but not the stuck
+  state of the first part: there a second Escape did nothing.
 - With 400, 1000, or 3000 ms between focus reaching Contour lines and
-  Escape: closed in 4 of 4 runs each. The state lasts less than half a
-  second here, so it was not made a test: a test of it would rest on how
-  soon Escape follows the layers.
-- `good-material` and `good-cupertino`, Escape at once: closed in 10 of
-  10 runs each; in the probe build (`good-material`, 3 runs) Back's
-  tooltip was not in the tree while the sheet was open. Why it was still
-  there under the overlay's barrier was not found.
+  Escape, as Linux: closed in 4 of 4 runs each.
+- `good-material` and `good-cupertino` in this version were not timed
+  like `good-widgets`: the probe waited up to five seconds for focus on
+  Contour lines, which in a route comes only after a Tab, and then 600 ms
+  before that Tab and 400 ms after it, about six seconds in all. They
+  closed in 10 of 10 runs each, and in the probe build (`good-material`,
+  3 runs) Back's tooltip was not in the tree by then. These runs say
+  nothing about the routes at the timing where `good-widgets` failed.
+
+Second version, after review: `probe_web_flake_hover2.spec.js.txt`,
+output `web_flake_hover2.txt`. The same steps, unthrottled, as Linux, 20
+runs of each good example, with no added waits from Enter on Map layers
+to Escape (for the routes, the one Tab from the route's scope is sent as
+soon as the switch is in the tree and focus has left Map layers), and the
+time from that Enter to Escape recorded:
+
+- `good-widgets`: Escape at 152 to 218 ms; the first Escape left the
+  layers shown in 20 of 20.
+- `good-material`: Escape at 116 to 199 ms; left shown in 20 of 20.
+- `good-cupertino`: its popup took longer to reach Contour lines, so
+  Escape came at 282 to 452 ms; left shown in all 11 runs at 383 ms or
+  less, closed in all 9 at 398 ms or more.
+- A second Escape a second later closed them in every run where it was
+  sent.
+
+So at comparable timing no difference was seen between the overlay and
+the routes; going by the `good-cupertino` runs, the state lasts about
+400 ms from opening the layers here. It was not made a
+test: a test of it would rest on how soon Escape follows the layers.
 
 ### Round 6, third part: the test after the change
 
