@@ -52,8 +52,8 @@ How each platform was looked at, and the raw output:
 - Widget tests (the harness, as Android and as iOS):
   `probe_test.dart.txt`, run as `flutter test` (`probe_test.txt`): the
   semantics tree closed and after a tap on the header's text, and where
-  seven Tabs go. The tap on d03's text does not open it, as only the icon
-  takes taps; `probe_d03_test.dart.txt` (`probe_d03_test.txt`) performs
+  seven Tabs go. In the widget tests the tap on d03's text does not open
+  it, as only the icon takes pointer input; `probe_d03_test.dart.txt` (`probe_d03_test.txt`) performs
   the merged node's tap action instead and reads its tap hint before and
   after.
 - Web: Chromium, Playwright, `c06_probe.spec.js.txt` with
@@ -191,35 +191,48 @@ passes no expanded state to iOS (C05's FL-260).
 
 ## What the probe found
 
-- **No SDK widget for a single disclosure exposes an expanded state on any
-  platform.** None of the four sets `expanded`: no `aria-expanded` on the
-  web, expanded state "undefined" on Android 17, no value on iOS. Where the
-  state reaches a screen reader at all, it is text: in the name on Android
-  ("d01 Details, Collapsed"), a hint on iOS ("Collapsed double tap to
-  expand"), the accessible description on the web (on macOS "Collapsed
-  double tap to expand"; on Linux and Windows "Collapsed", by C05's tests).
-- **`ExpansionTile` as it comes (d01) is not a button on Android or iOS**
-  (a `View`; static text), and is one on the web. The same as C05's p01.
+- **None of the four fixtures exposes an expanded state, on any platform
+  measured.** None sets `expanded`: no `aria-expanded` in Chromium,
+  expanded state "undefined" on Android 17, no value on iOS 27.0. Where
+  the state reaches a screen reader at all, it is text: in the name on
+  Android ("d01 Details, Collapsed"), a hint on iOS ("Collapsed double tap
+  to expand"), the accessible description in Chromium on this Mac
+  ("Collapsed double tap to expand"; on Linux and Windows "Collapsed", by
+  C05's tests with `navigator.platform` set).
+- **`ExpansionTile` as it comes (d01) is not a button on Android 17 or iOS
+  27.0** (a `View`; static text), and is one in Chromium. The same as
+  C05's p01.
 - **`ExpansionTile(internalAddSemanticForOnTap: true)` (d02) is a button
-  on all three**, named by its title, with the state as text as above,
-  reached by Tab, opened and closed by Enter and Space (web, Android, iOS),
-  and its change announced on all three: "Expanded" and "Collapsed" by
-  TalkBack (the tile's live region), by VoiceOver on iOS, and written to
-  `flt-announcement-polite` on the web. It does not change the tile's
-  hint or live region. The parameter is documented as "a temporary flag".
+  on all three**, named by its title, with the state as text as above. Tab
+  reaches it on all three; Enter and Space open it on all three, and
+  close it again in Chromium (closing by a key was not tried on Android or
+  iOS here). Its change is announced: "Expanded", then "Collapsed" on a
+  second click, by TalkBack (the tile's live region); "Expanded" by
+  VoiceOver on iOS after XCUITest's double tap (closing not listened for);
+  "Expanded" and "Collapsed" written to `flt-announcement-polite` in
+  Chromium. Its hint, live region, and announcements are the same as
+  d01's in every reading above. The parameter is documented as "a
+  temporary flag".
 - **`ExpandIcon` with a `Text` (d03), as its documentation says, is a
-  button named by the text with no state at all**: no state word anywhere,
-  nothing announced, the tap hint "Expand" or "Collapse". On Android that
-  hint stays "Expand" once it is open, in the tree and in what TalkBack
-  says, while the widget tests show it changing; why was not found. Only
-  the icon takes taps; a tap on the text does nothing.
-- **`CupertinoExpansionTile` (d04) takes no keyboard focus** on any
-  platform, is no button on Android and iOS, has no state on Android, and
-  once open its panel's text joins its name. The same as C05's p06.
-- **Keyboard**: every fixture but d04 is reached by Tab and opened and
-  closed by Enter and Space, with focus left on it, and the next Tab goes
-  into the open panel (web, Android, the widget tests; on iOS, opened by
-  two Tabs and Enter or Space).
+  button named by the text with no state at all**: no state word on any
+  platform, the tap hint "Expand" or "Collapse" (widget tests), and
+  nothing written to Chromium's announcement elements; TalkBack's capture
+  on its click held nothing (not checked against a live capture). On
+  Android 17 the click label stays "Expand" once it is open, in the tree
+  and in what TalkBack says, while the widget tests show the tap hint
+  changing; why was not found. A tap on the text opens nothing in the
+  widget tests and at the element's middle on iOS (only the icon takes
+  pointer input); in Chromium a mouse click at the element's middle opened
+  it, as a click there is taken by the node's element (FL-411).
+- **`CupertinoExpansionTile` (d04) takes no keyboard focus** in Chromium,
+  on Android 17, on iOS 27.0, and in the widget tests; it is no button on
+  Android and iOS, has no state word on Android, and once open its panel's
+  text joins its name. The same as C05's p06.
+- **Keyboard**: d01 to d03 are reached by Tab after Back. In Chromium
+  Enter and Space open and close each, with focus left on it; on Android
+  17 two Tabs and Enter, or Space, open each with focus left on it, and
+  the next Tab goes to the open panel's button; on iOS 27.0 two Tabs and
+  Enter or Space open each. The widget tests read the Tab stops only.
 - **Plain HTML**: `details` and `summary` are a disclosure triangle with
   an expanded state in Chromium, and APG's
   `<button aria-expanded="false">` a button with one.

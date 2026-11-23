@@ -2,9 +2,9 @@
 // Spec: docs/specs/C06-disclosure.md.
 //
 // No example has a test identifier (TestId's MergeSemantics would take the
-// open panel into the control), so the control is found by its label. No
-// Flutter widget for a disclosure gives iOS an expanded state (FL-260,
-// FL-264): XCUITest shows no value for any control here, and the tests
+// open panel into the control), so the control is found by its label.
+// Flutter passes no expanded state to iOS (FL-260), and none of these
+// widgets sets one (FL-264, FL-265, FL-267): XCUITest shows no value for any control here, and the tests
 // expect none, so that they fail when one appears. XCUITest cannot read
 // traits or hints: what VoiceOver says is checked by the walk.
 import XCTest

@@ -3633,11 +3633,13 @@ yet), **Fixed in x.y** (verified on that version).
   VoiceOver "Details Button Collapsed double tap to expand", after
   "Button" where UIKit's own expanded status also comes, but as the tile's
   hint: XCUITest shows no value), and on the web as before. Nothing else
-  changes: still no expanded state on any platform, the same hint, the
-  same live region on Android, and the change still announced, "Expanded"
-  and "Collapsed": by TalkBack from the live region (Android 17), by
-  VoiceOver on iOS after a second (iOS 27.0; the widget tests show the
-  one-second timer), and on the web written to Flutter's
+  that was measured changes: still no expanded state on Android 17, iOS
+  27.0, or Chromium; the same hint; the same live region on Android; and
+  the change still announced: "Expanded" from TalkBack on the click, and
+  "Collapsed" on a second (Android 17, the live region); "Expanded" from
+  VoiceOver on iOS after XCUITest's double tap opened it (iOS 27.0;
+  closing was not listened for; the widget tests show the one-second
+  timer); and "Expanded" and "Collapsed" written to Flutter's
   `flt-announcement-polite` element on a click, Enter, and Space (C06's
   web tests, Chromium). The parameter is documented as "a temporary flag
   to help changing the behavior of ListTile onTap semantics", with a note
@@ -3773,16 +3775,20 @@ yet), **Fixed in x.y** (verified on that version).
   C06 probe (fixture d03) and asserted by C06 `bad-expand-icon` in the
   widget, web, Android, and iOS tests and heard in its transcripts. One
   button named by the label ("Details"), with no expanded state, no hint,
-  no value, and no live region or announcement, closed or open: on the web
+  and no value, closed or open, and no live region (widget tests, Android
+  17); in the probe nothing was written to Chromium's announcement
+  elements when it opened or closed. On the web
   a `role="button"` with no `aria-expanded` and no description (Chromium,
   with `navigator.platform` set to macOS, Linux, and Windows); on Android
   an `android.widget.Button` "Details" whose click label is "Expand"
   ([FL-280](#fl-280): it stays "Expand" once open); on iOS a button with
   no value, which VoiceOver reads "Details Button", closed and open. In
   the widget tests its tap hint is "Expand", then "Collapse". Only the
-  icon takes taps: a tap on the label opens nothing (widget tests, and on
-  iOS XCUITest's tap at the element's middle). So nothing says whether
-  its panel is open, in any words.
+  icon takes pointer input: a tap on the label opens nothing (widget
+  tests, and on iOS XCUITest's tap at the element's middle); in Chromium a
+  mouse click at the element's middle opens it, as the node's element
+  takes the click ([FL-411](#fl-411)). So nothing says whether its panel
+  is open, in any words.
 - WCAG: for `ExpansionPanelList`, not judged: no C05 example uses it, and
   the probe alone does not test a whole screen built with it. For
   `ExpandIcon` on its own: 4.1.2 Name, Role, Value, on every platform: no
@@ -3863,9 +3869,9 @@ yet), **Fixed in x.y** (verified on that version).
   hint changes to "Collapse" and back (`probe_d03_test.txt`, and C06's
   widget test), so the framework's semantics change and Android's node
   does not show it; where it is lost was not found. `ExpansionTile`'s
-  click label, set the same way with `onTapHint` but not merged into a
-  parent, does change on the same device ("Expand for more details", then
-  "Collapse").
+  click label, also set with `onTapHint` but on a node that is not merged
+  into a parent (source read), does change on the same device ("Expand for
+  more details", then "Collapse").
 - WCAG: not counted by itself: the example has no state at all
   ([FL-267](#fl-267)), which fails 4.1.2 whatever its click label says. A
   label that says what a double tap does, and says the wrong thing once

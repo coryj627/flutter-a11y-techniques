@@ -10,8 +10,8 @@ final c06Disclosure = Technique(
   summary:
       'A control that shows and hides one section is a button, named by what '
       'it shows, that says whether the section is open, and that Enter and '
-      'Space operate. Flutter\'s ExpansionTile is a button on every platform '
-      'only with internalAddSemanticForOnTap, which its documentation calls '
+      'Space operate. Flutter\'s ExpansionTile is a button on Android and '
+      'iOS only with internalAddSemanticForOnTap, which its documentation calls '
       '"a temporary flag", and it says whether it is open only in words, '
       'never as a state (FL-264).',
   platforms: const {
@@ -19,8 +19,8 @@ final c06Disclosure = Technique(
       'ExpansionTile with internalAddSemanticForOnTap ("a temporary flag", '
       'its documentation says) is a button, but Flutter gives it no expanded '
       'state: "Collapsed" or "Expanded" is only the end of its name, which '
-      'TalkBack reads (FL-264). There is no workaround with the widget\'s '
-      'own parameters.',
+      'TalkBack reads (FL-264; measured on Android 17). There is no '
+      'workaround with the widget\'s own parameters.',
     ),
     AppPlatform.ios: PlatformStatus.limitation(
       'ExpansionTile with internalAddSemanticForOnTap ("a temporary flag", '
@@ -32,7 +32,8 @@ final c06Disclosure = Technique(
     AppPlatform.web: PlatformStatus.limitation(
       'ExpansionTile is a button with no aria-expanded: the state is only '
       'its accessible description, "Collapsed double tap to expand" in a '
-      'browser on macOS and "Collapsed" on Linux and Windows (FL-264). There '
+      'browser on macOS and "Collapsed" where Flutter finds Linux or Windows '
+      '(FL-264). There '
       'is no workaround with the widget\'s own parameters; a native details '
       'element in an HtmlElementView was not tried.',
     ),

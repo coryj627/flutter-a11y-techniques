@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 
 // Every example is a Flutter widget for the pattern, used through its own
 // parameters; nothing is built round it. What none of them gives is in
-// docs/flutter-limitations.md and is not built here: no Flutter widget for a
-// disclosure exposes an expanded or collapsed state on any platform
-// (FL-264, FL-265, FL-267); `ExpansionTile` gives the state only as text.
+// docs/flutter-limitations.md and is not built here: none of Flutter's
+// widgets for a disclosure measured here exposes an expanded or collapsed
+// state, on Android 17, iOS 27.0, or the web (FL-264, FL-265, FL-267);
+// `ExpansionTile` gives the state only as text.
 //
 // No example uses `TestId`: its `MergeSemantics` would take the open panel
 // into the control's node. The controls are found by their text.
@@ -150,7 +151,9 @@ class _BadExpandIconState extends State<BadExpandIcon> {
       // `MergeSemantics` as its documentation says. The button is named by
       // the label, and nothing says whether the panel is open, not even in
       // words: `ExpandIcon` sets no state and no hint, only a tap hint,
-      // "Expand" or "Collapse" (FL-267). Only the icon takes taps.
+      // "Expand" or "Collapse" (FL-267). Only the icon takes pointer input:
+      // a tap on the label opens nothing, except on the web, where a click
+      // there is taken by the button's element (FL-411).
       builder: (context, press) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -3,8 +3,9 @@
 // assistive technology, Tab, Enter, and Space do. Spec:
 // docs/specs/C06-disclosure.md. Runs against the release build in build/web.
 //
-// No Flutter widget for a disclosure writes aria-expanded (FL-264, FL-265,
-// FL-267): every test below that says so is written to fail when one does.
+// None of the Flutter widgets for a disclosure used here writes
+// aria-expanded (FL-264, FL-265, FL-267): every test below that says so is
+// written to fail when one does.
 // No example has a TestId, so the control is found by its role and name.
 import { test, expect } from '@playwright/test';
 import { technique } from './support/techniques.js';

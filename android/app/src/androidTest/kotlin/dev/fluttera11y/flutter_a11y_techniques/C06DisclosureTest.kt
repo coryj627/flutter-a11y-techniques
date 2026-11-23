@@ -3,8 +3,8 @@
 //
 // No example has a test identifier (TestId's MergeSemantics would take the
 // open panel into the control), so the control is the clickable node whose
-// name starts with its title. No Flutter widget for a disclosure gives an
-// expanded state (FL-264): where the tests read the expanded state, on
+// name starts with its title. None of these widgets gives an expanded
+// state (FL-264, FL-265, FL-267): where the tests read the expanded state, on
 // Android 16 and later, they expect "undefined", so that they fail when
 // Flutter starts to give one. Each test opens one example once.
 package dev.fluttera11y.flutter_a11y_techniques

@@ -30,12 +30,15 @@ platforms (`PlatformStatus.limitation`), and the state it gives as text, at
 the end of its name on Android, as a hint on iOS, and as the accessible
 description on the web, is not counted as meeting 4.1.2
 ([FL-264](../flutter-limitations.md#fl-264); on iOS also
-[FL-260](../flutter-limitations.md#fl-260)).
+[FL-260](../flutter-limitations.md#fl-260)). Measured on Android 17, iOS
+27.0, and Chromium; on Android before 16 Flutter passes no expanded state
+to any node (FL-261, source read), which was not measured here.
 
 `internalAddSemanticForOnTap` is what makes the control a button on Android
-and iOS. Its documentation calls it "a temporary flag to help changing the
-behavior of ListTile onTap semantics", and the source has a note to remove
-it once its default is flipped to true. It may change or go in a later
+and iOS (measured on Android 17 and iOS 27.0; without it the control is a
+button on the web only). Its documentation calls it "a temporary flag to
+help changing the behavior of ListTile onTap semantics", and the source has
+a note to remove it after its default is flipped to true (source read). It may change or go in a later
 Flutter.
 
 No workaround is built. A native `details` element in an `HtmlElementView`
@@ -109,12 +112,14 @@ and its focus indicator is `ListTile`'s tint, under 3:1
 `docs/evidence/probes/c06/focus_widget_test.txt`). It relies on a parameter its
 documentation calls "a temporary flag".
 
-No Cupertino good example: Cupertino's only disclosure widget,
-`CupertinoExpansionTile`, takes no keyboard focus
+No Cupertino good example: `CupertinoExpansionTile`, the only disclosure
+widget found in the SDK's Cupertino library (source read), takes no
+keyboard focus
 ([FL-265](../flutter-limitations.md#fl-265)), so it is
 `bad-cupertino-expansion-tile`. No widgets-layer good example:
-`Expansible`, the widgets layer's own, has no header of its own; one would
-have to be built by hand, which the owner's rule rules out.
+`Expansible`, the widgets layer's own, takes its header from a builder the
+app supplies (source read), so a header would have to be built by hand,
+which the owner's rule rules out.
 
 ### Bad
 
@@ -129,14 +134,20 @@ other measured shortcomings, which are not their named defects:
 
 - `bad-expansion-tile`: the same missing state as `good-material` (the
   state only as text); the same focus tint (FL-430).
-- `bad-expand-icon`: only the icon takes taps; a tap on the label opens
-  nothing (widget tests; on iOS a tap at the element's middle). On Android
+- `bad-expand-icon`: a tap on the label opens nothing, as only the icon
+  takes pointer input (widget tests; on iOS 27.0 XCUITest's tap at the
+  element's middle); on the web a mouse click at the element's middle
+  opened it (probe and web tests), as a click there is taken by the
+  node's element ([FL-411](../flutter-limitations.md#fl-411)); on Android a
+  tap at the label was not tried. On Android
   its click label stays "Expand" once open
   ([FL-280](../flutter-limitations.md#fl-280)). Its focus tint is
   `IconButton`'s (FL-430; 1.26:1 and 1.38:1 here, `focus_widget_test.txt`).
 - `bad-cupertino-expansion-tile`: no button role on Android and iOS; no
-  state on Android, and on the web on Linux and Windows; the state as a
-  hint on iOS and, on the web, as the description on macOS; once open the
+  state word on Android (TalkBack says only the click label), and on the web where Flutter finds Linux
+  or Windows (measured with `navigator.platform` set to them); the state as
+  a hint on iOS and, on the web, as the description where Flutter finds
+  macOS; once open the
   panel's text joins the control's name; once opened, an empty element
   over the page on the web ([FL-029](../flutter-limitations.md#fl-029),
   as C05 found). Its panel has no button, so that a closed panel, which
@@ -156,7 +167,11 @@ the owner's ruling that the state as text does not meet 4.1.2:
 `good-material` and `bad-expand-icon` fail the same criterion on every
 platform. What tells them apart is what a user hears: `good-material`
 says "Collapsed" or "Expanded" in words, and announces the change;
-`bad-expand-icon` says neither, nor announces anything.
+`bad-expand-icon` says neither word. Whether it announces anything was not
+checked by a test: in the probe nothing was written to the web's
+announcement elements when it opened, and on iOS VoiceOver said nothing
+more in the four seconds after XCUITest's double tap opened it (the
+transcript); what TalkBack says then is dropped (section 7).
 
 2.1.1 Keyboard, outside the entry's criterion, is claimed for
 `bad-cupertino-expansion-tile` because it fails as written and the tests
@@ -192,22 +207,29 @@ four fixtures on the web (Chromium), Android 17, and iOS 27.0, with
 TalkBack and VoiceOver, and plain HTML on the web. It measured what a
 single disclosure needs that C05's probe had not.
 
-- **No Flutter widget for a disclosure exposes an expanded state, on any
-  platform** (FL-264, FL-265, FL-267): no `aria-expanded` on the web,
+- **None of Flutter's widgets for a disclosure measured here exposes an
+  expanded state, on any platform** (FL-264, FL-265, FL-267; C05 found the
+  same for `ExpansionPanelList`, and in the SDK's source no other widget
+  for the pattern sets `expanded`): no `aria-expanded` on the web,
   expanded state "undefined" on Android 17, no value on iOS 27.0. Where the
   state reaches a screen reader, it is text. That is the limitation the
   owner recorded on all three platforms.
 - **`internalAddSemanticForOnTap: true` makes `ExpansionTile` a button on
-  Android and iOS, and changes nothing else** (FL-264, extended): the same
-  hint, the same live region on Android, the same announcements. On iOS
+  Android 17 and iOS 27.0, and changes nothing else that was measured**
+  (FL-264, extended): the same hint (widget tests, Chromium), the same
+  live region on Android, the same "Expanded" from TalkBack and from
+  VoiceOver on iOS after the change, and the same writes to the web's
+  announcement element (probe). On iOS
   27.0 VoiceOver reads it "Details Button Collapsed double tap to expand",
   the same words, in the same place after "Button", as UIKit's own
   expanded status in C05's probe ("Button Collapsed Double-tap to
   expand"); there it is the tile's hint, and XCUITest shows no value.
-- **The change is announced on every platform** by `ExpansionTile`, "Expanded"
-  and "Collapsed": by TalkBack from the tile's live region on Android 17;
-  by VoiceOver on iOS 27.0 after XCUITest's double tap (the widget tests
-  show the one-second timer); and on the web written to
+- **`ExpansionTile` announces the change on every platform measured**:
+  TalkBack says "Expanded" on the click from the tile's live region, and
+  "Collapsed" on a second click (probe), on Android 17; VoiceOver on iOS
+  27.0 says "Expanded" after XCUITest's double tap opened it (closing was
+  not listened for; the widget tests show the one-second timer); and on
+  the web "Expanded" and "Collapsed" are written to
   `flt-announcement-polite` on a click, Enter, and Space (Chromium). What
   VoiceOver on macOS says for that write was not listened for separately:
   the web walks start after the click.
@@ -216,7 +238,8 @@ single disclosure needs that C05's probe had not.
   "Expand" once open (FL-280; cause not found), while the widget tests
   show it change.
 - **`CupertinoExpansionTile` takes no keyboard focus** (FL-265), as C05
-  found for two of them.
+  found in its accordion: on the web, Android 17, iOS 27.0, and in the
+  widget tests.
 - **The transcripts.** TalkBack (`docs/evidence/C06/talkback-android.md`)
   passed on its first walk, judged whole: `good-material` "Details, /
   Collapsed / Button / Double-tap to Expand for more details", "Expanded"
@@ -281,8 +304,9 @@ Skips and what they give up, in the tests:
   (Back acted) in `bad-cupertino-expansion-tile`. They rely on the first
   Tab being on Back.
 - `bad-expand-icon` is tapped at its icon, 24 points in from the end of
-  its row, on iOS (and by `ExpandIcon` in the widget tests): only the icon
-  takes taps.
+  its row, on iOS (and by `ExpandIcon` in the widget tests), as a tap at
+  its label opens nothing there. On Android it is opened by the click
+  action; a tap was not tried.
 - The iOS VoiceOver walk goes to the end of the screen, where moving on
   gives the last utterance again, twice (`C06Walk`, tested with no device
   by `testWalkToTheEndSeesAnExtraStop`). It gives up two neighbouring
