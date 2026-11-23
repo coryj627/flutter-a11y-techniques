@@ -182,9 +182,9 @@ What each meets, by platform, as the criteria are written:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `good-action` | 4.1.3: announced (TalkBack), focus not moved; Undo's result announced, "Archive undone" (TalkBack). 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium announced it. Qualification on the web, Chromium: with Close's tooltip shown, as a VoiceOver walk leaves it, VoiceOver reads Close "Close Close" with no role word (FL-249); the tree keeps the role, so not 4.1.2 as written (section 7) |
+| `good-action` | 4.1.3: announced (TalkBack), focus not moved; Undo's result announced, "Archive undone" (TalkBack). 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium announced it. Qualification on the web, Chromium: with Close's tooltip shown, as a VoiceOver walk leaves it, VoiceOver reads Close "Close Close" with no role word (FL-249); the tree keeps the role, so not 4.1.2 as written (section 7). Undo's result on the web: written to `flt-announcement-polite`, not heard by VoiceOver in Chromium, which spoke its cursor's move to Back (section 7) |
 | `good-message` | 4.1.3: announced. 2.2.1: its going sets no time limit, as its news is on the page (Understanding 2.2.1) | the same | the same |
-| `good-banner` | 4.1.3: announced; going back online announced, "You are online." (TalkBack). 2.2.1: no time limit | the same, with VoiceOver | the same; VoiceOver in Chromium: to be recorded |
+| `good-banner` | 4.1.3: announced; going back online announced, "You are online." (TalkBack). 2.2.1: no time limit | the same, with VoiceOver | the same, but going back online is not heard: Flutter writes "You are online." to `flt-announcement-polite`, and VoiceOver in Chromium spoke the move of its cursor to Back instead (section 7). 4.1.3 for that change: met in the tree, not heard |
 
 R5 (the platform's timeout) is met by none of them, as nothing in the SDK
 reads it ([FL-290](../flutter-limitations.md#fl-290)); `good-action` and
@@ -280,8 +280,22 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   announced. Each now shows a SnackBar that says what it did, measured on
   every layer: a polite live region in the widget tests (with
   `accessibleNavigation` off and on) and on Android, written once to
-  `flt-announcement-polite` on the web, and heard by TalkBack, by
-  VoiceOver on iOS, and (to be recorded) by VoiceOver on the web.
+  `flt-announcement-polite` on the web, about 50 ms after Enter
+  (`web_done_focus.txt`), and heard by TalkBack and by VoiceOver on iOS.
+  **VoiceOver on the web did not say it** (fourth recording,
+  `voiceover-web-round3-fail.md.txt`): within six seconds of Enter on Undo
+  it said "Back and 1 more item and 2 more items group", "Back", and the
+  usage hint; on `good-banner`'s Go online, "Back" and the hint; on
+  `bad-inline-banner`'s, "Back and 1 more item and 2 more items group" and
+  "Back". The control Enter was pressed on goes as it acts; without
+  VoiceOver, DOM focus then went to the page's button (Undo: "Archive
+  message"; Go online: "Go offline", `web_done_focus.txt`), while
+  VoiceOver's cursor, as it spoke, went to Back. Why VoiceOver went to
+  Back, and whether it dropped the polite announcement for the move or
+  never had it, was not measured. So on the web, as measured, the change
+  back is a status message the tree determines (4.1.3 as written: its
+  role and property are there) but VoiceOver in Chromium does not present
+  it. The design is not changed until the principal decides.
 - **A SnackBar shown from a `SnackBarAction`'s `onPressed` after a clear
   there is hidden by the action when `accessibleNavigation` is on**
   ([FL-296](../flutter-limitations.md#fl-296), new): Undo's "Archive

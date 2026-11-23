@@ -66,6 +66,9 @@ for (const [slug, { must, mustNot }] of Object.entries(ANNOUNCED)) {
     test.skip(browserName === 'webkit', 'WebKit test build does not announce live regions');
     expect(voiceOver).toBeTruthy();
     const quiet = await openAtButton(page, browserName, slug);
+    // No stale phrase: what VoiceOver last said before the press must not
+    // already be the message (heardAfter also leaves that phrase out).
+    if (must) expect(quiet, `${slug}: the phrase before the press`).not.toContain(must);
     const heard = await heardAfter(page, () => page.keyboard.press('Enter'), quiet, 6000);
     console.log(`C13VO ${browserName} ${slug}-announced | ${heard.join(' / ') || '(nothing)'}`);
     // The button acted: the page's line changed.
@@ -80,6 +83,7 @@ for (const [slug, { must, mustNot }] of Object.entries(ANNOUNCED)) {
     // Keyboard focus, and VoiceOver, on the action; then Enter.
     await page.getByRole('button', { name: done.action, exact: true }).focus();
     const before = await waitUntilQuiet(page);
+    expect(before, `${slug}: the phrase before ${done.action}`).not.toContain(done.said);
     const after = await heardAfter(page, () => page.keyboard.press('Enter'), before, 6000);
     console.log(`C13VO ${browserName} ${slug}-done-announced | ${after.join(' / ') || '(nothing)'}`);
     await expect(page.locator(`[flt-semantics-identifier="c13-${slug}-count"]`)).toHaveText(/: 0$|online$/);

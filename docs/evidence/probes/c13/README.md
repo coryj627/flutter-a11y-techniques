@@ -189,3 +189,21 @@ complete on its first try. It is the transcript,
   `onPressed` after a clear: it never appeared, and nothing was
   announced. Round 2, shown from the first SnackBar's `closed` future: it
   appeared and was written to `flt-announcement-polite` (FL-296).
+
+## The fourth web VoiceOver recording
+
+Recorded by the principal after the review fixes (9eb7c64, eefe4ee); kept
+as `voiceover-web-round3-fail.md.txt`. 3 failed, 7 passed: the three
+announcement tests that then press the message's action and listen for
+what it did (`-done-announced`). Every walk and every first announcement
+passed. After Enter on Undo (`good-action`) VoiceOver in Chromium said
+"Back and 1 more item and 2 more items group", "Back", and the usage hint;
+after Enter on Go online, "Back" and the hint (`good-banner`), "Back and 1
+more item and 2 more items group" and "Back" (`bad-inline-banner`). None
+said "Archive undone" or "You are online.".
+
+`c13_done_focus_probe.spec.js.txt` (`web_done_focus.txt`), Chromium with
+no VoiceOver, pressing the same way: Flutter wrote "Archive undone" and
+"You are online." to `flt-announcement-polite` about 50 ms after Enter and
+emptied it about 300 ms later; DOM focus went to the page's button
+("Archive message" after Undo, "Go offline" after Go online).
