@@ -3345,7 +3345,10 @@ yet), **Fixed in x.y** (verified on that version).
     which is what assistive technology sends, runs nothing
     (`web_round2.txt`; the C18 web test, with a mouse click on the same
     element and a DOM click on Back in the same load as positive
-    controls). What VoiceOver's own activation sends was not measured.
+    controls). VoiceOver read it as "heading level 3 Ridge trail A 6 km
+    climb with a view.", with no "button", in Chromium and WebKit
+    (`docs/evidence/C18/voiceover-web.md`). What VoiceOver's own activation
+    sends was not measured.
   - A card that is one link, `Semantics(link: true, linkUrl:)` round an
     `InkWell` whose text has a heading (p09): an `<h3>` with no `href`, so
     the browser has no link to follow, and Enter after Tab did nothing
@@ -3404,7 +3407,8 @@ yet), **Fixed in x.y** (verified on that version).
     element after the card, "Saves: 0": the "Save Ridge trail" button
     inside the heading was not a stop
     (`docs/evidence/probes/c18/voiceover-web-round1-fail.md.txt`, the
-    first recording). Only `next` was tried; Tab with VoiceOver on, the
+    first recording, and the same in the second,
+    `docs/evidence/C18/voiceover-web.md`). Only `next` was tried; Tab with VoiceOver on, the
     rotor, and activating the button with VoiceOver were not. Why it was
     passed over was not found. Without a screen reader, Tab reaches the
     button and Enter and Space activate it (C18's web tree test).
