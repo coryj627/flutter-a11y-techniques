@@ -472,6 +472,71 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(verdict, "incomplete")
         self.assertEqual(reasons, ["c05-good-material-closed: speech capture was cut off"])
 
+    def cut_log(self, ident, whole, captured):
+        """A whole walk, right but for `ident`, which speaks the fragments
+        `whole` and then one more that is cut off after its lines
+        `captured` (logcat splits a fragment at its line breaks)."""
+        rest = {i: f for i, f in self.right.items() if i != ident}
+        tag = 'V talkback: SpeechControllerImpl: '
+        lines = [f"11-13 10:00:00.000  1  1 I C05TB   : FOCUS {ident}"]
+        lines += [f'{tag}Speaking fragment text="{f}", utteranceId=x' for f in whole]
+        lines.append(f'{tag}Speaking fragment text="{captured[0]}')
+        lines += [f"{tag}{line}" for line in captured[1:]]
+        return "\n".join(lines) + "\n" + log_for(rest)
+
+    def test_a_forbidden_phrase_beside_a_cut_off_fragment_fails_for_good(self):
+        # Codex's case: "expanded", forbidden while closed, is said in a
+        # fragment captured whole, and the next fragment is cut off. The
+        # walk is wrong, and a right walk after it changes nothing.
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["expanded", "Shipping"], ["Button. Heading"])
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log, log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["wrong"])
+        self.assertEqual(self.walks, 1)
+        failures, out = tb.strict_report(tries)
+        self.assertEqual(failures, [f'{ident}: did not expect "expanded" in '
+                                    f'"expanded | shipping | button. heading"'])
+        self.assertIn("Result: FAIL", out)
+        # The captured lines are in the transcript.
+        self.assertTrue(any('captured of the cut-off speech: "Button. Heading"' in line
+                            for line in out))
+
+    def test_a_forbidden_phrase_in_the_captured_lines_of_a_cut_off_fragment_is_wrong(self):
+        # A cut-off fragment's captured lines are whole lines of what was
+        # said: one that holds the whole forbidden phrase was said.
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["Shipping"], ["collapsed, Button", "expanded"])
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log, log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["wrong"])
+        self.assertEqual(self.walks, 1)
+
+    def test_a_required_phrase_lost_to_the_cut_is_incomplete(self):
+        # "Heading" and the hint were in the lost part: nothing heard is
+        # wrong, so the walk is incomplete and walked again.
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["collapsed. ", "Shipping"], ["Button."])
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log, log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["incomplete", "right"])
+        self.assertEqual(tries[0].reasons, [f"{ident}: speech capture was cut off"])
+        self.assertEqual(tb.strict_report(tries)[0], [])
+
+    def test_a_forbidden_phrase_split_by_the_cut_is_not_heard(self):
+        # Only the lines before the cut are known: a phrase whose words are
+        # not all in them was not shown to be said.
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["collapsed. ", "Shipping"], ["Button. Heading. fully"])
+        verdict, _ = tb.judge_walk(tb.parse_speech(log), self.expected)
+        cut = {}
+        spoken = tb.parse_speech(log, cut)
+        self.assertEqual(cut, {ident: ["Button. Heading. fully"]})
+        self.assertEqual(tb.judge_walk(spoken, self.expected, cut)[0], "incomplete")
+        self.assertEqual(verdict, "incomplete")
+
+    def test_parse_speech_is_the_same_with_or_without_the_cut_lines(self):
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["Shipping"], ["Button", "expanded"])
+        self.assertEqual(tb.parse_speech(log), tb.parse_speech(log, {}))
+
     def test_a_wrong_reading_in_an_incomplete_walk_fails_for_good(self):
         speech = dict(self.right)
         del speech["c05-good-custom-panel"]

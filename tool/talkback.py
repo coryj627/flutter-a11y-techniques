@@ -352,7 +352,7 @@ SPEECH_TAG = "talkback: SpeechControllerImpl: "
 INCOMPLETE = "[speech capture was cut off]"
 
 
-def parse_speech(log):
+def parse_speech(log, cut=None):
     """What TalkBack spoke while each identified node had focus.
 
     A spoken text with a line break in it (a merged node such as "Delivered",
@@ -362,6 +362,11 @@ def parse_speech(log):
     fragment that is cut off by a marker, by another fragment, or by any
     other log line is never credited to an element; INCOMPLETE is recorded
     for the element that had focus, so its speech fails its checks.
+
+    If `cut` is a dict, the lines captured of each cut-off fragment, joined
+    as above, are added to cut[element]: whole lines of what was said, since
+    logcat splits a fragment where its text has a line break. Only
+    walk_strictly uses them; the speech returned is the same either way.
     """
     spoken, current, open_fragment = {}, None, None
 
@@ -369,6 +374,8 @@ def parse_speech(log):
         nonlocal open_fragment
         if open_fragment is not None and current:
             spoken[current].append(INCOMPLETE)
+            if cut is not None:
+                cut.setdefault(current, []).append(" ".join(open_fragment))
         open_fragment = None
 
     for line in log.splitlines():
@@ -493,19 +500,38 @@ def walk_until_heard(walk_once=None):
 STRICT = {"C05"}
 
 # One walk of walk_strictly: the speech per element, the verdict ("right",
-# "wrong", or "incomplete"), and what made it so.
-Try = collections.namedtuple("Try", ["spoken", "verdict", "reasons"])
+# "wrong", or "incomplete"), what made it so, and the captured lines of each
+# cut-off fragment per element (parse_speech's `cut`).
+Try = collections.namedtuple("Try", ["spoken", "verdict", "reasons", "cut"], defaults=[{}])
 
 
-def judge_walk(spoken, expected):
+def forbidden(ident, fragments):
+    """The phrases that must not be spoken for `ident` that `fragments`
+    hold, as problems() words them."""
+    if ident not in EXPECT:
+        return []
+    fragments = [f.lower() for f in fragments]
+    joined = " | ".join(fragments)
+    return [f'{ident}: did not expect "{phrase}" in "{joined}"'
+            for phrase in EXPECT[ident][1] if unwanted(fragments, phrase)]
+
+
+def judge_walk(spoken, expected, cut=None):
     """The verdict on one whole walk: (verdict, reasons).
 
     "incomplete" only for a capture that is shown to be short: an expected
     element that was never focused, one for which nothing was spoken, or one
-    whose speech capture was cut off. Anything else that fails its checks is
-    a wrong reading, and a wrong reading anywhere makes the walk "wrong",
-    even when other elements of it are incomplete.
+    whose speech capture was cut off with nothing wrong in what was
+    captured. An element whose capture was cut off is checked for the
+    phrases it must not say in every fragment captured whole and in the
+    captured lines of the cut-off one (`cut`, from parse_speech): those
+    lines are whole lines of what was said, so a forbidden phrase in them
+    was said, and the reading is wrong. A required phrase it lacks may be in
+    the lost part, so that alone makes it incomplete. Anything else that
+    fails its checks is a wrong reading, and a wrong reading anywhere makes
+    the walk "wrong", even when other elements of it are incomplete.
     """
+    cut = cut or {}
     gaps, wrong = [], []
     for ident in expected:
         fragments = spoken.get(ident)
@@ -514,7 +540,12 @@ def judge_walk(spoken, expected):
         elif not fragments:
             gaps.append(f"{ident}: nothing was spoken")
         elif INCOMPLETE in fragments:
-            gaps.append(f"{ident}: speech capture was cut off")
+            heard = [f for f in fragments if f != INCOMPLETE] + cut.get(ident, [])
+            said_wrong = forbidden(ident, heard)
+            if said_wrong:
+                wrong += said_wrong
+            else:
+                gaps.append(f"{ident}: speech capture was cut off")
         else:
             wrong += problems(ident, fragments)
     if wrong:
@@ -542,9 +573,10 @@ def walk_strictly(prefix, walk_once=None):
         if run.returncode != 0:
             print(run.stdout[-3000:])
             sys.exit("instrumented walk failed")
-        spoken = parse_speech(log)
-        verdict, reasons = judge_walk(spoken, expected)
-        tries.append(Try(spoken, verdict, reasons))
+        cut = {}
+        spoken = parse_speech(log, cut)
+        verdict, reasons = judge_walk(spoken, expected, cut)
+        tries.append(Try(spoken, verdict, reasons, cut))
         if verdict != "incomplete":
             break
     return tries
@@ -564,15 +596,19 @@ def strict_report(tries):
     out += [f"- Walk {n}: {t.verdict}" + (f" ({'; '.join(t.reasons)})" if t.reasons else "")
             for n, t in enumerate(tries, 1)]
 
-    def table(spoken):
+    def table(walk):
         rows = ["| Element | Spoken |", "| --- | --- |"]
-        rows += [f"| `{ident}` | {' / '.join(fragments) or '(nothing)'} |"
-                 for ident, fragments in spoken.items()]
+        for ident, fragments in walk.spoken.items():
+            text = ' / '.join(fragments) or '(nothing)'
+            if walk.cut.get(ident):
+                text += " (captured of the cut-off speech: " + " / ".join(
+                    f'"{c}"' for c in walk.cut[ident]) + ")"
+            rows.append(f"| `{ident}` | {text} |")
         return rows
 
-    out += ["", f"## Walk {len(tries)} ({last.verdict})", ""] + table(last.spoken)
+    out += ["", f"## Walk {len(tries)} ({last.verdict})", ""] + table(last)
     for n, t in enumerate(tries[:-1], 1):
-        out += ["", f"## Walk {n} ({t.verdict})", ""] + table(t.spoken)
+        out += ["", f"## Walk {n} ({t.verdict})", ""] + table(t)
     if failures:
         out += ["", "## Failures", ""] + [f"- {f}" for f in failures]
     return failures, out
