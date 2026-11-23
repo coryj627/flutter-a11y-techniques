@@ -1,0 +1,193 @@
+I08 web Escape flake probe, 2026-11-23. Flutter 3.47.5, Chromium from
+Playwright 1.56, this Mac, two workers. Source: probe_web_flake.spec.js.txt,
+p08flake.config.js.txt, probe_web_flake.dart.txt and
+probe_web_flake_examples.diff.txt. "closed" is Escape closing the good
+example's layers within 5 seconds.
+
+== Counts per set ==
+linux1.jsonl: ci; Linux platform; CPU 1x; build release: 20 runs, closed 20, not closed 0
+linux4c.jsonl: ci; Linux platform; CPU 4x; build release: 30 runs, closed 26, not closed 4
+linux4b.jsonl: ci; Linux platform; CPU 4x; build release: 10 runs, closed 9, not closed 1
+rel_linux2.jsonl: ci; Linux platform; CPU 2x; build release: 30 runs, closed 28, not closed 2
+rel_native4.jsonl: ci; macOS platform (this Mac as it is); CPU 4x; build release: 30 runs, closed 30, not closed 0
+probe4.jsonl: ci; Linux platform; CPU 4x; build probe, release: 30 runs, closed 27, not closed 3
+probe4app.jsonl: ci; Linux platform; CPU 4x; build probe + instrumented examples, release: 30 runs, closed 29, not closed 1
+probeprof4.jsonl: ci; Linux platform; CPU 4x; build probe + instrumented examples, profile: 40 runs, closed 34, not closed 6
+probeprof4b.jsonl: ci; Linux platform; CPU 4x; build probe + instrumented examples + handler trace, profile: 40 runs, closed 33, not closed 7
+probeprof4c.jsonl: ci; Linux platform; CPU 4x; build probe + instrumented examples + handler trace + tooltips, profile: 30 runs, closed 25, not closed 5
+probeprof4away.jsonl: mouseaway; Linux platform; CPU 4x; build probe + instrumented examples + handler trace + tooltips, profile: 40 runs, closed 40, not closed 0
+probeprof4mat.jsonl: ci, the bad-not-dismissible / good-material pair; Linux platform; CPU 4x; build probe + instrumented examples + handler trace + tooltips, profile: 40 runs, closed 40, not closed 0
+
+linux4.jsonl, a first run of 20 at CPU 4x, is left out: 10 of its runs hit
+the 30-second test timeout reading the count (hidden behind the layers'
+barrier, so not closed), and the probe then had no outcome line for them.
+
+== probeprof4c, a run where Escape closed the layers: run 0, closed True ==
+ms from the click on the example title; focusin/focusout name the DOM element,
+"keydown bubble" is absent when Flutter stopped the event (it handled it);
+"flutter" lines are printed by the app (probe build).
+  -644 flutter          app _close(barrier) state 62686110 entry 371803884 mounted true
+  -642 flutter          focus -> node i08-bad-no-escape-open, route /t/I08/bad-no-escape, hasPrimaryFocus true, canRequestFocus true, ancestors 14
+  -627 focusout         i08-bad-no-escape-campsites
+  -625 focusin          flutter-view
+  -625 focusout         flutter-view
+  -625 focusin          i08-bad-no-escape-open
+  -458 focusout         i08-bad-no-escape-open
+  -457 flutter          focus -> node (no identifier above), route /t/I08/bad-no-escape, hasPrimaryFocus true, canRequestFocus true, ancestors 13
+  -456 focusin          FLT-SEMANTICS button Back
+  -451 flutter          focus -> scope (no identifier above), route /t/I08, hasPrimaryFocus true, canRequestFocus true, ancestors 12
+   -61 focusout         FLT-SEMANTICS button Back
+   -50 focusin          flutter-view
+   -49 focusout         flutter-view
+   -49 focusin          FLT-SEMANTICS button Back
+   -34 flutter          app dispose state 62686110 entry null
+     0 step             click title [primary: scope (no identifier above), route /t/I08, hasPrimaryFocus true, canRequestFocus true, ancestors 12; barriers 0; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current true, active true), tickers on, text built]
+    46 focusout         FLT-SEMANTICS button Back
+    46 flutter          focus -> node (no identifier above), route /t/I08, hasPrimaryFocus true, canRequestFocus true, ancestors 14
+    47 focusin          FLT-SEMANTICS button Layers drawn in the 
+    87 focusout         FLT-SEMANTICS button Layers drawn in the 
+    88 focusin          flutter-view
+    92 flutter          focus -> scope (no identifier above), route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 12
+   116 focusout         flutter-view
+   116 focusin          FLT-SEMANTICS button Back
+   341 step             count visible; click open [primary: scope (no identifier above), route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 12; barriers 0; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers on, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built]
+   462 focusout         FLT-SEMANTICS button Back
+   462 flutter          focus -> node i08-good-widgets-open, route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 14
+   462 focusin          i08-good-widgets-open
+   463 flutter          app _show state 1046636291 entry before null mounted true
+   472 flutter          app build layers of state 1046636291
+   488 focusout         i08-good-widgets-open
+   489 focusin          flutter-view
+   492 flutter          focus -> node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13
+   509 focusout         flutter-view
+   509 focusin          i08-good-widgets-contours
+   529 step             layers shown [primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built]
+   622 step             poll done: contours [primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built]
+   649 step             escape; focus contours [primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built]
+   655 keydown capture  Escape i08-good-widgets-contours
+   657 flutter          key down Escape; primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; chain [FocusNode Focus < FocusScopeNode FocusScope < FocusNode Focus < _FocusTraversalGroupNode Focus < FocusScopeNode FocusScope < FocusNode (onKeyEvent) Focus < FocusNode (onKeyEvent) Focus < _FocusTraversalGroupNode Focus < FocusNode (onKeyEvent) Focus < FocusNode (onKeyEvent) Focus < FocusNode (onKeyEvent) Focus < FocusScopeNode _FocusScopeWithExternalFocusNode < _FocusTraversalGroupNode Focus < FocusScopeNode null]; DismissIntent action: CallbackAction<DismissIntent> #277415244 enabled true; shortcuts above: Shortcuts, Shortcuts, Shortcuts, Shortcuts Escape->[DismissIntent]
+   658 flutter          pressed [Escape]
+   659 flutter          tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built
+   661 flutter          handler 5 (Title < Directionality < _LocalizationsScope) -> KeyEventResult.ignored
+   661 flutter          handler 6 (Shortcuts < _ShortcutRegistrarScope < ShortcutRegistrar) -> KeyEventResult.ignored
+   661 flutter          handler 8 (Shortcuts < Semantics < _FocusInheritedScope) -> KeyEventResult.ignored
+   661 flutter          handler 9 (Shortcuts < DefaultTextEditingShortcuts < Semantics) -> KeyEventResult.ignored
+   661 flutter          app _close(DismissIntent) state 1046636291 entry 701786517 mounted true
+   662 flutter          handler 10 (Shortcuts < NotificationListener<NavigationNotification> < _SharedAppModel) -> KeyEventResult.handled
+   662 flutter          focus -> node i08-good-widgets-open, route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 14
+   685 focusout         i08-good-widgets-contours
+   687 focusin          flutter-view
+   687 focusout         flutter-view
+   688 focusin          i08-good-widgets-open
+   700 keyup capture    Escape i08-good-widgets-open
+   703 flutter          key up Escape; primary: node i08-good-widgets-open, route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 14; barriers 0
+   703 flutter          late (not handled in the focus tree) up or repeat Escape
+   703 keyup bubble     Escape not prevented
+dump at the end: primary: node i08-good-widgets-open, route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 14; barriers 0; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built
+
+== probeprof4c, a run where it did not: run 7, closed False ==
+ms from the click on the example title; focusin/focusout name the DOM element,
+"keydown bubble" is absent when Flutter stopped the event (it handled it);
+"flutter" lines are printed by the app (probe build).
+  -612 flutter          app _close(barrier) state 497808079 entry 186645374 mounted true
+  -610 flutter          focus -> node i08-bad-no-escape-open, route /t/I08/bad-no-escape, hasPrimaryFocus true, canRequestFocus true, ancestors 14
+  -597 focusout         i08-bad-no-escape-campsites
+  -595 focusin          flutter-view
+  -595 focusout         flutter-view
+  -595 focusin          i08-bad-no-escape-open
+  -458 focusout         i08-bad-no-escape-open
+  -456 flutter          focus -> node (no identifier above), route /t/I08/bad-no-escape, hasPrimaryFocus true, canRequestFocus true, ancestors 13
+  -456 focusin          FLT-SEMANTICS button Back
+  -451 flutter          focus -> scope (no identifier above), route /t/I08, hasPrimaryFocus true, canRequestFocus true, ancestors 12
+   -57 focusout         FLT-SEMANTICS button Back
+   -46 focusin          flutter-view
+   -46 focusout         flutter-view
+   -45 focusin          FLT-SEMANTICS button Back
+   -29 flutter          app dispose state 497808079 entry null
+     0 step             click title [primary: scope (no identifier above), route /t/I08, hasPrimaryFocus true, canRequestFocus true, ancestors 12; barriers 0; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current true, active true), tickers on, text built]
+    67 focusout         FLT-SEMANTICS button Back
+    67 flutter          focus -> node (no identifier above), route /t/I08, hasPrimaryFocus true, canRequestFocus true, ancestors 14
+    68 focusin          FLT-SEMANTICS button Layers drawn in the 
+   103 focusout         FLT-SEMANTICS button Layers drawn in the 
+   104 focusin          flutter-view
+   108 flutter          focus -> scope (no identifier above), route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 12
+   134 focusout         flutter-view
+   135 focusin          FLT-SEMANTICS button Back
+   418 step             count visible; click open [primary: scope (no identifier above), route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 12; barriers 0; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built]
+   478 focusout         FLT-SEMANTICS button Back
+   479 flutter          focus -> node i08-good-widgets-open, route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 14
+   479 focusin          i08-good-widgets-open
+   481 flutter          app _show state 631972917 entry before null mounted true
+   487 flutter          app build layers of state 631972917
+   505 focusout         i08-good-widgets-open
+   506 focusin          flutter-view
+   508 flutter          focus -> node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13
+   526 focusout         flutter-view
+   526 focusin          i08-good-widgets-contours
+   548 step             layers shown [primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built]
+   633 step             poll done: contours [primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built]
+   650 step             escape; focus contours [primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built]
+   654 keydown capture  Escape i08-good-widgets-contours
+   656 flutter          key down Escape; primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; chain [FocusNode Focus < FocusScopeNode FocusScope < FocusNode Focus < _FocusTraversalGroupNode Focus < FocusScopeNode FocusScope < FocusNode (onKeyEvent) Focus < FocusNode (onKeyEvent) Focus < _FocusTraversalGroupNode Focus < FocusNode (onKeyEvent) Focus < FocusNode (onKeyEvent) Focus < FocusNode (onKeyEvent) Focus < FocusScopeNode _FocusScopeWithExternalFocusNode < _FocusTraversalGroupNode Focus < FocusScopeNode null]; DismissIntent action: CallbackAction<DismissIntent> #209543558 enabled true; shortcuts above: Shortcuts, Shortcuts, Shortcuts, Shortcuts Escape->[DismissIntent]
+   657 flutter          pressed [Escape]
+   658 flutter          tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built
+   660 flutter          handler 5 (Title < Directionality < _LocalizationsScope) -> KeyEventResult.handled
+   690 keyup capture    Escape i08-good-widgets-contours
+   692 flutter          key up Escape; primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1
+   693 flutter          handler 6 (Shortcuts < _ShortcutRegistrarScope < ShortcutRegistrar) -> KeyEventResult.ignored
+   693 flutter          handler 8 (Shortcuts < Semantics < _FocusInheritedScope) -> KeyEventResult.ignored
+   693 flutter          handler 9 (Shortcuts < DefaultTextEditingShortcuts < Semantics) -> KeyEventResult.ignored
+   693 flutter          handler 10 (Shortcuts < NotificationListener<NavigationNotification> < _SharedAppModel) -> KeyEventResult.ignored
+   693 flutter          late (not handled in the focus tree) up or repeat Escape
+   693 keyup bubble     Escape not prevented
+  6730 step             second escape; focus contours [primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built]
+  6734 keydown capture  Escape i08-good-widgets-contours
+  6736 flutter          key down Escape; primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; chain [FocusNode Focus < FocusScopeNode FocusScope < FocusNode Focus < _FocusTraversalGroupNode Focus < FocusScopeNode FocusScope < FocusNode (onKeyEvent) Focus < FocusNode (onKeyEvent) Focus < _FocusTraversalGroupNode Focus < FocusNode (onKeyEvent) Focus < FocusNode (onKeyEvent) Focus < FocusNode (onKeyEvent) Focus < FocusScopeNode _FocusScopeWithExternalFocusNode < _FocusTraversalGroupNode Focus < FocusScopeNode null]; DismissIntent action: CallbackAction<DismissIntent> #209543558 enabled true; shortcuts above: Shortcuts, Shortcuts, Shortcuts, Shortcuts Escape->[DismissIntent]
+  6737 flutter          pressed [Escape]
+  6738 flutter          tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built
+  6738 flutter          handler 5 (Title < Directionality < _LocalizationsScope) -> KeyEventResult.handled
+  6739 keyup capture    Escape i08-good-widgets-contours
+  6740 flutter          key up Escape; primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1
+  6740 flutter          handler 6 (Shortcuts < _ShortcutRegistrarScope < ShortcutRegistrar) -> KeyEventResult.ignored
+  6740 flutter          handler 8 (Shortcuts < Semantics < _FocusInheritedScope) -> KeyEventResult.ignored
+  6741 flutter          handler 9 (Shortcuts < DefaultTextEditingShortcuts < Semantics) -> KeyEventResult.ignored
+  6741 flutter          handler 10 (Shortcuts < NotificationListener<NavigationNotification> < _SharedAppModel) -> KeyEventResult.ignored
+  6741 flutter          late (not handled in the focus tree) up or repeat Escape
+  6741 keyup bubble     Escape not prevented
+second Escape a second later: still shown
+dump at the end: primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built
+
+== probeprof4c: every run, at the positive-control Escape ==
+run  0: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run  1: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run  2: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run  3: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run  4: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run  5: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run  6: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run  7: closed False technique screen's Back tooltip still built, tickers off: True  WidgetsApp tooltip Escape handler: KeyEventResult.handled
+run  8: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run  9: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 10: closed False technique screen's Back tooltip still built, tickers off: True  WidgetsApp tooltip Escape handler: KeyEventResult.handled
+run 11: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 12: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 13: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 14: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 15: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 16: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 17: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 18: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 19: closed False technique screen's Back tooltip still built, tickers off: True  WidgetsApp tooltip Escape handler: KeyEventResult.handled
+run 20: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 21: closed False technique screen's Back tooltip still built, tickers off: True  WidgetsApp tooltip Escape handler: KeyEventResult.handled
+run 22: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 23: closed False technique screen's Back tooltip still built, tickers off: True  WidgetsApp tooltip Escape handler: KeyEventResult.handled
+run 24: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 25: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 26: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 27: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 28: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+run 29: closed True  technique screen's Back tooltip still built, tickers off: False WidgetsApp tooltip Escape handler: KeyEventResult.ignored
+
+== probeprof4away (mouse moved off the app bar before the title click) ==
+40 runs; Back tooltip built at the title click in 0; closed 40

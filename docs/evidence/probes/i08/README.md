@@ -291,3 +291,64 @@ keyboard and, from each switch, the test went back in one of three ways:
 What was measured is the history event, not the key. That Alt+Left or
 Command+[ in a person's browser makes that event while Flutter has
 keyboard focus was not measured.
+
+## Round 6: the web Escape flake (2026-11-23)
+
+On GitHub CI (Chromium on ubuntu) the positive control of
+`bad-no-escape: Escape does nothing, from either switch` failed now and
+then: Escape on `good-widgets`' Contour lines, opened from the technique's
+screen after the bad example, left both switches shown for five seconds.
+It passed on a re-run each time, and here every time. The probe:
+`probe_web_flake.spec.js.txt` (served by `p08flake.config.js.txt`) does the
+test's own steps and records the outcome instead of failing, with DOM
+focus and key events from the page; `probe_web_flake.dart.txt` is the app
+with prints of Flutter's primary focus, each key event, which key handler
+of the focus chain took Escape, and every `RawTooltip` in the tree; and
+`probe_web_flake_examples.diff.txt` is the prints added to the examples
+for the probe (never committed to the examples themselves). Output and
+counts: `web_flake.txt`.
+
+- **Reproduced only with the page made slower, and only as Linux.** With
+  `navigator.platform` set to Linux, as on CI (Flutter then uses Zoom page
+  transitions; on this Mac it takes the platform to be macOS), and
+  Chromium's CPU throttled four times (CDP
+  `Emulation.setCPUThrottlingRate`), Escape did not close the layers in 4
+  of 30, 1 of 10, 3 of 30, 1 of 30, 6 of 40, 7 of 40 and 5 of 30 runs; at
+  two times, 2 of 30. Unthrottled as Linux, 0 of 20; throttled four times
+  as macOS, 0 of 30. The test as it is, at CI's two workers, 30 of 30.
+- **What the page was in when it failed.** DOM focus and Flutter's primary
+  focus both on Contour lines in the overlay, one barrier, the Escape
+  `keydown` reaching Flutter with nothing else pressed. Flutter took the
+  key (the engine stopped the event, and the late handler never saw it),
+  but the layers' `DismissIntent` action did not run. A second Escape a
+  second later: the same, in every failed run.
+- **What took it.** The handler that returned `handled` was `WidgetsApp`'s
+  own `Focus` for tooltips (`widgets/app.dart`: it handles Escape when
+  `RawTooltip.dismissAllToolTips()` returns true, which it does whenever a
+  tooltip is registered as open). It is lower in the focus chain than the
+  app's `Shortcuts` that turns Escape into `DismissIntent`, so it runs
+  first. In the 30 runs that list tooltips, the technique screen's Back
+  tooltip was built when the test clicked the example's title in all 30
+  (the mouse was still where it had clicked Back on the bad example's
+  screen, which is where the technique screen's Back appears). In the 25
+  that closed, it was gone by the time of the Escape. In the 5 that did
+  not, it was still built, in the technique's route, now under the example
+  with its tickers off, and that handler returned `handled`; in the 25 it
+  returned `ignored`. Read in the source: a tooltip leaves the open list
+  only when its hide animation ends (`RawTooltipState._handleStatusChanged`),
+  and an animation does not run while its route's tickers are off; that
+  this is why it stayed was not measured.
+- **With the tooltip out of the way, no failure.** The same steps with the
+  mouse moved off the app bar for a second after Back, so that no tooltip
+  was shown at the title click: 40 of 40 closed, at four times throttling.
+- **The other pair.** `bad-not-dismissible` then `good-material`, the
+  same way, at four times: 40 of 40 closed. Back's tooltip was built at
+  the title click in 39 of them and gone by the Escape in all 40; why it
+  never stayed there was not found.
+
+So Escape on `good-widgets` failed in a state a person with a mouse can
+reach: a tooltip still being hidden when a new screen is pushed over it.
+How often that happens on real hardware, without throttling, was not
+measured. The trace lines printed for the key up (handlers 6 to 10 in
+`web_flake.txt`) are the probe's wrappers still in place from the key
+down, not a second dispatch.
