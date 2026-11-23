@@ -169,3 +169,7 @@ browsers, `good-action` in WebKit (Close "Close button"), and the six
 announcements. The diagnostic row `good-action-close-tooltip-after-walk`
 said "shown" in both browsers: after the walk Close's tooltip was shown.
 The walks now expect each browser's reading exactly.
+
+The third recording, against 50889b8, passed: every test, every walk
+complete on its first try. It is the transcript,
+`docs/evidence/C13/voiceover-web.md`.

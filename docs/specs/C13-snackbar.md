@@ -300,6 +300,16 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   - `good-banner`: the title, then "You are offline. group", "Go online
     button", "end of You are offline. group", then the description, the
     "Example" heading, "Go offline button", "Status: offline".
+- **VoiceOver on the web, the transcript**
+  ([evidence/C13/voiceover-web.md](../evidence/C13/voiceover-web.md)) is
+  the third recording, by the principal: 10 tests passed, every walk
+  complete on its first try in both browsers, Chromium reading Close
+  "Close Close" and WebKit "Close button", with Close's tooltip shown
+  after the walk in both. The first recording failed on its four walks,
+  written as predictions; the second on `good-action`'s walk in Chromium,
+  at Close, before the lists were set per browser. Both are kept in the
+  probe folder (`voiceover-web-round1-fail.md.txt`,
+  `voiceover-web-round2-fail.md.txt`).
 - **The banner's reading order is its drawn order.** `showMaterialBanner`
   puts the banner at the top of the `Scaffold`'s body, under the app bar
   and above the page, so it is drawn after the title and before the
