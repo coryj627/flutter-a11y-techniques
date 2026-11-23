@@ -27,9 +27,12 @@ TALKBACK_EXPECT = {
     # The defects of these two are in time, not in what is said.
     "c13-bad-action-times-out-announced": (["Message archived"], []),
     "c13-bad-only-in-message-announced": (["Booked. Code: K7Q2"], []),
-    # FL-295: a banner put in the page is not announced; focus moved to it
-    # reads it, so its words are there to be found.
-    "c13-bad-inline-banner-announced": ([], ["offline"]),
+    # FL-295: a banner put in the page is not announced. The row is the five
+    # seconds after the press, then TalkBack focus moved to the page's
+    # button, which must be read: the strict judge counts a silent row as
+    # short, and this shows the capture live in the same row. The banner's
+    # words must not be in it; focus moved to the banner reads them (next).
+    "c13-bad-inline-banner-announced": (["Go offline"], ["You are offline."]),
     "c13-bad-inline-banner-message": (["You are offline."], []),
     # What the action did, told by a SnackBar of its own: focus parked on
     # the line again, the action pressed with the click action. For

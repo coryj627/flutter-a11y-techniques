@@ -288,7 +288,8 @@ class C13SnackbarTest : TechniqueTest("C13") {
      * L4. Skipped unless TalkBack is running. For each example: TalkBack
      * focus is parked on the example's line, the button is pressed with the
      * click action, and what TalkBack then says is logged as
-     * "c13-<slug>-announced". For the messages that stay, focus is then
+     * "c13-<slug>-announced" (for bad-inline-banner, the silence and then
+     * focus moved to its button, in that row). For the messages that stay, focus is then
      * moved to each of the message's nodes. tool/talkback.py reads the
      * speech between the markers from logcat.
      */
@@ -303,6 +304,16 @@ class C13SnackbarTest : TechniqueTest("C13") {
             Log.i(talkBackTag, "FOCUS c13-$slug-announced")
             assertTrue("$slug click", nodeInAnyWindow("c13-$slug-show").performAction(AccessibilityNodeInfo.ACTION_CLICK))
             Thread.sleep(5_000)
+            if (slug == "bad-inline-banner") {
+                // Its silence is the five seconds above. The strict judge
+                // (tool/talkback.py, walk_strictly) counts a row with
+                // nothing spoken as a capture shown to be short, so the row
+                // ends, within its marker, with TalkBack focus moved to the
+                // page's button, which must be read: the capture was live
+                // in the same row, after the silence.
+                talkBackFocus("$slug button") { nodeInAnyWindow("c13-$slug-show") }
+                Thread.sleep(3_000)
+            }
             val stops = when (slug) {
                 "good-action" -> listOf("message" to "Message archived", "undo" to "Undo", "close" to "Close")
                 "good-banner" -> listOf("message" to "You are offline.", "go-online" to "Go online")
