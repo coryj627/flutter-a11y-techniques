@@ -66,6 +66,7 @@ example is added without a decision.
 | [C03 Stand-alone link](#c03-stand-alone-link) | 4 | 4 | 0 | 0 |
 | [C04 Links inline with text](#c04-links-inline-with-text) | 3 | 3 | 0 | 0 |
 | [C12 Tooltip](#c12-tooltip) | 3 | 1 | 0 | 2 |
+| [C26 Progress indicator](#c26-progress-indicator) | 3 | 0 | 0 | 3 |
 | [F01 Text fields and labels](#f01-text-fields-and-labels) | 3 | 0 | 0 | 3 |
 | [F02 Input instructions](#f02-input-instructions) | 3 | 0 | 0 | 3 |
 | [F03 Keyboard types](#f03-keyboard-types) | 4 | 0 | 0 | 4 |
@@ -91,7 +92,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 114 | 48 | 12 | 54 |
+| All | 117 | 48 | 12 | 57 |
 
 ## C01 Button
 
@@ -147,6 +148,16 @@ Flagged: `good-cupertino`.
 | `good-material` | Nothing: `Tooltip(message:, ignorePointer: false, excludeFromSemantics: true)` round an `IconButton` named by `Icon(semanticLabel:)`, and a focus outline through the button's own `style` | `Tooltip` | The pointer cannot reach a default tooltip ([FL-247](flutter-limitations.md#fl-247)), filled with its own parameter; a faint focus tint ([FL-430](flutter-limitations.md#fl-430)), filled with the button's `style` | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
 | `good-cupertino` | An `Actions` for `ButtonActivateIntent` round the `CupertinoButton`, so that Enter works on the web; the tooltip itself is Material's `Tooltip` through its parameters | None: Cupertino has no tooltip; Material's `Tooltip` is used, with `CupertinoButton` | Enter on the web ([FL-002](flutter-limitations.md#fl-002)); the box over the button ([FL-250](flutter-limitations.md#fl-250)) and the faint ring ([FL-431](flutter-limitations.md#fl-431)), filled with parameters | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | custom |
 | `good-description` | Nothing is built: `MergeSemantics` round `Tooltip(message:, ignorePointer: false)` round an `OutlinedButton`, so that the tooltip is on the button | `Tooltip` | A tooltip round a Material button stays on a node of its own ([FL-040](flutter-limitations.md#fl-040)), filled with the documented merge | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
+
+## C26 Progress indicator
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-linear` | Nothing: `LinearProgressIndicator(value:, semanticsLabel:)`, the visible words in `ExcludeSemantics`, and the status line in `Semantics(liveRegion: true)` | `LinearProgressIndicator`; `Semantics.liveRegion` | A change of the bar's value is not announced ([FL-254](flutter-limitations.md#fl-254)), filled with the documented live region | R1, R2, R3, R4: iOS Progress Indicators, MDN: progress, ARIA progressbar, Understanding 4.1.3, ARIA25 | not custom |
+| `good-circular` | Nothing: `CircularProgressIndicator(semanticsLabel:)` and the status line in `Semantics(liveRegion: true)` | `CircularProgressIndicator`; `Semantics.liveRegion` | None filled (a spinner has no role, [FL-256](flutter-limitations.md#fl-256), and is left as it is) | R1, R3, R4: iOS Progress Indicators, MDN: progress, ARIA progressbar, Understanding 4.1.3, ARIA25 | not custom |
+| `good-cupertino` | Nothing is built: `Semantics(label:)` round a `CupertinoActivityIndicator`, and the status line in `Semantics(liveRegion: true)` | `CupertinoActivityIndicator`, which has no semantics and no parameter for a name | Cupertino's spinner gives no name ([FL-255](flutter-limitations.md#fl-255)), filled with a label, as the rule above allows for a Cupertino field's missing label | R1, R3, R4: iOS Progress Indicators, MDN: progress, ARIA progressbar, Understanding 4.1.3, ARIA25 | not custom |
 
 ## F01 Text fields and labels
 

@@ -48,5 +48,63 @@ How each platform was looked at, and the raw output:
   accessibility tree over the DevTools protocol, four Tabs; for the
   changing fixtures, the elements every 600 ms and every value written to
   Flutter's announcement elements. Output: `web.txt`.
-- Android: (filled in below)
-- iOS: (filled in below)
+- Android: Pixel emulator, Android 17, a throwaway instrumented test
+  (`ProbeC26Test.kt.txt`, run by `probe_android.py.txt` under the device
+  lock): every node of each fixture with its class, description, range,
+  live region, and actions; for the changing fixtures, Start pressed with
+  the click action and the indicator and status every 600 ms
+  (`android-tree.txt`). With TalkBack on, through `tool/talkback.py`'s own
+  helper, which restores the device: TalkBack focus on each still
+  indicator; for each changing fixture, focus left on the indicator, then
+  on Start, while Start is pressed, nine seconds each
+  (`android-talkback.md`, as parsed by `talkback.parse_speech`;
+  `android-talkback-markers.txt`, the probe's own lines).
+- iOS: iPhone 17 simulator, iOS 27.0, a throwaway XCUITest
+  (`ProbeC26UITests.swift.txt`, run by `ios_probe.sh.txt`): each
+  fixture's elements from one `snapshot()`; for the changing fixtures,
+  Start tapped and a snapshot every 600 ms; a VoiceOver walk of each
+  fixture; the cursor on Start, a double tap at it, and `currentSpeech()`
+  for nine seconds; and the cursor left on the indicator of the fixture's
+  "a" route, which starts by itself, and `currentSpeech()` until 24 s after
+  the open (`ios.txt`).
+
+## Rounds
+
+- **Round 1** (`android-tree-round1.txt`, `android-talkback-round1.md`,
+  `android-talkback-markers-round1.txt`, `ios-round1.txt`, `web-round1.txt`).
+  On Android the run stopped at p04, which never opened: a debug build
+  asserts against its value (FL-258). On iOS no fixture's elements were
+  found: a start by URL builds the probe's `/` route first, which then
+  listed every fixture, p04 among them; and each element query waited a
+  minute or more while an indicator turned. Round 1 was stopped there.
+- **Round 2**: `/` lists nothing; p04 is tried alone (`p04Alone`,
+  `testP04`); a changing bar is at 0 before Start, where in round 1 it was
+  indeterminate (no role on the web, a spinner's role elsewhere); iOS reads
+  the tree from snapshots. Every other file here is round 2. The web was
+  run again for round 2 (`web.txt`).
+
+## What was found
+
+| # | Web (Chromium) | Android | iOS |
+| --- | --- | --- | --- |
+| p01 bar, named | `progressbar`, `aria-label` "p01 Upload 40", `aria-valuenow` 40, min 0, max 100 | `ProgressBar` "40, p01 Upload", float range 0 to 100, 40; TalkBack "40.0.", "40,", "p01 Upload", "Progress bar" | static text, label "p01 Upload", value "40"; VoiceOver "p01 Upload 40" |
+| p02 bar, no name | `progressbar` named "40" | `ProgressBar` "40"; TalkBack "40.0.", "40", "Progress bar" | an element of type other, no label, value "40"; VoiceOver "40" |
+| p03 `semanticsValue: '40%'` | `aria-valuenow` 40, `aria-valuetext` "40%", named "p03 Upload 40%" | `ProgressBar` "40%, p03 Upload", range of the indeterminate type, 0 to 0 (FL-027); TalkBack "40%,", "p03 Upload", "Progress bar" | value "40%"; VoiceOver "p03 Upload 40%" |
+| p04 `semanticsValue: '2 of 5 files'` | (release) `aria-valuetext` "2 of 5 files", no `aria-valuenow` | (debug) never opened | (debug) never opened |
+| p05, p08 spinner, named | no role, `aria-label`; Chromium "generic" | `View` "p05 Loading", no range; TalkBack "p05 Loading", no role word | static text "p05 Loading"; VoiceOver "p05 Loading" |
+| p06 spinner, no name | an element with nothing | a `View` with nothing, not focusable; TalkBack nothing of it | type other, nothing; VoiceOver passed over |
+| p07 circle, named | as p01 | as p01 | as p01 |
+| p09, p10 `.adaptive` | nothing (a Mac's browser) | Material's: as p08 and p07 | nothing; VoiceOver passed over |
+| p11 to p13 Cupertino | nothing | nothing | nothing; VoiceOver passed over |
+| p14 `Semantics(label:)` round Cupertino's spinner | the text "p14 Loading", no role | `View` "p14 Loading" | static text "p14 Loading" |
+| p15 text above, one `Semantics` | the text and the label both in the name | the same | the same |
+| p17 changing bar, then text | `aria-valuenow` each step; nothing announced | range each step; TalkBack said nothing for the steps, on the bar or on Start | value each step; VoiceOver said nothing for them, on the bar or on Start |
+| p18 status line, live region | each line announced | each line spoken, seconds behind | each line spoken |
+| p19 `sendAnnouncement` at the end | announced | `supportsAnnounce` false; TalkBack spoke it (focus on Start) | spoken |
+| p20 spinner, then text | nothing announced | nothing; with TalkBack focus on the spinner, the focus was still on that node when it held "p20 Loaded", and nothing was said | nothing |
+| p21 live region round the spinner | "p21 Loading" and "p21 Loaded" announced | both spoken | both spoken |
+| p22 spinner and a status line | the line announced | spoken | spoken |
+
+Widget tests (`flutter_test.txt`): the same roles, labels, and values as
+Android, iOS, and macOS; `.adaptive` with nothing as iOS and macOS. The
+default `semanticsValue` is the percentage with no "%", "40".
