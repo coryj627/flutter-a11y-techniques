@@ -101,6 +101,31 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
         assertEquals("$countName for $slug (null: not in the tree)", expected, last)
     }
 
+    /**
+     * The node of [error], below the field [id], waited for up to 8 seconds
+     * with the keyboard put away before each look, and taken from the look
+     * that found it. Focus is on the first field in error, and the keyboard
+     * it brings up can come after [closeKeyboardAndWaitForCount] has looked
+     * for one. In five CI runs that failed here (45076161869, attempt 2;
+     * 45131874860, attempts 1 and 2; 45136174646, attempts 1 and 3) the
+     * device's log shows good-cupertino's keyboard shown as focus moved and
+     * never put away before the failure; with good-form's, put away by
+     * Back, the same checks passed. In four of them a 5-second wait never
+     * found the email's error; in the fifth the name's error was found and
+     * gone at the next look, 0.75 seconds after the example opened, as the
+     * keyboard came up. The failures began with the custom-solution note
+     * (pull request 204), which pushes the example down the screen.
+     */
+    private fun errorWithKeyboardAway(id: String, error: String): AccessibilityNodeInfo {
+        val end = System.currentTimeMillis() + 8_000
+        while (true) {
+            hideKeyboard()
+            withText(error)?.let { return it }
+            if (System.currentTimeMillis() >= end) throw AssertionError("$id and its error in the tree")
+            Thread.sleep(250)
+        }
+    }
+
     private val good = mapOf(
         "good-form" to listOf(
             Triple("f06-good-form-name", "Name", NAME_ERROR),
@@ -125,7 +150,8 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             assertFalse("$slug second field not focused", node(fields[1].first).isFocused)
             closeKeyboardAndWaitForCount(slug)
             for ((id, label, error) in fields) {
-                waitFor("$id and its error in the tree") { withText(error) != null }
+                // The visible error is a node of its own.
+                val message = errorWithKeyboardAway(id, error)
                 // Flutter joins the label and the error with ", ".
                 assertEquals(id, "$label, $error", hint(id))
                 assertTrue(id, node(id).contentDescription.isNullOrEmpty())
@@ -133,8 +159,7 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
                 assertTrue(id, node(id).error.isNullOrEmpty())
                 assertFalse(id, node(id).isContentInvalid)
                 assertEquals(id, View.ACCESSIBILITY_LIVE_REGION_NONE, node(id).liveRegion)
-                // The visible error is a node of its own, and a live region.
-                val message = withText(error)!!
+                // The visible error is a live region.
                 assertEquals(error, View.ACCESSIBILITY_LIVE_REGION_POLITE, message.liveRegion)
                 assertFalse(error, message.isEditable)
             }
@@ -175,8 +200,11 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             // polite live region.
             assertEquals("$slug count", View.ACCESSIBILITY_LIVE_REGION_POLITE,
                 node("f06-$slug-count").liveRegion)
+            // The field's hint can follow the count late: read once, it
+            // still had the error in one CI run (44991679415, attempt 2).
+            waitFor("$slug email error cleared") { hint(email) == "Email" }
             assertEquals(email, "Email", hint(email))
-            assertTrue("$slug errors gone", withText(EMAIL_ERROR) == null)
+            waitFor("$slug errors gone") { withText(EMAIL_ERROR) == null }
         }
     }
 

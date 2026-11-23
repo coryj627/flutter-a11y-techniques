@@ -129,9 +129,10 @@ jobs:
           target: google_apis
           working-directory: android
           # A test that hangs fails after three minutes with a stack trace.
-          # tool/ci_android_tests.sh runs the test classes four at a time,
-          # each batch in a test process of its own: in one process for
-          # every test the emulator's memory grew until the runner froze.
+          # tool/ci_android_tests.sh runs each test class in a test process
+          # of its own: in one process for every test the emulator's memory
+          # grew until the runner froze, and with four classes a process the
+          # runner still ran low on memory in about one run in six.
           # It stops the run, saves the state of the runner and the
           # emulator, and fails if no test starts or finishes for five
           # minutes, the runner runs low on memory, or the emulator exits.
