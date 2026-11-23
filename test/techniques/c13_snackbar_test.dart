@@ -493,7 +493,7 @@ void main() {
       });
 
       testWidgets('$slug: Back pops the example, and the message stays on '
-          'the screen under it', (tester) async {
+          'the screen under it and on the catalog', (tester) async {
         await _open(tester, slug);
         await _press(tester, slug);
         await tester.binding.handlePopRoute();
@@ -502,12 +502,21 @@ void main() {
         expect(find.byType(TechniqueScreen), findsOneWidget);
         expect(_shown(slug), isTrue);
         expect(await _goneAfter(tester, slug), isNull);
-        // Its action still works there, on a screen that is gone.
+        // And on to the catalog, the screen of every technique: the
+        // message is there too, over another screen than its own.
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.byType(CatalogScreen), findsOneWidget);
+        expect(_shown(slug), isTrue);
+        // Its action, used there, closes it, changes nothing, and tells
+        // nothing: its example has gone.
         await tester.tap(
           find.text(slug == 'good-action' ? 'Undo' : 'Go online'),
         );
-        await _frames(tester, const Duration(seconds: 1));
+        await _frames(tester, const Duration(seconds: 2));
         expect(_shown(slug), isFalse);
+        expect(find.text('Archive undone'), findsNothing);
+        expect(find.text('You are online.'), findsNothing);
         expect(tester.takeException(), isNull);
       });
     }
@@ -857,6 +866,158 @@ void main() {
       // banner is cleared with the one going out, and the page agrees.
       expect(_lineText(tester, 'good-banner'), 'Status: online');
       expect(find.text('You are offline.'), findsNothing);
+    });
+  });
+
+  // Messages outlive their example: the ScaffoldMessenger is the app's, and
+  // a SnackBar or banner goes with Back to the screen under (FL-291). The
+  // rules the examples keep, whatever the order (Codex review, 2026-11-23):
+  // a confirmation ("Archive undone", "You are online.") is shown only for
+  // an action that changed its example while that example was on the
+  // screen, and it clears the queue only if no newer message has been shown
+  // through the same messenger, by any example, since the message it is
+  // about; otherwise it waits behind the newer one. An action used after
+  // its example has gone closes its message, changes nothing, and tells
+  // nothing. (docs/specs/C13-snackbar.md, section 6, lists the orderings.)
+  group('messages that outlive their example', () {
+    /// Opens the example [title] from the technique's list, scrolled to.
+    Future<void> openFromList(WidgetTester tester, String title) async {
+      final tile = find.widgetWithText(ListTile, title);
+      await tester.ensureVisible(tile);
+      await tester.pumpAndSettle();
+      await tester.tap(tile);
+      await tester.pumpAndSettle();
+      expect(find.byType(ExampleScreen), findsOneWidget);
+    }
+
+    /// From an example screen, Back to the technique's screen, then the
+    /// example [title] opened again from its list.
+    Future<void> backAndOpen(WidgetTester tester, String title) async {
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byType(TechniqueScreen), findsOneWidget);
+      await openFromList(tester, title);
+    }
+
+    String titleOf(String slug) => c13Snackbar.example(slug)!.title;
+
+    for (final nav in [false, true]) {
+      testWidgets('across Back and reopen, accessibleNavigation $nav: the '
+          'old message\'s Undo, used after the new archive, changes nothing '
+          'and the new message keeps its Undo', (tester) async {
+        await _open(tester, 'good-action', accessibleNavigation: nav);
+        await _press(tester, 'good-action');
+        await backAndOpen(tester, titleOf('good-action'));
+        // The old message A followed Back and came back with the screen.
+        expect(find.text('Undo'), findsOneWidget);
+        expect(_lineText(tester, 'good-action'), 'Archived: 0');
+        await tester.tap(byId(_show('good-action')));
+        await tester.pump(const Duration(milliseconds: 50));
+        expect(_lineText(tester, 'good-action'), 'Archived: 1');
+        if (!nav) {
+          // With the animations on, A is still going out: press its Undo.
+          expect(find.text('Undo'), findsOneWidget);
+          await tester.tap(find.text('Undo'), warnIfMissed: false);
+        }
+        await _frames(tester, const Duration(seconds: 2));
+        // B is shown, with its Undo; the line counts B; nothing was told.
+        expect(_lineText(tester, 'good-action'), 'Archived: 1');
+        expect(find.text('Message archived'), findsOneWidget);
+        expect(find.text('Undo'), findsOneWidget);
+        expect(find.text('Archive undone'), findsNothing);
+        await tester.tap(find.text('Undo'));
+        await _frames(tester, const Duration(seconds: 1));
+        expect(_lineText(tester, 'good-action'), 'Archived: 0');
+        expect(find.text('Archive undone'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('an action used after its example has gone, '
+          'accessibleNavigation $nav: Undo and Go online close their '
+          'message on the screen under, and tell nothing', (tester) async {
+        for (final (slug, action) in [
+          ('good-action', 'Undo'),
+          ('good-banner', 'Go online'),
+        ]) {
+          await tester.pumpWidget(const SizedBox());
+          await _open(tester, slug, accessibleNavigation: nav);
+          await _press(tester, slug);
+          await tester.binding.handlePopRoute();
+          await tester.pumpAndSettle();
+          expect(find.byType(TechniqueScreen), findsOneWidget);
+          expect(_shown(slug), isTrue, reason: '$slug followed Back');
+          await tester.tap(find.text(action));
+          await _frames(tester, const Duration(seconds: 2));
+          expect(_shown(slug), isFalse, reason: slug);
+          expect(find.text('Archive undone'), findsNothing, reason: slug);
+          expect(find.text('You are online.'), findsNothing, reason: slug);
+          expect(tester.takeException(), isNull);
+        }
+      });
+
+      testWidgets('Undo, then Back while the message goes out, '
+          'accessibleNavigation $nav: the undo happened, and its news comes '
+          'on the screen under', (tester) async {
+        await _open(tester, 'good-action', accessibleNavigation: nav);
+        await _press(tester, 'good-action');
+        await tester.tap(find.text('Undo'));
+        await tester.pump(const Duration(milliseconds: 50));
+        expect(_lineText(tester, 'good-action'), 'Archived: 0');
+        await tester.binding.handlePopRoute();
+        await _frames(tester, const Duration(seconds: 2));
+        expect(find.byType(ExampleScreen), findsNothing);
+        expect(find.text('Archive undone'), findsOneWidget);
+        expect(find.text('Message archived'), findsNothing);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('across two examples, accessibleNavigation $nav: '
+          'good-action\'s Undo, used after good-message\'s or good-banner\'s '
+          'message is shown, does not take that message away', (tester) async {
+        for (final (other, otherMessage) in [
+          ('good-message', 'Draft saved'),
+          ('good-banner', 'You are offline.'),
+        ]) {
+          await tester.pumpWidget(const SizedBox());
+          await _open(tester, 'good-action', accessibleNavigation: nav);
+          await _press(tester, 'good-action');
+          await tester.binding.handlePopRoute();
+          await tester.pumpAndSettle();
+          await openFromList(tester, titleOf(other));
+          await tester.tap(byId(_show(other)));
+          await tester.pump(const Duration(milliseconds: 50));
+          // good-message's SnackBar replaces good-action's (A going out with
+          // the animations on); good-banner's banner leaves A shown.
+          if (find.text('Undo').evaluate().isNotEmpty) {
+            await tester.tap(find.text('Undo'), warnIfMissed: false);
+          }
+          await _frames(tester, const Duration(milliseconds: 600));
+          expect(find.text(otherMessage), findsOneWidget, reason: other);
+          expect(find.text('Archive undone'), findsNothing, reason: other);
+          expect(tester.takeException(), isNull);
+        }
+      });
+    }
+
+    testWidgets('a banner and a SnackBar together: good-action\'s message '
+        'over good-banner\'s screen; Go online there replaces it with '
+        '"You are online.", and the page is online', (tester) async {
+      await _open(tester, 'good-action');
+      await _press(tester, 'good-action');
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      await openFromList(tester, titleOf('good-banner'));
+      await _press(tester, 'good-banner');
+      // Both shown: the banner above the page, the SnackBar below it.
+      expect(find.text('You are offline.'), findsOneWidget);
+      expect(find.text('Message archived'), findsOneWidget);
+      await tester.tap(find.text('Go online'));
+      await _frames(tester, const Duration(seconds: 2));
+      expect(_lineText(tester, 'good-banner'), 'Status: online');
+      expect(find.text('You are offline.'), findsNothing);
+      // A newer message replaces an older one (clearSnackBars).
+      expect(find.text('You are online.'), findsOneWidget);
+      expect(find.text('Message archived'), findsNothing);
     });
   });
 

@@ -238,3 +238,10 @@ message's action, during the next one's coming", against `examples.dart`
 as of d7eebd9, where three of four failed (the newer message and its Undo
 were gone after the outgoing Undo), and against the fixed code, where all
 four passed (FL-293).
+
+`flutter_test_outlive.txt`: the C13 widget tests "messages that outlive
+their example", against `examples.dart` as of 6688803 (a count per example,
+a confirmation whether or not its example was still there), where 5 of 9
+failed, and against the fixed code (a count per messenger, a confirmation
+only for an action that changed its example while it was there), where
+all 9 passed.

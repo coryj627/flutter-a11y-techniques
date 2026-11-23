@@ -3817,8 +3817,11 @@ yet), **Fixed in x.y** (verified on that version).
   - Back (`popRoute`, the widget tests) pops the screen, and the message
     moves to the screen under it. A SnackBar that stays, and a banner,
     stay there: still shown 15 s and 30 s later (the probe's s02, s05,
-    s06; C13 `good-action` and `good-banner`), and their action still
-    works there, on a screen that is gone. A timed one goes on its timer.
+    s06; C13 `good-action` and `good-banner`, which also stay over the
+    catalog after a second Back), and their action can still be used
+    there, on a screen that is gone (in the probe it ran the app's
+    callback; C13's examples make it change nothing and tell nothing
+    then, as the example has gone). A timed one goes on its timer.
   - What does close one: its action, `showCloseIcon`'s Close button, a
     swipe down (a SnackBar only; `flutter_test.txt`), and the dismiss
     action that both put on their node (`Semantics(onDismiss:)`), which
@@ -3906,11 +3909,17 @@ yet), **Fixed in x.y** (verified on that version).
   during A's exit: A closes with the reason `action`, and B comes in. A
   confirmation shown then from A's `closed` future with `clearSnackBars()`
   took B, and its Undo, away, while the line still counted B's archive.
-  C13 now counts the messages each example has shown (plain state) and,
-  when a newer one has been shown since, queues the confirmation behind
-  it instead: B and its Undo stay, and "Archive undone" comes when B is
-  closed. With `accessibleNavigation` on a message goes at once, so the
-  ordering does not arise there.
+  C13 first counted the messages each example had shown; that missed
+  the messages that outlive their example: across Back and a reopen, or
+  across two examples, an old message's confirmation cleared a newer
+  message (`flutter_test_outlive.txt`). C13 now counts the messages shown
+  through each messenger (plain state beside it, an `Expando`), queues a
+  confirmation behind any newer one instead of clearing, and tells it only
+  for an action that changed its example while it was there: B and its
+  Undo stay, and "Archive undone" comes when B is closed. With
+  `accessibleNavigation` on a message goes at once, so the ordering
+  within one example does not arise there; across Back it does, and is
+  tested both ways.
 - Workaround, in the SDK: `clearSnackBars()` before `showSnackBar()`, and
   `clearMaterialBanners()` before `showMaterialBanner()`: they clear the
   queue and take away the current one. Every C13 example does; the C13
@@ -3999,7 +4008,8 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround, in the SDK: show it once the first SnackBar has closed by
   its action, from its controller's `closed` future
   (`SnackBarClosedReason.action`), and only with a clear when no newer
-  message has been shown since ([FL-293](#fl-293)); C13 `good-action` and
+  message has been shown through the messenger since
+  ([FL-293](#fl-293)); C13 `good-action` and
   `bad-action-times-out` do, and their "Archive undone" was announced on
   the web (`web_undo.txt`, round 2) and in the widget tests with
   `accessibleNavigation` off and on.
