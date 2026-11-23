@@ -32,7 +32,8 @@ recorded and not built:
 
 - No platform is told that a card is a card. Flutter has no `article` role
   ([FL-026](../flutter-limitations.md#fl-026), extended), and a `Card` with
-  separate parts is no node at all. The card's heading is what marks where
+  separate parts is no node at all on the web and Android (XCUITest gives
+  no hierarchy, so iOS's was not read). The card's heading is what marks where
   it starts, as MDN says each `article` should be identified.
 - A heading merged into a control is a heading and no longer a button or a
   link on the web ([FL-262](../flutter-limitations.md#fl-262), extended;
@@ -128,7 +129,9 @@ does not activate on the web ([FL-002](../flutter-limitations.md#fl-002))
 without an `Actions` built by hand, which would make it a custom solution.
 `CupertinoListSection.insetGrouped`, the nearest grouped surface, does not
 make its header a heading ([FL-014](../flutter-limitations.md#fl-014)), and
-a `CupertinoListTile` takes no keyboard focus and has no button role
+a `CupertinoListTile` takes no keyboard focus on any of the three platforms
+and has no button role on Android and iOS; on the web it is a button
+(`role="button"`, with no `tabindex`) that a mouse click runs
 ([FL-400](../flutter-limitations.md#fl-400); probe fixture p17).
 
 There is no widgets-layer example: the widgets layer has no card either,
@@ -200,8 +203,10 @@ failure there. Its one defect is the web's.
 
 `TestId` is a `MergeSemantics`, so it is put round each control and never
 round a card: round a card it makes the whole card one node with the
-heading's level and the button's action, a button that is a heading off the
-web and a heading on the web (probe fixture p18, a card with one button;
+heading's level and the button's action: on Android a button that is a
+heading, on iOS a button (VoiceOver's reading was cut at 64 characters
+before any trait), and on the web a heading only (probe fixture p18, a card
+with one button;
 `good-material`'s card, with two, was not tried).
 The headings and texts are found by their text.
 
@@ -236,8 +241,8 @@ Made by the principal on 2026-11-22, on the engineer's questions:
 ## 7. What the build found (Flutter 3.47.5)
 
 The probe that came first is in [evidence/probes/c18](../evidence/probes/c18/README.md):
-twenty fixtures on every platform, with plain HTML pages for comparison on
-the web.
+twenty fixtures on every platform (the iOS key test on eleven of them),
+with plain HTML pages for comparison on the web.
 
 - **A `Card` at its default is read as one heading**
   ([FL-269](../flutter-limitations.md#fl-269), new; `bad-default-container`).
@@ -319,11 +324,18 @@ the web.
   that the examples do not, names that tell the cards' actions apart, is in
   `good-material`'s button names already.
 - **Cupertino has no card.** A `CupertinoListSection.insetGrouped` header
-  is not a heading ([FL-014](../flutter-limitations.md#fl-014)) and its
-  `CupertinoListTile` takes no keyboard focus and has no button role
-  ([FL-400](../flutter-limitations.md#fl-400)); TalkBack read p17's tile as
-  its text and "Double-tap to activate", Tab passed it on Android and the
-  web, and on iOS no key the probe sent ran it. A `CupertinoButton` in a drawn card (p16) is a button, which on
+  is not a heading on any of the three platforms
+  ([FL-014](../flutter-limitations.md#fl-014)). Its `CupertinoListTile`
+  (p17) takes no keyboard focus on any of them: Tab passed it on Android
+  and the web, and on iOS no key the probe sent ran it. It has no button
+  role on Android (a clickable `View`, which TalkBack read as its text and
+  "Double-tap to activate") and on iOS (static text, read by VoiceOver
+  with no trait); on the web it is a button, `role="button"` with no
+  `tabindex`, in the DOM and in Chromium's tree, and a mouse click at its
+  centre ran it, so its web defect is the missing focus, not a missing role
+  ([FL-400](../flutter-limitations.md#fl-400), which has the same platform
+  scope). A tap ran it on iOS and the click action on Android. A
+  `CupertinoButton` in a drawn card (p16) is a button, which on
   the web Enter does not activate without an `Actions` of its own
   ([FL-002](../flutter-limitations.md#fl-002)); `good-cupertino` has no
   action for that reason.

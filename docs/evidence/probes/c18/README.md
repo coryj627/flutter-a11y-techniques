@@ -171,8 +171,10 @@ and p11 opened `/dest`; p17's tile was never run by a key.
 
 ## What this changed
 
-- `Card`'s default makes the card's text one heading on every platform:
-  `bad-default-container`, and [FL-269](../../../flutter-limitations.md#fl-269).
+- `Card`'s default makes the card's text one heading on every platform
+  (on iOS the probe's reading was cut at 64 characters after "H";
+  "Heading" was heard in C18's walk): `bad-default-container`, and
+  [FL-269](../../../flutter-limitations.md#fl-269).
 - A heading inside a control is only a heading on the web:
   `bad-heading-button`, `good-tappable` has no heading, and
   [FL-262](../../../flutter-limitations.md#fl-262).

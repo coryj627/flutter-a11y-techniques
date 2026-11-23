@@ -3514,9 +3514,13 @@ yet), **Fixed in x.y** (verified on that version).
     action; the mouse click 16 pixels in from its left edge, at mid height,
     and a DOM click ran nothing (a click where the button is drawn was not
     tried).
-  - Off the web each keeps both: on Android a `Button` (or a `View` with
-    the link's `URLSpan`) whose `isHeading` is true (`android-tree.txt`);
-    on iOS a button or a link to XCUITest (`ios.txt`). For C18
+  - Off the web the `ListTile` (p06), the `Semantics(button: true)` card
+    (p19), the merged card (p18), and the link card (p09) keep both: on
+    Android a `Button` (for p09 a `View` with the link's `URLSpan`) whose
+    `isHeading` is true (`android-tree.txt`); on iOS a button (for p09 a
+    link) to XCUITest (`ios.txt`). The `InkWell` cards with a heading (p03,
+    p04) have no button role off the web ([FL-401](#fl-401)): on Android a
+    clickable `View` that is a heading, on iOS an element of type other. For C18
     `bad-heading-button` VoiceOver reads "Ridge trail A 6 km climb with a
     view. Button Heading" (`docs/evidence/C18/voiceover-ios.md`) and
     TalkBack "… / Button. Heading" (`docs/evidence/C18/talkback-android.md`).
