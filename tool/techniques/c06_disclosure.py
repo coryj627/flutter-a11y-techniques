@@ -85,8 +85,7 @@ VOICEOVER_IOS_METHOD = (
     "in the four seconds after the gesture). That gesture is a tap at the control's place, "
     "not VoiceOver's own activation, which XCUIVoiceOverService cannot make (C04 probe round "
     "3), so what VoiceOver's own double tap does is not measured. Then the example is walked "
-    "again (`-open` rows). Utterances longer than 64 characters are cut by "
-    "XCUIVoiceOverService",
+    "again (`-open` rows)",
     "Spoken, in swipe order",
 )
 

@@ -1,0 +1,19 @@
+#!/bin/sh
+# C06's Android tree tests once at the CI emulator's size, 320 by 640 at
+# 160 dpi, on the local emulator, under tool/with_devices.py (kept as
+# docs/evidence/probes/c06/android_320x640.sh.txt). Resets both after.
+# Run from the worktree root once the app and test APKs are built.
+OUT=docs/evidence/probes/c06/android_320x640.txt
+adb shell wm size 320x640
+adb shell wm density 160
+trap 'adb shell wm size reset; adb shell wm density reset' EXIT
+{
+  echo "== $(adb shell wm size | tr '\n' ' ') $(adb shell wm density | tr '\n' ' ')"
+  cd android && ./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process \
+    app:connectedDebugAndroidTest \
+    -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest 2>&1 \
+    | grep -E "Tests? on|tests completed|FAILED|SKIPPED|BUILD|> Task :app:connected|Starting|finished"
+} > "$OUT" 2>&1
+cd .. 2>/dev/null
+find build/app/outputs/androidTest-results -name "*.xml" -exec grep -h -E "<testsuite |<testcase |<failure|<skipped" {} \; >> "$OUT" 2>/dev/null
+exit 0

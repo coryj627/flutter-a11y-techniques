@@ -155,8 +155,17 @@ final class C06DisclosureUITests: XCTestCase, CountedTechniqueUITest {
     XCTAssertEqual(value(e), "")
     e.tap()
     waitFor("a tap opens it") { self.shown(Self.panelText) }
-    // Open, the panel's text joins the control (FL-265).
-    XCTAssertTrue(element(labelled: "\(Self.title)\n\(Self.panelText)").exists)
+    // Open, the panel's text joins the control (FL-265): one element whose
+    // label starts with the title and holds the text, still no button.
+    let merged = app.descendants(matching: .any).matching(
+      NSPredicate(format: "label BEGINSWITH %@ AND label CONTAINS %@", Self.title, Self.panelText))
+    waitFor("an element holds the title and the panel's text") { merged.count > 0 }
+    let holding = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", Self.panelText))
+    print("C06IOS bad-cupertino-expansion-tile open: elements holding the text: \(holding.allElementsBoundByIndex.map { "\($0.elementType.rawValue) \($0.label.debugDescription)" })")
+    XCTAssertEqual(merged.count, 1, "one element holds the title and the panel's text")
+    print("C06IOS bad-cupertino-expansion-tile open: label \(merged.firstMatch.label.debugDescription), type \(merged.firstMatch.elementType.rawValue)")
+    XCTAssertNotEqual(merged.firstMatch.elementType, .button)
+    XCTAssertEqual(value(merged.firstMatch), "")
   }
 
   /// One, two, or three Tabs and then Enter or Space, each from a fresh
@@ -202,7 +211,11 @@ final class C06DisclosureUITests: XCTestCase, CountedTechniqueUITest {
       ("bad-expand-icon", ["Details Button", count],
        ["Details Button", text, action, count]),
       ("bad-cupertino-expansion-tile", ["Details \(closedHint)", count],
-       ["Details \(text) \(openHint)", count]),
+       // Open, the panel's text joins the control (FL-265), and the
+       // utterance runs past the 64 characters XCUIVoiceOverService
+       // returns: what is compared is the cut reading, as the first run
+       // heard it (docs/evidence/C06/voiceover-ios.md).
+       ["Details \(text) Expanded double tap to collaps", count]),
     ]
   }()
 

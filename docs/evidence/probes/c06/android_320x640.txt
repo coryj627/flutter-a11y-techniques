@@ -1,0 +1,23 @@
+== Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+> Task :gradle:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :url_launcher_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preDebugAndroidTestBuild SKIPPED
+Starting 12 tests on Pixel_10a(AVD) - 17
+> Task :app:connectedDebugAndroidTest
+dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest > talkBackWalk[Pixel_10a(AVD) - 17] [33mSKIPPED [0m
+BUILD SUCCESSFUL in 1m 8s
+<testsuite name="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" tests="12" failures="0" errors="0" skipped="1" time="42.314" timestamp="2026-11-23T21:38:46" hostname="localhost">
+<testcase name="badExpansionTileIsNotAButton"
+<testcase name="goodMaterialOpenPanelButtonIsTheNextTabStop"
+<testcase name="badCupertinoExpansionTileIsNoButtonAndHasNoState"
+<testcase name="goodMaterialIsAButtonWithTheStateOnlyInItsName"
+<testcase name="badCupertinoExpansionTileTakesNoKeyboardFocusEnter"
+<testcase name="badCupertinoExpansionTileTakesNoKeyboardFocusSpace"
+<testcase name="goodMaterialOpensByTheClickActionStraightAfterTheControl"
+<testcase name="goodMaterialIsReachedByTabAndOpenedAndClosedByEnter"
+<testcase name="goodMaterialIsReachedByTabAndOpenedAndClosedBySpace"
+<testcase name="badExpandIconHasNoStateInAnyWords"
+<testcase name="talkBackWalk"
+<skipped
+<testcase name="goodMaterialOpensByATap"

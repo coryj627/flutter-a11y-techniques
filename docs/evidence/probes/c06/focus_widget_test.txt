@@ -1,0 +1,14 @@
+# C06 widget tests, the focus measure (test/techniques/c06_disclosure_test.dart, 'keyboard focus shows only a tint under 3:1'), Flutter 3.47.5, 2026-11-23
+C06FOCUS good-material dark closed: 36556 pixels changed, best 1.46:1
+C06FOCUS good-material dark open: 36556 pixels changed, best 1.46:1
+C06FOCUS good-material light closed: 36668 pixels changed, best 1.32:1
+C06FOCUS good-material light open: 36668 pixels changed, best 1.32:1
+C06FOCUS bad-expansion-tile dark closed: 36556 pixels changed, best 1.46:1
+C06FOCUS bad-expansion-tile dark open: 36556 pixels changed, best 1.46:1
+C06FOCUS bad-expansion-tile light closed: 36668 pixels changed, best 1.32:1
+C06FOCUS bad-expansion-tile light open: 36668 pixels changed, best 1.32:1
+C06FOCUS bad-expand-icon dark closed: 1292 pixels changed, best 1.38:1
+C06FOCUS bad-expand-icon dark open: 1292 pixels changed, best 1.38:1
+C06FOCUS bad-expand-icon light closed: 1299 pixels changed, best 1.26:1
+C06FOCUS bad-expand-icon light open: 1299 pixels changed, best 1.26:1
+00:01 +12: All tests passed!

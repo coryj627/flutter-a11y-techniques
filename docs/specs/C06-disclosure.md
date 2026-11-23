@@ -105,7 +105,8 @@ its own documented parameters, and nothing is built round it
 with a limitation on every platform: it exposes no expanded state (FL-264),
 and its focus indicator is `ListTile`'s tint, under 3:1
 ([FL-430](../flutter-limitations.md#fl-430); 1.32:1 in light mode and
-1.45:1 in dark in the widget tests here). It relies on a parameter its
+1.46:1 in dark in the widget tests here,
+`docs/evidence/probes/c06/focus_widget_test.txt`). It relies on a parameter its
 documentation calls "a temporary flag".
 
 No Cupertino good example: Cupertino's only disclosure widget,
@@ -132,7 +133,7 @@ other measured shortcomings, which are not their named defects:
   nothing (widget tests; on iOS a tap at the element's middle). On Android
   its click label stays "Expand" once open
   ([FL-280](../flutter-limitations.md#fl-280)). Its focus tint is
-  `IconButton`'s (FL-430; 1.26:1 and 1.38:1 here).
+  `IconButton`'s (FL-430; 1.26:1 and 1.38:1 here, `focus_widget_test.txt`).
 - `bad-cupertino-expansion-tile`: no button role on Android and iOS; no
   state on Android, and on the web on Linux and Windows; the state as a
   hint on iOS and, on the web, as the description on macOS; once open the
@@ -179,7 +180,7 @@ container rests on where its edge is taken to be, and C06's criterion is
 | L1 widget tests | Every example, closed and open: at 200% text on a 320 by 640 screen, no layout overflow and no text cut short (line limit or box); in light and dark, the text contrast guideline. `good-material`, closed and open, in light and dark: the four guidelines. `good-material`: the control is the only button but Back, named "Details", focusable, with a tap action, hint "Collapsed" and tap hint "Expand for more details", no value, and no expanded state; no panel while closed and the reading order "Details" alone; open, hint "Expanded", tap hint "Collapse", still no expanded state, and the reading order "Details", the panel's text, its button; on Android a live region "Collapsed", then "Expanded"; as iOS, hint "Collapsed\n double tap to expand", no announcement straight after the tap action and "Expanded" announced a second later; the tap action opens and closes it; Tab stops are Back, then the control, and Enter, and in another test Space, opens it and closes it with focus kept on it; once open the next Tab goes to the panel's button and Enter presses it (the count). Focus, for `good-material`, `bad-expansion-tile`, and `bad-expand-icon`, closed and open, light and dark: keyboard focus changes pixels on the control, and none of them is 3:1 against what was there before (FL-430). `bad-expansion-tile`, as Android and as iOS: no button flag, no expanded state, before and after a tap that opens it. `bad-expand-icon`: a button named "Details" with no expanded state, no hint, no value, and no live region, before and after its tap action opens it; its tap hint "Expand", then "Collapse"; a tap on the label opens nothing and a tap on the icon opens it. `bad-cupertino-expansion-tile`: no button, no focus state, no expanded state, a tap action, and once open its label "Details\nOrders ship in two days."; Tab stops are Back four times, and Enter, and in another test Space, take the app back (the key acted) with the panel closed |
 | L3 web | `good-material` and `bad-expansion-tile`: a button named "Details" with no `aria-expanded`, and the description "Collapsed double tap to expand", then "Expanded double tap to collapse", where Flutter's engine finds macOS, and "Collapsed", then "Expanded", on Linux and Windows; the control and Back the only buttons; no panel in the page while closed; a click opens it with the panel straight after it in DOM order, and a second closes it; each also with `navigator.platform` set to "MacIntel", "Linux x86_64", and "Win32". `good-material`: a DOM click with no pointer events opens it; a click writes "Expanded", then a second "Collapsed", to `flt-announcement-polite`; Tab stops are Back and the control, and Enter, and in another test Space, open and close it with focus kept on it; once open, the next Tab goes to the panel's button and Enter presses it. `bad-expand-icon`, as the page's platform has it and with each of the three set: a button named "Details" with no `aria-expanded`, no `aria-description` and an empty description, before and after a click that opens it; Tab and Enter, and Space, open it. `bad-cupertino-expansion-tile`: Tab reaches only Back (stops on the page itself left out, FL-421), and Enter, and in another test Space, on Back leave the example; its control has no `tabindex` and no `aria-expanded`, the description "Collapsed double tap to expand" on macOS and none on Linux and Windows, and once a click has opened it one button "Details Orders ship in two days.", still with no `aria-expanded` or `tabindex`. Every example: no empty element over the page while closed; once opened, one for `bad-cupertino-expansion-tile` and none for the others. Also: the VoiceOver walk judge on made-up walks, and that each screen shows the texts the judge expects |
 | L3 Android | `good-material`: a `Button` named "Details, Collapsed", focusable, click label "Expand for more details", on Android 16 and later expanded state "undefined", no expand or collapse action, a live region "Collapsed", the only clickable node but Back, no panel while closed, and the reading order "Details, Collapsed" alone; `ACTION_CLICK` opens it ("Details, Expanded", click label "Collapse", still no state, a live region "Expanded", the panel's text and button straight after it) and a second closes it; a tap opens it; Tab to it and Enter, and in another test Space, open and close it with focus kept on it; once open the next Tab goes to the panel's button and Enter presses it (the count). `bad-expansion-tile`: a `View` "Details, Collapsed" with no state, before and after a click that opens it. `bad-expand-icon`: a `Button` "Details" with no state description, no hint, no expanded state, click label "Expand", no live region; after a click that opens it, read for two seconds, the same, the click label still "Expand" (FL-280). `bad-cupertino-expansion-tile`: Tab never gives the control focus and reaches Back, where Enter, and in another test Space, leave the example; the control is a `View` with no state, opened by the click action, after which its name is "Details\nOrders ship in two days." |
-| L3 iOS | `good-material`: a button "Details" with no value, the only button but Back, no panel while closed; a tap opens it, the panel's text and button below it on screen, still no value, and a second tap closes it; two Tabs and Enter, and in another launch Space, open it and the same key again closes it, staying on the example; once open, one Tab and Enter press the panel's button (the count). `bad-expansion-tile`: not a button, no value, no button but Back, opened by a tap. `bad-expand-icon`: a button with no value; a tap at its middle opens nothing and a tap at its icon, in the same launch, opens it, still with no value. `bad-cupertino-expansion-tile`: not a button, no value, opened by a tap, after which its label is "Details\nOrders ship in two days."; one, two, and three Tabs and then Enter or Space, each from a fresh launch, never open it and take the example off the screen (Back acted) |
+| L3 iOS | `good-material`: a button "Details" with no value, the only button but Back, no panel while closed; a tap opens it, the panel's text and button below it on screen, still no value, and a second tap closes it; two Tabs and Enter, and in another launch Space, open it and the same key again closes it, staying on the example; once open, one Tab and Enter press the panel's button (the count). `bad-expansion-tile`: not a button, no value, no button but Back, opened by a tap. `bad-expand-icon`: a button with no value; a tap at its middle opens nothing and a tap at its icon, in the same launch, opens it, still with no value. `bad-cupertino-expansion-tile`: not a button, no value, opened by a tap, after which one element, not a button and with no value, has a label that starts with "Details" and holds the panel's text; one, two, and three Tabs and then Enter or Space, each from a fresh launch, never open it and take the example off the screen (Back acted) |
 | L4 TalkBack | For each example: what is said with focus on the control, closed; on the click action with focus left there (not for `bad-expand-icon` and `bad-cupertino-expansion-tile`, see section 7); with focus on the panel's text (on Back for `bad-cupertino-expansion-tile`, whose open panel is part of its control); and on the control again, open. Judged whole (`STRICT` in `tool/talkback.py`) |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list, closed, and again after XCUITest's double tap at the control, with VoiceOver on, has opened it; what VoiceOver says with its cursor on the control, and in the four seconds after that gesture. The gesture is a tap at the control's place, not VoiceOver's activation, which XCUIVoiceOverService has no way to make (C04 probe round 3) |
 | L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C05's walks are (`judgeExampleWalk` in `web_tests/vo/c06_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened it, in Chromium and WebKit |
@@ -216,9 +217,28 @@ single disclosure needs that C05's probe had not.
   show it change.
 - **`CupertinoExpansionTile` takes no keyboard focus** (FL-265), as C05
   found for two of them.
+- **The transcripts.** TalkBack (`docs/evidence/C06/talkback-android.md`)
+  passed on its first walk, judged whole: `good-material` "Details, /
+  Collapsed / Button / Double-tap to Expand for more details", "Expanded"
+  on the click, and open "Details, / Expanded / Button / Double-tap to
+  Collapse"; `bad-expand-icon` "Details / Button / Double-tap to Expand",
+  closed and open. The first iOS VoiceOver run
+  (`docs/evidence/probes/c06/voiceover-ios-first-run.md.txt`) heard every
+  reading as expected but one: the open Cupertino tile's control and panel
+  text are one utterance longer than the 64 characters
+  `XCUIVoiceOverService` returns, and it was cut ("… Expanded double tap
+  to collaps"), as C05 found for the same tile. The expectation is now that
+  cut reading; the transcript is from the second run.
 - **The focus indicator is the SDK's tint**: `ListTile`'s on
   `good-material` and `bad-expansion-tile`, `IconButton`'s on
   `bad-expand-icon`, none of it 3:1 against what was there (FL-430).
+
+C06's Android tree tests were run once at the CI emulator's size, 320 by
+640 at 160 dpi, on the local emulator (Android 17), and both were reset
+after: 12 tests, none failed, `talkBackWalk` skipped with TalkBack off
+(`docs/evidence/probes/c06/android_320x640.txt`). That is not a run on
+CI's API 35 emulator, whose branch of the expanded-state checks (no state
+read before Android 16) runs only there.
 
 Skips and what they give up, in the tests:
 

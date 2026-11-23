@@ -223,3 +223,31 @@ passes no expanded state to iOS (C05's FL-260).
 - **Plain HTML**: `details` and `summary` are a disclosure triangle with
   an expanded state in Chromium, and APG's
   `<button aria-expanded="false">` a button with one.
+
+## C06's first iOS VoiceOver run
+
+`voiceover-ios-first-run.md.txt` is the tool's transcript of the first
+iOS VoiceOver run of C06's examples, kept as it was. Every reading was as
+expected but one: open, `bad-cupertino-expansion-tile`'s control and its
+panel's text are one utterance longer than the 64 characters
+`XCUIVoiceOverService` returns, and it was cut short ("Details Orders ship
+in two days. Expanded double tap to collaps"), as C05 found for the same
+widget. The expectation is now that cut reading. In the same run of the
+tree tests, the check that one element, once that tile is open, has a
+label that starts with "Details" and holds the panel's text found none,
+read straight after the panel was found on screen; the check now waits
+for it, and logs every element that holds the text.
+
+## C06's Android tests at CI's screen size
+
+`android_320x640.sh.txt` runs C06's Android tree tests once at the CI
+emulator's size, 320 by 640 at 160 dpi, on the local emulator, and resets
+both after; `android_320x640.txt` is its output (Gradle's lines and the
+JUnit results). The emulator is still Android 17 at that size.
+
+## The focus measure
+
+`focus_widget_test.txt` is the output of C06's widget tests of the focus
+indicator: for each example a keyboard reaches, closed and open, light and
+dark, how many pixels keyboard focus changed on the control and the best
+contrast of a changed pixel against what was there before.
