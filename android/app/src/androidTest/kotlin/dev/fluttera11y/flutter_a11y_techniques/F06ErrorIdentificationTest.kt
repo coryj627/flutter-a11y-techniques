@@ -83,6 +83,42 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
     }
 
     /**
+     * After a focus move to a field: waits up to 5 seconds for the keyboard
+     * it brings up to be in the window list, then puts it away. Nothing is
+     * pressed if no keyboard comes. [hideKeyboard] alone looks once, and
+     * the keyboard comes later: in PR 207's run 45270942444 good-cupertino's
+     * keyboard was shown at 21:59:23.279 and never put away, and
+     * hint("f06-good-cupertino-email") then found no such node in any
+     * window for 8 seconds. The app's window held android:id/content and
+     * f06-good-cupertino-name only, under the keyboard's window (its
+     * failure message lists every window).
+     */
+    private fun keyboardAwayOnceItIsUp() {
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end &&
+            automation.windows.none { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }) {
+            Thread.sleep(100)
+        }
+        hideKeyboard()
+    }
+
+    /**
+     * The field [id], waited for up to 8 seconds with the keyboard put
+     * away before each look, through [field].
+     */
+    private fun reached(id: String): AccessibilityNodeInfo {
+        val end = System.currentTimeMillis() + 8_000
+        while (true) {
+            hideKeyboard()
+            field(id)?.let { return it }
+            if (System.currentTimeMillis() >= end) {
+                throw AssertionError("no node with id $id in any window, with the keyboard away")
+            }
+            Thread.sleep(250)
+        }
+    }
+
+    /**
      * Puts the keyboard away, then waits up to 5 seconds for the count of
      * [slug] to be in the tree again, looking in every window. At CI's
      * emulator size, 320 by 640 at 160 dpi, the keyboard that comes up when
@@ -171,18 +207,20 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             waitFor("$slug errors shown") { withText(NAME_ERROR) != null }
             // Input focus is on the first field in error.
             waitFor("$slug first field focused") { field(fields[0].first)?.isFocused == true }
-            assertFalse("$slug second field not focused", node(fields[1].first).isFocused)
+            keyboardAwayOnceItIsUp()
+            assertFalse("$slug second field not focused", reached(fields[1].first).isFocused)
             closeKeyboardAndWaitForCount(slug)
             for ((id, label, error) in fields) {
                 // The visible error is a node of its own.
                 val message = errorWithKeyboardAway(id, error)
+                val fieldNode = reached(id)
                 // Flutter joins the label and the error with ", ".
-                assertEquals(id, "$label, $error", hint(id))
-                assertTrue(id, node(id).contentDescription.isNullOrEmpty())
+                assertEquals(id, "$label, $error", fieldNode.hintText?.toString().orEmpty())
+                assertTrue(id, fieldNode.contentDescription.isNullOrEmpty())
                 // Flutter sets neither of the native error properties.
-                assertTrue(id, node(id).error.isNullOrEmpty())
-                assertFalse(id, node(id).isContentInvalid)
-                assertEquals(id, View.ACCESSIBILITY_LIVE_REGION_NONE, node(id).liveRegion)
+                assertTrue(id, fieldNode.error.isNullOrEmpty())
+                assertFalse(id, fieldNode.isContentInvalid)
+                assertEquals(id, View.ACCESSIBILITY_LIVE_REGION_NONE, fieldNode.liveRegion)
                 // The visible error is a live region.
                 assertEquals(error, View.ACCESSIBILITY_LIVE_REGION_POLITE, message.liveRegion)
                 assertFalse(error, message.isEditable)
