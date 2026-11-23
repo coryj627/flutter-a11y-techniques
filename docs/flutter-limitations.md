@@ -3573,8 +3573,7 @@ yet), **Fixed in x.y** (verified on that version).
   reads, in the name on Android, the hint on iOS, and the accessible
   description on the web. The owner decided on 2026-11-23, for C06, that
   this text is not counted as meeting 4.1.2, so the state fails 4.1.2 on
-  every platform, with or without `internalAddSemanticForOnTap`. C05's
-  spec, written before that decision, calls it not settled.
+  every platform, with or without `internalAddSemanticForOnTap`.
 - Closest achievable example: none with `ExpansionTile`'s own parameters
   alone. C05 `good-material` builds the header from a `ListTile` inside
   `Semantics(button: true, expanded:)` and builds the panel only while it
@@ -3637,7 +3636,8 @@ yet), **Fixed in x.y** (verified on that version).
   Role, Value. On Android and iOS no role that says it is a control. For
   the state: where nothing gives it (Android; the web on Linux and
   Windows), it fails as written; where it is only a hint (iOS; the web on
-  macOS), not settled by the criterion as written.
+  macOS), it fails too, by the owner's ruling of 2026-11-23 (C06) that a
+  state given only as text does not meet 4.1.2.
 - Closest achievable example: none with `CupertinoExpansionTile`'s own
   parameters. C05 `good-cupertino` builds the header from a
   `CupertinoListTile` given focus by `FocusableActionDetector`, inside
