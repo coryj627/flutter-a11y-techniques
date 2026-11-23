@@ -1,0 +1,37 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: c05_accordion_vo.spec.js >> voiceover reads bad-cupertino-expansion-tile
+- Location: c05_accordion_vo.spec.js:109:3
+
+# Error details
+
+```
+Test timeout of 180000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e4]:
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - button "Back" [ref=e5]
+              - heading "CupertinoExpansionTile" [level=1] [ref=e6]
+            - group:
+              - generic [ref=e7]: Bad example for Accordion. Cupertino.
+              - generic [ref=e8]: "Defect: A keyboard cannot reach the headers, so it opens nothing."
+              - heading "Example" [level=2] [ref=e9]
+              - button "Shipping Orders ship in two days." [ref=e10]
+              - button "Returns" [ref=e12]
+              - generic [ref=e13]: "Presses: 0"
+```

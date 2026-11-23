@@ -1,0 +1,10 @@
+=== evidence android,talkback,ios,voiceover-ios,web
+[C05] voiceover-ios: running (log: build/evidence/C05/voiceover-ios.log)
+[C05] voiceover-ios: FAILED with status 1, 1054 s
+Result: FAIL
+| `bad-cupertino-expansion-tile` | Shipping Collapsed double tap to expand / Returns Collapsed double tap to expand / Presses: 0 |
+| `double-tap-bad-cupertino-expansion-tile` | cursor on Shipping Collapsed double tap to expand / then heard Shipping Collapsed double tap to expand / Shipping opened |
+| `bad-cupertino-expansion-tile-open` | Shipping Orders ship in two days. Expanded double tap to collap / Returns Collapsed double tap to expand / Presses: 0 |
+- XCTAssertEqual failed: ("Optional(["Shipping Orders ship in two days. Expanded double tap to collap", "Returns Collapsed double tap to expand", "Presses: 0"])") is not equal to ("Optional(["Shipping Orders ship in two days. Expanded double tap to collaps", "Returns Collapsed double tap to expand", "Presses: 0"])") - bad-cupertino-expansion-tile open
+  voiceover-ios  FAIL     exit status 1; see build/evidence/C05/voiceover-ios.log
+Result: FAIL

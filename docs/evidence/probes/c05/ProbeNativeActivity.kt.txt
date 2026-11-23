@@ -1,0 +1,66 @@
+// Throwaway native comparison for the C05 probe. Not committed; kept as
+// docs/evidence/probes/c05/ProbeNativeActivity.kt.txt, declared for the run
+// in the debug manifest.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.Activity
+import android.os.Build
+import android.os.Bundle
+import android.view.View
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+
+class ProbeNativeActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 200, 40, 40) }
+        // n01: the Android View reference's accordion header: a Button whose
+        // AccessibilityDelegate offers ACTION_EXPAND while collapsed and
+        // ACTION_COLLAPSE while expanded, and nothing else.
+        // n02: the same, also a heading, and on Android 16 and later with
+        // setExpandedState as well.
+        for ((id, heading) in listOf("n01" to false, "n02" to true)) {
+            var expanded = false
+            val panel = TextView(this).apply { text = "$id panel text"; visibility = View.GONE }
+            // isAllCaps off: the theme's capitals would change the node's
+            // text, which the probe finds the views by. It changes nothing
+            // about the role or the state.
+            val header = Button(this).apply { text = "$id Shipping"; isAllCaps = false }
+            fun toggle() {
+                expanded = !expanded
+                panel.visibility = if (expanded) View.VISIBLE else View.GONE
+            }
+            header.setOnClickListener { toggle() }
+            header.accessibilityDelegate = object : View.AccessibilityDelegate() {
+                override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    if (expanded) {
+                        info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND)
+                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_COLLAPSE)
+                    } else {
+                        info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_COLLAPSE)
+                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND)
+                    }
+                    if (heading) {
+                        info.isHeading = true
+                        if (Build.VERSION.SDK_INT >= 36) {
+                            info.expandedState = if (expanded) AccessibilityNodeInfo.EXPANDED_STATE_FULL
+                            else AccessibilityNodeInfo.EXPANDED_STATE_COLLAPSED
+                        }
+                    }
+                }
+
+                override fun performAccessibilityAction(host: View, action: Int, args: Bundle?): Boolean =
+                    when (action) {
+                        AccessibilityNodeInfo.ACTION_EXPAND, AccessibilityNodeInfo.ACTION_COLLAPSE -> { toggle(); true }
+                        else -> super.performAccessibilityAction(host, action, args)
+                    }
+            }
+            column.addView(header)
+            column.addView(panel)
+        }
+        setContentView(column)
+    }
+}

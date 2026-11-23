@@ -65,6 +65,7 @@ example is added without a decision.
 | [C02 Toggle button](#c02-toggle-button) | 4 | 3 | 0 | 1 |
 | [C03 Stand-alone link](#c03-stand-alone-link) | 4 | 4 | 0 | 0 |
 | [C04 Links inline with text](#c04-links-inline-with-text) | 3 | 3 | 0 | 0 |
+| [C05 Accordion](#c05-accordion) | 3 | 3 | 0 | 0 |
 | [C12 Tooltip](#c12-tooltip) | 3 | 1 | 0 | 2 |
 | [C13 Snackbar and transient messages](#c13-snackbar-and-transient-messages) | 3 | 0 | 0 | 3 |
 | [F01 Text fields and labels](#f01-text-fields-and-labels) | 3 | 0 | 0 | 3 |
@@ -92,7 +93,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 117 | 48 | 12 | 57 |
+| All | 120 | 51 | 12 | 57 |
 
 ## C01 Button
 
@@ -138,6 +139,16 @@ Flagged: `good-material`, `good-cupertino`, `good-custom`.
 | `good-material` | `MaterialInlineLink`: `Semantics(link: true, linkUrl:, onTapHint:)` round an `InkWell` in a `WidgetSpan`; C03's `BrowserKeys`; a focus ring; a sort key and an identifier that keep it in its sentence | A `TextSpan` with a tap recognizer, which takes no keyboard focus ([FL-240](flutter-limitations.md#fl-240)); no link widget ([FL-221](flutter-limitations.md#fl-221)) | [FL-240](flutter-limitations.md#fl-240); [FL-413](flutter-limitations.md#fl-413) (read after its sentence); [FL-241](flutter-limitations.md#fl-241) (scaled twice); [FL-013](flutter-limitations.md#fl-013); [FL-221](flutter-limitations.md#fl-221) | R1, R2, R3, R4, R5, R6, R7: APG Link, MDN a, iOS Links, G53, Android Compose, F73, G183, C03 R7 | custom |
 | `good-cupertino` | `KeyboardInlineLink`: `FocusableActionDetector` round `Semantics(link: true, linkUrl:, onTapHint:)` and a `GestureDetector` in a `WidgetSpan`; the high-contrast `systemBlue` | As `good-material`; Cupertino has no link widget either | [FL-240](flutter-limitations.md#fl-240); [FL-413](flutter-limitations.md#fl-413); [FL-241](flutter-limitations.md#fl-241); [FL-242](flutter-limitations.md#fl-242) (link colour under 4.5:1); [FL-221](flutter-limitations.md#fl-221) | R1, R2, R3, R4, R5, R6, R7: APG Link, MDN a, iOS Links, G53, Android Compose, F73, G183, C03 R7 | custom |
 | `good-custom` | `KeyboardInlineLink` in the theme's primary colour | As `good-material` | [FL-240](flutter-limitations.md#fl-240); [FL-413](flutter-limitations.md#fl-413); [FL-241](flutter-limitations.md#fl-241); [FL-221](flutter-limitations.md#fl-221) | R1, R2, R3, R4, R5, R6, R7: APG Link, MDN a, iOS Links, G53, Android Compose, F73, G183, C03 R7 | custom |
+
+## C05 Accordion
+
+Flagged: `good-material`, `good-cupertino`, `good-custom`.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | The accordion's state, with each panel built only while open; `HeaderSemantics` (`Semantics(button: true, expanded:)`, a heading, an iOS value, a tap hint, the expand and collapse actions, and `controlsNodes` while open) round a `ListTile`; a focus ring of its own | `ExpansionTile` | No expanded state and, on Android and iOS, no button role ([FL-264](flutter-limitations.md#fl-264)); no state on iOS ([FL-260](flutter-limitations.md#fl-260)); a heading that is a button on the web ([FL-262](flutter-limitations.md#fl-262)); `aria-controls` ([FL-266](flutter-limitations.md#fl-266)); a faint focus tint ([FL-430](flutter-limitations.md#fl-430)) | R1 to R8: APG Accordion, iOS Accordions, Android View Accordion Controls, Android Compose Accordion Controls | custom |
+| `good-cupertino` | As `good-material`, round a `CupertinoListTile` given focus, Enter, and Space by `FocusableActionDetector`; its title in a `DefaultTextStyle` of its own, so that it wraps | `CupertinoExpansionTile` | No keyboard focus, no button role, and no state ([FL-265](flutter-limitations.md#fl-265), [FL-400](flutter-limitations.md#fl-400)); as `good-material` for [FL-260](flutter-limitations.md#fl-260), [FL-262](flutter-limitations.md#fl-262), and [FL-266](flutter-limitations.md#fl-266) | R1 to R8: APG Accordion, iOS Accordions, Android View Accordion Controls, Android Compose Accordion Controls | custom |
+| `good-custom` | As `good-material`, round a header from the widgets layer: a `GestureDetector`, and focus, Enter, and Space from `FocusableActionDetector` | None for a drawn control; the SDK's accordions are `ExpansionTile`, `CupertinoExpansionTile`, and `ExpansionPanelList` ([FL-267](flutter-limitations.md#fl-267)) | As `good-material` for [FL-260](flutter-limitations.md#fl-260), [FL-262](flutter-limitations.md#fl-262), and [FL-266](flutter-limitations.md#fl-266) | R1 to R8: APG Accordion, iOS Accordions, Android View Accordion Controls, Android Compose Accordion Controls | custom |
 
 ## C12 Tooltip
 
