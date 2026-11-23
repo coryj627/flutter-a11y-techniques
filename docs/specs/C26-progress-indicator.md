@@ -34,9 +34,9 @@ moving.
 | Applies, with limitations | Applies, with limitations | Applies, with limitations |
 
 What the framework's indicators cannot do, by platform, with no
-workaround in the SDK. Whether any of these makes a platform
-`PlatformStatus.limitation` is the owner's decision (section 8); the
-catalog says "applies" with a note.
+workaround in the SDK. Whether the missing role (FL-256) makes a platform
+`PlatformStatus.limitation` is awaiting the owner's decision (section 8);
+until then the catalog says "applies" with a note on each platform.
 
 - **All: a change of an indicator's value is not announced**
   ([FL-254](../flutter-limitations.md#fl-254)), with the screen reader's
@@ -50,11 +50,20 @@ catalog says "applies" with a note.
   for `good-circular` and `good-cupertino` on every platform, and for
   `good-linear` on iOS. Nothing in the SDK can give the role: the
   progress bar role needs a numeric value ([FL-258](../flutter-limitations.md#fl-258)).
-- **Android and iOS: how the value is read** ([FL-027](../flutter-limitations.md#fl-027)).
-  With the default value TalkBack reads it twice, "0.0.", then "0,", and
-  VoiceOver on iOS reads the bare number, "Report upload 0", with no unit.
-  A percent sign in `semanticsValue` reads better and loses Android's
-  range. The good examples keep the default.
+- **All: how the value is read** ([FL-027](../flutter-limitations.md#fl-027),
+  [FL-037](../flutter-limitations.md#fl-037)). With the default value,
+  the value is heard twice on Android and on the web, and as a bare number
+  on iOS:
+  - TalkBack: "0.0.", "0,", "Report upload", "Progress bar"
+    (`docs/evidence/C26/talkback-android.md`).
+  - VoiceOver on iOS: "Report upload 0" (`docs/evidence/C26/voiceover-ios.md`).
+  - VoiceOver on the web, Chromium and WebKit alike: "Report upload 0 0%
+    progress indicator", the name, which holds the value on the web, then
+    the value again as a percentage
+    (`docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`).
+  A percent sign in `semanticsValue` reads better on Android and iOS (the
+  probe's p03) and loses Android's range. The good bar keeps the default,
+  by the principal's decision (section 8).
 - **Cupertino: nothing for a screen reader**
   ([FL-255](../flutter-limitations.md#fl-255)); `good-cupertino` names its
   spinner with a label, and the Cupertino bar is shown only as a bad
@@ -171,7 +180,7 @@ criteria:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `good-linear` | 4.1.2: a `ProgressBar` named "Report upload" with a range 0 to 100. 4.1.3: start, halfway, and end announced. Qualification: TalkBack reads the value twice (FL-027) | 4.1.2: name and value; no role (FL-256), so it fails 4.1.2's role under section 3's reading. 4.1.3: announced. The value is read as a bare number (FL-027) | 4.1.2: a `progressbar` named "Report upload 0" (the value in the name, FL-037), `aria-valuenow`. 4.1.3: announced |
+| `good-linear` | 4.1.2: a `ProgressBar` named "Report upload" with a range 0 to 100. 4.1.3: start, halfway, and end announced. Qualification: TalkBack reads the value twice (FL-027) | 4.1.2: name and value; no role (FL-256), so it fails 4.1.2's role under section 3's reading. 4.1.3: announced. The value is read as a bare number (FL-027) | 4.1.2: a `progressbar` named "Report upload 0" (the value in the name, FL-037), `aria-valuenow`. 4.1.3: announced. Qualification: VoiceOver reads the value twice, "Report upload 0 0% progress indicator" (FL-027) |
 | `good-circular` | Named; no role (FL-256): fails 4.1.2's role under the reading. 4.1.3: start and end announced | the same | the same |
 | `good-cupertino` | the same as `good-circular` | the same | the same |
 
@@ -186,7 +195,7 @@ indicator, and one would be drawn by hand.
 
 | Slug | Variant | Defect | Violates | Fails |
 | --- | --- | --- | --- | --- |
-| `bad-no-label` | Material | `good-linear`'s bar with no `semanticsLabel`, the words above it plain text: the bar is read as its value with no name, "0" | R1 | 4.1.2 (name), under the reading of section 3, on all three |
+| `bad-no-label` | Material | `good-linear`'s bar with no `semanticsLabel`, the words above it plain text: the bar is read as its value with no name: TalkBack "0.0.", "0", "Progress bar"; VoiceOver on iOS "0"; VoiceOver on the web "0 0% progress indicator" | R1 | 4.1.2 (name), under the reading of section 3, on all three |
 | `bad-silent-end` | Material | `good-linear` with its status line no live region: nothing tells a screen reader that the upload has started, is halfway, or has ended, and the bar's own changes are not announced (FL-254) | R4 | 4.1.3, on all three |
 | `bad-adaptive` | Material | `CircularProgressIndicator.adaptive(semanticsLabel:)`: on iOS, and in a browser on a Mac, the spinner has nothing a screen reader can find (FL-257) | R1 | 4.1.2 (name), under the reading, on iOS and the web on a Mac; none on Android, nor on the web elsewhere, where it is Material's spinner, named |
 | `bad-cupertino-bar` | Cupertino | `CupertinoLinearActivityIndicator` as it comes: no name, role, or value (FL-255) | R1, R2 | 4.1.2 (name and value), under the reading, on all three |
@@ -206,8 +215,12 @@ indicator, and one would be drawn by hand.
   ("Loading started").
 - `bad-no-label`'s words "Report upload" are on the screen, and a screen
   reader reads them as text before the bar; but they are not the bar's
-  name (each platform's tree: the bar's name is empty and the words are a
-  node of their own).
+  name. In each platform's tree the words are a node of their own, and the
+  bar's name holds nothing but its value: empty on iOS, "0" on Android and
+  the web, where the value is part of the name (FL-037). Every screen
+  reader read the bar with its value and no name (the transcripts, above).
+  The first web VoiceOver recording, which read the value twice, changes
+  none of this: it is still a number with no name.
 
 Not built:
 
@@ -236,12 +249,12 @@ Not built:
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Every good example, in light and dark: the four guidelines at rest, while running, and at the end; the button's focus outline 2 wide and 3:1 or more on the page, and the text contrast guideline with focus on it; a tap, the tap action, Enter, and Space each start the task from rest, which then runs to its end; Tab goes Back, the button, Back, and never to the indicator, which can take no focus, while it runs; the status line a live region with its words at each step; with animations turned off, the indicator exposes the same role, name, and value. `good-linear`: a progress bar named "Report upload", value 0 to 100 at each step, min 0, max 100, and one node with the words. The spinners: no node before and after, while loading named "Loading inbox", no value, `good-circular` a loading spinner and `good-cupertino` no role (FL-255). The colours from the theme as the SDK's defaults use them: the bar on its track 5.00 (light) and 5.46 (dark), on the page 6.12 and 10.90; Cupertino's darkest tick 3.18 and 5.81 on the page, its faintest 1.38 and 1.66 (printed and bounded; section 7). Every example, at 200% text on 320 by 640, at rest, while running, and at the end: no overflow, no text at its line limit or cut short, nothing off the screen. Bad: `bad-no-label`'s bar a progress bar with no name, its words one node with no role, `good-linear`'s named in the same test; `bad-silent-end`'s line "Upload complete" with no live region anywhere on the screen, `good-linear`'s a live region in the same test; `bad-adaptive` as iOS and as macOS a Cupertino spinner with no role, name, or value, and no node named "Loading inbox", `good-circular`'s named as a positive control in the same test, and as Android a named loading spinner; `bad-cupertino-bar` no role, name, value, minimum, or maximum, at rest and while running. Tests run as Android, except where they say iOS or macOS |
-| L3 web | `good-linear`: a `progressbar` element, `aria-label` "Report upload 0", `aria-valuenow` 0, min 0, max 100, no `tabindex`, named "Report upload 0" by Playwright and Chromium's tree, and its words no element of their own; `aria-valuenow` 25, 50, 75, 100 in turn after Enter. Announcements, recorded from before the press: exactly "Upload started", "Half uploaded", "Upload complete", polite, and DOM focus still on the button; the spinners' exactly "Loading started", "Inbox loaded". The spinners: no element before; while loading, `good-circular` an element with no role, `aria-label` "Loading inbox", no value, `good-cupertino` an element with the text "Loading inbox" and no role or label, and no `progressbar` in Chromium's tree; gone at the end. Tab from Back goes to the button and never to the indicator. Bad: `bad-no-label` a `progressbar` named "0", its words an element of their own, `good-linear`'s named; `bad-silent-end` nothing announced and no `aria-live` in the semantics tree, `good-linear`'s end announced by the same recorder; `bad-cupertino-bar` an element with no role, label, value, or text, at rest and while running, and no `progressbar`; `bad-adaptive` with `navigator.platform` set to "MacIntel" before load, an element with nothing and no element named "Loading inbox", and `good-circular` named in the same page; with "Linux x86_64", named. The stops the VoiceOver spec expects above each example's heading are on each screen; the walk judge on made-up walks (as C04's) |
+| L3 web | `good-linear`: a `progressbar` element, `aria-label` "Report upload 0", `aria-valuenow` 0, min 0, max 100, no `tabindex`, named "Report upload 0" by Playwright and Chromium's tree, and its words no element of their own; `aria-valuenow` 25, 50, 75, 100 in turn after Enter. Announcements, recorded from before the press: exactly "Upload started", "Half uploaded", "Upload complete", polite, and DOM focus still on the button; the spinners' exactly "Loading started", "Inbox loaded". The spinners: no element before; while loading, `good-circular` an element with no role, `aria-label` "Loading inbox", no value, `good-cupertino` an element with the text "Loading inbox" and no role or label, and no `progressbar` in Chromium's tree; gone at the end. Tab from Back goes to the button and never to the indicator. Bad: `bad-no-label` a `progressbar` named "0", its words an element of their own, `good-linear`'s named; `bad-silent-end` nothing announced and no `aria-live` in the semantics tree, `good-linear`'s end announced by the same recorder; `bad-cupertino-bar` an element with no role, label, value, or text, at rest and while running, and no `progressbar`; `bad-adaptive` with `navigator.platform` set to "MacIntel" before load, an element with nothing and no element named "Loading inbox", and `good-circular` named in the same page; with "Linux x86_64", named. The stops the VoiceOver spec expects above each example's heading are on each screen; the walk judge on made-up walks (as C04's), and on the first recording's bar walks as regression cases: each complete against the lists in both browsers, and the bar read with its value once, as first predicted, wrong |
 | L3 Android | `good-linear`: a `ProgressBar` named "0, Report upload", a float range 0 to 100, current 0, not clickable, and no node with its words; after the click action the range's current 25, 50, 75, 100 in turn, and the name "100, Report upload". The good status lines polite live regions, with their words at each point. The spinners: none before; while loading an `android.view.View` named "Loading inbox" with no range (FL-256); gone at the end. Four Tabs reach the button and never the indicator; Tab to the button and Enter start the upload. Bad: `bad-no-label` a `ProgressBar` named "0", its words a node of their own, `good-linear`'s named; `bad-silent-end` no live region anywhere, `good-linear`'s polite; `bad-adaptive` Material's spinner, named (the defect is not on Android); `bad-cupertino-bar` no `ProgressBar` anywhere, and the bar's node, if there, with no name, text, or range, at rest and while running |
 | L3 iOS | `good-linear`: a static text element labelled "Report upload", value "0", then "25", "50", "75", "100" after a tap; one element with the words. The good status lines' words at each point. The spinners, read from snapshots: none before; while loading a static text element labelled "Loading inbox" with no value, the only element with that label; gone at the end. Two Tabs and Return start the upload (that a Tab reached the button is shown by Return; no modifier keys). Bad: `bad-no-label` an element with no label and the value "0", the words another element, `good-linear`'s labelled; `bad-adaptive` the spinner's node with no label or value and no element labelled "Loading inbox", `good-circular`'s labelled in the same test; `bad-cupertino-bar` the bar's node, if there, with no label or value, at rest and while running |
 | L4 TalkBack | `good-linear`'s and `bad-silent-end`'s bar: "Report upload" and "Progress bar"; `bad-no-label`'s "Progress bar" without "Report upload". Each button its words and "Button". After the click action, with TalkBack focus left on the button, nine seconds: `good-linear`, `bad-no-label`, `bad-cupertino-bar` "Upload started", "Half uploaded", "Upload complete"; the spinners and `bad-adaptive` "Loading started", "Inbox loaded"; `bad-silent-end` none of the upload's words, and then its status line, with focus put on it, "Upload complete" |
 | L4 VoiceOver iOS | Each screen at rest, every utterance after the "Example" heading to its end as a whole list: `good-linear` and `bad-silent-end` "Upload report Button", "Report upload 0", "Not started"; `bad-no-label` "Report upload", "0"; `bad-cupertino-bar` "Report upload", "Not started" with no bar. While each task runs, the cursor on the button and the button pressed with a tap at its place: every expected status phrase heard, in order (none for `bad-silent-end`, whose status line two moves forward then reads "Upload complete"). While loading, with the cursor left on the button, one move back and three forward 0.8 s after the tap: the heading, the button, then `good-circular` and `good-cupertino` "Loading inbox", `bad-adaptive` "Loading started", the spinner passed over and never read; the fourth move the status line as it is by then, "Loading started" or "Inbox loaded" (section 7) |
-| L4 VoiceOver web | Each screen at rest, walked from Back and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/c26_vo_walks.js`, as C04's), in Chromium and WebKit; no runner retries. Enter on the button with VoiceOver's last phrase polled for eight seconds (Chromium only): the good examples' status phrases, and none of the upload's for `bad-silent-end`, with capture shown live after. The lists are predictions until the first recording (section 7) |
+| L4 VoiceOver web | Each screen at rest, walked from Back and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/c26_vo_walks.js`, as C04's), in Chromium and WebKit; no runner retries. Enter on the button with VoiceOver's last phrase polled for eight seconds (Chromium only): the good examples' status phrases, and none of the upload's for `bad-silent-end`, with capture shown live after. The lists (`WALKS` in `c26_vo_walks.js`) are what the first recording read, the same in both browsers: a bar "Report upload 0 0% progress indicator", `bad-no-label`'s "0 0% progress indicator" after "Report upload" (section 7) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -264,8 +277,24 @@ The probe that came first is in [evidence/probes/c26](../evidence/probes/c26/REA
   ([FL-258](../flutter-limitations.md#fl-258), new). The default value is
   the percentage as a number, not "40%" as the documentation says.
 - **FL-027, extended**: the cause read in the engine; and how each
-  reader reads the default value (TalkBack twice, VoiceOver on iOS as a
-  bare number) and a percentage.
+  reader reads the default value (TalkBack and VoiceOver on the web twice,
+  VoiceOver on iOS as a bare number) and a percentage.
+- **VoiceOver on the web, first recording**
+  (`docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`, recorded
+  by the principal; 6 of 18 tests failed, the three walks with a bar, in
+  each browser, on lists written as predictions). Chromium and WebKit read
+  the same. A bar was read "Report upload 0 0% progress indicator"
+  (`good-linear`, `bad-silent-end`) and "0 0% progress indicator"
+  (`bad-no-label`, after "Report upload" as text): the name, which holds
+  the value on the web ([FL-037](../flutter-limitations.md#fl-037)), then
+  the value again as "0%", then the role. The tree has `aria-valuenow` 0,
+  min 0, max 100, and no `aria-valuetext` (the tree spec); where the "0%"
+  comes from was not measured. The predicted lists had the value once.
+  Every other walk, and every announcement, passed: the status phrases in
+  Chromium, between them VoiceOver's usage hint for the button, and for
+  `bad-silent-end` the hint alone. The lists were set to what was read.
+  No verdict changes: the bar's name, role, and value are all in the tree,
+  and `bad-no-label`'s bar is still read as a number with no name.
 - **On the web a node whose role changes loses its identifier**
   ([FL-259](../flutter-limitations.md#fl-259), new): the probe's first
   round lost its changing bars' identifiers when they went from
@@ -332,29 +361,49 @@ Skips and what they give up, in the tests:
   `currentSpeech()` every 200 ms; a phrase spoken and replaced within
   that time could be missed, and would fail the test. Utterances are cut
   at 64 characters; the longest here is under 30.
-- The web VoiceOver lists are predictions until the first recording, which
-  the principal makes.
+- The web VoiceOver lists are what the first recording read; the second
+  recording, against them, is the principal's to run.
+- A spinner is shown only while its task runs, so no web VoiceOver walk
+  reads one: what VoiceOver on the web says for a spinner was not
+  recorded. Its tree is in the tree spec.
 
-**Not done yet.** What VoiceOver says on the web for a progress bar and
-a spinner (the recording, by the principal). A release build on Android
+**Not done yet.** The second web VoiceOver recording (the principal's).
+What VoiceOver on the web says for a spinner. A release build on Android
 and iOS with a value in words (FL-258). A native Android `ProgressBar`
 and a UIKit progress view, for comparison. Right-to-left. A real Android
 keyboard.
 
-## 8. Decisions for the owner
+## 8. Decisions
+
+Awaiting the owner's decision:
 
 - **No role, no workaround.** A spinner has no role on any platform, and
   no indicator has one on iOS ([FL-256](../flutter-limitations.md#fl-256)).
   Under this spec's reading of 4.1.2 (section 3), `good-circular` and
   `good-cupertino` fail its role everywhere, and `good-linear` on iOS,
-  with no workaround in the SDK. Open: whether C26 is a
-  `PlatformStatus.limitation` there, whether the spinners are still called
-  good, and whether the reading itself (an indicator as a user interface
-  component) stands. Until decided, the catalog says "applies" with a
-  note on each platform, and the examples are kept as built.
-- **The value's form** ([FL-027](../flutter-limitations.md#fl-027)): the
-  good bar keeps the default value, for Android's range, over a percent
-  sign, which TalkBack and VoiceOver read better. Open to the owner.
+  with no workaround in the SDK. Put to the owner, not answered yet:
+  whether C26 is a `PlatformStatus.limitation` there for the missing role,
+  whether the spinners are still called good, and whether the reading
+  itself (an indicator as a user interface component) stands. Until the
+  owner decides, the catalog says "applies" with a note on each platform,
+  and the examples are kept as built. They are good examples with that
+  qualification, not a recommendation.
+
+Decided in review by the principal on 2026-11-22, in answer to the build:
+
+- **The good bar keeps the default value**, the percentage as a number
+  ([FL-027](../flutter-limitations.md#fl-027)): it is the framework's
+  default and keeps Android's range. What it gives, as measured: TalkBack
+  "0.0.", "0,", "Report upload", "Progress bar", the value twice
+  (`docs/evidence/C26/talkback-android.md`); VoiceOver on iOS "Report
+  upload 0", a bare number (`docs/evidence/C26/voiceover-ios.md`);
+  VoiceOver on the web "Report upload 0 0% progress indicator", the value
+  twice (`docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`). A
+  percent sign, as the probe's p03, reads "40%," once on TalkBack and
+  "40%" on iOS, and loses Android's range.
+- **FL-259 stays in the limitations log.** It is a test finding, not an
+  accessibility fault: a node whose role changes loses its test
+  identifier on the web, and nothing a user meets changes.
 
 ## 9. What is handed on
 

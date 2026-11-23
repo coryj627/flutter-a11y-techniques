@@ -9,7 +9,7 @@
 // MutationObserver from before the button is pressed (I12's recorder).
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
-import { EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeExampleWalk, runWalks, screenStops } from './vo/c26_vo_walks.js';
+import { EXAMPLE_HEADING, EXAMPLE_SCREENS, WALKS, judgeExampleWalk, runWalks, screenStops } from './vo/c26_vo_walks.js';
 
 const status = (page, slug) => byId(page, `c26-${slug}-status`);
 const { open } = technique('C26', { ready: status, settle: 900 });
@@ -265,7 +265,7 @@ for (const slug of Object.keys(EXAMPLE_SCREENS)) {
 
 // The judge of the VoiceOver walks, on made-up walks.
 test.describe('the VoiceOver walk judge', () => {
-  const expected = ['Upload report button', 'Report upload 0 progress indicator', 'Not started'];
+  const expected = WALKS['good-linear'].chromium;
   const screen = screenStops('good-linear');
   const whole = [...screen, EXAMPLE_HEADING, ...expected];
 
@@ -274,7 +274,7 @@ test.describe('the VoiceOver walk judge', () => {
   });
   test('a wrong stop is wrong, wherever it is', () => {
     const wrong = [...whole];
-    wrong[whole.length - 2] = 'Report upload 0';
+    wrong[whole.length - 2] = 'Report upload 0 progress indicator';
     expect(judgeExampleWalk(wrong, true, expected, screen).verdict).toBe('wrong');
     expect(judgeExampleWalk(wrong.slice(0, -1), false, expected, screen).verdict).toBe('wrong');
   });
@@ -302,5 +302,34 @@ test.describe('the VoiceOver walk judge', () => {
     expect(result.verdict).toBe('wrong');
     expect(result.walks).toBe(2);
     expect(logged).toEqual(['1 incomplete', '2 wrong']);
+  });
+
+  // Regression, from the first recording
+  // (docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt): a bar was
+  // read "Report upload 0 0% progress indicator", the same in Chromium and
+  // WebKit, where the first lists expected "Report upload 0 progress
+  // indicator". The lists now hold what was read; a walk that reads the bar
+  // with its value once, as first predicted, must be wrong, and the
+  // recorded walks must be complete.
+  test('the first recording\'s bar walks are complete against the lists, in both browsers', () => {
+    const recorded = {
+      'good-linear': ['Upload report button', 'Report upload 0 0% progress indicator', 'Not started'],
+      'bad-silent-end': ['Upload report button', 'Report upload 0 0% progress indicator', 'Not started'],
+      'bad-no-label': ['Upload report button', 'Report upload', '0 0% progress indicator', 'Not started'],
+    };
+    for (const [slug, stops] of Object.entries(recorded)) {
+      for (const browser of ['chromium', 'webkit']) {
+        const screenOf = screenStops(slug);
+        const walk = [...screenOf, EXAMPLE_HEADING, ...stops];
+        expect(judgeExampleWalk(walk, true, WALKS[slug][browser], screenOf).verdict, `${slug} ${browser}`).toBe('complete');
+      }
+    }
+  });
+  test('a bar read with its value once, as first predicted, is wrong', () => {
+    const screenOf = screenStops('bad-no-label');
+    const predicted = [...screenOf, EXAMPLE_HEADING, 'Upload report button', 'Report upload', '0 progress indicator', 'Not started'];
+    expect(judgeExampleWalk(predicted, true, WALKS['bad-no-label'].chromium, screenOf).verdict).toBe('wrong');
+    const linear = [...screen, EXAMPLE_HEADING, 'Upload report button', 'Report upload 0 progress indicator', 'Not started'];
+    expect(judgeExampleWalk(linear, true, expected, screen).verdict).toBe('wrong');
   });
 });

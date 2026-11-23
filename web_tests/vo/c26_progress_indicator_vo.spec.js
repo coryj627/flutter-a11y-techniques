@@ -11,12 +11,11 @@
 // stop, or a walk that reached the end with any expected stop not read,
 // fails for good, and every try is logged.
 //
-// The walk lists are predictions, written before any VoiceOver recording
-// of C26 on the web, from Chromium's tree (web_tests/
-// c26_progress_indicator.spec.js) and from how VoiceOver read a button and
-// plain text in earlier techniques. The first recording will say whether
-// they hold; where they do not, they are set to what it read and the
-// failed recording is kept in the probe folder, as C12 and C13 did.
+// The walk lists (WALKS in c26_vo_walks.js) are what the first recording
+// read, in both browsers (docs/evidence/probes/c26/
+// voiceover-web-round1-fail.md.txt). That recording failed six walks, the
+// three with a bar in each browser, on lists written as predictions: a bar
+// was read with its value twice, in its name and then as a percentage.
 //
 // This spec runs in a browser on a Mac, so bad-adaptive's spinner is the
 // Cupertino one, with nothing for VoiceOver (FL-257).
@@ -25,27 +24,9 @@ import { expect } from '@playwright/test';
 import {
   activateBrowser, assertCaptureIsLive, heardAfter, waitUntilQuiet, walkToEnd,
 } from './vo_helpers.js';
-import { EXAMPLE_HEADING, judgeExampleWalk, runWalks, screenStops } from './c26_vo_walks.js';
+import { EXAMPLE_HEADING, WALKS, judgeExampleWalk, runWalks, screenStops } from './c26_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
-
-// slug -> browser -> everything VoiceOver speaks after the "Example"
-// heading, to the end of the screen, in order, at rest: the button, the
-// bar where there is one, and the status line. A spinner is shown only
-// while loading, so it is not in a walk at rest.
-const both = (list) => ({ chromium: list, webkit: list });
-const EXAMPLES = {
-  // The bar's name holds its value on the web (FL-037).
-  'good-linear': both(['Upload report button', 'Report upload 0 progress indicator', 'Not started']),
-  'good-circular': both(['Load inbox button', 'Inbox not loaded']),
-  'good-cupertino': both(['Load inbox button', 'Inbox not loaded']),
-  // The bar is named by its value alone; the words are text before it.
-  'bad-no-label': both(['Upload report button', 'Report upload', '0 progress indicator', 'Not started']),
-  'bad-silent-end': both(['Upload report button', 'Report upload 0 progress indicator', 'Not started']),
-  'bad-adaptive': both(['Load inbox button', 'Inbox not loaded']),
-  // The bar is not there; the words are text.
-  'bad-cupertino-bar': both(['Upload report button', 'Report upload', 'Not started']),
-};
 
 // slug -> what VoiceOver must announce once the task has run, or must not.
 const ANNOUNCED = {
@@ -54,12 +35,12 @@ const ANNOUNCED = {
   'good-cupertino': { must: ['Loading started', 'Inbox loaded'] },
   // The status line is no live region, and the bar's changes are not
   // announced (FL-254).
-  'bad-silent-end': { mustNot: ['Uploaded', 'complete'] },
+  'bad-silent-end': { mustNot: ['Upload started', 'Half uploaded', 'Upload complete'] },
 };
 
 const start = (page, slug) => page.locator(`[flt-semantics-identifier="c26-${slug}-start"]`);
 
-for (const [slug, byBrowser] of Object.entries(EXAMPLES)) {
+for (const [slug, byBrowser] of Object.entries(WALKS)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
     const expected = byBrowser[browserName];
     expect(expected, `no list for ${browserName}`).toBeDefined();

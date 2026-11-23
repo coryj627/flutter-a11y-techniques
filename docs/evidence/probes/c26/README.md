@@ -92,6 +92,9 @@ How each platform was looked at, and the raw output:
 - `voiceover-ios-round1-fail.md.txt` to `voiceover-ios-round3-fail.md.txt`:
   the iOS VoiceOver transcripts that failed while the reading of a
   spinner during loading was settled (the spec, section 7).
+- `voiceover-web-round1-fail.md.txt`: the first web VoiceOver recording,
+  made by the principal; its three bar walks failed in both browsers on
+  lists written as predictions (the spec, section 7).
 
 ## What was found
 

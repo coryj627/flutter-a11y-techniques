@@ -907,13 +907,22 @@ yet), **Fixed in x.y** (verified on that version).
   lost. So on Android the default gives a range and a doubled reading,
   and a percent sign gives one reading and no range. VoiceOver on iOS
   reads the default as "p01 Upload 40", the number with no unit, and
-  "40%" as "40%" (C26 probe, `ios.txt`). The documentation says the
+  "40%" as "40%" (C26 probe, `ios.txt`). VoiceOver on the web, in
+  Chromium and in WebKit, reads the default twice as well: C26
+  `good-linear`'s bar at 0 was "Report upload 0 0% progress indicator",
+  the name, which holds the value on the web ([FL-037](#fl-037)), then the
+  value as a percentage, and `bad-no-label`'s "0 0% progress indicator"
+  (`docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`). The
+  element has `aria-valuenow="0"`, min 0, max 100, and no
+  `aria-valuetext`; where VoiceOver's "0%" comes from was not measured. A
+  percent sign on the web was not recorded with VoiceOver. The documentation says the
   default is "10%" for 0.1 ([FL-258](#fl-258)).
 - Effect: anything that reads the range gets nothing when the value has a
   percent sign; the node's description still holds it ("40%, Storage
   used").
-- Workaround: none that serves both. C26's good examples keep the
-  default, for the range, with the doubled reading on Android and the bare
+- Workaround: none that serves both. C26's good bar keeps the default, by
+  the principal's decision in review (C26's spec, section 8), for the
+  range, with the doubled reading on Android and the web and the bare
   number on iOS as a qualification.
 - Upstream issue: not searched yet.
 
@@ -1343,6 +1352,14 @@ yet), **Fixed in x.y** (verified on that version).
   `aria-valuetext`. A disabled one is not adjustable, so its value is
   appended to its name like any other node's: "Volume 40%" as plain text
   (F10 probe; [FL-124](#fl-124)).
+- Progress bars (C26): a determinate indicator is a `progressbar` whose
+  value is in its name as well as in `aria-valuenow`: "Report upload 0".
+  VoiceOver, in Chromium and WebKit, then read the value twice: "Report
+  upload 0 0% progress indicator", and with no label "0 0% progress
+  indicator" (`docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`;
+  [FL-027](#fl-027)). So for a progress bar, unlike the "Why it matters"
+  above, the user hears the number twice; whether the name's copy of the
+  value is the cause was not measured.
 - Upstream issue: not searched yet (D25).
 
 ## FL-038

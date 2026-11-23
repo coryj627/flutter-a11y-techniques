@@ -46,6 +46,34 @@ export const screenStops = (slug) => {
 };
 
 /**
+ * slug -> browser -> everything VoiceOver speaks after the "Example"
+ * heading, to the end of the screen, in order, at rest: the button, the
+ * bar where there is one, and the status line. A spinner is shown only
+ * while loading, so it is not in a walk at rest.
+ *
+ * These are what the first recording read
+ * (docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt), the same in
+ * Chromium and WebKit. It had been written from predictions, which
+ * expected a bar to be read with its value once; VoiceOver read the name,
+ * which holds the value on the web (FL-037), and then the value again as
+ * a percentage, "0%" (FL-027).
+ */
+const both = (list) => ({ chromium: list, webkit: list });
+export const WALKS = {
+  'good-linear': both(['Upload report button', 'Report upload 0 0% progress indicator', 'Not started']),
+  'good-circular': both(['Load inbox button', 'Inbox not loaded']),
+  'good-cupertino': both(['Load inbox button', 'Inbox not loaded']),
+  // The bar is named by its value alone; the words are text before it.
+  'bad-no-label': both(['Upload report button', 'Report upload', '0 0% progress indicator', 'Not started']),
+  'bad-silent-end': both(['Upload report button', 'Report upload 0 0% progress indicator', 'Not started']),
+  // In a browser on a Mac the adaptive spinner is Cupertino's, with nothing
+  // in it (FL-257); it is shown only while loading in any case.
+  'bad-adaptive': both(['Load inbox button', 'Inbox not loaded']),
+  // The bar is not there.
+  'bad-cupertino-bar': both(['Upload report button', 'Report upload', 'Not started']),
+};
+
+/**
  * Judges one walk of an example screen: `stops` in order, whether the walk
  * reached the end of the screen (two moves in a row that changed nothing),
  * `expected`, everything VoiceOver must say after the "Example" heading to
