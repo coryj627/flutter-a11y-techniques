@@ -390,6 +390,24 @@ Skips and what they give up, in the tests:
   gives up is which state the status was in at that moment. Whether a
   VoiceOver user moving on from the button straight after the press
   reaches a new spinner was therefore not settled.
+- On iOS, `currentSpeech()` was measured before it was trusted for
+  silence (`docs/evidence/probes/c26/currentSpeech.txt`): with VoiceOver
+  on it gives the last utterance, and keeps giving it through ten quiet
+  seconds; the only error seen was "No speech available" (code 3), with
+  VoiceOver off. So "nothing said" reads as the last utterance, not as an
+  error, and every error is a failed read: the test fails on any, in
+  every example's nine seconds. `bad-silent-end`'s nine seconds are judged
+  by `C26Silence.judge` (tested on made-up readings, the
+  `testSilenceJudge` tests, among them every read failed with the moves
+  afterwards working): the same reading must give the button's own
+  utterance before the tap and the status line's after the two moves, at
+  least nine reads must have been made, none may fail, and none may give
+  anything but the button's utterance. What remains unproven: an
+  utterance identical to the button's own, said again in the interval,
+  reads the same as silence; and two utterances within one 200 ms read
+  show only the second (which, if it is not the button's, still fails
+  the test). Before the review (Codex, 2026-11-23) a failed read was
+  taken for silence.
 - The iOS VoiceOver walk is C03's: it ends where moving on gives the last
   utterance again, twice. The status phrases are read with
   `currentSpeech()` every 200 ms; a phrase spoken and replaced within

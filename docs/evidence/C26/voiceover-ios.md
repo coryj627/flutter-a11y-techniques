@@ -17,7 +17,7 @@ Result: PASS
 | `bad-adaptive-run` | Load inbox Button / (tap at it) / Load inbox Button / Loading started / Inbox loaded |
 | `bad-adaptive-loading` | Example Heading / Load inbox Button / Loading started / Inbox loaded |
 | `bad-cupertino-bar` | Upload report Button / Report upload / Not started |
-| `bad-cupertino-bar-run` | Upload report Button / (tap at it) / Upload report Button / Upload started / Half uploaded / Upload complete |
+| `bad-cupertino-bar-run` | Upload report Button / (tap at it) / Upload started / Half uploaded / Upload complete |
 | `bad-no-label` | Upload report Button / Report upload / 0 / Not started |
 | `bad-silent-end` | Upload report Button / Report upload 0 / Not started |
 | `bad-silent-end-run` | Upload report Button / (tap at it) / Upload report Button / (forward twice) / Report upload 100 / Upload complete |

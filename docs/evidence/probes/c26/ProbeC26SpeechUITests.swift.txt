@@ -1,0 +1,54 @@
+// C26 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c26/ProbeC26SpeechUITests.swift.txt): what
+// XCUIVoiceOverService.currentSpeech() returns or throws when nothing has
+// been spoken, after an utterance has ended, after a long quiet, and with
+// VoiceOver off, so that the C26 test can tell "no speech" from a broken
+// capture.
+import XCTest
+
+final class ProbeC26SpeechUITests: XCTestCase, TechniqueUITest {
+  static let technique = "C26"
+  let app = XCUIApplication()
+
+  func log(_ s: String) { print("C26SPEECH \(s)") }
+
+  func testCurrentSpeech() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func read(_ label: String, times: Int = 5) {
+      for i in 0..<times {
+        do {
+          let s = try vo.currentSpeech()
+          log("\(label) #\(i): utterance=\(s.utterance.debugDescription)")
+        } catch let e as NSError {
+          log("\(label) #\(i): error domain=\(e.domain) code=\(e.code) \(e.localizedDescription)")
+        }
+        usleep(200_000)
+      }
+    }
+    read("VoiceOver off, before anything", times: 2)
+    open("good-linear", waitingFor: element(labelled: "Material progress bar"), settle: 500_000)
+    try vo.enable()
+    read("straight after enable")
+    sleep(8)
+    read("8 s after enable, no move")
+    do {
+      log("moveForward: \(try vo.moveForward().utterance.debugDescription)")
+    } catch let e as NSError {
+      log("moveForward error domain=\(e.domain) code=\(e.code)")
+    }
+    read("straight after the move")
+    sleep(10)
+    read("10 s after the move, quiet")
+    element("c26-good-linear-start").tap()
+    read("after a tap that moves the cursor to the button")
+    sleep(10)
+    read("10 s later, quiet")
+    try vo.disable()
+    read("after disable", times: 3)
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}
