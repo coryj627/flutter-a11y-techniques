@@ -183,7 +183,7 @@ class C18CardTest : TechniqueTest("C18") {
 
     @Test
     fun badHeadingButtonIsAButtonAndAHeadingOnAndroid() {
-        // The defect is on the web (FL-268); Android keeps both.
+        // The defect is on the web (FL-262); Android keeps both.
         open("bad-heading-button")
         val card = node("c18-bad-heading-button-card")
         assertEquals(BUTTON, card.type())

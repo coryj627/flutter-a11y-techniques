@@ -43,7 +43,7 @@ const EXAMPLES = {
   // and did not stop on the button inside the heading: these are the
   // measured stops.
   'bad-default-container': [`heading level 3 ${CARD}`, 'Saves: 0'],
-  // A heading, and no button (FL-268).
+  // A heading, and no button (FL-262).
   'bad-heading-button': [`heading level 3 ${CARD}`, 'Opens: 0'],
   // The web is not affected: a button, as any tappable node is (FL-006).
   'bad-ink-well': [`${CARD} button`, 'Opens: 0'],

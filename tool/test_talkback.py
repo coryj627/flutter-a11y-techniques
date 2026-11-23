@@ -393,6 +393,170 @@ class Walks(unittest.TestCase):
             tb.walk_until_heard(lambda: (failed, ""))
 
 
+class StrictWalks(unittest.TestCase):
+    """walk_strictly, which C05 uses: a walk is judged whole. A wrong
+    reading fails for good, only a walk shown to be incomplete is walked
+    again, and no element's speech is taken from another walk."""
+    OK = mock.Mock(returncode=0, stdout="")
+    PREFIX = "c05-"
+
+    def setUp(self):
+        self.expected = [i for i in tb.EXPECT if i.startswith(self.PREFIX)]
+        # A right reading for each element: the phrases it must have.
+        self.right = {i: list(tb.EXPECT[i][0]) for i in self.expected}
+        for ident, fragments in self.right.items():
+            self.assertEqual(tb.problems(ident, fragments), [], ident)
+
+    def walker(self, logs):
+        logs = iter(logs)
+        self.walks = 0
+
+        def walk_once():
+            self.walks += 1
+            return self.OK, next(logs)
+
+        return walk_once
+
+    def wrong_at(self, ident):
+        """A whole walk, right but for `ident`, which says it is expanded
+        while closed."""
+        speech = dict(self.right)
+        speech[ident] = speech[ident] + ["expanded"]
+        self.assertTrue(tb.problems(ident, speech[ident]))
+        return log_for(speech)
+
+    def test_two_complete_walks_wrong_at_different_rows_fail(self):
+        # The case Codex reproduced: neither walk is right on its own.
+        first = self.wrong_at("c05-good-material-closed")
+        second = self.wrong_at("c05-good-cupertino-closed")
+        tries = tb.walk_strictly(self.PREFIX, self.walker([first, second]))
+        self.assertEqual([t.verdict for t in tries], ["wrong"])
+        self.assertEqual(self.walks, 1, "no walk after a wrong one")
+        failures, out = tb.strict_report(tries)
+        self.assertTrue(failures)
+        self.assertIn("Result: FAIL", out)
+        # walk_until_heard, which other techniques keep, makes the two into
+        # one passing composite: the difference this guards.
+        spoken, _ = tb.walk_until_heard(self.walker([first, second]))
+        self.assertFalse(any(tb.problems(i, spoken[i]) for i in self.expected))
+
+    def test_an_incomplete_walk_then_a_right_one_passes_on_the_second(self):
+        short = dict(self.right)
+        del short["c05-good-custom-panel"]  # never focused
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log_for(short), log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["incomplete", "right"])
+        failures, out = tb.strict_report(tries)
+        self.assertEqual(failures, [])
+        self.assertIn("Result: PASS", out)
+        # Both walks are in the transcript.
+        self.assertIn("## Walk 1 (incomplete)", out)
+        self.assertIn("## Walk 2 (right)", out)
+        self.assertIn("- Walk 1: incomplete (c05-good-custom-panel: never focused)", out)
+
+    def test_an_incomplete_walk_then_a_wrong_one_fails(self):
+        silent = dict(self.right)
+        silent["c05-good-material-open"] = []
+        tries = tb.walk_strictly(self.PREFIX, self.walker(
+            [log_for(silent), self.wrong_at("c05-good-cupertino-closed")]))
+        self.assertEqual([t.verdict for t in tries], ["incomplete", "wrong"])
+        failures, _ = tb.strict_report(tries)
+        self.assertTrue(any("c05-good-cupertino-closed" in f for f in failures))
+
+    def test_a_cut_off_capture_is_incomplete(self):
+        log = log_for(self.right).replace(
+            "END slug",
+            "FOCUS c05-good-material-closed\n"
+            'V talkback: SpeechControllerImpl: Speaking fragment text="Shipping\n'
+            "11-13 10:00:02.000  1  1 I C05TB   : END slug")
+        verdict, reasons = tb.judge_walk(tb.parse_speech(log), self.expected)
+        self.assertEqual(verdict, "incomplete")
+        self.assertEqual(reasons, ["c05-good-material-closed: speech capture was cut off"])
+
+    def cut_log(self, ident, whole, captured):
+        """A whole walk, right but for `ident`, which speaks the fragments
+        `whole` and then one more that is cut off after its lines
+        `captured` (logcat splits a fragment at its line breaks)."""
+        rest = {i: f for i, f in self.right.items() if i != ident}
+        tag = 'V talkback: SpeechControllerImpl: '
+        lines = [f"11-13 10:00:00.000  1  1 I C05TB   : FOCUS {ident}"]
+        lines += [f'{tag}Speaking fragment text="{f}", utteranceId=x' for f in whole]
+        lines.append(f'{tag}Speaking fragment text="{captured[0]}')
+        lines += [f"{tag}{line}" for line in captured[1:]]
+        return "\n".join(lines) + "\n" + log_for(rest)
+
+    def test_a_forbidden_phrase_beside_a_cut_off_fragment_fails_for_good(self):
+        # Codex's case: "expanded", forbidden while closed, is said in a
+        # fragment captured whole, and the next fragment is cut off. The
+        # walk is wrong, and a right walk after it changes nothing.
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["expanded", "Shipping"], ["Button. Heading"])
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log, log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["wrong"])
+        self.assertEqual(self.walks, 1)
+        failures, out = tb.strict_report(tries)
+        self.assertEqual(failures, [f'{ident}: did not expect "expanded" in '
+                                    f'"expanded | shipping | button. heading"'])
+        self.assertIn("Result: FAIL", out)
+        # The captured lines are in the transcript.
+        self.assertTrue(any('captured of the cut-off speech: "Button. Heading"' in line
+                            for line in out))
+
+    def test_a_forbidden_phrase_in_the_captured_lines_of_a_cut_off_fragment_is_wrong(self):
+        # A cut-off fragment's captured lines are whole lines of what was
+        # said: one that holds the whole forbidden phrase was said.
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["Shipping"], ["collapsed, Button", "expanded"])
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log, log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["wrong"])
+        self.assertEqual(self.walks, 1)
+
+    def test_a_required_phrase_lost_to_the_cut_is_incomplete(self):
+        # "Heading" and the hint were in the lost part: nothing heard is
+        # wrong, so the walk is incomplete and walked again.
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["collapsed. ", "Shipping"], ["Button."])
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log, log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["incomplete", "right"])
+        self.assertEqual(tries[0].reasons, [f"{ident}: speech capture was cut off"])
+        self.assertEqual(tb.strict_report(tries)[0], [])
+
+    def test_a_forbidden_phrase_split_by_the_cut_is_not_heard(self):
+        # Only the lines before the cut are known: a phrase whose words are
+        # not all in them was not shown to be said.
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["collapsed. ", "Shipping"], ["Button. Heading. fully"])
+        verdict, _ = tb.judge_walk(tb.parse_speech(log), self.expected)
+        cut = {}
+        spoken = tb.parse_speech(log, cut)
+        self.assertEqual(cut, {ident: ["Button. Heading. fully"]})
+        self.assertEqual(tb.judge_walk(spoken, self.expected, cut)[0], "incomplete")
+        self.assertEqual(verdict, "incomplete")
+
+    def test_parse_speech_is_the_same_with_or_without_the_cut_lines(self):
+        ident = "c05-good-material-closed"
+        log = self.cut_log(ident, ["Shipping"], ["Button", "expanded"])
+        self.assertEqual(tb.parse_speech(log), tb.parse_speech(log, {}))
+
+    def test_a_wrong_reading_in_an_incomplete_walk_fails_for_good(self):
+        speech = dict(self.right)
+        del speech["c05-good-custom-panel"]
+        speech["c05-good-material-closed"] = speech["c05-good-material-closed"] + ["expanded"]
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log_for(speech), log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["wrong"])
+        self.assertEqual(self.walks, 1)
+
+    def test_three_incomplete_walks_fail(self):
+        short = dict(self.right)
+        del short["c05-good-custom-panel"]
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log_for(short)] * 5))
+        self.assertEqual([t.verdict for t in tries], ["incomplete"] * tb.MAX_WALKS)
+        failures, _ = tb.strict_report(tries)
+        self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
+
+    def test_only_c05_and_c18_are_strict(self):
+        self.assertEqual(tb.STRICT, {"C05", "C18"})
+
+
 class FakeSettingsScreen:
     """Stands in for TalkBack's developer settings screen."""
 

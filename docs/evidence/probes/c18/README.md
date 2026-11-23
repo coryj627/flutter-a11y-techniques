@@ -172,7 +172,7 @@ with Space; p09 and p11 opened `/dest`; p17's tile was never run by a key.
   `bad-default-container`, and [FL-269](../../../flutter-limitations.md#fl-269).
 - A heading inside a control is only a heading on the web:
   `bad-heading-button`, `good-tappable` has no heading, and
-  [FL-268](../../../flutter-limitations.md#fl-268).
+  [FL-262](../../../flutter-limitations.md#fl-262).
 - The `Card` documentation's `InkWell` card has no role off the web:
   `bad-ink-well`, [FL-401](../../../flutter-limitations.md#fl-401) extended.
 - No `article` role, and what a card and a list of cards give instead:

@@ -40,7 +40,7 @@ TALKBACK_EXPECT = {
     # heading and the text are one heading.
     "c18-bad-default-container-card": ([_TRAIL, _TEXT, "Heading"], ["Button", _ACTIVATE]),
     "c18-bad-default-container-save": ([f"Save {_TRAIL}", "Button"], [_TEXT]),
-    # Android keeps both roles; the defect is the web's (FL-268).
+    # Android keeps both roles; the defect is the web's (FL-262).
     "c18-bad-heading-button-card": ([_TRAIL, _TEXT, "Heading", "Button"], []),
     # No role: only the usage hint gives it away (FL-401).
     "c18-bad-ink-well-card": ([_TRAIL, _TEXT, _ACTIVATE], ["Button", "Heading"]),

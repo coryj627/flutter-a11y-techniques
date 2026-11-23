@@ -1,0 +1,618 @@
+==== p01 android collapsed
+label="Before p01" value="" hint="" tapHint="" [] {}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p01 Shipping" value="" hint="Collapsed" tapHint="custom" [focusable,selected=false,enabled=true] {tap,focus}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p01 Returns" value="" hint="Collapsed" tapHint="custom" [focusable,selected=false,enabled=true] {tap,focus}
+label="p01 end" value="" hint="" tapHint="" [id=p01-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p01" value="" hint="" tapHint="" [header] {}
+p01 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p01 Shipping" size=Size(800.0, 56.0) / "p01 Returns" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "p01 Shipping" size=Size(800.0, 56.0) / "p01 Returns" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0)
+==== p01 android after a tap on Shipping
+label="Before p01" value="" hint="" tapHint="" [] {}
+label="Expanded" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p01 Shipping" value="" hint="Expanded" tapHint="custom" [focusable,selected=false,enabled=true] {tap,focus}
+label="p01 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p01 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p01 Returns" value="" hint="Collapsed" tapHint="custom" [focusable,selected=false,enabled=true] {tap,focus}
+label="p01 end" value="" hint="" tapHint="" [id=p01-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p01" value="" hint="" tapHint="" [header] {}
+p01 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p01 Shipping" size=Size(800.0, 56.0) / "p01 Shipping button" size=Size(291.9, 40.0) / "p01 Returns" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "p01 Shipping" size=Size(800.0, 56.0) / "p01 Shipping button" size=Size(291.9, 40.0)
+==== p02 android collapsed
+label="Before p02" value="" hint="" tapHint="" [] {}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p02 Shipping" value="" hint="Collapsed" tapHint="custom" [focusable,selected=false,enabled=true] {tap,focus}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p02 Returns" value="" hint="Collapsed" tapHint="custom" [focusable,selected=false,enabled=true] {tap,focus}
+label="p02 end" value="" hint="" tapHint="" [id=p02-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p02" value="" hint="" tapHint="" [header] {}
+p02 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p02 Shipping" size=Size(800.0, 56.0) / "p02 Returns" size=Size(800.0, 56.0) / "" size=Size(291.9, 40.0) / "" size=Size(277.8, 40.0) / "Back" size=Size(40.0, 40.0) / "p02 Shipping" size=Size(800.0, 56.0)
+==== p02 android after a tap on Shipping
+label="Before p02" value="" hint="" tapHint="" [] {}
+label="Expanded" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p02 Shipping" value="" hint="Expanded" tapHint="custom" [focusable,FOCUSED,selected=false,enabled=true] {tap,focus}
+label="p02 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p02 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p02 Returns" value="" hint="Collapsed" tapHint="custom" [focusable,selected=false,enabled=true] {tap,focus}
+label="p02 end" value="" hint="" tapHint="" [id=p02-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p02" value="" hint="" tapHint="" [header] {}
+p02 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p02 Shipping" size=Size(800.0, 56.0) / "p02 Shipping button" size=Size(291.9, 40.0) / "p02 Returns" size=Size(800.0, 56.0) / "" size=Size(277.8, 40.0) / "Back" size=Size(40.0, 40.0) / "p02 Shipping" size=Size(800.0, 56.0)
+==== p03 android collapsed
+label="Before p03" value="" hint="" tapHint="" [] {}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p03 Shipping" value="" hint="Collapsed" tapHint="custom" [h3,focusable,selected=false,enabled=true] {tap,focus}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p03 Returns" value="" hint="Collapsed" tapHint="custom" [h3,focusable,selected=false,enabled=true] {tap,focus}
+label="p03 end" value="" hint="" tapHint="" [id=p03-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p03" value="" hint="" tapHint="" [header] {}
+p03 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p03 Shipping" size=Size(800.0, 56.0) / "p03 Returns" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "p03 Shipping" size=Size(800.0, 56.0) / "p03 Returns" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0)
+==== p03 android after a tap on Shipping
+label="Before p03" value="" hint="" tapHint="" [] {}
+label="Expanded" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p03 Shipping" value="" hint="Expanded" tapHint="custom" [h3,focusable,selected=false,enabled=true] {tap,focus}
+label="p03 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p03 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p03 Returns" value="" hint="Collapsed" tapHint="custom" [h3,focusable,selected=false,enabled=true] {tap,focus}
+label="p03 end" value="" hint="" tapHint="" [id=p03-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p03" value="" hint="" tapHint="" [header] {}
+p03 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p03 Shipping" size=Size(800.0, 56.0) / "p03 Shipping button" size=Size(291.9, 40.0) / "p03 Returns" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "p03 Shipping" size=Size(800.0, 56.0) / "p03 Shipping button" size=Size(291.9, 40.0)
+==== p04 android collapsed
+label="Before p04" value="" hint="" tapHint="" [] {}
+label="p04 Shipping" value="" hint="" tapHint="" [selected=false,enabled=true] {}
+label="Expand" value="" hint="" tapHint="custom" [] {}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p04 Returns" value="" hint="" tapHint="" [selected=false,enabled=true] {}
+label="Expand" value="" hint="" tapHint="custom" [] {}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p04 end" value="" hint="" tapHint="" [id=p04-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p04" value="" hint="" tapHint="" [header] {}
+p04 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "Expand" size=Size(48.0, 48.0) / "Expand" size=Size(48.0, 48.0) / "Back" size=Size(40.0, 40.0) / "Expand" size=Size(48.0, 48.0) / "Expand" size=Size(48.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p04 android after a tap on Shipping
+label="Before p04" value="" hint="" tapHint="" [] {}
+label="p04 Shipping" value="" hint="" tapHint="" [selected=false,enabled=true] {}
+label="Expand" value="" hint="" tapHint="custom" [] {}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p04 Returns" value="" hint="" tapHint="" [selected=false,enabled=true] {}
+label="Expand" value="" hint="" tapHint="custom" [] {}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p04 end" value="" hint="" tapHint="" [id=p04-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p04" value="" hint="" tapHint="" [header] {}
+p04 android Tab stops after: "Back" size=Size(40.0, 40.0) / "Expand" size=Size(48.0, 48.0) / "Expand" size=Size(48.0, 48.0) / "Back" size=Size(40.0, 40.0) / "Expand" size=Size(48.0, 48.0) / "Expand" size=Size(48.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p05 android collapsed
+label="Before p05" value="" hint="" tapHint="" [] {}
+label="p05 Shipping" value="" hint="" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap,focus}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {}
+label="p05 Returns" value="" hint="" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap,focus}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {}
+label="p05 end" value="" hint="" tapHint="" [id=p05-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p05" value="" hint="" tapHint="" [header] {}
+p05 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p05 Shipping" size=Size(800.0, 56.0) / "p05 Shipping" size=Size(48.0, 48.0) / "p05 Returns" size=Size(800.0, 56.0) / "p05 Returns" size=Size(48.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p05 Shipping" size=Size(800.0, 56.0)
+==== p05 android after a tap on Shipping
+label="Before p05" value="" hint="" tapHint="" [] {}
+label="p05 Shipping" value="" hint="" tapHint="custom" [button,focusable,FOCUSED,selected=false,enabled=true] {tap,focus}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {}
+label="p05 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p05 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p05 Returns" value="" hint="" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap,focus}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {}
+label="p05 end" value="" hint="" tapHint="" [id=p05-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p05" value="" hint="" tapHint="" [header] {}
+p05 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p05 Shipping" size=Size(800.0, 88.0) / "p05 Shipping" size=Size(48.0, 48.0) / "p05 Shipping button" size=Size(291.9, 40.0) / "p05 Returns" size=Size(800.0, 56.0) / "p05 Returns" size=Size(48.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p06 android collapsed
+label="Before p06" value="" hint="" tapHint="" [] {}
+label="p06 Shipping" value="" hint="" tapHint="custom" [] {tap}
+label="p06 Returns" value="" hint="" tapHint="custom" [] {tap}
+label="p06 end" value="" hint="" tapHint="" [id=p06-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p06" value="" hint="" tapHint="" [header] {}
+p06 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p06 Shipping" size=Size(291.9, 40.0) / "p06 Returns" size=Size(277.8, 40.0) / "Back" size=Size(40.0, 40.0) / "p06 Shipping" size=Size(291.9, 40.0) / "p06 Returns" size=Size(277.8, 40.0) / "Back" size=Size(40.0, 40.0)
+==== p06 android after a tap on Shipping
+label="Before p06" value="" hint="" tapHint="" [] {}
+label="p06 Shipping\np06 Shipping panel" value="" hint="" tapHint="custom" [] {tap}
+  label="p06 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p06 Returns" value="" hint="" tapHint="custom" [] {tap}
+label="p06 end" value="" hint="" tapHint="" [id=p06-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p06" value="" hint="" tapHint="" [header] {}
+p06 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p06 Shipping button" size=Size(291.9, 40.0) / "p06 Returns" size=Size(277.8, 40.0) / "Back" size=Size(40.0, 40.0) / "p06 Shipping button" size=Size(291.9, 40.0) / "p06 Returns" size=Size(277.8, 40.0) / "Back" size=Size(40.0, 40.0)
+==== p07 android collapsed
+label="Before p07" value="" hint="" tapHint="" [] {}
+label="p07 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p07 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p07 end" value="" hint="" tapHint="" [id=p07-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p07" value="" hint="" tapHint="" [header] {}
+p07 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p07 Shipping" size=Size(800.0, 48.0) / "p07 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p07 Shipping" size=Size(800.0, 48.0) / "p07 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p07 android after a tap on Shipping
+label="Before p07" value="" hint="" tapHint="" [] {}
+label="p07 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable] {tap,focus}
+label="p07 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p07 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p07 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p07 end" value="" hint="" tapHint="" [id=p07-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p07" value="" hint="" tapHint="" [header] {}
+p07 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p07 Shipping" size=Size(800.0, 48.0) / "p07 Shipping button" size=Size(291.9, 40.0) / "p07 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p07 Shipping" size=Size(800.0, 48.0) / "p07 Shipping button" size=Size(291.9, 40.0)
+==== p08 android collapsed
+label="Before p08" value="" hint="" tapHint="" [] {}
+label="p08 Shipping" value="" hint="" tapHint="" [button,h3,expanded=false,focusable] {tap,focus}
+label="p08 Returns" value="" hint="" tapHint="" [button,h3,expanded=false,focusable] {tap,focus}
+label="p08 end" value="" hint="" tapHint="" [id=p08-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p08" value="" hint="" tapHint="" [header] {}
+p08 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p08 Shipping" size=Size(800.0, 48.0) / "p08 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p08 Shipping" size=Size(800.0, 48.0) / "p08 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p08 android after a tap on Shipping
+label="Before p08" value="" hint="" tapHint="" [] {}
+label="p08 Shipping" value="" hint="" tapHint="" [button,h3,expanded=true,focusable] {tap,focus}
+label="p08 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p08 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p08 Returns" value="" hint="" tapHint="" [button,h3,expanded=false,focusable] {tap,focus}
+label="p08 end" value="" hint="" tapHint="" [id=p08-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p08" value="" hint="" tapHint="" [header] {}
+p08 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p08 Shipping" size=Size(800.0, 48.0) / "p08 Shipping button" size=Size(291.9, 40.0) / "p08 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p08 Shipping" size=Size(800.0, 48.0) / "p08 Shipping button" size=Size(291.9, 40.0)
+==== p09 android collapsed
+label="Before p09" value="" hint="" tapHint="" [] {}
+label="" value="" hint="" tapHint="" [h3] {}
+  label="p09 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="" value="" hint="" tapHint="" [h3] {}
+  label="p09 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p09 end" value="" hint="" tapHint="" [id=p09-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p09" value="" hint="" tapHint="" [header] {}
+p09 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p09 Shipping" size=Size(800.0, 48.0) / "p09 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p09 Shipping" size=Size(800.0, 48.0) / "p09 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p09 android after a tap on Shipping
+label="Before p09" value="" hint="" tapHint="" [] {}
+label="" value="" hint="" tapHint="" [h3] {}
+  label="p09 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable] {tap,focus}
+label="p09 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p09 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="" value="" hint="" tapHint="" [h3] {}
+  label="p09 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p09 end" value="" hint="" tapHint="" [id=p09-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p09" value="" hint="" tapHint="" [header] {}
+p09 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p09 Shipping" size=Size(800.0, 48.0) / "p09 Shipping button" size=Size(291.9, 40.0) / "p09 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p09 Shipping" size=Size(800.0, 48.0) / "p09 Shipping button" size=Size(291.9, 40.0)
+==== p10 android collapsed
+label="Before p10" value="" hint="" tapHint="" [] {}
+label="p10 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus,expand}
+label="p10 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus,expand}
+label="p10 end" value="" hint="" tapHint="" [id=p10-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p10" value="" hint="" tapHint="" [header] {}
+p10 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p10 Shipping" size=Size(800.0, 48.0) / "p10 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p10 Shipping" size=Size(800.0, 48.0) / "p10 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p10 android after a tap on Shipping
+label="Before p10" value="" hint="" tapHint="" [] {}
+label="p10 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable] {tap,focus,collapse}
+label="p10 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p10 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p10 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus,expand}
+label="p10 end" value="" hint="" tapHint="" [id=p10-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p10" value="" hint="" tapHint="" [header] {}
+p10 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p10 Shipping" size=Size(800.0, 48.0) / "p10 Shipping button" size=Size(291.9, 40.0) / "p10 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p10 Shipping" size=Size(800.0, 48.0) / "p10 Shipping button" size=Size(291.9, 40.0)
+==== p11 android collapsed
+label="Before p11" value="" hint="" tapHint="" [] {}
+label="p11 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable,controls={p11-Shipping-panel}] {tap,focus}
+label="p11 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable,controls={p11-Returns-panel}] {tap,focus}
+label="p11 end" value="" hint="" tapHint="" [id=p11-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p11" value="" hint="" tapHint="" [header] {}
+p11 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p11 Shipping" size=Size(800.0, 48.0) / "p11 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p11 Shipping" size=Size(800.0, 48.0) / "p11 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p11 android after a tap on Shipping
+label="Before p11" value="" hint="" tapHint="" [] {}
+label="p11 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable,controls={p11-Shipping-panel}] {tap,focus}
+label="p11 Shipping panel" value="" hint="" tapHint="" [id=p11-Shipping-panel] {}
+  label="p11 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p11 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable,controls={p11-Returns-panel}] {tap,focus}
+label="p11 end" value="" hint="" tapHint="" [id=p11-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p11" value="" hint="" tapHint="" [header] {}
+p11 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p11 Shipping" size=Size(800.0, 48.0) / "p11 Shipping button" size=Size(291.9, 40.0) / "p11 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p11 Shipping" size=Size(800.0, 48.0) / "p11 Shipping button" size=Size(291.9, 40.0)
+==== p12 android collapsed
+label="Before p12" value="" hint="" tapHint="" [] {}
+label="p12 Shipping" value="collapsed" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p12 Returns" value="collapsed" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p12 end" value="" hint="" tapHint="" [id=p12-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p12" value="" hint="" tapHint="" [header] {}
+p12 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p12 Shipping" size=Size(800.0, 48.0) / "p12 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p12 Shipping" size=Size(800.0, 48.0) / "p12 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p12 android after a tap on Shipping
+label="Before p12" value="" hint="" tapHint="" [] {}
+label="p12 Shipping" value="expanded" hint="" tapHint="" [button,expanded=true,focusable] {tap,focus}
+label="p12 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p12 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p12 Returns" value="collapsed" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p12 end" value="" hint="" tapHint="" [id=p12-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p12" value="" hint="" tapHint="" [header] {}
+p12 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p12 Shipping" size=Size(800.0, 48.0) / "p12 Shipping button" size=Size(291.9, 40.0) / "p12 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p12 Shipping" size=Size(800.0, 48.0) / "p12 Shipping button" size=Size(291.9, 40.0)
+==== p13 android collapsed
+label="Before p13" value="" hint="" tapHint="" [] {}
+label="p13 Shipping" value="" hint="" tapHint="custom" [button,expanded=false,focusable] {tap,focus}
+label="p13 Returns" value="" hint="" tapHint="custom" [button,expanded=false,focusable] {tap,focus}
+label="p13 end" value="" hint="" tapHint="" [id=p13-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p13" value="" hint="" tapHint="" [header] {}
+p13 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p13 Shipping" size=Size(800.0, 48.0) / "p13 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p13 Shipping" size=Size(800.0, 48.0) / "p13 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0)
+==== p13 android after a tap on Shipping
+label="Before p13" value="" hint="" tapHint="" [] {}
+label="p13 Shipping" value="" hint="" tapHint="custom" [button,expanded=true,focusable] {tap,focus}
+label="p13 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p13 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p13 Returns" value="" hint="" tapHint="custom" [button,expanded=false,focusable] {tap,focus}
+label="p13 end" value="" hint="" tapHint="" [id=p13-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p13" value="" hint="" tapHint="" [header] {}
+p13 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p13 Shipping" size=Size(800.0, 48.0) / "p13 Shipping button" size=Size(291.9, 40.0) / "p13 Returns" size=Size(800.0, 48.0) / "Back" size=Size(40.0, 40.0) / "p13 Shipping" size=Size(800.0, 48.0) / "p13 Shipping button" size=Size(291.9, 40.0)
+==== p14 android collapsed
+label="Before p14" value="" hint="" tapHint="" [] {}
+label="p14 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p14 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p14 end" value="" hint="" tapHint="" [id=p14-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p14" value="" hint="" tapHint="" [header] {}
+p14 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p14 Shipping" size=Size(800.0, 48.0) / "p14 Returns" size=Size(800.0, 48.0) / "" size=Size(291.9, 40.0) / "" size=Size(277.8, 40.0) / "Back" size=Size(40.0, 40.0) / "p14 Shipping" size=Size(800.0, 48.0)
+==== p14 android after a tap on Shipping
+label="Before p14" value="" hint="" tapHint="" [] {}
+label="p14 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable,FOCUSED] {tap,focus}
+label="p14 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p14 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p14 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p14 end" value="" hint="" tapHint="" [id=p14-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p14" value="" hint="" tapHint="" [header] {}
+p14 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p14 Shipping" size=Size(800.0, 48.0) / "p14 Shipping button" size=Size(291.9, 40.0) / "p14 Returns" size=Size(800.0, 48.0) / "" size=Size(277.8, 40.0) / "Back" size=Size(40.0, 40.0) / "p14 Shipping" size=Size(800.0, 48.0)
+==== p15 android collapsed
+label="Before p15" value="" hint="" tapHint="" [] {}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p15 Shipping" value="" hint="Collapsed" tapHint="custom" [button,expanded=false,focusable,selected=false,enabled=true] {tap,focus}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p15 Returns" value="" hint="Collapsed" tapHint="custom" [button,expanded=false,focusable,selected=false,enabled=true] {tap,focus}
+label="p15 end" value="" hint="" tapHint="" [id=p15-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p15" value="" hint="" tapHint="" [header] {}
+p15 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p15 Shipping" size=Size(800.0, 56.0) / "p15 Returns" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "p15 Shipping" size=Size(800.0, 56.0) / "p15 Returns" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0)
+==== p15 android after a tap on Shipping
+label="Before p15" value="" hint="" tapHint="" [] {}
+label="Expanded" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p15 Shipping" value="" hint="Expanded" tapHint="custom" [button,expanded=true,focusable,selected=false,enabled=true] {tap,focus}
+label="p15 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p15 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+  label="p15 Returns" value="" hint="Collapsed" tapHint="custom" [button,expanded=false,focusable,selected=false,enabled=true] {tap,focus}
+label="p15 end" value="" hint="" tapHint="" [id=p15-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p15" value="" hint="" tapHint="" [header] {}
+p15 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p15 Shipping" size=Size(800.0, 56.0) / "p15 Shipping button" size=Size(291.9, 40.0) / "p15 Returns" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "p15 Shipping" size=Size(800.0, 56.0) / "p15 Shipping button" size=Size(291.9, 40.0)
+==== p16 android collapsed
+label="Before p16" value="" hint="" tapHint="" [] {}
+label="p16 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p16 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p16 end" value="" hint="" tapHint="" [id=p16-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p16" value="" hint="" tapHint="" [header] {}
+p16 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "p16 Shipping" size=Size(800.0, 44.0) / "p16 Returns" size=Size(800.0, 44.0) / "Back" size=Size(40.0, 40.0) / "p16 Shipping" size=Size(800.0, 44.0) / "p16 Returns" size=Size(800.0, 44.0) / "Back" size=Size(40.0, 40.0)
+==== p16 android after a tap on Shipping
+label="Before p16" value="" hint="" tapHint="" [] {}
+label="p16 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable] {tap,focus}
+label="p16 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p16 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+label="p16 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,focus}
+label="p16 end" value="" hint="" tapHint="" [id=p16-end] {}
+label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+label="p16" value="" hint="" tapHint="" [header] {}
+p16 android Tab stops after: "Back" size=Size(40.0, 40.0) / "p16 Shipping" size=Size(800.0, 44.0) / "p16 Shipping button" size=Size(291.9, 40.0) / "p16 Returns" size=Size(800.0, 44.0) / "Back" size=Size(40.0, 40.0) / "p16 Shipping" size=Size(800.0, 44.0) / "p16 Shipping button" size=Size(291.9, 40.0)
+==== p01 iOS collapsed
+label="Before p01" value="" hint="" tapHint="" [] {}
+label="p01 Shipping" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [focusable,selected=false,enabled=true] {tap}
+label="p01 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [focusable,selected=false,enabled=true] {tap}
+label="p01 end" value="" hint="" tapHint="" [id=p01-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p01" value="" hint="" tapHint="" [header] {}
+p01 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p01 Shipping" size=Size(800.0, 56.0) / "p01 Returns" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "p01 Shipping" size=Size(800.0, 56.0) / "p01 Returns" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0)
+==== p01 iOS after a tap on Shipping
+label="Before p01" value="" hint="" tapHint="" [] {}
+label="p01 Shipping" value="" hint="Expanded\n double tap to collapse" tapHint="custom" [focusable,selected=false,enabled=true] {tap}
+label="p01 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p01 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p01 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [focusable,selected=false,enabled=true] {tap}
+label="p01 end" value="" hint="" tapHint="" [id=p01-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p01" value="" hint="" tapHint="" [header] {}
+p01 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p01 Shipping" size=Size(800.0, 56.0) / "p01 Shipping button" size=Size(291.9, 40.0) / "p01 Returns" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "p01 Shipping" size=Size(800.0, 56.0) / "p01 Shipping button" size=Size(291.9, 40.0)
+==== p02 iOS collapsed
+label="Before p02" value="" hint="" tapHint="" [] {}
+label="p02 Shipping" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [focusable,selected=false,enabled=true] {tap}
+label="p02 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [focusable,selected=false,enabled=true] {tap}
+label="p02 end" value="" hint="" tapHint="" [id=p02-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p02" value="" hint="" tapHint="" [header] {}
+p02 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p02 Shipping" size=Size(800.0, 56.0) / "p02 Returns" size=Size(800.0, 56.0) / "" size=Size(291.9, 40.0) / "" size=Size(277.8, 40.0) / "" size=Size(40.0, 40.0) / "p02 Shipping" size=Size(800.0, 56.0)
+==== p02 iOS after a tap on Shipping
+label="Before p02" value="" hint="" tapHint="" [] {}
+label="p02 Shipping" value="" hint="Expanded\n double tap to collapse" tapHint="custom" [focusable,FOCUSED,selected=false,enabled=true] {tap}
+label="p02 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p02 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p02 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [focusable,selected=false,enabled=true] {tap}
+label="p02 end" value="" hint="" tapHint="" [id=p02-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p02" value="" hint="" tapHint="" [header] {}
+p02 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p02 Shipping" size=Size(800.0, 56.0) / "p02 Shipping button" size=Size(291.9, 40.0) / "p02 Returns" size=Size(800.0, 56.0) / "" size=Size(277.8, 40.0) / "" size=Size(40.0, 40.0) / "p02 Shipping" size=Size(800.0, 56.0)
+==== p03 iOS collapsed
+label="Before p03" value="" hint="" tapHint="" [] {}
+label="p03 Shipping" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [h3,focusable,selected=false,enabled=true] {tap}
+label="p03 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [h3,focusable,selected=false,enabled=true] {tap}
+label="p03 end" value="" hint="" tapHint="" [id=p03-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p03" value="" hint="" tapHint="" [header] {}
+p03 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p03 Shipping" size=Size(800.0, 56.0) / "p03 Returns" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "p03 Shipping" size=Size(800.0, 56.0) / "p03 Returns" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0)
+==== p03 iOS after a tap on Shipping
+label="Before p03" value="" hint="" tapHint="" [] {}
+label="p03 Shipping" value="" hint="Expanded\n double tap to collapse" tapHint="custom" [h3,focusable,selected=false,enabled=true] {tap}
+label="p03 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p03 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p03 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [h3,focusable,selected=false,enabled=true] {tap}
+label="p03 end" value="" hint="" tapHint="" [id=p03-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p03" value="" hint="" tapHint="" [header] {}
+p03 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p03 Shipping" size=Size(800.0, 56.0) / "p03 Shipping button" size=Size(291.9, 40.0) / "p03 Returns" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "p03 Shipping" size=Size(800.0, 56.0) / "p03 Shipping button" size=Size(291.9, 40.0)
+==== p04 iOS collapsed
+label="Before p04" value="" hint="" tapHint="" [] {}
+label="p04 Shipping" value="" hint="" tapHint="" [selected=false,enabled=true] {}
+label="Expand" value="" hint="" tapHint="custom" [] {}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p04 Returns" value="" hint="" tapHint="" [selected=false,enabled=true] {}
+label="Expand" value="" hint="" tapHint="custom" [] {}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p04 end" value="" hint="" tapHint="" [id=p04-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p04" value="" hint="" tapHint="" [header] {}
+p04 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "Expand" size=Size(48.0, 48.0) / "Expand" size=Size(48.0, 48.0) / "" size=Size(40.0, 40.0) / "Expand" size=Size(48.0, 48.0) / "Expand" size=Size(48.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p04 iOS after a tap on Shipping
+label="Before p04" value="" hint="" tapHint="" [] {}
+label="p04 Shipping" value="" hint="" tapHint="" [selected=false,enabled=true] {}
+label="Expand" value="" hint="" tapHint="custom" [] {}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p04 Returns" value="" hint="" tapHint="" [selected=false,enabled=true] {}
+label="Expand" value="" hint="" tapHint="custom" [] {}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p04 end" value="" hint="" tapHint="" [id=p04-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p04" value="" hint="" tapHint="" [header] {}
+p04 iOS Tab stops after: "" size=Size(40.0, 40.0) / "Expand" size=Size(48.0, 48.0) / "Expand" size=Size(48.0, 48.0) / "" size=Size(40.0, 40.0) / "Expand" size=Size(48.0, 48.0) / "Expand" size=Size(48.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p05 iOS collapsed
+label="Before p05" value="" hint="" tapHint="" [] {}
+label="p05 Shipping" value="" hint="" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {}
+label="p05 Returns" value="" hint="" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {}
+label="p05 end" value="" hint="" tapHint="" [id=p05-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p05" value="" hint="" tapHint="" [header] {}
+p05 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p05 Shipping" size=Size(800.0, 56.0) / "p05 Shipping" size=Size(48.0, 48.0) / "p05 Returns" size=Size(800.0, 56.0) / "p05 Returns" size=Size(48.0, 48.0) / "" size=Size(40.0, 40.0) / "p05 Shipping" size=Size(800.0, 56.0)
+==== p05 iOS after a tap on Shipping
+label="Before p05" value="" hint="" tapHint="" [] {}
+label="p05 Shipping" value="" hint="" tapHint="custom" [button,focusable,FOCUSED,selected=false,enabled=true] {tap}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {}
+label="p05 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p05 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p05 Returns" value="" hint="" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap}
+  label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {}
+label="p05 end" value="" hint="" tapHint="" [id=p05-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p05" value="" hint="" tapHint="" [header] {}
+p05 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p05 Shipping" size=Size(800.0, 88.0) / "p05 Shipping" size=Size(48.0, 48.0) / "p05 Shipping button" size=Size(291.9, 40.0) / "p05 Returns" size=Size(800.0, 56.0) / "p05 Returns" size=Size(48.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p06 iOS collapsed
+label="Before p06" value="" hint="" tapHint="" [] {}
+label="p06 Shipping" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [] {tap}
+label="p06 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [] {tap}
+label="p06 end" value="" hint="" tapHint="" [id=p06-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p06" value="" hint="" tapHint="" [header] {}
+p06 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p06 Shipping" size=Size(291.9, 40.0) / "p06 Returns" size=Size(277.8, 40.0) / "" size=Size(40.0, 40.0) / "p06 Shipping" size=Size(291.9, 40.0) / "p06 Returns" size=Size(277.8, 40.0) / "" size=Size(40.0, 40.0)
+==== p06 iOS after a tap on Shipping
+label="Before p06" value="" hint="" tapHint="" [] {}
+label="p06 Shipping\np06 Shipping panel" value="" hint="Expanded\n double tap to collapse" tapHint="custom" [] {tap}
+  label="p06 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p06 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [] {tap}
+label="p06 end" value="" hint="" tapHint="" [id=p06-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p06" value="" hint="" tapHint="" [header] {}
+p06 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p06 Shipping button" size=Size(291.9, 40.0) / "p06 Returns" size=Size(277.8, 40.0) / "" size=Size(40.0, 40.0) / "p06 Shipping button" size=Size(291.9, 40.0) / "p06 Returns" size=Size(277.8, 40.0) / "" size=Size(40.0, 40.0)
+==== p07 iOS collapsed
+label="Before p07" value="" hint="" tapHint="" [] {}
+label="p07 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p07 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p07 end" value="" hint="" tapHint="" [id=p07-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p07" value="" hint="" tapHint="" [header] {}
+p07 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p07 Shipping" size=Size(800.0, 48.0) / "p07 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p07 Shipping" size=Size(800.0, 48.0) / "p07 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p07 iOS after a tap on Shipping
+label="Before p07" value="" hint="" tapHint="" [] {}
+label="p07 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable] {tap}
+label="p07 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p07 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p07 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p07 end" value="" hint="" tapHint="" [id=p07-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p07" value="" hint="" tapHint="" [header] {}
+p07 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p07 Shipping" size=Size(800.0, 48.0) / "p07 Shipping button" size=Size(291.9, 40.0) / "p07 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p07 Shipping" size=Size(800.0, 48.0) / "p07 Shipping button" size=Size(291.9, 40.0)
+==== p08 iOS collapsed
+label="Before p08" value="" hint="" tapHint="" [] {}
+label="p08 Shipping" value="" hint="" tapHint="" [button,h3,expanded=false,focusable] {tap}
+label="p08 Returns" value="" hint="" tapHint="" [button,h3,expanded=false,focusable] {tap}
+label="p08 end" value="" hint="" tapHint="" [id=p08-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p08" value="" hint="" tapHint="" [header] {}
+p08 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p08 Shipping" size=Size(800.0, 48.0) / "p08 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p08 Shipping" size=Size(800.0, 48.0) / "p08 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p08 iOS after a tap on Shipping
+label="Before p08" value="" hint="" tapHint="" [] {}
+label="p08 Shipping" value="" hint="" tapHint="" [button,h3,expanded=true,focusable] {tap}
+label="p08 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p08 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p08 Returns" value="" hint="" tapHint="" [button,h3,expanded=false,focusable] {tap}
+label="p08 end" value="" hint="" tapHint="" [id=p08-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p08" value="" hint="" tapHint="" [header] {}
+p08 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p08 Shipping" size=Size(800.0, 48.0) / "p08 Shipping button" size=Size(291.9, 40.0) / "p08 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p08 Shipping" size=Size(800.0, 48.0) / "p08 Shipping button" size=Size(291.9, 40.0)
+==== p09 iOS collapsed
+label="Before p09" value="" hint="" tapHint="" [] {}
+label="" value="" hint="" tapHint="" [h3] {}
+  label="p09 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="" value="" hint="" tapHint="" [h3] {}
+  label="p09 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p09 end" value="" hint="" tapHint="" [id=p09-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p09" value="" hint="" tapHint="" [header] {}
+p09 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p09 Shipping" size=Size(800.0, 48.0) / "p09 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p09 Shipping" size=Size(800.0, 48.0) / "p09 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p09 iOS after a tap on Shipping
+label="Before p09" value="" hint="" tapHint="" [] {}
+label="" value="" hint="" tapHint="" [h3] {}
+  label="p09 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable] {tap}
+label="p09 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p09 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="" value="" hint="" tapHint="" [h3] {}
+  label="p09 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p09 end" value="" hint="" tapHint="" [id=p09-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p09" value="" hint="" tapHint="" [header] {}
+p09 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p09 Shipping" size=Size(800.0, 48.0) / "p09 Shipping button" size=Size(291.9, 40.0) / "p09 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p09 Shipping" size=Size(800.0, 48.0) / "p09 Shipping button" size=Size(291.9, 40.0)
+==== p10 iOS collapsed
+label="Before p10" value="" hint="" tapHint="" [] {}
+label="p10 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,expand}
+label="p10 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,expand}
+label="p10 end" value="" hint="" tapHint="" [id=p10-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p10" value="" hint="" tapHint="" [header] {}
+p10 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p10 Shipping" size=Size(800.0, 48.0) / "p10 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p10 Shipping" size=Size(800.0, 48.0) / "p10 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p10 iOS after a tap on Shipping
+label="Before p10" value="" hint="" tapHint="" [] {}
+label="p10 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable] {tap,collapse}
+label="p10 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p10 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p10 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap,expand}
+label="p10 end" value="" hint="" tapHint="" [id=p10-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p10" value="" hint="" tapHint="" [header] {}
+p10 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p10 Shipping" size=Size(800.0, 48.0) / "p10 Shipping button" size=Size(291.9, 40.0) / "p10 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p10 Shipping" size=Size(800.0, 48.0) / "p10 Shipping button" size=Size(291.9, 40.0)
+==== p11 iOS collapsed
+label="Before p11" value="" hint="" tapHint="" [] {}
+label="p11 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable,controls={p11-Shipping-panel}] {tap}
+label="p11 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable,controls={p11-Returns-panel}] {tap}
+label="p11 end" value="" hint="" tapHint="" [id=p11-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p11" value="" hint="" tapHint="" [header] {}
+p11 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p11 Shipping" size=Size(800.0, 48.0) / "p11 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p11 Shipping" size=Size(800.0, 48.0) / "p11 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p11 iOS after a tap on Shipping
+label="Before p11" value="" hint="" tapHint="" [] {}
+label="p11 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable,controls={p11-Shipping-panel}] {tap}
+label="p11 Shipping panel" value="" hint="" tapHint="" [id=p11-Shipping-panel] {}
+  label="p11 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p11 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable,controls={p11-Returns-panel}] {tap}
+label="p11 end" value="" hint="" tapHint="" [id=p11-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p11" value="" hint="" tapHint="" [header] {}
+p11 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p11 Shipping" size=Size(800.0, 48.0) / "p11 Shipping button" size=Size(291.9, 40.0) / "p11 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p11 Shipping" size=Size(800.0, 48.0) / "p11 Shipping button" size=Size(291.9, 40.0)
+==== p12 iOS collapsed
+label="Before p12" value="" hint="" tapHint="" [] {}
+label="p12 Shipping" value="collapsed" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p12 Returns" value="collapsed" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p12 end" value="" hint="" tapHint="" [id=p12-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p12" value="" hint="" tapHint="" [header] {}
+p12 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p12 Shipping" size=Size(800.0, 48.0) / "p12 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p12 Shipping" size=Size(800.0, 48.0) / "p12 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p12 iOS after a tap on Shipping
+label="Before p12" value="" hint="" tapHint="" [] {}
+label="p12 Shipping" value="expanded" hint="" tapHint="" [button,expanded=true,focusable] {tap}
+label="p12 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p12 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p12 Returns" value="collapsed" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p12 end" value="" hint="" tapHint="" [id=p12-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p12" value="" hint="" tapHint="" [header] {}
+p12 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p12 Shipping" size=Size(800.0, 48.0) / "p12 Shipping button" size=Size(291.9, 40.0) / "p12 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p12 Shipping" size=Size(800.0, 48.0) / "p12 Shipping button" size=Size(291.9, 40.0)
+==== p13 iOS collapsed
+label="Before p13" value="" hint="" tapHint="" [] {}
+label="p13 Shipping" value="" hint="" tapHint="custom" [button,expanded=false,focusable] {tap}
+label="p13 Returns" value="" hint="" tapHint="custom" [button,expanded=false,focusable] {tap}
+label="p13 end" value="" hint="" tapHint="" [id=p13-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p13" value="" hint="" tapHint="" [header] {}
+p13 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p13 Shipping" size=Size(800.0, 48.0) / "p13 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p13 Shipping" size=Size(800.0, 48.0) / "p13 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0)
+==== p13 iOS after a tap on Shipping
+label="Before p13" value="" hint="" tapHint="" [] {}
+label="p13 Shipping" value="" hint="" tapHint="custom" [button,expanded=true,focusable] {tap}
+label="p13 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p13 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p13 Returns" value="" hint="" tapHint="custom" [button,expanded=false,focusable] {tap}
+label="p13 end" value="" hint="" tapHint="" [id=p13-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p13" value="" hint="" tapHint="" [header] {}
+p13 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p13 Shipping" size=Size(800.0, 48.0) / "p13 Shipping button" size=Size(291.9, 40.0) / "p13 Returns" size=Size(800.0, 48.0) / "" size=Size(40.0, 40.0) / "p13 Shipping" size=Size(800.0, 48.0) / "p13 Shipping button" size=Size(291.9, 40.0)
+==== p14 iOS collapsed
+label="Before p14" value="" hint="" tapHint="" [] {}
+label="p14 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p14 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p14 end" value="" hint="" tapHint="" [id=p14-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p14" value="" hint="" tapHint="" [header] {}
+p14 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p14 Shipping" size=Size(800.0, 48.0) / "p14 Returns" size=Size(800.0, 48.0) / "" size=Size(291.9, 40.0) / "" size=Size(277.8, 40.0) / "" size=Size(40.0, 40.0) / "p14 Shipping" size=Size(800.0, 48.0)
+==== p14 iOS after a tap on Shipping
+label="Before p14" value="" hint="" tapHint="" [] {}
+label="p14 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable,FOCUSED] {tap}
+label="p14 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p14 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p14 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p14 end" value="" hint="" tapHint="" [id=p14-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p14" value="" hint="" tapHint="" [header] {}
+p14 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p14 Shipping" size=Size(800.0, 48.0) / "p14 Shipping button" size=Size(291.9, 40.0) / "p14 Returns" size=Size(800.0, 48.0) / "" size=Size(277.8, 40.0) / "" size=Size(40.0, 40.0) / "p14 Shipping" size=Size(800.0, 48.0)
+==== p15 iOS collapsed
+label="Before p15" value="" hint="" tapHint="" [] {}
+label="p15 Shipping" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [button,expanded=false,focusable,selected=false,enabled=true] {tap}
+label="p15 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [button,expanded=false,focusable,selected=false,enabled=true] {tap}
+label="p15 end" value="" hint="" tapHint="" [id=p15-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p15" value="" hint="" tapHint="" [header] {}
+p15 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p15 Shipping" size=Size(800.0, 56.0) / "p15 Returns" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "p15 Shipping" size=Size(800.0, 56.0) / "p15 Returns" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0)
+==== p15 iOS after a tap on Shipping
+label="Before p15" value="" hint="" tapHint="" [] {}
+label="p15 Shipping" value="" hint="Expanded\n double tap to collapse" tapHint="custom" [button,expanded=true,focusable,selected=false,enabled=true] {tap}
+label="p15 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p15 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p15 Returns" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [button,expanded=false,focusable,selected=false,enabled=true] {tap}
+label="p15 end" value="" hint="" tapHint="" [id=p15-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p15" value="" hint="" tapHint="" [header] {}
+p15 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p15 Shipping" size=Size(800.0, 56.0) / "p15 Shipping button" size=Size(291.9, 40.0) / "p15 Returns" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "p15 Shipping" size=Size(800.0, 56.0) / "p15 Shipping button" size=Size(291.9, 40.0)
+==== p16 iOS collapsed
+label="Before p16" value="" hint="" tapHint="" [] {}
+label="p16 Shipping" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p16 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p16 end" value="" hint="" tapHint="" [id=p16-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p16" value="" hint="" tapHint="" [header] {}
+p16 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "p16 Shipping" size=Size(800.0, 44.0) / "p16 Returns" size=Size(800.0, 44.0) / "" size=Size(40.0, 40.0) / "p16 Shipping" size=Size(800.0, 44.0) / "p16 Returns" size=Size(800.0, 44.0) / "" size=Size(40.0, 40.0)
+==== p16 iOS after a tap on Shipping
+label="Before p16" value="" hint="" tapHint="" [] {}
+label="p16 Shipping" value="" hint="" tapHint="" [button,expanded=true,focusable] {tap}
+label="p16 Shipping panel" value="" hint="" tapHint="" [] {}
+label="p16 Shipping button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+label="p16 Returns" value="" hint="" tapHint="" [button,expanded=false,focusable] {tap}
+label="p16 end" value="" hint="" tapHint="" [id=p16-end] {}
+label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+label="p16" value="" hint="" tapHint="" [header] {}
+p16 iOS Tab stops after: "" size=Size(40.0, 40.0) / "p16 Shipping" size=Size(800.0, 44.0) / "p16 Shipping button" size=Size(291.9, 40.0) / "p16 Returns" size=Size(800.0, 44.0) / "" size=Size(40.0, 40.0) / "p16 Shipping" size=Size(800.0, 44.0) / "p16 Shipping button" size=Size(291.9, 40.0)

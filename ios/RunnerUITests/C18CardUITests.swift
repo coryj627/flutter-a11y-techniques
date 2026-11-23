@@ -145,7 +145,7 @@ final class C18CardUITests: XCTestCase, TechniqueUITest {
   }
 
   func testBadHeadingButtonIsAButtonOnIOS() {
-    // The defect is on the web (FL-268); on iOS the heading is heard as
+    // The defect is on the web (FL-262); on iOS the heading is heard as
     // well (the VoiceOver walk).
     open("bad-heading-button")
     let card = element("c18-bad-heading-button-card")
@@ -193,7 +193,7 @@ final class C18CardUITests: XCTestCase, TechniqueUITest {
     // Bad examples: the defect must be audible where iOS shows it. The
     // heading and the text are one heading.
     ("bad-default-container", ["\(read) Heading", "Save \(trail) Button", "Saves: 0"]),
-    // iOS keeps both roles; the defect is the web's (FL-268). In the probe
+    // iOS keeps both roles; the defect is the web's (FL-262). In the probe
     // VoiceOver read the button trait first (docs/evidence/probes/c18/ios.txt,
     // p06, cut at 64 characters).
     ("bad-heading-button", ["\(read) Button Heading", "Opens: 0"]),

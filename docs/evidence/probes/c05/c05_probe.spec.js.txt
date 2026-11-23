@@ -1,0 +1,170 @@
+// C05 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/c05/c05_probe.spec.js.txt with c05probe.config.js.txt).
+// For each fixture of lib/probe.dart: the semantics DOM between "Before pNN"
+// and "pNN end", Chromium's accessibility tree, where Tab goes, and what a
+// click, Enter, and Space on the first header do, each from a fresh load.
+// A key that does nothing is followed, in the same load, by a click (the
+// positive control). Last, a plain HTML accordion (APG's markup) and a
+// details element, for comparison.
+import { test } from '@playwright/test';
+
+const ids = Array.from({ length: 18 }, (_, i) => `p${String(i + 1).padStart(2, '0')}`);
+
+function log(...a) {
+  console.log('C05WEB', ...a);
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-end"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+async function host(page) {
+  return page.locator('flt-semantics-host').evaluate((e) =>
+    e.outerHTML
+      .replace(/ style="[^"]*"/g, '')
+      .replace(/ id="flt-semantic-node-\d+"/g, (m) => m)
+      .replace(/></g, '>\n<'),
+  );
+}
+
+async function ax(page, context, id) {
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const out = [];
+  for (const n of nodes) {
+    if (n.ignored) continue;
+    const name = n.name?.value ?? '';
+    const role = n.role?.value ?? '';
+    if (role === 'StaticText' || role === 'InlineTextBox') continue;
+    if (!name.includes(id) && !['heading', 'button', 'region'].includes(role)) continue;
+    const props = (n.properties ?? [])
+      .filter((p) => ['expanded', 'level', 'focusable', 'controls', 'disabled', 'hasPopup'].includes(p.name))
+      .map((p) => `${p.name}:${JSON.stringify(p.value?.value ?? p.value?.relatedNodes?.map((r) => r.idref ?? r.text ?? r.backendDOMNodeId))}`)
+      .join(',');
+    out.push(`role=${role} name="${name}" ${props}`);
+  }
+  await cdp.detach();
+  return out;
+}
+
+async function active(page) {
+  return page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e || e === document.body) return '(body)';
+    const label = e.getAttribute('aria-label') || e.textContent.trim().slice(0, 40);
+    return `<${e.tagName.toLowerCase()} role=${e.getAttribute('role')} aria-expanded=${e.getAttribute('aria-expanded')}> "${label}"`;
+  });
+}
+
+async function shippingState(page, id) {
+  await page.waitForTimeout(1000);
+  const panel = (await page.getByText(`${id} Shipping panel`).count()) > 0;
+  const expanded = await page.evaluate((id) => {
+    const els = [...document.querySelectorAll('flt-semantics-host [aria-expanded]')];
+    return els.map((e) => `${(e.getAttribute('aria-label') || e.textContent).trim().slice(0, 30)}=${e.getAttribute('aria-expanded')}`).join('; ');
+  }, id);
+  return `panel shown=${panel}; aria-expanded: ${expanded || '(none)'}`;
+}
+
+// The element that holds the header "pNN Shipping": the closest element with
+// a role, a tabindex, or a heading tag, around the text.
+async function header(page, id) {
+  const handle = await page.evaluateHandle((id) => {
+    const all = [...document.querySelectorAll('flt-semantics-host *')];
+    const own = (e) => (e.getAttribute('aria-label') || [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('')).trim();
+    let e = all.find((x) => own(x).startsWith(`${id} Shipping`) && !own(x).includes('panel') && !own(x).includes('button'));
+    if (!e) return null;
+    let up = e;
+    while (up && up.tagName !== 'FLT-SEMANTICS-HOST') {
+      if (up.getAttribute('role') === 'button' || up.hasAttribute('tabindex') || /^H\d$/.test(up.tagName)) return up;
+      up = up.parentElement;
+    }
+    return e;
+  }, id);
+  return handle.asElement();
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of ids) {
+  test(`probe ${id}`, async ({ page, context }) => {
+    page.on('console', (m) => {
+      if (m.text().includes('C05PROBE')) log(id, 'app:', m.text());
+    });
+    await fresh(page, id);
+    log(id, 'DOM collapsed:\n' + (await host(page)));
+    for (const l of await ax(page, context, id)) log(id, 'ax collapsed', l);
+    const stops = [];
+    for (let i = 0; i < 7; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      stops.push(await active(page));
+    }
+    log(id, 'Tab stops collapsed:', stops.join(' / '));
+
+    // A click on the first header.
+    const h = await header(page, id);
+    if (!h) {
+      log(id, 'no header element found');
+      return;
+    }
+    log(id, 'header element:', await h.evaluate((e) => e.outerHTML.replace(/ style="[^"]*"/g, '').slice(0, 400)));
+    const box = await h.boundingBox();
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    log(id, 'after a click:', await shippingState(page, id));
+    log(id, 'DOM after a click:\n' + (await host(page)));
+    for (const l of await ax(page, context, id)) log(id, 'ax after a click', l);
+    const after = [];
+    await page.evaluate(() => document.activeElement?.blur());
+    for (let i = 0; i < 8; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      after.push(await active(page));
+    }
+    log(id, 'Tab stops after a click:', after.join(' / '));
+
+    for (const key of ['Enter', 'Space']) {
+      await fresh(page, id);
+      let reached = 0;
+      for (let i = 1; i <= 6; i++) {
+        await page.keyboard.press('Tab');
+        await page.waitForTimeout(150);
+        const a = await active(page);
+        if (a.includes(`${id} Shipping`) && !a.includes('button"') && !a.includes('panel')) {
+          reached = i;
+          break;
+        }
+      }
+      log(id, `${key}: header reached after ${reached} Tab(s)`);
+      if (!reached) continue;
+      await page.keyboard.press(key);
+      const s = await shippingState(page, id);
+      log(id, `${key}:`, s, '; focus now', await active(page));
+      if (key === 'Enter' && s.includes('panel shown=true')) {
+        await page.keyboard.press(key);
+        log(id, `${key} again:`, await shippingState(page, id));
+      }
+      if (!s.includes('panel shown=true')) {
+        const again = await header(page, id);
+        const b = await again.boundingBox();
+        await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+        log(id, `${key} control click:`, await shippingState(page, id));
+      }
+    }
+  });
+}
+
+test('plain HTML comparison', async ({ page, context }) => {
+  await page.setContent(`
+    <h3><button aria-expanded="false" aria-controls="h1p" id="h1">h01 Shipping</button></h3>
+    <div id="h1p" role="region" aria-labelledby="h1" hidden><p>h01 Shipping panel</p><button>h01 Shipping button</button></div>
+    <h3><button aria-expanded="true" aria-controls="h2p" id="h2">h02 Returns</button></h3>
+    <div id="h2p" role="region" aria-labelledby="h2"><p>h02 Returns panel</p></div>
+    <details><summary>h03 Details summary</summary><p>h03 panel</p></details>
+    <div role="heading" aria-level="3"><div role="button" tabindex="0" aria-expanded="false">h04 ARIA heading holding a button</div></div>
+    <div role="button" tabindex="0" aria-expanded="false" aria-level="3">h05 button with aria-level</div>`);
+  for (const l of await ax(page, context, 'h0')) log('html', 'ax', l);
+});

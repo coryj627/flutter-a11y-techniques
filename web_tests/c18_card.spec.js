@@ -167,7 +167,7 @@ test.describe('bad examples have their defect', () => {
     });
   }
 
-  test('bad-heading-button: the card is a level 3 heading and not a button (FL-268)', async ({ page }) => {
+  test('bad-heading-button: the card is a level 3 heading and not a button (FL-262)', async ({ page }) => {
     await open(page, 'bad-heading-button');
     const card = byId(page, 'c18-bad-heading-button-card');
     await expect(card).toHaveRole('heading');
