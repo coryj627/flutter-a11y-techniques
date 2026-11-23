@@ -212,47 +212,59 @@ class C26ProgressIndicatorTest : TechniqueTest("C26") {
 
     /**
      * L4. For each example: TalkBack focus on its indicator, where it has
-     * one at rest; then focus parked on the button and the button pressed
-     * with the click action, and everything TalkBack says until the task
-     * has ended (`-run`); for bad-silent-end, focus then moved to the bar
-     * inside the same marker, so that the capture that must hold none of
-     * the status phrases is shown live, and then to the status line
-     * (`-status`). tool/talkback.py reads the speech between the markers
-     * and judges the walk whole.
+     * one at rest (`-bar`); then focus parked on the button (`-start`), and
+     * the button pressed with the click action, with everything TalkBack
+     * says until the task has ended (`-run`). tool/talkback.py reads the
+     * speech between the markers and judges the walk whole.
+     *
+     * bad-silent-end's `-run` is declared silent (tool/talkback.py,
+     * SILENT): its marker is logged after the click action has returned,
+     * so the press itself is not in it, and anything said in its nine
+     * seconds fails the walk. The row after it is its liveness control:
+     * focus moved to the bar, which reads 100 (`-run-live`). Then the status
+     * line (`-status`). Then the same with TalkBack focus on the bar while
+     * its value changes: focus on the bar (`-bar-again`), the button pressed
+     * with the click action, which leaves focus on the bar, a silent row
+     * (`-bar-run`), and its liveness control, focus on the status line
+     * (`-bar-run-live`). FL-254.
      */
     @Test
     fun talkBackWalk() {
         assumeTalkBack()
+        fun focus(marker: String, id: String, dwell: Long) {
+            Log.i(talkBackTag, "FOCUS $marker")
+            talkBackFocus(marker) { nodeInAnyWindow(id) }
+            Thread.sleep(dwell)
+        }
+        fun press(slug: String) =
+            assertTrue(nodeInAnyWindow(start(slug)).performAction(AccessibilityNodeInfo.ACTION_CLICK))
         for (slug in c26Titles.keys) {
             openExampleInAnyWindow(slug) { it.name() == c26Titles.getValue(slug) }
             Thread.sleep(8_000)
             val bar = "c26-$slug-bar"
-            if (slug in listOf("good-linear", "bad-no-label", "bad-silent-end")) {
-                Log.i(talkBackTag, "FOCUS $bar")
-                talkBackFocus(bar) { nodeInAnyWindow(bar) }
-                Thread.sleep(4_000)
-            }
-            Log.i(talkBackTag, "FOCUS c26-$slug-start")
-            talkBackFocus(start(slug)) { nodeInAnyWindow(start(slug)) }
-            Thread.sleep(3_000)
-            Log.i(talkBackTag, "FOCUS c26-$slug-run")
-            assertTrue(nodeInAnyWindow(start(slug)).performAction(AccessibilityNodeInfo.ACTION_CLICK))
-            // The task ends 4 s after the press; TalkBack speaks a live
-            // region's changes behind time (the probe's p18, where its
-            // speech ran into the next marker), so the capture runs on.
-            Thread.sleep(9_000)
+            if (slug in listOf("good-linear", "bad-no-label", "bad-silent-end")) focus(bar, bar, 4_000)
+            focus("c26-$slug-start", start(slug), 3_000)
             if (slug == "bad-silent-end") {
-                // Still inside the -run marker: focus moved to the bar,
-                // which TalkBack reads at 100. The marker's capture is then
-                // never empty, and what it must not hold (any of the
-                // upload's status phrases) is judged on a capture shown to
-                // be live. The walk is judged whole (tool/talkback.py,
-                // walk_strictly), where an empty capture is incomplete.
-                talkBackFocus("c26-$slug-bar") { nodeInAnyWindow("c26-$slug-bar") }
-                Thread.sleep(4_000)
-                Log.i(talkBackTag, "FOCUS c26-$slug-status")
-                talkBackFocus(status(slug)) { nodeInAnyWindow(status(slug)) }
-                Thread.sleep(4_000)
+                press(slug)
+                Log.i(talkBackTag, "FOCUS c26-$slug-run")
+                Thread.sleep(9_000)
+                focus("c26-$slug-run-live", bar, 4_000)
+                focus("c26-$slug-status", status(slug), 4_000)
+                // The bar's own reading must be over before the silent row
+                // starts: in the probe a reading's last words came seconds
+                // after the focus (p17).
+                focus("c26-$slug-bar-again", bar, 6_000)
+                press(slug)
+                Log.i(talkBackTag, "FOCUS c26-$slug-bar-run")
+                Thread.sleep(9_000)
+                focus("c26-$slug-bar-run-live", status(slug), 4_000)
+            } else {
+                Log.i(talkBackTag, "FOCUS c26-$slug-run")
+                press(slug)
+                // The task ends 4 s after the press; TalkBack speaks a live
+                // region's changes behind time (the probe's p18, where its
+                // speech ran into the next marker), so the capture runs on.
+                Thread.sleep(9_000)
             }
             Log.i(talkBackTag, "END $slug")
         }

@@ -3405,9 +3405,14 @@ yet), **Fixed in x.y** (verified on that version).
   the end (p19) was spoken on iOS and the web, and by TalkBack too, though
   Android reports it as unsupported ([FL-018](#fl-018)).
 - Asserted by C26 `bad-silent-end` on every layer: its tree tests (no live
-  region), the web's recorder (nothing written), and the TalkBack and iOS
-  VoiceOver transcripts (nothing about the upload heard, then the status
-  line read).
+  region); the web's recorder (nothing at all written to Flutter's
+  announcement elements); the TalkBack transcript, two rows that must be
+  silent, nothing at all said in the nine seconds after the press, with
+  TalkBack focus on the button and then on the bar while its value goes
+  0 to 100, each followed by a reading that shows the capture live; and
+  the iOS VoiceOver transcript (nothing heard after the tap but the
+  button's own utterance, then the status line read). The web VoiceOver
+  test listens for the upload's status phrases only.
 - Upstream issue: not searched yet (D25).
 
 ## FL-255

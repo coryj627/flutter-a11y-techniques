@@ -34,16 +34,22 @@ TALKBACK_EXPECT = {
     "c26-bad-no-label-run": (_UPLOAD, []),
     "c26-bad-silent-end-bar": (["Report upload", "Progress bar"], []),
     "c26-bad-silent-end-start": (["Upload report", "Button"], []),
-    # Nothing about the upload is announced, neither the status line nor the
-    # bar's changes (FL-254). The walk is judged whole (talkback.STRICT),
-    # where a capture with nothing in it is incomplete, so after the nine
-    # seconds TalkBack focus is moved to the bar inside the same marker: it
-    # reads the bar at 100, which shows the capture live and the upload
-    # ended, and none of the status phrases may be in it.
-    "c26-bad-silent-end-run": (["100", "Progress bar"],
-                               ["Upload started", "Half uploaded", "Upload complete"]),
-    # Then the status line, with focus moved to it, says it is complete.
+    # FL-254: nothing about the upload is announced, neither the status line
+    # nor the bar's changes. "(must be silent)" is talkback.SILENT: the row,
+    # logged after the click action has returned, must have nothing spoken
+    # in it at all, a number included, and the row after it, its liveness
+    # control, must be right (talkback.judge_walk).
+    "c26-bad-silent-end-run": (["(must be silent)"], []),
+    # The liveness control: focus moved to the bar, which reads 100.
+    "c26-bad-silent-end-run-live": (["100", "Progress bar"],
+                                    ["Upload started", "Half uploaded", "Upload complete"]),
     "c26-bad-silent-end-status": (["Upload complete"], []),
+    # The same with TalkBack focus on the bar while its value changes: the
+    # bar read once on the focus, then silence through 0 to 100, then the
+    # status line as the liveness control.
+    "c26-bad-silent-end-bar-again": (["Report upload", "Progress bar"], []),
+    "c26-bad-silent-end-bar-run": (["(must be silent)"], []),
+    "c26-bad-silent-end-bar-run-live": (["Upload complete"], []),
     # FL-257 is on iOS and in a browser on a Mac: on Android the adaptive
     # spinner is Material's, and the status line is announced.
     "c26-bad-adaptive-start": (["Load inbox", "Button"], []),
@@ -56,10 +62,14 @@ TALKBACK_EXPECT = {
 TALKBACK_METHOD = (
     "TalkBack focus moved to the example's bar, where it has one at rest (`-bar`), then to its "
     "button (`-start`); the button pressed with ACTION_CLICK with TalkBack focus left on it, and "
-    "everything TalkBack said for nine seconds, the task taking four (`-run`); for "
-    "`bad-silent-end`, TalkBack focus then moved to the bar inside that marker, and then to the "
-    "status line (`-status`). Speech read from TalkBack's verbose log. Each walk is judged whole: "
-    "a wrong reading fails for good, and only a walk shown to be incomplete is walked again"
+    "everything TalkBack said for nine seconds, the task taking four (`-run`). For "
+    "`bad-silent-end` the `-run` marker is logged after the click action has returned and must "
+    "be silent: nothing at all may be spoken in it; the row after it is its liveness control, "
+    "focus moved to the bar (`-run-live`); then the status line (`-status`); then focus on the "
+    "bar (`-bar-again`), the button pressed again with focus left on the bar, nine seconds that "
+    "must be silent (`-bar-run`), and focus moved to the status line as their liveness control "
+    "(`-bar-run-live`). Speech read from TalkBack's verbose log. Each walk is judged whole: a "
+    "wrong reading fails for good, and only a walk shown to be incomplete is walked again"
 )
 
 # tool/voiceover_ios.py: (how the speech was captured, heading of the

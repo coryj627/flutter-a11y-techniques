@@ -317,8 +317,11 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
         XCTAssertEqual(status(slug).label, Self.end[slug]!, "\(slug): the task did not run to its end")
         var row = "\(before) / (tap at it) / \(said.joined(separator: " / "))"
         if slug == "bad-silent-end" {
-          let upload = said.filter { s in ["started", "Half", "complete"].contains { s.contains($0) } }
-          XCTAssertEqual(upload, [], "\(slug): something about the upload was announced")
+          // Nothing may be heard but the button's own utterance, which
+          // currentSpeech() gives from before the tap: no status phrase,
+          // and no number from the bar (FL-254).
+          let other = said.filter { $0 != before }
+          XCTAssertEqual(other, [], "\(slug): something was announced")
           let moves = [move(), move()]
           row += " / (forward twice) / \(moves.joined(separator: " / "))"
           XCTAssertEqual(moves.last, "Upload complete", "\(slug): the status line was not read, so the capture is not shown live")
