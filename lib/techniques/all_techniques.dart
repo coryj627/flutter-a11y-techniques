@@ -8,6 +8,7 @@ import 'c04_links_inline_with_text/c04_links_inline_with_text.dart';
 import 'c05_accordion/c05_accordion.dart';
 import 'c06_disclosure/c06_disclosure.dart';
 import 'c12_tooltip/c12_tooltip.dart';
+import 'c18_card/c18_card.dart';
 import 'f01_text_fields/f01_text_fields.dart';
 import 'f02_input_instructions/f02_input_instructions.dart';
 import 'f03_keyboard_types/f03_keyboard_types.dart';
@@ -44,6 +45,7 @@ final List<Technique> allTechniques = [
   c05Accordion,
   c06Disclosure,
   c12Tooltip,
+  c18Card,
   f01TextFields,
   f02InputInstructions,
   f03KeyboardTypes,

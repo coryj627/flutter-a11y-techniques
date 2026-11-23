@@ -1,0 +1,178 @@
+// C18 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c18/ProbeC18Test.kt.txt). Runs against lib/probe.dart
+// (Gradle -Ptarget=lib/probe.dart). probe() dumps every node of each
+// fixture, then performs ACTION_CLICK on each clickable node of the fixture
+// and reads the taps line; keys() tabs through each fixture with `input
+// keyevent`, logs the deepest node with input focus after each Tab, and
+// presses Enter, then Space, after one to four Tabs, each from a fresh
+// launch; talkBackWalk() moves TalkBack focus to each node of the fixture
+// that has a name.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.graphics.Rect
+import android.text.Spanned
+import android.text.style.URLSpan
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeC18Test : TechniqueTest("C18") {
+    private val tag = "C18PROBE"
+    private val ids = (1..20).map { "p%02d".format(it) }
+
+    private fun launch(fixture: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", "/$fixture")
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.viewIdResourceName == "$fixture-taps" }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("$fixture did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun spans(cs: CharSequence?): String {
+        if (cs !is Spanned) return "-"
+        return cs.getSpans(0, cs.length, URLSpan::class.java).joinToString(",") { s ->
+            "URLSpan(${s.url})@${cs.getSpanStart(s)}-${cs.getSpanEnd(s)}"
+        }.ifEmpty { "-" }
+    }
+
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = Rect().also { n.getBoundsInScreen(it) }
+        val actions = n.actionList.joinToString(",") { a ->
+            val name = when (a.id) {
+                AccessibilityNodeInfo.ACTION_CLICK -> "click"
+                AccessibilityNodeInfo.ACTION_FOCUS -> "focus"
+                AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS -> "a11yfocus"
+                AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS -> "clra11y"
+                AccessibilityNodeInfo.ACTION_LONG_CLICK -> "longclick"
+                AccessibilityNodeInfo.ACTION_SCROLL_FORWARD -> "scrollfwd"
+                AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD -> "scrollback"
+                else -> a.id.toString()
+            }
+            if (a.label != null) "$name(${a.label})" else name
+        }
+        val desc = n.name().replace("\n", "\\n")
+        val ci = n.collectionInfo?.let { " collection=${it.rowCount}x${it.columnCount}" } ?: ""
+        val cii = n.collectionItemInfo?.let { " item=${it.rowIndex},${it.columnIndex} itemHeading=${it.isHeading}" } ?: ""
+        return "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"$desc\" spans=${spans(n.contentDescription)} " +
+            "text=\"${(n.text ?: "").toString().replace("\n", "\\n")}\" heading=${n.isHeading} " +
+            "clickable=${n.isClickable} focusable=${n.isFocusable} screenReaderFocusable=${n.isScreenReaderFocusable} " +
+            "tooltip=\"${n.tooltipText ?: ""}\" $r [$actions] children=${n.childCount}$ci$cii"
+    }
+
+    private fun collect(root: AccessibilityNodeInfo?, depth: Int, out: MutableList<Pair<Int, AccessibilityNodeInfo>>) {
+        if (root == null) return
+        out.add(depth to root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), depth + 1, out)
+    }
+
+    private fun appNodes(): List<Pair<Int, AccessibilityNodeInfo>> {
+        val out = mutableListOf<Pair<Int, AccessibilityNodeInfo>>()
+        for (w in automation.windows) if (w.type == AccessibilityWindowInfo.TYPE_APPLICATION) collect(w.root, 0, out)
+        return out
+    }
+
+    private fun dump(label: String) {
+        Log.i(tag, "==== $label")
+        for ((depth, n) in appNodes()) Log.i(tag, "${"  ".repeat(depth)}${describe(n)}")
+    }
+
+    private fun label(n: AccessibilityNodeInfo) = n.name().ifEmpty { n.text?.toString().orEmpty() }
+        .ifEmpty { n.tooltipText?.toString().orEmpty() }
+
+    private fun taps(id: String): String =
+        appNodes().map { it.second }.firstOrNull { it.viewIdResourceName == "$id-taps" }?.let { label(it) } ?: "(gone)"
+
+    private fun arrived() = anyWindowHas { label(it).startsWith("Arrived") }
+
+    /** The fixture's own nodes: a name with the id, other than its Before and taps lines and the title. */
+    private fun own(id: String) = appNodes().map { it.second }.filter {
+        val l = label(it)
+        l.contains("$id ") && !l.startsWith("Before") && it.viewIdResourceName != "$id-taps"
+    }
+
+    @Test
+    fun probe() {
+        for (id in ids) {
+            launch(id)
+            dump("$id start")
+            val clickables = own(id).filter { it.isClickable }.map { label(it) }
+            for (name in clickables) {
+                launch(id)
+                val node = own(id).firstOrNull { label(it) == name && it.isClickable }
+                if (node == null) {
+                    Log.i(tag, "$id \"$name\": not found again")
+                    continue
+                }
+                val ok = node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                Thread.sleep(2_000)
+                Log.i(tag, "$id ACTION_CLICK on \"${name.replace("\n", "\\n")}\" returned $ok; destination=${arrived()}; ${taps(id)}")
+            }
+        }
+    }
+
+    private fun key(name: String) {
+        device.executeShellCommand("input keyevent KEYCODE_$name")
+        Thread.sleep(600)
+    }
+
+    private fun focusedLabel(): String {
+        val f = appNodes().map { it.second }.lastOrNull { it.isFocused } ?: return "(none)"
+        return label(f).replace("\n", "\\n").ifEmpty { "(${f.type()} no name)" }
+    }
+
+    @Test
+    fun keys() {
+        for (id in ids) {
+            launch(id)
+            val stops = mutableListOf<String>()
+            for (i in 0 until 6) {
+                key("TAB")
+                stops.add(focusedLabel())
+            }
+            Log.i(tag, "$id Tab stops: ${stops.joinToString(" -> ")}")
+            for (k in listOf("ENTER", "SPACE")) {
+                for (n in 1..4) {
+                    launch(id)
+                    for (i in 0 until n) key("TAB")
+                    val on = focusedLabel()
+                    key(k)
+                    Thread.sleep(1_500)
+                    Log.i(tag, "$id $n Tab(s) (on $on) then $k: destination=${arrived()}; ${taps(id)}")
+                }
+            }
+        }
+    }
+
+    @Test
+    fun talkBackWalk() {
+        assumeTalkBack()
+        for (id in ids) {
+            launch(id)
+            Thread.sleep(6_000)
+            val parts = own(id)
+            parts.forEachIndexed { i, n ->
+                val marker = "c18-$id-$i"
+                Log.i(tag, "$marker is \"${label(n).replace("\n", "\\n")}\"")
+                Log.i(talkBackTag, "FOCUS $marker")
+                try {
+                    talkBackFocus(marker) { n }
+                } catch (e: AssertionError) {
+                    Log.i(tag, "$marker: TalkBack focus refused")
+                }
+                Thread.sleep(6_000)
+            }
+            Log.i(talkBackTag, "END $id")
+        }
+    }
+}
