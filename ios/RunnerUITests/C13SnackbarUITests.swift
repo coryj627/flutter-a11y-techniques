@@ -155,27 +155,25 @@ final class C13SnackbarUITests: XCTestCase, TechniqueUITest {
     XCTAssertEqual(lineElement("good-action").label, "Archived: 1", "Close undoes nothing")
   }
 
-  /// What an action did, back on the page's line, is told by a SnackBar of
-  /// its own, which goes after its four seconds and leaves the line. (That
-  /// it is a live region is read on Android, the web, and in the widget
-  /// tests, and heard in testVoiceOverSpeech.)
-  func testWhatAnActionDidIsToldAndGoes() {
+  /// What an action did is told by the example's result line, which stays.
+  /// (That it is a live region is read on Android, the web, and in the
+  /// widget tests, and heard in testVoiceOverSpeech.)
+  func testWhatAnActionDidIsToldByTheResultLine() {
     for (slug, action, said) in [
-      ("good-action", "Undo", "Archive undone"),
+      ("good-action", "Undo", "Archive undone. Archived: 0"),
       ("good-banner", "Go online", "You are online."),
-      ("bad-action-times-out", "Undo", "Archive undone"),
+      ("bad-action-times-out", "Undo", "Archive undone. Archived: 0"),
       ("bad-inline-banner", "Go online", "You are online."),
     ] {
       open(slug)
       press(slug)
       app.buttons[action].tap()
       expectLine(slug, Self.line[slug]!.0)
-      let told = element(labelled: said)
-      XCTAssertTrue(told.waitForExistence(timeout: 5), "\(slug): \(said) shown")
-      let end = Date().addingTimeInterval(8)
-      while told.exists && Date() < end { usleep(100_000) }
-      XCTAssertFalse(told.exists, "\(slug): \(said) gone")
-      XCTAssertEqual(lineElement(slug).label, Self.line[slug]!.0, slug)
+      let result = element("c13-\(slug)-result")
+      XCTAssertTrue(result.waitForExistence(timeout: 5), "\(slug): result line")
+      XCTAssertEqual(result.label, said, slug)
+      sleep(6)
+      XCTAssertEqual(result.label, said, "\(slug): it stays")
     }
   }
 
@@ -263,7 +261,7 @@ final class C13SnackbarUITests: XCTestCase, TechniqueUITest {
         XCTAssertEqual(walk, expected, "\(slug): the moves forward from the button")
       }
       // What the message's action did, announced: the cursor on the action
-      // with tap(), doubleTap() at it, and the SnackBar that tells it heard.
+      // with tap(), doubleTap() at it, and the result line that tells it heard.
       // For bad-inline-banner this is also the positive control of its
       // silence, in the same launch.
       var done = ""
@@ -312,7 +310,7 @@ enum C13Walks {
 
   /// The action pressed after the walk, and what must then be heard.
   static let done: [String: (String, String)] = [
-    "good-action": ("Undo", "Archive undone"),
+    "good-action": ("Undo", "Archive undone. Archived: 0"),
     "good-banner": ("Go online", "You are online."),
     "bad-inline-banner": ("Go online", "You are online."),
   ]

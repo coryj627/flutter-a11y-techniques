@@ -23,7 +23,7 @@ Walks: 1. Each walk is judged whole: a wrong reading fails for good, and only a 
 | `c13-good-action-message` | Message archived / Actions available, use Tap with 3 fingers to view |
 | `c13-good-action-undo` | Undo / Button / Double-tap to activate |
 | `c13-good-action-close` | Close. Button / Double-tap to activate / Archived: 1 |
-| `c13-good-action-done-announced` | Archive undone |
+| `c13-good-action-done-announced` | Archive undone. Archived: 0 |
 | `c13-good-message-announced` | Draft saved |
 | `c13-good-banner-announced` | You are offline. |
 | `c13-good-banner-message` | You are offline. / Actions available, use Tap with 3 fingers to view |

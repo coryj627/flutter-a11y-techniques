@@ -245,3 +245,15 @@ a confirmation whether or not its example was still there), where 5 of 9
 failed, and against the fixed code (a count per messenger, a confirmation
 only for an action that changed its example while it was there), where
 all 9 passed.
+
+## Design A (2026-11-23)
+
+The principal decided in review to take out the second SnackBar and tell
+what an action did with a live-region line of the page instead.
+`c13_result_probe.spec.js.txt` (`web_result.txt`), Chromium, no
+VoiceOver: on the load nothing is written; each show writes the message
+once; Undo and Go online write the result line once; emptying it writes
+nothing, and an empty line has no element. `bad-inline-banner`'s Go
+offline writes nothing. The device layers measured the same through the C13
+suites (the transcripts). `android_design_a_flake.txt`: one Android tree
+run that failed once on a launch and passed again.

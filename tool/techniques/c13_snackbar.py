@@ -34,7 +34,7 @@ TALKBACK_EXPECT = {
     # words must not be in it; focus moved to the banner reads them (next).
     "c13-bad-inline-banner-announced": (["Go offline"], ["You are offline."]),
     "c13-bad-inline-banner-message": (["You are offline."], []),
-    # What the action did, told by a SnackBar of its own: focus parked on
+    # What the action did, told by the result line, a live region: focus parked on
     # the line again, the action pressed with the click action. For
     # bad-inline-banner this is also the positive control of its silence.
     "c13-good-action-done-announced": (["Archive undone"], []),
@@ -62,7 +62,7 @@ VOICEOVER_IOS_METHOD = (
     "forward must land on the button again. For the messages that stay, the "
     "cursor is then moved forward from the button to the end of the screen; then put "
     "on the message's action (Undo, Go online), which is pressed with `doubleTap()` at "
-    "its place, and the SnackBar that tells what it did must be heard",
+    "its place, and the result line that tells what it did must be heard",
     "Spoken: on the button / after the tap at it / back and forward / moves forward / "
     "on the action / after the tap at it",
 )

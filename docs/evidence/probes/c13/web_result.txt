@@ -1,0 +1,24 @@
+# c13_result_probe.spec.js.txt against build/web (design A), Chromium, no VoiceOver, 2026-11-23.
+C13RESULT good-action on load: []
+C13RESULT good-action result element on load: (none)
+C13RESULT good-action after Enter on Archive message: ["157 ms polite: \"Message archived\"","344 ms polite: \"\""] | result line: (none)
+C13RESULT good-action after Enter on Undo: ["49 ms polite: \"Archive undone. Archived: 0\"","342 ms polite: \"\""] | result line: - "Archive undone. Archived: 0"
+C13RESULT good-action after Enter on Archive message: ["23 ms polite: \"Message archived\"","321 ms polite: \"\""] | result line: (none)
+C13RESULT good-action after Enter on Undo: ["33 ms polite: \"Archive undone. Archived: 0\"","329 ms polite: \"\""] | result line: - "Archive undone. Archived: 0"
+C13RESULT bad-action-times-out on load: []
+C13RESULT bad-action-times-out result element on load: (none)
+C13RESULT bad-action-times-out after Enter on Archive message: ["147 ms polite: \"Message archived\"","343 ms polite: \"\""] | result line: (none)
+C13RESULT bad-action-times-out after Enter on Undo: ["47 ms polite: \"Archive undone. Archived: 0\"","342 ms polite: \"\""] | result line: - "Archive undone. Archived: 0"
+C13RESULT good-banner on load: []
+C13RESULT good-banner result element on load: (none)
+C13RESULT good-banner after Enter on Go offline: ["154 ms polite: \"You are offline.\"","343 ms polite: \"\""] | result line: (none)
+C13RESULT good-banner after Enter on Go online: ["38 ms polite: \"You are online.\"","327 ms polite: \"\""] | result line: - "You are online."
+C13RESULT good-banner after Enter on Go offline: ["21 ms polite: \"You are offline.\"","318 ms polite: \"\""] | result line: (none)
+C13RESULT good-banner after Enter on Go online: ["31 ms polite: \"You are online.\"","329 ms polite: \"\""] | result line: - "You are online."
+C13RESULT bad-inline-banner on load: []
+C13RESULT bad-inline-banner result element on load: (none)
+C13RESULT bad-inline-banner after Enter on Go offline: [] | result line: (none)
+C13RESULT bad-inline-banner after Enter on Go online: ["25 ms polite: \"You are online.\"","326 ms polite: \"\""] | result line: - "You are online."
+C13RESULT bad-inline-banner after Enter on Go offline: [] | result line: (none)
+C13RESULT bad-inline-banner after Enter on Go online: ["40 ms polite: \"You are online.\"","325 ms polite: \"\""] | result line: - "You are online."
+  4 passed (30.8s)

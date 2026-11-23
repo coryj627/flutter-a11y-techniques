@@ -14,13 +14,19 @@ import '../../catalog/test_id.dart';
 // #region shared
 /// Lays out one example: a button that does something and shows a message
 /// about it, and a line of the page that says what the button has done, so
-/// that people and tests can confirm it worked.
+/// that people and tests can confirm it worked. An example whose message
+/// has an action has a [result] line too: what that action did, in a live
+/// region (`Semantics(liveRegion: true)`), so that the framework announces
+/// it. It is empty until the action is used, and emptied again when the
+/// button shows a new message, so that it changes, and is announced, each
+/// time the action is used.
 class _Demo extends StatelessWidget {
   const _Demo({
     required this.slug,
     required this.action,
     required this.line,
     required this.onPressed,
+    this.result,
     this.below,
   });
 
@@ -29,7 +35,10 @@ class _Demo extends StatelessWidget {
   final String line;
   final void Function(BuildContext context) onPressed;
 
-  /// What the example shows under its line, if anything.
+  /// What the message's action did, or null for an example with no action.
+  final String? result;
+
+  /// What the example shows under its lines, if anything.
   final Widget? below;
 
   @override
@@ -51,6 +60,13 @@ class _Demo extends StatelessWidget {
           identifier: 'c13-$slug-count',
           child: Text(line),
         ),
+        if (result case final result?)
+          Semantics(
+            key: ValueKey<String>('c13-$slug-result'),
+            identifier: 'c13-$slug-result',
+            liveRegion: true,
+            child: Text(result),
+          ),
         ?below,
       ],
     );
@@ -89,63 +105,14 @@ SnackBarAction undo(BuildContext context, VoidCallback onPressed) {
   );
 }
 
-/// How many messages have been shown through each ScaffoldMessenger by
-/// these examples. The messenger is the app's, and its messages outlive the
-/// example that showed them (FL-291), so the count is the messenger's, not
-/// an example's: plain state kept beside it in an `Expando`.
-final _shownThrough = Expando<List<int>>('C13 messages shown');
-
-int _shownCount(ScaffoldMessengerState messenger) =>
-    (_shownThrough[messenger] ??= [0]).first;
-
-/// Shows [bar] through [messenger], first clearing the queue and taking
-/// away the message that is shown (`clearSnackBars`), so that a new message
-/// replaces the one before and is never queued behind one that stays
-/// (FL-293), and presses that come while a message is still going out leave
-/// only the newest. Counts it.
-ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _show(
-  ScaffoldMessengerState messenger,
-  SnackBar bar,
-) {
-  (_shownThrough[messenger] ??= [0])[0]++;
-  messenger.clearSnackBars();
-  return messenger.showSnackBar(bar);
+/// Shows [bar], first clearing the queue and taking away the message that
+/// is shown (`clearSnackBars`), so that a new message replaces the one
+/// before and is never queued behind one that stays (FL-293).
+void _show(BuildContext context, SnackBar bar) {
+  ScaffoldMessenger.of(context)
+    ..clearSnackBars()
+    ..showSnackBar(bar);
 }
-
-/// Tells, once [controller]'s SnackBar, just shown by [_show], has been
-/// closed by its action, what that action did, if [acted] says the action
-/// changed its example: an action used after its example has gone (its
-/// message followed Back, FL-291) changes nothing, and nothing is told.
-///
-/// The news is shown from the old SnackBar's `closed` future and not from
-/// the action's `onPressed`: the action hides the current SnackBar after
-/// `onPressed` returns, and with `accessibleNavigation` on, that is a
-/// SnackBar shown there (FL-296). If a newer message has been shown through
-/// the same messenger since, by this example or another, the news waits
-/// behind it, queued, and does not clear it: the newer message and its
-/// action stay (FL-293).
-void _tellAfterAction(
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> controller,
-  ScaffoldMessengerState messenger,
-  String text,
-  bool Function() acted,
-) {
-  final mine = _shownCount(messenger);
-  controller.closed.then((reason) {
-    if (reason != SnackBarClosedReason.action || !acted()) return;
-    if (_shownCount(messenger) == mine) {
-      _show(messenger, _done(text));
-    } else {
-      (_shownThrough[messenger] ??= [0])[0]++;
-      messenger.showSnackBar(_done(text));
-    }
-  });
-}
-
-/// What an action that changes the page's line back says it did: a message
-/// only, which goes after its default four seconds, as its news is on the
-/// page too.
-SnackBar _done(String text) => SnackBar(content: Text(text));
 // #endregion
 
 // #region good-action
@@ -166,6 +133,7 @@ class GoodAction extends StatefulWidget {
 
 class _GoodActionState extends State<GoodAction> {
   int _archived = 0;
+  String _result = '';
 
   @override
   Widget build(BuildContext context) {
@@ -173,24 +141,30 @@ class _GoodActionState extends State<GoodAction> {
       slug: 'good-action',
       action: 'Archive message',
       line: 'Archived: $_archived',
+      result: _result,
       onPressed: (context) {
-        setState(() => _archived++);
-        final messenger = ScaffoldMessenger.of(context);
-        // Whether this message's Undo undid anything: not once this screen
-        // has gone, which the SnackBar outlives (FL-291).
-        var undid = false;
-        final controller = _show(
-          messenger,
+        setState(() {
+          _archived++;
+          _result = '';
+        });
+        _show(
+          context,
           SnackBar(
             content: Text('Message archived'),
+            // What Undo did is told by the result line, a live region. The
+            // SnackBar follows Back to other screens (FL-291): there, with
+            // this screen gone, Undo changes nothing, and the action takes
+            // away its own message only.
             action: undo(context, () {
               if (!mounted) return;
-              setState(() => _archived--);
-              undid = true;
+              setState(() {
+                _archived--;
+                _result = 'Archive undone. Archived: $_archived';
+              });
             }),
             showCloseIcon: true,
             // The close icon's default focus tint is under 3:1 (FL-430);
-            // its colour changes while it has keyboard focus.
+            // a WidgetStateColor here does not change it on focus (FL-294).
             closeIconColor: WidgetStateColor.resolveWith(
               (states) => states.contains(WidgetState.focused)
                   ? Theme.of(context).colorScheme.inversePrimary
@@ -198,9 +172,6 @@ class _GoodActionState extends State<GoodAction> {
             ),
           ),
         );
-        // What Undo did is told by a SnackBar too, as the line's change
-        // alone is not announced.
-        _tellAfterAction(controller, messenger, 'Archive undone', () => undid);
       },
     );
   }
@@ -229,10 +200,7 @@ class _GoodMessageState extends State<GoodMessage> {
       line: 'Drafts saved: $_saved',
       onPressed: (context) {
         setState(() => _saved++);
-        _show(
-          ScaffoldMessenger.of(context),
-          SnackBar(content: Text('Draft saved')),
-        );
+        _show(context, SnackBar(content: Text('Draft saved')));
       },
     );
   }
@@ -251,6 +219,7 @@ class GoodBanner extends StatefulWidget {
 
 class _GoodBannerState extends State<GoodBanner> {
   bool _offline = false;
+  String _result = '';
 
   @override
   Widget build(BuildContext context) {
@@ -258,11 +227,15 @@ class _GoodBannerState extends State<GoodBanner> {
       slug: 'good-banner',
       action: 'Go offline',
       line: _offline ? 'Status: offline' : 'Status: online',
+      result: _result,
       onPressed: (context) {
-        setState(() => _offline = true);
+        setState(() {
+          _offline = true;
+          _result = '';
+        });
         final messenger = ScaffoldMessenger.of(context);
-        // clearMaterialBanners, as _show does for a SnackBar: presses that
-        // come while a banner is going out leave only the newest.
+        // clearMaterialBanners, as _show does for a SnackBar: a new banner
+        // replaces the one before.
         messenger
           ..clearMaterialBanners()
           ..showMaterialBanner(
@@ -270,15 +243,22 @@ class _GoodBannerState extends State<GoodBanner> {
               content: Text('You are offline.'),
               actions: [
                 TextButton(
-                  // Going online is told by a SnackBar, as the line's
-                  // change alone is not announced.
-                  // Used after this screen has gone (the banner follows
-                  // Back, FL-291), it closes the banner and tells nothing.
                   onPressed: () {
+                    // The banner follows Back to other screens (FL-291):
+                    // there, with this screen gone, Go online takes away
+                    // this banner only, and changes nothing.
+                    if (!mounted) {
+                      messenger.hideCurrentMaterialBanner();
+                      return;
+                    }
+                    // Going online makes every "You are offline." untrue:
+                    // the queue is cleared with it. What it did is told by
+                    // the result line, a live region.
                     messenger.clearMaterialBanners();
-                    if (!mounted) return;
-                    setState(() => _offline = false);
-                    _show(messenger, _done('You are online.'));
+                    setState(() {
+                      _offline = false;
+                      _result = 'You are online.';
+                    });
                   },
                   style: focusRing(Theme.of(context).colorScheme.onSurface),
                   child: const Text('Go online'),
@@ -306,6 +286,7 @@ class BadActionTimesOut extends StatefulWidget {
 
 class _BadActionTimesOutState extends State<BadActionTimesOut> {
   int _archived = 0;
+  String _result = '';
 
   @override
   Widget build(BuildContext context) {
@@ -313,24 +294,27 @@ class _BadActionTimesOutState extends State<BadActionTimesOut> {
       slug: 'bad-action-times-out',
       action: 'Archive message',
       line: 'Archived: $_archived',
+      result: _result,
       onPressed: (context) {
-        setState(() => _archived++);
-        final messenger = ScaffoldMessenger.of(context);
-        var undid = false;
-        final controller = _show(
-          messenger,
+        setState(() {
+          _archived++;
+          _result = '';
+        });
+        _show(
+          context,
           SnackBar(
             content: Text('Message archived'),
             action: undo(context, () {
               if (!mounted) return;
-              setState(() => _archived--);
-              undid = true;
+              setState(() {
+                _archived--;
+                _result = 'Archive undone. Archived: $_archived';
+              });
             }),
             // Defect: the action times out with the message.
             persist: false,
           ),
         );
-        _tellAfterAction(controller, messenger, 'Archive undone', () => undid);
       },
     );
   }
@@ -360,7 +344,7 @@ class _BadOnlyInMessageState extends State<BadOnlyInMessage> {
       onPressed: (context) {
         setState(() => _booked++);
         _show(
-          ScaffoldMessenger.of(context),
+          context,
           SnackBar(
             // Defect: the code is nowhere else, and the message times out.
             content: Text('Booked. Code: K7Q2'),
@@ -385,6 +369,7 @@ class BadInlineBanner extends StatefulWidget {
 
 class _BadInlineBannerState extends State<BadInlineBanner> {
   bool _offline = false;
+  String _result = '';
 
   @override
   Widget build(BuildContext context) {
@@ -392,22 +377,23 @@ class _BadInlineBannerState extends State<BadInlineBanner> {
       slug: 'bad-inline-banner',
       action: 'Go offline',
       line: _offline ? 'Status: offline' : 'Status: online',
-      onPressed: (context) => setState(() => _offline = true),
+      // The result line is good-banner's, a live region: the defect is the
+      // banner's alone.
+      result: _result,
+      onPressed: (context) => setState(() {
+        _offline = true;
+        _result = '';
+      }),
       // Defect: a banner in the page, with no live region.
       below: _offline
           ? MaterialBanner(
               content: Text('You are offline.'),
               actions: [
                 TextButton(
-                  // Going online is told by a SnackBar, as in good-banner:
-                  // the defect is the banner's alone.
-                  onPressed: () {
-                    setState(() => _offline = false);
-                    _show(
-                      ScaffoldMessenger.of(context),
-                      _done('You are online.'),
-                    );
-                  },
+                  onPressed: () => setState(() {
+                    _offline = false;
+                    _result = 'You are online.';
+                  }),
                   style: focusRing(Theme.of(context).colorScheme.onSurface),
                   child: const Text('Go online'),
                 ),

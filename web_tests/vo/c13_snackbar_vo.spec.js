@@ -43,7 +43,7 @@ const ANNOUNCED = {
 // action that did not act, or a capture that is not live after it
 // (judgeAfterAction, assertCaptureIsLive).
 const DONE = {
-  'good-action': { action: 'Undo', said: 'Archive undone' },
+  'good-action': { action: 'Undo', said: 'Archive undone. Archived: 0' },
   'good-banner': { action: 'Go online', said: 'You are online.' },
   'bad-inline-banner': { action: 'Go online', said: 'You are online.' },
 };

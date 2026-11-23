@@ -234,7 +234,7 @@ class C13SnackbarTest : TechniqueTest("C13") {
 
     // FL-295.
     @Test
-    fun badInlineBannerIsNoLiveRegionAndGoOnlinesSnackBarInTheSameLaunchIs() {
+    fun badInlineBannerIsNoLiveRegionAndItsResultLineInTheSameLaunchIs() {
         open("bad-inline-banner")
         press("bad-inline-banner")
         Thread.sleep(2_000)
@@ -242,7 +242,7 @@ class C13SnackbarTest : TechniqueTest("C13") {
         assertTrue("no dismiss action", all().none { n -> n.actionList.any { it.id == AccessibilityNodeInfo.ACTION_DISMISS } })
         // The positive control, in the same launch, read the same way.
         assertTrue("Go online click", maybe("Go online")!!.performAction(AccessibilityNodeInfo.ACTION_CLICK))
-        assertEquals("Go online's SnackBar is one", listOf("You are online."), waitLiveRegions(listOf("You are online.")))
+        assertEquals("Go online's result line is one", listOf("You are online."), waitLiveRegions(listOf("You are online.")))
     }
 
     /** Waits up to 5 seconds for the names of the live regions to be [expected]; returns them. */
@@ -253,35 +253,29 @@ class C13SnackbarTest : TechniqueTest("C13") {
         return now()
     }
 
-    // What an action did, back on the page's line, is told by a SnackBar of
-    // its own: a polite live region, which goes; the line is no live region.
+    // What an action did is told by the example's result line: a polite
+    // live region, with no node while empty, which then stays; the status
+    // line is no live region.
     @Test
-    fun whatAnActionDidIsAPoliteLiveRegion() {
+    fun whatAnActionDidIsAPoliteLiveRegionResultLine() {
         for ((slug, action, said) in listOf(
-            Triple("good-action", "Undo", "Archive undone"),
+            Triple("good-action", "Undo", "Archive undone. Archived: 0"),
             Triple("good-banner", "Go online", "You are online."),
-            Triple("bad-action-times-out", "Undo", "Archive undone"),
+            Triple("bad-action-times-out", "Undo", "Archive undone. Archived: 0"),
         )) {
             open(slug)
+            assertTrue("$slug: no result node while empty", all().none { it.viewIdResourceName == "c13-$slug-result" })
             press(slug)
             assertTrue("$slug $action click", maybe(action)!!.performAction(AccessibilityNodeInfo.ACTION_CLICK))
             assertEquals("$slug: told", listOf(said), waitLiveRegions(listOf(said)))
-            val live = all().single { it.liveRegion != View.ACCESSIBILITY_LIVE_REGION_NONE }
-            assertEquals("$slug: polite", View.ACCESSIBILITY_LIVE_REGION_POLITE, live.liveRegion)
+            val result = node("c13-$slug-result")
+            assertEquals("$slug: polite", View.ACCESSIBILITY_LIVE_REGION_POLITE, result.liveRegion)
+            assertEquals("$slug: its words", said, result.name())
             assertEquals("$slug line", line.getValue(slug).first, lineText(slug))
             assertEquals("$slug: the line is no live region", View.ACCESSIBILITY_LIVE_REGION_NONE, node("c13-$slug-count").liveRegion)
-            assertNotNull("$slug: it goes", goneAfterName(said, 8_000))
+            Thread.sleep(6_000)
+            assertEquals("$slug: it stays", said, node("c13-$slug-result").name())
         }
-    }
-
-    /** Waits until no node is named [name], at most [max] ms; how long it took, or null. */
-    private fun goneAfterName(name: String, max: Long): Long? {
-        val start = System.currentTimeMillis()
-        while (System.currentTimeMillis() - start < max) {
-            if (maybe(name) == null) return System.currentTimeMillis() - start
-            Thread.sleep(100)
-        }
-        return null
     }
 
     /**

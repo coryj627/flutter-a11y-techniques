@@ -13,7 +13,7 @@ Result: PASS
 
 | Example | Spoken: on the button / after the tap at it / back and forward / moves forward / on the action / after the tap at it |
 | --- | --- |
-| `good-action` | Archive message Button / (tap at it) / Message archived / (back, forward) / Archive message Button / Archived: 1 / Message archived / Undo Button / Close Button / Undo Button / (tap at it) / Archive undone |
+| `good-action` | Archive message Button / (tap at it) / Message archived / (back, forward) / Archive message Button / Archived: 1 / Message archived / Undo Button / Close Button / Undo Button / (tap at it) / Archive undone. Archived: 0 |
 | `good-message` | Save draft Button / (tap at it) / Draft saved / (back, forward) / Save draft Button |
 | `good-banner` | Go offline Button / (tap at it) / You are offline. / (back, forward) / Go offline Button / Status: offline / Go online Button / (tap at it) / You are online. |
 | `bad-action-times-out` | Archive message Button / (tap at it) / Message archived / (back, forward) / Archive message Button |

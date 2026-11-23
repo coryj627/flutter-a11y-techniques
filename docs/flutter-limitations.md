@@ -3915,11 +3915,15 @@ yet), **Fixed in x.y** (verified on that version).
   message (`flutter_test_outlive.txt`). C13 now counts the messages shown
   through each messenger (plain state beside it, an `Expando`), queues a
   confirmation behind any newer one instead of clearing, and tells it only
-  for an action that changed its example while it was there: B and its
-  Undo stay, and "Archive undone" comes when B is closed. With
-  `accessibleNavigation` on a message goes at once, so the ordering
-  within one example does not arise there; across Back it does, and is
-  tested both ways.
+  for an action that changed its example while it was there. Those were
+  the third and fourth fixes to one project-built mechanism (a fourth bug
+  was an old banner's Go online, after Back and a reopen, clearing the new
+  instance's banner); by the principal's decision in review (2026-11-23)
+  it was taken out: no second SnackBar is shown, and what an action did
+  is told by a live-region line of the page. What remains of this
+  entry's orderings in C13: a new message replaces the one before
+  (`clear…` before each show), and an action whose example has gone
+  changes nothing and takes away its own message only.
 - Workaround, in the SDK: `clearSnackBars()` before `showSnackBar()`, and
   `clearMaterialBanners()` before `showMaterialBanner()`: they clear the
   queue and take away the current one. Every C13 example does; the C13
@@ -4005,14 +4009,13 @@ yet), **Fixed in x.y** (verified on that version).
   confirmation of what an action did, shown this way, is lost for the
   users who most need it to be announced, and works in a widget test that
   leaves it off.
-- Workaround, in the SDK: show it once the first SnackBar has closed by
-  its action, from its controller's `closed` future
-  (`SnackBarClosedReason.action`), and only with a clear when no newer
-  message has been shown through the messenger since
-  ([FL-293](#fl-293)); C13 `good-action` and
-  `bad-action-times-out` do, and their "Archive undone" was announced on
-  the web (`web_undo.txt`, round 2) and in the widget tests with
-  `accessibleNavigation` off and on.
+- Workaround: none built. C13 first showed the second SnackBar from the
+  first one's `closed` future (`SnackBarClosedReason.action`), and
+  "Archive undone" was then written on the web (`web_undo.txt`, round 2);
+  its ordering needed a project-built policy ([FL-293](#fl-293)), and it
+  was taken out (the principal's decision in review, 2026-11-23). What an
+  action did is announced by a live-region line of the page instead
+  (`Semantics(liveRegion: true)`; C13 `good-action`, `good-banner`).
 - Upstream issue: not searched yet (D25).
 
 ## FL-297
@@ -4024,6 +4027,11 @@ yet), **Fixed in x.y** (verified on that version).
   The C13 web VoiceOver spec now records every phrase heard after the
   press and asserts nothing about the message (the rows
   `<slug>-after-undo-recorded`, `<slug>-after-go-online-recorded`).
+- What these three recordings measured was the first review build's
+  second SnackBar; C13 now tells what the action did with a live-region
+  line of the page (FL-296), and the after-action rows of later
+  recordings record what VoiceOver says for that line. The rows stay
+  record-only unless three recordings agree.
 - What was pressed: Enter, with keyboard focus on the action, in three
   examples: `good-action`'s Undo (a `SnackBarAction`), `good-banner`'s Go
   online (a `TextButton` in a `MaterialBanner` the messenger shows), and

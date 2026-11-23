@@ -287,7 +287,8 @@ test.describe('bad examples have their defect', () => {
     expect(await announced(page)).toEqual([]);
     await expect(page.locator('flt-semantics-host [aria-live]')).toHaveCount(0);
     // The positive control: no reload, the same MutationObserver and the
-    // same buffer. Go online shows a SnackBar, which the recorder must hear.
+    // same buffer. Go online changes the result line, a live region, which
+    // the recorder must hear.
     await tabToButton(page, 'Go online');
     await page.keyboard.press('Enter');
     await expect(line(page, 'bad-inline-banner')).toHaveText('Status: online');
@@ -297,13 +298,14 @@ test.describe('bad examples have their defect', () => {
   });
 });
 
-// What an action did, back on the page's line, is told by a SnackBar of its
-// own: the line's change alone writes nothing to the announcement elements.
+// What an action did is told by the example's result line, a live region:
+// one write to the announcement elements per use, and none for the status
+// line, which is no live region.
 test.describe('what an action did is announced', () => {
   for (const [slug, action, said, back] of [
-    ['good-action', 'Undo', 'Archive undone', 'Archived: 0'],
+    ['good-action', 'Undo', 'Archive undone. Archived: 0', 'Archived: 0'],
     ['good-banner', 'Go online', 'You are online.', 'Status: online'],
-    ['bad-action-times-out', 'Undo', 'Archive undone', 'Archived: 0'],
+    ['bad-action-times-out', 'Undo', 'Archive undone. Archived: 0', 'Archived: 0'],
   ]) {
     test(`${slug}: ${action} is announced "${said}", after the message, and the line changes`, async ({ page }) => {
       await open(page, slug);

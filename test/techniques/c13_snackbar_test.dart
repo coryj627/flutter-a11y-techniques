@@ -83,6 +83,16 @@ Future<void> _press(WidgetTester tester, String slug) async {
 /// Whether the example's message is on the screen.
 bool _shown(String slug) => find.text(_message[slug]!).evaluate().isNotEmpty;
 
+/// The text of [slug]'s result line.
+String _resultText(WidgetTester tester, String slug) => tester
+    .widget<Text>(
+      find.descendant(
+        of: byId('c13-$slug-result'),
+        matching: find.byType(Text),
+      ),
+    )
+    .data!;
+
 /// The line of the page under the button.
 String _lineText(WidgetTester tester, String slug) => tester
     .widget<Text>(
@@ -105,11 +115,21 @@ Future<Duration?> _goneAfter(
   return null;
 }
 
-/// Every live region on the screen.
+/// Every live region on the screen but the examples' result lines, which
+/// are tested by name (_result).
 List<SemanticsData> _liveRegions(WidgetTester tester) => [
   for (final n in semanticsNodes(tester))
-    if (n.flagsCollection.isLiveRegion) n,
+    if (n.flagsCollection.isLiveRegion && !n.identifier.endsWith('-result')) n,
 ];
+
+/// The result line of [slug]'s node: what the message's action did, in a
+/// live region. Null while the line is empty: an empty line has no node
+/// (the identifier alone makes none), on the web no element either
+/// (docs/evidence/probes/c13/web_result.txt).
+SemanticsData? _result(String slug) {
+  final found = nodeById('c13-$slug-result').evaluate();
+  return found.isEmpty ? null : found.single.getSemanticsData();
+}
 
 /// The node that has keyboard focus, named by its identifier, its label,
 /// or its tooltip; "(none)" when no node has it.
@@ -418,55 +438,81 @@ void main() {
       handle.dispose();
     });
 
-    // What the action did, back on the page's line, is told by a SnackBar of
-    // its own: the line's change alone is not announced (Codex review).
+    // What the action did is told by the result line, a live region of the
+    // page: empty until the action is used, emptied when a new message is
+    // shown, so that each use of the action changes it (design A, decided in
+    // review by the principal, 2026-11-23).
     for (final nav in [false, true]) {
       for (final (slug, action, said, line) in [
-        ('good-action', 'Undo', 'Archive undone', 'Archived: 0'),
+        ('good-action', 'Undo', 'Archive undone. Archived: 0', 'Archived: 0'),
         ('good-banner', 'Go online', 'You are online.', 'Status: online'),
-        ('bad-action-times-out', 'Undo', 'Archive undone', 'Archived: 0'),
+        (
+          'bad-action-times-out',
+          'Undo',
+          'Archive undone. Archived: 0',
+          'Archived: 0',
+        ),
         ('bad-inline-banner', 'Go online', 'You are online.', 'Status: online'),
       ]) {
-        testWidgets('$slug: $action changes the line and is told by a live '
-            'region, "$said", that goes and leaves the line, with '
-            'accessibleNavigation $nav', (tester) async {
+        testWidgets('$slug: $action changes the line and the result line, a '
+            'live region, says "$said", with accessibleNavigation $nav', (
+          tester,
+        ) async {
           final handle = tester.ensureSemantics();
           await _open(tester, slug, accessibleNavigation: nav);
+          // The result line is empty, and has no node, from the start.
+          expect(_result(slug), isNull);
+          expect(_resultText(tester, slug), '');
           await _press(tester, slug);
+          expect(_result(slug), isNull, reason: 'a new message empties it');
           await _tabTo(tester, action);
           await tester.sendKeyEvent(LogicalKeyboardKey.enter);
           await _frames(tester, const Duration(seconds: 1));
           expect(_lineText(tester, slug), line);
           expect(_shown(slug), isFalse);
-          expect(_liveRegions(tester).map((n) => n.label), [said]);
-          // The line is not a live region: the SnackBar is the announcement.
+          expect(_result(slug)!.label, said);
+          expect(_result(slug)!.flagsCollection.isLiveRegion, isTrue);
+          // The status line is no live region, and no SnackBar tells it.
           expect(
             dataById('c13-$slug-count').flagsCollection.isLiveRegion,
             isFalse,
           );
-          expect(find.text(said), findsOneWidget);
+          expect(find.byType(SnackBar), findsNothing);
+          // It stays: the page's own record of what was done.
           await _frames(tester, const Duration(seconds: 6));
-          expect(find.text(said), findsNothing);
-          expect(_lineText(tester, slug), line);
+          expect(_result(slug)!.label, said);
           handle.dispose();
         });
       }
     }
 
-    for (final nav in [false, true]) {
-      testWidgets('good-message: the message goes after about 4 s, with '
-          'accessibleNavigation $nav, and what it said stays on the page', (
-        tester,
-      ) async {
-        await _open(tester, 'good-message', accessibleNavigation: nav);
-        await _press(tester, 'good-message');
-        final gone = await _goneAfter(tester, 'good-message');
-        expect(gone, isNotNull);
-        // _press waited a second of it.
-        expect(gone!.inMilliseconds, inInclusiveRange(2900, 4500));
-        expect(_lineText(tester, 'good-message'), 'Drafts saved: 1');
-      });
-    }
+    testWidgets('good-action: two undos in a row change the result line each '
+        'time', (tester) async {
+      final handle = tester.ensureSemantics();
+      await _open(tester, 'good-action');
+      await _press(tester, 'good-action');
+      await _press(tester, 'good-action');
+      // The second press replaced the first message; its Undo undoes one.
+      await tester.tap(find.text('Undo'));
+      await _frames(tester, const Duration(seconds: 1));
+      expect(_result('good-action')!.label, 'Archive undone. Archived: 1');
+      await _press(tester, 'good-action');
+      expect(_result('good-action'), isNull);
+      await tester.tap(find.text('Undo'));
+      await _frames(tester, const Duration(seconds: 1));
+      expect(_result('good-action')!.label, 'Archive undone. Archived: 1');
+      handle.dispose();
+    });
+
+    testWidgets('the examples with no action have no result line', (
+      tester,
+    ) async {
+      for (final slug in ['good-message', 'bad-only-in-message']) {
+        await tester.pumpWidget(const SizedBox());
+        await _open(tester, slug);
+        expect(byId('c13-$slug-result'), findsNothing, reason: slug);
+      }
+    });
   });
 
   group('FL-291: Escape and Back', () {
@@ -578,7 +624,7 @@ void main() {
     });
 
     testWidgets('bad-inline-banner: the banner is shown with no live region '
-        '(FL-295); Go online\'s SnackBar, in the same launch, is one', (
+        '(FL-295); the result line, in the same launch, is one', (
       tester,
     ) async {
       final handle = tester.ensureSemantics();
@@ -587,11 +633,16 @@ void main() {
       expect(_shown('bad-inline-banner'), isTrue);
       await _frames(tester, const Duration(seconds: 2));
       expect(_liveRegions(tester), isEmpty);
+      expect(_result('bad-inline-banner'), isNull);
       // The positive control, in the same launch and read the same way: Go
-      // online's SnackBar is a live region.
+      // online's result line is a live region.
       await tester.tap(find.text('Go online'));
       await _frames(tester, const Duration(seconds: 1));
-      expect(_liveRegions(tester).map((n) => n.label), ['You are online.']);
+      expect(_result('bad-inline-banner')!.label, 'You are online.');
+      expect(
+        _result('bad-inline-banner')!.flagsCollection.isLiveRegion,
+        isTrue,
+      );
       handle.dispose();
     });
 
@@ -799,57 +850,33 @@ void main() {
   // The outgoing message's action, used while a newer message waits to come
   // in, with the animations on (Codex review): archive A, press again so
   // that A goes out and B is queued, and press A's Undo, still on the
-  // screen, during A's exit. The right outcome: A's Undo undoes A's archive
-  // (the line goes from 2 to 1); B, the newer archive, stays archived, with
-  // its message and its own Undo; and "Archive undone", the news of A's
-  // undo, does not take B away: it waits behind B and comes when B is
-  // closed (FL-293). The first review build's confirmation cleared the
-  // queue and took B, and its Undo, away
-  // (docs/evidence/probes/c13/flutter_test_outgoing_undo.txt).
+  // screen, during A's exit. A's Undo undoes A's archive (2 to 1), the
+  // result line says so, and B comes in with its own Undo, which undoes B.
   group('the outgoing message\'s action, during the next one\'s coming', () {
     for (final slug in ['good-action', 'bad-action-times-out']) {
       testWidgets('$slug: Undo on the outgoing message undoes it, and the '
           'newer message keeps its Undo', (tester) async {
+        final handle = tester.ensureSemantics();
         await _open(tester, slug);
         await _press(tester, slug);
-        expect(_lineText(tester, slug), 'Archived: 1');
         await tester.tap(byId(_show(slug)));
         await tester.pump(const Duration(milliseconds: 50));
         expect(_lineText(tester, slug), 'Archived: 2');
-        // A is going out, B waits: one Undo on the screen, A's.
         expect(find.text('Undo'), findsOneWidget);
         await tester.tap(find.text('Undo'), warnIfMissed: false);
         await _frames(tester, const Duration(seconds: 1));
         expect(_lineText(tester, slug), 'Archived: 1', reason: 'A undone');
-        // B came in, with its own Undo, and the confirmation waits.
+        expect(_result(slug)!.label, 'Archive undone. Archived: 1');
         expect(find.text('Message archived'), findsOneWidget);
         expect(find.text('Undo'), findsOneWidget);
-        expect(find.text('Archive undone'), findsNothing);
-        // B's Undo works: it undoes B.
         await tester.tap(find.text('Undo'));
         await _frames(tester, const Duration(seconds: 1));
         expect(_lineText(tester, slug), 'Archived: 0', reason: 'B undone');
-        // A's news, then B's, each the one message shown in turn.
-        expect(find.text('Archive undone'), findsOneWidget);
-        expect(find.text('Message archived'), findsNothing);
+        expect(_result(slug)!.label, 'Archive undone. Archived: 0');
+        expect(find.byType(SnackBar), findsNothing);
+        handle.dispose();
       });
     }
-
-    testWidgets('good-action: Close on the newer message lets the waiting '
-        'confirmation come', (tester) async {
-      await _open(tester, 'good-action');
-      await _press(tester, 'good-action');
-      await tester.tap(byId(_show('good-action')));
-      await tester.pump(const Duration(milliseconds: 50));
-      await tester.tap(find.text('Undo'), warnIfMissed: false);
-      await _frames(tester, const Duration(seconds: 1));
-      expect(_lineText(tester, 'good-action'), 'Archived: 1');
-      await tester.tap(find.byTooltip('Close'));
-      await _frames(tester, const Duration(seconds: 1));
-      expect(find.text('Message archived'), findsNothing);
-      expect(find.text('Archive undone'), findsOneWidget);
-      expect(_lineText(tester, 'good-action'), 'Archived: 1');
-    });
 
     testWidgets('good-banner: Go online on the outgoing banner, while a '
         'newer one waits, leaves the page online and no banner', (
@@ -871,14 +898,10 @@ void main() {
 
   // Messages outlive their example: the ScaffoldMessenger is the app's, and
   // a SnackBar or banner goes with Back to the screen under (FL-291). The
-  // rules the examples keep, whatever the order (Codex review, 2026-11-23):
-  // a confirmation ("Archive undone", "You are online.") is shown only for
-  // an action that changed its example while that example was on the
-  // screen, and it clears the queue only if no newer message has been shown
-  // through the same messenger, by any example, since the message it is
-  // about; otherwise it waits behind the newer one. An action used after
-  // its example has gone closes its message, changes nothing, and tells
-  // nothing. (docs/specs/C13-snackbar.md, section 6, lists the orderings.)
+  // rules the examples keep, whatever the order: a new message replaces the
+  // one before (clearSnackBars, clearMaterialBanners); an action used after
+  // its example has gone changes nothing and takes away its own message
+  // only (docs/specs/C13-snackbar.md, section 6, lists the orderings).
   group('messages that outlive their example', () {
     /// Opens the example [title] from the technique's list, scrolled to.
     Future<void> openFromList(WidgetTester tester, String title) async {
@@ -924,11 +947,14 @@ void main() {
         expect(_lineText(tester, 'good-action'), 'Archived: 1');
         expect(find.text('Message archived'), findsOneWidget);
         expect(find.text('Undo'), findsOneWidget);
-        expect(find.text('Archive undone'), findsNothing);
+        expect(_resultText(tester, 'good-action'), '');
         await tester.tap(find.text('Undo'));
         await _frames(tester, const Duration(seconds: 1));
         expect(_lineText(tester, 'good-action'), 'Archived: 0');
-        expect(find.text('Archive undone'), findsOneWidget);
+        expect(
+          _resultText(tester, 'good-action'),
+          'Archive undone. Archived: 0',
+        );
         expect(tester.takeException(), isNull);
       });
 
@@ -949,26 +975,27 @@ void main() {
           await tester.tap(find.text(action));
           await _frames(tester, const Duration(seconds: 2));
           expect(_shown(slug), isFalse, reason: slug);
-          expect(find.text('Archive undone'), findsNothing, reason: slug);
-          expect(find.text('You are online.'), findsNothing, reason: slug);
+          expect(find.byType(SnackBar), findsNothing, reason: slug);
           expect(tester.takeException(), isNull);
         }
       });
 
       testWidgets('Undo, then Back while the message goes out, '
-          'accessibleNavigation $nav: the undo happened, and its news comes '
-          'on the screen under', (tester) async {
+          'accessibleNavigation $nav: the undo happened and was told on its '
+          'screen, and nothing comes on the screen under', (tester) async {
+        final handle = tester.ensureSemantics();
         await _open(tester, 'good-action', accessibleNavigation: nav);
         await _press(tester, 'good-action');
         await tester.tap(find.text('Undo'));
         await tester.pump(const Duration(milliseconds: 50));
         expect(_lineText(tester, 'good-action'), 'Archived: 0');
+        expect(_result('good-action')!.label, 'Archive undone. Archived: 0');
         await tester.binding.handlePopRoute();
         await _frames(tester, const Duration(seconds: 2));
         expect(find.byType(ExampleScreen), findsNothing);
-        expect(find.text('Archive undone'), findsOneWidget);
-        expect(find.text('Message archived'), findsNothing);
+        expect(find.byType(SnackBar), findsNothing);
         expect(tester.takeException(), isNull);
+        handle.dispose();
       });
 
       testWidgets('across two examples, accessibleNavigation $nav: '
@@ -993,31 +1020,62 @@ void main() {
           }
           await _frames(tester, const Duration(milliseconds: 600));
           expect(find.text(otherMessage), findsOneWidget, reason: other);
-          expect(find.text('Archive undone'), findsNothing, reason: other);
+          expect(
+            find.textContaining('Archive undone'),
+            findsNothing,
+            reason: other,
+          );
           expect(tester.takeException(), isNull);
         }
       });
     }
 
     testWidgets('a banner and a SnackBar together: good-action\'s message '
-        'over good-banner\'s screen; Go online there replaces it with '
-        '"You are online.", and the page is online', (tester) async {
+        'over good-banner\'s screen; Go online there takes the banner away, '
+        'leaves the SnackBar, and the page is online', (tester) async {
       await _open(tester, 'good-action');
       await _press(tester, 'good-action');
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       await openFromList(tester, titleOf('good-banner'));
       await _press(tester, 'good-banner');
-      // Both shown: the banner above the page, the SnackBar below it.
       expect(find.text('You are offline.'), findsOneWidget);
       expect(find.text('Message archived'), findsOneWidget);
       await tester.tap(find.text('Go online'));
       await _frames(tester, const Duration(seconds: 2));
       expect(_lineText(tester, 'good-banner'), 'Status: online');
+      expect(_resultText(tester, 'good-banner'), 'You are online.');
       expect(find.text('You are offline.'), findsNothing);
-      // A newer message replaces an older one (clearSnackBars).
-      expect(find.text('You are online.'), findsOneWidget);
-      expect(find.text('Message archived'), findsNothing);
+      // A banner's action touches no SnackBar.
+      expect(find.text('Message archived'), findsOneWidget);
+    });
+
+    // Finding 1: the banner across Back and reopen.
+    testWidgets('good-banner across Back and reopen: the old banner\'s Go '
+        'online, used during its exit, takes away that banner only; the new '
+        'page stays offline with its banner and Go online', (tester) async {
+      await _open(tester, 'good-banner');
+      await _press(tester, 'good-banner');
+      await backAndOpen(tester, titleOf('good-banner'));
+      expect(find.text('You are offline.'), findsOneWidget);
+      await tester.tap(byId(_show('good-banner')));
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(_lineText(tester, 'good-banner'), 'Status: offline');
+      // The old banner is going out: its Go online.
+      expect(find.text('Go online'), findsOneWidget);
+      await tester.tap(find.text('Go online'), warnIfMissed: false);
+      await _frames(tester, const Duration(seconds: 2));
+      expect(_lineText(tester, 'good-banner'), 'Status: offline');
+      expect(find.text('You are offline.'), findsOneWidget);
+      expect(find.text('Go online'), findsOneWidget);
+      expect(_resultText(tester, 'good-banner'), '');
+      // The new banner's Go online works.
+      await tester.tap(find.text('Go online'));
+      await _frames(tester, const Duration(seconds: 2));
+      expect(_lineText(tester, 'good-banner'), 'Status: online');
+      expect(_resultText(tester, 'good-banner'), 'You are online.');
+      expect(find.text('You are offline.'), findsNothing);
+      expect(tester.takeException(), isNull);
     });
   });
 

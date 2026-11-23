@@ -1,0 +1,13 @@
+# C13 Android tree tests, design A, 2026-11-23, local emulator (Android 17, 1080 by 2424).
+# First run, `python3 tool/evidence.py C13 --only android,talkback,ios,voiceover-ios`:
+# one test failed; the log was overwritten by the rerun, so only these lines
+# are kept, as read from build/evidence/C13/android.log at the time.
+
+dev.fluttera11y.flutter_a11y_techniques.C13SnackbarTest > keysReachUndoAndCloseAndEnterActs[Pixel_10a(AVD) - 17] FAILED
+	java.lang.AssertionError: no node with id c13-good-action-show, even after scrolling
+(at C13SnackbarTest.kt:171, press(), via :60, node(); the second launch of the test,
+after Tab to Undo and Enter in the first)
+
+# Rerun, `python3 tool/evidence.py C13 --only android`, no change in between:
+  android        PASS     173 s
+# Every later run passed too (see the report). The cause was not found.
