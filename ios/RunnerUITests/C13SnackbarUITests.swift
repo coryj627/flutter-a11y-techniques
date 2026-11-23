@@ -155,6 +155,30 @@ final class C13SnackbarUITests: XCTestCase, TechniqueUITest {
     XCTAssertEqual(lineElement("good-action").label, "Archived: 1", "Close undoes nothing")
   }
 
+  /// What an action did, back on the page's line, is told by a SnackBar of
+  /// its own, which goes after its four seconds and leaves the line. (That
+  /// it is a live region is read on Android, the web, and in the widget
+  /// tests, and heard in testVoiceOverSpeech.)
+  func testWhatAnActionDidIsToldAndGoes() {
+    for (slug, action, said) in [
+      ("good-action", "Undo", "Archive undone"),
+      ("good-banner", "Go online", "You are online."),
+      ("bad-action-times-out", "Undo", "Archive undone"),
+      ("bad-inline-banner", "Go online", "You are online."),
+    ] {
+      open(slug)
+      press(slug)
+      app.buttons[action].tap()
+      expectLine(slug, Self.line[slug]!.0)
+      let told = element(labelled: said)
+      XCTAssertTrue(told.waitForExistence(timeout: 5), "\(slug): \(said) shown")
+      let end = Date().addingTimeInterval(8)
+      while told.exists && Date() < end { usleep(100_000) }
+      XCTAssertFalse(told.exists, "\(slug): \(said) gone")
+      XCTAssertEqual(lineElement(slug).label, Self.line[slug]!.0, slug)
+    }
+  }
+
   func testTabReachesTheBannersGoOnline() {
     open("good-banner")
     press("good-banner")
@@ -238,8 +262,29 @@ final class C13SnackbarUITests: XCTestCase, TechniqueUITest {
         }
         XCTAssertEqual(walk, expected, "\(slug): the moves forward from the button")
       }
+      // What the message's action did, announced: the cursor on the action
+      // with tap(), doubleTap() at it, and the SnackBar that tells it heard.
+      // For bad-inline-banner this is also the positive control of its
+      // silence, in the same launch.
+      var done = ""
+      if let (action, said) = C13Walks.done[slug] {
+        let button = app.buttons[action]
+        let actionSpeech = "\(action) Button"
+        var on = ""
+        for _ in 0..<5 {
+          button.tap()
+          on = waitForSpeech(4) { $0 == actionSpeech }
+          if on == actionSpeech { break }
+        }
+        XCTAssertEqual(on, actionSpeech, "\(slug): cursor is not on \(action)")
+        button.doubleTap()
+        expectLine(slug, Self.line[slug]!.0)
+        done = waitForSpeech(8) { $0 == said }
+        XCTAssertEqual(done, said, "\(slug): \(action)'s result was not announced")
+        done = " / \(on) / (tap at it) / \(done)"
+      }
       print("C13VO \(slug) | \(before) / (tap at it) / \(after) / (back, forward) / \(returned)"
-        + (walk.isEmpty ? "" : " / " + walk.joined(separator: " / ")))
+        + (walk.isEmpty ? "" : " / " + walk.joined(separator: " / ")) + done)
       try voiceOver.disable()
     }
     #else
@@ -263,5 +308,12 @@ enum C13Walks {
     "good-action": ["Archived: 1", "Message archived", "Undo Button", "Close Button"],
     "good-banner": ["Status: offline"],
     "bad-inline-banner": ["Status: offline", "You are offline.", "Go online Button"],
+  ]
+
+  /// The action pressed after the walk, and what must then be heard.
+  static let done: [String: (String, String)] = [
+    "good-action": ("Undo", "Archive undone"),
+    "good-banner": ("Go online", "You are online."),
+    "bad-inline-banner": ("Go online", "You are online."),
   ]
 }

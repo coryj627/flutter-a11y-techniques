@@ -141,6 +141,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-293](#fl-293) | A message shown while one that stays is up waits, unseen and unannounced, until that one is closed | Widget tests only | Confirmed (widget tests only) |
 | [FL-294](#fl-294) | A SnackBar's Close button shows keyboard focus only by a faint tint, and `closeIconColor` cannot change that | Widget tests only | Confirmed (widget tests only) |
 | [FL-295](#fl-295) | A `MaterialBanner` is a live region only when the `ScaffoldMessenger` shows it | All | Confirmed |
+| [FL-296](#fl-296) | A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it | Web; widget tests (Android and iOS not run) | Confirmed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -3507,12 +3508,25 @@ yet), **Fixed in x.y** (verified on that version).
   stays, [FL-290](#fl-290)) is not on the screen and not in the tree 10 s
   later; when the first is closed it comes, and is announced then, as a
   live region.
-- WCAG: 4.1.3, where the waiting message is a status message that is
-  shown nowhere else: until the user closes the first, it is not there to
-  be determined. Not claimed for any example: every C13 example takes the
-  current message away first.
-- Workaround, in the SDK: `hideCurrentSnackBar()` before
-  `showSnackBar()` (every C13 example does).
+- WCAG: none established. The waiting message is presented late, to
+  everyone, and when it comes it is a live region, announced without
+  focus: the measurement shows a delay in presentation, not a status
+  message that cannot be programmatically determined, so it does not
+  establish a 4.1.3 failure. It is logged as a queueing limitation: a
+  message about a later action can wait behind one the user has not
+  dealt with.
+- The same queue with presses that come while a message is going out
+  (C13 review, 2026-11-22; `docs/evidence/probes/c13/flutter_test_burst.txt`):
+  with `hideCurrentSnackBar()` (or `hideCurrentMaterialBanner()`) before
+  each show and the animations on, two or three presses inside the exit
+  animation each hid the same message and queued a replacement; the
+  first replacement stayed, and the next came when it was closed, or, for
+  a banner, when Go online hid it, with the page saying online.
+- Workaround, in the SDK: `clearSnackBars()` before `showSnackBar()`, and
+  `clearMaterialBanners()` before `showMaterialBanner()`: they clear the
+  queue and take away the current one. Every C13 example does; the C13
+  widget tests "a burst of presses" fail with `hideCurrent…` and pass
+  with `clear…`.
 - Upstream issue: not searched yet (D25).
 
 ## FL-294
@@ -3562,6 +3576,43 @@ yet), **Fixed in x.y** (verified on that version).
 - WCAG: 4.1.3 Status Messages, where the banner is a status message.
 - Workaround, in the SDK: show it with
   `ScaffoldMessenger.showMaterialBanner` (C13 `good-banner`).
+- Upstream issue: not searched yet (D25).
+
+## FL-296
+
+**A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it.**
+
+- Status: Confirmed, Flutter 3.47.5. Framework source read:
+  `material/snack_bar.dart`, `_SnackBarActionState._handlePressed`, calls
+  the app's `onPressed` and then
+  `ScaffoldMessenger.of(context).hideCurrentSnackBar(reason: action)`;
+  `scaffold.dart`, `hideCurrentSnackBar`, with `accessibleNavigation` on,
+  sets the animation to 0 at once, which takes the SnackBar out of the
+  queue before the next line runs. Asserted by the C13 widget tests
+  "FL-296" (the SDK alone, four cases): with a clear in `onPressed`, the
+  second SnackBar was never on the screen with `accessibleNavigation` on,
+  and came with it off; without the clear, it came either way. Seen on the
+  web (Chromium) in C13's first build of `good-action`, whose Undo cleared
+  and showed "Archive undone" in `onPressed`: it never entered the
+  semantics tree, and nothing was announced, by Enter or by a click
+  (`docs/evidence/probes/c13/web_undo.txt`, round 1). Whether the web
+  engine reports `accessibleNavigation` on was not read; the old SnackBar
+  went at once there, as it does with it on.
+- What happens: with it on, clearing takes the current SnackBar away at
+  once, the new one becomes the current one, and the action then hides
+  that one. With it off the cleared one is still going out when the
+  action hides, so the action hides it again and the new one comes.
+- What users get: `accessibleNavigation` is on when TalkBack or VoiceOver
+  is (and was in every Android run of C13, [FL-290](#fl-290)), so a
+  confirmation of what an action did, shown this way, is lost for the
+  users who most need it to be announced, and works in a widget test that
+  leaves it off.
+- Workaround, in the SDK: show it once the first SnackBar has closed by
+  its action, from its controller's `closed` future
+  (`SnackBarClosedReason.action`); C13 `good-action` and
+  `bad-action-times-out` do, and their "Archive undone" was announced on
+  the web (`web_undo.txt`, round 2) and in the widget tests with
+  `accessibleNavigation` off and on.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->

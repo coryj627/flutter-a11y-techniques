@@ -234,18 +234,54 @@ class C13SnackbarTest : TechniqueTest("C13") {
 
     // FL-295.
     @Test
-    fun badInlineBannerIsNoLiveRegionAndGoodBannersIs() {
+    fun badInlineBannerIsNoLiveRegionAndGoOnlinesSnackBarInTheSameLaunchIs() {
         open("bad-inline-banner")
         press("bad-inline-banner")
+        Thread.sleep(2_000)
         assertTrue("no live region", all().none { it.liveRegion != View.ACCESSIBILITY_LIVE_REGION_NONE })
         assertTrue("no dismiss action", all().none { n -> n.actionList.any { it.id == AccessibilityNodeInfo.ACTION_DISMISS } })
-        open("good-banner")
-        press("good-banner")
-        assertEquals(
-            "good-banner's message is one",
-            listOf("You are offline."),
-            all().filter { it.liveRegion != View.ACCESSIBILITY_LIVE_REGION_NONE }.map { it.name() },
-        )
+        // The positive control, in the same launch, read the same way.
+        assertTrue("Go online click", maybe("Go online")!!.performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        assertEquals("Go online's SnackBar is one", listOf("You are online."), waitLiveRegions(listOf("You are online.")))
+    }
+
+    /** Waits up to 5 seconds for the names of the live regions to be [expected]; returns them. */
+    private fun waitLiveRegions(expected: List<String>): List<String> {
+        fun now() = all().filter { it.liveRegion != View.ACCESSIBILITY_LIVE_REGION_NONE }.map { it.name() }
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end && now() != expected) Thread.sleep(100)
+        return now()
+    }
+
+    // What an action did, back on the page's line, is told by a SnackBar of
+    // its own: a polite live region, which goes; the line is no live region.
+    @Test
+    fun whatAnActionDidIsAPoliteLiveRegion() {
+        for ((slug, action, said) in listOf(
+            Triple("good-action", "Undo", "Archive undone"),
+            Triple("good-banner", "Go online", "You are online."),
+            Triple("bad-action-times-out", "Undo", "Archive undone"),
+        )) {
+            open(slug)
+            press(slug)
+            assertTrue("$slug $action click", maybe(action)!!.performAction(AccessibilityNodeInfo.ACTION_CLICK))
+            assertEquals("$slug: told", listOf(said), waitLiveRegions(listOf(said)))
+            val live = all().single { it.liveRegion != View.ACCESSIBILITY_LIVE_REGION_NONE }
+            assertEquals("$slug: polite", View.ACCESSIBILITY_LIVE_REGION_POLITE, live.liveRegion)
+            assertEquals("$slug line", line.getValue(slug).first, lineText(slug))
+            assertEquals("$slug: the line is no live region", View.ACCESSIBILITY_LIVE_REGION_NONE, node("c13-$slug-count").liveRegion)
+            assertNotNull("$slug: it goes", goneAfterName(said, 8_000))
+        }
+    }
+
+    /** Waits until no node is named [name], at most [max] ms; how long it took, or null. */
+    private fun goneAfterName(name: String, max: Long): Long? {
+        val start = System.currentTimeMillis()
+        while (System.currentTimeMillis() - start < max) {
+            if (maybe(name) == null) return System.currentTimeMillis() - start
+            Thread.sleep(100)
+        }
+        return null
     }
 
     /**
@@ -277,6 +313,22 @@ class C13SnackbarTest : TechniqueTest("C13") {
                 Log.i(talkBackTag, "FOCUS c13-$slug-$part")
                 talkBackFocus("$slug $part") { anyWindowNode { it.name() == name } }
                 Thread.sleep(4_000)
+            }
+            // What the action did, announced: focus parked on the line again,
+            // the action pressed with the click action. For bad-inline-banner
+            // this is also the positive control of its silence, in the same
+            // launch.
+            val acted = when (slug) {
+                "good-action" -> "Undo"
+                "good-banner", "bad-inline-banner" -> "Go online"
+                else -> null
+            }
+            if (acted != null) {
+                talkBackFocus("$slug line") { nodeInAnyWindow("c13-$slug-count") }
+                Thread.sleep(3_000)
+                Log.i(talkBackTag, "FOCUS c13-$slug-done-announced")
+                assertTrue("$slug $acted click", anyWindowNode { it.name() == acted }.performAction(AccessibilityNodeInfo.ACTION_CLICK))
+                Thread.sleep(5_000)
             }
             Log.i(talkBackTag, "END $slug")
         }

@@ -31,6 +31,12 @@ TALKBACK_EXPECT = {
     # reads it, so its words are there to be found.
     "c13-bad-inline-banner-announced": ([], ["offline"]),
     "c13-bad-inline-banner-message": (["You are offline."], []),
+    # What the action did, told by a SnackBar of its own: focus parked on
+    # the line again, the action pressed with the click action. For
+    # bad-inline-banner this is also the positive control of its silence.
+    "c13-good-action-done-announced": (["Archive undone"], []),
+    "c13-good-banner-done-announced": (["You are online."], []),
+    "c13-bad-inline-banner-done-announced": (["You are online."], []),
 }
 
 # tool/talkback.py: how the speech was captured.
@@ -38,7 +44,8 @@ TALKBACK_METHOD = (
     "TalkBack focus parked on the example's line, the example's button pressed "
     "with ACTION_CLICK, and what TalkBack then announced read from its verbose "
     "log (`-announced`); then, for the messages that stay, TalkBack focus moved "
-    "to each of the message's nodes"
+    "to each of the message's nodes; then focus parked on the line again and the "
+    "message's action (Undo, Go online) pressed with ACTION_CLICK (`-done-announced`)"
 )
 
 # tool/voiceover_ios.py: (how the speech was captured, heading of the
@@ -50,8 +57,11 @@ VOICEOVER_IOS_METHOD = (
     "`XCUIVoiceOverService.currentSpeech()` is read until the message is heard, "
     "or for six seconds when nothing should be said; one move back and one "
     "forward must land on the button again. For the messages that stay, the "
-    "cursor is then moved forward from the button to the end of the screen",
-    "Spoken: on the button / after the tap at it / back and forward / moves forward",
+    "cursor is then moved forward from the button to the end of the screen; then put "
+    "on the message's action (Undo, Go online), which is pressed with `doubleTap()` at "
+    "its place, and the SnackBar that tells what it did must be heard",
+    "Spoken: on the button / after the tap at it / back and forward / moves forward / "
+    "on the action / after the tap at it",
 )
 
 # tool/voiceover_web.py: how the speech was captured.
@@ -63,5 +73,7 @@ VOICEOVER_WEB_METHOD = (
     "`voiceOver.next()` to its end, every stop judged against the whole screen "
     "in order (web_tests/vo/c13_vo_walks.js); a wrong stop fails for good, and "
     "only a walk cut short with every stop right so far is walked again, up to "
-    "three walks, each shown as its own row (`-walk-<n>`). No runner retries"
+    "three walks, each shown as its own row (`-walk-<n>`). No runner retries. After "
+    "the announcements of the examples with an action, keyboard focus on the "
+    "message's action and Enter: what it did must be heard (`-done-announced`)"
 )

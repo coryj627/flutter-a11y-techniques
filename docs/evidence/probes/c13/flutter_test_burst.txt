@@ -1,0 +1,28 @@
+# The burst tests of test/techniques/c13_snackbar_test.dart (group 'a burst of presses'),
+# 2026-11-22, Flutter 3.47.5, as Android.
+## Against examples.dart as of 3b3b982: hideCurrentSnackBar / hideCurrentMaterialBanner before each show
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "Message archived": [
+   Which: means one was found but none were expected
+00:00 +0 -1: a burst of presses good-action: 2 presses leave one message, and once it is closed no other comes [E]
+Expected: <2>
+  Actual: <3>
+00:00 +0 -2: a burst of presses good-message: 2 more presses bring one message in, and once it has gone no other comes [E]
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "You are offline.": [
+   Which: means one was found but none were expected
+00:01 +0 -3: a burst of presses good-banner: 2 presses leave one banner, and Go online leaves none [E]
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "Message archived": [
+   Which: means one was found but none were expected
+00:01 +0 -4: a burst of presses good-action: 3 presses leave one message, and once it is closed no other comes [E]
+Expected: <2>
+  Actual: <4>
+00:01 +0 -5: a burst of presses good-message: 3 more presses bring one message in, and once it has gone no other comes [E]
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "You are offline.": [
+   Which: means one was found but none were expected
+00:01 +0 -6: a burst of presses good-banner: 3 presses leave one banner, and Go online leaves none [E]
+00:01 +0 -6: Some tests failed.
+## Against the fixed examples.dart: clearSnackBars / clearMaterialBanners before each show
+00:00 +6: All tests passed!

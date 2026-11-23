@@ -418,6 +418,41 @@ void main() {
       handle.dispose();
     });
 
+    // What the action did, back on the page's line, is told by a SnackBar of
+    // its own: the line's change alone is not announced (Codex review).
+    for (final nav in [false, true]) {
+      for (final (slug, action, said, line) in [
+        ('good-action', 'Undo', 'Archive undone', 'Archived: 0'),
+        ('good-banner', 'Go online', 'You are online.', 'Status: online'),
+        ('bad-action-times-out', 'Undo', 'Archive undone', 'Archived: 0'),
+        ('bad-inline-banner', 'Go online', 'You are online.', 'Status: online'),
+      ]) {
+        testWidgets('$slug: $action changes the line and is told by a live '
+            'region, "$said", that goes and leaves the line, with '
+            'accessibleNavigation $nav', (tester) async {
+          final handle = tester.ensureSemantics();
+          await _open(tester, slug, accessibleNavigation: nav);
+          await _press(tester, slug);
+          await _tabTo(tester, action);
+          await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+          await _frames(tester, const Duration(seconds: 1));
+          expect(_lineText(tester, slug), line);
+          expect(_shown(slug), isFalse);
+          expect(_liveRegions(tester).map((n) => n.label), [said]);
+          // The line is not a live region: the SnackBar is the announcement.
+          expect(
+            dataById('c13-$slug-count').flagsCollection.isLiveRegion,
+            isFalse,
+          );
+          expect(find.text(said), findsOneWidget);
+          await _frames(tester, const Duration(seconds: 6));
+          expect(find.text(said), findsNothing);
+          expect(_lineText(tester, slug), line);
+          handle.dispose();
+        });
+      }
+    }
+
     for (final nav in [false, true]) {
       testWidgets('good-message: the message goes after about 4 s, with '
           'accessibleNavigation $nav, and what it said stays on the page', (
@@ -534,17 +569,20 @@ void main() {
     });
 
     testWidgets('bad-inline-banner: the banner is shown with no live region '
-        '(FL-295); good-banner\'s, in the same test, is one', (tester) async {
+        '(FL-295); Go online\'s SnackBar, in the same launch, is one', (
+      tester,
+    ) async {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-inline-banner');
       await _press(tester, 'bad-inline-banner');
       expect(_shown('bad-inline-banner'), isTrue);
+      await _frames(tester, const Duration(seconds: 2));
       expect(_liveRegions(tester), isEmpty);
-      // A new app, so that its initial route is read again.
-      await tester.pumpWidget(const SizedBox());
-      await _open(tester, 'good-banner');
-      await _press(tester, 'good-banner');
-      expect(_liveRegions(tester).map((n) => n.label), ['You are offline.']);
+      // The positive control, in the same launch and read the same way: Go
+      // online's SnackBar is a live region.
+      await tester.tap(find.text('Go online'));
+      await _frames(tester, const Duration(seconds: 1));
+      expect(_liveRegions(tester).map((n) => n.label), ['You are online.']);
       handle.dispose();
     });
 
@@ -596,6 +634,67 @@ void main() {
     });
   });
 
+  // FL-296, the SDK alone: a SnackBar shown from a SnackBarAction's
+  // onPressed, after clearSnackBars() there, and without it. The action
+  // hides the current SnackBar after onPressed returns (read in the source:
+  // _SnackBarActionState._handlePressed). With accessibleNavigation off,
+  // the cleared one is still going out then and is the one hidden; with it
+  // on, it has gone at once, the new one is current, and the action hides
+  // that. Without the clear, the first is current, the new one queued, and
+  // it comes either way.
+  for (final (nav, clear) in [
+    (false, true),
+    (true, true),
+    (false, false),
+    (true, false),
+  ]) {
+    testWidgets('FL-296: a SnackBar shown from a SnackBarAction\'s onPressed, '
+        '${clear ? 'after clearSnackBars' : 'alone'}, with '
+        'accessibleNavigation $nav', (tester) async {
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          FakeAccessibilityFeatures(accessibleNavigation: nav);
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () {
+                  final messenger = ScaffoldMessenger.of(context);
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: const Text('First'),
+                      action: SnackBarAction(
+                        label: 'Act',
+                        onPressed: () {
+                          if (clear) messenger.clearSnackBars();
+                          messenger.showSnackBar(
+                            const SnackBar(content: Text('Second')),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('Show'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Show'));
+      await _frames(tester, const Duration(seconds: 1));
+      await tester.tap(find.text('Act'));
+      var seen = false;
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        seen = seen || find.text('Second').evaluate().isNotEmpty;
+      }
+      // Written to fail when either changes.
+      expect(seen, !(nav && clear), reason: 'the second SnackBar shown');
+    });
+  }
+
   testWidgets('FL-293: a message shown while one that stays is shown waits, '
       'unseen, until that one is closed', (tester) async {
     final handle = tester.ensureSemantics();
@@ -611,6 +710,81 @@ void main() {
     expect(find.text('Second message'), findsOneWidget);
     expect(_liveRegions(tester).map((n) => n.label), ['Second message']);
     handle.dispose();
+  });
+
+  // Presses that come while the last message is still going out, with the
+  // animations on (accessibleNavigation false): each example shows only
+  // the newest message, and once it has gone no message from an earlier
+  // press comes after it. With hideCurrentSnackBar() alone before each
+  // show, the first replacement stayed and the second waited behind it,
+  // and came when the first was closed (Codex review; the test failed so
+  // on that code).
+  group('a burst of presses', () {
+    /// Shows the example's message and lets it come in, then presses the
+    /// button [n] times more, 50 ms apart, inside the exit animation of the
+    /// message shown, then lets them settle.
+    Future<void> burst(WidgetTester tester, String slug, int n) async {
+      await _press(tester, slug);
+      for (var i = 0; i < n; i++) {
+        await tester.tap(byId(_show(slug)));
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await _frames(tester, const Duration(seconds: 2));
+    }
+
+    for (final n in [2, 3]) {
+      testWidgets('good-action: $n presses leave one message, and once it '
+          'is closed no other comes', (tester) async {
+        await _open(tester, 'good-action');
+        await burst(tester, 'good-action', n);
+        expect(_lineText(tester, 'good-action'), 'Archived: ${n + 1}');
+        expect(find.text('Message archived'), findsOneWidget);
+        await tester.tap(find.byTooltip('Close'));
+        await _frames(tester, const Duration(seconds: 6));
+        expect(find.text('Message archived'), findsNothing);
+      });
+
+      testWidgets('good-message: $n more presses bring one message in, and '
+          'once it has gone no other comes', (tester) async {
+        await _open(tester, 'good-message');
+        // Each SnackBar the messenger shows has a key of its own (its
+        // fallback key, read in the source: ScaffoldMessengerState
+        // .showSnackBar), so the SnackBars seen are counted by their keys.
+        final seen = <Key?>{};
+        void look() {
+          for (final e in find.byType(SnackBar).evaluate()) {
+            seen.add(e.widget.key);
+          }
+        }
+
+        await _press(tester, 'good-message');
+        look();
+        for (var i = 0; i < n; i++) {
+          await tester.tap(byId(_show('good-message')));
+          await tester.pump(const Duration(milliseconds: 50));
+          look();
+        }
+        for (var t = 0; t < 200; t++) {
+          await tester.pump(const Duration(milliseconds: 100));
+          look();
+        }
+        expect(_shown('good-message'), isFalse, reason: 'gone 20 s after');
+        final comings = seen.length;
+        // The first, and the newest press's: no other.
+        expect(comings, 2);
+      });
+
+      testWidgets('good-banner: $n presses leave one banner, and Go online '
+          'leaves none', (tester) async {
+        await _open(tester, 'good-banner');
+        await burst(tester, 'good-banner', n);
+        expect(find.text('You are offline.'), findsOneWidget);
+        await tester.tap(find.text('Go online'));
+        await _frames(tester, const Duration(seconds: 6));
+        expect(_lineText(tester, 'good-banner'), 'Status: online');
+        expect(find.text('You are offline.'), findsNothing);
+      });
+    }
   });
 
   // Every example, with its message shown: at 200% text on a 320 by 640

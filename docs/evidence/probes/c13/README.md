@@ -173,3 +173,19 @@ The walks now expect each browser's reading exactly.
 The third recording, against 50889b8, passed: every test, every walk
 complete on its first try. It is the transcript,
 `docs/evidence/C13/voiceover-web.md`.
+
+## Review round (Codex, 2026-11-22)
+
+- `flutter_test_burst.txt`: the C13 widget tests "a burst of presses" run
+  against `examples.dart` as of 3b3b982 (`hideCurrentSnackBar` and
+  `hideCurrentMaterialBanner` before each show), where all six failed: a
+  replacement stayed queued and came after the message was closed or
+  gone, three SnackBars were seen for two presses; and against the fixed
+  code (`clearSnackBars`, `clearMaterialBanners`), where all six passed
+  (FL-293).
+- `c13_undo_probe.spec.js.txt` (`web_undo.txt`), Chromium, no VoiceOver:
+  after Undo on `good-action`, what of the two messages is in the tree and
+  what is announced. Round 1, with "Archive undone" shown from Undo's
+  `onPressed` after a clear: it never appeared, and nothing was
+  announced. Round 2, shown from the first SnackBar's `closed` future: it
+  appeared and was written to `flt-announcement-polite` (FL-296).

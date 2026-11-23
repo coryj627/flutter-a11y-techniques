@@ -276,18 +276,48 @@ test.describe('bad examples have their defect', () => {
     expect(await page.evaluate(() => [...document.querySelectorAll('[aria-label]')].some((e) => e.getAttribute('aria-label').includes('K7Q2')))).toBe(false);
   });
 
-  test('bad-inline-banner: nothing is announced (FL-295); good-banner, recorded the same way, is', async ({ page }) => {
+  test('bad-inline-banner: nothing is announced (FL-295); then Go online\'s SnackBar, in the same document, is, by the same recorder', async ({ page }) => {
     await open(page, 'bad-inline-banner');
     await pressByKeyboard(page, 'bad-inline-banner');
     await expect(page.locator('flt-semantics-host').getByText('You are offline.', { exact: false })).toHaveCount(1);
+    // The buffer the silence is read from is marked, so that the control
+    // below can show it is the same one, in the same document.
+    await page.evaluate(() => { window.announced.mark = 'silence'; });
     await page.waitForTimeout(1500);
     expect(await announced(page)).toEqual([]);
     await expect(page.locator('flt-semantics-host [aria-live]')).toHaveCount(0);
-    // The same recorder hears good-banner's.
-    await open(page, 'good-banner');
-    await pressByKeyboard(page, 'good-banner');
-    await expect.poll(() => announced(page)).toEqual(['polite: You are offline.']);
+    // The positive control: no reload, the same MutationObserver and the
+    // same buffer. Go online shows a SnackBar, which the recorder must hear.
+    await tabToButton(page, 'Go online');
+    await page.keyboard.press('Enter');
+    await expect(line(page, 'bad-inline-banner')).toHaveText('Status: online');
+    await expect.poll(() => announced(page)).toEqual(['polite: You are online.']);
+    // The same buffer the silence was read from.
+    expect(await page.evaluate(() => window.announced.mark)).toBe('silence');
   });
+});
+
+// What an action did, back on the page's line, is told by a SnackBar of its
+// own: the line's change alone writes nothing to the announcement elements.
+test.describe('what an action did is announced', () => {
+  for (const [slug, action, said, back] of [
+    ['good-action', 'Undo', 'Archive undone', 'Archived: 0'],
+    ['good-banner', 'Go online', 'You are online.', 'Status: online'],
+    ['bad-action-times-out', 'Undo', 'Archive undone', 'Archived: 0'],
+  ]) {
+    test(`${slug}: ${action} is announced "${said}", after the message, and the line changes`, async ({ page }) => {
+      await open(page, slug);
+      await pressByKeyboard(page, slug);
+      await expect.poll(() => announced(page)).toEqual([`polite: ${MESSAGE[slug]}`]);
+      await tabToButton(page, action);
+      await page.keyboard.press('Enter');
+      await expect(line(page, slug)).toHaveText(back);
+      await expect.poll(() => announced(page)).toEqual([`polite: ${MESSAGE[slug]}`, `polite: ${said}`]);
+      await page.waitForTimeout(1500);
+      expect(await announced(page)).toEqual([`polite: ${MESSAGE[slug]}`, `polite: ${said}`]);
+      await expect(line(page, slug)).not.toHaveAttribute('aria-live');
+    });
+  }
 });
 
 // The VoiceOver spec takes these texts as the stops above each example's

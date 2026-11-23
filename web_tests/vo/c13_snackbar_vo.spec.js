@@ -34,6 +34,16 @@ const ANNOUNCED = {
   'bad-inline-banner': { mustNot: 'offline' },
 };
 
+// slug -> the message's action, pressed after the announcement, and what
+// must then be announced: what the action did, told by a SnackBar of its
+// own. For bad-inline-banner it is also the positive control of its
+// silence, in the same page and by the same reading of VoiceOver.
+const DONE = {
+  'good-action': { action: 'Undo', said: 'Archive undone' },
+  'good-banner': { action: 'Go online', said: 'You are online.' },
+  'bad-inline-banner': { action: 'Go online', said: 'You are online.' },
+};
+
 const show = (page, slug) => page.locator(`[flt-semantics-identifier="c13-${slug}-show"]`);
 
 /** Opens the example and puts keyboard focus, and VoiceOver, on its button. */
@@ -65,6 +75,15 @@ for (const [slug, { must, mustNot }] of Object.entries(ANNOUNCED)) {
     const all = heard.join(' | ');
     if (must) expect(all, slug).toContain(must);
     if (mustNot) expect(all, slug).not.toContain(mustNot);
+    const done = DONE[slug];
+    if (!done) return;
+    // Keyboard focus, and VoiceOver, on the action; then Enter.
+    await page.getByRole('button', { name: done.action, exact: true }).focus();
+    const before = await waitUntilQuiet(page);
+    const after = await heardAfter(page, () => page.keyboard.press('Enter'), before, 6000);
+    console.log(`C13VO ${browserName} ${slug}-done-announced | ${after.join(' / ') || '(nothing)'}`);
+    await expect(page.locator(`[flt-semantics-identifier="c13-${slug}-count"]`)).toHaveText(/: 0$|online$/);
+    expect(after.join(' | '), `${slug}: what ${done.action} did`).toContain(done.said);
   });
 }
 

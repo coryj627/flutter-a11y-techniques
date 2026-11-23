@@ -1,0 +1,50 @@
+// C13 probe round 3 (throwaway, not committed; kept as
+// docs/evidence/probes/c13/c13_undo_probe.spec.js.txt): on the web, after
+// Undo on good-action, what the page shows, every 100 ms for 6 s: whether
+// "Message archived" and "Archive undone" are in the semantics tree, as what,
+// and everything written to the announcement elements; for Enter on Undo
+// and for a click on it.
+import { test } from '@playwright/test';
+
+const log = (...a) => console.log('C13UNDO', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+
+for (const how of ['Enter', 'click']) {
+  test(`Undo by ${how}`, async ({ page, browserName }) => {
+    await page.goto('/#/t/C13/good-action');
+    const show = page.locator('[flt-semantics-identifier="c13-good-action-show"]');
+    await show.waitFor();
+    await page.waitForTimeout(900);
+    await page.evaluate(() => {
+      window.t0 = performance.now();
+      window.announced = [];
+      for (const politeness of ['polite', 'assertive']) {
+        const element = document.querySelector(`flt-announcement-${politeness}`);
+        new MutationObserver(() => {
+          window.announced.push(`${Math.round(performance.now() - window.t0)} ms ${politeness}: "${element.textContent.trim()}"`);
+        }).observe(element, { childList: true, characterData: true, subtree: true });
+      }
+    });
+    await show.click();
+    await page.waitForTimeout(1500);
+    const undo = page.getByRole('button', { name: 'Undo', exact: true });
+    if (how === 'Enter') {
+      await undo.focus();
+      await page.keyboard.press('Enter');
+    } else {
+      await undo.click();
+    }
+    const t = Date.now();
+    const seen = [];
+    while (Date.now() - t < 6000) {
+      const state = await page.evaluate(() => [...document.querySelectorAll('flt-semantics')]
+        .filter((e) => /Message archived|Archive undone/.test(`${e.getAttribute('aria-label') ?? ''} ${e.querySelector('flt-semantics') ? '' : e.textContent}`))
+        .map((e) => `${e.id.replace('flt-semantic-node-', '#')}:${e.getAttribute('role') ?? '-'}:"${e.getAttribute('aria-label') ?? e.textContent.trim()}"`)
+        .join(', ') || '(none)');
+      if (seen.at(-1)?.split(' ms ')[1] !== state) seen.push(`${Date.now() - t} ms ${state}`);
+      await page.waitForTimeout(100);
+    }
+    log(browserName, how, 'tree after Undo:', seen.join(' | '));
+    log(browserName, how, 'line:', await page.locator('[flt-semantics-identifier="c13-good-action-count"]').textContent());
+    log(browserName, how, 'announced:', JSON.stringify(await page.evaluate(() => window.announced)));
+  });
+}

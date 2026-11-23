@@ -89,13 +89,37 @@ SnackBarAction undo(BuildContext context, VoidCallback onPressed) {
   );
 }
 
-/// Shows [bar], first taking away any message that is shown, so that a new
-/// message is never queued behind one that stays (FL-293).
-void _show(BuildContext context, SnackBar bar) {
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(bar);
+/// Shows [bar] through [messenger], first clearing the queue and taking
+/// away the message that is shown (`clearSnackBars`), so that a new message
+/// is never queued behind one that stays (FL-293), and presses that come
+/// while a message is still going out leave only the newest.
+ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _show(
+  ScaffoldMessengerState messenger,
+  SnackBar bar,
+) {
+  messenger.clearSnackBars();
+  return messenger.showSnackBar(bar);
 }
+
+/// Tells, once a SnackBar shown by [_show] has been closed by its action,
+/// what that action did. The new SnackBar is shown from the old one's
+/// `closed` future and not from the action's `onPressed`: the action hides
+/// the current SnackBar after `onPressed` returns, and with
+/// `accessibleNavigation` on, that is a SnackBar shown there (FL-296).
+void _tellAfterAction(
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> shown,
+  ScaffoldMessengerState messenger,
+  String text,
+) {
+  shown.closed.then((reason) {
+    if (reason == SnackBarClosedReason.action) _show(messenger, _done(text));
+  });
+}
+
+/// What an action that changes the page's line back says it did: a message
+/// only, which goes after its default four seconds, as its news is on the
+/// page too.
+SnackBar _done(String text) => SnackBar(content: Text(text));
 // #endregion
 
 // #region good-action
@@ -125,8 +149,9 @@ class _GoodActionState extends State<GoodAction> {
       line: 'Archived: $_archived',
       onPressed: (context) {
         setState(() => _archived++);
-        _show(
-          context,
+        final messenger = ScaffoldMessenger.of(context);
+        final shown = _show(
+          messenger,
           SnackBar(
             content: Text('Message archived'),
             // The SnackBar follows the user to the screen under when they go
@@ -144,6 +169,9 @@ class _GoodActionState extends State<GoodAction> {
             ),
           ),
         );
+        // What Undo did is told by a SnackBar too, as the line's change
+        // alone is not announced.
+        _tellAfterAction(shown, messenger, 'Archive undone');
       },
     );
   }
@@ -172,7 +200,10 @@ class _GoodMessageState extends State<GoodMessage> {
       line: 'Drafts saved: $_saved',
       onPressed: (context) {
         setState(() => _saved++);
-        _show(context, SnackBar(content: Text('Draft saved')));
+        _show(
+          ScaffoldMessenger.of(context),
+          SnackBar(content: Text('Draft saved')),
+        );
       },
     );
   }
@@ -201,16 +232,21 @@ class _GoodBannerState extends State<GoodBanner> {
       onPressed: (context) {
         setState(() => _offline = true);
         final messenger = ScaffoldMessenger.of(context);
+        // clearMaterialBanners, as _show does for a SnackBar: presses that
+        // come while a banner is going out leave only the newest.
         messenger
-          ..hideCurrentMaterialBanner()
+          ..clearMaterialBanners()
           ..showMaterialBanner(
             MaterialBanner(
               content: Text('You are offline.'),
               actions: [
                 TextButton(
+                  // Going online is told by a SnackBar, as the line's
+                  // change alone is not announced.
                   onPressed: () {
                     if (mounted) setState(() => _offline = false);
-                    messenger.hideCurrentMaterialBanner();
+                    messenger.clearMaterialBanners();
+                    _show(messenger, _done('You are online.'));
                   },
                   style: focusRing(Theme.of(context).colorScheme.onSurface),
                   child: const Text('Go online'),
@@ -247,8 +283,9 @@ class _BadActionTimesOutState extends State<BadActionTimesOut> {
       line: 'Archived: $_archived',
       onPressed: (context) {
         setState(() => _archived++);
-        _show(
-          context,
+        final messenger = ScaffoldMessenger.of(context);
+        final shown = _show(
+          messenger,
           SnackBar(
             content: Text('Message archived'),
             action: undo(context, () {
@@ -258,6 +295,7 @@ class _BadActionTimesOutState extends State<BadActionTimesOut> {
             persist: false,
           ),
         );
+        _tellAfterAction(shown, messenger, 'Archive undone');
       },
     );
   }
@@ -287,7 +325,7 @@ class _BadOnlyInMessageState extends State<BadOnlyInMessage> {
       onPressed: (context) {
         setState(() => _booked++);
         _show(
-          context,
+          ScaffoldMessenger.of(context),
           SnackBar(
             // Defect: the code is nowhere else, and the message times out.
             content: Text('Booked. Code: K7Q2'),
@@ -326,7 +364,15 @@ class _BadInlineBannerState extends State<BadInlineBanner> {
               content: Text('You are offline.'),
               actions: [
                 TextButton(
-                  onPressed: () => setState(() => _offline = false),
+                  // Going online is told by a SnackBar, as in good-banner:
+                  // the defect is the banner's alone.
+                  onPressed: () {
+                    setState(() => _offline = false);
+                    _show(
+                      ScaffoldMessenger.of(context),
+                      _done('You are online.'),
+                    );
+                  },
                   style: focusRing(Theme.of(context).colorScheme.onSurface),
                   child: const Text('Go online'),
                 ),
