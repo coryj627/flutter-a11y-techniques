@@ -1,0 +1,16 @@
+C18CardTest on the local emulator set to CI's size (android_320x640.sh.txt), 2026-11-22, before the evidence run. From the script:
+during: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+BUILD SUCCESSFUL in 1m 17s
+after: Physical size: 1080x2424  Physical density: 420 
+
+From the test runner's report (TEST-Pixel_10a(AVD) - 17-_app-.xml):
+testsuite name="dev.fluttera11y.flutter_a11y_techniques.C18CardTest" tests="9" failures="0" errors="0" skipped="1" time="56.898" timestamp="2026-11-23T00:17:08" hostname="localhost"
+testcase name="goodTappableIsOneButtonNamedByItsTextAndNotAHeading" time="4.987"
+testcase name="badDefaultContainerIsOneHeadingNodeHoldingTheButton" time="4.094"
+testcase name="eachControlIsActivatedAloneByTheClickActionATapAndTabThenEnter" time="29.111"
+testcase name="goodMaterialHasEachPartAsANodeOfItsOwn" time="2.895"
+testcase name="goodCupertinoHasAHeadingTheTextAndThePictureAndNoControl" time="3.567"
+testcase name="badReadMoreIsALinkNamedReadMoreBesideTheHeading" time="3.615"
+testcase name="badInkWellIsNotAButton" time="6.4"
+testcase name="badHeadingButtonIsAButtonAndAHeadingOnAndroid" time="2.228"
+testcase name="talkBackWalk" time="0.001"

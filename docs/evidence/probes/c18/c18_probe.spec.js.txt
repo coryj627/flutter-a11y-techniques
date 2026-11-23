@@ -1,0 +1,157 @@
+// C18 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/c18/c18_probe.spec.js.txt with c18probe.config.js.txt).
+// For each fixture of lib/probe.dart: the semantics DOM of its card,
+// Chromium's accessibility tree, the ARIA snapshot, every stop of eight
+// Tabs, and, from a fresh load each time, what Enter and Space do after one
+// to four Tabs, and what a mouse click at the centre of each element with a
+// button or link role does. Then plain HTML pages for comparison.
+import { test } from '@playwright/test';
+
+const ids = Array.from({ length: 20 }, (_, i) => `p${String(i + 1).padStart(2, '0')}`);
+
+function log(...a) {
+  console.log('C18WEB', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-taps"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+function clean(html) {
+  return html.replace(/ style="[^"]*"/g, '').replace(/ id="flt-semantic-node-\d+"/g, '');
+}
+
+async function state(page, id) {
+  await page.waitForTimeout(1000);
+  const url = page.url().replace(/^http:\/\/127\.0\.0\.1:\d+/, '');
+  const taps = await page
+    .locator(`[flt-semantics-identifier="${id}-taps"]`)
+    .textContent({ timeout: 1000 })
+    .catch(() => '(gone)');
+  const dest = (await page.getByText(/^Arrived/).count()) > 0;
+  return `url=${url} taps="${taps}" destination=${dest}`;
+}
+
+async function active(page) {
+  return page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e || !e.closest('flt-semantics-host')) return `(page: ${e?.tagName})`;
+    const role = e.getAttribute('role');
+    return `${e.tagName}${role ? `[role=${role}]` : ''} "${(e.getAttribute('aria-label') || e.textContent.trim()).slice(0, 60)}"`;
+  });
+}
+
+async function axTree(page, context, keep) {
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const byId = new Map(nodes.map((n) => [n.nodeId, n]));
+  const depth = (n) => {
+    let d = 0;
+    let p = n.parentId;
+    while (p && byId.get(p)) {
+      d++;
+      p = byId.get(p).parentId;
+    }
+    return d;
+  };
+  const out = [];
+  for (const n of nodes) {
+    if (n.ignored) continue;
+    if (n.role?.value === 'InlineTextBox') continue;
+    const name = n.name?.value ?? '';
+    if (!keep(n, name)) continue;
+    const props = (n.properties ?? []).map((p) => `${p.name}:${JSON.stringify(p.value?.value)}`).join(',');
+    out.push(`${'  '.repeat(depth(n))}role=${n.role?.value} name="${name}" props=${props}`);
+  }
+  return out;
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of ids) {
+  test(`probe ${id}`, async ({ page, context }) => {
+    await fresh(page, id);
+    const html = await page.evaluate((id) => {
+      const host = document.querySelector('flt-semantics-host');
+      const before = [...host.querySelectorAll('*')].find(
+        (e) => e.textContent.trim() === `Before ${id}` && e.children.length === 0,
+      );
+      const after = host.querySelector(`[flt-semantics-identifier="${id}-taps"]`);
+      let a = before;
+      while (a.parentElement && !a.parentElement.contains(after)) a = a.parentElement;
+      const out = [];
+      for (let s = a.nextElementSibling; s && !s.contains(after); s = s.nextElementSibling) out.push(s.outerHTML);
+      return out;
+    }, id);
+    for (const h of html) log(id, 'element', clean(h));
+    for (const l of await axTree(page, context, (n, name) => name.includes(id))) log(id, 'ax', l);
+    log(id, 'aria', JSON.stringify(await page.locator('flt-semantics-host').ariaSnapshot()));
+    const stops = [];
+    for (let i = 0; i < 8; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      stops.push(await active(page));
+    }
+    log(id, 'tab stops', stops.join(' -> '));
+    for (const key of ['Enter', 'Space']) {
+      for (let n = 1; n <= 4; n++) {
+        await fresh(page, id);
+        for (let i = 0; i < n; i++) {
+          await page.keyboard.press('Tab');
+          await page.waitForTimeout(150);
+        }
+        const on = await active(page);
+        await page.keyboard.press(key);
+        log(id, `${n} Tab(s) (on ${on}) then ${key}:`, await state(page, id));
+      }
+    }
+    await fresh(page, id);
+    const targets = await page.evaluate(
+      (id) =>
+        [...document.querySelectorAll('flt-semantics-host [role=button], flt-semantics-host a, flt-semantics-host button')]
+          .map((e) => ({
+            name: (e.getAttribute('aria-label') || e.textContent.trim()).slice(0, 40),
+            r: e.getBoundingClientRect().toJSON(),
+          }))
+          .filter((t) => t.name.includes(id)),
+      id,
+    );
+    for (const t of targets) {
+      await fresh(page, id);
+      await page.mouse.click(t.r.x + t.r.width / 2, t.r.y + t.r.height / 2);
+      const box = { x: Math.round(t.r.x), y: Math.round(t.r.y), w: Math.round(t.r.width), h: Math.round(t.r.height) };
+      log(id, `click centre of "${t.name}" ${JSON.stringify(box)}:`, await state(page, id));
+    }
+  });
+}
+
+test('plain HTML comparison', async ({ page, context }) => {
+  const pages = {
+    article:
+      '<article><h3>h1 Card heading</h3><p>h1 Body text.</p><button>h1 Read about cards</button><button>h1 Save</button></article>',
+    'div-button-nested':
+      '<div role="button" tabindex="0"><h3>h2 Card heading</h3><p>h2 Body text.</p><button>h2 Save</button></div>',
+    'link-block': '<a href="#x"><h3>h4 Card heading</h3><p>h4 Body text.</p></a>',
+    'heading-link': '<article><h3><a href="#x">h5 Card heading</a></h3><p>h5 Body text.</p></article>',
+    'read-more': '<article><h3>h6 Card heading</h3><p>h6 Body text.</p><p><a href="#x">Read more</a></p></article>',
+    'div-group': '<div><h3>h7 Card heading</h3><p>h7 Body text.</p><button>h7 Save</button></div>',
+    'heading-in-button': '<div role="button" tabindex="0"><h3>h9 Card heading</h3><p>h9 Body text.</p></div>',
+  };
+  for (const [name, html] of Object.entries(pages)) {
+    await page.setContent(`<!doctype html><html lang="en"><body>${html}</body></html>`);
+    for (const l of await axTree(page, context, () => true)) log('html', name, l);
+    const stops = [];
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press('Tab');
+      stops.push(
+        await page.evaluate(
+          () => `${document.activeElement.tagName} "${document.activeElement.textContent.trim().slice(0, 40)}"`,
+        ),
+      );
+    }
+    log('html', name, 'tab stops', stops.join(' -> '));
+  }
+});
