@@ -1,0 +1,17 @@
+// Throwaway: serves the C18 probe build (build/web_probe) for
+// c18_probe.spec.js. Not committed; kept as
+// docs/evidence/probes/c18/c18probe.config.js.txt.
+import { defineConfig } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = Number(process.env.C18_PORT ?? 29843);
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: /c18_probe\.spec\.js$/,
+  reporter: 'list',
+  workers: 1,
+  timeout: 300_000,
+  use: { baseURL: `http://127.0.0.1:${port}`, browserName: 'chromium' },
+  webServer: webServer(process.env.C18_BUILD ?? 'build/web_probe', port),
+});

@@ -1,0 +1,701 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+==== p01 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p01" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 1111) [a11yfocus] children=3
+                   | android.view.View | desc="Before p01" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p01 Card heading\np01 Body text of the card. A second sentence." spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 985) [a11yfocus] children=3
+                     | android.widget.ImageView | desc="p01 picture" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 628 - 336, 796) [a11yfocus] children=0
+                     | android.widget.Button | desc="p01 Read about cards" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 817 - 511, 943) [a11yfocus,click] children=0
+                     | android.widget.Button | desc="p01 Save" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(511, 817 - 727, 943) [a11yfocus,click] children=0
+                  p01-taps | android.view.View | desc="p01 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 1016 - 1038, 1069) [a11yfocus] children=0
+11-22 18:40:36.793  6041  6041 I flutter : C18PROBE TAP p01 1
+p01 ACTION_CLICK on "p01 Read about cards" returned true; destination=false; p01 taps: whole=0 a=1 b=0 c=0
+11-22 18:40:39.830  6041  6041 I flutter : C18PROBE TAP p01 2
+p01 ACTION_CLICK on "p01 Save" returned true; destination=false; p01 taps: whole=0 a=0 b=1 c=0
+==== p02 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p02" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 1111) [a11yfocus] children=7
+                   | android.view.View | desc="Before p02" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p02 Card heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 457 - 505, 533) [a11yfocus] children=0
+                   | android.view.View | desc="p02 Body text of the card. A second sentence." spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 554 - 862, 607) [a11yfocus] children=0
+                   | android.widget.ImageView | desc="p02 picture" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 628 - 336, 796) [a11yfocus] children=0
+                   | android.widget.Button | desc="p02 Read about cards" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 817 - 511, 943) [a11yfocus,click] children=0
+                   | android.widget.Button | desc="p02 Save" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(511, 817 - 727, 943) [a11yfocus,click] children=0
+                  p02-taps | android.view.View | desc="p02 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 1016 - 1038, 1069) [a11yfocus] children=0
+11-22 18:40:45.515  6041  6041 I flutter : C18PROBE TAP p02 1
+p02 ACTION_CLICK on "p02 Read about cards" returned true; destination=false; p02 taps: whole=0 a=1 b=0 c=0
+11-22 18:40:48.549  6041  6041 I flutter : C18PROBE TAP p02 2
+p02 ACTION_CLICK on "p02 Save" returned true; destination=false; p02 taps: whole=0 a=0 b=1 c=0
+==== p03 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p03" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 964) [a11yfocus] children=3
+                   | android.view.View | desc="Before p03" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p03 Card heading\np03 Body text of the card. A second sentence." spans=- text="" heading=true clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 838) [a11yfocus,click] children=0
+                  p03-taps | android.view.View | desc="p03 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 869 - 1038, 922) [a11yfocus] children=0
+11-22 18:40:54.145  6041  6041 I flutter : C18PROBE TAP p03 0
+p03 ACTION_CLICK on "p03 Card heading\np03 Body text of the card. A second sentence." returned true; destination=false; p03 taps: whole=1 a=0 b=0 c=0
+==== p04 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p04" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 964) [a11yfocus] children=3
+                   | android.view.View | desc="Before p04" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p04 Card heading\np04 Body text of the card. A second sentence." spans=- text="" heading=true clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(53, 426 - 1028, 827) [a11yfocus,click] children=0
+                  p04-taps | android.view.View | desc="p04 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 869 - 1038, 922) [a11yfocus] children=0
+11-22 18:40:59.823  6041  6041 I flutter : C18PROBE TAP p04 0
+p04 ACTION_CLICK on "p04 Card heading\np04 Body text of the card. A second sentence." returned true; destination=false; p04 taps: whole=1 a=0 b=0 c=0
+==== p05 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p05" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 751) [a11yfocus] children=3
+                   | android.view.View | desc="Before p05" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.widget.Button | desc="p05 Card heading\np05 Body text of the card. A second sentence." spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 625) [a11yfocus,click] children=0
+                  p05-taps | android.view.View | desc="p05 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 657 - 1038, 709) [a11yfocus] children=0
+11-22 18:41:05.482  6041  6041 I flutter : C18PROBE TAP p05 0
+p05 ACTION_CLICK on "p05 Card heading\np05 Body text of the card. A second sentence." returned true; destination=false; p05 taps: whole=1 a=0 b=0 c=0
+==== p06 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p06" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 751) [a11yfocus] children=3
+                   | android.view.View | desc="Before p06" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.widget.Button | desc="p06 Card heading\np06 Body text of the card. A second sentence." spans=- text="" heading=true clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 625) [a11yfocus,click] children=0
+                  p06-taps | android.view.View | desc="p06 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 657 - 1038, 709) [a11yfocus] children=0
+11-22 18:41:11.193  6041  6041 I flutter : C18PROBE TAP p06 0
+p06 ACTION_CLICK on "p06 Card heading\np06 Body text of the card. A second sentence." returned true; destination=false; p06 taps: whole=1 a=0 b=0 c=0
+==== p07 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p07" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 1111) [a11yfocus] children=3
+                   | android.view.View | desc="Before p07" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p07 Card heading\np07 Body text of the card. A second sentence." spans=- text="" heading=true clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 985) [a11yfocus,click] children=1
+                     | android.widget.Button | desc="p07 Save" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 817 - 300, 943) [a11yfocus,click] children=0
+                  p07-taps | android.view.View | desc="p07 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 1016 - 1038, 1069) [a11yfocus] children=0
+11-22 18:41:16.844  6041  6041 I flutter : C18PROBE TAP p07 0
+p07 ACTION_CLICK on "p07 Card heading\np07 Body text of the card. A second sentence." returned true; destination=false; p07 taps: whole=1 a=0 b=0 c=0
+11-22 18:41:19.875  6041  6041 I flutter : C18PROBE TAP p07 1
+p07 ACTION_CLICK on "p07 Save" returned true; destination=false; p07 taps: whole=0 a=1 b=0 c=0
+==== p08 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p08" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 772) [a11yfocus] children=3
+                   | android.view.View | desc="Before p08" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.widget.Button | desc="p08 Card heading\np08 Body text of the card. A second sentence." spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 646) [a11yfocus,click] children=1
+                     | android.widget.Button | desc="p08 Save" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="p08 Save" Rect(838, 468 - 964, 594) [a11yfocus,click] children=0
+                  p08-taps | android.view.View | desc="p08 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 678 - 1038, 730) [a11yfocus] children=0
+11-22 18:41:25.600  6041  6041 I flutter : C18PROBE TAP p08 0
+p08 ACTION_CLICK on "p08 Card heading\np08 Body text of the card. A second sentence." returned true; destination=false; p08 taps: whole=1 a=0 b=0 c=0
+11-22 18:41:28.635  6041  6041 I flutter : C18PROBE TAP p08 1
+p08 ACTION_CLICK on "p08 Save" returned true; destination=false; p08 taps: whole=0 a=1 b=0 c=0
+==== p09 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p09" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 964) [a11yfocus] children=3
+                   | android.view.View | desc="Before p09" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p09 Card heading\np09 Body text of the card. A second sentence." spans=URLSpan(#/dest)@0-62 text="" heading=true clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(53, 426 - 1028, 827) [a11yfocus,click(open link),267386881] children=0
+                  p09-taps | android.view.View | desc="p09 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 869 - 1038, 922) [a11yfocus] children=0
+11-22 18:41:34.360  6041  6041 I flutter : C18PROBE TAP p09 0
+11-22 18:41:34.361  6041  6041 I flutter : C18PROBE DEST 1
+p09 ACTION_CLICK on "p09 Card heading\np09 Body text of the card. A second sentence." returned true; destination=true; (gone)
+==== p10 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p10" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 922) [a11yfocus] children=5
+                   | android.view.View | desc="Before p10" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p10 Card heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 457 - 505, 533) [a11yfocus] children=0
+                   | android.view.View | desc="p10 Body text of the card. A second sentence." spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 554 - 862, 607) [a11yfocus] children=0
+                   | android.widget.Button | desc="p10 Read more" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 628 - 400, 754) [a11yfocus,click] children=0
+                  p10-taps | android.view.View | desc="p10 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 827 - 1038, 880) [a11yfocus] children=0
+11-22 18:41:40.028  6041  6041 I flutter : C18PROBE TAP p10 1
+p10 ACTION_CLICK on "p10 Read more" returned true; destination=false; p10 taps: whole=0 a=1 b=0 c=0
+==== p11 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p11" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 848) [a11yfocus] children=5
+                   | android.view.View | desc="Before p11" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p11 Card heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 457 - 505, 533) [a11yfocus] children=0
+                   | android.view.View | desc="p11 Body text of the card. A second sentence." spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 554 - 862, 607) [a11yfocus] children=0
+                   | android.view.View | desc="p11 Read more" spans=URLSpan(#/dest)@0-13 text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 628 - 340, 680) [a11yfocus,click(open link),267386881] children=0
+                  p11-taps | android.view.View | desc="p11 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 754 - 1038, 806) [a11yfocus] children=0
+11-22 18:41:45.704  6041  6041 I flutter : C18PROBE TAP p11 1
+11-22 18:41:45.707  6041  6041 I flutter : C18PROBE DEST 1
+p11 ACTION_CLICK on "p11 Read more" returned true; destination=true; (gone)
+==== p12 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p12" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 922) [a11yfocus] children=5
+                   | android.view.View | desc="Before p12" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p12 Card heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 457 - 505, 533) [a11yfocus] children=0
+                   | android.view.View | desc="p12 Body text of the card. A second sentence." spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 554 - 862, 607) [a11yfocus] children=0
+                   | android.widget.Button | desc="p12 Read more about cards" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 628 - 400, 754) [a11yfocus,click] children=0
+                  p12-taps | android.view.View | desc="p12 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 827 - 1038, 880) [a11yfocus] children=0
+11-22 18:41:51.381  6041  6041 I flutter : C18PROBE TAP p12 1
+p12 ACTION_CLICK on "p12 Read more about cards" returned true; destination=false; p12 taps: whole=0 a=1 b=0 c=0
+==== p13 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p13" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 1654) [a11yfocus] children=11
+                   | android.view.View | desc="Before p13" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p13 Card 1 heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 457 - 413, 510) [a11yfocus] children=0
+                   | android.view.View | desc="p13 Card 1 body" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 531 - 360, 583) [a11yfocus] children=0
+                   | android.widget.Button | desc="p13 Save 1" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 604 - 331, 730) [a11yfocus,click] children=0
+                   | android.view.View | desc="p13 Card 2 heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 835 - 413, 888) [a11yfocus] children=0
+                   | android.view.View | desc="p13 Card 2 body" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 909 - 360, 961) [a11yfocus] children=0
+                   | android.widget.Button | desc="p13 Save 2" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 982 - 331, 1108) [a11yfocus,click] children=0
+                   | android.view.View | desc="p13 Card 3 heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 1213 - 413, 1266) [a11yfocus] children=0
+                   | android.view.View | desc="p13 Card 3 body" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 1287 - 360, 1339) [a11yfocus] children=0
+                   | android.widget.Button | desc="p13 Save 3" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 1360 - 331, 1486) [a11yfocus,click] children=0
+                  p13-taps | android.view.View | desc="p13 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 1560 - 1038, 1612) [a11yfocus] children=0
+p13 "p13 Save 1": not found again
+11-22 18:42:01.407  6041  6041 I flutter : C18PROBE TAP p13 2
+p13 ACTION_CLICK on "p13 Save 2" returned true; destination=false; p13 taps: whole=0 a=0 b=1 c=0
+11-22 18:42:04.431  6041  6041 I flutter : C18PROBE TAP p13 3
+p13 ACTION_CLICK on "p13 Save 3" returned true; destination=false; p13 taps: whole=0 a=0 b=0 c=1
+==== p14 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p14" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 1675) [a11yfocus] children=3
+                   | android.view.View | desc="Before p14" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 1549) [a11yfocus] children=1
+                     | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 1549) [a11yfocus] children=3 collection=3x1
+                       | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 772) [a11yfocus] children=3
+                         | android.view.View | desc="p14 Card 1 heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 457 - 413, 510) [a11yfocus] children=0
+                         | android.view.View | desc="p14 Card 1 body" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 531 - 360, 583) [a11yfocus] children=0
+                         | android.widget.Button | desc="p14 Save 1" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 604 - 331, 730) [a11yfocus,click] children=0
+                       | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(42, 772 - 1038, 1129) [a11yfocus] children=3
+                         | android.view.View | desc="p14 Card 2 heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 814 - 413, 867) [a11yfocus] children=0
+                         | android.view.View | desc="p14 Card 2 body" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 888 - 360, 940) [a11yfocus] children=0
+                         | android.widget.Button | desc="p14 Save 2" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 961 - 331, 1087) [a11yfocus,click] children=0
+                       | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(42, 1129 - 1038, 1486) [a11yfocus] children=3
+                         | android.view.View | desc="p14 Card 3 heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 1171 - 413, 1224) [a11yfocus] children=0
+                         | android.view.View | desc="p14 Card 3 body" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 1245 - 360, 1297) [a11yfocus] children=0
+                         | android.widget.Button | desc="p14 Save 3" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 1318 - 331, 1444) [a11yfocus,click] children=0
+                  p14-taps | android.view.View | desc="p14 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 1581 - 1038, 1633) [a11yfocus] children=0
+11-22 18:42:10.079  6041  6041 I flutter : C18PROBE TAP p14 1
+p14 ACTION_CLICK on "p14 Save 1" returned true; destination=false; p14 taps: whole=0 a=1 b=0 c=0
+11-22 18:42:13.116  6041  6041 I flutter : C18PROBE TAP p14 2
+p14 ACTION_CLICK on "p14 Save 2" returned true; destination=false; p14 taps: whole=0 a=0 b=1 c=0
+11-22 18:42:16.142  6041  6041 I flutter : C18PROBE TAP p14 3
+p14 ACTION_CLICK on "p14 Save 3" returned true; destination=false; p14 taps: whole=0 a=0 b=0 c=1
+==== p15 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p15" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 1654) [a11yfocus] children=3
+                   | android.view.View | desc="Before p15" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.widget.ListView | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 1528) [a11yfocus] children=3
+                     | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(42, 415 - 455, 772) [a11yfocus] children=3
+                       | android.view.View | desc="p15 Card 1 heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 457 - 413, 510) [a11yfocus] children=0
+                       | android.view.View | desc="p15 Card 1 body" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 531 - 360, 583) [a11yfocus] children=0
+                       | android.widget.Button | desc="p15 Save 1" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 604 - 331, 730) [a11yfocus,click] children=0
+                     | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(42, 793 - 455, 1150) [a11yfocus] children=3
+                       | android.view.View | desc="p15 Card 2 heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 835 - 413, 888) [a11yfocus] children=0
+                       | android.view.View | desc="p15 Card 2 body" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 909 - 360, 961) [a11yfocus] children=0
+                       | android.widget.Button | desc="p15 Save 2" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 982 - 331, 1108) [a11yfocus,click] children=0
+                     | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(42, 1171 - 455, 1528) [a11yfocus] children=3
+                       | android.view.View | desc="p15 Card 3 heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 1213 - 413, 1266) [a11yfocus] children=0
+                       | android.view.View | desc="p15 Card 3 body" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(84, 1287 - 360, 1339) [a11yfocus] children=0
+                       | android.widget.Button | desc="p15 Save 3" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(84, 1360 - 331, 1486) [a11yfocus,click] children=0
+                  p15-taps | android.view.View | desc="p15 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 1560 - 1038, 1612) [a11yfocus] children=0
+p15 "p15 Save 1": not found again
+11-22 18:42:26.154  6041  6041 I flutter : C18PROBE TAP p15 2
+p15 ACTION_CLICK on "p15 Save 2" returned true; destination=false; p15 taps: whole=0 a=0 b=1 c=0
+p15 "p15 Save 3": not found again
+==== p16 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p16" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 911) [a11yfocus] children=5
+                   | android.view.View | desc="Before p16" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p16 Card heading" spans=- text="" heading=true clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(74, 447 - 494, 523) [a11yfocus] children=0
+                   | android.view.View | desc="p16 Body text of the card. A second sentence." spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(74, 544 - 851, 596) [a11yfocus] children=0
+                   | android.widget.Button | desc="p16 Save" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(74, 617 - 352, 754) [a11yfocus,click] children=0
+                  p16-taps | android.view.View | desc="p16 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 817 - 1038, 869) [a11yfocus] children=0
+p16 "p16 Save": not found again
+==== p17 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p17" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 811) [a11yfocus] children=4
+                   | android.view.View | desc="Before p17" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p17 Section header" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(95, 457 - 533, 517) [a11yfocus] children=0
+                   | android.view.View | desc="p17 Card heading\np17 Body text" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(95, 533 - 985, 659) [a11yfocus,click] children=0
+                  p17-taps | android.view.View | desc="p17 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 717 - 1038, 769) [a11yfocus] children=0
+11-22 18:42:42.610  6041  6041 I flutter : C18PROBE TAP p17 0
+p17 ACTION_CLICK on "p17 Card heading\np17 Body text" returned true; destination=false; p17 taps: whole=1 a=0 b=0 c=0
+==== p18 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p18" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 922) [a11yfocus] children=3
+                   | android.view.View | desc="Before p18" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.widget.Button | desc="p18 Card heading\np18 Body text of the card. A second sentence.\np18 Save" spans=- text="" heading=true clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 796) [a11yfocus,click] children=0
+                  p18-taps | android.view.View | desc="p18 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 827 - 1038, 880) [a11yfocus] children=0
+p18 "p18 Card heading
+p18 Body text of the card. A second sentence.
+p18 Save": not found again
+==== p19 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p19" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 964) [a11yfocus] children=3
+                   | android.view.View | desc="Before p19" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.widget.Button | desc="p19 Card heading\np19 Body text of the card. A second sentence." spans=- text="" heading=true clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 838) [a11yfocus,click] children=0
+                  p19-taps | android.view.View | desc="p19 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 869 - 1038, 922) [a11yfocus] children=0
+p19 "p19 Card heading
+p19 Body text of the card. A second sentence.": not found again
+==== p20 start
+- | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=1
+         | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="p20" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(189, 179 - 286, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" spans=- text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" Rect(0, 289 - 1080, 775) [a11yfocus] children=3
+                   | android.view.View | desc="Before p20" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 331 - 1038, 384) [a11yfocus] children=0
+                   | android.view.View | desc="p20 Card heading\np20 Body text of the card. A second sentence." spans=- text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" Rect(42, 415 - 1038, 649) [a11yfocus,click] children=0
+                  p20-taps | android.view.View | desc="p20 taps: whole=0 a=0 b=0 c=0" spans=- text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" Rect(42, 680 - 1038, 733) [a11yfocus] children=0
+p20 "p20 Card heading
+p20 Body text of the card. A second sentence.": not found again
+p01 Tab stops: (android.widget.FrameLayout no name) -> Back -> p01 Read about cards -> p01 Save -> Back -> p01 Read about cards
+p01 1 Tab(s) (on Back) then ENTER: destination=false; p01 taps: whole=0 a=0 b=0 c=0
+11-22 18:43:23.691  7864  7864 I flutter : C18PROBE TAP p01 1
+p01 2 Tab(s) (on p01 Read about cards) then ENTER: destination=false; p01 taps: whole=0 a=1 b=0 c=0
+11-22 18:43:28.698  7864  7864 I flutter : C18PROBE TAP p01 2
+p01 3 Tab(s) (on p01 Save) then ENTER: destination=false; p01 taps: whole=0 a=0 b=1 c=0
+p01 4 Tab(s) (on Back) then ENTER: destination=false; p01 taps: whole=0 a=0 b=0 c=0
+p01 1 Tab(s) (on Back) then SPACE: destination=false; p01 taps: whole=0 a=0 b=0 c=0
+11-22 18:43:42.647  7864  7864 I flutter : C18PROBE TAP p01 1
+p01 2 Tab(s) (on p01 Read about cards) then SPACE: destination=false; p01 taps: whole=0 a=1 b=0 c=0
+11-22 18:43:47.634  7864  7864 I flutter : C18PROBE TAP p01 2
+p01 3 Tab(s) (on p01 Save) then SPACE: destination=false; p01 taps: whole=0 a=0 b=1 c=0
+p01 4 Tab(s) (on Back) then SPACE: destination=false; p01 taps: whole=0 a=0 b=0 c=0
+p02 Tab stops: Back -> p02 Read about cards -> p02 Save -> Back -> p02 Read about cards -> p02 Save
+p02 1 Tab(s) (on Back) then ENTER: destination=false; p02 taps: whole=0 a=0 b=0 c=0
+11-22 18:44:07.752  7864  7864 I flutter : C18PROBE TAP p02 1
+p02 2 Tab(s) (on p02 Read about cards) then ENTER: destination=false; p02 taps: whole=0 a=1 b=0 c=0
+11-22 18:44:12.796  7864  7864 I flutter : C18PROBE TAP p02 2
+p02 3 Tab(s) (on p02 Save) then ENTER: destination=false; p02 taps: whole=0 a=0 b=1 c=0
+p02 4 Tab(s) (on Back) then ENTER: destination=false; p02 taps: whole=0 a=0 b=0 c=0
+p02 1 Tab(s) (on Back) then SPACE: destination=false; p02 taps: whole=0 a=0 b=0 c=0
+11-22 18:44:26.645  7864  7864 I flutter : C18PROBE TAP p02 1
+p02 2 Tab(s) (on p02 Read about cards) then SPACE: destination=false; p02 taps: whole=0 a=1 b=0 c=0
+11-22 18:44:31.652  7864  7864 I flutter : C18PROBE TAP p02 2
+p02 3 Tab(s) (on p02 Save) then SPACE: destination=false; p02 taps: whole=0 a=0 b=1 c=0
+p02 4 Tab(s) (on Back) then SPACE: destination=false; p02 taps: whole=0 a=0 b=0 c=0
+p03 Tab stops: Back -> p03 Card heading\np03 Body text of the card. A second sentence. -> Back -> p03 Card heading\np03 Body text of the card. A second sentence. -> Back -> p03 Card heading\np03 Body text of the card. A second sentence.
+p03 1 Tab(s) (on Back) then ENTER: destination=false; p03 taps: whole=0 a=0 b=0 c=0
+11-22 18:44:51.732  7864  7864 I flutter : C18PROBE TAP p03 0
+p03 2 Tab(s) (on p03 Card heading\np03 Body text of the card. A second sentence.) then ENTER: destination=false; p03 taps: whole=1 a=0 b=0 c=0
+p03 3 Tab(s) (on Back) then ENTER: destination=false; p03 taps: whole=0 a=0 b=0 c=0
+11-22 18:45:02.477  7864  7864 I flutter : C18PROBE TAP p03 0
+p03 4 Tab(s) (on p03 Card heading\np03 Body text of the card. A second sentence.) then ENTER: destination=false; p03 taps: whole=1 a=0 b=0 c=0
+p03 1 Tab(s) (on Back) then SPACE: destination=false; p03 taps: whole=0 a=0 b=0 c=0
+11-22 18:45:10.650  7864  7864 I flutter : C18PROBE TAP p03 0
+p03 2 Tab(s) (on p03 Card heading\np03 Body text of the card. A second sentence.) then SPACE: destination=false; p03 taps: whole=1 a=0 b=0 c=0
+p03 3 Tab(s) (on Back) then SPACE: destination=false; p03 taps: whole=0 a=0 b=0 c=0
+11-22 18:45:21.488  7864  7864 I flutter : C18PROBE TAP p03 0
+p03 4 Tab(s) (on p03 Card heading\np03 Body text of the card. A second sentence.) then SPACE: destination=false; p03 taps: whole=1 a=0 b=0 c=0
+p04 Tab stops: Back -> p04 Card heading\np04 Body text of the card. A second sentence. -> Back -> p04 Card heading\np04 Body text of the card. A second sentence. -> Back -> p04 Card heading\np04 Body text of the card. A second sentence.
+p04 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:45:39.469  7864  7864 I flutter : C18PROBE TAP p04 0
+p04 2 Tab(s) (on p04 Card heading\np04 Body text of the card. A second sentence.) then ENTER: destination=false; p04 taps: whole=1 a=0 b=0 c=0
+p04 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:45:52.027  7864  7864 I flutter : C18PROBE TAP p04 0
+p04 4 Tab(s) (on p04 Card heading\np04 Body text of the card. A second sentence.) then ENTER: destination=false; p04 taps: whole=1 a=0 b=0 c=0
+p04 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:46:01.893  7864  7864 I flutter : C18PROBE TAP p04 0
+p04 2 Tab(s) (on p04 Card heading\np04 Body text of the card. A second sentence.) then SPACE: destination=false; p04 taps: whole=1 a=0 b=0 c=0
+p04 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:46:14.550  7864  7864 I flutter : C18PROBE TAP p04 0
+p04 4 Tab(s) (on p04 Card heading\np04 Body text of the card. A second sentence.) then SPACE: destination=false; p04 taps: whole=1 a=0 b=0 c=0
+p05 Tab stops: Back -> p05 Card heading\np05 Body text of the card. A second sentence. -> Back -> p05 Card heading\np05 Body text of the card. A second sentence. -> Back -> p05 Card heading\np05 Body text of the card. A second sentence.
+p05 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:46:32.821  7864  7864 I flutter : C18PROBE TAP p05 0
+p05 2 Tab(s) (on p05 Card heading\np05 Body text of the card. A second sentence.) then ENTER: destination=false; p05 taps: whole=1 a=0 b=0 c=0
+p05 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:46:45.305  7864  7864 I flutter : C18PROBE TAP p05 0
+p05 4 Tab(s) (on p05 Card heading\np05 Body text of the card. A second sentence.) then ENTER: destination=false; p05 taps: whole=1 a=0 b=0 c=0
+p05 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:46:55.232  7864  7864 I flutter : C18PROBE TAP p05 0
+p05 2 Tab(s) (on p05 Card heading\np05 Body text of the card. A second sentence.) then SPACE: destination=false; p05 taps: whole=1 a=0 b=0 c=0
+p05 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:47:07.845  7864  7864 I flutter : C18PROBE TAP p05 0
+p05 4 Tab(s) (on p05 Card heading\np05 Body text of the card. A second sentence.) then SPACE: destination=false; p05 taps: whole=1 a=0 b=0 c=0
+p06 Tab stops: Back -> p06 Card heading\np06 Body text of the card. A second sentence. -> Back -> p06 Card heading\np06 Body text of the card. A second sentence. -> Back -> p06 Card heading\np06 Body text of the card. A second sentence.
+p06 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:47:25.954  7864  7864 I flutter : C18PROBE TAP p06 0
+p06 2 Tab(s) (on p06 Card heading\np06 Body text of the card. A second sentence.) then ENTER: destination=false; p06 taps: whole=1 a=0 b=0 c=0
+p06 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:47:38.382  7864  7864 I flutter : C18PROBE TAP p06 0
+p06 4 Tab(s) (on p06 Card heading\np06 Body text of the card. A second sentence.) then ENTER: destination=false; p06 taps: whole=1 a=0 b=0 c=0
+p06 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:47:48.262  7864  7864 I flutter : C18PROBE TAP p06 0
+p06 2 Tab(s) (on p06 Card heading\np06 Body text of the card. A second sentence.) then SPACE: destination=false; p06 taps: whole=1 a=0 b=0 c=0
+p06 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:48:00.693  7864  7864 I flutter : C18PROBE TAP p06 0
+p06 4 Tab(s) (on p06 Card heading\np06 Body text of the card. A second sentence.) then SPACE: destination=false; p06 taps: whole=1 a=0 b=0 c=0
+p07 Tab stops: Back -> p07 Card heading\np07 Body text of the card. A second sentence. -> p07 Save -> Back -> p07 Card heading\np07 Body text of the card. A second sentence. -> p07 Save
+p07 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:48:18.845  7864  7864 I flutter : C18PROBE TAP p07 0
+p07 2 Tab(s) (on p07 Card heading\np07 Body text of the card. A second sentence.) then ENTER: destination=false; p07 taps: whole=1 a=0 b=0 c=0
+11-22 18:48:23.917  7864  7864 I flutter : C18PROBE TAP p07 1
+p07 3 Tab(s) (on p07 Save) then ENTER: destination=false; p07 taps: whole=0 a=1 b=0 c=0
+p07 4 Tab(s) (on Back) then ENTER: destination=false; (gone)
+p07 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:48:41.357  7864  7864 I flutter : C18PROBE TAP p07 0
+p07 2 Tab(s) (on p07 Card heading\np07 Body text of the card. A second sentence.) then SPACE: destination=false; p07 taps: whole=1 a=0 b=0 c=0
+11-22 18:48:46.380  7864  7864 I flutter : C18PROBE TAP p07 1
+p07 3 Tab(s) (on p07 Save) then SPACE: destination=false; p07 taps: whole=0 a=1 b=0 c=0
+p07 4 Tab(s) (on Back) then SPACE: destination=false; (gone)
+p08 Tab stops: Back -> p08 Card heading\np08 Body text of the card. A second sentence. -> p08 Save -> Back -> p08 Card heading\np08 Body text of the card. A second sentence. -> p08 Save
+p08 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:49:10.503  7864  7864 I flutter : C18PROBE TAP p08 0
+p08 2 Tab(s) (on p08 Card heading\np08 Body text of the card. A second sentence.) then ENTER: destination=false; p08 taps: whole=1 a=0 b=0 c=0
+11-22 18:49:15.515  7864  7864 I flutter : C18PROBE TAP p08 1
+p08 3 Tab(s) (on p08 Save) then ENTER: destination=false; p08 taps: whole=0 a=1 b=0 c=0
+p08 4 Tab(s) (on Back) then ENTER: destination=false; (gone)
+p08 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:49:33.087  7864  7864 I flutter : C18PROBE TAP p08 0
+p08 2 Tab(s) (on p08 Card heading\np08 Body text of the card. A second sentence.) then SPACE: destination=false; p08 taps: whole=1 a=0 b=0 c=0
+11-22 18:49:38.115  7864  7864 I flutter : C18PROBE TAP p08 1
+p08 3 Tab(s) (on p08 Save) then SPACE: destination=false; p08 taps: whole=0 a=1 b=0 c=0
+p08 4 Tab(s) (on Back) then SPACE: destination=false; (gone)
+p09 Tab stops: Back -> p09 Card heading\np09 Body text of the card. A second sentence. -> Back -> p09 Card heading\np09 Body text of the card. A second sentence. -> Back -> p09 Card heading\np09 Body text of the card. A second sentence.
+p09 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:50:02.523  7864  7864 I flutter : C18PROBE TAP p09 0
+11-22 18:50:02.525  7864  7864 I flutter : C18PROBE DEST 1
+p09 2 Tab(s) (on p09 Card heading\np09 Body text of the card. A second sentence.) then ENTER: destination=true; (gone)
+p09 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:50:16.727  7864  7864 I flutter : C18PROBE TAP p09 0
+11-22 18:50:16.728  7864  7864 I flutter : C18PROBE DEST 1
+p09 4 Tab(s) (on p09 Card heading\np09 Body text of the card. A second sentence.) then ENTER: destination=true; (gone)
+p09 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:50:28.246  7864  7864 I flutter : C18PROBE TAP p09 0
+11-22 18:50:28.248  7864  7864 I flutter : C18PROBE DEST 1
+p09 2 Tab(s) (on p09 Card heading\np09 Body text of the card. A second sentence.) then SPACE: destination=true; (gone)
+p09 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:50:42.404  7864  7864 I flutter : C18PROBE TAP p09 0
+11-22 18:50:42.407  7864  7864 I flutter : C18PROBE DEST 1
+p09 4 Tab(s) (on p09 Card heading\np09 Body text of the card. A second sentence.) then SPACE: destination=true; (gone)
+p10 Tab stops: Back -> p10 Read more -> Back -> p10 Read more -> Back -> p10 Read more
+p10 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:51:00.474  7864  7864 I flutter : C18PROBE TAP p10 1
+p10 2 Tab(s) (on p10 Read more) then ENTER: destination=false; p10 taps: whole=0 a=1 b=0 c=0
+p10 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:51:12.904  7864  7864 I flutter : C18PROBE TAP p10 1
+p10 4 Tab(s) (on p10 Read more) then ENTER: destination=false; p10 taps: whole=0 a=1 b=0 c=0
+p10 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:51:22.773  7864  7864 I flutter : C18PROBE TAP p10 1
+p10 2 Tab(s) (on p10 Read more) then SPACE: destination=false; p10 taps: whole=0 a=1 b=0 c=0
+p10 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:51:35.352  7864  7864 I flutter : C18PROBE TAP p10 1
+p10 4 Tab(s) (on p10 Read more) then SPACE: destination=false; p10 taps: whole=0 a=1 b=0 c=0
+p11 Tab stops: Back -> p11 Read more -> Back -> p11 Read more -> Back -> p11 Read more
+p11 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:51:53.406  7864  7864 I flutter : C18PROBE TAP p11 1
+11-22 18:51:53.409  7864  7864 I flutter : C18PROBE DEST 1
+p11 2 Tab(s) (on p11 Read more) then ENTER: destination=true; (gone)
+p11 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:52:07.556  7864  7864 I flutter : C18PROBE TAP p11 1
+11-22 18:52:07.558  7864  7864 I flutter : C18PROBE DEST 1
+p11 4 Tab(s) (on p11 Read more) then ENTER: destination=true; (gone)
+p11 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:52:19.596  7864  7864 I flutter : C18PROBE TAP p11 1
+11-22 18:52:19.598  7864  7864 I flutter : C18PROBE DEST 1
+p11 2 Tab(s) (on p11 Read more) then SPACE: destination=true; (gone)
+p11 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:52:33.817  7864  7864 I flutter : C18PROBE TAP p11 1
+11-22 18:52:33.818  7864  7864 I flutter : C18PROBE DEST 1
+p11 4 Tab(s) (on p11 Read more) then SPACE: destination=true; (gone)
+p12 Tab stops: Back -> p12 Read more about cards -> Back -> p12 Read more about cards -> Back -> p12 Read more about cards
+p12 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:52:52.169  7864  7864 I flutter : C18PROBE TAP p12 1
+p12 2 Tab(s) (on p12 Read more about cards) then ENTER: destination=false; p12 taps: whole=0 a=1 b=0 c=0
+p12 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:53:04.636  7864  7864 I flutter : C18PROBE TAP p12 1
+p12 4 Tab(s) (on p12 Read more about cards) then ENTER: destination=false; p12 taps: whole=0 a=1 b=0 c=0
+p12 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:53:14.461  7864  7864 I flutter : C18PROBE TAP p12 1
+p12 2 Tab(s) (on p12 Read more about cards) then SPACE: destination=false; p12 taps: whole=0 a=1 b=0 c=0
+p12 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:53:27.078  7864  7864 I flutter : C18PROBE TAP p12 1
+p12 4 Tab(s) (on p12 Read more about cards) then SPACE: destination=false; p12 taps: whole=0 a=1 b=0 c=0
+p13 Tab stops: Back -> p13 Save 1 -> p13 Save 2 -> p13 Save 3 -> Back -> p13 Save 1
+p13 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:53:45.268  7864  7864 I flutter : C18PROBE TAP p13 1
+p13 2 Tab(s) (on p13 Save 1) then ENTER: destination=false; p13 taps: whole=0 a=1 b=0 c=0
+11-22 18:53:50.265  7864  7864 I flutter : C18PROBE TAP p13 2
+p13 3 Tab(s) (on p13 Save 2) then ENTER: destination=false; p13 taps: whole=0 a=0 b=1 c=0
+11-22 18:53:55.928  7864  7864 I flutter : C18PROBE TAP p13 3
+p13 4 Tab(s) (on p13 Save 3) then ENTER: destination=false; p13 taps: whole=0 a=0 b=0 c=1
+p13 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:54:05.991  7864  7864 I flutter : C18PROBE TAP p13 1
+p13 2 Tab(s) (on p13 Save 1) then SPACE: destination=false; p13 taps: whole=0 a=1 b=0 c=0
+11-22 18:54:11.004  7864  7864 I flutter : C18PROBE TAP p13 2
+p13 3 Tab(s) (on p13 Save 2) then SPACE: destination=false; p13 taps: whole=0 a=0 b=1 c=0
+11-22 18:54:16.745  7864  7864 I flutter : C18PROBE TAP p13 3
+p13 4 Tab(s) (on p13 Save 3) then SPACE: destination=false; p13 taps: whole=0 a=0 b=0 c=1
+p14 Tab stops: Back -> p14 Save 1 -> p14 Save 2 -> p14 Save 3 -> Back -> p14 Save 1
+p14 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:54:34.770  7864  7864 I flutter : C18PROBE TAP p14 1
+p14 2 Tab(s) (on p14 Save 1) then ENTER: destination=false; p14 taps: whole=0 a=1 b=0 c=0
+11-22 18:54:39.787  7864  7864 I flutter : C18PROBE TAP p14 2
+p14 3 Tab(s) (on p14 Save 2) then ENTER: destination=false; p14 taps: whole=0 a=0 b=1 c=0
+11-22 18:54:45.579  7864  7864 I flutter : C18PROBE TAP p14 3
+p14 4 Tab(s) (on p14 Save 3) then ENTER: destination=false; p14 taps: whole=0 a=0 b=0 c=1
+p14 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:54:55.495  7864  7864 I flutter : C18PROBE TAP p14 1
+p14 2 Tab(s) (on p14 Save 1) then SPACE: destination=false; p14 taps: whole=0 a=1 b=0 c=0
+11-22 18:55:00.556  7864  7864 I flutter : C18PROBE TAP p14 2
+p14 3 Tab(s) (on p14 Save 2) then SPACE: destination=false; p14 taps: whole=0 a=0 b=1 c=0
+11-22 18:55:06.244  7864  7864 I flutter : C18PROBE TAP p14 3
+p14 4 Tab(s) (on p14 Save 3) then SPACE: destination=false; p14 taps: whole=0 a=0 b=0 c=1
+p15 Tab stops: Back -> p15 Save 1 -> p15 Save 2 -> p15 Save 3 -> Back -> p15 Save 1
+p15 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:55:24.430  7864  7864 I flutter : C18PROBE TAP p15 1
+p15 2 Tab(s) (on p15 Save 1) then ENTER: destination=false; p15 taps: whole=0 a=1 b=0 c=0
+11-22 18:55:29.472  7864  7864 I flutter : C18PROBE TAP p15 2
+p15 3 Tab(s) (on p15 Save 2) then ENTER: destination=false; p15 taps: whole=0 a=0 b=1 c=0
+11-22 18:55:35.134  7864  7864 I flutter : C18PROBE TAP p15 3
+p15 4 Tab(s) (on p15 Save 3) then ENTER: destination=false; p15 taps: whole=0 a=0 b=0 c=1
+p15 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:55:45.082  7864  7864 I flutter : C18PROBE TAP p15 1
+p15 2 Tab(s) (on p15 Save 1) then SPACE: destination=false; p15 taps: whole=0 a=1 b=0 c=0
+11-22 18:55:50.116  7864  7864 I flutter : C18PROBE TAP p15 2
+p15 3 Tab(s) (on p15 Save 2) then SPACE: destination=false; p15 taps: whole=0 a=0 b=1 c=0
+11-22 18:55:55.872  7864  7864 I flutter : C18PROBE TAP p15 3
+p15 4 Tab(s) (on p15 Save 3) then SPACE: destination=false; p15 taps: whole=0 a=0 b=0 c=1
+p16 Tab stops: Back -> p16 Save -> Back -> p16 Save -> Back -> p16 Save
+p16 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:56:14.430  7864  7864 I flutter : C18PROBE TAP p16 1
+p16 2 Tab(s) (on p16 Save) then ENTER: destination=false; p16 taps: whole=0 a=1 b=0 c=0
+p16 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:56:28.760  7864  7864 I flutter : C18PROBE TAP p16 1
+p16 4 Tab(s) (on p16 Save) then ENTER: destination=false; p16 taps: whole=0 a=1 b=0 c=0
+p16 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:56:40.314  7864  7864 I flutter : C18PROBE TAP p16 1
+p16 2 Tab(s) (on p16 Save) then SPACE: destination=false; p16 taps: whole=0 a=1 b=0 c=0
+p16 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:56:54.845  7864  7864 I flutter : C18PROBE TAP p16 1
+p16 4 Tab(s) (on p16 Save) then SPACE: destination=false; p16 taps: whole=0 a=1 b=0 c=0
+p17 Tab stops: Back -> Back -> Back -> Back -> Back -> Back
+p17 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+p17 2 Tab(s) (on Back) then ENTER: destination=false; (gone)
+p17 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+p17 4 Tab(s) (on Back) then ENTER: destination=false; (gone)
+p17 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+p17 2 Tab(s) (on Back) then SPACE: destination=false; (gone)
+p17 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+p17 4 Tab(s) (on Back) then SPACE: destination=false; (gone)
+p18 Tab stops: Back -> p18 Card heading\np18 Body text of the card. A second sentence.\np18 Save -> Back -> p18 Card heading\np18 Body text of the card. A second sentence.\np18 Save -> Back -> p18 Card heading\np18 Body text of the card. A second sentence.\np18 Save
+p18 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:58:15.698  7864  7864 I flutter : C18PROBE TAP p18 1
+p18 2 Tab(s) (on p18 Card heading\np18 Body text of the card. A second sentence.\np18 Save) then ENTER: destination=false; p18 taps: whole=0 a=1 b=0 c=0
+p18 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:58:28.367  7864  7864 I flutter : C18PROBE TAP p18 1
+p18 4 Tab(s) (on p18 Card heading\np18 Body text of the card. A second sentence.\np18 Save) then ENTER: destination=false; p18 taps: whole=0 a=1 b=0 c=0
+p18 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:58:38.238  7864  7864 I flutter : C18PROBE TAP p18 1
+p18 2 Tab(s) (on p18 Card heading\np18 Body text of the card. A second sentence.\np18 Save) then SPACE: destination=false; p18 taps: whole=0 a=1 b=0 c=0
+p18 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:58:50.718  7864  7864 I flutter : C18PROBE TAP p18 1
+p18 4 Tab(s) (on p18 Card heading\np18 Body text of the card. A second sentence.\np18 Save) then SPACE: destination=false; p18 taps: whole=0 a=1 b=0 c=0
+p19 Tab stops: Back -> p19 Card heading\np19 Body text of the card. A second sentence. -> Back -> p19 Card heading\np19 Body text of the card. A second sentence. -> Back -> p19 Card heading\np19 Body text of the card. A second sentence.
+p19 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:59:09.042  7864  7864 I flutter : C18PROBE TAP p19 0
+p19 2 Tab(s) (on p19 Card heading\np19 Body text of the card. A second sentence.) then ENTER: destination=false; p19 taps: whole=1 a=0 b=0 c=0
+p19 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 18:59:21.793  7864  7864 I flutter : C18PROBE TAP p19 0
+p19 4 Tab(s) (on p19 Card heading\np19 Body text of the card. A second sentence.) then ENTER: destination=false; p19 taps: whole=1 a=0 b=0 c=0
+p19 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:59:31.786  7864  7864 I flutter : C18PROBE TAP p19 0
+p19 2 Tab(s) (on p19 Card heading\np19 Body text of the card. A second sentence.) then SPACE: destination=false; p19 taps: whole=1 a=0 b=0 c=0
+p19 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 18:59:44.405  7864  7864 I flutter : C18PROBE TAP p19 0
+p19 4 Tab(s) (on p19 Card heading\np19 Body text of the card. A second sentence.) then SPACE: destination=false; p19 taps: whole=1 a=0 b=0 c=0
+p20 Tab stops: Back -> p20 Card heading\np20 Body text of the card. A second sentence. -> Back -> p20 Card heading\np20 Body text of the card. A second sentence. -> Back -> p20 Card heading\np20 Body text of the card. A second sentence.
+p20 1 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 19:00:02.723  7864  7864 I flutter : C18PROBE TAP p20 0
+p20 2 Tab(s) (on p20 Card heading\np20 Body text of the card. A second sentence.) then ENTER: destination=false; p20 taps: whole=1 a=0 b=0 c=0
+p20 3 Tab(s) (on Back) then ENTER: destination=false; (gone)
+11-22 19:00:15.200  7864  7864 I flutter : C18PROBE TAP p20 0
+p20 4 Tab(s) (on p20 Card heading\np20 Body text of the card. A second sentence.) then ENTER: destination=false; p20 taps: whole=1 a=0 b=0 c=0
+p20 1 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 19:00:25.184  7864  7864 I flutter : C18PROBE TAP p20 0
+p20 2 Tab(s) (on p20 Card heading\np20 Body text of the card. A second sentence.) then SPACE: destination=false; p20 taps: whole=1 a=0 b=0 c=0
+p20 3 Tab(s) (on Back) then SPACE: destination=false; (gone)
+11-22 19:00:37.609  7864  7864 I flutter : C18PROBE TAP p20 0
+p20 4 Tab(s) (on p20 Card heading\np20 Body text of the card. A second sentence.) then SPACE: destination=false; p20 taps: whole=1 a=0 b=0 c=0

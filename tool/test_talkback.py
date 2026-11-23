@@ -553,8 +553,8 @@ class StrictWalks(unittest.TestCase):
         failures, _ = tb.strict_report(tries)
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
-    def test_only_c05_is_strict(self):
-        self.assertEqual(tb.STRICT, {"C05"})
+    def test_only_c05_and_c18_are_strict(self):
+        self.assertEqual(tb.STRICT, {"C05", "C18"})
 
 
 class FakeSettingsScreen:

@@ -1,0 +1,20 @@
+#!/bin/sh
+# C18's Android tree tests at CI's emulator size, 320 by 640 at 160 dpi,
+# under tool/with_devices.py (kept as
+# docs/evidence/probes/c18/android_320x640.sh.txt). Run from the worktree
+# root after `flutter build apk --debug`. The size and density are put back
+# however the run ends.
+reset() {
+  adb shell wm size reset
+  adb shell wm density reset
+  echo "after: $(adb shell wm size | tr '\n' ' ') $(adb shell wm density | tr '\n' ' ')"
+}
+trap reset EXIT
+adb shell wm size 320x640
+adb shell wm density 160
+echo "during: $(adb shell wm size | tr '\n' ' ') $(adb shell wm density | tr '\n' ' ')"
+sleep 3
+cd android || exit 1
+./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.C18CardTest \
+  -Pandroid.testInstrumentationRunnerArguments.timeout_msec=180000 2>&1 | grep -E "Tests on|tests completed|FAILED|BUILD|AssertionError|expected" | head -40

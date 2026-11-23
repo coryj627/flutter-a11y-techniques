@@ -67,6 +67,7 @@ example is added without a decision.
 | [C04 Links inline with text](#c04-links-inline-with-text) | 3 | 3 | 0 | 0 |
 | [C05 Accordion](#c05-accordion) | 3 | 3 | 0 | 0 |
 | [C12 Tooltip](#c12-tooltip) | 3 | 1 | 0 | 2 |
+| [C18 Card](#c18-card) | 3 | 0 | 0 | 3 |
 | [F01 Text fields and labels](#f01-text-fields-and-labels) | 3 | 0 | 0 | 3 |
 | [F02 Input instructions](#f02-input-instructions) | 3 | 0 | 0 | 3 |
 | [F03 Keyboard types](#f03-keyboard-types) | 4 | 0 | 0 | 4 |
@@ -92,7 +93,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 117 | 51 | 12 | 54 |
+| All | 120 | 51 | 12 | 57 |
 
 ## C01 Button
 
@@ -158,6 +159,16 @@ Flagged: `good-cupertino`.
 | `good-material` | Nothing: `Tooltip(message:, ignorePointer: false, excludeFromSemantics: true)` round an `IconButton` named by `Icon(semanticLabel:)`, and a focus outline through the button's own `style` | `Tooltip` | The pointer cannot reach a default tooltip ([FL-247](flutter-limitations.md#fl-247)), filled with its own parameter; a faint focus tint ([FL-430](flutter-limitations.md#fl-430)), filled with the button's `style` | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
 | `good-cupertino` | An `Actions` for `ButtonActivateIntent` round the `CupertinoButton`, so that Enter works on the web; the tooltip itself is Material's `Tooltip` through its parameters | None: Cupertino has no tooltip; Material's `Tooltip` is used, with `CupertinoButton` | Enter on the web ([FL-002](flutter-limitations.md#fl-002)); the box over the button ([FL-250](flutter-limitations.md#fl-250)) and the faint ring ([FL-431](flutter-limitations.md#fl-431)), filled with parameters | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | custom |
 | `good-description` | Nothing is built: `MergeSemantics` round `Tooltip(message:, ignorePointer: false)` round an `OutlinedButton`, so that the tooltip is on the button | `Tooltip` | A tooltip round a Material button stays on a node of its own ([FL-040](flutter-limitations.md#fl-040)), filled with the documented merge | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
+
+## C18 Card
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Nothing: `Card(semanticContainer: false)`, as its documentation says for a card with different kinds of content; `Semantics(headingLevel: 3)` on the title; `Image(semanticLabel:)`; `TextButton`s named with `Text(semanticsLabel:)` and given a focus outline through their own `style` | `Card`, `TextButton` | The card's texts join one heading by default ([FL-269](flutter-limitations.md#fl-269)), filled with its own parameter; a faint focus tint ([FL-430](flutter-limitations.md#fl-430)), filled with the button's `style` | R1, R2, R3, R4, R5: iOS Cards, MDN article, Card documentation, S01, S02 | not custom |
+| `good-tappable` | Nothing: a `ListTile(onTap:)` with a title and a subtitle, in a `Card` | `Card`, `ListTile` | An `InkWell` card has no button role ([FL-401](flutter-limitations.md#fl-401)), filled by using `ListTile` | R6, R7: iOS Cards, Card documentation, ARIA button | not custom |
+| `good-cupertino` | Nothing is built: a `DecoratedBox` in Cupertino's grouped background, with `Semantics(headingLevel: 3)` on the title and `Image(semanticLabel:)` | None: Cupertino has no card | none | R1, R2, R3: iOS Cards, MDN article, S02 | not custom |
 
 ## F01 Text fields and labels
 
