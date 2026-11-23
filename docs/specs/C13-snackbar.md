@@ -349,7 +349,9 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   written as predictions; the second on `good-action`'s walk in Chromium,
   at Close, before the lists were set per browser. Both are kept in the
   probe folder (`voiceover-web-round1-fail.md.txt`,
-  `voiceover-web-round2-fail.md.txt`).
+  `voiceover-web-round2-fail.md.txt`). The review round then added Undo's
+  and Go online's own announcements (`-done-announced`), which that
+  transcript does not have: it is to be recorded again.
 - **The banner's reading order is its drawn order.** `showMaterialBanner`
   puts the banner at the top of the `Scaffold`'s body, under the app bar
   and above the page, so it is drawn after the title and before the
