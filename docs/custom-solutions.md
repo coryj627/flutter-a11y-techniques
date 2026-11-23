@@ -66,6 +66,7 @@ example is added without a decision.
 | [C03 Stand-alone link](#c03-stand-alone-link) | 4 | 4 | 0 | 0 |
 | [C04 Links inline with text](#c04-links-inline-with-text) | 3 | 3 | 0 | 0 |
 | [C05 Accordion](#c05-accordion) | 3 | 3 | 0 | 0 |
+| [C06 Disclosure](#c06-disclosure) | 1 | 0 | 0 | 1 |
 | [C12 Tooltip](#c12-tooltip) | 3 | 1 | 0 | 2 |
 | [F01 Text fields and labels](#f01-text-fields-and-labels) | 3 | 0 | 0 | 3 |
 | [F02 Input instructions](#f02-input-instructions) | 3 | 0 | 0 | 3 |
@@ -92,7 +93,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 117 | 51 | 12 | 54 |
+| All | 118 | 51 | 12 | 55 |
 
 ## C01 Button
 
@@ -148,6 +149,14 @@ Flagged: `good-material`, `good-cupertino`, `good-custom`.
 | `good-material` | The accordion's state, with each panel built only while open; `HeaderSemantics` (`Semantics(button: true, expanded:)`, a heading, an iOS value, a tap hint, the expand and collapse actions, and `controlsNodes` while open) round a `ListTile`; a focus ring of its own | `ExpansionTile` | No expanded state and, on Android and iOS, no button role ([FL-264](flutter-limitations.md#fl-264)); no state on iOS ([FL-260](flutter-limitations.md#fl-260)); a heading that is a button on the web ([FL-262](flutter-limitations.md#fl-262)); `aria-controls` ([FL-266](flutter-limitations.md#fl-266)); a faint focus tint ([FL-430](flutter-limitations.md#fl-430)) | R1 to R8: APG Accordion, iOS Accordions, Android View Accordion Controls, Android Compose Accordion Controls | custom |
 | `good-cupertino` | As `good-material`, round a `CupertinoListTile` given focus, Enter, and Space by `FocusableActionDetector`; its title in a `DefaultTextStyle` of its own, so that it wraps | `CupertinoExpansionTile` | No keyboard focus, no button role, and no state ([FL-265](flutter-limitations.md#fl-265), [FL-400](flutter-limitations.md#fl-400)); as `good-material` for [FL-260](flutter-limitations.md#fl-260), [FL-262](flutter-limitations.md#fl-262), and [FL-266](flutter-limitations.md#fl-266) | R1 to R8: APG Accordion, iOS Accordions, Android View Accordion Controls, Android Compose Accordion Controls | custom |
 | `good-custom` | As `good-material`, round a header from the widgets layer: a `GestureDetector`, and focus, Enter, and Space from `FocusableActionDetector` | None for a drawn control; the SDK's accordions are `ExpansionTile`, `CupertinoExpansionTile`, and `ExpansionPanelList` ([FL-267](flutter-limitations.md#fl-267)) | As `good-material` for [FL-260](flutter-limitations.md#fl-260), [FL-262](flutter-limitations.md#fl-262), and [FL-266](flutter-limitations.md#fl-266) | R1 to R8: APG Accordion, iOS Accordions, Android View Accordion Controls, Android Compose Accordion Controls | custom |
+
+## C06 Disclosure
+
+Flagged: none.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Nothing: `ExpansionTile(internalAddSemanticForOnTap: true)`, a documented parameter its documentation calls "a temporary flag", with a `Text` title and its own panel | `ExpansionTile` | The button role on Android and iOS ([FL-264](flutter-limitations.md#fl-264)), filled with the widget's own parameter; the missing expanded state is not filled, and is a limitation on all three platforms | R1, R2, R3, R4: APG Disclosure, MDN `summary`, Flutter's ExpansionTile documentation, 4.1.2 | not custom |
 
 ## C12 Tooltip
 
