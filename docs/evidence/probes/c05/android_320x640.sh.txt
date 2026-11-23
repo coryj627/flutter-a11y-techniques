@@ -1,0 +1,20 @@
+#!/bin/sh
+# C05's Android tree tests at the CI emulator's size, 320 by 640 at 160 dpi,
+# under tool/with_devices.py from the worktree root. The size and density
+# are reset however the run ends. Kept as
+# docs/evidence/probes/c05/android_320x640.sh.txt; its output is
+# android_320x640.txt.
+ADB="$HOME/Library/Android/sdk/platform-tools/adb"
+reset() {
+  "$ADB" shell wm size reset
+  "$ADB" shell wm density reset
+  echo "after reset: $("$ADB" shell wm size | tr '\n' ' ') $("$ADB" shell wm density | tr '\n' ' ')"
+}
+trap reset EXIT
+"$ADB" shell wm size 320x640
+"$ADB" shell wm density 160
+echo "during the run: $("$ADB" shell wm size | tr '\n' ' ') $("$ADB" shell wm density | tr '\n' ' ')"
+cd android || exit 1
+./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process app:connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.C05AccordionTest \
+  2>&1 | grep -E "Tests on|FAILED|tests completed|BUILD|AssertionError|> Task :app:connected" | tail -40

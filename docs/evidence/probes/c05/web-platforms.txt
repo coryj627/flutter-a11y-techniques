@@ -1,0 +1,63 @@
+C05: the SDK tiles' web descriptions, by platform. 2026-11-22, Flutter 3.47.5,
+Playwright Chromium, release build (build/web).
+
+1. CI, Chromium on ubuntu-latest (GitHub Actions run 44978831061, job
+   137109317673, the "web" job of PR 202, before this change):
+
+  ✘ c05_accordion.spec.js:264:3 › bad examples have their defect ›
+    bad-cupertino-expansion-tile: the header takes no focus and has no
+    aria-expanded; a click opens it
+    Error: expect(locator).toHaveAccessibleDescription(expected) failed
+    Expected pattern: /^Collapsed/
+    Received string:  ""
+  1 failed
+  933 passed (12.3m)
+
+  Every other C05 test in that run passed, among them "bad-expansion-tile:
+  a button with no aria-expanded; the state is in its description", which
+  then expected a description starting "Collapsed".
+
+2. This Mac, the whole C05 tree spec (82 tests, before this change) with
+   navigator.platform set to "Linux x86_64" by page.addInitScript before
+   the app starts (a temporary hook, since removed):
+
+  ✘ c05_accordion.spec.js:270:3 › bad examples have their defect ›
+    bad-cupertino-expansion-tile: the header takes no focus and has no
+    aria-expanded; a click opens it
+    Expected pattern: /^Collapsed/
+    Received string:  ""
+  1 failed
+  81 passed (1.8m)
+
+3. This Mac, the Shipping header's attributes (style and id left out),
+   closed and after a click has opened it:
+
+  native, navigator.platform "MacIntel", maxTouchPoints 0
+    bad-expansion-tile
+      closed role=button tabindex=0 aria-description="Collapsed\n double tap to expand" aria-current=false flt-tappable
+      open   role=button tabindex=0 aria-description="Expanded\n double tap to collapse" aria-current=false flt-tappable
+    bad-cupertino-expansion-tile
+      closed role=button aria-description="Collapsed\n double tap to expand" flt-tappable
+      open   role=button aria-description="Expanded\n double tap to collapse" flt-tappable aria-owns=flt-semantic-node-14
+
+  navigator.platform set to "Linux x86_64", maxTouchPoints 0
+    bad-expansion-tile
+      closed role=button tabindex=0 aria-description="Collapsed" aria-current=false flt-tappable
+      open   role=button tabindex=0 aria-description="Expanded" aria-current=false flt-tappable
+    bad-cupertino-expansion-tile
+      closed role=button flt-tappable
+      open   role=button flt-tappable aria-owns=flt-semantic-node-14
+
+Source read, not measured: Flutter's web engine takes the operating system
+from navigator.platform ("Mac..." macOS, or iOS with more than two touch
+points; "iPhone", "iPad", "iPod" iOS; an Android user agent Android;
+"Linux..." Linux; "Win..." Windows; detectOperatingSystem in
+ui_web/browser_detection.dart), and defaultTargetPlatform on the web
+follows it (foundation/_platform_web.dart). ExpansionTile's hint is
+"Collapsed\n double tap to expand" on iOS and macOS and "Collapsed"
+elsewhere, with a live region on Android (material/expansion_tile.dart,
+_buildHeader). CupertinoExpansionTile's hint is the same on iOS and macOS
+and none elsewhere (cupertino/expansion_tile.dart, _buildHeader).
+
+Not run: a real browser on Windows; a browser on Android; on Linux,
+anything after this change (CI will).
