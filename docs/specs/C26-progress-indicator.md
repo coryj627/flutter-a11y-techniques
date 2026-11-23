@@ -335,7 +335,13 @@ The probe that came first is in [evidence/probes/c26](../evidence/probes/c26/REA
   complete on its first try in Chromium and WebKit, the bars read as in
   the first, and every announcement as in the first: the status phrases
   in Chromium, with VoiceOver's usage hint for the button between them,
-  and for `bad-silent-end` the hint alone.
+  and for `bad-silent-end` the hint alone. The transcript was recorded
+  again by the principal after the owner's decision on FL-256, with the
+  spinners as `bad-no-role` and `bad-cupertino-no-role` (their screens
+  now state the defect above the heading): 18 tests passed, every walk
+  complete on its first try in both browsers, every reading after the
+  heading and every announcement as before. No walk at rest reaches a
+  spinner, so the spinners' defect on the web rests on the tree spec.
 - **On the web a node whose role changes loses its identifier**
   ([FL-259](../flutter-limitations.md#fl-259), new): the probe's first
   round lost its changing bars' identifiers when they went from
