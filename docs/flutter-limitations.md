@@ -3527,6 +3527,18 @@ yet), **Fixed in x.y** (verified on that version).
   animation each hid the same message and queued a replacement; the
   first replacement stayed, and the next came when it was closed, or, for
   a banner, when Go online hid it, with the page saying online.
+- The same queue with an outgoing message's action (C13 review,
+  2026-11-23; `docs/evidence/probes/c13/flutter_test_outgoing_undo.txt`):
+  with the animations on, a message going out still takes taps. Archive
+  A, press again so that A goes out and B is queued, and press A's Undo
+  during A's exit: A closes with the reason `action`, and B comes in. A
+  confirmation shown then from A's `closed` future with `clearSnackBars()`
+  took B, and its Undo, away, while the line still counted B's archive.
+  C13 now counts the messages each example has shown (plain state) and,
+  when a newer one has been shown since, queues the confirmation behind
+  it instead: B and its Undo stay, and "Archive undone" comes when B is
+  closed. With `accessibleNavigation` on a message goes at once, so the
+  ordering does not arise there.
 - Workaround, in the SDK: `clearSnackBars()` before `showSnackBar()`, and
   `clearMaterialBanners()` before `showMaterialBanner()`: they clear the
   queue and take away the current one. Every C13 example does; the C13
@@ -3614,7 +3626,8 @@ yet), **Fixed in x.y** (verified on that version).
   leaves it off.
 - Workaround, in the SDK: show it once the first SnackBar has closed by
   its action, from its controller's `closed` future
-  (`SnackBarClosedReason.action`); C13 `good-action` and
+  (`SnackBarClosedReason.action`), and only with a clear when no newer
+  message has been shown since ([FL-293](#fl-293)); C13 `good-action` and
   `bad-action-times-out` do, and their "Archive undone" was announced on
   the web (`web_undo.txt`, round 2) and in the widget tests with
   `accessibleNavigation` off and on.

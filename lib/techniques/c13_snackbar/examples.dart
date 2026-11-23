@@ -89,30 +89,52 @@ SnackBarAction undo(BuildContext context, VoidCallback onPressed) {
   );
 }
 
+/// How many messages an example has shown: plain state, so that a
+/// confirmation that comes later can tell whether a newer message has been
+/// shown since the one it is about.
+class _Shown {
+  int count = 0;
+}
+
 /// Shows [bar] through [messenger], first clearing the queue and taking
 /// away the message that is shown (`clearSnackBars`), so that a new message
 /// is never queued behind one that stays (FL-293), and presses that come
-/// while a message is still going out leave only the newest.
+/// while a message is still going out leave only the newest. [shown], if
+/// given, counts it.
 ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _show(
   ScaffoldMessengerState messenger,
-  SnackBar bar,
-) {
+  SnackBar bar, [
+  _Shown? shown,
+]) {
+  if (shown != null) shown.count++;
   messenger.clearSnackBars();
   return messenger.showSnackBar(bar);
 }
 
-/// Tells, once a SnackBar shown by [_show] has been closed by its action,
-/// what that action did. The new SnackBar is shown from the old one's
-/// `closed` future and not from the action's `onPressed`: the action hides
-/// the current SnackBar after `onPressed` returns, and with
-/// `accessibleNavigation` on, that is a SnackBar shown there (FL-296).
+/// Tells, once [controller]'s SnackBar, just shown by [_show], has been
+/// closed by its action, what that action did. The new SnackBar is shown
+/// from the old one's `closed` future and not from the action's
+/// `onPressed`: the action hides the current SnackBar after `onPressed`
+/// returns, and with `accessibleNavigation` on, that is a SnackBar shown
+/// there (FL-296). If a newer message has been shown since (its action
+/// was used while it was going out and the next one coming in), the news
+/// waits behind the newer one, queued, and does not clear it: the newer
+/// message and its action stay (FL-293).
 void _tellAfterAction(
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> shown,
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> controller,
   ScaffoldMessengerState messenger,
   String text,
+  _Shown shown,
 ) {
-  shown.closed.then((reason) {
-    if (reason == SnackBarClosedReason.action) _show(messenger, _done(text));
+  final mine = shown.count;
+  controller.closed.then((reason) {
+    if (reason != SnackBarClosedReason.action) return;
+    if (shown.count == mine) {
+      _show(messenger, _done(text), shown);
+    } else {
+      shown.count++;
+      messenger.showSnackBar(_done(text));
+    }
   });
 }
 
@@ -140,6 +162,7 @@ class GoodAction extends StatefulWidget {
 
 class _GoodActionState extends State<GoodAction> {
   int _archived = 0;
+  final _shown = _Shown();
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +173,7 @@ class _GoodActionState extends State<GoodAction> {
       onPressed: (context) {
         setState(() => _archived++);
         final messenger = ScaffoldMessenger.of(context);
-        final shown = _show(
+        final controller = _show(
           messenger,
           SnackBar(
             content: Text('Message archived'),
@@ -168,10 +191,11 @@ class _GoodActionState extends State<GoodAction> {
                   : Theme.of(context).colorScheme.onInverseSurface,
             ),
           ),
+          _shown,
         );
         // What Undo did is told by a SnackBar too, as the line's change
         // alone is not announced.
-        _tellAfterAction(shown, messenger, 'Archive undone');
+        _tellAfterAction(controller, messenger, 'Archive undone', _shown);
       },
     );
   }
@@ -274,6 +298,7 @@ class BadActionTimesOut extends StatefulWidget {
 
 class _BadActionTimesOutState extends State<BadActionTimesOut> {
   int _archived = 0;
+  final _shown = _Shown();
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +309,7 @@ class _BadActionTimesOutState extends State<BadActionTimesOut> {
       onPressed: (context) {
         setState(() => _archived++);
         final messenger = ScaffoldMessenger.of(context);
-        final shown = _show(
+        final controller = _show(
           messenger,
           SnackBar(
             content: Text('Message archived'),
@@ -294,8 +319,9 @@ class _BadActionTimesOutState extends State<BadActionTimesOut> {
             // Defect: the action times out with the message.
             persist: false,
           ),
+          _shown,
         );
-        _tellAfterAction(shown, messenger, 'Archive undone');
+        _tellAfterAction(controller, messenger, 'Archive undone', _shown);
       },
     );
   }

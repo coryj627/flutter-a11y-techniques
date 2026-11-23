@@ -787,6 +787,79 @@ void main() {
     }
   });
 
+  // The outgoing message's action, used while a newer message waits to come
+  // in, with the animations on (Codex review): archive A, press again so
+  // that A goes out and B is queued, and press A's Undo, still on the
+  // screen, during A's exit. The right outcome: A's Undo undoes A's archive
+  // (the line goes from 2 to 1); B, the newer archive, stays archived, with
+  // its message and its own Undo; and "Archive undone", the news of A's
+  // undo, does not take B away: it waits behind B and comes when B is
+  // closed (FL-293). The first review build's confirmation cleared the
+  // queue and took B, and its Undo, away
+  // (docs/evidence/probes/c13/flutter_test_outgoing_undo.txt).
+  group('the outgoing message\'s action, during the next one\'s coming', () {
+    for (final slug in ['good-action', 'bad-action-times-out']) {
+      testWidgets('$slug: Undo on the outgoing message undoes it, and the '
+          'newer message keeps its Undo', (tester) async {
+        await _open(tester, slug);
+        await _press(tester, slug);
+        expect(_lineText(tester, slug), 'Archived: 1');
+        await tester.tap(byId(_show(slug)));
+        await tester.pump(const Duration(milliseconds: 50));
+        expect(_lineText(tester, slug), 'Archived: 2');
+        // A is going out, B waits: one Undo on the screen, A's.
+        expect(find.text('Undo'), findsOneWidget);
+        await tester.tap(find.text('Undo'), warnIfMissed: false);
+        await _frames(tester, const Duration(seconds: 1));
+        expect(_lineText(tester, slug), 'Archived: 1', reason: 'A undone');
+        // B came in, with its own Undo, and the confirmation waits.
+        expect(find.text('Message archived'), findsOneWidget);
+        expect(find.text('Undo'), findsOneWidget);
+        expect(find.text('Archive undone'), findsNothing);
+        // B's Undo works: it undoes B.
+        await tester.tap(find.text('Undo'));
+        await _frames(tester, const Duration(seconds: 1));
+        expect(_lineText(tester, slug), 'Archived: 0', reason: 'B undone');
+        // A's news, then B's, each the one message shown in turn.
+        expect(find.text('Archive undone'), findsOneWidget);
+        expect(find.text('Message archived'), findsNothing);
+      });
+    }
+
+    testWidgets('good-action: Close on the newer message lets the waiting '
+        'confirmation come', (tester) async {
+      await _open(tester, 'good-action');
+      await _press(tester, 'good-action');
+      await tester.tap(byId(_show('good-action')));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(find.text('Undo'), warnIfMissed: false);
+      await _frames(tester, const Duration(seconds: 1));
+      expect(_lineText(tester, 'good-action'), 'Archived: 1');
+      await tester.tap(find.byTooltip('Close'));
+      await _frames(tester, const Duration(seconds: 1));
+      expect(find.text('Message archived'), findsNothing);
+      expect(find.text('Archive undone'), findsOneWidget);
+      expect(_lineText(tester, 'good-action'), 'Archived: 1');
+    });
+
+    testWidgets('good-banner: Go online on the outgoing banner, while a '
+        'newer one waits, leaves the page online and no banner', (
+      tester,
+    ) async {
+      await _open(tester, 'good-banner');
+      await _press(tester, 'good-banner');
+      await tester.tap(byId(_show('good-banner')));
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(find.text('Go online'), findsOneWidget);
+      await tester.tap(find.text('Go online'), warnIfMissed: false);
+      await _frames(tester, const Duration(seconds: 6));
+      // Going online makes every "You are offline." untrue: the waiting
+      // banner is cleared with the one going out, and the page agrees.
+      expect(_lineText(tester, 'good-banner'), 'Status: online');
+      expect(find.text('You are offline.'), findsNothing);
+    });
+  });
+
   // Every example, with its message shown: at 200% text on a 320 by 640
   // screen no layout overflows, and no text is cut short, by a line limit
   // or by a box too small for its lines, or runs off the screen.

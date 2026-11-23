@@ -230,3 +230,11 @@ recorded: Undo, "Back" and the hint; `good-banner`'s Go online, "Back and
 1 more item and 2 more items group", "Back", the hint;
 `bad-inline-banner`'s, "Back and 1 more item and 2 more items group", "You
 are online.".
+
+## Review round (Codex, 2026-11-23)
+
+`flutter_test_outgoing_undo.txt`: the C13 widget tests "the outgoing
+message's action, during the next one's coming", against `examples.dart`
+as of d7eebd9, where three of four failed (the newer message and its Undo
+were gone after the outgoing Undo), and against the fixed code, where all
+four passed (FL-293).
