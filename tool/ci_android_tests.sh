@@ -8,6 +8,17 @@
 # froze, and the job sat silent until GitHub's time limit. The memory is
 # given back when the test process ends.
 #
+# Given back to the emulator, not to the runner: the emulator's own size on
+# the runner stays near the largest any one test process has needed, and
+# the next process reuses that room. With four classes a batch, the batch
+# that held I04 and I08 took the emulator from about 7.4 GB to as much as
+# 11.4 GB, and in 8 of 49 runs from 2026-11-21 to 23 the runner went below
+# MIN_AVAILABLE_MB and the run was stopped: 7 in that batch, one in a later
+# batch with the emulator still at 11.2 GB. Which batch a class falls in
+# moves as classes are added. So each class runs in a test process of its
+# own (BATCH_CLASSES=1). A Gradle run adds 8 to 22 seconds between one
+# class's last test and the next one's first (run 45133024276).
+#
 # Gradle runs in the background, and every 10 seconds this script checks that
 #   - a test has started or finished in the last STALL_SECONDS (from the
 #     test runner's own log on the device, not Gradle's progress line),
@@ -73,7 +84,7 @@ FIRST_TEST_SECONDS=${FIRST_TEST_SECONDS:-600}
 # attempt 2). The limit is now 90 minutes, for the classes still to come.
 LIMIT_SECONDS=${LIMIT_SECONDS:-5400}
 MIN_AVAILABLE_MB=${MIN_AVAILABLE_MB:-600}
-BATCH_CLASSES=${BATCH_CLASSES:-4}
+BATCH_CLASSES=${BATCH_CLASSES:-1}
 POLL_SECONDS=${POLL_SECONDS:-10}
 SETTLE_SECONDS=${SETTLE_SECONDS:-5}
 PKG=dev.fluttera11y.flutter_a11y_techniques

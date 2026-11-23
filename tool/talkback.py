@@ -10,6 +10,7 @@ writes the transcript to docs/evidence/<ID>/talkback-android.md.
 
 Usage: python3 tool/talkback.py <ID>     for example: python3 tool/talkback.py C01
 """
+import collections
 import datetime
 import os
 import re
@@ -351,7 +352,7 @@ SPEECH_TAG = "talkback: SpeechControllerImpl: "
 INCOMPLETE = "[speech capture was cut off]"
 
 
-def parse_speech(log):
+def parse_speech(log, cut=None):
     """What TalkBack spoke while each identified node had focus.
 
     A spoken text with a line break in it (a merged node such as "Delivered",
@@ -361,6 +362,11 @@ def parse_speech(log):
     fragment that is cut off by a marker, by another fragment, or by any
     other log line is never credited to an element; INCOMPLETE is recorded
     for the element that had focus, so its speech fails its checks.
+
+    If `cut` is a dict, the lines captured of each cut-off fragment, joined
+    as above, are added to cut[element]: whole lines of what was said, since
+    logcat splits a fragment where its text has a line break. Only
+    walk_strictly uses them; the speech returned is the same either way.
     """
     spoken, current, open_fragment = {}, None, None
 
@@ -368,6 +374,8 @@ def parse_speech(log):
         nonlocal open_fragment
         if open_fragment is not None and current:
             spoken[current].append(INCOMPLETE)
+            if cut is not None:
+                cut.setdefault(current, []).append(" ".join(open_fragment))
         open_fragment = None
 
     for line in log.splitlines():
@@ -486,6 +494,126 @@ def walk_until_heard(walk_once=None):
     return spoken, retried
 
 
+# Techniques whose TalkBack walk is judged whole (walk_strictly), not row by
+# row across walks (walk_until_heard). Every other technique keeps
+# walk_until_heard.
+STRICT = {"C05"}
+
+# One walk of walk_strictly: the speech per element, the verdict ("right",
+# "wrong", or "incomplete"), what made it so, and the captured lines of each
+# cut-off fragment per element (parse_speech's `cut`).
+Try = collections.namedtuple("Try", ["spoken", "verdict", "reasons", "cut"], defaults=[{}])
+
+
+def forbidden(ident, fragments):
+    """The phrases that must not be spoken for `ident` that `fragments`
+    hold, as problems() words them."""
+    if ident not in EXPECT:
+        return []
+    fragments = [f.lower() for f in fragments]
+    joined = " | ".join(fragments)
+    return [f'{ident}: did not expect "{phrase}" in "{joined}"'
+            for phrase in EXPECT[ident][1] if unwanted(fragments, phrase)]
+
+
+def judge_walk(spoken, expected, cut=None):
+    """The verdict on one whole walk: (verdict, reasons).
+
+    "incomplete" only for a capture that is shown to be short: an expected
+    element that was never focused, one for which nothing was spoken, or one
+    whose speech capture was cut off with nothing wrong in what was
+    captured. An element whose capture was cut off is checked for the
+    phrases it must not say in every fragment captured whole and in the
+    captured lines of the cut-off one (`cut`, from parse_speech): those
+    lines are whole lines of what was said, so a forbidden phrase in them
+    was said, and the reading is wrong. A required phrase it lacks may be in
+    the lost part, so that alone makes it incomplete. Anything else that
+    fails its checks is a wrong reading, and a wrong reading anywhere makes
+    the walk "wrong", even when other elements of it are incomplete.
+    """
+    cut = cut or {}
+    gaps, wrong = [], []
+    for ident in expected:
+        fragments = spoken.get(ident)
+        if fragments is None:
+            gaps.append(f"{ident}: never focused")
+        elif not fragments:
+            gaps.append(f"{ident}: nothing was spoken")
+        elif INCOMPLETE in fragments:
+            heard = [f for f in fragments if f != INCOMPLETE] + cut.get(ident, [])
+            said_wrong = forbidden(ident, heard)
+            if said_wrong:
+                wrong += said_wrong
+            else:
+                gaps.append(f"{ident}: speech capture was cut off")
+        else:
+            wrong += problems(ident, fragments)
+    if wrong:
+        return "wrong", wrong
+    if gaps:
+        return "incomplete", gaps
+    return "right", []
+
+
+def walk_strictly(prefix, walk_once=None):
+    """Walks the examples of the technique whose identifiers start with
+    `prefix`, judging each walk whole (judge_walk).
+
+    A walk with a wrong reading fails for good: no further walk is made.
+    Only an incomplete walk is walked again, up to MAX_WALKS walks, and the
+    walk that decides is judged on its own: no element's speech is taken
+    from another walk. Returns every walk made, in order (Try), so that the
+    transcript lists each one.
+    """
+    walk_once = walk_once or walk
+    expected = [ident for ident in EXPECT if ident.startswith(prefix)]
+    tries = []
+    for attempt in range(MAX_WALKS):
+        run, log = walk_once()
+        if run.returncode != 0:
+            print(run.stdout[-3000:])
+            sys.exit("instrumented walk failed")
+        cut = {}
+        spoken = parse_speech(log, cut)
+        verdict, reasons = judge_walk(spoken, expected, cut)
+        tries.append(Try(spoken, verdict, reasons, cut))
+        if verdict != "incomplete":
+            break
+    return tries
+
+
+def strict_report(tries):
+    """The failures and the transcript lines after the metadata for the walks
+    of walk_strictly: the result, each walk's verdict, the table of the walk
+    that decided, and the table of every earlier walk."""
+    last = tries[-1]
+    failures = [] if last.verdict == "right" else last.reasons
+    out = ["", f"Result: {'FAIL' if failures else 'PASS'}", ""]
+    out.append(f"Walks: {len(tries)}. Each walk is judged whole: a wrong reading fails for good, "
+               "and only a walk shown to be incomplete (an element never focused, silent, or "
+               "cut off in the log) is walked again.")
+    out.append("")
+    out += [f"- Walk {n}: {t.verdict}" + (f" ({'; '.join(t.reasons)})" if t.reasons else "")
+            for n, t in enumerate(tries, 1)]
+
+    def table(walk):
+        rows = ["| Element | Spoken |", "| --- | --- |"]
+        for ident, fragments in walk.spoken.items():
+            text = ' / '.join(fragments) or '(nothing)'
+            if walk.cut.get(ident):
+                text += " (captured of the cut-off speech: " + " / ".join(
+                    f'"{c}"' for c in walk.cut[ident]) + ")"
+            rows.append(f"| `{ident}` | {text} |")
+        return rows
+
+    out += ["", f"## Walk {len(tries)} ({last.verdict})", ""] + table(last)
+    for n, t in enumerate(tries[:-1], 1):
+        out += ["", f"## Walk {n} ({t.verdict})", ""] + table(t)
+    if failures:
+        out += ["", "## Failures", ""] + [f"- {f}" for f in failures]
+    return failures, out
+
+
 DEFAULT_METHOD = "ACTION_ACCESSIBILITY_FOCUS on each node; speech read from TalkBack's verbose log"
 METHODS = {tid: r.talkback_method for tid, r in REGISTRATIONS.items() if r.talkback_method}
 
@@ -523,16 +651,23 @@ def main():
     if not stop_android_tests():
         sys.exit(UNCONFIRMED_EMULATOR)
     exit_on_termination_signals()
+    strict = technique in STRICT
     try:
-        spoken, retried = run_with_talkback(walk_until_heard)
+        if strict:
+            tries = run_with_talkback(lambda: walk_strictly(prefix))
+        else:
+            spoken, retried = run_with_talkback(walk_until_heard)
     except AdbError as error:
         sys.exit(str(error))
 
-    if not any(spoken.values()):
+    if strict:
+        if not any(any(t.spoken.values()) for t in tries):
+            sys.exit("No speech captured. Is TalkBack's log output level VERBOSE?")
+    elif not any(spoken.values()):
         sys.exit("No speech captured. Is TalkBack's log output level VERBOSE?")
 
     failures = []
-    for ident in EXPECT:
+    for ident in EXPECT if not strict else ():
         if not ident.startswith(prefix):
             continue
         if ident not in spoken:
@@ -553,6 +688,10 @@ def main():
     out = [f"# {title}: TalkBack transcript (Android)", "",
            f"Generated by `python3 tool/talkback.py {technique}`. Do not edit by hand.", ""]
     out += [f"- {k}: {v}" for k, v in meta.items()]
+    if strict:
+        failures, body = strict_report(tries)
+        write_transcript(technique, out + body)
+        sys.exit(1 if failures else 0)
     out += ["", f"Result: {'FAIL' if failures else 'PASS'}"]
     if retried:
         out += ["", "Elements whose speech failed its checks on a walk and were walked again: "
@@ -562,12 +701,18 @@ def main():
         out.append(f"| `{ident}` | {' / '.join(fragments) or '(nothing)'} |")
     if failures:
         out += ["", "## Failures", ""] + [f"- {f}" for f in failures]
+    write_transcript(technique, out)
+    sys.exit(1 if failures else 0)
+
+
+def write_transcript(technique, out):
+    """Writes the transcript lines `out` to the technique's
+    docs/evidence/<ID>/talkback-android.md and prints them."""
     os.makedirs(os.path.join(ROOT, "docs", "evidence", technique), exist_ok=True)
     path = os.path.join(ROOT, "docs", "evidence", technique, "talkback-android.md")
     with open(path, "w") as f:
         f.write("\n".join(out) + "\n")
     print("\n".join(out))
-    sys.exit(1 if failures else 0)
 
 
 if __name__ == "__main__":
