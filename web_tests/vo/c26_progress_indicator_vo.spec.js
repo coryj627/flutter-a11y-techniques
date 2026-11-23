@@ -31,8 +31,8 @@ test.describe.configure({ retries: 0 });
 // slug -> what VoiceOver must announce once the task has run, or must not.
 const ANNOUNCED = {
   'good-linear': { must: ['Half uploaded', 'Upload complete'] },
-  'good-circular': { must: ['Loading started', 'Inbox loaded'] },
-  'good-cupertino': { must: ['Loading started', 'Inbox loaded'] },
+  'bad-no-role': { must: ['Loading started', 'Inbox loaded'] },
+  'bad-cupertino-no-role': { must: ['Loading started', 'Inbox loaded'] },
   // The status line is no live region, and the bar's changes are not
   // announced (FL-254).
   'bad-silent-end': { mustNot: ['Upload started', 'Half uploaded', 'Upload complete'] },

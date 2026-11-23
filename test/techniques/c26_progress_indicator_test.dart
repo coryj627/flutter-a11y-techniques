@@ -38,14 +38,19 @@ Future<void> _open(
   );
 }
 
-const _good = ['good-linear', 'good-circular', 'good-cupertino'];
+const _good = ['good-linear'];
+
+/// The examples with a working status line, whose button, keys, live
+/// region, and guidelines are checked alike: the good bar, and the two
+/// spinners, whose one defect is the framework's missing role (FL-256).
+const _live = ['good-linear', 'bad-no-role', 'bad-cupertino-no-role'];
 const _bars = ['good-linear', 'bad-no-label', 'bad-silent-end'];
 
 /// The indicator of each example: a bar, or a spinner shown while running.
 const _indicator = {
   'good-linear': 'c26-good-linear-bar',
-  'good-circular': 'c26-good-circular-spinner',
-  'good-cupertino': 'c26-good-cupertino-spinner',
+  'bad-no-role': 'c26-bad-no-role-spinner',
+  'bad-cupertino-no-role': 'c26-bad-cupertino-no-role-spinner',
   'bad-no-label': 'c26-bad-no-label-bar',
   'bad-silent-end': 'c26-bad-silent-end-bar',
   'bad-adaptive': 'c26-bad-adaptive-spinner',
@@ -128,6 +133,8 @@ void main() {
       ..._good,
       'bad-no-label',
       'bad-silent-end',
+      'bad-no-role',
+      'bad-cupertino-no-role',
       'bad-adaptive',
       'bad-cupertino-bar',
     ]);
@@ -141,8 +148,11 @@ void main() {
     );
   });
 
-  group('good examples', () {
-    for (final slug in _good) {
+  // The good example, and the spinners, which are bad examples only for the
+  // role Flutter does not give them (FL-256): everything else about them
+  // is checked as for the good one.
+  group('good example, and the spinners but for their role', () {
+    for (final slug in _live) {
       for (final brightness in Brightness.values) {
         testWidgets('$slug meets the guidelines at rest and while running '
             '(${brightness.name})', (tester) async {
@@ -319,10 +329,10 @@ void main() {
       handle.dispose();
     });
 
-    for (final slug in ['good-circular', 'good-cupertino']) {
+    for (final slug in ['bad-no-role', 'bad-cupertino-no-role']) {
       testWidgets(
-        '$slug: the spinner is there only while loading, named, '
-        'with no value; ${slug == 'good-circular' ? 'its role is a loading spinner' : 'it has no role (FL-255)'}',
+        '$slug (the defect): the spinner is there only while loading, named, '
+        'with no value, and with ${slug == 'bad-no-role' ? 'the loading spinner role, which no platform turns into a role (FL-256)' : 'no role (FL-255, FL-256)'}',
         (tester) async {
           final handle = tester.ensureSemantics();
           await _open(tester, slug);
@@ -340,7 +350,7 @@ void main() {
               spinner.maxValue,
             ),
             (
-              slug == 'good-circular'
+              slug == 'bad-no-role'
                   ? SemanticsRole.loadingSpinner
                   : SemanticsRole.none,
               'Loading inbox',
@@ -533,11 +543,11 @@ void main() {
         );
         expect(_labelled(tester, 'Loading inbox'), isEmpty);
         expect(dataById('c26-bad-adaptive-status').label, 'Loading started');
-        // Positive control, same platform: good-circular's spinner.
-        await _open(tester, 'good-circular');
-        await _press(tester, 'good-circular');
+        // Positive control, same platform: bad-no-role's spinner.
+        await _open(tester, 'bad-no-role');
+        await _press(tester, 'bad-no-role');
         await _step(tester);
-        expect(dataById('c26-good-circular-spinner').label, 'Loading inbox');
+        expect(dataById('c26-bad-no-role-spinner').label, 'Loading inbox');
         await tester.pumpWidget(const SizedBox());
         handle.dispose();
         debugDefaultTargetPlatformOverride = null;

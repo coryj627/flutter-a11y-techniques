@@ -8,9 +8,10 @@ import '../../catalog/test_id.dart';
 // Every indicator is Flutter's own: Material's LinearProgressIndicator and
 // CircularProgressIndicator through their documented `semanticsLabel`, and
 // Cupertino's CupertinoActivityIndicator, which has no semantics of its
-// own, named with `Semantics(label:)`. How the task is going, and that it
-// has ended, is told by a line of text in a live region,
-// `Semantics(liveRegion: true)`: a change of an indicator's value is not
+// own, named with `Semantics(label:)`. The only good example is the bar:
+// Flutter gives a spinner no role (FL-256), so the spinners are bad
+// examples of that. How the task is going, and that it has ended, is told
+// by a line of text in a live region, `Semantics(liveRegion: true)`: a change of an indicator's value is not
 // announced on any platform (docs/flutter-limitations.md, FL-254). What the
 // framework cannot do is in that file and is not built here.
 
@@ -184,67 +185,6 @@ class GoodLinear extends StatelessWidget {
 }
 // #endregion
 
-// #region good-circular
-/// A spinner shown while the inbox loads, named by `semanticsLabel`. It has
-/// no value: how long is left is not known. The status line, a live region,
-/// says that loading has started and that it has ended, when the spinner
-/// goes.
-class GoodCircular extends StatelessWidget {
-  const GoodCircular({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return _Demo(
-      slug: 'good-circular',
-      action: 'Load inbox',
-      status: _loadStatus,
-      indicator: (context, task) => SizedBox.fromSize(
-        size: _spinnerBox,
-        child: task.running
-            ? const TestId(
-                'c26-good-circular-spinner',
-                child: CircularProgressIndicator(semanticsLabel: _loadName),
-              )
-            : null,
-      ),
-    );
-  }
-}
-// #endregion
-
-// #region good-cupertino
-/// Cupertino's spinner. `CupertinoActivityIndicator` gives no semantics of
-/// its own and has no parameter for a name (FL-255), so it is named with
-/// `Semantics(label:)`; Material's spinner has no role on any platform
-/// either (FL-256). The status line, a live region, says that loading has
-/// started and that it has ended. The button is Material's, as in the other
-/// examples: a `CupertinoButton` takes no Enter on the web (FL-002).
-class GoodCupertino extends StatelessWidget {
-  const GoodCupertino({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return _Demo(
-      slug: 'good-cupertino',
-      action: 'Load inbox',
-      status: _loadStatus,
-      indicator: (context, task) => SizedBox.fromSize(
-        size: _spinnerBox,
-        child: task.running
-            ? TestId(
-                'c26-good-cupertino-spinner',
-                child: Semantics(
-                  label: _loadName,
-                  child: const CupertinoActivityIndicator(radius: 14),
-                ),
-              )
-            : null,
-      ),
-    );
-  }
-}
-// #endregion
-
 // #region bad-no-label
 /// The bar of `good-linear` with no `semanticsLabel`. The words above it
 /// are shown, and read as text of their own, but nothing ties them to it:
@@ -304,6 +244,74 @@ class BadSilentEnd extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+// #endregion
+
+// #region bad-no-role
+/// Material's spinner, shown while the inbox loads, named by
+/// `semanticsLabel`, with no value, as an indeterminate indicator has none.
+/// The status line, a live region, says that loading has started and that
+/// it has ended. Its one defect is the framework's: Flutter gives a spinner
+/// no role on any platform, and no parameter adds one (FL-256), so a
+/// screen reader hears a name and nothing that says what it is. There is
+/// no good spinner example: by the owner's decision of 2026-11-23 a
+/// platform where Flutter gives no role is a limitation.
+class BadNoRole extends StatelessWidget {
+  const BadNoRole({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return _Demo(
+      slug: 'bad-no-role',
+      action: 'Load inbox',
+      status: _loadStatus,
+      indicator: (context, task) => SizedBox.fromSize(
+        size: _spinnerBox,
+        child: task.running
+            ? const TestId(
+                'c26-bad-no-role-spinner',
+                // Defect: no role, on any platform (FL-256).
+                child: CircularProgressIndicator(semanticsLabel: _loadName),
+              )
+            : null,
+      ),
+    );
+  }
+}
+// #endregion
+
+// #region bad-cupertino-no-role
+/// Cupertino's spinner. `CupertinoActivityIndicator` gives no semantics of
+/// its own and has no parameter for a name (FL-255), so it is named with
+/// `Semantics(label:)`. The status line, a live region, says that loading
+/// has started and that it has ended. Its one defect is the framework's,
+/// as `bad-no-role`'s: no role, on any platform, and nothing in the SDK
+/// adds one (FL-256). The button is Material's, as in the other examples:
+/// a `CupertinoButton` takes no Enter on the web (FL-002).
+class BadCupertinoNoRole extends StatelessWidget {
+  const BadCupertinoNoRole({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return _Demo(
+      slug: 'bad-cupertino-no-role',
+      action: 'Load inbox',
+      status: _loadStatus,
+      indicator: (context, task) => SizedBox.fromSize(
+        size: _spinnerBox,
+        child: task.running
+            ? TestId(
+                'c26-bad-cupertino-no-role-spinner',
+                // Defect: a name, and no role, on any platform (FL-256).
+                child: Semantics(
+                  label: _loadName,
+                  child: const CupertinoActivityIndicator(radius: 14),
+                ),
+              )
+            : null,
       ),
     );
   }

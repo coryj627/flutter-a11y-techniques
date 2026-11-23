@@ -19,8 +19,14 @@ export const EXAMPLE_HEADING = 'heading level 2 Example';
  */
 export const EXAMPLE_SCREENS = {
   'good-linear': ['Material progress bar', 'Good example for Progress indicator. Material.'],
-  'good-circular': ['Material spinner', 'Good example for Progress indicator. Material.'],
-  'good-cupertino': ['Cupertino spinner', 'Good example for Progress indicator. Cupertino.'],
+  'bad-no-role': [
+    'Material spinner', 'Bad example for Progress indicator. Material.',
+    'Defect: A screen reader hears a name and no role: Flutter gives no spinner one.',
+  ],
+  'bad-cupertino-no-role': [
+    'Cupertino spinner', 'Bad example for Progress indicator. Cupertino.',
+    'Defect: A screen reader hears a name and no role: Flutter gives no spinner one.',
+  ],
   'bad-no-label': [
     'Progress bar with no name', 'Bad example for Progress indicator. Material.',
     'Defect: A screen reader reads the bar as a number with no name.',
@@ -61,8 +67,8 @@ export const screenStops = (slug) => {
 const both = (list) => ({ chromium: list, webkit: list });
 export const WALKS = {
   'good-linear': both(['Upload report button', 'Report upload 0 0% progress indicator', 'Not started']),
-  'good-circular': both(['Load inbox button', 'Inbox not loaded']),
-  'good-cupertino': both(['Load inbox button', 'Inbox not loaded']),
+  'bad-no-role': both(['Load inbox button', 'Inbox not loaded']),
+  'bad-cupertino-no-role': both(['Load inbox button', 'Inbox not loaded']),
   // The bar is named by its value alone; the words are text before it.
   'bad-no-label': both(['Upload report button', 'Report upload', '0 0% progress indicator', 'Not started']),
   'bad-silent-end': both(['Upload report button', 'Report upload 0 0% progress indicator', 'Not started']),

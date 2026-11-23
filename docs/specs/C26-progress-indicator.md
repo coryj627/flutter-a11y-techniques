@@ -31,12 +31,17 @@ moving.
 
 | Android | iOS | Web |
 | --- | --- | --- |
-| Applies, with limitations | Applies, with limitations | Applies, with limitations |
+| Applies, for a bar, with limitations; no good spinner | Limitation (FL-256) | Applies, for a bar, with limitations; no good spinner |
 
-What the framework's indicators cannot do, by platform, with no
-workaround in the SDK. Whether the missing role (FL-256) makes a platform
-`PlatformStatus.limitation` is awaiting the owner's decision (section 8);
-until then the catalog says "applies" with a note on each platform.
+By the owner's decision of 2026-11-23 (section 8): where Flutter gives no
+role and no documented parameter adds one, the platform is a limitation
+and there is no good example for it. So iOS is
+`PlatformStatus.limitation`, citing FL-256: no progress indicator has a
+role there. Android and the web apply for the bar,
+`LinearProgressIndicator`. A spinner has no role on any platform, so
+there is no good spinner example on any: the two spinners are bad
+examples of that missing role (section 5). What the framework's
+indicators cannot do, by platform, with no workaround in the SDK:
 
 - **All: a change of an indicator's value is not announced**
   ([FL-254](../flutter-limitations.md#fl-254)), with the screen reader's
@@ -47,9 +52,10 @@ until then the catalog says "applies" with a note on each platform.
   ([FL-256](../flutter-limitations.md#fl-256)). The web gives a spinner no
   ARIA role, Android a plain `View`, iOS static text; and iOS gives a bar
   static text too. Under the reading of section 3, this fails 4.1.2's role
-  for `good-circular` and `good-cupertino` on every platform, and for
-  `good-linear` on iOS. Nothing in the SDK can give the role: the
-  progress bar role needs a numeric value ([FL-258](../flutter-limitations.md#fl-258)).
+  for every spinner on every platform (`bad-no-role`,
+  `bad-cupertino-no-role`), and for `good-linear` on iOS, which is why iOS
+  is a limitation. Nothing in the SDK can give the role: the progress bar
+  role needs a numeric value ([FL-258](../flutter-limitations.md#fl-258)).
 - **All: how the value is read** ([FL-027](../flutter-limitations.md#fl-027),
   [FL-037](../flutter-limitations.md#fl-037)). With the default value,
   the value is heard twice on Android and on the web, and as a bare number
@@ -67,9 +73,10 @@ until then the catalog says "applies" with a note on each platform.
   probe's p03) and loses Android's range. The good bar keeps the default,
   by the principal's decision (section 8).
 - **Cupertino: nothing for a screen reader**
-  ([FL-255](../flutter-limitations.md#fl-255)); `good-cupertino` names its
-  spinner with a label, and the Cupertino bar is shown only as a bad
-  example.
+  ([FL-255](../flutter-limitations.md#fl-255)). `bad-cupertino-no-role`
+  names Cupertino's spinner with a label, which gives it a name and no
+  role, as Material's has; the Cupertino bar is a bad example as it
+  comes.
 - **iOS, and a browser on a Mac: `CircularProgressIndicator.adaptive`
   drops its label** ([FL-257](../flutter-limitations.md#fl-257)).
 
@@ -163,17 +170,22 @@ its task starts; a spinner is shown only while its task runs.
 | Slug | Variant | What it shows | Mechanism | Reqs |
 | --- | --- | --- | --- | --- |
 | `good-linear` | Material | "Upload report": a bar named "Report upload", the words shown above it, and its status line | `LinearProgressIndicator(value:, semanticsLabel:)`, its value the default (the percentage as a number); the shown words in `ExcludeSemantics`, so that they are read once; the status line in `Semantics(liveRegion: true)` | R1, R2, R4, R5 |
-| `good-circular` | Material | "Load inbox": a spinner named "Loading inbox" while it loads, and its status line | `CircularProgressIndicator(semanticsLabel:)`, no value; the status line in a live region | R1, R3, R4 |
-| `good-cupertino` | Cupertino | The same with Cupertino's spinner | `Semantics(label:)` round a `CupertinoActivityIndicator`, which has no name of its own ([FL-255](../flutter-limitations.md#fl-255)); the status line in a live region | R1, R3, R4 |
+
+`good-linear` is the only good example, and it is good on Android and the
+web only: on iOS it has no role (FL-256), and iOS is a limitation. There
+is no good spinner example and no good Cupertino example, by the owner's
+decision (section 8): Flutter gives a spinner no role on any platform,
+and Cupertino's bar gives nothing. The spinners, Material's and
+Cupertino's, are bad examples of that missing role (below).
 
 Every button is a Material `OutlinedButton` with a 2 pixel focus outline
-through its own `style`; `good-cupertino`'s too, because a
+through its own `style`; `bad-cupertino-no-role`'s too, because a
 `CupertinoButton` takes no Enter on the web
 ([FL-002](../flutter-limitations.md#fl-002)) and making it would be
 hand-built.
 
-No example is a custom solution: each is a Flutter widget through its own
-documented parameters, with a name or an exclusion given by `Semantics`
+The good example is not a custom solution: a Flutter widget through its
+own documented parameters, with an exclusion given by `ExcludeSemantics`
 and a live region as its documentation describes
 ([custom-solutions.md](../custom-solutions.md)).
 
@@ -183,12 +195,12 @@ criteria:
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
 | `good-linear` | 4.1.2: a `ProgressBar` named "Report upload" with a range 0 to 100. 4.1.3: start, halfway, and end announced. Qualification: TalkBack reads the value twice (FL-027) | 4.1.2: name and value; no role (FL-256), so it fails 4.1.2's role under section 3's reading. 4.1.3: announced. The value is read as a bare number (FL-027) | 4.1.2: a `progressbar` named "Report upload 0" (the value in the name, FL-037), `aria-valuenow`. 4.1.3: announced. Qualification: VoiceOver reads the value twice, "Report upload 0 0% progress indicator" (FL-027) |
-| `good-circular` | Named; no role (FL-256): fails 4.1.2's role under the reading. 4.1.3: start and end announced | the same | the same |
-| `good-cupertino` | the same as `good-circular` | the same | the same |
 
-In none of them is the indicator's own change announced (FL-254); the
-live region is what tells the status, and it does on every platform. Each
-test of these limits is written to fail when Flutter changes.
+On iOS, `good-linear` is shown as the closest the framework comes, not as
+a good example there: the platform is a limitation. Its indicator's own
+change is not announced on any platform (FL-254); the live region is what
+tells the status, and it does on every platform. Each test of these
+limits is written to fail when Flutter changes.
 
 No widgets-layer example is built: the widgets layer has no progress
 indicator, and one would be drawn by hand.
@@ -199,6 +211,8 @@ indicator, and one would be drawn by hand.
 | --- | --- | --- | --- | --- |
 | `bad-no-label` | Material | `good-linear`'s bar with no `semanticsLabel`, the words above it plain text: the bar is read as its value with no name: TalkBack "0.0.", "0", "Progress bar"; VoiceOver on iOS "0"; VoiceOver on the web "0 0% progress indicator" | R1 | 4.1.2 (name), under the reading of section 3, on all three |
 | `bad-silent-end` | Material | `good-linear` with its status line no live region: nothing tells a screen reader that the upload has started, is halfway, or has ended, and the bar's own changes are not announced (FL-254) | R4 | 4.1.3, on all three |
+| `bad-no-role` | Material | `CircularProgressIndicator(semanticsLabel:)`, a spinner named "Loading inbox", with no value and a status line in a live region: a screen reader hears its name and no role, on every platform (FL-256). The framework's defect: no parameter adds a role | R5 | 4.1.2 (role), under the reading of section 3, on all three |
+| `bad-cupertino-no-role` | Cupertino | `Semantics(label:)` round a `CupertinoActivityIndicator`, which has no semantics of its own (FL-255), with the same status line: a name and no role, as `bad-no-role` (FL-256) | R5 | 4.1.2 (role), under the reading, on all three |
 | `bad-adaptive` | Material | `CircularProgressIndicator.adaptive(semanticsLabel:)`: on iOS, and in a browser on a Mac, the spinner has nothing a screen reader can find (FL-257) | R1 | 4.1.2 (name), under the reading, on iOS and the web on a Mac; none on Android, nor on the web elsewhere, where it is Material's spinner, named |
 | `bad-cupertino-bar` | Cupertino | `CupertinoLinearActivityIndicator` as it comes: no name, role, or value (FL-255) | R1, R2 | 4.1.2 (name and value), under the reading, on all three |
 
@@ -210,6 +224,24 @@ indicator, and one would be drawn by hand.
   bar's value changes are not announced either (FL-254). A screen reader
   user finds it only by moving to it. The defect is in the example, not
   the framework: `good-linear` is the same with the line a live region.
+- `bad-no-role` and `bad-cupertino-no-role` and the guide. A spinner was
+  a good example until the owner's decision; it is now a bad one, by the
+  technique guide's rule for a mechanism that does not work where it can
+  be checked ("it is a bad example with a limitation entry, not a good
+  one"), and by its rule that a bad example's assertions are written "to
+  fail if a Flutter upgrade fixes the defect", which allows a defect that
+  is the framework's. I12's `bad-status-role-only` and
+  `bad-alert-role-only` are bad examples of the same kind (FL-017). The
+  defect is not one a developer can avoid with another Flutter widget:
+  every spinner Flutter has lacks the role, and the doc says so on the
+  example. Everything else about them is as the good example's (their
+  status lines are announced, their buttons work), and is tested as such,
+  so that the one defect is the role. Not chosen: removing them (FL-256
+  would then carry the spinner findings with the probe alone, and no test
+  would fail when Flutter adds the role); a third kind of example for
+  "the framework cannot do this", which the catalog does not have (the
+  guide's `workaround-` kind is for HTML embedded on the web, and is not
+  built yet).
 - `bad-adaptive` and `bad-cupertino-bar` keep the status line, which
   tells the status as text: what they fail is the indicator's own name
   (and the bar's value), not 4.1.3. A spinner is also non-text content;
@@ -250,13 +282,13 @@ Not built:
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Every good example, in light and dark: the four guidelines at rest, while running, and at the end; the button's focus outline 2 wide and 3:1 or more on the page, and the text contrast guideline with focus on it; a tap, the tap action, Enter, and Space each start the task from rest, which then runs to its end; Tab goes Back, the button, Back, and never to the indicator, which can take no focus, while it runs; the status line a live region with its words at each step; with animations turned off, the indicator exposes the same role, name, and value. `good-linear`: a progress bar named "Report upload", value 0 to 100 at each step, min 0, max 100, and one node with the words. The spinners: no node before and after, while loading named "Loading inbox", no value, `good-circular` a loading spinner and `good-cupertino` no role (FL-255). The colours from the theme as the SDK's defaults use them: the bar on its track 5.00 (light) and 5.46 (dark), on the page 6.12 and 10.90; Cupertino's darkest tick 3.18 and 5.81 on the page, its faintest 1.38 and 1.66 (printed and bounded; section 7). Every example, at 200% text on 320 by 640, at rest, while running, and at the end: no overflow, no text at its line limit or cut short, nothing off the screen. Bad: `bad-no-label`'s bar a progress bar with no name, its words one node with no role, `good-linear`'s named in the same test; `bad-silent-end`'s line "Upload complete" with no live region anywhere on the screen, `good-linear`'s a live region in the same test; `bad-adaptive` as iOS and as macOS a Cupertino spinner with no role, name, or value, and no node named "Loading inbox", `good-circular`'s named as a positive control in the same test, and as Android a named loading spinner; `bad-cupertino-bar` no role, name, value, minimum, or maximum, at rest and while running. Tests run as Android, except where they say iOS or macOS |
-| L3 web | `good-linear`: a `progressbar` element, `aria-label` "Report upload 0", `aria-valuenow` 0, min 0, max 100, no `tabindex`, named "Report upload 0" by Playwright and Chromium's tree, and its words no element of their own; `aria-valuenow` 25, 50, 75, 100 in turn after Enter. Announcements, recorded from before the press: exactly "Upload started", "Half uploaded", "Upload complete", polite, and DOM focus still on the button; the spinners' exactly "Loading started", "Inbox loaded". The spinners: no element before; while loading, `good-circular` an element with no role, `aria-label` "Loading inbox", no value, `good-cupertino` an element with the text "Loading inbox" and no role or label, and no `progressbar` in Chromium's tree; gone at the end. Tab from Back goes to the button and never to the indicator. Bad: `bad-no-label` a `progressbar` named "0", its words an element of their own, `good-linear`'s named; `bad-silent-end` nothing announced and no `aria-live` in the semantics tree, `good-linear`'s end announced by the same recorder; `bad-cupertino-bar` an element with no role, label, value, or text, at rest and while running, and no `progressbar`; `bad-adaptive` with `navigator.platform` set to "MacIntel" before load, an element with nothing and no element named "Loading inbox", and `good-circular` named in the same page; with "Linux x86_64", named. The stops the VoiceOver spec expects above each example's heading are on each screen; the walk judge on made-up walks (as C04's), and on the first recording's bar walks as regression cases: each complete against the lists in both browsers, and the bar read with its value once, as first predicted, wrong |
-| L3 Android | `good-linear`: a `ProgressBar` named "0, Report upload", a float range 0 to 100, current 0, not clickable, and no node with its words; after the click action the range's current 25, 50, 75, 100 in turn, and the name "100, Report upload". The good status lines polite live regions, with their words at each point. The spinners: none before; while loading an `android.view.View` named "Loading inbox" with no range (FL-256); gone at the end. Four Tabs reach the button and never the indicator; Tab to the button and Enter start the upload. Bad: `bad-no-label` a `ProgressBar` named "0", its words a node of their own, `good-linear`'s named; `bad-silent-end` no live region anywhere, `good-linear`'s polite; `bad-adaptive` Material's spinner, named (the defect is not on Android); `bad-cupertino-bar` no `ProgressBar` anywhere, and the bar's node, if there, with no name, text, or range, at rest and while running |
-| L3 iOS | `good-linear`: a static text element labelled "Report upload", value "0", then "25", "50", "75", "100" after a tap; one element with the words. The good status lines' words at each point. The spinners, read from snapshots: none before; while loading a static text element labelled "Loading inbox" with no value, the only element with that label; gone at the end. Two Tabs and Return start the upload (that a Tab reached the button is shown by Return; no modifier keys). Bad: `bad-no-label` an element with no label and the value "0", the words another element, `good-linear`'s labelled; `bad-adaptive` the spinner's node with no label or value and no element labelled "Loading inbox", `good-circular`'s labelled in the same test; `bad-cupertino-bar` the bar's node, if there, with no label or value, at rest and while running |
-| L4 TalkBack | `good-linear`'s and `bad-silent-end`'s bar: "Report upload" and "Progress bar"; `bad-no-label`'s "Progress bar" without "Report upload". Each button its words and "Button". After the click action, with TalkBack focus left on the button, nine seconds: `good-linear`, `bad-no-label`, `bad-cupertino-bar` "Upload started", "Half uploaded", "Upload complete"; the spinners and `bad-adaptive` "Loading started", "Inbox loaded"; `bad-silent-end`, with focus on the button, nothing at all in the nine seconds after the press (a silent row: its marker is logged once the click action has returned), and then, as that row's liveness control, focus moved to the bar, "100" and "Progress bar"; its status line, with focus put on it, "Upload complete"; and again with TalkBack focus on the bar while its value goes 0 to 100: the bar read on the focus, then nothing at all for nine seconds after the press (FL-254), then the status line, "Upload complete", as the control. Each walk is judged whole (`walk_strictly` in `tool/talkback.py`; C26 is in its `STRICT` set): a walk with any wrong reading fails for good, and only a walk shown to be incomplete (an element never focused, nothing spoken for it, or its speech cut off in the log with no forbidden phrase in what was captured) is walked again, up to three walks; the walk that decides is judged on its own, with no element's speech taken from another walk, and every walk is in the transcript. A row declared silent (`SILENT` in `tool/talkback.py`) is right only with nothing spoken in it at all, its capture ended by the next marker, and the row after it, its liveness control, right; any speech in it, a number included, fails for good. The judge is tested on made-up logs in `tool/test_talkback.py` (`StrictWalks`, `SilentRows`) |
-| L4 VoiceOver iOS | Each screen at rest, every utterance after the "Example" heading to its end as a whole list: `good-linear` and `bad-silent-end` "Upload report Button", "Report upload 0", "Not started"; `bad-no-label` "Report upload", "0"; `bad-cupertino-bar` "Report upload", "Not started" with no bar. While each task runs, the cursor on the button and the button pressed with a tap at its place: every expected status phrase heard, in order (for `bad-silent-end`, nothing heard but the button's own utterance, no status phrase and no number, and then two moves forward read its status line, "Upload complete"). While loading, with the cursor left on the button, one move back and three forward 0.8 s after the tap: the heading, the button, then `good-circular` and `good-cupertino` "Loading inbox", `bad-adaptive` "Loading started", the spinner passed over and never read; the fourth move the status line as it is by then, "Loading started" or "Inbox loaded" (section 7) |
-| L4 VoiceOver web | Each screen at rest, walked from Back and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/c26_vo_walks.js`, as C04's), in Chromium and WebKit; no runner retries. Enter on the button with VoiceOver's last phrase polled for eight seconds (Chromium only): the good examples' status phrases, and none of the upload's for `bad-silent-end`, with capture shown live after. The lists (`WALKS` in `c26_vo_walks.js`) are what the first recording read, the same in both browsers: a bar "Report upload 0 0% progress indicator", `bad-no-label`'s "0 0% progress indicator" after "Report upload" (section 7) |
+| L1 widget tests | The good example, and the two spinners for everything but their role, in light and dark: the four guidelines at rest, while running, and at the end; the button's focus outline 2 wide and 3:1 or more on the page, and the text contrast guideline with focus on it; a tap, the tap action, Enter, and Space each start the task from rest, which then runs to its end; Tab goes Back, the button, Back, and never to the indicator, which can take no focus, while it runs; the status line a live region with its words at each step; with animations turned off, the indicator exposes the same role, name, and value. `good-linear`: a progress bar named "Report upload", value 0 to 100 at each step, min 0, max 100, and one node with the words. The spinners: no node before and after, while loading named "Loading inbox", no value, `bad-no-role` the loading spinner role, which no platform turns into a role, and `bad-cupertino-no-role` no role at all (FL-255, FL-256): the defect. The colours from the theme as the SDK's defaults use them: the bar on its track 5.00 (light) and 5.46 (dark), on the page 6.12 and 10.90; Cupertino's darkest tick 3.18 and 5.81 on the page, its faintest 1.38 and 1.66 (printed and bounded; section 7). Every example, at 200% text on 320 by 640, at rest, while running, and at the end: no overflow, no text at its line limit or cut short, nothing off the screen. Bad: `bad-no-label`'s bar a progress bar with no name, its words one node with no role, `good-linear`'s named in the same test; `bad-silent-end`'s line "Upload complete" with no live region anywhere on the screen, `good-linear`'s a live region in the same test; `bad-adaptive` as iOS and as macOS a Cupertino spinner with no role, name, or value, and no node named "Loading inbox", `bad-no-role`'s named as a positive control in the same test, and as Android a named loading spinner; `bad-cupertino-bar` no role, name, value, minimum, or maximum, at rest and while running. Tests run as Android, except where they say iOS or macOS |
+| L3 web | `good-linear`: a `progressbar` element, `aria-label` "Report upload 0", `aria-valuenow` 0, min 0, max 100, no `tabindex`, named "Report upload 0" by Playwright and Chromium's tree, and its words no element of their own; `aria-valuenow` 25, 50, 75, 100 in turn after Enter. Announcements, recorded from before the press: exactly "Upload started", "Half uploaded", "Upload complete", polite, and DOM focus still on the button; the spinners' exactly "Loading started", "Inbox loaded". The spinners: no element before; while loading, `bad-no-role` an element with no role, `aria-label` "Loading inbox", no value, `bad-cupertino-no-role` an element with the text "Loading inbox" and no role or label, and no `progressbar` in Chromium's tree; gone at the end. Tab from Back goes to the button and never to the indicator. Bad: `bad-no-label` a `progressbar` named "0", its words an element of their own, `good-linear`'s named; `bad-silent-end` nothing announced and no `aria-live` in the semantics tree, `good-linear`'s end announced by the same recorder; `bad-cupertino-bar` an element with no role, label, value, or text, at rest and while running, and no `progressbar`; `bad-adaptive` with `navigator.platform` set to "MacIntel" before load, an element with nothing and no element named "Loading inbox", and `bad-no-role` named in the same page; with "Linux x86_64", named. The stops the VoiceOver spec expects above each example's heading are on each screen; the walk judge on made-up walks (as C04's), and on the first recording's bar walks as regression cases: each complete against the lists in both browsers, and the bar read with its value once, as first predicted, wrong |
+| L3 Android | `good-linear`: a `ProgressBar` named "0, Report upload", a float range 0 to 100, current 0, not clickable, and no node with its words; after the click action the range's current 25, 50, 75, 100 in turn, and the name "100, Report upload". The status lines of `good-linear` and the spinners polite live regions, with their words at each point. The spinners: none before; while loading an `android.view.View` named "Loading inbox" with no range (FL-256); gone at the end. Four Tabs reach the button and never the indicator; Tab to the button and Enter start the upload. Bad: `bad-no-label` a `ProgressBar` named "0", its words a node of their own, `good-linear`'s named; `bad-silent-end` no live region anywhere, `good-linear`'s polite; `bad-adaptive` Material's spinner, named (the defect is not on Android); `bad-cupertino-bar` no `ProgressBar` anywhere, and the bar's node, if there, with no name, text, or range, at rest and while running |
+| L3 iOS | `good-linear`: a static text element labelled "Report upload", value "0", then "25", "50", "75", "100" after a tap; one element with the words. The status lines' words at each point, for `good-linear` and the spinners. The spinners, read from snapshots: none before; while loading a static text element labelled "Loading inbox" with no value, the only element with that label; gone at the end. Two Tabs and Return start the upload (that a Tab reached the button is shown by Return; no modifier keys). Bad: `bad-no-label` an element with no label and the value "0", the words another element, `good-linear`'s labelled; `bad-adaptive` the spinner's node with no label or value and no element labelled "Loading inbox", `bad-no-role`'s labelled in the same test; `bad-cupertino-bar` the bar's node, if there, with no label or value, at rest and while running |
+| L4 TalkBack | The spinners' defect: each, pressed again and focused while it is shown, "Loading inbox" with no "Progress bar" and no "Button". `good-linear`'s and `bad-silent-end`'s bar: "Report upload" and "Progress bar"; `bad-no-label`'s "Progress bar" without "Report upload". Each button its words and "Button". After the click action, with TalkBack focus left on the button, nine seconds: `good-linear`, `bad-no-label`, `bad-cupertino-bar` "Upload started", "Half uploaded", "Upload complete"; the spinners and `bad-adaptive` "Loading started", "Inbox loaded"; `bad-silent-end`, with focus on the button, nothing at all in the nine seconds after the press (a silent row: its marker is logged once the click action has returned), and then, as that row's liveness control, focus moved to the bar, "100" and "Progress bar"; its status line, with focus put on it, "Upload complete"; and again with TalkBack focus on the bar while its value goes 0 to 100: the bar read on the focus, then nothing at all for nine seconds after the press (FL-254), then the status line, "Upload complete", as the control. Each walk is judged whole (`walk_strictly` in `tool/talkback.py`; C26 is in its `STRICT` set): a walk with any wrong reading fails for good, and only a walk shown to be incomplete (an element never focused, nothing spoken for it, or its speech cut off in the log with no forbidden phrase in what was captured) is walked again, up to three walks; the walk that decides is judged on its own, with no element's speech taken from another walk, and every walk is in the transcript. A row declared silent (`SILENT` in `tool/talkback.py`) is right only with nothing spoken in it at all, its capture ended by the next marker, and the row after it, its liveness control, right; any speech in it, a number included, fails for good. The judge is tested on made-up logs in `tool/test_talkback.py` (`StrictWalks`, `SilentRows`) |
+| L4 VoiceOver iOS | Each screen at rest, every utterance after the "Example" heading to its end as a whole list: `good-linear` and `bad-silent-end` "Upload report Button", "Report upload 0", "Not started"; `bad-no-label` "Report upload", "0"; `bad-cupertino-bar` "Report upload", "Not started" with no bar. While each task runs, the cursor on the button and the button pressed with a tap at its place: every expected status phrase heard, in order (for `bad-silent-end`, nothing heard but the button's own utterance, no status phrase and no number, and then two moves forward read its status line, "Upload complete"). While loading, with the cursor left on the button, one move back and three forward 0.8 s after the tap: the heading, the button, then `bad-no-role` and `bad-cupertino-no-role` "Loading inbox", `bad-adaptive` "Loading started", the spinner passed over and never read; the fourth move the status line as it is by then, "Loading started" or "Inbox loaded" (section 7) |
+| L4 VoiceOver web | Each screen at rest, walked from Back and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/c26_vo_walks.js`, as C04's), in Chromium and WebKit; no runner retries. Enter on the button with VoiceOver's last phrase polled for eight seconds (Chromium only): `good-linear`'s and the spinners' status phrases, and none of the upload's for `bad-silent-end`, with capture shown live after. The lists (`WALKS` in `c26_vo_walks.js`) are what the first recording read, the same in both browsers: a bar "Report upload 0 0% progress indicator", `bad-no-label`'s "0 0% progress indicator" after "Report upload" (section 7) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -443,19 +475,20 @@ keyboard.
 
 ## 8. Decisions
 
-Awaiting the owner's decision:
+Decided by the owner on 2026-11-23, in answer to the build:
 
-- **No role, no workaround.** A spinner has no role on any platform, and
-  no indicator has one on iOS ([FL-256](../flutter-limitations.md#fl-256)).
-  Under this spec's reading of 4.1.2 (section 3), `good-circular` and
-  `good-cupertino` fail its role everywhere, and `good-linear` on iOS,
-  with no workaround in the SDK. Put to the owner, not answered yet:
-  whether C26 is a `PlatformStatus.limitation` there for the missing role,
-  whether the spinners are still called good, and whether the reading
-  itself (an indicator as a user interface component) stands. Until the
-  owner decides, the catalog says "applies" with a note on each platform,
-  and the examples are kept as built. They are good examples with that
-  qualification, not a recommendation.
+- **Where Flutter gives no role and no documented parameter adds one, the
+  platform is recorded as a limitation, and there is no good example for
+  it** ([FL-256](../flutter-limitations.md#fl-256)). For the bar,
+  `LinearProgressIndicator`, iOS is `PlatformStatus.limitation` (no role
+  there); Android and the web apply. For the spinners,
+  `CircularProgressIndicator` and `CupertinoActivityIndicator`, there is no
+  role on any platform, so there is no good spinner example: the former
+  `good-circular` and `good-cupertino` are now the bad examples
+  `bad-no-role` and `bad-cupertino-no-role` (section 5, which says why
+  that shape was chosen). The reading of section 3, a progress indicator
+  as a user interface component under 4.1.2, stands; the owner did not
+  object to it.
 
 Decided in review by the principal on 2026-11-22, in answer to the build:
 

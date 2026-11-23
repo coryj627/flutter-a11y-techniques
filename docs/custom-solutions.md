@@ -67,7 +67,7 @@ example is added without a decision.
 | [C04 Links inline with text](#c04-links-inline-with-text) | 3 | 3 | 0 | 0 |
 | [C05 Accordion](#c05-accordion) | 3 | 3 | 0 | 0 |
 | [C12 Tooltip](#c12-tooltip) | 3 | 1 | 0 | 2 |
-| [C26 Progress indicator](#c26-progress-indicator) | 3 | 0 | 0 | 3 |
+| [C26 Progress indicator](#c26-progress-indicator) | 1 | 0 | 0 | 1 |
 | [F01 Text fields and labels](#f01-text-fields-and-labels) | 3 | 0 | 0 | 3 |
 | [F02 Input instructions](#f02-input-instructions) | 3 | 0 | 0 | 3 |
 | [F03 Keyboard types](#f03-keyboard-types) | 4 | 0 | 0 | 4 |
@@ -93,7 +93,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 120 | 51 | 12 | 57 |
+| All | 118 | 51 | 12 | 55 |
 
 ## C01 Button
 
@@ -166,9 +166,7 @@ Nothing flagged.
 
 | Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
 | --- | --- | --- | --- | --- | --- |
-| `good-linear` | Nothing: `LinearProgressIndicator(value:, semanticsLabel:)`, the visible words in `ExcludeSemantics`, and the status line in `Semantics(liveRegion: true)` | `LinearProgressIndicator`; `Semantics.liveRegion` | A change of the bar's value is not announced ([FL-254](flutter-limitations.md#fl-254)), filled with the documented live region | R1, R2, R3, R4: iOS Progress Indicators, MDN: progress, ARIA progressbar, Understanding 4.1.3, ARIA25 | not custom |
-| `good-circular` | Nothing: `CircularProgressIndicator(semanticsLabel:)` and the status line in `Semantics(liveRegion: true)` | `CircularProgressIndicator`; `Semantics.liveRegion` | None filled (a spinner has no role, [FL-256](flutter-limitations.md#fl-256), and is left as it is) | R1, R3, R4: iOS Progress Indicators, MDN: progress, ARIA progressbar, Understanding 4.1.3, ARIA25 | not custom |
-| `good-cupertino` | Nothing is built: `Semantics(label:)` round a `CupertinoActivityIndicator`, and the status line in `Semantics(liveRegion: true)` | `CupertinoActivityIndicator`, which has no semantics and no parameter for a name | Cupertino's spinner gives no name ([FL-255](flutter-limitations.md#fl-255)), filled with a label, as the rule above allows for a Cupertino field's missing label | R1, R3, R4: iOS Progress Indicators, MDN: progress, ARIA progressbar, Understanding 4.1.3, ARIA25 | not custom |
+| `good-linear` | Nothing: `LinearProgressIndicator(value:, semanticsLabel:)`, the visible words in `ExcludeSemantics`, and the status line in `Semantics(liveRegion: true)` | `LinearProgressIndicator`; `Semantics.liveRegion` | A change of the bar's value is not announced ([FL-254](flutter-limitations.md#fl-254)), filled with the documented live region | R1, R2, R4, R5: iOS Progress Indicators, MDN: progress, ARIA progressbar, Understanding 4.1.3, ARIA25 | not custom |
 
 ## F01 Text fields and labels
 

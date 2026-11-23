@@ -8,27 +8,29 @@ final c26ProgressIndicator = Technique(
   title: 'Progress indicator',
   group: TechniqueGroup.components,
   summary:
-      'A progress indicator has a name, and a value when how far the task '
-      'has gone is known; how it is going, and that it has finished, are '
-      'announced as status messages. Flutter\'s Material indicators, and '
-      'Cupertino\'s spinner named with a label, with a live region for the '
-      'status.',
+      'A progress bar has a name and its value, and how the task is going, '
+      'and that it has finished, are announced as status messages: '
+      'Material\'s LinearProgressIndicator with a live region for the '
+      'status. Flutter gives a spinner no role on any platform, and no '
+      'indicator a role on iOS, so there is no good spinner example.',
   platforms: const {
     AppPlatform.android: PlatformStatus.applies(
       note:
-          'A spinner has no role (FL-256), and a change of an indicator\'s '
-          'value is not announced (FL-254): a live region tells the status.',
+          'For a bar. A spinner has no role (limitation FL-256), so there is '
+          'no good spinner example. A change of an indicator\'s value is not '
+          'announced (FL-254): a live region tells the status.',
     ),
-    AppPlatform.ios: PlatformStatus.applies(
-      note:
-          'No indicator has a role: each is plain text with a value '
-          '(FL-256). A change of its value is not announced (FL-254). '
-          'CircularProgressIndicator.adaptive drops its label (FL-257).',
+    AppPlatform.ios: PlatformStatus.limitation(
+      'No progress indicator has a role on iOS: a bar and a spinner are '
+      'plain text, read as a name and a value (limitation FL-256). There is '
+      'no workaround. A change of the value is not announced (FL-254); a '
+      'live region tells the status.',
     ),
     AppPlatform.web: PlatformStatus.applies(
       note:
-          'A spinner has no role (FL-256), and a change of an indicator\'s '
-          'value is not announced (FL-254). In a browser on a Mac, '
+          'For a bar. A spinner has no role (limitation FL-256), so there is '
+          'no good spinner example. A change of an indicator\'s value is not '
+          'announced (FL-254). In a browser on a Mac, '
           'CircularProgressIndicator.adaptive drops its label (FL-257).',
     ),
   },
@@ -85,18 +87,6 @@ final c26ProgressIndicator = Technique(
       variant: ExampleVariant.material,
       builder: (_) => const GoodLinear(),
     ),
-    TechniqueExample.good(
-      slug: 'good-circular',
-      title: 'Material spinner',
-      variant: ExampleVariant.material,
-      builder: (_) => const GoodCircular(),
-    ),
-    TechniqueExample.good(
-      slug: 'good-cupertino',
-      title: 'Cupertino spinner',
-      variant: ExampleVariant.cupertino,
-      builder: (_) => const GoodCupertino(),
-    ),
     TechniqueExample.bad(
       slug: 'bad-no-label',
       title: 'Progress bar with no name',
@@ -110,6 +100,24 @@ final c26ProgressIndicator = Technique(
       variant: ExampleVariant.material,
       defect: 'Nothing tells a screen reader that the upload has finished.',
       builder: (_) => const BadSilentEnd(),
+    ),
+    TechniqueExample.bad(
+      slug: 'bad-no-role',
+      title: 'Material spinner',
+      variant: ExampleVariant.material,
+      defect:
+          'A screen reader hears a name and no role: Flutter gives no '
+          'spinner one.',
+      builder: (_) => const BadNoRole(),
+    ),
+    TechniqueExample.bad(
+      slug: 'bad-cupertino-no-role',
+      title: 'Cupertino spinner',
+      variant: ExampleVariant.cupertino,
+      defect:
+          'A screen reader hears a name and no role: Flutter gives no '
+          'spinner one.',
+      builder: (_) => const BadCupertinoNoRole(),
     ),
     TechniqueExample.bad(
       slug: 'bad-adaptive',

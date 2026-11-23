@@ -21,8 +21,8 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
 
   static let titles = [
     "good-linear": "Material progress bar",
-    "good-circular": "Material spinner",
-    "good-cupertino": "Cupertino spinner",
+    "bad-no-role": "Material spinner",
+    "bad-cupertino-no-role": "Cupertino spinner",
     "bad-no-label": "Progress bar with no name",
     "bad-silent-end": "Upload that ends in silence",
     "bad-adaptive": "Adaptive spinner",
@@ -103,8 +103,8 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
     XCTAssertEqual(seen, ["25", "50", "75", "100"])
   }
 
-  func testGoodStatusLinesSayHowItGoesAndThatItEnded() {
-    for slug in ["good-linear", "good-circular", "good-cupertino"] {
+  func testStatusLinesSayHowItGoesAndThatItEnded() {
+    for slug in ["good-linear", "bad-no-role", "bad-cupertino-no-role"] {
       open(slug)
       let upload = slug == "good-linear"
       expectStatus(slug, upload ? "Not started" : "Inbox not loaded")
@@ -120,8 +120,8 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
     }
   }
 
-  func testGoodSpinnersAreThereOnlyWhileLoadingNamedWithNoValue() {
-    for slug in ["good-circular", "good-cupertino"] {
+  func testBadSpinnersAreNamedWithNoValueAndNoRole() {
+    for slug in ["bad-no-role", "bad-cupertino-no-role"] {
       open(slug)
       let id = "c26-\(slug)-spinner"
       XCTAssertNil(seen(id), "\(slug): no spinner before")
@@ -129,7 +129,7 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
       XCTAssertTrue(wait(3) { seen(id) != nil }, "\(slug): spinner shown")
       let spinner = seen(id)
       print("C26IOS \(slug) spinner: \(String(describing: spinner))")
-      // FL-256: plain text, named, with no value.
+      // The defect (FL-256): plain text, named, with no value and no role.
       XCTAssertEqual(spinner, Seen(type: .staticText, label: "Loading inbox", value: ""), slug)
       XCTAssertEqual(snapshotCount(labelled: "Loading inbox"), 1, slug)
       XCTAssertTrue(wait(6) { seen(id) == nil }, "\(slug): spinner gone")
@@ -166,7 +166,7 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
     XCTAssertEqual(element("c26-good-linear-bar").label, "Report upload")
   }
 
-  func testBadAdaptiveExposesNothingWhileGoodCircularIsNamed() {
+  func testBadAdaptiveExposesNothingWhileBadNoRoleIsNamed() {
     open("bad-adaptive")
     start("bad-adaptive").tap()
     expectStatus("bad-adaptive", "Loading started", within: 1.5)
@@ -179,11 +179,11 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
     XCTAssertEqual(spinner?.label ?? "", "")
     XCTAssertEqual(spinner?.value ?? "", "")
     XCTAssertEqual(snapshotCount(labelled: "Loading inbox"), 0)
-    // Positive control, the same reading in the same launch: good-circular.
-    open("good-circular")
-    start("good-circular").tap()
-    XCTAssertTrue(wait(3) { seen("c26-good-circular-spinner") != nil })
-    XCTAssertEqual(seen("c26-good-circular-spinner")?.label, "Loading inbox")
+    // Positive control, the same reading in the same launch: bad-no-role.
+    open("bad-no-role")
+    start("bad-no-role").tap()
+    XCTAssertTrue(wait(3) { seen("c26-bad-no-role-spinner") != nil })
+    XCTAssertEqual(seen("c26-bad-no-role-spinner")?.label, "Loading inbox")
     XCTAssertEqual(snapshotCount(labelled: "Loading inbox"), 1)
   }
 
@@ -223,8 +223,8 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
   // named spinner is its name; an indicator with nothing is passed over.
   static let walks: [String: [String]] = [
     "good-linear": ["Upload report Button", "Report upload 0", "Not started"],
-    "good-circular": ["Load inbox Button", "Inbox not loaded"],
-    "good-cupertino": ["Load inbox Button", "Inbox not loaded"],
+    "bad-no-role": ["Load inbox Button", "Inbox not loaded"],
+    "bad-cupertino-no-role": ["Load inbox Button", "Inbox not loaded"],
     // The bar is named by nothing: its value alone.
     "bad-no-label": ["Upload report Button", "Report upload", "0", "Not started"],
     "bad-silent-end": ["Upload report Button", "Report upload 0", "Not started"],
@@ -236,8 +236,8 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
   /// What must be heard, in order, while each task runs.
   static let heard: [String: [String]] = [
     "good-linear": ["Upload started", "Half uploaded", "Upload complete"],
-    "good-circular": ["Loading started", "Inbox loaded"],
-    "good-cupertino": ["Loading started", "Inbox loaded"],
+    "bad-no-role": ["Loading started", "Inbox loaded"],
+    "bad-cupertino-no-role": ["Loading started", "Inbox loaded"],
     "bad-adaptive": ["Loading started", "Inbox loaded"],
     "bad-cupertino-bar": ["Upload started", "Half uploaded", "Upload complete"],
   ]
@@ -248,20 +248,20 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
   /// a name, or the status line where it has none. The fourth is checked
   /// apart (testVoiceOverSpeech).
   static let loading: [String: [String]] = [
-    "good-circular": ["Example Heading", "Load inbox Button", "Loading inbox", "Loading started"],
-    "good-cupertino": ["Example Heading", "Load inbox Button", "Loading inbox", "Loading started"],
+    "bad-no-role": ["Example Heading", "Load inbox Button", "Loading inbox", "Loading started"],
+    "bad-cupertino-no-role": ["Example Heading", "Load inbox Button", "Loading inbox", "Loading started"],
     // FL-257: the spinner is passed over.
     "bad-adaptive": ["Example Heading", "Load inbox Button", "Loading started", "Loading started"],
   ]
 
   static let action = [
-    "good-linear": "Upload report", "good-circular": "Load inbox", "good-cupertino": "Load inbox",
+    "good-linear": "Upload report", "bad-no-role": "Load inbox", "bad-cupertino-no-role": "Load inbox",
     "bad-no-label": "Upload report", "bad-silent-end": "Upload report", "bad-adaptive": "Load inbox",
     "bad-cupertino-bar": "Upload report",
   ]
 
   static let end = [
-    "good-linear": "Upload complete", "good-circular": "Inbox loaded", "good-cupertino": "Inbox loaded",
+    "good-linear": "Upload complete", "bad-no-role": "Inbox loaded", "bad-cupertino-no-role": "Inbox loaded",
     "bad-no-label": "Upload complete", "bad-silent-end": "Upload complete", "bad-adaptive": "Inbox loaded",
     "bad-cupertino-bar": "Upload complete",
   ]

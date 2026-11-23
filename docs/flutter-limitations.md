@@ -3397,7 +3397,7 @@ yet), **Fixed in x.y** (verified on that version).
   a screen reader through a separate live region. Whether a native
   Android `ProgressBar` or a UIKit progress view announces its changes
   was not measured.
-- Workaround, used by C26's good examples: a line of text that says how
+- Workaround, used by C26's good example and its spinners: a line of text that says how
   the task is going and that it has ended, in `Semantics(liveRegion:
   true)`; it was announced on all three platforms (the probe's p18, p21,
   p22). A live region round the indicator itself (p21) is announced when
@@ -3433,7 +3433,7 @@ yet), **Fixed in x.y** (verified on that version).
 - What users get: a spinner or a progress bar that a screen reader does
   not find, with its value lost for the bar.
 - Workaround: for a spinner, `Semantics(label:)` round it (the probe's
-  p14; C26 `good-cupertino`) gives a name, read as plain text on every
+  p14; C26 `bad-cupertino-no-role`) gives a name, read as plain text on every
   platform, which is all Material's spinner gives too
   ([FL-256](#fl-256)). For the bar, none that this project counts as not
   hand-built: a value with `Semantics(value:)` on a drawing was judged
@@ -3476,8 +3476,18 @@ yet), **Fixed in x.y** (verified on that version).
   spinner. On the web, an HTML `progress` element embedded with
   `HtmlElementView` might carry the role (D31, D32); not tried.
 - How to read this entry: a role Flutter has not added yet on these
-  platforms. C26's good examples name their indicators, and tell their
-  status with a live region, and are good with this qualification.
+  platforms. By the owner's decision of 2026-11-23, a platform where
+  Flutter gives no role and no documented parameter adds one is a
+  limitation, with no good example for it: C26 records iOS as
+  `PlatformStatus.limitation` for its bar, and has no good spinner
+  example on any platform. Its spinners, Material's and Cupertino's, are
+  bad examples of this entry (`bad-no-role`, `bad-cupertino-no-role`),
+  asserted on every layer and written to fail when Flutter adds the role:
+  the tree tests (no role on the web, a plain `View` on Android, static
+  text on iOS), the TalkBack transcript (the spinner read by its name with
+  no role word), and the iOS VoiceOver transcript ("Loading inbox" alone).
+  The spinners' measurements in the C26 probe (p05, p08, p14, p20 to p22)
+  are this entry's evidence as well.
 - Upstream issue: not searched yet (D25).
 
 ## FL-257
@@ -3501,7 +3511,8 @@ yet), **Fixed in x.y** (verified on that version).
   Mac.
 - Workaround: use `CircularProgressIndicator` (not adaptive), or name a
   `CupertinoActivityIndicator` with `Semantics(label:)` as C26
-  `good-cupertino` does. Asserted by C26 `bad-adaptive` on every layer,
+  `bad-cupertino-no-role` does, which gives a name but no role
+  ([FL-256](#fl-256)). Asserted by C26 `bad-adaptive` on every layer,
   with a named spinner as the positive control in the same launch.
 - Upstream issue: not searched yet (D25).
 

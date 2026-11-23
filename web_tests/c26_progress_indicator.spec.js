@@ -22,8 +22,8 @@ const BAR = {
   'bad-cupertino-bar': 'c26-bad-cupertino-bar-bar',
 };
 const SPINNER = {
-  'good-circular': 'c26-good-circular-spinner',
-  'good-cupertino': 'c26-good-cupertino-spinner',
+  'bad-no-role': 'c26-bad-no-role-spinner',
+  'bad-cupertino-no-role': 'c26-bad-cupertino-no-role-spinner',
   'bad-adaptive': 'c26-bad-adaptive-spinner',
 };
 const UPLOAD = ['Not started', 'Upload started', 'Half uploaded', 'Upload complete'];
@@ -107,7 +107,7 @@ test.describe('good-linear', () => {
   });
 });
 
-for (const slug of ['good-circular', 'good-cupertino']) {
+for (const slug of ['bad-no-role', 'bad-cupertino-no-role']) {
   test.describe(slug, () => {
     test('the spinner is there only while loading, named "Loading inbox", with no role and no value', async ({ page, context }) => {
       await open(page, slug);
@@ -115,7 +115,7 @@ for (const slug of ['good-circular', 'good-cupertino']) {
       await expect(spinner).toHaveCount(0);
       await openAndStart(page, slug);
       await expect(spinner).toHaveCount(1, { timeout: 3000 });
-      if (slug === 'good-circular') {
+      if (slug === 'bad-no-role') {
         // Material's spinner: a plain element named by aria-label (FL-256).
         expect(await exposed(page, context, spinner)).toEqual({
           role: null, label: 'Loading inbox', now: null, min: null, max: null, text: null, tabindex: null,
@@ -143,7 +143,7 @@ for (const slug of ['good-circular', 'good-cupertino']) {
   });
 }
 
-for (const slug of ['good-linear', 'good-circular', 'good-cupertino']) {
+for (const slug of ['good-linear', 'bad-no-role', 'bad-cupertino-no-role']) {
   test(`${slug}: Tab goes Back, the button, and out of the view; never to the indicator, while it runs too`, async ({ page }) => {
     await openAndStart(page, slug);
     await page.waitForTimeout(1200);
@@ -225,7 +225,7 @@ async function asPlatform(page, platform) {
 }
 
 test.describe('bad-adaptive', () => {
-  test('in a browser on a Mac the spinner exposes nothing; good-circular in the same page is named', async ({ page, context }) => {
+  test('in a browser on a Mac the spinner exposes nothing; bad-no-role in the same page is named', async ({ page, context }) => {
     await page.goto('about:blank');
     await asPlatform(page, 'MacIntel');
     await openAndStart(page, 'bad-adaptive');
@@ -237,8 +237,8 @@ test.describe('bad-adaptive', () => {
     });
     await expect(spinner).toHaveText('');
     await expect(page.locator('flt-semantics-host [aria-label="Loading inbox"]')).toHaveCount(0);
-    await openAndStart(page, 'good-circular');
-    await expect(byId(page, SPINNER['good-circular'])).toHaveAccessibleName('Loading inbox', { timeout: 3000 });
+    await openAndStart(page, 'bad-no-role');
+    await expect(byId(page, SPINNER['bad-no-role'])).toHaveAccessibleName('Loading inbox', { timeout: 3000 });
   });
 
   test('in a browser on Linux the spinner is Material\'s, named', async ({ page }) => {

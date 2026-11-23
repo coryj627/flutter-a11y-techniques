@@ -86,8 +86,8 @@ class C26ProgressIndicatorTest : TechniqueTest("C26") {
     }
 
     @Test
-    fun goodStatusLinesArePoliteLiveRegionsThatSayHowItGoesAndThatItEnded() {
-        for (slug in listOf("good-linear", "good-circular", "good-cupertino")) {
+    fun statusLinesArePoliteLiveRegionsThatSayHowItGoesAndThatItEnded() {
+        for (slug in listOf("good-linear", "bad-no-role", "bad-cupertino-no-role")) {
             open(slug)
             assertEquals("$slug live region", View.ACCESSIBILITY_LIVE_REGION_POLITE, node(status(slug)).liveRegion)
             val upload = slug == "good-linear"
@@ -106,8 +106,8 @@ class C26ProgressIndicatorTest : TechniqueTest("C26") {
     }
 
     @Test
-    fun goodSpinnersAreThereOnlyWhileLoadingNamedWithNoRange() {
-        for (slug in listOf("good-circular", "good-cupertino")) {
+    fun badSpinnersAreNamedWithNoRangeAndNoRole() {
+        for (slug in listOf("bad-no-role", "bad-cupertino-no-role")) {
             open(slug)
             val id = "c26-$slug-spinner"
             assertNull("$slug: no spinner before", nodeOrNull(id))
@@ -125,7 +125,7 @@ class C26ProgressIndicatorTest : TechniqueTest("C26") {
 
     @Test
     fun tabReachesTheButtonAndNeverTheIndicator() {
-        for (slug in listOf("good-linear", "good-circular", "good-cupertino")) {
+        for (slug in listOf("good-linear", "bad-no-role", "bad-cupertino-no-role")) {
             open(slug)
             press(slug)
             Thread.sleep(1_200)
@@ -265,6 +265,14 @@ class C26ProgressIndicatorTest : TechniqueTest("C26") {
                 // region's changes behind time (the probe's p18, where its
                 // speech ran into the next marker), so the capture runs on.
                 Thread.sleep(9_000)
+                if (slug in listOf("bad-no-role", "bad-cupertino-no-role")) {
+                    // The defect: the spinner, focused while it is shown,
+                    // is read by its name and no role (FL-256). It is
+                    // shown for four seconds after the press.
+                    press(slug)
+                    Thread.sleep(800)
+                    focus("c26-$slug-spinner", "c26-$slug-spinner", 2_500)
+                }
             }
             Log.i(talkBackTag, "END $slug")
         }
@@ -273,8 +281,8 @@ class C26ProgressIndicatorTest : TechniqueTest("C26") {
 
 private val c26Titles = mapOf(
     "good-linear" to "Material progress bar",
-    "good-circular" to "Material spinner",
-    "good-cupertino" to "Cupertino spinner",
+    "bad-no-role" to "Material spinner",
+    "bad-cupertino-no-role" to "Cupertino spinner",
     "bad-no-label" to "Progress bar with no name",
     "bad-silent-end" to "Upload that ends in silence",
     "bad-adaptive" to "Adaptive spinner",

@@ -24,10 +24,15 @@ TALKBACK_EXPECT = {
     "c26-good-linear-start": (["Upload report", "Button"], []),
     # The status line, a live region, at the start, halfway, and the end.
     "c26-good-linear-run": (_UPLOAD, []),
-    "c26-good-circular-start": (["Load inbox", "Button"], []),
-    "c26-good-circular-run": (_LOAD, []),
-    "c26-good-cupertino-start": (["Load inbox", "Button"], []),
-    "c26-good-cupertino-run": (_LOAD, []),
+    "c26-bad-no-role-start": (["Load inbox", "Button"], []),
+    "c26-bad-no-role-run": (_LOAD, []),
+    "c26-bad-cupertino-no-role-start": (["Load inbox", "Button"], []),
+    "c26-bad-cupertino-no-role-run": (_LOAD, []),
+    # The spinners' defect (FL-256): focused while shown, read by the name
+    # alone, with no role word. "Button" is a whole sentence in said(); a
+    # progress bar's role word is "Progress bar".
+    "c26-bad-no-role-spinner": (["Loading inbox"], ["Progress bar", "Button"]),
+    "c26-bad-cupertino-no-role-spinner": (["Loading inbox"], ["Progress bar", "Button"]),
     # The bar's value and role, with no name.
     "c26-bad-no-label-bar": (["Progress bar"], ["Report upload"]),
     "c26-bad-no-label-start": (["Upload report", "Button"], []),
@@ -62,7 +67,9 @@ TALKBACK_EXPECT = {
 TALKBACK_METHOD = (
     "TalkBack focus moved to the example's bar, where it has one at rest (`-bar`), then to its "
     "button (`-start`); the button pressed with ACTION_CLICK with TalkBack focus left on it, and "
-    "everything TalkBack said for nine seconds, the task taking four (`-run`). For "
+    "everything TalkBack said for nine seconds, the task taking four (`-run`). For the spinners, "
+    "the button is then pressed again and TalkBack focus moved to the spinner while it is shown "
+    "(`-spinner`). For "
     "`bad-silent-end` the `-run` marker is logged after the click action has returned and must "
     "be silent: nothing at all may be spoken in it; the row after it is its liveness control, "
     "focus moved to the bar (`-run-live`); then the status line (`-status`); then focus on the "
