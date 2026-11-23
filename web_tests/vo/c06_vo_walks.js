@@ -59,7 +59,7 @@ export const screenStops = (slug) => {
  *   its place. Only such a walk may be walked again.
  *
  * There is no exception for an empty first stop: as in C04, an empty
- * phrase anywhere is a wrong stop. C06's walks have not been recorded yet.
+ * phrase anywhere is a wrong stop.
  */
 export function judgeExampleWalk(stops, reachedEnd, expected, screen = []) {
   const whole = [...screen, EXAMPLE_HEADING, ...expected];

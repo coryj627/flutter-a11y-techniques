@@ -33,7 +33,8 @@ const COUNT = 'Presses: 0';
 // readings are written after C05's recorded readings of the same widgets
 // (docs/evidence/C05/voiceover-web.md: "Shipping Collapsed double tap to
 // expand button", and open, the Cupertino tile's header and panel text
-// read as one button). C06's own have not been recorded yet.
+// read as one button). C06's first recording heard every one of them, in
+// Chromium and WebKit (docs/evidence/C06/voiceover-web.md).
 const CLOSED_TILE = `${TITLE} Collapsed double tap to expand button`;
 const OPEN_TILE = `${TITLE} Expanded double tap to collapse button`;
 

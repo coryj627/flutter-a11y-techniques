@@ -183,7 +183,7 @@ container rests on where its edge is taken to be, and C06's criterion is
 | L3 iOS | `good-material`: a button "Details" with no value, the only button but Back, no panel while closed; a tap opens it, the panel's text and button below it on screen, still no value, and a second tap closes it; two Tabs and Enter, and in another launch Space, open it and the same key again closes it, staying on the example; once open, one Tab and Enter press the panel's button (the count). `bad-expansion-tile`: not a button, no value, no button but Back, opened by a tap. `bad-expand-icon`: a button with no value; a tap at its middle opens nothing and a tap at its icon, in the same launch, opens it, still with no value. `bad-cupertino-expansion-tile`: not a button, no value, opened by a tap, after which one element, not a button and with no value, has a label that starts with "Details" and holds the panel's text; one, two, and three Tabs and then Enter or Space, each from a fresh launch, never open it and take the example off the screen (Back acted) |
 | L4 TalkBack | For each example: what is said with focus on the control, closed; on the click action with focus left there (not for `bad-expand-icon` and `bad-cupertino-expansion-tile`, see section 7); with focus on the panel's text (on Back for `bad-cupertino-expansion-tile`, whose open panel is part of its control); and on the control again, open. Judged whole (`STRICT` in `tool/talkback.py`) |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list, closed, and again after XCUITest's double tap at the control, with VoiceOver on, has opened it; what VoiceOver says with its cursor on the control, and in the four seconds after that gesture. The gesture is a tap at the control's place, not VoiceOver's activation, which XCUIVoiceOverService has no way to make (C04 probe round 3) |
-| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C05's walks are (`judgeExampleWalk` in `web_tests/vo/c06_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened it, in Chromium and WebKit |
+| L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C05's walks are (`judgeExampleWalk` in `web_tests/vo/c06_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened it, in Chromium and WebKit. The first recording (`docs/evidence/C06/voiceover-web.md`) passed: every walk complete and as expected on its first walk, in both browsers, with the same readings in each |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -228,7 +228,14 @@ single disclosure needs that C05's probe had not.
   text are one utterance longer than the 64 characters
   `XCUIVoiceOverService` returns, and it was cut ("… Expanded double tap
   to collaps"), as C05 found for the same tile. The expectation is now that
-  cut reading; the transcript is from the second run.
+  cut reading; the transcript is from the second run. VoiceOver on macOS
+  (`docs/evidence/C06/voiceover-web.md`) passed on its first recording,
+  every walk complete on its first try, with the same readings in Chromium
+  and WebKit: `good-material` and `bad-expansion-tile` "Details Collapsed
+  double tap to expand button", then "Details Expanded double tap to
+  collapse button"; `bad-expand-icon` "Details button", closed and open;
+  the open Cupertino tile "Details Orders ship in two days. Expanded double
+  tap to collapse button".
 - **The focus indicator is the SDK's tint**: `ListTile`'s on
   `good-material` and `bad-expansion-tile`, `IconButton`'s on
   `bad-expand-icon`, none of it 3:1 against what was there (FL-430).
