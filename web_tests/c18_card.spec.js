@@ -153,6 +153,20 @@ test.describe('bad examples have their defect', () => {
     await expectCounts(page, 'bad-default-container', { saves: 1 });
   });
 
+  for (const key of ['Enter', 'Space']) {
+    test(`bad-default-container: Tab reaches the button inside the heading, and ${key} activates it`, async ({ page }) => {
+      // VoiceOver's next did not stop on this button (round 1); the
+      // keyboard, with no screen reader, does.
+      await open(page, 'bad-default-container');
+      const save = byId(page, 'c18-bad-default-container-save');
+      expect(await tabTo(page, save), 'Tab reaches the button').toBe(true);
+      await expect(save).toHaveRole('button');
+      await expect(save).toHaveAccessibleName(`Save ${TRAIL}`);
+      await page.keyboard.press(key);
+      await expectCounts(page, 'bad-default-container', { saves: 1 });
+    });
+  }
+
   test('bad-heading-button: the card is a level 3 heading and not a button (FL-268)', async ({ page }) => {
     await open(page, 'bad-heading-button');
     const card = byId(page, 'c18-bad-heading-button-card');
@@ -297,6 +311,18 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
 
   test('a bad example\'s own stops include its defect', () => {
     expect(screenStops('bad-read-more').at(-1)).toMatch(/^Defect: /);
+  });
+
+  test('bad-default-container: the measured walk is complete, and a stop on the button is wrong', () => {
+    // The expected list of web_tests/vo/c18_card_vo.spec.js, from round 1
+    // (docs/evidence/probes/c18/voiceover-web-round1-fail.md.txt).
+    const measured = [`heading level 3 ${CARD}`, 'Saves: 0'];
+    const ownStops = screenStops('bad-default-container');
+    const walk = (...content) => [...ownStops, EXAMPLE_HEADING, ...content];
+    expect(judgeExampleWalk(walk(...measured), true, measured, ownStops).verdict).toBe('complete');
+    expect(judgeExampleWalk(walk(measured[0], `Save ${TRAIL} button`, 'Saves: 0'), true, measured, ownStops).verdict)
+      .toBe('wrong');
+    expect(judgeExampleWalk(walk(measured[0]), true, measured, ownStops).verdict).toBe('wrong');
   });
 
   test('no screen has a custom solution note', () => {

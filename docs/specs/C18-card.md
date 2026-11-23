@@ -161,17 +161,35 @@ or a text alternative given by documented properties.
 | `bad-default-container` | `Card` left at `semanticContainer: true`, its default: the heading and the text are one node, a level 3 heading, and on the web an `<h3>` that holds the card's button too ([FL-269](../flutter-limitations.md#fl-269)) | R1, R2 |
 | `bad-heading-button` | The title of `good-tappable` marked as a heading: the card's one node is a heading and a button, and on the web only a heading ([FL-268](../flutter-limitations.md#fl-268)) | R7 |
 | `bad-ink-well` | The tappable card of the `Card` documentation: an `InkWell` round the title and the text, with no button role on Android and iOS ([FL-401](../flutter-limitations.md#fl-401)) | R6 |
-| `bad-read-more` | A link named "Read more" under the card's heading, built as C03's links are; the heading that says what it reads more of is not related to it | R8 |
+| `bad-read-more` | A link named "Read more" under the card's heading; the heading that says what it reads more of is not related to it. The link itself is C03's custom build (FL-221), and is not what is shown | R8 |
 
 What each fails, by platform, as the criteria are written (section 7 has
 the measurements):
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `bad-default-container` | 1.3.1: one heading node named by the heading and the text, the button its child | 1.3.1: one element named by the heading and the text, read as one heading | 1.3.1: one `<h3>` named by the heading and the text, holding the button |
+| `bad-default-container` | 1.3.1: one heading node named by the heading and the text, the button its child | 1.3.1: one element named by the heading and the text, read as one heading | 1.3.1: one `<h3>` named by the heading and the text, holding the button; VoiceOver's next did not stop on the button, which Tab reaches (below) |
 | `bad-heading-button` | none: a `Button` that is also a heading, as the iOS reference builds a combined card | none: a button that VoiceOver reads as a button and a heading | 4.1.2: an `<h3>` with no button role; a DOM click on it runs nothing, though a mouse click and Enter do |
 | `bad-ink-well` | 4.1.2: an `android.view.View`, clickable, with no button role ([FL-401](../flutter-limitations.md#fl-401)) | 4.1.2: static text, read by VoiceOver as its text alone ([FL-401](../flutter-limitations.md#fl-401)) | none: a button, as any tappable node is ([FL-006](../flutter-limitations.md#fl-006)) |
 | `bad-read-more` | 2.4.4 (F63): a link named "Read more", a sibling of the heading's node with nothing relating them | 2.4.4 (F63): a link named "Read more", read as "Read more Link", the heading an element of its own | 2.4.4 (F63): `<a href>` named "Read more", outside the heading and the paragraph, with no `aria-label`, `aria-labelledby`, or `aria-describedby` |
+
+On the web, VoiceOver did not stop on `bad-default-container`'s button.
+In the first web VoiceOver recording
+(`docs/evidence/probes/c18/voiceover-web-round1-fail.md.txt`), in Chromium
+and in WebKit alike, `voiceOver.next()` went from "heading level 3 Ridge
+trail A 6 km climb with a view." straight to "Saves: 0": the "Save Ridge
+trail" button inside the `<h3>` was not a stop, although Chromium's tree
+has it as a button inside the heading (the web tree test). Only VoiceOver's
+next was tried; Tab with VoiceOver on, VoiceOver's rotor or other
+navigation, and activating the button with VoiceOver were not. Why it was
+passed over was not found. Without a screen reader the keyboard reaches
+it: Tab stops on it and Enter and Space activate it (the web tree test;
+also probe p01). This changes no verdict: the example already fails 1.3.1
+on the web, and the button keeps its role and name in the tree and is
+reached by the keyboard, so no 2.1.1 or 4.1.2 failure is claimed from a
+skip measured with one navigation command. It is recorded in
+[FL-269](../flutter-limitations.md#fl-269). The VoiceOver spec now expects
+the measured stops, the heading and then the count.
 
 `bad-heading-button` on Android and iOS is a heading and a button at once:
 that is the combined card of the iOS reference ("retains its child heading
@@ -183,17 +201,33 @@ round a card: round `good-material`'s card it would make the whole card one
 button with the heading's level, on the web a heading (probe fixture p18).
 The headings and texts are found by their text.
 
+### Decisions
+
+Made by the principal on 2026-11-22, on the engineer's questions:
+
+1. No good link example is added. A Flutter link is built by hand
+   ([FL-221](../flutter-limitations.md#fl-221)), and the rule is not to
+   invent a mechanism. The gap is recorded: 2.4.4's passing case, a link in
+   a card that names its subject or a card that is one link, has no good
+   example here, because Flutter gives no link to build it from.
+2. `bad-read-more` on C03's hand-built link stands as a bad example. The
+   link itself is C03's custom build and is not what is being shown; the
+   defect shown is the name "Read more" with its context in a heading that
+   nothing relates to it.
+3. `good-cupertino` stays with no action.
+4. No list-of-cards example; a list of cards is measured in the probe only.
+
 ## 6. Assertions by layer
 
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Every example: at 200% text on a 320 by 640 screen, no layout overflow, no text that hits its line limit, none taller than its box, none past the screen's edge. Good, in light and dark: the four guidelines, and the text contrast guideline again with keyboard focus on each control. `good-material`: the card's nodes, in traversal order, are exactly the heading (level 3, nothing else), the text, the picture (image), "Save Ridge trail" and "Share Ridge trail" (buttons with a tap action); Tab goes Back, Save, Share; each button's style draws a 2 pixel outline in the text colour, 3:1 or more against the card, only for the focused state. `good-tappable`: exactly one node, a button named "Ridge trail\nA 6 km climb with a view.", no heading level and no header flag; its focus tint inside the card is under 3:1 and over 1:1 (FL-434: 1.32:1 in light, 1.44:1 in dark), written to fail if it reaches 3:1. `good-cupertino`: exactly the heading, the text, and the picture, and no control. For each control: a tap, and the tap action, each add one to its own count and to no other; Tab to it, then Enter, and then Space (each from a fresh open), do the same. Bad: `bad-default-container` one node named by the heading and the text with level 3, the button inside it, and the button still working; `bad-heading-button` one node with level 3, the button flag, and a tap action that works; `bad-ink-well` one node with a tap action and no button or link flag, reached by Tab and activated by Enter; `bad-read-more` the heading, the text, and a link "Read more" with its address, nothing in its label, hint, value, or tooltip naming the trail, and a tap that opens the technique's page. The tests run as Android, so the web engine's choice of role (FL-268) is not seen here |
-| L3 web | Good: the example's elements in the page's order from Chromium's tree (the ARIA snapshot between the "Example" heading and the first count): `good-material` exactly a level 3 heading "Ridge trail", the text, the image, and the two buttons, with nothing inside the heading; three buttons (Back included) and no link; `good-tappable` exactly one button named by the title and the text, and no level 3 heading; `good-cupertino` the heading, the text, the image, and no button but Back. Tab goes Back, Save, Share. For each control: a click, a DOM click with no pointer events, and Tab then Enter, then Space (each from a fresh load) add one to its own count and to no other. Bad: `bad-default-container` one level 3 heading named by the heading and the text, holding the button, no heading "Ridge trail" alone, and the button working; `bad-heading-button` an `<h3>` with the card's identifier, named by the title and the text, no button but Back; a mouse click and Tab then Enter open it (positive controls), and a DOM click on it does nothing, with a mouse click on it and a DOM click on Back in the same load as positive controls; `bad-ink-well` a button (FL-006) that Tab and Enter open; `bad-read-more` the heading, the text, and a link "Read more" to `#/t/C18`, with no description and no `aria-label`, `aria-labelledby`, or `aria-describedby`, outside the heading; Tab and Enter follow it. The VoiceOver judge (`web_tests/vo/c18_vo_walks.js`) is tested on made-up walks, and each screen is checked to show the title and lines the judge expects above its heading |
+| L3 web | Good: the example's elements in the page's order from Chromium's tree (the ARIA snapshot between the "Example" heading and the first count): `good-material` exactly a level 3 heading "Ridge trail", the text, the image, and the two buttons, with nothing inside the heading; three buttons (Back included) and no link; `good-tappable` exactly one button named by the title and the text, and no level 3 heading; `good-cupertino` the heading, the text, the image, and no button but Back. Tab goes Back, Save, Share. For each control: a click, a DOM click with no pointer events, and Tab then Enter, then Space (each from a fresh load) add one to its own count and to no other. Bad: `bad-default-container` one level 3 heading named by the heading and the text, holding the button, no heading "Ridge trail" alone, and the button working by a click, and by Tab then Enter, and Tab then Space (each from a fresh load), with its role and name; `bad-heading-button` an `<h3>` with the card's identifier, named by the title and the text, no button but Back; a mouse click and Tab then Enter open it (positive controls), and a DOM click on it does nothing, with a mouse click on it and a DOM click on Back in the same load as positive controls; `bad-ink-well` a button (FL-006) that Tab and Enter open; `bad-read-more` the heading, the text, and a link "Read more" to `#/t/C18`, with no description and no `aria-label`, `aria-labelledby`, or `aria-describedby`, outside the heading; Tab and Enter follow it. The VoiceOver judge (`web_tests/vo/c18_vo_walks.js`) is tested on made-up walks, and each screen is checked to show the title and lines the judge expects above its heading |
 | L3 Android | The example's named nodes between the "Example" heading and its first count, in the tree's order (scrolling a step at a time where the card's end is below the view, each node kept once): `good-material` exactly a heading `View` "Ridge trail", a `View` with the text, an `ImageView` with the picture's name, and two clickable `Button`s, "Save Ridge trail" and "Share Ridge trail"; `good-tappable` exactly one clickable `Button` named "Ridge trail\nA 6 km climb with a view.", not a heading; `good-cupertino` the heading, the text, and the picture, and no clickable node but Back. For each control, from a fresh launch each: `ACTION_CLICK` (what TalkBack's double tap performs), a tap at its centre, and Tab then Enter each add one to its own count and to no other. Bad: `bad-default-container` one heading `View` named by the title and the text, whose one child is the button, no node named by the title alone, and the button's click action working; `bad-heading-button` a `Button` that is a heading, named by the title and the text, whose click action works; `bad-ink-well` an `android.view.View`, clickable, named by the title and the text, whose click action, and Tab then Enter, work; `bad-read-more` the heading, the text, and a clickable `View` "Read more" with the address `#/t/C18` in a `URLSpan`, with nothing in its name, hint, or state naming the trail, neither it nor the heading holding the other, and a click action that opens the technique's page. Run once at CI's 320 by 640 at 160 dpi as well |
 | L3 iOS | `good-material`: the heading and the text are elements of their own (no element holds the text but its own), the picture an image, and the only buttons but Back are "Save Ridge trail" and "Share Ridge trail"; `good-tappable` one button named "Ridge trail\nA 6 km climb with a view.", the only button but Back; `good-cupertino` the heading, the text, the picture, and no button but Back. For each control a tap adds one to its own count and to no other; two Tabs then Enter, and then Space, add one to the first control's count, and three Tabs to the second's, each key sent once from a fresh launch (XCUITest cannot see Flutter's focus; the probe found the first Tab on Back). Bad: `bad-default-container` no element named by the title alone or the text alone, one named by both, and the button working; `bad-heading-button` a button named by the title and the text, whose tap works; `bad-ink-well` not a button, named by the title and the text, no button but Back, a tap working; `bad-read-more` a link named "Read more", without the trail, the heading an element of its own, and a tap opening the technique's page. XCUITest cannot read traits: headings are checked in the VoiceOver walk |
 | L4 TalkBack | What is read with focus moved to each part of each card: each heading with "Heading" and without the text; the text alone; the picture with "Image"; each button with its whole name and "Button"; `good-tappable` its title, its text, and "Button", and no "Heading"; `bad-default-container` the title and the text with "Heading"; `bad-heading-button` both "Heading" and "Button"; `bad-ink-well` its text and "Double-tap to activate" and no "Button"; `bad-read-more`'s link "Read more" and "Double-tap to open link", without the trail. The usage hint is not required on a button (probe p05) |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk, `C03Walk`): `good-material` "Ridge trail Heading", the text, "Sunrise over the valley Image", "Save Ridge trail Button", "Share Ridge trail Button", and the two counts; `good-tappable` the title and the text with "Button", and the count; `good-cupertino` the heading, the text, the picture; `bad-default-container` the title and the text with "Heading", then the button and the count; `bad-heading-button` the title and the text with "Button Heading"; `bad-ink-well` the title and the text with no trait; `bad-read-more` the heading, the text, "Read more Link". Every utterance here is under the service's 64 characters |
-| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/c18_vo_walks.js`, a copy of C04's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen, the counts included. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short before the end with every stop right so far is walked again, up to three walks, and every walk is logged in the transcript. No runner retries. In Chromium and WebKit. The expected phrases were written from Chromium's tree and earlier transcripts' wording before any C18 recording, and are not yet measured |
+| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/c18_vo_walks.js`, a copy of C04's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen, the counts included. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short before the end with every stop right so far is walked again, up to three walks, and every walk is logged in the transcript. No runner retries. In Chromium and WebKit. The expected phrases were written before any C18 recording; in the first recording every walk matched them but `bad-default-container`'s, in both browsers, whose list is now the measured stops (the heading, then the count: VoiceOver did not stop on the button inside the heading). The judge's regression cases in the web tree spec include that walk |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -340,10 +374,10 @@ Skips and what they give up, in the tests:
   the other; on iOS the link's label alone. What a screen reader might
   offer as context of its own (a heading rotor, say) is not measured.
 
-**Not done yet.** The web VoiceOver transcript: the expected phrases in
-`web_tests/vo/c18_card_vo.spec.js` were written from Chromium's tree and
-the wording of earlier transcripts, before any C18 recording, and may
-need changing once it is recorded. Also: which stops a TalkBack swipe makes
+**Not done yet.** The second web VoiceOver recording, with
+`bad-default-container`'s measured stops. Also: whether VoiceOver on the
+web reaches `bad-default-container`'s button by Tab, its rotor, or other
+navigation, and what it does when that button is activated; which stops a TalkBack swipe makes
 (the walk moves focus by action); VoiceOver's own activation on iOS, which
 XCUITest cannot make (C04 probe round 3); what VoiceOver on the web does
 with a button inside a button (probe p07, p08) and with

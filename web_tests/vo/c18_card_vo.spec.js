@@ -37,8 +37,12 @@ const EXAMPLES = {
   'good-tappable': [`${CARD} button`, 'Opens: 0'],
   'good-cupertino': [HEADING, TEXT, PICTURE],
   // Bad examples: the defect must be audible where the web shows it. The
-  // heading and the text are one heading, which holds the button.
-  'bad-default-container': [`heading level 3 ${CARD}`, `Save ${TRAIL} button`, 'Saves: 0'],
+  // heading and the text are one heading, which holds the button. In round
+  // 1 (docs/evidence/probes/c18/voiceover-web-round1-fail.md.txt) VoiceOver's
+  // next went from the heading to the count in Chromium and WebKit alike,
+  // and did not stop on the button inside the heading: these are the
+  // measured stops.
+  'bad-default-container': [`heading level 3 ${CARD}`, 'Saves: 0'],
   // A heading, and no button (FL-268).
   'bad-heading-button': [`heading level 3 ${CARD}`, 'Opens: 0'],
   // The web is not affected: a button, as any tappable node is (FL-006).

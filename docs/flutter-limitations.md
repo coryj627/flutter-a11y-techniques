@@ -3398,6 +3398,16 @@ yet), **Fixed in x.y** (verified on that version).
   labelled pictures keep nodes of their own, as children of it.
   - Web: an `<h3>` whose `aria-label` is the title and the text, holding
     the picture (`role="img"`) and the buttons (`web.txt`, p01).
+    VoiceOver on macOS, moving with `voiceOver.next()` in Chromium and in
+    WebKit, read C18 `bad-default-container`'s `<h3>` as "heading level 3
+    Ridge trail A 6 km climb with a view." and then went to the next
+    element after the card, "Saves: 0": the "Save Ridge trail" button
+    inside the heading was not a stop
+    (`docs/evidence/probes/c18/voiceover-web-round1-fail.md.txt`, the
+    first recording). Only `next` was tried; Tab with VoiceOver on, the
+    rotor, and activating the button with VoiceOver were not. Why it was
+    passed over was not found. Without a screen reader, Tab reaches the
+    button and Enter and Space activate it (C18's web tree test).
   - Android: an `android.view.View` with `isHeading` true, named by the
     title and the text, with the picture and the buttons as its children
     (`android-tree.txt`, p01).
