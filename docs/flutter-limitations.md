@@ -912,7 +912,7 @@ yet), **Fixed in x.y** (verified on that version).
   `good-linear`'s bar at 0 was "Report upload 0 0% progress indicator",
   the name, which holds the value on the web ([FL-037](#fl-037)), then the
   value as a percentage, and `bad-no-label`'s "0 0% progress indicator"
-  (`docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`). The
+  (`docs/evidence/C26/voiceover-web.md`; the first recording read the same). The
   element has `aria-valuenow="0"`, min 0, max 100, and no
   `aria-valuetext`; where VoiceOver's "0%" comes from was not measured. A
   percent sign on the web was not recorded with VoiceOver. The documentation says the
@@ -1356,7 +1356,7 @@ yet), **Fixed in x.y** (verified on that version).
   value is in its name as well as in `aria-valuenow`: "Report upload 0".
   VoiceOver, in Chromium and WebKit, then read the value twice: "Report
   upload 0 0% progress indicator", and with no label "0 0% progress
-  indicator" (`docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`;
+  indicator" (`docs/evidence/C26/voiceover-web.md`;
   [FL-027](#fl-027)). So for a progress bar, unlike the "Why it matters"
   above, the user hears the number twice; whether the name's copy of the
   value is the cause was not measured.

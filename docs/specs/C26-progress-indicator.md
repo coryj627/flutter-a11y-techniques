@@ -60,7 +60,9 @@ until then the catalog says "applies" with a note on each platform.
   - VoiceOver on the web, Chromium and WebKit alike: "Report upload 0 0%
     progress indicator", the name, which holds the value on the web, then
     the value again as a percentage
-    (`docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`).
+    (`docs/evidence/C26/voiceover-web.md`; the first recording,
+    `docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`, read the
+    same).
   A percent sign in `semanticsValue` reads better on Android and iOS (the
   probe's p03) and loses Android's range. The good bar keeps the default,
   by the principal's decision (section 8).
@@ -295,6 +297,13 @@ The probe that came first is in [evidence/probes/c26](../evidence/probes/c26/REA
   `bad-silent-end` the hint alone. The lists were set to what was read.
   No verdict changes: the bar's name, role, and value are all in the tree,
   and `bad-no-label`'s bar is still read as a number with no name.
+- **VoiceOver on the web, the transcript**
+  ([evidence/C26/voiceover-web.md](../evidence/C26/voiceover-web.md)) is
+  the second recording, by the principal: 18 tests passed, every walk
+  complete on its first try in Chromium and WebKit, the bars read as in
+  the first, and every announcement as in the first: the status phrases
+  in Chromium, with VoiceOver's usage hint for the button between them,
+  and for `bad-silent-end` the hint alone.
 - **On the web a node whose role changes loses its identifier**
   ([FL-259](../flutter-limitations.md#fl-259), new): the probe's first
   round lost its changing bars' identifiers when they went from
@@ -362,13 +371,12 @@ Skips and what they give up, in the tests:
   that time could be missed, and would fail the test. Utterances are cut
   at 64 characters; the longest here is under 30.
 - The web VoiceOver lists are what the first recording read; the second
-  recording, against them, is the principal's to run.
+  recording passed against them (the transcript).
 - A spinner is shown only while its task runs, so no web VoiceOver walk
   reads one: what VoiceOver on the web says for a spinner was not
   recorded. Its tree is in the tree spec.
 
-**Not done yet.** The second web VoiceOver recording (the principal's).
-What VoiceOver on the web says for a spinner. A release build on Android
+**Not done yet.** What VoiceOver on the web says for a spinner. A release build on Android
 and iOS with a value in words (FL-258). A native Android `ProgressBar`
 and a UIKit progress view, for comparison. Right-to-left. A real Android
 keyboard.
@@ -398,7 +406,7 @@ Decided in review by the principal on 2026-11-22, in answer to the build:
   (`docs/evidence/C26/talkback-android.md`); VoiceOver on iOS "Report
   upload 0", a bare number (`docs/evidence/C26/voiceover-ios.md`);
   VoiceOver on the web "Report upload 0 0% progress indicator", the value
-  twice (`docs/evidence/probes/c26/voiceover-web-round1-fail.md.txt`). A
+  twice (`docs/evidence/C26/voiceover-web.md`). A
   percent sign, as the probe's p03, reads "40%," once on TalkBack and
   "40%" on iOS, and loses Android's range.
 - **FL-259 stays in the limitations log.** It is a test finding, not an
