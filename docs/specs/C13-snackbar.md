@@ -56,8 +56,9 @@ qualification below. The catalog says "applies" with a note.
   [FL-430](../flutter-limitations.md#fl-430) reads an `IconButton`'s
   tint, wherever a keyboard is used (widget tests; not measured on a
   device). Without `showCloseIcon` a keyboard user could take the
-  message away only by using Undo. The owner decided (2026-11-22) to keep
-  Close with this qualification (section 8).
+  message away only by using Undo. Close was kept with this
+  qualification, decided in review by the principal on 2026-11-22; the
+  owner can overrule it (section 8).
 - **All: a message shown while one that stays is up waits unseen**
   ([FL-293](../flutter-limitations.md#fl-293)); every example takes the
   current message away first.
@@ -209,8 +210,7 @@ Not built:
 - **A Cupertino example.** Cupertino has no widget for a transient
   message (section 4).
 - **A message with an action and no Close.** It would differ from
-  `good-action` only in Close, which the owner decided to keep (section
-  8).
+  `good-action` only in Close, which was kept in review (section 8).
 
 ## 6. Assertions by layer
 
@@ -367,7 +367,9 @@ right-to-left.
 
 ## 8. Decisions
 
-Made by the owner on 2026-11-22, in answer to the build:
+Decided in review by the principal on 2026-11-22, in answer to the
+build. The owner has not been asked about them and can overrule any of
+them:
 
 - **Close stays on `good-action`**, with its qualification stated on the
   example. `good-action` has `showCloseIcon: true` so that a keyboard
@@ -386,7 +388,7 @@ Made by the owner on 2026-11-22, in answer to the build:
 - **I12 Announcements**: its `good-snackbar` is a SnackBar with no action,
   whose news ("Message archived") is nowhere else on its page; by
   Understanding 2.2.1 its going is a time limit (FL-290). I12 is not
-  changed here, by the owner's decision (section 8).
+  changed here, by the principal's decision in review (section 8).
 - **I08 Dismiss and escape**: FL-291 measures what its probe's `e12`
   found, on every layer.
 - **V14 Focus indicators**: a `SnackBarAction`'s and Close's default
