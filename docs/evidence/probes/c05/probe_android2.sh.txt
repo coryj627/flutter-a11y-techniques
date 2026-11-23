@@ -1,0 +1,11 @@
+#!/bin/sh
+# C05 probe, second Android run, under tool/with_devices.py (throwaway; kept
+# as docs/evidence/probes/c05/probe_android2.sh.txt): keys() with the focus
+# reading fixed, and the native screen with its buttons' capitals off.
+S=$(dirname "$0")
+ROOT=$(pwd)
+for mode in keys native; do
+  echo "== android $mode"
+  python3 "$S/probe_android.py" "$ROOT" "$mode" $( [ "$mode" = native ] && echo "-native" )
+done
+exit 0

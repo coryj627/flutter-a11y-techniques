@@ -1,0 +1,79 @@
+import Flutter
+import SwiftUI
+import UIKit
+
+class SceneDelegate: FlutterSceneDelegate {
+  // Throwaway, C05 probe: not committed (kept as
+  // docs/evidence/probes/c05/SceneDelegate.swift.txt). With the launch
+  // argument -c05native the window shows native accordion headers instead of
+  // Flutter, for comparison.
+  override func scene(
+    _ scene: UIScene, willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
+    super.scene(scene, willConnectTo: session, options: connectionOptions)
+    if ProcessInfo.processInfo.arguments.contains("-c05native") {
+      window?.rootViewController = C05NativeProbeViewController()
+    }
+  }
+}
+
+struct C05DisclosureView: View {
+  var body: some View {
+    DisclosureGroup("n03 Shipping") {
+      Text("n03 panel text")
+    }
+    .padding()
+  }
+}
+
+final class C05NativeProbeViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .systemBackground
+    let stack = UIStackView()
+    stack.axis = .vertical
+    stack.alignment = .leading
+    stack.spacing = 12
+    stack.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(stack)
+    NSLayoutConstraint.activate([
+      stack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+      stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+      stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+    ])
+    let start = UIButton(type: .system)
+    start.setTitle("n00 Start", for: .normal)
+    stack.addArrangedSubview(start)
+    // n01: a UIKit button with accessibilityExpandedStatus (iOS 18), toggled
+    // on each tap. n02: the same with the header trait added to UIKit's own
+    // traits.
+    for (title, heading) in [("n01 Shipping", false), ("n02 Shipping", true)] {
+      let button = UIButton(type: .system)
+      button.setTitle(title, for: .normal)
+      let panel = UILabel()
+      panel.text = "\(title.prefix(3)) panel text"
+      panel.isHidden = true
+      if #available(iOS 18.0, *) { button.accessibilityExpandedStatus = .collapsed }
+      if heading { button.accessibilityTraits = button.accessibilityTraits.union(.header) }
+      button.addAction(
+        UIAction { [weak button, weak panel] _ in
+          guard let button, let panel else { return }
+          panel.isHidden.toggle()
+          if #available(iOS 18.0, *) {
+            button.accessibilityExpandedStatus = panel.isHidden ? .collapsed : .expanded
+          }
+        }, for: .primaryActionTriggered)
+      stack.addArrangedSubview(button)
+      stack.addArrangedSubview(panel)
+    }
+    // n03: SwiftUI's DisclosureGroup, which the iOS reference uses.
+    let host = UIHostingController(rootView: C05DisclosureView())
+    addChild(host)
+    stack.addArrangedSubview(host.view)
+    host.didMove(toParent: self)
+    let end = UILabel()
+    end.text = "n99 end"
+    stack.addArrangedSubview(end)
+  }
+}

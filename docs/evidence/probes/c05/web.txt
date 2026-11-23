@@ -1,0 +1,447 @@
+p01 DOM collapsed:
+p01 ax collapsed role=button name="Back" focusable:true
+p01 ax collapsed role=heading name="p01" level:2
+p01 ax collapsed role=button name="p01 Shipping" focusable:true
+p01 ax collapsed role=button name="p01 Returns" focusable:true
+p01 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "p01 Shipping" / <flt-semantics role=button aria-expanded=null> "p01 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp01Before p01p01 Shippingp01 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "p01 Shipping"
+p01 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-description="Collapsed
+p01 app: C05PROBE p01 Shipping open
+p01 after a click: panel shown=true; aria-expanded: (none)
+p01 DOM after a click:
+p01 ax after a click role=button name="Back" focusable:true
+p01 ax after a click role=heading name="p01" level:2
+p01 ax after a click role=button name="p01 Shipping" focusable:true
+p01 ax after a click role=button name="p01 Shipping button" focusable:true
+p01 ax after a click role=button name="p01 Returns" focusable:true
+p01 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p01 Shipping button" / <flt-semantics role=button aria-expanded=null> "p01 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp01Before p01p01 Shippingp01 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "p01 Shipping" / <flt-semantics role=button aria-expanded=null> "p01 Shipping button" / <flt-semantics role=button aria-expanded=null> "p01 Returns"
+p01 Enter: header reached after 2 Tab(s)
+p01 app: C05PROBE p01 Shipping open
+p01 Enter: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "p01 Shipping"
+p01 app: C05PROBE p01 Shipping closed
+p01 Enter again: panel shown=false; aria-expanded: (none)
+p01 Space: header reached after 2 Tab(s)
+p01 app: C05PROBE p01 Shipping open
+p01 Space: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "p01 Shipping"
+p02 DOM collapsed:
+p02 ax collapsed role=button name="Back" focusable:true
+p02 ax collapsed role=heading name="p02" level:2
+p02 ax collapsed role=button name="p02 Shipping" focusable:true
+p02 ax collapsed role=button name="p02 Returns" focusable:true
+p02 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "p02 Shipping" / <flt-semantics role=button aria-expanded=null> "p02 Returns" / <flt-semantics role=button aria-expanded=null> "p02 Returns" / <flt-semantics role=button aria-expanded=null> "p02 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp02Before p02p02 Shippingp02 Returns"
+p02 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-description="Collapsed
+p02 app: C05PROBE p02 Shipping open
+p02 after a click: panel shown=true; aria-expanded: (none)
+p02 DOM after a click:
+p02 ax after a click role=button name="Back" focusable:true
+p02 ax after a click role=heading name="p02" level:2
+p02 ax after a click role=button name="p02 Shipping" focusable:true
+p02 ax after a click role=button name="p02 Shipping button" focusable:true
+p02 ax after a click role=button name="p02 Returns" focusable:true
+p02 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p02 Shipping button" / <flt-semantics role=button aria-expanded=null> "p02 Returns" / <flt-semantics role=button aria-expanded=null> "p02 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp02Before p02p02 Shippingp02 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "p02 Shipping" / <flt-semantics role=button aria-expanded=null> "p02 Shipping button"
+p02 Enter: header reached after 2 Tab(s)
+p02 app: C05PROBE p02 Shipping open
+p02 Enter: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "p02 Shipping"
+p02 app: C05PROBE p02 Shipping closed
+p02 Enter again: panel shown=false; aria-expanded: (none)
+p02 Space: header reached after 2 Tab(s)
+p02 app: C05PROBE p02 Shipping open
+p02 Space: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "p02 Shipping"
+p03 DOM collapsed:
+p03 ax collapsed role=button name="Back" focusable:true
+p03 ax collapsed role=heading name="p03" level:2
+p03 ax collapsed role=heading name="p03 Shipping" focusable:true,level:3
+p03 ax collapsed role=heading name="p03 Returns" focusable:true,level:3
+p03 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <h3 role=null aria-expanded=null> "p03 Shipping" / <h3 role=null aria-expanded=null> "p03 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp03Before p03p03 Shippingp03 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <h3 role=null aria-expanded=null> "p03 Shipping"
+p03 header element: <h3 id="flt-semantic-node-6" tabindex="0" aria-description="Collapsed
+p03 app: C05PROBE p03 Shipping open
+p03 after a click: panel shown=true; aria-expanded: (none)
+p03 DOM after a click:
+p03 ax after a click role=button name="Back" focusable:true
+p03 ax after a click role=heading name="p03" level:2
+p03 ax after a click role=heading name="p03 Shipping" focusable:true,level:3
+p03 ax after a click role=button name="p03 Shipping button" focusable:true
+p03 ax after a click role=heading name="p03 Returns" focusable:true,level:3
+p03 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p03 Shipping button" / <h3 role=null aria-expanded=null> "p03 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp03Before p03p03 Shippingp03 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <h3 role=null aria-expanded=null> "p03 Shipping" / <flt-semantics role=button aria-expanded=null> "p03 Shipping button" / <h3 role=null aria-expanded=null> "p03 Returns"
+p03 Enter: header reached after 2 Tab(s)
+p03 app: C05PROBE p03 Shipping open
+p03 Enter: panel shown=true; aria-expanded: (none) ; focus now <h3 role=null aria-expanded=null> "p03 Shipping"
+p03 app: C05PROBE p03 Shipping closed
+p03 Enter again: panel shown=false; aria-expanded: (none)
+p03 Space: header reached after 2 Tab(s)
+p03 app: C05PROBE p03 Shipping open
+p03 Space: panel shown=true; aria-expanded: (none) ; focus now <h3 role=null aria-expanded=null> "p03 Shipping"
+p04 DOM collapsed:
+p04 ax collapsed role=button name="Back" focusable:true
+p04 ax collapsed role=heading name="p04" level:2
+p04 ax collapsed role=button name="" focusable:true
+p04 ax collapsed role=button name="" focusable:true
+p04 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "" / <flt-semantics role=button aria-expanded=null> "" / (body) / <flutter-view role=null aria-expanded=null> "Backp04Before p04p04 Shippingp04 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> ""
+p04 header element: <span>p04 Shipping</span>
+p04 after a click: panel shown=false; aria-expanded: (none)
+p04 DOM after a click:
+p04 ax after a click role=generic name="Back p04" focusable:true
+p04 ax after a click role=button name="Back" focusable:true
+p04 ax after a click role=heading name="p04" level:2
+p04 ax after a click role=button name="" focusable:true
+p04 ax after a click role=button name="" focusable:true
+p04 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "" / <flt-semantics role=button aria-expanded=null> "" / (body) / <flutter-view role=null aria-expanded=null> "Backp04Before p04p04 Shippingp04 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "" / <flt-semantics role=button aria-expanded=null> "" / (body)
+p04 Enter: header reached after 5 Tab(s)
+p04 Enter: panel shown=false; aria-expanded: (none) ; focus now <flutter-view role=null aria-expanded=null> "Backp04Before p04p04 Shippingp04 Returns"
+p04 Enter control click: panel shown=false; aria-expanded: (none)
+p04 Space: header reached after 5 Tab(s)
+p04 Space: panel shown=false; aria-expanded: (none) ; focus now <flutter-view role=null aria-expanded=null> "Backp04Before p04p04 Shippingp04 Returns"
+p04 Space control click: panel shown=false; aria-expanded: (none)
+p05 DOM collapsed:
+p05 ax collapsed role=button name="Back" focusable:true
+p05 ax collapsed role=heading name="p05" level:2
+p05 ax collapsed role=button name="p05 Shipping" focusable:true
+p05 ax collapsed role=button name="p05 Returns" focusable:true
+p05 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "p05 Shipping" / <flt-semantics role=button aria-expanded=null> "p05 Shipping" / <flt-semantics role=button aria-expanded=null> "p05 Returns" / <flt-semantics role=button aria-expanded=null> "p05 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp05Before p05p05 Shippingp05 Returns"
+p05 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-current="false" flt-tappable="">p05 Shipping</flt-semantics>
+p05 app: C05PROBE p05 Shipping open
+p05 after a click: panel shown=true; aria-expanded: (none)
+p05 DOM after a click:
+p05 ax after a click role=button name="Back" focusable:true
+p05 ax after a click role=heading name="p05" level:2
+p05 ax after a click role=button name="p05 Shipping" focusable:true
+p05 ax after a click role=button name="p05 Shipping button" focusable:true
+p05 ax after a click role=button name="p05 Returns" focusable:true
+p05 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p05 Shipping button" / <flt-semantics role=button aria-expanded=null> "p05 Returns" / <flt-semantics role=button aria-expanded=null> "p05 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp05Before p05p05 Shippingp05 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "p05 Shipping" / <flt-semantics role=button aria-expanded=null> "p05 Shipping"
+p05 Enter: header reached after 2 Tab(s)
+p05 app: C05PROBE p05 Shipping open
+p05 Enter: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "p05 Shipping"
+p05 app: C05PROBE p05 Shipping closed
+p05 Enter again: panel shown=false; aria-expanded: (none)
+p05 Space: header reached after 2 Tab(s)
+p05 app: C05PROBE p05 Shipping open
+p05 Space: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "p05 Shipping"
+p06 DOM collapsed:
+p06 ax collapsed role=button name="Back" focusable:true
+p06 ax collapsed role=heading name="p06" level:2
+p06 ax collapsed role=button name="p06 Shipping" 
+p06 ax collapsed role=button name="p06 Returns" 
+p06 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "Back" / (body) / <flutter-view role=null aria-expanded=null> "Backp06Before p06p06 Shippingp06 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "Back"
+p06 header element: <flt-semantics id="flt-semantic-node-6" role="button" aria-description="Collapsed
+p06 after a click: panel shown=false; aria-expanded: (none)
+p06 DOM after a click:
+p06 ax after a click role=button name="Back" focusable:true
+p06 ax after a click role=heading name="p06" level:2
+p06 ax after a click role=group name="p06 Shipping p06 Shipping panel" 
+p06 ax after a click role=button name="p06 Returns" 
+p06 ax after a click role=button name="p06 Shipping button" focusable:true
+p06 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p06 Shipping button" / <flt-semantics role=button aria-expanded=null> "p06 Shipping button" / (body) / <flutter-view role=null aria-expanded=null> "Backp06Before p06p06 Shipping buttonp06 " / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "p06 Shipping button" / <flt-semantics role=button aria-expanded=null> "p06 Shipping button" / (body)
+p06 Enter: header reached after 5 Tab(s)
+p06 Enter: panel shown=false; aria-expanded: (none) ; focus now <flutter-view role=null aria-expanded=null> "Backp06Before p06p06 Shippingp06 Returns"
+p06 Enter control click: panel shown=false; aria-expanded: (none)
+p06 Space: header reached after 5 Tab(s)
+p06 Space: panel shown=false; aria-expanded: (none) ; focus now <flutter-view role=null aria-expanded=null> "Backp06Before p06p06 Shippingp06 Returns"
+p06 Space control click: panel shown=false; aria-expanded: (none)
+p07 DOM collapsed:
+p07 ax collapsed role=button name="Back" focusable:true
+p07 ax collapsed role=heading name="p07" level:2
+p07 ax collapsed role=button name="p07 Shipping" focusable:true,expanded:false
+p07 ax collapsed role=button name="p07 Returns" focusable:true,expanded:false
+p07 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p07 Shipping" / <flt-semantics role=button aria-expanded=false> "p07 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp07Before p07p07 Shippingp07 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p07 Shipping"
+p07 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-expanded="false" flt-tappable="">p07 Shipping</flt-semantics>
+p07 app: C05PROBE p07 Shipping open
+p07 after a click: panel shown=true; aria-expanded: p07 Shipping=true; p07 Returns=false
+p07 DOM after a click:
+p07 ax after a click role=button name="Back" focusable:true
+p07 ax after a click role=heading name="p07" level:2
+p07 ax after a click role=button name="p07 Shipping" focusable:true,expanded:true
+p07 ax after a click role=button name="p07 Shipping button" focusable:true
+p07 ax after a click role=button name="p07 Returns" focusable:true,expanded:false
+p07 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p07 Shipping button" / <flt-semantics role=button aria-expanded=false> "p07 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp07Before p07p07 Shippingp07 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p07 Shipping" / <flt-semantics role=button aria-expanded=null> "p07 Shipping button" / <flt-semantics role=button aria-expanded=false> "p07 Returns"
+p07 Enter: header reached after 2 Tab(s)
+p07 app: C05PROBE p07 Shipping open
+p07 Enter: panel shown=true; aria-expanded: p07 Shipping=true; p07 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p07 Shipping"
+p07 app: C05PROBE p07 Shipping closed
+p07 Enter again: panel shown=false; aria-expanded: p07 Shipping=false; p07 Returns=false
+p07 Space: header reached after 2 Tab(s)
+p07 app: C05PROBE p07 Shipping open
+p07 Space: panel shown=true; aria-expanded: p07 Shipping=true; p07 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p07 Shipping"
+p08 DOM collapsed:
+p08 ax collapsed role=button name="Back" focusable:true
+p08 ax collapsed role=heading name="p08" level:2
+p08 ax collapsed role=heading name="p08 Shipping" focusable:true,level:3
+p08 ax collapsed role=heading name="p08 Returns" focusable:true,level:3
+p08 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <h3 role=null aria-expanded=null> "p08 Shipping" / <h3 role=null aria-expanded=null> "p08 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp08Before p08p08 Shippingp08 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <h3 role=null aria-expanded=null> "p08 Shipping"
+p08 header element: <h3 id="flt-semantic-node-6" tabindex="0">p08 Shipping</h3>
+p08 app: C05PROBE p08 Shipping open
+p08 after a click: panel shown=true; aria-expanded: (none)
+p08 DOM after a click:
+p08 ax after a click role=button name="Back" focusable:true
+p08 ax after a click role=heading name="p08" level:2
+p08 ax after a click role=heading name="p08 Shipping" focusable:true,level:3
+p08 ax after a click role=button name="p08 Shipping button" focusable:true
+p08 ax after a click role=heading name="p08 Returns" focusable:true,level:3
+p08 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p08 Shipping button" / <h3 role=null aria-expanded=null> "p08 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp08Before p08p08 Shippingp08 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <h3 role=null aria-expanded=null> "p08 Shipping" / <flt-semantics role=button aria-expanded=null> "p08 Shipping button" / <h3 role=null aria-expanded=null> "p08 Returns"
+p08 Enter: header reached after 2 Tab(s)
+p08 app: C05PROBE p08 Shipping open
+p08 Enter: panel shown=true; aria-expanded: (none) ; focus now <h3 role=null aria-expanded=null> "p08 Shipping"
+p08 app: C05PROBE p08 Shipping closed
+p08 Enter again: panel shown=false; aria-expanded: (none)
+p08 Space: header reached after 2 Tab(s)
+p08 app: C05PROBE p08 Shipping open
+p08 Space: panel shown=true; aria-expanded: (none) ; focus now <h3 role=null aria-expanded=null> "p08 Shipping"
+p09 DOM collapsed:
+p09 ax collapsed role=button name="Back" focusable:true
+p09 ax collapsed role=heading name="p09" level:2
+p09 ax collapsed role=heading name="p09 Shipping" level:3
+p09 ax collapsed role=heading name="p09 Returns" level:3
+p09 ax collapsed role=button name="p09 Shipping" focusable:true,expanded:false
+p09 ax collapsed role=button name="p09 Returns" focusable:true,expanded:false
+p09 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p09 Shipping" / <flt-semantics role=button aria-expanded=false> "p09 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp09Before p09p09 Shippingp09 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p09 Shipping"
+p09 header element: <flt-semantics id="flt-semantic-node-7" role="button" tabindex="0" aria-expanded="false" flt-tappable="">p09 Shipping</flt-semantics>
+p09 app: C05PROBE p09 Shipping open
+p09 after a click: panel shown=true; aria-expanded: p09 Shipping=true; p09 Returns=false
+p09 DOM after a click:
+p09 ax after a click role=button name="Back" focusable:true
+p09 ax after a click role=heading name="p09" level:2
+p09 ax after a click role=heading name="p09 Shipping" level:3
+p09 ax after a click role=button name="p09 Shipping button" focusable:true
+p09 ax after a click role=heading name="p09 Returns" level:3
+p09 ax after a click role=button name="p09 Shipping" focusable:true,expanded:true
+p09 ax after a click role=button name="p09 Returns" focusable:true,expanded:false
+p09 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p09 Shipping button" / <flt-semantics role=button aria-expanded=false> "p09 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp09Before p09p09 Shippingp09 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p09 Shipping" / <flt-semantics role=button aria-expanded=null> "p09 Shipping button" / <flt-semantics role=button aria-expanded=false> "p09 Returns"
+p09 Enter: header reached after 2 Tab(s)
+p09 app: C05PROBE p09 Shipping open
+p09 Enter: panel shown=true; aria-expanded: p09 Shipping=true; p09 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p09 Shipping"
+p09 app: C05PROBE p09 Shipping closed
+p09 Enter again: panel shown=false; aria-expanded: p09 Shipping=false; p09 Returns=false
+p09 Space: header reached after 2 Tab(s)
+p09 app: C05PROBE p09 Shipping open
+p09 Space: panel shown=true; aria-expanded: p09 Shipping=true; p09 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p09 Shipping"
+p10 DOM collapsed:
+p10 ax collapsed role=button name="Back" focusable:true
+p10 ax collapsed role=heading name="p10" level:2
+p10 ax collapsed role=button name="p10 Shipping" focusable:true,expanded:false
+p10 ax collapsed role=button name="p10 Returns" focusable:true,expanded:false
+p10 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p10 Shipping" / <flt-semantics role=button aria-expanded=false> "p10 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp10Before p10p10 Shippingp10 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p10 Shipping"
+p10 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-expanded="false" flt-tappable="">p10 Shipping</flt-semantics>
+p10 app: C05PROBE p10 Shipping open
+p10 after a click: panel shown=true; aria-expanded: p10 Shipping=true; p10 Returns=false
+p10 DOM after a click:
+p10 ax after a click role=button name="Back" focusable:true
+p10 ax after a click role=heading name="p10" level:2
+p10 ax after a click role=button name="p10 Shipping" focusable:true,expanded:true
+p10 ax after a click role=button name="p10 Shipping button" focusable:true
+p10 ax after a click role=button name="p10 Returns" focusable:true,expanded:false
+p10 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p10 Shipping button" / <flt-semantics role=button aria-expanded=false> "p10 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp10Before p10p10 Shippingp10 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p10 Shipping" / <flt-semantics role=button aria-expanded=null> "p10 Shipping button" / <flt-semantics role=button aria-expanded=false> "p10 Returns"
+p10 Enter: header reached after 2 Tab(s)
+p10 app: C05PROBE p10 Shipping open
+p10 Enter: panel shown=true; aria-expanded: p10 Shipping=true; p10 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p10 Shipping"
+p10 app: C05PROBE p10 Shipping closed
+p10 Enter again: panel shown=false; aria-expanded: p10 Shipping=false; p10 Returns=false
+p10 Space: header reached after 2 Tab(s)
+p10 app: C05PROBE p10 Shipping open
+p10 Space: panel shown=true; aria-expanded: p10 Shipping=true; p10 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p10 Shipping"
+p11 DOM collapsed:
+p11 ax collapsed role=button name="Back" focusable:true
+p11 ax collapsed role=heading name="p11" level:2
+p11 ax collapsed role=button name="p11 Shipping" focusable:true,expanded:false
+p11 ax collapsed role=button name="p11 Returns" focusable:true,expanded:false
+p11 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p11 Shipping" / <flt-semantics role=button aria-expanded=false> "p11 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp11Before p11p11 Shippingp11 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p11 Shipping"
+p11 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-expanded="false" flt-tappable="">p11 Shipping</flt-semantics>
+p11 app: C05PROBE p11 Shipping open
+p11 after a click: panel shown=false; aria-expanded: p11 Shipping=true; p11 Returns=false
+p11 DOM after a click:
+p11 ax after a click role=button name="Back" focusable:true
+p11 ax after a click role=heading name="p11" level:2
+p11 ax after a click role=button name="p11 Shipping" focusable:true,expanded:true
+p11 ax after a click role=group name="p11 Shipping panel" 
+p11 ax after a click role=button name="p11 Returns" focusable:true,expanded:false
+p11 ax after a click role=button name="p11 Shipping button" focusable:true
+p11 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p11 Shipping button" / <flt-semantics role=button aria-expanded=false> "p11 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp11Before p11p11 Shippingp11 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p11 Shipping" / <flt-semantics role=button aria-expanded=null> "p11 Shipping button" / <flt-semantics role=button aria-expanded=false> "p11 Returns"
+p11 Enter: header reached after 2 Tab(s)
+p11 app: C05PROBE p11 Shipping open
+p11 Enter: panel shown=false; aria-expanded: p11 Shipping=true; p11 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p11 Shipping"
+p11 app: C05PROBE p11 Shipping closed
+p11 Enter control click: panel shown=false; aria-expanded: p11 Shipping=false; p11 Returns=false
+p11 Space: header reached after 2 Tab(s)
+p11 app: C05PROBE p11 Shipping open
+p11 Space: panel shown=false; aria-expanded: p11 Shipping=true; p11 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p11 Shipping"
+p11 app: C05PROBE p11 Shipping closed
+p11 Space control click: panel shown=false; aria-expanded: p11 Shipping=false; p11 Returns=false
+p12 DOM collapsed:
+p12 ax collapsed role=button name="Back" focusable:true
+p12 ax collapsed role=heading name="p12" level:2
+p12 ax collapsed role=button name="p12 Shipping collapsed" focusable:true,expanded:false
+p12 ax collapsed role=button name="p12 Returns collapsed" focusable:true,expanded:false
+p12 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p12 Shipping collapsed" / <flt-semantics role=button aria-expanded=false> "p12 Returns collapsed" / (body) / <flutter-view role=null aria-expanded=null> "Backp12Before p12p12 Shipping collapsedp" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p12 Shipping collapsed"
+p12 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-expanded="false" flt-tappable="">p12 Shipping collapsed</flt-semantics>
+p12 app: C05PROBE p12 Shipping open
+p12 after a click: panel shown=true; aria-expanded: p12 Shipping expanded=true; p12 Returns collapsed=false
+p12 DOM after a click:
+p12 ax after a click role=button name="Back" focusable:true
+p12 ax after a click role=heading name="p12" level:2
+p12 ax after a click role=button name="p12 Shipping expanded" focusable:true,expanded:true
+p12 ax after a click role=button name="p12 Shipping button" focusable:true
+p12 ax after a click role=button name="p12 Returns collapsed" focusable:true,expanded:false
+p12 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p12 Shipping button" / <flt-semantics role=button aria-expanded=false> "p12 Returns collapsed" / (body) / <flutter-view role=null aria-expanded=null> "Backp12Before p12p12 Shipping expandedp1" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p12 Shipping expanded" / <flt-semantics role=button aria-expanded=null> "p12 Shipping button" / <flt-semantics role=button aria-expanded=false> "p12 Returns collapsed"
+p12 Enter: header reached after 2 Tab(s)
+p12 app: C05PROBE p12 Shipping open
+p12 Enter: panel shown=true; aria-expanded: p12 Shipping expanded=true; p12 Returns collapsed=false ; focus now <flt-semantics role=button aria-expanded=true> "p12 Shipping expanded"
+p12 app: C05PROBE p12 Shipping closed
+p12 Enter again: panel shown=false; aria-expanded: p12 Shipping collapsed=false; p12 Returns collapsed=false
+p12 Space: header reached after 2 Tab(s)
+p12 app: C05PROBE p12 Shipping open
+p12 Space: panel shown=true; aria-expanded: p12 Shipping expanded=true; p12 Returns collapsed=false ; focus now <flt-semantics role=button aria-expanded=true> "p12 Shipping expanded"
+p13 DOM collapsed:
+p13 ax collapsed role=button name="Back" focusable:true
+p13 ax collapsed role=heading name="p13" level:2
+p13 ax collapsed role=button name="p13 Shipping" focusable:true,expanded:false
+p13 ax collapsed role=button name="p13 Returns" focusable:true,expanded:false
+p13 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p13 Shipping" / <flt-semantics role=button aria-expanded=false> "p13 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp13Before p13p13 Shippingp13 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p13 Shipping"
+p13 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-expanded="false" flt-tappable="">p13 Shipping</flt-semantics>
+p13 app: C05PROBE p13 Shipping open
+p13 after a click: panel shown=true; aria-expanded: p13 Shipping=true; p13 Returns=false
+p13 DOM after a click:
+p13 ax after a click role=button name="Back" focusable:true
+p13 ax after a click role=heading name="p13" level:2
+p13 ax after a click role=button name="p13 Shipping" focusable:true,expanded:true
+p13 ax after a click role=button name="p13 Shipping button" focusable:true
+p13 ax after a click role=button name="p13 Returns" focusable:true,expanded:false
+p13 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p13 Shipping button" / <flt-semantics role=button aria-expanded=false> "p13 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp13Before p13p13 Shippingp13 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p13 Shipping" / <flt-semantics role=button aria-expanded=null> "p13 Shipping button" / <flt-semantics role=button aria-expanded=false> "p13 Returns"
+p13 Enter: header reached after 2 Tab(s)
+p13 app: C05PROBE p13 Shipping open
+p13 Enter: panel shown=true; aria-expanded: p13 Shipping=true; p13 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p13 Shipping"
+p13 app: C05PROBE p13 Shipping closed
+p13 Enter again: panel shown=false; aria-expanded: p13 Shipping=false; p13 Returns=false
+p13 Space: header reached after 2 Tab(s)
+p13 app: C05PROBE p13 Shipping open
+p13 Space: panel shown=true; aria-expanded: p13 Shipping=true; p13 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p13 Shipping"
+p14 DOM collapsed:
+p14 ax collapsed role=button name="Back" focusable:true
+p14 ax collapsed role=heading name="p14" level:2
+p14 ax collapsed role=button name="p14 Shipping" focusable:true,expanded:false
+p14 ax collapsed role=button name="p14 Returns" focusable:true,expanded:false
+p14 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p14 Shipping" / <flt-semantics role=button aria-expanded=false> "p14 Returns" / <flt-semantics role=button aria-expanded=false> "p14 Returns" / <flt-semantics role=button aria-expanded=false> "p14 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp14Before p14p14 Shippingp14 Returns"
+p14 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-expanded="false" flt-tappable="">p14 Shipping</flt-semantics>
+p14 app: C05PROBE p14 Shipping open
+p14 after a click: panel shown=true; aria-expanded: p14 Shipping=true; p14 Returns=false
+p14 DOM after a click:
+p14 ax after a click role=button name="Back" focusable:true
+p14 ax after a click role=heading name="p14" level:2
+p14 ax after a click role=button name="p14 Shipping" focusable:true,expanded:true
+p14 ax after a click role=button name="p14 Shipping button" focusable:true
+p14 ax after a click role=button name="p14 Returns" focusable:true,expanded:false
+p14 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p14 Shipping button" / <flt-semantics role=button aria-expanded=false> "p14 Returns" / <flt-semantics role=button aria-expanded=false> "p14 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp14Before p14p14 Shippingp14 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p14 Shipping" / <flt-semantics role=button aria-expanded=null> "p14 Shipping button"
+p14 Enter: header reached after 2 Tab(s)
+p14 Enter: panel shown=false; aria-expanded: p14 Shipping=false; p14 Returns=false ; focus now <flt-semantics role=button aria-expanded=false> "p14 Shipping"
+p14 app: C05PROBE p14 Shipping open
+p14 Enter control click: panel shown=true; aria-expanded: p14 Shipping=true; p14 Returns=false
+p14 Space: header reached after 2 Tab(s)
+p14 app: C05PROBE p14 Shipping open
+p14 Space: panel shown=true; aria-expanded: p14 Shipping=true; p14 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p14 Shipping"
+p15 DOM collapsed:
+p15 ax collapsed role=button name="Back" focusable:true
+p15 ax collapsed role=heading name="p15" level:2
+p15 ax collapsed role=button name="p15 Shipping" focusable:true,expanded:false
+p15 ax collapsed role=button name="p15 Returns" focusable:true,expanded:false
+p15 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p15 Shipping" / <flt-semantics role=button aria-expanded=false> "p15 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp15Before p15p15 Shippingp15 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p15 Shipping"
+p15 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-description="Collapsed
+p15 app: C05PROBE p15 Shipping open
+p15 after a click: panel shown=true; aria-expanded: p15 Shipping=true; p15 Returns=false
+p15 DOM after a click:
+p15 ax after a click role=button name="Back" focusable:true
+p15 ax after a click role=heading name="p15" level:2
+p15 ax after a click role=button name="p15 Shipping" focusable:true,expanded:true
+p15 ax after a click role=button name="p15 Shipping button" focusable:true
+p15 ax after a click role=button name="p15 Returns" focusable:true,expanded:false
+p15 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p15 Shipping button" / <flt-semantics role=button aria-expanded=false> "p15 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp15Before p15p15 Shippingp15 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p15 Shipping" / <flt-semantics role=button aria-expanded=null> "p15 Shipping button" / <flt-semantics role=button aria-expanded=false> "p15 Returns"
+p15 Enter: header reached after 2 Tab(s)
+p15 app: C05PROBE p15 Shipping open
+p15 Enter: panel shown=true; aria-expanded: p15 Shipping=true; p15 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p15 Shipping"
+p15 app: C05PROBE p15 Shipping closed
+p15 Enter again: panel shown=false; aria-expanded: p15 Shipping=false; p15 Returns=false
+p15 Space: header reached after 2 Tab(s)
+p15 app: C05PROBE p15 Shipping open
+p15 Space: panel shown=true; aria-expanded: p15 Shipping=true; p15 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p15 Shipping"
+p16 DOM collapsed:
+p16 ax collapsed role=button name="Back" focusable:true
+p16 ax collapsed role=heading name="p16" level:2
+p16 ax collapsed role=button name="p16 Shipping" focusable:true,expanded:false
+p16 ax collapsed role=button name="p16 Returns" focusable:true,expanded:false
+p16 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p16 Shipping" / <flt-semantics role=button aria-expanded=false> "p16 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp16Before p16p16 Shippingp16 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p16 Shipping"
+p16 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-expanded="false" flt-tappable="">p16 Shipping</flt-semantics>
+p16 app: C05PROBE p16 Shipping open
+p16 after a click: panel shown=true; aria-expanded: p16 Shipping=true; p16 Returns=false
+p16 DOM after a click:
+p16 ax after a click role=button name="Back" focusable:true
+p16 ax after a click role=heading name="p16" level:2
+p16 ax after a click role=button name="p16 Shipping" focusable:true,expanded:true
+p16 ax after a click role=button name="p16 Shipping button" focusable:true
+p16 ax after a click role=button name="p16 Returns" focusable:true,expanded:false
+p16 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p16 Shipping button" / <flt-semantics role=button aria-expanded=false> "p16 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp16Before p16p16 Shippingp16 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p16 Shipping" / <flt-semantics role=button aria-expanded=null> "p16 Shipping button" / <flt-semantics role=button aria-expanded=false> "p16 Returns"
+p16 Enter: header reached after 2 Tab(s)
+p16 app: C05PROBE p16 Shipping open
+p16 Enter: panel shown=true; aria-expanded: p16 Shipping=true; p16 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p16 Shipping"
+p16 app: C05PROBE p16 Shipping closed
+p16 Enter again: panel shown=false; aria-expanded: p16 Shipping=false; p16 Returns=false
+p16 Space: header reached after 2 Tab(s)
+p16 app: C05PROBE p16 Shipping open
+p16 Space: panel shown=true; aria-expanded: p16 Shipping=true; p16 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p16 Shipping"
+p17 DOM collapsed:
+p17 ax collapsed role=button name="Back" focusable:true
+p17 ax collapsed role=heading name="p17" level:2
+p17 ax collapsed role=button name="p17 Shipping" focusable:true,expanded:true,controls:"flt-semantic-node-7"
+p17 ax collapsed role=group name="p17 Shipping panel" 
+p17 ax collapsed role=button name="p17 Returns" focusable:true,expanded:false
+p17 ax collapsed role=button name="p17 Shipping button" focusable:true
+p17 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p17 Shipping" / <flt-semantics role=button aria-expanded=null> "p17 Shipping button" / <flt-semantics role=button aria-expanded=false> "p17 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp17Before p17p17 Shippingp17 Shippin" / <flt-semantics role=button aria-expanded=null> "Back"
+p17 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-expanded="true" flt-tappable="" aria-controls="flt-semantic-node-7">p17 Shipping</flt-semantics>
+p17 app: C05PROBE p17 Shipping closed
+p17 after a click: panel shown=false; aria-expanded: p17 Shipping=false; p17 Returns=false
+p17 DOM after a click:
+p17 ax after a click role=button name="Back" focusable:true
+p17 ax after a click role=heading name="p17" level:2
+p17 ax after a click role=button name="p17 Shipping" focusable:true,expanded:false
+p17 ax after a click role=button name="p17 Returns" focusable:true,expanded:false
+p17 Tab stops after a click: <flt-semantics role=button aria-expanded=false> "p17 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp17Before p17p17 Shippingp17 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p17 Shipping" / <flt-semantics role=button aria-expanded=false> "p17 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp17Before p17p17 Shippingp17 Returns"
+p17 Enter: header reached after 2 Tab(s)
+p17 app: C05PROBE p17 Shipping closed
+p17 Enter: panel shown=false; aria-expanded: p17 Shipping=false; p17 Returns=false ; focus now <flt-semantics role=button aria-expanded=false> "p17 Shipping"
+p17 app: C05PROBE p17 Shipping open
+p17 Enter control click: panel shown=false; aria-expanded: p17 Shipping=true; p17 Returns=false
+p17 Space: header reached after 2 Tab(s)
+p17 app: C05PROBE p17 Shipping closed
+p17 Space: panel shown=false; aria-expanded: p17 Shipping=false; p17 Returns=false ; focus now <flt-semantics role=button aria-expanded=false> "p17 Shipping"
+p17 app: C05PROBE p17 Shipping open
+p17 Space control click: panel shown=false; aria-expanded: p17 Shipping=true; p17 Returns=false
+p18 DOM collapsed:
+p18 ax collapsed role=button name="Back" focusable:true
+p18 ax collapsed role=heading name="p18" level:2
+p18 ax collapsed role=button name="p18 Shipping" focusable:true,expanded:false
+p18 ax collapsed role=button name="p18 Returns" focusable:true,expanded:false
+p18 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p18 Shipping" / <flt-semantics role=button aria-expanded=false> "p18 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp18Before p18p18 Shippingp18 Returns" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=false> "p18 Shipping"
+p18 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-expanded="false" flt-tappable="">p18 Shipping</flt-semantics>
+p18 app: C05PROBE p18 Shipping open
+p18 after a click: panel shown=false; aria-expanded: p18 Shipping=true; p18 Returns=false
+p18 DOM after a click:
+p18 ax after a click role=button name="Back" focusable:true
+p18 ax after a click role=heading name="p18" level:2
+p18 ax after a click role=button name="p18 Shipping" focusable:true,expanded:true,controls:"flt-semantic-node-12"
+p18 ax after a click role=group name="p18 Shipping panel" 
+p18 ax after a click role=button name="p18 Returns" focusable:true,expanded:false
+p18 ax after a click role=button name="p18 Shipping button" focusable:true
+p18 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "p18 Shipping button" / <flt-semantics role=button aria-expanded=false> "p18 Returns" / (body) / <flutter-view role=null aria-expanded=null> "Backp18Before p18p18 Shippingp18 Shippin" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=true> "p18 Shipping" / <flt-semantics role=button aria-expanded=null> "p18 Shipping button" / <flt-semantics role=button aria-expanded=false> "p18 Returns"
+p18 Enter: header reached after 2 Tab(s)
+p18 app: C05PROBE p18 Shipping open
+p18 Enter: panel shown=false; aria-expanded: p18 Shipping=true; p18 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p18 Shipping"
+p18 app: C05PROBE p18 Shipping closed
+p18 Enter control click: panel shown=false; aria-expanded: p18 Shipping=false; p18 Returns=false
+p18 Space: header reached after 2 Tab(s)
+p18 app: C05PROBE p18 Shipping open
+p18 Space: panel shown=false; aria-expanded: p18 Shipping=true; p18 Returns=false ; focus now <flt-semantics role=button aria-expanded=true> "p18 Shipping"
+p18 app: C05PROBE p18 Shipping closed
+p18 Space control click: panel shown=false; aria-expanded: p18 Shipping=false; p18 Returns=false
+html ax role=heading name="h01 Shipping" level:3
+html ax role=heading name="h02 Returns" level:3
+html ax role=region name="h02 Returns" 
+html ax role=heading name="h04 ARIA heading holding a button" level:3
+html ax role=button name="h05 button with aria-level" focusable:true,expanded:false
+html ax role=button name="h01 Shipping" focusable:true,expanded:false
+html ax role=button name="h02 Returns" focusable:true,expanded:true,controls:"h2p"
+html ax role=DisclosureTriangle name="h03 Details summary" focusable:true,expanded:false
+html ax role=button name="h04 ARIA heading holding a button" focusable:true,expanded:false

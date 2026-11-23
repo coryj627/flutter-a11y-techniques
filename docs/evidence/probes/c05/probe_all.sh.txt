@@ -1,0 +1,26 @@
+#!/bin/sh
+# C05 probe on Android and iOS, under tool/with_devices.py (throwaway; kept
+# as docs/evidence/probes/c05/probe_all.sh.txt). Run from the worktree root
+# after the probe builds: `./gradlew app:assembleDebug
+# app:assembleDebugAndroidTest -Ptarget=lib/probe.dart` in android/, and
+# `fvm flutter build ios --simulator --debug -t lib/probe.dart` then
+# `xcodebuild build-for-testing` into build/ios_uitest.
+S=$(dirname "$0")
+OUT=docs/evidence/probes/c05
+ROOT=$(pwd)
+for mode in tree keys native talkback; do
+  echo "== android $mode"
+  python3 "$S/probe_android.py" "$ROOT" "$mode" $( [ "$mode" = native ] && echo "-native" )
+done
+echo "== ios"
+echo "== simulator: $(xcrun simctl list devices booted | grep -E 'Booted' | head -1)" > $OUT/ios.txt
+cd ios || exit 1
+for t in testTree testKeys testVoiceOver testNative; do
+  echo "== $t" >> ../$OUT/ios.txt
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/ProbeC05UITests/$t" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "C05PROBE|error:|passed|failed|skipped" | grep -v "Test Suite" >> ../$OUT/ios.txt
+done
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

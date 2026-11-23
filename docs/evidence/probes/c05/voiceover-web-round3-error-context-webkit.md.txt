@@ -1,0 +1,172 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: c05_accordion_vo.spec.js >> voiceover reads bad-cupertino-expansion-tile
+- Location: c05_accordion_vo.spec.js:152:3
+
+# Error details
+
+```
+Error: bad-cupertino-expansion-tile-open, walk 1: stop 1 was "CupertinoExpansionTile - Flutter A11Y Techniques web content" where "heading level 1 CupertinoExpansionTile" was expected
+
+expect(received).toBe(expected) // Object.is equality
+
+Expected: "complete"
+Received: "wrong"
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - button "Back" [ref=e5]
+              - heading "CupertinoExpansionTile" [level=1] [ref=e6]
+            - group:
+              - generic [ref=e7]: Bad example for Accordion. Cupertino.
+              - generic [ref=e8]: "Defect: A keyboard cannot reach the headers, so it opens nothing."
+              - heading "Example" [level=2] [ref=e9]
+              - button "Shipping Orders ship in two days." [ref=e10]
+              - button "Returns" [ref=e12]
+              - generic [ref=e13]: "Presses: 0"
+```
+
+# Test source
+
+```ts
+  48  |   ...Object.fromEntries(['good-material', 'good-cupertino', 'good-custom'].map((slug) => [slug, {
+  49  |     closed: [inHeading(collapsed('Shipping')), inHeading(collapsed('Returns')), COUNT],
+  50  |     open: [inHeading(expanded('Shipping')), SHIPPING_TEXT, SHIPPING_ACTION, inHeading(collapsed('Returns')), COUNT],
+  51  |   }])),
+  52  |   // Bad examples: the defect must be audible where the web shows it.
+  53  |   'bad-no-state': {
+  54  |     closed: [inHeading('Shipping button'), inHeading('Returns button'), COUNT],
+  55  |     open: [inHeading('Shipping button'), SHIPPING_TEXT, SHIPPING_ACTION, inHeading('Returns button'), COUNT],
+  56  |   },
+  57  |   'bad-heading-on-button': {
+  58  |     closed: ['heading level 3 Shipping', 'heading level 3 Returns', COUNT],
+  59  |     open: ['heading level 3 Shipping', SHIPPING_TEXT, SHIPPING_ACTION, 'heading level 3 Returns', COUNT],
+  60  |   },
+  61  |   'bad-no-heading': {
+  62  |     closed: [collapsed('Shipping'), collapsed('Returns'), COUNT],
+  63  |     open: [expanded('Shipping'), SHIPPING_TEXT, SHIPPING_ACTION, collapsed('Returns'), COUNT],
+  64  |   },
+  65  |   // The defect is in where Tab goes, which this walk does not use.
+  66  |   'bad-hidden-panel': {
+  67  |     closed: [inHeading(collapsed('Shipping')), inHeading(collapsed('Returns')), COUNT],
+  68  |     open: [inHeading(expanded('Shipping')), SHIPPING_TEXT, SHIPPING_ACTION, inHeading(collapsed('Returns')), COUNT],
+  69  |   },
+  70  |   // A button on the web (FL-006); the defect, no button role, is on
+  71  |   // Android and iOS. The state is in its description, the tile's hint,
+  72  |   // which on a macOS browser is a touch instruction: closed, as the first
+  73  |   // recording heard it in Chromium and WebKit
+  74  |   // (docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt); open, as
+  75  |   // the second heard it (voiceover-web-round2-fail.md.txt).
+  76  |   'bad-expansion-tile': {
+  77  |     closed: [CLOSED_TILE('Shipping'), CLOSED_TILE('Returns'), COUNT],
+  78  |     open: [`Shipping ${OPEN_HINT} button`, SHIPPING_TEXT, CLOSED_TILE('Returns'), COUNT],
+  79  |   },
+  80  |   // The defect is the keyboard (see the tree spec); the same description
+  81  |   // as bad-expansion-tile, closed, as heard. Open, the header and its
+  82  |   // panel's text are one button (the tree spec); not heard yet: the
+  83  |   // second recording's test ran into its timeout before the open walk
+  84  |   // (see walkToEndClickingAtPoint).
+  85  |   'bad-cupertino-expansion-tile': {
+  86  |     closed: [CLOSED_TILE('Shipping'), CLOSED_TILE('Returns'), COUNT],
+  87  |     open: [`Shipping ${SHIPPING_TEXT} ${OPEN_HINT} button`, CLOSED_TILE('Returns'), COUNT],
+  88  |   },
+  89  | };
+  90  | 
+  91  | const tile = (slug) => slug.endsWith('expansion-tile');
+  92  | 
+  93  | /**
+  94  |  * walkToEnd (vo_helpers.js), with its first click made with the mouse at
+  95  |  * the "Example" heading's place instead of Playwright's checked click on
+  96  |  * the heading, as walkFromBack's `clickAtPoint` does for FL-029.
+  97  |  *
+  98  |  * Why: once a section of `CupertinoExpansionTile` has been opened, an empty
+  99  |  * element the size of the view lies over the page in the semantics DOM and
+  100 |  * takes pointer events (FL-029, extended; measured without VoiceOver in
+  101 |  * docs/evidence/probes/c05/click_probe.txt). A checked click on the heading
+  102 |  * there is refused (the probe: "intercepts pointer events", then its
+  103 |  * timeout). In the second recording this example's test ran into the
+  104 |  * test's timeout after its closed walk, with no open walk logged
+  105 |  * (docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt); its output
+  106 |  * does not say which step was running.
+  107 |  * The click is only there to bring keyboard focus into the page; focus is
+  108 |  * then put on Back as walkToEnd does, and the walk is walkToEnd's, step for
+  109 |  * step (stopsToEnd over VoiceOver's last phrase and cursor position).
+  110 |  */
+  111 | async function walkToEndClickingAtPoint(page, voiceOver, browserName, max = 40) {
+  112 |   await activateBrowser(browserName);
+  113 |   await page.bringToFront();
+  114 |   const heading = page.getByRole('heading', { name: 'Example', exact: true, level: 2 });
+  115 |   const box = await heading.boundingBox();
+  116 |   if (!box) throw new Error(`The "Example" heading has no box to click on ${page.url()}`);
+  117 |   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  118 |   await page.getByRole('button', { name: 'Back' }).focus();
+  119 |   const { phrase, quiet } = await untilQuiet({
+  120 |     read: lastPhrase, sleep: (ms) => page.waitForTimeout(ms), quietMs: 2000, limitMs: 10000 });
+  121 |   if (!quiet) {
+  122 |     throw new Error(`VoiceOver did not go quiet within 10 seconds of focusing Back; it last said "${phrase}"`);
+  123 |   }
+  124 |   const step = async () => {
+  125 |     await voiceOver.next();
+  126 |     return { phrase: await lastPhrase(), position: await cursorBounds() };
+  127 |   };
+  128 |   return stopsToEnd(step, await cursorBounds(), max);
+  129 | }
+  130 | 
+  131 | /**
+  132 |  * Walks the screen until a walk is complete or wrong, at most three times,
+  133 |  * logging each try as `<label>-walk-<n>` with its verdict: the stops after
+  134 |  * the "Example" heading for a complete walk, every stop for any other.
+  135 |  */
+  136 | async function read(page, voiceOver, browserName, label, expected, screen, { clickAtPoint = false } = {}) {
+  137 |   const walk = clickAtPoint ? walkToEndClickingAtPoint : walkToEnd;
+  138 |   const { verdict, reason, walks } = await runWalks(
+  139 |     () => walk(page, voiceOver, browserName, 40),
+  140 |     (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screen),
+  141 |     {
+  142 |       log: (walk, stops, judged) => {
+  143 |         const start = stops.indexOf(EXAMPLE_HEADING);
+  144 |         const shown = (judged.verdict === 'complete' ? stops.slice(start + 1) : stops).join(' / ') || '(nothing)';
+  145 |         console.log(`C05VO ${browserName} ${label}-walk-${walk} | ${shown} (${judged.verdict}: ${judged.reason})`);
+  146 |       },
+  147 |     });
+> 148 |   expect(verdict, `${label}, walk ${walks}: ${reason}`).toBe('complete');
+      |                                                         ^ Error: bad-cupertino-expansion-tile-open, walk 1: stop 1 was "CupertinoExpansionTile - Flutter A11Y Techniques web content" where "heading level 1 CupertinoExpansionTile" was expected
+  149 | }
+  150 | 
+  151 | for (const [slug, { closed, open }] of Object.entries(EXAMPLES)) {
+  152 |   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
+  153 |     await page.goto(`/#/t/C05/${slug}`, { waitUntil: 'load' });
+  154 |     const count = page.locator(`[flt-semantics-identifier="c05-${slug}-count"]`);
+  155 |     await expect(count).toBeVisible();
+  156 |     await page.waitForTimeout(600);
+  157 |     await read(page, voiceOver, browserName, slug, closed, screenStops(slug));
+  158 |     const header = tile(slug)
+  159 |       ? page.getByRole('button', { name: 'Shipping', exact: true })
+  160 |       : page.locator(`[flt-semantics-identifier="c05-${slug}-shipping"]`);
+  161 |     await header.click();
+  162 |     // The walk must end with the panel's text read, so a reading from
+  163 |     // before the click cannot pass.
+  164 |     await expect(page.getByText(SHIPPING_TEXT).or(page.getByRole('button', { name: new RegExp(SHIPPING_TEXT) }))).toHaveCount(1);
+  165 |     // Open, the Cupertino tile leaves an empty element over the page that
+  166 |     // takes pointer events (see walkToEndClickingAtPoint).
+  167 |     await read(page, voiceOver, browserName, `${slug}-open`, open, screenStops(slug),
+  168 |       { clickAtPoint: slug === 'bad-cupertino-expansion-tile' });
+  169 |   });
+  170 | }
+  171 | 
+```

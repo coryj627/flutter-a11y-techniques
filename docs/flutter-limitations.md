@@ -141,6 +141,14 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-257](#fl-257) | `CircularProgressIndicator.adaptive` drops its label, and all its semantics, where the theme's platform is iOS or macOS, which includes a browser on a Mac | iOS, Web (on a Mac) | Confirmed |
 | [FL-258](#fl-258) | A progress indicator's `semanticsValue` that is not a number or a percentage fails the framework's own check, and in a debug build no semantics are sent for the screen | Android, iOS, test framework (debug); Web (release: no `aria-valuenow`) | Confirmed |
 | [FL-259](#fl-259) | On the web a node whose role changes loses its test identifier | Web | Observed (source read) |
+| [FL-260](#fl-260) | On iOS `expanded` has no effect: VoiceOver says no expanded or collapsed state | iOS | Confirmed |
+| [FL-261](#fl-261) | On Android the expanded state reaches only Android 16 and later | Android (before 16) | Confirmed (source read); measured on Android 17 only |
+| [FL-262](#fl-262) | On the web a heading is never a button: a node with a heading level and a button flag is a heading only, with no `aria-expanded` and no button role | Web | Confirmed |
+| [FL-263](#fl-263) | A panel hidden with `Offstage` is out of the semantics tree, but its controls keep keyboard focus; `Expansible` and `CupertinoExpansionTile` hide closed panels that way by default, and `ExpansionTile` does with `maintainState: true` | All | Confirmed |
+| [FL-264](#fl-264) | `ExpansionTile`'s header has no expanded state, and on Android and iOS no button role; the state is a hint | All | Confirmed |
+| [FL-265](#fl-265) | `CupertinoExpansionTile`'s header takes no keyboard focus, is no button, and has no expanded state; once open, the panel's text joins its name | All (no focus); Android, iOS (no role) | Confirmed |
+| [FL-266](#fl-266) | On the web `controlsNodes` becomes `aria-controls` only if the controlled node is there when `controlsNodes` is set | Web | Confirmed |
+| [FL-267](#fl-267) | `ExpansionPanelList`'s expand buttons are named "Expand" or "Collapse" whatever their panel, and have no expanded state | All | Observed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -1035,9 +1043,30 @@ yet), **Fixed in x.y** (verified on that version).
   element is the only difference found between the two kinds of screen;
   the test cannot rule out the harness. The WebKit build is not Safari;
   Safari was not tried.
+- Also seen in C05 (2026-11-21), for `CupertinoExpansionTile`: once any
+  of its sections has been opened, one empty `flt-semantics` element the
+  size of the view, with `pointer-events: auto`, lies over the page; before
+  that there is none (`docs/evidence/probes/c05/click_probe.txt`, from
+  `c05_probe_click.spec.js.txt`). Framework source read:
+  `cupertino/expansion_tile.dart` shows an `OverlayPortal` for its fade on
+  the first tap of a header (`_fadeController.show()`) and never hides it.
+  That its node is made the way the `Slider`'s is (`_DeferredLayout`) was
+  not traced. Asserted by `web_tests/c05_accordion.spec.js` ("the empty
+  element over the page"), written to fail when it goes: none on the other
+  C05 examples, closed or open; on `bad-cupertino-expansion-tile` none
+  while closed and one once opened, a hit test at the "Example" heading
+  finds it, Playwright's checked click on the heading is refused, and a
+  real mouse click on the Returns header still opens it. In C05's second
+  web VoiceOver recording the test of that example ran into its timeout
+  after its closed walk, with no open walk logged
+  (`docs/evidence/probes/c05/voiceover-web-round2-fail.md.txt`); the open
+  walk begins with a checked click on the heading, which the probe shows
+  is refused there.
 - How it is handled here: `walkFromBack` in `web_tests/vo/vo_helpers.js`
   takes a `clickAtPoint` flag for these screens, which clicks with the
-  mouse at a position and skips Playwright's check.
+  mouse at a position and skips Playwright's check. C05's web VoiceOver
+  spec has its own `walkToEndClickingAtPoint`, `walkToEnd` with that click,
+  for the open Cupertino tile.
 - Workaround: none in the SDK for a Material `Slider`. Tried in F10:
   `showValueIndicator: never` and `Overlay.wrap` around the slider. A
   `CupertinoSlider` or a custom slider has no such element.
@@ -3523,6 +3552,349 @@ yet), **Fixed in x.y** (verified on that version).
   Android and iOS were not checked for it.
 - Workaround: keep a node's role fixed while it has an identifier; C26's
   bars are determinate from the start.
+- Upstream issue: not searched yet (D25).
+
+## FL-260
+
+**On iOS `expanded` has no effect: VoiceOver says no expanded or collapsed state.**
+
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator. Found in the C05
+  probe (`docs/evidence/probes/c05/`, fixtures p07 to p11 and p13 to p18
+  have `Semantics(expanded:)`) and asserted by C05's VoiceOver walk on iOS
+  (`bad-no-state` against the good examples; see below). Engine source read
+  at the pinned revision: nothing under
+  `engine/src/flutter/shell/platform/darwin/ios/framework/` reads the
+  expanded flag, and the engine never sets UIKit's
+  `accessibilityExpandedStatus` (iOS 18 and later, in
+  `UIAccessibility.h` of the iOS 27.1 SDK).
+- WCAG: 4.1.2 Name, Role, Value, on iOS: with `expanded` alone the state
+  cannot be programmatically determined there.
+- What happens: `Semantics(button: true, expanded: false)` and the same
+  node expanded read alike: "p07 Shipping Button", closed and open (probe
+  `ios.txt`, p07, p09 to p11, p13, p14, p16 to p18). XCUITest shows no value
+  and no selected state for it. After XCUITest's double tap at the header
+  opened it (a tap at its place with VoiceOver on, not VoiceOver's own
+  activation, which XCUIVoiceOverService cannot make: C04 probe round 3),
+  VoiceOver said nothing more in the three seconds read (nor for UIKit's own
+  buttons, below), and moving on read the panel.
+  So a VoiceOver user cannot tell whether a section is open.
+- Native comparison (probe, `testNative`): a UIKit button with
+  `accessibilityExpandedStatus` is read "n01 Shipping Button Collapsed
+  Double-tap to expand", and once a tap has opened it "n01 Shipping Button
+  Expanded Double-tap to collapse"; with the header trait added, "n02
+  Shipping Button Heading Collapsed Double-tap to expand"; SwiftUI's
+  `DisclosureGroup`, which the iOS reference uses, "n03 Shipping Button
+  Collapsed Double-tap to expand" (`ios.txt`, `testNative`). So iOS has a
+  state for this, which VoiceOver reads, and Flutter does not set it.
+- Workaround, in the SDK, with no source (of this project's own design;
+  not in APG, the reference repositories, or Flutter's documentation).
+  Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions"). On iOS only, put the state in the header's value
+  as well: `value: open ? 'expanded' : 'collapsed'` when
+  `defaultTargetPlatform == TargetPlatform.iOS` and not on the web
+  (C05 `iosStateValue`). VoiceOver then says "p12 Shipping collapsed Button" (probe
+  p12), the state between the name and the role, where UIKit's own status
+  comes after the role and adds a hint; C05's good examples are read
+  "Shipping collapsed Button Heading" (`docs/evidence/C05/voiceover-ios.md`). The value is not given elsewhere:
+  on Android it is put before the name in the content description
+  ("collapsed, p12 Shipping", probe p12), and on the web it is added to
+  the name ("p12 Shipping collapsed", [FL-037](#fl-037)), each beside the
+  expanded state the platform already reads.
+- How to read this entry: Flutter has not passed the expanded state to
+  iOS yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-261
+
+**On Android the expanded state reaches only Android 16 and later.**
+
+- Status: Confirmed (source read), Flutter 3.47.5. Measured on Android 17
+  only: there it works (below). Below Android 16 it was not measured; the
+  local emulator is Android 17, and the only Android 15 device is CI's
+  emulator, where C05's Android tests take the other branch and assert
+  that the node has no expand or collapse action. Engine source read:
+  `BaseRoleConfigurator.java` (`configureExpanded`) sets the expanded state
+  and adds `ACTION_EXPAND` and `ACTION_COLLAPSE` only when
+  `Build.VERSION.SDK_INT >= API_LEVELS.API_36`, and
+  `AccessibilityBridge.java` sends the expanded content change event under
+  the same test.
+- WCAG: 4.1.2 Name, Role, Value, on Android before 16 (source read, not
+  measured): the state cannot be programmatically determined there.
+- What happens on Android 17 (C05 probe and tests): a node with
+  `Semantics(button: true, expanded:)` is a `Button` whose expanded state
+  is "collapsed" or "full". TalkBack 17 says "collapsed." before the name
+  ("collapsed. p07 Shipping / Button / Double-tap to activate"), and, when
+  a click opens it with focus left on it, "fully expanded" (probe
+  `android-talkback.md`, p07 to p18). `ACTION_EXPAND` and
+  `ACTION_COLLAPSE` are on the node only when `onExpand` or `onCollapse`
+  is set (p10: TalkBack then adds "Actions available"), and each opened
+  and closed the section in the probe.
+- Native comparison: the Android View reference marks a header with
+  `ACTION_EXPAND` and `ACTION_COLLAPSE`, which exist on every version.
+  In the C05 probe (`android-tree-native.txt`, `android-talkback-native.md`)
+  a native `Button` with only those actions (n01) had no expanded state,
+  and TalkBack 17 read it "Double-tap to activate. Actions available, use
+  Tap with 3 fingers to view", with no state word (the name was not in the
+  capture); one that also sets `setExpandedState` (n02, Android 16 and
+  later) has the state "collapsed", then "full", as Flutter's node does.
+  What TalkBack says for n02 was not captured: the walk could not move
+  focus back to n01 after its click and stopped.
+- What is left before Android 16: no state at all. The good examples set
+  `onTapHint: open ? 'collapse' : 'expand'`, which makes TalkBack say
+  "Double-tap to expand" or "to collapse" (heard on Android 17, probe p13),
+  as the Android Compose reference does with `onClickLabel`. The engine
+  gives the click action that label on every version
+  (`BaseRoleConfigurator.java`, `configureTappable`, source read); what
+  TalkBack says for it before Android 16 was not measured. That says what a
+  double tap does, which implies the state; it is not the state, and no
+  SDK way to give the state on those versions was found: `value` would be
+  read on every version, so on Android 16 and later beside the state.
+- How to read this entry: Flutter has not passed the expanded state to
+  Android before 16 yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-262
+
+**On the web a heading is never a button: a node with a heading level and a button flag is a heading only, with no `aria-expanded` and no button role.**
+
+- Status: Confirmed, Flutter 3.47.5, Chromium. Found in the C05 probe
+  (`docs/evidence/probes/c05/web.txt`, fixtures p03 and p08) and asserted
+  by C05 `bad-heading-on-button` in `web_tests/c05_accordion.spec.js`,
+  written to fail when the header is a button. Web engine source read:
+  `semantics.dart` (`_getEngineSemanticsRole` returns the heading role
+  before the button role is looked at) and `heading.dart` (the heading
+  role is built with `SemanticRole.blank`, so it adds none of the
+  behaviours a button has, and not the one that writes `aria-expanded`).
+- What happens: `Semantics(headingLevel: 3, button: true, expanded: false)`
+  on one node is `<h3 tabindex="0">Shipping</h3>`: Chromium's tree has a
+  heading of level 3, focusable, and no button and no expanded state. Tab
+  still reaches it, and Enter, Space, and a click still open the section
+  (p08). An `ExpansionTile`
+  with its title in `Semantics(headingLevel: 3)` is the same (p03), with
+  its hint as `aria-description`.
+- On Android and iOS the same node is a heading and a button at once:
+  `Button` with `isHeading` true, and TalkBack says "Button. Heading"
+  (p08). On iOS VoiceOver says "p08 Shipping Button Heading".
+- WCAG: 4.1.2 Name, Role, Value, on the web: the header's role and state
+  cannot be programmatically determined.
+- Workaround, in the SDK: on the web, a heading node of its own that holds
+  the button's node, as APG's markup is:
+  `Semantics(headingLevel: 3, container: true, child: <the button>)` gives
+  `<h3><flt-semantics role="button" aria-expanded="false">Shipping</flt-semantics></h3>`,
+  which Chromium reads as the APG markup in plain HTML (probe p09, and the
+  plain HTML comparison in `web.txt`). Off the web keep the heading on the
+  button's node: on Android the outer node of p09 is a heading with no name
+  and the button is not a heading (`android-tree.txt`), and on iOS
+  VoiceOver says "p09 Shipping Button", with no "Heading" (`ios.txt`).
+  C05's good examples do both, by `kIsWeb` (`HeaderSemantics`). Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions").
+- How to read this entry: Flutter has not given a heading node the
+  behaviours of a button on the web yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-263
+
+**A panel hidden with `Offstage` is out of the semantics tree, but its controls keep keyboard focus; `Expansible` and `CupertinoExpansionTile` hide closed panels that way by default, and `ExpansionTile` does with `maintainState: true`.**
+
+- Status: Confirmed, Flutter 3.47.5, in widget tests, on the web, on
+  Android 17, and on iOS 27.0. Found in the C05 probe (fixtures p02,
+  `ExpansionTile(maintainState: true)`, and p14, `Expansible`;
+  `probe_test.txt`, `web.txt`, `android-keys.txt`) and asserted by C05
+  `bad-hidden-panel` in the widget, web, Android, and iOS tests (on iOS,
+  `testBadHiddenPanelTabGoesToAHiddenButton`: four Tabs and Enter press a
+  hidden button). Framework source read:
+  `widgets/basic.dart` documents that "Offstage children are still active:
+  they can receive focus and have keyboard input"; `RenderOffstage` paints
+  nothing and gives no semantics while offstage
+  (`rendering/proxy_box.dart`); `Expansible` builds a closed body as
+  `Offstage(offstage: true, child: TickerMode(...))` unless
+  `maintainState` is false (`widgets/expansible.dart`), and its
+  `maintainState` defaults to true; `ExpansionTile` passes its own
+  `maintainState`, false by default; `CupertinoExpansionTile` builds an
+  `Expansible` and does not set it (`cupertino/expansion_tile.dart`).
+- What happens: Tab moves keyboard focus to the closed panel's buttons,
+  which are not drawn and have no semantics node. Tab reaches them after
+  both headers, not after their own (why was not looked into). In the
+  widget tests no node has focus while it is there; on Android the tree
+  goes on reporting the last header as focused (probe `android-keys.txt`,
+  p02 and p14), and on the web the page's focus stays on that header. Enter there
+  presses the hidden button (C05's count goes up while every section stays
+  closed).
+- WCAG, as written: 4.1.2 Name, Role, Value: a control that takes
+  keyboard focus and is operated by Enter has no name or role a screen
+  reader can read. 2.4.7 Focus Visible is not claimed: the tests show focus
+  on a control with no node, not that no focus indicator is visible (that
+  nothing is drawn is from the source, `RenderOffstage` paints nothing; no
+  screenshot was taken). 2.4.3 Focus Order is not claimed: the order of the
+  visible stops is kept.
+- Workaround, in the SDK: pass `maintainState: false` to `Expansible`
+  (its documented parameter; not measured), or build a closed panel not at
+  all, as C05's good examples do (`if (open) panel`; a custom solution, not vetted by a real-world
+  example: C05's spec, "Custom solutions"). Keeping a hidden panel's state while taking its controls
+  out of the focus order, for example with `ExcludeFocus`, was not tried.
+- Upstream issue: not searched yet (D25).
+
+## FL-264
+
+**`ExpansionTile`'s header has no expanded state, and on Android and iOS no button role; the state is a hint.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the C05
+  probe (fixture p01) and asserted by C05 `bad-expansion-tile` in the
+  widget, web, Android, and iOS tests and heard in its transcripts.
+  Framework source read: `material/expansion_tile.dart` builds its header
+  as a `ListTile` with `internalAddSemanticForOnTap: false` (the
+  parameter's default on `ExpansionTile`, documented as "a temporary
+  flag"), so the header has no button flag; it sets no `expanded`; it
+  puts "Collapsed" or "Expanded" (`MaterialLocalizations.expandedHint` and
+  `collapsedHint`) in the header's hint, with "double tap to expand" or
+  "to collapse" after it when `defaultTargetPlatform` is iOS or macOS
+  (which it is in a browser on a Mac); on Android it wraps the header in a
+  live region whose label is the same word, to announce the change; on
+  iOS and the web it announces the change with `sendAnnouncement`.
+- What each platform gets (probe and C05 tests):
+  - Android: `android.view.View`, not a button, named "Shipping,
+    Collapsed" (the hint at the end of the name, [FL-039](#fl-039)), click
+    label "Expand for more details" or "Collapse". TalkBack: "Shipping, /
+    Collapsed / Double-tap to Expand for more details", and "Expanded"
+    when a click opens it.
+  - iOS: static text to XCUITest. VoiceOver: "p01 Shipping Collapsed double tap to expand",
+    the state as a hint with no role, and "Expanded" after XCUITest's
+    double tap at the header opened it (the announcement; the gesture is a
+    tap at its place, not VoiceOver's activation).
+  - Web: `role="button"` ([FL-006](#fl-006)) with no `aria-expanded`;
+    the state is its `aria-description`, which depends on the platform
+    Flutter's engine finds from the browser's `navigator.platform`
+    (`detectOperatingSystem`, ui_web's `browser_detection.dart`; source
+    read). On macOS it is "Collapsed" and "double tap to expand"
+    (accessible description "Collapsed double tap to expand", Chromium);
+    on Linux and Windows "Collapsed" alone (C05's web tests, with
+    `navigator.platform` set in the page; on a real Linux browser, CI's
+    Chromium, the earlier test that the description starts "Collapsed"
+    passed). VoiceOver on macOS reads it "Shipping Collapsed double tap to
+    expand button", in Chromium and WebKit
+    (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`): the
+    state in words, phrased as a touch instruction on a desktop browser.
+    In a browser on Android the source adds a live region; not
+    measured.
+- WCAG: 4.1.2 Name, Role, Value. On Android and iOS: no role that says it
+  is a control. For the state, on every platform: not settled by the
+  criterion as written. No expanded state is exposed (no `aria-expanded`
+  on the web, no expanded state on Android, none on iOS), but the state is
+  text a screen reader reads: in the name on Android, the hint on iOS, and
+  the accessible description on the web.
+- Closest achievable example: none with `ExpansionTile`'s own parameters
+  alone. C05 `good-material` builds the header from a `ListTile` inside
+  `Semantics(button: true, expanded:)` and builds the panel only while it
+  is open. Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions"). `ExpansionTile(internalAddSemanticForOnTap:
+  true)` with its title in `Semantics(expanded:)` gives a button with the
+  state (probe p15), but keeps the hint and the live region, so the state
+  is said twice ("Expanded / fully expanded" from TalkBack), and relies on
+  a parameter the source calls temporary; it is not used.
+- How to read this entry: Flutter has not given `ExpansionTile` a button
+  role and an expanded state yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-265
+
+**`CupertinoExpansionTile`'s header takes no keyboard focus, is no button, and has no expanded state; once open, the panel's text joins its name.**
+
+- Status: Confirmed, Flutter 3.47.5. Found in the C05 probe (fixture p06)
+  and asserted by C05 `bad-cupertino-expansion-tile` in the widget, web,
+  Android, and iOS tests. Framework source read:
+  `cupertino/expansion_tile.dart` builds the header as a
+  `CupertinoListTile` with `onTap` inside `Semantics(hint:, onTapHint:)`,
+  the hint only when `defaultTargetPlatform` is iOS or macOS (on the web,
+  as Flutter's engine finds it from the browser's `navigator.platform`);
+  a `CupertinoListTile` takes no focus and
+  is no button ([FL-400](#fl-400), the same mechanism).
+- What happens:
+  - No keyboard focus, on every platform: Tab passes the headers (the
+    widget tests, the web, Android, iOS), so a keyboard cannot open a
+    section. WCAG 2.1.1 Keyboard: no other keyboard path opens it.
+  - No button role on Android (`android.view.View`) and iOS (static text);
+    a button on the web ([FL-006](#fl-006)), with no `tabindex`.
+  - No expanded state. On Android nothing says the state. On iOS the hint
+    is "Collapsed double tap to expand" (VoiceOver, probe p06). On the web,
+    where Flutter's engine finds macOS, the same hint is the header's
+    accessible description (C05's web tests), which VoiceOver on macOS
+    reads "Shipping Collapsed double tap to expand button", in Chromium
+    and WebKit (`docs/evidence/probes/c05/voiceover-web-round1-fail.md.txt`):
+    the state in words, phrased as a touch instruction on a desktop
+    browser. On Linux and Windows the header has no description and no
+    `aria-description`, so nothing gives its state (C05's web tests, with
+    `navigator.platform` set in the page; on a real Linux browser, CI's
+    Chromium, the earlier test that expected a description received an
+    empty one, `docs/evidence/probes/c05/web-platforms.txt`). Nothing
+    announces the change.
+  - Once a section is open, its panel's text is merged into the header's
+    node: "Shipping\nOrders ship in two days." on Android; on the web a
+    group named "Shipping p06 Shipping panel" in the probe (p06, whose
+    panel has a button), and in C05's example, whose panel is text only, a
+    button named "Shipping Orders ship in two days." (C05's web tests).
+  - Once a section has been opened, an empty element the size of the view
+    lies over the page on the web and takes pointer events
+    ([FL-029](#fl-029), extended).
+  - Its closed panel is `Offstage` and keeps keyboard focus
+    ([FL-263](#fl-263)); C05's example has no button in it, so that this
+    is not a second defect there.
+- WCAG, for what is not C05's named defect (2.1.1, above): 4.1.2 Name,
+  Role, Value. On Android and iOS no role that says it is a control. For
+  the state: where nothing gives it (Android; the web on Linux and
+  Windows), it fails as written; where it is only a hint (iOS; the web on
+  macOS), not settled by the criterion as written.
+- Closest achievable example: none with `CupertinoExpansionTile`'s own
+  parameters. C05 `good-cupertino` builds the header from a
+  `CupertinoListTile` given focus by `FocusableActionDetector`, inside
+  `Semantics(button: true, expanded:)`, with the panel built only while
+  open. Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions").
+- How to read this entry: Flutter has not given `CupertinoExpansionTile`
+  keyboard focus, a button role, or an expanded state yet.
+- Upstream issue: not searched yet (D25).
+
+## FL-266
+
+**On the web `controlsNodes` becomes `aria-controls` only if the controlled node is there when `controlsNodes` is set.**
+
+- Status: Confirmed, Flutter 3.47.5, Chromium, in the C05 probe
+  (`web.txt`, fixtures p11, p17, p18); the workaround is asserted by
+  C05's web tests. Web engine source read: `semantics.dart`
+  (`_updateControls`), which looks the identifiers up once, after the
+  update in which `controlsNodes` changed.
+- What happens: a header with `controlsNodes: {'p11-Shipping-panel'}` set
+  all along, whose panel is built only once it is opened, has no
+  `aria-controls` before or after it opens (p11). With the panel open from
+  the start, `aria-controls` names the panel's element, and is kept after
+  the panel is gone (p17). Android and iOS do not read `controlsNodes`
+  (engine source: neither embedding refers to it).
+- WCAG: none failed as written. APG's accordion pattern requires
+  `aria-controls`; 1.3.1 and 4.1.2 are met by the panel coming straight
+  after its header.
+- Workaround, in the SDK, with no source (of this project's own design).
+  Custom solution: not vetted by a real-world example (C05's spec, "Custom solutions"). Set `controlsNodes` only while the panel is
+  open, so it changes in the update that builds the panel:
+  `controlsNodes: open ? {panelId} : null` (p18; C05 `controls`). Then
+  `aria-controls` names the open panel and is gone while it is closed.
+- Upstream issue: not searched yet (D25).
+
+## FL-267
+
+**`ExpansionPanelList`'s expand buttons are named "Expand" or "Collapse" whatever their panel, and have no expanded state.**
+
+- Status: Observed, Flutter 3.47.5, in the C05 probe only (fixtures p04
+  and p05); no C05 example uses it. Framework source read:
+  `material/expansion_panel.dart` and `material/expand_icon.dart`.
+- What happens, with `canTapOnHeader` false (the default, p04): the header
+  is text, and a separate `ExpandIcon`, an `IconButton`, opens it. That
+  button is wrapped in `Semantics(label: 'Expand', container: true)`:
+  on Android a node "Expand" holding a `Button` with no name; on the web
+  a button with no name; on iOS "Expand" and then "Button", two stops after the
+  header's text (VoiceOver, p04). Each panel's button reads
+  the same, so nothing says which section it opens. No node has an
+  expanded state. With `canTapOnHeader` true (p05) the header is one
+  button, named by the header ("p05 Shipping", click label "Expand"), but
+  the `ExpandIcon` inside it still takes keyboard focus: Tab stops twice on
+  each header (widget tests, web).
+- WCAG: not judged. No C05 example uses it, and the probe alone does not
+  test a whole screen built with it.
+- Workaround: as for [FL-264](#fl-264).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->

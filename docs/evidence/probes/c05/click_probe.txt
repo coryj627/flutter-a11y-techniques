@@ -1,0 +1,27 @@
+good-material closed heading box={"x":296,"y":120,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-6> "Example"; checked click: ok
+good-material open heading box={"x":296,"y":120,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-6> "Example"; checked click: ok
+good-material open: large leaf elements in the semantics tree: (none)
+good-cupertino closed heading box={"x":296,"y":120,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-6> "Example"; checked click: ok
+good-cupertino open heading box={"x":296,"y":120,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-6> "Example"; checked click: ok
+good-cupertino open: large leaf elements in the semantics tree: (none)
+good-custom closed heading box={"x":296,"y":120,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-6> "Example"; checked click: ok
+good-custom open heading box={"x":296,"y":120,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-6> "Example"; checked click: ok
+good-custom open: large leaf elements in the semantics tree: (none)
+bad-no-state closed heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-no-state open heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-no-state open: large leaf elements in the semantics tree: (none)
+bad-heading-on-button closed heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-heading-on-button open heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-heading-on-button open: large leaf elements in the semantics tree: (none)
+bad-no-heading closed heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-no-heading open heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-no-heading open: large leaf elements in the semantics tree: (none)
+bad-hidden-panel closed heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-hidden-panel open heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-hidden-panel open: large leaf elements in the semantics tree: (none)
+bad-expansion-tile closed heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-expansion-tile open heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-expansion-tile open: large leaf elements in the semantics tree: (none)
+bad-cupertino-expansion-tile closed heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <h2 role=null id=flt-semantic-node-7> "Example"; checked click: ok
+bad-cupertino-expansion-tile open heading box={"x":296,"y":152,"width":688,"height":28} element at its centre: <flt-semantics role=null id=flt-semantic-node-14> ""; checked click: FAILED: locator.click: Timeout 5000ms exceeded. |       - <flt-semantics id="flt-semantic-node-14"></flt-semantics> intercepts pointer events |       - <flt-semantics id="flt-semantic-node-14"></flt-semantics> intercepts pointer events
+bad-cupertino-expansion-tile open: large leaf elements in the semantics tree: <flt-semantics role=null 1280x720>
