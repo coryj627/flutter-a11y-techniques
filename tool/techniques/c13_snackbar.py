@@ -75,5 +75,7 @@ VOICEOVER_WEB_METHOD = (
     "only a walk cut short with every stop right so far is walked again, up to "
     "three walks, each shown as its own row (`-walk-<n>`). No runner retries. After "
     "the announcements of the examples with an action, keyboard focus on the "
-    "message's action and Enter: what it did must be heard (`-done-announced`)"
+    "message's action and Enter, and what VoiceOver then said for six seconds "
+    "(`-after-undo`, `-after-go-online`): FL-297's measured reading, checked both "
+    "ways, the exact phrase \"Back\" heard and the action's message not"
 )

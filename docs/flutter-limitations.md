@@ -142,6 +142,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-294](#fl-294) | A SnackBar's Close button shows keyboard focus only by a faint tint, and `closeIconColor` cannot change that | Widget tests only | Confirmed (widget tests only) |
 | [FL-295](#fl-295) | A `MaterialBanner` is a live region only when the `ScaffoldMessenger` shows it | All | Confirmed |
 | [FL-296](#fl-296) | A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it | Web; widget tests (Android and iOS not run) | Confirmed |
+| [FL-297](#fl-297) | On the web, VoiceOver in Chromium did not say the message a SnackBar or banner action showed when Enter on that action removed the control: it spoke its cursor's move to Back | Web (Chromium, VoiceOver, Enter) | Observed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -3613,6 +3614,53 @@ yet), **Fixed in x.y** (verified on that version).
   `bad-action-times-out` do, and their "Archive undone" was announced on
   the web (`web_undo.txt`, round 2) and in the widget tests with
   `accessibleNavigation` off and on.
+- Upstream issue: not searched yet (D25).
+
+## FL-297
+
+**On the web, VoiceOver in Chromium did not say the message a SnackBar or banner action showed when Enter on that action removed the control: it spoke its cursor's move to Back.**
+
+- Status: Observed, Flutter 3.47.5, macOS 27.2.1, VoiceOver, Playwright's
+  Chromium build. Measured in C13's fourth web VoiceOver recording
+  (`docs/evidence/probes/c13/voiceover-web-round3-fail.md.txt`) and held by
+  the C13 web VoiceOver spec as a measured reading, checked both ways (it
+  fails if the move to Back is not spoken, or if the message is heard).
+- What was measured: Enter, with keyboard focus on the action, in three
+  examples. In the six seconds after it, VoiceOver said:
+  - `good-action`, Undo (a `SnackBarAction`): "Back and 1 more item and 2
+    more items group", "Back", and its usage hint for a button. The
+    SnackBar then shown, "Archive undone", was not said.
+  - `good-banner`, Go online (a `TextButton` in a `MaterialBanner` the
+    messenger shows): "Back" and the usage hint. "You are online." was not
+    said.
+  - `bad-inline-banner`, Go online (a `TextButton` in a banner in the
+    page): "Back and 1 more item and 2 more items group" and "Back". "You
+    are online." was not said.
+- What Flutter did, the same presses without VoiceOver
+  (`docs/evidence/probes/c13/web_done_focus.txt`, Chromium): it wrote
+  "Archive undone" or "You are online." to `flt-announcement-polite` about
+  50 ms after Enter and emptied it about 300 ms later ([FL-012](#fl-012)'s
+  timer); the control pressed went with its message or banner, and DOM
+  focus went to the page's button ("Archive message" after Undo, "Go
+  offline" after Go online).
+- Not measured: why VoiceOver's cursor went to Back; whether VoiceOver
+  dropped the polite announcement for the move, or never received it; a
+  press by any other means than Enter (a click, VoiceOver's own
+  activation); WebKit, where Playwright's build passes no live region
+  changes to VoiceOver at all (I12), and real Safari; any other screen
+  reader. No cause is given.
+- WCAG: 4.1.3 as written is met in the tree (the message is a polite live
+  region, and Flutter writes it to the page's live region). What was
+  measured is that VoiceOver in Chromium did not present it, a
+  qualification of the web for the examples that show such a message, not
+  a failure of 4.1.3 as written.
+- What users get, as measured: a VoiceOver user in Chromium who presses
+  Undo or Go online hears "Back" and not what the action did. The page's
+  line shows it; TalkBack and VoiceOver on iOS said it (the C13
+  transcripts).
+- Workaround: none tried. The C13 examples are the framework's SnackBar
+  and banner through their own parameters, and nothing is built round
+  them (the principal's decision in review, 2026-11-22).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->

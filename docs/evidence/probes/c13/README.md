@@ -207,3 +207,6 @@ no VoiceOver, pressing the same way: Flutter wrote "Archive undone" and
 "You are online." to `flt-announcement-polite` about 50 ms after Enter and
 emptied it about 300 ms later; DOM focus went to the page's button
 ("Archive message" after Undo, "Go offline" after Go online).
+
+The principal decided (2026-11-22) to keep the design and record the
+reading as FL-297; the spec now checks it both ways.

@@ -34,10 +34,14 @@ const ANNOUNCED = {
   'bad-inline-banner': { mustNot: 'offline' },
 };
 
-// slug -> the message's action, pressed after the announcement, and what
-// must then be announced: what the action did, told by a SnackBar of its
-// own. For bad-inline-banner it is also the positive control of its
-// silence, in the same page and by the same reading of VoiceOver.
+// slug -> the message's action, pressed after the announcement, and the
+// message that action shows. A measured reading, checked both ways
+// (FL-297; docs/specs/C13-snackbar.md, section 7): the fourth recording
+// heard VoiceOver in Chromium speak its cursor's move to Back, and not the
+// message, which Flutter writes to its announcer about 50 ms after Enter.
+// Each check requires the exact phrase "Back" among what is heard, and
+// that no phrase holds the message: if VoiceOver ever says it, the check
+// fails, so the finding cannot go stale unnoticed.
 const DONE = {
   'good-action': { action: 'Undo', said: 'Archive undone' },
   'good-banner': { action: 'Go online', said: 'You are online.' },
@@ -84,10 +88,15 @@ for (const [slug, { must, mustNot }] of Object.entries(ANNOUNCED)) {
     await page.getByRole('button', { name: done.action, exact: true }).focus();
     const before = await waitUntilQuiet(page);
     expect(before, `${slug}: the phrase before ${done.action}`).not.toContain(done.said);
+    expect(before, `${slug}: the phrase before ${done.action}`).not.toBe('Back');
     const after = await heardAfter(page, () => page.keyboard.press('Enter'), before, 6000);
-    console.log(`C13VO ${browserName} ${slug}-done-announced | ${after.join(' / ') || '(nothing)'}`);
+    console.log(`C13VO ${browserName} ${slug}-after-${done.action === 'Undo' ? 'undo' : 'go-online'} | ${after.join(' / ') || '(nothing)'}`);
+    // The action acted: the page's line changed back.
     await expect(page.locator(`[flt-semantics-identifier="c13-${slug}-count"]`)).toHaveText(/: 0$|online$/);
-    expect(after.join(' | '), `${slug}: what ${done.action} did`).toContain(done.said);
+    // FL-297, as measured: the move to Back is spoken ...
+    expect(after, `${slug}: VoiceOver spoke its cursor's move to Back`).toContain('Back');
+    // ... and the message the action showed is not heard.
+    expect(after.join(' | '), `${slug}: "${done.said}" heard: FL-297 no longer holds`).not.toContain(done.said);
   });
 }
 
