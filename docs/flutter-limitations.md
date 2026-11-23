@@ -877,7 +877,8 @@ yet), **Fixed in x.y** (verified on that version).
 - What a card gets in place of `article`, measured in C18 (2026-11-22,
   `docs/evidence/probes/c18/`): a Material `Card` with
   `semanticContainer: false` makes no node of its own, so its parts are
-  siblings of everything round it on every platform; with the default,
+  siblings of everything round it on the web and Android (XCUITest gives no
+  hierarchy, so iOS's was not read); with the default,
   true, it is one node that takes in its text ([FL-269](#fl-269)). Cards in
   a `ListView` (fixture p14) are each an item node: on Android the list's
   node has collection information, three rows by one column, and TalkBack
@@ -3489,9 +3490,9 @@ yet), **Fixed in x.y** (verified on that version).
   the control's node, which becomes an `<h3 tabindex="0">` named by
   everything merged into it:
   - A `ListTile` with `onTap` (p06, `bad-heading-button`): Tab reaches it,
-    and Enter, Space, and a mouse click run its `onTap`; a DOM click with
-    no pointer events, which is what assistive technology sends, runs
-    nothing (`web_round2.txt`; the C18 web test, with a mouse click on the
+    and Enter, Space, and a mouse click (16 pixels in from its left edge in
+    the probe) run its `onTap`; a DOM click with no pointer events, which
+    is what assistive technology sends, runs nothing (`web_round2.txt`; the C18 web test, with a mouse click on the
     same element and a DOM click on Back in the same load as positive
     controls). VoiceOver read it as "heading level 3 Ridge trail A 6 km
     climb with a view.", with no "button", in Chromium and WebKit
@@ -3499,11 +3500,20 @@ yet), **Fixed in x.y** (verified on that version).
     activation sends was not measured.
   - A card that is one link, `Semantics(link: true, linkUrl:)` round an
     `InkWell` whose text has a heading (p09): an `<h3>` with no `href`, so
-    the browser has no link to follow, and Enter after Tab did nothing
-    there (C03's `BrowserKeys` gives Enter to the browser).
+    the browser has no link to follow, and neither Enter nor Space after
+    Tab ran anything there (C03's `BrowserKeys` gives both to the browser).
+    A mouse click 16 pixels in from its left edge ran the card's handler,
+    which on the web leaves following the link to the browser, so nothing
+    opened. A DOM click ran nothing.
   - `Semantics(button: true)` round an `InkWell` card, [FL-401](#fl-401)'s
-    own workaround (p19), and `MergeSemantics` round a card with a button
-    (p18; the project's `TestId` is one): an `<h3>` each.
+    own workaround (p19): an `<h3>`; Enter, Space, and the mouse click ran
+    its handler, a DOM click nothing.
+  - `MergeSemantics` round a card with one button (p18; the project's
+    `TestId` is one): an `<h3>` named by the title, the text, and the
+    button; Enter and Space ran the button's handler, the merged node's one
+    action; the mouse click 16 pixels in from its left edge, at mid height,
+    and a DOM click ran nothing (a click where the button is drawn was not
+    tried).
   - Off the web each keeps both: on Android a `Button` (or a `View` with
     the link's `URLSpan`) whose `isHeading` is true (`android-tree.txt`);
     on iOS a button or a link to XCUITest (`ios.txt`). For C18

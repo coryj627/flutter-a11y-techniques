@@ -199,8 +199,10 @@ semantics", with the button trait added back), so it is not called a
 failure there. Its one defect is the web's.
 
 `TestId` is a `MergeSemantics`, so it is put round each control and never
-round a card: round `good-material`'s card it would make the whole card one
-button with the heading's level, on the web a heading (probe fixture p18).
+round a card: round a card it makes the whole card one node with the
+heading's level and the button's action, a button that is a heading off the
+web and a heading on the web (probe fixture p18, a card with one button;
+`good-material`'s card, with two, was not tried).
 The headings and texts are found by their text.
 
 ### Decisions
@@ -244,8 +246,9 @@ the web.
   level makes the whole text a heading: on the web an `<h3>` holding the
   picture and the buttons; on Android a heading `View` with them as its
   children, read by TalkBack as the title and the text and "Heading"
-  (probe p01); on iOS one element named by both, which VoiceOver read with
-  "Heading" after the text. With `semanticContainer: false`, as the `Card`
+  (probe p01); on iOS one element named by both, which VoiceOver read in
+  the probe with "H" after the text, cut at 64 characters, and in
+  `bad-default-container`'s walk with "Heading" after the text. With `semanticContainer: false`, as the `Card`
   documentation says for "multiple different types of content", each part
   is a node of its own (p02, `good-material`).
 - **On the web, a heading merged into a control takes the control's role**
@@ -257,11 +260,20 @@ the web.
   heading (p06), an `InkWell` card with a heading (p03, p04), the same with
   `Semantics(button: true)` (p19), a card merged with `MergeSemantics`
   (p18), and a card made one link (p09) all became an `<h3 tabindex="0">`
-  with no button role and, for the link, no `href`. Tab reached each, and
-  Enter, Space, and a mouse click ran its handler, but a DOM click with no
-  pointer events ran nothing (`web_round2.txt`), and the link card did
-  nothing on Enter, as C03's `BrowserKeys` leaves Enter to a browser that
-  has no link there. Android keeps both roles: TalkBack read p06 and p19 as
+  with no button role and, for the link, no `href`. Tab reached each
+  (`web.txt`), and a DOM click with no pointer events on it ran nothing
+  (`web_round2.txt`). What the other inputs did differs by fixture, as the
+  probe recorded it:
+  - p03, p04, p06, p19: Enter and Space ran the card's handler, and so did
+    a mouse click 16 pixels in from the `<h3>`'s left edge, at mid height.
+  - p09, the link card: neither Enter nor Space ran anything (C03's
+    `BrowserKeys` leaves both to the browser, which has no link there). The
+    mouse click at the same place ran the card's handler, which on the web
+    does not open the page itself, so nothing opened.
+  - p18, the card merged with `MergeSemantics`: Enter and Space ran the
+    Save button's handler, the merged node's one action. The mouse click
+    at the same place ran nothing; a click where the button is drawn was
+    not tried. Android keeps both roles: TalkBack read p06 and p19 as
   "Button. Heading". iOS keeps them too: XCUITest found a button (p06,
   p18, p19) or a link (p09), and VoiceOver read `bad-heading-button` as
   "Ridge trail A 6 km climb with a view. Button Heading" (the probe's
@@ -281,7 +293,9 @@ the web.
   `IconButton`). Android: a clickable node with a clickable child; TalkBack
   focus and Tab reached each, and each ran only its own handler. Web: a
   button inside a button (p08) or inside the `<h3>` (p07), both in
-  Chromium's tree, both reached by Tab and run by Enter, Space, and a click.
+  Chromium's tree, both reached by Tab and run by Enter, Space, and a mouse
+  click (at the centre of each button, and for p07's card 16 pixels in from
+  its left edge).
   iOS: the `InkWell` card an element of type other and the `ListTile` a
   button, each with the inner button as an element of its own; VoiceOver
   moving forward stopped on the card and then on the inner button, a tap
@@ -308,8 +322,8 @@ the web.
   is not a heading ([FL-014](../flutter-limitations.md#fl-014)) and its
   `CupertinoListTile` takes no keyboard focus and has no button role
   ([FL-400](../flutter-limitations.md#fl-400)); TalkBack read p17's tile as
-  its text and "Double-tap to activate", and Tab passed it on Android and
-  the web. A `CupertinoButton` in a drawn card (p16) is a button, which on
+  its text and "Double-tap to activate", Tab passed it on Android and the
+  web, and on iOS no key the probe sent ran it. A `CupertinoButton` in a drawn card (p16) is a button, which on
   the web Enter does not activate without an `Actions` of its own
   ([FL-002](../flutter-limitations.md#fl-002)); `good-cupertino` has no
   action for that reason.

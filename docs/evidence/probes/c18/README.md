@@ -89,7 +89,7 @@ From `web.txt` and `web_round2.txt`:
 | --- | --- | --- | --- |
 | p01 | one `<h3 aria-label="p01 Card heading\np01 Body text…">` holding a `role="img"` and two `role="button"` | Back, the two buttons | Enter, Space, and a click run each button's own handler |
 | p02 | `<h3>` "p02 Card heading", the text in a `<span>`, `role="img"`, two buttons, as siblings | Back, the two buttons | as p01 |
-| p03, p04, p06, p09, p19 | one `<h3 tabindex="0">` named by the title and the text, no button or link role, no `href` (p09) | Back, the `<h3>` | Enter, Space, and a mouse click run the handler (p09: Enter and Space nothing); a DOM click runs nothing |
+| p03, p04, p06, p09, p19 | one `<h3 tabindex="0">` named by the title and the text, no button or link role, no `href` (p09) | Back, the `<h3>` | Enter and Space run the handler (p09: nothing); a mouse click 16 pixels in from the left edge runs it (for p09 the handler, with nothing opened); a DOM click runs nothing |
 | p05, p20 | one `role="button"` named by the title and the text | Back, the button | Enter, Space, and a click run it |
 | p07 | `<h3 tabindex="0">` holding a `role="button"` "p07 Save" | Back, the `<h3>`, Save | each runs its own handler; a DOM click on the `<h3>` runs nothing |
 | p08 | `role="button"` named by the title and the text, holding a `role="button"` "p08 Save" | Back, the card, Save | each runs its own handler |
@@ -100,7 +100,7 @@ From `web.txt` and `web_round2.txt`:
 | p15 | `role="list"` holding three `role="listitem"`, each a card's parts | as p13 | as p13 |
 | p16 | `<h3>`, the text, a button "p16 Save" | Back, Save | Space and a click run it (Enter: FL-002) |
 | p17 | the header as text; the tile a `role="button"` with no `tabindex` | Back only | a click runs it |
-| p18 | one `<h3 tabindex="0">` named by the title, the text, and "p18 Save" | Back, the `<h3>` | Enter and Space run Save; a click 16 pixels in from its left edge, on the title, and a DOM click, run nothing |
+| p18 | one `<h3 tabindex="0">` named by the title, the text, and "p18 Save" | Back, the `<h3>` | Enter and Space run Save; a click 16 pixels in from its left edge at mid height, and a DOM click, run nothing (a click where the button is drawn was not tried) |
 
 Plain HTML in Chromium (`web.txt`, "html" lines): an `article` is role
 `article` holding its heading, paragraph, and buttons; a `div` with
@@ -135,9 +135,10 @@ From `android-tree.txt` and `android-talkback.md`:
 | p20 | one clickable `View`, not a heading | "… / Double-tap to activate" |
 
 Keys (`input keyevent`, from `android-tree.txt`): Tab went Back, then
-each control of the fixture in order, then round again; Enter and Space on
-each control ran its own handler, and for p09 and p11 opened `/dest`. p17's
-tile took no focus: Tab stopped on Back only.
+each control of the fixture in order, then round again (for p01 the first
+Tab left touch mode); Enter and Space on each control ran its own handler
+(for p18's one merged node, Save's), and for p09 and p11 opened `/dest`.
+p17's tile took no focus: Tab stopped on Back only.
 
 ## iOS
 
@@ -162,9 +163,11 @@ shown here as "…"):
 | p20 | one static text named by the title and the text | the text alone, no trait | runs the card's handler |
 
 Keys (one to three Tabs and Enter, two Tabs and Space, each from a fresh
-launch): one Tab and Enter ran nothing; two Tabs ran the fixture's first
-control (the card, or its first button), three its second, with Enter and
-with Space; p09 and p11 opened `/dest`; p17's tile was never run by a key.
+launch): one Tab and Enter ran nothing; two Tabs then Enter, and two Tabs
+then Space, ran the fixture's first control (the card, its first button,
+or for p18 the merged node's Save); three Tabs then Enter ran its second
+where it has one (p01, p02, p07, p08) and nothing where it has not; p09
+and p11 opened `/dest`; p17's tile was never run by a key.
 
 ## What this changed
 
