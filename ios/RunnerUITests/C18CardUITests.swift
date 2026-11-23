@@ -185,22 +185,22 @@ final class C18CardUITests: XCTestCase, TechniqueUITest {
   private static let read = "\(trail) \(text)"
   private static let speech: [(slug: String, content: [String])] = [
     // Each part on its own, then the counts.
-    ("good-material", [Self.heading, Self.text, "\(Self.picture) Image", "Save \(Self.trail) Button", "Share \(Self.trail) Button",
+    ("good-material", [heading, text, "\(picture) Image", "Save \(trail) Button", "Share \(trail) Button",
                        "Saves: 0", "Shares: 0"]),
     // One button, named by the title and the text.
-    ("good-tappable", ["\(Self.read) Button", "Opens: 0"]),
-    ("good-cupertino", [Self.heading, Self.text, "\(Self.picture) Image"]),
+    ("good-tappable", ["\(read) Button", "Opens: 0"]),
+    ("good-cupertino", [heading, text, "\(picture) Image"]),
     // Bad examples: the defect must be audible where iOS shows it. The
     // heading and the text are one heading.
-    ("bad-default-container", ["\(Self.read) Heading", "Save \(Self.trail) Button", "Saves: 0"]),
+    ("bad-default-container", ["\(read) Heading", "Save \(trail) Button", "Saves: 0"]),
     // iOS keeps both roles; the defect is the web's (FL-268). In the probe
     // VoiceOver read the button trait first (docs/evidence/probes/c18/ios.txt,
     // p06, cut at 64 characters).
-    ("bad-heading-button", ["\(Self.read) Button Heading", "Opens: 0"]),
+    ("bad-heading-button", ["\(read) Button Heading", "Opens: 0"]),
     // No role at all (FL-401).
-    ("bad-ink-well", [Self.read, "Opens: 0"]),
+    ("bad-ink-well", [read, "Opens: 0"]),
     // The link says only "Read more".
-    ("bad-read-more", [Self.heading, Self.text, "Read more Link"]),
+    ("bad-read-more", [heading, text, "Read more Link"]),
   ]
 
   func testVoiceOverSpeech() throws {

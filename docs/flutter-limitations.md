@@ -135,7 +135,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-251](#fl-251) | A tooltip is part of its control's name on iOS and the web, before the control's own text on the web; only Android treats it as separate text | iOS, Web | Confirmed |
 | [FL-252](#fl-252) | On iOS VoiceOver does not stop on a node whose only text is a tooltip | iOS | Confirmed |
 | [FL-253](#fl-253) | A `FilledButton`'s text is under 4.5:1 in light mode while it has keyboard focus and a hover | All (widget test only) | Confirmed (widget test only) |
-| [FL-268](#fl-268) | On the web a node with a heading level is a heading and nothing else: a button, a link, a checkbox, or a text field merged with a heading loses its role | Web | Confirmed |
+| [FL-268](#fl-268) | On the web a node with a heading level is a heading and nothing else: a button, a link, a checkbox, or a text field merged with a heading loses its role | Web | Confirmed for a button and a link; the others source read |
 | [FL-269](#fl-269) | A `Card` left at its default joins all its text into one node, and a heading in it makes all of that one heading | All | Confirmed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
@@ -3321,7 +3321,8 @@ yet), **Fixed in x.y** (verified on that version).
 
 **On the web a node with a heading level is a heading and nothing else: a button, a link, a checkbox, or a text field merged with a heading loses its role.**
 
-- Status: Confirmed, Flutter 3.47.5, Chromium: asserted by C18
+- Status: Confirmed for a button and a link, Flutter 3.47.5, Chromium; a
+  checkbox and a text field read in the source only. Asserted by C18
   `bad-heading-button` in `web_tests/c18_card.spec.js`. Found in the C18
   probe (`docs/evidence/probes/c18/web.txt` and `web_round2.txt`, fixtures
   p03, p04, p06, p07, p09, p18, p19). Web engine source read:
@@ -3359,9 +3360,11 @@ yet), **Fixed in x.y** (verified on that version).
   p06, p09, p18, p19); on iOS, to XCUITest, a button (p06, p18, p19) or a
   link (p09) (`ios.txt`). VoiceOver's reading of those fixtures was cut at
   64 characters before the second trait, after "B" for p06 and p19 and "H"
-  for p09, so the probe did not show whether it said both; C18
-  `bad-heading-button`'s walk, with a shorter name, checks it
-  (`docs/evidence/C18/voiceover-ios.md`).
+  for p09, so the probe did not show whether it said both. C18
+  `bad-heading-button`, with a shorter name, shows it does: VoiceOver
+  reads "Ridge trail A 6 km climb with a view. Button Heading"
+  (`docs/evidence/C18/voiceover-ios.md`), and TalkBack "… / Button.
+  Heading" (`docs/evidence/C18/talkback-android.md`).
 - Plain HTML for comparison (`web.txt`, "html"): a `div` with
   `role="button"` round an `h3` and a `p`, and an `a href` round them, are
   a button and a link in Chromium's tree, with the heading inside them as a
@@ -3401,9 +3404,10 @@ yet), **Fixed in x.y** (verified on that version).
   - iOS: one element of type other (XCUITest's type for a heading here)
     named by the title and the text, with the picture and the buttons as
     elements of their own (`ios.txt`, p01). VoiceOver read the title and
-    the text and then "H", cut at 64 characters, in the probe; C18's walk
-    checks the whole reading, the text and "Heading"
-    (`docs/evidence/C18/voiceover-ios.md`).
+    the text and then "H", cut at 64 characters, in the probe; for C18
+    `bad-default-container` it reads "Ridge trail A 6 km climb with a
+    view. Heading" (`docs/evidence/C18/voiceover-ios.md`), and TalkBack
+    "… / Heading" (`docs/evidence/C18/talkback-android.md`).
   - With `semanticContainer: false` each part is a node of its own, and
     the title alone is the heading (p02, C18 `good-material`).
 - Why it matters: the default is what a `Card` gets unless its author has

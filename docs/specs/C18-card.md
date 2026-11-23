@@ -225,11 +225,12 @@ the web.
   nothing on Enter, as C03's `BrowserKeys` leaves Enter to a browser that
   has no link there. Android keeps both roles: TalkBack read p06 and p19 as
   "Button. Heading". iOS keeps them too: XCUITest found a button (p06,
-  p18, p19) or a link (p09), and `bad-heading-button`'s walk checks that
-  VoiceOver says both traits, which the probe's longer names cut off at 64
-  characters. Plain HTML keeps both as well: Chromium
-  exposes a `role="button"` element or an `<a href>` round an `<h3>` as a
-  button or a link with the heading inside it.
+  p18, p19) or a link (p09), and VoiceOver read `bad-heading-button` as
+  "Ridge trail A 6 km climb with a view. Button Heading" (the probe's
+  longer names were cut off at 64 characters before the second trait).
+  Plain HTML keeps both as well: Chromium exposes a `role="button"`
+  element or an `<a href>` round an `<h3>` as a button or a link with the
+  heading inside it.
 - **The `Card` documentation's tappable card has no button role off the
   web** ([FL-401](../flutter-limitations.md#fl-401), extended;
   `bad-ink-well`): `Card` round `InkWell`, read by TalkBack as its text and

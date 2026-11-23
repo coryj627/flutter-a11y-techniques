@@ -56,8 +56,7 @@ VOICEOVER_IOS_METHOD = (
     "`XCUIVoiceOverService.moveForward()` from the top of the screen to its "
     "end, where moving on gives the last utterance again, twice (C03's walk); "
     "what is shown is everything after the \"Example\" heading, and a walk "
-    "that does not reach the end fails. Utterances are cut at 64 characters "
-    "by the service",
+    "that does not reach the end fails",
     "Spoken, in swipe order",
 )
 
