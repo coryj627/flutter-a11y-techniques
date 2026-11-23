@@ -1,0 +1,55 @@
+// C18 probe round 2 on the web (throwaway, not committed; kept as
+// docs/evidence/probes/c18/c18_probe2.spec.js.txt, run with
+// c18probe.config.js.txt changed to match this file): for the fixtures
+// whose tappable node came out as an <h3>, what a mouse click at its centre
+// and a DOM click with no pointer events (what assistive technology sends)
+// do, each from a fresh load.
+import { test } from '@playwright/test';
+
+const ids = ['p03', 'p04', 'p06', 'p07', 'p09', 'p18', 'p19'];
+
+function log(...a) {
+  console.log('C18WEB2', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-taps"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+async function state(page, id) {
+  await page.waitForTimeout(1000);
+  const url = page.url().replace(/^http:\/\/127\.0\.0\.1:\d+/, '');
+  const taps = await page
+    .locator(`[flt-semantics-identifier="${id}-taps"]`)
+    .textContent({ timeout: 1000 })
+    .catch(() => '(gone)');
+  const dest = (await page.getByText(/^Arrived/).count()) > 0;
+  return `url=${url} taps="${taps}" destination=${dest}`;
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of ids) {
+  test(`probe2 ${id}`, async ({ page }) => {
+    for (const how of ['mouse', 'dispatch']) {
+      await fresh(page, id);
+      const h3 = page.locator('flt-semantics-host h3[tabindex]');
+      const n = await h3.count();
+      if (n !== 1) {
+        log(id, how, `h3 with tabindex: ${n}`);
+        continue;
+      }
+      const tag = await h3.evaluate((e) => `${e.tagName} role=${e.getAttribute('role')} href=${e.getAttribute('href')}`);
+      if (how === 'mouse') {
+        const b = await h3.boundingBox();
+        await page.mouse.click(b.x + 16, b.y + b.height / 2);
+      } else {
+        await h3.dispatchEvent('click');
+      }
+      log(id, how, tag, await state(page, id));
+    }
+  });
+}
