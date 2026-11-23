@@ -83,6 +83,16 @@ How each platform was looked at, and the raw output:
   the tree from snapshots. Every other file here is round 2. The web was
   run again for round 2 (`web.txt`).
 
+## Kept from the build, after the probe
+
+- `android_320x640.txt`, with `android_320x640.sh.txt`: C26's Android tree
+  tests at CI's emulator size, 320 by 640 at 160 dpi; passed.
+- `ios-tab-round1-fail.txt`: the first iOS tree run's one failure, Tab
+  and Return (the spec, section 7).
+- `voiceover-ios-round1-fail.md.txt` to `voiceover-ios-round3-fail.md.txt`:
+  the iOS VoiceOver transcripts that failed while the reading of a
+  spinner during loading was settled (the spec, section 7).
+
 ## What was found
 
 | # | Web (Chromium) | Android | iOS |
