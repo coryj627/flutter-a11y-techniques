@@ -352,3 +352,37 @@ How often that happens on real hardware, without throttling, was not
 measured. The trace lines printed for the key up (handlers 6 to 10 in
 `web_flake.txt`) are the probe's wrappers still in place from the key
 down, not a second dispatch.
+
+### Round 6, second part: a tooltip kept shown by hover
+
+`probe_web_flake_hover.spec.js.txt` (served by `p08tip.config.js.txt`),
+unthrottled; output `web_flake_hover.txt`. Can the state be made without
+slowing the page? On the technique screen the mouse rests on Back until
+its tooltip shows; with the mouse left there, Tab and Enter open the
+example, Tab and Enter show its layers, and Escape is sent once DOM focus
+is on Contour lines.
+
+- `good-widgets`, Escape at once: the first Escape left the layers shown
+  in 28 of 28 runs with Flutter seeing Linux and 10 of 10 seeing macOS. A
+  second Escape a second later closed them in all 28 where it was sent.
+  In the probe build (4 runs) the tooltip in the tree at the first Escape
+  was the example screen's own Back tooltip, in the current route under
+  the layers' barrier, and it was gone after that Escape. So this is the
+  same handler taking the key, but not the stuck state of the first part:
+  there a second Escape did nothing.
+- With 400, 1000, or 3000 ms between focus reaching Contour lines and
+  Escape: closed in 4 of 4 runs each. The state lasts less than half a
+  second here, so it was not made a test: a test of it would rest on how
+  soon Escape follows the layers.
+- `good-material` and `good-cupertino`, Escape at once: closed in 10 of
+  10 runs each; in the probe build (`good-material`, 3 runs) Back's
+  tooltip was not in the tree while the sheet was open. Why it was still
+  there under the overlay's barrier was not found.
+
+### Round 6, third part: the test after the change
+
+The positive controls now move the mouse off the app bar after Back and
+open the good example only once Back's tooltip has not been shown for
+half a second (FL-484). The committed spec, with Flutter seeing Linux and
+the CPU throttled four times, ran the two tests 30 times each: 60 of 60
+passed (`probe_web_fixcheck.txt`).

@@ -1,0 +1,160 @@
+I08 step-4 probe, 2026-11-23: a tooltip kept shown by hover while the
+keyboard opens the example and its layers. Flutter 3.47.5, Chromium from
+Playwright, this Mac, two workers, no CPU throttling. Source:
+probe_web_flake_hover.spec.js.txt, p08tip.config.js.txt; the probe build
+is probe_web_flake.dart.txt with probe_web_flake_examples.diff.txt.
+"closed" is the first Escape closing the layers within 5 s; "second" is
+a second Escape a second later, sent only when the first did not.
+
+== det_hover.jsonl: release build; Linux; no second Escape recorded (an earlier version of the probe) ==
+run  0 good-widgets: closed False, second None
+run  1 good-widgets: closed False, second None
+run  2 good-widgets: closed False, second None
+run  3 good-widgets: closed False, second None
+run  4 good-widgets: closed False, second None
+run  5 good-widgets: closed False, second None
+run  6 good-widgets: closed False, second None
+run  7 good-widgets: closed False, second None
+run  8 good-widgets: closed False, second None
+run  9 good-widgets: closed False, second None
+steps of the first run:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-widgets-open
+  layers shown: focus i08-good-widgets-contours
+
+== det_hover_probe.jsonl: probe build (profile); Linux ==
+run  0 good-widgets: closed False, second closed
+run  1 good-widgets: closed False, second closed
+run  2 good-widgets: closed False, second closed
+run  3 good-widgets: closed False, second closed
+steps of the first run:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-widgets-open
+  layers shown: focus i08-good-widgets-contours
+  dump before Escape: primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text built
+  dump after Escape: primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built
+
+== det2_good-widgets.jsonl: release build; Linux ==
+run  0 good-widgets: closed False, second closed
+run  1 good-widgets: closed False, second closed
+run  2 good-widgets: closed False, second closed
+run  3 good-widgets: closed False, second closed
+run  4 good-widgets: closed False, second closed
+run  5 good-widgets: closed False, second closed
+run  6 good-widgets: closed False, second closed
+run  7 good-widgets: closed False, second closed
+run  8 good-widgets: closed False, second closed
+run  9 good-widgets: closed False, second closed
+steps of the first run:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-widgets-open
+  layers shown: focus i08-good-widgets-contours
+  dump before Escape: null
+  dump after Escape: null
+
+== det_hover_native.jsonl: release build; macOS (this Mac as it is) ==
+run  0 good-widgets: closed False, second closed
+run  1 good-widgets: closed False, second closed
+run  2 good-widgets: closed False, second closed
+run  3 good-widgets: closed False, second closed
+run  4 good-widgets: closed False, second closed
+run  5 good-widgets: closed False, second closed
+run  6 good-widgets: closed False, second closed
+run  7 good-widgets: closed False, second closed
+run  8 good-widgets: closed False, second closed
+run  9 good-widgets: closed False, second closed
+steps of the first run:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-widgets-open
+  layers shown: focus i08-good-widgets-contours
+  dump before Escape: null
+  dump after Escape: null
+
+== det2_good-material.jsonl: release build; Linux; good-material ==
+run  0 good-material: closed True, second None
+run  1 good-material: closed True, second None
+run  2 good-material: closed True, second None
+run  3 good-material: closed True, second None
+run  4 good-material: closed True, second None
+run  5 good-material: closed True, second None
+run  6 good-material: closed True, second None
+run  7 good-material: closed True, second None
+run  8 good-material: closed True, second None
+run  9 good-material: closed True, second None
+steps of the first run:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-material-open
+  layers shown: focus i08-good-material-contours
+  dump before Escape: null
+  dump after Escape: null
+
+== det2_good-cupertino.jsonl: release build; Linux; good-cupertino ==
+run  0 good-cupertino: closed True, second None
+run  1 good-cupertino: closed True, second None
+run  2 good-cupertino: closed True, second None
+run  3 good-cupertino: closed True, second None
+run  4 good-cupertino: closed True, second None
+run  5 good-cupertino: closed True, second None
+run  6 good-cupertino: closed True, second None
+run  7 good-cupertino: closed True, second None
+run  8 good-cupertino: closed True, second None
+run  9 good-cupertino: closed True, second None
+steps of the first run:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-cupertino-open
+  layers shown: focus i08-good-cupertino-contours
+  dump before Escape: null
+  dump after Escape: null
+
+== det2p_material.jsonl: probe build (profile); Linux; good-material ==
+run  0 good-material: closed True, second None
+run  1 good-material: closed True, second None
+run  2 good-material: closed True, second None
+steps of the first run:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-material-open
+  layers shown: focus i08-good-material-contours
+  dump before Escape: primary: node i08-good-material-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 0; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-material tickers on, text not built
+  dump after Escape: primary: node i08-good-material-open, route /t/I08/good-material, hasPrimaryFocus true, canRequestFocus true, ancestors 14; barriers 0; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-material (current true, active true), tickers on, text built
+
+== det_delay.jsonl: release build; Linux; P08_DELAY ms between focus on Contour lines and Escape ==
+run  0 good-widgets delay 0 ms: closed False, second closed
+run  1 good-widgets delay 0 ms: closed False, second closed
+run  2 good-widgets delay 0 ms: closed False, second closed
+run  3 good-widgets delay 0 ms: closed False, second closed
+run  0 good-widgets delay 400 ms: closed True, second None
+run  1 good-widgets delay 400 ms: closed True, second None
+run  2 good-widgets delay 400 ms: closed True, second None
+run  3 good-widgets delay 400 ms: closed True, second None
+run  0 good-widgets delay 1000 ms: closed True, second None
+run  1 good-widgets delay 1000 ms: closed True, second None
+run  2 good-widgets delay 1000 ms: closed True, second None
+run  3 good-widgets delay 1000 ms: closed True, second None
+run  0 good-widgets delay 3000 ms: closed True, second None
+run  1 good-widgets delay 3000 ms: closed True, second None
+run  2 good-widgets delay 3000 ms: closed True, second None
+run  3 good-widgets delay 3000 ms: closed True, second None
+steps of the first run:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-widgets-open
+  layers shown: focus i08-good-widgets-contours
+  waited 0 ms before Escape
+  dump before Escape: null
+  dump after Escape: null
+
