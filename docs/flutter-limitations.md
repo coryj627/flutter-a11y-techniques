@@ -3891,9 +3891,13 @@ yet), **Fixed in x.y** (verified on that version).
   web a button. Two things change the workaround for a card: if the
   card's title is a heading, `Semantics(button: true)` round the
   `InkWell` gives a node that is a heading and a button, which on the web
-  is a heading only ([FL-262](#fl-262), probe fixture p19); and a
-  `ListTile` with `onTap` (C18 `good-tappable`) is a button only while its
-  title is not a heading (C18 `bad-heading-button`).
+  is a heading only ([FL-262](#fl-262), probe fixture p19); and on the
+  web a `ListTile` with `onTap` (C18 `good-tappable`) is a button only
+  while its title is not a heading (C18 `bad-heading-button`). On Android
+  and iOS it keeps the button role with a heading title: an
+  `android.widget.Button` that is a heading (`android-tree.txt`, p06), a
+  button to XCUITest (`ios.txt`, p06), read by VoiceOver as "… Button
+  Heading" (`docs/evidence/C18/voiceover-ios.md`, `bad-heading-button`).
 - Upstream issue: not searched yet (D25). This may be intended: `InkWell`
   is an ink response and not a control of a given kind.
 
