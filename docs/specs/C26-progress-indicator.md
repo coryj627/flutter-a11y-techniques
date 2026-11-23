@@ -240,7 +240,7 @@ Not built:
 | L3 Android | `good-linear`: a `ProgressBar` named "0, Report upload", a float range 0 to 100, current 0, not clickable, and no node with its words; after the click action the range's current 25, 50, 75, 100 in turn, and the name "100, Report upload". The good status lines polite live regions, with their words at each point. The spinners: none before; while loading an `android.view.View` named "Loading inbox" with no range (FL-256); gone at the end. Four Tabs reach the button and never the indicator; Tab to the button and Enter start the upload. Bad: `bad-no-label` a `ProgressBar` named "0", its words a node of their own, `good-linear`'s named; `bad-silent-end` no live region anywhere, `good-linear`'s polite; `bad-adaptive` Material's spinner, named (the defect is not on Android); `bad-cupertino-bar` no `ProgressBar` anywhere, and the bar's node, if there, with no name, text, or range, at rest and while running |
 | L3 iOS | `good-linear`: a static text element labelled "Report upload", value "0", then "25", "50", "75", "100" after a tap; one element with the words. The good status lines' words at each point. The spinners, read from snapshots: none before; while loading a static text element labelled "Loading inbox" with no value, the only element with that label; gone at the end. Two Tabs and Return start the upload (that a Tab reached the button is shown by Return; no modifier keys). Bad: `bad-no-label` an element with no label and the value "0", the words another element, `good-linear`'s labelled; `bad-adaptive` the spinner's node with no label or value and no element labelled "Loading inbox", `good-circular`'s labelled in the same test; `bad-cupertino-bar` the bar's node, if there, with no label or value, at rest and while running |
 | L4 TalkBack | `good-linear`'s and `bad-silent-end`'s bar: "Report upload" and "Progress bar"; `bad-no-label`'s "Progress bar" without "Report upload". Each button its words and "Button". After the click action, with TalkBack focus left on the button, nine seconds: `good-linear`, `bad-no-label`, `bad-cupertino-bar` "Upload started", "Half uploaded", "Upload complete"; the spinners and `bad-adaptive` "Loading started", "Inbox loaded"; `bad-silent-end` none of the upload's words, and then its status line, with focus put on it, "Upload complete" |
-| L4 VoiceOver iOS | Each screen at rest, every utterance after the "Example" heading to its end as a whole list: `good-linear` and `bad-silent-end` "Upload report Button", "Report upload 0", "Not started"; `bad-no-label` "Report upload", "0"; `bad-cupertino-bar` "Report upload", "Not started" with no bar. While each task runs, the cursor on the button and the button pressed with a tap at its place: every expected status phrase heard, in order (none for `bad-silent-end`, whose status line two moves forward then reads "Upload complete"). While loading, two moves forward from the button: `good-circular` and `good-cupertino` "Loading inbox" then "Loading started"; `bad-adaptive` "Loading started" twice, the spinner passed over |
+| L4 VoiceOver iOS | Each screen at rest, every utterance after the "Example" heading to its end as a whole list: `good-linear` and `bad-silent-end` "Upload report Button", "Report upload 0", "Not started"; `bad-no-label` "Report upload", "0"; `bad-cupertino-bar` "Report upload", "Not started" with no bar. While each task runs, the cursor on the button and the button pressed with a tap at its place: every expected status phrase heard, in order (none for `bad-silent-end`, whose status line two moves forward then reads "Upload complete"). While loading, with the cursor left on the button, one move back and three forward 0.8 s after the tap: the heading, the button, then `good-circular` and `good-cupertino` "Loading inbox" and "Loading started", `bad-adaptive` "Loading started" twice, the spinner passed over (section 7) |
 | L4 VoiceOver web | Each screen at rest, walked from Back and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/c26_vo_walks.js`, as C04's), in Chromium and WebKit; no runner retries. Enter on the button with VoiceOver's last phrase polled for eight seconds (Chromium only): the good examples' status phrases, and none of the upload's for `bad-silent-end`, with capture shown live after. The lists are predictions until the first recording (section 7) |
 
 ## 7. What the build found (Flutter 3.47.5)
@@ -280,6 +280,9 @@ The probe that came first is in [evidence/probes/c26](../evidence/probes/c26/REA
   took a minute or more; why was not measured). The second round read
   each screen from one `snapshot()`, at once. The iOS tests read the
   spinners from snapshots.
+- **The Android suite at CI's size**, 320 by 640 at 160 dpi, passed
+  (`docs/evidence/probes/c26/android_320x640.txt`, with the script
+  `android_320x640.sh.txt`; the size and density reset after).
 - **Colours** (widget tests, from the theme as the SDK's defaults use
   them): Material's bar is 5.00:1 on its track in light mode and 5.46:1 in
   dark, and its track is 1.22:1 and 2.00:1 on the page: where the track
@@ -305,7 +308,11 @@ Skips and what they give up, in the tests:
   from element queries. XCUITest cannot read a live region: whether a
   status line is announced on iOS is the VoiceOver test's.
 - On iOS a Tab is shown to have reached the button only by what Return
-  does; no key with a modifier is sent.
+  does; no key with a modifier is sent. Return is sent as "\n" 0.9 s
+  after each Tab, as C12's and C03's key tests do: in the first run, two
+  Tabs 0.6 s apart and `XCUIKeyboardKey.return` left the status "Not
+  started" (`docs/evidence/probes/c26/ios-tab-round1-fail.txt`); which
+  key did not arrive was not found.
 - `talkback.py` walks an element again, up to three walks, when its
   speech fails its checks (a shared tool, unchanged).
 - The iOS VoiceOver walk is C03's: it ends where moving on gives the last

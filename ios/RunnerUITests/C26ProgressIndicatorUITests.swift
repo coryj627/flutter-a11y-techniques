@@ -215,9 +215,8 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
   //   heard; then two moves forward must reach the status line and read
   //   "Upload complete", so that the silence is not an empty capture.
   // - `<slug>-loading`, for the spinners: the cursor on the button, the
-  //   button pressed, and at once one move forward and a second: the
-  //   spinner and then the status line where the spinner has a name, the
-  //   status line and then the same again (the end) where it has none.
+  //   button pressed, and 0.8 s later one move back and three forward
+  //   (`loading`, below).
   //
   // The probe measured the utterances (docs/evidence/probes/c26/ios.txt):
   // a bar is "<name> <value>" with no role and the value a bare number; a
@@ -244,11 +243,15 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
   ]
 
   /// The two moves forward from the button while loading.
+  /// One move back and three forward while loading, with the cursor left
+  /// on the button: the heading, the button, then the spinner and the
+  /// status line where the spinner has a name, or the status line and
+  /// then the same again (the end) where it has none.
   static let loading: [String: [String]] = [
-    "good-circular": ["Loading inbox", "Loading started"],
-    "good-cupertino": ["Loading inbox", "Loading started"],
-    // FL-257: the spinner is passed over; the second move finds no more.
-    "bad-adaptive": ["Loading started", "Loading started"],
+    "good-circular": ["Example Heading", "Load inbox Button", "Loading inbox", "Loading started"],
+    "good-cupertino": ["Example Heading", "Load inbox Button", "Loading inbox", "Loading started"],
+    // FL-257: the spinner is passed over.
+    "bad-adaptive": ["Example Heading", "Load inbox Button", "Loading started", "Loading started"],
   ]
 
   static let action = [
@@ -335,8 +338,16 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
         try voiceOver.enable()
         _ = cursorOnButton(slug)
         start(slug).doubleTap()
-        usleep(500_000)
-        let moves = [move(), move()]
+        // In the first two runs, two moves forward made 0.5 s, and then
+        // about 1.5 s, after the tap each read "Loading started", the status
+        // line, for every spinner alike, named or not
+        // (docs/evidence/probes/c26/voiceover-ios-round1-fail.md.txt and
+        // voiceover-ios-round2-fail.md.txt). Where the cursor was is not
+        // known from that, so here it is found first: one move back, then
+        // three forward, 0.8 s after the tap; the spinner stays four.
+        usleep(800_000)
+        let back = VoiceOverWalk.normalized((try? voiceOver.moveBackward().utterance) ?? VoiceOverWalk.silent)
+        let moves = [back, move(), move(), move()]
         print("C26VO \(slug)-loading | \(moves.joined(separator: " / "))")
         XCTAssertEqual(moves, expected, "\(slug): the moves forward while loading")
         try voiceOver.disable()

@@ -67,7 +67,7 @@ VOICEOVER_IOS_METHOD = (
     "what is under the tap; VoiceOver's own activation was not measured), and every distinct "
     "utterance `currentSpeech()` gave for nine seconds; for `bad-silent-end`, two moves forward "
     "after it, which must read the status line. `-loading`: the button pressed the same way, and "
-    "at once two moves forward",
+    "0.8 s later one move back and three forward",
     "Spoken",
 )
 
