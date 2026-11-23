@@ -156,8 +156,10 @@ class C13SnackbarTest : TechniqueTest("C13") {
         assertEquals("Drafts saved: 1", lineText("good-message"))
     }
 
+    // One launch per test: open() waits for the example's title, which a
+    // second launch of the same example would find on the screen it replaces.
     @Test
-    fun keysReachUndoAndCloseAndEnterActs() {
+    fun keysReachUndoAndEnterUndoes() {
         open("good-action")
         press("good-action")
         tabTo("Undo")
@@ -166,7 +168,10 @@ class C13SnackbarTest : TechniqueTest("C13") {
         while (System.currentTimeMillis() < end && lineText("good-action") != "Archived: 0") Thread.sleep(100)
         assertEquals("Archived: 0", lineText("good-action"))
         assertNotNull("gone after Undo", goneAfter("good-action", 3_000))
+    }
 
+    @Test
+    fun keysReachCloseAndEnterUndoesNothing() {
         open("good-action")
         press("good-action")
         tabTo("Close")
