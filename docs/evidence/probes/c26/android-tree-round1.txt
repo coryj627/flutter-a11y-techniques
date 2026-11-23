@@ -1,0 +1,8 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+device 37
+==== p01 start
+p01 node p01-indicator | android.widget.ProgressBar | desc="40, p01 Upload" text="" state="" range(float 0.0..100.0 cur=40.0) liveRegion=0 focusable=true a11yFocused=false visible=true Rect(42, 415 - 1038, 426) [a11yfocus]
+==== p02 start
+p02 node p02-indicator | android.widget.ProgressBar | desc="40" text="" state="" range(float 0.0..100.0 cur=40.0) liveRegion=0 focusable=true a11yFocused=false visible=true Rect(42, 415 - 1038, 426) [a11yfocus]
+==== p03 start
+p03 node p03-indicator | android.widget.ProgressBar | desc="40%, p03 Upload" text="" state="" range(indeterminate 0.0..0.0 cur=0.0) liveRegion=0 focusable=true a11yFocused=false visible=true Rect(42, 415 - 1038, 426) [a11yfocus]

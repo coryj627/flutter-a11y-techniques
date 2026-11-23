@@ -1,0 +1,14 @@
+C26C dark: primary on secondaryContainer (linear bar on its track) 5.46; primary on surface 10.90; secondaryContainer on surface 2.00
+C26C dark: Cupertino tick alpha 47 on surface 1.66
+C26C dark: Cupertino tick alpha 72 on surface 2.31
+C26C dark: Cupertino tick alpha 97 on surface 3.21
+C26C dark: Cupertino tick alpha 122 on surface 4.37
+C26C dark: Cupertino tick alpha 147 on surface 5.81
+C26C dark: CupertinoLinearActivityIndicator activeBlue on systemFill over surface 3.25
+C26C light: primary on secondaryContainer (linear bar on its track) 5.00; primary on surface 6.12; secondaryContainer on surface 1.22
+C26C light: Cupertino tick alpha 47 on surface 1.38
+C26C light: Cupertino tick alpha 72 on surface 1.66
+C26C light: Cupertino tick alpha 97 on surface 2.03
+C26C light: Cupertino tick alpha 122 on surface 2.52
+C26C light: Cupertino tick alpha 147 on surface 3.18
+C26C light: CupertinoLinearActivityIndicator activeBlue on systemFill over surface 3.03

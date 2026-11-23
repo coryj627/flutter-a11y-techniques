@@ -1,0 +1,120 @@
+// C26 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/c26/probe_c26.spec.js.txt with
+// probe_c26.config.js.txt). For each fixture of lib/probe.dart: its
+// semantics elements, Chromium's accessibility tree over the DevTools
+// protocol, and where Tab stops; for a changing fixture, Start clicked and
+// the indicator's element and the status line every 600 ms for 9 s, with
+// every value Flutter writes to its announcement elements recorded by a
+// MutationObserver.
+import { test } from '@playwright/test';
+
+const stills = Array.from({ length: 16 }, (_, i) => `p${String(i + 1).padStart(2, '0')}`);
+const movings = Array.from({ length: 6 }, (_, i) => `p${String(i + 17).padStart(2, '0')}`);
+
+function log(...a) {
+  console.log('C26WEB', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-end"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+function clean(html) {
+  return html.replace(/ style="[^"]*"/g, '').replace(/ id="flt-semantic-node-\d+"/g, '');
+}
+
+/** The fixture's own elements: identified by the id, or with it in their text or label, but not Before or end. */
+async function elements(page, id) {
+  return page.evaluate((id) => {
+    const host = document.querySelector('flt-semantics-host');
+    const own = (e) => (e.getAttribute('aria-label') || '') + [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('');
+    return [...host.querySelectorAll('*')]
+      .filter((e) => ((e.getAttribute('flt-semantics-identifier') || '').startsWith(id) || own(e).includes(id))
+        && !own(e).startsWith(`Before ${id}`) && e.getAttribute('flt-semantics-identifier') !== `${id}-end`)
+      .map((e) => e.outerHTML.replace(/>[\s\S]*$/, '>') + ` text="${own(e)}"`);
+  }, id);
+}
+
+async function axTree(context, page, id) {
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const out = [];
+  for (const n of nodes) {
+    if (n.ignored) continue;
+    const name = n.name?.value ?? '';
+    const props = Object.fromEntries((n.properties ?? []).map((p) => [p.name, p.value?.value]));
+    const value = n.value?.value ?? '';
+    if (['StaticText', 'InlineTextBox'].includes(n.role?.value)) continue;
+    if (!(name.includes(id) || String(value).includes(id) || ['progressbar', 'ProgressIndicator'].includes(n.role?.value))) continue;
+    if (name.startsWith('Before') || name.startsWith(`${id} end`)) continue;
+    out.push(`role=${n.role?.value} name="${name}" value="${value}" props=${JSON.stringify(props)}`);
+  }
+  await cdp.detach();
+  return out;
+}
+
+async function active(page) {
+  return page.evaluate(() => {
+    const a = document.activeElement;
+    if (!a) return '(none)';
+    return `${a.tagName.toLowerCase()} role=${a.getAttribute('role')} label=${a.getAttribute('aria-label')} id=${a.getAttribute('flt-semantics-identifier')} text=${(a.textContent || '').slice(0, 40)}`;
+  });
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of [...stills, ...movings]) {
+  test(`probe ${id}`, async ({ page, context }) => {
+    await page.setViewportSize({ width: 800, height: 900 });
+    await fresh(page, id);
+    log(id, 'platform', await page.evaluate(() => navigator.platform + ' | ' + navigator.userAgent));
+    for (const e of await elements(page, id)) log(id, 'element', clean(e));
+    for (const a of await axTree(context, page, id)) log(id, 'ax', a);
+    const stops = [];
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(250);
+      stops.push(await active(page));
+    }
+    log(id, 'Tab stops', stops.join(' -> '));
+  });
+}
+
+for (const id of movings) {
+  test(`probe ${id} moving`, async ({ page, context }) => {
+    await page.setViewportSize({ width: 800, height: 900 });
+    await fresh(page, id);
+    await page.waitForTimeout(1500);
+    await page.evaluate(() => {
+      window.__said = [];
+      const t0 = performance.now();
+      for (const tag of ['flt-announcement-polite', 'flt-announcement-assertive']) {
+        const el = document.querySelector(tag);
+        if (!el) continue;
+        new MutationObserver(() => {
+          window.__said.push(`${((performance.now() - t0) / 1000).toFixed(1)}s ${tag}: ${el.textContent}`);
+        }).observe(el, { childList: true, characterData: true, subtree: true });
+      }
+      window.__t0 = t0;
+    });
+    await page.locator(`[flt-semantics-identifier="${id}-start"]`).click();
+    for (let i = 0; i < 15; i++) {
+      await page.waitForTimeout(600);
+      const now = await page.evaluate((id) => {
+        const s = ((performance.now() - window.__t0) / 1000).toFixed(1);
+        const ind = document.querySelector(`[flt-semantics-identifier="${id}-indicator"]`);
+        const st = document.querySelector(`[flt-semantics-identifier="${id}-status"]`);
+        const strip = (e) => e ? e.outerHTML.replace(/>[\s\S]*$/, '>').replace(/ style="[^"]*"/g, '').replace(/ id="flt-semantic-node-\d+"/g, '') + ` text="${(e.textContent || '').trim()}"` : '(none)';
+        return `${s}s indicator ${strip(ind)} || status ${strip(st)}`;
+      }, id);
+      log(id, 'moving', now);
+      if (i === 2) for (const a of await axTree(context, page, id)) log(id, 'ax while moving', a);
+    }
+    for (const a of await axTree(context, page, id)) log(id, 'ax at the end', a);
+    log(id, 'announcements', JSON.stringify(await page.evaluate(() => window.__said)));
+    log(id, 'active element at the end', await active(page));
+  });
+}

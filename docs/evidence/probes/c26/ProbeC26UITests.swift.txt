@@ -1,0 +1,144 @@
+// C26 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c26/ProbeC26UITests.swift.txt), round 2: for each
+// fixture of lib/probe.dart, opened by URL: the XCUITest tree, read from
+// one snapshot of the app; for a changing fixture, Start tapped and the
+// tree every 0.6 s for 9 s, each reading timed. VoiceOver: a walk of each
+// fixture from the top; for a changing fixture, the cursor on Start, a
+// double tap at it, and currentSpeech() for 9 s; and the cursor on the
+// indicator of the fixture's "a" route, which starts by itself 10 s after it
+// opens, and currentSpeech() until 24 s after the open. p04 is tried alone
+// (testP04): its value is not a number, which a debug build asserts
+// against in every semantics update.
+import XCTest
+
+final class ProbeC26UITests: XCTestCase {
+  let app = XCUIApplication()
+  let stills = (1...16).map { String(format: "p%02d", $0) }.filter { $0 != "p04" }
+  let movings = (17...22).map { String(format: "p%02d", $0) }
+
+  func log(_ s: String) { print("C26PROBE \(s)") }
+
+  func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+
+  @discardableResult
+  func open(_ route: String, _ id: String) -> Bool {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///\(route)")!)
+      if el("\(id)-end").waitForExistence(timeout: 30) { sleep(1); return true }
+    }
+    log("\(route) did not open")
+    return false
+  }
+
+  /// Every element of one snapshot whose label or identifier has the id,
+  /// but not Before or end.
+  func dump(_ id: String, _ label: String) {
+    let t0 = Date()
+    guard let root = try? app.snapshot() else { log("\(id) \(label): no snapshot"); return }
+    var out: [String] = []
+    func walk(_ s: XCUIElementSnapshot) {
+      let l = s.label
+      let mine = l.contains(id) || s.identifier.hasPrefix(id)
+      if mine && !l.hasPrefix("Before \(id)") && s.identifier != "\(id)-end"
+        && s.elementType != .window && s.elementType != .application {
+        out.append("type=\(s.elementType.rawValue) id=\(s.identifier) label=\(l.debugDescription) value=\(String(describing: s.value)) enabled=\(s.isEnabled) frame=\(s.frame)")
+      }
+      for c in s.children { walk(c) }
+    }
+    walk(root)
+    log("\(id) \(label) (snapshot \(String(format: "%.1f", Date().timeIntervalSince(t0)))s): \(out.count) element(s): \(out.joined(separator: " | "))")
+  }
+
+  func testP04() {
+    if open("p04", "p04") { dump("p04", "start") }
+  }
+
+  func testTree() {
+    for id in stills + movings {
+      if open(id, id) { dump(id, "start") }
+    }
+    for id in movings {
+      guard open(id, id) else { continue }
+      el("\(id)-start").tap()
+      let t0 = Date()
+      for _ in 0..<12 {
+        usleep(600_000)
+        dump(id, "at \(String(format: "%.1f", Date().timeIntervalSince(t0)))s")
+      }
+    }
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    func current() -> String { norm((try? vo.currentSpeech().utterance) ?? "(none)") }
+    /// Every distinct utterance currentSpeech() gives until `end` seconds after `t0`, with its time.
+    func listen(from t0: Date, until end: TimeInterval) -> String {
+      var heard: [String] = []
+      var last = ""
+      while Date().timeIntervalSince(t0) < end {
+        let s = current()
+        if s != last {
+          heard.append(String(format: "%.1fs %@", Date().timeIntervalSince(t0), s))
+          last = s
+        }
+        usleep(200_000)
+      }
+      return heard.joined(separator: " / ")
+    }
+    for id in stills + movings {
+      guard open(id, id) else { continue }
+      try vo.enable()
+      var walk: [String] = []
+      for _ in 0..<14 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix("\(id) end") { break }
+      }
+      log("VO \(id) walk: \(walk.joined(separator: " / "))")
+      try vo.disable()
+    }
+    for id in movings {
+      // The cursor on Start, then a double tap at it.
+      if open(id, id) {
+        try vo.enable()
+        var walk: [String] = []
+        for _ in 0..<10 {
+          let s = say()
+          walk.append(s)
+          if s.hasPrefix("\(id) Start") { break }
+        }
+        el("\(id)-start").doubleTap()
+        let t0 = Date()
+        log("VO \(id) on Start: walk \(walk.joined(separator: " / ")) | after the double tap: \(listen(from: t0, until: 9))")
+        let back = (try? vo.moveBackward().utterance).map(norm) ?? "(error)"
+        log("VO \(id) on Start: one move back: \(back)")
+        try vo.disable()
+      }
+      // The cursor on the indicator, which starts by itself.
+      let t1 = Date()
+      guard open("\(id)a", id) else { continue }
+      try vo.enable()
+      var walk: [String] = []
+      for _ in 0..<10 {
+        let s = say()
+        walk.append(s)
+        if s.contains("\(id) Start") {
+          walk.append(say())
+          break
+        }
+      }
+      log("VO \(id) on the indicator (\(String(format: "%.1f", Date().timeIntervalSince(t1)))s after the open): walk \(walk.joined(separator: " / ")) | then: \(listen(from: t1, until: 24))")
+      try vo.disable()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}
