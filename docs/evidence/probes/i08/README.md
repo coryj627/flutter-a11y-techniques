@@ -410,3 +410,19 @@ open the good example only once Back's tooltip has not been shown for
 half a second (FL-484). The committed spec, with Flutter seeing Linux and
 the CPU throttled four times, ran the two tests 30 times each: 60 of 60
 passed (`probe_web_fixcheck.txt`).
+
+### Round 6, fourth part: the web status, and the attempt at a test
+
+The owner decided on 2026-11-23 that I08's web status is a limitation
+because of FL-484. The same hover probe was then run with the CPU
+throttled (10 runs per example, as Linux, appended to
+`web_flake_hover2.txt`): at two times slower the first Escape left the
+layers shown in every run of `good-widgets` and `good-material`, and a
+second closed them; at four times slower the first Escape left
+`good-widgets`' layers shown in 10 of 10 and `good-material`'s in 6 of
+10 (those that closed had Escape at 262 ms or later), and a second Escape
+did not always close them. A test of `good-widgets` in the I08 web spec
+held unthrottled and at two times slower, and at four times slower once
+went past its 300 ms bound, with the second Escape, in its first form,
+leaving the layers shown in 10 of 10 (`web_flake_test_attempt.txt`). It
+was not added.

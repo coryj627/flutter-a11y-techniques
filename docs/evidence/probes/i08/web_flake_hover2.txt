@@ -99,3 +99,49 @@ steps of run 0:
   layers shown: focus i08-good-cupertino-contours
   waited 0 ms before Escape
 
+
+== Throttled runs (P08_THROTTLE), the same probe, as Linux, release build ==
+-- good-widgets, CPU 2x: 10 runs, first Escape closed 0 --
+openToEscapeMs  154, closed False, second closed
+openToEscapeMs  173, closed False, second closed
+openToEscapeMs  207, closed False, second closed
+openToEscapeMs  209, closed False, second closed
+openToEscapeMs  210, closed False, second closed
+openToEscapeMs  211, closed False, second closed
+openToEscapeMs  212, closed False, second closed
+openToEscapeMs  212, closed False, second closed
+openToEscapeMs  215, closed False, second closed
+openToEscapeMs  220, closed False, second closed
+-- good-material, CPU 2x: 10 runs, first Escape closed 0 --
+openToEscapeMs  128, closed False, second closed
+openToEscapeMs  131, closed False, second closed
+openToEscapeMs  131, closed False, second closed
+openToEscapeMs  131, closed False, second closed
+openToEscapeMs  137, closed False, second closed
+openToEscapeMs  137, closed False, second closed
+openToEscapeMs  161, closed False, second closed
+openToEscapeMs  166, closed False, second closed
+openToEscapeMs  167, closed False, second closed
+openToEscapeMs  171, closed False, second closed
+-- good-widgets, CPU 4x: 10 runs, first Escape closed 0 --
+openToEscapeMs  199, closed False, second still shown
+openToEscapeMs  199, closed False, second closed
+openToEscapeMs  200, closed False, second closed
+openToEscapeMs  213, closed False, second closed
+openToEscapeMs  233, closed False, second closed
+openToEscapeMs  235, closed False, second closed
+openToEscapeMs  239, closed False, second closed
+openToEscapeMs  240, closed False, second still shown
+openToEscapeMs  247, closed False, second still shown
+openToEscapeMs  259, closed False, second still shown
+-- good-material, CPU 4x: 10 runs, first Escape closed 4 --
+openToEscapeMs  226, closed False, second closed
+openToEscapeMs  238, closed False, second closed
+openToEscapeMs  246, closed False, second still shown
+openToEscapeMs  253, closed False, second closed
+openToEscapeMs  258, closed False, second still shown
+openToEscapeMs  262, closed True, second None
+openToEscapeMs  272, closed True, second None
+openToEscapeMs  282, closed True, second None
+openToEscapeMs  317, closed True, second None
+openToEscapeMs  317, closed False, second still shown

@@ -5047,7 +5047,18 @@ yet), **Fixed in x.y** (verified on that version).
     (`good-material`, 3 runs, as long) had no Back tooltip in the tree
     then. So no difference was seen between the overlay and the routes at
     comparable timing, and, going by the `good-cupertino` runs, the state
-    lasts about 400 ms from the layers being opened here.
+    lasts about 400 ms from the layers being opened here. With the CPU
+    throttled (the same probe, as Linux, 10 runs each,
+    `web_flake_hover2.txt`): at two times slower, the first Escape left
+    the layers shown in 10 of 10 of `good-widgets` (154 to 220 ms) and of
+    `good-material` (128 to 171 ms), and a second closed them in all 20;
+    at four times slower, in 10 of 10 of `good-widgets` (199 to 259 ms)
+    and 6 of 10 of `good-material` (226 to 317 ms; the 4 that closed were
+    at 262 ms or later), and a second Escape a second later left them
+    shown in 4 of the 10 `good-widgets` runs and 3 of the 6 `good-material`
+    runs where it was sent. Made into a test of `good-widgets` in the I08
+    web spec, it held unthrottled and at two times slower but not at four
+    (`web_flake_test_attempt.txt`), so it is not a test.
   - Every Escape, with a tooltip left open under another screen: on CI
     (GitHub's ubuntu runner) the positive control of I08's "bad-no-escape:
     Escape does nothing" test failed now and then. Here it was reproduced

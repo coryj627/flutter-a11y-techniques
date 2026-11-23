@@ -1,7 +1,8 @@
 // Throwaway: I08 step-4 probe. Can a tooltip kept open by hover, while the
 // keyboard opens the example and its layers, make Escape fail without CPU
 // throttling? Not committed; kept as
-// docs/evidence/probes/i08/probe_web_flake_hover2.spec.js.txt.
+// docs/evidence/probes/i08/probe_web_flake_hover2.spec.js.txt (with
+// P08_THROTTLE added for its throttled runs).
 //
 // On the technique screen the mouse rests on Back until its tooltip is
 // shown; then, with the mouse left there, Tab goes to good-widgets' title
@@ -46,6 +47,13 @@ for (let run = 0; run < Number(process.env.P08_RUNS ?? 1); run++) {
   test(`hover then keyboard, run ${run}`, async ({ page }) => {
     if (platform === 'linux') {
       await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'platform', { get: () => 'Linux x86_64' }));
+    }
+    // P08_THROTTLE=n slows the CPU n times (CDP Emulation.setCPUThrottlingRate).
+    const throttle = Number(process.env.P08_THROTTLE ?? 1);
+    if (throttle > 1) {
+      test.setTimeout(180000);
+      const cdp = await page.context().newCDPSession(page);
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: throttle });
     }
     const steps = [];
     await page.goto('about:blank');
@@ -109,6 +117,6 @@ for (let run = 0; run < Number(process.env.P08_RUNS ?? 1); run++) {
       await page.waitForTimeout(2000);
       second = (await byId(page, `i08-${good}-contours`).count()) === 0 ? 'closed' : 'still shown';
     }
-    fs.appendFileSync(out, JSON.stringify({ platform, variant, good, delay: Number(process.env.P08_DELAY ?? 0), run, closed, openToEscapeMs: escaped - opened, second, steps }) + '\n');
+    fs.appendFileSync(out, JSON.stringify({ platform, throttle: Number(process.env.P08_THROTTLE ?? 1), variant, good, delay: Number(process.env.P08_DELAY ?? 0), run, closed, openToEscapeMs: escaped - opened, second, steps }) + '\n');
   });
 }

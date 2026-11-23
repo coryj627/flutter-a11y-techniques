@@ -35,7 +35,22 @@ or the arrow keys, the user is told what it is.
 
 | Android | iOS | Web |
 | --- | --- | --- |
-| Applies | Applies; Escape measured on iOS 27.0 only, the escape gesture not verified | Applies |
+| Applies | Applies; Escape measured on iOS 27.0 only, the escape gesture not verified | Limitation ([FL-484](../flutter-limitations.md#fl-484)) |
+
+On the web, in Chromium, Escape is taken for a tooltip that still counts
+as open before the layers can take it
+([FL-484](../flutter-limitations.md#fl-484)). Measured in probes,
+unthrottled, with the mouse resting on Back, the first Escape within about 400 ms of opening
+the layers did not close them in any of the three good examples (20 of
+20, 20 of 20, and 11 of 11 at 383 ms or less), and a second Escape did;
+with the CPU throttled, a tooltip left open under the screen took every
+Escape in `good-widgets`. No workaround is built. The web status was
+changed from Applies to Limitation by the owner's decision of
+2026-11-23. A limitation status does not need a criterion to fail: the
+technique guide asks for one wherever a limitation has no workaround,
+and the catalog defines it as a pattern Flutter keeps from being fully
+accessible. So FL-484 still claims no WCAG failure as written (its WCAG
+line says why), while I08's web status is a limitation.
 
 Keyboard: a hardware keyboard on Android and iOS, the browser's on the
 web. Android's Back: the Back key, the global Back action that TalkBack's
@@ -291,6 +306,14 @@ What the tests leave out, and what that gives up:
   (`docs/evidence/probes/i08/README.md`, round 6), not tested. A tooltip
   left open under another screen is not in the page's tree, so the wait
   cannot see one; it removes the hover that leaves one.
+- The limitation itself, FL-484, is not a test: it is in the probes
+  (`docs/evidence/probes/i08/README.md`, round 6). A test of the first
+  Escape in `good-widgets` with Back's tooltip shown by the mouse held
+  unthrottled and at two times slower, but at four times slower the time
+  from opening the layers to Escape went past its bound and a second
+  Escape no longer closed them (`web_flake_test_attempt.txt`); CI's
+  runner's speed is not known, so it was not added. What that gives up: a
+  Flutter release that changes this would not be noticed by the tests.
 
 ## 7. What the build found (Flutter 3.47.5)
 
