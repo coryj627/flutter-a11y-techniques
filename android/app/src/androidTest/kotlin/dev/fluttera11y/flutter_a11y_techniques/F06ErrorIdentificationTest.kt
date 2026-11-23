@@ -41,6 +41,30 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
         return found
     }
 
+    /**
+     * The field [id] for a check inside a wait, or null if it cannot be
+     * reached this time: looked for in every window first, as [hint] does,
+     * then by [node], which scrolls to it. [node] alone throws when the
+     * active window does not have the field, and a throw ends a wait at
+     * once: in four CI runs (45156342222, attempts 2 and 3; 45055757147,
+     * attempt 1; 45265840755) good-cupertino's email was found for the
+     * hint and the selection, then was "no node with id
+     * f06-good-cupertino-email, even after scrolling" at the first look for
+     * the typed text: in the three whose device log was read, 1.7 seconds
+     * after the keyboard came up again for the email. Which window was
+     * active then, and what was on the screen, was not recorded.
+     */
+    private fun field(id: String): AccessibilityNodeInfo? {
+        var found: AccessibilityNodeInfo? = null
+        anyWindowHas { n -> (n.viewIdResourceName == id).also { if (it) found = n } }
+        return found ?: try { node(id) } catch (e: AssertionError) { null }
+    }
+
+    /** The text in a field, as [value] reads it, or null if it cannot be reached. */
+    private fun typed(id: String): String? = field(id)?.let {
+        if (it.isShowingHintText) "" else it.text?.toString().orEmpty()
+    }
+
     private fun waitFor(what: String, check: () -> Boolean) {
         val end = System.currentTimeMillis() + 5_000
         while (System.currentTimeMillis() < end && !check()) Thread.sleep(100)
@@ -146,7 +170,7 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             send(slug)
             waitFor("$slug errors shown") { withText(NAME_ERROR) != null }
             // Input focus is on the first field in error.
-            waitFor("$slug first field focused") { node(fields[0].first).isFocused }
+            waitFor("$slug first field focused") { field(fields[0].first)?.isFocused == true }
             assertFalse("$slug second field not focused", node(fields[1].first).isFocused)
             closeKeyboardAndWaitForCount(slug)
             for ((id, label, error) in fields) {
@@ -174,12 +198,12 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             val (name, _, _) = fields[0]
             val (email, _, _) = fields[1]
             send(slug)
-            waitFor("$slug name focused") { node(name).isFocused }
+            waitFor("$slug name focused") { field(name)?.isFocused == true }
             type(name, "Ana")
             type(email, "abc")
             hideKeyboard()
             send(slug)
-            waitFor("$slug email focused") { node(email).isFocused }
+            waitFor("$slug email focused") { field(email)?.isFocused == true }
             // The tree can take a moment longer than focus to update.
             waitFor("$slug name error cleared") { hint(name) == "Name" }
             assertEquals(name, "Name", hint(name))
@@ -192,7 +216,12 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             assertTrue(email, node(email).performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selection))
             Thread.sleep(500)
             inst.sendStringSync("@example.com")
-            waitFor("$slug email typed") { value(email) == "abc@example.com" }
+            // Typed once. Each look first puts the keyboard away, as the
+            // next step does anyway: the field can be under it.
+            waitFor("$slug email typed") {
+                hideKeyboard()
+                typed(email) == "abc@example.com"
+            }
             hideKeyboard()
             send(slug)
             waitForCount(slug, 1)
