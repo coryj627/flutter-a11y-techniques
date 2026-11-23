@@ -164,7 +164,7 @@ replacement queued, section 7).
 What an action in a message did, Undo or Go online, is told by the
 example's **result line**, a line of the page in a live region
 (`Semantics(liveRegion: true)`, the documented property, as I12
-`good-live-region` uses it): "Archive undone. Archived: 1" or "You are
+`good-live-region` uses it): "Archive undone. Archived: 0" or "You are
 online.". The status line's change alone would not be announced, and
 Understanding 4.1.3 counts a change to visible status text as a status
 message; the result line is that text, given the property that makes the
@@ -183,7 +183,9 @@ is the framework's own. `bad-action-times-out` and `bad-inline-banner`
 have the same result line, so that each keeps its one defect:
 `bad-inline-banner`'s defect is its banner, which is no live region, and
 its result line is, so its silence check has a live region to compare with
-in the same page.
+in the same page (TalkBack and VoiceOver on iOS said it; VoiceOver in
+Chromium did not, in its one web recording, section 7 and
+[FL-297](../flutter-limitations.md#fl-297)).
 
 The rules the examples keep for their messages, which the app-wide
 `ScaffoldMessenger` shows and which outlive the example that showed them
@@ -214,9 +216,9 @@ What each meets, by platform, as the criteria are written:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `good-action` | 4.1.3: announced (TalkBack), focus not moved; Undo's result announced by the result line, "Archive undone. Archived: 0" (TalkBack). 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium announced it. Qualification on the web, Chromium: with Close's tooltip shown, as a VoiceOver walk leaves it, VoiceOver reads Close "Close Close" with no role word (FL-249); the tree keeps the role, so not 4.1.2 as written (section 7). Undo's result on the web: the result line, a polite live region written once to `flt-announcement-polite` (4.1.3 met in the tree); what VoiceOver in Chromium says for it is to be recorded (the three recordings of [FL-297](../flutter-limitations.md#fl-297) were of the SnackBar the first build showed instead, said in one of three) |
+| `good-action` | 4.1.3: announced (TalkBack), focus not moved; Undo's result announced by the result line, "Archive undone. Archived: 0" (TalkBack). 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium announced it. Qualification on the web, Chromium: with Close's tooltip shown, as a VoiceOver walk leaves it, VoiceOver reads Close "Close Close" with no role word (FL-249); the tree keeps the role, so not 4.1.2 as written (section 7). Undo's result on the web: the result line, a polite live region written once to `flt-announcement-polite` (4.1.3 met in the tree); VoiceOver in Chromium did not say it in its one recording ("Back and 1 more item and 1 more item group", "Back"), so it may not be presented: a qualification of the web, recorded, not judged, until three recordings agree ([FL-297](../flutter-limitations.md#fl-297); the three before were of the SnackBar the first build showed instead, said in one of three) |
 | `good-message` | 4.1.3: announced. 2.2.1: its going sets no time limit, as its news is on the page (Understanding 2.2.1) | the same | the same |
-| `good-banner` | 4.1.3: announced; going back online announced by the result line, "You are online." (TalkBack). 2.2.1: no time limit | the same, with VoiceOver | the same. On the web going back online is the result line, a polite live region written once to `flt-announcement-polite` (4.1.3 met in the tree); what VoiceOver in Chromium says for it is to be recorded (FL-297's three recordings were of the SnackBar the first build showed instead, said in none) |
+| `good-banner` | 4.1.3: announced; going back online announced by the result line, "You are online." (TalkBack). 2.2.1: no time limit | the same, with VoiceOver | the same. On the web going back online is the result line, a polite live region written once to `flt-announcement-polite` (4.1.3 met in the tree); VoiceOver in Chromium did not say it in its one recording ("Back"), so it may not be presented: a qualification of the web, recorded, not judged, until three recordings agree (FL-297; the three before were of the SnackBar the first build showed instead, said in none) |
 
 R5 (the platform's timeout) is met by none of them, as nothing in the SDK
 reads it ([FL-290](../flutter-limitations.md#fl-290)); `good-action` and
@@ -275,7 +277,7 @@ Not built:
 | L3 iOS | Each message an element labelled by it, once; Undo and Close buttons, and Go online; `good-action` and `good-banner` stay 10 s; `good-message`, `bad-action-times-out`, and `bad-only-in-message` go within 6 s of being seen, their lines staying, Undo gone, and the code in no element. Undo and Go online, by a tap: the line changes back, and the result line is labelled "Archive undone. Archived: 0" or "You are online.", and stays. Three Tabs and Return undo; four Tabs and Return close, undoing nothing; two Tabs and Return close the banner (that a Tab reached a control is shown by what Return does; XCUITest cannot read Flutter's focus, nor a live region). No key with a modifier is sent, so Escape is not checked on iOS |
 | L4 TalkBack | Focus parked on the example's line, the button pressed with the click action: the message's words for every example but `bad-inline-banner`, which says nothing of "offline"; then focus on `good-action`'s message, Undo, and Close, on `good-banner`'s message and Go online, and on `bad-inline-banner`'s message, which is read when focus is put on it Then, with focus parked on the line again, the action pressed with the click action (`-done-announced`, the result line): "Archive undone" for `good-action`, "You are online." for `good-banner` and `bad-inline-banner`, the last the positive control of its silence in the same launch `bad-inline-banner`'s silence row is the five seconds after the press, then focus moved to its button in the same row, which must be read ("Go offline"), with "You are offline." not said. Each walk is judged whole (`walk_strictly`): a wrong reading anywhere fails for good, only a walk shown to be incomplete is walked again, up to three, the deciding walk judged on its own, and every walk is in the transcript; the judge is tested on made-up logs in `tool/test_talkback.py` (`StrictWalks`) |
 | L4 VoiceOver iOS | The cursor on the button, `doubleTap()` at it: the message heard for every example but `bad-inline-banner`, where the button's utterance stays six seconds; one move back and one forward land on the button again; for `good-action`, `good-banner`, and `bad-inline-banner`, the moves forward from the button to where the last utterance repeats, as a whole list Then the cursor on the message's action with `tap()`, `doubleTap()` at it, and what it did must be heard: "Archive undone. Archived: 0", the result line (`good-action`), "You are online." (`good-banner`, `bad-inline-banner`, the last the positive control of its silence in the same launch) |
-| L4 VoiceOver web | Chromium only for the announcements (Playwright's WebKit build passes no live region changes): Enter on the button, VoiceOver's last phrase for six seconds must hold the message, or must not hold "offline" for `bad-inline-banner`, with capture shown live after. For `good-action` and `good-banner`, in Chromium and WebKit, the screen walked from Back with the message shown, judged against the whole list in order (`judgeWalk` in `web_tests/vo/c13_vo_walks.js`); no runner retries. The lists are what the first two recordings read (section 7): the same in both browsers but at Close, "Close Close" in Chromium and "Close button" in WebKit, each exact; after `good-action`'s walk, whether Close's tooltip is shown is logged, judged by nobody After each announcement of `good-action`, `good-banner`, and `bad-inline-banner`, keyboard focus on the message's action and Enter, and every phrase heard in six seconds recorded (`-after-undo-recorded`, `-after-go-online-recorded`): nothing is asserted about the message or about Back, which varied (FL-297); the row fails only on a stale phrase before the press, an empty capture, a line that did not change back, or a capture not live after it (`judgeAfterAction`, `assertCaptureIsLive`; section 7). `bad-inline-banner`'s silence has `assertCaptureIsLive` in the same page as its VoiceOver control, and no positive control of an announcement (section 7) |
+| L4 VoiceOver web | Chromium only for the announcements (Playwright's WebKit build passes no live region changes): Enter on the button, VoiceOver's last phrase for six seconds must hold the message, or must not hold "offline" for `bad-inline-banner`, with capture shown live after. For `good-action` and `good-banner`, in Chromium and WebKit, the screen walked from Back with the message shown, judged against the whole list in order (`judgeWalk` in `web_tests/vo/c13_vo_walks.js`); no runner retries. The lists are what the first two recordings read (section 7): the same in both browsers but at Close, "Close Close" in Chromium and "Close button" in WebKit, each exact; after `good-action`'s walk, whether Close's tooltip is shown is logged, judged by nobody After each announcement of `good-action`, `good-banner`, and `bad-inline-banner`, keyboard focus on the message's action and Enter, and every phrase heard in six seconds recorded (`-after-undo-recorded`, `-after-go-online-recorded`): nothing is asserted about the result line or about Back, which varied (FL-297); the row fails only on a stale phrase before the press, an empty capture, a line that did not change back, or a capture not live after it (`judgeAfterAction`, `assertCaptureIsLive`; section 7). `bad-inline-banner`'s silence has `assertCaptureIsLive` in the same page as its VoiceOver control, and no positive control of an announcement (section 7) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -322,11 +324,17 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   (`docs/evidence/C13/talkback-android.md`, one walk, right); VoiceOver on
   iOS said "Message archived" once, and "Archive undone. Archived: 0" and
   "You are online." after a tap at the action
-  (`docs/evidence/C13/voiceover-ios.md`). The bullets below are the
-  history of the removed mechanism. One Android tree run failed once on
-  a launch that did not show the example's button, and passed when run
-  again with nothing changed (`android_design_a_flake.txt`); the cause was
-  not found.
+  (`docs/evidence/C13/voiceover-ios.md`). VoiceOver on the web, in
+  Chromium, did not say it: in the seventh recording, the first of the
+  result line, Undo gave "Back and 1 more item and 1 more item group",
+  "Back", and the usage hint; `good-banner`'s Go online "Back" and the
+  hint; `bad-inline-banner`'s "Back" ([FL-297](../flutter-limitations.md#fl-297),
+  the rows recording only). The bullets below are the history of the
+  removed mechanism. An Android keyboard test failed twice on its second
+  launch, which did not show the example's button: it opened the same
+  example twice, and the wait for its title passed on the screen being
+  replaced. It is two tests now, one launch each, which passed in two
+  runs and at 320 by 640 (`android_design_a_flake.txt`).
 - **A message's action, used after its example had gone, could take a
   newer message away, and told of an undo that did nothing** (Codex
   review, 2026-11-23, the third ordering bug in this code): the count of
@@ -376,9 +384,8 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   group", "Archive undone", the hint; `good-banner`'s Go online, "Go
   offline button", "Back", the hint, and not the message;
   `bad-inline-banner`'s, "Back and 1 more item and 2 more items group",
-  "You are online.". In the sixth, the committed transcript
-  ([evidence/C13/voiceover-web.md](../evidence/C13/voiceover-web.md)), one
-  of the three: Undo, "Back" and the hint; `good-banner`'s Go online,
+  "You are online.". In the sixth (`voiceover-web-round5.md.txt`, every
+  test passing, the transcript until the seventh), one of the three: Undo, "Back" and the hint; `good-banner`'s Go online,
   "Back and 1 more item and 2 more items group", "Back", the hint;
   `bad-inline-banner`'s, "Back and 1 more item and 2 more items group",
   "You are online.". Across the three: "Archive undone" (`good-action`) was said in one, `good-banner`'s "You are online." in none, and `bad-inline-banner`'s "You are online." in two. The control Enter was pressed on goes as it acts;
@@ -397,21 +404,24 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   `<slug>-after-go-online-recorded` (`good-action`, `good-banner`,
   `bad-inline-banner`; Chromium only, as every announcement check) log
   every phrase VoiceOver gave in the six seconds after Enter. They assert
-  nothing about whether the message is heard, nor about "Back", as the
-  reading varied between recordings, and no single reading could be held.
-  They fail only if the phrase VoiceOver last said before the press
-  already held the message or was "Back" (stale; `heardAfter` also leaves
+  nothing about whether what the action did is heard (the second
+  SnackBar, now the result line), nor about "Back", as the reading varied
+  between recordings, and no single reading could be held; they stay so
+  unless three recordings agree. They fail only if the phrase VoiceOver
+  last said before the press already held what the action says or was
+  "Back" (stale; `heardAfter` also leaves
   out a phrase equal to it), if nothing at all was heard (an empty
   capture; `judgeAfterAction`, tested on made-up readings in
   `web_tests/c13_snackbar.spec.js`), if the page's line did not change
   back (the action did not act), or if the capture is not live after the
   six seconds (`assertCaptureIsLive`). A passing row shows that VoiceOver
   was listened to while the action acted, and what it said that time; it
-  does not show that VoiceOver presents the message, or that it does not.
+  does not show that VoiceOver presents it, or that it does not.
   No retries: each recording's row is what that recording heard.
 - **`bad-inline-banner`'s web VoiceOver silence has no same-launch
-  positive control of an announcement.** Its Go online message, which
-  would have been one, was heard in two recordings of three (FL-297), so
+  positive control of an announcement.** What its Go online did, which
+  would have been one, was heard in two recordings of three as the second
+  SnackBar, and not in the one recording of the result line (FL-297), so
   it cannot be one. The best real control
   in the same page load is `assertCaptureIsLive`, run right after the
   silence: it moves VoiceOver's cursor and requires its last phrase to
@@ -419,9 +429,9 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   in that page. It does not show that VoiceOver would have spoken a live
   region there. The same-document control of the announcement itself is
   the web tree test's: the same MutationObserver and the same marked
-  buffer record Go online's "You are online." after the silence. Together
-  they show that Flutter wrote nothing for the banner and does write for
-  a SnackBar in that page, and that VoiceOver's speech was being read; not
+  buffer record Go online's result line, "You are online.", after the
+  silence. Together they show that Flutter wrote nothing for the banner
+  and does write for a live region in that page, and that VoiceOver's speech was being read; not
   that VoiceOver presents a live region there.
 - **A SnackBar shown from a `SnackBarAction`'s `onPressed` after a clear
   there is hidden by the action when `accessibleNavigation` is on**
@@ -457,8 +467,8 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
     what that stop was); here it did not.
   - `good-action`: "Archived: 1", "Message archived group", "Undo button",
     then Close, then "end of Message archived group". WebKit read Close
-    "Close button" in all six recordings; Chromium read it "Close Close",
-    with no role word, in all six. After each walk from the second on,
+    "Close button" in all seven recordings; Chromium read it "Close Close",
+    with no role word, in all seven. After each walk from the second on,
     Close's tooltip was shown, in both browsers (`voiceover-web-round2-fail.md.txt`,
     `good-action-close-tooltip-after-walk`). Close is the `IconButton` that
     `showCloseIcon` adds, with the tooltip "Close". With no tooltip shown
@@ -483,17 +493,20 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
     "Example" heading, "Go offline button", "Status: offline".
 - **VoiceOver on the web, the transcript**
   ([evidence/C13/voiceover-web.md](../evidence/C13/voiceover-web.md)) is
-  the sixth recording, by the principal, at 3ea1098: 10 tests passed,
-  every walk complete on its first try in both browsers, Chromium reading
-  Close "Close Close" and WebKit "Close button", with Close's tooltip shown
-  after the walk in both; the after-action rows recorded what is listed
-  above. The first recording failed on its four walks, written as
+  the seventh recording, by the principal, at 943c51e, the first of
+  design A: 10 tests passed, every walk complete on its first try in both
+  browsers, Chromium reading Close "Close Close" and WebKit "Close
+  button", with Close's tooltip shown after the walk in both; the
+  after-action rows recorded what is listed above, the result line said
+  in none. The first recording failed on its four walks, written as
   predictions; the second on `good-action`'s walk in Chromium, at Close,
   before the lists were set per browser; the third passed, before the
   review round added the after-action rows; the fourth and fifth failed
-  on those rows, written then as one reading, which did not hold (FL-297).
-  The failed ones are kept in the probe folder
-  (`voiceover-web-round1-fail.md.txt` to `voiceover-web-round4-fail.md.txt`).
+  on those rows, written then as one reading, which did not hold (FL-297);
+  the sixth passed, the rows recording only, on the second SnackBar. The
+  failed ones are kept in the probe folder
+  (`voiceover-web-round1-fail.md.txt` to `voiceover-web-round4-fail.md.txt`),
+  and the sixth as `voiceover-web-round5.md.txt`.
 - **The banner's reading order is its drawn order.** `showMaterialBanner`
   puts the banner at the top of the `Scaffold`'s body, under the app bar
   and above the page, so it is drawn after the title and before the

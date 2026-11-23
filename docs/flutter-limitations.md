@@ -150,7 +150,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-294](#fl-294) | A SnackBar's Close button shows keyboard focus only by a faint tint, and `closeIconColor` cannot change that | Widget tests only | Confirmed (widget tests only) |
 | [FL-295](#fl-295) | A `MaterialBanner` is a live region only when the `ScaffoldMessenger` shows it | All | Confirmed |
 | [FL-296](#fl-296) | A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it | Web; widget tests (Android and iOS not run) | Confirmed |
-| [FL-297](#fl-297) | On the web, whether VoiceOver in Chromium said the message a SnackBar or banner action showed, when Enter on that action removed the control, varied between recordings | Web (Chromium, VoiceOver, Enter) | Observed |
+| [FL-297](#fl-297) | On the web, whether VoiceOver in Chromium said what a SnackBar or banner action did, when Enter on that action removed the control, varied between recordings, and the live-region line that now says it was not heard in its one recording | Web (Chromium, VoiceOver, Enter) | Observed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -3245,10 +3245,10 @@ yet), **Fixed in x.y** (verified on that version).
   button", and after each walk Close's tooltip was shown, in both browsers
   (`voiceover-web-round2-fail.md.txt`, row
   `good-action-close-tooltip-after-walk`). Every C13 recording since read
-  the same, six in all: Chromium "Close Close", WebKit "Close button",
+  the same, seven in all: Chromium "Close Close", WebKit "Close button",
   the tooltip shown after each walk (`voiceover-web-round3-fail.md.txt`,
-  `voiceover-web-round4-fail.md.txt`, and the transcript,
-  `docs/evidence/C13/voiceover-web.md`). So a walk that reaches Close
+  `voiceover-web-round4-fail.md.txt`, `voiceover-web-round5.md.txt`, and
+  the transcript, `docs/evidence/C13/voiceover-web.md`). So a walk that reaches Close
   leaves its tooltip shown, and Chromium's VoiceOver then reads the doubled
   name with no role word; WebKit's reads the name once with its role. The
   tree keeps the role, a button, while the tooltip is shown
@@ -4015,30 +4015,33 @@ yet), **Fixed in x.y** (verified on that version).
   its ordering needed a project-built policy ([FL-293](#fl-293)), and it
   was taken out (the principal's decision in review, 2026-11-23). What an
   action did is announced by a live-region line of the page instead
-  (`Semantics(liveRegion: true)`; C13 `good-action`, `good-banner`).
+  (`Semantics(liveRegion: true)`; C13 `good-action`, `good-banner`):
+  TalkBack and VoiceOver on iOS said it; VoiceOver in Chromium did not,
+  in its one web recording ([FL-297](#fl-297)).
 - Upstream issue: not searched yet (D25).
 
 ## FL-297
 
-**On the web, whether VoiceOver in Chromium said the message a SnackBar or banner action showed, when Enter on that action removed the control, varied between recordings.**
+**On the web, whether VoiceOver in Chromium said what a SnackBar or banner action did, when Enter on that action removed the control, varied between recordings, and the live-region line that now says it was not heard in its one recording.**
 
 - Status: Observed, Flutter 3.47.5, macOS 27.2.1, VoiceOver, Playwright's
   Chromium build. Seen in C13's web VoiceOver recordings, listed below.
   The C13 web VoiceOver spec now records every phrase heard after the
   press and asserts nothing about the message (the rows
   `<slug>-after-undo-recorded`, `<slug>-after-go-online-recorded`).
-- What these three recordings measured was the first review build's
-  second SnackBar; C13 now tells what the action did with a live-region
-  line of the page (FL-296), and the after-action rows of later
-  recordings record what VoiceOver says for that line. The rows stay
+- Rounds 3 to 5 measured the first review build's second SnackBar,
+  since removed; C13 now tells what the action did with a live-region
+  line of the page, the result line (`Semantics(liveRegion: true)`,
+  [FL-296](#fl-296)), and round 6 on measured that line. The rows stay
   record-only unless three recordings agree.
 - What was pressed: Enter, with keyboard focus on the action, in three
   examples: `good-action`'s Undo (a `SnackBarAction`), `good-banner`'s Go
   online (a `TextButton` in a `MaterialBanner` the messenger shows), and
   `bad-inline-banner`'s Go online (a `TextButton` in a banner in the
-  page). Each removes the control pressed and shows a SnackBar, "Archive
-  undone" or "You are online.". What VoiceOver said in the six seconds
-  after, by recording:
+  page). Each removes the control pressed and, in rounds 3 to 5, showed a
+  SnackBar, "Archive undone" or "You are online."; from round 6, writes
+  the result line instead, "Archive undone. Archived: 0" or "You are
+  online.". What VoiceOver said in the six seconds after, by recording:
   - Round 3 (`docs/evidence/probes/c13/voiceover-web-round3-fail.md.txt`):
     none of the three messages. Undo: "Back and 1 more item and 2 more
     items group", "Back", the usage hint. `good-banner`'s Go online:
@@ -4049,38 +4052,60 @@ yet), **Fixed in x.y** (verified on that version).
     hint. `good-banner`'s Go online: "Go offline button", "Back", the
     hint, and not the message. `bad-inline-banner`'s: "Back and 1 more item
     and 2 more items group", "You are online.".
-  - Round 5, the committed transcript (`docs/evidence/C13/voiceover-web.md`,
-    every test passing, the rows recording only): one of the three. Undo:
+  - Round 5 (`voiceover-web-round5.md.txt`, every test passing, the rows
+    recording only; the committed transcript until round 6): one of the
+    three. Undo:
     "Back", the hint, and not the message. `good-banner`'s Go online:
     "Back and 1 more item and 2 more items group", "Back", the hint, and
     not the message. `bad-inline-banner`'s: "Back and 1 more item and 2
     more items group", "You are online.".
-  - Across the three: "Archive undone" (`good-action`) was said in one, `good-banner`'s "You are online." in none, and `bad-inline-banner`'s "You are online." in two.
+  - Across rounds 3 to 5, the second SnackBar: "Archive undone" (`good-action`) was said in one, `good-banner`'s "You are online." in none, and `bad-inline-banner`'s "You are online." in two.
+  - Round 6, the result line, the committed transcript
+    (`docs/evidence/C13/voiceover-web.md`, recorded by the principal at
+    943c51e, 10 passed, the rows recording only): none of the three.
+    Undo: "Back and 1 more item and 1 more item group", "Back", the hint,
+    and not "Archive undone. Archived: 0". `good-banner`'s Go online:
+    "Back", the hint, and not "You are online.". `bad-inline-banner`'s:
+    "Back", and not "You are online.".
+  - Across all four: `good-action`'s was said in one, `good-banner`'s in
+    none, `bad-inline-banner`'s in two, and the result line, in its one
+    recording, in none. One recording of the result line is no reading
+    of it to hold; its rows stay record-only.
 - What Flutter did, the same presses without VoiceOver
   (`docs/evidence/probes/c13/web_done_focus.txt`, Chromium): it wrote
   "Archive undone" or "You are online." to `flt-announcement-polite` about
   50 ms after Enter and emptied it about 300 ms later ([FL-012](#fl-012)'s
   timer); the control pressed went, and DOM focus went to the page's
   button ("Archive message" after Undo, "Go offline" after Go online).
+  The result line goes the same way
+  (`docs/evidence/probes/c13/web_result.txt`, Chromium, no VoiceOver):
+  "Archive undone. Archived: 0" or "You are online." written to
+  `flt-announcement-polite` 25 to 50 ms after Enter and emptied about
+  300 ms later, once per press, the line itself staying on the page.
 - Not measured: why the result varies; what decides between the message
   and the move to Back; why VoiceOver's cursor went to Back; whether a
   message not heard was dropped or never received; a press by any other
   means than Enter (a click, VoiceOver's own activation); WebKit, where
   Playwright's build passes no live region changes to VoiceOver at all
   (I12), and real Safari; any other screen reader. No cause is given.
-- WCAG: 4.1.3 as written is met in the tree (the message is a polite live
-  region, and Flutter writes it to the page's live region). VoiceOver in
-  Chromium said it in some recordings and not in others, and
-  `good-banner`'s in none of three, so on the web it may not be presented:
-  a qualification of the web for the examples that show such a message,
-  not a failure of 4.1.3 as written.
+- WCAG: 4.1.3 as written is met in the tree (the second SnackBar, and
+  now the result line, is a polite live region, and Flutter writes it to
+  the page's live region). VoiceOver in Chromium said the SnackBar in
+  some recordings and not in others, `good-banner`'s in none of three,
+  and the result line in none of the three examples in its one
+  recording, so on the web what the action did may not be presented: a
+  qualification of the web for the examples with an action, not a
+  failure of 4.1.3 as written.
 - What users get, as measured: a VoiceOver user in Chromium who presses
-  Undo or Go online may hear what it did, or may hear "Back" instead. The
-  page's line shows it; TalkBack and VoiceOver on iOS said it (the C13
-  transcripts).
+  Undo or Go online may hear what it did, or may hear "Back" instead; with
+  the result line, in its one recording, they heard "Back" each time. The
+  page's line shows it, and the result line stays on the page, where
+  moving to it reads it (not measured with VoiceOver); TalkBack and
+  VoiceOver on iOS said it (the C13 transcripts).
 - Workaround: none tried. The C13 examples are the framework's SnackBar
-  and banner through their own parameters, and nothing is built round
-  them (the principal's decision in review, 2026-11-22).
+  and banner through their own parameters, and what an action did is a
+  `Semantics(liveRegion: true)` line of the page; nothing is built round
+  them (the principal's decisions in review, 2026-11-22 and 2026-11-23).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->

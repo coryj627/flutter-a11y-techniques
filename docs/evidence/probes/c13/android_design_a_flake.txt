@@ -21,4 +21,7 @@ after Tab to Undo and Enter in the first)
 # openExample says to wait for something the previous screen does not have.
 # Nothing in the app: the test was split into keysReachUndoAndEnterUndoes and
 # keysReachCloseAndEnterUndoesNothing, one launch each, with the same steps
-# and assertions. Their runs are in the report.
+# and assertions. Then, the same day: `python3 tool/evidence.py C13 --only android`
+# twice, PASS 176 s and PASS 173 s (14 tests, talkBackWalk skipped as ever
+# outside the TalkBack run), and the 320 by 640 run (android_320x640.txt),
+# BUILD SUCCESSFUL.

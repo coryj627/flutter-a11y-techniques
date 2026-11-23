@@ -224,12 +224,27 @@ message (the principal's decision, 2026-11-22).
 
 ## The sixth web VoiceOver recording
 
-Recorded by the principal at 3ea1098: every test passed. It is the
-transcript, `docs/evidence/C13/voiceover-web.md`. The after-action rows
+Recorded by the principal at 3ea1098: every test passed. It was the
+transcript until the seventh, and is kept as `voiceover-web-round5.md.txt`
+(the second SnackBar, since removed). The after-action rows
 recorded: Undo, "Back" and the hint; `good-banner`'s Go online, "Back and
 1 more item and 2 more items group", "Back", the hint;
 `bad-inline-banner`'s, "Back and 1 more item and 2 more items group", "You
 are online.".
+
+## The seventh web VoiceOver recording, design A
+
+Recorded by the principal at 943c51e, the first with the result line in
+place of the second SnackBar: 10 passed (5.1 min). It is the transcript,
+`docs/evidence/C13/voiceover-web.md`. The walks read as in the sixth,
+Close "Close Close" in Chromium and "Close button" in WebKit. The
+after-action rows, Chromium, recording only (FL-297), heard none of the
+result lines: Undo, "Back and 1 more item and 1 more item group",
+"Back", the hint, and not "Archive undone. Archived: 0"; `good-banner`'s
+Go online, "Back", the hint, and not "You are online."; and
+`bad-inline-banner`'s, "Back", and not "You are online.". Without
+VoiceOver the result line is written to `flt-announcement-polite` once
+per press, 25 to 50 ms after Enter (`web_result.txt`).
 
 ## Review round (Codex, 2026-11-23)
 

@@ -34,11 +34,11 @@ const ANNOUNCED = {
   'bad-inline-banner': { mustNot: 'offline' },
 };
 
-// slug -> the message's action, pressed after the announcement, and the
-// message that action shows. Recorded, not judged (FL-297;
+// slug -> the message's action, pressed after the announcement, and what
+// the example's result line then says. Recorded, not judged (FL-297;
 // docs/specs/C13-snackbar.md, section 7): whether VoiceOver in Chromium
-// says the message after Enter varied between recordings, so the row logs
-// every phrase heard and asserts nothing about the message or about Back.
+// says what the action did after Enter varied between recordings, so the
+// row logs every phrase heard and asserts nothing about it or about Back.
 // It fails only on a stale phrase before the press, an empty capture, an
 // action that did not act, or a capture that is not live after it
 // (judgeAfterAction, assertCaptureIsLive).
