@@ -14,18 +14,18 @@ Result: PASS
 | Example | Spoken |
 | --- | --- |
 | `bad-adaptive` | Load inbox Button / Inbox not loaded |
-| `bad-adaptive-run` | Load inbox Button / (tap at it) / Loading started / Inbox loaded |
+| `bad-adaptive-run` | Load inbox Button / (tap at it) / Load inbox Button / Loading started / Inbox loaded |
 | `bad-adaptive-loading` | Example Heading / Load inbox Button / Loading started / Inbox loaded |
 | `bad-cupertino-bar` | Upload report Button / Report upload / Not started |
 | `bad-cupertino-bar-run` | Upload report Button / (tap at it) / Upload report Button / Upload started / Half uploaded / Upload complete |
+| `bad-cupertino-no-role` | Load inbox Button / Inbox not loaded |
+| `bad-cupertino-no-role-run` | Load inbox Button / (tap at it) / Load inbox Button / Loading started / Inbox loaded |
+| `bad-cupertino-no-role-loading` | Example Heading / Load inbox Button / Loading inbox / Loading started |
 | `bad-no-label` | Upload report Button / Report upload / 0 / Not started |
+| `bad-no-role` | Load inbox Button / Inbox not loaded |
+| `bad-no-role-run` | Load inbox Button / (tap at it) / Load inbox Button / Loading started / Inbox loaded |
+| `bad-no-role-loading` | Example Heading / Load inbox Button / Loading inbox / Loading started |
 | `bad-silent-end` | Upload report Button / Report upload 0 / Not started |
 | `bad-silent-end-run` | Upload report Button / (tap at it) / Upload report Button / (forward twice) / Report upload 100 / Upload complete |
-| `good-circular` | Load inbox Button / Inbox not loaded |
-| `good-circular-run` | Load inbox Button / (tap at it) / Load inbox Button / Loading started / Inbox loaded |
-| `good-circular-loading` | Example Heading / Load inbox Button / Loading inbox / Loading started |
-| `good-cupertino` | Load inbox Button / Inbox not loaded |
-| `good-cupertino-run` | Load inbox Button / (tap at it) / Load inbox Button / Loading started / Inbox loaded |
-| `good-cupertino-loading` | Example Heading / Load inbox Button / Loading inbox / Loading started |
 | `good-linear` | Upload report Button / Report upload 0 / Not started |
-| `good-linear-run` | Upload report Button / (tap at it) / Upload started / Half uploaded / Upload complete |
+| `good-linear-run` | Upload report Button / (tap at it) / Upload report Button / Upload started / Half uploaded / Upload complete |

@@ -395,6 +395,11 @@ Skips and what they give up, in the tests:
   reading spoiled by the device, which the composite judge of other
   techniques (`walk_until_heard`) would walk again row by row; that
   composite could pass two walks each wrong at a different row.
+- The spinners' `-spinner` reading comes from a second press, 0.8 s
+  before TalkBack focus is moved to the spinner; that press's own
+  "Loading started" is spoken before the `-spinner` marker and lands at
+  the end of the `-run` capture, which requires its phrases and forbids
+  none. In the transcript `-spinner` held "Loading inbox" alone.
 - Under that judge a capture with nothing in it is incomplete, so a row
   that must be silent is declared silent (`SILENT`), and judged apart:
   anything spoken in it, a number or a cut-off fragment included, is a

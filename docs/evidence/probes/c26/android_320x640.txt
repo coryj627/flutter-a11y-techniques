@@ -1,4 +1,4 @@
 during the run: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
 > Task :app:connectedDebugAndroidTest
-BUILD SUCCESSFUL in 1m 53s
+BUILD SUCCESSFUL in 1m 52s
 after reset: Physical size: 1080x2424  Physical density: 420 
