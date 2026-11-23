@@ -135,6 +135,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-251](#fl-251) | A tooltip is part of its control's name on iOS and the web, before the control's own text on the web; only Android treats it as separate text | iOS, Web | Confirmed |
 | [FL-252](#fl-252) | On iOS VoiceOver does not stop on a node whose only text is a tooltip | iOS | Confirmed |
 | [FL-253](#fl-253) | A `FilledButton`'s text is under 4.5:1 in light mode while it has keyboard focus and a hover | All (widget test only) | Confirmed (widget test only) |
+| [FL-268](#fl-268) | On the web a node with a heading level is a heading and nothing else: a button, a link, a checkbox, or a text field merged with a heading loses its role | Web | Confirmed |
+| [FL-269](#fl-269) | A `Card` left at its default joins all its text into one node, and a heading in it makes all of that one heading | All | Confirmed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -865,6 +867,22 @@ yet), **Fixed in x.y** (verified on that version).
   has been verified. None has been yet.
 - Workaround: none through `Semantics` that keeps the pattern. Each entry
   documents the closest achievable example.
+- What a card gets in place of `article`, measured in C18 (2026-11-22,
+  `docs/evidence/probes/c18/`): a Material `Card` with
+  `semanticContainer: false` makes no node of its own, so its parts are
+  siblings of everything round it on every platform; with the default,
+  true, it is one node that takes in its text ([FL-269](#fl-269)). Cards in
+  a `ListView` (fixture p14) are each an item node: on Android the list's
+  node has collection information, three rows by one column, and TalkBack
+  read the first card's heading with "In list. 3 items"; on the web each
+  item is a `flt-semantics` element with no role. `SemanticsRole.list` and
+  `listItem` round the cards (fixture p15) are `role="list"` and
+  `role="listitem"` on the web, and on Android an `android.widget.ListView`
+  that TalkBack reads as "In list". On iOS neither changed what XCUITest
+  or VoiceOver showed: each part was read on its own, with no word about a
+  list (`ios.txt`, p14, p15). None of these says
+  "article". C18 relies on each card's heading to mark where it starts, as
+  MDN's `article` page says an article should be identified.
 - How to read this entry: these are roles Flutter has not added yet. Treat
   it as unfinished work in the framework, and re-check it whenever the
   pinned version changes.
@@ -3299,6 +3317,104 @@ yet), **Fixed in x.y** (verified on that version).
   `style` whose overlay keeps the contrast. Not tried.
 - Upstream issue: not searched yet (D25).
 
+## FL-268
+
+**On the web a node with a heading level is a heading and nothing else: a button, a link, a checkbox, or a text field merged with a heading loses its role.**
+
+- Status: Confirmed, Flutter 3.47.5, Chromium: asserted by C18
+  `bad-heading-button` in `web_tests/c18_card.spec.js`. Found in the C18
+  probe (`docs/evidence/probes/c18/web.txt` and `web_round2.txt`, fixtures
+  p03, p04, p06, p07, p09, p18, p19). Web engine source read:
+  `lib/_engine/engine/semantics/semantics.dart`,
+  `_getEngineSemanticsRole`, which returns the heading role before it
+  looks for a text field, a checkable node, a link, or a button, for any
+  node with a heading level (or a header flag with a label and no
+  children).
+- WCAG: 4.1.2 Name, Role, Value, on the web: the control's role is not
+  exposed.
+- What happens: `Semantics(headingLevel: 3)` round the title of a control
+  that merges its children, such as a `ListTile` with `onTap`, an
+  `InkWell`, or anything inside `MergeSemantics` (the project's `TestId`
+  is one), puts the level on the control's node. The engine then makes
+  that node an `<h3 tabindex="0">`, named by everything merged into it,
+  with no button role:
+  - A `ListTile` with `onTap`, a button off the web (p06,
+    `bad-heading-button`): an `<h3>`. Tab reaches it, and Enter and Space
+    and a mouse click run its `onTap`; a DOM click with no pointer events,
+    which is what assistive technology sends, runs nothing
+    (`web_round2.txt`; the C18 web test, with a mouse click on the same
+    element and a DOM click on Back in the same load as positive
+    controls). What VoiceOver's own activation sends was not measured.
+  - A card that is one link, `Semantics(link: true, linkUrl:)` round an
+    `InkWell` whose text has a heading (p09): an `<h3>` with no `href`, so
+    the browser has no link to follow, and Enter after Tab did nothing
+    there (C03's `BrowserKeys` gives Enter to the browser).
+  - `Semantics(button: true)` round an `InkWell` card, FL-401's own
+    workaround (p19), and `MergeSemantics` round a card with a button
+    (p18): an `<h3>` each.
+  - A text field or a checkbox merged with a heading was not built; that
+    they are affected is read in the source only.
+- Off the web the node keeps both: on Android a `Button` (or a `View` with
+  the link's `URLSpan`) whose `isHeading` is true (`android-tree.txt`,
+  p06, p09, p18, p19); on iOS, to XCUITest, a button (p06, p18, p19) or a
+  link (p09) (`ios.txt`). VoiceOver's reading of those fixtures was cut at
+  64 characters before the second trait, after "B" for p06 and p19 and "H"
+  for p09, so the probe did not show whether it said both; C18
+  `bad-heading-button`'s walk, with a shorter name, checks it
+  (`docs/evidence/C18/voiceover-ios.md`).
+- Plain HTML for comparison (`web.txt`, "html"): a `div` with
+  `role="button"` round an `h3` and a `p`, and an `a href` round them, are
+  a button and a link in Chromium's tree, with the heading inside them as a
+  child. The engine has no such shape: one node has one role.
+- Why it matters: the iOS reference repository's card combined into one
+  element keeps its heading and adds the button trait back, and doing the
+  same in Flutter, which is what `Semantics(headingLevel:)` on a tile's
+  title does, gives a web user a heading that does not say it can be
+  activated, and that a screen reader's click may not activate.
+- Workaround, in the SDK: no heading inside a control. A card that is one
+  control has no heading of its own (C18 `good-tappable`).
+- Upstream issue: not searched yet (D25).
+
+## FL-269
+
+**A `Card` left at its default joins all its text into one node, and a heading in it makes all of that one heading.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by C18
+  `bad-default-container` in the widget, web, Android, and iOS tests and
+  its transcripts. Found in the C18 probe (`docs/evidence/probes/c18/`,
+  fixtures p01 and p02). Framework source read: `material/card.dart`
+  wraps the card in `Semantics(container: semanticContainer)` and its
+  child in `Semantics(explicitChildNodes: !semanticContainer)`;
+  `semanticContainer` is true by default.
+- WCAG: 1.3.1 Info and Relationships, on every platform: the card's body
+  text is exposed as part of its heading, which is not what is shown.
+- What happens: with `semanticContainer: true` every text in the card that
+  has no node of its own (a `Text` has none) is merged into the card's
+  node, and so are their flags: a `Semantics(headingLevel: 3)` title
+  makes the whole node a level 3 heading named "title\ntext". Controls and
+  labelled pictures keep nodes of their own, as children of it.
+  - Web: an `<h3>` whose `aria-label` is the title and the text, holding
+    the picture (`role="img"`) and the buttons (`web.txt`, p01).
+  - Android: an `android.view.View` with `isHeading` true, named by the
+    title and the text, with the picture and the buttons as its children
+    (`android-tree.txt`, p01).
+  - iOS: one element of type other (XCUITest's type for a heading here)
+    named by the title and the text, with the picture and the buttons as
+    elements of their own (`ios.txt`, p01). VoiceOver read the title and
+    the text and then "H", cut at 64 characters, in the probe; C18's walk
+    checks the whole reading, the text and "Heading"
+    (`docs/evidence/C18/voiceover-ios.md`).
+  - With `semanticContainer: false` each part is a node of its own, and
+    the title alone is the heading (p02, C18 `good-material`).
+- Why it matters: the default is what a `Card` gets unless its author has
+  read this parameter's documentation, which says it "should be false if
+  the card contains multiple different types of content". A screen reader
+  user hears the card's whole text as a heading, and a list of headings
+  holds every card's text.
+- Workaround, in the SDK: `Card(semanticContainer: false)`, as its
+  documentation says (C18 `good-material`).
+- Upstream issue: not searched yet (D25).
+
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->
@@ -3380,6 +3496,20 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround, in the SDK: `Semantics(button: true)` around the `InkWell`
   (probe fixture `k03`: a button on all three platforms), or a `ListTile`
   with `onTap`, which is a button by itself (I01 `good-material`).
+- The same in C18 (2026-11-22), as the card of the `Card` documentation:
+  `Card(child: InkWell(onTap:, child: …))` with a title and a text is one
+  node with a tap action and no button flag. Asserted by C18
+  `bad-ink-well` in the widget, Android, iOS, and web tests and its
+  transcripts: on Android an `android.view.View`, clickable, that TalkBack
+  reads as its text and "Double-tap to activate" (probe fixture p20,
+  `docs/evidence/probes/c18/android-talkback.md`); on iOS static text to
+  XCUITest, which VoiceOver read as its text alone (`ios.txt`, p20); on the
+  web a button. Two things change the workaround for a card: if the
+  card's title is a heading, `Semantics(button: true)` round the
+  `InkWell` gives a node that is a heading and a button, which on the web
+  is a heading only ([FL-268](#fl-268), probe fixture p19); and a
+  `ListTile` with `onTap` (C18 `good-tappable`) is a button only while its
+  title is not a heading (C18 `bad-heading-button`).
 - Upstream issue: not searched yet (D25). This may be intended: `InkWell`
   is an ink response and not a control of a given kind.
 

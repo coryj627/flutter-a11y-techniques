@@ -1,0 +1,16 @@
+Chromium (Playwright), build/web_probe, Flutter 3.47.5, 2026-11-22. Mouse click 16 px in from the left edge, at mid height; dispatch = a DOM click with no pointer events.
+p03 mouse H3 role=null href=null url=/#/p03 taps="p03 taps: whole=1 a=0 b=0 c=0" destination=false
+p03 dispatch H3 role=null href=null url=/#/p03 taps="p03 taps: whole=0 a=0 b=0 c=0" destination=false
+p04 mouse H3 role=null href=null url=/#/p04 taps="p04 taps: whole=1 a=0 b=0 c=0" destination=false
+p04 dispatch H3 role=null href=null url=/#/p04 taps="p04 taps: whole=0 a=0 b=0 c=0" destination=false
+p06 mouse H3 role=null href=null url=/#/p06 taps="p06 taps: whole=1 a=0 b=0 c=0" destination=false
+p06 dispatch H3 role=null href=null url=/#/p06 taps="p06 taps: whole=0 a=0 b=0 c=0" destination=false
+p07 mouse H3 role=null href=null url=/#/p07 taps="p07 taps: whole=1 a=0 b=0 c=0" destination=false
+p07 dispatch H3 role=null href=null url=/#/p07 taps="p07 taps: whole=0 a=0 b=0 c=0" destination=false
+p09 mouse H3 role=null href=null url=/#/p09 taps="p09 taps: whole=1 a=0 b=0 c=0" destination=false
+p09 dispatch H3 role=null href=null url=/#/p09 taps="p09 taps: whole=0 a=0 b=0 c=0" destination=false
+p18 mouse H3 role=null href=null url=/#/p18 taps="p18 taps: whole=0 a=0 b=0 c=0" destination=false
+p18 dispatch H3 role=null href=null url=/#/p18 taps="p18 taps: whole=0 a=0 b=0 c=0" destination=false
+p19 mouse H3 role=null href=null url=/#/p19 taps="p19 taps: whole=1 a=0 b=0 c=0" destination=false
+p19 dispatch H3 role=null href=null url=/#/p19 taps="p19 taps: whole=0 a=0 b=0 c=0" destination=false
+  7 passed (30.7s)
