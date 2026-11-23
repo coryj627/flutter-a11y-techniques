@@ -14,10 +14,10 @@ Result: PASS
 | Example | Spoken |
 | --- | --- |
 | `bad-adaptive` | Load inbox Button / Inbox not loaded |
-| `bad-adaptive-run` | Load inbox Button / (tap at it) / Load inbox Button / Loading started / Inbox loaded |
+| `bad-adaptive-run` | Load inbox Button / (tap at it) / Loading started / Inbox loaded |
 | `bad-adaptive-loading` | Example Heading / Load inbox Button / Loading started / Inbox loaded |
 | `bad-cupertino-bar` | Upload report Button / Report upload / Not started |
-| `bad-cupertino-bar-run` | Upload report Button / (tap at it) / Upload started / Half uploaded / Upload complete |
+| `bad-cupertino-bar-run` | Upload report Button / (tap at it) / Upload report Button / Upload started / Half uploaded / Upload complete |
 | `bad-no-label` | Upload report Button / Report upload / 0 / Not started |
 | `bad-silent-end` | Upload report Button / Report upload 0 / Not started |
 | `bad-silent-end-run` | Upload report Button / (tap at it) / Upload report Button / (forward twice) / Report upload 100 / Upload complete |
@@ -28,4 +28,4 @@ Result: PASS
 | `good-cupertino-run` | Load inbox Button / (tap at it) / Load inbox Button / Loading started / Inbox loaded |
 | `good-cupertino-loading` | Example Heading / Load inbox Button / Loading inbox / Loading started |
 | `good-linear` | Upload report Button / Report upload 0 / Not started |
-| `good-linear-run` | Upload report Button / (tap at it) / Upload report Button / Upload started / Half uploaded / Upload complete |
+| `good-linear-run` | Upload report Button / (tap at it) / Upload started / Half uploaded / Upload complete |

@@ -329,8 +329,13 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
           usleep(200_000)
         }
         let said = C26Silence.heard(polls)
-        let failed = polls.filter { if case .failed = $0 { return true } else { return false } }
-        XCTAssertEqual(failed, [], "\(slug): currentSpeech() failed while the task ran")
+        // Every raw read, for every example: none may fail, and none may be
+        // empty. With VoiceOver on, currentSpeech() gives the last utterance
+        // (docs/evidence/probes/c26/currentSpeech.txt); an empty one (after
+        // poll()'s whitespace normalising, a whitespace-only one too) is
+        // not something it was measured to give, and is not taken for
+        // silence.
+        XCTAssertEqual(C26Silence.unreadable(polls), [], "\(slug): reads that failed or were empty while the task ran")
         XCTAssertEqual(status(slug).label, Self.end[slug]!, "\(slug): the task did not run to its end")
         var row = "\(before) / (tap at it) / \(said.joined(separator: " / "))"
         if slug == "bad-silent-end" {
@@ -397,13 +402,20 @@ final class C26ProgressIndicatorUITests: XCTestCase, TechniqueUITest {
 /// kept apart from the device so that it is tested on made-up readings
 /// (the testSilenceJudge tests, below).
 enum C26Silence {
-  /// One read of `currentSpeech()`.
+  /// One read of `currentSpeech()`: its utterance, already whitespace-
+  /// normalised by the test (`VoiceOverWalk.normalized`: runs of
+  /// whitespace made one space, and none at the ends), or the error.
   enum Poll: Equatable {
     case speech(String)
     case failed(String)
   }
 
-  /// The utterances of `polls`, each once where it repeats.
+  /// The fewest reads the nine seconds must hold: one a second.
+  static let minimumReads = 9
+
+  /// The utterances of `polls`, each once where it repeats. For the
+  /// transcript and for the order of required phrases only; never for
+  /// judging silence.
   static func heard(_ polls: [Poll]) -> [String] {
     var out: [String] = []
     for p in polls {
@@ -412,22 +424,41 @@ enum C26Silence {
     return out
   }
 
-  /// nil when the interval is shown silent, or why not. The capture must be
-  /// live through the same reading before it (`before`, the button's own
-  /// utterance) and after it (`after`, the status line's, once the cursor
-  /// has moved there); every poll in between must have read, at least one
-  /// a second for nine seconds; and nothing but the button's utterance may
-  /// have been read. currentSpeech() keeps giving the last utterance while
-  /// nothing is said, so that is what silence reads as. A failed read is
-  /// never silence.
-  static func judge(button: String, before: String, polls: [Poll], after: Poll, end: String) -> String? {
-    guard before == button else { return "the capture was not live before: read \"\(before)\"" }
-    guard polls.count >= 9 else { return "only \(polls.count) reads in the interval" }
-    for p in polls {
-      if case .failed(let why) = p { return "a read failed in the interval (\(why))" }
+  /// The reads of `polls` that read nothing usable: failed, or empty
+  /// (whitespace-only included, as the test normalises it to empty).
+  static func unreadable(_ polls: [Poll]) -> [Poll] {
+    polls.filter { p in
+      switch p {
+      case .failed: return true
+      case .speech(let s): return s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      }
     }
-    let other = heard(polls).filter { $0 != button }
-    guard other.isEmpty else { return "heard \(other)" }
+  }
+
+  /// nil when the interval is shown silent, or why not. Every raw read is
+  /// judged, none filtered: the reading before the interval (`before`),
+  /// each read in it, and the reading after it (`after`, once the cursor
+  /// has moved to the status line) go through the same path. Each must be
+  /// exactly as expected, compared as whole strings after the test's
+  /// whitespace normalising, with no trimming of its own: `before` and
+  /// every read the button's utterance, `after` the status line's. With
+  /// VoiceOver on, currentSpeech() keeps giving the last utterance while
+  /// nothing is said (measured), so silence reads as the button's
+  /// utterance, every time. A failed read, an empty one, a whitespace-only
+  /// one, or any other text is never silence. XCUIVoiceOverService cuts an
+  /// utterance at 64 characters; both expected ones are shorter, and an
+  /// expected one of 64 or more is refused.
+  static func judge(button: String, before: String, polls: [Poll], after: Poll, end: String) -> String? {
+    for (name, text) in [("button", button), ("end", end)] {
+      if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return "the expected \(name) utterance is empty" }
+      if text.count >= 64 { return "the expected \(name) utterance is 64 characters or more" }
+    }
+    guard button != end else { return "the button's and the end's utterances are the same" }
+    guard before == button else { return "the capture was not live before: read \"\(before)\"" }
+    guard polls.count >= minimumReads else { return "only \(polls.count) reads in the interval" }
+    for (i, p) in polls.enumerated() where p != .speech(button) {
+      return "read \(i + 1) of \(polls.count) was \(p), not the button's utterance"
+    }
     guard after == .speech(end) else { return "the capture was not live after: \(after)" }
     return nil
   }
@@ -439,38 +470,93 @@ enum C26Silence {
 extension C26ProgressIndicatorUITests {
   private var button: String { "Upload report Button" }
   private var end: String { "Upload complete" }
-  private var quiet: [C26Silence.Poll] { Array(repeating: .speech(button), count: 45) }
+  private var failure: C26Silence.Poll { .failed("com.apple.xctest.voiceoverservice 3") }
 
-  func testSilenceJudgeSilenceShownLiveBeforeAndAfterPasses() {
+  /// Every shape a single read can take.
+  private var shapes: [(name: String, poll: C26Silence.Poll)] {
+    [("failed", failure), ("empty", .speech("")), ("whitespace", .speech("   ")),
+     ("button", .speech(button)), ("other text", .speech("Report upload 50")),
+     ("a number", .speech("25")), ("the end", .speech(end)),
+     ("the button with a space", .speech(button + " "))]
+  }
+
+  /// Every interval shape: all reads one shape, one read of a shape among
+  /// the button's at the start, the middle, and the end, and too few reads.
+  private var intervals: [(name: String, polls: [C26Silence.Poll], silent: Bool)] {
+    let n = 45
+    var out: [(String, [C26Silence.Poll], Bool)] = []
+    for (name, poll) in shapes {
+      let isButton = poll == .speech(button)
+      out.append(("all \(name)", Array(repeating: poll, count: n), isButton))
+      for at in [0, n / 2, n - 1] {
+        var polls = Array(repeating: C26Silence.Poll.speech(button), count: n)
+        polls[at] = poll
+        out.append(("one \(name) at \(at)", polls, isButton))
+      }
+    }
+    out.append(("none", [], false))
+    out.append(("8 of the button", Array(repeating: .speech(button), count: C26Silence.minimumReads - 1), false))
+    out.append(("9 of the button", Array(repeating: .speech(button), count: C26Silence.minimumReads), true))
+    return out
+  }
+
+  func testSilenceJudgeOverEveryShapeOfInput() {
+    // The full cross: every `before`, every interval, every `after`. Only
+    // the button's utterance before, a silent interval, and the end's
+    // utterance after pass.
+    var cases = 0
+    for (beforeName, beforePoll) in shapes {
+      let before: String
+      switch beforePoll {
+      case .speech(let s): before = s
+      case .failed: before = ""  // what the test's current() gives on a failed read
+      }
+      for interval in intervals {
+        for (afterName, after) in shapes {
+          let verdict = C26Silence.judge(button: button, before: before, polls: interval.polls, after: after, end: end)
+          let shouldPass = before == button && interval.silent && after == .speech(end)
+          XCTAssertEqual(verdict == nil, shouldPass,
+                         "before \(beforeName), interval \(interval.name), after \(afterName): \(verdict ?? "passed")")
+          cases += 1
+        }
+      }
+    }
+    XCTAssertEqual(cases, shapes.count * intervals.count * shapes.count)
+  }
+
+  func testSilenceJudgeNamedRegressions() {
+    let quiet = Array(repeating: C26Silence.Poll.speech(button), count: 45)
     XCTAssertNil(C26Silence.judge(button: button, before: button, polls: quiet, after: .speech(end), end: end))
-  }
-
-  func testSilenceJudgeFailedReadsWithTheLaterMovesWorkingDoNotPass() {
-    // Codex's case: every read in the interval failed, and the moves
-    // afterwards reached the status line.
-    let polls = Array(repeating: C26Silence.Poll.failed("com.apple.xctest.voiceoverservice 3"), count: 45)
-    XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: polls, after: .speech(end), end: end))
-    var some = quiet
-    some[20] = .failed("com.apple.xctest.voiceoverservice 3")
-    XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: some, after: .speech(end), end: end))
-  }
-
-  func testSilenceJudgeNoReadsDoNotPass() {
-    XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: [], after: .speech(end), end: end))
-  }
-
-  func testSilenceJudgeAnythingHeardButTheButtonDoesNotPass() {
-    for words in ["25", "Report upload 50", "Half uploaded", end] {
+    // Every read failed, and the moves afterwards worked (round 3's finding).
+    XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: Array(repeating: failure, count: 45),
+                                     after: .speech(end), end: end))
+    // An entirely empty interval, one empty read, one whitespace-only read
+    // (round 4's finding).
+    XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: Array(repeating: .speech(""), count: 45),
+                                     after: .speech(end), end: end))
+    for blank in ["", "   "] {
       var polls = quiet
-      polls[10] = .speech(words)
-      XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: polls, after: .speech(end), end: end), words)
+      polls[20] = .speech(blank)
+      XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: polls, after: .speech(end), end: end),
+                      "\"\(blank)\"")
     }
   }
 
-  func testSilenceJudgeACaptureNotLiveBeforeOrAfterDoesNotPass() {
-    XCTAssertNotNil(C26Silence.judge(button: button, before: "", polls: quiet, after: .speech(end), end: end))
-    XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: quiet,
-                                     after: .failed("com.apple.xctest.voiceoverservice 3"), end: end))
-    XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: quiet, after: .speech(button), end: end))
+  func testSilenceJudgeRefusesDegenerateExpectations() {
+    let quiet = Array(repeating: C26Silence.Poll.speech(""), count: 45)
+    // An empty expected utterance would make empty reads pass.
+    XCTAssertNotNil(C26Silence.judge(button: "", before: "", polls: quiet, after: .speech(end), end: end))
+    XCTAssertNotNil(C26Silence.judge(button: " ", before: " ", polls: Array(repeating: .speech(" "), count: 45),
+                                     after: .speech(end), end: end))
+    XCTAssertNotNil(C26Silence.judge(button: button, before: button, polls: Array(repeating: .speech(button), count: 45),
+                                     after: .speech(button), end: button))
+    let long = String(repeating: "x", count: 64)
+    XCTAssertNotNil(C26Silence.judge(button: long, before: long, polls: Array(repeating: .speech(long), count: 45),
+                                     after: .speech(end), end: end))
+  }
+
+  func testUnreadablePollsAreFailedOrBlank() {
+    XCTAssertEqual(C26Silence.unreadable([.speech(button), .speech(""), .speech("  "), failure, .speech("25")]),
+                   [.speech(""), .speech("  "), failure])
   }
 }

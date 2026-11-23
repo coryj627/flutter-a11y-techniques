@@ -395,19 +395,31 @@ Skips and what they give up, in the tests:
   on it gives the last utterance, and keeps giving it through ten quiet
   seconds; the only error seen was "No speech available" (code 3), with
   VoiceOver off. So "nothing said" reads as the last utterance, not as an
-  error, and every error is a failed read: the test fails on any, in
-  every example's nine seconds. `bad-silent-end`'s nine seconds are judged
-  by `C26Silence.judge` (tested on made-up readings, the
-  `testSilenceJudge` tests, among them every read failed with the moves
-  afterwards working): the same reading must give the button's own
-  utterance before the tap and the status line's after the two moves, at
-  least nine reads must have been made, none may fail, and none may give
-  anything but the button's utterance. What remains unproven: an
-  utterance identical to the button's own, said again in the interval,
-  reads the same as silence; and two utterances within one 200 ms read
-  show only the second (which, if it is not the button's, still fails
-  the test). Before the review (Codex, 2026-11-23) a failed read was
-  taken for silence.
+  error, and every error is a failed read. In every example's nine
+  seconds the test fails on any read that failed or was empty (a
+  whitespace-only utterance is empty once the test has normalised its
+  whitespace, as it does every utterance). `bad-silent-end`'s nine seconds
+  are judged by `C26Silence.judge` on every raw read, none filtered: the
+  reading before the tap must be exactly the button's utterance, every
+  read in the interval exactly the button's utterance, at least nine of
+  them, and the reading after the two moves exactly the status line's.
+  Exact means whole strings after the whitespace normalising, with no
+  further trimming: "Upload report Button " with a trailing space would
+  fail. Both expected utterances are under the API's 64-character cut,
+  and the judge refuses an expected utterance that is empty, of 64
+  characters or more, or the same for button and end. It is tested on
+  made-up readings over the full cross of input shapes (the
+  `testSilenceJudge` tests): `before`, each read, and `after` each one
+  of failed, empty, whitespace, the button's utterance, other text, a
+  number, the status line's, and the button's with a space; the interval
+  all of one shape, or one read of a shape at its start, middle, or end,
+  or too few reads, or none; only the one right combination passes. What
+  remains unproven: an utterance identical to the button's own, said
+  again in the interval, reads the same as silence; and two utterances
+  within one 200 ms read show only the second (which, if it is not the
+  button's, still fails the test). In review (Codex, 2026-11-23) a failed
+  read had been taken for silence, and then empty reads had been dropped
+  before judging; both now fail.
 - The iOS VoiceOver walk is C03's: it ends where moving on gives the last
   utterance again, twice. The status phrases are read with
   `currentSpeech()` every 200 ms; a phrase spoken and replaced within
