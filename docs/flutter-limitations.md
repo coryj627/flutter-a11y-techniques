@@ -3215,7 +3215,11 @@ yet), **Fixed in x.y** (verified on that version).
   second recording read the same, Chromium "Close Close" and WebKit "Close
   button", and after each walk Close's tooltip was shown, in both browsers
   (`voiceover-web-round2-fail.md.txt`, row
-  `good-action-close-tooltip-after-walk`). So a walk that reaches Close
+  `good-action-close-tooltip-after-walk`). Every C13 recording since read
+  the same, six in all: Chromium "Close Close", WebKit "Close button",
+  the tooltip shown after each walk (`voiceover-web-round3-fail.md.txt`,
+  `voiceover-web-round4-fail.md.txt`, and the transcript,
+  `docs/evidence/C13/voiceover-web.md`). So a walk that reaches Close
   leaves its tooltip shown, and Chromium's VoiceOver then reads the doubled
   name with no role word; WebKit's reads the name once with its role. The
   tree keeps the role, a button, while the tooltip is shown
@@ -3642,7 +3646,13 @@ yet), **Fixed in x.y** (verified on that version).
     hint. `good-banner`'s Go online: "Go offline button", "Back", the
     hint, and not the message. `bad-inline-banner`'s: "Back and 1 more item
     and 2 more items group", "You are online.".
-  - Round 5, the committed transcript: to be added with it.
+  - Round 5, the committed transcript (`docs/evidence/C13/voiceover-web.md`,
+    every test passing, the rows recording only): one of the three. Undo:
+    "Back", the hint, and not the message. `good-banner`'s Go online:
+    "Back and 1 more item and 2 more items group", "Back", the hint, and
+    not the message. `bad-inline-banner`'s: "Back and 1 more item and 2
+    more items group", "You are online.".
+  - Across the three: "Archive undone" (`good-action`) was said in one, `good-banner`'s "You are online." in none, and `bad-inline-banner`'s "You are online." in two.
 - What Flutter did, the same presses without VoiceOver
   (`docs/evidence/probes/c13/web_done_focus.txt`, Chromium): it wrote
   "Archive undone" or "You are online." to `flt-announcement-polite` about
@@ -3657,9 +3667,10 @@ yet), **Fixed in x.y** (verified on that version).
   (I12), and real Safari; any other screen reader. No cause is given.
 - WCAG: 4.1.3 as written is met in the tree (the message is a polite live
   region, and Flutter writes it to the page's live region). VoiceOver in
-  Chromium said it in some recordings and not in others, so on the web it
-  may not be presented: a qualification of the web for the examples that
-  show such a message, not a failure of 4.1.3 as written.
+  Chromium said it in some recordings and not in others, and
+  `good-banner`'s in none of three, so on the web it may not be presented:
+  a qualification of the web for the examples that show such a message,
+  not a failure of 4.1.3 as written.
 - What users get, as measured: a VoiceOver user in Chromium who presses
   Undo or Go online may hear what it did, or may hear "Back" instead. The
   page's line shows it; TalkBack and VoiceOver on iOS said it (the C13

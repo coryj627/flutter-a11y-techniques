@@ -182,9 +182,9 @@ What each meets, by platform, as the criteria are written:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `good-action` | 4.1.3: announced (TalkBack), focus not moved; Undo's result announced, "Archive undone" (TalkBack). 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium announced it. Qualification on the web, Chromium: with Close's tooltip shown, as a VoiceOver walk leaves it, VoiceOver reads Close "Close Close" with no role word (FL-249); the tree keeps the role, so not 4.1.2 as written (section 7). Undo's result on the web: a polite live region written to `flt-announcement-polite` (4.1.3 met in the tree); VoiceOver in Chromium said it in some recordings and not in others, so on the web it may not be presented ([FL-297](../flutter-limitations.md#fl-297)) |
+| `good-action` | 4.1.3: announced (TalkBack), focus not moved; Undo's result announced, "Archive undone" (TalkBack). 2.2.1: no time limit (it stays). Qualification: Close's focus tint (FL-294), with a keyboard | the same, with VoiceOver | the same; VoiceOver in Chromium announced it. Qualification on the web, Chromium: with Close's tooltip shown, as a VoiceOver walk leaves it, VoiceOver reads Close "Close Close" with no role word (FL-249); the tree keeps the role, so not 4.1.2 as written (section 7). Undo's result on the web: a polite live region written to `flt-announcement-polite` (4.1.3 met in the tree); VoiceOver in Chromium said it in one of three recordings, so on the web it may not be presented ([FL-297](../flutter-limitations.md#fl-297)) |
 | `good-message` | 4.1.3: announced. 2.2.1: its going sets no time limit, as its news is on the page (Understanding 2.2.1) | the same | the same |
-| `good-banner` | 4.1.3: announced; going back online announced, "You are online." (TalkBack). 2.2.1: no time limit | the same, with VoiceOver | the same. Qualification on the web: going back online is a polite live region written to `flt-announcement-polite` (4.1.3 met in the tree); VoiceOver in Chromium said it in some recordings and not in others, so on the web it may not be presented ([FL-297](../flutter-limitations.md#fl-297)) |
+| `good-banner` | 4.1.3: announced; going back online announced, "You are online." (TalkBack). 2.2.1: no time limit | the same, with VoiceOver | the same. Qualification on the web: going back online is a polite live region written to `flt-announcement-polite` (4.1.3 met in the tree); VoiceOver in Chromium did not say it in any of three recordings, so on the web it may not be presented ([FL-297](../flutter-limitations.md#fl-297)) |
 
 R5 (the platform's timeout) is met by none of them, as nothing in the SDK
 reads it ([FL-290](../flutter-limitations.md#fl-290)); `good-action` and
@@ -293,13 +293,19 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   group", "Archive undone", the hint; `good-banner`'s Go online, "Go
   offline button", "Back", the hint, and not the message;
   `bad-inline-banner`'s, "Back and 1 more item and 2 more items group",
-  "You are online.". The control Enter was pressed on goes as it acts;
+  "You are online.". In the sixth, the committed transcript
+  ([evidence/C13/voiceover-web.md](../evidence/C13/voiceover-web.md)), one
+  of the three: Undo, "Back" and the hint; `good-banner`'s Go online,
+  "Back and 1 more item and 2 more items group", "Back", the hint;
+  `bad-inline-banner`'s, "Back and 1 more item and 2 more items group",
+  "You are online.". Across the three: "Archive undone" (`good-action`) was said in one, `good-banner`'s "You are online." in none, and `bad-inline-banner`'s "You are online." in two. The control Enter was pressed on goes as it acts;
   without VoiceOver, DOM focus then went to the page's button (Undo:
   "Archive message"; Go online: "Go offline", `web_done_focus.txt`). Why
   the result varies was not measured. So on the web the change back is a
   status message the tree determines (4.1.3 as written: its role and
   property are there), and VoiceOver in Chromium said it in some
-  recordings and not in others, so it may not be presented. The principal
+  recordings and not in others (`good-banner`'s in none of three), so it
+  may not be presented. The principal
   decided in review (2026-11-22) to keep the design, the framework's own
   SnackBar being what is measured, and to record this as a finding; the
   owner can overrule it.
@@ -322,8 +328,8 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
   No retries: each recording's row is what that recording heard.
 - **`bad-inline-banner`'s web VoiceOver silence has no same-launch
   positive control of an announcement.** Its Go online message, which
-  would have been one, was heard in one recording and not in another
-  (FL-297), so it cannot be one. The best real control
+  would have been one, was heard in two recordings of three (FL-297), so
+  it cannot be one. The best real control
   in the same page load is `assertCaptureIsLive`, run right after the
   silence: it moves VoiceOver's cursor and requires its last phrase to
   change, which shows that the capture of VoiceOver's speech was working
@@ -368,9 +374,9 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
     what that stop was); here it did not.
   - `good-action`: "Archived: 1", "Message archived group", "Undo button",
     then Close, then "end of Message archived group". WebKit read Close
-    "Close button" in both recordings; Chromium read it "Close Close",
-    with no role word, in both. After the second recording's walk Close's
-    tooltip was shown, in both browsers (`voiceover-web-round2-fail.md.txt`,
+    "Close button" in all six recordings; Chromium read it "Close Close",
+    with no role word, in all six. After each walk from the second on,
+    Close's tooltip was shown, in both browsers (`voiceover-web-round2-fail.md.txt`,
     `good-action-close-tooltip-after-walk`). Close is the `IconButton` that
     `showCloseIcon` adds, with the tooltip "Close". With no tooltip shown
     the tree names it "Close", a button, as it names Undo; while its
@@ -394,16 +400,17 @@ The probe that came first is in [evidence/probes/c13](../evidence/probes/c13/REA
     "Example" heading, "Go offline button", "Status: offline".
 - **VoiceOver on the web, the transcript**
   ([evidence/C13/voiceover-web.md](../evidence/C13/voiceover-web.md)) is
-  the third recording, by the principal: 10 tests passed, every walk
-  complete on its first try in both browsers, Chromium reading Close
-  "Close Close" and WebKit "Close button", with Close's tooltip shown
-  after the walk in both. The first recording failed on its four walks,
-  written as predictions; the second on `good-action`'s walk in Chromium,
-  at Close, before the lists were set per browser. Both are kept in the
-  probe folder (`voiceover-web-round1-fail.md.txt`,
-  `voiceover-web-round2-fail.md.txt`). The review round then added Undo's
-  and Go online's own announcements (`-done-announced`), which that
-  transcript does not have: it is to be recorded again.
+  the sixth recording, by the principal, at 3ea1098: 10 tests passed,
+  every walk complete on its first try in both browsers, Chromium reading
+  Close "Close Close" and WebKit "Close button", with Close's tooltip shown
+  after the walk in both; the after-action rows recorded what is listed
+  above. The first recording failed on its four walks, written as
+  predictions; the second on `good-action`'s walk in Chromium, at Close,
+  before the lists were set per browser; the third passed, before the
+  review round added the after-action rows; the fourth and fifth failed
+  on those rows, written then as one reading, which did not hold (FL-297).
+  The failed ones are kept in the probe folder
+  (`voiceover-web-round1-fail.md.txt` to `voiceover-web-round4-fail.md.txt`).
 - **The banner's reading order is its drawn order.** `showMaterialBanner`
   puts the banner at the top of the `Scaffold`'s body, under the app bar
   and above the page, so it is drawn after the title and before the

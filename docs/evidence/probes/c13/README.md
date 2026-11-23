@@ -221,3 +221,12 @@ neither; `good-banner`'s heard "Go offline button", "Back", the hint, and
 no message. The reading varied, so FL-297 now lists each recording, and
 the after-action rows record every phrase and assert nothing about the
 message (the principal's decision, 2026-11-22).
+
+## The sixth web VoiceOver recording
+
+Recorded by the principal at 3ea1098: every test passed. It is the
+transcript, `docs/evidence/C13/voiceover-web.md`. The after-action rows
+recorded: Undo, "Back" and the hint; `good-banner`'s Go online, "Back and
+1 more item and 2 more items group", "Back", the hint;
+`bad-inline-banner`'s, "Back and 1 more item and 2 more items group", "You
+are online.".
