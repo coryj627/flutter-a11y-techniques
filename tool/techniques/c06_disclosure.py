@@ -81,8 +81,11 @@ VOICEOVER_IOS_METHOD = (
     "on gives the last utterance again, twice; what is shown is everything after the "
     "\"Example\" heading, and a walk that does not reach the end fails. Each example is walked "
     "closed; then the cursor is put on the control by a tap, and XCUITest's `doubleTap()` at "
-    "it opens it (`xcuitest-double-tap-` rows: what VoiceOver said with the cursor there, and "
-    "in the four seconds after the gesture). That gesture is a tap at the control's place, "
+    "it opens it (`xcuitest-double-tap-` rows: what VoiceOver said with the cursor there, every "
+    "raw read of the four seconds after the gesture, a failed read shown as failed, and for "
+    "the two examples judged silent the reading after a move on; each row is judged, "
+    "`ExpansionTile`'s \"Expanded\" required, silence required of the others). That gesture is "
+    "a tap at the control's place, "
     "not VoiceOver's own activation, which XCUIVoiceOverService cannot make (C04 probe round "
     "3), so what VoiceOver's own double tap does is not measured. Then the example is walked "
     "again (`-open` rows)",

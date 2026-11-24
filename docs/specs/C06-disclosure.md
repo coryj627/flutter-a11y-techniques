@@ -167,11 +167,12 @@ the owner's ruling that the state as text does not meet 4.1.2:
 `good-material` and `bad-expand-icon` fail the same criterion on every
 platform. What tells them apart is what a user hears: `good-material`
 says "Collapsed" or "Expanded" in words, and announces the change;
-`bad-expand-icon` says neither word. Whether it announces anything was not
-checked by a test: in the probe nothing was written to the web's
-announcement elements when it opened, and on iOS VoiceOver said nothing
-more in the four seconds after XCUITest's double tap opened it (the
-transcript); what TalkBack says then is dropped (section 7).
+`bad-expand-icon` says neither word. Whether it announces anything is
+tested on iOS only: there the four seconds after XCUITest's double tap
+opened it are judged silent, with live readings before and after (L4
+VoiceOver iOS, below). On the web it was not tested: in the probe nothing
+was written to the web's announcement elements when it opened. On
+Android what TalkBack says then is dropped (section 7).
 
 2.1.1 Keyboard, outside the entry's criterion, is claimed for
 `bad-cupertino-expansion-tile` because it fails as written and the tests
@@ -200,7 +201,7 @@ container rests on where its edge is taken to be, and C06's criterion is
 | L3 Android | `good-material`: a `Button` named "Details, Collapsed", focusable, click label "Expand for more details", on Android 16 and later expanded state "undefined", no expand or collapse action, a live region "Collapsed", the only clickable node but Back, no panel while closed, and the reading order "Details, Collapsed" alone; `ACTION_CLICK` opens it ("Details, Expanded", click label "Collapse", still no state, a live region "Expanded", the panel's text and button straight after it) and a second closes it; a tap opens it; Tab to it and Enter, and in another test Space, open and close it with focus kept on it; once open the next Tab goes to the panel's button and Enter presses it (the count). `bad-expansion-tile`: a `View` "Details, Collapsed" with no state, before and after a click that opens it. `bad-expand-icon`: a `Button` "Details" with no state description, no hint, no expanded state, click label "Expand", no live region; after a click that opens it, read for two seconds, the same, the click label still "Expand" (FL-280). `bad-cupertino-expansion-tile`: a whole cycle of focus, Tab until Back has had focus twice (at most eight presses), with the control's focus read at every stop, stops on Back alone (or on no node), with the panel closed, and Enter, and in another test Space, on Back where the cycle ended, leave the example; the same with Shift+Tab (sent as I02 sends it) and Enter; the positive control, the same cycles on `good-material`, Tab and Shift+Tab, each visit the control; the control is a `View` with no state, opened by the click action, after which its name is "Details\nOrders ship in two days." |
 | L3 iOS | `good-material`: a button "Details" with no value, the only button but Back, no panel while closed; a tap opens it, the panel's text and button below it on screen, still no value, and a second tap closes it; two Tabs and Enter, and in another launch Space, open it and the same key again closes it, staying on the example; once open, one Tab and Enter press the panel's button (the count). `bad-expansion-tile`: not a button, no value, no button but Back, opened by a tap. `bad-expand-icon`: a button with no value; a tap at its middle opens nothing and a tap at its icon, in the same launch, opens it, still with no value. `bad-cupertino-expansion-tile`: not a button, no value, opened by a tap, after which one element, not a button and with no value, has a label that starts with "Details" and holds the panel's text; one, two, and three Tabs and then Enter or Space, each from a fresh launch, never open it and take the example off the screen (Back acted); on iOS 27 and later, one, two, and three Shift+Tabs and then Enter do the same; the positive control, on `good-material`: two Tabs and Enter open it, one Tab more, then one Shift+Tab and Enter close it, with the panel's button not pressed and the example still on screen, so Shift+Tab came back onto the control. A first version of that control, one Shift+Tab from launch and Enter, left the example, as Enter on Back does (`docs/evidence/probes/c06/ios-shift-tab-first-run.txt`) |
 | L4 TalkBack | For each example: what is said with focus on the control, closed; on the click action with focus left there (not for `bad-expand-icon` and `bad-cupertino-expansion-tile`, see section 7); with focus on the panel's text (on Back for `bad-cupertino-expansion-tile`, whose open panel is part of its control); and on the control again, open. Judged whole (`STRICT` in `tool/talkback.py`) |
-| L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list, closed, and again after XCUITest's double tap at the control, with VoiceOver on, has opened it; what VoiceOver says with its cursor on the control, and in the four seconds after that gesture. The gesture is a tap at the control's place, not VoiceOver's activation, which XCUIVoiceOverService has no way to make (C04 probe round 3) |
+| L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list, closed, and again after XCUITest's double tap at the control, with VoiceOver on, has opened it; and what is said on that change, judged from raw reads (`C06Speech.judge`): with the cursor on the control, the reading before must be the control's closed utterance; then eight reads of `currentSpeech()`, half a second apart, every one readable (a failed or an empty read fails). For `good-material` and `bad-expansion-tile` every read must be the control's utterance or "Expanded", and "Expanded" must be read; for `bad-expand-icon` and `bad-cupertino-expansion-tile` every read must be the control's utterance (silence: with VoiceOver on, `currentSpeech()` keeps giving the last utterance, as C26's probe measured), and the reading after a move on must be the next stop. The expected utterances must differ and be under 64 characters. The judge is tested with no device on named cases (a missing, wrong, failed, empty, or stale announcement; a silence with a dead or wrong reading after) and on every shape of reading before crossed with every shape of one read (`testSpeechJudge…`). The gesture is a tap at the control's place, not VoiceOver's activation, which XCUIVoiceOverService has no way to make (C04 probe round 3) |
 | L4 VoiceOver web | Every stop of VoiceOver's cursor from Back to the end of the screen, judged as C05's walks are (`judgeExampleWalk` in `web_tests/vo/c06_vo_walks.js`): the whole screen in order, the title, the description, a bad example's defect, the heading, and every stop after it; a walk that reached the end with a stop missing, or with any stop wrong, fails for good; only a walk cut short with every stop right so far is walked again, up to three times, and every try is logged; no runner retries. Closed, and after a click has opened it, in Chromium and WebKit. The first recording (`docs/evidence/C06/voiceover-web.md`) passed: every walk complete and as expected on its first walk, in both browsers, with the same readings in each |
 
 ## 7. What the build found (Flutter 3.47.5)
@@ -230,8 +231,10 @@ single disclosure needs that C05's probe had not.
 - **`ExpansionTile` announces the change on every platform measured**:
   TalkBack says "Expanded" on the click from the tile's live region, and
   "Collapsed" on a second click (probe), on Android 17; VoiceOver on iOS
-  27.0 says "Expanded" after XCUITest's double tap opened it (closing was
-  not listened for; the widget tests show the one-second timer); and on
+  27.0 says "Expanded" after XCUITest's double tap opened it (asserted
+  from raw reads since review: from the second read of eight, half a
+  second apart, in `docs/evidence/C06/voiceover-ios.md`; closing was not
+  listened for; the widget tests show the one-second timer); and on
   the web "Expanded" and "Collapsed" are written to
   `flt-announcement-polite` on a click, Enter, and Space (Chromium). What
   VoiceOver on macOS says for that write was not listened for separately:
@@ -261,7 +264,11 @@ single disclosure needs that C05's probe had not.
   double tap to expand button", then "Details Expanded double tap to
   collapse button"; `bad-expand-icon` "Details button", closed and open;
   the open Cupertino tile "Details Orders ship in two days. Expanded double
-  tap to collapse button".
+  tap to collapse button". On iOS, `bad-expand-icon` and
+  `bad-cupertino-expansion-tile` were silent in the four seconds after
+  XCUITest's double tap opened them: every one of the eight reads was the
+  control's own utterance, and the move on read the next stop (the
+  transcript's double-tap rows, judged by `C06Speech`).
 - **The focus indicator is the SDK's tint**: `ListTile`'s on
   `good-material` and `bad-expansion-tile`, `IconButton`'s on
   `bad-expand-icon`, none of it 3:1 against what was there (FL-430).
@@ -314,6 +321,20 @@ Skips and what they give up, in the tests:
   it cannot have focus there unseen.
 - The iOS Shift+Tab tests are skipped below iOS 27, as I02's, I04's, and
   I08's modifier-key tests are: CI's iOS 26.5 gives up that check.
+- Where a test turns a missing reading into a value, and what it gives
+  up (the sweep after review): on iOS a missing `value` is read as ""
+  and an expected "" means no value, so no value and an empty one are not
+  told apart; on Android a missing state description or hint is read as
+  "" with the same meaning, and a node with no click action has the click
+  label "", which no test expects; Android's focus cycle reads "(none)"
+  where no node of the app has input focus, and reads the control's own
+  focus at every stop; the web's focus reading gives "(page)" for the
+  page itself, left out by the cycle (FL-421). No speech read is turned
+  into an empty value: the iOS walk handles VoiceOver's "no speech" error
+  as the shared walk does (`VoiceOverWalk.afterNoSpeech`), and any other
+  error fails the test; the change readings keep a failed read as failed
+  (`C06Speech`). Everything the tests log is also asserted, but for the
+  TalkBack speech dropped on the two clicks above.
 - `bad-expand-icon` is tapped at its icon, 24 points in from the end of
   its row, on iOS (and by `ExpandIcon` in the widget tests), as a tap at
   its label opens nothing there. On Android it is opened by the click

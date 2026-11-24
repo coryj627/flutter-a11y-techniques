@@ -282,7 +282,7 @@ final class C06DisclosureUITests: XCTestCase, CountedTechniqueUITest {
       print("C06VO \(example.slug) | \((closedContent ?? closed.stops).joined(separator: " / "))")
       XCTAssertNotNil(closedContent, "\(example.slug): the walk did not run from the heading to the end: \(closed)")
       XCTAssertEqual(closedContent, example.closed, example.slug)
-      try doubleTapOpens(example.slug, voiceOver)
+      try doubleTapOpens(example.slug, voiceOver, cursor: example.closed[0], next: example.open[1])
       let opened = try C06Walk.walk(voiceOver)
       let openContent = C06Walk.content(opened)
       print("C06VO \(example.slug)-open | \((openContent ?? opened.stops).joined(separator: " / "))")
@@ -319,34 +319,73 @@ final class C06DisclosureUITests: XCTestCase, CountedTechniqueUITest {
   }
 
   #if compiler(>=6.4)
+  /// What VoiceOver must say once XCUITest's double tap has opened each
+  /// example: `ExpansionTile` announces "Expanded" (on iOS after a second,
+  /// its source and the widget tests); `ExpandIcon` and
+  /// `CupertinoExpansionTile` were heard to say nothing more (the first
+  /// transcripts), which is now judged as an absence.
+  private static let onChange: [String: C06Speech.Change] = [
+    "good-material": .announces("Expanded"),
+    "bad-expansion-tile": .announces("Expanded"),
+    "bad-expand-icon": .silent,
+    "bad-cupertino-expansion-tile": .silent,
+  ]
+
   /// Puts VoiceOver's cursor on the control (with VoiceOver on, a tap only
-  /// moves it), checks what is said there, then sends XCUITest's double tap
-  /// at the control's place (at the icon for `bad-expand-icon`, whose label
-  /// takes no taps) and checks it opened. As C04 measured (probe round 3),
-  /// that gesture acts on what is under it and is not VoiceOver's
-  /// activation of what its cursor is on, which XCUIVoiceOverService cannot
-  /// make; so what VoiceOver's own double tap does is not measured here.
-  /// Logs what VoiceOver said after the gesture, a row of the transcript.
+  /// moves it), reads what is said there (`before`), then sends XCUITest's
+  /// double tap at the control's place (at the icon for `bad-expand-icon`,
+  /// whose label takes no taps) and reads `currentSpeech()` eight times,
+  /// half a second apart. Every read is kept raw, a failure as a failure
+  /// (C06Speech.Poll), and judged whole by C06Speech: the reading before
+  /// must be the control's closed utterance `cursor`, every read after
+  /// must be readable, and the example's expectation (onChange) must hold.
+  /// For an absence, the cursor is then moved on, and that reading must be
+  /// the next stop, `next`: the liveness reading after. As C04 measured
+  /// (probe round 3), the gesture acts on what is under it and is not
+  /// VoiceOver's activation of what its cursor is on, which
+  /// XCUIVoiceOverService cannot make; so what VoiceOver's own double tap
+  /// does is not measured here. Logs every raw read, a row of the
+  /// transcript.
   @available(iOS 27.0, *)
-  private func doubleTapOpens(_ slug: String, _ voiceOver: XCUIVoiceOverService) throws {
+  private func doubleTapOpens(_ slug: String, _ voiceOver: XCUIVoiceOverService, cursor: String, next: String) throws {
     try voiceOver.enable()
     defer { try? voiceOver.disable() }
+    func poll() -> C06Speech.Poll {
+      do {
+        return .speech(VoiceOverWalk.normalized(try voiceOver.currentSpeech().utterance))
+      } catch let error as NSError {
+        return .failed("\(error.domain) \(error.code)")
+      }
+    }
     let e = control
     e.tap()
     usleep(1_500_000)
-    let cursor = VoiceOverWalk.normalized((try? voiceOver.currentSpeech().utterance) ?? "")
-    XCTAssertTrue(cursor.hasPrefix(Self.title), "\(slug): the cursor is on the control: \(cursor)")
+    let before = poll()
     XCTAssertFalse(shown(Self.panelText), "\(slug): moving the cursor opened nothing")
     if slug == "bad-expand-icon" { iconPoint(e).doubleTap() } else { e.doubleTap() }
-    var heard: [String] = []
+    var polls: [C06Speech.Poll] = []
     for _ in 0..<8 {
       usleep(500_000)
-      let s = VoiceOverWalk.normalized((try? voiceOver.currentSpeech().utterance) ?? "")
-      if heard.last != s { heard.append(s) }
+      polls.append(poll())
     }
     let opened = shown(Self.panelText)
-    print("C06VO xcuitest-double-tap-\(slug) | cursor on \(cursor) / then heard \(heard.joined(separator: " | ")) / \(opened ? "it opened" : "nothing opened")")
+    let change = Self.onChange[slug]!
+    var after: C06Speech.Poll? = nil
+    if case .silent = change {
+      after = {
+        do {
+          return .speech(VoiceOverWalk.normalized(try voiceOver.moveForward().utterance))
+        } catch let error as NSError {
+          return .failed("\(error.domain) \(error.code)")
+        }
+      }()
+    }
+    let verdict = C06Speech.judge(change, cursor: cursor, before: before, polls: polls, after: after, next: next)
+    let raw = polls.map(C06Speech.describe).joined(separator: " | ")
+    let afterText = after.map { " / then moved on: \(C06Speech.describe($0))" } ?? ""
+    print("C06VO xcuitest-double-tap-\(slug) | cursor on \(C06Speech.describe(before)) / then read \(raw)\(afterText) / \(opened ? "it opened" : "nothing opened") / \(verdict ?? "as expected")")
     XCTAssertTrue(opened, "\(slug): XCUITest's double tap at the control opens it")
+    XCTAssertNil(verdict, "\(slug): what VoiceOver said on the change")
   }
   #endif
 }
@@ -413,4 +452,195 @@ enum C06Walk {
     }
   }
   #endif
+}
+
+
+/// How C06's iOS VoiceOver test judges what is said on the change, kept
+/// apart from the device so that it is tested on made-up readings (the
+/// testSpeechJudge tests). Written after C26's judge (C26ProgressIndicator
+/// UITests on the branch c26-progress), which measured that with VoiceOver
+/// on `currentSpeech()` keeps giving the last utterance while nothing is
+/// said, and that its one error, "No speech available", came with
+/// VoiceOver off; C06's own first transcripts read the same (the
+/// double-tap rows of docs/evidence/probes/c06/voiceover-ios-first-run.md.txt).
+enum C06Speech {
+  /// One read of `currentSpeech()` (or of a move): its utterance, already
+  /// normalised by the test (`VoiceOverWalk.normalized`), or the error.
+  enum Poll: Equatable {
+    case speech(String)
+    case failed(String)
+  }
+
+  /// What must be said after the change: an announcement, said on its own
+  /// as a whole utterance, or nothing.
+  enum Change: Equatable {
+    case announces(String)
+    case silent
+  }
+
+  static func describe(_ p: Poll) -> String {
+    switch p {
+    case .speech(let s): return "\"\(s)\""
+    case .failed(let e): return "(failed: \(e))"
+    }
+  }
+
+  /// nil when the reads show what `change` says, or why not. Every raw read
+  /// is judged, none filtered, compared as whole strings:
+  ///
+  /// - `cursor`, `next`, and an announcement must be non-empty and shorter
+  ///   than the 64 characters XCUIVoiceOverService returns, and all
+  ///   different, so that a stale reading cannot pass for a new one;
+  /// - `before`, read with the cursor on the control before the gesture,
+  ///   must be exactly `cursor` (the capture was live, and what was said
+  ///   before is known);
+  /// - every read after the gesture must be readable: a failed read or an
+  ///   empty one fails;
+  /// - for an announcement, every read must be `cursor` or the
+  ///   announcement, and the announcement must be read at least once: a
+  ///   missing one, or any other text, fails;
+  /// - for silence, every read must be `cursor` (what `currentSpeech()`
+  ///   gives while nothing is said), and `after`, read once the cursor has
+  ///   moved on, must be exactly `next`: the capture was live after.
+  static func judge(_ change: Change, cursor: String, before: Poll, polls: [Poll], after: Poll?, next: String) -> String? {
+    var expected = [("cursor", cursor), ("next", next)]
+    if case .announces(let a) = change { expected.append(("announcement", a)) }
+    for (name, text) in expected {
+      if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return "the expected \(name) utterance is empty" }
+      if text.count >= 64 { return "the expected \(name) utterance is 64 characters or more" }
+    }
+    if Set(expected.map(\.1)).count != expected.count { return "two expected utterances are the same" }
+    guard before == .speech(cursor) else { return "the reading before was \(describe(before)), not the control's \"\(cursor)\"" }
+    guard polls.count >= 4 else { return "only \(polls.count) reads after the gesture" }
+    for (i, p) in polls.enumerated() {
+      switch p {
+      case .failed: return "read \(i + 1) failed: \(describe(p))"
+      case .speech(let s) where s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty:
+        return "read \(i + 1) was empty"
+      default: break
+      }
+    }
+    switch change {
+    case .announces(let a):
+      for (i, p) in polls.enumerated() where p != .speech(cursor) && p != .speech(a) {
+        return "read \(i + 1) was \(describe(p)), neither the control nor \"\(a)\""
+      }
+      guard polls.contains(.speech(a)) else { return "\"\(a)\" was never read" }
+      return nil
+    case .silent:
+      for (i, p) in polls.enumerated() where p != .speech(cursor) {
+        return "read \(i + 1) was \(describe(p)), not silence (the control's \"\(cursor)\")"
+      }
+      guard let after else { return "no reading after" }
+      guard after == .speech(next) else { return "the reading after was \(describe(after)), not \"\(next)\"" }
+      return nil
+    }
+  }
+}
+
+// The judge on made-up readings. In the technique's own class, so that the
+// iOS tree run (`evidence.py --only ios`) runs them; they need no app and
+// no VoiceOver.
+extension C06DisclosureUITests {
+  private static let cursorText = "Details Button Collapsed double tap to expand"
+  private static let nextText = "Orders ship in two days."
+  private static let failure = C06Speech.Poll.failed("com.apple.xctest.voiceoverservice 3")
+
+  private func announced(_ before: C06Speech.Poll, _ polls: [C06Speech.Poll]) -> String? {
+    C06Speech.judge(.announces("Expanded"), cursor: Self.cursorText, before: before, polls: polls, after: nil,
+                    next: Self.nextText)
+  }
+
+  private func silent(_ before: C06Speech.Poll, _ polls: [C06Speech.Poll], _ after: C06Speech.Poll?) -> String? {
+    C06Speech.judge(.silent, cursor: Self.cursorText, before: before, polls: polls, after: after, next: Self.nextText)
+  }
+
+  func testSpeechJudgeNamedCases() {
+    let c = C06Speech.Poll.speech(Self.cursorText)
+    let x = C06Speech.Poll.speech("Expanded")
+    let n = C06Speech.Poll.speech(Self.nextText)
+    // An announcement: heard as recorded (the cursor, then "Expanded").
+    XCTAssertNil(announced(c, [c, c, x, x, x, x, x, x]))
+    // Missing with the panel open: the cursor's reading all along.
+    XCTAssertNotNil(announced(c, Array(repeating: c, count: 8)))
+    // A wrong announcement, alone or beside the right one.
+    XCTAssertNotNil(announced(c, [c, .speech("Collapsed"), .speech("Collapsed"), c, c, c, c, c]))
+    XCTAssertNotNil(announced(c, [c, x, .speech("Collapsed"), x, x, x, x, x]))
+    // A failed read, or an empty one, anywhere fails, even beside the
+    // announcement.
+    XCTAssertNotNil(announced(c, [c, x, Self.failure, x, x, x, x, x]))
+    XCTAssertNotNil(announced(c, [c, x, .speech(""), x, x, x, x, x]))
+    XCTAssertNotNil(announced(c, Array(repeating: Self.failure, count: 8)))
+    // Stale: the announcement read before the gesture cannot count.
+    XCTAssertNotNil(announced(x, Array(repeating: x, count: 8)))
+    XCTAssertNotNil(announced(.speech(""), [c, x, x, x, x, x, x, x]))
+    XCTAssertNotNil(announced(Self.failure, [c, x, x, x, x, x, x, x]))
+    // Too few reads.
+    XCTAssertNotNil(announced(c, [x, x]))
+    // Silence: the cursor all along, then the next stop.
+    XCTAssertNil(silent(c, Array(repeating: c, count: 8), n))
+    // Silence with no liveness after, or a wrong one, or a stale one.
+    XCTAssertNotNil(silent(c, Array(repeating: c, count: 8), nil))
+    XCTAssertNotNil(silent(c, Array(repeating: c, count: 8), Self.failure))
+    XCTAssertNotNil(silent(c, Array(repeating: c, count: 8), c))
+    XCTAssertNotNil(silent(c, Array(repeating: c, count: 8), .speech("")))
+    // Silence that was not: an announcement, or a failed or empty read.
+    XCTAssertNotNil(silent(c, [c, c, x, x, x, x, x, x], n))
+    XCTAssertNotNil(silent(c, [c, c, Self.failure, c, c, c, c, c], n))
+    XCTAssertNotNil(silent(c, [c, c, .speech(""), c, c, c, c, c], n))
+    // Silence judged with a dead capture before.
+    XCTAssertNotNil(silent(Self.failure, Array(repeating: c, count: 8), n))
+  }
+
+  /// Every shape of reading before, crossed with every shape of one read
+  /// put among seven right ones, for both kinds of change. Whether each
+  /// passes is worked out here from the rules, separately from the judge.
+  func testSpeechJudgeOverEveryShapeOfInput() {
+    let c = C06Speech.Poll.speech(Self.cursorText)
+    let x = C06Speech.Poll.speech("Expanded")
+    let n = C06Speech.Poll.speech(Self.nextText)
+    let shapes: [(String, C06Speech.Poll)] = [
+      ("cursor", c), ("announcement", x), ("next", n), ("failed", Self.failure), ("empty", .speech("")),
+      ("whitespace", .speech("  ")), ("other text", .speech("Collapsed")), ("cursor with a space", .speech(Self.cursorText + " ")),
+    ]
+    func readable(_ p: C06Speech.Poll) -> Bool {
+      if case .speech(let s) = p { return !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+      return false
+    }
+    for (beforeName, before) in shapes {
+      for (oddName, odd) in shapes {
+        for at in [0, 3, 7] {
+          // Announcement: seven reads of "Expanded" and one odd one.
+          var polls = Array(repeating: x, count: 8)
+          polls[at] = odd
+          let announceOK = before == c && readable(odd) && (odd == c || odd == x)
+          XCTAssertEqual(announced(before, polls) == nil, announceOK,
+                         "announces: before \(beforeName), read \(at + 1) \(oddName)")
+          // Silence: seven reads of the cursor and one odd one; then the next stop.
+          var quiet = Array(repeating: c, count: 8)
+          quiet[at] = odd
+          let silentOK = before == c && odd == c
+          XCTAssertEqual(silent(before, quiet, n) == nil, silentOK,
+                         "silent: before \(beforeName), read \(at + 1) \(oddName)")
+          // The reading after, in every shape.
+          XCTAssertEqual(silent(c, Array(repeating: c, count: 8), odd) == nil, odd == n,
+                         "silent: after \(oddName)")
+        }
+      }
+    }
+  }
+
+  func testSpeechJudgeRefusesDegenerateExpectations() {
+    let c = C06Speech.Poll.speech(Self.cursorText)
+    XCTAssertNotNil(C06Speech.judge(.announces(""), cursor: Self.cursorText, before: c,
+                                    polls: Array(repeating: c, count: 8), after: nil, next: Self.nextText))
+    XCTAssertNotNil(C06Speech.judge(.announces(Self.cursorText), cursor: Self.cursorText, before: c,
+                                    polls: Array(repeating: c, count: 8), after: nil, next: Self.nextText))
+    XCTAssertNotNil(C06Speech.judge(.silent, cursor: Self.cursorText, before: c,
+                                    polls: Array(repeating: c, count: 8), after: c, next: Self.cursorText))
+    let long = String(repeating: "a", count: 64)
+    XCTAssertNotNil(C06Speech.judge(.silent, cursor: long, before: .speech(long),
+                                    polls: Array(repeating: .speech(long), count: 8),
+                                    after: .speech(Self.nextText), next: Self.nextText))
+  }
 }
