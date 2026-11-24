@@ -1,0 +1,11 @@
+C26's first iOS tree run, 2026-11-22, iPhone 17 simulator, iOS 27.0
+(`python3 tool/evidence.py C26`, build/evidence/C26/ios.log, not kept;
+these lines copied from it). testTabAndReturnStartTheTask sent two Tabs
+0.6 s apart and XCUIKeyboardKey.return; the status line did not change.
+Every other test of the class passed in that run.
+
+ios/RunnerUITests/C26ProgressIndicatorUITests.swift:149: error: -[RunnerUITests.C26ProgressIndicatorUITests testTabAndReturnStartTheTask] : XCTAssertEqual failed: ("Not started") is not equal to ("Upload started") - good-linear
+Test Case '-[RunnerUITests.C26ProgressIndicatorUITests testTabAndReturnStartTheTask]' failed (11.689 seconds).
+
+The test now sends each Tab 0.9 s apart and Return as "\n", as C12's and
+C03's key tests do; it passed in the second run.

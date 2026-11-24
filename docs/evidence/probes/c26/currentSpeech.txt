@@ -1,0 +1,39 @@
+C26 probe, 2026-11-23, iPhone 17 simulator, iOS 27.0: what XCUIVoiceOverService.currentSpeech() gives (ProbeC26SpeechUITests.swift.txt), on good-linear's screen.
+
+VoiceOver off, before anything #0: error domain=com.apple.xctest.voiceoverservice code=3 No speech available
+VoiceOver off, before anything #1: error domain=com.apple.xctest.voiceoverservice code=3 No speech available
+straight after enable #0: utterance="Flutter A11Y Techniques Back Button"
+straight after enable #1: utterance="Flutter A11Y Techniques Back Button"
+straight after enable #2: utterance="Flutter A11Y Techniques Back Button"
+straight after enable #3: utterance="Flutter A11Y Techniques Back Button"
+straight after enable #4: utterance="Flutter A11Y Techniques Back Button"
+8 s after enable, no move #0: utterance="Flutter A11Y Techniques Back Button"
+8 s after enable, no move #1: utterance="Flutter A11Y Techniques Back Button"
+8 s after enable, no move #2: utterance="Flutter A11Y Techniques Back Button"
+8 s after enable, no move #3: utterance="Flutter A11Y Techniques Back Button"
+8 s after enable, no move #4: utterance="Flutter A11Y Techniques Back Button"
+moveForward: "Material progress bar Heading"
+straight after the move #0: utterance="Material progress bar Heading"
+straight after the move #1: utterance="Material progress bar Heading"
+straight after the move #2: utterance="Material progress bar Heading"
+straight after the move #3: utterance="Material progress bar Heading"
+straight after the move #4: utterance="Material progress bar Heading"
+10 s after the move, quiet #0: utterance="Material progress bar Heading"
+10 s after the move, quiet #1: utterance="Material progress bar Heading"
+10 s after the move, quiet #2: utterance="Material progress bar Heading"
+10 s after the move, quiet #3: utterance="Material progress bar Heading"
+10 s after the move, quiet #4: utterance="Material progress bar Heading"
+after a tap that moves the cursor to the button #0: utterance="Upload report Button"
+after a tap that moves the cursor to the button #1: utterance="Upload report Button"
+after a tap that moves the cursor to the button #2: utterance="Upload report Button"
+after a tap that moves the cursor to the button #3: utterance="Upload report Button"
+after a tap that moves the cursor to the button #4: utterance="Upload report Button"
+10 s later, quiet #0: utterance="Upload report Button"
+10 s later, quiet #1: utterance="Upload report Button"
+10 s later, quiet #2: utterance="Upload report Button"
+10 s later, quiet #3: utterance="Upload report Button"
+10 s later, quiet #4: utterance="Upload report Button"
+after disable #0: error domain=com.apple.xctest.voiceoverservice code=3 No speech available
+after disable #1: error domain=com.apple.xctest.voiceoverservice code=3 No speech available
+after disable #2: error domain=com.apple.xctest.voiceoverservice code=3 No speech available
+Test Case '-[RunnerUITests.ProbeC26SpeechUITests testCurrentSpeech]' passed (55.542 seconds).

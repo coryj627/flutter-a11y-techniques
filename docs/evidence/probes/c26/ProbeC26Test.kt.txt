@@ -1,0 +1,176 @@
+// C26 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c26/ProbeC26Test.kt.txt). Runs against lib/probe.dart
+// (Gradle -Ptarget=lib/probe.dart).
+//
+// probe(): every node of each fixture (class, name, text, range, state,
+// live region, focusable, actions); for a changing fixture, Start pressed
+// with the click action and the fixture's nodes every 600 ms for 9 s.
+// talkBack(): TalkBack focus on each still fixture's indicator; for each
+// changing fixture, TalkBack focus left on the indicator while Start is
+// pressed with the click action, then left on Start while it is pressed;
+// 9 s of speech each.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.graphics.Rect
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeC26Test : TechniqueTest("C26") {
+    private val tag = "C26PROBE"
+    // p04's value is not a number, which a debug build asserts against in
+    // every semantics update (round 1: the screen never opened). It is tried
+    // once, alone, in p04Alone().
+    private val stills = (1..16).map { "p%02d".format(it) } - "p04"
+    private val movings = (17..22).map { "p%02d".format(it) }
+
+    private fun launch(fixture: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", "/$fixture")
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.viewIdResourceName == "$fixture-end" }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("$fixture did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = Rect().also { n.getBoundsInScreen(it) }
+        val actions = n.actionList.joinToString(",") { a ->
+            when (a.id) {
+                AccessibilityNodeInfo.ACTION_CLICK -> "click"
+                AccessibilityNodeInfo.ACTION_FOCUS -> "focus"
+                AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS -> "a11yfocus"
+                AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS -> "clra11y"
+                AccessibilityNodeInfo.ACTION_SELECT -> "select"
+                AccessibilityNodeInfo.ACTION_CLEAR_SELECTION -> "clrsel"
+                else -> a.id.toString()
+            }
+        }
+        fun q(s: CharSequence?) = (s?.toString() ?: "").replace("\n", "\\n")
+        val range = n.rangeInfo?.let {
+            val type = when (it.type) {
+                AccessibilityNodeInfo.RangeInfo.RANGE_TYPE_INT -> "int"
+                AccessibilityNodeInfo.RangeInfo.RANGE_TYPE_FLOAT -> "float"
+                AccessibilityNodeInfo.RangeInfo.RANGE_TYPE_PERCENT -> "percent"
+                3 -> "indeterminate"
+                else -> it.type.toString()
+            }
+            "range($type ${it.min}..${it.max} cur=${it.current})"
+        } ?: "range(none)"
+        return "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"${q(n.contentDescription)}\" text=\"${q(n.text)}\" " +
+            "state=\"${q(n.stateDescription)}\" $range liveRegion=${n.liveRegion} " +
+            "focusable=${n.isFocusable} a11yFocused=${n.isAccessibilityFocused} visible=${n.isVisibleToUser} " +
+            "$r [$actions]"
+    }
+
+    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
+        if (root == null) return
+        out.add(root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), out)
+    }
+
+    private fun appNodes(): List<AccessibilityNodeInfo> {
+        val out = mutableListOf<AccessibilityNodeInfo>()
+        for (w in automation.windows) if (w.type == AccessibilityWindowInfo.TYPE_APPLICATION) collect(w.root, out)
+        return out
+    }
+
+    /** The fixture's own nodes: identified by the id, or named with it, but not Before or end. */
+    private fun fixtureNodes(id: String) = appNodes().filter {
+        val all = "${it.viewIdResourceName ?: ""}|${it.contentDescription ?: ""}|${it.text ?: ""}"
+        all.contains(id) && !all.contains("Before $id") && it.viewIdResourceName != "$id-end"
+    }
+
+    private fun dump(id: String, label: String) {
+        Log.i(tag, "==== $id $label")
+        for (n in fixtureNodes(id)) Log.i(tag, "$id node ${describe(n)}")
+    }
+
+    private fun byId(id: String): AccessibilityNodeInfo? =
+        appNodes().firstOrNull { it.viewIdResourceName == id }
+
+    private fun startNode(id: String): AccessibilityNodeInfo =
+        appNodes().first { it.isClickable && (it.contentDescription?.toString() ?: "").contains("$id Start") }
+
+    @Test
+    fun p04Alone() {
+        try {
+            launch("p04")
+            dump("p04", "start")
+        } catch (e: AssertionError) {
+            Log.i(tag, "p04: $e; nodes with p04 in any window: " +
+                appNodes().filter { "${it.viewIdResourceName}|${it.contentDescription}|${it.text}".contains("p04") }
+                    .joinToString(" | ") { describe(it) })
+        }
+    }
+
+    @Test
+    fun probe() {
+        Log.i(tag, "device ${android.os.Build.VERSION.SDK_INT}")
+        for (id in stills + movings) {
+            launch(id)
+            dump(id, "start")
+        }
+        for (id in movings) {
+            launch(id)
+            Log.i(tag, "$id click Start: ${startNode(id).performAction(AccessibilityNodeInfo.ACTION_CLICK)}")
+            val t0 = System.currentTimeMillis()
+            for (i in 0 until 15) {
+                Thread.sleep(600)
+                val s = (System.currentTimeMillis() - t0) / 100 / 10.0
+                val ind = byId("$id-indicator")?.let { describe(it) } ?: "(no indicator)"
+                val st = byId("$id-status")?.let { " || status ${describe(it)}" } ?: ""
+                Log.i(tag, "$id at ${s}s: $ind$st")
+            }
+        }
+    }
+
+    @Test
+    fun talkBack() {
+        assumeTalkBack()
+        for (id in stills) {
+            launch(id)
+            Thread.sleep(6_000)
+            val marker = "c26-$id-indicator"
+            Log.i(talkBackTag, "FOCUS $marker")
+            try {
+                talkBackFocus(marker) { byId("$id-indicator")!! }
+            } catch (e: Throwable) {
+                Log.i(tag, "$marker: TalkBack focus refused: $e")
+            }
+            Thread.sleep(4_000)
+            Log.i(talkBackTag, "END $id")
+        }
+        for (id in movings) {
+            for (where in listOf("indicator", "start")) {
+                launch(id)
+                Thread.sleep(6_000)
+                val marker = "c26-$id-on-$where"
+                Log.i(talkBackTag, "FOCUS $marker")
+                try {
+                    if (where == "indicator") talkBackFocus(marker) { byId("$id-indicator")!! }
+                    else talkBackFocus(marker) { startNode(id) }
+                } catch (e: Throwable) {
+                    Log.i(tag, "$marker: TalkBack focus refused: $e")
+                }
+                Thread.sleep(3_000)
+                Log.i(talkBackTag, "FOCUS $marker-pressed")
+                Log.i(tag, "$marker click Start: ${startNode(id).performAction(AccessibilityNodeInfo.ACTION_CLICK)}")
+                Thread.sleep(9_000)
+                val focused = appNodes().firstOrNull { it.isAccessibilityFocused }
+                Log.i(tag, "$marker after 9 s, TalkBack focus on: ${focused?.let { describe(it) } ?: "(none)"}")
+                Log.i(talkBackTag, "END $id-$where")
+            }
+        }
+    }
+}

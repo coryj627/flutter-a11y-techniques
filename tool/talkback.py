@@ -352,7 +352,7 @@ SPEECH_TAG = "talkback: SpeechControllerImpl: "
 INCOMPLETE = "[speech capture was cut off]"
 
 
-def parse_speech(log, cut=None):
+def parse_speech(log, cut=None, closed=None):
     """What TalkBack spoke while each identified node had focus.
 
     A spoken text with a line break in it (a merged node such as "Delivered",
@@ -367,6 +367,11 @@ def parse_speech(log, cut=None):
     as above, are added to cut[element]: whole lines of what was said, since
     logcat splits a fragment where its text has a line break. Only
     walk_strictly uses them; the speech returned is the same either way.
+
+    If `closed` is a set, each element whose capture was ended by a marker
+    (the next FOCUS, or END) is added to it: an element missing from it was
+    still being captured when the log ended. Only walk_strictly uses it, for
+    silent rows (SILENT); the speech returned is the same either way.
     """
     spoken, current, open_fragment = {}, None, None
 
@@ -382,6 +387,8 @@ def parse_speech(log, cut=None):
         marker = re.search(r"[A-Z]\d\dTB\s*: (FOCUS|END) (\S+)", line)
         if marker:
             drop()
+            if current and closed is not None:
+                closed.add(current)
             current = marker.group(2) if marker.group(1) == "FOCUS" else None
             if current:
                 spoken[current] = []
@@ -497,7 +504,20 @@ def walk_until_heard(walk_once=None):
 # Techniques whose TalkBack walk is judged whole (walk_strictly), not row by
 # row across walks (walk_until_heard). Every other technique keeps
 # walk_until_heard.
-STRICT = {"C05", "C06", "C13", "C18"}
+STRICT = {"C05", "C06", "C13", "C18", "C26"}
+
+# A row of a strict technique that must be silent declares it with this as
+# its only required phrase: (["(must be silent)"], []). judge_walk then
+# requires the row to have been captured from its start marker to the next
+# marker with nothing spoken at all, and the row after it in the walk, its
+# liveness control, to be right; any speech in it is a wrong reading. Only
+# walk_strictly knows it: walk_until_heard would look for the phrase.
+SILENT = "(must be silent)"
+
+
+def is_silent(ident):
+    """Whether `ident` is declared silent (SILENT)."""
+    return ident in EXPECT and list(EXPECT[ident][0]) == [SILENT]
 
 # One walk of walk_strictly: the speech per element, the verdict ("right",
 # "wrong", or "incomplete"), what made it so, and the captured lines of each
@@ -516,7 +536,7 @@ def forbidden(ident, fragments):
             for phrase in EXPECT[ident][1] if unwanted(fragments, phrase)]
 
 
-def judge_walk(spoken, expected, cut=None):
+def judge_walk(spoken, expected, cut=None, closed=None):
     """The verdict on one whole walk: (verdict, reasons).
 
     "incomplete" only for a capture that is shown to be short: an expected
@@ -530,13 +550,39 @@ def judge_walk(spoken, expected, cut=None):
     the lost part, so that alone makes it incomplete. Anything else that
     fails its checks is a wrong reading, and a wrong reading anywhere makes
     the walk "wrong", even when other elements of it are incomplete.
+
+    A row declared silent (SILENT) is judged apart. Anything spoken in it,
+    a cut-off fragment included, is a wrong reading. It is right only when
+    its capture was ended by a marker (`closed`, from parse_speech) and the
+    row logged after it, its liveness control, is an expected row that is
+    not silent and is right by the rules above; otherwise it is incomplete.
+    A walk with no silent rows is judged as before, `closed` unused.
     """
     cut = cut or {}
+    closed = closed if closed is not None else set()
+    order = list(spoken)
     gaps, wrong = [], []
     for ident in expected:
         fragments = spoken.get(ident)
         if fragments is None:
             gaps.append(f"{ident}: never focused")
+        elif is_silent(ident):
+            heard = [f for f in fragments if f != INCOMPLETE] + cut.get(ident, [])
+            if fragments:
+                text = " | ".join(heard) or INCOMPLETE
+                wrong.append(f'{ident}: expected silence, heard "{text}"')
+                continue
+            if ident not in closed:
+                gaps.append(f"{ident}: the capture was not ended by a marker")
+                continue
+            after = order[order.index(ident) + 1] if order.index(ident) + 1 < len(order) else None
+            if after is None or after not in expected or is_silent(after):
+                gaps.append(f"{ident}: no liveness control after it")
+                continue
+            control = spoken[after]
+            if not control or INCOMPLETE in control or problems(after, control):
+                # A wrong control is reported as its own row.
+                gaps.append(f"{ident}: its liveness control, {after}, is not right")
         elif not fragments:
             gaps.append(f"{ident}: nothing was spoken")
         elif INCOMPLETE in fragments:
@@ -573,9 +619,9 @@ def walk_strictly(prefix, walk_once=None):
         if run.returncode != 0:
             print(run.stdout[-3000:])
             sys.exit("instrumented walk failed")
-        cut = {}
-        spoken = parse_speech(log, cut)
-        verdict, reasons = judge_walk(spoken, expected, cut)
+        cut, closed = {}, set()
+        spoken = parse_speech(log, cut, closed)
+        verdict, reasons = judge_walk(spoken, expected, cut, closed)
         tries.append(Try(spoken, verdict, reasons, cut))
         if verdict != "incomplete":
             break

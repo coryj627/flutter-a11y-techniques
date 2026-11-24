@@ -1,0 +1,47 @@
+// C26 probe (throwaway; kept as docs/evidence/probes/c26/contrast_test.dart.txt):
+// the colours the indicators draw with in the app's light and dark themes,
+// and their contrast with the page and the track. Read from the themes and
+// from the SDK's defaults (source read: material/progress_indicator.dart,
+// cupertino/activity_indicator.dart).
+import 'dart:math' as math;
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+double lum(Color c) {
+  double ch(double v) => v <= 0.03928 ? v / 12.92 : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+  return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+}
+
+double contrast(Color a, Color b) {
+  final x = lum(a), y = lum(b);
+  return (math.max(x, y) + 0.05) / (math.min(x, y) + 0.05);
+}
+
+Color over(Color fg, Color bg) => Color.alphaBlend(fg, bg);
+
+void main() {
+  test('colours', () {
+    for (final b in Brightness.values) {
+      final theme = b == Brightness.light
+          ? ThemeData(colorSchemeSeed: Colors.indigo)
+          : ThemeData(colorSchemeSeed: Colors.indigo, brightness: Brightness.dark);
+      final s = theme.colorScheme;
+      final page = s.surface;
+      debugPrint('C26C ${b.name}: primary on secondaryContainer (linear bar on its track) '
+          '${contrast(s.primary, s.secondaryContainer).toStringAsFixed(2)}; '
+          'primary on surface ${contrast(s.primary, page).toStringAsFixed(2)}; '
+          'secondaryContainer on surface ${contrast(s.secondaryContainer, page).toStringAsFixed(2)}');
+      final tick = b == Brightness.light ? const Color(0xFF3C3C44) : const Color(0xFFEBEBF5);
+      for (final a in [47, 72, 97, 122, 147]) {
+        debugPrint('C26C ${b.name}: Cupertino tick alpha $a on surface '
+            '${contrast(over(tick.withAlpha(a), page), page).toStringAsFixed(2)}');
+      }
+      final blue = b == Brightness.light ? CupertinoColors.activeBlue.color : CupertinoColors.activeBlue.darkColor;
+      final fill = b == Brightness.light ? CupertinoColors.systemFill.color : CupertinoColors.systemFill.darkColor;
+      debugPrint('C26C ${b.name}: CupertinoLinearActivityIndicator activeBlue on systemFill over surface '
+          '${contrast(blue, over(fill, page)).toStringAsFixed(2)}');
+    }
+  });
+}

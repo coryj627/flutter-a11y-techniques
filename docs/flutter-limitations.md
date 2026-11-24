@@ -70,7 +70,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-024](#fl-024) | Tables have structure on web only, and a plain `Table` marks no headers by itself | Android, iOS, Web | Observed |
 | [FL-025](#fl-025) | iOS accessibility APIs and settings with no Flutter counterpart | iOS | Confirmed |
 | [FL-026](#fl-026) | No semantics roles for grid, tree, treegrid, feed, separator, meter, or math | All | Confirmed |
-| [FL-027](#fl-027) | A progress indicator whose value has a percent sign reports an empty range on Android | Android | Observed |
+| [FL-027](#fl-027) | A progress indicator whose value has a percent sign reports an empty range on Android | Android | Confirmed (source read) |
 | [FL-028](#fl-028) | A slider has no accessible name on web | Web | Confirmed; fixed in 3.50 by its source, not verified |
 | [FL-029](#fl-029) | A Material `Slider` adds an empty full-screen element that takes pointer events on web | Web | Confirmed |
 | [FL-030](#fl-030) | A label on an `Image` inside a button does not name the button | Android, iOS | Confirmed (source read) |
@@ -135,6 +135,12 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-251](#fl-251) | A tooltip is part of its control's name on iOS and the web, before the control's own text on the web; only Android treats it as separate text | iOS, Web | Confirmed |
 | [FL-252](#fl-252) | On iOS VoiceOver does not stop on a node whose only text is a tooltip | iOS | Confirmed |
 | [FL-253](#fl-253) | A `FilledButton`'s text is under 4.5:1 in light mode while it has keyboard focus and a hover | All (widget test only) | Confirmed (widget test only) |
+| [FL-254](#fl-254) | A change of a progress indicator's value is not announced, even with the screen reader on the indicator | All | Confirmed |
+| [FL-255](#fl-255) | Cupertino's activity indicators give no semantics, and have no parameter for a name or a value | All | Confirmed |
+| [FL-256](#fl-256) | A spinner has no role on any platform, and on iOS no progress indicator has one | All (spinner); iOS (every indicator) | Confirmed |
+| [FL-257](#fl-257) | `CircularProgressIndicator.adaptive` drops its label, and all its semantics, where the theme's platform is iOS or macOS, which includes a browser on a Mac | iOS, Web (on a Mac) | Confirmed |
+| [FL-258](#fl-258) | A progress indicator's `semanticsValue` that is not a number or a percentage fails the framework's own check, and in a debug build no semantics are sent for the screen | Android, iOS, test framework (debug); Web (release: no `aria-valuenow`) | Confirmed |
+| [FL-259](#fl-259) | On the web a node whose role changes loses its test identifier | Web | Observed (source read) |
 | [FL-260](#fl-260) | On iOS `expanded` has no effect: VoiceOver says no expanded or collapsed state | iOS | Confirmed |
 | [FL-261](#fl-261) | On Android the expanded state reaches only Android 16 and later | Android (before 16) | Confirmed (source read); measured on Android 17 only |
 | [FL-262](#fl-262) | On the web a heading is never a button: a node with a heading level and a button flag is a heading only, with no `aria-expanded` and no button role | Web | Confirmed |
@@ -182,6 +188,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-481](#fl-481) | Nothing closes an overlay that is not a route, and Back pops the screen under it | All | Confirmed |
 | [FL-482](#fl-482) | On the web, Escape does not hide a tooltip while the page has no keyboard focus | Web | Confirmed |
 | [FL-483](#fl-483) | A `ModalBarrier` in an `OverlayPortal`'s overlay takes the whole screen out of the semantics tree, the overlay with it | All (widget test only) | Confirmed (widget test only) |
+| [FL-484](#fl-484) | While a tooltip counts as open, `WidgetsApp` takes Escape for it before the app's default Escape shortcut reaches the focused layers; a tooltip still hiding when a screen is pushed over it took every Escape | Web (Chromium) | Observed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -919,22 +926,50 @@ yet), **Fixed in x.y** (verified on that version).
 
 **A progress indicator whose value has a percent sign reports an empty range on Android.**
 
-- Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`);
-  `material/progress_indicator.dart` read.
+- Status: Confirmed (source read), Flutter 3.47.5, batch 0 probe
+  (`docs/evidence/probes/batch-0/`); `material/progress_indicator.dart`
+  read; measured again, with TalkBack, in the C26 probe
+  (`docs/evidence/probes/c26/`, p01 to p03), and the engine source read
+  for C26.
 - WCAG: 4.1.2 Name, Role, Value.
 - What happens: `LinearProgressIndicator(value: 0.4, semanticsValue: '40%')`
   sets `minValue: '0'` and `maxValue: '100'`, and is an
   `android.widget.ProgressBar` whose `RangeInfo` is 0 to 0 with current 0.
   `Semantics(role: SemanticsRole.progressBar, value: '40', minValue: '0',
   maxValue: '100')` gives 0 to 100 with current 40. On web both give
-  `aria-valuenow="40"`. The percent sign in the value is the likely cause
-  (a value that is not a number); the engine source was not read. Whether the widget's default value, with no `semanticsValue`, has the same
-  result was not probed.
-- Effect: anything that reads the range gets nothing. The node's description
-  still holds the value ("40%, Storage used"); what TalkBack speaks was not
-  recorded.
-- Workaround: none found yet. To be checked, with TalkBack, in the progress
-  indicator technique.
+  `aria-valuenow="40"`.
+- Cause (engine source read for C26):
+  `shell/platform/android/io/flutter/view/ProgressBarRoleConfigurator.java`
+  parses the value with `Float.parseFloat`; "40%" fails, and from Android
+  16 (API 36) the range is given the indeterminate type, 0 to 0 (the C26
+  probe on Android 17 read `RANGE_TYPE_INDETERMINATE`, 3); before 16, a
+  float range 0 to 0.
+- The widget's default value (no `semanticsValue`), measured in C26: the
+  percentage as a bare number, "40", which Android parses: a float range 0
+  to 100 with current 40. TalkBack then reads the value twice, first from
+  the range as a decimal and then from the description: "40.0.", "40,",
+  the name, "Progress bar" (C26 probe, `android-talkback.md`, p01). With
+  "40%" it reads "40%,", the name, "Progress bar", once, and the range is
+  lost. So on Android the default gives a range and a doubled reading,
+  and a percent sign gives one reading and no range. VoiceOver on iOS
+  reads the default as "p01 Upload 40", the number with no unit, and
+  "40%" as "40%" (C26 probe, `ios.txt`). VoiceOver on the web, in
+  Chromium and in WebKit, reads the default twice as well: C26
+  `good-linear`'s bar at 0 was "Report upload 0 0% progress indicator",
+  the name, which holds the value on the web ([FL-037](#fl-037)), then the
+  value as a percentage, and `bad-no-label`'s "0 0% progress indicator"
+  (`docs/evidence/C26/voiceover-web.md`; the first recording read the same). The
+  element has `aria-valuenow="0"`, min 0, max 100, and no
+  `aria-valuetext`; where VoiceOver's "0%" comes from was not measured. A
+  percent sign on the web was not recorded with VoiceOver. The documentation says the
+  default is "10%" for 0.1 ([FL-258](#fl-258)).
+- Effect: anything that reads the range gets nothing when the value has a
+  percent sign; the node's description still holds it ("40%, Storage
+  used").
+- Workaround: none that serves both. C26's good bar keeps the default, by
+  the principal's decision in review (C26's spec, section 8), for the
+  range, with the doubled reading on Android and the web and the bare
+  number on iOS as a qualification.
 - Upstream issue: not searched yet.
 
 ## FL-028
@@ -1384,6 +1419,14 @@ yet), **Fixed in x.y** (verified on that version).
   `aria-valuetext`. A disabled one is not adjustable, so its value is
   appended to its name like any other node's: "Volume 40%" as plain text
   (F10 probe; [FL-124](#fl-124)).
+- Progress bars (C26): a determinate indicator is a `progressbar` whose
+  value is in its name as well as in `aria-valuenow`: "Report upload 0".
+  VoiceOver, in Chromium and WebKit, then read the value twice: "Report
+  upload 0 0% progress indicator", and with no label "0 0% progress
+  indicator" (`docs/evidence/C26/voiceover-web.md`;
+  [FL-027](#fl-027)). So for a progress bar, unlike the "Why it matters"
+  above, the user hears the number twice; whether the name's copy of the
+  value is the cause was not measured.
 - Upstream issue: not searched yet (D25).
 
 ## FL-038
@@ -3399,6 +3442,254 @@ yet), **Fixed in x.y** (verified on that version).
 - WCAG: 1.4.3 Contrast (Minimum), in that state.
 - Workaround: another button (C12 uses an `OutlinedButton`), or a
   `style` whose overlay keeps the contrast. Not tried.
+- Upstream issue: not searched yet (D25).
+
+## FL-254
+
+**A change of a progress indicator's value is not announced, even with the screen reader on the indicator.**
+
+- Status: Confirmed, Flutter 3.47.5. Measured in the C26 probe
+  (`docs/evidence/probes/c26/`): a `LinearProgressIndicator` going 0 to
+  100 in five steps, with the screen reader's focus on it and on the
+  button that started it. Android 17 with TalkBack
+  (`android-talkback.md`, `p17-on-indicator-pressed` and
+  `p17-on-start-pressed`): nothing was said for the steps, while the
+  node's range changed every step (`android-tree.txt`, `p17 at …`). iOS
+  27.0 with VoiceOver (`ios.txt`, `VO p17 on the indicator` and `on
+  Start`): nothing was said from 10 s to 24 s after the screen opened,
+  while the element's value went 0 to 100. Web, Chromium: nothing was
+  written to Flutter's announcement elements (`web.txt`, `p17
+  announcements []`), while `aria-valuenow` changed every step. What
+  VoiceOver on the web says for it has not been recorded. Engine source
+  read: Android's `AccessibilityBridge` sends a content change only for a
+  live region whose label changed; iOS's `SemanticsObject.mm` gives a
+  node the "updates frequently" trait only when it is a live region.
+- WCAG: 4.1.3 Status Messages, for progress shown only by the indicator.
+- What it means: the indicator's value can be read by moving to it, and
+  is never told as it changes. That is also how ARIA's `progressbar`
+  works on the web: it is not a live region, and ARIA25 gives progress to
+  a screen reader through a separate live region. Whether a native
+  Android `ProgressBar` or a UIKit progress view announces its changes
+  was not measured.
+- Workaround, used by C26's good example and its spinners: a line of text that says how
+  the task is going and that it has ended, in `Semantics(liveRegion:
+  true)`; it was announced on all three platforms (the probe's p18, p21,
+  p22). A live region round the indicator itself (p21) is announced when
+  its label changes, not its value. `SemanticsService.sendAnnouncement` at
+  the end (p19) was spoken on iOS and the web, and by TalkBack too, though
+  Android reports it as unsupported ([FL-018](#fl-018)).
+- Asserted by C26 `bad-silent-end` on every layer: its tree tests (no live
+  region); the web's recorder (nothing at all written to Flutter's
+  announcement elements); the TalkBack transcript, two rows that must be
+  silent, nothing at all said in the nine seconds after the press, with
+  TalkBack focus on the button and then on the bar while its value goes
+  0 to 100, each followed by a reading that shows the capture live; and
+  the iOS VoiceOver transcript (nothing heard after the tap but the
+  button's own utterance, then the status line read). The web VoiceOver
+  test listens for the upload's status phrases only.
+- Upstream issue: not searched yet (D25).
+
+## FL-255
+
+**Cupertino's activity indicators give no semantics, and have no parameter for a name or a value.**
+
+- Status: Confirmed, Flutter 3.47.5. Source read:
+  `cupertino/activity_indicator.dart`: `CupertinoActivityIndicator`,
+  `CupertinoActivityIndicator.partiallyRevealed`, and
+  `CupertinoLinearActivityIndicator` paint and add no `Semantics`, and
+  take no label or value. Measured in the C26 probe (p11, p12, p13): the
+  widget tests have no node of their own for them; Android 17 a `View`
+  with no description that is not focusable, which TalkBack says nothing
+  for; iOS 27.0 nothing but an identifier, which VoiceOver passed over;
+  the web an element with no role, name, or text.
+- WCAG: 4.1.2 Name, Role, Value, where the indicator is taken to be a
+  user interface component (C26's spec, section 3).
+- What users get: a spinner or a progress bar that a screen reader does
+  not find, with its value lost for the bar.
+- Workaround: for a spinner, `Semantics(label:)` round it (the probe's
+  p14; C26 `bad-cupertino-no-role`) gives a name, read as plain text on every
+  platform, which is all Material's spinner gives too
+  ([FL-256](#fl-256)). For the bar, none that this project counts as not
+  hand-built: a value with `Semantics(value:)` on a drawing was judged
+  borderline in S14, and a progress bar role needs `SemanticsRole`, a role
+  set by hand. C26 shows the bar as it comes (`bad-cupertino-bar`) and
+  builds nothing.
+- Upstream issue: not searched yet (D25).
+
+## FL-256
+
+**A spinner has no role on any platform, and on iOS no progress indicator has one.**
+
+- Status: Confirmed, Flutter 3.47.5. Material's indeterminate indicators
+  set `SemanticsRole.loadingSpinner` (source read:
+  `material/progress_indicator.dart`). In the C26 probe (p05, p08):
+  - Web, Chromium: an element with an `aria-label` and no role, which
+    Chromium gives the role "generic" (`web.txt`). Engine source read:
+    `semantics/progress_bar.dart`, `SemanticsLoadingSpinner` sets no ARIA
+    role. HTML's `progress` with no value is an indeterminate
+    `progressbar` (MDN), and ARIA's `progressbar` without
+    `aria-valuenow` is one (WAI-ARIA 1.2); Flutter has neither for a
+    spinner. Chromium's own node for Material's spinner is "generic", not
+    ignored, with no children (`probes/c26/web-spinner-ax.txt`).
+  - VoiceOver on the web, moving on with `next` from the button while the
+    spinner loads (C26 `bad-no-role` and `bad-cupertino-no-role`; three
+    recordings, all measured: at 7b9dc5c and 9f40ddc, `probes/c26/
+    voiceover-web-round3-fail.md.txt` and `-round4-fail.md.txt`, and at
+    4323aae, the transcript, `docs/evidence/C26/voiceover-web.md`, which
+    passed):
+    - WebKit (Playwright's build, not Safari itself): Material's spinner
+      "Loading inbox empty group", in all three. The name, then
+      "group", as VoiceOver says for [FL-028](#fl-028)'s slider wrapper, the other
+      named element with no role in this project's transcripts ("Volume
+      group", both browsers, `docs/evidence/F10/voiceover-web.md`): a
+      measured comparison, not VoiceOver's documented reason. The spinner
+      has no children; the slider wrapper has one and was read with no
+      "empty". Neither word says it is a progress or busy indicator.
+      Cupertino's spinner, plain text, "Loading inbox".
+    - Chromium: Cupertino's spinner "Loading inbox", in all three.
+      Material's spinner was not read in any of them. In the two that read
+      the cursor's place (9f40ddc and 4323aae), `next` went from the button
+      (top 343) to the status line below the spinner (top 439, "Loading
+      started"), where Cupertino's spinner in the same browser was read at
+      top 387, between them; the one at 7b9dc5c heard the same words and
+      read no place. Not tried: VoiceOver's other ways of moving (the
+      rotor, item by item within a group, the mouse), and real Safari or
+      Chrome. No cause is claimed: the tree probe above, a node that is not
+      ignored, is evidence of what Chromium exposes, not of why VoiceOver
+      passes over it. A search of this log and of the web VoiceOver
+      transcripts found no other named element with no role that
+      VoiceOver in Chromium passed over: [FL-028](#fl-028)'s slider
+      wrapper, which has a child, is a stop in Chromium. Two passings-over
+      found are other shapes: [FL-262](#fl-262)'s button inside C18's
+      `<h3>`, a button with a role inside a heading that has a label of its
+      own; and F09 `bad-tile-not-merged`'s switch, which has a role and no
+      name.
+  - Android 17: an `android.view.View` with the name as its description
+    (`android-tree.txt`); TalkBack read the name alone, with no role word
+    (`android-talkback.md`). A determinate indicator is an
+    `android.widget.ProgressBar`, which TalkBack calls "Progress bar".
+  - iOS 27.0: a determinate indicator and a spinner are both a static
+    text element (`ios.txt`: type 48), and VoiceOver read the name and
+    the value with no role word ("p01 Upload 40", "p05 Loading"). Engine
+    source read: `SemanticsObject.mm` gives no trait for either role.
+    What VoiceOver says for a UIKit progress view or activity indicator
+    was not measured.
+- WCAG: 4.1.2 Name, Role, Value, where the indicator is taken to be a
+  user interface component (C26's spec, section 3): the role is not
+  programmatically determinable for a spinner on any platform, nor for a
+  bar on iOS.
+- A further consequence, on the web: with no role, Material's named
+  spinner is a `generic` element with no children, and VoiceOver's next
+  in Chromium passed over it (above), so a VoiceOver user moving through
+  the screen in Chromium does not hear that something is loading at all,
+  only the status line. It is the same failure, 4.1.2's role; no other
+  criterion is claimed from it, and its cause is not known.
+- Workaround: none in the SDK. `Semantics(role:
+  SemanticsRole.progressBar)` without a numeric value fails the
+  framework's own check ([FL-258](#fl-258)), so it cannot stand for a
+  spinner. On the web, an HTML `progress` element embedded with
+  `HtmlElementView` might carry the role (D31, D32); not tried.
+- How to read this entry: a role Flutter has not added yet on these
+  platforms. By the owner's decision of 2026-11-23, a platform where
+  Flutter gives no role and no documented parameter adds one is a
+  limitation, with no good example for it: C26 records iOS as
+  `PlatformStatus.limitation` for its bar, and has no good spinner
+  example on any platform. Its spinners, Material's and Cupertino's, are
+  bad examples of this entry (`bad-no-role`, `bad-cupertino-no-role`),
+  asserted on every layer and written to fail when Flutter adds the role:
+  the tree tests (no role on the web, a plain `View` on Android, static
+  text on iOS), the TalkBack transcript (the spinner read by its name with
+  no role word), the iOS VoiceOver transcript ("Loading inbox" alone), and
+  the web VoiceOver spec, which moves on from the button while each
+  spinner loads and requires what was measured for that browser
+  (`SPINNER_READINGS` in `web_tests/vo/c26_vo_walks.js`): the reading,
+  exactly, with its name and no word that says it is an indicator, in
+  WebKit for both spinners and in Chromium for Cupertino's; and in Chromium
+  for Material's, a move that passes over the spinner to the status line,
+  which fails if the spinner is ever read (C26's spec, section 7).
+  The spinners' measurements in the C26 probe (p05, p08, p14, p20 to p22)
+  are this entry's evidence as well.
+- Upstream issue: not searched yet (D25).
+
+## FL-257
+
+**`CircularProgressIndicator.adaptive` drops its label, and all its semantics, where the theme's platform is iOS or macOS, which includes a browser on a Mac.**
+
+- Status: Confirmed, Flutter 3.47.5. The documentation says its
+  `semanticsLabel` and `semanticsValue` "will be ignored on iOS & macOS"
+  (source read: `material/progress_indicator.dart`: it builds a
+  `CupertinoActivityIndicator` there, which has no semantics,
+  [FL-255](#fl-255)). Measured in the C26 probe (p09, p10): the widget
+  tests as iOS and macOS, no label, role, or value; iOS 27.0, an element
+  with nothing in it, passed over by VoiceOver; the web in Chromium on a
+  Mac, an element with no name or role, because Flutter takes the
+  platform from `navigator.platform` ("MacIntel" gives macOS). On Android
+  it is Material's spinner, named, with no role, as every spinner
+  ([FL-256](#fl-256)).
+- WCAG: 4.1.2 Name, Role, Value, as C26's spec reads it, on iOS and in a
+  browser on a Mac.
+- What it means: a label that looks set in the code reaches no screen
+  reader on an iPhone, and on the web only in browsers that are not on a
+  Mac.
+- Workaround: use `CircularProgressIndicator` (not adaptive), or name a
+  `CupertinoActivityIndicator` with `Semantics(label:)` as C26
+  `bad-cupertino-no-role` does, which gives a name but no role
+  ([FL-256](#fl-256)). Asserted by C26 `bad-adaptive` on every layer,
+  with a named spinner as the positive control in the same launch.
+- Upstream issue: not searched yet (D25).
+
+## FL-258
+
+**A progress indicator's `semanticsValue` that is not a number or a percentage fails the framework's own check, and in a debug build no semantics are sent for the screen.**
+
+- Status: Confirmed, Flutter 3.47.5. Source read:
+  `semantics/semantics.dart`, `_semanticsProgressBar`: a node with the
+  progress bar role must have a value, a minimum, and a maximum, and the
+  value must parse as a number or a number with "%". Measured in the C26
+  probe with `semanticsValue: '2 of 5 files'` (p04): the widget tests
+  threw "Progress bar value, minValue, and maxValue must be valid
+  numbers" in every frame (`flutter_test_p04.txt`); on Android 17 and on
+  iOS 27.0 (debug builds) the screen's elements never reached the
+  accessibility tree (`android-tree.txt`, `ios.txt`: p04 did not open).
+  In the probe's first iOS round no fixture's elements were found at all
+  (`ios-round1.txt`): a start by URL builds the probe's `/` route first,
+  which then listed every fixture, p04 among them. With `/` listing none,
+  the second round found them. That p04's check caused the first round's
+  failure is inferred from that change alone. In the web's release
+  build the bar had `aria-valuetext="2 of 5 files"` and no
+  `aria-valuenow`. A release build on Android or iOS was not measured.
+- What it means: the documentation says `semanticsValue` "may be used for
+  determinate progress indicators to indicate how much progress has been
+  made", and nothing says it must be a number; a value in words, such as
+  "2 of 5 files", is not allowed. The documentation also says the
+  default value is the percentage, "`0.1` will become '10%'"; the code
+  gives "10", with no percent sign (C26's probe, every platform).
+- Workaround: a number or a percentage as the value, and words, where
+  needed, in a status line or the label.
+- Upstream issue: not searched yet (D25).
+
+## FL-259
+
+**On the web a node whose role changes loses its test identifier.**
+
+- Status: Observed, Flutter 3.47.5, web (Chromium); engine source read.
+  In the C26 probe's first web round (`web-round1.txt`), a
+  `Semantics(identifier:)` round an indicator that went from
+  indeterminate (no role on the web) to determinate (`progressbar`), and
+  then to text, had no `flt-semantics-identifier` from the first change
+  on, while Chromium's tree had the element; the status lines, whose role
+  never changed, kept theirs. In the second round, with the bar
+  determinate from the start, the identifier stayed through every value
+  (`web.txt`, p17 to p19) and went when the bar was replaced by text.
+  Engine source read: `semantics/semantics.dart`, `SemanticRole.update`
+  writes the identifier only when it has changed, and a role change makes
+  a new element.
+- What it means: a test, or anything else, that finds an element by its
+  identifier loses it when its role changes, with the same identifier
+  still on the node. Not an accessibility fault; a surprise for tests.
+  Android and iOS were not checked for it.
+- Workaround: keep a node's role fixed while it has an identifier; C26's
+  bars are determinate from the start.
 - Upstream issue: not searched yet (D25).
 
 ## FL-260
@@ -5673,6 +5964,160 @@ yet), **Fixed in x.y** (verified on that version).
   silent to a screen reader. Not checked on a device.
 - Workaround, in the SDK: put the barrier and the panel in an
   `OverlayEntry`, as I08 `good-widgets` does.
+- Upstream issue: not searched yet (D25).
+
+## FL-484
+
+**While a tooltip counts as open, `WidgetsApp` takes Escape for it before the app's default Escape shortcut reaches the focused layers; a tooltip still hiding when a screen is pushed over it took every Escape.**
+
+- Status: Observed, Flutter 3.47.5, web (Chromium, Playwright, on this
+  Mac), in two states, both in probes; no test in the repository
+  reproduces either. Found in I08 (`docs/evidence/probes/i08/README.md`,
+  round 6; `web_flake.txt`, `web_flake_hover.txt`,
+  `web_flake_hover2.txt`, `web_flake_hover3.txt`).
+  - The first Escape, with a tooltip shown by hover, in all three good
+    examples: on the technique screen the mouse rests on Back for a
+    second, until its tooltip shows; then, with the mouse left there, the
+    keyboard opens the example (Tab and Enter) and shows its layers (Tab
+    and Enter on Map layers). Unthrottled, Flutter seeing Linux, Escape
+    sent with no added wait once DOM focus was on Contour lines (for the
+    sheet and the popup, after the one Tab from the route's scope, also
+    sent at once), timed from Enter on Map layers to Escape
+    (`web_flake_hover2.txt`): the first Escape left the layers shown in
+    20 of 20 runs of `good-widgets` (152 to 218 ms) and 20 of 20 of
+    `good-material` (116 to 199 ms); in `good-cupertino`, whose popup took
+    longer to reach Contour lines (282 to 452 ms), in all 11 runs with
+    Escape at 383 ms or less, and in none of the 9 at 398 ms or more. A
+    second Escape, sent about six seconds after the first (after a 5 s
+    wait for the layers to close and a further second), closed them in
+    every run where it was sent. Sent 200, 500, or 1000 ms after the first
+    (third version, release build, `web_flake_hover3.txt`; the layers
+    still shown just before it in every run), it closed `good-widgets`'
+    layers in 60 of 60 runs (20 at each gap; within 9 to 30 ms) and
+    `good-material`'s sheet in 30 of 30 (10 at each gap; within 193 to
+    244 ms). An earlier version of the probe (`web_flake_hover.txt`) saw the
+    same in `good-widgets`, with Escape sent within a 50 ms poll of focus
+    reaching Contour lines (time not recorded): 28 of 28 runs as Linux, 10
+    of 10 as macOS; in its probe build (4 runs, as Linux, Escape after a
+    walk of the widget tree) the example screen's own Back tooltip was in
+    the tree at the first Escape, in its route under the layers' barrier,
+    and gone after it; whether it could be seen there was not checked.
+    With 400, 1000, or 3000 ms between focus reaching Contour lines and
+    Escape, as Linux, the first Escape closed `good-widgets`' layers in 4
+    of 4 runs at each. That version's route runs, as Linux, with about
+    six seconds from Enter to Escape, closed in 10 of 10 each, and its
+    probe build
+    (`good-material`, 3 runs, as long) had no Back tooltip in the tree
+    then. So no difference was seen between the overlay and the routes at
+    comparable timing, and, going by the `good-cupertino` runs, the state
+    lasts about 400 ms from the layers being opened here. With the CPU
+    throttled (the same probe, as Linux, 10 runs each,
+    `web_flake_hover2.txt`): at two times slower, the first Escape left
+    the layers shown in 10 of 10 of `good-widgets` (154 to 220 ms) and of
+    `good-material` (128 to 171 ms), and a second Escape, about six
+    seconds after the first, closed them in all 20;
+    at four times slower, in 10 of 10 of `good-widgets` (199 to 259 ms)
+    and 6 of 10 of `good-material` (226 to 317 ms; the 4 that closed were
+    at 262 ms or later), and a second Escape about six seconds after the
+    first left them shown in 4 of the 10 `good-widgets` runs and 3 of the 6 `good-material`
+    runs where it was sent. Made into a test of `good-widgets` in the I08
+    web spec, it held unthrottled and at two times slower but not at four
+    (`web_flake_test_attempt.txt`), so it is not a test.
+  - Every Escape, with a tooltip left open under another screen: on CI
+    (GitHub's ubuntu runner) the positive control of I08's "bad-no-escape:
+    Escape does nothing" test failed now and then. Here it was reproduced
+    only with the probe that does that test's steps
+    (`probe_web_flake.spec.js.txt`), Flutter seeing Linux and Chromium's
+    CPU throttled (CDP `Emulation.setCPUThrottlingRate`), two workers, in
+    release and probe builds: Escape did not close `good-widgets`' layers
+    within five seconds in about 15% of runs at four times (4 of 30, 1 of
+    10, 3 of 30, 1 of 30, 6 of 40, 7 of 40, 5 of 30) and in 2 of 30 at two
+    times. After a mouse click on Back and then on the example's title,
+    the technique screen's Back tooltip was still in the tree, in that
+    screen's route, now under the pushed example with its tickers off.
+    Escape reached Flutter with focus on Contour lines, `WidgetsApp`'s
+    tooltip `Focus` returned `handled`, and the layers' `DismissIntent`
+    action did not run; a second Escape about six seconds after the first
+    (after the 5 s wait and a further second) did the same.
+    Controls, with the same steps: 0 of 30 with Flutter seeing macOS at
+    four times; 0 of 20 unthrottled as Linux; 40 of 40 closed, as Linux
+    at four times, when the mouse was moved off the app bar for a second
+    before the title was clicked. In 30 runs as Linux at four times that
+    listed tooltips, the Back tooltip was in the tree at the title click
+    every time, and still there at the Escape in exactly the 5 that
+    failed. The same steps on the `bad-not-dismissible` and
+    `good-material` pair, as Linux at four times: 40 of 40 closed.
+- What happens, read in the source (`widgets/app.dart`,
+  `widgets/raw_tooltip.dart`): `WidgetsApp` wraps the app in a `Focus`
+  whose key handler, on an Escape key down, calls
+  `RawTooltip.dismissAllToolTips()` and returns `handled` when that
+  returns true, which it does whenever any tooltip is in the list of open
+  tooltips, wherever it is. That `Focus` is below the app's `Shortcuts`
+  that turns Escape into `DismissIntent`, so a key on its way up from the
+  focused node reaches it first, and the layers' action never sees that
+  Escape (also measured: in the probe's trace of the focus chain, the
+  tooltip `Focus` ran before that `Shortcuts`). That is the order for the
+  app's default Escape mapping, which every route and the I08 examples
+  rely on. A `Shortcuts` nearer the focused node, inside the layers, comes
+  before that `Focus`: `FocusManager` sends a key from the focused node
+  up through its ancestors and stops at the first that handles it (read
+  in the source, `widgets/focus_manager.dart`; measured below, under
+  Workaround). A tooltip leaves the list
+  only when its hide animation ends
+  (`RawTooltipState._handleStatusChanged`). Not measured: that the Back
+  tooltip stayed in the list because its route's tickers were off before
+  its hide animation ended. The source has a TODO above that `Focus`
+  citing flutter/flutter#180319, to use actions and shortcuts for this
+  instead; read in the source only, the issue not searched (D25).
+- Effect: with the layers open, Escape, their standard way out, does
+  nothing: in the first state on the first press, made within about
+  400 ms of the layers being opened while the mouse rests on Back, whose
+  tooltip is shown, in an overlay or a route; in the second, on every press until the user leaves
+  the screen. In `good-widgets` Tab stays in the layers (`closedLoop`).
+- WCAG: none as written. 2.1.2 No Keyboard Trap needs focus to be movable
+  away with the keyboard: in the first state a second Escape did it,
+  every time it was sent (about six seconds after the first in all three
+  good examples, and 200, 500, or 1000 ms after it in `good-widgets` and
+  `good-material`); in
+  the second, whether the browser's Back still closed the layers was not
+  measured, so no failure is claimed. 1.4.13 Content on Hover or Focus is
+  about dismissing the hover content itself, and in the first state the
+  tooltip was gone from the tree after the first Escape (4 runs of
+  `good-widgets`); in the second it was under another screen. What a user meets is an Escape that seems to do nothing.
+- Not measured: real hardware without throttling, other browsers,
+  Android or iOS with a mouse or trackpad, and touch. A keyboard-only
+  user: I08's web tests that open an example by its address and show the
+  layers from the keyboard alone (Tab passes Back on the way, and each
+  key is followed by 400 ms) found Escape closing them every time; in the probes a tooltip was in the tree only
+  after the mouse had rested on Back; whether one shows on keyboard focus
+  was not checked. Whether a keyboard-only or touch user can reach either
+  state was not measured.
+- Workaround: none built into the examples. Measured in a probe only: a
+  local `Shortcuts` mapping Escape to `DismissIntent` round the layers
+  (round `good-widgets`' layers, inside their `Actions`, and round
+  `good-material`'s sheet content; `probe_web_local_shortcuts.diff.txt`).
+  With the first state's steps and timing (unthrottled, Flutter seeing
+  Linux, a profile-mode probe build), the first Escape closed the layers
+  in 20 of 20 runs of `good-widgets` (85 to 205 ms from Enter on Map
+  layers to Escape) and 20 of 20 of `good-material` (115 to 203 ms); in
+  the same probe build without it, in 0 of 10 of each (111 to 233 ms and
+  110 to 180 ms) (`web_flake_hover3.txt`). After the layers had closed,
+  Back's tooltip was in the tree, with the mouse still resting on Back;
+  whether that Escape left it open or it showed again on hover was not
+  separated. Not measured with it: the every-Escape state, the other
+  examples, throttled CPUs, other browsers and platforms. The examples do
+  not use it: by the rule of the register of custom solutions
+  ([custom-solutions.md](custom-solutions.md)), a `Shortcuts` or
+  `Actions` built round a framework widget to work around a limitation is
+  a custom solution (C12 `good-cupertino`'s `Actions` is the precedent),
+  and adopting one is the owner's decision. Read in the source, not
+  measured: `TooltipVisibility(visible: false)` stops Material tooltips
+  from showing, at the cost of the tooltips themselves.
+  I08's web tests move the mouse off the app bar and wait until no
+  tooltip is shown before they open a good example in the positive
+  controls, so that this does not decide them.
+- See also [FL-482](#fl-482): the same handler, which a key reaches only
+  on its way up from a focused node.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->

@@ -1,0 +1,14 @@
+// Throwaway config for the I08 tooltip probes. Not committed; kept as
+// docs/evidence/probes/i08/p08tip.config.js.txt.
+import { defineConfig } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = 29985;
+export default defineConfig({
+  testDir: '.',
+  testMatch: new RegExp(process.env.P08_MATCH ?? 'p08_tip\\.spec\\.js$'),
+  reporter: 'list',
+  workers: 2,
+  use: { baseURL: `http://127.0.0.1:${port}` },
+  webServer: webServer(process.env.P08_BUILD ?? 'build/web', port),
+});

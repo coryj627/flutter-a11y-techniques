@@ -10,6 +10,7 @@ import 'c06_disclosure/c06_disclosure.dart';
 import 'c12_tooltip/c12_tooltip.dart';
 import 'c13_snackbar/c13_snackbar.dart';
 import 'c18_card/c18_card.dart';
+import 'c26_progress_indicator/c26_progress_indicator.dart';
 import 'f01_text_fields/f01_text_fields.dart';
 import 'f02_input_instructions/f02_input_instructions.dart';
 import 'f03_keyboard_types/f03_keyboard_types.dart';
@@ -48,6 +49,7 @@ final List<Technique> allTechniques = [
   c12Tooltip,
   c13Snackbar,
   c18Card,
+  c26ProgressIndicator,
   f01TextFields,
   f02InputInstructions,
   f03KeyboardTypes,

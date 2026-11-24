@@ -1,0 +1,27 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+c26-p17-on-indicator click Start: true
+c26-p17-on-indicator after 9 s, TalkBack focus on: p17-indicator | android.view.View | desc="p17 Upload complete" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 573 - 672, 625) [clra11y]
+c26-p17-on-start click Start: true
+c26-p17-on-start after 9 s, TalkBack focus on:  | android.widget.Button | desc="p17 Start" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 415 - 322, 541) [clra11y,click]
+c26-p18-on-indicator click Start: true
+c26-p18-on-indicator after 9 s, TalkBack focus on: p18-indicator | android.view.View | desc="p18 bar gone" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 573 - 672, 625) [clra11y]
+c26-p18-on-start click Start: true
+c26-p18-on-start after 9 s, TalkBack focus on:  | android.widget.Button | desc="p18 Start" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 415 - 322, 541) [clra11y,click]
+c26-p19-on-indicator click Start: true
+11-22 20:54:21.261 31326 31326 I flutter : C26PROBE p19 supportsAnnounce=false
+c26-p19-on-indicator after 9 s, TalkBack focus on: p19-indicator | android.view.View | desc="p19 Upload complete" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 573 - 672, 625) [clra11y]
+c26-p19-on-start click Start: true
+11-22 20:54:40.300 31326 31326 I flutter : C26PROBE p19 supportsAnnounce=false
+c26-p19-on-start after 9 s, TalkBack focus on:  | android.widget.Button | desc="p19 Start" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 415 - 322, 541) [clra11y,click]
+c26-p20-on-indicator click Start: true
+c26-p20-on-indicator after 9 s, TalkBack focus on: p20-indicator | android.view.View | desc="p20 Loaded" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 573 - 672, 625) [clra11y]
+c26-p20-on-start click Start: true
+c26-p20-on-start after 9 s, TalkBack focus on:  | android.widget.Button | desc="p20 Start" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 415 - 322, 541) [clra11y,click]
+c26-p21-on-indicator click Start: true
+c26-p21-on-indicator after 9 s, TalkBack focus on: p21-indicator | android.view.View | desc="p21 Loaded" text="" state="" range(none) liveRegion=1 focusable=true a11yFocused=true visible=true Rect(42, 573 - 672, 625) [clra11y]
+c26-p21-on-start click Start: true
+c26-p21-on-start after 9 s, TalkBack focus on:  | android.widget.Button | desc="p21 Start" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 415 - 322, 541) [clra11y,click]
+c26-p22-on-indicator click Start: true
+c26-p22-on-indicator after 9 s, TalkBack focus on: p22-indicator | android.view.View | desc="p22 spinner gone" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 573 - 672, 625) [clra11y]
+c26-p22-on-start click Start: true
+c26-p22-on-start after 9 s, TalkBack focus on:  | android.widget.Button | desc="p22 Start" text="" state="" range(none) liveRegion=0 focusable=true a11yFocused=true visible=true Rect(42, 415 - 322, 541) [clra11y,click]

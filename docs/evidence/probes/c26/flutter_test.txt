@@ -1,0 +1,1491 @@
+C26TEST android p01
+            #76
+            #77
+              #78 id=p01-indicator role=progressBar label="p01 Upload" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST android p02
+            #76
+            #77
+              #78 id=p02-indicator role=progressBar value="40" min="0" max="100"
+            #79
+            #80
+C26TEST android p03
+            #76
+            #77
+              #78 id=p03-indicator role=progressBar label="p03 Upload" value="40%" min="0" max="100"
+            #79
+            #80
+C26TEST android p04
+            #76
+            #77
+              #78 id=p04-indicator role=progressBar label="p04 Upload" value="2 of 5 files" min="0" max="100"
+            #79
+            #80
+C26TEST android p05
+            #76
+            #77
+              #78 id=p05-indicator role=loadingSpinner label="p05 Loading"
+            #79
+            #80
+C26TEST android p06
+            #76
+            #77
+              #78 id=p06-indicator role=loadingSpinner
+            #79
+            #80
+C26TEST android p07
+            #76
+            #77
+              #78 id=p07-indicator role=progressBar label="p07 Upload" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST android p08
+            #76
+            #77
+              #78 id=p08-indicator role=loadingSpinner label="p08 Loading"
+            #79
+            #80
+C26TEST android p09
+            #76
+            #77
+              #78 id=p09-indicator role=loadingSpinner label="p09 Loading"
+            #79
+            #80
+C26TEST android p10
+            #76
+            #77
+              #78 id=p10-indicator role=progressBar label="p10 Upload" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST android p11
+            #76
+            #77
+              #78 id=p11-indicator
+            #79
+            #80
+C26TEST android p12
+            #76
+            #77
+              #78 id=p12-indicator
+            #79
+            #80
+C26TEST android p13
+            #76
+            #77
+              #78 id=p13-indicator
+            #79
+            #80
+C26TEST android p14
+            #76
+            #77
+              #78 id=p14-indicator label="p14 Loading"
+            #79
+            #80
+C26TEST android p15
+            #76
+            #77
+              #78 id=p15-indicator role=progressBar label="p15 Uploading report\np15 Uploading report" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST android p16
+            #76
+            #77
+              #78 id=p16-indicator role=progressBar label="p16 Upload" value="100" min="0" max="100"
+            #79
+            #80
+C26TEST android p17
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=loadingSpinner label="p17 Upload"
+            #81
+            #82
+C26TEST android p17 after Start
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="0" min="0" max="100"
+            #81
+            #82
+C26TEST android p17 step 1
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="20" min="0" max="100"
+            #81
+            #82
+C26TEST android p17 step 2
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="40" min="0" max="100"
+            #81
+            #82
+C26TEST android p17 step 3
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="60" min="0" max="100"
+            #81
+            #82
+C26TEST android p17 step 4
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="80" min="0" max="100"
+            #81
+            #82
+C26TEST android p17 step 5
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="100" min="0" max="100"
+            #81
+            #82
+C26TEST android p17 step 6
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator label="p17 Upload complete"
+            #81
+            #82
+C26TEST android p18
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=loadingSpinner label="p18 Upload"
+              #81 id=p18-status label="p18 Not started" liveRegion
+            #82
+            #83
+C26TEST android p18 after Start
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="0" min="0" max="100"
+              #81 id=p18-status label="p18 0% uploaded" liveRegion
+            #82
+            #83
+C26TEST android p18 step 1
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="20" min="0" max="100"
+              #81 id=p18-status label="p18 20% uploaded" liveRegion
+            #82
+            #83
+C26TEST android p18 step 2
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="40" min="0" max="100"
+              #81 id=p18-status label="p18 40% uploaded" liveRegion
+            #82
+            #83
+C26TEST android p18 step 3
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="60" min="0" max="100"
+              #81 id=p18-status label="p18 60% uploaded" liveRegion
+            #82
+            #83
+C26TEST android p18 step 4
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="80" min="0" max="100"
+              #81 id=p18-status label="p18 80% uploaded" liveRegion
+            #82
+            #83
+C26TEST android p18 step 5
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="100" min="0" max="100"
+              #81 id=p18-status label="p18 100% uploaded" liveRegion
+            #82
+            #83
+C26TEST android p18 step 6
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator label="p18 bar gone"
+              #81 id=p18-status label="p18 Upload complete" liveRegion
+            #82
+            #83
+C26TEST android p19
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=loadingSpinner label="p19 Upload"
+            #81
+            #82
+C26TEST android p19 after Start
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="0" min="0" max="100"
+            #81
+            #82
+C26TEST android p19 step 1
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="20" min="0" max="100"
+            #81
+            #82
+C26TEST android p19 step 2
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="40" min="0" max="100"
+            #81
+            #82
+C26TEST android p19 step 3
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="60" min="0" max="100"
+            #81
+            #82
+C26TEST android p19 step 4
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="80" min="0" max="100"
+            #81
+            #82
+C26TEST android p19 step 5
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="100" min="0" max="100"
+            #81
+            #82
+C26PROBE p19 supportsAnnounce=true
+C26TEST android p19 step 6
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator label="p19 Upload complete"
+            #81
+            #82
+C26TEST android p20
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator label="p20 Not loading"
+            #81
+            #82
+C26TEST android p20 after Start
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST android p20 step 1
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST android p20 step 2
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST android p20 step 3
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST android p20 step 4
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST android p20 step 5
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST android p20 step 6
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator label="p20 Loaded"
+            #81
+            #82
+C26TEST android p21
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator label="p21 Not loading" liveRegion
+            #81
+            #82
+C26TEST android p21 after Start
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST android p21 step 1
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST android p21 step 2
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST android p21 step 3
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST android p21 step 4
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST android p21 step 5
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST android p21 step 6
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator label="p21 Loaded" liveRegion
+            #81
+            #82
+C26TEST android p22
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator label="p22 Not loading"
+              #81 id=p22-status label="p22 Idle" liveRegion
+            #82
+            #83
+C26TEST android p22 after Start
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST android p22 step 1
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST android p22 step 2
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST android p22 step 3
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST android p22 step 4
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST android p22 step 5
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST android p22 step 6
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator label="p22 spinner gone"
+              #81 id=p22-status label="p22 Messages loaded" liveRegion
+            #82
+            #83
+C26TEST iOS p01
+            #76
+            #77
+              #78 id=p01-indicator role=progressBar label="p01 Upload" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST iOS p02
+            #76
+            #77
+              #78 id=p02-indicator role=progressBar value="40" min="0" max="100"
+            #79
+            #80
+C26TEST iOS p03
+            #76
+            #77
+              #78 id=p03-indicator role=progressBar label="p03 Upload" value="40%" min="0" max="100"
+            #79
+            #80
+C26TEST iOS p04
+            #76
+            #77
+              #78 id=p04-indicator role=progressBar label="p04 Upload" value="2 of 5 files" min="0" max="100"
+            #79
+            #80
+C26TEST iOS p05
+            #76
+            #77
+              #78 id=p05-indicator role=loadingSpinner label="p05 Loading"
+            #79
+            #80
+C26TEST iOS p06
+            #76
+            #77
+              #78 id=p06-indicator role=loadingSpinner
+            #79
+            #80
+C26TEST iOS p07
+            #76
+            #77
+              #78 id=p07-indicator role=progressBar label="p07 Upload" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST iOS p08
+            #76
+            #77
+              #78 id=p08-indicator role=loadingSpinner label="p08 Loading"
+            #79
+            #80
+C26TEST iOS p09
+            #76
+            #77
+              #78 id=p09-indicator
+            #79
+            #80
+C26TEST iOS p10
+            #76
+            #77
+              #78 id=p10-indicator
+            #79
+            #80
+C26TEST iOS p11
+            #76
+            #77
+              #78 id=p11-indicator
+            #79
+            #80
+C26TEST iOS p12
+            #76
+            #77
+              #78 id=p12-indicator
+            #79
+            #80
+C26TEST iOS p13
+            #76
+            #77
+              #78 id=p13-indicator
+            #79
+            #80
+C26TEST iOS p14
+            #76
+            #77
+              #78 id=p14-indicator label="p14 Loading"
+            #79
+            #80
+C26TEST iOS p15
+            #76
+            #77
+              #78 id=p15-indicator role=progressBar label="p15 Uploading report\np15 Uploading report" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST iOS p16
+            #76
+            #77
+              #78 id=p16-indicator role=progressBar label="p16 Upload" value="100" min="0" max="100"
+            #79
+            #80
+C26TEST iOS p17
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=loadingSpinner label="p17 Upload"
+            #81
+            #82
+C26TEST iOS p17 after Start
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="0" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p17 step 1
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="20" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p17 step 2
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="40" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p17 step 3
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="60" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p17 step 4
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="80" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p17 step 5
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="100" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p17 step 6
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator label="p17 Upload complete"
+            #81
+            #82
+C26TEST iOS p18
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=loadingSpinner label="p18 Upload"
+              #81 id=p18-status label="p18 Not started" liveRegion
+            #82
+            #83
+C26TEST iOS p18 after Start
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="0" min="0" max="100"
+              #81 id=p18-status label="p18 0% uploaded" liveRegion
+            #82
+            #83
+C26TEST iOS p18 step 1
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="20" min="0" max="100"
+              #81 id=p18-status label="p18 20% uploaded" liveRegion
+            #82
+            #83
+C26TEST iOS p18 step 2
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="40" min="0" max="100"
+              #81 id=p18-status label="p18 40% uploaded" liveRegion
+            #82
+            #83
+C26TEST iOS p18 step 3
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="60" min="0" max="100"
+              #81 id=p18-status label="p18 60% uploaded" liveRegion
+            #82
+            #83
+C26TEST iOS p18 step 4
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="80" min="0" max="100"
+              #81 id=p18-status label="p18 80% uploaded" liveRegion
+            #82
+            #83
+C26TEST iOS p18 step 5
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="100" min="0" max="100"
+              #81 id=p18-status label="p18 100% uploaded" liveRegion
+            #82
+            #83
+C26TEST iOS p18 step 6
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator label="p18 bar gone"
+              #81 id=p18-status label="p18 Upload complete" liveRegion
+            #82
+            #83
+C26TEST iOS p19
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=loadingSpinner label="p19 Upload"
+            #81
+            #82
+C26TEST iOS p19 after Start
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="0" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p19 step 1
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="20" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p19 step 2
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="40" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p19 step 3
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="60" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p19 step 4
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="80" min="0" max="100"
+            #81
+            #82
+C26TEST iOS p19 step 5
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="100" min="0" max="100"
+            #81
+            #82
+C26PROBE p19 supportsAnnounce=true
+C26TEST iOS p19 step 6
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator label="p19 Upload complete"
+            #81
+            #82
+C26TEST iOS p20
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator label="p20 Not loading"
+            #81
+            #82
+C26TEST iOS p20 after Start
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST iOS p20 step 1
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST iOS p20 step 2
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST iOS p20 step 3
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST iOS p20 step 4
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST iOS p20 step 5
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST iOS p20 step 6
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator label="p20 Loaded"
+            #81
+            #82
+C26TEST iOS p21
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator label="p21 Not loading" liveRegion
+            #81
+            #82
+C26TEST iOS p21 after Start
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST iOS p21 step 1
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST iOS p21 step 2
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST iOS p21 step 3
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST iOS p21 step 4
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST iOS p21 step 5
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST iOS p21 step 6
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator label="p21 Loaded" liveRegion
+            #81
+            #82
+C26TEST iOS p22
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator label="p22 Not loading"
+              #81 id=p22-status label="p22 Idle" liveRegion
+            #82
+            #83
+C26TEST iOS p22 after Start
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST iOS p22 step 1
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST iOS p22 step 2
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST iOS p22 step 3
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST iOS p22 step 4
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST iOS p22 step 5
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST iOS p22 step 6
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator label="p22 spinner gone"
+              #81 id=p22-status label="p22 Messages loaded" liveRegion
+            #82
+            #83
+C26TEST macOS p01
+            #76
+            #77
+              #78 id=p01-indicator role=progressBar label="p01 Upload" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST macOS p02
+            #76
+            #77
+              #78 id=p02-indicator role=progressBar value="40" min="0" max="100"
+            #79
+            #80
+C26TEST macOS p03
+            #76
+            #77
+              #78 id=p03-indicator role=progressBar label="p03 Upload" value="40%" min="0" max="100"
+            #79
+            #80
+C26TEST macOS p04
+            #76
+            #77
+              #78 id=p04-indicator role=progressBar label="p04 Upload" value="2 of 5 files" min="0" max="100"
+            #79
+            #80
+C26TEST macOS p05
+            #76
+            #77
+              #78 id=p05-indicator role=loadingSpinner label="p05 Loading"
+            #79
+            #80
+C26TEST macOS p06
+            #76
+            #77
+              #78 id=p06-indicator role=loadingSpinner
+            #79
+            #80
+C26TEST macOS p07
+            #76
+            #77
+              #78 id=p07-indicator role=progressBar label="p07 Upload" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST macOS p08
+            #76
+            #77
+              #78 id=p08-indicator role=loadingSpinner label="p08 Loading"
+            #79
+            #80
+C26TEST macOS p09
+            #76
+            #77
+              #78 id=p09-indicator
+            #79
+            #80
+C26TEST macOS p10
+            #76
+            #77
+              #78 id=p10-indicator
+            #79
+            #80
+C26TEST macOS p11
+            #76
+            #77
+              #78 id=p11-indicator
+            #79
+            #80
+C26TEST macOS p12
+            #76
+            #77
+              #78 id=p12-indicator
+            #79
+            #80
+C26TEST macOS p13
+            #76
+            #77
+              #78 id=p13-indicator
+            #79
+            #80
+C26TEST macOS p14
+            #76
+            #77
+              #78 id=p14-indicator label="p14 Loading"
+            #79
+            #80
+C26TEST macOS p15
+            #76
+            #77
+              #78 id=p15-indicator role=progressBar label="p15 Uploading report\np15 Uploading report" value="40" min="0" max="100"
+            #79
+            #80
+C26TEST macOS p16
+            #76
+            #77
+              #78 id=p16-indicator role=progressBar label="p16 Upload" value="100" min="0" max="100"
+            #79
+            #80
+C26TEST macOS p17
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=loadingSpinner label="p17 Upload"
+            #81
+            #82
+C26TEST macOS p17 after Start
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="0" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p17 step 1
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="20" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p17 step 2
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="40" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p17 step 3
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="60" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p17 step 4
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="80" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p17 step 5
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator role=progressBar label="p17 Upload" value="100" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p17 step 6
+            #76
+            #77
+              #78 id=p17-start
+                #79 label="p17 Start" tap
+              #80 id=p17-indicator label="p17 Upload complete"
+            #81
+            #82
+C26TEST macOS p18
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=loadingSpinner label="p18 Upload"
+              #81 id=p18-status label="p18 Not started" liveRegion
+            #82
+            #83
+C26TEST macOS p18 after Start
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="0" min="0" max="100"
+              #81 id=p18-status label="p18 0% uploaded" liveRegion
+            #82
+            #83
+C26TEST macOS p18 step 1
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="20" min="0" max="100"
+              #81 id=p18-status label="p18 20% uploaded" liveRegion
+            #82
+            #83
+C26TEST macOS p18 step 2
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="40" min="0" max="100"
+              #81 id=p18-status label="p18 40% uploaded" liveRegion
+            #82
+            #83
+C26TEST macOS p18 step 3
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="60" min="0" max="100"
+              #81 id=p18-status label="p18 60% uploaded" liveRegion
+            #82
+            #83
+C26TEST macOS p18 step 4
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="80" min="0" max="100"
+              #81 id=p18-status label="p18 80% uploaded" liveRegion
+            #82
+            #83
+C26TEST macOS p18 step 5
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator role=progressBar label="p18 Upload" value="100" min="0" max="100"
+              #81 id=p18-status label="p18 100% uploaded" liveRegion
+            #82
+            #83
+C26TEST macOS p18 step 6
+            #76
+            #77
+              #78 id=p18-start
+                #79 label="p18 Start" tap
+              #80 id=p18-indicator label="p18 bar gone"
+              #81 id=p18-status label="p18 Upload complete" liveRegion
+            #82
+            #83
+C26TEST macOS p19
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=loadingSpinner label="p19 Upload"
+            #81
+            #82
+C26TEST macOS p19 after Start
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="0" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p19 step 1
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="20" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p19 step 2
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="40" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p19 step 3
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="60" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p19 step 4
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="80" min="0" max="100"
+            #81
+            #82
+C26TEST macOS p19 step 5
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator role=progressBar label="p19 Upload" value="100" min="0" max="100"
+            #81
+            #82
+C26PROBE p19 supportsAnnounce=true
+C26TEST macOS p19 step 6
+            #76
+            #77
+              #78 id=p19-start
+                #79 label="p19 Start" tap
+              #80 id=p19-indicator label="p19 Upload complete"
+            #81
+            #82
+C26TEST macOS p20
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator label="p20 Not loading"
+            #81
+            #82
+C26TEST macOS p20 after Start
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST macOS p20 step 1
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST macOS p20 step 2
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST macOS p20 step 3
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST macOS p20 step 4
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST macOS p20 step 5
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator role=loadingSpinner label="p20 Loading"
+            #81
+            #82
+C26TEST macOS p20 step 6
+            #76
+            #77
+              #78 id=p20-start
+                #79 label="p20 Start" tap
+              #80 id=p20-indicator label="p20 Loaded"
+            #81
+            #82
+C26TEST macOS p21
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator label="p21 Not loading" liveRegion
+            #81
+            #82
+C26TEST macOS p21 after Start
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST macOS p21 step 1
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST macOS p21 step 2
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST macOS p21 step 3
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST macOS p21 step 4
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST macOS p21 step 5
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator role=loadingSpinner label="p21 Loading" liveRegion
+            #81
+            #82
+C26TEST macOS p21 step 6
+            #76
+            #77
+              #78 id=p21-start
+                #79 label="p21 Start" tap
+              #80 id=p21-indicator label="p21 Loaded" liveRegion
+            #81
+            #82
+C26TEST macOS p22
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator label="p22 Not loading"
+              #81 id=p22-status label="p22 Idle" liveRegion
+            #82
+            #83
+C26TEST macOS p22 after Start
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST macOS p22 step 1
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST macOS p22 step 2
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST macOS p22 step 3
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST macOS p22 step 4
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST macOS p22 step 5
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator role=loadingSpinner label="p22 Loading"
+              #81 id=p22-status label="p22 Loading messages" liveRegion
+            #82
+            #83
+C26TEST macOS p22 step 6
+            #76
+            #77
+              #78 id=p22-start
+                #79 label="p22 Start" tap
+              #80 id=p22-indicator label="p22 spinner gone"
+              #81 id=p22-status label="p22 Messages loaded" liveRegion
+            #82
+            #83

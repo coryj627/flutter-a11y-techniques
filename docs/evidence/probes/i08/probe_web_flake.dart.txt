@@ -1,0 +1,223 @@
+// Throwaway: the app with diagnostics for the I08 web flake. Not committed;
+// kept as docs/evidence/probes/i08/probe_web_flake.dart.txt.
+//
+// Runs the app as lib/main.dart does and prints, to the browser console,
+// every change of the primary focus and every key event the framework
+// receives, each with where the primary focus is: the test identifier of
+// the nearest `Semantics(identifier:)` above it, the route it is in (or
+// "no route", for the app's overlay), and whether it is a scope. Key events
+// that no one in the focus tree handled reach the late handler and are
+// printed as such. window.p08dump() returns the same description of the
+// primary focus and the number of "Close map layers" barriers in the tree.
+import 'dart:js_interop';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'main.dart' as app;
+
+@JS('p08dump')
+external set _p08dump(JSFunction value);
+
+String _describe(FocusNode? node) {
+  if (node == null) return 'none';
+  final context = node.context;
+  String? id;
+  String route = 'no route';
+  if (context != null) {
+    final name = ModalRoute.of(context)?.settings.name;
+    if (name != null) route = 'route $name';
+    if (context.widget case Semantics(:final properties)
+        when properties.identifier != null) {
+      id = properties.identifier;
+    }
+    if (context is Element && context.mounted) {
+      context.visitAncestorElements((e) {
+        if (e.widget case Semantics(:final properties)
+            when properties.identifier != null) {
+          id ??= properties.identifier;
+          return false;
+        }
+        return true;
+      });
+    } else {
+      route = '$route (context not mounted)';
+    }
+  }
+  final kind = node is FocusScopeNode ? 'scope' : 'node';
+  return '$kind ${id ?? '(no identifier above)'}, $route, '
+      'hasPrimaryFocus ${node.hasPrimaryFocus}, '
+      'canRequestFocus ${node.canRequestFocus}, '
+      'ancestors ${node.ancestors.length}';
+}
+
+int _barriers() {
+  var n = 0;
+  void visit(Element e) {
+    if (e.widget case ModalBarrier(semanticsLabel: 'Close map layers')) n++;
+    e.visitChildElements(visit);
+  }
+
+  final root = WidgetsBinding.instance.rootElement;
+  if (root != null) visit(root);
+  return n;
+}
+
+/// The focus chain from the primary focus up, each node with whether it
+/// has a key handler and the widget that owns it; then the action that
+/// Escape's intent finds from the primary focus, and every Shortcuts
+/// widget above it that maps Escape.
+String _chain() {
+  final primary = FocusManager.instance.primaryFocus;
+  if (primary == null) return 'no primary focus';
+  final parts = <String>[];
+  for (final node in [primary, ...primary.ancestors]) {
+    parts.add(
+      '${node.runtimeType}${node.onKeyEvent != null ? ' (onKeyEvent)' : ''}'
+      ' ${node.context?.widget.runtimeType}',
+    );
+  }
+  final context = primary.context;
+  var action = 'no context';
+  final shortcuts = <String>[];
+  if (context != null && context is Element && context.mounted) {
+    final found = Actions.maybeFind<DismissIntent>(
+      context,
+      intent: const DismissIntent(),
+    );
+    action = found == null
+        ? 'none'
+        : '${found.runtimeType} #${identityHashCode(found)} '
+              'enabled ${found.isEnabled(const DismissIntent())}';
+    context.visitAncestorElements((e) {
+      final widget = e.widget;
+      if (widget is Shortcuts) {
+        final esc = widget.shortcuts.entries
+            .where(
+              (entry) =>
+                  entry.key is SingleActivator &&
+                  (entry.key as SingleActivator).trigger ==
+                      LogicalKeyboardKey.escape,
+            )
+            .map((entry) => entry.value.runtimeType)
+            .toList();
+        shortcuts.add('${widget.runtimeType}${esc.isEmpty ? '' : ' Escape->$esc'}');
+      }
+      if (widget is CallbackShortcuts) shortcuts.add('CallbackShortcuts');
+      return true;
+    });
+  }
+  return 'chain [${parts.join(' < ')}]; DismissIntent action: $action; '
+      'shortcuts above: ${shortcuts.join(', ')}';
+}
+
+/// Every RawTooltip in the tree: its text, the route it is in and whether
+/// that route is the current one, whether tickers are on there, and whether
+/// its text is built (the tooltip's overlay child is shown).
+String _tooltips() {
+  final found = <String>[];
+  void visit(Element e) {
+    final widget = e.widget;
+    if (widget is RawTooltip) {
+      final route = ModalRoute.of(e);
+      var shown = false;
+      void text(Element d) {
+        final w = d.widget;
+        if (w is RichText && w.text.toPlainText() == widget.semanticsTooltip) {
+          shown = true;
+        }
+        d.visitChildElements(text);
+      }
+
+      e.visitChildElements(text);
+      found.add(
+        '"${widget.semanticsTooltip}" in ${route?.settings.name} '
+        '(current ${route?.isCurrent}, active ${route?.isActive}), '
+        'tickers ${TickerMode.valuesOf(e).enabled ? 'on' : 'off'}, '
+        'text ${shown ? 'built' : 'not built'}',
+      );
+    }
+    e.visitChildElements(visit);
+  }
+
+  final root = WidgetsBinding.instance.rootElement;
+  if (root != null) visit(root);
+  return found.join('; ');
+}
+
+String _dump() =>
+    'primary: ${_describe(FocusManager.instance.primaryFocus)}; '
+    'barriers ${_barriers()}; tooltips: ${_tooltips()}';
+
+/// Wraps, for one event, the key handler of every node in the focus chain,
+/// so that each prints what it returned, with the three widgets above the
+/// node's Focus.
+void _traceChain() {
+  final primary = FocusManager.instance.primaryFocus;
+  if (primary == null) return;
+  var i = 0;
+  for (final node in [primary, ...primary.ancestors]) {
+    final index = i++;
+    final original = node.onKeyEvent;
+    if (original == null) continue;
+    final owners = <String>[];
+    final context = node.context;
+    if (context is Element && context.mounted) {
+      context.visitAncestorElements((e) {
+        owners.add('${e.widget.runtimeType}');
+        return owners.length < 3;
+      });
+    }
+    node.onKeyEvent = (n, event) {
+      final result = original(n, event);
+      // ignore: avoid_print
+      print('P08 handler $index (${owners.join(' < ')}) -> $result');
+      if (identical(node.onKeyEvent, original) == false) {
+        node.onKeyEvent = original;
+      }
+      return result;
+    };
+  }
+}
+
+void main() {
+  app.main();
+  FocusManager.instance.addListener(() {
+    // ignore: avoid_print
+    print('P08 focus -> ${_describe(FocusManager.instance.primaryFocus)}');
+  });
+  HardwareKeyboard.instance.addHandler((event) {
+    // ignore: avoid_print
+    print(
+      'P08 key ${event is KeyDownEvent
+          ? 'down'
+          : event is KeyUpEvent
+          ? 'up'
+          : 'repeat'} '
+      '${event.logicalKey.keyLabel}${event.synthesized ? ' (synthesized)' : ''}; '
+      'primary: ${_describe(FocusManager.instance.primaryFocus)}; '
+      'barriers ${_barriers()}'
+      '${event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.escape ? '; ${_chain()}' : ''}',
+    );
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.escape) {
+      // ignore: avoid_print
+      print(
+        'P08 pressed ${HardwareKeyboard.instance.logicalKeysPressed.map((k) => k.keyLabel).toList()}',
+      );
+      // ignore: avoid_print
+      print('P08 tooltips: ${_tooltips()}');
+      _traceChain();
+    }
+    return false;
+  });
+  FocusManager.instance.addLateKeyEventHandler((event) {
+    // ignore: avoid_print
+    print(
+      'P08 late (not handled in the focus tree) '
+      '${event is KeyDownEvent ? 'down' : 'up or repeat'} '
+      '${event.logicalKey.keyLabel}',
+    );
+    return KeyEventResult.ignored;
+  });
+  _p08dump = (() => _dump().toJS).toJS;
+}
