@@ -188,6 +188,58 @@ final class C06DisclosureUITests: XCTestCase, CountedTechniqueUITest {
     }
   }
 
+  /// Shift+Tab, as the other direction of the test above. Each launch sends
+  /// one, two, or three Shift+Tabs and then Enter, each key once: none opens
+  /// the tile, and Back takes the key. The positive control, in the next
+  /// test: Shift+Tab, sent the same way, moves focus back onto
+  /// good-material's control.
+  /// Skipped below iOS 27: on CI's iOS 26.5, keys with a modifier sent by
+  /// XCUITest were unreliable (I02, I04, I08), so CI gives up this check.
+  func testBadCupertinoExpansionTileIsOpenedByNoKeyAfterShiftTab() throws {
+    if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 27 {
+      throw XCTSkip("keys with a modifier were unreliable on CI's iOS 26.5 (I02, I04, I08)")
+    }
+    for presses in 1...3 {
+      open("bad-cupertino-expansion-tile")
+      for _ in 0..<presses {
+        app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: .shift)
+        usleep(700_000)
+      }
+      app.typeKey("\n", modifierFlags: [])
+      waitFor("\(presses) Shift+Tab(s), Enter: the key acted, on Back") {
+        !self.countElement("bad-cupertino-expansion-tile").exists
+      }
+      XCTAssertFalse(shown(Self.panelText), "\(presses) Shift+Tab(s), Enter: it did not open")
+    }
+  }
+
+  /// The positive control for the test above: Shift+Tab, sent the same
+  /// way, moves keyboard focus back onto good-material's control. Two Tabs
+  /// and Enter open it; one Tab goes on to the panel's button; one
+  /// Shift+Tab comes back to the control, and Enter there closes it, with
+  /// the panel's button never pressed (the count stays 0) and the example
+  /// still on screen. Had the Shift been lost, focus would have moved on,
+  /// off the control, and Enter would not have closed the panel while the
+  /// example stayed. Each key is sent once. In the first run, one
+  /// Shift+Tab from launch and Enter left the example, as Enter on Back
+  /// does (docs/evidence/probes/c06/ios-shift-tab-first-run.txt).
+  func testGoodMaterialIsReachedByShiftTab() throws {
+    if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 27 {
+      throw XCTSkip("keys with a modifier were unreliable on CI's iOS 26.5 (I02, I04, I08)")
+    }
+    open("good-material")
+    tab(2)
+    app.typeKey("\n", modifierFlags: [])
+    waitFor("Tab, Tab, Enter opens it") { self.shown(Self.panelText) }
+    tab(1)
+    app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: .shift)
+    usleep(700_000)
+    app.typeKey("\n", modifierFlags: [])
+    waitFor("Shift+Tab back to the control, Enter closes it") { !self.shown(Self.panelText) }
+    expectCount("good-material", 0)
+    XCTAssertTrue(countElement("good-material").exists, "Enter stayed on the example")
+  }
+
   // L4. Everything VoiceOver says after the "Example" heading, to the end
   // of the screen (C06Walk), the count included, compared as a whole list:
   // closed, then after the control has been opened by XCUITest's double tap

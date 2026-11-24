@@ -44,6 +44,26 @@ async function tabStops(page, tabs) {
   return stops;
 }
 
+/**
+ * One whole cycle of focus: `key` (Tab or Shift+Tab) until Back has had
+ * focus twice, at most ten presses, and what has focus after each. It does
+ * not stop at the first Back, so a control after Back in the cycle is
+ * always visited. Going round, focus can pass through the page itself
+ * ("(page)", FL-421). Fails when no whole cycle is made.
+ */
+async function focusCycle(page, key) {
+  const stops = [];
+  let backs = 0;
+  for (let i = 0; i < 10; i++) {
+    await page.keyboard.press(key);
+    await page.waitForTimeout(150);
+    const name = await focused(page);
+    stops.push(name);
+    if (name === 'Back' && ++backs === 2) return stops;
+  }
+  throw new Error(`no whole focus cycle in ten presses of ${key}: ${stops.join(' / ')}`);
+}
+
 /** Tab until the element named `name` has focus, at most six times. */
 async function tabToName(page, name) {
   for (let i = 0; i < 6; i++) {
@@ -263,23 +283,31 @@ test.describe('bad examples have their defect', () => {
     });
   }
 
-  for (const key of ['Enter', 'Space']) {
-    test(`bad-cupertino-expansion-tile: Tab reaches only Back, and ${key} there leaves the example`, async ({ page }) => {
+  // A whole focus cycle, forwards and backwards: every stop in Flutter's
+  // tree is Back, and the panel stays closed; then the key, on Back where
+  // the cycle ended, leaves the example (the key acted). The same cycle
+  // visits good-material's control (the test after these).
+  for (const [key, by] of [['Enter', 'Tab'], ['Space', 'Tab'], ['Enter', 'Shift+Tab']]) {
+    test(`bad-cupertino-expansion-tile: a whole ${by} cycle stops only on Back, and ${key} there leaves the example`, async ({ page }) => {
       await open(page, 'bad-cupertino-expansion-tile');
-      const stops = await tabStops(page, 4);
-      // Every stop in Flutter's tree is Back; going round, focus can pass
-      // through the page itself (FL-421), which holds no control.
+      const stops = await focusCycle(page, by);
       const inApp = stops.filter((s) => s !== '(page)');
-      expect(inApp.length).toBeGreaterThan(0);
-      expect(inApp).toEqual(inApp.map(() => 'Back'));
-      // Put focus on Back and press the key: Back acts, the positive control.
-      await page.evaluate(() => document.activeElement?.blur());
-      expect(await tabToName(page, 'Back')).toBe(true);
+      expect(inApp, stops.join(' / ')).toEqual(inApp.map(() => 'Back'));
+      expect(await shown(page, PANEL_TEXT)).toBe(false);
+      expect(await focused(page)).toBe('Back');
       await page.keyboard.press(key);
       await expect(exampleHeading(page)).toHaveCount(0);
       await expect(page).toHaveURL(/#\/t\/C06$/);
     });
   }
+
+  test('good-material: the same whole cycle, Tab and Shift+Tab, visits the control (the positive control)', async ({ page }) => {
+    await open(page, 'good-material');
+    const forwards = await focusCycle(page, 'Tab');
+    expect(forwards, forwards.join(' / ')).toContain(TITLE);
+    const backwards = await focusCycle(page, 'Shift+Tab');
+    expect(backwards, backwards.join(' / ')).toContain(TITLE);
+  });
 
   for (const platform of [null, ...EMULATED]) {
     test(`bad-cupertino-expansion-tile${platform ? `, navigator.platform "${platform}"` : ''}: no tabindex and no aria-expanded; the description for that platform; a click opens it`, async ({ page }) => {

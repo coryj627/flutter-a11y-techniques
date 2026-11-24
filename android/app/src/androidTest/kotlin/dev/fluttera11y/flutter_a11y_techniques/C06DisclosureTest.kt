@@ -10,6 +10,10 @@
 package dev.fluttera11y.flutter_a11y_techniques
 
 import android.os.Build
+import android.os.SystemClock
+import android.view.InputDevice
+import android.view.KeyCharacterMap
+import android.view.KeyEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
@@ -226,30 +230,78 @@ class C06DisclosureTest : TechniqueTest("C06") {
         }
     }
 
-    private fun cupertinoTakesNoFocus(name: String) {
-        open("bad-cupertino-expansion-tile")
-        var backFocused = false
-        for (i in 0 until 6) {
-            key("TAB")
-            assertFalse("Tab ${i + 1} gave the control focus", control().isFocused)
-            if (named("Back").isFocused) {
-                backFocused = true
-                break
-            }
+    /** Shift+Tab from the emulator's keyboard, as I02's test sends it. */
+    private fun shiftTab() {
+        val t = SystemClock.uptimeMillis()
+        val shift = KeyEvent.META_SHIFT_ON or KeyEvent.META_SHIFT_LEFT_ON
+        fun event(time: Long, action: Int, code: Int, meta: Int) = KeyEvent(
+            time, time, action, code, 0, meta, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
+            InputDevice.SOURCE_KEYBOARD)
+        inst.sendKeySync(event(t, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT, shift))
+        inst.sendKeySync(event(t + 10, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB, shift))
+        inst.sendKeySync(event(t + 20, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_TAB, shift))
+        inst.sendKeySync(event(t + 30, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT, 0))
+        Thread.sleep(600)
+    }
+
+    /**
+     * One whole cycle of keyboard focus: Tab (Shift+Tab when [backwards])
+     * until Back has had focus twice, at most eight presses, and the name of
+     * the focused node after each, "(none)" where no node of the app has it.
+     * Whether the control has focus is also read at each stop. It does not
+     * stop at the first Back, so a control after Back in the cycle is
+     * always visited. Fails when no whole cycle is made.
+     */
+    private fun focusCycle(backwards: Boolean): List<String> {
+        val stops = mutableListOf<String>()
+        var backs = 0
+        for (i in 0 until 8) {
+            if (backwards) shiftTab() else key("TAB")
+            val name = focusName()
+            stops.add(if (control().isFocused) "CONTROL $name" else name)
+            if (name == "Back" && ++backs == 2) return stops
         }
-        assertTrue("Tab reached Back", backFocused)
+        throw AssertionError("no whole focus cycle in eight presses: $stops")
+    }
+
+    @Test
+    fun goodMaterialFocusCycleVisitsTheControl() {
+        // The positive control for the Cupertino tests below: the same
+        // cycle, forwards and backwards, does visit a control that takes
+        // focus.
+        open("good-material")
+        val forwards = focusCycle(backwards = false)
+        assertTrue("Tab visits the control: $forwards", forwards.any { it.startsWith("CONTROL $TITLE") })
+        val backwards = focusCycle(backwards = true)
+        assertTrue("Shift+Tab visits the control: $backwards", backwards.any { it.startsWith("CONTROL $TITLE") })
+    }
+
+    /**
+     * A whole focus cycle, forwards or backwards: every stop in the app is
+     * Back, the control never has focus, and the panel stays closed. Then,
+     * with focus on Back, where the cycle ended, [name] leaves the example:
+     * the key reached the app, the positive control.
+     */
+    private fun cupertinoTakesNoFocus(name: String, backwards: Boolean) {
+        open("bad-cupertino-expansion-tile")
+        val stops = focusCycle(backwards)
+        assertTrue("every stop in the app is Back: $stops", stops.all { it == "Back" || it == "(none)" })
+        assertFalse("the panel stayed closed", shown(PANEL_TEXT))
+        assertTrue("focus is on Back", named("Back").isFocused)
         key(name)
-        // Back acted: the positive control. The example is gone, unopened.
         waitFor("$name on Back leaves the example") {
             !anyWindowHas { it.name() == c06Titles.getValue("bad-cupertino-expansion-tile") }
         }
     }
 
     @Test
-    fun badCupertinoExpansionTileTakesNoKeyboardFocusEnter() = cupertinoTakesNoFocus("ENTER")
+    fun badCupertinoExpansionTileTakesNoKeyboardFocusEnter() = cupertinoTakesNoFocus("ENTER", backwards = false)
 
     @Test
-    fun badCupertinoExpansionTileTakesNoKeyboardFocusSpace() = cupertinoTakesNoFocus("SPACE")
+    fun badCupertinoExpansionTileTakesNoKeyboardFocusSpace() = cupertinoTakesNoFocus("SPACE", backwards = false)
+
+    @Test
+    fun badCupertinoExpansionTileTakesNoKeyboardFocusShiftTab() = cupertinoTakesNoFocus("ENTER", backwards = true)
 
     @Test
     fun badCupertinoExpansionTileIsNoButtonAndHasNoState() {

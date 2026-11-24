@@ -58,6 +58,32 @@ Future<List<String>> _tabStops(WidgetTester tester, int tabs) async {
   return stops;
 }
 
+/// One whole cycle of keyboard focus: Tab (Shift+Tab when [backwards])
+/// until Back has had focus twice, at most eight presses, and the name of
+/// the focused node after each. It does not stop at the first Back, so a
+/// control after Back in the cycle is always visited.
+Future<List<String>> _focusCycle(
+  WidgetTester tester, {
+  required bool backwards,
+}) async {
+  final stops = <String>[];
+  var backs = 0;
+  for (var i = 0; i < 8; i++) {
+    if (backwards) {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    } else {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    }
+    await tester.pumpAndSettle();
+    final name = _focusName(tester);
+    stops.add(name);
+    if (name == 'Back' && ++backs == 2) return stops;
+  }
+  fail('no whole focus cycle in eight presses: $stops');
+}
+
 /// Tabs until the control has focus, at most four times.
 Future<void> _tabToControl(WidgetTester tester) async {
   for (var i = 0; i < 4; i++) {
@@ -584,15 +610,21 @@ void main() {
       handle.dispose();
     });
 
-    for (final (key, name) in [
-      (LogicalKeyboardKey.enter, 'Enter'),
-      (LogicalKeyboardKey.space, 'Space'),
+    // A whole focus cycle, forwards and backwards, whose every stop is
+    // Back; then the key, on Back, leaves the example (the key acted). The
+    // same cycle visits good-material's control (the next test).
+    for (final (key, name, backwards) in [
+      (LogicalKeyboardKey.enter, 'Enter', false),
+      (LogicalKeyboardKey.space, 'Space', false),
+      (LogicalKeyboardKey.enter, 'Enter', true),
     ]) {
-      testWidgets('bad-cupertino-expansion-tile: Tab reaches only Back, and '
-          '$name there leaves the example closed', (tester) async {
+      final by = backwards ? 'Shift+Tab' : 'Tab';
+      testWidgets('bad-cupertino-expansion-tile: a whole $by cycle stops only '
+          'on Back, and $name there leaves the example closed', (tester) async {
         final handle = tester.ensureSemantics();
         await _open(tester, 'bad-cupertino-expansion-tile');
-        expect(await _tabStops(tester, 4), ['Back', 'Back', 'Back', 'Back']);
+        final stops = await _focusCycle(tester, backwards: backwards);
+        expect(stops, everyElement('Back'));
         expect(_panelShown(tester), isFalse);
         await tester.sendKeyEvent(key);
         await tester.pumpAndSettle();
@@ -602,6 +634,24 @@ void main() {
         handle.dispose();
       });
     }
+
+    testWidgets('good-material: the same whole cycle, forwards and backwards, '
+        'visits the control (the positive control)', (tester) async {
+      final handle = tester.ensureSemantics();
+      await _open(tester, 'good-material');
+      expect(await _focusCycle(tester, backwards: false), [
+        'Back',
+        disclosureTitle,
+        'Back',
+      ]);
+      expect(await _focusCycle(tester, backwards: true), [
+        disclosureTitle,
+        'Back',
+        disclosureTitle,
+        'Back',
+      ]);
+      handle.dispose();
+    });
 
     testWidgets('bad-cupertino-expansion-tile: the control takes no focus, '
         'is no button, has no state, and a tap opens it', (tester) async {
