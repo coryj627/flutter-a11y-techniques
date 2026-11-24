@@ -1,0 +1,77 @@
+diff --git a/lib/techniques/i08_dismiss_and_escape/examples.dart b/lib/techniques/i08_dismiss_and_escape/examples.dart
+index 17e2cb2..cc2be2c 100644
+--- a/lib/techniques/i08_dismiss_and_escape/examples.dart
++++ b/lib/techniques/i08_dismiss_and_escape/examples.dart
+@@ -268,6 +268,8 @@ class _OverlayState extends State<_Overlay> {
+ 
+   @override
+   void dispose() {
++    // ignore: avoid_print
++    print('P08 app dispose state ${identityHashCode(this)} entry ${_entry == null ? 'null' : identityHashCode(_entry)}');
+     _entry?.remove();
+     _entry?.dispose();
+     _scope.dispose();
+@@ -275,8 +277,14 @@ class _OverlayState extends State<_Overlay> {
+   }
+ 
+   Future<void> _show(BuildContext context, _MapState map) {
++    // ignore: avoid_print
++    print('P08 app _show state ${identityHashCode(this)} entry before ${_entry == null ? 'null' : identityHashCode(_entry)} mounted $mounted');
+     _map = map;
+-    _entry = OverlayEntry(builder: (context) => _layers(context, map));
++    _entry = OverlayEntry(builder: (context) {
++      // ignore: avoid_print
++      print('P08 app build layers of state ${identityHashCode(this)}');
++      return _layers(context, map);
++    });
+     Overlay.of(context).insert(_entry!);
+     setState(() {});
+     _shown = Completer<void>();
+@@ -287,8 +295,10 @@ class _OverlayState extends State<_Overlay> {
+     return _shown!.future;
+   }
+ 
+-  void _close() {
++  void _close([String why = '?']) {
+     final entry = _entry;
++    // ignore: avoid_print
++    print('P08 app _close($why) state ${identityHashCode(this)} entry ${entry == null ? 'null: returns' : identityHashCode(entry)} mounted $mounted');
+     if (entry == null) return;
+     _entry = null;
+     entry.remove();
+@@ -304,7 +314,7 @@ class _OverlayState extends State<_Overlay> {
+     Widget layers = Semantics(
+       // For screen readers: TalkBack lists it as the Dismiss action, and
+       // VoiceOver's escape gesture on any part of the layers performs it.
+-      onDismiss: _close,
++      onDismiss: () => _close('semantics dismiss'),
+       explicitChildNodes: true,
+       child: FocusScope(
+         node: _scope,
+@@ -320,7 +330,7 @@ class _OverlayState extends State<_Overlay> {
+         actions: {
+           DismissIntent: CallbackAction<DismissIntent>(
+             onInvoke: (_) {
+-              _close();
++              _close('DismissIntent');
+               return null;
+             },
+           ),
+@@ -334,7 +344,7 @@ class _OverlayState extends State<_Overlay> {
+         // and closes them on a tap outside them.
+         ModalBarrier(
+           color: Colors.black54,
+-          onDismiss: _close,
++          onDismiss: () => _close('barrier'),
+           semanticsLabel: 'Close map layers',
+         ),
+         Align(alignment: Alignment.bottomCenter, child: layers),
+@@ -349,7 +359,7 @@ class _OverlayState extends State<_Overlay> {
+     return PopScope(
+       canPop: _entry == null,
+       onPopInvokedWithResult: (didPop, _) {
+-        if (!didPop) _close();
++        if (!didPop) _close('PopScope');
+       },
+       child: map,
+     );

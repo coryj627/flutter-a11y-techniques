@@ -1,0 +1,95 @@
+I08 web: the attempt to make FL-484's first-Escape state a test, 2026-11-23.
+Not committed as a test. The block below was added to
+web_tests/i08_dismiss_and_escape.spec.js inside "Escape (2.1.2)" (with
+tabTo imported), and run from a copy, p08_fixcheck.spec.js, that also had a
+beforeEach making Flutter see Linux and throttling the CPU P08_THROTTLE
+times: npx playwright test p08_fixcheck.spec.js -g FL-484 --repeat-each=10
+--workers=2, release build, Flutter 3.47.5, Chromium from Playwright, this
+Mac.
+
+First form, which also asserted that a second Escape (sent about a second
+after the first, after a 1 s wait and two reads; then 400 ms and up to 5 s
+for the closed state) closed the layers:
+CPU 1x: ms [179, 181, 182, 182, 188, 188, 193, 197, 198, 205]; failed 0 of 10
+CPU 2x: ms [142, 147, 150, 150, 155, 163, 163, 190, 214, 224]; failed 0 of 10
+CPU 4x: ms [193, 202, 203, 212, 212, 213, 227, 227, 230, 239]; failed 10 of 10
+(at 4x every failure was that second Escape: the layers stayed shown,
+"State at the failure: DOM focus on i08-good-widgets-contours; Back's
+tooltip not shown")
+
+Second form, as below: the first Escape leaves the layers and Space turns
+Contour lines; the second Escape not asserted:
+CPU 1x: ms from Enter on Map layers to the first Escape: [192, 192, 195, 200, 200, 203, 207, 208, 210, 213]; 10 passed (23.4s)
+CPU 2x: ms from Enter on Map layers to the first Escape: [145, 167, 168, 173, 173, 178, 179, 184, 204, 215]; 10 passed (25.4s)
+CPU 4x: ms from Enter on Map layers to the first Escape: [246, 247, 260, 263, 269, 272, 284, 293, 297, 339]; 1 failed; 9 passed (32.0s)
+   Expected: < 300
+   Received:   339
+
+So as the CPU slows the time to the first Escape grows past the bound
+of 300 ms, and the second Escape's result changes with it: not deterministic
+enough for CI's runner, whose speed is not known here.
+
+  // The limitation, FL-484 (why I08 is a limitation on the web): while a
+  // tooltip still counts as open, Flutter takes Escape for it before the
+  // layers can. The mouse rests on the technique screen's Back until its
+  // tooltip shows and stays there; the keyboard opens the example and its
+  // layers; Escape is sent once, with no added wait, as soon as DOM focus
+  // is on Contour lines (for the sheet, after the one Tab from its route's
+  // scope, also sent at once). That first Escape leaves the layers and
+  // focus where they were a second later, and Space then turns Contour
+  // lines, so keys arrive. What a second Escape does is not asserted: it
+  // closed them unthrottled and at two times slower, but at four times
+  // slower it did not in 4 of 10 probe runs and 10 of 10 runs of this test.
+  // The state lasts about 400 ms from opening the layers (the probe's
+  // good-cupertino runs, docs/evidence/probes/i08/web_flake_hover2.txt), so
+  // the time from Enter on Map layers to the first Escape is logged and
+  // must be under 300 ms. Only good-widgets: in the probe it held at every
+  // CPU speed tried (40 of 40 runs, at 1, 2, and 4 times slower, 152 to
+  // 259 ms), while good-material's sheet closed on the first Escape in 4 of
+  // 10 runs at four times slower (262 to 317 ms) and good-cupertino's popup
+  // reaches Contour lines too late (282 to 452 ms unthrottled); those two
+  // stay in the probe. Written to fail when the first Escape closes them.
+  const tooltipTitles = {
+    'good-widgets': /^Layers drawn in the overlay, closed by every dismiss command/,
+  };
+  for (const [slug, titleName] of Object.entries(tooltipTitles)) {
+    test(`${slug}: with Back's tooltip shown by the mouse, the first Escape soon after the layers open leaves them (FL-484)`, async ({ page }) => {
+      await page.goto('about:blank');
+      await page.goto('/#/t/I08');
+      const title = page.getByRole('button', { name: titleName });
+      await title.waitFor();
+      const back = await page.getByRole('button', { name: 'Back', exact: true }).boundingBox();
+      await page.mouse.move(back.x + back.width / 2, back.y + back.height / 2);
+      await expect.poll(() => backTooltip(page), { message: 'Back\'s tooltip shown by the hover' }).toBe(true);
+      expect(await tabTo(page, title, 12), 'Tab reaches the example\'s title').toBe(true);
+      await page.keyboard.press('Enter');
+      await expect(control(page, slug, 'count')).toBeVisible();
+      // Setup, in a bounded loop, once the screen has come in: Tab to Map
+      // layers. The technique screen's Back has the same name meanwhile.
+      await page.waitForTimeout(800);
+      for (let i = 0; i < 6 && (await stop(page, slug)) !== 'open'; i++) {
+        await page.keyboard.press('Tab');
+        await page.waitForTimeout(200);
+      }
+      expect(await stop(page, slug), 'Tab reaches Map layers').toBe('open');
+      const opened = Date.now();
+      await page.keyboard.press('Enter');
+      await layer(page, slug, 'contours').waitFor();
+      if (routes.includes(slug)) {
+        while ((await stop(page, slug)) === 'open' && Date.now() - opened < 5000) await page.waitForTimeout(10);
+        if ((await stop(page, slug)) !== 'contours') await page.keyboard.press('Tab');
+      }
+      while ((await stop(page, slug)) !== 'contours' && Date.now() - opened < 5000) await page.waitForTimeout(10);
+      const elapsed = Date.now() - opened;
+      console.log(`I08 ${slug} FL-484: ${elapsed} ms from Enter on Map layers to the first Escape`);
+      expect(await stop(page, slug), 'focus on Contour lines before Escape').toBe('contours');
+      expect(elapsed, 'ms from Enter on Map layers to the first Escape').toBeLessThan(300);
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(1000);
+      await expectShown(page, slug, true);
+      expect(await stop(page, slug), 'after the first Escape').toBe('contours');
+      await press(page, 'Space');
+      await expect(layer(page, slug, 'contours')).toHaveAttribute('aria-checked', 'false');
+    });
+  }
+

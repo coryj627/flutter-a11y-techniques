@@ -1,0 +1,24 @@
+I08 web Escape fix check, 2026-11-23. The committed
+web_tests/i08_dismiss_and_escape.spec.js, copied as p08_fixcheck.spec.js
+with this hook added after its helpers, run with
+npx playwright test p08_fixcheck.spec.js -g "Escape does nothing" --repeat-each=30 --workers=2
+against the release build (Flutter 3.47.5, Chromium from Playwright, this
+Mac). Before the change, the probe that does the test's own steps
+(probe_web_flake.spec.js.txt) had Escape fail to close good-widgets' layers
+in about 15% of runs in this condition (web_flake.txt); the spec itself was
+not run throttled before the change.
+
+// Throwaway check (not committed; kept as
+// docs/evidence/probes/i08/probe_web_fixcheck.txt with its result): the
+// spec as committed, with Flutter seeing Linux and the CPU throttled 4x.
+test.beforeEach(async ({ page }) => {
+  test.setTimeout(180000);
+  await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'platform', { get: () => 'Linux x86_64' }));
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+
+Result:
+
+Running 60 tests using 2 workers
+····························································
+  60 passed (5.0m)

@@ -1,0 +1,180 @@
+// Throwaway: I08 probe of the intermittent CI failure of the positive
+// control in "bad-no-escape: Escape does nothing, from either switch".
+// Not committed; kept as docs/evidence/probes/i08/probe_web_flake.spec.js.txt.
+//
+// Runs the test's own steps up to the positive control and then, instead of
+// failing, records what happened: whether Escape closed good-widgets' layers
+// within 5 seconds, a timeline of DOM focus changes and key events (each
+// keydown's target, and whether the page's handlers called preventDefault
+// on it, which Flutter's web engine does when the framework handles the
+// key), and the times of the test's own steps. One JSON line per run goes
+// to $P08_OUT.
+//
+// P08_PAIR=material runs the other such test instead: bad-not-dismissible,
+// closed by a drag, then good-material (Tab from the route's scope to
+// Contour lines before Escape).
+// P08_PLATFORM=linux makes navigator.platform read "Linux x86_64", as on
+// CI's ubuntu runner, so that Flutter's web engine takes the platform to be
+// Linux (Zoom page transitions) instead of macOS (Cupertino ones).
+// P08_THROTTLE=n slows the CPU n times (CDP Emulation.setCPUThrottlingRate).
+// P08_VARIANT picks what the test does before Escape:
+//   ci      the spec as it is: poll for focus on Contour lines, then Escape
+//   settle  the same, but first wait for focus to stay on Contour lines for
+//           a whole second
+//   mouseaway  the same as ci, but after the click on Back the mouse is
+//           moved off the app bar and a second passes before the title is
+//           clicked, so that Back's tooltip is not shown then
+import fs from 'node:fs';
+import { test } from '@playwright/test';
+
+const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
+const out = process.env.P08_OUT ?? 'p08_flake.jsonl';
+const platform = process.env.P08_PLATFORM ?? 'native';
+const throttle = Number(process.env.P08_THROTTLE ?? 1);
+const variant = process.env.P08_VARIANT ?? 'ci';
+
+const stop = (page, slug) => page.evaluate((prefix) => {
+  const e = document.activeElement;
+  if (!e || e === document.body || e.tagName === 'FLUTTER-VIEW') return 'outside';
+  const owner = e.closest('[flt-semantics-identifier]');
+  const id = owner?.getAttribute('flt-semantics-identifier');
+  if (id && id.startsWith(prefix)) return id.slice(prefix.length);
+  if (e.getAttribute('role') === 'button' && e.textContent.trim() === 'Back') return 'back';
+  return `other: ${e.tagName} ${e.getAttribute('role') ?? ''} ${e.textContent.trim().slice(0, 30)}`;
+}, `i08-${slug}-`);
+
+async function press(page, key) {
+  await page.keyboard.press(key);
+  await page.waitForTimeout(400);
+}
+
+const now = (page) => page.evaluate(() => Math.round(performance.now()));
+const mark = async (page, what) => page.evaluate((w) => window.__p08.push([Math.round(performance.now()), 'step', w + (window.p08dump ? ` [${window.p08dump()}]` : '')]), what);
+
+test.beforeEach(async ({ page }) => {
+  if (platform === 'linux') {
+    await page.addInitScript(() => {
+      Object.defineProperty(Navigator.prototype, 'platform', { get: () => 'Linux x86_64' });
+    });
+  }
+  await page.addInitScript(() => {
+    window.__p08 = [];
+    // The probe build (lib/probe.dart) prints lines starting "P08".
+    const log = console.log.bind(console);
+    console.log = (...args) => {
+      const text = args.join(' ');
+      if (text.startsWith('P08')) window.__p08.push([Math.round(performance.now()), 'flutter', text.slice(4)]);
+      log(...args);
+    };
+    const name = (e) => {
+      if (!e || e === document.body) return 'body';
+      if (e.tagName === 'FLUTTER-VIEW') return 'flutter-view';
+      const id = e.closest?.('[flt-semantics-identifier]')?.getAttribute('flt-semantics-identifier');
+      return id ?? `${e.tagName} ${e.getAttribute?.('role') ?? ''} ${(e.textContent ?? '').trim().slice(0, 20)}`;
+    };
+    document.addEventListener('focusout', (e) => window.__p08.push([Math.round(performance.now()), 'focusout', name(e.target)]), true);
+    document.addEventListener('focusin', (e) => window.__p08.push([Math.round(performance.now()), 'focusin', name(e.target)]), true);
+    for (const type of ['keydown', 'keyup']) {
+      // On window in the capture phase, before Flutter's own listener: the
+      // key and its target. In the bubble phase, after it: whether it
+      // called preventDefault (absent when it stopped the event).
+      window.addEventListener(type, (e) => window.__p08.push([Math.round(performance.now()), `${type} capture`, e.key, name(e.target)]), true);
+      window.addEventListener(type, (e) => window.__p08.push([Math.round(performance.now()), `${type} bubble`, e.key, e.defaultPrevented ? 'prevented' : 'not prevented']));
+    }
+  });
+  if (throttle > 1) {
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: throttle });
+  }
+});
+
+for (let run = 0; run < Number(process.env.P08_RUNS ?? 1); run++) {
+  test(`bad-no-escape then good-widgets, run ${run}`, async ({ page }) => {
+    test.setTimeout(240000);
+    const material = process.env.P08_PAIR === 'material';
+    const slug = material ? 'bad-not-dismissible' : 'bad-no-escape';
+    const good = material ? 'good-material' : 'good-widgets';
+    await page.goto('about:blank');
+    await page.goto(`/#/t/I08/${slug}`);
+    await byId(page, `i08-${slug}-count`).waitFor();
+    await page.waitForTimeout(0);
+    await press(page, 'Tab');
+    await press(page, 'Tab');
+    await press(page, 'Enter');
+    for (const part of ['contours', 'campsites']) {
+      if (part === 'campsites') await press(page, 'Tab');
+      await press(page, 'Escape');
+      await page.waitForTimeout(1000);
+      await press(page, 'Space');
+    }
+    const size = page.viewportSize();
+    if (material) {
+      const box = await byId(page, `i08-${slug}-contours`).boundingBox();
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width / 2, size.height - 2, { steps: 20 });
+      await page.mouse.up();
+    } else {
+      await page.mouse.click(size.width / 2, 40);
+    }
+    await byId(page, `i08-${slug}-contours`).waitFor({ state: 'detached' });
+    await page.getByRole('button', { name: 'Back' }).click();
+    if (variant === 'mouseaway') {
+      // The mouse leaves the place where Back was, and a second passes, so
+      // that no tooltip is shown when the example is opened.
+      await page.waitForTimeout(300);
+      await page.mouse.move(size.width - 5, size.height - 5);
+      await page.waitForTimeout(1000);
+    }
+    await mark(page, 'click title');
+    await page.getByRole('button', { name: material ? /^A Material bottom sheet that can be dismissed/ : /^Layers drawn in the overlay, closed by every dismiss command/ }).click();
+    await byId(page, `i08-${good}-count`).waitFor();
+    await mark(page, 'count visible; click open');
+    await byId(page, `i08-${good}-open`).click();
+    await byId(page, `i08-${good}-contours`).waitFor();
+    await mark(page, 'layers shown');
+    // The spec's precondition: DOM focus on Contour lines.
+    const pollStart = Date.now();
+    const first = material ? 'outside' : 'contours';
+    while ((await stop(page, good)) !== first && Date.now() - pollStart < 5000) await page.waitForTimeout(50);
+    if (material) await press(page, 'Tab');
+    await mark(page, `poll done: ${await stop(page, good)}`);
+    if (variant === 'settle') {
+      let since = Date.now();
+      const start = Date.now();
+      while (Date.now() - since < 1000 && Date.now() - start < 10000) {
+        await page.waitForTimeout(50);
+        if ((await stop(page, good)) !== 'contours') since = Date.now();
+      }
+      await mark(page, `settled: ${await stop(page, good)}`);
+    }
+    const before = await stop(page, good);
+    await mark(page, `escape; focus ${before}`);
+    await page.keyboard.press('Escape');
+    const escAt = Date.now();
+    let closed = false;
+    while (Date.now() - escAt < 5000) {
+      if ((await byId(page, `i08-${good}-contours`).count()) === 0) { closed = true; break; }
+      await page.waitForTimeout(50);
+    }
+    const after = await stop(page, good);
+    const dump = await page.evaluate(() => (window.p08dump ? window.p08dump() : null));
+    // Diagnostic only, after the outcome is recorded: does a second Escape,
+    // a second later, close them?
+    let second = null;
+    if (!closed) {
+      await page.waitForTimeout(1000);
+      await mark(page, `second escape; focus ${await stop(page, good)}`);
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(2000);
+      second = (await byId(page, `i08-${good}-contours`).count()) === 0 ? 'closed' : 'still shown';
+    }
+    const countNode = byId(page, `i08-${good}-count`);
+    const count = (await countNode.count()) ? (await countNode.textContent()).trim() : '(count not in the tree)';
+    const shown = (await byId(page, `i08-${good}-contours`).count()) + (await byId(page, `i08-${good}-campsites`).count());
+    const log = await page.evaluate(() => window.__p08);
+    const t0 = log.find((e) => e[2] === 'click title')?.[0] ?? 0;
+    const timeline = log.map((e) => [e[0] - t0, ...e.slice(1)]);
+    fs.appendFileSync(out, JSON.stringify({ platform, throttle, variant, run, closed, before, after, count, shown, second, dump, timeline }) + '\n');
+  });
+}

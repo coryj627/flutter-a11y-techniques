@@ -52,10 +52,64 @@ async function tabs(page, slug, n, key = 'Tab') {
   return stops;
 }
 
-/** Both switches are on the page, or both are gone. */
+/**
+ * Whether Back's tooltip is shown: an element with the text "Back" just
+ * below the Back button and not part of it (while a tooltip is shown its
+ * text is an element of its own, FL-249). A tooltip left open under
+ * another screen (FL-484) is not in the page's tree, and is not seen here.
+ */
+const backTooltip = (page) => page.evaluate(() => {
+  const isBack = (e) => e.getAttribute('role') === 'button' && e.textContent.trim() === 'Back';
+  const button = [...document.querySelectorAll('flt-semantics')].find(isBack);
+  const below = button ? button.getBoundingClientRect().bottom : 60;
+  return [...document.querySelectorAll('flt-semantics-host *')].some((e) => {
+    if (![...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === 'Back')) return false;
+    if (e.closest('flt-semantics') && isBack(e.closest('flt-semantics'))) return false;
+    const top = e.getBoundingClientRect().top;
+    return top >= below - 8 && top <= below + 60;
+  });
+});
+
+/** Where DOM focus is and whether Back's tooltip is shown, for a failure message. */
+async function pageState(page) {
+  const active = await page.evaluate(() => {
+    const e = document.activeElement;
+    const id = e?.closest('[flt-semantics-identifier]')?.getAttribute('flt-semantics-identifier');
+    return id ?? `${e?.tagName} ${e?.getAttribute('role') ?? ''} ${(e?.textContent ?? '').trim().slice(0, 30)}`;
+  });
+  return `DOM focus on ${active}; Back's tooltip ${(await backTooltip(page)) ? 'shown' : 'not shown'}`;
+}
+
+/**
+ * Both switches are on the page, or both are gone. A failure says where
+ * DOM focus was and whether Back's tooltip was shown when it failed.
+ */
 async function expectShown(page, slug, shown) {
   for (const part of ['contours', 'campsites']) {
-    await expect(layer(page, slug, part), part).toHaveCount(shown ? 1 : 0);
+    try {
+      await expect(layer(page, slug, part), part).toHaveCount(shown ? 1 : 0);
+    } catch (error) {
+      error.message = `${error.message}\nState at the failure: ${await pageState(page)}`;
+      throw error;
+    }
+  }
+}
+
+/**
+ * Moves the mouse off the app bar and waits, at most ten seconds, until
+ * Back's tooltip has not been shown for half a second. A precondition, not
+ * a retry: a tooltip still open when the next screen is pushed takes
+ * Escape from the layers there (FL-484).
+ */
+async function noTooltip(page) {
+  const size = page.viewportSize();
+  await page.mouse.move(size.width / 2, size.height - 2);
+  const start = Date.now();
+  let since = Date.now();
+  while (Date.now() - since < 500) {
+    if (Date.now() - start > 10000) throw new Error(`Back's tooltip still shown after ten seconds; ${await pageState(page)}`);
+    await page.waitForTimeout(100);
+    if (await backTooltip(page)) since = Date.now();
   }
 }
 
@@ -148,9 +202,10 @@ test.describe('Escape (2.1.2)', () => {
   // are still there and focus has not moved; then Space on the stop turns
   // its layer, so keys arrive. Then, on the same page, the positive control
   // for Escape itself: the layers are closed with the mouse, Back goes to
-  // the technique's screen, the good example the bad one is made from is
-  // opened from there, and the same Escape closes its layers. Written to
-  // fail when Escape closes the bad example's layers.
+  // the technique's screen, the mouse leaves the app bar and no tooltip is
+  // shown (FL-484), the good example the bad one is made from is opened
+  // from there, and the same Escape, sent once, closes its layers. Written
+  // to fail when Escape closes the bad example's layers.
   for (const slug of ['bad-not-dismissible', 'bad-no-escape']) {
     test(`${slug}: Escape does nothing, from either switch`, async ({ page }) => {
       await showByKeyboard(page, slug);
@@ -177,6 +232,12 @@ test.describe('Escape (2.1.2)', () => {
       }
       await expectShown(page, slug, false);
       await page.getByRole('button', { name: 'Back' }).click();
+      // The mouse is left where Back was, which is where the technique
+      // screen's Back is, so its tooltip shows; if it is still hiding when
+      // the good example is pushed over it, it can take every Escape there
+      // (FL-484). So the mouse leaves the app bar first, and the good
+      // example is opened once no tooltip is shown.
+      await noTooltip(page);
       const [good, title] = goodOf[slug];
       await page.getByRole('button', { name: new RegExp(`^${title}`) }).click();
       await expect(control(page, good, 'count')).toBeVisible();

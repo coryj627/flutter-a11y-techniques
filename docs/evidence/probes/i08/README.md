@@ -291,3 +291,173 @@ keyboard and, from each switch, the test went back in one of three ways:
 What was measured is the history event, not the key. That Alt+Left or
 Command+[ in a person's browser makes that event while Flutter has
 keyboard focus was not measured.
+
+## Round 6: the web Escape flake (2026-11-23)
+
+On GitHub CI (Chromium on ubuntu) the positive control of
+`bad-no-escape: Escape does nothing, from either switch` failed now and
+then: Escape on `good-widgets`' Contour lines, opened from the technique's
+screen after the bad example, left both switches shown for five seconds.
+It passed on a re-run each time, and here every time. The probe:
+`probe_web_flake.spec.js.txt` (served by `p08flake.config.js.txt`) does the
+test's own steps and records the outcome instead of failing, with DOM
+focus and key events from the page; `probe_web_flake.dart.txt` is the app
+with prints of Flutter's primary focus, each key event, which key handler
+of the focus chain took Escape, and every `RawTooltip` in the tree; and
+`probe_web_flake_examples.diff.txt` is the prints added to the examples
+for the probe (never committed to the examples themselves). Output and
+counts: `web_flake.txt`.
+
+- **Reproduced only with the page made slower, and only as Linux.** With
+  `navigator.platform` set to Linux, as on CI (Flutter then uses Zoom page
+  transitions; on this Mac it takes the platform to be macOS), and
+  Chromium's CPU throttled four times (CDP
+  `Emulation.setCPUThrottlingRate`), Escape did not close the layers in 4
+  of 30, 1 of 10, 3 of 30, 1 of 30, 6 of 40, 7 of 40 and 5 of 30 runs; at
+  two times, 2 of 30. Unthrottled as Linux, 0 of 20; throttled four times
+  as macOS, 0 of 30. The test as it is, at CI's two workers, 30 of 30.
+- **What the page was in when it failed.** DOM focus and Flutter's primary
+  focus both on Contour lines in the overlay, one barrier, the Escape
+  `keydown` reaching Flutter with nothing else pressed. Flutter took the
+  key (the engine stopped the event, and the late handler never saw it),
+  but the layers' `DismissIntent` action did not run. A second Escape,
+  about six seconds after the first (after the probe's 5 s wait for the layers to close and a further second): the same, in every failed run.
+- **What took it.** The handler that returned `handled` was `WidgetsApp`'s
+  own `Focus` for tooltips (`widgets/app.dart`: it handles Escape when
+  `RawTooltip.dismissAllToolTips()` returns true, which it does whenever a
+  tooltip is registered as open). It is lower in the focus chain than the
+  app's default `Shortcuts` that turns Escape into `DismissIntent`, so it
+  runs first. (A `Shortcuts` inside the layers would be lower still: see
+  the fifth part.) In the 30 runs that list tooltips, the technique screen's Back
+  tooltip was built when the test clicked the example's title in all 30
+  (the mouse was still where it had clicked Back on the bad example's
+  screen, which is where the technique screen's Back appears). In the 25
+  that closed, it was gone by the time of the Escape. In the 5 that did
+  not, it was still built, in the technique's route, now under the example
+  with its tickers off, and that handler returned `handled`; in the 25 it
+  returned `ignored`. Read in the source: a tooltip leaves the open list
+  only when its hide animation ends (`RawTooltipState._handleStatusChanged`),
+  and an animation does not run while its route's tickers are off; that
+  this is why it stayed was not measured.
+- **With the tooltip out of the way, no failure.** The same steps with the
+  mouse moved off the app bar for a second after Back, so that no tooltip
+  was shown at the title click: 40 of 40 closed, at four times throttling.
+- **The other pair.** `bad-not-dismissible` then `good-material`, the
+  same way, at four times: 40 of 40 closed. Back's tooltip was built at
+  the title click in 39 of them and gone by the Escape in all 40; why it
+  never stayed there was not found.
+
+So Escape on `good-widgets` failed in a state a person with a mouse can
+reach: a tooltip still being hidden when a new screen is pushed over it.
+How often that happens on real hardware, without throttling, was not
+measured. The trace lines printed for the key up (handlers 6 to 10 in
+`web_flake.txt`) are the probe's wrappers still in place from the key
+down, not a second dispatch.
+
+### Round 6, second part: a tooltip kept shown by hover
+
+`probe_web_flake_hover.spec.js.txt` (served by `p08tip.config.js.txt`),
+unthrottled; output `web_flake_hover.txt`. Can the state be made without
+slowing the page? On the technique screen the mouse rests on Back until
+its tooltip shows; with the mouse left there, Tab and Enter open the
+example, Tab and Enter show its layers, and Escape is sent once DOM focus
+is on Contour lines.
+
+- `good-widgets`, Escape within a 50 ms poll of focus reaching Contour
+  lines (the time from opening the layers not recorded in this version):
+  the first Escape left the layers shown in 28 of 28 runs with Flutter
+  seeing Linux and 10 of 10 seeing macOS. A second Escape, about six seconds after the first (after the probe's 5 s wait for the layers to close and a further second),
+  closed them in all 28 where it was sent. In the probe build (4 runs, as
+  Linux, with a walk of the widget tree before Escape) the tooltip in the
+  tree at the first Escape was the example screen's own Back tooltip, in
+  the current route under the layers' barrier, and it was gone after that
+  Escape. So this is the same handler taking the key, but not the stuck
+  state of the first part: there a second Escape did nothing.
+- With 400, 1000, or 3000 ms between focus reaching Contour lines and
+  Escape, as Linux: closed in 4 of 4 runs each.
+- `good-material` and `good-cupertino` in this version were not timed
+  like `good-widgets`: the probe waited up to five seconds for focus on
+  Contour lines, which in a route comes only after a Tab, and then 600 ms
+  before that Tab and 400 ms after it, about six seconds in all. They
+  closed in 10 of 10 runs each, and in the probe build (`good-material`,
+  3 runs) Back's tooltip was not in the tree by then. These runs say
+  nothing about the routes at the timing where `good-widgets` failed.
+
+Second version, after review: `probe_web_flake_hover2.spec.js.txt`,
+output `web_flake_hover2.txt`. The same steps, unthrottled, as Linux, 20
+runs of each good example, with no added waits from Enter on Map layers
+to Escape (for the routes, the one Tab from the route's scope is sent as
+soon as the switch is in the tree and focus has left Map layers), and the
+time from that Enter to Escape recorded:
+
+- `good-widgets`: Escape at 152 to 218 ms; the first Escape left the
+  layers shown in 20 of 20.
+- `good-material`: Escape at 116 to 199 ms; left shown in 20 of 20.
+- `good-cupertino`: its popup took longer to reach Contour lines, so
+  Escape came at 282 to 452 ms; left shown in all 11 runs at 383 ms or
+  less, closed in all 9 at 398 ms or more.
+- A second Escape, about six seconds after the first (after the probe's 5 s wait for the layers to close and a further second), closed them in every run where it was sent.
+
+So at comparable timing no difference was seen between the overlay and
+the routes; going by the `good-cupertino` runs, the state lasts about
+400 ms from opening the layers here. It was not made a
+test: a test of it would rest on how soon Escape follows the layers.
+
+### Round 6, third part: the test after the change
+
+The positive controls now move the mouse off the app bar after Back and
+open the good example only once Back's tooltip has not been shown for
+half a second (FL-484). The committed spec, with Flutter seeing Linux and
+the CPU throttled four times, ran the two tests 30 times each: 60 of 60
+passed (`probe_web_fixcheck.txt`).
+
+### Round 6, fourth part: the web status, and the attempt at a test
+
+The owner decided on 2026-11-23 that I08's web status is a limitation
+because of FL-484. The same hover probe was then run with the CPU
+throttled (10 runs per example, as Linux, appended to
+`web_flake_hover2.txt`): at two times slower the first Escape left the
+layers shown in every run of `good-widgets` and `good-material`, and a
+second, about six seconds after the first, closed them; at four times
+slower the first Escape left
+`good-widgets`' layers shown in 10 of 10 and `good-material`'s in 6 of
+10 (those that closed had Escape at 262 ms or later), and a second
+Escape, about six seconds after the first, did not always close them. A test of `good-widgets` in the I08 web spec
+held unthrottled and at two times slower, and at four times slower once
+went past its 300 ms bound, with the second Escape, in its first form
+sent about a second after the first, leaving the layers shown in 10 of 10 (`web_flake_test_attempt.txt`). It
+was not added.
+
+### Round 6, fifth part: a local Escape shortcut, and the second Escape's timing
+
+After review: `probe_web_flake_hover3.spec.js.txt` (the second version,
+with `P08_GAP` added and the probe build's tree dumps taken only after the
+outcome, so that they do not delay Escape), output `web_flake_hover3.txt`.
+Unthrottled, Flutter seeing Linux, the same steps and timing as the
+second version.
+
+- **A local Escape shortcut.** The probe build of `probe_web_flake.dart.txt`
+  with `probe_web_local_shortcuts.diff.txt` (profile mode; never committed
+  to the examples) puts a `Shortcuts` mapping Escape to `DismissIntent`
+  round `good-widgets`' layers, inside their `Actions`, and round
+  `good-material`'s sheet content. The first Escape closed the layers in
+  20 of 20 runs of `good-widgets` (85 to 205 ms from Enter on Map layers
+  to Escape) and 20 of 20 of `good-material` (115 to 203 ms). The same
+  probe build without the diff, as a control: 0 of 10 of each (111 to
+  233 ms, 110 to 180 ms). After the layers had closed, the example
+  screen's Back tooltip was in the tree, with the mouse still resting on
+  Back; whether that Escape left it open or it showed again on hover was
+  not separated. Read in the source: `FocusManager` sends a key from the
+  focused node up through its ancestors and stops at the first that
+  handles it, so a `Shortcuts` inside the layers comes before
+  `WidgetsApp`'s tooltip `Focus`. The examples do not use it (FL-484,
+  Workaround).
+- **The second Escape, 200, 500, and 1000 ms after the first** (release
+  build, the examples as committed). Just before the second Escape the
+  layers were still shown in every run, and the second Escape closed them
+  in every run: `good-widgets` 20 of 20 at each gap (actual gaps 201 to
+  211, 501 to 547, 1002 to 1028 ms; closed within 9 to 30 ms),
+  `good-material` 10 of 10 at each gap (actual gaps 200 to 205, 501 to
+  507, 1001 to 1007 ms; closed within 193 to 244 ms, the sheet's own
+  closing). Before this, every second Escape in the probes was sent about
+  six seconds after the first.
