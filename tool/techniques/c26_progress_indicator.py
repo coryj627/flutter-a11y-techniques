@@ -55,8 +55,10 @@ TALKBACK_EXPECT = {
     "c26-bad-silent-end-bar-again": (["Report upload", "Progress bar"], []),
     "c26-bad-silent-end-bar-run": (["(must be silent)"], []),
     "c26-bad-silent-end-bar-run-live": (["Upload complete"], []),
-    # FL-257 is on iOS and in a browser on a Mac: on Android the adaptive
-    # spinner is Material's, and the status line is announced.
+    # FL-257, the dropped label, is on iOS and in a browser on a Mac: on
+    # Android the adaptive spinner is Material's, named, with no role as
+    # every spinner (FL-256; asserted in the tree test), and the status
+    # line is announced.
     "c26-bad-adaptive-start": (["Load inbox", "Button"], []),
     "c26-bad-adaptive-run": (_LOAD, []),
     "c26-bad-cupertino-bar-start": (["Upload report", "Button"], []),
@@ -103,6 +105,10 @@ VOICEOVER_WEB_METHOD = (
     "the end with any expected stop not read, fails for good; only a walk cut short with every "
     "stop right so far is walked again, up to three walks. `-announced`: keyboard focus on the "
     "example's button, Enter pressed, and VoiceOver's last phrase polled for eight seconds "
-    "(Chromium only: Playwright's WebKit build passes no live region changes to VoiceOver). No "
+    "(Chromium only: Playwright's WebKit build passes no live region changes to VoiceOver). "
+    "`-loading`, for the spinners: keyboard focus on the button, Enter, and at most two "
+    "`voiceOver.next()` moves while the spinner is shown, each phrase read straight after its move "
+    "with the time since Enter; the reading must hold the spinner's name and no role word, and an "
+    "empty, stale, or late capture fails (web_tests/vo/c26_vo_walks.js, judgeSpinnerReading). No "
     "runner retries"
 )

@@ -182,13 +182,17 @@ class C26ProgressIndicatorTest : TechniqueTest("C26") {
     }
 
     @Test
-    fun badAdaptiveIsMaterialsSpinnerOnAndroid() {
-        // FL-257 is on iOS and in a browser on a Mac; on Android the
-        // adaptive spinner is Material's, named.
+    fun badAdaptiveIsMaterialsSpinnerOnAndroidNamedWithNoRole() {
+        // FL-257, the dropped label, is on iOS and in a browser on a Mac; on
+        // Android the adaptive spinner is Material's, named, and with no
+        // role, as every spinner (FL-256): a plain View.
         open("bad-adaptive")
         press("bad-adaptive")
         assertTrue(waitFor(3_000) { nodeOrNull("c26-bad-adaptive-spinner") != null })
-        assertEquals("Loading inbox", nodeOrNull("c26-bad-adaptive-spinner")!!.name())
+        val spinner = nodeOrNull("c26-bad-adaptive-spinner")!!
+        assertEquals("Loading inbox", spinner.name())
+        assertEquals("android.view.View", spinner.type())
+        assertNull(spinner.rangeInfo)
     }
 
     @Test

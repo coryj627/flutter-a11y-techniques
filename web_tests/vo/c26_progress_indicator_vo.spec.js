@@ -17,14 +17,22 @@
 // three with a bar in each browser, on lists written as predictions: a bar
 // was read with its value twice, in its name and then as a percentage.
 //
+// The spinners are also read while they load (`-loading`): a reading that
+// must have the name and no role word (FL-256), judged by
+// judgeSpinnerReading in c26_vo_walks.js.
+//
 // This spec runs in a browser on a Mac, so bad-adaptive's spinner is the
 // Cupertino one, with nothing for VoiceOver (FL-257).
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import {
-  activateBrowser, assertCaptureIsLive, heardAfter, waitUntilQuiet, walkToEnd,
+  activateBrowser, assertCaptureIsLive, heardAfter, lastPhrase, waitUntilQuiet, walkToEnd,
 } from './vo_helpers.js';
-import { EXAMPLE_HEADING, WALKS, judgeExampleWalk, runWalks, screenStops } from './c26_vo_walks.js';
+import {
+  EXAMPLE_HEADING, WALKS, judgeExampleWalk, judgeSpinnerReading, runWalks, screenStops,
+} from './c26_vo_walks.js';
+
+const SPINNER_NAME = 'Loading inbox';
 
 test.describe.configure({ retries: 0 });
 
@@ -39,6 +47,44 @@ const ANNOUNCED = {
 };
 
 const start = (page, slug) => page.locator(`[flt-semantics-identifier="c26-${slug}-start"]`);
+
+// The spinners' defect (FL-256), read while loading: keyboard focus, and
+// with it VoiceOver's cursor, on the button; Enter; then at most two
+// VoiceOver moves forward while the spinner is shown (four seconds), each
+// read straight after the move with the time since Enter and whether the
+// spinner's element was in the page. judgeSpinnerReading requires the name
+// and refuses every role word, and fails a capture that is empty, stale,
+// or late. In Chromium and WebKit.
+for (const slug of ['bad-no-role', 'bad-cupertino-no-role']) {
+  test(`voiceover reads ${slug}'s spinner while it loads`, async ({ page, voiceOver, browserName }) => {
+    expect(voiceOver).toBeTruthy();
+    await page.goto(`/#/t/C26/${slug}`, { waitUntil: 'load' });
+    await expect(start(page, slug)).toBeVisible();
+    await page.waitForTimeout(600);
+    await activateBrowser(browserName);
+    await page.bringToFront();
+    await page.getByRole('heading', { name: 'Example', level: 2 }).click();
+    await start(page, slug).focus();
+    await waitUntilQuiet(page);
+    const spinner = page.locator(`[flt-semantics-identifier="c26-${slug}-spinner"]`);
+    await page.keyboard.press('Enter');
+    const t0 = Date.now();
+    await spinner.waitFor({ timeout: 2000 });
+    await page.waitForTimeout(300);
+    const before = await lastPhrase();
+    const moves = [];
+    for (let i = 0; i < 2; i++) {
+      await voiceOver.next();
+      const phrase = (await lastPhrase()).replace(/\s+/g, ' ').trim();
+      moves.push({ phrase, ms: Date.now() - t0, shown: (await spinner.count()) > 0 });
+      if (phrase.includes(SPINNER_NAME)) break;
+    }
+    const { verdict, reason } = judgeSpinnerReading(before, moves, SPINNER_NAME);
+    const shown = moves.map((m) => `${m.phrase || '(empty)'} (${m.ms} ms, spinner ${m.shown ? 'shown' : 'gone'})`).join(' / ');
+    console.log(`C26VO ${browserName} ${slug}-loading | before: ${before || '(empty)'} / ${shown} (${verdict}: ${reason})`);
+    expect(verdict, `${slug}: ${reason}`).toBe('right');
+  });
+}
 
 for (const [slug, byBrowser] of Object.entries(WALKS)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {

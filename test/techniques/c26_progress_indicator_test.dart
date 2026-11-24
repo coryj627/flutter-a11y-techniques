@@ -554,20 +554,22 @@ void main() {
       });
     }
 
-    testWidgets('bad-adaptive as Android: Material\'s spinner, named', (
-      tester,
-    ) async {
-      final handle = tester.ensureSemantics();
-      await _open(tester, 'bad-adaptive');
-      await _press(tester, 'bad-adaptive');
-      await _step(tester);
-      final spinner = dataById('c26-bad-adaptive-spinner');
-      expect(
-        (spinner.role, spinner.label),
-        (SemanticsRole.loadingSpinner, 'Loading inbox'),
-      );
-      handle.dispose();
-    });
+    testWidgets(
+      'bad-adaptive as Android: Material\'s spinner, named, with '
+      'the loading spinner role, which no platform turns into a role (FL-256)',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        await _open(tester, 'bad-adaptive');
+        await _press(tester, 'bad-adaptive');
+        await _step(tester);
+        final spinner = dataById('c26-bad-adaptive-spinner');
+        expect(
+          (spinner.role, spinner.label),
+          (SemanticsRole.loadingSpinner, 'Loading inbox'),
+        );
+        handle.dispose();
+      },
+    );
 
     testWidgets('bad-cupertino-bar: the bar exposes no role, name, or value, '
         'at rest and while running', (tester) async {

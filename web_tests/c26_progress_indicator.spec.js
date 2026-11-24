@@ -9,7 +9,10 @@
 // MutationObserver from before the button is pressed (I12's recorder).
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
-import { EXAMPLE_HEADING, EXAMPLE_SCREENS, WALKS, judgeExampleWalk, runWalks, screenStops } from './vo/c26_vo_walks.js';
+import {
+  EXAMPLE_HEADING, EXAMPLE_SCREENS, ROLE_WORDS, SPINNER_MS, WALKS, judgeExampleWalk, judgeSpinnerReading, runWalks,
+  screenStops,
+} from './vo/c26_vo_walks.js';
 
 const status = (page, slug) => byId(page, `c26-${slug}-status`);
 const { open } = technique('C26', { ready: status, settle: 900 });
@@ -241,12 +244,17 @@ test.describe('bad-adaptive', () => {
     await expect(byId(page, SPINNER['bad-no-role'])).toHaveAccessibleName('Loading inbox', { timeout: 3000 });
   });
 
-  test('in a browser on Linux the spinner is Material\'s, named', async ({ page }) => {
+  test('in a browser on Linux the spinner is Material\'s, named, with no role (FL-256)', async ({ page, context }) => {
     await page.goto('about:blank');
     await asPlatform(page, 'Linux x86_64');
     await openAndStart(page, 'bad-adaptive');
     expect(await page.evaluate(() => navigator.platform)).toBe('Linux x86_64');
-    await expect(byId(page, SPINNER['bad-adaptive'])).toHaveAccessibleName('Loading inbox', { timeout: 3000 });
+    const spinner = byId(page, SPINNER['bad-adaptive']);
+    await expect(spinner).toHaveAccessibleName('Loading inbox', { timeout: 3000 });
+    expect(await exposed(page, context, spinner)).toEqual({
+      role: null, label: 'Loading inbox', now: null, min: null, max: null, text: null, tabindex: null,
+    });
+    expect(await chromiumProgressBars(page)).toEqual([]);
   });
 });
 
@@ -331,5 +339,42 @@ test.describe('the VoiceOver walk judge', () => {
     expect(judgeExampleWalk(predicted, true, WALKS['bad-no-label'].chromium, screenOf).verdict).toBe('wrong');
     const linear = [...screen, EXAMPLE_HEADING, 'Upload report button', 'Report upload 0 progress indicator', 'Not started'];
     expect(judgeExampleWalk(linear, true, expected, screen).verdict).toBe('wrong');
+  });
+});
+
+// The judge of the VoiceOver spec's spinner reading while loading
+// (judgeSpinnerReading in vo/c26_vo_walks.js), on made-up readings: every
+// shape a move can take, and the ways a capture can be empty, stale, late,
+// or hold a role.
+test.describe('the VoiceOver spinner judge', () => {
+  const name = 'Loading inbox';
+  const before = 'Loading started';
+  const at = (phrase, ms = 900, shown = true) => ({ phrase, ms, shown });
+  const judge = (moves, b = before) => judgeSpinnerReading(b, moves, name).verdict;
+
+  test('the name with no role word, in time, while shown, is right', () => {
+    expect(judge([at('Loading inbox')])).toBe('right');
+    // The status line first, then the spinner.
+    expect(judge([at('Inbox not loaded'), at('Loading inbox', 1500)])).toBe('right');
+  });
+  test('every role word fails, whole and in any case', () => {
+    expect(ROLE_WORDS).toContain('progress indicator');
+    for (const word of ROLE_WORDS) {
+      expect(judge([at(`Loading inbox ${word}`)]), word).toBe('wrong');
+      expect(judge([at(`Loading inbox ${word.toUpperCase()}`)]), word).toBe('wrong');
+    }
+    expect(judge([at('Loading inbox 0% progress indicator')])).toBe('wrong');
+  });
+  test('the spinner not reached, or reached late or once gone, fails', () => {
+    expect(judge([])).toBe('wrong');
+    expect(judge([at('Inbox not loaded'), at('Back button', 1200)])).toBe('wrong');
+    expect(judge([at('Loading inbox', SPINNER_MS + 1)])).toBe('wrong');
+    expect(judge([at('Loading inbox', 1000, false)])).toBe('wrong');
+  });
+  test('an empty or stale capture fails', () => {
+    expect(judge([at('')])).toBe('wrong');
+    expect(judge([at('Loading inbox')], 'Loading inbox')).toBe('wrong');
+    expect(judge([at('Inbox not loaded'), at('Inbox not loaded', 1500)])).toBe('wrong');
+    expect(judge([at('Inbox not loaded'), at('', 1500)])).toBe('wrong');
   });
 });

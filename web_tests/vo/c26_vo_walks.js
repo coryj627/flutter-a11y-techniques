@@ -65,6 +65,58 @@ export const screenStops = (slug) => {
  * a percentage, "0%" (FL-027).
  */
 const both = (list) => ({ chromium: list, webkit: list });
+
+/**
+ * The words that would say what a spinner is, any of which in its reading
+ * means it has a role: VoiceOver's word for a `progressbar`, taken from
+ * C26's own bar reading ("Report upload 0 0% progress indicator"), and the
+ * other words a spinner could be read with. Matched whole, case ignored.
+ */
+export const ROLE_WORDS = [
+  'progress indicator', 'progress bar', 'busy indicator', 'activity indicator',
+  'spinner', 'image', 'group', 'button', 'status', 'timer',
+];
+
+/** How long a C26 spinner is shown after its button is pressed. */
+export const SPINNER_MS = 4000;
+
+/**
+ * Judges a spinner's reading while it loads (FL-256). `before` is
+ * VoiceOver's last phrase just before the first move; `moves` is each move
+ * after the press, in order: `{ phrase, ms, shown }`, the phrase read
+ * straight after the move, the milliseconds since the press, and whether
+ * the spinner's element was in the page then. Returns `{ verdict, reason }`,
+ * the verdict "right" or "wrong"; anything not shown right is wrong:
+ *
+ * - every move's phrase must be non-empty and differ from the phrase before
+ *   it (the one before the first move is `before`), so that an empty or
+ *   stale capture cannot pass;
+ * - some move must read `name` while the spinner was shown and within
+ *   SPINNER_MS of the press; if none did, the spinner was not reached in
+ *   time, and that is a failure, not a pass;
+ * - that reading must hold none of ROLE_WORDS.
+ *
+ * Only the first move that reads `name` is judged; the test makes no move
+ * after it.
+ */
+export function judgeSpinnerReading(before, moves, name) {
+  let previous = before;
+  for (let i = 0; i < moves.length; i++) {
+    const { phrase, ms, shown } = moves[i];
+    if (!phrase) return { verdict: 'wrong', reason: `move ${i + 1} read an empty phrase` };
+    if (phrase === previous) return { verdict: 'wrong', reason: `move ${i + 1} read "${phrase}" again: the capture is stale` };
+    previous = phrase;
+    if (!phrase.toLowerCase().includes(name.toLowerCase())) continue;
+    if (!shown || ms > SPINNER_MS) {
+      return { verdict: 'wrong', reason: `the spinner was not reached in time: "${phrase}" at ${ms} ms, spinner ${shown ? 'shown' : 'gone'}` };
+    }
+    const roles = ROLE_WORDS.filter((w) => new RegExp(`\\b${w}\\b`, 'i').test(phrase));
+    if (roles.length) return { verdict: 'wrong', reason: `"${phrase}" holds a role word: ${roles.join(', ')}` };
+    return { verdict: 'right', reason: `"${phrase}" at ${ms} ms: the name and no role word` };
+  }
+  return { verdict: 'wrong', reason: `the spinner was not reached: no move read "${name}"` };
+}
+
 export const WALKS = {
   'good-linear': both(['Upload report button', 'Report upload 0 0% progress indicator', 'Not started']),
   'bad-no-role': both(['Load inbox button', 'Inbox not loaded']),

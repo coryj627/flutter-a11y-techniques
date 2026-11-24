@@ -324,7 +324,7 @@ class BadCupertinoNoRole extends StatelessWidget {
 /// browser on a Mac, it draws a `CupertinoActivityIndicator` and drops the
 /// label, as its documentation says: the spinner is not there for a screen
 /// reader at all (FL-257). On Android, and in a browser elsewhere, it is
-/// Material's spinner, named.
+/// Material's spinner, named, and with no role, as every spinner (FL-256).
 class BadAdaptive extends StatelessWidget {
   const BadAdaptive({super.key});
 

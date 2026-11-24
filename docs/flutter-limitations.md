@@ -3557,7 +3557,10 @@ yet), **Fixed in x.y** (verified on that version).
   asserted on every layer and written to fail when Flutter adds the role:
   the tree tests (no role on the web, a plain `View` on Android, static
   text on iOS), the TalkBack transcript (the spinner read by its name with
-  no role word), and the iOS VoiceOver transcript ("Loading inbox" alone).
+  no role word), the iOS VoiceOver transcript ("Loading inbox" alone), and
+  the web VoiceOver spec, which reads each spinner while it loads in
+  Chromium and WebKit and requires its name and no role word
+  (`judgeSpinnerReading` in `web_tests/vo/c26_vo_walks.js`).
   The spinners' measurements in the C26 probe (p05, p08, p14, p20 to p22)
   are this entry's evidence as well.
 - Upstream issue: not searched yet (D25).
@@ -3575,7 +3578,8 @@ yet), **Fixed in x.y** (verified on that version).
   with nothing in it, passed over by VoiceOver; the web in Chromium on a
   Mac, an element with no name or role, because Flutter takes the
   platform from `navigator.platform` ("MacIntel" gives macOS). On Android
-  it is Material's spinner, named.
+  it is Material's spinner, named, with no role, as every spinner
+  ([FL-256](#fl-256)).
 - WCAG: 4.1.2 Name, Role, Value, as C26's spec reads it, on iOS and in a
   browser on a Mac.
 - What it means: a label that looks set in the code reaches no screen
