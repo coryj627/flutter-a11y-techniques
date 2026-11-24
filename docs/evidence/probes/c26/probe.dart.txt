@@ -1,0 +1,275 @@
+// C26 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c26/probe.dart.txt): what Flutter's progress
+// indicators expose to assistive technology, still and while they change,
+// and how the end of loading can be made known. One fixture per route,
+// `/p01` to `/p22`; `/` lists them all. A route with "a" after the id
+// (`/p17a`) starts the fixture's progress by itself 10 s after it opens, so
+// that a screen reader's cursor can be left on the indicator.
+//
+// Each fixture is "Before pNN", the indicator (and for the changing ones a
+// "pNN Start" button and, where it says so, a status line), and "pNN end",
+// the last element. A changing fixture goes 0, 20, 40, 60, 80, 100 one step
+// every 1.2 s after Start, then its indicator is replaced as it says.
+// Round 2: a bar is at 0 before Start (in round 1 it was indeterminate
+// there, and its animation kept XCUITest waiting for the app to be idle).
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      onGenerateRoute: (settings) {
+        var name = (settings.name ?? '/').replaceFirst('/', '');
+        final auto = name.length == 4 && name.endsWith('a');
+        if (auto) name = name.substring(0, 3);
+        // Round 2: `/` lists nothing. In round 1 it listed every fixture,
+        // p04 among them, and a cold start by URL on iOS builds `/` before
+        // the fixture's route: p04's assertion then stopped every
+        // semantics update, and no fixture's elements were found.
+        final ids = fixtures.containsKey(name) ? [name] : <String>[];
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => FixtureScreen(ids: ids, auto: auto),
+        );
+      },
+    );
+  }
+}
+
+Widget still(String id, Widget indicator) => SizedBox(width: 240, child: indicator);
+
+/// The fixtures that do not change.
+final Map<String, Widget Function()> stills = {
+  'p01': () => LinearProgressIndicator(value: 0.4, semanticsLabel: 'p01 Upload'),
+  'p02': () => const LinearProgressIndicator(value: 0.4),
+  'p03': () => const LinearProgressIndicator(
+    value: 0.4,
+    semanticsLabel: 'p03 Upload',
+    semanticsValue: '40%',
+  ),
+  'p04': () => const LinearProgressIndicator(
+    value: 0.4,
+    semanticsLabel: 'p04 Upload',
+    semanticsValue: '2 of 5 files',
+  ),
+  'p05': () => const LinearProgressIndicator(semanticsLabel: 'p05 Loading'),
+  'p06': () => const LinearProgressIndicator(),
+  'p07': () => const CircularProgressIndicator(value: 0.4, semanticsLabel: 'p07 Upload'),
+  'p08': () => const CircularProgressIndicator(semanticsLabel: 'p08 Loading'),
+  'p09': () => const CircularProgressIndicator.adaptive(semanticsLabel: 'p09 Loading'),
+  'p10': () => const CircularProgressIndicator.adaptive(
+    value: 0.4,
+    semanticsLabel: 'p10 Upload',
+  ),
+  'p11': () => const CupertinoActivityIndicator(),
+  'p12': () => const CupertinoActivityIndicator.partiallyRevealed(progress: 0.4),
+  'p13': () => const CupertinoLinearActivityIndicator(progress: 0.4),
+  'p14': () => Semantics(label: 'p14 Loading', child: const CupertinoActivityIndicator()),
+  'p15': () => const Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('p15 Uploading report'),
+      LinearProgressIndicator(value: 0.4, semanticsLabel: 'p15 Uploading report'),
+    ],
+  ),
+  'p16': () => const LinearProgressIndicator(value: 1.0, semanticsLabel: 'p16 Upload'),
+};
+
+/// What a changing fixture does: [indicator] while it runs, [done] after.
+class Moving {
+  const Moving({required this.indicator, required this.done, this.status, this.announce});
+
+  final Widget Function(String id, double? value, bool running) indicator;
+  final Widget Function(String id) done;
+
+  /// A status line in a live region: its text at each step, or null.
+  final String Function(String id, double? value, bool finished)? status;
+
+  /// Sent with SemanticsService.sendAnnouncement at the end.
+  final String Function(String id)? announce;
+}
+
+final Map<String, Moving> movings = {
+  // A determinate bar, then a plain text with no live region.
+  'p17': Moving(
+    indicator: (id, v, _) => LinearProgressIndicator(value: v ?? 0, semanticsLabel: '$id Upload'),
+    done: (id) => Text('$id Upload complete'),
+  ),
+  // The same with a status line in a live region, at every step.
+  'p18': Moving(
+    indicator: (id, v, _) => LinearProgressIndicator(value: v ?? 0, semanticsLabel: '$id Upload'),
+    done: (id) => Text('$id bar gone'),
+    status: (id, v, finished) => finished
+        ? '$id Upload complete'
+        : v == null
+        ? '$id Not started'
+        : '$id ${(v * 100).round()}% uploaded',
+  ),
+  // The same with an announcement from code at the end, and no live region.
+  'p19': Moving(
+    indicator: (id, v, _) => LinearProgressIndicator(value: v ?? 0, semanticsLabel: '$id Upload'),
+    done: (id) => Text('$id Upload complete'),
+    announce: (id) => '$id Upload complete',
+  ),
+  // A spinner shown while loading, then a plain text.
+  'p20': Moving(
+    indicator: (id, v, running) => running
+        ? CircularProgressIndicator(semanticsLabel: '$id Loading')
+        : Text('$id Not loading'),
+    done: (id) => Text('$id Loaded'),
+  ),
+  // A live region round the spinner and what replaces it.
+  'p21': Moving(
+    indicator: (id, v, running) => Semantics(
+      liveRegion: true,
+      child: running
+          ? CircularProgressIndicator(semanticsLabel: '$id Loading')
+          : Text('$id Not loading'),
+    ),
+    done: (id) => Semantics(liveRegion: true, child: Text('$id Loaded')),
+  ),
+  // A spinner, and a separate status line in a live region.
+  'p22': Moving(
+    indicator: (id, v, running) => running
+        ? CircularProgressIndicator(semanticsLabel: '$id Loading')
+        : Text('$id Not loading'),
+    done: (id) => Text('$id spinner gone'),
+    status: (id, v, finished) => finished
+        ? '$id Messages loaded'
+        : v == null
+        ? '$id Idle'
+        : '$id Loading messages',
+  ),
+};
+
+final Map<String, Object> fixtures = {...stills, ...movings};
+
+class FixtureScreen extends StatelessWidget {
+  const FixtureScreen({super.key, required this.ids, required this.auto});
+
+  final List<String> ids;
+  final bool auto;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('C26 probe')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          for (final id in ids) ...[
+            Text('Before $id'),
+            const SizedBox(height: 12),
+            if (stills[id] case final build?)
+              Semantics(identifier: '$id-indicator', child: still(id, build()))
+            else
+              MovingFixture(id: id, moving: movings[id]!, auto: auto),
+            const SizedBox(height: 12),
+            Semantics(identifier: '$id-end', child: Text('$id end')),
+            const SizedBox(height: 24),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class MovingFixture extends StatefulWidget {
+  const MovingFixture({super.key, required this.id, required this.moving, required this.auto});
+
+  final String id;
+  final Moving moving;
+  final bool auto;
+
+  @override
+  State<MovingFixture> createState() => _MovingFixtureState();
+}
+
+class _MovingFixtureState extends State<MovingFixture> {
+  double? _value;
+  bool _running = false;
+  bool _finished = false;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.auto) _timer = Timer(const Duration(seconds: 10), _start);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _start() {
+    if (_running) return;
+    _timer?.cancel();
+    setState(() {
+      _running = true;
+      _finished = false;
+      _value = 0;
+    });
+    _timer = Timer.periodic(const Duration(milliseconds: 1200), (t) {
+      final next = (_value ?? 0) + 0.2;
+      if (next > 1.001) {
+        t.cancel();
+        setState(() {
+          _running = false;
+          _finished = true;
+        });
+        final a = widget.moving.announce;
+        if (a != null) {
+          final view = View.of(context);
+          debugPrint('C26PROBE ${widget.id} supportsAnnounce='
+              '${MediaQuery.supportsAnnounceOf(context)}');
+          SemanticsService.sendAnnouncement(view, a(widget.id), TextDirection.ltr);
+        }
+        return;
+      }
+      setState(() => _value = next);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final id = widget.id;
+    final m = widget.moving;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 12,
+      children: [
+        Semantics(
+          identifier: '$id-start',
+          child: FilledButton(onPressed: _start, child: Text('$id Start')),
+        ),
+        SizedBox(
+          width: 240,
+          child: Semantics(
+            identifier: '$id-indicator',
+            child: _finished ? m.done(id) : m.indicator(id, _value, _running),
+          ),
+        ),
+        if (m.status case final status?)
+          Semantics(
+            identifier: '$id-status',
+            liveRegion: true,
+            child: Text(status(id, _value, _finished)),
+          ),
+      ],
+    );
+  }
+}

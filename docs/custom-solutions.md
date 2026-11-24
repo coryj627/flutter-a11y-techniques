@@ -69,6 +69,7 @@ example is added without a decision.
 | [C12 Tooltip](#c12-tooltip) | 3 | 1 | 0 | 2 |
 | [C13 Snackbar and transient messages](#c13-snackbar-and-transient-messages) | 3 | 0 | 0 | 3 |
 | [C18 Card](#c18-card) | 3 | 0 | 0 | 3 |
+| [C26 Progress indicator](#c26-progress-indicator) | 1 | 0 | 0 | 1 |
 | [F01 Text fields and labels](#f01-text-fields-and-labels) | 3 | 0 | 0 | 3 |
 | [F02 Input instructions](#f02-input-instructions) | 3 | 0 | 0 | 3 |
 | [F03 Keyboard types](#f03-keyboard-types) | 4 | 0 | 0 | 4 |
@@ -94,7 +95,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 123 | 51 | 12 | 60 |
+| All | 124 | 51 | 12 | 61 |
 
 ## C01 Button
 
@@ -180,6 +181,14 @@ Nothing flagged.
 | `good-material` | Nothing: `Card(semanticContainer: false)`, as its documentation says for a card with different kinds of content; `Semantics(headingLevel: 3)` on the title; `Image(semanticLabel:)`; `TextButton`s named with `Text(semanticsLabel:)` and given a focus outline through their own `style` | `Card`, `TextButton` | The card's texts join one heading by default ([FL-269](flutter-limitations.md#fl-269)), filled with its own parameter; a faint focus tint ([FL-430](flutter-limitations.md#fl-430)), filled with the button's `style` | R1, R2, R3, R4, R5: iOS Cards, MDN article, Card documentation, S01, S02 | not custom |
 | `good-tappable` | Nothing: a `ListTile(onTap:)` with a title and a subtitle, in a `Card` | `Card`, `ListTile` | An `InkWell` card has no button role ([FL-401](flutter-limitations.md#fl-401)), filled by using `ListTile` | R6, R7: iOS Cards, Card documentation, ARIA button | not custom |
 | `good-cupertino` | Nothing is built: a `DecoratedBox` in Cupertino's grouped background, with `Semantics(headingLevel: 3)` on the title and `Image(semanticLabel:)` | None: Cupertino has no card | none | R1, R2, R3: iOS Cards, MDN article, S02 | not custom |
+
+## C26 Progress indicator
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-linear` | Nothing: `LinearProgressIndicator(value:, semanticsLabel:)`, the visible words in `ExcludeSemantics`, and the status line in `Semantics(liveRegion: true)` | `LinearProgressIndicator`; `Semantics.liveRegion` | A change of the bar's value is not announced ([FL-254](flutter-limitations.md#fl-254)), filled with the documented live region | R1, R2, R4, R5: iOS Progress Indicators, MDN: progress, ARIA progressbar, Understanding 4.1.3, ARIA25 | not custom |
 
 ## F01 Text fields and labels
 

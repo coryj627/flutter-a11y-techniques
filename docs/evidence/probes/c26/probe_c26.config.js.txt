@@ -1,0 +1,17 @@
+// Throwaway: serves the C26 probe build (build/web_probe) for
+// probe_c26.spec.js. Not committed; kept as
+// docs/evidence/probes/c26/probe_c26.config.js.txt.
+import { defineConfig } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = Number(process.env.C26_PORT ?? 29861);
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: /probe_c26\.spec\.js$/,
+  reporter: 'list',
+  workers: 1,
+  timeout: 180_000,
+  use: { baseURL: `http://127.0.0.1:${port}`, browserName: 'chromium' },
+  webServer: webServer(process.env.C26_BUILD ?? 'build/web_probe', port),
+});

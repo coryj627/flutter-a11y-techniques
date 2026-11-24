@@ -1,0 +1,13 @@
+══╡ EXCEPTION CAUGHT BY SCHEDULER LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during a scheduler callback:
+Progress bar value, minValue, and maxValue must be valid numbers. value: "2 of 5 files", minValue:
+"0", maxValue: "100"
+
+When the exception was thrown, this was the stack:
+#0      SemanticsNode._addToUpdate.<anonymous closure> (package:flutter/src/semantics/semantics.dart:4094:9)
+#1      SemanticsNode._addToUpdate (package:flutter/src/semantics/semantics.dart:4097:6)
+#2      SemanticsOwner.sendSemanticsUpdate (package:flutter/src/semantics/semantics.dart:5065:14)
+#3      PipelineOwner.flushSemantics (package:flutter/src/rendering/object.dart:1651:24)
+#4      PipelineOwner.flushSemantics (package:flutter/src/rendering/object.dart:1653:15)
+#5      AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2445:35)
+#6      RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:558:5)

@@ -554,7 +554,116 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C13", "C18"})
+        self.assertEqual(tb.STRICT, {"C05", "C13", "C18", "C26"})
+
+    def test_c05_has_no_silent_rows(self):
+        self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
+
+
+class SilentRows(unittest.TestCase):
+    """Rows of a strict walk declared silent (tb.SILENT), as C26's are: the
+    row must have nothing spoken in it, its capture must be ended by a
+    marker, and the row after it, its liveness control, must be right."""
+    OK = mock.Mock(returncode=0, stdout="")
+    PREFIX = "c26-"
+    SILENT = "c26-bad-silent-end-run"
+    CONTROL = "c26-bad-silent-end-run-live"
+
+    def setUp(self):
+        self.expected = [i for i in tb.EXPECT if i.startswith(self.PREFIX)]
+        self.assertEqual([i for i in self.expected if tb.is_silent(i)],
+                         ["c26-bad-silent-end-run", "c26-bad-silent-end-bar-run"])
+        # A right reading for each element: its required phrases, and
+        # nothing for a silent one. log_for logs the rows in this order,
+        # each ended by the next marker.
+        self.right = {i: [] if tb.is_silent(i) else list(tb.EXPECT[i][0]) for i in self.expected}
+        order = list(self.right)
+        self.assertEqual(order[order.index(self.SILENT) + 1], self.CONTROL)
+
+    def walker(self, logs):
+        logs = iter(logs)
+        self.walks = 0
+
+        def walk_once():
+            self.walks += 1
+            return self.OK, next(logs)
+
+        return walk_once
+
+    def judge(self, log):
+        cut, closed = {}, set()
+        spoken = tb.parse_speech(log, cut, closed)
+        return tb.judge_walk(spoken, self.expected, cut, closed)
+
+    def test_an_empty_silent_row_with_both_markers_and_a_live_control_is_right(self):
+        self.assertEqual(self.judge(log_for(self.right)), ("right", []))
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["right"])
+
+    def test_numbers_in_a_silent_row_are_wrong_and_not_walked_again(self):
+        # Codex's case: the bar's values read out while it must be silent.
+        speech = dict(self.right)
+        speech[self.SILENT] = ["25.0. ", "50.0. ", "75.0. ", "100.0. "]
+        tries = tb.walk_strictly(self.PREFIX, self.walker([log_for(speech), log_for(self.right)]))
+        self.assertEqual([t.verdict for t in tries], ["wrong"])
+        self.assertEqual(self.walks, 1)
+        failures, out = tb.strict_report(tries)
+        self.assertEqual(failures, [f'{self.SILENT}: expected silence, heard "25.0.  | 50.0.  | 75.0.  | 100.0. "'])
+        self.assertIn("Result: FAIL", out)
+
+    def test_any_speech_at_all_in_a_silent_row_is_wrong(self):
+        for words in (["Double-tap to activate"], ["Progress bar"]):
+            speech = dict(self.right)
+            speech[self.SILENT] = words
+            self.assertEqual(self.judge(log_for(speech))[0], "wrong", words)
+
+    def test_a_cut_off_fragment_in_a_silent_row_is_wrong(self):
+        # A fragment that starts in the silent row and is cut off by the
+        # next marker: something was said.
+        log = log_for(self.right).replace(
+            f"11-13 10:00:00.000  1  1 I C01TB   : FOCUS {self.CONTROL}",
+            'V talkback: SpeechControllerImpl: Speaking fragment text="Half\n'
+            f"11-13 10:00:00.000  1  1 I C01TB   : FOCUS {self.CONTROL}")
+        verdict, reasons = self.judge(log)
+        self.assertEqual(verdict, "wrong")
+        self.assertEqual(reasons, [f'{self.SILENT}: expected silence, heard "Half"'])
+
+    def test_a_silent_row_whose_end_marker_was_not_captured_is_incomplete(self):
+        # The log ends inside the silent row: no marker after it.
+        log = log_for(self.right)
+        lines = log.splitlines()
+        cut_at = lines.index(f"11-13 10:00:00.000  1  1 I C01TB   : FOCUS {self.SILENT}")
+        verdict, reasons = self.judge("\n".join(lines[:cut_at + 1]))
+        self.assertEqual(verdict, "incomplete")
+        self.assertIn(f"{self.SILENT}: the capture was not ended by a marker", reasons)
+
+    def test_a_silent_row_with_an_empty_liveness_control_is_incomplete(self):
+        speech = dict(self.right)
+        speech[self.CONTROL] = []
+        verdict, reasons = self.judge(log_for(speech))
+        self.assertEqual(verdict, "incomplete")
+        self.assertIn(f"{self.SILENT}: its liveness control, {self.CONTROL}, is not right", reasons)
+        self.assertIn(f"{self.CONTROL}: nothing was spoken", reasons)
+
+    def test_a_silent_row_with_no_row_after_it_is_incomplete(self):
+        # The walk ends (END) straight after the silent row.
+        order = list(self.right)
+        speech = {i: self.right[i] for i in order[:order.index(self.SILENT) + 1]}
+        verdict, reasons = self.judge(log_for(speech))
+        self.assertEqual(verdict, "incomplete")
+        self.assertIn(f"{self.SILENT}: no liveness control after it", reasons)
+
+    def test_an_empty_row_not_declared_silent_stays_incomplete(self):
+        speech = dict(self.right)
+        speech["c26-good-linear-run"] = []
+        self.assertEqual(self.judge(log_for(speech)),
+                         ("incomplete", ["c26-good-linear-run: nothing was spoken"]))
+
+    def test_parse_speech_is_the_same_with_or_without_the_closed_set(self):
+        log = log_for(self.right)
+        closed = set()
+        self.assertEqual(tb.parse_speech(log), tb.parse_speech(log, {}, closed))
+        self.assertEqual(closed, set(self.right))
 
 
 class FakeSettingsScreen:
