@@ -351,7 +351,15 @@ The probe that came first is in [evidence/probes/c26](../evidence/probes/c26/REA
   heading and every announcement as before. No walk at rest reaches a
   spinner; in review (Codex, 2026-11-23) a reading of each spinner while
   it loads was added (section 6, `-loading`), which that recording did not
-  have, and which the next recording makes.
+  have. The transcript now is the recording at 4323aae, by the principal,
+  with those readings: 22 tests passed, every walk complete on its first
+  try in both browsers, every announcement as before. WebKit read
+  Material's spinner "Loading inbox empty group" (1625 ms after Enter);
+  Cupertino's spinner was read "Loading inbox" in both (1972 ms in
+  Chromium, 1639 ms in WebKit); in Chromium VoiceOver's next went from the
+  button (318, 343) to the status line (318, 439), below the spinner's
+  bottom (427), at 3096 ms, with no move reading "Loading inbox". The two
+  failed recordings before it are below.
 - **On the web a node whose role changes loses its identifier**
   ([FL-259](../flutter-limitations.md#fl-259), new): the probe's first
   round lost its changing bars' identifiers when they went from
@@ -539,21 +547,24 @@ Skips and what they give up, in the tests:
     387, 358, 427), between the button and the status line. So VoiceOver's
     next went from the button to the status line, and did not stop on
     Material's spinner. With the recording at 7b9dc5c, which heard the
-    same words, that is two recordings. Not tried: VoiceOver's other ways
+    same words, and the transcript at 4323aae (above), which passed with
+    the move at the same places, that is three recordings, two with the
+    cursor's place. Not tried: VoiceOver's other ways
     of moving (the rotor, the mouse), and real Safari or Chrome. No cause
     is claimed (FL-256). The row is now that measurement
     (`-loading-passed-over`), asserted both ways: it fails if the move does
     not land on the status line below the spinner, and if the spinner is
     ever read, so that the finding cannot go stale unseen.
   - The margin: the move was read at 3140 ms, 860 ms inside the four
-    seconds the spinner is shown. Most of that time is the settling after
+    seconds the spinner is shown (3096 ms in the transcript, 904 ms
+    inside). Most of that time is the settling after
     Enter (1419 ms) and the wait for a new phrase after the move, which
     runs its full 1.2 seconds here because the status line says the
     announcement's own words. A run slower by more than 860 ms fails the
     row as not reached in time (the spinner gone, or past four seconds); it
     does not pass.
 
-**Not done yet.** A web VoiceOver recording of the spinners while they load that passes, with Material's spinner passed over in Chromium as measured; the principal's to make. VoiceOver's other ways of moving onto Material's spinner in Chromium, and real Safari and Chrome. A release build on Android
+**Not done yet.** VoiceOver's other ways of moving onto Material's spinner in Chromium, and real Safari and Chrome. A release build on Android
 and iOS with a value in words (FL-258). A native Android `ProgressBar`
 and a UIKit progress view, for comparison. Right-to-left. A real Android
 keyboard.

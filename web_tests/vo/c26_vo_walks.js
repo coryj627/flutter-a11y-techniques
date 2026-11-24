@@ -93,19 +93,20 @@ export const INDICATOR_WORDS = [
  * - `{ read }`: its cursor stops on the spinner and says `read`, exactly.
  *   Material's spinner is an element with no role, an `aria-label`, and no
  *   children (FL-256). WebKit read it "Loading inbox empty group" in the
- *   recordings at 7b9dc5c and 9f40ddc: the name, then "group", as for
- *   FL-028's role-less named slider wrapper ("Volume group"; that element
- *   has a child, and no "empty" was said). Cupertino's spinner is
+ *   recordings at 7b9dc5c, 9f40ddc, and 4323aae: the name, then "group",
+ *   as for FL-028's role-less named slider wrapper ("Volume group"; that
+ *   element has a child, and no "empty" was said). Cupertino's spinner is
  *   `Semantics(label:)` round a widget with no semantics: plain text, read
- *   "Loading inbox" in both browsers in both recordings.
+ *   "Loading inbox" in both browsers in all three.
  * - `{ passedOver }`: its cursor does not stop on the spinner. The first
  *   move from the button lands on the status line below it, which says
  *   `passedOver`. This is Chromium with Material's spinner: in the
- *   recording at 9f40ddc the move went from the button (top 343) to the
- *   status line (top 439), where Cupertino's spinner in the same browser
- *   was read at top 387, between them; the one at 7b9dc5c, which read no
- *   position, heard the same words (docs/evidence/probes/c26/
- *   voiceover-web-round3-fail.md.txt and -round4-fail.md.txt).
+ *   recordings at 9f40ddc and 4323aae the move went from the button (top
+ *   343) to the status line (top 439), where Cupertino's spinner in the
+ *   same browser was read at top 387, between them; the one at 7b9dc5c,
+ *   which read no position, heard the same words (docs/evidence/probes/
+ *   c26/voiceover-web-round3-fail.md.txt and -round4-fail.md.txt; the
+ *   transcript, docs/evidence/C26/voiceover-web.md).
  */
 export const SPINNER_READINGS = {
   'bad-no-role': {

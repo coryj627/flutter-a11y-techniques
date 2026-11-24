@@ -3530,12 +3530,13 @@ yet), **Fixed in x.y** (verified on that version).
     spinner. Chromium's own node for Material's spinner is "generic", not
     ignored, with no children (`probes/c26/web-spinner-ax.txt`).
   - VoiceOver on the web, moving on with `next` from the button while the
-    spinner loads (C26 `bad-no-role` and `bad-cupertino-no-role`; the
-    recordings at 7b9dc5c and 9f40ddc, `probes/c26/
-    voiceover-web-round3-fail.md.txt` and `-round4-fail.md.txt`, both
-    measured):
+    spinner loads (C26 `bad-no-role` and `bad-cupertino-no-role`; three
+    recordings, all measured: at 7b9dc5c and 9f40ddc, `probes/c26/
+    voiceover-web-round3-fail.md.txt` and `-round4-fail.md.txt`, and at
+    4323aae, the transcript, `docs/evidence/C26/voiceover-web.md`, which
+    passed):
     - WebKit (Playwright's build, not Safari itself): Material's spinner
-      "Loading inbox empty group", in both recordings. The name, then
+      "Loading inbox empty group", in all three. The name, then
       "group", as VoiceOver says for [FL-028](#fl-028)'s slider wrapper, the other
       named element with no role in this project's transcripts ("Volume
       group", both browsers, `docs/evidence/F10/voiceover-web.md`): a
@@ -3543,9 +3544,9 @@ yet), **Fixed in x.y** (verified on that version).
       has no children; the slider wrapper has one and was read with no
       "empty". Neither word says it is a progress or busy indicator.
       Cupertino's spinner, plain text, "Loading inbox".
-    - Chromium: Cupertino's spinner "Loading inbox", in both recordings.
-      Material's spinner was not read in either. In the recording at
-      9f40ddc, which read the cursor's place, `next` went from the button
+    - Chromium: Cupertino's spinner "Loading inbox", in all three.
+      Material's spinner was not read in any of them. In the two that read
+      the cursor's place (9f40ddc and 4323aae), `next` went from the button
       (top 343) to the status line below the spinner (top 439, "Loading
       started"), where Cupertino's spinner in the same browser was read at
       top 387, between them; the one at 7b9dc5c heard the same words and
