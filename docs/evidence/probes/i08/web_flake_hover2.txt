@@ -1,0 +1,148 @@
+I08 step-4 probe, second version, 2026-11-23: probe_web_flake_hover2.spec.js.txt
+(served by p08tip.config.js.txt), release build, Flutter 3.47.5, Chromium from
+Playwright, this Mac, two workers, Flutter seeing Linux, no CPU throttling.
+The mouse rests on the technique screen's Back for a second (its tooltip
+shown), then the keyboard opens the example and Map layers. From Enter on
+Map layers to Escape there are no added waits (for the routes, one Tab, sent
+as soon as the switch is in the tree and focus has left Map layers).
+openToEscapeMs is the time from that Enter to Escape. "closed" is the first
+Escape closing the layers within 5 s; "second" is a second Escape sent 1 s
+after that 5 s wait (so about 6 s after the first), only when the first did
+not.
+
+== good-widgets: 20 runs, first Escape closed 0 ==
+sorted by openToEscapeMs:
+run 10: openToEscapeMs  152, closed False, second closed
+run  1: openToEscapeMs  155, closed False, second closed
+run  6: openToEscapeMs  161, closed False, second closed
+run 13: openToEscapeMs  180, closed False, second closed
+run  3: openToEscapeMs  183, closed False, second closed
+run 12: openToEscapeMs  183, closed False, second closed
+run  0: openToEscapeMs  184, closed False, second closed
+run  2: openToEscapeMs  187, closed False, second closed
+run  5: openToEscapeMs  187, closed False, second closed
+run 11: openToEscapeMs  187, closed False, second closed
+run 18: openToEscapeMs  188, closed False, second closed
+run  9: openToEscapeMs  190, closed False, second closed
+run 14: openToEscapeMs  190, closed False, second closed
+run 15: openToEscapeMs  191, closed False, second closed
+run 16: openToEscapeMs  193, closed False, second closed
+run  8: openToEscapeMs  198, closed False, second closed
+run  4: openToEscapeMs  201, closed False, second closed
+run 17: openToEscapeMs  201, closed False, second closed
+run  7: openToEscapeMs  218, closed False, second closed
+run 19: openToEscapeMs  218, closed False, second closed
+steps of run 0:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-widgets-open
+  layers shown: focus i08-good-widgets-contours
+  waited 0 ms before Escape
+
+== good-material: 20 runs, first Escape closed 0 ==
+sorted by openToEscapeMs:
+run  9: openToEscapeMs  116, closed False, second closed
+run 11: openToEscapeMs  118, closed False, second closed
+run 15: openToEscapeMs  120, closed False, second closed
+run 10: openToEscapeMs  136, closed False, second closed
+run  1: openToEscapeMs  137, closed False, second closed
+run  4: openToEscapeMs  148, closed False, second closed
+run  5: openToEscapeMs  148, closed False, second closed
+run  8: openToEscapeMs  148, closed False, second closed
+run 19: openToEscapeMs  152, closed False, second closed
+run  3: openToEscapeMs  153, closed False, second closed
+run  6: openToEscapeMs  154, closed False, second closed
+run 13: openToEscapeMs  163, closed False, second closed
+run 14: openToEscapeMs  168, closed False, second closed
+run 17: openToEscapeMs  169, closed False, second closed
+run  7: openToEscapeMs  177, closed False, second closed
+run 16: openToEscapeMs  180, closed False, second closed
+run 18: openToEscapeMs  186, closed False, second closed
+run  0: openToEscapeMs  188, closed False, second closed
+run 12: openToEscapeMs  193, closed False, second closed
+run  2: openToEscapeMs  199, closed False, second closed
+steps of run 0:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-material-open
+  layers shown: focus i08-good-material-contours
+  waited 0 ms before Escape
+
+== good-cupertino: 20 runs, first Escape closed 9 ==
+sorted by openToEscapeMs:
+run 19: openToEscapeMs  282, closed False, second closed
+run 13: openToEscapeMs  289, closed False, second closed
+run 17: openToEscapeMs  290, closed False, second closed
+run  3: openToEscapeMs  292, closed False, second closed
+run  7: openToEscapeMs  299, closed False, second closed
+run  9: openToEscapeMs  301, closed False, second closed
+run  8: openToEscapeMs  302, closed False, second closed
+run 14: openToEscapeMs  308, closed False, second closed
+run  0: openToEscapeMs  347, closed False, second closed
+run 16: openToEscapeMs  354, closed False, second closed
+run 18: openToEscapeMs  383, closed False, second closed
+run  5: openToEscapeMs  398, closed True, second None
+run  6: openToEscapeMs  400, closed True, second None
+run  2: openToEscapeMs  418, closed True, second None
+run  4: openToEscapeMs  418, closed True, second None
+run  1: openToEscapeMs  419, closed True, second None
+run 10: openToEscapeMs  421, closed True, second None
+run 12: openToEscapeMs  421, closed True, second None
+run 11: openToEscapeMs  439, closed True, second None
+run 15: openToEscapeMs  452, closed True, second None
+steps of run 0:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-cupertino-open
+  layers shown: focus i08-good-cupertino-contours
+  waited 0 ms before Escape
+
+
+== Throttled runs (P08_THROTTLE), the same probe, as Linux, release build ==
+-- good-widgets, CPU 2x: 10 runs, first Escape closed 0 --
+openToEscapeMs  154, closed False, second closed
+openToEscapeMs  173, closed False, second closed
+openToEscapeMs  207, closed False, second closed
+openToEscapeMs  209, closed False, second closed
+openToEscapeMs  210, closed False, second closed
+openToEscapeMs  211, closed False, second closed
+openToEscapeMs  212, closed False, second closed
+openToEscapeMs  212, closed False, second closed
+openToEscapeMs  215, closed False, second closed
+openToEscapeMs  220, closed False, second closed
+-- good-material, CPU 2x: 10 runs, first Escape closed 0 --
+openToEscapeMs  128, closed False, second closed
+openToEscapeMs  131, closed False, second closed
+openToEscapeMs  131, closed False, second closed
+openToEscapeMs  131, closed False, second closed
+openToEscapeMs  137, closed False, second closed
+openToEscapeMs  137, closed False, second closed
+openToEscapeMs  161, closed False, second closed
+openToEscapeMs  166, closed False, second closed
+openToEscapeMs  167, closed False, second closed
+openToEscapeMs  171, closed False, second closed
+-- good-widgets, CPU 4x: 10 runs, first Escape closed 0 --
+openToEscapeMs  199, closed False, second still shown
+openToEscapeMs  199, closed False, second closed
+openToEscapeMs  200, closed False, second closed
+openToEscapeMs  213, closed False, second closed
+openToEscapeMs  233, closed False, second closed
+openToEscapeMs  235, closed False, second closed
+openToEscapeMs  239, closed False, second closed
+openToEscapeMs  240, closed False, second still shown
+openToEscapeMs  247, closed False, second still shown
+openToEscapeMs  259, closed False, second still shown
+-- good-material, CPU 4x: 10 runs, first Escape closed 4 --
+openToEscapeMs  226, closed False, second closed
+openToEscapeMs  238, closed False, second closed
+openToEscapeMs  246, closed False, second still shown
+openToEscapeMs  253, closed False, second closed
+openToEscapeMs  258, closed False, second still shown
+openToEscapeMs  262, closed True, second None
+openToEscapeMs  272, closed True, second None
+openToEscapeMs  282, closed True, second None
+openToEscapeMs  317, closed True, second None
+openToEscapeMs  317, closed False, second still shown

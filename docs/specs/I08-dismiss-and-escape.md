@@ -35,7 +35,29 @@ or the arrow keys, the user is told what it is.
 
 | Android | iOS | Web |
 | --- | --- | --- |
-| Applies | Applies; Escape measured on iOS 27.0 only, the escape gesture not verified | Applies |
+| Applies | Applies; Escape measured on iOS 27.0 only, the escape gesture not verified | Limitation ([FL-484](../flutter-limitations.md#fl-484)) |
+
+On the web, in Chromium, Escape is taken for a tooltip that still counts
+as open before the app's default Escape shortcut, which the examples rely
+on, reaches the layers ([FL-484](../flutter-limitations.md#fl-484)).
+Measured in probes, unthrottled, with the mouse resting on Back, the
+first Escape within about 400 ms of opening the layers did not close them
+in any of the three good examples (20 of 20, 20 of 20, and 11 of 11 at
+383 ms or less), and a second Escape did, every time it was sent: about
+six seconds after the first in all three, and 200, 500, or 1000 ms after
+it in `good-widgets` and `good-material`; with the CPU throttled, a
+tooltip left open under the screen took every Escape in `good-widgets`.
+No workaround is built into the examples. A local `Shortcuts` mapping Escape to
+`DismissIntent` round the layers made the first Escape close them in a
+probe (20 of 20 for `good-widgets` and for `good-material`); the examples
+do not use it: it would be a custom solution, and adopting one is the
+owner's decision (FL-484, Workaround). The web status was
+changed from Applies to Limitation by the owner's decision of
+2026-11-23. A limitation status does not need a criterion to fail: the
+technique guide asks for one wherever a limitation has no workaround,
+and the catalog defines it as a pattern Flutter keeps from being fully
+accessible. So FL-484 still claims no WCAG failure as written (its WCAG
+line says why), while I08's web status is a limitation.
 
 Keyboard: a hardware keyboard on Android and iOS, the browser's on the
 web. Android's Back: the Back key, the global Back action that TalkBack's
@@ -66,7 +88,14 @@ says that keeping focus in a modal dialog is not a trap as long as the
 user can leave it, that Escape is the usual standard exit method with a
 keyboard, and gives as its example a modal dialog that keeps Tab inside it
 and is closed by its buttons or by Escape. A modal with a standard way out
-is not a trap; the three good examples are that.
+is not a trap; the three good examples are that. On the web Escape can be
+taken first by a tooltip that counts as open
+([FL-484](../flutter-limitations.md#fl-484)): seen in probes only, in
+all three, for the first Escape pressed within about 400 ms of the
+layers being opened while the mouse rests on Back, and, with Chromium's CPU
+throttled, for every Escape after a tooltip was left open under the
+pushed screen. No criterion is claimed failed for it (the entry says
+why).
 
 Android has a keyboard way out of its own. Its system shortcuts turn
 Meta+Escape and Meta+Left on a hardware keyboard into Back (AOSP's
@@ -262,12 +291,37 @@ examples in the widget tests).
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Good: guidelines in light and dark, with and without the layers shown; 200% text at 320 by 640 with them shown. Every example: Map layers is a button, the count is 0, "Showing: Contour lines"; the switches are named and Contour lines alone is on; Enter on Map layers puts keyboard focus in the layers (the route's scope, then the first switch on Tab, or the first switch at once) and Space turns it; Tab and Shift+Tab go round the two switches. Escape, as Android and as iOS: it closes the layers in the good examples and `bad-back-leaves`, the count goes to 1 and focus is back on Map layers; in `bad-not-dismissible` and `bad-no-escape` it is not handled, from either switch, the layers stay with focus where it was after a second, Space turns the switch, twenty Tabs and Shift+Tabs never leave the two, and the good example the bad one is made from then closes on the same key. `popRoute` (Back, and the escape gesture at the root): closes the layers on the example's screen in every example but `bad-back-leaves`, where, after Escape has closed them once in the same test, it takes the user to the technique's own screen. The dismiss action: which nodes have it ("Scrim", "Dismiss", "Close map layers", and the overlay's own node), and each one closes the layers; in `bad-not-dismissible` no node has it, and the same search finds `good-material`'s. Where VoiceOver's escape gesture on a switch is taken: by the layers' own node in the overlay examples, by no node in the route examples. The SDK on its own: `showDialog` with and without `barrierDismissible` (FL-480); an `OverlayPortal` that Escape does not close and `popRoute` pops the screen under, and an `OverlayEntry` that stays after it (FL-481); a trap made each of the three ways keeps Tab and Shift+Tab and lets no Escape out; a tooltip that Escape hides while focus is in the app and not after the view loses focus (FL-482); a `ModalBarrier` in an `OverlayPortal` that empties the semantics tree, and in an `OverlayEntry` that does not (FL-483) |
-| L3 web | Every example: Map layers is a button with its name, the count, and each switch is `role="switch"` with its name and `aria-checked`; Enter shows the layers and Space turns a switch. Tab and Shift+Tab: round the two switches in the overlay examples; in the route examples round the two and out of the page for the browser's own stops, and back to the first switch. Escape: closes the layers, the count is 1 and DOM focus is on Map layers, in the good examples and `bad-back-leaves`; does nothing in the other two, from either switch, with the positive controls as above; in `bad-no-escape` twenty Tabs and Shift+Tabs never leave the switches. The browser's Back, as its history event (`page.goBack()`; its keyboard shortcuts cannot be sent from Playwright): from each switch, it closes the layers in every example but `bad-back-leaves` (both switches gone, the count at 1, DOM focus on Map layers, the URL still the example's), and in `bad-back-leaves` it brings back the technique's screen |
+| L3 web | Every example: Map layers is a button with its name, the count, and each switch is `role="switch"` with its name and `aria-checked`; Enter shows the layers and Space turns a switch. Tab and Shift+Tab: round the two switches in the overlay examples; in the route examples round the two and out of the page for the browser's own stops, and back to the first switch. Escape: closes the layers, the count is 1 and DOM focus is on Map layers, in the good examples and `bad-back-leaves`; does nothing in the other two, from either switch, with the positive controls as above, where the mouse is first moved off the app bar and the good example is opened only once Back's tooltip has not been shown for half a second (FL-484); a failure of `expectShown` reports where DOM focus was and whether Back's tooltip was shown; in `bad-no-escape` twenty Tabs and Shift+Tabs never leave the switches. The browser's Back, as its history event (`page.goBack()`; its keyboard shortcuts cannot be sent from Playwright): from each switch, it closes the layers in every example but `bad-back-leaves` (both switches gone, the count at 1, DOM focus on Map layers, the URL still the example's), and in `bad-back-leaves` it brings back the technique's screen |
 | L3 Android | The same parts by class (`Button`, `Switch`), name, and `isChecked`; Tab and Shift+Tab round the two switches by `isFocused`; Escape as on the web, with the positive controls; the Back key, the global Back action, and the keyboard's Back (Meta+Escape and Meta+Left, sent as key events) close the layers on the example's screen, keyboard focus back on Map layers, in every example but `bad-back-leaves`, where all four take the app to the technique's screen with the app still in front, after Escape has closed the layers in the same launch; `ACTION_DISMISS` on the barrier, and on the overlay's own node, closes the layers; in `bad-not-dismissible` the read that holds the layers has no node with it |
 | L3 iOS | Map layers (a button) and the switches (`.switch`, named, values "1" and "0"); Tab and Shift+Tab round the two switches, each stop named by what Space turns; Escape, on iOS 27 and later (section 7), sent as Command+period once Space twice has shown keyboard focus on Contour lines, closes the layers in the good examples and `bad-back-leaves` (both switches gone, the count at 1), and Space then shows them again from Map layers; it does nothing in the other two, with the positive controls as above (the good example opened over the bad one by its link, in the same launch). Not asserted: the Escape key itself, which XCUITest cannot send to Flutter; Back, which iOS has no key for; the escape gesture |
 | L4 TalkBack | Map layers, then, with the layers open, each switch (name, "Switch", and its state) and the barrier, by what TalkBack reads; then TalkBack's Back gesture (the global Back action) from a switch: the layers close and TalkBack's focus is on Map layers for the last two seconds of the window; in `bad-back-leaves` the app goes to the technique's screen and TalkBack is no longer on the example |
 | L4 VoiceOver iOS | VoiceOver's cursor on Map layers and a double tap; what VoiceOver says, then each element forward until the barrier: both switches with "Switch button", and the barrier in every example but `bad-not-dismissible`, where neither "Scrim" nor "Dismiss" is read |
 | L4 VoiceOver web | VoiceOver's own activation on Map layers shows the layers and VoiceOver speaks; Escape pressed through the system closes them in the good examples and `bad-back-leaves`, and leaves them in the other two, where VoiceOver's activation on the focused switch then turns it |
+
+What the tests leave out, and what that gives up:
+
+- In the web positive controls (`bad-not-dismissible` and
+  `bad-no-escape`: "Escape does nothing, from either switch"), after the
+  click on Back the mouse is moved off the app bar, and the good example
+  is opened only once Back's tooltip has not been shown for half a
+  second, waited for for at most ten seconds; Escape is still sent once.
+  Without that, a tooltip still being hidden when the good example was
+  pushed made Escape fail now and then on CI
+  ([FL-484](../flutter-limitations.md#fl-484)). What it gives up: these
+  tests no longer show Escape closing a good example while a tooltip
+  counts as open; that state is recorded in the entry and the probe
+  (`docs/evidence/probes/i08/README.md`, round 6), not tested. A tooltip
+  left open under another screen is not in the page's tree, so the wait
+  cannot see one; it removes the hover that leaves one.
+- The limitation itself, FL-484, is not a test: it is in the probes
+  (`docs/evidence/probes/i08/README.md`, round 6). A test of the first
+  Escape in `good-widgets` with Back's tooltip shown by the mouse held
+  unthrottled and at two times slower, but at four times slower the time
+  from opening the layers to Escape went past its bound and a second
+  Escape, sent about a second after the first, no longer closed them
+  (`web_flake_test_attempt.txt`); CI's
+  runner's speed is not known, so it was not added. What that gives up: a
+  Flutter release that changes this would not be noticed by the tests.
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -410,6 +464,28 @@ output of each platform.
   ([FL-482](../flutter-limitations.md#fl-482)). The plan's note that
   Escape on tooltips on the web needs 3.50 is right for that case only; on
   Android, one shown by the long-click action stayed after Escape.
+- **On the web, an open tooltip can take Escape from the layers**
+  ([FL-484](../flutter-limitations.md#fl-484)). `WidgetsApp` hides
+  tooltips on Escape from a `Focus` of its own that a key reaches before
+  the app's default `Shortcuts` (read in the source; the order also seen
+  in the probe's trace); a `Shortcuts` inside the layers comes before it,
+  and in a probe it made the first Escape close the layers (FL-484,
+  Workaround; not used by the examples). In the probe (round 6) Escape failed to close the
+  layers in two states. The first Escape, with the mouse resting on Back
+  and its tooltip shown, sent with no added wait once focus was on
+  Contour lines, unthrottled, as Linux: in 20 of 20 runs of
+  `good-widgets` and of `good-material` (116 to 218 ms from Enter on Map
+  layers), and in `good-cupertino` in the 11 runs with Escape at 383 ms
+  or less and none of the 9 at 398 ms or more; with 400 ms or more
+  between focus reaching Contour lines and Escape, `good-widgets` closed
+  in 12 of 12. And every Escape on `good-widgets` after the technique
+  screen's Back tooltip was
+  left in the list of open tooltips under the pushed example, which
+  happened only with Chromium's CPU throttled and Flutter seeing Linux
+  (about 15% of runs at four times). That second state is the one the
+  probe found behind the positive control's failures; the failures on CI
+  had the same symptom, and their page state was not recorded. The
+  positive controls now move the mouse off the app bar first (section 6).
 
 **Not done yet.** Escape on iOS before 27 (on CI's iOS 26.5
 Command+period did not arrive every time, so nothing was measured); the

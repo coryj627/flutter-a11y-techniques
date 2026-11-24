@@ -1,0 +1,154 @@
+// Throwaway: I08 step-4 probe, third version (P08_GAP, and dumps only
+// after the outcome; for the local-Shortcuts build of
+// probe_web_local_shortcuts.diff.txt and the second-Escape timing). Not
+// committed; kept as docs/evidence/probes/i08/probe_web_flake_hover3.spec.js.txt.
+//
+// Earlier header: Can a tooltip kept open by hover, while the
+// keyboard opens the example and its layers, make Escape fail without CPU
+// throttling? Not committed; kept as
+// docs/evidence/probes/i08/probe_web_flake_hover2.spec.js.txt (with
+// P08_THROTTLE added for its throttled runs).
+//
+// On the technique screen the mouse rests on Back until its tooltip is
+// shown; then, with the mouse left there, Tab goes to good-widgets' title
+// and Enter opens it; Tab, Tab, Enter shows the layers; once DOM focus is
+// on Contour lines, Escape, once. Second version (after review): from
+// Enter on Map layers to Escape there are no added waits, for the routes
+// too (one Tab from the route's scope, sent at once), and the time from
+// that Enter to Escape is recorded as openToEscapeMs; dumps from the probe
+// build are taken only when P08_BUILD is set. The first version waited
+// for focus on Contour lines for up to five seconds and then 600 and
+// 400 ms around the routes' Tab. Records whether the layers closed within
+// five seconds, and whether a tooltip was shown at each step (an element
+// with the text "Back" near the app bar that is not the Back button).
+// P08_PLATFORM=linux as in probe_web_flake.spec.js.txt.
+import fs from 'node:fs';
+import { test } from '@playwright/test';
+
+const out = process.env.P08_OUT ?? 'p08_det.jsonl';
+const platform = process.env.P08_PLATFORM ?? 'native';
+const variant = process.env.P08_VARIANT ?? 'hover';
+// P08_GOOD=good-material runs the same on the Material sheet (a route: Tab
+// from the route's scope to Contour lines).
+const good = process.env.P08_GOOD ?? 'good-widgets';
+const titles = {
+  'good-widgets': /^Layers drawn in the overlay, closed by every dismiss command/,
+  'good-material': /^A Material bottom sheet that can be dismissed/,
+  'good-cupertino': /^A Cupertino modal popup with a dismissible barrier/,
+};
+const byId = (page, id) => page.locator(`[flt-semantics-identifier="${id}"]`);
+
+const tooltip = (page) => page.evaluate(() => [...document.querySelectorAll('flt-semantics-host *')]
+  .filter((e) => [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === 'Back'))
+  .filter((e) => e.closest('flt-semantics')?.getAttribute('role') !== 'button')
+  .filter((e) => { const r = e.getBoundingClientRect(); return r.y >= 0 && r.y < 120; }).length > 0);
+
+const stop = (page) => page.evaluate(() => {
+  const e = document.activeElement;
+  return e?.closest('[flt-semantics-identifier]')?.getAttribute('flt-semantics-identifier') ?? `${e?.tagName} ${e?.textContent?.trim().slice(0, 20)}`;
+});
+
+for (let run = 0; run < Number(process.env.P08_RUNS ?? 1); run++) {
+  test(`hover then keyboard, run ${run}`, async ({ page }) => {
+    if (platform === 'linux') {
+      await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'platform', { get: () => 'Linux x86_64' }));
+    }
+    // P08_THROTTLE=n slows the CPU n times (CDP Emulation.setCPUThrottlingRate).
+    const throttle = Number(process.env.P08_THROTTLE ?? 1);
+    if (throttle > 1) {
+      test.setTimeout(180000);
+      const cdp = await page.context().newCDPSession(page);
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: throttle });
+    }
+    const steps = [];
+    await page.goto('about:blank');
+    await page.goto('/#/t/I08');
+    await page.getByRole('heading', { name: 'Dismiss and escape', level: 1 }).waitFor();
+    await page.waitForTimeout(500);
+    const back = await page.getByRole('button', { name: 'Back', exact: true }).boundingBox();
+    await page.mouse.move(back.x + back.width / 2, back.y + back.height / 2);
+    await page.waitForTimeout(1000);
+    steps.push(`hovered Back: tooltip ${await tooltip(page)}`);
+    const title = page.getByRole('button', { name: titles[good] });
+    let found = false;
+    for (let i = 0; i < 12 && !found; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      found = await title.evaluate((e) => e === document.activeElement || e.contains(document.activeElement));
+    }
+    steps.push(`title focused ${found}; tooltip ${await tooltip(page)}`);
+    await page.keyboard.press('Enter');
+    await byId(page, `i08-${good}-count`).waitFor();
+    await page.waitForTimeout(variant === 'quick' ? 0 : 800);
+    steps.push(`example shown: tooltip ${await tooltip(page)}; focus ${await stop(page)}`);
+    for (let i = 0; i < 6 && (await stop(page)) !== `i08-${good}-open`; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(200);
+    }
+    steps.push(`before Enter: focus ${await stop(page)}`);
+    // Timed from here: Enter on Map layers. No added waits until Escape.
+    // The overlay puts focus on Contour lines itself; a route's scope takes
+    // focus ('outside' the example's parts), and one Tab, sent as soon as
+    // the switch is in the tree and focus is off Map layers, goes to
+    // Contour lines.
+    const opened = Date.now();
+    await page.keyboard.press('Enter');
+    await byId(page, `i08-${good}-contours`).waitFor();
+    if (good !== 'good-widgets') {
+      while ((await stop(page)) === `i08-${good}-open` && Date.now() - opened < 5000) await page.waitForTimeout(10);
+      if ((await stop(page)) !== `i08-${good}-contours`) await page.keyboard.press('Tab');
+    }
+    while ((await stop(page)) !== `i08-${good}-contours` && Date.now() - opened < 5000) await page.waitForTimeout(10);
+    steps.push(`layers shown: focus ${await stop(page)}`);
+    const delay = Number(process.env.P08_DELAY ?? 0);
+    if (delay) await page.waitForTimeout(delay);
+    steps.push(`waited ${delay} ms before Escape`);
+    const dump = () => page.evaluate(() => (window.p08dump ? window.p08dump() : null));
+    const shown = async () => (await byId(page, `i08-${good}-contours`).count()) > 0;
+    // P08_GAP=n (third version): the second Escape is sent n ms after the
+    // first, whatever the first did, and the layers are read just before
+    // it; then up to 5 s for them to close, timed from the second Escape.
+    const gap = process.env.P08_GAP === undefined ? null : Number(process.env.P08_GAP);
+    const escaped = Date.now();
+    await page.keyboard.press('Escape');
+    const at = Date.now();
+    let closed = false;
+    let second = null;
+    let shownAtGap = null;
+    let secondToClosedMs = null;
+    let actualGapMs = null;
+    if (gap === null) {
+      while (Date.now() - at < 5000) {
+        if (!(await shown())) { closed = true; break; }
+        await page.waitForTimeout(50);
+      }
+      // Dumps from the probe build only after the outcome, so that they
+      // do not delay Escape.
+      if (process.env.P08_BUILD) steps.push(`dump after the first Escape's outcome: ${await dump()}`);
+      // Diagnostic only, after the outcome: a second Escape a second after
+      // that 5 s wait (so about 6 s after the first).
+      if (!closed) {
+        await page.waitForTimeout(1000);
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(2000);
+        second = (await shown()) ? 'still shown' : 'closed';
+      }
+    } else {
+      while (Date.now() - at < gap - 20) await page.waitForTimeout(10);
+      while (Date.now() - at < gap) { /* the last few ms */ }
+      shownAtGap = await shown();
+      closed = !shownAtGap;
+      const secondAt = Date.now();
+      actualGapMs = secondAt - escaped;
+      await page.keyboard.press('Escape');
+      while (Date.now() - secondAt < 5000) {
+        if (!(await shown())) { secondToClosedMs = Date.now() - secondAt; break; }
+        await page.waitForTimeout(20);
+      }
+      second = secondToClosedMs === null ? 'still shown after 5 s' : 'closed';
+      if (process.env.P08_BUILD) steps.push(`dump after the second Escape's outcome: ${await dump()}`);
+    }
+    if (process.env.P08_BUILD) steps.push(`dump at the end: ${await dump()}`);
+    fs.appendFileSync(out, JSON.stringify({ platform, throttle: Number(process.env.P08_THROTTLE ?? 1), variant, good, delay: Number(process.env.P08_DELAY ?? 0), gap, run, closed, openToEscapeMs: escaped - opened, shownAtGap, actualGapMs, second, secondToClosedMs, build: process.env.P08_BUILD ?? 'build/web', steps }) + '\n');
+  });
+}
