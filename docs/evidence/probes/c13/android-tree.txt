@@ -1,0 +1,195 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+device: 1080x2424
+11-22 17:20:59.889 13413 13413 I flutter : C13PROBE s01 focus: Root Focus Scope
+11-22 17:20:59.897 13413 13413 I flutter : C13PROBE s01 focus: Before s01
+s01 node  | android.widget.Button | desc="Back" text="" tooltip="Back" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(11, 153 - 137, 279) [a11yfocus,click]
+s01 node  | android.view.View | desc="s01 SnackBar, content only" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(189, 179 - 880, 252) [a11yfocus]
+s01 node  | android.view.View | desc="Before s01" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 331 - 226, 384) [a11yfocus]
+s01 node s01-show | android.widget.Button | desc="s01 Show" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 405 - 331, 531) [a11yfocus,click]
+s01 node s01-taps | android.view.View | desc="s01 taps: 0" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 552 - 229, 604) [a11yfocus]
+s01 node s01-closed | android.view.View | desc="s01 closed: open" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 625 - 330, 678) [a11yfocus]
+s01 node s01-nav | android.view.View | desc="s01 nav: true" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 699 - 260, 751) [a11yfocus]
+s01 node s01-focus | android.view.View | desc="s01 focus: Before s01" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 772 - 412, 825) [a11yfocus]
+s01 node  | android.view.View | desc="After s01" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 846 - 198, 898) [a11yfocus]
+s01 node  | android.view.View | desc="s01 Message archived" text="" tooltip="" live=1 pane="" dismissable=true focusable=true focused=false a11yFocused=false Rect(0, 2235 - 1080, 2424) [a11yfocus,dismiss,scrollfwd,scrollback]
+11-22 17:21:07.437 13413 13413 I flutter : C13PROBE s01 closed: timeout 4288 ms
+s01 s01 nav: true | s01 closed: timeout 4288 ms | message node after: gone
+11-22 17:21:07.980 13413 13413 I flutter : C13PROBE s01 focus: Root Focus Scope
+11-22 17:21:07.981 13413 13413 I flutter : C13PROBE s01 focus: Before s01
+s01 dismiss action on: s01 Message archived; performed=true
+11-22 17:21:10.095 13413 13413 I flutter : C13PROBE s01 closed: dismiss 1017 ms
+s01 after dismiss: s01 closed: dismiss 1017 ms | message gone (was there)
+11-22 17:21:11.386 13413 13413 I flutter : C13PROBE s02 focus: Root Focus Scope
+11-22 17:21:11.388 13413 13413 I flutter : C13PROBE s02 focus: Before s02
+s02 node  | android.widget.Button | desc="Back" text="" tooltip="Back" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(11, 153 - 137, 279) [a11yfocus,click]
+s02 node  | android.view.View | desc="s02 SnackBar with an action" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(189, 179 - 916, 252) [a11yfocus]
+s02 node  | android.view.View | desc="Before s02" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 331 - 226, 384) [a11yfocus]
+s02 node s02-show | android.widget.Button | desc="s02 Show" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 405 - 331, 531) [a11yfocus,click]
+s02 node s02-taps | android.view.View | desc="s02 taps: 0" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 552 - 229, 604) [a11yfocus]
+s02 node s02-closed | android.view.View | desc="s02 closed: open" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 625 - 330, 678) [a11yfocus]
+s02 node s02-nav | android.view.View | desc="s02 nav: true" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 699 - 260, 751) [a11yfocus]
+s02 node s02-focus | android.view.View | desc="s02 focus: Before s02" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 772 - 412, 825) [a11yfocus]
+s02 node  | android.view.View | desc="After s02" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(42, 846 - 198, 898) [a11yfocus]
+s02 node  | android.view.View | desc="s02 Message archived" text="" tooltip="" live=1 pane="" dismissable=true focusable=true focused=false a11yFocused=false Rect(0, 2235 - 1080, 2424) [a11yfocus,dismiss,scrollfwd,scrollback]
+s02 node  | android.widget.Button | desc="s02 Undo" text="" tooltip="" live=0 pane="" dismissable=false focusable=true focused=false a11yFocused=false Rect(765, 2235 - 1049, 2361) [a11yfocus,click]
+s02 s02 nav: true | s02 closed: open (still, 16 s after the show) | message node after: still there
+11-22 17:21:31.858 13413 13413 I flutter : C13PROBE s02 focus: Root Focus Scope
+11-22 17:21:31.865 13413 13413 I flutter : C13PROBE s02 focus: Before s02
+11-22 17:21:39.246 13957 13957 I flutter : C13PROBE s01 focus: Root Focus Scope
+11-22 17:21:39.254 13957 13957 I flutter : C13PROBE s01 focus: Before s01
+11-22 17:21:43.782 13957 13957 I flutter : C13PROBE s01 focus: icon 57490
+11-22 17:21:44.401 13957 13957 I flutter : C13PROBE s01 focus: s01 Show
+11-22 17:21:45.015 13957 13957 I flutter : C13PROBE s01 focus: icon 57490
+11-22 17:21:45.627 13957 13957 I flutter : C13PROBE s01 focus: s01 Show
+11-22 17:21:46.249 13957 13957 I flutter : C13PROBE s01 focus: icon 57490
+11-22 17:21:46.869 13957 13957 I flutter : C13PROBE s01 focus: s01 Show
+11-22 17:21:47.039 13957 13957 I flutter : C13PROBE s01 closed: timeout 4283 ms
+s01 tab stops after the show: icon 57490 | s01 Show | icon 57490 | s01 Show | icon 57490 | s01 Show
+11-22 17:21:47.784 13957 13957 I flutter : C13PROBE s01 focus: Root Focus Scope
+11-22 17:21:47.787 13957 13957 I flutter : C13PROBE s01 focus: Before s01
+11-22 17:21:49.750 13957 13957 I flutter : C13PROBE s01 focus: icon 57490
+11-22 17:21:52.971 13957 13957 I flutter : C13PROBE s01 closed: timeout 4245 ms
+s01 focus on "icon 57490": s01 closed: timeout 4245 ms | focus then s01 focus: icon 57490
+11-22 17:21:53.160 13957 13957 I flutter : C13PROBE s01 focus: s01 Show
+s01 one Tab after it went: s01 focus: s01 Show
+11-22 17:21:54.056 13957 13957 I flutter : C13PROBE s02 focus: Root Focus Scope
+11-22 17:21:54.058 13957 13957 I flutter : C13PROBE s02 focus: Before s02
+11-22 17:21:58.241 13957 13957 I flutter : C13PROBE s02 focus: icon 57490
+11-22 17:21:58.871 13957 13957 I flutter : C13PROBE s02 focus: s02 Show
+11-22 17:21:59.486 13957 13957 I flutter : C13PROBE s02 focus: s02 Undo
+11-22 17:22:00.099 13957 13957 I flutter : C13PROBE s02 focus: icon 57490
+11-22 17:22:00.735 13957 13957 I flutter : C13PROBE s02 focus: s02 Show
+11-22 17:22:01.357 13957 13957 I flutter : C13PROBE s02 focus: s02 Undo
+s02 tab stops after the show: icon 57490 | s02 Show | s02 Undo | icon 57490 | s02 Show | s02 Undo
+11-22 17:22:02.277 13957 13957 I flutter : C13PROBE s02 focus: Root Focus Scope
+11-22 17:22:02.280 13957 13957 I flutter : C13PROBE s02 focus: Before s02
+11-22 17:22:04.118 13957 13957 I flutter : C13PROBE s02 focus: icon 57490
+s02 focus on "icon 57490": s02 closed: open (still, 12 s after the show) | focus then s02 focus: icon 57490
+s02 Escape on "icon 57490": s02 closed: open | message there
+11-22 17:22:18.386 13957 13957 I flutter : C13PROBE s02 focus: C13 probe home
+s02 Enter on "icon 57490": (no node s02-closed) | (no node s02-taps) | (no node s02-focus)
+11-22 17:22:20.785 13957 13957 I flutter : C13PROBE s03 focus: Root Focus Scope
+11-22 17:22:20.788 13957 13957 I flutter : C13PROBE s03 focus: Before s03
+11-22 17:22:24.030 13957 13957 I flutter : C13PROBE s03 focus: icon 57490
+11-22 17:22:24.656 13957 13957 I flutter : C13PROBE s03 focus: s03 Show
+11-22 17:22:25.269 13957 13957 I flutter : C13PROBE s03 focus: s03 Undo
+11-22 17:22:25.885 13957 13957 I flutter : C13PROBE s03 focus: icon 57490
+11-22 17:22:26.497 13957 13957 I flutter : C13PROBE s03 focus: s03 Show
+11-22 17:22:27.118 13957 13957 I flutter : C13PROBE s03 focus: s03 Undo
+11-22 17:22:27.287 13957 13957 I flutter : C13PROBE s03 closed: timeout 4281 ms
+11-22 17:22:27.323 13957 13957 I flutter : C13PROBE s03 focus: s03 Show
+s03 tab stops after the show: icon 57490 | s03 Show | s03 Undo | icon 57490 | s03 Show | s03 Show
+11-22 17:22:28.011 13957 13957 I flutter : C13PROBE s03 focus: Root Focus Scope
+11-22 17:22:28.013 13957 13957 I flutter : C13PROBE s03 focus: Before s03
+11-22 17:22:29.953 13957 13957 I flutter : C13PROBE s03 focus: icon 57490
+11-22 17:22:33.175 13957 13957 I flutter : C13PROBE s03 closed: timeout 4260 ms
+s03 focus on "icon 57490": s03 closed: timeout 4260 ms | focus then s03 focus: icon 57490
+11-22 17:22:33.350 13957 13957 I flutter : C13PROBE s03 focus: s03 Show
+s03 one Tab after it went: s03 focus: s03 Show
+11-22 17:22:34.519 13957 13957 I flutter : C13PROBE s04 focus: Root Focus Scope
+11-22 17:22:34.526 13957 13957 I flutter : C13PROBE s04 focus: Before s04
+11-22 17:22:38.626 13957 13957 I flutter : C13PROBE s04 focus: icon 57490
+11-22 17:22:39.240 13957 13957 I flutter : C13PROBE s04 focus: s04 Show
+11-22 17:22:39.862 13957 13957 I flutter : C13PROBE s04 focus: icon 57706
+11-22 17:22:40.480 13957 13957 I flutter : C13PROBE s04 focus: icon 57490
+11-22 17:22:41.096 13957 13957 I flutter : C13PROBE s04 focus: s04 Show
+11-22 17:22:41.713 13957 13957 I flutter : C13PROBE s04 focus: icon 57706
+11-22 17:22:41.894 13957 13957 I flutter : C13PROBE s04 closed: timeout 4292 ms
+11-22 17:22:41.912 13957 13957 I flutter : C13PROBE s04 focus: s04 Show
+s04 tab stops after the show: icon 57490 | s04 Show | icon 57706 | icon 57490 | s04 Show | s04 Show
+11-22 17:22:42.594 13957 13957 I flutter : C13PROBE s04 focus: Root Focus Scope
+11-22 17:22:42.596 13957 13957 I flutter : C13PROBE s04 focus: Before s04
+11-22 17:22:44.505 13957 13957 I flutter : C13PROBE s04 focus: icon 57490
+11-22 17:22:47.713 13957 13957 I flutter : C13PROBE s04 closed: timeout 4246 ms
+s04 focus on "icon 57490": s04 closed: timeout 4246 ms | focus then s04 focus: icon 57490
+11-22 17:22:47.906 13957 13957 I flutter : C13PROBE s04 focus: s04 Show
+s04 one Tab after it went: s04 focus: s04 Show
+11-22 17:22:48.806 13957 13957 I flutter : C13PROBE s05 focus: Root Focus Scope
+11-22 17:22:48.808 13957 13957 I flutter : C13PROBE s05 focus: Before s05
+11-22 17:22:52.910 13957 13957 I flutter : C13PROBE s05 focus: icon 57490
+11-22 17:22:53.535 13957 13957 I flutter : C13PROBE s05 focus: s05 Show
+11-22 17:22:54.152 13957 13957 I flutter : C13PROBE s05 focus: s05 Undo
+11-22 17:22:54.766 13957 13957 I flutter : C13PROBE s05 focus: icon 57706
+11-22 17:22:55.378 13957 13957 I flutter : C13PROBE s05 focus: icon 57490
+11-22 17:22:56.005 13957 13957 I flutter : C13PROBE s05 focus: s05 Show
+s05 tab stops after the show: icon 57490 | s05 Show | s05 Undo | icon 57706 | icon 57490 | s05 Show
+11-22 17:22:56.905 13957 13957 I flutter : C13PROBE s05 focus: Root Focus Scope
+11-22 17:22:56.907 13957 13957 I flutter : C13PROBE s05 focus: Before s05
+11-22 17:22:58.720 13957 13957 I flutter : C13PROBE s05 focus: icon 57490
+s05 focus on "icon 57490": s05 closed: open (still, 12 s after the show) | focus then s05 focus: icon 57490
+s05 Escape on "icon 57490": s05 closed: open | message there
+11-22 17:23:12.575 13957 13957 I flutter : C13PROBE s05 focus: C13 probe home
+s05 Enter on "icon 57490": (no node s05-closed) | (no node s05-taps) | (no node s05-focus)
+11-22 17:23:15.046 13957 13957 I flutter : C13PROBE s06 focus: Root Focus Scope
+11-22 17:23:15.048 13957 13957 I flutter : C13PROBE s06 focus: Before s06
+11-22 17:23:18.356 13957 13957 I flutter : C13PROBE s06 focus: icon 57490
+11-22 17:23:18.973 13957 13957 I flutter : C13PROBE s06 focus: s06 Dismiss
+11-22 17:23:19.585 13957 13957 I flutter : C13PROBE s06 focus: s06 Show
+11-22 17:23:20.206 13957 13957 I flutter : C13PROBE s06 focus: icon 57490
+11-22 17:23:20.831 13957 13957 I flutter : C13PROBE s06 focus: s06 Dismiss
+11-22 17:23:21.453 13957 13957 I flutter : C13PROBE s06 focus: s06 Show
+s06 tab stops after the show: icon 57490 | s06 Dismiss | s06 Show | icon 57490 | s06 Dismiss | s06 Show
+11-22 17:23:22.365 13957 13957 I flutter : C13PROBE s06 focus: Root Focus Scope
+11-22 17:23:22.369 13957 13957 I flutter : C13PROBE s06 focus: Before s06
+11-22 17:23:24.215 13957 13957 I flutter : C13PROBE s06 focus: icon 57490
+s06 focus on "icon 57490": s06 closed: open (still, 12 s after the show) | focus then s06 focus: icon 57490
+s06 Escape on "icon 57490": s06 closed: open | message there
+11-22 17:23:38.528 13957 13957 I flutter : C13PROBE s06 focus: C13 probe home
+s06 Enter on "icon 57490": (no node s06-closed) | (no node s06-taps) | (no node s06-focus)
+11-22 17:23:40.932 13957 13957 I flutter : C13PROBE s07 focus: Root Focus Scope
+11-22 17:23:40.934 13957 13957 I flutter : C13PROBE s07 focus: Before s07
+11-22 17:23:44.172 13957 13957 I flutter : C13PROBE s07 focus: icon 57490
+11-22 17:23:44.787 13957 13957 I flutter : C13PROBE s07 focus: s07 Show
+11-22 17:23:45.405 13957 13957 I flutter : C13PROBE s07 focus: icon 57490
+11-22 17:23:46.019 13957 13957 I flutter : C13PROBE s07 focus: s07 Show
+11-22 17:23:46.643 13957 13957 I flutter : C13PROBE s07 focus: icon 57490
+11-22 17:23:47.277 13957 13957 I flutter : C13PROBE s07 focus: s07 Show
+s07 tab stops after the show: icon 57490 | s07 Show | icon 57490 | s07 Show | icon 57490 | s07 Show
+11-22 17:23:48.162 13957 13957 I flutter : C13PROBE s07 focus: Root Focus Scope
+11-22 17:23:48.164 13957 13957 I flutter : C13PROBE s07 focus: Before s07
+11-22 17:23:49.995 13957 13957 I flutter : C13PROBE s07 focus: icon 57490
+11-22 17:23:59.306 13957 13957 I flutter : C13PROBE s07 closed: timeout 10346 ms
+s07 focus on "icon 57490": s07 closed: timeout 10346 ms | focus then s07 focus: icon 57490
+11-22 17:23:59.604 13957 13957 I flutter : C13PROBE s07 focus: s07 Show
+s07 one Tab after it went: s07 focus: s07 Show
+11-22 17:24:01.265 13957 13957 I flutter : C13PROBE s08 focus: Root Focus Scope
+11-22 17:24:01.276 13957 13957 I flutter : C13PROBE s08 focus: Before s08
+11-22 17:24:05.321 13957 13957 I flutter : C13PROBE s08 focus: icon 57490
+11-22 17:24:05.944 13957 13957 I flutter : C13PROBE s08 focus: s08 Show
+11-22 17:24:06.561 13957 13957 I flutter : C13PROBE s08 focus: s08 Undo
+11-22 17:24:07.173 13957 13957 I flutter : C13PROBE s08 focus: icon 57490
+11-22 17:24:07.798 13957 13957 I flutter : C13PROBE s08 focus: s08 Show
+11-22 17:24:08.411 13957 13957 I flutter : C13PROBE s08 focus: s08 Undo
+11-22 17:24:08.589 13957 13957 I flutter : C13PROBE s08 closed: timeout 4295 ms
+11-22 17:24:08.619 13957 13957 I flutter : C13PROBE s08 focus: s08 Show
+s08 tab stops after the show: icon 57490 | s08 Show | s08 Undo | icon 57490 | s08 Show | s08 Show
+11-22 17:24:09.298 13957 13957 I flutter : C13PROBE s08 focus: Root Focus Scope
+11-22 17:24:09.300 13957 13957 I flutter : C13PROBE s08 focus: Before s08
+11-22 17:24:11.246 13957 13957 I flutter : C13PROBE s08 focus: icon 57490
+11-22 17:24:14.508 13957 13957 I flutter : C13PROBE s08 closed: timeout 4285 ms
+s08 focus on "icon 57490": s08 closed: timeout 4285 ms | focus then s08 focus: icon 57490
+11-22 17:24:14.640 13957 13957 I flutter : C13PROBE s08 focus: s08 Show
+s08 one Tab after it went: s08 focus: s08 Show
+timeout settings before: {accessibility_non_interactive_ui_timeout_ms=null, accessibility_interactive_ui_timeout_ms=null}
+timeout settings during: {accessibility_non_interactive_ui_timeout_ms=60000, accessibility_interactive_ui_timeout_ms=60000}
+11-22 17:24:21.778 16231 16231 I flutter : C13PROBE s01 focus: Root Focus Scope
+11-22 17:24:21.784 16231 16231 I flutter : C13PROBE s01 focus: Before s01
+11-22 17:24:29.147 16231 16231 I flutter : C13PROBE s01 closed: timeout 4284 ms
+s01 with a 60 s accessibility timeout: s01 nav: true | s01 closed: timeout 4284 ms
+11-22 17:24:29.465 16231 16231 I flutter : C13PROBE s03 focus: Root Focus Scope
+11-22 17:24:29.467 16231 16231 I flutter : C13PROBE s03 focus: Before s03
+11-22 17:24:36.124 16231 16231 I flutter : C13PROBE s03 closed: timeout 4293 ms
+s03 with a 60 s accessibility timeout: s03 nav: true | s03 closed: timeout 4293 ms
+11-22 17:24:36.448 16231 16231 I flutter : C13PROBE s04 focus: Root Focus Scope
+11-22 17:24:36.450 16231 16231 I flutter : C13PROBE s04 focus: Before s04
+11-22 17:24:43.138 16231 16231 I flutter : C13PROBE s04 closed: timeout 4283 ms
+s04 with a 60 s accessibility timeout: s04 nav: true | s04 closed: timeout 4283 ms
+11-22 17:24:43.459 16231 16231 I flutter : C13PROBE s07 focus: Root Focus Scope
+11-22 17:24:43.461 16231 16231 I flutter : C13PROBE s07 focus: Before s07
+11-22 17:24:56.131 16231 16231 I flutter : C13PROBE s07 closed: timeout 10342 ms
+s07 with a 60 s accessibility timeout: s07 nav: true | s07 closed: timeout 10342 ms
+11-22 17:24:57.244 16231 16231 I flutter : C13PROBE s08 focus: Root Focus Scope
+11-22 17:24:57.251 16231 16231 I flutter : C13PROBE s08 focus: Before s08
+11-22 17:25:04.603 16231 16231 I flutter : C13PROBE s08 closed: timeout 4285 ms
+s08 with a 60 s accessibility timeout: s08 nav: true | s08 closed: timeout 4285 ms
+timeout settings after: {accessibility_non_interactive_ui_timeout_ms=null, accessibility_interactive_ui_timeout_ms=null}

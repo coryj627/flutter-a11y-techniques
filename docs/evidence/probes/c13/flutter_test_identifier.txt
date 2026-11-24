@@ -1,0 +1,6 @@
+C13P3 text alone | label "Show" identifier "" liveRegion=false dismiss=false
+C13P3 text alone | label "Message archived" identifier "" liveRegion=true dismiss=true
+C13P3 Semantics(identifier:) round the text | label "Show" identifier "" liveRegion=false dismiss=false
+C13P3 Semantics(identifier:) round the text | label "" identifier "" liveRegion=true dismiss=true
+C13P3 Semantics(identifier:) round the text | label "Message archived" identifier "message" liveRegion=false dismiss=false
+00:00 +2: All tests passed!

@@ -1,0 +1,320 @@
+// C13 probe in widget tests (throwaway, not committed; kept as
+// docs/evidence/probes/c13/probe_test.dart.txt). Runs lib/probe.dart's
+// fixtures as Android, with MediaQuery.accessibleNavigation off and on, and
+// prints one line per reading, prefixed C13FT. Time is pumped in 100 ms
+// steps, so a time is good to 100 ms.
+import 'dart:ui' show AccessibilityFeatures;
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+class _Features implements AccessibilityFeatures {
+  const _Features(this.accessibleNavigation);
+  @override
+  final bool accessibleNavigation;
+  @override
+  bool get invertColors => false;
+  @override
+  bool get disableAnimations => false;
+  @override
+  bool get boldText => false;
+  @override
+  bool get reduceMotion => false;
+  @override
+  bool get highContrast => false;
+  @override
+  bool get onOffSwitchLabels => false;
+  @override
+  bool get supportsAnnounce => false;
+  @override
+  bool get autoPlayAnimatedImages => true;
+  @override
+  bool get autoPlayVideos => true;
+  @override
+  bool get deterministicCursor => false;
+  @override
+  dynamic noSuchMethod(Invocation i) => super.noSuchMethod(i);
+}
+
+void log(String s) => debugPrint('C13FT $s');
+
+String flags(SemanticsData d) {
+  final f = d.flagsCollection;
+  final out = <String>[];
+  if (f.isLiveRegion) out.add('liveRegion');
+  if (f.isButton) out.add('button');
+  if (f.scopesRoute) out.add('scopesRoute');
+  if (f.namesRoute) out.add('namesRoute');
+  if (f.isFocused.toString().contains('isTrue')) out.add('focused');
+  return out.join(',');
+}
+
+String actions(SemanticsData d) => [
+  for (final a in SemanticsAction.values)
+    if (d.hasAction(a)) a.name,
+].join(',');
+
+/// Every node depth first, in the tree's order, not merged into a parent.
+List<SemanticsNode> nodes(WidgetTester tester) {
+  final out = <SemanticsNode>[];
+  void visit(SemanticsNode n) {
+    if (!n.isMergedIntoParent) out.add(n);
+    n.visitChildren((c) {
+      visit(c);
+      return true;
+    });
+  }
+
+  visit(
+    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
+  );
+  return out;
+}
+
+String describe(SemanticsNode n) {
+  final d = n.getSemanticsData();
+  return '#${n.id} "${d.label.replaceAll('\n', '\\n')}" tooltip="${d.tooltip}" '
+      'value="${d.value}" [${flags(d)}] {${actions(d)}}';
+}
+
+/// What has keyboard focus, by the semantics node that is focused: its
+/// label, or its tooltip when it has no label.
+String focusText(WidgetTester tester) {
+  for (final n in nodes(tester)) {
+    final d = n.getSemanticsData();
+    if (d.flagsCollection.isFocused.toString().contains('isTrue')) {
+      return d.label.isNotEmpty ? d.label : 'tooltip ${d.tooltip}';
+    }
+  }
+  return 'no focused node (${FocusManager.instance.primaryFocus})';
+}
+
+String closedText(WidgetTester tester, String id) {
+  final t = find.textContaining('$id closed:');
+  return t.evaluate().isEmpty ? '?' : tester.widget<Text>(t).data!;
+}
+
+bool messageShown(String id) => find
+    .textContaining(RegExp('$id (Message archived|Offline)'))
+    .evaluate()
+    .isNotEmpty;
+
+Future<void> open(WidgetTester tester, String id, bool nav) async {
+  tester.platformDispatcher.accessibilityFeaturesTestValue = _Features(nav);
+  addTearDown(tester.platformDispatcher.clearAllTestValues);
+  await tester.pumpWidget(const ProbeApp());
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('$id ${fixtures[id]!.$1}'));
+  await tester.pumpAndSettle();
+}
+
+Future<void> show(WidgetTester tester, String id) async {
+  await tester.tap(find.text('$id Show'));
+  for (var i = 0; i < 10; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+/// Pumps 100 ms at a time until the message is gone or [max] passes;
+/// returns the time it was gone at, from the show, or null.
+Future<int?> lifetime(WidgetTester tester, String id, {int max = 15000}) async {
+  for (var t = 1000; t <= max; t += 100) {
+    if (!messageShown(id)) return t;
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+  return null;
+}
+
+void main() {
+  final ids = fixtures.keys.toList();
+  for (final nav in [false, true]) {
+    for (final id in ids) {
+      testWidgets('$id nav=$nav: tree, focus, lifetime', (tester) async {
+        final handle = tester.ensureSemantics();
+        await open(tester, id, nav);
+        await show(tester, id);
+        log('$id nav=$nav focus after show: ${focusText(tester)}');
+        for (final n in nodes(tester)) {
+          final d = n.getSemanticsData();
+          if (d.label.isEmpty &&
+              d.tooltip.isEmpty &&
+              !d.flagsCollection.isLiveRegion)
+            continue;
+          log('$id nav=$nav node ${describe(n)}');
+        }
+        final gone = await lifetime(tester, id);
+        log(
+          '$id nav=$nav gone at: ${gone ?? 'still shown at 15000'} ms; ${closedText(tester, id)}',
+        );
+        handle.dispose();
+      });
+    }
+  }
+
+  for (final id in ids) {
+    testWidgets('$id: Tab order after the show, and Escape', (tester) async {
+      final handle = tester.ensureSemantics();
+      await open(tester, id, false);
+      await show(tester, id);
+      final stops = <String>[];
+      for (var i = 0; i < 10; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump(const Duration(milliseconds: 50));
+        stops.add(focusText(tester));
+      }
+      log('$id tab stops: ${stops.join(' | ')}');
+      // Escape with focus wherever the Tabs left it.
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump(const Duration(milliseconds: 500));
+      log(
+        '$id Escape with focus on "${focusText(tester)}": shown=${messageShown(id)} ${closedText(tester, id)}',
+      );
+      handle.dispose();
+    });
+
+    testWidgets('$id: Tab to the message action, then wait', (tester) async {
+      final handle = tester.ensureSemantics();
+      await open(tester, id, false);
+      await show(tester, id);
+      String? reached;
+      for (var i = 0; i < 10; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump(const Duration(milliseconds: 50));
+        final f = focusText(tester);
+        if (f.contains('Undo') ||
+            f.contains('Dismiss') ||
+            f == 'tooltip Close') {
+          reached = f;
+          break;
+        }
+      }
+      if (reached == null) {
+        log('$id no Tab reached an action');
+        handle.dispose();
+        return;
+      }
+      final ms = await lifetime(tester, id);
+      log(
+        '$id focus on "$reached": gone at ${ms ?? 'still shown at 15000'} ms; focus then "${focusText(tester)}"; ${closedText(tester, id)}',
+      );
+      if (ms != null) {
+        final after = <String>[];
+        for (var i = 0; i < 3; i++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump(const Duration(milliseconds: 50));
+          after.add(focusText(tester));
+        }
+        log('$id three Tabs after it went: ${after.join(' | ')}');
+      }
+      if (ms == null) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pump(const Duration(milliseconds: 500));
+        log(
+          '$id Escape on "$reached": shown=${messageShown(id)} ${closedText(tester, id)}',
+        );
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pump(const Duration(milliseconds: 500));
+        log(
+          '$id Enter on "$reached": shown=${messageShown(id)} ${closedText(tester, id)} ${find.textContaining('$id taps').evaluate().isEmpty ? '' : tester.widget<Text>(find.textContaining('$id taps')).data}',
+        );
+        await tester.pump(const Duration(seconds: 1));
+        log('$id 1 s after Enter: focus "${focusText(tester)}"');
+      }
+      handle.dispose();
+    });
+
+    testWidgets('$id: the dismiss action, popRoute, a swipe, a hover', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await open(tester, id, false);
+      await show(tester, id);
+      final live = nodes(tester)
+          .where((n) => n.getSemanticsData().flagsCollection.isLiveRegion);
+      log('$id live regions: ${live.map(describe).join(' ; ')}');
+      final withDismiss = nodes(
+        tester,
+      ).where((n) => n.getSemanticsData().hasAction(SemanticsAction.dismiss));
+      if (withDismiss.isNotEmpty) {
+        tester.binding.pipelineOwner.semanticsOwner!.performAction(
+          withDismiss.first.id,
+          SemanticsAction.dismiss,
+        );
+        await tester.pump(const Duration(milliseconds: 500));
+        log(
+          '$id dismiss action: shown=${messageShown(id)} ${closedText(tester, id)}',
+        );
+      } else {
+        log('$id no node has the dismiss action');
+      }
+
+      await show(tester, id);
+      await tester.binding.handlePopRoute();
+      await tester.pump(const Duration(milliseconds: 600));
+      log(
+        '$id popRoute: fixture screen=${find.text('Before $id').evaluate().isNotEmpty} home=${find.text('C13 probe home').evaluate().isNotEmpty} message shown=${messageShown(id)}',
+      );
+      final gone = await lifetime(tester, id);
+      log(
+        '$id after popRoute: message gone at ${gone ?? 'still shown at 15000'} ms (from the pop)',
+      );
+
+      await tester.tap(find.text('$id ${fixtures[id]!.$1}'));
+      await tester.pumpAndSettle();
+      await show(tester, id);
+      final content = find.textContaining(
+        RegExp('$id (Message archived|Offline)'),
+      );
+      await tester.drag(content, const Offset(0, 300));
+      await tester.pump(const Duration(milliseconds: 600));
+      log(
+        '$id swipe down: shown=${messageShown(id)} ${closedText(tester, id)}',
+      );
+
+      await show(tester, id);
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer(location: tester.getCenter(content));
+      await tester.pump();
+      final hovered = await lifetime(tester, id);
+      log(
+        '$id mouse resting on the message: gone at ${hovered ?? 'still shown at 15000'} ms',
+      );
+      await gesture.removePointer();
+      handle.dispose();
+    });
+  }
+
+  testWidgets('accessibleNavigation turned on while s01 is shown', (
+    tester,
+  ) async {
+    await open(tester, 's01', false);
+    await show(tester, 's01');
+    tester.platformDispatcher.accessibilityFeaturesTestValue = const _Features(
+      true,
+    );
+    await tester.pump();
+    final gone = await lifetime(tester, 's01');
+    log(
+      's01 nav turned on after the show: gone at ${gone ?? 'still shown at 15000'} ms; ${closedText(tester, 's01')}',
+    );
+  });
+
+  testWidgets('a second message while s02 (persists) is shown', (tester) async {
+    await open(tester, 's02', false);
+    await show(tester, 's02');
+    final messenger = ScaffoldMessenger.of(
+      tester.element(find.text('Before s02')),
+    );
+    messenger.showSnackBar(const SnackBar(content: Text('second message')));
+    for (var i = 0; i < 100; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    log(
+      's02 then a second showSnackBar, 10 s later: first shown=${messageShown('s02')} second shown=${find.text('second message').evaluate().isNotEmpty}',
+    );
+  });
+}

@@ -1,0 +1,37 @@
+# c13_close_probe.spec.js.txt against build/web (the app), run 2026-11-22 with
+# npx playwright test c13_close_probe.spec.js --browser=chromium, then --browser=webkit.
+# No VoiceOver. The "AX" lines are Chromium's accessibility tree over the DevTools protocol.
+C13CLOSE chromium Close element: <flt-semantics role="button" tabindex="0" flt-tappable="">Close</flt-semantics>
+C13CLOSE chromium Close attributes: {"ariaLabel":null,"ariaDescription":null,"ariaDescribedby":null,"title":null,"text":"Close"}
+C13CLOSE chromium Undo element: <flt-semantics role="button" tabindex="0" flt-tappable="">Undo</flt-semantics>
+C13CLOSE chromium Undo attributes: {"ariaLabel":null,"ariaDescription":null,"ariaDescribedby":null,"title":null,"text":"Undo"}
+C13CLOSE chromium Back element: <flt-semantics role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+C13CLOSE chromium Back attributes: {"ariaLabel":null,"ariaDescription":null,"ariaDescribedby":null,"title":null,"text":"Back"}
+C13CLOSE chromium buttons with the pointer on Close: ["|Back|owns=","|Archive message|owns=","|Undo|owns=","|Close|owns=flt-semantic-node-17"]
+C13CLOSE chromium leaf elements reading "Close" with the pointer on it: 2
+C13CLOSE chromium AX with the pointer on Close role=button name="Close Close" description=""
+C13CLOSE chromium AX with the pointer on Close role=StaticText name="Close" description=""
+C13CLOSE chromium AX with the pointer on Close role=InlineTextBox name="Close" description=""
+C13CLOSE chromium AX with the pointer on Close role=StaticText name="Close" description=""
+C13CLOSE chromium AX with the pointer on Close role=InlineTextBox name="Close" description=""
+C13CLOSE chromium keyboard focus on button Close ; leaf elements reading "Close": 1
+C13CLOSE chromium AX role=button name="Back" description="" focusable=true
+C13CLOSE chromium AX role=button name="Undo" description="" focusable=true
+C13CLOSE chromium AX role=button name="Close" description="" focusable=true focused=true
+C13CLOSE chromium AX role=StaticText name="Back" description="" 
+C13CLOSE chromium AX role=StaticText name="Undo" description="" 
+C13CLOSE chromium AX role=StaticText name="Close" description="" 
+C13CLOSE chromium AX role=InlineTextBox name="Back" description="" 
+C13CLOSE chromium AX role=InlineTextBox name="Undo" description="" 
+C13CLOSE chromium AX role=InlineTextBox name="Close" description="" 
+  1 passed (9.0s)
+C13CLOSE webkit Close element: <flt-semantics role="button" tabindex="0" flt-tappable="">Close</flt-semantics>
+C13CLOSE webkit Close attributes: {"ariaLabel":null,"ariaDescription":null,"ariaDescribedby":null,"title":null,"text":"Close"}
+C13CLOSE webkit Undo element: <flt-semantics role="button" tabindex="0" flt-tappable="">Undo</flt-semantics>
+C13CLOSE webkit Undo attributes: {"ariaLabel":null,"ariaDescription":null,"ariaDescribedby":null,"title":null,"text":"Undo"}
+C13CLOSE webkit Back element: <flt-semantics role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+C13CLOSE webkit Back attributes: {"ariaLabel":null,"ariaDescription":null,"ariaDescribedby":null,"title":null,"text":"Back"}
+C13CLOSE webkit buttons with the pointer on Close: ["|Back|owns=","|Archive message|owns=","|Undo|owns=","|Close|owns=flt-semantic-node-17"]
+C13CLOSE webkit leaf elements reading "Close" with the pointer on it: 2
+C13CLOSE webkit keyboard focus on button Close ; leaf elements reading "Close": 1
+  1 passed (9.1s)

@@ -1,0 +1,134 @@
+// C13 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c13/ProbeC13UITests.swift.txt): for each fixture of
+// lib/probe.dart, opened by URL. The app writes on screen why and how long
+// after the show each message went, accessibleNavigation at the show, and
+// what has Flutter's keyboard focus; this reads them.
+//
+// testTree: the elements once the message is shown, and how long it stays.
+// testKeys: Tab stops after the show, the action with keyboard focus left on
+// it, then Return. testVoiceOver: what VoiceOver says once the message is
+// shown by a tap at the Show button, with the cursor on that button; then
+// the moves forward from it; then how long the message stayed.
+import XCTest
+
+final class ProbeC13UITests: XCTestCase {
+  let app = XCUIApplication()
+  let ids = (1...8).map { String(format: "s%02d", $0) }
+
+  func log(_ s: String) { print("C13PROBE \(s)") }
+
+  func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+
+  func open(_ id: String) {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///\(id)")!)
+      if el("\(id)-taps").waitForExistence(timeout: 30) { sleep(1); return }
+    }
+    XCTFail("\(id) did not open")
+  }
+
+  func messageElements(_ id: String) -> [String] {
+    app.descendants(matching: .any).allElementsBoundByIndex.compactMap { e in
+      let l = e.label
+      guard l.contains("\(id) Message") || l.contains("\(id) Offline") || l.contains("\(id) Undo")
+        || l.contains("\(id) Dismiss") || l == "Close" else { return nil }
+      return "type=\(e.elementType.rawValue) label=\(l.debugDescription) id=\(e.identifier) frame=\(e.frame)"
+    }
+  }
+
+  /// Waits for the app's "closed" line to say the message went, at most `max` s.
+  func waitClosed(_ id: String, _ max: TimeInterval = 16) -> String {
+    let end = Date().addingTimeInterval(max)
+    while Date() < end {
+      let l = el("\(id)-closed").label
+      if !l.hasSuffix("open") { return l }
+      usleep(250_000)
+    }
+    return "\(el("\(id)-closed").label) (still, \(Int(max)) s after)"
+  }
+
+  func testTree() {
+    for id in ids {
+      open(id)
+      el("\(id)-show").tap()
+      sleep(1)
+      log("\(id) elements: \(messageElements(id).joined(separator: " | "))")
+      log("\(id) \(el("\(id)-nav").label) | \(waitClosed(id))")
+    }
+  }
+
+  func focus(_ id: String) -> String { el("\(id)-focus").label.replacingOccurrences(of: "\(id) focus: ", with: "") }
+
+  func tab() {
+    app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+    usleep(700_000)
+  }
+
+  func testKeys() {
+    for id in ids {
+      open(id)
+      el("\(id)-show").tap()
+      sleep(1)
+      let stops = (0..<6).map { _ -> String in tab(); return focus(id) }
+      log("\(id) tab stops after the show: \(stops.joined(separator: " | "))")
+      open(id)
+      el("\(id)-show").tap()
+      sleep(1)
+      var reached: String? = nil
+      for _ in 0..<6 {
+        tab()
+        let f = focus(id)
+        if f.contains("Undo") || f.contains("Dismiss") || f.hasPrefix("icon") { reached = f; break }
+      }
+      guard let reached else { log("\(id) no Tab reached an action"); continue }
+      let closed = waitClosed(id, 12)
+      log("\(id) focus on \"\(reached)\": \(closed) | focus then \(focus(id))")
+      if !closed.contains("still") { continue }
+      app.typeKey(XCUIKeyboardKey.return.rawValue, modifierFlags: [])
+      sleep(2)
+      log("\(id) Return on \"\(reached)\": \(el("\(id)-closed").label) | \(el("\(id)-taps").label) | focus then \(focus(id))")
+    }
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func current() -> String { norm((try? vo.currentSpeech().utterance) ?? "(none)") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    for id in ids {
+      open(id)
+      try vo.enable()
+      let show = el("\(id)-show")
+      var before = ""
+      for _ in 0..<5 {
+        show.tap()
+        let end = Date().addingTimeInterval(4)
+        repeat { usleep(250_000); before = current() } while !before.hasPrefix("\(id) Show") && Date() < end
+        if before.hasPrefix("\(id) Show") { break }
+      }
+      let t0 = Date()
+      show.doubleTap()
+      var heard: [String] = []
+      let end = Date().addingTimeInterval(6)
+      while Date() < end {
+        let s = current()
+        if heard.last != s { heard.append(s) }
+        usleep(200_000)
+      }
+      log("VO \(id) cursor before: \(before) | speech after a double tap at Show, 6 s: \(heard.joined(separator: " / "))")
+      var walk: [String] = []
+      for _ in 0..<8 { walk.append(say()) }
+      log("VO \(id) moves forward from there (\(Int(Date().timeIntervalSince(t0))) s after the tap): \(walk.joined(separator: " / "))")
+      try vo.disable()
+      log("VO \(id) \(el("\(id)-nav").label) | \(waitClosed(id, 14))")
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}

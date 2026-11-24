@@ -1,0 +1,51 @@
+C13P2 good-action | "Good example for Snackbar and transient messages. Material." tooltip="" id="" live=false button=false actions=
+C13P2 good-action | "Example" tooltip="" id="" live=false button=false actions=
+C13P2 good-action | "Archive message" tooltip="" id="c13-good-action-show" live=false button=true actions=tap,focus
+C13P2 good-action | "Archived: 1" tooltip="" id="c13-good-action-count" live=false button=false actions=
+C13P2 good-action | "Back" tooltip="Back" id="" live=false button=true actions=tap,focus
+C13P2 good-action | "SnackBar with an action" tooltip="" id="" live=false button=false actions=
+C13P2 good-action | "Message archived" tooltip="" id="" live=true button=false actions=scrollUp,scrollDown,dismiss
+C13P2 good-action | "Undo" tooltip="" id="" live=false button=true actions=tap,focus
+C13P2 good-action | "" tooltip="Close" id="" live=false button=true actions=tap,focus
+C13P2 good-message | "Good example for Snackbar and transient messages. Material." tooltip="" id="" live=false button=false actions=
+C13P2 good-message | "Example" tooltip="" id="" live=false button=false actions=
+C13P2 good-message | "Save draft" tooltip="" id="c13-good-message-show" live=false button=true actions=tap,focus
+C13P2 good-message | "Drafts saved: 1" tooltip="" id="c13-good-message-count" live=false button=false actions=
+C13P2 good-message | "Back" tooltip="Back" id="" live=false button=true actions=tap,focus
+C13P2 good-message | "SnackBar whose news is also on the page" tooltip="" id="" live=false button=false actions=
+C13P2 good-message | "Draft saved" tooltip="" id="" live=true button=false actions=scrollUp,scrollDown,dismiss
+C13P2 good-banner | "Good example for Snackbar and transient messages. Material." tooltip="" id="" live=false button=false actions=
+C13P2 good-banner | "Example" tooltip="" id="" live=false button=false actions=
+C13P2 good-banner | "Go offline" tooltip="" id="c13-good-banner-show" live=false button=true actions=tap,focus
+C13P2 good-banner | "Status: offline" tooltip="" id="c13-good-banner-count" live=false button=false actions=
+C13P2 good-banner | "Back" tooltip="Back" id="" live=false button=true actions=tap,focus
+C13P2 good-banner | "MaterialBanner" tooltip="" id="" live=false button=false actions=
+C13P2 good-banner | "You are offline." tooltip="" id="" live=true button=false actions=dismiss
+C13P2 good-banner | "Go online" tooltip="" id="" live=false button=true actions=tap,focus
+C13P2 bad-action-times-out | "Bad example for Snackbar and transient messages. Material." tooltip="" id="" live=false button=false actions=
+C13P2 bad-action-times-out | "Defect: Undo goes after four seconds, and nothing gives more time." tooltip="" id="" live=false button=false actions=
+C13P2 bad-action-times-out | "Example" tooltip="" id="" live=false button=false actions=
+C13P2 bad-action-times-out | "Archive message" tooltip="" id="c13-bad-action-times-out-show" live=false button=true actions=tap,focus
+C13P2 bad-action-times-out | "Archived: 1" tooltip="" id="c13-bad-action-times-out-count" live=false button=false actions=
+C13P2 bad-action-times-out | "Back" tooltip="Back" id="" live=false button=true actions=tap,focus
+C13P2 bad-action-times-out | "Action that times out" tooltip="" id="" live=false button=false actions=
+C13P2 bad-action-times-out | "Message archived" tooltip="" id="" live=true button=false actions=scrollUp,scrollDown,dismiss
+C13P2 bad-action-times-out | "Undo" tooltip="" id="" live=false button=true actions=tap,focus
+C13P2 bad-only-in-message | "Bad example for Snackbar and transient messages. Material." tooltip="" id="" live=false button=false actions=
+C13P2 bad-only-in-message | "Defect: The code is shown for four seconds and nowhere else." tooltip="" id="" live=false button=false actions=
+C13P2 bad-only-in-message | "Example" tooltip="" id="" live=false button=false actions=
+C13P2 bad-only-in-message | "Book a table" tooltip="" id="c13-bad-only-in-message-show" live=false button=true actions=tap,focus
+C13P2 bad-only-in-message | "Bookings: 1" tooltip="" id="c13-bad-only-in-message-count" live=false button=false actions=
+C13P2 bad-only-in-message | "Back" tooltip="Back" id="" live=false button=true actions=tap,focus
+C13P2 bad-only-in-message | "Information only in a SnackBar" tooltip="" id="" live=false button=false actions=
+C13P2 bad-only-in-message | "Booked. Code: K7Q2" tooltip="" id="" live=true button=false actions=scrollUp,scrollDown,dismiss
+C13P2 bad-inline-banner | "Bad example for Snackbar and transient messages. Material." tooltip="" id="" live=false button=false actions=
+C13P2 bad-inline-banner | "Defect: The banner is not announced." tooltip="" id="" live=false button=false actions=
+C13P2 bad-inline-banner | "Example" tooltip="" id="" live=false button=false actions=
+C13P2 bad-inline-banner | "Go offline" tooltip="" id="c13-bad-inline-banner-show" live=false button=true actions=tap,focus
+C13P2 bad-inline-banner | "Status: offline" tooltip="" id="c13-bad-inline-banner-count" live=false button=false actions=
+C13P2 bad-inline-banner | "You are offline." tooltip="" id="" live=false button=false actions=
+C13P2 bad-inline-banner | "Go online" tooltip="" id="" live=false button=true actions=tap,focus
+C13P2 bad-inline-banner | "Back" tooltip="Back" id="" live=false button=true actions=tap,focus
+C13P2 bad-inline-banner | "Banner put in the page" tooltip="" id="" live=false button=false actions=
+00:00 +6: All tests passed!

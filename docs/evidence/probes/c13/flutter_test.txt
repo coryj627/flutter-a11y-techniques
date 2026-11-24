@@ -1,0 +1,333 @@
+C13FT s01 nav=false focus after show: no focused node (FocusScopeNode#f97f0(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s01 nav=false node #20 "Before s01" tooltip="" value="" [] {}
+C13FT s01 nav=false node #21 "s01 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s01 nav=false node #24 "s01 taps: 0" tooltip="" value="" [] {}
+C13FT s01 nav=false node #26 "s01 closed: open" tooltip="" value="" [] {}
+C13FT s01 nav=false node #28 "s01 nav: false" tooltip="" value="" [] {}
+C13FT s01 nav=false node #30 "s01 focus: Before s01" tooltip="" value="" [] {}
+C13FT s01 nav=false node #32 "After s01" tooltip="" value="" [] {}
+C13FT s01 nav=false node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s01 nav=false node #35 "s01 SnackBar, content only" tooltip="" value="" [namesRoute] {}
+C13FT s01 nav=false node #36 "s01 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s01 nav=false gone at: 4700 ms; s01 closed: timeout 38 ms
+C13FT s02 nav=false focus after show: no focused node (FocusScopeNode#9ede8(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s02 nav=false node #20 "Before s02" tooltip="" value="" [] {}
+C13FT s02 nav=false node #21 "s02 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s02 nav=false node #24 "s02 taps: 0" tooltip="" value="" [] {}
+C13FT s02 nav=false node #26 "s02 closed: open" tooltip="" value="" [] {}
+C13FT s02 nav=false node #28 "s02 nav: false" tooltip="" value="" [] {}
+C13FT s02 nav=false node #30 "s02 focus: Before s02" tooltip="" value="" [] {}
+C13FT s02 nav=false node #32 "After s02" tooltip="" value="" [] {}
+C13FT s02 nav=false node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s02 nav=false node #35 "s02 SnackBar with an action" tooltip="" value="" [namesRoute] {}
+C13FT s02 nav=false node #36 "s02 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s02 nav=false node #37 "s02 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s02 nav=false gone at: still shown at 15000 ms; s02 closed: open
+C13FT s03 nav=false focus after show: no focused node (FocusScopeNode#5006a(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s03 nav=false node #20 "Before s03" tooltip="" value="" [] {}
+C13FT s03 nav=false node #21 "s03 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s03 nav=false node #24 "s03 taps: 0" tooltip="" value="" [] {}
+C13FT s03 nav=false node #26 "s03 closed: open" tooltip="" value="" [] {}
+C13FT s03 nav=false node #28 "s03 nav: false" tooltip="" value="" [] {}
+C13FT s03 nav=false node #30 "s03 focus: Before s03" tooltip="" value="" [] {}
+C13FT s03 nav=false node #32 "After s03" tooltip="" value="" [] {}
+C13FT s03 nav=false node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s03 nav=false node #35 "s03 SnackBar with an action, persist: false" tooltip="" value="" [namesRoute] {}
+C13FT s03 nav=false node #36 "s03 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s03 nav=false node #37 "s03 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s03 nav=false gone at: 4700 ms; s03 closed: timeout 15 ms
+C13FT s04 nav=false focus after show: no focused node (FocusScopeNode#b8d46(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s04 nav=false node #20 "Before s04" tooltip="" value="" [] {}
+C13FT s04 nav=false node #21 "s04 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s04 nav=false node #24 "s04 taps: 0" tooltip="" value="" [] {}
+C13FT s04 nav=false node #26 "s04 closed: open" tooltip="" value="" [] {}
+C13FT s04 nav=false node #28 "s04 nav: false" tooltip="" value="" [] {}
+C13FT s04 nav=false node #30 "s04 focus: Before s04" tooltip="" value="" [] {}
+C13FT s04 nav=false node #32 "After s04" tooltip="" value="" [] {}
+C13FT s04 nav=false node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s04 nav=false node #35 "s04 SnackBar with showCloseIcon, no action" tooltip="" value="" [namesRoute] {}
+C13FT s04 nav=false node #36 "s04 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s04 nav=false node #37 "" tooltip="Close" value="" [button] {tap,focus}
+C13FT s04 nav=false gone at: 4700 ms; s04 closed: timeout 15 ms
+C13FT s05 nav=false focus after show: no focused node (FocusScopeNode#c1cf1(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s05 nav=false node #20 "Before s05" tooltip="" value="" [] {}
+C13FT s05 nav=false node #21 "s05 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s05 nav=false node #24 "s05 taps: 0" tooltip="" value="" [] {}
+C13FT s05 nav=false node #26 "s05 closed: open" tooltip="" value="" [] {}
+C13FT s05 nav=false node #28 "s05 nav: false" tooltip="" value="" [] {}
+C13FT s05 nav=false node #30 "s05 focus: Before s05" tooltip="" value="" [] {}
+C13FT s05 nav=false node #32 "After s05" tooltip="" value="" [] {}
+C13FT s05 nav=false node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s05 nav=false node #35 "s05 SnackBar with an action and showCloseIcon" tooltip="" value="" [namesRoute] {}
+C13FT s05 nav=false node #36 "s05 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s05 nav=false node #37 "s05 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s05 nav=false node #38 "" tooltip="Close" value="" [button] {tap,focus}
+C13FT s05 nav=false gone at: still shown at 15000 ms; s05 closed: open
+C13FT s06 nav=false focus after show: no focused node (FocusScopeNode#04590(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s06 nav=false node #20 "Before s06" tooltip="" value="" [] {}
+C13FT s06 nav=false node #21 "s06 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s06 nav=false node #24 "s06 taps: 0" tooltip="" value="" [] {}
+C13FT s06 nav=false node #26 "s06 closed: open" tooltip="" value="" [] {}
+C13FT s06 nav=false node #28 "s06 nav: false" tooltip="" value="" [] {}
+C13FT s06 nav=false node #30 "s06 focus: Before s06" tooltip="" value="" [] {}
+C13FT s06 nav=false node #32 "After s06" tooltip="" value="" [] {}
+C13FT s06 nav=false node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s06 nav=false node #35 "s06 MaterialBanner" tooltip="" value="" [namesRoute] {}
+C13FT s06 nav=false node #36 "s06 Offline: changes are kept" tooltip="" value="" [liveRegion] {dismiss}
+C13FT s06 nav=false node #37 "s06 Dismiss" tooltip="" value="" [button] {tap,focus}
+C13FT s06 nav=false gone at: still shown at 15000 ms; s06 closed: open
+C13FT s07 nav=false focus after show: no focused node (FocusScopeNode#ef1b3(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s07 nav=false node #20 "Before s07" tooltip="" value="" [] {}
+C13FT s07 nav=false node #21 "s07 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s07 nav=false node #24 "s07 taps: 0" tooltip="" value="" [] {}
+C13FT s07 nav=false node #26 "s07 closed: open" tooltip="" value="" [] {}
+C13FT s07 nav=false node #28 "s07 nav: false" tooltip="" value="" [] {}
+C13FT s07 nav=false node #30 "s07 focus: Before s07" tooltip="" value="" [] {}
+C13FT s07 nav=false node #32 "After s07" tooltip="" value="" [] {}
+C13FT s07 nav=false node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s07 nav=false node #35 "s07 SnackBar, duration 10 s" tooltip="" value="" [namesRoute] {}
+C13FT s07 nav=false node #36 "s07 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s07 nav=false gone at: 10700 ms; s07 closed: timeout 14 ms
+C13FT s08 nav=false focus after show: no focused node (FocusScopeNode#b3e2c(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s08 nav=false node #20 "Before s08" tooltip="" value="" [] {}
+C13FT s08 nav=false node #21 "s08 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s08 nav=false node #24 "s08 taps: 0" tooltip="" value="" [] {}
+C13FT s08 nav=false node #26 "s08 closed: open" tooltip="" value="" [] {}
+C13FT s08 nav=false node #28 "s08 nav: false" tooltip="" value="" [] {}
+C13FT s08 nav=false node #30 "s08 focus: Before s08" tooltip="" value="" [] {}
+C13FT s08 nav=false node #32 "After s08" tooltip="" value="" [] {}
+C13FT s08 nav=false node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s08 nav=false node #35 "s08 SnackBar, floating, with an action, persist: false" tooltip="" value="" [namesRoute] {}
+C13FT s08 nav=false node #36 "s08 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s08 nav=false node #37 "s08 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s08 nav=false gone at: 4700 ms; s08 closed: timeout 16 ms
+C13FT s09 nav=false focus after show: no focused node (FocusScopeNode#2b79c(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s09 nav=false node #20 "Before s09" tooltip="" value="" [] {}
+C13FT s09 nav=false node #21 "s09 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s09 nav=false node #24 "s09 taps: 0" tooltip="" value="" [] {}
+C13FT s09 nav=false node #26 "s09 closed: open" tooltip="" value="" [] {}
+C13FT s09 nav=false node #28 "s09 nav: false" tooltip="" value="" [] {}
+C13FT s09 nav=false node #30 "s09 focus: Before s09" tooltip="" value="" [] {}
+C13FT s09 nav=false node #32 "After s09" tooltip="" value="" [] {}
+C13FT s09 nav=false node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s09 nav=false node #35 "s09 SnackBar with an action and showCloseIcon, closeIconColor by state" tooltip="" value="" [namesRoute] {}
+C13FT s09 nav=false node #36 "s09 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s09 nav=false node #37 "s09 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s09 nav=false node #38 "" tooltip="Close" value="" [button] {tap,focus}
+C13FT s09 nav=false gone at: still shown at 15000 ms; s09 closed: open
+C13FT s01 nav=true focus after show: no focused node (FocusScopeNode#7a436(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s01 nav=true node #20 "Before s01" tooltip="" value="" [] {}
+C13FT s01 nav=true node #21 "s01 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s01 nav=true node #24 "s01 taps: 0" tooltip="" value="" [] {}
+C13FT s01 nav=true node #26 "s01 closed: open" tooltip="" value="" [] {}
+C13FT s01 nav=true node #28 "s01 nav: true" tooltip="" value="" [] {}
+C13FT s01 nav=true node #30 "s01 focus: Before s01" tooltip="" value="" [] {}
+C13FT s01 nav=true node #32 "After s01" tooltip="" value="" [] {}
+C13FT s01 nav=true node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s01 nav=true node #35 "s01 SnackBar, content only" tooltip="" value="" [namesRoute] {}
+C13FT s01 nav=true node #36 "s01 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s01 nav=true gone at: 4400 ms; s01 closed: timeout 6 ms
+C13FT s02 nav=true focus after show: no focused node (FocusScopeNode#d6883(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s02 nav=true node #20 "Before s02" tooltip="" value="" [] {}
+C13FT s02 nav=true node #21 "s02 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s02 nav=true node #24 "s02 taps: 0" tooltip="" value="" [] {}
+C13FT s02 nav=true node #26 "s02 closed: open" tooltip="" value="" [] {}
+C13FT s02 nav=true node #28 "s02 nav: true" tooltip="" value="" [] {}
+C13FT s02 nav=true node #30 "s02 focus: Before s02" tooltip="" value="" [] {}
+C13FT s02 nav=true node #32 "After s02" tooltip="" value="" [] {}
+C13FT s02 nav=true node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s02 nav=true node #35 "s02 SnackBar with an action" tooltip="" value="" [namesRoute] {}
+C13FT s02 nav=true node #36 "s02 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s02 nav=true node #37 "s02 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s02 nav=true gone at: still shown at 15000 ms; s02 closed: open
+C13FT s03 nav=true focus after show: no focused node (FocusScopeNode#bcdc0(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s03 nav=true node #20 "Before s03" tooltip="" value="" [] {}
+C13FT s03 nav=true node #21 "s03 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s03 nav=true node #24 "s03 taps: 0" tooltip="" value="" [] {}
+C13FT s03 nav=true node #26 "s03 closed: open" tooltip="" value="" [] {}
+C13FT s03 nav=true node #28 "s03 nav: true" tooltip="" value="" [] {}
+C13FT s03 nav=true node #30 "s03 focus: Before s03" tooltip="" value="" [] {}
+C13FT s03 nav=true node #32 "After s03" tooltip="" value="" [] {}
+C13FT s03 nav=true node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s03 nav=true node #35 "s03 SnackBar with an action, persist: false" tooltip="" value="" [namesRoute] {}
+C13FT s03 nav=true node #36 "s03 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s03 nav=true node #37 "s03 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s03 nav=true gone at: 4400 ms; s03 closed: timeout 7 ms
+C13FT s04 nav=true focus after show: no focused node (FocusScopeNode#f7ecb(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s04 nav=true node #20 "Before s04" tooltip="" value="" [] {}
+C13FT s04 nav=true node #21 "s04 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s04 nav=true node #24 "s04 taps: 0" tooltip="" value="" [] {}
+C13FT s04 nav=true node #26 "s04 closed: open" tooltip="" value="" [] {}
+C13FT s04 nav=true node #28 "s04 nav: true" tooltip="" value="" [] {}
+C13FT s04 nav=true node #30 "s04 focus: Before s04" tooltip="" value="" [] {}
+C13FT s04 nav=true node #32 "After s04" tooltip="" value="" [] {}
+C13FT s04 nav=true node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s04 nav=true node #35 "s04 SnackBar with showCloseIcon, no action" tooltip="" value="" [namesRoute] {}
+C13FT s04 nav=true node #36 "s04 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s04 nav=true node #37 "" tooltip="Close" value="" [button] {tap,focus}
+C13FT s04 nav=true gone at: 4400 ms; s04 closed: timeout 8 ms
+C13FT s05 nav=true focus after show: no focused node (FocusScopeNode#e73d0(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s05 nav=true node #20 "Before s05" tooltip="" value="" [] {}
+C13FT s05 nav=true node #21 "s05 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s05 nav=true node #24 "s05 taps: 0" tooltip="" value="" [] {}
+C13FT s05 nav=true node #26 "s05 closed: open" tooltip="" value="" [] {}
+C13FT s05 nav=true node #28 "s05 nav: true" tooltip="" value="" [] {}
+C13FT s05 nav=true node #30 "s05 focus: Before s05" tooltip="" value="" [] {}
+C13FT s05 nav=true node #32 "After s05" tooltip="" value="" [] {}
+C13FT s05 nav=true node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s05 nav=true node #35 "s05 SnackBar with an action and showCloseIcon" tooltip="" value="" [namesRoute] {}
+C13FT s05 nav=true node #36 "s05 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s05 nav=true node #37 "s05 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s05 nav=true node #38 "" tooltip="Close" value="" [button] {tap,focus}
+C13FT s05 nav=true gone at: still shown at 15000 ms; s05 closed: open
+C13FT s06 nav=true focus after show: no focused node (FocusScopeNode#45550(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s06 nav=true node #20 "Before s06" tooltip="" value="" [] {}
+C13FT s06 nav=true node #21 "s06 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s06 nav=true node #24 "s06 taps: 0" tooltip="" value="" [] {}
+C13FT s06 nav=true node #26 "s06 closed: open" tooltip="" value="" [] {}
+C13FT s06 nav=true node #28 "s06 nav: true" tooltip="" value="" [] {}
+C13FT s06 nav=true node #30 "s06 focus: Before s06" tooltip="" value="" [] {}
+C13FT s06 nav=true node #32 "After s06" tooltip="" value="" [] {}
+C13FT s06 nav=true node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s06 nav=true node #35 "s06 MaterialBanner" tooltip="" value="" [namesRoute] {}
+C13FT s06 nav=true node #36 "s06 Offline: changes are kept" tooltip="" value="" [liveRegion] {dismiss}
+C13FT s06 nav=true node #37 "s06 Dismiss" tooltip="" value="" [button] {tap,focus}
+C13FT s06 nav=true gone at: still shown at 15000 ms; s06 closed: open
+C13FT s07 nav=true focus after show: no focused node (FocusScopeNode#94ad1(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s07 nav=true node #20 "Before s07" tooltip="" value="" [] {}
+C13FT s07 nav=true node #21 "s07 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s07 nav=true node #24 "s07 taps: 0" tooltip="" value="" [] {}
+C13FT s07 nav=true node #26 "s07 closed: open" tooltip="" value="" [] {}
+C13FT s07 nav=true node #28 "s07 nav: true" tooltip="" value="" [] {}
+C13FT s07 nav=true node #30 "s07 focus: Before s07" tooltip="" value="" [] {}
+C13FT s07 nav=true node #32 "After s07" tooltip="" value="" [] {}
+C13FT s07 nav=true node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s07 nav=true node #35 "s07 SnackBar, duration 10 s" tooltip="" value="" [namesRoute] {}
+C13FT s07 nav=true node #36 "s07 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s07 nav=true gone at: 10400 ms; s07 closed: timeout 9 ms
+C13FT s08 nav=true focus after show: no focused node (FocusScopeNode#03c47(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s08 nav=true node #20 "Before s08" tooltip="" value="" [] {}
+C13FT s08 nav=true node #21 "s08 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s08 nav=true node #24 "s08 taps: 0" tooltip="" value="" [] {}
+C13FT s08 nav=true node #26 "s08 closed: open" tooltip="" value="" [] {}
+C13FT s08 nav=true node #28 "s08 nav: true" tooltip="" value="" [] {}
+C13FT s08 nav=true node #30 "s08 focus: Before s08" tooltip="" value="" [] {}
+C13FT s08 nav=true node #32 "After s08" tooltip="" value="" [] {}
+C13FT s08 nav=true node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s08 nav=true node #35 "s08 SnackBar, floating, with an action, persist: false" tooltip="" value="" [namesRoute] {}
+C13FT s08 nav=true node #36 "s08 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s08 nav=true node #37 "s08 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s08 nav=true gone at: 4400 ms; s08 closed: timeout 8 ms
+C13FT s09 nav=true focus after show: no focused node (FocusScopeNode#e58d1(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS))
+C13FT s09 nav=true node #20 "Before s09" tooltip="" value="" [] {}
+C13FT s09 nav=true node #21 "s09 Show" tooltip="" value="" [button] {tap,focus}
+C13FT s09 nav=true node #24 "s09 taps: 0" tooltip="" value="" [] {}
+C13FT s09 nav=true node #26 "s09 closed: open" tooltip="" value="" [] {}
+C13FT s09 nav=true node #28 "s09 nav: true" tooltip="" value="" [] {}
+C13FT s09 nav=true node #30 "s09 focus: Before s09" tooltip="" value="" [] {}
+C13FT s09 nav=true node #32 "After s09" tooltip="" value="" [] {}
+C13FT s09 nav=true node #34 "Back" tooltip="Back" value="" [button] {tap,focus}
+C13FT s09 nav=true node #35 "s09 SnackBar with an action and showCloseIcon, closeIconColor by state" tooltip="" value="" [namesRoute] {}
+C13FT s09 nav=true node #36 "s09 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s09 nav=true node #37 "s09 Undo" tooltip="" value="" [button] {tap,focus}
+C13FT s09 nav=true node #38 "" tooltip="Close" value="" [button] {tap,focus}
+C13FT s09 nav=true gone at: still shown at 15000 ms; s09 closed: open
+C13FT s01 tab stops: Back | s01 Show | Back | s01 Show | Back | s01 Show | Back | s01 Show | Back | s01 Show
+C13FT s01 Escape with focus on "s01 Show": shown=true s01 closed: open
+C13FT s01 no Tab reached an action
+C13FT s01 live regions: #36 "s01 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s01 dismiss action: shown=false s01 closed: dismiss 7 ms
+C13FT s01 popRoute: fixture screen=true home=true message shown=true
+C13FT s01 after popRoute: message gone at 4100 ms (from the pop)
+C13FT s01 swipe down: shown=false s01 closed: swipe 11 ms
+C13FT s01 mouse resting on the message: gone at 4700 ms
+C13FT s02 tab stops: Back | s02 Show | s02 Undo | Back | s02 Show | s02 Undo | Back | s02 Show | s02 Undo | Back
+C13FT s02 Escape with focus on "Back": shown=true s02 closed: open
+C13FT s02 focus on "s02 Undo": gone at still shown at 15000 ms; focus then "s02 Undo"; s02 closed: open
+C13FT s02 Escape on "s02 Undo": shown=true s02 closed: open
+C13FT s02 Enter on "s02 Undo": shown=true s02 closed: open s02 taps: 1
+C13FT s02 1 s after Enter: focus "s02 Show"
+C13FT s02 live regions: #36 "s02 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s02 dismiss action: shown=false s02 closed: dismiss 8 ms
+C13FT s02 popRoute: fixture screen=true home=true message shown=true
+C13FT s02 after popRoute: message gone at still shown at 15000 ms (from the pop)
+C13FT s02 swipe down: shown=false s02 closed: swipe 7 ms
+C13FT s02 mouse resting on the message: gone at still shown at 15000 ms
+C13FT s03 tab stops: Back | s03 Show | s03 Undo | Back | s03 Show | s03 Undo | Back | s03 Show | s03 Undo | Back
+C13FT s03 Escape with focus on "Back": shown=true s03 closed: open
+C13FT s03 focus on "s03 Undo": gone at 4600 ms; focus then "no focused node (FocusNode#a64d0([PRIMARY FOCUS])(context: Focus, PRIMARY FOCUS))"; s03 closed: timeout 14 ms
+C13FT s03 three Tabs after it went: Back | s03 Show | Back
+C13FT s03 live regions: #36 "s03 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s03 dismiss action: shown=false s03 closed: dismiss 5 ms
+C13FT s03 popRoute: fixture screen=true home=true message shown=true
+C13FT s03 after popRoute: message gone at 4100 ms (from the pop)
+C13FT s03 swipe down: shown=false s03 closed: swipe 5 ms
+C13FT s03 mouse resting on the message: gone at 4700 ms
+C13FT s04 tab stops: Back | s04 Show | tooltip Close | Back | s04 Show | tooltip Close | Back | s04 Show | tooltip Close | Back
+C13FT s04 Escape with focus on "Back": shown=true s04 closed: open
+C13FT s04 focus on "tooltip Close": gone at 4600 ms; focus then "no focused node (FocusNode#5163c([PRIMARY FOCUS])(context: Focus, PRIMARY FOCUS))"; s04 closed: timeout 15 ms
+C13FT s04 three Tabs after it went: Back | s04 Show | Back
+C13FT s04 live regions: #36 "s04 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s04 dismiss action: shown=false s04 closed: dismiss 6 ms
+C13FT s04 popRoute: fixture screen=true home=true message shown=true
+C13FT s04 after popRoute: message gone at 4100 ms (from the pop)
+C13FT s04 swipe down: shown=false s04 closed: swipe 6 ms
+C13FT s04 mouse resting on the message: gone at 4700 ms
+C13FT s05 tab stops: Back | s05 Show | s05 Undo | tooltip Close | Back | s05 Show | s05 Undo | tooltip Close | Back | s05 Show
+C13FT s05 Escape with focus on "s05 Show": shown=true s05 closed: open
+C13FT s05 focus on "s05 Undo": gone at still shown at 15000 ms; focus then "s05 Undo"; s05 closed: open
+C13FT s05 Escape on "s05 Undo": shown=true s05 closed: open
+C13FT s05 Enter on "s05 Undo": shown=true s05 closed: open s05 taps: 1
+C13FT s05 1 s after Enter: focus "s05 Show"
+C13FT s05 live regions: #36 "s05 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s05 dismiss action: shown=false s05 closed: dismiss 5 ms
+C13FT s05 popRoute: fixture screen=true home=true message shown=true
+C13FT s05 after popRoute: message gone at still shown at 15000 ms (from the pop)
+C13FT s05 swipe down: shown=false s05 closed: swipe 7 ms
+C13FT s05 mouse resting on the message: gone at still shown at 15000 ms
+C13FT s06 tab stops: Back | s06 Dismiss | s06 Show | Back | s06 Dismiss | s06 Show | Back | s06 Dismiss | s06 Show | Back
+C13FT s06 Escape with focus on "Back": shown=true s06 closed: open
+C13FT s06 focus on "s06 Dismiss": gone at still shown at 15000 ms; focus then "s06 Dismiss"; s06 closed: open
+C13FT s06 Escape on "s06 Dismiss": shown=true s06 closed: open
+C13FT s06 Enter on "s06 Dismiss": shown=true s06 closed: open s06 taps: 1
+C13FT s06 1 s after Enter: focus "no focused node (FocusNode#4237b([PRIMARY FOCUS])(context: Focus, PRIMARY FOCUS))"
+C13FT s06 live regions: #36 "s06 Offline: changes are kept" tooltip="" value="" [liveRegion] {dismiss}
+C13FT s06 dismiss action: shown=false s06 closed: dismiss 6 ms
+C13FT s06 popRoute: fixture screen=true home=true message shown=true
+C13FT s06 after popRoute: message gone at still shown at 15000 ms (from the pop)
+C13FT s06 swipe down: shown=true s06 closed: open
+C13FT s06 mouse resting on the message: gone at still shown at 15000 ms
+C13FT s07 tab stops: Back | s07 Show | Back | s07 Show | Back | s07 Show | Back | s07 Show | Back | s07 Show
+C13FT s07 Escape with focus on "s07 Show": shown=true s07 closed: open
+C13FT s07 no Tab reached an action
+C13FT s07 live regions: #36 "s07 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s07 dismiss action: shown=false s07 closed: dismiss 3 ms
+C13FT s07 popRoute: fixture screen=true home=true message shown=true
+C13FT s07 after popRoute: message gone at 10100 ms (from the pop)
+C13FT s07 swipe down: shown=false s07 closed: swipe 9 ms
+C13FT s07 mouse resting on the message: gone at 10700 ms
+C13FT s08 tab stops: Back | s08 Show | s08 Undo | Back | s08 Show | s08 Undo | Back | s08 Show | s08 Undo | Back
+C13FT s08 Escape with focus on "Back": shown=true s08 closed: open
+C13FT s08 focus on "s08 Undo": gone at 4600 ms; focus then "no focused node (FocusNode#8bf0f([PRIMARY FOCUS])(context: Focus, PRIMARY FOCUS))"; s08 closed: timeout 13 ms
+C13FT s08 three Tabs after it went: Back | s08 Show | Back
+C13FT s08 live regions: #36 "s08 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s08 dismiss action: shown=false s08 closed: dismiss 5 ms
+C13FT s08 popRoute: fixture screen=true home=true message shown=true
+C13FT s08 after popRoute: message gone at 4100 ms (from the pop)
+C13FT s08 swipe down: shown=false s08 closed: swipe 5 ms
+C13FT s08 mouse resting on the message: gone at 4700 ms
+C13FT s09 tab stops: Back | s09 Show | s09 Undo | tooltip Close | Back | s09 Show | s09 Undo | tooltip Close | Back | s09 Show
+C13FT s09 Escape with focus on "s09 Show": shown=true s09 closed: open
+C13FT s09 focus on "s09 Undo": gone at still shown at 15000 ms; focus then "s09 Undo"; s09 closed: open
+C13FT s09 Escape on "s09 Undo": shown=true s09 closed: open
+C13FT s09 Enter on "s09 Undo": shown=true s09 closed: open s09 taps: 1
+C13FT s09 1 s after Enter: focus "s09 Show"
+C13FT s09 live regions: #36 "s09 Message archived" tooltip="" value="" [liveRegion] {scrollUp,scrollDown,dismiss}
+C13FT s09 dismiss action: shown=false s09 closed: dismiss 4 ms
+C13FT s09 popRoute: fixture screen=true home=true message shown=true
+C13FT s09 after popRoute: message gone at still shown at 15000 ms (from the pop)
+C13FT s09 swipe down: shown=false s09 closed: swipe 9 ms
+C13FT s09 mouse resting on the message: gone at still shown at 15000 ms
+C13FT s01 nav turned on after the show: gone at 4400 ms; s01 closed: timeout 7 ms
+C13FT s02 then a second showSnackBar, 10 s later: first shown=true second shown=false
+00:02 +47: All tests passed!

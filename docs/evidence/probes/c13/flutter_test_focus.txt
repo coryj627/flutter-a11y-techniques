@@ -1,0 +1,21 @@
+C13P4 s05 dark s05 Undo (focus from s05 Show), within 8 of its box: 4908 pixels changed; largest change 1.26:1; at 3:1 or more: 0
+C13P4 s05 dark tooltip Close (focus from s05 Undo), within 8 of its box: 1130 pixels changed; largest change 1.34:1; at 3:1 or more: 0
+C13P4 s05 light s05 Undo (focus from s05 Show), within 8 of its box: 4908 pixels changed; largest change 1.26:1; at 3:1 or more: 0
+C13P4 s05 light tooltip Close (focus from s05 Undo), within 8 of its box: 1130 pixels changed; largest change 1.34:1; at 3:1 or more: 0
+C13P4 s06 dark s06 Dismiss (focus from Back), within 8 of its box: 5146 pixels changed; largest change 1.15:1; at 3:1 or more: 0
+C13P4 s06 light s06 Dismiss (focus from Back), within 8 of its box: 5146 pixels changed; largest change 1.15:1; at 3:1 or more: 0
+C13P4 s09 dark s09 Undo (focus from s09 Show), within 8 of its box: 4908 pixels changed; largest change 1.26:1; at 3:1 or more: 0
+C13P4 s09 dark tooltip Close (focus from s09 Undo), within 8 of its box: 1130 pixels changed; largest change 1.38:1; at 3:1 or more: 0
+C13P4 s09 light s09 Undo (focus from s09 Show), within 8 of its box: 4908 pixels changed; largest change 1.26:1; at 3:1 or more: 0
+C13P4 s09 light tooltip Close (focus from s09 Undo), within 8 of its box: 1130 pixels changed; largest change 1.38:1; at 3:1 or more: 0
+C13P4 good-action dark Archive message (focus from Back), within 8 of its box: 7698 pixels changed; largest change 13.97:1; at 3:1 or more: 646
+C13P4 good-action dark Undo (focus from Archive message), within 8 of its box: 3900 pixels changed; largest change 4.98:1; at 3:1 or more: 3685
+C13P4 good-action dark tooltip Close (focus from Undo), within 8 of its box: 1130 pixels changed; largest change 1.19:1; at 3:1 or more: 0
+C13P4 good-action light Archive message (focus from Back), within 8 of its box: 7698 pixels changed; largest change 15.00:1; at 3:1 or more: 1107
+C13P4 good-action light Undo (focus from Archive message), within 8 of its box: 3900 pixels changed; largest change 7.70:1; at 3:1 or more: 3714
+C13P4 good-action light tooltip Close (focus from Undo), within 8 of its box: 1130 pixels changed; largest change 1.34:1; at 3:1 or more: 0
+C13P4 good-banner dark Go online (focus from Back), within 8 of its box: 4366 pixels changed; largest change 12.91:1; at 3:1 or more: 714
+C13P4 good-banner light Go online (focus from Back), within 8 of its box: 4392 pixels changed; largest change 14.42:1; at 3:1 or more: 698
+C13P4 bad-inline-banner dark Go online (focus from Go offline), within 8 of its box: 4366 pixels changed; largest change 12.91:1; at 3:1 or more: 714
+C13P4 bad-inline-banner light Go online (focus from Go offline), within 8 of its box: 4392 pixels changed; largest change 14.42:1; at 3:1 or more: 698
+00:01 +12: All tests passed!

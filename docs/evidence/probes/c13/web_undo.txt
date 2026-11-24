@@ -1,0 +1,22 @@
+# c13_undo_probe.spec.js.txt against build/web (the app), Chromium, 2026-11-22. No VoiceOver.
+# After Undo on good-action, by Enter and by a click: what of "Message archived" and
+# "Archive undone" is in the semantics tree (node id, role, name), whenever it changes,
+# for 6 s; the line; everything written to Flutter's announcement elements.
+
+## Round 1: "Archive undone" shown from Undo's onPressed, after clearSnackBars() there
+C13UNDO chromium Enter tree after Undo: 5 ms (none)
+C13UNDO chromium Enter line: Archived: 0
+C13UNDO chromium Enter announced: ["83 ms polite: \"Message archived\"","341 ms polite: \"\""]
+C13UNDO chromium click tree after Undo: 1 ms #14:group:"Message archived" | 103 ms (none)
+C13UNDO chromium click line: Archived: 0
+C13UNDO chromium click announced: ["76 ms polite: \"Message archived\"","342 ms polite: \"\""]
+  2 passed (18.6s)
+
+## Round 2: "Archive undone" shown once the first SnackBar's closed future completes with the reason action (the examples as fixed)
+C13UNDO chromium Enter tree after Undo: 1 ms #17:-:"Archive undone" | 4344 ms (none)
+C13UNDO chromium Enter line: Archived: 0
+C13UNDO chromium Enter announced: ["80 ms polite: \"Message archived\"","339 ms polite: \"\"","1579 ms polite: \"Archive undone\"","1866 ms polite: \"\""]
+C13UNDO chromium click tree after Undo: 1 ms #14:group:"Message archived" | 104 ms #17:-:"Archive undone" | 4337 ms (none)
+C13UNDO chromium click line: Archived: 0
+C13UNDO chromium click announced: ["69 ms polite: \"Message archived\"","339 ms polite: \"\"","1554 ms polite: \"Archive undone\"","1850 ms polite: \"\""]
+  2 passed (18.6s)
