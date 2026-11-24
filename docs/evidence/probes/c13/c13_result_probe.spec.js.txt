@@ -1,0 +1,51 @@
+// C13 probe round 5 (throwaway, not committed; kept as
+// docs/evidence/probes/c13/c13_result_probe.spec.js.txt): design A, the
+// result line a live region. In Chromium, with no VoiceOver: everything
+// Flutter writes to its announcement elements, empty writes included, from
+// the load, through each press by Enter, with the time of each write; and
+// the result line's element.
+import { test } from '@playwright/test';
+
+const log = (...a) => console.log('C13RESULT', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+
+const STEPS = {
+  'good-action': ['Archive message', 'Undo', 'Archive message', 'Undo'],
+  'bad-action-times-out': ['Archive message', 'Undo'],
+  'good-banner': ['Go offline', 'Go online', 'Go offline', 'Go online'],
+  'bad-inline-banner': ['Go offline', 'Go online', 'Go offline', 'Go online'],
+};
+
+for (const [slug, steps] of Object.entries(STEPS)) {
+  test(slug, async ({ page }) => {
+    await page.addInitScript(() => {
+      window.announced = [];
+      window.t0 = performance.now();
+      const watch = () => {
+        for (const politeness of ['polite', 'assertive']) {
+          const element = document.querySelector(`flt-announcement-${politeness}`);
+          if (!element || element.dataset.watched) continue;
+          element.dataset.watched = '1';
+          new MutationObserver(() => {
+            window.announced.push(`${Math.round(performance.now() - window.t0)} ms ${politeness}: "${element.textContent.trim()}"`);
+          }).observe(element, { childList: true, characterData: true, subtree: true });
+        }
+      };
+      setInterval(watch, 20);
+    });
+    await page.goto(`/#/t/C13/${slug}`);
+    const show = page.locator(`[flt-semantics-identifier="c13-${slug}-show"]`);
+    await show.waitFor();
+    await page.waitForTimeout(1500);
+    log(slug, 'on load:', JSON.stringify(await page.evaluate(() => window.announced)));
+    const result = page.locator(`[flt-semantics-identifier="c13-${slug}-result"]`);
+    log(slug, 'result element on load:', await result.count() ? await result.evaluate((e) => e.outerHTML.replace(/ style="[^"]*"/g, '')) : '(none)');
+    for (const step of steps) {
+      await page.evaluate(() => { window.announced = []; window.t0 = performance.now(); });
+      await page.getByRole('button', { name: step, exact: true }).focus();
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(1500);
+      const r = await result.count() ? await result.evaluate((e) => `${e.getAttribute('aria-live') ?? '-'} "${e.textContent.trim()}"`) : '(none)';
+      log(slug, `after Enter on ${step}:`, JSON.stringify(await page.evaluate(() => window.announced)), '| result line:', r);
+    }
+  });
+}

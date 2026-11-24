@@ -1,0 +1,30 @@
+# C13: where Flutter 3.47.5 could read a platform timeout setting
+# Engine: af7e796e161ae0bb1ff0758c71a7105418bd9ded
+
+## Android embedding (flutter_embedding_debug jar of that engine, unzipped), class files searched as bytes
+$ grep -rla "RecommendedTimeout" <jar>   (AccessibilityManager.getRecommendedTimeoutMillis)
+(files found: 0)
+$ grep -rla "TouchExploration" <jar>    (positive control: the bridge reads isTouchExplorationEnabled)
+<jar>/io/flutter/embedding/android/FlutterView.class
+<jar>/io/flutter/embedding/android/FlutterView$1.class
+<jar>/io/flutter/view/AccessibilityBridge.class
+<jar>/io/flutter/view/AccessibilityBridge$3.class
+<jar>/io/flutter/view/AccessibilityBridge$2.class
+
+## Framework and dart:ui sources
+$ grep -rn "RecommendedTimeout|recommendedTimeout|interactive_ui_timeout" packages/flutter/lib bin/cache/pkg/sky_engine/lib
+(lines found: 0)
+
+$ grep -n "accessibleNavigation" material/snack_bar.dart material/scaffold.dart material/banner.dart
+material/snack_bar.dart:228:/// enabled. This is controlled by [AccessibilityFeatures.accessibleNavigation].
+material/snack_bar.dart:624:    final bool accessibleNavigation = MediaQuery.accessibleNavigationOf(context);
+material/snack_bar.dart:809:        child: accessibleNavigation || theme.useMaterial3
+material/snack_bar.dart:851:    if (accessibleNavigation) {
+material/scaffold.dart:202:  late bool _accessibleNavigation;
+material/scaffold.dart:207:    _accessibleNavigation = MediaQuery.accessibleNavigationOf(context);
+material/scaffold.dart:446:    if (_accessibleNavigation) {
+material/scaffold.dart:582:    if (_accessibleNavigation) {
+material/scaffold.dart:612:    _accessibleNavigation = MediaQuery.accessibleNavigationOf(context);
+material/banner.dart:338:    final bool accessibleNavigation = MediaQuery.accessibleNavigationOf(context);
+material/banner.dart:451:      child: accessibleNavigation
+material/banner.dart:457:    if (accessibleNavigation) {

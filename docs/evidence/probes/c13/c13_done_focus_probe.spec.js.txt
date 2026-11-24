@@ -1,0 +1,45 @@
+// C13 probe round 4 (throwaway, not committed; kept as
+// docs/evidence/probes/c13/c13_done_focus_probe.spec.js.txt): in Chromium,
+// with no VoiceOver, where DOM focus is, and what Flutter writes to its
+// announcement elements, every 100 ms for 6 s after Enter on Undo or Go
+// online with focus on it, as the web VoiceOver spec presses them.
+import { test } from '@playwright/test';
+
+const log = (...a) => console.log('C13DONE', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+
+for (const [slug, action] of [['good-action', 'Undo'], ['good-banner', 'Go online'], ['bad-inline-banner', 'Go online']]) {
+  test(`${slug} ${action}`, async ({ page }) => {
+    await page.goto(`/#/t/C13/${slug}`);
+    const show = page.locator(`[flt-semantics-identifier="c13-${slug}-show"]`);
+    await show.waitFor();
+    await page.waitForTimeout(900);
+    await page.getByRole('heading', { name: 'Example', level: 2 }).click();
+    await show.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(1500);
+    await page.evaluate(() => {
+      window.t0 = performance.now();
+      window.announced = [];
+      for (const politeness of ['polite', 'assertive']) {
+        const element = document.querySelector(`flt-announcement-${politeness}`);
+        new MutationObserver(() => {
+          window.announced.push(`${Math.round(performance.now() - window.t0)} ms ${politeness}: "${element.textContent.trim()}"`);
+        }).observe(element, { childList: true, characterData: true, subtree: true });
+      }
+    });
+    await page.getByRole('button', { name: action, exact: true }).focus();
+    await page.keyboard.press('Enter');
+    const t = Date.now();
+    const seen = [];
+    while (Date.now() - t < 6000) {
+      const f = await page.evaluate(() => {
+        const e = document.activeElement;
+        return e ? `${e.tagName.toLowerCase()}${e.getAttribute('role') ? `[${e.getAttribute('role')}]` : ''} "${(e.getAttribute('aria-label') ?? e.textContent ?? '').trim().slice(0, 30)}"` : 'none';
+      });
+      if (seen.at(-1)?.split(' ms ')[1] !== f) seen.push(`${Date.now() - t} ms ${f}`);
+      await page.waitForTimeout(100);
+    }
+    log(slug, action, 'DOM focus after Enter:', seen.join(' | '));
+    log(slug, action, 'announced:', JSON.stringify(await page.evaluate(() => window.announced)));
+  });
+}

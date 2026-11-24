@@ -1,0 +1,144 @@
+// C13 probe 4 (throwaway, not committed; kept as
+// docs/evidence/probes/c13/probe4_test.dart.txt): what keyboard focus draws
+// on the controls of the probe's fixtures s05, s06, and s09 (the SnackBar's
+// and the banner's defaults, and closeIconColor by state) and of the C13
+// examples, as Android, light and dark. For each
+// control: a screenshot of the app with the control unfocused (focus on the
+// one before it), and one with it focused; the pixels that differ; and for
+// those pixels, the contrast between the focused colour and the colour that
+// was there, the largest and the share of them at 3:1 or more.
+import 'dart:math' as math;
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_a11y_techniques/techniques/c13_snackbar/c13_snackbar.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'support/examples.dart';
+
+double _lum(int c) {
+  double ch(int v) {
+    final s = v / 255;
+    return s <= 0.04045
+        ? s / 12.92
+        : math.pow((s + 0.055) / 1.055, 2.4).toDouble();
+  }
+
+  return 0.2126 * ch((c >> 16) & 255) +
+      0.7152 * ch((c >> 8) & 255) +
+      0.0722 * ch(c & 255);
+}
+
+double _contrast(int a, int b) {
+  final la = _lum(a), lb = _lum(b);
+  return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
+}
+
+Future<List<int>> _shot(WidgetTester tester) async {
+  final boundary = tester.renderObject<RenderRepaintBoundary>(
+    find.byType(RepaintBoundary).first,
+  );
+  return (await tester.runAsync(() async {
+    final image = await boundary.toImage();
+    final data = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+    final bytes = data!.buffer.asUint8List();
+    return [
+      for (var i = 0; i < bytes.length; i += 4)
+        (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2],
+    ];
+  }))!;
+}
+
+String _focused(WidgetTester tester) {
+  for (final d in semanticsNodes(tester)) {
+    if (d.flagsCollection.isFocused.toString().contains('isTrue')) {
+      return d.label.isNotEmpty ? d.label : 'tooltip ${d.tooltip}';
+    }
+  }
+  return '(none)';
+}
+
+void main() {
+  const cases = {
+    's05': ['s05 Undo', 'tooltip Close'],
+    's06': ['s06 Dismiss'],
+    's09': ['s09 Undo', 'tooltip Close'],
+    'good-action': ['Archive message', 'Undo', 'tooltip Close'],
+    'good-banner': ['Go online', 'Archive message'],
+    'bad-inline-banner': ['Go online'],
+  };
+  for (final MapEntry(key: slug, value: controls) in cases.entries) {
+    for (final brightness in Brightness.values) {
+      testWidgets('$slug ${brightness.name}', (tester) async {
+        final handle = tester.ensureSemantics();
+        if (slug.startsWith('s')) {
+          tester.platformDispatcher.platformBrightnessTestValue = brightness;
+          addTearDown(tester.platformDispatcher.clearAllTestValues);
+          await tester.pumpWidget(const ProbeApp());
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('$slug ${fixtures[slug]!.$1}'));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('$slug Show'));
+        } else {
+          await openExample(tester, c13Snackbar, slug, brightness: brightness);
+          await tester.tap(byId('c13-$slug-show'));
+        }
+        await tester.pumpAndSettle();
+        // Tab round once, recording each stop's screenshot.
+        final shots = <String, List<int>>{};
+        String? previous;
+        for (var i = 0; i < 6; i++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pumpAndSettle();
+          final now = _focused(tester);
+          final shot = await _shot(tester);
+          if (previous != null) shots['$previous>$now'] = shots['_$previous']!;
+          shots['_$now'] = shot;
+          previous = now;
+        }
+        for (final c in controls) {
+          if (c == 'Archive message' && slug == 'good-banner') continue;
+          // The probe's theme is Material 3's default, as the app's.
+          final key = shots.keys.firstWhere(
+            (k) => k.endsWith('>$c'),
+            orElse: () => '',
+          );
+          if (key.isEmpty) {
+            debugPrint('C13P4 $slug ${brightness.name} $c: not reached by Tab');
+            continue;
+          }
+          final before = shots[key]!;
+          final after = shots['_$c']!;
+          final finder = switch (c) {
+            'tooltip Close' => find.byTooltip('Close'),
+            'Archive message' => byId('c13-$slug-show'),
+            _ => find.widgetWithText(TextButton, c),
+          };
+          // The control's box and 8 round it, where a ring would be drawn.
+          final r = tester.getRect(finder).inflate(8);
+          final width =
+              tester.view.physicalSize.width ~/ tester.view.devicePixelRatio;
+          var changed = 0, strong = 0;
+          var best = 1.0;
+          for (var i = 0; i < before.length; i++) {
+            final x = i % width, y = i ~/ width;
+            if (!r.contains(Offset(x + 0.5, y + 0.5))) continue;
+            if (before[i] == after[i]) continue;
+            changed++;
+            final k = _contrast(before[i], after[i]);
+            if (k >= 3) strong++;
+            best = math.max(best, k);
+          }
+          debugPrint(
+            'C13P4 $slug ${brightness.name} $c (focus from ${key.split('>').first}), within 8 of its box: '
+            '$changed pixels changed; largest change ${best.toStringAsFixed(2)}:1; at 3:1 or more: $strong',
+          );
+        }
+        handle.dispose();
+      });
+    }
+  }
+}

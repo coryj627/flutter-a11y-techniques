@@ -497,7 +497,7 @@ def walk_until_heard(walk_once=None):
 # Techniques whose TalkBack walk is judged whole (walk_strictly), not row by
 # row across walks (walk_until_heard). Every other technique keeps
 # walk_until_heard.
-STRICT = {"C05", "C18"}
+STRICT = {"C05", "C13", "C18"}
 
 # One walk of walk_strictly: the speech per element, the verdict ("right",
 # "wrong", or "incomplete"), what made it so, and the captured lines of each

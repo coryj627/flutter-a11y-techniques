@@ -1,0 +1,33 @@
+// C13 probe 2 (throwaway, not committed; kept as
+// docs/evidence/probes/c13/probe2_test.dart.txt): the semantics nodes of
+// each C13 example once its message is shown, as Android.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter_a11y_techniques/techniques/c13_snackbar/c13_snackbar.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'support/examples.dart';
+
+void main() {
+  for (final e in c13Snackbar.examples) {
+    testWidgets('${e.slug}: nodes once shown', (tester) async {
+      final handle = tester.ensureSemantics();
+      await openExample(tester, c13Snackbar, e.slug);
+      await tester.tap(byId('c13-${e.slug}-show'));
+      for (var i = 0; i < 8; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      for (final d in semanticsNodes(tester)) {
+        if (d.label.isEmpty && d.tooltip.isEmpty) continue;
+        final f = d.flagsCollection;
+        debugPrint(
+          'C13P2 ${e.slug} | "${d.label.replaceAll('\n', '\\n')}" tooltip="${d.tooltip}" id="${d.identifier}" '
+          'live=${f.isLiveRegion} button=${f.isButton} '
+          'actions=${[for (final a in SemanticsAction.values)
+            if (d.hasAction(a)) a.name].join(',')}',
+        );
+      }
+      handle.dispose();
+    });
+  }
+}

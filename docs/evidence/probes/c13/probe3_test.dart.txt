@@ -1,0 +1,56 @@
+// C13 probe 3 (throwaway, not committed; kept as
+// docs/evidence/probes/c13/probe3_test.dart.txt): a SnackBar whose content
+// is `Semantics(identifier:)` round its text, against the same SnackBar
+// with the text alone, as Android. Which node is the live region, and which
+// has the words?
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'support/examples.dart';
+
+Future<void> _run(WidgetTester tester, String name, Widget content) async {
+  final handle = tester.ensureSemantics();
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: Builder(
+          builder: (context) => TextButton(
+            onPressed: () =>
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: content)),
+            child: const Text('Show'),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.tap(find.text('Show'));
+  for (var i = 0; i < 8; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+  for (final d in semanticsNodes(tester)) {
+    final f = d.flagsCollection;
+    if (d.label.isEmpty && !f.isLiveRegion) continue;
+    debugPrint(
+      'C13P3 $name | label "${d.label}" identifier "${d.identifier}" '
+      'liveRegion=${f.isLiveRegion} dismiss=${d.hasAction(SemanticsAction.dismiss)}',
+    );
+  }
+  handle.dispose();
+}
+
+void main() {
+  testWidgets(
+    'text alone',
+    (tester) => _run(tester, 'text alone', const Text('Message archived')),
+  );
+  testWidgets(
+    'identifier round the text',
+    (tester) => _run(
+      tester,
+      'Semantics(identifier:) round the text',
+      Semantics(identifier: 'message', child: const Text('Message archived')),
+    ),
+  );
+}

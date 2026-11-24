@@ -1,0 +1,66 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+== testTree
+s01 elements: type=1 label="s01 Message archived" id= frame=(0.0, 792.0, 402.0, 82.0)
+s01 s01 nav: false | s01 closed: timeout 4562 ms
+s02 elements: type=1 label="s02 Message archived" id= frame=(0.0, 792.0, 402.0, 82.0) | type=9 label="s02 Undo" id= frame=(276.1547444661458, 792.0, 113.84525553385419, 48.0)
+s02 s02 nav: false | s02 closed: open (still, 16 s after)
+s03 elements: type=1 label="s03 Message archived" id= frame=(0.0, 792.0, 402.0, 82.0) | type=9 label="s03 Undo" id= frame=(275.84942626953125, 792.0, 114.15057373046875, 48.0)
+s03 s03 nav: false | s03 closed: timeout 4563 ms
+s04 elements: type=1 label="s04 Message archived" id= frame=(0.0, 792.0, 402.0, 82.0) | type=9 label="Close" id= frame=(352.0, 792.0, 48.0, 48.0)
+s04 s04 nav: false | s04 closed: timeout 4564 ms
+s05 elements: type=1 label="s05 Message archived" id= frame=(0.0, 730.0, 402.0, 144.0) | type=9 label="s05 Undo" id= frame=(223.9234822591146, 778.0, 114.07651774088541, 48.0) | type=9 label="Close" id= frame=(352.0, 778.0, 48.0, 48.0)
+s05 s05 nav: false | s05 closed: open (still, 16 s after)
+s06 elements: type=1 label="s06 Offline: changes are kept" id= frame=(0.0, 118.0, 402.0, 54.0) | type=9 label="s06 Dismiss" id= frame=(286.8559977213542, 122.0, 107.14400227864581, 48.0)
+s06 s06 nav: false | s06 closed: open (still, 16 s after)
+s07 elements: type=1 label="s07 Message archived" id= frame=(0.0, 792.0, 402.0, 82.0)
+s07 s07 nav: false | s07 closed: timeout 10546 ms
+s08 elements: type=1 label="s08 Message archived" id= frame=(0.0, 777.0, 402.0, 63.0) | type=9 label="s08 Undo" id= frame=(280.58966064453125, 782.0, 98.41033935546875, 48.0)
+s08 s08 nav: false | s08 closed: timeout 4547 ms
+Test Case '-[RunnerUITests.ProbeC13UITests testTree]' passed (135.420 seconds).
+== testKeys
+s01 tab stops after the show: icon 62832 | s01 Show | icon 62832 | s01 Show | icon 62832 | s01 Show
+s01 focus on "icon 62832": s01 closed: timeout 4545 ms | focus then icon 62832
+s02 tab stops after the show: icon 62832 | s02 Show | s02 Undo | icon 62832 | s02 Show | s02 Undo
+s02 focus on "icon 62832": s02 closed: open (still, 12 s after) | focus then icon 62832
+s02 Return on "icon 62832": s02 closed: open | s02 taps: 0 | focus then icon 62832
+s03 tab stops after the show: icon 62832 | s03 Show | s03 Undo | icon 62832 | s03 Show | icon 62832
+s03 focus on "icon 62832": s03 closed: timeout 4562 ms | focus then icon 62832
+s04 tab stops after the show: icon 62832 | s04 Show | icon 57706 | icon 62832 | s04 Show | icon 62832
+s04 focus on "icon 62832": s04 closed: timeout 4562 ms | focus then icon 62832
+s05 tab stops after the show: icon 62832 | s05 Show | s05 Undo | icon 57706 | icon 62832 | s05 Show
+s05 focus on "icon 62832": s05 closed: open (still, 12 s after) | focus then icon 62832
+s05 Return on "icon 62832": s05 closed: open | s05 taps: 0 | focus then icon 62832
+s06 tab stops after the show: icon 62832 | s06 Dismiss | s06 Show | icon 62832 | s06 Dismiss | s06 Show
+s06 focus on "icon 62832": s06 closed: open (still, 12 s after) | focus then icon 62832
+s06 Return on "icon 62832": s06 closed: open | s06 taps: 0 | focus then icon 62832
+s07 tab stops after the show: icon 62832 | s07 Show | icon 62832 | s07 Show | icon 62832 | s07 Show
+s07 focus on "icon 62832": s07 closed: timeout 10562 ms | focus then icon 62832
+s08 tab stops after the show: icon 62832 | s08 Show | s08 Undo | icon 62832 | s08 Show | icon 62832
+s08 focus on "icon 62832": s08 closed: timeout 4564 ms | focus then icon 62832
+Test Case '-[RunnerUITests.ProbeC13UITests testKeys]' passed (247.504 seconds).
+== testVoiceOver
+VO s01 cursor before: s01 Show Button | speech after a double tap at Show, 6 s: s01 Show Button / s01 Message archived
+VO s01 moves forward from there (16 s after the tap): s01 taps: 0 / s01 closed: timeout 4281 ms / s01 nav: true / s01 focus: Before s01 / After s01 / After s01 / After s01 / After s01
+VO s01 s01 nav: true | s01 closed: timeout 4281 ms
+VO s02 cursor before: s02 Show Button | speech after a double tap at Show, 6 s: s02 Show Button / s02 Message archived
+VO s02 moves forward from there (12 s after the tap): s02 taps: 0 / s02 closed: open / s02 nav: true / s02 focus: Before s02 / After s02 / s02 Message archived / s02 Undo Button / s02 Undo Button
+VO s02 s02 nav: true | s02 closed: open (still, 14 s after)
+VO s03 cursor before: s03 Show Button | speech after a double tap at Show, 6 s: s03 Message archived
+VO s03 moves forward from there (16 s after the tap): s03 taps: 0 / s03 closed: timeout 4269 ms / s03 nav: true / s03 focus: Before s03 / After s03 / After s03 / After s03 / After s03
+VO s03 s03 nav: true | s03 closed: timeout 4269 ms
+VO s04 cursor before: s04 Show Button | speech after a double tap at Show, 6 s: s04 Show Button / s04 Message archived
+VO s04 moves forward from there (16 s after the tap): s04 taps: 0 / s04 closed: timeout 4284 ms / s04 nav: true / s04 focus: Before s04 / After s04 / After s04 / After s04 / After s04
+VO s04 s04 nav: true | s04 closed: timeout 4284 ms
+VO s05 cursor before: s05 Show Button | speech after a double tap at Show, 6 s: s05 Show Button / s05 Message archived
+VO s05 moves forward from there (10 s after the tap): s05 taps: 0 / s05 closed: open / s05 nav: true / s05 focus: Before s05 / After s05 / s05 Message archived / s05 Undo Button / Close Button
+VO s05 s05 nav: true | s05 closed: open (still, 14 s after)
+VO s06 cursor before: s06 Show Button | speech after a double tap at Show, 6 s: s06 Show Button / s06 Offline: changes are kept
+VO s06 moves forward from there (16 s after the tap): s06 taps: 0 / s06 closed: open / s06 nav: true / s06 focus: Before s06 / After s06 / After s06 / After s06 / After s06
+VO s06 s06 nav: true | s06 closed: open (still, 14 s after)
+VO s07 cursor before: s07 Show Button | speech after a double tap at Show, 6 s: s07 Message archived
+VO s07 moves forward from there (12 s after the tap): s07 taps: 0 / s07 closed: open / s07 nav: true / s07 focus: Before s07 / After s07 / s07 Message archived / Back Button / s07 SnackBar, duration 10 s
+VO s07 s07 nav: true | s07 closed: timeout 10267 ms
+VO s08 cursor before: s08 Show Button | speech after a double tap at Show, 6 s: s08 Message archived
+VO s08 moves forward from there (16 s after the tap): s08 taps: 0 / s08 closed: timeout 4265 ms / s08 nav: true / s08 focus: Before s08 / After s08 / After s08 / After s08 / After s08
+VO s08 s08 nav: true | s08 closed: timeout 4265 ms
+Test Case '-[RunnerUITests.ProbeC13UITests testVoiceOver]' passed (312.101 seconds).

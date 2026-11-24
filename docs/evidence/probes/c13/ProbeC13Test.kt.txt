@@ -1,0 +1,214 @@
+// C13 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c13/ProbeC13Test.kt.txt). Runs against lib/probe.dart
+// (Gradle -Ptarget=lib/probe.dart). The app writes on screen why and how
+// long after the show each message went ("sNN closed: timeout 4266 ms"),
+// MediaQuery.accessibleNavigation at the show ("sNN nav: …"), and what has
+// Flutter's keyboard focus ("sNN focus: …"); this reads them from the tree.
+//
+// probe(): every node once the message is shown; how long it stays; the
+// dismiss action. keys(): Tab stops with `input keyevent`, the message's
+// action with keyboard focus left on it, Escape and Enter there.
+// timeout(): the same lifetimes with Android's accessibility timeout
+// ("Time to take action") set to 60 s, then put back. talkBack(): what
+// TalkBack says when the message comes, with its focus left on "Before
+// sNN", and on each of the message's nodes.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.graphics.Rect
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeC13Test : TechniqueTest("C13") {
+    private val tag = "C13PROBE"
+    private val ids = (1..8).map { "s%02d".format(it) }
+
+    private fun log(s: String) = Log.i(tag, s)
+
+    private fun launch(fixture: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", "/$fixture")
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.viewIdResourceName == "$fixture-taps" }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("$fixture did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
+        if (root == null) return
+        out.add(root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), out)
+    }
+
+    private fun appNodes(): List<AccessibilityNodeInfo> {
+        val out = mutableListOf<AccessibilityNodeInfo>()
+        for (w in automation.windows) if (w.type == AccessibilityWindowInfo.TYPE_APPLICATION) collect(w.root, out)
+        return out
+    }
+
+    private fun byId(id: String): AccessibilityNodeInfo? = appNodes().firstOrNull { it.viewIdResourceName == id }
+
+    private fun textOf(id: String): String = byId(id)?.name() ?: "(no node $id)"
+
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = Rect().also { n.getBoundsInScreen(it) }
+        val actions = n.actionList.joinToString(",") { a ->
+            when (a.id) {
+                AccessibilityNodeInfo.ACTION_CLICK -> "click"
+                AccessibilityNodeInfo.ACTION_FOCUS -> "focus"
+                AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS -> "a11yfocus"
+                AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS -> "clra11y"
+                AccessibilityNodeInfo.ACTION_DISMISS -> "dismiss"
+                AccessibilityNodeInfo.ACTION_SCROLL_FORWARD -> "scrollfwd"
+                AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD -> "scrollback"
+                else -> a.id.toString()
+            }
+        }
+        fun q(s: CharSequence?) = (s?.toString() ?: "").replace("\n", "\\n")
+        return "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"${q(n.contentDescription)}\" text=\"${q(n.text)}\" " +
+            "tooltip=\"${q(n.tooltipText)}\" live=${n.liveRegion} pane=\"${q(n.paneTitle)}\" dismissable=${n.isDismissable} " +
+            "focusable=${n.isFocusable} focused=${n.isFocused} a11yFocused=${n.isAccessibilityFocused} $r [$actions]"
+    }
+
+    private fun message(id: String): AccessibilityNodeInfo? =
+        appNodes().firstOrNull { it.name().contains("$id Message archived") || it.name().contains("$id Offline") }
+
+    private fun show(id: String) {
+        byId("$id-show")!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        Thread.sleep(1_000)
+    }
+
+    /** Waits until the app says the message closed, at most [max] ms; returns what it says. */
+    private fun waitClosed(id: String, max: Long = 16_000): String {
+        val end = System.currentTimeMillis() + max
+        while (System.currentTimeMillis() < end) {
+            val t = textOf("$id-closed")
+            if (!t.endsWith("open")) return t
+            Thread.sleep(250)
+        }
+        return "${textOf("$id-closed")} (still, ${max / 1000} s after the show)"
+    }
+
+    @Test
+    fun probe() {
+        log("device: ${device.displayWidth}x${device.displayHeight}")
+        for (id in ids) {
+            launch(id)
+            show(id)
+            for (n in appNodes()) {
+                if (n.name().isEmpty() && n.text.isNullOrEmpty() && n.liveRegion == 0 && n.tooltipText.isNullOrEmpty()) continue
+                log("$id node ${describe(n)}")
+            }
+            log("$id ${textOf("$id-nav")} | ${waitClosed(id)} | message node after: ${message(id)?.let { "still there" } ?: "gone"}")
+            // The dismiss action on the message, from a fresh show.
+            launch(id)
+            show(id)
+            val m = message(id)
+            val withDismiss = appNodes().firstOrNull { n -> n.actionList.any { it.id == AccessibilityNodeInfo.ACTION_DISMISS } }
+            log("$id dismiss action on: ${withDismiss?.name() ?: "(none)"}; performed=${withDismiss?.performAction(AccessibilityNodeInfo.ACTION_DISMISS)}")
+            Thread.sleep(1_000)
+            log("$id after dismiss: ${textOf("$id-closed")} | message ${if (message(id) == null) "gone" else "still there"} (was ${if (m == null) "not found" else "there"})")
+        }
+    }
+
+    private fun key(name: String) {
+        device.executeShellCommand("input keyevent KEYCODE_$name")
+        Thread.sleep(600)
+    }
+
+    @Test
+    fun keys() {
+        for (id in ids) {
+            launch(id)
+            show(id)
+            val stops = (0 until 6).map { key("TAB"); textOf("$id-focus").substringAfter("focus: ") }
+            log("$id tab stops after the show: ${stops.joinToString(" | ")}")
+            launch(id)
+            show(id)
+            var reached: String? = null
+            for (i in 0 until 6) {
+                key("TAB")
+                val f = textOf("$id-focus").substringAfter("focus: ")
+                if (f.contains("Undo") || f.contains("Dismiss") || f.startsWith("icon")) { reached = f; break }
+            }
+            if (reached == null) { log("$id no Tab reached an action"); continue }
+            val closed = waitClosed(id, 12_000)
+            log("$id focus on \"$reached\": $closed | focus then ${textOf("$id-focus")}")
+            if (!closed.contains("still")) {
+                key("TAB")
+                log("$id one Tab after it went: ${textOf("$id-focus")}")
+                continue
+            }
+            key("ESCAPE")
+            Thread.sleep(500)
+            log("$id Escape on \"$reached\": ${textOf("$id-closed")} | message ${if (message(id) == null) "gone" else "there"}")
+            key("ENTER")
+            Thread.sleep(1_500)
+            log("$id Enter on \"$reached\": ${textOf("$id-closed")} | ${textOf("$id-taps")} | ${textOf("$id-focus")}")
+        }
+    }
+
+    private fun setting(name: String): String = device.executeShellCommand("settings get secure $name").trim()
+
+    @Test
+    fun timeout() {
+        val names = listOf("accessibility_non_interactive_ui_timeout_ms", "accessibility_interactive_ui_timeout_ms")
+        val before = names.associateWith { setting(it) }
+        log("timeout settings before: $before")
+        try {
+            for (n in names) device.executeShellCommand("settings put secure $n 60000")
+            log("timeout settings during: ${names.associateWith { setting(it) }}")
+            for (id in listOf("s01", "s03", "s04", "s07", "s08")) {
+                launch(id)
+                show(id)
+                log("$id with a 60 s accessibility timeout: ${textOf("$id-nav")} | ${waitClosed(id, 20_000)}")
+            }
+        } finally {
+            for (n in names) {
+                val v = before.getValue(n)
+                device.executeShellCommand(if (v == "null" || v.isEmpty()) "settings delete secure $n" else "settings put secure $n $v")
+            }
+            log("timeout settings after: ${names.associateWith { setting(it) }}")
+        }
+    }
+
+    @Test
+    fun talkBack() {
+        assumeTalkBack()
+        for (id in ids) {
+            launch(id)
+            Thread.sleep(8_000)
+            talkBackFocus("$id before") { appNodes().first { it.name() == "Before $id" } }
+            Thread.sleep(3_000)
+            Log.i("C13TB", "FOCUS c13-$id-announced")
+            byId("$id-show")!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            Thread.sleep(5_000)
+            val m = message(id)
+            if (m != null) {
+                Log.i("C13TB", "FOCUS c13-$id-message")
+                talkBackFocus("$id message") { message(id)!! }
+                Thread.sleep(3_000)
+            }
+            val action = appNodes().firstOrNull { it.name().contains("$id Undo") || it.name().contains("$id Dismiss") || it.name() == "Close" }
+            if (action != null) {
+                Log.i("C13TB", "FOCUS c13-$id-action")
+                talkBackFocus("$id action") {
+                    appNodes().first { it.name().contains("$id Undo") || it.name().contains("$id Dismiss") || it.name() == "Close" }
+                }
+                Thread.sleep(3_000)
+            }
+            Log.i("C13TB", "END $id")
+            log("$id talkBack: ${textOf("$id-nav")} | ${waitClosed(id, 14_000)}")
+        }
+    }
+}
