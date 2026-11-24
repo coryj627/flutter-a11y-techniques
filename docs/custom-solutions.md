@@ -67,6 +67,7 @@ example is added without a decision.
 | [C04 Links inline with text](#c04-links-inline-with-text) | 3 | 3 | 0 | 0 |
 | [C05 Accordion](#c05-accordion) | 3 | 3 | 0 | 0 |
 | [C12 Tooltip](#c12-tooltip) | 3 | 1 | 0 | 2 |
+| [C13 Snackbar and transient messages](#c13-snackbar-and-transient-messages) | 3 | 0 | 0 | 3 |
 | [C18 Card](#c18-card) | 3 | 0 | 0 | 3 |
 | [C26 Progress indicator](#c26-progress-indicator) | 1 | 0 | 0 | 1 |
 | [F01 Text fields and labels](#f01-text-fields-and-labels) | 3 | 0 | 0 | 3 |
@@ -94,7 +95,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 121 | 51 | 12 | 58 |
+| All | 124 | 51 | 12 | 61 |
 
 ## C01 Button
 
@@ -160,6 +161,16 @@ Flagged: `good-cupertino`.
 | `good-material` | Nothing: `Tooltip(message:, ignorePointer: false, excludeFromSemantics: true)` round an `IconButton` named by `Icon(semanticLabel:)`, and a focus outline through the button's own `style` | `Tooltip` | The pointer cannot reach a default tooltip ([FL-247](flutter-limitations.md#fl-247)), filled with its own parameter; a faint focus tint ([FL-430](flutter-limitations.md#fl-430)), filled with the button's `style` | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
 | `good-cupertino` | An `Actions` for `ButtonActivateIntent` round the `CupertinoButton`, so that Enter works on the web; the tooltip itself is Material's `Tooltip` through its parameters | None: Cupertino has no tooltip; Material's `Tooltip` is used, with `CupertinoButton` | Enter on the web ([FL-002](flutter-limitations.md#fl-002)); the box over the button ([FL-250](flutter-limitations.md#fl-250)) and the faint ring ([FL-431](flutter-limitations.md#fl-431)), filled with parameters | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | custom |
 | `good-description` | Nothing is built: `MergeSemantics` round `Tooltip(message:, ignorePointer: false)` round an `OutlinedButton`, so that the tooltip is on the button | `Tooltip` | A tooltip round a Material button stays on a node of its own ([FL-040](flutter-limitations.md#fl-040)), filled with the documented merge | R2, R3, R4: 1.4.13, Understanding 1.4.13, F95, APG, MDN title, Flutter's Tooltip documentation, 4.1.2, C01 | not custom |
+
+## C13 Snackbar and transient messages
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-action` | Nothing: `ScaffoldMessenger.clearSnackBars` and `showSnackBar` with a `SnackBarAction` (which makes it stay, by `persist`'s default) and `showCloseIcon`; Undo's result on a line of the page in `Semantics(liveRegion: true)`, the documented property, as its documentation describes; an Undo used after the example has gone changes nothing; the action's focus colours through its own `textColor` and `backgroundColor`, and a focus outline on the page's button through its `style` | `SnackBar` | A faint focus tint on the action and the page's button ([FL-430](flutter-limitations.md#fl-430)), filled with their own parameters; the close icon's is not filled ([FL-294](flutter-limitations.md#fl-294)); a SnackBar shown from the action is hidden with a screen reader on ([FL-296](flutter-limitations.md#fl-296)), not worked round | R1, R2, R4: Understanding 4.1.3, APG Alert, Android Compose Popup messages, Understanding 2.2.1, 2.1.1 | not custom |
+| `good-message` | Nothing: `ScaffoldMessenger.clearSnackBars` and `showSnackBar` with a message only, and the same news in a line of the page | `SnackBar` | none | R1, R3: Understanding 4.1.3, APG Alert, Understanding 2.2.1 | not custom |
+| `good-banner` | Nothing: `ScaffoldMessenger.clearMaterialBanners` and `showMaterialBanner`; going online on a line of the page in `Semantics(liveRegion: true)`; a Go online used after the example has gone hides its own banner only (`hideCurrentMaterialBanner`); a focus outline on its `TextButton` and the page's button through their `style` | `MaterialBanner` | A faint focus tint on a `TextButton` ([FL-430](flutter-limitations.md#fl-430)), filled with its `style` | R1, R2, R4: Understanding 4.1.3, APG Alert, Android Compose Popup messages, Understanding 2.2.1, 2.1.1 | not custom |
 
 ## C18 Card
 

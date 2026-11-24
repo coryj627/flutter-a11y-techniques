@@ -1,0 +1,87 @@
+C13WEB s01 focus on load flt-semantics[role=button] "Back"
+C13WEB s01 before Enter, focus on flt-semantics[role=button] "s01 Show"
+C13WEB s01 shown true | focus after the show flt-semantics[role=button] "s01 Show"
+C13WEB s01 tab stops after the show body "flutter typography measurementBacks01 Sn" | flutter-view "Backs01 SnackBar, content onlyBefore s01" | flt-semantics[role=button] "Back" | flt-semantics[role=button] "s01 Show" | body "flutter typography measurementBacks01 Sn"
+C13WEB s01 gone 2656 ms after the Tabs | s01 closed: timeout 4257 ms
+C13WEB s01 announced ["500 ms polite: \"s01 Message archived\"","665 ms polite: \"\""]
+C13WEB s01 before Enter, focus on flt-semantics[role=button] "s01 Show"
+C13WEB s01 no Tab reached an action
+C13WEB s02 focus on load flt-semantics[role=button] "Back"
+C13WEB s02 before Enter, focus on flt-semantics[role=button] "s02 Show"
+C13WEB s02 shown true | focus after the show flt-semantics[role=button] "s02 Show"
+C13WEB s02 element <flt-semantics role=group aria-label=s02 Message archived> own text ""
+C13WEB s02 element <flt-semantics role=button tabindex=0 flt-tappable=> own text "s02 Undo"
+C13WEB s02 tab stops after the show flt-semantics[role=button] "s02 Undo" | body "flutter typography measurementBacks02 Sn" | flutter-view "Backs02 SnackBar with an actionBefore s0" | flt-semantics[role=button] "Back" | flt-semantics[role=button] "s02 Show"
+C13WEB s02 gone still shown at 14 s (from about 2 s after the show) | s02 closed: open
+C13WEB s02 announced ["403 ms polite: \"s02 Message archived\"","648 ms polite: \"\""]
+C13WEB s02 before Enter, focus on flt-semantics[role=button] "s02 Show"
+C13WEB s02 focus on flt-semantics[role=button] "s02 Undo": still shown at 14 s | focus then flt-semantics[role=button] "s02 Undo" | s02 closed: open
+C13WEB s02 Escape on flt-semantics[role=button] "s02 Undo": shown true | s02 closed: open | focus flt-semantics[role=button] "s02 Undo"
+C13WEB s02 Enter on flt-semantics[role=button] "s02 Undo": shown false | s02 closed: action 15676 ms | s02 taps: 1 | focus flt-semantics[role=button] "s02 Show"
+C13WEB s03 focus on load flt-semantics[role=button] "Back"
+C13WEB s03 before Enter, focus on flt-semantics[role=button] "s03 Show"
+C13WEB s03 shown true | focus after the show flt-semantics[role=button] "s03 Show"
+C13WEB s03 element <flt-semantics role=group aria-label=s03 Message archived> own text ""
+C13WEB s03 element <flt-semantics role=button tabindex=0 flt-tappable=> own text "s03 Undo"
+C13WEB s03 tab stops after the show flt-semantics[role=button] "s03 Undo" | body "flutter typography measurementBacks03 Sn" | flutter-view "Backs03 SnackBar with an action, persist" | flt-semantics[role=button] "Back" | flt-semantics[role=button] "s03 Show"
+C13WEB s03 gone 2649 ms after the Tabs | s03 closed: timeout 4255 ms
+C13WEB s03 announced ["467 ms polite: \"s03 Message archived\"","649 ms polite: \"\""]
+C13WEB s03 before Enter, focus on flt-semantics[role=button] "s03 Show"
+C13WEB s03 focus on flt-semantics[role=button] "s03 Undo": gone 3266 ms after focus reached it | focus then flt-semantics[role=button] "s03 Show" | s03 closed: timeout 4256 ms
+C13WEB s03 one Tab after it went: body "flutter typography measurementBacks03 Sn"
+C13WEB s04 focus on load flt-semantics[role=button] "Back"
+C13WEB s04 before Enter, focus on flt-semantics[role=button] "s04 Show"
+C13WEB s04 shown true | focus after the show flt-semantics[role=button] "s04 Show"
+C13WEB s04 element <flt-semantics role=group aria-label=s04 Message archived> own text ""
+C13WEB s04 element <flt-semantics role=button tabindex=0 flt-tappable=> own text "Close"
+C13WEB s04 tab stops after the show flt-semantics[role=button] "Close" | body "flutter typography measurementBacks04 Sn" | flutter-view "Backs04 SnackBar with showCloseIcon, no " | flt-semantics[role=button] "Back" | flt-semantics[role=button] "s04 Show"
+C13WEB s04 gone 2642 ms after the Tabs | s04 closed: timeout 4268 ms
+C13WEB s04 announced ["414 ms polite: \"s04 Message archived\"","650 ms polite: \"\""]
+C13WEB s04 before Enter, focus on flt-semantics[role=button] "s04 Show"
+C13WEB s04 focus on flt-semantics[role=button] "Close": gone 3264 ms after focus reached it | focus then flt-semantics[role=button] "s04 Show" | s04 closed: timeout 4252 ms
+C13WEB s04 one Tab after it went: body "flutter typography measurementBacks04 Sn"
+C13WEB s05 focus on load flt-semantics[role=button] "Back"
+C13WEB s05 before Enter, focus on flt-semantics[role=button] "s05 Show"
+C13WEB s05 shown true | focus after the show flt-semantics[role=button] "s05 Show"
+C13WEB s05 element <flt-semantics role=group aria-label=s05 Message archived> own text ""
+C13WEB s05 element <flt-semantics role=button tabindex=0 flt-tappable=> own text "s05 Undo"
+C13WEB s05 element <flt-semantics role=button tabindex=0 flt-tappable=> own text "Close"
+C13WEB s05 tab stops after the show flt-semantics[role=button] "s05 Undo" | flt-semantics[role=button] "Close" | body "flutter typography measurementBacks05 Sn" | flutter-view "Backs05 SnackBar with an action and show" | flt-semantics[role=button] "Back"
+C13WEB s05 gone still shown at 14 s (from about 2 s after the show) | s05 closed: open
+C13WEB s05 announced ["465 ms polite: \"s05 Message archived\"","649 ms polite: \"\""]
+C13WEB s05 before Enter, focus on flt-semantics[role=button] "s05 Show"
+C13WEB s05 focus on flt-semantics[role=button] "s05 Undo": still shown at 14 s | focus then flt-semantics[role=button] "s05 Undo" | s05 closed: open
+C13WEB s05 Escape on flt-semantics[role=button] "s05 Undo": shown true | s05 closed: open | focus flt-semantics[role=button] "s05 Undo"
+C13WEB s05 Enter on flt-semantics[role=button] "s05 Undo": shown false | s05 closed: action 15692 ms | s05 taps: 1 | focus flt-semantics[role=button] "s05 Show"
+C13WEB s06 focus on load flt-semantics[role=button] "Back"
+C13WEB s06 before Enter, focus on flt-semantics[role=button] "s06 Show"
+C13WEB s06 shown true | focus after the show flt-semantics[role=button] "s06 Show"
+C13WEB s06 element <flt-semantics role=group aria-label=s06 Offline: changes are kept> own text ""
+C13WEB s06 element <flt-semantics role=button tabindex=0 flt-tappable=> own text "s06 Dismiss"
+C13WEB s06 tab stops after the show body "flutter typography measurementBacks06 Ma" | flutter-view "Backs06 MaterialBanners06 DismissBefore " | flt-semantics[role=button] "Back" | flt-semantics[role=button] "s06 Dismiss" | flt-semantics[role=button] "s06 Show"
+C13WEB s06 gone still shown at 14 s (from about 2 s after the show) | s06 closed: open
+C13WEB s06 announced ["374 ms polite: \"s06 Offline: changes are kept\"","642 ms polite: \"\""]
+C13WEB s06 before Enter, focus on flt-semantics[role=button] "s06 Show"
+C13WEB s06 focus on flt-semantics[role=button] "s06 Dismiss": still shown at 14 s | focus then flt-semantics[role=button] "s06 Dismiss" | s06 closed: open
+C13WEB s06 Escape on flt-semantics[role=button] "s06 Dismiss": shown true | s06 closed: open | focus flt-semantics[role=button] "s06 Dismiss"
+C13WEB s06 Enter on flt-semantics[role=button] "s06 Dismiss": shown false | s06 closed: hide 16151 ms | s06 taps: 1 | focus flt-semantics[role=button] "Back"
+C13WEB s07 focus on load flt-semantics[role=button] "Back"
+C13WEB s07 before Enter, focus on flt-semantics[role=button] "s07 Show"
+C13WEB s07 shown true | focus after the show flt-semantics[role=button] "s07 Show"
+C13WEB s07 tab stops after the show body "flutter typography measurementBacks07 Sn" | flutter-view "Backs07 SnackBar, duration 10 sBefore s0" | flt-semantics[role=button] "Back" | flt-semantics[role=button] "s07 Show" | body "flutter typography measurementBacks07 Sn"
+C13WEB s07 gone 8755 ms after the Tabs | s07 closed: timeout 10264 ms
+C13WEB s07 announced ["405 ms polite: \"s07 Message archived\"","649 ms polite: \"\""]
+C13WEB s07 before Enter, focus on flt-semantics[role=button] "s07 Show"
+C13WEB s07 no Tab reached an action
+C13WEB s08 focus on load flt-semantics[role=button] "Back"
+C13WEB s08 before Enter, focus on flt-semantics[role=button] "s08 Show"
+C13WEB s08 shown true | focus after the show flt-semantics[role=button] "s08 Show"
+C13WEB s08 element <flt-semantics role=group aria-label=s08 Message archived> own text ""
+C13WEB s08 element <flt-semantics role=button tabindex=0 flt-tappable=> own text "s08 Undo"
+C13WEB s08 tab stops after the show flt-semantics[role=button] "s08 Undo" | body "flutter typography measurementBacks08 Sn" | flutter-view "Backs08 SnackBar, floating, with an acti" | flt-semantics[role=button] "Back" | flt-semantics[role=button] "s08 Show"
+C13WEB s08 gone 2637 ms after the Tabs | s08 closed: timeout 4262 ms
+C13WEB s08 announced ["494 ms polite: \"s08 Message archived\"","661 ms polite: \"\""]
+C13WEB s08 before Enter, focus on flt-semantics[role=button] "s08 Show"
+C13WEB s08 focus on flt-semantics[role=button] "s08 Undo": gone 3254 ms after focus reached it | focus then flutter-view "Backs08 SnackBar, floating, with an acti" | s08 closed: timeout 4270 ms
+C13WEB s08 one Tab after it went: flt-semantics[role=button] "Back"
+  8 passed (2.8m)

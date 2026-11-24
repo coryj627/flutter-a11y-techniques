@@ -1,0 +1,304 @@
+// C13 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c13/probe.dart.txt): what Flutter's SnackBar and
+// MaterialBanner give assistive technology, how long they stay, and what
+// reaches and closes them. One fixture per route, `/s01` to `/s08`; `/`
+// lists them all, and each can be pushed from there.
+//
+// Each fixture is a Scaffold with "Before sNN", a button "sNN Show" that
+// shows the message, "sNN taps: N" (the message's action), "sNN closed: …"
+// (why and how long after the show the message went, from the
+// ScaffoldMessenger's own future), "sNN nav: …" (what
+// MediaQuery.accessibleNavigation was at the show) and "sNN focus: …" (what
+// has Flutter's keyboard focus, updated on every change), then "After sNN".
+// The timings and the focus are on screen so that every platform's tree can
+// read them.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+typedef Show = void Function(
+  BuildContext context,
+  String id,
+  VoidCallback tapped,
+);
+
+SnackBarAction undo(String id, VoidCallback tapped) =>
+    SnackBarAction(label: '$id Undo', onPressed: tapped);
+
+final Map<String, (String, Show)> fixtures = {
+  's01': (
+    'SnackBar, content only',
+    (c, id, t) =>
+        _snack(c, id, SnackBar(content: Text('$id Message archived'))),
+  ),
+  's02': (
+    'SnackBar with an action',
+    (c, id, t) => _snack(
+      c,
+      id,
+      SnackBar(content: Text('$id Message archived'), action: undo(id, t)),
+    ),
+  ),
+  's03': (
+    'SnackBar with an action, persist: false',
+    (c, id, t) => _snack(
+      c,
+      id,
+      SnackBar(
+        content: Text('$id Message archived'),
+        action: undo(id, t),
+        persist: false,
+      ),
+    ),
+  ),
+  's04': (
+    'SnackBar with showCloseIcon, no action',
+    (c, id, t) => _snack(
+      c,
+      id,
+      SnackBar(content: Text('$id Message archived'), showCloseIcon: true),
+    ),
+  ),
+  's05': (
+    'SnackBar with an action and showCloseIcon',
+    (c, id, t) => _snack(
+      c,
+      id,
+      SnackBar(
+        content: Text('$id Message archived'),
+        action: undo(id, t),
+        showCloseIcon: true,
+      ),
+    ),
+  ),
+  's06': (
+    'MaterialBanner',
+    (c, id, t) {
+      final messenger = ScaffoldMessenger.of(c);
+      final started = DateTime.now();
+      _Fixture._live[id]!.shown(MediaQuery.accessibleNavigationOf(c));
+      messenger
+          .showMaterialBanner(
+            MaterialBanner(
+              content: Text('$id Offline: changes are kept'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    t();
+                    messenger.hideCurrentMaterialBanner();
+                  },
+                  child: Text('$id Dismiss'),
+                ),
+              ],
+            ),
+          )
+          .closed
+          .then(
+            (r) => _Fixture.closedFor(
+              id,
+              '${r.name} ${DateTime.now().difference(started).inMilliseconds} ms',
+            ),
+          );
+    },
+  ),
+  's07': (
+    'SnackBar, duration 10 s',
+    (c, id, t) => _snack(
+      c,
+      id,
+      SnackBar(
+        content: Text('$id Message archived'),
+        duration: const Duration(seconds: 10),
+      ),
+    ),
+  ),
+  's08': (
+    'SnackBar, floating, with an action, persist: false',
+    (c, id, t) => _snack(
+      c,
+      id,
+      SnackBar(
+        content: Text('$id Message archived'),
+        action: undo(id, t),
+        persist: false,
+        behavior: SnackBarBehavior.floating,
+      ),
+    ),
+  ),
+  // Added after the device rounds; widget tests only (probe4_test).
+  's09': (
+    'SnackBar with an action and showCloseIcon, closeIconColor by state',
+    (c, id, t) => _snack(
+      c,
+      id,
+      SnackBar(
+        content: Text('$id Message archived'),
+        action: undo(id, t),
+        showCloseIcon: true,
+        closeIconColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.focused)
+              ? Colors.yellow
+              : Colors.white,
+        ),
+      ),
+    ),
+  ),
+};
+
+void _snack(BuildContext context, String id, SnackBar bar) {
+  final messenger = ScaffoldMessenger.of(context);
+  final started = DateTime.now();
+  _Fixture._live[id]!.shown(MediaQuery.accessibleNavigationOf(context));
+  messenger
+    ..hideCurrentSnackBar()
+    ..showSnackBar(bar).closed.then(
+      (r) => _Fixture.closedFor(
+        id,
+        '${r.name} ${DateTime.now().difference(started).inMilliseconds} ms',
+      ),
+    );
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      onGenerateRoute: (settings) {
+        final name = (settings.name ?? '/').replaceFirst('/', '');
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => fixtures.containsKey(name)
+              ? FixtureScreen(id: name)
+              : const HomeScreen(),
+        );
+      },
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('C13 probe home')),
+      body: ListView(
+        children: [
+          for (final MapEntry(key: id, value: (title, _)) in fixtures.entries)
+            ListTile(
+              title: Text('$id $title'),
+              onTap: () => Navigator.pushNamed(context, '/$id'),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class FixtureScreen extends StatefulWidget {
+  const FixtureScreen({super.key, required this.id});
+
+  final String id;
+
+  @override
+  State<FixtureScreen> createState() => _Fixture();
+}
+
+class _Fixture extends State<FixtureScreen> {
+  static final Map<String, _Fixture> _live = {};
+
+  static void closedFor(String id, String text) {
+    final f = _live[id];
+    if (f != null && f.mounted) f.setState(() => f._closed = text);
+    debugPrint('C13PROBE $id closed: $text');
+  }
+
+  int _taps = 0;
+  String _closed = '-';
+  String _nav = '-';
+  String _focus = '-';
+
+  void shown(bool nav) => setState(() {
+    _nav = '$nav';
+    _closed = 'open';
+  });
+
+  @override
+  void initState() {
+    super.initState();
+    _live[widget.id] = this;
+    FocusManager.instance.addListener(_onFocus);
+  }
+
+  @override
+  void dispose() {
+    FocusManager.instance.removeListener(_onFocus);
+    if (_live[widget.id] == this) _live.remove(widget.id);
+    super.dispose();
+  }
+
+  void _onFocus() {
+    final node = FocusManager.instance.primaryFocus;
+    var text = node?.debugLabel ?? node.runtimeType.toString();
+    final ctx = node?.context;
+    if (ctx != null) {
+      String? found;
+      void visit(Element e) {
+        if (found != null) return;
+        final w = e.widget;
+        if (w is Text) found = w.data;
+        if (w is Icon) found = 'icon ${w.icon?.codePoint}';
+        e.visitChildren(visit);
+      }
+
+      (ctx as Element).visitChildren(visit);
+      text = found ?? text;
+    }
+    if (mounted) setState(() => _focus = text);
+    debugPrint('C13PROBE ${widget.id} focus: $text');
+  }
+
+  Widget _id(String suffix, Widget child) => MergeSemantics(
+    child: Semantics(identifier: '${widget.id}-$suffix', child: child),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final id = widget.id;
+    final (title, show) = fixtures[id]!;
+    return Scaffold(
+      appBar: AppBar(title: Text('$id $title')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8,
+          children: [
+            Text('Before $id'),
+            _id(
+              'show',
+              FilledButton(
+                onPressed: () =>
+                    show(context, id, () => setState(() => _taps++)),
+                child: Text('$id Show'),
+              ),
+            ),
+            _id('taps', Text('$id taps: $_taps')),
+            _id('closed', Text('$id closed: $_closed')),
+            _id('nav', Text('$id nav: $_nav')),
+            _id('focus', Text('$id focus: $_focus')),
+            Text('After $id'),
+          ],
+        ),
+      ),
+    );
+  }
+}

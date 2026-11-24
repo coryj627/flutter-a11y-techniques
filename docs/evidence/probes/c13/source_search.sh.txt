@@ -1,0 +1,23 @@
+#!/bin/sh
+# C13: where Flutter 3.47.5 could read a platform timeout setting. Kept as
+# docs/evidence/probes/c13/source_search.sh.txt; its output is
+# source_search.txt. $1 is the unzipped Android embedding jar.
+D="$1"
+F="$HOME/fvm/versions/3.47.5"
+echo "# C13: where Flutter 3.47.5 could read a platform timeout setting"
+echo "# Engine: $(cat "$F/bin/internal/engine.version")"
+echo
+echo "## Android embedding (flutter_embedding_debug jar of that engine, unzipped), class files searched as bytes"
+echo '$ grep -rla "RecommendedTimeout" <jar>   (AccessibilityManager.getRecommendedTimeoutMillis)'
+grep -rla "RecommendedTimeout" "$D" | sed "s|$D|<jar>|"
+echo "(files found: $(grep -rla RecommendedTimeout "$D" | wc -l | tr -d ' '))"
+echo '$ grep -rla "TouchExploration" <jar>    (positive control: the bridge reads isTouchExplorationEnabled)'
+grep -rla "TouchExploration" "$D" | sed "s|$D|<jar>|"
+echo
+echo "## Framework and dart:ui sources"
+echo '$ grep -rn "RecommendedTimeout|recommendedTimeout|interactive_ui_timeout" packages/flutter/lib bin/cache/pkg/sky_engine/lib'
+grep -rn "RecommendedTimeout\|recommendedTimeout\|interactive_ui_timeout" "$F/packages/flutter/lib" "$F/bin/cache/pkg/sky_engine/lib"
+echo "(lines found: $(grep -rn "RecommendedTimeout\|recommendedTimeout\|interactive_ui_timeout" "$F/packages/flutter/lib" "$F/bin/cache/pkg/sky_engine/lib" | wc -l | tr -d ' '))"
+echo
+echo '$ grep -n "accessibleNavigation" material/snack_bar.dart material/scaffold.dart material/banner.dart'
+grep -n "accessibleNavigation" "$F/packages/flutter/lib/src/material/snack_bar.dart" "$F/packages/flutter/lib/src/material/scaffold.dart" "$F/packages/flutter/lib/src/material/banner.dart" | sed "s|$F/packages/flutter/lib/src/||"

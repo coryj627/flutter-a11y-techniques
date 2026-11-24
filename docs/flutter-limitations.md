@@ -150,6 +150,14 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-266](#fl-266) | On the web `controlsNodes` becomes `aria-controls` only if the controlled node is there when `controlsNodes` is set | Web | Confirmed |
 | [FL-267](#fl-267) | `ExpansionPanelList`'s expand buttons are named "Expand" or "Collapse" whatever their panel, and have no expanded state | All | Observed |
 | [FL-269](#fl-269) | A `Card` left at its default joins all its text into one node, and a heading in it makes all of that one heading | All | Confirmed |
+| [FL-290](#fl-290) | A SnackBar's time limit is the app's alone: a screen reader, Android's accessibility timeout, a pointer resting on it, and keyboard focus on its action do not change it | All | Confirmed |
+| [FL-291](#fl-291) | Escape closes no SnackBar or MaterialBanner; Back pops the screen under it, and the message stays on the screen before | All (Escape: Android and the web, and widget tests; not sent on iOS) | Confirmed |
+| [FL-292](#fl-292) | When a SnackBar times out with keyboard focus on its action, focus goes back to the button that showed it on Android and the web, but to no control in widget tests, and once to the page for a floating one on the web | Android, Web, widget tests (iOS not measured) | Confirmed |
+| [FL-293](#fl-293) | A message shown while one that stays is up waits, unseen and unannounced, until that one is closed | Widget tests only | Confirmed (widget tests only) |
+| [FL-294](#fl-294) | A SnackBar's Close button shows keyboard focus only by a faint tint, and `closeIconColor` cannot change that | Widget tests only | Confirmed (widget tests only) |
+| [FL-295](#fl-295) | A `MaterialBanner` is a live region only when the `ScaffoldMessenger` shows it | All | Confirmed |
+| [FL-296](#fl-296) | A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it | Web; widget tests (Android and iOS not run) | Confirmed |
+| [FL-297](#fl-297) | On the web, whether VoiceOver in Chromium said what a SnackBar or banner action did, when Enter on that action removed the control, varied between recordings, and the live-region line that now says it was not heard in its one recording | Web (Chromium, VoiceOver, Enter) | Observed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -362,6 +370,16 @@ yet), **Fixed in x.y** (verified on that version).
   element inside the button, but the button keeps its name: a button's
   accessible name is computed from its content
   (`web_tests/s22_semantics_identifiers.spec.js`, "bad-inside").
+- The same inside a SnackBar's message (C13, 2026-11-22; widget test
+  only, `docs/evidence/probes/c13/flutter_test_identifier.txt`, as
+  Android): with `SnackBar(content: Semantics(identifier: 'message', child:
+  Text('Message archived')))`, the SnackBar's own node keeps the live
+  region and the dismiss action and has no label, and the words and the
+  identifier are on a node of their own inside it, which is not a live
+  region; with the text alone, the SnackBar's node is the live region with
+  the words. What a screen reader announces for the split one was not
+  measured. C13's examples put no identifier on a message, and the tests
+  find it by its words.
 - Cause: a `Semantics` with an identifier is a node boundary for the text
   under it, so the text can no longer merge up into the button. Not read in
   the SDK source; this is from the trees.
@@ -3272,6 +3290,42 @@ yet), **Fixed in x.y** (verified on that version).
   tooltip was shown: in C12's web VoiceOver walks no tooltip was shown,
   and nothing was read twice in either browser
   (`docs/evidence/probes/c12/voiceover-web-round1-fail.md.txt`).
+- C13 (2026-11-22) found the same on the close button that
+  `SnackBar.showCloseIcon` adds, an `IconButton` whose tooltip is
+  "Close", which the app cannot leave out: with the pointer on it, in
+  Chromium and WebKit, the button owns the tooltip's element (`aria-owns`)
+  and Chromium names it "Close Close", still a button; with keyboard focus
+  alone no tooltip is shown and it is named "Close"
+  (`docs/evidence/probes/c13/close_probe.txt`; asserted by
+  `web_tests/c13_snackbar.spec.js`). In C13's first web VoiceOver
+  recording Chromium read that button "Close Close", with no role, and
+  WebKit "Close button"
+  (`docs/evidence/probes/c13/voiceover-web-round1-fail.md.txt`). The
+  second recording read the same, Chromium "Close Close" and WebKit "Close
+  button", and after each walk Close's tooltip was shown, in both browsers
+  (`voiceover-web-round2-fail.md.txt`, row
+  `good-action-close-tooltip-after-walk`). Every C13 recording since read
+  the same, seven in all: Chromium "Close Close", WebKit "Close button",
+  the tooltip shown after each walk (`voiceover-web-round3-fail.md.txt`,
+  `voiceover-web-round4-fail.md.txt`, `voiceover-web-round5.md.txt`, and
+  the transcript, `docs/evidence/C13/voiceover-web.md`). So a walk that reaches Close
+  leaves its tooltip shown, and Chromium's VoiceOver then reads the doubled
+  name with no role word; WebKit's reads the name once with its role. The
+  tree keeps the role, a button, while the tooltip is shown
+  (`close_probe.txt`), so the role is programmatically determinable: not a
+  4.1.2 failure as written. But a Chromium VoiceOver user does not hear
+  "button" on Close. What shows the tooltip during the walk (the pointer
+  following VoiceOver's cursor is the likeliest, and keyboard focus alone
+  does not), and why Chromium's speech drops the role, were not measured
+  beyond that correlation. `SnackBar` has no parameter for the close
+  icon's tooltip (read in the source: `material/snack_bar.dart` builds the
+  `IconButton` with `tooltip: MaterialLocalizations.of(context)
+  .closeButtonTooltip`), so an app cannot leave it out for one SnackBar;
+  only its words could be changed, app-wide, through `MaterialLocalizations`.
+  This is recorded here and not as an entry of its own because the doubled
+  name is this entry's mechanism, a shown tooltip's text owned by its
+  control; the dropped role word is VoiceOver's reading of that name in
+  Chromium.
 - Workaround: `Tooltip.excludeFromSemantics` leaves out the tooltip's
   semantics on its control, not the shown text. None in the framework for
   the shown text; Flutter has not added one yet.
@@ -4039,6 +4093,389 @@ yet), **Fixed in x.y** (verified on that version).
   holds every card's text.
 - Workaround, in the SDK: `Card(semanticContainer: false)`, as its
   documentation says (C18 `good-material`).
+- Upstream issue: not searched yet (D25).
+
+## FL-290
+
+**A SnackBar's time limit is the app's alone: a screen reader, Android's accessibility timeout, a pointer resting on it, and keyboard focus on its action do not change it.**
+
+- Status: Confirmed, Flutter 3.47.5. Framework source read:
+  `material/scaffold.dart`, `ScaffoldMessengerState.build`, starts a
+  `Timer(snackBar.duration)` once the SnackBar has come in, and when it
+  fires does nothing if `snackBar.persist` is true and hides the SnackBar
+  otherwise; nothing else is read. `SnackBar`'s constructor sets `persist`
+  to `action != null` when the app gives none. `accessibleNavigation` is
+  read in `snack_bar.dart` and `scaffold.dart` only to leave out the
+  animations and to hide at once (`docs/evidence/probes/c13/source_search.txt`).
+  The Android embedding of the pinned engine has no call to
+  `AccessibilityManager.getRecommendedTimeoutMillis`, which it does have
+  for touch exploration, and `AccessibilityFeatures` has no timeout
+  (the same file).
+- What was measured, as the time from the show to the message's going
+  (the probe's fixtures s01 to s08, `docs/evidence/probes/c13/`):
+  - Widget tests, as Android, with `accessibleNavigation` off and on
+    (`flutter_test.txt`): a SnackBar with no action went at 4.7 s and 4.4
+    s (the entrance animation is left out when it is on); with an action
+    and `persist: false`, the same; with an action and the default, still
+    there at 15 s, off and on; `duration: 10 s` went at 10.7 s and 10.4 s;
+    `accessibleNavigation` turned on while one was shown, and a mouse
+    resting on it, changed nothing. Keyboard focus on the action did not
+    keep it (4.6 s).
+  - Web, Chromium (`web_round1.txt`, `web_round2.txt`): 4.26 s, 4.27 s
+    with keyboard focus on its action, 10.26 s for 10 s.
+  - iOS 27.0 simulator (`ios.txt`): 4.56 s with VoiceOver off, and with
+    VoiceOver on 4.27 s, `accessibleNavigation` true; with an action and
+    the default, still there 14 s later with VoiceOver on.
+  - Android 17 emulator (`android-tree.txt`, `android-talkback-markers.txt`):
+    4.29 s with no action and with an action and `persist: false`, 4.27 s
+    and 4.28 s with TalkBack on; with an action and the default, still
+    there 16 s later, and 14 s later with TalkBack on. With Android's two
+    accessibility timeout settings ("Time to take action") at 60 s, set
+    by the probe and put back after: 4.28 s, 4.29 s, 4.28 s, and 10.34 s for
+    a `duration` of 10 s, unchanged. `accessibleNavigation` was true in
+    every Android run, TalkBack off as well as on; why was not found.
+- WCAG: 2.2.1 Timing Adjustable, where the message is the only means to
+  some information or function (Understanding 2.2.1). Nothing in a
+  SnackBar lets the user turn its time off, adjust it, or extend it, and
+  nothing in the platform does either. A SnackBar with an action and the
+  default `persist` sets no time limit on its action.
+- The documentation says: "A SnackBar with an action will not time out
+  when TalkBack or VoiceOver are enabled. This is controlled by
+  AccessibilityFeatures.accessibleNavigation." As measured, a SnackBar
+  with an action does not time out whether a screen reader is on or not,
+  by `persist`'s default, and with `persist: false` it times out with
+  VoiceOver on and with TalkBack on (above).
+- What users get: a SnackBar whose action or news exists nowhere else
+  goes after four seconds for everyone, screen reader users included,
+  before a swipe at a time can reach it: on iOS, VoiceOver's cursor moved
+  from the button that showed it reached the message of a SnackBar that
+  stays after six moves, past the page's own lines (`ios.txt`, s02 and
+  s05). The reference repositories' Android Compose entry says a native
+  Snackbar follows Android's "Time to take action" setting; a Flutter one
+  does not.
+- Workaround, in the SDK: give a SnackBar with an action no
+  `persist: false`, so that it stays (C13 `good-action`); put news that
+  is needed on the page as well (C13 `good-message`); or use a
+  `MaterialBanner`, which has no timer. A longer `duration` is a longer
+  fixed time, not one the user sets.
+- How to read this entry: a SnackBar is documented as brief; this is
+  logged because its time is fixed by the app for every user, and the
+  documentation's sentence about screen readers describes `persist`'s
+  default, not a change made for them.
+- Upstream issue: not searched yet (D25).
+
+## FL-291
+
+**Escape closes no SnackBar or MaterialBanner; Back pops the screen under it, and the message stays on the screen before.**
+
+- Status: Confirmed, Flutter 3.47.5. First seen in the I08 probe (fixture
+  `e12`): Escape did nothing to a SnackBar, and Back popped the screen.
+  Measured in the C13 probe (`flutter_test.txt`, `web_round1.txt`,
+  `web_round2.txt`) and asserted by the C13 widget, web, and Android
+  tests "Escape with focus on Undo (or Go online) leaves the message;
+  Enter there, in the same launch, acts". Framework source read: neither
+  `SnackBar` nor `MaterialBanner` has an action for `DismissIntent`, and
+  the `ScaffoldMessenger` sits above the `Navigator`, so a SnackBar is
+  shown on whichever `Scaffold` is current (`scaffold.dart`, `_register`
+  and `_updateScaffolds`).
+- What happens:
+  - Escape, with keyboard focus on the message's action, its Close
+    button, or elsewhere, leaves the message, as Android (widget tests and
+    the emulator) and on the web; Enter on the same action in the same
+    launch acted. On iOS Escape was not sent (I08: it reaches Flutter
+    only as Command+period, and not every time before iOS 27).
+  - Back (`popRoute`, the widget tests) pops the screen, and the message
+    moves to the screen under it. A SnackBar that stays, and a banner,
+    stay there: still shown 15 s and 30 s later (the probe's s02, s05,
+    s06; C13 `good-action` and `good-banner`, which also stay over the
+    catalog after a second Back), and their action can still be used
+    there, on a screen that is gone (in the probe it ran the app's
+    callback; C13's examples make it change nothing and tell nothing
+    then, as the example has gone). A timed one goes on its timer.
+  - What does close one: its action, `showCloseIcon`'s Close button, a
+    swipe down (a SnackBar only; `flutter_test.txt`), and the dismiss
+    action that both put on their node (`Semantics(onDismiss:)`), which
+    TalkBack's Dismiss action reaches. VoiceOver's escape gesture made
+    inside the message reaches the same action (read in the source, FL-481);
+    not measured.
+- WCAG: none failed as written. A keyboard can leave the message (Tab)
+  and reach a control that closes it, where the app gives one. A SnackBar
+  that stays and has no Close button can be removed with a keyboard only
+  by using its action; `good-action` has a Close button for this.
+- Workaround, in the SDK: `showCloseIcon: true` on a SnackBar that stays;
+  a `MaterialBanner`'s own action that hides it.
+- Upstream issue: not searched yet (D25).
+
+## FL-292
+
+**When a SnackBar times out with keyboard focus on its action, focus goes back to the button that showed it on Android and the web, but to no control in widget tests, and once to the page for a floating one on the web.**
+
+- Status: Confirmed, Flutter 3.47.5. Asserted, as measured on each, by
+  the C13 tests of `bad-action-times-out` "with keyboard focus on Undo it
+  still goes": the widget test (no node has focus, and the next Tab goes
+  to Back), the web tree test (DOM focus on "Archive message"), and
+  `C13SnackbarTest.badActionTimesOutGoesWithKeyboardFocusOnUndo` (the
+  node with input focus is "Archive message"'s, on the local emulator at
+  its own size and at CI's 320 by 640, `android_320x640.txt`). Measured
+  in the probe on fixtures s03, s04, and s08.
+- What happens, with keyboard focus on a SnackBar's action or its Close
+  button when the SnackBar times out:
+  - Android 17 emulator, C13's test: focus on the button that showed it.
+  - Web, Chromium: DOM focus on that button, for a fixed SnackBar, in
+    both probe rounds (`web_round1.txt`, `web_round2.txt`, s03 and s04)
+    and in six runs of six of C13's tree test; the next Tab left
+    Flutter's controls for the page's body. For a floating one (s08), on
+    that button in round 1, and on the Flutter view in round 2, where the
+    next Tab went to Back.
+  - Widget tests, as Android (`flutter_test.txt`): no node has focus
+    afterwards; the next Tab goes to Back, the first control of the
+    screen. Why the widget tests differ from the emulator was not found.
+  - iOS: not measured (the probe's key test matched the Back button's
+    icon and never reached the action; XCUITest cannot read Flutter's
+    focus).
+  When the action is used, focus goes back to the button that showed the
+  message (widget tests, web).
+- WCAG: none failed as written. It is the time limit of
+  [FL-290](#fl-290) seen from the keyboard: the control under focus goes.
+- How to read this entry: logged because a test of a widget's keyboard
+  behaviour in `flutter test` does not show what a device does here, and
+  the web varied for a floating SnackBar.
+- Workaround: none needed for the examples; a SnackBar that stays does
+  not go from under focus (C13 `good-action`).
+- Upstream issue: not searched yet (D25).
+
+## FL-293
+
+**A message shown while one that stays is up waits, unseen and unannounced, until that one is closed.**
+
+- Status: Confirmed in the widget tests, Flutter 3.47.5: the C13 test
+  "FL-293", and the probe (`flutter_test.txt`, "a second message while
+  s02 (persists) is shown"). Framework source read:
+  `ScaffoldMessengerState.showSnackBar` queues a SnackBar while one is
+  shown, as its documentation says, and shows the next only when the
+  first has gone.
+- What happens: a SnackBar shown while one with an action is up (which
+  stays, [FL-290](#fl-290)) is not on the screen and not in the tree 10 s
+  later; when the first is closed it comes, and is announced then, as a
+  live region.
+- WCAG: none established. The waiting message is presented late, to
+  everyone, and when it comes it is a live region, announced without
+  focus: the measurement shows a delay in presentation, not a status
+  message that cannot be programmatically determined, so it does not
+  establish a 4.1.3 failure. It is logged as a queueing limitation: a
+  message about a later action can wait behind one the user has not
+  dealt with.
+- The same queue with presses that come while a message is going out
+  (C13 review, 2026-11-22; `docs/evidence/probes/c13/flutter_test_burst.txt`):
+  with `hideCurrentSnackBar()` (or `hideCurrentMaterialBanner()`) before
+  each show and the animations on, two or three presses inside the exit
+  animation each hid the same message and queued a replacement; the
+  first replacement stayed, and the next came when it was closed, or, for
+  a banner, when Go online hid it, with the page saying online.
+- The same queue with an outgoing message's action (C13 review,
+  2026-11-23; `docs/evidence/probes/c13/flutter_test_outgoing_undo.txt`):
+  with the animations on, a message going out still takes taps. Archive
+  A, press again so that A goes out and B is queued, and press A's Undo
+  during A's exit: A closes with the reason `action`, and B comes in. A
+  confirmation shown then from A's `closed` future with `clearSnackBars()`
+  took B, and its Undo, away, while the line still counted B's archive.
+  C13 first counted the messages each example had shown; that missed
+  the messages that outlive their example: across Back and a reopen, or
+  across two examples, an old message's confirmation cleared a newer
+  message (`flutter_test_outlive.txt`). C13 now counts the messages shown
+  through each messenger (plain state beside it, an `Expando`), queues a
+  confirmation behind any newer one instead of clearing, and tells it only
+  for an action that changed its example while it was there. Those were
+  the third and fourth fixes to one project-built mechanism (a fourth bug
+  was an old banner's Go online, after Back and a reopen, clearing the new
+  instance's banner); by the principal's decision in review (2026-11-23)
+  it was taken out: no second SnackBar is shown, and what an action did
+  is told by a live-region line of the page. What remains of this
+  entry's orderings in C13: a new message replaces the one before
+  (`clear…` before each show), and an action whose example has gone
+  changes nothing and takes away its own message only.
+- Workaround, in the SDK: `clearSnackBars()` before `showSnackBar()`, and
+  `clearMaterialBanners()` before `showMaterialBanner()`: they clear the
+  queue and take away the current one. Every C13 example does; the C13
+  widget tests "a burst of presses" fail with `hideCurrent…` and pass
+  with `clear…`.
+- Upstream issue: not searched yet (D25).
+
+## FL-294
+
+**A SnackBar's Close button shows keyboard focus only by a faint tint, and `closeIconColor` cannot change that.**
+
+- Status: Confirmed in the widget tests only, Flutter 3.47.5. Measured in
+  the probe (`flutter_test_focus.txt`, from `probe4_test.dart.txt`) and
+  asserted by the C13 widget test "keyboard focus draws a change of 3:1
+  or more on each control but the SnackBar's Close", written to fail when
+  Close draws one.
+- What happens: `showCloseIcon` adds an `IconButton` that the app cannot
+  style. Keyboard focus on it changes 1,130 pixels on and round it, the
+  largest change 1.34:1 in light mode and 1.19:1 in dark (the tint of
+  [FL-430](#fl-430)). `closeIconColor` is documented to be resolved
+  against the button's states when it is a `WidgetStateColor`; one that
+  is yellow when focused and white otherwise changed nothing on focus
+  (fixture s09: largest change 1.38:1). Read in the source:
+  `IconButton` passes its `color` to `styleFrom` as `foregroundColor`,
+  and `ButtonStyleButton.defaultColor` maps it to every state as it is.
+- WCAG: 1.4.11 Non-text Contrast, as [FL-430](#fl-430) reads it for an
+  `IconButton`.
+- Workaround: none through the SnackBar's parameters. A `SnackBarAction`
+  can be given focus colours (its `textColor` and `backgroundColor` take
+  a `WidgetStateColor`, and C13 `good-action` uses them). An
+  `IconButtonTheme` above the `ScaffoldMessenger`, for the whole app, was
+  not tried.
+- Upstream issue: not searched yet (D25).
+
+## FL-295
+
+**A `MaterialBanner` is a live region only when the `ScaffoldMessenger` shows it.**
+
+- Status: Confirmed, Flutter 3.47.5. Framework source read:
+  `material/banner.dart`, `_MaterialBannerState.build`, returns the
+  banner as it is when it has no `animation` ("a static banner for
+  backwards compatibility"), and wraps it in `Semantics(container: true,
+  liveRegion: true, onDismiss:)` only when it has one, which
+  `showMaterialBanner` gives it. Asserted by every C13 layer's tests of
+  `bad-inline-banner`, with `good-banner` as the positive control.
+- What happens: a `MaterialBanner` put in the page, as any widget is put
+  there, has no live region and no dismiss action: on the web nothing is
+  written to Flutter's announcement elements (the tree spec), and
+  VoiceOver on iOS and TalkBack say nothing when it appears (see the C13
+  transcripts). The same banner shown by `showMaterialBanner` is
+  announced on all three.
+- WCAG: 4.1.3 Status Messages, where the banner is a status message.
+- Workaround, in the SDK: show it with
+  `ScaffoldMessenger.showMaterialBanner` (C13 `good-banner`).
+- Upstream issue: not searched yet (D25).
+
+## FL-296
+
+**A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it.**
+
+- Status: Confirmed, Flutter 3.47.5. Framework source read:
+  `material/snack_bar.dart`, `_SnackBarActionState._handlePressed`, calls
+  the app's `onPressed` and then
+  `ScaffoldMessenger.of(context).hideCurrentSnackBar(reason: action)`;
+  `scaffold.dart`, `hideCurrentSnackBar`, with `accessibleNavigation` on,
+  sets the animation to 0 at once, which takes the SnackBar out of the
+  queue before the next line runs. Asserted by the C13 widget tests
+  "FL-296" (the SDK alone, four cases): with a clear in `onPressed`, the
+  second SnackBar was never on the screen with `accessibleNavigation` on,
+  and came with it off; without the clear, it came either way. Seen on the
+  web (Chromium) in C13's first build of `good-action`, whose Undo cleared
+  and showed "Archive undone" in `onPressed`: it never entered the
+  semantics tree, and nothing was announced, by Enter or by a click
+  (`docs/evidence/probes/c13/web_undo.txt`, round 1). Whether the web
+  engine reports `accessibleNavigation` on was not read; the old SnackBar
+  went at once there, as it does with it on.
+- What happens: with it on, clearing takes the current SnackBar away at
+  once, the new one becomes the current one, and the action then hides
+  that one. With it off the cleared one is still going out when the
+  action hides, so the action hides it again and the new one comes.
+- What users get: `accessibleNavigation` is on when TalkBack or VoiceOver
+  is (and was in every Android run of C13, [FL-290](#fl-290)), so a
+  confirmation of what an action did, shown this way, is lost for the
+  users who most need it to be announced, and works in a widget test that
+  leaves it off.
+- Workaround: none built. C13 first showed the second SnackBar from the
+  first one's `closed` future (`SnackBarClosedReason.action`), and
+  "Archive undone" was then written on the web (`web_undo.txt`, round 2);
+  its ordering needed a project-built policy ([FL-293](#fl-293)), and it
+  was taken out (the principal's decision in review, 2026-11-23). What an
+  action did is announced by a live-region line of the page instead
+  (`Semantics(liveRegion: true)`; C13 `good-action`, `good-banner`):
+  TalkBack and VoiceOver on iOS said it; VoiceOver in Chromium did not,
+  in its one web recording ([FL-297](#fl-297)).
+- Upstream issue: not searched yet (D25).
+
+## FL-297
+
+**On the web, whether VoiceOver in Chromium said what a SnackBar or banner action did, when Enter on that action removed the control, varied between recordings, and the live-region line that now says it was not heard in its one recording.**
+
+- Status: Observed, Flutter 3.47.5, macOS 27.2.1, VoiceOver, Playwright's
+  Chromium build. Seen in C13's web VoiceOver recordings, listed below.
+  The C13 web VoiceOver spec now records every phrase heard after the
+  press and asserts nothing about the message (the rows
+  `<slug>-after-undo-recorded`, `<slug>-after-go-online-recorded`).
+- Rounds 3 to 5 measured the first review build's second SnackBar,
+  since removed; C13 now tells what the action did with a live-region
+  line of the page, the result line (`Semantics(liveRegion: true)`,
+  [FL-296](#fl-296)), and round 6 on measured that line. The rows stay
+  record-only unless three recordings agree.
+- What was pressed: Enter, with keyboard focus on the action, in three
+  examples: `good-action`'s Undo (a `SnackBarAction`), `good-banner`'s Go
+  online (a `TextButton` in a `MaterialBanner` the messenger shows), and
+  `bad-inline-banner`'s Go online (a `TextButton` in a banner in the
+  page). Each removes the control pressed and, in rounds 3 to 5, showed a
+  SnackBar, "Archive undone" or "You are online."; from round 6, writes
+  the result line instead, "Archive undone. Archived: 0" or "You are
+  online.". What VoiceOver said in the six seconds after, by recording:
+  - Round 3 (`docs/evidence/probes/c13/voiceover-web-round3-fail.md.txt`):
+    none of the three messages. Undo: "Back and 1 more item and 2 more
+    items group", "Back", the usage hint. `good-banner`'s Go online:
+    "Back", the hint. `bad-inline-banner`'s: "Back and 1 more item and 2
+    more items group", "Back".
+  - Round 4 (`voiceover-web-round4-fail.md.txt`): two of the three. Undo:
+    "Back and 1 more item and 2 more items group", "Archive undone", the
+    hint. `good-banner`'s Go online: "Go offline button", "Back", the
+    hint, and not the message. `bad-inline-banner`'s: "Back and 1 more item
+    and 2 more items group", "You are online.".
+  - Round 5 (`voiceover-web-round5.md.txt`, every test passing, the rows
+    recording only; the committed transcript until round 6): one of the
+    three. Undo:
+    "Back", the hint, and not the message. `good-banner`'s Go online:
+    "Back and 1 more item and 2 more items group", "Back", the hint, and
+    not the message. `bad-inline-banner`'s: "Back and 1 more item and 2
+    more items group", "You are online.".
+  - Across rounds 3 to 5, the second SnackBar: "Archive undone" (`good-action`) was said in one, `good-banner`'s "You are online." in none, and `bad-inline-banner`'s "You are online." in two.
+  - Round 6, the result line, the committed transcript
+    (`docs/evidence/C13/voiceover-web.md`, recorded by the principal at
+    943c51e, 10 passed, the rows recording only): none of the three.
+    Undo: "Back and 1 more item and 1 more item group", "Back", the hint,
+    and not "Archive undone. Archived: 0". `good-banner`'s Go online:
+    "Back", the hint, and not "You are online.". `bad-inline-banner`'s:
+    "Back", and not "You are online.".
+  - Across all four: `good-action`'s was said in one, `good-banner`'s in
+    none, `bad-inline-banner`'s in two, and the result line, in its one
+    recording, in none. One recording of the result line is no reading
+    of it to hold; its rows stay record-only.
+- What Flutter did, the same presses without VoiceOver
+  (`docs/evidence/probes/c13/web_done_focus.txt`, Chromium): it wrote
+  "Archive undone" or "You are online." to `flt-announcement-polite` about
+  50 ms after Enter and emptied it about 300 ms later ([FL-012](#fl-012)'s
+  timer); the control pressed went, and DOM focus went to the page's
+  button ("Archive message" after Undo, "Go offline" after Go online).
+  The result line goes the same way
+  (`docs/evidence/probes/c13/web_result.txt`, Chromium, no VoiceOver):
+  "Archive undone. Archived: 0" or "You are online." written to
+  `flt-announcement-polite` 25 to 50 ms after Enter and emptied about
+  300 ms later, once per press, the line itself staying on the page.
+- Not measured: why the result varies; what decides between the message
+  and the move to Back; why VoiceOver's cursor went to Back; whether a
+  message not heard was dropped or never received; a press by any other
+  means than Enter (a click, VoiceOver's own activation); WebKit, where
+  Playwright's build passes no live region changes to VoiceOver at all
+  (I12), and real Safari; any other screen reader. No cause is given.
+- WCAG: 4.1.3 as written is met in the tree (the second SnackBar, and
+  now the result line, is a polite live region, and Flutter writes it to
+  the page's live region). VoiceOver in Chromium said the SnackBar in
+  some recordings and not in others, `good-banner`'s in none of three,
+  and the result line in none of the three examples in its one
+  recording, so on the web what the action did may not be presented: a
+  qualification of the web for the examples with an action, not a
+  failure of 4.1.3 as written.
+- What users get, as measured: a VoiceOver user in Chromium who presses
+  Undo or Go online may hear what it did, or may hear "Back" instead; with
+  the result line, in its one recording, they heard "Back" each time. The
+  page's line shows it, and the result line stays on the page, where
+  moving to it reads it (not measured with VoiceOver); TalkBack and
+  VoiceOver on iOS said it (the C13 transcripts).
+- Workaround: none tried. The C13 examples are the framework's SnackBar
+  and banner through their own parameters, and what an action did is a
+  `Semantics(liveRegion: true)` line of the page; nothing is built round
+  them (the principal's decisions in review, 2026-11-22 and 2026-11-23).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->

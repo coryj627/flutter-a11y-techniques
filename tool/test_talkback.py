@@ -554,7 +554,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C18", "C26"})
+        self.assertEqual(tb.STRICT, {"C05", "C13", "C18", "C26"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])

@@ -1,0 +1,25 @@
+# The C13 widget tests 'messages that outlive their example' (as Android), 2026-11-23, Flutter 3.47.5.
+## Against examples.dart as of 6688803: the shown-counter in each example's own State, a confirmation shown whether or not that State is still there
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Message archived": []>
+   Which: means none were found but one was expected
+00:00 +0 -1: messages that outlive their example across Back and reopen, accessibleNavigation false: the old message's Undo, used after the new archive, changes nothing and the new message keeps its Undo [E]
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "Archive undone": [
+   Which: means one was found but none were expected
+00:00 +0 -2: messages that outlive their example an action used after its example has gone, accessibleNavigation false: Undo and Go online close their message on the screen under, and tell nothing [E]
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Draft saved": []>
+   Which: means none were found but one was expected
+00:01 +1 -3: messages that outlive their example across two examples, accessibleNavigation false: good-action's Undo, used after good-message's or good-banner's message is shown, does not take that message away [E]
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "Archive undone": [
+   Which: means one was found but none were expected
+00:01 +2 -4: messages that outlive their example an action used after its example has gone, accessibleNavigation true: Undo and Go online close their message on the screen under, and tell nothing [E]
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "Archive undone": [
+   Which: means one was found but none were expected
+00:01 +3 -5: messages that outlive their example across two examples, accessibleNavigation true: good-action's Undo, used after good-message's or good-banner's message is shown, does not take that message away [E]
+00:01 +4 -5: Some tests failed.
+## Against the fixed examples.dart: the count is the messenger's (an Expando beside it), and a confirmation is told only for an action that changed its example while it was there
+00:02 +9: All tests passed!

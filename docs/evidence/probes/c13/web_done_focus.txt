@@ -1,0 +1,8 @@
+# c13_done_focus_probe.spec.js.txt against build/web (the app), Chromium, no VoiceOver, 2026-11-22.
+C13DONE good-action Undo DOM focus after Enter: 5 ms flt-semantics[button] "Archive message"
+C13DONE good-action Undo announced: ["56 ms polite: \"Archive undone\"","346 ms polite: \"\""]
+C13DONE good-banner Go online DOM focus after Enter: 1 ms flt-semantics[button] "Go online" | 106 ms flt-semantics[button] "Go offline"
+C13DONE good-banner Go online announced: ["60 ms polite: \"You are online.\"","326 ms polite: \"\""]
+C13DONE bad-inline-banner Go online DOM focus after Enter: 1 ms flt-semantics[button] "Go online" | 110 ms flt-semantics[button] "Go offline"
+C13DONE bad-inline-banner Go online announced: ["59 ms polite: \"You are online.\"","325 ms polite: \"\""]
+  3 passed (27.5s)
