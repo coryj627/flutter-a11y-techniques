@@ -1,0 +1,1776 @@
+flutter test of probe_test.dart.txt, Flutter 3.47.5, 2026-11-22 (runs as Android).
+==== p01 Card (semanticContainer true, the default): heading, text, picture, two TextButtons
+p01 tree SemanticsNode#0
+p01 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p01 tree  │
+p01 tree  └─SemanticsNode#1
+p01 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p01 tree    │ textDirection: ltr
+p01 tree    │
+p01 tree    └─SemanticsNode#2
+p01 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p01 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p01 tree      │
+p01 tree      └─SemanticsNode#3
+p01 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p01 tree        │ flags: scopesRoute
+p01 tree        │
+p01 tree        ├─SemanticsNode#11
+p01 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p01 tree        │ │
+p01 tree        │ └─SemanticsNode#12
+p01 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p01 tree        │     flags: isHeader, namesRoute
+p01 tree        │     label: "p01"
+p01 tree        │     textDirection: ltr
+p01 tree        │
+p01 tree        └─SemanticsNode#4
+p01 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 369.0)
+p01 tree          │ flags: hasImplicitScrolling
+p01 tree          │ scrollExtentMin: 0.0
+p01 tree          │ scrollPosition: 0.0
+p01 tree          │ scrollExtentMax: 0.0
+p01 tree          │
+p01 tree          ├─SemanticsNode#5
+p01 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p01 tree          │   label: "Before p01"
+p01 tree          │   textDirection: ltr
+p01 tree          │
+p01 tree          ├─SemanticsNode#6
+p01 tree          │ │ Rect.fromLTRB(16.0, 48.0, 784.0, 265.0)
+p01 tree          │ │ label:
+p01 tree          │ │   "p01 Card heading
+p01 tree          │ │   p01 Body text of the card. A second sentence."
+p01 tree          │ │ textDirection: ltr
+p01 tree          │ │ headingLevel: 3
+p01 tree          │ │
+p01 tree          │ ├─SemanticsNode#7
+p01 tree          │ │   Rect.fromLTRB(16.0, 81.0, 112.0, 145.0)
+p01 tree          │ │   flags: isImage
+p01 tree          │ │   label: "p01 picture"
+p01 tree          │ │   textDirection: ltr
+p01 tree          │ │
+p01 tree          │ ├─SemanticsNode#8
+p01 tree          │ │   Rect.fromLTRB(16.0, 153.0, 322.0, 201.0)
+p01 tree          │ │   actions: focus, tap
+p01 tree          │ │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p01 tree          │ │   label: "p01 Read about cards"
+p01 tree          │ │   textDirection: ltr
+p01 tree          │ │
+p01 tree          │ └─SemanticsNode#9
+p01 tree          │     Rect.fromLTRB(322.0, 153.0, 458.8, 201.0)
+p01 tree          │     actions: focus, tap
+p01 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+p01 tree          │     label: "p01 Save"
+p01 tree          │     textDirection: ltr
+p01 tree          │
+p01 tree          └─SemanticsNode#10
+p01 tree              Rect.fromLTRB(16.0, 277.0, 784.0, 297.0)
+p01 tree              identifier: "p01-taps"
+p01 tree              label: "p01 taps: whole=0 a=0 b=0 c=0"
+p01 tree              textDirection: ltr
+p01 node           label="Before p01" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p01 node           label="p01 Card heading\np01 Body text of the card. A second sentence." level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p01 node             label="p01 picture" level=0 flags=[image] tap=false url=null role=SemanticsRole.none id=
+p01 node             label="p01 Read about cards" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p01 node             label="p01 Save" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p01 node           label="p01 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p01-taps
+p01 node           label="p01" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p01 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p01 2
+p01 2 Tabs (on Focus "") then Enter: p01 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p01 1
+p01 3 Tabs (on Focus "") then Enter: p01 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p01 2
+p01 4 Tabs (on Focus "") then Enter: p01 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p01 1
+p01 5 Tabs (on Focus "") then Enter: p01 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p01 2
+p01 2 Tabs (on Focus "") then  : p01 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p01 1
+p01 3 Tabs (on Focus "") then  : p01 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p01 2
+p01 4 Tabs (on Focus "") then  : p01 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p01 1
+p01 5 Tabs (on Focus "") then  : p01 taps: whole=0 a=1 b=0 c=0 dest=false
+==== p02 p01 with semanticContainer: false
+p02 tree SemanticsNode#0
+p02 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p02 tree  │
+p02 tree  └─SemanticsNode#1
+p02 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p02 tree    │ textDirection: ltr
+p02 tree    │
+p02 tree    └─SemanticsNode#2
+p02 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p02 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p02 tree      │
+p02 tree      └─SemanticsNode#3
+p02 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p02 tree        │ flags: scopesRoute
+p02 tree        │
+p02 tree        ├─SemanticsNode#12
+p02 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p02 tree        │ │
+p02 tree        │ └─SemanticsNode#13
+p02 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p02 tree        │     flags: isHeader, namesRoute
+p02 tree        │     label: "p02"
+p02 tree        │     textDirection: ltr
+p02 tree        │
+p02 tree        └─SemanticsNode#4
+p02 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 369.0)
+p02 tree          │ flags: hasImplicitScrolling
+p02 tree          │ scrollExtentMin: 0.0
+p02 tree          │ scrollPosition: 0.0
+p02 tree          │ scrollExtentMax: 0.0
+p02 tree          │
+p02 tree          ├─SemanticsNode#5
+p02 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p02 tree          │   label: "Before p02"
+p02 tree          │   textDirection: ltr
+p02 tree          │
+p02 tree          ├─SemanticsNode#6
+p02 tree          │   Rect.fromLTRB(32.0, 64.0, 356.0, 93.0)
+p02 tree          │   label: "p02 Card heading"
+p02 tree          │   textDirection: ltr
+p02 tree          │   headingLevel: 3
+p02 tree          │
+p02 tree          ├─SemanticsNode#7
+p02 tree          │   Rect.fromLTRB(32.0, 101.0, 673.3, 121.0)
+p02 tree          │   label: "p02 Body text of the card. A second sentence."
+p02 tree          │   textDirection: ltr
+p02 tree          │
+p02 tree          ├─SemanticsNode#8
+p02 tree          │   Rect.fromLTRB(32.0, 129.0, 128.0, 193.0)
+p02 tree          │   flags: isImage
+p02 tree          │   label: "p02 picture"
+p02 tree          │   textDirection: ltr
+p02 tree          │
+p02 tree          ├─SemanticsNode#9
+p02 tree          │   Rect.fromLTRB(32.0, 201.0, 338.0, 249.0)
+p02 tree          │   actions: focus, tap
+p02 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p02 tree          │   label: "p02 Read about cards"
+p02 tree          │   textDirection: ltr
+p02 tree          │
+p02 tree          ├─SemanticsNode#10
+p02 tree          │   Rect.fromLTRB(338.0, 201.0, 474.8, 249.0)
+p02 tree          │   actions: focus, tap
+p02 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p02 tree          │   label: "p02 Save"
+p02 tree          │   textDirection: ltr
+p02 tree          │
+p02 tree          └─SemanticsNode#11
+p02 tree              Rect.fromLTRB(16.0, 277.0, 784.0, 297.0)
+p02 tree              identifier: "p02-taps"
+p02 tree              label: "p02 taps: whole=0 a=0 b=0 c=0"
+p02 tree              textDirection: ltr
+p02 node           label="Before p02" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p02 node           label="p02 Card heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p02 node           label="p02 Body text of the card. A second sentence." level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p02 node           label="p02 picture" level=0 flags=[image] tap=false url=null role=SemanticsRole.none id=
+p02 node           label="p02 Read about cards" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p02 node           label="p02 Save" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p02 node           label="p02 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p02-taps
+p02 node           label="p02" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p02 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p02 2
+p02 2 Tabs (on Focus "") then Enter: p02 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p02 1
+p02 3 Tabs (on Focus "") then Enter: p02 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p02 2
+p02 4 Tabs (on Focus "") then Enter: p02 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p02 1
+p02 5 Tabs (on Focus "") then Enter: p02 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p02 2
+p02 2 Tabs (on Focus "") then  : p02 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p02 1
+p02 3 Tabs (on Focus "") then  : p02 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p02 2
+p02 4 Tabs (on Focus "") then  : p02 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p02 1
+p02 5 Tabs (on Focus "") then  : p02 taps: whole=0 a=1 b=0 c=0 dest=false
+==== p03 Card round an InkWell (the tappable card of the Card documentation): heading, text, excluded picture
+p03 tree SemanticsNode#0
+p03 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p03 tree  │
+p03 tree  └─SemanticsNode#1
+p03 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p03 tree    │ textDirection: ltr
+p03 tree    │
+p03 tree    └─SemanticsNode#2
+p03 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p03 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p03 tree      │
+p03 tree      └─SemanticsNode#3
+p03 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p03 tree        │ flags: scopesRoute
+p03 tree        │
+p03 tree        ├─SemanticsNode#8
+p03 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p03 tree        │ │
+p03 tree        │ └─SemanticsNode#9
+p03 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p03 tree        │     flags: isHeader, namesRoute
+p03 tree        │     label: "p03"
+p03 tree        │     textDirection: ltr
+p03 tree        │
+p03 tree        └─SemanticsNode#4
+p03 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 313.0)
+p03 tree          │ flags: hasImplicitScrolling
+p03 tree          │ scrollExtentMin: 0.0
+p03 tree          │ scrollPosition: 0.0
+p03 tree          │ scrollExtentMax: 0.0
+p03 tree          │
+p03 tree          ├─SemanticsNode#5
+p03 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p03 tree          │   label: "Before p03"
+p03 tree          │   textDirection: ltr
+p03 tree          │
+p03 tree          ├─SemanticsNode#6
+p03 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 209.0)
+p03 tree          │   actions: focus, tap
+p03 tree          │   flags: isFocusable
+p03 tree          │   label:
+p03 tree          │     "p03 Card heading
+p03 tree          │     p03 Body text of the card. A second sentence."
+p03 tree          │   textDirection: ltr
+p03 tree          │   headingLevel: 3
+p03 tree          │
+p03 tree          └─SemanticsNode#7
+p03 tree              Rect.fromLTRB(16.0, 221.0, 784.0, 241.0)
+p03 tree              identifier: "p03-taps"
+p03 tree              label: "p03 taps: whole=0 a=0 b=0 c=0"
+p03 tree              textDirection: ltr
+p03 node           label="Before p03" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p03 node           label="p03 Card heading\np03 Body text of the card. A second sentence." level=3 flags=[focusable] tap=true url=null role=SemanticsRole.none id=
+p03 node           label="p03 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p03-taps
+p03 node           label="p03" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p03 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p03 0
+p03 2 Tabs (on Focus "") then Enter: p03 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p03 0
+p03 3 Tabs (on Focus "") then Enter: p03 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p03 0
+p03 4 Tabs (on Focus "") then Enter: p03 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p03 0
+p03 5 Tabs (on Focus "") then Enter: p03 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p03 0
+p03 2 Tabs (on Focus "") then  : p03 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p03 0
+p03 3 Tabs (on Focus "") then  : p03 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p03 0
+p03 4 Tabs (on Focus "") then  : p03 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p03 0
+p03 5 Tabs (on Focus "") then  : p03 taps: whole=1 a=0 b=0 c=0 dest=false
+==== p04 p03 with semanticContainer: false
+p04 tree SemanticsNode#0
+p04 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p04 tree  │
+p04 tree  └─SemanticsNode#1
+p04 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p04 tree    │ textDirection: ltr
+p04 tree    │
+p04 tree    └─SemanticsNode#2
+p04 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p04 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p04 tree      │
+p04 tree      └─SemanticsNode#3
+p04 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p04 tree        │ flags: scopesRoute
+p04 tree        │
+p04 tree        ├─SemanticsNode#8
+p04 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p04 tree        │ │
+p04 tree        │ └─SemanticsNode#9
+p04 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p04 tree        │     flags: isHeader, namesRoute
+p04 tree        │     label: "p04"
+p04 tree        │     textDirection: ltr
+p04 tree        │
+p04 tree        └─SemanticsNode#4
+p04 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 313.0)
+p04 tree          │ flags: hasImplicitScrolling
+p04 tree          │ scrollExtentMin: 0.0
+p04 tree          │ scrollPosition: 0.0
+p04 tree          │ scrollExtentMax: 0.0
+p04 tree          │
+p04 tree          ├─SemanticsNode#5
+p04 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p04 tree          │   label: "Before p04"
+p04 tree          │   textDirection: ltr
+p04 tree          │
+p04 tree          ├─SemanticsNode#6
+p04 tree          │   Rect.fromLTRB(20.0, 52.0, 780.0, 205.0)
+p04 tree          │   actions: focus, tap
+p04 tree          │   flags: isFocusable
+p04 tree          │   label:
+p04 tree          │     "p04 Card heading
+p04 tree          │     p04 Body text of the card. A second sentence."
+p04 tree          │   textDirection: ltr
+p04 tree          │   headingLevel: 3
+p04 tree          │
+p04 tree          └─SemanticsNode#7
+p04 tree              Rect.fromLTRB(16.0, 221.0, 784.0, 241.0)
+p04 tree              identifier: "p04-taps"
+p04 tree              label: "p04 taps: whole=0 a=0 b=0 c=0"
+p04 tree              textDirection: ltr
+p04 node           label="Before p04" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p04 node           label="p04 Card heading\np04 Body text of the card. A second sentence." level=3 flags=[focusable] tap=true url=null role=SemanticsRole.none id=
+p04 node           label="p04 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p04-taps
+p04 node           label="p04" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p04 tab stops: Focus "p04 Card heading\np04 Body text of the card. A second sentence." -> Focus "p04 Card heading\np04 Body text of the card. A second sentence." -> Focus "p04 Card heading\np04 Body text of the card. A second sentence." -> Focus "p04 Card heading\np04 Body text of the card. A second sentence." -> Focus "p04 Card heading\np04 Body text of the card. A second sentence." -> Focus "p04 Card heading\np04 Body text of the card. A second sentence."
+TAP p04 0
+p04 2 Tabs (on Focus "p04 Card heading\np04 Body text of the card. A second sentence.") then Enter: p04 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p04 0
+p04 3 Tabs (on Focus "p04 Card heading\np04 Body text of the card. A second sentence.") then Enter: p04 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p04 0
+p04 4 Tabs (on Focus "p04 Card heading\np04 Body text of the card. A second sentence.") then Enter: p04 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p04 0
+p04 5 Tabs (on Focus "p04 Card heading\np04 Body text of the card. A second sentence.") then Enter: p04 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p04 0
+p04 2 Tabs (on Focus "p04 Card heading\np04 Body text of the card. A second sentence.") then  : p04 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p04 0
+p04 3 Tabs (on Focus "p04 Card heading\np04 Body text of the card. A second sentence.") then  : p04 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p04 0
+p04 4 Tabs (on Focus "p04 Card heading\np04 Body text of the card. A second sentence.") then  : p04 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p04 0
+p04 5 Tabs (on Focus "p04 Card heading\np04 Body text of the card. A second sentence.") then  : p04 taps: whole=1 a=0 b=0 c=0 dest=false
+==== p05 Card round a ListTile(onTap:, title:, subtitle:)
+p05 tree SemanticsNode#0
+p05 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p05 tree  │
+p05 tree  └─SemanticsNode#1
+p05 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p05 tree    │ textDirection: ltr
+p05 tree    │
+p05 tree    └─SemanticsNode#2
+p05 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p05 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p05 tree      │
+p05 tree      └─SemanticsNode#3
+p05 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p05 tree        │ flags: scopesRoute
+p05 tree        │
+p05 tree        ├─SemanticsNode#8
+p05 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p05 tree        │ │
+p05 tree        │ └─SemanticsNode#9
+p05 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p05 tree        │     flags: isHeader, namesRoute
+p05 tree        │     label: "p05"
+p05 tree        │     textDirection: ltr
+p05 tree        │
+p05 tree        └─SemanticsNode#4
+p05 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 232.0)
+p05 tree          │ flags: hasImplicitScrolling
+p05 tree          │ scrollExtentMin: 0.0
+p05 tree          │ scrollPosition: 0.0
+p05 tree          │ scrollExtentMax: 0.0
+p05 tree          │
+p05 tree          ├─SemanticsNode#5
+p05 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p05 tree          │   label: "Before p05"
+p05 tree          │   textDirection: ltr
+p05 tree          │
+p05 tree          ├─SemanticsNode#6
+p05 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 128.0)
+p05 tree          │   actions: focus, tap
+p05 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable,
+p05 tree          │     hasSelectedState
+p05 tree          │   label:
+p05 tree          │     "p05 Card heading
+p05 tree          │     p05 Body text of the card. A second sentence."
+p05 tree          │   textDirection: ltr
+p05 tree          │
+p05 tree          └─SemanticsNode#7
+p05 tree              Rect.fromLTRB(16.0, 140.0, 784.0, 160.0)
+p05 tree              identifier: "p05-taps"
+p05 tree              label: "p05 taps: whole=0 a=0 b=0 c=0"
+p05 tree              textDirection: ltr
+p05 node           label="Before p05" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p05 node           label="p05 Card heading\np05 Body text of the card. A second sentence." level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p05 node           label="p05 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p05-taps
+p05 node           label="p05" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p05 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p05 0
+p05 2 Tabs (on Focus "") then Enter: p05 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p05 0
+p05 3 Tabs (on Focus "") then Enter: p05 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p05 0
+p05 4 Tabs (on Focus "") then Enter: p05 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p05 0
+p05 5 Tabs (on Focus "") then Enter: p05 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p05 0
+p05 2 Tabs (on Focus "") then  : p05 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p05 0
+p05 3 Tabs (on Focus "") then  : p05 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p05 0
+p05 4 Tabs (on Focus "") then  : p05 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p05 0
+p05 5 Tabs (on Focus "") then  : p05 taps: whole=1 a=0 b=0 c=0 dest=false
+==== p06 p05 with the title marked as a heading (headingLevel 3)
+p06 tree SemanticsNode#0
+p06 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p06 tree  │
+p06 tree  └─SemanticsNode#1
+p06 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p06 tree    │ textDirection: ltr
+p06 tree    │
+p06 tree    └─SemanticsNode#2
+p06 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p06 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p06 tree      │
+p06 tree      └─SemanticsNode#3
+p06 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p06 tree        │ flags: scopesRoute
+p06 tree        │
+p06 tree        ├─SemanticsNode#8
+p06 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p06 tree        │ │
+p06 tree        │ └─SemanticsNode#9
+p06 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p06 tree        │     flags: isHeader, namesRoute
+p06 tree        │     label: "p06"
+p06 tree        │     textDirection: ltr
+p06 tree        │
+p06 tree        └─SemanticsNode#4
+p06 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 232.0)
+p06 tree          │ flags: hasImplicitScrolling
+p06 tree          │ scrollExtentMin: 0.0
+p06 tree          │ scrollPosition: 0.0
+p06 tree          │ scrollExtentMax: 0.0
+p06 tree          │
+p06 tree          ├─SemanticsNode#5
+p06 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p06 tree          │   label: "Before p06"
+p06 tree          │   textDirection: ltr
+p06 tree          │
+p06 tree          ├─SemanticsNode#6
+p06 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 128.0)
+p06 tree          │   actions: focus, tap
+p06 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable,
+p06 tree          │     hasSelectedState
+p06 tree          │   label:
+p06 tree          │     "p06 Card heading
+p06 tree          │     p06 Body text of the card. A second sentence."
+p06 tree          │   textDirection: ltr
+p06 tree          │   headingLevel: 3
+p06 tree          │
+p06 tree          └─SemanticsNode#7
+p06 tree              Rect.fromLTRB(16.0, 140.0, 784.0, 160.0)
+p06 tree              identifier: "p06-taps"
+p06 tree              label: "p06 taps: whole=0 a=0 b=0 c=0"
+p06 tree              textDirection: ltr
+p06 node           label="Before p06" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p06 node           label="p06 Card heading\np06 Body text of the card. A second sentence." level=3 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p06 node           label="p06 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p06-taps
+p06 node           label="p06" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p06 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p06 0
+p06 2 Tabs (on Focus "") then Enter: p06 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p06 0
+p06 3 Tabs (on Focus "") then Enter: p06 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p06 0
+p06 4 Tabs (on Focus "") then Enter: p06 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p06 0
+p06 5 Tabs (on Focus "") then Enter: p06 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p06 0
+p06 2 Tabs (on Focus "") then  : p06 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p06 0
+p06 3 Tabs (on Focus "") then  : p06 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p06 0
+p06 4 Tabs (on Focus "") then  : p06 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p06 0
+p06 5 Tabs (on Focus "") then  : p06 taps: whole=1 a=0 b=0 c=0 dest=false
+==== p07 p03 with a TextButton inside the InkWell (nested)
+p07 tree SemanticsNode#0
+p07 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p07 tree  │
+p07 tree  └─SemanticsNode#1
+p07 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p07 tree    │ textDirection: ltr
+p07 tree    │
+p07 tree    └─SemanticsNode#2
+p07 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p07 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p07 tree      │
+p07 tree      └─SemanticsNode#3
+p07 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p07 tree        │ flags: scopesRoute
+p07 tree        │
+p07 tree        ├─SemanticsNode#9
+p07 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p07 tree        │ │
+p07 tree        │ └─SemanticsNode#10
+p07 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p07 tree        │     flags: isHeader, namesRoute
+p07 tree        │     label: "p07"
+p07 tree        │     textDirection: ltr
+p07 tree        │
+p07 tree        └─SemanticsNode#4
+p07 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 369.0)
+p07 tree          │ flags: hasImplicitScrolling
+p07 tree          │ scrollExtentMin: 0.0
+p07 tree          │ scrollPosition: 0.0
+p07 tree          │ scrollExtentMax: 0.0
+p07 tree          │
+p07 tree          ├─SemanticsNode#5
+p07 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p07 tree          │   label: "Before p07"
+p07 tree          │   textDirection: ltr
+p07 tree          │
+p07 tree          ├─SemanticsNode#6
+p07 tree          │ │ Rect.fromLTRB(16.0, 48.0, 784.0, 265.0)
+p07 tree          │ │ actions: focus, tap
+p07 tree          │ │ flags: isFocusable
+p07 tree          │ │ label:
+p07 tree          │ │   "p07 Card heading
+p07 tree          │ │   p07 Body text of the card. A second sentence."
+p07 tree          │ │ textDirection: ltr
+p07 tree          │ │ headingLevel: 3
+p07 tree          │ │
+p07 tree          │ └─SemanticsNode#7
+p07 tree          │     Rect.fromLTRB(16.0, 153.0, 152.8, 201.0)
+p07 tree          │     actions: focus, tap
+p07 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+p07 tree          │     label: "p07 Save"
+p07 tree          │     textDirection: ltr
+p07 tree          │
+p07 tree          └─SemanticsNode#8
+p07 tree              Rect.fromLTRB(16.0, 277.0, 784.0, 297.0)
+p07 tree              identifier: "p07-taps"
+p07 tree              label: "p07 taps: whole=0 a=0 b=0 c=0"
+p07 tree              textDirection: ltr
+p07 node           label="Before p07" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p07 node           label="p07 Card heading\np07 Body text of the card. A second sentence." level=3 flags=[focusable] tap=true url=null role=SemanticsRole.none id=
+p07 node             label="p07 Save" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p07 node           label="p07 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p07-taps
+p07 node           label="p07" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p07 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p07 1
+p07 2 Tabs (on Focus "") then Enter: p07 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p07 0
+p07 3 Tabs (on Focus "") then Enter: p07 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p07 1
+p07 4 Tabs (on Focus "") then Enter: p07 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p07 0
+p07 5 Tabs (on Focus "") then Enter: p07 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p07 1
+p07 2 Tabs (on Focus "") then  : p07 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p07 0
+p07 3 Tabs (on Focus "") then  : p07 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p07 1
+p07 4 Tabs (on Focus "") then  : p07 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p07 0
+p07 5 Tabs (on Focus "") then  : p07 taps: whole=1 a=0 b=0 c=0 dest=false
+==== p08 p05 with a trailing IconButton (nested)
+p08 tree SemanticsNode#0
+p08 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p08 tree  │
+p08 tree  └─SemanticsNode#1
+p08 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p08 tree    │ textDirection: ltr
+p08 tree    │
+p08 tree    └─SemanticsNode#2
+p08 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p08 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p08 tree      │
+p08 tree      └─SemanticsNode#3
+p08 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p08 tree        │ flags: scopesRoute
+p08 tree        │
+p08 tree        ├─SemanticsNode#9
+p08 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p08 tree        │ │
+p08 tree        │ └─SemanticsNode#10
+p08 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p08 tree        │     flags: isHeader, namesRoute
+p08 tree        │     label: "p08"
+p08 tree        │     textDirection: ltr
+p08 tree        │
+p08 tree        └─SemanticsNode#4
+p08 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 232.0)
+p08 tree          │ flags: hasImplicitScrolling
+p08 tree          │ scrollExtentMin: 0.0
+p08 tree          │ scrollPosition: 0.0
+p08 tree          │ scrollExtentMax: 0.0
+p08 tree          │
+p08 tree          ├─SemanticsNode#5
+p08 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p08 tree          │   label: "Before p08"
+p08 tree          │   textDirection: ltr
+p08 tree          │
+p08 tree          ├─SemanticsNode#6
+p08 tree          │ │ Rect.fromLTRB(16.0, 48.0, 784.0, 128.0)
+p08 tree          │ │ actions: focus, tap
+p08 tree          │ │ flags: isButton, hasEnabledState, isEnabled, isFocusable,
+p08 tree          │ │   hasSelectedState
+p08 tree          │ │ label:
+p08 tree          │ │   "p08 Card heading
+p08 tree          │ │   p08 Body text of the card. A second sentence."
+p08 tree          │ │ textDirection: ltr
+p08 tree          │ │
+p08 tree          │ └─SemanticsNode#7
+p08 tree          │     Rect.fromLTRB(692.0, 16.0, 740.0, 64.0)
+p08 tree          │     actions: focus, tap
+p08 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+p08 tree          │     traversalParentIdentifier: _OverlayPortalState#d8f40
+p08 tree          │     tooltip: "p08 Save"
+p08 tree          │     textDirection: ltr
+p08 tree          │
+p08 tree          └─SemanticsNode#8
+p08 tree              Rect.fromLTRB(16.0, 140.0, 784.0, 160.0)
+p08 tree              identifier: "p08-taps"
+p08 tree              label: "p08 taps: whole=0 a=0 b=0 c=0"
+p08 tree              textDirection: ltr
+p08 node           label="Before p08" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p08 node           label="p08 Card heading\np08 Body text of the card. A second sentence." level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p08 node             label="" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p08 node           label="p08 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p08-taps
+p08 node           label="p08" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p08 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p08 1
+p08 2 Tabs (on Focus "") then Enter: p08 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p08 0
+p08 3 Tabs (on Focus "") then Enter: p08 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p08 1
+p08 4 Tabs (on Focus "") then Enter: p08 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p08 0
+p08 5 Tabs (on Focus "") then Enter: p08 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p08 1
+p08 2 Tabs (on Focus "") then  : p08 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p08 0
+p08 3 Tabs (on Focus "") then  : p08 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p08 1
+p08 4 Tabs (on Focus "") then  : p08 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p08 0
+p08 5 Tabs (on Focus "") then  : p08 taps: whole=1 a=0 b=0 c=0 dest=false
+==== p09 The whole card one link: Semantics(link: true, linkUrl:, onTapHint:) round the InkWell, BrowserKeys
+p09 tree SemanticsNode#0
+p09 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p09 tree  │
+p09 tree  └─SemanticsNode#1
+p09 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p09 tree    │ textDirection: ltr
+p09 tree    │
+p09 tree    └─SemanticsNode#2
+p09 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p09 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p09 tree      │
+p09 tree      └─SemanticsNode#3
+p09 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p09 tree        │ flags: scopesRoute
+p09 tree        │
+p09 tree        ├─SemanticsNode#8
+p09 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p09 tree        │ │
+p09 tree        │ └─SemanticsNode#9
+p09 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p09 tree        │     flags: isHeader, namesRoute
+p09 tree        │     label: "p09"
+p09 tree        │     textDirection: ltr
+p09 tree        │
+p09 tree        └─SemanticsNode#4
+p09 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 313.0)
+p09 tree          │ flags: hasImplicitScrolling
+p09 tree          │ scrollExtentMin: 0.0
+p09 tree          │ scrollPosition: 0.0
+p09 tree          │ scrollExtentMax: 0.0
+p09 tree          │
+p09 tree          ├─SemanticsNode#5
+p09 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p09 tree          │   label: "Before p09"
+p09 tree          │   textDirection: ltr
+p09 tree          │
+p09 tree          ├─SemanticsNode#6
+p09 tree          │   Rect.fromLTRB(20.0, 52.0, 780.0, 205.0)
+p09 tree          │   actions: focus, tap
+p09 tree          │   flags: isFocusable, isLink
+p09 tree          │   label:
+p09 tree          │     "p09 Card heading
+p09 tree          │     p09 Body text of the card. A second sentence."
+p09 tree          │   textDirection: ltr
+p09 tree          │   headingLevel: 3
+p09 tree          │
+p09 tree          └─SemanticsNode#7
+p09 tree              Rect.fromLTRB(16.0, 221.0, 784.0, 241.0)
+p09 tree              identifier: "p09-taps"
+p09 tree              label: "p09 taps: whole=0 a=0 b=0 c=0"
+p09 tree              textDirection: ltr
+p09 node           label="Before p09" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p09 node           label="p09 Card heading\np09 Body text of the card. A second sentence." level=3 flags=[link, focusable] tap=true url=#/dest role=SemanticsRole.none id=
+p09 node           label="p09 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p09-taps
+p09 node           label="p09" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p09 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p09 0
+p09 2 Tabs (on Focus "") then Enter: (gone) dest=true
+TAP p09 0
+p09 3 Tabs (on Focus "") then Enter: (gone) dest=true
+TAP p09 0
+p09 4 Tabs (on Focus "") then Enter: (gone) dest=true
+TAP p09 0
+p09 5 Tabs (on Focus "") then Enter: (gone) dest=true
+TAP p09 0
+p09 2 Tabs (on Focus "") then  : (gone) dest=true
+TAP p09 0
+p09 3 Tabs (on Focus "") then  : (gone) dest=true
+TAP p09 0
+p09 4 Tabs (on Focus "") then  : (gone) dest=true
+TAP p09 0
+p09 5 Tabs (on Focus "") then  : (gone) dest=true
+==== p10 semanticContainer false: heading, text, a TextButton "Read more"
+p10 tree SemanticsNode#0
+p10 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p10 tree  │
+p10 tree  └─SemanticsNode#1
+p10 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p10 tree    │ textDirection: ltr
+p10 tree    │
+p10 tree    └─SemanticsNode#2
+p10 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p10 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p10 tree      │
+p10 tree      └─SemanticsNode#3
+p10 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p10 tree        │ flags: scopesRoute
+p10 tree        │
+p10 tree        ├─SemanticsNode#10
+p10 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p10 tree        │ │
+p10 tree        │ └─SemanticsNode#11
+p10 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p10 tree        │     flags: isHeader, namesRoute
+p10 tree        │     label: "p10"
+p10 tree        │     textDirection: ltr
+p10 tree        │
+p10 tree        └─SemanticsNode#4
+p10 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 297.0)
+p10 tree          │ flags: hasImplicitScrolling
+p10 tree          │ scrollExtentMin: 0.0
+p10 tree          │ scrollPosition: 0.0
+p10 tree          │ scrollExtentMax: 0.0
+p10 tree          │
+p10 tree          ├─SemanticsNode#5
+p10 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p10 tree          │   label: "Before p10"
+p10 tree          │   textDirection: ltr
+p10 tree          │
+p10 tree          ├─SemanticsNode#6
+p10 tree          │   Rect.fromLTRB(32.0, 64.0, 356.0, 93.0)
+p10 tree          │   label: "p10 Card heading"
+p10 tree          │   textDirection: ltr
+p10 tree          │   headingLevel: 3
+p10 tree          │
+p10 tree          ├─SemanticsNode#7
+p10 tree          │   Rect.fromLTRB(32.0, 101.0, 673.3, 121.0)
+p10 tree          │   label: "p10 Body text of the card. A second sentence."
+p10 tree          │   textDirection: ltr
+p10 tree          │
+p10 tree          ├─SemanticsNode#8
+p10 tree          │   Rect.fromLTRB(32.0, 129.0, 239.3, 177.0)
+p10 tree          │   actions: focus, tap
+p10 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p10 tree          │   label: "p10 Read more"
+p10 tree          │   textDirection: ltr
+p10 tree          │
+p10 tree          └─SemanticsNode#9
+p10 tree              Rect.fromLTRB(16.0, 205.0, 784.0, 225.0)
+p10 tree              identifier: "p10-taps"
+p10 tree              label: "p10 taps: whole=0 a=0 b=0 c=0"
+p10 tree              textDirection: ltr
+p10 node           label="Before p10" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p10 node           label="p10 Card heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p10 node           label="p10 Body text of the card. A second sentence." level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p10 node           label="p10 Read more" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p10 node           label="p10 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p10-taps
+p10 node           label="p10" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p10 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p10 1
+p10 2 Tabs (on Focus "") then Enter: p10 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p10 1
+p10 3 Tabs (on Focus "") then Enter: p10 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p10 1
+p10 4 Tabs (on Focus "") then Enter: p10 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p10 1
+p10 5 Tabs (on Focus "") then Enter: p10 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p10 1
+p10 2 Tabs (on Focus "") then  : p10 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p10 1
+p10 3 Tabs (on Focus "") then  : p10 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p10 1
+p10 4 Tabs (on Focus "") then  : p10 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p10 1
+p10 5 Tabs (on Focus "") then  : p10 taps: whole=0 a=1 b=0 c=0 dest=false
+==== p11 semanticContainer false: heading, text, a link "Read more" (C03 MaterialLink)
+p11 tree SemanticsNode#0
+p11 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p11 tree  │
+p11 tree  └─SemanticsNode#1
+p11 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p11 tree    │ textDirection: ltr
+p11 tree    │
+p11 tree    └─SemanticsNode#2
+p11 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p11 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p11 tree      │
+p11 tree      └─SemanticsNode#3
+p11 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p11 tree        │ flags: scopesRoute
+p11 tree        │
+p11 tree        ├─SemanticsNode#10
+p11 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p11 tree        │ │
+p11 tree        │ └─SemanticsNode#11
+p11 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p11 tree        │     flags: isHeader, namesRoute
+p11 tree        │     label: "p11"
+p11 tree        │     textDirection: ltr
+p11 tree        │
+p11 tree        └─SemanticsNode#4
+p11 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 269.0)
+p11 tree          │ flags: hasImplicitScrolling
+p11 tree          │ scrollExtentMin: 0.0
+p11 tree          │ scrollPosition: 0.0
+p11 tree          │ scrollExtentMax: 0.0
+p11 tree          │
+p11 tree          ├─SemanticsNode#5
+p11 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p11 tree          │   label: "Before p11"
+p11 tree          │   textDirection: ltr
+p11 tree          │
+p11 tree          ├─SemanticsNode#6
+p11 tree          │   Rect.fromLTRB(32.0, 64.0, 356.0, 93.0)
+p11 tree          │   label: "p11 Card heading"
+p11 tree          │   textDirection: ltr
+p11 tree          │   headingLevel: 3
+p11 tree          │
+p11 tree          ├─SemanticsNode#7
+p11 tree          │   Rect.fromLTRB(32.0, 101.0, 673.3, 121.0)
+p11 tree          │   label: "p11 Body text of the card. A second sentence."
+p11 tree          │   textDirection: ltr
+p11 tree          │
+p11 tree          ├─SemanticsNode#8
+p11 tree          │   Rect.fromLTRB(32.0, 129.0, 217.3, 149.0)
+p11 tree          │   actions: focus, tap
+p11 tree          │   flags: isFocusable, isLink
+p11 tree          │   label: "p11 Read more"
+p11 tree          │   textDirection: ltr
+p11 tree          │
+p11 tree          └─SemanticsNode#9
+p11 tree              Rect.fromLTRB(16.0, 177.0, 784.0, 197.0)
+p11 tree              identifier: "p11-taps"
+p11 tree              label: "p11 taps: whole=0 a=0 b=0 c=0"
+p11 tree              textDirection: ltr
+p11 node           label="Before p11" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p11 node           label="p11 Card heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p11 node           label="p11 Body text of the card. A second sentence." level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p11 node           label="p11 Read more" level=0 flags=[link, focusable] tap=true url=#/dest role=SemanticsRole.none id=
+p11 node           label="p11 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p11-taps
+p11 node           label="p11" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p11 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p11 1
+p11 2 Tabs (on Focus "") then Enter: (gone) dest=true
+TAP p11 1
+p11 3 Tabs (on Focus "") then Enter: (gone) dest=true
+TAP p11 1
+p11 4 Tabs (on Focus "") then Enter: (gone) dest=true
+TAP p11 1
+p11 5 Tabs (on Focus "") then Enter: (gone) dest=true
+TAP p11 1
+p11 2 Tabs (on Focus "") then  : (gone) dest=true
+TAP p11 1
+p11 3 Tabs (on Focus "") then  : (gone) dest=true
+TAP p11 1
+p11 4 Tabs (on Focus "") then  : (gone) dest=true
+TAP p11 1
+p11 5 Tabs (on Focus "") then  : (gone) dest=true
+==== p12 p10 with Text(semanticsLabel:) on the button: "Read more about cards"
+p12 tree SemanticsNode#0
+p12 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p12 tree  │
+p12 tree  └─SemanticsNode#1
+p12 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p12 tree    │ textDirection: ltr
+p12 tree    │
+p12 tree    └─SemanticsNode#2
+p12 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p12 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p12 tree      │
+p12 tree      └─SemanticsNode#3
+p12 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p12 tree        │ flags: scopesRoute
+p12 tree        │
+p12 tree        ├─SemanticsNode#10
+p12 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p12 tree        │ │
+p12 tree        │ └─SemanticsNode#11
+p12 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p12 tree        │     flags: isHeader, namesRoute
+p12 tree        │     label: "p12"
+p12 tree        │     textDirection: ltr
+p12 tree        │
+p12 tree        └─SemanticsNode#4
+p12 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 297.0)
+p12 tree          │ flags: hasImplicitScrolling
+p12 tree          │ scrollExtentMin: 0.0
+p12 tree          │ scrollPosition: 0.0
+p12 tree          │ scrollExtentMax: 0.0
+p12 tree          │
+p12 tree          ├─SemanticsNode#5
+p12 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p12 tree          │   label: "Before p12"
+p12 tree          │   textDirection: ltr
+p12 tree          │
+p12 tree          ├─SemanticsNode#6
+p12 tree          │   Rect.fromLTRB(32.0, 64.0, 356.0, 93.0)
+p12 tree          │   label: "p12 Card heading"
+p12 tree          │   textDirection: ltr
+p12 tree          │   headingLevel: 3
+p12 tree          │
+p12 tree          ├─SemanticsNode#7
+p12 tree          │   Rect.fromLTRB(32.0, 101.0, 673.3, 121.0)
+p12 tree          │   label: "p12 Body text of the card. A second sentence."
+p12 tree          │   textDirection: ltr
+p12 tree          │
+p12 tree          ├─SemanticsNode#8
+p12 tree          │   Rect.fromLTRB(32.0, 129.0, 239.3, 177.0)
+p12 tree          │   actions: focus, tap
+p12 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p12 tree          │   label: "p12 Read more about cards"
+p12 tree          │   textDirection: ltr
+p12 tree          │
+p12 tree          └─SemanticsNode#9
+p12 tree              Rect.fromLTRB(16.0, 205.0, 784.0, 225.0)
+p12 tree              identifier: "p12-taps"
+p12 tree              label: "p12 taps: whole=0 a=0 b=0 c=0"
+p12 tree              textDirection: ltr
+p12 node           label="Before p12" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p12 node           label="p12 Card heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p12 node           label="p12 Body text of the card. A second sentence." level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p12 node           label="p12 Read more about cards" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p12 node           label="p12 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p12-taps
+p12 node           label="p12" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p12 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p12 1
+p12 2 Tabs (on Focus "") then Enter: p12 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p12 1
+p12 3 Tabs (on Focus "") then Enter: p12 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p12 1
+p12 4 Tabs (on Focus "") then Enter: p12 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p12 1
+p12 5 Tabs (on Focus "") then Enter: p12 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p12 1
+p12 2 Tabs (on Focus "") then  : p12 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p12 1
+p12 3 Tabs (on Focus "") then  : p12 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p12 1
+p12 4 Tabs (on Focus "") then  : p12 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p12 1
+p12 5 Tabs (on Focus "") then  : p12 taps: whole=0 a=1 b=0 c=0 dest=false
+==== p13 A Column of three cards (semanticContainer false), each heading, text, button
+p13 tree SemanticsNode#0
+p13 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p13 tree  │
+p13 tree  └─SemanticsNode#1
+p13 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p13 tree    │ textDirection: ltr
+p13 tree    │
+p13 tree    └─SemanticsNode#2
+p13 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p13 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p13 tree      │
+p13 tree      └─SemanticsNode#3
+p13 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p13 tree        │ flags: scopesRoute
+p13 tree        │
+p13 tree        ├─SemanticsNode#16
+p13 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p13 tree        │ │
+p13 tree        │ └─SemanticsNode#17
+p13 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p13 tree        │     flags: isHeader, namesRoute
+p13 tree        │     label: "p13"
+p13 tree        │     textDirection: ltr
+p13 tree        │
+p13 tree        └─SemanticsNode#4
+p13 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 576.0)
+p13 tree          │ flags: hasImplicitScrolling
+p13 tree          │ scrollExtentMin: 0.0
+p13 tree          │ scrollPosition: 0.0
+p13 tree          │ scrollExtentMax: 0.0
+p13 tree          │
+p13 tree          ├─SemanticsNode#5
+p13 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p13 tree          │   label: "Before p13"
+p13 tree          │   textDirection: ltr
+p13 tree          │
+p13 tree          ├─SemanticsNode#6
+p13 tree          │   Rect.fromLTRB(32.0, 64.0, 288.5, 84.0)
+p13 tree          │   label: "p13 Card 1 heading"
+p13 tree          │   textDirection: ltr
+p13 tree          │   headingLevel: 3
+p13 tree          │
+p13 tree          ├─SemanticsNode#7
+p13 tree          │   Rect.fromLTRB(32.0, 92.0, 245.8, 112.0)
+p13 tree          │   label: "p13 Card 1 body"
+p13 tree          │   textDirection: ltr
+p13 tree          │
+p13 tree          ├─SemanticsNode#8
+p13 tree          │   Rect.fromLTRB(32.0, 120.0, 197.0, 168.0)
+p13 tree          │   actions: focus, tap
+p13 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p13 tree          │   label: "p13 Save 1"
+p13 tree          │   textDirection: ltr
+p13 tree          │
+p13 tree          ├─SemanticsNode#9
+p13 tree          │   Rect.fromLTRB(32.0, 208.0, 288.5, 228.0)
+p13 tree          │   label: "p13 Card 2 heading"
+p13 tree          │   textDirection: ltr
+p13 tree          │   headingLevel: 3
+p13 tree          │
+p13 tree          ├─SemanticsNode#10
+p13 tree          │   Rect.fromLTRB(32.0, 236.0, 245.8, 256.0)
+p13 tree          │   label: "p13 Card 2 body"
+p13 tree          │   textDirection: ltr
+p13 tree          │
+p13 tree          ├─SemanticsNode#11
+p13 tree          │   Rect.fromLTRB(32.0, 264.0, 197.0, 312.0)
+p13 tree          │   actions: focus, tap
+p13 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p13 tree          │   label: "p13 Save 2"
+p13 tree          │   textDirection: ltr
+p13 tree          │
+p13 tree          ├─SemanticsNode#12
+p13 tree          │   Rect.fromLTRB(32.0, 352.0, 288.5, 372.0)
+p13 tree          │   label: "p13 Card 3 heading"
+p13 tree          │   textDirection: ltr
+p13 tree          │   headingLevel: 3
+p13 tree          │
+p13 tree          ├─SemanticsNode#13
+p13 tree          │   Rect.fromLTRB(32.0, 380.0, 245.8, 400.0)
+p13 tree          │   label: "p13 Card 3 body"
+p13 tree          │   textDirection: ltr
+p13 tree          │
+p13 tree          ├─SemanticsNode#14
+p13 tree          │   Rect.fromLTRB(32.0, 408.0, 197.0, 456.0)
+p13 tree          │   actions: focus, tap
+p13 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p13 tree          │   label: "p13 Save 3"
+p13 tree          │   textDirection: ltr
+p13 tree          │
+p13 tree          └─SemanticsNode#15
+p13 tree              Rect.fromLTRB(16.0, 484.0, 784.0, 504.0)
+p13 tree              identifier: "p13-taps"
+p13 tree              label: "p13 taps: whole=0 a=0 b=0 c=0"
+p13 tree              textDirection: ltr
+p13 node           label="Before p13" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p13 node           label="p13 Card 1 heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p13 node           label="p13 Card 1 body" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p13 node           label="p13 Save 1" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p13 node           label="p13 Card 2 heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p13 node           label="p13 Card 2 body" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p13 node           label="p13 Save 2" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p13 node           label="p13 Card 3 heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p13 node           label="p13 Card 3 body" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p13 node           label="p13 Save 3" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p13 node           label="p13 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p13-taps
+p13 node           label="p13" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p13 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p13 2
+p13 2 Tabs (on Focus "") then Enter: p13 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p13 3
+p13 3 Tabs (on Focus "") then Enter: p13 taps: whole=0 a=0 b=0 c=1 dest=false
+TAP p13 1
+p13 4 Tabs (on Focus "") then Enter: p13 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p13 2
+p13 5 Tabs (on Focus "") then Enter: p13 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p13 2
+p13 2 Tabs (on Focus "") then  : p13 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p13 3
+p13 3 Tabs (on Focus "") then  : p13 taps: whole=0 a=0 b=0 c=1 dest=false
+TAP p13 1
+p13 4 Tabs (on Focus "") then  : p13 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p13 2
+p13 5 Tabs (on Focus "") then  : p13 taps: whole=0 a=0 b=1 c=0 dest=false
+==== p14 p13 in a ListView (shrinkWrap)
+p14 tree SemanticsNode#0
+p14 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p14 tree  │
+p14 tree  └─SemanticsNode#1
+p14 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p14 tree    │ textDirection: ltr
+p14 tree    │
+p14 tree    └─SemanticsNode#2
+p14 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p14 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p14 tree      │
+p14 tree      └─SemanticsNode#3
+p14 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p14 tree        │ flags: scopesRoute
+p14 tree        │
+p14 tree        ├─SemanticsNode#21
+p14 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p14 tree        │ │
+p14 tree        │ └─SemanticsNode#22
+p14 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p14 tree        │     flags: isHeader, namesRoute
+p14 tree        │     label: "p14"
+p14 tree        │     textDirection: ltr
+p14 tree        │
+p14 tree        └─SemanticsNode#4
+p14 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 560.0)
+p14 tree          │ flags: hasImplicitScrolling
+p14 tree          │ scrollExtentMin: 0.0
+p14 tree          │ scrollPosition: 0.0
+p14 tree          │ scrollExtentMax: 0.0
+p14 tree          │
+p14 tree          ├─SemanticsNode#5
+p14 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p14 tree          │   label: "Before p14"
+p14 tree          │   textDirection: ltr
+p14 tree          │
+p14 tree          ├─SemanticsNode#6
+p14 tree          │ │ Rect.fromLTRB(16.0, 48.0, 784.0, 456.0)
+p14 tree          │ │
+p14 tree          │ └─SemanticsNode#19
+p14 tree          │   │ Rect.fromLTRB(0.0, 0.0, 768.0, 408.0)
+p14 tree          │   │ scrollChildren: 3
+p14 tree          │   │ scrollIndex: 0
+p14 tree          │   │ scrollExtentMin: 0.0
+p14 tree          │   │ scrollPosition: 0.0
+p14 tree          │   │ scrollExtentMax: 0.0
+p14 tree          │   │
+p14 tree          │   ├─SemanticsNode#7
+p14 tree          │   │ │ Rect.fromLTRB(0.0, 0.0, 768.0, 136.0)
+p14 tree          │   │ │ tags: RenderViewport.twoPane
+p14 tree          │   │ │ indexInParent: 0
+p14 tree          │   │ │
+p14 tree          │   │ ├─SemanticsNode#8
+p14 tree          │   │ │   Rect.fromLTRB(16.0, 16.0, 272.5, 36.0)
+p14 tree          │   │ │   label: "p14 Card 1 heading"
+p14 tree          │   │ │   textDirection: ltr
+p14 tree          │   │ │   headingLevel: 3
+p14 tree          │   │ │
+p14 tree          │   │ ├─SemanticsNode#9
+p14 tree          │   │ │   Rect.fromLTRB(16.0, 44.0, 229.8, 64.0)
+p14 tree          │   │ │   label: "p14 Card 1 body"
+p14 tree          │   │ │   textDirection: ltr
+p14 tree          │   │ │
+p14 tree          │   │ └─SemanticsNode#10
+p14 tree          │   │     Rect.fromLTRB(16.0, 72.0, 181.0, 120.0)
+p14 tree          │   │     actions: focus, tap
+p14 tree          │   │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+p14 tree          │   │     label: "p14 Save 1"
+p14 tree          │   │     textDirection: ltr
+p14 tree          │   │
+p14 tree          │   ├─SemanticsNode#11
+p14 tree          │   │ │ Rect.fromLTRB(0.0, 136.0, 768.0, 272.0)
+p14 tree          │   │ │ tags: RenderViewport.twoPane
+p14 tree          │   │ │ indexInParent: 1
+p14 tree          │   │ │
+p14 tree          │   │ ├─SemanticsNode#12
+p14 tree          │   │ │   Rect.fromLTRB(16.0, 16.0, 272.5, 36.0)
+p14 tree          │   │ │   label: "p14 Card 2 heading"
+p14 tree          │   │ │   textDirection: ltr
+p14 tree          │   │ │   headingLevel: 3
+p14 tree          │   │ │
+p14 tree          │   │ ├─SemanticsNode#13
+p14 tree          │   │ │   Rect.fromLTRB(16.0, 44.0, 229.8, 64.0)
+p14 tree          │   │ │   label: "p14 Card 2 body"
+p14 tree          │   │ │   textDirection: ltr
+p14 tree          │   │ │
+p14 tree          │   │ └─SemanticsNode#14
+p14 tree          │   │     Rect.fromLTRB(16.0, 72.0, 181.0, 120.0)
+p14 tree          │   │     actions: focus, tap
+p14 tree          │   │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+p14 tree          │   │     label: "p14 Save 2"
+p14 tree          │   │     textDirection: ltr
+p14 tree          │   │
+p14 tree          │   └─SemanticsNode#15
+p14 tree          │     │ Rect.fromLTRB(0.0, 272.0, 768.0, 408.0)
+p14 tree          │     │ tags: RenderViewport.twoPane
+p14 tree          │     │ indexInParent: 2
+p14 tree          │     │
+p14 tree          │     ├─SemanticsNode#16
+p14 tree          │     │   Rect.fromLTRB(16.0, 16.0, 272.5, 36.0)
+p14 tree          │     │   label: "p14 Card 3 heading"
+p14 tree          │     │   textDirection: ltr
+p14 tree          │     │   headingLevel: 3
+p14 tree          │     │
+p14 tree          │     ├─SemanticsNode#17
+p14 tree          │     │   Rect.fromLTRB(16.0, 44.0, 229.8, 64.0)
+p14 tree          │     │   label: "p14 Card 3 body"
+p14 tree          │     │   textDirection: ltr
+p14 tree          │     │
+p14 tree          │     └─SemanticsNode#18
+p14 tree          │         Rect.fromLTRB(16.0, 72.0, 181.0, 120.0)
+p14 tree          │         actions: focus, tap
+p14 tree          │         flags: isButton, hasEnabledState, isEnabled, isFocusable
+p14 tree          │         label: "p14 Save 3"
+p14 tree          │         textDirection: ltr
+p14 tree          │
+p14 tree          └─SemanticsNode#20
+p14 tree              Rect.fromLTRB(16.0, 468.0, 784.0, 488.0)
+p14 tree              identifier: "p14-taps"
+p14 tree              label: "p14 taps: whole=0 a=0 b=0 c=0"
+p14 tree              textDirection: ltr
+p14 node           label="Before p14" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p14 node                 label="p14 Card 1 heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p14 node                 label="p14 Card 1 body" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p14 node                 label="p14 Save 1" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p14 node                 label="p14 Card 2 heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p14 node                 label="p14 Card 2 body" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p14 node                 label="p14 Save 2" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p14 node                 label="p14 Card 3 heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p14 node                 label="p14 Card 3 body" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p14 node                 label="p14 Save 3" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p14 node           label="p14 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p14-taps
+p14 node           label="p14" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p14 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p14 2
+p14 2 Tabs (on Focus "") then Enter: p14 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p14 3
+p14 3 Tabs (on Focus "") then Enter: p14 taps: whole=0 a=0 b=0 c=1 dest=false
+TAP p14 1
+p14 4 Tabs (on Focus "") then Enter: p14 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p14 2
+p14 5 Tabs (on Focus "") then Enter: p14 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p14 2
+p14 2 Tabs (on Focus "") then  : p14 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p14 3
+p14 3 Tabs (on Focus "") then  : p14 taps: whole=0 a=0 b=0 c=1 dest=false
+TAP p14 1
+p14 4 Tabs (on Focus "") then  : p14 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p14 2
+p14 5 Tabs (on Focus "") then  : p14 taps: whole=0 a=0 b=1 c=0 dest=false
+==== p15 p13 with Semantics(role: SemanticsRole.list) round it and role listItem round each card
+p15 tree SemanticsNode#0
+p15 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p15 tree  │
+p15 tree  └─SemanticsNode#1
+p15 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p15 tree    │ textDirection: ltr
+p15 tree    │
+p15 tree    └─SemanticsNode#2
+p15 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p15 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p15 tree      │
+p15 tree      └─SemanticsNode#3
+p15 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p15 tree        │ flags: scopesRoute
+p15 tree        │
+p15 tree        ├─SemanticsNode#20
+p15 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p15 tree        │ │
+p15 tree        │ └─SemanticsNode#21
+p15 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p15 tree        │     flags: isHeader, namesRoute
+p15 tree        │     label: "p15"
+p15 tree        │     textDirection: ltr
+p15 tree        │
+p15 tree        └─SemanticsNode#4
+p15 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 576.0)
+p15 tree          │ flags: hasImplicitScrolling
+p15 tree          │ scrollExtentMin: 0.0
+p15 tree          │ scrollPosition: 0.0
+p15 tree          │ scrollExtentMax: 0.0
+p15 tree          │
+p15 tree          ├─SemanticsNode#5
+p15 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p15 tree          │   label: "Before p15"
+p15 tree          │   textDirection: ltr
+p15 tree          │
+p15 tree          ├─SemanticsNode#6
+p15 tree          │ │ Rect.fromLTRB(16.0, 48.0, 784.0, 472.0)
+p15 tree          │ │ role: list
+p15 tree          │ │
+p15 tree          │ ├─SemanticsNode#7
+p15 tree          │ │ │ Rect.fromLTRB(0.0, 0.0, 288.5, 136.0)
+p15 tree          │ │ │ role: listItem
+p15 tree          │ │ │
+p15 tree          │ │ ├─SemanticsNode#8
+p15 tree          │ │ │   Rect.fromLTRB(16.0, 16.0, 272.5, 36.0)
+p15 tree          │ │ │   label: "p15 Card 1 heading"
+p15 tree          │ │ │   textDirection: ltr
+p15 tree          │ │ │   headingLevel: 3
+p15 tree          │ │ │
+p15 tree          │ │ ├─SemanticsNode#9
+p15 tree          │ │ │   Rect.fromLTRB(16.0, 44.0, 229.8, 64.0)
+p15 tree          │ │ │   label: "p15 Card 1 body"
+p15 tree          │ │ │   textDirection: ltr
+p15 tree          │ │ │
+p15 tree          │ │ └─SemanticsNode#10
+p15 tree          │ │     Rect.fromLTRB(16.0, 72.0, 181.0, 120.0)
+p15 tree          │ │     actions: focus, tap
+p15 tree          │ │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+p15 tree          │ │     label: "p15 Save 1"
+p15 tree          │ │     textDirection: ltr
+p15 tree          │ │
+p15 tree          │ ├─SemanticsNode#11
+p15 tree          │ │ │ Rect.fromLTRB(0.0, 144.0, 288.5, 280.0)
+p15 tree          │ │ │ role: listItem
+p15 tree          │ │ │
+p15 tree          │ │ ├─SemanticsNode#12
+p15 tree          │ │ │   Rect.fromLTRB(16.0, 16.0, 272.5, 36.0)
+p15 tree          │ │ │   label: "p15 Card 2 heading"
+p15 tree          │ │ │   textDirection: ltr
+p15 tree          │ │ │   headingLevel: 3
+p15 tree          │ │ │
+p15 tree          │ │ ├─SemanticsNode#13
+p15 tree          │ │ │   Rect.fromLTRB(16.0, 44.0, 229.8, 64.0)
+p15 tree          │ │ │   label: "p15 Card 2 body"
+p15 tree          │ │ │   textDirection: ltr
+p15 tree          │ │ │
+p15 tree          │ │ └─SemanticsNode#14
+p15 tree          │ │     Rect.fromLTRB(16.0, 72.0, 181.0, 120.0)
+p15 tree          │ │     actions: focus, tap
+p15 tree          │ │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+p15 tree          │ │     label: "p15 Save 2"
+p15 tree          │ │     textDirection: ltr
+p15 tree          │ │
+p15 tree          │ └─SemanticsNode#15
+p15 tree          │   │ Rect.fromLTRB(0.0, 288.0, 288.5, 424.0)
+p15 tree          │   │ role: listItem
+p15 tree          │   │
+p15 tree          │   ├─SemanticsNode#16
+p15 tree          │   │   Rect.fromLTRB(16.0, 16.0, 272.5, 36.0)
+p15 tree          │   │   label: "p15 Card 3 heading"
+p15 tree          │   │   textDirection: ltr
+p15 tree          │   │   headingLevel: 3
+p15 tree          │   │
+p15 tree          │   ├─SemanticsNode#17
+p15 tree          │   │   Rect.fromLTRB(16.0, 44.0, 229.8, 64.0)
+p15 tree          │   │   label: "p15 Card 3 body"
+p15 tree          │   │   textDirection: ltr
+p15 tree          │   │
+p15 tree          │   └─SemanticsNode#18
+p15 tree          │       Rect.fromLTRB(16.0, 72.0, 181.0, 120.0)
+p15 tree          │       actions: focus, tap
+p15 tree          │       flags: isButton, hasEnabledState, isEnabled, isFocusable
+p15 tree          │       label: "p15 Save 3"
+p15 tree          │       textDirection: ltr
+p15 tree          │
+p15 tree          └─SemanticsNode#19
+p15 tree              Rect.fromLTRB(16.0, 484.0, 784.0, 504.0)
+p15 tree              identifier: "p15-taps"
+p15 tree              label: "p15 taps: whole=0 a=0 b=0 c=0"
+p15 tree              textDirection: ltr
+p15 node           label="Before p15" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p15 node               label="p15 Card 1 heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p15 node               label="p15 Card 1 body" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p15 node               label="p15 Save 1" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p15 node               label="p15 Card 2 heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p15 node               label="p15 Card 2 body" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p15 node               label="p15 Save 2" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p15 node               label="p15 Card 3 heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p15 node               label="p15 Card 3 body" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p15 node               label="p15 Save 3" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p15 node           label="p15 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p15-taps
+p15 node           label="p15" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p15 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p15 2
+p15 2 Tabs (on Focus "") then Enter: p15 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p15 3
+p15 3 Tabs (on Focus "") then Enter: p15 taps: whole=0 a=0 b=0 c=1 dest=false
+TAP p15 1
+p15 4 Tabs (on Focus "") then Enter: p15 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p15 2
+p15 5 Tabs (on Focus "") then Enter: p15 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p15 2
+p15 2 Tabs (on Focus "") then  : p15 taps: whole=0 a=0 b=1 c=0 dest=false
+TAP p15 3
+p15 3 Tabs (on Focus "") then  : p15 taps: whole=0 a=0 b=0 c=1 dest=false
+TAP p15 1
+p15 4 Tabs (on Focus "") then  : p15 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p15 2
+p15 5 Tabs (on Focus "") then  : p15 taps: whole=0 a=0 b=1 c=0 dest=false
+==== p16 Cupertino: a DecoratedBox drawn as a card, heading, text, a CupertinoButton
+p16 tree SemanticsNode#0
+p16 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p16 tree  │
+p16 tree  └─SemanticsNode#1
+p16 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p16 tree    │ textDirection: ltr
+p16 tree    │
+p16 tree    └─SemanticsNode#2
+p16 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p16 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p16 tree      │
+p16 tree      └─SemanticsNode#3
+p16 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p16 tree        │ flags: scopesRoute
+p16 tree        │
+p16 tree        ├─SemanticsNode#10
+p16 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p16 tree        │ │
+p16 tree        │ └─SemanticsNode#11
+p16 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p16 tree        │     flags: isHeader, namesRoute
+p16 tree        │     label: "p16"
+p16 tree        │     textDirection: ltr
+p16 tree        │
+p16 tree        └─SemanticsNode#4
+p16 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 290.0)
+p16 tree          │ flags: hasImplicitScrolling
+p16 tree          │ scrollExtentMin: 0.0
+p16 tree          │ scrollPosition: 0.0
+p16 tree          │ scrollExtentMax: 0.0
+p16 tree          │
+p16 tree          ├─SemanticsNode#5
+p16 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p16 tree          │   label: "Before p16"
+p16 tree          │   textDirection: ltr
+p16 tree          │
+p16 tree          ├─SemanticsNode#6
+p16 tree          │   Rect.fromLTRB(28.0, 60.0, 352.0, 89.0)
+p16 tree          │   label: "p16 Card heading"
+p16 tree          │   textDirection: ltr
+p16 tree          │   headingLevel: 3
+p16 tree          │
+p16 tree          ├─SemanticsNode#7
+p16 tree          │   Rect.fromLTRB(28.0, 97.0, 669.3, 117.0)
+p16 tree          │   label: "p16 Body text of the card. A second sentence."
+p16 tree          │   textDirection: ltr
+p16 tree          │
+p16 tree          ├─SemanticsNode#8
+p16 tree          │   Rect.fromLTRB(28.0, 125.0, 200.7, 174.0)
+p16 tree          │   actions: focus, tap
+p16 tree          │   flags: isButton, isFocusable
+p16 tree          │   label: "p16 Save"
+p16 tree          │   textDirection: ltr
+p16 tree          │
+p16 tree          └─SemanticsNode#9
+p16 tree              Rect.fromLTRB(16.0, 198.0, 784.0, 218.0)
+p16 tree              identifier: "p16-taps"
+p16 tree              label: "p16 taps: whole=0 a=0 b=0 c=0"
+p16 tree              textDirection: ltr
+p16 node           label="Before p16" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p16 node           label="p16 Card heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p16 node           label="p16 Body text of the card. A second sentence." level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p16 node           label="p16 Save" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p16 node           label="p16 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p16-taps
+p16 node           label="p16" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p16 tab stops: Focus "p16 Save" -> Focus "p16 Save" -> Focus "p16 Save" -> Focus "p16 Save" -> Focus "p16 Save" -> Focus "p16 Save"
+TAP p16 1
+p16 2 Tabs (on Focus "p16 Save") then Enter: p16 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p16 1
+p16 3 Tabs (on Focus "p16 Save") then Enter: p16 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p16 1
+p16 4 Tabs (on Focus "p16 Save") then Enter: p16 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p16 1
+p16 5 Tabs (on Focus "p16 Save") then Enter: p16 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p16 1
+p16 2 Tabs (on Focus "p16 Save") then  : p16 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p16 1
+p16 3 Tabs (on Focus "p16 Save") then  : p16 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p16 1
+p16 4 Tabs (on Focus "p16 Save") then  : p16 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p16 1
+p16 5 Tabs (on Focus "p16 Save") then  : p16 taps: whole=0 a=1 b=0 c=0 dest=false
+==== p17 Cupertino: CupertinoListSection.insetGrouped with a header and one CupertinoListTile(onTap:)
+p17 tree SemanticsNode#0
+p17 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p17 tree  │
+p17 tree  └─SemanticsNode#1
+p17 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p17 tree    │ textDirection: ltr
+p17 tree    │
+p17 tree    └─SemanticsNode#2
+p17 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p17 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p17 tree      │
+p17 tree      └─SemanticsNode#3
+p17 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p17 tree        │ flags: scopesRoute
+p17 tree        │
+p17 tree        ├─SemanticsNode#9
+p17 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p17 tree        │ │
+p17 tree        │ └─SemanticsNode#10
+p17 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p17 tree        │     flags: isHeader, namesRoute
+p17 tree        │     label: "p17"
+p17 tree        │     textDirection: ltr
+p17 tree        │
+p17 tree        └─SemanticsNode#4
+p17 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 252.0)
+p17 tree          │ flags: hasImplicitScrolling
+p17 tree          │ scrollExtentMin: 0.0
+p17 tree          │ scrollPosition: 0.0
+p17 tree          │ scrollExtentMax: 0.0
+p17 tree          │
+p17 tree          ├─SemanticsNode#5
+p17 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p17 tree          │   label: "Before p17"
+p17 tree          │   textDirection: ltr
+p17 tree          │
+p17 tree          ├─SemanticsNode#6
+p17 tree          │   Rect.fromLTRB(36.0, 64.0, 388.6, 84.0)
+p17 tree          │   label: "p17 Section header"
+p17 tree          │   textDirection: ltr
+p17 tree          │
+p17 tree          ├─SemanticsNode#7
+p17 tree          │   Rect.fromLTRB(36.0, 90.0, 764.0, 138.0)
+p17 tree          │   actions: tap
+p17 tree          │   label:
+p17 tree          │     "p17 Card heading
+p17 tree          │     p17 Body text"
+p17 tree          │   textDirection: ltr
+p17 tree          │
+p17 tree          └─SemanticsNode#8
+p17 tree              Rect.fromLTRB(16.0, 160.0, 784.0, 180.0)
+p17 tree              identifier: "p17-taps"
+p17 tree              label: "p17 taps: whole=0 a=0 b=0 c=0"
+p17 tree              textDirection: ltr
+p17 node           label="Before p17" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p17 node           label="p17 Section header" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p17 node           label="p17 Card heading\np17 Body text" level=0 flags=[] tap=true url=null role=SemanticsRole.none id=
+p17 node           label="p17 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p17-taps
+p17 node           label="p17" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p17 tab stops: _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode ""
+p17 2 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: p17 taps: whole=0 a=0 b=0 c=0 dest=false
+p17 3 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: p17 taps: whole=0 a=0 b=0 c=0 dest=false
+p17 4 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: p17 taps: whole=0 a=0 b=0 c=0 dest=false
+p17 5 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: p17 taps: whole=0 a=0 b=0 c=0 dest=false
+p17 2 Tabs (on _FocusScopeWithExternalFocusNode "") then  : p17 taps: whole=0 a=0 b=0 c=0 dest=false
+p17 3 Tabs (on _FocusScopeWithExternalFocusNode "") then  : p17 taps: whole=0 a=0 b=0 c=0 dest=false
+p17 4 Tabs (on _FocusScopeWithExternalFocusNode "") then  : p17 taps: whole=0 a=0 b=0 c=0 dest=false
+p17 5 Tabs (on _FocusScopeWithExternalFocusNode "") then  : p17 taps: whole=0 a=0 b=0 c=0 dest=false
+==== p18 MergeSemantics round a semanticContainer-false card: heading, text, TextButton
+p18 tree SemanticsNode#0
+p18 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p18 tree  │
+p18 tree  └─SemanticsNode#1
+p18 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p18 tree    │ textDirection: ltr
+p18 tree    │
+p18 tree    └─SemanticsNode#2
+p18 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p18 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p18 tree      │
+p18 tree      └─SemanticsNode#3
+p18 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p18 tree        │ flags: scopesRoute
+p18 tree        │
+p18 tree        ├─SemanticsNode#11
+p18 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p18 tree        │ │
+p18 tree        │ └─SemanticsNode#12
+p18 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p18 tree        │     flags: isHeader, namesRoute
+p18 tree        │     label: "p18"
+p18 tree        │     textDirection: ltr
+p18 tree        │
+p18 tree        └─SemanticsNode#4
+p18 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 297.0)
+p18 tree          │ flags: hasImplicitScrolling
+p18 tree          │ scrollExtentMin: 0.0
+p18 tree          │ scrollPosition: 0.0
+p18 tree          │ scrollExtentMax: 0.0
+p18 tree          │
+p18 tree          ├─SemanticsNode#5
+p18 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p18 tree          │   label: "Before p18"
+p18 tree          │   textDirection: ltr
+p18 tree          │
+p18 tree          ├─SemanticsNode#6
+p18 tree          │ │ merge boundary ⛔️
+p18 tree          │ │ Rect.fromLTRB(16.0, 48.0, 784.0, 193.0)
+p18 tree          │ │
+p18 tree          │ ├─SemanticsNode#7
+p18 tree          │ │   merged up ⬆️
+p18 tree          │ │   Rect.fromLTRB(16.0, 16.0, 340.0, 45.0)
+p18 tree          │ │   label: "p18 Card heading"
+p18 tree          │ │   textDirection: ltr
+p18 tree          │ │   headingLevel: 3
+p18 tree          │ │
+p18 tree          │ ├─SemanticsNode#8
+p18 tree          │ │   merged up ⬆️
+p18 tree          │ │   Rect.fromLTRB(16.0, 53.0, 657.3, 73.0)
+p18 tree          │ │   label: "p18 Body text of the card. A second sentence."
+p18 tree          │ │   textDirection: ltr
+p18 tree          │ │
+p18 tree          │ └─SemanticsNode#9
+p18 tree          │     merged up ⬆️
+p18 tree          │     Rect.fromLTRB(16.0, 81.0, 152.8, 129.0)
+p18 tree          │     actions: focus, tap
+p18 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+p18 tree          │     label: "p18 Save"
+p18 tree          │     textDirection: ltr
+p18 tree          │
+p18 tree          └─SemanticsNode#10
+p18 tree              Rect.fromLTRB(16.0, 205.0, 784.0, 225.0)
+p18 tree              identifier: "p18-taps"
+p18 tree              label: "p18 taps: whole=0 a=0 b=0 c=0"
+p18 tree              textDirection: ltr
+p18 node           label="Before p18" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p18 node           label="p18 Card heading\np18 Body text of the card. A second sentence.\np18 Save" level=3 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p18 node             label="p18 Card heading" level=3 flags=[] tap=false url=null role=SemanticsRole.none id=
+p18 node             label="p18 Body text of the card. A second sentence." level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p18 node             label="p18 Save" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p18 node           label="p18 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p18-taps
+p18 node           label="p18" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p18 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p18 1
+p18 2 Tabs (on Focus "") then Enter: p18 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p18 1
+p18 3 Tabs (on Focus "") then Enter: p18 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p18 1
+p18 4 Tabs (on Focus "") then Enter: p18 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p18 1
+p18 5 Tabs (on Focus "") then Enter: p18 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p18 1
+p18 2 Tabs (on Focus "") then  : p18 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p18 1
+p18 3 Tabs (on Focus "") then  : p18 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p18 1
+p18 4 Tabs (on Focus "") then  : p18 taps: whole=0 a=1 b=0 c=0 dest=false
+TAP p18 1
+p18 5 Tabs (on Focus "") then  : p18 taps: whole=0 a=1 b=0 c=0 dest=false
+==== p19 p03 with Semantics(button: true) round the InkWell
+p19 tree SemanticsNode#0
+p19 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p19 tree  │
+p19 tree  └─SemanticsNode#1
+p19 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p19 tree    │ textDirection: ltr
+p19 tree    │
+p19 tree    └─SemanticsNode#2
+p19 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p19 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p19 tree      │
+p19 tree      └─SemanticsNode#3
+p19 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p19 tree        │ flags: scopesRoute
+p19 tree        │
+p19 tree        ├─SemanticsNode#8
+p19 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p19 tree        │ │
+p19 tree        │ └─SemanticsNode#9
+p19 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p19 tree        │     flags: isHeader, namesRoute
+p19 tree        │     label: "p19"
+p19 tree        │     textDirection: ltr
+p19 tree        │
+p19 tree        └─SemanticsNode#4
+p19 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 313.0)
+p19 tree          │ flags: hasImplicitScrolling
+p19 tree          │ scrollExtentMin: 0.0
+p19 tree          │ scrollPosition: 0.0
+p19 tree          │ scrollExtentMax: 0.0
+p19 tree          │
+p19 tree          ├─SemanticsNode#5
+p19 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p19 tree          │   label: "Before p19"
+p19 tree          │   textDirection: ltr
+p19 tree          │
+p19 tree          ├─SemanticsNode#6
+p19 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 209.0)
+p19 tree          │   actions: focus, tap
+p19 tree          │   flags: isButton, isFocusable
+p19 tree          │   label:
+p19 tree          │     "p19 Card heading
+p19 tree          │     p19 Body text of the card. A second sentence."
+p19 tree          │   textDirection: ltr
+p19 tree          │   headingLevel: 3
+p19 tree          │
+p19 tree          └─SemanticsNode#7
+p19 tree              Rect.fromLTRB(16.0, 221.0, 784.0, 241.0)
+p19 tree              identifier: "p19-taps"
+p19 tree              label: "p19 taps: whole=0 a=0 b=0 c=0"
+p19 tree              textDirection: ltr
+p19 node           label="Before p19" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p19 node           label="p19 Card heading\np19 Body text of the card. A second sentence." level=3 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+p19 node           label="p19 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p19-taps
+p19 node           label="p19" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p19 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p19 0
+p19 2 Tabs (on Focus "") then Enter: p19 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p19 0
+p19 3 Tabs (on Focus "") then Enter: p19 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p19 0
+p19 4 Tabs (on Focus "") then Enter: p19 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p19 0
+p19 5 Tabs (on Focus "") then Enter: p19 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p19 0
+p19 2 Tabs (on Focus "") then  : p19 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p19 0
+p19 3 Tabs (on Focus "") then  : p19 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p19 0
+p19 4 Tabs (on Focus "") then  : p19 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p19 0
+p19 5 Tabs (on Focus "") then  : p19 taps: whole=1 a=0 b=0 c=0 dest=false
+==== p20 p03 with the heading not marked (plain text)
+p20 tree SemanticsNode#0
+p20 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p20 tree  │
+p20 tree  └─SemanticsNode#1
+p20 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p20 tree    │ textDirection: ltr
+p20 tree    │
+p20 tree    └─SemanticsNode#2
+p20 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p20 tree      │ sortKey: OrdinalSortKey#7cc91(order: 0.0)
+p20 tree      │
+p20 tree      └─SemanticsNode#3
+p20 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p20 tree        │ flags: scopesRoute
+p20 tree        │
+p20 tree        ├─SemanticsNode#8
+p20 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p20 tree        │ │
+p20 tree        │ └─SemanticsNode#9
+p20 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p20 tree        │     flags: isHeader, namesRoute
+p20 tree        │     label: "p20"
+p20 tree        │     textDirection: ltr
+p20 tree        │
+p20 tree        └─SemanticsNode#4
+p20 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 241.0)
+p20 tree          │ flags: hasImplicitScrolling
+p20 tree          │ scrollExtentMin: 0.0
+p20 tree          │ scrollPosition: 0.0
+p20 tree          │ scrollExtentMax: 0.0
+p20 tree          │
+p20 tree          ├─SemanticsNode#5
+p20 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p20 tree          │   label: "Before p20"
+p20 tree          │   textDirection: ltr
+p20 tree          │
+p20 tree          ├─SemanticsNode#6
+p20 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 137.0)
+p20 tree          │   actions: focus, tap
+p20 tree          │   flags: isFocusable
+p20 tree          │   label:
+p20 tree          │     "p20 Card heading
+p20 tree          │     p20 Body text of the card. A second sentence."
+p20 tree          │   textDirection: ltr
+p20 tree          │
+p20 tree          └─SemanticsNode#7
+p20 tree              Rect.fromLTRB(16.0, 149.0, 784.0, 169.0)
+p20 tree              identifier: "p20-taps"
+p20 tree              label: "p20 taps: whole=0 a=0 b=0 c=0"
+p20 tree              textDirection: ltr
+p20 node           label="Before p20" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+p20 node           label="p20 Card heading\np20 Body text of the card. A second sentence." level=0 flags=[focusable] tap=true url=null role=SemanticsRole.none id=
+p20 node           label="p20 taps: whole=0 a=0 b=0 c=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=p20-taps
+p20 node           label="p20" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+p20 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+TAP p20 0
+p20 2 Tabs (on Focus "") then Enter: p20 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p20 0
+p20 3 Tabs (on Focus "") then Enter: p20 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p20 0
+p20 4 Tabs (on Focus "") then Enter: p20 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p20 0
+p20 5 Tabs (on Focus "") then Enter: p20 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p20 0
+p20 2 Tabs (on Focus "") then  : p20 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p20 0
+p20 3 Tabs (on Focus "") then  : p20 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p20 0
+p20 4 Tabs (on Focus "") then  : p20 taps: whole=1 a=0 b=0 c=0 dest=false
+TAP p20 0
+p20 5 Tabs (on Focus "") then  : p20 taps: whole=1 a=0 b=0 c=0 dest=false

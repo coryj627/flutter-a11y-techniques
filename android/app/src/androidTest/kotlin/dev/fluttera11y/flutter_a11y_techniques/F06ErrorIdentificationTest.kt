@@ -41,6 +41,30 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
         return found
     }
 
+    /**
+     * The field [id] for a check inside a wait, or null if it cannot be
+     * reached this time: looked for in every window first, as [hint] does,
+     * then by [node], which scrolls to it. [node] alone throws when the
+     * active window does not have the field, and a throw ends a wait at
+     * once: in four CI runs (45156342222, attempts 2 and 3; 45055757147,
+     * attempt 1; 45265840755) good-cupertino's email was found for the
+     * hint and the selection, then was "no node with id
+     * f06-good-cupertino-email, even after scrolling" at the first look for
+     * the typed text: in the three whose device log was read, 1.7 seconds
+     * after the keyboard came up again for the email. Which window was
+     * active then, and what was on the screen, was not recorded.
+     */
+    private fun field(id: String): AccessibilityNodeInfo? {
+        var found: AccessibilityNodeInfo? = null
+        anyWindowHas { n -> (n.viewIdResourceName == id).also { if (it) found = n } }
+        return found ?: try { node(id) } catch (e: AssertionError) { null }
+    }
+
+    /** The text in a field, as [value] reads it, or null if it cannot be reached. */
+    private fun typed(id: String): String? = field(id)?.let {
+        if (it.isShowingHintText) "" else it.text?.toString().orEmpty()
+    }
+
     private fun waitFor(what: String, check: () -> Boolean) {
         val end = System.currentTimeMillis() + 5_000
         while (System.currentTimeMillis() < end && !check()) Thread.sleep(100)
@@ -55,6 +79,42 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
                 automation.windows.none { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }
             }
             device.waitForIdle()
+        }
+    }
+
+    /**
+     * After a focus move to a field: waits up to 5 seconds for the keyboard
+     * it brings up to be in the window list, then puts it away. Nothing is
+     * pressed if no keyboard comes. [hideKeyboard] alone looks once, and
+     * the keyboard comes later: in PR 207's run 45270942444 good-cupertino's
+     * keyboard was shown at 21:59:23.279 and never put away, and
+     * hint("f06-good-cupertino-email") then found no such node in any
+     * window for 8 seconds. The app's window held android:id/content and
+     * f06-good-cupertino-name only, under the keyboard's window (its
+     * failure message lists every window).
+     */
+    private fun keyboardAwayOnceItIsUp() {
+        val end = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < end &&
+            automation.windows.none { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }) {
+            Thread.sleep(100)
+        }
+        hideKeyboard()
+    }
+
+    /**
+     * The field [id], waited for up to 8 seconds with the keyboard put
+     * away before each look, through [field].
+     */
+    private fun reached(id: String): AccessibilityNodeInfo {
+        val end = System.currentTimeMillis() + 8_000
+        while (true) {
+            hideKeyboard()
+            field(id)?.let { return it }
+            if (System.currentTimeMillis() >= end) {
+                throw AssertionError("no node with id $id in any window, with the keyboard away")
+            }
+            Thread.sleep(250)
         }
     }
 
@@ -101,6 +161,31 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
         assertEquals("$countName for $slug (null: not in the tree)", expected, last)
     }
 
+    /**
+     * The node of [error], below the field [id], waited for up to 8 seconds
+     * with the keyboard put away before each look, and taken from the look
+     * that found it. Focus is on the first field in error, and the keyboard
+     * it brings up can come after [closeKeyboardAndWaitForCount] has looked
+     * for one. In five CI runs that failed here (45076161869, attempt 2;
+     * 45131874860, attempts 1 and 2; 45136174646, attempts 1 and 3) the
+     * device's log shows good-cupertino's keyboard shown as focus moved and
+     * never put away before the failure; with good-form's, put away by
+     * Back, the same checks passed. In four of them a 5-second wait never
+     * found the email's error; in the fifth the name's error was found and
+     * gone at the next look, 0.75 seconds after the example opened, as the
+     * keyboard came up. The failures began with the custom-solution note
+     * (pull request 204), which pushes the example down the screen.
+     */
+    private fun errorWithKeyboardAway(id: String, error: String): AccessibilityNodeInfo {
+        val end = System.currentTimeMillis() + 8_000
+        while (true) {
+            hideKeyboard()
+            withText(error)?.let { return it }
+            if (System.currentTimeMillis() >= end) throw AssertionError("$id and its error in the tree")
+            Thread.sleep(250)
+        }
+    }
+
     private val good = mapOf(
         "good-form" to listOf(
             Triple("f06-good-form-name", "Name", NAME_ERROR),
@@ -121,20 +206,22 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             send(slug)
             waitFor("$slug errors shown") { withText(NAME_ERROR) != null }
             // Input focus is on the first field in error.
-            waitFor("$slug first field focused") { node(fields[0].first).isFocused }
-            assertFalse("$slug second field not focused", node(fields[1].first).isFocused)
+            waitFor("$slug first field focused") { field(fields[0].first)?.isFocused == true }
+            keyboardAwayOnceItIsUp()
+            assertFalse("$slug second field not focused", reached(fields[1].first).isFocused)
             closeKeyboardAndWaitForCount(slug)
             for ((id, label, error) in fields) {
-                waitFor("$id and its error in the tree") { withText(error) != null }
+                // The visible error is a node of its own.
+                val message = errorWithKeyboardAway(id, error)
+                val fieldNode = reached(id)
                 // Flutter joins the label and the error with ", ".
-                assertEquals(id, "$label, $error", hint(id))
-                assertTrue(id, node(id).contentDescription.isNullOrEmpty())
+                assertEquals(id, "$label, $error", fieldNode.hintText?.toString().orEmpty())
+                assertTrue(id, fieldNode.contentDescription.isNullOrEmpty())
                 // Flutter sets neither of the native error properties.
-                assertTrue(id, node(id).error.isNullOrEmpty())
-                assertFalse(id, node(id).isContentInvalid)
-                assertEquals(id, View.ACCESSIBILITY_LIVE_REGION_NONE, node(id).liveRegion)
-                // The visible error is a node of its own, and a live region.
-                val message = withText(error)!!
+                assertTrue(id, fieldNode.error.isNullOrEmpty())
+                assertFalse(id, fieldNode.isContentInvalid)
+                assertEquals(id, View.ACCESSIBILITY_LIVE_REGION_NONE, fieldNode.liveRegion)
+                // The visible error is a live region.
                 assertEquals(error, View.ACCESSIBILITY_LIVE_REGION_POLITE, message.liveRegion)
                 assertFalse(error, message.isEditable)
             }
@@ -149,12 +236,12 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             val (name, _, _) = fields[0]
             val (email, _, _) = fields[1]
             send(slug)
-            waitFor("$slug name focused") { node(name).isFocused }
+            waitFor("$slug name focused") { field(name)?.isFocused == true }
             type(name, "Ana")
             type(email, "abc")
             hideKeyboard()
             send(slug)
-            waitFor("$slug email focused") { node(email).isFocused }
+            waitFor("$slug email focused") { field(email)?.isFocused == true }
             // The tree can take a moment longer than focus to update.
             waitFor("$slug name error cleared") { hint(name) == "Name" }
             assertEquals(name, "Name", hint(name))
@@ -167,7 +254,12 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             assertTrue(email, node(email).performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selection))
             Thread.sleep(500)
             inst.sendStringSync("@example.com")
-            waitFor("$slug email typed") { value(email) == "abc@example.com" }
+            // Typed once. Each look first puts the keyboard away, as the
+            // next step does anyway: the field can be under it.
+            waitFor("$slug email typed") {
+                hideKeyboard()
+                typed(email) == "abc@example.com"
+            }
             hideKeyboard()
             send(slug)
             waitForCount(slug, 1)
@@ -175,8 +267,11 @@ class F06ErrorIdentificationTest : TechniqueTest("F06") {
             // polite live region.
             assertEquals("$slug count", View.ACCESSIBILITY_LIVE_REGION_POLITE,
                 node("f06-$slug-count").liveRegion)
+            // The field's hint can follow the count late: read once, it
+            // still had the error in one CI run (44991679415, attempt 2).
+            waitFor("$slug email error cleared") { hint(email) == "Email" }
             assertEquals(email, "Email", hint(email))
-            assertTrue("$slug errors gone", withText(EMAIL_ERROR) == null)
+            waitFor("$slug errors gone") { withText(EMAIL_ERROR) == null }
         }
     }
 
