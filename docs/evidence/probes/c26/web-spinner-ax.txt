@@ -1,0 +1,22 @@
+
+Running 2 tests using 1 worker
+
+PROBE bad-no-role DOM {"self":"<flt-semantics id=\"flt-semantic-node-15\" aria-label=\"Loading inbox\" flt-semantics-identifier=\"c26-bad-no-role-spinner\" style=\"position: absolute; overflow: visible; pointer-events: auto; z-index: 5; width: 40px; height: 40px; transform-origin: 0px 0px 0px; transform: matrix(1, 0, 0, 1, 16, 192);\"></flt-semantics>","parent":"<flt-semantics id=\"flt-semantic-node-4\" role=\"group\" style=\"position: absolute; scrollbar-width: none; pointer-events: none; z-index: 1; width: 720px; height: 296px; transform-origin: 0px 0px 0px; tra","next":"<flt-semantics id=\"flt-semantic-node-11\" flt-semantics-identifier=\"c26-bad-no-role-status\" style=\"position: absolute; overflow: visible; pointer-events: auto; z-index: 6; width: 101.593px; height: 20px; transform-origin: 0px 0px 0px; transform: matrix(1, 0, 0, 1, 16, 244);\"><span style=\"display: inl"}
+PROBE bad-no-role AX {"role":"button","name":"Load inbox","ignored":false,"reasons":[],"children":1}
+PROBE bad-no-role AX {"role":"generic","name":"Loading inbox","ignored":false,"reasons":[],"children":0}
+PROBE bad-no-role AX {"role":"StaticText","name":"Load inbox","ignored":false,"reasons":[],"children":1}
+PROBE bad-no-role AX {"role":"StaticText","name":"Loading started","ignored":false,"reasons":[],"children":1}
+PROBE bad-no-role AX {"role":"InlineTextBox","name":"Load inbox","ignored":false,"reasons":[],"children":0}
+PROBE bad-no-role AX {"role":"InlineTextBox","name":"Loading started","ignored":false,"reasons":[],"children":0}
+  ✓  1 c26_probe_ax.spec.js:10:3 › probe bad-no-role (2.0s)
+PROBE bad-cupertino-no-role DOM {"self":"<flt-semantics id=\"flt-semantic-node-15\" flt-semantics-identifier=\"c26-bad-cupertino-no-role-spinner\" style=\"position: absolute; overflow: visible; pointer-events: auto; z-index: 5; width: 40px; height: 40px; transform-origin: 0px 0px 0px; transform: matrix(1, 0, 0, 1, 16, 192);\"><span style=\"display: inline-block; white-space: nowrap; transform-origin: 0px 0px 0px; pointer-events: none; transform","parent":"<flt-semantics id=\"flt-semantic-node-4\" role=\"group\" style=\"position: absolute; scrollbar-width: none; pointer-events: none; z-index: 1; width: 720px; height: 296px; transform-origin: 0px 0px 0px; tra","next":"<flt-semantics id=\"flt-semantic-node-11\" flt-semantics-identifier=\"c26-bad-cupertino-no-role-status\" style=\"position: absolute; overflow: visible; pointer-events: auto; z-index: 6; width: 101.593px; height: 20px; transform-origin: 0px 0px 0px; transform: matrix(1, 0, 0, 1, 16, 244);\"><span style=\"di"}
+PROBE bad-cupertino-no-role AX {"role":"button","name":"Load inbox","ignored":false,"reasons":[],"children":1}
+PROBE bad-cupertino-no-role AX {"role":"StaticText","name":"Load inbox","ignored":false,"reasons":[],"children":1}
+PROBE bad-cupertino-no-role AX {"role":"StaticText","name":"Loading inbox","ignored":false,"reasons":[],"children":1}
+PROBE bad-cupertino-no-role AX {"role":"StaticText","name":"Loading started","ignored":false,"reasons":[],"children":1}
+PROBE bad-cupertino-no-role AX {"role":"InlineTextBox","name":"Load inbox","ignored":false,"reasons":[],"children":0}
+PROBE bad-cupertino-no-role AX {"role":"InlineTextBox","name":"Loading inbox","ignored":false,"reasons":[],"children":0}
+PROBE bad-cupertino-no-role AX {"role":"InlineTextBox","name":"Loading started","ignored":false,"reasons":[],"children":0}
+  ✓  2 c26_probe_ax.spec.js:10:3 › probe bad-cupertino-no-role (1.8s)
+
+  2 passed (4.2s)

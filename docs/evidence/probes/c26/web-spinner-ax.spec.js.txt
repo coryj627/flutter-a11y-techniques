@@ -1,0 +1,31 @@
+// Temporary probe (C26 round 3): Chromium's own accessibility nodes for each
+// spinner example while it loads, ignored ones included.
+import { test } from '@playwright/test';
+import { byId, technique } from './support/techniques.js';
+
+const status = (page, slug) => byId(page, `c26-${slug}-status`);
+const { open } = technique('C26', { ready: status, settle: 900 });
+
+for (const slug of ['bad-no-role', 'bad-cupertino-no-role']) {
+  test(`probe ${slug}`, async ({ page }) => {
+    await open(page, slug);
+    await byId(page, `c26-${slug}-start`).focus();
+    await page.keyboard.press('Enter');
+    await byId(page, `c26-${slug}-spinner`).waitFor({ timeout: 3000 });
+    await page.waitForTimeout(300);
+    const html = await byId(page, `c26-${slug}-spinner`).evaluate((e) => ({
+      self: e.outerHTML.slice(0, 400), parent: e.parentElement.outerHTML.slice(0, 200),
+      next: e.nextElementSibling?.outerHTML.slice(0, 300) ?? null,
+    }));
+    const cdp = await page.context().newCDPSession(page);
+    const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+    await cdp.detach();
+    const rows = nodes.filter((n) => /Load|Inbox|inbox|loading/i.test(String(n.name?.value ?? '')) || n.role?.value === 'StaticText' && /Load/.test(String(n.name?.value)))
+      .map((n) => ({
+        role: n.role?.value, name: n.name?.value, ignored: n.ignored,
+        reasons: (n.ignoredReasons || []).map((r) => r.name), children: (n.childIds || []).length,
+      }));
+    console.log(`PROBE ${slug} DOM ${JSON.stringify(html)}`);
+    for (const r of rows) console.log(`PROBE ${slug} AX ${JSON.stringify(r)}`);
+  });
+}

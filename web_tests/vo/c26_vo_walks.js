@@ -67,54 +67,107 @@ export const screenStops = (slug) => {
 const both = (list) => ({ chromium: list, webkit: list });
 
 /**
- * The words that would say what a spinner is, any of which in its reading
- * means it has a role: VoiceOver's word for a `progressbar`, taken from
- * C26's own bar reading ("Report upload 0 0% progress indicator"), and the
- * other words a spinner could be read with. Matched whole, case ignored.
+ * The words that would say a spinner is a progress or busy indicator:
+ * VoiceOver's word for a `progressbar`, taken from C26's own bar reading
+ * ("Report upload 0 0% progress indicator"), and the other words one could
+ * be read with. A spinner's expected reading (SPINNER_READINGS) must hold
+ * none of them: a reading that did would mean the spinner has a role, and
+ * this bad example must then fail. Matched whole, case ignored.
+ *
+ * "group" is not one of them. VoiceOver says it for a named element with
+ * no role of its own: FL-028's slider wrapper, a `flt-semantics` element
+ * with `aria-label` and no role, is read "Volume group" in both browsers
+ * (docs/evidence/F10/voiceover-web.md), and Material's spinner is such an
+ * element (the tree spec; docs/evidence/probes/c26/web-spinner-ax.txt,
+ * where Chromium gives it the role "generic").
  */
-export const ROLE_WORDS = [
-  'progress indicator', 'progress bar', 'busy indicator', 'activity indicator',
-  'spinner', 'image', 'group', 'button', 'status', 'timer',
+export const INDICATOR_WORDS = [
+  'progress indicator', 'progress bar', 'progressbar', 'progress', 'busy indicator', 'busy',
+  'activity indicator', 'loading indicator', 'spinner', 'timer',
 ];
+
+/**
+ * slug -> browser -> what VoiceOver must say, exactly, when its cursor
+ * reaches the spinner while it loads. Measured in the recording at
+ * 7b9dc5c (docs/evidence/probes/c26/voiceover-web-round3-fail.md.txt),
+ * except where this says otherwise.
+ *
+ * - Material's spinner is an element with no role, an `aria-label`, and no
+ *   children (FL-256). WebKit read it "Loading inbox empty group": the
+ *   name, then "group", as for FL-028's role-less named slider wrapper
+ *   ("Volume group"; that element has a child, and no "empty" was said).
+ *   Chromium's reading is not measured yet: in that recording the capture
+ *   after each move was still the announcement made before it (the spec,
+ *   section 7). The Chromium entry is WebKit's reading, written as a
+ *   prediction, which the next recording confirms or fails.
+ * - Cupertino's spinner is `Semantics(label:)` round a widget with no
+ *   semantics: plain text, read "Loading inbox" in both browsers.
+ */
+export const SPINNER_READINGS = {
+  'bad-no-role': { chromium: 'Loading inbox empty group', webkit: 'Loading inbox empty group' },
+  'bad-cupertino-no-role': { chromium: 'Loading inbox', webkit: 'Loading inbox' },
+};
 
 /** How long a C26 spinner is shown after its button is pressed. */
 export const SPINNER_MS = 4000;
 
+const indicatorWords = (text) =>
+  INDICATOR_WORDS.filter((w) => new RegExp(`\\b${w}\\b`, 'i').test(text));
+
 /**
  * Judges a spinner's reading while it loads (FL-256). `before` is
- * VoiceOver's last phrase just before the first move; `moves` is each move
- * after the press, in order: `{ phrase, ms, shown }`, the phrase read
- * straight after the move, the milliseconds since the press, and whether
- * the spinner's element was in the page then. Returns `{ verdict, reason }`,
- * the verdict "right" or "wrong"; anything not shown right is wrong:
+ * `{ phrase, position }`, VoiceOver's last phrase and the bounds of its
+ * cursor just before the first move; `moves` is each move after the press,
+ * in order: `{ phrase, position, ms, shown }`, the phrase and the cursor's
+ * bounds once the move had spoken, the milliseconds since the press, and
+ * whether the spinner's element was in the page then. `name` is the
+ * spinner's name and `expected` its whole reading (SPINNER_READINGS).
+ * Returns `{ verdict, reason }`, the verdict "right" or "wrong"; anything
+ * not shown right is wrong:
  *
- * - every move's phrase must be non-empty and differ from the phrase before
- *   it (the one before the first move is `before`), so that an empty or
- *   stale capture cannot pass;
- * - some move must read `name` while the spinner was shown and within
- *   SPINNER_MS of the press; if none did, the spinner was not reached in
- *   time, and that is a failure, not a pass;
- * - that reading must hold none of ROLE_WORDS.
+ * - `expected` must hold `name` and none of INDICATOR_WORDS, so that a
+ *   reading with a role cannot be written in as the expectation;
+ * - every move's phrase must be non-empty, and no move may leave both the
+ *   phrase and the cursor where they were (before the first move, where
+ *   `before` has them), so that an empty or stale capture cannot pass. A
+ *   move that speaks the same words at a new place is not stale: the
+ *   status line says "Loading started", the words of the announcement
+ *   before it;
+ * - the first move that reads `name` is the spinner's reading. It must come
+ *   while the spinner was shown and within SPINNER_MS of the press, and it
+ *   must be `expected`, exactly. If no move read `name`, the spinner was
+ *   not reached, and that is a failure, not a pass.
  *
- * Only the first move that reads `name` is judged; the test makes no move
- * after it.
+ * The test makes no move after the one that reads `name`.
  */
-export function judgeSpinnerReading(before, moves, name) {
+export function judgeSpinnerReading(before, moves, name, expected) {
+  if (!expected || !expected.includes(name)) {
+    return { verdict: 'wrong', reason: `the expected reading "${expected}" does not hold the name "${name}"` };
+  }
+  const named = indicatorWords(expected);
+  if (named.length) {
+    return { verdict: 'wrong', reason: `the expected reading "${expected}" says it is an indicator: ${named.join(', ')}` };
+  }
   let previous = before;
   for (let i = 0; i < moves.length; i++) {
-    const { phrase, ms, shown } = moves[i];
+    const { phrase, position, ms, shown } = moves[i];
     if (!phrase) return { verdict: 'wrong', reason: `move ${i + 1} read an empty phrase` };
-    if (phrase === previous) return { verdict: 'wrong', reason: `move ${i + 1} read "${phrase}" again: the capture is stale` };
-    previous = phrase;
-    if (!phrase.toLowerCase().includes(name.toLowerCase())) continue;
+    if (phrase === previous.phrase && position === previous.position) {
+      return {
+        verdict: 'wrong',
+        reason: `move ${i + 1} left the cursor at ${position} and spoke nothing new ("${phrase}"): the capture is stale`,
+      };
+    }
+    previous = moves[i];
+    if (!phrase.includes(name)) continue;
     if (!shown || ms > SPINNER_MS) {
       return { verdict: 'wrong', reason: `the spinner was not reached in time: "${phrase}" at ${ms} ms, spinner ${shown ? 'shown' : 'gone'}` };
     }
-    const roles = ROLE_WORDS.filter((w) => new RegExp(`\\b${w}\\b`, 'i').test(phrase));
-    if (roles.length) return { verdict: 'wrong', reason: `"${phrase}" holds a role word: ${roles.join(', ')}` };
-    return { verdict: 'right', reason: `"${phrase}" at ${ms} ms: the name and no role word` };
+    if (phrase !== expected) return { verdict: 'wrong', reason: `"${phrase}", not "${expected}"` };
+    return { verdict: 'right', reason: `"${phrase}" at ${ms} ms, exactly the reading expected` };
   }
-  return { verdict: 'wrong', reason: `the spinner was not reached: no move read "${name}"` };
+  const heard = moves.map((m) => `"${m.phrase}" at ${m.position}`).join(', ') || 'no move';
+  return { verdict: 'wrong', reason: `the spinner was not reached: no move read "${name}" (${heard})` };
 }
 
 export const WALKS = {

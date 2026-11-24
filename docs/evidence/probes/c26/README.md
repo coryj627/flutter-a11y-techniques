@@ -98,6 +98,14 @@ How each platform was looked at, and the raw output:
 - `voiceover-web-round1-fail.md.txt`: the first web VoiceOver recording,
   made by the principal; its three bar walks failed in both browsers on
   lists written as predictions (the spec, section 7).
+- `voiceover-web-round3-fail.md.txt`: the web VoiceOver recording at
+  7b9dc5c, made by the principal, the first with the spinners read while
+  they load; `bad-no-role` failed in both browsers, on "group" in WebKit
+  and a stale capture in Chromium (the spec, section 7).
+- `web-spinner-ax.txt`, with `web-spinner-ax.spec.js.txt`: each spinner's
+  element and Chromium's own accessibility nodes while it loads: Material's
+  spinner a "generic" node named "Loading inbox" with no children,
+  Cupertino's a text node.
 
 ## What was found
 

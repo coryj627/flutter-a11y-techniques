@@ -296,7 +296,7 @@ Not built:
 | L3 iOS | `good-linear`: a static text element labelled "Report upload", value "0", then "25", "50", "75", "100" after a tap; one element with the words. The status lines' words at each point, for `good-linear` and the spinners. The spinners, read from snapshots: none before; while loading a static text element labelled "Loading inbox" with no value, the only element with that label; gone at the end. Two Tabs and Return start the upload (that a Tab reached the button is shown by Return; no modifier keys). Bad: `bad-no-label` an element with no label and the value "0", the words another element, `good-linear`'s labelled; `bad-adaptive` the spinner's node with no label or value and no element labelled "Loading inbox", `bad-no-role`'s labelled in the same test; `bad-cupertino-bar` the bar's node, if there, with no label or value, at rest and while running |
 | L4 TalkBack | The spinners' defect: each, pressed again and focused while it is shown, "Loading inbox" with no "Progress bar" and no "Button". `good-linear`'s and `bad-silent-end`'s bar: "Report upload" and "Progress bar"; `bad-no-label`'s "Progress bar" without "Report upload". Each button its words and "Button". After the click action, with TalkBack focus left on the button, nine seconds: `good-linear`, `bad-no-label`, `bad-cupertino-bar` "Upload started", "Half uploaded", "Upload complete"; the spinners and `bad-adaptive` "Loading started", "Inbox loaded"; `bad-silent-end`, with focus on the button, nothing at all in the nine seconds after the press (a silent row: its marker is logged once the click action has returned), and then, as that row's liveness control, focus moved to the bar, "100" and "Progress bar"; its status line, with focus put on it, "Upload complete"; and again with TalkBack focus on the bar while its value goes 0 to 100: the bar read on the focus, then nothing at all for nine seconds after the press (FL-254), then the status line, "Upload complete", as the control. Each walk is judged whole (`walk_strictly` in `tool/talkback.py`; C26 is in its `STRICT` set): a walk with any wrong reading fails for good, and only a walk shown to be incomplete (an element never focused, nothing spoken for it, or its speech cut off in the log with no forbidden phrase in what was captured) is walked again, up to three walks; the walk that decides is judged on its own, with no element's speech taken from another walk, and every walk is in the transcript. A row declared silent (`SILENT` in `tool/talkback.py`) is right only with nothing spoken in it at all, its capture ended by the next marker, and the row after it, its liveness control, right; any speech in it, a number included, fails for good. The judge is tested on made-up logs in `tool/test_talkback.py` (`StrictWalks`, `SilentRows`) |
 | L4 VoiceOver iOS | Each screen at rest, every utterance after the "Example" heading to its end as a whole list: `good-linear` and `bad-silent-end` "Upload report Button", "Report upload 0", "Not started"; `bad-no-label` "Report upload", "0"; `bad-cupertino-bar` "Report upload", "Not started" with no bar. While each task runs, the cursor on the button and the button pressed with a tap at its place: every expected status phrase heard, in order (for `bad-silent-end`, nothing heard but the button's own utterance, no status phrase and no number, and then two moves forward read its status line, "Upload complete"). While loading, with the cursor left on the button, one move back and three forward 0.8 s after the tap: the heading, the button, then `bad-no-role` and `bad-cupertino-no-role` "Loading inbox", `bad-adaptive` "Loading started", the spinner passed over and never read; the fourth move the status line as it is by then, "Loading started" or "Inbox loaded" (section 7) |
-| L4 VoiceOver web | Each screen at rest, walked from Back and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/c26_vo_walks.js`, as C04's), in Chromium and WebKit; no runner retries. Enter on the button with VoiceOver's last phrase polled for eight seconds (Chromium only): `good-linear`'s and the spinners' status phrases, and none of the upload's for `bad-silent-end`, with capture shown live after. The lists (`WALKS` in `c26_vo_walks.js`) are what the first recording read, the same in both browsers: a bar "Report upload 0 0% progress indicator", `bad-no-label`'s "0 0% progress indicator" after "Report upload" (section 7). The spinners' defect, in Chromium and WebKit: keyboard focus on the button, Enter, and at most two VoiceOver moves while the spinner is shown; the reading must hold "Loading inbox" and none of the role words (`ROLE_WORDS`: "progress indicator", VoiceOver's word for the bar here, and "progress bar", "busy indicator", "activity indicator", "spinner", "image", "group", "button", "status", "timer"), and it fails if any move read an empty phrase or the phrase before it, or if the spinner was not reached within four seconds of Enter while its element was in the page (`judgeSpinnerReading`, tested on made-up readings in the tree spec) |
+| L4 VoiceOver web | Each screen at rest, walked from Back and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/c26_vo_walks.js`, as C04's), in Chromium and WebKit; no runner retries. Enter on the button with VoiceOver's last phrase polled for eight seconds (Chromium only): `good-linear`'s and the spinners' status phrases, and none of the upload's for `bad-silent-end`, with capture shown live after. The lists (`WALKS` in `c26_vo_walks.js`) are what the first recording read, the same in both browsers: a bar "Report upload 0 0% progress indicator", `bad-no-label`'s "0 0% progress indicator" after "Report upload" (section 7). The spinners' defect, in Chromium and WebKit: keyboard focus on the button, Enter, VoiceOver's last phrase let settle (400 ms unchanged, at most one second), then at most two VoiceOver moves while the spinner is shown, each read once a new phrase has come (at most 1.2 seconds), with the cursor's position. The spinner's reading must be the one measured for that browser, exactly (`SPINNER_READINGS`): `bad-no-role` "Loading inbox empty group", `bad-cupertino-no-role` "Loading inbox" (section 7). Every expected reading must hold "Loading inbox" and none of the words that say it is an indicator (`INDICATOR_WORDS`: "progress indicator", VoiceOver's word for the bar here, "progress bar", "progressbar", "progress", "busy indicator", "busy", "activity indicator", "loading indicator", "spinner", "timer"). It fails if any move read an empty phrase, or left both the phrase and the cursor where they were, or if the spinner was not reached within four seconds of Enter while its element was in the page (`judgeSpinnerReading`, tested in the tree spec on made-up readings and on the recording at 7b9dc5c) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -488,13 +488,46 @@ Skips and what they give up, in the tests:
 - A spinner is shown only while its task runs, so no web VoiceOver walk
   at rest reads one. The spinners are read while loading instead
   (`-loading`, section 6): at most two moves from the button, within four
-  seconds of Enter. What that gives up: the reading is judged by words, so
-  a role VoiceOver spoke in words not in `ROLE_WORDS` would pass; the list
-  holds VoiceOver's word for the bar, measured here, and the words for the
-  other roles a spinner could take. A spinner not reached in the window
-  fails the test; it is not passed over.
+  seconds of Enter. A spinner not reached in the window fails the test;
+  it is not passed over.
+- **The spinners' first web VoiceOver reading**
+  (`docs/evidence/probes/c26/voiceover-web-round3-fail.md.txt`, recorded
+  by the principal at 7b9dc5c): 20 passed, 2 failed, both `bad-no-role`.
+  - WebKit, Material's spinner: "Loading inbox empty group", 924 ms after
+    Enter, with the spinner shown. The judge then refused every phrase
+    with "group" in it, as a role word. Material's spinner is an element
+    with `aria-label`, no role, and no children (the tree spec; Chromium's
+    node for it is "generic" with none, `probes/c26/web-spinner-ax.txt`).
+    VoiceOver says "group" for FL-028's slider wrapper as well, the other
+    named element with no role in this project's transcripts ("Volume
+    group", both browsers, `docs/evidence/F10/voiceover-web.md`), and that
+    one has a child and was read with no "empty". This is a measured
+    comparison, not VoiceOver's documented reason: "group" is what
+    VoiceOver says for a named element with no role, and neither word says
+    the spinner is a progress or busy indicator. The reading supports
+    FL-256. So the judge now requires the reading measured for each
+    browser exactly, and refuses only an expected reading with a word that
+    says it is an indicator (`INDICATOR_WORDS`), not "group".
+  - Chromium, Material's spinner: the phrase before the moves was the
+    announcement, "Loading started", and both moves (831 and 1227 ms) read
+    "Loading started" again, judged stale. The test read each phrase
+    straight after its move, and recorded no cursor position, so this
+    recording cannot say whether the cursor moved: onto the spinner with
+    its speech not yet captured, then onto the status line, whose text is
+    also "Loading started"; or past a spinner VoiceOver does not stop on.
+    The sequencing is changed, not the judge's rule: the press's speech is
+    let settle, each move waits for a new phrase (at most 1.2 seconds), and
+    the cursor's position is read with it, so that the same words at a new
+    place are a reading and the same words at the same place are stale.
+    Chromium's expected reading for this spinner is WebKit's, written as a
+    prediction: the next recording confirms it or fails, and if VoiceOver
+    in Chromium cannot be made to read the spinner in the window, FL-256's
+    web VoiceOver claim is narrowed to WebKit for Material's spinner.
+  - Both browsers, Cupertino's spinner: "Loading inbox" (814 ms in
+    Chromium, 830 ms in WebKit), right. Every walk and announcement test
+    passed.
 
-**Not done yet.** The web VoiceOver recording of the spinners while they load (`-loading`), the principal's to make. A release build on Android
+**Not done yet.** A web VoiceOver recording of the spinners while they load (`-loading`) that passes, with Material's spinner heard in Chromium; the principal's to make. A release build on Android
 and iOS with a value in words (FL-258). A native Android `ProgressBar`
 and a UIKit progress view, for comparison. Right-to-left. A real Android
 keyboard.

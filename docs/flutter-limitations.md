@@ -3527,7 +3527,18 @@ yet), **Fixed in x.y** (verified on that version).
     role. HTML's `progress` with no value is an indeterminate
     `progressbar` (MDN), and ARIA's `progressbar` without
     `aria-valuenow` is one (WAI-ARIA 1.2); Flutter has neither for a
-    spinner.
+    spinner. VoiceOver in WebKit, moving onto Material's spinner while it
+    loads (C26 `bad-no-role`, measured, `probes/c26/
+    voiceover-web-round3-fail.md.txt`): "Loading inbox empty group". The
+    name, then "group", as VoiceOver says for FL-028's slider wrapper, the
+    other named element with no role in this project's transcripts
+    ("Volume group", both browsers, `docs/evidence/F10/voiceover-web.md`):
+    a measured comparison, not VoiceOver's documented reason. "empty"
+    comes with an element that has no children (Chromium's node for the
+    spinner has none, `probes/c26/web-spinner-ax.txt`; the slider wrapper,
+    which has one, was read with no "empty"). Neither word says it is a
+    progress or busy indicator. Cupertino's spinner with `Semantics(label:)`
+    round it is plain text, read "Loading inbox" in both browsers.
   - Android 17: an `android.view.View` with the name as its description
     (`android-tree.txt`); TalkBack read the name alone, with no role word
     (`android-talkback.md`). A determinate indicator is an
@@ -3559,8 +3570,13 @@ yet), **Fixed in x.y** (verified on that version).
   text on iOS), the TalkBack transcript (the spinner read by its name with
   no role word), the iOS VoiceOver transcript ("Loading inbox" alone), and
   the web VoiceOver spec, which reads each spinner while it loads in
-  Chromium and WebKit and requires its name and no role word
-  (`judgeSpinnerReading` in `web_tests/vo/c26_vo_walks.js`).
+  Chromium and WebKit and requires the reading measured for that browser,
+  exactly, with its name and no word that says it is an indicator
+  (`SPINNER_READINGS` and `judgeSpinnerReading` in
+  `web_tests/vo/c26_vo_walks.js`). Material's spinner in Chromium is the
+  one reading not yet heard: the recording at 7b9dc5c captured the
+  announcement from before the moves in its place (C26's spec, section
+  7).
   The spinners' measurements in the C26 probe (p05, p08, p14, p20 to p22)
   are this entry's evidence as well.
 - Upstream issue: not searched yet (D25).

@@ -17,8 +17,9 @@
 // three with a bar in each browser, on lists written as predictions: a bar
 // was read with its value twice, in its name and then as a percentage.
 //
-// The spinners are also read while they load (`-loading`): a reading that
-// must have the name and no role word (FL-256), judged by
+// The spinners are also read while they load (`-loading`): each must be
+// read exactly as measured for its browser (SPINNER_READINGS: the name,
+// and no word that says it is an indicator, FL-256), judged by
 // judgeSpinnerReading in c26_vo_walks.js.
 //
 // This spec runs in a browser on a Mac, so bad-adaptive's spinner is the
@@ -26,10 +27,11 @@
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import {
-  activateBrowser, assertCaptureIsLive, heardAfter, lastPhrase, waitUntilQuiet, walkToEnd,
+  activateBrowser, assertCaptureIsLive, cursorBounds, heardAfter, lastPhrase, untilQuiet, waitUntilQuiet,
+  walkToEnd,
 } from './vo_helpers.js';
 import {
-  EXAMPLE_HEADING, WALKS, judgeExampleWalk, judgeSpinnerReading, runWalks, screenStops,
+  EXAMPLE_HEADING, SPINNER_READINGS, WALKS, judgeExampleWalk, judgeSpinnerReading, runWalks, screenStops,
 } from './c26_vo_walks.js';
 
 const SPINNER_NAME = 'Loading inbox';
@@ -48,16 +50,40 @@ const ANNOUNCED = {
 
 const start = (page, slug) => page.locator(`[flt-semantics-identifier="c26-${slug}-start"]`);
 
+const norm = (phrase) => phrase.replace(/\s+/g, ' ').trim();
+
+/**
+ * Waits, after a VoiceOver move, until its last phrase is a new non-empty
+ * one, or `limitMs` has passed, and returns the phrase and the cursor's
+ * bounds then. The first recording read the phrase straight after the
+ * move and, in Chromium, got the announcement from before it twice
+ * (docs/evidence/probes/c26/voiceover-web-round3-fail.md.txt).
+ */
+async function afterMove(page, previous, limitMs = 1200) {
+  const end = Date.now() + limitMs;
+  for (;;) {
+    const phrase = norm(await lastPhrase());
+    const position = await cursorBounds();
+    if ((phrase && phrase !== previous.phrase) || Date.now() >= end) return { phrase, position };
+    await page.waitForTimeout(150);
+  }
+}
+
 // The spinners' defect (FL-256), read while loading: keyboard focus, and
-// with it VoiceOver's cursor, on the button; Enter; then at most two
-// VoiceOver moves forward while the spinner is shown (four seconds), each
-// read straight after the move with the time since Enter and whether the
-// spinner's element was in the page. judgeSpinnerReading requires the name
-// and refuses every role word, and fails a capture that is empty, stale,
-// or late. In Chromium and WebKit.
-for (const slug of ['bad-no-role', 'bad-cupertino-no-role']) {
+// with it VoiceOver's cursor, on the button; Enter; VoiceOver's speech for
+// the press let settle (the announcement "Loading started" in Chromium:
+// until the last phrase holds for 400 ms, at most one second); then at most
+// two VoiceOver moves forward while the spinner is shown (four seconds),
+// each read once it has spoken (afterMove), with the cursor's bounds, the
+// time since Enter, and whether the spinner's element was in the page.
+// judgeSpinnerReading requires the browser's measured reading exactly
+// (SPINNER_READINGS), and fails a capture that is empty, stale, or late.
+// In Chromium and WebKit.
+for (const slug of Object.keys(SPINNER_READINGS)) {
   test(`voiceover reads ${slug}'s spinner while it loads`, async ({ page, voiceOver, browserName }) => {
     expect(voiceOver).toBeTruthy();
+    const expected = SPINNER_READINGS[slug][browserName];
+    expect(expected, `no reading for ${browserName}`).toBeDefined();
     await page.goto(`/#/t/C26/${slug}`, { waitUntil: 'load' });
     await expect(start(page, slug)).toBeVisible();
     await page.waitForTimeout(600);
@@ -70,18 +96,22 @@ for (const slug of ['bad-no-role', 'bad-cupertino-no-role']) {
     await page.keyboard.press('Enter');
     const t0 = Date.now();
     await spinner.waitFor({ timeout: 2000 });
-    await page.waitForTimeout(300);
-    const before = await lastPhrase();
+    const { quiet } = await untilQuiet({
+      read: lastPhrase, sleep: (ms) => page.waitForTimeout(ms), quietMs: 400, limitMs: 1000 });
+    const before = { phrase: norm(await lastPhrase()), position: await cursorBounds() };
+    const settled = `${Date.now() - t0} ms, ${quiet ? 'quiet' : 'not quiet'}`;
     const moves = [];
     for (let i = 0; i < 2; i++) {
       await voiceOver.next();
-      const phrase = (await lastPhrase()).replace(/\s+/g, ' ').trim();
-      moves.push({ phrase, ms: Date.now() - t0, shown: (await spinner.count()) > 0 });
+      const { phrase, position } = await afterMove(page, moves[i - 1] ?? before);
+      moves.push({ phrase, position, ms: Date.now() - t0, shown: (await spinner.count()) > 0 });
       if (phrase.includes(SPINNER_NAME)) break;
     }
-    const { verdict, reason } = judgeSpinnerReading(before, moves, SPINNER_NAME);
-    const shown = moves.map((m) => `${m.phrase || '(empty)'} (${m.ms} ms, spinner ${m.shown ? 'shown' : 'gone'})`).join(' / ');
-    console.log(`C26VO ${browserName} ${slug}-loading | before: ${before || '(empty)'} / ${shown} (${verdict}: ${reason})`);
+    const { verdict, reason } = judgeSpinnerReading(before, moves, SPINNER_NAME, expected);
+    const shown = moves.map((m) =>
+      `${m.phrase || '(empty)'} (${m.ms} ms, spinner ${m.shown ? 'shown' : 'gone'}, at ${m.position})`).join(' / ');
+    console.log(`C26VO ${browserName} ${slug}-loading | before (${settled}): ${before.phrase || '(empty)'} ` +
+      `(at ${before.position}) / ${shown} (${verdict}: ${reason})`);
     expect(verdict, `${slug}: ${reason}`).toBe('right');
   });
 }

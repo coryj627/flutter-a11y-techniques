@@ -10,8 +10,8 @@
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
 import {
-  EXAMPLE_HEADING, EXAMPLE_SCREENS, ROLE_WORDS, SPINNER_MS, WALKS, judgeExampleWalk, judgeSpinnerReading, runWalks,
-  screenStops,
+  EXAMPLE_HEADING, EXAMPLE_SCREENS, INDICATOR_WORDS, SPINNER_MS, SPINNER_READINGS, WALKS, judgeExampleWalk,
+  judgeSpinnerReading, runWalks, screenStops,
 } from './vo/c26_vo_walks.js';
 
 const status = (page, slug) => byId(page, `c26-${slug}-status`);
@@ -71,6 +71,15 @@ async function chromiumProgressBars(page) {
     .map((n) => ({ name: n.name?.value ?? '', value: String(n.value?.value ?? '') }));
 }
 
+/** Chromium's own accessibility nodes named `name`, not ignored and not text, with their roles and child counts. */
+async function chromiumNamed(page, name) {
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  await cdp.detach();
+  return nodes.filter((n) => !n.ignored && n.name?.value === name && !['StaticText', 'InlineTextBox'].includes(n.role?.value))
+    .map((n) => ({ role: n.role?.value, children: (n.childIds || []).length }));
+}
+
 /** Opens `slug`, records announcements, and presses its button with Enter after a Tab to it. */
 async function openAndStart(page, slug) {
   await open(page, slug);
@@ -124,6 +133,10 @@ for (const slug of ['bad-no-role', 'bad-cupertino-no-role']) {
           role: null, label: 'Loading inbox', now: null, min: null, max: null, text: null, tabindex: null,
         });
         await expect(spinner).toHaveAccessibleName('Loading inbox');
+        // Chromium's own node: "generic", named, with no children, which
+        // VoiceOver in WebKit read "Loading inbox empty group" (the VoiceOver
+        // spec, SPINNER_READINGS).
+        expect(await chromiumNamed(page, 'Loading inbox')).toEqual([{ role: 'generic', children: 0 }]);
       } else {
         // Semantics(label:) round a CupertinoActivityIndicator: text.
         expect(await exposed(page, context, spinner)).toEqual({
@@ -343,38 +356,74 @@ test.describe('the VoiceOver walk judge', () => {
 });
 
 // The judge of the VoiceOver spec's spinner reading while loading
-// (judgeSpinnerReading in vo/c26_vo_walks.js), on made-up readings: every
-// shape a move can take, and the ways a capture can be empty, stale, late,
-// or hold a role.
+// (judgeSpinnerReading in vo/c26_vo_walks.js), on made-up readings and on
+// the ones the recording at 7b9dc5c gave (docs/evidence/probes/c26/
+// voiceover-web-round3-fail.md.txt): every shape a move can take, and the
+// ways a capture can be empty, stale, late, or other than the reading
+// measured.
 test.describe('the VoiceOver spinner judge', () => {
   const name = 'Loading inbox';
-  const before = 'Loading started';
-  const at = (phrase, ms = 900, shown = true) => ({ phrase, ms, shown });
-  const judge = (moves, b = before) => judgeSpinnerReading(b, moves, name).verdict;
+  const material = 'Loading inbox empty group';
+  const button = '16, 120, 160, 160';
+  const spinnerAt = '16, 192, 56, 232';
+  const statusAt = '16, 244, 118, 264';
+  const before = { phrase: 'Loading started', position: button };
+  const at = (phrase, position = spinnerAt, ms = 900, shown = true) => ({ phrase, position, ms, shown });
+  const judge = (moves, expected = material, b = before) => judgeSpinnerReading(b, moves, name, expected).verdict;
 
-  test('the name with no role word, in time, while shown, is right', () => {
-    expect(judge([at('Loading inbox')])).toBe('right');
-    // The status line first, then the spinner.
-    expect(judge([at('Inbox not loaded'), at('Loading inbox', 1500)])).toBe('right');
-  });
-  test('every role word fails, whole and in any case', () => {
-    expect(ROLE_WORDS).toContain('progress indicator');
-    for (const word of ROLE_WORDS) {
-      expect(judge([at(`Loading inbox ${word}`)]), word).toBe('wrong');
-      expect(judge([at(`Loading inbox ${word.toUpperCase()}`)]), word).toBe('wrong');
+  test('every expected reading holds the name and no word that says it is an indicator', () => {
+    expect(INDICATOR_WORDS).toContain('progress indicator');
+    expect(INDICATOR_WORDS).not.toContain('group');
+    for (const [slug, byBrowser] of Object.entries(SPINNER_READINGS)) {
+      expect(Object.keys(byBrowser).sort(), slug).toEqual(['chromium', 'webkit']);
+      for (const expected of Object.values(byBrowser)) {
+        expect(judgeSpinnerReading(before, [at(expected)], name, expected).verdict, `${slug}: ${expected}`).toBe('right');
+      }
     }
-    expect(judge([at('Loading inbox 0% progress indicator')])).toBe('wrong');
+  });
+  test('the readings measured at 7b9dc5c', () => {
+    // WebKit, Material's spinner: the reading the old judge refused for
+    // its "group".
+    expect(judge([at(material, spinnerAt, 924)], material,
+      { phrase: 'Playwright: Material spinner window Load inbox button has keyboard focus', position: button })).toBe('right');
+    // Both browsers, Cupertino's spinner.
+    expect(judge([at('Loading inbox', spinnerAt, 814)], 'Loading inbox')).toBe('right');
+    // Chromium, Material's spinner: the announcement three times, at one
+    // place, is stale.
+    expect(judge([at('Loading started', button, 831), at('Loading started', button, 1227)])).toBe('wrong');
+  });
+  test('the reading must be the one expected, exactly', () => {
+    expect(judge([at('Loading inbox')])).toBe('wrong');
+    expect(judge([at('Loading inbox empty group progress indicator')])).toBe('wrong');
+    expect(judge([at('Loading inbox group')])).toBe('wrong');
+    expect(judge([at(material)], 'Loading inbox')).toBe('wrong');
+    // The status line first, then the spinner.
+    expect(judge([at('Inbox not loaded', statusAt), at(material, spinnerAt, 1500)])).toBe('right');
+  });
+  test('an expected reading with an indicator word, or without the name, is refused', () => {
+    for (const word of INDICATOR_WORDS) {
+      for (const expected of [`Loading inbox ${word}`, `Loading inbox ${word.toUpperCase()}`]) {
+        expect(judge([at(expected)], expected), expected).toBe('wrong');
+      }
+    }
+    expect(judge([at('empty group')], 'empty group')).toBe('wrong');
+    expect(judge([at('')], '')).toBe('wrong');
   });
   test('the spinner not reached, or reached late or once gone, fails', () => {
     expect(judge([])).toBe('wrong');
-    expect(judge([at('Inbox not loaded'), at('Back button', 1200)])).toBe('wrong');
-    expect(judge([at('Loading inbox', SPINNER_MS + 1)])).toBe('wrong');
-    expect(judge([at('Loading inbox', 1000, false)])).toBe('wrong');
+    expect(judge([at('Inbox not loaded', statusAt), at('Back button', button, 1200)])).toBe('wrong');
+    expect(judge([at(material, spinnerAt, SPINNER_MS + 1)])).toBe('wrong');
+    expect(judge([at(material, spinnerAt, 1000, false)])).toBe('wrong');
   });
-  test('an empty or stale capture fails', () => {
+  test('an empty or stale capture fails; the same words at a new place are not stale', () => {
     expect(judge([at('')])).toBe('wrong');
-    expect(judge([at('Loading inbox')], 'Loading inbox')).toBe('wrong');
-    expect(judge([at('Inbox not loaded'), at('Inbox not loaded', 1500)])).toBe('wrong');
-    expect(judge([at('Inbox not loaded'), at('', 1500)])).toBe('wrong');
+    expect(judge([at(material, button)], material, { phrase: material, position: button })).toBe('wrong');
+    expect(judge([at('Inbox not loaded', statusAt), at('Inbox not loaded', statusAt, 1500)])).toBe('wrong');
+    expect(judge([at('Inbox not loaded', statusAt), at('', spinnerAt, 1500)])).toBe('wrong');
+    // The status line reads "Loading started", the words of the
+    // announcement before the first move: at a new place it is a reading,
+    // and the spinner is still to come; or it is the end, not reached.
+    expect(judge([at('Loading started', statusAt), at(material, spinnerAt, 1500)])).toBe('right');
+    expect(judge([at('Loading started', statusAt)])).toBe('wrong');
   });
 });
