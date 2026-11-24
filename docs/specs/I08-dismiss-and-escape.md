@@ -38,13 +38,20 @@ or the arrow keys, the user is told what it is.
 | Applies | Applies; Escape measured on iOS 27.0 only, the escape gesture not verified | Limitation ([FL-484](../flutter-limitations.md#fl-484)) |
 
 On the web, in Chromium, Escape is taken for a tooltip that still counts
-as open before the layers can take it
-([FL-484](../flutter-limitations.md#fl-484)). Measured in probes,
-unthrottled, with the mouse resting on Back, the first Escape within about 400 ms of opening
-the layers did not close them in any of the three good examples (20 of
-20, 20 of 20, and 11 of 11 at 383 ms or less), and a second Escape did;
-with the CPU throttled, a tooltip left open under the screen took every
-Escape in `good-widgets`. No workaround is built. The web status was
+as open before the app's default Escape shortcut, which the examples rely
+on, reaches the layers ([FL-484](../flutter-limitations.md#fl-484)).
+Measured in probes, unthrottled, with the mouse resting on Back, the
+first Escape within about 400 ms of opening the layers did not close them
+in any of the three good examples (20 of 20, 20 of 20, and 11 of 11 at
+383 ms or less), and a second Escape did, every time it was sent: about
+six seconds after the first in all three, and 200, 500, or 1000 ms after
+it in `good-widgets` and `good-material`; with the CPU throttled, a
+tooltip left open under the screen took every Escape in `good-widgets`.
+No workaround is built into the examples. A local `Shortcuts` mapping Escape to
+`DismissIntent` round the layers made the first Escape close them in a
+probe (20 of 20 for `good-widgets` and for `good-material`); the examples
+do not use it: it would be a custom solution, and adopting one is the
+owner's decision (FL-484, Workaround). The web status was
 changed from Applies to Limitation by the owner's decision of
 2026-11-23. A limitation status does not need a criterion to fail: the
 technique guide asks for one wherever a limitation has no workaround,
@@ -311,7 +318,8 @@ What the tests leave out, and what that gives up:
   Escape in `good-widgets` with Back's tooltip shown by the mouse held
   unthrottled and at two times slower, but at four times slower the time
   from opening the layers to Escape went past its bound and a second
-  Escape no longer closed them (`web_flake_test_attempt.txt`); CI's
+  Escape, sent about a second after the first, no longer closed them
+  (`web_flake_test_attempt.txt`); CI's
   runner's speed is not known, so it was not added. What that gives up: a
   Flutter release that changes this would not be noticed by the tests.
 
@@ -459,8 +467,10 @@ output of each platform.
 - **On the web, an open tooltip can take Escape from the layers**
   ([FL-484](../flutter-limitations.md#fl-484)). `WidgetsApp` hides
   tooltips on Escape from a `Focus` of its own that a key reaches before
-  the app's `Shortcuts` (read in the source; the order also seen in the
-  probe's trace). In the probe (round 6) Escape failed to close the
+  the app's default `Shortcuts` (read in the source; the order also seen
+  in the probe's trace); a `Shortcuts` inside the layers comes before it,
+  and in a probe it made the first Escape close the layers (FL-484,
+  Workaround; not used by the examples). In the probe (round 6) Escape failed to close the
   layers in two states. The first Escape, with the mouse resting on Back
   and its tooltip shown, sent with no added wait once focus was on
   Contour lines, unthrottled, as Linux: in 20 of 20 runs of

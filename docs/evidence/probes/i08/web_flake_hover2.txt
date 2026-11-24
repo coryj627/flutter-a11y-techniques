@@ -6,8 +6,9 @@ shown), then the keyboard opens the example and Map layers. From Enter on
 Map layers to Escape there are no added waits (for the routes, one Tab, sent
 as soon as the switch is in the tree and focus has left Map layers).
 openToEscapeMs is the time from that Enter to Escape. "closed" is the first
-Escape closing the layers within 5 s; "second" is a second Escape a second
-later, sent only when the first did not.
+Escape closing the layers within 5 s; "second" is a second Escape sent 1 s
+after that 5 s wait (so about 6 s after the first), only when the first did
+not.
 
 == good-widgets: 20 runs, first Escape closed 0 ==
 sorted by openToEscapeMs:

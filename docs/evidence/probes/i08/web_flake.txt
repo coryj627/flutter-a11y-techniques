@@ -154,7 +154,7 @@ ms from the click on the example title; focusin/focusout name the DOM element,
   6741 flutter          handler 10 (Shortcuts < NotificationListener<NavigationNotification> < _SharedAppModel) -> KeyEventResult.ignored
   6741 flutter          late (not handled in the focus tree) up or repeat Escape
   6741 keyup bubble     Escape not prevented
-second Escape a second later: still shown
+second Escape about 6 s after the first (1 s after the 5 s wait): still shown
 dump at the end: primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / (current false, active true), tickers off, text not built; "Back" in /t/I08 (current false, active true), tickers off, text built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built
 
 == probeprof4c: every run, at the positive-control Escape ==

@@ -173,7 +173,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-481](#fl-481) | Nothing closes an overlay that is not a route, and Back pops the screen under it | All | Confirmed |
 | [FL-482](#fl-482) | On the web, Escape does not hide a tooltip while the page has no keyboard focus | Web | Confirmed |
 | [FL-483](#fl-483) | A `ModalBarrier` in an `OverlayPortal`'s overlay takes the whole screen out of the semantics tree, the overlay with it | All (widget test only) | Confirmed (widget test only) |
-| [FL-484](#fl-484) | While a tooltip counts as open, `WidgetsApp` takes Escape for it before the focused layers' own Escape action; a tooltip still hiding when a screen is pushed over it took every Escape | Web (Chromium) | Observed |
+| [FL-484](#fl-484) | While a tooltip counts as open, `WidgetsApp` takes Escape for it before the app's default Escape shortcut reaches the focused layers; a tooltip still hiding when a screen is pushed over it took every Escape | Web (Chromium) | Observed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
@@ -5157,13 +5157,13 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-484
 
-**While a tooltip counts as open, `WidgetsApp` takes Escape for it before the focused layers' own Escape action; a tooltip still hiding when a screen is pushed over it took every Escape.**
+**While a tooltip counts as open, `WidgetsApp` takes Escape for it before the app's default Escape shortcut reaches the focused layers; a tooltip still hiding when a screen is pushed over it took every Escape.**
 
 - Status: Observed, Flutter 3.47.5, web (Chromium, Playwright, on this
   Mac), in two states, both in probes; no test in the repository
   reproduces either. Found in I08 (`docs/evidence/probes/i08/README.md`,
   round 6; `web_flake.txt`, `web_flake_hover.txt`,
-  `web_flake_hover2.txt`).
+  `web_flake_hover2.txt`, `web_flake_hover3.txt`).
   - The first Escape, with a tooltip shown by hover, in all three good
     examples: on the technique screen the mouse rests on Back for a
     second, until its tooltip shows; then, with the mouse left there, the
@@ -5177,8 +5177,14 @@ yet), **Fixed in x.y** (verified on that version).
     `good-material` (116 to 199 ms); in `good-cupertino`, whose popup took
     longer to reach Contour lines (282 to 452 ms), in all 11 runs with
     Escape at 383 ms or less, and in none of the 9 at 398 ms or more. A
-    second Escape a second later closed them in every run where it was
-    sent. An earlier version of the probe (`web_flake_hover.txt`) saw the
+    second Escape, sent about six seconds after the first (after a 5 s
+    wait for the layers to close and a further second), closed them in
+    every run where it was sent. Sent 200, 500, or 1000 ms after the first
+    (third version, release build, `web_flake_hover3.txt`; the layers
+    still shown just before it in every run), it closed `good-widgets`'
+    layers in 60 of 60 runs (20 at each gap; within 9 to 30 ms) and
+    `good-material`'s sheet in 30 of 30 (10 at each gap; within 193 to
+    244 ms). An earlier version of the probe (`web_flake_hover.txt`) saw the
     same in `good-widgets`, with Escape sent within a 50 ms poll of focus
     reaching Contour lines (time not recorded): 28 of 28 runs as Linux, 10
     of 10 as macOS; in its probe build (4 runs, as Linux, Escape after a
@@ -5197,11 +5203,12 @@ yet), **Fixed in x.y** (verified on that version).
     throttled (the same probe, as Linux, 10 runs each,
     `web_flake_hover2.txt`): at two times slower, the first Escape left
     the layers shown in 10 of 10 of `good-widgets` (154 to 220 ms) and of
-    `good-material` (128 to 171 ms), and a second closed them in all 20;
+    `good-material` (128 to 171 ms), and a second Escape, about six
+    seconds after the first, closed them in all 20;
     at four times slower, in 10 of 10 of `good-widgets` (199 to 259 ms)
     and 6 of 10 of `good-material` (226 to 317 ms; the 4 that closed were
-    at 262 ms or later), and a second Escape a second later left them
-    shown in 4 of the 10 `good-widgets` runs and 3 of the 6 `good-material`
+    at 262 ms or later), and a second Escape about six seconds after the
+    first left them shown in 4 of the 10 `good-widgets` runs and 3 of the 6 `good-material`
     runs where it was sent. Made into a test of `good-widgets` in the I08
     web spec, it held unthrottled and at two times slower but not at four
     (`web_flake_test_attempt.txt`), so it is not a test.
@@ -5219,7 +5226,8 @@ yet), **Fixed in x.y** (verified on that version).
     screen's route, now under the pushed example with its tickers off.
     Escape reached Flutter with focus on Contour lines, `WidgetsApp`'s
     tooltip `Focus` returned `handled`, and the layers' `DismissIntent`
-    action did not run; a second Escape a second later did the same.
+    action did not run; a second Escape about six seconds after the first
+    (after the 5 s wait and a further second) did the same.
     Controls, with the same steps: 0 of 30 with Flutter seeing macOS at
     four times; 0 of 20 unthrottled as Linux; 40 of 40 closed, as Linux
     at four times, when the mouse was moved off the app bar for a second
@@ -5237,7 +5245,13 @@ yet), **Fixed in x.y** (verified on that version).
   that turns Escape into `DismissIntent`, so a key on its way up from the
   focused node reaches it first, and the layers' action never sees that
   Escape (also measured: in the probe's trace of the focus chain, the
-  tooltip `Focus` ran before that `Shortcuts`). A tooltip leaves the list
+  tooltip `Focus` ran before that `Shortcuts`). That is the order for the
+  app's default Escape mapping, which every route and the I08 examples
+  rely on. A `Shortcuts` nearer the focused node, inside the layers, comes
+  before that `Focus`: `FocusManager` sends a key from the focused node
+  up through its ancestors and stops at the first that handles it (read
+  in the source, `widgets/focus_manager.dart`; measured below, under
+  Workaround). A tooltip leaves the list
   only when its hide animation ends
   (`RawTooltipState._handleStatusChanged`). Not measured: that the Back
   tooltip stayed in the list because its route's tickers were off before
@@ -5250,7 +5264,10 @@ yet), **Fixed in x.y** (verified on that version).
   tooltip is shown, in an overlay or a route; in the second, on every press until the user leaves
   the screen. In `good-widgets` Tab stays in the layers (`closedLoop`).
 - WCAG: none as written. 2.1.2 No Keyboard Trap needs focus to be movable
-  away with the keyboard: in the first state a second Escape did it; in
+  away with the keyboard: in the first state a second Escape did it,
+  every time it was sent (about six seconds after the first in all three
+  good examples, and 200, 500, or 1000 ms after it in `good-widgets` and
+  `good-material`); in
   the second, whether the browser's Back still closed the layers was not
   measured, so no failure is claimed. 1.4.13 Content on Hover or Focus is
   about dismissing the hover content itself, and in the first state the
@@ -5264,10 +5281,27 @@ yet), **Fixed in x.y** (verified on that version).
   after the mouse had rested on Back; whether one shows on keyboard focus
   was not checked. Whether a keyboard-only or touch user can reach either
   state was not measured.
-- Workaround: none built. Flutter has not added a way for a focused
-  dialog or overlay to take Escape before the tooltip handler. Read in the
-  source, not measured: `TooltipVisibility(visible: false)` stops Material
-  tooltips from showing, at the cost of the tooltips themselves.
+- Workaround: none built into the examples. Measured in a probe only: a
+  local `Shortcuts` mapping Escape to `DismissIntent` round the layers
+  (round `good-widgets`' layers, inside their `Actions`, and round
+  `good-material`'s sheet content; `probe_web_local_shortcuts.diff.txt`).
+  With the first state's steps and timing (unthrottled, Flutter seeing
+  Linux, a profile-mode probe build), the first Escape closed the layers
+  in 20 of 20 runs of `good-widgets` (85 to 205 ms from Enter on Map
+  layers to Escape) and 20 of 20 of `good-material` (115 to 203 ms); in
+  the same probe build without it, in 0 of 10 of each (111 to 233 ms and
+  110 to 180 ms) (`web_flake_hover3.txt`). After the layers had closed,
+  Back's tooltip was in the tree, with the mouse still resting on Back;
+  whether that Escape left it open or it showed again on hover was not
+  separated. Not measured with it: the every-Escape state, the other
+  examples, throttled CPUs, other browsers and platforms. The examples do
+  not use it: by the rule of the register of custom solutions
+  ([custom-solutions.md](custom-solutions.md)), a `Shortcuts` or
+  `Actions` built round a framework widget to work around a limitation is
+  a custom solution (C12 `good-cupertino`'s `Actions` is the precedent),
+  and adopting one is the owner's decision. Read in the source, not
+  measured: `TooltipVisibility(visible: false)` stops Material tooltips
+  from showing, at the cost of the tooltips themselves.
   I08's web tests move the mouse off the app bar and wait until no
   tooltip is shown before they open a good example in the positive
   controls, so that this does not decide them.

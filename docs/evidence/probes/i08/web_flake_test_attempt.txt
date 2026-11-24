@@ -7,8 +7,9 @@ times: npx playwright test p08_fixcheck.spec.js -g FL-484 --repeat-each=10
 --workers=2, release build, Flutter 3.47.5, Chromium from Playwright, this
 Mac.
 
-First form, which also asserted that a second Escape (sent with 400 ms
-after it, then up to 5 s for the closed state) closed the layers:
+First form, which also asserted that a second Escape (sent about a second
+after the first, after a 1 s wait and two reads; then 400 ms and up to 5 s
+for the closed state) closed the layers:
 CPU 1x: ms [179, 181, 182, 182, 188, 188, 193, 197, 198, 205]; failed 0 of 10
 CPU 2x: ms [142, 147, 150, 150, 155, 163, 163, 190, 214, 224]; failed 0 of 10
 CPU 4x: ms [193, 202, 203, 212, 212, 213, 227, 227, 230, 239]; failed 10 of 10

@@ -1,0 +1,41 @@
+diff --git a/lib/techniques/i08_dismiss_and_escape/examples.dart b/lib/techniques/i08_dismiss_and_escape/examples.dart
+index 17e2cb2..0576551 100644
+--- a/lib/techniques/i08_dismiss_and_escape/examples.dart
++++ b/lib/techniques/i08_dismiss_and_escape/examples.dart
+@@ -2,6 +2,7 @@ import 'dart:async';
+ 
+ import 'package:flutter/cupertino.dart';
+ import 'package:flutter/material.dart';
++import 'package:flutter/services.dart';
+ 
+ import '../../catalog/test_id.dart';
+ 
+@@ -150,7 +151,13 @@ class GoodMaterial extends StatelessWidget {
+       slug: 'good-material',
+       show: (context, map) => showModalBottomSheet<void>(
+         context: context,
+-        builder: (context) => _layersPanel(context, map),
++        // PROBE ONLY (FL-484): a local Escape mapping round the sheet.
++        builder: (context) => Shortcuts(
++          shortcuts: const {
++            SingleActivator(LogicalKeyboardKey.escape): DismissIntent(),
++          },
++          child: _layersPanel(context, map),
++        ),
+       ),
+     );
+   }
+@@ -316,6 +323,13 @@ class _OverlayState extends State<_Overlay> {
+       ),
+     );
+     if (widget.escape) {
++      // PROBE ONLY (FL-484): a local Escape mapping round the layers.
++      layers = Shortcuts(
++        shortcuts: const {
++          SingleActivator(LogicalKeyboardKey.escape): DismissIntent(),
++        },
++        child: layers,
++      );
+       layers = Actions(
+         actions: {
+           DismissIntent: CallbackAction<DismissIntent>(

@@ -4,7 +4,8 @@ Playwright, this Mac, two workers, no CPU throttling. Source:
 probe_web_flake_hover.spec.js.txt, p08tip.config.js.txt; the probe build
 is probe_web_flake.dart.txt with probe_web_flake_examples.diff.txt.
 "closed" is the first Escape closing the layers within 5 s; "second" is
-a second Escape a second later, sent only when the first did not.
+a second Escape sent 1 s after the 5 s wait (so about 6 s after the
+first), only when the first did not.
 
 == det_hover.jsonl: release build; Linux; no second Escape recorded (an earlier version of the probe) ==
 run  0 good-widgets: closed False, second None

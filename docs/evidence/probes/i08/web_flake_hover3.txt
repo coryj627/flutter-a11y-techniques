@@ -1,0 +1,231 @@
+I08 step-4 probe, third version, 2026-11-23: probe_web_flake_hover3.spec.js.txt
+(served by p08tip.config.js.txt). Flutter 3.47.5, Chromium from Playwright, this
+Mac, two workers, Flutter seeing Linux, no CPU throttling. As the second
+version: the mouse rests on the technique screen's Back for a second (its
+tooltip shown), the keyboard opens the example and Map layers, and the first
+Escape is sent with no added wait once DOM focus is on Contour lines
+(openToEscapeMs, from Enter on Map layers).
+
+== A. Local Escape shortcut (probe build: probe_web_flake.dart.txt with
+   probe_web_local_shortcuts.diff.txt, profile mode) ==
+A Shortcuts mapping Escape to DismissIntent round good-widgets' layers (inside
+their Actions) and round good-material's sheet content. "closed" is the first
+Escape closing the layers within 5 s. Tree dumps only after the outcome.
+
+-- good-widgets, local shortcut: 20 runs, first Escape closed 20 --
+run  0: openToEscapeMs  194, closed True, second None
+run  1: openToEscapeMs  182, closed True, second None
+run  2: openToEscapeMs  198, closed True, second None
+run  3: openToEscapeMs  146, closed True, second None
+run  4: openToEscapeMs   85, closed True, second None
+run  5: openToEscapeMs  189, closed True, second None
+run  6: openToEscapeMs  205, closed True, second None
+run  7: openToEscapeMs  189, closed True, second None
+run  8: openToEscapeMs  150, closed True, second None
+run  9: openToEscapeMs  152, closed True, second None
+run 10: openToEscapeMs  192, closed True, second None
+run 11: openToEscapeMs  203, closed True, second None
+run 12: openToEscapeMs  181, closed True, second None
+run 13: openToEscapeMs  158, closed True, second None
+run 14: openToEscapeMs  185, closed True, second None
+run 15: openToEscapeMs  187, closed True, second None
+run 16: openToEscapeMs  183, closed True, second None
+run 17: openToEscapeMs  199, closed True, second None
+run 18: openToEscapeMs  183, closed True, second None
+run 19: openToEscapeMs  178, closed True, second None
+steps of run 0:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-widgets-open
+  layers shown: focus i08-good-widgets-contours
+  waited 0 ms before Escape
+  dump after the first Escape's outcome: primary: node i08-good-widgets-open, route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 14; barriers 0; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text built
+  dump at the end: primary: node i08-good-widgets-open, route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 14; barriers 0; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text built
+
+-- good-material, local shortcut: 20 runs, first Escape closed 20 --
+run  0: openToEscapeMs  183, closed True, second None
+run  1: openToEscapeMs  187, closed True, second None
+run  2: openToEscapeMs  176, closed True, second None
+run  3: openToEscapeMs  192, closed True, second None
+run  4: openToEscapeMs  169, closed True, second None
+run  5: openToEscapeMs  144, closed True, second None
+run  6: openToEscapeMs  189, closed True, second None
+run  7: openToEscapeMs  183, closed True, second None
+run  8: openToEscapeMs  184, closed True, second None
+run  9: openToEscapeMs  151, closed True, second None
+run 10: openToEscapeMs  203, closed True, second None
+run 11: openToEscapeMs  115, closed True, second None
+run 12: openToEscapeMs  118, closed True, second None
+run 13: openToEscapeMs  153, closed True, second None
+run 14: openToEscapeMs  120, closed True, second None
+run 15: openToEscapeMs  116, closed True, second None
+run 16: openToEscapeMs  174, closed True, second None
+run 17: openToEscapeMs  131, closed True, second None
+run 18: openToEscapeMs  183, closed True, second None
+run 19: openToEscapeMs  174, closed True, second None
+steps of run 0:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-material-open
+  layers shown: focus i08-good-material-contours
+  waited 0 ms before Escape
+  dump after the first Escape's outcome: primary: node i08-good-material-open, route /t/I08/good-material, hasPrimaryFocus true, canRequestFocus true, ancestors 14; barriers 0; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-material (current true, active true), tickers on, text built
+  dump at the end: primary: node i08-good-material-open, route /t/I08/good-material, hasPrimaryFocus true, canRequestFocus true, ancestors 14; barriers 0; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-material (current true, active true), tickers on, text built
+
+== B. Control: the same probe build without the local shortcut
+   (probe_web_flake.dart.txt alone, profile mode) ==
+"second" here is a second Escape sent 1 s after the 5 s wait, so about 6 s
+after the first.
+
+-- good-widgets, no local shortcut: 10 runs, first Escape closed 0 --
+run  0: openToEscapeMs  196, closed False, second closed
+run  1: openToEscapeMs  114, closed False, second closed
+run  2: openToEscapeMs  191, closed False, second closed
+run  3: openToEscapeMs  186, closed False, second closed
+run  4: openToEscapeMs  233, closed False, second closed
+run  5: openToEscapeMs  189, closed False, second closed
+run  6: openToEscapeMs  111, closed False, second closed
+run  7: openToEscapeMs  190, closed False, second closed
+run  8: openToEscapeMs  194, closed False, second closed
+run  9: openToEscapeMs  159, closed False, second closed
+steps of run 0:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-widgets-open
+  layers shown: focus i08-good-widgets-contours
+  waited 0 ms before Escape
+  dump after the first Escape's outcome: primary: node i08-good-widgets-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 1; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text not built
+  dump at the end: primary: node i08-good-widgets-open, route /t/I08/good-widgets, hasPrimaryFocus true, canRequestFocus true, ancestors 14; barriers 0; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-widgets (current true, active true), tickers on, text built
+
+-- good-material, no local shortcut: 10 runs, first Escape closed 0 --
+run  0: openToEscapeMs  168, closed False, second closed
+run  1: openToEscapeMs  137, closed False, second closed
+run  2: openToEscapeMs  155, closed False, second closed
+run  3: openToEscapeMs  180, closed False, second closed
+run  4: openToEscapeMs  110, closed False, second closed
+run  5: openToEscapeMs  176, closed False, second closed
+run  6: openToEscapeMs  138, closed False, second closed
+run  7: openToEscapeMs  142, closed False, second closed
+run  8: openToEscapeMs  151, closed False, second closed
+run  9: openToEscapeMs  137, closed False, second closed
+steps of run 0:
+  hovered Back: tooltip true
+  title focused true; tooltip true
+  example shown: tooltip true; focus FLT-SEMANTICS Back
+  before Enter: focus i08-good-material-open
+  layers shown: focus i08-good-material-contours
+  waited 0 ms before Escape
+  dump after the first Escape's outcome: primary: node i08-good-material-contours, no route, hasPrimaryFocus true, canRequestFocus true, ancestors 13; barriers 0; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-material tickers on, text not built
+  dump at the end: primary: node i08-good-material-open, route /t/I08/good-material, hasPrimaryFocus true, canRequestFocus true, ancestors 14; barriers 0; tooltips: "About" in / tickers off, text not built; "Back" in /t/I08 tickers off, text not built; "Back" in /t/I08/good-material (current true, active true), tickers on, text built
+
+== C. The second Escape, P08_GAP ms after the first (release build, the
+   examples as committed) ==
+shownAtGap: both switches still in the tree just before the second Escape;
+actualGapMs: measured time between the two Escapes; secondToClosedMs: from
+the second Escape until the switches were gone (polled every 20 ms).
+
+-- good-widgets, gap 200 ms: 20 runs, shown at the gap 20, closed after the second Escape 20 --
+run  0: openToEscapeMs  183, actualGapMs  202, shownAtGap True, secondToClosedMs 30
+run  1: openToEscapeMs  181, actualGapMs  203, shownAtGap True, secondToClosedMs 30
+run  2: openToEscapeMs  158, actualGapMs  203, shownAtGap True, secondToClosedMs 10
+run  3: openToEscapeMs  188, actualGapMs  201, shownAtGap True, secondToClosedMs 27
+run  4: openToEscapeMs  183, actualGapMs  203, shownAtGap True, secondToClosedMs 10
+run  5: openToEscapeMs  171, actualGapMs  211, shownAtGap True, secondToClosedMs 25
+run  6: openToEscapeMs  189, actualGapMs  203, shownAtGap True, secondToClosedMs 30
+run  7: openToEscapeMs  186, actualGapMs  202, shownAtGap True, secondToClosedMs 10
+run  8: openToEscapeMs  182, actualGapMs  201, shownAtGap True, secondToClosedMs 26
+run  9: openToEscapeMs  146, actualGapMs  205, shownAtGap True, secondToClosedMs 23
+run 10: openToEscapeMs  156, actualGapMs  206, shownAtGap True, secondToClosedMs 24
+run 11: openToEscapeMs  181, actualGapMs  202, shownAtGap True, secondToClosedMs 23
+run 12: openToEscapeMs  159, actualGapMs  206, shownAtGap True, secondToClosedMs 25
+run 13: openToEscapeMs  191, actualGapMs  201, shownAtGap True, secondToClosedMs 25
+run 14: openToEscapeMs  190, actualGapMs  201, shownAtGap True, secondToClosedMs 26
+run 15: openToEscapeMs  181, actualGapMs  202, shownAtGap True, secondToClosedMs 25
+run 16: openToEscapeMs  186, actualGapMs  201, shownAtGap True, secondToClosedMs 26
+run 17: openToEscapeMs  154, actualGapMs  201, shownAtGap True, secondToClosedMs 30
+run 18: openToEscapeMs  193, actualGapMs  201, shownAtGap True, secondToClosedMs 9
+run 19: openToEscapeMs  160, actualGapMs  202, shownAtGap True, secondToClosedMs 26
+
+-- good-widgets, gap 500 ms: 20 runs, shown at the gap 20, closed after the second Escape 20 --
+run  0: openToEscapeMs  190, actualGapMs  502, shownAtGap True, secondToClosedMs 14
+run  1: openToEscapeMs  198, actualGapMs  503, shownAtGap True, secondToClosedMs 21
+run  2: openToEscapeMs  190, actualGapMs  527, shownAtGap True, secondToClosedMs 14
+run  3: openToEscapeMs  171, actualGapMs  503, shownAtGap True, secondToClosedMs 14
+run  4: openToEscapeMs  198, actualGapMs  529, shownAtGap True, secondToClosedMs 10
+run  5: openToEscapeMs  202, actualGapMs  503, shownAtGap True, secondToClosedMs 15
+run  6: openToEscapeMs  162, actualGapMs  529, shownAtGap True, secondToClosedMs 14
+run  7: openToEscapeMs  191, actualGapMs  502, shownAtGap True, secondToClosedMs 14
+run  8: openToEscapeMs  191, actualGapMs  502, shownAtGap True, secondToClosedMs 9
+run  9: openToEscapeMs  188, actualGapMs  501, shownAtGap True, secondToClosedMs 15
+run 10: openToEscapeMs  188, actualGapMs  501, shownAtGap True, secondToClosedMs 10
+run 11: openToEscapeMs  222, actualGapMs  547, shownAtGap True, secondToClosedMs 11
+run 12: openToEscapeMs  187, actualGapMs  501, shownAtGap True, secondToClosedMs 14
+run 13: openToEscapeMs  190, actualGapMs  501, shownAtGap True, secondToClosedMs 15
+run 14: openToEscapeMs  194, actualGapMs  502, shownAtGap True, secondToClosedMs 16
+run 15: openToEscapeMs  182, actualGapMs  502, shownAtGap True, secondToClosedMs 9
+run 16: openToEscapeMs  201, actualGapMs  512, shownAtGap True, secondToClosedMs 20
+run 17: openToEscapeMs  184, actualGapMs  502, shownAtGap True, secondToClosedMs 17
+run 18: openToEscapeMs  186, actualGapMs  502, shownAtGap True, secondToClosedMs 13
+run 19: openToEscapeMs  191, actualGapMs  529, shownAtGap True, secondToClosedMs 9
+
+-- good-widgets, gap 1000 ms: 20 runs, shown at the gap 20, closed after the second Escape 20 --
+run  0: openToEscapeMs  196, actualGapMs 1023, shownAtGap True, secondToClosedMs 23
+run  1: openToEscapeMs  184, actualGapMs 1002, shownAtGap True, secondToClosedMs 19
+run  2: openToEscapeMs  199, actualGapMs 1003, shownAtGap True, secondToClosedMs 23
+run  3: openToEscapeMs  214, actualGapMs 1002, shownAtGap True, secondToClosedMs 11
+run  4: openToEscapeMs  157, actualGapMs 1002, shownAtGap True, secondToClosedMs 10
+run  5: openToEscapeMs  199, actualGapMs 1003, shownAtGap True, secondToClosedMs 24
+run  6: openToEscapeMs  203, actualGapMs 1003, shownAtGap True, secondToClosedMs 22
+run  7: openToEscapeMs  197, actualGapMs 1028, shownAtGap True, secondToClosedMs 15
+run  8: openToEscapeMs  183, actualGapMs 1003, shownAtGap True, secondToClosedMs 24
+run  9: openToEscapeMs  189, actualGapMs 1003, shownAtGap True, secondToClosedMs 15
+run 10: openToEscapeMs  201, actualGapMs 1002, shownAtGap True, secondToClosedMs 22
+run 11: openToEscapeMs  147, actualGapMs 1002, shownAtGap True, secondToClosedMs 18
+run 12: openToEscapeMs  189, actualGapMs 1027, shownAtGap True, secondToClosedMs 24
+run 13: openToEscapeMs  192, actualGapMs 1002, shownAtGap True, secondToClosedMs 13
+run 14: openToEscapeMs  187, actualGapMs 1002, shownAtGap True, secondToClosedMs 12
+run 15: openToEscapeMs  188, actualGapMs 1002, shownAtGap True, secondToClosedMs 10
+run 16: openToEscapeMs  181, actualGapMs 1002, shownAtGap True, secondToClosedMs 28
+run 17: openToEscapeMs  183, actualGapMs 1002, shownAtGap True, secondToClosedMs 9
+run 18: openToEscapeMs  193, actualGapMs 1003, shownAtGap True, secondToClosedMs 22
+run 19: openToEscapeMs  186, actualGapMs 1002, shownAtGap True, secondToClosedMs 14
+
+-- good-material, gap 200 ms: 10 runs, shown at the gap 10, closed after the second Escape 10 --
+run  0: openToEscapeMs  147, actualGapMs  205, shownAtGap True, secondToClosedMs 206
+run  1: openToEscapeMs  141, actualGapMs  202, shownAtGap True, secondToClosedMs 223
+run  2: openToEscapeMs  174, actualGapMs  204, shownAtGap True, secondToClosedMs 226
+run  3: openToEscapeMs  116, actualGapMs  203, shownAtGap True, secondToClosedMs 220
+run  4: openToEscapeMs  155, actualGapMs  202, shownAtGap True, secondToClosedMs 229
+run  5: openToEscapeMs  168, actualGapMs  202, shownAtGap True, secondToClosedMs 207
+run  6: openToEscapeMs  184, actualGapMs  202, shownAtGap True, secondToClosedMs 229
+run  7: openToEscapeMs  110, actualGapMs  202, shownAtGap True, secondToClosedMs 222
+run  8: openToEscapeMs  150, actualGapMs  200, shownAtGap True, secondToClosedMs 220
+run  9: openToEscapeMs  142, actualGapMs  201, shownAtGap True, secondToClosedMs 244
+
+-- good-material, gap 500 ms: 10 runs, shown at the gap 10, closed after the second Escape 10 --
+run  0: openToEscapeMs  194, actualGapMs  502, shownAtGap True, secondToClosedMs 211
+run  1: openToEscapeMs  173, actualGapMs  503, shownAtGap True, secondToClosedMs 222
+run  2: openToEscapeMs  108, actualGapMs  503, shownAtGap True, secondToClosedMs 227
+run  3: openToEscapeMs  191, actualGapMs  503, shownAtGap True, secondToClosedMs 235
+run  4: openToEscapeMs  159, actualGapMs  501, shownAtGap True, secondToClosedMs 216
+run  5: openToEscapeMs  153, actualGapMs  501, shownAtGap True, secondToClosedMs 216
+run  6: openToEscapeMs  191, actualGapMs  503, shownAtGap True, secondToClosedMs 210
+run  7: openToEscapeMs  176, actualGapMs  501, shownAtGap True, secondToClosedMs 227
+run  8: openToEscapeMs  154, actualGapMs  503, shownAtGap True, secondToClosedMs 193
+run  9: openToEscapeMs  138, actualGapMs  507, shownAtGap True, secondToClosedMs 195
+
+-- good-material, gap 1000 ms: 10 runs, shown at the gap 10, closed after the second Escape 10 --
+run  0: openToEscapeMs  161, actualGapMs 1004, shownAtGap True, secondToClosedMs 236
+run  1: openToEscapeMs  153, actualGapMs 1006, shownAtGap True, secondToClosedMs 211
+run  2: openToEscapeMs  118, actualGapMs 1004, shownAtGap True, secondToClosedMs 220
+run  3: openToEscapeMs  109, actualGapMs 1006, shownAtGap True, secondToClosedMs 214
+run  4: openToEscapeMs  132, actualGapMs 1001, shownAtGap True, secondToClosedMs 220
+run  5: openToEscapeMs  141, actualGapMs 1005, shownAtGap True, secondToClosedMs 202
+run  6: openToEscapeMs  142, actualGapMs 1007, shownAtGap True, secondToClosedMs 215
+run  7: openToEscapeMs  191, actualGapMs 1002, shownAtGap True, secondToClosedMs 207
+run  8: openToEscapeMs  146, actualGapMs 1002, shownAtGap True, secondToClosedMs 211
+run  9: openToEscapeMs  118, actualGapMs 1002, shownAtGap True, secondToClosedMs 197
+

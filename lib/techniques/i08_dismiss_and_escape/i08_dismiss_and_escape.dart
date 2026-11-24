@@ -23,13 +23,16 @@ final i08DismissAndEscape = Technique(
     ),
     AppPlatform.web: PlatformStatus.limitation(
       'In Chromium, while a tooltip still counts as open after a mouse '
-      'hover, Flutter takes Escape for the tooltip before the layers can '
-      '(limitation FL-484). In probes, unthrottled, with the mouse resting '
-      'on Back, the first Escape within about 400 ms of opening the layers '
-      'did not close them in any of the three good examples (20 of 20, 20 '
-      'of 20, and 11 of 11 at 383 ms or less); a second Escape did. With '
-      'the CPU throttled, a tooltip left open under the screen took every '
-      'Escape in good-widgets. No workaround is built.',
+      'hover, Flutter takes Escape for the tooltip before the app\'s '
+      'default Escape shortcut reaches the layers (limitation FL-484). In '
+      'probes, unthrottled, with the mouse resting on Back, the first '
+      'Escape within about 400 ms of opening the layers did not close them '
+      'in any of the three good examples (20 of 20, 20 of 20, and 11 of 11 '
+      'at 383 ms or less); a second Escape did, about six seconds after '
+      'the first in all three, and 200, 500, or 1000 ms after it in '
+      'good-widgets and good-material. With the CPU throttled, a tooltip '
+      'left open under the screen took every Escape in good-widgets. No '
+      'workaround is built into the examples.',
     ),
   },
   wcag: const [WcagCriterion('2.1.2', 'No Keyboard Trap', 'no-keyboard-trap')],

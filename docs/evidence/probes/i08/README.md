@@ -320,14 +320,15 @@ counts: `web_flake.txt`.
   focus both on Contour lines in the overlay, one barrier, the Escape
   `keydown` reaching Flutter with nothing else pressed. Flutter took the
   key (the engine stopped the event, and the late handler never saw it),
-  but the layers' `DismissIntent` action did not run. A second Escape a
-  second later: the same, in every failed run.
+  but the layers' `DismissIntent` action did not run. A second Escape,
+  about six seconds after the first (after the probe's 5 s wait for the layers to close and a further second): the same, in every failed run.
 - **What took it.** The handler that returned `handled` was `WidgetsApp`'s
   own `Focus` for tooltips (`widgets/app.dart`: it handles Escape when
   `RawTooltip.dismissAllToolTips()` returns true, which it does whenever a
   tooltip is registered as open). It is lower in the focus chain than the
-  app's `Shortcuts` that turns Escape into `DismissIntent`, so it runs
-  first. In the 30 runs that list tooltips, the technique screen's Back
+  app's default `Shortcuts` that turns Escape into `DismissIntent`, so it
+  runs first. (A `Shortcuts` inside the layers would be lower still: see
+  the fifth part.) In the 30 runs that list tooltips, the technique screen's Back
   tooltip was built when the test clicked the example's title in all 30
   (the mouse was still where it had clicked Back on the bad example's
   screen, which is where the technique screen's Back appears). In the 25
@@ -365,7 +366,7 @@ is on Contour lines.
 - `good-widgets`, Escape within a 50 ms poll of focus reaching Contour
   lines (the time from opening the layers not recorded in this version):
   the first Escape left the layers shown in 28 of 28 runs with Flutter
-  seeing Linux and 10 of 10 seeing macOS. A second Escape a second later
+  seeing Linux and 10 of 10 seeing macOS. A second Escape, about six seconds after the first (after the probe's 5 s wait for the layers to close and a further second),
   closed them in all 28 where it was sent. In the probe build (4 runs, as
   Linux, with a walk of the widget tree before Escape) the tooltip in the
   tree at the first Escape was the example screen's own Back tooltip, in
@@ -395,8 +396,7 @@ time from that Enter to Escape recorded:
 - `good-cupertino`: its popup took longer to reach Contour lines, so
   Escape came at 282 to 452 ms; left shown in all 11 runs at 383 ms or
   less, closed in all 9 at 398 ms or more.
-- A second Escape a second later closed them in every run where it was
-  sent.
+- A second Escape, about six seconds after the first (after the probe's 5 s wait for the layers to close and a further second), closed them in every run where it was sent.
 
 So at comparable timing no difference was seen between the overlay and
 the routes; going by the `good-cupertino` runs, the state lasts about
@@ -418,11 +418,46 @@ because of FL-484. The same hover probe was then run with the CPU
 throttled (10 runs per example, as Linux, appended to
 `web_flake_hover2.txt`): at two times slower the first Escape left the
 layers shown in every run of `good-widgets` and `good-material`, and a
-second closed them; at four times slower the first Escape left
+second, about six seconds after the first, closed them; at four times
+slower the first Escape left
 `good-widgets`' layers shown in 10 of 10 and `good-material`'s in 6 of
-10 (those that closed had Escape at 262 ms or later), and a second Escape
-did not always close them. A test of `good-widgets` in the I08 web spec
+10 (those that closed had Escape at 262 ms or later), and a second
+Escape, about six seconds after the first, did not always close them. A test of `good-widgets` in the I08 web spec
 held unthrottled and at two times slower, and at four times slower once
-went past its 300 ms bound, with the second Escape, in its first form,
-leaving the layers shown in 10 of 10 (`web_flake_test_attempt.txt`). It
+went past its 300 ms bound, with the second Escape, in its first form
+sent about a second after the first, leaving the layers shown in 10 of 10 (`web_flake_test_attempt.txt`). It
 was not added.
+
+### Round 6, fifth part: a local Escape shortcut, and the second Escape's timing
+
+After review: `probe_web_flake_hover3.spec.js.txt` (the second version,
+with `P08_GAP` added and the probe build's tree dumps taken only after the
+outcome, so that they do not delay Escape), output `web_flake_hover3.txt`.
+Unthrottled, Flutter seeing Linux, the same steps and timing as the
+second version.
+
+- **A local Escape shortcut.** The probe build of `probe_web_flake.dart.txt`
+  with `probe_web_local_shortcuts.diff.txt` (profile mode; never committed
+  to the examples) puts a `Shortcuts` mapping Escape to `DismissIntent`
+  round `good-widgets`' layers, inside their `Actions`, and round
+  `good-material`'s sheet content. The first Escape closed the layers in
+  20 of 20 runs of `good-widgets` (85 to 205 ms from Enter on Map layers
+  to Escape) and 20 of 20 of `good-material` (115 to 203 ms). The same
+  probe build without the diff, as a control: 0 of 10 of each (111 to
+  233 ms, 110 to 180 ms). After the layers had closed, the example
+  screen's Back tooltip was in the tree, with the mouse still resting on
+  Back; whether that Escape left it open or it showed again on hover was
+  not separated. Read in the source: `FocusManager` sends a key from the
+  focused node up through its ancestors and stops at the first that
+  handles it, so a `Shortcuts` inside the layers comes before
+  `WidgetsApp`'s tooltip `Focus`. The examples do not use it (FL-484,
+  Workaround).
+- **The second Escape, 200, 500, and 1000 ms after the first** (release
+  build, the examples as committed). Just before the second Escape the
+  layers were still shown in every run, and the second Escape closed them
+  in every run: `good-widgets` 20 of 20 at each gap (actual gaps 201 to
+  211, 501 to 547, 1002 to 1028 ms; closed within 9 to 30 ms),
+  `good-material` 10 of 10 at each gap (actual gaps 200 to 205, 501 to
+  507, 1001 to 1007 ms; closed within 193 to 244 ms, the sheet's own
+  closing). Before this, every second Escape in the probes was sent about
+  six seconds after the first.
