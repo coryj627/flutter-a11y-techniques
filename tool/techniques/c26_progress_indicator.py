@@ -110,7 +110,9 @@ VOICEOVER_WEB_METHOD = (
     "let settle (400 ms unchanged, at most one second), and at most two `voiceOver.next()` moves "
     "while the spinner is shown, each read once a new phrase has come (at most 1.2 seconds), with "
     "the cursor's position and the time since Enter; the spinner's reading must be the one measured "
-    "for that browser, exactly, holding its name and no word that says it is an indicator, and an "
-    "empty, stale (phrase and position unchanged), or late capture fails "
-    "(web_tests/vo/c26_vo_walks.js, SPINNER_READINGS and judgeSpinnerReading). No runner retries"
+    "for that browser, exactly, holding its name and no word that says it is an indicator. "
+    "`-loading-passed-over`, Material's spinner in Chromium, as measured: one move, which must land "
+    "on the status line below the spinner's place and must not read the spinner. An empty, stale "
+    "(phrase and position unchanged), or late capture fails (web_tests/vo/c26_vo_walks.js, "
+    "SPINNER_READINGS, judgeSpinnerReading and judgeSpinnerPassedOver). No runner retries"
 )

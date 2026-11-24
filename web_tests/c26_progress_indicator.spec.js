@@ -11,7 +11,7 @@ import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
 import {
   EXAMPLE_HEADING, EXAMPLE_SCREENS, INDICATOR_WORDS, SPINNER_MS, SPINNER_READINGS, WALKS, judgeExampleWalk,
-  judgeSpinnerReading, runWalks, screenStops,
+  judgeSpinnerPassedOver, judgeSpinnerReading, judgeSpinnerRow, runWalks, screenStops,
 } from './vo/c26_vo_walks.js';
 
 const status = (page, slug) => byId(page, `c26-${slug}-status`);
@@ -371,15 +371,24 @@ test.describe('the VoiceOver spinner judge', () => {
   const at = (phrase, position = spinnerAt, ms = 900, shown = true) => ({ phrase, position, ms, shown });
   const judge = (moves, expected = material, b = before) => judgeSpinnerReading(b, moves, name, expected).verdict;
 
-  test('every expected reading holds the name and no word that says it is an indicator', () => {
+  test('every row is a reading with the name and no word that says it is an indicator, or a pass over', () => {
     expect(INDICATOR_WORDS).toContain('progress indicator');
     expect(INDICATOR_WORDS).not.toContain('group');
     for (const [slug, byBrowser] of Object.entries(SPINNER_READINGS)) {
       expect(Object.keys(byBrowser).sort(), slug).toEqual(['chromium', 'webkit']);
-      for (const expected of Object.values(byBrowser)) {
-        expect(judgeSpinnerReading(before, [at(expected)], name, expected).verdict, `${slug}: ${expected}`).toBe('right');
+      for (const row of Object.values(byBrowser)) {
+        expect(Object.keys(row), slug).toHaveLength(1);
+        if (row.read !== undefined) {
+          expect(judgeSpinnerReading(before, [at(row.read)], name, row.read).verdict, `${slug}: ${row.read}`).toBe('right');
+        } else {
+          expect(row.passedOver, slug).toBe('Loading started');
+        }
       }
     }
+    // Measured: Chromium passes over Material's spinner; every other row
+    // reads it.
+    expect(SPINNER_READINGS['bad-no-role'].chromium).toEqual({ passedOver: 'Loading started' });
+    expect(judgeSpinnerRow({}, before, [at(material)], name, {}).verdict).toBe('wrong');
   });
   test('the readings measured at 7b9dc5c', () => {
     // WebKit, Material's spinner: the reading the old judge refused for
@@ -425,5 +434,56 @@ test.describe('the VoiceOver spinner judge', () => {
     // and the spinner is still to come; or it is the end, not reached.
     expect(judge([at('Loading started', statusAt), at(material, spinnerAt, 1500)])).toBe('right');
     expect(judge([at('Loading started', statusAt)])).toBe('wrong');
+  });
+});
+
+// The judge of the Chromium row for Material's spinner, which VoiceOver's
+// next passes over (judgeSpinnerPassedOver in vo/c26_vo_walks.js), on the
+// recording at 9f40ddc (docs/evidence/probes/c26/
+// voiceover-web-round4-fail.md.txt) and on made-up moves: it must fail
+// both ways, when the move does not land on the status line below the
+// spinner, and when the spinner is read.
+test.describe('the VoiceOver passed-over judge', () => {
+  const name = 'Loading inbox';
+  const status = 'Loading started';
+  // The positions of the recording at 9f40ddc, in Chromium: the button,
+  // the status line, and Cupertino's spinner, read in the same browser.
+  const button = '318, 343, 436, 375';
+  const statusAt = '318, 439, 420, 459';
+  const spinnerAt = '318, 387, 358, 427';
+  const spinnerBottom = 427;
+  const before = { phrase: status, position: button };
+  const at = (phrase, position = statusAt, ms = 3140, shown = true) => ({ phrase, position, ms, shown });
+  const judge = (moves, b = before) => judgeSpinnerPassedOver(b, moves, name, status, spinnerBottom).verdict;
+  const row = { passedOver: status };
+
+  test('the move measured at 9f40ddc is right, through the row as the spec judges it', () => {
+    expect(judge([at(status)])).toBe('right');
+    expect(judgeSpinnerRow(row, before, [at(status)], name, { status, spinnerBottom }).verdict).toBe('right');
+    // The hint the second move read there, at the same place, is no reading
+    // of the spinner either.
+    const hint = 'You are currently on a selectable text, inside of web content. To exit this web area, press Control-Option-Shift-Up Arrow.';
+    expect(judge([at(status), at(hint, statusAt, 3646)])).toBe('right');
+  });
+  test('the spinner read, by any move, fails', () => {
+    expect(judge([at('Loading inbox empty group', spinnerAt, 1600)])).toBe('wrong');
+    expect(judge([at('Loading inbox', spinnerAt, 1600)])).toBe('wrong');
+    expect(judge([at(status), at('Loading inbox empty group', spinnerAt, 3500)])).toBe('wrong');
+  });
+  test('a first move that is not the status line below the spinner fails', () => {
+    expect(judge([at('Inbox not loaded')])).toBe('wrong');
+    expect(judge([at(status, spinnerAt)])).toBe('wrong');
+    expect(judge([at(status, '318, 426, 420, 446')])).toBe('wrong');
+    expect(judge([at('Back button', '20, 100, 80, 130')])).toBe('wrong');
+  });
+  test('a stale or empty capture fails, and so does no move', () => {
+    expect(judge([])).toBe('wrong');
+    expect(judge([at(status, button)])).toBe('wrong');
+    expect(judge([at('')])).toBe('wrong');
+    expect(judge([at(status), at(status, statusAt, 3500)])).toBe('wrong');
+  });
+  test('a move once the spinner is gone, or after the window, is not reached in time', () => {
+    expect(judge([at(status, statusAt, SPINNER_MS + 1)])).toBe('wrong');
+    expect(judge([at(status, statusAt, 3000, false)])).toBe('wrong');
   });
 });

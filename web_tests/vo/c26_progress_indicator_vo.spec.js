@@ -17,10 +17,11 @@
 // three with a bar in each browser, on lists written as predictions: a bar
 // was read with its value twice, in its name and then as a percentage.
 //
-// The spinners are also read while they load (`-loading`): each must be
-// read exactly as measured for its browser (SPINNER_READINGS: the name,
-// and no word that says it is an indicator, FL-256), judged by
-// judgeSpinnerReading in c26_vo_walks.js.
+// The spinners are also reached for while they load: each must do what was
+// measured for its browser (SPINNER_READINGS in c26_vo_walks.js): read
+// exactly as measured, with the name and no word that says it is an
+// indicator (`-loading`, FL-256), or, Material's spinner in Chromium,
+// passed over by VoiceOver's next (`-loading-passed-over`).
 //
 // This spec runs in a browser on a Mac, so bad-adaptive's spinner is the
 // Cupertino one, with nothing for VoiceOver (FL-257).
@@ -31,7 +32,7 @@ import {
   walkToEnd,
 } from './vo_helpers.js';
 import {
-  EXAMPLE_HEADING, SPINNER_READINGS, WALKS, judgeExampleWalk, judgeSpinnerReading, runWalks, screenStops,
+  EXAMPLE_HEADING, SPINNER_READINGS, WALKS, judgeExampleWalk, judgeSpinnerRow, runWalks, screenStops,
 } from './c26_vo_walks.js';
 
 const SPINNER_NAME = 'Loading inbox';
@@ -69,21 +70,33 @@ async function afterMove(page, previous, limitMs = 1200) {
   }
 }
 
-// The spinners' defect (FL-256), read while loading: keyboard focus, and
-// with it VoiceOver's cursor, on the button; Enter; VoiceOver's speech for
-// the press let settle (the announcement "Loading started" in Chromium:
-// until the last phrase holds for 400 ms, at most one second); then at most
-// two VoiceOver moves forward while the spinner is shown (four seconds),
-// each read once it has spoken (afterMove), with the cursor's bounds, the
-// time since Enter, and whether the spinner's element was in the page.
-// judgeSpinnerReading requires the browser's measured reading exactly
-// (SPINNER_READINGS), and fails a capture that is empty, stale, or late.
-// In Chromium and WebKit.
-for (const slug of Object.keys(SPINNER_READINGS)) {
-  test(`voiceover reads ${slug}'s spinner while it loads`, async ({ page, voiceOver, browserName }) => {
+// The spinners' defect (FL-256), while loading, one test for each row of
+// SPINNER_READINGS, in its own browser: keyboard focus, and with it
+// VoiceOver's cursor, on the button; Enter; VoiceOver's speech for the
+// press let settle (the announcement "Loading started" in Chromium: until
+// the last phrase holds for 400 ms, at most one second); then VoiceOver
+// moves forward while the spinner is shown (four seconds), each read once
+// it has spoken (afterMove), with the cursor's bounds, the time since
+// Enter, and whether the spinner's element was in the page.
+//
+// - A `read` row (`-loading`): at most two moves; the spinner's reading
+//   must be the one measured, exactly (judgeSpinnerReading).
+// - A `passedOver` row (`-loading-passed-over`, Chromium with Material's
+//   spinner): one move, which must land on the status line below the
+//   spinner's place, and must not read the spinner (judgeSpinnerPassedOver).
+//   The spinner's place on the screen is its box in the page moved by as
+//   much as the button's: the button's box against the cursor's bounds on
+//   it before the move.
+//
+// Every row fails a capture that is empty, stale, or late.
+const ROWS = Object.entries(SPINNER_READINGS).flatMap(([slug, byBrowser]) =>
+  Object.entries(byBrowser).map(([browser, row]) => ({ slug, browser, row })));
+
+for (const { slug, browser, row } of ROWS) {
+  const label = row.passedOver !== undefined ? 'passes over' : 'reads';
+  test(`${browser}: voiceover ${label} ${slug}'s spinner while it loads`, async ({ page, voiceOver, browserName }) => {
+    test.skip(browserName !== browser, `a ${browser} row`);
     expect(voiceOver).toBeTruthy();
-    const expected = SPINNER_READINGS[slug][browserName];
-    expect(expected, `no reading for ${browserName}`).toBeDefined();
     await page.goto(`/#/t/C26/${slug}`, { waitUntil: 'load' });
     await expect(start(page, slug)).toBeVisible();
     await page.waitForTimeout(600);
@@ -100,17 +113,28 @@ for (const slug of Object.keys(SPINNER_READINGS)) {
       read: lastPhrase, sleep: (ms) => page.waitForTimeout(ms), quietMs: 400, limitMs: 1000 });
     const before = { phrase: norm(await lastPhrase()), position: await cursorBounds() };
     const settled = `${Date.now() - t0} ms, ${quiet ? 'quiet' : 'not quiet'}`;
+    const buttonBox = await start(page, slug).boundingBox();
+    const spinnerBox = await spinner.boundingBox();
+    expect(buttonBox && spinnerBox, 'the button and the spinner have boxes').toBeTruthy();
+    // The cursor must be on the button before the first move: its bounds the
+    // button's size, to within 2 points.
+    const [left, top, right, bottom] = before.position.split(',').map(Number);
+    expect(Math.abs(right - left - buttonBox.width) <= 2 && Math.abs(bottom - top - buttonBox.height) <= 2,
+      `VoiceOver's cursor at ${before.position} is not on the button (${buttonBox.width} by ${buttonBox.height})`).toBe(true);
+    const spinnerBottom = Math.round(top - buttonBox.y + spinnerBox.y + spinnerBox.height);
     const moves = [];
-    for (let i = 0; i < 2; i++) {
+    const most = row.passedOver !== undefined ? 1 : 2;
+    for (let i = 0; i < most; i++) {
       await voiceOver.next();
       const { phrase, position } = await afterMove(page, moves[i - 1] ?? before);
       moves.push({ phrase, position, ms: Date.now() - t0, shown: (await spinner.count()) > 0 });
       if (phrase.includes(SPINNER_NAME)) break;
     }
-    const { verdict, reason } = judgeSpinnerReading(before, moves, SPINNER_NAME, expected);
+    const { verdict, reason } = judgeSpinnerRow(row, before, moves, SPINNER_NAME, { status: 'Loading started', spinnerBottom });
     const shown = moves.map((m) =>
       `${m.phrase || '(empty)'} (${m.ms} ms, spinner ${m.shown ? 'shown' : 'gone'}, at ${m.position})`).join(' / ');
-    console.log(`C26VO ${browserName} ${slug}-loading | before (${settled}): ${before.phrase || '(empty)'} ` +
+    const suffix = row.passedOver !== undefined ? 'loading-passed-over' : 'loading';
+    console.log(`C26VO ${browserName} ${slug}-${suffix} | before (${settled}): ${before.phrase || '(empty)'} ` +
       `(at ${before.position}) / ${shown} (${verdict}: ${reason})`);
     expect(verdict, `${slug}: ${reason}`).toBe('right');
   });

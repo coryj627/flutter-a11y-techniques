@@ -102,6 +102,10 @@ How each platform was looked at, and the raw output:
   7b9dc5c, made by the principal, the first with the spinners read while
   they load; `bad-no-role` failed in both browsers, on "group" in WebKit
   and a stale capture in Chromium (the spec, section 7).
+- `voiceover-web-round4-fail.md.txt`: the web VoiceOver recording at
+  9f40ddc, made by the principal, with the cursor's place: `bad-no-role`
+  failed in Chromium, where VoiceOver's next went from the button to the
+  status line and passed over Material's spinner (the spec, section 7).
 - `web-spinner-ax.txt`, with `web-spinner-ax.spec.js.txt`: each spinner's
   element and Chromium's own accessibility nodes while it loads: Material's
   spinner a "generic" node named "Loading inbox" with no children,

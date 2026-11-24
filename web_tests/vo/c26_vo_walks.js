@@ -87,25 +87,32 @@ export const INDICATOR_WORDS = [
 ];
 
 /**
- * slug -> browser -> what VoiceOver must say, exactly, when its cursor
- * reaches the spinner while it loads. Measured in the recording at
- * 7b9dc5c (docs/evidence/probes/c26/voiceover-web-round3-fail.md.txt),
- * except where this says otherwise.
+ * slug -> browser -> what VoiceOver does when it moves on from the button
+ * while the spinner loads, as measured:
  *
- * - Material's spinner is an element with no role, an `aria-label`, and no
- *   children (FL-256). WebKit read it "Loading inbox empty group": the
- *   name, then "group", as for FL-028's role-less named slider wrapper
- *   ("Volume group"; that element has a child, and no "empty" was said).
- *   Chromium's reading is not measured yet: in that recording the capture
- *   after each move was still the announcement made before it (the spec,
- *   section 7). The Chromium entry is WebKit's reading, written as a
- *   prediction, which the next recording confirms or fails.
- * - Cupertino's spinner is `Semantics(label:)` round a widget with no
- *   semantics: plain text, read "Loading inbox" in both browsers.
+ * - `{ read }`: its cursor stops on the spinner and says `read`, exactly.
+ *   Material's spinner is an element with no role, an `aria-label`, and no
+ *   children (FL-256). WebKit read it "Loading inbox empty group" in the
+ *   recordings at 7b9dc5c and 9f40ddc: the name, then "group", as for
+ *   FL-028's role-less named slider wrapper ("Volume group"; that element
+ *   has a child, and no "empty" was said). Cupertino's spinner is
+ *   `Semantics(label:)` round a widget with no semantics: plain text, read
+ *   "Loading inbox" in both browsers in both recordings.
+ * - `{ passedOver }`: its cursor does not stop on the spinner. The first
+ *   move from the button lands on the status line below it, which says
+ *   `passedOver`. This is Chromium with Material's spinner: in the
+ *   recording at 9f40ddc the move went from the button (top 343) to the
+ *   status line (top 439), where Cupertino's spinner in the same browser
+ *   was read at top 387, between them; the one at 7b9dc5c, which read no
+ *   position, heard the same words (docs/evidence/probes/c26/
+ *   voiceover-web-round3-fail.md.txt and -round4-fail.md.txt).
  */
 export const SPINNER_READINGS = {
-  'bad-no-role': { chromium: 'Loading inbox empty group', webkit: 'Loading inbox empty group' },
-  'bad-cupertino-no-role': { chromium: 'Loading inbox', webkit: 'Loading inbox' },
+  'bad-no-role': {
+    chromium: { passedOver: 'Loading started' },
+    webkit: { read: 'Loading inbox empty group' },
+  },
+  'bad-cupertino-no-role': { chromium: { read: 'Loading inbox' }, webkit: { read: 'Loading inbox' } },
 };
 
 /** How long a C26 spinner is shown after its button is pressed. */
@@ -114,25 +121,44 @@ export const SPINNER_MS = 4000;
 const indicatorWords = (text) =>
   INDICATOR_WORDS.filter((w) => new RegExp(`\\b${w}\\b`, 'i').test(text));
 
+/** The top of VoiceOver's cursor bounds, "left, top, right, bottom". */
+const topOf = (position) => Number(String(position).split(',')[1]);
+
 /**
- * Judges a spinner's reading while it loads (FL-256). `before` is
- * `{ phrase, position }`, VoiceOver's last phrase and the bounds of its
- * cursor just before the first move; `moves` is each move after the press,
- * in order: `{ phrase, position, ms, shown }`, the phrase and the cursor's
- * bounds once the move had spoken, the milliseconds since the press, and
- * whether the spinner's element was in the page then. `name` is the
- * spinner's name and `expected` its whole reading (SPINNER_READINGS).
- * Returns `{ verdict, reason }`, the verdict "right" or "wrong"; anything
- * not shown right is wrong:
+ * Checks every move for an empty or stale capture: a move's phrase must be
+ * non-empty, and no move may leave both the phrase and the cursor where
+ * they were (before the first move, where `before` has them). A move that
+ * speaks the same words at a new place is not stale: the status line says
+ * "Loading started", the words of the announcement before it. Returns a
+ * reason, or null.
+ */
+function badCapture(before, moves) {
+  let previous = before;
+  for (let i = 0; i < moves.length; i++) {
+    const { phrase, position } = moves[i];
+    if (!phrase) return `move ${i + 1} read an empty phrase`;
+    if (phrase === previous.phrase && position === previous.position) {
+      return `move ${i + 1} left the cursor at ${position} and spoke nothing new ("${phrase}"): the capture is stale`;
+    }
+    previous = moves[i];
+  }
+  return null;
+}
+
+/**
+ * Judges a spinner's reading while it loads (FL-256), for a `{ read }` row
+ * of SPINNER_READINGS. `before` is `{ phrase, position }`, VoiceOver's last
+ * phrase and the bounds of its cursor just before the first move; `moves`
+ * is each move after the press, in order: `{ phrase, position, ms, shown }`,
+ * the phrase and the cursor's bounds once the move had spoken, the
+ * milliseconds since the press, and whether the spinner's element was in
+ * the page then. `name` is the spinner's name and `expected` its whole
+ * reading. Returns `{ verdict, reason }`, the verdict "right" or "wrong";
+ * anything not shown right is wrong:
  *
  * - `expected` must hold `name` and none of INDICATOR_WORDS, so that a
  *   reading with a role cannot be written in as the expectation;
- * - every move's phrase must be non-empty, and no move may leave both the
- *   phrase and the cursor where they were (before the first move, where
- *   `before` has them), so that an empty or stale capture cannot pass. A
- *   move that speaks the same words at a new place is not stale: the
- *   status line says "Loading started", the words of the announcement
- *   before it;
+ * - no capture may be empty or stale (badCapture);
  * - the first move that reads `name` is the spinner's reading. It must come
  *   while the spinner was shown and within SPINNER_MS of the press, and it
  *   must be `expected`, exactly. If no move read `name`, the spinner was
@@ -148,26 +174,65 @@ export function judgeSpinnerReading(before, moves, name, expected) {
   if (named.length) {
     return { verdict: 'wrong', reason: `the expected reading "${expected}" says it is an indicator: ${named.join(', ')}` };
   }
-  let previous = before;
-  for (let i = 0; i < moves.length; i++) {
-    const { phrase, position, ms, shown } = moves[i];
-    if (!phrase) return { verdict: 'wrong', reason: `move ${i + 1} read an empty phrase` };
-    if (phrase === previous.phrase && position === previous.position) {
-      return {
-        verdict: 'wrong',
-        reason: `move ${i + 1} left the cursor at ${position} and spoke nothing new ("${phrase}"): the capture is stale`,
-      };
-    }
-    previous = moves[i];
-    if (!phrase.includes(name)) continue;
-    if (!shown || ms > SPINNER_MS) {
-      return { verdict: 'wrong', reason: `the spinner was not reached in time: "${phrase}" at ${ms} ms, spinner ${shown ? 'shown' : 'gone'}` };
-    }
-    if (phrase !== expected) return { verdict: 'wrong', reason: `"${phrase}", not "${expected}"` };
-    return { verdict: 'right', reason: `"${phrase}" at ${ms} ms, exactly the reading expected` };
+  const first = moves.findIndex((m) => m.phrase.includes(name));
+  const bad = badCapture(before, first < 0 ? moves : moves.slice(0, first + 1));
+  if (bad) return { verdict: 'wrong', reason: bad };
+  if (first < 0) {
+    const heard = moves.map((m) => `"${m.phrase}" at ${m.position}`).join(', ') || 'no move';
+    return { verdict: 'wrong', reason: `the spinner was not reached: no move read "${name}" (${heard})` };
   }
-  const heard = moves.map((m) => `"${m.phrase}" at ${m.position}`).join(', ') || 'no move';
-  return { verdict: 'wrong', reason: `the spinner was not reached: no move read "${name}" (${heard})` };
+  const { phrase, ms, shown } = moves[first];
+  if (!shown || ms > SPINNER_MS) {
+    return { verdict: 'wrong', reason: `the spinner was not reached in time: "${phrase}" at ${ms} ms, spinner ${shown ? 'shown' : 'gone'}` };
+  }
+  if (phrase !== expected) return { verdict: 'wrong', reason: `"${phrase}", not "${expected}"` };
+  return { verdict: 'right', reason: `"${phrase}" at ${ms} ms, exactly the reading expected` };
+}
+
+/**
+ * Judges a `{ passedOver }` row of SPINNER_READINGS: VoiceOver's cursor
+ * moves from the button past the spinner without stopping on it. `before`,
+ * `moves`, and `name` are as for judgeSpinnerReading; `status` is what the
+ * status line says while loading, and `spinnerBottom` the bottom of the
+ * spinner's place on the screen, in the same points as the cursor's bounds.
+ * Right only if all of these hold, so that it fails both ways:
+ *
+ * - no capture is empty or stale (badCapture);
+ * - no move reads `name`: if VoiceOver ever reads the spinner, this row
+ *   fails, and the finding cannot go stale unseen;
+ * - the first move lands on the status line: it says `status`, exactly, at
+ *   a place whose top is at or below `spinnerBottom`;
+ * - it does so while the spinner is shown and within SPINNER_MS of the
+ *   press. A move made once the spinner is gone shows nothing about the
+ *   spinner, so it is "not reached in time", not a pass.
+ */
+export function judgeSpinnerPassedOver(before, moves, name, status, spinnerBottom) {
+  if (!moves.length) return { verdict: 'wrong', reason: 'no move was made' };
+  const bad = badCapture(before, moves);
+  if (bad) return { verdict: 'wrong', reason: bad };
+  const read = moves.find((m) => m.phrase.includes(name));
+  if (read) {
+    return { verdict: 'wrong', reason: `the spinner was read: "${read.phrase}" at ${read.position}; VoiceOver now stops on it, so measure it and change the row` };
+  }
+  const { phrase, position, ms, shown } = moves[0];
+  if (!shown || ms > SPINNER_MS) {
+    return { verdict: 'wrong', reason: `not reached in time: the first move came at ${ms} ms, spinner ${shown ? 'shown' : 'gone'}` };
+  }
+  if (phrase !== status) return { verdict: 'wrong', reason: `the first move read "${phrase}", not the status line's "${status}"` };
+  if (!(topOf(position) >= spinnerBottom)) {
+    return { verdict: 'wrong', reason: `the first move read "${phrase}" at ${position}, not below the spinner's place (bottom ${spinnerBottom})` };
+  }
+  return {
+    verdict: 'right',
+    reason: `passed over: the first move went from ${before.position} to the status line at ${position} (the spinner's bottom ${spinnerBottom}), at ${ms} ms; no move read "${name}"`,
+  };
+}
+
+/** Judges one SPINNER_READINGS row; see judgeSpinnerReading and judgeSpinnerPassedOver. */
+export function judgeSpinnerRow(row, before, moves, name, { status, spinnerBottom }) {
+  if (row.read !== undefined) return judgeSpinnerReading(before, moves, name, row.read);
+  if (row.passedOver !== undefined) return judgeSpinnerPassedOver(before, moves, name, status, spinnerBottom);
+  return { verdict: 'wrong', reason: `a row with neither "read" nor "passedOver": ${JSON.stringify(row)}` };
 }
 
 export const WALKS = {

@@ -3527,18 +3527,40 @@ yet), **Fixed in x.y** (verified on that version).
     role. HTML's `progress` with no value is an indeterminate
     `progressbar` (MDN), and ARIA's `progressbar` without
     `aria-valuenow` is one (WAI-ARIA 1.2); Flutter has neither for a
-    spinner. VoiceOver in WebKit, moving onto Material's spinner while it
-    loads (C26 `bad-no-role`, measured, `probes/c26/
-    voiceover-web-round3-fail.md.txt`): "Loading inbox empty group". The
-    name, then "group", as VoiceOver says for FL-028's slider wrapper, the
-    other named element with no role in this project's transcripts
-    ("Volume group", both browsers, `docs/evidence/F10/voiceover-web.md`):
-    a measured comparison, not VoiceOver's documented reason. "empty"
-    comes with an element that has no children (Chromium's node for the
-    spinner has none, `probes/c26/web-spinner-ax.txt`; the slider wrapper,
-    which has one, was read with no "empty"). Neither word says it is a
-    progress or busy indicator. Cupertino's spinner with `Semantics(label:)`
-    round it is plain text, read "Loading inbox" in both browsers.
+    spinner. Chromium's own node for Material's spinner is "generic", not
+    ignored, with no children (`probes/c26/web-spinner-ax.txt`).
+  - VoiceOver on the web, moving on with `next` from the button while the
+    spinner loads (C26 `bad-no-role` and `bad-cupertino-no-role`; the
+    recordings at 7b9dc5c and 9f40ddc, `probes/c26/
+    voiceover-web-round3-fail.md.txt` and `-round4-fail.md.txt`, both
+    measured):
+    - WebKit (Playwright's build, not Safari itself): Material's spinner
+      "Loading inbox empty group", in both recordings. The name, then
+      "group", as VoiceOver says for [FL-028](#fl-028)'s slider wrapper, the other
+      named element with no role in this project's transcripts ("Volume
+      group", both browsers, `docs/evidence/F10/voiceover-web.md`): a
+      measured comparison, not VoiceOver's documented reason. The spinner
+      has no children; the slider wrapper has one and was read with no
+      "empty". Neither word says it is a progress or busy indicator.
+      Cupertino's spinner, plain text, "Loading inbox".
+    - Chromium: Cupertino's spinner "Loading inbox", in both recordings.
+      Material's spinner was not read in either. In the recording at
+      9f40ddc, which read the cursor's place, `next` went from the button
+      (top 343) to the status line below the spinner (top 439, "Loading
+      started"), where Cupertino's spinner in the same browser was read at
+      top 387, between them; the one at 7b9dc5c heard the same words and
+      read no place. Not tried: VoiceOver's other ways of moving (the
+      rotor, item by item within a group, the mouse), and real Safari or
+      Chrome. No cause is claimed: the tree probe above, a node that is not
+      ignored, is evidence of what Chromium exposes, not of why VoiceOver
+      passes over it. A search of this log and of the web VoiceOver
+      transcripts found no other named element with no role that
+      VoiceOver in Chromium passed over: [FL-028](#fl-028)'s slider
+      wrapper, which has a child, is a stop in Chromium. Two passings-over
+      found are other shapes: [FL-262](#fl-262)'s button inside C18's
+      `<h3>`, a button with a role inside a heading that has a label of its
+      own; and F09 `bad-tile-not-merged`'s switch, which has a role and no
+      name.
   - Android 17: an `android.view.View` with the name as its description
     (`android-tree.txt`); TalkBack read the name alone, with no role word
     (`android-talkback.md`). A determinate indicator is an
@@ -3553,6 +3575,12 @@ yet), **Fixed in x.y** (verified on that version).
   user interface component (C26's spec, section 3): the role is not
   programmatically determinable for a spinner on any platform, nor for a
   bar on iOS.
+- A further consequence, on the web: with no role, Material's named
+  spinner is a `generic` element with no children, and VoiceOver's next
+  in Chromium passed over it (above), so a VoiceOver user moving through
+  the screen in Chromium does not hear that something is loading at all,
+  only the status line. It is the same failure, 4.1.2's role; no other
+  criterion is claimed from it, and its cause is not known.
 - Workaround: none in the SDK. `Semantics(role:
   SemanticsRole.progressBar)` without a numeric value fails the
   framework's own check ([FL-258](#fl-258)), so it cannot stand for a
@@ -3569,14 +3597,13 @@ yet), **Fixed in x.y** (verified on that version).
   the tree tests (no role on the web, a plain `View` on Android, static
   text on iOS), the TalkBack transcript (the spinner read by its name with
   no role word), the iOS VoiceOver transcript ("Loading inbox" alone), and
-  the web VoiceOver spec, which reads each spinner while it loads in
-  Chromium and WebKit and requires the reading measured for that browser,
-  exactly, with its name and no word that says it is an indicator
-  (`SPINNER_READINGS` and `judgeSpinnerReading` in
-  `web_tests/vo/c26_vo_walks.js`). Material's spinner in Chromium is the
-  one reading not yet heard: the recording at 7b9dc5c captured the
-  announcement from before the moves in its place (C26's spec, section
-  7).
+  the web VoiceOver spec, which moves on from the button while each
+  spinner loads and requires what was measured for that browser
+  (`SPINNER_READINGS` in `web_tests/vo/c26_vo_walks.js`): the reading,
+  exactly, with its name and no word that says it is an indicator, in
+  WebKit for both spinners and in Chromium for Cupertino's; and in Chromium
+  for Material's, a move that passes over the spinner to the status line,
+  which fails if the spinner is ever read (C26's spec, section 7).
   The spinners' measurements in the C26 probe (p05, p08, p14, p20 to p22)
   are this entry's evidence as well.
 - Upstream issue: not searched yet (D25).
