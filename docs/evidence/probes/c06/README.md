@@ -154,7 +154,10 @@ d03's click label stays "Expand" once it is open, in the tree and in what
 TalkBack says. In the widget test (`probe_d03_test.txt`) the same node's
 tap hint does change, to "Collapse" and back. Why Android keeps "Expand"
 was not found. "Nothing" on a click is the walk's capture for that marker;
-it was not checked against a live capture.
+it was not checked against a live capture here. C06's own TalkBack walk
+later declared the clicks of d03's and d04's examples silent rows, with a
+liveness row after each, and both were silent
+(`docs/evidence/C06/talkback-android.md`).
 
 ## iOS (27.0)
 

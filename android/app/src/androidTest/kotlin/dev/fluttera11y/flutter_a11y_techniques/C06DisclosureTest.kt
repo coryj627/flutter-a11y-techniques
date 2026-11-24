@@ -329,9 +329,12 @@ class C06DisclosureTest : TechniqueTest("C06") {
      * judges each walk whole (STRICT). Skipped unless TalkBack is running.
      *
      * `bad-expand-icon` and `bad-cupertino-expansion-tile` have no state to
-     * announce: what TalkBack says on their click is not checked, since a
-     * check that passes on silence would also pass on a lost capture; an
-     * END marker before the click drops it. The Cupertino tile merges its
+     * announce: their `-activated` rows are declared silent
+     * (tool/talkback.py SILENT), logged once the click action has
+     * returned. Nothing at all may be spoken in them, their capture must be
+     * ended by the next marker, and the row after each, the panel's text
+     * or Back, is its liveness control and must be right, so a lost
+     * capture cannot pass for silence. The Cupertino tile merges its
      * open panel's text into the control, so focus goes to Back in place of
      * a panel node.
      */
@@ -347,11 +350,16 @@ class C06DisclosureTest : TechniqueTest("C06") {
             talkBackFocus("$slug closed") { control() }
             Thread.sleep(6_000)
             if (slug in silentOnChange) {
-                android.util.Log.i(talkBackTag, "END $slug")
+                // Declared silent (tool/talkback.py SILENT): the marker is
+                // logged once the click action has returned, so the row
+                // holds only what is said after the change; the row after
+                // it, the panel's text or Back, is its liveness control.
+                assertTrue("$slug click", control().performAction(AccessibilityNodeInfo.ACTION_CLICK))
+                android.util.Log.i(talkBackTag, "FOCUS c06-$slug-activated")
             } else {
                 android.util.Log.i(talkBackTag, "FOCUS c06-$slug-activated")
+                assertTrue("$slug click", control().performAction(AccessibilityNodeInfo.ACTION_CLICK))
             }
-            assertTrue("$slug click", control().performAction(AccessibilityNodeInfo.ACTION_CLICK))
             Thread.sleep(6_000)
             assertTrue("$slug: the click opened it", shown(PANEL_TEXT))
             if (slug == "bad-cupertino-expansion-tile") {
