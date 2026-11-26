@@ -89,13 +89,14 @@ example is added without a decision.
 | [S03 Decorative images](#s03-decorative-images) | 5 | 0 | 0 | 5 |
 | [S04 Functional images](#s04-functional-images) | 6 | 3 | 0 | 3 |
 | [S05 Headings](#s05-headings) | 2 | 0 | 0 | 2 |
+| [S06 Screen and page titles](#s06-screen-and-page-titles) | 2 | 0 | 0 | 2 |
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 124 | 51 | 12 | 61 |
+| All | 126 | 51 | 12 | 63 |
 
 ## C01 Button
 
@@ -390,6 +391,15 @@ Nothing flagged.
 | --- | --- | --- | --- | --- | --- |
 | `good-levels` | Nothing: `Semantics(header: true, headingLevel:)` | `Semantics.headingLevel` | none | R1, R2, R4: iOS Headings, Android Compose Heading Semantics, Android View Heading Semantics, MDN heading elements | not custom |
 | `good-cupertino` | Nothing: `Semantics(header: true, headingLevel: 3)` as a `CupertinoListSection` header | `CupertinoListSection` | The header is not a heading ([FL-014](flutter-limitations.md#fl-014)), filled with the documented property | R1: iOS Headings, Android Compose Heading Semantics, Android View Heading Semantics | not custom |
+
+## S06 Screen and page titles
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Nothing: `AppBar(title:)` with `Semantics(headingLevel: 1)` on its text, and `Title(title:)`, in a `MaterialPageRoute` | `AppBar`, `Title` | none | R1, R2, R3, R4: Android Compose Screen and Pane Titles, iOS Page Titles, MDN title, Understanding 2.4.2 | not custom |
+| `good-cupertino` | Nothing: `CupertinoNavigationBar(middle:)` with `Semantics(namesRoute: true, headingLevel: 1)` on its text, and `Title(title:)`, in a `CupertinoPageRoute` | `CupertinoNavigationBar`, `Title` | The bar's middle does not name the route ([FL-301](flutter-limitations.md#fl-301)), filled with the documented property | R1, R2, R3, R4: Android Compose Screen and Pane Titles, iOS Page Titles, MDN title, Understanding 2.4.2 | not custom |
 
 ## S13 Roles and traits
 
