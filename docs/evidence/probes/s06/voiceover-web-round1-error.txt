@@ -1,0 +1,14 @@
+Web VoiceOver recording, round 1 (2026-11-26, run by the principal):
+the one failed test, from
+web_tests/test-results/s06_screen_titles_vo-voiceover-reads-good-material-chromium/error-context.md
+
+Name: s06_screen_titles_vo.spec.js >> voiceover reads good-material
+Location: s06_screen_titles_vo.spec.js:68:3
+Browser: chromium
+
+Error details:
+Error: VoiceOver cannot be started
+
+The test stopped before any walk: Guidepup's VoiceOver did not start for
+it, so good-material in Chromium has no row in
+voiceover-web-round1-fail.md.txt. Every other test, eleven, passed.

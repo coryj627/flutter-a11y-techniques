@@ -46,8 +46,9 @@ How each platform was looked at, and the raw output:
   carry a route (`aria-describedby` and what it points to, a dialog
   role), the headings, and the element with DOM focus; the app's Back,
   the browser's back and forward; a second run of four fixtures with
-  `navigator.platform` set to "Linux x86_64" before load, as CI's browser
-  is; two fixtures opened with Tab and Enter. Output: `web.txt` (round 4).
+  `navigator.platform` set to "Linux x86_64" before load, the value a
+  browser on Linux, such as CI's, reports (an override, not a browser on
+  Linux); two fixtures opened with Tab and Enter. Output: `web.txt` (round 4).
   On the app's release build, `probe_s06_back.spec.js.txt`
   (`web_back.txt`): what Enter, Tab, and Shift+Tab do on S06
   `good-material`'s opened screen.
@@ -114,12 +115,15 @@ round 2 of that spec): the catalog "Flutter A11Y Techniques", the S06
 technique screen opened from it "Screen and page titles - Flutter A11Y
 Techniques", and the catalog after Back the same, the closed screen's.
 
-**The route on the web** (`web.txt`). As a Mac, no element had
+**The route on the web** (`web.txt`, Playwright's Chromium on macOS).
+With `navigator.platform` as it is, "MacIntel", no element had
 `aria-describedby` and no element was a dialog or region, except where
 `namesRoute` was set by hand (p07, p08: one generic element described by
 the title, a generic node in Chromium's tree with no name and that
-description). As Linux, `AppBar`'s routes were described too (p01, p09,
-p13), and p05's Cupertino route was not. With the drawer open (as Linux)
+description). With `navigator.platform` set to "Linux x86_64" before
+load, in the same browser, `AppBar`'s routes were described too (p01,
+p09, p13), and p05's Cupertino route was not. No browser that really runs
+on Linux or Windows was tried. With the drawer open (with "Linux x86_64")
 the route's description pointed at nothing. Keyboard focus, after Open by
 a click or by Enter, was on the new screen's first control (Back, or
 "Open navigation menu" in p13), and after Back on the launcher's Open
@@ -191,3 +195,39 @@ case.
 - `android_320x640.sh.txt`, `android_320x640.txt`: S06's Android tree
   tests at CI's screen size, 320 by 640 at 160 dpi, on the local
   emulator, under the device lock; the size and density reset after.
+- `voiceover-web-round1-fail.md.txt`, `voiceover-web-round1-error.txt`:
+  the first web VoiceOver recording, run by the principal. It failed one
+  test of twelve, `good-material` in Chromium, on "Error: VoiceOver
+  cannot be started", before any walk; every walk that ran was complete
+  on its first try in Chromium and WebKit. Its line "Walks that needed a
+  retry: good-material (chromium)" is the tool's name for a failed test,
+  not a walk walked again.
+
+## Per fixture and platform, from the raw files
+
+The table every sentence of S06's spec, doc, limitation entries
+(FL-300 to FL-305), and example texts was checked against. Web:
+Playwright's Chromium on macOS (`web.txt`); "Mac" is `navigator.platform`
+as it is ("MacIntel"), "Linux" the value set to "Linux x86_64" before load
+(p01, p05, p09, p13 only). Android 17 (`android-tree.txt`,
+`android-talkback.md`). iOS 27.0 (`ios-round1.txt`, `ios.txt`; p11 to p13
+VoiceOver from round 2 only, no tree).
+
+| # | Web title open → after app Back | Web route described (Mac / Linux) | Android pane title open → after Back | TalkBack as it opened | VoiceOver iOS as it opened |
+| --- | --- | --- | --- | --- | --- |
+| p01 | "p01 Orders" → "p01 Orders" | no / yes | "p01 Orders" → "p01 launcher" | "p01 Orders", "Back" | "Back Button" |
+| p02 | "p02 launcher" → "p02 launcher" | no / – | "p02 Orders" → "p02 launcher" | "p02 Orders", "Back" | "Back Button" |
+| p03 | "p03 Orders" → "p03 Orders" | no / – | " " → "p03 launcher" | " ", "Back" | "Back Button" |
+| p04 | "p04 Orders" → "p04 Orders" | no / – | " " → "p04 launcher" | " ", "Back" | "Back Button" |
+| p05 | "p05 Orders" → "p05 Orders" | no / no | " " → "p05 launcher" | " ", "Back" | "Button" |
+| p06 | "p06 Orders" → "p06 Orders" | no / – | " " → "p06 launcher" | " ", "Back" | "Button" |
+| p07 | "p07 Orders" → "p07 Orders" | yes / – | "p07 Orders" → "p07 launcher" | "p07 Orders", "Back" | "Back Button" |
+| p08 | "p08 Orders" → "p08 Orders" | yes / – | "p08 Orders" → "p08 launcher" | "p08 Orders", "Back" | "Button" |
+| p09 | "p09 Orders" → "p09 Orders" | no / yes | "p09 Orders" → "p09 launcher" | "p09 Orders", "Back" | "Back Button" |
+| p10 | "p10 Inbox", "p10 Settings" after the second destination → "p10 Settings" | no / – | "p10 Inbox", still "p10 Inbox" after the second destination → "p10 launcher" | "p10 Inbox", "Back"; "selected" for the destination | "Back Button"; nothing new for the destination |
+| p11 | "p11 launcher" (address `/#/p11/orders`) → "p11 launcher" | no / – | "p11 Orders" → "p11 launcher" | "p11 Orders", "Back" | "Back Button" |
+| p12 | "Probe app" on the launcher; "p12 Orders" → "p12 Orders" | no / – | "p12 Orders" → "p12 launcher" | "p12 Orders", "Back" | "Back Button" |
+| p13 | "p13 Mail"; the drawer did not change it | no / yes (no target with the drawer open) | "p13 Mail", "p13 Folders" with the drawer open → "p13 launcher" | "p13 Mail", "Open navigation menu"; "p13 Folders" for the drawer | "Open navigation menu Button"; "p13 Inbox folder" for the drawer |
+
+"–": not measured. p13's app Back was not taken on the web (its leading
+button opens the drawer); its browser Back kept "p13 Mail".

@@ -36,7 +36,7 @@ do not share one title where they differ.
 
 | Android | iOS | Web |
 | --- | --- | --- |
-| Applies | Applies, with a qualification (FL-302) | Limitation (FL-300) |
+| Applies | Applies | Limitation (FL-300) |
 
 By the owner's rule of 2026-11-23: where Flutter is measured not to meet
 a requirement on a platform and no documented parameter fixes it, that
@@ -55,18 +55,18 @@ platform is a limitation, and there is no good example for it there.
   `NavigatorObserver` that called `SystemChrome` would be a mechanism of
   the project's own. The good examples are the closest the framework
   comes on the web: right while a screen is open, wrong after Back.
-- **iOS: applies, with a qualification**
-  ([FL-302](../flutter-limitations.md#fl-302)). The title is the screen's
-  level 1 heading, and VoiceOver reads it with "Heading" (R1, R2, R3). When
-  a screen opens, VoiceOver's cursor goes to the screen's first control,
-  Back, and the title was never heard in the reads made (R5): Material's
-  `AppBar` does not name the route on iOS (source read:
-  `material/app_bar.dart`), and the probe heard no title where a node did
-  name it (p07, p08). R5 comes from the Android source, whose pane title
-  is announced; the iOS source asks for the title to be read as a heading,
-  and says nothing of an announcement. So iOS is recorded as applying, and
-  whether R5 is a requirement on iOS is a decision for the owner
-  (section 8).
+- **iOS: applies** (the principal's decision, section 8). The title is
+  the screen's level 1 heading, and VoiceOver reads it with "Heading"
+  when its cursor reaches it (R1, R2, R3). When a screen opens, the title
+  is not heard: VoiceOver's cursor goes to the screen's first control,
+  Back ([FL-302](../flutter-limitations.md#fl-302)). Material's `AppBar`
+  does not name the route on iOS (source read: `material/app_bar.dart`),
+  and the probe heard no title where a node did name it (p07, p08). R5,
+  the title said when a screen opens, is not a requirement on iOS: 2.4.2
+  does not ask for it, and its only source is the Android Compose
+  repository. `good-cupertino` has a framework defect on iOS besides:
+  its Back button's tap target has no name
+  ([FL-303](../flutter-limitations.md#fl-303)).
 - **Android: applies.** `AppBar`'s title is the pane title of the app's
   view, and TalkBack says it when the screen opens and closes (section 7).
   `CupertinoNavigationBar`'s middle names no route
@@ -116,7 +116,7 @@ in question, and this spec makes no claim on it.
 | R2 | The title describes the screen's topic or purpose, and two screens do not share one where that is reasonable | Android Compose ("must be descriptive", "To the extent reasonable, screen titles should also be unique"), iOS ("describe the purpose of the page and be unique for each page"), [Understanding 2.4.2](https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html), [F25](https://www.w3.org/WAI/WCAG22/Techniques/failures/F25) |
 | R3 | The title is the screen's heading | iOS ("VoiceOver will speak the page title as a Heading"), Android Compose (titles as headings, "suggested"); S05 (level 1) |
 | R4 | On the web, the document's title is the title of the screen shown, and changes when the screen does | [MDN: title](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/title), Understanding 2.4.2 ("should also be changed dynamically to reflect the content or topic of the current view"), [G88](https://www.w3.org/WAI/WCAG22/Techniques/general/G88) |
-| R5 | When a screen opens, the screen reader is told its title | Android Compose (the title "announced by screen readers"; "One good way to provide screen reader announcement of screen titles is using the `Modifier.semantics` `paneTitle` property") |
+| R5 | On Android, when a screen opens, the screen reader is told its title | Android Compose (the title "announced by screen readers"; "One good way to provide screen reader announcement of screen titles is using the `Modifier.semantics` `paneTitle` property") |
 
 The reference repositories: iOS has Page Titles, read above, with a good
 page (`.navigationTitle("About the Company")`) and a bad page with no
@@ -166,7 +166,7 @@ measurement). The iOS source has the same problem with long titles.
 | Slug | Variant | What it shows | Mechanism | Reqs |
 | --- | --- | --- | --- | --- |
 | `good-material` | Material | A Material screen titled "Orders" | `MaterialPageRoute`; `Scaffold(appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('Orders'))))`; `Title(title: 'Orders')` round it | R1 to R5 |
-| `good-cupertino` | Cupertino | A Cupertino screen titled "Orders" | `CupertinoPageRoute`; `CupertinoPageScaffold(navigationBar: CupertinoNavigationBar(middle: Semantics(namesRoute: true, headingLevel: 1, child: Text('Orders'))))`; `Title(title: 'Orders')` round it | R1 to R5 |
+| `good-cupertino` | Cupertino | A Cupertino screen titled "Orders", with Cupertino's own Back button, which has a framework defect (FL-303, below) | `CupertinoPageRoute`; `CupertinoPageScaffold(navigationBar: CupertinoNavigationBar(middle: Semantics(namesRoute: true, headingLevel: 1, child: Text('Orders'))))`; `Title(title: 'Orders')` round it | R1 to R5 |
 
 Neither is a custom solution: Flutter's widgets through their documented
 parameters, with `namesRoute` and `headingLevel` applied as their
@@ -177,8 +177,14 @@ What each meets and does not, by platform, under the reading of section 3:
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `good-material` | R1 to R5: pane title "Orders"; a heading; TalkBack said "Orders" as it opened | R1 to R3: "Orders Heading". R5: not heard (FL-302) | R1 to R3; R4 while it is open, not after Back (FL-300). R5 not measured yet (the web VoiceOver recording) |
-| `good-cupertino` | As `good-material`, with `namesRoute` (FL-301) | As `good-material`; and VoiceOver's cursor lands first on an unnamed button, Cupertino's Back (FL-303) | As `good-material`; and the route is described by its title in every browser |
+| `good-material` | R1 to R5: pane title "Orders"; a heading; TalkBack said "Orders" as it opened | R1 to R3: "Orders Heading" when reached; the title not heard as the screen opens (FL-302), which R5 does not ask of iOS | R1 to R3; R4 while it is open, not after Back (FL-300), so not good on the web |
+| `good-cupertino` | As `good-material`, with `namesRoute` (FL-301). Its Back button (FL-303): TalkBack read the node named "Back", a `Button` with no click action and no "Double-tap to activate"; an unnamed clickable node is there too; not shown to fail 4.1.2 | As `good-material`, and a framework defect: as the screen opens VoiceOver lands on Back's unnamed tap target and says only "Button", which fails 4.1.2's name as written (FL-303) | As `good-material`, so not good on the web; its route is described by its title with `navigator.platform` as a Mac and as Linux (Playwright's Chromium on macOS); Back is two button elements, both named "Back", read by VoiceOver as "Back button" (Chromium adding "group"): not a 4.1.2 failure (FL-303) |
+
+`good-cupertino` is the framework's bar through its documented
+parameters, and it is not free of defects: its Back button, which the
+bar builds, fails 4.1.2 on iOS (FL-303). Nothing in the SDK names that
+tap target, and the example does not replace the bar's button with one
+of its own (the owner's rule).
 
 No widgets-layer example: the widgets layer has no bar to hold a title.
 A title there would be a heading and a `Semantics(namesRoute: true)`
@@ -215,10 +221,13 @@ Not built:
   nothing of it (probe round 2). A bottom navigation bar is a navigation
   technique's.
 - **A drawer, a pane** (p13). `Drawer` scopes and names a route of its
-  own, "Navigation menu" or its `semanticLabel`, on Android and iOS alike
-  (widget tests, source read: `material/drawer.dart`), which is the
-  Compose source's pane title for a drawer; on the web it is no dialog
-  and no region (`web.txt`). The navigation techniques' subject.
+  own, "Navigation menu" or its `semanticLabel`, in the widget tests as
+  Android and as iOS (source read: `material/drawer.dart`), which is the
+  Compose source's pane title for a drawer. On the Android emulator the
+  pane title became "p13 Folders" and TalkBack said it; on iOS VoiceOver
+  went to the drawer's first item, and "p13 Folders" was not heard; on
+  the web the drawer is no dialog and no region (`web.txt`). The
+  navigation techniques' subject.
 - **`MaterialApp.title` alone** (p12): it builds a `Title` for the whole
   app, which gives the document the app's name until a screen's `Title`
   replaces it (`web.txt`, p12 launcher "Probe app"); every example's
@@ -243,7 +252,7 @@ Not built:
 | L3 iOS | For each example: the button labelled "Open orders"; a tap opens the screen, whose title is a text element and which has no navigation bar; the example screen's button is out of the tree while it is covered; Back closes it. Cupertino's Back: two buttons, one labelled Back and one with no label; Material's, one, labelled Back |
 | L4 TalkBack | Each button "Open orders", "Button". After the click action, eight seconds: the good examples and `bad-no-document-title` "Orders"; `bad-vague-title` "Details" and not "Orders"; `bad-no-title` and `bad-cupertino-unnamed` not "Orders". After the system Back, eight seconds: the example screen's title. Judged whole (`walk_strictly`; S06 is in `STRICT`) |
 | L4 VoiceOver iOS | For each example, the cursor walked to the button and the button pressed with a tap at its place: every `currentSpeech()` read for six seconds judged raw (`S06Landing.judge`): the button's utterance, then only the landing, "Back Button" (Material) or "Button" (Cupertino, FL-303), and never back; then the screen to its end as a whole list ("Orders Heading" or "Details Heading", "Orders" for `bad-no-title`, and the text; the Cupertino screens "Back Button" first); then Back pressed the same way, and the reads judged: the text's utterance, then "Open orders Button" |
-| L4 VoiceOver web | Each example screen walked from Back and judged against the whole screen in order; Enter on the button and six seconds of phrases, recorded and not judged, except that something must be heard; the opened screen walked from its Back and judged: "heading level 1 Orders" (or "Details", or "Orders" as plain text for `bad-no-title`) and the text. No runner retries. Not yet recorded: the principal runs it |
+| L4 VoiceOver web | Each example screen walked from Back and judged against the whole screen in order; Enter on the button and six seconds of phrases, recorded and not judged, except that something must be heard; the opened screen walked from its Back and judged: "heading level 1 Orders" (or "Details", or "Orders" as plain text for `bad-no-title`) and the text. No runner retries. Recorded once, by the principal, and failed on a start of VoiceOver (section 7) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -255,9 +264,9 @@ tests and transcripts confirm it:
 | | Web (Chromium on macOS) | Android 17 | iOS 27.0 |
 | --- | --- | --- | --- |
 | What holds a screen's title | `document.title`, from `Title`; the name of Chromium's root web area follows it | the FlutterView's pane title, the route's name; the window's title is the app's label throughout | nothing but the title's own text element; no navigation bar |
-| `AppBar(title:)` | a heading (level 2 without `headingLevel`, FL-004); no route name in a browser on a Mac, a route described by it as Linux (FL-304) | the pane title; a heading only with `headingLevel` (FL-005) | no route name (FL-302); static text, read as a heading only with `headingLevel` (FL-003) |
-| `CupertinoNavigationBar(middle:)` | a heading; no route name on either platform tried (FL-301) | pane title a single space (FL-301) | as `AppBar` |
-| `Semantics(namesRoute: true)` round the title | a route described by it, on a Mac too | the pane title | no change heard (FL-302) |
+| `AppBar(title:)` | a heading (level 2 without `headingLevel`, FL-004); no route name with `navigator.platform` "MacIntel", a route described by it with "Linux x86_64" set before load, both in Playwright's Chromium on macOS (FL-304) | the pane title; a heading only with `headingLevel` (FL-005) | no route name (FL-302); static text, read as a heading only with `headingLevel` (FL-003) |
+| `CupertinoNavigationBar(middle:)` | a heading; no route name with either `navigator.platform` tried (FL-301) | pane title a single space (FL-301) | as `AppBar` |
+| `Semantics(namesRoute: true)` round the title | a route described by it, with `navigator.platform` "MacIntel" too | the pane title | no change heard (FL-302) |
 | `Title` | sets `document.title` when its screen opens; nothing when it closes (FL-300) | the task label in Recents (source read; not measured) | nothing (source read) |
 | When a screen opens | DOM focus on its first control, Back; the web's announcer: FL-010 | TalkBack says the pane title, then the first control: "Orders", "Back", "Button"; an empty utterance where there is no name | VoiceOver's cursor on the first control: "Back Button", or "Button" on a Cupertino screen (FL-303); the title not heard (FL-302) |
 | When a screen closes | the closed screen's title stays (FL-300); DOM focus back on the button that opened it | TalkBack says the pane title of the screen under it, then the button that opened it | the cursor back on the button that opened it |
@@ -294,6 +303,24 @@ What the examples' tests showed:
   Button" (`docs/evidence/S06/voiceover-ios.md`). The tree: two buttons
   on each Cupertino screen, one labelled "Back" and one with no label;
   one on each Material screen (`S06ScreenTitlesUITests`).
+- **VoiceOver on the web** (the principal's recording,
+  `docs/evidence/probes/s06/voiceover-web-round1-fail.md.txt` and
+  `voiceover-web-round1-error.txt`). The run failed one test of twelve:
+  `good-material` in Chromium, where VoiceOver could not be started
+  ("Error: VoiceOver cannot be started"), so it has no reading. Every
+  walk that ran was complete on its first try, in Chromium and WebKit:
+  each example screen to its button, "Open orders button", and each
+  opened screen, "heading level 1 Orders" (or "Details", or "Orders" as
+  plain text for `bad-no-title`) and the text. No list was wrong, so no
+  expectation was changed. The opening rows, recorded and not judged,
+  differ between the browsers: WebKit read "Back button" for every
+  example; Chromium read "Back button" for the Material ones, with "Back
+  and 1 more item and 1 more item group" first for `bad-vague-title`, and
+  "Back button, group" and VoiceOver's help for a group for the two
+  Cupertino ones, with "Back and 2 more items group" first for
+  `good-cupertino`. Neither browser's opening rows had the title. These
+  readings prove nothing beyond what was heard once, and the spec makes
+  no claim on them but that.
 - **Widget tests.** No title is sent on Back, for any example; the route
   names and headings are as the table above, as Android and as iOS.
 
@@ -311,8 +338,11 @@ Skips and what they give up, in the tests:
   and assert that defect instead. They check that no text is cut short
   on the example's own widget and on the whole opened screen, and not on
   the example screen's app bar, which is the app's.
-- The web tests' route checks set `navigator.platform` before load, to a
-  Mac's and to Linux's; Windows was not tried. Chromium only.
+- The web tests' route checks set `navigator.platform` before load, to
+  "MacIntel" and to "Linux x86_64", in Playwright's Chromium on macOS (and
+  on CI, Playwright's Chromium on Linux). Overriding the value is not the
+  same as a browser that runs on Linux; no browser on Windows, and no
+  real browser on Linux, was tried here. Chromium only for the tree.
 - The Android tree test reads the pane titles of the application windows
   only; the status bar has a pane title of its own.
 - TalkBack's rows are judged on phrases, a name found anywhere in a row's
@@ -330,40 +360,41 @@ Skips and what they give up, in the tests:
   first run, at the local size, failed one test, a fault of the test
   (`android-test-round1-fail.txt`, the probe README).
 
-**Not done yet.** The web VoiceOver recording, which the principal runs:
-its lists are predictions from the web tree and the other screen
-readers, not measurements, and the first recording may change them. What
+**Not done yet.** A web VoiceOver recording that passes: the first
+stopped on a start of VoiceOver before `good-material`'s walk in
+Chromium, and the principal records it again. What
 TalkBack and VoiceOver do with a title that changes inside one route
 (FL-305) and with a drawer, beyond the probe.
 
 ## 8. Decisions
 
-Asked of the principal, and through the principal of the owner, by the
-engineer on 2026-11-26; not decided yet:
+Decided by the principal on 2026-11-26, in answer to the build; the
+owner has been told of the first, and may overrule the second and the
+fourth:
 
-- **The web is a limitation with no workaround** (FL-300). By the
-  owner's rule this is the owner's call to confirm. What would fill it,
-  a `NavigatorObserver` or `RouteAware` that sets the title again on a
-  pop, is a mechanism of the project's own and is not built. The app's
-  own screens have the same fault (`lib/app/widgets.dart`, `PageScaffold`:
+- **The web is `PlatformStatus.limitation`, citing FL-300, with no good
+  example on the web.** This follows the owner's rule of 2026-11-23. No
+  `NavigatorObserver` or `RouteAware` that sets the title again on a pop
+  is built: it would be a mechanism of the project's own. The app's own
+  screens have the same fault (`lib/app/widgets.dart`, `PageScaffold`:
   the catalog after Back keeps the technique screen's title,
-  `docs/evidence/probes/s06/web_back.txt`), which is outside this
-  technique's files.
-- **Whether R5, an announcement of the title when a screen opens, is a
-  requirement on iOS.** Its source is the Android Compose repository; the
-  iOS one asks for a title read as a heading. If it is, iOS is a
-  limitation too (FL-302), with no workaround: `namesRoute` changed
-  nothing that was heard.
-- **`good-cupertino` is judged not custom**: `Semantics(namesRoute:
+  `docs/evidence/probes/s06/web_back.txt`); `lib/app` is not changed
+  here, and section 9 hands it on.
+- **R5, the title said when a screen opens, is not a requirement on
+  iOS.** 2.4.2 does not ask for it, and its only source is the Android
+  Compose repository. iOS applies: on iOS the title is not heard as a
+  screen opens (FL-302), and VoiceOver reads it as a heading when it
+  reaches it.
+- **`good-cupertino` is not a custom solution**: `Semantics(namesRoute:
   true)` fills FL-301 with a documented property, as S05
-  `good-cupertino` fills FL-014 with `headingLevel`. Its own Back button,
-  the framework's, has an unnamed tap target (FL-303), so its widget
-  test skips the labelled tap target guideline on the opened screen and
-  asserts the defect instead.
-- **`bad-cupertino-unnamed` fails no WCAG criterion**; it misses R5 on
-  Android, from the Android source. It is kept as a bad example of a
-  framework defect, as C26's spinners are; the alternative is to keep
-  FL-301 with `good-cupertino` as its only example.
+  `good-cupertino` fills FL-014 with `headingLevel`. Its Back button's
+  unnamed tap target (FL-303) is a framework defect inside a good
+  example, and the spec, the doc, and the example's code say so by
+  platform: on iOS it fails 4.1.2's name as written; on the web and
+  Android it was not shown to fail. The example is not called free of
+  defects.
+- **`bad-cupertino-unnamed` is kept**, labelled as a framework defect
+  that fails no WCAG criterion (it misses R5 on Android).
 
 ## 9. What is handed on
 
@@ -372,7 +403,7 @@ engineer on 2026-11-26; not decided yet:
   focus on Back (`docs/evidence/probes/s06/web_back.txt`). TalkBack and
   VoiceOver go to the new screen's first control, and back to the button
   that opened it when it closes.
-- **The app's shell**: FL-300 holds for the app's own screens.
+- **The app's shell** (`lib/app`): FL-300 holds for the app's own screens; the catalog after Back keeps the technique screen's title (`web_back.txt`). Not changed here (the principal's decision, section 8).
 - **Navigation techniques** (tabs, bottom navigation, drawers): FL-305;
   TalkBack said only "selected" for a new destination; a `Drawer` names a
   route of its own, which TalkBack announced (p13).

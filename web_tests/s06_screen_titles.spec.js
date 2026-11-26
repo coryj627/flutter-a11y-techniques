@@ -123,9 +123,10 @@ test.describe('the opened screen', () => {
 // What the route's element says, by the platform the browser reports:
 // Flutter's web engine reads navigator.platform, and AppBar names its route
 // on Linux and Windows but not on macOS (material/app_bar.dart, read in the
-// source; the probe's p01 and "as a Linux browser", in
-// docs/evidence/probes/s06/web.txt). CI's browser is on Linux, a local one
-// here on a Mac, so each case sets it before the page loads.
+// source; the probe's p01, with navigator.platform as it is on a Mac and
+// set to "Linux x86_64", in docs/evidence/probes/s06/web.txt). CI's
+// browser runs on Linux, a local one here on a Mac, so each case sets the
+// value before the page loads: an override, not a browser on that system.
 const PLATFORMS = { mac: 'MacIntel', linux: 'Linux x86_64' };
 
 /** The route elements: each element with aria-describedby, and the text of what it points to. */
