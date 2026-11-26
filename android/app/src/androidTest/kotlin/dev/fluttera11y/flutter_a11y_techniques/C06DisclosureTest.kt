@@ -330,8 +330,9 @@ class C06DisclosureTest : TechniqueTest("C06") {
      *
      * `bad-expand-icon` and `bad-cupertino-expansion-tile` have no state to
      * announce: their `-activated` rows are declared silent
-     * (tool/talkback.py SILENT), logged once the click action has
-     * returned. Nothing at all may be spoken in them, their capture must be
+     * (tool/talkback.py SILENT), logged just before the click action, so
+     * that speech during the action is in them. Nothing at all may be
+     * spoken in them, their capture must be
      * ended by the next marker, and the row after each, the panel's text
      * or Back, is its liveness control and must be right, so a lost
      * capture cannot pass for silence. The Cupertino tile merges its
@@ -341,7 +342,6 @@ class C06DisclosureTest : TechniqueTest("C06") {
     @Test
     fun talkBackWalk() {
         assumeTalkBack()
-        val silentOnChange = setOf("bad-expand-icon", "bad-cupertino-expansion-tile")
         for (slug in c06Titles.keys) {
             open(slug)
             // Let TalkBack finish announcing the new screen first.
@@ -349,17 +349,15 @@ class C06DisclosureTest : TechniqueTest("C06") {
             android.util.Log.i(talkBackTag, "FOCUS c06-$slug-closed")
             talkBackFocus("$slug closed") { control() }
             Thread.sleep(6_000)
-            if (slug in silentOnChange) {
-                // Declared silent (tool/talkback.py SILENT): the marker is
-                // logged once the click action has returned, so the row
-                // holds only what is said after the change; the row after
-                // it, the panel's text or Back, is its liveness control.
-                assertTrue("$slug click", control().performAction(AccessibilityNodeInfo.ACTION_CLICK))
-                android.util.Log.i(talkBackTag, "FOCUS c06-$slug-activated")
-            } else {
-                android.util.Log.i(talkBackTag, "FOCUS c06-$slug-activated")
-                assertTrue("$slug click", control().performAction(AccessibilityNodeInfo.ACTION_CLICK))
-            }
+            // The marker comes before the click, for every example, so
+            // that whatever TalkBack says from the click on, during the
+            // action included, is in the `-activated` row and not in the
+            // closed row before it. For the two examples with no state to
+            // announce that row is declared silent (tool/talkback.py
+            // SILENT); the row after it, the panel's text or Back, is its
+            // liveness control.
+            android.util.Log.i(talkBackTag, "FOCUS c06-$slug-activated")
+            assertTrue("$slug click", control().performAction(AccessibilityNodeInfo.ACTION_CLICK))
             Thread.sleep(6_000)
             assertTrue("$slug: the click opened it", shown(PANEL_TEXT))
             if (slug == "bad-cupertino-expansion-tile") {

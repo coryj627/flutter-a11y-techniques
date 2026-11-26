@@ -496,9 +496,11 @@ enum C06Speech {
   ///   before is known);
   /// - every read after the gesture must be readable: a failed read or an
   ///   empty one fails;
-  /// - for an announcement, every read must be `cursor` or the
-  ///   announcement, and the announcement must be read at least once: a
-  ///   missing one, or any other text, fails;
+  /// - for an announcement, the reads must be the control's utterance
+  ///   `cursor` for a while (none at all included), then the announcement
+  ///   from its first reading to the last read: a missing one, any other
+  ///   text, or a return to `cursor` after it (another reading, or a stale
+  ///   capture, as a quiet read keeps the last utterance) fails;
   /// - for silence, every read must be `cursor` (what `currentSpeech()`
   ///   gives while nothing is said), and `after`, read once the cursor has
   ///   moved on, must be exactly `next`: the capture was live after.
@@ -522,10 +524,20 @@ enum C06Speech {
     }
     switch change {
     case .announces(let a):
-      for (i, p) in polls.enumerated() where p != .speech(cursor) && p != .speech(a) {
-        return "read \(i + 1) was \(describe(p)), neither the control nor \"\(a)\""
+      guard let first = polls.firstIndex(of: .speech(a)) else {
+        for (i, p) in polls.enumerated() where p != .speech(cursor) {
+          return "read \(i + 1) was \(describe(p)), neither the control nor \"\(a)\""
+        }
+        return "\"\(a)\" was never read"
       }
-      guard polls.contains(.speech(a)) else { return "\"\(a)\" was never read" }
+      for (i, p) in polls.enumerated() {
+        if i < first, p != .speech(cursor) {
+          return "read \(i + 1) was \(describe(p)), before \"\(a)\" only the control's utterance may be read"
+        }
+        if i > first, p != .speech(a) {
+          return "read \(i + 1) was \(describe(p)), after \"\(a)\" every read must be \"\(a)\""
+        }
+      }
       return nil
     case .silent:
       for (i, p) in polls.enumerated() where p != .speech(cursor) {
@@ -559,8 +571,17 @@ extension C06DisclosureUITests {
     let c = C06Speech.Poll.speech(Self.cursorText)
     let x = C06Speech.Poll.speech("Expanded")
     let n = C06Speech.Poll.speech(Self.nextText)
-    // An announcement: heard as recorded (the cursor, then "Expanded").
+    // An announcement: heard as recorded (the cursor, then "Expanded"),
+    // with the first reading anywhere.
+    XCTAssertNil(announced(c, [c, x, x, x, x, x, x, x]))
     XCTAssertNil(announced(c, [c, c, x, x, x, x, x, x]))
+    XCTAssertNil(announced(c, [x, x, x, x, x, x, x, x]))
+    XCTAssertNil(announced(c, [c, c, c, c, c, c, c, x]))
+    // A return to the control's utterance after "Expanded", midway or on
+    // the last read: another reading, or a stale capture.
+    XCTAssertNotNil(announced(c, [c, x, x, c, x, x, x, x]))
+    XCTAssertNotNil(announced(c, [c, x, x, x, x, x, x, c]))
+    XCTAssertNotNil(announced(c, [x, c, c, c, c, c, c, c]))
     // Missing with the panel open: the cursor's reading all along.
     XCTAssertNotNil(announced(c, Array(repeating: c, count: 8)))
     // A wrong announcement, alone or beside the right one.
@@ -593,7 +614,8 @@ extension C06DisclosureUITests {
   }
 
   /// Every shape of reading before, crossed with every shape of one read
-  /// put among seven right ones, for both kinds of change. Whether each
+  /// put among seven right ones, at the first, a middle, and the last read,
+  /// for both kinds of change. Whether each
   /// passes is worked out here from the rules, separately from the judge.
   func testSpeechJudgeOverEveryShapeOfInput() {
     let c = C06Speech.Poll.speech(Self.cursorText)
@@ -613,7 +635,9 @@ extension C06DisclosureUITests {
           // Announcement: seven reads of "Expanded" and one odd one.
           var polls = Array(repeating: x, count: 8)
           polls[at] = odd
-          let announceOK = before == c && readable(odd) && (odd == c || odd == x)
+          // The cursor's utterance is allowed only before the first
+          // "Expanded": here, only as the first read.
+          let announceOK = before == c && readable(odd) && (odd == x || (odd == c && at == 0))
           XCTAssertEqual(announced(before, polls) == nil, announceOK,
                          "announces: before \(beforeName), read \(at + 1) \(oddName)")
           // Silence: seven reads of the cursor and one odd one; then the next stop.

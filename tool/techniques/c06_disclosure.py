@@ -42,11 +42,11 @@ TALKBACK_EXPECT = {
     "c06-bad-expansion-tile-open": (["Details,", "Expanded", "Double-tap to Collapse"],
                                     ["Button", "collapsed"]),
     # ExpandIcon: a button with no state in any words, before and after. Its
-    # click label stays "Expand" once open (FL-280). What is said after the
-    # click is declared silent ("(must be silent)" is talkback.SILENT): its
-    # marker is logged once the click action has returned, nothing at all
-    # may be spoken in the row, and the row after it, the panel's text, is
-    # its liveness control.
+    # click label stays "Expand" once open (FL-280). What is said from the
+    # click on is declared silent ("(must be silent)" is talkback.SILENT):
+    # its marker is logged just before the click action, nothing at all may
+    # be spoken in the row, and the row after it, the panel's text, is its
+    # liveness control.
     "c06-bad-expand-icon-closed": (["Details", "Button", "Double-tap to Expand"],
                                    ["collapsed", "expanded"]),
     "c06-bad-expand-icon-activated": (["(must be silent)"], []),
@@ -71,8 +71,8 @@ TALKBACK_METHOD = (
     "it (`activated`: what TalkBack says on the change); then focus goes to the panel's text "
     "(`panel`) and back to the control (`open`). For `bad-expand-icon` and "
     "`bad-cupertino-expansion-tile`, which have no state to announce, the `activated` row is "
-    "declared silent: its marker is logged once the click action has returned, nothing at "
-    "all may be spoken in it, and the row after it (`panel`, or `back`) is its liveness "
+    "declared silent: its marker is logged just before the click action, so speech during "
+    "the action is in it, nothing at all may be spoken in it, and the row after it (`panel`, or `back`) is its liveness "
     "control and must be right; `bad-cupertino-expansion-tile`, whose open panel is part of "
     "its control, moves to Back (`back`) in place of the panel. Each walk is judged whole: a wrong reading fails "
     "for good, and only a walk shown to be incomplete is walked again. Speech is read from "
