@@ -1,0 +1,207 @@
+// C06 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/c06/c06_probe.spec.js.txt with c06probe.config.js.txt).
+// For each fixture of lib/probe.dart: the semantics DOM between "Before dNN"
+// and "dNN end", Chromium's accessibility tree, where Tab goes, what a click,
+// Enter, and Space on the header do, each from a fresh load, and what is
+// written to Flutter's announcement elements while it opens and closes. A key
+// that does nothing is followed, in the same load, by a click (the positive
+// control). Last, plain HTML: a `details` element and APG's disclosure button,
+// for Chromium's reading of the same structures.
+import { test } from '@playwright/test';
+
+const ids = ['d01', 'd02', 'd03', 'd04'];
+
+function log(...a) {
+  console.log('C06WEB', ...a);
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-end"]`).waitFor();
+  await page.waitForTimeout(800);
+  // Record everything written to the announcement elements from now on.
+  await page.evaluate(() => {
+    window.__heard = [];
+    const watch = () => {
+      for (const el of document.querySelectorAll('flt-announcement-host *, [id^="flt-announcement"]')) {
+        if (el.__watched) continue;
+        el.__watched = true;
+        new MutationObserver(() => {
+          const t = el.textContent.trim();
+          if (t) window.__heard.push(`${el.id || el.tagName}: ${t}`);
+        }).observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    };
+    watch();
+    new MutationObserver(watch).observe(document.body, { childList: true, subtree: true });
+  });
+}
+
+async function heard(page) {
+  return page.evaluate(() => window.__heard.splice(0).join(' | ') || '(nothing)');
+}
+
+async function host(page) {
+  return page.locator('flt-semantics-host').evaluate((e) =>
+    e.outerHTML.replace(/ style="[^"]*"/g, '').replace(/></g, '>\n<'),
+  );
+}
+
+async function ax(page, context, id) {
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const out = [];
+  for (const n of nodes) {
+    if (n.ignored) continue;
+    const name = n.name?.value ?? '';
+    const role = n.role?.value ?? '';
+    if (role === 'StaticText' || role === 'InlineTextBox') continue;
+    if (!name.includes(id) && !['heading', 'button', 'region', 'DisclosureTriangle', 'group'].includes(role)) continue;
+    const desc = n.description?.value;
+    const props = (n.properties ?? [])
+      .filter((p) => ['expanded', 'level', 'focusable', 'controls', 'disabled', 'selected', 'pressed'].includes(p.name))
+      .map((p) => `${p.name}:${JSON.stringify(p.value?.value ?? p.value?.relatedNodes?.map((r) => r.idref ?? r.text ?? r.backendDOMNodeId))}`)
+      .join(',');
+    out.push(`role=${role} name="${name}"${desc ? ` description="${desc.replace(/\n/g, '\\n')}"` : ''} ${props}`);
+  }
+  await cdp.detach();
+  return out;
+}
+
+async function active(page) {
+  return page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e || e === document.body) return '(body)';
+    const label = e.getAttribute('aria-label') || e.textContent.trim().slice(0, 40);
+    return `<${e.tagName.toLowerCase()} role=${e.getAttribute('role')} aria-expanded=${e.getAttribute('aria-expanded')}> "${label}"`;
+  });
+}
+
+async function state(page, id) {
+  await page.waitForTimeout(1000);
+  // The panel's button: its text can be merged into the header (d04).
+  const panel = (await page.getByRole('button', { name: `${id} panel button` }).count()) > 0;
+  const expanded = await page.evaluate(() => {
+    const els = [...document.querySelectorAll('flt-semantics-host [aria-expanded]')];
+    return els.map((e) => `${(e.getAttribute('aria-label') || e.textContent).trim().slice(0, 30)}=${e.getAttribute('aria-expanded')}`).join('; ');
+  });
+  return `panel shown=${panel}; aria-expanded: ${expanded || '(none)'}`;
+}
+
+// The element that holds the header "dNN Details": the closest element with
+// a role or a tabindex around the text.
+async function header(page, id) {
+  const handle = await page.evaluateHandle((id) => {
+    const all = [...document.querySelectorAll('flt-semantics-host *')];
+    const own = (e) => (e.getAttribute('aria-label') || [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('')).trim();
+    const e = all.find((x) => own(x).startsWith(`${id} Details`));
+    if (!e) return null;
+    let up = e;
+    while (up && up.tagName !== 'FLT-SEMANTICS-HOST') {
+      if (up.getAttribute('role') === 'button' || up.hasAttribute('tabindex')) return up;
+      up = up.parentElement;
+    }
+    return e;
+  }, id);
+  return handle.asElement();
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of ids) {
+  test(`probe ${id}`, async ({ page, context }) => {
+    page.on('console', (m) => {
+      if (m.text().includes('C06PROBE')) log(id, 'app:', m.text());
+    });
+    await fresh(page, id);
+    log(id, 'navigator.platform', await page.evaluate(() => navigator.platform));
+    log(id, 'DOM collapsed:\n' + (await host(page)));
+    for (const l of await ax(page, context, id)) log(id, 'ax collapsed', l);
+    const stops = [];
+    for (let i = 0; i < 5; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      stops.push(await active(page));
+    }
+    log(id, 'Tab stops collapsed:', stops.join(' / '));
+
+    const h = await header(page, id);
+    if (!h) {
+      log(id, 'no header element found');
+      return;
+    }
+    log(id, 'header element:', await h.evaluate((e) => e.outerHTML.replace(/ style="[^"]*"/g, '').slice(0, 500)));
+    await heard(page);
+    const box = await h.boundingBox();
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    log(id, 'after a click:', await state(page, id), '; announced:', await heard(page));
+    log(id, 'DOM after a click:\n' + (await host(page)));
+    for (const l of await ax(page, context, id)) log(id, 'ax after a click', l);
+    const after = [];
+    await page.evaluate(() => document.activeElement?.blur());
+    for (let i = 0; i < 6; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      after.push(await active(page));
+    }
+    log(id, 'Tab stops after a click:', after.join(' / '));
+    const h2 = await header(page, id);
+    const b2 = await h2.boundingBox();
+    await page.mouse.click(b2.x + b2.width / 2, b2.y + b2.height / 2);
+    log(id, 'after a second click:', await state(page, id), '; announced:', await heard(page));
+
+    for (const key of ['Enter', 'Space']) {
+      await fresh(page, id);
+      let reached = 0;
+      for (let i = 1; i <= 4; i++) {
+        await page.keyboard.press('Tab');
+        await page.waitForTimeout(150);
+        const a = await active(page);
+        if (a.startsWith('<flt-semantics') && a.includes(`${id} Details`)) {
+          reached = i;
+          break;
+        }
+      }
+      log(id, `${key}: header reached after ${reached} Tab(s)`);
+      if (!reached) {
+        const again = await header(page, id);
+        const b = await again.boundingBox();
+        await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+        log(id, `${key}: not reached; control click:`, await state(page, id));
+        continue;
+      }
+      await heard(page);
+      await page.keyboard.press(key);
+      const s = await state(page, id);
+      log(id, `${key}:`, s, '; focus now', await active(page), '; announced:', await heard(page));
+      if (s.includes('panel shown=true')) {
+        await page.keyboard.press(key);
+        log(id, `${key} again:`, await state(page, id), '; focus now', await active(page), '; announced:', await heard(page));
+      } else {
+        const again = await header(page, id);
+        const b = await again.boundingBox();
+        await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+        log(id, `${key} control click:`, await state(page, id));
+      }
+    }
+  });
+}
+
+test('plain HTML comparison', async ({ page, context }) => {
+  await page.setContent(`
+    <p>Before</p>
+    <details><summary>h01 Details summary</summary><p>h01 panel text</p><button>h01 panel button</button></details>
+    <button type="button" aria-expanded="false" aria-controls="h2p" id="h2">h02 Details button</button>
+    <div id="h2p" hidden><p>h02 panel text</p></div>
+    <p>End</p>`);
+  for (const l of await ax(page, context, 'h0')) log('html', 'ax collapsed', l);
+  await page.keyboard.press('Tab');
+  log('html', 'Tab 1:', await page.evaluate(() => document.activeElement.outerHTML.slice(0, 80)));
+  await page.keyboard.press('Enter');
+  log('html', 'Enter on summary: open =', await page.evaluate(() => document.querySelector('details').open));
+  await page.keyboard.press('Space');
+  log('html', 'Space on summary: open =', await page.evaluate(() => document.querySelector('details').open));
+  await page.keyboard.press('Space');
+  for (const l of await ax(page, context, 'h0')) log('html', 'ax with details open', l);
+});

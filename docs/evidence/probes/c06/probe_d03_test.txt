@@ -1,0 +1,4 @@
+C06D03 before: label="d03 Details" tap hints=[SemanticsAction.tap:Expand] panel shown=false
+C06D03 after the tap action: label="d03 Details" tap hints=[SemanticsAction.tap:Collapse] panel shown=true
+C06D03 after a second tap action: label="d03 Details" tap hints=[SemanticsAction.tap:Expand] panel shown=false
+00:00 +1: All tests passed!

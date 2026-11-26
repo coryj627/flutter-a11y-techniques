@@ -145,11 +145,12 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-261](#fl-261) | On Android the expanded state reaches only Android 16 and later | Android (before 16) | Confirmed (source read); measured on Android 17 only |
 | [FL-262](#fl-262) | On the web a heading is never a button: a node with a heading level and a button flag is a heading only, with no `aria-expanded` and no button role | Web | Confirmed |
 | [FL-263](#fl-263) | A panel hidden with `Offstage` is out of the semantics tree, but its controls keep keyboard focus; `Expansible` and `CupertinoExpansionTile` hide closed panels that way by default, and `ExpansionTile` does with `maintainState: true` | All | Confirmed |
-| [FL-264](#fl-264) | `ExpansionTile`'s header has no expanded state, and on Android and iOS no button role; the state is a hint | All | Confirmed |
+| [FL-264](#fl-264) | `ExpansionTile`'s header has no expanded state, and on Android and iOS no button role unless `internalAddSemanticForOnTap`, "a temporary flag", is set; the state is a hint | All | Confirmed |
 | [FL-265](#fl-265) | `CupertinoExpansionTile`'s header takes no keyboard focus, is no button, and has no expanded state; once open, the panel's text joins its name | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-266](#fl-266) | On the web `controlsNodes` becomes `aria-controls` only if the controlled node is there when `controlsNodes` is set | Web | Confirmed |
-| [FL-267](#fl-267) | `ExpansionPanelList`'s expand buttons are named "Expand" or "Collapse" whatever their panel, and have no expanded state | All | Observed |
+| [FL-267](#fl-267) | `ExpansionPanelList`'s expand buttons are named "Expand" or "Collapse" whatever their panel, and have no expanded state; an `ExpandIcon` on its own has no state in any words | All | Observed (`ExpansionPanelList`); Confirmed (`ExpandIcon` on its own, C06) |
 | [FL-269](#fl-269) | A `Card` left at its default joins all its text into one node, and a heading in it makes all of that one heading | All | Confirmed |
+| [FL-280](#fl-280) | On Android an `ExpandIcon` merged with its label keeps the click label "Expand" once it is open | Android | Confirmed; cause not found |
 | [FL-290](#fl-290) | A SnackBar's time limit is the app's alone: a screen reader, Android's accessibility timeout, a pointer resting on it, and keyboard focus on its action do not change it | All | Confirmed |
 | [FL-291](#fl-291) | Escape closes no SnackBar or MaterialBanner; Back pops the screen under it, and the message stays on the screen before | All (Escape: Android and the web, and widget tests; not sent on iOS) | Confirmed |
 | [FL-292](#fl-292) | When a SnackBar times out with keyboard focus on its action, focus goes back to the button that showed it on Android and the web, but to no control in widget tests, and once to the page for a floating one on the web | Android, Web, widget tests (iOS not measured) | Confirmed |
@@ -3929,7 +3930,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-264
 
-**`ExpansionTile`'s header has no expanded state, and on Android and iOS no button role; the state is a hint.**
+**`ExpansionTile`'s header has no expanded state, and on Android and iOS no button role unless `internalAddSemanticForOnTap`, "a temporary flag", is set; the state is a hint.**
 
 - Status: Confirmed, Flutter 3.47.5, all platforms. Found in the C05
   probe (fixture p01) and asserted by C05 `bad-expansion-tile` in the
@@ -3969,12 +3970,33 @@ yet), **Fixed in x.y** (verified on that version).
     state in words, phrased as a touch instruction on a desktop browser.
     In a browser on Android the source adds a live region; not
     measured.
-- WCAG: 4.1.2 Name, Role, Value. On Android and iOS: no role that says it
-  is a control. For the state, on every platform: not settled by the
-  criterion as written. No expanded state is exposed (no `aria-expanded`
-  on the web, no expanded state on Android, none on iOS), but the state is
-  text a screen reader reads: in the name on Android, the hint on iOS, and
-  the accessible description on the web.
+- With `internalAddSemanticForOnTap: true`, and nothing else added (C06
+  probe fixture d02, `docs/evidence/probes/c06/`, and C06 `good-material`
+  in the widget, web, Android, and iOS tests and its transcripts): the
+  header is a button on Android (`android.widget.Button`, "Details,
+  Collapsed"; TalkBack adds "Button") and iOS (a button to XCUITest;
+  VoiceOver "Details Button Collapsed double tap to expand", after
+  "Button" where UIKit's own expanded status also comes, but as the tile's
+  hint: XCUITest shows no value), and on the web as before. Nothing else
+  that was measured changes: still no expanded state on Android 17, iOS
+  27.0, or Chromium; the same hint; the same live region on Android; and
+  the change still announced: "Expanded" from TalkBack on the click, and
+  "Collapsed" on a second (Android 17, the live region); "Expanded" from
+  VoiceOver on iOS after XCUITest's double tap opened it (iOS 27.0;
+  closing was not listened for; the widget tests show the one-second
+  timer); and "Expanded" and "Collapsed" written to Flutter's
+  `flt-announcement-polite` element on a click, Enter, and Space (C06's
+  web tests, Chromium). The parameter is documented as "a temporary flag
+  to help changing the behavior of ListTile onTap semantics", with a note
+  in the source to remove it once its default is flipped to true.
+- WCAG: 4.1.2 Name, Role, Value. As it comes, on Android and iOS: no role
+  that says it is a control. For the state, on every platform: no
+  expanded state is exposed (no `aria-expanded` on the web, no expanded
+  state on Android, none on iOS); the state is only text a screen reader
+  reads, in the name on Android, the hint on iOS, and the accessible
+  description on the web. The owner decided on 2026-11-23, for C06, that
+  this text is not counted as meeting 4.1.2, so the state fails 4.1.2 on
+  every platform, with or without `internalAddSemanticForOnTap`.
 - Closest achievable example: none with `ExpansionTile`'s own parameters
   alone. C05 `good-material` builds the header from a `ListTile` inside
   `Semantics(button: true, expanded:)` and builds the panel only while it
@@ -3982,9 +4004,12 @@ yet), **Fixed in x.y** (verified on that version).
   true)` with its title in `Semantics(expanded:)` gives a button with the
   state (probe p15), but keeps the hint and the live region, so the state
   is said twice ("Expanded / fully expanded" from TalkBack), and relies on
-  a parameter the source calls temporary; it is not used.
-- How to read this entry: Flutter has not given `ExpansionTile` a button
-  role and an expanded state yet.
+  a parameter the source calls temporary; it is not used. C06
+  `good-material` is `ExpansionTile(internalAddSemanticForOnTap: true)`
+  through its own parameters, with this entry's missing state recorded as
+  a limitation on all three platforms; it is not a custom solution.
+- How to read this entry: Flutter has not given `ExpansionTile` an
+  expanded state, or a button role by default, yet.
 - Upstream issue: not searched yet (D25).
 
 ## FL-265
@@ -4034,7 +4059,8 @@ yet), **Fixed in x.y** (verified on that version).
   Role, Value. On Android and iOS no role that says it is a control. For
   the state: where nothing gives it (Android; the web on Linux and
   Windows), it fails as written; where it is only a hint (iOS; the web on
-  macOS), not settled by the criterion as written.
+  macOS), it fails too, by the owner's ruling of 2026-11-23 (C06) that a
+  state given only as text does not meet 4.1.2.
 - Closest achievable example: none with `CupertinoExpansionTile`'s own
   parameters. C05 `good-cupertino` builds the header from a
   `CupertinoListTile` given focus by `FocusableActionDetector`, inside
@@ -4071,10 +4097,11 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-267
 
-**`ExpansionPanelList`'s expand buttons are named "Expand" or "Collapse" whatever their panel, and have no expanded state.**
+**`ExpansionPanelList`'s expand buttons are named "Expand" or "Collapse" whatever their panel, and have no expanded state; an `ExpandIcon` on its own has no state in any words.**
 
-- Status: Observed, Flutter 3.47.5, in the C05 probe only (fixtures p04
-  and p05); no C05 example uses it. Framework source read:
+- Status, for `ExpansionPanelList`: Observed, Flutter 3.47.5, in the C05
+  probe only (fixtures p04 and p05); no C05 example uses it. For
+  `ExpandIcon` on its own: Confirmed, below. Framework source read:
   `material/expansion_panel.dart` and `material/expand_icon.dart`.
 - What happens, with `canTapOnHeader` false (the default, p04): the header
   is text, and a separate `ExpandIcon`, an `IconButton`, opens it. That
@@ -4087,8 +4114,30 @@ yet), **Fixed in x.y** (verified on that version).
   button, named by the header ("p05 Shipping", click label "Expand"), but
   the `ExpandIcon` inside it still takes keyboard focus: Tab stops twice on
   each header (widget tests, web).
-- WCAG: not judged. No C05 example uses it, and the probe alone does not
-  test a whole screen built with it.
+- `ExpandIcon` on its own, beside a `Text` and merged with it in a
+  `MergeSemantics`, as its documentation says ("it should be combined
+  with a label using MergeSemantics"): Confirmed, Flutter 3.47.5, in the
+  C06 probe (fixture d03) and asserted by C06 `bad-expand-icon` in the
+  widget, web, Android, and iOS tests and heard in its transcripts. One
+  button named by the label ("Details"), with no expanded state, no hint,
+  and no value, closed or open, and no live region (widget tests, Android
+  17); in the probe nothing was written to Chromium's announcement
+  elements when it opened or closed. On the web
+  a `role="button"` with no `aria-expanded` and no description (Chromium,
+  with `navigator.platform` set to macOS, Linux, and Windows); on Android
+  an `android.widget.Button` "Details" whose click label is "Expand"
+  ([FL-280](#fl-280): it stays "Expand" once open); on iOS a button with
+  no value, which VoiceOver reads "Details Button", closed and open. In
+  the widget tests its tap hint is "Expand", then "Collapse". Only the
+  icon takes pointer input: a tap on the label opens nothing (widget
+  tests, and on iOS XCUITest's tap at the element's middle); in Chromium a
+  mouse click at the element's middle opens it, as the node's element
+  takes the click ([FL-411](#fl-411)). So nothing says whether its panel
+  is open, in any words.
+- WCAG: for `ExpansionPanelList`, not judged: no C05 example uses it, and
+  the probe alone does not test a whole screen built with it. For
+  `ExpandIcon` on its own: 4.1.2 Name, Role, Value, on every platform: no
+  state.
 - Workaround: as for [FL-264](#fl-264).
 - Upstream issue: not searched yet (D25).
 
@@ -4142,6 +4191,41 @@ yet), **Fixed in x.y** (verified on that version).
   holds every card's text.
 - Workaround, in the SDK: `Card(semanticContainer: false)`, as its
   documentation says (C18 `good-material`).
+- Upstream issue: not searched yet (D25).
+
+## FL-280
+
+**On Android an `ExpandIcon` merged with its label keeps the click label "Expand" once it is open.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 (emulator); cause not
+  found. Found in the C06 probe (fixture d03, `android-tree.txt` and
+  `android-talkback.md`) and asserted by C06 `bad-expand-icon` in the
+  Android tests (`badExpandIconHasNoStateInAnyWords`, which reads the
+  label for two seconds after the click has opened it) and heard in its
+  TalkBack transcript. Not measured below Android 17. Framework source
+  read: `material/expand_icon.dart` sets `onTapHint` to "Expand" or
+  "Collapse" (`collapsedIconTapHint`, `expandedIconTapHint`) from
+  `isExpanded` on every build.
+- What happens: `ExpandIcon` beside a `Text` in a `MergeSemantics`, as its
+  documentation says: closed, the merged `Button` "Details" has the click
+  label "Expand"; once its click has opened the panel, the click label is
+  still "Expand", and TalkBack says "Details / Button / Double-tap to
+  Expand" with the panel open. In the widget tests the same node's tap
+  hint changes to "Collapse" and back (`probe_d03_test.txt`, and C06's
+  widget test), so the framework's semantics change and Android's node
+  does not show it; where it is lost was not found. `ExpansionTile`'s
+  click label, also set with `onTapHint` but on a node that is not merged
+  into a parent (source read), does change on the same device ("Expand for
+  more details", then "Collapse").
+- WCAG: not counted by itself: the example has no state at all
+  ([FL-267](#fl-267)), which fails 4.1.2 whatever its click label says. A
+  label that says what a double tap does, and says the wrong thing once
+  open, adds to that.
+- Workaround: none found with `ExpandIcon`'s own parameters. Not tried:
+  leaving out the `MergeSemantics` (the button then has no name, as the
+  documentation warns).
+- How to read this entry: Flutter has not passed a changed tap hint on a
+  merged node to Android yet, in this case.
 - Upstream issue: not searched yet (D25).
 
 ## FL-290

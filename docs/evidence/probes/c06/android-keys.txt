@@ -1,0 +1,24 @@
+11-22 16:20:13.951  3058  3076 I C06PROBE: d01 Tab stops collapsed: "Back" android.widget.Button / "d01 Details, Collapsed" android.view.View / "Back" android.widget.Button / "d01 Details, Collapsed" android.view.View
+11-22 16:20:17.835  3058  3058 I flutter : C06PROBE d01 open
+11-22 16:20:19.373  3058  3076 I C06PROBE: d01 Enter after 2 Tab(s): panel shown=true; focus "d01 Details, Expanded" android.view.View
+11-22 16:20:20.803  3058  3076 I C06PROBE: d01 after Enter, next Tabs: "d01 panel button" android.widget.Button / "Back" android.widget.Button
+11-22 16:20:23.329  3058  3058 I flutter : C06PROBE d01 open
+11-22 16:20:24.858  3058  3076 I C06PROBE: d01 Space after 2 Tab(s): panel shown=true; focus "d01 Details, Expanded" android.view.View
+11-22 16:20:26.305  3058  3076 I C06PROBE: d01 after Space, next Tabs: "d01 panel button" android.widget.Button / "Back" android.widget.Button
+11-22 16:20:32.001  3058  3076 I C06PROBE: d02 Tab stops collapsed: "Back" android.widget.Button / "d02 Details, Collapsed" android.widget.Button / "Back" android.widget.Button / "d02 Details, Collapsed" android.widget.Button
+11-22 16:20:35.835  3058  3058 I flutter : C06PROBE d02 open
+11-22 16:20:37.366  3058  3076 I C06PROBE: d02 Enter after 2 Tab(s): panel shown=true; focus "d02 Details, Expanded" android.widget.Button
+11-22 16:20:38.794  3058  3076 I C06PROBE: d02 after Enter, next Tabs: "d02 panel button" android.widget.Button / "Back" android.widget.Button
+11-22 16:20:41.320  3058  3058 I flutter : C06PROBE d02 open
+11-22 16:20:42.838  3058  3076 I C06PROBE: d02 Space after 2 Tab(s): panel shown=true; focus "d02 Details, Expanded" android.widget.Button
+11-22 16:20:44.270  3058  3076 I C06PROBE: d02 after Space, next Tabs: "d02 panel button" android.widget.Button / "Back" android.widget.Button
+11-22 16:20:49.999  3058  3076 I C06PROBE: d03 Tab stops collapsed: "Back" android.widget.Button / "d03 Details" android.widget.Button / "Back" android.widget.Button / "d03 Details" android.widget.Button
+11-22 16:20:53.917  3058  3058 I flutter : C06PROBE d03 open
+11-22 16:20:55.435  3058  3076 I C06PROBE: d03 Enter after 2 Tab(s): panel shown=true; focus "d03 Details" android.widget.Button
+11-22 16:20:56.878  3058  3076 I C06PROBE: d03 after Enter, next Tabs: "d03 panel button" android.widget.Button / "Back" android.widget.Button
+11-22 16:20:59.907  3058  3058 I flutter : C06PROBE d03 open
+11-22 16:21:01.430  3058  3076 I C06PROBE: d03 Space after 2 Tab(s): panel shown=true; focus "d03 Details" android.widget.Button
+11-22 16:21:02.868  3058  3076 I C06PROBE: d03 after Space, next Tabs: "d03 panel button" android.widget.Button / "Back" android.widget.Button
+11-22 16:21:08.602  3058  3076 I C06PROBE: d04 Tab stops collapsed: "Back" android.widget.Button / "Back" android.widget.Button / "Back" android.widget.Button / "Back" android.widget.Button
+11-22 16:21:14.014  3058  3076 I C06PROBE: d04 Enter: header not reached by Tab
+11-22 16:21:19.563  3058  3076 I C06PROBE: d04 Space: header not reached by Tab

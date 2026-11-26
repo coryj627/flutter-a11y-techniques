@@ -1,0 +1,25 @@
+== Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+> Task :gradle:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :url_launcher_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preDebugAndroidTestBuild SKIPPED
+Starting 14 tests on Pixel_10a(AVD) - 17
+> Task :app:connectedDebugAndroidTest
+dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest > talkBackWalk[Pixel_10a(AVD) - 17] [33mSKIPPED [0m
+BUILD SUCCESSFUL in 1m 23s
+  <testsuite name="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" tests="14" failures="0" errors="0" skipped="1" time="56.617" timestamp="2026-11-24T00:13:07" hostname="localhost">
+    <testcase name="badExpansionTileIsNotAButton" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="4.88" />
+    <testcase name="goodMaterialOpenPanelButtonIsTheNextTabStop" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="5.66" />
+    <testcase name="goodMaterialFocusCycleVisitsTheControl" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="6.555" />
+    <testcase name="badCupertinoExpansionTileTakesNoKeyboardFocusShiftTab" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="6.03" />
+    <testcase name="badCupertinoExpansionTileIsNoButtonAndHasNoState" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="2.266" />
+    <testcase name="goodMaterialIsAButtonWithTheStateOnlyInItsName" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="3.334" />
+    <testcase name="badCupertinoExpansionTileTakesNoKeyboardFocusEnter" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="5.874" />
+    <testcase name="badCupertinoExpansionTileTakesNoKeyboardFocusSpace" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="3.745" />
+    <testcase name="goodMaterialOpensByTheClickActionStraightAfterTheControl" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="2.726" />
+    <testcase name="goodMaterialIsReachedByTabAndOpenedAndClosedByEnter" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="4.363" />
+    <testcase name="goodMaterialIsReachedByTabAndOpenedAndClosedBySpace" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="4.381" />
+    <testcase name="badExpandIconHasNoStateInAnyWords" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="4.476" />
+    <testcase name="talkBackWalk" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="0.001">
+      <skipped />
+    <testcase name="goodMaterialOpensByATap" classname="dev.fluttera11y.flutter_a11y_techniques.C06DisclosureTest" time="2.326" />

@@ -1,0 +1,153 @@
+// C06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/c06/probe.dart.txt): what the SDK's widgets for a
+// single disclosure expose, and what activates them. One fixture per route,
+// `/d01` to `/d04`; `/` lists them all.
+//
+// Every fixture is one disclosure, "dNN Details", collapsed at the start,
+// between a "Before dNN" text and a "dNN end" text. Its panel holds the text
+// "dNN panel text" and a button "dNN panel button". A change of state prints
+// "C06PROBE dNN open" or "... closed".
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      onGenerateRoute: (settings) {
+        final name = (settings.name ?? '/').replaceFirst('/', '');
+        final page = fixtures.containsKey(name)
+            ? FixtureScreen(ids: [name])
+            : FixtureScreen(ids: fixtures.keys.toList());
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => page,
+        );
+      },
+    );
+  }
+}
+
+void note(String id, bool open) =>
+    debugPrint('C06PROBE $id ${open ? 'open' : 'closed'}');
+
+Widget panel(String id) => Padding(
+  padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('$id panel text'),
+      TextButton(onPressed: () {}, child: Text('$id panel button')),
+    ],
+  ),
+);
+
+/// d03: `ExpandIcon` with a `Text`, in a `MergeSemantics`, as its
+/// documentation says ("it should be combined with a label using
+/// MergeSemantics"); the panel shown while it is expanded.
+class ExpandIconFixture extends StatefulWidget {
+  const ExpandIconFixture({super.key});
+
+  @override
+  State<ExpandIconFixture> createState() => _ExpandIconFixtureState();
+}
+
+class _ExpandIconFixtureState extends State<ExpandIconFixture> {
+  bool open = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        MergeSemantics(
+          child: Row(
+            children: [
+              const SizedBox(width: 16),
+              const Expanded(child: Text('d03 Details')),
+              ExpandIcon(
+                isExpanded: open,
+                onPressed: (wasExpanded) {
+                  setState(() => open = !wasExpanded);
+                  note('d03', open);
+                },
+              ),
+            ],
+          ),
+        ),
+        if (open) panel('d03'),
+      ],
+    );
+  }
+}
+
+final Map<String, (String, WidgetBuilder)> fixtures = {
+  'd01': (
+    'ExpansionTile, as it comes',
+    (_) => ExpansionTile(
+      onExpansionChanged: (v) => note('d01', v),
+      title: const Text('d01 Details'),
+      children: [panel('d01')],
+    ),
+  ),
+  'd02': (
+    'ExpansionTile(internalAddSemanticForOnTap: true)',
+    (_) => ExpansionTile(
+      internalAddSemanticForOnTap: true,
+      onExpansionChanged: (v) => note('d02', v),
+      title: const Text('d02 Details'),
+      children: [panel('d02')],
+    ),
+  ),
+  'd03': (
+    'ExpandIcon and a Text in MergeSemantics',
+    (_) => const ExpandIconFixture(),
+  ),
+  'd04': (
+    'CupertinoExpansionTile, as it comes',
+    (_) => CupertinoExpansionTile(
+      title: const Text('d04 Details'),
+      child: panel('d04'),
+    ),
+  ),
+};
+
+class FixtureScreen extends StatelessWidget {
+  const FixtureScreen({super.key, required this.ids});
+
+  final List<String> ids;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(ids.length == 1 ? ids.single : 'C06 probe')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final id in ids) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text('Before $id'),
+              ),
+              Builder(builder: fixtures[id]!.$2),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Semantics(identifier: '$id-end', child: Text('$id end')),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
