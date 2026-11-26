@@ -4670,8 +4670,12 @@ yet), **Fixed in x.y** (verified on that version).
     tappable, the inner one with the text "Back"; in Chromium both are
     named "Back", the outer by its content (`web.txt`, round 3's strict
     locator found two).
-  - Android: what S06's Android tree test asserts; TalkBack, when the
-    screen opened, said "Back", "Button" (`android-talkback.md`, p05).
+  - Android: one node named "Back", a `Button` with no click action,
+    which TalkBack read as "Back", "Button" with no "Double-tap to
+    activate", where it said that for Material's Back
+    (`docs/evidence/S06/talkback-android.md`, the Cupertino `-opened`
+    rows; the probe's p05, p06, p08); and a clickable node with no
+    name, as S06's Android tree test asserts.
 - Workaround: none tried. S06 `good-cupertino` keeps the bar's own
   button; its widget test skips the labelled tap target guideline on the
   opened screen and asserts this instead.

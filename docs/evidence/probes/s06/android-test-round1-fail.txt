@@ -1,0 +1,7 @@
+dev.fluttera11y.flutter_a11y_techniques.S06ScreenTitlesTest > cupertinosBackButtonTakesTheClickOnANodeWithNoName[Pixel_10a(AVD) - 17] FAILED 
+	java.lang.AssertionError: good-cupertino: a clickable node with no name
+dev.fluttera11y.flutter_a11y_techniques.S06ScreenTitlesTest > talkBackWalk[Pixel_10a(AVD) - 17] SKIPPED 
+Tests on Pixel_10a(AVD) - 17 failed: There was 1 failure(s).
+java.lang.AssertionError: java.lang.AssertionError: good-cupertino: a clickable node with no name
+java.lang.AssertionError: good-cupertino: a clickable node with no name
+BUILD FAILED in 1m 20s

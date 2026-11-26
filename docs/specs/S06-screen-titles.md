@@ -276,9 +276,24 @@ What the examples' tests showed:
   focus there, Enter closed it (`web_back.txt`; I03's subject).
 - **Android.** The pane title is "Orders" (or "Details", or a single
   space) once each screen is open, and the example's title again after
-  Back (`S06ScreenTitlesTest`). TalkBack: see the transcript,
-  `docs/evidence/S06/talkback-android.md`.
-- **iOS.** See the transcript, `docs/evidence/S06/voiceover-ios.md`.
+  Back (`S06ScreenTitlesTest`). TalkBack, as each screen opened, said its
+  pane title and then "Back", "Button": "Orders" for the good examples
+  and `bad-no-document-title`, "Details" for `bad-vague-title`, and an
+  empty utterance for `bad-no-title` and `bad-cupertino-unnamed`; as each
+  closed, the example screen's title and then "Open orders", "Button"
+  (`docs/evidence/S06/talkback-android.md`, one walk, right). On the two
+  Cupertino screens TalkBack said "Back", "Button" with no "Double-tap to
+  activate", which it said for Material's Back: the node named Back has
+  no click action there (FL-303).
+- **iOS.** As each screen opened, VoiceOver's reads went from "Open
+  orders Button" to "Back Button" on the Material screens and to
+  "Button" on the Cupertino ones (FL-303), and to nothing else; the
+  screen then read "Orders Heading" (or "Details Heading", or "Orders"
+  as plain text for `bad-no-title`) and the text, the Cupertino screens
+  "Back Button" first; as each closed, the reads went to "Open orders
+  Button" (`docs/evidence/S06/voiceover-ios.md`). The tree: two buttons
+  on each Cupertino screen, one labelled "Back" and one with no label;
+  one on each Material screen (`S06ScreenTitlesUITests`).
 - **Widget tests.** No title is sent on Back, for any example; the route
   names and headings are as the table above, as Android and as iOS.
 
@@ -310,9 +325,16 @@ Skips and what they give up, in the tests:
   tint of its container, which FL-434 records as not a 1.4.11 failure as
   written; its text contrast with focus on it is checked.
 
-**Not done yet.** The web VoiceOver recording (the principal runs it);
-the Android suite at CI's screen size is in
-`docs/evidence/probes/s06/android_320x640.txt`.
+- **The Android suite passed at CI's size** (320 by 640 at 160 dpi) on the
+  local emulator (`docs/evidence/probes/s06/android_320x640.txt`). Its
+  first run, at the local size, failed one test, a fault of the test
+  (`android-test-round1-fail.txt`, the probe README).
+
+**Not done yet.** The web VoiceOver recording, which the principal runs:
+its lists are predictions from the web tree and the other screen
+readers, not measurements, and the first recording may change them. What
+TalkBack and VoiceOver do with a title that changes inside one route
+(FL-305) and with a drawer, beyond the probe.
 
 ## 8. Decisions
 

@@ -180,3 +180,14 @@ title at 29.5 for a size of 22 at 200% (its text scale is limited);
 Cupertino's bar cut none of the four and drew its title at 17 at 200% as
 at 100% (no scaling). The semantics label was the whole title in every
 case.
+
+## After the probe: the examples' own runs
+
+- `android-test-round1-fail.txt`: the first run of S06's Android tree
+  test failed one test, the one for Cupertino's Back button: it looked for
+  a clickable node whose resource id was null, and every Flutter node's is
+  empty, not null (the probe's `android-tree.txt` shows them blank). The
+  test now takes an empty id as none; no other test changed.
+- `android_320x640.sh.txt`, `android_320x640.txt`: S06's Android tree
+  tests at CI's screen size, 320 by 640 at 160 dpi, on the local
+  emulator, under the device lock; the size and density reset after.

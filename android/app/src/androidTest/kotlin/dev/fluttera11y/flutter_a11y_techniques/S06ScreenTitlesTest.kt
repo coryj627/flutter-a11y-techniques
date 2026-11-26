@@ -136,7 +136,8 @@ class S06ScreenTitlesTest : TechniqueTest("S06") {
         for (slug in listOf("good-material", "good-cupertino", "bad-cupertino-unnamed")) {
             open(slug)
             openScreen(slug)
-            val clickable = everywhere().filter { it.isClickable && it.viewIdResourceName == null }
+            // Flutter's nodes have an empty resource id, not none (the probe).
+            val clickable = everywhere().filter { it.isClickable && it.viewIdResourceName.isNullOrEmpty() }
             val named = everywhere().filter { it.name() == "Back" }
             Log.i("S06", "$slug: clickable ${clickable.map { "${it.type()} \"${it.name()}\"" }}; named Back ${named.map { "${it.type()} clickable=${it.isClickable}" }}")
             if (slug == "good-material") {
@@ -145,7 +146,8 @@ class S06ScreenTitlesTest : TechniqueTest("S06") {
             } else {
                 assertEquals("$slug: one node named Back", 1, named.size)
                 assertTrue("$slug: the node named Back takes no click", !named.single().isClickable)
-                assertTrue("$slug: a clickable node with no name",
+                assertTrue("$slug: a clickable node with no name; clickable: " +
+                    clickable.map { "${it.type()} \"${it.name()}\"" },
                     clickable.any { it.name().isEmpty() && it.text.isNullOrEmpty() })
             }
             closeScreen(slug)
