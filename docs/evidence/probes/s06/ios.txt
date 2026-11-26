@@ -1,0 +1,33 @@
+2026-11-26 16:37:34.072 xcodebuild[83940:68815575] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+p10 launcher: 4 element(s): type=9 id= label="Back" value=nil frame=(4.0, 66.0, 48.0, 48.0) | type=48 id= label="p10 launcher" value=nil frame=(141.49365234375, 76.0, 119.0126953125, 28.0) | type=48 id=p10-start label="p10 start" value=nil frame=(16.0, 134.0, 370.0, 20.0) | type=9 id=p10-open label="p10 Open" value=nil frame=(16.0, 170.0, 112.88816324869794, 48.0)
+p10 screen did not open
+p10 opened: 4 element(s): type=9 id= label="Back" value=nil frame=(4.0, 66.0, 48.0, 48.0) | type=48 id= label="p10 launcher" value=nil frame=(141.49365234375, 76.0, 119.0126953125, 28.0) | type=48 id=p10-start label="p10 start" value=nil frame=(16.0, 134.0, 370.0, 20.0) | type=9 id=p10-open label="p10 Open" value=nil frame=(16.0, 170.0, 112.88816324869794, 48.0)
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a7e78a772289bdcdc/ios/RunnerUITests/ProbeS06UITests.swift:66: error: -[RunnerUITests.ProbeS06UITests testTree] : Failed to tap Any (First Match): No matches found for first query match sequence: `Descendants matching type Any` -> `Elements matching predicate 'label BEGINSWITH "p10 Settings"'`, given input App element pid: 84040
+Test Case '-[RunnerUITests.ProbeS06UITests testTree]' failed (26.426 seconds).
+2026-11-26 16:48:05.067 xcodebuild[95538:68866375] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+VO p10 launcher walk: p10 launcher / p10 start / p10 Open Button
+VO p10 after the double tap at Open: 0.0s p10 Open Button / 0.9s Back Button
+VO p10 opened, one move forward: p10 Inbox | one move back: Back Button
+VO p10 after the double tap at Settings: 0.0s Back Button
+VO p10 second destination, one move forward: p10 Settings | one move back: Back Button
+VO p10 after the double tap at Back: 0.0s Back Button / 1.4s p10 Open Button
+VO p10 back, one move forward: p10 Open Button | one move back: p10 start
+2026-11-26 16:48:49.324 xcodebuild[95538:68866375] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+VO p11 launcher walk: p11 launcher / p11 start / p11 Open Button
+VO p11 after the double tap at Open: 0.0s p11 Open Button / 1.1s Back Button
+VO p11 opened, one move forward: p11 Orders | one move back: Back Button
+VO p11 after the double tap at Back: 0.0s Back Button / 1.4s p11 Open Button
+VO p11 back, one move forward: p11 Open Button | one move back: p11 start
+2026-11-26 16:49:25.193 xcodebuild[95538:68866375] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+VO p12 launcher walk: p12 launcher / p12 start / p12 Open Button
+VO p12 after the double tap at Open: 0.0s p12 Open Button / 1.0s Back Button
+VO p12 opened, one move forward: p12 Orders | one move back: Back Button
+VO p12 after the double tap at Back: 0.0s Back Button / 1.4s p12 Open Button
+VO p12 back, one move forward: p12 Open Button | one move back: p12 start
+2026-11-26 16:50:01.041 xcodebuild[95538:68866375] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+VO p13 launcher walk: p13 launcher / p13 start / p13 Open Button
+VO p13 after the double tap at Open: 0.0s p13 Open Button / 0.9s Open navigation menu Button
+VO p13 opened, one move forward: p13 Mail | one move back: Open navigation menu Button
+VO p13 after the double tap at Show folders: 0.0s Open navigation menu Button / 0.9s p13 Inbox folder
+VO p13 drawer, one move forward: p13 Sent folder | one move back: p13 Inbox folder
+Test Case '-[RunnerUITests.ProbeS06UITests testVoiceOver]' passed (154.212 seconds).
