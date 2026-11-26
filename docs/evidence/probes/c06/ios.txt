@@ -1,0 +1,152 @@
+== simulator:     iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+== testTree
+2026-11-22 16:25:16.186 xcodebuild[9738:47171949] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE ==== d01 collapsed
+C06PROBE EL type=9 id= label="Back" value=Optional() selected=false enabled=true frame=(4.0, 66.0, 48.0, 48.0)
+C06PROBE EL type=48 id= label="d01" value=Optional() selected=false enabled=true frame=(183.46875, 76.0, 35.0625, 28.0)
+C06PROBE EL type=46 id= label="" value=Optional() selected=false enabled=true frame=(0.0, 118.0, 402.0, 130.0)
+C06PROBE EL type=48 id= label="Before d01" value=Optional() selected=false enabled=true frame=(16.0, 134.0, 370.0, 20.0)
+C06PROBE EL type=48 id= label="d01 Details" value=Optional() selected=false enabled=true frame=(0.0, 155.0, 402.0, 56.0)
+C06PROBE EL type=48 id=d01-end label="d01 end" value=Optional() selected=false enabled=true frame=(16.0, 212.0, 370.0, 20.0)
+C06PROBE d01 header type=48 label="d01 Details" value=Optional()
+C06PROBE d01 tap: panel shown=true
+C06PROBE ==== d01 after a tap
+C06PROBE EL type=9 id= label="Back" value=Optional() selected=false enabled=true frame=(4.0, 66.0, 48.0, 48.0)
+C06PROBE EL type=48 id= label="d01" value=Optional() selected=false enabled=true frame=(183.46875, 76.0, 35.0625, 28.0)
+C06PROBE EL type=46 id= label="" value=Optional() selected=false enabled=true frame=(0.0, 118.0, 402.0, 214.0)
+C06PROBE EL type=48 id= label="Before d01" value=Optional() selected=false enabled=true frame=(16.0, 134.0, 370.0, 20.0)
+C06PROBE EL type=48 id= label="d01 Details" value=Optional() selected=false enabled=true frame=(0.0, 155.0, 402.0, 56.0)
+C06PROBE EL type=48 id= label="d01 panel text" value=Optional() selected=false enabled=true frame=(131.41141764322916, 215.0, 96.400390625, 20.0)
+C06PROBE EL type=9 id= label="d01 panel button" value=Optional() selected=false enabled=true frame=(131.41141764322916, 235.0, 139.17716471354166, 48.0)
+C06PROBE EL type=48 id=d01-end label="d01 end" value=Optional() selected=false enabled=true frame=(16.0, 296.0, 370.0, 20.0)
+C06PROBE d01 second tap: panel shown=false
+2026-11-22 16:25:30.845 xcodebuild[9738:47171949] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE ==== d02 collapsed
+C06PROBE EL type=9 id= label="Back" value=Optional() selected=false enabled=true frame=(4.0, 66.0, 48.0, 48.0)
+C06PROBE EL type=48 id= label="d02" value=Optional() selected=false enabled=true frame=(182.12060546875, 76.0, 37.7587890625, 28.0)
+C06PROBE EL type=46 id= label="" value=Optional() selected=false enabled=true frame=(0.0, 118.0, 402.0, 130.0)
+C06PROBE EL type=48 id= label="Before d02" value=Optional() selected=false enabled=true frame=(16.0, 134.0, 370.0, 20.0)
+C06PROBE EL type=9 id= label="d02 Details" value=Optional() selected=false enabled=true frame=(0.0, 155.0, 402.0, 56.0)
+C06PROBE EL type=48 id=d02-end label="d02 end" value=Optional() selected=false enabled=true frame=(16.0, 212.0, 370.0, 20.0)
+C06PROBE d02 header type=9 label="d02 Details" value=Optional()
+C06PROBE d02 tap: panel shown=true
+C06PROBE ==== d02 after a tap
+C06PROBE EL type=9 id= label="Back" value=Optional() selected=false enabled=true frame=(4.0, 66.0, 48.0, 48.0)
+C06PROBE EL type=48 id= label="d02" value=Optional() selected=false enabled=true frame=(182.12060546875, 76.0, 37.7587890625, 28.0)
+C06PROBE EL type=46 id= label="" value=Optional() selected=false enabled=true frame=(0.0, 118.0, 402.0, 214.0)
+C06PROBE EL type=48 id= label="Before d02" value=Optional() selected=false enabled=true frame=(16.0, 134.0, 370.0, 20.0)
+C06PROBE EL type=9 id= label="d02 Details" value=Optional() selected=false enabled=true frame=(0.0, 155.0, 402.0, 56.0)
+C06PROBE EL type=48 id= label="d02 panel text" value=Optional() selected=false enabled=true frame=(130.4532470703125, 215.0, 98.35546875, 20.0)
+C06PROBE EL type=9 id= label="d02 panel button" value=Optional() selected=false enabled=true frame=(130.4532470703125, 235.0, 141.093505859375, 48.0)
+C06PROBE EL type=48 id=d02-end label="d02 end" value=Optional() selected=false enabled=true frame=(16.0, 296.0, 370.0, 20.0)
+C06PROBE d02 second tap: panel shown=false
+2026-11-22 16:25:43.684 xcodebuild[9738:47171949] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE ==== d03 collapsed
+C06PROBE EL type=9 id= label="Back" value=Optional() selected=false enabled=true frame=(4.0, 66.0, 48.0, 48.0)
+C06PROBE EL type=48 id= label="d03" value=Optional() selected=false enabled=true frame=(181.728515625, 76.0, 38.54296875, 28.0)
+C06PROBE EL type=46 id= label="" value=Optional() selected=false enabled=true frame=(0.0, 118.0, 402.0, 120.0)
+C06PROBE EL type=48 id= label="Before d03" value=Optional() selected=false enabled=true frame=(16.0, 134.0, 370.0, 20.0)
+C06PROBE EL type=9 id= label="d03 Details" value=Optional() selected=false enabled=true frame=(0.0, 154.0, 402.0, 48.0)
+C06PROBE EL type=48 id=d03-end label="d03 end" value=Optional() selected=false enabled=true frame=(16.0, 202.0, 370.0, 20.0)
+C06PROBE d03 header type=9 label="d03 Details" value=Optional()
+C06PROBE d03 tap: panel shown=false
+C06PROBE ==== d03 after a tap
+C06PROBE EL type=9 id= label="Back" value=Optional() selected=false enabled=true frame=(4.0, 66.0, 48.0, 48.0)
+C06PROBE EL type=48 id= label="d03" value=Optional() selected=false enabled=true frame=(181.728515625, 76.0, 38.54296875, 28.0)
+C06PROBE EL type=46 id= label="" value=Optional() selected=false enabled=true frame=(0.0, 118.0, 402.0, 120.0)
+C06PROBE EL type=48 id= label="Before d03" value=Optional() selected=false enabled=true frame=(16.0, 134.0, 370.0, 20.0)
+C06PROBE EL type=9 id= label="d03 Details" value=Optional() selected=false enabled=true frame=(0.0, 154.0, 402.0, 48.0)
+C06PROBE EL type=48 id=d03-end label="d03 end" value=Optional() selected=false enabled=true frame=(16.0, 202.0, 370.0, 20.0)
+C06PROBE d03 second tap: panel shown=false
+2026-11-22 16:25:56.466 xcodebuild[9738:47171949] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE ==== d04 collapsed
+C06PROBE EL type=9 id= label="Back" value=Optional() selected=false enabled=true frame=(4.0, 66.0, 48.0, 48.0)
+C06PROBE EL type=48 id= label="d04" value=Optional() selected=false enabled=true frame=(181.5888671875, 76.0, 38.822265625, 28.0)
+C06PROBE EL type=46 id= label="" value=Optional() selected=false enabled=true frame=(0.0, 118.0, 402.0, 116.0)
+C06PROBE EL type=48 id= label="Before d04" value=Optional() selected=false enabled=true frame=(16.0, 134.0, 370.0, 20.0)
+C06PROBE EL type=48 id= label="d04 Details" value=Optional() selected=false enabled=true frame=(0.0, 154.0, 402.0, 44.0)
+C06PROBE EL type=48 id=d04-end label="d04 end" value=Optional() selected=false enabled=true frame=(16.0, 198.0, 370.0, 20.0)
+C06PROBE d04 header type=48 label="d04 Details" value=Optional()
+C06PROBE d04 tap: panel shown=true
+C06PROBE ==== d04 after a tap
+C06PROBE EL type=9 id= label="Back" value=Optional() selected=false enabled=true frame=(4.0, 66.0, 48.0, 48.0)
+C06PROBE EL type=48 id= label="d04" value=Optional() selected=false enabled=true frame=(181.5888671875, 76.0, 38.822265625, 28.0)
+C06PROBE EL type=46 id= label="" value=Optional() selected=false enabled=true frame=(0.0, 118.0, 402.0, 200.0)
+C06PROBE EL type=48 id= label="Before d04" value=Optional() selected=false enabled=true frame=(16.0, 134.0, 370.0, 20.0)
+C06PROBE EL type=48 id=d04-end label="d04 end" value=Optional() selected=false enabled=true frame=(16.0, 282.0, 370.0, 20.0)
+C06PROBE EL type=1 id= label="d04 Details\nd04 panel text" value=Optional() selected=false enabled=true frame=(0.0, 154.0, 402.0, 128.0)
+C06PROBE EL type=9 id= label="d04 panel button" value=Optional() selected=false enabled=true frame=(130.16385904947916, 222.0, 141.67228190104166, 48.0)
+C06PROBE d04 second tap: panel shown=true
+Test Case '-[RunnerUITests.ProbeC06UITests testTree]' passed (52.831 seconds).
+== testKeys
+2026-11-22 16:26:12.708 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d01 1 Tab(s) then Enter: panel shown=false example still on screen=true
+2026-11-22 16:26:23.501 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d01 1 Tab(s) then Space: panel shown=false example still on screen=true
+2026-11-22 16:26:33.337 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d01 2 Tab(s) then Enter: panel shown=true example still on screen=true
+2026-11-22 16:26:44.283 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d01 2 Tab(s) then Space: panel shown=true example still on screen=true
+2026-11-22 16:26:55.314 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d01 3 Tab(s) then Enter: panel shown=false example still on screen=true
+2026-11-22 16:27:07.501 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d01 3 Tab(s) then Space: panel shown=false example still on screen=true
+2026-11-22 16:27:19.599 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d02 1 Tab(s) then Enter: panel shown=false example still on screen=true
+2026-11-22 16:27:29.496 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d02 1 Tab(s) then Space: panel shown=false example still on screen=true
+2026-11-22 16:27:39.432 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d02 2 Tab(s) then Enter: panel shown=true example still on screen=true
+2026-11-22 16:27:50.404 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d02 2 Tab(s) then Space: panel shown=true example still on screen=true
+2026-11-22 16:28:01.452 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d02 3 Tab(s) then Enter: panel shown=false example still on screen=true
+2026-11-22 16:28:13.681 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d02 3 Tab(s) then Space: panel shown=false example still on screen=true
+2026-11-22 16:28:25.847 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d03 1 Tab(s) then Enter: panel shown=false example still on screen=true
+2026-11-22 16:28:35.681 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d03 1 Tab(s) then Space: panel shown=false example still on screen=true
+2026-11-22 16:28:45.617 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d03 2 Tab(s) then Enter: panel shown=true example still on screen=true
+2026-11-22 16:28:56.604 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d03 2 Tab(s) then Space: panel shown=true example still on screen=true
+2026-11-22 16:29:07.581 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d03 3 Tab(s) then Enter: panel shown=false example still on screen=true
+2026-11-22 16:29:19.716 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d03 3 Tab(s) then Space: panel shown=false example still on screen=true
+2026-11-22 16:29:31.786 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d04 1 Tab(s) then Enter: panel shown=false example still on screen=true
+2026-11-22 16:29:41.672 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d04 1 Tab(s) then Space: panel shown=false example still on screen=true
+2026-11-22 16:29:51.620 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d04 2 Tab(s) then Enter: panel shown=false example still on screen=true
+2026-11-22 16:30:02.652 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d04 2 Tab(s) then Space: panel shown=false example still on screen=true
+2026-11-22 16:30:13.666 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d04 3 Tab(s) then Enter: panel shown=false example still on screen=true
+2026-11-22 16:30:25.830 xcodebuild[10657:47178161] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE d04 3 Tab(s) then Space: panel shown=false example still on screen=true
+Test Case '-[RunnerUITests.ProbeC06UITests testKeys]' passed (264.559 seconds).
+== testVoiceOver
+2026-11-22 16:30:41.321 xcodebuild[14088:47195299] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE VO d01 walk collapsed: d01 / Before d01 / d01 Details Collapsed double tap to expand / d01 end
+C06PROBE VO d01 cursor on "d01 Details Collapsed double tap to expand"; after XCUITest's double tap heard: d01 Details Collapsed double tap to expand | Expanded; panel shown=true
+C06PROBE VO d01 moving on from the header: d01 panel text / d01 panel Button / d01 end / d01 end
+C06PROBE VO d01 walk after: d01 / Before d01 / d01 Details Expanded double tap to collapse / d01 panel text / d01 panel Button / d01 end
+2026-11-22 16:31:28.359 xcodebuild[14088:47195299] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE VO d02 walk collapsed: d02 / Before d02 / d02 Details Button Collapsed double tap to expand / d02 end
+C06PROBE VO d02 cursor on "d02 Details Button Collapsed double tap to expand"; after XCUITest's double tap heard: d02 Details Button Collapsed double tap to expand | Expanded; panel shown=true
+C06PROBE VO d02 moving on from the header: d02 panel text / d02 panel Button / d02 end / d02 end
+C06PROBE VO d02 walk after: d02 / Before d02 / d02 Details Button Expanded double tap to collapse / d02 panel text / d02 panel Button / d02 end
+2026-11-22 16:32:14.570 xcodebuild[14088:47195299] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE VO d03 walk collapsed: d03 / Before d03 / d03 Details Button / d03 end
+C06PROBE VO d03 cursor on "d03 Details Button"; after XCUITest's double tap heard: d03 Details Button; panel shown=false
+C06PROBE VO d03 moving on from the header: d03 end / d03 end / d03 end / d03 end
+C06PROBE VO d03 walk after: d03 / Before d03 / d03 Details Button / d03 end
+2026-11-22 16:33:03.319 xcodebuild[14088:47195299] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+C06PROBE VO d04 walk collapsed: d04 / Before d04 / d04 Details Collapsed double tap to expand / d04 end
+C06PROBE VO d04 cursor on "d04 Details Collapsed double tap to expand"; after XCUITest's double tap heard: d04 Details Collapsed double tap to expand; panel shown=true
+C06PROBE VO d04 moving on from the header: d04 panel Button / d04 end / d04 end / d04 end
+C06PROBE VO d04 walk after: d04 / Before d04 / d04 Details d04 panel text Expanded double tap to collapse / d04 panel Button / d04 end
+Test Case '-[RunnerUITests.ProbeC06UITests testVoiceOver]' passed (188.656 seconds).

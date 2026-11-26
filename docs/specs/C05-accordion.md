@@ -221,9 +221,9 @@ defects' verdicts below do not change, on any of those platforms
 `bad-cupertino-expansion-tile` fails 2.1.1, as its header takes no focus
 on each). For the state, which is not a named defect: where it is text in
 the accessible description and not `aria-expanded` (both tiles on macOS,
-`bad-expansion-tile` on Linux and Windows too), 4.1.2 is not settled, as
-the criterion as written does not decide whether text in a description is
-the state being programmatically determined; where nothing gives it
+`bad-expansion-tile` on Linux and Windows too), 4.1.2 fails, by the
+owner's ruling of 2026-11-23 that a state given only as text does not
+meet 4.1.2; where nothing gives it
 (`bad-cupertino-expansion-tile` on Linux and Windows, as on Android), 4.1.2
 fails as written. Nothing more is claimed.
 
@@ -258,9 +258,6 @@ leave the example (widget tests, the web, Android); and on iOS one, two,
 or three Tabs and then Enter or Space never open a section. A section
 opens only by a pointer or a screen reader's tap action. 2.1.1's exception
 (input that depends on the path of the user's movement) does not apply.
-
-"Not settled" means the evidence and the criterion as written do not decide
-it either way; nothing is claimed.
 
 ## 6. Assertions by layer
 
@@ -462,5 +459,5 @@ place); a real app and user journey built with the custom solution; what TalkBac
 through an open panel (the walk moves focus by action); arrow keys, Home,
 and End between headers, which APG does not list and Radix has; an
 accordion that keeps one section always open (APG's `aria-disabled` case);
-the region role for panels, which APG makes optional; and C06 Disclosure.
+and the region role for panels, which APG makes optional.
 

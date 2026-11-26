@@ -1,0 +1,43 @@
+// C06 probe (throwaway; kept as docs/evidence/probes/c06/probe_d03_test.dart.txt):
+// d03's tap hint before and after the merged node's tap action opens it.
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  testWidgets('d03 tap hint follows the state', (tester) async {
+    final handle = tester.ensureSemantics();
+    await tester.pumpWidget(const ProbeApp());
+    await tester.pumpAndSettle();
+    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/d03');
+    await tester.pumpAndSettle();
+    SemanticsNode node() => tester.getSemantics(find.text('d03 Details'));
+    void report(String when) {
+      final d = node().getSemanticsData();
+      final hints = [
+        for (final id in d.customSemanticsActionIds ?? <int>[])
+          '${CustomSemanticsAction.getAction(id)?.action}:${CustomSemanticsAction.getAction(id)?.hint}',
+      ];
+      debugPrint(
+        'C06D03 $when: label="${d.label}" tap hints=$hints '
+        'panel shown=${find.text('d03 panel text').evaluate().isNotEmpty}',
+      );
+    }
+
+    report('before');
+    tester.binding.pipelineOwner.semanticsOwner!.performAction(
+      node().id,
+      SemanticsAction.tap,
+    );
+    await tester.pumpAndSettle();
+    report('after the tap action');
+    tester.binding.pipelineOwner.semanticsOwner!.performAction(
+      node().id,
+      SemanticsAction.tap,
+    );
+    await tester.pumpAndSettle();
+    report('after a second tap action');
+    handle.dispose();
+  });
+}
