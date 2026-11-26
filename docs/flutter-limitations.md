@@ -54,7 +54,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-008](#fl-008) | `IconButton` tooltip is read as a second item by VoiceOver in Chromium | Web (Chromium) | Observed |
 | [FL-009](#fl-009) | `textContrastGuideline` checks disabled text | Test framework | Confirmed |
 | [FL-010](#fl-010) | Live region text is announced when the screen opens | Android, iOS, Web | Observed |
-| [FL-011](#fl-011) | Lazy lists expose only content near the viewport | Web (others not checked) | Confirmed |
+| [FL-011](#fl-011) | Lazy lists expose only content near the viewport | All (measured on the web, Android, and iOS in S08) | Confirmed |
 | [FL-012](#fl-012) | A web live region announcement can be erased by an earlier one's clear timer | Web | Confirmed (source read) |
 | [FL-013](#fl-013) | A web link with `linkUrl` is followed by the browser as well as by `onTap` | Web | Confirmed |
 | [FL-014](#fl-014) | `CupertinoListSection` does not expose its header as a heading | All | Confirmed |
@@ -159,6 +159,11 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-296](#fl-296) | A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it | Web; widget tests (Android and iOS not run) | Confirmed |
 | [FL-297](#fl-297) | On the web, whether VoiceOver in Chromium said what a SnackBar or banner action did, when Enter on that action removed the control, varied between recordings, and the live-region line that now says it was not heard in its one recording | Web (Chromium, VoiceOver, Enter) | Observed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
+| [FL-310](#fl-310) | On iOS the list roles have no effect: VoiceOver says nothing about a list, its size, or an item's place | iOS | Confirmed |
+| [FL-311](#fl-311) | On Android a list made with `SemanticsRole.list` says "In list" and "Out of list", but not how many items it has or where an item is | Android | Confirmed |
+| [FL-312](#fl-312) | On the web a scrolling list (`ListView`, `SliverList`) is not a list, and the list role cannot be put round one | Web | Confirmed |
+| [FL-313](#fl-313) | On Android a list that scrolls says nothing about a list, and once scrolled its items report the wrong place | Android | Confirmed |
+| [FL-314](#fl-314) | A list item whose parent node is not a list fails the framework's own check, and in a debug build no semantics are sent for the screen | Android, iOS, test framework (debug); Web (release: list items) | Confirmed |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
@@ -452,7 +457,8 @@ yet), **Fixed in x.y** (verified on that version).
 
 **Lazy lists expose only content near the viewport.**
 
-- Status: Confirmed on web, Flutter 3.47.5. Android and iOS not checked.
+- Status: Confirmed on web, Flutter 3.47.5; measured on Android and iOS as
+  well in S08 (below).
 - WCAG: 1.3.1 Info and Relationships, 2.4.1 Bypass Blocks (heading navigation).
 - What happens: `ListView` builds only the children near the viewport, and
   only those are in the accessibility tree. With the technique screen in a
@@ -468,6 +474,25 @@ yet), **Fixed in x.y** (verified on that version).
   `web_tests/c01_button.spec.js` asserts that the last section's heading is in
   the tree without scrolling. Long or unbounded lists still need a lazy list;
   what to do there is a question for the list techniques (S12, C-group).
+- Measured on every platform in S08 List semantics (2026-11-26, probe
+  `docs/evidence/probes/s08/`, fixture p08: a `ListView.builder` of 30
+  items in a box 200 high inside the page), and asserted by S08
+  `bad-lazy-list` in the widget and web tests:
+  - Widget tests: items 1 to 13 are nodes when it opens, 7 to 13 of them
+    flagged hidden; scrolled to its end, 18 to 30 (`flutter_test.txt`).
+  - Web: the page holds items 1 to 13 when it opens and 18 to 30 after the
+    mouse wheel scrolls it to its end (`web.txt`).
+  - Android: the visible items only, 1 to 6, in the tree when it opens;
+    after each `ACTION_SCROLL_FORWARD` the items then in view
+    (`android-tree.txt`).
+  - iOS: items 1 to 13 are elements when it opens (`ios.txt`). VoiceOver,
+    moving forward from the line above the list, stopped once with no
+    speech, read items 1 to 6, the ones in view, and then went to the line
+    after the list: items 7 to 30 were not reached by moving forward, and
+    the list was not scrolled. VoiceOver's three-finger scroll was not
+    tried.
+  - What each platform says about the list itself is FL-312 (web) and
+    FL-313 (Android); Flutter gives a list nothing on iOS (FL-310).
 - Upstream issue: not searched yet. Lazy building is by design; the effect on
   assistive technology navigation is the limitation.
 
@@ -916,6 +941,17 @@ yet), **Fixed in x.y** (verified on that version).
   list (`ios.txt`, p14, p15). None of these says
   "article". C18 relies on each card's heading to mark where it starts, as
   MDN's `article` page says an article should be identified.
+- Description lists, measured in S08 (2026-11-26,
+  `docs/evidence/probes/s08/`): `SemanticsRole` has nothing for a
+  description list or for HTML's `dt` and `dd`, which Chromium exposes as
+  a `DescriptionList` holding `term` and `definition` (the plain HTML
+  comparison in `web.txt`; the ARIA roles `term` and `definition`). Terms
+  and descriptions as plain `Text` (fixture p16) are a text each on every
+  platform, read one after the other with nothing that pairs them; each
+  pair in a `MergeSemantics` row (p17) is one node named "p17 Weight\np17
+  2 kg", read on Android, iOS, and the web as the two texts together. S08
+  builds no description list example: nothing in the SDK marks a term or
+  its description.
 - How to read this entry: these are roles Flutter has not added yet. Treat
   it as unfinished work in the framework, and re-check it whenever the
   pinned version changes.
@@ -3881,6 +3917,26 @@ yet), **Fixed in x.y** (verified on that version).
     `<h3>` has no label of its own, are read as one stop with the button
     ("heading level 3 Shipping collapsed button",
     `docs/evidence/C05/voiceover-web.md`). Why they differ was not measured.
+- Also seen in S08 (2026-11-26), the same mechanism from a list item: the
+  engine's order (source read, `_getEngineSemanticsRole`) looks at a
+  node's `SemanticsRole` before any flag, so any role set with
+  `Semantics(role:)` on a node that also has a button flag is that role
+  only. Asserted by S08 `bad-tile-in-item` in
+  `web_tests/s08_list_semantics.spec.js`, written to fail when the tile is
+  a button; found in the S08 probe (`docs/evidence/probes/s08/web.txt`,
+  p24). `Semantics(role: SemanticsRole.listItem)` round a `ListTile` with
+  `onTap` merges the tile into the item's node, which is
+  `<flt-semantics role="listitem" tabindex="0">` named by the tile's
+  title, with no button role. Tab reaches it, and Enter, Space, and a
+  click run its `onTap` (the S08 web test). On Android the same node is
+  a `Button`, read by TalkBack as "p24 Milk / Button. In list"
+  (`android-tree.txt`, `android-talkback.md`), and on iOS a button that
+  VoiceOver reads as "p24 Milk Button" (`ios.txt`, `ios-round2.txt`). The
+  way round it in the SDK: `explicitChildNodes: true` on the list item,
+  which keeps the tile a node of its own: a button inside a list item on
+  the web and Android, and a button on iOS, where XCUITest shows no
+  hierarchy (p28, S08 `good-material`). Other roles round a control were
+  not built.
 - How to read this entry: Flutter has not given a heading node the
   behaviours of a button on the web yet.
 - Upstream issue: not searched yet (D25).
@@ -4528,6 +4584,190 @@ yet), **Fixed in x.y** (verified on that version).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
+
+## FL-310
+
+**On iOS the list roles have no effect: VoiceOver says nothing about a list, its size, or an item's place.**
+
+- Status: Confirmed, Flutter 3.47.5, iPhone 17 simulator, iOS 27.0.
+  Asserted by S08's iOS VoiceOver walks, which expect no word about a list.
+  iOS engine source read (`shell/platform/darwin/ios/framework/Source/SemanticsObject.mm`,
+  `FlutterSemanticsScrollView.mm`): nothing reads a node's role, and no
+  element is given an `accessibilityContainerType`. Found in the S08 probe
+  (`docs/evidence/probes/s08/`); C18's probe saw the same for cards in a
+  list (FL-026, p15).
+- What happens: `Semantics(role: SemanticsRole.list)` round a `Column` and
+  `Semantics(role: SemanticsRole.listItem)` round each item give each item
+  as static text to XCUITest, with no element for the list (`ios.txt`,
+  p03), and VoiceOver, moving forward, reads each item by its text alone:
+  "p03 Milk", "p03 Eggs", "p03 Bread", with no "list", no number of items,
+  and nothing when the list ends. A `ListView` (p06, p07, p08), a
+  `SliverList` (p19), Material's and Cupertino's list widgets (p11 to p14),
+  and every combination probed (p15 to p29) read the same way.
+- What iOS has: the iOS reference repository's Lists technique says that
+  iOS "has no native list semantics like `<ul>`" and that a SwiftUI `List`
+  gives no "List" trait and no "1 of 6"; its requirement is that each item
+  is an element of its own, which Flutter meets. But VoiceOver itself does
+  speak lists: in Safari on the same simulator, moving forward through a
+  plain HTML `ul` of three items, it said "• ul Milk … List start 1 of
+  3", "2 of 3", "3 of 3 List end"; through an `ol` "List start 1" (cut at
+  64 characters) and "2 of 3"; through a `dl` "Term" and "Description"
+  after each term and description; and through a nested `ul` "List start"
+  and "List end" at each level (`ios-round2.txt`, the Safari walks; the
+  service returned each item's text twice). So the screen reader has list
+  semantics on iOS, for web content at least. UIKit has
+  `UIAccessibilityContainerType.list` for a native view; whether VoiceOver
+  says the same for a native container of that type was not measured
+  here, and no native comparison was built.
+- WCAG: none claimed on iOS. Each item is its own element, which is what
+  the iOS reference asks and what a SwiftUI `List` gives. Whether a
+  platform list exists that Flutter fails to give, and so whether iOS is a
+  limitation for S08's start, end, size, and place (R2, R3), waits on the
+  native comparison above.
+- Workaround: none needed for R1 of S08 (each item an element); nothing in
+  the SDK gives iOS a list container.
+- Upstream issue: not searched yet (D25).
+
+## FL-311
+
+**On Android a list made with `SemanticsRole.list` says "In list" and "Out of list", but not how many items it has or where an item is.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator. Asserted by
+  S08's Android tree test (`noItemHasCollectionItemInformation`) and its
+  TalkBack walk, written to fail when the count or the place is said.
+  Engine source read: `RoleConfiguratorFactory.java` gives the list role
+  the class name `android.widget.ListView` and nothing else;
+  `BaseRoleConfigurator.java` sets `CollectionInfo` only from a node's
+  `scrollChildren` (a scroll view's child count), and `CollectionItemInfo`
+  only on the child of a node with implicit scrolling
+  (`AccessibilityBridge.shouldSetCollectionInfo`,
+  `shouldSetCollectionItemInfo`).
+- What happens: the list's node is an `android.widget.ListView` with no
+  collection information, and its items are plain `View`s (`android-tree.txt`,
+  p03). TalkBack, with focus moved to each item in turn, said "p03 Milk /
+  In list", then "p03 Eggs", "p03 Bread", and "Out of list" with the line
+  after it (`android-talkback.md`). A native `ListView` of three items
+  said "n01 Milk. 1 of 3. In list. 3 items", then "2 of 3" and "3 of 3"
+  (the native comparison, `ProbeNativeActivity.kt.txt`, n01). The Android
+  View reference's own unnumbered list, a `LinearLayout` given
+  `CollectionInfo` by an `AccessibilityDelegate` (n02), said "• n02 Milk.
+  In list. 3 items", and its numbered list, with `CollectionItemInfo` on
+  each item as well (n03), "1. n03 Milk. 1 of 3. In list. 3 items"
+  (`android-talkback-round2.md`). Flutter's
+  own `ListView` of the items, which the web does not expose as a list
+  (FL-312), gives Android the size: "In list. 3 items" when it is laid out
+  whole inside the page (p06, `shrinkWrap`), and the place as well, "1 of
+  3. In list. 3 items", when it has a height of its own and does not need
+  to scroll (p07).
+- Why it matters: the Android reference repositories' list semantics give
+  the number of items and, with `CollectionItemInfo`, each item's place
+  ("1 of 3"); a Flutter list made with the role gives the start and the
+  end only.
+- WCAG: none claimed. That it is a list, and where it starts and ends, is
+  programmatically determinable; the count and the place are what the
+  platform adds.
+- Workaround: none that keeps the web's list. A `ListView` gives the count
+  on Android but no list on the web, and the two cannot be put together:
+  a list item inside a `ListView` fails the framework's check (FL-312,
+  FL-314).
+- Upstream issue: not searched yet (D25).
+
+## FL-312
+
+**On the web a scrolling list (`ListView`, `SliverList`) is not a list, and the list role cannot be put round one.**
+
+- Status: Confirmed, Flutter 3.47.5, Chromium. Asserted by S08
+  `bad-lazy-list` in `web_tests/s08_list_semantics.spec.js`, written to
+  fail when a list role appears. Found in the S08 probe
+  (`docs/evidence/probes/s08/web.txt`, `flutter_test.txt`). Framework
+  source read: no widget of the SDK sets `SemanticsRole.list` or
+  `listItem` (searched in `packages/flutter/lib`); `semantics.dart`,
+  `_semanticsListItem`, requires a list item's parent node to have the
+  list role.
+- What happens: a `ListView`, built lazily (p08) or not (p06, p07), a
+  `ListView.separated` (p20), and a `SliverList` (p19) are `flt-semantics`
+  elements with no role, or `role="group"` where the list has a height of
+  its own (p07, p08), and
+  their items are plain text. `Semantics(role: SemanticsRole.list)` round
+  one, with `listItem` round each item (p09, p10), is a list in the web's
+  release build, but the items' parent node is the scroll view's own
+  node, not the list, so the framework's check fails: "Semantics node 8
+  has role SemanticsRole.listItem, but its parent node 11 doesn't have the
+  role SemanticsRole.list" (widget tests, `flutter_test.txt`), and in a
+  debug build on Android and iOS the screen's semantics never arrived
+  (FL-314). The list role round a `ListView` with no list items (p27)
+  passes the check, and is a list whose children are not list items.
+- Why it matters: a list long enough to need a lazy `ListView`, the
+  widget the Flutter documentation gives for long lists, cannot be a list
+  on the web. With FL-011 the page also holds only the items near the
+  view: 13 of 30 when p08 opened, 18 to 30 after it was scrolled to the
+  end.
+- WCAG: 1.3.1 Info and Relationships, on the web: a list shown as a list
+  is not programmatically a list.
+- Workaround: none in the SDK. For a list short enough to lay out whole,
+  the list role round a `Column` (S08 `good-bulleted`).
+- Upstream issue: not searched yet (D25).
+
+## FL-313
+
+**On Android a list that scrolls says nothing about a list, and once scrolled its items report the wrong place.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator. Asserted by S08
+  `bad-lazy-list` in `S08ListSemanticsTest.kt`
+  (`badLazyListGivesTheWrongRowOnceScrolled`) and its TalkBack walk,
+  written to fail when the list is announced or the rows are right. Engine
+  source read: `BaseRoleConfigurator.configureCollectionItem` takes an
+  item's row from its index among the scroll view's children that are
+  there now (`childrenInTraversalOrder.indexOf`), not from its index in
+  the list.
+- What happens: a `ListView.builder` of 30 items in a box 200 high (p08)
+  is an `android.widget.ScrollView` with `CollectionInfo` 30 by 1, its
+  items `View`s with `CollectionItemInfo`. TalkBack, with focus moved to
+  each visible item, said only the item's text: no "In list", no number
+  of items, no place (`android-talkback.md`, p08). The same list with a
+  height that holds all of it (p07, three items, not scrolling) said "1 of
+  3. In list. 3 items". After the list was scrolled forward with
+  `ACTION_SCROLL_FORWARD`, item 9 reported row 7, and item 26 row 7
+  (`android-tree.txt`, p08, steps 2 and 6): the row is the item's place
+  among the nodes the list holds at that moment. After three steps
+  forward, TalkBack read items 14 to 19 by their text alone, as before
+  (`android-talkback-round2.md`).
+- The native comparison (n04, `ProbeNativeActivity.kt.txt`): a native
+  `ListView` of 30 items in a box that scrolls is an
+  `android.widget.ListView`, scrollable, with `CollectionInfo` 30 by 1
+  (`android-tree-round2.txt`), and TalkBack said "n04 Item 1. 1 of 30. In
+  list. 30 items", "2 of 30", and after three steps forward "n04 Item 10.
+  10 of 30. In list. 30 items", "11 of 30": the right place, and the list
+  announced. So a scrolling list is announced on Android, and Flutter's is
+  not. Why TalkBack is silent for Flutter's was not found; its class,
+  `ScrollView` where the native one is `ListView`, is one difference.
+- WCAG: 1.3.1 Info and Relationships, on Android: TalkBack is given a
+  collection with wrong rows, and says nothing of the list.
+- Workaround: none in the SDK.
+- Upstream issue: not searched yet (D25).
+
+## FL-314
+
+**A list item whose parent node is not a list fails the framework's own check, and in a debug build no semantics are sent for the screen.**
+
+- Status: Confirmed, Flutter 3.47.5. Framework source read:
+  `semantics/semantics.dart`, `_semanticsListItem`. Measured in the S08
+  probe: a list item with no list round it (p05), and list items inside a
+  `ListView` with the list role round it (p09, p10), threw the check in
+  the widget tests (`flutter_test.txt`); on Android 17 and iOS 27.0, debug
+  builds, those screens' elements never reached the accessibility tree
+  (`android-tree.txt`, `ios.txt`: "did not open"). In the web's release
+  build, where the check does not run, they were list items (`web.txt`).
+  The same check, for the progress bar role, is
+  [FL-258](#fl-258).
+- What it means: the check is right that a list item belongs in a list,
+  but the parent it looks at is the node directly above the item, which
+  a scroll view, or any widget that makes a node of its own, can put in
+  between. A list item cannot be put inside a `ListView` at all (FL-312).
+- Workaround: put the list role directly round the widget that lays out
+  the items, with nothing that makes a node between them (S08's good
+  examples). S08's widget tests check that no good example throws.
+- Upstream issue: not searched yet (D25).
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->
 
