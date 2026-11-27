@@ -109,7 +109,8 @@ final s09ContentGrouping = Technique(
       slug: 'bad-merged-group',
       title: 'Question and buttons merged',
       variant: ExampleVariant.material,
-      defect: 'The buttons are one, and a screen reader can only press On.',
+      defect:
+          "The question and both buttons are one button, whose action is On's.",
       builder: (_) => const BadMergedGroup(),
     ),
   ],

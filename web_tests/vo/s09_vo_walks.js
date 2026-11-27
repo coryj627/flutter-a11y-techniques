@@ -37,7 +37,7 @@ export const EXAMPLE_SCREENS = {
   ],
   'bad-merged-group': [
     'Question and buttons merged', 'Bad example for Content grouping. Material.',
-    'Defect: The buttons are one, and a screen reader can only press On.',
+    "Defect: The question and both buttons are one button, whose action is On's.",
   ],
 };
 

@@ -170,8 +170,8 @@ class GoodMergedFacts extends StatelessWidget {
 // #region good-cupertino
 /// The same facts as rows of a Cupertino list, each its label over its
 /// value. A `CupertinoListTile` keeps its title and its subtitle as two
-/// elements, so each row is put in `MergeSemantics`, which makes it one:
-/// "City, Boston".
+/// elements (measured in the widget tests), so each row is put in
+/// `MergeSemantics`, which makes it one: "City, Boston".
 class GoodCupertino extends StatelessWidget {
   const GoodCupertino({super.key});
 
@@ -192,9 +192,12 @@ class GoodCupertino extends StatelessWidget {
 
 // #region good-named-group
 /// Two buttons that answer one question. The question is the label of a
-/// node round the buttons, so that the buttons are a group named by it,
-/// as `fieldset` and `legend` make one in HTML. The visible question is
-/// left out of the semantics, or it would be read twice.
+/// node round the buttons. On the web that node is a group named by the
+/// question, as `fieldset` and `legend` make one in HTML. On Android and
+/// iOS Flutter has no such group: the question is read as a stop of its
+/// own before the buttons, and not with them (docs/flutter-limitations.md,
+/// FL-320). The visible question is left out of the semantics, or it would
+/// be read twice.
 class GoodNamedGroup extends StatelessWidget {
   const GoodNamedGroup({super.key});
 
@@ -284,7 +287,10 @@ class BadSplitFacts extends StatelessWidget {
 // #region bad-merged-group
 /// The question and its buttons merged into one element with
 /// `MergeSemantics`: one button named "Kitchen light On Off", whose action
-/// is the first button's. A screen reader cannot reach "Off".
+/// is the first button's. "Off" is no element of its own: TalkBack's
+/// double tap on Android, and a click from assistive technology on the
+/// web, turn the light on (VoiceOver's own activation on iOS was not
+/// measured). The keyboard still reaches Off.
 class BadMergedGroup extends StatelessWidget {
   const BadMergedGroup({super.key});
 
