@@ -20,11 +20,13 @@
 // of the elements in the page, which the web tree spec measures
 // (web_tests/s11_reading_traversal_order.spec.js), and from how VoiceOver
 // read headings, text, and buttons in earlier techniques' recordings. The
-// first recording (2026-11-26, docs/evidence/S11/voiceover-web.md) read
-// exactly these lists in Chromium and WebKit: every walk complete on its
-// first try but WebKit's bad-columns-mixed, whose first walk read the
-// screen's title as an empty phrase and whose second was complete. No help
-// message came in any walk.
+// first recording (2026-11-26, with the judge before review,
+// docs/evidence/probes/s11/voiceover-web-round1.md.txt) read exactly these lists in
+// Chromium and WebKit, every walk complete on its first try but WebKit's
+// bad-columns-mixed, whose first walk read the screen's title as an empty
+// phrase and whose second was complete. The second (2026-11-27, the present
+// judge, docs/evidence/S11/voiceover-web.md) read them again, every walk
+// complete on its first try. No help message came in either.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';

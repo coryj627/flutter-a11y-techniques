@@ -143,10 +143,12 @@ export function helpAfterStop(stops, positions, i) {
  * level 1 heading) read every later stop in its place. This is the rule the
  * principal set on 2026-11-26: an empty reading is a failed capture, walked
  * again, and a reading of the wrong words fails for good. S11's first
- * recording (2026-11-26) gave one such walk: WebKit, bad-columns-mixed, the
- * screen's title read as an empty phrase, every later stop right; the
- * second walk was complete. No help message came in it, so the help rule
- * above is tested here only by the made-up walks in the web tree spec.
+ * recording (2026-11-26, the judge before review) gave one such walk:
+ * WebKit, bad-columns-mixed, the screen's title read as an empty phrase,
+ * every later stop right; the second walk was complete. The second
+ * recording (2026-11-27) gave none. No help message came in either, so the
+ * help rule above is tested here only by the made-up walks in the web tree
+ * spec.
  */
 export function judgeExampleWalk(walked, reachedEnd, expected, screen = [], positions = undefined) {
   // VoiceOver's own help message (VO_HELP, vo_logic.js), when it is about

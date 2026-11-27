@@ -198,7 +198,7 @@ counts included, so a stop missing, added, or out of its place fails.
 | L3 iOS | Every example: every part an element of its own, its label once on the screen; the two buttons buttons with their names, and no other button but Back. XCUITest's own list of elements is not checked for order: it gives an element's children after the elements beside it (probe, `ios.txt`), so the order is checked in the VoiceOver walk. For each button a tap adds one to its own count and to no other; two Tabs then Space add one to Save route's count, three to Save list's, each key sent once from a fresh launch (XCUITest cannot see Flutter's focus; the probe found the first Tab on Back). Shift+Tab is not sent on iOS (section 7) |
 | L4 TalkBack | TalkBack's own order: its focus put on the "Example" heading by action, then TalkBack's "next" pressed once per row, Search and Right on the `uinput` keyboard, with a marker logged before each press, eleven presses per example; each row is what TalkBack said after that press and must say the part meant there ("Route" and "Heading", "Save route" and "Button", and so on) and no other part's whole label, and no role word ("Heading", "Button") its part does not have, so that a label held in another ("Route" in "Save route" and in "Route saves: 0") is caught by its role. So a walk in a different order, or a row that also says another part, is a wrong reading. The good examples' rows are the order meant; the bad ones' the order measured. Each walk is judged whole (`walk_strictly`): a wrong reading fails for good, and only a walk shown to be incomplete (a row with nothing said, or cut off in the log) is walked again, up to three walks, each in the transcript. The judge is tested on made-up logs (`S11OrderedWalk` in `tool/test_talkback.py`) |
 | L4 VoiceOver iOS | VoiceOver's own order: everything after the "Example" heading to the end of the screen, moving with `moveForward()` (C03's walk), compared as a whole list: the good examples "Route Heading", the three steps, "Save route Button", "Bring Heading", the two items, "Save list Button", the two counts; the bad ones in their own orders. Every expected utterance is under the service's 64 characters, and the test refuses a longer one |
-| L4 VoiceOver web | VoiceOver's own order with `voiceOver.next()`, in Chromium and WebKit: every walk must read the whole screen, each stop in its place (S08's judge, copied as `web_tests/vo/s11_vo_walks.js`): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, or a walk that reached the end with any stop not read, or any stop past the last expected one, empty or not, fails for good; a walk cut short with every stop right so far, or one with a stop read as an empty phrase and nothing wrong, is walked again, up to three walks, every try logged; the cursor's position is kept at every stop, and VoiceOver's own help message ("You are currently on ...") is left out only when it is at the position of the stop before it, that stop is a real reading, and the role it names is the role that reading was spoken with, read from where VoiceOver puts it ("heading level 3" first, "button" last; a text or a count has none), never a word of its label (S08's rule, tightened in review); any other help message is a stop that matches nothing and fails for good, as does one in place of a stop, and the judge's cases for this are in the web tree spec. No runner retries. The expected lists were written from the document's order before any recording, and the recording of 2026-11-26 read exactly them in both browsers (section 7) |
+| L4 VoiceOver web | VoiceOver's own order with `voiceOver.next()`, in Chromium and WebKit: every walk must read the whole screen, each stop in its place (S08's judge, copied as `web_tests/vo/s11_vo_walks.js`): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, or a walk that reached the end with any stop not read, or any stop past the last expected one, empty or not, fails for good; a walk cut short with every stop right so far, or one with a stop read as an empty phrase and nothing wrong, is walked again, up to three walks, every try logged; the cursor's position is kept at every stop, and VoiceOver's own help message ("You are currently on ...") is left out only when it is at the position of the stop before it, that stop is a real reading, and the role it names is the role that reading was spoken with, read from where VoiceOver puts it ("heading level 3" first, "button" last; a text or a count has none), never a word of its label (S08's rule, tightened in review); any other help message is a stop that matches nothing and fails for good, as does one in place of a stop, and the judge's cases for this are in the web tree spec. No runner retries. The expected lists were written from the document's order before any recording, and both recordings, 2026-11-26 and 2026-11-27, read exactly them in both browsers (section 7) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -309,18 +309,22 @@ navigation, and plain HTML pages for comparison on the web.
   right-to-left: handed on below.
 - **VoiceOver on the web read every example in the document's order**
   (`docs/evidence/S11/voiceover-web.md`, recorded by the principal on
-  2026-11-26, in Chromium and Playwright's WebKit): the good examples one
+  2026-11-27 with the present judge, in Chromium and Playwright's WebKit):
+  the good examples one
   column, then the other, `bad-columns-mixed` row by row with both
   headings first, and `bad-key-missing` "Route", "Bring", the steps, Save
   route, the items, Save list. Headings were read "heading level 3 Route",
   buttons "Save route button". The lists had been written from the
-  document's order before the recording, and every one was read exactly.
-  Every walk was complete on its first try but WebKit's
-  `bad-columns-mixed`, whose first walk read the screen's title as an
-  empty phrase, every later stop right, and was walked again, complete. No
-  help message ("You are currently on ...") came in any walk, so the rule
-  that ties one to the stop before it by the cursor's position (S08's,
-  mirrored) is tested only by the made-up walks in the web tree spec.
+  document's order before the first recording, and every one was read
+  exactly. Every walk was complete on its first try. The first recording
+  (2026-11-26, with the judge before review,
+  `docs/evidence/probes/s11/voiceover-web-round1.md.txt`) read the same lists, and had one walk
+  made twice: WebKit's `bad-columns-mixed`, whose first walk read the
+  screen's title as an empty phrase, every later stop right. No help
+  message ("You are currently on ...") came in any walk of either
+  recording, so the rule that ties one to the stop before it by the
+  cursor's position and its role (S08's, mirrored and tightened in review)
+  is tested only by the made-up walks in the web tree spec.
 - **The Android suite passed at CI's size** (320 by 640 at 160 dpi) on
   the local emulator, with `bad-columns-mixed` read row by row there too
   (`docs/evidence/probes/s11/android_320x640.txt`).
