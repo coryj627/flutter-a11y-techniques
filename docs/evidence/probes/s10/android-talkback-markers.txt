@@ -1,0 +1,41 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+s10-p01-0 is "Rating:" android.view.View
+s10-p01-1 is "68" android.widget.ProgressBar
+s10-p01-2 is "3.4 / 5" android.view.View
+s10-p01-3 is "Reviews: 856" android.view.View
+s10-p02-0 is "68, Rating:\n3.4 / 5\nReviews: 856" android.widget.ProgressBar
+s10-p03-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.view.View
+s10-p04-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.view.View
+s10-p05-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.view.View
+s10-p06-0 is "68, Rating: 3.4 out of 5 stars, based on 856 reviews\nRating:\n3.4 / 5\nReviews: 856" android.widget.ProgressBar
+s10-p07-0 is "68, Rating: 3.4 out of 5 stars, based on 856 reviews\nRating:\n3.4 / 5\nReviews: 856" android.widget.ProgressBar
+s10-p08-0 is "68, Rating: 3.4 out of 5 stars, based on 856 reviews" android.widget.ProgressBar
+s10-p09-0 is "3.4" android.view.View
+s10-p09-1 is "(856)" android.view.View
+s10-p10-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.view.View
+s10-p11-0 is "3.4 out of 5 stars, 856 reviews, Rating" android.view.View
+s10-p12-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.widget.ImageView
+s10-p13-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.view.View
+s10-p14-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.view.View
+s10-p15-0 is "Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews" android.widget.Button
+s10-p16-0 is "Steps this week: highest Saturday, 9,000; lowest Friday, 3,900" android.view.View
+s10-p17-0 is "Mon: 4200 steps" android.view.View
+s10-p17-1 is "Tue: 6100 steps" android.view.View
+s10-p17-2 is "Wed: 5300 steps" android.view.View
+s10-p17-3 is "Thu: 7000 steps" android.view.View
+s10-p17-4 is "Fri: 3900 steps" android.view.View
+s10-p17-5 is "Sat: 9000 steps" android.view.View
+s10-p17-6 is "Sun: 6600 steps" android.view.View
+s10-p18-0 is "21°" android.view.View
+s10-p18-1 is "H 24°  L 12°" android.view.View
+s10-p19-0 is "Sunny, 21 degrees, high 24, low 12" android.view.View
+s10-p20-0 is "3" android.view.View
+s10-p20-1 is "Inbox" android.view.View
+s10-p21-0 is "Inbox, 3 unread" android.view.View
+s10-p22-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.view.View
+s10-p22-1 is "Add a 5-star review" android.widget.Button
+s10-p23-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.view.View
+s10-p23-1 is "Add a 5-star review" android.widget.Button
+s10-p24-0 is "3.4 out of 5" android.view.View
+s10-p24-1 is "3.4 out of 5 stars" android.view.View
+s10-p25-0 is "Rating: 3.4 out of 5 stars, based on 856 reviews" android.view.View

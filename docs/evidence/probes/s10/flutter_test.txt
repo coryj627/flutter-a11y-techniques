@@ -1,0 +1,1625 @@
+==== p01 Rating row, pieces as they are
+p01 tree SemanticsNode#0
+p01 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p01 tree  │
+p01 tree  └─SemanticsNode#1
+p01 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p01 tree    │ textDirection: ltr
+p01 tree    │
+p01 tree    └─SemanticsNode#2
+p01 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p01 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p01 tree      │
+p01 tree      └─SemanticsNode#3
+p01 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p01 tree        │ flags: scopesRoute
+p01 tree        │
+p01 tree        ├─SemanticsNode#11
+p01 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p01 tree        │ │
+p01 tree        │ └─SemanticsNode#12
+p01 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p01 tree        │     flags: isHeader, namesRoute
+p01 tree        │     label: "p01"
+p01 tree        │     textDirection: ltr
+p01 tree        │
+p01 tree        └─SemanticsNode#4
+p01 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 172.0)
+p01 tree          │ flags: hasImplicitScrolling
+p01 tree          │ scrollExtentMin: 0.0
+p01 tree          │ scrollPosition: 0.0
+p01 tree          │ scrollExtentMax: 0.0
+p01 tree          │
+p01 tree          ├─SemanticsNode#5
+p01 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p01 tree          │   label: "Before p01"
+p01 tree          │   textDirection: ltr
+p01 tree          │
+p01 tree          ├─SemanticsNode#6
+p01 tree          │   Rect.fromLTRB(16.0, 48.0, 115.8, 68.0)
+p01 tree          │   label: "Rating:"
+p01 tree          │   textDirection: ltr
+p01 tree          │
+p01 tree          ├─SemanticsNode#7
+p01 tree          │   Rect.fromLTRB(123.8, 56.0, 203.8, 60.0)
+p01 tree          │   value: "68"
+p01 tree          │   textDirection: ltr
+p01 tree          │   role: progressBar
+p01 tree          │   minValue: "0"
+p01 tree          │   maxValue: "100"
+p01 tree          │
+p01 tree          ├─SemanticsNode#8
+p01 tree          │   Rect.fromLTRB(211.8, 48.0, 311.5, 68.0)
+p01 tree          │   label: "3.4 / 5"
+p01 tree          │   textDirection: ltr
+p01 tree          │
+p01 tree          ├─SemanticsNode#9
+p01 tree          │   Rect.fromLTRB(319.5, 48.0, 490.5, 68.0)
+p01 tree          │   label: "Reviews: 856"
+p01 tree          │   textDirection: ltr
+p01 tree          │
+p01 tree          └─SemanticsNode#10
+p01 tree              Rect.fromLTRB(16.0, 80.0, 784.0, 100.0)
+p01 tree              identifier: "p01-taps"
+p01 tree              label: "p01 taps: a=0 b=0"
+p01 tree              textDirection: ltr
+p01 node           label="Before p01" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p01 node           label="Rating:" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 99.8, 20.0)
+p01 node           label="" value="68" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.progressBar id= rect=Rect.fromLTRB(0.0, 0.0, 80.0, 4.0)
+p01 node           label="3.4 / 5" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 99.8, 20.0)
+p01 node           label="Reviews: 856" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 171.0, 20.0)
+p01 node           label="p01 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p01-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p01 node           label="p01" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p01 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p01 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p01 taps: a=0 b=0
+p01 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p01 taps: a=0 b=0
+p01 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p01 taps: a=0 b=0
+p01 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p01 taps: a=0 b=0
+p01 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p01 taps: a=0 b=0
+p01 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p01 taps: a=0 b=0
+==== p02 Rating row in MergeSemantics
+p02 tree SemanticsNode#0
+p02 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p02 tree  │
+p02 tree  └─SemanticsNode#1
+p02 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p02 tree    │ textDirection: ltr
+p02 tree    │
+p02 tree    └─SemanticsNode#2
+p02 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p02 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p02 tree      │
+p02 tree      └─SemanticsNode#3
+p02 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p02 tree        │ flags: scopesRoute
+p02 tree        │
+p02 tree        ├─SemanticsNode#8
+p02 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p02 tree        │ │
+p02 tree        │ └─SemanticsNode#9
+p02 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p02 tree        │     flags: isHeader, namesRoute
+p02 tree        │     label: "p02"
+p02 tree        │     textDirection: ltr
+p02 tree        │
+p02 tree        └─SemanticsNode#4
+p02 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 172.0)
+p02 tree          │ flags: hasImplicitScrolling
+p02 tree          │ scrollExtentMin: 0.0
+p02 tree          │ scrollPosition: 0.0
+p02 tree          │ scrollExtentMax: 0.0
+p02 tree          │
+p02 tree          ├─SemanticsNode#5
+p02 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p02 tree          │   label: "Before p02"
+p02 tree          │   textDirection: ltr
+p02 tree          │
+p02 tree          ├─SemanticsNode#6
+p02 tree          │   merge boundary ⛔️
+p02 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 68.0)
+p02 tree          │   label:
+p02 tree          │     "Rating:
+p02 tree          │     3.4 / 5
+p02 tree          │     Reviews: 856"
+p02 tree          │   value: "68"
+p02 tree          │   textDirection: ltr
+p02 tree          │   role: progressBar
+p02 tree          │   minValue: "0"
+p02 tree          │   maxValue: "100"
+p02 tree          │
+p02 tree          └─SemanticsNode#7
+p02 tree              Rect.fromLTRB(16.0, 80.0, 784.0, 100.0)
+p02 tree              identifier: "p02-taps"
+p02 tree              label: "p02 taps: a=0 b=0"
+p02 tree              textDirection: ltr
+p02 node           label="Before p02" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p02 node           label="Rating:\n3.4 / 5\nReviews: 856" value="68" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.progressBar id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p02 node           label="p02 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p02-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p02 node           label="p02" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p02 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p02 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p02 taps: a=0 b=0
+p02 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p02 taps: a=0 b=0
+p02 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p02 taps: a=0 b=0
+p02 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p02 taps: a=0 b=0
+p02 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p02 taps: a=0 b=0
+p02 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p02 taps: a=0 b=0
+==== p03 Rating row in Semantics(label:, excludeSemantics: true)
+p03 tree SemanticsNode#0
+p03 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p03 tree  │
+p03 tree  └─SemanticsNode#1
+p03 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p03 tree    │ textDirection: ltr
+p03 tree    │
+p03 tree    └─SemanticsNode#2
+p03 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p03 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p03 tree      │
+p03 tree      └─SemanticsNode#3
+p03 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p03 tree        │ flags: scopesRoute
+p03 tree        │
+p03 tree        ├─SemanticsNode#8
+p03 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p03 tree        │ │
+p03 tree        │ └─SemanticsNode#9
+p03 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p03 tree        │     flags: isHeader, namesRoute
+p03 tree        │     label: "p03"
+p03 tree        │     textDirection: ltr
+p03 tree        │
+p03 tree        └─SemanticsNode#4
+p03 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 172.0)
+p03 tree          │ flags: hasImplicitScrolling
+p03 tree          │ scrollExtentMin: 0.0
+p03 tree          │ scrollPosition: 0.0
+p03 tree          │ scrollExtentMax: 0.0
+p03 tree          │
+p03 tree          ├─SemanticsNode#5
+p03 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p03 tree          │   label: "Before p03"
+p03 tree          │   textDirection: ltr
+p03 tree          │
+p03 tree          ├─SemanticsNode#6
+p03 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 68.0)
+p03 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p03 tree          │   textDirection: ltr
+p03 tree          │
+p03 tree          └─SemanticsNode#7
+p03 tree              Rect.fromLTRB(16.0, 80.0, 784.0, 100.0)
+p03 tree              identifier: "p03-taps"
+p03 tree              label: "p03 taps: a=0 b=0"
+p03 tree              textDirection: ltr
+p03 node           label="Before p03" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p03 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p03 node           label="p03 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p03-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p03 node           label="p03" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p03 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p03 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p03 taps: a=0 b=0
+p03 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p03 taps: a=0 b=0
+p03 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p03 taps: a=0 b=0
+p03 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p03 taps: a=0 b=0
+p03 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p03 taps: a=0 b=0
+p03 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p03 taps: a=0 b=0
+==== p04 Rating row in Semantics(label:) round ExcludeSemantics
+p04 tree SemanticsNode#0
+p04 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p04 tree  │
+p04 tree  └─SemanticsNode#1
+p04 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p04 tree    │ textDirection: ltr
+p04 tree    │
+p04 tree    └─SemanticsNode#2
+p04 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p04 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p04 tree      │
+p04 tree      └─SemanticsNode#3
+p04 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p04 tree        │ flags: scopesRoute
+p04 tree        │
+p04 tree        ├─SemanticsNode#8
+p04 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p04 tree        │ │
+p04 tree        │ └─SemanticsNode#9
+p04 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p04 tree        │     flags: isHeader, namesRoute
+p04 tree        │     label: "p04"
+p04 tree        │     textDirection: ltr
+p04 tree        │
+p04 tree        └─SemanticsNode#4
+p04 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 172.0)
+p04 tree          │ flags: hasImplicitScrolling
+p04 tree          │ scrollExtentMin: 0.0
+p04 tree          │ scrollPosition: 0.0
+p04 tree          │ scrollExtentMax: 0.0
+p04 tree          │
+p04 tree          ├─SemanticsNode#5
+p04 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p04 tree          │   label: "Before p04"
+p04 tree          │   textDirection: ltr
+p04 tree          │
+p04 tree          ├─SemanticsNode#6
+p04 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 68.0)
+p04 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p04 tree          │   textDirection: ltr
+p04 tree          │
+p04 tree          └─SemanticsNode#7
+p04 tree              Rect.fromLTRB(16.0, 80.0, 784.0, 100.0)
+p04 tree              identifier: "p04-taps"
+p04 tree              label: "p04 taps: a=0 b=0"
+p04 tree              textDirection: ltr
+p04 node           label="Before p04" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p04 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p04 node           label="p04 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p04-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p04 node           label="p04" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p04 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p04 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p04 taps: a=0 b=0
+p04 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p04 taps: a=0 b=0
+p04 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p04 taps: a=0 b=0
+p04 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p04 taps: a=0 b=0
+p04 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p04 taps: a=0 b=0
+p04 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p04 taps: a=0 b=0
+==== p05 MergeSemantics, Semantics(label:), each piece in ExcludeSemantics
+p05 tree SemanticsNode#0
+p05 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p05 tree  │
+p05 tree  └─SemanticsNode#1
+p05 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p05 tree    │ textDirection: ltr
+p05 tree    │
+p05 tree    └─SemanticsNode#2
+p05 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p05 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p05 tree      │
+p05 tree      └─SemanticsNode#3
+p05 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p05 tree        │ flags: scopesRoute
+p05 tree        │
+p05 tree        ├─SemanticsNode#8
+p05 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p05 tree        │ │
+p05 tree        │ └─SemanticsNode#9
+p05 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p05 tree        │     flags: isHeader, namesRoute
+p05 tree        │     label: "p05"
+p05 tree        │     textDirection: ltr
+p05 tree        │
+p05 tree        └─SemanticsNode#4
+p05 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 172.0)
+p05 tree          │ flags: hasImplicitScrolling
+p05 tree          │ scrollExtentMin: 0.0
+p05 tree          │ scrollPosition: 0.0
+p05 tree          │ scrollExtentMax: 0.0
+p05 tree          │
+p05 tree          ├─SemanticsNode#5
+p05 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p05 tree          │   label: "Before p05"
+p05 tree          │   textDirection: ltr
+p05 tree          │
+p05 tree          ├─SemanticsNode#6
+p05 tree          │   merge boundary ⛔️
+p05 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 68.0)
+p05 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p05 tree          │   textDirection: ltr
+p05 tree          │
+p05 tree          └─SemanticsNode#7
+p05 tree              Rect.fromLTRB(16.0, 80.0, 784.0, 100.0)
+p05 tree              identifier: "p05-taps"
+p05 tree              label: "p05 taps: a=0 b=0"
+p05 tree              textDirection: ltr
+p05 node           label="Before p05" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p05 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p05 node           label="p05 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p05-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p05 node           label="p05" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p05 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p05 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p05 taps: a=0 b=0
+p05 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p05 taps: a=0 b=0
+p05 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p05 taps: a=0 b=0
+p05 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p05 taps: a=0 b=0
+p05 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p05 taps: a=0 b=0
+p05 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p05 taps: a=0 b=0
+==== p06 Rating row in Semantics(label:), pieces not hidden
+p06 tree SemanticsNode#0
+p06 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p06 tree  │
+p06 tree  └─SemanticsNode#1
+p06 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p06 tree    │ textDirection: ltr
+p06 tree    │
+p06 tree    └─SemanticsNode#2
+p06 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p06 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p06 tree      │
+p06 tree      └─SemanticsNode#3
+p06 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p06 tree        │ flags: scopesRoute
+p06 tree        │
+p06 tree        ├─SemanticsNode#8
+p06 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p06 tree        │ │
+p06 tree        │ └─SemanticsNode#9
+p06 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p06 tree        │     flags: isHeader, namesRoute
+p06 tree        │     label: "p06"
+p06 tree        │     textDirection: ltr
+p06 tree        │
+p06 tree        └─SemanticsNode#4
+p06 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 172.0)
+p06 tree          │ flags: hasImplicitScrolling
+p06 tree          │ scrollExtentMin: 0.0
+p06 tree          │ scrollPosition: 0.0
+p06 tree          │ scrollExtentMax: 0.0
+p06 tree          │
+p06 tree          ├─SemanticsNode#5
+p06 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p06 tree          │   label: "Before p06"
+p06 tree          │   textDirection: ltr
+p06 tree          │
+p06 tree          ├─SemanticsNode#6
+p06 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 68.0)
+p06 tree          │   label:
+p06 tree          │     "Rating: 3.4 out of 5 stars, based on 856 reviews
+p06 tree          │     Rating:
+p06 tree          │     3.4 / 5
+p06 tree          │     Reviews: 856"
+p06 tree          │   value: "68"
+p06 tree          │   textDirection: ltr
+p06 tree          │   role: progressBar
+p06 tree          │   minValue: "0"
+p06 tree          │   maxValue: "100"
+p06 tree          │
+p06 tree          └─SemanticsNode#7
+p06 tree              Rect.fromLTRB(16.0, 80.0, 784.0, 100.0)
+p06 tree              identifier: "p06-taps"
+p06 tree              label: "p06 taps: a=0 b=0"
+p06 tree              textDirection: ltr
+p06 node           label="Before p06" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p06 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews\nRating:\n3.4 / 5\nReviews: 856" value="68" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.progressBar id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p06 node           label="p06 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p06-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p06 node           label="p06" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p06 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p06 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p06 taps: a=0 b=0
+p06 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p06 taps: a=0 b=0
+p06 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p06 taps: a=0 b=0
+p06 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p06 taps: a=0 b=0
+p06 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p06 taps: a=0 b=0
+p06 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p06 taps: a=0 b=0
+==== p07 MergeSemantics round Semantics(label:), pieces not hidden
+p07 tree SemanticsNode#0
+p07 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p07 tree  │
+p07 tree  └─SemanticsNode#1
+p07 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p07 tree    │ textDirection: ltr
+p07 tree    │
+p07 tree    └─SemanticsNode#2
+p07 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p07 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p07 tree      │
+p07 tree      └─SemanticsNode#3
+p07 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p07 tree        │ flags: scopesRoute
+p07 tree        │
+p07 tree        ├─SemanticsNode#8
+p07 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p07 tree        │ │
+p07 tree        │ └─SemanticsNode#9
+p07 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p07 tree        │     flags: isHeader, namesRoute
+p07 tree        │     label: "p07"
+p07 tree        │     textDirection: ltr
+p07 tree        │
+p07 tree        └─SemanticsNode#4
+p07 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 172.0)
+p07 tree          │ flags: hasImplicitScrolling
+p07 tree          │ scrollExtentMin: 0.0
+p07 tree          │ scrollPosition: 0.0
+p07 tree          │ scrollExtentMax: 0.0
+p07 tree          │
+p07 tree          ├─SemanticsNode#5
+p07 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p07 tree          │   label: "Before p07"
+p07 tree          │   textDirection: ltr
+p07 tree          │
+p07 tree          ├─SemanticsNode#6
+p07 tree          │   merge boundary ⛔️
+p07 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 68.0)
+p07 tree          │   label:
+p07 tree          │     "Rating: 3.4 out of 5 stars, based on 856 reviews
+p07 tree          │     Rating:
+p07 tree          │     3.4 / 5
+p07 tree          │     Reviews: 856"
+p07 tree          │   value: "68"
+p07 tree          │   textDirection: ltr
+p07 tree          │   role: progressBar
+p07 tree          │   minValue: "0"
+p07 tree          │   maxValue: "100"
+p07 tree          │
+p07 tree          └─SemanticsNode#7
+p07 tree              Rect.fromLTRB(16.0, 80.0, 784.0, 100.0)
+p07 tree              identifier: "p07-taps"
+p07 tree              label: "p07 taps: a=0 b=0"
+p07 tree              textDirection: ltr
+p07 node           label="Before p07" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p07 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews\nRating:\n3.4 / 5\nReviews: 856" value="68" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.progressBar id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p07 node           label="p07 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p07-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p07 node           label="p07" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p07 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p07 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p07 taps: a=0 b=0
+p07 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p07 taps: a=0 b=0
+p07 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p07 taps: a=0 b=0
+p07 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p07 taps: a=0 b=0
+p07 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p07 taps: a=0 b=0
+p07 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p07 taps: a=0 b=0
+==== p08 p05 with the bar left out of ExcludeSemantics
+p08 tree SemanticsNode#0
+p08 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p08 tree  │
+p08 tree  └─SemanticsNode#1
+p08 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p08 tree    │ textDirection: ltr
+p08 tree    │
+p08 tree    └─SemanticsNode#2
+p08 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p08 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p08 tree      │
+p08 tree      └─SemanticsNode#3
+p08 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p08 tree        │ flags: scopesRoute
+p08 tree        │
+p08 tree        ├─SemanticsNode#8
+p08 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p08 tree        │ │
+p08 tree        │ └─SemanticsNode#9
+p08 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p08 tree        │     flags: isHeader, namesRoute
+p08 tree        │     label: "p08"
+p08 tree        │     textDirection: ltr
+p08 tree        │
+p08 tree        └─SemanticsNode#4
+p08 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 172.0)
+p08 tree          │ flags: hasImplicitScrolling
+p08 tree          │ scrollExtentMin: 0.0
+p08 tree          │ scrollPosition: 0.0
+p08 tree          │ scrollExtentMax: 0.0
+p08 tree          │
+p08 tree          ├─SemanticsNode#5
+p08 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p08 tree          │   label: "Before p08"
+p08 tree          │   textDirection: ltr
+p08 tree          │
+p08 tree          ├─SemanticsNode#6
+p08 tree          │   merge boundary ⛔️
+p08 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 68.0)
+p08 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p08 tree          │   value: "68"
+p08 tree          │   textDirection: ltr
+p08 tree          │   role: progressBar
+p08 tree          │   minValue: "0"
+p08 tree          │   maxValue: "100"
+p08 tree          │
+p08 tree          └─SemanticsNode#7
+p08 tree              Rect.fromLTRB(16.0, 80.0, 784.0, 100.0)
+p08 tree              identifier: "p08-taps"
+p08 tree              label: "p08 taps: a=0 b=0"
+p08 tree              textDirection: ltr
+p08 node           label="Before p08" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p08 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="68" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.progressBar id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p08 node           label="p08 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p08-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p08 node           label="p08" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p08 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p08 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p08 taps: a=0 b=0
+p08 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p08 taps: a=0 b=0
+p08 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p08 taps: a=0 b=0
+p08 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p08 taps: a=0 b=0
+p08 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p08 taps: a=0 b=0
+p08 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p08 taps: a=0 b=0
+==== p09 Stars, pieces as they are (icons with no label)
+p09 tree SemanticsNode#0
+p09 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p09 tree  │
+p09 tree  └─SemanticsNode#1
+p09 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p09 tree    │ textDirection: ltr
+p09 tree    │
+p09 tree    └─SemanticsNode#2
+p09 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p09 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p09 tree      │
+p09 tree      └─SemanticsNode#3
+p09 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p09 tree        │ flags: scopesRoute
+p09 tree        │
+p09 tree        ├─SemanticsNode#9
+p09 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p09 tree        │ │
+p09 tree        │ └─SemanticsNode#10
+p09 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p09 tree        │     flags: isHeader, namesRoute
+p09 tree        │     label: "p09"
+p09 tree        │     textDirection: ltr
+p09 tree        │
+p09 tree        └─SemanticsNode#4
+p09 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 176.0)
+p09 tree          │ flags: hasImplicitScrolling
+p09 tree          │ scrollExtentMin: 0.0
+p09 tree          │ scrollPosition: 0.0
+p09 tree          │ scrollExtentMax: 0.0
+p09 tree          │
+p09 tree          ├─SemanticsNode#5
+p09 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p09 tree          │   label: "Before p09"
+p09 tree          │   textDirection: ltr
+p09 tree          │
+p09 tree          ├─SemanticsNode#6
+p09 tree          │   Rect.fromLTRB(156.0, 50.0, 198.8, 70.0)
+p09 tree          │   label: "3.4"
+p09 tree          │   textDirection: ltr
+p09 tree          │
+p09 tree          ├─SemanticsNode#7
+p09 tree          │   Rect.fromLTRB(202.8, 50.0, 274.0, 70.0)
+p09 tree          │   label: "(856)"
+p09 tree          │   textDirection: ltr
+p09 tree          │
+p09 tree          └─SemanticsNode#8
+p09 tree              Rect.fromLTRB(16.0, 84.0, 784.0, 104.0)
+p09 tree              identifier: "p09-taps"
+p09 tree              label: "p09 taps: a=0 b=0"
+p09 tree              textDirection: ltr
+p09 node           label="Before p09" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p09 node           label="3.4" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 42.8, 20.0)
+p09 node           label="(856)" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 71.3, 20.0)
+p09 node           label="p09 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p09-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p09 node           label="p09" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p09 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p09 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p09 taps: a=0 b=0
+p09 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p09 taps: a=0 b=0
+p09 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p09 taps: a=0 b=0
+p09 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p09 taps: a=0 b=0
+p09 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p09 taps: a=0 b=0
+p09 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p09 taps: a=0 b=0
+==== p10 Stars in Semantics(label:, excludeSemantics: true)
+p10 tree SemanticsNode#0
+p10 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p10 tree  │
+p10 tree  └─SemanticsNode#1
+p10 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p10 tree    │ textDirection: ltr
+p10 tree    │
+p10 tree    └─SemanticsNode#2
+p10 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p10 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p10 tree      │
+p10 tree      └─SemanticsNode#3
+p10 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p10 tree        │ flags: scopesRoute
+p10 tree        │
+p10 tree        ├─SemanticsNode#8
+p10 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p10 tree        │ │
+p10 tree        │ └─SemanticsNode#9
+p10 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p10 tree        │     flags: isHeader, namesRoute
+p10 tree        │     label: "p10"
+p10 tree        │     textDirection: ltr
+p10 tree        │
+p10 tree        └─SemanticsNode#4
+p10 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 176.0)
+p10 tree          │ flags: hasImplicitScrolling
+p10 tree          │ scrollExtentMin: 0.0
+p10 tree          │ scrollPosition: 0.0
+p10 tree          │ scrollExtentMax: 0.0
+p10 tree          │
+p10 tree          ├─SemanticsNode#5
+p10 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p10 tree          │   label: "Before p10"
+p10 tree          │   textDirection: ltr
+p10 tree          │
+p10 tree          ├─SemanticsNode#6
+p10 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 72.0)
+p10 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p10 tree          │   textDirection: ltr
+p10 tree          │
+p10 tree          └─SemanticsNode#7
+p10 tree              Rect.fromLTRB(16.0, 84.0, 784.0, 104.0)
+p10 tree              identifier: "p10-taps"
+p10 tree              label: "p10 taps: a=0 b=0"
+p10 tree              textDirection: ltr
+p10 node           label="Before p10" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p10 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)
+p10 node           label="p10 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p10-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p10 node           label="p10" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p10 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p10 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p10 taps: a=0 b=0
+p10 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p10 taps: a=0 b=0
+p10 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p10 taps: a=0 b=0
+p10 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p10 taps: a=0 b=0
+p10 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p10 taps: a=0 b=0
+p10 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p10 taps: a=0 b=0
+==== p11 Stars in Semantics(label: Rating, value:, excludeSemantics: true)
+p11 tree SemanticsNode#0
+p11 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p11 tree  │
+p11 tree  └─SemanticsNode#1
+p11 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p11 tree    │ textDirection: ltr
+p11 tree    │
+p11 tree    └─SemanticsNode#2
+p11 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p11 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p11 tree      │
+p11 tree      └─SemanticsNode#3
+p11 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p11 tree        │ flags: scopesRoute
+p11 tree        │
+p11 tree        ├─SemanticsNode#8
+p11 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p11 tree        │ │
+p11 tree        │ └─SemanticsNode#9
+p11 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p11 tree        │     flags: isHeader, namesRoute
+p11 tree        │     label: "p11"
+p11 tree        │     textDirection: ltr
+p11 tree        │
+p11 tree        └─SemanticsNode#4
+p11 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 176.0)
+p11 tree          │ flags: hasImplicitScrolling
+p11 tree          │ scrollExtentMin: 0.0
+p11 tree          │ scrollPosition: 0.0
+p11 tree          │ scrollExtentMax: 0.0
+p11 tree          │
+p11 tree          ├─SemanticsNode#5
+p11 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p11 tree          │   label: "Before p11"
+p11 tree          │   textDirection: ltr
+p11 tree          │
+p11 tree          ├─SemanticsNode#6
+p11 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 72.0)
+p11 tree          │   label: "Rating"
+p11 tree          │   value: "3.4 out of 5 stars, 856 reviews"
+p11 tree          │   textDirection: ltr
+p11 tree          │
+p11 tree          └─SemanticsNode#7
+p11 tree              Rect.fromLTRB(16.0, 84.0, 784.0, 104.0)
+p11 tree              identifier: "p11-taps"
+p11 tree              label: "p11 taps: a=0 b=0"
+p11 tree              textDirection: ltr
+p11 node           label="Before p11" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p11 node           label="Rating" value="3.4 out of 5 stars, 856 reviews" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)
+p11 node           label="p11 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p11-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p11 node           label="p11" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p11 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p11 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p11 taps: a=0 b=0
+p11 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p11 taps: a=0 b=0
+p11 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p11 taps: a=0 b=0
+p11 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p11 taps: a=0 b=0
+p11 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p11 taps: a=0 b=0
+p11 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p11 taps: a=0 b=0
+==== p12 Stars in Semantics(image: true, label:, excludeSemantics: true)
+p12 tree SemanticsNode#0
+p12 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p12 tree  │
+p12 tree  └─SemanticsNode#1
+p12 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p12 tree    │ textDirection: ltr
+p12 tree    │
+p12 tree    └─SemanticsNode#2
+p12 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p12 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p12 tree      │
+p12 tree      └─SemanticsNode#3
+p12 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p12 tree        │ flags: scopesRoute
+p12 tree        │
+p12 tree        ├─SemanticsNode#8
+p12 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p12 tree        │ │
+p12 tree        │ └─SemanticsNode#9
+p12 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p12 tree        │     flags: isHeader, namesRoute
+p12 tree        │     label: "p12"
+p12 tree        │     textDirection: ltr
+p12 tree        │
+p12 tree        └─SemanticsNode#4
+p12 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 176.0)
+p12 tree          │ flags: hasImplicitScrolling
+p12 tree          │ scrollExtentMin: 0.0
+p12 tree          │ scrollPosition: 0.0
+p12 tree          │ scrollExtentMax: 0.0
+p12 tree          │
+p12 tree          ├─SemanticsNode#5
+p12 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p12 tree          │   label: "Before p12"
+p12 tree          │   textDirection: ltr
+p12 tree          │
+p12 tree          ├─SemanticsNode#6
+p12 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 72.0)
+p12 tree          │   flags: isImage
+p12 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p12 tree          │   textDirection: ltr
+p12 tree          │
+p12 tree          └─SemanticsNode#7
+p12 tree              Rect.fromLTRB(16.0, 84.0, 784.0, 104.0)
+p12 tree              identifier: "p12-taps"
+p12 tree              label: "p12 taps: a=0 b=0"
+p12 tree              textDirection: ltr
+p12 node           label="Before p12" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p12 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[image] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)
+p12 node           label="p12 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p12-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p12 node           label="p12" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p12 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p12 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p12 taps: a=0 b=0
+p12 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p12 taps: a=0 b=0
+p12 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p12 taps: a=0 b=0
+p12 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p12 taps: a=0 b=0
+p12 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p12 taps: a=0 b=0
+p12 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p12 taps: a=0 b=0
+==== p13 Stars and a TextButton, all in Semantics(label:, excludeSemantics: true)
+p13 tree SemanticsNode#0
+p13 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p13 tree  │
+p13 tree  └─SemanticsNode#1
+p13 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p13 tree    │ textDirection: ltr
+p13 tree    │
+p13 tree    └─SemanticsNode#2
+p13 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p13 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p13 tree      │
+p13 tree      └─SemanticsNode#3
+p13 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p13 tree        │ flags: scopesRoute
+p13 tree        │
+p13 tree        ├─SemanticsNode#8
+p13 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p13 tree        │ │
+p13 tree        │ └─SemanticsNode#9
+p13 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p13 tree        │     flags: isHeader, namesRoute
+p13 tree        │     label: "p13"
+p13 tree        │     textDirection: ltr
+p13 tree        │
+p13 tree        └─SemanticsNode#4
+p13 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 200.0)
+p13 tree          │ flags: hasImplicitScrolling
+p13 tree          │ scrollExtentMin: 0.0
+p13 tree          │ scrollPosition: 0.0
+p13 tree          │ scrollExtentMax: 0.0
+p13 tree          │
+p13 tree          ├─SemanticsNode#5
+p13 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p13 tree          │   label: "Before p13"
+p13 tree          │   textDirection: ltr
+p13 tree          │
+p13 tree          ├─SemanticsNode#6
+p13 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 96.0)
+p13 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p13 tree          │   textDirection: ltr
+p13 tree          │
+p13 tree          └─SemanticsNode#7
+p13 tree              Rect.fromLTRB(16.0, 108.0, 784.0, 128.0)
+p13 tree              identifier: "p13-taps"
+p13 tree              label: "p13 taps: a=0 b=0"
+p13 tree              textDirection: ltr
+p13 node           label="Before p13" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p13 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 48.0)
+p13 node           label="p13 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p13-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p13 node           label="p13" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p13 tab stops: Focus sem=none -> Focus sem=none -> Focus sem=none -> Focus sem=none
+TAP p13 0
+p13 1 Tabs (on Focus sem=none) then Enter: p13 taps: a=1 b=0
+TAP p13 0
+p13 2 Tabs (on Focus sem=none) then Enter: p13 taps: a=1 b=0
+TAP p13 0
+p13 3 Tabs (on Focus sem=none) then Enter: p13 taps: a=1 b=0
+TAP p13 0
+p13 1 Tabs (on Focus sem=none) then  : p13 taps: a=1 b=0
+TAP p13 0
+p13 2 Tabs (on Focus sem=none) then  : p13 taps: a=1 b=0
+TAP p13 0
+p13 3 Tabs (on Focus sem=none) then  : p13 taps: a=1 b=0
+==== p14 Stars replaced, with a custom semantics action "Read reviews"
+p14 tree SemanticsNode#0
+p14 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p14 tree  │
+p14 tree  └─SemanticsNode#1
+p14 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p14 tree    │ textDirection: ltr
+p14 tree    │
+p14 tree    └─SemanticsNode#2
+p14 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p14 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p14 tree      │
+p14 tree      └─SemanticsNode#3
+p14 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p14 tree        │ flags: scopesRoute
+p14 tree        │
+p14 tree        ├─SemanticsNode#8
+p14 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p14 tree        │ │
+p14 tree        │ └─SemanticsNode#9
+p14 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p14 tree        │     flags: isHeader, namesRoute
+p14 tree        │     label: "p14"
+p14 tree        │     textDirection: ltr
+p14 tree        │
+p14 tree        └─SemanticsNode#4
+p14 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 176.0)
+p14 tree          │ flags: hasImplicitScrolling
+p14 tree          │ scrollExtentMin: 0.0
+p14 tree          │ scrollPosition: 0.0
+p14 tree          │ scrollExtentMax: 0.0
+p14 tree          │
+p14 tree          ├─SemanticsNode#5
+p14 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p14 tree          │   label: "Before p14"
+p14 tree          │   textDirection: ltr
+p14 tree          │
+p14 tree          ├─SemanticsNode#6
+p14 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 72.0)
+p14 tree          │   actions: customAction
+p14 tree          │   customActions: Read reviews
+p14 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p14 tree          │   textDirection: ltr
+p14 tree          │
+p14 tree          └─SemanticsNode#7
+p14 tree              Rect.fromLTRB(16.0, 84.0, 784.0, 104.0)
+p14 tree              identifier: "p14-taps"
+p14 tree              label: "p14 taps: a=0 b=0"
+p14 tree              textDirection: ltr
+p14 node           label="Before p14" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p14 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[] actions=[customAction] custom=[0] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)
+p14 node           label="p14 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p14-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p14 node           label="p14" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p14 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p14 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p14 taps: a=0 b=0
+p14 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p14 taps: a=0 b=0
+p14 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p14 taps: a=0 b=0
+p14 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p14 taps: a=0 b=0
+p14 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p14 taps: a=0 b=0
+p14 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p14 taps: a=0 b=0
+==== p15 ListTile(onTap:) whose subtitle is the replaced stars
+p15 tree SemanticsNode#0
+p15 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p15 tree  │
+p15 tree  └─SemanticsNode#1
+p15 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p15 tree    │ textDirection: ltr
+p15 tree    │
+p15 tree    └─SemanticsNode#2
+p15 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p15 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p15 tree      │
+p15 tree      └─SemanticsNode#3
+p15 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p15 tree        │ flags: scopesRoute
+p15 tree        │
+p15 tree        ├─SemanticsNode#8
+p15 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p15 tree        │ │
+p15 tree        │ └─SemanticsNode#9
+p15 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p15 tree        │     flags: isHeader, namesRoute
+p15 tree        │     label: "p15"
+p15 tree        │     textDirection: ltr
+p15 tree        │
+p15 tree        └─SemanticsNode#4
+p15 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 224.0)
+p15 tree          │ flags: hasImplicitScrolling
+p15 tree          │ scrollExtentMin: 0.0
+p15 tree          │ scrollPosition: 0.0
+p15 tree          │ scrollExtentMax: 0.0
+p15 tree          │
+p15 tree          ├─SemanticsNode#5
+p15 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p15 tree          │   label: "Before p15"
+p15 tree          │   textDirection: ltr
+p15 tree          │
+p15 tree          ├─SemanticsNode#6
+p15 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 120.0)
+p15 tree          │   actions: focus, tap
+p15 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable,
+p15 tree          │     hasSelectedState
+p15 tree          │   label:
+p15 tree          │     "Ridge trail
+p15 tree          │     Rating: 3.4 out of 5 stars, based on 856 reviews"
+p15 tree          │   textDirection: ltr
+p15 tree          │
+p15 tree          └─SemanticsNode#7
+p15 tree              Rect.fromLTRB(16.0, 132.0, 784.0, 152.0)
+p15 tree              identifier: "p15-taps"
+p15 tree              label: "p15 taps: a=0 b=0"
+p15 tree              textDirection: ltr
+p15 node           label="Before p15" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p15 node           label="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[button, focusable] actions=[tap, focus] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 72.0)
+p15 node           label="p15 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p15-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p15 node           label="p15" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p15 tab stops: Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews" -> Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews" -> Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews" -> Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews"
+TAP p15 0
+p15 1 Tabs (on Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews") then Enter: p15 taps: a=1 b=0
+TAP p15 0
+p15 2 Tabs (on Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews") then Enter: p15 taps: a=1 b=0
+TAP p15 0
+p15 3 Tabs (on Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews") then Enter: p15 taps: a=1 b=0
+TAP p15 0
+p15 1 Tabs (on Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews") then  : p15 taps: a=1 b=0
+TAP p15 0
+p15 2 Tabs (on Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews") then  : p15 taps: a=1 b=0
+TAP p15 0
+p15 3 Tabs (on Focus sem="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews") then  : p15 taps: a=1 b=0
+==== p16 CustomPaint, semanticsBuilder with one node
+p16 tree SemanticsNode#0
+p16 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p16 tree  │
+p16 tree  └─SemanticsNode#1
+p16 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p16 tree    │ textDirection: ltr
+p16 tree    │
+p16 tree    └─SemanticsNode#2
+p16 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p16 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p16 tree      │
+p16 tree      └─SemanticsNode#3
+p16 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p16 tree        │ flags: scopesRoute
+p16 tree        │
+p16 tree        ├─SemanticsNode#9
+p16 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p16 tree        │ │
+p16 tree        │ └─SemanticsNode#10
+p16 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p16 tree        │     flags: isHeader, namesRoute
+p16 tree        │     label: "p16"
+p16 tree        │     textDirection: ltr
+p16 tree        │
+p16 tree        └─SemanticsNode#4
+p16 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 232.0)
+p16 tree          │ flags: hasImplicitScrolling
+p16 tree          │ scrollExtentMin: 0.0
+p16 tree          │ scrollPosition: 0.0
+p16 tree          │ scrollExtentMax: 0.0
+p16 tree          │
+p16 tree          ├─SemanticsNode#5
+p16 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p16 tree          │   label: "Before p16"
+p16 tree          │   textDirection: ltr
+p16 tree          │
+p16 tree          ├─SemanticsNode#6
+p16 tree          │ │ Rect.fromLTRB(16.0, 48.0, 784.0, 128.0)
+p16 tree          │ │
+p16 tree          │ └─SemanticsNode#7
+p16 tree          │     Rect.fromLTRB(0.0, 0.0, 768.0, 80.0)
+p16 tree          │     label: "Steps this week: highest Saturday, 9,000; lowest Friday,
+p16 tree          │       3,900"
+p16 tree          │     textDirection: ltr
+p16 tree          │
+p16 tree          └─SemanticsNode#8
+p16 tree              Rect.fromLTRB(16.0, 140.0, 784.0, 160.0)
+p16 tree              identifier: "p16-taps"
+p16 tree              label: "p16 taps: a=0 b=0"
+p16 tree              textDirection: ltr
+p16 node           label="Before p16" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p16 node             label="Steps this week: highest Saturday, 9,000; lowest Friday, 3,900" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 80.0)
+p16 node           label="p16 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p16-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p16 node           label="p16" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p16 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p16 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p16 taps: a=0 b=0
+p16 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p16 taps: a=0 b=0
+p16 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p16 taps: a=0 b=0
+p16 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p16 taps: a=0 b=0
+p16 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p16 taps: a=0 b=0
+p16 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p16 taps: a=0 b=0
+==== p17 CustomPaint, semanticsBuilder with a node per bar
+p17 tree SemanticsNode#0
+p17 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p17 tree  │
+p17 tree  └─SemanticsNode#1
+p17 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p17 tree    │ textDirection: ltr
+p17 tree    │
+p17 tree    └─SemanticsNode#2
+p17 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p17 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p17 tree      │
+p17 tree      └─SemanticsNode#3
+p17 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p17 tree        │ flags: scopesRoute
+p17 tree        │
+p17 tree        ├─SemanticsNode#15
+p17 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p17 tree        │ │
+p17 tree        │ └─SemanticsNode#16
+p17 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p17 tree        │     flags: isHeader, namesRoute
+p17 tree        │     label: "p17"
+p17 tree        │     textDirection: ltr
+p17 tree        │
+p17 tree        └─SemanticsNode#4
+p17 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 232.0)
+p17 tree          │ flags: hasImplicitScrolling
+p17 tree          │ scrollExtentMin: 0.0
+p17 tree          │ scrollPosition: 0.0
+p17 tree          │ scrollExtentMax: 0.0
+p17 tree          │
+p17 tree          ├─SemanticsNode#5
+p17 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p17 tree          │   label: "Before p17"
+p17 tree          │   textDirection: ltr
+p17 tree          │
+p17 tree          ├─SemanticsNode#6
+p17 tree          │ │ Rect.fromLTRB(16.0, 48.0, 784.0, 128.0)
+p17 tree          │ │
+p17 tree          │ ├─SemanticsNode#7
+p17 tree          │ │   Rect.fromLTRB(0.0, 0.0, 109.7, 80.0)
+p17 tree          │ │   label: "Mon: 4200 steps"
+p17 tree          │ │   textDirection: ltr
+p17 tree          │ │
+p17 tree          │ ├─SemanticsNode#8
+p17 tree          │ │   Rect.fromLTRB(109.7, 0.0, 219.4, 80.0)
+p17 tree          │ │   label: "Tue: 6100 steps"
+p17 tree          │ │   textDirection: ltr
+p17 tree          │ │
+p17 tree          │ ├─SemanticsNode#9
+p17 tree          │ │   Rect.fromLTRB(219.4, 0.0, 329.1, 80.0)
+p17 tree          │ │   label: "Wed: 5300 steps"
+p17 tree          │ │   textDirection: ltr
+p17 tree          │ │
+p17 tree          │ ├─SemanticsNode#10
+p17 tree          │ │   Rect.fromLTRB(329.1, 0.0, 438.9, 80.0)
+p17 tree          │ │   label: "Thu: 7000 steps"
+p17 tree          │ │   textDirection: ltr
+p17 tree          │ │
+p17 tree          │ ├─SemanticsNode#11
+p17 tree          │ │   Rect.fromLTRB(438.9, 0.0, 548.6, 80.0)
+p17 tree          │ │   label: "Fri: 3900 steps"
+p17 tree          │ │   textDirection: ltr
+p17 tree          │ │
+p17 tree          │ ├─SemanticsNode#12
+p17 tree          │ │   Rect.fromLTRB(548.6, 0.0, 658.3, 80.0)
+p17 tree          │ │   label: "Sat: 9000 steps"
+p17 tree          │ │   textDirection: ltr
+p17 tree          │ │
+p17 tree          │ └─SemanticsNode#13
+p17 tree          │     Rect.fromLTRB(658.3, 0.0, 768.0, 80.0)
+p17 tree          │     label: "Sun: 6600 steps"
+p17 tree          │     textDirection: ltr
+p17 tree          │
+p17 tree          └─SemanticsNode#14
+p17 tree              Rect.fromLTRB(16.0, 140.0, 784.0, 160.0)
+p17 tree              identifier: "p17-taps"
+p17 tree              label: "p17 taps: a=0 b=0"
+p17 tree              textDirection: ltr
+p17 node           label="Before p17" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p17 node             label="Mon: 4200 steps" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 109.7, 80.0)
+p17 node             label="Tue: 6100 steps" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(109.7, 0.0, 219.4, 80.0)
+p17 node             label="Wed: 5300 steps" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(219.4, 0.0, 329.1, 80.0)
+p17 node             label="Thu: 7000 steps" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(329.1, 0.0, 438.9, 80.0)
+p17 node             label="Fri: 3900 steps" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(438.9, 0.0, 548.6, 80.0)
+p17 node             label="Sat: 9000 steps" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(548.6, 0.0, 658.3, 80.0)
+p17 node             label="Sun: 6600 steps" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(658.3, 0.0, 768.0, 80.0)
+p17 node           label="p17 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p17-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p17 node           label="p17" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p17 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p17 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p17 taps: a=0 b=0
+p17 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p17 taps: a=0 b=0
+p17 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p17 taps: a=0 b=0
+p17 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p17 taps: a=0 b=0
+p17 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p17 taps: a=0 b=0
+p17 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p17 taps: a=0 b=0
+==== p18 Weather, pieces as they are
+p18 tree SemanticsNode#0
+p18 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p18 tree  │
+p18 tree  └─SemanticsNode#1
+p18 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p18 tree    │ textDirection: ltr
+p18 tree    │
+p18 tree    └─SemanticsNode#2
+p18 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p18 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p18 tree      │
+p18 tree      └─SemanticsNode#3
+p18 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p18 tree        │ flags: scopesRoute
+p18 tree        │
+p18 tree        ├─SemanticsNode#9
+p18 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p18 tree        │ │
+p18 tree        │ └─SemanticsNode#10
+p18 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p18 tree        │     flags: isHeader, namesRoute
+p18 tree        │     label: "p18"
+p18 tree        │     textDirection: ltr
+p18 tree        │
+p18 tree        └─SemanticsNode#4
+p18 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 176.0)
+p18 tree          │ flags: hasImplicitScrolling
+p18 tree          │ scrollExtentMin: 0.0
+p18 tree          │ scrollPosition: 0.0
+p18 tree          │ scrollExtentMax: 0.0
+p18 tree          │
+p18 tree          ├─SemanticsNode#5
+p18 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p18 tree          │   label: "Before p18"
+p18 tree          │   textDirection: ltr
+p18 tree          │
+p18 tree          ├─SemanticsNode#6
+p18 tree          │   Rect.fromLTRB(48.0, 50.0, 90.8, 70.0)
+p18 tree          │   label: "21°"
+p18 tree          │   textDirection: ltr
+p18 tree          │
+p18 tree          ├─SemanticsNode#7
+p18 tree          │   Rect.fromLTRB(98.8, 50.0, 269.8, 70.0)
+p18 tree          │   label: "H 24°  L 12°"
+p18 tree          │   textDirection: ltr
+p18 tree          │
+p18 tree          └─SemanticsNode#8
+p18 tree              Rect.fromLTRB(16.0, 84.0, 784.0, 104.0)
+p18 tree              identifier: "p18-taps"
+p18 tree              label: "p18 taps: a=0 b=0"
+p18 tree              textDirection: ltr
+p18 node           label="Before p18" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p18 node           label="21°" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 42.8, 20.0)
+p18 node           label="H 24°  L 12°" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 171.0, 20.0)
+p18 node           label="p18 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p18-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p18 node           label="p18" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p18 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p18 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p18 taps: a=0 b=0
+p18 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p18 taps: a=0 b=0
+p18 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p18 taps: a=0 b=0
+p18 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p18 taps: a=0 b=0
+p18 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p18 taps: a=0 b=0
+p18 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p18 taps: a=0 b=0
+==== p19 Weather in Semantics(label:, excludeSemantics: true)
+p19 tree SemanticsNode#0
+p19 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p19 tree  │
+p19 tree  └─SemanticsNode#1
+p19 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p19 tree    │ textDirection: ltr
+p19 tree    │
+p19 tree    └─SemanticsNode#2
+p19 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p19 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p19 tree      │
+p19 tree      └─SemanticsNode#3
+p19 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p19 tree        │ flags: scopesRoute
+p19 tree        │
+p19 tree        ├─SemanticsNode#8
+p19 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p19 tree        │ │
+p19 tree        │ └─SemanticsNode#9
+p19 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p19 tree        │     flags: isHeader, namesRoute
+p19 tree        │     label: "p19"
+p19 tree        │     textDirection: ltr
+p19 tree        │
+p19 tree        └─SemanticsNode#4
+p19 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 176.0)
+p19 tree          │ flags: hasImplicitScrolling
+p19 tree          │ scrollExtentMin: 0.0
+p19 tree          │ scrollPosition: 0.0
+p19 tree          │ scrollExtentMax: 0.0
+p19 tree          │
+p19 tree          ├─SemanticsNode#5
+p19 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p19 tree          │   label: "Before p19"
+p19 tree          │   textDirection: ltr
+p19 tree          │
+p19 tree          ├─SemanticsNode#6
+p19 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 72.0)
+p19 tree          │   label: "Sunny, 21 degrees, high 24, low 12"
+p19 tree          │   textDirection: ltr
+p19 tree          │
+p19 tree          └─SemanticsNode#7
+p19 tree              Rect.fromLTRB(16.0, 84.0, 784.0, 104.0)
+p19 tree              identifier: "p19-taps"
+p19 tree              label: "p19 taps: a=0 b=0"
+p19 tree              textDirection: ltr
+p19 node           label="Before p19" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p19 node           label="Sunny, 21 degrees, high 24, low 12" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)
+p19 node           label="p19 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p19-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p19 node           label="p19" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p19 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p19 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p19 taps: a=0 b=0
+p19 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p19 taps: a=0 b=0
+p19 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p19 taps: a=0 b=0
+p19 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p19 taps: a=0 b=0
+p19 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p19 taps: a=0 b=0
+p19 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p19 taps: a=0 b=0
+==== p20 Badge on an icon, pieces as they are
+p20 tree SemanticsNode#0
+p20 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p20 tree  │
+p20 tree  └─SemanticsNode#1
+p20 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p20 tree    │ textDirection: ltr
+p20 tree    │
+p20 tree    └─SemanticsNode#2
+p20 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p20 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p20 tree      │
+p20 tree      └─SemanticsNode#3
+p20 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p20 tree        │ flags: scopesRoute
+p20 tree        │
+p20 tree        ├─SemanticsNode#9
+p20 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p20 tree        │ │
+p20 tree        │ └─SemanticsNode#10
+p20 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p20 tree        │     flags: isHeader, namesRoute
+p20 tree        │     label: "p20"
+p20 tree        │     textDirection: ltr
+p20 tree        │
+p20 tree        └─SemanticsNode#4
+p20 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 176.0)
+p20 tree          │ flags: hasImplicitScrolling
+p20 tree          │ scrollExtentMin: 0.0
+p20 tree          │ scrollPosition: 0.0
+p20 tree          │ scrollExtentMax: 0.0
+p20 tree          │
+p20 tree          ├─SemanticsNode#5
+p20 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p20 tree          │   label: "Before p20"
+p20 tree          │   textDirection: ltr
+p20 tree          │
+p20 tree          ├─SemanticsNode#6
+p20 tree          │   Rect.fromLTRB(32.0, 44.0, 43.5, 60.0)
+p20 tree          │   label: "3"
+p20 tree          │   textDirection: ltr
+p20 tree          │
+p20 tree          ├─SemanticsNode#7
+p20 tree          │   Rect.fromLTRB(48.0, 50.0, 119.3, 70.0)
+p20 tree          │   label: "Inbox"
+p20 tree          │   textDirection: ltr
+p20 tree          │
+p20 tree          └─SemanticsNode#8
+p20 tree              Rect.fromLTRB(16.0, 84.0, 784.0, 104.0)
+p20 tree              identifier: "p20-taps"
+p20 tree              label: "p20 taps: a=0 b=0"
+p20 tree              textDirection: ltr
+p20 node           label="Before p20" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p20 node           label="3" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 11.5, 16.0)
+p20 node           label="Inbox" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 71.3, 20.0)
+p20 node           label="p20 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p20-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p20 node           label="p20" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p20 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p20 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p20 taps: a=0 b=0
+p20 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p20 taps: a=0 b=0
+p20 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p20 taps: a=0 b=0
+p20 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p20 taps: a=0 b=0
+p20 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p20 taps: a=0 b=0
+p20 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p20 taps: a=0 b=0
+==== p21 Badge in Semantics(label:, excludeSemantics: true)
+p21 tree SemanticsNode#0
+p21 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p21 tree  │
+p21 tree  └─SemanticsNode#1
+p21 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p21 tree    │ textDirection: ltr
+p21 tree    │
+p21 tree    └─SemanticsNode#2
+p21 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p21 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p21 tree      │
+p21 tree      └─SemanticsNode#3
+p21 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p21 tree        │ flags: scopesRoute
+p21 tree        │
+p21 tree        ├─SemanticsNode#8
+p21 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p21 tree        │ │
+p21 tree        │ └─SemanticsNode#9
+p21 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p21 tree        │     flags: isHeader, namesRoute
+p21 tree        │     label: "p21"
+p21 tree        │     textDirection: ltr
+p21 tree        │
+p21 tree        └─SemanticsNode#4
+p21 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 176.0)
+p21 tree          │ flags: hasImplicitScrolling
+p21 tree          │ scrollExtentMin: 0.0
+p21 tree          │ scrollPosition: 0.0
+p21 tree          │ scrollExtentMax: 0.0
+p21 tree          │
+p21 tree          ├─SemanticsNode#5
+p21 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p21 tree          │   label: "Before p21"
+p21 tree          │   textDirection: ltr
+p21 tree          │
+p21 tree          ├─SemanticsNode#6
+p21 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 72.0)
+p21 tree          │   label: "Inbox, 3 unread"
+p21 tree          │   textDirection: ltr
+p21 tree          │
+p21 tree          └─SemanticsNode#7
+p21 tree              Rect.fromLTRB(16.0, 84.0, 784.0, 104.0)
+p21 tree              identifier: "p21-taps"
+p21 tree              label: "p21 taps: a=0 b=0"
+p21 tree              textDirection: ltr
+p21 node           label="Before p21" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p21 node           label="Inbox, 3 unread" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 24.0)
+p21 node           label="p21 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p21-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p21 node           label="p21" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p21 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p21 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p21 taps: a=0 b=0
+p21 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p21 taps: a=0 b=0
+p21 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p21 taps: a=0 b=0
+p21 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p21 taps: a=0 b=0
+p21 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p21 taps: a=0 b=0
+p21 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p21 taps: a=0 b=0
+==== p22 Replaced rating that follows its values, with a button that adds a review
+p22 tree SemanticsNode#0
+p22 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p22 tree  │
+p22 tree  └─SemanticsNode#1
+p22 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p22 tree    │ textDirection: ltr
+p22 tree    │
+p22 tree    └─SemanticsNode#2
+p22 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p22 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p22 tree      │
+p22 tree      └─SemanticsNode#3
+p22 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p22 tree        │ flags: scopesRoute
+p22 tree        │
+p22 tree        ├─SemanticsNode#9
+p22 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p22 tree        │ │
+p22 tree        │ └─SemanticsNode#10
+p22 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p22 tree        │     flags: isHeader, namesRoute
+p22 tree        │     label: "p22"
+p22 tree        │     textDirection: ltr
+p22 tree        │
+p22 tree        └─SemanticsNode#4
+p22 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 220.0)
+p22 tree          │ flags: hasImplicitScrolling
+p22 tree          │ scrollExtentMin: 0.0
+p22 tree          │ scrollPosition: 0.0
+p22 tree          │ scrollExtentMax: 0.0
+p22 tree          │
+p22 tree          ├─SemanticsNode#5
+p22 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p22 tree          │   label: "Before p22"
+p22 tree          │   textDirection: ltr
+p22 tree          │
+p22 tree          ├─SemanticsNode#6
+p22 tree          │   Rect.fromLTRB(16.0, 48.0, 490.5, 68.0)
+p22 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p22 tree          │   textDirection: ltr
+p22 tree          │
+p22 tree          ├─SemanticsNode#7
+p22 tree          │   Rect.fromLTRB(16.0, 68.0, 307.9, 116.0)
+p22 tree          │   actions: focus, tap
+p22 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p22 tree          │   label: "Add a 5-star review"
+p22 tree          │   textDirection: ltr
+p22 tree          │
+p22 tree          └─SemanticsNode#8
+p22 tree              Rect.fromLTRB(16.0, 128.0, 784.0, 148.0)
+p22 tree              identifier: "p22-taps"
+p22 tree              label: "p22 taps: a=0 b=0"
+p22 tree              textDirection: ltr
+p22 node           label="Before p22" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p22 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 474.5, 20.0)
+p22 node           label="Add a 5-star review" value="" hint="" tooltip="" flags=[button, focusable] actions=[tap, focus] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 291.9, 48.0)
+p22 node           label="p22 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p22-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p22 node           label="p22" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p22 tab stops: Focus sem=none -> Focus sem=none -> Focus sem=none -> Focus sem=none
+TAP p22 0
+p22 1 Tabs (on Focus sem=none) then Enter: p22 taps: a=1 b=0
+TAP p22 0
+p22 2 Tabs (on Focus sem=none) then Enter: p22 taps: a=1 b=0
+TAP p22 0
+p22 3 Tabs (on Focus sem=none) then Enter: p22 taps: a=1 b=0
+TAP p22 0
+p22 1 Tabs (on Focus sem=none) then  : p22 taps: a=1 b=0
+TAP p22 0
+p22 2 Tabs (on Focus sem=none) then  : p22 taps: a=1 b=0
+TAP p22 0
+p22 3 Tabs (on Focus sem=none) then  : p22 taps: a=1 b=0
+p22 before: Rating: 3.4 out of 5 stars, based on 856 reviews shown="Reviews: 856"
+TAP p22 0
+p22 after tap: Rating: 3.4 out of 5 stars, based on 857 reviews shown="Reviews: 857" p22 taps: a=1 b=0
+==== p23 Replaced rating with a fixed label, with the same button
+p23 tree SemanticsNode#0
+p23 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p23 tree  │
+p23 tree  └─SemanticsNode#1
+p23 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p23 tree    │ textDirection: ltr
+p23 tree    │
+p23 tree    └─SemanticsNode#2
+p23 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p23 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p23 tree      │
+p23 tree      └─SemanticsNode#3
+p23 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p23 tree        │ flags: scopesRoute
+p23 tree        │
+p23 tree        ├─SemanticsNode#9
+p23 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p23 tree        │ │
+p23 tree        │ └─SemanticsNode#10
+p23 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p23 tree        │     flags: isHeader, namesRoute
+p23 tree        │     label: "p23"
+p23 tree        │     textDirection: ltr
+p23 tree        │
+p23 tree        └─SemanticsNode#4
+p23 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 220.0)
+p23 tree          │ flags: hasImplicitScrolling
+p23 tree          │ scrollExtentMin: 0.0
+p23 tree          │ scrollPosition: 0.0
+p23 tree          │ scrollExtentMax: 0.0
+p23 tree          │
+p23 tree          ├─SemanticsNode#5
+p23 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p23 tree          │   label: "Before p23"
+p23 tree          │   textDirection: ltr
+p23 tree          │
+p23 tree          ├─SemanticsNode#6
+p23 tree          │   Rect.fromLTRB(16.0, 48.0, 490.5, 68.0)
+p23 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p23 tree          │   textDirection: ltr
+p23 tree          │
+p23 tree          ├─SemanticsNode#7
+p23 tree          │   Rect.fromLTRB(16.0, 68.0, 307.9, 116.0)
+p23 tree          │   actions: focus, tap
+p23 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+p23 tree          │   label: "Add a 5-star review"
+p23 tree          │   textDirection: ltr
+p23 tree          │
+p23 tree          └─SemanticsNode#8
+p23 tree              Rect.fromLTRB(16.0, 128.0, 784.0, 148.0)
+p23 tree              identifier: "p23-taps"
+p23 tree              label: "p23 taps: a=0 b=0"
+p23 tree              textDirection: ltr
+p23 node           label="Before p23" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p23 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 474.5, 20.0)
+p23 node           label="Add a 5-star review" value="" hint="" tooltip="" flags=[button, focusable] actions=[tap, focus] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 291.9, 48.0)
+p23 node           label="p23 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p23-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p23 node           label="p23" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p23 tab stops: Focus sem=none -> Focus sem=none -> Focus sem=none -> Focus sem=none
+TAP p23 0
+p23 1 Tabs (on Focus sem=none) then Enter: p23 taps: a=1 b=0
+TAP p23 0
+p23 2 Tabs (on Focus sem=none) then Enter: p23 taps: a=1 b=0
+TAP p23 0
+p23 3 Tabs (on Focus sem=none) then Enter: p23 taps: a=1 b=0
+TAP p23 0
+p23 1 Tabs (on Focus sem=none) then  : p23 taps: a=1 b=0
+TAP p23 0
+p23 2 Tabs (on Focus sem=none) then  : p23 taps: a=1 b=0
+TAP p23 0
+p23 3 Tabs (on Focus sem=none) then  : p23 taps: a=1 b=0
+p23 before: Rating: 3.4 out of 5 stars, based on 856 reviews shown="Reviews: 856"
+TAP p23 0
+p23 after tap: Rating: 3.4 out of 5 stars, based on 856 reviews shown="Reviews: 857" p23 taps: a=1 b=0
+==== p24 Text(semanticsLabel:) on "3.4 / 5", and Text.rich with semanticsLabel
+p24 tree SemanticsNode#0
+p24 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p24 tree  │
+p24 tree  └─SemanticsNode#1
+p24 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p24 tree    │ textDirection: ltr
+p24 tree    │
+p24 tree    └─SemanticsNode#2
+p24 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p24 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p24 tree      │
+p24 tree      └─SemanticsNode#3
+p24 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p24 tree        │ flags: scopesRoute
+p24 tree        │
+p24 tree        ├─SemanticsNode#9
+p24 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p24 tree        │ │
+p24 tree        │ └─SemanticsNode#10
+p24 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p24 tree        │     flags: isHeader, namesRoute
+p24 tree        │     label: "p24"
+p24 tree        │     textDirection: ltr
+p24 tree        │
+p24 tree        └─SemanticsNode#4
+p24 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 192.0)
+p24 tree          │ flags: hasImplicitScrolling
+p24 tree          │ scrollExtentMin: 0.0
+p24 tree          │ scrollPosition: 0.0
+p24 tree          │ scrollExtentMax: 0.0
+p24 tree          │
+p24 tree          ├─SemanticsNode#5
+p24 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p24 tree          │   label: "Before p24"
+p24 tree          │   textDirection: ltr
+p24 tree          │
+p24 tree          ├─SemanticsNode#6
+p24 tree          │   Rect.fromLTRB(16.0, 48.0, 115.8, 68.0)
+p24 tree          │   label: "3.4 out of 5"
+p24 tree          │   textDirection: ltr
+p24 tree          │
+p24 tree          ├─SemanticsNode#7
+p24 tree          │   Rect.fromLTRB(16.0, 68.0, 115.8, 88.0)
+p24 tree          │   label: "3.4 out of 5 stars"
+p24 tree          │   textDirection: ltr
+p24 tree          │
+p24 tree          └─SemanticsNode#8
+p24 tree              Rect.fromLTRB(16.0, 100.0, 784.0, 120.0)
+p24 tree              identifier: "p24-taps"
+p24 tree              label: "p24 taps: a=0 b=0"
+p24 tree              textDirection: ltr
+p24 node           label="Before p24" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p24 node           label="3.4 out of 5" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 99.8, 20.0)
+p24 node           label="3.4 out of 5 stars" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 99.8, 20.0)
+p24 node           label="p24 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p24-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p24 node           label="p24" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p24 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p24 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p24 taps: a=0 b=0
+p24 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p24 taps: a=0 b=0
+p24 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p24 taps: a=0 b=0
+p24 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p24 taps: a=0 b=0
+p24 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p24 taps: a=0 b=0
+p24 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p24 taps: a=0 b=0
+==== p25 p03 with an identifier on the replacement node
+p25 tree SemanticsNode#0
+p25 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p25 tree  │
+p25 tree  └─SemanticsNode#1
+p25 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+p25 tree    │ textDirection: ltr
+p25 tree    │
+p25 tree    └─SemanticsNode#2
+p25 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p25 tree      │ sortKey: OrdinalSortKey#5ee50(order: 0.0)
+p25 tree      │
+p25 tree      └─SemanticsNode#3
+p25 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p25 tree        │ flags: scopesRoute
+p25 tree        │
+p25 tree        ├─SemanticsNode#8
+p25 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p25 tree        │ │
+p25 tree        │ └─SemanticsNode#9
+p25 tree        │     Rect.fromLTRB(16.0, 14.0, 82.0, 42.0)
+p25 tree        │     flags: isHeader, namesRoute
+p25 tree        │     label: "p25"
+p25 tree        │     textDirection: ltr
+p25 tree        │
+p25 tree        └─SemanticsNode#4
+p25 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 172.0)
+p25 tree          │ flags: hasImplicitScrolling
+p25 tree          │ scrollExtentMin: 0.0
+p25 tree          │ scrollPosition: 0.0
+p25 tree          │ scrollExtentMax: 0.0
+p25 tree          │
+p25 tree          ├─SemanticsNode#5
+p25 tree          │   Rect.fromLTRB(16.0, 16.0, 784.0, 36.0)
+p25 tree          │   label: "Before p25"
+p25 tree          │   textDirection: ltr
+p25 tree          │
+p25 tree          ├─SemanticsNode#6
+p25 tree          │   Rect.fromLTRB(16.0, 48.0, 784.0, 68.0)
+p25 tree          │   identifier: "p25-node"
+p25 tree          │   label: "Rating: 3.4 out of 5 stars, based on 856 reviews"
+p25 tree          │   textDirection: ltr
+p25 tree          │
+p25 tree          └─SemanticsNode#7
+p25 tree              Rect.fromLTRB(16.0, 80.0, 784.0, 100.0)
+p25 tree              identifier: "p25-taps"
+p25 tree              label: "p25 taps: a=0 b=0"
+p25 tree              textDirection: ltr
+p25 node           label="Before p25" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p25 node           label="Rating: 3.4 out of 5 stars, based on 856 reviews" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p25-node rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p25 node           label="p25 taps: a=0 b=0" value="" hint="" tooltip="" flags=[] actions=[] custom=[] role=SemanticsRole.none id=p25-taps rect=Rect.fromLTRB(0.0, 0.0, 768.0, 20.0)
+p25 node           label="p25" value="" hint="" tooltip="" flags=[header] actions=[] custom=[] role=SemanticsRole.none id= rect=Rect.fromLTRB(0.0, 0.0, 66.0, 28.0)
+p25 tab stops: _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none -> _FocusScopeWithExternalFocusNode sem=none
+p25 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p25 taps: a=0 b=0
+p25 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p25 taps: a=0 b=0
+p25 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then Enter: p25 taps: a=0 b=0
+p25 1 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p25 taps: a=0 b=0
+p25 2 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p25 taps: a=0 b=0
+p25 3 Tabs (on _FocusScopeWithExternalFocusNode sem=none) then  : p25 taps: a=0 b=0
