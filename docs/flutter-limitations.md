@@ -4775,8 +4775,8 @@ yet), **Fixed in x.y** (verified on that version).
   - S11 `bad-key-missing`: the "Bring" heading is read second, then the
     route's steps and its button, then the list's items with no heading
     before them, in the widget tests, the web tree, the Android tree,
-    TalkBack's walk, the iOS tree, and VoiceOver on iOS (S11's tests and
-    transcripts).
+    TalkBack's walk, the iOS tree, VoiceOver on iOS, and VoiceOver on the
+    web in Chromium and WebKit (S11's tests and transcripts).
 - Why it matters: the documentation of `sortKey` says it "determines the
   position of this node among its siblings", and of `SemanticsSortKey`
   that a node with no key is "ordered using a platform dependent default
@@ -5240,7 +5240,8 @@ yet), **Fixed in x.y** (verified on that version).
   (`docs/evidence/probes/s11/`): TalkBack's "next" (Search and Right on a
   keyboard registered with the shell's `uinput` tool), VoiceOver's
   `moveForward()` on iOS, and the document's order and Chromium's tree on
-  the web (VoiceOver on the web: S11's recording):
+  the web, and VoiceOver's `next()` on the web for S11's examples
+  (`docs/evidence/S11/voiceover-web.md`, Chromium and WebKit):
   - The order is the framework's, the same on every platform. In all
     twenty probe fixtures the widget tests' traversal order, the web
     document's order, the Android tree's order, the stops TalkBack moved
@@ -5262,7 +5263,8 @@ yet), **Fixed in x.y** (verified on that version).
     row by row throughout in Chromium at 1280 by 720 and at 320 by 640
     (S11's tests), on the local Android emulator (1080 by 2424 at 420 dpi)
     and at CI's size (320 by 640 at 160 dpi), in TalkBack's own moves, and
-    in VoiceOver's on the iOS simulator (S11's transcripts): with a real
+    in VoiceOver's on the iOS simulator and on the web, in Chromium and
+    WebKit (S11's transcripts): with a real
     font each step fits on one line, so the rows are level.
   - A semantics container per column (r02) keeps each column together,
     and joins the column's texts into one node, read in one go, unless it

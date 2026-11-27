@@ -19,8 +19,12 @@
 // The expected lists were written before any S11 recording, from the order
 // of the elements in the page, which the web tree spec measures
 // (web_tests/s11_reading_traversal_order.spec.js), and from how VoiceOver
-// read headings, text, and buttons in earlier techniques' recordings. They
-// are a prediction until the first recording.
+// read headings, text, and buttons in earlier techniques' recordings. The
+// first recording (2026-11-26, docs/evidence/S11/voiceover-web.md) read
+// exactly these lists in Chromium and WebKit: every walk complete on its
+// first try but WebKit's bad-columns-mixed, whose first walk read the
+// screen's title as an empty phrase and whose second was complete. No help
+// message came in any walk.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
