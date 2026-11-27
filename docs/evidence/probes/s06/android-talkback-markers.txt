@@ -1,0 +1,58 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+s06-p01-button then accessibility focus: p01-open | android.widget.Button | desc="p01 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p01 Open: true
+s06-p01-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p01-back then accessibility focus: p01-open | android.widget.Button | desc="p01 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p02-button then accessibility focus: p02-open | android.widget.Button | desc="p02 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p02 Open: true
+s06-p02-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p02-back then accessibility focus: p02-open | android.widget.Button | desc="p02 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p03-button then accessibility focus: p03-open | android.widget.Button | desc="p03 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p03 Open: true
+s06-p03-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p03-back then accessibility focus: p03-open | android.widget.Button | desc="p03 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p04-button then accessibility focus: p04-open | android.widget.Button | desc="p04 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p04 Open: true
+s06-p04-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p04-back then accessibility focus: p04-open | android.widget.Button | desc="p04 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p05-button then accessibility focus: p05-open | android.widget.Button | desc="p05 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p05 Open: true
+s06-p05-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p05-back then accessibility focus: p05-open | android.widget.Button | desc="p05 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p06-button then accessibility focus: p06-open | android.widget.Button | desc="p06 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p06 Open: true
+s06-p06-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p06-back then accessibility focus: p06-open | android.widget.Button | desc="p06 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p07-button then accessibility focus: p07-open | android.widget.Button | desc="p07 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p07 Open: true
+s06-p07-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p07-back then accessibility focus: p07-open | android.widget.Button | desc="p07 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p08-button then accessibility focus: p08-open | android.widget.Button | desc="p08 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p08 Open: true
+s06-p08-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p08-back then accessibility focus: p08-open | android.widget.Button | desc="p08 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p09-button then accessibility focus: p09-open | android.widget.Button | desc="p09 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p09 Open: true
+s06-p09-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p09-back then accessibility focus: p09-open | android.widget.Button | desc="p09 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p10-button then accessibility focus: p10-open | android.widget.Button | desc="p10 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p10 Open: true
+s06-p10-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+click p10 Settings: true
+s06-p10-tab then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p10-back then accessibility focus: p10-open | android.widget.Button | desc="p10 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p11-button then accessibility focus: p11-open | android.widget.Button | desc="p11 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p11 Open: true
+s06-p11-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p11-back then accessibility focus: p11-open | android.widget.Button | desc="p11 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p12-button then accessibility focus: p12-open | android.widget.Button | desc="p12 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p12 Open: true
+s06-p12-push then accessibility focus:  | android.widget.Button | desc="Back" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p12-back then accessibility focus: p12-open | android.widget.Button | desc="p12 Open" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p13-button then accessibility focus: p13-open | android.widget.Button | desc="p13 Open" text="" heading=false pane="" a11yFocused=true focused=false
+click p13 Open: true
+s06-p13-push then accessibility focus:  | android.widget.Button | desc="Open navigation menu" text="" heading=false pane="" a11yFocused=true focused=false
+click p13 Show folders: true
+s06-p13-drawer then accessibility focus:  | android.view.View | desc="p13 Inbox folder" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p13-drawer-back then accessibility focus:  | android.widget.Button | desc="Open navigation menu" text="" heading=false pane="" a11yFocused=true focused=false
+s06-p13-back then accessibility focus: p13-open | android.widget.Button | desc="p13 Open" text="" heading=false pane="" a11yFocused=true focused=false

@@ -1,0 +1,26 @@
+// S06 probe (throwaway; kept as
+// docs/evidence/probes/s06/probe_s06_status.spec.js.txt): what the release
+// app build shows of the web's platform status for S06 and I08, on the
+// technique screen and on a good example's screen.
+import { test } from '@playwright/test';
+
+for (const [id, slug] of [['S06', 'good-material'], ['I08', 'good-material']]) {
+  test(`${id}`, async ({ page }) => {
+    await page.goto('about:blank');
+    await page.goto(`/#/t/${id}`);
+    await page.getByRole('heading', { name: 'Platforms', level: 2 }).waitFor();
+    await page.waitForTimeout(800);
+    const web = await page.evaluate(() => [...document.querySelectorAll('flt-semantics')]
+      .map((e) => e.textContent).filter((t) => t && t.startsWith('Web: ')));
+    console.log(`S06STATUS ${id} technique screen: ${JSON.stringify([...new Set(web)])}`);
+    const good = await page.getByRole('heading', { name: 'Good examples' }).count();
+    console.log(`S06STATUS ${id} technique screen: headings named "Good examples": ${good}`);
+    await page.goto('about:blank');
+    await page.goto(`/#/t/${id}/${slug}`);
+    await page.getByRole('heading', { name: 'Example', exact: true, level: 2 }).waitFor();
+    await page.waitForTimeout(800);
+    const lines = await page.evaluate(() => [...document.querySelectorAll('flt-semantics')]
+      .map((e) => e.textContent).filter((t) => t && /Good example|limitation|FL-\d/.test(t)));
+    console.log(`S06STATUS ${id} ${slug} screen: ${JSON.stringify([...new Set(lines)])}`);
+  });
+}

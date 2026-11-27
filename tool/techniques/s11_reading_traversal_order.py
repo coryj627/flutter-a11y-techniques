@@ -9,18 +9,20 @@ IOS_TEST = "S11ReadingTraversalOrderUITests"
 WEB_VO_SPEC = "s11_reading_traversal_order_vo.spec.js"
 
 # Each part of the screen after the "Example" heading, as TalkBack reads it,
-# one utterance each: a heading is its text and "Heading", a button its text
-# and "Button" (TalkBack's usage hint is let through and not required).
+# one utterance each: a heading is its text and "Heading"; a button its text,
+# "Button", and the usage hint TalkBack gives with a keyboard attached,
+# "Press select to activate", which every button row of both recordings had
+# (docs/evidence/S11/talkback-android.md).
 _PARTS = {
     "route": ["Route", "Heading"],
     "park": ["Park at the gate."],
     "climb": ["Climb the ridge."],
     "back": ["Walk back."],
-    "save-route": ["Save route", "Button"],
+    "save-route": ["Save route", "Button", "Press select to activate"],
     "bring": ["Bring", "Heading"],
     "water": ["Water"],
     "map": ["A map"],
-    "save-list": ["Save list", "Button"],
+    "save-list": ["Save list", "Button", "Press select to activate"],
     "route-saves": ["Route saves: 0"],
     "list-saves": ["List saves: 0"],
 }
@@ -40,32 +42,20 @@ _ORDERS = {
 }
 
 
-_ROLES = ("Heading", "Button")
-
-
-def _forbidden(part):
-    """Every other part's whole label that this part's own utterances do not
-    hold, and every role word this part does not have. The row is judged by
-    whole utterances first (below); these are checked as well, in every
-    fragment captured, so that a capture cut off in the log is still wrong
-    when what was captured of it names another part."""
-    mine = " ".join(_PARTS[part]).lower()
-    labels = [_PARTS[p][0] for p in _PARTS if p != part and _PARTS[p][0].lower() not in mine]
-    return labels + [r for r in _ROLES if r not in _PARTS[part]]
-
-
 # tool/talkback.py: identifier -> (phrases that must be spoken, phrases that
 # must not be). "s11-<example>-<n>" is what TalkBack said after its n-th
 # press of "next" (Search and Right on a keyboard), counted from the "Example"
 # heading: so each row checks both which part TalkBack moved to and what it
-# said there. The one required phrase starts with "(utterances) "
-# (talkback.UTTERANCES): what TalkBack said, its usage hint left out, must be
-# exactly the part's utterances, in order, and nothing more. Labels overlap
+# said there. The one required phrase is S06's whole-utterance form
+# ("== A / B / C", talkback.said): what TalkBack said must be exactly the
+# part's utterances, in order, each compared whole, and nothing more (only
+# "Double-tap to activate" may come once at the end). Labels overlap
 # ("Route" is in "Save route" and in "Route saves: 0"), so a phrase found
-# anywhere in what was said could not tell a row's own label from another
-# part's said beside it; a whole utterance can.
+# anywhere could not tell a row's own label from another part's said beside
+# it; a whole utterance can. A capture cut off in the log is judged by S06's
+# whole_wrong at its place, so the rows need no phrase list of their own.
 TALKBACK_EXPECT = {
-    f"s11-{slug}-{n}": (["(utterances) " + " / ".join(_PARTS[part])], _forbidden(part))
+    f"s11-{slug}-{n}": (["== " + " / ".join(_PARTS[part])], [])
     for slug, order in _ORDERS.items()
     for n, part in enumerate(order, 1)
 }
@@ -75,8 +65,8 @@ TALKBACK_METHOD = (
     "TalkBack focus put on the example's \"Example\" heading by action, then moved with TalkBack's "
     "own \"next\", Search (Meta) and Right on a keyboard registered with the shell's `uinput` tool, once per row: "
     "`<example>-<n>` is everything TalkBack said after the n-th press, so each row shows where "
-    "TalkBack moved as well as what it said, and must be exactly that part's utterances, its usage "
-    "hint aside, and nothing more. Speech read "
+    "TalkBack moved as well as what it said, and must be exactly that part's utterances, each "
+    "whole, and nothing more (S06's whole-utterance form). Speech read "
     "from TalkBack's verbose log. Each walk is judged whole: a wrong reading fails for good, and "
     "only a walk shown to be incomplete is walked again"
 )

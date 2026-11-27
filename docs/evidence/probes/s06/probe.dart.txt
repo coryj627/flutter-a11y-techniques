@@ -1,0 +1,330 @@
+// S06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s06/probe.dart.txt): what Flutter gives assistive
+// technology as a screen's title, when a screen opens, when it closes, and
+// when the screen changes inside one route.
+//
+// One fixture per route, `/p01` to `/p13`. Each route is a launcher: a
+// screen titled "pNN launcher" (with a `Title` of the same text, except
+// p12), its text "pNN start", and a button "pNN Open" that pushes the
+// fixture's screen. Every fixture screen has the text "pNN body" and, last,
+// "pNN end" (identifier `pNN-end`). The app's own title is "Probe app"
+// (`MaterialApp.title`).
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+const indigo = Color(0xFF3F51B5);
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Probe app',
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      onGenerateRoute: (settings) {
+        final name = settings.name ?? '/';
+        // p11's screen, pushed by name.
+        if (name == '/p11/orders') {
+          return MaterialPageRoute<void>(
+            settings: settings,
+            builder: (_) => const Fixture11(),
+          );
+        }
+        final id = name.replaceFirst('/', '');
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => fixtures.containsKey(id)
+              ? Launcher(id: id)
+              : const Scaffold(body: Center(child: Text('Probe'))),
+        );
+      },
+    );
+  }
+}
+
+/// A stable locator, as the app's TestId: one node with the identifier.
+Widget tid(String id, Widget child) =>
+    MergeSemantics(child: Semantics(identifier: id, child: child));
+
+Widget endText(String id) =>
+    Semantics(identifier: '$id-end', child: Text('$id end'));
+
+List<Widget> bodyOf(String id, [List<Widget> extra = const []]) => [
+  Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [Text('$id body'), ...extra, endText(id)],
+    ),
+  ),
+];
+
+Widget materialScreen(
+  String id, {
+  Widget? title,
+  bool exclude = false,
+  List<Widget> extra = const [],
+}) => Scaffold(
+  appBar: AppBar(title: title, excludeHeaderSemantics: exclude),
+  body: ListView(children: bodyOf(id, extra)),
+);
+
+/// How each fixture's screen is pushed: (route, screen).
+typedef Push = Route<void> Function(WidgetBuilder builder);
+
+Route<void> material(WidgetBuilder b) => MaterialPageRoute<void>(builder: b);
+Route<void> cupertino(WidgetBuilder b) => CupertinoPageRoute<void>(builder: b);
+
+final Map<String, (Push, WidgetBuilder)> fixtures = {
+  // Material: Title and AppBar title.
+  'p01': (
+    material,
+    (_) => Title(
+      title: 'p01 Orders',
+      color: indigo,
+      child: materialScreen('p01', title: const Text('p01 Orders')),
+    ),
+  ),
+  // Material: AppBar title, no Title.
+  'p02': (
+    material,
+    (_) => materialScreen('p02', title: const Text('p02 Orders')),
+  ),
+  // Material: Title, an AppBar with no title, a large text in the body.
+  'p03': (
+    material,
+    (context) => Title(
+      title: 'p03 Orders',
+      color: indigo,
+      child: materialScreen(
+        'p03',
+        extra: [
+          Text('p03 Orders', style: Theme.of(context).textTheme.headlineMedium),
+        ],
+      ),
+    ),
+  ),
+  // Material: Title, AppBar title with excludeHeaderSemantics.
+  'p04': (
+    material,
+    (_) => Title(
+      title: 'p04 Orders',
+      color: indigo,
+      child: materialScreen(
+        'p04',
+        title: const Text('p04 Orders'),
+        exclude: true,
+      ),
+    ),
+  ),
+  // Cupertino: CupertinoPageRoute, CupertinoNavigationBar(middle:), Title.
+  'p05': (
+    cupertino,
+    (_) => Title(
+      title: 'p05 Orders',
+      color: indigo,
+      child: CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(middle: Text('p05 Orders')),
+        child: SafeArea(child: ListView(children: bodyOf('p05'))),
+      ),
+    ),
+  ),
+  // Cupertino: a large title, CupertinoSliverNavigationBar, Title.
+  'p06': (
+    cupertino,
+    (_) => Title(
+      title: 'p06 Orders',
+      color: indigo,
+      child: CupertinoPageScaffold(
+        child: CustomScrollView(
+          slivers: [
+            const CupertinoSliverNavigationBar(largeTitle: Text('p06 Orders')),
+            SliverList(delegate: SliverChildListDelegate(bodyOf('p06'))),
+          ],
+        ),
+      ),
+    ),
+  ),
+  // Material: Semantics(namesRoute: true) round the AppBar title, Title.
+  'p07': (
+    material,
+    (_) => Title(
+      title: 'p07 Orders',
+      color: indigo,
+      child: materialScreen(
+        'p07',
+        title: Semantics(namesRoute: true, child: const Text('p07 Orders')),
+      ),
+    ),
+  ),
+  // Cupertino: Semantics(namesRoute: true) round the middle, Title.
+  'p08': (
+    cupertino,
+    (_) => Title(
+      title: 'p08 Orders',
+      color: indigo,
+      child: CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: Semantics(namesRoute: true, child: const Text('p08 Orders')),
+        ),
+        child: SafeArea(child: ListView(children: bodyOf('p08'))),
+      ),
+    ),
+  ),
+  // Material as the app's PageScaffold: a heading level on the title.
+  'p09': (
+    material,
+    (_) => Title(
+      title: 'p09 Orders',
+      color: indigo,
+      child: materialScreen(
+        'p09',
+        title: Semantics(headingLevel: 1, child: const Text('p09 Orders')),
+      ),
+    ),
+  ),
+  // One route whose screen changes: a NavigationBar.
+  'p10': (material, (_) => const Fixture10()),
+  // Pushed by name ('/p11/orders'), AppBar title, no Title.
+  'p11': (material, (_) => const Fixture11()),
+  // As p01; the launcher has no Title, only MaterialApp.title.
+  'p12': (
+    material,
+    (_) => Title(
+      title: 'p12 Orders',
+      color: indigo,
+      child: materialScreen('p12', title: const Text('p12 Orders')),
+    ),
+  ),
+  // A Drawer with a semanticLabel, opened from the screen.
+  'p13': (material, (_) => const Fixture13()),
+};
+
+class Launcher extends StatelessWidget {
+  const Launcher({super.key, required this.id});
+
+  final String id;
+
+  @override
+  Widget build(BuildContext context) {
+    final (push, builder) = fixtures[id]!;
+    final screen = Scaffold(
+      appBar: AppBar(title: Text('$id launcher')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Semantics(identifier: '$id-start', child: Text('$id start')),
+          const SizedBox(height: 16),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: tid(
+              '$id-open',
+              ElevatedButton(
+                onPressed: () {
+                  if (id == 'p11') {
+                    Navigator.pushNamed(context, '/p11/orders');
+                  } else {
+                    Navigator.push(context, push(builder));
+                  }
+                },
+                child: Text('$id Open'),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (id == 'p12') return screen;
+    return Title(title: '$id launcher', color: indigo, child: screen);
+  }
+}
+
+class Fixture10 extends StatefulWidget {
+  const Fixture10({super.key});
+
+  @override
+  State<Fixture10> createState() => _Fixture10State();
+}
+
+class _Fixture10State extends State<Fixture10> {
+  int index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final name = index == 0 ? 'p10 Inbox' : 'p10 Settings';
+    return Title(
+      title: name,
+      color: indigo,
+      child: Scaffold(
+        appBar: AppBar(title: Text(name)),
+        body: ListView(children: bodyOf('p10', [Text('$name content')])),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: index,
+          onDestinationSelected: (i) => setState(() => index = i),
+          destinations: const [
+            NavigationDestination(icon: Icon(Icons.inbox), label: 'p10 Inbox'),
+            NavigationDestination(
+              icon: Icon(Icons.settings),
+              label: 'p10 Settings',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Fixture11 extends StatelessWidget {
+  const Fixture11({super.key});
+
+  @override
+  Widget build(BuildContext context) =>
+      materialScreen('p11', title: const Text('p11 Orders'));
+}
+
+class Fixture13 extends StatelessWidget {
+  const Fixture13({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Title(
+      title: 'p13 Mail',
+      color: indigo,
+      child: Scaffold(
+        appBar: AppBar(title: const Text('p13 Mail')),
+        drawer: Drawer(
+          semanticLabel: 'p13 Folders',
+          child: ListView(
+            children: const [
+              ListTile(title: Text('p13 Inbox folder')),
+              ListTile(title: Text('p13 Sent folder')),
+            ],
+          ),
+        ),
+        body: Builder(
+          builder: (context) => ListView(
+            children: bodyOf('p13', [
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: tid(
+                  'p13-drawer',
+                  TextButton(
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                    child: const Text('p13 Show folders'),
+                  ),
+                ),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+}

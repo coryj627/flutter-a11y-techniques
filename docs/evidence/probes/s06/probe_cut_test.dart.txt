@@ -1,0 +1,65 @@
+// S06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s06/probe_cut_test.dart.txt): whether a screen's
+// title in Material's AppBar and in Cupertino's CupertinoNavigationBar is
+// cut short at 100% and 200% text on a 320 by 640 screen, with a Back
+// button before it, for titles of several lengths; the title's font size
+// as drawn; and the label its semantics node has.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  const titles = ['Orders', 'Your orders', 'Order history', 'Order history for this year'];
+  for (final scale in [1.0, 2.0]) {
+    for (final kind in ['material', 'cupertino']) {
+      for (final title in titles) {
+        testWidgets('$kind "$title" at ${scale * 100}%', (tester) async {
+          tester.view.physicalSize = const Size(320, 640);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          tester.platformDispatcher.textScaleFactorTestValue = scale;
+          addTearDown(tester.platformDispatcher.clearAllTestValues);
+          final handle = tester.ensureSemantics();
+          final nav = GlobalKey<NavigatorState>();
+          await tester.pumpWidget(
+            MaterialApp(
+              navigatorKey: nav,
+              home: const Scaffold(body: Text('start')),
+            ),
+          );
+          nav.currentState!.push(
+            kind == 'material'
+                ? MaterialPageRoute<void>(
+                    builder: (_) => Scaffold(
+                      appBar: AppBar(title: Text(title)),
+                      body: const Text('body'),
+                    ),
+                  )
+                : CupertinoPageRoute<void>(
+                    builder: (_) => CupertinoPageScaffold(
+                      navigationBar: CupertinoNavigationBar(
+                        middle: Text(title),
+                      ),
+                      child: const Text('body'),
+                    ),
+                  ),
+          );
+          await tester.pumpAndSettle();
+          final p = tester.renderObject<RenderParagraph>(
+            find.descendant(of: find.text(title), matching: find.byType(RichText)),
+          );
+          final size = p.text.style?.fontSize;
+          final scaled = p.textScaler.scale(size ?? 14);
+          final label = tester.getSemantics(find.text(title)).label;
+          debugPrint(
+            'S06CUT $kind ${scale * 100}% "$title": cut=${p.didExceedMaxLines} '
+            'width=${p.size.width.toStringAsFixed(1)} fontSize=$size drawn at '
+            '${scaled.toStringAsFixed(1)} semantics label="$label"',
+          );
+          handle.dispose();
+        });
+      }
+    }
+  }
+}
