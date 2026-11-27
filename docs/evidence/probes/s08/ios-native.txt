@@ -1,0 +1,12 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+native n05 (uikit) elements: type=2 "NativeLists" | ......type=48 "Before n05" | ......type=26 "" | .......type=75 "" | ........type=48 "n05 Milk" | .......type=75 "" | ........type=48 "n05 Eggs" | .......type=75 "" | ........type=48 "n05 Bread" | .......type=1 "Vertical scroll bar, 1 page" | .......type=1 "Horizontal scroll bar, 1 page" | ......type=48 "n05 end"
+native VO n05 (uikit) walk from a tap on Before: tap: Before n05 / n05 Milk / n05 Eggs / n05 Bread / n05 end
+native VO n05 (uikit) walk from the top: n05 Milk / n05 Eggs / n05 Bread / n05 end
+native n06 (swiftui) elements: type=2 "NativeLists" | ......type=48 "Before n06" | ......type=32 "" | .......type=75 "" | ...........type=48 "n06 Milk" | .......type=75 "" | ...........type=48 "n06 Eggs" | .......type=75 "" | ...........type=48 "n06 Bread" | .......type=1 "Vertical scroll bar, 2 pages" | .......type=1 "Vertical scroll bar, 2 pages" | ......type=48 "n06 end"
+native VO n06 (swiftui) walk from a tap on Before: tap: Before n06 / n06 Milk / n06 Eggs / n06 Bread / n06 end
+native VO n06 (swiftui) walk from the top: n06 Milk / n06 Eggs / n06 Bread / n06 end
+native n07 (stack) elements: type=2 "NativeLists" | ......type=48 "Before n07" | ......type=48 "n07 Milk" | ......type=48 "n07 Eggs" | ......type=48 "n07 Bread" | ......type=48 "n07 end"
+native VO n07 (stack) walk from a tap on Before: tap: Before n07 / n07 Milk / n07 Eggs / n07 Bread / n07 end
+native VO n07 (stack) walk from the top: n07 Milk / n07 Eggs / n07 Bread / n07 end
+Test Case '-[RunnerUITests.ProbeS08NativeUITests testNative]' passed (109.732 seconds).
+exit 0

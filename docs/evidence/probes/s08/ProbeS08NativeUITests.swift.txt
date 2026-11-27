@@ -1,0 +1,74 @@
+// S08 native iOS comparison (throwaway, not committed; kept as
+// docs/evidence/probes/s08/ProbeS08NativeUITests.swift.txt). Drives the
+// separate native app NativeLists (NativeLists.swift.txt, installed by
+// ios_native.sh.txt) by its bundle identifier, as the Safari comparison
+// drove Safari: for each screen, the elements of one snapshot, then with
+// VoiceOver on a walk forward from a tap on "Before" to the end label, and
+// a walk forward from the top of the screen.
+import XCTest
+
+final class ProbeS08NativeUITests: XCTestCase {
+  func log(_ s: String) { print("S08PROBE \(s)") }
+
+  func testNative() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    for (arg, id) in [("uikit", "n05"), ("swiftui", "n06"), ("stack", "n07")] {
+      let app = XCUIApplication(bundleIdentifier: "dev.fluttera11y.s08nativelists")
+      app.terminate()
+      app.launchArguments = [arg]
+      app.launch()
+      let before = app.staticTexts["Before \(id)"]
+      guard before.waitForExistence(timeout: 20) else {
+        log("native \(id) (\(arg)): did not open")
+        continue
+      }
+      sleep(1)
+      if let snap = try? app.snapshot() {
+        var out: [String] = []
+        func walk(_ s: XCUIElementSnapshot, _ depth: Int) {
+          if !s.label.isEmpty || s.elementType == .table || s.elementType == .collectionView || s.elementType == .cell {
+            out.append("\(String(repeating: ".", count: depth))type=\(s.elementType.rawValue) \(s.label.debugDescription)")
+          }
+          for c in s.children { walk(c, depth + 1) }
+        }
+        walk(snap, 0)
+        log("native \(id) (\(arg)) elements: \(out.joined(separator: " | "))")
+      }
+      try vo.enable()
+      before.tap()
+      sleep(1)
+      var walk = ["tap: " + norm((try? vo.currentSpeech().utterance) ?? "(none)")]
+      for _ in 0..<10 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix("\(id) end") { break }
+      }
+      log("native VO \(id) (\(arg)) walk from a tap on Before: \(walk.joined(separator: " / "))")
+      try vo.disable()
+
+      app.terminate()
+      app.launch()
+      _ = before.waitForExistence(timeout: 20)
+      sleep(1)
+      try vo.enable()
+      var top: [String] = []
+      for _ in 0..<10 {
+        let s = say()
+        top.append(s)
+        if s.hasPrefix("\(id) end") { break }
+      }
+      log("native VO \(id) (\(arg)) walk from the top: \(top.joined(separator: " / "))")
+      try vo.disable()
+      app.terminate()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}

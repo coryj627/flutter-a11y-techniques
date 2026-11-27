@@ -1,0 +1,5 @@
+#!/bin/sh
+# S08 iOS probe round 2, from the worktree root, under the device lock.
+S=/private/tmp/claude-501/-Users-cory-dev-flutter-a11y-techniques--claude-worktrees-wave0-prep-51ac0e/18a0fc9d-6a75-4c6c-bf6e-8c96fa8f6ae7/scratchpad/s08eng
+HTML="$S/html" TESTS="testTree2 testSafari" sh "$S/ios_probe.sh" > build/s08_ios_round2.txt 2>&1
+echo "ios round 2 exit $?"

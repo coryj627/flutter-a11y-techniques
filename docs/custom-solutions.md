@@ -91,6 +91,7 @@ example is added without a decision.
 | [S04 Functional images](#s04-functional-images) | 6 | 3 | 0 | 3 |
 | [S05 Headings](#s05-headings) | 2 | 0 | 0 | 2 |
 | [S06 Screen and page titles](#s06-screen-and-page-titles) | 2 | 0 | 0 | 2 |
+| [S08 List semantics](#s08-list-semantics) | 4 | 0 | 0 | 4 |
 | [S09 Content grouping](#s09-content-grouping) | 4 | 0 | 1 | 3 |
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
@@ -98,7 +99,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 131 | 51 | 13 | 67 |
+| All | 135 | 51 | 13 | 71 |
 
 ## C01 Button
 
@@ -410,6 +411,20 @@ Nothing flagged.
 | --- | --- | --- | --- | --- | --- |
 | `good-material` | Nothing: `AppBar(title:)` with `Semantics(headingLevel: 1)` on its text, and `Title(title:)`, in a `MaterialPageRoute` | `AppBar`, `Title` | none | R1, R2, R3, R4: Android Compose Screen and Pane Titles, iOS Page Titles, MDN title, Understanding 2.4.2 | not custom |
 | `good-cupertino` | Nothing: `CupertinoNavigationBar(middle:)` with `Semantics(namesRoute: true, headingLevel: 1)` on its text, and `Title(title:)`, in a `CupertinoPageRoute` | `CupertinoNavigationBar`, `Title` | The bar's middle does not name the route ([FL-301](flutter-limitations.md#fl-301)), filled with the documented property | R1, R2, R3, R4: Android Compose Screen and Pane Titles, iOS Page Titles, MDN title, Understanding 2.4.2 | not custom |
+
+## S08 List semantics
+
+Nothing flagged. The list and its items are given the roles that
+`SemanticsRole.list` and `SemanticsRole.listItem` document, through
+`Semantics(role:)`, the way `headingLevel` gives S05 its headings; the widget
+keeps its own role and behaviour, and nothing is built.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-bulleted` | Nothing: `Semantics(role: SemanticsRole.list)` round a `Column`, `Semantics(role: SemanticsRole.listItem)` round each line; the bullet is drawn, not text | `SemanticsRole.list`, `SemanticsRole.listItem` | none | R1, R2: iOS Lists, Android View List Semantics, Android Compose List Semantics, MDN ul | not custom |
+| `good-numbered` | Nothing: as `good-bulleted`, each number part of its item's text | `SemanticsRole.list`, `SemanticsRole.listItem` | No ordered list in Flutter: the number is in the text | R1, R2, R4: iOS Lists, Android View List Semantics, MDN ol | not custom |
+| `good-material` | Nothing: the roles round a `Column` of `ListTile(onTap:)`, each list item with `explicitChildNodes: true` so that the tile stays a node of its own | `ListTile`, `SemanticsRole.listItem`, `Semantics.explicitChildNodes` | A tile merged into its item is no button on the web ([FL-262](flutter-limitations.md#fl-262)), avoided with the documented parameter | R1, R2, R6: Android Compose ListItem Layouts, Android View List Semantics | not custom |
+| `good-cupertino` | Nothing: the roles round a `CupertinoListSection` and each `CupertinoListTile` | `CupertinoListSection`, `CupertinoListTile` | none | R1, R2: iOS Lists, Android View List Semantics | not custom |
 
 ## S09 Content grouping
 
