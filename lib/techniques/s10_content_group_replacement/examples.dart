@@ -154,8 +154,8 @@ class _RatingDemoState extends State<RatingDemo> {
 // #region good-exclude-semantics
 /// The rating row replaced, for assistive technology, by one node that says
 /// what it means: `Semantics(excludeSemantics: true)` "replace[s] all child
-/// semantics with this node", so the word, the bar (a progress bar of its
-/// own), and the two numbers are hidden, and only the label is exposed. The
+/// semantics with this node", so the word, the bar (a node of its own, with
+/// a value), and the two numbers are hidden, and only the label is exposed. The
 /// label is worked out from the same values as the pieces, so it follows
 /// them when a review is added.
 class GoodExcludeSemantics extends StatelessWidget {

@@ -129,8 +129,8 @@ Every example shows the same rating: 3.4 out of 5 stars from 856 reviews,
 "Rating: 3.4 out of 5 stars, based on 856 reviews" in words, as the
 Android references word it (48 characters, under the 64 that VoiceOver's
 test service gives back). The bar row is the references' own: the text
-"Rating:", a `LinearProgressIndicator` at 3.4 of 5 (a progress bar of its
-own, value 68), "3.4 / 5", and "Reviews: 856". The star row is five star
+"Rating:", a `LinearProgressIndicator` at 3.4 of 5 (a node of its own,
+value 68, a progress bar on Android and the web), "3.4 / 5", and "Reviews: 856". The star row is five star
 `Icon`s with no `semanticLabel`, "3.4", and "(856)". Where there is a
 button "Add a 5-star review", it adds a review, and the row then shows
 857.
@@ -171,8 +171,9 @@ web not yet recorded). `bad-not-excluded` the same with the label first.
 Not built:
 
 - **The bar left out of the hiding** (probe p08, the regression the
-  Compose reference warns of): the replacement becomes a progress bar with
-  the value 68, as `bad-not-excluded` but read once. In FL-330; one
+  Compose reference warns of): the replacement gets the value 68, and a
+  progress bar role on Android and the web, as `bad-not-excluded` but with
+  the words once. In FL-330; one
   example of a stray 68 from a merge with a label is enough.
 - **A label and a value** (p11): `Semantics(label: 'Rating', value: …)`.
   On Android the value is read before the label ("3.4 out of 5 stars, 856
@@ -261,10 +262,6 @@ fixtures on every platform, with each screen reader.
   Material's default, whose colours C26 measured (its track 1.22:1 and
   2.00:1 on the page); "3.4 / 5" says the same in text, so no 1.4.11
   failure is claimed.
-
-What was measured, by example and platform, and what each document here
-says about it, was compared sentence by sentence with the raw probe files
-and the transcripts before hand-back (the brief's platform-scope pass).
 
 Skips and what they give up, in the tests:
 
