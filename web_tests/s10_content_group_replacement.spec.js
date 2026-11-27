@@ -219,9 +219,10 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
   const own = screenStops('good-exclude-semantics');
   const ADD = 'Add a 5-star review button';
   const expected = EXPECTED_STOPS['good-exclude-semantics'];
-  // Made-up help messages: no S10 recording has been made, and no help for
-  // a text or a button has been heard in this project's recordings; the
-  // wording follows the list's that S08 heard.
+  // Made-up help messages: S10's recording of 2026-11-27 captured none,
+  // and no help for a text, a button, or a progress indicator has been
+  // heard in this project's recordings; the wording follows the list's
+  // that S08 heard.
   const TEXT_HELP = 'You are currently on a text element, inside of web content. To exit this web area, press '
     + 'Control-Option-Shift-Up Arrow.';
   const BUTTON_HELP = 'You are currently on a button, inside of web content. To click this button, press Control-Option-Space.';

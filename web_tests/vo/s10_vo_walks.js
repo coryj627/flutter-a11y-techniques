@@ -69,8 +69,9 @@ const PIECES = 'Rating: 3.4 / 5 Reviews: 856';
 // and from what VoiceOver read for the same kinds of element in other
 // techniques' transcripts: a text element as its text, a button with
 // "button", and a progress bar as its name, then its value as a percentage,
-// then "progress indicator" (docs/evidence/C26/voiceover-web.md). They are
-// predictions until the first recording.
+// then "progress indicator" (docs/evidence/C26/voiceover-web.md). The
+// recording of 2026-11-27 (docs/evidence/S10/voiceover-web.md) read every
+// one exactly, in Chromium and WebKit, on the first walk.
 export const EXPECTED_STOPS = {
   // One text that says what the rating means; nothing of its pieces.
   'good-exclude-semantics': [WORDS, ADD],
@@ -201,8 +202,9 @@ export function helpAfterStop(stops, positions, i) {
  * stop before it, and every help message in a walk with no positions. A
  * help message given in place of an element's own speech is at a new
  * position, and fails. S08's fourth recording read a list's help message
- * after its last stop (S08's spec, section 7). No S10 recording has been
- * made, so S10's help rule is tested only on made-up walks.
+ * after its last stop (S08's spec, section 7). S10's recording of
+ * 2026-11-27 captured no help message, so S10's help rule is tested only
+ * on made-up walks.
  *
  * An empty stop holds the place of the stop expected there: S08's walks
  * that gave one (its second and third recordings, WebKit, the screen's

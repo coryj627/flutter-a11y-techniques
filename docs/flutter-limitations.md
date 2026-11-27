@@ -5088,7 +5088,10 @@ yet), **Fixed in x.y** (verified on that version).
     - Web: one `role="progressbar"` element, `aria-valuenow` 68,
       `aria-label` "Rating:\n3.4 / 5\nReviews: 856 68": the value is
       appended to the name ([FL-037](#fl-037)), and Chromium names it
-      "Rating: 3.4 / 5 Reviews: 856 68" (`web.txt`).
+      "Rating: 3.4 / 5 Reviews: 856 68" (`web.txt`). VoiceOver read it
+      "Rating: 3.4 / 5 Reviews: 856 68 68% progress indicator" in Chromium
+      and WebKit, the value twice, and `bad-not-excluded` the same after
+      the label (recorded 2026-11-27, `docs/evidence/S10/voiceover-web.md`).
     - Android: one `android.widget.ProgressBar` with the range 0 to 100 at
       68, named "68, Rating:\n3.4 / 5\nReviews: 856" (`android-tree.txt`).
       TalkBack read "68.0.", "68,", and "Rating: 3.4 / 5 Reviews: 856", and

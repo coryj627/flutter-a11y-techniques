@@ -19,8 +19,9 @@
 // spoken role (helpAfterStop).
 //
 // The expected lists (EXPECTED_STOPS and EXPECTED_AFTER_ADDING in
-// s10_vo_walks.js) were written before any S10 recording; they are
-// predictions until the first recording.
+// s10_vo_walks.js) were written before any S10 recording; the recording
+// of 2026-11-27 (docs/evidence/S10/voiceover-web.md) read every one
+// exactly, in Chromium and WebKit, on the first walk.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
