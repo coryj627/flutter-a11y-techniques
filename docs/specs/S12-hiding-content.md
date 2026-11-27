@@ -499,10 +499,14 @@ so three walks with a lost read fail. A lost read of the stop just before
 the last is caught by the witness instead (the move back reads the lost
 element), and that walk is wrong for good, as any failed witness is. Two
 unchanged readings in a row are still the end, with its witness. The
-transcript format changed (one `-unresolved` row per walk), so the
-committed web transcript, recorded before this, fails the re-judging test
-until the principal records it again; the test is no longer skipped for a
-transcript recorded under older rules.
+transcript format changed (one `-unresolved` row per walk), and the test
+of the committed transcript is no longer skipped for a transcript recorded
+under older rules. The principal recorded the web transcript again with
+this collector on 2026-11-27 (`docs/evidence/S12/voiceover-web.md`, 233
+seconds): 14 walks of 14, each complete on its first walk in Chromium and
+WebKit, each with its end row and an unresolved row of "none"; the
+readings are those of the recordings before. The re-judging test passes on
+it.
 
 What the witness cannot show. It shows that the capture was live at the
 end and that the cursor stood on the last stop read. It cannot show that
