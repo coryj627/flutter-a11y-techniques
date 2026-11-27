@@ -253,6 +253,18 @@ only by its description, which is what Flutter's labelled node gives; at
 "Before n02" it also said "Out of n01 Kitchen light", left over from the
 move before.
 
+## Web VoiceOver, first recording
+
+Recorded by the principal on 2026-11-26 with `tool/voiceover_web.py S09`:
+`voiceover-web-round1-fail.md.txt` (the transcript) and
+`voiceover-web-round1-fail.log.txt`. Eleven walks of twelve were complete
+and right on their first try, in Chromium and WebKit, every predicted stop
+heard. WebKit's `bad-merged-group` read "" where the screen's level 1
+title was expected, and every later stop in its place; the judge of the
+time counted that as wrong. The judge is now S08's: an empty phrase is a
+failed capture, walked again, and VoiceOver's help message is left out
+(spec, section 7).
+
 ## What this changed
 
 - A label and its value are merged with `MergeSemantics` (`good-merged-facts`),

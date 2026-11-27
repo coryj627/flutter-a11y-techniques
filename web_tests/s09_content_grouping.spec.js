@@ -226,6 +226,9 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
 test.describe('the VoiceOver example walks are judged on every walk', () => {
   const expected = [`${GROUP} group`, 'On button', 'Off button', `end of ${GROUP} group`, 'Light: not set'];
   const own = screenStops('good-named-group');
+  // A help message as S08's fourth recording read one (WebKit), with the
+  // role of a group: its words are never judged.
+  const HELP = 'You are currently on a group, inside of web content. To exit this web area, press Control-Option-Shift-Up Arrow.';
   const screen = (...content) => [...own, EXAMPLE_HEADING, ...content];
   const cases = [
     ['a correct walk', screen(...expected), true, 'complete'],
@@ -235,7 +238,7 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['a button with no role', screen(expected[0], 'On', ...expected.slice(2)), true, 'wrong'],
     ['the buttons swapped', screen(expected[0], expected[2], expected[1], ...expected.slice(3)), true, 'wrong'],
     ['the question read twice', screen(expected[0], GROUP, ...expected.slice(1)), true, 'wrong'],
-    ['an empty reading', screen('', ...expected), true, 'wrong'],
+    ['an empty stop put in, so that every later stop comes late', screen('', ...expected), true, 'wrong'],
     ['a stop after the status', screen(...expected, 'end of main'), true, 'wrong'],
     ['a wrong reading in a walk cut short', screen(expected[0], 'On'), false, 'wrong'],
     // A walk that reached the end with an expected stop not read: wrong,
@@ -250,7 +253,21 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['a walk that reached the end after the screen\'s own stops', [...own], true, 'wrong'],
     ['the screen\'s own stops out of their order', [own[1], own[0], EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['a stop that is not the screen\'s before the heading', ['Back button', ...own, EXAMPLE_HEADING, ...expected], true, 'wrong'],
-    ['an empty first stop for the title', ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'wrong'],
+    // An empty phrase is a failed capture: walked again, never passed (the
+    // principal's rule of 2026-11-26, S08's judge).
+    ['an empty first stop for the title, every later stop right', ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'incomplete'],
+    ['a button read as an empty phrase, every other stop right', screen(expected[0], '', ...expected.slice(2)), true, 'incomplete'],
+    ['an empty first stop and a wrong reading later', ['', ...own.slice(1), EXAMPLE_HEADING, expected[0], 'On', ...expected.slice(2)], true, 'wrong'],
+    ['an empty first stop and a walk that reached the end short', ['', ...own.slice(1), EXAMPLE_HEADING, expected[0]], true, 'wrong'],
+    ['an empty phrase after the last expected stop', screen(...expected, ''), true, 'incomplete'],
+    ['every stop an empty phrase', Array(8).fill(''), true, 'incomplete'],
+    // VoiceOver's help message is not a stop of the page.
+    ['a help message after the last stop', screen(...expected, HELP), true, 'complete'],
+    ['a help message in the middle', screen(expected[0], expected[1], HELP, ...expected.slice(2)), true, 'complete'],
+    ['a help message in place of an expected stop', screen(expected[0], HELP, ...expected.slice(2)), true, 'wrong'],
+    ['a help message in place of the last stop', screen(...expected.slice(0, -1), HELP), true, 'wrong'],
+    ['only help messages', [HELP, HELP], true, 'wrong'],
+    ['a help message and a wrong reading', screen(expected[0], HELP, 'On', ...expected.slice(2)), true, 'wrong'],
     // Cut short before the end, with every stop right so far: may be walked
     // again.
     ['an empty walk cut short', [], false, 'incomplete'],
@@ -275,6 +292,15 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     const walk = (...content) => [...ownStops, EXAMPLE_HEADING, ...content];
     expect(judgeExampleWalk(walk(...split), true, split, ownStops).verdict).toBe('complete');
     expect(judgeExampleWalk(walk('City Boston', 'Founded 1630'), true, split, ownStops).verdict).toBe('wrong');
+  });
+
+  test('bad-merged-group: the first recording\'s WebKit walk, the title read as an empty phrase, is walked again', () => {
+    // docs/evidence/probes/s09/voiceover-web-round1-fail.md.txt.
+    const measured = [`${GROUP} On Off button`, 'Light: not set'];
+    const ownStops = screenStops('bad-merged-group');
+    const walk = ['', ...ownStops.slice(1), EXAMPLE_HEADING, ...measured];
+    expect(judgeExampleWalk(walk, true, measured, ownStops).verdict).toBe('incomplete');
+    expect(judgeExampleWalk([...ownStops, EXAMPLE_HEADING, ...measured], true, measured, ownStops).verdict).toBe('complete');
   });
 
   test('no screen has a custom solution note', () => {
@@ -303,6 +329,26 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
       expect(made()).toBe(1);
     });
   }
+
+  const emptyTitle = { stops: ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], reachedEnd: true };
+
+  test('an empty first stop is walked again, and a right walk then passes on the second', async () => {
+    const { walkOnce, made } = sequence(emptyTitle, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'complete', walks: 2 });
+    expect(made()).toBe(2);
+  });
+
+  test('an empty first stop, then a wrong reading on the re-walk, fails, and no third walk is made', async () => {
+    const { walkOnce, made } = sequence(emptyTitle, { stops: screen(GROUP), reachedEnd: true }, right);
+    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+    expect(made()).toBe(2);
+  });
+
+  test('three empty captures fail, and no fourth walk is made', async () => {
+    const { walkOnce, made } = sequence(emptyTitle, emptyTitle, emptyTitle, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'incomplete', walks: 3 });
+    expect(made()).toBe(3);
+  });
 
   test('a wrong walk after a short one still fails, and no third walk is made', async () => {
     const { walkOnce, made } = sequence(short, { stops: screen(...expected.slice(0, -1)), reachedEnd: true }, right);

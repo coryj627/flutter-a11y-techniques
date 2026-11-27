@@ -69,7 +69,10 @@ VOICEOVER_WEB_METHOD = (
     "(web_tests/vo/s09_vo_walks.js): the title and the description, the "
     "\"Example\" heading, and the expected list after it. A wrong stop, or a walk "
     "that reached the end with any expected stop not read, fails the test for "
-    "good; only a walk cut short before the end with every stop right so far is "
-    "walked again, up to three walks, each shown as its own row (`-walk-<n>`). "
-    "No runner retries"
+    "good; only a walk cut short before the end with every stop right so far, or "
+    "one with a stop read as an empty phrase (a failed capture, which never "
+    "passes) and nothing wrong read, is walked again, up to three walks, each "
+    "shown as its own row (`-walk-<n>`). VoiceOver's own help message (\"You are "
+    "currently on ...\") is not a stop: the walk puts the phrase logged for the move "
+    "in its place, and the judge leaves out one that comes anyway. No runner retries"
 )

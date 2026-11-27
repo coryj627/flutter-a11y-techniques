@@ -209,7 +209,7 @@ criterion fails, so its defect is not one WCAG names.
 | L3 iOS | `good-merged-facts` and `good-cupertino`: one element for each label and its value ("City\nBoston"), none for either alone, and no button but Back; `good-named-group`: one element "Kitchen light", the buttons "On" and "Off", the only buttons but Back, neither carrying the question; `good-tap-target`: one button "App information", the only button but Back, and no image. For each control a tap sets its own status; two Tabs then Enter, and then Space, reach the first control and three Tabs the second, each key sent once from a fresh launch (XCUITest cannot see Flutter's focus; the probe found the first Tab on Back). Bad: `bad-split-facts` one element for each of the four texts, none joined; `bad-merged-group` one button labelled "Kitchen light\nOn\nOff", the only button but Back, and no element "On" or "Off". XCUITest gives no hierarchy, so whether the buttons sit inside the group is not seen on iOS |
 | L4 TalkBack | What is read with focus moved to each part of each example: each fact its label and value together and nothing of the other; the group's name alone, with no role; each button its name and "Button" and not the group's name, both when focus comes from the question and when it comes straight from the "Example" heading (FL-320, written to fail if the name starts to be heard); the tap target its name and "Button" and no "Image"; `bad-split-facts` each text alone; `bad-merged-group` "Kitchen light On Off" and "Button". The walk is judged whole (`walk_strictly`, S09 in `STRICT` of `tool/talkback.py`): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, each in the transcript. No row claims silence |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk, `C03Walk`), each one checked to be under the service's 64 characters before the walk: `good-merged-facts` and `good-cupertino` "City Boston", "Founded 1630"; `good-named-group` "Kitchen light", "On Button", "Off Button", "Light: not set"; `good-tap-target` "App information Button", "Opens: 0"; `bad-split-facts` "City", "Founded", "Boston", "1630"; `bad-merged-group` "Kitchen light On Off Button", "Light: not set" |
-| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s09_vo_walks.js`, a copy of C04's by way of C18's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short before the end with every stop right so far is walked again, up to three walks, each logged. No runner retries. In Chromium and WebKit. The expected phrases were written before any S09 recording, from how C18 and F07 were read: `good-named-group` "Kitchen light group", "On button", "Off button", "end of Kitchen light group", "Light: not set"; the facts "City Boston" and "Founded 1630"; `bad-merged-group` "Kitchen light On Off button" |
+| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s09_vo_walks.js`, S08's judge, itself a copy of C04's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good. A stop read as an empty phrase is a failed capture, not a reading: the walk is incomplete and walked again (at most three walks, each logged), an empty phrase never passes, and a walk that also read the wrong words is wrong (the principal's rule of 2026-11-26). A walk cut short with every stop right so far is walked again too. VoiceOver's own help message ("You are currently on …", `VO_HELP` in `vo_logic.js`) is not a stop of the page: the walk puts the phrase Guidepup logged for a move in place of one (`walkToEnd`'s `loggedForHelp`), and the judge leaves out any that comes anyway, wherever it is; a help message in place of an element's own speech leaves that element unread, which fails. No runner retries. In Chromium and WebKit. The expected phrases were written before any S09 recording, from how C18 and F07 were read: `good-named-group` "Kitchen light group", "On button", "Off button", "end of Kitchen light group", "Light: not set"; the facts "City Boston" and "Founded 1630"; `bad-merged-group` "Kitchen light On Off button". The judge's regression cases in the web tree spec include the first recording's WebKit walk of `bad-merged-group`, an empty first stop walked again, an empty first stop and then a wrong re-walk failing, three empty captures failing, and help messages after the last stop, in the middle, and in place of a stop |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -310,10 +310,34 @@ comparison on the web.
   Button / Double-tap to activate" with no group name both after the
   question and with focus moved straight from the "Example" heading, and
   VoiceOver on iOS read "Kitchen light", "On Button", "Off Button". The
-  web VoiceOver recording has not been made (the principal runs it); its
-  expected lists are predictions from C18's and F07's recordings, and a
-  reading that differs will be a measurement to record, not a defect to
-  assume.
+  web VoiceOver recording's first round read every predicted stop and
+  failed on one empty capture (below).
+- **The first web VoiceOver recording failed one walk of 12 on an empty
+  capture** (`docs/evidence/probes/s09/voiceover-web-round1-fail.md.txt`,
+  its log `voiceover-web-round1-fail.log.txt`; recorded by the
+  principal). Every walk in Chromium and WebKit read exactly the predicted
+  stops, the group on the web included ("Kitchen light group", "On
+  button", "Off button", "end of Kitchen light group"), but WebKit's walk
+  of `bad-merged-group`, whose first stop, where the screen's level 1
+  title was expected, was "", every later stop right. The same was seen in
+  WebKit on a screen's title in S08's second and third recordings, where
+  its section 7 sets out what the logs can and cannot tell about it. S09's
+  judge was C04's, by way of C18's, which counts an empty phrase as a wrong stop;
+  it is now S08's, which counts it as a failed capture and walks again, and
+  leaves out VoiceOver's help message (seen once, in S08's fourth
+  recording). No shared file was changed.
+- **What leaving out the help message gives up.** Its words are never
+  checked: a help message that named the wrong role would pass unseen. A
+  help message that came in place of an element's own speech is not
+  passed over: the element is then missing, and the walk fails. Nor can a
+  walk of help messages alone pass.
+- **What a re-walk can hide.** A stop VoiceOver sometimes gives no phrase
+  for (WebKit's title, here) passes when a later walk of the same example
+  reads it; the empty try is in the transcript, as every try is, but does
+  not fail the test. A wrong reading cannot be hidden this way: a walk with
+  one fails, whatever try it is. Nor can an empty phrase pass: three walks
+  each with one fail. What is given up is that an empty phrase that comes
+  and goes is reported, not failed.
 - **The Android suite passed at CI's size** (320 by 640 at 160 dpi)
   on the local emulator after the evidence run, eight tests with
   `talkBackWalk` skipped as it runs only with TalkBack on
@@ -363,7 +387,8 @@ Handed on:
   row by row on every platform here, by Flutter's ordering by position
   ([FL-420](../flutter-limitations.md#fl-420)).
 
-**Not done yet.** The web VoiceOver recording (the principal runs it);
+**Not done yet.** A passing web VoiceOver recording, with the judge that
+walks an empty capture again (the principal records it);
 TalkBack's own navigation into a native or a Flutter group, which could
 not be driven (focus was moved by action); VoiceOver's own activation on
 iOS (C04 probe round 3); whether VoiceOver on the web says the group's
