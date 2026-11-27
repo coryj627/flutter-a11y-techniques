@@ -555,7 +555,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S12"})
+        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S12"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
@@ -920,6 +920,133 @@ class S06CutOffRows(unittest.TestCase):
         self.assert_fails_for_good("s06-good-material-opened", ["Orders", "Back", "Button", self.HINT, self.HINT])
         self.assert_fails_for_good("s06-good-material-opened",
                                    ["Orders", "Back", "Button", self.HINT, Cut("Double-t")])
+
+
+class S10WholeUtterances(unittest.TestCase):
+    """S10 judges each TalkBack row as whole utterances ("== A / B", and
+    "^= A" where an utterance holds "/"), because a word match passed a row
+    with the rating said twice, an extra "Image", or "(1856)" for "(856)"
+    (Codex, first review of S10). The rows of the committed transcript
+    (docs/evidence/S10/talkback-android.md), written out here because two
+    of its utterances hold " / " and the transcript's own separator cannot
+    be split on; and the mutations, each of which must be wrong."""
+    WORDS = "Rating: 3.4 out of 5 stars, based on 856 reviews"
+    WORDS_AFTER = "Rating: 3.4 out of 5 stars, based on 857 reviews"
+    ADD = ["Add a 5-star review", "Button", "Double-tap to activate"]
+    PIECES = "Rating: 3.4 / 5 Reviews: 856"
+    RIGHT = {
+        "s10-good-exclude-semantics-rating": [WORDS],
+        "s10-good-exclude-semantics-add": ADD,
+        "s10-good-exclude-semantics-after": [WORDS_AFTER],
+        "s10-good-hidden-pieces-rating": [WORDS],
+        "s10-good-stars-rating": [WORDS],
+        "s10-bad-pieces-stars": ["3.4"],
+        "s10-bad-pieces-count": ["(856)"],
+        "s10-bad-merged-rating": ["68.0. ", "68,", " ", PIECES],
+        "s10-bad-not-excluded-rating": ["68.0. ", "68,", " ", f"{WORDS} {PIECES}"],
+        "s10-bad-hides-control-rating": [WORDS],
+        "s10-bad-hides-control-opens": ["Reviews opened: 0"],
+        "s10-bad-stale-rating": [WORDS],
+        "s10-bad-stale-add": ADD,
+        "s10-bad-stale-after": [WORDS],
+    }
+    TRANSCRIPT = os.path.join(tb.ROOT, "docs", "evidence", "S10", "talkback-android.md")
+
+    def wrong(self, ident, row):
+        self.assertTrue(tb.problems(ident, row), f"{ident}: {row} passed")
+
+    def test_the_rows_are_the_committed_transcripts(self):
+        # Every row here, joined as the transcript shows it, is the
+        # transcript's decided walk, and every S10 row is here.
+        shown = {}
+        with open(self.TRANSCRIPT) as f:
+            for line in f:
+                m = re.match(r"^\| `(s10-[^`]+)` \| (.*) \|$", line.rstrip("\n"))
+                if m and m.group(1) not in shown:
+                    shown[m.group(1)] = m.group(2)
+        self.assertEqual(sorted(shown), sorted(self.RIGHT))
+        self.assertEqual(sorted(i for i in tb.EXPECT if i.startswith("s10-")), sorted(self.RIGHT))
+        for ident, row in self.RIGHT.items():
+            self.assertEqual(" / ".join(row), shown[ident], ident)
+
+    def test_the_committed_rows_are_right(self):
+        for ident, row in self.RIGHT.items():
+            self.assertEqual(tb.problems(ident, row), [], ident)
+        self.assertEqual(tb.judge_walk(self.RIGHT, list(self.RIGHT))[0], "right")
+
+    def test_duplicated_speech_is_wrong(self):
+        for ident in ("s10-good-exclude-semantics-rating", "s10-good-hidden-pieces-rating", "s10-good-stars-rating",
+                      "s10-bad-pieces-stars", "s10-bad-pieces-count", "s10-bad-hides-control-opens",
+                      "s10-bad-stale-after"):
+            self.wrong(ident, self.RIGHT[ident] * 2)
+        self.wrong("s10-good-exclude-semantics-add", ["Add a 5-star review", "Add a 5-star review", "Button"])
+        # The replacement and its pieces in one utterance, as bad-not-excluded
+        # reads, is wrong for a good row.
+        self.wrong("s10-good-hidden-pieces-rating", [f"{self.WORDS} {self.PIECES}"])
+
+    def test_an_unexpected_role_is_wrong(self):
+        for ident in ("s10-good-exclude-semantics-rating", "s10-good-stars-rating", "s10-bad-pieces-stars",
+                      "s10-bad-hides-control-rating", "s10-bad-merged-rating", "s10-bad-not-excluded-rating"):
+            for role in ("Image", "Button", "Progress bar", "Heading"):
+                if ident.startswith("s10-bad-merged") or ident.startswith("s10-bad-not-excluded"):
+                    if role != "Image":
+                        continue  # see test_what_the_two_cut_rows_give_up
+                self.wrong(ident, self.RIGHT[ident] + [role])
+        self.wrong("s10-good-exclude-semantics-add", ["Add a 5-star review", "Link"])
+
+    def test_a_wrong_number_is_wrong(self):
+        self.wrong("s10-bad-pieces-count", ["(1856)"])
+        self.wrong("s10-bad-pieces-count", ["(85)"])
+        self.wrong("s10-bad-pieces-stars", ["3.45"])
+        self.wrong("s10-bad-pieces-stars", ["13.4"])
+        self.wrong("s10-good-stars-rating", [self.WORDS.replace("856", "1856")])
+        self.wrong("s10-good-exclude-semantics-after", [self.WORDS])
+        self.wrong("s10-bad-stale-after", [self.WORDS_AFTER])
+        self.wrong("s10-bad-merged-rating", ["68.0. ", "68,", " ", self.PIECES.replace("856", "857")])
+        self.wrong("s10-bad-merged-rating", ["168.0. ", "68,", " ", self.PIECES])
+
+    def test_each_siblings_label_added_is_wrong(self):
+        # Every other node of the screen the row is on, added to the row:
+        # what a merge into a wider node would read.
+        siblings = {
+            "s10-good-exclude-semantics-rating": ["Add a 5-star review"],
+            "s10-good-hidden-pieces-rating": ["Rating:", "3.4 / 5", "Reviews: 856", "68"],
+            "s10-good-stars-rating": ["3.4", "(856)"],
+            "s10-bad-pieces-stars": ["(856)"],
+            "s10-bad-pieces-count": ["3.4"],
+            "s10-bad-hides-control-rating": ["Reviews opened: 0", "Reviews"],
+            "s10-bad-hides-control-opens": [self.WORDS],
+            "s10-bad-stale-rating": ["Add a 5-star review"],
+            "s10-bad-merged-rating": [self.WORDS],
+        }
+        for ident, labels in siblings.items():
+            for label in labels:
+                if ident == "s10-bad-merged-rating":
+                    # Only as the words the row must not hold.
+                    self.wrong(ident, self.RIGHT[ident][:-1] + [f"{label} {self.PIECES}"])
+                    continue
+                self.wrong(ident, self.RIGHT[ident] + [label])
+                self.wrong(ident, [label] + self.RIGHT[ident])
+                self.wrong(ident, [f"{self.RIGHT[ident][0]} {label}"])
+
+    def test_the_usage_hint_only_at_the_end(self):
+        hint = "Double-tap to activate"
+        self.assertEqual(tb.problems("s10-good-exclude-semantics-add", ["Add a 5-star review", "Button"]), [])
+        self.wrong("s10-good-exclude-semantics-add", ["Add a 5-star review", hint, "Button"])
+        self.wrong("s10-good-exclude-semantics-add", ["Add a 5-star review", "Button", hint, hint])
+        self.wrong("s10-good-exclude-semantics-add", ["Add a 5-star review"])
+        self.wrong("s10-good-stars-rating", [self.WORDS, hint, hint])
+
+    def test_what_the_two_cut_rows_give_up(self):
+        # bad-merged's and bad-not-excluded's last utterance holds "3.4 / 5",
+        # which "==" would split: they are judged by "^= 68.0." and a
+        # substring. A wrong first utterance, or the pieces missing, is
+        # wrong; an utterance added after the pieces is not caught, which
+        # the spec lists among the skips.
+        self.wrong("s10-bad-merged-rating", ["68,", " ", self.PIECES])
+        self.wrong("s10-bad-merged-rating", ["68.0. ", "68,", " "])
+        self.wrong("s10-bad-not-excluded-rating", ["68.0. ", "68,", " ", self.PIECES])
+        self.assertEqual(tb.problems("s10-bad-merged-rating", self.RIGHT["s10-bad-merged-rating"] + ["Heading"]), [])
 
 
 class FakeSettingsScreen:

@@ -1,0 +1,272 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+large
+== testTree
+S10PROBE ==== p01
+S10PROBE p01 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p01 EL type=48 id= label="p01" value=Optional() frame=(183.51708984375, 76.0, 34.9658203125, 28.0)
+S10PROBE p01 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 116.0)
+S10PROBE p01 EL type=48 id= label="Before p01" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p01 EL type=48 id= label="Rating:" value=Optional() frame=(16.0, 166.0, 48.0224609375, 20.0)
+S10PROBE p01 EL type=48 id= label="3.4 / 5" value=Optional() frame=(160.0224609375, 166.0, 43.599609375, 20.0)
+S10PROBE p01 EL type=48 id= label="Reviews: 856" value=Optional() frame=(211.6220703125, 166.0, 91.416015625, 20.0)
+S10PROBE p01 EL type=48 id=p01-taps label="p01 taps: a=0 b=0" value=Optional() frame=(16.0, 198.0, 370.0, 20.0)
+S10PROBE ==== p02
+S10PROBE p02 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p02 EL type=48 id= label="p02" value=Optional() frame=(182.1689453125, 76.0, 37.662109375, 28.0)
+S10PROBE p02 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 116.0)
+S10PROBE p02 EL type=48 id= label="Before p02" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p02 EL type=48 id= label="Rating:\n3.4 / 5\nReviews: 856" value=Optional(68) frame=(16.0, 166.0, 370.0, 20.0)
+S10PROBE p02 EL type=48 id=p02-taps label="p02 taps: a=0 b=0" value=Optional() frame=(16.0, 198.0, 370.0, 20.0)
+S10PROBE ==== p03
+S10PROBE p03 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p03 EL type=48 id= label="p03" value=Optional() frame=(181.77685546875, 76.0, 38.4462890625, 28.0)
+S10PROBE p03 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 116.0)
+S10PROBE p03 EL type=48 id= label="Before p03" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p03 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 370.0, 20.0)
+S10PROBE p03 EL type=48 id=p03-taps label="p03 taps: a=0 b=0" value=Optional() frame=(16.0, 198.0, 370.0, 20.0)
+S10PROBE ==== p04
+S10PROBE p04 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p04 EL type=48 id= label="p04" value=Optional() frame=(181.63720703125, 76.0, 38.7255859375, 28.0)
+S10PROBE p04 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 116.0)
+S10PROBE p04 EL type=48 id= label="Before p04" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p04 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 370.0, 20.0)
+S10PROBE p04 EL type=48 id=p04-taps label="p04 taps: a=0 b=0" value=Optional() frame=(16.0, 198.0, 370.0, 20.0)
+S10PROBE ==== p05
+S10PROBE p05 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p05 EL type=48 id= label="p05" value=Optional() frame=(181.85205078125, 76.0, 38.2958984375, 28.0)
+S10PROBE p05 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 116.0)
+S10PROBE p05 EL type=48 id= label="Before p05" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p05 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 370.0, 20.0)
+S10PROBE p05 EL type=48 id=p05-taps label="p05 taps: a=0 b=0" value=Optional() frame=(16.0, 198.0, 370.0, 20.0)
+S10PROBE ==== p06
+S10PROBE p06 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p06 EL type=48 id= label="p06" value=Optional() frame=(181.49755859375, 76.0, 39.0048828125, 28.0)
+S10PROBE p06 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 116.0)
+S10PROBE p06 EL type=48 id= label="Before p06" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p06 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews\nRating:\n3.4 / 5\nReviews: 856" value=Optional(68) frame=(16.0, 166.0, 370.0, 20.0)
+S10PROBE p06 EL type=48 id=p06-taps label="p06 taps: a=0 b=0" value=Optional() frame=(16.0, 198.0, 370.0, 20.0)
+S10PROBE ==== p07
+S10PROBE p07 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p07 EL type=48 id= label="p07" value=Optional() frame=(182.48583984375, 76.0, 37.0283203125, 28.0)
+S10PROBE p07 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 116.0)
+S10PROBE p07 EL type=48 id= label="Before p07" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p07 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews\nRating:\n3.4 / 5\nReviews: 856" value=Optional(68) frame=(16.0, 166.0, 370.0, 20.0)
+S10PROBE p07 EL type=48 id=p07-taps label="p07 taps: a=0 b=0" value=Optional() frame=(16.0, 198.0, 370.0, 20.0)
+S10PROBE ==== p08
+S10PROBE p08 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p08 EL type=48 id= label="p08" value=Optional() frame=(181.69091796875, 76.0, 38.6181640625, 28.0)
+S10PROBE p08 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 116.0)
+S10PROBE p08 EL type=48 id= label="Before p08" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p08 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional(68) frame=(16.0, 166.0, 370.0, 20.0)
+S10PROBE p08 EL type=48 id=p08-taps label="p08 taps: a=0 b=0" value=Optional() frame=(16.0, 198.0, 370.0, 20.0)
+S10PROBE ==== p09
+S10PROBE p09 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p09 EL type=48 id= label="p09" value=Optional() frame=(181.49755859375, 76.0, 39.0048828125, 28.0)
+S10PROBE p09 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 120.0)
+S10PROBE p09 EL type=48 id= label="Before p09" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p09 EL type=48 id= label="3.4" value=Optional() frame=(156.0, 168.0, 21.8046875, 20.0)
+S10PROBE p09 EL type=48 id= label="(856)" value=Optional() frame=(181.8046875, 168.0, 38.451171875, 20.0)
+S10PROBE p09 EL type=48 id=p09-taps label="p09 taps: a=0 b=0" value=Optional() frame=(16.0, 202.0, 370.0, 20.0)
+S10PROBE ==== p10
+S10PROBE p10 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p10 EL type=48 id= label="p10" value=Optional() frame=(183.57080078125, 76.0, 34.8583984375, 28.0)
+S10PROBE p10 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 120.0)
+S10PROBE p10 EL type=48 id= label="Before p10" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p10 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 370.0, 24.0)
+S10PROBE p10 EL type=48 id=p10-taps label="p10 taps: a=0 b=0" value=Optional() frame=(16.0, 202.0, 370.0, 20.0)
+S10PROBE ==== p11
+S10PROBE p11 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p11 EL type=48 id= label="p11" value=Optional() frame=(185.36474609375, 76.0, 31.2705078125, 28.0)
+S10PROBE p11 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 120.0)
+S10PROBE p11 EL type=48 id= label="Before p11" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p11 EL type=48 id= label="Rating" value=Optional(3.4 out of 5 stars, 856 reviews) frame=(16.0, 166.0, 370.0, 24.0)
+S10PROBE p11 EL type=48 id=p11-taps label="p11 taps: a=0 b=0" value=Optional() frame=(16.0, 202.0, 370.0, 20.0)
+S10PROBE ==== p12
+S10PROBE p12 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p12 EL type=48 id= label="p12" value=Optional() frame=(184.0166015625, 76.0, 33.966796875, 28.0)
+S10PROBE p12 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 120.0)
+S10PROBE p12 EL type=48 id= label="Before p12" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p12 EL type=43 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 370.0, 24.0)
+S10PROBE p12 EL type=48 id=p12-taps label="p12 taps: a=0 b=0" value=Optional() frame=(16.0, 202.0, 370.0, 20.0)
+S10PROBE ==== p13
+S10PROBE p13 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p13 EL type=48 id= label="p13" value=Optional() frame=(183.73193359375, 76.0, 34.5361328125, 28.0)
+S10PROBE p13 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 144.0)
+S10PROBE p13 EL type=48 id= label="Before p13" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p13 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 370.0, 48.0)
+S10PROBE p13 EL type=48 id=p13-taps label="p13 taps: a=0 b=0" value=Optional() frame=(16.0, 226.0, 370.0, 20.0)
+S10PROBE p13 replaced node frame=(16.0, 166.0, 370.0, 48.0) exists=true
+S10PROBE p13 tap at 0.3 of the replaced node: p13 taps: a=0 b=0
+S10PROBE p13 tap at 0.35 of the replaced node: p13 taps: a=0 b=0
+S10PROBE p13 tap at 0.4 of the replaced node: p13 taps: a=0 b=0
+S10PROBE p13 tap at 0.45 of the replaced node: p13 taps: a=0 b=0
+S10PROBE p13 tap at 0.5 of the replaced node: p13 taps: a=0 b=0
+S10PROBE p13 tap at 0.55 of the replaced node: p13 taps: a=0 b=0
+S10PROBE p13 tap at 0.6 of the replaced node: p13 taps: a=1 b=0
+S10PROBE ==== p14
+S10PROBE p14 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p14 EL type=48 id= label="p14" value=Optional() frame=(183.59228515625, 76.0, 34.8154296875, 28.0)
+S10PROBE p14 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 120.0)
+S10PROBE p14 EL type=48 id= label="Before p14" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p14 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 370.0, 24.0)
+S10PROBE p14 EL type=48 id=p14-taps label="p14 taps: a=0 b=0" value=Optional() frame=(16.0, 202.0, 370.0, 20.0)
+S10PROBE p14 replaced node frame=(16.0, 166.0, 370.0, 24.0) exists=true
+S10PROBE p14 tap at 0.3 of the replaced node: p14 taps: a=0 b=0
+S10PROBE p14 tap at 0.35 of the replaced node: p14 taps: a=0 b=0
+S10PROBE p14 tap at 0.4 of the replaced node: p14 taps: a=0 b=0
+S10PROBE p14 tap at 0.45 of the replaced node: p14 taps: a=0 b=0
+S10PROBE p14 tap at 0.5 of the replaced node: p14 taps: a=0 b=0
+S10PROBE p14 tap at 0.55 of the replaced node: p14 taps: a=0 b=0
+S10PROBE p14 tap at 0.6 of the replaced node: p14 taps: a=0 b=0
+S10PROBE ==== p15
+S10PROBE p15 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p15 EL type=48 id= label="p15" value=Optional() frame=(183.80712890625, 76.0, 34.3857421875, 28.0)
+S10PROBE p15 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 168.0)
+S10PROBE p15 EL type=48 id= label="Before p15" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p15 EL type=9 id= label="Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 370.0, 72.0)
+S10PROBE p15 EL type=48 id=p15-taps label="p15 taps: a=0 b=0" value=Optional() frame=(16.0, 250.0, 370.0, 20.0)
+S10PROBE p15 tap on button "Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews": p15 taps: a=1 b=0
+S10PROBE ==== p16
+S10PROBE p16 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p16 EL type=48 id= label="p16" value=Optional() frame=(183.45263671875, 76.0, 35.0947265625, 28.0)
+S10PROBE p16 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 176.0)
+S10PROBE p16 EL type=48 id= label="Before p16" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p16 EL type=48 id=p16-taps label="p16 taps: a=0 b=0" value=Optional() frame=(16.0, 258.0, 370.0, 20.0)
+S10PROBE p16 EL type=48 id= label="Steps this week: highest Saturday, 9,000; lowest Friday, 3,900" value=Optional() frame=(16.0, 166.0, 370.0, 80.0)
+S10PROBE ==== p17
+S10PROBE p17 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p17 EL type=48 id= label="p17" value=Optional() frame=(184.22607421875, 76.0, 33.5478515625, 28.0)
+S10PROBE p17 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 176.0)
+S10PROBE p17 EL type=48 id= label="Before p17" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p17 EL type=48 id=p17-taps label="p17 taps: a=0 b=0" value=Optional() frame=(16.0, 258.0, 370.0, 20.0)
+S10PROBE p17 EL type=48 id= label="Mon: 4200 steps" value=Optional() frame=(16.0, 166.0, 52.857142130533845, 80.0)
+S10PROBE p17 EL type=48 id= label="Tue: 6100 steps" value=Optional() frame=(68.85714213053386, 166.0, 52.857142130533845, 80.0)
+S10PROBE p17 EL type=48 id= label="Wed: 5300 steps" value=Optional() frame=(121.7142842610677, 166.0, 52.85714721679689, 80.0)
+S10PROBE p17 EL type=48 id= label="Thu: 7000 steps" value=Optional() frame=(174.5714314778646, 166.0, 52.857137044270814, 80.0)
+S10PROBE p17 EL type=48 id= label="Fri: 3900 steps" value=Optional() frame=(227.4285685221354, 166.0, 52.85713704427084, 80.0)
+S10PROBE p17 EL type=48 id= label="Sat: 9000 steps" value=Optional() frame=(280.28570556640625, 166.0, 52.857157389322936, 80.0)
+S10PROBE p17 EL type=48 id= label="Sun: 6600 steps" value=Optional() frame=(333.1428629557292, 166.0, 52.857137044270814, 80.0)
+S10PROBE ==== p18
+S10PROBE p18 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p18 EL type=48 id= label="p18" value=Optional() frame=(183.64599609375, 76.0, 34.7080078125, 28.0)
+S10PROBE p18 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 120.0)
+S10PROBE p18 EL type=48 id= label="Before p18" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p18 EL type=48 id= label="21°" value=Optional() frame=(48.0, 168.0, 22.296875, 20.0)
+S10PROBE p18 EL type=48 id= label="H 24°  L 12°" value=Optional() frame=(78.296875, 168.0, 82.3583984375, 20.0)
+S10PROBE p18 EL type=48 id=p18-taps label="p18 taps: a=0 b=0" value=Optional() frame=(16.0, 202.0, 370.0, 20.0)
+S10PROBE ==== p19
+S10PROBE p19 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p19 EL type=48 id= label="p19" value=Optional() frame=(183.45263671875, 76.0, 35.0947265625, 28.0)
+S10PROBE p19 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 120.0)
+S10PROBE p19 EL type=48 id= label="Before p19" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p19 EL type=48 id= label="Sunny, 21 degrees, high 24, low 12" value=Optional() frame=(16.0, 166.0, 370.0, 24.0)
+S10PROBE p19 EL type=48 id=p19-taps label="p19 taps: a=0 b=0" value=Optional() frame=(16.0, 202.0, 370.0, 20.0)
+S10PROBE ==== p20
+S10PROBE p20 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p20 EL type=48 id= label="p20" value=Optional() frame=(182.22265625, 76.0, 37.5546875, 28.0)
+S10PROBE p20 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 120.0)
+S10PROBE p20 EL type=48 id= label="Before p20" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p20 EL type=48 id= label="3" value=Optional() frame=(32.224761962890625, 162.0, 7.55047607421875, 16.0)
+S10PROBE p20 EL type=48 id= label="Inbox" value=Optional() frame=(48.0, 168.0, 37.0361328125, 20.0)
+S10PROBE p20 EL type=48 id=p20-taps label="p20 taps: a=0 b=0" value=Optional() frame=(16.0, 202.0, 370.0, 20.0)
+S10PROBE ==== p21
+S10PROBE p21 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p21 EL type=48 id= label="p21" value=Optional() frame=(184.0166015625, 76.0, 33.966796875, 28.0)
+S10PROBE p21 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 120.0)
+S10PROBE p21 EL type=48 id= label="Before p21" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p21 EL type=48 id= label="Inbox, 3 unread" value=Optional() frame=(16.0, 166.0, 370.0, 24.0)
+S10PROBE p21 EL type=48 id=p21-taps label="p21 taps: a=0 b=0" value=Optional() frame=(16.0, 202.0, 370.0, 20.0)
+S10PROBE ==== p22
+S10PROBE p22 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p22 EL type=48 id= label="p22" value=Optional() frame=(182.66845703125, 76.0, 36.6630859375, 28.0)
+S10PROBE p22 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 164.0)
+S10PROBE p22 EL type=48 id= label="Before p22" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p22 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 287.0380859375, 20.0)
+S10PROBE p22 EL type=9 id= label="Add a 5-star review" value=Optional() frame=(16.0, 186.0, 157.99344889322916, 48.0)
+S10PROBE p22 EL type=48 id=p22-taps label="p22 taps: a=0 b=0" value=Optional() frame=(16.0, 246.0, 370.0, 20.0)
+S10PROBE p22 tap on button "Add a 5-star review": p22 taps: a=1 b=0
+S10PROBE ==== p22 after tap
+S10PROBE p22 after tap EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p22 after tap EL type=48 id= label="p22" value=Optional() frame=(182.66845703125, 76.0, 36.6630859375, 28.0)
+S10PROBE p22 after tap EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 164.0)
+S10PROBE p22 after tap EL type=48 id= label="Before p22" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p22 after tap EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 857 reviews" value=Optional() frame=(16.0, 166.0, 286.0947265625, 20.0)
+S10PROBE p22 after tap EL type=9 id= label="Add a 5-star review" value=Optional() frame=(16.0, 186.0, 157.99344889322916, 48.0)
+S10PROBE p22 after tap EL type=48 id=p22-taps label="p22 taps: a=1 b=0" value=Optional() frame=(16.0, 246.0, 370.0, 20.0)
+S10PROBE ==== p23
+S10PROBE p23 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p23 EL type=48 id= label="p23" value=Optional() frame=(182.3837890625, 76.0, 37.232421875, 28.0)
+S10PROBE p23 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 164.0)
+S10PROBE p23 EL type=48 id= label="Before p23" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p23 EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 287.0380859375, 20.0)
+S10PROBE p23 EL type=9 id= label="Add a 5-star review" value=Optional() frame=(16.0, 186.0, 157.99344889322916, 48.0)
+S10PROBE p23 EL type=48 id=p23-taps label="p23 taps: a=0 b=0" value=Optional() frame=(16.0, 246.0, 370.0, 20.0)
+S10PROBE p23 tap on button "Add a 5-star review": p23 taps: a=1 b=0
+S10PROBE ==== p23 after tap
+S10PROBE p23 after tap EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p23 after tap EL type=48 id= label="p23" value=Optional() frame=(182.3837890625, 76.0, 37.232421875, 28.0)
+S10PROBE p23 after tap EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 164.0)
+S10PROBE p23 after tap EL type=48 id= label="Before p23" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p23 after tap EL type=48 id= label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 286.0947265625, 20.0)
+S10PROBE p23 after tap EL type=9 id= label="Add a 5-star review" value=Optional() frame=(16.0, 186.0, 157.99344889322916, 48.0)
+S10PROBE p23 after tap EL type=48 id=p23-taps label="p23 taps: a=1 b=0" value=Optional() frame=(16.0, 246.0, 370.0, 20.0)
+S10PROBE ==== p24
+S10PROBE p24 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p24 EL type=48 id= label="p24" value=Optional() frame=(182.5126953125, 76.0, 36.974609375, 28.0)
+S10PROBE p24 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 136.0)
+S10PROBE p24 EL type=48 id= label="Before p24" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p24 EL type=48 id= label="3.4 out of 5" value=Optional() frame=(16.0, 166.0, 43.599609375, 20.0)
+S10PROBE p24 EL type=48 id= label="3.4 out of 5 stars" value=Optional() frame=(16.0, 186.0, 45.6435546875, 20.0)
+S10PROBE p24 EL type=48 id=p24-taps label="p24 taps: a=0 b=0" value=Optional() frame=(16.0, 218.0, 370.0, 20.0)
+S10PROBE ==== p25
+S10PROBE p25 EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S10PROBE p25 EL type=48 id= label="p25" value=Optional() frame=(182.458984375, 76.0, 37.08203125, 28.0)
+S10PROBE p25 EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 116.0)
+S10PROBE p25 EL type=48 id= label="Before p25" value=Optional() frame=(16.0, 134.0, 370.0, 20.0)
+S10PROBE p25 EL type=48 id=p25-node label="Rating: 3.4 out of 5 stars, based on 856 reviews" value=Optional() frame=(16.0, 166.0, 370.0, 20.0)
+S10PROBE p25 EL type=48 id=p25-taps label="p25 taps: a=0 b=0" value=Optional() frame=(16.0, 198.0, 370.0, 20.0)
+Test Case '-[RunnerUITests.ProbeS10UITests testTree]' passed (345.345 seconds).
+== testKeys
+S10PROBE p13 1 Tab(s) then Enter: p13 taps: a=0 b=0
+S10PROBE p13 2 Tab(s) then Enter: p13 taps: a=1 b=0
+S10PROBE p13 3 Tab(s) then Enter: p13 taps: a=0 b=0
+S10PROBE p14 1 Tab(s) then Enter: p14 taps: a=0 b=0
+S10PROBE p14 2 Tab(s) then Enter: p14 taps: a=0 b=0
+S10PROBE p14 3 Tab(s) then Enter: p14 taps: a=0 b=0
+S10PROBE p15 1 Tab(s) then Enter: p15 taps: a=0 b=0
+S10PROBE p15 2 Tab(s) then Enter: p15 taps: a=1 b=0
+S10PROBE p15 3 Tab(s) then Enter: p15 taps: a=0 b=0
+S10PROBE p22 1 Tab(s) then Enter: p22 taps: a=0 b=0
+S10PROBE p22 2 Tab(s) then Enter: p22 taps: a=1 b=0
+S10PROBE p22 3 Tab(s) then Enter: p22 taps: a=0 b=0
+S10PROBE p23 1 Tab(s) then Enter: p23 taps: a=0 b=0
+S10PROBE p23 2 Tab(s) then Enter: p23 taps: a=1 b=0
+S10PROBE p23 3 Tab(s) then Enter: p23 taps: a=0 b=0
+Test Case '-[RunnerUITests.ProbeS10UITests testKeys]' passed (173.159 seconds).
+== testVoiceOver
+S10PROBE VO p01 walk: p01 / Before p01 / Rating: / 68 / 3.4 / 5 / Reviews: 856 / p01 taps: a=0 b=0
+S10PROBE VO p02 walk: p02 / Before p02 / Rating: 3.4 / 5 Reviews: 856 68 / p02 taps: a=0 b=0
+S10PROBE VO p03 walk: p03 / Before p03 / Rating: 3.4 out of 5 stars, based on 856 reviews / p03 taps: a=0 b=0
+S10PROBE VO p04 walk: p04 / Before p04 / Rating: 3.4 out of 5 stars, based on 856 reviews / p04 taps: a=0 b=0
+S10PROBE VO p05 walk: p05 / Before p05 / Rating: 3.4 out of 5 stars, based on 856 reviews / p05 taps: a=0 b=0
+S10PROBE VO p06 walk: p06 / Before p06 / Rating: 3.4 out of 5 stars, based on 856 reviews Rating: 3.4 / 5 / p06 taps: a=0 b=0
+S10PROBE VO p07 walk: p07 / Before p07 / Rating: 3.4 out of 5 stars, based on 856 reviews Rating: 3.4 / 5 / p07 taps: a=0 b=0
+S10PROBE VO p08 walk: p08 / Before p08 / Rating: 3.4 out of 5 stars, based on 856 reviews 68 / p08 taps: a=0 b=0
+S10PROBE VO p09 walk: p09 / Before p09 / 3.4 / (856) / p09 taps: a=0 b=0
+S10PROBE VO p10 walk: p10 / Before p10 / Rating: 3.4 out of 5 stars, based on 856 reviews / p10 taps: a=0 b=0
+S10PROBE VO p11 walk: p11 / Before p11 / Rating 3.4 out of 5 stars, 856 reviews / p11 taps: a=0 b=0
+S10PROBE VO p12 walk: p12 / Before p12 / Rating: 3.4 out of 5 stars, based on 856 reviews Image / p12 taps: a=0 b=0
+S10PROBE VO p13 walk: p13 / Before p13 / Rating: 3.4 out of 5 stars, based on 856 reviews / p13 taps: a=0 b=0
+S10PROBE VO p14 walk: p14 / Before p14 / Rating: 3.4 out of 5 stars, based on 856 reviews Actions availab / p14 taps: a=0 b=0
+S10PROBE VO p15 walk: p15 / Before p15 / Ridge trail Rating: 3.4 out of 5 stars, based on 856 reviews But / p15 taps: a=0 b=0
+S10PROBE VO p16 walk: p16 / Before p16 / Steps this week: highest Saturday, 9,000; lowest Friday, 3,900 / p16 taps: a=0 b=0
+S10PROBE VO p17 walk: p17 / Before p17 / Mon: 4200 steps / Tue: 6100 steps / Wed: 5300 steps / Thu: 7000 steps / Fri: 3900 steps / Sat: 9000 steps / Sun: 6600 steps / p17 taps: a=0 b=0
+S10PROBE VO p18 walk: p18 / Before p18 / 21° / H 24° L 12° / p18 taps: a=0 b=0
+S10PROBE VO p19 walk: p19 / Before p19 / Sunny, 21 degrees, high 24, low 12 / p19 taps: a=0 b=0
+S10PROBE VO p20 walk: p20 / Before p20 / 3 / Inbox / p20 taps: a=0 b=0
+S10PROBE VO p21 walk: p21 / Before p21 / Inbox, 3 unread / p21 taps: a=0 b=0
+S10PROBE VO p22 walk: p22 / Before p22 / Rating: 3.4 out of 5 stars, based on 856 reviews / Add a 5-star review Button / p22 taps: a=0 b=0
+S10PROBE VO p23 walk: p23 / Before p23 / Rating: 3.4 out of 5 stars, based on 856 reviews / Add a 5-star review Button / p23 taps: a=0 b=0
+S10PROBE VO p24 walk: p24 / Before p24 / 3.4 out of 5 / 3.4 out of 5 stars / p24 taps: a=0 b=0
+S10PROBE VO p25 walk: p25 / Before p25 / Rating: 3.4 out of 5 stars, based on 856 reviews / p25 taps: a=0 b=0
+Test Case '-[RunnerUITests.ProbeS10UITests testVoiceOver]' passed (399.113 seconds).

@@ -13,8 +13,8 @@ and read by the screen reader (WCAG technique
 CSS to complete a link's purpose), is a different case and is not covered
 here. A picture that only decorates is
 [S03 Decorative images](S03-decorative-images.md), merged and cited, and not
-repeated here; replacing a group with one label of its own is S10 Content
-group replacement (in review on branch `s10-content-group-replacement`);
+repeated here; replacing a group with one label of its own is
+[S10 Content group replacement](S10-content-group-replacement.md);
 joining texts into one stop is [S09 Content grouping](S09-content-grouping.md).
 A panel that opens and closes is a disclosure ([C06](C06-disclosure.md)) or
 an accordion ([C05](C05-accordion.md)); this spec uses a switch to show and
@@ -269,7 +269,8 @@ What each fails, as the criterion is written, is in section 3.
 - **`Offstage`**: C05's `bad-hidden-panel` is that defect, and FL-263 has
   it; S12's probe measured it again (p05, p12), and FL-263 is extended.
 - **`Semantics(excludeSemantics: true)` round a control**: S10's
-  `bad-hides-control` (in review); S12's probe measured it again (p04), in
+  `bad-hides-control` ([its spec](S10-content-group-replacement.md), section 9, hands that
+  finding to S12); S12's probe measured it again (p04), in
   FL-350.
 - **`BlockSemantics`** (p23, p24): it drops the semantics of what was
   painted before it in the same container, as documented, and the
@@ -572,8 +573,11 @@ Not asked: there is no Cupertino example (section 4).
   node with no role or tap action (p31).
 - **Wave 7, dialogs and overlays**: `BlockSemantics` and what it leaves in
   the keyboard's order (p23, p24, FL-350), next to FL-483.
-- **S10 Content group replacement**: `Semantics(excludeSemantics: true)`
-  round a control is FL-350 (p04).
+- **S10 Content group replacement** (merged): its hand-off, that
+  `excludeSemantics: true` hides a control and leaves it in the keyboard's
+  order ([S10's spec](S10-content-group-replacement.md), section 9), is
+  FL-350, measured again here (p04); its `bad-hides-control` is that
+  defect.
 - **C05 Accordion**: `Visibility(visible:, maintainState: true)` keeps a
   closed panel's state and takes it out of the keyboard's order (p07),
   the workaround FL-263 had not tried.

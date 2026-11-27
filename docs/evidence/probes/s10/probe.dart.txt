@@ -1,0 +1,370 @@
+// S10 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s10/probe.dart.txt): what Flutter's own mechanisms
+// for replacing a visual composite give assistive technology, and what
+// each candidate defect does. One fixture per route, `/p01` to `/p25`; `/`
+// lists them all.
+//
+// Each fixture sits between a "Before pNN" text and a "pNN taps: a=N b=N"
+// text (identifier `pNN-taps`) that counts the taps that reached each
+// handler. The composites are the reference repositories' rating row (a
+// label, a bar, "3.4 / 5", and a review count), a row of star icons, a
+// weather summary, a badge on an icon, and a drawn chart.
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      onGenerateRoute: (settings) {
+        final name = (settings.name ?? '/').replaceFirst('/', '');
+        final page = fixtures.containsKey(name)
+            ? FixtureScreen(ids: [name])
+            : FixtureScreen(ids: fixtures.keys.toList());
+        return MaterialPageRoute<void>(settings: settings, builder: (_) => page);
+      },
+    );
+  }
+}
+
+/// The replacement text of the rating, as the Android references word it.
+const ratingLabel = 'Rating: 3.4 out of 5 stars, based on 856 reviews';
+
+/// What a fixture gets: the context, the values it shows, and the handler
+/// of each part (0 the first, 1 the second).
+typedef Build = Widget Function(BuildContext context, Rating r, void Function(int) tap);
+
+/// The rating shown, which p22 and p23 change.
+class Rating {
+  const Rating(this.stars, this.reviews);
+  final double stars;
+  final int reviews;
+  String get short => '${stars.toStringAsFixed(1)} / 5';
+  String get words =>
+      'Rating: ${stars.toStringAsFixed(1)} out of 5 stars, based on $reviews reviews';
+  Rating added(int s) => Rating(((stars * reviews) + s) / (reviews + 1), reviews + 1);
+}
+
+const start = Rating(3.4, 856);
+
+/// The reference repositories' rating row: "Rating:", a bar, "3.4 / 5",
+/// "Reviews: 856". [wrap] wraps each piece (for p05 and p08).
+Widget ratingRow(Rating r, {Widget Function(int i, Widget w)? wrap}) {
+  Widget w(int i, Widget c) => wrap == null ? c : wrap(i, c);
+  return Wrap(
+    spacing: 8,
+    crossAxisAlignment: WrapCrossAlignment.center,
+    children: [
+      w(0, const Text('Rating:')),
+      w(1, SizedBox(width: 80, child: LinearProgressIndicator(value: r.stars / 5))),
+      w(2, Text(r.short)),
+      w(3, Text('Reviews: ${r.reviews}')),
+    ],
+  );
+}
+
+/// The rating drawn as five star icons, "3.4", and "(856)".
+Widget starRow(Rating r, {bool labelled = false}) {
+  final full = r.stars.floor();
+  final half = r.stars - full >= 0.25 && r.stars - full < 0.75;
+  final icons = <Widget>[];
+  for (var i = 0; i < 5; i++) {
+    final kind = i < full
+        ? Icons.star
+        : (i == full && half)
+        ? Icons.star_half
+        : Icons.star_border;
+    final name = kind == Icons.star
+        ? 'Full star'
+        : kind == Icons.star_half
+        ? 'Half star'
+        : 'Empty star';
+    icons.add(Icon(kind, color: Colors.amber.shade900, semanticLabel: labelled ? name : null));
+  }
+  return Wrap(
+    spacing: 4,
+    crossAxisAlignment: WrapCrossAlignment.center,
+    children: [...icons, Text(r.stars.toStringAsFixed(1)), Text('(${r.reviews})')],
+  );
+}
+
+Widget weatherRow() => const Wrap(
+  spacing: 8,
+  crossAxisAlignment: WrapCrossAlignment.center,
+  children: [Icon(Icons.wb_sunny), Text('21°'), Text('H 24°  L 12°')],
+);
+
+Widget badgeRow() => Row(
+  mainAxisSize: MainAxisSize.min,
+  spacing: 8,
+  children: [
+    Badge(label: const Text('3'), child: const Icon(Icons.mail_outline)),
+    const Text('Inbox'),
+  ],
+);
+
+/// Seven bars, Monday to Sunday, drawn on a canvas.
+const steps = [4200, 6100, 5300, 7000, 3900, 9000, 6600];
+const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+class BarsPainter extends CustomPainter {
+  const BarsPainter({required this.perBar, required this.color});
+  final bool? perBar; // null: no semanticsBuilder
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width / steps.length;
+    final paint = Paint()..color = color;
+    for (var i = 0; i < steps.length; i++) {
+      final h = size.height * steps[i] / 9000;
+      canvas.drawRect(Rect.fromLTWH(i * w + 4, size.height - h, w - 8, h), paint);
+    }
+  }
+
+  @override
+  SemanticsBuilderCallback? get semanticsBuilder {
+    if (perBar == null) return null;
+    return (size) {
+      if (perBar == false) {
+        return [
+          CustomPainterSemantics(
+            rect: Offset.zero & size,
+            properties: const SemanticsProperties(
+              label: 'Steps this week: highest Saturday, 9,000; lowest Friday, 3,900',
+              textDirection: TextDirection.ltr,
+            ),
+          ),
+        ];
+      }
+      final w = size.width / steps.length;
+      return [
+        for (var i = 0; i < steps.length; i++)
+          CustomPainterSemantics(
+            key: ValueKey<int>(i),
+            rect: Rect.fromLTWH(i * w, 0, w, size.height),
+            properties: SemanticsProperties(
+              label: '${days[i]}: ${steps[i]} steps',
+              textDirection: TextDirection.ltr,
+            ),
+          ),
+      ];
+    };
+  }
+
+  @override
+  bool shouldRepaint(BarsPainter old) => false;
+
+  @override
+  bool shouldRebuildSemantics(BarsPainter old) => false;
+}
+
+Widget chart(BuildContext context, bool? perBar) => CustomPaint(
+  size: const Size(220, 80),
+  painter: BarsPainter(perBar: perBar, color: Theme.of(context).colorScheme.primary),
+);
+
+final Map<String, (String, Build)> fixtures = {
+  'p01': ('Rating row, pieces as they are', (c, r, t) => ratingRow(r)),
+  'p02': ('Rating row in MergeSemantics', (c, r, t) => MergeSemantics(child: ratingRow(r))),
+  'p03': (
+    'Rating row in Semantics(label:, excludeSemantics: true)',
+    (c, r, t) => Semantics(label: ratingLabel, excludeSemantics: true, child: ratingRow(r)),
+  ),
+  'p04': (
+    'Rating row in Semantics(label:) round ExcludeSemantics',
+    (c, r, t) => Semantics(label: ratingLabel, child: ExcludeSemantics(child: ratingRow(r))),
+  ),
+  'p05': (
+    'MergeSemantics, Semantics(label:), each piece in ExcludeSemantics',
+    (c, r, t) => MergeSemantics(
+      child: Semantics(
+        label: ratingLabel,
+        child: ratingRow(r, wrap: (i, w) => ExcludeSemantics(child: w)),
+      ),
+    ),
+  ),
+  'p06': ('Rating row in Semantics(label:), pieces not hidden', (c, r, t) => Semantics(label: ratingLabel, child: ratingRow(r))),
+  'p07': (
+    'MergeSemantics round Semantics(label:), pieces not hidden',
+    (c, r, t) => MergeSemantics(child: Semantics(label: ratingLabel, child: ratingRow(r))),
+  ),
+  'p08': (
+    'p05 with the bar left out of ExcludeSemantics',
+    (c, r, t) => MergeSemantics(
+      child: Semantics(
+        label: ratingLabel,
+        child: ratingRow(r, wrap: (i, w) => i == 1 ? w : ExcludeSemantics(child: w)),
+      ),
+    ),
+  ),
+  'p09': ('Stars, pieces as they are (icons with no label)', (c, r, t) => starRow(r)),
+  'p10': (
+    'Stars in Semantics(label:, excludeSemantics: true)',
+    (c, r, t) => Semantics(label: ratingLabel, excludeSemantics: true, child: starRow(r)),
+  ),
+  'p11': (
+    'Stars in Semantics(label: Rating, value:, excludeSemantics: true)',
+    (c, r, t) => Semantics(
+      label: 'Rating',
+      value: '3.4 out of 5 stars, 856 reviews',
+      excludeSemantics: true,
+      child: starRow(r),
+    ),
+  ),
+  'p12': (
+    'Stars in Semantics(image: true, label:, excludeSemantics: true)',
+    (c, r, t) => Semantics(image: true, label: ratingLabel, excludeSemantics: true, child: starRow(r)),
+  ),
+  'p13': (
+    'Stars and a TextButton, all in Semantics(label:, excludeSemantics: true)',
+    (c, r, t) => Semantics(
+      label: ratingLabel,
+      excludeSemantics: true,
+      child: Row(
+        children: [
+          starRow(r),
+          TextButton(onPressed: () => t(0), child: const Text('Reviews')),
+        ],
+      ),
+    ),
+  ),
+  'p14': (
+    'Stars replaced, with a custom semantics action "Read reviews"',
+    (c, r, t) => Semantics(
+      label: ratingLabel,
+      excludeSemantics: true,
+      customSemanticsActions: {const CustomSemanticsAction(label: 'Read reviews'): () => t(0)},
+      child: starRow(r),
+    ),
+  ),
+  'p15': (
+    'ListTile(onTap:) whose subtitle is the replaced stars',
+    (c, r, t) => ListTile(
+      onTap: () => t(0),
+      title: const Text('Ridge trail'),
+      subtitle: Semantics(label: ratingLabel, excludeSemantics: true, child: starRow(r)),
+    ),
+  ),
+  'p16': ('CustomPaint, semanticsBuilder with one node', (c, r, t) => chart(c, false)),
+  'p17': ('CustomPaint, semanticsBuilder with a node per bar', (c, r, t) => chart(c, true)),
+  'p18': ('Weather, pieces as they are', (c, r, t) => weatherRow()),
+  'p19': (
+    'Weather in Semantics(label:, excludeSemantics: true)',
+    (c, r, t) => Semantics(
+      label: 'Sunny, 21 degrees, high 24, low 12',
+      excludeSemantics: true,
+      child: weatherRow(),
+    ),
+  ),
+  'p20': ('Badge on an icon, pieces as they are', (c, r, t) => badgeRow()),
+  'p21': (
+    'Badge in Semantics(label:, excludeSemantics: true)',
+    (c, r, t) => Semantics(label: 'Inbox, 3 unread', excludeSemantics: true, child: badgeRow()),
+  ),
+  'p22': (
+    'Replaced rating that follows its values, with a button that adds a review',
+    (c, r, t) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(label: r.words, excludeSemantics: true, child: ratingRow(r)),
+        TextButton(onPressed: () => t(0), child: const Text('Add a 5-star review')),
+      ],
+    ),
+  ),
+  'p23': (
+    'Replaced rating with a fixed label, with the same button',
+    (c, r, t) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(label: ratingLabel, excludeSemantics: true, child: ratingRow(r)),
+        TextButton(onPressed: () => t(0), child: const Text('Add a 5-star review')),
+      ],
+    ),
+  ),
+  'p24': (
+    'Text(semanticsLabel:) on "3.4 / 5", and Text.rich with semanticsLabel',
+    (c, r, t) => const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('3.4 / 5', semanticsLabel: '3.4 out of 5'),
+        Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(text: '3.4', style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(text: ' / 5'),
+            ],
+          ),
+          semanticsLabel: '3.4 out of 5 stars',
+        ),
+      ],
+    ),
+  ),
+  'p25': (
+    'p03 with an identifier on the replacement node',
+    (c, r, t) => Semantics(
+      identifier: 'p25-node',
+      label: ratingLabel,
+      excludeSemantics: true,
+      child: ratingRow(r),
+    ),
+  ),
+};
+
+class FixtureScreen extends StatefulWidget {
+  const FixtureScreen({super.key, required this.ids});
+
+  final List<String> ids;
+
+  @override
+  State<FixtureScreen> createState() => _FixtureScreenState();
+}
+
+class _FixtureScreenState extends State<FixtureScreen> {
+  final taps = <String, List<int>>{};
+  final ratings = <String, Rating>{};
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.ids.length == 1 ? widget.ids.single : 'S10 probe')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 12,
+          children: [
+            for (final id in widget.ids) ...[
+              Text('Before $id'),
+              Builder(
+                builder: (context) => fixtures[id]!.$2(context, ratings[id] ?? start, (which) {
+                  debugPrint('S10PROBE TAP $id $which');
+                  setState(() {
+                    (taps[id] ??= [0, 0])[which]++;
+                    if (id == 'p22' || id == 'p23') ratings[id] = (ratings[id] ?? start).added(5);
+                  });
+                }),
+              ),
+              Semantics(
+                identifier: '$id-taps',
+                child: Text('$id taps: a=${taps[id]?[0] ?? 0} b=${taps[id]?[1] ?? 0}'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Unused off the web; keeps `kIsWeb` imported for the web build's checks.
+bool get onWeb => kIsWeb;
