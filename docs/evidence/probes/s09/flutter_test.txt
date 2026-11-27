@@ -1,0 +1,1549 @@
+==== s01 MergeSemantics round each label and its value, in a Row of two Columns
+s01 tree SemanticsNode#0
+s01 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s01 tree  │
+s01 tree  └─SemanticsNode#1
+s01 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s01 tree    │ textDirection: ltr
+s01 tree    │
+s01 tree    └─SemanticsNode#2
+s01 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s01 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s01 tree      │
+s01 tree      └─SemanticsNode#3
+s01 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s01 tree        │ flags: scopesRoute
+s01 tree        │
+s01 tree        ├─SemanticsNode#9
+s01 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s01 tree        │ │
+s01 tree        │ └─SemanticsNode#10
+s01 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s01 tree        │     flags: isHeader, namesRoute
+s01 tree        │     label: "S09 probe"
+s01 tree        │     textDirection: ltr
+s01 tree        │
+s01 tree        └─SemanticsNode#4
+s01 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 217.0)
+s01 tree          │ flags: hasImplicitScrolling
+s01 tree          │ scrollExtentMin: 0.0
+s01 tree          │ scrollPosition: 0.0
+s01 tree          │ scrollExtentMax: 0.0
+s01 tree          │
+s01 tree          ├─SemanticsNode#5
+s01 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s01 tree          │   label: "Before s01"
+s01 tree          │   textDirection: ltr
+s01 tree          │
+s01 tree          ├─SemanticsNode#6
+s01 tree          │   merge boundary ⛔️
+s01 tree          │   Rect.fromLTRB(12.0, 44.0, 133.5, 93.0)
+s01 tree          │   label:
+s01 tree          │     "s01 City
+s01 tree          │     Boston"
+s01 tree          │   textDirection: ltr
+s01 tree          │
+s01 tree          ├─SemanticsNode#7
+s01 tree          │   merge boundary ⛔️
+s01 tree          │   Rect.fromLTRB(157.5, 44.0, 357.0, 93.0)
+s01 tree          │   label:
+s01 tree          │     "s01 Population
+s01 tree          │     675,647"
+s01 tree          │   textDirection: ltr
+s01 tree          │
+s01 tree          └─SemanticsNode#8
+s01 tree              Rect.fromLTRB(12.0, 105.0, 396.8, 125.0)
+s01 tree              identifier: "s01-taps"
+s01 tree              label: "s01 taps: on=0 off=0 info=0"
+s01 tree              textDirection: ltr
+s01 node           label="Before s01" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s01 node           label="s01 City\nBoston" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s01 node           label="s01 Population\n675,647" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s01 node           label="s01 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s01-taps
+s01 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s01 tab stops: _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode ""
+s01 1 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s01 taps: on=0 off=0 info=0
+s01 2 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s01 taps: on=0 off=0 info=0
+s01 3 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s01 taps: on=0 off=0 info=0
+s01 1 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s01 taps: on=0 off=0 info=0
+s01 2 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s01 taps: on=0 off=0 info=0
+s01 3 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s01 taps: on=0 off=0 info=0
+==== s02 s01 without MergeSemantics
+s02 tree SemanticsNode#0
+s02 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s02 tree  │
+s02 tree  └─SemanticsNode#1
+s02 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s02 tree    │ textDirection: ltr
+s02 tree    │
+s02 tree    └─SemanticsNode#2
+s02 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s02 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s02 tree      │
+s02 tree      └─SemanticsNode#3
+s02 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s02 tree        │ flags: scopesRoute
+s02 tree        │
+s02 tree        ├─SemanticsNode#11
+s02 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s02 tree        │ │
+s02 tree        │ └─SemanticsNode#12
+s02 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s02 tree        │     flags: isHeader, namesRoute
+s02 tree        │     label: "S09 probe"
+s02 tree        │     textDirection: ltr
+s02 tree        │
+s02 tree        └─SemanticsNode#4
+s02 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 217.0)
+s02 tree          │ flags: hasImplicitScrolling
+s02 tree          │ scrollExtentMin: 0.0
+s02 tree          │ scrollPosition: 0.0
+s02 tree          │ scrollExtentMax: 0.0
+s02 tree          │
+s02 tree          ├─SemanticsNode#5
+s02 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s02 tree          │   label: "Before s02"
+s02 tree          │   textDirection: ltr
+s02 tree          │
+s02 tree          ├─SemanticsNode#6
+s02 tree          │   Rect.fromLTRB(12.0, 44.0, 126.0, 64.0)
+s02 tree          │   label: "s02 City"
+s02 tree          │   textDirection: ltr
+s02 tree          │
+s02 tree          ├─SemanticsNode#8
+s02 tree          │   Rect.fromLTRB(157.5, 44.0, 357.0, 64.0)
+s02 tree          │   label: "s02 Population"
+s02 tree          │   textDirection: ltr
+s02 tree          │
+s02 tree          ├─SemanticsNode#7
+s02 tree          │   Rect.fromLTRB(12.0, 64.0, 133.5, 93.0)
+s02 tree          │   label: "Boston"
+s02 tree          │   textDirection: ltr
+s02 tree          │
+s02 tree          ├─SemanticsNode#9
+s02 tree          │   Rect.fromLTRB(157.5, 64.0, 299.3, 93.0)
+s02 tree          │   label: "675,647"
+s02 tree          │   textDirection: ltr
+s02 tree          │
+s02 tree          └─SemanticsNode#10
+s02 tree              Rect.fromLTRB(12.0, 105.0, 396.8, 125.0)
+s02 tree              identifier: "s02-taps"
+s02 tree              label: "s02 taps: on=0 off=0 info=0"
+s02 tree              textDirection: ltr
+s02 node           label="Before s02" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s02 node           label="s02 City" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s02 node           label="Boston" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s02 node           label="s02 Population" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s02 node           label="675,647" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s02 node           label="s02 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s02-taps
+s02 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s02 tab stops: _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode ""
+s02 1 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s02 taps: on=0 off=0 info=0
+s02 2 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s02 taps: on=0 off=0 info=0
+s02 3 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s02 taps: on=0 off=0 info=0
+s02 1 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s02 taps: on=0 off=0 info=0
+s02 2 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s02 taps: on=0 off=0 info=0
+s02 3 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s02 taps: on=0 off=0 info=0
+==== s03 The same table built row by row: a Row of the labels, then a Row of the values, nothing merged
+s03 tree SemanticsNode#0
+s03 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s03 tree  │
+s03 tree  └─SemanticsNode#1
+s03 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s03 tree    │ textDirection: ltr
+s03 tree    │
+s03 tree    └─SemanticsNode#2
+s03 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s03 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s03 tree      │
+s03 tree      └─SemanticsNode#3
+s03 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s03 tree        │ flags: scopesRoute
+s03 tree        │
+s03 tree        ├─SemanticsNode#11
+s03 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s03 tree        │ │
+s03 tree        │ └─SemanticsNode#12
+s03 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s03 tree        │     flags: isHeader, namesRoute
+s03 tree        │     label: "S09 probe"
+s03 tree        │     textDirection: ltr
+s03 tree        │
+s03 tree        └─SemanticsNode#4
+s03 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 246.0)
+s03 tree          │ flags: hasImplicitScrolling
+s03 tree          │ scrollExtentMin: 0.0
+s03 tree          │ scrollPosition: 0.0
+s03 tree          │ scrollExtentMax: 0.0
+s03 tree          │
+s03 tree          ├─SemanticsNode#5
+s03 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s03 tree          │   label: "Before s03"
+s03 tree          │   textDirection: ltr
+s03 tree          │
+s03 tree          ├─SemanticsNode#6
+s03 tree          │   Rect.fromLTRB(12.0, 44.0, 132.0, 64.0)
+s03 tree          │   label: "s03 City"
+s03 tree          │   textDirection: ltr
+s03 tree          │
+s03 tree          ├─SemanticsNode#7
+s03 tree          │   Rect.fromLTRB(132.0, 44.0, 331.5, 64.0)
+s03 tree          │   label: "s03 Population"
+s03 tree          │   textDirection: ltr
+s03 tree          │
+s03 tree          ├─SemanticsNode#8
+s03 tree          │   Rect.fromLTRB(12.0, 64.0, 132.0, 122.0)
+s03 tree          │   label: "Boston"
+s03 tree          │   textDirection: ltr
+s03 tree          │
+s03 tree          ├─SemanticsNode#9
+s03 tree          │   Rect.fromLTRB(132.0, 78.5, 273.8, 107.5)
+s03 tree          │   label: "675,647"
+s03 tree          │   textDirection: ltr
+s03 tree          │
+s03 tree          └─SemanticsNode#10
+s03 tree              Rect.fromLTRB(12.0, 134.0, 396.8, 154.0)
+s03 tree              identifier: "s03-taps"
+s03 tree              label: "s03 taps: on=0 off=0 info=0"
+s03 tree              textDirection: ltr
+s03 node           label="Before s03" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s03 node           label="s03 City" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s03 node           label="s03 Population" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s03 node           label="Boston" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s03 node           label="675,647" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s03 node           label="s03 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s03-taps
+s03 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s03 tab stops: _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode ""
+s03 1 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s03 taps: on=0 off=0 info=0
+s03 2 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s03 taps: on=0 off=0 info=0
+s03 3 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s03 taps: on=0 off=0 info=0
+s03 1 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s03 taps: on=0 off=0 info=0
+s03 2 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s03 taps: on=0 off=0 info=0
+s03 3 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s03 taps: on=0 off=0 info=0
+==== s04 Semantics(container: true) round each label and its value
+s04 tree SemanticsNode#0
+s04 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s04 tree  │
+s04 tree  └─SemanticsNode#1
+s04 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s04 tree    │ textDirection: ltr
+s04 tree    │
+s04 tree    └─SemanticsNode#2
+s04 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s04 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s04 tree      │
+s04 tree      └─SemanticsNode#3
+s04 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s04 tree        │ flags: scopesRoute
+s04 tree        │
+s04 tree        ├─SemanticsNode#9
+s04 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s04 tree        │ │
+s04 tree        │ └─SemanticsNode#10
+s04 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s04 tree        │     flags: isHeader, namesRoute
+s04 tree        │     label: "S09 probe"
+s04 tree        │     textDirection: ltr
+s04 tree        │
+s04 tree        └─SemanticsNode#4
+s04 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 217.0)
+s04 tree          │ flags: hasImplicitScrolling
+s04 tree          │ scrollExtentMin: 0.0
+s04 tree          │ scrollPosition: 0.0
+s04 tree          │ scrollExtentMax: 0.0
+s04 tree          │
+s04 tree          ├─SemanticsNode#5
+s04 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s04 tree          │   label: "Before s04"
+s04 tree          │   textDirection: ltr
+s04 tree          │
+s04 tree          ├─SemanticsNode#6
+s04 tree          │   Rect.fromLTRB(12.0, 44.0, 133.5, 93.0)
+s04 tree          │   label:
+s04 tree          │     "s04 City
+s04 tree          │     Boston"
+s04 tree          │   textDirection: ltr
+s04 tree          │
+s04 tree          ├─SemanticsNode#7
+s04 tree          │   Rect.fromLTRB(157.5, 44.0, 357.0, 93.0)
+s04 tree          │   label:
+s04 tree          │     "s04 Population
+s04 tree          │     675,647"
+s04 tree          │   textDirection: ltr
+s04 tree          │
+s04 tree          └─SemanticsNode#8
+s04 tree              Rect.fromLTRB(12.0, 105.0, 396.8, 125.0)
+s04 tree              identifier: "s04-taps"
+s04 tree              label: "s04 taps: on=0 off=0 info=0"
+s04 tree              textDirection: ltr
+s04 node           label="Before s04" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s04 node           label="s04 City\nBoston" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s04 node           label="s04 Population\n675,647" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s04 node           label="s04 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s04-taps
+s04 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s04 tab stops: _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode ""
+s04 1 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s04 taps: on=0 off=0 info=0
+s04 2 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s04 taps: on=0 off=0 info=0
+s04 3 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s04 taps: on=0 off=0 info=0
+s04 1 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s04 taps: on=0 off=0 info=0
+s04 2 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s04 taps: on=0 off=0 info=0
+s04 3 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s04 taps: on=0 off=0 info=0
+==== s05 ListTile(title:, subtitle:) with no onTap for each pair
+s05 tree SemanticsNode#0
+s05 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s05 tree  │
+s05 tree  └─SemanticsNode#1
+s05 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s05 tree    │ textDirection: ltr
+s05 tree    │
+s05 tree    └─SemanticsNode#2
+s05 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s05 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s05 tree      │
+s05 tree      └─SemanticsNode#3
+s05 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s05 tree        │ flags: scopesRoute
+s05 tree        │
+s05 tree        ├─SemanticsNode#9
+s05 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s05 tree        │ │
+s05 tree        │ └─SemanticsNode#10
+s05 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s05 tree        │     flags: isHeader, namesRoute
+s05 tree        │     label: "S09 probe"
+s05 tree        │     textDirection: ltr
+s05 tree        │
+s05 tree        └─SemanticsNode#4
+s05 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 312.0)
+s05 tree          │ flags: hasImplicitScrolling
+s05 tree          │ scrollExtentMin: 0.0
+s05 tree          │ scrollPosition: 0.0
+s05 tree          │ scrollExtentMax: 0.0
+s05 tree          │
+s05 tree          ├─SemanticsNode#5
+s05 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s05 tree          │   label: "Before s05"
+s05 tree          │   textDirection: ltr
+s05 tree          │
+s05 tree          ├─SemanticsNode#6
+s05 tree          │   Rect.fromLTRB(12.0, 44.0, 788.0, 116.0)
+s05 tree          │   flags: hasEnabledState, isEnabled, hasSelectedState
+s05 tree          │   label:
+s05 tree          │     "s05 City
+s05 tree          │     Boston"
+s05 tree          │   textDirection: ltr
+s05 tree          │
+s05 tree          ├─SemanticsNode#7
+s05 tree          │   Rect.fromLTRB(12.0, 116.0, 788.0, 188.0)
+s05 tree          │   flags: hasEnabledState, isEnabled, hasSelectedState
+s05 tree          │   label:
+s05 tree          │     "s05 Population
+s05 tree          │     675,647"
+s05 tree          │   textDirection: ltr
+s05 tree          │
+s05 tree          └─SemanticsNode#8
+s05 tree              Rect.fromLTRB(12.0, 200.0, 396.8, 220.0)
+s05 tree              identifier: "s05-taps"
+s05 tree              label: "s05 taps: on=0 off=0 info=0"
+s05 tree              textDirection: ltr
+s05 node           label="Before s05" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s05 node           label="s05 City\nBoston" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s05 node           label="s05 Population\n675,647" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s05 node           label="s05 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s05-taps
+s05 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s05 tab stops: _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode ""
+s05 1 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s05 taps: on=0 off=0 info=0
+s05 2 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s05 taps: on=0 off=0 info=0
+s05 3 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s05 taps: on=0 off=0 info=0
+s05 1 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s05 taps: on=0 off=0 info=0
+s05 2 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s05 taps: on=0 off=0 info=0
+s05 3 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s05 taps: on=0 off=0 info=0
+==== s06 MergeSemantics round a pair whose value has semanticsLabel
+s06 tree SemanticsNode#0
+s06 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s06 tree  │
+s06 tree  └─SemanticsNode#1
+s06 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s06 tree    │ textDirection: ltr
+s06 tree    │
+s06 tree    └─SemanticsNode#2
+s06 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s06 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s06 tree      │
+s06 tree      └─SemanticsNode#3
+s06 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s06 tree        │ flags: scopesRoute
+s06 tree        │
+s06 tree        ├─SemanticsNode#8
+s06 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s06 tree        │ │
+s06 tree        │ └─SemanticsNode#9
+s06 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s06 tree        │     flags: isHeader, namesRoute
+s06 tree        │     label: "S09 probe"
+s06 tree        │     textDirection: ltr
+s06 tree        │
+s06 tree        └─SemanticsNode#4
+s06 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 208.0)
+s06 tree          │ flags: hasImplicitScrolling
+s06 tree          │ scrollExtentMin: 0.0
+s06 tree          │ scrollPosition: 0.0
+s06 tree          │ scrollExtentMax: 0.0
+s06 tree          │
+s06 tree          ├─SemanticsNode#5
+s06 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s06 tree          │   label: "Before s06"
+s06 tree          │   textDirection: ltr
+s06 tree          │
+s06 tree          ├─SemanticsNode#6
+s06 tree          │   merge boundary ⛔️
+s06 tree          │   Rect.fromLTRB(12.0, 44.0, 183.0, 84.0)
+s06 tree          │   label:
+s06 tree          │     "s06 Distance
+s06 tree          │     6 kilometres"
+s06 tree          │   textDirection: ltr
+s06 tree          │
+s06 tree          └─SemanticsNode#7
+s06 tree              Rect.fromLTRB(12.0, 96.0, 396.8, 116.0)
+s06 tree              identifier: "s06-taps"
+s06 tree              label: "s06 taps: on=0 off=0 info=0"
+s06 tree              textDirection: ltr
+s06 node           label="Before s06" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s06 node           label="s06 Distance\n6 kilometres" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s06 node           label="s06 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s06-taps
+s06 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s06 tab stops: _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode ""
+s06 1 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s06 taps: on=0 off=0 info=0
+s06 2 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s06 taps: on=0 off=0 info=0
+s06 3 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s06 taps: on=0 off=0 info=0
+s06 1 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s06 taps: on=0 off=0 info=0
+s06 2 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s06 taps: on=0 off=0 info=0
+s06 3 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s06 taps: on=0 off=0 info=0
+==== s07 Named group (F07 good-group): Semantics(container, explicitChildNodes, label:) round the question (excluded) and the buttons
+s07 tree SemanticsNode#0
+s07 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s07 tree  │
+s07 tree  └─SemanticsNode#1
+s07 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s07 tree    │ textDirection: ltr
+s07 tree    │
+s07 tree    └─SemanticsNode#2
+s07 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s07 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s07 tree      │
+s07 tree      └─SemanticsNode#3
+s07 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s07 tree        │ flags: scopesRoute
+s07 tree        │
+s07 tree        ├─SemanticsNode#10
+s07 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s07 tree        │ │
+s07 tree        │ └─SemanticsNode#11
+s07 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s07 tree        │     flags: isHeader, namesRoute
+s07 tree        │     label: "S09 probe"
+s07 tree        │     textDirection: ltr
+s07 tree        │
+s07 tree        └─SemanticsNode#4
+s07 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 242.0)
+s07 tree          │ flags: hasImplicitScrolling
+s07 tree          │ scrollExtentMin: 0.0
+s07 tree          │ scrollPosition: 0.0
+s07 tree          │ scrollExtentMax: 0.0
+s07 tree          │
+s07 tree          ├─SemanticsNode#5
+s07 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s07 tree          │   label: "Before s07"
+s07 tree          │   textDirection: ltr
+s07 tree          │
+s07 tree          ├─SemanticsNode#6
+s07 tree          │ │ Rect.fromLTRB(12.0, 44.0, 788.0, 118.0)
+s07 tree          │ │ label: "s07 Kitchen light"
+s07 tree          │ │ textDirection: ltr
+s07 tree          │ │
+s07 tree          │ ├─SemanticsNode#7
+s07 tree          │ │   Rect.fromLTRB(0.0, 26.0, 132.6, 74.0)
+s07 tree          │ │   actions: focus, tap
+s07 tree          │ │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s07 tree          │ │   label: "s07 On"
+s07 tree          │ │   textDirection: ltr
+s07 tree          │ │
+s07 tree          │ └─SemanticsNode#8
+s07 tree          │     Rect.fromLTRB(140.6, 26.0, 287.3, 74.0)
+s07 tree          │     actions: focus, tap
+s07 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+s07 tree          │     label: "s07 Off"
+s07 tree          │     textDirection: ltr
+s07 tree          │
+s07 tree          └─SemanticsNode#9
+s07 tree              Rect.fromLTRB(12.0, 130.0, 396.8, 150.0)
+s07 tree              identifier: "s07-taps"
+s07 tree              label: "s07 taps: on=0 off=0 info=0"
+s07 tree              textDirection: ltr
+s07 node           label="Before s07" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s07 node           label="s07 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s07 node             label="s07 On" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s07 node             label="s07 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s07 node           label="s07 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s07-taps
+s07 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s07 tap action on "s07 On": s07 taps: on=1 off=0 info=0
+s07 tap action on "s07 Off": s07 taps: on=0 off=1 info=0
+s07 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s07 1 Tabs (on Focus "") then Enter: s07 taps: on=1 off=0 info=0
+s07 2 Tabs (on Focus "") then Enter: s07 taps: on=0 off=1 info=0
+s07 3 Tabs (on Focus "") then Enter: s07 taps: on=1 off=0 info=0
+s07 1 Tabs (on Focus "") then  : s07 taps: on=1 off=0 info=0
+s07 2 Tabs (on Focus "") then  : s07 taps: on=0 off=1 info=0
+s07 3 Tabs (on Focus "") then  : s07 taps: on=1 off=0 info=0
+==== s08 Semantics(container: true) round the question and the buttons: named by the text inside
+s08 tree SemanticsNode#0
+s08 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s08 tree  │
+s08 tree  └─SemanticsNode#1
+s08 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s08 tree    │ textDirection: ltr
+s08 tree    │
+s08 tree    └─SemanticsNode#2
+s08 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s08 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s08 tree      │
+s08 tree      └─SemanticsNode#3
+s08 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s08 tree        │ flags: scopesRoute
+s08 tree        │
+s08 tree        ├─SemanticsNode#10
+s08 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s08 tree        │ │
+s08 tree        │ └─SemanticsNode#11
+s08 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s08 tree        │     flags: isHeader, namesRoute
+s08 tree        │     label: "S09 probe"
+s08 tree        │     textDirection: ltr
+s08 tree        │
+s08 tree        └─SemanticsNode#4
+s08 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 242.0)
+s08 tree          │ flags: hasImplicitScrolling
+s08 tree          │ scrollExtentMin: 0.0
+s08 tree          │ scrollPosition: 0.0
+s08 tree          │ scrollExtentMax: 0.0
+s08 tree          │
+s08 tree          ├─SemanticsNode#5
+s08 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s08 tree          │   label: "Before s08"
+s08 tree          │   textDirection: ltr
+s08 tree          │
+s08 tree          ├─SemanticsNode#6
+s08 tree          │ │ Rect.fromLTRB(12.0, 44.0, 788.0, 118.0)
+s08 tree          │ │ label: "s08 Kitchen light"
+s08 tree          │ │ textDirection: ltr
+s08 tree          │ │
+s08 tree          │ ├─SemanticsNode#7
+s08 tree          │ │   Rect.fromLTRB(0.0, 26.0, 132.6, 74.0)
+s08 tree          │ │   actions: focus, tap
+s08 tree          │ │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s08 tree          │ │   label: "s08 On"
+s08 tree          │ │   textDirection: ltr
+s08 tree          │ │
+s08 tree          │ └─SemanticsNode#8
+s08 tree          │     Rect.fromLTRB(140.6, 26.0, 287.3, 74.0)
+s08 tree          │     actions: focus, tap
+s08 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+s08 tree          │     label: "s08 Off"
+s08 tree          │     textDirection: ltr
+s08 tree          │
+s08 tree          └─SemanticsNode#9
+s08 tree              Rect.fromLTRB(12.0, 130.0, 396.8, 150.0)
+s08 tree              identifier: "s08-taps"
+s08 tree              label: "s08 taps: on=0 off=0 info=0"
+s08 tree              textDirection: ltr
+s08 node           label="Before s08" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s08 node           label="s08 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s08 node             label="s08 On" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s08 node             label="s08 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s08 node           label="s08 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s08-taps
+s08 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s08 tap action on "s08 On": s08 taps: on=1 off=0 info=0
+s08 tap action on "s08 Off": s08 taps: on=0 off=1 info=0
+s08 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s08 1 Tabs (on Focus "") then Enter: s08 taps: on=1 off=0 info=0
+s08 2 Tabs (on Focus "") then Enter: s08 taps: on=0 off=1 info=0
+s08 3 Tabs (on Focus "") then Enter: s08 taps: on=1 off=0 info=0
+s08 1 Tabs (on Focus "") then  : s08 taps: on=1 off=0 info=0
+s08 2 Tabs (on Focus "") then  : s08 taps: on=0 off=1 info=0
+s08 3 Tabs (on Focus "") then  : s08 taps: on=1 off=0 info=0
+==== s09 Semantics(container: true, explicitChildNodes: true) round the question and the buttons, no label
+s09 tree SemanticsNode#0
+s09 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s09 tree  │
+s09 tree  └─SemanticsNode#1
+s09 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s09 tree    │ textDirection: ltr
+s09 tree    │
+s09 tree    └─SemanticsNode#2
+s09 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s09 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s09 tree      │
+s09 tree      └─SemanticsNode#3
+s09 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s09 tree        │ flags: scopesRoute
+s09 tree        │
+s09 tree        ├─SemanticsNode#11
+s09 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s09 tree        │ │
+s09 tree        │ └─SemanticsNode#12
+s09 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s09 tree        │     flags: isHeader, namesRoute
+s09 tree        │     label: "S09 probe"
+s09 tree        │     textDirection: ltr
+s09 tree        │
+s09 tree        └─SemanticsNode#4
+s09 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 242.0)
+s09 tree          │ flags: hasImplicitScrolling
+s09 tree          │ scrollExtentMin: 0.0
+s09 tree          │ scrollPosition: 0.0
+s09 tree          │ scrollExtentMax: 0.0
+s09 tree          │
+s09 tree          ├─SemanticsNode#5
+s09 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s09 tree          │   label: "Before s09"
+s09 tree          │   textDirection: ltr
+s09 tree          │
+s09 tree          ├─SemanticsNode#6
+s09 tree          │ │ Rect.fromLTRB(12.0, 44.0, 788.0, 118.0)
+s09 tree          │ │
+s09 tree          │ ├─SemanticsNode#7
+s09 tree          │ │   Rect.fromLTRB(0.0, 0.0, 310.3, 26.0)
+s09 tree          │ │   label: "s09 Kitchen light"
+s09 tree          │ │   textDirection: ltr
+s09 tree          │ │
+s09 tree          │ ├─SemanticsNode#8
+s09 tree          │ │   Rect.fromLTRB(0.0, 26.0, 132.6, 74.0)
+s09 tree          │ │   actions: focus, tap
+s09 tree          │ │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s09 tree          │ │   label: "s09 On"
+s09 tree          │ │   textDirection: ltr
+s09 tree          │ │
+s09 tree          │ └─SemanticsNode#9
+s09 tree          │     Rect.fromLTRB(140.6, 26.0, 287.3, 74.0)
+s09 tree          │     actions: focus, tap
+s09 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+s09 tree          │     label: "s09 Off"
+s09 tree          │     textDirection: ltr
+s09 tree          │
+s09 tree          └─SemanticsNode#10
+s09 tree              Rect.fromLTRB(12.0, 130.0, 396.8, 150.0)
+s09 tree              identifier: "s09-taps"
+s09 tree              label: "s09 taps: on=0 off=0 info=0"
+s09 tree              textDirection: ltr
+s09 node           label="Before s09" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s09 node             label="s09 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s09 node             label="s09 On" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s09 node             label="s09 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s09 node           label="s09 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s09-taps
+s09 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s09 tap action on "s09 On": s09 taps: on=1 off=0 info=0
+s09 tap action on "s09 Off": s09 taps: on=0 off=1 info=0
+s09 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s09 1 Tabs (on Focus "") then Enter: s09 taps: on=1 off=0 info=0
+s09 2 Tabs (on Focus "") then Enter: s09 taps: on=0 off=1 info=0
+s09 3 Tabs (on Focus "") then Enter: s09 taps: on=1 off=0 info=0
+s09 1 Tabs (on Focus "") then  : s09 taps: on=1 off=0 info=0
+s09 2 Tabs (on Focus "") then  : s09 taps: on=0 off=1 info=0
+s09 3 Tabs (on Focus "") then  : s09 taps: on=1 off=0 info=0
+==== s10 No group: the question as plain text above the buttons
+s10 tree SemanticsNode#0
+s10 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s10 tree  │
+s10 tree  └─SemanticsNode#1
+s10 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s10 tree    │ textDirection: ltr
+s10 tree    │
+s10 tree    └─SemanticsNode#2
+s10 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s10 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s10 tree      │
+s10 tree      └─SemanticsNode#3
+s10 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s10 tree        │ flags: scopesRoute
+s10 tree        │
+s10 tree        ├─SemanticsNode#10
+s10 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s10 tree        │ │
+s10 tree        │ └─SemanticsNode#11
+s10 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s10 tree        │     flags: isHeader, namesRoute
+s10 tree        │     label: "S09 probe"
+s10 tree        │     textDirection: ltr
+s10 tree        │
+s10 tree        └─SemanticsNode#4
+s10 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 242.0)
+s10 tree          │ flags: hasImplicitScrolling
+s10 tree          │ scrollExtentMin: 0.0
+s10 tree          │ scrollPosition: 0.0
+s10 tree          │ scrollExtentMax: 0.0
+s10 tree          │
+s10 tree          ├─SemanticsNode#5
+s10 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s10 tree          │   label: "Before s10"
+s10 tree          │   textDirection: ltr
+s10 tree          │
+s10 tree          ├─SemanticsNode#6
+s10 tree          │   Rect.fromLTRB(12.0, 44.0, 322.3, 70.0)
+s10 tree          │   label: "s10 Kitchen light"
+s10 tree          │   textDirection: ltr
+s10 tree          │
+s10 tree          ├─SemanticsNode#7
+s10 tree          │   Rect.fromLTRB(12.0, 70.0, 144.6, 118.0)
+s10 tree          │   actions: focus, tap
+s10 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s10 tree          │   label: "s10 On"
+s10 tree          │   textDirection: ltr
+s10 tree          │
+s10 tree          ├─SemanticsNode#8
+s10 tree          │   Rect.fromLTRB(152.6, 70.0, 299.3, 118.0)
+s10 tree          │   actions: focus, tap
+s10 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s10 tree          │   label: "s10 Off"
+s10 tree          │   textDirection: ltr
+s10 tree          │
+s10 tree          └─SemanticsNode#9
+s10 tree              Rect.fromLTRB(12.0, 130.0, 396.8, 150.0)
+s10 tree              identifier: "s10-taps"
+s10 tree              label: "s10 taps: on=0 off=0 info=0"
+s10 tree              textDirection: ltr
+s10 node           label="Before s10" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s10 node           label="s10 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s10 node           label="s10 On" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s10 node           label="s10 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s10 node           label="s10 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s10-taps
+s10 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s10 tap action on "s10 On": s10 taps: on=1 off=0 info=0
+s10 tap action on "s10 Off": s10 taps: on=0 off=1 info=0
+s10 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s10 1 Tabs (on Focus "") then Enter: s10 taps: on=1 off=0 info=0
+s10 2 Tabs (on Focus "") then Enter: s10 taps: on=0 off=1 info=0
+s10 3 Tabs (on Focus "") then Enter: s10 taps: on=1 off=0 info=0
+s10 1 Tabs (on Focus "") then  : s10 taps: on=1 off=0 info=0
+s10 2 Tabs (on Focus "") then  : s10 taps: on=0 off=1 info=0
+s10 3 Tabs (on Focus "") then  : s10 taps: on=1 off=0 info=0
+==== s11 Semantics(label:) round the buttons, no container (the iOS reference's warning)
+s11 tree SemanticsNode#0
+s11 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s11 tree  │
+s11 tree  └─SemanticsNode#1
+s11 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s11 tree    │ textDirection: ltr
+s11 tree    │
+s11 tree    └─SemanticsNode#2
+s11 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s11 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s11 tree      │
+s11 tree      └─SemanticsNode#3
+s11 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s11 tree        │ flags: scopesRoute
+s11 tree        │
+s11 tree        ├─SemanticsNode#11
+s11 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s11 tree        │ │
+s11 tree        │ └─SemanticsNode#12
+s11 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s11 tree        │     flags: isHeader, namesRoute
+s11 tree        │     label: "S09 probe"
+s11 tree        │     textDirection: ltr
+s11 tree        │
+s11 tree        └─SemanticsNode#4
+s11 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 242.0)
+s11 tree          │ flags: hasImplicitScrolling
+s11 tree          │ scrollExtentMin: 0.0
+s11 tree          │ scrollPosition: 0.0
+s11 tree          │ scrollExtentMax: 0.0
+s11 tree          │
+s11 tree          ├─SemanticsNode#5
+s11 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s11 tree          │   label: "Before s11"
+s11 tree          │   textDirection: ltr
+s11 tree          │
+s11 tree          ├─SemanticsNode#6
+s11 tree          │   Rect.fromLTRB(12.0, 44.0, 322.3, 70.0)
+s11 tree          │   label: "s11 Kitchen light"
+s11 tree          │   textDirection: ltr
+s11 tree          │
+s11 tree          ├─SemanticsNode#7
+s11 tree          │ │ Rect.fromLTRB(12.0, 70.0, 788.0, 118.0)
+s11 tree          │ │ label: "s11 Kitchen light"
+s11 tree          │ │ textDirection: ltr
+s11 tree          │ │
+s11 tree          │ ├─SemanticsNode#8
+s11 tree          │ │   Rect.fromLTRB(0.0, 0.0, 132.6, 48.0)
+s11 tree          │ │   actions: focus, tap
+s11 tree          │ │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s11 tree          │ │   label: "s11 On"
+s11 tree          │ │   textDirection: ltr
+s11 tree          │ │
+s11 tree          │ └─SemanticsNode#9
+s11 tree          │     Rect.fromLTRB(140.6, 0.0, 287.3, 48.0)
+s11 tree          │     actions: focus, tap
+s11 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+s11 tree          │     label: "s11 Off"
+s11 tree          │     textDirection: ltr
+s11 tree          │
+s11 tree          └─SemanticsNode#10
+s11 tree              Rect.fromLTRB(12.0, 130.0, 396.8, 150.0)
+s11 tree              identifier: "s11-taps"
+s11 tree              label: "s11 taps: on=0 off=0 info=0"
+s11 tree              textDirection: ltr
+s11 node           label="Before s11" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s11 node           label="s11 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s11 node           label="s11 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s11 node             label="s11 On" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s11 node             label="s11 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s11 node           label="s11 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s11-taps
+s11 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s11 tap action on "s11 On": s11 taps: on=1 off=0 info=0
+s11 tap action on "s11 Off": s11 taps: on=0 off=1 info=0
+s11 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s11 1 Tabs (on Focus "") then Enter: s11 taps: on=1 off=0 info=0
+s11 2 Tabs (on Focus "") then Enter: s11 taps: on=0 off=1 info=0
+s11 3 Tabs (on Focus "") then Enter: s11 taps: on=1 off=0 info=0
+s11 1 Tabs (on Focus "") then  : s11 taps: on=1 off=0 info=0
+s11 2 Tabs (on Focus "") then  : s11 taps: on=0 off=1 info=0
+s11 3 Tabs (on Focus "") then  : s11 taps: on=1 off=0 info=0
+==== s12 MergeSemantics round the question and the buttons
+s12 tree SemanticsNode#0
+s12 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s12 tree  │
+s12 tree  └─SemanticsNode#1
+s12 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s12 tree    │ textDirection: ltr
+s12 tree    │
+s12 tree    └─SemanticsNode#2
+s12 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s12 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s12 tree      │
+s12 tree      └─SemanticsNode#3
+s12 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s12 tree        │ flags: scopesRoute
+s12 tree        │
+s12 tree        ├─SemanticsNode#10
+s12 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s12 tree        │ │
+s12 tree        │ └─SemanticsNode#11
+s12 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s12 tree        │     flags: isHeader, namesRoute
+s12 tree        │     label: "S09 probe"
+s12 tree        │     textDirection: ltr
+s12 tree        │
+s12 tree        └─SemanticsNode#4
+s12 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 242.0)
+s12 tree          │ flags: hasImplicitScrolling
+s12 tree          │ scrollExtentMin: 0.0
+s12 tree          │ scrollPosition: 0.0
+s12 tree          │ scrollExtentMax: 0.0
+s12 tree          │
+s12 tree          ├─SemanticsNode#5
+s12 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s12 tree          │   label: "Before s12"
+s12 tree          │   textDirection: ltr
+s12 tree          │
+s12 tree          ├─SemanticsNode#6
+s12 tree          │ │ merge boundary ⛔️
+s12 tree          │ │ Rect.fromLTRB(12.0, 44.0, 788.0, 118.0)
+s12 tree          │ │ label: "s12 Kitchen light"
+s12 tree          │ │ textDirection: ltr
+s12 tree          │ │
+s12 tree          │ ├─SemanticsNode#7
+s12 tree          │ │   merged up ⬆️
+s12 tree          │ │   Rect.fromLTRB(0.0, 26.0, 132.6, 74.0)
+s12 tree          │ │   actions: focus, tap
+s12 tree          │ │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s12 tree          │ │   label: "s12 On"
+s12 tree          │ │   textDirection: ltr
+s12 tree          │ │
+s12 tree          │ └─SemanticsNode#8
+s12 tree          │     merged up ⬆️
+s12 tree          │     Rect.fromLTRB(140.6, 26.0, 287.3, 74.0)
+s12 tree          │     actions: focus, tap
+s12 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+s12 tree          │     label: "s12 Off"
+s12 tree          │     textDirection: ltr
+s12 tree          │
+s12 tree          └─SemanticsNode#9
+s12 tree              Rect.fromLTRB(12.0, 130.0, 396.8, 150.0)
+s12 tree              identifier: "s12-taps"
+s12 tree              label: "s12 taps: on=0 off=0 info=0"
+s12 tree              textDirection: ltr
+s12 node           label="Before s12" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s12 node           label="s12 Kitchen light\ns12 On\ns12 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s12 node             label="s12 On" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s12 node             label="s12 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s12 node           label="s12 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s12-taps
+s12 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s12 tap action on "s12 Kitchen light\ns12 On\ns12 Off": s12 taps: on=1 off=0 info=0
+s12 tap action on "s12 On": s12 taps: on=1 off=0 info=0
+s12 tap action on "s12 Off": s12 taps: on=0 off=1 info=0
+s12 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s12 1 Tabs (on Focus "") then Enter: s12 taps: on=1 off=0 info=0
+s12 2 Tabs (on Focus "") then Enter: s12 taps: on=0 off=1 info=0
+s12 3 Tabs (on Focus "") then Enter: s12 taps: on=1 off=0 info=0
+s12 1 Tabs (on Focus "") then  : s12 taps: on=1 off=0 info=0
+s12 2 Tabs (on Focus "") then  : s12 taps: on=0 off=1 info=0
+s12 3 Tabs (on Focus "") then  : s12 taps: on=1 off=0 info=0
+==== s13 CupertinoFormSection(header:) round two CupertinoButtons
+s13 tree SemanticsNode#0
+s13 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s13 tree  │
+s13 tree  └─SemanticsNode#1
+s13 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s13 tree    │ textDirection: ltr
+s13 tree    │
+s13 tree    └─SemanticsNode#2
+s13 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s13 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s13 tree      │
+s13 tree      └─SemanticsNode#3
+s13 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s13 tree        │ flags: scopesRoute
+s13 tree        │
+s13 tree        ├─SemanticsNode#10
+s13 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s13 tree        │ │
+s13 tree        │ └─SemanticsNode#11
+s13 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s13 tree        │     flags: isHeader, namesRoute
+s13 tree        │     label: "S09 probe"
+s13 tree        │     textDirection: ltr
+s13 tree        │
+s13 tree        └─SemanticsNode#4
+s13 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 308.0)
+s13 tree          │ flags: hasImplicitScrolling
+s13 tree          │ scrollExtentMin: 0.0
+s13 tree          │ scrollPosition: 0.0
+s13 tree          │ scrollExtentMax: 0.0
+s13 tree          │
+s13 tree          ├─SemanticsNode#5
+s13 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s13 tree          │   label: "Before s13"
+s13 tree          │   textDirection: ltr
+s13 tree          │
+s13 tree          ├─SemanticsNode#6
+s13 tree          │   Rect.fromLTRB(32.0, 66.0, 253.0, 79.0)
+s13 tree          │   label: "s13 Kitchen light"
+s13 tree          │   textDirection: ltr
+s13 tree          │
+s13 tree          ├─SemanticsNode#7
+s13 tree          │   Rect.fromLTRB(330.2, 85.3, 469.8, 134.3)
+s13 tree          │   actions: focus, tap
+s13 tree          │   flags: isButton, isFocusable
+s13 tree          │   label: "s13 On"
+s13 tree          │   textDirection: ltr
+s13 tree          │
+s13 tree          ├─SemanticsNode#8
+s13 tree          │   Rect.fromLTRB(321.9, 134.7, 478.1, 183.7)
+s13 tree          │   actions: focus, tap
+s13 tree          │   flags: isButton, isFocusable
+s13 tree          │   label: "s13 Off"
+s13 tree          │   textDirection: ltr
+s13 tree          │
+s13 tree          └─SemanticsNode#9
+s13 tree              Rect.fromLTRB(12.0, 196.0, 396.8, 216.0)
+s13 tree              identifier: "s13-taps"
+s13 tree              label: "s13 taps: on=0 off=0 info=0"
+s13 tree              textDirection: ltr
+s13 node           label="Before s13" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s13 node           label="s13 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s13 node           label="s13 On" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s13 node           label="s13 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s13 node           label="s13 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s13-taps
+s13 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s13 tap action on "s13 On": s13 taps: on=1 off=0 info=0
+s13 tap action on "s13 Off": s13 taps: on=0 off=1 info=0
+s13 tab stops: Focus "s13 On" -> Focus "s13 Off" -> Focus "s13 On" -> Focus "s13 Off" -> Focus "s13 On" -> Focus "s13 Off"
+s13 1 Tabs (on Focus "s13 On") then Enter: s13 taps: on=1 off=0 info=0
+s13 2 Tabs (on Focus "s13 Off") then Enter: s13 taps: on=0 off=1 info=0
+s13 3 Tabs (on Focus "s13 On") then Enter: s13 taps: on=1 off=0 info=0
+s13 1 Tabs (on Focus "s13 On") then  : s13 taps: on=1 off=0 info=0
+s13 2 Tabs (on Focus "s13 Off") then  : s13 taps: on=0 off=1 info=0
+s13 3 Tabs (on Focus "s13 On") then  : s13 taps: on=1 off=0 info=0
+==== s14 s07 with the question not excluded
+s14 tree SemanticsNode#0
+s14 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s14 tree  │
+s14 tree  └─SemanticsNode#1
+s14 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s14 tree    │ textDirection: ltr
+s14 tree    │
+s14 tree    └─SemanticsNode#2
+s14 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s14 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s14 tree      │
+s14 tree      └─SemanticsNode#3
+s14 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s14 tree        │ flags: scopesRoute
+s14 tree        │
+s14 tree        ├─SemanticsNode#11
+s14 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s14 tree        │ │
+s14 tree        │ └─SemanticsNode#12
+s14 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s14 tree        │     flags: isHeader, namesRoute
+s14 tree        │     label: "S09 probe"
+s14 tree        │     textDirection: ltr
+s14 tree        │
+s14 tree        └─SemanticsNode#4
+s14 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 242.0)
+s14 tree          │ flags: hasImplicitScrolling
+s14 tree          │ scrollExtentMin: 0.0
+s14 tree          │ scrollPosition: 0.0
+s14 tree          │ scrollExtentMax: 0.0
+s14 tree          │
+s14 tree          ├─SemanticsNode#5
+s14 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s14 tree          │   label: "Before s14"
+s14 tree          │   textDirection: ltr
+s14 tree          │
+s14 tree          ├─SemanticsNode#6
+s14 tree          │ │ Rect.fromLTRB(12.0, 44.0, 788.0, 118.0)
+s14 tree          │ │ label: "s14 Kitchen light"
+s14 tree          │ │ textDirection: ltr
+s14 tree          │ │
+s14 tree          │ ├─SemanticsNode#7
+s14 tree          │ │   Rect.fromLTRB(0.0, 0.0, 310.3, 26.0)
+s14 tree          │ │   label: "s14 Kitchen light"
+s14 tree          │ │   textDirection: ltr
+s14 tree          │ │
+s14 tree          │ ├─SemanticsNode#8
+s14 tree          │ │   Rect.fromLTRB(0.0, 26.0, 132.6, 74.0)
+s14 tree          │ │   actions: focus, tap
+s14 tree          │ │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s14 tree          │ │   label: "s14 On"
+s14 tree          │ │   textDirection: ltr
+s14 tree          │ │
+s14 tree          │ └─SemanticsNode#9
+s14 tree          │     Rect.fromLTRB(140.6, 26.0, 287.3, 74.0)
+s14 tree          │     actions: focus, tap
+s14 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+s14 tree          │     label: "s14 Off"
+s14 tree          │     textDirection: ltr
+s14 tree          │
+s14 tree          └─SemanticsNode#10
+s14 tree              Rect.fromLTRB(12.0, 130.0, 396.8, 150.0)
+s14 tree              identifier: "s14-taps"
+s14 tree              label: "s14 taps: on=0 off=0 info=0"
+s14 tree              textDirection: ltr
+s14 node           label="Before s14" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s14 node           label="s14 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s14 node             label="s14 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s14 node             label="s14 On" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s14 node             label="s14 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s14 node           label="s14 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s14-taps
+s14 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s14 tap action on "s14 On": s14 taps: on=1 off=0 info=0
+s14 tap action on "s14 Off": s14 taps: on=0 off=1 info=0
+s14 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s14 1 Tabs (on Focus "") then Enter: s14 taps: on=1 off=0 info=0
+s14 2 Tabs (on Focus "") then Enter: s14 taps: on=0 off=1 info=0
+s14 3 Tabs (on Focus "") then Enter: s14 taps: on=1 off=0 info=0
+s14 1 Tabs (on Focus "") then  : s14 taps: on=1 off=0 info=0
+s14 2 Tabs (on Focus "") then  : s14 taps: on=0 off=1 info=0
+s14 3 Tabs (on Focus "") then  : s14 taps: on=1 off=0 info=0
+==== s15 TextButton.icon: an icon and its text, one target
+s15 tree SemanticsNode#0
+s15 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s15 tree  │
+s15 tree  └─SemanticsNode#1
+s15 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s15 tree    │ textDirection: ltr
+s15 tree    │
+s15 tree    └─SemanticsNode#2
+s15 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s15 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s15 tree      │
+s15 tree      └─SemanticsNode#3
+s15 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s15 tree        │ flags: scopesRoute
+s15 tree        │
+s15 tree        ├─SemanticsNode#8
+s15 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s15 tree        │ │
+s15 tree        │ └─SemanticsNode#9
+s15 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s15 tree        │     flags: isHeader, namesRoute
+s15 tree        │     label: "S09 probe"
+s15 tree        │     textDirection: ltr
+s15 tree        │
+s15 tree        └─SemanticsNode#4
+s15 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 216.0)
+s15 tree          │ flags: hasImplicitScrolling
+s15 tree          │ scrollExtentMin: 0.0
+s15 tree          │ scrollPosition: 0.0
+s15 tree          │ scrollExtentMax: 0.0
+s15 tree          │
+s15 tree          ├─SemanticsNode#5
+s15 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s15 tree          │   label: "Before s15"
+s15 tree          │   textDirection: ltr
+s15 tree          │
+s15 tree          ├─SemanticsNode#6
+s15 tree          │   Rect.fromLTRB(12.0, 44.0, 333.9, 92.0)
+s15 tree          │   actions: focus, tap
+s15 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s15 tree          │   label: "s15 App information"
+s15 tree          │   textDirection: ltr
+s15 tree          │
+s15 tree          └─SemanticsNode#7
+s15 tree              Rect.fromLTRB(12.0, 104.0, 396.8, 124.0)
+s15 tree              identifier: "s15-taps"
+s15 tree              label: "s15 taps: on=0 off=0 info=0"
+s15 tree              textDirection: ltr
+s15 node           label="Before s15" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s15 node           label="s15 App information" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s15 node           label="s15 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s15-taps
+s15 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s15 tap action on "s15 App information": s15 taps: on=0 off=0 info=1
+s15 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s15 1 Tabs (on Focus "") then Enter: s15 taps: on=0 off=0 info=1
+s15 2 Tabs (on Focus "") then Enter: s15 taps: on=0 off=0 info=1
+s15 3 Tabs (on Focus "") then Enter: s15 taps: on=0 off=0 info=1
+s15 1 Tabs (on Focus "") then  : s15 taps: on=0 off=0 info=1
+s15 2 Tabs (on Focus "") then  : s15 taps: on=0 off=0 info=1
+s15 3 Tabs (on Focus "") then  : s15 taps: on=0 off=0 info=1
+==== s16 ListTile(leading: Icon, title:, onTap:)
+s16 tree SemanticsNode#0
+s16 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s16 tree  │
+s16 tree  └─SemanticsNode#1
+s16 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s16 tree    │ textDirection: ltr
+s16 tree    │
+s16 tree    └─SemanticsNode#2
+s16 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s16 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s16 tree      │
+s16 tree      └─SemanticsNode#3
+s16 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s16 tree        │ flags: scopesRoute
+s16 tree        │
+s16 tree        ├─SemanticsNode#8
+s16 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s16 tree        │ │
+s16 tree        │ └─SemanticsNode#9
+s16 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s16 tree        │     flags: isHeader, namesRoute
+s16 tree        │     label: "S09 probe"
+s16 tree        │     textDirection: ltr
+s16 tree        │
+s16 tree        └─SemanticsNode#4
+s16 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 224.0)
+s16 tree          │ flags: hasImplicitScrolling
+s16 tree          │ scrollExtentMin: 0.0
+s16 tree          │ scrollPosition: 0.0
+s16 tree          │ scrollExtentMax: 0.0
+s16 tree          │
+s16 tree          ├─SemanticsNode#5
+s16 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s16 tree          │   label: "Before s16"
+s16 tree          │   textDirection: ltr
+s16 tree          │
+s16 tree          ├─SemanticsNode#6
+s16 tree          │   Rect.fromLTRB(12.0, 44.0, 788.0, 100.0)
+s16 tree          │   actions: focus, tap
+s16 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable,
+s16 tree          │     hasSelectedState
+s16 tree          │   label: "s16 App information"
+s16 tree          │   textDirection: ltr
+s16 tree          │
+s16 tree          └─SemanticsNode#7
+s16 tree              Rect.fromLTRB(12.0, 112.0, 396.8, 132.0)
+s16 tree              identifier: "s16-taps"
+s16 tree              label: "s16 taps: on=0 off=0 info=0"
+s16 tree              textDirection: ltr
+s16 node           label="Before s16" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s16 node           label="s16 App information" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s16 node           label="s16 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s16-taps
+s16 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s16 tap action on "s16 App information": s16 taps: on=0 off=0 info=1
+s16 tab stops: Focus "s16 App information" -> Focus "s16 App information" -> Focus "s16 App information" -> Focus "s16 App information" -> Focus "s16 App information" -> Focus "s16 App information"
+s16 1 Tabs (on Focus "s16 App information") then Enter: s16 taps: on=0 off=0 info=1
+s16 2 Tabs (on Focus "s16 App information") then Enter: s16 taps: on=0 off=0 info=1
+s16 3 Tabs (on Focus "s16 App information") then Enter: s16 taps: on=0 off=0 info=1
+s16 1 Tabs (on Focus "s16 App information") then  : s16 taps: on=0 off=0 info=1
+s16 2 Tabs (on Focus "s16 App information") then  : s16 taps: on=0 off=0 info=1
+s16 3 Tabs (on Focus "s16 App information") then  : s16 taps: on=0 off=0 info=1
+==== s17 Two targets for one action: an IconButton with a tooltip and a TextButton
+s17 tree SemanticsNode#0
+s17 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s17 tree  │
+s17 tree  └─SemanticsNode#1
+s17 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s17 tree    │ textDirection: ltr
+s17 tree    │
+s17 tree    └─SemanticsNode#2
+s17 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s17 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s17 tree      │
+s17 tree      └─SemanticsNode#3
+s17 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s17 tree        │ flags: scopesRoute
+s17 tree        │
+s17 tree        ├─SemanticsNode#9
+s17 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s17 tree        │ │
+s17 tree        │ └─SemanticsNode#10
+s17 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s17 tree        │     flags: isHeader, namesRoute
+s17 tree        │     label: "S09 probe"
+s17 tree        │     textDirection: ltr
+s17 tree        │
+s17 tree        └─SemanticsNode#4
+s17 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 216.0)
+s17 tree          │ flags: hasImplicitScrolling
+s17 tree          │ scrollExtentMin: 0.0
+s17 tree          │ scrollPosition: 0.0
+s17 tree          │ scrollExtentMax: 0.0
+s17 tree          │
+s17 tree          ├─SemanticsNode#5
+s17 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s17 tree          │   label: "Before s17"
+s17 tree          │   textDirection: ltr
+s17 tree          │
+s17 tree          ├─SemanticsNode#6
+s17 tree          │   Rect.fromLTRB(12.0, 44.0, 60.0, 92.0)
+s17 tree          │   actions: focus, tap
+s17 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s17 tree          │   traversalParentIdentifier: _OverlayPortalState#57fda
+s17 tree          │   tooltip: "s17 App information"
+s17 tree          │   textDirection: ltr
+s17 tree          │
+s17 tree          ├─SemanticsNode#7
+s17 tree          │   Rect.fromLTRB(60.0, 44.0, 351.9, 92.0)
+s17 tree          │   actions: focus, tap
+s17 tree          │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s17 tree          │   label: "s17 App information"
+s17 tree          │   textDirection: ltr
+s17 tree          │
+s17 tree          └─SemanticsNode#8
+s17 tree              Rect.fromLTRB(12.0, 104.0, 396.8, 124.0)
+s17 tree              identifier: "s17-taps"
+s17 tree              label: "s17 taps: on=0 off=0 info=0"
+s17 tree              textDirection: ltr
+s17 node           label="Before s17" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s17 node           label="" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s17 node           label="s17 App information" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s17 node           label="s17 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s17-taps
+s17 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s17 tap action on "": s17 taps: on=0 off=0 info=1
+s17 tap action on "s17 App information": s17 taps: on=0 off=0 info=1
+s17 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s17 1 Tabs (on Focus "") then Enter: s17 taps: on=0 off=0 info=1
+s17 2 Tabs (on Focus "") then Enter: s17 taps: on=0 off=0 info=1
+s17 3 Tabs (on Focus "") then Enter: s17 taps: on=0 off=0 info=1
+s17 1 Tabs (on Focus "") then  : s17 taps: on=0 off=0 info=1
+s17 2 Tabs (on Focus "") then  : s17 taps: on=0 off=0 info=1
+s17 3 Tabs (on Focus "") then  : s17 taps: on=0 off=0 info=1
+==== s18 MergeSemantics round s17
+s18 tree SemanticsNode#0
+s18 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s18 tree  │
+s18 tree  └─SemanticsNode#1
+s18 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s18 tree    │ textDirection: ltr
+s18 tree    │
+s18 tree    └─SemanticsNode#2
+s18 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s18 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s18 tree      │
+s18 tree      └─SemanticsNode#3
+s18 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s18 tree        │ flags: scopesRoute
+s18 tree        │
+s18 tree        ├─SemanticsNode#10
+s18 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s18 tree        │ │
+s18 tree        │ └─SemanticsNode#11
+s18 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s18 tree        │     flags: isHeader, namesRoute
+s18 tree        │     label: "S09 probe"
+s18 tree        │     textDirection: ltr
+s18 tree        │
+s18 tree        └─SemanticsNode#4
+s18 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 216.0)
+s18 tree          │ flags: hasImplicitScrolling
+s18 tree          │ scrollExtentMin: 0.0
+s18 tree          │ scrollPosition: 0.0
+s18 tree          │ scrollExtentMax: 0.0
+s18 tree          │
+s18 tree          ├─SemanticsNode#5
+s18 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s18 tree          │   label: "Before s18"
+s18 tree          │   textDirection: ltr
+s18 tree          │
+s18 tree          ├─SemanticsNode#6
+s18 tree          │ │ merge boundary ⛔️
+s18 tree          │ │ Rect.fromLTRB(12.0, 44.0, 788.0, 92.0)
+s18 tree          │ │
+s18 tree          │ ├─SemanticsNode#7
+s18 tree          │ │   merged up ⬆️
+s18 tree          │ │   Rect.fromLTRB(0.0, 0.0, 48.0, 48.0)
+s18 tree          │ │   actions: focus, tap
+s18 tree          │ │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s18 tree          │ │   traversalParentIdentifier: _OverlayPortalState#26235
+s18 tree          │ │   tooltip: "s18 App information"
+s18 tree          │ │   textDirection: ltr
+s18 tree          │ │
+s18 tree          │ └─SemanticsNode#8
+s18 tree          │     merged up ⬆️
+s18 tree          │     Rect.fromLTRB(48.0, 0.0, 339.9, 48.0)
+s18 tree          │     actions: focus, tap
+s18 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+s18 tree          │     label: "s18 App information"
+s18 tree          │     textDirection: ltr
+s18 tree          │
+s18 tree          └─SemanticsNode#9
+s18 tree              Rect.fromLTRB(12.0, 104.0, 396.8, 124.0)
+s18 tree              identifier: "s18-taps"
+s18 tree              label: "s18 taps: on=0 off=0 info=0"
+s18 tree              textDirection: ltr
+s18 node           label="Before s18" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s18 node           label="s18 App information" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s18 node             label="" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s18 node             label="s18 App information" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s18 node           label="s18 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s18-taps
+s18 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s18 tap action on "s18 App information": s18 taps: on=0 off=0 info=1
+s18 tap action on "": s18 taps: on=0 off=0 info=1
+s18 tap action on "s18 App information": s18 taps: on=0 off=0 info=1
+s18 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s18 1 Tabs (on Focus "") then Enter: s18 taps: on=0 off=0 info=1
+s18 2 Tabs (on Focus "") then Enter: s18 taps: on=0 off=0 info=1
+s18 3 Tabs (on Focus "") then Enter: s18 taps: on=0 off=0 info=1
+s18 1 Tabs (on Focus "") then  : s18 taps: on=0 off=0 info=1
+s18 2 Tabs (on Focus "") then  : s18 taps: on=0 off=0 info=1
+s18 3 Tabs (on Focus "") then  : s18 taps: on=0 off=0 info=1
+==== s19 s07 without explicitChildNodes
+s19 tree SemanticsNode#0
+s19 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s19 tree  │
+s19 tree  └─SemanticsNode#1
+s19 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s19 tree    │ textDirection: ltr
+s19 tree    │
+s19 tree    └─SemanticsNode#2
+s19 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s19 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s19 tree      │
+s19 tree      └─SemanticsNode#3
+s19 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s19 tree        │ flags: scopesRoute
+s19 tree        │
+s19 tree        ├─SemanticsNode#10
+s19 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s19 tree        │ │
+s19 tree        │ └─SemanticsNode#11
+s19 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s19 tree        │     flags: isHeader, namesRoute
+s19 tree        │     label: "S09 probe"
+s19 tree        │     textDirection: ltr
+s19 tree        │
+s19 tree        └─SemanticsNode#4
+s19 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 242.0)
+s19 tree          │ flags: hasImplicitScrolling
+s19 tree          │ scrollExtentMin: 0.0
+s19 tree          │ scrollPosition: 0.0
+s19 tree          │ scrollExtentMax: 0.0
+s19 tree          │
+s19 tree          ├─SemanticsNode#5
+s19 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s19 tree          │   label: "Before s19"
+s19 tree          │   textDirection: ltr
+s19 tree          │
+s19 tree          ├─SemanticsNode#6
+s19 tree          │ │ Rect.fromLTRB(12.0, 44.0, 788.0, 118.0)
+s19 tree          │ │ label: "s19 Kitchen light"
+s19 tree          │ │ textDirection: ltr
+s19 tree          │ │
+s19 tree          │ ├─SemanticsNode#7
+s19 tree          │ │   Rect.fromLTRB(0.0, 26.0, 132.6, 74.0)
+s19 tree          │ │   actions: focus, tap
+s19 tree          │ │   flags: isButton, hasEnabledState, isEnabled, isFocusable
+s19 tree          │ │   label: "s19 On"
+s19 tree          │ │   textDirection: ltr
+s19 tree          │ │
+s19 tree          │ └─SemanticsNode#8
+s19 tree          │     Rect.fromLTRB(140.6, 26.0, 287.3, 74.0)
+s19 tree          │     actions: focus, tap
+s19 tree          │     flags: isButton, hasEnabledState, isEnabled, isFocusable
+s19 tree          │     label: "s19 Off"
+s19 tree          │     textDirection: ltr
+s19 tree          │
+s19 tree          └─SemanticsNode#9
+s19 tree              Rect.fromLTRB(12.0, 130.0, 396.8, 150.0)
+s19 tree              identifier: "s19-taps"
+s19 tree              label: "s19 taps: on=0 off=0 info=0"
+s19 tree              textDirection: ltr
+s19 node           label="Before s19" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s19 node           label="s19 Kitchen light" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s19 node             label="s19 On" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s19 node             label="s19 Off" level=0 flags=[button, focusable] tap=true url=null role=SemanticsRole.none id=
+s19 node           label="s19 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s19-taps
+s19 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s19 tap action on "s19 On": s19 taps: on=1 off=0 info=0
+s19 tap action on "s19 Off": s19 taps: on=0 off=1 info=0
+s19 tab stops: Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus "" -> Focus ""
+s19 1 Tabs (on Focus "") then Enter: s19 taps: on=1 off=0 info=0
+s19 2 Tabs (on Focus "") then Enter: s19 taps: on=0 off=1 info=0
+s19 3 Tabs (on Focus "") then Enter: s19 taps: on=1 off=0 info=0
+s19 1 Tabs (on Focus "") then  : s19 taps: on=1 off=0 info=0
+s19 2 Tabs (on Focus "") then  : s19 taps: on=0 off=1 info=0
+s19 3 Tabs (on Focus "") then  : s19 taps: on=1 off=0 info=0
+==== s20 CupertinoListSection of CupertinoListTile(title:, additionalInfo:), no onTap
+s20 tree SemanticsNode#0
+s20 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s20 tree  │
+s20 tree  └─SemanticsNode#1
+s20 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s20 tree    │ textDirection: ltr
+s20 tree    │
+s20 tree    └─SemanticsNode#2
+s20 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s20 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s20 tree      │
+s20 tree      └─SemanticsNode#3
+s20 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s20 tree        │ flags: scopesRoute
+s20 tree        │
+s20 tree        ├─SemanticsNode#11
+s20 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s20 tree        │ │
+s20 tree        │ └─SemanticsNode#12
+s20 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s20 tree        │     flags: isHeader, namesRoute
+s20 tree        │     label: "S09 probe"
+s20 tree        │     textDirection: ltr
+s20 tree        │
+s20 tree        └─SemanticsNode#4
+s20 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 286.3)
+s20 tree          │ flags: hasImplicitScrolling
+s20 tree          │ scrollExtentMin: 0.0
+s20 tree          │ scrollPosition: 0.0
+s20 tree          │ scrollExtentMax: 0.0
+s20 tree          │
+s20 tree          ├─SemanticsNode#5
+s20 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s20 tree          │   label: "Before s20"
+s20 tree          │   textDirection: ltr
+s20 tree          │
+s20 tree          ├─SemanticsNode#6
+s20 tree          │   Rect.fromLTRB(52.0, 77.5, 184.7, 94.5)
+s20 tree          │   label: "s20 City"
+s20 tree          │   textDirection: ltr
+s20 tree          │
+s20 tree          ├─SemanticsNode#7
+s20 tree          │   Rect.fromLTRB(654.5, 77.5, 754.0, 94.5)
+s20 tree          │   label: "Boston"
+s20 tree          │   textDirection: ltr
+s20 tree          │
+s20 tree          ├─SemanticsNode#8
+s20 tree          │   Rect.fromLTRB(52.0, 121.8, 284.3, 138.8)
+s20 tree          │   label: "s20 Population"
+s20 tree          │   textDirection: ltr
+s20 tree          │
+s20 tree          ├─SemanticsNode#9
+s20 tree          │   Rect.fromLTRB(637.9, 121.8, 754.0, 138.8)
+s20 tree          │   label: "675,647"
+s20 tree          │   textDirection: ltr
+s20 tree          │
+s20 tree          └─SemanticsNode#10
+s20 tree              Rect.fromLTRB(12.0, 174.3, 396.8, 194.3)
+s20 tree              identifier: "s20-taps"
+s20 tree              label: "s20 taps: on=0 off=0 info=0"
+s20 tree              textDirection: ltr
+s20 node           label="Before s20" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s20 node           label="s20 City" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s20 node           label="Boston" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s20 node           label="s20 Population" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s20 node           label="675,647" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s20 node           label="s20 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s20-taps
+s20 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s20 tab stops: _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode ""
+s20 1 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s20 taps: on=0 off=0 info=0
+s20 2 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s20 taps: on=0 off=0 info=0
+s20 3 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s20 taps: on=0 off=0 info=0
+s20 1 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s20 taps: on=0 off=0 info=0
+s20 2 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s20 taps: on=0 off=0 info=0
+s20 3 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s20 taps: on=0 off=0 info=0
+==== s21 CupertinoListSection of CupertinoListTile(title:, subtitle:), no onTap
+s21 tree SemanticsNode#0
+s21 tree  │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+s21 tree  │
+s21 tree  └─SemanticsNode#1
+s21 tree    │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+s21 tree    │ textDirection: ltr
+s21 tree    │
+s21 tree    └─SemanticsNode#2
+s21 tree      │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s21 tree      │ sortKey: OrdinalSortKey#b6cd5(order: 0.0)
+s21 tree      │
+s21 tree      └─SemanticsNode#3
+s21 tree        │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+s21 tree        │ flags: scopesRoute
+s21 tree        │
+s21 tree        ├─SemanticsNode#11
+s21 tree        │ │ Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+s21 tree        │ │
+s21 tree        │ └─SemanticsNode#12
+s21 tree        │     Rect.fromLTRB(16.0, 14.0, 214.0, 42.0)
+s21 tree        │     flags: isHeader, namesRoute
+s21 tree        │     label: "S09 probe"
+s21 tree        │     textDirection: ltr
+s21 tree        │
+s21 tree        └─SemanticsNode#4
+s21 tree          │ Rect.fromLTRB(0.0, 56.0, 800.0, 294.3)
+s21 tree          │ flags: hasImplicitScrolling
+s21 tree          │ scrollExtentMin: 0.0
+s21 tree          │ scrollPosition: 0.0
+s21 tree          │ scrollExtentMax: 0.0
+s21 tree          │
+s21 tree          ├─SemanticsNode#5
+s21 tree          │   Rect.fromLTRB(12.0, 12.0, 154.5, 32.0)
+s21 tree          │   label: "Before s21"
+s21 tree          │   textDirection: ltr
+s21 tree          │
+s21 tree          ├─SemanticsNode#6
+s21 tree          │   Rect.fromLTRB(52.0, 72.0, 184.7, 89.0)
+s21 tree          │   label: "s21 City"
+s21 tree          │   textDirection: ltr
+s21 tree          │
+s21 tree          ├─SemanticsNode#7
+s21 tree          │   Rect.fromLTRB(52.0, 92.0, 121.5, 104.0)
+s21 tree          │   label: "Boston"
+s21 tree          │   textDirection: ltr
+s21 tree          │
+s21 tree          ├─SemanticsNode#8
+s21 tree          │   Rect.fromLTRB(52.0, 120.3, 234.5, 137.3)
+s21 tree          │   label: "s21 Founded"
+s21 tree          │   textDirection: ltr
+s21 tree          │
+s21 tree          ├─SemanticsNode#9
+s21 tree          │   Rect.fromLTRB(52.0, 140.3, 98.4, 152.3)
+s21 tree          │   label: "1630"
+s21 tree          │   textDirection: ltr
+s21 tree          │
+s21 tree          └─SemanticsNode#10
+s21 tree              Rect.fromLTRB(12.0, 182.3, 396.8, 202.3)
+s21 tree              identifier: "s21-taps"
+s21 tree              label: "s21 taps: on=0 off=0 info=0"
+s21 tree              textDirection: ltr
+s21 node           label="Before s21" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s21 node           label="s21 City" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s21 node           label="Boston" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s21 node           label="s21 Founded" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s21 node           label="1630" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=
+s21 node           label="s21 taps: on=0 off=0 info=0" level=0 flags=[] tap=false url=null role=SemanticsRole.none id=s21-taps
+s21 node           label="S09 probe" level=0 flags=[header] tap=false url=null role=SemanticsRole.none id=
+s21 tab stops: _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode "" -> _FocusScopeWithExternalFocusNode ""
+s21 1 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s21 taps: on=0 off=0 info=0
+s21 2 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s21 taps: on=0 off=0 info=0
+s21 3 Tabs (on _FocusScopeWithExternalFocusNode "") then Enter: s21 taps: on=0 off=0 info=0
+s21 1 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s21 taps: on=0 off=0 info=0
+s21 2 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s21 taps: on=0 off=0 info=0
+s21 3 Tabs (on _FocusScopeWithExternalFocusNode "") then  : s21 taps: on=0 off=0 info=0

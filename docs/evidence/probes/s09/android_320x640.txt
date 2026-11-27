@@ -1,0 +1,5 @@
+S09ContentGroupingTest on the local emulator set to CI's size (android_320x640.sh.txt), 2026-11-26, after the evidence run's Android layer passed at the emulator's own size. From the script:
+during: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160
+BUILD SUCCESSFUL in 1m 11s
+after: Physical size: 1080x2424  Physical density: 420
+From the run's JUnit report (build/app/outputs/androidTest-results/connected/debug/): tests="8" failures="0" errors="0" skipped="1" (talkBackWalk, which runs only with TalkBack on).
