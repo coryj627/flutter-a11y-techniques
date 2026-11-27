@@ -227,6 +227,44 @@ final class S16LanguagePagePartsUITests: XCTestCase, TechniqueUITest {
     }
   }
 
+  func testTheCollectorFailsADuplicateStopAndAnUnwitnessedEnd() {
+    // Made-up walks of good-passage's screen. `moves` is what each move
+    // forward reads, `back` and `again` what the end's witness reads.
+    let walk = Self.speech[0].screen + Self.speech[0].content
+    func run(_ moves: [String], back: String, again: String) -> S16Walk.Result {
+      var i = 0
+      return S16Walk.collect(
+        next: { defer { i += 1 }; return i < moves.count ? moves[i] : moves.last! },
+        back: { back }, forward: { again })
+    }
+    let last = walk.last!, before = walk[walk.count - 2]
+    let cases: [(String, S16Walk.Result, Bool)] = [
+      ("the whole screen, then the last twice, the witness right",
+       run(walk + [last, last], back: before, again: last), true),
+      ("a duplicate title read in the middle of the walk",
+       run([walk[0], walk[0]] + walk.dropFirst() + [last, last], back: before, again: last), false),
+      ("a duplicate stop after the heading",
+       run(Array(walk.prefix(4)) + [walk[3]] + walk.dropFirst(4) + [last, last], back: before, again: last), false),
+      ("stale speech at the end: the move back reads the last again",
+       run(walk + [last, last], back: last, again: last), false),
+      ("the end's move back reads another element",
+       run(walk + [last, last], back: walk[0], again: last), false),
+      ("the end's move forward again reads something else",
+       run(walk + [last, last], back: before, again: "Extra"), false),
+      ("a walk that runs out of moves", S16Walk.collect(max: 3, next: { "x\(Int.random(in: 0..<1_000_000))" }, back: { "" }, forward: { "" }), false),
+    ]
+    for (what, result, whole) in cases {
+      XCTAssertEqual(result.reachedEnd && result.problem == nil, whole, "\(what): \(result)")
+    }
+    // The whole walk keeps every stop once, and a judged walk of it is right.
+    let right = run(walk + [last, last], back: before, again: last)
+    XCTAssertEqual(right.stops, walk)
+    XCTAssertEqual(S16Walk.judge(right.stops, reachedEnd: right.reachedEnd, Self.speech[0]), [])
+    // The duplicate title is kept, and the judge would fail it as well.
+    let dup = run([walk[0], walk[0]] + walk.dropFirst() + [last, last], back: before, again: last)
+    XCTAssertEqual(dup.stops, [walk[0], walk[1]])
+  }
+
   func testVoiceOverSpeech() throws {
     #if compiler(>=6.4)
     guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
@@ -240,7 +278,7 @@ final class S16LanguagePagePartsUITests: XCTestCase, TechniqueUITest {
     for example in Self.speech {
       open(example.slug)
       let walk = try S16Walk.walk(voiceOver)
-      let problems = S16Walk.judge(walk.stops, reachedEnd: walk.reachedEnd, example)
+      let problems = (walk.problem.map { [$0] } ?? []) + S16Walk.judge(walk.stops, reachedEnd: walk.reachedEnd, example)
       let heading = walk.stops.map(VoiceOverWalk.normalized).lastIndex { $0.hasPrefix("Example ") }
       let shown = problems.isEmpty
         ? Array(walk.stops[(heading! + 1)...]).map(VoiceOverWalk.normalized)
@@ -254,11 +292,78 @@ final class S16LanguagePagePartsUITests: XCTestCase, TechniqueUITest {
   }
 }
 
-/// S16's VoiceOver walk: C03's walk (from the top of the screen to its
-/// end, where moving on gives the last element again, twice), keeping each
-/// utterance as the service gave it. C03Walk keeps only the normalized
-/// utterance, where the doubled space round a marked part is gone.
+/// S16's VoiceOver walk, from the top of the screen to its end, keeping
+/// each utterance as the service gave it (C03Walk keeps only the
+/// normalized utterance, where the doubled space round a marked part is
+/// gone), and judging how it ended.
+///
+/// A move that reads the same words as the stop before it is one of two
+/// things: the cursor did not move, at the last element, or a second
+/// element read alike (or speech the service gave again while nothing new
+/// was said, as `currentSpeech()` does). The words cannot tell them apart,
+/// so the collector does not count a repeat as the end by itself:
+///
+/// - A repeat followed by a different utterance is a stop read twice in a
+///   row mid-screen, and the walk fails ("a duplicate stop"); it is never
+///   dropped. No S16 screen has two neighbouring elements that read alike,
+///   so a real screen never needs one.
+/// - Two repeats in a row end the walk only with a witness that the cursor
+///   is on the last element: one move back must read the stop before the
+///   last, and one move forward again the last. A second element that
+///   reads like the last, or speech given again with the cursor elsewhere,
+///   reads something else there, and the walk fails ("the end is not
+///   shown"). What the witness cannot show: that the move forward from the
+///   last element did not go past it to an element the service reads with
+///   no speech; that case is the no-speech error, handled as
+///   VoiceOverWalk.forward does (afterNoSpeech), which records it as a stop.
+/// - A walk that runs out of moves is not at its end.
 enum S16Walk {
+  struct Result: Equatable {
+    var stops: [String]
+    var reachedEnd: Bool
+    /// Why the walk is not a whole walk to the end, or nil.
+    var problem: String?
+  }
+
+  /// Collects a walk from `next` (one move forward, its raw utterance),
+  /// with `back` and `forward` (one move back, one move forward, each its
+  /// raw utterance) as the end's witness; at most `max` moves.
+  static func collect(
+    max: Int = 24, next: () throws -> String, back: () throws -> String, forward: () throws -> String
+  ) rethrows -> Result {
+    var stops: [String] = []
+    var repeats = 0
+    for _ in 0..<max {
+      let utterance = try next()
+      let said = VoiceOverWalk.normalized(utterance)
+      let last = stops.last.map(VoiceOverWalk.normalized)
+      if said == last {
+        repeats += 1
+        guard repeats == 2 else { continue }
+        guard stops.count >= 2 else {
+          return Result(stops: stops, reachedEnd: false, problem: "the end is not shown: the walk read one stop only")
+        }
+        let before = VoiceOverWalk.normalized(stops[stops.count - 2])
+        let movedBack = VoiceOverWalk.normalized(try back())
+        let movedOn = VoiceOverWalk.normalized(try forward())
+        if movedBack == before && movedOn == said {
+          return Result(stops: stops, reachedEnd: true, problem: nil)
+        }
+        return Result(
+          stops: stops, reachedEnd: false,
+          problem: "the end is not shown: \"\(said)\" came again, but a move back read \"\(movedBack)\" and a move forward \"\(movedOn)\", where \"\(before)\" and \"\(said)\" were expected")
+      }
+      if repeats == 1, let last {
+        return Result(
+          stops: stops + [utterance], reachedEnd: false,
+          problem: "a duplicate stop: \"\(last)\" was read twice in a row, then \"\(said)\"")
+      }
+      repeats = 0
+      stops.append(utterance)
+    }
+    return Result(stops: stops, reachedEnd: false, problem: "the walk ran out of moves")
+  }
+
   /// What is wrong with a walk of `example`; empty when it is right. The
   /// walk must have reached the end; its stops up to and including the
   /// last "Example" heading must be exactly the example's screen stops,
@@ -289,36 +394,33 @@ enum S16Walk {
   }
 
   #if compiler(>=6.4)
-  /// Switches VoiceOver on, walks to the end of the screen, and switches it
-  /// off. A move with no speech is handled as VoiceOverWalk.forward does.
+  /// Switches VoiceOver on, walks to the end of the screen (collect), and
+  /// switches it off. A move with no speech is handled as
+  /// VoiceOverWalk.forward does (afterNoSpeech).
   @available(iOS 27.0, *)
-  static func walk(_ voiceOver: XCUIVoiceOverService) throws -> C03Walk.Result {
+  static func walk(_ voiceOver: XCUIVoiceOverService) throws -> Result {
     try voiceOver.enable()
     defer { try? voiceOver.disable() }
-    var stops: [String] = []
-    var repeats = 0
-    for _ in 0..<24 {
-      var utterance: String
-      do {
-        utterance = try voiceOver.moveForward().utterance
-      } catch let error as NSError where VoiceOverWalk.isNoSpeech(error) {
-        let back = VoiceOverWalk.normalized(try voiceOver.moveBackward().utterance)
-        var again: String? = nil
+    var previous: String? = nil
+    return try collect(
+      next: {
+        let utterance: String
         do {
-          again = try voiceOver.moveForward().utterance
-        } catch let error as NSError where VoiceOverWalk.isNoSpeech(error) {}
-        utterance = VoiceOverWalk.afterNoSpeech(
-          previous: stops.last.map(VoiceOverWalk.normalized), back: back, again: again)
-      }
-      if VoiceOverWalk.normalized(utterance) == stops.last.map(VoiceOverWalk.normalized) {
-        repeats += 1
-        if repeats == 2 { return C03Walk.Result(stops: stops, reachedEnd: true) }
-      } else {
-        repeats = 0
-        stops.append(utterance)
-      }
-    }
-    return C03Walk.Result(stops: stops, reachedEnd: false)
+          utterance = try voiceOver.moveForward().utterance
+        } catch let error as NSError where VoiceOverWalk.isNoSpeech(error) {
+          let back = VoiceOverWalk.normalized(try voiceOver.moveBackward().utterance)
+          var again: String? = nil
+          do {
+            again = try voiceOver.moveForward().utterance
+          } catch let error as NSError where VoiceOverWalk.isNoSpeech(error) {}
+          utterance = VoiceOverWalk.afterNoSpeech(
+            previous: previous.map(VoiceOverWalk.normalized), back: back, again: again)
+        }
+        previous = utterance
+        return utterance
+      },
+      back: { try voiceOver.moveBackward().utterance },
+      forward: { try voiceOver.moveForward().utterance })
   }
   #endif
 }

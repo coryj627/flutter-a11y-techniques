@@ -141,11 +141,21 @@ How each platform was looked at, and the raw output:
   alone carries the attribute, and p16, unmarked, "Français Button". A
   `CupertinoListTile` (p15) was read "Français" with no role.
 - **What the captures cannot show.** TalkBack's log gives the locale it
-  asked for with each fragment, not the voice the engine used. The
-  emulator's speech engine had no French voice: it tried to download the
-  fr-fr and fr-ca voices while the probe ran, and the download failed
-  ("failed to download voice fr-ca", `android-talkback-log.txt`), so what
-  was heard for a French fragment is not known. XCUITest's snapshot has no
+  asked for with each fragment, not the voice the engine used. The emulator's speech engine had no French voice when the probe
+  began. When TalkBack first asked for French, for p02's text at
+  07:38:10, the engine began downloading its fr-fr and fr-ca voices;
+  one sync of fr-ca failed at once ("failed to download voice fr-ca"),
+  and then both downloads completed at 07:38:27 ("Download fr-fr Success
+  true", "Download fr-ca Success true"), before p03. So p02's French
+  text was spoken while no French voice was on the device, and the later
+  French texts, from p03 on, after both had been downloaded. In the same
+  way a Japanese voice was downloaded while p19's text was focused
+  (07:44:55 to 07:45:03), and a Mandarin one (cmn-cn) while p20's zh-Hant
+  text was (07:45:18 to 07:45:24) (`android-talkback-log.txt`). Which
+  voice spoke any fragment is in no log, so pronunciation is not
+  verified; whether the voices were still on the device for the S16
+  TalkBack walk was not recorded.
+  XCUITest's snapshot has no
   language attribute: the dictionary printed (`ios.txt`) is of the element
   of type other after "Before pNN", not of the text, and its keys are the
   ones `XCUIElementAttributes` declares, which name no language (the SDK

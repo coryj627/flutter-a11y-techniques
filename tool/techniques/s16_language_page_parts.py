@@ -78,7 +78,9 @@ TALKBACK_METHOD = (
 # transcript column).
 VOICEOVER_IOS_METHOD = (
     "`XCUIVoiceOverService.moveForward()` from the top of the screen to its "
-    "end, where moving on gives the last utterance again, twice (C03's walk); "
+    "end (S16Walk): a stop read twice in a row in the middle of the walk fails, "
+    "and the last utterance read again twice is the end only when one move "
+    "back then reads the stop before it and one move forward the last again; "
     "the walk must first read this example's own title and description, and "
     "what is shown is everything after the \"Example\" heading. A walk that "
     "does not reach the end fails. The service gives the words, not the "

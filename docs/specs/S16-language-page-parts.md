@@ -27,7 +27,8 @@ solution (section 5).
 - **Android, applies.** The app's language, a passage's, and a phrase's
   reach the node as `LocaleSpan`s, and TalkBack logged the locale of each
   fragment it spoke accordingly (section 7). What voice the speech engine
-  used was not measured: the emulator's engine had no French voice.
+  used was not measured: the log does not say, and the emulator's engine
+  had no French voice until it downloaded one during the probe (section 7).
 - **iOS, applies; the voice not verified.** XCUITest cannot read an
   element's language or a label's language attribute. What was measured is
   what VoiceOver's words show: a button whose element is French is read
@@ -211,7 +212,9 @@ may overrule:
    layer judges words only; keeping the logged locale is a follow-up
    (section 7).
 4. The emulator's missing French voice is recorded under what is not
-   verified (section 7).
+   verified (section 7). The probe's log, reread on review, shows that
+   the engine downloaded French voices during the probe, after the first
+   French text; section 7 gives the sequence.
 
 ### Not built
 
@@ -240,7 +243,7 @@ round each tile's `TestId`, and the texts are found by their names.
 | L3 Android | The `LocaleSpan`s of each node's description, sorted: the screen's title and "Example" heading `en-US` over their whole text on every example but `bad-override`; `good-passage` the lead `en-US` and the passage `fr`; `good-phrase` one node `en-US` over the whole and `fr` over the phrase; `good-language-menu` three `Button`s, each its language over its name, and the Chosen line `en-US`; `bad-unmarked` both `en-US`; `bad-title-in-tile` three `Button`s `en-US`; `bad-region-tag` the passage `fr-FR`; `bad-override` the title, the heading, the lead and the passage `fr`, and after Back the technique page's title in the app bar `fr`, with the control that it is `en-US` after Back from `good-passage` (the witness that Back took effect: that title on the screen and no "Example" heading; the title and not the page's "Good examples" heading, which can be below CI's 320 by 640 screen, where the first run at that size failed: `docs/evidence/probes/s16/android_320x640-round1-fail.txt`). For each tile of both menus, from a fresh launch each: `ACTION_CLICK`, a tap at its centre, and Tab then Enter choose it. Run once at CI's 320 by 640 at 160 dpi as well |
 | L3 iOS | The labels of the example's elements after the "Example" heading, in order, and each tile a button with its label; a tap on each tile, and Tabs then Enter, and then Space, each key sent once from a fresh launch, choose it. XCUITest cannot read a language, so no defect is seen in the tree; the VoiceOver walk is where it is judged |
 | L4 TalkBack | Focus moved to each text of each example and to each tile, in order; every row a whole-utterance form, exactly its fragments in order (`== A / B`, `tool/talkback.py`): each text its words, `good-phrase` the sentence in three fragments, "The guide said / bon voyage / as we left.", split where the language changes, each tile its name and "Button" (a usage hint allowed once at the end). The locale TalkBack logs with each fragment is not read by the tool, so the rows judge words: the split of `good-phrase` is the only one that shows a language; the passages' languages are judged by the Android tree test. Each walk is judged whole (`walk_strictly`): a wrong reading fails for good |
-| L4 VoiceOver iOS | Every utterance from the top of the screen to its end (S16Walk, C03's walk keeping each raw utterance), judged whole: the screen's own stops (the title, the description, a bad example's defect, the "Example" heading, each heading with its role word), which tie the walk to this example; another example's, a missing or an empty one fails, then exactly the example's stops, each with white space made one space; and for some stops the raw utterance exactly: `good-phrase`'s with a second space before and after the phrase, and the passages' leads and passages with single spaces. `good-language-menu`'s tiles with their role word in their language ("Français Bouton", "Español Botón", "Deutsch Taste"); `bad-title-in-tile`'s with "Button"; `bad-override`'s title and heading with "En-tête". Every expected utterance is under the service's 64 characters, and a test refuses a longer one; made-up walks test the judge |
+| L4 VoiceOver iOS | Every utterance from the top of the screen to its end (S16Walk, which keeps each raw utterance). A move that reads the same words as the stop before it is never dropped: followed by a different utterance it is a duplicate stop and fails; read twice it is the end only with a witness, one move back reading the stop before the last and one move forward the last again, which a second element read alike or speech given again with the cursor elsewhere does not give (made-up walks test a duplicate title, a duplicate stop after the heading, stale speech at the end, and a wrong witness; no S16 screen has two neighbouring elements that read alike). Judged whole: the screen's own stops (the title, the description, a bad example's defect, the "Example" heading, each heading with its role word), which tie the walk to this example; another example's, a missing or an empty one fails, then exactly the example's stops, each with white space made one space; and for some stops the raw utterance exactly: `good-phrase`'s with a second space before and after the phrase, and the passages' leads and passages with single spaces. `good-language-menu`'s tiles with their role word in their language ("Français Bouton", "Español Botón", "Deutsch Taste"); `bad-title-in-tile`'s with "Button"; `bad-override`'s title and heading with "En-tête". Every expected utterance is under the service's 64 characters, and a test refuses a longer one; made-up walks test the judge |
 | L4 VoiceOver web | The walk and the judge are S08's (`web_tests/vo/s16_vo_walks.js`): the whole screen in order, every stop judged, an empty stop a failed capture walked again (at most three walks, each logged), a wrong reading failing for good, no runner retries; the help-message rule is tested only on made-up walks. The expected stops were predictions from the page's elements, and the first recording read every one as predicted (section 7); the words are the same whatever language a stop is in. Every walk is logged whole, the screen's own stops included, and the web tree spec judges the committed transcript again from its recorded stops (`judgeTranscript`): each browser and example exactly once, walks in order, the last complete; duplicate, malformed, unknown, or missing rows fail (made-up transcripts, fourteen copies of one row among them, test it; the second recording passes it) |
 
 ## 7. What the build found (Flutter 3.47.5)
@@ -293,8 +296,20 @@ every platform, with a plain HTML control page on the web.
   the raw utterances included. The screen stops are now the title, the
   lines, and the heading; nothing else was changed.
 - **What no capture shows: the voice.** TalkBack logged the locale it
-  asked for; the emulator's speech engine had no French voice, tried to
-  download one during the probe, and failed (`android-talkback-log.txt`).
+  asked for, not the voice that spoke. The emulator's speech engine had no French voice when the probe
+  began. When TalkBack first asked for French, for p02's text at
+  07:38:10, the engine began downloading its fr-fr and fr-ca voices;
+  one sync of fr-ca failed at once ("failed to download voice fr-ca"),
+  and then both downloads completed at 07:38:27 ("Download fr-fr Success
+  true", "Download fr-ca Success true"), before p03. So p02's French
+  text was spoken while no French voice was on the device, and the later
+  French texts, from p03 on, after both had been downloaded. In the same
+  way a Japanese voice was downloaded while p19's text was focused
+  (07:44:55 to 07:45:03), and a Mandarin one (cmn-cn) while p20's zh-Hant
+  text was (07:45:18 to 07:45:24) (`android-talkback-log.txt`). Which
+  voice spoke any fragment is in no log, so pronunciation is not
+  verified; whether the voices were still on the device for the S16
+  TalkBack walk was not recorded.
   VoiceOver's service gives words. Chromium's accessibility tree over the
   DevTools protocol holds no language. So "reaches the screen reader"
   here means the span, the attribute, the `lang`, the logged locale, or
@@ -331,6 +346,16 @@ What the tests skip or cannot see, and what each gives up:
   if Back is not taken, and a control, `good-passage`, whose Back leaves
   the language the app's. On iOS what the language is after Back was not
   measured.
+- The iOS VoiceOver walk's end. The service gives no cursor position, so
+  the end is shown by moves: the last utterance read again twice, then a
+  move back that reads the stop before it and a move forward that reads
+  the last again. That witness cannot show that a move forward from the
+  last element did not reach an element read with no speech; such a move
+  is the service's no-speech error, which the walk records as a stop, as
+  VoiceOverWalk.forward does. Until the first review the walk, like C03's,
+  dropped every utterance that repeated the one before it and took two
+  repeats as the end with no witness, so a stop read twice anywhere would
+  have passed; the transcripts made since are made with the walk above.
 - The iOS layers cannot read a language. The VoiceOver walk judges the
   role words and the doubled spaces that show one, and nothing shows a
   passage's language: `good-passage`, `bad-unmarked`, `bad-region-tag`,
@@ -371,9 +396,11 @@ What the tests skip or cannot see, and what each gives up:
 language (the principal's decision 3: not now).
 
 **Not verified.** The voice on any platform. The emulator's speech engine
-has no French voice: it tried to download one during the probe and the
-download failed (`docs/evidence/probes/s16/android-talkback-log.txt`), so
-what TalkBack's French fragments sounded like is not known. A passage's
+had no French voice until TalkBack first asked for French in the probe
+(p02); it then downloaded the fr-fr and fr-ca voices, after one failed
+sync of fr-ca, before p03 (`docs/evidence/probes/s16/android-talkback-log.txt`,
+section 7). Which voice spoke any fragment is in no log, so what
+TalkBack's French fragments sounded like is not known. A passage's
 language on iOS rests on the engine's source.
 
 **Not done yet.** What VoiceOver does with `lang="fr_FR"` or with a page whose `lang` is
