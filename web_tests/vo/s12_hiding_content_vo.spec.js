@@ -6,14 +6,15 @@
 // No test in this file is retried by the runner. The shared config retries
 // a failed test twice, and a retry that passes makes the run pass, so a wrong
 // reading on the first attempt would be hidden. Each test retries instead,
-// itself, only a walk cut short before the end of the screen with every stop
-// right so far, or a walk whose capture failed (a stop read as an empty
-// phrase) with nothing wrong read in it (runWalks and judgeExampleWalk in
-// s12_vo_walks.js, a copy of S08's). Every walk must read the whole screen,
-// the title and the description, the "Example" heading, and every expected
-// stop after it, each in its place: a wrong stop, or a walk that reached the
-// end with any expected stop not read, fails the test for good, and every
-// try is logged, so every attempt is in the transcript.
+// itself, only a walk that reached the end with nothing wrong read in it
+// and whose capture failed (a stop read as an empty phrase, or an
+// unresolved read) (runWalks and judgeExampleWalk in s12_vo_walks.js, from
+// S08's). Every walk must read the whole screen, the title and the
+// description, the "Example" heading, and every expected stop after it,
+// each in its place: a wrong stop, before or after an unresolved read, a
+// walk that reached the end with any expected stop not read, or one that
+// ran out of moves, fails the test for good, and every try is logged, so
+// every attempt is in the transcript.
 //
 // The expected lists (EXPECTED_STOPS in s12_vo_walks.js) were written as
 // predictions; the first recording, 2026-11-27

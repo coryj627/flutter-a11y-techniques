@@ -139,18 +139,29 @@ export function helpAfterStop(stops, positions, i) {
  *   title, the description, the heading, or any element of the example. This
  *   fails the test whichever try it is in, and is looked for first: a walk
  *   with a wrong reading is wrong even if a capture in it also failed.
- * - "incomplete": a walk whose capture failed or fell short, with nothing
- *   wrong read in it: a stop read as an empty phrase (the AppleScript read
- *   of VoiceOver's last phrase gave nothing for a move that changed the
- *   cursor's position), or a walk cut short before the end (it ran out of
- *   moves) with every stop so far the expected one in its place. Only such
- *   a walk may be walked again (runWalks, at most three walks, each
- *   logged), and an empty phrase never passes: no expected stop is empty,
- *   so three such walks fail the test. An empty stop past the last expected
- *   one is not a failed capture but an element the screen does not have:
- *   it is wrong, as any stop there is.
+ *   A walk that ran out of moves without reaching the end is wrong too
+ *   (Codex, fourth review): with 40 moves and at most nine stops on a
+ *   screen, it can only have gone on past the screen.
+ * - "incomplete": a walk that reached the end with nothing wrong read in
+ *   it, whose capture failed: a stop read as an empty phrase (the
+ *   AppleScript read of VoiceOver's last phrase gave nothing for a move
+ *   that changed the cursor's position), or a gap, an unresolved read
+ *   (`gaps`, collectWalk's "after stop K"). Only such a walk may be walked
+ *   again (runWalks, at most three walks, each logged), and it never
+ *   passes, so three such walks fail the test. An empty stop past the last
+ *   expected one is not a failed capture but an element the screen does
+ *   not have: it is wrong, as any stop there is.
  * - "complete": the walk reached the end and read exactly the whole screen,
- *   with no empty stop.
+ *   with no empty stop and no gap.
+ *
+ * A gap does not hide a wrong stop (Codex, fourth review): the stops are
+ * judged whatever the gaps. The stops before the first gap must be the
+ * expected ones exactly. Across a gap after a stop in place i, the next
+ * stop must be the one expected in place i + 1 (the lost read was an extra
+ * or repeated element: which, cannot be told) or in place i + 2 (the lost
+ * read was the one in place i + 1); anything else is wrong. The walk must
+ * end at the end of the expected list: a stop past it is wrong, and so is
+ * an end reached with an expected stop not read and not lost in a gap.
  *
  * A stop that is VoiceOver's help message ("You are currently on a switch,
  * inside of web content. …", VO_HELP) is left out only when it is tied to
@@ -179,45 +190,59 @@ export function helpAfterStop(stops, positions, i) {
  * again, and a reading of the wrong words fails for good. An empty reading
  * stands for nothing.
  */
-export function judgeExampleWalk(walked, reachedEnd, expected, screen = [], positions = undefined) {
+export function judgeExampleWalk(walked, reachedEnd, expected, screen = [], positions = undefined, gaps = []) {
   // VoiceOver's own help message (VO_HELP, vo_logic.js), when it is about
   // the element just read, is not a stop of the page (helpAfterStop).
-  const stops = walked.filter((stop, i) => !helpAfterStop(walked, positions, i));
+  const kept = walked.map((stop, i) => !helpAfterStop(walked, positions, i));
+  const stops = walked.filter((_, i) => kept[i]);
+  // A gap "after stop K" of the walk is before stop K of the kept stops,
+  // counted from 0.
+  const gapBefore = new Set(gaps.filter((k) => k <= walked.length).map((k) => kept.slice(0, k).filter(Boolean).length));
   const whole = [...screen, EXAMPLE_HEADING, ...expected];
   const empty = [];
+  // Where in `whole` the walk may be: one place, until a gap lets the lost
+  // read have been an extra element (the place stays) or the expected one
+  // (the place moves on by one). A stop no place allows is wrong for good.
+  let places = new Set([0]);
   for (let i = 0; i < stops.length; i++) {
+    if (gapBefore.has(i)) places = new Set([...places].flatMap((j) => [j, j + 1]));
+    const open = [...places].filter((j) => j < whole.length).sort((x, y) => x - y);
     // A stop past the end of the screen is wrong, empty or not: an empty
     // phrase there is an element the screen does not have, not a failed
     // capture of one it does.
-    if (i >= whole.length) {
+    if (open.length === 0) {
       return { verdict: 'wrong', reason: `"${stops[i]}" was read after the last expected stop` };
     }
-    if (stops[i] === '') {
-      empty.push(i + 1);
-      continue;
+    // An empty phrase holds the place of the stop expected there.
+    if (stops[i] === '') empty.push(i + 1);
+    const next = open.filter((j) => stops[i] === '' || stops[i] === whole[j]).map((j) => j + 1);
+    if (next.length === 0) {
+      return {
+        verdict: 'wrong',
+        reason: `stop ${i + 1} was "${stops[i]}" where ${open.map((j) => `"${whole[j]}"`).join(' or ')} was expected`,
+      };
     }
-    if (stops[i] !== whole[i]) {
-      return { verdict: 'wrong', reason: `stop ${i + 1} was "${stops[i]}" where "${whole[i]}" was expected` };
-    }
+    places = new Set(next);
   }
-  if (reachedEnd && stops.length < whole.length) {
+  if (!reachedEnd) {
+    return { verdict: 'wrong', reason: `the walk ran out of moves after ${stops.length} stops without reaching the end of the screen` };
+  }
+  if (!places.has(whole.length)) {
+    const at = Math.max(...places);
     return {
       verdict: 'wrong',
-      reason: `the walk reached the end after ${stops.length} of the ${whole.length} expected stops; "${whole[stops.length]}" was never read`,
+      reason: `the walk reached the end after ${stops.length} of the ${whole.length} expected stops; "${whole[at]}" was never read`,
     };
   }
-  if (empty.length > 0) {
-    return {
-      verdict: 'incomplete',
-      reason: `the capture failed: stop${empty.length > 1 ? 's' : ''} ${empty.join(', ')} read as an empty phrase, nothing else wrong`,
-    };
+  const failed = [];
+  if (empty.length > 0) failed.push(`stop${empty.length > 1 ? 's' : ''} ${empty.join(', ')} read as an empty phrase`);
+  if (gapBefore.size > 0) {
+    failed.push(`${gapBefore.size} unresolved read${gapBefore.size > 1 ? 's' : ''} (a move that read no new element), so an element may be missing`);
   }
-  if (stops.length === whole.length) {
-    return reachedEnd
-      ? { verdict: 'complete', reason: 'the whole screen, every stop in its place' }
-      : { verdict: 'incomplete', reason: 'every expected stop was read, but the walk did not reach the end' };
+  if (failed.length > 0) {
+    return { verdict: 'incomplete', reason: `the capture failed: ${failed.join('; ')}; nothing wrong read` };
   }
-  return { verdict: 'incomplete', reason: `the walk was cut short after ${stops.length} of the ${whole.length} expected stops, all right so far` };
+  return { verdict: 'complete', reason: 'the whole screen, every stop in its place' };
 }
 
 /**
@@ -263,18 +288,19 @@ const UNRESOLVED_ROW = /^\| `([a-z-]+)-walk-(\d+)-unresolved` \| (.*) \|$/;
  * - every browser in BROWSERS and every example in EXPECTED_STOPS must have
  *   walks, numbered 1, 2, … with no gap and no repeat, at most three, and
  *   nothing else may have any;
- * - every walk is judged again by judgeExampleWalk on the stops it
- *   recorded, with nothing put back: the last must be recorded complete
- *   and judge complete (as having reached the end); every earlier one must
- *   be recorded incomplete and judge incomplete as a walk cut short;
  * - every walk must have its unresolved-reads row
- *   (`<slug>-walk-<n>-unresolved`, collectWalk's unresolved reads), once:
- *   "none" for the last walk; an earlier walk with unresolved reads is
- *   incomplete whatever its stops say;
- * - the last walk must have its end witness row (`<slug>-walk-<n>-end`,
- *   collectWalk's witness): the move back read the stop before the last,
- *   at a position other than the move forward's, which read the last
- *   stop; no other walk may have one, and none may appear twice. The
+ *   (`<slug>-walk-<n>-unresolved`, collectWalk's unresolved reads), once,
+ *   well formed: "none" for the last walk;
+ * - every walk is judged again by judgeExampleWalk on the stops it
+ *   recorded, with nothing put back, its unresolved reads as gaps, as
+ *   having reached the end: the last must be recorded complete and judge
+ *   complete; every earlier one must be recorded incomplete and judge
+ *   incomplete, so a wrong earlier walk fails the transcript;
+ * - every walk must have its end witness row (`<slug>-walk-<n>-end`,
+ *   collectWalk's witness), since a walk that is not wrong reached the
+ *   end: the move back read the stop before the last, at a position other
+ *   than the move forward's, which read the last stop; none may appear
+ *   twice or belong to a walk that is not there. The
  *   transcript holds no cursor positions, so a help message the judge left
  *   out by its position counts as a stop here and fails: this errs toward
  *   failing.
@@ -364,11 +390,12 @@ export function judgeTranscript(text) {
         if (last && reads !== undefined && reads !== 'none') {
           problems.push(`${key}: the last walk, ${n}, had unresolved reads: ${reads}`);
         }
-        // An earlier walk with unresolved reads is incomplete whatever its
-        // stops say, as judgeCollectedWalk judged it.
-        const judged = reads !== undefined && reads !== 'none'
-          ? 'incomplete'
-          : judgeExampleWalk(stops, last, EXPECTED_STOPS[slug], screenStops(slug)).verdict;
+        const gaps = gapsOf(reads ?? 'none');
+        if (gaps === null) problems.push(`${key}: walk ${n}'s unresolved reads are malformed: ${reads}`);
+        // Every walk is judged on its stops with its gaps, as
+        // judgeCollectedWalk judged it, and as having reached the end: a
+        // walk that is not wrong reached it, and its end row shows it.
+        const judged = judgeExampleWalk(stops, true, EXPECTED_STOPS[slug], screenStops(slug), undefined, gaps ?? []).verdict;
         if (last && (was !== 'complete' || judged !== 'complete')) {
           problems.push(`${key}: the last walk, ${n}, was recorded ${was} and judges ${judged}`);
         }
@@ -377,21 +404,36 @@ export function judgeTranscript(text) {
         }
         const end = ends.get(`${key} ${n}`);
         ends.delete(`${key} ${n}`);
-        if (last) {
-          const before = stops[stops.length - 2];
-          const lastStop = stops[stops.length - 1];
-          if (!end) {
-            problems.push(`${key}: the last walk, ${n}, has no end witness`);
-          } else if (end.back !== before || end.forward !== lastStop || end.back === '' || end.backAt === end.forwardAt) {
-            problems.push(`${key}: walk ${n}'s end witness read back "${end.back}" at ${end.backAt} and forward "${end.forward}" at ${end.forwardAt}, where "${before}" and then "${lastStop}" at another position were expected`);
-          }
+        // Every walk that is not wrong reached the end with its witness, the
+        // walks before the last included.
+        const before = stops[stops.length - 2];
+        const lastStop = stops[stops.length - 1];
+        if (!end) {
+          problems.push(`${key}: walk ${n} has no end witness`);
+        } else if (end.back !== before || end.forward !== lastStop || end.back === '' || end.backAt === end.forwardAt) {
+          problems.push(`${key}: walk ${n}'s end witness read back "${end.back}" at ${end.backAt} and forward "${end.forward}" at ${end.forwardAt}, where "${before}" and then "${lastStop}" at another position were expected`);
         }
       }
     }
   }
-  for (const key of ends.keys()) problems.push(`${key}: an end witness for a walk that is not the last, or that does not exist`);
+  for (const key of ends.keys()) problems.push(`${key}: an end witness for a walk that does not exist`);
   for (const key of unresolvedRows.keys()) problems.push(`${key}: an unresolved-reads row for a walk that does not exist`);
   return problems;
+}
+
+/**
+ * The gaps of an unresolved-reads row ("none", or `after stop K: "…" at …`
+ * joined by " ; "), as the K of each; null when the row is malformed.
+ */
+function gapsOf(reads) {
+  if (reads === 'none') return [];
+  const gaps = [];
+  for (const read of reads.split(' ; ')) {
+    const m = /^after stop (\d+): ".*" at .+$/.exec(read);
+    if (!m) return null;
+    gaps.push(Number(m[1]));
+  }
+  return gaps;
 }
 
 /** One transcript row, as the VoiceOver spec logs a walk and the tool writes it. */
@@ -435,11 +477,12 @@ export function transcriptRow(slug, n, stops, verdict, reason) {
 // past it. A real transient capture failure looks like that: the read came
 // before VoiceOver had updated its last phrase and cursor, and the next
 // move reads fresh. So it is treated as the empty-capture rule treats an
-// empty phrase: a failed capture, not a wrong reading. A walk with any
-// unresolved read is "incomplete" whatever its stops say (they may lack an
-// element, so they cannot be trusted either way), and is walked again, at
-// most three walks; an incomplete walk never passes, so three such walks
-// fail. Each walk logs its unresolved reads ("none", or each with the stop
+// empty phrase: a failed capture, not a wrong reading. Each unresolved
+// read is a gap in the walk, after the stop it came after; the stops are
+// still judged (judgeExampleWalk): a wrong stop before or after a gap is
+// wrong for good, and a walk with a gap and nothing wrong is "incomplete",
+// walked again, at most three walks; an incomplete walk never passes, so
+// three such walks fail. Each walk logs its unresolved reads ("none", or each with the stop
 // it came after, its phrase, and its position). Two unchanged reads in a
 // row are still the end, with its witness.
 //
@@ -516,14 +559,14 @@ export async function collectWalk({ next, previous, capture, start, max = 40 }) 
 
 /**
  * Judges a collected walk: a failed witness is wrong for good; otherwise
- * judgeExampleWalk on its stops and positions.
+ * judgeExampleWalk on its stops, positions, and gaps (each unresolved read
+ * is a gap after the stop it came after). The stops are judged whatever the
+ * gaps: a wrong stop is wrong with or without them.
  */
 export function judgeCollectedWalk(walk, expected, screen) {
   if (walk.problem) return { verdict: 'wrong', reason: walk.problem };
-  if (walk.unresolved.length > 0) {
-    return { verdict: 'incomplete', reason: `${unresolvedText(walk.unresolved)}: a move mid-walk read no new element and the walk moved on, so an element may be missing from it` };
-  }
-  return judgeExampleWalk(walk.stops, walk.reachedEnd, expected, screen, walk.positions);
+  return judgeExampleWalk(walk.stops, walk.reachedEnd, expected, screen, walk.positions,
+    walk.unresolved.map((u) => u.after));
 }
 
 /** The transcript row's text for a walk's unresolved reads: "none", or each read. */

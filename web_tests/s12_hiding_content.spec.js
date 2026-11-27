@@ -325,13 +325,14 @@ test.describe('the walk ends only with a witness that the cursor is at the last 
         await run(fake(whole, { forward: { phrase: 'Extra button', position: POS_OTHER } })), 'wrong'],
       ['the move forward again reads the last words elsewhere',
         await run(fake(whole, { forward: { phrase: whole.at(-1), position: POS_OTHER } })), 'wrong'],
-      ['a walk that runs out of moves', await run(fake(whole), 3), 'incomplete'],
+      ['a walk that runs out of moves', await run(fake(whole), 3), 'wrong'],
       ['a screen of one stop', await run(fake([whole[0]])), 'wrong'],
     ];
     for (const [what, walk, verdict] of cases) {
       expect(judged(walk), `${what}: ${walk.problem ?? ''}`).toBe(verdict);
-      if (verdict === 'wrong') expect(walk.problem, what).toMatch(/^the end is not witnessed/);
-      if (verdict !== 'incomplete' && what !== 'a screen of one stop') expect(walk.stops, what).toEqual(whole);
+      const ranOut = what === 'a walk that runs out of moves';
+      if (verdict === 'wrong' && !ranOut) expect(walk.problem, what).toMatch(/^the end is not witnessed/);
+      if (verdict !== 'incomplete' && what !== 'a screen of one stop' && !ranOut) expect(walk.stops, what).toEqual(whole);
     }
   });
 
@@ -406,6 +407,81 @@ test.describe('the walk ends only with a witness that the cursor is at the last 
     expect(judgedAs(deco, lost)).toBe('incomplete');
   });
 
+  // Codex, fourth review (8134819): an unresolved read must not hide a
+  // wrong stop. Each made-up screen below has one lost read; the stops
+  // around it are judged all the same (judgeExampleWalk with its gaps).
+  const WRONG_TITLE = 'heading level 1 Another screen';
+  const withTitle = (list, title) => [title, ...list.slice(1)];
+  const lostCases = () => {
+    const at = decoWhole.indexOf(EXAMPLE_HEADING);
+    const extraBefore = [...decoWhole.slice(0, at), 'Extra', ...decoWhole.slice(at)];
+    const wrongAfter = [...decoWhole.slice(0, at + 1), '\u275D', 'Wrong', ...decoWhole.slice(at + 2)];
+    return [
+      // [what, elements, the move whose capture is lost, how, verdict]
+      ['a wrong title, then one stale read', withTitle(injected, WRONG_TITLE), moveOnto(at + 1), 'stale', 'wrong'],
+      ['a wrong title, then one empty read', withTitle(injected, WRONG_TITLE), moveOnto(at + 1), 'empty', 'wrong'],
+      ['an extra stop before the lost read', extraBefore, moveOnto(at + 1), 'stale', 'wrong'],
+      ['a wrong stop after the lost read', wrongAfter, moveOnto(at + 1), 'stale', 'wrong'],
+      ['a right prefix, one lost read (an extra element), then the next expected stop', injected, moveOnto(at + 1), 'stale', 'incomplete'],
+    ];
+  };
+
+  test('an unresolved read hides no wrong stop, and a lost read alone stays incomplete', async () => {
+    for (const [what, elements, move, as, verdict] of lostCases()) {
+      const walk = await run(fake(elements, { lose: { move, as } }));
+      expect(walk.unresolved, what).toHaveLength(1);
+      expect(walk.problem, what).toBeNull();
+      expect(judgedAs(deco, walk), what).toBe(verdict);
+    }
+    // The lost read was the expected stop, and the next stop is the one
+    // after it: incomplete (bad-decoration-read, its "❝" lost; above too).
+    const bad = 'bad-decoration-read';
+    const badWhole = screenOf(bad);
+    const walk = await run(fake(badWhole, { lose: { move: moveOnto(badWhole.indexOf('\u275D')) } }));
+    expect(judgedAs(bad, walk)).toBe('incomplete');
+  });
+
+  test('a wrong walk with a lost read is wrong, and a clean walk after it is not made', async () => {
+    for (const [what, elements, move, as, verdict] of lostCases()) {
+      if (verdict !== 'wrong') continue;
+      let latest = null;
+      let made = 0;
+      const screens = [fake(elements, { lose: { move, as } }), fake(decoWhole)];
+      const walkOnce = async () => {
+        latest = await run(screens[made++]);
+        return latest;
+      };
+      const result = await runWalks(walkOnce, () => judgeCollectedWalk(latest, EXPECTED_STOPS[deco], screenStops(deco)));
+      expect(result.verdict, what).toBe('wrong');
+      expect(made, what).toBe(1);
+    }
+  });
+
+  test('the judge reads the stops across a gap: the next expected stop, or the one after it, and nothing else', () => {
+    const w = decoWhole;
+    const at = w.indexOf(EXAMPLE_HEADING);
+    const judge = (stops, gaps, reachedEnd = true) => judgeExampleWalk(stops, reachedEnd, EXPECTED_STOPS[deco], screenStops(deco), undefined, gaps).verdict;
+    // A gap after the heading, then the quote (the lost read was extra).
+    expect(judge(w, [at + 1])).toBe('incomplete');
+    // A gap after the heading, then the source (the lost read was the quote).
+    expect(judge(w.filter((_, i) => i !== at + 1), [at + 1])).toBe('incomplete');
+    // A gap, then a stop two places on: wrong.
+    expect(judge([...w.slice(0, at), w.at(-1)], [at])).toBe('wrong');
+    // A wrong title before a gap: wrong.
+    expect(judge(withTitle(w, WRONG_TITLE), [at + 1])).toBe('wrong');
+    // A wrong stop after a gap: wrong.
+    expect(judge([...w.slice(0, at + 1), 'Wrong', w.at(-1)], [at + 1])).toBe('wrong');
+    // A stop past the end after a gap: wrong.
+    expect(judge([...w, 'Extra'], [at + 1])).toBe('wrong');
+    // The end reached with an expected stop neither read nor lost: wrong.
+    expect(judge(w.slice(0, -1), [1])).toBe('wrong');
+    // A walk that ran out of moves, with or without a gap: wrong.
+    expect(judge(w, [], false)).toBe('wrong');
+    expect(judge(w, [at + 1], false)).toBe('wrong');
+    // No gap, every stop right: complete.
+    expect(judge(w, [])).toBe('complete');
+  });
+
   test('the reviewer\'s frozen capture would pass without the witness, and the witness is recorded', async () => {
     const walk = await run(fake([...whole, '3', 'Extra button'], { after: whole.length, capture: 'frozen' }));
     // The stops are exactly the expected screen: only the witness shows the
@@ -436,7 +512,7 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
   // the stop before the last, the move forward the last, at two positions),
   // and its unresolved-reads row, as the VoiceOver spec logs them.
   const LOST = [{ after: 3, phrase: EXAMPLE_HEADING, position: POS_OTHER }];
-  const row = (slug, n, stops, verdict, end = verdict === 'complete', unresolved = []) => [
+  const row = (slug, n, stops, verdict, end = true, unresolved = []) => [
     transcriptRow(slug, n, stops, verdict, 'x'),
     ...(end ? [endRow(slug, n, {
       back: { phrase: stops.at(-2), position: POS_BACK }, forward: { phrase: stops.at(-1), position: POS_LAST },
@@ -455,6 +531,7 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
     .join('\n');
   const all = () => Object.fromEntries(BROWSERS.map((b) => [b, Object.keys(EXPECTED_STOPS).map(right)]));
 
+  const WRONG_TITLE_T = 'heading level 1 Another screen';
   test('every made-up transcript is judged as its case says', () => {
     const slugs = Object.keys(EXPECTED_STOPS);
     const first = right(slugs[0]);
@@ -542,12 +619,12 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
       ['a first walk with an unresolved read, recorded incomplete though its stops judge complete, then complete',
         withRows((t) => {
           t.webkit.splice(0, 1,
-            row(slugs[0], 1, walk(slugs[0]), 'incomplete', false, LOST),
+            row(slugs[0], 1, walk(slugs[0]), 'incomplete', true, LOST),
             row(slugs[0], 2, walk(slugs[0]), 'complete'));
         }), true],
       ['a first walk with an unresolved read recorded complete, then complete', withRows((t) => {
         t.webkit.splice(0, 1,
-          row(slugs[0], 1, walk(slugs[0]), 'complete', false, LOST),
+          row(slugs[0], 1, walk(slugs[0]), 'complete', true, LOST),
           row(slugs[0], 2, walk(slugs[0]), 'complete'));
       }), false],
       ['an unresolved-reads row twice', withRows((t) => {
@@ -557,6 +634,45 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
         t.webkit[5] = `${t.webkit[5]}\n${unresolvedRow(slugs[5], 2, [])}`;
       }), false],
       ['an empty transcript', '', false],
+      // Codex, fourth review: an earlier walk is judged on its stops with
+      // its gaps, and a wrong one fails the transcript however clean the
+      // walk after it.
+      ...(() => {
+        const s0 = slugs[0];
+        const w = walk(s0);
+        const at = w.indexOf(EXAMPLE_HEADING);
+        const gap = [{ after: at + 1, phrase: EXAMPLE_HEADING, position: POS_OTHER }];
+        const emptyGap = [{ after: at + 1, phrase: '', position: POS_OTHER }];
+        const thenRight = (first) => withRows((t) => { t.chromium.splice(0, 1, first, row(s0, 2, w, 'complete')); });
+        // A walk exhausted at the move limit: 20 stops, each after an
+        // unresolved read, and no end.
+        const exhausted = Array.from({ length: 20 }, (_, i) => w[i % w.length]);
+        const exhaustedGaps = exhausted.map((_, i) => ({ after: i, phrase: 'x', position: POS_OTHER }));
+        return [
+          ['a wrong title, then one stale read, then a clean walk',
+            thenRight(row(s0, 1, [WRONG_TITLE_T, ...w.slice(1)], 'incomplete', true, gap)), false],
+          ['a wrong title, then one empty read, then a clean walk',
+            thenRight(row(s0, 1, [WRONG_TITLE_T, ...w.slice(1)], 'incomplete', true, emptyGap)), false],
+          ['an extra stop before the lost read, then a clean walk',
+            thenRight(row(s0, 1, [...w.slice(0, at), 'Extra', ...w.slice(at)], 'incomplete', true,
+              [{ after: at + 2, phrase: EXAMPLE_HEADING, position: POS_OTHER }])), false],
+          ['a wrong stop after the lost read, then a clean walk',
+            thenRight(row(s0, 1, [...w.slice(0, at + 1), 'Wrong', ...w.slice(at + 2)], 'incomplete', true, gap)), false],
+          ['a walk exhausted at the move limit, then a clean walk',
+            thenRight(row(s0, 1, exhausted, 'incomplete', false, exhaustedGaps)), false],
+          ['the same exhausted walk given an end row, then a clean walk',
+            thenRight(row(s0, 1, exhausted, 'incomplete', true, exhaustedGaps)), false],
+          ['a right prefix, one lost read, then the next expected stop; then a clean walk',
+            thenRight(row(s0, 1, w, 'incomplete', true, gap)), true],
+          ['a right prefix, one lost read, then the stop after the next; then a clean walk',
+            thenRight(row(s0, 1, w.filter((_, i) => i !== at + 1), 'incomplete', true, gap)), true],
+          ['an earlier walk with no end row, then a clean walk',
+            thenRight(row(s0, 1, w, 'incomplete', false, gap)), false],
+          ['malformed unresolved reads', withRows((t) => {
+            t.chromium[0] = t.chromium[0].replace(`${s0}-walk-1-unresolved\` | none`, `${s0}-walk-1-unresolved\` | lost one`);
+          }), false],
+        ];
+      })(),
       ['every end witness row removed', transcript(all()).split('\n').filter((l) => !/-walk-\d+-end` \|/.test(l)).join('\n'), false],
       ['every unresolved-reads row removed',
         transcript(all()).split('\n').filter((l) => !/-walk-\d+-unresolved` \|/.test(l)).join('\n'), false],
@@ -618,9 +734,11 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['no title', [own[1], EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['no defect', [own[0], own[1], EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['no heading', [...own, ...expected], true, 'wrong'],
-    ['an empty walk cut short', [], false, 'incomplete'],
-    ['a walk cut short after the heading', screen(), false, 'incomplete'],
-    ['every stop read, but the end not reached', screen(...expected), false, 'incomplete'],
+    // A walk that ran out of moves is wrong (Codex, fourth review): with
+    // 40 moves it can only have gone on past the screen.
+    ['an empty walk that ran out of moves', [], false, 'wrong'],
+    ['a walk that ran out of moves after the heading', screen(), false, 'wrong'],
+    ['every stop read, but the end not reached', screen(...expected), false, 'wrong'],
   ];
   // Every mutation of a walk in one test; each case is named in its
   // message, so a failure says which.
@@ -737,25 +855,20 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     expect(made()).toBe(1);
   });
 
-  test('a wrong walk after a short one still fails, and no third walk is made', async () => {
-    const { walkOnce, made } = sequence(short, { stops: screen(sw, count), reachedEnd: true }, right);
+  test('a wrong walk after an empty capture still fails, and no third walk is made', async () => {
+    const { walkOnce, made } = sequence(emptyTitle, { stops: screen(sw, count), reachedEnd: true }, right);
     expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
     expect(made()).toBe(2);
   });
 
-  test('a walk cut short followed by a right one passes on the second', async () => {
+  test('a walk that ran out of moves fails, and no second walk is made', async () => {
     const { walkOnce, made } = sequence(short, right);
-    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'complete', walks: 2 });
-    expect(made()).toBe(2);
-  });
-
-  test('three walks cut short fail', async () => {
-    const { walkOnce } = sequence(short, short, short, right);
-    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'incomplete', walks: 3 });
+    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+    expect(made()).toBe(1);
   });
 
   test('every try of an example walk is logged', async () => {
-    const { walkOnce } = sequence(short, short, right);
+    const { walkOnce } = sequence(emptyTitle, emptyTitle, right);
     const logged = [];
     await runWalks(walkOnce, judge, { log: (n, stops, judged) => logged.push([n, judged.verdict]) });
     expect(logged).toEqual([[1, 'incomplete'], [2, 'incomplete'], [3, 'complete']]);
