@@ -213,7 +213,7 @@ two texts are found by their text.
 | L3 iOS | Good: the replacement a static text labelled with the words, no value, the only element with that label, no element labelled with a piece; no button but Back, and the add button for `good-exclude-semantics`. `good-exclude-semantics`: after a tap, and after two Tabs and Return (no modifier; the probe found the first Tab on Back), the replacement says 857. Bad: `bad-pieces` elements "3.4" and "(856)", none naming stars, "out of", or reviews but the screen's own title and defect, no image; `bad-merged` labelled with the pieces, value "68"; `bad-not-excluded` labelled with the words and the pieces, value "68"; `bad-hides-control` labelled with the words, no element "Reviews", no button but Back, and two Tabs and Return running Reviews; `bad-stale` after a tap still 856 for two seconds, nothing labelled with 857, and `good-exclude-semantics` following the same tap in the same test. XCUITest cannot read traits or Flutter's focus |
 | L4 TalkBack | Focus moved to each node by action, each row judged as whole utterances (`== A / B` in `said()`, `tool/talkback.py`: the row's utterances exactly these, in order, TalkBack's usage hint once at the end allowed), as the committed transcript holds them: each good replacement exactly the words; `good-exclude-semantics`' button exactly "Add a 5-star review", "Button"; after the click action on it, with the witness showing 857 first, the replacement exactly "… 857 reviews". Bad: `bad-pieces` exactly "3.4", and exactly "(856)"; `bad-hides-control` exactly the words, and exactly "Reviews opened: 0"; `bad-stale` exactly the words, the button, and, after the click action and the witness showing 857, exactly the words with 856. `bad-merged` and `bad-not-excluded` cannot be written whole, because their last utterance holds "3.4 / 5" and the form splits at every "/": their first utterance must be exactly "68.0." (`^= A`), the row must hold the pieces (and for `bad-not-excluded` the words before them) in one utterance, and "out of 5 stars" (`bad-merged`) and "Image" must not be said. The rows and their mutations (the speech said twice, an extra role, a wrong number, each neighbour's label added before, after, or inside) are tested in `tool/test_talkback.py` (`S10WholeUtterances`). Each walk is judged whole (`walk_strictly`; S10 is in its `STRICT` set): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, every walk in the transcript. No row is declared silent |
 | L4 VoiceOver iOS | Every utterance of the screen (C03's walk), tied to its screen: the stops before the "Example Heading" must be exactly this example's title with "Heading", its description, and a bad example's defect (a stop of 64 characters or more as the service cuts it), and only then is what follows taken as the content, compared as a whole list: `good-exclude-semantics` the words, "Add a 5-star review Button", and after a tap on the button (VoiceOver off, the witness showing 857 first) the words with 857; `good-hidden-pieces` and `good-stars` the words (the same content, told apart by their titles and descriptions); `bad-pieces` "3.4", "(856)"; `bad-merged` "Rating: 3.4 / 5 Reviews: 856 68"; `bad-not-excluded` the words and " Rating: 3.4 / 5", cut by the service at 64 characters (a `.cut` stop: its first 63 characters, and the utterance exactly 64 long); `bad-hides-control` the words and "Reviews opened: 0"; `bad-stale` the words and the button, and after a tap (the witness showing 857) still the words with 856. The identification judge is tested on made-up walks (`testTheIdentificationJudgeTiesACaptureToItsScreen`): another example's title or description with the same content, a missing, empty, half, or extra identification, a missing defect, no heading, and a walk that did not reach the end are each refused. Every expected utterance is under 64 characters; the test refuses one that is not |
-| L4 VoiceOver web | Each screen walked from Back with the cursor's position kept at every stop (`walkWithPositions`, a copy of S08's) and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/s10_vo_walks.js`, a copy of S08's judge), in Chromium and WebKit, no runner retries. A wrong reading fails for good and is looked for first; any stop past the expected end fails for good, an empty one included (the bounds check comes before the empty check); a walk that reached the end short is wrong; a walk with an empty phrase and nothing wrong is a failed capture, walked again, at most three walks, every try logged, and an empty reading never passes. VoiceOver's help message ("You are currently on ...") is left out only when it is at the same position as the real stop before it and names that stop's spoken role (`spokenRole`, from the reading's role part, never from a name: extended for S10 to a text and a progress indicator); any other help message is a stop, and fails. The help rule is tested only on made-up walks: no S10 recording has been made. `good-exclude-semantics` and `bad-stale` are walked again after a mouse click on the add button. The lists (`EXPECTED_STOPS`, `EXPECTED_AFTER_ADDING`) were written as predictions before any S10 recording; the recording of 2026-11-27 read every one exactly, in both browsers, on the first walk (section 7). The judge's cases, and its mutations (a help message at a new position, naming another role, after an empty stop, with positions of the wrong length, two in a row, after a heading whose name has a role word), are in the web tree spec |
+| L4 VoiceOver web | Each screen walked from Back with the cursor's position kept at every stop (`walkWithPositions`, a copy of S08's) and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/s10_vo_walks.js`, a copy of S08's judge), in Chromium and WebKit, no runner retries. A wrong reading fails for good and is looked for first; any stop past the expected end fails for good, an empty one included (the bounds check comes before the empty check); a walk that reached the end short is wrong; a walk with an empty phrase and nothing wrong is a failed capture, walked again, at most three walks, every try logged, and an empty reading never passes. VoiceOver's help message ("You are currently on ...") is left out only when it is at the same position as the real stop before it and names that stop's spoken role (`spokenRole`, from the reading's role part, never from a name: extended for S10 to a text and a progress indicator); any other help message is a stop, and fails. The help rule is tested only on made-up walks: neither S10 recording captured a help message. `good-exclude-semantics` and `bad-stale` are walked again after a mouse click on the add button. The lists (`EXPECTED_STOPS`, `EXPECTED_AFTER_ADDING`) were written as predictions before any S10 recording; the recordings of 2026-11-27 read every one exactly, in both browsers; in the second, with the witness in place, one WebKit walk read the title as an empty phrase and was walked again (section 7). The judge's cases, and its mutations (a help message at a new position, naming another role, after an empty stop, with positions of the wrong length, two in a row, after a heading whose name has a role word), are in the web tree spec |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -266,8 +266,17 @@ fixtures on every platform, with each screen reader.
   API read, nothing measured).
 - **VoiceOver on the web, recorded 2026-11-27**
   ([evidence/S10/voiceover-web.md](../evidence/S10/voiceover-web.md), by
-  the principal): 20 tests passed, every walk complete on its first try in
-  Chromium and WebKit, and the two browsers read the same. Every list
+  the principal, twice). The first recording, before the test-only
+  witness was added, passed 20 tests, every walk complete on its first try.
+  The transcript is the second, made with the witness in place: 20 tests
+  passed, in Chromium and WebKit, and the two browsers read the same. Every
+  walk was complete on its first try but one: WebKit's `bad-stale-after`
+  read the screen's level 1 title as an empty phrase on its first walk, a
+  failed capture (the same as S08's recordings had), every later stop right,
+  and its second walk was complete. No walk in either browser made a stop
+  on the witness: each complete walk read exactly the expected stops, and
+  the incomplete one, shown whole, has no stop between the button and the
+  end. Every list
   written as a prediction before the recording was read exactly: each
   replacement as its words alone; `bad-pieces` "3.4", "(856)";
   `bad-merged` "Rating: 3.4 / 5 Reviews: 856 68 68% progress indicator",
@@ -277,8 +286,8 @@ fixtures on every platform, with each screen reader.
   button; the button "Add a 5-star review button"; after a review was added
   with a mouse click, `good-exclude-semantics` "… 857 reviews" and
   `bad-stale` still "… 856 reviews". No help message was captured in any
-  walk, so the judge's help rule did not come into play and stays tested
-  on made-up walks only.
+  walk of either recording, so the judge's help rule did not come into
+  play and stays tested on made-up walks only.
 - **The first TalkBack recording failed on its own walk**
   (`docs/evidence/probes/s10/talkback-round1-fail.md.txt`): every row was
   read as expected but `bad-stale`'s second, which put TalkBack focus back
@@ -333,9 +342,9 @@ Skips and what they give up, in the tests:
   press as the positive control. With the witness in place (2026-11-27),
   the iOS VoiceOver walks, which move through the whole screen, read
   exactly what they read before it, so VoiceOver on iOS did not stop on
-  it; the TalkBack walk moves focus by action and so cannot show whether a
-  swipe would stop on it; the web VoiceOver recording, made before the
-  witness was added, is to be made again with it in place.
+  it; the web VoiceOver recording made with it in place (the transcript)
+  has no stop on it in Chromium or WebKit; the TalkBack walk moves focus
+  by action and so cannot show whether a swipe would stop on it.
 - The iOS tree tests cannot see Flutter's focus: the key tests rely on the
   probe's finding that the first Tab is on Back and the second on the next
   control; which value changed is what shows the key reached it.

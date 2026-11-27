@@ -71,7 +71,8 @@ const PIECES = 'Rating: 3.4 / 5 Reviews: 856';
 // "button", and a progress bar as its name, then its value as a percentage,
 // then "progress indicator" (docs/evidence/C26/voiceover-web.md). The
 // recording of 2026-11-27 (docs/evidence/S10/voiceover-web.md) read every
-// one exactly, in Chromium and WebKit, on the first walk.
+// one exactly, in Chromium and WebKit (one WebKit walk walked again after
+// an empty title, a failed capture).
 export const EXPECTED_STOPS = {
   // One text that says what the rating means; nothing of its pieces.
   'good-exclude-semantics': [WORDS, ADD],
