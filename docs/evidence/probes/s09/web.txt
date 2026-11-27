@@ -1,0 +1,366 @@
+s01 element <flt-semantics><span>s01 City\nBoston</span></flt-semantics>
+s01 element <flt-semantics><span>s01 Population\n675,647</span></flt-semantics>
+s01 ax                   role=group name="" props=
+s01 ax                       role=StaticText name="Before s01" props=
+s01 ax                       role=StaticText name="s01 City Boston" props=
+s01 ax                       role=StaticText name="s01 Population 675,647" props=
+s01 ax                       role=StaticText name="s01 taps: on=0 off=0 info=0" props=
+s01 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group: \"Before s01 s01 City Boston s01 Population 675,647 s01 taps: on=0 off=0 info=0\""
+s01 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+s01 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s01 taps: on=0 off=0 info=0
+s01 2 Tab(s) (on (page: BODY)) then Enter: s01 taps: on=0 off=0 info=0
+s01 3 Tab(s) (on (page: FLUTTER-VIEW)) then Enter: s01 taps: on=0 off=0 info=0
+s01 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s01 taps: on=0 off=0 info=0
+s01 2 Tab(s) (on (page: BODY)) then Space: s01 taps: on=0 off=0 info=0
+s01 3 Tab(s) (on (page: FLUTTER-VIEW)) then Space: s01 taps: on=0 off=0 info=0
+s02 element <flt-semantics><span>s02 City</span></flt-semantics>
+s02 element <flt-semantics><span>s02 Population</span></flt-semantics>
+s02 element <flt-semantics><span>Boston</span></flt-semantics>
+s02 element <flt-semantics><span>675,647</span></flt-semantics>
+s02 ax                   role=group name="" props=
+s02 ax                       role=StaticText name="Before s02" props=
+s02 ax                       role=StaticText name="s02 City" props=
+s02 ax                       role=StaticText name="s02 Population" props=
+s02 ax                       role=StaticText name="s02 taps: on=0 off=0 info=0" props=
+s02 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group: \"Before s02 s02 City s02 Population Boston 675,647 s02 taps: on=0 off=0 info=0\""
+s02 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+s02 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s02 taps: on=0 off=0 info=0
+s02 2 Tab(s) (on (page: BODY)) then Enter: s02 taps: on=0 off=0 info=0
+s02 3 Tab(s) (on (page: FLUTTER-VIEW)) then Enter: s02 taps: on=0 off=0 info=0
+s02 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s02 taps: on=0 off=0 info=0
+s02 2 Tab(s) (on (page: BODY)) then Space: s02 taps: on=0 off=0 info=0
+s02 3 Tab(s) (on (page: FLUTTER-VIEW)) then Space: s02 taps: on=0 off=0 info=0
+s03 element <flt-semantics><span>s03 City</span></flt-semantics>
+s03 element <flt-semantics><span>s03 Population</span></flt-semantics>
+s03 element <flt-semantics><span>Boston</span></flt-semantics>
+s03 element <flt-semantics><span>675,647</span></flt-semantics>
+s03 ax                   role=group name="" props=
+s03 ax                       role=StaticText name="Before s03" props=
+s03 ax                       role=StaticText name="s03 City" props=
+s03 ax                       role=StaticText name="s03 Population" props=
+s03 ax                       role=StaticText name="s03 taps: on=0 off=0 info=0" props=
+s03 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group: \"Before s03 s03 City s03 Population Boston 675,647 s03 taps: on=0 off=0 info=0\""
+s03 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+s03 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s03 taps: on=0 off=0 info=0
+s03 2 Tab(s) (on (page: BODY)) then Enter: s03 taps: on=0 off=0 info=0
+s03 3 Tab(s) (on (page: FLUTTER-VIEW)) then Enter: s03 taps: on=0 off=0 info=0
+s03 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s03 taps: on=0 off=0 info=0
+s03 2 Tab(s) (on (page: BODY)) then Space: s03 taps: on=0 off=0 info=0
+s03 3 Tab(s) (on (page: FLUTTER-VIEW)) then Space: s03 taps: on=0 off=0 info=0
+s04 element <flt-semantics><span>s04 City\nBoston</span></flt-semantics>
+s04 element <flt-semantics><span>s04 Population\n675,647</span></flt-semantics>
+s04 ax                   role=group name="" props=
+s04 ax                       role=StaticText name="Before s04" props=
+s04 ax                       role=StaticText name="s04 City Boston" props=
+s04 ax                       role=StaticText name="s04 Population 675,647" props=
+s04 ax                       role=StaticText name="s04 taps: on=0 off=0 info=0" props=
+s04 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group: \"Before s04 s04 City Boston s04 Population 675,647 s04 taps: on=0 off=0 info=0\""
+s04 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+s04 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s04 taps: on=0 off=0 info=0
+s04 2 Tab(s) (on (page: BODY)) then Enter: s04 taps: on=0 off=0 info=0
+s04 3 Tab(s) (on (page: FLUTTER-VIEW)) then Enter: s04 taps: on=0 off=0 info=0
+s04 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s04 taps: on=0 off=0 info=0
+s04 2 Tab(s) (on (page: BODY)) then Space: s04 taps: on=0 off=0 info=0
+s04 3 Tab(s) (on (page: FLUTTER-VIEW)) then Space: s04 taps: on=0 off=0 info=0
+s05 element <flt-semantics aria-current="false"><span>s05 City\nBoston</span></flt-semantics>
+s05 element <flt-semantics aria-current="false"><span>s05 Population\n675,647</span></flt-semantics>
+s05 ax                   role=group name="" props=
+s05 ax                       role=StaticText name="Before s05" props=
+s05 ax                       role=StaticText name="s05 City Boston" props=
+s05 ax                       role=StaticText name="s05 Population 675,647" props=
+s05 ax                       role=StaticText name="s05 taps: on=0 off=0 info=0" props=
+s05 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group: \"Before s05 s05 City Boston s05 Population 675,647 s05 taps: on=0 off=0 info=0\""
+s05 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+s05 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s05 taps: on=0 off=0 info=0
+s05 2 Tab(s) (on (page: BODY)) then Enter: s05 taps: on=0 off=0 info=0
+s05 3 Tab(s) (on (page: FLUTTER-VIEW)) then Enter: s05 taps: on=0 off=0 info=0
+s05 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s05 taps: on=0 off=0 info=0
+s05 2 Tab(s) (on (page: BODY)) then Space: s05 taps: on=0 off=0 info=0
+s05 3 Tab(s) (on (page: FLUTTER-VIEW)) then Space: s05 taps: on=0 off=0 info=0
+s06 element <flt-semantics><span>s06 Distance\n6 kilometres</span></flt-semantics>
+s06 ax                   role=group name="" props=
+s06 ax                       role=StaticText name="Before s06" props=
+s06 ax                       role=StaticText name="s06 Distance 6 kilometres" props=
+s06 ax                       role=StaticText name="s06 taps: on=0 off=0 info=0" props=
+s06 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group: \"Before s06 s06 Distance 6 kilometres s06 taps: on=0 off=0 info=0\""
+s06 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+s06 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s06 taps: on=0 off=0 info=0
+s06 2 Tab(s) (on (page: BODY)) then Enter: s06 taps: on=0 off=0 info=0
+s06 3 Tab(s) (on (page: FLUTTER-VIEW)) then Enter: s06 taps: on=0 off=0 info=0
+s06 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s06 taps: on=0 off=0 info=0
+s06 2 Tab(s) (on (page: BODY)) then Space: s06 taps: on=0 off=0 info=0
+s06 3 Tab(s) (on (page: FLUTTER-VIEW)) then Space: s06 taps: on=0 off=0 info=0
+s07 element <flt-semantics role="group" aria-label="s07 Kitchen light"><flt-semantics role="button" tabindex="0" flt-tappable="">s07 On</flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">s07 Off</flt-semantics></flt-semantics>
+s07 ax                   role=group name="" props=
+s07 ax                     role=group name="s07 Kitchen light" props=
+s07 ax                       role=StaticText name="Before s07" props=
+s07 ax                       role=button name="s07 On" props=focusable:true
+s07 ax                       role=button name="s07 Off" props=focusable:true
+s07 ax                       role=StaticText name="s07 taps: on=0 off=0 info=0" props=
+s07 ax                         role=StaticText name="s07 On" props=
+s07 ax                         role=StaticText name="s07 Off" props=
+s07 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s07\n  - group \"s07 Kitchen light\":\n    - button \"s07 On\"\n    - button \"s07 Off\"\n  - text: \"s07 taps: on=0 off=0 info=0\""
+s07 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s07 On" -> FLT-SEMANTICS[role=button] "s07 Off" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s07 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s07 taps: on=0 off=0 info=0
+s07 2 Tab(s) (on FLT-SEMANTICS[role=button] "s07 On") then Enter: s07 taps: on=1 off=0 info=0
+s07 3 Tab(s) (on FLT-SEMANTICS[role=button] "s07 Off") then Enter: s07 taps: on=0 off=1 info=0
+s07 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s07 taps: on=0 off=0 info=0
+s07 2 Tab(s) (on FLT-SEMANTICS[role=button] "s07 On") then Space: s07 taps: on=1 off=0 info=0
+s07 3 Tab(s) (on FLT-SEMANTICS[role=button] "s07 Off") then Space: s07 taps: on=0 off=1 info=0
+s07 click centre of "s07 On" {"x":12,"y":126,"w":92,"h":32}: s07 taps: on=1 off=0 info=0
+s07 click centre of "s07 Off" {"x":112,"y":126,"w":94,"h":32}: s07 taps: on=0 off=1 info=0
+s08 element <flt-semantics role="group" aria-label="s08 Kitchen light"><flt-semantics role="button" tabindex="0" flt-tappable="">s08 On</flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">s08 Off</flt-semantics></flt-semantics>
+s08 ax                   role=group name="" props=
+s08 ax                     role=group name="s08 Kitchen light" props=
+s08 ax                       role=StaticText name="Before s08" props=
+s08 ax                       role=button name="s08 On" props=focusable:true
+s08 ax                       role=button name="s08 Off" props=focusable:true
+s08 ax                       role=StaticText name="s08 taps: on=0 off=0 info=0" props=
+s08 ax                         role=StaticText name="s08 On" props=
+s08 ax                         role=StaticText name="s08 Off" props=
+s08 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s08\n  - group \"s08 Kitchen light\":\n    - button \"s08 On\"\n    - button \"s08 Off\"\n  - text: \"s08 taps: on=0 off=0 info=0\""
+s08 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s08 On" -> FLT-SEMANTICS[role=button] "s08 Off" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s08 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s08 taps: on=0 off=0 info=0
+s08 2 Tab(s) (on FLT-SEMANTICS[role=button] "s08 On") then Enter: s08 taps: on=1 off=0 info=0
+s08 3 Tab(s) (on FLT-SEMANTICS[role=button] "s08 Off") then Enter: s08 taps: on=0 off=1 info=0
+s08 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s08 taps: on=0 off=0 info=0
+s08 2 Tab(s) (on FLT-SEMANTICS[role=button] "s08 On") then Space: s08 taps: on=1 off=0 info=0
+s08 3 Tab(s) (on FLT-SEMANTICS[role=button] "s08 Off") then Space: s08 taps: on=0 off=1 info=0
+s08 click centre of "s08 On" {"x":12,"y":126,"w":92,"h":32}: s08 taps: on=1 off=0 info=0
+s08 click centre of "s08 Off" {"x":112,"y":126,"w":94,"h":32}: s08 taps: on=0 off=1 info=0
+s09 element <flt-semantics><flt-semantics><span>s09 Kitchen light</span></flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">s09 On</flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">s09 Off</flt-semantics></flt-semantics>
+s09 ax                   role=group name="" props=
+s09 ax                       role=StaticText name="Before s09" props=
+s09 ax                       role=button name="s09 On" props=focusable:true
+s09 ax                       role=button name="s09 Off" props=focusable:true
+s09 ax                       role=StaticText name="s09 taps: on=0 off=0 info=0" props=
+s09 ax                         role=StaticText name="s09 Kitchen light" props=
+s09 ax                         role=StaticText name="s09 On" props=
+s09 ax                         role=StaticText name="s09 Off" props=
+s09 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s09 s09 Kitchen light\n  - button \"s09 On\"\n  - button \"s09 Off\"\n  - text: \"s09 taps: on=0 off=0 info=0\""
+s09 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s09 On" -> FLT-SEMANTICS[role=button] "s09 Off" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s09 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s09 taps: on=0 off=0 info=0
+s09 2 Tab(s) (on FLT-SEMANTICS[role=button] "s09 On") then Enter: s09 taps: on=1 off=0 info=0
+s09 3 Tab(s) (on FLT-SEMANTICS[role=button] "s09 Off") then Enter: s09 taps: on=0 off=1 info=0
+s09 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s09 taps: on=0 off=0 info=0
+s09 2 Tab(s) (on FLT-SEMANTICS[role=button] "s09 On") then Space: s09 taps: on=1 off=0 info=0
+s09 3 Tab(s) (on FLT-SEMANTICS[role=button] "s09 Off") then Space: s09 taps: on=0 off=1 info=0
+s09 click centre of "s09 On" {"x":12,"y":126,"w":92,"h":32}: s09 taps: on=1 off=0 info=0
+s09 click centre of "s09 Off" {"x":112,"y":126,"w":94,"h":32}: s09 taps: on=0 off=1 info=0
+s10 element <flt-semantics><span>s10 Kitchen light</span></flt-semantics>
+s10 element <flt-semantics role="button" tabindex="0" flt-tappable="">s10 On</flt-semantics>
+s10 element <flt-semantics role="button" tabindex="0" flt-tappable="">s10 Off</flt-semantics>
+s10 ax                   role=group name="" props=
+s10 ax                     role=button name="s10 On" props=focusable:true
+s10 ax                     role=button name="s10 Off" props=focusable:true
+s10 ax                       role=StaticText name="Before s10" props=
+s10 ax                       role=StaticText name="s10 Kitchen light" props=
+s10 ax                       role=StaticText name="s10 On" props=
+s10 ax                       role=StaticText name="s10 Off" props=
+s10 ax                       role=StaticText name="s10 taps: on=0 off=0 info=0" props=
+s10 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s10 s10 Kitchen light\n  - button \"s10 On\"\n  - button \"s10 Off\"\n  - text: \"s10 taps: on=0 off=0 info=0\""
+s10 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s10 On" -> FLT-SEMANTICS[role=button] "s10 Off" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s10 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s10 taps: on=0 off=0 info=0
+s10 2 Tab(s) (on FLT-SEMANTICS[role=button] "s10 On") then Enter: s10 taps: on=1 off=0 info=0
+s10 3 Tab(s) (on FLT-SEMANTICS[role=button] "s10 Off") then Enter: s10 taps: on=0 off=1 info=0
+s10 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s10 taps: on=0 off=0 info=0
+s10 2 Tab(s) (on FLT-SEMANTICS[role=button] "s10 On") then Space: s10 taps: on=1 off=0 info=0
+s10 3 Tab(s) (on FLT-SEMANTICS[role=button] "s10 Off") then Space: s10 taps: on=0 off=1 info=0
+s10 click centre of "s10 On" {"x":12,"y":126,"w":92,"h":32}: s10 taps: on=1 off=0 info=0
+s10 click centre of "s10 Off" {"x":112,"y":126,"w":94,"h":32}: s10 taps: on=0 off=1 info=0
+s11 element <flt-semantics><span>s11 Kitchen light</span></flt-semantics>
+s11 element <flt-semantics role="group" aria-label="s11 Kitchen light"><flt-semantics role="button" tabindex="0" flt-tappable="">s11 On</flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">s11 Off</flt-semantics></flt-semantics>
+s11 ax                   role=group name="" props=
+s11 ax                     role=group name="s11 Kitchen light" props=
+s11 ax                       role=StaticText name="Before s11" props=
+s11 ax                       role=StaticText name="s11 Kitchen light" props=
+s11 ax                       role=button name="s11 On" props=focusable:true
+s11 ax                       role=button name="s11 Off" props=focusable:true
+s11 ax                       role=StaticText name="s11 taps: on=0 off=0 info=0" props=
+s11 ax                         role=StaticText name="s11 On" props=
+s11 ax                         role=StaticText name="s11 Off" props=
+s11 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s11 s11 Kitchen light\n  - group \"s11 Kitchen light\":\n    - button \"s11 On\"\n    - button \"s11 Off\"\n  - text: \"s11 taps: on=0 off=0 info=0\""
+s11 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s11 On" -> FLT-SEMANTICS[role=button] "s11 Off" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s11 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s11 taps: on=0 off=0 info=0
+s11 2 Tab(s) (on FLT-SEMANTICS[role=button] "s11 On") then Enter: s11 taps: on=1 off=0 info=0
+s11 3 Tab(s) (on FLT-SEMANTICS[role=button] "s11 Off") then Enter: s11 taps: on=0 off=1 info=0
+s11 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s11 taps: on=0 off=0 info=0
+s11 2 Tab(s) (on FLT-SEMANTICS[role=button] "s11 On") then Space: s11 taps: on=1 off=0 info=0
+s11 3 Tab(s) (on FLT-SEMANTICS[role=button] "s11 Off") then Space: s11 taps: on=0 off=1 info=0
+s11 click centre of "s11 On" {"x":12,"y":126,"w":92,"h":32}: s11 taps: on=1 off=0 info=0
+s11 click centre of "s11 Off" {"x":112,"y":126,"w":94,"h":32}: s11 taps: on=0 off=1 info=0
+s12 element <flt-semantics role="button" tabindex="0" flt-tappable="">s12 Kitchen light\ns12 On\ns12 Off</flt-semantics>
+s12 ax                   role=group name="" props=
+s12 ax                     role=button name="s12 Kitchen light s12 On s12 Off" props=focusable:true
+s12 ax                       role=StaticText name="Before s12" props=
+s12 ax                       role=StaticText name="s12 Kitchen light s12 On s12 Off" props=
+s12 ax                       role=StaticText name="s12 taps: on=0 off=0 info=0" props=
+s12 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s12\n  - button \"s12 Kitchen light s12 On s12 Off\"\n  - text: \"s12 taps: on=0 off=0 info=0\""
+s12 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s12 Kitchen light\ns12 On\ns12 Off" -> FLT-SEMANTICS[role=button] "s12 Kitchen light\ns12 On\ns12 Off" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s12 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s12 taps: on=0 off=0 info=0
+s12 2 Tab(s) (on FLT-SEMANTICS[role=button] "s12 Kitchen light\ns12 On\ns12 Off") then Enter: s12 taps: on=1 off=0 info=0
+s12 3 Tab(s) (on FLT-SEMANTICS[role=button] "s12 Kitchen light\ns12 On\ns12 Off") then Enter: s12 taps: on=0 off=1 info=0
+s12 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s12 taps: on=0 off=0 info=0
+s12 2 Tab(s) (on FLT-SEMANTICS[role=button] "s12 Kitchen light\ns12 On\ns12 Off") then Space: s12 taps: on=1 off=0 info=0
+s12 3 Tab(s) (on FLT-SEMANTICS[role=button] "s12 Kitchen light\ns12 On\ns12 Off") then Space: s12 taps: on=0 off=1 info=0
+s12 click centre of "s12 Kitchen light\ns12 On\ns12 Off" {"x":12,"y":100,"w":1256,"h":58}: s12 taps: on=1 off=0 info=0
+s13 element <flt-semantics><span>s13 Kitchen light</span></flt-semantics>
+s13 element <flt-semantics role="button" tabindex="0" flt-tappable="">s13 On</flt-semantics>
+s13 element <flt-semantics role="button" tabindex="0" flt-tappable="">s13 Off</flt-semantics>
+s13 ax                   role=group name="" props=
+s13 ax                     role=button name="s13 On" props=focusable:true
+s13 ax                     role=button name="s13 Off" props=focusable:true
+s13 ax                       role=StaticText name="Before s13" props=
+s13 ax                       role=StaticText name="s13 Kitchen light" props=
+s13 ax                       role=StaticText name="s13 On" props=
+s13 ax                       role=StaticText name="s13 Off" props=
+s13 ax                       role=StaticText name="s13 taps: on=0 off=0 info=0" props=
+s13 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s13 s13 Kitchen light\n  - button \"s13 On\"\n  - button \"s13 Off\"\n  - text: \"s13 taps: on=0 off=0 info=0\""
+s13 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s13 On" -> FLT-SEMANTICS[role=button] "s13 Off" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s13 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s13 taps: on=0 off=0 info=0
+s13 2 Tab(s) (on FLT-SEMANTICS[role=button] "s13 On") then Enter: s13 taps: on=0 off=0 info=0
+s13 3 Tab(s) (on FLT-SEMANTICS[role=button] "s13 Off") then Enter: s13 taps: on=0 off=0 info=0
+s13 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s13 taps: on=0 off=0 info=0
+s13 2 Tab(s) (on FLT-SEMANTICS[role=button] "s13 On") then Space: s13 taps: on=1 off=0 info=0
+s13 3 Tab(s) (on FLT-SEMANTICS[role=button] "s13 Off") then Space: s13 taps: on=0 off=1 info=0
+s13 click centre of "s13 On" {"x":595,"y":144,"w":91,"h":52}: s13 taps: on=1 off=0 info=0
+s13 click centre of "s13 Off" {"x":594,"y":197,"w":93,"h":52}: s13 taps: on=0 off=1 info=0
+s14 element <flt-semantics role="group" aria-label="s14 Kitchen light"><flt-semantics><span>s14 Kitchen light</span></flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">s14 On</flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">s14 Off</flt-semantics></flt-semantics>
+s14 ax                   role=group name="" props=
+s14 ax                     role=group name="s14 Kitchen light" props=
+s14 ax                       role=StaticText name="Before s14" props=
+s14 ax                       role=button name="s14 On" props=focusable:true
+s14 ax                       role=button name="s14 Off" props=focusable:true
+s14 ax                       role=StaticText name="s14 taps: on=0 off=0 info=0" props=
+s14 ax                         role=StaticText name="s14 Kitchen light" props=
+s14 ax                         role=StaticText name="s14 On" props=
+s14 ax                         role=StaticText name="s14 Off" props=
+s14 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s14\n  - group \"s14 Kitchen light\":\n    - text: s14 Kitchen light\n    - button \"s14 On\"\n    - button \"s14 Off\"\n  - text: \"s14 taps: on=0 off=0 info=0\""
+s14 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s14 On" -> FLT-SEMANTICS[role=button] "s14 Off" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s14 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s14 taps: on=0 off=0 info=0
+s14 2 Tab(s) (on FLT-SEMANTICS[role=button] "s14 On") then Enter: s14 taps: on=1 off=0 info=0
+s14 3 Tab(s) (on FLT-SEMANTICS[role=button] "s14 Off") then Enter: s14 taps: on=0 off=1 info=0
+s14 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s14 taps: on=0 off=0 info=0
+s14 2 Tab(s) (on FLT-SEMANTICS[role=button] "s14 On") then Space: s14 taps: on=1 off=0 info=0
+s14 3 Tab(s) (on FLT-SEMANTICS[role=button] "s14 Off") then Space: s14 taps: on=0 off=1 info=0
+s14 click centre of "s14 On" {"x":12,"y":126,"w":92,"h":32}: s14 taps: on=1 off=0 info=0
+s14 click centre of "s14 Off" {"x":112,"y":126,"w":94,"h":32}: s14 taps: on=0 off=1 info=0
+s15 element <flt-semantics role="button" tabindex="0" flt-tappable="">s15 App information</flt-semantics>
+s15 ax                   role=group name="" props=
+s15 ax                     role=button name="s15 App information" props=focusable:true
+s15 ax                       role=StaticText name="Before s15" props=
+s15 ax                       role=StaticText name="s15 App information" props=
+s15 ax                       role=StaticText name="s15 taps: on=0 off=0 info=0" props=
+s15 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s15\n  - button \"s15 App information\"\n  - text: \"s15 taps: on=0 off=0 info=0\""
+s15 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s15 App information" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s15 App information"
+s15 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s15 taps: on=0 off=0 info=0
+s15 2 Tab(s) (on FLT-SEMANTICS[role=button] "s15 App information") then Enter: s15 taps: on=0 off=0 info=1
+s15 3 Tab(s) (on (page: BODY)) then Enter: s15 taps: on=0 off=0 info=0
+s15 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s15 taps: on=0 off=0 info=0
+s15 2 Tab(s) (on FLT-SEMANTICS[role=button] "s15 App information") then Space: s15 taps: on=0 off=0 info=1
+s15 3 Tab(s) (on (page: BODY)) then Space: s15 taps: on=0 off=0 info=0
+s15 click centre of "s15 App information" {"x":12,"y":100,"w":183,"h":32}: s15 taps: on=0 off=0 info=1
+s16 element <flt-semantics role="button" tabindex="0" aria-current="false" flt-tappable="">s16 App information</flt-semantics>
+s16 ax                   role=group name="" props=
+s16 ax                     role=button name="s16 App information" props=focusable:true
+s16 ax                       role=StaticText name="Before s16" props=
+s16 ax                       role=StaticText name="s16 App information" props=
+s16 ax                       role=StaticText name="s16 taps: on=0 off=0 info=0" props=
+s16 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s16\n  - button \"s16 App information\"\n  - text: \"s16 taps: on=0 off=0 info=0\""
+s16 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s16 App information" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s16 App information"
+s16 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s16 taps: on=0 off=0 info=0
+s16 2 Tab(s) (on FLT-SEMANTICS[role=button] "s16 App information") then Enter: s16 taps: on=0 off=0 info=1
+s16 3 Tab(s) (on (page: BODY)) then Enter: s16 taps: on=0 off=0 info=0
+s16 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s16 taps: on=0 off=0 info=0
+s16 2 Tab(s) (on FLT-SEMANTICS[role=button] "s16 App information") then Space: s16 taps: on=0 off=0 info=1
+s16 3 Tab(s) (on (page: BODY)) then Space: s16 taps: on=0 off=0 info=0
+s16 click centre of "s16 App information" {"x":12,"y":100,"w":1256,"h":48}: s16 taps: on=0 off=0 info=1
+s17 element <flt-semantics role="button" tabindex="0" flt-tappable="">s17 App information</flt-semantics>
+s17 element <flt-semantics role="button" tabindex="0" flt-tappable="">s17 App information</flt-semantics>
+s17 ax                   role=group name="" props=
+s17 ax                     role=button name="s17 App information" props=focusable:true
+s17 ax                     role=button name="s17 App information" props=focusable:true
+s17 ax                       role=StaticText name="Before s17" props=
+s17 ax                       role=StaticText name="s17 App information" props=
+s17 ax                       role=StaticText name="s17 App information" props=
+s17 ax                       role=StaticText name="s17 taps: on=0 off=0 info=0" props=
+s17 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s17\n  - button \"s17 App information\"\n  - button \"s17 App information\"\n  - text: \"s17 taps: on=0 off=0 info=0\""
+s17 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s17 App information" -> FLT-SEMANTICS[role=button] "s17 App information" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s17 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s17 taps: on=0 off=0 info=0
+s17 2 Tab(s) (on FLT-SEMANTICS[role=button] "s17 App information") then Enter: s17 taps: on=0 off=0 info=1
+s17 3 Tab(s) (on FLT-SEMANTICS[role=button] "s17 App information") then Enter: s17 taps: on=0 off=0 info=1
+s17 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s17 taps: on=0 off=0 info=0
+s17 2 Tab(s) (on FLT-SEMANTICS[role=button] "s17 App information") then Space: s17 taps: on=0 off=0 info=1
+s17 3 Tab(s) (on FLT-SEMANTICS[role=button] "s17 App information") then Space: s17 taps: on=0 off=0 info=1
+s17 click centre of "s17 App information" {"x":12,"y":100,"w":40,"h":40}: s17 taps: on=0 off=0 info=1
+s17 click centre of "s17 App information" {"x":52,"y":104,"w":153,"h":32}: s17 taps: on=0 off=0 info=1
+s18 element <flt-semantics role="button" tabindex="0" flt-tappable="">s18 App information\ns18 App information</flt-semantics>
+s18 ax                   role=group name="" props=
+s18 ax                     role=button name="s18 App information s18 App information" props=focusable:true
+s18 ax                       role=StaticText name="Before s18" props=
+s18 ax                       role=StaticText name="s18 App information s18 App information" props=
+s18 ax                       role=StaticText name="s18 taps: on=0 off=0 info=0" props=
+s18 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s18\n  - button \"s18 App information s18 App information\"\n  - text: \"s18 taps: on=0 off=0 info=0\""
+s18 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s18 App information\ns18 App information" -> FLT-SEMANTICS[role=button] "s18 App information\ns18 App information" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s18 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s18 taps: on=0 off=0 info=0
+s18 2 Tab(s) (on FLT-SEMANTICS[role=button] "s18 App information\ns18 App information") then Enter: s18 taps: on=0 off=0 info=1
+s18 3 Tab(s) (on FLT-SEMANTICS[role=button] "s18 App information\ns18 App information") then Enter: s18 taps: on=0 off=0 info=1
+s18 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s18 taps: on=0 off=0 info=0
+s18 2 Tab(s) (on FLT-SEMANTICS[role=button] "s18 App information\ns18 App information") then Space: s18 taps: on=0 off=0 info=1
+s18 3 Tab(s) (on FLT-SEMANTICS[role=button] "s18 App information\ns18 App information") then Space: s18 taps: on=0 off=0 info=1
+s18 click centre of "s18 App information\ns18 App information" {"x":12,"y":100,"w":1256,"h":40}: s18 taps: on=0 off=0 info=1
+s19 element <flt-semantics role="group" aria-label="s19 Kitchen light"><flt-semantics role="button" tabindex="0" flt-tappable="">s19 On</flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">s19 Off</flt-semantics></flt-semantics>
+s19 ax                   role=group name="" props=
+s19 ax                     role=group name="s19 Kitchen light" props=
+s19 ax                       role=StaticText name="Before s19" props=
+s19 ax                       role=button name="s19 On" props=focusable:true
+s19 ax                       role=button name="s19 Off" props=focusable:true
+s19 ax                       role=StaticText name="s19 taps: on=0 off=0 info=0" props=
+s19 ax                         role=StaticText name="s19 On" props=
+s19 ax                         role=StaticText name="s19 Off" props=
+s19 aria "- button \"Back\"\n- heading \"S09 probe\" [level=2]\n- group:\n  - text: Before s19\n  - group \"s19 Kitchen light\":\n    - button \"s19 On\"\n    - button \"s19 Off\"\n  - text: \"s19 taps: on=0 off=0 info=0\""
+s19 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "s19 On" -> FLT-SEMANTICS[role=button] "s19 Off" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+s19 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: s19 taps: on=0 off=0 info=0
+s19 2 Tab(s) (on FLT-SEMANTICS[role=button] "s19 On") then Enter: s19 taps: on=1 off=0 info=0
+s19 3 Tab(s) (on FLT-SEMANTICS[role=button] "s19 Off") then Enter: s19 taps: on=0 off=1 info=0
+s19 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: s19 taps: on=0 off=0 info=0
+s19 2 Tab(s) (on FLT-SEMANTICS[role=button] "s19 On") then Space: s19 taps: on=1 off=0 info=0
+s19 3 Tab(s) (on FLT-SEMANTICS[role=button] "s19 Off") then Space: s19 taps: on=0 off=1 info=0
+s19 click centre of "s19 On" {"x":12,"y":126,"w":92,"h":32}: s19 taps: on=1 off=0 info=0
+s19 click centre of "s19 Off" {"x":112,"y":126,"w":94,"h":32}: s19 taps: on=0 off=1 info=0
+html fieldset role=RootWebArea name="" props=focusable:true,focused:true,url:"about:blank"
+html fieldset       role=group name="h1 Kitchen light" props=invalid:"false",labelledby:undefined
+html fieldset         role=Legend name="" props=
+html fieldset         role=button name="h1 On" props=invalid:"false",focusable:true
+html fieldset         role=button name="h1 Off" props=invalid:"false",focusable:true
+html fieldset           role=StaticText name="h1 Kitchen light" props=
+html fieldset           role=StaticText name="h1 On" props=
+html fieldset           role=StaticText name="h1 Off" props=
+html role-group role=RootWebArea name="" props=focusable:true,focused:true,url:"about:blank"
+html role-group       role=group name="h2 Kitchen light" props=labelledby:undefined
+html role-group         role=generic name="" props=
+html role-group         role=button name="h2 On" props=invalid:"false",focusable:true
+html role-group         role=button name="h2 Off" props=invalid:"false",focusable:true
+html role-group           role=StaticText name="h2 Kitchen light" props=
+html role-group           role=StaticText name="h2 On" props=
+html role-group           role=StaticText name="h2 Off" props=
+html role-group-label role=RootWebArea name="" props=focusable:true,focused:true,url:"about:blank"
+html role-group-label       role=group name="h3 Kitchen light" props=
+html role-group-label         role=button name="h3 On" props=invalid:"false",focusable:true
+html role-group-label         role=button name="h3 Off" props=invalid:"false",focusable:true
+html role-group-label           role=StaticText name="h3 On" props=
+html role-group-label           role=StaticText name="h3 Off" props=
+html label-value-dl role=RootWebArea name="" props=focusable:true,focused:true,url:"about:blank"
+html label-value-dl       role=DescriptionList name="" props=
+html label-value-dl         role=term name="h4 City" props=
+html label-value-dl         role=definition name="" props=
+html label-value-dl         role=term name="h4 Population" props=
+html label-value-dl         role=definition name="" props=
+html label-value-dl           role=StaticText name="h4 City" props=
+html label-value-dl           role=StaticText name="Boston" props=
+html label-value-dl           role=StaticText name="h4 Population" props=
+html label-value-dl           role=StaticText name="675,647" props=
+html button-icon-text role=RootWebArea name="" props=focusable:true,focused:true,url:"about:blank"
+html button-icon-text     role=generic name="" props=
+html button-icon-text       role=button name="h5 App information" props=invalid:"false",focusable:true
+html button-icon-text         role=StaticText name="h5 App information" props=

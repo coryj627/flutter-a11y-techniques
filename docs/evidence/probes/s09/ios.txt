@@ -1,0 +1,267 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+large
+== testTree
+S09PROBE ==== s01 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 161.0)
+S09PROBE EL type=48 id= label="Before s01" value=Optional() frame=(12.0, 130.0, 72.431640625, 20.0)
+S09PROBE EL type=48 id= label="s01 City\nBoston" value=Optional() frame=(12.0, 162.0, 67.4375, 49.0)
+S09PROBE EL type=48 id= label="s01 Population\n675,647" value=Optional() frame=(103.4375, 162.0, 100.0029296875, 49.0)
+S09PROBE EL type=48 id=s01-taps label="s01 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 223.0, 190.390625, 20.0)
+S09PROBE s01 tap on type=48 "s01 City\nBoston": taps="s01 taps: on=0 off=0 info=0"
+S09PROBE s01 tap on type=48 "s01 Population\n675,647": taps="s01 taps: on=0 off=0 info=0"
+S09PROBE ==== s02 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 161.0)
+S09PROBE EL type=48 id= label="Before s02" value=Optional() frame=(12.0, 130.0, 74.38671875, 20.0)
+S09PROBE EL type=48 id= label="s02 City" value=Optional() frame=(12.0, 162.0, 56.701171875, 20.0)
+S09PROBE EL type=48 id= label="s02 Population" value=Optional() frame=(103.4375, 162.0, 101.9580078125, 20.0)
+S09PROBE EL type=48 id= label="Boston" value=Optional() frame=(12.0, 182.0, 67.4375, 29.0)
+S09PROBE EL type=48 id= label="675,647" value=Optional() frame=(103.4375, 182.0, 79.50390625, 29.0)
+S09PROBE EL type=48 id=s02-taps label="s02 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 223.0, 192.345703125, 20.0)
+S09PROBE s02 tap on type=48 "s02 City": taps="s02 taps: on=0 off=0 info=0"
+S09PROBE s02 tap on type=48 "s02 Population": taps="s02 taps: on=0 off=0 info=0"
+S09PROBE ==== s03 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 161.0)
+S09PROBE EL type=48 id= label="Before s03" value=Optional() frame=(12.0, 130.0, 74.71484375, 20.0)
+S09PROBE EL type=48 id= label="s03 City" value=Optional() frame=(12.0, 162.0, 120.0, 20.0)
+S09PROBE EL type=48 id= label="s03 Population" value=Optional() frame=(132.0, 162.0, 102.2861328125, 20.0)
+S09PROBE EL type=48 id= label="Boston" value=Optional() frame=(12.0, 182.0, 120.0, 29.0)
+S09PROBE EL type=48 id= label="675,647" value=Optional() frame=(132.0, 182.0, 79.50390625, 29.0)
+S09PROBE EL type=48 id=s03-taps label="s03 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 223.0, 192.673828125, 20.0)
+S09PROBE s03 tap on type=48 "s03 City": taps="s03 taps: on=0 off=0 info=0"
+S09PROBE s03 tap on type=48 "s03 Population": taps="s03 taps: on=0 off=0 info=0"
+S09PROBE ==== s04 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 161.0)
+S09PROBE EL type=48 id= label="Before s04" value=Optional() frame=(12.0, 130.0, 74.947265625, 20.0)
+S09PROBE EL type=48 id= label="s04 City\nBoston" value=Optional() frame=(12.0, 162.0, 67.4375, 49.0)
+S09PROBE EL type=48 id= label="s04 Population\n675,647" value=Optional() frame=(103.4375, 162.0, 102.5185546875, 49.0)
+S09PROBE EL type=48 id=s04-taps label="s04 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 223.0, 192.90625, 20.0)
+S09PROBE s04 tap on type=48 "s04 City\nBoston": taps="s04 taps: on=0 off=0 info=0"
+S09PROBE s04 tap on type=48 "s04 Population\n675,647": taps="s04 taps: on=0 off=0 info=0"
+S09PROBE ==== s05 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 256.0)
+S09PROBE EL type=48 id= label="Before s05" value=Optional() frame=(12.0, 130.0, 74.591796875, 20.0)
+S09PROBE EL type=48 id= label="s05 City\nBoston" value=Optional() frame=(12.0, 162.0, 378.0, 72.0)
+S09PROBE EL type=48 id= label="s05 Population\n675,647" value=Optional() frame=(12.0, 234.0, 378.0, 72.0)
+S09PROBE EL type=48 id=s05-taps label="s05 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 318.0, 192.55078125, 20.0)
+S09PROBE s05 tap on type=48 "s05 City\nBoston": taps="s05 taps: on=0 off=0 info=0"
+S09PROBE s05 tap on type=48 "s05 Population\n675,647": taps="s05 taps: on=0 off=0 info=0"
+S09PROBE ==== s06 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 152.0)
+S09PROBE EL type=48 id= label="Before s06" value=Optional() frame=(12.0, 130.0, 74.8515625, 20.0)
+S09PROBE EL type=48 id= label="s06 Distance\n6 kilometres" value=Optional() frame=(12.0, 162.0, 89.7001953125, 40.0)
+S09PROBE EL type=48 id=s06-taps label="s06 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 214.0, 192.810546875, 20.0)
+S09PROBE s06 tap on type=48 "s06 Distance\n6 kilometres": taps="s06 taps: on=0 off=0 info=0"
+S09PROBE ==== s07 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 186.0)
+S09PROBE EL type=48 id= label="Before s07" value=Optional() frame=(12.0, 130.0, 73.634765625, 20.0)
+S09PROBE EL type=48 id=s07-taps label="s07 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 248.0, 191.59375, 20.0)
+S09PROBE EL type=1 id= label="s07 Kitchen light" value=Optional() frame=(12.0, 162.0, 378.0, 74.0)
+S09PROBE EL type=9 id= label="s07 On" value=Optional() frame=(12.0, 188.0, 96.13490804036458, 48.0)
+S09PROBE EL type=9 id= label="s07 Off" value=Optional() frame=(116.13490804036458, 188.0, 98.44639078776042, 48.0)
+S09PROBE s07 tap on type=1 "s07 Kitchen light": taps="s07 taps: on=0 off=1 info=0"
+S09PROBE s07 tap on type=9 "s07 On": taps="s07 taps: on=1 off=0 info=0"
+S09PROBE s07 tap on type=9 "s07 Off": taps="s07 taps: on=0 off=1 info=0"
+S09PROBE ==== s08 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 186.0)
+S09PROBE EL type=48 id= label="Before s08" value=Optional() frame=(12.0, 130.0, 74.87890625, 20.0)
+S09PROBE EL type=48 id=s08-taps label="s08 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 248.0, 192.837890625, 20.0)
+S09PROBE EL type=1 id= label="s08 Kitchen light" value=Optional() frame=(12.0, 162.0, 378.0, 74.0)
+S09PROBE EL type=9 id= label="s08 On" value=Optional() frame=(12.0, 188.0, 97.47249348958333, 48.0)
+S09PROBE EL type=9 id= label="s08 Off" value=Optional() frame=(117.47249348958333, 188.0, 99.78397623697917, 48.0)
+S09PROBE s08 tap on type=1 "s08 Kitchen light": taps="s08 taps: on=0 off=1 info=0"
+S09PROBE s08 tap on type=9 "s08 On": taps="s08 taps: on=1 off=0 info=0"
+S09PROBE s08 tap on type=9 "s08 Off": taps="s08 taps: on=0 off=1 info=0"
+S09PROBE ==== s09 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 186.0)
+S09PROBE EL type=48 id= label="Before s09" value=Optional() frame=(12.0, 130.0, 74.8515625, 20.0)
+S09PROBE EL type=48 id=s09-taps label="s09 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 248.0, 192.810546875, 20.0)
+S09PROBE EL type=48 id= label="s09 Kitchen light" value=Optional() frame=(12.0, 162.0, 147.8544921875, 26.0)
+S09PROBE EL type=9 id= label="s09 On" value=Optional() frame=(12.0, 188.0, 97.40641276041667, 48.0)
+S09PROBE EL type=9 id= label="s09 Off" value=Optional() frame=(117.40641276041667, 188.0, 99.71787516276042, 48.0)
+S09PROBE s09 tap on type=48 "s09 Kitchen light": taps="s09 taps: on=0 off=0 info=0"
+S09PROBE s09 tap on type=9 "s09 On": taps="s09 taps: on=1 off=0 info=0"
+S09PROBE s09 tap on type=9 "s09 Off": taps="s09 taps: on=0 off=1 info=0"
+S09PROBE ==== s10 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 186.0)
+S09PROBE EL type=48 id= label="Before s10" value=Optional() frame=(12.0, 130.0, 72.2265625, 20.0)
+S09PROBE EL type=48 id= label="s10 Kitchen light" value=Optional() frame=(12.0, 162.0, 144.4794921875, 26.0)
+S09PROBE EL type=9 id= label="s10 On" value=Optional() frame=(12.0, 188.0, 94.79735310872395, 48.0)
+S09PROBE EL type=9 id= label="s10 Off" value=Optional() frame=(114.79735310872395, 188.0, 97.1088155110677, 48.0)
+S09PROBE EL type=48 id=s10-taps label="s10 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 248.0, 190.185546875, 20.0)
+S09PROBE s10 tap on type=48 "s10 Kitchen light": taps="s10 taps: on=0 off=0 info=0"
+S09PROBE s10 tap on type=9 "s10 On": taps="s10 taps: on=1 off=0 info=0"
+S09PROBE s10 tap on type=9 "s10 Off": taps="s10 taps: on=0 off=1 info=0"
+S09PROBE ==== s11 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 186.0)
+S09PROBE EL type=48 id= label="Before s11" value=Optional() frame=(12.0, 130.0, 69.90234375, 20.0)
+S09PROBE EL type=48 id= label="s11 Kitchen light" value=Optional() frame=(12.0, 162.0, 141.4912109375, 26.0)
+S09PROBE EL type=48 id=s11-taps label="s11 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 248.0, 187.861328125, 20.0)
+S09PROBE EL type=1 id= label="s11 Kitchen light" value=Optional() frame=(12.0, 188.0, 378.0, 48.0)
+S09PROBE EL type=9 id= label="s11 On" value=Optional() frame=(12.0, 188.0, 92.4412333170573, 48.0)
+S09PROBE EL type=9 id= label="s11 Off" value=Optional() frame=(112.4412333170573, 188.0, 94.75269571940105, 48.0)
+S09PROBE s11 tap on type=48 "s11 Kitchen light": taps="s11 taps: on=0 off=0 info=0"
+S09PROBE s11 tap on type=1 "s11 Kitchen light": taps="s11 taps: on=0 off=1 info=0"
+S09PROBE s11 tap on type=9 "s11 On": taps="s11 taps: on=1 off=0 info=0"
+S09PROBE s11 tap on type=9 "s11 Off": taps="s11 taps: on=0 off=1 info=0"
+S09PROBE ==== s12 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 186.0)
+S09PROBE EL type=48 id= label="Before s12" value=Optional() frame=(12.0, 130.0, 71.857421875, 20.0)
+S09PROBE EL type=9 id= label="s12 Kitchen light\ns12 On\ns12 Off" value=Optional() frame=(12.0, 162.0, 378.0, 74.0)
+S09PROBE EL type=48 id=s12-taps label="s12 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 248.0, 189.81640625, 20.0)
+S09PROBE s12 tap on type=9 "s12 Kitchen light\ns12 On\ns12 Off": taps="s12 taps: on=0 off=1 info=0"
+S09PROBE ==== s13 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 261.0)
+S09PROBE EL type=48 id= label="Before s13" value=Optional() frame=(12.0, 130.0, 72.185546875, 20.0)
+S09PROBE EL type=48 id= label="s13 Kitchen light" value=Optional() frame=(32.0, 184.0, 101.23876953125, 16.0)
+S09PROBE EL type=9 id= label="s13 On" value=Optional() frame=(154.7253621419271, 206.33333333333334, 92.54927571614581, 52.00000000000003)
+S09PROBE EL type=9 id= label="s13 Off" value=Optional() frame=(153.73919677734375, 258.66668701171875, 94.5216064453125, 52.0)
+S09PROBE EL type=48 id=s13-taps label="s13 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 323.0, 190.14453125, 20.0)
+S09PROBE s13 tap on type=48 "s13 Kitchen light": taps="s13 taps: on=0 off=0 info=0"
+S09PROBE s13 tap on type=9 "s13 On": taps="s13 taps: on=1 off=0 info=0"
+S09PROBE s13 tap on type=9 "s13 Off": taps="s13 taps: on=0 off=1 info=0"
+S09PROBE ==== s14 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 186.0)
+S09PROBE EL type=48 id= label="Before s14" value=Optional() frame=(12.0, 130.0, 72.41796875, 20.0)
+S09PROBE EL type=48 id=s14-taps label="s14 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 248.0, 190.376953125, 20.0)
+S09PROBE EL type=1 id= label="s14 Kitchen light" value=Optional() frame=(12.0, 162.0, 378.0, 74.0)
+S09PROBE EL type=48 id= label="s14 Kitchen light" value=Optional() frame=(12.0, 162.0, 144.7255859375, 26.0)
+S09PROBE EL type=9 id= label="s14 On" value=Optional() frame=(12.0, 188.0, 94.9363505045573, 48.0)
+S09PROBE EL type=9 id= label="s14 Off" value=Optional() frame=(114.9363505045573, 188.0, 97.24781290690105, 48.0)
+S09PROBE s14 tap on type=1 "s14 Kitchen light": taps="s14 taps: on=0 off=1 info=0"
+S09PROBE s14 tap on type=48 "s14 Kitchen light": taps="s14 taps: on=0 off=0 info=0"
+S09PROBE s14 tap on type=9 "s14 On": taps="s14 taps: on=1 off=0 info=0"
+S09PROBE s14 tap on type=9 "s14 Off": taps="s14 taps: on=0 off=1 info=0"
+S09PROBE ==== s15 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 160.0)
+S09PROBE EL type=48 id= label="Before s15" value=Optional() frame=(12.0, 130.0, 72.0625, 20.0)
+S09PROBE EL type=9 id= label="s15 App information" value=Optional() frame=(12.0, 162.0, 190.83951822916666, 48.0)
+S09PROBE EL type=48 id=s15-taps label="s15 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 222.0, 190.021484375, 20.0)
+S09PROBE s15 tap on type=9 "s15 App information": taps="s15 taps: on=0 off=0 info=1"
+S09PROBE ==== s16 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 168.0)
+S09PROBE EL type=48 id= label="Before s16" value=Optional() frame=(12.0, 130.0, 72.322265625, 20.0)
+S09PROBE EL type=9 id= label="s16 App information" value=Optional() frame=(12.0, 162.0, 378.0, 56.0)
+S09PROBE EL type=48 id=s16-taps label="s16 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 230.0, 190.28125, 20.0)
+S09PROBE s16 tap on type=9 "s16 App information": taps="s16 taps: on=0 off=0 info=1"
+S09PROBE ==== s17 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 160.0)
+S09PROBE EL type=48 id= label="Before s17" value=Optional() frame=(12.0, 130.0, 71.37890625, 20.0)
+S09PROBE EL type=9 id= label="s17 App information" value=Optional() frame=(12.0, 162.0, 48.0, 48.0)
+S09PROBE EL type=9 id= label="s17 App information" value=Optional() frame=(60.0, 162.0, 160.10921223958334, 48.0)
+S09PROBE EL type=48 id=s17-taps label="s17 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 222.0, 189.337890625, 20.0)
+S09PROBE s17 tap on type=9 "s17 App information": taps="s17 taps: on=0 off=0 info=1"
+S09PROBE s17 tap on type=9 "s17 App information": taps="s17 taps: on=0 off=0 info=1"
+S09PROBE ==== s18 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 160.0)
+S09PROBE EL type=48 id= label="Before s18" value=Optional() frame=(12.0, 130.0, 72.349609375, 20.0)
+S09PROBE EL type=9 id= label="s18 App information\ns18 App information" value=Optional() frame=(12.0, 162.0, 378.0, 48.0)
+S09PROBE EL type=48 id=s18-taps label="s18 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 222.0, 190.30859375, 20.0)
+S09PROBE s18 tap on type=9 "s18 App information\ns18 App information": taps="s18 taps: on=0 off=0 info=1"
+S09PROBE ==== s19 start
+S09PROBE EL type=9 id= label="Back" value=Optional() frame=(4.0, 66.0, 48.0, 48.0)
+S09PROBE EL type=48 id= label="S09 probe" value=Optional() frame=(152.03173828125, 76.0, 97.9365234375, 28.0)
+S09PROBE EL type=46 id= label="" value=Optional() frame=(0.0, 118.0, 402.0, 186.0)
+S09PROBE EL type=48 id= label="Before s19" value=Optional() frame=(12.0, 130.0, 72.322265625, 20.0)
+S09PROBE EL type=48 id=s19-taps label="s19 taps: on=0 off=0 info=0" value=Optional() frame=(12.0, 248.0, 190.28125, 20.0)
+S09PROBE EL type=1 id= label="s19 Kitchen light" value=Optional() frame=(12.0, 162.0, 378.0, 74.0)
+S09PROBE EL type=9 id= label="s19 On" value=Optional() frame=(12.0, 188.0, 94.85660807291667, 48.0)
+S09PROBE EL type=9 id= label="s19 Off" value=Optional() frame=(114.85660807291667, 188.0, 97.16807047526042, 48.0)
+S09PROBE s19 tap on type=1 "s19 Kitchen light": taps="s19 taps: on=0 off=1 info=0"
+S09PROBE s19 tap on type=9 "s19 On": taps="s19 taps: on=1 off=0 info=0"
+S09PROBE s19 tap on type=9 "s19 Off": taps="s19 taps: on=0 off=1 info=0"
+Test Case '-[RunnerUITests.ProbeS09UITests testTree]' passed (545.532 seconds).
+== testKeys
+S09PROBE s07 1 Tab(s) then Enter: taps="s07 taps: on=0 off=0 info=0"
+S09PROBE s07 2 Tab(s) then Enter: taps="s07 taps: on=1 off=0 info=0"
+S09PROBE s07 3 Tab(s) then Enter: taps="s07 taps: on=0 off=1 info=0"
+S09PROBE s07 2 Tab(s) then Space: taps="s07 taps: on=1 off=0 info=0"
+S09PROBE s08 1 Tab(s) then Enter: taps="s08 taps: on=0 off=0 info=0"
+S09PROBE s08 2 Tab(s) then Enter: taps="s08 taps: on=1 off=0 info=0"
+S09PROBE s08 3 Tab(s) then Enter: taps="s08 taps: on=0 off=1 info=0"
+S09PROBE s08 2 Tab(s) then Space: taps="s08 taps: on=1 off=0 info=0"
+S09PROBE s10 1 Tab(s) then Enter: taps="s10 taps: on=0 off=0 info=0"
+S09PROBE s10 2 Tab(s) then Enter: taps="s10 taps: on=1 off=0 info=0"
+S09PROBE s10 3 Tab(s) then Enter: taps="s10 taps: on=0 off=1 info=0"
+S09PROBE s10 2 Tab(s) then Space: taps="s10 taps: on=1 off=0 info=0"
+S09PROBE s12 1 Tab(s) then Enter: taps="s12 taps: on=0 off=0 info=0"
+S09PROBE s12 2 Tab(s) then Enter: taps="s12 taps: on=1 off=0 info=0"
+S09PROBE s12 3 Tab(s) then Enter: taps="s12 taps: on=0 off=1 info=0"
+S09PROBE s12 2 Tab(s) then Space: taps="s12 taps: on=1 off=0 info=0"
+S09PROBE s13 1 Tab(s) then Enter: taps="s13 taps: on=0 off=0 info=0"
+S09PROBE s13 2 Tab(s) then Enter: taps="s13 taps: on=1 off=0 info=0"
+S09PROBE s13 3 Tab(s) then Enter: taps="s13 taps: on=0 off=1 info=0"
+S09PROBE s13 2 Tab(s) then Space: taps="s13 taps: on=1 off=0 info=0"
+S09PROBE s15 1 Tab(s) then Enter: taps="s15 taps: on=0 off=0 info=0"
+S09PROBE s15 2 Tab(s) then Enter: taps="s15 taps: on=0 off=0 info=1"
+S09PROBE s15 3 Tab(s) then Enter: taps="s15 taps: on=0 off=0 info=0"
+S09PROBE s15 2 Tab(s) then Space: taps="s15 taps: on=0 off=0 info=1"
+S09PROBE s16 1 Tab(s) then Enter: taps="s16 taps: on=0 off=0 info=0"
+S09PROBE s16 2 Tab(s) then Enter: taps="s16 taps: on=0 off=0 info=1"
+S09PROBE s16 3 Tab(s) then Enter: taps="s16 taps: on=0 off=0 info=0"
+S09PROBE s16 2 Tab(s) then Space: taps="s16 taps: on=0 off=0 info=1"
+S09PROBE s17 1 Tab(s) then Enter: taps="s17 taps: on=0 off=0 info=0"
+S09PROBE s17 2 Tab(s) then Enter: taps="s17 taps: on=0 off=0 info=1"
+S09PROBE s17 3 Tab(s) then Enter: taps="s17 taps: on=0 off=0 info=1"
+S09PROBE s17 2 Tab(s) then Space: taps="s17 taps: on=0 off=0 info=1"
+S09PROBE s18 1 Tab(s) then Enter: taps="s18 taps: on=0 off=0 info=0"
+S09PROBE s18 2 Tab(s) then Enter: taps="s18 taps: on=0 off=0 info=1"
+S09PROBE s18 3 Tab(s) then Enter: taps="s18 taps: on=0 off=0 info=1"
+S09PROBE s18 2 Tab(s) then Space: taps="s18 taps: on=0 off=0 info=1"
+Test Case '-[RunnerUITests.ProbeS09UITests testKeys]' passed (399.621 seconds).
+== testVoiceOver
+S09PROBE VO s01 walk: S09 probe / Before s01 / s01 City Boston / s01 Population 675,647 / s01 taps: on=0 off=0 info=0
+S09PROBE VO s02 walk: S09 probe / Before s02 / s02 City / s02 Population / Boston / 675,647 / s02 taps: on=0 off=0 info=0
+S09PROBE VO s03 walk: S09 probe / Before s03 / s03 City / s03 Population / Boston / 675,647 / s03 taps: on=0 off=0 info=0
+S09PROBE VO s04 walk: S09 probe / Before s04 / s04 City Boston / s04 Population 675,647 / s04 taps: on=0 off=0 info=0
+S09PROBE VO s05 walk: S09 probe / Before s05 / s05 City Boston / s05 Population 675,647 / s05 taps: on=0 off=0 info=0
+S09PROBE VO s06 walk: S09 probe / Before s06 / s06 Distance 6 kilometres / s06 taps: on=0 off=0 info=0
+S09PROBE VO s07 walk: S09 probe / Before s07 / s07 Kitchen light / s07 On Button / s07 Off Button / s07 taps: on=0 off=0 info=0
+S09PROBE VO s08 walk: S09 probe / Before s08 / s08 Kitchen light / s08 On Button / s08 Off Button / s08 taps: on=0 off=0 info=0
+S09PROBE VO s09 walk: S09 probe / Before s09 / s09 Kitchen light / s09 On Button / s09 Off Button / s09 taps: on=0 off=0 info=0
+S09PROBE VO s10 walk: S09 probe / Before s10 / s10 Kitchen light / s10 On Button / s10 Off Button / s10 taps: on=0 off=0 info=0
+S09PROBE VO s11 walk: S09 probe / Before s11 / s11 Kitchen light / s11 Kitchen light / s11 On Button / s11 Off Button / s11 taps: on=0 off=0 info=0
+S09PROBE VO s12 walk: S09 probe / Before s12 / s12 Kitchen light s12 On s12 Off Button / s12 taps: on=0 off=0 info=0
+S09PROBE VO s13 walk: S09 probe / Before s13 / s13 Kitchen light / s13 On Button / s13 Off Button / s13 taps: on=0 off=0 info=0
+S09PROBE VO s14 walk: S09 probe / Before s14 / s14 Kitchen light / s14 Kitchen light / s14 On Button / s14 Off Button / s14 taps: on=0 off=0 info=0
+S09PROBE VO s15 walk: S09 probe / Before s15 / s15 App information Button / s15 taps: on=0 off=0 info=0
+S09PROBE VO s16 walk: S09 probe / Before s16 / s16 App information Button / s16 taps: on=0 off=0 info=0
+S09PROBE VO s17 walk: S09 probe / Before s17 / s17 App information Button / s17 App information Button / s17 taps: on=0 off=0 info=0
+S09PROBE VO s18 walk: S09 probe / Before s18 / s18 App information s18 App information Button / s18 taps: on=0 off=0 info=0
+S09PROBE VO s19 walk: S09 probe / Before s19 / s19 Kitchen light / s19 On Button / s19 Off Button / s19 taps: on=0 off=0 info=0
+Test Case '-[RunnerUITests.ProbeS09UITests testVoiceOver]' passed (313.576 seconds).

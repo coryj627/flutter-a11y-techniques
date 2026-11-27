@@ -1,0 +1,110 @@
+// S09 native iOS comparison (throwaway, not committed; kept as
+// docs/evidence/probes/s09/ProbeS09NativeUITests.swift.txt). Drives the
+// separate native app NativeGroups (NativeGroups.swift.txt, installed by
+// ios_native.sh.txt) by its bundle identifier, and then the Runner's own
+// S09 good-named-group, the same way:
+//
+// - the elements of one snapshot;
+// - with VoiceOver on, a tap on "Before" (which puts VoiceOver's cursor
+//   there), then moving forward to the end label: into, through, and out of
+//   the group;
+// - with VoiceOver on, a tap on the first button, which puts the cursor
+//   straight on it, and every raw poll of currentSpeech() for three seconds
+//   after it (the service keeps returning the last utterance while nothing
+//   new is said, so a reading is only taken as new once it differs from
+//   the one before the tap).
+import XCTest
+
+final class ProbeS09NativeUITests: XCTestCase {
+  func log(_ s: String) { print("S09PROBE \(s)") }
+
+  func testNative() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    func current() -> String { norm((try? vo.currentSpeech().utterance) ?? "(none)") }
+    func polls(after previous: String) -> String {
+      var out: [String] = []
+      for _ in 0..<12 {
+        usleep(250_000)
+        out.append(current())
+      }
+      let first = out.firstIndex { $0 != previous }
+      return "previous \"\(previous)\"; polls: \(out.joined(separator: " | ")); first new: \(first.map { out[$0] } ?? "(none)")"
+    }
+
+    func run(_ app: XCUIApplication, id: String, before: XCUIElement, first: XCUIElement, endPrefix: String, launch: () -> Void) throws {
+      launch()
+      guard before.waitForExistence(timeout: 30) else {
+        log("\(id): did not open")
+        return
+      }
+      sleep(1)
+      if let snap = try? app.snapshot() {
+        var out: [String] = []
+        func walk(_ s: XCUIElementSnapshot, _ depth: Int) {
+          if !s.label.isEmpty || s.elementType == .button {
+            out.append("\(String(repeating: ".", count: depth))type=\(s.elementType.rawValue) \(s.label.debugDescription)")
+          }
+          for c in s.children { walk(c, depth + 1) }
+        }
+        walk(snap, 0)
+        log("\(id) elements: \(out.joined(separator: " | "))")
+      }
+      try vo.enable()
+      before.tap()
+      sleep(1)
+      var walk = ["tap on Before: " + current()]
+      for _ in 0..<10 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix(endPrefix) { break }
+      }
+      log("VO \(id) walk from a tap on Before: \(walk.joined(separator: " / "))")
+      // Straight onto the first button: from Before again, so that the
+      // reading before the tap is known.
+      before.tap()
+      sleep(1)
+      let previous = current()
+      first.tap()
+      log("VO \(id) tap on the first button: \(polls(after: previous))")
+      // And on along from it, out of the group.
+      var on: [String] = []
+      for _ in 0..<4 {
+        let s = say()
+        on.append(s)
+        if s.hasPrefix(endPrefix) { break }
+      }
+      log("VO \(id) forward from the first button: \(on.joined(separator: " / "))")
+      try vo.disable()
+      app.terminate()
+    }
+
+    for (arg, id) in [("uikit", "n11"), ("swiftui", "n12"), ("plain", "n13")] {
+      let app = XCUIApplication(bundleIdentifier: "dev.fluttera11y.s09nativegroups")
+      try run(app, id: "native \(id) (\(arg))", before: app.staticTexts["Before \(id)"],
+              first: app.buttons["\(id) On"], endPrefix: "\(id) end") {
+        app.terminate()
+        app.launchArguments = [arg]
+        app.launch()
+      }
+    }
+
+    // The Runner's good-named-group, the same way. "Before" is the example's
+    // "Example" heading, and the end is its status line.
+    let runner = XCUIApplication()
+    let heading = runner.descendants(matching: .any).matching(NSPredicate(format: "label == 'Example'")).firstMatch
+    let on = runner.descendants(matching: .any)["s09-good-named-group-on"]
+    try run(runner, id: "flutter good-named-group", before: heading, first: on, endPrefix: "Light:") {
+      runner.terminate()
+      runner.open(URL(string: "fluttera11y:///t/S09/good-named-group")!)
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}
