@@ -444,23 +444,26 @@ hidden button was not measured: the walks move with VoiceOver's own
 `next`, not Tab. The ornaments' stops hold the characters as VoiceOver's
 last phrase gives them; how the voice pronounced them is not in it.
 
-**The web VoiceOver transcript must be recorded again.** The first
+**The web VoiceOver transcript was recorded again.** The first
 recording logged a complete walk only from the "Example" heading on, and
 the re-judging test put the screen's own stops back from today's
 expectations, so it could not show which screen a row came from: fourteen
 copies of one row would have passed (Codex, review of 7328954). The
 VoiceOver spec now logs every try whole, and the re-judging test judges
-only what a row recorded, so the committed transcript, in the old form,
-fails that test until it is recorded again. It is kept as it was recorded
+only what a row recorded. The first recording is kept as it was committed
 in `docs/evidence/probes/s12/voiceover-web-round1-pass.md.txt`.
 The evidence run after the review (2026-11-27) passed the Android tree
 tests, TalkBack (every row a whole-utterance row, right on its first walk),
 the iOS tree tests (the judge's made-up walks among them), and VoiceOver on
 iOS (each walk judged whole against its own screen; the transcript now
-shows the whole walk); the web layer failed on that one test alone, as it
-must until the web transcript is recorded again. Nothing
-about what VoiceOver read is in doubt: the readings above are that
-recording's.
+shows the whole walk); its web layer failed on the re-judging test alone,
+against the first recording's old form. The principal then recorded the
+web transcript again, 2026-11-27 (`docs/evidence/S12/voiceover-web.md`):
+14 walks of 14, every one complete on its first walk in Chromium and
+WebKit, each row the whole walk, from "heading level 1 <title>" through
+the description, a bad example's defect, "heading level 2 Example", to
+the expected list, which was read as in the first recording. No walk had
+an empty stop or a help message. The re-judging test passes on it.
 
 What the tests skip or cannot see, and what each gives up:
 
