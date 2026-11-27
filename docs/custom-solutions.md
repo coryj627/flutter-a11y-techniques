@@ -90,13 +90,14 @@ example is added without a decision.
 | [S03 Decorative images](#s03-decorative-images) | 5 | 0 | 0 | 5 |
 | [S04 Functional images](#s04-functional-images) | 6 | 3 | 0 | 3 |
 | [S05 Headings](#s05-headings) | 2 | 0 | 0 | 2 |
+| [S10 Content group replacement](#s10-content-group-replacement) | 3 | 0 | 0 | 3 |
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 125 | 51 | 12 | 62 |
+| All | 128 | 51 | 12 | 65 |
 
 ## C01 Button
 
@@ -399,6 +400,16 @@ Nothing flagged.
 | --- | --- | --- | --- | --- | --- |
 | `good-levels` | Nothing: `Semantics(header: true, headingLevel:)` | `Semantics.headingLevel` | none | R1, R2, R4: iOS Headings, Android Compose Heading Semantics, Android View Heading Semantics, MDN heading elements | not custom |
 | `good-cupertino` | Nothing: `Semantics(header: true, headingLevel: 3)` as a `CupertinoListSection` header | `CupertinoListSection` | The header is not a heading ([FL-014](flutter-limitations.md#fl-014)), filled with the documented property | R1: iOS Headings, Android Compose Heading Semantics, Android View Heading Semantics | not custom |
+
+## S10 Content group replacement
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-exclude-semantics` | Nothing: `Semantics(label:, excludeSemantics: true)` round the rating's pieces, the documented property for replacing all child semantics with one node, its label worked out from the shown values; a `TextButton` with a focus outline through its own `style` | `Semantics.excludeSemantics` | A faint focus tint on a `TextButton` ([FL-430](flutter-limitations.md#fl-430)), filled with its `style` | R1, R2, R3: Android View Content Group Replacement, Android Compose Content Group Replacement, Flutter's Semantics.excludeSemantics documentation | not custom |
+| `good-hidden-pieces` | Nothing: `MergeSemantics` round `Semantics(label:)`, with each piece in `ExcludeSemantics` | `MergeSemantics`, `ExcludeSemantics` | none | R1, R2: Android Compose Content Group Replacement | not custom |
+| `good-stars` | Nothing: `Semantics(label:, excludeSemantics: true)` round star `Icon`s and two texts | `Semantics.excludeSemantics` | none | R1, R2: Android View Content Group Replacement, Android Compose Content Group Replacement | not custom |
 
 ## S13 Roles and traits
 
