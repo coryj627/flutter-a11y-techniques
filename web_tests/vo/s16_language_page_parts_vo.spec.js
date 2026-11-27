@@ -28,15 +28,17 @@
 // heading of a complete walk. The second
 // (docs/evidence/probes/s16/voiceover-web-round2-pass.md.txt) logged every
 // walk whole and passed, before the walk kept its unchanged reads and
-// witnessed its end; it has no end or unresolved-reads rows.
+// witnessed its end; it has no end or unresolved-reads rows. The third
+// (voiceover-web-round3-pass.md.txt) had them, and passed, before the walk
+// captured its start on Back; it has no start rows.
 // Each test opens its example in a page of its own, from a fresh load, so
 // that bad-override's French (FL-360) does not reach another example.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
 import {
-  EMPTY_STOP, EXPECTED_STOPS, NO_STOPS, collectWalk, judgeCollectedWalk, runWalks, screenStops, unresolvedText,
-  witnessText,
+  EMPTY_STOP, EXPECTED_STOPS, NO_STOPS, collectWalk, judgeCollectedWalk, runWalks, screenStops, startText,
+  unresolvedText, witnessText,
 } from './s16_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
@@ -66,7 +68,9 @@ async function walkOnce(page, voiceOver, browserName, max = 40) {
     next: () => voiceOver.next(),
     previous: () => voiceOver.previous(),
     capture,
-    start: await cursorBounds(),
+    // The capture before the first move, on Back, which the first move is
+    // compared with like every other.
+    start: await capture(),
     max,
   });
 }
@@ -92,13 +96,14 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
           // example, try, and every stop it read. An empty phrase is written
           // "(empty)" and a walk with no stops "(nothing)". A walk that read
           // its end witness logs it on a row of its own,
-          // `<slug>-walk-<n>-end`, and every walk logs its unresolved
-          // reads, `<slug>-walk-<n>-unresolved` ("none" or each).
+          // `<slug>-walk-<n>-end`, and every walk logs its start capture,
+          // `<slug>-walk-<n>-start`, and its unresolved reads, `<slug>-walk-<n>-unresolved` ("none" or each).
           // judgeTranscript in s16_vo_walks.js reads them back, and
           // web_tests/s16_language_page_parts.spec.js judges the committed
           // transcript again from these rows alone.
           const shown = stops.map((s) => (s === '' ? EMPTY_STOP : s)).join(' / ') || NO_STOPS;
           console.log(`S16VO ${browserName} ${slug}-walk-${walk} | ${shown} (${judged.verdict}: ${judged.reason})`);
+          console.log(`S16VO ${browserName} ${slug}-walk-${walk}-start | ${startText(latest.start)}`);
           if (latest.witness) console.log(`S16VO ${browserName} ${slug}-walk-${walk}-end | ${witnessText(latest.witness)}`);
           console.log(`S16VO ${browserName} ${slug}-walk-${walk}-unresolved | ${unresolvedText(latest.unresolved)}`);
         },

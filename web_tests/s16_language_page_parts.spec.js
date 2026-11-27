@@ -13,7 +13,7 @@
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
 import {
-  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, collectWalk, endRow, helpRole, judgeCollectedWalk, judgeExampleWalk,
+  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, collectWalk, endRow, helpRole, judgeCollectedWalk, judgeExampleWalk, startRow,
   judgeTranscript, runWalks, screenStops, spokenRole, transcriptRow, unresolvedRow,
 } from './vo/s16_vo_walks.js';
 import { readFileSync } from 'node:fs';
@@ -387,7 +387,8 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
   const expected = EXPECTED_STOPS[slug];
   const words = [...own, EXAMPLE_HEADING, ...expected];
   const at = (i) => `${10 + i}, ${100 + 20 * i}, 300, ${118 + 20 * i}`;
-  const START = '10, 60, 300, 78';
+  // The capture before the first move: the walk begins on Back.
+  const START = { phrase: 'Back button', position: '10, 60, 300, 78' };
   /** A screen of `elements` ({ phrase, position }) and a capture rule. */
   const drive = (elements, reads = (cursor, el, count) => el, max = 40) => {
     let cursor = -1;
@@ -534,6 +535,38 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
     }
   });
 
+  // The fourth review's reproduction: the first capture reads a wrong title
+  // at the start's bounds (Back's, which had not changed yet). Compared with
+  // the start capture, its words are new, so it is a stop, judged wrong.
+  test('a wrong first title at the start bounds is a stop, judged wrong, not a gap', async () => {
+    const atStart = (c, el, n) => (n === 1 ? { phrase: 'heading level 1 Passage not marked', position: START.position } : el);
+    const elements = [{ phrase: 'x', position: START.position }, ...screen.slice(1)];
+    const walk = await drive(elements, atStart);
+    expect(walk.unresolved).toEqual([]);
+    expect(walk.stops[0]).toBe('heading level 1 Passage not marked');
+    expect(judge(walk).verdict).toBe('wrong');
+    // A first capture that repeats the start at its bounds is a gap, and
+    // the next stop the title: incomplete, walked again.
+    const repeat = await drive([{ phrase: 'x', position: START.position }, ...screen],
+      (c, el, n) => (n === 1 ? START : el));
+    expect(repeat.unresolved).toEqual([{ after: 0, phrase: START.phrase, position: START.position }]);
+    expect(judge(repeat).verdict).toBe('incomplete');
+    // No unresolved read carries words other than the previous stop's.
+    for (const w of [walk, repeat]) {
+      for (const u of w.unresolved) expect([w.stops[u.after - 1] ?? START.phrase, '']).toContain(u.phrase);
+    }
+  });
+
+  test('in the retry loop a wrong first title at the start bounds ends the example, and a clean retry is never made', async () => {
+    const atStart = (c, el, n) => (n === 1 ? { phrase: 'heading level 1 Passage not marked', position: START.position } : el);
+    const walks = [await drive([{ phrase: 'x', position: START.position }, ...screen.slice(1)], atStart), await drive(screen)];
+    let i = 0;
+    let latest;
+    const result = await runWalks(async () => { latest = walks[i++]; return latest; }, () => judge(latest));
+    expect(result.verdict).toBe('wrong');
+    expect(i).toBe(1);
+  });
+
   test('in the retry loop a wrong walk with a gap ends the example, and a clean walk after it is never made', async () => {
     const wrongTitle = [{ phrase: 'heading level 1 Passage not marked', position: at(0) }, ...screen.slice(1)];
     for (const as of ['stale', 'empty']) {
@@ -582,13 +615,15 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     const w = whole(slug);
     return { back: { phrase: w.at(-2), position: '10, 300, 300, 318' }, forward: { phrase: w.at(-1), position: '10, 320, 300, 338' } };
   };
+  const BACK = { phrase: 'Back button', position: '10, 60, 300, 78' };
   const rowsOf = (slug, n = 1) => [transcriptRow(slug, n, whole(slug), 'complete', 'the whole screen, every stop in its place'),
+    startRow(slug, n, BACK),
     endRow(slug, n, witness(slug)), unresolvedRow(slug, n, [])];
   const section = (browser, rows) => ['', `## ${browser}`, '', '| Example | Spoken, in order |', '| --- | --- |', ...rows];
   const transcript = (rowsFor) => ['# S16 Language of page and parts: VoiceOver transcript (web, macOS)', '',
     'Result: PASS', ...BROWSERS.flatMap((b) => section(b, rowsFor(b)))].join('\n');
   const right = () => Object.keys(EXAMPLE_SCREENS).flatMap((slug) => rowsOf(slug));
-  const short = (slug) => [transcriptRow(slug, 1, whole(slug).slice(0, 3), 'incomplete', 'cut short'), unresolvedRow(slug, 1, [])];
+  const short = (slug) => [transcriptRow(slug, 1, whole(slug).slice(0, 3), 'incomplete', 'cut short'), startRow(slug, 1, BACK), unresolvedRow(slug, 1, [])];
 
   test('made-up transcripts: a right one passes, and each wrong one names its problem', () => {
     const passage = transcriptRow('good-passage', 1, whole('good-passage'), 'complete', 'x');
@@ -639,9 +674,33 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
         ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x))]), false],
       ['a first walk with an unresolved read, witnessed at its end, recorded incomplete though its stops judge complete, then complete', transcript(() => [
         transcriptRow('good-passage', 1, whole('good-passage'), 'incomplete', 'unresolved'),
+        startRow('good-passage', 1, BACK),
         endRow('good-passage', 1, witness('good-passage')),
         unresolvedRow('good-passage', 1, [{ after: 3, phrase: '', position: '1, 2, 3, 4' }]),
         ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x))]), true],
+      // The fourth review's cases: an unresolved read hides no words.
+      ['a first walk whose unresolved read after the start read a wrong title, then a clean walk', transcript(() => [
+        transcriptRow('good-passage', 1, whole('good-passage').slice(1), 'incomplete', 'unresolved'),
+        startRow('good-passage', 1, BACK),
+        endRow('good-passage', 1, witness('good-passage')),
+        unresolvedRow('good-passage', 1, [{ after: 0, phrase: 'heading level 1 Passage not marked', position: BACK.position }]),
+        ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x))]), false],
+      ['an unresolved read mid-walk whose words differ from the stop before it', transcript(() => [
+        transcriptRow('good-passage', 1, whole('good-passage'), 'incomplete', 'unresolved'),
+        startRow('good-passage', 1, BACK),
+        endRow('good-passage', 1, witness('good-passage')),
+        unresolvedRow('good-passage', 1, [{ after: 3, phrase: 'Extra', position: '1, 2, 3, 4' }]),
+        ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x))]), false],
+      ['an unresolved read after the start that repeats the start, then complete', transcript(() => [
+        transcriptRow('good-passage', 1, whole('good-passage'), 'incomplete', 'unresolved'),
+        startRow('good-passage', 1, BACK),
+        endRow('good-passage', 1, witness('good-passage')),
+        unresolvedRow('good-passage', 1, [{ after: 0, phrase: BACK.phrase, position: BACK.position }]),
+        ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x))]), true],
+      ['every start row removed', transcript(() => right().filter((r) => !r.includes('-start`'))), false],
+      ['a start row twice', transcript(() => [...right(), startRow('good-passage', 1, BACK)]), false],
+      ['a start row whose position is one word', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1-start`')
+        ? '| `good-passage-walk-1-start` | "Back button" at here |' : r))), false],
       ['a first walk with an unresolved read recorded complete, then complete', transcript(() => [
         transcriptRow('good-passage', 1, whole('good-passage'), 'complete', 'x'),
         unresolvedRow('good-passage', 1, [{ after: 3, phrase: '', position: '1, 2, 3, 4' }]),
@@ -676,6 +735,14 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
       expect(problems.filter((p) => / has no end witness$/.test(p)), file).toHaveLength(14);
       expect(problems.filter((p) => / has no unresolved-reads row$/.test(p)), file).toHaveLength(14);
     }
+  });
+
+  test('the third recording, made before the walk recorded its start capture, fails for that alone', () => {
+    const text = readFileSync(new URL('../docs/evidence/probes/s16/voiceover-web-round3-pass.md.txt', import.meta.url), 'utf8');
+    const problems = judgeTranscript(text);
+    // Every pair lacks its start row, and nothing else is wrong with it.
+    expect(problems.filter((p) => / has no start row$/.test(p))).toHaveLength(14);
+    expect(problems).toHaveLength(14);
   });
 
   test('the committed recording (docs/evidence/S16/voiceover-web.md) is right, every browser and example once', () => {

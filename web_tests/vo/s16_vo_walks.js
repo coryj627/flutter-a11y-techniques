@@ -251,6 +251,7 @@ export const BOUNDS = /^-?\d+, -?\d+, -?\d+, -?\d+$/;
 const ROW = /^\| `([a-z-]+)-walk-(\d+)` \| (.*) \((complete|wrong|incomplete): (.*)\) \|$/;
 const END_ROW = /^\| `([a-z-]+)-walk-(\d+)-end` \| back "(.*)" at (.*) \/ forward "(.*)" at (.*) \|$/;
 const UNRESOLVED_ROW = /^\| `([a-z-]+)-walk-(\d+)-unresolved` \| (.*) \|$/;
+const START_ROW = /^\| `([a-z-]+)-walk-(\d+)-start` \| "(.*)" at (.*) \|$/;
 
 /**
  * Judges a committed web VoiceOver transcript (docs/evidence/S16/voiceover-web.md)
@@ -270,8 +271,12 @@ const UNRESOLVED_ROW = /^\| `([a-z-]+)-walk-(\d+)-unresolved` \| (.*) \|$/;
  *   walks, numbered 1, 2, … with no gap and no repeat, at most three, and
  *   nothing else may have any; so an empty transcript fails, and so do
  *   fourteen copies of one row;
- * - every walk must have its unresolved-reads row, once, which gives its
- *   gaps ("none", or each read "after stop K"), and the last walk its end
+ * - every walk must have its start row, once (`<slug>-walk-<n>-start`, the
+ *   capture before its first move, at cursor bounds), and its
+ *   unresolved-reads row, once, which gives its gaps ("none", or each read
+ *   "after stop K"); an unresolved read whose phrase is not empty and not
+ *   the phrase of the stop it came after (or of the start, after none)
+ *   hides words, and fails; and the last walk its end
  *   witness row: the move back read the stop before the last, not empty,
  *   at a position other than the move forward's, which read the last stop;
  *   both positions must be cursor bounds (BOUNDS). An earlier walk has an
@@ -293,6 +298,7 @@ export function judgeTranscript(text) {
   const walks = new Map(); // "browser slug" -> Map(n -> { stops, was })
   const ends = new Map(); // "browser slug n" -> the end witness
   const unresolvedRows = new Map(); // "browser slug n" -> "none" or the reads
+  const starts = new Map(); // "browser slug n" -> the start capture
   let browser = null;
   for (const line of text.split('\n')) {
     const section = /^## (\S+)$/.exec(line);
@@ -302,6 +308,21 @@ export function judgeTranscript(text) {
       continue;
     }
     if (!line.startsWith('| ') || line.startsWith('| Example |') || line.startsWith('| --- |')) continue;
+    const startRow = START_ROW.exec(line);
+    if (startRow) {
+      const [, slug, n, phrase, position] = startRow;
+      const key = `${browser} ${slug} ${n}`;
+      if (!BROWSERS.includes(browser) || !(slug in EXPECTED_STOPS)) {
+        problems.push(`a start row for an unknown browser or example: ${line}`);
+      } else if (!BOUNDS.test(position)) {
+        problems.push(`${browser} ${slug}: walk ${n}'s start row has a position that is not cursor bounds: ${line}`);
+      } else if (starts.has(key)) {
+        problems.push(`${browser} ${slug}: the start of walk ${n} appears twice`);
+      } else {
+        starts.set(key, { phrase, position });
+      }
+      continue;
+    }
     const unresolvedRow = UNRESOLVED_ROW.exec(line);
     if (unresolvedRow) {
       const [, slug, n, reads] = unresolvedRow;
@@ -372,8 +393,20 @@ export function judgeTranscript(text) {
         const reads = unresolvedRows.get(`${key} ${n}`);
         unresolvedRows.delete(`${key} ${n}`);
         if (reads === undefined) problems.push(`${key}: walk ${n} has no unresolved-reads row`);
-        const gaps = reads === undefined ? [] : gapsOf(reads);
-        if (gaps === null) problems.push(`${key}: walk ${n}'s unresolved-reads row is malformed: ${reads}`);
+        const start = starts.get(`${key} ${n}`);
+        starts.delete(`${key} ${n}`);
+        if (!start) problems.push(`${key}: walk ${n} has no start row`);
+        const read = reads === undefined ? [] : readsOf(reads);
+        if (read === null) problems.push(`${key}: walk ${n}'s unresolved-reads row is malformed: ${reads}`);
+        // An unresolved read hides no words: its phrase is empty, or the
+        // phrase of the stop it came after (or of the start, after none).
+        for (const r of read ?? []) {
+          const before = r.after === 0 ? start?.phrase : stops[r.after - 1];
+          if (r.phrase !== '' && r.phrase !== before) {
+            problems.push(`${key}: walk ${n}'s unresolved read after stop ${r.after} read "${r.phrase}", where only "" or "${before}" is a gap: those words are a stop`);
+          }
+        }
+        const gaps = (read ?? []).map((r) => r.after);
         // The walk reached its end only if its end row is there and is a
         // witness: the move back read the stop before the last, not empty,
         // at a position other than the move forward's, which read the last.
@@ -389,7 +422,7 @@ export function judgeTranscript(text) {
         if (last && !end) problems.push(`${key}: the last walk, ${n}, has no end witness`);
         // Every walk judged again with judgeWalk, its gaps included: a wrong
         // verdict always wins, so a wrong earlier walk fails the transcript.
-        const judged = judgeWalk(stops, witnessed, EXPECTED_STOPS[slug], screenStops(slug), undefined, gaps ?? []).verdict;
+        const judged = judgeWalk(stops, witnessed, EXPECTED_STOPS[slug], screenStops(slug), undefined, gaps).verdict;
         if (last && (was !== 'complete' || judged !== 'complete')) {
           problems.push(`${key}: the last walk, ${n}, was recorded ${was} and judges ${judged}`);
         }
@@ -401,6 +434,7 @@ export function judgeTranscript(text) {
   }
   for (const key of ends.keys()) problems.push(`${key}: an end witness for a walk that does not exist`);
   for (const key of unresolvedRows.keys()) problems.push(`${key}: an unresolved-reads row for a walk that does not exist`);
+  for (const key of starts.keys()) problems.push(`${key}: a start row for a walk that does not exist`);
   return problems;
 }
 
@@ -445,8 +479,9 @@ export function transcriptRow(slug, n, stops, verdict, reason) {
 
 /**
  * Walks forward with `next()` (one move), reading `capture()` (resolves to
- * `{ phrase, position }`) after each, from `start` (the cursor's position
- * before the first move); at most `max` moves. At the apparent end, moves
+ * `{ phrase, position }`) after each, from `start`, the capture before the
+ * first move (`{ phrase, position }`, where the walk begins, on Back); at
+ * most `max` moves. At the apparent end, moves
  * back with `previous()` and forward again with `next()`, capturing after
  * each (the witness). Resolves to `{ stops, positions, reachedEnd, witness,
  * problem, unresolved }`: `witness` is `{ back, forward }`, each a capture,
@@ -457,14 +492,19 @@ export async function collectWalk({ next, previous, capture, start, max = 40 }) 
   const stops = [];
   const positions = [];
   const unresolved = [];
-  let position = start;
+  let position = start.position;
   let unmoved = 0;
   let pending = null;
-  const done = (reachedEnd, witness, problem) => ({ stops, positions, reachedEnd, witness, problem, unresolved });
+  const done = (reachedEnd, witness, problem) => ({ stops, positions, reachedEnd, witness, problem, unresolved, start });
   for (let i = 0; i < max; i++) {
     await next();
     const { phrase, position: now } = await capture();
-    const spokeAnew = phrase !== '' && stops.length > 0 && phrase !== stops[stops.length - 1];
+    // Compared with the stop before it, or with the start capture before
+    // the first stop: a changed, non-empty phrase is a stop even where the
+    // cursor's bounds did not change, so an unresolved read is only ever an
+    // empty phrase or the previous one, and hides no words.
+    const previousPhrase = stops.length > 0 ? stops[stops.length - 1] : start.phrase;
+    const spokeAnew = phrase !== '' && phrase !== previousPhrase;
     if (now === position && !spokeAnew) {
       unmoved++;
       if (unmoved < 2) {
@@ -511,15 +551,15 @@ export function judgeCollectedWalk(walk, expected, screen) {
 }
 
 /**
- * The gaps of an unresolved-reads row's text: [] for "none", the K of each
- * "after stop K: ..." read otherwise, or null when the text is neither.
+ * The reads of an unresolved-reads row's text: [] for "none", each
+ * "after stop K: "phrase" at position" as `{ after, phrase, position }`
+ * otherwise, or null when the text is neither.
  */
-export function gapsOf(text) {
+export function readsOf(text) {
   if (text === 'none') return [];
-  const reads = text.split(' ; ');
-  const gaps = reads.map((r) => /^after stop (\d+): ".*" at (.*)$/.exec(r));
-  if (gaps.some((g) => !g || !BOUNDS.test(g[2]))) return null;
-  return gaps.map((g) => Number(g[1]));
+  const reads = text.split(' ; ').map((r) => /^after stop (\d+): "(.*)" at (.*)$/.exec(r));
+  if (reads.some((g) => !g || !BOUNDS.test(g[3]))) return null;
+  return reads.map((g) => ({ after: Number(g[1]), phrase: g[2], position: g[3] }));
 }
 
 /**
@@ -614,6 +654,16 @@ export function witnessText(witness) {
   if (!witness) return 'no witness';
   const side = (w) => `"${w.phrase}" at ${w.position}`;
   return `back ${side(witness.back)} / forward ${side(witness.forward)}`;
+}
+
+/** A walk's start row: the capture before its first move. */
+export function startRow(slug, n, start) {
+  return `| \`${slug}-walk-${n}-start\` | "${start.phrase}" at ${start.position} |`;
+}
+
+/** The transcript row's text for a walk's start capture. */
+export function startText(start) {
+  return `"${start.phrase}" at ${start.position}`;
 }
 
 /** A walk's end witness row, as the VoiceOver spec logs it and the tool writes it. */
