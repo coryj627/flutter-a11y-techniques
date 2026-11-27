@@ -1,0 +1,358 @@
+// S08 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s08/probe.dart.txt): what lists built from the SDK
+// expose. One fixture per route, `/p01` to `/p22`; `/` lists nothing.
+//
+// Each fixture sits on a screen laid out as the app's own technique screens
+// are (a `Scaffold` whose body is a `SingleChildScrollView` round a
+// `Column`), between a "Before pNN" text and a "pNN end" text, which has the
+// test identifier `pNN-end`. Every item's text starts with the fixture's id.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      onGenerateRoute: (settings) {
+        final name = (settings.name ?? '/').replaceFirst('/', '');
+        final page = fixtures.containsKey(name)
+            ? FixtureScreen(id: name)
+            : const Scaffold(body: Text('S08 probe'));
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => page,
+        );
+      },
+    );
+  }
+}
+
+typedef Build = Widget Function(String id, void Function() tap);
+
+const groceries = ['Milk', 'Eggs', 'Bread'];
+const steps = ['Fork the repository', 'Make the change', 'Open a pull request'];
+
+List<Widget> texts(String id, {String bullet = ''}) => [
+  for (final g in groceries) Text('$bullet$id $g'),
+];
+
+Widget item(Widget child) =>
+    Semantics(role: SemanticsRole.listItem, child: child);
+
+Widget list(Widget child) => Semantics(role: SemanticsRole.list, child: child);
+
+Widget column(List<Widget> children) => Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  mainAxisSize: MainAxisSize.min,
+  children: children,
+);
+
+ListView shrunk(List<Widget> children) => ListView(
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  children: children,
+);
+
+Widget lazy(String id, {bool roles = false}) => SizedBox(
+  height: 200,
+  child: ListView.builder(
+    itemCount: 30,
+    itemBuilder: (context, i) {
+      final t = Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Text('$id Item ${i + 1}'),
+      );
+      return roles ? item(t) : t;
+    },
+  ),
+);
+
+final Map<String, (String, Build)> fixtures = {
+  'p01': (
+    'Column of three Text items with a bullet',
+    (id, tap) => column(texts(id, bullet: '• ')),
+  ),
+  'p02': (
+    'one Text with the items on lines of their own',
+    (id, tap) => Text([for (final g in groceries) '$id $g'].join('\n')),
+  ),
+  'p03': (
+    'Semantics(role: list) round a Column, Semantics(role: listItem) round each Text',
+    (id, tap) => list(column([for (final t in texts(id)) item(t)])),
+  ),
+  'p04': (
+    'Semantics(role: list) round a Column of plain Text',
+    (id, tap) => list(column(texts(id))),
+  ),
+  'p05': (
+    'Semantics(role: listItem) round each Text, no list round them',
+    (id, tap) => column([for (final t in texts(id)) item(t)]),
+  ),
+  'p06': (
+    'ListView(shrinkWrap, NeverScrollableScrollPhysics) of three Text',
+    (id, tap) => shrunk(texts(id)),
+  ),
+  'p07': (
+    'ListView of three Text in a SizedBox(height: 160): fits, does not scroll',
+    (id, tap) => SizedBox(height: 160, child: ListView(children: texts(id))),
+  ),
+  'p08': (
+    'ListView.builder of 30 Text in a SizedBox(height: 200): lazy',
+    (id, tap) => lazy(id),
+  ),
+  'p09': (
+    'Semantics(role: list) round p06, listItem round each Text',
+    (id, tap) => list(shrunk([for (final t in texts(id)) item(t)])),
+  ),
+  'p10': (
+    'Semantics(role: list) round p08, listItem round each item',
+    (id, tap) => list(lazy(id, roles: true)),
+  ),
+  'p11': (
+    'Column of three ListTile(title, subtitle), not tappable',
+    (id, tap) => column([
+      for (final g in groceries)
+        ListTile(title: Text('$id $g'), subtitle: Text('$id $g detail')),
+    ]),
+  ),
+  'p12': (
+    'ListView(shrinkWrap) of three ListTile(title, subtitle), not tappable',
+    (id, tap) => shrunk([
+      for (final g in groceries)
+        ListTile(title: Text('$id $g'), subtitle: Text('$id $g detail')),
+    ]),
+  ),
+  'p13': (
+    'ListView(shrinkWrap) of three ListTile(onTap)',
+    (id, tap) => shrunk([
+      for (final g in groceries) ListTile(title: Text('$id $g'), onTap: tap),
+    ]),
+  ),
+  'p14': (
+    'CupertinoListSection(header:) of three CupertinoListTile, not tappable',
+    (id, tap) => CupertinoListSection(
+      header: Text('$id Groceries'),
+      children: [
+        for (final g in groceries) CupertinoListTile(title: Text('$id $g')),
+      ],
+    ),
+  ),
+  'p15': (
+    'ordered: role list and listItem, the number in each Text',
+    (id, tap) => list(
+      column([
+        for (final (i, s) in steps.indexed) item(Text('${i + 1}. $id $s')),
+      ]),
+    ),
+  ),
+  'p16': (
+    'description list: a Column of term and description Text, plain',
+    (id, tap) => column([
+      Text('$id Weight'),
+      Text('$id 2 kg'),
+      Text('$id Colour'),
+      Text('$id Blue'),
+    ]),
+  ),
+  'p17': (
+    'description list: each term and description in a MergeSemantics row',
+    (id, tap) => column([
+      MergeSemantics(
+        child: Row(
+          spacing: 8,
+          children: [Text('$id Weight'), Text('$id 2 kg')],
+        ),
+      ),
+      MergeSemantics(
+        child: Row(
+          spacing: 8,
+          children: [Text('$id Colour'), Text('$id Blue')],
+        ),
+      ),
+    ]),
+  ),
+  'p18': (
+    'nested: role list > listItem with a role list of two inside > listItem',
+    (id, tap) => list(
+      column([
+        item(
+          column([
+            Text('$id Fruit'),
+            Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: list(
+                column([item(Text('$id Apple')), item(Text('$id Pear'))]),
+              ),
+            ),
+          ]),
+        ),
+        item(Text('$id Bread')),
+      ]),
+    ),
+  ),
+  'p19': (
+    'SliverList in a CustomScrollView(shrinkWrap, NeverScrollableScrollPhysics)',
+    (id, tap) => CustomScrollView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      slivers: [SliverList.list(children: texts(id))],
+    ),
+  ),
+  'p20': (
+    'ListView.separated(shrinkWrap) with a Divider between items',
+    (id, tap) => ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: groceries.length,
+      itemBuilder: (_, i) => Text('$id ${groceries[i]}'),
+      separatorBuilder: (_, _) => const Divider(),
+    ),
+  ),
+  'p21': (
+    'horizontal ListView of three Text in a SizedBox(height: 48)',
+    (id, tap) => SizedBox(
+      height: 48,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          for (final g in groceries)
+            Padding(padding: const EdgeInsets.all(12), child: Text('$id $g')),
+        ],
+      ),
+    ),
+  ),
+  'p22': (
+    'role list round a Column; each listItem holds two Text: a name and a quantity',
+    (id, tap) => list(
+      column([
+        for (final g in groceries)
+          item(
+            Row(spacing: 8, children: [Text('$id $g'), Text('$id 2 of $g')]),
+          ),
+      ]),
+    ),
+  ),
+  'p23': (
+    'role list round a Column of three ListTile(title, subtitle), each in a listItem',
+    (id, tap) => list(
+      column([
+        for (final g in groceries)
+          item(
+            ListTile(title: Text('$id $g'), subtitle: Text('$id $g detail')),
+          ),
+      ]),
+    ),
+  ),
+  'p24': (
+    'role list round a Column of three ListTile(onTap), each in a listItem',
+    (id, tap) => list(
+      column([
+        for (final g in groceries)
+          item(ListTile(title: Text('$id $g'), onTap: tap)),
+      ]),
+    ),
+  ),
+  'p25': (
+    'role list round a CupertinoListSection(header:), each CupertinoListTile in a listItem',
+    (id, tap) => list(
+      CupertinoListSection(
+        header: Text('$id Groceries'),
+        children: [
+          for (final g in groceries)
+            item(CupertinoListTile(title: Text('$id $g'))),
+        ],
+      ),
+    ),
+  ),
+  'p26': (
+    'role list round a Column; each listItem a MergeSemantics row of two Text',
+    (id, tap) => list(
+      column([
+        for (final g in groceries)
+          item(
+            MergeSemantics(
+              child: Row(
+                spacing: 8,
+                children: [Text('$id $g'), Text('$id 2 of $g')],
+              ),
+            ),
+          ),
+      ]),
+    ),
+  ),
+  'p27': (
+    'role list round a ListView(shrinkWrap) of plain Text, no listItem',
+    (id, tap) => list(shrunk(texts(id))),
+  ),
+  'p28': (
+    'p24 with explicitChildNodes: true on each listItem',
+    (id, tap) => list(
+      column([
+        for (final g in groceries)
+          Semantics(
+            role: SemanticsRole.listItem,
+            explicitChildNodes: true,
+            child: ListTile(title: Text('$id $g'), onTap: tap),
+          ),
+      ]),
+    ),
+  ),
+  'p29': (
+    'role list round a CupertinoListSection; each CupertinoListTile(onTap) in a listItem with explicitChildNodes',
+    (id, tap) => list(
+      CupertinoListSection(
+        header: Text('$id Groceries'),
+        children: [
+          for (final g in groceries)
+            Semantics(
+              role: SemanticsRole.listItem,
+              explicitChildNodes: true,
+              child: CupertinoListTile(title: Text('$id $g'), onTap: tap),
+            ),
+        ],
+      ),
+    ),
+  ),
+};
+
+class FixtureScreen extends StatefulWidget {
+  const FixtureScreen({super.key, required this.id});
+
+  final String id;
+
+  @override
+  State<FixtureScreen> createState() => _FixtureScreenState();
+}
+
+class _FixtureScreenState extends State<FixtureScreen> {
+  var taps = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final id = widget.id;
+    return Scaffold(
+      appBar: AppBar(title: Text('Probe $id')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 12,
+          children: [
+            Text('Before $id'),
+            fixtures[id]!.$2(id, () => setState(() => taps++)),
+            Semantics(identifier: '$id-end', child: Text('$id end taps=$taps')),
+          ],
+        ),
+      ),
+    );
+  }
+}

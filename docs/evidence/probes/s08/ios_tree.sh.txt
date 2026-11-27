@@ -1,0 +1,20 @@
+#!/bin/sh
+# S08 probe round 4 on iOS, under tool/with_devices.py, from the worktree
+# root (throwaway; kept as docs/evidence/probes/s08/ios_tree.sh.txt): the
+# full XCUITest hierarchy of S08's examples and of the native comparison
+# app. Installs NativeLists.app for the run and uninstalls it. Changes no
+# simulator setting.
+S=/private/tmp/claude-501/-Users-cory-dev-flutter-a11y-techniques--claude-worktrees-wave0-prep-51ac0e/18a0fc9d-6a75-4c6c-bf6e-8c96fa8f6ae7/scratchpad/s08eng
+xcrun simctl list devices booted | grep -i "iphone"
+xcrun simctl install booted "$S/native_ios/NativeLists.app" || exit 1
+cd ios || exit 1
+for t in testFlutterExamples testNative; do
+  echo "== $t"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/ProbeS08TreeUITests/$t" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep --line-buffered -E "S08PROBE|error:|passed|failed|skipped" | grep --line-buffered -v "Test Suite"
+done
+xcrun simctl terminate booted dev.fluttera11y.s08nativelists 2>/dev/null
+xcrun simctl uninstall booted dev.fluttera11y.s08nativelists
+exit 0

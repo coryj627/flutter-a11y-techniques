@@ -1,0 +1,99 @@
+"""S08 probe runner for Android (throwaway; kept as
+docs/evidence/probes/s08/probe_android.py.txt). Run under the device lock:
+
+  python3 tool/with_devices.py --label "probe S08 android" -- python3 <this> <repo>
+
+Installs the probe build (lib/probe.dart, built beforehand with
+`flutter build apk --debug -t lib/probe.dart` and
+`./gradlew app:assembleDebugAndroidTest -Ptarget=lib/probe.dart`) and its test
+APK, then runs ProbeS08Test with `am instrument`:
+
+- probe, nativeTree: without TalkBack; the S08PROBE log lines go in
+  android-tree.txt.
+- talkBackWalk, talkBackKeys: with TalkBack on through the project's own helper
+  (tool/talkback.py: run_with_talkback, which restores the device); the
+  speech per marker as parsed by tool/talkback.py's parse_speech goes in
+  android-talkback.md, the probe's own lines in android-talkback-markers.txt.
+"""
+import os
+import subprocess
+import sys
+import time
+
+ROOT = sys.argv[1]
+OUT = os.path.join(ROOT, "docs", "evidence", "probes", "s08")
+SCRATCH = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(ROOT, "tool"))
+import talkback  # noqa: E402
+from evidence_common import stop_android_tests  # noqa: E402
+
+SUFFIX = os.environ.get("SUFFIX", "")
+PKG = "dev.fluttera11y.flutter_a11y_techniques"
+APKS = [
+    os.path.join(ROOT, "build/app/outputs/flutter-apk/app-debug.apk"),
+    os.path.join(ROOT, "build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk"),
+]
+
+
+def instrument(method):
+    talkback.adb("logcat", "-c")
+    log_path = os.path.join(SCRATCH, f"android-{method}{SUFFIX}-logcat.txt")
+    with open(log_path, "w") as log:
+        reader = subprocess.Popen([talkback.ADB, "logcat"], stdout=log, stderr=subprocess.DEVNULL)
+        try:
+            run = subprocess.run(
+                [talkback.ADB, "shell", "am", "instrument", "-w", "-e", "class",
+                 f"{PKG}.ProbeS08Test#{method}", f"{PKG}.test/androidx.test.runner.AndroidJUnitRunner"],
+                capture_output=True, text=True, timeout=40 * 60)
+        finally:
+            time.sleep(2)
+            reader.terminate()
+            reader.wait()
+    print(method, run.stdout[-1500:])
+    stop_android_tests()
+    with open(log_path, errors="replace") as f:
+        return f.read()
+
+
+def keep(logs, name, header):
+    lines = [header]
+    for log in logs:
+        lines += [l.split("S08PROBE: ", 1)[-1] for l in log.splitlines() if "S08PROBE" in l]
+    with open(os.path.join(OUT, name), "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+def main():
+    os.makedirs(OUT, exist_ok=True)
+    if not stop_android_tests():
+        sys.exit("emulator not clean")
+    for apk in APKS:
+        print(talkback.adb("install", "-r", "-t", apk)[-200:])
+    device = (talkback.adb("shell", "getprop", "ro.build.version.release").strip(),
+              talkback.adb("shell", "wm", "size").strip().replace("\n", " "),
+              talkback.adb("shell", "wm", "density").strip().replace("\n", " "))
+    header = f"device: Android {device[0]}; {device[1]}; {device[2]}"
+    print(header)
+    methods = sys.argv[2].split(",") if len(sys.argv) > 2 else ["probe", "nativeTree", "talkBackWalk", "talkBackKeys"]
+    spoken_methods = [m for m in methods if m.startswith("talkBack")]
+    plain = [m for m in methods if m not in spoken_methods]
+    if plain:
+        keep([instrument(m) for m in plain], f"android-tree{SUFFIX}.txt", header)
+    if spoken_methods:
+        talkback.exit_on_termination_signals()
+        logs = talkback.run_with_talkback(lambda: [instrument(m) for m in spoken_methods])
+        spoken = {}
+        for log in logs:
+            spoken.update(talkback.parse_speech(log))
+        out = [header, "", "| Marker | TalkBack spoke |", "| --- | --- |"]
+        for ident, fragments in spoken.items():
+            out.append(f"| `{ident}` | {' / '.join(fragments) or '(nothing)'} |")
+        with open(os.path.join(OUT, f"android-talkback{SUFFIX}.md"), "w") as f:
+            f.write("\n".join(out) + "\n")
+        keep(logs, f"android-talkback-markers{SUFFIX}.txt", header)
+        print("\n".join(out))
+    talkback.adb("uninstall", f"{PKG}.test")
+
+
+if __name__ == "__main__":
+    main()

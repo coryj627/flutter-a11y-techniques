@@ -1,0 +1,144 @@
+// S08 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/s08/s08_probe.spec.js.txt with
+// s08probe.config.js.txt). For each fixture of lib/probe.dart: the
+// semantics elements between its "Before" and "end" texts, Chromium's own
+// accessibility tree over the DevTools protocol (role, name, and the
+// properties, setsize and posinset among them), and five Tabs. For the
+// lazy fixtures, the items in the page before and after the list is
+// scrolled to its end with the mouse wheel. Then plain HTML lists for
+// comparison.
+import { test } from '@playwright/test';
+
+const ids = Array.from({ length: 29 }, (_, i) => `p${String(i + 1).padStart(2, '0')}`);
+
+function log(...a) {
+  console.log('S08WEB', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-end"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+function clean(html) {
+  return html.replace(/ style="[^"]*"/g, '').replace(/ id="flt-semantic-node-\d+"/g, '');
+}
+
+async function axTree(page, context) {
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const byId = new Map(nodes.map((n) => [n.nodeId, n]));
+  const depth = (n) => {
+    let d = 0;
+    let p = n.parentId;
+    while (p && byId.get(p)) {
+      d++;
+      p = byId.get(p).parentId;
+    }
+    return d;
+  };
+  const out = [];
+  for (const n of nodes) {
+    if (n.ignored) continue;
+    const role = n.role?.value;
+    if (role === 'InlineTextBox') continue;
+    const name = n.name?.value ?? '';
+    const props = (n.properties ?? []).map((p) => `${p.name}:${JSON.stringify(p.value?.value)}`).join(',');
+    out.push(`${'  '.repeat(depth(n))}role=${role} name="${name}" props=${props}`);
+  }
+  await cdp.detach();
+  return out;
+}
+
+async function active(page) {
+  return page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e || !e.closest('flt-semantics-host')) return `(page: ${e?.tagName})`;
+    const role = e.getAttribute('role');
+    return `${e.tagName}${role ? `[role=${role}]` : ''} "${(e.getAttribute('aria-label') || e.textContent.trim()).slice(0, 60)}"`;
+  });
+}
+
+async function items(page, id) {
+  return page.evaluate((id) => {
+    const out = [];
+    for (const e of document.querySelectorAll('flt-semantics-host *')) {
+      const t = e.getAttribute('aria-label') || (e.children.length === 0 ? e.textContent.trim() : '');
+      if (t.startsWith(`${id} Item `)) out.push(t.replace(`${id} Item `, ''));
+    }
+    return out.join(',');
+  }, id);
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of ids) {
+  test(`probe ${id}`, async ({ page, context }) => {
+    await fresh(page, id);
+    const html = await page.evaluate((id) => {
+      const host = document.querySelector('flt-semantics-host');
+      const before = [...host.querySelectorAll('*')].find(
+        (e) => e.textContent.trim() === `Before ${id}` && e.children.length === 0,
+      );
+      const after = host.querySelector(`[flt-semantics-identifier="${id}-end"]`);
+      let a = before;
+      while (a.parentElement && !a.parentElement.contains(after)) a = a.parentElement;
+      const out = [];
+      for (let s = a.nextElementSibling; s && !s.contains(after); s = s.nextElementSibling) out.push(s.outerHTML);
+      return out;
+    }, id);
+    for (const h of html) log(id, 'element', clean(h));
+    for (const l of await axTree(page, context)) log(id, 'ax', l);
+    if (id === 'p08' || id === 'p10') {
+      log(id, 'items at the start:', await items(page, id));
+      const el = await page.evaluate(
+        (id) => {
+          const e = [...document.querySelectorAll('flt-semantics-host *')].find(
+            (x) => (x.getAttribute('aria-label') || (x.children.length === 0 ? x.textContent.trim() : '')) === `${id} Item 2`,
+          );
+          const r = e?.getBoundingClientRect();
+          return r ? { x: r.x + 20, y: r.y + 5 } : null;
+        },
+        id,
+      );
+      log(id, 'item 2 at', JSON.stringify(el));
+      if (el) {
+        await page.mouse.move(el.x, el.y);
+        for (let i = 0; i < 20; i++) {
+          await page.mouse.wheel(0, 200);
+          await page.waitForTimeout(100);
+        }
+        await page.waitForTimeout(800);
+        log(id, 'items after the wheel:', await items(page, id));
+        for (const l of await axTree(page, context)) log(id, 'ax-scrolled', l);
+      }
+    }
+    await fresh(page, id);
+    const stops = [];
+    for (let i = 0; i < 5; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      stops.push(await active(page));
+    }
+    log(id, 'tab stops', stops.join(' -> '));
+  });
+}
+
+test('plain HTML comparison', async ({ page, context }) => {
+  const pages = {
+    ul: '<ul><li>h1 Milk</li><li>h1 Eggs</li><li>h1 Bread</li></ul>',
+    ol: '<ol><li>h2 Fork the repository</li><li>h2 Make the change</li><li>h2 Open a pull request</li></ol>',
+    dl: '<dl><dt>h3 Weight</dt><dd>h3 2 kg</dd><dt>h3 Colour</dt><dd>h3 Blue</dd></dl>',
+    nested: '<ul><li>h4 Fruit<ul><li>h4 Apple</li><li>h4 Pear</li></ul></li><li>h4 Bread</li></ul>',
+    menu: '<menu><li>h5 Milk</li><li>h5 Eggs</li></menu>',
+    'role-list-divs':
+      '<div role="list"><div role="listitem">h6 Milk</div><div role="listitem">h6 Eggs</div><div role="listitem">h6 Bread</div></div>',
+    'ul-no-style': '<ul style="list-style:none"><li>h7 Milk</li><li>h7 Eggs</li></ul>',
+  };
+  for (const [name, html] of Object.entries(pages)) {
+    await page.setContent(`<!doctype html><html lang="en"><body>${html}</body></html>`);
+    for (const l of await axTree(page, context)) log('html', name, l);
+  }
+});
