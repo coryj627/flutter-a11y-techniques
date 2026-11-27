@@ -17,14 +17,15 @@ final s09ContentGrouping = Technique(
       'A label and its value are one stop, and an icon and its text one '
       'button. But Flutter has no group that TalkBack names: a group\'s '
       'name is a stop of its own before its controls, and focus put on a '
-      'control inside is read without it (limitation FL-320). There is no '
-      'workaround.',
+      'control inside is read without it, where a native container title '
+      'is read on the way in (limitation FL-320). There is no workaround.',
     ),
     AppPlatform.ios: PlatformStatus.limitation(
       'A label and its value are one stop, and an icon and its text one '
       'button. But Flutter has no group that VoiceOver names: a group\'s '
       'name is a stop of its own before its controls, and the controls are '
-      'read without it (limitation FL-320). There is no workaround.',
+      'read without it, where a native semantic group is read on the way in '
+      '(limitation FL-320). There is no workaround.',
     ),
     AppPlatform.web: PlatformStatus.applies(),
   },

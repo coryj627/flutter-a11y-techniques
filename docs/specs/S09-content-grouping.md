@@ -32,10 +32,14 @@ three. A named group works on the web only: there a labelled node round
 the buttons is a `group` named by the question. On Android and iOS Flutter
 has no group a screen reader names: the name is a stop of its own before
 the buttons, and a button is read without it
-([FL-320](../flutter-limitations.md#fl-320), new). There is no documented
-parameter that changes this, so by the owner's rule of 2026-11-23 both
-platforms are a limitation, and `good-named-group` is not a good example
-of R4 on them (section 5). This is reported to the principal.
+([FL-320](../flutter-limitations.md#fl-320), new). Natively both
+platforms have one, and their screen readers speak it on the way in:
+TalkBack read a container title as "On. Button. In Kitchen light", and
+VoiceOver a semantic group as "Kitchen light On Button" (the native
+comparison, section 7). Flutter has no documented parameter for either,
+so by the owner's rule of 2026-11-23 both platforms are a limitation (the
+principal's decision 1, section 5), and `good-named-group` does not meet
+R4 on them.
 
 ## 3. WCAG 2.2 success criteria
 
@@ -56,7 +60,8 @@ on all three platforms (section 7).
 `good-named-group` on Android and iOS: the question is exposed as text
 read just before the buttons, and on Android as the node that holds them,
 so no 1.3.1 failure is claimed; what is missing there is R4, the name said
-on the way into the group, which the iOS reference requires (section 7).
+on the way into the group, which the iOS reference requires and which
+native groups on both platforms were measured to give (section 7).
 
 Other criteria the examples touch are named where they fail: 4.1.2 Name,
 Role, Value (`bad-merged-group`, all three).
@@ -68,7 +73,7 @@ Role, Value (`bad-merged-group`, all three).
 | R1 | Content that belongs together, such as a label and its value, is one element, read as one stop | [Android View Content Grouping](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/grouping/ContentGrouping.md) and [Android Compose Content Grouping](https://github.com/cvs-health/android-compose-accessibility-techniques/blob/main/doc/content/ContentGrouping.md) ("Group content labels with their values"), [iOS Combining Focus](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/CombiningFocus.md) (`.accessibilityElement(children: .combine)`) |
 | R2 | A unit is read in the order shown, and a table's labels are not all read before its values | Android View and Android Compose Content Grouping ("misgrouping or a lack of grouping could read all the table headings, then the table values") |
 | R3 | A set of related controls is a group whose name is its visible question | [iOS Grouping Controls](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/GroupingControls.md) (`.accessibilityElement(children: .contain)` and `.accessibilityLabel`), [MDN `fieldset`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/fieldset) (implicit role `group`, captioned by its `legend`), [H71](https://www.w3.org/WAI/WCAG22/Techniques/html/H71) |
-| R4 | The screen reader says the group's name when focus first comes to a control in the group | iOS Grouping Controls ("VoiceOver users need to hear the group label text spoken when they first focus on a control in a group of related controls") |
+| R4 | The screen reader says the group's name when focus first comes to a control in the group | iOS Grouping Controls ("VoiceOver users need to hear the group label text spoken when they first focus on a control in a group of related controls"); measured to hold for native groups on iOS (a semantic group) and Android (a container title, "In …"), section 7 |
 | R5 | An icon and its text that do the same thing are one target, named by the text, and the icon adds no name of its own | [Android View Tap Target Grouping](https://github.com/cvs-health/android-view-accessibility-techniques/blob/main/doc/grouping/TapTargetGrouping.md) ("Group adjacent tap targets that perform the same action"; "Disable any redundant content description") |
 | R6 | Controls that do different things are not merged into one unit: each keeps its own name, role, and action | iOS Combining Focus (a button combined into its parent loses its label unless its trait is removed, and "important traits" must be added back), [FL-243](../flutter-limitations.md#fl-243) |
 
@@ -134,10 +139,11 @@ info icon, and a count of its opens.
 | `good-tap-target` | Material | An icon and its text as one button | `TextButton.icon(icon:, label:)`, with a 2 pixel focus outline from its own `style` | R5 |
 
 `good-named-group` meets R3 and R4 on the web only. On Android and iOS it
-is the closest Flutter gets, and R4 is not met there
-([FL-320](../flutter-limitations.md#fl-320)); it is not a good example of
-R4 on those platforms. It is kept because the web needs it and because
-Android and iOS read it no worse than plain text.
+gives the question as a stop of its own just before the buttons, and on
+Android as the node that holds them; it does not give R4 there
+([FL-320](../flutter-limitations.md#fl-320)), and is not a complete named
+group on either. It stays a good example by the principal's decision 3
+(below).
 
 No good example is flagged as a custom solution. The register's rows are in
 [custom-solutions.md](../custom-solutions.md#s09-content-grouping):
@@ -152,7 +158,9 @@ the others are Flutter's widgets through their documented parameters.
 | `bad-merged-group` | `MergeSemantics` round the question and its buttons: one button named "Kitchen light On Off", whose action is On's; Off is no element of its own | R6 |
 
 What each fails, by platform, as the criteria are written (section 7 has
-the measurements):
+the measurements; the web is Chromium, through Playwright, here and
+throughout this spec, apart from the F07 VoiceOver recording cited for
+WebKit; WebKit's tree was not read):
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
@@ -166,6 +174,23 @@ is claimed. What a screen reader activates is the merged node, whose one
 action is On's: TalkBack's double tap performs the click action, measured
 here on Android; on the web the element's click, measured; on iOS
 VoiceOver's own activation is not measured (C04 probe round 3).
+
+### Decisions
+
+Made by the principal on 2026-11-26, on the engineer's questions:
+
+1. The platform status follows the owner's rule of 2026-11-23 wherever the
+   native comparison confirms the gap: Android and iOS are a limitation
+   for a named group (FL-320). The principal tells the owner.
+2. F07 Checkbox and F09 Switch, whose named groups are built the same
+   way, are not edited here. Whether they become limitations on Android
+   and iOS for their groups is handed on as an open question for the
+   owner, with FL-320 (section 7, "Handed on").
+3. `good-named-group` is borderline in the custom-solution register, and
+   stays a good example, as the owner's C06 ruling of 2026-11-23 kept a
+   framework example whose gap is a limitation. The spec, the doc, and
+   the example's text say by platform what it gives and does not, and
+   never call it complete on a limitation platform.
 
 There is no bad example of a group with its question as plain text: it is
 F07's `bad-group-unlabelled`, and on Android and iOS it reads the same as
@@ -230,10 +255,30 @@ comparison on the web.
   button without it, "On / Button / Double-tap to activate", also when
   focus went straight from the line before to "On" (`-direct-on`). On iOS an element of type other
   named by the question, then the two buttons; VoiceOver, moving forward,
-  read "Kitchen light", "On Button", "Off Button". Moving forward is the
-  only way XCUITest moves VoiceOver, so a button reached by touch, without
-  passing the question, was not measured on iOS. Plain text above the buttons (s10) is read the same as the
+  read "Kitchen light", "On Button", "Off Button", and with the cursor put
+  straight on "On" by a tap, "On Button" (round 3, `ios-native.txt`). Plain text above the buttons (s10) is read the same as the
   group on Android and iOS, and is no group on the web.
+- **Natively, both platforms name a group on the way in** (round 3 of the
+  probe, `ios-native.txt`, `android-native-talkback.md`). On iOS a UIKit
+  container with `accessibilityContainerType = .semanticGroup` and a
+  label, and the iOS reference's SwiftUI `HStack` with
+  `.accessibilityElement(children: .contain)` and a label, were read by
+  VoiceOver as "Kitchen light On Button", moving forward into the group
+  and with the cursor put straight on "On" by a tap; "Off Button" and the
+  line after with nothing on the way out. Native buttons with plain text
+  above them read "On Button", as Flutter's `good-named-group` did the
+  same two ways. On Android (TalkBack 17.0) a container with
+  `setContainerTitle` gave "On. Button. In Kitchen light" with focus
+  moved onto "On", from the line before and straight from it, and "end.
+  Out of Kitchen light" for the line after; a container named only by its
+  `contentDescription`, which is what Flutter's labelled node gives, and
+  no group, gave "On. Button". TalkBack's own navigation could not be
+  driven: neither Alt and Right from `input keycombination` nor a swipe
+  from `input swipe` moved its focus, so only focus moved by
+  `ACTION_ACCESSIBILITY_FOCUS` was measured. No Compose fixture was
+  built (it needs the Compose compiler's Gradle plugin and libraries).
+  This is what makes R4 a requirement Flutter fails on both platforms,
+  and not one that the platforms' own screen readers do not meet.
 - **A label put round the buttons without a container** (s11, the iOS
   reference's warning) did not override the buttons' names in Flutter: it
   made a node of its own round them, so with the question also drawn the
@@ -308,10 +353,20 @@ Skips and what they give up, in the tests:
   elements that VoiceOver reads alike; no example has two. Utterances are
   cut at 64 characters; the test refuses an expected one that long.
 
+Handed on:
+
+- To the owner, by the principal: whether F07 Checkbox's and F09 Switch's
+  named groups, built as `good-named-group` is and recorded there as
+  applying on Android and iOS, become limitations on those platforms for
+  their groups ([FL-320](../flutter-limitations.md#fl-320)).
+- To S11 Reading and traversal order: a table of unmerged pairs is read
+  row by row on every platform here, by Flutter's ordering by position
+  ([FL-420](../flutter-limitations.md#fl-420)).
+
 **Not done yet.** The web VoiceOver recording (the principal runs it);
-which stops a TalkBack swipe makes; VoiceOver's own activation on iOS
-(C04 probe round 3); whether VoiceOver on the web says the group's name
-when Tab, not its own navigation, moves into the group; whether TalkBack
-would speak a container title if Flutter set one; a group of text
-fields; dark mode on a device (widget tests only); text scaling on the
+TalkBack's own navigation into a native or a Flutter group, which could
+not be driven (focus was moved by action); VoiceOver's own activation on
+iOS (C04 probe round 3); whether VoiceOver on the web says the group's
+name when Tab, not its own navigation, moves into the group; a group of
+text fields; dark mode on a device (widget tests only); text scaling on the
 web; and right-to-left text.

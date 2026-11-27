@@ -179,6 +179,80 @@ the merged button, two Tabs ran On and three ran Off, as on the web and
 Android. For s13 Enter ran the `CupertinoButton`s on iOS, unlike the web
 (FL-002).
 
+## Native comparison (round 3)
+
+Asked for by the principal on 2026-11-26, before FL-320 could make Android
+and iOS a limitation: what does a natively named group give each screen
+reader? The fixtures have the texts of `good-named-group`: a "Before nNN"
+line, the question "nNN Kitchen light", buttons "nNN On" and "nNN Off",
+and an "nNN end" line.
+
+iOS: `NativeGroups.swift.txt`, a UIKit app built with `swiftc` by
+`build_native_ios.sh.txt` and installed only for the run by
+`ios_native.sh.txt` (never part of the Runner), driven by
+`ProbeS09NativeUITests.swift.txt`. n11 a `UIStackView` with
+`accessibilityContainerType = .semanticGroup` and an `accessibilityLabel`,
+its question label not an accessibility element; n12 the iOS reference's
+SwiftUI layout, the question as a `Text` above an `HStack` of the buttons
+with `.accessibilityElement(children: .contain)` and
+`.accessibilityLabel`; n13 no group. For each, and for the app's own
+`good-named-group`: a snapshot of the elements; with VoiceOver on, a tap on
+the line before (which puts the cursor there) and moving forward to the
+end; then a tap on "On", which puts the cursor straight on it, with every
+raw poll of `currentSpeech()` for three seconds (a reading counts as new
+only once it differs from the one before the tap), and moving forward
+from it. Output: `ios-native.txt`.
+
+| # | Moving forward from the line before | Cursor put on "On" by a tap |
+| --- | --- | --- |
+| n11 (UIKit, semantic group) | "Before n11" / "n11 Kitchen light n11 On Button" / "n11 Off Button" / "n11 end" | "n11 Kitchen light n11 On Button" |
+| n12 (SwiftUI, `.contain` and a label) | "Before n12" / "n12 Kitchen light" (the visible `Text`) / "n12 Kitchen light n12 On Button" / "n12 Off Button" / "n12 end" | "n12 Kitchen light n12 On Button" |
+| n13 (no group) | "Before n13" / "n13 Kitchen light" / "n13 On Button" / "n13 Off Button" / "n13 end" | "n13 On Button" |
+| Flutter `good-named-group` | "Example Heading" / "Kitchen light" / "On Button" / "Off Button" / "Light: not set" | "On Button" |
+
+So on iOS a named group's label is spoken with its first control on the
+way in, whether VoiceOver moves into the group or the cursor is put on the
+control, and nothing is said on the way out; Flutter's labelled node is
+read as a stop of its own, and its buttons as a plain button is.
+
+Android: `ProbeS09NativeActivity.kt.txt`, an `Activity` declared in the
+debug manifest for the run only (`debug_AndroidManifest_for_the_run.xml.txt`),
+driven by `ProbeS09NativeTest.kt.txt` and run by `native_android.py.txt`.
+n01 a `LinearLayout` holding the question (not important for
+accessibility) and the two `Button`s, whose `AccessibilityDelegate` sets
+`AccessibilityNodeInfo.setContainerTitle` (Android 14 and later); n02 the
+same named by its `contentDescription` only; n03 no group. The Android
+Compose reference has no entry for a group of controls, and Compose needs
+the Compose compiler's Gradle plugin and Compose's libraries, which the
+project's Android build does not have and which were not added for a
+throwaway probe, so no Compose fixture was built. `nativeTree()` dumps the screen
+(`android-native-tree.txt`: n01's `LinearLayout` has the container title
+"n01 Kitchen light", n02's the description, n03 no node round the
+buttons). With TalkBack on (Android 17, TalkBack 17.0), `talkBackWalk()`
+moves TalkBack focus by `ACTION_ACCESSIBILITY_FOCUS` to the line before,
+the question where it is a node, "On", "Off", and the line after, and then
+from the line before straight to "On" (`android-native-talkback.md`).
+`talkBackKeys()` tried to move through with TalkBack's own navigation: in
+round 1 Alt and Right with `input keycombination`
+(`android-native-talkback-round1.md`; round 1's walk found no button, as
+the buttons' text was in capitals, and is not used), in round 2 a swipe
+right with `input swipe`. Neither moved TalkBack's focus (the "after"
+lines in `android-native-talkback-markers.txt`), so TalkBack's own
+navigation was not measured.
+
+| # | Focus moved to "On" | "Off" | The line after |
+| --- | --- | --- | --- |
+| n01 (container title) | "n01 On. Button. In n01 Kitchen light / Double-tap to activate", from the line before and straight from it | "n01 Off. Button / Double-tap to activate" | "n01 end. Out of n01 Kitchen light" |
+| n02 (`contentDescription` only) | "n02 On. Button / Double-tap to activate" | "n02 Off. Button …" | "n02 end" |
+| n03 (no group) | "n03 On. Button / Double-tap to activate" | "n03 Off. Button …" | "n03 end" |
+| Flutter `good-named-group` (the S09 transcript) | "On / Button / Double-tap to activate", from the question and straight from the "Example" heading | "Off / Button …" | not walked |
+
+So on Android TalkBack says a container title on the way into a group and
+on the way out ("In …", "Out of …"), and nothing for a container named
+only by its description, which is what Flutter's labelled node gives; at
+"Before n02" it also said "Out of n01 Kitchen light", left over from the
+move before.
+
 ## What this changed
 
 - A label and its value are merged with `MergeSemantics` (`good-merged-facts`),
@@ -190,7 +264,8 @@ Android. For s13 Enter ran the `CupertinoButton`s on iOS, unlike the web
   is the row build, with its rows apart, which FL-420 reads across.
 - A labelled node round controls is a `group` on the web only; on Android
   and iOS the name is a stop of its own and the buttons are read without
-  it, from wherever focus comes: [FL-320](../../../flutter-limitations.md#fl-320),
+  it, from wherever focus comes, where native groups on both are named on
+  the way in (round 3): [FL-320](../../../flutter-limitations.md#fl-320),
   and Android and iOS are a limitation for a named group.
 - `MergeSemantics` round controls makes one button with the first one's
   action: `bad-merged-group`, and

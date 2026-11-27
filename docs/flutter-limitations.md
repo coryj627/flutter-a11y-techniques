@@ -3116,9 +3116,9 @@ yet), **Fixed in x.y** (verified on that version).
   `Button` whose click action, what TalkBack's double tap performs, turns
   the light on, and TalkBack read "Kitchen light On Off / Button"; on iOS
   one button with that label and no element for either button; on the
-  web one `role="button"` named "Kitchen light On Off", which a click
-  from assistive technology turns on and a mouse click at its centre turns
-  on (`web.txt`). The second button's focus node is still there, as the
+  web one `role="button"` named "Kitchen light On Off" in Chromium, which
+  a click from assistive technology turns on and a mouse click at its
+  centre turns on (`web.txt`). The second button's focus node is still there, as the
   second link's is: on the web and Android Tab stops on the merged node
   twice, and Enter on the second stop turns the light off (probe s12; the
   S09 web and Android tree tests). Asserted by S09 `bad-merged-group` on
@@ -4639,7 +4639,9 @@ yet), **Fixed in x.y** (verified on that version).
 
 - Status: Confirmed, Flutter 3.47.5, Android 17 emulator and iOS 27.0
   simulator. Found in the S09 probe (`docs/evidence/probes/s09/`,
-  fixtures s07 to s11, s14, and s19). Asserted by the S09 Android tree test
+  fixtures s07 to s11, s14, and s19), and compared there with native
+  groups on both platforms (round 3, fixtures n01 to n03 and n11 to n13),
+  which screen readers do name. Asserted by the S09 Android tree test
   (`goodNamedGroupIsANodeNamedByTheQuestionHoldingTheButtons`, no container
   title), the S09 TalkBack walk (`s09-good-named-group-on` and
   `-on-direct`, which must not say the group's name), and the S09
@@ -4648,7 +4650,8 @@ yet), **Fixed in x.y** (verified on that version).
   `dart:ui` has no group role, and `SemanticsProperties` has no container
   title.
 - WCAG: 1.3.1 Info and Relationships is the criterion; no failure is
-  claimed, because the question is exposed, in reading order, just before
+  claimed (the native groups below show what is missing, not that the
+  criterion requires it), because the question is exposed, in reading order, just before
   the buttons (and on Android as the node that holds them). What is
   missing is a group a screen reader names on the way in, which the iOS
   reference repository requires: "VoiceOver users need to hear the group
@@ -4671,8 +4674,9 @@ yet), **Fixed in x.y** (verified on that version).
     buttons as its children, no container title and no pane title
     (`android-tree.txt`). Android 14 added a container title "used to
     group together related controls, similar to HTML fieldset"
-    (`AccessibilityNodeInfo.setContainerTitle`; platform documentation, not
-    measured); the pinned engine does not set it, and its name is not in
+    (`AccessibilityNodeInfo.setContainerTitle`, platform documentation;
+    what TalkBack does with it is measured below); no Flutter node in the
+    probe had one, and the name is not in
     the compiled `AccessibilityBridge` class (its strings were read, not
     its source). TalkBack read the question as a stop of its own, "Kitchen
     light", and each button as "On / Button / Double-tap to activate",
@@ -4681,6 +4685,23 @@ yet), **Fixed in x.y** (verified on that version).
     `-direct-on`, and round 2 for s13, s14, and s19); in the S09
     transcript the same with focus moved straight from the "Example"
     heading to "On" (`docs/evidence/S09/talkback-android.md`).
+  - Android, native comparison (`ProbeS09NativeActivity.kt.txt`,
+    `android-native-tree.txt`, `android-native-talkback.md`; Android 17,
+    TalkBack 17.0; each text has the fixture's id before it, "n01 On"): a
+    `LinearLayout` whose `AccessibilityDelegate` sets the container title
+    "Kitchen light" (n01) is read by TalkBack, with
+    focus moved onto "On", as "On. Button. In Kitchen light / Double-tap
+    to activate", both from the line before and straight from it; "Off"
+    as "Off. Button" with no group name; and the line after as "end. Out
+    of Kitchen light". The same container named by its
+    `contentDescription` only (n02), and buttons with no group (n03), are
+    read "On. Button / Double-tap to activate", as Flutter's are. So
+    TalkBack does speak a container title on the way into and out of a
+    group, and Flutter sets none. Focus was moved by
+    `ACTION_ACCESSIBILITY_FOCUS`; TalkBack's own navigation was not
+    measured: neither Alt and Right from `input keycombination` (round 1,
+    `android-native-talkback-round1.md`) nor a swipe from `input swipe`
+    (round 2) moved TalkBack's focus.
   - iOS: an element of type other named by the question, and the two
     buttons as elements of their own (XCUITest gives no hierarchy, so
     whether they sit inside it was not seen). VoiceOver, moving forward,
@@ -4688,10 +4709,25 @@ yet), **Fixed in x.y** (verified on that version).
     question as a stop of its own and the buttons without it, the same as
     for plain text above the buttons (`ios.txt`, s07 to s10, s19; and
     `docs/evidence/S09/voiceover-ios.md`, `good-named-group`).
-    Moving forward is the only way XCUITest moves VoiceOver, so focus put
-    straight on a button by touch was not measured on iOS.
+    With VoiceOver on, a tap on "On" (which puts VoiceOver's cursor on
+    it) read "On Button" too (`ios-native.txt`, the "flutter
+    good-named-group" lines).
+  - iOS, native comparison (`NativeGroups.swift.txt`, `ios-native.txt`): a
+    UIKit `UIStackView` with `accessibilityContainerType = .semanticGroup`
+    and an `accessibilityLabel` (n11), and the iOS reference's SwiftUI
+    `HStack` with `.accessibilityElement(children: .contain)` and
+    `.accessibilityLabel` (n12), are each read by VoiceOver as "Kitchen
+    light On Button" on the way in, moving forward from the line before
+    and when the cursor is put straight on "On" by a tap; then "Off
+    Button" and the line after, with no word on the way out. Native
+    controls with plain text above them and no group (n13) read "On
+    Button", as Flutter's do. So iOS has a named group that VoiceOver
+    speaks on the way in, and Flutter does not reach it: no parameter of
+    `Semantics` sets a container type.
 - Effect: on Android and iOS a group's controls are read only by their own
-  names. "On" and "Off" heard on their own, after focus lands on them by
+  names, where a native group's first control is read with the group's
+  name (TalkBack: "In Kitchen light"; VoiceOver: "Kitchen light On
+  Button"). "On" and "Off" heard on their own, after focus lands on them by
   touch or from elsewhere, do not say what they turn on. The question is
   heard only by someone who passes over it.
 - Workaround: none in the SDK. Naming each control by the question as
@@ -4699,8 +4735,9 @@ yet), **Fixed in x.y** (verified on that version).
   text) would change their names, and is not a group; it is not built.
   On the web the labelled node is the workaround and is what
   `good-named-group` uses.
-- How to read this entry: Flutter has not added a group role, or a
-  container title for Android and iOS, yet.
+- How to read this entry: Flutter has not added a group role yet: no way
+  to set Android's container title or iOS's semantic group container
+  type, which TalkBack and VoiceOver were measured to speak (above).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->

@@ -195,9 +195,10 @@ class GoodCupertino extends StatelessWidget {
 /// node round the buttons. On the web that node is a group named by the
 /// question, as `fieldset` and `legend` make one in HTML. On Android and
 /// iOS Flutter has no such group: the question is read as a stop of its
-/// own before the buttons, and not with them (docs/flutter-limitations.md,
-/// FL-320). The visible question is left out of the semantics, or it would
-/// be read twice.
+/// own before the buttons, and not with them, where a native group's name
+/// is said on the way in (docs/flutter-limitations.md, FL-320). So this is
+/// a complete named group on the web only. The visible question is left
+/// out of the semantics, or it would be read twice.
 class GoodNamedGroup extends StatelessWidget {
   const GoodNamedGroup({super.key});
 
