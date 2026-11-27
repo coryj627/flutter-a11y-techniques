@@ -217,11 +217,16 @@ every platform, with a plain HTML control page on the web.
   resolved locale, with no parameter set (probe p01): the page's
   `lang="en-US"`, replacing the host page's `lang="en"`; on Android a
   `LocaleSpan` en-US over every node's text, and TalkBack logged
-  `locale=en_US` with every unmarked fragment. A French app (the probe's
-  second build) gave the page `lang="fr"`. On iOS by the engine's source
-  only.
-- **`localeForSubtree` with a language alone marks a node on every
-  platform** (p04, p05, p19, p21, p23; `good-passage`). See the tree tests.
+  `locale=en_US` with the text of every unmarked node (its own words, such
+  as "1 of 5", with `locale=null`). A French app (the probe's second
+  build, measured on the web only) gave the page `lang="fr"`. On iOS by
+  the engine's source only.
+- **`localeForSubtree` with a language alone marks a node** on the web
+  (`lang="fr"`, matching `:lang(fr)` only) and on Android (a `LocaleSpan`
+  fr in place of the app's, and TalkBack logged `locale=fr`) (p04, p05,
+  p19, p21, p23; `good-passage`). On iOS by the engine's source; what was
+  measured is VoiceOver reading a button inside it with the French role
+  word (p13).
 - **A part's language** (p02, p08, p10, p12, p17, p22; `good-phrase`)
   reaches Android as a `LocaleSpan` over the part, and TalkBack spoke the
   text in one fragment per part, each logged with its locale. On iOS,

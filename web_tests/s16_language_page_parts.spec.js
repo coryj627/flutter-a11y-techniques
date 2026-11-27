@@ -214,13 +214,17 @@ test.describe('bad examples have their defect', () => {
     test(`${slug}: after Back to the technique's page, the page's lang is ${after}${slug === 'bad-override' ? ' (FL-360)' : ' (the control)'}`, async ({ page }) => {
       await open(page, slug);
       await page.getByRole('button', { name: 'Back' }).click();
-      await expect(page.getByRole('heading', { name: 'Good examples' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Good examples', level: 2 })).toBeVisible();
       await expect(exampleHeading(page)).toHaveCount(0);
       expect(await pageLang(page)).toBe(after);
       const title = after === 'fr'
         ? { nearest: 'fr', langs: ['fr'], matches: ['fr'] }
         : ENGLISH;
-      await expectIn(page, 'Good examples', title);
+      // The page's "Good examples" heading, and the technique doc's, which
+      // the page shows below it: every one in the page's language.
+      const found = await languageOf(page, 'Good examples');
+      expect(found.length).toBeGreaterThanOrEqual(1);
+      for (const f of found) expect(f).toEqual(title);
     });
   }
 });

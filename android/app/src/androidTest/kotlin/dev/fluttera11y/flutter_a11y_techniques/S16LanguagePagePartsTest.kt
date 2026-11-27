@@ -227,7 +227,11 @@ class S16LanguagePagePartsTest : TechniqueTest("S16") {
         for ((slug, tag) in listOf("bad-override" to "fr", "good-passage" to "en-US")) {
             open(slug)
             backToTheTechnique()
-            assertEquals(slug, whole(tag, "Good examples"), locales(only("Good examples")))
+            // The page's heading, and the technique doc's below it where it
+            // is on the screen: every one in the app's language.
+            val headings = tree().filter { it.name() == "Good examples" }
+            assertTrue("$slug: a Good examples heading", headings.isNotEmpty())
+            for (h in headings) assertEquals(slug, whole(tag, "Good examples"), locales(h))
         }
     }
 

@@ -84,15 +84,18 @@ How each platform was looked at, and the raw output:
   page's `lang` is `en-US` (the host page's own `<html lang="en">` is
   replaced), every Android node's description has a `LocaleSpan` en-US
   over its whole text, and TalkBack logged `locale=en_US` with every
-  fragment of an unmarked text. With the app's locale French the page's
-  `lang` is `fr` (`web_app_fr.txt`). On iOS the default language of every
+  fragment of an unmarked text (its own words, "1 of 5. In list. 5 items",
+  with `locale=null`). With the app's locale French the page's
+  `lang` is `fr` (`web_app_fr.txt`; the web only). On iOS the default language of every
   element is the app's locale (engine source read:
   `SemanticsObject.accessibilityLanguage` gives the node's locale or the
   bridge's application locale); XCUITest cannot read it.
-- **`localeForSubtree` with a language alone marks a node on every
-  platform** (p04, p05, p19, p21, p23): the web `lang="fr"` on the node's
+- **`localeForSubtree` with a language alone marks a node** on the web
+  and Android (p04, p05, p19, p21, p23): the web `lang="fr"` on the node's
   element, which matches `:lang(fr)` only; Android a `LocaleSpan` fr in
-  place of the app's; TalkBack logged `locale=fr` for it. `container`
+  place of the app's; TalkBack logged `locale=fr` for it. On iOS by the
+  engine's source; VoiceOver's words for a text are the same as unmarked
+  (a button inside it, below, is read with a French role word). `container`
   makes no difference to what is exposed. A node inside it with
   `localeForSubtree` of its own (p21) has its own.
 - **A part of a text marked with `TextSpan(locale:)`, `Text(locale:)`, or
