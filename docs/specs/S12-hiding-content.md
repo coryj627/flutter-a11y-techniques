@@ -495,6 +495,11 @@ element VoiceOver never moves to is not seen on either platform.
 The web VoiceOver transcript committed at 90edde5 was recorded before the
 witness, so it has no witness rows; the web tree spec's test of it is
 skipped, with that reason, until the principal records it again.
+The evidence run after this change (2026-11-27, `--only
+ios,voiceover-ios,web`) passed all three: every iOS walk ended with its
+witness, the move back reading the stop before the last and the move
+forward the last again, each shown after its row in
+`docs/evidence/S12/voiceover-ios.md`.
 
 What the tests skip or cannot see, and what each gives up:
 
