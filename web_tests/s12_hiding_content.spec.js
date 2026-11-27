@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
 import {
   BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, collectWalk, endRow, helpRole, judgeCollectedWalk,
-  judgeExampleWalk, judgeTranscript, runWalks, screenStops, spokenRole, transcriptRow,
+  judgeExampleWalk, judgeTranscript, runWalks, screenStops, spokenRole, transcriptRow, unresolvedRow,
 } from './vo/s12_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
@@ -271,14 +271,16 @@ const POS_OTHER = pos(92);
 // The walk's end witness (collectWalk in vo/s12_vo_walks.js), on made-up
 // screens: the cursor moves over `elements`; `capture` reads the element
 // under it, unless the case freezes or empties the capture after the
-// `after`-th move. The reviewer's case (Codex, review of 90edde5): after
+// `after`-th move, or loses the `lose.move`-th move's capture (`lose.as`:
+// "stale", the last phrase and bounds again, or "empty", no phrase at the
+// last bounds). The reviewer's case (Codex, review of 90edde5): after
 // good-badge's expected stops the capture froze while the cursor went on
 // through an exposed "3" and an unexpected button; under the end rule alone
 // (two moves that change nothing) that walk judged complete.
 test.describe('the walk ends only with a witness that the cursor is at the last stop', () => {
   const slug = 'good-badge';
   const whole = [...screenStops(slug), EXAMPLE_HEADING, ...EXPECTED_STOPS[slug]];
-  const fake = (elements, { after = Infinity, capture = 'live', back = null, forward = null } = {}) => {
+  const fake = (elements, { after = Infinity, capture = 'live', back = null, forward = null, lose = null } = {}) => {
     let at = -1;
     let moves = 0;
     let frozen = null;
@@ -293,6 +295,9 @@ test.describe('the walk ends only with a witness that the cursor is at the last 
         if (moves > after && capture !== 'live') {
           frozen ??= { phrase: capture === 'empty' ? '' : elements[after - 1], position: pos(after - 1) };
           return frozen;
+        }
+        if (lose && witness === 0 && moves === lose.move) {
+          return { phrase: lose.as === 'empty' ? '' : elements[at - 1], position: pos(at - 1) };
         }
         if (witness === 1 && back) return back;
         if (witness === 2 && forward) return forward;
@@ -330,6 +335,77 @@ test.describe('the walk ends only with a witness that the cursor is at the last 
     }
   });
 
+  // Codex, third review (739520f): an exposed "❝" after good-decoration's
+  // Example heading, whose move's capture is lost (the heading's phrase and
+  // bounds again, or no phrase at the heading's bounds), while every later
+  // capture and the witness are live. The stops are then exactly the
+  // expected screen; only the unresolved read shows an element went
+  // unrecorded. The cases use their own example, named in each.
+  const screenOf = (s) => [...screenStops(s), EXAMPLE_HEADING, ...EXPECTED_STOPS[s]];
+  const judgedAs = (s, walk) => judgeCollectedWalk(walk, EXPECTED_STOPS[s], screenStops(s)).verdict;
+  const deco = 'good-decoration';
+  const decoWhole = screenOf(deco);
+  const heading = decoWhole.indexOf(EXAMPLE_HEADING);
+  const injected = [...decoWhole.slice(0, heading + 1), '\u275D', ...decoWhole.slice(heading + 1)];
+  // The move that lands on element i (the first move lands on element 0).
+  const moveOnto = (i) => i + 1;
+
+  test('a lost capture mid-walk is unresolved, and the walk is incomplete', async () => {
+    for (const as of ['stale', 'empty']) {
+      const walk = await run(fake(injected, { lose: { move: moveOnto(heading + 1), as } }));
+      expect(walk.stops, as).toEqual(decoWhole);
+      expect(walk.reachedEnd, as).toBe(true);
+      expect(walk.problem, as).toBeNull();
+      // Without the unresolved read the stops would judge complete.
+      expect(judgeExampleWalk(walk.stops, true, EXPECTED_STOPS[deco], screenStops(deco)).verdict, as).toBe('complete');
+      const phrase = as === 'empty' ? '' : EXAMPLE_HEADING;
+      expect(walk.unresolved, as).toEqual([{ after: heading + 1, phrase, position: pos(heading) }]);
+      expect(judgedAs(deco, walk), as).toBe('incomplete');
+      expect(unresolvedRow(deco, 1, walk.unresolved), as).toBe(
+        `| \`${deco}-walk-1-unresolved\` | after stop ${heading + 1}: "${phrase}" at ${pos(heading)} |`);
+    }
+  });
+
+  test('a lost capture on the right screen is unresolved too, so the walk is walked again', async () => {
+    // bad-decoration-read, its "❝" lost: its stops lack an element, which
+    // alone would judge wrong; the unresolved read makes it incomplete.
+    const bad = 'bad-decoration-read';
+    const badWhole = screenOf(bad);
+    const at = badWhole.indexOf('\u275D');
+    const walk = await run(fake(badWhole, { lose: { move: moveOnto(at) } }));
+    expect(walk.unresolved).toEqual([{ after: at, phrase: badWhole[at - 1], position: pos(at - 1) }]);
+    expect(walk.stops).toEqual(badWhole.filter((_, i) => i !== at));
+    expect(walk.reachedEnd).toBe(true);
+    expect(judgeExampleWalk(walk.stops, true, EXPECTED_STOPS[bad], screenStops(bad)).verdict).toBe('wrong');
+    expect(judgedAs(bad, walk)).toBe('incomplete');
+  });
+
+  test('a lost capture of the stop before the last fails the witness, and is wrong for good', async () => {
+    // good-decoration, its quote lost: the move back from the source reads
+    // the quote, not the heading the stops have before the source.
+    const walk = await run(fake(decoWhole, { lose: { move: moveOnto(decoWhole.length - 2) } }));
+    expect(walk.unresolved).toHaveLength(1);
+    expect(walk.problem).toMatch(/^the end is not witnessed: a move back read/);
+    expect(judgedAs(deco, walk)).toBe('wrong');
+  });
+
+  test('an unchanged read at the true end is the end, through the witness', async () => {
+    const walk = await run(fake(decoWhole));
+    expect(walk.reachedEnd).toBe(true);
+    expect(walk.unresolved).toEqual([]);
+    expect(unresolvedRow(deco, 1, walk.unresolved)).toBe(`| \`${deco}-walk-1-unresolved\` | none |`);
+    expect(judgedAs(deco, walk)).toBe('complete');
+    // A lost read mid-walk, then the true end: still the end, via the
+    // witness, but the walk is incomplete.
+    const lost = await run(fake(injected, { lose: { move: moveOnto(heading + 1) } }));
+    expect(lost.reachedEnd).toBe(true);
+    expect(lost.witness).toEqual({
+      back: { phrase: decoWhole.at(-2), position: pos(injected.length - 2) },
+      forward: { phrase: decoWhole.at(-1), position: pos(injected.length - 1) },
+    });
+    expect(judgedAs(deco, lost)).toBe('incomplete');
+  });
+
   test('the reviewer\'s frozen capture would pass without the witness, and the witness is recorded', async () => {
     const walk = await run(fake([...whole, '3', 'Extra button'], { after: whole.length, capture: 'frozen' }));
     // The stops are exactly the expected screen: only the witness shows the
@@ -356,10 +432,18 @@ test.describe('the walk ends only with a witness that the cursor is at the last 
 // judge is tested first on made-up transcripts; each case is named.
 test.describe('the committed web VoiceOver transcript is judged from its rows alone', () => {
   const walk = (slug) => [...screenStops(slug), EXAMPLE_HEADING, ...EXPECTED_STOPS[slug]];
-  // A walk row, and for a complete walk its end witness row (the move back
-  // read the stop before the last, the move forward the last, at two
-  // positions), as the VoiceOver spec logs them.
-  const row = (slug, n, stops, verdict, end = verdict === 'complete') => [
+  // A walk row, for a complete walk its end witness row (the move back read
+  // the stop before the last, the move forward the last, at two positions),
+  // and its unresolved-reads row, as the VoiceOver spec logs them.
+  const LOST = [{ after: 3, phrase: EXAMPLE_HEADING, position: POS_OTHER }];
+  const row = (slug, n, stops, verdict, end = verdict === 'complete', unresolved = []) => [
+    transcriptRow(slug, n, stops, verdict, 'x'),
+    ...(end ? [endRow(slug, n, {
+      back: { phrase: stops.at(-2), position: POS_BACK }, forward: { phrase: stops.at(-1), position: POS_LAST },
+    })] : []),
+    unresolvedRow(slug, n, unresolved),
+  ].join('\n');
+  const withUnresolved = (slug, n, stops, verdict, end) => [
     transcriptRow(slug, n, stops, verdict, 'x'),
     ...(end ? [endRow(slug, n, {
       back: { phrase: stops.at(-2), position: POS_BACK }, forward: { phrase: stops.at(-1), position: POS_LAST },
@@ -423,26 +507,59 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
       ['an end witness whose move back read the last stop again (a frozen capture)', withRows((t) => {
         const w = walk(slugs[0]);
         t.chromium[0] = [transcriptRow(slugs[0], 1, w, 'complete', 'x'),
-          endRow(slugs[0], 1, { back: { phrase: w.at(-1), position: POS_LAST }, forward: { phrase: w.at(-1), position: POS_LAST } })].join('\n');
+          endRow(slugs[0], 1, { back: { phrase: w.at(-1), position: POS_LAST }, forward: { phrase: w.at(-1), position: POS_LAST } }), unresolvedRow(slugs[0], 1, [])].join('\n');
       }), false],
       ['an end witness whose move back read the right words at the last position', withRows((t) => {
         const w = walk(slugs[1]);
         t.chromium[1] = [transcriptRow(slugs[1], 1, w, 'complete', 'x'),
-          endRow(slugs[1], 1, { back: { phrase: w.at(-2), position: POS_LAST }, forward: { phrase: w.at(-1), position: POS_LAST } })].join('\n');
+          endRow(slugs[1], 1, { back: { phrase: w.at(-2), position: POS_LAST }, forward: { phrase: w.at(-1), position: POS_LAST } }), unresolvedRow(slugs[1], 1, [])].join('\n');
       }), false],
       ['an end witness whose move back read an empty phrase', withRows((t) => {
         const w = walk(slugs[2]);
         t.webkit[2] = [transcriptRow(slugs[2], 1, w, 'complete', 'x'),
-          endRow(slugs[2], 1, { back: { phrase: '', position: POS_BACK }, forward: { phrase: w.at(-1), position: POS_LAST } })].join('\n');
+          endRow(slugs[2], 1, { back: { phrase: '', position: POS_BACK }, forward: { phrase: w.at(-1), position: POS_LAST } }), unresolvedRow(slugs[2], 1, [])].join('\n');
       }), false],
       ['an end witness whose move forward read another stop', withRows((t) => {
         const w = walk(slugs[3]);
         t.webkit[3] = [transcriptRow(slugs[3], 1, w, 'complete', 'x'),
-          endRow(slugs[3], 1, { back: { phrase: w.at(-2), position: POS_BACK }, forward: { phrase: 'Extra button', position: POS_OTHER } })].join('\n');
+          endRow(slugs[3], 1, { back: { phrase: w.at(-2), position: POS_BACK }, forward: { phrase: 'Extra button', position: POS_OTHER } }), unresolvedRow(slugs[3], 1, [])].join('\n');
       }), false],
       ['an end witness row twice', withRows((t) => {
         t.webkit[4] = `${t.webkit[4]}\n${t.webkit[4].split('\n')[1]}`;
       }), false],
+      // The unresolved reads (collectWalk), as the transcript records them.
+      ['a last walk with an unresolved read', withRows((t) => {
+        t.chromium[0] = row(slugs[0], 1, walk(slugs[0]), 'complete', true, LOST);
+      }), false],
+      ['a walk with no unresolved-reads row', withRows((t) => {
+        t.chromium[1] = withUnresolved(slugs[1], 1, walk(slugs[1]), 'complete', true);
+      }), false],
+      ['a first walk with no unresolved-reads row, walked again', withRows((t) => {
+        t.chromium.splice(0, 1,
+          withUnresolved(slugs[0], 1, ['', ...walk(slugs[0]).slice(1)], 'incomplete', false),
+          row(slugs[0], 2, walk(slugs[0]), 'complete'));
+      }), false],
+      ['a first walk with an unresolved read, recorded incomplete though its stops judge complete, then complete',
+        withRows((t) => {
+          t.webkit.splice(0, 1,
+            row(slugs[0], 1, walk(slugs[0]), 'incomplete', false, LOST),
+            row(slugs[0], 2, walk(slugs[0]), 'complete'));
+        }), true],
+      ['a first walk with an unresolved read recorded complete, then complete', withRows((t) => {
+        t.webkit.splice(0, 1,
+          row(slugs[0], 1, walk(slugs[0]), 'complete', false, LOST),
+          row(slugs[0], 2, walk(slugs[0]), 'complete'));
+      }), false],
+      ['an unresolved-reads row twice', withRows((t) => {
+        t.webkit[4] = `${t.webkit[4]}\n${t.webkit[4].split('\n').at(-1)}`;
+      }), false],
+      ['an unresolved-reads row for a walk that is not there', withRows((t) => {
+        t.webkit[5] = `${t.webkit[5]}\n${unresolvedRow(slugs[5], 2, [])}`;
+      }), false],
+      ['an empty transcript', '', false],
+      ['every end witness row removed', transcript(all()).split('\n').filter((l) => !/-walk-\d+-end` \|/.test(l)).join('\n'), false],
+      ['every unresolved-reads row removed',
+        transcript(all()).split('\n').filter((l) => !/-walk-\d+-unresolved` \|/.test(l)).join('\n'), false],
       ['an end witness row for a walk that is not there', withRows((t) => {
         t.webkit[5] = `${t.webkit[5]}\n${endRow(slugs[5], 2, { back: { phrase: 'a', position: POS_BACK }, forward: { phrase: 'b', position: POS_LAST } })}`;
       }), false],
@@ -456,16 +573,15 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
     }
   });
 
+  // Always judged: a transcript recorded under older rules, or with rows
+  // removed, fails here.
   const committed = readFileSync(new URL('../docs/evidence/S12/voiceover-web.md', import.meta.url), 'utf8');
-  // The transcript committed at 90edde5 was recorded before the walk read
-  // an end witness, so it has no `-walk-<n>-end` rows and cannot be judged
-  // by the present rules. Until the principal records it again, this test
-  // is skipped, with that reason; once any end row is in it, it runs.
-  const recordedWithWitness = /^\| `[a-z-]+-walk-\d+-end` \|/m.test(committed);
   test('the committed transcript (docs/evidence/S12/voiceover-web.md) is right', () => {
-    test.skip(!recordedWithWitness,
-      'recorded before the end witness (collectWalk): the web VoiceOver transcript is to be recorded again');
     expect(judgeTranscript(committed)).toEqual([]);
+    // One unresolved-reads row per walk row.
+    const walks = committed.split('\n').filter((l) => /^\| `[a-z-]+-walk-\d+` \|/.test(l));
+    const unresolved = committed.split('\n').filter((l) => /^\| `[a-z-]+-walk-\d+-unresolved` \|/.test(l));
+    expect(unresolved).toHaveLength(walks.length);
     // Every end row of the committed transcript is read whole, positions
     // with their commas and spaces included: one per browser and example.
     const ends = committed.split('\n').filter((l) => /^\| `[a-z-]+-walk-\d+-end` \|/.test(l));

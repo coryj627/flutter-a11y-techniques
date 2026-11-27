@@ -22,7 +22,8 @@ import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
 import {
-  EMPTY_STOP, EXPECTED_STOPS, NO_STOPS, collectWalk, judgeCollectedWalk, runWalks, screenStops, witnessText,
+  EMPTY_STOP, EXPECTED_STOPS, NO_STOPS, collectWalk, judgeCollectedWalk, runWalks, screenStops, unresolvedText,
+  witnessText,
 } from './s12_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
@@ -77,13 +78,15 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
           // example, its try, and the title, description, and heading it
           // read. An empty phrase is written "(empty)" and a walk with no
           // stops "(nothing)". A walk that read its end witness logs it on
-          // a row of its own, `<slug>-walk-<n>-end`. judgeTranscript in
+          // a row of its own, `<slug>-walk-<n>-end`, and every walk logs its
+          // unresolved reads, `<slug>-walk-<n>-unresolved` ("none" or each). judgeTranscript in
           // s12_vo_walks.js reads them back, and
           // web_tests/s12_hiding_content.spec.js judges the committed
           // transcript again from these rows alone.
           const shown = stops.map((s) => (s === '' ? EMPTY_STOP : s)).join(' / ') || NO_STOPS;
           console.log(`S12VO ${browserName} ${slug}-walk-${walk} | ${shown} (${judged.verdict}: ${judged.reason})`);
           if (latest.witness) console.log(`S12VO ${browserName} ${slug}-walk-${walk}-end | ${witnessText(latest.witness)}`);
+          console.log(`S12VO ${browserName} ${slug}-walk-${walk}-unresolved | ${unresolvedText(latest.unresolved)}`);
         },
       });
     expect(verdict, `${slug}, walk ${walks}: ${reason}`).toBe('complete');

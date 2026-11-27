@@ -249,6 +249,7 @@ export const BROWSERS = ['chromium', 'webkit'];
 
 const ROW = /^\| `([a-z-]+)-walk-(\d+)` \| (.*) \((complete|wrong|incomplete): (.*)\) \|$/;
 const END_ROW = /^\| `([a-z-]+)-walk-(\d+)-end` \| back "(.*)" at (.*) \/ forward "(.*)" at (.*) \|$/;
+const UNRESOLVED_ROW = /^\| `([a-z-]+)-walk-(\d+)-unresolved` \| (.*) \|$/;
 
 /**
  * Judges a committed web VoiceOver transcript (docs/evidence/S12/voiceover-web.md)
@@ -266,6 +267,10 @@ const END_ROW = /^\| `([a-z-]+)-walk-(\d+)-end` \| back "(.*)" at (.*) \/ forwar
  *   recorded, with nothing put back: the last must be recorded complete
  *   and judge complete (as having reached the end); every earlier one must
  *   be recorded incomplete and judge incomplete as a walk cut short;
+ * - every walk must have its unresolved-reads row
+ *   (`<slug>-walk-<n>-unresolved`, collectWalk's unresolved reads), once:
+ *   "none" for the last walk; an earlier walk with unresolved reads is
+ *   incomplete whatever its stops say;
  * - the last walk must have its end witness row (`<slug>-walk-<n>-end`,
  *   collectWalk's witness): the move back read the stop before the last,
  *   at a position other than the move forward's, which read the last
@@ -278,6 +283,7 @@ export function judgeTranscript(text) {
   const problems = [];
   const walks = new Map(); // "browser slug" -> Map(n -> { stops, was })
   const ends = new Map(); // "browser slug n" -> the end witness
+  const unresolvedRows = new Map(); // "browser slug n" -> "none" or the reads
   let browser = null;
   for (const line of text.split('\n')) {
     const section = /^## (\S+)$/.exec(line);
@@ -287,6 +293,19 @@ export function judgeTranscript(text) {
       continue;
     }
     if (!line.startsWith('| ') || line.startsWith('| Example |') || line.startsWith('| --- |')) continue;
+    const unresolvedRow = UNRESOLVED_ROW.exec(line);
+    if (unresolvedRow) {
+      const [, slug, n, reads] = unresolvedRow;
+      const key = `${browser} ${slug} ${n}`;
+      if (!BROWSERS.includes(browser) || !(slug in EXPECTED_STOPS)) {
+        problems.push(`an unresolved-reads row for an unknown browser or example: ${line}`);
+      } else if (unresolvedRows.has(key)) {
+        problems.push(`${browser} ${slug}: the unresolved reads of walk ${n} appear twice`);
+      } else {
+        unresolvedRows.set(key, reads);
+      }
+      continue;
+    }
     const end = END_ROW.exec(line);
     if (end) {
       const [, slug, n, back, backAt, forward, forwardAt] = end;
@@ -339,7 +358,17 @@ export function judgeTranscript(text) {
       for (const n of numbers) {
         const { stops, was } = tries.get(n);
         const last = n === numbers.length;
-        const judged = judgeExampleWalk(stops, last, EXPECTED_STOPS[slug], screenStops(slug)).verdict;
+        const reads = unresolvedRows.get(`${key} ${n}`);
+        unresolvedRows.delete(`${key} ${n}`);
+        if (reads === undefined) problems.push(`${key}: walk ${n} has no unresolved-reads row`);
+        if (last && reads !== undefined && reads !== 'none') {
+          problems.push(`${key}: the last walk, ${n}, had unresolved reads: ${reads}`);
+        }
+        // An earlier walk with unresolved reads is incomplete whatever its
+        // stops say, as judgeCollectedWalk judged it.
+        const judged = reads !== undefined && reads !== 'none'
+          ? 'incomplete'
+          : judgeExampleWalk(stops, last, EXPECTED_STOPS[slug], screenStops(slug)).verdict;
         if (last && (was !== 'complete' || judged !== 'complete')) {
           problems.push(`${key}: the last walk, ${n}, was recorded ${was} and judges ${judged}`);
         }
@@ -361,6 +390,7 @@ export function judgeTranscript(text) {
     }
   }
   for (const key of ends.keys()) problems.push(`${key}: an end witness for a walk that is not the last, or that does not exist`);
+  for (const key of unresolvedRows.keys()) problems.push(`${key}: an unresolved-reads row for a walk that does not exist`);
   return problems;
 }
 
@@ -398,6 +428,21 @@ export function transcriptRow(slug, n, stops, verdict, reason) {
 // cannot be told from a frozen capture, so it is not trusted. Both witness
 // readings are logged with the walk.
 //
+// A single unchanged read mid-walk, a move that neither moved the cursor
+// nor spoke a new phrase, followed by a move that does, is unresolved: the
+// move may have reached an element whose capture was lost (stale speech
+// and the old bounds, or an empty phrase), and the next capture skips
+// past it. A real transient capture failure looks like that: the read came
+// before VoiceOver had updated its last phrase and cursor, and the next
+// move reads fresh. So it is treated as the empty-capture rule treats an
+// empty phrase: a failed capture, not a wrong reading. A walk with any
+// unresolved read is "incomplete" whatever its stops say (they may lack an
+// element, so they cannot be trusted either way), and is walked again, at
+// most three walks; an incomplete walk never passes, so three such walks
+// fail. Each walk logs its unresolved reads ("none", or each with the stop
+// it came after, its phrase, and its position). Two unchanged reads in a
+// row are still the end, with its witness.
+//
 // What the witness cannot show: that the last stop is the screen's last
 // element. If the capture froze exactly at the screen's real last element,
 // or if VoiceOver itself stops moving early (two moves that change
@@ -420,18 +465,25 @@ export function transcriptRow(slug, n, stops, verdict, reason) {
 export async function collectWalk({ next, previous, capture, start, max = 40 }) {
   const stops = [];
   const positions = [];
+  const unresolved = [];
   let position = start;
   let unmoved = 0;
+  let pending = null;
+  // Every return carries the unresolved reads, so the log shows them.
+  const done = (reachedEnd, witness, problem) => ({ stops, positions, reachedEnd, witness, problem, unresolved });
   for (let i = 0; i < max; i++) {
     await next();
     const { phrase, position: now } = await capture();
     const spokeAnew = phrase !== '' && stops.length > 0 && phrase !== stops[stops.length - 1];
     if (now === position && !spokeAnew) {
       unmoved++;
-      if (unmoved < 2) continue;
-      if (stops.length < 2) {
-        return { stops, positions, reachedEnd: false, witness: null, problem: 'the end is not witnessed: fewer than two stops' };
+      if (unmoved < 2) {
+        // An unchanged read: the start of the end, or a read that lost a
+        // move. Which, only the next move shows.
+        pending = { after: stops.length, phrase, position: now };
+        continue;
       }
+      if (stops.length < 2) return done(false, null, 'the end is not witnessed: fewer than two stops');
       await previous();
       const back = await capture();
       await next();
@@ -441,25 +493,25 @@ export async function collectWalk({ next, previous, capture, start, max = 40 }) 
       const last = stops[stops.length - 1];
       const lastAt = positions[positions.length - 1];
       if (back.phrase === '' || back.phrase !== before || back.position === lastAt) {
-        return {
-          stops, positions, reachedEnd: false, witness,
-          problem: `the end is not witnessed: a move back read "${back.phrase}" at ${back.position}, where "${before}" was expected away from ${lastAt}`,
-        };
+        return done(false, witness,
+          `the end is not witnessed: a move back read "${back.phrase}" at ${back.position}, where "${before}" was expected away from ${lastAt}`);
       }
       if (forward.phrase !== last || forward.position !== lastAt) {
-        return {
-          stops, positions, reachedEnd: false, witness,
-          problem: `the end is not witnessed: a move forward again read "${forward.phrase}" at ${forward.position}, where "${last}" was expected at ${lastAt}`,
-        };
+        return done(false, witness,
+          `the end is not witnessed: a move forward again read "${forward.phrase}" at ${forward.position}, where "${last}" was expected at ${lastAt}`);
       }
-      return { stops, positions, reachedEnd: true, witness, problem: null };
+      return done(true, witness, null);
     }
+    // The walk moved on after one unchanged read: that read is unresolved.
+    // The move may have reached an element that was never captured.
+    if (unmoved === 1 && pending) unresolved.push(pending);
     unmoved = 0;
+    pending = null;
     position = now;
     stops.push(phrase);
     positions.push(now);
   }
-  return { stops, positions, reachedEnd: false, witness: null, problem: null };
+  return done(false, null, null);
 }
 
 /**
@@ -468,7 +520,16 @@ export async function collectWalk({ next, previous, capture, start, max = 40 }) 
  */
 export function judgeCollectedWalk(walk, expected, screen) {
   if (walk.problem) return { verdict: 'wrong', reason: walk.problem };
+  if (walk.unresolved.length > 0) {
+    return { verdict: 'incomplete', reason: `${unresolvedText(walk.unresolved)}: a move mid-walk read no new element and the walk moved on, so an element may be missing from it` };
+  }
   return judgeExampleWalk(walk.stops, walk.reachedEnd, expected, screen, walk.positions);
+}
+
+/** The transcript row's text for a walk's unresolved reads: "none", or each read. */
+export function unresolvedText(unresolved) {
+  if (unresolved.length === 0) return 'none';
+  return unresolved.map((u) => `after stop ${u.after}: "${u.phrase}" at ${u.position}`).join(' ; ');
 }
 
 /** The transcript row's text for a walk's end witness. */
@@ -481,4 +542,9 @@ export function witnessText(witness) {
 /** A walk's end witness row, as the VoiceOver spec logs it and the tool writes it. */
 export function endRow(slug, n, witness) {
   return `| \`${slug}-walk-${n}-end\` | ${witnessText(witness)} |`;
+}
+
+/** A walk's unresolved-reads row, as the VoiceOver spec logs it and the tool writes it. */
+export function unresolvedRow(slug, n, unresolved) {
+  return `| \`${slug}-walk-${n}-unresolved\` | ${unresolvedText(unresolved)} |`;
 }
