@@ -271,7 +271,15 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['an item missing at the end', screen('list 3 items', milk, eggs), true, 'wrong'],
     ['the browser\'s crash dialog in place of the screen', ['Google Chrome for Testing quit unexpectedly.', 'Reopen default button'], true, 'wrong'],
     ['a stop after the last expected one', screen(...expected, 'Extra'), true, 'wrong'],
-    ['an empty stop', screen('', ...expected), true, 'wrong'],
+    ['an empty stop put in, so that every later stop comes late', screen('', ...expected), true, 'wrong'],
+    // An empty phrase is a failed capture: walked again, never passed.
+    ['the second and third recordings: the title read as an empty phrase, every later stop right',
+      ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], true, 'incomplete'],
+    ['an item read as an empty phrase, every other stop right', screen('list 3 items', milk, '', bread, 'end of list'), true, 'incomplete'],
+    ['an empty first stop and a wrong reading later', ['', ...own.slice(1), EXAMPLE_HEADING, 'list 3 items', 'Milk', eggs, bread, 'end of list'], true, 'wrong'],
+    ['an empty first stop and a walk that reached the end short', ['', ...own.slice(1), EXAMPLE_HEADING, 'list 3 items'], true, 'wrong'],
+    ['an empty phrase after the last expected stop', screen(...expected, ''), true, 'incomplete'],
+    ['every stop an empty phrase', Array(8).fill(''), true, 'incomplete'],
     ['no title', [own[1], EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['no heading', [...own, ...expected], true, 'wrong'],
     ['an empty walk cut short', [], false, 'incomplete'],
@@ -314,6 +322,26 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
       expect(made()).toBe(1);
     });
   }
+
+  const emptyTitle = { stops: ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], reachedEnd: true };
+
+  test('an empty first stop is walked again, and a right walk then passes on the second', async () => {
+    const { walkOnce, made } = sequence(emptyTitle, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'complete', walks: 2 });
+    expect(made()).toBe(2);
+  });
+
+  test('an empty first stop, then a wrong reading on the re-walk, fails, and no third walk is made', async () => {
+    const { walkOnce, made } = sequence(emptyTitle, { stops: screen('Milk Eggs Bread'), reachedEnd: true }, right);
+    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+    expect(made()).toBe(2);
+  });
+
+  test('three empty captures fail, and no fourth walk is made', async () => {
+    const { walkOnce, made } = sequence(emptyTitle, emptyTitle, emptyTitle, right);
+    expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'incomplete', walks: 3 });
+    expect(made()).toBe(3);
+  });
 
   test('a wrong walk after a short one still fails, and no third walk is made', async () => {
     const { walkOnce, made } = sequence(short, { stops: screen('Milk Eggs Bread'), reachedEnd: true }, right);

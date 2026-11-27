@@ -7,7 +7,9 @@
 // a failed test twice, and a retry that passes makes the run pass, so a wrong
 // reading on the first attempt would be hidden. Each test retries instead,
 // itself, only a walk cut short before the end of the screen with every stop
-// right so far (runWalks and judgeExampleWalk in s08_vo_walks.js). Every
+// right so far, or a walk whose capture failed (a stop read as an empty
+// phrase) with nothing wrong read in it (runWalks and judgeExampleWalk in
+// s08_vo_walks.js). Every
 // walk must read the whole screen, the title and the description, the
 // "Example" heading, and every expected stop after it, each in its place:
 // a wrong stop, or a walk that reached the end with any expected stop not
@@ -21,8 +23,10 @@
 // text is merged into it as "empty group" (FL-315). The same was heard in
 // Chromium and WebKit for every example but `good-material`, which has
 // WebKit's reading only: Chromium quit during that walk, and VoiceOver read
-// its crash dialog. So `good-material`'s list is measured for WebKit and a
-// prediction for Chromium.
+// its crash dialog. The second and third recordings read good-material in
+// Chromium as WebKit had, and every other walk as listed here, but for one
+// WebKit walk each whose first stop was an empty phrase
+// (voiceover-web-round2-fail.md.txt, round3).
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { walkToEnd } from './vo_helpers.js';
@@ -45,7 +49,7 @@ const EXAMPLES = {
   'good-bulleted': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'empty group')), 'end of list'],
   'good-numbered': ['list 3 items', ...STEPS.map((s, i) => item(s, i, 'empty group')), 'end of list'],
   // Each tile a button with its place; the list items are not stops
-  // (WebKit; Chromium not recorded yet).
+  // (WebKit in every recording, Chromium in the second and third).
   'good-material': ['list 3 items', ...GROCERIES.map((g, i) => `${g} button ${i + 1} of 3`), 'end of list', 'Chosen: none'],
   // The list named by its header.
   'good-cupertino': ['list Groceries 3 items', ...GROCERIES.map((g, i) => item(g, i, 'empty group')), 'end of list'],

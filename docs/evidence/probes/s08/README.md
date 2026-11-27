@@ -237,6 +237,13 @@ and is kept whole: `voiceover-web-round1-fail.md.txt` (the transcript) and
 `voiceover-web-round1-fail.log.txt` (the log). What was said is in the
 spec's section 7 and FL-315; the expected lists were then set to it.
 
+The second and third recordings, against those lists, each failed one
+walk of 16, in WebKit, on a first stop read as an empty phrase with every
+later stop right (`voiceover-web-round2-fail.md.txt`, `bad-tile-in-item`;
+`voiceover-web-round3-fail.md.txt`, `bad-one-text`; each `.log.txt` holds
+the same text). The judge now walks such a capture again; the spec's
+section 7 has the diagnosis.
+
 ## What the examples take from this
 
 - The list role round a `Column`, with the list item role round each
