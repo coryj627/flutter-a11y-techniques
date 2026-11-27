@@ -437,19 +437,20 @@ def said(fragments, phrase):
     - "== A / B / C": the row's utterances are exactly A, B, C, in that
       order, each compared whole (trimmed, case ignored; an empty part is
       an utterance of nothing but white space, as a pane title of one
-      space is spoken). TalkBack's usage hint, "Double-tap to activate",
-      is left out where it comes at the end, as it does after a control;
-      anything else more, less, or in another order is wrong.
+      space is spoken; runs of white space count as one). TalkBack's
+      usage hint, "Double-tap to activate", may come once at the end, as
+      it does after a control; anything else more, less, or in another
+      order is wrong, a second hint included.
     - "^= A": the row's first utterance is exactly A.
     """
     if phrase.startswith("=="):
-        want = [p.strip().lower() for p in phrase[2:].split("/")]
-        got = [f.strip().lower() for f in fragments]
-        while got and got[-1] == "double-tap to activate" and len(got) > len(want):
+        want = row_slots(phrase)[:-1]
+        got = [utterance_text(f) for f in fragments]
+        if len(got) == len(want) + 1 and got[-1] == USAGE_HINT:
             got.pop()
         return got == want
     if phrase.startswith("^="):
-        return bool(fragments) and fragments[0].strip().lower() == phrase[2:].strip().lower()
+        return bool(fragments) and utterance_text(fragments[0]) == utterance_text(phrase[2:])
     word = phrase.lower()
     if word in ("button", "disabled", "heading", "edit box", "switch",
                 "check box", "slider", "image"):
@@ -560,50 +561,77 @@ def forbidden(ident, fragments):
 USAGE_HINT = "double-tap to activate"
 
 
-def whole_wrong(ident, fragments):
-    """For a row whose capture was cut off: what its fully captured
-    utterances already show to be wrong against the whole-utterance forms
-    of said() ("== A / B" and "^= A"), as problems() words it. Only rows
-    that use those forms are judged; every other row gives nothing.
+def utterance_text(text):
+    """An utterance as the whole-utterance forms compare it: runs of white
+    space made one space (logcat splits a fragment at its line breaks, and
+    parse_speech joins the lines with a space), trimmed, case ignored."""
+    return " ".join(text.split()).lower()
 
-    INCOMPLETE in `fragments` stands for the one utterance that was cut
-    off, which is not judged: it may be the expected utterance in its
-    place, or the closing usage hint. Every utterance captured whole must
-    be the expected one in its place, or the closing hint once at the end;
-    one that is wrong, extra, or out of place is a wrong reading. For
-    "^= A", a first utterance captured whole that is not A is wrong."""
+
+def row_slots(phrase):
+    """The utterances an "== A / B / C" row allows, by place: A, B, C, and
+    after them TalkBack's usage hint, once, or nothing."""
+    return [utterance_text(p) for p in phrase[2:].split("/")] + [USAGE_HINT]
+
+
+def whole_wrong(ident, fragments, captured=()):
+    """For a row whose capture was cut off: what it already shows to be
+    wrong against the whole-utterance forms of said() ("== A / B" and
+    "^= A"), as problems() words it. Only rows that use those forms are
+    judged; every other row gives nothing.
+
+    `fragments` is the row as parse_speech gives it, INCOMPLETE in the
+    place of each utterance that was cut off; `captured` is what was
+    captured of each of those, in order (parse_speech's `cut` for the
+    row), or nothing when it is not known. Each utterance is judged in its
+    own place, the n-th utterance against the n-th that the row allows:
+
+    - one captured whole must be the utterance allowed there;
+    - one cut off must have, as what was captured of it, the start of the
+      utterance allowed there: no ending can turn "Details" into "Orders".
+      What was captured is compared trimmed, with runs of white space made
+      one, case ignored; an empty capture proves nothing;
+    - an utterance of any kind beyond the last place the row allows (its
+      utterances, then the usage hint once) is wrong, cut off or not.
+
+    For "^= A" only the first utterance is judged, the same way. A row
+    that is short of its utterances is not judged here: what is missing
+    may be the cut-off part, and the row stays incomplete. Anything not
+    shown wrong leaves the row incomplete, to be walked again."""
     if ident not in EXPECT:
         return []
+    captured = list(captured)
+    texts, k = [], 0
+    for f in fragments:
+        if f == INCOMPLETE:
+            texts.append(("cut", utterance_text(captured[k]) if k < len(captured) else ""))
+            k += 1
+        else:
+            texts.append(("whole", utterance_text(f)))
+    shown = " | ".join(t if kind == "whole" else f"{t}<cut off>" for kind, t in texts)
+
+    def fits(kind, text, allowed):
+        return text == allowed if kind == "whole" else allowed.startswith(text)
+
     found = []
-    shown = " | ".join(f.lower() for f in fragments)
     for phrase in EXPECT[ident][0]:
         if phrase.startswith("=="):
-            want = [p.strip().lower() for p in phrase[2:].split("/")]
-            j, hint_used, bad = 0, False, None
-            for i, f in enumerate(fragments):
-                if f == INCOMPLETE:
-                    if j < len(want):
-                        j += 1
-                    elif not hint_used:
-                        hint_used = True
-                    else:
-                        bad = f"utterance {i + 1} is more than the row may hold"
-                        break
-                    continue
-                got = f.strip().lower()
-                if j < len(want) and got == want[j]:
-                    j += 1
-                elif j == len(want) and got == USAGE_HINT and not hint_used:
-                    hint_used = True
-                else:
-                    bad = f'utterance {i + 1}, "{f.strip()}", is not the expected one in its place'
+            slots = row_slots(phrase)
+            for i, (kind, text) in enumerate(texts):
+                if i >= len(slots):
+                    found.append(f'{ident}: expected "{phrase}" in "{shown}": '
+                                 f"utterance {i + 1} is more than the row may hold")
                     break
-            if bad:
-                found.append(f'{ident}: expected "{phrase}" in "{shown}": {bad}')
-        elif phrase.startswith("^="):
-            if fragments and fragments[0] != INCOMPLETE and \
-                    fragments[0].strip().lower() != phrase[2:].strip().lower():
-                found.append(f'{ident}: expected "{phrase}" in "{shown}": the first utterance differs')
+                if not fits(kind, text, slots[i]):
+                    what = "captured whole" if kind == "whole" else "cut off"
+                    found.append(f'{ident}: expected "{phrase}" in "{shown}": utterance {i + 1}, '
+                                 f'"{text}", {what}, cannot be "{slots[i]}"')
+                    break
+        elif phrase.startswith("^=") and texts:
+            kind, text = texts[0]
+            if not fits(kind, text, utterance_text(phrase[2:])):
+                found.append(f'{ident}: expected "{phrase}" in "{shown}": the first utterance, '
+                             f'"{text}", cannot be it')
     return found
 
 
@@ -619,9 +647,10 @@ def judge_walk(spoken, expected, cut=None, closed=None):
     lines are whole lines of what was said, so a forbidden phrase in them
     was said, and the reading is wrong. A required phrase it lacks may be in
     the lost part, so that alone makes it incomplete. A row that uses the
-    whole-utterance forms of said() is also judged on the utterances it
-    captured whole (whole_wrong): one wrong, extra, or out of place there
-    is a wrong reading, and only the cut-off utterance is not judged.
+    whole-utterance forms of said() is also judged on what it captured
+    (whole_wrong), each utterance in its place: one captured whole that is
+    wrong, extra, or out of place, or a cut-off one whose captured start
+    cannot begin the utterance allowed there, is a wrong reading.
     Anything else that
     fails its checks is a wrong reading, and a wrong reading anywhere makes
     the walk "wrong", even when other elements of it are incomplete.
@@ -665,7 +694,7 @@ def judge_walk(spoken, expected, cut=None, closed=None):
             # The whole-utterance forms are checked on what was captured
             # whole (whole_wrong): a wrong title captured whole is not
             # walked again away.
-            said_wrong = forbidden(ident, heard) + whole_wrong(ident, fragments)
+            said_wrong = forbidden(ident, heard) + whole_wrong(ident, fragments, cut.get(ident, []))
             if said_wrong:
                 wrong += said_wrong
             else:

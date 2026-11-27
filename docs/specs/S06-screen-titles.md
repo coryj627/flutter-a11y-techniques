@@ -376,10 +376,15 @@ Skips and what they give up, in the tests:
   hint would pass either way. A closing row is judged by its first
   utterance, exactly, the title; everything after it is recorded and not
   judged, since it varied between recordings. A row whose capture was cut
-  off in the log is still judged on the utterances captured whole: one
-  that is wrong, extra, or out of place fails for good, and only the
-  cut-off utterance is not judged, so a wrong title cannot be walked
-  again away (`whole_wrong` in `tool/talkback.py`; `S06CutOffRows` in
+  off in the log is still judged on what was captured of it, each
+  utterance in its own place: one captured whole must be the utterance
+  allowed there, and one cut off must have, as its captured text, the
+  start of it (an empty capture proves nothing); an utterance beyond the
+  last place, cut off or not, and a second usage hint, are wrong. A row
+  shown wrong fails for good, so a wrong title cannot be walked again
+  away; one that is short of its utterances, or whose cut-off parts could
+  still be the right ones, stays incomplete and is walked again
+  (`whole_wrong` in `tool/talkback.py`; `S06CutOffRows` in
   `tool/test_talkback.py`, from the log to the report).
 - The iOS VoiceOver landing reads `currentSpeech()` every 0.15 s; an
   utterance shorter than that between two reads would not be seen.
