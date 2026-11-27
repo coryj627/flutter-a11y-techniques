@@ -12,7 +12,8 @@
 // is the web VoiceOver spec's, which can show the words only.
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
-import { EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, runWalks, screenStops, spokenRole } from './vo/s16_vo_walks.js';
+import { BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, judgeTranscript, runWalks, screenStops, spokenRole } from './vo/s16_vo_walks.js';
+import { existsSync, readFileSync } from 'node:fs';
 
 // The example screen's own "Example" heading; the technique's page has
 // "Good examples" and "Bad examples", so the name must match exactly.
@@ -370,5 +371,69 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
       expect(i, `${what}: walks made`).toBe(made);
       expect(logged.map(([w]) => w), `${what}: every try logged`).toEqual(Array.from({ length: made }, (_, k) => k + 1));
     }
+  });
+});
+
+// The committed web VoiceOver transcript, judged again from the stops it
+// recorded (judgeTranscript in web_tests/vo/s16_vo_walks.js): every
+// browser and example once, walks in order, the last complete, the screen's
+// own stops included. Made-up transcripts test the judge first.
+test.describe('the web VoiceOver transcript is judged again from what it recorded', () => {
+  const row = (slug, n, stops, verdict = 'complete', reason = 'the whole screen, every stop in its place') =>
+    `| \`${slug}-walk-${n}\` | ${stops.join(' / ') || '(nothing)'} (${verdict}: ${reason}) |`;
+  const whole = (slug) => [...screenStops(slug), EXAMPLE_HEADING, ...EXPECTED_STOPS[slug]];
+  const section = (browser, rows) => ['', `## ${browser}`, '', '| Example | Spoken, in order |', '| --- | --- |', ...rows];
+  const transcript = (rowsFor) => ['# S16 Language of page and parts: VoiceOver transcript (web, macOS)', '',
+    'Result: PASS', ...BROWSERS.flatMap((b) => section(b, rowsFor(b)))].join('\n');
+  const right = (b) => Object.keys(EXAMPLE_SCREENS).map((slug) => row(slug, 1, whole(slug)));
+
+  test('made-up transcripts: a right one passes, and each wrong one names its problem', () => {
+    const passage = row('good-passage', 1, whole('good-passage'));
+    const short = (slug) => row(slug, 1, whole(slug).slice(0, 3), 'incomplete', 'the walk was cut short');
+    const cases = [
+      ['a whole walk of every example in both browsers', transcript(right), true],
+      ['a short first walk, then a complete second', transcript((b) => right(b).flatMap((r, i) => (i === 0 ? [short('good-passage'), r.replace('-walk-1`', '-walk-2`')] : [r]))), true],
+      ['fourteen copies of one row', transcript(() => Array(7).fill(passage)), false],
+      ['one row twice', transcript((b) => [...right(b), passage]), false],
+      ['an example missing in one browser', transcript((b) => (b === 'webkit' ? right(b).slice(1) : right(b))), false],
+      ['a browser section missing', ['Result: PASS', ...section('chromium', right('chromium'))].join('\n'), false],
+      ['a browser section twice', [transcript(right), ...section('webkit', right('webkit'))].join('\n'), false],
+      ['an unknown browser section', [transcript(right), ...section('firefox', [])].join('\n'), false],
+      ['an unknown example', transcript((b) => [...right(b), row('good-other', 1, whole('good-passage'))]), false],
+      ['a malformed row', transcript((b) => [...right(b), '| `good-passage-walk-x` | something |']), false],
+      ['a row outside any section', [passage, transcript(right)].join('\n'), false],
+      ['walk 2 with no walk 1', transcript((b) => right(b).map((r, i) => (i === 0 ? r.replace('-walk-1`', '-walk-2`') : r))), false],
+      ['the last walk recorded wrong', transcript((b) => right(b).map((r, i) => (i === 0 ? r.replace('(complete:', '(wrong:') : r))), false],
+      ['a short walk as the last', transcript((b) => right(b).map((r, i) => (i === 0 ? short('good-passage') : r))), false],
+      ['a complete walk after a wrong one', transcript((b) => right(b).flatMap((r, i) => (i === 0 ? [row('good-passage', 1, ['x'], 'wrong', 'x'), r.replace('-walk-1`', '-walk-2`')] : [r]))), false],
+      ['recorded complete, but only what follows the heading (the first recording\'s form)',
+        transcript((b) => Object.keys(EXAMPLE_SCREENS).map((slug) => row(slug, 1, EXPECTED_STOPS[slug]))), false],
+      ['recorded complete, with another example\'s screen stops',
+        transcript((b) => right(b).map((r, i) => (i === 0 ? row('good-passage', 1, [...screenStops('bad-unmarked'), EXAMPLE_HEADING, ...EXPECTED_STOPS['good-passage']]) : r))), false],
+      ['recorded complete, with a wrong stop after the heading',
+        transcript((b) => right(b).map((r, i) => (i === 0 ? row('good-passage', 1, [...screenStops('good-passage'), EXAMPLE_HEADING, 'Bienvenue']) : r))), false],
+    ];
+    for (const [what, text, ok] of cases) {
+      const problems = judgeTranscript(text);
+      expect(problems.length === 0, `${what}: ${problems.join('; ')}`).toBe(ok);
+    }
+  });
+
+  test('the first recording (voiceover-web-round1-pass.md.txt), which logged only what follows the heading of a complete walk, cannot be judged again: every pair fails for its missing screen stops', () => {
+    const text = readFileSync(new URL('../docs/evidence/probes/s16/voiceover-web-round1-pass.md.txt', import.meta.url), 'utf8');
+    const problems = judgeTranscript(text);
+    // Fourteen walks, each judged wrong again (its first stop is not the
+    // title), and nothing else wrong with the file.
+    expect(problems.filter((p) => / judges "wrong" again: stop 1 was /.test(p))).toHaveLength(14);
+    expect(problems).toHaveLength(14);
+  });
+
+  // The recording with every walk logged whole is made by the principal
+  // (the web VoiceOver recording takes over the Mac). Until it is
+  // committed there is nothing to judge, and this test says so.
+  const committed = new URL('../docs/evidence/S16/voiceover-web.md', import.meta.url);
+  test('the committed recording (docs/evidence/S16/voiceover-web.md) is right, every browser and example once', () => {
+    test.skip(!existsSync(committed), 'not recorded yet with every walk logged whole');
+    expect(judgeTranscript(readFileSync(committed, 'utf8'))).toEqual([]);
   });
 });

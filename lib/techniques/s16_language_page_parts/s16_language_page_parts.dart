@@ -31,8 +31,8 @@ final s16LanguagePageParts = Technique(
       'localeForSubtree has a lang of its own. A phrase inside a sentence '
       'cannot be marked: the web engine drops TextSpan(locale:) and every '
       'language attribute of a label (limitation FL-020). A locale with a '
-      'country is written fr_FR, which the browser does not read as French '
-      '(FL-020).',
+      'country is written fr_FR, which Chromium and WebKit do not match to '
+      'French (FL-020).',
     ),
   },
   wcag: const [
@@ -126,7 +126,7 @@ final s16LanguagePageParts = Technique(
       slug: 'bad-override',
       title: 'Localizations.override',
       variant: ExampleVariant.widgets,
-      defect: 'The whole app becomes French, and stays French.',
+      defect: 'Once opened, the app is French until it is restarted.',
       builder: (_) => const BadOverride(),
     ),
   ],

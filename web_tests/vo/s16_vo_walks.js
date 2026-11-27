@@ -44,7 +44,7 @@ export const EXAMPLE_SCREENS = {
   ],
   'bad-override': [
     'Localizations.override', 'Bad example for Language of page and parts. Widgets layer.',
-    'Defect: The whole app becomes French, and stays French.',
+    'Defect: Once opened, the app is French until it is restarted.',
   ],
 };
 
@@ -57,7 +57,9 @@ const MENU = ['Français button', 'Español button', 'Deutsch button', 'Chosen: 
 // can judge the committed transcripts with it too) after the "Example"
 // heading, to the end of the screen, in order, one entry for each element
 // its cursor stops on. Predicted before any recording, from the page's
-// elements (the web tree spec): no recording has been made yet. The words
+// elements (the web tree spec); the first recording (2026-11-27,
+// docs/evidence/probes/s16/voiceover-web-round1-pass.md.txt) read every
+// one as predicted, in Chromium and WebKit. The words
 // are the same whatever language a stop is in.
 export const EXPECTED_STOPS = {
   'good-passage': [LEAD, PASSAGE],
@@ -230,4 +232,81 @@ export async function runWalks(walkOnce, judge, { tries = 3, log = () => {} } = 
     if (judged.verdict !== 'incomplete') return { ...judged, walks: walk };
   }
   return { ...judged, walks: tries };
+}
+
+/** The browsers every web VoiceOver recording walks, each once. */
+export const BROWSERS = ['chromium', 'webkit'];
+
+/**
+ * Judges a committed web VoiceOver transcript (the markdown
+ * tool/voiceover_web.py writes) again with today's judge, from the stops
+ * it recorded, never from stops rebuilt from the expectations: every walk
+ * is logged whole, the screen's own stops included
+ * (s16_language_page_parts_vo.spec.js). Returns the list of problems;
+ * empty when the transcript is right. It is right only when:
+ *
+ * - it has one section for each of BROWSERS, and no other, each once;
+ * - every row that starts as a walk's row does is `| \`<slug>-walk-<n>\` |
+ *   <stops> (<verdict>: <reason>) |`, inside a section, for a slug of
+ *   EXAMPLE_SCREENS; any other such row is malformed;
+ * - each browser and example has walks 1 to n, each once, in order, so a
+ *   duplicated row, a missing walk, or a row copied for another pair
+ *   fails, and every browser and example pair is there;
+ * - each walk before the last recorded "incomplete" and is judged so again
+ *   (walked again only for a failed or short capture, with nothing wrong
+ *   read), and the last recorded "complete" and is judged so again, the
+ *   title, the description, and the heading included.
+ *
+ * The transcript records no cursor positions, so a help message in it is
+ * a stop like any other, and fails.
+ */
+export function judgeTranscript(text) {
+  const problems = [];
+  const walks = new Map();
+  const sections = [];
+  let browser = null;
+  for (const [i, line] of text.split('\n').entries()) {
+    const section = /^## (.+)$/.exec(line);
+    if (section) {
+      browser = section[1].trim();
+      if (!BROWSERS.includes(browser)) problems.push(`line ${i + 1}: unknown section "${browser}"`);
+      if (sections.includes(browser)) problems.push(`line ${i + 1}: a second "${browser}" section`);
+      sections.push(browser);
+      continue;
+    }
+    if (!line.startsWith('| `')) continue;
+    const row = /^\| `([a-z0-9-]+)-walk-(\d+)` \| (.*) \((complete|wrong|incomplete): (.*)\) \|$/.exec(line);
+    if (!row || browser === null) {
+      problems.push(`line ${i + 1}: malformed row "${line}"`);
+      continue;
+    }
+    const [, slug, n, spoken, verdict] = row;
+    if (!(slug in EXAMPLE_SCREENS)) {
+      problems.push(`line ${i + 1}: unknown example "${slug}"`);
+      continue;
+    }
+    const key = `${browser} ${slug}`;
+    if (!walks.has(key)) walks.set(key, []);
+    walks.get(key).push({ n: Number(n), stops: spoken === '(nothing)' ? [] : spoken.split(' / '), verdict, line: i + 1 });
+  }
+  for (const b of BROWSERS) if (!sections.includes(b)) problems.push(`no "${b}" section`);
+  for (const b of BROWSERS) {
+    for (const slug of Object.keys(EXAMPLE_SCREENS)) {
+      const key = `${b} ${slug}`;
+      const tries = walks.get(key);
+      if (!tries) {
+        problems.push(`${key}: no walk`);
+        continue;
+      }
+      tries.forEach((t, k) => {
+        if (t.n !== k + 1) problems.push(`${key}: walk ${t.n} where walk ${k + 1} was expected (line ${t.line})`);
+        const last = k === tries.length - 1;
+        const want = last ? 'complete' : 'incomplete';
+        const again = judgeExampleWalk(t.stops, last, EXPECTED_STOPS[slug], screenStops(slug));
+        if (t.verdict !== want) problems.push(`${key}: walk ${t.n} recorded "${t.verdict}", where a ${last ? 'last' : 'repeated'} walk must be "${want}"`);
+        if (again.verdict !== want) problems.push(`${key}: walk ${t.n} judges "${again.verdict}" again: ${again.reason}`);
+      });
+    }
+  }
+  return problems;
 }

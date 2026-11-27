@@ -47,7 +47,7 @@ final class S16LanguagePagePartsUITests: XCTestCase, TechniqueUITest {
     ],
     "bad-override": [
       "Localizations.override", "Bad example for Language of page and parts. Widgets layer.",
-      "Defect: The whole app becomes French, and stays French.",
+      "Defect: Once opened, the app is French until it is restarted.",
     ],
   ]
 

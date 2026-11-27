@@ -17,13 +17,17 @@
 //
 // VoiceOver's last phrase is text: whether a French part was spoken in a
 // French voice is not in it. What is judged is the words and the stops.
-// The expected lists are predictions; no recording has been made yet.
+// The expected lists were predictions, and the first recording
+// (2026-11-27, docs/evidence/probes/s16/voiceover-web-round1-pass.md.txt)
+// read every example as predicted, in Chromium and WebKit, each on its
+// first walk. That recording showed only what follows the "Example"
+// heading of a complete walk; every walk is now logged whole.
 // Each test opens its example in a page of its own, from a fresh load, so
 // that bad-override's French (FL-360) does not reach another example.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
-import { EXAMPLE_HEADING, EXPECTED_STOPS, judgeExampleWalk, runWalks, screenStops } from './s16_vo_walks.js';
+import { EXPECTED_STOPS, judgeExampleWalk, runWalks, screenStops } from './s16_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
@@ -86,11 +90,12 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
       (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug), positions),
       {
         log: (walk, stops, judged) => {
-          // A complete walk read the screen's own stops exactly as listed,
-          // so only what follows the heading is shown; any other try is
-          // shown whole.
-          const start = stops.indexOf(EXAMPLE_HEADING);
-          const shown = (judged.verdict === 'complete' ? stops.slice(start + 1) : stops).join(' / ') || '(nothing)';
+          // Every try is shown whole, the screen's own stops (title,
+          // description, defect, heading) included, so that the committed
+          // transcript can be judged again from what was recorded
+          // (judgeTranscript in s16_vo_walks.js), never from stops rebuilt
+          // from the expectations.
+          const shown = stops.join(' / ') || '(nothing)';
           console.log(`S16VO ${browserName} ${slug}-walk-${walk} | ${shown} (${judged.verdict}: ${judged.reason})`);
         },
       });

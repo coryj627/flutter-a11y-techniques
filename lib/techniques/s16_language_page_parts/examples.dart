@@ -226,8 +226,8 @@ class BadRegionTag extends StatelessWidget {
         const Text(lead),
         const SizedBox(height: 8),
         // Defect: a locale with a country is written `lang="fr_FR"` on the
-        // web, which is not a language tag, and no browser reads it as
-        // French (FL-020). Android and iOS are given fr-FR.
+        // web, which is not a valid language tag; Chromium and WebKit do
+        // not match it to French with `:lang()` (FL-020). Android and iOS are given fr-FR.
         Semantics(
           localeForSubtree: const Locale('fr', 'FR'),
           child: const Text(passage),

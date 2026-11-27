@@ -44,12 +44,13 @@ solution (section 5).
   example for R3, and `good-phrase` is good on Android and iOS only. The
   page's language (R1), a passage's (R2), and a control's (R5) work on the
   web, with a locale of a language alone; with a country the web writes
-  `lang="fr_FR"`, which the browser takes as no language (FL-020).
+  `lang="fr_FR"`, which is not a valid language tag and which Chromium and WebKit do not match to French with `:lang()` (FL-020).
 
 This follows the owner's rule of 2026-11-23: where Flutter is measured not
 to meet a requirement on a platform and no documented parameter fixes it,
 that platform is a limitation and has no good example for that requirement.
-The principal has not yet decided this technique's statuses.
+The principal decided these statuses on 2026-11-27 (section 5,
+"Decisions"); the owner may overrule.
 
 What each good example gives, by platform (section 7):
 
@@ -153,7 +154,7 @@ No good example here is a custom solution. The register's rows are in
 | --- | --- | --- |
 | `bad-unmarked` | The passage with nothing marked: it is in the app's language, English | R2 |
 | `bad-title-in-tile` | `good-language-menu` with `localeForSubtree` on each tile's title, inside the tile, which merges it: the language is lost ([FL-361](../flutter-limitations.md#fl-361)) | R5 |
-| `bad-region-tag` | `good-passage` with `Locale('fr', 'FR')`: on the web `lang="fr_FR"`, which is no language tag and which the browser takes as no language ([FL-020](../flutter-limitations.md#fl-020)) | R4 |
+| `bad-region-tag` | `good-passage` with `Locale('fr', 'FR')`: on the web `lang="fr_FR"`, which is not a valid BCP 47 tag and which Chromium and WebKit match with `:lang()` to none of the languages checked ([FL-020](../flutter-limitations.md#fl-020)) | R4 |
 | `bad-override` | The passage inside `Localizations.override(locale: Locale('fr'))`: the passage is French, and so is the whole app, which stays French after the screen closes ([FL-360](../flutter-limitations.md#fl-360)) | R1, R6 |
 
 What each fails, by platform, as the criterion is written (section 7 has
@@ -167,7 +168,20 @@ the measurements):
 | `bad-override` | 3.1.1: every node of the screen fr, and after Back the technique's page fr | 3.1.1: the screen's English title and heading read with the French role word, "Localizations.override En-tête", "Example En-tête"; after Back not measured | 3.1.1: the page's `lang="fr"`, on the screen and after Back |
 
 `bad-region-tag` on Android and iOS is not called a failure: its one
-defect is the web's, as S08's `bad-tile-in-item` is.
+defect is the web's, as S08's `bad-tile-in-item` is. On the web its
+3.1.2 verdict rests on two things, each checked: the HTML standard
+requires `lang` to be a valid BCP 47 language tag or empty, and BCP 47
+separates subtags with hyphens only, so `fr_FR` is not one; and
+Chromium's and WebKit's `:lang()`, which matches by subtags separated by
+hyphens (Selectors), matched the passage to none of the languages
+checked. What a screen reader does with it was not measured beyond
+VoiceOver's words, which are the same as `good-passage`'s.
+
+`bad-override`'s 3.1.1 verdict: once the app's language is French, the
+language determined for the English screens is French, so the default
+language of the app is not the one its content is in. On iOS it rests on
+VoiceOver reading the English headings with the French role word; the
+language there after the screen closes was not measured.
 
 `bad-override` is a framework defect: its author used the widget the
 documentation gives for a part of an app in another locale. It changes the
@@ -176,8 +190,28 @@ French until the app is started again. Every test opens each example in a
 fresh start (a page load, a new Android activity, a new iOS launch), and
 the web VoiceOver spec gives each example a page of its own. A user of the
 catalog who opens it is left with a French catalog; that is the defect,
-shown where it happens, and it is the principal's call whether the
-example stays (section 7, "Decisions needed").
+shown where it happens. Its screen says so before the example, in its
+defect line: "Once opened, the app is French until it is restarted."
+
+### Decisions
+
+The principal's, on 2026-11-27, on the engineer's questions; the owner
+may overrule:
+
+1. The web is `PlatformStatus.limitation`, citing FL-020: a phrase's
+   language cannot be exposed there, and no documented parameter fixes
+   it. Android and iOS apply. By example: `good-passage` and
+   `good-language-menu` are good on Android, iOS, and the web;
+   `good-phrase` on Android and iOS only. On iOS a passage's language
+   rests on reading the engine's source, not on a measurement, and the
+   voice was measured on no platform.
+2. `bad-override` stays, with its screen warning that once it is opened
+   the whole app is French until the app is restarted.
+3. No change to `tool/talkback.py`'s `parse_speech` now. The TalkBack
+   layer judges words only; keeping the logged locale is a follow-up
+   (section 7).
+4. The emulator's missing French voice is recorded under what is not
+   verified (section 7).
 
 ### Not built
 
@@ -207,7 +241,7 @@ round each tile's `TestId`, and the texts are found by their names.
 | L3 iOS | The labels of the example's elements after the "Example" heading, in order, and each tile a button with its label; a tap on each tile, and Tabs then Enter, and then Space, each key sent once from a fresh launch, choose it. XCUITest cannot read a language, so no defect is seen in the tree; the VoiceOver walk is where it is judged |
 | L4 TalkBack | Focus moved to each text of each example and to each tile, in order; every row a whole-utterance form, exactly its fragments in order (`== A / B`, `tool/talkback.py`): each text its words, `good-phrase` the sentence in three fragments, "The guide said / bon voyage / as we left.", split where the language changes, each tile its name and "Button" (a usage hint allowed once at the end). The locale TalkBack logs with each fragment is not read by the tool, so the rows judge words: the split of `good-phrase` is the only one that shows a language; the passages' languages are judged by the Android tree test. Each walk is judged whole (`walk_strictly`): a wrong reading fails for good |
 | L4 VoiceOver iOS | Every utterance from the top of the screen to its end (S16Walk, C03's walk keeping each raw utterance), judged whole: the screen's own stops (the title, the description, a bad example's defect, the "Example" heading, each heading with its role word), which tie the walk to this example; another example's, a missing or an empty one fails, then exactly the example's stops, each with white space made one space; and for some stops the raw utterance exactly: `good-phrase`'s with a second space before and after the phrase, and the passages' leads and passages with single spaces. `good-language-menu`'s tiles with their role word in their language ("Français Bouton", "Español Botón", "Deutsch Taste"); `bad-title-in-tile`'s with "Button"; `bad-override`'s title and heading with "En-tête". Every expected utterance is under the service's 64 characters, and a test refuses a longer one; made-up walks test the judge |
-| L4 VoiceOver web | Not recorded yet. The walk and the judge are S08's (`web_tests/vo/s16_vo_walks.js`): the whole screen in order, every stop judged, an empty stop a failed capture walked again (at most three walks, each logged), a wrong reading failing for good, no runner retries; the help-message rule is tested only on made-up walks. The expected stops are predictions from the page's elements; the words are the same whatever language a stop is in |
+| L4 VoiceOver web | The walk and the judge are S08's (`web_tests/vo/s16_vo_walks.js`): the whole screen in order, every stop judged, an empty stop a failed capture walked again (at most three walks, each logged), a wrong reading failing for good, no runner retries; the help-message rule is tested only on made-up walks. The expected stops were predictions from the page's elements, and the first recording read every one as predicted (section 7); the words are the same whatever language a stop is in. Every walk is logged whole, the screen's own stops included, and the web tree spec judges the committed transcript again from its recorded stops (`judgeTranscript`): each browser and example exactly once, walks in order, the last complete; duplicate, malformed, unknown, or missing rows fail (made-up transcripts, fourteen copies of one row among them, test it; the test of the committed transcript is skipped, saying why, until the recording with every walk logged whole is committed) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -283,13 +317,20 @@ on the simulator.
 
 What the tests skip or cannot see, and what each gives up:
 
-- The TalkBack rows judge words. `tool/talkback.py` reads each fragment's
-  text and drops the `locale=` TalkBack logs with it, so a passage read
-  with an English locale and one read with a French one give the same
-  row: the TalkBack layer cannot fail `bad-unmarked` or pass
+- The TalkBack layer judges words only. `tool/talkback.py` reads each
+  fragment's text and drops the `locale=` TalkBack logs with it, so a
+  passage read with an English locale and one read with a French one give
+  the same row: the TalkBack layer cannot fail `bad-unmarked` or pass
   `good-passage` on their language. The Android tree test judges the
-  spans. Reading the logged locale needs a change to the shared tool,
-  proposed and not made.
+  spans.
+- The web VoiceOver walks judge words and stops only: VoiceOver's last
+  phrase is text, and a passage read in French and one read in English
+  give the same stop.
+- The after-Back checks (web and Android) have a witness that Back took
+  effect, the technique page shown and no "Example" heading, which fails
+  if Back is not taken, and a control, `good-passage`, whose Back leaves
+  the language the app's. On iOS what the language is after Back was not
+  measured.
 - The iOS layers cannot read a language. The VoiceOver walk judges the
   role words and the doubled spaces that show one, and nothing shows a
   passage's language: `good-passage`, `bad-unmarked`, `bad-region-tag`,
@@ -301,9 +342,33 @@ What the tests skip or cannot see, and what each gives up:
   its end; a node scrolled away above would be missed. Every example fits
   CI's screen below the heading (checked at 320 by 640).
 
-**Decisions needed.** Listed in the engineer's report to the principal.
+- **The first web VoiceOver recording passed** (recorded 2026-11-27,
+  `docs/evidence/probes/s16/voiceover-web-round1-pass.md.txt`): 14 walks of 14,
+  each complete on its first walk, in Playwright's Chromium and WebKit
+  builds, with no help message and no empty stop. Every example was read
+  as predicted after its "Example" heading: the lead and the passage as
+  plain text; `good-phrase` as one stop, "The guide said bon voyage as we
+  left."; both language menus "Français button", "Español button",
+  "Deutsch button", "Chosen: none". The role word is English in both
+  menus, where VoiceOver on iOS used the tile's language. That recording
+  logged only what follows the heading of a complete walk, so the
+  screen's own stops it judged are not in it, and it cannot be judged
+  again; the web tree spec shows that it fails `judgeTranscript` for
+  exactly that. The VoiceOver spec now logs every walk whole, and the
+  recording is to be made again (by the principal).
 
-**Not done yet.** The web VoiceOver recording. The voice on any platform.
+**Follow-ups.** Keep the locale TalkBack logs with each fragment, in
+`tool/talkback.py`'s `parse_speech`, so that TalkBack rows can judge
+language (the principal's decision 3: not now).
+
+**Not verified.** The voice on any platform. The emulator's speech engine
+has no French voice: it tried to download one during the probe and the
+download failed (`docs/evidence/probes/s16/android-talkback-log.txt`), so
+what TalkBack's French fragments sounded like is not known. A passage's
+language on iOS rests on the engine's source.
+
+**Not done yet.** The web VoiceOver recording with every walk logged
+whole.
 What VoiceOver does with `lang="fr_FR"` or with a page whose `lang` is
 wrong. An app in another language as an example. Right-to-left languages
 (S17).

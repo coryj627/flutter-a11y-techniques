@@ -810,12 +810,18 @@ yet), **Fixed in x.y** (verified on that version).
     any element (S16 probe p02, p08, p10, p12, p17, p22).
     `localeForSubtree` with a language alone writes a valid `lang`
     (`Locale('fr')`: `lang="fr"`, which matches `:lang(fr)`). With a
-    country or a script it writes `lang="fr_FR"`, `lang="zh_Hant"`: a
-    language tag uses hyphens (BCP 47), and Chromium and WebKit match the
-    element to no language with `:lang()`, as they match a plain HTML
+    country or a script it writes `lang="fr_FR"`, `lang="zh_Hant"`. HTML
+    requires `lang` to be a valid BCP 47 language tag or empty, and BCP 47
+    separates subtags with hyphens only, so neither is valid; Selectors'
+    `:lang()` matches subtags separated by hyphens, and Chromium and WebKit
+    matched the element to none of the languages checked (`en`, `en-US`,
+    `fr`, `fr-FR`, `ja`, `zh`, `zh-Hant`), as they match a plain HTML
     element with `lang="fr_FR"` to none, and one with `lang="fr-FR"` to
-    `fr` and `fr-FR` (the probe's HTML control). What VoiceOver does with
-    it was not measured.
+    `fr` and `fr-FR` (the probe's HTML control). VoiceOver in Chromium and
+    WebKit read S16's `bad-region-tag` passage in the same words as
+    `good-passage`'s (recorded 2026-11-27,
+    `docs/evidence/probes/s16/voiceover-web-round1-pass.md.txt`); what voice
+    it used was not measured.
   - On iOS, the engine sets an attributed label with the language over the
     part's range (source read: `SemanticsObject.mm`,
     `UIAccessibilitySpeechAttributeLanguage`). XCUITest cannot read speech
@@ -826,8 +832,9 @@ yet), **Fixed in x.y** (verified on that version).
     measured.
 - Effect: on the web a phrase in another language inside a sentence cannot
   be marked, nor can a control's name in a part of its label, and a
-  passage marked with a locale that has a country or a script is in no
-  language the browser recognises.
+  passage marked with a locale that has a country or a script has a
+  `lang` that is not a valid language tag, which `:lang()` matches to no
+  language checked.
 - Workaround: for a whole node, `Semantics(localeForSubtree:)` with a
   locale of a language alone, `Locale('fr')` (S16's `good-passage`,
   `good-language-menu`); it gives the node's language and drops the
