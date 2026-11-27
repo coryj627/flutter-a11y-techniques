@@ -4,10 +4,15 @@ import 'package:flutter/semantics.dart';
 
 // Every good example is Flutter's own widgets used through their documented
 // parameters: `Semantics(role: SemanticsRole.list)` round the list and
-// `Semantics(role: SemanticsRole.listItem)` round each item, as the
-// `SemanticsRole` documentation describes them, round a `Column`, Material's
-// `ListTile`, and Cupertino's `CupertinoListSection`. What they cannot do is
-// in docs/flutter-limitations.md and is not built here.
+// `Semantics(role: SemanticsRole.listItem)` round each item, round a `Column`
+// as the `SemanticsRole.list` documentation describes, Material's `ListTile`,
+// and Cupertino's `CupertinoListSection`. None is complete on Android or the
+// web: on Android a list made this way says "In list" and "Out of list" but
+// not its size or an item's place (FL-311); on the web it is a list only
+// because it is laid out whole and does not scroll (FL-312), and VoiceOver
+// reads a text-only item as an "empty group" (FL-315). On iOS Flutter gives
+// a list nothing (FL-310): each item is an element of its own. What they
+// cannot do is in docs/flutter-limitations.md and is not built here.
 
 // #region shared
 /// The shopping list every unordered example shows.
@@ -91,7 +96,9 @@ class Chosen extends StatelessWidget {
 
 // #region good-bulleted
 /// A bulleted list: `SemanticsRole.list` round a `Column`, and
-/// `SemanticsRole.listItem` round each line.
+/// `SemanticsRole.listItem` round each line. Android: "In list" and "Out
+/// of list", no size or place. iOS: each line an element, no list. Web: a
+/// list of three items, each read as "Milk empty group (1 of 3) 1 of 3".
 class GoodBulleted extends StatelessWidget {
   const GoodBulleted({super.key});
 
@@ -109,7 +116,8 @@ class GoodBulleted extends StatelessWidget {
 
 // #region good-numbered
 /// A numbered list. Flutter has no ordered list, so each item's number is
-/// part of its text, where it is read with the item.
+/// part of its text, where it is read with the item. What each platform
+/// gives is `good-bulleted`'s.
 class GoodNumbered extends StatelessWidget {
   const GoodNumbered({super.key});
 
@@ -137,7 +145,9 @@ class GoodNumbered extends StatelessWidget {
 /// A list of Material list tiles that each open something. Each tile is
 /// kept a button of its own inside its list item with `explicitChildNodes`:
 /// merged into the item, it would be a list item and no button on the web
-/// (`bad-tile-in-item`).
+/// (`bad-tile-in-item`). Android: each tile a button, the first with "In
+/// list", no size or place. iOS: each tile a button, no list. Web: a list
+/// of items each holding a button, read "Milk button 1 of 3" (WebKit).
 class GoodMaterial extends StatefulWidget {
   const GoodMaterial({super.key});
 
@@ -186,7 +196,9 @@ class _GoodMaterialState extends State<GoodMaterial> {
 /// the `CupertinoListSection`, which joins the header's text to the list,
 /// and `SemanticsRole.listItem` round each `CupertinoListTile`. The tiles do
 /// nothing when tapped: a `CupertinoListTile` with `onTap` takes no keyboard
-/// focus and is not a button on Android and iOS (FL-400).
+/// focus and is not a button on Android and iOS (FL-400). Android: the list
+/// named "Groceries", no size or place. iOS: the header, then each tile, no
+/// list. Web: "list Groceries 3 items", each tile as `good-bulleted`'s.
 class GoodCupertino extends StatelessWidget {
   const GoodCupertino({super.key});
 
@@ -287,9 +299,11 @@ class BadLazyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Defect: a long list in a `ListView`, which builds its items as they
-    // are scrolled to. On Android and the web nothing says that it is a
-    // list, and the list's role cannot be put round it (FL-312).
+    // Defect, Flutter's and not the author's: a long list in a `ListView`,
+    // the widget for long lists, which builds its items as they are
+    // scrolled to. On Android and the web nothing says that it is a list
+    // (FL-313, FL-312), and the list's role cannot be put round it
+    // (FL-314). There is no good example of a long list to put beside it.
     return SizedBox(
       height: 200,
       child: ListView.builder(

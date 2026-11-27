@@ -14,11 +14,15 @@
 // read, fails the test for good, and every try is logged, so every attempt
 // is in the transcript.
 //
-// The expected lists below were written before any VoiceOver recording of
-// these examples was made: no recording of a Flutter list on the web had
-// been made in this project (docs/specs/S08-list-semantics.md, section 7).
-// They are what VoiceOver is predicted to say from the elements the web
-// tree test measures; the first recording decides them.
+// The expected lists are what VoiceOver said in the first recording
+// (2026-11-26, docs/evidence/probes/s08/voiceover-web-round1-fail.md.txt),
+// which was judged against predictions written before any recording and
+// failed: every list item was read with its place, and a list item whose
+// text is merged into it as "empty group" (FL-315). The same was heard in
+// Chromium and WebKit for every example but `good-material`, which has
+// WebKit's reading only: Chromium quit during that walk, and VoiceOver read
+// its crash dialog. So `good-material`'s list is measured for WebKit and a
+// prediction for Chromium.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { walkToEnd } from './vo_helpers.js';
@@ -29,24 +33,30 @@ test.describe.configure({ retries: 0 });
 const GROCERIES = ['Milk', 'Eggs', 'Bread'];
 const STEPS = ['1. Fork the repository', '2. Make the change', '3. Open a pull request'];
 
+/** A list item as VoiceOver read it: "Milk empty group (1 of 3) 1 of 3". */
+const item = (text, i, kind) => `${text} ${kind} (${i + 1} of 3) ${i + 1} of 3`;
+
 // slug -> everything VoiceOver speaks after the "Example" heading, to the
 // end of the screen, in order, one entry for each element its cursor stops
 // on. Because every stop is listed, the lists also show what is not spoken.
 const EXAMPLES = {
-  // The list, with its number of items, then each item.
-  'good-bulleted': ['list 3 items', ...GROCERIES],
-  'good-numbered': ['list 3 items', ...STEPS],
-  'good-material': ['list 3 items', ...GROCERIES.map((g) => `${g} button`), 'Chosen: none'],
-  'good-cupertino': ['Groceries list 3 items', ...GROCERIES],
+  // The list with its number of items; each item with "empty group" and
+  // its place, twice; then the end of the list (FL-315).
+  'good-bulleted': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'empty group')), 'end of list'],
+  'good-numbered': ['list 3 items', ...STEPS.map((s, i) => item(s, i, 'empty group')), 'end of list'],
+  // Each tile a button with its place; the list items are not stops
+  // (WebKit; Chromium not recorded yet).
+  'good-material': ['list 3 items', ...GROCERIES.map((g, i) => `${g} button ${i + 1} of 3`), 'end of list', 'Chosen: none'],
+  // The list named by its header.
+  'good-cupertino': ['list Groceries 3 items', ...GROCERIES.map((g, i) => item(g, i, 'empty group')), 'end of list'],
   // Bad examples: the defect must be audible where the web shows it.
   // One text, no list.
   'bad-one-text': [GROCERIES.join(' ')],
   // Three texts, no list.
   'bad-no-list': GROCERIES,
-  // Each tile a list item, and no button (FL-262).
-  'bad-tile-in-item': ['list 3 items', ...GROCERIES, 'Chosen: none'],
-  // No list; the orders the page holds when it opens (the web tree test
-  // measured 1 to 13 of 30, FL-011).
+  // Each tile a list item, read as a group and not as a button (FL-262).
+  'bad-tile-in-item': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'group')), 'end of list', 'Chosen: none'],
+  // No list; the orders the page holds when it opens (FL-011).
   'bad-lazy-list': Array.from({ length: 13 }, (_, i) => `Order ${i + 1}`),
 };
 

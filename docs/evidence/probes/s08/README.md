@@ -213,9 +213,29 @@ item's text twice, and cut an utterance at 64 characters):
 | nested `ul` | "• List start", "nested Fruit … 1 of 2", "◦ nested Apple … List start 1 of 2", "◦ nested Pear … 2 of 2 List end", "• nested Bread … 2 of 2 List end" |
 
 So VoiceOver on iOS speaks lists, their size, an item's place, and a
-description list's parts, for web content. Whether it does for a native
-UIKit container of type list was not measured: no native iOS comparison
-was built.
+description list's parts, for web content.
+
+Native iOS (round 3, `ios-native.txt`; `NativeLists.swift.txt`, a
+separate app built with `swiftc` by `build_native_ios.sh.txt`, installed
+and driven by `ios_native.sh.txt` and `ProbeS08NativeUITests.swift.txt`,
+never part of the Runner):
+
+| # | Elements (XCUITest types) | VoiceOver, moving forward from a tap on "Before" and from the top |
+| --- | --- | --- |
+| n05, a UIKit `UITableView` of three rows | a table (26) holding three cells (75), each holding a static text | "n05 Milk", "n05 Eggs", "n05 Bread", "n05 end" |
+| n06, a SwiftUI `List` of three `Text` rows | a collection view (32) holding three cells, each holding a static text | "n06 Milk", "n06 Eggs", "n06 Bread", "n06 end" |
+| n07, a `UIStackView` of three labels | three static texts | "n07 Milk", "n07 Eggs", "n07 Bread", "n07 end" |
+
+No native walk said "list", a count, or a place. Only moving forward was
+measured.
+
+## Web VoiceOver, the first recording of the examples
+
+Made by the coordinator on 2026-11-26 with `tool/voiceover_web.py S08`,
+against expected lists that were predictions; it failed on 10 walks of 16
+and is kept whole: `voiceover-web-round1-fail.md.txt` (the transcript) and
+`voiceover-web-round1-fail.log.txt` (the log). What was said is in the
+spec's section 7 and FL-315; the expected lists were then set to it.
 
 ## What the examples take from this
 

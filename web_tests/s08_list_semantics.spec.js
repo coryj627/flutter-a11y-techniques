@@ -105,6 +105,32 @@ test.describe('good examples', () => {
     expect(await named(page, 'button')).toEqual(['Back']);
   });
 
+  // FL-315: a list item whose text is merged into it is an element with the
+  // text as its aria-label and nothing inside it, which VoiceOver read as
+  // "Milk empty group (1 of 3) 1 of 3" in Chromium and WebKit. Written to
+  // fail when the item holds its text. A list item that holds a control
+  // (good-material) holds its element.
+  for (const [slug, names] of [['good-bulleted', GROCERIES], ['good-numbered', STEPS], ['good-cupertino', GROCERIES]]) {
+    test(`${slug}: each list item's text is its aria-label, with nothing inside it (FL-315)`, async ({ page }) => {
+      await open(page, slug);
+      const items = await page.locator('flt-semantics-host [role="listitem"]').evaluateAll((els) => els.map((e) => ({
+        label: e.getAttribute('aria-label'),
+        children: e.children.length,
+        text: e.textContent,
+      })));
+      expect(items).toEqual(names.map((n) => ({ label: n, children: 0, text: '' })));
+    });
+  }
+
+  test('good-material: each list item holds its tile\'s element and has no label of its own', async ({ page }) => {
+    await open(page, 'good-material');
+    const items = await page.locator('flt-semantics-host [role="listitem"]').evaluateAll((els) => els.map((e) => ({
+      label: e.getAttribute('aria-label'),
+      child: e.children.length === 1 ? e.children[0].getAttribute('role') : `${e.children.length} children`,
+    })));
+    expect(items).toEqual(GROCERIES.map(() => ({ label: null, child: 'button' })));
+  });
+
   test('good-material: Tab goes Back, then each tile in turn', async ({ page }) => {
     await open(page, 'good-material');
     const stops = [];
@@ -229,13 +255,21 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
 
 test.describe('the VoiceOver example walks are judged on every walk', () => {
   const own = screenStops('good-bulleted');
-  const expected = ['list 3 items', 'Milk', 'Eggs', 'Bread', 'end of list'];
+  // good-bulleted's list in web_tests/vo/s08_list_semantics_vo.spec.js, as
+  // the first recording measured it in Chromium and WebKit
+  // (docs/evidence/probes/s08/voiceover-web-round1-fail.md.txt).
+  const item = (text, i) => `${text} empty group (${i + 1} of 3) ${i + 1} of 3`;
+  const [milk, eggs, bread] = GROCERIES.map(item);
+  const expected = ['list 3 items', milk, eggs, bread, 'end of list'];
   const screen = (...content) => [...own, EXAMPLE_HEADING, ...content];
   const cases = [
     ['the whole screen, every stop in its place', screen(...expected), true, 'complete'],
-    ['a stop read in other words', screen('list 3 items', 'Milk', 'Eggs', 'Bread', 'Cheese'), true, 'wrong'],
-    ['the list stop missing', screen('Milk', 'Eggs', 'Bread', 'end of list'), true, 'wrong'],
-    ['an item missing at the end', screen('list 3 items', 'Milk', 'Eggs'), true, 'wrong'],
+    ['the round 1 prediction, items read by their text alone', screen('list 3 items', ...GROCERIES, 'end of list'), true, 'wrong'],
+    ['a stop read in other words', screen('list 3 items', milk, eggs, bread, 'Cheese'), true, 'wrong'],
+    ['the list stop missing', screen(milk, eggs, bread, 'end of list'), true, 'wrong'],
+    ['the end of the list missing', screen('list 3 items', milk, eggs, bread), true, 'wrong'],
+    ['an item missing at the end', screen('list 3 items', milk, eggs), true, 'wrong'],
+    ['the browser\'s crash dialog in place of the screen', ['Google Chrome for Testing quit unexpectedly.', 'Reopen default button'], true, 'wrong'],
     ['a stop after the last expected one', screen(...expected, 'Extra'), true, 'wrong'],
     ['an empty stop', screen('', ...expected), true, 'wrong'],
     ['no title', [own[1], EXAMPLE_HEADING, ...expected], true, 'wrong'],
@@ -272,7 +306,7 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
 
   for (const [what, walk] of [
     ['a wrong reading', { stops: screen('Milk Eggs Bread'), reachedEnd: true }],
-    ['a walk that reached the end without an item', { stops: screen('list 3 items', 'Milk', 'Bread', 'end of list'), reachedEnd: true }],
+    ['a walk that reached the end without an item', { stops: screen('list 3 items', milk, bread, 'end of list'), reachedEnd: true }],
   ]) {
     test(`${what} followed by a right walk fails, and no second walk is made`, async () => {
       const { walkOnce, made } = sequence(walk, right);

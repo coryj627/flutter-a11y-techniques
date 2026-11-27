@@ -143,7 +143,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-259](#fl-259) | On the web a node whose role changes loses its test identifier | Web | Observed (source read) |
 | [FL-260](#fl-260) | On iOS `expanded` has no effect: VoiceOver says no expanded or collapsed state | iOS | Confirmed |
 | [FL-261](#fl-261) | On Android the expanded state reaches only Android 16 and later | Android (before 16) | Confirmed (source read); measured on Android 17 only |
-| [FL-262](#fl-262) | On the web a heading is never a button: a node with a heading level and a button flag is a heading only, with no `aria-expanded` and no button role | Web | Confirmed |
+| [FL-262](#fl-262) | On the web a heading is never a button: a node with a heading level and a button flag is a heading only, with no `aria-expanded` and no button role; a node given a `SemanticsRole`, such as a list item, is that role only | Web | Confirmed |
 | [FL-263](#fl-263) | A panel hidden with `Offstage` is out of the semantics tree, but its controls keep keyboard focus; `Expansible` and `CupertinoExpansionTile` hide closed panels that way by default, and `ExpansionTile` does with `maintainState: true` | All | Confirmed |
 | [FL-264](#fl-264) | `ExpansionTile`'s header has no expanded state, and on Android and iOS no button role unless `internalAddSemanticForOnTap`, "a temporary flag", is set; the state is a hint | All | Confirmed |
 | [FL-265](#fl-265) | `CupertinoExpansionTile`'s header takes no keyboard focus, is no button, and has no expanded state; once open, the panel's text joins its name | All (no focus); Android, iOS (no role) | Confirmed |
@@ -160,11 +160,12 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-296](#fl-296) | A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it | Web; widget tests (Android and iOS not run) | Confirmed |
 | [FL-297](#fl-297) | On the web, whether VoiceOver in Chromium said what a SnackBar or banner action did, when Enter on that action removed the control, varied between recordings, and the live-region line that now says it was not heard in its one recording | Web (Chromium, VoiceOver, Enter) | Observed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
-| [FL-310](#fl-310) | On iOS the list roles have no effect: VoiceOver says nothing about a list, its size, or an item's place | iOS | Confirmed |
+| [FL-310](#fl-310) | On iOS the list roles have no effect: VoiceOver says nothing about a list, its size, or an item's place; nor does it for a native `UITableView` or SwiftUI `List` | iOS | Confirmed |
 | [FL-311](#fl-311) | On Android a list made with `SemanticsRole.list` says "In list" and "Out of list", but not how many items it has or where an item is | Android | Confirmed |
 | [FL-312](#fl-312) | On the web a scrolling list (`ListView`, `SliverList`) is not a list, and the list role cannot be put round one | Web | Confirmed |
 | [FL-313](#fl-313) | On Android a list that scrolls says nothing about a list, and once scrolled its items report the wrong place | Android | Confirmed |
 | [FL-314](#fl-314) | A list item whose parent node is not a list fails the framework's own check, and in a debug build no semantics are sent for the screen | Android, iOS, test framework (debug); Web (release: list items) | Confirmed |
+| [FL-315](#fl-315) | On the web a list item whose text is merged into it has the text only as its `aria-label`, and VoiceOver read it as "empty group" | Web (VoiceOver in Chromium and WebKit) | Observed |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
@@ -481,7 +482,7 @@ yet), **Fixed in x.y** (verified on that version).
   `bad-lazy-list` in the widget and web tests:
   - Widget tests: items 1 to 13 are nodes when it opens, 7 to 13 of them
     flagged hidden; scrolled to its end, 18 to 30 (`flutter_test.txt`).
-  - Web: the page holds items 1 to 13 when it opens and 18 to 30 after the
+  - Web (Chromium, Playwright): the page holds items 1 to 13 when it opens and 18 to 30 after the
     mouse wheel scrolls it to its end (`web.txt`).
   - Android: the visible items only, 1 to 6, in the tree when it opens;
     after each `ACTION_SCROLL_FORWARD` the items then in view
@@ -3828,7 +3829,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-262
 
-**On the web a heading is never a button: a node with a heading level and a button flag is a heading only, with no `aria-expanded` and no button role.**
+**On the web a heading is never a button: a node with a heading level and a button flag is a heading only, with no `aria-expanded` and no button role; a node given a `SemanticsRole`, such as a list item, is that role only.**
 
 - Status: Confirmed, Flutter 3.47.5, Chromium. Found in the C05 probe
   (`docs/evidence/probes/c05/web.txt`, fixtures p03 and p08) and asserted
@@ -3935,9 +3936,14 @@ yet), **Fixed in x.y** (verified on that version).
   VoiceOver reads as "p24 Milk Button" (`ios.txt`, `ios-round2.txt`). The
   way round it in the SDK: `explicitChildNodes: true` on the list item,
   which keeps the tile a node of its own: a button inside a list item on
-  the web and Android, and a button on iOS, where XCUITest shows no
+  the web and Android, and a button on iOS, where the tests read no
   hierarchy (p28, S08 `good-material`). Other roles round a control were
   not built.
+  VoiceOver on macOS, in Chromium's and WebKit's Playwright builds, read
+  `bad-tile-in-item`'s merged tiles as "Milk group (1 of 3) 1 of 3", with
+  no "button" (`docs/evidence/probes/s08/voiceover-web-round1-fail.md.txt`;
+  see [FL-315](#fl-315) for the list items that hold only text). The
+  tree measurements above are Chromium's.
 - How to read this entry: Flutter has not given a heading node the
   behaviours of a button on the web yet.
 - Upstream issue: not searched yet (D25).
@@ -4671,7 +4677,7 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-310
 
-**On iOS the list roles have no effect: VoiceOver says nothing about a list, its size, or an item's place.**
+**On iOS the list roles have no effect: VoiceOver says nothing about a list, its size, or an item's place; nor does it for a native `UITableView` or SwiftUI `List`.**
 
 - Status: Confirmed, Flutter 3.47.5, iPhone 17 simulator, iOS 27.0.
   Asserted by S08's iOS VoiceOver walks, which expect no word about a list.
@@ -4699,15 +4705,27 @@ yet), **Fixed in x.y** (verified on that version).
   after each term and description; and through a nested `ul` "List start"
   and "List end" at each level (`ios-round2.txt`, the Safari walks; the
   service returned each item's text twice). So the screen reader has list
-  semantics on iOS, for web content at least. UIKit has
-  `UIAccessibilityContainerType.list` for a native view; whether VoiceOver
-  says the same for a native container of that type was not measured
-  here, and no native comparison was built.
+  semantics on iOS for web content.
+- What a native iOS list gives, measured (2026-11-26, the S08 probe's
+  native comparison: `NativeLists.swift.txt`, a separate app built with
+  `swiftc` and installed on the same simulator, driven by
+  `ProbeS08NativeUITests.swift.txt`; output `ios-native.txt`): a UIKit
+  `UITableView` of three rows (n05, a table to XCUITest, each row a cell
+  holding its text), a SwiftUI `List` of three `Text` rows (n06, a
+  collection view of cells), and a `UIStackView` of three labels (n07).
+  VoiceOver, moving forward from a tap on the label above and from the
+  top of the screen, read each row by its text alone in all three: "n05
+  Milk", "n05 Eggs", "n05 Bread", then "n05 end"; no "list", no number of
+  rows, no place, and nothing on entering or leaving. Only moving forward
+  was measured; touching a row, the rotor, and the container type UIKit
+  gives a table (not read) were not.
+- So, on iOS, a native list says nothing more than Flutter's: FL-310 is
+  not a gap against the platform's own lists. It is recorded because the
+  list roles, which do something on Android and the web, do nothing here,
+  and because VoiceOver does speak lists in web content.
 - WCAG: none claimed on iOS. Each item is its own element, which is what
-  the iOS reference asks and what a SwiftUI `List` gives. Whether a
-  platform list exists that Flutter fails to give, and so whether iOS is a
-  limitation for S08's start, end, size, and place (R2, R3), waits on the
-  native comparison above.
+  the iOS reference asks and what a native `UITableView` and SwiftUI
+  `List` give.
 - Workaround: none needed for R1 of S08 (each item an element); nothing in
   the SDK gives iOS a list container.
 - Upstream issue: not searched yet (D25).
@@ -4851,6 +4869,45 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround: put the list role directly round the widget that lays out
   the items, with nothing that makes a node between them (S08's good
   examples). S08's widget tests check that no good example throws.
+- Upstream issue: not searched yet (D25).
+
+## FL-315
+
+**On the web a list item whose text is merged into it has the text only as its `aria-label`, and VoiceOver read it as "empty group".**
+
+- Status: Observed, Flutter 3.47.5: one recording, VoiceOver on macOS
+  27.2.1 in Playwright 1.65.0's Chromium and WebKit builds (WebKit is not
+  Safari itself), 2026-11-26
+  (`docs/evidence/probes/s08/voiceover-web-round1-fail.md.txt`). The
+  element is asserted in `web_tests/s08_list_semantics.spec.js`, written
+  to fail when the item holds its text.
+- What happens: `Semantics(role: SemanticsRole.listItem)` round a `Text`
+  (S08 `good-bulleted`, `good-numbered`, `good-cupertino`) is
+  `<flt-semantics role="listitem" aria-label="Milk">` with no child
+  element and no text inside it (the web tree test; the probe's
+  `web.txt`, p03). Chromium's tree names the item "Milk" from the label.
+  VoiceOver, moving with `voiceOver.next()`, read each such item as "Milk
+  empty group (1 of 3) 1 of 3", in both browsers. A list item that is a
+  merged `ListTile`, with `tabindex="0"` and the same `aria-label`
+  (S08 `bad-tile-in-item`), was read as "Milk group (1 of 3) 1 of 3". A
+  list item holding a tile's button element of its own (S08
+  `good-material`) was not a stop: WebKit read the button, "Milk button 1
+  of 3" (Chromium quit during that walk and gave no reading).
+- Not measured: what VoiceOver says for a plain HTML `li` in the same
+  browsers (the plain HTML lists were read only in Chromium's tree, where
+  an `li` holds its text and a list marker, and in Safari on iOS, where
+  VoiceOver read "• ul Milk … List start 1 of 3"). So whether "empty group"
+  comes from the item having no content, or from something else, was not
+  found; what was measured is the element and what was said.
+- Why it matters: a user hears that an item with text is an empty group,
+  and its place twice.
+- WCAG: none claimed. The item's name, its role, and its place are
+  conveyed; the extra words are noise, not a missing relationship.
+- Workaround: none tried with a recording. A list item that holds a
+  node of its own does hold an element in the page (the probe's p26, a
+  `MergeSemantics` row inside the item, is a list item holding a text
+  element, `web.txt`); whether VoiceOver reads that without "empty group"
+  was not recorded.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->

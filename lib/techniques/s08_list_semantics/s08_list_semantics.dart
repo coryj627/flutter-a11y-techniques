@@ -23,16 +23,18 @@ final s08ListSemantics = Technique(
       note:
           'Flutter gives a list nothing on iOS (FL-310): VoiceOver reads '
           'each item by its text alone, which is what the iOS reference '
-          'says a SwiftUI List gives. VoiceOver does say "List start" and '
-          '"1 of 3" for a web page\'s list in Safari; a native UIKit list '
-          'was not measured. VoiceOver, moving forward, leaves a long '
-          'ListView after the items in view (FL-011).',
+          'says a SwiftUI List gives; a native UITableView and SwiftUI '
+          'List were read the same way, with no word about a list. '
+          'VoiceOver, moving forward, leaves a long ListView after the items '
+          'in view (FL-011).',
     ),
     AppPlatform.web: PlatformStatus.limitation(
       'A short list made with the list role is a list of list items. A '
       'list that scrolls, Flutter\'s ListView, is not a list, and the role '
       'cannot be put round one (limitation FL-312); a description list '
-      'has no roles (FL-026). There is no workaround in the SDK.',
+      'has no roles (FL-026). There is no workaround in the SDK. VoiceOver '
+      'reads a list item that holds only text as an "empty group" '
+      '(FL-315).',
     ),
   },
   wcag: const [
