@@ -1,0 +1,221 @@
+p01 element <flt-semantics><span>Rating:</span></flt-semantics>
+p01 element <flt-semantics role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68" aria-label="68"></flt-semantics>
+p01 element <flt-semantics><span>3.4 / 5</span></flt-semantics>
+p01 element <flt-semantics><span>Reviews: 856</span></flt-semantics>
+p01 ax                     role=generic name="" props=
+p01 ax                       role=StaticText name="Rating:" props=
+p01 ax                     role=progressbar name="68" value="68" props=valuemin:0,valuemax:100,valuetext:""
+p01 ax                     role=generic name="" props=
+p01 ax                       role=StaticText name="3.4 / 5" props=
+p01 ax                     role=generic name="" props=
+p01 ax                       role=StaticText name="Reviews: 856" props=
+p01 ax                     role=generic name="" props=
+p01 aria "- button \"Back\"\n- heading \"p01\" [level=2]\n- group:\n  - text: \"Before p01 Rating:\"\n  - progressbar \"68\"\n  - text: \"3.4 / 5 Reviews: 856 p01 taps: a=0 b=0\""
+p01 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p02 element <flt-semantics role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68" aria-label="Rating:\n3.4 / 5\nReviews: 856 68"></flt-semantics>
+p02 ax                     role=progressbar name="Rating: 3.4 / 5 Reviews: 856 68" value="68" props=valuemin:0,valuemax:100,valuetext:""
+p02 ax                     role=generic name="" props=
+p02 aria "- button \"Back\"\n- heading \"p02\" [level=2]\n- group:\n  - text: Before p02\n  - 'progressbar \"Rating: 3.4 / 5 Reviews: 856 68\"'\n  - text: \"p02 taps: a=0 b=0\""
+p02 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p03 element <flt-semantics><span>Rating: 3.4 out of 5 stars, based on 856 reviews</span></flt-semantics>
+p03 ax                     role=generic name="" props=
+p03 ax                       role=StaticText name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p03 ax                     role=generic name="" props=
+p03 aria "- button \"Back\"\n- heading \"p03\" [level=2]\n- group: \"Before p03 Rating: 3.4 out of 5 stars, based on 856 reviews p03 taps: a=0 b=0\""
+p03 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p04 element <flt-semantics><span>Rating: 3.4 out of 5 stars, based on 856 reviews</span></flt-semantics>
+p04 ax                     role=generic name="" props=
+p04 ax                       role=StaticText name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p04 ax                     role=generic name="" props=
+p04 aria "- button \"Back\"\n- heading \"p04\" [level=2]\n- group: \"Before p04 Rating: 3.4 out of 5 stars, based on 856 reviews p04 taps: a=0 b=0\""
+p04 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p05 element <flt-semantics><span>Rating: 3.4 out of 5 stars, based on 856 reviews</span></flt-semantics>
+p05 ax                     role=generic name="" props=
+p05 ax                       role=StaticText name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p05 ax                     role=generic name="" props=
+p05 aria "- button \"Back\"\n- heading \"p05\" [level=2]\n- group: \"Before p05 Rating: 3.4 out of 5 stars, based on 856 reviews p05 taps: a=0 b=0\""
+p05 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p06 element <flt-semantics role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68" aria-label="Rating: 3.4 out of 5 stars, based on 856 reviews\nRating:\n3.4 / 5\nReviews: 856 68"></flt-semantics>
+p06 ax                     role=progressbar name="Rating: 3.4 out of 5 stars, based on 856 reviews Rating: 3.4 / 5 Reviews: 856 68" value="68" props=valuemin:0,valuemax:100,valuetext:""
+p06 ax                     role=generic name="" props=
+p06 aria "- button \"Back\"\n- heading \"p06\" [level=2]\n- group:\n  - text: Before p06\n  - 'progressbar \"Rating: 3.4 out of 5 stars, based on 856 reviews Rating: 3.4 / 5 Reviews: 856 68\"'\n  - text: \"p06 taps: a=0 b=0\""
+p06 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p07 element <flt-semantics role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68" aria-label="Rating: 3.4 out of 5 stars, based on 856 reviews\nRating:\n3.4 / 5\nReviews: 856 68"></flt-semantics>
+p07 ax                     role=progressbar name="Rating: 3.4 out of 5 stars, based on 856 reviews Rating: 3.4 / 5 Reviews: 856 68" value="68" props=valuemin:0,valuemax:100,valuetext:""
+p07 ax                     role=generic name="" props=
+p07 aria "- button \"Back\"\n- heading \"p07\" [level=2]\n- group:\n  - text: Before p07\n  - 'progressbar \"Rating: 3.4 out of 5 stars, based on 856 reviews Rating: 3.4 / 5 Reviews: 856 68\"'\n  - text: \"p07 taps: a=0 b=0\""
+p07 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p08 element <flt-semantics role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68" aria-label="Rating: 3.4 out of 5 stars, based on 856 reviews 68"></flt-semantics>
+p08 ax                     role=progressbar name="Rating: 3.4 out of 5 stars, based on 856 reviews 68" value="68" props=valuemin:0,valuemax:100,valuetext:""
+p08 ax                     role=generic name="" props=
+p08 aria "- button \"Back\"\n- heading \"p08\" [level=2]\n- group:\n  - text: Before p08\n  - 'progressbar \"Rating: 3.4 out of 5 stars, based on 856 reviews 68\"'\n  - text: \"p08 taps: a=0 b=0\""
+p08 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p09 element <flt-semantics><span>3.4</span></flt-semantics>
+p09 element <flt-semantics><span>(856)</span></flt-semantics>
+p09 ax                     role=generic name="" props=
+p09 ax                       role=StaticText name="3.4" props=
+p09 ax                     role=generic name="" props=
+p09 ax                       role=StaticText name="(856)" props=
+p09 ax                     role=generic name="" props=
+p09 aria "- button \"Back\"\n- heading \"p09\" [level=2]\n- group: \"Before p09 3.4 (856) p09 taps: a=0 b=0\""
+p09 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p10 element <flt-semantics><span>Rating: 3.4 out of 5 stars, based on 856 reviews</span></flt-semantics>
+p10 ax                     role=generic name="" props=
+p10 ax                       role=StaticText name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p10 ax                     role=generic name="" props=
+p10 aria "- button \"Back\"\n- heading \"p10\" [level=2]\n- group: \"Before p10 Rating: 3.4 out of 5 stars, based on 856 reviews p10 taps: a=0 b=0\""
+p10 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p11 element <flt-semantics><span>Rating 3.4 out of 5 stars, 856 reviews</span></flt-semantics>
+p11 ax                     role=generic name="" props=
+p11 ax                       role=StaticText name="Rating 3.4 out of 5 stars, 856 reviews" props=
+p11 ax                     role=generic name="" props=
+p11 aria "- button \"Back\"\n- heading \"p11\" [level=2]\n- group: \"Before p11 Rating 3.4 out of 5 stars, 856 reviews p11 taps: a=0 b=0\""
+p11 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p12 element <flt-semantics role="img" aria-label="Rating: 3.4 out of 5 stars, based on 856 reviews"></flt-semantics>
+p12 ax                     role=image name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p12 ax                     role=generic name="" props=
+p12 aria "- button \"Back\"\n- heading \"p12\" [level=2]\n- group:\n  - text: Before p12\n  - 'img \"Rating: 3.4 out of 5 stars, based on 856 reviews\"'\n  - text: \"p12 taps: a=0 b=0\""
+p12 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p13 element <flt-semantics><span>Rating: 3.4 out of 5 stars, based on 856 reviews</span></flt-semantics>
+p13 ax                     role=generic name="" props=
+p13 ax                       role=StaticText name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p13 ax                     role=generic name="" props=
+p13 aria "- button \"Back\"\n- heading \"p13\" [level=2]\n- group: \"Before p13 Rating: 3.4 out of 5 stars, based on 856 reviews p13 taps: a=0 b=0\""
+p13 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back"
+p13 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p13 taps: a=0 b=0
+p13 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p13 taps: a=1 b=0
+p13 3 Tab(s) (on (page: BODY)) then Enter: p13 taps: a=0 b=0
+p13 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: p13 taps: a=0 b=0
+p13 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: p13 taps: a=1 b=0
+p13 3 Tab(s) (on (page: BODY)) then Space: p13 taps: a=0 b=0
+p13 click at 1226,120 ("p13 right end"): p13 taps: a=0 b=0
+p14 element <flt-semantics><span>Rating: 3.4 out of 5 stars, based on 856 reviews</span></flt-semantics>
+p14 ax                     role=generic name="" props=
+p14 ax                       role=StaticText name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p14 ax                     role=generic name="" props=
+p14 aria "- button \"Back\"\n- heading \"p14\" [level=2]\n- group: \"Before p14 Rating: 3.4 out of 5 stars, based on 856 reviews p14 taps: a=0 b=0\""
+p14 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p14 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p14 taps: a=0 b=0
+p14 2 Tab(s) (on (page: BODY)) then Enter: p14 taps: a=0 b=0
+p14 3 Tab(s) (on (page: FLUTTER-VIEW)) then Enter: p14 taps: a=0 b=0
+p14 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: p14 taps: a=0 b=0
+p14 2 Tab(s) (on (page: BODY)) then Space: p14 taps: a=0 b=0
+p14 3 Tab(s) (on (page: FLUTTER-VIEW)) then Space: p14 taps: a=0 b=0
+p15 element <flt-semantics role="button" tabindex="0" aria-current="false" flt-tappable="">Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews</flt-semantics>
+p15 ax                     role=button name="Ridge trail Rating: 3.4 out of 5 stars, based on 856 reviews" props=focusable:true
+p15 ax                       role=StaticText name="Ridge trail Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p15 ax                     role=generic name="" props=
+p15 aria "- button \"Back\"\n- heading \"p15\" [level=2]\n- group:\n  - text: Before p15\n  - 'button \"Ridge trail Rating: 3.4 out of 5 stars, based on 856 reviews\"'\n  - text: \"p15 taps: a=0 b=0\""
+p15 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews"
+p15 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p15 taps: a=0 b=0
+p15 2 Tab(s) (on FLT-SEMANTICS[role=button] "Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews") then Enter: p15 taps: a=1 b=0
+p15 3 Tab(s) (on (page: BODY)) then Enter: p15 taps: a=0 b=0
+p15 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: p15 taps: a=0 b=0
+p15 2 Tab(s) (on FLT-SEMANTICS[role=button] "Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews") then Space: p15 taps: a=1 b=0
+p15 3 Tab(s) (on (page: BODY)) then Space: p15 taps: a=0 b=0
+p15 click at 640,136 ("Ridge trail\nRating: 3.4 out of 5 stars, "): p15 taps: a=1 b=0
+p16 element <flt-semantics><flt-semantics><span>Steps this week: highest Saturday, 9,000; lowest Friday, 3,900</span></flt-semantics></flt-semantics>
+p16 ax                     role=generic name="" props=
+p16 ax                       role=generic name="" props=
+p16 ax                         role=StaticText name="Steps this week: highest Saturday, 9,000; lowest Friday, 3,900" props=
+p16 ax                     role=generic name="" props=
+p16 aria "- button \"Back\"\n- heading \"p16\" [level=2]\n- group: \"Before p16 Steps this week: highest Saturday, 9,000; lowest Friday, 3,900 p16 taps: a=0 b=0\""
+p16 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p17 element <flt-semantics><flt-semantics><span>Mon: 4200 steps</span></flt-semantics><flt-semantics><span>Tue: 6100 steps</span></flt-semantics><flt-semantics><span>Wed: 5300 steps</span></flt-semantics><flt-semantics><span>Thu: 7000 steps</span></flt-semantics><flt-semantics><span>Fri: 3900 steps</span></flt-semantics><flt-semantics><span>Sat: 9000 steps</span></flt-semantics><flt-semantics><span>Sun: 6600 steps</span></flt-semantics></flt-semantics>
+p17 ax                     role=generic name="" props=
+p17 ax                       role=generic name="" props=
+p17 ax                         role=StaticText name="Mon: 4200 steps" props=
+p17 ax                       role=generic name="" props=
+p17 ax                         role=StaticText name="Tue: 6100 steps" props=
+p17 ax                       role=generic name="" props=
+p17 ax                         role=StaticText name="Wed: 5300 steps" props=
+p17 ax                       role=generic name="" props=
+p17 ax                         role=StaticText name="Thu: 7000 steps" props=
+p17 ax                       role=generic name="" props=
+p17 ax                         role=StaticText name="Fri: 3900 steps" props=
+p17 ax                       role=generic name="" props=
+p17 ax                         role=StaticText name="Sat: 9000 steps" props=
+p17 ax                       role=generic name="" props=
+p17 ax                         role=StaticText name="Sun: 6600 steps" props=
+p17 ax                     role=generic name="" props=
+p17 aria "- button \"Back\"\n- heading \"p17\" [level=2]\n- group: \"Before p17 Mon: 4200 steps Tue: 6100 steps Wed: 5300 steps Thu: 7000 steps Fri: 3900 steps Sat: 9000 steps Sun: 6600 steps p17 taps: a=0 b=0\""
+p17 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p18 element <flt-semantics><span>21°</span></flt-semantics>
+p18 element <flt-semantics><span>H 24°  L 12°</span></flt-semantics>
+p18 ax                     role=generic name="" props=
+p18 ax                       role=StaticText name="21°" props=
+p18 ax                     role=generic name="" props=
+p18 ax                       role=StaticText name="H 24° L 12°" props=
+p18 ax                     role=generic name="" props=
+p18 aria "- button \"Back\"\n- heading \"p18\" [level=2]\n- group: \"Before p18 21° H 24° L 12° p18 taps: a=0 b=0\""
+p18 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p19 element <flt-semantics><span>Sunny, 21 degrees, high 24, low 12</span></flt-semantics>
+p19 ax                     role=generic name="" props=
+p19 ax                       role=StaticText name="Sunny, 21 degrees, high 24, low 12" props=
+p19 ax                     role=generic name="" props=
+p19 aria "- button \"Back\"\n- heading \"p19\" [level=2]\n- group: \"Before p19 Sunny, 21 degrees, high 24, low 12 p19 taps: a=0 b=0\""
+p19 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p20 element <flt-semantics><span>3</span></flt-semantics>
+p20 element <flt-semantics><span>Inbox</span></flt-semantics>
+p20 ax                     role=generic name="" props=
+p20 ax                       role=StaticText name="3" props=
+p20 ax                     role=generic name="" props=
+p20 ax                       role=StaticText name="Inbox" props=
+p20 ax                     role=generic name="" props=
+p20 aria "- button \"Back\"\n- heading \"p20\" [level=2]\n- group: \"Before p20 3 Inbox p20 taps: a=0 b=0\""
+p20 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p21 element <flt-semantics><span>Inbox, 3 unread</span></flt-semantics>
+p21 ax                     role=generic name="" props=
+p21 ax                       role=StaticText name="Inbox, 3 unread" props=
+p21 ax                     role=generic name="" props=
+p21 aria "- button \"Back\"\n- heading \"p21\" [level=2]\n- group: \"Before p21 Inbox, 3 unread p21 taps: a=0 b=0\""
+p21 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p22 element <flt-semantics><span>Rating: 3.4 out of 5 stars, based on 856 reviews</span></flt-semantics>
+p22 element <flt-semantics role="button" tabindex="0" flt-tappable="">Add a 5-star review</flt-semantics>
+p22 ax                     role=generic name="" props=
+p22 ax                       role=StaticText name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p22 ax                     role=button name="Add a 5-star review" props=focusable:true
+p22 ax                       role=StaticText name="Add a 5-star review" props=
+p22 ax                     role=generic name="" props=
+p22 aria "- button \"Back\"\n- heading \"p22\" [level=2]\n- group:\n  - text: \"Before p22 Rating: 3.4 out of 5 stars, based on 856 reviews\"\n  - button \"Add a 5-star review\"\n  - text: \"p22 taps: a=0 b=0\""
+p22 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Add a 5-star review" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Add a 5-star review"
+p22 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p22 taps: a=0 b=0
+p22 2 Tab(s) (on FLT-SEMANTICS[role=button] "Add a 5-star review") then Enter: p22 taps: a=1 b=0
+p22 3 Tab(s) (on (page: BODY)) then Enter: p22 taps: a=0 b=0
+p22 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: p22 taps: a=0 b=0
+p22 2 Tab(s) (on FLT-SEMANTICS[role=button] "Add a 5-star review") then Space: p22 taps: a=1 b=0
+p22 3 Tab(s) (on (page: BODY)) then Space: p22 taps: a=0 b=0
+p22 click at 88,140 ("Add a 5-star review"): p22 taps: a=1 b=0
+p22 after click, replacement: Rating: 3.4 out of 5 stars, based on 857 reviews
+p23 element <flt-semantics><span>Rating: 3.4 out of 5 stars, based on 856 reviews</span></flt-semantics>
+p23 element <flt-semantics role="button" tabindex="0" flt-tappable="">Add a 5-star review</flt-semantics>
+p23 ax                     role=generic name="" props=
+p23 ax                       role=StaticText name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p23 ax                     role=button name="Add a 5-star review" props=focusable:true
+p23 ax                       role=StaticText name="Add a 5-star review" props=
+p23 ax                     role=generic name="" props=
+p23 aria "- button \"Back\"\n- heading \"p23\" [level=2]\n- group:\n  - text: \"Before p23 Rating: 3.4 out of 5 stars, based on 856 reviews\"\n  - button \"Add a 5-star review\"\n  - text: \"p23 taps: a=0 b=0\""
+p23 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Add a 5-star review" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Add a 5-star review"
+p23 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p23 taps: a=0 b=0
+p23 2 Tab(s) (on FLT-SEMANTICS[role=button] "Add a 5-star review") then Enter: p23 taps: a=1 b=0
+p23 3 Tab(s) (on (page: BODY)) then Enter: p23 taps: a=0 b=0
+p23 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: p23 taps: a=0 b=0
+p23 2 Tab(s) (on FLT-SEMANTICS[role=button] "Add a 5-star review") then Space: p23 taps: a=1 b=0
+p23 3 Tab(s) (on (page: BODY)) then Space: p23 taps: a=0 b=0
+p23 click at 88,140 ("Add a 5-star review"): p23 taps: a=1 b=0
+p23 after click, replacement: Rating: 3.4 out of 5 stars, based on 856 reviews
+p24 element <flt-semantics><span>3.4 out of 5</span></flt-semantics>
+p24 element <flt-semantics><span>3.4 out of 5 stars</span></flt-semantics>
+p24 ax                     role=generic name="" props=
+p24 ax                       role=StaticText name="3.4 out of 5" props=
+p24 ax                     role=generic name="" props=
+p24 ax                       role=StaticText name="3.4 out of 5 stars" props=
+p24 ax                     role=generic name="" props=
+p24 aria "- button \"Back\"\n- heading \"p24\" [level=2]\n- group: \"Before p24 3.4 out of 5 3.4 out of 5 stars p24 taps: a=0 b=0\""
+p24 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)
+p25 element <flt-semantics flt-semantics-identifier="p25-node"><span>Rating: 3.4 out of 5 stars, based on 856 reviews</span></flt-semantics>
+p25 ax                     role=generic name="" props=
+p25 ax                       role=StaticText name="Rating: 3.4 out of 5 stars, based on 856 reviews" props=
+p25 ax                     role=generic name="" props=
+p25 aria "- button \"Back\"\n- heading \"p25\" [level=2]\n- group: \"Before p25 Rating: 3.4 out of 5 stars, based on 856 reviews p25 taps: a=0 b=0\""
+p25 tab stops FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> (page: BODY) -> (page: FLUTTER-VIEW)

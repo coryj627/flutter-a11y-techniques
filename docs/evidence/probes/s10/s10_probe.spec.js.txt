@@ -1,0 +1,160 @@
+// S10 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/s10/s10_probe.spec.js.txt with s10probe.config.js.txt).
+// For each fixture of lib/probe.dart: the semantics DOM between its
+// "Before" text and its taps line, Chromium's accessibility tree over the
+// same span, the ARIA snapshot, every stop of six Tabs; for the fixtures
+// with a control, Enter and Space after one to three Tabs and a mouse
+// click on the control, each from a fresh load; for p22 and p23, the
+// replacement's name before and after the button.
+import { test } from '@playwright/test';
+
+const ids = Array.from({ length: 25 }, (_, i) => `p${String(i + 1).padStart(2, '0')}`);
+const withControls = ['p13', 'p14', 'p15', 'p22', 'p23'];
+
+function log(...a) {
+  console.log('S10WEB', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-taps"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+function clean(html) {
+  return html.replace(/ style="[^"]*"/g, '').replace(/ id="flt-semantic-node-\d+"/g, '');
+}
+
+async function taps(page, id) {
+  await page.waitForTimeout(800);
+  return page
+    .locator(`[flt-semantics-identifier="${id}-taps"]`)
+    .textContent({ timeout: 1000 })
+    .catch(() => '(gone)');
+}
+
+async function active(page) {
+  return page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e || !e.closest('flt-semantics-host')) return `(page: ${e?.tagName})`;
+    const role = e.getAttribute('role');
+    return `${e.tagName}${role ? `[role=${role}]` : ''} "${(e.getAttribute('aria-label') || e.textContent.trim()).slice(0, 60)}"`;
+  });
+}
+
+async function axSpan(page, context, id) {
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const byId = new Map(nodes.map((n) => [n.nodeId, n]));
+  const depth = (n) => {
+    let d = 0;
+    let p = n.parentId;
+    while (p && byId.get(p)) {
+      d++;
+      p = byId.get(p).parentId;
+    }
+    return d;
+  };
+  const out = [];
+  let on = false;
+  // Pre-order from the root, so that the span is in the page's order.
+  const root = nodes.find((n) => !n.parentId);
+  const visit = (n) => {
+    if (!n) return;
+    const name = n.name?.value ?? '';
+    if (!n.ignored && n.role?.value !== 'InlineTextBox') {
+      if (name === `Before ${id}`) on = true;
+      else if (name.startsWith(`${id} taps`)) on = false;
+      else if (on) {
+        const props = (n.properties ?? []).map((p) => `${p.name}:${JSON.stringify(p.value?.value)}`).join(',');
+        const value = n.value?.value !== undefined ? ` value="${n.value.value}"` : '';
+        const desc = n.description?.value ? ` description="${n.description.value}"` : '';
+        out.push(`${'  '.repeat(depth(n))}role=${n.role?.value} name="${name}"${value}${desc} props=${props}`);
+      }
+    }
+    for (const c of n.childIds ?? []) visit(byId.get(c));
+  };
+  visit(root);
+  return out;
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const id of ids) {
+  test(`probe ${id}`, async ({ page, context }) => {
+    await fresh(page, id);
+    const html = await page.evaluate((id) => {
+      const host = document.querySelector('flt-semantics-host');
+      const before = [...host.querySelectorAll('*')].find(
+        (e) => e.textContent.trim() === `Before ${id}` && e.children.length === 0,
+      );
+      const after = host.querySelector(`[flt-semantics-identifier="${id}-taps"]`);
+      let a = before;
+      while (a.parentElement && !a.parentElement.contains(after)) a = a.parentElement;
+      const out = [];
+      for (let s = a.nextElementSibling; s && !s.contains(after); s = s.nextElementSibling) out.push(s.outerHTML);
+      return out;
+    }, id);
+    for (const h of html) log(id, 'element', clean(h));
+    for (const l of await axSpan(page, context, id)) log(id, 'ax', l);
+    log(id, 'aria', JSON.stringify(await page.locator('flt-semantics-host').ariaSnapshot()));
+    const stops = [];
+    for (let i = 0; i < 6; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(150);
+      stops.push(await active(page));
+    }
+    log(id, 'tab stops', stops.join(' -> '));
+    if (!withControls.includes(id)) return;
+    for (const key of ['Enter', 'Space']) {
+      for (let n = 1; n <= 3; n++) {
+        await fresh(page, id);
+        for (let i = 0; i < n; i++) {
+          await page.keyboard.press('Tab');
+          await page.waitForTimeout(150);
+        }
+        const on = await active(page);
+        await page.keyboard.press(key);
+        log(id, `${n} Tab(s) (on ${on}) then ${key}:`, await taps(page, id));
+      }
+    }
+    // A mouse click where the control is drawn: the fixture's span, found by
+    // the button's text in the page's canvas is not possible, so p13 clicks
+    // the replaced node's right end, where the Reviews button is drawn, and
+    // the others click each element with a button role.
+    await fresh(page, id);
+    const targets = await page.evaluate(
+      ({ id, p13 }) => {
+        const host = document.querySelector('flt-semantics-host');
+        if (p13) {
+          const e = [...host.querySelectorAll('*')].find((e) =>
+            (e.getAttribute('aria-label') || e.textContent).startsWith('Rating: 3.4') && e.children.length === 0,
+          );
+          const r = e.getBoundingClientRect();
+          return [{ name: 'p13 right end', x: r.right - 40, y: r.top + r.height / 2 }];
+        }
+        return [...host.querySelectorAll('[role=button]')]
+          .filter((e) => !(e.getAttribute('aria-label') || e.textContent).startsWith('Back'))
+          .map((e) => {
+            const r = e.getBoundingClientRect();
+            return { name: (e.getAttribute('aria-label') || e.textContent).slice(0, 40), x: r.x + r.width / 2, y: r.y + r.height / 2 };
+          });
+      },
+      { id, p13: id === 'p13' },
+    );
+    for (const t of targets) {
+      await fresh(page, id);
+      await page.mouse.click(t.x, t.y);
+      log(id, `click at ${Math.round(t.x)},${Math.round(t.y)} ("${t.name}"):`, await taps(page, id));
+      if (id === 'p22' || id === 'p23') {
+        const names = await page.evaluate(() =>
+          [...document.querySelectorAll('flt-semantics-host *')]
+            .map((e) => e.getAttribute('aria-label') || (e.children.length === 0 ? e.textContent : ''))
+            .filter((s) => s && s.startsWith('Rating: ')),
+        );
+        log(id, 'after click, replacement:', names.join(' | '));
+      }
+    }
+  });
+}

@@ -173,6 +173,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-314](#fl-314) | A list item whose parent node is not a list fails the framework's own check, and in a debug build no semantics are sent for the screen | Android, iOS, test framework (debug); Web (release: list items) | Confirmed |
 | [FL-315](#fl-315) | On the web a list item whose text is merged into it has the text only as its `aria-label`, and VoiceOver read it as "empty group" | Web (VoiceOver in Chromium and WebKit) | Observed |
 | [FL-320](#fl-320) | Off the web Flutter has no named group: a group's name is read as text of its own before its controls, and a control inside is read without it | Android, iOS | Confirmed |
+| [FL-330](#fl-330) | A progress indicator merged into a group, by `MergeSemantics` or by a labelled `Semantics` that does not exclude it, puts its value, and its role where the platform has one, on the whole group | All | Confirmed |
+| [FL-331](#fl-331) | A change of a node's identifier alone is not sent to the platform: the node keeps the identifier it had | All (source read); the web measured | Confirmed (source read) |
 | [FL-340](#fl-340) | A node with no sort key keeps its place by position and splits the keyed nodes round it into runs that are sorted apart | All | Confirmed |
 | [FL-341](#fl-341) | A sort key inside `MergeSemantics` does not order the merged node | All | Confirmed |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
@@ -835,6 +837,18 @@ yet), **Fixed in x.y** (verified on that version).
   action does not exist on web.
 - Workaround: also offer the actions as visible controls or a menu. To be
   worked out in I05.
+- Seen again in the S10 probe (2026-11-26,
+  `docs/evidence/probes/s10/`, fixture p14: a rating replaced with
+  `Semantics(label:, excludeSemantics: true, customSemanticsActions:)`
+  holding "Read reviews"). Android: the node has the action labelled "Read
+  reviews", and performing it ran the handler (`android-tree.txt`,
+  `android-tree-round2.txt`); TalkBack read the label and "Actions
+  available, use Tap with 3 fingers to view" (`android-talkback.md`). Web:
+  the replacement is a plain element holding the label, and the action is
+  not in the DOM; Tab and Enter ran nothing (`web.txt`). iOS: VoiceOver
+  read the label and then "Actions availab", cut at 64 characters
+  (`ios.txt`, `VO p14`); no key and no tap ran the action (VoiceOver's own
+  actions rotor was not tried). No S10 example uses a custom action.
 - Upstream issue: not searched yet.
 
 ## FL-023
@@ -892,6 +906,15 @@ yet), **Fixed in x.y** (verified on that version).
   - The large content viewer.
   - `accessibilityIgnoresInvertColors`, so an image cannot be kept out of
     Smart Invert. `MediaQuery.invertColors` does report the setting.
+  - A representation (SwiftUI's `accessibilityRepresentation`): there is
+    no way to give a drawn view the semantics of a framework control, so
+    that it is exposed as that control. The nearest in Flutter is a
+    `Semantics` with a role's flags, a value, and actions set by hand
+    (F10 `good-custom`, S14 `good-rating`), which this project counts as
+    a custom solution, or the framework control itself drawn another way
+    (a `Slider` with `SliderThemeData` shapes; not built). Found while
+    building S10, whose iOS reference is that API; the SDK's `Semantics`
+    API was read (2026-11-26), nothing was measured.
   - The Reduce Transparency and Button Shapes settings.
     `AccessibilityFeatures` reports `accessibleNavigation`, `invertColors`,
     `disableAnimations`, `boldText`, `reduceMotion`, `highContrast`,
@@ -5279,6 +5302,91 @@ yet), **Fixed in x.y** (verified on that version).
 - How to read this entry: Flutter has not added a group role yet: no way
   to set Android's container title or iOS's semantic group container
   type, which TalkBack and VoiceOver were measured to speak (above).
+- Upstream issue: not searched yet (D25).
+
+## FL-330
+
+**A progress indicator merged into a group, by `MergeSemantics` or by a labelled `Semantics` that does not exclude it, puts its value, and its role where the platform has one, on the whole group.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by S10 `bad-merged` and
+  `bad-not-excluded` in the widget, web, Android, and iOS tests and their
+  transcripts. Found in the S10 probe (`docs/evidence/probes/s10/`,
+  fixtures p01, p02, and p06 to p08), on a rating drawn, as the Android
+  reference repositories draw it, with a `LinearProgressIndicator` beside
+  the texts "Rating:", "3.4 / 5", and "Reviews: 856". The framework source
+  was not read for this.
+- WCAG: none claimed as written for the merge itself; see S10's spec,
+  section 3, for each example.
+- What happens: the indicator alone is a node with the progress bar role
+  and the value 68 (3.4 of 5). Merged into the row, the row is one node
+  named by its texts, joined with line breaks, with the bar's value 68,
+  and with the bar's role on the platforms where Flutter gives one
+  ([FL-256](#fl-256): none on iOS).
+  - `MergeSemantics` round the row (p02, S10 `bad-merged`):
+    - Web: one `role="progressbar"` element, `aria-valuenow` 68,
+      `aria-label` "Rating:\n3.4 / 5\nReviews: 856 68": the value is
+      appended to the name ([FL-037](#fl-037)), and Chromium names it
+      "Rating: 3.4 / 5 Reviews: 856 68" (`web.txt`). VoiceOver read it
+      "Rating: 3.4 / 5 Reviews: 856 68 68% progress indicator" in Chromium
+      and WebKit, the value twice, and `bad-not-excluded` the same after
+      the label (recorded 2026-11-27, `docs/evidence/S10/voiceover-web.md`).
+    - Android: one `android.widget.ProgressBar` with the range 0 to 100 at
+      68, named "68, Rating:\n3.4 / 5\nReviews: 856" (`android-tree.txt`).
+      TalkBack read "68.0.", "68,", and "Rating: 3.4 / 5 Reviews: 856", and
+      no role word within its six-second dwell (`android-talkback.md`).
+    - iOS: one static text element labelled with the texts, value "68";
+      VoiceOver read "Rating: 3.4 / 5 Reviews: 856 68" (`ios.txt`).
+  - `Semantics(label:)` round the row, without `excludeSemantics` (p06,
+    S10 `bad-not-excluded`), and the same in a `MergeSemantics` (p07):
+    the same node with the label first, then the texts, so the rating is
+    read twice. A `Semantics` with a label merges the texts and the bar
+    under it into its own node; it is not only a label above them.
+  - The bar alone left out of `ExcludeSemantics` when every other piece
+    is hidden (p08): the replacement node gets the bar's value and role:
+    web a `progressbar` named "Rating: 3.4 out of 5 stars, based on 856
+    reviews 68"; Android a `ProgressBar` named "68, Rating: …", read
+    "68.0. 68, Rating: …"; iOS "Rating: 3.4 out of 5 stars, based on 856
+    reviews 68".
+- Why it matters: a group made of a bar and its text reads as a progress
+  indicator, or with a number that says nothing, where the author meant one
+  rating. The `MergeSemantics` documentation warns that merged nodes with
+  conflicting semantics "may be nonsensical"; that the role and the value
+  of one child become the whole group's is what it means here. The
+  Android Compose reference says, of its own grouped row, that the
+  indicator "is announced separately in TalkBack, despite the Row's merge
+  semantics"; that was not measured here.
+- Workaround, in the SDK: replace the group with
+  `Semantics(label:, excludeSemantics: true)`, which drops every child's
+  semantics (S10 `good-exclude-semantics`), or put every piece, the bar
+  included, in `ExcludeSemantics` (S10 `good-hidden-pieces`).
+- Upstream issue: not searched yet (D25).
+
+## FL-331
+
+**A change of a node's identifier alone is not sent to the platform: the node keeps the identifier it had.**
+
+- Status: Confirmed by reading the framework source, Flutter 3.47.5;
+  measured on the web only. Found while building S10's test witness
+  (`docs/evidence/probes/s10/witness_probe.txt`, with
+  `witness_probe.spec.js.txt`).
+- What happens: `SemanticsNode._isDifferentFromCurrentSemanticAnnotation`
+  (`semantics/semantics.dart`) compares a node's label, value, hint,
+  flags, actions, role, and more, but not its `identifier`, so a node
+  whose only change is its identifier is not marked dirty and no update
+  for it is sent. The framework's own tree has the new identifier (S10's
+  widget tests read it). On the web, a `Semantics(container: true,
+  identifier:)` whose identifier went from `s10-bad-stale-shows-856` to
+  `-857` after a tap kept `flt-semantics-identifier="…-856"` in the page,
+  in both examples tried; in one of them the label of another node, the
+  replacement, did change in the same frame. Android and iOS were not
+  measured; by the source the same update is not sent to them either.
+- Why it matters: nothing a user meets. A test that finds a node by an
+  identifier that changes with the state finds the old one, and can pass
+  or fail for the wrong reason. As with
+  [FL-259](#fl-259), this is a test finding, kept in the log.
+- Workaround: give the node a key that changes with the identifier, so
+  that a new node is made (S10's witness: a `ValueKey` of the identifier);
+  or change something the comparison does include in the same update.
 - Upstream issue: not searched yet (D25).
 
 ## FL-340

@@ -1,0 +1,120 @@
+// S10 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s10/probe_test.dart.txt): each fixture of
+// lib/probe.dart under flutter test (as Android): its semantics tree in
+// traversal order, the merged data of every node with a label, a value, or
+// an action, the Tab stops, and what Enter and Space do after one to three
+// Tabs. p22 and p23: the replacement's label before and after the button.
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void log(String s) => debugPrint('S10PROBE $s');
+
+Future<void> open(WidgetTester tester, String id) async {
+  await tester.pumpWidget(const SizedBox());
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: FixtureScreen(ids: [id]),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+String taps(WidgetTester tester, String id) {
+  final f = find.textContaining('$id taps');
+  if (f.evaluate().isEmpty) return '(gone)';
+  return (tester.widget<Text>(f).data ?? '');
+}
+
+String focused() {
+  final f = FocusManager.instance.primaryFocus;
+  if (f == null) return '(none)';
+  final ctx = f.context;
+  if (ctx == null) return f.toString();
+  final sem = ctx.findRenderObject()?.debugSemantics;
+  return '${ctx.widget.runtimeType} sem=${sem == null ? 'none' : '"${sem.getSemanticsData().label.replaceAll('\n', '\\n')}"'}';
+}
+
+String describe(SemanticsData d) {
+  final f = d.flagsCollection;
+  final flags = <String>[
+    if (f.isButton) 'button',
+    if (f.isLink) 'link',
+    if (f.isHeader) 'header',
+    if (f.isImage) 'image',
+    if (f.isFocused != ui.Tristate.none) 'focusable',
+    if (f.isLiveRegion) 'live',
+  ];
+  final actions = <String>[
+    for (final a in SemanticsAction.values)
+      if (d.hasAction(a)) a.name,
+  ];
+  return 'label="${d.label.replaceAll('\n', '\\n')}" value="${d.value}" hint="${d.hint}" '
+      'tooltip="${d.tooltip}" flags=$flags actions=$actions custom=${d.customSemanticsActionIds} '
+      'role=${d.role} id=${d.identifier} rect=${d.rect}';
+}
+
+void main() {
+  for (final id in fixtures.keys) {
+    testWidgets('probe $id', (tester) async {
+      final handle = tester.ensureSemantics();
+      await open(tester, id);
+      log('==== $id ${fixtures[id]!.$1}');
+      final root = tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!;
+      for (final line in root.toStringDeep(childOrder: DebugSemanticsDumpOrder.traversalOrder).split('\n')) {
+        if (line.trim().isEmpty) continue;
+        log('$id tree $line');
+      }
+      void walk(SemanticsNode n, int depth) {
+        final d = n.getSemanticsData();
+        if (d.label.isNotEmpty || d.value.isNotEmpty || d.actions != 0) {
+          log('$id node${'  ' * depth} ${describe(d)}');
+        }
+        n.visitChildren((c) {
+          walk(c, depth + 1);
+          return true;
+        });
+      }
+
+      walk(root, 0);
+      final stops = <String>[];
+      for (var i = 0; i < 4; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        stops.add(focused());
+      }
+      log('$id tab stops: ${stops.join(' -> ')}');
+      for (final key in [LogicalKeyboardKey.enter, LogicalKeyboardKey.space]) {
+        for (var n = 1; n <= 3; n++) {
+          await open(tester, id);
+          for (var i = 0; i < n; i++) {
+            await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+            await tester.pump();
+          }
+          final on = focused();
+          await tester.sendKeyEvent(key);
+          await tester.pumpAndSettle();
+          log('$id $n Tabs (on $on) then ${key.keyLabel}: ${taps(tester, id)}');
+        }
+      }
+      if (id == 'p22' || id == 'p23') {
+        await open(tester, id);
+        String replaced() {
+          final f = find.bySemanticsLabel(RegExp('^Rating: '));
+          return f.evaluate().map((e) => tester.getSemantics(find.byWidget(e.widget).first).label).join(' | ');
+        }
+
+        log('$id before: ${replaced()} shown="${find.textContaining('Reviews:').evaluate().map((e) => (e.widget as Text).data).join()}"');
+        await tester.tap(find.text('Add a 5-star review'));
+        await tester.pumpAndSettle();
+        log('$id after tap: ${replaced()} shown="${find.textContaining('Reviews:').evaluate().map((e) => (e.widget as Text).data).join()}" ${taps(tester, id)}');
+      }
+      handle.dispose();
+    });
+  }
+}

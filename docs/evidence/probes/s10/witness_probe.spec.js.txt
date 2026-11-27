@@ -1,0 +1,21 @@
+// Throwaway: what the web does with an identifier that changes. Kept as
+// docs/evidence/probes/s10/witness_probe.spec.js.txt.
+import { test } from '@playwright/test';
+
+test('witness identifier after a click', async ({ page }) => {
+  await page.goto('/#/t/S10/bad-stale');
+  await page.getByRole('heading', { name: 'Example', exact: true, level: 2 }).waitFor();
+  await page.waitForTimeout(600);
+  const ids = () => page.evaluate(() =>
+    [...document.querySelectorAll('[flt-semantics-identifier^="s10-"]')].map((e) => e.getAttribute('flt-semantics-identifier')));
+  console.log('S10WITNESS before', JSON.stringify(await ids()));
+  await page.locator('[flt-semantics-identifier="s10-bad-stale-add"]').click();
+  await page.waitForTimeout(2000);
+  console.log('S10WITNESS after click', JSON.stringify(await ids()));
+  await page.goto('/#/t/S10/good-exclude-semantics');
+  await page.getByRole('heading', { name: 'Example', exact: true, level: 2 }).waitFor();
+  await page.waitForTimeout(600);
+  await page.locator('[flt-semantics-identifier="s10-good-exclude-semantics-add"]').click();
+  await page.waitForTimeout(2000);
+  console.log('S10WITNESS good after click', JSON.stringify(await ids()));
+});

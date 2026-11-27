@@ -1,0 +1,16 @@
+# python3 tool/with_devices.py -- sh docs/evidence/probes/s10/android_320x640.sh.txt (2026-11-26)
+during the run: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+> Task :app:connectedDebugAndroidTest
+BUILD SUCCESSFUL in 1m 17s
+after reset: Physical size: 1080x2424  Physical density: 420 
+# from the test results XML:
+<testsuite name="dev.fluttera11y.flutter_a11y_techniques.S10ContentGroupReplacementTest" tests="8" failures="0" errors="0" skipped="1" time="54.03" timestamp="2026-11-27T03:03:40" hostname="localhost">
+<testcase name="theReplacementFollowsTheValuesAfterTheClickActionATapAndTabThenEnter" classname="dev.fluttera11y.flutter_a11y_techniques.S10ContentGroupReplacementTest" time="11.366" />
+<testcase name="badMergedIsOneProgressBarAt68NamedByThePieces" classname="dev.fluttera11y.flutter_a11y_techniques.S10ContentGroupReplacementTest" time="2.063" />
+<testcase name="badHidesControlHasNoNodeForTheButtonThatTheKeyboardStillReaches" classname="dev.fluttera11y.flutter_a11y_techniques.S10ContentGroupReplacementTest" time="20.1" />
+<testcase name="badStaleKeepsSaying856AfterAReview" classname="dev.fluttera11y.flutter_a11y_techniques.S10ContentGroupReplacementTest" time="6.124" />
+<testcase name="badNotExcludedIsOneProgressBarWithTheLabelAndThePieces" classname="dev.fluttera11y.flutter_a11y_techniques.S10ContentGroupReplacementTest" time="2.451" />
+<testcase name="badPiecesIsTwoNumbersAndNothingForTheStars" classname="dev.fluttera11y.flutter_a11y_techniques.S10ContentGroupReplacementTest" time="1.947" />
+<testcase name="talkBackWalk" classname="dev.fluttera11y.flutter_a11y_techniques.S10ContentGroupReplacementTest" time="0.002">
+<testcase name="eachGoodReplacementIsOneNodeNamedByWhatTheRatingMeans" classname="dev.fluttera11y.flutter_a11y_techniques.S10ContentGroupReplacementTest" time="9.977" />
+<skipped />

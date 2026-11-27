@@ -1,0 +1,13 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+11-26 21:33:47.804 21052 21052 I flutter : S10PROBE TAP p15 0
+p15 ACTION_CLICK on "Ridge trail\nRating: 3.4 out of 5 stars, based on 856 reviews" returned true; p15 taps: a=1 b=0
+11-26 21:33:53.523 21052 21052 I flutter : S10PROBE TAP p22 0
+p22 ACTION_CLICK on "Add a 5-star review" returned true; p22 taps: a=1 b=0
+p22 after click  | android.view.View | desc="Rating: 3.4 out of 5 stars, based on 857 reviews" text="" state="" hint="" heading=false clickable=false focusable=true screenReaderFocusable=false importantForA11y=true Rect(42, 415 - 765, 468) [a11yfocus] children=0
+p22 after click  | android.widget.Button | desc="Add a 5-star review" text="" state="" hint="" heading=false clickable=true focusable=true screenReaderFocusable=false importantForA11y=true Rect(42, 468 - 427, 594) [a11yfocus,click] children=0
+11-26 21:33:59.226 21052 21052 I flutter : S10PROBE TAP p23 0
+p23 ACTION_CLICK on "Add a 5-star review" returned true; p23 taps: a=1 b=0
+p23 after click  | android.view.View | desc="Rating: 3.4 out of 5 stars, based on 856 reviews" text="" state="" hint="" heading=false clickable=false focusable=true screenReaderFocusable=false importantForA11y=true Rect(42, 415 - 765, 468) [a11yfocus] children=0
+p23 after click  | android.widget.Button | desc="Add a 5-star review" text="" state="" hint="" heading=false clickable=true focusable=true screenReaderFocusable=false importantForA11y=true Rect(42, 468 - 427, 594) [a11yfocus,click] children=0
+11-26 21:34:03.806 21052 21052 I flutter : S10PROBE TAP p14 0
+p14 custom action "Read reviews" (267386881) returned true; p14 taps: a=1 b=0
