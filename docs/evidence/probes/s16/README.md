@@ -141,20 +141,27 @@ How each platform was looked at, and the raw output:
   alone carries the attribute, and p16, unmarked, "Français Button". A
   `CupertinoListTile` (p15) was read "Français" with no role.
 - **What the captures cannot show.** TalkBack's log gives the locale it
-  asked for with each fragment, not the voice the engine used. The emulator's speech engine had no French voice when the probe
-  began. When TalkBack first asked for French, for p02's text at
-  07:38:10, the engine began downloading its fr-fr and fr-ca voices;
-  one sync of fr-ca failed at once ("failed to download voice fr-ca"),
-  and then both downloads completed at 07:38:27 ("Download fr-fr Success
-  true", "Download fr-ca Success true"), before p03. So p02's French
-  text was spoken while no French voice was on the device, and the later
-  French texts, from p03 on, after both had been downloaded. In the same
-  way a Japanese voice was downloaded while p19's text was focused
-  (07:44:55 to 07:45:03), and a Mandarin one (cmn-cn) while p20's zh-Hant
-  text was (07:45:18 to 07:45:24) (`android-talkback-log.txt`). Which
-  voice spoke any fragment is in no log, so pronunciation is not
-  verified; whether the voices were still on the device for the S16
-  TalkBack walk was not recorded.
+  asked for with each fragment, not the voice the engine used. Voice data, from the timestamps in `android-talkback-log.txt`: the
+  emulator's speech engine had no French voice when the probe began.
+  TalkBack focus reached p02's French text at 07:38:10.101, and its fragment
+  was given locale=fr at 07:38:10.136; the engine started downloading its
+  fr-fr voice at 07:38:10.143 and its fr-ca voice at 07:38:10.209, and one
+  sync of fr-ca failed at 07:38:10.214, all while p02's text had focus. On
+  p03's screen, TalkBack's opening announcement of the Back button was given
+  locale=fr at 07:38:23.984, while both downloads were still running
+  ("Already downloading", 07:38:23.988 and 07:38:24.061). Both completed at
+  07:38:27.658 ("Download fr-fr Success true", "Download fr-ca Success
+  true"), before p03's first stop (07:38:28.618). So p02's French fragment
+  and p03's opening announcement were given French before any French voice
+  had been downloaded, and p03's stops and every later French fragment after
+  both had been. A Japanese voice for p19's text: focus from 07:44:55.274,
+  download from 07:44:55.323 to 07:45:03.046, completing after focus had
+  moved to p19's end marker (07:45:00.281). A Mandarin (cmn-cn) voice for
+  p20's zh-Hant text: focus from 07:45:18.811, download from 07:45:18.960 to
+  07:45:24.095, completing after focus had moved to p20's end marker
+  (07:45:23.817). Which voice spoke any fragment is in no log, so
+  pronunciation is not verified; whether the voices were still on the device
+  for the S16 TalkBack walk was not recorded.
   XCUITest's snapshot has no
   language attribute: the dictionary printed (`ios.txt`) is of the element
   of type other after "Before pNN", not of the text, and its keys are the

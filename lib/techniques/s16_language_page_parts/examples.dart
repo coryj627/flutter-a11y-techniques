@@ -186,8 +186,9 @@ class BadUnmarked extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Defect: nothing says that the passage is in French, so it is in the
-    // app's language, English, and read with English speech.
+    // Defect: nothing marks the passage French, so it has the app's
+    // language, English: a LocaleSpan en-US on Android, the page's lang on
+    // the web. Which voice a screen reader then uses was not measured.
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [Text(lead), SizedBox(height: 8), Text(passage)],

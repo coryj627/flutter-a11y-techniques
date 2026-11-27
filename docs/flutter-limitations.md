@@ -5514,7 +5514,8 @@ yet), **Fixed in x.y** (verified on that version).
   Locale('fr'), child: Text('Français')))` is one node, the tile's, a
   button named "Français", in the app's language. The same holds inside
   `MergeSemantics`, and so inside this project's `TestId`.
-- Effect: a control named in another language is read in the app's.
+- Effect: a control named in another language has the app's language,
+  so nothing tells a screen reader to change its voice for it.
 - Workaround: put `localeForSubtree` round the control, so that the
   merged node is inside it (S16's `good-language-menu`). On Android and
   iOS, `TextSpan(locale:)` in the title also works, since a part's

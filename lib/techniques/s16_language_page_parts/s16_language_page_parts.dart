@@ -105,14 +105,14 @@ final s16LanguagePageParts = Technique(
       slug: 'bad-unmarked',
       title: 'Passage not marked',
       variant: ExampleVariant.widgets,
-      defect: 'The French passage is read as English.',
+      defect: 'The French passage has the app\'s language, English.',
       builder: (_) => const BadUnmarked(),
     ),
     TechniqueExample.bad(
       slug: 'bad-title-in-tile',
       title: 'Language set inside each tile',
       variant: ExampleVariant.material,
-      defect: 'Each language is read as English.',
+      defect: 'Each language\'s name has the app\'s language, English.',
       builder: (_) => const BadTitleInTile(),
     ),
     TechniqueExample.bad(

@@ -8,12 +8,16 @@
 // reading on the first attempt would be hidden. Each test retries instead,
 // itself, only a walk cut short before the end of the screen with every stop
 // right so far, or a walk whose capture failed (a stop read as an empty
-// phrase) with nothing wrong read in it (runWalks and judgeExampleWalk in
+// phrase, or a move that read nothing new mid-walk) with nothing wrong
+// read in it (runWalks, collectWalk, and judgeCollectedWalk in
 // s16_vo_walks.js). Every walk must read the whole screen, the title and
 // the description, the "Example" heading, and every expected stop after it,
-// each in its place: a wrong stop, or a walk that reached the end with any
-// expected stop not read, fails the test for good, and every try is logged,
-// so every attempt is in the transcript. The walk and the judge are S08's.
+// each in its place, and its end must be witnessed by a move back and a
+// move forward again: a wrong stop, a failed witness, or a walk that
+// reached the end with any expected stop not read, fails the test for
+// good, and every try is logged, so every attempt is in the transcript.
+// The judge of a walk's stops is S08's; the walk is written to the rules of
+// S12's collector.
 //
 // VoiceOver's last phrase is text: whether a French part was spoken in a
 // French voice is not in it. What is judged is the words and the stops.
@@ -21,56 +25,50 @@
 // (2026-11-27, docs/evidence/probes/s16/voiceover-web-round1-pass.md.txt)
 // read every example as predicted, in Chromium and WebKit, each on its
 // first walk. That recording showed only what follows the "Example"
-// heading of a complete walk; every walk is now logged whole, and the
-// second recording (2026-11-27, docs/evidence/S16/voiceover-web.md) passed
-// with every walk whole.
+// heading of a complete walk. The second
+// (docs/evidence/probes/s16/voiceover-web-round2-pass.md.txt) logged every
+// walk whole and passed, before the walk kept its unchanged reads and
+// witnessed its end; it has no end or unresolved-reads rows.
 // Each test opens its example in a page of its own, from a fresh load, so
 // that bad-override's French (FL-360) does not reach another example.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
-import { EXPECTED_STOPS, judgeExampleWalk, runWalks, screenStops } from './s16_vo_walks.js';
+import {
+  EMPTY_STOP, EXPECTED_STOPS, NO_STOPS, collectWalk, judgeCollectedWalk, runWalks, screenStops, unresolvedText,
+  witnessText,
+} from './s16_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
 const EXAMPLES = EXPECTED_STOPS;
 
 /**
- * walkToEnd (vo_helpers.js), keeping the cursor's position at each stop, so
- * that the judge can tie a help message to the stop before it. walkToEnd
- * returns no positions, so the walk is made here: walkToEnd with no moves
- * starts it exactly as the shared walk does (from Back, once VoiceOver is
- * quiet), and the moves follow its rule (stopsToEnd in vo_logic.js: a move
- * is a stop when the cursor moved or a new phrase was spoken; two moves in
- * a row that do neither are the end), with `loggedForHelp` as the form
- * techniques use it (phraseForMove). The one difference is that each
- * stop's position is kept. Resolves to `{ stops, positions, reachedEnd }`.
+ * One walk of the screen: walkToEnd with no moves starts it exactly as the
+ * shared walk does (from Back, once VoiceOver is quiet), and collectWalk
+ * (s16_vo_walks.js) makes the moves, keeps each stop's cursor position and
+ * every unchanged read, and accepts the end only with its witness, a move
+ * back and a move forward again. A help message VoiceOver gives for a move
+ * is replaced by the phrase Guidepup logged for it (phraseForMove), as the
+ * form techniques' walks do; one that comes anyway is left out by the
+ * judge only when it is about the stop before it, at the same position.
  */
-async function walkWithPositions(page, voiceOver, browserName, max = 40) {
+async function walkOnce(page, voiceOver, browserName, max = 40) {
   await walkToEnd(page, voiceOver, browserName, 0);
-  const stops = [];
-  const positions = [];
-  let position = await cursorBounds();
-  let unmoved = 0;
-  for (let i = 0; i < max; i++) {
-    await voiceOver.next();
+  const capture = async () => {
     let phrase = await lastPhrase();
     if (VO_HELP.test(phrase)) {
       phrase = phraseForMove(phrase, (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim());
     }
-    const now = await cursorBounds();
-    const spokeAnew = phrase !== '' && stops.length > 0 && phrase !== stops[stops.length - 1];
-    if (now === position && !spokeAnew) {
-      unmoved++;
-      if (unmoved === 2) return { stops, positions, reachedEnd: true };
-      continue;
-    }
-    unmoved = 0;
-    position = now;
-    stops.push(phrase);
-    positions.push(now);
-  }
-  return { stops, positions, reachedEnd: false };
+    return { phrase, position: await cursorBounds() };
+  };
+  return collectWalk({
+    next: () => voiceOver.next(),
+    previous: () => voiceOver.previous(),
+    capture,
+    start: await cursorBounds(),
+    max,
+  });
 }
 
 for (const [slug, expected] of Object.entries(EXAMPLES)) {
@@ -78,27 +76,31 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
     await page.goto(`/#/t/S16/${slug}`, { waitUntil: 'load' });
     await expect(page.getByRole('heading', { name: 'Example', exact: true, level: 2 })).toBeVisible();
     await page.waitForTimeout(600);
-    let positions;
+    let latest;
     const { verdict, reason, walks } = await runWalks(
-      // A help message VoiceOver gives for a move is replaced by the phrase
-      // Guidepup logged for it (phraseForMove), as the form techniques'
-      // walks do; one that comes anyway is left out by the judge only when
-      // it is about the stop before it, at the same position.
       async () => {
-        const walk = await walkWithPositions(page, voiceOver, browserName, 40);
-        positions = walk.positions;
-        return walk;
+        latest = await walkOnce(page, voiceOver, browserName, 40);
+        return latest;
       },
-      (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug), positions),
+      // A failed end witness is wrong for good, and an unresolved read
+      // makes the walk incomplete (judgeCollectedWalk).
+      () => judgeCollectedWalk(latest, expected, screenStops(slug)),
       {
         log: (walk, stops, judged) => {
-          // Every try is shown whole, the screen's own stops (title,
-          // description, defect, heading) included, so that the committed
-          // transcript can be judged again from what was recorded
-          // (judgeTranscript in s16_vo_walks.js), never from stops rebuilt
-          // from the expectations.
-          const shown = stops.join(' / ') || '(nothing)';
+          // Every try is logged whole, the screen's own stops included, so
+          // that the committed transcript keeps each walk's browser,
+          // example, try, and every stop it read. An empty phrase is written
+          // "(empty)" and a walk with no stops "(nothing)". A walk that read
+          // its end witness logs it on a row of its own,
+          // `<slug>-walk-<n>-end`, and every walk logs its unresolved
+          // reads, `<slug>-walk-<n>-unresolved` ("none" or each).
+          // judgeTranscript in s16_vo_walks.js reads them back, and
+          // web_tests/s16_language_page_parts.spec.js judges the committed
+          // transcript again from these rows alone.
+          const shown = stops.map((s) => (s === '' ? EMPTY_STOP : s)).join(' / ') || NO_STOPS;
           console.log(`S16VO ${browserName} ${slug}-walk-${walk} | ${shown} (${judged.verdict}: ${judged.reason})`);
+          if (latest.witness) console.log(`S16VO ${browserName} ${slug}-walk-${walk}-end | ${witnessText(latest.witness)}`);
+          console.log(`S16VO ${browserName} ${slug}-walk-${walk}-unresolved | ${unresolvedText(latest.unresolved)}`);
         },
       });
     expect(verdict, `${slug}, walk ${walks}: ${reason}`).toBe('complete');

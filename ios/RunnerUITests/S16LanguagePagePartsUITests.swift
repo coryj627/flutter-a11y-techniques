@@ -35,11 +35,11 @@ final class S16LanguagePagePartsUITests: XCTestCase, TechniqueUITest {
     "good-language-menu": ["Language menu", "Good example for Language of page and parts. Material."],
     "bad-unmarked": [
       "Passage not marked", "Bad example for Language of page and parts. Widgets layer.",
-      "Defect: The French passage is read as English.",
+      "Defect: The French passage has the app's language, English.",
     ],
     "bad-title-in-tile": [
       "Language set inside each tile", "Bad example for Language of page and parts. Material.",
-      "Defect: Each language is read as English.",
+      "Defect: Each language's name has the app's language, English.",
     ],
     "bad-region-tag": [
       "Language with a country", "Bad example for Language of page and parts. Widgets layer.",

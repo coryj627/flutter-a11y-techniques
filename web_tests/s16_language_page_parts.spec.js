@@ -12,7 +12,10 @@
 // is the web VoiceOver spec's, which can show the words only.
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
-import { BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, judgeTranscript, runWalks, screenStops, spokenRole } from './vo/s16_vo_walks.js';
+import {
+  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, collectWalk, endRow, helpRole, judgeCollectedWalk, judgeExampleWalk,
+  judgeTranscript, runWalks, screenStops, spokenRole, transcriptRow, unresolvedRow,
+} from './vo/s16_vo_walks.js';
 import { readFileSync } from 'node:fs';
 
 // The example screen's own "Example" heading; the technique's page has
@@ -328,7 +331,7 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
       ['Chosen: none', null],
       ['The sign at the door reads:', null],
       ['Good example for Language of page and parts. Material.', null],
-      ['Defect: Each language is read as English.', null],
+      ["Defect: Each language's name has the app's language, English.", null],
     ];
     for (const [reading, role] of roles) expect(spokenRole(reading), reading).toBe(role);
     expect(helpRole(HELP)).toBe('button');
@@ -374,44 +377,129 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
   });
 });
 
-// The committed web VoiceOver transcript, judged again from the stops it
-// recorded (judgeTranscript in web_tests/vo/s16_vo_walks.js): every
-// browser and example once, walks in order, the last complete, the screen's
-// own stops included. Made-up transcripts test the judge first.
+// The walk (collectWalk in web_tests/vo/s16_vo_walks.js), driven by made-up
+// screens and captures: a screen is a list of elements, each a phrase at a
+// position; `next` and `previous` move a cursor over it, and `capture`
+// reads what a capture function makes of the element the cursor is on.
+test.describe('the VoiceOver walk keeps every unchanged read and needs a witness for its end', () => {
+  const slug = 'good-language-menu';
+  const own = screenStops(slug);
+  const expected = EXPECTED_STOPS[slug];
+  const words = [...own, EXAMPLE_HEADING, ...expected];
+  const at = (i) => `${10 + i}, ${100 + 20 * i}, 300, ${118 + 20 * i}`;
+  const START = '10, 60, 300, 78';
+  /** A screen of `elements` ({ phrase, position }) and a capture rule. */
+  const drive = (elements, reads = (cursor, el, count) => el, max = 40) => {
+    let cursor = -1;
+    let count = 0;
+    return collectWalk({
+      next: async () => { cursor = Math.min(cursor + 1, elements.length - 1); },
+      previous: async () => { cursor = Math.max(cursor - 1, 0); },
+      capture: async () => { count++; return reads(cursor, elements[cursor], count); },
+      start: START,
+      max,
+    });
+  };
+  const screen = words.map((phrase, i) => ({ phrase, position: at(i) }));
+  const judge = (walk) => judgeCollectedWalk(walk, expected, own);
+
+  test('made-up walks: a whole screen passes, and each fault fails or is not complete', async () => {
+    const right = await drive(screen);
+    expect(judge(right).verdict, 'the whole screen').toBe('complete');
+    expect(right.witness.back).toEqual(screen.at(-2));
+    expect(right.witness.forward).toEqual(screen.at(-1));
+    expect(right.unresolved).toEqual([]);
+
+    let frozenAt = -1;
+    const cases = [
+      // The capture froze at the heading: every later element reads as the
+      // heading at its position, so the walk looks ended there, and the
+      // move back reads the heading again at its own position.
+      ['a frozen capture with elements after it', await drive(screen, (c, el) => {
+        if (el.phrase === EXAMPLE_HEADING && frozenAt < 0) frozenAt = c;
+        return frozenAt >= 0 ? screen[frozenAt] : el;
+      }), 'wrong'],
+      // From the heading on every read is an empty phrase at the heading's
+      // position.
+      ['empty phrases with frozen bounds', await drive(screen, (c, el) => (c >= own.length
+        ? { phrase: '', position: at(own.length) } : el)), 'wrong'],
+      // The move back at the end reads the last element again where it is.
+      ['a wrong witness: the move back reads the last stop', await drive(screen, (c, el, n) => (n === words.length + 3
+        ? screen.at(-1) : el)), 'wrong'],
+      ['a wrong witness: the move back reads an empty phrase', await drive(screen, (c, el, n) => (n === words.length + 3
+        ? { phrase: '', position: at(words.length - 2) } : el)), 'wrong'],
+      ['a wrong witness: the move forward reads another place', await drive(screen, (c, el, n) => (n === words.length + 4
+        ? { phrase: expected.at(-1), position: '1, 1, 1, 1' } : el)), 'wrong'],
+      // One stale read at an element mid-walk (the previous phrase and
+      // bounds), then the walk moves on: that element is never a stop.
+      ['one stale read at an unexpected element mid-walk', await drive(
+        [...screen.slice(0, own.length + 2), { phrase: 'Extra', position: at(90) }, ...screen.slice(own.length + 2)],
+        (c, el) => (el.phrase === 'Extra' ? screen[own.length + 1] : el)), 'incomplete'],
+      // One empty read at an element mid-walk, at the previous bounds.
+      ['one empty read at an unexpected element mid-walk', await drive(
+        [...screen.slice(0, own.length + 2), { phrase: 'Extra', position: at(90) }, ...screen.slice(own.length + 2)],
+        (c, el) => (el.phrase === 'Extra' ? { phrase: '', position: screen[own.length + 1].position } : el)), 'incomplete'],
+      // A repeated heading mid-walk at the heading's bounds.
+      ['the Example heading read again mid-walk at its bounds', await drive(
+        [...screen.slice(0, own.length + 1), { phrase: EXAMPLE_HEADING, position: at(own.length) }, ...screen.slice(own.length + 1)]), 'incomplete'],
+      ['a walk that runs out of moves', await drive(screen, undefined, 3), 'incomplete'],
+    ];
+    for (const [what, walk, verdict] of cases) {
+      expect(judge(walk).verdict, `${what}: ${JSON.stringify(walk)}`).toBe(verdict);
+    }
+  });
+});
+
+// The committed web VoiceOver transcript, judged again from its rows alone
+// (judgeTranscript in web_tests/vo/s16_vo_walks.js), never skipped: every
+// browser and example once, walks in order, the last complete, with its end
+// witness row and its unresolved-reads row. Made-up transcripts test the
+// judge first.
 test.describe('the web VoiceOver transcript is judged again from what it recorded', () => {
-  const row = (slug, n, stops, verdict = 'complete', reason = 'the whole screen, every stop in its place') =>
-    `| \`${slug}-walk-${n}\` | ${stops.join(' / ') || '(nothing)'} (${verdict}: ${reason}) |`;
   const whole = (slug) => [...screenStops(slug), EXAMPLE_HEADING, ...EXPECTED_STOPS[slug]];
+  const witness = (slug) => {
+    const w = whole(slug);
+    return { back: { phrase: w.at(-2), position: '10, 300, 300, 318' }, forward: { phrase: w.at(-1), position: '10, 320, 300, 338' } };
+  };
+  const rowsOf = (slug, n = 1) => [transcriptRow(slug, n, whole(slug), 'complete', 'the whole screen, every stop in its place'),
+    endRow(slug, n, witness(slug)), unresolvedRow(slug, n, [])];
   const section = (browser, rows) => ['', `## ${browser}`, '', '| Example | Spoken, in order |', '| --- | --- |', ...rows];
   const transcript = (rowsFor) => ['# S16 Language of page and parts: VoiceOver transcript (web, macOS)', '',
     'Result: PASS', ...BROWSERS.flatMap((b) => section(b, rowsFor(b)))].join('\n');
-  const right = (b) => Object.keys(EXAMPLE_SCREENS).map((slug) => row(slug, 1, whole(slug)));
+  const right = () => Object.keys(EXAMPLE_SCREENS).flatMap((slug) => rowsOf(slug));
+  const short = (slug) => [transcriptRow(slug, 1, whole(slug).slice(0, 3), 'incomplete', 'cut short'), unresolvedRow(slug, 1, [])];
 
   test('made-up transcripts: a right one passes, and each wrong one names its problem', () => {
-    const passage = row('good-passage', 1, whole('good-passage'));
-    const short = (slug) => row(slug, 1, whole(slug).slice(0, 3), 'incomplete', 'the walk was cut short');
+    const passage = transcriptRow('good-passage', 1, whole('good-passage'), 'complete', 'x');
     const cases = [
       ['a whole walk of every example in both browsers', transcript(right), true],
-      ['a short first walk, then a complete second', transcript((b) => right(b).flatMap((r, i) => (i === 0 ? [short('good-passage'), r.replace('-walk-1`', '-walk-2`')] : [r]))), true],
+      ['a short first walk, then a complete second', transcript(() => [...short('good-passage'),
+        ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((s) => rowsOf(s))]), true],
+      ['an empty transcript', '', false],
+      ['every end row removed', transcript(() => right().filter((r) => !r.includes('-end`'))), false],
+      ['every unresolved-reads row removed', transcript(() => right().filter((r) => !r.includes('-unresolved`'))), false],
+      ['an end row whose positions are one word', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1-end`')
+        ? '| `good-passage-walk-1-end` | back "x" at here / forward "y" at here |' : r))), false],
+      ['an end witness that read back the last stop', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1-end`')
+        ? endRow('good-passage', 1, { back: witness('good-passage').forward, forward: witness('good-passage').forward }) : r))), false],
+      ['an end witness that read back an empty phrase', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1-end`')
+        ? endRow('good-passage', 1, { back: { phrase: '', position: '1, 2, 3, 4' }, forward: witness('good-passage').forward }) : r))), false],
+      ['the last walk with an unresolved read', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1-unresolved`')
+        ? unresolvedRow('good-passage', 1, [{ after: 3, phrase: '', position: '1, 2, 3, 4' }]) : r))), false],
       ['fourteen copies of one row', transcript(() => Array(7).fill(passage)), false],
-      ['one row twice', transcript((b) => [...right(b), passage]), false],
-      ['an example missing in one browser', transcript((b) => (b === 'webkit' ? right(b).slice(1) : right(b))), false],
-      ['a browser section missing', ['Result: PASS', ...section('chromium', right('chromium'))].join('\n'), false],
-      ['a browser section twice', [transcript(right), ...section('webkit', right('webkit'))].join('\n'), false],
+      ['one walk row twice', transcript(() => [...right(), passage]), false],
+      ['an example missing in one browser', transcript((b) => (b === 'webkit' ? right().slice(3) : right())), false],
+      ['a browser section missing', ['Result: PASS', ...section('chromium', right())].join('\n'), false],
       ['an unknown browser section', [transcript(right), ...section('firefox', [])].join('\n'), false],
-      ['an unknown example', transcript((b) => [...right(b), row('good-other', 1, whole('good-passage'))]), false],
-      ['a malformed row', transcript((b) => [...right(b), '| `good-passage-walk-x` | something |']), false],
+      ['an unknown example', transcript(() => [...right(), transcriptRow('good-other', 1, whole('good-passage'), 'complete', 'x')]), false],
+      ['a malformed row', transcript(() => [...right(), '| `good-passage-walk-x` | something |']), false],
       ['a row outside any section', [passage, transcript(right)].join('\n'), false],
-      ['walk 2 with no walk 1', transcript((b) => right(b).map((r, i) => (i === 0 ? r.replace('-walk-1`', '-walk-2`') : r))), false],
-      ['the last walk recorded wrong', transcript((b) => right(b).map((r, i) => (i === 0 ? r.replace('(complete:', '(wrong:') : r))), false],
-      ['a short walk as the last', transcript((b) => right(b).map((r, i) => (i === 0 ? short('good-passage') : r))), false],
-      ['a complete walk after a wrong one', transcript((b) => right(b).flatMap((r, i) => (i === 0 ? [row('good-passage', 1, ['x'], 'wrong', 'x'), r.replace('-walk-1`', '-walk-2`')] : [r]))), false],
-      ['recorded complete, but only what follows the heading (the first recording\'s form)',
-        transcript((b) => Object.keys(EXAMPLE_SCREENS).map((slug) => row(slug, 1, EXPECTED_STOPS[slug]))), false],
-      ['recorded complete, with another example\'s screen stops',
-        transcript((b) => right(b).map((r, i) => (i === 0 ? row('good-passage', 1, [...screenStops('bad-unmarked'), EXAMPLE_HEADING, ...EXPECTED_STOPS['good-passage']]) : r))), false],
-      ['recorded complete, with a wrong stop after the heading',
-        transcript((b) => right(b).map((r, i) => (i === 0 ? row('good-passage', 1, [...screenStops('good-passage'), EXAMPLE_HEADING, 'Bienvenue']) : r))), false],
+      ['walk 2 with no walk 1', transcript(() => right().map((r) => r.replace('good-passage-walk-1', 'good-passage-walk-2'))), false],
+      ['the last walk recorded wrong', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1`') ? r.replace('(complete:', '(wrong:') : r))), false],
+      ['the first recording\'s form, only what follows the heading', transcript(() => Object.keys(EXAMPLE_SCREENS).flatMap((slug) => [
+        transcriptRow(slug, 1, EXPECTED_STOPS[slug], 'complete', 'x'), endRow(slug, 1, witness(slug)), unresolvedRow(slug, 1, [])])), false],
+      ['another example\'s screen stops', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1`')
+        ? transcriptRow('good-passage', 1, [...screenStops('bad-unmarked'), EXAMPLE_HEADING, ...EXPECTED_STOPS['good-passage']], 'complete', 'x') : r))), false],
     ];
     for (const [what, text, ok] of cases) {
       const problems = judgeTranscript(text);
@@ -419,19 +507,19 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     }
   });
 
-  test('the first recording (voiceover-web-round1-pass.md.txt), which logged only what follows the heading of a complete walk, cannot be judged again: every pair fails for its missing screen stops', () => {
-    const text = readFileSync(new URL('../docs/evidence/probes/s16/voiceover-web-round1-pass.md.txt', import.meta.url), 'utf8');
-    const problems = judgeTranscript(text);
-    // Fourteen walks, each judged wrong again (its first stop is not the
-    // title), and nothing else wrong with the file.
-    expect(problems.filter((p) => / judges "wrong" again: stop 1 was /.test(p))).toHaveLength(14);
-    expect(problems).toHaveLength(14);
+  test('the first two recordings, made before the walk had its end witness, cannot be judged again', () => {
+    for (const file of ['voiceover-web-round1-pass.md.txt', 'voiceover-web-round2-pass.md.txt']) {
+      const text = readFileSync(new URL(`../docs/evidence/probes/s16/${file}`, import.meta.url), 'utf8');
+      const problems = judgeTranscript(text);
+      // Every pair lacks its end witness row and its unresolved-reads row.
+      expect(problems.filter((p) => / has no end witness$/.test(p)), file).toHaveLength(14);
+      expect(problems.filter((p) => / has no unresolved-reads row$/.test(p)), file).toHaveLength(14);
+    }
   });
 
-  // The second recording (2026-11-27), the first with every walk logged
-  // whole.
-  const committed = new URL('../docs/evidence/S16/voiceover-web.md', import.meta.url);
   test('the committed recording (docs/evidence/S16/voiceover-web.md) is right, every browser and example once', () => {
-    expect(judgeTranscript(readFileSync(committed, 'utf8'))).toEqual([]);
+    // Never skipped: a missing file fails here.
+    const text = readFileSync(new URL('../docs/evidence/S16/voiceover-web.md', import.meta.url), 'utf8');
+    expect(judgeTranscript(text)).toEqual([]);
   });
 });
