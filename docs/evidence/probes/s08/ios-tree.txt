@@ -1,0 +1,247 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+== testFlutterExamples
+2026-11-26 23:11:55.358 xcodebuild[62264:72609341] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+good-bulleted type=2 label="Flutter A11Y Techniques" id="" frame=(0,0,402,874) children=1
+good-bulleted   type=4 label="" id="" frame=(0,0,402,874) children=1
+good-bulleted     type=1 label="" id="" frame=(0,0,402,874) children=1
+good-bulleted       type=1 label="" id="" frame=(0,0,402,874) children=1
+good-bulleted         type=1 label="" id="" frame=(0,0,402,874) children=1
+good-bulleted           type=1 label="" id="" frame=(0,0,402,874) children=2
+good-bulleted             type=1 label="" id="" frame=(0,0,402,874) children=0
+good-bulleted             type=1 label="" id="" frame=(0,0,402,874) children=2
+good-bulleted               type=1 label="" id="" frame=(0,0,402,874) children=0
+good-bulleted               type=1 label="" id="" frame=(0,0,402,874) children=2
+good-bulleted                 type=1 label="" id="" frame=(0,0,402,874) children=0
+good-bulleted                 type=1 label="" id="" frame=(0,0,402,874) children=3
+good-bulleted                   type=1 label="" id="" frame=(0,0,402,874) children=0
+good-bulleted                   type=1 label="" id="" frame=(0,0,402,874) children=3
+good-bulleted                     type=1 label="" id="" frame=(0,0,402,118) children=0
+good-bulleted                     type=9 label="Back" id="" frame=(4,66,48,48) children=0
+good-bulleted                     type=1 label="Bulleted list" id="" frame=(148,76,105,28) children=0
+good-bulleted                   type=1 label="" id="" frame=(0,0,402,874) children=4
+good-bulleted                     type=46 label="" id="" frame=(0,118,402,256) children=0
+good-bulleted                     type=48 label="Good example for List semantics. Widgets layer." id="" frame=(16,138,370,48) children=0
+good-bulleted                     type=1 label="Example" id="" frame=(16,206,370,28) children=0
+good-bulleted                     type=1 label="" id="" frame=(0,0,402,874) children=4
+good-bulleted                       type=1 label="" id="" frame=(16,258,370,84) children=0
+good-bulleted                       type=48 label="Milk" id="" frame=(16,258,370,28) children=0
+good-bulleted                       type=48 label="Eggs" id="" frame=(16,286,370,28) children=0
+good-bulleted                       type=48 label="Bread" id="" frame=(16,314,370,28) children=0
+2026-11-26 23:12:02.932 xcodebuild[62264:72609341] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+good-numbered type=2 label="Flutter A11Y Techniques" id="" frame=(0,0,402,874) children=1
+good-numbered   type=4 label="" id="" frame=(0,0,402,874) children=1
+good-numbered     type=1 label="" id="" frame=(0,0,402,874) children=1
+good-numbered       type=1 label="" id="" frame=(0,0,402,874) children=1
+good-numbered         type=1 label="" id="" frame=(0,0,402,874) children=1
+good-numbered           type=1 label="" id="" frame=(0,0,402,874) children=2
+good-numbered             type=1 label="" id="" frame=(0,0,402,874) children=0
+good-numbered             type=1 label="" id="" frame=(0,0,402,874) children=2
+good-numbered               type=1 label="" id="" frame=(0,0,402,874) children=0
+good-numbered               type=1 label="" id="" frame=(0,0,402,874) children=2
+good-numbered                 type=1 label="" id="" frame=(0,0,402,874) children=0
+good-numbered                 type=1 label="" id="" frame=(0,0,402,874) children=3
+good-numbered                   type=1 label="" id="" frame=(0,0,402,874) children=0
+good-numbered                   type=1 label="" id="" frame=(0,0,402,874) children=3
+good-numbered                     type=1 label="" id="" frame=(0,0,402,118) children=0
+good-numbered                     type=9 label="Back" id="" frame=(4,66,48,48) children=0
+good-numbered                     type=1 label="Numbered list" id="" frame=(136,76,128,28) children=0
+good-numbered                   type=1 label="" id="" frame=(0,0,402,874) children=4
+good-numbered                     type=46 label="" id="" frame=(0,118,402,256) children=0
+good-numbered                     type=48 label="Good example for List semantics. Widgets layer." id="" frame=(16,138,370,48) children=0
+good-numbered                     type=1 label="Example" id="" frame=(16,206,370,28) children=0
+good-numbered                     type=1 label="" id="" frame=(0,0,402,874) children=4
+good-numbered                       type=1 label="" id="" frame=(16,258,370,84) children=0
+good-numbered                       type=48 label="1. Fork the repository" id="" frame=(16,258,145,28) children=0
+good-numbered                       type=48 label="2. Make the change" id="" frame=(16,286,133,28) children=0
+good-numbered                       type=48 label="3. Open a pull request" id="" frame=(16,314,150,28) children=0
+2026-11-26 23:12:09.511 xcodebuild[62264:72609341] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+good-material type=2 label="Flutter A11Y Techniques" id="" frame=(0,0,402,874) children=1
+good-material   type=4 label="" id="" frame=(0,0,402,874) children=1
+good-material     type=1 label="" id="" frame=(0,0,402,874) children=1
+good-material       type=1 label="" id="" frame=(0,0,402,874) children=1
+good-material         type=1 label="" id="" frame=(0,0,402,874) children=1
+good-material           type=1 label="" id="" frame=(0,0,402,874) children=2
+good-material             type=1 label="" id="" frame=(0,0,402,874) children=0
+good-material             type=1 label="" id="" frame=(0,0,402,874) children=2
+good-material               type=1 label="" id="" frame=(0,0,402,874) children=0
+good-material               type=1 label="" id="" frame=(0,0,402,874) children=2
+good-material                 type=1 label="" id="" frame=(0,0,402,874) children=0
+good-material                 type=1 label="" id="" frame=(0,0,402,874) children=3
+good-material                   type=1 label="" id="" frame=(0,0,402,874) children=0
+good-material                   type=1 label="" id="" frame=(0,0,402,874) children=3
+good-material                     type=1 label="" id="" frame=(0,0,402,118) children=0
+good-material                     type=9 label="Back" id="" frame=(4,66,48,48) children=0
+good-material                     type=1 label="List of Material list tiles" id="" frame=(98,76,205,28) children=0
+good-material                   type=1 label="" id="" frame=(0,0,402,874) children=5
+good-material                     type=46 label="" id="" frame=(0,118,402,344) children=0
+good-material                     type=48 label="Good example for List semantics. Material." id="" frame=(16,138,370,24) children=0
+good-material                     type=1 label="Example" id="" frame=(16,182,370,28) children=0
+good-material                     type=1 label="" id="" frame=(0,0,402,874) children=4
+good-material                       type=1 label="" id="" frame=(16,234,370,168) children=0
+good-material                       type=1 label="" id="" frame=(0,0,402,874) children=2
+good-material                         type=1 label="" id="" frame=(16,234,370,56) children=0
+good-material                         type=9 label="Milk" id="s08-good-material-milk" frame=(16,234,370,56) children=0
+good-material                       type=1 label="" id="" frame=(0,0,402,874) children=2
+good-material                         type=1 label="" id="" frame=(16,290,370,56) children=0
+good-material                         type=9 label="Eggs" id="s08-good-material-eggs" frame=(16,290,370,56) children=0
+good-material                       type=1 label="" id="" frame=(0,0,402,874) children=2
+good-material                         type=1 label="" id="" frame=(16,346,370,56) children=0
+good-material                         type=9 label="Bread" id="s08-good-material-bread" frame=(16,346,370,56) children=0
+good-material                     type=1 label="Chosen: none" id="s08-good-material-chosen" frame=(16,410,370,20) children=0
+2026-11-26 23:12:16.045 xcodebuild[62264:72609341] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+good-cupertino type=2 label="Flutter A11Y Techniques" id="" frame=(0,0,402,874) children=1
+good-cupertino   type=4 label="" id="" frame=(0,0,402,874) children=1
+good-cupertino     type=1 label="" id="" frame=(0,0,402,874) children=1
+good-cupertino       type=1 label="" id="" frame=(0,0,402,874) children=1
+good-cupertino         type=1 label="" id="" frame=(0,0,402,874) children=1
+good-cupertino           type=1 label="" id="" frame=(0,0,402,874) children=2
+good-cupertino             type=1 label="" id="" frame=(0,0,402,874) children=0
+good-cupertino             type=1 label="" id="" frame=(0,0,402,874) children=2
+good-cupertino               type=1 label="" id="" frame=(0,0,402,874) children=0
+good-cupertino               type=1 label="" id="" frame=(0,0,402,874) children=2
+good-cupertino                 type=1 label="" id="" frame=(0,0,402,874) children=0
+good-cupertino                 type=1 label="" id="" frame=(0,0,402,874) children=3
+good-cupertino                   type=1 label="" id="" frame=(0,0,402,874) children=0
+good-cupertino                   type=1 label="" id="" frame=(0,0,402,874) children=3
+good-cupertino                     type=1 label="" id="" frame=(0,0,402,118) children=0
+good-cupertino                     type=9 label="Back" id="" frame=(4,66,48,48) children=0
+good-cupertino                     type=1 label="Cupertino list section" id="" frame=(104,76,193,28) children=0
+good-cupertino                   type=1 label="" id="" frame=(0,0,402,874) children=4
+good-cupertino                     type=46 label="" id="" frame=(0,117,402,333) children=0
+good-cupertino                     type=48 label="Good example for List semantics. Cupertino." id="" frame=(16,138,370,24) children=0
+good-cupertino                     type=1 label="Example" id="" frame=(16,182,370,28) children=0
+good-cupertino                     type=1 label="" id="" frame=(0,0,402,874) children=4
+good-cupertino                       type=1 label="Groceries" id="" frame=(16,234,370,185) children=0
+good-cupertino                       type=48 label="Milk" id="" frame=(16,278,370,44) children=0
+good-cupertino                       type=48 label="Eggs" id="" frame=(16,322,370,44) children=0
+good-cupertino                       type=48 label="Bread" id="" frame=(16,367,370,44) children=0
+2026-11-26 23:12:22.628 xcodebuild[62264:72609341] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+bad-no-list type=2 label="Flutter A11Y Techniques" id="" frame=(0,0,402,874) children=1
+bad-no-list   type=4 label="" id="" frame=(0,0,402,874) children=1
+bad-no-list     type=1 label="" id="" frame=(0,0,402,874) children=1
+bad-no-list       type=1 label="" id="" frame=(0,0,402,874) children=1
+bad-no-list         type=1 label="" id="" frame=(0,0,402,874) children=1
+bad-no-list           type=1 label="" id="" frame=(0,0,402,874) children=2
+bad-no-list             type=1 label="" id="" frame=(0,0,402,874) children=0
+bad-no-list             type=1 label="" id="" frame=(0,0,402,874) children=2
+bad-no-list               type=1 label="" id="" frame=(0,0,402,874) children=0
+bad-no-list               type=1 label="" id="" frame=(0,0,402,874) children=2
+bad-no-list                 type=1 label="" id="" frame=(0,0,402,874) children=0
+bad-no-list                 type=1 label="" id="" frame=(0,0,402,874) children=3
+bad-no-list                   type=1 label="" id="" frame=(0,0,402,874) children=0
+bad-no-list                   type=1 label="" id="" frame=(0,0,402,874) children=3
+bad-no-list                     type=1 label="" id="" frame=(0,0,402,118) children=0
+bad-no-list                     type=9 label="Back" id="" frame=(4,66,48,48) children=0
+bad-no-list                     type=1 label="Lines with no list role" id="" frame=(106,76,188,28) children=0
+bad-no-list                   type=1 label="" id="" frame=(0,0,402,874) children=7
+bad-no-list                     type=46 label="" id="" frame=(0,118,402,288) children=0
+bad-no-list                     type=48 label="Bad example for List semantics. Widgets layer." id="" frame=(16,138,370,48) children=0
+bad-no-list                     type=48 label="Defect: Nothing says that the lines are a list." id="" frame=(16,194,370,24) children=0
+bad-no-list                     type=1 label="Example" id="" frame=(16,238,370,28) children=0
+bad-no-list                     type=48 label="Milk" id="" frame=(38,294,27,20) children=0
+bad-no-list                     type=48 label="Eggs" id="" frame=(38,322,33,20) children=0
+bad-no-list                     type=48 label="Bread" id="" frame=(38,350,39,20) children=0
+2026-11-26 23:12:29.186 xcodebuild[62264:72609341] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+bad-one-text type=2 label="Flutter A11Y Techniques" id="" frame=(0,0,402,874) children=1
+bad-one-text   type=4 label="" id="" frame=(0,0,402,874) children=1
+bad-one-text     type=1 label="" id="" frame=(0,0,402,874) children=1
+bad-one-text       type=1 label="" id="" frame=(0,0,402,874) children=1
+bad-one-text         type=1 label="" id="" frame=(0,0,402,874) children=1
+bad-one-text           type=1 label="" id="" frame=(0,0,402,874) children=2
+bad-one-text             type=1 label="" id="" frame=(0,0,402,874) children=0
+bad-one-text             type=1 label="" id="" frame=(0,0,402,874) children=2
+bad-one-text               type=1 label="" id="" frame=(0,0,402,874) children=0
+bad-one-text               type=1 label="" id="" frame=(0,0,402,874) children=2
+bad-one-text                 type=1 label="" id="" frame=(0,0,402,874) children=0
+bad-one-text                 type=1 label="" id="" frame=(0,0,402,874) children=3
+bad-one-text                   type=1 label="" id="" frame=(0,0,402,874) children=0
+bad-one-text                   type=1 label="" id="" frame=(0,0,402,874) children=3
+bad-one-text                     type=1 label="" id="" frame=(0,0,402,118) children=0
+bad-one-text                     type=9 label="Back" id="" frame=(4,66,48,48) children=0
+bad-one-text                     type=1 label="List in one text" id="" frame=(135,76,131,28) children=0
+bad-one-text                   type=1 label="" id="" frame=(0,0,402,874) children=5
+bad-one-text                     type=46 label="" id="" frame=(0,118,402,288) children=0
+bad-one-text                     type=48 label="Bad example for List semantics. Widgets layer." id="" frame=(16,138,370,48) children=0
+bad-one-text                     type=48 label="Defect: The items are read as one paragraph, not as a list." id="" frame=(16,194,370,48) children=0
+bad-one-text                     type=1 label="Example" id="" frame=(16,262,370,28) children=0
+bad-one-text                     type=48 label="Milk\nEggs\nBread" id="" frame=(16,314,370,60) children=0
+Test Case '-[RunnerUITests.ProbeS08TreeUITests testFlutterExamples]' passed (39.663 seconds).
+== testNative
+native-n05 type=2 label="NativeLists" id="" frame=(0,0,402,874) children=1
+native-n05   type=4 label="" id="" frame=(0,0,402,874) children=1
+native-n05     type=1 label="" id="" frame=(0,0,402,874) children=1
+native-n05       type=1 label="" id="" frame=(0,0,402,874) children=1
+native-n05         type=1 label="" id="" frame=(0,0,402,874) children=1
+native-n05           type=1 label="" id="" frame=(16,86,370,264) children=3
+native-n05             type=48 label="Before n05" id="" frame=(16,86,370,20) children=0
+native-n05             type=26 label="" id="" frame=(16,118,370,200) children=5
+native-n05               type=75 label="" id="" frame=(16,118,370,53) children=3
+native-n05                 type=1 label="" id="" frame=(16,118,370,53) children=1
+native-n05                   type=1 label="" id="" frame=(16,118,370,53) children=0
+native-n05                 type=48 label="n05 Milk" id="" frame=(36,134,65,20) children=0
+native-n05                 type=1 label="" id="" frame=(36,170,330,1) children=0
+native-n05               type=75 label="" id="" frame=(16,171,370,53) children=3
+native-n05                 type=1 label="" id="" frame=(16,171,370,53) children=1
+native-n05                   type=1 label="" id="" frame=(16,171,370,53) children=0
+native-n05                 type=48 label="n05 Eggs" id="" frame=(36,187,72,20) children=0
+native-n05                 type=1 label="" id="" frame=(36,223,330,1) children=0
+native-n05               type=75 label="" id="" frame=(16,224,370,53) children=3
+native-n05                 type=1 label="" id="" frame=(16,224,370,53) children=1
+native-n05                   type=1 label="" id="" frame=(16,224,370,53) children=0
+native-n05                 type=48 label="n05 Bread" id="" frame=(36,240,79,20) children=0
+native-n05                 type=1 label="" id="" frame=(36,276,330,1) children=0
+native-n05               type=1 label="Vertical scroll bar, 1 page" id="" frame=(353,118,30,200) children=1
+native-n05                 type=1 label="" id="" frame=(380,79,3,36) children=0
+native-n05               type=1 label="Horizontal scroll bar, 1 page" id="" frame=(16,285,370,30) children=1
+native-n05                 type=1 label="" id="" frame=(-23,312,36,3) children=0
+native-n05             type=48 label="n05 end" id="" frame=(16,330,370,20) children=0
+native-n06 type=2 label="NativeLists" id="" frame=(0,0,402,874) children=1
+native-n06   type=4 label="" id="" frame=(0,0,402,874) children=1
+native-n06     type=1 label="" id="" frame=(0,0,402,874) children=1
+native-n06       type=1 label="" id="" frame=(0,0,402,874) children=1
+native-n06         type=1 label="" id="" frame=(0,0,402,874) children=1
+native-n06           type=1 label="" id="" frame=(0,0,402,874) children=3
+native-n06             type=48 label="Before n06" id="" frame=(16,78,84,20) children=0
+native-n06             type=32 label="" id="" frame=(16,110,370,200) children=8
+native-n06               type=1 label="" id="" frame=(0,-289,402,1011) children=0
+native-n06               type=75 label="" id="" frame=(32,145,338,52) children=2
+native-n06                 type=1 label="" id="" frame=(32,145,338,52) children=1
+native-n06                   type=1 label="" id="" frame=(32,145,338,52) children=0
+native-n06                 type=1 label="" id="" frame=(32,145,338,52) children=1
+native-n06                   type=1 label="" id="" frame=(32,145,338,52) children=1
+native-n06                     type=1 label="" id="" frame=(32,145,338,52) children=1
+native-n06                       type=48 label="n06 Milk" id="" frame=(32,145,338,52) children=0
+native-n06               type=75 label="" id="" frame=(32,197,338,52) children=2
+native-n06                 type=1 label="" id="" frame=(32,197,338,52) children=1
+native-n06                   type=1 label="" id="" frame=(32,197,338,52) children=0
+native-n06                 type=1 label="" id="" frame=(32,197,338,52) children=1
+native-n06                   type=1 label="" id="" frame=(32,197,338,52) children=1
+native-n06                     type=1 label="" id="" frame=(32,197,338,52) children=1
+native-n06                       type=48 label="n06 Eggs" id="" frame=(32,197,338,52) children=0
+native-n06               type=1 label="" id="" frame=(48,196,306,1) children=0
+native-n06               type=75 label="" id="" frame=(32,249,338,52) children=2
+native-n06                 type=1 label="" id="" frame=(32,249,338,52) children=1
+native-n06                   type=1 label="" id="" frame=(32,249,338,52) children=0
+native-n06                 type=1 label="" id="" frame=(32,249,338,52) children=1
+native-n06                   type=1 label="" id="" frame=(32,249,338,52) children=1
+native-n06                     type=1 label="" id="" frame=(32,249,338,52) children=1
+native-n06                       type=48 label="n06 Bread" id="" frame=(32,249,338,52) children=0
+native-n06               type=1 label="" id="" frame=(48,248,306,1) children=0
+native-n06               type=1 label="Vertical scroll bar, 2 pages" id="" frame=(353,110,30,200) children=1
+native-n06                 type=1 label="" id="" frame=(380,300,3,7) children=0
+native-n06               type=1 label="Vertical scroll bar, 2 pages" id="" frame=(353,110,30,200) children=1
+native-n06                 type=1 label="" id="" frame=(380,300,3,7) children=0
+native-n06             type=48 label="n06 end" id="" frame=(16,322,63,20) children=0
+native-n07 type=2 label="NativeLists" id="" frame=(0,0,402,874) children=1
+native-n07   type=4 label="" id="" frame=(0,0,402,874) children=1
+native-n07     type=1 label="" id="" frame=(0,0,402,874) children=1
+native-n07       type=1 label="" id="" frame=(0,0,402,874) children=1
+native-n07         type=1 label="" id="" frame=(0,0,402,874) children=1
+native-n07           type=1 label="" id="" frame=(16,85,370,149) children=5
+native-n07             type=48 label="Before n07" id="" frame=(16,85,370,20) children=0
+native-n07             type=48 label="n07 Milk" id="" frame=(16,118,370,20) children=0
+native-n07             type=48 label="n07 Eggs" id="" frame=(16,150,370,20) children=0
+native-n07             type=48 label="n07 Bread" id="" frame=(16,183,370,20) children=0
+native-n07             type=48 label="n07 end" id="" frame=(16,215,370,20) children=0
+Test Case '-[RunnerUITests.ProbeS08TreeUITests testNative]' passed (18.396 seconds).
+exit 0

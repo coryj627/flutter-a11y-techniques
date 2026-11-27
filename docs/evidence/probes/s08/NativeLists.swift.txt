@@ -1,0 +1,116 @@
+// S08 native iOS comparison (throwaway; kept as
+// docs/evidence/probes/s08/NativeLists.swift.txt). A UIKit app, built with
+// swiftc by build_native_ios.sh.txt and installed on the simulator, never
+// part of the Runner. One screen per launch argument:
+//
+// - "uikit" (n05): a "Before n05" label, a UITableView of three rows
+//   ("n05 Milk", "n05 Eggs", "n05 Bread") 200 points high, an "n05 end"
+//   label.
+// - "swiftui" (n06): the same with a SwiftUI `List` of three `Text` rows.
+// - "stack" (n07): the same with a UIStackView of three UILabels, the
+//   iOS reference's good example (separate elements, no list).
+import SwiftUI
+import UIKit
+
+let groceries = ["Milk", "Eggs", "Bread"]
+
+func label(_ text: String) -> UILabel {
+  let l = UILabel()
+  l.text = text
+  l.font = .preferredFont(forTextStyle: .body)
+  return l
+}
+
+final class TableScreen: UIViewController, UITableViewDataSource {
+  let id: String
+  init(_ id: String) {
+    self.id = id
+    super.init(nibName: nil, bundle: nil)
+  }
+  required init?(coder: NSCoder) { fatalError() }
+
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { groceries.count }
+
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+    var content = cell.defaultContentConfiguration()
+    content.text = "\(id) \(groceries[indexPath.row])"
+    cell.contentConfiguration = content
+    return cell
+  }
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .systemBackground
+    let table = UITableView(frame: .zero, style: .plain)
+    table.dataSource = self
+    table.heightAnchor.constraint(equalToConstant: 200).isActive = true
+    stack(view, [label("Before \(id)"), table, label("\(id) end")])
+  }
+}
+
+final class StackScreen: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .systemBackground
+    stack(view, [label("Before n07")] + groceries.map { label("n07 \($0)") } + [label("n07 end")])
+  }
+}
+
+func stack(_ view: UIView, _ views: [UIView]) {
+  let s = UIStackView(arrangedSubviews: views)
+  s.axis = .vertical
+  s.spacing = 12
+  s.translatesAutoresizingMaskIntoConstraints = false
+  view.addSubview(s)
+  NSLayoutConstraint.activate([
+    s.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+    s.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+    s.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+  ])
+}
+
+struct SwiftUIScreen: View {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text("Before n06")
+      List(groceries, id: \.self) { g in Text("n06 \(g)") }
+        .frame(height: 200)
+      Text("n06 end")
+      Spacer()
+    }
+    .padding()
+  }
+}
+
+@main
+final class AppDelegate: UIResponder, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   configurationForConnecting connectingSceneSession: UISceneSession,
+                   options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    let config = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+    config.delegateClass = SceneDelegate.self
+    return config
+  }
+}
+
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+  var window: UIWindow?
+
+  func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options: UIScene.ConnectionOptions) {
+    guard let scene = scene as? UIWindowScene else { return }
+    let args = ProcessInfo.processInfo.arguments
+    let root: UIViewController
+    if args.contains("swiftui") {
+      root = UIHostingController(rootView: SwiftUIScreen())
+    } else if args.contains("stack") {
+      root = StackScreen()
+    } else {
+      root = TableScreen("n05")
+    }
+    let window = UIWindow(windowScene: scene)
+    window.rootViewController = root
+    window.makeKeyAndVisible()
+    self.window = window
+  }
+}

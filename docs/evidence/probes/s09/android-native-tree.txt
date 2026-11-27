@@ -1,0 +1,32 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420; TalkBack versionName=17.0.0.889642762
+==== native (SDK 37)
+android.widget.FrameLayout | desc="" text="" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=1
+  android.view.ViewGroup | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=2
+    android.widget.FrameLayout | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=1
+      android.widget.ScrollView | desc="" text="" clickable=false focusable=true important=true paneTitle="" containerTitle="" children=1
+        android.widget.LinearLayout | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=9
+          android.widget.TextView | desc="" text="Before n01" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=0
+          android.widget.LinearLayout | desc="" text="" clickable=false focusable=false important=true paneTitle="" containerTitle="n01 Kitchen light" children=2
+            android.widget.TextView | desc="" text="n01 Kitchen light" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=0
+            android.widget.LinearLayout | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=2
+              android.widget.Button | desc="" text="n01 On" clickable=true focusable=true important=true paneTitle="" containerTitle="" children=0
+              android.widget.Button | desc="" text="n01 Off" clickable=true focusable=true important=true paneTitle="" containerTitle="" children=0
+          android.widget.TextView | desc="" text="n01 end" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=0
+          android.widget.TextView | desc="" text="Before n02" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=0
+          android.widget.LinearLayout | desc="n02 Kitchen light" text="" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=2
+            android.widget.TextView | desc="" text="n02 Kitchen light" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=0
+            android.widget.LinearLayout | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=2
+              android.widget.Button | desc="" text="n02 On" clickable=true focusable=true important=true paneTitle="" containerTitle="" children=0
+              android.widget.Button | desc="" text="n02 Off" clickable=true focusable=true important=true paneTitle="" containerTitle="" children=0
+          android.widget.TextView | desc="" text="n02 end" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=0
+          android.widget.TextView | desc="" text="Before n03" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=0
+          android.widget.LinearLayout | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=2
+            android.widget.TextView | desc="" text="n03 Kitchen light" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=0
+            android.widget.LinearLayout | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=2
+              android.widget.Button | desc="" text="n03 On" clickable=true focusable=true important=true paneTitle="" containerTitle="" children=0
+              android.widget.Button | desc="" text="n03 Off" clickable=true focusable=true important=true paneTitle="" containerTitle="" children=0
+          android.widget.TextView | desc="" text="n03 end" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=0
+    android.widget.FrameLayout | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=1
+      android.view.ViewGroup | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=2
+        android.widget.TextView | desc="" text="Flutter A11Y Techniques" clickable=false focusable=false important=true paneTitle="" containerTitle="" children=0
+        android.widget.LinearLayout | desc="" text="" clickable=false focusable=false important=false paneTitle="" containerTitle="" children=0

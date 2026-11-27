@@ -1,0 +1,134 @@
+// S09 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s09/probe_test.dart.txt): each fixture of
+// lib/probe.dart under flutter test: its semantics tree in traversal order,
+// the merged data of each node, the tap action of each node that has one,
+// the Tab stops, and what Enter and Space do after one to three Tabs.
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void log(String s) => debugPrint('S09PROBE $s');
+
+Future<void> open(WidgetTester tester, String id) async {
+  await tester.pumpWidget(const SizedBox());
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: FixtureScreen(ids: [id]),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+String taps(WidgetTester tester, String id) {
+  final f = find.textContaining('$id taps');
+  if (f.evaluate().isEmpty) return '(gone)';
+  return (tester.widget<Text>(f).data ?? '');
+}
+
+String focused() {
+  final f = FocusManager.instance.primaryFocus;
+  if (f == null) return '(none)';
+  final ctx = f.context;
+  if (ctx == null) return f.toString();
+  final sem = ctx.findRenderObject()?.debugSemantics;
+  var label = '';
+  var node = sem;
+  while (node != null && label.isEmpty) {
+    label = node.getSemanticsData().label.replaceAll('\n', '\\n');
+    node = node.parent;
+  }
+  return '${ctx.widget.runtimeType} "$label"';
+}
+
+void main() {
+  for (final id in fixtures.keys) {
+    testWidgets('probe $id', (tester) async {
+      final handle = tester.ensureSemantics();
+      await open(tester, id);
+      log('==== $id ${fixtures[id]!.$1}');
+      final root = tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!;
+      for (final line in root.toStringDeep(childOrder: DebugSemanticsDumpOrder.traversalOrder).split('\n')) {
+        if (line.trim().isEmpty) continue;
+        log('$id tree $line');
+      }
+      // Merged data of every node with a label.
+      void walk(SemanticsNode n, int depth) {
+        final d = n.getSemanticsData();
+        if (d.label.isNotEmpty || d.hasAction(SemanticsAction.tap)) {
+          final flags = <String>[
+            if (d.flagsCollection.isButton) 'button',
+            if (d.flagsCollection.isLink) 'link',
+            if (d.flagsCollection.isInMutuallyExclusiveGroup) 'exclusive',
+            if (d.flagsCollection.isHeader) 'header',
+            if (d.flagsCollection.isImage) 'image',
+            if (d.flagsCollection.isFocused != ui.Tristate.none) 'focusable',
+          ];
+          log('$id node${'  ' * depth} label="${d.label.replaceAll('\n', '\\n')}" level=${d.headingLevel} '
+              'flags=$flags tap=${d.hasAction(SemanticsAction.tap)} url=${d.linkUrl} role=${d.role} id=${d.identifier}');
+        }
+        n.visitChildren((c) {
+          walk(c, depth + 1);
+          return true;
+        });
+      }
+
+      walk(root, 0);
+      // The tap action of every node that has one, each from a fresh pump.
+      final tappable = <String>[];
+      void find2(SemanticsNode n) {
+        final d = n.getSemanticsData();
+        if (d.hasAction(SemanticsAction.tap)) tappable.add(d.label);
+        n.visitChildren((c) {
+          find2(c);
+          return true;
+        });
+      }
+
+      find2(root);
+      for (final label in tappable) {
+        await open(tester, id);
+        final r = tester.binding.renderViews.first.owner!.semanticsOwner!;
+        SemanticsNode? hit;
+        void look(SemanticsNode n) {
+          if (hit == null && n.getSemanticsData().label == label && n.getSemanticsData().hasAction(SemanticsAction.tap)) hit = n;
+          n.visitChildren((c) {
+            look(c);
+            return true;
+          });
+        }
+
+        look(r.rootSemanticsNode!);
+        r.performAction(hit!.id, SemanticsAction.tap);
+        await tester.pumpAndSettle();
+        log('$id tap action on "${label.replaceAll('\n', '\\n')}": ${taps(tester, id)}');
+      }
+      await open(tester, id);
+      final stops = <String>[];
+      for (var i = 0; i < 6; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        stops.add(focused());
+      }
+      log('$id tab stops: ${stops.join(' -> ')}');
+      for (final key in [LogicalKeyboardKey.enter, LogicalKeyboardKey.space]) {
+        for (var n = 1; n <= 3; n++) {
+          await open(tester, id);
+          for (var i = 0; i < n; i++) {
+            await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+            await tester.pump();
+          }
+          final on = focused();
+          await tester.sendKeyEvent(key);
+          await tester.pumpAndSettle();
+          log('$id $n Tabs (on $on) then ${key.keyLabel}: ${taps(tester, id)}');
+        }
+      }
+      handle.dispose();
+    });
+  }
+}

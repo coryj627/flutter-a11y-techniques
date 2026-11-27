@@ -1,0 +1,53 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+s08-native2-0 is "Before n02"
+s08-native2-1 is "• n02 Milk"
+s08-native2-2 is "• n02 Eggs"
+s08-native2-3 is "• n02 Bread"
+s08-native2-4 is "n02 end"
+s08-native2-5 is "Before n03"
+s08-native2-6 is "1. n03 Milk"
+s08-native2-7 is "2. n03 Eggs"
+s08-native2-8 is "3. n03 Bread"
+s08-native2-9 is "n03 end"
+s08-native4-0 is "Before n04"
+s08-native4-1 is "n04 Item 1"
+s08-native4-2 is "n04 Item 2"
+s08-native4-3 is "n04 Item 3"
+s08-native4-4 is "n04 Item 4"
+s08-native4-5 is "n04 end"
+native4 ACTION_SCROLL_FORWARD step 1 returned true
+native4 ACTION_SCROLL_FORWARD step 2 returned true
+native4 ACTION_SCROLL_FORWARD step 3 returned true
+native4 visible after scrolling: n04 Item 10,n04 Item 11,n04 Item 12,n04 Item 13
+s08-native4-scrolled-0 is "n04 Item 10"
+s08-native4-scrolled-1 is "n04 Item 11"
+s08-native4-scrolled-2 is "n04 Item 12"
+s08-native4-scrolled-3 is "n04 Item 13"
+s08-r2-p01-0 is "Before p01"
+s08-r2-p01-1 is "• p01 Milk"
+s08-r2-p01-2 is "• p01 Eggs"
+s08-r2-p01-3 is "• p01 Bread"
+s08-r2-p01-4 is "p01 end taps=0"
+s08-r2-p15-0 is "Before p15"
+s08-r2-p15-1 is "1. p15 Fork the repository"
+s08-r2-p15-2 is "2. p15 Make the change"
+s08-r2-p15-3 is "3. p15 Open a pull request"
+s08-r2-p15-4 is "p15 end taps=0"
+s08-r2-p08-0 is "Before p08"
+s08-r2-p08-1 is "p08 Item 1"
+s08-r2-p08-2 is "p08 Item 2"
+s08-r2-p08-3 is "p08 Item 3"
+s08-r2-p08-4 is "p08 Item 4"
+s08-r2-p08-5 is "p08 Item 5"
+s08-r2-p08-6 is "p08 Item 6"
+s08-r2-p08-7 is "p08 end taps=0"
+r2-p08 ACTION_SCROLL_FORWARD step 1 returned true
+r2-p08 ACTION_SCROLL_FORWARD step 2 returned true
+r2-p08 ACTION_SCROLL_FORWARD step 3 returned true
+r2-p08 visible after scrolling: p08 Item 14,p08 Item 15,p08 Item 16,p08 Item 17,p08 Item 18,p08 Item 19
+s08-r2-p08-scrolled-0 is "p08 Item 14"
+s08-r2-p08-scrolled-1 is "p08 Item 15"
+s08-r2-p08-scrolled-2 is "p08 Item 16"
+s08-r2-p08-scrolled-3 is "p08 Item 17"
+s08-r2-p08-scrolled-4 is "p08 Item 18"
+s08-r2-p08-scrolled-5 is "p08 Item 19"
