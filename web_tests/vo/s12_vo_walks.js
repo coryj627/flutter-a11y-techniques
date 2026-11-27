@@ -248,6 +248,7 @@ export const NO_STOPS = '(nothing)';
 export const BROWSERS = ['chromium', 'webkit'];
 
 const ROW = /^\| `([a-z-]+)-walk-(\d+)` \| (.*) \((complete|wrong|incomplete): (.*)\) \|$/;
+const END_ROW = /^\| `([a-z-]+)-walk-(\d+)-end` \| back "(.*)" at (.*) \/ forward "(.*)" at (.*) \|$/;
 
 /**
  * Judges a committed web VoiceOver transcript (docs/evidence/S12/voiceover-web.md)
@@ -264,7 +265,11 @@ const ROW = /^\| `([a-z-]+)-walk-(\d+)` \| (.*) \((complete|wrong|incomplete): (
  * - every walk is judged again by judgeExampleWalk on the stops it
  *   recorded, with nothing put back: the last must be recorded complete
  *   and judge complete (as having reached the end); every earlier one must
- *   be recorded incomplete and judge incomplete as a walk cut short. The
+ *   be recorded incomplete and judge incomplete as a walk cut short;
+ * - the last walk must have its end witness row (`<slug>-walk-<n>-end`,
+ *   collectWalk's witness): the move back read the stop before the last,
+ *   at a position other than the move forward's, which read the last
+ *   stop; no other walk may have one, and none may appear twice. The
  *   transcript holds no cursor positions, so a help message the judge left
  *   out by its position counts as a stop here and fails: this errs toward
  *   failing.
@@ -272,6 +277,7 @@ const ROW = /^\| `([a-z-]+)-walk-(\d+)` \| (.*) \((complete|wrong|incomplete): (
 export function judgeTranscript(text) {
   const problems = [];
   const walks = new Map(); // "browser slug" -> Map(n -> { stops, was })
+  const ends = new Map(); // "browser slug n" -> the end witness
   let browser = null;
   for (const line of text.split('\n')) {
     const section = /^## (\S+)$/.exec(line);
@@ -281,6 +287,19 @@ export function judgeTranscript(text) {
       continue;
     }
     if (!line.startsWith('| ') || line.startsWith('| Example |') || line.startsWith('| --- |')) continue;
+    const end = END_ROW.exec(line);
+    if (end) {
+      const [, slug, n, back, backAt, forward, forwardAt] = end;
+      const key = `${browser} ${slug}`;
+      if (!BROWSERS.includes(browser) || !(slug in EXPECTED_STOPS)) {
+        problems.push(`an end row for an unknown browser or example: ${line}`);
+      } else if (ends.has(`${key} ${n}`)) {
+        problems.push(`${key}: the end of walk ${n} appears twice`);
+      } else {
+        ends.set(`${key} ${n}`, { back, backAt, forward, forwardAt });
+      }
+      continue;
+    }
     const m = ROW.exec(line);
     if (!m) {
       problems.push(`a malformed row: ${line}`);
@@ -327,9 +346,21 @@ export function judgeTranscript(text) {
         if (!last && (was !== 'incomplete' || judged !== 'incomplete')) {
           problems.push(`${key}: walk ${n}, before the last, was recorded ${was} and judges ${judged}`);
         }
+        const end = ends.get(`${key} ${n}`);
+        ends.delete(`${key} ${n}`);
+        if (last) {
+          const before = stops[stops.length - 2];
+          const lastStop = stops[stops.length - 1];
+          if (!end) {
+            problems.push(`${key}: the last walk, ${n}, has no end witness`);
+          } else if (end.back !== before || end.forward !== lastStop || end.back === '' || end.backAt === end.forwardAt) {
+            problems.push(`${key}: walk ${n}'s end witness read back "${end.back}" at ${end.backAt} and forward "${end.forward}" at ${end.forwardAt}, where "${before}" and then "${lastStop}" at another position were expected`);
+          }
+        }
       }
     }
   }
+  for (const key of ends.keys()) problems.push(`${key}: an end witness for a walk that is not the last, or that does not exist`);
   return problems;
 }
 
@@ -337,4 +368,117 @@ export function judgeTranscript(text) {
 export function transcriptRow(slug, n, stops, verdict, reason) {
   const shown = stops.map((s) => (s === '' ? EMPTY_STOP : s)).join(' / ') || NO_STOPS;
   return `| \`${slug}-walk-${n}\` | ${shown} (${verdict}: ${reason}) |`;
+}
+
+// --- The walk and its end witness -----------------------------------------
+//
+// collectWalk moves VoiceOver's cursor forward through a screen and keeps
+// every stop with the cursor's position. Its capture and move functions are
+// passed in, so that the web tree spec can drive it with made-up screens and
+// captures, and other techniques can copy it with this comment.
+//
+// A move is a stop when the cursor moved or a new, non-empty phrase was
+// spoken; two moves in a row that do neither look like the end of the
+// screen (the shared walk's rule, stopsToEnd in vo_logic.js). But a capture
+// that froze looks the same: the phrase and the position stop changing
+// while the cursor goes on to elements nobody reads. So the end is accepted
+// only with a witness, read after those two moves:
+//
+// 1. one move back, whose fresh capture must be the stop before the last,
+//    by its recorded phrase, at a position other than the last stop's;
+// 2. one move forward, whose capture must be the last stop again, by its
+//    phrase and its position.
+//
+// A frozen capture reads the last stop at the last position for the move
+// back; an empty one reads "". Either fails the witness, and a failed
+// witness fails the walk for good ("wrong"), not as an incomplete walk to
+// try again: the empty-capture rule (an empty phrase in an expected place
+// is a failed capture, walked again) is for the walk's own stops, which
+// have a moved cursor to show they are new; at the witness an empty phrase
+// cannot be told from a frozen capture, so it is not trusted. Both witness
+// readings are logged with the walk.
+//
+// What the witness cannot show: that the last stop is the screen's last
+// element. If the capture froze exactly at the screen's real last element,
+// or if VoiceOver itself stops moving early (two moves that change
+// nothing) while elements follow, the move back and forward read true
+// stops and the walk ends there; the elements after it are then missing
+// from the walk, and the judge, which needs every expected stop, fails it
+// only if one of them was expected. An element that VoiceOver never moves
+// to is not seen at all.
+
+/**
+ * Walks forward with `next()` (one move), reading `capture()` (resolves to
+ * `{ phrase, position }`) after each, from `start` (the cursor's position
+ * before the first move); at most `max` moves. At the apparent end, moves
+ * back with `previous()` and forward again with `next()`, capturing after
+ * each (the witness, above). Resolves to `{ stops, positions, reachedEnd,
+ * witness, problem }`: `witness` is `{ back, forward }`, each a capture,
+ * when it was read; `problem` says why the walk failed for good, or is
+ * null.
+ */
+export async function collectWalk({ next, previous, capture, start, max = 40 }) {
+  const stops = [];
+  const positions = [];
+  let position = start;
+  let unmoved = 0;
+  for (let i = 0; i < max; i++) {
+    await next();
+    const { phrase, position: now } = await capture();
+    const spokeAnew = phrase !== '' && stops.length > 0 && phrase !== stops[stops.length - 1];
+    if (now === position && !spokeAnew) {
+      unmoved++;
+      if (unmoved < 2) continue;
+      if (stops.length < 2) {
+        return { stops, positions, reachedEnd: false, witness: null, problem: 'the end is not witnessed: fewer than two stops' };
+      }
+      await previous();
+      const back = await capture();
+      await next();
+      const forward = await capture();
+      const witness = { back, forward };
+      const before = stops[stops.length - 2];
+      const last = stops[stops.length - 1];
+      const lastAt = positions[positions.length - 1];
+      if (back.phrase === '' || back.phrase !== before || back.position === lastAt) {
+        return {
+          stops, positions, reachedEnd: false, witness,
+          problem: `the end is not witnessed: a move back read "${back.phrase}" at ${back.position}, where "${before}" was expected away from ${lastAt}`,
+        };
+      }
+      if (forward.phrase !== last || forward.position !== lastAt) {
+        return {
+          stops, positions, reachedEnd: false, witness,
+          problem: `the end is not witnessed: a move forward again read "${forward.phrase}" at ${forward.position}, where "${last}" was expected at ${lastAt}`,
+        };
+      }
+      return { stops, positions, reachedEnd: true, witness, problem: null };
+    }
+    unmoved = 0;
+    position = now;
+    stops.push(phrase);
+    positions.push(now);
+  }
+  return { stops, positions, reachedEnd: false, witness: null, problem: null };
+}
+
+/**
+ * Judges a collected walk: a failed witness is wrong for good; otherwise
+ * judgeExampleWalk on its stops and positions.
+ */
+export function judgeCollectedWalk(walk, expected, screen) {
+  if (walk.problem) return { verdict: 'wrong', reason: walk.problem };
+  return judgeExampleWalk(walk.stops, walk.reachedEnd, expected, screen, walk.positions);
+}
+
+/** The transcript row's text for a walk's end witness. */
+export function witnessText(witness) {
+  if (!witness) return 'no witness';
+  const side = (w) => `"${w.phrase}" at ${w.position}`;
+  return `back ${side(witness.back)} / forward ${side(witness.forward)}`;
+}
+
+/** A walk's end witness row, as the VoiceOver spec logs it and the tool writes it. */
+export function endRow(slug, n, witness) {
+  return `| \`${slug}-walk-${n}-end\` | ${witnessText(witness)} |`;
 }

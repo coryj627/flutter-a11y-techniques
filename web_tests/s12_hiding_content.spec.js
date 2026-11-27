@@ -6,8 +6,8 @@ import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
 import {
-  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, judgeTranscript, runWalks,
-  screenStops, spokenRole, transcriptRow,
+  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, collectWalk, endRow, helpRole, judgeCollectedWalk,
+  judgeExampleWalk, judgeTranscript, runWalks, screenStops, spokenRole, transcriptRow,
 } from './vo/s12_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
@@ -259,6 +259,86 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
   }
 });
 
+// The walk's end witness (collectWalk in vo/s12_vo_walks.js), on made-up
+// screens: the cursor moves over `elements`; `capture` reads the element
+// under it, unless the case freezes or empties the capture after the
+// `after`-th move. The reviewer's case (Codex, review of 90edde5): after
+// good-badge's expected stops the capture froze while the cursor went on
+// through an exposed "3" and an unexpected button; under the end rule alone
+// (two moves that change nothing) that walk judged complete.
+test.describe('the walk ends only with a witness that the cursor is at the last stop', () => {
+  const slug = 'good-badge';
+  const whole = [...screenStops(slug), EXAMPLE_HEADING, ...EXPECTED_STOPS[slug]];
+  const fake = (elements, { after = Infinity, capture = 'live', back = null, forward = null } = {}) => {
+    let at = -1;
+    let moves = 0;
+    let frozen = null;
+    // 0 during the walk; 1 after the witness's move back; 2 after its move
+    // forward again. The overrides apply to those two reads only.
+    let witness = 0;
+    const live = () => ({ phrase: elements[at] ?? '', position: `p${at}` });
+    return {
+      next: async () => { moves++; if (witness === 1) witness = 2; if (at < elements.length - 1) at++; },
+      previous: async () => { moves++; witness = 1; if (at > 0) at--; },
+      capture: async () => {
+        if (moves > after && capture !== 'live') {
+          frozen ??= { phrase: capture === 'empty' ? '' : elements[after - 1], position: `p${after - 1}` };
+          return frozen;
+        }
+        if (witness === 1 && back) return back;
+        if (witness === 2 && forward) return forward;
+        return live();
+      },
+      start: 'p-start',
+    };
+  };
+  const run = (screen, max) => collectWalk({ ...screen, max });
+  const judged = (walk) => judgeCollectedWalk(walk, EXPECTED_STOPS[slug], screenStops(slug)).verdict;
+
+  test('every made-up walk ends, or fails, as its case says', async () => {
+    const extra = [...whole, '3', 'Extra button'];
+    const cases = [
+      ['the whole screen, the witness right', await run(fake(whole)), 'complete'],
+      ['the capture frozen after the last expected stop, while the cursor goes on through "3" and a button',
+        await run(fake(extra, { after: whole.length, capture: 'frozen' })), 'wrong'],
+      ['empty phrases with frozen bounds after the last expected stop',
+        await run(fake(extra, { after: whole.length, capture: 'empty' })), 'wrong'],
+      ['the move back reads another stop', await run(fake(whole, { back: { phrase: '3', position: 'p-3' } })), 'wrong'],
+      ['the move back reads the right words at the last stop\'s position',
+        await run(fake(whole, { back: { phrase: whole.at(-2), position: `p${whole.length - 1}` } })), 'wrong'],
+      ['the move back reads an empty phrase', await run(fake(whole, { back: { phrase: '', position: 'p-x' } })), 'wrong'],
+      ['the move forward again reads another stop',
+        await run(fake(whole, { forward: { phrase: 'Extra button', position: 'p-9' } })), 'wrong'],
+      ['the move forward again reads the last words elsewhere',
+        await run(fake(whole, { forward: { phrase: whole.at(-1), position: 'p-9' } })), 'wrong'],
+      ['a walk that runs out of moves', await run(fake(whole), 3), 'incomplete'],
+      ['a screen of one stop', await run(fake([whole[0]])), 'wrong'],
+    ];
+    for (const [what, walk, verdict] of cases) {
+      expect(judged(walk), `${what}: ${walk.problem ?? ''}`).toBe(verdict);
+      if (verdict === 'wrong') expect(walk.problem, what).toMatch(/^the end is not witnessed/);
+      if (verdict !== 'incomplete' && what !== 'a screen of one stop') expect(walk.stops, what).toEqual(whole);
+    }
+  });
+
+  test('the reviewer\'s frozen capture would pass without the witness, and the witness is recorded', async () => {
+    const walk = await run(fake([...whole, '3', 'Extra button'], { after: whole.length, capture: 'frozen' }));
+    // The stops are exactly the expected screen: only the witness shows the
+    // capture had frozen.
+    expect(walk.stops).toEqual(whole);
+    expect(judgeExampleWalk(walk.stops, true, EXPECTED_STOPS[slug], screenStops(slug)).verdict).toBe('complete');
+    expect(walk.witness.back).toEqual({ phrase: whole.at(-1), position: `p${whole.length - 1}` });
+    expect(walk.problem).toMatch(/^the end is not witnessed/);
+    const right = await run(fake(whole));
+    expect(right.witness).toEqual({
+      back: { phrase: whole.at(-2), position: `p${whole.length - 2}` },
+      forward: { phrase: whole.at(-1), position: `p${whole.length - 1}` },
+    });
+    expect(endRow(slug, 1, right.witness)).toBe(
+      `| \`${slug}-walk-1-end\` | back "${whole.at(-2)}" at p${whole.length - 2} / forward "${whole.at(-1)}" at p${whole.length - 1} |`);
+  });
+});
+
 // The committed web VoiceOver transcript, judged again with today's judge
 // from its rows alone (judgeTranscript in vo/s12_vo_walks.js): every
 // browser and example exactly once, walks numbered from 1, no duplicate or
@@ -267,7 +347,16 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
 // judge is tested first on made-up transcripts; each case is named.
 test.describe('the committed web VoiceOver transcript is judged from its rows alone', () => {
   const walk = (slug) => [...screenStops(slug), EXAMPLE_HEADING, ...EXPECTED_STOPS[slug]];
-  const right = (slug) => transcriptRow(slug, 1, walk(slug), 'complete', 'the whole screen, every stop in its place');
+  // A walk row, and for a complete walk its end witness row (the move back
+  // read the stop before the last, the move forward the last, at two
+  // positions), as the VoiceOver spec logs them.
+  const row = (slug, n, stops, verdict, end = verdict === 'complete') => [
+    transcriptRow(slug, n, stops, verdict, 'x'),
+    ...(end ? [endRow(slug, n, {
+      back: { phrase: stops.at(-2), position: 'p-back' }, forward: { phrase: stops.at(-1), position: 'p-last' },
+    })] : []),
+  ].join('\n');
+  const right = (slug) => row(slug, 1, walk(slug), 'complete');
   const transcript = (sections) => Object.entries(sections)
     .map(([b, rows]) => [`## ${b}`, '', '| Example | Spoken, in order |', '| --- | --- |', ...rows, ''].join('\n'))
     .join('\n');
@@ -291,35 +380,65 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
       ['a malformed row', withRows((t) => t.chromium.push('| `good-badge-walk-2` | Inbox: 3 unread |')), false],
       ['a row for an unknown example', withRows((t) => t.webkit.push(right('good-badge').replace('good-badge', 'good-other'))), false],
       ['good-visibility\'s walk under bad-opacity\'s name', withRows((t) => {
-        t.chromium[slugs.indexOf('bad-opacity')] = transcriptRow('bad-opacity', 1, walk('good-visibility'), 'complete', 'x');
+        t.chromium[slugs.indexOf('bad-opacity')] = row('bad-opacity', 1, walk('good-visibility'), 'complete');
       }), false],
       ['a walk recorded as the old transcripts did, after the heading only', withRows((t) => {
-        t.webkit[0] = transcriptRow(slugs[0], 1, EXPECTED_STOPS[slugs[0]], 'complete', 'x');
+        t.webkit[0] = row(slugs[0], 1, EXPECTED_STOPS[slugs[0]], 'complete');
       }), false],
       ['a walk with no title', withRows((t) => {
-        t.webkit[1] = transcriptRow(slugs[1], 1, walk(slugs[1]).slice(1), 'complete', 'x');
+        t.webkit[1] = row(slugs[1], 1, walk(slugs[1]).slice(1), 'complete');
       }), false],
       ['a walk whose title is an empty phrase', withRows((t) => {
-        t.webkit[2] = transcriptRow(slugs[2], 1, ['', ...walk(slugs[2]).slice(1)], 'complete', 'x');
+        t.webkit[2] = row(slugs[2], 1, ['', ...walk(slugs[2]).slice(1)], 'complete');
       }), false],
       ['a last walk recorded wrong', withRows((t) => {
-        t.chromium[0] = transcriptRow(slugs[0], 1, walk(slugs[0]), 'wrong', 'x');
+        t.chromium[0] = row(slugs[0], 1, walk(slugs[0]), 'wrong');
       }), false],
       ['a walk 2 with no walk 1', withRows((t) => {
-        t.chromium[0] = transcriptRow(slugs[0], 2, walk(slugs[0]), 'complete', 'x');
+        t.chromium[0] = row(slugs[0], 2, walk(slugs[0]), 'complete');
       }), false],
       ['an empty first walk walked again, then complete', withRows((t) => {
         t.chromium.splice(0, 1,
-          transcriptRow(slugs[0], 1, ['', ...walk(slugs[0]).slice(1)], 'incomplete', 'x'),
-          transcriptRow(slugs[0], 2, walk(slugs[0]), 'complete', 'x'));
+          row(slugs[0], 1, ['', ...walk(slugs[0]).slice(1)], 'incomplete'),
+          row(slugs[0], 2, walk(slugs[0]), 'complete'));
       }), true],
       ['a wrong first walk followed by a complete one', withRows((t) => {
         t.chromium.splice(0, 1,
-          transcriptRow(slugs[0], 1, [...walk(slugs[0]), 'Extra'], 'incomplete', 'x'),
-          transcriptRow(slugs[0], 2, walk(slugs[0]), 'complete', 'x'));
+          row(slugs[0], 1, [...walk(slugs[0]), 'Extra'], 'incomplete'),
+          row(slugs[0], 2, walk(slugs[0]), 'complete'));
+      }), false],
+      // The end witness (collectWalk), as the transcript records it.
+      ['a complete walk with no end witness row', withRows((t) => {
+        t.chromium[0] = row(slugs[0], 1, walk(slugs[0]), 'complete', false);
+      }), false],
+      ['an end witness whose move back read the last stop again (a frozen capture)', withRows((t) => {
+        const w = walk(slugs[0]);
+        t.chromium[0] = [transcriptRow(slugs[0], 1, w, 'complete', 'x'),
+          endRow(slugs[0], 1, { back: { phrase: w.at(-1), position: 'p-last' }, forward: { phrase: w.at(-1), position: 'p-last' } })].join('\n');
+      }), false],
+      ['an end witness whose move back read the right words at the last position', withRows((t) => {
+        const w = walk(slugs[1]);
+        t.chromium[1] = [transcriptRow(slugs[1], 1, w, 'complete', 'x'),
+          endRow(slugs[1], 1, { back: { phrase: w.at(-2), position: 'p-last' }, forward: { phrase: w.at(-1), position: 'p-last' } })].join('\n');
+      }), false],
+      ['an end witness whose move back read an empty phrase', withRows((t) => {
+        const w = walk(slugs[2]);
+        t.webkit[2] = [transcriptRow(slugs[2], 1, w, 'complete', 'x'),
+          endRow(slugs[2], 1, { back: { phrase: '', position: 'p-back' }, forward: { phrase: w.at(-1), position: 'p-last' } })].join('\n');
+      }), false],
+      ['an end witness whose move forward read another stop', withRows((t) => {
+        const w = walk(slugs[3]);
+        t.webkit[3] = [transcriptRow(slugs[3], 1, w, 'complete', 'x'),
+          endRow(slugs[3], 1, { back: { phrase: w.at(-2), position: 'p-back' }, forward: { phrase: 'Extra button', position: 'p-other' } })].join('\n');
+      }), false],
+      ['an end witness row twice', withRows((t) => {
+        t.webkit[4] = `${t.webkit[4]}\n${t.webkit[4].split('\n')[1]}`;
+      }), false],
+      ['an end witness row for a walk that is not there', withRows((t) => {
+        t.webkit[5] = `${t.webkit[5]}\n${endRow(slugs[5], 2, { back: { phrase: 'a', position: '1' }, forward: { phrase: 'b', position: '2' } })}`;
       }), false],
       ['a stop past the end', withRows((t) => {
-        t.webkit[3] = transcriptRow(slugs[3], 1, [...walk(slugs[3]), ''], 'complete', 'x');
+        t.webkit[3] = row(slugs[3], 1, [...walk(slugs[3]), ''], 'complete');
       }), false],
     ];
     for (const [what, text, passes] of cases) {
@@ -328,9 +447,16 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
     }
   });
 
+  const committed = readFileSync(new URL('../docs/evidence/S12/voiceover-web.md', import.meta.url), 'utf8');
+  // The transcript committed at 90edde5 was recorded before the walk read
+  // an end witness, so it has no `-walk-<n>-end` rows and cannot be judged
+  // by the present rules. Until the principal records it again, this test
+  // is skipped, with that reason; once any end row is in it, it runs.
+  const recordedWithWitness = /^\| `[a-z-]+-walk-\d+-end` \|/m.test(committed);
   test('the committed transcript (docs/evidence/S12/voiceover-web.md) is right', () => {
-    const text = readFileSync(new URL('../docs/evidence/S12/voiceover-web.md', import.meta.url), 'utf8');
-    expect(judgeTranscript(text)).toEqual([]);
+    test.skip(!recordedWithWitness,
+      'recorded before the end witness (collectWalk): the web VoiceOver transcript is to be recorded again');
+    expect(judgeTranscript(committed)).toEqual([]);
   });
 });
 

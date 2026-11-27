@@ -80,7 +80,10 @@ TALKBACK_METHOD = (
 # transcript column).
 VOICEOVER_IOS_METHOD = (
     "`XCUIVoiceOverService.moveForward()` from the top of the screen to its "
-    "end, where moving on gives the last utterance again, twice (C03's walk). "
+    "end (S12Walk.collect): every utterance is a stop, a stop read twice in a row "
+    "mid-screen fails the walk, and two repeats end it only when a move back reads "
+    "the stop before the last and a move forward the last again (the end witness, "
+    "shown after the walk). "
     "What is shown is the whole walk, the screen's own stops included, and it is "
     "judged against this example's screen (S12Walk.judge): Back may come first, "
     "then the screen's title as a heading, its description, a bad example's "
@@ -91,7 +94,12 @@ VOICEOVER_IOS_METHOD = (
 
 # tool/voiceover_web.py: how the speech was captured.
 VOICEOVER_WEB_METHOD = (
-    "focus the Back button, then `voiceOver.next()` to the end of the screen. "
+    "focus the Back button, then `voiceOver.next()` to the end of the screen "
+    "(collectWalk in web_tests/vo/s12_vo_walks.js). The end is accepted only with "
+    "a witness: a move back whose fresh reading is the stop before the last at "
+    "another position, then a move forward whose reading is the last stop at its "
+    "position; a frozen or empty reading there fails the walk for good, and both "
+    "readings are the `-end` row. "
     "VoiceOver's last phrase and the position of its cursor are read over "
     "AppleScript after every move: a move that changes the position, or that "
     "speaks a different phrase, is a stop; two moves in a row that do neither are "
