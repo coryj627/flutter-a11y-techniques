@@ -91,13 +91,14 @@ example is added without a decision.
 | [S04 Functional images](#s04-functional-images) | 6 | 3 | 0 | 3 |
 | [S05 Headings](#s05-headings) | 2 | 0 | 0 | 2 |
 | [S08 List semantics](#s08-list-semantics) | 4 | 0 | 0 | 4 |
+| [S09 Content grouping](#s09-content-grouping) | 4 | 0 | 1 | 3 |
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 129 | 51 | 12 | 66 |
+| All | 133 | 51 | 13 | 69 |
 
 ## C01 Button
 
@@ -414,6 +415,18 @@ keeps its own role and behaviour, and nothing is built.
 | `good-numbered` | Nothing: as `good-bulleted`, each number part of its item's text | `SemanticsRole.list`, `SemanticsRole.listItem` | No ordered list in Flutter: the number is in the text | R1, R2, R4: iOS Lists, Android View List Semantics, MDN ol | not custom |
 | `good-material` | Nothing: the roles round a `Column` of `ListTile(onTap:)`, each list item with `explicitChildNodes: true` so that the tile stays a node of its own | `ListTile`, `SemanticsRole.listItem`, `Semantics.explicitChildNodes` | A tile merged into its item is no button on the web ([FL-262](flutter-limitations.md#fl-262)), avoided with the documented parameter | R1, R2, R6: Android Compose ListItem Layouts, Android View List Semantics | not custom |
 | `good-cupertino` | Nothing: the roles round a `CupertinoListSection` and each `CupertinoListTile` | `CupertinoListSection`, `CupertinoListTile` | none | R1, R2: iOS Lists, Android View List Semantics | not custom |
+
+## S09 Content grouping
+
+Nothing flagged. `good-named-group` is borderline, as F07's and F09's
+`good-group` are.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-merged-facts` | Nothing: `MergeSemantics` round each label and its value | `MergeSemantics` | none | R1, R2: Android View and Android Compose Content Grouping, iOS Combining Focus | not custom |
+| `good-cupertino` | Nothing: `MergeSemantics` round each `CupertinoListTile` | `CupertinoListTile`, `MergeSemantics` | A tile's title and subtitle are two elements, filled with `MergeSemantics` | R1, R2: Android View and Android Compose Content Grouping, iOS Combining Focus | not custom |
+| `good-named-group` | A named group: `Semantics(container: true, explicitChildNodes: true, label:)` round the buttons, the visible question in `ExcludeSemantics` | None for a named group of controls | none | R3, R4: iOS Grouping Controls, MDN fieldset, H71 | borderline: As F07 `good-group`: only a name, with documented properties, and nothing behaves differently; but it makes a group node, a structure no Flutter widget provides. |
+| `good-tap-target` | Nothing: `TextButton.icon`, with a focus outline through its own `style` | `TextButton.icon` | A faint focus tint ([FL-430](flutter-limitations.md#fl-430)), filled with the button's `style` | R5: Android View Tap Target Grouping | not custom |
 
 ## S13 Roles and traits
 

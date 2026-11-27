@@ -1,0 +1,330 @@
+// S09 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s09/probe.dart.txt): what the SDK's grouping
+// mechanisms expose, and what reaches and activates the controls inside a
+// group. One fixture per route, `/s01` to `/s18`; `/` lists them all.
+//
+// Each fixture sits between a "Before sNN" text and a "sNN taps: on=N off=N
+// info=N" text that counts the taps that reached each handler.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      onGenerateRoute: (settings) {
+        final name = (settings.name ?? '/').replaceFirst('/', '');
+        final page = fixtures.containsKey(name)
+            ? FixtureScreen(ids: [name])
+            : FixtureScreen(ids: fixtures.keys.toList());
+        return MaterialPageRoute<void>(settings: settings, builder: (_) => page);
+      },
+    );
+  }
+}
+
+/// What a fixture gets: its id and the handler of each control
+/// ("on", "off", "info").
+typedef Build = Widget Function(String id, void Function(String) tap);
+
+Widget pair(String id, String label, String value) => Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [Text('$id $label'), Text(value, style: const TextStyle(fontSize: 20))],
+);
+
+Widget question(String id) =>
+    Text('$id Kitchen light', style: const TextStyle(fontSize: 18));
+
+Widget onOff(String id, void Function(String) tap) => Row(
+  spacing: 8,
+  children: [
+    OutlinedButton(onPressed: () => tap('on'), child: Text('$id On')),
+    OutlinedButton(onPressed: () => tap('off'), child: Text('$id Off')),
+  ],
+);
+
+final Map<String, (String, Build)> fixtures = {
+  's01': (
+    'MergeSemantics round each label and its value, in a Row of two Columns',
+    (id, tap) => Row(
+      spacing: 24,
+      children: [
+        MergeSemantics(child: pair(id, 'City', 'Boston')),
+        MergeSemantics(child: pair(id, 'Population', '675,647')),
+      ],
+    ),
+  ),
+  's02': (
+    's01 without MergeSemantics',
+    (id, tap) => Row(
+      spacing: 24,
+      children: [pair(id, 'City', 'Boston'), pair(id, 'Population', '675,647')],
+    ),
+  ),
+  's03': (
+    'The same table built row by row: a Row of the labels, then a Row of the values, nothing merged',
+    (id, tap) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [SizedBox(width: 120, child: Text('$id City')), Text('$id Population')]),
+        Row(
+          children: [
+            const SizedBox(width: 120, child: Text('Boston', style: TextStyle(fontSize: 20))),
+            const Text('675,647', style: TextStyle(fontSize: 20)),
+          ],
+        ),
+      ],
+    ),
+  ),
+  's04': (
+    'Semantics(container: true) round each label and its value',
+    (id, tap) => Row(
+      spacing: 24,
+      children: [
+        Semantics(container: true, child: pair(id, 'City', 'Boston')),
+        Semantics(container: true, child: pair(id, 'Population', '675,647')),
+      ],
+    ),
+  ),
+  's05': (
+    'ListTile(title:, subtitle:) with no onTap for each pair',
+    (id, tap) => Column(
+      children: [
+        ListTile(title: Text('$id City'), subtitle: const Text('Boston')),
+        ListTile(title: Text('$id Population'), subtitle: const Text('675,647')),
+      ],
+    ),
+  ),
+  's06': (
+    'MergeSemantics round a pair whose value has semanticsLabel',
+    (id, tap) => MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [Text('$id Distance'), const Text('6 km', semanticsLabel: '6 kilometres')],
+      ),
+    ),
+  ),
+  's07': (
+    'Named group (F07 good-group): Semantics(container, explicitChildNodes, label:) round the question (excluded) and the buttons',
+    (id, tap) => Semantics(
+      container: true,
+      explicitChildNodes: true,
+      label: '$id Kitchen light',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [ExcludeSemantics(child: question(id)), onOff(id, tap)],
+      ),
+    ),
+  ),
+  's08': (
+    'Semantics(container: true) round the question and the buttons: named by the text inside',
+    (id, tap) => Semantics(
+      container: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [question(id), onOff(id, tap)],
+      ),
+    ),
+  ),
+  's09': (
+    'Semantics(container: true, explicitChildNodes: true) round the question and the buttons, no label',
+    (id, tap) => Semantics(
+      container: true,
+      explicitChildNodes: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [question(id), onOff(id, tap)],
+      ),
+    ),
+  ),
+  's10': (
+    'No group: the question as plain text above the buttons',
+    (id, tap) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [question(id), onOff(id, tap)],
+    ),
+  ),
+  's11': (
+    'Semantics(label:) round the buttons, no container (the iOS reference\'s warning)',
+    (id, tap) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        question(id),
+        Semantics(label: '$id Kitchen light', child: onOff(id, tap)),
+      ],
+    ),
+  ),
+  's12': (
+    'MergeSemantics round the question and the buttons',
+    (id, tap) => MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [question(id), onOff(id, tap)],
+      ),
+    ),
+  ),
+  's13': (
+    'CupertinoFormSection(header:) round two CupertinoButtons',
+    (id, tap) => CupertinoFormSection(
+      header: Text('$id Kitchen light'),
+      children: [
+        CupertinoButton(onPressed: () => tap('on'), child: Text('$id On')),
+        CupertinoButton(onPressed: () => tap('off'), child: Text('$id Off')),
+      ],
+    ),
+  ),
+  's14': (
+    's07 with the question not excluded',
+    (id, tap) => Semantics(
+      container: true,
+      explicitChildNodes: true,
+      label: '$id Kitchen light',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [question(id), onOff(id, tap)],
+      ),
+    ),
+  ),
+  's15': (
+    'TextButton.icon: an icon and its text, one target',
+    (id, tap) => TextButton.icon(
+      onPressed: () => tap('info'),
+      icon: const Icon(Icons.info_outline),
+      label: Text('$id App information'),
+    ),
+  ),
+  's16': (
+    'ListTile(leading: Icon, title:, onTap:)',
+    (id, tap) => ListTile(
+      leading: const Icon(Icons.info_outline),
+      title: Text('$id App information'),
+      onTap: () => tap('info'),
+    ),
+  ),
+  's17': (
+    'Two targets for one action: an IconButton with a tooltip and a TextButton',
+    (id, tap) => Row(
+      children: [
+        IconButton(
+          onPressed: () => tap('info'),
+          tooltip: '$id App information',
+          icon: const Icon(Icons.info_outline),
+        ),
+        TextButton(onPressed: () => tap('info'), child: Text('$id App information')),
+      ],
+    ),
+  ),
+  's18': (
+    'MergeSemantics round s17',
+    (id, tap) => MergeSemantics(
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => tap('info'),
+            tooltip: '$id App information',
+            icon: const Icon(Icons.info_outline),
+          ),
+          TextButton(onPressed: () => tap('info'), child: Text('$id App information')),
+        ],
+      ),
+    ),
+  ),
+  's19': (
+    's07 without explicitChildNodes',
+    (id, tap) => Semantics(
+      container: true,
+      label: '$id Kitchen light',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [ExcludeSemantics(child: question(id)), onOff(id, tap)],
+      ),
+    ),
+  ),
+  's20': (
+    'CupertinoListSection of CupertinoListTile(title:, additionalInfo:), no onTap',
+    (id, tap) => CupertinoListSection.insetGrouped(
+      children: [
+        CupertinoListTile(title: Text('$id City'), additionalInfo: const Text('Boston')),
+        CupertinoListTile(title: Text('$id Population'), additionalInfo: const Text('675,647')),
+      ],
+    ),
+  ),
+  's21': (
+    'CupertinoListSection of CupertinoListTile(title:, subtitle:), no onTap',
+    (id, tap) => CupertinoListSection.insetGrouped(
+      children: [
+        CupertinoListTile(title: Text('$id City'), subtitle: const Text('Boston')),
+        CupertinoListTile(title: Text('$id Founded'), subtitle: const Text('1630')),
+      ],
+    ),
+  ),
+};
+
+class FixtureScreen extends StatelessWidget {
+  const FixtureScreen({super.key, required this.ids});
+
+  final List<String> ids;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('S09 probe')),
+      // As the app's PageScaffold: a SingleChildScrollView round a Column,
+      // not a ListView, whose items would each be a node of their own.
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [for (final id in ids) Fixture(id: id)],
+        ),
+      ),
+    );
+  }
+}
+
+class Fixture extends StatefulWidget {
+  const Fixture({super.key, required this.id});
+
+  final String id;
+
+  @override
+  State<Fixture> createState() => _FixtureState();
+}
+
+class _FixtureState extends State<Fixture> {
+  final _taps = <String, int>{};
+
+  @override
+  Widget build(BuildContext context) {
+    final id = widget.id;
+    final (_, build) = fixtures[id]!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 12,
+      children: [
+        Text('Before $id'),
+        build(id, (k) {
+          setState(() => _taps[k] = (_taps[k] ?? 0) + 1);
+          debugPrint('S09PROBE TAP $id $k');
+        }),
+        Semantics(
+          identifier: '$id-taps',
+          container: true,
+          child: Text(
+            '$id taps: on=${_taps['on'] ?? 0} off=${_taps['off'] ?? 0} info=${_taps['info'] ?? 0}',
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+}

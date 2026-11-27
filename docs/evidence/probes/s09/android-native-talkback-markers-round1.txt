@@ -1,0 +1,38 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420; TalkBack versionName=17.0.0.889642762
+s09-n01-on: TalkBack focus refused (java.util.NoSuchElementException: Collection contains no element matching the predicate.)
+s09-n01-off: TalkBack focus refused (java.util.NoSuchElementException: Collection contains no element matching the predicate.)
+s09-n01-direct-on: TalkBack focus refused (java.util.NoSuchElementException: Collection contains no element matching the predicate.)
+s09-n02-on: TalkBack focus refused (java.util.NoSuchElementException: Collection contains no element matching the predicate.)
+s09-n02-off: TalkBack focus refused (java.util.NoSuchElementException: Collection contains no element matching the predicate.)
+s09-n02-direct-on: TalkBack focus refused (java.util.NoSuchElementException: Collection contains no element matching the predicate.)
+s09-n03-on: TalkBack focus refused (java.util.NoSuchElementException: Collection contains no element matching the predicate.)
+s09-n03-off: TalkBack focus refused (java.util.NoSuchElementException: Collection contains no element matching the predicate.)
+s09-n03-direct-on: TalkBack focus refused (java.util.NoSuchElementException: Collection contains no element matching the predicate.)
+n01 k-start on Before n01
+s09-kn01-1 after Alt+Right: TalkBack focus on Before n01
+s09-kn01-2 after Alt+Right: TalkBack focus on Before n01
+s09-kn01-3 after Alt+Right: TalkBack focus on Before n01
+s09-kn01-4 after Alt+Right: TalkBack focus on Before n01
+s09-kn01-5 after Alt+Right: TalkBack focus on Before n01
+s09-kn01-6 after Alt+Right: TalkBack focus on Before n01
+n02 k-start on Before n02
+s09-kn02-1 after Alt+Right: TalkBack focus on Before n02
+s09-kn02-2 after Alt+Right: TalkBack focus on Before n02
+s09-kn02-3 after Alt+Right: TalkBack focus on Before n02
+s09-kn02-4 after Alt+Right: TalkBack focus on Before n02
+s09-kn02-5 after Alt+Right: TalkBack focus on Before n02
+s09-kn02-6 after Alt+Right: TalkBack focus on Before n02
+n03 k-start on Before n03
+s09-kn03-1 after Alt+Right: TalkBack focus on Before n03
+s09-kn03-2 after Alt+Right: TalkBack focus on Before n03
+s09-kn03-3 after Alt+Right: TalkBack focus on Before n03
+s09-kn03-4 after Alt+Right: TalkBack focus on Before n03
+s09-kn03-5 after Alt+Right: TalkBack focus on Before n03
+s09-kn03-6 after Alt+Right: TalkBack focus on Before n03
+flutter k-start on Example
+s09-kflutter-1 after Alt+Right: TalkBack focus on Example
+s09-kflutter-2 after Alt+Right: TalkBack focus on Example
+s09-kflutter-3 after Alt+Right: TalkBack focus on Example
+s09-kflutter-4 after Alt+Right: TalkBack focus on Example
+s09-kflutter-5 after Alt+Right: TalkBack focus on Example
+s09-kflutter-6 after Alt+Right: TalkBack focus on Example

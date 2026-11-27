@@ -1,0 +1,57 @@
+// Throwaway native comparison for the S09 probe. Not committed; kept as
+// docs/evidence/probes/s09/ProbeS09NativeActivity.kt.txt, declared for the
+// run in the debug manifest.
+//
+// Each fixture is a "Before nNN" TextView, the question "nNN Kitchen
+// light", two Buttons "nNN On" and "nNN Off", and an "nNN end" TextView,
+// with the texts of S09's good-named-group:
+//
+// n01: the question and the buttons in a LinearLayout whose
+// AccessibilityDelegate sets AccessibilityNodeInfo.setContainerTitle
+// ("n01 Kitchen light"; Android 14 and later), the question not important
+// for accessibility (as good-named-group excludes it). n02: the same with
+// the container's contentDescription "n02 Kitchen light" and no container
+// title. n03: no group: the question as a TextView above the buttons.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.Activity
+import android.os.Build
+import android.os.Bundle
+import android.view.View
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
+
+class ProbeS09NativeActivity : Activity() {
+    private fun text(s: String) = TextView(this).apply { text = s; textSize = 16f; setPadding(0, 12, 0, 12) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 160, 40, 40) }
+        for (id in listOf("n01", "n02", "n03")) {
+            column.addView(text("Before $id"))
+            val group = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+            group.addView(text("$id Kitchen light").apply {
+                if (id != "n03") importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            })
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            row.addView(Button(this).apply { isAllCaps = false; text = "$id On" })
+            row.addView(Button(this).apply { isAllCaps = false; text = "$id Off" })
+            group.addView(row)
+            when (id) {
+                "n01" -> group.accessibilityDelegate = object : View.AccessibilityDelegate() {
+                    override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
+                        super.onInitializeAccessibilityNodeInfo(host, info)
+                        if (Build.VERSION.SDK_INT >= 34) info.containerTitle = "$id Kitchen light"
+                    }
+                }
+                "n02" -> group.contentDescription = "$id Kitchen light"
+            }
+            column.addView(group)
+            column.addView(text("$id end"))
+        }
+        setContentView(ScrollView(this).apply { addView(column) })
+    }
+}
