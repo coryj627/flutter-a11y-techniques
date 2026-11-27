@@ -90,13 +90,14 @@ example is added without a decision.
 | [S03 Decorative images](#s03-decorative-images) | 5 | 0 | 0 | 5 |
 | [S04 Functional images](#s04-functional-images) | 6 | 3 | 0 | 3 |
 | [S05 Headings](#s05-headings) | 2 | 0 | 0 | 2 |
+| [S09 Content grouping](#s09-content-grouping) | 4 | 0 | 1 | 3 |
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 125 | 51 | 12 | 62 |
+| All | 129 | 51 | 13 | 65 |
 
 ## C01 Button
 
@@ -399,6 +400,18 @@ Nothing flagged.
 | --- | --- | --- | --- | --- | --- |
 | `good-levels` | Nothing: `Semantics(header: true, headingLevel:)` | `Semantics.headingLevel` | none | R1, R2, R4: iOS Headings, Android Compose Heading Semantics, Android View Heading Semantics, MDN heading elements | not custom |
 | `good-cupertino` | Nothing: `Semantics(header: true, headingLevel: 3)` as a `CupertinoListSection` header | `CupertinoListSection` | The header is not a heading ([FL-014](flutter-limitations.md#fl-014)), filled with the documented property | R1: iOS Headings, Android Compose Heading Semantics, Android View Heading Semantics | not custom |
+
+## S09 Content grouping
+
+Nothing flagged. `good-named-group` is borderline, as F07's and F09's
+`good-group` are.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-merged-facts` | Nothing: `MergeSemantics` round each label and its value | `MergeSemantics` | none | R1, R2: Android View and Android Compose Content Grouping, iOS Combining Focus | not custom |
+| `good-cupertino` | Nothing: `MergeSemantics` round each `CupertinoListTile` | `CupertinoListTile`, `MergeSemantics` | A tile's title and subtitle are two elements, filled with `MergeSemantics` | R1, R2: Android View and Android Compose Content Grouping, iOS Combining Focus | not custom |
+| `good-named-group` | A named group: `Semantics(container: true, explicitChildNodes: true, label:)` round the buttons, the visible question in `ExcludeSemantics` | None for a named group of controls | none | R3, R4: iOS Grouping Controls, MDN fieldset, H71 | borderline: As F07 `good-group`: only a name, with documented properties, and nothing behaves differently; but it makes a group node, a structure no Flutter widget provides. |
+| `good-tap-target` | Nothing: `TextButton.icon`, with a focus outline through its own `style` | `TextButton.icon` | A faint focus tint ([FL-430](flutter-limitations.md#fl-430)), filled with the button's `style` | R5: Android View Tap Target Grouping | not custom |
 
 ## S13 Roles and traits
 
