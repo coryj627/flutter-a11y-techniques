@@ -1,0 +1,341 @@
+npm notice run npx
+npm notice run 'playwright' test -c c06probe.config.js
+
+Running 5 tests using 1 worker
+
+C06WEB d01 navigator.platform MacIntel
+C06WEB d01 DOM collapsed:
+<flt-semantics-host>
+<flt-semantics id="flt-semantic-node-0">
+<flt-semantics id="flt-semantic-node-1">
+<flt-semantics id="flt-semantic-node-2">
+<flt-semantics id="flt-semantic-node-3">
+<flt-semantics id="flt-semantic-node-8">
+<flt-semantics id="flt-semantic-node-9" role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+<h2 id="flt-semantic-node-10">d01</h2>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-4" role="group">
+<flt-semantics id="flt-semantic-node-5">
+<span>Before d01</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-description="Collapsed
+ double tap to expand" aria-current="false" flt-tappable="">d01 Details</flt-semantics>
+<flt-semantics id="flt-semantic-node-7" flt-semantics-identifier="d01-end">
+<span>d01 end</span>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics-host>
+C06WEB d01 ax collapsed role=group name="" 
+C06WEB d01 ax collapsed role=button name="Back" focusable:true
+C06WEB d01 ax collapsed role=heading name="d01" level:2
+C06WEB d01 ax collapsed role=button name="d01 Details" description="Collapsed double tap to expand" focusable:true
+C06WEB d01 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "d01 Details" / (body) / <flutter-view role=null aria-expanded=null> "Backd01Before d01d01 Detailsd01 endflutt" / <flt-semantics role=button aria-expanded=null> "Back"
+C06WEB d01 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-description="Collapsed
+ double tap to expand" aria-current="false" flt-tappable="">d01 Details</flt-semantics>
+C06WEB d01 app: C06PROBE d01 open
+C06WEB d01 after a click: panel shown=true; aria-expanded: (none) ; announced: FLT-ANNOUNCEMENT-POLITE: Expanded
+C06WEB d01 DOM after a click:
+<flt-semantics-host>
+<flt-semantics id="flt-semantic-node-0">
+<flt-semantics id="flt-semantic-node-1">
+<flt-semantics id="flt-semantic-node-2">
+<flt-semantics id="flt-semantic-node-3">
+<flt-semantics id="flt-semantic-node-8">
+<flt-semantics id="flt-semantic-node-9" role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+<h2 id="flt-semantic-node-10">d01</h2>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-4" role="group">
+<flt-semantics id="flt-semantic-node-5">
+<span>Before d01</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-description="Expanded
+ double tap to collapse" aria-current="false" flt-tappable="">d01 Details</flt-semantics>
+<flt-semantics id="flt-semantic-node-11">
+<span>d01 panel text</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-12" role="button" tabindex="0" flt-tappable="">d01 panel button</flt-semantics>
+<flt-semantics id="flt-semantic-node-7" flt-semantics-identifier="d01-end">
+<span>d01 end</span>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics-host>
+C06WEB d01 ax after a click role=group name="" 
+C06WEB d01 ax after a click role=button name="Back" focusable:true
+C06WEB d01 ax after a click role=heading name="d01" level:2
+C06WEB d01 ax after a click role=button name="d01 Details" description="Expanded double tap to collapse" focusable:true
+C06WEB d01 ax after a click role=button name="d01 panel button" focusable:true
+C06WEB d01 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "d01 panel button" / (body) / <flutter-view role=null aria-expanded=null> "Backd01Before d01d01 Detailsd01 panel te" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "d01 Details" / <flt-semantics role=button aria-expanded=null> "d01 panel button"
+C06WEB d01 app: C06PROBE d01 closed
+C06WEB d01 after a second click: panel shown=false; aria-expanded: (none) ; announced: FLT-ANNOUNCEMENT-POLITE: Collapsed
+C06WEB d01 Enter: header reached after 2 Tab(s)
+C06WEB d01 app: C06PROBE d01 open
+C06WEB d01 Enter: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d01 Details" ; announced: FLT-ANNOUNCEMENT-POLITE: Expanded
+C06WEB d01 app: C06PROBE d01 closed
+C06WEB d01 Enter again: panel shown=false; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d01 Details" ; announced: FLT-ANNOUNCEMENT-POLITE: Collapsed
+C06WEB d01 Space: header reached after 2 Tab(s)
+C06WEB d01 app: C06PROBE d01 open
+C06WEB d01 Space: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d01 Details" ; announced: FLT-ANNOUNCEMENT-POLITE: Expanded
+C06WEB d01 app: C06PROBE d01 closed
+C06WEB d01 Space again: panel shown=false; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d01 Details" ; announced: FLT-ANNOUNCEMENT-POLITE: Collapsed
+  ✓  1 c06_probe.spec.js:113:3 › probe d01 (11.6s)
+C06WEB d02 navigator.platform MacIntel
+C06WEB d02 DOM collapsed:
+<flt-semantics-host>
+<flt-semantics id="flt-semantic-node-0">
+<flt-semantics id="flt-semantic-node-1">
+<flt-semantics id="flt-semantic-node-2">
+<flt-semantics id="flt-semantic-node-3">
+<flt-semantics id="flt-semantic-node-8">
+<flt-semantics id="flt-semantic-node-9" role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+<h2 id="flt-semantic-node-10">d02</h2>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-4" role="group">
+<flt-semantics id="flt-semantic-node-5">
+<span>Before d02</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-description="Collapsed
+ double tap to expand" aria-current="false" flt-tappable="">d02 Details</flt-semantics>
+<flt-semantics id="flt-semantic-node-7" flt-semantics-identifier="d02-end">
+<span>d02 end</span>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics-host>
+C06WEB d02 ax collapsed role=group name="" 
+C06WEB d02 ax collapsed role=button name="Back" focusable:true
+C06WEB d02 ax collapsed role=heading name="d02" level:2
+C06WEB d02 ax collapsed role=button name="d02 Details" description="Collapsed double tap to expand" focusable:true
+C06WEB d02 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "d02 Details" / (body) / <flutter-view role=null aria-expanded=null> "Backd02Before d02d02 Detailsd02 endflutt" / <flt-semantics role=button aria-expanded=null> "Back"
+C06WEB d02 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-description="Collapsed
+ double tap to expand" aria-current="false" flt-tappable="">d02 Details</flt-semantics>
+C06WEB d02 app: C06PROBE d02 open
+C06WEB d02 after a click: panel shown=true; aria-expanded: (none) ; announced: FLT-ANNOUNCEMENT-POLITE: Expanded
+C06WEB d02 DOM after a click:
+<flt-semantics-host>
+<flt-semantics id="flt-semantic-node-0">
+<flt-semantics id="flt-semantic-node-1">
+<flt-semantics id="flt-semantic-node-2">
+<flt-semantics id="flt-semantic-node-3">
+<flt-semantics id="flt-semantic-node-8">
+<flt-semantics id="flt-semantic-node-9" role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+<h2 id="flt-semantic-node-10">d02</h2>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-4" role="group">
+<flt-semantics id="flt-semantic-node-5">
+<span>Before d02</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" aria-description="Expanded
+ double tap to collapse" aria-current="false" flt-tappable="">d02 Details</flt-semantics>
+<flt-semantics id="flt-semantic-node-11">
+<span>d02 panel text</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-12" role="button" tabindex="0" flt-tappable="">d02 panel button</flt-semantics>
+<flt-semantics id="flt-semantic-node-7" flt-semantics-identifier="d02-end">
+<span>d02 end</span>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics-host>
+C06WEB d02 ax after a click role=group name="" 
+C06WEB d02 ax after a click role=button name="Back" focusable:true
+C06WEB d02 ax after a click role=heading name="d02" level:2
+C06WEB d02 ax after a click role=button name="d02 Details" description="Expanded double tap to collapse" focusable:true
+C06WEB d02 ax after a click role=button name="d02 panel button" focusable:true
+C06WEB d02 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "d02 panel button" / (body) / <flutter-view role=null aria-expanded=null> "Backd02Before d02d02 Detailsd02 panel te" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "d02 Details" / <flt-semantics role=button aria-expanded=null> "d02 panel button"
+C06WEB d02 app: C06PROBE d02 closed
+C06WEB d02 after a second click: panel shown=false; aria-expanded: (none) ; announced: FLT-ANNOUNCEMENT-POLITE: Collapsed
+C06WEB d02 Enter: header reached after 2 Tab(s)
+C06WEB d02 app: C06PROBE d02 open
+C06WEB d02 Enter: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d02 Details" ; announced: FLT-ANNOUNCEMENT-POLITE: Expanded
+C06WEB d02 app: C06PROBE d02 closed
+C06WEB d02 Enter again: panel shown=false; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d02 Details" ; announced: FLT-ANNOUNCEMENT-POLITE: Collapsed
+C06WEB d02 Space: header reached after 2 Tab(s)
+C06WEB d02 app: C06PROBE d02 open
+C06WEB d02 Space: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d02 Details" ; announced: FLT-ANNOUNCEMENT-POLITE: Expanded
+C06WEB d02 app: C06PROBE d02 closed
+C06WEB d02 Space again: panel shown=false; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d02 Details" ; announced: FLT-ANNOUNCEMENT-POLITE: Collapsed
+  ✓  2 c06_probe.spec.js:113:3 › probe d02 (11.6s)
+C06WEB d03 navigator.platform MacIntel
+C06WEB d03 DOM collapsed:
+<flt-semantics-host>
+<flt-semantics id="flt-semantic-node-0">
+<flt-semantics id="flt-semantic-node-1">
+<flt-semantics id="flt-semantic-node-2">
+<flt-semantics id="flt-semantic-node-3">
+<flt-semantics id="flt-semantic-node-9">
+<flt-semantics id="flt-semantic-node-10" role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+<h2 id="flt-semantic-node-11">d03</h2>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-4" role="group">
+<flt-semantics id="flt-semantic-node-5">
+<span>Before d03</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" flt-tappable="">d03 Details</flt-semantics>
+<flt-semantics id="flt-semantic-node-8" flt-semantics-identifier="d03-end">
+<span>d03 end</span>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics-host>
+C06WEB d03 ax collapsed role=group name="" 
+C06WEB d03 ax collapsed role=button name="Back" focusable:true
+C06WEB d03 ax collapsed role=heading name="d03" level:2
+C06WEB d03 ax collapsed role=button name="d03 Details" focusable:true
+C06WEB d03 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "d03 Details" / (body) / <flutter-view role=null aria-expanded=null> "Backd03Before d03d03 Detailsd03 endflutt" / <flt-semantics role=button aria-expanded=null> "Back"
+C06WEB d03 header element: <flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" flt-tappable="">d03 Details</flt-semantics>
+C06WEB d03 app: C06PROBE d03 open
+C06WEB d03 after a click: panel shown=true; aria-expanded: (none) ; announced: (nothing)
+C06WEB d03 DOM after a click:
+<flt-semantics-host>
+<flt-semantics id="flt-semantic-node-0">
+<flt-semantics id="flt-semantic-node-1">
+<flt-semantics id="flt-semantic-node-2">
+<flt-semantics id="flt-semantic-node-3">
+<flt-semantics id="flt-semantic-node-9">
+<flt-semantics id="flt-semantic-node-10" role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+<h2 id="flt-semantic-node-11">d03</h2>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-4" role="group">
+<flt-semantics id="flt-semantic-node-5">
+<span>Before d03</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-6" role="button" tabindex="0" flt-tappable="">d03 Details</flt-semantics>
+<flt-semantics id="flt-semantic-node-12">
+<span>d03 panel text</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-13" role="button" tabindex="0" flt-tappable="">d03 panel button</flt-semantics>
+<flt-semantics id="flt-semantic-node-8" flt-semantics-identifier="d03-end">
+<span>d03 end</span>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics-host>
+C06WEB d03 ax after a click role=group name="" 
+C06WEB d03 ax after a click role=button name="Back" focusable:true
+C06WEB d03 ax after a click role=heading name="d03" level:2
+C06WEB d03 ax after a click role=button name="d03 Details" focusable:true
+C06WEB d03 ax after a click role=button name="d03 panel button" focusable:true
+C06WEB d03 Tab stops after a click: <flt-semantics role=button aria-expanded=null> "d03 panel button" / (body) / <flutter-view role=null aria-expanded=null> "Backd03Before d03d03 Detailsd03 panel te" / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "d03 Details" / <flt-semantics role=button aria-expanded=null> "d03 panel button"
+C06WEB d03 app: C06PROBE d03 closed
+C06WEB d03 after a second click: panel shown=false; aria-expanded: (none) ; announced: (nothing)
+C06WEB d03 Enter: header reached after 2 Tab(s)
+C06WEB d03 app: C06PROBE d03 open
+C06WEB d03 Enter: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d03 Details" ; announced: (nothing)
+C06WEB d03 app: C06PROBE d03 closed
+C06WEB d03 Enter again: panel shown=false; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d03 Details" ; announced: (nothing)
+C06WEB d03 Space: header reached after 2 Tab(s)
+C06WEB d03 app: C06PROBE d03 open
+C06WEB d03 Space: panel shown=true; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d03 Details" ; announced: (nothing)
+C06WEB d03 app: C06PROBE d03 closed
+C06WEB d03 Space again: panel shown=false; aria-expanded: (none) ; focus now <flt-semantics role=button aria-expanded=null> "d03 Details" ; announced: (nothing)
+  ✓  3 c06_probe.spec.js:113:3 › probe d03 (11.6s)
+C06WEB d04 navigator.platform MacIntel
+C06WEB d04 DOM collapsed:
+<flt-semantics-host>
+<flt-semantics id="flt-semantic-node-0">
+<flt-semantics id="flt-semantic-node-1">
+<flt-semantics id="flt-semantic-node-2">
+<flt-semantics id="flt-semantic-node-3">
+<flt-semantics id="flt-semantic-node-8">
+<flt-semantics id="flt-semantic-node-9" role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+<h2 id="flt-semantic-node-10">d04</h2>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-4" role="group">
+<flt-semantics id="flt-semantic-node-5">
+<span>Before d04</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-6" role="button" aria-description="Collapsed
+ double tap to expand" flt-tappable="">d04 Details</flt-semantics>
+<flt-semantics id="flt-semantic-node-7" flt-semantics-identifier="d04-end">
+<span>d04 end</span>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics-host>
+C06WEB d04 ax collapsed role=group name="" 
+C06WEB d04 ax collapsed role=button name="Back" focusable:true
+C06WEB d04 ax collapsed role=heading name="d04" level:2
+C06WEB d04 ax collapsed role=button name="d04 Details" description="Collapsed double tap to expand" 
+C06WEB d04 Tab stops collapsed: <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "Back" / (body) / <flutter-view role=null aria-expanded=null> "Backd04Before d04d04 Detailsd04 endflutt" / <flt-semantics role=button aria-expanded=null> "Back"
+C06WEB d04 header element: <flt-semantics id="flt-semantic-node-6" role="button" aria-description="Collapsed
+ double tap to expand" flt-tappable="">d04 Details</flt-semantics>
+C06WEB d04 after a click: panel shown=true; aria-expanded: (none) ; announced: (nothing)
+C06WEB d04 DOM after a click:
+<flt-semantics-host>
+<flt-semantics id="flt-semantic-node-0">
+<flt-semantics id="flt-semantic-node-1">
+<flt-semantics id="flt-semantic-node-2">
+<flt-semantics id="flt-semantic-node-3">
+<flt-semantics id="flt-semantic-node-8">
+<flt-semantics id="flt-semantic-node-9" role="button" tabindex="0" flt-tappable="">Back</flt-semantics>
+<h2 id="flt-semantic-node-10">d04</h2>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-4" role="group">
+<flt-semantics id="flt-semantic-node-5">
+<span>Before d04</span>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-6" role="group" aria-label="d04 Details
+d04 panel text" aria-description="Expanded
+ double tap to collapse" flt-tappable="">
+<flt-semantics id="flt-semantic-node-14" role="button" tabindex="0" flt-tappable="">d04 panel button</flt-semantics>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-7" flt-semantics-identifier="d04-end">
+<span>d04 end</span>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+<flt-semantics id="flt-semantic-node-11">
+</flt-semantics>
+</flt-semantics>
+</flt-semantics>
+</flt-semantics-host>
+C06WEB d04 ax after a click role=generic name="Back d04" focusable:true
+C06WEB d04 ax after a click role=group name="" 
+C06WEB d04 ax after a click role=button name="Back" focusable:true
+C06WEB d04 ax after a click role=heading name="d04" level:2
+C06WEB d04 ax after a click role=group name="d04 Details d04 panel text" description="Expanded double tap to collapse" 
+C06WEB d04 ax after a click role=button name="d04 panel button" focusable:true
+C06WEB d04 Tab stops after a click: (body) / <flt-semantics role=button aria-expanded=null> "Back" / <flt-semantics role=button aria-expanded=null> "d04 panel button" / (body) / <flutter-view role=null aria-expanded=null> "Backd04Before d04d04 panel buttond04 end" / <flt-semantics role=button aria-expanded=null> "Back"
+C06WEB d04 after a second click: panel shown=true; aria-expanded: (none) ; announced: (nothing)
+C06WEB d04 Enter: header reached after 0 Tab(s)
+C06WEB d04 Enter: not reached; control click: panel shown=true; aria-expanded: (none)
+C06WEB d04 Space: header reached after 0 Tab(s)
+C06WEB d04 Space: not reached; control click: panel shown=true; aria-expanded: (none)
+  ✓  4 c06_probe.spec.js:113:3 › probe d04 (10.2s)
+C06WEB html ax collapsed role=group name="" 
+C06WEB html ax collapsed role=button name="h02 Details button" focusable:true,expanded:false
+C06WEB html ax collapsed role=DisclosureTriangle name="h01 Details summary" focusable:true,expanded:false
+C06WEB html Tab 1: <summary>h01 Details summary</summary>
+C06WEB html Enter on summary: open = true
+C06WEB html Space on summary: open = false
+C06WEB html ax with details open role=group name="" 
+C06WEB html ax with details open role=button name="h02 Details button" focusable:true,expanded:false
+C06WEB html ax with details open role=DisclosureTriangle name="h01 Details summary" focusable:true,expanded:true
+C06WEB html ax with details open role=button name="h01 panel button" focusable:true
+  ✓  5 c06_probe.spec.js:191:1 › plain HTML comparison (53ms)
+
+  5 passed (45.5s)

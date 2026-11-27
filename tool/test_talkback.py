@@ -554,7 +554,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C13", "C18", "C26", "S08"})
+        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S08"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
@@ -664,6 +664,52 @@ class SilentRows(unittest.TestCase):
         closed = set()
         self.assertEqual(tb.parse_speech(log), tb.parse_speech(log, {}, closed))
         self.assertEqual(closed, set(self.right))
+
+
+class C06SilentClicks(unittest.TestCase):
+    """C06's declared silent rows, the clicks of `bad-expand-icon` and
+    `bad-cupertino-expansion-tile`, with their markers logged just before
+    the click action (C06DisclosureTest.talkBackWalk). Speech caused by the
+    click then falls in the silent row and fails it. The judge itself is
+    unchanged: a row that is not silent is checked for its phrases as
+    substrings, so extra speech in it passes, which is why the marker must
+    come before the click."""
+    PREFIX = "c06-"
+    SILENT = "c06-bad-expand-icon-activated"
+
+    def setUp(self):
+        self.expected = [i for i in tb.EXPECT if i.startswith(self.PREFIX)]
+        self.assertEqual([i for i in self.expected if tb.is_silent(i)],
+                         ["c06-bad-expand-icon-activated", "c06-bad-cupertino-expansion-tile-activated"])
+        self.right = {i: [] if tb.is_silent(i) else list(tb.EXPECT[i][0]) for i in self.expected}
+        order = list(self.right)
+        self.assertEqual(order[order.index(self.SILENT) - 1], "c06-bad-expand-icon-closed")
+        self.assertEqual(order[order.index(self.SILENT) + 1], "c06-bad-expand-icon-panel")
+
+    def judge(self, speech):
+        cut, closed = {}, set()
+        spoken = tb.parse_speech(log_for(speech), cut, closed)
+        return tb.judge_walk(spoken, self.expected, cut, closed)
+
+    def test_the_right_walk_is_right(self):
+        self.assertEqual(self.judge(self.right), ("right", []))
+
+    def test_speech_during_the_click_fails_the_silent_row(self):
+        # Codex's case: the panel's text said as the click opens it. With
+        # the marker before the click it is in the silent row.
+        for slug in ("bad-expand-icon", "bad-cupertino-expansion-tile"):
+            speech = dict(self.right)
+            speech[f"c06-{slug}-activated"] = ["Orders ship in two days."]
+            verdict, reasons = self.judge(speech)
+            self.assertEqual(verdict, "wrong", slug)
+            self.assertIn(f'c06-{slug}-activated: expected silence, heard "Orders ship in two days."', reasons)
+
+    def test_the_same_speech_before_the_marker_would_pass(self):
+        # Why the marker is before the click: the closed row's phrases are
+        # substrings, so the same speech logged in it is not caught.
+        speech = dict(self.right)
+        speech["c06-bad-expand-icon-closed"] = self.right["c06-bad-expand-icon-closed"] + ["Orders ship in two days."]
+        self.assertEqual(self.judge(speech), ("right", []))
 
 
 class FakeSettingsScreen:

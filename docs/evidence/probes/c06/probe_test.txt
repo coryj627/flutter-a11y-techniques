@@ -1,0 +1,131 @@
+C06TEST ==== d01 android collapsed
+C06TEST label="Before d01" value="" hint="" tapHint="" [] {}
+C06TEST label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+C06TEST   label="d01 Details" value="" hint="Collapsed" tapHint="custom" [focusable,selected=false,enabled=true] {tap,focus}
+C06TEST label="d01 end" value="" hint="" tapHint="" [id=d01-end] {}
+C06TEST label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+C06TEST label="d01" value="" hint="" tapHint="" [header] {}
+C06TEST d01 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0)
+C06TEST ==== d01 android after a tap on Details
+C06TEST label="Before d01" value="" hint="" tapHint="" [] {}
+C06TEST label="Expanded" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+C06TEST   label="d01 Details" value="" hint="Expanded" tapHint="custom" [focusable,selected=false,enabled=true] {tap,focus}
+C06TEST label="d01 panel text" value="" hint="" tapHint="" [] {}
+C06TEST label="d01 panel button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+C06TEST label="d01 end" value="" hint="" tapHint="" [id=d01-end] {}
+C06TEST label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+C06TEST label="d01" value="" hint="" tapHint="" [header] {}
+C06TEST d01 android Tab stops after: "Back" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "d01 panel button" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "d01 panel button" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0)
+C06TEST ==== d02 android collapsed
+C06TEST label="Before d02" value="" hint="" tapHint="" [] {}
+C06TEST label="Collapsed" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+C06TEST   label="d02 Details" value="" hint="Collapsed" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap,focus}
+C06TEST label="d02 end" value="" hint="" tapHint="" [id=d02-end] {}
+C06TEST label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+C06TEST label="d02" value="" hint="" tapHint="" [header] {}
+C06TEST d02 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "Back" size=Size(40.0, 40.0)
+C06TEST ==== d02 android after a tap on Details
+C06TEST label="Before d02" value="" hint="" tapHint="" [] {}
+C06TEST label="Expanded" value="" hint="" tapHint="" [liveRegion,a11yFocusBlocked] {}
+C06TEST   label="d02 Details" value="" hint="Expanded" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap,focus}
+C06TEST label="d02 panel text" value="" hint="" tapHint="" [] {}
+C06TEST label="d02 panel button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+C06TEST label="d02 end" value="" hint="" tapHint="" [id=d02-end] {}
+C06TEST label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+C06TEST label="d02" value="" hint="" tapHint="" [header] {}
+C06TEST d02 android Tab stops after: "Back" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "d02 panel button" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "d02 panel button" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0)
+C06TEST ==== d03 android collapsed
+C06TEST label="Before d03" value="" hint="" tapHint="" [] {}
+C06TEST label="d03 Details" value="" hint="" tapHint="custom" [button,focusable,enabled=true] {tap,focus}
+C06TEST   label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+C06TEST label="d03 end" value="" hint="" tapHint="" [id=d03-end] {}
+C06TEST label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+C06TEST label="d03" value="" hint="" tapHint="" [header] {}
+C06TEST d03 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "Back" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "Back" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "Back" size=Size(40.0, 40.0)
+C06TEST ==== d03 android after a tap on Details
+C06TEST label="Before d03" value="" hint="" tapHint="" [] {}
+C06TEST label="d03 Details" value="" hint="" tapHint="custom" [button,focusable,enabled=true] {tap,focus}
+C06TEST   label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+C06TEST label="d03 end" value="" hint="" tapHint="" [id=d03-end] {}
+C06TEST label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+C06TEST label="d03" value="" hint="" tapHint="" [header] {}
+C06TEST d03 android Tab stops after: "Back" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "Back" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "Back" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "Back" size=Size(40.0, 40.0)
+C06TEST ==== d04 android collapsed
+C06TEST label="Before d04" value="" hint="" tapHint="" [] {}
+C06TEST label="d04 Details" value="" hint="" tapHint="custom" [] {tap}
+C06TEST label="d04 end" value="" hint="" tapHint="" [id=d04-end] {}
+C06TEST label="Back" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+C06TEST label="d04" value="" hint="" tapHint="" [header] {}
+C06TEST d04 android Tab stops collapsed: "Back" size=Size(40.0, 40.0) / "d04 Details" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0) / "d04 Details" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0) / "d04 Details" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0)
+C06TEST ==== d04 android after a tap on Details
+C06TEST label="Before d04" value="" hint="" tapHint="" [] {}
+C06TEST label="d04 Details\nd04 panel text" value="" hint="" tapHint="custom" [] {tap}
+C06TEST   label="d04 panel button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap,focus}
+C06TEST label="d04 end" value="" hint="" tapHint="" [id=d04-end] {}
+C06TEST label="Back" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap,focus}
+C06TEST label="d04" value="" hint="" tapHint="" [header] {}
+C06TEST d04 android Tab stops after: "Back" size=Size(40.0, 40.0) / "d04 panel button" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0) / "d04 panel button" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0) / "d04 panel button" size=Size(249.6, 40.0) / "Back" size=Size(40.0, 40.0)
+C06TEST ==== d01 iOS collapsed
+C06TEST label="Before d01" value="" hint="" tapHint="" [] {}
+C06TEST label="d01 Details" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [focusable,selected=false,enabled=true] {tap}
+C06TEST label="d01 end" value="" hint="" tapHint="" [id=d01-end] {}
+C06TEST label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+C06TEST label="d01" value="" hint="" tapHint="" [header] {}
+C06TEST d01 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0)
+C06TEST ==== d01 iOS after a tap on Details
+C06TEST label="Before d01" value="" hint="" tapHint="" [] {}
+C06TEST label="d01 Details" value="" hint="Expanded\n double tap to collapse" tapHint="custom" [focusable,selected=false,enabled=true] {tap}
+C06TEST label="d01 panel text" value="" hint="" tapHint="" [] {}
+C06TEST label="d01 panel button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+C06TEST label="d01 end" value="" hint="" tapHint="" [id=d01-end] {}
+C06TEST label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+C06TEST label="d01" value="" hint="" tapHint="" [header] {}
+C06TEST d01 iOS Tab stops after: "" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "d01 panel button" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0) / "d01 Details" size=Size(800.0, 56.0) / "d01 panel button" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0)
+C06TEST ==== d02 iOS collapsed
+C06TEST label="Before d02" value="" hint="" tapHint="" [] {}
+C06TEST label="d02 Details" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap}
+C06TEST label="d02 end" value="" hint="" tapHint="" [id=d02-end] {}
+C06TEST label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+C06TEST label="d02" value="" hint="" tapHint="" [header] {}
+C06TEST d02 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "" size=Size(40.0, 40.0)
+C06TEST ==== d02 iOS after a tap on Details
+C06TEST label="Before d02" value="" hint="" tapHint="" [] {}
+C06TEST label="d02 Details" value="" hint="Expanded\n double tap to collapse" tapHint="custom" [button,focusable,selected=false,enabled=true] {tap}
+C06TEST label="d02 panel text" value="" hint="" tapHint="" [] {}
+C06TEST label="d02 panel button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+C06TEST label="d02 end" value="" hint="" tapHint="" [id=d02-end] {}
+C06TEST label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+C06TEST label="d02" value="" hint="" tapHint="" [header] {}
+C06TEST d02 iOS Tab stops after: "" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "d02 panel button" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0) / "d02 Details" size=Size(800.0, 56.0) / "d02 panel button" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0)
+C06TEST ==== d03 iOS collapsed
+C06TEST label="Before d03" value="" hint="" tapHint="" [] {}
+C06TEST label="d03 Details" value="" hint="" tapHint="custom" [button,focusable,enabled=true] {tap}
+C06TEST   label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+C06TEST label="d03 end" value="" hint="" tapHint="" [id=d03-end] {}
+C06TEST label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+C06TEST label="d03" value="" hint="" tapHint="" [header] {}
+C06TEST d03 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "" size=Size(40.0, 40.0)
+C06TEST ==== d03 iOS after a tap on Details
+C06TEST label="Before d03" value="" hint="" tapHint="" [] {}
+C06TEST label="d03 Details" value="" hint="" tapHint="custom" [button,focusable,enabled=true] {tap}
+C06TEST   label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+C06TEST label="d03 end" value="" hint="" tapHint="" [id=d03-end] {}
+C06TEST label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+C06TEST label="d03" value="" hint="" tapHint="" [header] {}
+C06TEST d03 iOS Tab stops after: "" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "" size=Size(40.0, 40.0) / "d03 Details" size=Size(40.0, 40.0) / "" size=Size(40.0, 40.0)
+C06TEST ==== d04 iOS collapsed
+C06TEST label="Before d04" value="" hint="" tapHint="" [] {}
+C06TEST label="d04 Details" value="" hint="Collapsed\n double tap to expand" tapHint="custom" [] {tap}
+C06TEST label="d04 end" value="" hint="" tapHint="" [id=d04-end] {}
+C06TEST label="" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+C06TEST label="d04" value="" hint="" tapHint="" [header] {}
+C06TEST d04 iOS Tab stops collapsed: "" size=Size(40.0, 40.0) / "d04 Details" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0) / "d04 Details" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0) / "d04 Details" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0)
+C06TEST ==== d04 iOS after a tap on Details
+C06TEST label="Before d04" value="" hint="" tapHint="" [] {}
+C06TEST label="d04 Details\nd04 panel text" value="" hint="Expanded\n double tap to collapse" tapHint="custom" [] {tap}
+C06TEST   label="d04 panel button" value="" hint="" tapHint="" [button,focusable,enabled=true] {tap}
+C06TEST label="d04 end" value="" hint="" tapHint="" [id=d04-end] {}
+C06TEST label="" value="" hint="" tapHint="" [button,focusable,FOCUSED,enabled=true] {tap}
+C06TEST label="d04" value="" hint="" tapHint="" [header] {}
+C06TEST d04 iOS Tab stops after: "" size=Size(40.0, 40.0) / "d04 panel button" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0) / "d04 panel button" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0) / "d04 panel button" size=Size(249.6, 40.0) / "" size=Size(40.0, 40.0)
+00:00 +8: All tests passed!

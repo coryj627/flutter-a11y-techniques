@@ -1,0 +1,7 @@
+# C06 iOS tree tests, 2026-11-23, iOS 27.0 simulator: the first run of testGoodMaterialIsReachedByShiftTab, which sent one Shift+Tab from launch and Enter (lines from build/evidence/C06/ios.log)
+Test Case '-[RunnerUITests.C06DisclosureUITests testBadCupertinoExpansionTileIsOpenedByNoKeyAfterShiftTab]' started.
+Test Case '-[RunnerUITests.C06DisclosureUITests testBadCupertinoExpansionTileIsOpenedByNoKeyAfterShiftTab]' passed (26.372 seconds).
+Test Case '-[RunnerUITests.C06DisclosureUITests testGoodMaterialIsReachedByShiftTab]' started.
+ios/RunnerUITests/C06DisclosureUITests.swift:226: error: -[RunnerUITests.C06DisclosureUITests testGoodMaterialIsReachedByShiftTab] : XCTAssertTrue failed - Shift+Tab, Enter opens it
+ios/RunnerUITests/C06DisclosureUITests.swift:227: error: -[RunnerUITests.C06DisclosureUITests testGoodMaterialIsReachedByShiftTab] : XCTAssertTrue failed - Enter stayed on the example
+Test Case '-[RunnerUITests.C06DisclosureUITests testGoodMaterialIsReachedByShiftTab]' failed (12.768 seconds).
