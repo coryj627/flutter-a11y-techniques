@@ -416,7 +416,15 @@ What the tests skip or cannot see, and what each gives up:
   read is only an empty phrase or the phrase of the stop before it, and
   `judgeTranscript` fails a recorded unresolved read with other words. The
   third recording has no start rows and fails `judgeTranscript` for that
-  alone; the recording is to be made again.
+  alone. The fourth recording (2026-11-27,
+  `docs/evidence/S16/voiceover-web.md`), the first with the start capture,
+  passed: 14 walks of 14, each complete on its first walk in Chromium and
+  WebKit, with a start row on each, every unresolved-reads row "none",
+  and every end witnessed; every example's stops as in the first three.
+  The start capture read an empty phrase on Back in all 14 walks (why was
+  not looked into), so every first move was
+  compared with "", and any phrase read was a stop. The web tree spec
+  judges this transcript again from its rows alone, and it passes.
 
 **Follow-ups.** Keep the locale TalkBack logs with each fragment, in
 `tool/talkback.py`'s `parse_speech`, so that TalkBack rows can judge
@@ -430,7 +438,6 @@ had no French voice when TalkBack first gave a fragment French (p02,
 log, so what TalkBack's French fragments sounded like is not known. A passage's
 language on iOS rests on the engine's source.
 
-**Not done yet.** The web VoiceOver recording with the start capture.
-What VoiceOver does with `lang="fr_FR"` or with a page whose `lang` is
+**Not done yet.** What VoiceOver does with `lang="fr_FR"` or with a page whose `lang` is
 wrong. An app in another language as an example. Right-to-left languages
 (S17).
