@@ -557,6 +557,56 @@ def forbidden(ident, fragments):
             for phrase in EXPECT[ident][1] if unwanted(fragments, phrase)]
 
 
+USAGE_HINT = "double-tap to activate"
+
+
+def whole_wrong(ident, fragments):
+    """For a row whose capture was cut off: what its fully captured
+    utterances already show to be wrong against the whole-utterance forms
+    of said() ("== A / B" and "^= A"), as problems() words it. Only rows
+    that use those forms are judged; every other row gives nothing.
+
+    INCOMPLETE in `fragments` stands for the one utterance that was cut
+    off, which is not judged: it may be the expected utterance in its
+    place, or the closing usage hint. Every utterance captured whole must
+    be the expected one in its place, or the closing hint once at the end;
+    one that is wrong, extra, or out of place is a wrong reading. For
+    "^= A", a first utterance captured whole that is not A is wrong."""
+    if ident not in EXPECT:
+        return []
+    found = []
+    shown = " | ".join(f.lower() for f in fragments)
+    for phrase in EXPECT[ident][0]:
+        if phrase.startswith("=="):
+            want = [p.strip().lower() for p in phrase[2:].split("/")]
+            j, hint_used, bad = 0, False, None
+            for i, f in enumerate(fragments):
+                if f == INCOMPLETE:
+                    if j < len(want):
+                        j += 1
+                    elif not hint_used:
+                        hint_used = True
+                    else:
+                        bad = f"utterance {i + 1} is more than the row may hold"
+                        break
+                    continue
+                got = f.strip().lower()
+                if j < len(want) and got == want[j]:
+                    j += 1
+                elif j == len(want) and got == USAGE_HINT and not hint_used:
+                    hint_used = True
+                else:
+                    bad = f'utterance {i + 1}, "{f.strip()}", is not the expected one in its place'
+                    break
+            if bad:
+                found.append(f'{ident}: expected "{phrase}" in "{shown}": {bad}')
+        elif phrase.startswith("^="):
+            if fragments and fragments[0] != INCOMPLETE and \
+                    fragments[0].strip().lower() != phrase[2:].strip().lower():
+                found.append(f'{ident}: expected "{phrase}" in "{shown}": the first utterance differs')
+    return found
+
+
 def judge_walk(spoken, expected, cut=None, closed=None):
     """The verdict on one whole walk: (verdict, reasons).
 
@@ -568,7 +618,11 @@ def judge_walk(spoken, expected, cut=None, closed=None):
     captured lines of the cut-off one (`cut`, from parse_speech): those
     lines are whole lines of what was said, so a forbidden phrase in them
     was said, and the reading is wrong. A required phrase it lacks may be in
-    the lost part, so that alone makes it incomplete. Anything else that
+    the lost part, so that alone makes it incomplete. A row that uses the
+    whole-utterance forms of said() is also judged on the utterances it
+    captured whole (whole_wrong): one wrong, extra, or out of place there
+    is a wrong reading, and only the cut-off utterance is not judged.
+    Anything else that
     fails its checks is a wrong reading, and a wrong reading anywhere makes
     the walk "wrong", even when other elements of it are incomplete.
 
@@ -608,7 +662,10 @@ def judge_walk(spoken, expected, cut=None, closed=None):
             gaps.append(f"{ident}: nothing was spoken")
         elif INCOMPLETE in fragments:
             heard = [f for f in fragments if f != INCOMPLETE] + cut.get(ident, [])
-            said_wrong = forbidden(ident, heard)
+            # The whole-utterance forms are checked on what was captured
+            # whole (whole_wrong): a wrong title captured whole is not
+            # walked again away.
+            said_wrong = forbidden(ident, heard) + whole_wrong(ident, fragments)
             if said_wrong:
                 wrong += said_wrong
             else:

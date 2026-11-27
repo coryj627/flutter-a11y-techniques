@@ -375,7 +375,12 @@ Skips and what they give up, in the tests:
   whose Back node has no click action): a row that differed only by that
   hint would pass either way. A closing row is judged by its first
   utterance, exactly, the title; everything after it is recorded and not
-  judged, since it varied between recordings.
+  judged, since it varied between recordings. A row whose capture was cut
+  off in the log is still judged on the utterances captured whole: one
+  that is wrong, extra, or out of place fails for good, and only the
+  cut-off utterance is not judged, so a wrong title cannot be walked
+  again away (`whole_wrong` in `tool/talkback.py`; `S06CutOffRows` in
+  `tool/test_talkback.py`, from the log to the report).
 - The iOS VoiceOver landing reads `currentSpeech()` every 0.15 s; an
   utterance shorter than that between two reads would not be seen.
 - The web VoiceOver opening rows are recorded and not judged, so they

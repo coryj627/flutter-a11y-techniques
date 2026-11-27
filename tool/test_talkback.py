@@ -783,6 +783,84 @@ class S06WholeUtterances(unittest.TestCase):
         self.assertTrue(tb.said(["orders", "open orders"], "^= Orders"))
 
 
+class S06CutOffRows(unittest.TestCase):
+    """A row whose capture was cut off is still judged on the utterances
+    captured whole, for the whole-utterance forms (tb.whole_wrong): a wrong
+    title captured whole fails for good, and a later right walk cannot
+    erase it. Codex's case, review of aede22a, from the parser to the
+    report: "Details / Back / Button" captured whole, then a usage hint cut
+    off, was incomplete, and the next walk's right reading passed."""
+    OK = mock.Mock(returncode=0, stdout="")
+    TAG = "V talkback: SpeechControllerImpl: "
+
+    def setUp(self):
+        self.right = S06WholeUtterances().transcript()
+
+    def log(self, ident=None, whole=(), cut=None):
+        """A whole walk, the committed transcript's, but for `ident`, which
+        speaks `whole` and then, if `cut` is given, the start of one more
+        utterance that is cut off."""
+        lines = []
+        for i, fragments in self.right.items():
+            lines.append(f"11-13 10:00:00.000  1  1 I S06TB   : FOCUS {i}")
+            for f in (whole if i == ident else fragments):
+                lines.append(f'{self.TAG}Speaking fragment text="{f}", utteranceId=x')
+            if i == ident and cut is not None:
+                lines.append(f'{self.TAG}Speaking fragment text="{cut}')
+        lines.append("11-13 10:00:01.000  1  1 I S06TB   : END slug")
+        return "\n".join(lines)
+
+    def run_walks(self, *logs):
+        logs = iter(logs)
+        tries = tb.walk_strictly("s06-", lambda: (self.OK, next(logs)))
+        failures, _ = tb.strict_report(tries)
+        return tries, failures
+
+    def assert_fails_for_good(self, ident, whole, cut="Double-tap to"):
+        bad = self.log(ident, whole, cut)
+        cut_off, closed = {}, set()
+        spoken = tb.parse_speech(bad, cut_off, closed)
+        self.assertIn(tb.INCOMPLETE, spoken[ident])
+        tries, failures = self.run_walks(bad, self.log())
+        self.assertEqual(len(tries), 1, f"{ident}: walked again after a wrong reading")
+        self.assertEqual(tries[0].verdict, "wrong")
+        self.assertTrue(failures)
+        self.assertTrue(all(f.startswith(ident) for f in failures), failures)
+
+    def test_the_committed_transcript_is_right(self):
+        tries, failures = self.run_walks(self.log())
+        self.assertEqual([t.verdict for t in tries], ["right"])
+        self.assertEqual(failures, [])
+
+    def test_a_wrong_opening_title_with_a_truncated_hint_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-opened", ["Details", "Back", "Button"])
+
+    def test_a_missing_opening_title_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-opened", ["Back", "Button"])
+
+    def test_an_extra_title_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-opened", ["Orders", "Details", "Back", "Button"])
+        self.assert_fails_for_good("s06-bad-no-title-opened", ["Orders", "Back", "Button"])
+
+    def test_a_wrong_closing_title_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-closed", ["Screen titled Details", "Open orders"],
+                                   cut="Button")
+
+    def test_a_right_row_cut_off_is_walked_again_and_then_passes(self):
+        # The positive controls: the cut-off hint, the cut-off title, and a
+        # closing row cut off after its title are not judged.
+        for ident, whole, cut in (("s06-good-material-opened", ["Orders", "Back", "Button"], "Double-tap"),
+                                  ("s06-good-material-opened", [], "Ord"),
+                                  ("s06-good-material-closed", ["Material screen title"], "Open")):
+            tries, failures = self.run_walks(self.log(ident, whole, cut), self.log())
+            self.assertEqual([t.verdict for t in tries], ["incomplete", "right"], (ident, whole))
+            self.assertEqual(failures, [])
+
+    def test_more_than_the_row_may_hold_fails_even_if_cut_off(self):
+        whole = ["Orders", "Back", "Button", "Double-tap to activate"]
+        self.assert_fails_for_good("s06-good-material-opened", whole, cut="Orders")
+
+
 class FakeSettingsScreen:
     """Stands in for TalkBack's developer settings screen."""
 
