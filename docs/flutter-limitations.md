@@ -5242,12 +5242,15 @@ yet), **Fixed in x.y** (verified on that version).
   `moveForward()` on iOS, and the document's order and Chromium's tree on
   the web, and VoiceOver's `next()` on the web for S11's examples
   (`docs/evidence/S11/voiceover-web.md`, Chromium and WebKit):
-  - The order is the framework's, the same on every platform. In all
-    twenty probe fixtures the widget tests' traversal order, the web
-    document's order, the Android tree's order, the stops TalkBack moved
-    to, and the stops VoiceOver on iOS moved to were the same
-    (`flutter_test.txt`, `web.txt`, `android-tree.txt`,
-    `android-talkback-order.txt`, `ios.txt`). XCUITest's own list of
+  - The order is the framework's, the same on every platform, with one
+    exception on the web. In nineteen of the twenty probe fixtures the
+    widget tests' traversal order, the web document's order, the order of
+    Chromium's accessibility tree, the Android tree's order, the stops
+    TalkBack moved to, and the stops VoiceOver on iOS moved to were the
+    same (`flutter_test.txt`, `web.txt`, `android-tree.txt`,
+    `android-talkback-order.txt`, `ios.txt`). In r13 (below) the web
+    document's order differs from Chromium's accessibility tree, which
+    follows an `aria-owns`. XCUITest's own list of
     elements is not that order once an element has children: it gives an
     element's children after the elements beside it (`ios.txt`, "element
     order", r11 to r13 and r15 to r20).
@@ -5271,8 +5274,9 @@ yet), **Fixed in x.y** (verified on that version).
     has `explicitChildNodes: true` (r16), which keeps each part a stop: on
     every platform. S11 `good-columns` uses both.
   - A sort key changes the screen reader's order and not Tab's, on every
-    platform: with the right column keyed first (r11), every screen reader
-    read it first, and Tab still reached the left column's button first,
+    platform: with the right column keyed first (r11), TalkBack and
+    VoiceOver on iOS read it first, and the web document and Chromium's
+    tree have it first, and Tab still reached the left column's button first,
     in the widget tests, in Chromium, on the Android emulator (a `uinput`
     keyboard), and on the iOS simulator (Tab then Space). An
     `OrderedTraversalPolicy` with a `FocusTraversalOrder` round each
@@ -5281,8 +5285,13 @@ yet), **Fixed in x.y** (verified on that version).
     test "FL-420: a sort key changes the reading order and not Tab".
   - `Semantics(traversalParentIdentifier:)` and `traversalChildIdentifier:`
     (documented as "primarily used with `OverlayPortal`") put a text from
-    below the columns into the left column's place in the order on every
-    platform (r13). Not used by any example.
+    below the columns into the left column's place in the order (r13) in
+    the widget tests, the Android tree, TalkBack's moves, and VoiceOver's
+    on iOS. On the web the document's order kept the text last, after the
+    right column, and the left column's element had `aria-owns` naming its
+    element, so Chromium's accessibility tree had it in the left column;
+    what VoiceOver on the web reads there was not measured. Not used by any
+    example.
 - How to read this entry: this is how Flutter's default policy is
   documented to work, not a defect in it. It is logged because it differs
   from the platforms Flutter runs on, and because nothing ties the two

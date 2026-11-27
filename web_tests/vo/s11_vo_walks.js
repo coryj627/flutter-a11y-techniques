@@ -53,20 +53,44 @@ export function helpRole(phrase) {
 }
 
 /**
+ * The role VoiceOver spoke in a stop's reading, from where VoiceOver puts
+ * it, or null for a stop that has none: "heading level 3" for "heading
+ * level 3 Route" (a heading's role comes first), "button" for "Save route
+ * button" (a button's comes last). A plain text or a count, such as "A map"
+ * or "List saves: 0", has no role, whatever words its label holds. These
+ * are the only roles on S11's screens; the screens' titles ("heading level
+ * 1 ...") and the "Example" heading are headings too.
+ */
+export function spokenRole(reading) {
+  const heading = /^(heading level \d+) \S/.exec(reading);
+  if (heading) return heading[1];
+  if (/\S button$/.test(reading)) return 'button';
+  return null;
+}
+
+/**
  * Whether stop `i` of a walk is a help message about the stop before it:
  * VO_HELP, the cursor at the same position as for stop `i - 1` (from
  * `positions`, the walk's record of where the cursor was at each stop), the
  * stop before it a reading, neither empty nor a help message, and the role
- * the help names found in that reading. False whenever any of that cannot
- * be shown, `positions` missing included. S08's rule, mirrored.
+ * the help names the role spoken in that reading (spokenRole): "heading
+ * level 3", or "heading", for a level 3 heading's reading, "button" for a
+ * button's. The help's role is matched against the reading's role, never
+ * against its label, so "on a list" after "Save list button" or "List
+ * saves: 0" is not left out. False whenever any of that cannot be shown,
+ * `positions` missing included. S08's rule, mirrored, with the role read
+ * from where VoiceOver speaks it.
  */
 export function helpAfterStop(stops, positions, i) {
   if (!VO_HELP.test(stops[i]) || i === 0 || !Array.isArray(positions)) return false;
   if (positions.length !== stops.length || positions[i] !== positions[i - 1]) return false;
   const before = stops[i - 1];
   if (before === '' || VO_HELP.test(before)) return false;
-  const role = helpRole(stops[i]);
-  return role !== null && before.toLowerCase().includes(role.toLowerCase());
+  const named = helpRole(stops[i]);
+  const spoken = spokenRole(before);
+  if (named === null || spoken === null) return false;
+  const role = named.toLowerCase();
+  return role === spoken || (role === 'heading' && spoken.startsWith('heading level '));
 }
 
 /**
@@ -81,7 +105,7 @@ export function helpAfterStop(stops, positions, i) {
  *
  * - "wrong": a stop that READ something other than the one expected in its
  *   place (a stop read in other words, a stop skipped so that a later one
- *   comes early, a stop after the last expected one), or a walk that
+ *   comes early, a stop after the last expected one, empty or not), or a walk that
  *   reached the end of the screen with any expected stop not read, the
  *   title, the description, the heading, or a list item included. This
  *   fails the test whichever try it is in, and is looked for first: a walk
@@ -102,7 +126,8 @@ export function helpAfterStop(stops, positions, i) {
  * the stop before it (helpAfterStop): `positions`, the cursor's position at
  * each stop as the walk recorded it, shows the cursor had not moved, the
  * stop before it is a reading (neither empty nor help), and the role the
- * help names ("on a button") is in that reading ("Save route button"). It
+ * help names ("on a button") is the role spoken in that reading ("Save
+ * route button", spokenRole), not a word of its label. It
  * is then VoiceOver's speech about the element just judged. Any other help
  * message is a stop like any other, and since no expected stop is a help
  * message it is wrong and fails for good: one at a new position (an element
@@ -130,12 +155,15 @@ export function judgeExampleWalk(walked, reachedEnd, expected, screen = [], posi
   const whole = [...screen, EXAMPLE_HEADING, ...expected];
   const empty = [];
   for (let i = 0; i < stops.length; i++) {
+    // A stop past the last expected one is wrong for good, an empty one
+    // too: this is checked before an empty phrase is let stand as a failed
+    // capture, so that an extra element at the end cannot be walked away.
+    if (i >= whole.length) {
+      return { verdict: 'wrong', reason: `"${stops[i]}" was read after the last expected stop` };
+    }
     if (stops[i] === '') {
       empty.push(i + 1);
       continue;
-    }
-    if (i >= whole.length) {
-      return { verdict: 'wrong', reason: `"${stops[i]}" was read after the last expected stop` };
     }
     if (stops[i] !== whole[i]) {
       return { verdict: 'wrong', reason: `stop ${i + 1} was "${stops[i]}" where "${whole[i]}" was expected` };

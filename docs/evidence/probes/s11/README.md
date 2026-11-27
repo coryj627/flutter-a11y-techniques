@@ -76,7 +76,7 @@ How each platform was looked at, and the raw output:
 Orders are written with the fixture's part names; "A0..A3" is a whole
 column joined into one node.
 
-| # | Every platform's order (widget tests, web, Android tree, TalkBack, VoiceOver on iOS) |
+| # | The order on every layer (widget tests, the web document and Chromium's tree, Android tree, TalkBack, VoiceOver on iOS), but where the row says otherwise |
 | --- | --- |
 | r01 | A0, B0, A1, B1, A2, B2, A3: row by row |
 | r02 | A0..A3, B0..B2: each column one node |
@@ -90,7 +90,7 @@ column joined into one node.
 | r10 | B0..B2, A0..A3: the right column first |
 | r11 | B0..B2, B btn, A0..A3, A btn; Tab: A btn, then B btn (FL-420) |
 | r12 | as r11; Tab: B btn, then A btn |
-| r13 | A0..A3, A9 grafted, B0..B2: the grafted text read in the left column |
+| r13 | A0..A3, A9 grafted, B0..B2: the grafted text read in the left column; on the web this is Chromium's accessibility tree, through `aria-owns`, and the document's order is A0..A3, B0..B2, A9 grafted |
 | r14 | B0..B2, A0..A3: in a right-to-left `Directionality`, with the columns' places swapped on the screen, still read left first |
 | r15 | A0..A3, A btn, B0..B2, B btn; Tab: A btn, then B btn |
 | r16 | A0, A1, A2, A3, B0, B1, B2: each column kept, each part its own node |
@@ -99,13 +99,21 @@ column joined into one node.
 | r19 | B0, B1, B2, B btn, A0 .. A3, A btn; Tab: B btn, then A btn |
 | r20 | A0, A1, A2, A3, A btn, B0, B1, B2, B btn; Tab: A btn, then B btn |
 
-- **The order is the framework's, the same everywhere.** For every
-  fixture, the widget tests' traversal order (`flutter_test.txt`, at both
-  sizes), the document's order and Chromium's tree on the web
-  (`web.txt`, at both sizes), the Android tree (`android-tree.txt`), the
-  stops TalkBack's own "next" moved to (`android-talkback-order.txt`, and
-  what it said, `android-talkback.md`), and the stops VoiceOver's
-  `moveForward()` moved to on iOS (`ios.txt`, "VO" lines) were the same.
+- **The order is the framework's.** For nineteen of the twenty
+  fixtures, the widget tests' traversal order (`flutter_test.txt`, at both
+  sizes), the document's order on the web and the order of Chromium's
+  accessibility tree (`web.txt`, "dom order" and "ax order", at both
+  sizes), the Android tree (`android-tree.txt`), the stops TalkBack's own
+  "next" moved to (`android-talkback-order.txt`, and what it said,
+  `android-talkback.md`), and the stops VoiceOver's `moveForward()` moved
+  to on iOS (`ios.txt`, "VO" lines) were the same. The exception is r13
+  on the web: the document's order there is A0..A3, B0..B2, A9 grafted,
+  the grafted text last, while Chromium's accessibility tree has A0..A3,
+  A9 grafted, B0..B2, as every other layer does. The left column's element
+  has `aria-owns` naming the grafted text's element (`web.txt`, r13
+  "aria-owns/flowto", the only fixture with one), and Chromium's tree
+  follows it. Which of the two VoiceOver on the web follows for r13 was
+  not measured: no web VoiceOver walk was made in the probe.
   On Android each node's traversal-after link is the node before it
   (`android-tree.txt`).
 - **TalkBack's own navigation can be driven.** Search (Meta) and Right on
@@ -119,12 +127,15 @@ column joined into one node.
   elements beside it (`ios.txt`, "element order", r11 to r13 and r15 to r20, where the
   "After" line comes before the columns). For the flat fixtures it was the
   same as VoiceOver's.
-- **Tab** went by position in every fixture without a focus order: Back,
-  the left button, the right button (r11, r15, r20), and with
+- **Tab** went by position in every fixture without a focus order, the
+  left button before the right one (r11, r15, r20), and with
   `OrderedTraversalPolicy` and a `FocusTraversalOrder` round each column's
-  group, in that order (r12, r19): in the widget tests, Chromium, the
-  Android emulator (`uinput` keyboard, Tab and Shift+Tab), and the iOS
-  simulator (one to three Tabs then Space; Shift+Tab not sent). In
+  group the right one first (r12, r19): in the widget tests, Chromium
+  (Back first), the Android emulator (`uinput` keyboard, Tab and
+  Shift+Tab; the first Tab after opening reached no node, then Back came
+  next in r11 and after the last button in the others), and the iOS
+  simulator (one to three Tabs then Space, which pressed nothing after one
+  Tab; Shift+Tab not sent). In
   Chromium, r11's Tab never left the page: Flutter's last control, the
   right button, is not the document's last (FL-421); Shift+Tab got out.
 - **Right-to-left** (r14, r17, and `flutter_test_round2.txt`): a

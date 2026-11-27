@@ -24,16 +24,6 @@ _PARTS = {
     "route-saves": ["Route saves: 0"],
     "list-saves": ["List saves: 0"],
 }
-# The words that tell each part from every other, in lower case: a stop must
-# say its own and none of another part's, so a stop that lands on the wrong
-# part is a wrong reading. "Route" and "Save route" are both in "Route
-# saves: 0", so the count's own word is "saves".
-_OWN = {
-    "route": "route", "park": "park at the gate", "climb": "climb the ridge", "back": "walk back",
-    "save-route": "save route", "bring": "bring", "water": "water", "map": "a map",
-    "save-list": "save list", "route-saves": "route saves", "list-saves": "list saves",
-}
-
 _MEANT = ["route", "park", "climb", "back", "save-route", "bring", "water", "map", "save-list",
           "route-saves", "list-saves"]
 
@@ -50,10 +40,25 @@ _ORDERS = {
 }
 
 
+_ROLES = ("Heading", "Button")
+
+
 def _forbidden(part):
-    """The words of every other part that this part's own words do not hold."""
+    """What this part's row must not say: every other part's whole label,
+    and every role word this part does not have.
+
+    The labels overlap ("Route" is in "Save route" and in "Route saves: 0"),
+    and talkback.py finds a phrase anywhere in what was said, so a label
+    that is part of this row's own label cannot be forbidden in it. Each of
+    those is told apart by its role instead: "Route" is a heading, and a
+    button's or a count's row must not say "Heading"; "Save route" is a
+    button, and a heading's or a count's row must not say "Button". So any
+    other part's reading heard in a row fails it (S11OrderedWalk in
+    tool/test_talkback.py tries every part's reading in every row).
+    """
     mine = " ".join(_PARTS[part]).lower()
-    return [w for p, w in _OWN.items() if p != part and w not in mine and _OWN[part] not in w]
+    labels = [_PARTS[p][0] for p in _PARTS if p != part and _PARTS[p][0].lower() not in mine]
+    return labels + [r for r in _ROLES if r not in _PARTS[part]]
 
 
 # tool/talkback.py: identifier -> (phrases that must be spoken, phrases that
@@ -101,6 +106,7 @@ VOICEOVER_WEB_METHOD = (
     "as an empty phrase and nothing wrong, is walked again, up to three walks, each "
     "shown as its own row (`-walk-<n>`). VoiceOver's own help message is left out "
     "only when the cursor is still at the stop before it and the role it names is "
-    "in that stop's reading; any other fails. "
+    "the role that stop was read with; any other fails, as does any stop past the "
+    "last expected one, empty or not. "
     "No runner retries"
 )

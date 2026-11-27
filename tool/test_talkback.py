@@ -4,6 +4,7 @@ Run: python3 -m unittest discover -s tool -p 'test_*.py'
 """
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -759,6 +760,46 @@ class S11OrderedWalk(unittest.TestCase):
         speech = dict(self.right)
         speech["s11-good-columns-5"] = ["Route saves: 0"]
         self.assertEqual(self.judge(speech)[0], "wrong")
+
+    def test_a_sibling_whose_label_overlaps_is_caught(self):
+        # Codex's cases: labels that hold each other ("Route" is in "Save
+        # route" and in "Route saves: 0") must still fail a row they are
+        # heard in, beside the row's own reading.
+        for row, extra in [
+            ("s11-good-columns-1", ["Save route", "Button"]),
+            ("s11-good-columns-1", ["Route saves: 0"]),
+            ("s11-good-columns-10", ["Route", "Heading"]),
+            ("s11-good-columns-5", ["Route", "Heading"]),
+        ]:
+            speech = dict(self.right)
+            speech[row] = self.right[row] + extra
+            verdict, reasons = self.judge(speech)
+            self.assertEqual(verdict, "wrong", (row, extra))
+            self.assertTrue(any(r.startswith(f"{row}:") for r in reasons), reasons)
+
+    def test_every_other_parts_reading_fails_every_row(self):
+        # Each part's whole reading, as TalkBack gives it, heard after the
+        # row's own reading in any row of any example, fails that row.
+        readings = {tuple(v[0]) for i, v in tb.EXPECT.items() if i.startswith(self.PREFIX)}
+        for row in self.expected:
+            for reading in readings:
+                if list(reading) == self.right[row]:
+                    continue
+                speech = dict(self.right)
+                speech[row] = self.right[row] + list(reading)
+                self.assertEqual(self.judge(speech)[0], "wrong", (row, reading))
+
+    def test_the_committed_transcript_judges_right(self):
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "docs", "evidence",
+                            "S11", "talkback-android.md")
+        speech = {}
+        with open(path, encoding="utf-8") as transcript:
+            for line in transcript:
+                m = re.match(r"\| `(s11-[^`]+)` \| (.*) \|$", line.rstrip("\n"))
+                if m:
+                    speech[m.group(1)] = m.group(2).split(" / ")
+        self.assertEqual(sorted(speech), sorted(self.expected))
+        self.assertEqual(self.judge(speech), ("right", []))
 
     def test_a_press_that_moved_nothing_is_incomplete(self):
         # Nothing said after a press: walked again, never passed.

@@ -33,8 +33,10 @@ parameters; none is a custom solution
 The order is worked out by the framework, once, for every platform: Android
 gets it as the order of the nodes in the tree with traversal links, iOS as
 the order of the accessibility elements, and the web as the order of the
-elements in the document (read in the engine's source; section 7 has what
-each screen reader was measured to do with it).
+elements in the document, with `aria-owns` where a node is a traversal
+child of a node elsewhere (read in the engine's source, `_updateTraversalParent` for `aria-owns`, and seen in the
+probe's r13; section 7 has what each screen reader was measured to do
+with it).
 
 ## 3. WCAG 2.2 success criteria
 
@@ -95,7 +97,7 @@ source, `semantics/semantics.dart` and `widgets/focus_traversal.dart`):
 | `Semantics(container: true)`, with `explicitChildNodes` | the screen reader: a container's children are sorted among themselves | `good-columns` |
 | `Semantics(sortKey: OrdinalSortKey(n))`, with a `name` to sort groups of keys apart | the screen reader, among siblings | `good-sort-keys`; the defect of `bad-key-missing` |
 | A `SemanticsSortKey` subclass of one's own | the screen reader | no: it would be a mechanism of the project's own |
-| `Semantics(traversalParentIdentifier:)` and `traversalChildIdentifier:` | the screen reader: a node read inside another, wherever it is | probe only (r13): documented as "primarily used with `OverlayPortal`" |
+| `Semantics(traversalParentIdentifier:)` and `traversalChildIdentifier:` | the screen reader: a node read inside another, wherever it is (on the web through `aria-owns`, the document's order unchanged) | probe only (r13): documented as "primarily used with `OverlayPortal`" |
 | `Semantics(textDirection:)`, and `Directionality` for text | the direction rows are read in | probe only (r14, r17); right-to-left is not covered (section 7) |
 | `FocusTraversalGroup`, `ReadingOrderTraversalPolicy` (the default), `OrderedTraversalPolicy` with `FocusTraversalOrder` and `NumericFocusOrder` or `LexicalFocusOrder`, `WidgetOrderTraversalPolicy` | the keyboard only | `FocusTraversalGroup` in `good-columns` and `bad-columns-mixed`; the rest is I02's |
 
@@ -194,9 +196,9 @@ counts included, so a stop missing, added, or out of its place fails.
 | L3 web | Every example: the example's elements in the document's order (each element after the "Example" heading with a role, a name, or text of its own), at 1280 by 720 and at 320 by 640, compared whole with the order measured; Chromium's own accessibility tree in the same order; no `aria-owns` or `aria-flowto`. The good examples are the order meant at both sizes; the bad ones are not, with both headings first and every part there. Two level 3 headings, "Route" and "Bring", and three buttons (Back, Save route, Save list) with their names. Tab goes Back, Save route, Save list, then out of Flutter's elements (FL-421), and Shift+Tab back; for each button a click, a DOM click with no pointer events, and Tab then Enter, and then Space, each from a fresh load, add one to its own count and to no other. The VoiceOver judge (`web_tests/vo/s11_vo_walks.js`, S08's) is tested on made-up walks, and each screen is checked to show the title and lines the judge expects above its heading |
 | L3 Android | Every example: the named nodes after the "Example" heading in the tree's order, to the last count (scrolling a step at a time where the end is below the view, each node kept once), with "heading" and "button" where they are: the good examples exactly the order meant; `bad-columns-mixed` the order measured, both headings first, not the order meant; `bad-key-missing` its order. Tab, from a keyboard registered with the shell's `uinput` tool, stop by stop: Back, Save route, Save list, Back, and Shift+Tab back the same way, each key sent once with a bounded wait for focus to settle. For each button, from a fresh launch each: `ACTION_CLICK` (what TalkBack's double tap performs), a tap at its centre, and Tab then Enter, and then Space, each add one to its own count and to no other. Run once at CI's 320 by 640 at 160 dpi as well |
 | L3 iOS | Every example: every part an element of its own, its label once on the screen; the two buttons buttons with their names, and no other button but Back. XCUITest's own list of elements is not checked for order: it gives an element's children after the elements beside it (probe, `ios.txt`), so the order is checked in the VoiceOver walk. For each button a tap adds one to its own count and to no other; two Tabs then Space add one to Save route's count, three to Save list's, each key sent once from a fresh launch (XCUITest cannot see Flutter's focus; the probe found the first Tab on Back). Shift+Tab is not sent on iOS (section 7) |
-| L4 TalkBack | TalkBack's own order: its focus put on the "Example" heading by action, then TalkBack's "next" pressed once per row, Search and Right on the `uinput` keyboard, with a marker logged before each press, eleven presses per example; each row is what TalkBack said after that press and must say the part meant there ("Route" and "Heading", "Save route" and "Button", and so on) and no other part's words. So a walk in a different order is a wrong reading. The good examples' rows are the order meant; the bad ones' the order measured. Each walk is judged whole (`walk_strictly`): a wrong reading fails for good, and only a walk shown to be incomplete (a row with nothing said, or cut off in the log) is walked again, up to three walks, each in the transcript. The judge is tested on made-up logs (`S11OrderedWalk` in `tool/test_talkback.py`) |
+| L4 TalkBack | TalkBack's own order: its focus put on the "Example" heading by action, then TalkBack's "next" pressed once per row, Search and Right on the `uinput` keyboard, with a marker logged before each press, eleven presses per example; each row is what TalkBack said after that press and must say the part meant there ("Route" and "Heading", "Save route" and "Button", and so on) and no other part's whole label, and no role word ("Heading", "Button") its part does not have, so that a label held in another ("Route" in "Save route" and in "Route saves: 0") is caught by its role. So a walk in a different order, or a row that also says another part, is a wrong reading. The good examples' rows are the order meant; the bad ones' the order measured. Each walk is judged whole (`walk_strictly`): a wrong reading fails for good, and only a walk shown to be incomplete (a row with nothing said, or cut off in the log) is walked again, up to three walks, each in the transcript. The judge is tested on made-up logs (`S11OrderedWalk` in `tool/test_talkback.py`) |
 | L4 VoiceOver iOS | VoiceOver's own order: everything after the "Example" heading to the end of the screen, moving with `moveForward()` (C03's walk), compared as a whole list: the good examples "Route Heading", the three steps, "Save route Button", "Bring Heading", the two items, "Save list Button", the two counts; the bad ones in their own orders. Every expected utterance is under the service's 64 characters, and the test refuses a longer one |
-| L4 VoiceOver web | VoiceOver's own order with `voiceOver.next()`, in Chromium and WebKit: every walk must read the whole screen, each stop in its place (S08's judge, copied as `web_tests/vo/s11_vo_walks.js`): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, or a walk that reached the end with any stop not read, fails for good; a walk cut short with every stop right so far, or one with a stop read as an empty phrase and nothing wrong, is walked again, up to three walks, every try logged; the cursor's position is kept at every stop, and VoiceOver's own help message ("You are currently on ...") is left out only when it is at the position of the stop before it, that stop is a real reading, and the role it names is in that reading (S08's rule); any other help message is a stop that matches nothing and fails for good, as does one in place of a stop, and the judge's cases for this are in the web tree spec. No runner retries. The expected lists were written from the document's order before any recording, and the recording of 2026-11-26 read exactly them in both browsers (section 7) |
+| L4 VoiceOver web | VoiceOver's own order with `voiceOver.next()`, in Chromium and WebKit: every walk must read the whole screen, each stop in its place (S08's judge, copied as `web_tests/vo/s11_vo_walks.js`): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, or a walk that reached the end with any stop not read, or any stop past the last expected one, empty or not, fails for good; a walk cut short with every stop right so far, or one with a stop read as an empty phrase and nothing wrong, is walked again, up to three walks, every try logged; the cursor's position is kept at every stop, and VoiceOver's own help message ("You are currently on ...") is left out only when it is at the position of the stop before it, that stop is a real reading, and the role it names is the role that reading was spoken with, read from where VoiceOver puts it ("heading level 3" first, "button" last; a text or a count has none), never a word of its label (S08's rule, tightened in review); any other help message is a stop that matches nothing and fails for good, as does one in place of a stop, and the judge's cases for this are in the web tree spec. No runner retries. The expected lists were written from the document's order before any recording, and the recording of 2026-11-26 read exactly them in both browsers (section 7) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -206,10 +208,15 @@ side-by-side columns on every platform, with each screen reader's own
 navigation, and plain HTML pages for comparison on the web.
 
 - **The reading order is the framework's, and the same on every
-  platform.** For every probe fixture the widget tests' traversal order,
-  the web document's order and Chromium's tree, the Android tree, the
-  stops TalkBack's own "next" moved to, and the stops VoiceOver's
-  `moveForward()` moved to on iOS were the same. The engine hands each
+  platform**, with one exception on the web. For nineteen of the twenty
+  probe fixtures the widget tests' traversal order, the web document's
+  order, the order of Chromium's accessibility tree, the Android tree,
+  the stops TalkBack's own "next" moved to, and the stops VoiceOver's
+  `moveForward()` moved to on iOS were the same. In r13 (a traversal
+  parent and child, below) the web document's order differs: the grafted
+  text is last in the document, and Chromium's accessibility tree puts it
+  in the left column, as every other layer does, through an `aria-owns`
+  on the left column's element. The engine hands each
   platform the framework's order (read in the engine's source: Android's
   `AccessibilityBridge` adds the children in that order and links each to
   the one before with `setTraversalAfter`; iOS's bridge builds its
@@ -239,7 +246,9 @@ navigation, and plain HTML pages for comparison on the web.
 - **A container per column needs `explicitChildNodes: true`** to keep its
   parts apart: without it the container joins the column's texts into one
   node (r02), as `Semantics.explicitChildNodes`' documentation says, which
-  every screen reader read as one stop. That is a reading order kept, with
+  TalkBack and VoiceOver on iOS read as one stop (the web was measured in
+  the document and Chromium's tree, not with VoiceOver). That is a reading
+  order kept, with
   each column one long stop. `good-columns` keeps the parts.
 - **A node with no sort key splits the keyed nodes round it**
   ([FL-340](../flutter-limitations.md#fl-340), new; `bad-key-missing`):
@@ -253,9 +262,9 @@ navigation, and plain HTML pages for comparison on the web.
   `good-sort-keys` keys each button outside its `TestId`.
 - **A sort key changes the reading order and not Tab, and a focus order
   the reverse** ([FL-420](../flutter-limitations.md#fl-420), extended):
-  with the right column keyed first (r11), every screen reader read it
-  first and Tab still went to the left column's button first, on every
-  platform; a `FocusTraversalOrder` round each column's
+  with the right column keyed first (r11), TalkBack and VoiceOver on iOS
+  read it first, as the web document and Chromium's tree have it, and
+  Tab still went to the left column's button first, on every platform; a `FocusTraversalOrder` round each column's
   `FocusTraversalGroup`, under an `OrderedTraversalPolicy` (r12), brought
   Tab into the same order. On the web, r11's Tab never left the page,
   because Flutter's last control was not the document's last
@@ -263,9 +272,13 @@ navigation, and plain HTML pages for comparison on the web.
   out. All four examples keep the last control of the two orders the
   same, and Tab leaves the page in each (web tree test).
 - **`traversalParentIdentifier` and `traversalChildIdentifier`** put a text
-  from below the columns into the left column's place in the order on
-  every platform (r13). They are documented as "primarily used with
-  `OverlayPortal`"; no example uses them.
+  from below the columns into the left column's place in the order (r13)
+  in the widget tests, the Android tree, TalkBack's moves, and VoiceOver's
+  on iOS. On the web the document keeps the text where it is, last, and
+  the left column's element names it in `aria-owns`; Chromium's
+  accessibility tree then has it in the left column. What VoiceOver on the
+  web reads there was not measured. They are documented as "primarily
+  used with `OverlayPortal`"; no example uses them.
 - **TalkBack's own navigation can be driven by a test**: Search (Meta) and
   Right on a keyboard registered with the shell's `uinput` tool moved
   TalkBack's focus to the next node, every time in the probe and in every
@@ -279,9 +292,12 @@ navigation, and plain HTML pages for comparison on the web.
   element has children: it lists an element's children after the elements
   beside it (probe, r11 to r13 and r15 to r20). The iOS tree test does not check order
   for that reason, and the VoiceOver walk does.
-- **Tab on iOS**: one Tab reached Back, two the left column's button, three
-  the right one, in every probe fixture with buttons; in r11 that is the
-  other way round from the reading order, as on the other platforms.
+- **Tab on iOS**: one Tab then Space pressed no button; two Tabs then
+  Space pressed the first button of the keyboard's order and three the
+  second, in every probe fixture with buttons: the left column's first in
+  r11, r15, and r20, the right column's first in r12 and r19, as on the
+  other platforms. In r11 that is the other way round from the reading
+  order.
 - **Right-to-left** (probe r14, r17, widget-test round 2): a
   `Directionality(rtl)` round the columns swapped their places on the
   screen and not the reading order, which still started at the left, on
