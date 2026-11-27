@@ -330,9 +330,12 @@ Skips and what they give up, in the tests:
   which the witness never says 857, so the gate cannot pass. Then
   "still 856" is checked for two seconds more (Android, iOS) or at once
   (web, widget tests), with `good-exclude-semantics` following the same
-  press as the positive control. The witness node is reachable by no
-  screen reader in the transcripts recorded since (section 7); the web
-  VoiceOver recording is to be made again with it in place.
+  press as the positive control. With the witness in place (2026-11-27),
+  the iOS VoiceOver walks, which move through the whole screen, read
+  exactly what they read before it, so VoiceOver on iOS did not stop on
+  it; the TalkBack walk moves focus by action and so cannot show whether a
+  swipe would stop on it; the web VoiceOver recording, made before the
+  witness was added, is to be made again with it in place.
 - The iOS tree tests cannot see Flutter's focus: the key tests rely on the
   probe's finding that the first Tab is on Back and the second on the next
   control; which value changed is what shows the key reached it.
