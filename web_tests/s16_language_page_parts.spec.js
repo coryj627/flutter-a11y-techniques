@@ -448,6 +448,77 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
       expect(judge(walk).verdict, `${what}: ${JSON.stringify(walk)}`).toBe(verdict);
     }
   });
+
+  // S12's regression cases, carried over to S16's screens.
+  const heading = own.length; // the index of the Example heading
+  const extra = { phrase: 'Extra', position: at(90) };
+  const injected = [...screen.slice(0, heading + 1), extra, ...screen.slice(heading + 1)];
+  // A capture that loses the move onto the element at `index` of
+  // `elements`, once: it reads the previous element again (stale), or an
+  // empty phrase at the previous bounds. A later capture there, the end
+  // witness's included, reads the element.
+  const losing = (elements, index, as = 'stale') => {
+    let lost = false;
+    return (c, el) => {
+      if (c !== index || lost) return el;
+      lost = true;
+      return as === 'stale' ? elements[index - 1] : { phrase: '', position: elements[index - 1].position };
+    };
+  };
+
+  test('the reviewer\'s frozen capture, with elements after the last expected stop, would pass without the witness, and fails with it', async () => {
+    const elements = [...screen, { phrase: 'Español button', position: at(80) }, extra];
+    const walk = await drive(elements, (c, el) => (c >= screen.length ? screen.at(-1) : el));
+    expect(walk.stops).toEqual(words);
+    expect(judgeExampleWalk(walk.stops, true, expected, own).verdict).toBe('complete');
+    expect(walk.witness.back).toEqual(screen.at(-1));
+    expect(walk.problem).toMatch(/^the end is not witnessed/);
+    expect(judge(walk).verdict).toBe('wrong');
+  });
+
+  test('a lost capture mid-walk (stale, or empty at the old bounds) is unresolved, and the walk is incomplete', async () => {
+    for (const as of ['stale', 'empty']) {
+      const walk = await drive(injected, losing(injected, heading + 1, as));
+      expect(walk.stops, as).toEqual(words);
+      expect(walk.reachedEnd, as).toBe(true);
+      expect(walk.problem, as).toBeNull();
+      // Without the unresolved read the stops would judge complete.
+      expect(judgeExampleWalk(walk.stops, true, expected, own).verdict, as).toBe('complete');
+      const phrase = as === 'empty' ? '' : EXAMPLE_HEADING;
+      expect(walk.unresolved, as).toEqual([{ after: heading + 1, phrase, position: at(heading) }]);
+      expect(judge(walk).verdict, as).toBe('incomplete');
+      expect(unresolvedRow(slug, 1, walk.unresolved), as).toBe(
+        `| \`${slug}-walk-1-unresolved\` | after stop ${heading + 1}: "${phrase}" at ${at(heading)} |`);
+    }
+  });
+
+  test('a lost capture of an expected stop is unresolved too, so the walk is walked again', async () => {
+    const lostAt = heading + 2; // Español button
+    const walk = await drive(screen, losing(screen, lostAt));
+    expect(walk.stops).toEqual(words.filter((_, i) => i !== lostAt));
+    expect(walk.unresolved).toEqual([{ after: lostAt, phrase: words[lostAt - 1], position: at(lostAt - 1) }]);
+    expect(judgeExampleWalk(walk.stops, true, expected, own).verdict).toBe('wrong');
+    expect(judge(walk).verdict).toBe('incomplete');
+  });
+
+  test('a lost capture of the stop before the last fails the witness, and is wrong for good', async () => {
+    const walk = await drive(screen, losing(screen, screen.length - 2));
+    expect(walk.unresolved).toHaveLength(1);
+    expect(walk.problem).toMatch(/^the end is not witnessed: a move back read/);
+    expect(judge(walk).verdict).toBe('wrong');
+  });
+
+  test('an unchanged read at the true end is the end, through the witness, and logged', async () => {
+    const walk = await drive(screen);
+    expect(walk.reachedEnd).toBe(true);
+    expect(unresolvedRow(slug, 1, walk.unresolved)).toBe(`| \`${slug}-walk-1-unresolved\` | none |`);
+    expect(endRow(slug, 1, walk.witness)).toBe(
+      `| \`${slug}-walk-1-end\` | back "${words.at(-2)}" at ${at(words.length - 2)} / forward "${words.at(-1)}" at ${at(words.length - 1)} |`);
+    const lost = await drive(injected, losing(injected, heading + 1));
+    expect(lost.reachedEnd).toBe(true);
+    expect(lost.witness).toEqual({ back: screen.at(-2), forward: screen.at(-1) });
+    expect(judge(lost).verdict).toBe('incomplete');
+  });
 });
 
 // The committed web VoiceOver transcript, judged again from its rows alone
@@ -500,6 +571,31 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
         transcriptRow(slug, 1, EXPECTED_STOPS[slug], 'complete', 'x'), endRow(slug, 1, witness(slug)), unresolvedRow(slug, 1, [])])), false],
       ['another example\'s screen stops', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1`')
         ? transcriptRow('good-passage', 1, [...screenStops('bad-unmarked'), EXAMPLE_HEADING, ...EXPECTED_STOPS['good-passage']], 'complete', 'x') : r))), false],
+      // S12's cases, carried over.
+      ['a walk whose title is an empty phrase', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1`')
+        ? transcriptRow('good-passage', 1, ['', ...whole('good-passage').slice(1)], 'complete', 'x') : r))), false],
+      ['an end witness whose move back read the right words at the last position', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1-end`')
+        ? endRow('good-passage', 1, { back: { phrase: witness('good-passage').back.phrase, position: witness('good-passage').forward.position }, forward: witness('good-passage').forward }) : r))), false],
+      ['an end witness whose move forward read another stop', transcript(() => right().map((r) => (r.startsWith('| `good-passage-walk-1-end`')
+        ? endRow('good-passage', 1, { back: witness('good-passage').back, forward: { phrase: 'Extra', position: witness('good-passage').forward.position } }) : r))), false],
+      ['an end witness row twice', transcript(() => [...right(), endRow('good-passage', 1, witness('good-passage'))]), false],
+      ['an end witness row for a walk that is not there', transcript(() => [...right(), endRow('good-passage', 2, witness('good-passage'))]), false],
+      ['an unresolved-reads row twice', transcript(() => [...right(), unresolvedRow('good-passage', 1, [])]), false],
+      ['an unresolved-reads row for a walk that is not there', transcript(() => [...right(), unresolvedRow('good-passage', 2, [])]), false],
+      ['a first walk with no unresolved-reads row, walked again', transcript(() => [
+        transcriptRow('good-passage', 1, whole('good-passage').slice(0, 3), 'incomplete', 'cut short'),
+        ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x))]), false],
+      ['a first walk with an unresolved read, recorded incomplete though its stops judge complete, then complete', transcript(() => [
+        transcriptRow('good-passage', 1, whole('good-passage'), 'incomplete', 'unresolved'),
+        unresolvedRow('good-passage', 1, [{ after: 3, phrase: '', position: '1, 2, 3, 4' }]),
+        ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x))]), true],
+      ['a first walk with an unresolved read recorded complete, then complete', transcript(() => [
+        transcriptRow('good-passage', 1, whole('good-passage'), 'complete', 'x'),
+        unresolvedRow('good-passage', 1, [{ after: 3, phrase: '', position: '1, 2, 3, 4' }]),
+        ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x))]), false],
+      ['a wrong first walk followed by a complete one', transcript(() => [
+        transcriptRow('good-passage', 1, ['x'], 'wrong', 'x'), unresolvedRow('good-passage', 1, []),
+        ...rowsOf('good-passage', 2), ...Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x))]), false],
     ];
     for (const [what, text, ok] of cases) {
       const problems = judgeTranscript(text);
