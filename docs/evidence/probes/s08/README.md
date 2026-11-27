@@ -242,7 +242,10 @@ walk of 16, in WebKit, on a first stop read as an empty phrase with every
 later stop right (`voiceover-web-round2-fail.md.txt`, `bad-tile-in-item`;
 `voiceover-web-round3-fail.md.txt`, `bad-one-text`; each `.log.txt` holds
 the same text). The judge now walks such a capture again; the spec's
-section 7 has the diagnosis.
+section 7 has the diagnosis. The fourth failed one walk, WebKit,
+`good-numbered`, on VoiceOver's help message for the list after the last
+stop (`voiceover-web-round4-fail.md.txt`, its log the same text); the walk
+and the judge now leave a help message out.
 
 ## What the examples take from this
 

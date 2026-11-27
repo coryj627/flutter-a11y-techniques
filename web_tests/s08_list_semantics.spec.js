@@ -261,6 +261,9 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
   const item = (text, i) => `${text} empty group (${i + 1} of 3) ${i + 1} of 3`;
   const [milk, eggs, bread] = GROCERIES.map(item);
   const expected = ['list 3 items', milk, eggs, bread, 'end of list'];
+  // As the fourth recording read it (WebKit, good-numbered).
+  const HELP = 'You are currently on a list, inside of web content. To move between items in this list, press '
+    + 'Control-Option-Right Arrow or Control-Option-Left Arrow. To exit this web area, press Control-Option-Shift-Up Arrow.';
   const screen = (...content) => [...own, EXAMPLE_HEADING, ...content];
   const cases = [
     ['the whole screen, every stop in its place', screen(...expected), true, 'complete'],
@@ -280,6 +283,13 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['an empty first stop and a walk that reached the end short', ['', ...own.slice(1), EXAMPLE_HEADING, 'list 3 items'], true, 'wrong'],
     ['an empty phrase after the last expected stop', screen(...expected, ''), true, 'incomplete'],
     ['every stop an empty phrase', Array(8).fill(''), true, 'incomplete'],
+    // VoiceOver's help message is not a stop of the page.
+    ['the fourth recording: the list\'s help message after the last stop', screen(...expected, HELP), true, 'complete'],
+    ['a help message in the middle', screen('list 3 items', milk, HELP, eggs, bread, 'end of list'), true, 'complete'],
+    ['a help message in place of an expected stop', screen('list 3 items', milk, HELP, bread, 'end of list'), true, 'wrong'],
+    ['a help message in place of the last stop', screen('list 3 items', milk, eggs, bread, HELP), true, 'wrong'],
+    ['only help messages', [HELP, HELP], true, 'wrong'],
+    ['a help message and a wrong reading', screen('list 3 items', milk, HELP, 'Eggs', bread, 'end of list'), true, 'wrong'],
     ['no title', [own[1], EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['no heading', [...own, ...expected], true, 'wrong'],
     ['an empty walk cut short', [], false, 'incomplete'],

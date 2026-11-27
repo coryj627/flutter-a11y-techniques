@@ -4,6 +4,8 @@
 // made-up walks in CI. A copy of C04's c04_vo_walks.js (not imported: that
 // file is another technique's), with S08's screens; the judge is the same.
 
+import { VO_HELP } from './vo_logic.js';
+
 /** The heading every example screen has, as VoiceOver reads it. */
 export const EXAMPLE_HEADING = 'heading level 2 Example';
 
@@ -73,6 +75,15 @@ export const screenStops = (slug) => {
  * - "complete": the walk reached the end and read exactly the whole screen,
  *   with no empty stop.
  *
+ * A stop that is VoiceOver's help message ("You are currently on a list,
+ * inside of web content. …", VO_HELP) is left out first, wherever it is:
+ * it says where the cursor already is. Its words are never checked, and a
+ * help message given in place of an element's own speech leaves that
+ * element unread, which fails as a missing stop. The fourth recording
+ * (docs/evidence/probes/s08/voiceover-web-round4-fail.md.txt, WebKit,
+ * good-numbered) read every expected stop and then one more, the list's
+ * help message, after "end of list".
+ *
  * An empty stop holds the place of the stop expected there: the walks that
  * gave one (the second and third recordings, WebKit, the screen's level 1
  * heading; docs/evidence/probes/s08/voiceover-web-round2-fail.md.txt and
@@ -82,7 +93,15 @@ export const screenStops = (slug) => {
  * judges count an empty phrase as a wrong stop; C02's lets it stand for
  * WebKit's level 1 heading. S08's lets it stand for nothing.
  */
-export function judgeExampleWalk(stops, reachedEnd, expected, screen = []) {
+export function judgeExampleWalk(walked, reachedEnd, expected, screen = []) {
+  // VoiceOver's own help message (VO_HELP, vo_logic.js) is its speech about
+  // where its cursor already is, not a stop of the page: it is left out
+  // before the walk is judged. The walk itself already puts the phrase
+  // logged for a move in place of a help message (walkToEnd's
+  // `loggedForHelp`, phraseForMove); what is left out here is a help
+  // message that came anyway, such as one given after a pause on the last
+  // element, where the cursor no longer moves.
+  const stops = walked.filter((stop) => !VO_HELP.test(stop));
   const whole = [...screen, EXAMPLE_HEADING, ...expected];
   const empty = [];
   for (let i = 0; i < stops.length; i++) {

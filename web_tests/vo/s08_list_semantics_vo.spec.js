@@ -70,7 +70,10 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
     await expect(page.getByRole('heading', { name: 'Example', exact: true, level: 2 })).toBeVisible();
     await page.waitForTimeout(600);
     const { verdict, reason, walks } = await runWalks(
-      () => walkToEnd(page, voiceOver, browserName, 40),
+      // A help message VoiceOver gives for a move is replaced by the phrase
+      // Guidepup logged for it (vo_helpers.js, phraseForMove), as the form
+      // techniques' walks do; one that comes anyway is left out by the judge.
+      () => walkToEnd(page, voiceOver, browserName, 40, { loggedForHelp: true }),
       (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug)),
       {
         log: (walk, stops, judged) => {

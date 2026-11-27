@@ -274,7 +274,7 @@ their text.
 | L3 iOS | The labels of the example's elements after the "Example" heading, in order: `good-bulleted` exactly the three lines, each the label of one element; `good-numbered` the steps; `good-material` the three tiles, each a button with its identifier and label; `good-cupertino` "Groceries" and the three items, and no button but Back. For each tile of `good-material` and `bad-tile-in-item`: a tap opens it; and Tabs then Enter, and then Space, each key sent once from a fresh launch, open it (XCUITest cannot see Flutter's focus; the first Tab goes to Back, as in the widget tests). Bad: `bad-one-text` one element with the three lines, and no element named by one of them; `bad-no-list` the three lines; `bad-tile-in-item` three buttons. The iOS tree test reads labels and types, not the hierarchy, and XCUITest gives no traits; an element with no label is left out (the probe found no element for an unnamed list on iOS, and a list named by a header, p25, as an element of type other); the VoiceOver walk is what shows that nothing says "list" |
 | L4 TalkBack | Focus moved to each item of each list, in order: the first item of each list with its name and "In list", the others with their name and no "In list", and none with the list's size or an item's place ("3 items", "1 of 3"; FL-311); `good-material`'s and `bad-tile-in-item`'s tiles with "Button", and the line after them with "Out of list"; `good-cupertino`'s list itself named "Groceries" with "List"; `bad-one-text` the three lines as one reading, with no "In list"; `bad-no-list` each line with no "In list"; `bad-lazy-list` the first two orders with no "In list" and no size or place (FL-313). Each walk is judged whole (`walk_strictly` in `tool/talkback.py`, as C18's is): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, each in the transcript |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk, `C03Walk`): each item by its text alone, with no word about a list (FL-310); the tiles with "Button" and the "Chosen" line; `good-cupertino` "Groceries" then the items; `bad-one-text` the three lines as one utterance; `bad-lazy-list` the measured stops. Every expected utterance is under the service's 64 characters, and a test refuses a longer one |
-| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s08_vo_walks.js`, a copy of C04's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short with every stop right so far is walked again, up to three walks, every walk logged. No runner retries. A stop read as an empty phrase is a failed capture, not a reading: the walk is incomplete and walked again (at most three walks, each logged), an empty phrase never passes, and a walk that also read the wrong words is wrong (the principal's rule of 2026-11-26; regression cases in the web tree spec: an empty first stop walked again, an empty first stop and then a wrong re-walk failing, three empty captures failing). In Chromium and WebKit. The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted. The judge's regression cases in the web tree spec include the first recording's prediction, now a wrong walk, and the crash dialog |
+| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s08_vo_walks.js`, a copy of C04's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short with every stop right so far is walked again, up to three walks, every walk logged. No runner retries. VoiceOver's own help message ("You are currently on …", `VO_HELP` in `vo_logic.js`) is not a stop of the page: the walk puts the phrase Guidepup logged for a move in place of one (`walkToEnd`'s `loggedForHelp`, as the form techniques' walks do), and the judge leaves out any that comes anyway, wherever it is; a help message in place of an element's own speech leaves that element unread, which fails (regression cases in the web tree spec: after the last stop and in the middle, complete; in place of an expected stop, wrong). A stop read as an empty phrase is a failed capture, not a reading: the walk is incomplete and walked again (at most three walks, each logged), an empty phrase never passes, and a walk that also read the wrong words is wrong (the principal's rule of 2026-11-26; regression cases in the web tree spec: an empty first stop walked again, an empty first stop and then a wrong re-walk failing, three empty captures failing). In Chromium and WebKit. The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted. The judge's regression cases in the web tree spec include the first recording's prediction, now a wrong walk, and the crash dialog |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -411,6 +411,32 @@ lists in Chromium and in Safari on iOS.
   the judge: S08's counted the empty reading as wrong. It now counts it as
   a failed capture, walked again, as the principal set out. Nothing in
   the walk's start was changed.
+- **The fourth web recording failed one walk of 16 on VoiceOver's help
+  message**, WebKit, `good-numbered`
+  (`docs/evidence/probes/s08/voiceover-web-round4-fail.md.txt`, its log
+  the same text): every expected stop was read in its place, and then,
+  after "end of list", one more stop, "You are currently on a list, inside
+  of web content. To move between items in this list, press
+  Control-Option-Right Arrow or Control-Option-Left Arrow. To exit this web
+  area, press Control-Option-Shift-Up Arrow.", which the judge counted as
+  read after the last expected stop. No stop was empty. The shared walk
+  counts a move as a stop when the cursor moves or a new phrase is spoken
+  (`stopsToEnd`, `vo_logic.js`), so a help message read after the last
+  element is a new phrase and becomes a stop, whether or not the cursor
+  moved; the log holds no cursor positions, so which it was is not
+  known.
+  `vo_helpers.js` already says that VoiceOver gives its help for an
+  element about a second after the element, and the form techniques
+  replace a help message with the phrase Guidepup logged for the move
+  (`phraseForMove`). S08 now does both: the walk uses `loggedForHelp`, and
+  the judge leaves out a help message wherever it comes. No shared file
+  was changed.
+- **What leaving out the help message gives up.** Its words are never
+  checked: here it said "on a list", which is VoiceOver telling where its
+  cursor is, and a help message that named the wrong role would pass
+  unseen. A help message that came in place of an element's own speech is
+  not passed over: the element is then missing, and the walk fails. Nor
+  can a walk of help messages alone pass.
 - **What a re-walk can hide.** A stop VoiceOver sometimes gives no phrase
   for (WebKit's title, here) passes when a later walk of the same example
   reads it; the empty try is in the transcript, as every try is, but does
@@ -480,7 +506,7 @@ What the tests skip or cannot see, and what each gives up:
   in one snapshot's order, not the hierarchy; the VoiceOver walk shows what is said.
 
 **Not done yet.** A passing web VoiceOver recording with the judge that
-walks an empty capture again. What VoiceOver says for a plain HTML `li`
+walks an empty capture again and leaves out VoiceOver's help message. What VoiceOver says for a plain HTML `li`
 in the same browsers (FL-315). Which stops a TalkBack
 swipe makes, and whether it scrolls a lazy list. VoiceOver's own
 activation on iOS, which XCUITest cannot make (C04 probe round 3): the

@@ -91,5 +91,7 @@ VOICEOVER_WEB_METHOD = (
     "good; only a walk cut short before the end with every stop right so far, or "
     "one with a stop read as an empty phrase (a failed capture, which never "
     "passes) and nothing wrong read, is walked again, up to three walks, each "
-    "shown as its own row (`-walk-<n>`). No runner retries"
+    "shown as its own row (`-walk-<n>`). VoiceOver's own help message (\"You are "
+    "currently on ...\") is not a stop: the walk puts the phrase logged for the move "
+    "in its place, and the judge leaves out one that comes anyway. No runner retries"
 )
