@@ -1,0 +1,118 @@
+// S06 probe in widget tests (throwaway, not committed; kept as
+// docs/evidence/probes/s06/probe_test.dart.txt). For each fixture of
+// lib/probe.dart, as Android and as iOS: every title the app sends
+// (`SystemChrome.setApplicationSwitcherDescription`) on the launcher, after
+// Open, and after Back; and the semantics nodes that scope or name a route,
+// with the name Android's and iOS's engines would take for the last route
+// (the first non-empty label of a node with namesRoute, depth first).
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  final ids = [for (var i = 1; i <= 13; i++) 'p${'$i'.padLeft(2, '0')}'];
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    for (final id in ids) {
+      testWidgets('$id ${platform.name}', (tester) async {
+        debugDefaultTargetPlatformOverride = platform;
+        final titles = <String>[];
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          (call) async {
+            if (call.method == 'SystemChrome.setApplicationSwitcherDescription') {
+              titles.add('"${(call.arguments as Map)['label']}"');
+            }
+            return null;
+          },
+        );
+        final handle = tester.ensureSemantics();
+        tester.binding.platformDispatcher.defaultRouteNameTestValue = '/$id';
+        await tester.pumpWidget(const ProbeApp());
+        await tester.pumpAndSettle();
+        void report(String step) {
+          final routes = <String>[];
+          String? lastName;
+          var lastRoute = '';
+          String? nameIn(SemanticsNode n) {
+            final d = n.getSemanticsData();
+            if (d.flagsCollection.namesRoute && d.label.isNotEmpty) return d.label;
+            String? found;
+            n.visitChildren((c) {
+              found ??= nameIn(c);
+              return found == null;
+            });
+            return found;
+          }
+
+          void visit(SemanticsNode n) {
+            final d = n.getSemanticsData();
+            if (d.flagsCollection.scopesRoute || d.flagsCollection.namesRoute) {
+              routes.add(
+                '#${n.id} scopesRoute=${d.flagsCollection.scopesRoute} '
+                'namesRoute=${d.flagsCollection.namesRoute} '
+                'header=${d.flagsCollection.isHeader} '
+                'label="${d.label}"',
+              );
+            }
+            if (d.flagsCollection.scopesRoute) {
+              lastRoute = '#${n.id}';
+              lastName = nameIn(n);
+            }
+            n.visitChildren((c) {
+              visit(c);
+              return true;
+            });
+          }
+
+          visit(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!);
+          debugPrint(
+            'S06TEST $id ${platform.name} $step: titles sent ${titles.isEmpty ? '(none)' : titles.join(', ')}; '
+            'last route $lastRoute named ${lastName == null ? '(nothing)' : '"$lastName"'}; '
+            'route nodes: ${routes.join(' | ')}',
+          );
+          titles.clear();
+        }
+
+        report('launcher');
+        await tester.tap(find.text('$id Open'));
+        await tester.pumpAndSettle();
+        report('opened');
+        if (id == 'p10') {
+          await tester.tap(find.text('p10 Settings').last);
+          await tester.pumpAndSettle();
+          report('second destination');
+        }
+        if (id == 'p13') {
+          await tester.tap(find.text('p13 Show folders'));
+          await tester.pumpAndSettle();
+          report('drawer open');
+          await tester.tapAt(const Offset(780, 300));
+          await tester.pumpAndSettle();
+          report('drawer closed');
+          await tester.tap(find.byTooltip('Open navigation menu'));
+          await tester.pumpAndSettle();
+          report('drawer by menu button');
+          return _end(handle);
+        }
+        final back = find.byTooltip('Back');
+        if (back.evaluate().isEmpty) {
+          await tester.tap(find.byType(CupertinoNavigationBarBackButton));
+        } else {
+          await tester.tap(back);
+        }
+        await tester.pumpAndSettle();
+        report('back');
+        _end(handle);
+      });
+    }
+  }
+}
+
+void _end(SemanticsHandle handle) {
+  handle.dispose();
+  debugDefaultTargetPlatformOverride = null;
+}

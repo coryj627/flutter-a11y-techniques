@@ -4,6 +4,7 @@ Run: python3 -m unittest discover -s tool -p 'test_*.py'
 """
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -554,7 +555,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S08", "S09", "S10"})
+        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
@@ -710,6 +711,215 @@ class C06SilentClicks(unittest.TestCase):
         speech = dict(self.right)
         speech["c06-bad-expand-icon-closed"] = self.right["c06-bad-expand-icon-closed"] + ["Orders ship in two days."]
         self.assertEqual(self.judge(speech), ("right", []))
+
+
+class S06WholeUtterances(unittest.TestCase):
+    """S06 judges a screen's title as a whole utterance ("== A / B" and
+    "^= A" in said()), because "Orders" is inside "Open orders". The cases
+    are the false passes Codex reproduced on the word match, review of
+    788a911, and the committed transcript, which must still be right."""
+    TRANSCRIPT = os.path.join(tb.ROOT, "docs", "evidence", "S06", "talkback-android.md")
+
+    def transcript(self):
+        """The decided walk of the committed transcript: element -> fragments."""
+        rows = {}
+        with open(self.TRANSCRIPT) as f:
+            for line in f:
+                m = re.match(r"^\| `(s06-[^`]+)` \| (.*) \|$", line.rstrip("\n"))
+                if m and m.group(1) not in rows:
+                    rows[m.group(1)] = m.group(2).split(" / ")
+        return rows
+
+    def test_the_committed_transcript_is_still_right(self):
+        rows = self.transcript()
+        expected = [i for i in tb.EXPECT if i.startswith("s06-")]
+        self.assertEqual(sorted(rows), sorted(expected))
+        for ident in expected:
+            self.assertEqual(tb.problems(ident, rows[ident]), [], ident)
+
+    def test_late_launcher_speech_in_place_of_the_title_is_wrong(self):
+        # Codex's first case: "Orders" was found inside "Open orders".
+        self.assertTrue(tb.problems("s06-good-material-opened", ["Open orders", "Back", "Button"]))
+        self.assertTrue(tb.problems("s06-good-material-closed",
+                                    ["Open orders", "Button", "Material screen title"]))
+
+    def test_a_closing_row_is_judged_by_its_title_alone(self):
+        # Where focus went after the title varied between recordings
+        # (docs/evidence/probes/s06/talkback-round2-fail.md.txt): recorded,
+        # not judged. A wrong or missing title is still wrong.
+        title = "Cupertino screen title"
+        for rest in (["Open orders", "Button"], ["Back", "Button", "Double-tap to activate"]):
+            self.assertEqual(tb.problems("s06-good-cupertino-closed", [title] + rest), [], rest)
+        self.assertTrue(tb.problems("s06-good-cupertino-closed", ["Material screen title", "Back"]))
+        self.assertTrue(tb.problems("s06-good-cupertino-closed", ["Back", "Button", title]))
+
+    def test_a_title_where_none_is_expected_is_wrong(self):
+        # Codex's second case: bad-no-title given a title it does not have.
+        self.assertTrue(tb.problems("s06-bad-no-title-opened", ["Details", "Back", "Button"]))
+        self.assertTrue(tb.problems("s06-bad-cupertino-unnamed-opened", ["Orders", "Back", "Button"]))
+
+    def test_a_contradictory_extra_announcement_is_wrong(self):
+        for row in (["Orders", "Details", "Back", "Button"],
+                    ["Orders", "Back", "Button", "Details"],
+                    ["Details", "Orders", "Back", "Button"]):
+            self.assertTrue(tb.problems("s06-good-material-opened", row), row)
+        self.assertTrue(tb.problems("s06-bad-vague-title-opened", ["Details", "Orders", "Back", "Button"]))
+
+    def test_the_usage_hint_only_at_the_end(self):
+        hint = "Double-tap to activate"
+        self.assertEqual(tb.problems("s06-good-material-opened", ["Orders", "Back", "Button", hint]), [])
+        self.assertEqual(tb.problems("s06-good-cupertino-opened", ["Orders", "Back", "Button"]), [])
+        self.assertTrue(tb.problems("s06-good-material-opened", ["Orders", hint, "Back", "Button"]))
+        self.assertTrue(tb.problems("s06-good-material-opened", ["Orders", "Back"]))
+
+    def test_the_empty_pane_title(self):
+        self.assertEqual(tb.problems("s06-bad-no-title-opened", [" ", "Back", "Button"]), [])
+        self.assertTrue(tb.problems("s06-bad-no-title-opened", ["Back", "Button"]))
+
+    def test_the_word_forms_are_unchanged(self):
+        self.assertTrue(tb.said(["open orders"], "Orders"))
+        self.assertFalse(tb.said(["open orders"], "== Orders"))
+        self.assertFalse(tb.said(["open orders", "orders"], "^= Orders"))
+        self.assertTrue(tb.said(["orders", "open orders"], "^= Orders"))
+
+
+class Cut(str):
+    """An utterance of a made-up row that is cut off in the log after what
+    it holds: its captured lines, separated by line breaks (logcat splits a
+    fragment at its line breaks)."""
+
+
+class S06CutOffRows(unittest.TestCase):
+    """A row whose capture was cut off is still judged on what was captured
+    of it, for the whole-utterance forms (tb.whole_wrong), each utterance in
+    its own place: one captured whole must be the one allowed there, and one
+    cut off must have the start of it. A row shown wrong fails for good, and
+    a later right walk cannot erase it. From the log to the report, through
+    parse_speech, walk_strictly, and strict_report. Codex's cases: review of
+    aede22a ("Details / Back / Button" whole, then a cut-off hint) and of
+    f554e6e ("Orders / Back / Button" then "Details" cut off; "Details" cut
+    off first, then "Back", "Button" whole)."""
+    OK = mock.Mock(returncode=0, stdout="")
+    TAG = "V talkback: SpeechControllerImpl: "
+    HINT = "Double-tap to activate"
+
+    def setUp(self):
+        self.right = S06WholeUtterances().transcript()
+
+    def log(self, ident=None, row=()):
+        """A whole walk, the committed transcript's, but for `ident`, which
+        speaks `row`: each item a whole utterance, or a Cut."""
+        lines = []
+        for i, fragments in self.right.items():
+            lines.append(f"11-13 10:00:00.000  1  1 I S06TB   : FOCUS {i}")
+            for f in (row if i == ident else fragments):
+                if isinstance(f, Cut):
+                    first, *rest = f.split("\n")
+                    lines.append(f'{self.TAG}Speaking fragment text="{first}')
+                    lines += [f"{self.TAG}{line}" for line in rest]
+                else:
+                    lines.append(f'{self.TAG}Speaking fragment text="{f}", utteranceId=x')
+        lines.append("11-13 10:00:01.000  1  1 I S06TB   : END slug")
+        return "\n".join(lines)
+
+    def run_walks(self, *logs):
+        logs = iter(logs)
+        tries = tb.walk_strictly("s06-", lambda: (self.OK, next(logs)))
+        failures, _ = tb.strict_report(tries)
+        return tries, failures
+
+    def assert_fails_for_good(self, ident, row):
+        bad = self.log(ident, row)
+        if any(isinstance(f, Cut) for f in row):
+            self.assertIn(tb.INCOMPLETE, tb.parse_speech(bad)[ident], row)
+        tries, failures = self.run_walks(bad, self.log())
+        self.assertEqual(len(tries), 1, f"{ident} {row}: walked again after a wrong reading")
+        self.assertEqual(tries[0].verdict, "wrong", row)
+        self.assertTrue(failures, row)
+        self.assertTrue(all(f.startswith(ident) for f in failures), failures)
+
+    def assert_walked_again_and_passes(self, ident, row):
+        tries, failures = self.run_walks(self.log(ident, row), self.log())
+        self.assertEqual([t.verdict for t in tries], ["incomplete", "right"], (ident, row))
+        self.assertEqual(failures, [])
+
+    def test_the_committed_transcript_is_right(self):
+        tries, failures = self.run_walks(self.log())
+        self.assertEqual([t.verdict for t in tries], ["right"])
+        self.assertEqual(failures, [])
+
+    # Wrong utterances captured whole beside a cut-off one (aede22a).
+
+    def test_a_wrong_opening_title_with_a_truncated_hint_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-opened", ["Details", "Back", "Button", Cut("Double-tap to")])
+
+    def test_a_missing_opening_title_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-opened", ["Back", "Button", Cut("Double-tap to")])
+
+    def test_an_extra_title_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-opened",
+                                   ["Orders", "Details", "Back", "Button", Cut("Double-tap to")])
+        self.assert_fails_for_good("s06-bad-no-title-opened", ["Orders", "Back", "Button", Cut("Double-tap to")])
+
+    def test_a_wrong_closing_title_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-closed", ["Screen titled Details", "Open orders", Cut("Button")])
+
+    # What was captured of a cut-off utterance (f554e6e).
+
+    def test_a_wrong_cut_off_opening_title_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-opened", [Cut("Details"), "Back", "Button"])
+        self.assert_fails_for_good("s06-bad-vague-title-opened", [Cut("Orders"), "Back", "Button"])
+
+    def test_a_wrong_cut_off_closing_title_fails_for_good(self):
+        self.assert_fails_for_good("s06-good-material-closed", [Cut("Screen titled"), "Open orders", "Button"])
+
+    def test_an_extra_cut_off_title_after_a_whole_row_fails_for_good(self):
+        # In the hint's place, and beyond it.
+        self.assert_fails_for_good("s06-good-material-opened", ["Orders", "Back", "Button", Cut("Details")])
+        self.assert_fails_for_good("s06-good-material-opened",
+                                   ["Orders", "Back", "Button", self.HINT, Cut("Orders")])
+        # Beyond the last place even with nothing captured of it.
+        self.assert_fails_for_good("s06-good-material-opened", ["Orders", "Back", "Button", self.HINT, Cut("")])
+
+    def test_two_cut_off_utterances_in_one_row(self):
+        self.assert_walked_again_and_passes("s06-good-material-opened", [Cut("Ord"), "Back", Cut("But")])
+        self.assert_fails_for_good("s06-good-material-opened", [Cut("Ord"), "Back", Cut("Details")])
+        self.assert_fails_for_good("s06-good-material-opened", [Cut("Det"), "Back", Cut("But")])
+
+    def test_a_cut_off_utterance_in_the_middle_with_whole_ones_after_it(self):
+        self.assert_walked_again_and_passes("s06-good-material-opened", ["Orders", Cut("Ba"), "Button"])
+        self.assert_fails_for_good("s06-good-material-opened", ["Orders", Cut("Ba"), "Details"])
+        self.assert_fails_for_good("s06-good-material-opened", ["Orders", Cut("Details"), "Button"])
+
+    def test_the_blank_pane_title(self):
+        self.assert_walked_again_and_passes("s06-bad-no-title-opened", [Cut(" "), "Back", "Button"])
+        self.assert_walked_again_and_passes("s06-bad-no-title-opened", [" ", "Back", Cut("Bu")])
+        self.assert_fails_for_good("s06-bad-no-title-opened", [Cut("Det"), "Back", "Button"])
+        self.assert_fails_for_good("s06-bad-cupertino-unnamed-opened", [Cut("Orders"), "Back", "Button"])
+
+    def test_an_empty_capture_proves_nothing(self):
+        self.assert_walked_again_and_passes("s06-good-material-opened", [Cut(""), "Back", "Button"])
+        self.assert_walked_again_and_passes("s06-good-material-closed", [Cut(""), "Open orders", "Button"])
+
+    def test_a_capture_over_lines_is_compared_with_its_line_breaks_as_spaces(self):
+        self.assert_walked_again_and_passes("s06-good-material-closed", [Cut("Material screen\ntitle")])
+        self.assert_fails_for_good("s06-good-material-closed", [Cut("Material screen\ntitled")])
+
+    def test_compatible_cut_offs_are_walked_again_and_then_pass(self):
+        # The positive controls Codex asked for, and the earlier ones.
+        self.assert_walked_again_and_passes("s06-good-material-opened", [Cut("Ord"), "Back", "Button"])
+        self.assert_walked_again_and_passes("s06-good-material-opened", ["Orders", "Back", "Button", Cut("Double-t")])
+        self.assert_walked_again_and_passes("s06-good-material-opened", [Cut("Ord")])
+        self.assert_walked_again_and_passes("s06-good-material-closed", ["Material screen title", Cut("Open")])
+        self.assert_walked_again_and_passes("s06-good-material-closed", [Cut("Material scr")])
+
+    def test_the_usage_hint_once_at_most(self):
+        # Captured whole, a second hint is an utterance more than the row
+        # may hold (said(), the whole row), and a cut-off one after a
+        # whole hint as well (whole_wrong).
+        self.assert_fails_for_good("s06-good-material-opened", ["Orders", "Back", "Button", self.HINT, self.HINT])
+        self.assert_fails_for_good("s06-good-material-opened",
+                                   ["Orders", "Back", "Button", self.HINT, Cut("Double-t")])
 
 
 class FakeSettingsScreen:
