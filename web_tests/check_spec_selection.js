@@ -10,6 +10,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// The JSON listing of the default config passed execFileSync's 1 MiB default
+// (ENOBUFS) once the suite reached about 1.05 MB of listing.
+const LISTING_BUFFER = 64 * 1024 * 1024;
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 const voDir = path.join(here, 'vo');
 const GUARD = 'FLUTTER_A11Y_VOICEOVER_RUN';
@@ -28,7 +32,7 @@ const environment = () => {
 /** The spec files a config selects, relative to web_tests/, sorted. */
 function listed(config) {
   const args = ['playwright', 'test', '--list', '--reporter=json', ...(config ? ['-c', config] : [])];
-  const out = execFileSync('npx', args, { cwd: here, env: environment(), encoding: 'utf8', stdio: QUIET });
+  const out = execFileSync('npx', args, { cwd: here, env: environment(), encoding: 'utf8', stdio: QUIET, maxBuffer: LISTING_BUFFER });
   const report = JSON.parse(out);
   assert.deepEqual(report.errors, [], `errors while listing ${config ?? 'the default config'}`);
   const root = report.config.rootDir;
@@ -55,7 +59,7 @@ test('naming a VoiceOver or Widgetbook spec selects nothing with the default con
     const args = ['playwright', 'test', '--list', '--reporter=json', filter];
     let out;
     try {
-      out = execFileSync('npx', args, { cwd: here, env: environment(), encoding: 'utf8', stdio: QUIET });
+      out = execFileSync('npx', args, { cwd: here, env: environment(), encoding: 'utf8', stdio: QUIET, maxBuffer: LISTING_BUFFER });
     } catch (error) {
       out = error.stdout; // "No tests found" exits non-zero
     }
