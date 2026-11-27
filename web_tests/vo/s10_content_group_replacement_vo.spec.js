@@ -11,67 +11,75 @@
 // phrase) with nothing wrong read in it (runWalks and judgeExampleWalk in
 // s10_vo_walks.js, a copy of S08's judge). Every walk must read the whole
 // screen, the title and the description, the "Example" heading, and every
-// expected stop after it, each in its place: a wrong stop, or a walk that
-// reached the end with any expected stop not read, fails the test for good,
-// and every try is logged, so every attempt is in the transcript.
+// expected stop after it, each in its place: a wrong stop, a stop past the
+// expected end (empty or not), or a walk that reached the end with any
+// expected stop not read, fails the test for good, and every try is logged,
+// so every attempt is in the transcript. A help message is left out only
+// when it is at the position of the stop before it and names that stop's
+// spoken role (helpAfterStop).
 //
-// The expected lists were written before any S10 recording, from the
-// semantics tree the web probe and the tree spec measured
-// (docs/evidence/probes/s10/web.txt) and from what VoiceOver read for the
-// same kinds of element in other techniques' transcripts: a text element as
-// its text, a button with "button", and a progress bar as its name, then its
-// value as a percentage, then "progress indicator"
-// (docs/evidence/C26/voiceover-web.md). They are predictions until the
-// first recording.
+// The expected lists (EXPECTED_STOPS and EXPECTED_AFTER_ADDING in
+// s10_vo_walks.js) were written before any S10 recording; they are
+// predictions until the first recording.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
-import { walkToEnd } from './vo_helpers.js';
-import { EXAMPLE_HEADING, judgeExampleWalk, runWalks, screenStops } from './s10_vo_walks.js';
+import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
+import {
+  EXAMPLE_HEADING, EXPECTED_AFTER_ADDING, EXPECTED_STOPS, judgeExampleWalk, runWalks, screenStops,
+} from './s10_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
 const WORDS = 'Rating: 3.4 out of 5 stars, based on 856 reviews';
 const WORDS_AFTER = 'Rating: 3.4 out of 5 stars, based on 857 reviews';
-const ADD = 'Add a 5-star review button';
-// The bar row's texts, as one name (Chromium joins the lines with spaces).
-const PIECES = 'Rating: 3.4 / 5 Reviews: 856';
 
-// slug -> everything VoiceOver speaks after the "Example" heading, to the
-// end of the screen, in order, one entry for each element its cursor stops
-// on. Because every stop is listed, the lists also show what is not spoken.
-const EXAMPLES = {
-  // One text that says what the rating means; nothing of its pieces.
-  'good-exclude-semantics': [WORDS, ADD],
-  'good-hidden-pieces': [WORDS],
-  'good-stars': [WORDS],
-  // Bad examples: the defect must be audible where the web shows it.
-  // The two numbers, and nothing for the stars.
-  'bad-pieces': ['3.4', '(856)'],
-  // One progress bar named by the pieces, its value in its name (FL-037)
-  // and again as a percentage (FL-027), as C26's bars were read.
-  'bad-merged': [`${PIECES} 68 68% progress indicator`],
-  // The label, then the pieces again, as one progress bar.
-  'bad-not-excluded': [`${WORDS} ${PIECES} 68 68% progress indicator`],
-  // The rating, and the count; no Reviews button.
-  'bad-hides-control': [WORDS, 'Reviews opened: 0'],
-  'bad-stale': [WORDS, ADD],
-};
-
-// The same screens after a 5-star review is added with a mouse click on
-// the button, before VoiceOver starts: the good replacement follows the
-// row, the stale one does not.
-const AFTER_ADDING = {
-  'good-exclude-semantics': [WORDS_AFTER, ADD],
-  'bad-stale': [WORDS, ADD],
-};
+/**
+ * walkToEnd (vo_helpers.js), keeping the cursor's position at each stop, so
+ * that the judge can tie a help message to the stop before it. A copy of
+ * S08's walkWithPositions: walkToEnd with no moves starts it exactly as the
+ * shared walk does (from Back, once VoiceOver is quiet), and the moves
+ * follow its rule (stopsToEnd in vo_logic.js: a move is a stop when the
+ * cursor moved or a new phrase was spoken; two moves in a row that do
+ * neither are the end), with `loggedForHelp` as the form techniques use it
+ * (phraseForMove). The one difference is that each stop's position is
+ * kept. Resolves to `{ stops, positions, reachedEnd }`.
+ */
+async function walkWithPositions(page, voiceOver, browserName, max = 40) {
+  await walkToEnd(page, voiceOver, browserName, 0);
+  const stops = [];
+  const positions = [];
+  let position = await cursorBounds();
+  let unmoved = 0;
+  for (let i = 0; i < max; i++) {
+    await voiceOver.next();
+    let phrase = await lastPhrase();
+    if (VO_HELP.test(phrase)) {
+      phrase = phraseForMove(phrase, (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim());
+    }
+    const now = await cursorBounds();
+    const spokeAnew = phrase !== '' && stops.length > 0 && phrase !== stops[stops.length - 1];
+    if (now === position && !spokeAnew) {
+      unmoved++;
+      if (unmoved === 2) return { stops, positions, reachedEnd: true };
+      continue;
+    }
+    unmoved = 0;
+    position = now;
+    stops.push(phrase);
+    positions.push(now);
+  }
+  return { stops, positions, reachedEnd: false };
+}
 
 async function walkScreen(page, voiceOver, browserName, slug, expected, row) {
+  let positions;
   const { verdict, reason, walks } = await runWalks(
-    // A help message VoiceOver gives for a move is replaced by the phrase
-    // Guidepup logged for it (vo_helpers.js, phraseForMove); one that comes
-    // anyway is left out by the judge.
-    () => walkToEnd(page, voiceOver, browserName, 40, { loggedForHelp: true }),
-    (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug)),
+    async () => {
+      const walk = await walkWithPositions(page, voiceOver, browserName, 40);
+      positions = walk.positions;
+      return walk;
+    },
+    (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug), positions),
     {
       log: (walk, stops, judged) => {
         // A complete walk read the screen's own stops exactly as listed, so
@@ -91,18 +99,17 @@ async function openScreen(page, slug) {
   await page.waitForTimeout(600);
 }
 
-for (const [slug, expected] of Object.entries(EXAMPLES)) {
+for (const [slug, expected] of Object.entries(EXPECTED_STOPS)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
     await openScreen(page, slug);
     await walkScreen(page, voiceOver, browserName, slug, expected, slug);
   });
 }
 
-for (const [slug, expected] of Object.entries(AFTER_ADDING)) {
+for (const [slug, expected] of Object.entries(EXPECTED_AFTER_ADDING)) {
   test(`voiceover reads ${slug} after a review is added`, async ({ page, voiceOver, browserName }) => {
     await openScreen(page, slug);
-    const add = page.locator(`[flt-semantics-identifier="s10-${slug}-add"]`);
-    await add.click();
+    await page.locator(`[flt-semantics-identifier="s10-${slug}-add"]`).click();
     await expect(page.getByText(slug === 'bad-stale' ? WORDS : WORDS_AFTER, { exact: true })).toHaveCount(1);
     // The pointer is moved off the button, so that nothing is hovered.
     await page.mouse.move(0, 0);

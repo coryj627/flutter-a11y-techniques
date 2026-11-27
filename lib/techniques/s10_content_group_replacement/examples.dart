@@ -243,7 +243,8 @@ class BadMerged extends StatelessWidget {
   Widget build(BuildContext context) {
     // Defect: the row is merged and not replaced. Its texts join one node,
     // and the bar's value, 68, becomes the node's (and its role, where the
-    // platform has one: FL-330): the rating is read with a stray 68.
+    // platform has one: FL-330): the rating is read with a stray 68. Not a
+    // shown failure of a success criterion; shown for what the user hears.
     return MergeSemantics(
       child: Semantics(
         identifier: 's10-bad-merged-rating',
@@ -263,7 +264,8 @@ class BadNotExcluded extends StatelessWidget {
     const rating = startRating;
     // Defect: the label is given and the pieces are not hidden. They join
     // the label's node, with the bar's value (FL-330): the rating is read
-    // twice, with a stray 68.
+    // twice, with a stray 68. Not a shown failure of a success criterion;
+    // shown for what the user hears.
     return Semantics(
       identifier: 's10-bad-not-excluded-rating',
       label: rating.words,

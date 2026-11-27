@@ -12,7 +12,7 @@ content in general (S12); a picture's text alternative and a chart's
 (S02 Informative images, whose `good-chart` and `good-group-description`
 give a drawing or an icon and a time one description), decorative images
 (S03); a custom control's role, value, and adjust actions (S14
-`good-rating`, F10 `good-custom`, both custom solutions); a single text's
+`good-rating` and F10 `good-custom`, flagged custom solutions, tested in isolation and not vetted by a real-world example); a single text's
 reworded name (`Text(semanticsLabel:)`, S01); custom actions (I05).
 
 ## 1. Rule
@@ -36,12 +36,12 @@ not built here:
 - **A framework control's semantics for a drawing** (the iOS reference's
   `accessibilityRepresentation`): no Flutter API does it
   ([FL-025](../flutter-limitations.md#fl-025), extended; source read). A
-  drawn control is given a role, a value, and actions by hand, which this
-  project counts as a custom solution (F10 `good-custom`, S14
-  `good-rating`), or the framework control itself is drawn another way.
-  S10 builds neither; its composites are not controls. This is equal on
-  every platform, so no platform is marked a limitation for it; the
-  principal is asked about it (section 8).
+  drawn control is given a role, a value, and actions by hand (F10
+  `good-custom`, S14 `good-rating`: flagged custom solutions, tested in isolation and not vetted by a real-world example), or the
+  framework control itself is drawn another way. That wider subject is
+  outside S10, whose requirement is a text alternative for a group, and
+  stays in FL-025; the good examples meet S10's requirement on iOS, so iOS
+  applies (the principal's decision, section 8).
 - **A merged group takes a progress indicator's value, and its role where
   the platform has one** ([FL-330](../flutter-limitations.md#fl-330),
   new): `bad-merged`, `bad-not-excluded`. The good examples hide the bar.
@@ -79,9 +79,9 @@ bar is a user interface component that a progress bar role misidentifies,
 4.1.2 does not say for content that takes no input; C26 read a progress
 indicator as one, "under that reading". No criterion is claimed failed for
 these two: the information is in the name, and the 68 is the bar's value
-as drawn. They are bad examples of what the user hears, by the technique
-guide's rule that a bad example's defect is stated as the user
-experiences it.
+as drawn. Neither is a shown failure of a success criterion; each is
+shown for what the user hears, a stray 68 (the principal's decision,
+section 8).
 
 4.1.2, as written: "For all user interface components …, the name and
 role can be programmatically determined". A `TextButton` inside the
@@ -101,9 +101,10 @@ reaches and runs it (section 7).
 | R5 | A drawn control is given the representation of a native control: its role, value, and actions | [iOS: Accessibility Representation](https://github.com/cvs-health/ios-swiftui-accessibility-techniques/blob/main/iOSswiftUIa11yTechniques/Documentation/AccessibilityRepresentation.md) (`.accessibilityRepresentation` with a `Slider`; 4.1.2) |
 
 R5 has no Flutter counterpart ([FL-025](../flutter-limitations.md#fl-025),
-extended): S10 has no example for it, and cites S14 `good-rating` and F10
-`good-custom`, which give a drawn control a role, a value, and actions by
-hand and are flagged as custom solutions. The iOS reference's subject is
+extended): it is outside S10, whose requirement is a text alternative
+for a group (the principal's decision, section 8). S10 has no example for
+it, and cites S14 `good-rating` and F10 `good-custom`, which give a drawn
+control a role, a value, and actions by hand: flagged custom solutions, tested in isolation and not vetted by a real-world example. The iOS reference's subject is
 a custom control; the Android references' is a composite that is not a
 control, which is what S10 builds.
 
@@ -157,8 +158,8 @@ parameter for this, and its activity indicators give nothing to replace
 | Slug | Variant | Defect | Violates | Fails |
 | --- | --- | --- | --- | --- |
 | `bad-pieces` | Widgets layer | The star row as it is: the stars are not read, and nothing says what 3.4 and 856 are | R1 | 1.3.1 and 1.1.1, on all three |
-| `bad-merged` | Material | The bar row in `MergeSemantics`, the references' "grouped" example: the rating is read with a stray 68 from the bar ([FL-330](../flutter-limitations.md#fl-330)) | R1, R2 | none as written (section 3), on all three |
-| `bad-not-excluded` | Material | `Semantics(label:)` round the bar row, its pieces not hidden: the rating is read twice, with a stray 68 (FL-330) | R2 | none as written (section 3), on all three |
+| `bad-merged` | Material | The bar row in `MergeSemantics`, the references' "grouped" example: the rating is read with a stray 68 from the bar ([FL-330](../flutter-limitations.md#fl-330)) | R1, R2 | none: not a shown failure of a success criterion; shown for what the user hears (section 3) |
+| `bad-not-excluded` | Material | `Semantics(label:)` round the bar row, its pieces not hidden: the rating is read twice, with a stray 68 (FL-330) | R2 | none: not a shown failure of a success criterion; shown for what the user hears (section 3) |
 | `bad-hides-control` | Material | The star row and a `TextButton` "Reviews" in one `Semantics(label:, excludeSemantics: true)`: a screen reader cannot find the button; the keyboard still reaches it | R4 | 4.1.2, on all three |
 | `bad-stale` | Material | `good-exclude-semantics` with a fixed label: after a review is added the row shows 857, and a screen reader still hears 856 | R3 | 1.3.1, on all three |
 
@@ -210,7 +211,7 @@ two texts are found by their text.
 | L3 iOS | Good: the replacement a static text labelled with the words, no value, the only element with that label, no element labelled with a piece; no button but Back, and the add button for `good-exclude-semantics`. `good-exclude-semantics`: after a tap, and after two Tabs and Return (no modifier; the probe found the first Tab on Back), the replacement says 857. Bad: `bad-pieces` elements "3.4" and "(856)", none naming stars, "out of", or reviews but the screen's own title and defect, no image; `bad-merged` labelled with the pieces, value "68"; `bad-not-excluded` labelled with the words and the pieces, value "68"; `bad-hides-control` labelled with the words, no element "Reviews", no button but Back, and two Tabs and Return running Reviews; `bad-stale` after a tap still 856 for two seconds, nothing labelled with 857, and `good-exclude-semantics` following the same tap in the same test. XCUITest cannot read traits or Flutter's focus |
 | L4 TalkBack | Focus moved to each node by action: each good replacement the words, and none of "3.4 / 5", "Reviews: 856", "Progress bar", "68", or "Button"; `good-exclude-semantics`' button "Add a 5-star review" and "Button"; after the click action on it, the replacement "… 857 reviews" and not "856". Bad: `bad-pieces` "3.4" and "856", with no "star", "out of", "Rating", or "review"; `bad-merged` "68" and "Rating: 3.4 / 5 Reviews: 856", not "out of 5 stars"; `bad-not-excluded` "68" and the words followed by the pieces; `bad-hides-control` the words with no "Button", and the count; `bad-stale` the words, the button, and after the click action on it the replacement again, still the words, with no "857". Each walk is judged whole (`walk_strictly` in `tool/talkback.py`; S10 is in its `STRICT` set): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, every walk in the transcript. No row is declared silent |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk): `good-exclude-semantics` the words, "Add a 5-star review Button", and after a tap on the button (VoiceOver off) the words with 857; `good-hidden-pieces` and `good-stars` the words; `bad-pieces` "3.4", "(856)"; `bad-merged` "Rating: 3.4 / 5 Reviews: 856 68"; `bad-not-excluded` the words and " Rating: 3.4 / 5", cut by the service at 64 characters (a `.cut` stop: its first 63 characters, and the utterance exactly 64 long); `bad-hides-control` the words and "Reviews opened: 0"; `bad-stale` the words and the button, and after a tap still the words with 856. Every expected utterance is under 64 characters; the test refuses one that is not |
-| L4 VoiceOver web | Each screen walked from Back and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/s10_vo_walks.js`, a copy of S08's judge), in Chromium and WebKit, no runner retries: a wrong reading fails for good and is looked for first; a walk that ended short is wrong; a walk with an empty phrase and nothing wrong is a failed capture, walked again, at most three walks, every try logged; an empty reading can never pass; VoiceOver's help message is left out (`loggedForHelp`, `VO_HELP`), and one given in place of an element's speech fails. `good-exclude-semantics` and `bad-stale` are walked again after a mouse click on the add button. The lists are predictions, not yet recorded (section 7) |
+| L4 VoiceOver web | Each screen walked from Back with the cursor's position kept at every stop (`walkWithPositions`, a copy of S08's) and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/s10_vo_walks.js`, a copy of S08's judge), in Chromium and WebKit, no runner retries. A wrong reading fails for good and is looked for first; any stop past the expected end fails for good, an empty one included (the bounds check comes before the empty check); a walk that reached the end short is wrong; a walk with an empty phrase and nothing wrong is a failed capture, walked again, at most three walks, every try logged, and an empty reading never passes. VoiceOver's help message ("You are currently on ...") is left out only when it is at the same position as the real stop before it and names that stop's spoken role (`spokenRole`, from the reading's role part, never from a name: extended for S10 to a text and a progress indicator); any other help message is a stop, and fails. The help rule is tested only on made-up walks: no S10 recording has been made. `good-exclude-semantics` and `bad-stale` are walked again after a mouse click on the add button. The lists (`EXPECTED_STOPS`, `EXPECTED_AFTER_ADDING`) are predictions, not yet recorded (section 7). The judge's cases, and its mutations (a help message at a new position, naming another role, after an empty stop, with positions of the wrong length, two in a row, after a heading whose name has a role word), are in the web tree spec |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -301,6 +302,13 @@ Skips and what they give up, in the tests:
   stop it was not told of; the Android tree test checks the nodes and
   their order. `bad-merged`'s role word is not judged: the probe heard
   none within the dwell.
+- The web VoiceOver judge leaves out a help message only when the walk's
+  positions tie it to the real stop before it and its role matches that
+  stop's spoken role. A reading with no role part is taken as spoken text
+  (`spokenRole` gives "text"), and VoiceOver's help wording for a text
+  element and a progress indicator is assumed to follow the list's and the
+  button's: no recording here has heard either. The rule is tested only on
+  made-up walks.
 - The iOS VoiceOver walk is C03's: it ends where moving on gives the last
   utterance again, twice, and so gives up two neighbouring elements that
   VoiceOver reads alike; no example has two. `bad-not-excluded`'s
@@ -320,16 +328,20 @@ dark mode on a device.
 
 ## 8. Decisions
 
-For the principal, not decided by the engineer:
+The principal's, on 2026-11-27, in review of the build. They are the
+principal's and not the owner's, who may overrule them.
 
-- **R5, the iOS reference's representation of a drawn control.** No
-  Flutter API gives a drawing a framework control's semantics (FL-025,
-  extended). S10 builds no example for it and keeps every platform as
-  applying, citing S14 `good-rating` and F10 `good-custom` (custom
-  solutions). Whether that should instead be a limitation on some
-  platform is the owner's call.
-- **No WCAG failure is claimed for `bad-merged` and `bad-not-excluded`**
-  (section 3). They are kept as bad examples of what the user hears.
+1. **iOS stays "applies".** S10's requirement is a text alternative for a
+   group, and the good examples meet it on iOS. The iOS reference's wider
+   subject, a drawn control given a native control's role, value, and
+   actions (R5), is outside S10 and stays in
+   [FL-025](../flutter-limitations.md#fl-025). Where S14 `good-rating`
+   and F10 `good-custom` are cited for it, they are flagged custom solutions, tested in isolation and not vetted by a real-world example;
+   neither is recommended.
+2. **`bad-merged` and `bad-not-excluded` stay as bad examples, with no
+   WCAG failure claimed** (section 3). Each is not a shown failure of a
+   success criterion; it is shown for what the user hears, a stray 68
+   from the bar, as C03's `bad-vague-text` is shown as poor practice.
 
 ## 9. What is handed on
 
