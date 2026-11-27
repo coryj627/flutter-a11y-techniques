@@ -7,7 +7,7 @@
 // release build in build/web.
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
-import { EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeExampleWalk, runWalks, screenStops } from './vo/s11_vo_walks.js';
+import { EXAMPLE_HEADING, EXAMPLE_SCREENS, helpRole, judgeExampleWalk, runWalks, screenStops } from './vo/s11_vo_walks.js';
 
 const exampleHeading = (page) => page.getByRole('heading', { name: 'Example', exact: true, level: 2 });
 const { open } = technique('S11', { ready: exampleHeading, settle: 600 });
@@ -252,8 +252,9 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     'heading level 3 Route', 'Park at the gate.', 'Climb the ridge.', 'Walk back.', 'Save route button',
     'heading level 3 Bring', 'Water', 'A map', 'Save list button', 'Route saves: 0', 'List saves: 0',
   ];
-  // VoiceOver's help message, as S08's fourth recording read one.
-  const HELP = 'You are currently on a heading level 3, inside of web content. To exit this web area, press '
+  // VoiceOver's help message about a heading, in the form S08's recordings
+  // logged one about a list.
+  const HELP ='You are currently on a heading level 3, inside of web content. To exit this web area, press '
     + 'Control-Option-Shift-Up Arrow.';
   const screen = (...content) => [...own, EXAMPLE_HEADING, ...content];
   const mixed = [
@@ -276,9 +277,9 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['an empty first stop and a walk that reached the end short', ['', ...own.slice(1), EXAMPLE_HEADING, expected[0]], true, 'wrong'],
     ['an empty phrase after the last expected stop', screen(...expected, ''), true, 'incomplete'],
     ['every stop an empty phrase', Array(14).fill(''), true, 'incomplete'],
-    // VoiceOver's help message is not a stop of the page.
-    ['a help message after the last stop', screen(...expected, HELP), true, 'complete'],
-    ['a help message in the middle', screen(...expected.slice(0, 3), HELP, ...expected.slice(3)), true, 'complete'],
+    // With no positions recorded, a help message is a stop like any other.
+    ['a help message after the last stop, no positions', screen(...expected, HELP), true, 'wrong'],
+    ['a help message in the middle, no positions', screen(...expected.slice(0, 6), HELP, ...expected.slice(6)), true, 'wrong'],
     ['a help message in place of an expected stop', screen(...expected.slice(0, 3), HELP, ...expected.slice(4)), true, 'wrong'],
     ['a help message in place of the last stop', screen(...expected.slice(0, -1), HELP), true, 'wrong'],
     ['only help messages', [HELP, HELP], true, 'wrong'],
@@ -293,6 +294,57 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
       expect(judgeExampleWalk(stops, reachedEnd, expected, own).verdict).toBe(verdict);
     });
   }
+
+  // A help message is left out only when the walk's positions tie it to the
+  // stop before it: same position, a reading before it, and its role in
+  // that reading (helpAfterStop in s11_vo_walks.js, S08's rule).
+  const BUTTON_HELP = 'You are currently on a button, inside of web content. To click this button, press Control-Option-Space.';
+  const TEXT_FIELD_HELP = 'You are currently on a text field, inside of web content.';
+  // One position per stop, each new but where `same` lists the stops (by
+  // index) that are at the position of the stop before them.
+  const at = (stops, same = []) => {
+    const out = [];
+    stops.forEach((_, i) => out.push(same.includes(i) ? out[i - 1] : `p${i}`));
+    return out;
+  };
+  const whole = screen(...expected);
+  const n = whole.length;
+  // After "heading level 3 Bring" (expected[5]), and after "Save list button" (expected[8]).
+  const midHeading = screen(...expected.slice(0, 6), HELP, ...expected.slice(6));
+  const midButton = screen(...expected.slice(0, 9), BUTTON_HELP, ...expected.slice(9));
+  const atBring = own.length + 1 + 6;
+  const atSaveList = own.length + 1 + 9;
+  const helpCases = [
+    ['help after the last stop, at its position, naming a role it does not have: fails', [...whole, BUTTON_HELP],
+      at([...whole, BUTTON_HELP], [n]), 'wrong'],
+    ['a heading\'s help after a judged heading, at its position: left out', midHeading, at(midHeading, [atBring]), 'complete'],
+    ['a button\'s help after a judged button, at its position: left out', midButton, at(midButton, [atSaveList]), 'complete'],
+    ['help only, at a new position after the whole screen (an extra element): fails', [...whole, HELP], at([...whole, HELP]), 'wrong'],
+    ['a text field\'s help at a new position after the whole screen: fails', [...whole, TEXT_FIELD_HELP], at([...whole, TEXT_FIELD_HELP]), 'wrong'],
+    ['a heading\'s help at a new position in the middle: fails', midHeading, at(midHeading), 'wrong'],
+    ['help naming a role the stop before it does not have, at its position: fails', midHeading.map((s) => (s === HELP ? TEXT_FIELD_HELP : s)),
+      at(midHeading, [atBring]), 'wrong'],
+    ['help in place of an expected stop: fails', screen(...expected.slice(0, 5), HELP, ...expected.slice(6)),
+      at(screen(...expected.slice(0, 5), HELP, ...expected.slice(6))), 'wrong'],
+    ['help after an empty stop, at its position: fails', screen(...expected.slice(0, 5), '', HELP, ...expected.slice(6)),
+      at(screen(...expected.slice(0, 5), '', HELP, ...expected.slice(6)), [atBring]), 'wrong'],
+    ['help with positions of the wrong length: fails', midHeading, at(whole), 'wrong'],
+    ['help and a wrong reading: fails', screen(...mixed.slice(0, 2), HELP, ...mixed.slice(2)),
+      at(screen(...mixed.slice(0, 2), HELP, ...mixed.slice(2)), [own.length + 3]), 'wrong'],
+    ['no help message, positions recorded', whole, at(whole), 'complete'],
+  ];
+  for (const [what, stops, positions, verdict] of helpCases) {
+    test(`${what}: ${verdict}`, () => {
+      expect(judgeExampleWalk(stops, true, expected, own, positions).verdict).toBe(verdict);
+    });
+  }
+
+  test('a help message names the role it is about', () => {
+    expect(helpRole(HELP)).toBe('heading level 3');
+    expect(helpRole(BUTTON_HELP)).toBe('button');
+    expect(helpRole(TEXT_FIELD_HELP)).toBe('text field');
+    expect(helpRole('Save list button')).toBe(null);
+  });
 
   test('a bad example\'s own stops include its defect', () => {
     for (const slug of Object.keys(EXAMPLE_SCREENS).filter((s) => s.startsWith('bad-'))) {

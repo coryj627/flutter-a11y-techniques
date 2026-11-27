@@ -3,8 +3,10 @@
 // and no browser, so that web_tests/s11_reading_traversal_order.spec.js can
 // test it on made-up walks in CI. A copy of S08's s08_vo_walks.js (branch
 // s08-list-semantics; not imported: that file is another technique's), with
-// S11's screens; the judge is the same, so its rules for an empty phrase and
-// VoiceOver's help message are S08's.
+// S11's screens; the judge is the same, with S08's later fix to VoiceOver's
+// help message (left out only when the cursor's position and its role tie it
+// to the stop before it), so its rules for an empty phrase and for help are
+// S08's.
 
 import { VO_HELP } from './vo_logic.js';
 
@@ -44,12 +46,36 @@ export const screenStops = (slug) => {
   return [`heading level 1 ${title}`, ...lines];
 };
 
+/** The role a help message names: "list" for "You are currently on a list, …". */
+export function helpRole(phrase) {
+  const m = /^You are currently on (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
+  return m ? m[1].trim() : null;
+}
+
+/**
+ * Whether stop `i` of a walk is a help message about the stop before it:
+ * VO_HELP, the cursor at the same position as for stop `i - 1` (from
+ * `positions`, the walk's record of where the cursor was at each stop), the
+ * stop before it a reading, neither empty nor a help message, and the role
+ * the help names found in that reading. False whenever any of that cannot
+ * be shown, `positions` missing included. S08's rule, mirrored.
+ */
+export function helpAfterStop(stops, positions, i) {
+  if (!VO_HELP.test(stops[i]) || i === 0 || !Array.isArray(positions)) return false;
+  if (positions.length !== stops.length || positions[i] !== positions[i - 1]) return false;
+  const before = stops[i - 1];
+  if (before === '' || VO_HELP.test(before)) return false;
+  const role = helpRole(stops[i]);
+  return role !== null && before.toLowerCase().includes(role.toLowerCase());
+}
+
 /**
  * Judges one walk of an example screen: `stops` in order, whether the walk
  * reached the end of the screen (two moves in a row that changed nothing),
  * `expected`, everything VoiceOver must say after the "Example" heading to
  * the end of the screen, in order, and `screen`, the stops the screen has
- * before the heading (screenStops). The walk must read the whole screen:
+ * before the heading (screenStops), and `positions`, the cursor's position
+ * at each stop, when the walk recorded them. The walk must read the whole screen:
  * `screen`, then the heading, then `expected`, every stop in its place and
  * nothing else. Returns `{ verdict, reason }`, the verdict one of:
  *
@@ -72,12 +98,20 @@ export const screenStops = (slug) => {
  *   with no empty stop.
  *
  * A stop that is VoiceOver's help message ("You are currently on a list,
- * inside of web content. …", VO_HELP) is left out first, wherever it is:
- * it says where the cursor already is. Its words are never checked, and a
- * help message given in place of an element's own speech leaves that
- * element unread, which fails as a missing stop. S08's fourth recording
- * (WebKit) read every expected stop and then one more, a list's help
- * message, after the last one.
+ * inside of web content. …", VO_HELP) is left out only when it is tied to
+ * the stop before it (helpAfterStop): `positions`, the cursor's position at
+ * each stop as the walk recorded it, shows the cursor had not moved, the
+ * stop before it is a reading (neither empty nor help), and the role the
+ * help names ("on a button") is in that reading ("Save route button"). It
+ * is then VoiceOver's speech about the element just judged. Any other help
+ * message is a stop like any other, and since no expected stop is a help
+ * message it is wrong and fails for good: one at a new position (an element
+ * nothing else was read for), one naming a role the reading before it does
+ * not have, one with no stop before it, and every help message in a walk
+ * with no positions. A help message given in place of an element's own
+ * speech is at a new position, and fails. S08's fourth recording (WebKit)
+ * read every expected stop and then a list's help message after the last
+ * one; it recorded no positions, so such a walk judges wrong here.
  *
  * An empty stop holds the place of the stop expected there: the S08 walks
  * that gave one (its second and third recordings, WebKit, the screen's
@@ -86,15 +120,10 @@ export const screenStops = (slug) => {
  * again, and a reading of the wrong words fails for good. No S11 recording
  * has been made yet.
  */
-export function judgeExampleWalk(walked, reachedEnd, expected, screen = []) {
-  // VoiceOver's own help message (VO_HELP, vo_logic.js) is its speech about
-  // where its cursor already is, not a stop of the page: it is left out
-  // before the walk is judged. The walk itself already puts the phrase
-  // logged for a move in place of a help message (walkToEnd's
-  // `loggedForHelp`, phraseForMove); what is left out here is a help
-  // message that came anyway, such as one given after a pause on the last
-  // element, where the cursor no longer moves.
-  const stops = walked.filter((stop) => !VO_HELP.test(stop));
+export function judgeExampleWalk(walked, reachedEnd, expected, screen = [], positions = undefined) {
+  // VoiceOver's own help message (VO_HELP, vo_logic.js), when it is about
+  // the element just read, is not a stop of the page (helpAfterStop).
+  const stops = walked.filter((stop, i) => !helpAfterStop(walked, positions, i));
   const whole = [...screen, EXAMPLE_HEADING, ...expected];
   const empty = [];
   for (let i = 0; i < stops.length; i++) {

@@ -99,6 +99,8 @@ VOICEOVER_WEB_METHOD = (
     "walk that reached the end with any expected stop not read, fails the test for "
     "good; a walk cut short with every stop right so far, or one with a stop read "
     "as an empty phrase and nothing wrong, is walked again, up to three walks, each "
-    "shown as its own row (`-walk-<n>`); VoiceOver's own help message is left out. "
+    "shown as its own row (`-walk-<n>`). VoiceOver's own help message is left out "
+    "only when the cursor is still at the stop before it and the role it names is "
+    "in that stop's reading; any other fails. "
     "No runner retries"
 )

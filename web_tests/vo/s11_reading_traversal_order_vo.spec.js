@@ -23,10 +23,49 @@
 // are a prediction until the first recording.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
-import { walkToEnd } from './vo_helpers.js';
+import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
 import { EXAMPLE_HEADING, judgeExampleWalk, runWalks, screenStops } from './s11_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
+
+/**
+ * walkToEnd (vo_helpers.js), keeping the cursor's position at each stop, so
+ * that the judge can tie a help message to the stop before it (S08's walk,
+ * mirrored). walkToEnd returns no positions, so the walk is made here:
+ * walkToEnd with no moves starts it exactly as the shared walk does (from
+ * Back, once VoiceOver is quiet), and the moves follow its rule (stopsToEnd
+ * in vo_logic.js: a move is a stop when the cursor moved or a new phrase was
+ * spoken; two moves in a row that do neither are the end), with
+ * `loggedForHelp` as the form techniques use it (phraseForMove). The one
+ * difference is that each stop's position is kept. Resolves to
+ * `{ stops, positions, reachedEnd }`.
+ */
+async function walkWithPositions(page, voiceOver, browserName, max = 40) {
+  await walkToEnd(page, voiceOver, browserName, 0);
+  const stops = [];
+  const positions = [];
+  let position = await cursorBounds();
+  let unmoved = 0;
+  for (let i = 0; i < max; i++) {
+    await voiceOver.next();
+    let phrase = await lastPhrase();
+    if (VO_HELP.test(phrase)) {
+      phrase = phraseForMove(phrase, (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim());
+    }
+    const now = await cursorBounds();
+    const spokeAnew = phrase !== '' && stops.length > 0 && phrase !== stops[stops.length - 1];
+    if (now === position && !spokeAnew) {
+      unmoved++;
+      if (unmoved === 2) return { stops, positions, reachedEnd: true };
+      continue;
+    }
+    unmoved = 0;
+    position = now;
+    stops.push(phrase);
+    positions.push(now);
+  }
+  return { stops, positions, reachedEnd: false };
+}
 
 const ROUTE = ['heading level 3 Route', 'Park at the gate.', 'Climb the ridge.', 'Walk back.', 'Save route button'];
 const BRING = ['heading level 3 Bring', 'Water', 'A map', 'Save list button'];
@@ -53,12 +92,18 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
     await page.goto(`/#/t/S11/${slug}`, { waitUntil: 'load' });
     await expect(page.getByRole('heading', { name: 'Example', exact: true, level: 2 })).toBeVisible();
     await page.waitForTimeout(600);
+    let positions;
     const { verdict, reason, walks } = await runWalks(
       // A help message VoiceOver gives for a move is replaced by the phrase
-      // Guidepup logged for it (vo_helpers.js, phraseForMove); one that comes
-      // anyway is left out by the judge.
-      () => walkToEnd(page, voiceOver, browserName, 40, { loggedForHelp: true }),
-      (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug)),
+      // Guidepup logged for it (phraseForMove); one that comes anyway is
+      // left out by the judge only when it is about the stop before it, at
+      // the same position.
+      async () => {
+        const walk = await walkWithPositions(page, voiceOver, browserName, 40);
+        positions = walk.positions;
+        return walk;
+      },
+      (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug), positions),
       {
         log: (walk, stops, judged) => {
           // A complete walk read the screen's own stops exactly as listed,
