@@ -1,0 +1,186 @@
+// S06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s06/ProbeS06Test.kt.txt). Runs against lib/probe.dart
+// (Gradle -Ptarget=lib/probe.dart).
+//
+// probe(): for each fixture, the launcher opened by route; then its "Open"
+// button pressed with the click action; then Back. At each step: the
+// title of every window, every node that has a pane title, the app's task
+// description label from `dumpsys activity recents`, the node with
+// accessibility focus, and every node of the screen (class, name, text,
+// heading). p10: the second destination pressed; p13: the drawer opened and
+// closed with Back.
+// talkBack(): the same steps with TalkBack on, TalkBack focus first moved to
+// the Open button, a marker before each action, 8 s of speech after it.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeS06Test : TechniqueTest("S06") {
+    private val tag = "S06PROBE"
+    private val ids = (1..13).map { "p%02d".format(it) }
+
+    private fun collect(root: AccessibilityNodeInfo?, out: MutableList<AccessibilityNodeInfo>) {
+        if (root == null) return
+        out.add(root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), out)
+    }
+
+    private fun appNodes(): List<AccessibilityNodeInfo> {
+        val out = mutableListOf<AccessibilityNodeInfo>()
+        for (w in automation.windows) collect(w.root, out)
+        return out
+    }
+
+    private fun has(id: String) = appNodes().any { it.viewIdResourceName == id }
+
+    private fun waitFor(id: String, millis: Long = 20_000): Boolean {
+        val end = System.currentTimeMillis() + millis
+        while (System.currentTimeMillis() < end) {
+            try {
+                if (has(id)) return true
+            } catch (e: Exception) {
+                // A window can go away while it is read.
+            }
+            Thread.sleep(250)
+        }
+        return false
+    }
+
+    private fun q(s: CharSequence?) = (s?.toString() ?: "").replace("\n", "\\n")
+
+    private fun describe(n: AccessibilityNodeInfo): String =
+        "${n.viewIdResourceName ?: "-"} | ${n.type()} | desc=\"${q(n.contentDescription)}\" " +
+            "text=\"${q(n.text)}\" heading=${n.isHeading} pane=\"${q(n.paneTitle)}\" " +
+            "a11yFocused=${n.isAccessibilityFocused} focused=${n.isFocused}"
+
+    private fun recents(): String {
+        val pfd = automation.executeShellCommand("dumpsys activity recents")
+        val text = android.os.ParcelFileDescriptor.AutoCloseInputStream(pfd).bufferedReader().readText()
+        val lines = text.lines()
+        val mine = mutableListOf<String>()
+        var inMine = false
+        for (l in lines) {
+            if (l.contains("* Recent #")) inMine = false
+            if (l.contains("dev.fluttera11y.flutter_a11y_techniques")) inMine = true
+            if (inMine && (l.contains("TaskDescription") || l.contains("lastDescription") || l.contains("abel="))) {
+                mine.add(l.trim())
+            }
+        }
+        return mine.distinct().joinToString(" || ").ifEmpty { "(no task description line)" }
+    }
+
+    private fun state(id: String, step: String) {
+        try {
+            val windows = automation.windows.joinToString(" | ") { "type=${it.type} title=\"${q(it.title)}\"" }
+            Log.i(tag, "$id $step windows: $windows")
+            val nodes = appNodes()
+            val panes = nodes.filter { it.paneTitle != null }.joinToString(" | ") { describe(it) }
+            Log.i(tag, "$id $step pane titles: ${panes.ifEmpty { "(none)" }}")
+            Log.i(tag, "$id $step recents: ${recents()}")
+            val focus = nodes.firstOrNull { it.isAccessibilityFocused }?.let { describe(it) } ?: "(none)"
+            Log.i(tag, "$id $step accessibility focus: $focus")
+            for (n in nodes) {
+                val all = "${n.contentDescription ?: ""}${n.text ?: ""}${n.viewIdResourceName ?: ""}"
+                if (all.isNotEmpty() || n.paneTitle != null) Log.i(tag, "$id $step node ${describe(n)}")
+            }
+        } catch (e: Exception) {
+            Log.i(tag, "$id $step read failed: $e")
+        }
+    }
+
+    private fun launch(id: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", "/$id")
+        inst.targetContext.startActivity(intent)
+        if (!waitFor("$id-start")) Log.i(tag, "$id launcher did not open")
+        device.waitForIdle()
+        Thread.sleep(1_500)
+    }
+
+    private fun click(match: (AccessibilityNodeInfo) -> Boolean, what: String): Boolean {
+        val n = appNodes().firstOrNull(match)
+        val ok = n?.performAction(AccessibilityNodeInfo.ACTION_CLICK) ?: false
+        Log.i(tag, "click $what: $ok")
+        return ok
+    }
+
+    private fun openButton(id: String) = { n: AccessibilityNodeInfo -> n.viewIdResourceName == "$id-open" }
+    private fun settings() = { n: AccessibilityNodeInfo ->
+        n.isClickable && "${n.contentDescription ?: ""}".contains("p10 Settings")
+    }
+    private fun drawerButton() = { n: AccessibilityNodeInfo -> n.viewIdResourceName == "p13-drawer" }
+
+    @Test
+    fun probe() {
+        Log.i(tag, "device ${android.os.Build.VERSION.SDK_INT}")
+        for (id in ids) {
+            launch(id)
+            state(id, "launcher")
+            click(openButton(id), "$id Open")
+            if (!waitFor("$id-end")) Log.i(tag, "$id screen did not open")
+            device.waitForIdle()
+            Thread.sleep(1_500)
+            state(id, "opened")
+            if (id == "p10") {
+                click(settings(), "p10 Settings")
+                Thread.sleep(2_000)
+                state(id, "second destination")
+            }
+            if (id == "p13") {
+                click(drawerButton(), "p13 Show folders")
+                Thread.sleep(2_000)
+                state(id, "drawer open")
+                device.pressBack()
+                Thread.sleep(2_000)
+                state(id, "drawer closed")
+            }
+            device.pressBack()
+            if (!waitFor("$id-start")) Log.i(tag, "$id launcher did not come back")
+            Thread.sleep(2_000)
+            state(id, "back")
+        }
+    }
+
+    private fun mark(marker: String, action: () -> Unit) {
+        Log.i(talkBackTag, "FOCUS $marker")
+        action()
+        Thread.sleep(8_000)
+        val focus = try {
+            appNodes().firstOrNull { it.isAccessibilityFocused }?.let { describe(it) } ?: "(none)"
+        } catch (e: Exception) {
+            "read failed: $e"
+        }
+        Log.i(tag, "$marker then accessibility focus: $focus")
+    }
+
+    @Test
+    fun talkBack() {
+        assumeTalkBack()
+        for (id in ids) {
+            launch(id)
+            Thread.sleep(6_000)
+            mark("s06-$id-button") {
+                try {
+                    talkBackFocus("$id-open") { appNodes().first(openButton(id)) }
+                } catch (e: Throwable) {
+                    Log.i(tag, "$id: TalkBack focus refused: $e")
+                }
+            }
+            mark("s06-$id-push") { click(openButton(id), "$id Open") }
+            if (id == "p10") mark("s06-p10-tab") { click(settings(), "p10 Settings") }
+            if (id == "p13") {
+                mark("s06-p13-drawer") { click(drawerButton(), "p13 Show folders") }
+                mark("s06-p13-drawer-back") { device.pressBack() }
+            }
+            mark("s06-$id-back") { device.pressBack() }
+            Log.i(talkBackTag, "END $id")
+        }
+    }
+}

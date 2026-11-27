@@ -1,0 +1,60 @@
+// S06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s06/probe_s06_back.spec.js.txt): on the release app
+// build, good-material's screen opened with Tab and Enter; where DOM focus
+// is, then what Enter does, then Tab and Enter, then Shift+Tab and Enter.
+import { test, expect } from '@playwright/test';
+
+const log = (...a) => console.log('S06BACK', ...a);
+const focused = (page) => page.evaluate(() => {
+  const a = document.activeElement;
+  return `${a?.tagName.toLowerCase()} id=${a?.getAttribute('flt-semantics-identifier') || ''} role=${a?.getAttribute('role')} name="${a?.getAttribute('aria-label') || a?.textContent || ''}"`;
+});
+const open = async (page) => {
+  await page.goto('about:blank');
+  await page.goto('/#/t/S06/good-material');
+  await page.getByRole('heading', { name: 'Example', exact: true, level: 2 }).waitFor();
+  await page.waitForTimeout(800);
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(150);
+    if ((await focused(page)).includes('s06-good-material-open')) break;
+  }
+  log('before Enter:', await focused(page));
+  await page.keyboard.press('Enter');
+  await page.getByText('Three orders in the last 30 days.').waitFor();
+  await page.waitForTimeout(1200);
+  log('opened by Enter:', await focused(page));
+};
+const shown = (page) => page.getByText('Three orders in the last 30 days.').count();
+
+for (const keys of [['Enter'], ['Tab', 'Enter'], ['Shift+Tab', 'Enter'], ['Tab', 'Tab', 'Enter']]) {
+  test(`after the open, ${keys.join(' ')}`, async ({ page }) => {
+    await open(page);
+    for (const k of keys) {
+      await page.keyboard.press(k);
+      await page.waitForTimeout(800);
+      log(`${keys.join(' ')}: after ${k}: focus ${await focused(page)}; screen shown: ${await shown(page)}; title "${await page.title()}"`);
+    }
+    expect(true).toBe(true);
+  });
+}
+
+// Round 2: the app's own screens. The catalog, a technique opened from
+// it, and the app's Back: the document title at each step.
+test('the app\'s own screens: catalog, technique, Back', async ({ page }) => {
+  await page.goto('about:blank');
+  await page.goto('/#/');
+  await page.getByRole('heading', { name: 'Flutter A11Y Techniques', level: 1 }).waitFor();
+  await page.waitForTimeout(800);
+  log(`catalog: title "${await page.title()}"`);
+  // Round 3: a catalog row is one button named by its title and id.
+  await page.getByRole('button', { name: /^Screen and page titles/ }).click({ timeout: 15_000 });
+  await page.getByRole('heading', { name: 'Screen and page titles', level: 1 }).waitFor();
+  await page.waitForTimeout(800);
+  log(`technique S06 opened from the catalog: title "${await page.title()}"`);
+  await page.mouse.move(0, 0);
+  await page.getByRole('button', { name: 'Back', exact: true }).first().click();
+  await page.getByRole('heading', { name: 'Flutter A11Y Techniques', level: 1 }).waitFor();
+  await page.waitForTimeout(800);
+  log(`catalog after Back: title "${await page.title()}"`);
+});
