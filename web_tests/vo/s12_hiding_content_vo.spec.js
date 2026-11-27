@@ -15,8 +15,9 @@
 // end with any expected stop not read, fails the test for good, and every
 // try is logged, so every attempt is in the transcript.
 //
-// The expected lists are predictions (EXPECTED_STOPS in s12_vo_walks.js):
-// no web VoiceOver recording of S12 has been made yet.
+// The expected lists (EXPECTED_STOPS in s12_vo_walks.js) were written as
+// predictions; the first recording, 2026-11-27
+// (docs/evidence/S12/voiceover-web.md), read every one as written.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';

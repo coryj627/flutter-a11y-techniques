@@ -92,13 +92,15 @@ What a bad example fails, by platform, as the criterion is written:
 | `bad-opacity` | 4.1.2: hidden, Copy has no node; the keyboard and a tap at its place run it | 4.1.2, as Android | 4.1.2, as Android; the page's focus stays on the switch | 2.4.7: no focus indicator shows |
 | `bad-maintain` | none of 1.3.1 and 4.1.2: hidden, everything is exposed as if shown | as Android | as Android | 2.4.7: no focus indicator shows |
 
-`bad-decoration-read` fails no criterion as written: 1.1.1 is about
-non-text content, and the ornaments are text characters; the defect is what
-the user meets, a stop for each ornament, read as text, that says nothing
-(the technique guide's rule that a bad example's defect is stated as the user experiences
-it). `bad-maintain` fails neither 1.3.1 nor 4.1.2: what it exposes is
+`bad-decoration-read` is not a shown failure of a success criterion in this technique's list; shown for what the user hears. It fails no criterion as written:
+1.1.1 is about non-text content, and the ornaments are text characters;
+the defect is what the user meets, a stop for each ornament, read as text,
+that says nothing (the technique guide's rule that a bad example's defect
+is stated as the user experiences it). `bad-maintain` is likewise
+not a shown failure of a success criterion in this technique's list; shown for what the user hears: it fails neither 1.3.1 nor 4.1.2, because what it exposes is
 determinable; its defect is that a screen reader reads, and the keyboard
-reaches, what is not on the screen. 2.4.7 Focus Visible, as written: "Any
+reaches, what is not on the screen. Its 2.4.7 failure below was measured in
+widget tests only, and 2.4.7 is outside S12's list. 2.4.7 Focus Visible, as written: "Any
 keyboard operable user interface has a mode of operation where the keyboard
 focus indicator is visible." While the panel is hidden, focus on Copy draws
 nothing at all (the widget test compares the screen's pixels with focus on
@@ -262,12 +264,12 @@ What each fails, as the criterion is written, is in section 3.
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Good, in light and dark: the four guidelines (for `good-visibility` with the panel hidden and again shown); the ornaments, which the text contrast guideline does not see once they are out of the semantics tree, 4.5:1 or more on the page; the badge's text on its colour 4.5:1 or more (Material 3's defaults, `onError` on `error`) and the icon 3:1 or more on the page; the switch's track 3:1 or more on the page off (`outline`) and on (`primary`); Copy's 2 pixel outline in the text colour, 3:1 or more, only while focused; the text contrast guideline with focus on the switch and on Copy. The example's nodes after the "Example" heading, exactly: `good-decoration` the quote and its source, and no label anywhere on the screen with "❝" or "✦"; `good-badge` "Inbox: 3 unread", and no other label with a "3". `good-visibility`: hidden, the switch alone, off, and no node for the number or Copy anywhere, and a whole Tab cycle (Tab until focus comes back to its first stop) is Back and the switch; shown, in the same launch, the switch on, the number, and Copy, and the cycle Back, the switch, Copy. Hidden, Enter and Space each on the switch (its only stop but Back) copy nothing and show the panel; in the same launch Tab to Copy and the same key copies. Shown, a tap and the tap action on Copy each copy. Every example at 200% text on 320 by 640, the panels shown: no overflow, no text at its line limit or cut short, nothing past the screen. Bad: `bad-decoration-read` exactly "❝", the quote, the source, "✦ ✦ ✦"; `bad-hidden-control` exactly the quote, no label "Share", no button but Back, a whole Tab cycle Back and Share, Enter and then Space with focus on Share and no node focused each share, and a tap on it shares; `bad-opacity` and `bad-maintain`, hidden (the opacity read as 0, `Visibility.visible` false): the whole Tab cycle Back, the switch, Copy, Enter and then Space on Copy each copy and the switch stays off; with focus on Copy the screen's pixels are the same as with no focus at all, and, shown, in the same launch, focus on Copy changes them (the positive control); `bad-opacity` hidden has only the switch as a node, no node for the number or Copy, no node focused with focus on Copy, and a tap on Copy's place copies; `bad-maintain` hidden has the switch, the number, and Copy as nodes, and Copy's tap action copies. The tests run as Android |
-| L3 web | The example's elements after the "Example" heading, up to its count, read from the page's `flt-semantics` elements, exactly: `good-decoration` the quote and the source as texts, no name or text in the page with "❝" or "✦", one button (Back); `good-badge` "Inbox: 3 unread" alone, no other text with a "3", no image; `good-visibility` hidden: the switch, `aria-checked="false"`, no number, no Copy; a whole Tab cycle is Back, the switch, then out of Flutter's elements and back to Back (FL-421); shown, in the same load, the switch, the number, and the Copy button, and Tab reaches Copy. Enter and Space each: hidden, with Tab past the switch, copy nothing; then on the switch show the panel and copy nothing; then Tab to Copy and the key copies. Shown, a click and a DOM click (what a screen reader's activation sends) each copy. Bad: `bad-decoration-read` exactly "❝", the quote, the source, "✦ ✦ ✦"; `bad-hidden-control` exactly the quote, no text "Share", one button, Back; after two Tabs DOM focus is on Back, and Enter, and in another load Space, share and leave the screen open; in another load one Tab and the same key leave the screen (the key on Back, the positive control); a click where Share is drawn, between the quote and the count, shares; `bad-opacity` hidden: the switch alone, no number, no Copy; after the Tab past the switch DOM focus stays on the switch, and Enter copies, and in another load Space, with the switch still off; a click where Copy is laid out copies; `bad-maintain` hidden: the switch, the number, and the Copy button; Tab reaches Copy, and Enter and Space copy with the switch off. Each screen shows the title and lines the VoiceOver judge expects above its heading. The judge (`web_tests/vo/s12_vo_walks.js`, S08's) on made-up walks |
+| L3 web | The example's elements after the "Example" heading, up to its count, read from the page's `flt-semantics` elements, exactly: `good-decoration` the quote and the source as texts, no name or text in the page with "❝" or "✦", one button (Back); `good-badge` "Inbox: 3 unread" alone, no other text with a "3", no image; `good-visibility` hidden: the switch, `aria-checked="false"`, no number, no Copy; a whole Tab cycle is Back, the switch, then out of Flutter's elements and back to Back (FL-421); shown, in the same load, the switch, the number, and the Copy button, and Tab reaches Copy. Enter and Space each: hidden, with Tab past the switch, copy nothing; then on the switch show the panel and copy nothing; then Tab to Copy and the key copies. Shown, a click and a DOM click (what a screen reader's activation sends) each copy. Bad: `bad-decoration-read` exactly "❝", the quote, the source, "✦ ✦ ✦"; `bad-hidden-control` exactly the quote, no text "Share", one button, Back; after two Tabs DOM focus is on Back, and Enter, and in another load Space, share and leave the screen open; in another load one Tab and the same key leave the screen (the key on Back, the positive control); a click where Share is drawn, between the quote and the count, shares; `bad-opacity` hidden: the switch alone, no number, no Copy; after the Tab past the switch DOM focus stays on the switch, and Enter copies, and in another load Space, with the switch still off; a click where Copy is laid out copies; `bad-maintain` hidden: the switch, the number, and the Copy button; Tab reaches Copy, and Enter and Space copy with the switch off. Each screen shows the title and lines the VoiceOver judge expects above its heading. The judge (`web_tests/vo/s12_vo_walks.js`, S08's) on made-up walks, its mutation cases in two tests that name every case in their messages, and on the committed transcript, whose 14 walks must judge complete |
 | L3 Android | The example's nodes after the "Example" heading, with their class, name, and checked state, the screen scrolled to the count: `good-decoration` exactly the quote and the source as `View`s, and no name on the screen with "❝" or "✦"; `good-badge` exactly "Inbox: 3 unread", and no other name with a "3"; `good-visibility` hidden: the switch alone, a `Switch`, not checked, and no node named by the number or Copy; Tabs from a fresh launch stop only on Back and the switch; in the same launch, shown by the click action: the switch checked, the number, and Copy, and Tab to Copy and Enter copy. Hidden, one to three Tabs and Enter, each from a fresh launch: the try that lands on the switch copies nothing, and in that launch Tab to Copy and Enter copy. Shown, the click action and a tap at Copy's centre each copy. Bad: `bad-decoration-read` exactly "❝", the quote, the source, "✦ ✦ ✦" as `View`s; `bad-hidden-control` exactly the quote, no node "Share", no clickable node but Back; from a fresh launch each, one to three Tabs then Enter, and then Space: one try shares, with no node named Share focused, and one leaves the screen (the key on Back); a tap where Share is drawn shares; `bad-opacity` hidden: the switch alone, no node for the number or Copy; Tab to the switch, one more Tab, then Enter, and in another launch Space, copy with the switch still off; a tap where Copy is laid out copies; `bad-maintain` hidden: the switch, the number, and Copy as nodes; Tab to Copy and Enter copy with the switch off, and the click action on Copy copies. Run once at CI's 320 by 640 at 160 dpi as well |
 | L3 iOS | `good-decoration` one element each for the quote and the source, and no label with "❝" or "✦"; `good-badge` "Inbox: 3 unread" the only label with a "3", no image; `good-visibility` hidden: the switch (type switch, value "0"), no element for the number or Copy, no button but Back; shown, in the same launch, by a tap: the number, and Copy a button, which a tap makes copy. Hidden, three Tabs (the probe found the first on Back) and Return, and in another launch Space, leave the screen: the third Tab is on Back again, with no stop for Copy between the switch and Back; from a fresh launch, shown first, the same keys copy and leave the screen open. Bad: `bad-decoration-read` one element each for "❝", the quote, the source, and "✦ ✦ ✦"; `bad-hidden-control` no element "Share", no button but Back; two Tabs and Return, and then Space, each from a fresh launch, share and leave the screen open; one Tab and Return leave it (on Back, the positive control); a tap where Share is drawn shares; `bad-opacity` hidden: no element for the number or Copy, no button but Back; three Tabs and Return, and then Space, copy with the switch still off; a tap where Copy is laid out copies; `bad-maintain` hidden: the number and Copy, a button, are there; three Tabs and Return copy with the switch off. XCUITest cannot see Flutter's focus or traits; no key has a modifier |
-| L4 TalkBack | Focus moved to each part by action: `good-decoration` the quote and the source, neither with an ornament's speech or the other part's words; `good-badge` "Inbox: 3 unread"; `good-visibility` the switch "off", "Show tracking", "Switch", with nothing of the panel, and the count; `bad-decoration-read` each ornament with the speech the probe measured, the quote, the source; `bad-hidden-control` the quote with no "Share" and no "Button", and the count; `bad-opacity` as `good-visibility`; `bad-maintain` the switch, the number, "Copy number" with "Button", and the count. Each row forbids the other parts' whole labels where they share words. Each walk is judged whole (`walk_strictly`; S12 is in `STRICT` in `tool/talkback.py`): a walk with a wrong reading fails for good, only a walk shown to be incomplete is walked again, up to three walks, every walk in the transcript. No row is declared silent: what is hidden is not a node, and a walk by action cannot focus it, so its absence is the tree test's |
+| L4 TalkBack | Focus moved to each part by action: `good-decoration` the quote and the source, neither with an ornament's speech or the other part's words; `good-badge` "Inbox: 3 unread"; `good-visibility` the switch "off", "Show tracking", "Switch", with nothing of the panel, and the count; `bad-decoration-read` each ornament with the speech the probe measured, the quote, the source; `bad-hidden-control` the quote with no "Share" and no "Button", and the count; `bad-opacity` as `good-visibility`; `bad-maintain` the switch, the number, "Copy number" with "Button", and the count. Each row forbids the other parts' whole labels where they share words. Each walk is judged whole (`walk_strictly`; S12 is in `STRICT` in `tool/talkback.py`): a walk with a wrong reading fails for good, only a walk shown to be incomplete is walked again, up to three walks, every walk in the transcript. No row is declared silent: what is hidden is not a node, and a walk by action cannot focus it, so its absence is the tree test's. The probe's finding that TalkBack says nothing for the Tab that lands on a hidden button stays probe-only and is not a judged row (the principal's decision, section 8): which Tab lands there depends on touch mode (the probe's p01 spent its first Tab leaving it), and with focus reported on Back either way the walk cannot tell which Tab it was, so a silent row could not be tied to that Tab |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk): the lists in `S12HidingContentUITests.speech`, written from the probe's readings of text and buttons and from F09's transcript for a `SwitchListTile` ("Bluetooth Switch button off Double tap to toggle setting."), then checked by the first S12 recording (section 7). Every expected utterance is under 64 characters; the test refuses one that is not |
-| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s12_vo_walks.js`, a copy of S08's): the title, the description, a bad example's defect, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop fails for good and is looked for first; a walk that reached the end with an expected stop not read fails for good; a stop past the expected end fails for good, an empty one included (the bounds check runs before the empty-stop check); a stop read as an empty phrase in an expected place is a failed capture, walked again, and never passes; only a walk cut short, or one with an empty capture and nothing wrong, is walked again, at most three walks, every walk logged. No runner retries (`retries: 0`). `walkWithPositions` keeps each stop's cursor position; VoiceOver's help message ("You are currently on …") is left out only at the same position as the judged stop before it, a reading whose spoken role (`spokenRole`: heading, switch, button) is the help's role; any other help message is a wrong stop, and one in place of an element's own speech fails. The help rule is tested only synthetically, by the regression cases in the web tree spec. The expected lists are predictions (section 7) |
+| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s12_vo_walks.js`, a copy of S08's): the title, the description, a bad example's defect, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop fails for good and is looked for first; a walk that reached the end with an expected stop not read fails for good; a stop past the expected end fails for good, an empty one included (the bounds check runs before the empty-stop check); a stop read as an empty phrase in an expected place is a failed capture, walked again, and never passes; only a walk cut short, or one with an empty capture and nothing wrong, is walked again, at most three walks, every walk logged. No runner retries (`retries: 0`). `walkWithPositions` keeps each stop's cursor position; VoiceOver's help message ("You are currently on …") is left out only at the same position as the judged stop before it, a reading whose spoken role (`spokenRole`: heading, switch, button) is the help's role; any other help message is a wrong stop, and one in place of an element's own speech fails. The help rule is tested only synthetically, by the regression cases in the web tree spec: no recorded walk had a help message. The expected lists were written as predictions and were confirmed by the recording of 2026-11-27 (section 7); the web tree spec judges the committed transcript again with the present judge |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -386,6 +388,23 @@ the iOS VoiceOver transcript (`docs/evidence/S12/voiceover-ios.md`) read
 every example as listed, the switch as F09's had been read ("Show
 tracking Switch button off Double tap to toggle setting.").
 
+The web VoiceOver recording, made by the principal on 2026-11-27
+(`docs/evidence/S12/voiceover-web.md`; macOS 27.2.1, Playwright 1.65.0's
+Chromium and WebKit builds), passed: 14 walks of 14, every one complete on
+its first walk, the same in both browsers. Every expected list, written as
+a prediction from the tree and from F09's reading of a `SwitchListTile`,
+was read as written: `good-decoration` the quote and "Trail guide";
+`good-badge` "Inbox: 3 unread"; `good-visibility` and `bad-opacity` "Show
+tracking off switch" and "Copies: 0"; `bad-decoration-read` "❝", the quote,
+"Trail guide", "✦ ✦ ✦"; `bad-hidden-control` the quote and "Shares: 0";
+`bad-maintain` "Show tracking off switch", "Tracking number: 1Z 999", "Copy
+number button", and "Copies: 0". No walk had an empty stop or a help
+message, so the judge's rule for a help message was not exercised by a
+real walk. What VoiceOver on the web says when keyboard focus lands on a
+hidden button was not measured: the walks move with VoiceOver's own
+`next`, not Tab. The ornaments' stops hold the characters as VoiceOver's
+last phrase gives them; how the voice pronounced them is not in it.
+
 What the tests skip or cannot see, and what each gives up:
 
 - The widget tests run as Android (`kIsWeb` false): what the web engine
@@ -423,10 +442,7 @@ What the tests skip or cannot see, and what each gives up:
   utterance again, twice, and so gives up two neighbouring elements that
   VoiceOver reads alike; no example has two.
 
-**Not done yet.** The web VoiceOver recording (the principal runs it): its
-lists are predictions written from the tree and from what VoiceOver read
-for the same kinds of element in other techniques (F09's switch, a
-`TextButton`, plain text). How each screen reader pronounces the
+**Not done yet.** How each screen reader pronounces the
 ornaments' symbols. TalkBack's and VoiceOver's own navigation by swipe or
 by keyboard, which the tests could not drive or did not try. VoiceOver's
 own activation on iOS, which XCUITest cannot make (C04 probe round 3): the
@@ -437,20 +453,26 @@ Dark mode on a device; text scaling on the web; right-to-left text.
 
 ## 8. Decisions
 
-For the principal, not decided by the engineer:
+The principal's, on 2026-11-27, on the engineer's questions (the owner
+may overrule):
 
-- **FL-350 is a new entry, and FL-263 is extended.** The mechanism is the
-  same, semantics dropped and focus left alone; FL-263 is about `Offstage`
-  and the expansion widgets that use it, and FL-350 about the other
-  widgets. They could be one entry; kept apart so that C05's citations of
-  FL-263 stay as they are.
-- **No platform is a limitation.** FL-350 and FL-351 are gaps the good
-  examples do not need: the rule asks that no control be hidden, and
-  `Visibility` hides from everyone together.
-- **`bad-decoration-read` and `bad-maintain` fail neither 1.3.1 nor 4.1.2**
-  (section 3); they are kept as bad examples of what the user hears and
-  meets, `bad-maintain` with 2.4.7 from the widget tests.
-- **No Cupertino example** (section 4).
+1. **FL-350 stays its own entry beside FL-263.** The mechanism is the
+   same, semantics dropped and focus left alone; FL-263 is about
+   `Offstage` and the expansion widgets that use it, and FL-350 about the
+   other widgets. FL-263 is extended with S12's measurements of
+   `Offstage`.
+2. **All three platforms stay "applies".** The good examples meet the
+   requirement without the gaps in FL-350 and FL-351: the rule asks that
+   no control be hidden, and `Visibility` hides from everyone together.
+3. **`bad-decoration-read` and `bad-maintain` stay.** Each is not a shown failure of a success criterion in this technique's list; shown for what the user hears
+   (section 3); for `bad-maintain`, 2.4.7 was measured in widget tests
+   only and is outside S12's list. The spec, the technique doc, and the
+   example text say so.
+4. **The TalkBack silence on a hidden-focus Tab stays probe-only.** It is
+   not a judged row, because which Tab lands on the hidden button depends
+   on touch mode and the walk cannot tell (section 6).
+
+Not asked: there is no Cupertino example (section 4).
 
 ## 9. What is handed on
 

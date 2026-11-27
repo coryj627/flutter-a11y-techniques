@@ -51,15 +51,15 @@ const SWITCH_OFF = 'Show tracking off switch';
 // end of the screen, in order, one entry for each element its cursor stops
 // on. Because every stop is listed, the lists also show what is not spoken.
 //
-// These are PREDICTIONS, written before any web VoiceOver recording of S12
-// from the page's elements (web_tests/s12_hiding_content.spec.js) and from
-// what VoiceOver read for the same kinds of element in other techniques'
+// Written as predictions, before any web VoiceOver recording of S12, from
+// the page's elements (web_tests/s12_hiding_content.spec.js) and from what
+// VoiceOver read for the same kinds of element in other techniques'
 // recordings: a SwitchListTile "Bluetooth off switch" (F09), a TextButton
-// "<name> button", a plain text by its words. How VoiceOver reads the
-// ornaments' symbols in bad-decoration-read is not known: it is written as
-// the characters themselves, which is what VoiceOver speaks only if it
-// passes them through. The first recording decides; its walks that differ
-// are kept as a failed round, and the lists are changed to what it read.
+// "<name> button", a plain text by its words. The recording of 2026-11-27
+// (docs/evidence/S12/voiceover-web.md) read every list as written, in
+// Chromium and WebKit, each walk complete on its first walk. The ornaments'
+// stops are the characters as VoiceOver's last phrase gives them; how the
+// voice pronounced them is not recorded.
 export const EXPECTED_STOPS = {
   // The quote and who said it: no ornament.
   'good-decoration': [QUOTE, SOURCE],

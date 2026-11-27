@@ -197,7 +197,7 @@ class GoodVisibility extends StatelessWidget {
 
 // #region bad-decoration-read
 /// The ornaments are left as they are: a screen reader stops on each one,
-/// around the quote, and reads it as text.
+/// around the quote, and reads it as text. This is not a shown failure of a success criterion in this technique's list; shown for what the user hears.
 class BadDecorationRead extends StatelessWidget {
   const BadDecorationRead({super.key});
 
@@ -272,7 +272,9 @@ class BadOpacity extends StatelessWidget {
 // #region bad-maintain
 /// While the switch is off the panel is hidden with `Visibility.maintain`:
 /// it is not drawn, but its semantics are kept, so a screen reader reads
-/// the number and the button, and the keyboard reaches the button.
+/// the number and the button, and the keyboard reaches the button. This is
+/// not a shown failure of a success criterion in this technique's list; shown for what the user hears; the 2.4.7 failure of its invisible focus was measured in
+/// widget tests only and is outside S12's list.
 class BadMaintain extends StatelessWidget {
   const BadMaintain({super.key});
 

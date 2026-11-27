@@ -2,6 +2,7 @@
 // example, and where Tab, Enter, Space, and a click go. Spec:
 // docs/specs/S12-hiding-content.md. Runs against the release build in
 // build/web.
+import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
 import {
@@ -256,6 +257,29 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
   }
 });
 
+// The committed web VoiceOver transcript, judged again with today's judge:
+// each row's stops (a complete walk shows only what follows the "Example"
+// heading, so the screen's own stops are put back), with no positions, as
+// none is in a transcript. The recording of 2026-11-27 passed, 14 walks of
+// 14 in Chromium and WebKit, and must still judge complete.
+const transcriptRows = (file) => readFileSync(new URL(`../${file}`, import.meta.url), 'utf8')
+  .split('\n')
+  .map((line) => /^\| `([a-z-]+)-walk-\d+` \| (.*) \((complete|wrong|incomplete): .*\) \|$/.exec(line))
+  .filter(Boolean)
+  .map(([, slug, shown, was]) => {
+    const read = shown.split(' / ');
+    return { slug, was, stops: was === 'complete' ? [...screenStops(slug), EXAMPLE_HEADING, ...read] : read };
+  });
+
+test('the committed web VoiceOver transcript (docs/evidence/S12/voiceover-web.md): every walk complete', () => {
+  const rows = transcriptRows('docs/evidence/S12/voiceover-web.md');
+  expect(rows).toHaveLength(14);
+  for (const { slug, was, stops } of rows) {
+    expect(was, slug).toBe('complete');
+    expect(judgeExampleWalk(stops, true, EXPECTED_STOPS[slug], screenStops(slug)).verdict, slug).toBe('complete');
+  }
+});
+
 // How the web VoiceOver spec judges one walk (judgeExampleWalk, S08's judge)
 // and repeats one that fell short (runWalks). The walks here are made up;
 // VoiceOver is not used.
@@ -288,11 +312,13 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['a walk cut short after the heading', screen(), false, 'incomplete'],
     ['every stop read, but the end not reached', screen(...expected), false, 'incomplete'],
   ];
-  for (const [what, stops, reachedEnd, verdict] of cases) {
-    test(`${what}: ${verdict}`, () => {
-      expect(judgeExampleWalk(stops, reachedEnd, expected, own).verdict).toBe(verdict);
-    });
-  }
+  // Every mutation of a walk in one test; each case is named in its
+  // message, so a failure says which.
+  test(`every made-up walk is judged as its case says (${cases.length} cases)`, () => {
+    for (const [what, stops, reachedEnd, verdict] of cases) {
+      expect(judgeExampleWalk(stops, reachedEnd, expected, own).verdict, what).toBe(verdict);
+    }
+  });
 
   // A help message is left out only when the walk's positions tie it to the
   // stop before it: same position, a reading before it, and its role in
@@ -322,11 +348,11 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['switch help after the title heading, at its position: fails', [own[0], HELP, ...whole.slice(1)],
       at([own[0], HELP, ...whole.slice(1)], [1]), 'wrong'],
   ];
-  for (const [what, stops, positions, verdict] of helpCases) {
-    test(`${what}: ${verdict}`, () => {
-      expect(judgeExampleWalk(stops, true, expected, own, positions).verdict).toBe(verdict);
-    });
-  }
+  test(`every made-up walk with a help message is judged as its case says (${helpCases.length} cases)`, () => {
+    for (const [what, stops, positions, verdict] of helpCases) {
+      expect(judgeExampleWalk(stops, true, expected, own, positions).verdict, what).toBe(verdict);
+    }
+  });
 
   test('a reading\'s spoken role comes from its role part only', () => {
     expect(spokenRole('heading level 1 Panel hidden from everyone')).toBe('heading');
