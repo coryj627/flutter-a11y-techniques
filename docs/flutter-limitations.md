@@ -160,6 +160,12 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-296](#fl-296) | A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it | Web; widget tests (Android and iOS not run) | Confirmed |
 | [FL-297](#fl-297) | On the web, whether VoiceOver in Chromium said what a SnackBar or banner action did, when Enter on that action removed the control, varied between recordings, and the live-region line that now says it was not heard in its one recording | Web (Chromium, VoiceOver, Enter) | Observed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
+| [FL-300](#fl-300) | `Title` sets the document title only when it is built or its title changes: after Back the browser keeps the title of the screen that closed | Web (Chromium) | Confirmed |
+| [FL-301](#fl-301) | `CupertinoNavigationBar`'s title names no route: on Android the pane title is a space, and TalkBack is not told the screen's name | Android, Web (Chromium on macOS, `navigator.platform` as a Mac and as Linux) | Confirmed |
+| [FL-302](#fl-302) | On iOS VoiceOver is not told a screen's title when it opens: its cursor goes to the screen's first control | iOS | Confirmed |
+| [FL-303](#fl-303) | `CupertinoNavigationBarBackButton` is two buttons: the one that takes the tap has no name | All | Confirmed |
+| [FL-304](#fl-304) | On the web a route is a generic element with no role, described by its title only where a node names the route, which `AppBar` does not when `navigator.platform` reports a Mac | Web (Chromium) | Confirmed |
+| [FL-305](#fl-305) | On Android a screen that changes inside one route, such as a `NavigationBar`'s destinations, keeps the pane title of the first | Android | Observed |
 | [FL-310](#fl-310) | On iOS a list made with the list roles is a container of no particular kind, where a native list is a table or a collection view of cells; nothing gives it a list's type, and VoiceOver says nothing about it | iOS | Confirmed |
 | [FL-311](#fl-311) | On Android a list made with `SemanticsRole.list` says "In list" and "Out of list", but not how many items it has or where an item is | Android | Confirmed |
 | [FL-312](#fl-312) | On the web a scrolling list (`ListView`, `SliverList`) is not a list, and the list role cannot be put round one | Web | Confirmed |
@@ -4713,6 +4719,235 @@ yet), **Fixed in x.y** (verified on that version).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
+
+## FL-300
+
+**`Title` sets the document title only when it is built or its title changes: after Back the browser keeps the title of the screen that closed.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by every S06 example in the
+  widget tests (Back sends no title) and the web tree tests (the document
+  title after the app's Back, and after the browser's Back for
+  `good-material`). Found in the S06 probe
+  (`docs/evidence/probes/s06/`): on the web, in Chromium on macOS, for
+  every fixture with a `Title` (p01, p03 to p10, p12, p13), after the
+  app's Back (not taken for p13) and after the browser's back and
+  forward (`web.txt`), in Playwright's Chromium on macOS; in
+  the widget tests, as Android and as iOS, Back sent no title at all
+  (`flutter_test.txt`). Framework source read: `widgets/title.dart` calls
+  `SystemChrome.setApplicationSwitcherDescription` in `initState` and in
+  `didUpdateWidget` when its title or colour changed, and at no other
+  time; the screen under a pushed route keeps its state and its widget,
+  so nothing calls it again when the route above it pops. The web engine
+  writes the label to `document.title` (source read:
+  `platform_dispatcher.dart`).
+- WCAG: 2.4.2 Page Titled, on the web, under S06's reading of each
+  screen as a page (its spec, section 3). As written, an app at one
+  address can be one page; Understanding 2.4.2 says its title "should
+  also be changed dynamically" with the view.
+- What happens: a screen opened with a `Title` gives the document its
+  title, and Chromium's root web area takes that name. When the screen
+  closes, the document keeps it: the example screen under S06's
+  `good-material`, titled "Material screen title - Flutter A11Y
+  Techniques" when it opened, is shown under the title "Orders" after
+  Back. The same holds for this app's own screens, which each have a
+  `Title` (`lib/app/widgets.dart`, `PageScaffold`): the catalog, "Flutter
+  A11Y Techniques", opened S06's technique screen, "Screen and page
+  titles - Flutter A11Y Techniques", and after the app's Back the catalog
+  kept that title (`docs/evidence/probes/s06/web_back.txt`, the release
+  app build in Playwright's Chromium on macOS); the example screens under
+  S06's screens as above. No other screen of the app was tried. On Android `Title` sets the app's task label in
+  Recents (source read: `PlatformPlugin.java`); what that label is after
+  Back was not measured. On iOS `Title` does
+  nothing (source read: `FlutterPlatformPlugin.mm`).
+- Why it matters: after Back, the document's title, which a browser
+  shows in its tab, and the page's name in Chromium's accessibility tree
+  name a screen that is not shown. What a screen reader said of the
+  page's name after Back, and the titles in the browser's history, were
+  not measured.
+- Workaround: none in the SDK. No documented parameter of `Title`,
+  `MaterialApp` (`title`, `onGenerateTitle`), or the routes sets the
+  title again when a route pops. A `NavigatorObserver` or a `RouteAware`
+  that calls `SystemChrome` on a pop would be a mechanism of the
+  project's own, which the owner's rule does not allow; it is not built.
+  So the web is a limitation in S06 (`PlatformStatus.limitation`).
+- Upstream issue: not searched yet (D25).
+
+## FL-301
+
+**`CupertinoNavigationBar`'s title names no route: on Android the pane title is a space, and TalkBack is not told the screen's name.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by S06
+  `bad-cupertino-unnamed` in the widget tests (no node names the route),
+  the Android tree test (the pane title a single space), the TalkBack
+  transcript, and the web tree test (Playwright's Chromium on macOS, with
+  `navigator.platform` left as "MacIntel" and set to "Linux x86_64"
+  before load); `good-cupertino`, the same
+  bar with `Semantics(namesRoute: true)` round its middle, is the
+  positive control on each. Found in the S06 probe (p05, p06; p08 with
+  `namesRoute`). Framework source read: `cupertino/nav_bar.dart` wraps
+  the middle and the large title in `Semantics(header: true)` with no
+  `namesRoute`, where `material/app_bar.dart` sets `namesRoute` on its
+  title for Android, Fuchsia, Linux, and Windows.
+- WCAG: none as written: the title is there, shown, and a header. It
+  misses S06's R5, an announcement of the title, which the Android
+  Compose reference repository gives through the screen's pane title.
+- What happens: Android's engine sets the FlutterView's pane title to the
+  route's name, the label of the first node with `namesRoute` in the last
+  route, or to a single space where there is none (source read:
+  `AccessibilityBridge.java`, `onWindowNameChange`). With the bar's
+  middle (p05) or large title (p06) it is " ", and TalkBack, when the
+  screen opened, spoke an empty utterance and then "Back", "Button"
+  (`android-tree.txt`, `android-talkback.md`). With `namesRoute` (p08)
+  the pane title is "p08 Orders". On the web, in Playwright's Chromium on
+  macOS, no element describes the route, with `navigator.platform` left
+  as "MacIntel" or set to "Linux x86_64"; with `namesRoute` it is
+  described by the title ([FL-304](#fl-304)). A browser that really runs
+  on Linux or Windows was not tried here; CI's web tests run on Linux. On iOS VoiceOver did not say the title when the
+  screen opened with or without it ([FL-302](#fl-302)).
+- Workaround, in the SDK: `Semantics(namesRoute: true)` round the
+  middle's text, the documented property, as S06 `good-cupertino` does.
+- Upstream issue: not searched yet (D25).
+
+## FL-302
+
+**On iOS VoiceOver is not told a screen's title when it opens: its cursor goes to the screen's first control.**
+
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0: asserted by S06's iOS
+  VoiceOver test for every example. Found in the S06 probe (`ios.txt`,
+  `ios-round1.txt`, p01 to p13). Framework source read:
+  `material/app_bar.dart` leaves `namesRoute` unset on iOS and macOS;
+  the iOS engine posts `UIAccessibilityScreenChangedNotification` with
+  the route's name, nil where no node names it, then
+  `UIAccessibilityLayoutChangedNotification` with the first focusable
+  node (`accessibility_bridge.mm`).
+- WCAG: none as written; 2.4.2 asks for a title, not for an
+  announcement. S06's R5, the title said as a screen opens, comes from
+  the Android Compose reference alone and is not a requirement on iOS
+  (the principal's decision, S06's spec, section 8); iOS applies there.
+- What happens: after a double tap at the button that opens the screen,
+  `currentSpeech()`, read every 0.15 s for eight seconds in the probe and
+  six in the test, gave the button's own utterance and then only "Back
+  Button" for a Material screen, or "Button" for a Cupertino one
+  ([FL-303](#fl-303)): the cursor on the first control. The title was
+  never among the reads, also where `Semantics(namesRoute: true)` names
+  the route (p07, p08). One move forward reads it, "Orders Heading" when
+  it has `headingLevel` (p09), "Orders" when it has not (p01): the
+  header alone is not a heading for VoiceOver ([FL-003](#fl-003)). An
+  utterance shorter than one read's interval could be missed by these
+  reads; nothing shorter was seen.
+- Why it matters: a VoiceOver user learns the screen's name only by
+  moving to it.
+- Workaround: none in the SDK. `namesRoute` did not change what was heard.
+- Upstream issue: not searched yet (D25).
+
+## FL-303
+
+**`CupertinoNavigationBarBackButton` is two buttons: the one that takes the tap has no name.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by S06 `good-cupertino`
+  and `bad-cupertino-unnamed` in the widget tests, the iOS tree and
+  VoiceOver tests, and the web tree test (where the Back button is
+  located as the first of two), with Material's Back as the positive
+  control. Found in the S06 probe (p05, p06, p08). Framework source read:
+  `cupertino/nav_bar.dart` builds a `CupertinoButton`, which has the tap,
+  round a `Semantics(container: true, excludeSemantics: true, label:
+  'Back', button: true)`, which has the name and no action.
+- WCAG: 4.1.2 Name, Role, Value, as written ("the name and role can be
+  programmatically determined"), by platform, as measured:
+  - iOS: fails. The element that takes the tap is a button with no
+    label, and VoiceOver stops on it and says only "Button"; that a
+    second element is labelled "Back" does not name it.
+  - Web (Chromium and WebKit, Playwright's builds): not failed. Both
+    elements have the button role and are named "Back" in Chromium's
+    tree (the outer one by its content), and VoiceOver read "Back
+    button" in both browsers as the two Cupertino screens opened; in
+    Chromium it added "group" and its help for a group, in both
+    recordings (`docs/evidence/S06/voiceover-web.md` and
+    `docs/evidence/probes/s06/voiceover-web-round1-fail.md.txt`, the
+    Cupertino `-opening` rows, recorded and not judged).
+  - Android: not shown to fail. The node TalkBack read, "Back", has its
+    name and the `Button` class; it has no click action, which 4.1.2
+    does not ask about. Whether TalkBack ever stops on the unnamed
+    clickable node was not measured: in the walk it went to "Back".
+  - Widget tests: a test-framework finding, not a platform's.
+- What happens:
+  - Widget tests: a node with the tap action and no label, which fails
+    `labeledTapTargetGuideline`, and a button node named "Back" with no
+    action.
+  - iOS: two buttons, one labelled "Back" and one with no label. When the
+    screen opened, VoiceOver's cursor went to the unnamed one and said
+    "Button"; one move forward said "Back Button" (`ios.txt`, p05, p06,
+    p08). A double tap at the labelled one's place went back.
+  - Web: two elements with the button role, the outer one focusable and
+    tappable, the inner one with the text "Back"; in Chromium both are
+    named "Back", the outer by its content (`web.txt`, round 3's strict
+    locator found two).
+  - Android: one node named "Back", a `Button` with no click action,
+    which TalkBack read as "Back", "Button" with no "Double-tap to
+    activate", where it said that for Material's Back
+    (`docs/evidence/S06/talkback-android.md`, the Cupertino `-opened`
+    rows; the probe's p05, p06, p08); and a clickable node with no
+    name, as S06's Android tree test asserts.
+- Workaround: none tried. S06 `good-cupertino` keeps the bar's own
+  button, so that good example has this framework defect on iOS, and its
+  spec, doc, and code say so; its widget test skips the labelled tap
+  target guideline on the opened screen and asserts this instead.
+- Upstream issue: not searched yet (D25).
+
+## FL-304
+
+**On the web a route is a generic element with no role, described by its title only where a node names the route, which `AppBar` does not when `navigator.platform` reports a Mac.**
+
+- Status: Confirmed, Flutter 3.47.5, Playwright's Chromium on macOS:
+  asserted by S06's web tree test, with `navigator.platform` set before
+  load to "MacIntel" and to "Linux x86_64". Found in the S06 probe
+  (`web.txt`: p01 to p13 with the platform as it is, "MacIntel"; p01,
+  p05, p09, p13 with it set to "Linux x86_64"). A browser that really
+  runs on Linux, as CI's does, or on Windows, was not tried here. Framework source read: the web engine gives a
+  node with `scopesRoute` the `SemanticRoute` role, which sets no ARIA
+  role, and points `aria-describedby` at a descendant with `namesRoute`
+  (`semantics/route.dart`); Flutter takes the web's platform from
+  `navigator.platform`, and `AppBar` sets `namesRoute` only on Android,
+  Fuchsia, Linux, and Windows.
+- WCAG: none on its own: the document's title is the web's screen title
+  (R4), and this is about the route's element.
+- What happens: with "MacIntel", no route element has
+  `aria-describedby` with a Material `AppBar` (p01, p09), and one does
+  with `namesRoute` set by hand (p07, p08). With "Linux x86_64",
+  `AppBar`'s route is described by its title (p01, p09, p13). Where it is, Chromium's tree has a generic node with
+  no name whose description is the title; no route is a `dialog`, a
+  `region`, or any landmark. A screen is not a region a screen reader
+  can move to. Named-route landmarks on the web are said to come with
+  Flutter 3.50 (S06's issue); the pin is 3.47.5, and nothing of 3.50 was
+  measured. VoiceOver on the web, opening `good-cupertino`'s screen,
+  whose route is described with either `navigator.platform`, did not
+  read the description in either recording, in Chromium or WebKit
+  (`docs/evidence/S06/voiceover-web.md`, and the first, failed round,
+  `docs/evidence/probes/s06/voiceover-web-round1-fail.md.txt`; the
+  opening rows, recorded and not judged); nothing else was measured of
+  it. Those recordings ran with `navigator.platform` as it is on the
+  Mac, so `good-material`'s route was not described in them.
+- Upstream issue: not searched yet (D25).
+
+## FL-305
+
+**On Android a screen that changes inside one route, such as a `NavigationBar`'s destinations, keeps the pane title of the first.**
+
+- Status: Observed, Flutter 3.47.5, Android 17: the S06 probe (p10,
+  `android-tree.txt`); no test in the repo. Framework source read:
+  Android's engine sets the pane title only when the routes on the
+  screen change (`AccessibilityBridge.java`, the route check before
+  `onWindowNameChange`), not when the name of the shown route changes.
+- WCAG: none as written; it misses S06's R5 for each destination.
+- What happens: p10's `AppBar` title and `Title` follow the selected
+  destination. After "p10 Settings" was pressed, the pane title was still
+  "p10 Inbox"; on the web the document's title became "p10 Settings"
+  (`web.txt`). TalkBack, after the press, said only "selected"
+  (`android-talkback.md`). On iOS, after a double tap at the destination,
+  VoiceOver's reads gave nothing new in eight seconds, and one move
+  forward read "p10 Settings", the new title (`ios.txt`).
+- Workaround: none tried.
+- Upstream issue: not searched yet (D25).
 
 ## FL-310
 

@@ -1,0 +1,152 @@
+// S06 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s06/ProbeS06UITests.swift.txt). For each fixture of
+// lib/probe.dart, opened by URL on its launcher: testTree logs the elements
+// of one snapshot on the launcher, after the Open button is tapped, and
+// after Back is tapped (p10: after the second destination; p13: after the
+// drawer is opened). testVoiceOver walks the launcher to its Open button,
+// double taps at it (which acts on what is under the tap), and logs every
+// distinct utterance currentSpeech() gives for 8 s, then one move forward
+// and one back; the same after Back is double tapped at; p10 and p13 as
+// above.
+import XCTest
+
+final class ProbeS06UITests: XCTestCase {
+  let app = XCUIApplication()
+  // TEST_RUNNER_IDS="p10,p11" (round 2) limits the fixtures.
+  let ids = ProcessInfo.processInfo.environment["IDS"].map { $0.split(separator: ",").map(String.init) }
+    ?? (1...13).map { String(format: "p%02d", $0) }
+
+  func log(_ s: String) { print("S06PROBE \(s)") }
+
+  func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+
+  func labelled(_ l: String) -> XCUIElement {
+    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", l)).firstMatch
+  }
+
+  /// The NavigationBar destination: its label is "p10 Settings\nTab 2 of 2" (round 1).
+  func destination(_ l: String) -> XCUIElement {
+    app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@", l)).firstMatch
+  }
+
+  @discardableResult
+  func open(_ id: String) -> Bool {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///\(id)")!)
+      if el("\(id)-start").waitForExistence(timeout: 30) { sleep(1); return true }
+    }
+    log("\(id) did not open")
+    return false
+  }
+
+  /// Every element of one snapshot with a label or identifier.
+  func dump(_ id: String, _ step: String) {
+    guard let root = try? app.snapshot() else { log("\(id) \(step): no snapshot"); return }
+    var out: [String] = []
+    func walk(_ s: XCUIElementSnapshot) {
+      if (!s.label.isEmpty || !s.identifier.isEmpty) && s.elementType != .application {
+        out.append("type=\(s.elementType.rawValue) id=\(s.identifier) label=\(s.label.debugDescription) value=\(String(describing: s.value)) frame=\(s.frame)")
+      }
+      for c in s.children { walk(c) }
+    }
+    walk(root)
+    log("\(id) \(step): \(out.count) element(s): \(out.joined(separator: " | "))")
+  }
+
+  func testTree() {
+    for id in ids {
+      guard open(id) else { continue }
+      dump(id, "launcher")
+      el("\(id)-open").tap()
+      if !el("\(id)-end").waitForExistence(timeout: 10) { log("\(id) screen did not open") }
+      sleep(2)
+      dump(id, "opened")
+      if id == "p10" {
+        destination("p10 Settings").tap()
+        sleep(2)
+        dump(id, "second destination")
+      }
+      if id == "p13" {
+        el("p13-drawer").tap()
+        sleep(2)
+        dump(id, "drawer open")
+        continue
+      }
+      let back = labelled("Back")
+      if back.exists { back.tap() } else { log("\(id): no element labelled Back") }
+      if !el("\(id)-start").waitForExistence(timeout: 10) { log("\(id) launcher did not come back") }
+      sleep(2)
+      dump(id, "back")
+    }
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    // Round 2: VoiceOver is switched off however the test ends (round 1
+    // stopped at p10 with it on).
+    defer { try? vo.disable() }
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    func sayBack() -> String {
+      do { return norm(try vo.moveBackward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    func current() -> String { norm((try? vo.currentSpeech().utterance) ?? "(none)") }
+    func listen(_ seconds: TimeInterval) -> String {
+      let t0 = Date()
+      var heard: [String] = []
+      var last = "\u{0}"
+      while Date().timeIntervalSince(t0) < seconds {
+        let s = current()
+        if s != last {
+          heard.append(String(format: "%.1fs %@", Date().timeIntervalSince(t0), s))
+          last = s
+        }
+        usleep(150_000)
+      }
+      return heard.joined(separator: " / ")
+    }
+    for id in ids {
+      guard open(id) else { continue }
+      try vo.enable()
+      var walk: [String] = []
+      for _ in 0..<8 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix("\(id) Open") { break }
+      }
+      log("VO \(id) launcher walk: \(walk.joined(separator: " / "))")
+      el("\(id)-open").doubleTap()
+      log("VO \(id) after the double tap at Open: \(listen(8))")
+      log("VO \(id) opened, one move forward: \(say()) | one move back: \(sayBack())")
+      if id == "p10" {
+        destination("p10 Settings").doubleTap()
+        log("VO p10 after the double tap at Settings: \(listen(8))")
+        log("VO p10 second destination, one move forward: \(say()) | one move back: \(sayBack())")
+      }
+      if id == "p13" {
+        el("p13-drawer").doubleTap()
+        log("VO p13 after the double tap at Show folders: \(listen(8))")
+        log("VO p13 drawer, one move forward: \(say()) | one move back: \(sayBack())")
+        try vo.disable()
+        continue
+      }
+      let back = labelled("Back")
+      if back.exists {
+        back.doubleTap()
+        log("VO \(id) after the double tap at Back: \(listen(8))")
+        log("VO \(id) back, one move forward: \(say()) | one move back: \(sayBack())")
+      } else {
+        log("VO \(id): no element labelled Back")
+      }
+      try vo.disable()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}
