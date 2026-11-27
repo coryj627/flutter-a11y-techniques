@@ -268,9 +268,12 @@ the same text). The judge now walks such a capture again; the spec's
 section 7 has the diagnosis. The fourth failed one walk, WebKit,
 `good-numbered`, on VoiceOver's help message for the list after the last
 stop (`voiceover-web-round4-fail.md.txt`, its log the same text). The
-fifth passed, 16 of 16 (`docs/evidence/S08/voiceover-web.md`). The judge
+fifth passed, 16 of 16 (`voiceover-web-round5-pass.md.txt`). The judge
 was tightened after it: a help message is left out only when the walk's
-recorded positions tie it to the stop before it.
+recorded positions tie it to the stop before it. The sixth, with that
+walk and judge, passed 16 of 16 on first walks, with no empty stop and no
+help message (`docs/evidence/S08/voiceover-web.md`); since no help
+message came, the position rule was not exercised by it.
 
 ## What the examples take from this
 

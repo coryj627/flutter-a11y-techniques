@@ -24,7 +24,8 @@
 // Chromium and WebKit for every example but `good-material`, which has
 // WebKit's reading only: Chromium quit during that walk, and VoiceOver read
 // its crash dialog. Every later recording read good-material in Chromium
-// as WebKit had; the fifth passed whole (docs/evidence/S08/voiceover-web.md).
+// as WebKit had; the fifth passed whole, and the sixth, with this walk and
+// judge (docs/evidence/S08/voiceover-web.md).
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';

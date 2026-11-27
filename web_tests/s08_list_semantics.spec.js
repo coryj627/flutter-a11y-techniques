@@ -257,8 +257,9 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
 // The committed web VoiceOver transcripts, judged again with today's judge:
 // each row's stops (a complete walk shows only what follows the "Example"
 // heading, so the screen's own stops are put back), with no positions, as
-// none was recorded. The fifth recording passed and must still pass; the
-// fourth failed on a help message after the last stop and must still fail.
+// none is in a transcript. The sixth and fifth recordings passed and must
+// still pass; the fourth failed on a help message after the last stop and
+// must still fail.
 const transcriptRows = (file) => readFileSync(new URL(`../${file}`, import.meta.url), 'utf8')
   .split('\n')
   .map((line) => /^\| `([a-z-]+)-walk-\d+` \| (.*) \((complete|wrong|incomplete): .*\) \|$/.exec(line))
@@ -269,13 +270,18 @@ const transcriptRows = (file) => readFileSync(new URL(`../${file}`, import.meta.
   });
 
 test.describe('the committed web VoiceOver transcripts judge as recorded', () => {
-  test('the fifth recording (docs/evidence/S08/voiceover-web.md): every walk complete', () => {
-    const rows = transcriptRows('docs/evidence/S08/voiceover-web.md');
-    expect(rows).toHaveLength(16);
-    for (const { slug, stops } of rows) {
-      expect(judgeExampleWalk(stops, true, EXPECTED_STOPS[slug], screenStops(slug)).verdict, slug).toBe('complete');
-    }
-  });
+  for (const [what, file] of [
+    ['the sixth recording', 'docs/evidence/S08/voiceover-web.md'],
+    ['the fifth recording', 'docs/evidence/probes/s08/voiceover-web-round5-pass.md.txt'],
+  ]) {
+    test(`${what} (${file}): every walk complete`, () => {
+      const rows = transcriptRows(file);
+      expect(rows).toHaveLength(16);
+      for (const { slug, stops } of rows) {
+        expect(judgeExampleWalk(stops, true, EXPECTED_STOPS[slug], screenStops(slug)).verdict, slug).toBe('complete');
+      }
+    });
+  }
 
   test('the fourth recording (voiceover-web-round4-fail.md.txt): good-numbered in WebKit wrong, the rest complete', () => {
     const rows = transcriptRows('docs/evidence/probes/s08/voiceover-web-round4-fail.md.txt');

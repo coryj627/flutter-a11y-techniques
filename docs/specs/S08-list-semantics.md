@@ -557,17 +557,31 @@ What the tests skip or cannot see, and what each gives up:
   in one snapshot's order, not the hierarchy; the VoiceOver walk shows what is said.
 
 - **The fifth web recording passed**, 16 walks of 16, every one complete
-  on its first try in Chromium and WebKit
-  (`docs/evidence/S08/voiceover-web.md`, recorded by the coordinator on
-  2026-11-26 with the judge of that day). No walk in it had an empty stop
-  or a help message. The judge was changed after it, so that a help
-  message is left out only when the walk's positions tie it to the stop
-  before it (above); the web tree spec judges this transcript and the
-  fourth round's again with today's judge: the fifth still passes and the
-  fourth still fails. A recording with today's judge has not been made.
+  on its first try in Chromium and WebKit, recorded by the coordinator on
+  2026-11-26 with the judge of that day
+  (`docs/evidence/probes/s08/voiceover-web-round5-pass.md.txt`, its
+  transcript as it was committed). No walk in it had an empty stop or a
+  help message. The judge was changed after it, so that a help message is
+  left out only when the walk's positions tie it to the stop before it
+  (above).
+- **The sixth web recording, with the walk that records positions and the
+  judge that ties a help message to its stop, passed**, 16 walks of 16,
+  every one complete on its first walk in Chromium and WebKit, recorded by
+  the coordinator on 2026-11-26 (`docs/evidence/S08/voiceover-web.md`).
+  No walk in it had an empty stop or a help message. The web tree spec
+  judges the sixth, the fifth, and the fourth transcripts again with the
+  judge: the sixth and the fifth complete, the fourth wrong on its help
+  message.
+- **What the sixth recording does not show.** No help message came in any
+  of its walks, so the judge's rule for one, that a help message about the
+  element just read is at the same cursor position as the stop before it,
+  was not exercised by a real walk. That rule is inferred from the shared
+  walk's rule (`stopsToEnd`), and tested only by the synthetic regression
+  cases in the web tree spec and by round 4's transcript, which holds no
+  positions and so judges wrong.
 
-**Not done yet.** A web VoiceOver recording with today's judge, which
-records each stop's position and ties a help message to it. What VoiceOver says for a plain HTML `li`
+**Not done yet.** A web VoiceOver walk in which a help message comes, to
+show the cursor's position for it. What VoiceOver says for a plain HTML `li`
 in the same browsers (FL-315). Which stops a TalkBack
 swipe makes, and whether it scrolls a lazy list. VoiceOver's own
 activation on iOS, which XCUITest cannot make (C04 probe round 3): the
