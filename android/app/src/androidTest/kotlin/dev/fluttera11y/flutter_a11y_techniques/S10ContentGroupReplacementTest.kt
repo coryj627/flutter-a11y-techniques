@@ -260,6 +260,13 @@ class S10ContentGroupReplacementTest : TechniqueTest("S10") {
             ),
             "bad-stale" to listOf(
                 byId("s10-bad-stale-rating", "s10-bad-stale-rating"),
+                // Focus is moved to the button first, as in
+                // good-exclude-semantics: with focus put on the replacement
+                // again straight after its first reading, TalkBack said
+                // nothing for it in three walks (the first recording,
+                // docs/evidence/probes/s10/talkback-round1-fail.md.txt; the
+                // cause was not found).
+                byId("s10-bad-stale-add", "s10-bad-stale-add"),
                 Stop("s10-bad-stale-after", before = {
                     assertTrue(node("s10-bad-stale-add").performAction(AccessibilityNodeInfo.ACTION_CLICK))
                     Thread.sleep(2_000)

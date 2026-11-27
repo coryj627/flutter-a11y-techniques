@@ -39,6 +39,7 @@ TALKBACK_EXPECT = {
     "s10-bad-hides-control-rating": ([_WORDS], ["Button"] + _PIECES),
     "s10-bad-hides-control-opens": (["Reviews opened: 0"], ["Button"]),
     "s10-bad-stale-rating": ([_WORDS], _PIECES),
+    "s10-bad-stale-add": ([_ADD, "Button"], [_WORDS]),
     # After the click action the row shows 857, and the replacement still
     # says 856.
     "s10-bad-stale-after": ([_WORDS], ["857"]),
