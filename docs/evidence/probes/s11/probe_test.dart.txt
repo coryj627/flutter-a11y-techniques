@@ -1,0 +1,75 @@
+// S11 probe in widget tests (throwaway, not committed; kept as
+// docs/evidence/probes/s11/probe_test.dart.txt). For each fixture of
+// lib/probe.dart, at two screen sizes: the fixture's labelled nodes in
+// traversal order (the order the framework gives the platforms), and for the
+// fixtures with buttons the keyboard's stops with Tab.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+List<String> order(WidgetTester tester, String id) {
+  final out = <String>[];
+  void visit(SemanticsNode node) {
+    final l = node.label.replaceAll('\n', r'\n');
+    if (l.contains(id) || l.startsWith('Before') || l.startsWith('After')) {
+      out.add(l);
+    }
+    final kids = node.debugListChildrenInOrder(DebugSemanticsDumpOrder.traversalOrder);
+    for (final k in kids) {
+      visit(k);
+    }
+  }
+
+  visit(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!);
+  return out;
+}
+
+String focused() {
+  final f = FocusManager.instance.primaryFocus;
+  final w = f?.context?.widget;
+  if (f?.context == null) return '(none)';
+  // The text of the nearest TextButton or BackButton.
+  String? text;
+  f!.context!.visitChildElements((_) {});
+  void find(Element e) {
+    if (text != null) return;
+    final ww = e.widget;
+    if (ww is Text) text = ww.data;
+    e.visitChildElements(find);
+  }
+
+  (f.context! as Element).visitChildElements(find);
+  return text ?? '(${w.runtimeType})';
+}
+
+void main() {
+  for (final size in [const Size(412, 915), const Size(320, 640)]) {
+    for (final id in fixtures.keys) {
+      testWidgets('$id at ${size.width.toInt()}x${size.height.toInt()}', (tester) async {
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final handle = tester.ensureSemantics();
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(builder: (_) => FixtureScreen(ids: [id])),
+          ),
+        );
+        await tester.pumpAndSettle();
+        debugPrint('S11PROBE $id ${size.width.toInt()} order: ${order(tester, id).join(' / ')}');
+        if (['r11', 'r12', 'r15', 'r19', 'r20'].contains(id)) {
+          final stops = <String>[];
+          for (var i = 0; i < 5; i++) {
+            await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+            await tester.pumpAndSettle();
+            stops.add(focused());
+          }
+          debugPrint('S11PROBE $id ${size.width.toInt()} Tab: ${stops.join(' -> ')}');
+        }
+        handle.dispose();
+      });
+    }
+  }
+}
