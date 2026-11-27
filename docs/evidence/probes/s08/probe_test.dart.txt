@@ -1,0 +1,103 @@
+// S08 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s08/probe_test.dart.txt): each fixture of
+// lib/probe.dart under flutter test: any error the framework reports, the
+// semantics tree in traversal order with each node's role, flags, scroll
+// data and index, the item nodes of the lazy fixtures before and after
+// their list is scrolled to its end, and the Tab stops.
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void log(String s) => debugPrint('S08PROBE $s');
+
+Future<List<String>> open(WidgetTester tester, String id) async {
+  final errors = <String>[];
+  final old = FlutterError.onError;
+  FlutterError.onError = (d) => errors.add(d.exceptionAsString().split('\n').first);
+  await tester.pumpWidget(const SizedBox());
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: FixtureScreen(id: id),
+    ),
+  );
+  await tester.pumpAndSettle();
+  FlutterError.onError = old;
+  return errors;
+}
+
+SemanticsNode root(WidgetTester tester) =>
+    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!;
+
+void dump(WidgetTester tester, String id, String when) {
+  void walk(SemanticsNode n, int depth) {
+    final d = n.getSemanticsData();
+    final f = d.flagsCollection;
+    final flags = <String>[
+      if (f.isButton) 'button',
+      if (f.isHeader) 'header',
+      if (f.hasImplicitScrolling) 'implicitScrolling',
+      if (f.isHidden) 'hidden',
+      if (n.isMergedIntoParent) 'merged',
+    ];
+    final actions = [
+      for (final a in SemanticsAction.values)
+        if (d.hasAction(a)) a.name,
+    ];
+    log('$id $when ${'  ' * depth}#${n.id} role=${d.role.name} label="${d.label.replaceAll('\n', '\\n')}" '
+        'flags=$flags actions=$actions scrollChildCount=${d.scrollChildCount} scrollIndex=${d.scrollIndex} '
+        'indexInParent=${n.indexInParent} id=${d.identifier} rect=${n.rect}');
+    n.visitChildren((c) {
+      walk(c, depth + 1);
+      return true;
+    });
+  }
+
+  walk(root(tester), 0);
+}
+
+List<String> itemLabels(WidgetTester tester, String id) {
+  final out = <String>[];
+  void walk(SemanticsNode n) {
+    final l = n.getSemanticsData().label;
+    if (l.startsWith('$id Item ')) out.add(l.replaceFirst('$id Item ', ''));
+    n.visitChildren((c) {
+      walk(c);
+      return true;
+    });
+  }
+
+  walk(root(tester));
+  return out;
+}
+
+void main() {
+  for (final id in fixtures.keys) {
+    testWidgets('probe $id', (tester) async {
+      final handle = tester.ensureSemantics();
+      final errors = await open(tester, id);
+      log('==== $id ${fixtures[id]!.$1}');
+      log('$id errors: ${errors.isEmpty ? '(none)' : errors.join(' | ')}');
+      dump(tester, id, 'tree');
+      if (id == 'p08' || id == 'p10') {
+        log('$id items at the start: ${itemLabels(tester, id).join(',')}');
+        final view = find.byType(Scrollable).last;
+        await tester.drag(view, const Offset(0, -3000));
+        await tester.pumpAndSettle();
+        log('$id items after scrolling the list to its end: ${itemLabels(tester, id).join(',')}');
+        dump(tester, id, 'scrolled');
+      }
+      final stops = <String>[];
+      for (var i = 0; i < 5; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        final f = FocusManager.instance.primaryFocus;
+        stops.add(f?.context?.widget.runtimeType.toString() ?? '(none)');
+      }
+      log('$id tab stops: ${stops.join(' -> ')}');
+      handle.dispose();
+    });
+  }
+}

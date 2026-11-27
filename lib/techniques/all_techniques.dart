@@ -30,6 +30,7 @@ import 's02_informative_images/s02_informative_images.dart';
 import 's03_decorative_images/s03_decorative_images.dart';
 import 's04_functional_images/s04_functional_images.dart';
 import 's05_headings/s05_headings.dart';
+import 's08_list_semantics/s08_list_semantics.dart';
 import 's09_content_grouping/s09_content_grouping.dart';
 import 's13_roles_and_traits/s13_roles_and_traits.dart';
 import 's14_values_and_state_descriptions/s14_values_and_state_descriptions.dart';
@@ -70,6 +71,7 @@ final List<Technique> allTechniques = [
   s03DecorativeImages,
   s04FunctionalImages,
   s05Headings,
+  s08ListSemantics,
   s09ContentGrouping,
   s13RolesAndTraits,
   s14ValuesAndStateDescriptions,

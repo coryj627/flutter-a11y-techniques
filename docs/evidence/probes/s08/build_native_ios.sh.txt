@@ -1,0 +1,31 @@
+#!/bin/sh
+# Builds the S08 native iOS comparison app (throwaway; kept as
+# docs/evidence/probes/s08/build_native_ios.sh.txt) into
+# $DIR/NativeLists.app for the simulator. Installs nothing.
+DIR=$(cd "$(dirname "$0")" && pwd)
+APP="$DIR/NativeLists.app"
+rm -rf "$APP"
+mkdir -p "$APP"
+xcrun --sdk iphonesimulator swiftc -parse-as-library -target arm64-apple-ios18.0-simulator \
+  -o "$APP/NativeLists" "$DIR/NativeLists.swift" || exit 1
+cat > "$APP/Info.plist" <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleIdentifier</key><string>dev.fluttera11y.s08nativelists</string>
+  <key>CFBundleExecutable</key><string>NativeLists</string>
+  <key>CFBundleName</key><string>NativeLists</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleVersion</key><string>1</string>
+  <key>CFBundleShortVersionString</key><string>1.0</string>
+  <key>MinimumOSVersion</key><string>18.0</string>
+  <key>UIDeviceFamily</key><array><integer>1</integer></array>
+  <key>UILaunchScreen</key><dict/>
+  <key>UIApplicationSceneManifest</key><dict><key>UIApplicationSupportsMultipleScenes</key><false/></dict>
+  <key>UIRequiredDeviceCapabilities</key><array><string>arm64</string></array>
+</dict>
+</plist>
+PLIST
+codesign --force --sign - "$APP" || exit 1
+echo "built $APP"

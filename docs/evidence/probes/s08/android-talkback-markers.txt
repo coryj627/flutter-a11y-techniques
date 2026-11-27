@@ -1,0 +1,259 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+s08-native-0 is "Before n01"
+s08-native-1 is "n01 Milk"
+s08-native-2 is "n01 Eggs"
+s08-native-3 is "n01 Bread"
+s08-native-4 is "n01 end"
+s08-native-5 is "Before n02"
+s08-native-6 is "n02 end"
+s08-native-7 is "Before n03"
+s08-native-8 is "n03 end"
+s08-p01-0 is "Before p01"
+s08-p01-1 is "p01 end taps=0"
+s08-p02-0 is "Before p02"
+s08-p02-1 is "p02 Milk\np02 Eggs\np02 Bread"
+s08-p02-2 is "p02 end taps=0"
+s08-p03-0 is "Before p03"
+s08-p03-1 is "p03 Milk"
+s08-p03-2 is "p03 Eggs"
+s08-p03-3 is "p03 Bread"
+s08-p03-4 is "p03 end taps=0"
+s08-p04-0 is "Before p04"
+s08-p04-1 is "p04 Milk\np04 Eggs\np04 Bread"
+s08-p04-2 is "p04 end taps=0"
+p05 did not open (no "Before p05" node)
+==== p05 not open
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=0
+s08-p06-0 is "Before p06"
+s08-p06-1 is "p06 Milk"
+s08-p06-2 is "p06 Eggs"
+s08-p06-3 is "p06 Bread"
+s08-p06-4 is "p06 end taps=0"
+s08-p07-0 is "Before p07"
+s08-p07-1 is "p07 Milk"
+s08-p07-2 is "p07 Eggs"
+s08-p07-3 is "p07 Bread"
+s08-p07-4 is "p07 end taps=0"
+s08-p08-0 is "Before p08"
+s08-p08-1 is "p08 Item 1"
+s08-p08-2 is "p08 Item 2"
+s08-p08-3 is "p08 Item 3"
+s08-p08-4 is "p08 Item 4"
+s08-p08-5 is "p08 Item 5"
+s08-p08-6 is "p08 Item 6"
+s08-p08-7 is "p08 end taps=0"
+p09 did not open (no "Before p09" node)
+==== p09 not open
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=0
+p10 did not open (no "Before p10" node)
+==== p10 not open
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true scrollable=false visible=true Rect(0, 0 - 1080, 2424) [4,8,focus,a11yfocus,16908342] children=0
+s08-p11-0 is "Before p11"
+s08-p11-1 is "p11 Milk\np11 Milk detail"
+s08-p11-2 is "p11 Eggs\np11 Eggs detail"
+s08-p11-3 is "p11 Bread\np11 Bread detail"
+s08-p11-4 is "p11 end taps=0"
+s08-p12-0 is "Before p12"
+s08-p12-1 is "p12 Milk\np12 Milk detail"
+s08-p12-2 is "p12 Eggs\np12 Eggs detail"
+s08-p12-3 is "p12 Bread\np12 Bread detail"
+s08-p12-4 is "p12 end taps=0"
+s08-p13-0 is "Before p13"
+s08-p13-1 is "p13 Milk"
+s08-p13-2 is "p13 Eggs"
+s08-p13-3 is "p13 Bread"
+s08-p13-4 is "p13 end taps=0"
+s08-p14-0 is "Before p14"
+s08-p14-1 is "p14 Groceries"
+s08-p14-2 is "p14 Milk"
+s08-p14-3 is "p14 Eggs"
+s08-p14-4 is "p14 Bread"
+s08-p14-5 is "p14 end taps=0"
+s08-p15-0 is "Before p15"
+s08-p15-1 is "p15 end taps=0"
+s08-p16-0 is "Before p16"
+s08-p16-1 is "p16 Weight"
+s08-p16-2 is "p16 2 kg"
+s08-p16-3 is "p16 Colour"
+s08-p16-4 is "p16 Blue"
+s08-p16-5 is "p16 end taps=0"
+s08-p17-0 is "Before p17"
+s08-p17-1 is "p17 Weight\np17 2 kg"
+s08-p17-2 is "p17 Colour\np17 Blue"
+s08-p17-3 is "p17 end taps=0"
+s08-p18-0 is "Before p18"
+s08-p18-1 is "p18 Fruit"
+s08-p18-2 is "p18 Apple"
+s08-p18-3 is "p18 Pear"
+s08-p18-4 is "p18 Bread"
+s08-p18-5 is "p18 end taps=0"
+s08-p19-0 is "Before p19"
+s08-p19-1 is "p19 Milk"
+s08-p19-2 is "p19 Eggs"
+s08-p19-3 is "p19 Bread"
+s08-p19-4 is "p19 end taps=0"
+s08-p20-0 is "Before p20"
+s08-p20-1 is "p20 Milk"
+s08-p20-2 is "p20 Eggs"
+s08-p20-3 is "p20 Bread"
+s08-p20-4 is "p20 end taps=0"
+s08-p21-0 is "Before p21"
+s08-p21-1 is "p21 Milk"
+s08-p21-2 is "p21 Eggs"
+s08-p21-3 is "p21 Bread"
+s08-p21-4 is "p21 end taps=0"
+s08-p22-0 is "Before p22"
+s08-p22-1 is "p22 Milk\np22 2 of Milk"
+s08-p22-2 is "p22 Eggs\np22 2 of Eggs"
+s08-p22-3 is "p22 Bread\np22 2 of Bread"
+s08-p22-4 is "p22 end taps=0"
+s08-p23-0 is "Before p23"
+s08-p23-1 is "p23 Milk\np23 Milk detail"
+s08-p23-2 is "p23 Eggs\np23 Eggs detail"
+s08-p23-3 is "p23 Bread\np23 Bread detail"
+s08-p23-4 is "p23 end taps=0"
+s08-p24-0 is "Before p24"
+s08-p24-1 is "p24 Milk"
+s08-p24-2 is "p24 Eggs"
+s08-p24-3 is "p24 Bread"
+s08-p24-4 is "p24 end taps=0"
+s08-p25-0 is "Before p25"
+s08-p25-1 is "p25 Groceries"
+s08-p25-2 is "p25 Milk"
+s08-p25-3 is "p25 Eggs"
+s08-p25-4 is "p25 Bread"
+s08-p25-5 is "p25 end taps=0"
+s08-p26-0 is "Before p26"
+s08-p26-1 is "p26 Milk\np26 2 of Milk"
+s08-p26-2 is "p26 Eggs\np26 2 of Eggs"
+s08-p26-3 is "p26 Bread\np26 2 of Bread"
+s08-p26-4 is "p26 end taps=0"
+s08-p27-0 is "Before p27"
+s08-p27-1 is "p27 Milk"
+s08-p27-2 is "p27 Eggs"
+s08-p27-3 is "p27 Bread"
+s08-p27-4 is "p27 end taps=0"
+s08-p28-0 is "Before p28"
+s08-p28-1 is "p28 Milk"
+s08-p28-2 is "p28 Eggs"
+s08-p28-3 is "p28 Bread"
+s08-p28-4 is "p28 end taps=0"
+s08-p29-0 is "Before p29"
+s08-p29-1 is "p29 Groceries"
+s08-p29-2 is "p29 Milk"
+s08-p29-3 is "p29 Eggs"
+s08-p29-4 is "p29 Bread"
+s08-p29-5 is "p29 end taps=0"
+native k-start on Before n01
+s08-knative-1 after Alt+Right: TalkBack focus on Before n01
+s08-knative-2 after Alt+Right: TalkBack focus on Before n01
+s08-knative-3 after Alt+Right: TalkBack focus on Before n01
+s08-knative-4 after Alt+Right: TalkBack focus on Before n01
+s08-knative-5 after Alt+Right: TalkBack focus on Before n01
+s08-knative-6 after Alt+Right: TalkBack focus on Before n01
+s08-knative-7 after Alt+Right: TalkBack focus on Before n01
+s08-knative-8 after Alt+Right: TalkBack focus on Before n01
+s08-knative-9 after Alt+Right: TalkBack focus on Before n01
+s08-knative-10 after Alt+Right: TalkBack focus on Before n01
+s08-knative-11 after Alt+Right: TalkBack focus on Before n01
+s08-knative-12 after Alt+Right: TalkBack focus on Before n01
+p01 k-start on Before p01
+s08-kp01-1 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-2 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-3 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-4 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-5 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-6 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-7 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-8 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-9 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-10 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-11 after Alt+Right: TalkBack focus on Before p01
+s08-kp01-12 after Alt+Right: TalkBack focus on Before p01
+p03 k-start on Before p03
+s08-kp03-1 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-2 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-3 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-4 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-5 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-6 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-7 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-8 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-9 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-10 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-11 after Alt+Right: TalkBack focus on Before p03
+s08-kp03-12 after Alt+Right: TalkBack focus on Before p03
+p06 k-start on Before p06
+s08-kp06-1 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-2 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-3 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-4 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-5 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-6 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-7 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-8 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-9 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-10 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-11 after Alt+Right: TalkBack focus on Before p06
+s08-kp06-12 after Alt+Right: TalkBack focus on Before p06
+p08 k-start on Before p08
+s08-kp08-1 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-2 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-3 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-4 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-5 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-6 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-7 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-8 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-9 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-10 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-11 after Alt+Right: TalkBack focus on Before p08
+s08-kp08-12 after Alt+Right: TalkBack focus on Before p08
+p13 k-start on Before p13
+s08-kp13-1 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-2 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-3 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-4 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-5 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-6 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-7 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-8 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-9 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-10 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-11 after Alt+Right: TalkBack focus on Before p13
+s08-kp13-12 after Alt+Right: TalkBack focus on Before p13
+p24 k-start on Before p24
+s08-kp24-1 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-2 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-3 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-4 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-5 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-6 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-7 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-8 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-9 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-10 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-11 after Alt+Right: TalkBack focus on Before p24
+s08-kp24-12 after Alt+Right: TalkBack focus on Before p24
+p28 k-start on Before p28
+s08-kp28-1 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-2 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-3 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-4 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-5 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-6 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-7 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-8 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-9 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-10 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-11 after Alt+Right: TalkBack focus on Before p28
+s08-kp28-12 after Alt+Right: TalkBack focus on Before p28
