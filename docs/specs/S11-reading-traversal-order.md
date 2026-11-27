@@ -8,7 +8,7 @@ This spec covers the order in which a screen reader moves through content
 order of keyboard focus. The keyboard's order on its own (Tab, Shift+Tab,
 the arrow keys, an explicit focus order, what happens past the last
 control) is [I02 Keyboard focus order](I02-focus-order.md); grouping parts
-into one element is S09 Content grouping (in review); a list's structure,
+into one element is [S09 Content grouping](S09-content-grouping.md); a list's structure,
 S08; headings, [S05](S05-headings.md); a link inside a sentence, which is
 read out of its place without help ([FL-413](../flutter-limitations.md#fl-413)),
 [C04](C04-links-inline-with-text.md).

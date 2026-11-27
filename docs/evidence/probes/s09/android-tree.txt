@@ -1,0 +1,547 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+==== s01 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 712) [a11yfocus] children=4
+                   | android.view.View | desc="Before s01" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s01 City\nBoston" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 201, 533) [a11yfocus] children=0
+                   | android.view.View | desc="s01 Population\n675,647" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(264, 405 - 518, 533) [a11yfocus] children=0
+                  s01-taps | android.view.View | desc="s01 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 565 - 500, 617) [a11yfocus] children=0
+==== s02 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 712) [a11yfocus] children=6
+                   | android.view.View | desc="Before s02" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s02 City" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 168, 457) [a11yfocus] children=0
+                   | android.view.View | desc="s02 Population" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(264, 405 - 518, 457) [a11yfocus] children=0
+                   | android.view.View | desc="Boston" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 457 - 201, 533) [a11yfocus] children=0
+                   | android.view.View | desc="675,647" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(264, 457 - 456, 533) [a11yfocus] children=0
+                  s02-taps | android.view.View | desc="s02 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 565 - 500, 617) [a11yfocus] children=0
+==== s03 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 712) [a11yfocus] children=6
+                   | android.view.View | desc="Before s03" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s03 City" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 347, 457) [a11yfocus] children=0
+                   | android.view.View | desc="s03 Population" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(347, 405 - 601, 457) [a11yfocus] children=0
+                   | android.view.View | desc="Boston" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 457 - 347, 533) [a11yfocus] children=0
+                   | android.view.View | desc="675,647" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(347, 457 - 538, 533) [a11yfocus] children=0
+                  s03-taps | android.view.View | desc="s03 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 565 - 500, 617) [a11yfocus] children=0
+==== s04 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 712) [a11yfocus] children=4
+                   | android.view.View | desc="Before s04" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s04 City\nBoston" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 201, 533) [a11yfocus] children=0
+                   | android.view.View | desc="s04 Population\n675,647" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(264, 405 - 518, 533) [a11yfocus] children=0
+                  s04-taps | android.view.View | desc="s04 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 565 - 500, 617) [a11yfocus] children=0
+==== s05 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 961) [a11yfocus] children=4
+                   | android.view.View | desc="Before s05" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s05 City\nBoston" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 1049, 594) [a11yfocus] children=0
+                   | android.view.View | desc="s05 Population\n675,647" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 594 - 1049, 783) [a11yfocus] children=0
+                  s05-taps | android.view.View | desc="s05 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 814 - 500, 867) [a11yfocus] children=0
+==== s06 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 688) [a11yfocus] children=3
+                   | android.view.View | desc="Before s06" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s06 Distance\n6 kilometres" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 252, 510) [a11yfocus] children=0
+                  s06-taps | android.view.View | desc="s06 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 541 - 500, 594) [a11yfocus] children=0
+==== s07 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 777) [a11yfocus] children=3
+                   | android.view.View | desc="Before s07" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s07 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 1049, 599) [a11yfocus] children=2
+                     | android.widget.Button | desc="s07 On" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 473 - 275, 599) [a11yfocus,click] children=0
+                     | android.widget.Button | desc="s07 Off" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(296, 473 - 545, 599) [a11yfocus,click] children=0
+                  s07-taps | android.view.View | desc="s07 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 630 - 500, 683) [a11yfocus] children=0
+s07 "s07 On" Rect(32, 473 - 275, 599): not found again
+11-26 19:03:34.716 10051 10051 I flutter : S09PROBE TAP s07 off
+s07 ACTION_CLICK on "s07 Off" Rect(296, 473 - 545, 599) returned true; s07 taps: on=0 off=1 info=0
+==== s08 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 777) [a11yfocus] children=3
+                   | android.view.View | desc="Before s08" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s08 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 1049, 599) [a11yfocus] children=2
+                     | android.widget.Button | desc="s08 On" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 473 - 275, 599) [a11yfocus,click] children=0
+                     | android.widget.Button | desc="s08 Off" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(296, 473 - 545, 599) [a11yfocus,click] children=0
+                  s08-taps | android.view.View | desc="s08 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 630 - 500, 683) [a11yfocus] children=0
+s08 "s08 On" Rect(32, 473 - 275, 599): not found again
+11-26 19:03:45.599 10051 10051 I flutter : S09PROBE TAP s08 off
+s08 ACTION_CLICK on "s08 Off" Rect(296, 473 - 545, 599) returned true; s08 taps: on=0 off=1 info=0
+==== s09 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 777) [a11yfocus] children=3
+                   | android.view.View | desc="Before s09" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 1049, 599) [a11yfocus] children=3
+                     | android.view.View | desc="s09 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 393, 473) [a11yfocus] children=0
+                     | android.widget.Button | desc="s09 On" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 473 - 275, 599) [a11yfocus,click] children=0
+                     | android.widget.Button | desc="s09 Off" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(296, 473 - 545, 599) [a11yfocus,click] children=0
+                  s09-taps | android.view.View | desc="s09 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 630 - 500, 683) [a11yfocus] children=0
+s09 "s09 On" Rect(32, 473 - 275, 599): not found again
+11-26 19:03:56.313 10051 10051 I flutter : S09PROBE TAP s09 off
+s09 ACTION_CLICK on "s09 Off" Rect(296, 473 - 545, 599) returned true; s09 taps: on=0 off=1 info=0
+==== s10 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 777) [a11yfocus] children=5
+                   | android.view.View | desc="Before s10" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s10 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 393, 473) [a11yfocus] children=0
+                   | android.widget.Button | desc="s10 On" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 473 - 275, 599) [a11yfocus,click] children=0
+                   | android.widget.Button | desc="s10 Off" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(296, 473 - 545, 599) [a11yfocus,click] children=0
+                  s10-taps | android.view.View | desc="s10 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 630 - 500, 683) [a11yfocus] children=0
+s10 "s10 On" Rect(32, 473 - 275, 599): not found again
+s10 "s10 Off" Rect(296, 473 - 545, 599): not found again
+==== s11 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 777) [a11yfocus] children=4
+                   | android.view.View | desc="Before s11" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s11 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 393, 473) [a11yfocus] children=0
+                   | android.view.View | desc="s11 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 473 - 1049, 599) [a11yfocus] children=2
+                     | android.widget.Button | desc="s11 On" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 473 - 275, 599) [a11yfocus,click] children=0
+                     | android.widget.Button | desc="s11 Off" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(296, 473 - 545, 599) [a11yfocus,click] children=0
+                  s11-taps | android.view.View | desc="s11 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 630 - 500, 683) [a11yfocus] children=0
+s11 "s11 On" Rect(32, 473 - 275, 599): not found again
+11-26 19:04:14.084 10051 10051 I flutter : S09PROBE TAP s11 off
+s11 ACTION_CLICK on "s11 Off" Rect(296, 473 - 545, 599) returned true; s11 taps: on=0 off=1 info=0
+==== s12 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 777) [a11yfocus] children=3
+                   | android.view.View | desc="Before s12" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.widget.Button | desc="s12 Kitchen light\ns12 On\ns12 Off" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 1049, 599) [a11yfocus,click] children=0
+                  s12-taps | android.view.View | desc="s12 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 630 - 500, 683) [a11yfocus] children=0
+s12 "s12 Kitchen light
+s12 On
+s12 Off" Rect(32, 405 - 1049, 599): not found again
+==== s13 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 972) [a11yfocus] children=5
+                   | android.view.View | desc="Before s13" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s13 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(84, 462 - 337, 502) [a11yfocus] children=0
+                   | android.widget.Button | desc="s13 On" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(421, 518 - 659, 655) [a11yfocus,click] children=0
+                   | android.widget.Button | desc="s13 Off" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(418, 656 - 662, 792) [a11yfocus,click] children=0
+                  s13-taps | android.view.View | desc="s13 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 825 - 500, 877) [a11yfocus] children=0
+s13 "s13 On" Rect(421, 518 - 659, 655): not found again
+11-26 19:04:30.485 10051 10051 I flutter : S09PROBE TAP s13 off
+s13 ACTION_CLICK on "s13 Off" Rect(418, 656 - 662, 792) returned true; s13 taps: on=0 off=1 info=0
+==== s14 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 777) [a11yfocus] children=3
+                   | android.view.View | desc="Before s14" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s14 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 1049, 599) [a11yfocus] children=3
+                     | android.view.View | desc="s14 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 393, 473) [a11yfocus] children=0
+                     | android.widget.Button | desc="s14 On" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 473 - 275, 599) [a11yfocus,click] children=0
+                     | android.widget.Button | desc="s14 Off" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(296, 473 - 545, 599) [a11yfocus,click] children=0
+                  s14-taps | android.view.View | desc="s14 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 630 - 500, 683) [a11yfocus] children=0
+s14 "s14 On" Rect(32, 473 - 275, 599): not found again
+11-26 19:04:42.278 10051 10051 I flutter : S09PROBE TAP s14 off
+s14 ACTION_CLICK on "s14 Off" Rect(296, 473 - 545, 599) returned true; s14 taps: on=0 off=1 info=0
+==== s15 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 709) [a11yfocus] children=3
+                   | android.view.View | desc="Before s15" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.widget.Button | desc="s15 App information" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 514, 531) [a11yfocus,click] children=0
+                  s15-taps | android.view.View | desc="s15 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 562 - 500, 615) [a11yfocus] children=0
+s15 "s15 App information" Rect(32, 405 - 514, 531): not found again
+==== s16 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 730) [a11yfocus] children=3
+                   | android.view.View | desc="Before s16" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.widget.Button | desc="s16 App information" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 1049, 552) [a11yfocus,click] children=0
+                  s16-taps | android.view.View | desc="s16 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 583 - 500, 636) [a11yfocus] children=0
+s16 "s16 App information" Rect(32, 405 - 1049, 552): not found again
+==== s17 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 709) [a11yfocus] children=4
+                   | android.view.View | desc="Before s17" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.widget.Button | desc="s17 App information" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="s17 App information" paneTitle="" containerTitle="" Rect(32, 405 - 158, 531) [a11yfocus,click] children=0
+                   | android.widget.Button | desc="s17 App information" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(158, 405 - 561, 531) [a11yfocus,click] children=0
+                  s17-taps | android.view.View | desc="s17 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 562 - 500, 615) [a11yfocus] children=0
+s17 "s17 App information" Rect(32, 405 - 158, 531): not found again
+11-26 19:05:03.874 10051 10051 I flutter : S09PROBE TAP s17 info
+s17 ACTION_CLICK on "s17 App information" Rect(158, 405 - 561, 531) returned true; s17 taps: on=0 off=0 info=1
+==== s18 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 709) [a11yfocus] children=3
+                   | android.view.View | desc="Before s18" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.widget.Button | desc="s18 App information" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="s18 App information" paneTitle="" containerTitle="" Rect(32, 405 - 1049, 531) [a11yfocus,click] children=0
+                  s18-taps | android.view.View | desc="s18 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 562 - 500, 615) [a11yfocus] children=0
+s18 "s18 App information" Rect(32, 405 - 1049, 531): not found again
+==== s19 start
+- | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+  - | android.widget.LinearLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+    android:id/content | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,a11yfocus,16908342] children=1
+      - | android.widget.FrameLayout | desc="" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="S09 probe" containerTitle="" Rect(0, 0 - 1080, 2424) [4,8,2,a11yfocus,16908342] children=1
+         | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+           | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+             | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=1
+               | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 2424) [a11yfocus] children=2
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 0 - 1080, 289) [a11yfocus] children=2
+                   | android.widget.Button | desc="Back" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="Back" paneTitle="" containerTitle="" Rect(11, 153 - 137, 279) [a11yfocus,click] children=0
+                   | android.view.View | desc="S09 probe" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(189, 179 - 450, 252) [a11yfocus] children=0
+                 | android.view.View | desc="" text="" heading=false clickable=false focusable=false screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(0, 289 - 1080, 777) [a11yfocus] children=3
+                   | android.view.View | desc="Before s19" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 321 - 215, 373) [a11yfocus] children=0
+                   | android.view.View | desc="s19 Kitchen light" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 405 - 1049, 599) [a11yfocus] children=2
+                     | android.widget.Button | desc="s19 On" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 473 - 275, 599) [a11yfocus,click] children=0
+                     | android.widget.Button | desc="s19 Off" text="" heading=false clickable=true focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(296, 473 - 545, 599) [a11yfocus,click] children=0
+                  s19-taps | android.view.View | desc="s19 taps: on=0 off=0 info=0" text="" heading=false clickable=false focusable=true screenReaderFocusable=false tooltip="" paneTitle="" containerTitle="" Rect(32, 630 - 500, 683) [a11yfocus] children=0
+s19 "s19 On" Rect(32, 473 - 275, 599): not found again
+11-26 19:05:19.417 10051 10051 I flutter : S09PROBE TAP s19 off
+s19 ACTION_CLICK on "s19 Off" Rect(296, 473 - 545, 599) returned true; s19 taps: on=0 off=1 info=0
+s01 Tab stops: Back -> Back -> Back -> Back -> Back
+s01 1 Tab(s) (on Back) then ENTER: s01 taps: on=0 off=0 info=0
+s01 2 Tab(s) (on Back) then ENTER: s01 taps: on=0 off=0 info=0
+s01 3 Tab(s) (on Back) then ENTER: s01 taps: on=0 off=0 info=0
+s01 1 Tab(s) (on Back) then SPACE: s01 taps: on=0 off=0 info=0
+s01 2 Tab(s) (on Back) then SPACE: s01 taps: on=0 off=0 info=0
+s01 3 Tab(s) (on Back) then SPACE: s01 taps: on=0 off=0 info=0
+s02 Tab stops: Back -> Back -> Back -> Back -> Back
+s02 1 Tab(s) (on Back) then ENTER: s02 taps: on=0 off=0 info=0
+s02 2 Tab(s) (on Back) then ENTER: s02 taps: on=0 off=0 info=0
+s02 3 Tab(s) (on Back) then ENTER: s02 taps: on=0 off=0 info=0
+s02 1 Tab(s) (on Back) then SPACE: s02 taps: on=0 off=0 info=0
+s02 2 Tab(s) (on Back) then SPACE: s02 taps: on=0 off=0 info=0
+s02 3 Tab(s) (on Back) then SPACE: s02 taps: on=0 off=0 info=0
+s03 Tab stops: Back -> Back -> Back -> Back -> Back
+s03 1 Tab(s) (on Back) then ENTER: s03 taps: on=0 off=0 info=0
+s03 2 Tab(s) (on Back) then ENTER: s03 taps: on=0 off=0 info=0
+s03 3 Tab(s) (on Back) then ENTER: s03 taps: on=0 off=0 info=0
+s03 1 Tab(s) (on Back) then SPACE: s03 taps: on=0 off=0 info=0
+s03 2 Tab(s) (on Back) then SPACE: s03 taps: on=0 off=0 info=0
+s03 3 Tab(s) (on Back) then SPACE: s03 taps: on=0 off=0 info=0
+s04 Tab stops: Back -> Back -> Back -> Back -> Back
+s04 1 Tab(s) (on Back) then ENTER: s04 taps: on=0 off=0 info=0
+s04 2 Tab(s) (on Back) then ENTER: s04 taps: on=0 off=0 info=0
+s04 3 Tab(s) (on Back) then ENTER: s04 taps: on=0 off=0 info=0
+s04 1 Tab(s) (on Back) then SPACE: s04 taps: on=0 off=0 info=0
+s04 2 Tab(s) (on Back) then SPACE: s04 taps: on=0 off=0 info=0
+s04 3 Tab(s) (on Back) then SPACE: s04 taps: on=0 off=0 info=0
+s05 Tab stops: Back -> Back -> Back -> Back -> Back
+s05 1 Tab(s) (on Back) then ENTER: s05 taps: on=0 off=0 info=0
+s05 2 Tab(s) (on Back) then ENTER: s05 taps: on=0 off=0 info=0
+s05 3 Tab(s) (on Back) then ENTER: s05 taps: on=0 off=0 info=0
+s05 1 Tab(s) (on Back) then SPACE: s05 taps: on=0 off=0 info=0
+s05 2 Tab(s) (on Back) then SPACE: s05 taps: on=0 off=0 info=0
+s05 3 Tab(s) (on Back) then SPACE: s05 taps: on=0 off=0 info=0
+s06 Tab stops: Back -> Back -> Back -> Back -> Back
+s06 1 Tab(s) (on Back) then ENTER: (gone)
+s06 2 Tab(s) (on Back) then ENTER: (gone)
+s06 3 Tab(s) (on Back) then ENTER: (gone)
+s06 1 Tab(s) (on Back) then SPACE: (gone)
+s06 2 Tab(s) (on Back) then SPACE: (gone)
+s06 3 Tab(s) (on Back) then SPACE: (gone)
+s07 Tab stops: Back -> s07 On -> s07 Off -> Back -> s07 On
+s07 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:09:04.704 11808 11808 I flutter : S09PROBE TAP s07 on
+s07 2 Tab(s) (on s07 On) then ENTER: s07 taps: on=1 off=0 info=0
+11-26 19:09:09.703 11808 11808 I flutter : S09PROBE TAP s07 off
+s07 3 Tab(s) (on s07 Off) then ENTER: s07 taps: on=0 off=1 info=0
+s07 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:09:19.724 11808 11808 I flutter : S09PROBE TAP s07 on
+s07 2 Tab(s) (on s07 On) then SPACE: s07 taps: on=1 off=0 info=0
+11-26 19:09:24.746 11808 11808 I flutter : S09PROBE TAP s07 off
+s07 3 Tab(s) (on s07 Off) then SPACE: s07 taps: on=0 off=1 info=0
+s08 Tab stops: Back -> s08 On -> s08 Off -> Back -> s08 On
+s08 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:09:41.495 11808 11808 I flutter : S09PROBE TAP s08 on
+s08 2 Tab(s) (on s08 On) then ENTER: s08 taps: on=1 off=0 info=0
+11-26 19:09:46.479 11808 11808 I flutter : S09PROBE TAP s08 off
+s08 3 Tab(s) (on s08 Off) then ENTER: s08 taps: on=0 off=1 info=0
+s08 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:09:56.331 11808 11808 I flutter : S09PROBE TAP s08 on
+s08 2 Tab(s) (on s08 On) then SPACE: s08 taps: on=1 off=0 info=0
+11-26 19:10:01.314 11808 11808 I flutter : S09PROBE TAP s08 off
+s08 3 Tab(s) (on s08 Off) then SPACE: s08 taps: on=0 off=1 info=0
+s09 Tab stops: Back -> s09 On -> s09 Off -> Back -> s09 On
+s09 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:10:18.105 11808 11808 I flutter : S09PROBE TAP s09 on
+s09 2 Tab(s) (on s09 On) then ENTER: s09 taps: on=1 off=0 info=0
+11-26 19:10:23.123 11808 11808 I flutter : S09PROBE TAP s09 off
+s09 3 Tab(s) (on s09 Off) then ENTER: s09 taps: on=0 off=1 info=0
+s09 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:10:32.986 11808 11808 I flutter : S09PROBE TAP s09 on
+s09 2 Tab(s) (on s09 On) then SPACE: s09 taps: on=1 off=0 info=0
+11-26 19:10:37.969 11808 11808 I flutter : S09PROBE TAP s09 off
+s09 3 Tab(s) (on s09 Off) then SPACE: s09 taps: on=0 off=1 info=0
+s10 Tab stops: Back -> s10 On -> s10 Off -> Back -> s10 On
+s10 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:10:54.743 11808 11808 I flutter : S09PROBE TAP s10 on
+s10 2 Tab(s) (on s10 On) then ENTER: s10 taps: on=1 off=0 info=0
+11-26 19:10:59.747 11808 11808 I flutter : S09PROBE TAP s10 off
+s10 3 Tab(s) (on s10 Off) then ENTER: s10 taps: on=0 off=1 info=0
+s10 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:11:09.607 11808 11808 I flutter : S09PROBE TAP s10 on
+s10 2 Tab(s) (on s10 On) then SPACE: s10 taps: on=1 off=0 info=0
+11-26 19:11:14.604 11808 11808 I flutter : S09PROBE TAP s10 off
+s10 3 Tab(s) (on s10 Off) then SPACE: s10 taps: on=0 off=1 info=0
+s11 Tab stops: Back -> s11 On -> s11 Off -> Back -> s11 On
+s11 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:11:32.035 11808 11808 I flutter : S09PROBE TAP s11 on
+s11 2 Tab(s) (on s11 On) then ENTER: s11 taps: on=1 off=0 info=0
+11-26 19:11:37.037 11808 11808 I flutter : S09PROBE TAP s11 off
+s11 3 Tab(s) (on s11 Off) then ENTER: s11 taps: on=0 off=1 info=0
+s11 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:11:46.920 11808 11808 I flutter : S09PROBE TAP s11 on
+s11 2 Tab(s) (on s11 On) then SPACE: s11 taps: on=1 off=0 info=0
+11-26 19:11:51.907 11808 11808 I flutter : S09PROBE TAP s11 off
+s11 3 Tab(s) (on s11 Off) then SPACE: s11 taps: on=0 off=1 info=0
+s12 Tab stops: Back -> s12 Kitchen light\ns12 On\ns12 Off -> s12 Kitchen light\ns12 On\ns12 Off -> Back -> s12 Kitchen light\ns12 On\ns12 Off
+s12 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:12:09.171 11808 11808 I flutter : S09PROBE TAP s12 on
+s12 2 Tab(s) (on s12 Kitchen light\ns12 On\ns12 Off) then ENTER: s12 taps: on=1 off=0 info=0
+11-26 19:12:14.190 11808 11808 I flutter : S09PROBE TAP s12 off
+s12 3 Tab(s) (on s12 Kitchen light\ns12 On\ns12 Off) then ENTER: s12 taps: on=0 off=1 info=0
+s12 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:12:24.128 11808 11808 I flutter : S09PROBE TAP s12 on
+s12 2 Tab(s) (on s12 Kitchen light\ns12 On\ns12 Off) then SPACE: s12 taps: on=1 off=0 info=0
+11-26 19:12:29.147 11808 11808 I flutter : S09PROBE TAP s12 off
+s12 3 Tab(s) (on s12 Kitchen light\ns12 On\ns12 Off) then SPACE: s12 taps: on=0 off=1 info=0
+s13 Tab stops: Back -> s13 On -> s13 Off -> Back -> s13 On
+s13 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:12:46.112 11808 11808 I flutter : S09PROBE TAP s13 on
+s13 2 Tab(s) (on s13 On) then ENTER: s13 taps: on=1 off=0 info=0
+11-26 19:12:52.388 11808 11808 I flutter : S09PROBE TAP s13 off
+s13 3 Tab(s) (on s13 Off) then ENTER: s13 taps: on=0 off=1 info=0
+s13 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:13:03.692 11808 11808 I flutter : S09PROBE TAP s13 on
+s13 2 Tab(s) (on s13 On) then SPACE: s13 taps: on=1 off=0 info=0
+11-26 19:13:10.348 11808 11808 I flutter : S09PROBE TAP s13 off
+s13 3 Tab(s) (on s13 Off) then SPACE: s13 taps: on=0 off=1 info=0
+s14 Tab stops: Back -> s14 On -> s14 Off -> Back -> s14 On
+s14 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:13:29.112 11808 11808 I flutter : S09PROBE TAP s14 on
+s14 2 Tab(s) (on s14 On) then ENTER: s14 taps: on=1 off=0 info=0
+11-26 19:13:34.104 11808 11808 I flutter : S09PROBE TAP s14 off
+s14 3 Tab(s) (on s14 Off) then ENTER: s14 taps: on=0 off=1 info=0
+s14 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:13:44.048 11808 11808 I flutter : S09PROBE TAP s14 on
+s14 2 Tab(s) (on s14 On) then SPACE: s14 taps: on=1 off=0 info=0
+11-26 19:13:49.059 11808 11808 I flutter : S09PROBE TAP s14 off
+s14 3 Tab(s) (on s14 Off) then SPACE: s14 taps: on=0 off=1 info=0
+s15 Tab stops: Back -> s15 App information -> Back -> s15 App information -> Back
+s15 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:14:06.367 11808 11808 I flutter : S09PROBE TAP s15 info
+s15 2 Tab(s) (on s15 App information) then ENTER: s15 taps: on=0 off=0 info=1
+s15 3 Tab(s) (on Back) then ENTER: (gone)
+s15 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:14:22.843 11808 11808 I flutter : S09PROBE TAP s15 info
+s15 2 Tab(s) (on s15 App information) then SPACE: s15 taps: on=0 off=0 info=1
+s15 3 Tab(s) (on Back) then SPACE: (gone)
+s16 Tab stops: Back -> s16 App information -> Back -> s16 App information -> Back
+s16 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:14:45.173 11808 11808 I flutter : S09PROBE TAP s16 info
+s16 2 Tab(s) (on s16 App information) then ENTER: s16 taps: on=0 off=0 info=1
+s16 3 Tab(s) (on Back) then ENTER: (gone)
+s16 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:15:01.678 11808 11808 I flutter : S09PROBE TAP s16 info
+s16 2 Tab(s) (on s16 App information) then SPACE: s16 taps: on=0 off=0 info=1
+s16 3 Tab(s) (on Back) then SPACE: (gone)
+s17 Tab stops: Back -> s17 App information -> s17 App information -> Back -> s17 App information
+s17 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:15:23.770 11808 11808 I flutter : S09PROBE TAP s17 info
+s17 2 Tab(s) (on s17 App information) then ENTER: s17 taps: on=0 off=0 info=1
+11-26 19:15:28.762 11808 11808 I flutter : S09PROBE TAP s17 info
+s17 3 Tab(s) (on s17 App information) then ENTER: s17 taps: on=0 off=0 info=1
+s17 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:15:38.591 11808 11808 I flutter : S09PROBE TAP s17 info
+s17 2 Tab(s) (on s17 App information) then SPACE: s17 taps: on=0 off=0 info=1
+11-26 19:15:43.596 11808 11808 I flutter : S09PROBE TAP s17 info
+s17 3 Tab(s) (on s17 App information) then SPACE: s17 taps: on=0 off=0 info=1
+s18 Tab stops: Back -> s18 App information -> s18 App information -> Back -> s18 App information
+s18 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:16:00.805 11808 11808 I flutter : S09PROBE TAP s18 info
+s18 2 Tab(s) (on s18 App information) then ENTER: s18 taps: on=0 off=0 info=1
+11-26 19:16:05.806 11808 11808 I flutter : S09PROBE TAP s18 info
+s18 3 Tab(s) (on s18 App information) then ENTER: s18 taps: on=0 off=0 info=1
+s18 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:16:15.721 11808 11808 I flutter : S09PROBE TAP s18 info
+s18 2 Tab(s) (on s18 App information) then SPACE: s18 taps: on=0 off=0 info=1
+11-26 19:16:20.703 11808 11808 I flutter : S09PROBE TAP s18 info
+s18 3 Tab(s) (on s18 App information) then SPACE: s18 taps: on=0 off=0 info=1
+s19 Tab stops: Back -> s19 On -> s19 Off -> Back -> s19 On
+s19 1 Tab(s) (on Back) then ENTER: (gone)
+11-26 19:16:37.749 11808 11808 I flutter : S09PROBE TAP s19 on
+s19 2 Tab(s) (on s19 On) then ENTER: s19 taps: on=1 off=0 info=0
+11-26 19:16:42.781 11808 11808 I flutter : S09PROBE TAP s19 off
+s19 3 Tab(s) (on s19 Off) then ENTER: s19 taps: on=0 off=1 info=0
+s19 1 Tab(s) (on Back) then SPACE: (gone)
+11-26 19:16:52.649 11808 11808 I flutter : S09PROBE TAP s19 on
+s19 2 Tab(s) (on s19 On) then SPACE: s19 taps: on=1 off=0 info=0
+11-26 19:16:57.660 11808 11808 I flutter : S09PROBE TAP s19 off
+s19 3 Tab(s) (on s19 Off) then SPACE: s19 taps: on=0 off=1 info=0

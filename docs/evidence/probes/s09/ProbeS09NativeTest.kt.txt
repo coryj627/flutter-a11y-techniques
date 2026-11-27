@@ -1,0 +1,135 @@
+// S09 native comparison (throwaway, not committed; kept as
+// docs/evidence/probes/s09/ProbeS09NativeTest.kt.txt). nativeTree() dumps
+// the native screen (ProbeS09NativeActivity) with each node's depth, class,
+// name, text, and container and pane titles. With TalkBack on:
+// talkBackWalk() moves TalkBack focus to each node of each native fixture
+// in order (Before, the question where it is a node, On, Off, end), and
+// then from "Before" straight to "On"; talkBackKeys() puts TalkBack focus
+// on "Before" and moves on with TalkBack's gesture for the next item, a
+// swipe right (`input swipe`; round 1 sent Alt and Right with
+// `input keycombination`, which did not move it), six times, logging where its focus is,
+// for each native fixture and for the app's S09 good-named-group (from its
+// "Example" heading).
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.content.Intent
+import android.os.Build
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.By
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ProbeS09NativeTest : TechniqueTest("S09") {
+    private val tag = "S09PROBE"
+    private val ids = listOf("n01", "n02", "n03")
+
+    private fun openNative() {
+        val intent = Intent(inst.targetContext, ProbeS09NativeActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.text?.toString() == "Before n01" }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("the native screen did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun collect(root: AccessibilityNodeInfo?, depth: Int, out: MutableList<Pair<Int, AccessibilityNodeInfo>>) {
+        if (root == null) return
+        out.add(depth to root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), depth + 1, out)
+    }
+
+    private fun appNodes(): List<Pair<Int, AccessibilityNodeInfo>> {
+        val out = mutableListOf<Pair<Int, AccessibilityNodeInfo>>()
+        for (w in automation.windows) if (w.type == AccessibilityWindowInfo.TYPE_APPLICATION) collect(w.root, 0, out)
+        return out
+    }
+
+    private fun label(n: AccessibilityNodeInfo) = n.name().ifEmpty { n.text?.toString().orEmpty() }
+
+    @Test
+    fun nativeTree() {
+        openNative()
+        Log.i(tag, "==== native (SDK ${Build.VERSION.SDK_INT})")
+        for ((depth, n) in appNodes()) {
+            val title = if (Build.VERSION.SDK_INT >= 34) " containerTitle=\"${n.containerTitle ?: ""}\"" else ""
+            Log.i(tag, "${"  ".repeat(depth)}${n.type()} | desc=\"${n.name()}\" text=\"${n.text ?: ""}\" " +
+                "clickable=${n.isClickable} focusable=${n.isFocusable} important=${n.isImportantForAccessibility} " +
+                "paneTitle=\"${n.paneTitle ?: ""}\"$title children=${n.childCount}")
+        }
+    }
+
+    private fun a11yFocused(): String {
+        val f = automation.windows.firstNotNullOfOrNull { it.root?.findFocus(AccessibilityNodeInfo.FOCUS_ACCESSIBILITY) }
+        return f?.let { label(it).replace("\n", "\\n").ifEmpty { "(${it.type()} no name)" } } ?: "(none)"
+    }
+
+    private fun stop(marker: String, find: () -> AccessibilityNodeInfo) {
+        Log.i(talkBackTag, "FOCUS $marker")
+        try {
+            talkBackFocus(marker, find)
+        } catch (e: Throwable) {
+            Log.i(tag, "$marker: TalkBack focus refused ($e)")
+        }
+        Thread.sleep(5_000)
+    }
+
+    private fun byLabel(text: String) = { appNodes().map { it.second }.first { label(it) == text } }
+
+    @Test
+    fun talkBackWalk() {
+        assumeTalkBack()
+        openNative()
+        // Round 1 found TalkBack's speech engine not ready at the first stop.
+        Thread.sleep(12_000)
+        stop("s09-warmup", byLabel("Before n01"))
+        for (id in ids) {
+            stop("s09-$id-before", byLabel("Before $id"))
+            if (id == "n03") stop("s09-$id-question", byLabel("$id Kitchen light"))
+            stop("s09-$id-on", byLabel("$id On"))
+            stop("s09-$id-off", byLabel("$id Off"))
+            stop("s09-$id-end", byLabel("$id end"))
+            stop("s09-$id-direct-before", byLabel("Before $id"))
+            stop("s09-$id-direct-on", byLabel("$id On"))
+        }
+        Log.i(talkBackTag, "END native")
+    }
+
+    private fun keyWalk(prefix: String, first: () -> AccessibilityNodeInfo?) {
+        val start = first() ?: run { Log.i(tag, "$prefix: no first node"); return }
+        talkBackFocus("$prefix start") { start }
+        Thread.sleep(3_000)
+        Log.i(tag, "$prefix k-start on ${a11yFocused()}")
+        for (i in 1..6) {
+            val marker = "s09-k$prefix-$i"
+            Log.i(talkBackTag, "FOCUS $marker")
+            // Round 1 sent Alt and Right with `input keycombination`, and
+            // TalkBack's focus never moved; round 2 swipes right with one
+            // finger, TalkBack's gesture for the next item.
+            device.executeShellCommand("input swipe 250 1600 850 1600 150")
+            Thread.sleep(3_000)
+            Log.i(tag, "$marker after a swipe right: TalkBack focus on ${a11yFocused()}")
+        }
+        Log.i(talkBackTag, "END k$prefix")
+    }
+
+    @Test
+    fun talkBackKeys() {
+        assumeTalkBack()
+        for (id in ids) {
+            openNative()
+            Thread.sleep(6_000)
+            keyWalk(id) { appNodes().map { it.second }.firstOrNull { label(it) == "Before $id" } }
+        }
+        openExample("good-named-group", By.desc("Buttons in a group named by its question"), settleMillis = 500)
+        Thread.sleep(6_000)
+        keyWalk("flutter") { appNodes().map { it.second }.firstOrNull { label(it) == "Example" } }
+    }
+}

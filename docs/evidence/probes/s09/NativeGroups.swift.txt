@@ -1,0 +1,122 @@
+// S09 native iOS comparison (throwaway; kept as
+// docs/evidence/probes/s09/NativeGroups.swift.txt). A UIKit app, built with
+// swiftc by build_native_ios.sh.txt and installed on the simulator, never
+// part of the Runner. One screen per launch argument, each a "Before nNN"
+// label, the question "nNN Kitchen light", two buttons "nNN On" and
+// "nNN Off", and an "nNN end" label, with the texts of S09's
+// good-named-group:
+//
+// - "uikit" (n11): the question and the buttons in a UIStackView with
+//   `accessibilityContainerType = .semanticGroup` and `accessibilityLabel`
+//   "n11 Kitchen light"; the question label is not an accessibility
+//   element (as good-named-group excludes it).
+// - "swiftui" (n12): the iOS reference's GroupingControlsView: the question
+//   as a Text above an HStack of the two buttons, the HStack with
+//   `.accessibilityElement(children: .contain)` and
+//   `.accessibilityLabel("n12 Kitchen light")`.
+// - "plain" (n13): the question as a UILabel above the buttons, no group.
+import SwiftUI
+import UIKit
+
+func label(_ text: String) -> UILabel {
+  let l = UILabel()
+  l.text = text
+  l.font = .preferredFont(forTextStyle: .body)
+  return l
+}
+
+func button(_ title: String) -> UIButton {
+  let b = UIButton(type: .system)
+  b.setTitle(title, for: .normal)
+  return b
+}
+
+func stack(_ views: [UIView], axis: NSLayoutConstraint.Axis = .vertical) -> UIStackView {
+  let s = UIStackView(arrangedSubviews: views)
+  s.axis = axis
+  s.spacing = 12
+  s.alignment = .leading
+  return s
+}
+
+final class GroupScreen: UIViewController {
+  let id: String
+  let grouped: Bool
+  init(_ id: String, grouped: Bool) {
+    self.id = id
+    self.grouped = grouped
+    super.init(nibName: nil, bundle: nil)
+  }
+  required init?(coder: NSCoder) { fatalError() }
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .systemBackground
+    let question = label("\(id) Kitchen light")
+    let buttons = stack([button("\(id) On"), button("\(id) Off")], axis: .horizontal)
+    let group = stack([question, buttons])
+    if grouped {
+      question.isAccessibilityElement = false
+      group.accessibilityContainerType = .semanticGroup
+      group.accessibilityLabel = "\(id) Kitchen light"
+    }
+    let page = stack([label("Before \(id)"), group, label("\(id) end")])
+    page.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(page)
+    NSLayoutConstraint.activate([
+      page.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+      page.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+      page.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+    ])
+  }
+}
+
+struct SwiftUIScreen: View {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text("Before n12")
+      Text("n12 Kitchen light")
+      HStack {
+        Button("n12 On") {}
+        Button("n12 Off") {}
+      }
+      .accessibilityElement(children: .contain)
+      .accessibilityLabel("n12 Kitchen light")
+      Text("n12 end")
+      Spacer()
+    }
+    .padding()
+  }
+}
+
+@main
+final class AppDelegate: UIResponder, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   configurationForConnecting connectingSceneSession: UISceneSession,
+                   options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    let config = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+    config.delegateClass = SceneDelegate.self
+    return config
+  }
+}
+
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+  var window: UIWindow?
+
+  func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options: UIScene.ConnectionOptions) {
+    guard let scene = scene as? UIWindowScene else { return }
+    let args = ProcessInfo.processInfo.arguments
+    let root: UIViewController
+    if args.contains("swiftui") {
+      root = UIHostingController(rootView: SwiftUIScreen())
+    } else if args.contains("plain") {
+      root = GroupScreen("n13", grouped: false)
+    } else {
+      root = GroupScreen("n11", grouped: true)
+    }
+    let window = UIWindow(windowScene: scene)
+    window.rootViewController = root
+    window.makeKeyAndVisible()
+    self.window = window
+  }
+}
