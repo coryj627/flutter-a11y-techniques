@@ -743,6 +743,16 @@ class S06WholeUtterances(unittest.TestCase):
         self.assertTrue(tb.problems("s06-good-material-closed",
                                     ["Open orders", "Button", "Material screen title"]))
 
+    def test_a_closing_row_is_judged_by_its_title_alone(self):
+        # Where focus went after the title varied between recordings
+        # (docs/evidence/probes/s06/talkback-round2-fail.md.txt): recorded,
+        # not judged. A wrong or missing title is still wrong.
+        title = "Cupertino screen title"
+        for rest in (["Open orders", "Button"], ["Back", "Button", "Double-tap to activate"]):
+            self.assertEqual(tb.problems("s06-good-cupertino-closed", [title] + rest), [], rest)
+        self.assertTrue(tb.problems("s06-good-cupertino-closed", ["Material screen title", "Back"]))
+        self.assertTrue(tb.problems("s06-good-cupertino-closed", ["Back", "Button", title]))
+
     def test_a_title_where_none_is_expected_is_wrong(self):
         # Codex's second case: bad-no-title given a title it does not have.
         self.assertTrue(tb.problems("s06-bad-no-title-opened", ["Details", "Back", "Button"]))

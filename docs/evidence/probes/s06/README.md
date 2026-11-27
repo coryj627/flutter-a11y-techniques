@@ -237,3 +237,12 @@ button opens the drawer); its browser Back kept "p13 Mail".
   to compare, I08, whose web is a limitation too: the technique screen's
   "Web: Flutter limitation. …" line, and on both techniques' good
   example screens "Good example for …" with no platform note.
+- `talkback-round2-fail.md.txt`: the second TalkBack recording of S06's
+  walk, after the title was judged as a whole utterance. It failed one
+  row, `good-cupertino-closed`: after the title, TalkBack went to the
+  app's "Back", "Button", where the first recording went to "Open
+  orders", "Button". Every other row read as before. The closing rows
+  have since been judged by the title alone; the focus after it is
+  recorded, not judged (I03's subject). The third recording, the
+  committed transcript, passed, and said what the first said in every
+  row.
