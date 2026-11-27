@@ -452,7 +452,13 @@ copies of one row would have passed (Codex, review of 7328954). The
 VoiceOver spec now logs every try whole, and the re-judging test judges
 only what a row recorded, so the committed transcript, in the old form,
 fails that test until it is recorded again. It is kept as it was recorded
-in `docs/evidence/probes/s12/voiceover-web-round1-pass.md.txt`. Nothing
+in `docs/evidence/probes/s12/voiceover-web-round1-pass.md.txt`.
+The evidence run after the review (2026-11-27) passed the Android tree
+tests, TalkBack (every row a whole-utterance row, right on its first walk),
+the iOS tree tests (the judge's made-up walks among them), and VoiceOver on
+iOS (each walk judged whole against its own screen; the transcript now
+shows the whole walk); the web layer failed on that one test alone, as it
+must until the web transcript is recorded again. Nothing
 about what VoiceOver read is in doubt: the readings above are that
 recording's.
 
