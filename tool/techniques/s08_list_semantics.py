@@ -92,6 +92,9 @@ VOICEOVER_WEB_METHOD = (
     "one with a stop read as an empty phrase (a failed capture, which never "
     "passes) and nothing wrong read, is walked again, up to three walks, each "
     "shown as its own row (`-walk-<n>`). VoiceOver's own help message (\"You are "
-    "currently on ...\") is not a stop: the walk puts the phrase logged for the move "
-    "in its place, and the judge leaves out one that comes anyway. No runner retries"
+    "currently on ...\") is not a stop when it is about the element just read: the walk puts "
+    "the phrase logged for the move in its place and records each stop's cursor "
+    "position, and the judge leaves out a help message only at the position of "
+    "the stop before it, whose reading has the role the help names; any other is "
+    "a wrong stop. No runner retries"
 )

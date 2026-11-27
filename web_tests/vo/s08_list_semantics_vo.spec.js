@@ -23,58 +23,72 @@
 // text is merged into it as "empty group" (FL-315). The same was heard in
 // Chromium and WebKit for every example but `good-material`, which has
 // WebKit's reading only: Chromium quit during that walk, and VoiceOver read
-// its crash dialog. The second and third recordings read good-material in
-// Chromium as WebKit had, and every other walk as listed here, but for one
-// WebKit walk each whose first stop was an empty phrase
-// (voiceover-web-round2-fail.md.txt, round3).
+// its crash dialog. Every later recording read good-material in Chromium
+// as WebKit had; the fifth passed whole (docs/evidence/S08/voiceover-web.md).
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
-import { walkToEnd } from './vo_helpers.js';
-import { EXAMPLE_HEADING, judgeExampleWalk, runWalks, screenStops } from './s08_vo_walks.js';
+import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
+import { EXAMPLE_HEADING, EXPECTED_STOPS, judgeExampleWalk, runWalks, screenStops } from './s08_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
-const GROCERIES = ['Milk', 'Eggs', 'Bread'];
-const STEPS = ['1. Fork the repository', '2. Make the change', '3. Open a pull request'];
+const EXAMPLES = EXPECTED_STOPS;
 
-/** A list item as VoiceOver read it: "Milk empty group (1 of 3) 1 of 3". */
-const item = (text, i, kind) => `${text} ${kind} (${i + 1} of 3) ${i + 1} of 3`;
-
-// slug -> everything VoiceOver speaks after the "Example" heading, to the
-// end of the screen, in order, one entry for each element its cursor stops
-// on. Because every stop is listed, the lists also show what is not spoken.
-const EXAMPLES = {
-  // The list with its number of items; each item with "empty group" and
-  // its place, twice; then the end of the list (FL-315).
-  'good-bulleted': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'empty group')), 'end of list'],
-  'good-numbered': ['list 3 items', ...STEPS.map((s, i) => item(s, i, 'empty group')), 'end of list'],
-  // Each tile a button with its place; the list items are not stops
-  // (WebKit in every recording, Chromium in the second and third).
-  'good-material': ['list 3 items', ...GROCERIES.map((g, i) => `${g} button ${i + 1} of 3`), 'end of list', 'Chosen: none'],
-  // The list named by its header.
-  'good-cupertino': ['list Groceries 3 items', ...GROCERIES.map((g, i) => item(g, i, 'empty group')), 'end of list'],
-  // Bad examples: the defect must be audible where the web shows it.
-  // One text, no list.
-  'bad-one-text': [GROCERIES.join(' ')],
-  // Three texts, no list.
-  'bad-no-list': GROCERIES,
-  // Each tile a list item, read as a group and not as a button (FL-262).
-  'bad-tile-in-item': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'group')), 'end of list', 'Chosen: none'],
-  // No list; the orders the page holds when it opens (FL-011).
-  'bad-lazy-list': Array.from({ length: 13 }, (_, i) => `Order ${i + 1}`),
-};
+/**
+ * walkToEnd (vo_helpers.js), keeping the cursor's position at each stop, so
+ * that the judge can tie a help message to the stop before it. walkToEnd
+ * returns no positions, so the walk is made here: walkToEnd with no moves
+ * starts it exactly as the shared walk does (from Back, once VoiceOver is
+ * quiet), and the moves follow its rule (stopsToEnd in vo_logic.js: a move
+ * is a stop when the cursor moved or a new phrase was spoken; two moves in
+ * a row that do neither are the end), with `loggedForHelp` as the form
+ * techniques use it (phraseForMove). The one difference is that each
+ * stop's position is kept. Resolves to `{ stops, positions, reachedEnd }`.
+ */
+async function walkWithPositions(page, voiceOver, browserName, max = 40) {
+  await walkToEnd(page, voiceOver, browserName, 0);
+  const stops = [];
+  const positions = [];
+  let position = await cursorBounds();
+  let unmoved = 0;
+  for (let i = 0; i < max; i++) {
+    await voiceOver.next();
+    let phrase = await lastPhrase();
+    if (VO_HELP.test(phrase)) {
+      phrase = phraseForMove(phrase, (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim());
+    }
+    const now = await cursorBounds();
+    const spokeAnew = phrase !== '' && stops.length > 0 && phrase !== stops[stops.length - 1];
+    if (now === position && !spokeAnew) {
+      unmoved++;
+      if (unmoved === 2) return { stops, positions, reachedEnd: true };
+      continue;
+    }
+    unmoved = 0;
+    position = now;
+    stops.push(phrase);
+    positions.push(now);
+  }
+  return { stops, positions, reachedEnd: false };
+}
 
 for (const [slug, expected] of Object.entries(EXAMPLES)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
     await page.goto(`/#/t/S08/${slug}`, { waitUntil: 'load' });
     await expect(page.getByRole('heading', { name: 'Example', exact: true, level: 2 })).toBeVisible();
     await page.waitForTimeout(600);
+    let positions;
     const { verdict, reason, walks } = await runWalks(
       // A help message VoiceOver gives for a move is replaced by the phrase
-      // Guidepup logged for it (vo_helpers.js, phraseForMove), as the form
-      // techniques' walks do; one that comes anyway is left out by the judge.
-      () => walkToEnd(page, voiceOver, browserName, 40, { loggedForHelp: true }),
-      (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug)),
+      // Guidepup logged for it (phraseForMove), as the form techniques'
+      // walks do; one that comes anyway is left out by the judge only when
+      // it is about the stop before it, at the same position.
+      async () => {
+        const walk = await walkWithPositions(page, voiceOver, browserName, 40);
+        positions = walk.positions;
+        return walk;
+      },
+      (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug), positions),
       {
         log: (walk, stops, judged) => {
           // A complete walk read the screen's own stops exactly as listed,

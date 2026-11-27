@@ -4,7 +4,8 @@
 // the release build in build/web.
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
-import { EXAMPLE_HEADING, EXAMPLE_SCREENS, judgeExampleWalk, runWalks, screenStops } from './vo/s08_vo_walks.js';
+import { readFileSync } from 'node:fs';
+import { EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, runWalks, screenStops } from './vo/s08_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
 // "Good examples" and "Bad examples", so the name must match exactly.
@@ -253,6 +254,43 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
   }
 });
 
+// The committed web VoiceOver transcripts, judged again with today's judge:
+// each row's stops (a complete walk shows only what follows the "Example"
+// heading, so the screen's own stops are put back), with no positions, as
+// none was recorded. The fifth recording passed and must still pass; the
+// fourth failed on a help message after the last stop and must still fail.
+const transcriptRows = (file) => readFileSync(new URL(`../${file}`, import.meta.url), 'utf8')
+  .split('\n')
+  .map((line) => /^\| `([a-z-]+)-walk-\d+` \| (.*) \((complete|wrong|incomplete): .*\) \|$/.exec(line))
+  .filter(Boolean)
+  .map(([, slug, shown, was]) => {
+    const read = shown.split(' / ');
+    return { slug, was, stops: was === 'complete' ? [...screenStops(slug), EXAMPLE_HEADING, ...read] : read };
+  });
+
+test.describe('the committed web VoiceOver transcripts judge as recorded', () => {
+  test('the fifth recording (docs/evidence/S08/voiceover-web.md): every walk complete', () => {
+    const rows = transcriptRows('docs/evidence/S08/voiceover-web.md');
+    expect(rows).toHaveLength(16);
+    for (const { slug, stops } of rows) {
+      expect(judgeExampleWalk(stops, true, EXPECTED_STOPS[slug], screenStops(slug)).verdict, slug).toBe('complete');
+    }
+  });
+
+  test('the fourth recording (voiceover-web-round4-fail.md.txt): good-numbered in WebKit wrong, the rest complete', () => {
+    const rows = transcriptRows('docs/evidence/probes/s08/voiceover-web-round4-fail.md.txt');
+    expect(rows).toHaveLength(16);
+    const verdicts = rows.map(({ slug, stops }) => judgeExampleWalk(stops, true, EXPECTED_STOPS[slug], screenStops(slug)).verdict);
+    expect(verdicts.filter((v) => v === 'wrong')).toHaveLength(1);
+    expect(verdicts.filter((v) => v === 'complete')).toHaveLength(15);
+    const wrong = rows[verdicts.indexOf('wrong')];
+    expect(wrong.slug).toBe('good-numbered');
+    expect(VO_HELP_PREFIX.test(wrong.stops.at(-1))).toBe(true);
+  });
+});
+
+const VO_HELP_PREFIX = /^You are currently on /;
+
 test.describe('the VoiceOver example walks are judged on every walk', () => {
   const own = screenStops('good-bulleted');
   // good-bulleted's list in web_tests/vo/s08_list_semantics_vo.spec.js, as
@@ -283,13 +321,8 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['an empty first stop and a walk that reached the end short', ['', ...own.slice(1), EXAMPLE_HEADING, 'list 3 items'], true, 'wrong'],
     ['an empty phrase after the last expected stop', screen(...expected, ''), true, 'incomplete'],
     ['every stop an empty phrase', Array(8).fill(''), true, 'incomplete'],
-    // VoiceOver's help message is not a stop of the page.
-    ['the fourth recording: the list\'s help message after the last stop', screen(...expected, HELP), true, 'complete'],
-    ['a help message in the middle', screen('list 3 items', milk, HELP, eggs, bread, 'end of list'), true, 'complete'],
-    ['a help message in place of an expected stop', screen('list 3 items', milk, HELP, bread, 'end of list'), true, 'wrong'],
-    ['a help message in place of the last stop', screen('list 3 items', milk, eggs, bread, HELP), true, 'wrong'],
-    ['only help messages', [HELP, HELP], true, 'wrong'],
-    ['a help message and a wrong reading', screen('list 3 items', milk, HELP, 'Eggs', bread, 'end of list'), true, 'wrong'],
+    // A help message with no positions recorded is a stop like any other.
+    ['the fourth recording as it was logged, with no positions: the help message after the last stop', screen(...expected, HELP), true, 'wrong'],
     ['no title', [own[1], EXAMPLE_HEADING, ...expected], true, 'wrong'],
     ['no heading', [...own, ...expected], true, 'wrong'],
     ['an empty walk cut short', [], false, 'incomplete'],
@@ -301,6 +334,50 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
       expect(judgeExampleWalk(stops, reachedEnd, expected, own).verdict).toBe(verdict);
     });
   }
+
+  // A help message is left out only when the walk's positions tie it to the
+  // stop before it: same position, a reading before it, and its role in
+  // that reading (helpAfterStop in s08_vo_walks.js).
+  const TEXT_FIELD_HELP = 'You are currently on a text field, inside of web content.';
+  const BUTTON_HELP = 'You are currently on a button, inside of web content. To click this button, press Control-Option-Space.';
+  // One position per stop, each new but where `same` lists the stops (by
+  // index) that are at the position of the stop before them.
+  const at = (stops, same = []) => {
+    const out = [];
+    stops.forEach((_, i) => out.push(same.includes(i) ? out[i - 1] : `p${i}`));
+    return out;
+  };
+  const whole = screen(...expected);
+  const n = whole.length;
+  const helpCases = [
+    ['help after a judged stop, at its position: left out', [...whole, HELP], at([...whole, HELP], [n]), 'complete'],
+    ['help after a judged stop in the middle, at its position, naming its role: left out',
+      screen('list 3 items', HELP, milk, eggs, bread, 'end of list'),
+      at(screen('list 3 items', HELP, milk, eggs, bread, 'end of list'), [own.length + 2]), 'complete'],
+    ['help only, at a new position after the whole screen (an extra element): fails', [...whole, HELP], at([...whole, HELP]), 'wrong'],
+    ['Codex\'s case: the whole screen, then a text field\'s help at a new position: fails', [...whole, TEXT_FIELD_HELP], at([...whole, TEXT_FIELD_HELP]), 'wrong'],
+    ['help naming a role the stop before it does not have, at its position: fails', [...whole, TEXT_FIELD_HELP], at([...whole, TEXT_FIELD_HELP], [n]), 'wrong'],
+    ['help in place of an expected stop: fails', screen('list 3 items', milk, HELP, bread, 'end of list'),
+      at(screen('list 3 items', milk, HELP, bread, 'end of list')), 'wrong'],
+    ['help after an empty stop, at its position: fails', [...screen('list 3 items', milk, eggs, bread, ''), HELP],
+      at([...screen('list 3 items', milk, eggs, bread, ''), HELP], [n]), 'wrong'],
+    ['help with positions of the wrong length: fails', [...whole, HELP], at(whole), 'wrong'],
+    ['help and a wrong reading: fails', [...screen('list 3 items', 'Milk', eggs, bread, 'end of list'), HELP],
+      at([...screen('list 3 items', 'Milk', eggs, bread, 'end of list'), HELP], [n]), 'wrong'],
+    ['the fifth recording, which passed: no help message', whole, at(whole), 'complete'],
+  ];
+  for (const [what, stops, positions, verdict] of helpCases) {
+    test(`${what}: ${verdict}`, () => {
+      expect(judgeExampleWalk(stops, true, expected, own, positions ?? at(stops)).verdict).toBe(verdict);
+    });
+  }
+
+  test('a help message names the role it is about', () => {
+    expect(helpRole(HELP)).toBe('list');
+    expect(helpRole(TEXT_FIELD_HELP)).toBe('text field');
+    expect(helpRole(BUTTON_HELP)).toBe('button');
+    expect(helpRole('end of list')).toBe(null);
+  });
 
   test('a bad example\'s own stops include its defect', () => {
     for (const slug of Object.keys(EXAMPLE_SCREENS).filter((s) => s.startsWith('bad-'))) {

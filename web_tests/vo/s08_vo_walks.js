@@ -42,18 +42,74 @@ export const EXAMPLE_SCREENS = {
   ],
 };
 
+const GROCERIES = ['Milk', 'Eggs', 'Bread'];
+const STEPS = ['1. Fork the repository', '2. Make the change', '3. Open a pull request'];
+
+/** A list item as VoiceOver read it: "Milk empty group (1 of 3) 1 of 3". */
+const item = (text, i, kind) => `${text} ${kind} (${i + 1} of 3) ${i + 1} of 3`;
+
+// slug -> everything VoiceOver speaks (web_tests/vo/s08_list_semantics_vo.spec.js,
+// which judges each walk against it; kept here so that the web tree spec
+// can judge the committed transcripts with it too) after the "Example" heading, to the
+// end of the screen, in order, one entry for each element its cursor stops
+// on. Because every stop is listed, the lists also show what is not spoken.
+export const EXPECTED_STOPS = {
+  // The list with its number of items; each item with "empty group" and
+  // its place, twice; then the end of the list (FL-315).
+  'good-bulleted': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'empty group')), 'end of list'],
+  'good-numbered': ['list 3 items', ...STEPS.map((s, i) => item(s, i, 'empty group')), 'end of list'],
+  // Each tile a button with its place; the list items are not stops
+  // (WebKit in every recording, Chromium from the second on).
+  'good-material': ['list 3 items', ...GROCERIES.map((g, i) => `${g} button ${i + 1} of 3`), 'end of list', 'Chosen: none'],
+  // The list named by its header.
+  'good-cupertino': ['list Groceries 3 items', ...GROCERIES.map((g, i) => item(g, i, 'empty group')), 'end of list'],
+  // Bad examples: the defect must be audible where the web shows it.
+  // One text, no list.
+  'bad-one-text': [GROCERIES.join(' ')],
+  // Three texts, no list.
+  'bad-no-list': GROCERIES,
+  // Each tile a list item, read as a group and not as a button (FL-262).
+  'bad-tile-in-item': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'group')), 'end of list', 'Chosen: none'],
+  // No list; the orders the page holds when it opens (FL-011).
+  'bad-lazy-list': Array.from({ length: 13 }, (_, i) => `Order ${i + 1}`),
+};
+
 /** The stops VoiceOver reads above the "Example" heading of `slug`'s screen. */
 export const screenStops = (slug) => {
   const [title, ...lines] = EXAMPLE_SCREENS[slug];
   return [`heading level 1 ${title}`, ...lines];
 };
 
+/** The role a help message names: "list" for "You are currently on a list, …". */
+export function helpRole(phrase) {
+  const m = /^You are currently on (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
+  return m ? m[1].trim() : null;
+}
+
+/**
+ * Whether stop `i` of a walk is a help message about the stop before it:
+ * VO_HELP, the cursor at the same position as for stop `i - 1` (from
+ * `positions`, the walk's record of where the cursor was at each stop), the
+ * stop before it a reading, neither empty nor a help message, and the role
+ * the help names found in that reading. False whenever any of that cannot
+ * be shown, `positions` missing included.
+ */
+export function helpAfterStop(stops, positions, i) {
+  if (!VO_HELP.test(stops[i]) || i === 0 || !Array.isArray(positions)) return false;
+  if (positions.length !== stops.length || positions[i] !== positions[i - 1]) return false;
+  const before = stops[i - 1];
+  if (before === '' || VO_HELP.test(before)) return false;
+  const role = helpRole(stops[i]);
+  return role !== null && before.toLowerCase().includes(role.toLowerCase());
+}
+
 /**
  * Judges one walk of an example screen: `stops` in order, whether the walk
  * reached the end of the screen (two moves in a row that changed nothing),
  * `expected`, everything VoiceOver must say after the "Example" heading to
  * the end of the screen, in order, and `screen`, the stops the screen has
- * before the heading (screenStops). The walk must read the whole screen:
+ * before the heading (screenStops), and `positions`, the cursor's position
+ * at each stop, when the walk recorded them. The walk must read the whole screen:
  * `screen`, then the heading, then `expected`, every stop in its place and
  * nothing else. Returns `{ verdict, reason }`, the verdict one of:
  *
@@ -76,13 +132,22 @@ export const screenStops = (slug) => {
  *   with no empty stop.
  *
  * A stop that is VoiceOver's help message ("You are currently on a list,
- * inside of web content. …", VO_HELP) is left out first, wherever it is:
- * it says where the cursor already is. Its words are never checked, and a
- * help message given in place of an element's own speech leaves that
- * element unread, which fails as a missing stop. The fourth recording
+ * inside of web content. …", VO_HELP) is left out only when it is tied to
+ * the stop before it (helpAfterStop): `positions`, the cursor's position at
+ * each stop as the walk recorded it, shows the cursor had not moved, the
+ * stop before it is a reading (neither empty nor help), and the role the
+ * help names ("on a list") is in that reading ("end of list"). It is then
+ * VoiceOver's speech about the element just judged. Any other help message
+ * is a stop like any other, and since no expected stop is a help message it
+ * is wrong and fails for good: one at a new position (an element nothing
+ * else was read for), one naming a role the reading before it does not
+ * have, one with no stop before it, and every help message in a walk with
+ * no positions. A help message given in place of an element's own speech
+ * is at a new position, and fails. The fourth recording
  * (docs/evidence/probes/s08/voiceover-web-round4-fail.md.txt, WebKit,
- * good-numbered) read every expected stop and then one more, the list's
- * help message, after "end of list".
+ * good-numbered) read every expected stop and then the list's help message
+ * after "end of list"; it recorded no positions, so its walk still judges
+ * wrong.
  *
  * An empty stop holds the place of the stop expected there: the walks that
  * gave one (the second and third recordings, WebKit, the screen's level 1
@@ -93,15 +158,10 @@ export const screenStops = (slug) => {
  * judges count an empty phrase as a wrong stop; C02's lets it stand for
  * WebKit's level 1 heading. S08's lets it stand for nothing.
  */
-export function judgeExampleWalk(walked, reachedEnd, expected, screen = []) {
-  // VoiceOver's own help message (VO_HELP, vo_logic.js) is its speech about
-  // where its cursor already is, not a stop of the page: it is left out
-  // before the walk is judged. The walk itself already puts the phrase
-  // logged for a move in place of a help message (walkToEnd's
-  // `loggedForHelp`, phraseForMove); what is left out here is a help
-  // message that came anyway, such as one given after a pause on the last
-  // element, where the cursor no longer moves.
-  const stops = walked.filter((stop) => !VO_HELP.test(stop));
+export function judgeExampleWalk(walked, reachedEnd, expected, screen = [], positions = undefined) {
+  // VoiceOver's own help message (VO_HELP, vo_logic.js), when it is about
+  // the element just read, is not a stop of the page (helpAfterStop).
+  const stops = walked.filter((stop, i) => !helpAfterStop(walked, positions, i));
   const whole = [...screen, EXAMPLE_HEADING, ...expected];
   const empty = [];
   for (let i = 0; i < stops.length; i++) {

@@ -229,6 +229,29 @@ never part of the Runner):
 No native walk said "list", a count, or a place. Only moving forward was
 measured.
 
+The whole hierarchy (round 4, `ios-tree.txt`, from one snapshot of each
+app read depth first, every element with its depth, type, label,
+identifier, and frame, unlabelled ones included; `ProbeS08TreeUITests.swift.txt`
+run by `ios_tree.sh.txt`). The tables above list only labelled elements,
+so they show no containers; this one shows what holds what. Everything
+after the "Example" heading for S08's own examples, and the list's part
+for the native app:
+
+| Screen | What holds the items |
+| --- | --- |
+| native n05, `UITableView` | a table (26) holding three cells (75), each holding its row's static text (48) and two unlabelled elements of type other |
+| native n06, SwiftUI `List` | a collection view (32) holding three cells (75), each holding its row's text in elements of type other |
+| native n07, `UIStackView` | the stack's element of type other (1), holding "Before n07", the three texts, and "n07 end" |
+| `good-bulleted`, `good-numbered` | an element of type other (1), no label, holding four: an element of type other at the list's frame, no label, then the three items as static texts (48) |
+| `good-cupertino` | the same, its first child labelled "Groceries" |
+| `good-material` | the same container, holding the list's element and, for each list item, a container of type other holding the item's element and the tile's button (9) |
+| `bad-no-list` | no container: the three static texts are siblings of the "Example" heading |
+| `bad-one-text` | one static text with the three lines |
+
+A list made with the roles is grouped on iOS, in the kind of container the
+iOS engine gives every semantics node with children; nothing in it is of
+a list's, a table's, or a cell's type (FL-310).
+
 ## Web VoiceOver, the first recording of the examples
 
 Made by the coordinator on 2026-11-26 with `tool/voiceover_web.py S08`,
@@ -244,8 +267,10 @@ later stop right (`voiceover-web-round2-fail.md.txt`, `bad-tile-in-item`;
 the same text). The judge now walks such a capture again; the spec's
 section 7 has the diagnosis. The fourth failed one walk, WebKit,
 `good-numbered`, on VoiceOver's help message for the list after the last
-stop (`voiceover-web-round4-fail.md.txt`, its log the same text); the walk
-and the judge now leave a help message out.
+stop (`voiceover-web-round4-fail.md.txt`, its log the same text). The
+fifth passed, 16 of 16 (`docs/evidence/S08/voiceover-web.md`). The judge
+was tightened after it: a help message is left out only when the walk's
+recorded positions tie it to the stop before it.
 
 ## What the examples take from this
 

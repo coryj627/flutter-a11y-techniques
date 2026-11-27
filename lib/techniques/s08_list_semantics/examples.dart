@@ -10,8 +10,9 @@ import 'package:flutter/semantics.dart';
 // web: on Android a list made this way says "In list" and "Out of list" but
 // not its size or an item's place (FL-311); on the web it is a list only
 // because it is laid out whole and does not scroll (FL-312), and VoiceOver
-// reads a text-only item as an "empty group" (FL-315). On iOS Flutter gives
-// a list nothing (FL-310): each item is an element of its own. What they
+// reads a text-only item as an "empty group" (FL-315). On iOS the list is a
+// container of no particular kind, where a native list is a table of cells
+// (FL-310); each item is an element of its own. What they
 // cannot do is in docs/flutter-limitations.md and is not built here.
 
 // #region shared
@@ -97,7 +98,8 @@ class Chosen extends StatelessWidget {
 // #region good-bulleted
 /// A bulleted list: `SemanticsRole.list` round a `Column`, and
 /// `SemanticsRole.listItem` round each line. Android: "In list" and "Out
-/// of list", no size or place. iOS: each line an element, no list. Web: a
+/// of list", no size or place. iOS: each line an element, in a container
+/// of no particular kind (FL-310). Web: a
 /// list of three items, each read as "Milk empty group (1 of 3) 1 of 3".
 class GoodBulleted extends StatelessWidget {
   const GoodBulleted({super.key});
@@ -146,7 +148,8 @@ class GoodNumbered extends StatelessWidget {
 /// kept a button of its own inside its list item with `explicitChildNodes`:
 /// merged into the item, it would be a list item and no button on the web
 /// (`bad-tile-in-item`). Android: each tile a button, the first with "In
-/// list", no size or place. iOS: each tile a button, no list. Web: a list
+/// list", no size or place. iOS: each tile a button, in a container of no
+/// particular kind. Web: a list
 /// of items each holding a button, read "Milk button 1 of 3" (WebKit).
 class GoodMaterial extends StatefulWidget {
   const GoodMaterial({super.key});
@@ -197,8 +200,9 @@ class _GoodMaterialState extends State<GoodMaterial> {
 /// and `SemanticsRole.listItem` round each `CupertinoListTile`. The tiles do
 /// nothing when tapped: a `CupertinoListTile` with `onTap` takes no keyboard
 /// focus and is not a button on Android and iOS (FL-400). Android: the list
-/// named "Groceries", no size or place. iOS: the header, then each tile, no
-/// list. Web: "list Groceries 3 items", each tile as `good-bulleted`'s.
+/// named "Groceries", no size or place. iOS: the header, then each tile, in
+/// a container of no particular kind. Web: "list Groceries 3 items", each
+/// tile as `good-bulleted`'s.
 class GoodCupertino extends StatelessWidget {
   const GoodCupertino({super.key});
 

@@ -160,7 +160,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-296](#fl-296) | A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it | Web; widget tests (Android and iOS not run) | Confirmed |
 | [FL-297](#fl-297) | On the web, whether VoiceOver in Chromium said what a SnackBar or banner action did, when Enter on that action removed the control, varied between recordings, and the live-region line that now says it was not heard in its one recording | Web (Chromium, VoiceOver, Enter) | Observed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
-| [FL-310](#fl-310) | On iOS the list roles have no effect: VoiceOver says nothing about a list, its size, or an item's place; nor does it for a native `UITableView` or SwiftUI `List` | iOS | Confirmed |
+| [FL-310](#fl-310) | On iOS a list made with the list roles is a container of no particular kind, where a native list is a table or a collection view of cells; nothing gives it a list's type, and VoiceOver says nothing about it | iOS | Confirmed |
 | [FL-311](#fl-311) | On Android a list made with `SemanticsRole.list` says "In list" and "Out of list", but not how many items it has or where an item is | Android | Confirmed |
 | [FL-312](#fl-312) | On the web a scrolling list (`ListView`, `SliverList`) is not a list, and the list role cannot be put round one | Web | Confirmed |
 | [FL-313](#fl-313) | On Android a list that scrolls says nothing about a list, and once scrolled its items report the wrong place | Android | Confirmed |
@@ -494,7 +494,7 @@ yet), **Fixed in x.y** (verified on that version).
     the list was not scrolled. VoiceOver's three-finger scroll was not
     tried.
   - What each platform says about the list itself is FL-312 (web) and
-    FL-313 (Android); Flutter gives a list nothing on iOS (FL-310).
+    FL-313 (Android); on iOS a list is a container of no particular kind (FL-310).
 - Upstream issue: not searched yet. Lazy building is by design; the effect on
   assistive technology navigation is the limitation.
 
@@ -4677,57 +4677,64 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-310
 
-**On iOS the list roles have no effect: VoiceOver says nothing about a list, its size, or an item's place; nor does it for a native `UITableView` or SwiftUI `List`.**
+**On iOS a list made with the list roles is a container of no particular kind, where a native list is a table or a collection view of cells; nothing gives it a list's type, and VoiceOver says nothing about it.**
 
-- Status: Confirmed, Flutter 3.47.5, iPhone 17 simulator, iOS 27.0.
-  Asserted by S08's iOS VoiceOver walks, which expect no word about a list.
-  iOS engine source read (`shell/platform/darwin/ios/framework/Source/SemanticsObject.mm`,
+- Status: Confirmed, Flutter 3.47.5, iPhone 17 simulator, iOS 27.0, from
+  the XCUITest element hierarchy (one snapshot of the app, read depth
+  first, every element with its type; `docs/evidence/probes/s08/ios-tree.txt`,
+  captured with `ProbeS08TreeUITests.swift.txt` by `ios_tree.sh.txt`) and
+  VoiceOver's walks. iOS engine source read
+  (`shell/platform/darwin/ios/framework/Source/SemanticsObject.mm`,
   `FlutterSemanticsScrollView.mm`): nothing reads a node's role, and no
-  element is given an `accessibilityContainerType`. Found in the S08 probe
-  (`docs/evidence/probes/s08/`); C18's probe saw the same for cards in a
-  list (FL-026, p15).
-- What happens: `Semantics(role: SemanticsRole.list)` round a `Column` and
-  `Semantics(role: SemanticsRole.listItem)` round each item give each item
-  as static text to XCUITest, with no element for the list (`ios.txt`,
-  p03), and VoiceOver, moving forward, reads each item by its text alone:
-  "p03 Milk", "p03 Eggs", "p03 Bread", with no "list", no number of items,
-  and nothing when the list ends. A `ListView` (p06, p07, p08), a
-  `SliverList` (p19), Material's and Cupertino's list widgets (p11 to p14),
-  and every combination probed (p15 to p29) read the same way.
-- What iOS has: the iOS reference repository's Lists technique says that
-  iOS "has no native list semantics like `<ul>`" and that a SwiftUI `List`
-  gives no "List" trait and no "1 of 6"; its requirement is that each item
-  is an element of its own, which Flutter meets. But VoiceOver itself does
-  speak lists: in Safari on the same simulator, moving forward through a
-  plain HTML `ul` of three items, it said "• ul Milk … List start 1 of
-  3", "2 of 3", "3 of 3 List end"; through an `ol` "List start 1" (cut at
-  64 characters) and "2 of 3"; through a `dl` "Term" and "Description"
-  after each term and description; and through a nested `ul` "List start"
-  and "List end" at each level (`ios-round2.txt`, the Safari walks; the
-  service returned each item's text twice). So the screen reader has list
-  semantics on iOS for web content.
-- What a native iOS list gives, measured (2026-11-26, the S08 probe's
-  native comparison: `NativeLists.swift.txt`, a separate app built with
-  `swiftc` and installed on the same simulator, driven by
-  `ProbeS08NativeUITests.swift.txt`; output `ios-native.txt`): a UIKit
-  `UITableView` of three rows (n05, a table to XCUITest, each row a cell
-  holding its text), a SwiftUI `List` of three `Text` rows (n06, a
-  collection view of cells), and a `UIStackView` of three labels (n07).
-  VoiceOver, moving forward from a tap on the label above and from the
-  top of the screen, read each row by its text alone in all three: "n05
-  Milk", "n05 Eggs", "n05 Bread", then "n05 end"; no "list", no number of
-  rows, no place, and nothing on entering or leaving. Only moving forward
-  was measured; touching a row, the rotor, and the container type UIKit
-  gives a table (not read) were not.
-- So, on iOS, a native list says nothing more than Flutter's: FL-310 is
-  not a gap against the platform's own lists. It is recorded because the
-  list roles, which do something on Android and the web, do nothing here,
-  and because VoiceOver does speak lists in web content.
-- WCAG: none claimed on iOS. Each item is its own element, which is what
-  the iOS reference asks and what a native `UITableView` and SwiftUI
-  `List` give.
-- Workaround: none needed for R1 of S08 (each item an element); nothing in
-  the SDK gives iOS a list container.
+  element is given an `accessibilityContainerType`. Asserted by S08's iOS
+  VoiceOver walks, which expect no word about a list.
+- What a native list exposes (`ios-tree.txt`, the native comparison app
+  `NativeLists.swift.txt`, a separate app, never part of the Runner): a
+  UIKit `UITableView` of three rows is an element of type table (XCUITest
+  type 26) holding three cells (type 75), each holding the row's static
+  text; a SwiftUI `List` of three `Text` rows is a collection view (type
+  32) holding three cells, each holding the row's text. A `UIStackView` of
+  three labels is the three static texts and no container of its own
+  kind.
+- What Flutter exposes:
+  - The list roles round a `Column` (S08 `good-bulleted`; `good-numbered`
+    and `good-cupertino` the same): an element of type other (type 1),
+    with no label, holding four children: an element of type other at the
+    list's frame, with no label (`good-cupertino`: labelled "Groceries" by
+    its header), then the three items as static texts (type 48). The iOS
+    engine gives every semantics node with children a container of this
+    kind; the type says nothing of a list.
+  - `good-material`: the same container, holding the list's own element,
+    then for each list item a container of type other holding an element
+    for the item and the tile's button (type 9).
+  - The same lines with no list role (S08 `bad-no-list`): the three static
+    texts as siblings of the "Example" heading, with no container round
+    them.
+  - VoiceOver, moving forward, read each item by its text alone in every
+    case: "Milk", "Eggs", "Bread", no "list", no size, no place
+    (`docs/evidence/S08/voiceover-ios.md`; the probe's `ios.txt`). The
+    native `UITableView` and SwiftUI `List` were read the same way
+    (`ios-native.txt`): VoiceOver's moving forward says nothing of a
+    list for them either, so speech is not what tells them apart. Their
+    tree does: a table or a collection view of cells, where Flutter's is
+    a container of no kind.
+- What VoiceOver can say for a list: in Safari on the same simulator, for
+  a plain HTML `ul`, "List start 1 of 3", "2 of 3", "3 of 3 List end"; for
+  a `dl`, "Term" and "Description" (`ios-round2.txt`; the service returned
+  each item's text twice).
+- Why it matters: on iOS the platform's own lists are a table or a
+  collection view of cells, a relationship assistive technology can read
+  from the tree. A Flutter list gives only a grouping that any node with
+  children gets: the items are together, but nothing says that they are a
+  list, its rows, or its size. 1.3.1 asks that the relationship be
+  programmatically determinable or available in text; S08's bullets are
+  drawn, so they give no text.
+- WCAG: 1.3.1 Info and Relationships, on iOS: the list relationship that a
+  native list exposes cannot be given. The same lines with no list role
+  (`bad-no-list`) have no container at all.
+- Workaround: none in the SDK. `SemanticsRole.list` and `listItem` have no
+  effect on iOS, and no documented parameter gives an element a table or
+  collection type.
 - Upstream issue: not searched yet (D25).
 
 ## FL-311

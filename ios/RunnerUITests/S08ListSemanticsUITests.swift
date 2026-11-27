@@ -1,11 +1,12 @@
 // L3 (tree) and L4 (VoiceOver) for S08 List semantics on iOS.
 // Spec: docs/specs/S08-list-semantics.md.
 //
-// The iOS reference's Lists says a SwiftUI List gives VoiceOver no list
-// semantics, and Flutter's iOS engine gives a list none (FL-310): what is
-// checked is that
-// each item is an element of its own. Items are found by their labels and
-// the tiles of a list of tiles by their test identifiers.
+// On iOS a Flutter list is a container of no particular kind, where a
+// native list is a table or a collection view of cells (FL-310), so there
+// is no list element to check. What is checked is that each item is an
+// element of its own, in order, and what VoiceOver says. Items are found
+// by their labels and the tiles of a list of tiles by their test
+// identifiers.
 import XCTest
 
 final class S08ListSemanticsUITests: XCTestCase, TechniqueUITest {

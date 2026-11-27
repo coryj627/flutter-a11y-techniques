@@ -19,14 +19,14 @@ final s08ListSemantics = Technique(
       'scrolled its items report the wrong place (FL-313). There is no '
       'workaround in the SDK that keeps the list on the web.',
     ),
-    AppPlatform.ios: PlatformStatus.applies(
-      note:
-          'Flutter gives a list nothing on iOS (FL-310): VoiceOver reads '
-          'each item by its text alone, which is what the iOS reference '
-          'says a SwiftUI List gives; a native UITableView and SwiftUI '
-          'List were read the same way, with no word about a list. '
-          'VoiceOver, moving forward, leaves a long ListView after the items '
-          'in view (FL-011).',
+    AppPlatform.ios: PlatformStatus.limitation(
+      'A list made with the list roles is a container of no particular '
+      'kind, where a native UITableView is a table of cells and a SwiftUI '
+      'List a collection view of cells; the roles have no effect on iOS, '
+      'and nothing in the SDK gives an element a list\'s type (limitation '
+      'FL-310). Each item is an element of its own. VoiceOver says nothing '
+      'about the list, and, moving forward, leaves a long ListView after '
+      'the items in view (FL-011).',
     ),
     AppPlatform.web: PlatformStatus.limitation(
       'A short list made with the list role is a list of list items. A '

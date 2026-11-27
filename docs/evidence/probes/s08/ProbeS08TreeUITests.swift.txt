@@ -1,0 +1,58 @@
+// S08 probe round 4 (throwaway, not committed; kept as
+// docs/evidence/probes/s08/ProbeS08TreeUITests.swift.txt): the whole
+// XCUITest element hierarchy of each S08 example screen, from one snapshot
+// of the app, depth first, every element with its depth, type, label,
+// identifier, and frame, an element with no label included. Then the same
+// for the native comparison app (NativeLists, installed by the run's
+// script), for the UIKit table, the SwiftUI list, and the stack of labels.
+import XCTest
+
+final class ProbeS08TreeUITests: XCTestCase, TechniqueUITest {
+  static let technique = "S08"
+  let app = XCUIApplication()
+
+  func log(_ s: String) { print("S08PROBE \(s)") }
+
+  func dump(_ name: String, _ target: XCUIApplication) {
+    guard let root = try? target.snapshot() else { log("\(name): no snapshot"); return }
+    func walk(_ s: XCUIElementSnapshot, _ depth: Int) {
+      let f = s.frame
+      log("\(name) \(String(repeating: "  ", count: depth))type=\(s.elementType.rawValue) "
+        + "label=\(s.label.debugDescription) id=\(s.identifier.debugDescription) "
+        + "frame=(\(Int(f.minX)),\(Int(f.minY)),\(Int(f.width)),\(Int(f.height))) children=\(s.children.count)")
+      for c in s.children { walk(c, depth + 1) }
+    }
+    walk(root, 0)
+  }
+
+  func testFlutterExamples() {
+    let titles = [
+      "good-bulleted": "Bulleted list",
+      "good-numbered": "Numbered list",
+      "good-material": "List of Material list tiles",
+      "good-cupertino": "Cupertino list section",
+      "bad-one-text": "List in one text",
+      "bad-no-list": "Lines with no list role",
+    ]
+    for slug in ["good-bulleted", "good-numbered", "good-material", "good-cupertino", "bad-no-list", "bad-one-text"] {
+      open(slug, waitingFor: element(labelled: titles[slug]!), settle: 1_000_000)
+      dump(slug, app)
+    }
+  }
+
+  func testNative() {
+    for (arg, id) in [("uikit", "n05"), ("swiftui", "n06"), ("stack", "n07")] {
+      let native = XCUIApplication(bundleIdentifier: "dev.fluttera11y.s08nativelists")
+      native.terminate()
+      native.launchArguments = [arg]
+      native.launch()
+      guard native.staticTexts["Before \(id)"].waitForExistence(timeout: 20) else {
+        log("native \(id): did not open")
+        continue
+      }
+      sleep(1)
+      dump("native-\(id)", native)
+      native.terminate()
+    }
+  }
+}

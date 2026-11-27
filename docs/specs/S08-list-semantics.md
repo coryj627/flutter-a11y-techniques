@@ -24,7 +24,7 @@ it is scrolled is still a list, and every item can be reached.
 
 | Android | iOS | Web |
 | --- | --- | --- |
-| Limitation | Applies | Limitation |
+| Limitation | Limitation | Limitation |
 
 Every good example is Flutter's own widgets through their documented
 parameters, `Semantics(role: SemanticsRole.list)` round the list and
@@ -56,20 +56,25 @@ solution. What they do not give is recorded, not built (section 7):
   do not scroll. VoiceOver reads them with their size and each item's
   place, and reads each item that holds only text as an "empty group"
   ([FL-315](../flutter-limitations.md#fl-315)).
-- **iOS, applies, by measurement.** Flutter gives a list nothing on iOS
-  ([FL-310](../flutter-limitations.md#fl-310)): VoiceOver reads each item
-  by its text alone. A native list gives no more: a UIKit `UITableView` and
-  a SwiftUI `List` of the same three rows, in a separate native app on
-  the same simulator, were read by VoiceOver row by row with no "list",
-  no count, no place, and nothing on entering or leaving (section 7). So
-  R2 and R3 ask nothing on iOS that the platform's own lists give, and
-  what is left is R1, each item an element of its own, as the iOS
-  reference asks, which every good example gives. VoiceOver does speak
-  lists in web content (Safari on the same simulator: "List start", "1 of
-  3", "List end", and "Term" and "Description" for a `dl`); that is
-  WebKit's, not a native view's. A long list is no good example here
-  either: VoiceOver, moving forward, read the items in view and then left
-  the list ([FL-011](../flutter-limitations.md#fl-011), extended).
+- **iOS, limitation.** The relationship is in the tree, not in speech.
+  In the XCUITest hierarchy (`docs/evidence/probes/s08/ios-tree.txt`), a
+  native UIKit `UITableView` of three rows is a table holding three cells,
+  and a SwiftUI `List` a collection view holding three cells; a list made
+  with the roles is an element of type other, with no label, holding an
+  element for the list and the items, which is the container the iOS
+  engine gives every semantics node with children, and nothing in it says
+  "list", "table", or "cell". The roles have no effect on iOS, and no
+  documented parameter gives an element a table or collection type
+  ([FL-310](../flutter-limitations.md#fl-310)). VoiceOver's moving forward
+  reads native and Flutter lists alike, row by row with no word about a
+  list (`ios-native.txt`, `docs/evidence/S08/voiceover-ios.md`), so speech
+  does not show that the two give the same relationship, and the tree
+  shows that they do not. So iOS has no good example for R2 or R3: the
+  good examples give iOS each item as an element of its own, grouped in a
+  container of no particular kind, and no more. A long list is no good
+  example here either: VoiceOver, moving forward, read the items in view
+  and then left the list ([FL-011](../flutter-limitations.md#fl-011),
+  extended).
 
 These statuses follow the owner's rule of 2026-11-23: where Flutter is
 measured not to meet a requirement on a platform and no documented
@@ -77,7 +82,9 @@ parameter fixes it, that platform is a limitation and has no good example
 for that requirement. The principal decided Android and the web on
 2026-11-26, and kept the good examples, after the owner's C06 ruling of
 2026-11-23, which kept a framework example with its gap recorded as a
-limitation (section 5, "Decisions").
+limitation (section 5, "Decisions"). iOS is recorded as a limitation by
+the same rule, from the tree measured on 2026-11-26; the principal has
+taken it to the owner. S08 is a limitation on all three platforms.
 
 What each good example gives, and does not, by platform (measured,
 section 7; the web's VoiceOver in Chromium and WebKit, Playwright's
@@ -85,11 +92,11 @@ builds):
 
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
-| `good-bulleted`, `good-numbered` | "In list" with the first item and "Out of list" after the list; no number of items, no place (FL-311) | each item an element, read by its text; no word about a list (FL-310) | a list of list items, read "list 3 items", each item "… empty group (1 of 3) 1 of 3" (FL-315), "end of list"; only because it does not scroll (FL-312) |
-| `good-material` | as above, each tile a button | each tile a button, read "Milk Button"; no word about a list | a list of list items each holding a button, read "list 3 items", "Milk button 1 of 3" … "end of list" (WebKit; no Chromium reading yet) |
-| `good-cupertino` | the list named by its header, "Groceries / List", and its first item "In list Groceries"; no size or place | the header an element, then each item | "list Groceries 3 items", each item as `good-bulleted`'s |
+| `good-bulleted`, `good-numbered` | "In list" with the first item and "Out of list" after the list; no number of items, no place (FL-311) | each item an element, in a container of type other with no list or table type (FL-310); read by its text, no word about a list | a list of list items, read "list 3 items", each item "… empty group (1 of 3) 1 of 3" (FL-315), "end of list"; only because it does not scroll (FL-312) |
+| `good-material` | as above, each tile a button | each tile a button, in the same kind of container; read "Milk Button" | a list of list items each holding a button, read "list 3 items", "Milk button 1 of 3" … "end of list" (WebKit in every recording, Chromium from the second on) |
+| `good-cupertino` | the list named by its header, "Groceries / List", and its first item "In list Groceries"; no size or place | the same container, its first element named "Groceries", then each item | "list Groceries 3 items", each item as `good-bulleted`'s |
 
-None of them is complete on Android or the web.
+None of them is complete on any platform.
 
 ## 3. WCAG 2.2 success criteria
 
@@ -105,16 +112,14 @@ as one is structure that is shown and not determinable, and fails 1.3.1 as
 written. [H48](https://www.w3.org/WAI/WCAG22/Techniques/html/H48) is the
 sufficient technique on the web. "Available in text" does not save it here:
 the bullets in these examples are drawn, not text, and a run of lines says
-nothing of where the list starts and ends. On iOS the iOS reference
-repository says a native view has no list semantics, and a SwiftUI `List`
-gives none; Flutter gives none either (FL-310). There the structure that
-can be determined is each item as an element of its own, and a list whose
-items are one element (`bad-one-text`) fails 1.3.1, while separate items
-that are not marked as a list (`bad-no-list`) are what a native SwiftUI
-`List` gives, and are not called a failure on iOS. VoiceOver does speak a
-web page's lists in Safari (section 7), but a native `UITableView` and
-SwiftUI `List` were read with no word about a list either, so a native
-app gives no more than separate items.
+nothing of where the list starts and ends. On iOS a native list is a
+table or a collection view of cells in the accessibility tree (section 7),
+which is how its relationship is determinable there, whatever VoiceOver
+says while moving forward; a Flutter list can be given no such type
+(FL-310), so no 1.3.1 pass is claimed for the good examples on iOS. A list
+whose items are one element (`bad-one-text`) fails 1.3.1 on iOS, and so
+does a list whose lines are not even grouped (`bad-no-list`): its three
+texts are siblings of the heading, with no container round them.
 
 A control that is a list item and loses its control's role
 (`bad-tile-in-item` on the web) fails 4.1.2 Name, Role, Value: its role is
@@ -202,9 +207,9 @@ the measurements):
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
 | `bad-one-text` | 1.3.1: one `View` named by the three lines, no list | 1.3.1: one element named by the three lines, read as one utterance | 1.3.1: one text, no list and no list item |
-| `bad-no-list` | 1.3.1: three `View`s, no list class and no collection information; TalkBack says no "In list" | none: three elements, as a native SwiftUI `List` gives (Flutter gives iOS no list, FL-310; a native UIKit list was not measured) | 1.3.1: three texts, no list and no list item |
+| `bad-no-list` | 1.3.1: three `View`s, no list class and no collection information; TalkBack says no "In list" | 1.3.1: three static texts, siblings of the heading, with no container round them (a native list is a table of cells; FL-310) | 1.3.1: three texts, no list and no list item |
 | `bad-tile-in-item` | none: a list of `Button`s, read "Milk / Button. In list" | none: each tile a button | 4.1.2: each tile a `listitem` with `tabindex`, no button role; Tab, Enter, Space, and a click still run it |
-| `bad-lazy-list` | 1.3.1: a `ScrollView` with collection information, which TalkBack does not announce; and once scrolled its items' rows are wrong (FL-313) | none claimed: Flutter gives iOS no list (FL-310); items past the view were not reached by VoiceOver's moving forward (FL-011) | 1.3.1: no list and no list item; 13 of 30 orders in the page when it opens (FL-011) |
+| `bad-lazy-list` | 1.3.1: a `ScrollView` with collection information, which TalkBack does not announce; and once scrolled its items' rows are wrong (FL-313) | none claimed beyond FL-310, which every Flutter list on iOS has; items past the view were not reached by VoiceOver's moving forward (FL-011) | 1.3.1: no list and no list item; 13 of 30 orders in the page when it opens (FL-011) |
 
 `bad-tile-in-item` on Android and iOS is a list of buttons, and is not
 called a failure there: its one defect is the web's, as C18's
@@ -231,9 +236,14 @@ The principal's, on 2026-11-26, on the engineer's questions:
 3. `bad-lazy-list` stays, labelled as a framework defect with no good
    counterpart; the owner may overrule.
 4. iOS was to be settled by a native comparison on the simulator: a
-   `UITableView` and a SwiftUI `List`, three rows each. Measured: VoiceOver
-   said nothing more for them than for Flutter's list, so iOS applies and
-   FL-310 says so with the measurement (section 2, section 7).
+   `UITableView` and a SwiftUI `List`, three rows each. The first reading
+   of it, that iOS applies because VoiceOver said no more for the native
+   lists than for Flutter's, was withdrawn on review: the same speech does
+   not show the same relationship. Decided from the tree instead
+   (`ios-tree.txt`): the native lists are a table and a collection view of
+   cells, Flutter's a container of no particular kind, so iOS is a
+   limitation (FL-310) by the owner's rule of 2026-11-23, taken to the
+   owner by the principal.
 5. `explicitChildNodes: true` in `good-material` is not a custom
    solution.
 6. No description list example; FL-026 carries it.
@@ -274,7 +284,7 @@ their text.
 | L3 iOS | The labels of the example's elements after the "Example" heading, in order: `good-bulleted` exactly the three lines, each the label of one element; `good-numbered` the steps; `good-material` the three tiles, each a button with its identifier and label; `good-cupertino` "Groceries" and the three items, and no button but Back. For each tile of `good-material` and `bad-tile-in-item`: a tap opens it; and Tabs then Enter, and then Space, each key sent once from a fresh launch, open it (XCUITest cannot see Flutter's focus; the first Tab goes to Back, as in the widget tests). Bad: `bad-one-text` one element with the three lines, and no element named by one of them; `bad-no-list` the three lines; `bad-tile-in-item` three buttons. The iOS tree test reads labels and types, not the hierarchy, and XCUITest gives no traits; an element with no label is left out (the probe found no element for an unnamed list on iOS, and a list named by a header, p25, as an element of type other); the VoiceOver walk is what shows that nothing says "list" |
 | L4 TalkBack | Focus moved to each item of each list, in order: the first item of each list with its name and "In list", the others with their name and no "In list", and none with the list's size or an item's place ("3 items", "1 of 3"; FL-311); `good-material`'s and `bad-tile-in-item`'s tiles with "Button", and the line after them with "Out of list"; `good-cupertino`'s list itself named "Groceries" with "List"; `bad-one-text` the three lines as one reading, with no "In list"; `bad-no-list` each line with no "In list"; `bad-lazy-list` the first two orders with no "In list" and no size or place (FL-313). Each walk is judged whole (`walk_strictly` in `tool/talkback.py`, as C18's is): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, each in the transcript |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk, `C03Walk`): each item by its text alone, with no word about a list (FL-310); the tiles with "Button" and the "Chosen" line; `good-cupertino` "Groceries" then the items; `bad-one-text` the three lines as one utterance; `bad-lazy-list` the measured stops. Every expected utterance is under the service's 64 characters, and a test refuses a longer one |
-| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s08_vo_walks.js`, a copy of C04's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short with every stop right so far is walked again, up to three walks, every walk logged. No runner retries. VoiceOver's own help message ("You are currently on …", `VO_HELP` in `vo_logic.js`) is not a stop of the page: the walk puts the phrase Guidepup logged for a move in place of one (`walkToEnd`'s `loggedForHelp`, as the form techniques' walks do), and the judge leaves out any that comes anyway, wherever it is; a help message in place of an element's own speech leaves that element unread, which fails (regression cases in the web tree spec: after the last stop and in the middle, complete; in place of an expected stop, wrong). A stop read as an empty phrase is a failed capture, not a reading: the walk is incomplete and walked again (at most three walks, each logged), an empty phrase never passes, and a walk that also read the wrong words is wrong (the principal's rule of 2026-11-26; regression cases in the web tree spec: an empty first stop walked again, an empty first stop and then a wrong re-walk failing, three empty captures failing). In Chromium and WebKit. The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted. The judge's regression cases in the web tree spec include the first recording's prediction, now a wrong walk, and the crash dialog |
+| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s08_vo_walks.js`, a copy of C04's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short with every stop right so far is walked again, up to three walks, every walk logged. No runner retries. VoiceOver's own help message ("You are currently on …", `VO_HELP` in `vo_logic.js`) is not a stop of the page when it is about the element just read: the walk puts the phrase Guidepup logged for a move in place of one (`phraseForMove`, as the form techniques' walks do) and records each stop's cursor position, and the judge leaves out a help message only at the same position as the stop before it, whose reading has the role the help names; any other help message is a wrong stop (regression cases in the web tree spec: after a judged stop at its position, left out; at a new position, wrong; naming another role, wrong; in place of an expected stop, wrong; with no positions, wrong). The web tree spec also judges the committed fifth and fourth recordings again: the fifth complete, the fourth wrong. A stop read as an empty phrase is a failed capture, not a reading: the walk is incomplete and walked again (at most three walks, each logged), an empty phrase never passes, and a walk that also read the wrong words is wrong (the principal's rule of 2026-11-26; regression cases in the web tree spec: an empty first stop walked again, an empty first stop and then a wrong re-walk failing, three empty captures failing). In Chromium and WebKit. The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted. The judge's regression cases in the web tree spec include the first recording's prediction, now a wrong walk, and the crash dialog |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -282,14 +292,17 @@ The probe that came first is in [evidence/probes/s08](../evidence/probes/s08/REA
 29 fixtures on every platform, a native Android comparison, and plain HTML
 lists in Chromium and in Safari on iOS.
 
-- **The list roles are a list on the web and Android, and nothing on iOS.**
+- **The list roles are a list on the web and Android, and a container of
+  no particular kind on iOS.**
   `Semantics(role: SemanticsRole.list)` round a `Column`, with
   `SemanticsRole.listItem` round each item (probe p03, `good-bulleted`),
   is a `list` of `listitem`s in Chromium's tree, the shape of a `div` with
   `role="list"` in plain HTML; on Android an `android.widget.ListView` that
-  TalkBack enters with "In list" and leaves with "Out of list"; on iOS a
-  static text per item, which VoiceOver reads by its text alone
-  ([FL-310](../flutter-limitations.md#fl-310), new). On Android there is
+  TalkBack enters with "In list" and leaves with "Out of list"; on iOS an
+  element of type other holding an element for the list and a static text
+  per item, which VoiceOver reads by its text alone
+  ([FL-310](../flutter-limitations.md#fl-310), new; the hierarchy in
+  `ios-tree.txt`). On Android there is
   no collection information, so TalkBack gives no number of items and no
   place, where a native `ListView` says "1 of 3. In list. 3 items"
   ([FL-311](../flutter-limitations.md#fl-311), new).
@@ -367,8 +380,9 @@ lists in Chromium and in Safari on iOS.
   WebKit: "list 3 items", "Milk button 1 of 3", "Eggs button 2 of 3",
   "Bread button 3 of 3", "end of list", "Chosen: none". In Chromium that
   walk read a dialog, "Google Chrome for Testing quit unexpectedly.":
-  the browser had quit, and there is no Chromium reading of
-  `good-material`; why it quit was not looked into. `bad-one-text`,
+  the browser had quit, and that recording has no Chromium reading of
+  `good-material`; why it quit was not looked into. Every later recording
+  read it in Chromium as WebKit had. `bad-one-text`,
   `bad-no-list`, and `bad-lazy-list` were read as predicted, in both
   browsers (`bad-lazy-list`: "Order 1" to "Order 13", with no list). Each
   text-only item is `<flt-semantics role="listitem" aria-label="…">`, with
@@ -376,17 +390,33 @@ lists in Chromium and in Safari on iOS.
   items have `tabindex="0"` as well; `good-material`'s items hold a
   button element and have no label. What VoiceOver says for a plain HTML
   `li` in these browsers was not measured.
-- **A native iOS list says nothing more than Flutter's**
-  ([FL-310](../flutter-limitations.md#fl-310), with the measurement). The
-  native comparison (`NativeLists.swift.txt`, a separate app built with
-  `swiftc`, installed on the same simulator, not part of the Runner;
-  `ios-native.txt`): a UIKit `UITableView` of three rows, a SwiftUI `List`
-  of three `Text` rows, and a `UIStackView` of three labels. VoiceOver,
-  moving forward from the label above and from the top of the screen,
-  read each row by its text and then the label after it, in all three:
-  no "list", no count, no place, nothing on entering or leaving. To
-  XCUITest the table is a table of cells and the SwiftUI list a collection
-  view of cells. Touching a row and the rotor were not tried.
+- **A native iOS list is a table or a collection view of cells; Flutter's
+  is a container of no particular kind**
+  ([FL-310](../flutter-limitations.md#fl-310)). The native comparison
+  (`NativeLists.swift.txt`, a separate app built with `swiftc`, installed
+  on the same simulator, not part of the Runner). The XCUITest hierarchy,
+  one snapshot read depth first with every element's type
+  (`ios-tree.txt`, `ProbeS08TreeUITests.swift.txt`, `ios_tree.sh.txt`):
+  - native `UITableView` (n05): a table (type 26) holding three cells
+    (75), each holding the row's static text (48);
+  - native SwiftUI `List` (n06): a collection view (32) holding three
+    cells, each holding the row's text;
+  - native `UIStackView` of three labels (n07): three static texts, in
+    the stack's own container of type other;
+  - Flutter `good-bulleted`, `good-numbered`, `good-cupertino`: an element
+    of type other (1) with no label holding four children, an element of
+    type other at the list's frame (`good-cupertino`'s named "Groceries")
+    and the three items as static texts;
+  - Flutter `good-material`: the same container holding the list's element
+    and, per list item, a container of type other holding the item's
+    element and the tile's button (9);
+  - Flutter `bad-no-list`: the three static texts as siblings of the
+    "Example" heading, with no container; `bad-one-text`: one static text.
+  VoiceOver, moving forward from the label above and from the top of the
+  screen, read each native row by its text and then the label after it, in
+  all three (`ios-native.txt`): no "list", no count, no place, nothing on
+  entering or leaving; it reads Flutter's lists the same way. Touching a
+  row and the rotor were not tried.
 - **The second and third web recordings each failed one walk of 16 on
   an empty first stop**, in WebKit only: `bad-tile-in-item` in round 2,
   `bad-one-text` in round 3
@@ -428,15 +458,36 @@ lists in Chromium and in Safari on iOS.
   `vo_helpers.js` already says that VoiceOver gives its help for an
   element about a second after the element, and the form techniques
   replace a help message with the phrase Guidepup logged for the move
-  (`phraseForMove`). S08 now does both: the walk uses `loggedForHelp`, and
-  the judge leaves out a help message wherever it comes. No shared file
-  was changed.
-- **What leaving out the help message gives up.** Its words are never
-  checked: here it said "on a list", which is VoiceOver telling where its
-  cursor is, and a help message that named the wrong role would pass
-  unseen. A help message that came in place of an element's own speech is
-  not passed over: the element is then missing, and the walk fails. Nor
-  can a walk of help messages alone pass.
+  (`phraseForMove`). S08's walk does the same, and records the cursor's
+  position at each stop; the judge leaves a help message out only when it
+  is tied to the stop before it (`helpAfterStop` in `s08_vo_walks.js`).
+  The first version of that rule, which left out every phrase starting
+  "You are currently on ", was found on review to let an extra element
+  through: a walk that read the whole screen and then moved to one more
+  element, captured only as "You are currently on a text field …", was
+  judged complete. It was tightened before any recording was judged by it
+  as a pass.
+- **How a help message is tied to a stop.** `walkToEnd` (`vo_helpers.js`)
+  returns no positions, and S08 changes no shared file, so S08's VoiceOver
+  spec makes the walk itself (`walkWithPositions`): `walkToEnd` with no
+  moves, which starts it as the shared walk does, then the moves by the
+  shared rule (`stopsToEnd`'s), keeping each stop's cursor position. A
+  help message is left out only when the cursor is at the same position
+  as for the stop before it, that stop is a reading (neither empty nor a
+  help message), and the role the help names ("on a list") is in that
+  reading ("end of list"). Every other help message is a stop, and no
+  expected stop is one, so it fails for good: one at a new position (an
+  element nothing else was read for), one naming a role the reading before
+  it lacks ("on a text field" after "end of list"), one with no reading
+  before it, and any in a walk with no positions, the fourth round's
+  among them. The smallest shared change that would let the walk use
+  `walkToEnd` itself is for `stopsToEnd` to return `positions` beside
+  `stops`, one per stop; it is proposed, not made.
+- **What leaving out the help message gives up.** The words after the
+  role are never checked, and the role check is a word found in the
+  reading before it, not a comparison of roles. A help message given in
+  place of an element's own speech is at a new position and fails; a walk
+  of help messages alone cannot pass.
 - **What a re-walk can hide.** A stop VoiceOver sometimes gives no phrase
   for (WebKit's title, here) passes when a later walk of the same example
   reads it; the empty try is in the transcript, as every try is, but does
@@ -505,8 +556,18 @@ What the tests skip or cannot see, and what each gives up:
 - XCUITest gives no traits, and the iOS tree test reads labels and types
   in one snapshot's order, not the hierarchy; the VoiceOver walk shows what is said.
 
-**Not done yet.** A passing web VoiceOver recording with the judge that
-walks an empty capture again and leaves out VoiceOver's help message. What VoiceOver says for a plain HTML `li`
+- **The fifth web recording passed**, 16 walks of 16, every one complete
+  on its first try in Chromium and WebKit
+  (`docs/evidence/S08/voiceover-web.md`, recorded by the coordinator on
+  2026-11-26 with the judge of that day). No walk in it had an empty stop
+  or a help message. The judge was changed after it, so that a help
+  message is left out only when the walk's positions tie it to the stop
+  before it (above); the web tree spec judges this transcript and the
+  fourth round's again with today's judge: the fifth still passes and the
+  fourth still fails. A recording with today's judge has not been made.
+
+**Not done yet.** A web VoiceOver recording with today's judge, which
+records each stop's position and ties a help message to it. What VoiceOver says for a plain HTML `li`
 in the same browsers (FL-315). Which stops a TalkBack
 swipe makes, and whether it scrolls a lazy list. VoiceOver's own
 activation on iOS, which XCUITest cannot make (C04 probe round 3): the
