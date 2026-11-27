@@ -1,0 +1,132 @@
+// S16 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s16/ProbeS16UITests.swift.txt). For each fixture of
+// lib/probe.dart, opened by URL: every element of one snapshot from "Before
+// pNN" to "pNN end", with its type, identifier, label, and value, and for
+// the first fixture element its snapshot's whole dictionary (to see whether
+// any key carries a language). VoiceOver: a walk of each fixture from the
+// top with the raw utterances, whitespace kept, and for the first one the
+// runtime's properties and instance variables of the output object. Nav:
+// p01, Open p03 tapped, Back tapped, and a VoiceOver walk of p01 again.
+import ObjectiveC
+import XCTest
+
+final class ProbeS16UITests: XCTestCase {
+  let app = XCUIApplication()
+  let ids = (1...25).map { String(format: "p%02d", $0) }
+
+  func log(_ s: String) { print("S16PROBE \(s)") }
+
+  func el(_ id: String) -> XCUIElement { app.descendants(matching: .any)[id] }
+
+  @discardableResult
+  func open(_ route: String, _ id: String) -> Bool {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///\(route)")!)
+      if el("\(id)-end").waitForExistence(timeout: 30) { sleep(1); return true }
+    }
+    log("\(route) did not open")
+    return false
+  }
+
+  func dump(_ id: String, _ label: String, dictionary: Bool) {
+    guard let root = try? app.snapshot() else { log("\(id) \(label): no snapshot"); return }
+    var flat: [XCUIElementSnapshot] = []
+    func walk(_ s: XCUIElementSnapshot) {
+      flat.append(s)
+      for c in s.children { walk(c) }
+    }
+    walk(root)
+    guard let start = flat.firstIndex(where: { $0.label == "Before \(id)" }),
+      let end = flat.firstIndex(where: { $0.identifier == "\(id)-end" })
+    else { log("\(id) \(label): Before or end not found"); return }
+    var out: [String] = []
+    for s in flat[start...end] {
+      out.append("type=\(s.elementType.rawValue) id=\(s.identifier) label=\(s.label.debugDescription) value=\(String(describing: s.value))")
+    }
+    log("\(id) \(label): \(out.count) element(s): \(out.joined(separator: " | "))")
+    if dictionary, start + 1 < end {
+      log("\(id) dictionary of \(flat[start + 1].label.debugDescription): \(flat[start + 1].dictionaryRepresentation)")
+    }
+  }
+
+  func testTree() {
+    for (i, id) in ids.enumerated() {
+      if open(id, id) { dump(id, "start", dictionary: i < 3 || id == "p08") }
+    }
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    var described = false
+    func say() -> String {
+      do {
+        let o = try vo.moveForward()
+        if !described {
+          described = true
+          var count: UInt32 = 0
+          let cls: AnyClass = type(of: o)
+          var props: [String] = []
+          if let list = class_copyPropertyList(cls, &count) {
+            for i in 0..<Int(count) { props.append(String(cString: property_getName(list[i]))) }
+          }
+          var ivars: [String] = []
+          if let list = class_copyIvarList(cls, &count) {
+            for i in 0..<Int(count) { if let n = ivar_getName(list[i]) { ivars.append(String(cString: n)) } }
+          }
+          log("VO output class \(cls) properties \(props) ivars \(ivars) debugDescription \(o.debugDescription)")
+        }
+        return o.utterance.debugDescription
+      } catch { return "(error \((error as NSError).code))" }
+    }
+    for id in ids {
+      guard open(id, id) else { continue }
+      try vo.enable()
+      var walk: [String] = []
+      for _ in 0..<14 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix("\"\(id) end") { break }
+      }
+      log("VO \(id) walk: \(walk.joined(separator: " / "))")
+      try vo.disable()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+
+  func testNav() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func walk(_ id: String) throws -> String {
+      try vo.enable()
+      var w: [String] = []
+      for _ in 0..<14 {
+        let s = (try? vo.moveForward().utterance.debugDescription) ?? "(error)"
+        w.append(s)
+        if s.hasPrefix("\"\(id) end") { break }
+      }
+      try vo.disable()
+      return w.joined(separator: " / ")
+    }
+    for second in ["p03", "p05"] {
+      guard open("p01-\(second)", "p01") else { continue }
+      log("nav p01 before \(second): \(try walk("p01"))")
+      app.buttons["Open \(second)"].tap()
+      _ = el("\(second)-end").waitForExistence(timeout: 20)
+      sleep(1)
+      log("nav \(second) opened: \(try walk(second))")
+      app.buttons["Back"].tap()
+      _ = el("p01-end").waitForExistence(timeout: 20)
+      sleep(2)
+      log("nav p01 after Back from \(second): \(try walk("p01"))")
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}

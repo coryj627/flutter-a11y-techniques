@@ -1,0 +1,42 @@
+S16WEB chromium nav p01 opened: html lang="en-US"
+S16WEB chromium nav p03 pushed: html lang="fr"
+S16WEB chromium nav back on p01: html lang="fr"
+S16WEB chromium nav <span> text="Before p01" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium nav <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium nav <flt-semantics flt-semantics-identifier="p01-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium nav <span> text="p01 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium nav p01 opened: html lang="en-US"
+S16WEB chromium nav p07 pushed: html lang="fr-FR"
+S16WEB chromium nav back on p01: html lang="fr-FR"
+S16WEB chromium nav <span> text="Before p01" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB chromium nav <span> text="Bonjour tout le monde" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB chromium nav <flt-semantics flt-semantics-identifier="p01-end"> text="" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB chromium nav <span> text="p01 end" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB chromium nav p01 opened: html lang="en-US"
+S16WEB chromium nav p05 pushed: html lang="en-US"
+S16WEB chromium nav back on p01: html lang="en-US"
+S16WEB chromium nav <span> text="Before p01" nearestLang="en-US" :lang matches=[en,en-US]
+S16WEB chromium nav <span> text="Bonjour tout le monde" nearestLang="en-US" :lang matches=[en,en-US]
+S16WEB chromium nav <flt-semantics flt-semantics-identifier="p01-end"> text="" nearestLang="en-US" :lang matches=[en,en-US]
+S16WEB chromium nav <span> text="p01 end" nearestLang="en-US" :lang matches=[en,en-US]
+S16WEB webkit nav p01 opened: html lang="en-US"
+S16WEB webkit nav p03 pushed: html lang="fr"
+S16WEB webkit nav back on p01: html lang="fr"
+S16WEB webkit nav <span> text="Before p01" nearestLang="fr" :lang matches=[fr]
+S16WEB webkit nav <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB webkit nav <flt-semantics flt-semantics-identifier="p01-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB webkit nav <span> text="p01 end" nearestLang="fr" :lang matches=[fr]
+S16WEB webkit nav p01 opened: html lang="en-US"
+S16WEB webkit nav p07 pushed: html lang="fr-FR"
+S16WEB webkit nav back on p01: html lang="fr-FR"
+S16WEB webkit nav <span> text="Before p01" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB webkit nav <span> text="Bonjour tout le monde" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB webkit nav <flt-semantics flt-semantics-identifier="p01-end"> text="" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB webkit nav <span> text="p01 end" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB webkit nav p01 opened: html lang="en-US"
+S16WEB webkit nav p05 pushed: html lang="en-US"
+S16WEB webkit nav back on p01: html lang="en-US"
+S16WEB webkit nav <span> text="Before p01" nearestLang="en-US" :lang matches=[en,en-US]
+S16WEB webkit nav <span> text="Bonjour tout le monde" nearestLang="en-US" :lang matches=[en,en-US]
+S16WEB webkit nav <flt-semantics flt-semantics-identifier="p01-end"> text="" nearestLang="en-US" :lang matches=[en,en-US]
+S16WEB webkit nav <span> text="p01 end" nearestLang="en-US" :lang matches=[en,en-US]

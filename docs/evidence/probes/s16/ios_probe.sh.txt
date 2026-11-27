@@ -1,0 +1,20 @@
+#!/bin/sh
+# S16 probe on iOS, under tool/with_devices.py (throwaway; kept as
+# docs/evidence/probes/s16/ios_probe.sh.txt). Run from the worktree root,
+# after `fvm flutter build ios --simulator --debug -t lib/probe.dart` and
+# `xcodebuild build-for-testing` into build/ios_uitest. Changes no
+# simulator setting; testVoiceOver and testNav turn VoiceOver on and off
+# through XCUIVoiceOverService.
+xcrun simctl list devices booted | grep -i "iphone"
+xcrun simctl spawn booted defaults read -g AppleLanguages 2>/dev/null | tr -d '\n'; echo
+cd ios || exit 1
+run() {
+  echo "== $1"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/ProbeS16UITests/$1" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep --line-buffered -E "S16PROBE|error:|passed|failed|skipped" | grep --line-buffered -v "Test Suite"
+}
+for t in ${TESTS:-testTree testVoiceOver testNav}; do run $t; done
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

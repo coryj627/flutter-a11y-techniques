@@ -1,0 +1,265 @@
+// S16 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s16/probe.dart.txt): what reaches assistive
+// technology of the language of an app, of a passage, and of a phrase. One
+// fixture per route, `/p01` to `/p25`; `/` lists nothing. Each fixture is
+// "Before pNN", the fixture, and "pNN end".
+//
+// Built twice: as it is, the app's locale is the default (no `locale`, the
+// default `supportedLocales`, so en-US); with `--dart-define=APP_LOCALE=fr`
+// the app is `MaterialApp(locale: Locale('fr'), supportedLocales: [fr])`,
+// with a probe-only delegate that gives Material's English strings for
+// French, since the SDK's default Material delegate supports English only.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+const appLocale = String.fromEnvironment('APP_LOCALE');
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class _AnyMaterial extends LocalizationsDelegate<MaterialLocalizations> {
+  const _AnyMaterial();
+  @override
+  bool isSupported(Locale locale) => true;
+  @override
+  Future<MaterialLocalizations> load(Locale locale) =>
+      SynchronousFuture<MaterialLocalizations>(
+        const DefaultMaterialLocalizations(),
+      );
+  @override
+  bool shouldReload(_AnyMaterial old) => false;
+}
+
+class _AnyCupertino extends LocalizationsDelegate<CupertinoLocalizations> {
+  const _AnyCupertino();
+  @override
+  bool isSupported(Locale locale) => true;
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) =>
+      SynchronousFuture<CupertinoLocalizations>(
+        const DefaultCupertinoLocalizations(),
+      );
+  @override
+  bool shouldReload(_AnyCupertino old) => false;
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final fr = appLocale == 'fr';
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      locale: fr ? const Locale('fr') : null,
+      supportedLocales: fr ? const [Locale('fr')] : const [Locale('en', 'US')],
+      localizationsDelegates: fr
+          ? const [
+              _AnyMaterial(),
+              _AnyCupertino(),
+              DefaultWidgetsLocalizations.delegate,
+            ]
+          : null,
+      onGenerateRoute: (settings) {
+        // `/p01-p03` is p01 with a button "Open p03" that pushes p03.
+        final parts = (settings.name ?? '/').replaceFirst('/', '').split('-');
+        final name = parts.first;
+        final ids = fixtures.containsKey(name) ? [name] : <String>[];
+        final next = parts.length > 1 ? parts[1] : null;
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => FixtureScreen(ids: ids, next: next),
+        );
+      },
+    );
+  }
+}
+
+const fr = Locale('fr');
+const passage = 'Bonjour tout le monde';
+const sentence = 'She said bonjour to me.';
+
+/// "She said ", then "bonjour" with [span]'s locale, then " to me.".
+Widget phrase({Locale? locale}) => Text.rich(
+  TextSpan(
+    text: 'She said ',
+    children: [
+      TextSpan(text: 'bonjour', locale: locale),
+      const TextSpan(text: ' to me.'),
+    ],
+  ),
+);
+
+final Map<String, Widget Function(BuildContext)> fixtures = {
+  // A passage in French with nothing marked.
+  'p01': (_) => const Text(passage),
+  // Text(locale:), documented as choosing a locale's glyphs.
+  'p02': (_) => const Text(passage, locale: fr),
+  // Localizations.override round the passage.
+  'p03': (c) => Localizations.override(
+    context: c,
+    locale: fr,
+    child: const Text(passage),
+  ),
+  // Semantics(localeForSubtree:), no container.
+  'p04': (_) => Semantics(localeForSubtree: fr, child: Text(passage)),
+  // Semantics(localeForSubtree:, container: true).
+  'p05': (_) =>
+      Semantics(localeForSubtree: fr, container: true, child: Text(passage)),
+  // A locale with a country, fr-FR, through localeForSubtree.
+  'p06': (_) => Semantics(
+    localeForSubtree: Locale('fr', 'FR'),
+    container: true,
+    child: Text(passage),
+  ),
+  // A locale with a country through Localizations.override.
+  'p07': (c) => Localizations.override(
+    context: c,
+    locale: const Locale('fr', 'FR'),
+    child: const Text(passage),
+  ),
+  // A phrase in French inside an English sentence: TextSpan(locale:).
+  'p08': (_) => phrase(locale: fr),
+  // The same sentence, nothing marked.
+  'p09': (_) => phrase(),
+  // The phrase marked in an attributed label (LocaleStringAttribute).
+  'p10': (_) => Semantics(
+    attributedLabel: AttributedString(
+      sentence,
+      attributes: [
+        LocaleStringAttribute(
+          range: const TextRange(start: 9, end: 16),
+          locale: fr,
+        ),
+      ],
+    ),
+    child: const ExcludeSemantics(child: Text(sentence)),
+  ),
+  // The sentence split into three texts, the phrase in localeForSubtree.
+  'p11': (_) => Wrap(
+    children: [
+      Text('She said '),
+      Semantics(localeForSubtree: fr, child: Text('bonjour')),
+      Text(' to me.'),
+    ],
+  ),
+  // A Material list tile named in French with TextSpan(locale:).
+  'p12': (_) => ListTile(
+    title: const Text.rich(TextSpan(text: 'Français', locale: fr)),
+    onTap: () {},
+  ),
+  // The tile inside Semantics(localeForSubtree:).
+  'p13': (_) => Semantics(
+    localeForSubtree: fr,
+    child: ListTile(title: const Text('Français'), onTap: () {}),
+  ),
+  // The tile inside Localizations.override.
+  'p14': (c) => Localizations.override(
+    context: c,
+    locale: fr,
+    child: ListTile(title: const Text('Français'), onTap: () {}),
+  ),
+  // A Cupertino list tile named in French with TextSpan(locale:).
+  'p15': (_) => CupertinoListTile(
+    title: const Text.rich(TextSpan(text: 'Français', locale: fr)),
+    onTap: () {},
+  ),
+  // A Material list tile named in French, nothing marked.
+  'p16': (_) => ListTile(title: const Text('Français'), onTap: () {}),
+  // The whole passage as one TextSpan(locale:).
+  'p17': (_) => const Text.rich(TextSpan(text: passage, locale: fr)),
+  // Japanese text, nothing marked.
+  'p18': (_) => const Text('日本語'),
+  // Japanese text in localeForSubtree.
+  'p19': (_) => Semantics(
+    localeForSubtree: Locale('ja'),
+    container: true,
+    child: Text('日本語'),
+  ),
+  // A locale with a script, zh-Hant, through localeForSubtree.
+  'p20': (_) => Semantics(
+    localeForSubtree: Locale.fromSubtags(
+      languageCode: 'zh',
+      scriptCode: 'Hant',
+    ),
+    container: true,
+    child: const Text('繁體中文'),
+  ),
+  // An English line inside a French passage: localeForSubtree nested.
+  'p21': (_) => Semantics(
+    localeForSubtree: fr,
+    container: true,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(passage),
+        Semantics(
+          localeForSubtree: Locale('en'),
+          container: true,
+          child: Text('Hello everyone'),
+        ),
+      ],
+    ),
+  ),
+  // The phrase marked with a locale that has a country, TextSpan(locale: fr-FR).
+  'p22': (_) => phrase(locale: const Locale('fr', 'FR')),
+  // p04 inside Semantics(identifier:), no container.
+  'p23': (_) => Semantics(
+    identifier: 'p23-id',
+    child: Semantics(localeForSubtree: fr, child: Text(passage)),
+  ),
+  // p04 inside MergeSemantics and Semantics(identifier:), as TestId does.
+  'p24': (_) => MergeSemantics(
+    child: Semantics(
+      identifier: 'p24-id',
+      child: Semantics(localeForSubtree: fr, child: Text(passage)),
+    ),
+  ),
+  // Localizations.override round a passage inside Semantics(identifier:).
+  'p25': (c) => Semantics(
+    identifier: 'p25-id',
+    child: Localizations.override(
+      context: c,
+      locale: fr,
+      child: const Text(passage),
+    ),
+  ),
+};
+
+class FixtureScreen extends StatelessWidget {
+  const FixtureScreen({super.key, required this.ids, this.next});
+
+  final List<String> ids;
+  final String? next;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('S16 probe')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          for (final id in ids) ...[
+            Text('Before $id'),
+            const SizedBox(height: 12),
+            Builder(builder: (c) => fixtures[id]!(c)),
+            const SizedBox(height: 12),
+            Semantics(identifier: '$id-end', child: Text('$id end')),
+          ],
+          if (next case final n?)
+            Semantics(
+              identifier: 'open-$n',
+              child: TextButton(
+                onPressed: () => Navigator.of(context).pushNamed('/$n'),
+                child: Text('Open $n'),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

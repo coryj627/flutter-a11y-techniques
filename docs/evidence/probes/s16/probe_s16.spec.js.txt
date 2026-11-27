@@ -1,0 +1,105 @@
+// S16 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/s16/probe_s16.spec.js.txt with
+// probe_s16.config.js.txt). For each fixture of lib/probe.dart, in Chromium
+// and WebKit: the page's `lang`, the semantics elements from "Before pNN" to
+// "pNN end" with every `lang` on them and on their ancestors, the language
+// the element's text is in by the browser's own `:lang()` matching, and in
+// Chromium the accessibility tree over the DevTools protocol. Then the same
+// for a plain HTML page (s16_html.html) as the control.
+import { test } from '@playwright/test';
+
+const ids = Array.from({ length: 25 }, (_, i) => `p${String(i + 1).padStart(2, '0')}`);
+
+function log(...a) {
+  console.log('S16WEB', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+const LANGS = ['en', 'en-US', 'fr', 'fr-FR', 'ja', 'zh', 'zh-Hant'];
+
+/** For each element with own text: the text, its lang, the nearest lang above, and which :lang() it matches. */
+function describe(langs) {
+  const own = (e) =>
+    (e.getAttribute('aria-label') || '') +
+    [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('');
+  const all = [...document.querySelectorAll('flt-semantics-host *, body > p, body > p *')];
+  return all
+    .filter((e) => own(e).trim() !== '' || e.hasAttribute('lang') || e.hasAttribute('flt-semantics-identifier'))
+    .map((e) => {
+      const near = e.closest('[lang]');
+      const matches = langs.filter((l) => {
+        try {
+          return e.matches(`:lang(${l})`);
+        } catch {
+          return false;
+        }
+      });
+      const tag = e.outerHTML.replace(/>[\s\S]*$/, '>').replace(/ style="[^"]*"/g, '').replace(/ id="flt-semantic-node-\d+"/g, '');
+      return `${tag} text="${own(e)}" nearestLang=${near ? JSON.stringify(near.getAttribute('lang')) : 'none'} :lang matches=[${matches.join(',')}]`;
+    });
+}
+
+async function axTree(context, page, browserName, keep) {
+  if (browserName !== 'chromium') return ['(no DevTools protocol in this browser)'];
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const out = [];
+  for (const n of nodes) {
+    if (n.ignored) continue;
+    const name = n.name?.value ?? '';
+    if (!keep(name)) continue;
+    const props = Object.fromEntries((n.properties ?? []).map((p) => [p.name, p.value?.value]));
+    out.push(`role=${n.role?.value} name="${name}" props=${JSON.stringify(props)}`);
+  }
+  await cdp.detach();
+  return out;
+}
+
+test('S16 probe fixtures', async ({ page, context, browserName }) => {
+  for (const id of ids) {
+    await page.goto('about:blank');
+    await page.goto(`/#/${id}`);
+    await page.locator(`[flt-semantics-identifier="${id}-end"]`).waitFor();
+    await page.waitForTimeout(800);
+    const html = await page.evaluate(() => document.documentElement.getAttribute('lang'));
+    log(browserName, id, `html lang=${JSON.stringify(html)}`);
+    const lines = await page.evaluate(describe, LANGS);
+    const start = lines.findIndex((l) => l.includes(`Before ${id}`));
+    const end = lines.findIndex((l) => l.includes(`${id} end`));
+    for (const l of lines.slice(start, end + 1)) log(browserName, id, l);
+    const ax = await axTree(context, page, browserName, (n) =>
+      /Bonjour|bonjour|She said|Français|日本語|繁體中文|Hello/.test(n));
+    for (const l of ax) log(browserName, id, 'AX', l);
+  }
+});
+
+test('S16 probe HTML control', async ({ page, context, browserName }) => {
+  await page.goto('/s16_html.html');
+  const html = await page.evaluate(() => document.documentElement.getAttribute('lang'));
+  log(browserName, 'html', `html lang=${JSON.stringify(html)}`);
+  for (const l of await page.evaluate(describe, LANGS)) log(browserName, 'html', l);
+  const ax = await axTree(context, page, browserName, (n) => /Bonjour|bonjour|She said|日本語|繁體中文/.test(n));
+  for (const l of ax) log(browserName, 'html', 'AX', l);
+});
+
+// Round 1b: does a `Localizations.override` change the page's language for
+// good? p01, then p03 or p07 pushed by the hash, then Back, without a reload.
+for (const [first, second] of [['p01', 'p03'], ['p01', 'p07'], ['p01', 'p05']]) {
+  test(`S16 probe ${first} then ${second} then back`, async ({ page, browserName }) => {
+    const lang = () => page.evaluate(() => document.documentElement.getAttribute('lang'));
+    await page.goto(`/#/${first}`);
+    await page.locator(`[flt-semantics-identifier="${first}-end"]`).waitFor();
+    await page.waitForTimeout(800);
+    log(browserName, 'nav', `${first} opened: html lang=${JSON.stringify(await lang())}`);
+    await page.evaluate((s) => { location.hash = `#/${s}`; }, second);
+    await page.locator(`[flt-semantics-identifier="${second}-end"]`).waitFor();
+    await page.waitForTimeout(800);
+    log(browserName, 'nav', `${second} pushed: html lang=${JSON.stringify(await lang())}`);
+    await page.evaluate(() => history.back());
+    await page.locator(`[flt-semantics-identifier="${second}-end"]`).waitFor({ state: 'detached' });
+    await page.locator(`[flt-semantics-identifier="${first}-end"]`).waitFor();
+    await page.waitForTimeout(800);
+    log(browserName, 'nav', `back on ${first}: html lang=${JSON.stringify(await lang())}`);
+    const lines = await page.evaluate(describe, LANGS);
+    for (const l of lines.filter((l) => l.includes('Bonjour') || l.includes(first))) log(browserName, 'nav', l);
+  });
+}

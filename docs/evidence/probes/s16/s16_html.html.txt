@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><meta charset="utf-8"><title>S16 HTML control</title></head>
+<body>
+<p id="h01">Bonjour tout le monde</p>
+<p id="h02" lang="fr">Bonjour tout le monde</p>
+<p id="h03" lang="fr-FR">Bonjour tout le monde</p>
+<p id="h04" lang="fr_FR">Bonjour tout le monde</p>
+<p id="h05">She said <span id="h05s" lang="fr">bonjour</span> to me.</p>
+<p id="h06" lang="zh-Hant">繁體中文</p>
+<p id="h07" lang="zh_Hant">繁體中文</p>
+<p id="h08" lang="ja">日本語</p>
+<p id="h09"><span id="h09s" lang="fr-FR">bonjour</span></p>
+</body>
+</html>
