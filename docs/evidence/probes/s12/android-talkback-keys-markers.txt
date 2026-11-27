@@ -1,0 +1,21 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+p01 after Tab 1: input focus on (android.widget.FrameLayout no name); p01 taps: a=0 b=0
+p01 after Tab 2: input focus on Back; p01 taps: a=0 b=0
+p01 after Tab 3: input focus on p01 Share; p01 taps: a=0 b=0
+p01 after Tab 4: input focus on p01 After; p01 taps: a=0 b=0
+p01 after Enter: p01 taps: a=0 b=1
+p03 after Tab 1: input focus on Back; p03 taps: a=0 b=0
+p03 after Tab 2: input focus on Back; p03 taps: a=0 b=0
+p03 after Tab 3: input focus on p03 After; p03 taps: a=0 b=0
+p03 after Tab 4: input focus on Back; p03 taps: a=0 b=0
+p03 after Enter: (gone)
+p13 after Tab 1: input focus on Back; p13 taps: a=0 b=0
+p13 after Tab 2: input focus on Back; p13 taps: a=0 b=0
+p13 after Tab 3: input focus on p13 After; p13 taps: a=0 b=0
+p13 after Tab 4: input focus on Back; p13 taps: a=0 b=0
+p13 after Enter: (gone)
+p05 after Tab 1: input focus on Back; p05 taps: a=0 b=0
+p05 after Tab 2: input focus on Back; p05 taps: a=0 b=0
+p05 after Tab 3: input focus on p05 After; p05 taps: a=0 b=0
+p05 after Tab 4: input focus on Back; p05 taps: a=0 b=0
+p05 after Enter: (gone)

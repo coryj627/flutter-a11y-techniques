@@ -1,0 +1,730 @@
+==== p01 nothing hidden: a note and a TextButton
+p01 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p01 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p01 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p01 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p01 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 224.0)
+p01 tree           #5 label="Before p01" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p01 tree           #6 label="p01 Note" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 114.0, 20.0)
+p01 tree           #7 label="p01 Share" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p01 tree           #8 label="p01 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p01 tree           #9 label="p01 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p01-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p01 tree         #10 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p01 tree           #11 label="Probe p01" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p01 tab stops: p01 Share -> p01 After -> p01 Share -> p01 After -> p01 Share
+p01 1 Tab(s) (on p01 Share) then Enter: p01 taps: a=1 b=0
+p01 2 Tab(s) (on p01 After) then Enter: p01 taps: a=0 b=1
+p01 3 Tab(s) (on p01 Share) then Enter: p01 taps: a=1 b=0
+p01 4 Tab(s) (on p01 After) then Enter: p01 taps: a=0 b=1
+p01 1 Tab(s) (on p01 Share) then  : p01 taps: a=1 b=0
+p01 2 Tab(s) (on p01 After) then  : p01 taps: a=0 b=1
+p01 3 Tab(s) (on p01 Share) then  : p01 taps: a=1 b=0
+p01 4 Tab(s) (on p01 After) then  : p01 taps: a=0 b=1
+p01 tap at the Share text (Offset(91.5, 148.0)): p01 taps: a=1 b=0
+==== p02 ExcludeSemantics round a decorative glyph and a note
+p02 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p02 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p02 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p02 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p02 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 176.0)
+p02 tree           #5 label="Before p02" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p02 tree           #6 label="p02 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p02 tree           #7 label="p02 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p02-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p02 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p02 tree           #9 label="Probe p02" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p02 tab stops: p02 After -> p02 After -> p02 After -> p02 After -> p02 After
+p02 1 Tab(s) (on p02 After) then Enter: p02 taps: a=0 b=1
+p02 2 Tab(s) (on p02 After) then Enter: p02 taps: a=0 b=1
+p02 3 Tab(s) (on p02 After) then Enter: p02 taps: a=0 b=1
+p02 4 Tab(s) (on p02 After) then Enter: p02 taps: a=0 b=1
+p02 1 Tab(s) (on p02 After) then  : p02 taps: a=0 b=1
+p02 2 Tab(s) (on p02 After) then  : p02 taps: a=0 b=1
+p02 3 Tab(s) (on p02 After) then  : p02 taps: a=0 b=1
+p02 4 Tab(s) (on p02 After) then  : p02 taps: a=0 b=1
+==== p03 ExcludeSemantics round a TextButton
+p03 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p03 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p03 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p03 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p03 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p03 tree           #5 label="Before p03" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p03 tree           #6 label="p03 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p03 tree           #7 label="p03 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p03-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p03 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p03 tree           #9 label="Probe p03" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p03 tab stops: p03 Share -> p03 After -> p03 Share -> p03 After -> p03 Share
+p03 1 Tab(s) (on p03 Share) then Enter: p03 taps: a=1 b=0
+p03 2 Tab(s) (on p03 After) then Enter: p03 taps: a=0 b=1
+p03 3 Tab(s) (on p03 Share) then Enter: p03 taps: a=1 b=0
+p03 4 Tab(s) (on p03 After) then Enter: p03 taps: a=0 b=1
+p03 1 Tab(s) (on p03 Share) then  : p03 taps: a=1 b=0
+p03 2 Tab(s) (on p03 After) then  : p03 taps: a=0 b=1
+p03 3 Tab(s) (on p03 Share) then  : p03 taps: a=1 b=0
+p03 4 Tab(s) (on p03 After) then  : p03 taps: a=0 b=1
+p03 tap at the Share text (Offset(91.5, 128.0)): p03 taps: a=1 b=0
+==== p04 Semantics(label:, excludeSemantics: true) round a TextButton
+p04 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p04 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p04 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p04 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p04 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p04 tree           #5 label="Before p04" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p04 tree           #6 label="p04 Replacement" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p04 tree           #7 label="p04 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p04 tree           #8 label="p04 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p04-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p04 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p04 tree           #10 label="Probe p04" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p04 tab stops: p04 Share -> p04 After -> p04 Share -> p04 After -> p04 Share
+p04 1 Tab(s) (on p04 Share) then Enter: p04 taps: a=1 b=0
+p04 2 Tab(s) (on p04 After) then Enter: p04 taps: a=0 b=1
+p04 3 Tab(s) (on p04 Share) then Enter: p04 taps: a=1 b=0
+p04 4 Tab(s) (on p04 After) then Enter: p04 taps: a=0 b=1
+p04 1 Tab(s) (on p04 Share) then  : p04 taps: a=1 b=0
+p04 2 Tab(s) (on p04 After) then  : p04 taps: a=0 b=1
+p04 3 Tab(s) (on p04 Share) then  : p04 taps: a=1 b=0
+p04 4 Tab(s) (on p04 After) then  : p04 taps: a=0 b=1
+p04 tap at the Share text (Offset(91.5, 128.0)): p04 taps: a=1 b=0
+==== p05 Offstage(offstage: true) round a TextButton
+p05 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p05 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p05 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p05 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p05 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 156.0)
+p05 tree           #5 label="Before p05" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p05 tree           #6 label="p05 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p05 tree           #7 label="p05 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p05-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p05 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p05 tree           #9 label="Probe p05" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p05 tab stops: p05 Share -> p05 After -> p05 Share -> p05 After -> p05 Share
+p05 1 Tab(s) (on p05 Share) then Enter: p05 taps: a=1 b=0
+p05 2 Tab(s) (on p05 After) then Enter: p05 taps: a=0 b=1
+p05 3 Tab(s) (on p05 Share) then Enter: p05 taps: a=1 b=0
+p05 4 Tab(s) (on p05 After) then Enter: p05 taps: a=0 b=1
+p05 1 Tab(s) (on p05 Share) then  : p05 taps: a=1 b=0
+p05 2 Tab(s) (on p05 After) then  : p05 taps: a=0 b=1
+p05 3 Tab(s) (on p05 Share) then  : p05 taps: a=1 b=0
+p05 4 Tab(s) (on p05 After) then  : p05 taps: a=0 b=1
+p05 tap at the Share text (Offset(91.5, 128.0)): p05 taps: a=0 b=1
+==== p06 Visibility(visible: false) round a TextButton
+p06 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p06 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p06 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p06 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p06 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 156.0)
+p06 tree           #5 label="Before p06" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p06 tree           #6 label="p06 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p06 tree           #7 label="p06 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p06-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p06 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p06 tree           #9 label="Probe p06" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p06 tab stops: p06 After -> p06 After -> p06 After -> p06 After -> p06 After
+p06 1 Tab(s) (on p06 After) then Enter: p06 taps: a=0 b=1
+p06 2 Tab(s) (on p06 After) then Enter: p06 taps: a=0 b=1
+p06 3 Tab(s) (on p06 After) then Enter: p06 taps: a=0 b=1
+p06 4 Tab(s) (on p06 After) then Enter: p06 taps: a=0 b=1
+p06 1 Tab(s) (on p06 After) then  : p06 taps: a=0 b=1
+p06 2 Tab(s) (on p06 After) then  : p06 taps: a=0 b=1
+p06 3 Tab(s) (on p06 After) then  : p06 taps: a=0 b=1
+p06 4 Tab(s) (on p06 After) then  : p06 taps: a=0 b=1
+==== p07 Visibility(visible: false, maintainState: true) round a TextButton
+p07 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p07 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p07 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p07 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p07 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 156.0)
+p07 tree           #5 label="Before p07" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p07 tree           #6 label="p07 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p07 tree           #7 label="p07 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p07-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p07 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p07 tree           #9 label="Probe p07" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p07 tab stops: p07 After -> p07 After -> p07 After -> p07 After -> p07 After
+p07 1 Tab(s) (on p07 After) then Enter: p07 taps: a=0 b=1
+p07 2 Tab(s) (on p07 After) then Enter: p07 taps: a=0 b=1
+p07 3 Tab(s) (on p07 After) then Enter: p07 taps: a=0 b=1
+p07 4 Tab(s) (on p07 After) then Enter: p07 taps: a=0 b=1
+p07 1 Tab(s) (on p07 After) then  : p07 taps: a=0 b=1
+p07 2 Tab(s) (on p07 After) then  : p07 taps: a=0 b=1
+p07 3 Tab(s) (on p07 After) then  : p07 taps: a=0 b=1
+p07 4 Tab(s) (on p07 After) then  : p07 taps: a=0 b=1
+p07 tap at the Share text (Offset(91.5, 128.0)): p07 taps: a=0 b=1
+==== p08 Visibility(visible: false, maintainState, maintainAnimation, maintainSize)
+p08 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p08 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p08 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p08 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p08 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p08 tree           #5 label="Before p08" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p08 tree           #6 label="p08 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p08 tree           #7 label="p08 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p08-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p08 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p08 tree           #9 label="Probe p08" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p08 tab stops: p08 After -> p08 After -> p08 After -> p08 After -> p08 After
+p08 1 Tab(s) (on p08 After) then Enter: p08 taps: a=0 b=1
+p08 2 Tab(s) (on p08 After) then Enter: p08 taps: a=0 b=1
+p08 3 Tab(s) (on p08 After) then Enter: p08 taps: a=0 b=1
+p08 4 Tab(s) (on p08 After) then Enter: p08 taps: a=0 b=1
+p08 1 Tab(s) (on p08 After) then  : p08 taps: a=0 b=1
+p08 2 Tab(s) (on p08 After) then  : p08 taps: a=0 b=1
+p08 3 Tab(s) (on p08 After) then  : p08 taps: a=0 b=1
+p08 4 Tab(s) (on p08 After) then  : p08 taps: a=0 b=1
+p08 tap at the Share text (Offset(91.5, 128.0)): p08 taps: a=0 b=0
+==== p09 p08 with maintainSemantics: true
+p09 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p09 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p09 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p09 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p09 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p09 tree           #5 label="Before p09" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p09 tree           #6 label="p09 Share" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p09 tree           #7 label="p09 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p09 tree           #8 label="p09 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p09-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p09 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p09 tree           #10 label="Probe p09" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p09 tab stops: p09 After -> p09 After -> p09 After -> p09 After -> p09 After
+p09 1 Tab(s) (on p09 After) then Enter: p09 taps: a=0 b=1
+p09 2 Tab(s) (on p09 After) then Enter: p09 taps: a=0 b=1
+p09 3 Tab(s) (on p09 After) then Enter: p09 taps: a=0 b=1
+p09 4 Tab(s) (on p09 After) then Enter: p09 taps: a=0 b=1
+p09 1 Tab(s) (on p09 After) then  : p09 taps: a=0 b=1
+p09 2 Tab(s) (on p09 After) then  : p09 taps: a=0 b=1
+p09 3 Tab(s) (on p09 After) then  : p09 taps: a=0 b=1
+p09 4 Tab(s) (on p09 After) then  : p09 taps: a=0 b=1
+p09 tap at the Share text (Offset(91.5, 128.0)): p09 taps: a=0 b=0
+==== p10 p08 with maintainInteractivity: true
+p10 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p10 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p10 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p10 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p10 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p10 tree           #5 label="Before p10" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p10 tree           #6 label="p10 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p10 tree           #7 label="p10 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p10-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p10 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p10 tree           #9 label="Probe p10" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p10 tab stops: p10 After -> p10 After -> p10 After -> p10 After -> p10 After
+p10 1 Tab(s) (on p10 After) then Enter: p10 taps: a=0 b=1
+p10 2 Tab(s) (on p10 After) then Enter: p10 taps: a=0 b=1
+p10 3 Tab(s) (on p10 After) then Enter: p10 taps: a=0 b=1
+p10 4 Tab(s) (on p10 After) then Enter: p10 taps: a=0 b=1
+p10 1 Tab(s) (on p10 After) then  : p10 taps: a=0 b=1
+p10 2 Tab(s) (on p10 After) then  : p10 taps: a=0 b=1
+p10 3 Tab(s) (on p10 After) then  : p10 taps: a=0 b=1
+p10 4 Tab(s) (on p10 After) then  : p10 taps: a=0 b=1
+p10 tap at the Share text (Offset(91.5, 128.0)): p10 taps: a=1 b=0
+==== p11 Visibility.maintain(visible: false) round a TextButton
+p11 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p11 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p11 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p11 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p11 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p11 tree           #5 label="Before p11" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p11 tree           #6 label="p11 Share" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p11 tree           #7 label="p11 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p11 tree           #8 label="p11 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p11-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p11 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p11 tree           #10 label="Probe p11" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p11 tab stops: p11 Share -> p11 After -> p11 Share -> p11 After -> p11 Share
+p11 1 Tab(s) (on p11 Share) then Enter: p11 taps: a=1 b=0
+p11 2 Tab(s) (on p11 After) then Enter: p11 taps: a=0 b=1
+p11 3 Tab(s) (on p11 Share) then Enter: p11 taps: a=1 b=0
+p11 4 Tab(s) (on p11 After) then Enter: p11 taps: a=0 b=1
+p11 1 Tab(s) (on p11 Share) then  : p11 taps: a=1 b=0
+p11 2 Tab(s) (on p11 After) then  : p11 taps: a=0 b=1
+p11 3 Tab(s) (on p11 Share) then  : p11 taps: a=1 b=0
+p11 4 Tab(s) (on p11 After) then  : p11 taps: a=0 b=1
+p11 tap at the Share text (Offset(91.5, 128.0)): p11 taps: a=1 b=0
+==== p12 Visibility(visible: false, maintainState: true, maintainFocusability: true)
+p12 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p12 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p12 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p12 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p12 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 156.0)
+p12 tree           #5 label="Before p12" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p12 tree           #6 label="p12 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p12 tree           #7 label="p12 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p12-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p12 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p12 tree           #9 label="Probe p12" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p12 tab stops: p12 Share -> p12 After -> p12 Share -> p12 After -> p12 Share
+p12 1 Tab(s) (on p12 Share) then Enter: p12 taps: a=1 b=0
+p12 2 Tab(s) (on p12 After) then Enter: p12 taps: a=0 b=1
+p12 3 Tab(s) (on p12 Share) then Enter: p12 taps: a=1 b=0
+p12 4 Tab(s) (on p12 After) then Enter: p12 taps: a=0 b=1
+p12 1 Tab(s) (on p12 Share) then  : p12 taps: a=1 b=0
+p12 2 Tab(s) (on p12 After) then  : p12 taps: a=0 b=1
+p12 3 Tab(s) (on p12 Share) then  : p12 taps: a=1 b=0
+p12 4 Tab(s) (on p12 After) then  : p12 taps: a=0 b=1
+p12 tap at the Share text (Offset(91.5, 128.0)): p12 taps: a=0 b=1
+==== p13 Opacity(opacity: 0) round a TextButton
+p13 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p13 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p13 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p13 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p13 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p13 tree           #5 label="Before p13" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p13 tree           #6 label="p13 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p13 tree           #7 label="p13 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p13-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p13 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p13 tree           #9 label="Probe p13" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p13 tab stops: p13 Share -> p13 After -> p13 Share -> p13 After -> p13 Share
+p13 1 Tab(s) (on p13 Share) then Enter: p13 taps: a=1 b=0
+p13 2 Tab(s) (on p13 After) then Enter: p13 taps: a=0 b=1
+p13 3 Tab(s) (on p13 Share) then Enter: p13 taps: a=1 b=0
+p13 4 Tab(s) (on p13 After) then Enter: p13 taps: a=0 b=1
+p13 1 Tab(s) (on p13 Share) then  : p13 taps: a=1 b=0
+p13 2 Tab(s) (on p13 After) then  : p13 taps: a=0 b=1
+p13 3 Tab(s) (on p13 Share) then  : p13 taps: a=1 b=0
+p13 4 Tab(s) (on p13 After) then  : p13 taps: a=0 b=1
+p13 tap at the Share text (Offset(91.5, 128.0)): p13 taps: a=1 b=0
+==== p14 Opacity(opacity: 0, alwaysIncludeSemantics: true) round a TextButton
+p14 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p14 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p14 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p14 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p14 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p14 tree           #5 label="Before p14" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p14 tree           #6 label="p14 Share" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p14 tree           #7 label="p14 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p14 tree           #8 label="p14 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p14-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p14 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p14 tree           #10 label="Probe p14" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p14 tab stops: p14 Share -> p14 After -> p14 Share -> p14 After -> p14 Share
+p14 1 Tab(s) (on p14 Share) then Enter: p14 taps: a=1 b=0
+p14 2 Tab(s) (on p14 After) then Enter: p14 taps: a=0 b=1
+p14 3 Tab(s) (on p14 Share) then Enter: p14 taps: a=1 b=0
+p14 4 Tab(s) (on p14 After) then Enter: p14 taps: a=0 b=1
+p14 1 Tab(s) (on p14 Share) then  : p14 taps: a=1 b=0
+p14 2 Tab(s) (on p14 After) then  : p14 taps: a=0 b=1
+p14 3 Tab(s) (on p14 Share) then  : p14 taps: a=1 b=0
+p14 4 Tab(s) (on p14 After) then  : p14 taps: a=0 b=1
+p14 tap at the Share text (Offset(91.5, 128.0)): p14 taps: a=1 b=0
+==== p15 AnimatedOpacity(opacity: 0) round a TextButton, settled
+p15 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p15 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p15 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p15 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p15 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p15 tree           #5 label="Before p15" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p15 tree           #6 label="p15 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p15 tree           #7 label="p15 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p15-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p15 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p15 tree           #9 label="Probe p15" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p15 tab stops: p15 Share -> p15 After -> p15 Share -> p15 After -> p15 Share
+p15 1 Tab(s) (on p15 Share) then Enter: p15 taps: a=1 b=0
+p15 2 Tab(s) (on p15 After) then Enter: p15 taps: a=0 b=1
+p15 3 Tab(s) (on p15 Share) then Enter: p15 taps: a=1 b=0
+p15 4 Tab(s) (on p15 After) then Enter: p15 taps: a=0 b=1
+p15 1 Tab(s) (on p15 Share) then  : p15 taps: a=1 b=0
+p15 2 Tab(s) (on p15 After) then  : p15 taps: a=0 b=1
+p15 3 Tab(s) (on p15 Share) then  : p15 taps: a=1 b=0
+p15 4 Tab(s) (on p15 After) then  : p15 taps: a=0 b=1
+p15 tap at the Share text (Offset(91.5, 128.0)): p15 taps: a=1 b=0
+==== p16 IgnorePointer round a TextButton
+p16 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p16 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p16 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p16 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p16 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p16 tree           #5 label="Before p16" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p16 tree           #6 label="p16 Share" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p16 tree           #7 label="p16 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p16 tree           #8 label="p16 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p16-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p16 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p16 tree           #10 label="Probe p16" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p16 tab stops: p16 Share -> p16 After -> p16 Share -> p16 After -> p16 Share
+p16 1 Tab(s) (on p16 Share) then Enter: p16 taps: a=1 b=0
+p16 2 Tab(s) (on p16 After) then Enter: p16 taps: a=0 b=1
+p16 3 Tab(s) (on p16 Share) then Enter: p16 taps: a=1 b=0
+p16 4 Tab(s) (on p16 After) then Enter: p16 taps: a=0 b=1
+p16 1 Tab(s) (on p16 Share) then  : p16 taps: a=1 b=0
+p16 2 Tab(s) (on p16 After) then  : p16 taps: a=0 b=1
+p16 3 Tab(s) (on p16 Share) then  : p16 taps: a=1 b=0
+p16 4 Tab(s) (on p16 After) then  : p16 taps: a=0 b=1
+p16 tap at the Share text (Offset(91.5, 128.0)): p16 taps: a=0 b=0
+==== p17 AbsorbPointer round a TextButton
+p17 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p17 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p17 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p17 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p17 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p17 tree           #5 label="Before p17" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p17 tree           #6 label="p17 Share" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p17 tree           #7 label="p17 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p17 tree           #8 label="p17 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p17-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p17 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p17 tree           #10 label="Probe p17" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p17 tab stops: p17 Share -> p17 After -> p17 Share -> p17 After -> p17 Share
+p17 1 Tab(s) (on p17 Share) then Enter: p17 taps: a=1 b=0
+p17 2 Tab(s) (on p17 After) then Enter: p17 taps: a=0 b=1
+p17 3 Tab(s) (on p17 Share) then Enter: p17 taps: a=1 b=0
+p17 4 Tab(s) (on p17 After) then Enter: p17 taps: a=0 b=1
+p17 1 Tab(s) (on p17 Share) then  : p17 taps: a=1 b=0
+p17 2 Tab(s) (on p17 After) then  : p17 taps: a=0 b=1
+p17 3 Tab(s) (on p17 Share) then  : p17 taps: a=1 b=0
+p17 4 Tab(s) (on p17 After) then  : p17 taps: a=0 b=1
+p17 tap at the Share text (Offset(91.5, 128.0)): p17 taps: a=0 b=0
+==== p18 IgnorePointer(ignoringSemantics: true), deprecated, round a TextButton
+p18 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p18 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p18 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p18 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p18 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p18 tree           #5 label="Before p18" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p18 tree           #6 label="p18 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p18 tree           #7 label="p18 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p18-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p18 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p18 tree           #9 label="Probe p18" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p18 tab stops: p18 Share -> p18 After -> p18 Share -> p18 After -> p18 Share
+p18 1 Tab(s) (on p18 Share) then Enter: p18 taps: a=1 b=0
+p18 2 Tab(s) (on p18 After) then Enter: p18 taps: a=0 b=1
+p18 3 Tab(s) (on p18 Share) then Enter: p18 taps: a=1 b=0
+p18 4 Tab(s) (on p18 After) then Enter: p18 taps: a=0 b=1
+p18 1 Tab(s) (on p18 Share) then  : p18 taps: a=1 b=0
+p18 2 Tab(s) (on p18 After) then  : p18 taps: a=0 b=1
+p18 3 Tab(s) (on p18 Share) then  : p18 taps: a=1 b=0
+p18 4 Tab(s) (on p18 After) then  : p18 taps: a=0 b=1
+p18 tap at the Share text (Offset(91.5, 128.0)): p18 taps: a=0 b=0
+==== p19 ExcludeFocus round a TextButton
+p19 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p19 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p19 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p19 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p19 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p19 tree           #5 label="Before p19" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p19 tree           #6 label="p19 Share" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p19 tree           #7 label="p19 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p19 tree           #8 label="p19 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p19-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p19 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p19 tree           #10 label="Probe p19" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p19 tab stops: p19 After -> p19 After -> p19 After -> p19 After -> p19 After
+p19 1 Tab(s) (on p19 After) then Enter: p19 taps: a=0 b=1
+p19 2 Tab(s) (on p19 After) then Enter: p19 taps: a=0 b=1
+p19 3 Tab(s) (on p19 After) then Enter: p19 taps: a=0 b=1
+p19 4 Tab(s) (on p19 After) then Enter: p19 taps: a=0 b=1
+p19 1 Tab(s) (on p19 After) then  : p19 taps: a=0 b=1
+p19 2 Tab(s) (on p19 After) then  : p19 taps: a=0 b=1
+p19 3 Tab(s) (on p19 After) then  : p19 taps: a=0 b=1
+p19 4 Tab(s) (on p19 After) then  : p19 taps: a=0 b=1
+p19 tap at the Share text (Offset(91.5, 128.0)): p19 taps: a=1 b=0
+==== p20 ExcludeSemantics round ExcludeFocus round a TextButton
+p20 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p20 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p20 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p20 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p20 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p20 tree           #5 label="Before p20" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p20 tree           #6 label="p20 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p20 tree           #7 label="p20 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p20-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p20 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p20 tree           #9 label="Probe p20" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p20 tab stops: p20 After -> p20 After -> p20 After -> p20 After -> p20 After
+p20 1 Tab(s) (on p20 After) then Enter: p20 taps: a=0 b=1
+p20 2 Tab(s) (on p20 After) then Enter: p20 taps: a=0 b=1
+p20 3 Tab(s) (on p20 After) then Enter: p20 taps: a=0 b=1
+p20 4 Tab(s) (on p20 After) then Enter: p20 taps: a=0 b=1
+p20 1 Tab(s) (on p20 After) then  : p20 taps: a=0 b=1
+p20 2 Tab(s) (on p20 After) then  : p20 taps: a=0 b=1
+p20 3 Tab(s) (on p20 After) then  : p20 taps: a=0 b=1
+p20 4 Tab(s) (on p20 After) then  : p20 taps: a=0 b=1
+p20 tap at the Share text (Offset(91.5, 128.0)): p20 taps: a=1 b=0
+==== p21 Semantics(hidden: true) round a note
+p21 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p21 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p21 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p21 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p21 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 176.0)
+p21 tree           #5 label="Before p21" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p21 tree           #6 label="p21 Note" tooltip="" flags=[hidden, focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 114.0, 20.0)
+p21 tree           #7 label="p21 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p21 tree           #8 label="p21 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p21-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p21 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p21 tree           #10 label="Probe p21" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p21 tab stops: p21 After -> p21 After -> p21 After -> p21 After -> p21 After
+p21 1 Tab(s) (on p21 After) then Enter: p21 taps: a=0 b=1
+p21 2 Tab(s) (on p21 After) then Enter: p21 taps: a=0 b=1
+p21 3 Tab(s) (on p21 After) then Enter: p21 taps: a=0 b=1
+p21 4 Tab(s) (on p21 After) then Enter: p21 taps: a=0 b=1
+p21 1 Tab(s) (on p21 After) then  : p21 taps: a=0 b=1
+p21 2 Tab(s) (on p21 After) then  : p21 taps: a=0 b=1
+p21 3 Tab(s) (on p21 After) then  : p21 taps: a=0 b=1
+p21 4 Tab(s) (on p21 After) then  : p21 taps: a=0 b=1
+==== p22 Semantics(hidden: true) round a TextButton
+p22 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p22 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p22 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p22 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p22 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 204.0)
+p22 tree           #5 label="Before p22" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p22 tree           #6 label="" tooltip="" flags=[hidden, focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p22 tree             #7 label="p22 Share" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p22 tree           #8 label="p22 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p22 tree           #9 label="p22 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p22-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p22 tree         #10 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p22 tree           #11 label="Probe p22" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p22 tab stops: p22 Share -> p22 After -> p22 Share -> p22 After -> p22 Share
+p22 1 Tab(s) (on p22 Share) then Enter: p22 taps: a=1 b=0
+p22 2 Tab(s) (on p22 After) then Enter: p22 taps: a=0 b=1
+p22 3 Tab(s) (on p22 Share) then Enter: p22 taps: a=1 b=0
+p22 4 Tab(s) (on p22 After) then Enter: p22 taps: a=0 b=1
+p22 1 Tab(s) (on p22 Share) then  : p22 taps: a=1 b=0
+p22 2 Tab(s) (on p22 After) then  : p22 taps: a=0 b=1
+p22 3 Tab(s) (on p22 Share) then  : p22 taps: a=1 b=0
+p22 4 Tab(s) (on p22 After) then  : p22 taps: a=0 b=1
+p22 tap at the Share text (Offset(91.5, 128.0)): p22 taps: a=1 b=0
+==== p23 BlockSemantics on a banner after a note and a TextButton, in Semantics(container: true)
+p23 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p23 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p23 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p23 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p23 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 244.0)
+p23 tree           #5 label="Before p23" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p23 tree           #6 label="p23 Banner" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 88.0)
+p23 tree           #7 label="p23 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p23 tree           #8 label="p23 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p23-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p23 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p23 tree           #10 label="Probe p23" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p23 tab stops: p23 Share -> p23 After -> p23 Share -> p23 After -> p23 Share
+p23 1 Tab(s) (on p23 Share) then Enter: p23 taps: a=1 b=0
+p23 2 Tab(s) (on p23 After) then Enter: p23 taps: a=0 b=1
+p23 3 Tab(s) (on p23 Share) then Enter: p23 taps: a=1 b=0
+p23 4 Tab(s) (on p23 After) then Enter: p23 taps: a=0 b=1
+p23 1 Tab(s) (on p23 Share) then  : p23 taps: a=1 b=0
+p23 2 Tab(s) (on p23 After) then  : p23 taps: a=0 b=1
+p23 3 Tab(s) (on p23 Share) then  : p23 taps: a=1 b=0
+p23 4 Tab(s) (on p23 After) then  : p23 taps: a=0 b=1
+p23 tap at the Share text (Offset(91.5, 148.0)): p23 taps: a=1 b=0
+==== p24 BlockSemantics on a banner after a note and a TextButton, no container
+p24 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p24 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p24 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p24 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p24 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 244.0)
+p24 tree           #5 label="p24 Banner" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p24 tree           #6 label="p24 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p24 tree           #7 label="p24 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p24-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p24 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p24 tree           #9 label="Probe p24" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p24 tab stops: p24 Share -> p24 After -> p24 Share -> p24 After -> p24 Share
+p24 1 Tab(s) (on p24 Share) then Enter: p24 taps: a=1 b=0
+p24 2 Tab(s) (on p24 After) then Enter: p24 taps: a=0 b=1
+p24 3 Tab(s) (on p24 Share) then Enter: p24 taps: a=1 b=0
+p24 4 Tab(s) (on p24 After) then Enter: p24 taps: a=0 b=1
+p24 1 Tab(s) (on p24 Share) then  : p24 taps: a=1 b=0
+p24 2 Tab(s) (on p24 After) then  : p24 taps: a=0 b=1
+p24 3 Tab(s) (on p24 Share) then  : p24 taps: a=1 b=0
+p24 4 Tab(s) (on p24 After) then  : p24 taps: a=0 b=1
+p24 tap at the Share text (Offset(91.5, 148.0)): p24 taps: a=1 b=0
+==== p25 a decorative glyph and an ornament, not hidden
+p25 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p25 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p25 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p25 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p25 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 216.0)
+p25 tree           #5 label="Before p25" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p25 tree           #6 label="❝ p25 Quote" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 156.8, 20.0)
+p25 tree           #7 label="· · ·" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 71.3, 20.0)
+p25 tree           #8 label="✦ ✦ ✦" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 71.3, 20.0)
+p25 tree           #9 label="p25 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p25 tree           #10 label="p25 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p25-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p25 tree         #11 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p25 tree           #12 label="Probe p25" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p25 tab stops: p25 After -> p25 After -> p25 After -> p25 After -> p25 After
+p25 1 Tab(s) (on p25 After) then Enter: p25 taps: a=0 b=1
+p25 2 Tab(s) (on p25 After) then Enter: p25 taps: a=0 b=1
+p25 3 Tab(s) (on p25 After) then Enter: p25 taps: a=0 b=1
+p25 4 Tab(s) (on p25 After) then Enter: p25 taps: a=0 b=1
+p25 1 Tab(s) (on p25 After) then  : p25 taps: a=0 b=1
+p25 2 Tab(s) (on p25 After) then  : p25 taps: a=0 b=1
+p25 3 Tab(s) (on p25 After) then  : p25 taps: a=0 b=1
+p25 4 Tab(s) (on p25 After) then  : p25 taps: a=0 b=1
+==== p26 p25 with each ornament in ExcludeSemantics
+p26 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p26 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p26 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p26 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p26 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 216.0)
+p26 tree           #5 label="Before p26" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p26 tree           #6 label="p26 Quote" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 128.3, 20.0)
+p26 tree           #7 label="p26 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p26 tree           #8 label="p26 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p26-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p26 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p26 tree           #10 label="Probe p26" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p26 tab stops: p26 After -> p26 After -> p26 After -> p26 After -> p26 After
+p26 1 Tab(s) (on p26 After) then Enter: p26 taps: a=0 b=1
+p26 2 Tab(s) (on p26 After) then Enter: p26 taps: a=0 b=1
+p26 3 Tab(s) (on p26 After) then Enter: p26 taps: a=0 b=1
+p26 4 Tab(s) (on p26 After) then Enter: p26 taps: a=0 b=1
+p26 1 Tab(s) (on p26 After) then  : p26 taps: a=0 b=1
+p26 2 Tab(s) (on p26 After) then  : p26 taps: a=0 b=1
+p26 3 Tab(s) (on p26 After) then  : p26 taps: a=0 b=1
+p26 4 Tab(s) (on p26 After) then  : p26 taps: a=0 b=1
+==== p27 Badge "3" on a mail Icon beside "3 unread", not hidden
+p27 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p27 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p27 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p27 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p27 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 180.0)
+p27 tree           #5 label="Before p27" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p27 tree           #6 label="3" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 11.5, 16.0)
+p27 tree           #7 label="p27 Inbox, 3 unread" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 270.8, 20.0)
+p27 tree           #8 label="p27 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p27 tree           #9 label="p27 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p27-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p27 tree         #10 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p27 tree           #11 label="Probe p27" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p27 tab stops: p27 After -> p27 After -> p27 After -> p27 After -> p27 After
+p27 1 Tab(s) (on p27 After) then Enter: p27 taps: a=0 b=1
+p27 2 Tab(s) (on p27 After) then Enter: p27 taps: a=0 b=1
+p27 3 Tab(s) (on p27 After) then Enter: p27 taps: a=0 b=1
+p27 4 Tab(s) (on p27 After) then Enter: p27 taps: a=0 b=1
+p27 1 Tab(s) (on p27 After) then  : p27 taps: a=0 b=1
+p27 2 Tab(s) (on p27 After) then  : p27 taps: a=0 b=1
+p27 3 Tab(s) (on p27 After) then  : p27 taps: a=0 b=1
+p27 4 Tab(s) (on p27 After) then  : p27 taps: a=0 b=1
+==== p28 p27 with the Badge in ExcludeSemantics
+p28 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p28 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p28 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p28 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p28 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 180.0)
+p28 tree           #5 label="Before p28" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p28 tree           #6 label="p28 Inbox, 3 unread" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 270.8, 20.0)
+p28 tree           #7 label="p28 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p28 tree           #8 label="p28 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p28-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p28 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p28 tree           #10 label="Probe p28" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p28 tab stops: p28 After -> p28 After -> p28 After -> p28 After -> p28 After
+p28 1 Tab(s) (on p28 After) then Enter: p28 taps: a=0 b=1
+p28 2 Tab(s) (on p28 After) then Enter: p28 taps: a=0 b=1
+p28 3 Tab(s) (on p28 After) then Enter: p28 taps: a=0 b=1
+p28 4 Tab(s) (on p28 After) then Enter: p28 taps: a=0 b=1
+p28 1 Tab(s) (on p28 After) then  : p28 taps: a=0 b=1
+p28 2 Tab(s) (on p28 After) then  : p28 taps: a=0 b=1
+p28 3 Tab(s) (on p28 After) then  : p28 taps: a=0 b=1
+p28 4 Tab(s) (on p28 After) then  : p28 taps: a=0 b=1
+==== p29 IndexedStack(index: 0): a note, and a pane with a TextButton
+p29 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p29 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p29 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p29 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p29 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 224.0)
+p29 tree           #5 label="Before p29" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p29 tree           #6 label="p29 Pane one" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 171.0, 20.0)
+p29 tree           #7 label="p29 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p29 tree           #8 label="p29 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p29-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p29 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p29 tree           #10 label="Probe p29" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p29 tab stops: p29 After -> p29 After -> p29 After -> p29 After -> p29 After
+p29 1 Tab(s) (on p29 After) then Enter: p29 taps: a=0 b=1
+p29 2 Tab(s) (on p29 After) then Enter: p29 taps: a=0 b=1
+p29 3 Tab(s) (on p29 After) then Enter: p29 taps: a=0 b=1
+p29 4 Tab(s) (on p29 After) then Enter: p29 taps: a=0 b=1
+p29 1 Tab(s) (on p29 After) then  : p29 taps: a=0 b=1
+p29 2 Tab(s) (on p29 After) then  : p29 taps: a=0 b=1
+p29 3 Tab(s) (on p29 After) then  : p29 taps: a=0 b=1
+p29 4 Tab(s) (on p29 After) then  : p29 taps: a=0 b=1
+p29 tap at the Share text (Offset(101.5, 148.0)): p29 taps: a=0 b=0
+==== p30 Tooltip(excludeFromSemantics: true) on a Text with the same words
+p30 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p30 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p30 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p30 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p30 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 176.0)
+p30 tree           #5 label="Before p30" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p30 tree           #6 label="p30 Full text" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 185.3, 20.0)
+p30 tree           #7 label="p30 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p30 tree           #8 label="p30 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p30-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p30 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p30 tree           #10 label="Probe p30" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p30 tab stops: p30 After -> p30 After -> p30 After -> p30 After -> p30 After
+p30 1 Tab(s) (on p30 After) then Enter: p30 taps: a=0 b=1
+p30 2 Tab(s) (on p30 After) then Enter: p30 taps: a=0 b=1
+p30 3 Tab(s) (on p30 After) then Enter: p30 taps: a=0 b=1
+p30 4 Tab(s) (on p30 After) then Enter: p30 taps: a=0 b=1
+p30 1 Tab(s) (on p30 After) then  : p30 taps: a=0 b=1
+p30 2 Tab(s) (on p30 After) then  : p30 taps: a=0 b=1
+p30 3 Tab(s) (on p30 After) then  : p30 taps: a=0 b=1
+p30 4 Tab(s) (on p30 After) then  : p30 taps: a=0 b=1
+==== p31 InkWell(excludeFromSemantics: true, onTap:) round a Text
+p31 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p31 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p31 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p31 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p31 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 176.0)
+p31 tree           #5 label="Before p31" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p31 tree           #6 label="p31 Share" tooltip="" flags=[focused=isFalse, enabled=none] actions=[focus] id= rect=Rect.fromLTRB(0.0, 0.0, 128.3, 20.0)
+p31 tree           #7 label="p31 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p31 tree           #8 label="p31 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p31-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p31 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p31 tree           #10 label="Probe p31" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p31 tab stops: p31 Share -> p31 After -> p31 Share -> p31 After -> p31 Share
+p31 1 Tab(s) (on p31 Share) then Enter: p31 taps: a=1 b=0
+p31 2 Tab(s) (on p31 After) then Enter: p31 taps: a=0 b=1
+p31 3 Tab(s) (on p31 Share) then Enter: p31 taps: a=1 b=0
+p31 4 Tab(s) (on p31 After) then Enter: p31 taps: a=0 b=1
+p31 1 Tab(s) (on p31 Share) then  : p31 taps: a=1 b=0
+p31 2 Tab(s) (on p31 After) then  : p31 taps: a=0 b=1
+p31 3 Tab(s) (on p31 Share) then  : p31 taps: a=1 b=0
+p31 4 Tab(s) (on p31 After) then  : p31 taps: a=0 b=1
+p31 tap at the Share text (Offset(80.1, 114.0)): p31 taps: a=1 b=0
+==== p32 GestureDetector(excludeFromSemantics: true, onTap:) round a Text
+p32 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p32 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p32 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p32 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p32 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 176.0)
+p32 tree           #5 label="Before p32" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p32 tree           #6 label="p32 Share" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 128.3, 20.0)
+p32 tree           #7 label="p32 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p32 tree           #8 label="p32 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p32-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p32 tree         #9 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p32 tree           #10 label="Probe p32" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p32 tab stops: p32 After -> p32 After -> p32 After -> p32 After -> p32 After
+p32 1 Tab(s) (on p32 After) then Enter: p32 taps: a=0 b=1
+p32 2 Tab(s) (on p32 After) then Enter: p32 taps: a=0 b=1
+p32 3 Tab(s) (on p32 After) then Enter: p32 taps: a=0 b=1
+p32 4 Tab(s) (on p32 After) then Enter: p32 taps: a=0 b=1
+p32 1 Tab(s) (on p32 After) then  : p32 taps: a=0 b=1
+p32 2 Tab(s) (on p32 After) then  : p32 taps: a=0 b=1
+p32 3 Tab(s) (on p32 After) then  : p32 taps: a=0 b=1
+p32 4 Tab(s) (on p32 After) then  : p32 taps: a=0 b=1
+p32 tap at the Share text (Offset(80.1, 114.0)): p32 taps: a=1 b=0
+==== p33 a struck-out old price and the new price, not hidden
+p33 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p33 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p33 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p33 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p33 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 176.0)
+p33 tree           #5 label="Before p33" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p33 tree           #6 label="p33 $30" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 99.8, 20.0)
+p33 tree           #7 label="p33 Now $24" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 156.8, 20.0)
+p33 tree           #8 label="p33 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p33 tree           #9 label="p33 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p33-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p33 tree         #10 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p33 tree           #11 label="Probe p33" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p33 tab stops: p33 After -> p33 After -> p33 After -> p33 After -> p33 After
+p33 1 Tab(s) (on p33 After) then Enter: p33 taps: a=0 b=1
+p33 2 Tab(s) (on p33 After) then Enter: p33 taps: a=0 b=1
+p33 3 Tab(s) (on p33 After) then Enter: p33 taps: a=0 b=1
+p33 4 Tab(s) (on p33 After) then Enter: p33 taps: a=0 b=1
+p33 1 Tab(s) (on p33 After) then  : p33 taps: a=0 b=1
+p33 2 Tab(s) (on p33 After) then  : p33 taps: a=0 b=1
+p33 3 Tab(s) (on p33 After) then  : p33 taps: a=0 b=1
+p33 4 Tab(s) (on p33 After) then  : p33 taps: a=0 b=1
+==== p34 Opacity(opacity: 0) round a note
+p34 tree #0 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+p34 tree   #1 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p34 tree     #2 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p34 tree       #3 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+p34 tree         #4 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 274.3, 176.0)
+p34 tree           #5 label="Before p34" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 142.5, 20.0)
+p34 tree           #6 label="p34 After" tooltip="" flags=[button, focused=isFalse, enabled=isTrue] actions=[tap, focus] id= rect=Rect.fromLTRB(0.0, 0.0, 150.9, 48.0)
+p34 tree           #7 label="p34 taps: a=0 b=0" tooltip="" flags=[focused=none, enabled=none] actions=[] id=p34-taps rect=Rect.fromLTRB(0.0, 0.0, 242.3, 20.0)
+p34 tree         #8 label="" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 800.0, 56.0)
+p34 tree           #9 label="Probe p34" tooltip="" flags=[focused=none, enabled=none] actions=[] id= rect=Rect.fromLTRB(0.0, 0.0, 198.0, 28.0)
+p34 tab stops: p34 After -> p34 After -> p34 After -> p34 After -> p34 After
+p34 1 Tab(s) (on p34 After) then Enter: p34 taps: a=0 b=1
+p34 2 Tab(s) (on p34 After) then Enter: p34 taps: a=0 b=1
+p34 3 Tab(s) (on p34 After) then Enter: p34 taps: a=0 b=1
+p34 4 Tab(s) (on p34 After) then Enter: p34 taps: a=0 b=1
+p34 1 Tab(s) (on p34 After) then  : p34 taps: a=0 b=1
+p34 2 Tab(s) (on p34 After) then  : p34 taps: a=0 b=1
+p34 3 Tab(s) (on p34 After) then  : p34 taps: a=0 b=1
+p34 4 Tab(s) (on p34 After) then  : p34 taps: a=0 b=1

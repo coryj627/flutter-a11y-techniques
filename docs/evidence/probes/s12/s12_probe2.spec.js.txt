@@ -1,0 +1,58 @@
+// S12 probe round 2 on the web (throwaway, not committed; kept as
+// docs/evidence/probes/s12/s12_probe2.spec.js.txt): the plain HTML
+// comparison page, html.html: Chromium's own tree for each hidden button
+// while it has DOM focus (WAI-ARIA 1.2, 7.2: a focused element is exposed
+// "even if the element or one of its ancestor elements has its aria-hidden
+// attribute set to true"), reached by Tab where Tab reaches it; and the
+// Flutter probe's p03 (ExcludeSemantics round a TextButton) and p13
+// (Opacity 0): Chromium's tree and the focused element while Flutter's
+// keyboard focus is on the hidden button.
+import { test } from '@playwright/test';
+
+function log(...a) {
+  console.log('S12WEB2', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+async function ax(page, context) {
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  return nodes
+    .filter((n) => !n.ignored && n.role?.value !== 'InlineTextBox' && n.role?.value !== 'StaticText')
+    .map((n) => {
+      const props = (n.properties ?? []).filter((p) => ['focused', 'focusable', 'hidden'].includes(p.name))
+        .map((p) => `${p.name}:${JSON.stringify(p.value?.value)}`).join(',');
+      return `role=${n.role?.value} name="${n.name?.value ?? ''}" ${props}`;
+    });
+}
+
+test.describe.configure({ mode: 'serial' });
+
+test('plain HTML: a hidden button with DOM focus', async ({ page, context }) => {
+  await page.goto('/html.html');
+  await page.waitForTimeout(500);
+  for (let i = 1; i <= 4; i++) {
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(150);
+    const id = await page.evaluate(() => document.activeElement?.id || document.activeElement?.tagName);
+    log('html', `after Tab ${i}, DOM focus on #${id}; the tree's buttons and focused nodes:`);
+    for (const l of await ax(page, context)) if (/role=button|focused:true/.test(l)) log('html', '  ', l);
+  }
+});
+
+for (const id of ['p03', 'p13']) {
+  test(`Flutter ${id}: keyboard focus on the hidden button`, async ({ page, context }) => {
+    await page.goto(`/#/${id}`);
+    await page.locator(`[flt-semantics-identifier="${id}-taps"]`).waitFor();
+    await page.waitForTimeout(800);
+    for (let i = 1; i <= 2; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(300);
+      const active = await page.evaluate(() => {
+        const e = document.activeElement;
+        return `${e?.tagName}${e?.getAttribute('role') ? `[role=${e.getAttribute('role')}]` : ''} "${(e?.textContent ?? '').trim().slice(0, 40)}"`;
+      });
+      log(id, `after Tab ${i}, DOM focus on ${active}; the tree's buttons and focused nodes:`);
+      for (const l of await ax(page, context)) if (/role=button|focused:true/.test(l)) log(id, '  ', l);
+    }
+  });
+}
