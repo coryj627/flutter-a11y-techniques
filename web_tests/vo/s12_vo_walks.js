@@ -239,3 +239,102 @@ export async function runWalks(walkOnce, judge, { tries = 3, log = () => {} } = 
   }
   return { ...judged, walks: tries };
 }
+
+/** How the VoiceOver spec logs an empty phrase, and a walk with no stops. */
+export const EMPTY_STOP = '(empty)';
+export const NO_STOPS = '(nothing)';
+
+/** The browsers every S12 recording walks in. */
+export const BROWSERS = ['chromium', 'webkit'];
+
+const ROW = /^\| `([a-z-]+)-walk-(\d+)` \| (.*) \((complete|wrong|incomplete): (.*)\) \|$/;
+
+/**
+ * Judges a committed web VoiceOver transcript (docs/evidence/S12/voiceover-web.md)
+ * again, from its rows alone. The VoiceOver spec logs every try whole, the
+ * screen's own stops included, as `<slug>-walk-<n>`, and tool/voiceover_web.py
+ * writes them under a heading per browser. Returns the problems found, empty
+ * when the transcript is right:
+ *
+ * - every table row must be a walk row in a known browser's section; a
+ *   malformed one, or one outside a browser's section, is a problem;
+ * - every browser in BROWSERS and every example in EXPECTED_STOPS must have
+ *   walks, numbered 1, 2, … with no gap and no repeat, at most three, and
+ *   nothing else may have any;
+ * - every walk is judged again by judgeExampleWalk on the stops it
+ *   recorded, with nothing put back: the last must be recorded complete
+ *   and judge complete (as having reached the end); every earlier one must
+ *   be recorded incomplete and judge incomplete as a walk cut short. The
+ *   transcript holds no cursor positions, so a help message the judge left
+ *   out by its position counts as a stop here and fails: this errs toward
+ *   failing.
+ */
+export function judgeTranscript(text) {
+  const problems = [];
+  const walks = new Map(); // "browser slug" -> Map(n -> { stops, was })
+  let browser = null;
+  for (const line of text.split('\n')) {
+    const section = /^## (\S+)$/.exec(line);
+    if (section) {
+      browser = section[1];
+      if (!BROWSERS.includes(browser)) problems.push(`a section for an unknown browser, "${browser}"`);
+      continue;
+    }
+    if (!line.startsWith('| ') || line.startsWith('| Example |') || line.startsWith('| --- |')) continue;
+    const m = ROW.exec(line);
+    if (!m) {
+      problems.push(`a malformed row: ${line}`);
+      continue;
+    }
+    const [, slug, n, shown, was] = m;
+    if (!BROWSERS.includes(browser)) {
+      problems.push(`a row outside a browser's section: ${line}`);
+      continue;
+    }
+    if (!(slug in EXPECTED_STOPS)) {
+      problems.push(`${browser}: a row for an unknown example, "${slug}"`);
+      continue;
+    }
+    const key = `${browser} ${slug}`;
+    if (!walks.has(key)) walks.set(key, new Map());
+    if (walks.get(key).has(Number(n))) {
+      problems.push(`${key}: walk ${n} appears twice`);
+      continue;
+    }
+    const stops = shown === NO_STOPS ? [] : shown.split(' / ').map((s) => (s === EMPTY_STOP ? '' : s));
+    walks.get(key).set(Number(n), { stops, was });
+  }
+  for (const b of BROWSERS) {
+    for (const slug of Object.keys(EXPECTED_STOPS)) {
+      const key = `${b} ${slug}`;
+      const tries = walks.get(key);
+      if (!tries) {
+        problems.push(`${key}: no walk`);
+        continue;
+      }
+      const numbers = [...tries.keys()].sort((x, y) => x - y);
+      if (numbers.some((n, i) => n !== i + 1) || numbers.length > 3) {
+        problems.push(`${key}: walks numbered ${numbers.join(', ')}`);
+        continue;
+      }
+      for (const n of numbers) {
+        const { stops, was } = tries.get(n);
+        const last = n === numbers.length;
+        const judged = judgeExampleWalk(stops, last, EXPECTED_STOPS[slug], screenStops(slug)).verdict;
+        if (last && (was !== 'complete' || judged !== 'complete')) {
+          problems.push(`${key}: the last walk, ${n}, was recorded ${was} and judges ${judged}`);
+        }
+        if (!last && (was !== 'incomplete' || judged !== 'incomplete')) {
+          problems.push(`${key}: walk ${n}, before the last, was recorded ${was} and judges ${judged}`);
+        }
+      }
+    }
+  }
+  return problems;
+}
+
+/** One transcript row, as the VoiceOver spec logs a walk and the tool writes it. */
+export function transcriptRow(slug, n, stops, verdict, reason) {
+  const shown = stops.map((s) => (s === '' ? EMPTY_STOP : s)).join(' / ') || NO_STOPS;
+  return `| \`${slug}-walk-${n}\` | ${shown} (${verdict}: ${reason}) |`;
+}

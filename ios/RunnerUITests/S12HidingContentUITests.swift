@@ -46,17 +46,6 @@ final class S12HidingContentUITests: XCTestCase, TechniqueUITest {
     XCTAssertEqual(element(id).label, expected, what, file: file, line: line)
   }
 
-  /// The count `id` stays `expected` for two seconds: read in a loop.
-  private func expectCountStays(_ what: String, _ id: String, _ expected: String,
-                                file: StaticString = #filePath, line: UInt = #line) {
-    let deadline = Date().addingTimeInterval(2)
-    while Date() < deadline {
-      if element(id).exists { XCTAssertEqual(element(id).label, expected, what, file: file, line: line) }
-      usleep(100_000)
-    }
-    XCTAssertEqual(element(id).label, expected, what, file: file, line: line)
-  }
-
   /// Every label on the screen, of any type, read from one snapshot.
   private func labels() -> [String] {
     app.descendants(matching: .any).allElementsBoundByIndex.map(\.label).filter { !$0.isEmpty }
@@ -214,10 +203,16 @@ final class S12HidingContentUITests: XCTestCase, TechniqueUITest {
     XCTAssertEqual(switchValue("bad-maintain"), "0", "the switch is still off")
   }
 
-  // L4. Everything VoiceOver says after the "Example" heading, to the end of
-  // the screen (C03Walk), compared as a whole list, so a stop after the
-  // expected ones fails the test too. Utterances are cut at 64 characters;
-  // every one here is shorter, which the test checks.
+  // L4. The whole walk, from the top of the screen to its end (C03Walk), is
+  // judged against this example's own screen (S12Walk.judge): Back may come
+  // first, then the screen's title as a heading, its description, a bad
+  // example's defect, the "Example" heading once, and then exactly the
+  // expected content. A walk that reads another screen's title cannot pass
+  // for this one, even where the content is the same (good-visibility and
+  // bad-opacity). Utterances are cut at 64 characters: every expected
+  // content utterance is shorter, which the test checks; a defect line that
+  // is longer is matched by its first 63 characters and an utterance 64
+  // long.
   private static let speech: [(slug: String, content: [String])] = [
     ("good-decoration", [quote, source]),
     ("good-badge", [inbox]),
@@ -240,13 +235,104 @@ final class S12HidingContentUITests: XCTestCase, TechniqueUITest {
     for example in Self.speech {
       open(example.slug)
       let walk = try C03Walk.walk(voiceOver)
-      let content = C03Walk.content(walk)
-      print("S12VO \(example.slug) | \((content ?? walk.stops).joined(separator: " / "))")
-      XCTAssertNotNil(content, "\(example.slug): the walk did not run from the heading to the end: \(walk)")
-      XCTAssertEqual(content, example.content, example.slug)
+      // The whole walk is the transcript row: the screen's own stops keep
+      // the walk's identity.
+      print("S12VO \(example.slug) | \(walk.stops.joined(separator: " / "))\(walk.reachedEnd ? "" : " (not to the end)")")
+      let verdict = S12Walk.judge(walk.stops, reachedEnd: walk.reachedEnd, slug: example.slug, content: example.content)
+      XCTAssertNil(verdict, "\(example.slug): \(verdict ?? "")")
     }
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
     #endif
+  }
+
+  /// The judge on made-up walks; no VoiceOver. Each case is named.
+  func testTheVoiceOverJudgeTiesAWalkToItsScreen() {
+    let content = Dictionary(uniqueKeysWithValues: Self.speech.map { ($0.slug, $0.content) })
+    func walk(_ slug: String) -> [String] { S12Walk.screenStops(slug) + ["Example Heading"] + content[slug]! }
+    let cases: [(String, [String], Bool, String, Bool)] = [
+      // (what, stops, reached the end, judged as, passes)
+      ("good-visibility's own walk", walk("good-visibility"), true, "good-visibility", true),
+      ("bad-opacity's own walk", walk("bad-opacity"), true, "bad-opacity", true),
+      ("Back first, then the screen", ["Back Button"] + walk("bad-maintain"), true, "bad-maintain", true),
+      ("a cut defect line, 64 long", walk("bad-hidden-control"), true, "bad-hidden-control", true),
+      ("good-visibility's walk judged as bad-opacity", walk("good-visibility"), true, "bad-opacity", false),
+      ("bad-opacity's walk judged as good-visibility", walk("bad-opacity"), true, "good-visibility", false),
+      ("no title", Array(walk("good-visibility").dropFirst()), true, "good-visibility", false),
+      ("no description", [walk("good-visibility")[0]] + Array(walk("good-visibility").dropFirst(2)), true,
+       "good-visibility", false),
+      ("an empty title", [""] + Array(walk("good-visibility").dropFirst()), true, "good-visibility", false),
+      ("a title with no stop at all", [], true, "good-visibility", false),
+      ("no defect on a bad screen", walk("bad-opacity").filter { !$0.hasPrefix("Defect") }, true, "bad-opacity", false),
+      ("the Example heading twice", walk("good-badge") + ["Example Heading"], true, "good-badge", false),
+      ("a stop before the title that is not Back", ["Probe"] + walk("good-badge"), true, "good-badge", false),
+      ("the content changed", walk("good-badge").dropLast() + ["Inbox: 4 unread"], true, "good-badge", false),
+      ("a stop after the content", walk("good-badge") + ["Extra"], true, "good-badge", false),
+      ("the end not reached", walk("good-badge"), false, "good-badge", false),
+      ("a defect line cut too short", walk("bad-hidden-control").map { $0.hasPrefix("Defect") ? String($0.prefix(40)) : $0 },
+       true, "bad-hidden-control", false),
+    ]
+    for (what, stops, reachedEnd, slug, passes) in cases {
+      let verdict = S12Walk.judge(stops, reachedEnd: reachedEnd, slug: slug, content: content[slug]!)
+      XCTAssertEqual(verdict == nil, passes, "\(what): \(verdict ?? "passed")")
+    }
+  }
+}
+
+/// What S12's VoiceOver walk on iOS must read before its content: each
+/// screen's title (a level 1 heading, read "<title> Heading"), the line that
+/// says whether it is a good or a bad example, and a bad example's defect
+/// (ExampleScreen in lib/app/screens.dart, with the titles and defects of
+/// lib/techniques/s12_hiding_content/s12_hiding_content.dart). The service
+/// returns the first 64 characters of an utterance, so the defect lines,
+/// which are longer, are kept whole here and compared cut.
+enum S12Walk {
+  static let screens: [String: (title: String, kind: String, defect: String?)] = [
+    "good-decoration": ("Ornaments hidden from AT", "Good example for Hiding content from AT. Widgets layer.", nil),
+    "good-badge": ("Repeated count hidden from AT", "Good example for Hiding content from AT. Material.", nil),
+    "good-visibility": ("Panel hidden from everyone", "Good example for Hiding content from AT. Material.", nil),
+    "bad-decoration-read": ("Ornaments read aloud", "Bad example for Hiding content from AT. Widgets layer.",
+                            "Defect: A screen reader stops on each ornament and reads it."),
+    "bad-hidden-control": ("Button hidden with an ornament", "Bad example for Hiding content from AT. Material.",
+                           "Defect: A screen reader cannot find the Share button; the keyboard still reaches it."),
+    "bad-opacity": ("Panel hidden by opacity", "Bad example for Hiding content from AT. Material.",
+                    "Defect: While the panel is hidden, the keyboard still reaches its button, which no screen reader can find."),
+    "bad-maintain": ("Panel hidden only from sight", "Bad example for Hiding content from AT. Material.",
+                     "Defect: While the panel is hidden, a screen reader still reads it and the keyboard still reaches its button."),
+  ]
+
+  /// The stops the screen of `slug` has before its "Example" heading, as
+  /// the service returns them: each cut at 64 characters.
+  static func screenStops(_ slug: String) -> [String] {
+    let s = screens[slug]!
+    return ["\(s.title) Heading", s.kind, s.defect].compactMap { $0 }.map { String($0.prefix(64)) }
+  }
+
+  /// Whether a stop is the expected line: equal, or, for a line of 64
+  /// characters or more, an utterance exactly 64 long that starts with the
+  /// line's first 63.
+  static func reads(_ stop: String, _ line: String) -> Bool {
+    if line.count < 64 { return stop == line }
+    return stop.count == 64 && stop.hasPrefix(String(line.prefix(63)))
+  }
+
+  /// Nil when the walk is this screen's whole walk; otherwise what is wrong.
+  static func judge(_ stops: [String], reachedEnd: Bool, slug: String, content: [String]) -> String? {
+    guard let s = screens[slug] else { return "no screen \(slug)" }
+    guard reachedEnd else { return "the walk did not reach the end of the screen" }
+    let lines = ["\(s.title) Heading", s.kind, s.defect].compactMap { $0 }
+    var rest = stops
+    if rest.first == "Back Button" { rest.removeFirst() }
+    guard rest.count == lines.count + 1 + content.count else {
+      return "\(rest.count) stops after Back where \(lines.count + 1 + content.count) were expected: \(stops)"
+    }
+    for (i, line) in lines.enumerated() where !reads(rest[i], line) {
+      return "stop \(i + 1) was \"\(rest[i])\" where \"\(line)\" was expected"
+    }
+    guard rest[lines.count] == "Example Heading" else {
+      return "\"\(rest[lines.count])\" where the Example heading was expected"
+    }
+    let got = Array(rest[(lines.count + 1)...])
+    return got == content ? nil : "the content was \(got) where \(content) was expected"
   }
 }

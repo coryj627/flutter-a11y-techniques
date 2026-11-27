@@ -21,7 +21,7 @@
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
-import { EXAMPLE_HEADING, EXPECTED_STOPS, judgeExampleWalk, runWalks, screenStops } from './s12_vo_walks.js';
+import { EMPTY_STOP, EXPECTED_STOPS, NO_STOPS, judgeExampleWalk, runWalks, screenStops } from './s12_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
@@ -84,11 +84,14 @@ for (const [slug, expected] of Object.entries(EXAMPLES)) {
       (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug), positions),
       {
         log: (walk, stops, judged) => {
-          // A complete walk read the screen's own stops exactly as listed,
-          // so only what follows the heading is shown; any other try is
-          // shown whole.
-          const start = stops.indexOf(EXAMPLE_HEADING);
-          const shown = (judged.verdict === 'complete' ? stops.slice(start + 1) : stops).join(' / ') || '(nothing)';
+          // Every try is logged whole, the screen's own stops included, so
+          // that the transcript keeps each walk's identity: its browser, its
+          // example, its try, and the title, description, and heading it
+          // read. An empty phrase is written "(empty)" and a walk with no
+          // stops "(nothing)" (judgeTranscript in s12_vo_walks.js reads
+          // them back). web_tests/s12_hiding_content.spec.js judges the
+          // committed transcript again from these rows alone.
+          const shown = stops.map((s) => (s === '' ? EMPTY_STOP : s)).join(' / ') || NO_STOPS;
           console.log(`S12VO ${browserName} ${slug}-walk-${walk} | ${shown} (${judged.verdict}: ${judged.reason})`);
         },
       });

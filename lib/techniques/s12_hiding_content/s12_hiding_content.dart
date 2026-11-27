@@ -8,9 +8,10 @@ final s12HidingContent = Technique(
   title: 'Hiding content from AT',
   group: TechniqueGroup.semantics,
   summary:
-      'Text that only decorates, or that repeats what is said beside it, is '
-      'hidden from assistive technology with ExcludeSemantics, and content '
-      'hidden from sight is hidden from everyone with Visibility. Nothing a '
+      'Characters that only decorate, and text that repeats what is said '
+      'beside it, are hidden from assistive technology with ExcludeSemantics, '
+      'and content that is closed or inactive, meant to be unavailable to '
+      'everyone, is hidden from everyone with Visibility. Nothing a '
       'user needs or can operate is hidden: ExcludeSemantics, and the '
       'other ways to hide from a screen reader alone, leave a control in '
       'the keyboard\'s order.',

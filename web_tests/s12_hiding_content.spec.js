@@ -6,7 +6,8 @@ import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { byId, tabTo, technique } from './support/techniques.js';
 import {
-  EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, runWalks, screenStops, spokenRole,
+  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, judgeTranscript, runWalks,
+  screenStops, spokenRole, transcriptRow,
 } from './vo/s12_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
@@ -112,18 +113,19 @@ test.describe('good examples', () => {
   });
 
   for (const key of ['Enter', 'Space']) {
-    test(`good-visibility: hidden, Tab goes to the switch and then out of Flutter, and ${key} there copies nothing; shown, Tab to Copy and ${key} copies`, async ({ page }) => {
+    test(`good-visibility: hidden, the Tab after the switch leaves Flutter's elements, with no stop for Copy; ${key} on the switch shows the panel and copies nothing; then Tab to Copy and ${key} copies`, async ({ page }) => {
       await open(page, 'good-visibility');
       const show = byId(page, 's12-good-visibility-show');
-      // Back, the switch, then out of Flutter's elements (FL-421).
+      // Back, the switch, then out of Flutter's elements (FL-421): no stop
+      // for Copy while it is hidden. No key is pressed there: a key on the
+      // page would have no effect to witness.
       expect(await tabTo(page, show)).toBe(true);
       await page.keyboard.press('Tab');
       await page.waitForTimeout(150);
       expect(await active(page)).toMatch(/^\(/);
-      await page.keyboard.press(key);
-      await page.waitForTimeout(800);
-      expect(await countOf(page, 'good-visibility')).toBe('Copies: 0');
-      // In the same load: the switch, shown with the key, then Copy.
+      // In the same load: the switch, and the key on it. The witness that
+      // the key acted is the switch turned on; only then is "copies
+      // nothing" a claim.
       expect(await tabTo(page, show)).toBe(true);
       await page.keyboard.press(key);
       await expect(show).toHaveAttribute('aria-checked', 'true');
@@ -257,27 +259,79 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
   }
 });
 
-// The committed web VoiceOver transcript, judged again with today's judge:
-// each row's stops (a complete walk shows only what follows the "Example"
-// heading, so the screen's own stops are put back), with no positions, as
-// none is in a transcript. The recording of 2026-11-27 passed, 14 walks of
-// 14 in Chromium and WebKit, and must still judge complete.
-const transcriptRows = (file) => readFileSync(new URL(`../${file}`, import.meta.url), 'utf8')
-  .split('\n')
-  .map((line) => /^\| `([a-z-]+)-walk-\d+` \| (.*) \((complete|wrong|incomplete): .*\) \|$/.exec(line))
-  .filter(Boolean)
-  .map(([, slug, shown, was]) => {
-    const read = shown.split(' / ');
-    return { slug, was, stops: was === 'complete' ? [...screenStops(slug), EXAMPLE_HEADING, ...read] : read };
+// The committed web VoiceOver transcript, judged again with today's judge
+// from its rows alone (judgeTranscript in vo/s12_vo_walks.js): every
+// browser and example exactly once, walks numbered from 1, no duplicate or
+// malformed row, and each walk judged on the stops it recorded, the screen's
+// title, description, and heading included, with nothing put back. The
+// judge is tested first on made-up transcripts; each case is named.
+test.describe('the committed web VoiceOver transcript is judged from its rows alone', () => {
+  const walk = (slug) => [...screenStops(slug), EXAMPLE_HEADING, ...EXPECTED_STOPS[slug]];
+  const right = (slug) => transcriptRow(slug, 1, walk(slug), 'complete', 'the whole screen, every stop in its place');
+  const transcript = (sections) => Object.entries(sections)
+    .map(([b, rows]) => [`## ${b}`, '', '| Example | Spoken, in order |', '| --- | --- |', ...rows, ''].join('\n'))
+    .join('\n');
+  const all = () => Object.fromEntries(BROWSERS.map((b) => [b, Object.keys(EXPECTED_STOPS).map(right)]));
+
+  test('every made-up transcript is judged as its case says', () => {
+    const slugs = Object.keys(EXPECTED_STOPS);
+    const first = right(slugs[0]);
+    const withRows = (edit) => {
+      const t = all();
+      edit(t);
+      return transcript(t);
+    };
+    const cases = [
+      ['every browser and example once, each complete', transcript(all()), true],
+      ['fourteen copies of the first Chromium row', transcript({ chromium: Array(7).fill(first), webkit: Array(7).fill(first) }), false],
+      ['one example missing in WebKit', withRows((t) => t.webkit.pop()), false],
+      ['a browser missing', transcript({ chromium: all().chromium }), false],
+      ['an unknown browser added', withRows((t) => { t.firefox = [first]; }), false],
+      ['a row repeated', withRows((t) => t.chromium.push(t.chromium[0])), false],
+      ['a malformed row', withRows((t) => t.chromium.push('| `good-badge-walk-2` | Inbox: 3 unread |')), false],
+      ['a row for an unknown example', withRows((t) => t.webkit.push(right('good-badge').replace('good-badge', 'good-other'))), false],
+      ['good-visibility\'s walk under bad-opacity\'s name', withRows((t) => {
+        t.chromium[slugs.indexOf('bad-opacity')] = transcriptRow('bad-opacity', 1, walk('good-visibility'), 'complete', 'x');
+      }), false],
+      ['a walk recorded as the old transcripts did, after the heading only', withRows((t) => {
+        t.webkit[0] = transcriptRow(slugs[0], 1, EXPECTED_STOPS[slugs[0]], 'complete', 'x');
+      }), false],
+      ['a walk with no title', withRows((t) => {
+        t.webkit[1] = transcriptRow(slugs[1], 1, walk(slugs[1]).slice(1), 'complete', 'x');
+      }), false],
+      ['a walk whose title is an empty phrase', withRows((t) => {
+        t.webkit[2] = transcriptRow(slugs[2], 1, ['', ...walk(slugs[2]).slice(1)], 'complete', 'x');
+      }), false],
+      ['a last walk recorded wrong', withRows((t) => {
+        t.chromium[0] = transcriptRow(slugs[0], 1, walk(slugs[0]), 'wrong', 'x');
+      }), false],
+      ['a walk 2 with no walk 1', withRows((t) => {
+        t.chromium[0] = transcriptRow(slugs[0], 2, walk(slugs[0]), 'complete', 'x');
+      }), false],
+      ['an empty first walk walked again, then complete', withRows((t) => {
+        t.chromium.splice(0, 1,
+          transcriptRow(slugs[0], 1, ['', ...walk(slugs[0]).slice(1)], 'incomplete', 'x'),
+          transcriptRow(slugs[0], 2, walk(slugs[0]), 'complete', 'x'));
+      }), true],
+      ['a wrong first walk followed by a complete one', withRows((t) => {
+        t.chromium.splice(0, 1,
+          transcriptRow(slugs[0], 1, [...walk(slugs[0]), 'Extra'], 'incomplete', 'x'),
+          transcriptRow(slugs[0], 2, walk(slugs[0]), 'complete', 'x'));
+      }), false],
+      ['a stop past the end', withRows((t) => {
+        t.webkit[3] = transcriptRow(slugs[3], 1, [...walk(slugs[3]), ''], 'complete', 'x');
+      }), false],
+    ];
+    for (const [what, text, passes] of cases) {
+      const problems = judgeTranscript(text);
+      expect(problems.length === 0, `${what}: ${problems.join('; ') || 'no problems'}`).toBe(passes);
+    }
   });
 
-test('the committed web VoiceOver transcript (docs/evidence/S12/voiceover-web.md): every walk complete', () => {
-  const rows = transcriptRows('docs/evidence/S12/voiceover-web.md');
-  expect(rows).toHaveLength(14);
-  for (const { slug, was, stops } of rows) {
-    expect(was, slug).toBe('complete');
-    expect(judgeExampleWalk(stops, true, EXPECTED_STOPS[slug], screenStops(slug)).verdict, slug).toBe('complete');
-  }
+  test('the committed transcript (docs/evidence/S12/voiceover-web.md) is right', () => {
+    const text = readFileSync(new URL('../docs/evidence/S12/voiceover-web.md', import.meta.url), 'utf8');
+    expect(judgeTranscript(text)).toEqual([]);
+  });
 });
 
 // How the web VoiceOver spec judges one walk (judgeExampleWalk, S08's judge)

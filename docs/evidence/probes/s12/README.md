@@ -236,4 +236,6 @@ whose `good-visibility` key test expected what the probe's p07 had shown
 not to happen; `android_320x640-round1-fail.txt`, the first run of the
 Android tree tests at CI's 320 by 640 at 160 dpi, where one tap missed;
 `android_320x640.sh.txt` and `android_320x640.txt`, the script and the
-passing run at that size.
+passing run at that size; `voiceover-web-round1-pass.md.txt`, the first
+web VoiceOver recording (2026-11-27, passed), as it was committed before
+the VoiceOver spec logged whole walks.

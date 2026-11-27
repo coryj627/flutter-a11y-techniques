@@ -173,7 +173,9 @@ class S12HidingContentTest : TechniqueTest("S12") {
     @Test
     fun goodVisibilityHiddenEnterAtEachStopCopiesNothing() {
         // Each stop from a fresh launch: Enter on Back leaves the screen,
-        // Enter on the switch shows the panel. Neither copies.
+        // Enter on the switch shows the panel (the witness that the key
+        // acted). Neither copies; in the same launch Tab to Copy and Enter
+        // do, the control that fails if the keys are lost.
         for (tabs in 1..3) {
             open("good-visibility")
             for (i in 0 until tabs) key("TAB")
@@ -181,6 +183,12 @@ class S12HidingContentTest : TechniqueTest("S12") {
             key("ENTER")
             if (on == "Back" || on == "(none)") continue
             assertEquals("after $tabs Tab(s)", SHOW, on)
+            // The witness that Enter took effect: it turned the switch on
+            // and showed the panel. Only then is "copied nothing" a claim.
+            val shown = System.currentTimeMillis() + 5_000
+            while (System.currentTimeMillis() < shown && !node("s12-good-visibility-show").isChecked) Thread.sleep(100)
+            assertTrue("Enter on the switch turned it on", node("s12-good-visibility-show").isChecked)
+            assertTrue("the panel is shown", anyWindowHas { it.name() == TRACKING })
             assertCountStays("good-visibility: Enter on the switch", "s12-good-visibility-count", "Copies: 0")
             // In the same launch, the panel shown: Tab to Copy and Enter copies.
             tabTo("s12-good-visibility-copy")

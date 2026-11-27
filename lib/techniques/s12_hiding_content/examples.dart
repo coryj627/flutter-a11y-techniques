@@ -4,7 +4,7 @@ import '../../catalog/test_id.dart';
 
 // Every good example is Flutter's own widgets used through their documented
 // parameters: `ExcludeSemantics` round what only decorates or repeats, and
-// `Visibility` for what is hidden from everyone. What they cannot do is in
+// `Visibility` for what is closed and meant to be unavailable to everyone. What they cannot do is in
 // docs/flutter-limitations.md and is not built here.
 
 // #region shared
@@ -140,9 +140,10 @@ class _TrackingDemoState extends State<TrackingDemo> {
 // #endregion
 
 // #region good-decoration
-/// The quote's ornaments are text that only decorates: each is in
-/// `ExcludeSemantics`, so a screen reader reads the quote and who said it,
-/// and nothing else.
+/// The quote's ornaments are characters that express nothing in human
+/// language, which WCAG counts as non-text content, and they only decorate:
+/// each is in `ExcludeSemantics`, so a screen reader reads the quote and who
+/// said it, and nothing else, as 1.1.1 asks of pure decoration.
 class GoodDecoration extends StatelessWidget {
   const GoodDecoration({super.key});
 
@@ -198,6 +199,8 @@ class GoodVisibility extends StatelessWidget {
 // #region bad-decoration-read
 /// The ornaments are left as they are: a screen reader stops on each one,
 /// around the quote, and reads it as text. This is not a shown failure of a success criterion in this technique's list; shown for what the user hears.
+/// It fails 1.1.1, outside that list: the ornaments are non-text content
+/// and pure decoration that assistive technology cannot ignore.
 class BadDecorationRead extends StatelessWidget {
   const BadDecorationRead({super.key});
 
