@@ -259,6 +259,15 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
   }
 });
 
+// A cursor position as cursorBounds gives it: "left, top, right, bottom",
+// numbers with commas and spaces ("318, 411, 1011, 431"). Made-up walks and
+// rows use this form, so that a pattern reading a position as one word fails
+// here as it would on a real transcript (S17's finding in its copy).
+const pos = (i) => `318, ${251 + 40 * i}, 1011, ${271 + 40 * i}`;
+const POS_BACK = pos(90);
+const POS_LAST = pos(91);
+const POS_OTHER = pos(92);
+
 // The walk's end witness (collectWalk in vo/s12_vo_walks.js), on made-up
 // screens: the cursor moves over `elements`; `capture` reads the element
 // under it, unless the case freezes or empties the capture after the
@@ -276,20 +285,20 @@ test.describe('the walk ends only with a witness that the cursor is at the last 
     // 0 during the walk; 1 after the witness's move back; 2 after its move
     // forward again. The overrides apply to those two reads only.
     let witness = 0;
-    const live = () => ({ phrase: elements[at] ?? '', position: `p${at}` });
+    const live = () => ({ phrase: elements[at] ?? '', position: pos(at) });
     return {
       next: async () => { moves++; if (witness === 1) witness = 2; if (at < elements.length - 1) at++; },
       previous: async () => { moves++; witness = 1; if (at > 0) at--; },
       capture: async () => {
         if (moves > after && capture !== 'live') {
-          frozen ??= { phrase: capture === 'empty' ? '' : elements[after - 1], position: `p${after - 1}` };
+          frozen ??= { phrase: capture === 'empty' ? '' : elements[after - 1], position: pos(after - 1) };
           return frozen;
         }
         if (witness === 1 && back) return back;
         if (witness === 2 && forward) return forward;
         return live();
       },
-      start: 'p-start',
+      start: pos(-1),
     };
   };
   const run = (screen, max) => collectWalk({ ...screen, max });
@@ -303,14 +312,14 @@ test.describe('the walk ends only with a witness that the cursor is at the last 
         await run(fake(extra, { after: whole.length, capture: 'frozen' })), 'wrong'],
       ['empty phrases with frozen bounds after the last expected stop',
         await run(fake(extra, { after: whole.length, capture: 'empty' })), 'wrong'],
-      ['the move back reads another stop', await run(fake(whole, { back: { phrase: '3', position: 'p-3' } })), 'wrong'],
+      ['the move back reads another stop', await run(fake(whole, { back: { phrase: '3', position: POS_OTHER } })), 'wrong'],
       ['the move back reads the right words at the last stop\'s position',
-        await run(fake(whole, { back: { phrase: whole.at(-2), position: `p${whole.length - 1}` } })), 'wrong'],
-      ['the move back reads an empty phrase', await run(fake(whole, { back: { phrase: '', position: 'p-x' } })), 'wrong'],
+        await run(fake(whole, { back: { phrase: whole.at(-2), position: pos(whole.length - 1) } })), 'wrong'],
+      ['the move back reads an empty phrase', await run(fake(whole, { back: { phrase: '', position: POS_OTHER } })), 'wrong'],
       ['the move forward again reads another stop',
-        await run(fake(whole, { forward: { phrase: 'Extra button', position: 'p-9' } })), 'wrong'],
+        await run(fake(whole, { forward: { phrase: 'Extra button', position: POS_OTHER } })), 'wrong'],
       ['the move forward again reads the last words elsewhere',
-        await run(fake(whole, { forward: { phrase: whole.at(-1), position: 'p-9' } })), 'wrong'],
+        await run(fake(whole, { forward: { phrase: whole.at(-1), position: POS_OTHER } })), 'wrong'],
       ['a walk that runs out of moves', await run(fake(whole), 3), 'incomplete'],
       ['a screen of one stop', await run(fake([whole[0]])), 'wrong'],
     ];
@@ -327,15 +336,15 @@ test.describe('the walk ends only with a witness that the cursor is at the last 
     // capture had frozen.
     expect(walk.stops).toEqual(whole);
     expect(judgeExampleWalk(walk.stops, true, EXPECTED_STOPS[slug], screenStops(slug)).verdict).toBe('complete');
-    expect(walk.witness.back).toEqual({ phrase: whole.at(-1), position: `p${whole.length - 1}` });
+    expect(walk.witness.back).toEqual({ phrase: whole.at(-1), position: pos(whole.length - 1) });
     expect(walk.problem).toMatch(/^the end is not witnessed/);
     const right = await run(fake(whole));
     expect(right.witness).toEqual({
-      back: { phrase: whole.at(-2), position: `p${whole.length - 2}` },
-      forward: { phrase: whole.at(-1), position: `p${whole.length - 1}` },
+      back: { phrase: whole.at(-2), position: pos(whole.length - 2) },
+      forward: { phrase: whole.at(-1), position: pos(whole.length - 1) },
     });
     expect(endRow(slug, 1, right.witness)).toBe(
-      `| \`${slug}-walk-1-end\` | back "${whole.at(-2)}" at p${whole.length - 2} / forward "${whole.at(-1)}" at p${whole.length - 1} |`);
+      `| \`${slug}-walk-1-end\` | back "${whole.at(-2)}" at ${pos(whole.length - 2)} / forward "${whole.at(-1)}" at ${pos(whole.length - 1)} |`);
   });
 });
 
@@ -353,7 +362,7 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
   const row = (slug, n, stops, verdict, end = verdict === 'complete') => [
     transcriptRow(slug, n, stops, verdict, 'x'),
     ...(end ? [endRow(slug, n, {
-      back: { phrase: stops.at(-2), position: 'p-back' }, forward: { phrase: stops.at(-1), position: 'p-last' },
+      back: { phrase: stops.at(-2), position: POS_BACK }, forward: { phrase: stops.at(-1), position: POS_LAST },
     })] : []),
   ].join('\n');
   const right = (slug) => row(slug, 1, walk(slug), 'complete');
@@ -414,28 +423,28 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
       ['an end witness whose move back read the last stop again (a frozen capture)', withRows((t) => {
         const w = walk(slugs[0]);
         t.chromium[0] = [transcriptRow(slugs[0], 1, w, 'complete', 'x'),
-          endRow(slugs[0], 1, { back: { phrase: w.at(-1), position: 'p-last' }, forward: { phrase: w.at(-1), position: 'p-last' } })].join('\n');
+          endRow(slugs[0], 1, { back: { phrase: w.at(-1), position: POS_LAST }, forward: { phrase: w.at(-1), position: POS_LAST } })].join('\n');
       }), false],
       ['an end witness whose move back read the right words at the last position', withRows((t) => {
         const w = walk(slugs[1]);
         t.chromium[1] = [transcriptRow(slugs[1], 1, w, 'complete', 'x'),
-          endRow(slugs[1], 1, { back: { phrase: w.at(-2), position: 'p-last' }, forward: { phrase: w.at(-1), position: 'p-last' } })].join('\n');
+          endRow(slugs[1], 1, { back: { phrase: w.at(-2), position: POS_LAST }, forward: { phrase: w.at(-1), position: POS_LAST } })].join('\n');
       }), false],
       ['an end witness whose move back read an empty phrase', withRows((t) => {
         const w = walk(slugs[2]);
         t.webkit[2] = [transcriptRow(slugs[2], 1, w, 'complete', 'x'),
-          endRow(slugs[2], 1, { back: { phrase: '', position: 'p-back' }, forward: { phrase: w.at(-1), position: 'p-last' } })].join('\n');
+          endRow(slugs[2], 1, { back: { phrase: '', position: POS_BACK }, forward: { phrase: w.at(-1), position: POS_LAST } })].join('\n');
       }), false],
       ['an end witness whose move forward read another stop', withRows((t) => {
         const w = walk(slugs[3]);
         t.webkit[3] = [transcriptRow(slugs[3], 1, w, 'complete', 'x'),
-          endRow(slugs[3], 1, { back: { phrase: w.at(-2), position: 'p-back' }, forward: { phrase: 'Extra button', position: 'p-other' } })].join('\n');
+          endRow(slugs[3], 1, { back: { phrase: w.at(-2), position: POS_BACK }, forward: { phrase: 'Extra button', position: POS_OTHER } })].join('\n');
       }), false],
       ['an end witness row twice', withRows((t) => {
         t.webkit[4] = `${t.webkit[4]}\n${t.webkit[4].split('\n')[1]}`;
       }), false],
       ['an end witness row for a walk that is not there', withRows((t) => {
-        t.webkit[5] = `${t.webkit[5]}\n${endRow(slugs[5], 2, { back: { phrase: 'a', position: '1' }, forward: { phrase: 'b', position: '2' } })}`;
+        t.webkit[5] = `${t.webkit[5]}\n${endRow(slugs[5], 2, { back: { phrase: 'a', position: POS_BACK }, forward: { phrase: 'b', position: POS_LAST } })}`;
       }), false],
       ['a stop past the end', withRows((t) => {
         t.webkit[3] = row(slugs[3], 1, [...walk(slugs[3]), ''], 'complete');
@@ -457,6 +466,11 @@ test.describe('the committed web VoiceOver transcript is judged from its rows al
     test.skip(!recordedWithWitness,
       'recorded before the end witness (collectWalk): the web VoiceOver transcript is to be recorded again');
     expect(judgeTranscript(committed)).toEqual([]);
+    // Every end row of the committed transcript is read whole, positions
+    // with their commas and spaces included: one per browser and example.
+    const ends = committed.split('\n').filter((l) => /^\| `[a-z-]+-walk-\d+-end` \|/.test(l));
+    expect(ends).toHaveLength(BROWSERS.length * Object.keys(EXPECTED_STOPS).length);
+    for (const line of ends) expect(line, line).toMatch(/ at \d+, \d+, \d+, \d+ \/ forward ".*" at \d+, \d+, \d+, \d+ \|$/);
   });
 });
 

@@ -493,8 +493,18 @@ as a stop, as the earlier walk did (`VoiceOverWalk.afterNoSpeech`), and an
 element VoiceOver never moves to is not seen on either platform.
 
 The web VoiceOver transcript committed at 90edde5 was recorded before the
-witness, so it has no witness rows; the web tree spec's test of it is
-skipped, with that reason, until the principal records it again.
+witness, so it had no witness rows, and the web tree spec's test of it was
+skipped with that reason. The principal recorded it again on 2026-11-27
+(`docs/evidence/S12/voiceover-web.md`): 14 walks of 14, each complete on
+its first walk in Chromium and WebKit, each with its end row, no empty stop
+and no help message; every move back read the stop before the last at
+another position, and every move forward the last stop again at its
+position, as the cursor's bounds show ("318, 355, 386, 375"). The readings
+are those of the two recordings before. The test runs on it and passes. A
+cursor position has commas and spaces, which S17 found its copy of this
+judge read as malformed; the end-row pattern here reads it whole, and the
+made-up rows and walks now use positions in that form, so a pattern that
+read it as one word would fail them.
 The evidence run after this change (2026-11-27, `--only
 ios,voiceover-ios,web`) passed all three: every iOS walk ended with its
 witness, the move back reading the stop before the last and the move
