@@ -94,12 +94,14 @@ link example, because a Flutter link is hand-built (FL-221).
   WebKit read Material's spinner "Loading inbox empty group". In
   Chromium, VoiceOver's next-item command passed over it, in three
   recordings.
-- **FL-262: on the web a heading level takes the role of the control it
-  is merged into.** A `ListTile`, an `InkWell` or a `TestId` round a
-  heading is only a heading on the web. Android and iOS keep both.
-- **FL-296: a `SnackBar` shown from a `SnackBarAction`'s `onPressed`** is
-  hidden at once when `accessibleNavigation` is on, which a screen reader
-  turns on.
+- **FL-262: on the web a heading is never a button.** A node with both a
+  heading level and a button flag, such as a `ListTile(onTap:)` whose
+  title is a heading, is a heading only on the web, with no button role.
+- **FL-296: a `SnackBar` shown from a `SnackBarAction`'s `onPressed`,
+  after `clearSnackBars` or `hideCurrentSnackBar` there,** never appears
+  when `accessibleNavigation` is on: the action hides it. Without the
+  clearing call the new one is queued and appears. Measured on the web
+  and in widget tests.
 
 ## Test-tool findings
 
@@ -140,7 +142,7 @@ link example, because a Flutter link is hand-built (FL-221).
 
 - HTTP 429 from Maven Central while Gradle downloaded, twice.
 - iOS, a tap that did not arrive: C01
-  `testGoodButtonsExposeNameRoleStateAndActivate` (three times on pull
+  `testGoodButtonsExposeNameRoleStateAndActivate` (twice on pull
   request 201), C02 `testBadSelectedOnlyIsAButtonThatIsSelectedOrNot`
   (202), F08 `testGoodExamplesHaveTheQuestionAsOneElement` ("did not
   open after three attempts", 207).
@@ -178,9 +180,9 @@ A re-run passed each time. None has been steadied.
   row.
 - A shared Android lookup that searches the app's own window and does
   not throw inside a wait, and a shared "wait for the keyboard, then put
-  it away" step. 28 of the 29 Android test classes use the shared
-  lookup, so the change needs every technique's Android suite run at
-  CI's screen size.
+  it away" step. All 35 Android test classes extend `TechniqueTest`,
+  where the lookup is, so the change needs every technique's Android
+  suite run at CI's screen size.
 - The shared iOS helper `VoiceOverWalk.forwardToRepeat` skips a failed
   move. F01, S01 and S05 use it.
 - The lost taps on CI's iOS simulator, listed above.
