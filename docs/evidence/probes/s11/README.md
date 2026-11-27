@@ -73,4 +73,73 @@ How each platform was looked at, and the raw output:
 
 ## What was found
 
-To be completed with the device results.
+Orders are written with the fixture's part names; "A0..A3" is a whole
+column joined into one node.
+
+| # | Every platform's order (widget tests, web, Android tree, TalkBack, VoiceOver on iOS) |
+| --- | --- |
+| r01 | A0, B0, A1, B1, A2, B2, A3: row by row |
+| r02 | A0..A3, B0..B2: each column one node |
+| r03 | A0, A1, B0, B1, B2, A2, A3: part of each column down it, where the rows overlap |
+| r04 | row by row, as r01 |
+| r05 | row by row, as r01: built by rows or by columns makes no difference |
+| r06 | A0, A1, A2, A3, B0, B1, B2: the column order |
+| r07 | the column order, as r06 (a key with no container works) |
+| r08 | A0, B0, A1, A2, A3, B1, B2: the unkeyed B0 stays second (FL-340) |
+| r09 | row by row, as r01: the keys inside `MergeSemantics` count for nothing (FL-341) |
+| r10 | B0..B2, A0..A3: the right column first |
+| r11 | B0..B2, B btn, A0..A3, A btn; Tab: A btn, then B btn (FL-420) |
+| r12 | as r11; Tab: B btn, then A btn |
+| r13 | A0..A3, A9 grafted, B0..B2: the grafted text read in the left column |
+| r14 | B0..B2, A0..A3: in a right-to-left `Directionality`, with the columns' places swapped on the screen, still read left first |
+| r15 | A0..A3, A btn, B0..B2, B btn; Tab: A btn, then B btn |
+| r16 | A0, A1, A2, A3, B0, B1, B2: each column kept, each part its own node |
+| r17 | A0..A3 (on the right), then B0..B2: with the `Row`'s semantics given `textDirection: rtl`, read right first |
+| r18 | B0, B1, B2, A0, A1, A2, A3 |
+| r19 | B0, B1, B2, B btn, A0 .. A3, A btn; Tab: B btn, then A btn |
+| r20 | A0, A1, A2, A3, A btn, B0, B1, B2, B btn; Tab: A btn, then B btn |
+
+- **The order is the framework's, the same everywhere.** For every
+  fixture, the widget tests' traversal order (`flutter_test.txt`, at both
+  sizes), the document's order and Chromium's tree on the web
+  (`web.txt`, at both sizes), the Android tree (`android-tree.txt`), the
+  stops TalkBack's own "next" moved to (`android-talkback-order.txt`, and
+  what it said, `android-talkback.md`), and the stops VoiceOver's
+  `moveForward()` moved to on iOS (`ios.txt`, "VO" lines) were the same.
+  On Android each node's traversal-after link is the node before it
+  (`android-tree.txt`).
+- **TalkBack's own navigation can be driven.** Search (Meta) and Right on
+  a keyboard registered with the shell's `uinput` tool moved TalkBack's
+  focus to the next node; Alt and Right did not, at the first press of each of the twenty fixtures (
+  "Alt+Right did not move", in `android-talkback-order.txt`). Earlier
+  techniques found that a swipe, `input swipe`, and `input keycombination`
+  did not move it (S03, C04).
+- **XCUITest's own list of elements is not VoiceOver's order** once an
+  element has children: it lists an element's children after the
+  elements beside it (`ios.txt`, "element order", r11 to r13 and r15 to r20, where the
+  "After" line comes before the columns). For the flat fixtures it was the
+  same as VoiceOver's.
+- **Tab** went by position in every fixture without a focus order: Back,
+  the left button, the right button (r11, r15, r20), and with
+  `OrderedTraversalPolicy` and a `FocusTraversalOrder` round each column's
+  group, in that order (r12, r19): in the widget tests, Chromium, the
+  Android emulator (`uinput` keyboard, Tab and Shift+Tab), and the iOS
+  simulator (one to three Tabs then Space; Shift+Tab not sent). In
+  Chromium, r11's Tab never left the page: Flutter's last control, the
+  right button, is not the document's last (FL-421); Shift+Tab got out.
+- **Right-to-left** (r14, r17, and `flutter_test_round2.txt`): a
+  `Directionality` round the columns swaps their places on the screen but
+  not the reading order, which still starts at the left; a `Semantics`
+  with `textDirection: TextDirection.rtl` round them starts it at the
+  right. The text direction the order is sorted by is taken from the
+  nearest node above that has one, and in these fixtures that was a node
+  of the app's own above the screen, left to right (round 2's
+  "ancestors" line). In an app made right-to-left only with
+  `Directionality` in `MaterialApp.builder`, with an English locale, the
+  columns were still read left first (round 2). An app in a right-to-left
+  locale was not tried; S11 does not cover right-to-left.
+- **Plain HTML** (`web.txt`, "html" lines): two columns written one after
+  the other and laid out side by side with flex are read one, then the
+  other; the same parts written row by row in a grid are read row by row;
+  CSS `order` moves a column on the screen and not in the reading order.
+  The document's order decides, as Understanding 1.3.2's C27 says.

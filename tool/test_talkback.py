@@ -554,7 +554,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26"})
+        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S11"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
@@ -710,6 +710,61 @@ class C06SilentClicks(unittest.TestCase):
         speech = dict(self.right)
         speech["c06-bad-expand-icon-closed"] = self.right["c06-bad-expand-icon-closed"] + ["Orders ship in two days."]
         self.assertEqual(self.judge(speech), ("right", []))
+
+
+class S11OrderedWalk(unittest.TestCase):
+    """S11's walk moves TalkBack with its own "next" key and logs a marker
+    before each press (S11ReadingTraversalOrderTest.talkBackWalk), so each
+    row is what TalkBack said after one move. A row must name the part
+    meant there and no other part, so a walk that moves in a different
+    order is wrong, not only one that says the wrong words."""
+    PREFIX = "s11-"
+
+    def setUp(self):
+        self.expected = [i for i in tb.EXPECT if i.startswith(self.PREFIX)]
+        self.assertEqual(len(self.expected), 44)
+        self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
+        self.right = {i: list(tb.EXPECT[i][0]) for i in self.expected}
+
+    def judge(self, speech):
+        cut, closed = {}, set()
+        spoken = tb.parse_speech(log_for(speech), cut, closed)
+        return tb.judge_walk(spoken, self.expected, cut, closed)
+
+    def test_the_right_walk_is_right(self):
+        self.assertEqual(self.judge(self.right), ("right", []))
+
+    def test_good_columns_read_across_the_columns_is_wrong(self):
+        # TalkBack moving row by row through good-columns, as it does
+        # through bad-columns-mixed: the second row says "Bring".
+        speech = dict(self.right)
+        for n in range(1, 12):
+            speech[f"s11-good-columns-{n}"] = list(tb.EXPECT[f"s11-bad-columns-mixed-{n}"][0])
+        verdict, reasons = self.judge(speech)
+        self.assertEqual(verdict, "wrong")
+        self.assertTrue(any(r.startswith("s11-good-columns-2:") for r in reasons), reasons)
+
+    def test_two_stops_the_other_way_round_are_wrong(self):
+        speech = dict(self.right)
+        speech["s11-good-sort-keys-2"], speech["s11-good-sort-keys-3"] = (
+            self.right["s11-good-sort-keys-3"], self.right["s11-good-sort-keys-2"])
+        self.assertEqual(self.judge(speech)[0], "wrong")
+
+    def test_a_count_does_not_pass_for_a_heading_or_a_button(self):
+        # "Route saves: 0" holds "Route" and "saves": it must not pass as
+        # the Route heading, nor as Save route.
+        speech = dict(self.right)
+        speech["s11-good-columns-1"] = ["Route saves: 0"]
+        self.assertEqual(self.judge(speech)[0], "wrong")
+        speech = dict(self.right)
+        speech["s11-good-columns-5"] = ["Route saves: 0"]
+        self.assertEqual(self.judge(speech)[0], "wrong")
+
+    def test_a_press_that_moved_nothing_is_incomplete(self):
+        # Nothing said after a press: walked again, never passed.
+        speech = dict(self.right)
+        speech["s11-bad-key-missing-4"] = []
+        self.assertEqual(self.judge(speech), ("incomplete", ["s11-bad-key-missing-4: nothing was spoken"]))
 
 
 class FakeSettingsScreen:

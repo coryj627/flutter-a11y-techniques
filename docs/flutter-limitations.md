@@ -160,6 +160,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-296](#fl-296) | A SnackBar shown from a `SnackBarAction`'s `onPressed`, after `clearSnackBars` or `hideCurrentSnackBar` there, never appears when `accessibleNavigation` is on: the action hides it | Web; widget tests (Android and iOS not run) | Confirmed |
 | [FL-297](#fl-297) | On the web, whether VoiceOver in Chromium said what a SnackBar or banner action did, when Enter on that action removed the control, varied between recordings, and the live-region line that now says it was not heard in its one recording | Web (Chromium, VoiceOver, Enter) | Observed |
 | **FL-300 to FL-399** | Wave 3, structure and order | | |
+| [FL-340](#fl-340) | A node with no sort key keeps its place by position and splits the keyed nodes round it into runs that are sorted apart | All | Confirmed |
+| [FL-341](#fl-341) | A sort key inside `MergeSemantics` does not order the merged node | All | Confirmed |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
@@ -4613,6 +4615,83 @@ yet), **Fixed in x.y** (verified on that version).
 
 <!-- FL-300 to FL-399: Wave 3, structure and order. Entries in this range go below, in id order. -->
 
+## FL-340
+
+**A node with no sort key keeps its place by position and splits the keyed nodes round it into runs that are sorted apart.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the S11
+  probe (`docs/evidence/probes/s11/`, fixture r08). Asserted on the SDK
+  alone by the S11 widget test "FL-340", and by every S11 layer's tests
+  of `bad-key-missing`, written to fail when an unkeyed node no longer
+  splits the runs. Framework source read: `semantics/semantics.dart`
+  (`SemanticsNode._childrenInTraversalOrder`): the children are first put
+  in the default order, by position; then each run of neighbours whose
+  keys are of the same type and name is sorted, and "groups with null sort
+  keys" are not sorted. A node with no key ends the run before it and
+  starts a new one.
+- WCAG: 1.3.2 Meaningful Sequence, where the order the keys were meant to
+  give carries the meaning (S11 `bad-key-missing`, on every platform).
+- What happens: in a two-column layout built row by row (r08, and S11
+  `bad-key-missing`), every part is keyed in column order but one, the
+  right column's title, which sits second by position. The parts before
+  it and after it are sorted as two runs, and the title stays second:
+  - Widget tests: r08 read A0, B0, A1, A2, A3, B1, B2 (`flutter_test.txt`),
+    where every part keyed reads A0 to A3, then B0 to B2 (r06).
+  - Web: the elements are in the document in that order
+    (`web.txt`, r08 "dom order"), and so in Chromium's tree.
+  - Android: the nodes are in the tree in that order, each one's
+    traversal-after link to the one before (`android-tree.txt`), and
+    TalkBack's own "next" moved in that order
+    (`android-talkback-order.txt`, r08).
+  - iOS: VoiceOver's own moves (`moveForward()`) went in that order
+    (`ios.txt`, "VO r08").
+  - S11 `bad-key-missing`: the "Bring" heading is read second, then the
+    route's steps and its button, then the list's items with no heading
+    before them, in the widget tests, the web tree, the Android tree,
+    TalkBack's walk, the iOS tree, and VoiceOver on iOS (S11's tests and
+    transcripts).
+- Why it matters: the documentation of `sortKey` says it "determines the
+  position of this node among its siblings", and of `SemanticsSortKey`
+  that a node with no key is "ordered using a platform dependent default
+  algorithm"; neither says that a node with no key also stops the keys
+  either side of it from being compared. A key added to most of a screen's
+  parts, as the iOS and Android Compose references do with sort priority
+  and `traversalIndex` for the parts that need moving, silently does
+  nothing for the parts on the other side of one that was missed.
+- Workaround, in the SDK: give every sibling that has to be ordered a key
+  (S11 `good-sort-keys`), or, better, a container per group, which needs
+  no key (S11 `good-columns`).
+- How to read this entry: Flutter has not documented this yet; it is how
+  its sort is written.
+- Upstream issue: not searched yet (D25).
+
+## FL-341
+
+**A sort key inside `MergeSemantics` does not order the merged node.**
+
+- Status: Confirmed, Flutter 3.47.5, all platforms. Found in the S11
+  probe (fixture r09), and noted before in passing in
+  [FL-413](#fl-413)'s workaround ("Not inside `MergeSemantics`, which
+  drops the sort key"). Asserted on the SDK alone by the S11 widget test
+  "FL-341", written to fail when a key inside the merge starts to count.
+  Why the key is lost was not read in the source.
+- WCAG: 1.3.2 Meaningful Sequence, where the key carries the order meant.
+- What happens: r09 is r06, every part keyed in column order, with each
+  keyed part inside a `MergeSemantics`, as the project's `TestId` puts one
+  round a control, and as a `ListTile` or a button merges its own content.
+  The keys did nothing, and the parts were read by position, row by row:
+  A0, B0, A1, B1, A2, B2, A3, in the widget tests (`flutter_test.txt`),
+  in the document's order on the web (`web.txt`), in the Android tree and
+  TalkBack's own moves (`android-tree.txt`, `android-talkback-order.txt`),
+  and in VoiceOver's own moves on iOS (`ios.txt`, "VO r09"). The same key on a `Semantics(container: true)` round the
+  `MergeSemantics` orders it (the SDK-alone widget test; S11
+  `good-sort-keys`, whose buttons are keyed outside their `TestId`).
+- Why it matters: a key put on a control's own content, such as a
+  `ListTile`'s title, or inside a wrapper that merges, is silently lost.
+- Workaround, in the SDK: put the key on a `Semantics(container: true)`
+  outside the merging widget (S11 `good-sort-keys`).
+- Upstream issue: not searched yet (D25).
+
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->
 
 ## FL-400
@@ -5029,6 +5108,52 @@ yet), **Fixed in x.y** (verified on that version).
   `OrderedTraversalPolicy` with a `FocusTraversalOrder` on every control,
   and an `OrdinalSortKey` with the same numbers (I02 `good-ordered`).
   Verified at every I02 layer.
+- Measured again in S11 Reading and traversal order (2026-11-26), from
+  the screen reader's side, with each screen reader's own navigation
+  (`docs/evidence/probes/s11/`): TalkBack's "next" (Search and Right on a
+  keyboard registered with the shell's `uinput` tool), VoiceOver's
+  `moveForward()` on iOS, and the document's order and Chromium's tree on
+  the web (VoiceOver on the web: S11's recording):
+  - The order is the framework's, the same on every platform. In all
+    twenty probe fixtures the widget tests' traversal order, the web
+    document's order, the Android tree's order, the stops TalkBack moved
+    to, and the stops VoiceOver on iOS moved to were the same
+    (`flutter_test.txt`, `web.txt`, `android-tree.txt`,
+    `android-talkback-order.txt`, `ios.txt`). XCUITest's own list of
+    elements is not that order once an element has children: it gives an
+    element's children after the elements beside it (`ios.txt`, "element
+    order", r11 to r13 and r15 to r20).
+  - It ignores how the widgets are written. Two columns written as a `Row`
+    of two `Column`s (r01) and the same parts written row by row (r05)
+    were read the same, row by row, on every platform. With the left
+    parts taller, so that the rows overlap (r03), part of each column was
+    read down it: A0, A1, B0, B1, B2, A2, A3. With no space between the
+    parts (r04), row by row.
+  - So one layout can be read in different orders on different screens.
+    S11 `bad-columns-mixed` was read in six different orders in the widget
+    tests (three screen sizes, 100% and 200% text, with the test font), and
+    row by row throughout in Chromium at 1280 by 720 and at 320 by 640
+    (S11's tests), on the local Android emulator (1080 by 2424 at 420 dpi)
+    and at CI's size (320 by 640 at 160 dpi), in TalkBack's own moves, and
+    in VoiceOver's on the iOS simulator (S11's transcripts): with a real
+    font each step fits on one line, so the rows are level.
+  - A semantics container per column (r02) keeps each column together,
+    and joins the column's texts into one node, read in one go, unless it
+    has `explicitChildNodes: true` (r16), which keeps each part a stop: on
+    every platform. S11 `good-columns` uses both.
+  - A sort key changes the screen reader's order and not Tab's, on every
+    platform: with the right column keyed first (r11), every screen reader
+    read it first, and Tab still reached the left column's button first,
+    in the widget tests, in Chromium, on the Android emulator (a `uinput`
+    keyboard), and on the iOS simulator (Tab then Space). An
+    `OrderedTraversalPolicy` with a `FocusTraversalOrder` round each
+    column's `FocusTraversalGroup` (r12, r19) brought Tab into the same
+    order on every platform. Asserted on the SDK alone by S11's widget
+    test "FL-420: a sort key changes the reading order and not Tab".
+  - `Semantics(traversalParentIdentifier:)` and `traversalChildIdentifier:`
+    (documented as "primarily used with `OverlayPortal`") put a text from
+    below the columns into the left column's place in the order on every
+    platform (r13). Not used by any example.
 - How to read this entry: this is how Flutter's default policy is
   documented to work, not a defect in it. It is logged because it differs
   from the platforms Flutter runs on, and because nothing ties the two
@@ -5066,6 +5191,17 @@ yet), **Fixed in x.y** (verified on that version).
   in the semantics order, which is the document's: give every control
   its place in both orders (FL-420), as I02 `good-ordered` does; there,
   Tab past Save plan leaves the page.
+- A sort key can cause it (S11 probe, 2026-11-26, Chromium): in fixture
+  r11 the right column is keyed to be read first, so its button is
+  earlier in the document than the left column's, while Tab, by position,
+  reaches the left column's button first. Flutter's last control is then
+  not the document's last, and Tab went Back, left button, right button,
+  left button, right button, and so on, never leaving the page; Shift+Tab
+  got out (`docs/evidence/probes/s11/web.txt`, r11). With the keyboard
+  given the same order as the screen reader (r12, r19), Tab left the
+  page after the last button. All four S11 examples keep the two orders'
+  last control the same, and Tab leaves the page in each (S11's web tree
+  test).
 - Upstream issue: not searched yet (D25).
 
 ## FL-422

@@ -90,13 +90,14 @@ example is added without a decision.
 | [S03 Decorative images](#s03-decorative-images) | 5 | 0 | 0 | 5 |
 | [S04 Functional images](#s04-functional-images) | 6 | 3 | 0 | 3 |
 | [S05 Headings](#s05-headings) | 2 | 0 | 0 | 2 |
+| [S11 Reading and traversal order](#s11-reading-and-traversal-order) | 2 | 0 | 0 | 2 |
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 125 | 51 | 12 | 62 |
+| All | 127 | 51 | 12 | 64 |
 
 ## C01 Button
 
@@ -399,6 +400,15 @@ Nothing flagged.
 | --- | --- | --- | --- | --- | --- |
 | `good-levels` | Nothing: `Semantics(header: true, headingLevel:)` | `Semantics.headingLevel` | none | R1, R2, R4: iOS Headings, Android Compose Heading Semantics, Android View Heading Semantics, MDN heading elements | not custom |
 | `good-cupertino` | Nothing: `Semantics(header: true, headingLevel: 3)` as a `CupertinoListSection` header | `CupertinoListSection` | The header is not a heading ([FL-014](flutter-limitations.md#fl-014)), filled with the documented property | R1: iOS Headings, Android Compose Heading Semantics, Android View Heading Semantics | not custom |
+
+## S11 Reading and traversal order
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-columns` | Nothing: `Semantics(container: true, explicitChildNodes: true)` and a `FocusTraversalGroup` round each `Column`, `TextButton`s with a focus outline from their own `style` | `Semantics.container`, `FocusTraversalGroup` | none | R1, R2, R4, R5: iOS Reading Order, Android View Accessibility Reading Order, Android Compose Accessibility Traversal Order, Understanding 1.3.2, Understanding 2.4.3 | not custom |
+| `good-sort-keys` | Nothing: `Semantics(container: true, sortKey: OrdinalSortKey(n))` on every part, as the `sortKey` documentation describes ("the position of this node among its siblings") | `Semantics.sortKey`, `OrdinalSortKey` | A part with no key is not sorted with the others ([FL-340](flutter-limitations.md#fl-340)), filled by giving every part its key | R1, R3, R4, R5: iOS Reading Order, iOS Accessibility Sort Priority, Android Compose Accessibility Traversal Order, Understanding 1.3.2, Understanding 2.4.3 | not custom |
 
 ## S13 Roles and traits
 
