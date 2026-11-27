@@ -169,9 +169,10 @@ Widget rowBuilt(
 /// column and then the other, and keeps each part a stop of its own with
 /// `explicitChildNodes` (without it the container joins the column's texts
 /// into one node). Each column is also a `FocusTraversalGroup`, so Tab
-/// reaches the buttons in the same order: the right column's button is
-/// higher on the screen, and Tab, which goes by position, would reach it
-/// first without the groups.
+/// reaches the buttons in the same order whatever their heights: the right
+/// column's button is higher on the screen, and without the groups Tab,
+/// which goes by position, reached it first in the widget tests at most
+/// sizes measured.
 class GoodColumns extends StatelessWidget {
   const GoodColumns({super.key});
 

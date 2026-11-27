@@ -8,9 +8,9 @@ ANDROID_TEST = "S11ReadingTraversalOrderTest"
 IOS_TEST = "S11ReadingTraversalOrderUITests"
 WEB_VO_SPEC = "s11_reading_traversal_order_vo.spec.js"
 
-# Each part of the screen after the "Example" heading, as TalkBack reads it:
-# (phrases that must be spoken). A heading is its text and "Heading", a
-# button its text and "Button" (the usage hint is not required, as in C18).
+# Each part of the screen after the "Example" heading, as TalkBack reads it,
+# one utterance each: a heading is its text and "Heading", a button its text
+# and "Button" (TalkBack's usage hint is let through and not required).
 _PARTS = {
     "route": ["Route", "Heading"],
     "park": ["Park at the gate."],
@@ -44,18 +44,11 @@ _ROLES = ("Heading", "Button")
 
 
 def _forbidden(part):
-    """What this part's row must not say: every other part's whole label,
-    and every role word this part does not have.
-
-    The labels overlap ("Route" is in "Save route" and in "Route saves: 0"),
-    and talkback.py finds a phrase anywhere in what was said, so a label
-    that is part of this row's own label cannot be forbidden in it. Each of
-    those is told apart by its role instead: "Route" is a heading, and a
-    button's or a count's row must not say "Heading"; "Save route" is a
-    button, and a heading's or a count's row must not say "Button". So any
-    other part's reading heard in a row fails it (S11OrderedWalk in
-    tool/test_talkback.py tries every part's reading in every row).
-    """
+    """Every other part's whole label that this part's own utterances do not
+    hold, and every role word this part does not have. The row is judged by
+    whole utterances first (below); these are checked as well, in every
+    fragment captured, so that a capture cut off in the log is still wrong
+    when what was captured of it names another part."""
     mine = " ".join(_PARTS[part]).lower()
     labels = [_PARTS[p][0] for p in _PARTS if p != part and _PARTS[p][0].lower() not in mine]
     return labels + [r for r in _ROLES if r not in _PARTS[part]]
@@ -65,9 +58,14 @@ def _forbidden(part):
 # must not be). "s11-<example>-<n>" is what TalkBack said after its n-th
 # press of "next" (Search and Right on a keyboard), counted from the "Example"
 # heading: so each row checks both which part TalkBack moved to and what it
-# said there.
+# said there. The one required phrase starts with "(utterances) "
+# (talkback.UTTERANCES): what TalkBack said, its usage hint left out, must be
+# exactly the part's utterances, in order, and nothing more. Labels overlap
+# ("Route" is in "Save route" and in "Route saves: 0"), so a phrase found
+# anywhere in what was said could not tell a row's own label from another
+# part's said beside it; a whole utterance can.
 TALKBACK_EXPECT = {
-    f"s11-{slug}-{n}": (_PARTS[part], _forbidden(part))
+    f"s11-{slug}-{n}": (["(utterances) " + " / ".join(_PARTS[part])], _forbidden(part))
     for slug, order in _ORDERS.items()
     for n, part in enumerate(order, 1)
 }
@@ -77,7 +75,8 @@ TALKBACK_METHOD = (
     "TalkBack focus put on the example's \"Example\" heading by action, then moved with TalkBack's "
     "own \"next\", Search (Meta) and Right on a keyboard registered with the shell's `uinput` tool, once per row: "
     "`<example>-<n>` is everything TalkBack said after the n-th press, so each row shows where "
-    "TalkBack moved as well as what it said, and must name that part and no other. Speech read "
+    "TalkBack moved as well as what it said, and must be exactly that part's utterances, its usage "
+    "hint aside, and nothing more. Speech read "
     "from TalkBack's verbose log. Each walk is judged whole: a wrong reading fails for good, and "
     "only a walk shown to be incomplete is walked again"
 )

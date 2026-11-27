@@ -114,8 +114,9 @@ column joined into one node.
   "aria-owns/flowto", the only fixture with one), and Chromium's tree
   follows it. Which of the two VoiceOver on the web follows for r13 was
   not measured: no web VoiceOver walk was made in the probe.
-  On Android each node's traversal-after link is the node before it
-  (`android-tree.txt`).
+  On Android each node's traversal-after link is its sibling before it, and
+  a node that is the first child of its parent has none (`android-tree.txt`,
+  for example r16's A0 and B0).
 - **TalkBack's own navigation can be driven.** Search (Meta) and Right on
   a keyboard registered with the shell's `uinput` tool moved TalkBack's
   focus to the next node; Alt and Right did not, at the first press of each of the twenty fixtures (

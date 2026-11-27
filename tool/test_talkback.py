@@ -725,7 +725,15 @@ class S11OrderedWalk(unittest.TestCase):
         self.expected = [i for i in tb.EXPECT if i.startswith(self.PREFIX)]
         self.assertEqual(len(self.expected), 44)
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
-        self.right = {i: list(tb.EXPECT[i][0]) for i in self.expected}
+        self.right = {i: self.utterances(i) for i in self.expected}
+
+    @staticmethod
+    def utterances(ident):
+        """The whole utterances a row expects, from its one
+        "(utterances) A / B" phrase (tb.UTTERANCES)."""
+        (phrase,) = tb.EXPECT[ident][0]
+        assert phrase.startswith(tb.UTTERANCES), phrase
+        return phrase[len(tb.UTTERANCES):].split(" / ")
 
     def judge(self, speech):
         cut, closed = {}, set()
@@ -740,7 +748,7 @@ class S11OrderedWalk(unittest.TestCase):
         # through bad-columns-mixed: the second row says "Bring".
         speech = dict(self.right)
         for n in range(1, 12):
-            speech[f"s11-good-columns-{n}"] = list(tb.EXPECT[f"s11-bad-columns-mixed-{n}"][0])
+            speech[f"s11-good-columns-{n}"] = self.utterances(f"s11-bad-columns-mixed-{n}")
         verdict, reasons = self.judge(speech)
         self.assertEqual(verdict, "wrong")
         self.assertTrue(any(r.startswith("s11-good-columns-2:") for r in reasons), reasons)
@@ -780,7 +788,7 @@ class S11OrderedWalk(unittest.TestCase):
     def test_every_other_parts_reading_fails_every_row(self):
         # Each part's whole reading, as TalkBack gives it, heard after the
         # row's own reading in any row of any example, fails that row.
-        readings = {tuple(v[0]) for i, v in tb.EXPECT.items() if i.startswith(self.PREFIX)}
+        readings = {tuple(self.utterances(i)) for i in self.expected}
         for row in self.expected:
             for reading in readings:
                 if list(reading) == self.right[row]:
@@ -788,6 +796,49 @@ class S11OrderedWalk(unittest.TestCase):
                 speech = dict(self.right)
                 speech[row] = self.right[row] + list(reading)
                 self.assertEqual(self.judge(speech)[0], "wrong", (row, reading))
+
+    def labels(self):
+        """Every part's label, the first utterance of its reading."""
+        return sorted({self.utterances(i)[0] for i in self.expected})
+
+    def test_every_other_label_alone_fails_every_row(self):
+        # Codex's second review: "Route" said as a fragment of its own beside
+        # "Save route" or "Route saves: 0" must fail, as must every other
+        # label, before or after the row's own utterances.
+        for row in self.expected:
+            own = self.right[row][0]
+            for label in self.labels():
+                if label == own:
+                    continue
+                for speech_row in (self.right[row] + [label], [label] + self.right[row]):
+                    speech = dict(self.right)
+                    speech[row] = speech_row
+                    self.assertEqual(self.judge(speech)[0], "wrong", (row, speech_row))
+
+    def test_every_other_label_joined_to_the_rows_own_fails(self):
+        for row in self.expected:
+            own = self.right[row][0]
+            for label in self.labels():
+                if label == own:
+                    continue
+                for joined in (f"{own} {label}", f"{label} {own}", f"{own}, {label}"):
+                    speech = dict(self.right)
+                    speech[row] = [joined] + self.right[row][1:]
+                    self.assertEqual(self.judge(speech)[0], "wrong", (row, joined))
+
+    def test_route_alone_beside_save_route_or_route_saves(self):
+        for row in ("s11-good-columns-5", "s11-good-columns-10", "s11-bad-key-missing-6"):
+            speech = dict(self.right)
+            speech[row] = self.right[row] + ["Route"]
+            verdict, reasons = self.judge(speech)
+            self.assertEqual(verdict, "wrong", row)
+            self.assertTrue(any(r.startswith(f"{row}: expected exactly") for r in reasons), reasons)
+
+    def test_the_usage_hint_is_let_through_and_not_required(self):
+        speech = dict(self.right)
+        speech["s11-good-columns-5"] = ["Save route", "Button", "Press select to activate"]
+        speech["s11-good-columns-9"] = ["Save list", "Button", "Double-tap to activate"]
+        self.assertEqual(self.judge(speech), ("right", []))
 
     def test_the_committed_transcript_judges_right(self):
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "docs", "evidence",

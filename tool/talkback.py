@@ -440,6 +440,36 @@ def said(fragments, phrase):
     return word in " | ".join(fragments)
 
 
+# A row whose one required phrase starts with this is judged by whole
+# utterances (utterance_problems): "(utterances) Save route / Button" means
+# that TalkBack's fragments, with its usage hint left out (USAGE_HINT), must
+# be exactly "Save route" and then "Button", nothing more. Only S11 uses it
+# (tool/techniques/s11_reading_traversal_order.py), where labels overlap
+# ("Route" is in "Save route") and a phrase found anywhere cannot tell the
+# row's own label from another part's said beside it.
+UTTERANCES = "(utterances) "
+
+# TalkBack's usage hints, which a whole-utterance row lets through.
+USAGE_HINT = re.compile(r"^(Double-tap|Press select) to activate\.?$", re.I)
+
+
+def utterance_problems(ident, spoken_fragments, expected, must_not=()):
+    """What is wrong with a whole-utterance row (UTTERANCES): the spoken
+    fragments, stripped and with any usage hint left out, must be the
+    expected ones exactly, in order, case aside; and no phrase of
+    `must_not` may be in them."""
+    want = [u.strip() for u in expected[len(UTTERANCES):].split(" / ")]
+    heard = [f.strip() for f in spoken_fragments if not USAGE_HINT.match(f.strip())]
+    found = []
+    if [h.lower() for h in heard] != [w.lower() for w in want]:
+        found.append(f'{ident}: expected exactly "{" / ".join(want)}", heard "{" / ".join(heard)}"')
+    lowered = [f.lower() for f in spoken_fragments]
+    joined = " | ".join(lowered)
+    found += [f'{ident}: did not expect "{phrase}" in "{joined}"'
+              for phrase in must_not if unwanted(lowered, phrase)]
+    return found
+
+
 def problems(ident, spoken_fragments):
     """What is wrong with the speech for one element; empty when it is as
     expected. An element with no expectations only has to have been spoken."""
@@ -450,6 +480,8 @@ def problems(ident, spoken_fragments):
     if ident not in EXPECT:
         return [] if fragments else [f"{ident}: nothing was spoken"]
     must, must_not = EXPECT[ident]
+    if len(must) == 1 and must[0].startswith(UTTERANCES):
+        return utterance_problems(ident, spoken_fragments, must[0], must_not)
     found = [f'{ident}: expected "{phrase}" in "{joined}"'
              for phrase in must if not said(fragments, phrase)]
     found += [f'{ident}: did not expect "{phrase}" in "{joined}"'

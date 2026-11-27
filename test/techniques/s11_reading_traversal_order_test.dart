@@ -598,6 +598,67 @@ void main() {
     });
   });
 
+  group('good-columns without its focus groups', () {
+    // What the FocusTraversalGroups of good-columns are measured to do, in
+    // the widget tests only (the test font): the same two columns, each a
+    // semantics container, without the groups. The Bring column is
+    // shorter, so its button is higher, and Tab, by position, reached Save
+    // list first at five of the six sizes; at 800 by 600 and 100% the two
+    // buttons' rows overlap and Save route came first. Not measured on a
+    // device: the probe's r15, with one part less in its right column,
+    // went to the left button first everywhere.
+    const first = {
+      '412 100': 'Save list',
+      '412 200': 'Save list',
+      '320 100': 'Save list',
+      '320 200': 'Save list',
+      '800 100': 'Save route',
+      '800 200': 'Save list',
+    };
+    for (final size in _sizes) {
+      for (final scale in [1.0, 2.0]) {
+        final key = '${size.width.toInt()} ${(scale * 100).toInt()}';
+        testWidgets('at $key% Tab reaches ${first[key]} first', (tester) async {
+          tester.view.physicalSize = size;
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          tester.platformDispatcher.textScaleFactorTestValue = scale;
+          addTearDown(tester.platformDispatcher.clearAllTestValues);
+          final handle = tester.ensureSemantics();
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Plan(
+                    slug: 'no-groups',
+                    builder: (context, plan) => sideBySide(
+                      Semantics(
+                        container: true,
+                        explicitChildNodes: true,
+                        child: stack(routeColumn(context, plan)),
+                      ),
+                      Semantics(
+                        container: true,
+                        explicitChildNodes: true,
+                        child: stack(bringColumn(context, plan)),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          final stops = await _keyStops(tester, 2);
+          expect(stops.first, first[key]);
+          expect(stops.toSet(), {'Save route', 'Save list'});
+          handle.dispose();
+        });
+      }
+    }
+  });
+
   group('the SDK alone', () {
     // Two columns of texts in a Row, no container: the order is by position.
     Widget columns({double leftHeight = 20, double rightHeight = 20}) => Row(
