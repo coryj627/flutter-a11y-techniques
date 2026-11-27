@@ -111,6 +111,9 @@ for (const [slug, expected] of Object.entries(EXPECTED_AFTER_ADDING)) {
   test(`voiceover reads ${slug} after a review is added`, async ({ page, voiceOver, browserName }) => {
     await openScreen(page, slug);
     await page.locator(`[flt-semantics-identifier="s10-${slug}-add"]`).click();
+    // The witness: the row shows 857 (the identifier of a test-only empty node),
+    // so a click that did nothing cannot pass as a stale replacement.
+    await expect(page.locator(`[flt-semantics-identifier="s10-${slug}-shows-857"]`)).toHaveCount(1);
     await expect(page.getByText(slug === 'bad-stale' ? WORDS : WORDS_AFTER, { exact: true })).toHaveCount(1);
     // The pointer is moved off the button, so that nothing is hovered.
     await page.mouse.move(0, 0);

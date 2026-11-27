@@ -93,6 +93,22 @@ class S10ContentGroupReplacementTest : TechniqueTest("S10") {
         assertEquals("$slug's replacement", name, rating(slug).name())
     }
 
+    /**
+     * Whether the test-only witness of [slug], an empty node whose
+     * identifier says how many reviews the row shows, says [reviews] within
+     * [millis]. The row's own text is hidden from assistive technology, so
+     * this is how a test knows the button added a review. A miss is caught,
+     * not thrown.
+     */
+    private fun witnessShows(slug: String, reviews: Int, millis: Long = 5_000): Boolean {
+        val end = System.currentTimeMillis() + millis
+        while (System.currentTimeMillis() < end) {
+            if (anyWindowHas { it.viewIdResourceName == "s10-$slug-shows-$reviews" }) return true
+            Thread.sleep(100)
+        }
+        return false
+    }
+
     /** No node of the screen is a piece of the rating or a progress bar. */
     private fun assertNoPieces(what: String) {
         for (n in all()) {
@@ -213,11 +229,16 @@ class S10ContentGroupReplacementTest : TechniqueTest("S10") {
 
     @Test
     fun badStaleKeepsSaying856AfterAReview() {
+        // The control: with no click, the witness never says 857, so the
+        // gate below cannot pass on a click that did nothing.
         open("bad-stale")
+        assertTrue("the witness says 856 at first", witnessShows("bad-stale", 856))
+        assertFalse("no click, no 857", witnessShows("bad-stale", 857, millis = 2_000))
         assertEquals(WORDS, rating("bad-stale").name())
         assertTrue(node("s10-bad-stale-add").performAction(AccessibilityNodeInfo.ACTION_CLICK))
-        // As long as good-exclude-semantics takes to follow (its test waits
-        // up to five seconds), and the name must not change.
+        // The witness: the row now shows 857. Only then is the replacement
+        // judged, for two seconds more, and its name must not change.
+        assertTrue("the row shows 857", witnessShows("bad-stale", 857))
         val end = System.currentTimeMillis() + 2_000
         while (System.currentTimeMillis() < end) {
             assertEquals(WORDS, rating("bad-stale").name())
@@ -246,6 +267,7 @@ class S10ContentGroupReplacementTest : TechniqueTest("S10") {
                 // After the click action on the button, the replacement again.
                 Stop("s10-good-exclude-semantics-after", before = {
                     assertTrue(node("s10-good-exclude-semantics-add").performAction(AccessibilityNodeInfo.ACTION_CLICK))
+                    assertTrue("good-exclude-semantics shows 857", witnessShows("good-exclude-semantics", 857))
                     waitForRating("good-exclude-semantics", WORDS_AFTER)
                 }) { node("s10-good-exclude-semantics-rating") },
             ),
@@ -269,7 +291,8 @@ class S10ContentGroupReplacementTest : TechniqueTest("S10") {
                 byId("s10-bad-stale-add", "s10-bad-stale-add"),
                 Stop("s10-bad-stale-after", before = {
                     assertTrue(node("s10-bad-stale-add").performAction(AccessibilityNodeInfo.ACTION_CLICK))
-                    Thread.sleep(2_000)
+                    // The witness that the row shows 857 before the reading.
+                    assertTrue("bad-stale shows 857", witnessShows("bad-stale", 857))
                 }) { node("s10-bad-stale-rating") },
             ),
         )

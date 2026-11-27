@@ -174,6 +174,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-315](#fl-315) | On the web a list item whose text is merged into it has the text only as its `aria-label`, and VoiceOver read it as "empty group" | Web (VoiceOver in Chromium and WebKit) | Observed |
 | [FL-320](#fl-320) | Off the web Flutter has no named group: a group's name is read as text of its own before its controls, and a control inside is read without it | Android, iOS | Confirmed |
 | [FL-330](#fl-330) | A progress indicator merged into a group, by `MergeSemantics` or by a labelled `Semantics` that does not exclude it, puts its value, and its role where the platform has one, on the whole group | All | Confirmed |
+| [FL-331](#fl-331) | A change of a node's identifier alone is not sent to the platform: the node keeps the identifier it had | All (source read); the web measured | Confirmed (source read) |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
@@ -5356,6 +5357,34 @@ yet), **Fixed in x.y** (verified on that version).
   `Semantics(label:, excludeSemantics: true)`, which drops every child's
   semantics (S10 `good-exclude-semantics`), or put every piece, the bar
   included, in `ExcludeSemantics` (S10 `good-hidden-pieces`).
+- Upstream issue: not searched yet (D25).
+
+## FL-331
+
+**A change of a node's identifier alone is not sent to the platform: the node keeps the identifier it had.**
+
+- Status: Confirmed by reading the framework source, Flutter 3.47.5;
+  measured on the web only. Found while building S10's test witness
+  (`docs/evidence/probes/s10/witness_probe.txt`, with
+  `witness_probe.spec.js.txt`).
+- What happens: `SemanticsNode._isDifferentFromCurrentSemanticAnnotation`
+  (`semantics/semantics.dart`) compares a node's label, value, hint,
+  flags, actions, role, and more, but not its `identifier`, so a node
+  whose only change is its identifier is not marked dirty and no update
+  for it is sent. The framework's own tree has the new identifier (S10's
+  widget tests read it). On the web, a `Semantics(container: true,
+  identifier:)` whose identifier went from `s10-bad-stale-shows-856` to
+  `-857` after a tap kept `flt-semantics-identifier="…-856"` in the page,
+  in both examples tried; in one of them the label of another node, the
+  replacement, did change in the same frame. Android and iOS were not
+  measured; by the source the same update is not sent to them either.
+- Why it matters: nothing a user meets. A test that finds a node by an
+  identifier that changes with the state finds the old one, and can pass
+  or fail for the wrong reason. As with
+  [FL-259](#fl-259), this is a test finding, kept in the log.
+- Workaround: give the node a key that changes with the identifier, so
+  that a new node is made (S10's witness: a `ValueKey` of the identifier);
+  or change something the comparison does include in the same update.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->

@@ -187,15 +187,46 @@ test.describe('bad examples have their defect', () => {
     await expect(exampleHeading(page)).toHaveCount(0, { timeout: 3000 });
   });
 
-  test('bad-stale: after the button the replacement still says 856, and 857 is in no element', async ({ page }) => {
+  test('bad-stale: after the button the row shows 857 (the witness) and the replacement still says 856', async ({ page }) => {
     await open(page, 'bad-stale');
     await expect(rating(page, 'bad-stale')).toHaveText(WORDS);
+    await expect(byId(page, 's10-bad-stale-shows-856')).toHaveCount(1);
     await addButton(page, 'bad-stale').click();
-    // The row now shows 857 reviews; wait as long as good-exclude-semantics
-    // takes to say so, and check that nothing does.
-    await page.waitForTimeout(1500);
+    // The row's own text is hidden from the semantics tree, and the canvas
+    // cannot be read: the test-only witness, an empty node whose identifier
+    // says what the row shows, says 857. Only then is the stale replacement
+    // judged.
+    await expect(byId(page, 's10-bad-stale-shows-857')).toHaveCount(1, { timeout: 3000 });
     await expect(rating(page, 'bad-stale')).toHaveText(WORDS);
     await expect(page.getByText(/857/)).toHaveCount(0);
+  });
+
+  test('bad-stale: with the click left out, the witness never says 857 (the control for the gate)', async ({ page }) => {
+    await open(page, 'bad-stale');
+    // The same gate as above, with no click: it must fail.
+    await expect(expect(byId(page, 's10-bad-stale-shows-857')).toHaveCount(1, { timeout: 1500 })).rejects.toThrow();
+    await expect(byId(page, 's10-bad-stale-shows-856')).toHaveCount(1);
+  });
+
+  test('the witness is an empty node with no role, name, value, text, or tab stop', async ({ page }) => {
+    for (const slug of ['good-exclude-semantics', 'bad-stale']) {
+      await open(page, slug);
+      const witness = byId(page, `s10-${slug}-shows-856`);
+      await expect(witness).toHaveCount(1);
+      await expect(page.locator(`[flt-semantics-identifier^="s10-${slug}-shows-"]`)).toHaveCount(1);
+      for (const attr of ['role', 'aria-label', 'aria-valuenow', 'tabindex']) {
+        await expect(witness, `${slug} ${attr}`).not.toHaveAttribute(attr, /.*/);
+      }
+      await expect(witness).toHaveText('');
+      expect(await witness.evaluate((e) => e.children.length), slug).toBe(0);
+    }
+  });
+
+  test('good-exclude-semantics: the witness says 857 once the button has added a review', async ({ page }) => {
+    await open(page, 'good-exclude-semantics');
+    await addButton(page, 'good-exclude-semantics').click();
+    await expect(byId(page, 's10-good-exclude-semantics-shows-857')).toHaveCount(1, { timeout: 3000 });
+    await expect(byId(page, 's10-good-exclude-semantics-shows-856')).toHaveCount(0);
   });
 
   test('bad-stale\'s positive control: good-exclude-semantics follows the same click', async ({ page }) => {

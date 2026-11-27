@@ -211,8 +211,8 @@ two texts are found by their text.
 | L3 web | Good: the replacement one element with the identifier, holding the words, with no `role`, `aria-label`, `aria-valuenow`, or `tabindex`; one element with the words on the page; no `progressbar`; no element whose own text or label is a piece. The example's elements after the "Example" heading, exactly: `good-exclude-semantics` a text and a button, `good-hidden-pieces` and `good-stars` the text alone (and no button but Back). Tab goes Back, then the button. After a click, a DOM click, Tab and Enter, and Tab and Space (each from a fresh load) the replacement says 857 reviews. Bad: `bad-pieces` exactly the texts "3.4" and "(856)", no image, none naming stars, "out of", reviews, or a rating; `bad-merged` exactly one `progressbar`, `aria-label` the pieces and " 68", `aria-valuenow` 68, named by Chromium "Rating: 3.4 / 5 Reviews: 856 68", with the identifier; `bad-not-excluded` the same with the words first; `bad-hides-control` exactly the words and the count, one button, Back, no element "Reviews"; after two Tabs DOM focus is on Back, and Enter runs Reviews and leaves the screen open; in another load one Tab and Enter leave the screen (Enter on Back, the positive control); `bad-stale` after a click the replacement still says 856 for 1.5 seconds and nothing says 857, and in another load `good-exclude-semantics` says 857 within 1.5 seconds of the same click. Each screen shows the title and lines the VoiceOver judge expects above its heading. The judge (`web_tests/vo/s10_vo_walks.js`, S08's) on made-up walks |
 | L3 Android | Good: the replacement a `View` named by the words, no range, not clickable, no child; no node on the screen named by a piece, a `ProgressBar`, or with a range; the example's named nodes after the "Example" heading, exactly the words and, for `good-exclude-semantics`, the clickable `Button`. `good-exclude-semantics`: the click action (what TalkBack's double tap performs), a tap at the button's centre, and Tab then Enter (each from a fresh launch) make the replacement say 857 reviews, with no piece or bar after. Bad: `bad-pieces` exactly two `View`s, "3.4" and "(856)", none naming stars, "out of", reviews, or a rating; `bad-merged` one `ProgressBar` named "68, " and the pieces, range current 68, and nothing else; `bad-not-excluded` the same with the words after the 68; `bad-hides-control` exactly the words and the count, no node "Reviews", no clickable node but Back, and from a fresh launch each, one to three Tabs then Enter: one of them runs Reviews with no node named Reviews focused, and one leaves the screen (Back); `bad-stale` after the click action the name stays the words with 856 for two seconds and no node says 857, and `good-exclude-semantics` follows the same action in the same test. Run once at CI's 320 by 640 at 160 dpi as well |
 | L3 iOS | Good: the replacement a static text labelled with the words, no value, the only element with that label, no element labelled with a piece; no button but Back, and the add button for `good-exclude-semantics`. `good-exclude-semantics`: after a tap, and after two Tabs and Return (no modifier; the probe found the first Tab on Back), the replacement says 857. Bad: `bad-pieces` elements "3.4" and "(856)", none naming stars, "out of", or reviews but the screen's own title and defect, no image; `bad-merged` labelled with the pieces, value "68"; `bad-not-excluded` labelled with the words and the pieces, value "68"; `bad-hides-control` labelled with the words, no element "Reviews", no button but Back, and two Tabs and Return running Reviews; `bad-stale` after a tap still 856 for two seconds, nothing labelled with 857, and `good-exclude-semantics` following the same tap in the same test. XCUITest cannot read traits or Flutter's focus |
-| L4 TalkBack | Focus moved to each node by action: each good replacement the words, and none of "3.4 / 5", "Reviews: 856", "Progress bar", "68", or "Button"; `good-exclude-semantics`' button "Add a 5-star review" and "Button"; after the click action on it, the replacement "… 857 reviews" and not "856". Bad: `bad-pieces` "3.4" and "856", with no "star", "out of", "Rating", or "review"; `bad-merged` "68" and "Rating: 3.4 / 5 Reviews: 856", not "out of 5 stars"; `bad-not-excluded` "68" and the words followed by the pieces; `bad-hides-control` the words with no "Button", and the count; `bad-stale` the words, the button, and after the click action on it the replacement again, still the words, with no "857". Each walk is judged whole (`walk_strictly` in `tool/talkback.py`; S10 is in its `STRICT` set): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, every walk in the transcript. No row is declared silent |
-| L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk): `good-exclude-semantics` the words, "Add a 5-star review Button", and after a tap on the button (VoiceOver off) the words with 857; `good-hidden-pieces` and `good-stars` the words; `bad-pieces` "3.4", "(856)"; `bad-merged` "Rating: 3.4 / 5 Reviews: 856 68"; `bad-not-excluded` the words and " Rating: 3.4 / 5", cut by the service at 64 characters (a `.cut` stop: its first 63 characters, and the utterance exactly 64 long); `bad-hides-control` the words and "Reviews opened: 0"; `bad-stale` the words and the button, and after a tap still the words with 856. Every expected utterance is under 64 characters; the test refuses one that is not |
+| L4 TalkBack | Focus moved to each node by action, each row judged as whole utterances (`== A / B` in `said()`, `tool/talkback.py`: the row's utterances exactly these, in order, TalkBack's usage hint once at the end allowed), as the committed transcript holds them: each good replacement exactly the words; `good-exclude-semantics`' button exactly "Add a 5-star review", "Button"; after the click action on it, with the witness showing 857 first, the replacement exactly "… 857 reviews". Bad: `bad-pieces` exactly "3.4", and exactly "(856)"; `bad-hides-control` exactly the words, and exactly "Reviews opened: 0"; `bad-stale` exactly the words, the button, and, after the click action and the witness showing 857, exactly the words with 856. `bad-merged` and `bad-not-excluded` cannot be written whole, because their last utterance holds "3.4 / 5" and the form splits at every "/": their first utterance must be exactly "68.0." (`^= A`), the row must hold the pieces (and for `bad-not-excluded` the words before them) in one utterance, and "out of 5 stars" (`bad-merged`) and "Image" must not be said. The rows and their mutations (the speech said twice, an extra role, a wrong number, each neighbour's label added before, after, or inside) are tested in `tool/test_talkback.py` (`S10WholeUtterances`). Each walk is judged whole (`walk_strictly`; S10 is in its `STRICT` set): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, every walk in the transcript. No row is declared silent |
+| L4 VoiceOver iOS | Every utterance of the screen (C03's walk), tied to its screen: the stops before the "Example Heading" must be exactly this example's title with "Heading", its description, and a bad example's defect (a stop of 64 characters or more as the service cuts it), and only then is what follows taken as the content, compared as a whole list: `good-exclude-semantics` the words, "Add a 5-star review Button", and after a tap on the button (VoiceOver off, the witness showing 857 first) the words with 857; `good-hidden-pieces` and `good-stars` the words (the same content, told apart by their titles and descriptions); `bad-pieces` "3.4", "(856)"; `bad-merged` "Rating: 3.4 / 5 Reviews: 856 68"; `bad-not-excluded` the words and " Rating: 3.4 / 5", cut by the service at 64 characters (a `.cut` stop: its first 63 characters, and the utterance exactly 64 long); `bad-hides-control` the words and "Reviews opened: 0"; `bad-stale` the words and the button, and after a tap (the witness showing 857) still the words with 856. The identification judge is tested on made-up walks (`testTheIdentificationJudgeTiesACaptureToItsScreen`): another example's title or description with the same content, a missing, empty, half, or extra identification, a missing defect, no heading, and a walk that did not reach the end are each refused. Every expected utterance is under 64 characters; the test refuses one that is not |
 | L4 VoiceOver web | Each screen walked from Back with the cursor's position kept at every stop (`walkWithPositions`, a copy of S08's) and judged against the whole screen in order (`judgeExampleWalk` in `web_tests/vo/s10_vo_walks.js`, a copy of S08's judge), in Chromium and WebKit, no runner retries. A wrong reading fails for good and is looked for first; any stop past the expected end fails for good, an empty one included (the bounds check comes before the empty check); a walk that reached the end short is wrong; a walk with an empty phrase and nothing wrong is a failed capture, walked again, at most three walks, every try logged, and an empty reading never passes. VoiceOver's help message ("You are currently on ...") is left out only when it is at the same position as the real stop before it and names that stop's spoken role (`spokenRole`, from the reading's role part, never from a name: extended for S10 to a text and a progress indicator); any other help message is a stop, and fails. The help rule is tested only on made-up walks: no S10 recording has been made. `good-exclude-semantics` and `bad-stale` are walked again after a mouse click on the add button. The lists (`EXPECTED_STOPS`, `EXPECTED_AFTER_ADDING`) were written as predictions before any S10 recording; the recording of 2026-11-27 read every one exactly, in both browsers, on the first walk (section 7). The judge's cases, and its mutations (a help message at a new position, naming another role, after an empty stop, with positions of the wrong length, two in a row, after a heading whose name has a role word), are in the web tree spec |
 
 ## 7. What the build found (Flutter 3.47.5)
@@ -257,6 +257,10 @@ fixtures on every platform, with each screen reader.
   TalkBack says "Actions available"; the web has none in the DOM; iOS
   VoiceOver reads "Actions availab" (cut), and no key or tap ran it
   ([FL-022](../flutter-limitations.md#fl-022), extended).
+- **A change of a node's identifier alone is not sent to the platform**
+  ([FL-331](../flutter-limitations.md#fl-331), new; source read, the web
+  measured): met while building `bad-stale`'s test witness (section 7,
+  skips). A test finding: nothing a user meets.
 - **No Flutter counterpart of `accessibilityRepresentation`**
   ([FL-025](../flutter-limitations.md#fl-025), extended; the `Semantics`
   API read, nothing measured).
@@ -305,9 +309,30 @@ Skips and what they give up, in the tests:
   label (widget tests, Android, iOS) or by an element's own text or label
   (web); a piece reworded would not be caught by that check, and is caught
   by the exact lists of each example's nodes.
-- `bad-stale`'s "still 856" is checked for 1.5 seconds (web) or 2 seconds
-  (Android, iOS) after the button; `good-exclude-semantics`, the positive
-  control in the same test, follows within that time.
+- `bad-stale`'s "still 856" is judged only once a witness shows that the
+  row reached 857 (Codex, first review: the test had checked words that
+  were already there, so a click that did nothing passed). The row's text
+  is in the subtree that the replacement hides, and on the web the canvas
+  cannot be read, so the example has a test-only witness: an empty node,
+  one pixel square, after the add button, whose identifier says how many
+  reviews the row shows (`s10-<slug>-shows-856`, then `-857`), in
+  `good-exclude-semantics` and `bad-stale`. It has no label, value, or
+  action and no text; the tree tests' lists of each example's nodes are
+  unchanged (they leave out nodes with none of these), and the web tree
+  spec checks it has no role, name, value, text, or tab stop. A new node is
+  made for each count (its key), because a change of an identifier alone
+  is not sent to the platform ([FL-331](../flutter-limitations.md#fl-331),
+  new: an identifier changed in place stayed "…-856" on the web,
+  `docs/evidence/probes/s10/witness_probe.txt`). Every layer waits for the
+  witness's 857 before judging the replacement (widget tests, web tree
+  spec, Android, iOS, TalkBack's and VoiceOver's `-after` rows), and each
+  has a control in the same test or spec with the activation left out, in
+  which the witness never says 857, so the gate cannot pass. Then
+  "still 856" is checked for two seconds more (Android, iOS) or at once
+  (web, widget tests), with `good-exclude-semantics` following the same
+  press as the positive control. The witness node is reachable by no
+  screen reader in the transcripts recorded since (section 7); the web
+  VoiceOver recording is to be made again with it in place.
 - The iOS tree tests cannot see Flutter's focus: the key tests rely on the
   probe's finding that the first Tab is on Back and the second on the next
   control; which value changed is what shows the key reached it.
@@ -318,7 +343,11 @@ Skips and what they give up, in the tests:
 - The TalkBack walk moves focus to each node by action and does not see a
   stop it was not told of; the Android tree test checks the nodes and
   their order. `bad-merged`'s role word is not judged: the probe heard
-  none within the dwell.
+  none within the dwell. `bad-merged`'s and `bad-not-excluded`'s rows are
+  not judged as whole utterances (their last utterance holds "3.4 / 5",
+  which the `==` form cannot hold): an utterance added after the pieces,
+  other than the forbidden "Image", is not caught there; the tree test and
+  the iOS and web walks read those nodes whole.
 - The web VoiceOver judge leaves out a help message only when the walk's
   positions tie it to the real stop before it and its role matches that
   stop's spoken role. A reading with no role part is taken as spoken text
@@ -328,7 +357,14 @@ Skips and what they give up, in the tests:
   made-up walks.
 - The iOS VoiceOver walk is C03's: it ends where moving on gives the last
   utterance again, twice, and so gives up two neighbouring elements that
-  VoiceOver reads alike; no example has two. `bad-not-excluded`'s
+  VoiceOver reads alike; no example has two. Its content is taken only
+  once the stops before the "Example Heading" are exactly the example's
+  title, description, and defect (Codex, first review: `C03Walk.content`
+  alone kept everything after the last heading, so `good-hidden-pieces`'
+  capture would have passed for `good-stars`'). The title, description,
+  and defect are as other techniques' transcripts show the screen
+  (`docs/evidence/S03/voiceover-ios.md`); the judge is in S10's own test
+  file, and no shared helper changed. `bad-not-excluded`'s
   utterance is longer than the service's 64 characters: the test checks
   its first 63 and that it was cut, and the "68" after the cut is checked
   in the tree test only.

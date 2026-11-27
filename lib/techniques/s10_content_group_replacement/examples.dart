@@ -116,6 +116,15 @@ ButtonStyle focusRing(ColorScheme colors) => ButtonStyle(
 /// Lays out a rating and, under it, a button that adds a 5-star review, so
 /// that people and tests can see whether what the rating says follows what
 /// it shows. [builder] gets the rating as it is now.
+///
+/// For the tests alone, an empty node after them whose identifier says how
+/// many reviews the row shows, `s10-<slug>-shows-857`: the shown row is
+/// hidden from assistive technology, so without it a test could not tell a
+/// stale replacement from a button that did nothing. It has no label,
+/// value, or action, and is one pixel square (a node of no size is left out
+/// of the tree). A new node is made for each count (its key):
+/// a change of an identifier alone is not sent to the platform
+/// (docs/flutter-limitations.md, FL-331).
 class RatingDemo extends StatefulWidget {
   const RatingDemo({super.key, required this.slug, required this.builder});
 
@@ -132,6 +141,7 @@ class _RatingDemoState extends State<RatingDemo> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final shows = 's10-${widget.slug}-shows-${_rating.reviews}';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
@@ -144,6 +154,12 @@ class _RatingDemoState extends State<RatingDemo> {
             onPressed: () => setState(() => _rating = _rating.plus(5)),
             child: const Text('Add a 5-star review'),
           ),
+        ),
+        Semantics(
+          key: ValueKey<String>(shows),
+          container: true,
+          identifier: shows,
+          child: const SizedBox.square(dimension: 1),
         ),
       ],
     );

@@ -135,12 +135,25 @@ final class S10ContentGroupReplacementUITests: XCTestCase, TechniqueUITest {
     XCTAssertEqual(opens.label, "Reviews opened: 1")
   }
 
+  /// Whether the test-only witness of `slug`, an empty node whose
+  /// identifier says how many reviews the row shows, says `reviews` within
+  /// `seconds`. The row's own text is hidden from assistive technology, so
+  /// this is how a test knows the button added a review.
+  private func witnessShows(_ slug: String, _ reviews: Int, within seconds: TimeInterval = 5) -> Bool {
+    element("s10-\(slug)-shows-\(reviews)").waitForExistence(timeout: seconds)
+  }
+
   func testBadStaleKeepsSaying856AfterAReview() {
+    // The control: with no tap, the witness never says 857, so the gate
+    // below cannot pass on a tap that did nothing.
     open("bad-stale")
+    XCTAssertTrue(witnessShows("bad-stale", 856), "the witness says 856 at first")
+    XCTAssertFalse(witnessShows("bad-stale", 857, within: 2), "no tap, no 857")
     XCTAssertEqual(rating("bad-stale").label, Self.words)
     element("s10-bad-stale-add").tap()
-    // As long as good-exclude-semantics takes to follow, and the label must
-    // not change.
+    // The witness: the row now shows 857. Only then is the replacement
+    // judged, for two seconds more, and its label must not change.
+    XCTAssertTrue(witnessShows("bad-stale", 857), "the row shows 857")
     let deadline = Date().addingTimeInterval(2)
     while Date() < deadline {
       XCTAssertEqual(rating("bad-stale").label, Self.words)
@@ -201,6 +214,104 @@ final class S10ContentGroupReplacementUITests: XCTestCase, TechniqueUITest {
     ("bad-stale", true, [.whole(words), addButton]),
   ]
 
+  /// What each screen says above its "Example" heading, as VoiceOver on iOS
+  /// reads it: the title with "Heading", the line that says whether it is a
+  /// good or a bad example, and a bad example's defect (ExampleScreen in
+  /// lib/app/screens.dart; the form other techniques' transcripts show,
+  /// docs/evidence/S03/voiceover-ios.md). An utterance of 64 characters or
+  /// more is a `.cut` stop, as the service cuts it.
+  private static let descriptions = [
+    "good-exclude-semantics": "Good example for Content group replacement. Material.",
+    "good-hidden-pieces": "Good example for Content group replacement. Material.",
+    "good-stars": "Good example for Content group replacement. Widgets layer.",
+    "bad-pieces": "Bad example for Content group replacement. Widgets layer.",
+    "bad-merged": "Bad example for Content group replacement. Material.",
+    "bad-not-excluded": "Bad example for Content group replacement. Material.",
+    "bad-hides-control": "Bad example for Content group replacement. Material.",
+    "bad-stale": "Bad example for Content group replacement. Material.",
+  ]
+  private static let defects = [
+    "bad-pieces": "The stars are not read, and nothing says what 3.4 and 856 are.",
+    "bad-merged": "The rating is read with a stray 68 from the bar.",
+    "bad-not-excluded": "The rating is read twice, with a stray 68.",
+    "bad-hides-control": "A screen reader cannot find the Reviews button.",
+    "bad-stale": "After a review is added, a screen reader still hears 856.",
+  ]
+
+  static func stop(_ utterance: String) -> Stop {
+    utterance.count < 64 ? .whole(utterance) : .cut(String(utterance.prefix(63)))
+  }
+
+  /// The stops above the "Example" heading of `slug`'s screen.
+  static func identification(_ slug: String) -> [Stop] {
+    var out = [stop("\(titles[slug]!) Heading"), stop(descriptions[slug]!)]
+    if let defect = defects[slug] { out.append(stop("Defect: \(defect)")) }
+    return out
+  }
+
+  /// The content of a walk of `slug`'s screen, everything after its
+  /// "Example Heading", or why the walk cannot be taken as that screen's:
+  /// it did not reach the end, it has no "Example Heading", or what came
+  /// before the heading is not exactly this screen's title, description,
+  /// and defect (an empty, missing, or other screen's stop included). So a
+  /// capture is tied to its screen: good-hidden-pieces and good-stars have
+  /// the same content and different titles and descriptions.
+  static func content(of walk: C03Walk.Result, for slug: String) -> (content: [String]?, reason: String?) {
+    guard walk.reachedEnd else { return (nil, "the walk did not reach the end") }
+    guard let heading = walk.stops.lastIndex(of: "Example Heading") else {
+      return (nil, "no Example Heading")
+    }
+    let before = Array(walk.stops[..<heading])
+    let want = identification(slug)
+    guard before.count == want.count else {
+      return (nil, "\(before.count) stops before the heading, where \(want.count) identify the screen: \(before)")
+    }
+    for (i, (said, stop)) in zip(before, want).enumerated() where !stop.matches(said) {
+      return (nil, "stop \(i + 1) before the heading was \"\(said)\" where \(stop) identifies the screen")
+    }
+    return (Array(walk.stops[(heading + 1)...]), nil)
+  }
+
+  func testTheIdentificationJudgeTiesACaptureToItsScreen() {
+    let content = ["Rating: 3.4 out of 5 stars, based on 856 reviews"]
+    func walk(_ slug: String?, _ rest: [String] = content, end: Bool = true) -> C03Walk.Result {
+      let top = slug.map { Self.identification($0).map(\.expected) } ?? []
+      return C03Walk.Result(stops: top + ["Example Heading"] + rest, reachedEnd: end)
+    }
+    // Its own screen passes, and gives the content.
+    XCTAssertEqual(Self.content(of: walk("good-hidden-pieces"), for: "good-hidden-pieces").content, content)
+    XCTAssertEqual(Self.content(of: walk("good-stars"), for: "good-stars").content, content)
+    // Another example's screen, with the same content, is refused.
+    XCTAssertNil(Self.content(of: walk("good-stars"), for: "good-hidden-pieces").content)
+    XCTAssertNil(Self.content(of: walk("good-hidden-pieces"), for: "good-stars").content)
+    XCTAssertNil(Self.content(of: walk("good-exclude-semantics"), for: "good-hidden-pieces").content,
+                 "same description, another title")
+    // No identification, an empty one, half of one, or one with an extra stop.
+    XCTAssertNil(Self.content(of: walk(nil), for: "good-stars").content)
+    XCTAssertNil(Self.content(of: C03Walk.Result(stops: ["", "", "Example Heading"] + content, reachedEnd: true),
+                              for: "good-stars").content)
+    XCTAssertNil(Self.content(of: C03Walk.Result(stops: ["Star rating replaced Heading", "", "Example Heading"] + content,
+                                                 reachedEnd: true), for: "good-stars").content)
+    XCTAssertNil(Self.content(of: C03Walk.Result(stops: ["Star rating replaced Heading", "Example Heading"] + content,
+                                                 reachedEnd: true), for: "good-stars").content)
+    XCTAssertNil(Self.content(of: C03Walk.Result(stops: ["Back Button"] + Self.identification("good-stars").map(\.expected)
+                                                   + ["Example Heading"] + content, reachedEnd: true),
+                              for: "good-stars").content)
+    // A bad example's screen needs its defect, cut where the service cuts it.
+    let pieces = Self.identification("bad-pieces")
+    XCTAssertEqual(pieces.count, 3)
+    let defect = "Defect: The stars are not read, and nothing says what 3.4 and 856 are."
+    XCTAssertTrue(pieces[2].matches(String(defect.prefix(64))))
+    XCTAssertFalse(pieces[2].matches(defect), "the whole defect is longer than the service gives back")
+    XCTAssertNil(Self.content(of: walk("bad-merged", ["3.4", "(856)"]), for: "bad-pieces").content)
+    XCTAssertNil(Self.content(of: walk("good-stars", ["3.4", "(856)"]), for: "bad-pieces").content,
+                 "no defect line")
+    // A walk that did not reach the end, or has no heading.
+    XCTAssertNil(Self.content(of: walk("good-stars", end: false), for: "good-stars").content)
+    XCTAssertNil(Self.content(of: C03Walk.Result(stops: Self.identification("good-stars").map(\.expected) + content,
+                                                 reachedEnd: true), for: "good-stars").content)
+  }
+
   func testExpectedUtterancesAreUnder64Characters() {
     for example in Self.speech {
       for stop in example.content {
@@ -225,16 +336,21 @@ final class S10ContentGroupReplacementUITests: XCTestCase, TechniqueUITest {
       }
       open(example.slug)
       if example.addFirst {
-        // A tap with VoiceOver off; the walk then reads the screen.
+        // A tap with VoiceOver off; the walk then reads the screen, once
+        // the witness shows that the row says 857.
         element("s10-\(example.slug)-add").tap()
+        guard witnessShows(example.slug, 857) else {
+          XCTFail("\(example.slug): the tap did not add a review (no witness of 857)")
+          continue
+        }
         usleep(1_000_000)
       }
       let row = example.addFirst ? "\(example.slug)-after" : example.slug
       let walk = try C03Walk.walk(voiceOver)
-      let content = C03Walk.content(walk)
+      let (content, reason) = Self.content(of: walk, for: example.slug)
       print("S10VO \(row) | \((content ?? walk.stops).joined(separator: " / "))")
       guard let content else {
-        XCTFail("\(row): the walk did not run from the heading to the end: \(walk)")
+        XCTFail("\(row): \(reason ?? "") (\(walk))")
         continue
       }
       XCTAssertEqual(content.count, example.content.count, "\(row): \(content)")

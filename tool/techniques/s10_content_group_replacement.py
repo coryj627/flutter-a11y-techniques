@@ -11,38 +11,53 @@ WEB_VO_SPEC = "s10_content_group_replacement_vo.spec.js"
 _WORDS = "Rating: 3.4 out of 5 stars, based on 856 reviews"
 _WORDS_AFTER = "Rating: 3.4 out of 5 stars, based on 857 reviews"
 _ADD = "Add a 5-star review"
-# What a piece of the bar row, or the bar itself, would add if it were read.
-_PIECES = ["3.4 / 5", "Reviews: 856", "Progress bar", "68"]
+_PIECES_ONE_LINE = "Rating: 3.4 / 5 Reviews: 856"
 
 # tool/talkback.py: identifier -> (phrases that must be spoken, phrases that
-# must not be). S10 is in talkback.py's STRICT set: each walk is judged whole.
+# must not be). S10 is in talkback.py's STRICT set: each walk is judged
+# whole.
+#
+# Every row is judged as whole utterances, never as words found in the
+# row (Codex, first review: a substring check passed a row with the rating
+# said twice, an extra "Image", or "(1856)" for "(856)"). "== A / B / C" is
+# the row's utterances, exactly, in order, TalkBack's closing usage hint
+# ("Double-tap to activate") allowed once at the end; "^= A" is its first
+# utterance (tool/talkback.py, said). The rows are what the committed
+# transcript holds (docs/evidence/S10/talkback-android.md).
+#
+# Two rows cannot be written whole: bad-merged's and bad-not-excluded's
+# last utterance holds "3.4 / 5", and the "==" form splits its utterances
+# at every "/", with no way to escape one. Those rows are judged by their
+# first utterance, "68.0." ("^="), and by the row's text holding the
+# pieces in one utterance (a substring), with the words that must not be
+# there; an utterance added after the pieces is not caught (the spec,
+# section 7, skips).
 TALKBACK_EXPECT = {
-    # The replacement alone: what the rating means, and none of its pieces.
-    "s10-good-exclude-semantics-rating": ([_WORDS], _PIECES + ["Button"]),
-    "s10-good-exclude-semantics-add": ([_ADD, "Button"], [_WORDS]),
-    # After the click action on the button, the replacement says 857.
-    "s10-good-exclude-semantics-after": ([_WORDS_AFTER], _PIECES + ["856"]),
-    "s10-good-hidden-pieces-rating": ([_WORDS], _PIECES + ["Button"]),
-    "s10-good-stars-rating": ([_WORDS], _PIECES + ["Button", "Image"]),
+    # The replacement alone, exactly; then the button; then, after the click
+    # action on the button, the replacement saying 857.
+    "s10-good-exclude-semantics-rating": ([f"== {_WORDS}"], []),
+    "s10-good-exclude-semantics-add": ([f"== {_ADD} / Button"], []),
+    "s10-good-exclude-semantics-after": ([f"== {_WORDS_AFTER}"], []),
+    "s10-good-hidden-pieces-rating": ([f"== {_WORDS}"], []),
+    "s10-good-stars-rating": ([f"== {_WORDS}"], []),
     # Bad examples: the defect must be audible where Android shows it. The
     # two numbers alone, and nothing for the stars.
-    "s10-bad-pieces-stars": (["3.4"], ["star", "out of", "Rating", "review"]),
-    "s10-bad-pieces-count": (["856"], ["star", "out of", "Rating", "review"]),
-    # One node, the bar's value, 68, before the pieces (FL-330). In the probe
-    # TalkBack read "68.0.", "68,", and the pieces, and no role word within
-    # the dwell (docs/evidence/probes/s10/android-talkback.md, p02); the
+    "s10-bad-pieces-stars": (["== 3.4"], []),
+    "s10-bad-pieces-count": (["== (856)"], []),
+    # The bar's value, 68, twice, an empty utterance, then the pieces in one
+    # utterance (FL-330). No role word in the probe or the transcript; the
     # role is not judged.
-    "s10-bad-merged-rating": (["68", "Rating: 3.4 / 5 Reviews: 856"], ["out of 5 stars"]),
-    # The bar's value, then the label, then the pieces again (p06).
-    "s10-bad-not-excluded-rating": (["68", f"{_WORDS} Rating: 3.4 / 5 Reviews: 856"], []),
+    "s10-bad-merged-rating": (["^= 68.0.", _PIECES_ONE_LINE], ["out of 5 stars", "Image"]),
+    # The same, with the replacement's words before the pieces.
+    "s10-bad-not-excluded-rating": (["^= 68.0.", f"{_WORDS} {_PIECES_ONE_LINE}"], ["Image"]),
     # The rating, then the count; no Reviews button anywhere.
-    "s10-bad-hides-control-rating": ([_WORDS], ["Button"] + _PIECES),
-    "s10-bad-hides-control-opens": (["Reviews opened: 0"], ["Button"]),
-    "s10-bad-stale-rating": ([_WORDS], _PIECES),
-    "s10-bad-stale-add": ([_ADD, "Button"], [_WORDS]),
+    "s10-bad-hides-control-rating": ([f"== {_WORDS}"], []),
+    "s10-bad-hides-control-opens": (["== Reviews opened: 0"], []),
+    "s10-bad-stale-rating": ([f"== {_WORDS}"], []),
+    "s10-bad-stale-add": ([f"== {_ADD} / Button"], []),
     # After the click action the row shows 857, and the replacement still
-    # says 856.
-    "s10-bad-stale-after": ([_WORDS], ["857"]),
+    # says 856, exactly.
+    "s10-bad-stale-after": ([f"== {_WORDS}"], []),
 }
 
 # tool/voiceover_ios.py: (how the speech was captured, heading of the

@@ -440,9 +440,20 @@ void main() {
       final handle = tester.ensureSemantics();
       await _open(tester, 'bad-stale');
       expect(_replacement('bad-stale'), _words);
+      // The test-only witness, the container's identifier, says what the
+      // row shows: 856 before the tap.
+      expect(nodeById('s10-bad-stale-shows-856'), findsOne);
+      expect(nodeById('s10-bad-stale-shows-857'), findsNothing);
       await tester.tap(byId('s10-bad-stale-add'));
       await tester.pumpAndSettle();
       expect(_shownReviews(), 'Reviews: 857');
+      expect(nodeById('s10-bad-stale-shows-857'), findsOne);
+      // The witness is a container: no label, value, or action, and the
+      // example's nodes are as before.
+      final witness = dataById('s10-bad-stale-shows-857');
+      expect(witness.label, isEmpty);
+      expect(witness.value, isEmpty);
+      expect(witness.actions, 0);
       expect(_replacement('bad-stale'), _words);
       expect(_replacement('bad-stale'), isNot(_wordsAfter));
       // Positive control: good-exclude-semantics, the same row and button,
