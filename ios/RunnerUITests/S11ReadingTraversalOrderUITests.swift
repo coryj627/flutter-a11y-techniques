@@ -106,10 +106,13 @@ final class S11ReadingTraversalOrderUITests: XCTestCase, TechniqueUITest {
     }
   }
 
-  // L4. Everything VoiceOver says after the "Example" heading, to the end of
-  // the screen (C03Walk), compared as a whole list, so every stop is judged
-  // and a stop after the expected ones fails the test too. Utterances are
-  // cut at 64 characters; every expected one is shorter.
+  // L4. The whole walk VoiceOver makes, from the top of the screen to its
+  // end (S11Walk, below), judged as a whole: this example's own title, its
+  // good or bad line, and a bad example's defect, right before "Example
+  // Heading", then exactly the expected content to the end. The two good
+  // examples have the same content, so the title is what tells their walks
+  // apart. Every content utterance is under the service's 64 characters; a
+  // screen line of 64 or more (a defect) is matched as the service cuts it.
   private static let routeSpoken = ["Route Heading", "Park at the gate.", "Climb the ridge.", "Walk back.", "Save route Button"]
   private static let bringSpoken = ["Bring Heading", "Water", "A map", "Save list Button"]
   static let speech: [(slug: String, content: [String])] = [
@@ -121,6 +124,22 @@ final class S11ReadingTraversalOrderUITests: XCTestCase, TechniqueUITest {
                            bringSpoken[2], routeSpoken[3], routeSpoken[4], bringSpoken[3]] + counts),
     // The Bring heading second, before the route.
     ("bad-key-missing", [routeSpoken[0], bringSpoken[0]] + routeSpoken.dropFirst() + bringSpoken.dropFirst() + counts),
+  ]
+
+  /// What each screen says above its "Example" heading, as VoiceOver reads
+  /// it: the title (the screen's level 1 heading), the good or bad line,
+  /// and a bad example's defect (ExampleScreen in lib/app/screens.dart).
+  static let screens: [String: [String]] = [
+    "good-columns": ["Two columns, each kept together Heading",
+                     "Good example for Reading and traversal order. Material."],
+    "good-sort-keys": ["Columns laid out row by row, given an order Heading",
+                       "Good example for Reading and traversal order. Widgets layer."],
+    "bad-columns-mixed": ["Two columns read row by row Heading",
+                          "Bad example for Reading and traversal order. Material.",
+                          "Defect: A screen reader reads across the two columns, mixing the route with what to bring."],
+    "bad-key-missing": ["One part with no sort key Heading",
+                        "Bad example for Reading and traversal order. Widgets layer.",
+                        "Defect: The \"Bring\" title has no sort key, so a screen reader reads it before the route."],
   ]
 
   func testExpectedUtterancesAreShorterThanTheServiceLimit() {
@@ -143,14 +162,221 @@ final class S11ReadingTraversalOrderUITests: XCTestCase, TechniqueUITest {
     let voiceOver = XCUIDevice.shared.voiceOverService
     for example in Self.speech {
       open(example.slug)
-      let walk = try C03Walk.walk(voiceOver)
-      let content = C03Walk.content(walk)
-      print("S11VO \(example.slug) | \((content ?? walk.stops).joined(separator: " / "))")
-      XCTAssertNotNil(content, "\(example.slug): the walk did not run from the heading to the end: \(walk)")
-      XCTAssertEqual(content, example.content, example.slug)
+      let walk = try S11Walk.walk(voiceOver)
+      let problem = S11Walk.judge(walk, screen: Self.screens[example.slug]!, content: example.content)
+      // The whole walk, from the top, is what the transcript shows.
+      print("S11VO \(example.slug) | \(walk.stops.joined(separator: " / "))"
+            + " [end: \(walk.reachedEnd ? "reached" : "not reached"); back from the end: \(walk.backFromEnd ?? "(nothing)")]")
+      XCTAssertNil(problem, "\(example.slug): \(problem ?? "")")
     }
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
     #endif
   }
+
+  // The judge and the collector on made-up walks: no device needed.
+
+  private static func walkOf(_ slug: String, before: [String] = ["Back Button"]) -> S11Walk.Result {
+    let content = speech.first { $0.slug == slug }!.content
+    let screen = screens[slug]!.map { $0.count >= 64 ? String($0.prefix(64)).trimmingCharacters(in: .whitespaces) : $0 }
+    return S11Walk.Result(stops: before + screen + ["Example Heading"] + content, reachedEnd: true,
+                          backFromEnd: content[content.count - 2])
+  }
+
+  private func judged(_ walk: S11Walk.Result, as slug: String) -> String? {
+    S11Walk.judge(walk, screen: Self.screens[slug]!, content: Self.speech.first { $0.slug == slug }!.content)
+  }
+
+  func testTheJudgePassesEachExamplesOwnWalk() {
+    for example in Self.speech {
+      XCTAssertNil(judged(Self.walkOf(example.slug), as: example.slug), example.slug)
+    }
+  }
+
+  func testTheJudgeRefusesTheOtherGoodExamplesWalk() {
+    // The good examples' content is the same; only the title tells them apart.
+    XCTAssertNotNil(judged(Self.walkOf("good-columns"), as: "good-sort-keys"))
+    XCTAssertNotNil(judged(Self.walkOf("good-sort-keys"), as: "good-columns"))
+  }
+
+  func testTheJudgeRefusesAMissingEmptyOrWrongTitle() {
+    for slug in ["good-columns", "bad-columns-mixed"] {
+      let right = Self.walkOf(slug)
+      let title = right.stops.firstIndex(of: Self.screens[slug]![0])!
+      var missing = right
+      missing.stops.remove(at: title)
+      XCTAssertNotNil(judged(missing, as: slug), "\(slug): no title")
+      var empty = right
+      empty.stops[title] = ""
+      XCTAssertNotNil(judged(empty, as: slug), "\(slug): an empty title")
+      var wrong = right
+      wrong.stops[title] = "Two columns read row by row Heading" == right.stops[title]
+        ? "Two columns, each kept together Heading" : "Two columns read row by row Heading"
+      XCTAssertNotNil(judged(wrong, as: slug), "\(slug): another example's title")
+      var noRole = right
+      noRole.stops[title] = String(right.stops[title].dropLast(" Heading".count))
+      XCTAssertNotNil(judged(noRole, as: slug), "\(slug): the title without its heading trait")
+    }
+  }
+
+  func testTheJudgeRefusesAMissingOrWrongLineAboveTheHeading() {
+    var noLine = Self.walkOf("good-columns")
+    noLine.stops.remove(at: noLine.stops.firstIndex(of: Self.screens["good-columns"]![1])!)
+    XCTAssertNotNil(judged(noLine, as: "good-columns"))
+    var noDefect = Self.walkOf("bad-key-missing")
+    noDefect.stops.removeAll { $0.hasPrefix("Defect:") }
+    XCTAssertNotNil(judged(noDefect, as: "bad-key-missing"))
+    var otherDefect = Self.walkOf("bad-key-missing")
+    otherDefect.stops = otherDefect.stops.map {
+      $0.hasPrefix("Defect:") ? String(Self.screens["bad-columns-mixed"]![2].prefix(64)) : $0
+    }
+    XCTAssertNotNil(judged(otherDefect, as: "bad-key-missing"))
+  }
+
+  func testTheJudgeMatchesALongDefectAsTheServiceCutsIt() {
+    let defect = Self.screens["bad-columns-mixed"]![2]
+    XCTAssertGreaterThanOrEqual(defect.count, 64)
+    XCTAssertTrue(S11Walk.matches(String(defect.prefix(64)), defect))
+    XCTAssertFalse(S11Walk.matches(String(defect.prefix(40)), defect), "a capture cut shorter than the service cuts")
+    XCTAssertFalse(S11Walk.matches("", defect))
+    XCTAssertTrue(S11Walk.matches("Water", "Water"))
+    XCTAssertFalse(S11Walk.matches("Wate", "Water"), "a short stop is matched whole")
+  }
+
+  func testTheJudgeRefusesAMidWalkDuplicate() {
+    var walk = Self.walkOf("good-columns")
+    let water = walk.stops.firstIndex(of: "Water")!
+    walk.stops.insert("Water", at: water)
+    XCTAssertNotNil(judged(walk, as: "good-columns"), "a stop read twice in a row")
+    var title = Self.walkOf("good-columns")
+    title.stops.insert(Self.screens["good-columns"]![0], at: title.stops.firstIndex(of: Self.screens["good-columns"]![0])!)
+    XCTAssertNotNil(judged(title, as: "good-columns"), "the title read twice in a row")
+  }
+
+  func testTheJudgeNeedsIndependentEvidenceOfTheEnd() {
+    var notReached = Self.walkOf("good-columns")
+    notReached.reachedEnd = false
+    XCTAssertNotNil(judged(notReached, as: "good-columns"))
+    var noBack = Self.walkOf("good-columns")
+    noBack.backFromEnd = nil
+    XCTAssertNotNil(judged(noBack, as: "good-columns"), "no move back from the end")
+    var staleBack = Self.walkOf("good-columns")
+    staleBack.backFromEnd = "List saves: 0"
+    XCTAssertNotNil(judged(staleBack, as: "good-columns"), "the move back read the last stop again: stale speech")
+  }
+
+  func testTheCollectorKeepsADuplicateAndEndsOnlyOnTwoRepeats() {
+    // A mid-walk duplicate is kept as a stop of its own.
+    var feed = ["A", "A", "B", "C", "C", "C"].makeIterator()
+    let walk = S11Walk.collect(max: 24) { feed.next()! }
+    XCTAssertEqual(walk.stops, ["A", "A", "B", "C"])
+    XCTAssertTrue(walk.reachedEnd)
+    // A duplicate title in the middle of a real walk is kept, and fails.
+    var title = ["Back Button", "T Heading", "T Heading", "Example Heading", "x", "x", "x"].makeIterator()
+    let walked = S11Walk.collect(max: 24) { title.next()! }
+    XCTAssertEqual(walked.stops, ["Back Button", "T Heading", "T Heading", "Example Heading", "x"])
+    // Stale speech at the end: two repeats end the collection, but the end
+    // still needs the move back (judge), which here is missing.
+    var stale = ["A", "B", "B", "B"].makeIterator()
+    let short = S11Walk.collect(max: 24) { stale.next()! }
+    XCTAssertEqual(short.stops, ["A", "B"])
+    XCTAssertTrue(short.reachedEnd)
+    XCTAssertNil(short.backFromEnd)
+    // Out of moves before two repeats: not the end.
+    var endless = (1...30).map(String.init).makeIterator()
+    XCTAssertFalse(S11Walk.collect(max: 24) { endless.next()! }.reachedEnd)
+  }
+}
+
+/// S11's own VoiceOver walk and judge (C03Walk's way of moving, with what
+/// review asked for added): every utterance is kept, a mid-walk duplicate
+/// included; the walk ends when moving on gives the last utterance again,
+/// twice, and the end then needs independent evidence: one move back must
+/// read the stop before the last.
+enum S11Walk {
+  struct Result: Equatable {
+    var stops: [String]
+    var reachedEnd: Bool
+    var backFromEnd: String? = nil
+  }
+
+  /// Reads utterances from `next` until the same one has come three times
+  /// in a row (the last element, then two moves that found nothing after
+  /// it), at most `max` reads. The two repeats at the end are left out;
+  /// any other repeat is kept as a stop.
+  static func collect(max: Int = 30, _ next: () throws -> String) rethrows -> Result {
+    var heard: [String] = []
+    for _ in 0..<max {
+      heard.append(try next())
+      if heard.count >= 3, heard[heard.count - 1] == heard[heard.count - 2], heard[heard.count - 2] == heard[heard.count - 3] {
+        return Result(stops: Array(heard.dropLast(2)), reachedEnd: true)
+      }
+    }
+    return Result(stops: heard, reachedEnd: false)
+  }
+
+  /// Whether `utterance` is `expected` as the service gives it: whole, or,
+  /// for an expected stop of 64 characters or more, its first 64
+  /// characters (white space at the cut trimmed).
+  static func matches(_ utterance: String, _ expected: String) -> Bool {
+    if expected.count < 64 { return utterance == expected }
+    let cut = String(expected.prefix(64)).trimmingCharacters(in: .whitespaces)
+    return utterance == cut || utterance == String(expected.prefix(64))
+  }
+
+  /// What is wrong with a walk, or nil for a right one: it must have
+  /// reached the end, with a move back from it that read the stop before
+  /// the last; no stop may be read twice in a row; the stops right before
+  /// the last "Example Heading" must be `screen` (title, line, defect), and
+  /// the stops after it exactly `content`.
+  static func judge(_ walk: Result, screen: [String], content: [String]) -> String? {
+    guard walk.reachedEnd else { return "the walk did not reach the end" }
+    let s = walk.stops
+    for i in 1..<max(s.count, 1) where s[i] == s[i - 1] {
+      return "stop \(i + 1), \"\(s[i])\", was read twice in a row"
+    }
+    guard let heading = s.lastIndex(of: "Example Heading") else { return "no \"Example Heading\"" }
+    guard heading >= screen.count else { return "the walk has too few stops before the heading" }
+    let above = Array(s[(heading - screen.count)..<heading])
+    for (got, want) in zip(above, screen) where !matches(got, want) {
+      return "above the heading, \"\(got)\" where \"\(want)\" was expected (all: \(above))"
+    }
+    let after = Array(s[(heading + 1)...])
+    guard after == content else { return "after the heading: \(after), expected \(content)" }
+    guard content.count >= 2, walk.backFromEnd == content[content.count - 2] else {
+      return "one move back from the end read \"\(walk.backFromEnd ?? "nothing")\", not \"\(content.dropLast().last ?? "")\""
+    }
+    return nil
+  }
+
+  #if compiler(>=6.4)
+  /// Switches VoiceOver on, walks to the end of the screen (a move with no
+  /// speech handled as C03Walk does), makes one move back from the end, and
+  /// switches VoiceOver off.
+  @available(iOS 27.0, *)
+  static func walk(_ voiceOver: XCUIVoiceOverService) throws -> Result {
+    try voiceOver.enable()
+    defer { try? voiceOver.disable() }
+    var last: String?
+    var result = try collect {
+      let utterance: String
+      do {
+        utterance = VoiceOverWalk.normalized(try voiceOver.moveForward().utterance)
+      } catch let error as NSError where VoiceOverWalk.isNoSpeech(error) {
+        let back = VoiceOverWalk.normalized(try voiceOver.moveBackward().utterance)
+        var again: String? = nil
+        do {
+          again = VoiceOverWalk.normalized(try voiceOver.moveForward().utterance)
+        } catch let error as NSError where VoiceOverWalk.isNoSpeech(error) {}
+        utterance = VoiceOverWalk.afterNoSpeech(previous: last, back: back, again: again)
+      }
+      last = utterance
+      return utterance
+    }
+    if result.reachedEnd {
+      result.backFromEnd = try? VoiceOverWalk.normalized(voiceOver.moveBackward().utterance)
+    }
+    return result
+  }
+  #endif
 }

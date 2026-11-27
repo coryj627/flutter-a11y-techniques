@@ -75,10 +75,12 @@ TALKBACK_METHOD = (
 # transcript column).
 VOICEOVER_IOS_METHOD = (
     "`XCUIVoiceOverService.moveForward()` from the top of the screen to its "
-    "end, where moving on gives the last utterance again, twice (C03's walk); "
-    "what is shown is everything after the \"Example\" heading, in the order "
-    "VoiceOver moved, and a walk that does not reach the end fails",
-    "Spoken, in swipe order",
+    "end, where moving on gives the last utterance again, twice, and then one "
+    "move back, which must read the stop before the last (S11Walk); the whole "
+    "walk is shown. It must hold the example's own title, its good or bad line, "
+    "and a bad example's defect right before \"Example Heading\", then exactly the "
+    "expected content, with no stop read twice in a row",
+    "Spoken, in swipe order, from the top",
 )
 
 # tool/voiceover_web.py: how the speech was captured.
