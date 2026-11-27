@@ -428,7 +428,28 @@ def said(fragments, phrase):
     "Close button" does not count as the role, "Bluetooth on" does not count
     as the state "on", and "not checked" does not count as "checked". A role
     word is a sentence of its own; a state word is a sentence or a part of
-    one between commas, since TalkBack says "Off, Repeat" as well as "off."."""
+    one between commas, since TalkBack says "Off, Repeat" as well as "off.".
+
+    Two forms, which a technique opts into, judge whole utterances, where a
+    name found inside another would be a wrong pass (S06: "Orders" inside
+    "Open orders"):
+
+    - "== A / B / C": the row's utterances are exactly A, B, C, in that
+      order, each compared whole (trimmed, case ignored; an empty part is
+      an utterance of nothing but white space, as a pane title of one
+      space is spoken). TalkBack's usage hint, "Double-tap to activate",
+      is left out where it comes at the end, as it does after a control;
+      anything else more, less, or in another order is wrong.
+    - "^= A": the row's first utterance is exactly A.
+    """
+    if phrase.startswith("=="):
+        want = [p.strip().lower() for p in phrase[2:].split("/")]
+        got = [f.strip().lower() for f in fragments]
+        while got and got[-1] == "double-tap to activate" and len(got) > len(want):
+            got.pop()
+        return got == want
+    if phrase.startswith("^="):
+        return bool(fragments) and fragments[0].strip().lower() == phrase[2:].strip().lower()
     word = phrase.lower()
     if word in ("button", "disabled", "heading", "edit box", "switch",
                 "check box", "slider", "image"):

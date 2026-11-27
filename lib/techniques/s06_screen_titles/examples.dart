@@ -113,9 +113,9 @@ class GoodMaterial extends StatelessWidget {
 /// Not free of defects: the bar builds its own Back button, two buttons
 /// whose tap target has no name (FL-303). On iOS VoiceOver lands on it as
 /// the screen opens and says only "Button", which fails 4.1.2's name. On
-/// the web both are named "Back", and on Android TalkBack reads the one
-/// named "Back"; neither was shown to fail 4.1.2. Nothing in the SDK names
-/// it, and the bar's button is kept.
+/// the web both are named "Back" (Chromium), and on Android TalkBack reads
+/// the one named "Back"; neither was shown to fail 4.1.2. Nothing in the
+/// SDK names it, and the bar's button is kept.
 class GoodCupertino extends StatelessWidget {
   const GoodCupertino({super.key});
 

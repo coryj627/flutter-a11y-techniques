@@ -55,6 +55,15 @@ platform is a limitation, and there is no good example for it there.
   `NavigatorObserver` that called `SystemChrome` would be a mechanism of
   the project's own. The good examples are the closest the framework
   comes on the web: right while a screen is open, wrong after Back.
+  What the app shows of this is the shared app's, as for every
+  technique with a limitation: the technique screen's "Platforms" line,
+  "Web: Flutter limitation. Title sets the document title when a screen
+  opens, … (limitation FL-300). There is no workaround."
+  (`lib/app/screens.dart`, lines 65 to 67 and `_describe`, line 96); the
+  example screens and the technique screen's list still say "Good
+  example" and "Good examples", with no platform note, as they do for
+  I08's good examples, whose web is a limitation too
+  (`docs/evidence/probes/s06/web_status.txt`).
 - **iOS: applies** (the principal's decision, section 8). The title is
   the screen's level 1 heading, and VoiceOver reads it with "Heading"
   when its cursor reaches it (R1, R2, R3). When a screen opens, the title
@@ -178,7 +187,7 @@ What each meets and does not, by platform, under the reading of section 3:
 | Example | Android | iOS | Web |
 | --- | --- | --- | --- |
 | `good-material` | R1 to R5: pane title "Orders"; a heading; TalkBack said "Orders" as it opened | R1 to R3: "Orders Heading" when reached; the title not heard as the screen opens (FL-302), which R5 does not ask of iOS | R1 to R3; R4 while it is open, not after Back (FL-300), so not good on the web |
-| `good-cupertino` | As `good-material`, with `namesRoute` (FL-301). Its Back button (FL-303): TalkBack read the node named "Back", a `Button` with no click action and no "Double-tap to activate"; an unnamed clickable node is there too; not shown to fail 4.1.2 | As `good-material`, and a framework defect: as the screen opens VoiceOver lands on Back's unnamed tap target and says only "Button", which fails 4.1.2's name as written (FL-303) | As `good-material`, so not good on the web; its route is described by its title with `navigator.platform` as a Mac and as Linux (Playwright's Chromium on macOS); Back is two button elements, both named "Back", read by VoiceOver as "Back button" (Chromium adding "group"): not a 4.1.2 failure (FL-303) |
+| `good-cupertino` | As `good-material`, with `namesRoute` (FL-301). Its Back button (FL-303): TalkBack read the node named "Back", a `Button` with no click action and no "Double-tap to activate"; an unnamed clickable node is there too; not shown to fail 4.1.2 | As `good-material`, and a framework defect: as the screen opens VoiceOver lands on Back's unnamed tap target and says only "Button", which fails 4.1.2's name as written (FL-303) | As `good-material`, so not good on the web; its route is described by its title with `navigator.platform` as a Mac and as Linux (Playwright's Chromium on macOS); Back is two button elements, both named "Back" in Chromium's tree, read by VoiceOver as "Back button" in Chromium and WebKit as the screen opened (Chromium adding "group"): not a 4.1.2 failure (FL-303) |
 
 `good-cupertino` is the framework's bar through its documented
 parameters, and it is not free of defects: its Back button, which the
@@ -250,9 +259,9 @@ Not built:
 | L3 web | For each example: the document title is the example screen's when it opens by its address, the opened screen's once it is open ("Orders", "Details", or the example screen's for `bad-no-title` and `bad-no-document-title`), and still the opened screen's after the app's Back (FL-300), and after the browser's Back for `good-material`; the name of Chromium's root web area is the document title each time. The opened screen's headings: one, level 1, "Orders" or "Details", and none for `bad-no-title`, where "Orders" is plain text; the example screen is out of the tree while covered. The route's element, with `navigator.platform` set before load to "MacIntel" and to "Linux x86_64" (CI's browser is on Linux): `good-material` described by "Orders" as Linux and by nothing as a Mac, `good-cupertino` by "Orders" as both, `bad-cupertino-unnamed` by nothing as both; a described route is a generic element with no name and no role, and no route is a dialog or a region. Tab reaches the button, and Enter and Space each open the screen, with DOM focus then on its Back; Tab and Enter on Back close it, focus goes back to the button, and the title stays. The VoiceOver spec's stops above each heading are on each screen; the walk judge on made-up walks |
 | L3 Android | For each example: the button a `Button` named "Open orders"; the FlutterView's pane title the example's title, then once the screen is open "Orders", "Details", or a single space for `bad-no-title` and `bad-cupertino-unnamed`, then the example's title again after the system Back; the app window's title "Flutter A11Y Techniques" throughout. The opened screen's headings: "Orders" or "Details", none for `bad-no-title`. Cupertino's Back: the node named Back takes no click, and a clickable node with no name is there; Material's Back, named and clickable, the control. Tab reaches the button and Enter opens the screen, for both good examples |
 | L3 iOS | For each example: the button labelled "Open orders"; a tap opens the screen, whose title is a text element and which has no navigation bar; the example screen's button is out of the tree while it is covered; Back closes it. Cupertino's Back: two buttons, one labelled Back and one with no label; Material's, one, labelled Back |
-| L4 TalkBack | Each button "Open orders", "Button". After the click action, eight seconds: the good examples and `bad-no-document-title` "Orders"; `bad-vague-title` "Details" and not "Orders"; `bad-no-title` and `bad-cupertino-unnamed` not "Orders". After the system Back, eight seconds: the example screen's title. Judged whole (`walk_strictly`; S06 is in `STRICT`) |
+| L4 TalkBack | Every row judged by whole utterances, not by words found in the row (`==` and `^=` in `tool/talkback.py`, `said`): each button exactly "Open orders", "Button". After the click action, eight seconds, exactly the pane title, "Back", "Button" (the usage hint at the end allowed): the title "Orders" for the good examples and `bad-no-document-title`, "Details" for `bad-vague-title`, and an utterance of nothing but white space, the pane title of one space, for `bad-no-title` and `bad-cupertino-unnamed`; any other title, or any utterance more, is a wrong reading. After the system Back, eight seconds: the first utterance exactly the example screen's title, then "Open orders", "Button". Judged whole (`walk_strictly`; S06 is in `STRICT`). The judge's cases, among them the false passes the word match allowed (late "Open orders" in place of "Orders"; a title on `bad-no-title`; a second title), are in `tool/test_talkback.py`, `S06WholeUtterances` |
 | L4 VoiceOver iOS | For each example, the cursor walked to the button and the button pressed with a tap at its place: every `currentSpeech()` read for six seconds judged raw (`S06Landing.judge`): the button's utterance, then only the landing, "Back Button" (Material) or "Button" (Cupertino, FL-303), and never back; then the screen to its end as a whole list ("Orders Heading" or "Details Heading", "Orders" for `bad-no-title`, and the text; the Cupertino screens "Back Button" first); then Back pressed the same way, and the reads judged: the text's utterance, then "Open orders Button" |
-| L4 VoiceOver web | Each example screen walked from Back and judged against the whole screen in order; Enter on the button and six seconds of phrases, recorded and not judged, except that something must be heard; the opened screen walked from its Back and judged: "heading level 1 Orders" (or "Details", or "Orders" as plain text for `bad-no-title`) and the text. No runner retries. Recorded once, by the principal, and failed on a start of VoiceOver (section 7) |
+| L4 VoiceOver web | Each example screen walked from Back and judged against the whole screen in order; Enter on the button and six seconds of phrases, recorded and not judged, except that something must be heard; the opened screen walked from its Back and judged: "heading level 1 Orders" (or "Details", or "Orders" as plain text for `bad-no-title`) and the text. No runner retries. Recorded twice, by the principal: the first failed on a start of VoiceOver, the second passed (section 7) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -303,24 +312,31 @@ What the examples' tests showed:
   Button" (`docs/evidence/S06/voiceover-ios.md`). The tree: two buttons
   on each Cupertino screen, one labelled "Back" and one with no label;
   one on each Material screen (`S06ScreenTitlesUITests`).
-- **VoiceOver on the web** (the principal's recording,
-  `docs/evidence/probes/s06/voiceover-web-round1-fail.md.txt` and
-  `voiceover-web-round1-error.txt`). The run failed one test of twelve:
+- **VoiceOver on the web** (the principal's recordings, Playwright's
+  Chromium and WebKit on macOS, `navigator.platform` as it is). The
+  second passed, twelve tests of twelve
+  (`docs/evidence/S06/voiceover-web.md`); the first failed one test,
   `good-material` in Chromium, where VoiceOver could not be started
-  ("Error: VoiceOver cannot be started"), so it has no reading. Every
-  walk that ran was complete on its first try, in Chromium and WebKit:
-  each example screen to its button, "Open orders button", and each
-  opened screen, "heading level 1 Orders" (or "Details", or "Orders" as
-  plain text for `bad-no-title`) and the text. No list was wrong, so no
-  expectation was changed. The opening rows, recorded and not judged,
-  differ between the browsers: WebKit read "Back button" for every
-  example; Chromium read "Back button" for the Material ones, with "Back
-  and 1 more item and 1 more item group" first for `bad-vague-title`, and
-  "Back button, group" and VoiceOver's help for a group for the two
-  Cupertino ones, with "Back and 2 more items group" first for
-  `good-cupertino`. Neither browser's opening rows had the title. These
-  readings prove nothing beyond what was heard once, and the spec makes
-  no claim on them but that.
+  ("Error: VoiceOver cannot be started"), and every walk that ran in it
+  was complete (`docs/evidence/probes/s06/voiceover-web-round1-fail.md.txt`,
+  `voiceover-web-round1-error.txt`). No expected list was changed between
+  them. In the passing one every walk was complete on its first try, in
+  both browsers: each example screen to its button, "Open orders
+  button", and each opened screen, "heading level 1 Orders" (or
+  "Details", or "Orders" as plain text for `bad-no-title`) and the text.
+  The opening rows, recorded and not judged, differ between the
+  browsers and between the recordings. WebKit read "Back button" for
+  every example, in both. Chromium, in the passing recording: for
+  `good-material`, "Back and 1 more item and 1 more item group", then
+  "Back button"; for `bad-vague-title`, the same group, then "Back";
+  "Back button" for `bad-no-title` and `bad-no-document-title`; "Back button, group" and
+  VoiceOver's help for a group for the two Cupertino ones, with "Back and
+  2 more items group" first for `bad-cupertino-unnamed`. In the first
+  recording the "Back and 2 more items group" came first for
+  `good-cupertino` and not `bad-cupertino-unnamed`, and `bad-vague-title`
+  ended on "Back button". No opening row of either recording had the
+  title. These rows prove only what was heard in each recording, and the
+  spec claims nothing more of them.
 - **Widget tests.** No title is sent on Back, for any example; the route
   names and headings are as the table above, as Android and as iOS.
 
@@ -345,8 +361,13 @@ Skips and what they give up, in the tests:
   real browser on Linux, was tried here. Chromium only for the tree.
 - The Android tree test reads the pane titles of the application windows
   only; the status bar has a pane title of its own.
-- TalkBack's rows are judged on phrases, a name found anywhere in a row's
-  speech: a row that must not say "Orders" fails on any word with it.
+- TalkBack's opening rows are judged as their exact list of utterances,
+  except that TalkBack's usage hint, "Double-tap to activate", may end a
+  row or not (it ended the Material rows and not the Cupertino ones,
+  whose Back node has no click action): a row that differed only by that
+  hint would pass either way. A closing row is judged by its first
+  utterance, exactly, and the button's name and role anywhere after it;
+  repeats after that are not judged.
 - The iOS VoiceOver landing reads `currentSpeech()` every 0.15 s; an
   utterance shorter than that between two reads would not be seen.
 - The web VoiceOver opening rows are recorded and not judged, so they
@@ -360,9 +381,7 @@ Skips and what they give up, in the tests:
   first run, at the local size, failed one test, a fault of the test
   (`android-test-round1-fail.txt`, the probe README).
 
-**Not done yet.** A web VoiceOver recording that passes: the first
-stopped on a start of VoiceOver before `good-material`'s walk in
-Chromium, and the principal records it again. What
+**Not done yet.** What
 TalkBack and VoiceOver do with a title that changes inside one route
 (FL-305) and with a drawer, beyond the probe.
 

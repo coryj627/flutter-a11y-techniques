@@ -17,39 +17,52 @@ WEB_VO_SPEC = "s06_screen_titles_vo.spec.js"
 # pane title (the route's name, or a single space where no node names the
 # route) and then the screen's first control, "Back", "Button"; and as it
 # closed, the pane title of the screen under it and the button that had
-# opened it (docs/evidence/probes/s06/android-talkback.md, p01 to p13). A
-# phrase that is not a role word is found anywhere in the row's speech, so
-# a row that must not say "Orders" must not say it in any word.
-_OPEN = (["Open orders", "Button"], [])
+# opened it (docs/evidence/probes/s06/android-talkback.md, p01 to p13).
+#
+# The title is judged as a whole utterance, never as words found in the
+# row: "Orders" is inside "Open orders", so a word match would pass a row
+# where launcher speech came late and no title was said, or a row with a
+# wrong title (Codex, review of 788a911). "== A / B / C" is the row's
+# utterances, exactly, in order, TalkBack's closing usage hint left out;
+# "^= A" is its first utterance (tool/talkback.py, said). An empty part is
+# the pane title of a single space that TalkBack speaks where no node names
+# the route. On a Cupertino screen TalkBack says no usage hint for Back,
+# whose node has no click action (FL-303); the exact form takes the row
+# with the hint at its end or without it, so one list holds for both bars.
+_OPEN = (["== Open orders / Button"], [])
+
+
+def _opened(title):
+    return ([f"== {title} / Back / Button"], [])
 
 
 def _closed(title):
-    return ([title, "Open orders", "Button"], [])
+    return ([f"^= {title}", "Open orders", "Button"], [])
 
 
 TALKBACK_EXPECT = {
     "s06-good-material-open": _OPEN,
-    "s06-good-material-opened": (["Orders", "Back", "Button"], []),
+    "s06-good-material-opened": _opened("Orders"),
     "s06-good-material-closed": _closed("Material screen title"),
     "s06-good-cupertino-open": _OPEN,
-    "s06-good-cupertino-opened": (["Orders", "Back", "Button"], []),
+    "s06-good-cupertino-opened": _opened("Orders"),
     "s06-good-cupertino-closed": _closed("Cupertino screen title"),
     # The defect: no name, a pane title of a single space, and then the
-    # screen's first control.
+    # screen's first control; any title said is a wrong reading.
     "s06-bad-no-title-open": _OPEN,
-    "s06-bad-no-title-opened": (["Back", "Button"], ["Orders"]),
+    "s06-bad-no-title-opened": _opened(""),
     "s06-bad-no-title-closed": _closed("Screen with no title"),
-    # The defect is the words: "Details", and nothing that says orders.
+    # The defect is the words: "Details" as the whole title.
     "s06-bad-vague-title-open": _OPEN,
-    "s06-bad-vague-title-opened": (["Details", "Back", "Button"], ["Orders"]),
+    "s06-bad-vague-title-opened": _opened("Details"),
     "s06-bad-vague-title-closed": _closed("Screen titled Details"),
     # The defect is the web's: TalkBack is told the name.
     "s06-bad-no-document-title-open": _OPEN,
-    "s06-bad-no-document-title-opened": (["Orders", "Back", "Button"], []),
+    "s06-bad-no-document-title-opened": _opened("Orders"),
     "s06-bad-no-document-title-closed": _closed("Screen with no document title"),
     # FL-301: as bad-no-title.
     "s06-bad-cupertino-unnamed-open": _OPEN,
-    "s06-bad-cupertino-unnamed-opened": (["Back", "Button"], ["Orders"]),
+    "s06-bad-cupertino-unnamed-opened": _opened(""),
     "s06-bad-cupertino-unnamed-closed": _closed("Cupertino bar that names no screen"),
 }
 
@@ -58,9 +71,11 @@ TALKBACK_METHOD = (
     "TalkBack focus moved to the example's button (`-open`); the marker `-opened` logged, the "
     "button pressed with ACTION_CLICK, and everything TalkBack said for eight seconds as the "
     "screen opened; the marker `-closed` logged, the system Back pressed, and everything said for "
-    "eight seconds as the screen closed. Speech read from TalkBack's verbose log. Each walk is "
-    "judged whole: a wrong reading fails for good, and only a walk shown to be incomplete is "
-    "walked again"
+    "eight seconds as the screen closed. Speech read from TalkBack's verbose log. The title is "
+    "judged as a whole utterance: `-open` and `-opened` rows must be exactly their list of "
+    "utterances (TalkBack's closing usage hint allowed), a `-closed` row's first utterance exactly "
+    "the example screen's title. Each walk is judged whole: a wrong reading fails for good, and "
+    "only a walk shown to be incomplete is walked again"
 )
 
 # tool/voiceover_ios.py: (how the speech was captured, heading of the

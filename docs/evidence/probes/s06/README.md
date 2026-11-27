@@ -231,3 +231,9 @@ VoiceOver from round 2 only, no tree).
 
 "–": not measured. p13's app Back was not taken on the web (its leading
 button opens the drawer); its browser Back kept "p13 Mail".
+- `probe_s06_status.spec.js.txt`, `web_status.txt`: on the release app
+  build in Playwright's Chromium on macOS, what the technique screen and
+  a good example's screen show of the web's platform status, for S06 and,
+  to compare, I08, whose web is a limitation too: the technique screen's
+  "Web: Flutter limitation. …" line, and on both techniques' good
+  example screens "Good example for …" with no platform note.

@@ -4649,15 +4649,20 @@ yet), **Fixed in x.y** (verified on that version).
   `good-material`, titled "Material screen title - Flutter A11Y
   Techniques" when it opened, is shown under the title "Orders" after
   Back. The same holds for this app's own screens, which each have a
-  `Title` (`lib/app/widgets.dart`, `PageScaffold`): measured only for an
-  example screen under an S06 screen; the catalog and technique screens
-  were not measured. On Android `Title` sets the app's task label in
+  `Title` (`lib/app/widgets.dart`, `PageScaffold`): the catalog, "Flutter
+  A11Y Techniques", opened S06's technique screen, "Screen and page
+  titles - Flutter A11Y Techniques", and after the app's Back the catalog
+  kept that title (`docs/evidence/probes/s06/web_back.txt`, the release
+  app build in Playwright's Chromium on macOS); the example screens under
+  S06's screens as above. No other screen of the app was tried. On Android `Title` sets the app's task label in
   Recents (source read: `PlatformPlugin.java`); what that label is after
   Back was not measured. On iOS `Title` does
   nothing (source read: `FlutterPlatformPlugin.mm`).
-- Why it matters: after Back, the browser tab, a screen reader's reading
-  of the page's name, and the browser's history all name a screen that
-  is not shown.
+- Why it matters: after Back, the document's title, which a browser
+  shows in its tab, and the page's name in Chromium's accessibility tree
+  name a screen that is not shown. What a screen reader said of the
+  page's name after Back, and the titles in the browser's history, were
+  not measured.
 - Workaround: none in the SDK. No documented parameter of `Title`,
   `MaterialApp` (`title`, `onGenerateTitle`), or the routes sets the
   title again when a route pops. A `NavigatorObserver` or a `RouteAware`
@@ -4754,9 +4759,11 @@ yet), **Fixed in x.y** (verified on that version).
   - Web (Chromium and WebKit, Playwright's builds): not failed. Both
     elements have the button role and are named "Back" in Chromium's
     tree (the outer one by its content), and VoiceOver read "Back
-    button" in both browsers; in Chromium it added "group" and its help
-    for a group (`voiceover-web-round1-fail.md.txt`, the Cupertino
-    `-opening` rows).
+    button" in both browsers as the two Cupertino screens opened; in
+    Chromium it added "group" and its help for a group, in both
+    recordings (`docs/evidence/S06/voiceover-web.md` and
+    `docs/evidence/probes/s06/voiceover-web-round1-fail.md.txt`, the
+    Cupertino `-opening` rows, recorded and not judged).
   - Android: not shown to fail. The node TalkBack read, "Back", has its
     name and the `Button` class; it has no click action, which 4.1.2
     does not ask about. Whether TalkBack ever stops on the unnamed
@@ -4812,9 +4819,13 @@ yet), **Fixed in x.y** (verified on that version).
   can move to. Named-route landmarks on the web are said to come with
   Flutter 3.50 (S06's issue); the pin is 3.47.5, and nothing of 3.50 was
   measured. VoiceOver on the web, opening `good-cupertino`'s screen,
-  whose route is described in either case, did not read the description
-  in its one recording (`voiceover-web-round1-fail.md.txt`); nothing
-  else was measured of it.
+  whose route is described with either `navigator.platform`, did not
+  read the description in either recording, in Chromium or WebKit
+  (`docs/evidence/S06/voiceover-web.md`, and the first, failed round,
+  `docs/evidence/probes/s06/voiceover-web-round1-fail.md.txt`; the
+  opening rows, recorded and not judged); nothing else was measured of
+  it. Those recordings ran with `navigator.platform` as it is on the
+  Mac, so `good-material`'s route was not described in them.
 - Upstream issue: not searched yet (D25).
 
 ## FL-305

@@ -4,6 +4,7 @@ Run: python3 -m unittest discover -s tool -p 'test_*.py'
 """
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -710,6 +711,66 @@ class C06SilentClicks(unittest.TestCase):
         speech = dict(self.right)
         speech["c06-bad-expand-icon-closed"] = self.right["c06-bad-expand-icon-closed"] + ["Orders ship in two days."]
         self.assertEqual(self.judge(speech), ("right", []))
+
+
+class S06WholeUtterances(unittest.TestCase):
+    """S06 judges a screen's title as a whole utterance ("== A / B" and
+    "^= A" in said()), because "Orders" is inside "Open orders". The cases
+    are the false passes Codex reproduced on the word match, review of
+    788a911, and the committed transcript, which must still be right."""
+    TRANSCRIPT = os.path.join(tb.ROOT, "docs", "evidence", "S06", "talkback-android.md")
+
+    def transcript(self):
+        """The decided walk of the committed transcript: element -> fragments."""
+        rows = {}
+        with open(self.TRANSCRIPT) as f:
+            for line in f:
+                m = re.match(r"^\| `(s06-[^`]+)` \| (.*) \|$", line.rstrip("\n"))
+                if m and m.group(1) not in rows:
+                    rows[m.group(1)] = m.group(2).split(" / ")
+        return rows
+
+    def test_the_committed_transcript_is_still_right(self):
+        rows = self.transcript()
+        expected = [i for i in tb.EXPECT if i.startswith("s06-")]
+        self.assertEqual(sorted(rows), sorted(expected))
+        for ident in expected:
+            self.assertEqual(tb.problems(ident, rows[ident]), [], ident)
+
+    def test_late_launcher_speech_in_place_of_the_title_is_wrong(self):
+        # Codex's first case: "Orders" was found inside "Open orders".
+        self.assertTrue(tb.problems("s06-good-material-opened", ["Open orders", "Back", "Button"]))
+        self.assertTrue(tb.problems("s06-good-material-closed",
+                                    ["Open orders", "Button", "Material screen title"]))
+
+    def test_a_title_where_none_is_expected_is_wrong(self):
+        # Codex's second case: bad-no-title given a title it does not have.
+        self.assertTrue(tb.problems("s06-bad-no-title-opened", ["Details", "Back", "Button"]))
+        self.assertTrue(tb.problems("s06-bad-cupertino-unnamed-opened", ["Orders", "Back", "Button"]))
+
+    def test_a_contradictory_extra_announcement_is_wrong(self):
+        for row in (["Orders", "Details", "Back", "Button"],
+                    ["Orders", "Back", "Button", "Details"],
+                    ["Details", "Orders", "Back", "Button"]):
+            self.assertTrue(tb.problems("s06-good-material-opened", row), row)
+        self.assertTrue(tb.problems("s06-bad-vague-title-opened", ["Details", "Orders", "Back", "Button"]))
+
+    def test_the_usage_hint_only_at_the_end(self):
+        hint = "Double-tap to activate"
+        self.assertEqual(tb.problems("s06-good-material-opened", ["Orders", "Back", "Button", hint]), [])
+        self.assertEqual(tb.problems("s06-good-cupertino-opened", ["Orders", "Back", "Button"]), [])
+        self.assertTrue(tb.problems("s06-good-material-opened", ["Orders", hint, "Back", "Button"]))
+        self.assertTrue(tb.problems("s06-good-material-opened", ["Orders", "Back"]))
+
+    def test_the_empty_pane_title(self):
+        self.assertEqual(tb.problems("s06-bad-no-title-opened", [" ", "Back", "Button"]), [])
+        self.assertTrue(tb.problems("s06-bad-no-title-opened", ["Back", "Button"]))
+
+    def test_the_word_forms_are_unchanged(self):
+        self.assertTrue(tb.said(["open orders"], "Orders"))
+        self.assertFalse(tb.said(["open orders"], "== Orders"))
+        self.assertFalse(tb.said(["open orders", "orders"], "^= Orders"))
+        self.assertTrue(tb.said(["orders", "open orders"], "^= Orders"))
 
 
 class FakeSettingsScreen:
