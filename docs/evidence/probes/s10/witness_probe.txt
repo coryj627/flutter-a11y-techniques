@@ -1,0 +1,10 @@
+# web_tests/s10_witness_probe.spec.js (witness_probe.spec.js.txt) against flutter build web, 2026-11-27.
+# Round 1: the witness was the identifier of a container round the rating and the button, changed in place with the count.
+S10WITNESS before ["s10-bad-stale-shows-856","s10-bad-stale-rating","s10-bad-stale-add"]
+S10WITNESS after click ["s10-bad-stale-shows-856","s10-bad-stale-rating","s10-bad-stale-add"]
+S10WITNESS good after click ["s10-good-exclude-semantics-shows-856","s10-good-exclude-semantics-rating","s10-good-exclude-semantics-add"]
+# (good-exclude-semantics' replacement did say 857 after the click in the same build: the tree spec.)
+# Round 2: the witness is an empty one-pixel node after the button, keyed by the count, so a new node is made for each count.
+S10WITNESS before ["s10-bad-stale-rating","s10-bad-stale-add","s10-bad-stale-shows-856"]
+S10WITNESS after click ["s10-bad-stale-rating","s10-bad-stale-add","s10-bad-stale-shows-857"]
+S10WITNESS good after click ["s10-good-exclude-semantics-rating","s10-good-exclude-semantics-add","s10-good-exclude-semantics-shows-857"]
