@@ -241,7 +241,7 @@ round each tile's `TestId`, and the texts are found by their names.
 | L3 iOS | The labels of the example's elements after the "Example" heading, in order, and each tile a button with its label; a tap on each tile, and Tabs then Enter, and then Space, each key sent once from a fresh launch, choose it. XCUITest cannot read a language, so no defect is seen in the tree; the VoiceOver walk is where it is judged |
 | L4 TalkBack | Focus moved to each text of each example and to each tile, in order; every row a whole-utterance form, exactly its fragments in order (`== A / B`, `tool/talkback.py`): each text its words, `good-phrase` the sentence in three fragments, "The guide said / bon voyage / as we left.", split where the language changes, each tile its name and "Button" (a usage hint allowed once at the end). The locale TalkBack logs with each fragment is not read by the tool, so the rows judge words: the split of `good-phrase` is the only one that shows a language; the passages' languages are judged by the Android tree test. Each walk is judged whole (`walk_strictly`): a wrong reading fails for good |
 | L4 VoiceOver iOS | Every utterance from the top of the screen to its end (S16Walk, C03's walk keeping each raw utterance), judged whole: the screen's own stops (the title, the description, a bad example's defect, the "Example" heading, each heading with its role word), which tie the walk to this example; another example's, a missing or an empty one fails, then exactly the example's stops, each with white space made one space; and for some stops the raw utterance exactly: `good-phrase`'s with a second space before and after the phrase, and the passages' leads and passages with single spaces. `good-language-menu`'s tiles with their role word in their language ("Français Bouton", "Español Botón", "Deutsch Taste"); `bad-title-in-tile`'s with "Button"; `bad-override`'s title and heading with "En-tête". Every expected utterance is under the service's 64 characters, and a test refuses a longer one; made-up walks test the judge |
-| L4 VoiceOver web | The walk and the judge are S08's (`web_tests/vo/s16_vo_walks.js`): the whole screen in order, every stop judged, an empty stop a failed capture walked again (at most three walks, each logged), a wrong reading failing for good, no runner retries; the help-message rule is tested only on made-up walks. The expected stops were predictions from the page's elements, and the first recording read every one as predicted (section 7); the words are the same whatever language a stop is in. Every walk is logged whole, the screen's own stops included, and the web tree spec judges the committed transcript again from its recorded stops (`judgeTranscript`): each browser and example exactly once, walks in order, the last complete; duplicate, malformed, unknown, or missing rows fail (made-up transcripts, fourteen copies of one row among them, test it; the test of the committed transcript is skipped, saying why, until the recording with every walk logged whole is committed) |
+| L4 VoiceOver web | The walk and the judge are S08's (`web_tests/vo/s16_vo_walks.js`): the whole screen in order, every stop judged, an empty stop a failed capture walked again (at most three walks, each logged), a wrong reading failing for good, no runner retries; the help-message rule is tested only on made-up walks. The expected stops were predictions from the page's elements, and the first recording read every one as predicted (section 7); the words are the same whatever language a stop is in. Every walk is logged whole, the screen's own stops included, and the web tree spec judges the committed transcript again from its recorded stops (`judgeTranscript`): each browser and example exactly once, walks in order, the last complete; duplicate, malformed, unknown, or missing rows fail (made-up transcripts, fourteen copies of one row among them, test it; the second recording passes it) |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -354,8 +354,17 @@ What the tests skip or cannot see, and what each gives up:
   logged only what follows the heading of a complete walk, so the
   screen's own stops it judged are not in it, and it cannot be judged
   again; the web tree spec shows that it fails `judgeTranscript` for
-  exactly that. The VoiceOver spec now logs every walk whole, and the
-  recording is to be made again (by the principal).
+  exactly that. The VoiceOver spec now logs every walk whole, and
+  the second recording (2026-11-27, `docs/evidence/S16/voiceover-web.md`),
+  the first with every walk logged whole, passed the same way: 14 walks of
+  14, each complete on its first walk in Chromium and WebKit, with no help
+  message and no empty stop, every screen's title, description, defect
+  (`bad-override`'s new line, "Defect: Once opened, the app is French until
+  it is restarted.", included) and heading read as expected, and every
+  example's stops as in the first. On `bad-override`'s screen the headings
+  were read "heading level 1 …", the same English role words as on every
+  other screen, where VoiceOver on iOS read "… En-tête". The web tree spec
+  judges this transcript again from its recorded stops, and it passes.
 
 **Follow-ups.** Keep the locale TalkBack logs with each fragment, in
 `tool/talkback.py`'s `parse_speech`, so that TalkBack rows can judge
@@ -367,8 +376,6 @@ download failed (`docs/evidence/probes/s16/android-talkback-log.txt`), so
 what TalkBack's French fragments sounded like is not known. A passage's
 language on iOS rests on the engine's source.
 
-**Not done yet.** The web VoiceOver recording with every walk logged
-whole.
-What VoiceOver does with `lang="fr_FR"` or with a page whose `lang` is
+**Not done yet.** What VoiceOver does with `lang="fr_FR"` or with a page whose `lang` is
 wrong. An app in another language as an example. Right-to-left languages
 (S17).

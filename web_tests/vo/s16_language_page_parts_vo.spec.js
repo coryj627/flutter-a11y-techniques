@@ -21,7 +21,9 @@
 // (2026-11-27, docs/evidence/probes/s16/voiceover-web-round1-pass.md.txt)
 // read every example as predicted, in Chromium and WebKit, each on its
 // first walk. That recording showed only what follows the "Example"
-// heading of a complete walk; every walk is now logged whole.
+// heading of a complete walk; every walk is now logged whole, and the
+// second recording (2026-11-27, docs/evidence/S16/voiceover-web.md) passed
+// with every walk whole.
 // Each test opens its example in a page of its own, from a fresh load, so
 // that bad-override's French (FL-360) does not reach another example.
 import { voiceOverTest as test } from '@guidepup/playwright';

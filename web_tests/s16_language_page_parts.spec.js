@@ -13,7 +13,7 @@
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
 import { BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, judgeTranscript, runWalks, screenStops, spokenRole } from './vo/s16_vo_walks.js';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 
 // The example screen's own "Example" heading; the technique's page has
 // "Good examples" and "Bad examples", so the name must match exactly.
@@ -428,12 +428,10 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     expect(problems).toHaveLength(14);
   });
 
-  // The recording with every walk logged whole is made by the principal
-  // (the web VoiceOver recording takes over the Mac). Until it is
-  // committed there is nothing to judge, and this test says so.
+  // The second recording (2026-11-27), the first with every walk logged
+  // whole.
   const committed = new URL('../docs/evidence/S16/voiceover-web.md', import.meta.url);
   test('the committed recording (docs/evidence/S16/voiceover-web.md) is right, every browser and example once', () => {
-    test.skip(!existsSync(committed), 'not recorded yet with every walk logged whole');
     expect(judgeTranscript(readFileSync(committed, 'utf8'))).toEqual([]);
   });
 });
