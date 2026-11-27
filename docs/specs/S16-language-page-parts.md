@@ -32,7 +32,9 @@ solution (section 5).
   element's language or a label's language attribute. What was measured is
   what VoiceOver's words show: a button whose element is French is read
   with the French role word ("Français Bouton"), and a label with a
-  phrase marked is read with a second space round the phrase. That a
+  phrase marked is read with a second space round the phrase; on
+  `bad-override`'s screen the English title and heading are read with the
+  French role word "En-tête", which shows the app's language changed. That a
   passage's element is French rests on the engine's source
   (`SemanticsObject.accessibilityLanguage`), not on a measurement.
 - **Web, limitation.** A phrase inside a sentence cannot be marked: the
@@ -162,7 +164,7 @@ the measurements):
 | `bad-unmarked` | 3.1.2: the passage's node en-US | 3.1.2: nothing marks the passage (the tree and the source; VoiceOver's words are the same as `good-passage`'s) | 3.1.2: the passage's element in the page's `en-US` |
 | `bad-title-in-tile` | 3.1.2: each tile's node en-US | 3.1.2: each tile read "Button", in English | 3.1.2: no `lang` on any tile |
 | `bad-region-tag` | none: the node fr-FR | none: fr-FR, by the source | 3.1.2: `lang="fr_FR"` matches no `:lang()` |
-| `bad-override` | 3.1.1: every node of the screen fr, and after Back the technique's page fr | 3.1.1 by the engine's source; not measured | 3.1.1: the page's `lang="fr"`, on the screen and after Back |
+| `bad-override` | 3.1.1: every node of the screen fr, and after Back the technique's page fr | 3.1.1: the screen's English title and heading read with the French role word, "Localizations.override En-tête", "Example En-tête"; after Back not measured | 3.1.1: the page's `lang="fr"`, on the screen and after Back |
 
 `bad-region-tag` on Android and iOS is not called a failure: its one
 defect is the web's, as S08's `bad-tile-in-item` is.
@@ -201,10 +203,10 @@ round each tile's `TestId`, and the texts are found by their names.
 | --- | --- |
 | L1 widget tests | Good, in light and dark: the four guidelines; `good-language-menu`'s text contrast with keyboard focus on each tile, and its focus tint under 3:1 and over 1:1 against the page ([FL-434](../flutter-limitations.md#fl-434), as S08's tiles; written to fail if it reaches 3:1). Every example: at 200% text on a 320 by 640 screen, no layout overflow, no text that hits its line limit, none taller than its box, none past the screen's edge. The example's named nodes after the "Example" heading, in traversal order, each with its locale and its label's language attributes: `good-passage` the lead with no locale and the passage `fr`; `good-phrase` one node with a `fr` attribute over "bon voyage" alone; `good-language-menu` three buttons, each with its language, and the Chosen line with none; `bad-unmarked` no locale and no attribute; `bad-title-in-tile` three buttons with no locale; `bad-region-tag` the passage `fr-FR`; `bad-override` the passage `fr`. For each tile of both menus: a tap and the tap action each choose it; Tab to it and Enter, and Space, each choose it (the positive control for `bad-title-in-tile`). The app's language is sent to the engine, which widget tests do not run, so it and FL-360 are not seen here |
 | L3 web | The page's `lang` is `en-US` on every example but `bad-override`, the screen's "Example" heading in it, and the host page's own `lang="en"`. Each text's `lang`, every `lang` from it to the root, and which of `en`, `en-US`, `fr`, `fr-FR`, `es`, `de` it matches by `:lang()`: `good-passage` the passage `fr` only and the lead `en-US`, one element with a `lang` of its own; `good-phrase` one English element, no `lang` in the page, no element for the phrase (FL-020, written to fail when the phrase gets one); `good-language-menu` each tile a button named by its language with its `lang`, the Chosen line `en-US`; `bad-unmarked` and `bad-title-in-tile` everything `en-US`, no `lang` in the page; `bad-region-tag` `lang="fr_FR"` matching nothing, with the control of a plain element with `lang="fr-FR"` matching `fr` and `fr-FR`; `bad-override` the page's `lang="fr"` and every text French, and after the app's Back the technique's page `fr`, with the control that `good-passage`'s Back leaves it `en-US` (the witness that Back took effect: the technique's "Good examples" heading shown and no "Example" heading). For each tile of both menus, a click, and Tab then Enter, and then Space, each key sent once from a fresh load, choose it. Each screen shows the title and lines the VoiceOver judge expects; the judge's regression cases (section 7) |
-| L3 Android | The `LocaleSpan`s of each node's description, sorted: the screen's title and "Example" heading `en-US` over their whole text on every example but `bad-override`; `good-passage` the lead `en-US` and the passage `fr`; `good-phrase` one node `en-US` over the whole and `fr` over the phrase; `good-language-menu` three `Button`s, each its language over its name, and the Chosen line `en-US`; `bad-unmarked` both `en-US`; `bad-title-in-tile` three `Button`s `en-US`; `bad-region-tag` the passage `fr-FR`; `bad-override` the title, the heading, the lead and the passage `fr`, and after Back the technique's "Good examples" heading `fr`, with the control that it is `en-US` after Back from `good-passage`. For each tile of both menus, from a fresh launch each: `ACTION_CLICK`, a tap at its centre, and Tab then Enter choose it. Run once at CI's 320 by 640 at 160 dpi as well |
+| L3 Android | The `LocaleSpan`s of each node's description, sorted: the screen's title and "Example" heading `en-US` over their whole text on every example but `bad-override`; `good-passage` the lead `en-US` and the passage `fr`; `good-phrase` one node `en-US` over the whole and `fr` over the phrase; `good-language-menu` three `Button`s, each its language over its name, and the Chosen line `en-US`; `bad-unmarked` both `en-US`; `bad-title-in-tile` three `Button`s `en-US`; `bad-region-tag` the passage `fr-FR`; `bad-override` the title, the heading, the lead and the passage `fr`, and after Back the technique page's title in the app bar `fr`, with the control that it is `en-US` after Back from `good-passage` (the witness that Back took effect: that title on the screen and no "Example" heading; the title and not the page's "Good examples" heading, which can be below CI's 320 by 640 screen, where the first run at that size failed: `docs/evidence/probes/s16/android_320x640-round1-fail.txt`). For each tile of both menus, from a fresh launch each: `ACTION_CLICK`, a tap at its centre, and Tab then Enter choose it. Run once at CI's 320 by 640 at 160 dpi as well |
 | L3 iOS | The labels of the example's elements after the "Example" heading, in order, and each tile a button with its label; a tap on each tile, and Tabs then Enter, and then Space, each key sent once from a fresh launch, choose it. XCUITest cannot read a language, so no defect is seen in the tree; the VoiceOver walk is where it is judged |
 | L4 TalkBack | Focus moved to each text of each example and to each tile, in order; every row a whole-utterance form, exactly its fragments in order (`== A / B`, `tool/talkback.py`): each text its words, `good-phrase` the sentence in three fragments, "The guide said / bon voyage / as we left.", split where the language changes, each tile its name and "Button" (a usage hint allowed once at the end). The locale TalkBack logs with each fragment is not read by the tool, so the rows judge words: the split of `good-phrase` is the only one that shows a language; the passages' languages are judged by the Android tree test. Each walk is judged whole (`walk_strictly`): a wrong reading fails for good |
-| L4 VoiceOver iOS | Every utterance from the top of the screen to its end (S16Walk, C03's walk keeping each raw utterance), judged whole: the screen's own stops (Back, the title, the description, the defect, the "Example" heading), which tie the walk to this example, then exactly the example's stops, each with white space made one space; and for some stops the raw utterance exactly: `good-phrase`'s with a second space before and after the phrase, and the passages' leads and passages with single spaces. `good-language-menu`'s tiles with their role word in their language; `bad-title-in-tile`'s with "Button"; `bad-override`'s screen stops with French role words. Every expected utterance is under the service's 64 characters, and a test refuses a longer one; made-up walks test the judge |
+| L4 VoiceOver iOS | Every utterance from the top of the screen to its end (S16Walk, C03's walk keeping each raw utterance), judged whole: the screen's own stops (the title, the description, a bad example's defect, the "Example" heading, each heading with its role word), which tie the walk to this example; another example's, a missing or an empty one fails, then exactly the example's stops, each with white space made one space; and for some stops the raw utterance exactly: `good-phrase`'s with a second space before and after the phrase, and the passages' leads and passages with single spaces. `good-language-menu`'s tiles with their role word in their language ("Français Bouton", "Español Botón", "Deutsch Taste"); `bad-title-in-tile`'s with "Button"; `bad-override`'s title and heading with "En-tête". Every expected utterance is under the service's 64 characters, and a test refuses a longer one; made-up walks test the judge |
 | L4 VoiceOver web | Not recorded yet. The walk and the judge are S08's (`web_tests/vo/s16_vo_walks.js`): the whole screen in order, every stop judged, an empty stop a failed capture walked again (at most three walks, each logged), a wrong reading failing for good, no runner retries; the help-message rule is tested only on made-up walks. The expected stops are predictions from the page's elements; the words are the same whatever language a stop is in |
 
 ## 7. What the build found (Flutter 3.47.5)
@@ -243,8 +245,19 @@ every platform, with a plain HTML control page on the web.
   `bad-title-in-tile`; [FL-361](../flutter-limitations.md#fl-361), new).
 - **VoiceOver on iOS speaks a role word in its element's language**: a
   tile inside `localeForSubtree` fr "Français Bouton", the same tile
-  unmarked "Français Button" (p13, p16). This is the one measurement on
-  iOS that shows an element's language.
+  unmarked "Français Button" (p13, p16); in the examples, "Español Botón"
+  and "Deutsch Taste" (`good-language-menu`), "… Button" for each of
+  `bad-title-in-tile`'s, and on `bad-override`'s screen the English title
+  and heading "… En-tête", where every other screen's are "… Heading"
+  (`docs/evidence/S16/voiceover-ios.md` shows what follows each "Example" heading; the headings' readings are judged by the test and shown whole in the first run's transcript, `docs/evidence/probes/s16/voiceover-ios-round1-fail.md.txt`, which also shows `good-phrase`'s raw utterance). These are the measurements on
+  iOS that show an element's language; a passage's text has no role word,
+  and its words are the same in any language.
+- **The first iOS VoiceOver run failed on the screen's own stops**
+  (`docs/evidence/probes/s16/voiceover-ios-round1-fail.md.txt`): the
+  expected stops began with "Back Button", and every walk began with the
+  title. Every example's stops after the heading were the expected ones,
+  the raw utterances included. The screen stops are now the title, the
+  lines, and the heading; nothing else was changed.
 - **What no capture shows: the voice.** TalkBack logged the locale it
   asked for; the emulator's speech engine had no French voice, tried to
   download one during the probe, and failed (`android-talkback-log.txt`).
@@ -252,6 +265,21 @@ every platform, with a plain HTML control page on the web.
   DevTools protocol holds no language. So "reaches the screen reader"
   here means the span, the attribute, the `lang`, the logged locale, or
   the role word, and never that a voice changed.
+
+The evidence runs (2026-11-27): the Android tree tests and the TalkBack
+walk passed on their first run, the walk on its first walk; the TalkBack
+transcript is that run's. The first run of the Android tests at CI's 320
+by 640 at 160 dpi failed one test: after Back it waited for the technique
+page's "Good examples" heading, which is below the view at that size
+(`docs/evidence/probes/s16/android_320x640-round1-fail.txt`); it now reads
+the page's title in the app bar, and passed at that size
+(`android_320x640.txt`) and at the emulator's own. The iOS tree tests
+passed; the first iOS VoiceOver run failed on the screen stops only
+(above), and the second passed. The web tree spec passed under
+`tool/evidence.py`. The size and density were reset after each run at
+CI's size, and the device state was read under the lock afterwards:
+no size or density override, no accessibility service on, VoiceOver off
+on the simulator.
 
 What the tests skip or cannot see, and what each gives up:
 

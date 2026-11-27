@@ -159,11 +159,14 @@ final class S16LanguagePagePartsUITests: XCTestCase, TechniqueUITest {
     let raw: [Int: String]
   }
 
-  /// The stops above the "Example" heading: the Back button, the title,
-  /// and the screen's lines, with the role words in `role`'s language.
-  static func screenStops(_ slug: String, back: String = "Back Button", heading: String = "Heading") -> [String] {
+  /// The stops above the "Example" heading, with it: the title, the
+  /// screen's lines, and the heading, each heading's role word `heading`.
+  /// The walk starts on the title: the first move forward from where
+  /// VoiceOver starts reads it (the first recording; Back was never a
+  /// stop).
+  static func screenStops(_ slug: String, heading: String = "Heading") -> [String] {
     let lines = screens[slug]!
-    return [back, "\(lines[0]) \(heading)"] + lines.dropFirst() + ["Example \(heading)"]
+    return ["\(lines[0]) \(heading)"] + lines.dropFirst() + ["Example \(heading)"]
   }
 
   static let passage2 = [lead, passage]
@@ -186,9 +189,10 @@ final class S16LanguagePagePartsUITests: XCTestCase, TechniqueUITest {
     Speech(slug: "bad-title-in-tile", screen: screenStops("bad-title-in-tile"), content: menuBad, raw: [:]),
     // The defect is the web's (FL-020): iOS is given fr-FR.
     Speech(slug: "bad-region-tag", screen: screenStops("bad-region-tag"), content: passage2, raw: [0: lead, 1: passage]),
-    // FL-360: the whole app French, so every role word on the screen is.
+    // FL-360: the whole app French, so the role word of every element
+    // with none of its own is, the English title's and heading's too.
     Speech(
-      slug: "bad-override", screen: screenStops("bad-override", back: "Back Bouton", heading: "En-tête"),
+      slug: "bad-override", screen: screenStops("bad-override", heading: "En-tête"),
       content: passage2, raw: [0: lead, 1: passage]),
   ]
 
@@ -210,8 +214,9 @@ final class S16LanguagePagePartsUITests: XCTestCase, TechniqueUITest {
       ("the whole screen", right, true, true),
       ("the walk did not reach the end", right, false, false),
       ("another example's screen", Self.screenStops("good-passage") + ["The guide said  bon voyage  as we left."], true, false),
-      ("no title", [good.screen[0]] + good.screen.dropFirst(2) + ["The guide said  bon voyage  as we left."], true, false),
-      ("an empty title", [good.screen[0], ""] + good.screen.dropFirst(2) + ["The guide said  bon voyage  as we left."], true, false),
+      ("no title", Array(good.screen.dropFirst()) + ["The guide said  bon voyage  as we left."], true, false),
+      ("an empty title", [""] + good.screen.dropFirst() + ["The guide said  bon voyage  as we left."], true, false),
+      ("the title in another language's role word", ["Phrase in another language En-tête"] + good.screen.dropFirst() + ["The guide said  bon voyage  as we left."], true, false),
       ("no stops before the heading", ["Example Heading", "The guide said  bon voyage  as we left."], true, false),
       ("the phrase not marked", good.screen + ["The guide said bon voyage as we left."], true, false),
       ("a stop after the end", right + ["Extra"], true, false),

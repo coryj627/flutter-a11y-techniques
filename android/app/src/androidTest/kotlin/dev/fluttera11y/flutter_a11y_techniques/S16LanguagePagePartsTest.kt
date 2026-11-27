@@ -20,6 +20,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 private const val LEAD = "The sign at the door reads:"
+private const val TECHNIQUE_TITLE = "Language of page and parts"
 private const val PASSAGE = "Bienvenue à tous nos visiteurs."
 private const val SENTENCE = "The guide said bon voyage as we left."
 private val LANGUAGES = listOf(
@@ -206,16 +207,22 @@ class S16LanguagePagePartsTest : TechniqueTest("S16") {
         )
     }
 
-    /** Presses Back and waits for the technique's page, with no Example heading. */
+    /**
+     * Presses Back and waits for the technique's page: its title,
+     * "Language of page and parts", in the app bar, and no Example heading,
+     * which only an example's screen has. The page's "Good examples" heading can be
+     * below CI's 320 by 640 screen, so the title is what is read.
+     */
     private fun backToTheTechnique() {
         device.pressBack()
         val end = System.currentTimeMillis() + 20_000
         while (System.currentTimeMillis() < end) {
             val nodes = tree()
-            if (nodes.any { it.name() == "Good examples" } && nodes.none { it.name() == "Example" }) return
+            if (nodes.any { it.name() == TECHNIQUE_TITLE } &&
+                nodes.none { it.name() == "Example" }) return
             Thread.sleep(250)
         }
-        throw AssertionError("Back did not reach the technique's page")
+        throw AssertionError("Back did not reach the technique's page: ${tree().map { it.name() }.filter { it.isNotEmpty() }}")
     }
 
     @Test
@@ -227,11 +234,7 @@ class S16LanguagePagePartsTest : TechniqueTest("S16") {
         for ((slug, tag) in listOf("bad-override" to "fr", "good-passage" to "en-US")) {
             open(slug)
             backToTheTechnique()
-            // The page's heading, and the technique doc's below it where it
-            // is on the screen: every one in the app's language.
-            val headings = tree().filter { it.name() == "Good examples" }
-            assertTrue("$slug: a Good examples heading", headings.isNotEmpty())
-            for (h in headings) assertEquals(slug, whole(tag, "Good examples"), locales(h))
+            assertEquals(slug, whole(tag, TECHNIQUE_TITLE), locales(only(TECHNIQUE_TITLE)))
         }
     }
 

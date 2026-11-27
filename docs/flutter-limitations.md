@@ -173,7 +173,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-314](#fl-314) | A list item whose parent node is not a list fails the framework's own check, and in a debug build no semantics are sent for the screen | Android, iOS, test framework (debug); Web (release: list items) | Confirmed |
 | [FL-315](#fl-315) | On the web a list item whose text is merged into it has the text only as its `aria-label`, and VoiceOver read it as "empty group" | Web (VoiceOver in Chromium and WebKit) | Observed |
 | [FL-320](#fl-320) | Off the web Flutter has no named group: a group's name is read as text of its own before its controls, and a control inside is read without it | Android, iOS | Confirmed |
-| [FL-360](#fl-360) | `Localizations.override` sets the whole app's language to its own, and nothing sets it back when its screen closes | Android, Web (iOS: source read) | Confirmed |
+| [FL-360](#fl-360) | `Localizations.override` sets the whole app's language to its own, and nothing sets it back when its screen closes | All (after the screen closes: Android, Web; iOS not measured) | Confirmed |
 | [FL-361](#fl-361) | A language set with `localeForSubtree` inside a node that merges its children, such as a `ListTile`'s title, is lost | All | Confirmed |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
@@ -5331,9 +5331,16 @@ yet), **Fixed in x.y** (verified on that version).
   Playwright's Chromium and WebKit on macOS (`web.txt`, and `web_nav.txt`
   for the browser's Back), and on the Android 17 emulator
   (`android-tree.txt`, the "nav" rows; `android-talkback-log.txt`). On iOS
-  read in the engine's source only, not measured: XCUITest cannot read an
-  element's language, and the probe's VoiceOver walks met no word that
-  would show it. Framework source read: `_LocalizationsState`'s `locale`
+  by VoiceOver's words, in S16's iOS VoiceOver test (iOS 27.0 simulator):
+  on `bad-override`'s screen the English title and the "Example" heading
+  were read with French role words, "Localizations.override En-tête" and
+  "Example En-tête", where every other example's are read "… Heading"
+  (asserted by the test, whose passing transcript shows only what follows
+  the heading; the readings in full in its first run's transcript,
+  `docs/evidence/probes/s16/voiceover-ios-round1-fail.md.txt`, which failed
+  only because it expected a Back stop that no walk read); the probe's walks had met no role
+  word. What the screen under it is on iOS after Back was not measured.
+  Framework source read: `_LocalizationsState`'s `locale`
   setter (`widgets/localizations.dart`) calls
   `PlatformDispatcher.setApplicationLocale` every time the state loads a
   locale, for every `Localizations`, the ones `Localizations.override`
@@ -5353,10 +5360,12 @@ yet), **Fixed in x.y** (verified on that version).
   page's `lang` becomes `fr`, so the screen's English title, its English
   lines, and the passage all match `:lang(fr)`; on Android every node's
   content description has a `LocaleSpan` fr, and TalkBack logged
-  `locale=fr` with the screen's English texts and its Back button. When
+  `locale=fr` with the screen's English texts and its Back button; on iOS
+  VoiceOver reads the screen's English headings with the French role word,
+  "En-tête". When
   the screen closes, the language stays French: after Back the screen
   under it (the probe's p01, S16's technique page) is French on the web
-  and on Android. A new start of the app (a page load, a new Android
+  and on Android (iOS not measured). A new start of the app (a page load, a new Android
   activity) is English again. A screen with `localeForSubtree` (the
   probe's p05) changes nothing outside its node.
 - Effect: one marked passage makes the rest of the app, English, read as
@@ -5376,8 +5385,10 @@ yet), **Fixed in x.y** (verified on that version).
   `bad-title-in-tile` in the widget tests (no locale on the tile's node),
   on the web (no `lang`; the tile matches English), on Android (a
   `LocaleSpan` en-US, the app's, over the tile's name), and on iOS by
-  VoiceOver's reading ("Français Button", the role word in English, where
-  a tile inside `localeForSubtree` is read "Français Bouton"). Found in the
+  VoiceOver's reading ("Français Button", "Español Button", "Deutsch
+  Button", the role word in English, where `good-language-menu`'s tiles,
+  inside `localeForSubtree`, are read "Français Bouton", "Español Botón",
+  "Deutsch Taste"; `docs/evidence/S16/voiceover-ios.md`). Found in the
   S16 probe (`docs/evidence/probes/s16/`, p24: `localeForSubtree` inside
   `MergeSemantics`). Framework source read: a node's locale is the one it
   inherits (`localeForChildren` in `rendering/object.dart`), and

@@ -133,8 +133,10 @@ class GoodPassage extends StatelessWidget {
 /// A phrase in French inside a sentence in English: `TextSpan(locale:)`
 /// round the phrase, whose documentation says it sets how assistive
 /// technology pronounces the text. Android: a `LocaleSpan` fr over the
-/// phrase alone. iOS: the phrase's range of the label carries the language
-/// (source read). Web: nothing; the web engine drops a part's language,
+/// phrase alone, and TalkBack speaks the sentence in three parts. iOS: the
+/// phrase's range of the label carries the language (source read), and
+/// VoiceOver's utterance has a second space before and after it. Web:
+/// nothing; the web engine drops a part's language,
 /// so the phrase is not marked there (FL-020), and the web has no good
 /// example of a phrase.
 class GoodPhrase extends StatelessWidget {
@@ -159,7 +161,9 @@ class GoodPhrase extends StatelessWidget {
 /// A language menu, each language named in its own language: each
 /// `ListTile`, with its test identifier, inside
 /// `Semantics(localeForSubtree:)` with its language, so that the tile's own
-/// node, a button, is in that language on every platform. The language is set round the whole tile: set inside it, on
+/// node, a button, is in that language on every platform: `lang` on the
+/// web, a `LocaleSpan` on Android, and on iOS VoiceOver reads its role
+/// word in it ("Français Bouton"). The language is set round the whole tile: set inside it, on
 /// its title, it is lost (`bad-title-in-tile`).
 class GoodLanguageMenu extends StatelessWidget {
   const GoodLanguageMenu({super.key});

@@ -20,10 +20,11 @@ final s16LanguagePageParts = Technique(
     ),
     AppPlatform.ios: PlatformStatus.applies(
       note:
-          'The language reaches VoiceOver through the element\'s language '
-          'and the label\'s language attribute, by the engine\'s source; '
-          'XCUITest cannot read either, and whether VoiceOver changes its '
-          'voice was not measured.',
+          'XCUITest cannot read a language. VoiceOver reads a button with '
+          'its role word in its element\'s language ("Français Bouton") and '
+          'a marked phrase with a second space round it; a passage\'s language '
+          'rests on the engine\'s source. Whether VoiceOver changes its voice '
+          'was not measured.',
     ),
     AppPlatform.web: PlatformStatus.limitation(
       'The page\'s lang is the app\'s language, and a passage marked with '
