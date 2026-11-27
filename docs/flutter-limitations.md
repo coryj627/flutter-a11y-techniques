@@ -63,7 +63,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-017](#fl-017) | The status and alert roles are announced on web only | Android, iOS | Confirmed |
 | [FL-018](#fl-018) | Announcements sent from code are reported as unsupported on Android, and assertiveness is web only | Android, iOS | Confirmed |
 | [FL-019](#fl-019) | Landmark roles have an effect on web only | Android, iOS | Observed |
-| [FL-020](#fl-020) | Spell-out and language attributes do not reach the web, and `localeForSubtree` writes an invalid `lang` | Web | Observed |
+| [FL-020](#fl-020) | Spell-out and language attributes do not reach the web, and `localeForSubtree` writes an invalid `lang` | Web | Confirmed (language); Observed (spell-out) |
 | [FL-021](#fl-021) | No semantics for inline or block text structure | All | Observed |
 | [FL-022](#fl-022) | Custom semantics actions are not exposed on web | Web | Observed |
 | [FL-023](#fl-023) | Material menu widgets do not use the menu roles, and their items have no button role on Android and iOS | All | Observed |
@@ -173,6 +173,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-314](#fl-314) | A list item whose parent node is not a list fails the framework's own check, and in a debug build no semantics are sent for the screen | Android, iOS, test framework (debug); Web (release: list items) | Confirmed |
 | [FL-315](#fl-315) | On the web a list item whose text is merged into it has the text only as its `aria-label`, and VoiceOver read it as "empty group" | Web (VoiceOver in Chromium and WebKit) | Observed |
 | [FL-320](#fl-320) | Off the web Flutter has no named group: a group's name is read as text of its own before its controls, and a control inside is read without it | Android, iOS | Confirmed |
+| [FL-360](#fl-360) | `Localizations.override` sets the whole app's language to its own, and nothing sets it back when its screen closes | Android, Web (iOS: source read) | Confirmed |
+| [FL-361](#fl-361) | A language set with `localeForSubtree` inside a node that merges its children, such as a `ListTile`'s title, is lost | All | Confirmed |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
@@ -779,23 +781,61 @@ yet), **Fixed in x.y** (verified on that version).
 
 **Spell-out and language attributes do not reach the web, and `localeForSubtree` writes an invalid `lang`.**
 
-- Status: Observed, Flutter 3.47.5, batch 0 probe (`docs/evidence/probes/batch-0/`).
-- WCAG: 3.1.2 Language of Parts; 3.1.6 Pronunciation (AAA).
+- Status: Confirmed for the language attributes and for `localeForSubtree`,
+  Flutter 3.47.5: asserted by S16's web tree spec (`good-phrase`: no
+  `lang` in the page; `bad-region-tag`: `lang="fr_FR"`, which matches no
+  `:lang()`) and measured in the S16 probe
+  (`docs/evidence/probes/s16/web.txt`), in Playwright's Chromium and
+  WebKit on macOS. Web engine source read: `_updateLocale`
+  (`lib/web_ui/lib/src/engine/semantics/semantics.dart`) writes
+  `locale.toString()`, where the Android and iOS engines are given
+  `locale.toLanguageTag()` (`dart:ui`'s `LocaleStringAttribute` and
+  `SemanticsUpdateBuilder.updateNode`); the label's attributes are kept by
+  the web engine (`labelAttributes`) and not used. Spell-out: Observed,
+  batch 0 probe (`docs/evidence/probes/batch-0/`).
+- WCAG: 3.1.2 Language of Parts, on the web; 3.1.6 Pronunciation (AAA).
 - What happens:
   - On Android, `SpellOutStringAttribute` arrives as a `TtsSpan` and
-    `LocaleStringAttribute` as a `LocaleSpan` over the same range.
-    `Semantics(localeForSubtree:)` arrives as a `LocaleSpan` on the text.
-  - On web, the two string attributes leave no trace in the DOM.
-    `localeForSubtree: Locale('fr', 'FR')` writes `lang="fr_FR"`. A language
-    tag uses a hyphen (`fr-FR`); whether browsers and screen readers accept
-    the underscore form was not tested.
-  - On iOS, the engine sets an attributed label. XCUITest cannot read speech
-    attributes, and the utterance text was unchanged apart from spacing, so
-    whether VoiceOver changes pronunciation was not confirmed.
-- Effect: a phrase in another language inside a sentence cannot be marked on
-  web, and a whole passage may be marked with a tag browsers do not
-  recognise.
-- Workaround: none found yet. To be worked out in S17 and S18.
+    `LocaleStringAttribute` as a `LocaleSpan` over the same range, beside
+    the app's language over the whole text. `TextSpan(locale:)` and
+    `Text(locale:)` give the same attribute over their text (S16 probe
+    p02, p08, p12, p17), and TalkBack speaks such a text as one fragment
+    per part, each with the locale it logs (`android-talkback-log.txt`).
+    `Semantics(localeForSubtree:)` arrives as a `LocaleSpan` on the text,
+    with the language tag: `fr-FR`, `zh-Hant`.
+  - On web, the two string attributes leave no trace in the DOM, in
+    Chromium and WebKit: a phrase marked with `TextSpan(locale:)`, a whole
+    text marked with `Text(locale:)` or `TextSpan(locale:)`, and a
+    `LocaleStringAttribute` in an `attributedLabel` all give no `lang` on
+    any element (S16 probe p02, p08, p10, p12, p17, p22).
+    `localeForSubtree` with a language alone writes a valid `lang`
+    (`Locale('fr')`: `lang="fr"`, which matches `:lang(fr)`). With a
+    country or a script it writes `lang="fr_FR"`, `lang="zh_Hant"`: a
+    language tag uses hyphens (BCP 47), and Chromium and WebKit match the
+    element to no language with `:lang()`, as they match a plain HTML
+    element with `lang="fr_FR"` to none, and one with `lang="fr-FR"` to
+    `fr` and `fr-FR` (the probe's HTML control). What VoiceOver does with
+    it was not measured.
+  - On iOS, the engine sets an attributed label with the language over the
+    part's range (source read: `SemanticsObject.mm`,
+    `UIAccessibilitySpeechAttributeLanguage`). XCUITest cannot read speech
+    attributes. VoiceOver's utterance for such a label has a second space
+    before and after the part ("She said  bonjour  to me."; S16 probe p08,
+    p10, p22), which an unmarked label (p09) does not: the part was taken
+    apart. Whether VoiceOver changes its voice or pronunciation was not
+    measured.
+- Effect: on the web a phrase in another language inside a sentence cannot
+  be marked, nor can a control's name in a part of its label, and a
+  passage marked with a locale that has a country or a script is in no
+  language the browser recognises.
+- Workaround: for a whole node, `Semantics(localeForSubtree:)` with a
+  locale of a language alone, `Locale('fr')` (S16's `good-passage`,
+  `good-language-menu`); it gives the node's language and drops the
+  country. For a phrase inside a sentence, none in the SDK on the web:
+  splitting the sentence into texts of their own, the phrase among them in
+  `localeForSubtree`, puts the phrase after the rest of the sentence on
+  every platform (S16 probe p11), and is not a workaround. So the web is a
+  limitation in S16 for a phrase (`PlatformStatus.limitation`).
 - Upstream issue: not searched yet.
 
 ## FL-021
@@ -5277,6 +5317,83 @@ yet), **Fixed in x.y** (verified on that version).
 - How to read this entry: Flutter has not added a group role yet: no way
   to set Android's container title or iOS's semantic group container
   type, which TalkBack and VoiceOver were measured to speak (above).
+- Upstream issue: not searched yet (D25).
+
+## FL-360
+
+**`Localizations.override` sets the whole app's language to its own, and nothing sets it back when its screen closes.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by S16's `bad-override` on
+  the web (the tree spec: the page's `lang`, on the screen and after the
+  app's Back) and on Android (the tree test: every node's `LocaleSpan`, on
+  the screen and after Back). Found in the S16 probe
+  (`docs/evidence/probes/s16/`): p03, p07, p14, and p25 on the web in
+  Playwright's Chromium and WebKit on macOS (`web.txt`, and `web_nav.txt`
+  for the browser's Back), and on the Android 17 emulator
+  (`android-tree.txt`, the "nav" rows; `android-talkback-log.txt`). On iOS
+  read in the engine's source only, not measured: XCUITest cannot read an
+  element's language, and the probe's VoiceOver walks met no word that
+  would show it. Framework source read: `_LocalizationsState`'s `locale`
+  setter (`widgets/localizations.dart`) calls
+  `PlatformDispatcher.setApplicationLocale` every time the state loads a
+  locale, for every `Localizations`, the ones `Localizations.override`
+  makes as well as the app's own (`isApplicationLevel` changes only the
+  `Semantics` it builds). Nothing calls it when one is disposed. The
+  engines take the call as the app's language: the web writes it to the
+  page's `lang` (`full_page_embedding_strategy.dart`), Android makes it
+  the default locale of every node (`AccessibilityBridge.setLocale`), and
+  iOS the language of every element with none of its own
+  (`accessibility_bridge.h`, `GetDefaultLocale`).
+- WCAG: 3.1.1 Language of Page, wherever the app is in a language other
+  than the override's; 3.1.2 Language of Parts on the screen with the
+  override.
+- What happens: a screen that marks a French passage with
+  `Localizations.override(locale: Locale('fr'))`, in an app whose
+  language is en-US, sets the app's language to French. On the web the
+  page's `lang` becomes `fr`, so the screen's English title, its English
+  lines, and the passage all match `:lang(fr)`; on Android every node's
+  content description has a `LocaleSpan` fr, and TalkBack logged
+  `locale=fr` with the screen's English texts and its Back button. When
+  the screen closes, the language stays French: after Back the screen
+  under it (the probe's p01, S16's technique page) is French on the web
+  and on Android. A new start of the app (a page load, a new Android
+  activity) is English again. A screen with `localeForSubtree` (the
+  probe's p05) changes nothing outside its node.
+- Effect: one marked passage makes the rest of the app, English, read as
+  French, for as long as the app runs.
+- Workaround: `Semantics(localeForSubtree:)` round the passage, which
+  marks its node and nothing else (S16's `good-passage`). It gives the
+  node a language and does not localize the widgets inside it, which
+  `Localizations.override` also does; a subtree that needs both has no
+  documented way here that leaves the app's language alone.
+- Upstream issue: not searched yet (D25).
+
+## FL-361
+
+**A language set with `localeForSubtree` inside a node that merges its children, such as a `ListTile`'s title, is lost.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by S16's
+  `bad-title-in-tile` in the widget tests (no locale on the tile's node),
+  on the web (no `lang`; the tile matches English), on Android (a
+  `LocaleSpan` en-US, the app's, over the tile's name), and on iOS by
+  VoiceOver's reading ("Français Button", the role word in English, where
+  a tile inside `localeForSubtree` is read "Français Bouton"). Found in the
+  S16 probe (`docs/evidence/probes/s16/`, p24: `localeForSubtree` inside
+  `MergeSemantics`). Framework source read: a node's locale is the one it
+  inherits (`localeForChildren` in `rendering/object.dart`), and
+  `SemanticsConfiguration.absorb` takes nothing of a merged child's
+  locale or `localeForSubtree`.
+- WCAG: 3.1.2 Language of Parts.
+- What happens: `ListTile(title: Semantics(localeForSubtree:
+  Locale('fr'), child: Text('Français')))` is one node, the tile's, a
+  button named "Français", in the app's language. The same holds inside
+  `MergeSemantics`, and so inside this project's `TestId`.
+- Effect: a control named in another language is read in the app's.
+- Workaround: put `localeForSubtree` round the control, so that the
+  merged node is inside it (S16's `good-language-menu`). On Android and
+  iOS, `TextSpan(locale:)` in the title also works, since a part's
+  language is kept in the merged label; not on the web
+  ([FL-020](#fl-020)).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->

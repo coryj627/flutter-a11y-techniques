@@ -555,7 +555,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09"})
+        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S16"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
@@ -781,6 +781,96 @@ class S06WholeUtterances(unittest.TestCase):
         self.assertFalse(tb.said(["open orders"], "== Orders"))
         self.assertFalse(tb.said(["open orders", "orders"], "^= Orders"))
         self.assertTrue(tb.said(["orders", "open orders"], "^= Orders"))
+
+
+class S16WholeUtterances(unittest.TestCase):
+    """S16's rows are whole-utterance forms ("== A / B"), from what TalkBack
+    said in the probe (docs/evidence/probes/s16/android-talkback-log.txt).
+    Each case names a reading a word match would pass and the row must
+    fail: a duplicated phrase, an extra role or list word, a wrong word, a
+    phrase not split at its language, a missing role. The rows judge
+    words: the locale TalkBack logs with each fragment is not read by the
+    tool, which the spec records."""
+
+    PHRASE = "s16-good-phrase-sentence"
+
+    def check(self, cases):
+        for ident, fragments, right in cases:
+            got = tb.problems(ident, fragments)
+            if right:
+                self.assertEqual(got, [], f"{ident}: {fragments}")
+            else:
+                self.assertTrue(got, f"{ident}: {fragments} should be wrong")
+
+    def test_every_s16_row_is_a_whole_utterance_form(self):
+        rows = [i for i in tb.EXPECT if i.startswith("s16-")]
+        # Four passages of two texts, one sentence, and two menus of three
+        # tiles and a Chosen line.
+        self.assertEqual(len(rows), 17)
+        for ident in rows:
+            must, must_not = tb.EXPECT[ident]
+            self.assertEqual(len(must), 1, ident)
+            self.assertTrue(must[0].startswith("== "), ident)
+            self.assertEqual(must_not, [], ident)
+
+    def test_a_passage_row(self):
+        passage = "Bienvenue à tous nos visiteurs."
+        lead = "The sign at the door reads:"
+        cases = []
+        for slug in ("good-passage", "bad-unmarked", "bad-region-tag", "bad-override"):
+            p, l = f"s16-{slug}-passage", f"s16-{slug}-lead"
+            cases += [
+                (p, [passage], True),
+                (l, [lead], True),
+                # Case and runs of white space are not words.
+                (p, ["bienvenue à  tous nos visiteurs."], True),
+                (p, [passage, passage], False),
+                (p, [passage, "Heading"], False),
+                (p, [passage, "In list"], False),
+                (p, ["Bienvenue à tous nos visiteurs"], False),
+                (p, ["Bienvenue", "à tous nos visiteurs."], False),
+                (p, [lead], False),
+                (l, [passage], False),
+                (p, [], False),
+                # A plain text has no usage hint, but said() allows one at
+                # the end of any row; two are wrong.
+                (p, [passage, tb.USAGE_HINT, tb.USAGE_HINT], False),
+            ]
+        self.check(cases)
+
+    def test_the_phrase_row_is_three_fragments_split_at_the_phrase(self):
+        self.check([
+            (self.PHRASE, ["The guide said ", "bon voyage", " as we left."], True),
+            # One fragment is what an unmarked sentence gives (probe p09).
+            (self.PHRASE, ["The guide said bon voyage as we left."], False),
+            (self.PHRASE, ["The guide said ", "bon voyage as we left."], False),
+            (self.PHRASE, ["The guide said ", "bon voyage", "bon voyage", " as we left."], False),
+            (self.PHRASE, ["The guide said ", "bon voyage", " as we left.", "Heading"], False),
+            (self.PHRASE, ["bon voyage", "The guide said ", " as we left."], False),
+        ])
+
+    def test_a_tile_row(self):
+        cases = []
+        for slug in ("good-language-menu", "bad-title-in-tile"):
+            for code, name in (("fr", "Français"), ("es", "Español"), ("de", "Deutsch")):
+                t = f"s16-{slug}-{code}"
+                cases += [
+                    (t, [name, "Button"], True),
+                    (t, [name, "Button", tb.USAGE_HINT], True),
+                    (t, [name], False),
+                    (t, [name, "Button", "Button"], False),
+                    (t, [name, "Button", "In list"], False),
+                    (t, [name, tb.USAGE_HINT, "Button"], False),
+                    (t, [name, "Button", tb.USAGE_HINT, tb.USAGE_HINT], False),
+                    (t, ["Français Español", "Button"], False),
+                ]
+            c = f"s16-{slug}-chosen"
+            cases += [
+                (c, ["Chosen: none"], True),
+                (c, ["Chosen: French"], False),
+                (c, ["Chosen: none", "Chosen: none"], False),
+            ]
+        self.check(cases)
 
 
 class Cut(str):
