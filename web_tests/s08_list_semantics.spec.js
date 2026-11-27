@@ -5,7 +5,7 @@
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
 import { readFileSync } from 'node:fs';
-import { EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, runWalks, screenStops } from './vo/s08_vo_walks.js';
+import { EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, helpRole, judgeExampleWalk, runWalks, screenStops, spokenRole } from './vo/s08_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
 // "Good examples" and "Bad examples", so the name must match exactly.
@@ -325,7 +325,7 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['an item read as an empty phrase, every other stop right', screen('list 3 items', milk, '', bread, 'end of list'), true, 'incomplete'],
     ['an empty first stop and a wrong reading later', ['', ...own.slice(1), EXAMPLE_HEADING, 'list 3 items', 'Milk', eggs, bread, 'end of list'], true, 'wrong'],
     ['an empty first stop and a walk that reached the end short', ['', ...own.slice(1), EXAMPLE_HEADING, 'list 3 items'], true, 'wrong'],
-    ['an empty phrase after the last expected stop', screen(...expected, ''), true, 'incomplete'],
+    ['an empty phrase after the last expected stop', screen(...expected, ''), true, 'wrong'],
     ['every stop an empty phrase', Array(8).fill(''), true, 'incomplete'],
     // A help message with no positions recorded is a stop like any other.
     ['the fourth recording as it was logged, with no positions: the help message after the last stop', screen(...expected, HELP), true, 'wrong'],
@@ -371,12 +371,31 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     ['help and a wrong reading: fails', [...screen('list 3 items', 'Milk', eggs, bread, 'end of list'), HELP],
       at([...screen('list 3 items', 'Milk', eggs, bread, 'end of list'), HELP], [n]), 'wrong'],
     ['the fifth recording, which passed: no help message', whole, at(whole), 'complete'],
+    // The role is the spoken role, never a word of the name.
+    ['list help after the "Bulleted list" heading, at its position: fails',
+      [own[0], HELP, ...whole.slice(1)], at([own[0], HELP, ...whole.slice(1)], [1]), 'wrong'],
+    ['list help after "list 3 items", at its position: left out',
+      screen('list 3 items', HELP, milk, eggs, bread, 'end of list'),
+      at(screen('list 3 items', HELP, milk, eggs, bread, 'end of list'), [own.length + 2]), 'complete'],
+    ['button help after a text with no role, at its position: fails',
+      [...whole, BUTTON_HELP], at([...whole, BUTTON_HELP], [n]), 'wrong'],
   ];
   for (const [what, stops, positions, verdict] of helpCases) {
     test(`${what}: ${verdict}`, () => {
       expect(judgeExampleWalk(stops, true, expected, own, positions ?? at(stops)).verdict).toBe(verdict);
     });
   }
+
+  test('a reading\'s spoken role comes from its role part only', () => {
+    expect(spokenRole('heading level 1 Bulleted list')).toBe('heading');
+    expect(spokenRole('list 3 items')).toBe('list');
+    expect(spokenRole('list Groceries 3 items')).toBe('list');
+    expect(spokenRole('end of list')).toBe('list');
+    expect(spokenRole('Milk button 1 of 3')).toBe('button');
+    expect(spokenRole('Milk empty group (1 of 3) 1 of 3')).toBe('group');
+    expect(spokenRole('Bad example for List semantics. Widgets layer.')).toBe(null);
+    expect(spokenRole('Milk')).toBe(null);
+  });
 
   test('a help message names the role it is about', () => {
     expect(helpRole(HELP)).toBe('list');
@@ -434,6 +453,12 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     const { walkOnce, made } = sequence(emptyTitle, emptyTitle, emptyTitle, right);
     expect(await runWalks(walkOnce, judge)).toMatchObject({ verdict: 'incomplete', walks: 3 });
     expect(made()).toBe(3);
+  });
+
+  test('a complete walk plus an empty stop past the end fails, and no second walk is made', async () => {
+    const { walkOnce, made } = sequence({ stops: screen(...expected, ''), reachedEnd: true }, right);
+    expect((await runWalks(walkOnce, judge)).verdict).toBe('wrong');
+    expect(made()).toBe(1);
   });
 
   test('a wrong walk after a short one still fails, and no third walk is made', async () => {

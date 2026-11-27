@@ -95,6 +95,7 @@ VOICEOVER_WEB_METHOD = (
     "currently on ...\") is not a stop when it is about the element just read: the walk puts "
     "the phrase logged for the move in its place and records each stop's cursor "
     "position, and the judge leaves out a help message only at the position of "
-    "the stop before it, whose reading has the role the help names; any other is "
-    "a wrong stop. No runner retries"
+    "the stop before it, whose reading speaks the role the help names (from the "
+    "reading's role part, never its name); any other is a wrong stop, as is any stop "
+    "past the end of the screen, an empty one included. No runner retries"
 )

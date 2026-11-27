@@ -87,12 +87,30 @@ export function helpRole(phrase) {
 }
 
 /**
+ * The role VoiceOver spoke in a reading, from the role part of the reading
+ * only, never from the element's name: "heading" for "heading level 1
+ * Bulleted list"; "list" for the list's own announcements, "list 3 items",
+ * "list Groceries 3 items", and "end of list"; "button" for "Milk button 1
+ * of 3"; "group" for a list item read as "Milk empty group (1 of 3) 1 of 3"
+ * or "Milk group (1 of 3) 1 of 3". Null for a reading with no role part,
+ * such as a plain text: such a stop allows no help message after it.
+ */
+export function spokenRole(reading) {
+  if (/^heading level \d+ /.test(reading)) return 'heading';
+  if (/^list (?:.+ )?\d+ items?$/.test(reading) || reading === 'end of list') return 'list';
+  if (/ button(?: \d+ of \d+)?$/.test(reading)) return 'button';
+  if (/ (?:empty )?group \(\d+ of \d+\) \d+ of \d+$/.test(reading)) return 'group';
+  return null;
+}
+
+/**
  * Whether stop `i` of a walk is a help message about the stop before it:
  * VO_HELP, the cursor at the same position as for stop `i - 1` (from
  * `positions`, the walk's record of where the cursor was at each stop), the
  * stop before it a reading, neither empty nor a help message, and the role
- * the help names found in that reading. False whenever any of that cannot
- * be shown, `positions` missing included.
+ * the help names the same as the role spoken in that reading (spokenRole),
+ * never a word of the element's name. False whenever any of that cannot be
+ * shown, `positions` missing included.
  */
 export function helpAfterStop(stops, positions, i) {
   if (!VO_HELP.test(stops[i]) || i === 0 || !Array.isArray(positions)) return false;
@@ -100,7 +118,7 @@ export function helpAfterStop(stops, positions, i) {
   const before = stops[i - 1];
   if (before === '' || VO_HELP.test(before)) return false;
   const role = helpRole(stops[i]);
-  return role !== null && before.toLowerCase().includes(role.toLowerCase());
+  return role !== null && role === spokenRole(before);
 }
 
 /**
@@ -127,7 +145,9 @@ export function helpAfterStop(stops, positions, i) {
  *   moves) with every stop so far the expected one in its place. Only such
  *   a walk may be walked again (runWalks, at most three walks, each
  *   logged), and an empty phrase never passes: no expected stop is empty,
- *   so three such walks fail the test.
+ *   so three such walks fail the test. An empty stop past the last expected
+ *   one is not a failed capture but an element the screen does not have:
+ *   it is wrong, as any stop there is.
  * - "complete": the walk reached the end and read exactly the whole screen,
  *   with no empty stop.
  *
@@ -136,7 +156,10 @@ export function helpAfterStop(stops, positions, i) {
  * the stop before it (helpAfterStop): `positions`, the cursor's position at
  * each stop as the walk recorded it, shows the cursor had not moved, the
  * stop before it is a reading (neither empty nor help), and the role the
- * help names ("on a list") is in that reading ("end of list"). It is then
+ * help names ("on a list") is the role spoken in that reading, from its
+ * role part only (spokenRole: "end of list" and "list 3 items" are the
+ * list's; "heading level 1 Bulleted list" is a heading's, whatever its
+ * name says). It is then
  * VoiceOver's speech about the element just judged. Any other help message
  * is a stop like any other, and since no expected stop is a help message it
  * is wrong and fails for good: one at a new position (an element nothing
@@ -165,12 +188,15 @@ export function judgeExampleWalk(walked, reachedEnd, expected, screen = [], posi
   const whole = [...screen, EXAMPLE_HEADING, ...expected];
   const empty = [];
   for (let i = 0; i < stops.length; i++) {
+    // A stop past the end of the screen is wrong, empty or not: an empty
+    // phrase there is an element the screen does not have, not a failed
+    // capture of one it does.
+    if (i >= whole.length) {
+      return { verdict: 'wrong', reason: `"${stops[i]}" was read after the last expected stop` };
+    }
     if (stops[i] === '') {
       empty.push(i + 1);
       continue;
-    }
-    if (i >= whole.length) {
-      return { verdict: 'wrong', reason: `"${stops[i]}" was read after the last expected stop` };
     }
     if (stops[i] !== whole[i]) {
       return { verdict: 'wrong', reason: `stop ${i + 1} was "${stops[i]}" where "${whole[i]}" was expected` };

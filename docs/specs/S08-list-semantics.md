@@ -284,7 +284,7 @@ their text.
 | L3 iOS | The labels of the example's elements after the "Example" heading, in order: `good-bulleted` exactly the three lines, each the label of one element; `good-numbered` the steps; `good-material` the three tiles, each a button with its identifier and label; `good-cupertino` "Groceries" and the three items, and no button but Back. For each tile of `good-material` and `bad-tile-in-item`: a tap opens it; and Tabs then Enter, and then Space, each key sent once from a fresh launch, open it (XCUITest cannot see Flutter's focus; the first Tab goes to Back, as in the widget tests). Bad: `bad-one-text` one element with the three lines, and no element named by one of them; `bad-no-list` the three lines; `bad-tile-in-item` three buttons. The iOS tree test reads labels and types, not the hierarchy, and XCUITest gives no traits; an element with no label is left out (the probe found no element for an unnamed list on iOS, and a list named by a header, p25, as an element of type other); the VoiceOver walk is what shows that nothing says "list" |
 | L4 TalkBack | Focus moved to each item of each list, in order: the first item of each list with its name and "In list", the others with their name and no "In list", and none with the list's size or an item's place ("3 items", "1 of 3"; FL-311); `good-material`'s and `bad-tile-in-item`'s tiles with "Button", and the line after them with "Out of list"; `good-cupertino`'s list itself named "Groceries" with "List"; `bad-one-text` the three lines as one reading, with no "In list"; `bad-no-list` each line with no "In list"; `bad-lazy-list` the first two orders with no "In list" and no size or place (FL-313). Each walk is judged whole (`walk_strictly` in `tool/talkback.py`, as C18's is): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, each in the transcript |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk, `C03Walk`): each item by its text alone, with no word about a list (FL-310); the tiles with "Button" and the "Chosen" line; `good-cupertino` "Groceries" then the items; `bad-one-text` the three lines as one utterance; `bad-lazy-list` the measured stops. Every expected utterance is under the service's 64 characters, and a test refuses a longer one |
-| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s08_vo_walks.js`, a copy of C04's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short with every stop right so far is walked again, up to three walks, every walk logged. No runner retries. VoiceOver's own help message ("You are currently on …", `VO_HELP` in `vo_logic.js`) is not a stop of the page when it is about the element just read: the walk puts the phrase Guidepup logged for a move in place of one (`phraseForMove`, as the form techniques' walks do) and records each stop's cursor position, and the judge leaves out a help message only at the same position as the stop before it, whose reading has the role the help names; any other help message is a wrong stop (regression cases in the web tree spec: after a judged stop at its position, left out; at a new position, wrong; naming another role, wrong; in place of an expected stop, wrong; with no positions, wrong). The web tree spec also judges the committed fifth and fourth recordings again: the fifth complete, the fourth wrong. A stop read as an empty phrase is a failed capture, not a reading: the walk is incomplete and walked again (at most three walks, each logged), an empty phrase never passes, and a walk that also read the wrong words is wrong (the principal's rule of 2026-11-26; regression cases in the web tree spec: an empty first stop walked again, an empty first stop and then a wrong re-walk failing, three empty captures failing). In Chromium and WebKit. The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted. The judge's regression cases in the web tree spec include the first recording's prediction, now a wrong walk, and the crash dialog |
+| L4 VoiceOver web | Every walk must read the whole screen, each stop in its place (`judgeExampleWalk` in `web_tests/vo/s08_vo_walks.js`, a copy of C04's): the screen's title and description, the "Example" heading, then exactly the expected list, to the end of the screen. A wrong stop, an empty one, a skipped one, or a walk that reached the end with any expected stop not read fails the test for good; only a walk cut short with every stop right so far is walked again, up to three walks, every walk logged. No runner retries. VoiceOver's own help message ("You are currently on …", `VO_HELP` in `vo_logic.js`) is not a stop of the page when it is about the element just read: the walk puts the phrase Guidepup logged for a move in place of one (`phraseForMove`, as the form techniques' walks do) and records each stop's cursor position, and the judge leaves out a help message only at the same position as the stop before it, whose reading speaks the role the help names (from the reading's role part, never its name); any other help message is a wrong stop (regression cases in the web tree spec: after a judged stop at its position, left out; at a new position, wrong; naming another role, wrong; a list's help after the "Bulleted list" heading, wrong; in place of an expected stop, wrong; with no positions, wrong). A stop past the end of the screen is wrong for good, an empty one included: an empty phrase is a failed capture only in the place of an expected stop (regression case: a complete walk plus an empty stop fails, with no second walk). The web tree spec also judges the committed fifth and fourth recordings again: the fifth complete, the fourth wrong. A stop read as an empty phrase is a failed capture, not a reading: the walk is incomplete and walked again (at most three walks, each logged), an empty phrase never passes, and a walk that also read the wrong words is wrong (the principal's rule of 2026-11-26; regression cases in the web tree spec: an empty first stop walked again, an empty first stop and then a wrong re-walk failing, three empty captures failing). In Chromium and WebKit. The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted. The judge's regression cases in the web tree spec include the first recording's prediction, now a wrong walk, and the crash dialog |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -474,8 +474,14 @@ lists in Chromium and in Safari on iOS.
   shared rule (`stopsToEnd`'s), keeping each stop's cursor position. A
   help message is left out only when the cursor is at the same position
   as for the stop before it, that stop is a reading (neither empty nor a
-  help message), and the role the help names ("on a list") is in that
-  reading ("end of list"). Every other help message is a stop, and no
+  help message), and the role the help names ("on a list") is the role
+  spoken in that reading, read from its role part only (`spokenRole`):
+  "list 3 items", "list Groceries 3 items", and "end of list" are the
+  list's; "heading level 1 …" a heading's, whatever its name says, so
+  "on a list" after the "Bulleted list" title is not left out; "… button
+  1 of 3" a button's; a list item's "… group (1 of 3) 1 of 3" a group's;
+  a plain text has no role and allows no help message. Every other help
+  message is a stop, and no
   expected stop is one, so it fails for good: one at a new position (an
   element nothing else was read for), one naming a role the reading before
   it lacks ("on a text field" after "end of list"), one with no reading
@@ -484,8 +490,10 @@ lists in Chromium and in Safari on iOS.
   `walkToEnd` itself is for `stopsToEnd` to return `positions` beside
   `stops`, one per stop; it is proposed, not made.
 - **What leaving out the help message gives up.** The words after the
-  role are never checked, and the role check is a word found in the
-  reading before it, not a comparison of roles. A help message given in
+  role are never checked, and the reading's role is read from the forms
+  listed above: a role VoiceOver speaks in some other form gets none, and
+  a help message after it fails, which errs toward failing. A help message
+  given in
   place of an element's own speech is at a new position and fails; a walk
   of help messages alone cannot pass.
 - **What a re-walk can hide.** A stop VoiceOver sometimes gives no phrase
@@ -570,8 +578,14 @@ What the tests skip or cannot see, and what each gives up:
   the coordinator on 2026-11-26 (`docs/evidence/S08/voiceover-web.md`).
   No walk in it had an empty stop or a help message. The web tree spec
   judges the sixth, the fifth, and the fourth transcripts again with the
-  judge: the sixth and the fifth complete, the fourth wrong on its help
-  message.
+  present judge: the sixth and the fifth complete, the fourth wrong on its
+  help message. The judge was changed again after the sixth recording, on
+  review (2026-11-27): a stop past the end is wrong even when empty, and a
+  help message's role must be the role spoken in the reading before it,
+  not a word of its name. The committed transcript was recorded with the
+  judge before that change, and is re-judged by the web tree spec with the
+  present one; no walk in it had an empty stop or a help message, so the
+  change alters no verdict in it.
 - **What the sixth recording does not show.** No help message came in any
   of its walks, so the judge's rule for one, that a help message about the
   element just read is at the same cursor position as the stop before it,
