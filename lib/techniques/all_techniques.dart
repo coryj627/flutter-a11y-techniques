@@ -39,6 +39,7 @@ import 's12_hiding_content/s12_hiding_content.dart';
 import 's13_roles_and_traits/s13_roles_and_traits.dart';
 import 's14_values_and_state_descriptions/s14_values_and_state_descriptions.dart';
 import 's15_hints/s15_hints.dart';
+import 's16_language_page_parts/s16_language_page_parts.dart';
 import 's22_semantics_identifiers/s22_semantics_identifiers.dart';
 import 'v13_touch_target_size/v13_touch_target_size.dart';
 import 'v14_focus_indicators/v14_focus_indicators.dart';
@@ -84,6 +85,7 @@ final List<Technique> allTechniques = [
   s13RolesAndTraits,
   s14ValuesAndStateDescriptions,
   s15Hints,
+  s16LanguagePageParts,
   s22SemanticsIdentifiers,
   v13TouchTargetSize,
   v14FocusIndicators,

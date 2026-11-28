@@ -1,0 +1,201 @@
+S16WEB chromium p01 html lang="fr"
+S16WEB chromium p01 <span> text="Before p01" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p01 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p01 <flt-semantics flt-semantics-identifier="p01-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p01 <span> text="p01 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p01 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p01 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p02 html lang="fr"
+S16WEB chromium p02 <span> text="Before p02" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p02 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p02 <flt-semantics flt-semantics-identifier="p02-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p02 <span> text="p02 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p02 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p02 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p03 html lang="fr"
+S16WEB chromium p03 <span> text="Before p03" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p03 <flt-semantics lang="fr"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p03 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p03 <flt-semantics flt-semantics-identifier="p03-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p03 <span> text="p03 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p03 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p03 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p04 html lang="fr"
+S16WEB chromium p04 <span> text="Before p04" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p04 <flt-semantics lang="fr"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p04 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p04 <flt-semantics flt-semantics-identifier="p04-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p04 <span> text="p04 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p04 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p04 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p05 html lang="fr"
+S16WEB chromium p05 <span> text="Before p05" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p05 <flt-semantics lang="fr"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p05 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p05 <flt-semantics flt-semantics-identifier="p05-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p05 <span> text="p05 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p05 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p05 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p06 html lang="fr"
+S16WEB chromium p06 <span> text="Before p06" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p06 <flt-semantics lang="fr_FR"> text="" nearestLang="fr_FR" :lang matches=[]
+S16WEB chromium p06 <span> text="Bonjour tout le monde" nearestLang="fr_FR" :lang matches=[]
+S16WEB chromium p06 <flt-semantics flt-semantics-identifier="p06-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p06 <span> text="p06 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p06 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p06 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p07 html lang="fr-FR"
+S16WEB chromium p07 <span> text="Before p07" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB chromium p07 <flt-semantics lang="fr_FR"> text="" nearestLang="fr_FR" :lang matches=[]
+S16WEB chromium p07 <span> text="Bonjour tout le monde" nearestLang="fr_FR" :lang matches=[]
+S16WEB chromium p07 <flt-semantics flt-semantics-identifier="p07-end"> text="" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB chromium p07 <span> text="p07 end" nearestLang="fr-FR" :lang matches=[fr,fr-FR]
+S16WEB chromium p07 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p07 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p08 html lang="fr"
+S16WEB chromium p08 <span> text="Before p08" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p08 <span> text="She said bonjour to me." nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p08 <flt-semantics flt-semantics-identifier="p08-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p08 <span> text="p08 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p08 AX role=StaticText name="She said bonjour to me." props={}
+S16WEB chromium p08 AX role=InlineTextBox name="She said bonjour to me." props={}
+S16WEB chromium p09 html lang="fr"
+S16WEB chromium p09 <span> text="Before p09" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p09 <span> text="She said bonjour to me." nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p09 <flt-semantics flt-semantics-identifier="p09-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p09 <span> text="p09 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p09 AX role=StaticText name="She said bonjour to me." props={}
+S16WEB chromium p09 AX role=InlineTextBox name="She said bonjour to me." props={}
+S16WEB chromium p10 html lang="fr"
+S16WEB chromium p10 <span> text="Before p10" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p10 <span> text="She said bonjour to me." nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p10 <flt-semantics flt-semantics-identifier="p10-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p10 <span> text="p10 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p10 AX role=StaticText name="She said bonjour to me." props={}
+S16WEB chromium p10 AX role=InlineTextBox name="She said bonjour to me." props={}
+S16WEB chromium p11 html lang="fr"
+S16WEB chromium p11 <span> text="Before p11" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p11 <flt-semantics role="group" aria-label="She said \n to me."> text="She said \n to me." nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p11 <flt-semantics lang="fr"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p11 <span> text="bonjour" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p11 <flt-semantics flt-semantics-identifier="p11-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p11 <span> text="p11 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p11 AX role=group name="She said to me." props={}
+S16WEB chromium p11 AX role=StaticText name="bonjour" props={}
+S16WEB chromium p11 AX role=InlineTextBox name="bonjour" props={}
+S16WEB chromium p12 html lang="fr"
+S16WEB chromium p12 <span> text="Before p12" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p12 <flt-semantics role="button" tabindex="0" aria-current="false" flt-tappable=""> text="Français" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p12 <flt-semantics flt-semantics-identifier="p12-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p12 <span> text="p12 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p12 AX role=button name="Français" props={"focusable":true}
+S16WEB chromium p12 AX role=StaticText name="Français" props={}
+S16WEB chromium p12 AX role=InlineTextBox name="Français" props={}
+S16WEB chromium p13 html lang="fr"
+S16WEB chromium p13 <span> text="Before p13" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p13 <flt-semantics role="button" tabindex="0" aria-current="false" flt-tappable="" lang="fr"> text="Français" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p13 <flt-semantics flt-semantics-identifier="p13-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p13 <span> text="p13 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p13 AX role=button name="Français" props={"focusable":true}
+S16WEB chromium p13 AX role=StaticText name="Français" props={}
+S16WEB chromium p13 AX role=InlineTextBox name="Français" props={}
+S16WEB chromium p14 html lang="fr"
+S16WEB chromium p14 <span> text="Before p14" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p14 <flt-semantics lang="fr"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p14 <flt-semantics role="button" tabindex="0" aria-current="false" flt-tappable=""> text="Français" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p14 <flt-semantics flt-semantics-identifier="p14-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p14 <span> text="p14 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p14 AX role=button name="Français" props={"focusable":true}
+S16WEB chromium p14 AX role=StaticText name="Français" props={}
+S16WEB chromium p14 AX role=InlineTextBox name="Français" props={}
+S16WEB chromium p15 html lang="fr"
+S16WEB chromium p15 <span> text="Before p15" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p15 <flt-semantics role="button" flt-tappable=""> text="Français" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p15 <flt-semantics flt-semantics-identifier="p15-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p15 <span> text="p15 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p15 AX role=button name="Français" props={}
+S16WEB chromium p15 AX role=StaticText name="Français" props={}
+S16WEB chromium p15 AX role=InlineTextBox name="Français" props={}
+S16WEB chromium p16 html lang="fr"
+S16WEB chromium p16 <span> text="Before p16" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p16 <flt-semantics role="button" tabindex="0" aria-current="false" flt-tappable=""> text="Français" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p16 <flt-semantics flt-semantics-identifier="p16-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p16 <span> text="p16 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p16 AX role=button name="Français" props={"focusable":true}
+S16WEB chromium p16 AX role=StaticText name="Français" props={}
+S16WEB chromium p16 AX role=InlineTextBox name="Français" props={}
+S16WEB chromium p17 html lang="fr"
+S16WEB chromium p17 <span> text="Before p17" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p17 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p17 <flt-semantics flt-semantics-identifier="p17-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p17 <span> text="p17 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p17 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p17 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p18 html lang="fr"
+S16WEB chromium p18 <span> text="Before p18" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p18 <span> text="日本語" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p18 <flt-semantics flt-semantics-identifier="p18-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p18 <span> text="p18 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p18 AX role=StaticText name="日本語" props={}
+S16WEB chromium p18 AX role=InlineTextBox name="日本語" props={}
+S16WEB chromium p19 html lang="fr"
+S16WEB chromium p19 <span> text="Before p19" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p19 <flt-semantics lang="ja"> text="" nearestLang="ja" :lang matches=[ja]
+S16WEB chromium p19 <span> text="日本語" nearestLang="ja" :lang matches=[ja]
+S16WEB chromium p19 <flt-semantics flt-semantics-identifier="p19-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p19 <span> text="p19 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p19 AX role=StaticText name="日本語" props={}
+S16WEB chromium p19 AX role=InlineTextBox name="日本語" props={}
+S16WEB chromium p20 html lang="fr"
+S16WEB chromium p20 <span> text="Before p20" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p20 <flt-semantics lang="zh_Hant"> text="" nearestLang="zh_Hant" :lang matches=[]
+S16WEB chromium p20 <span> text="繁體中文" nearestLang="zh_Hant" :lang matches=[]
+S16WEB chromium p20 <flt-semantics flt-semantics-identifier="p20-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p20 <span> text="p20 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p20 AX role=StaticText name="繁體中文" props={}
+S16WEB chromium p20 AX role=InlineTextBox name="繁體中文" props={}
+S16WEB chromium p21 html lang="fr"
+S16WEB chromium p21 <span> text="Before p21" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p21 <flt-semantics lang="fr"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p21 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p21 <flt-semantics lang="en"> text="" nearestLang="en" :lang matches=[en]
+S16WEB chromium p21 <span> text="Hello everyone" nearestLang="en" :lang matches=[en]
+S16WEB chromium p21 <flt-semantics flt-semantics-identifier="p21-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p21 <span> text="p21 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p21 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p21 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p21 AX role=StaticText name="Hello everyone" props={}
+S16WEB chromium p21 AX role=InlineTextBox name="Hello everyone" props={}
+S16WEB chromium p22 html lang="fr"
+S16WEB chromium p22 <span> text="Before p22" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p22 <span> text="She said bonjour to me." nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p22 <flt-semantics flt-semantics-identifier="p22-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p22 <span> text="p22 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p22 AX role=StaticText name="She said bonjour to me." props={}
+S16WEB chromium p22 AX role=InlineTextBox name="She said bonjour to me." props={}
+S16WEB chromium p23 html lang="fr"
+S16WEB chromium p23 <span> text="Before p23" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p23 <flt-semantics flt-semantics-identifier="p23-id"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p23 <flt-semantics lang="fr"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p23 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p23 <flt-semantics flt-semantics-identifier="p23-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p23 <span> text="p23 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p23 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p23 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p24 html lang="fr"
+S16WEB chromium p24 <span> text="Before p24" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p24 <flt-semantics flt-semantics-identifier="p24-id"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p24 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p24 <flt-semantics flt-semantics-identifier="p24-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p24 <span> text="p24 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p24 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p24 AX role=InlineTextBox name="Bonjour tout le monde" props={}
+S16WEB chromium p25 html lang="fr"
+S16WEB chromium p25 <span> text="Before p25" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p25 <flt-semantics flt-semantics-identifier="p25-id"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p25 <flt-semantics lang="fr"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p25 <span> text="Bonjour tout le monde" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p25 <flt-semantics flt-semantics-identifier="p25-end"> text="" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p25 <span> text="p25 end" nearestLang="fr" :lang matches=[fr]
+S16WEB chromium p25 AX role=StaticText name="Bonjour tout le monde" props={}
+S16WEB chromium p25 AX role=InlineTextBox name="Bonjour tout le monde" props={}

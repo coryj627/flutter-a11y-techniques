@@ -99,10 +99,11 @@ example is added without a decision.
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
+| [S16 Language of page and parts](#s16-language-of-page-and-parts) | 3 | 0 | 0 | 3 |
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 143 | 51 | 13 | 79 |
+| All | 146 | 51 | 13 | 82 |
 
 ## C01 Button
 
@@ -504,6 +505,19 @@ Flagged: `good-cupertino`, `good-custom`.
 | `good-cupertino` | An `Actions` for Enter on the web round the `CupertinoButton`; the hint itself is `Semantics(hint:)` | `CupertinoButton` | Enter on the web ([FL-002](flutter-limitations.md#fl-002)) | R1, R2, R3: iOS Accessibility Hint, Apple: accessibilityHint | custom |
 | `good-custom` | A button drawn by hand: `Semantics(button: true, label:, hint:, onTap:)`, with Enter and Space from `FocusableActionDetector` and a focus ring of its own | None for a drawn control | none | R1, R2, R3: iOS Accessibility Hint, Apple: accessibilityHint | custom |
 | `good-field` | Nothing: `Semantics(hint:)` round a `TextField`, and the rule as text | `TextField` | none | R6: iOS Accessibility Hint, MDN: aria-description | not custom |
+
+## S16 Language of page and parts
+
+Nothing flagged. A passage, a phrase, and a control are given their
+language with the parameters that document it, `Semantics(localeForSubtree:)`
+and `TextSpan(locale:)`; nothing is built, and the widgets keep their own
+role and behaviour.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-passage` | Nothing: `Semantics(localeForSubtree: Locale('fr'))` round the passage's `Text` | `Semantics.localeForSubtree` | `Localizations.override`, documented for a part of an app in another locale, sets the whole app's language ([FL-360](flutter-limitations.md#fl-360)) | R2, R4: iOS Language, Android View Text Language Identification, H58 | not custom |
+| `good-phrase` | Nothing: `TextSpan(text:, locale: Locale('fr'))` round the phrase in a `Text.rich` | `TextSpan.locale` | none on Android and iOS; nothing on the web ([FL-020](flutter-limitations.md#fl-020)) | R3: Android View Text Language Identification (`LocaleSpan`), iOS Language (an attributed string's language) | not custom |
+| `good-language-menu` | Nothing: `Semantics(localeForSubtree:)` round each `ListTile` | `ListTile`, `Semantics.localeForSubtree` | The language set inside the tile is lost ([FL-361](flutter-limitations.md#fl-361)), avoided by setting it round the tile | R2, R5: iOS Language, Android View Text Language Identification, H58 | not custom |
 
 ## S22 Semantics identifiers for testing
 

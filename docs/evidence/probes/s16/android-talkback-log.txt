@@ -1,0 +1,481 @@
+11-27 07:37:29.335 I VoiceDataManager: checkData: Refreshing list of all available voices...
+11-27 07:37:29.339 I VoiceDataDownloader: VoiceLM cache expired, refetching...
+11-27 07:37:29.351 I VoiceDataDownloader: getAvailableVoicesInfo en-us
+11-27 07:37:29.355 I VoiceDataManager: Calling onVoicesDataChange: updated voices
+11-27 07:37:29.437 I VoiceDataDownloader: VoiceLM path fetch completed in 86 ms (direct=false, count=0).
+11-27 07:37:31.757 V talkback: SpeechControllerImpl: Speaking fragment text="TalkBack on", utteranceId=talkback_0, TtsSpan=null, locale=null
+11-27 07:37:33.685 V talkback: SpeechControllerImpl: Speaking fragment text="Allow Android Accessibility Suite to send you notifications?", utteranceId=talkback_1, TtsSpan=null, locale=null
+11-27 07:37:37.061 V talkback: SpeechControllerImpl: Speaking fragment text="Allow. Button", utteranceId=talkback_2, TtsSpan=null, locale=null
+11-27 07:37:38.542 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_3, TtsSpan=null, locale=null
+11-27 07:37:40.736 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_4, TtsSpan=null, locale=en_US
+11-27 07:37:41.440 V talkback: SpeechControllerImpl: Speaking fragment text="Button", utteranceId=talkback_4, TtsSpan=null, locale=null
+11-27 07:37:41.567 I S16TB   : FOCUS s16-p01-0
+11-27 07:37:41.601 V talkback: SpeechControllerImpl: Speaking fragment text="Before p01", utteranceId=talkback_5, TtsSpan=null, locale=en_US
+11-27 07:37:43.017 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_5, TtsSpan=null, locale=null
+11-27 07:37:46.573 I S16TB   : FOCUS s16-p01-2
+11-27 07:37:46.617 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_6, TtsSpan=null, locale=en_US
+11-27 07:37:48.303 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_6, TtsSpan=null, locale=null
+11-27 07:37:51.577 I S16TB   : FOCUS s16-p01-5
+11-27 07:37:51.616 V talkback: SpeechControllerImpl: Speaking fragment text="p01 end", utteranceId=talkback_7, TtsSpan=null, locale=en_US
+11-27 07:37:52.777 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_7, TtsSpan=null, locale=null
+11-27 07:37:56.579 I S16TB   : END p01
+11-27 07:37:58.366 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_8, TtsSpan=null, locale=null
+11-27 07:38:00.507 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_9, TtsSpan=null, locale=en_US
+11-27 07:38:01.201 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_9, TtsSpan=null, locale=null
+11-27 07:38:03.168 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_10, TtsSpan=null, locale=null, event=null
+11-27 07:38:05.098 I S16TB   : FOCUS s16-p02-0
+11-27 07:38:05.131 V talkback: SpeechControllerImpl: Speaking fragment text="Before p02", utteranceId=talkback_11, TtsSpan=null, locale=en_US
+11-27 07:38:06.473 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_11, TtsSpan=null, locale=null
+11-27 07:38:10.101 I S16TB   : FOCUS s16-p02-2
+11-27 07:38:10.136 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_12, TtsSpan=null, locale=fr
+11-27 07:38:10.143 I VoiceDataManager: Explicitly adding voicepack to downloads: fr-fr-x-multi-seanet
+11-27 07:38:10.144 I VoiceDataDownloader: voicesToFetch fr-fr
+11-27 07:38:10.144 I VoiceDataDownloader: fetchVoiceInternal fr-fr
+11-27 07:38:10.144 I VoiceDataManager: start to download voice fr-fr
+11-27 07:38:10.144 I VoiceDataDownloader: Download of fr-fr started.
+11-27 07:38:10.144 I VoiceDataDownloader: Registered slicing strategy for fr-fr
+11-27 07:38:10.144 I VoiceDataDownloader: Got pack name "fr-fr-x-multi-r64" for voicemetadata fr-fr, voice fr-fr-x-multi
+11-27 07:38:10.144 I VoiceDataDownloader: Adding pack fr-fr-x-multi-r64 to superpack.
+11-27 07:38:10.144 I VoiceDataDownloader: Got pack name "fr-fr-x-multi-seanet-r64" for voicemetadata fr-fr, voice fr-fr-x-multi
+11-27 07:38:10.144 I VoiceDataDownloader: Adding pack fr-fr-x-multi-seanet-r64 to superpack.
+11-27 07:38:10.144 I VoiceDataDownloader: Got pack name "fr-fr-x-multi-locomel-r64" for voicemetadata fr-fr, voice fr-fr-x-multi
+11-27 07:38:10.144 I VoiceDataDownloader: Adding pack fr-fr-x-multi-locomel-r64 to superpack.
+11-27 07:38:10.144 I VoiceDataDownloader: Got pack name "fr-fr-x-multi-lemonbalm-r64" for voicemetadata fr-fr, voice fr-fr-x-multi
+11-27 07:38:10.144 I VoiceDataDownloader: Adding pack fr-fr-x-multi-lemonbalm-r64 to superpack.
+11-27 07:38:10.144 I VoiceDataDownloader: Got pack name "" for voicemetadata fr-fr, voice fr-fr-x-gia
+11-27 07:38:10.144 I VoiceDataDownloader: Syncing superpack fr-fr
+11-27 07:38:10.209 I VoiceDataManager: Already downloading fr-fr, ignoring async download request...
+11-27 07:38:10.209 I VoiceDataManager: Explicitly adding voicepack to downloads: fr-ca-x-multi
+11-27 07:38:10.209 I VoiceDataDownloader: voicesToFetch fr-ca
+11-27 07:38:10.209 I VoiceDataDownloader: fetchVoiceInternal fr-ca
+11-27 07:38:10.209 I VoiceDataManager: start to download voice fr-ca
+11-27 07:38:10.209 I VoiceDataDownloader: Download of fr-ca started.
+11-27 07:38:10.209 I VoiceDataDownloader: Registered slicing strategy for fr-ca
+11-27 07:38:10.209 I VoiceDataDownloader: Got pack name "fr-ca-x-multi-r59" for voicemetadata fr-ca, voice fr-ca-x-multi
+11-27 07:38:10.209 I VoiceDataDownloader: Adding pack fr-ca-x-multi-r59 to superpack.
+11-27 07:38:10.209 I VoiceDataDownloader: Got pack name "fr-ca-x-multi-seanet-r59" for voicemetadata fr-ca, voice fr-ca-x-multi
+11-27 07:38:10.209 I VoiceDataDownloader: Adding pack fr-ca-x-multi-seanet-r59 to superpack.
+11-27 07:38:10.209 I VoiceDataDownloader: Got pack name "" for voicemetadata fr-ca, voice fr-ca-x-gia
+11-27 07:38:10.209 I VoiceDataDownloader: Syncing superpack fr-ca
+11-27 07:38:10.214 I VoiceDataManager: failed to download voice fr-ca
+11-27 07:38:10.214 I VoiceDataManager: gdc: Failed to sync packs (Reason=SYNC_PACK_FAILED)
+11-27 07:38:10.214 I VoiceDataManager: 	at gdj.a(PG:64)
+11-27 07:38:10.214 I VoiceDataManager: 	at mpa.a(PG:18)
+11-27 07:38:10.214 I VoiceDataManager: 	at nqy.run(PG:35)
+11-27 07:38:10.214 I VoiceDataManager: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-27 07:38:10.214 I VoiceDataManager: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-27 07:38:10.214 I VoiceDataManager: 	at java.lang.Thread.run(Thread.java:1571)
+11-27 07:38:10.214 I VoiceDataManager: Caused by: java.util.concurrent.CancellationException: Task was cancelled.
+11-27 07:38:10.214 I VoiceDataManager: 	at npd.h(PG:31)
+11-27 07:38:10.214 I VoiceDataManager: 	at npk.s(PG:23)
+11-27 07:38:10.214 I VoiceDataManager: 	at npd.get(PG:1)
+11-27 07:38:10.214 I VoiceDataManager: 	at a.B(PG:2)
+11-27 07:38:10.214 I VoiceDataManager: 	at lsk.y(PG:10)
+11-27 07:38:10.214 I VoiceDataManager: 	at nqy.run(PG:22)
+11-27 07:38:10.214 I VoiceDataManager: 	... 3 more
+11-27 07:38:10.214 I VoiceDataManager: checkData: Refreshing list of all available voices...
+11-27 07:38:10.244 I VoiceDataDownloader: getAvailableVoicesInfo en-us
+11-27 07:38:10.244 I VoiceDataManager: Calling onVoicesDataChange: updated voices
+11-27 07:38:12.000 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_12, TtsSpan=null, locale=null
+11-27 07:38:15.104 I S16TB   : FOCUS s16-p02-5
+11-27 07:38:15.134 V talkback: SpeechControllerImpl: Speaking fragment text="p02 end", utteranceId=talkback_13, TtsSpan=null, locale=en_US
+11-27 07:38:16.522 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_13, TtsSpan=null, locale=null
+11-27 07:38:20.107 I S16TB   : END p02
+11-27 07:38:21.856 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_14, TtsSpan=null, locale=null
+11-27 07:38:23.984 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_15, TtsSpan=null, locale=fr
+11-27 07:38:23.988 I VoiceDataManager: Already downloading fr-fr, ignoring async download request...
+11-27 07:38:24.061 I VoiceDataManager: Already downloading fr-fr, ignoring async download request...
+11-27 07:38:24.061 I VoiceDataManager: Already downloading fr-ca, ignoring async download request...
+11-27 07:38:24.896 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_15, TtsSpan=null, locale=null
+11-27 07:38:27.060 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_16, TtsSpan=null, locale=null, event=null
+11-27 07:38:27.658 I VoiceDataDownloader: Superpack download completed.
+11-27 07:38:27.658 I VoiceDataDownloader: Download fr-fr Success true
+11-27 07:38:27.658 I VoiceDataManager: Downloaded voice fr-fr
+11-27 07:38:27.658 I VoiceDataManager: checkData: Refreshing list of all available voices...
+11-27 07:38:27.658 I VoiceDataDownloader: Download fr-ca Success true
+11-27 07:38:27.658 I VoiceDataManager: Downloaded voice fr-ca
+11-27 07:38:27.659 I VoiceDataDownloader: getAvailableVoicesInfo en-us
+11-27 07:38:27.659 I VoiceDataDownloader: getAvailableVoicesInfo fr-ca
+11-27 07:38:27.660 I VoiceDataDownloader: getAvailableVoicesInfo fr-fr
+11-27 07:38:27.661 I VoiceDataDownloader: getAvailableVoicesInfo en-us
+11-27 07:38:27.661 I VoiceDataDownloader: getAvailableVoicesInfo fr-ca
+11-27 07:38:27.661 I VoiceDataDownloader: getAvailableVoicesInfo fr-fr
+11-27 07:38:27.661 I VoiceDataManager: Calling onVoicesDataChange: updated voices
+11-27 07:38:28.618 I S16TB   : FOCUS s16-p03-0
+11-27 07:38:28.648 V talkback: SpeechControllerImpl: Speaking fragment text="Before p03", utteranceId=talkback_17, TtsSpan=null, locale=fr
+11-27 07:38:31.264 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_17, TtsSpan=null, locale=null
+11-27 07:38:33.625 I S16TB   : FOCUS s16-p03-4
+11-27 07:38:33.666 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_18, TtsSpan=null, locale=fr
+11-27 07:38:35.859 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_18, TtsSpan=null, locale=null
+11-27 07:38:38.630 I S16TB   : FOCUS s16-p03-7
+11-27 07:38:38.666 V talkback: SpeechControllerImpl: Speaking fragment text="p03 end", utteranceId=talkback_19, TtsSpan=null, locale=fr
+11-27 07:38:40.788 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_19, TtsSpan=null, locale=null
+11-27 07:38:43.634 I S16TB   : END p03
+11-27 07:38:45.422 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_20, TtsSpan=null, locale=null
+11-27 07:38:47.548 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_21, TtsSpan=null, locale=en_US
+11-27 07:38:48.232 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_21, TtsSpan=null, locale=null
+11-27 07:38:50.194 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_22, TtsSpan=null, locale=null, event=null
+11-27 07:38:52.118 I S16TB   : FOCUS s16-p04-0
+11-27 07:38:52.146 V talkback: SpeechControllerImpl: Speaking fragment text="Before p04", utteranceId=talkback_23, TtsSpan=null, locale=en_US
+11-27 07:38:53.743 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_23, TtsSpan=null, locale=null
+11-27 07:38:57.122 I S16TB   : FOCUS s16-p04-3
+11-27 07:38:57.149 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_24, TtsSpan=null, locale=fr
+11-27 07:38:59.009 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_24, TtsSpan=null, locale=null
+11-27 07:39:02.127 I S16TB   : FOCUS s16-p04-6
+11-27 07:39:02.167 V talkback: SpeechControllerImpl: Speaking fragment text="p04 end", utteranceId=talkback_25, TtsSpan=null, locale=en_US
+11-27 07:39:03.601 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_25, TtsSpan=null, locale=null
+11-27 07:39:07.131 I S16TB   : END p04
+11-27 07:39:08.951 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_26, TtsSpan=null, locale=null
+11-27 07:39:11.076 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_27, TtsSpan=null, locale=en_US
+11-27 07:39:11.758 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_27, TtsSpan=null, locale=null
+11-27 07:39:13.711 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_28, TtsSpan=null, locale=null, event=null
+11-27 07:39:15.621 I S16TB   : FOCUS s16-p05-0
+11-27 07:39:15.647 V talkback: SpeechControllerImpl: Speaking fragment text="Before p05", utteranceId=talkback_29, TtsSpan=null, locale=en_US
+11-27 07:39:17.107 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_29, TtsSpan=null, locale=null
+11-27 07:39:20.630 I S16TB   : FOCUS s16-p05-4
+11-27 07:39:20.666 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_30, TtsSpan=null, locale=fr
+11-27 07:39:22.585 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_30, TtsSpan=null, locale=null
+11-27 07:39:25.636 I S16TB   : FOCUS s16-p05-7
+11-27 07:39:25.667 V talkback: SpeechControllerImpl: Speaking fragment text="p05 end", utteranceId=talkback_31, TtsSpan=null, locale=en_US
+11-27 07:39:27.160 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_31, TtsSpan=null, locale=null
+11-27 07:39:30.641 I S16TB   : END p05
+11-27 07:39:32.424 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_32, TtsSpan=null, locale=null
+11-27 07:39:34.552 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_33, TtsSpan=null, locale=en_US
+11-27 07:39:35.252 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_33, TtsSpan=null, locale=null
+11-27 07:39:37.199 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_34, TtsSpan=null, locale=null, event=null
+11-27 07:39:39.150 I S16TB   : FOCUS s16-p06-0
+11-27 07:39:39.182 V talkback: SpeechControllerImpl: Speaking fragment text="Before p06", utteranceId=talkback_35, TtsSpan=null, locale=en_US
+11-27 07:39:40.687 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_35, TtsSpan=null, locale=null
+11-27 07:39:44.154 I S16TB   : FOCUS s16-p06-4
+11-27 07:39:44.185 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_36, TtsSpan=null, locale=fr_FR
+11-27 07:39:46.082 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_36, TtsSpan=null, locale=null
+11-27 07:39:49.158 I S16TB   : FOCUS s16-p06-7
+11-27 07:39:49.200 V talkback: SpeechControllerImpl: Speaking fragment text="p06 end", utteranceId=talkback_37, TtsSpan=null, locale=en_US
+11-27 07:39:50.686 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_37, TtsSpan=null, locale=null
+11-27 07:39:54.160 I S16TB   : END p06
+11-27 07:39:55.948 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_38, TtsSpan=null, locale=null
+11-27 07:39:58.073 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_39, TtsSpan=null, locale=fr_FR
+11-27 07:39:59.560 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_39, TtsSpan=null, locale=null
+11-27 07:40:01.724 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_40, TtsSpan=null, locale=null, event=null
+11-27 07:40:02.686 I S16TB   : FOCUS s16-p07-0
+11-27 07:40:02.716 V talkback: SpeechControllerImpl: Speaking fragment text="Before p07", utteranceId=talkback_41, TtsSpan=null, locale=fr_FR
+11-27 07:40:05.257 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_41, TtsSpan=null, locale=null
+11-27 07:40:07.695 I S16TB   : FOCUS s16-p07-4
+11-27 07:40:07.738 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_42, TtsSpan=null, locale=fr_FR
+11-27 07:40:09.628 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_42, TtsSpan=null, locale=null
+11-27 07:40:12.701 I S16TB   : FOCUS s16-p07-7
+11-27 07:40:12.731 V talkback: SpeechControllerImpl: Speaking fragment text="p07 end", utteranceId=talkback_43, TtsSpan=null, locale=fr_FR
+11-27 07:40:14.583 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_43, TtsSpan=null, locale=null
+11-27 07:40:17.706 I S16TB   : END p07
+11-27 07:40:19.516 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_44, TtsSpan=null, locale=null
+11-27 07:40:21.643 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_45, TtsSpan=null, locale=en_US
+11-27 07:40:22.349 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_45, TtsSpan=null, locale=null
+11-27 07:40:24.310 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_46, TtsSpan=null, locale=null, event=null
+11-27 07:40:26.183 I S16TB   : FOCUS s16-p08-0
+11-27 07:40:26.217 V talkback: SpeechControllerImpl: Speaking fragment text="Before p08", utteranceId=talkback_47, TtsSpan=null, locale=en_US
+11-27 07:40:27.716 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_47, TtsSpan=null, locale=null
+11-27 07:40:31.186 I S16TB   : FOCUS s16-p08-2
+11-27 07:40:31.216 V talkback: SpeechControllerImpl: Speaking fragment text="She said ", utteranceId=talkback_48, TtsSpan=null, locale=en_US
+11-27 07:40:32.072 V talkback: SpeechControllerImpl: Speaking fragment text="bonjour", utteranceId=talkback_48, TtsSpan=null, locale=fr
+11-27 07:40:33.614 V talkback: SpeechControllerImpl: Speaking fragment text=" to me.", utteranceId=talkback_48, TtsSpan=null, locale=en_US
+11-27 07:40:34.664 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_48, TtsSpan=null, locale=null
+11-27 07:40:36.190 I S16TB   : FOCUS s16-p08-5
+11-27 07:40:36.232 V talkback: SpeechControllerImpl: Speaking fragment text="p08 end", utteranceId=talkback_49, TtsSpan=null, locale=en_US
+11-27 07:40:37.431 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_49, TtsSpan=null, locale=null
+11-27 07:40:41.193 I S16TB   : END p08
+11-27 07:40:43.030 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_50, TtsSpan=null, locale=null
+11-27 07:40:45.156 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_51, TtsSpan=null, locale=en_US
+11-27 07:40:45.839 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_51, TtsSpan=null, locale=null
+11-27 07:40:47.801 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_52, TtsSpan=null, locale=null, event=null
+11-27 07:40:49.720 I S16TB   : FOCUS s16-p09-0
+11-27 07:40:49.747 V talkback: SpeechControllerImpl: Speaking fragment text="Before p09", utteranceId=talkback_53, TtsSpan=null, locale=en_US
+11-27 07:40:51.232 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_53, TtsSpan=null, locale=null
+11-27 07:40:54.726 I S16TB   : FOCUS s16-p09-2
+11-27 07:40:54.764 V talkback: SpeechControllerImpl: Speaking fragment text="She said bonjour to me.", utteranceId=talkback_54, TtsSpan=null, locale=en_US
+11-27 07:40:56.477 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_54, TtsSpan=null, locale=null
+11-27 07:40:59.733 I S16TB   : FOCUS s16-p09-5
+11-27 07:40:59.768 V talkback: SpeechControllerImpl: Speaking fragment text="p09 end", utteranceId=talkback_55, TtsSpan=null, locale=en_US
+11-27 07:41:01.026 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_55, TtsSpan=null, locale=null
+11-27 07:41:04.737 I S16TB   : END p09
+11-27 07:41:06.503 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_56, TtsSpan=null, locale=null
+11-27 07:41:08.632 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_57, TtsSpan=null, locale=en_US
+11-27 07:41:09.334 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_57, TtsSpan=null, locale=null
+11-27 07:41:11.289 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_58, TtsSpan=null, locale=null, event=null
+11-27 07:41:13.236 I S16TB   : FOCUS s16-p10-0
+11-27 07:41:13.267 V talkback: SpeechControllerImpl: Speaking fragment text="Before p10", utteranceId=talkback_59, TtsSpan=null, locale=en_US
+11-27 07:41:14.614 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_59, TtsSpan=null, locale=null
+11-27 07:41:18.241 I S16TB   : FOCUS s16-p10-2
+11-27 07:41:18.284 V talkback: SpeechControllerImpl: Speaking fragment text="She said ", utteranceId=talkback_60, TtsSpan=null, locale=en_US
+11-27 07:41:19.117 V talkback: SpeechControllerImpl: Speaking fragment text="bonjour", utteranceId=talkback_60, TtsSpan=null, locale=fr
+11-27 07:41:20.359 V talkback: SpeechControllerImpl: Speaking fragment text=" to me.", utteranceId=talkback_60, TtsSpan=null, locale=en_US
+11-27 07:41:21.266 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_60, TtsSpan=null, locale=null
+11-27 07:41:23.251 I S16TB   : FOCUS s16-p10-5
+11-27 07:41:23.287 V talkback: SpeechControllerImpl: Speaking fragment text="p10 end", utteranceId=talkback_61, TtsSpan=null, locale=en_US
+11-27 07:41:24.582 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_61, TtsSpan=null, locale=null
+11-27 07:41:28.256 I S16TB   : END p10
+11-27 07:41:30.131 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_62, TtsSpan=null, locale=null
+11-27 07:41:32.261 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_63, TtsSpan=null, locale=en_US
+11-27 07:41:32.969 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_63, TtsSpan=null, locale=null
+11-27 07:41:34.923 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_64, TtsSpan=null, locale=null, event=null
+11-27 07:41:36.817 I S16TB   : FOCUS s16-p11-0
+11-27 07:41:36.851 V talkback: SpeechControllerImpl: Speaking fragment text="Before p11", utteranceId=talkback_65, TtsSpan=null, locale=en_US
+11-27 07:41:38.240 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_65, TtsSpan=null, locale=null
+11-27 07:41:41.820 I S16TB   : FOCUS s16-p11-2
+11-27 07:41:41.851 V talkback: SpeechControllerImpl: Speaking fragment text="She said 
+11-27 07:41:43.364 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_66, TtsSpan=null, locale=null
+11-27 07:41:46.829 I S16TB   : FOCUS s16-p11-3
+11-27 07:41:46.864 V talkback: SpeechControllerImpl: Speaking fragment text="bonjour", utteranceId=talkback_67, TtsSpan=null, locale=fr
+11-27 07:41:51.834 I S16TB   : FOCUS s16-p11-6
+11-27 07:41:51.863 V talkback: SpeechControllerImpl: Speaking fragment text="p11 end", utteranceId=talkback_68, TtsSpan=null, locale=en_US
+11-27 07:41:53.442 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_68, TtsSpan=null, locale=null
+11-27 07:41:56.837 I S16TB   : END p11
+11-27 07:41:58.665 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_69, TtsSpan=null, locale=null
+11-27 07:42:00.791 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_70, TtsSpan=null, locale=en_US
+11-27 07:42:01.494 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_70, TtsSpan=null, locale=null
+11-27 07:42:03.460 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_71, TtsSpan=null, locale=null, event=null
+11-27 07:42:05.336 I S16TB   : FOCUS s16-p12-0
+11-27 07:42:05.363 V talkback: SpeechControllerImpl: Speaking fragment text="Before p12", utteranceId=talkback_72, TtsSpan=null, locale=en_US
+11-27 07:42:06.722 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_72, TtsSpan=null, locale=null
+11-27 07:42:10.342 I S16TB   : FOCUS s16-p12-2
+11-27 07:42:10.384 V talkback: SpeechControllerImpl: Speaking fragment text="Français", utteranceId=talkback_73, TtsSpan=null, locale=fr
+11-27 07:42:11.902 V talkback: SpeechControllerImpl: Speaking fragment text="Button. 3 of 5", utteranceId=talkback_73, TtsSpan=null, locale=null
+11-27 07:42:14.444 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_74, TtsSpan=null, locale=null, event=null
+11-27 07:42:15.348 I S16TB   : FOCUS s16-p12-5
+11-27 07:42:15.380 V talkback: SpeechControllerImpl: Speaking fragment text="p12 end", utteranceId=talkback_75, TtsSpan=null, locale=en_US
+11-27 07:42:16.569 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_75, TtsSpan=null, locale=null
+11-27 07:42:20.351 I S16TB   : END p12
+11-27 07:42:22.128 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_76, TtsSpan=null, locale=null
+11-27 07:42:24.258 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_77, TtsSpan=null, locale=en_US
+11-27 07:42:24.956 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_77, TtsSpan=null, locale=null
+11-27 07:42:26.926 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_78, TtsSpan=null, locale=null, event=null
+11-27 07:42:28.869 I S16TB   : FOCUS s16-p13-0
+11-27 07:42:28.902 V talkback: SpeechControllerImpl: Speaking fragment text="Before p13", utteranceId=talkback_79, TtsSpan=null, locale=en_US
+11-27 07:42:30.450 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_79, TtsSpan=null, locale=null
+11-27 07:42:33.874 I S16TB   : FOCUS s16-p13-3
+11-27 07:42:33.916 V talkback: SpeechControllerImpl: Speaking fragment text="Français", utteranceId=talkback_80, TtsSpan=null, locale=fr
+11-27 07:42:35.076 V talkback: SpeechControllerImpl: Speaking fragment text="Button. 3 of 5", utteranceId=talkback_80, TtsSpan=null, locale=null
+11-27 07:42:37.412 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_81, TtsSpan=null, locale=null, event=null
+11-27 07:42:38.882 I S16TB   : FOCUS s16-p13-6
+11-27 07:42:38.914 V talkback: SpeechControllerImpl: Speaking fragment text="p13 end", utteranceId=talkback_82, TtsSpan=null, locale=en_US
+11-27 07:42:40.385 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_82, TtsSpan=null, locale=null
+11-27 07:42:43.884 I S16TB   : END p13
+11-27 07:42:45.719 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_83, TtsSpan=null, locale=null
+11-27 07:42:47.845 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_84, TtsSpan=null, locale=fr
+11-27 07:42:48.968 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_84, TtsSpan=null, locale=null
+11-27 07:42:51.107 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_85, TtsSpan=null, locale=null, event=null
+11-27 07:42:52.465 I S16TB   : FOCUS s16-p14-0
+11-27 07:42:52.499 V talkback: SpeechControllerImpl: Speaking fragment text="Before p14", utteranceId=talkback_86, TtsSpan=null, locale=fr
+11-27 07:42:54.532 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_86, TtsSpan=null, locale=null
+11-27 07:42:57.469 I S16TB   : FOCUS s16-p14-4
+11-27 07:42:57.499 V talkback: SpeechControllerImpl: Speaking fragment text="Français", utteranceId=talkback_87, TtsSpan=null, locale=fr
+11-27 07:42:58.685 V talkback: SpeechControllerImpl: Speaking fragment text="Button. 3 of 5", utteranceId=talkback_87, TtsSpan=null, locale=null
+11-27 07:43:00.894 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_88, TtsSpan=null, locale=null, event=null
+11-27 07:43:02.472 I S16TB   : FOCUS s16-p14-7
+11-27 07:43:02.500 V talkback: SpeechControllerImpl: Speaking fragment text="p14 end", utteranceId=talkback_89, TtsSpan=null, locale=fr
+11-27 07:43:04.146 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_89, TtsSpan=null, locale=null
+11-27 07:43:07.475 I S16TB   : END p14
+11-27 07:43:09.311 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_90, TtsSpan=null, locale=null
+11-27 07:43:11.443 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_91, TtsSpan=null, locale=en_US
+11-27 07:43:12.141 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_91, TtsSpan=null, locale=null
+11-27 07:43:14.084 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_92, TtsSpan=null, locale=null, event=null
+11-27 07:43:16.069 I S16TB   : FOCUS s16-p15-0
+11-27 07:43:16.097 V talkback: SpeechControllerImpl: Speaking fragment text="Before p15", utteranceId=talkback_93, TtsSpan=null, locale=en_US
+11-27 07:43:17.817 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_93, TtsSpan=null, locale=null
+11-27 07:43:21.075 I S16TB   : FOCUS s16-p15-2
+11-27 07:43:21.116 V talkback: SpeechControllerImpl: Speaking fragment text="Français", utteranceId=talkback_94, TtsSpan=null, locale=fr
+11-27 07:43:22.308 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_94, TtsSpan=null, locale=null
+11-27 07:43:24.143 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_95, TtsSpan=null, locale=null, event=null
+11-27 07:43:26.079 I S16TB   : FOCUS s16-p15-5
+11-27 07:43:26.122 V talkback: SpeechControllerImpl: Speaking fragment text="p15 end", utteranceId=talkback_96, TtsSpan=null, locale=en_US
+11-27 07:43:27.547 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_96, TtsSpan=null, locale=null
+11-27 07:43:31.081 I S16TB   : END p15
+11-27 07:43:33.020 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_97, TtsSpan=null, locale=null
+11-27 07:43:35.147 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_98, TtsSpan=null, locale=en_US
+11-27 07:43:35.831 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_98, TtsSpan=null, locale=null
+11-27 07:43:37.800 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_99, TtsSpan=null, locale=null, event=null
+11-27 07:43:39.672 I S16TB   : FOCUS s16-p16-0
+11-27 07:43:39.718 V talkback: SpeechControllerImpl: Speaking fragment text="Before p16", utteranceId=talkback_100, TtsSpan=null, locale=en_US
+11-27 07:43:41.270 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_100, TtsSpan=null, locale=null
+11-27 07:43:44.680 I S16TB   : FOCUS s16-p16-2
+11-27 07:43:44.721 V talkback: SpeechControllerImpl: Speaking fragment text="Français", utteranceId=talkback_101, TtsSpan=null, locale=en_US
+11-27 07:43:45.705 V talkback: SpeechControllerImpl: Speaking fragment text="Button. 3 of 5", utteranceId=talkback_101, TtsSpan=null, locale=null
+11-27 07:43:47.827 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_102, TtsSpan=null, locale=null, event=null
+11-27 07:43:49.685 I S16TB   : FOCUS s16-p16-5
+11-27 07:43:49.716 V talkback: SpeechControllerImpl: Speaking fragment text="p16 end", utteranceId=talkback_103, TtsSpan=null, locale=en_US
+11-27 07:43:51.010 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_103, TtsSpan=null, locale=null
+11-27 07:43:54.690 I S16TB   : END p16
+11-27 07:43:56.466 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_104, TtsSpan=null, locale=null
+11-27 07:43:58.593 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_105, TtsSpan=null, locale=en_US
+11-27 07:43:59.274 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_105, TtsSpan=null, locale=null
+11-27 07:44:01.213 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_106, TtsSpan=null, locale=null, event=null
+11-27 07:44:03.200 I S16TB   : FOCUS s16-p17-0
+11-27 07:44:03.231 V talkback: SpeechControllerImpl: Speaking fragment text="Before p17", utteranceId=talkback_107, TtsSpan=null, locale=en_US
+11-27 07:44:04.806 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_107, TtsSpan=null, locale=null
+11-27 07:44:08.205 I S16TB   : FOCUS s16-p17-2
+11-27 07:44:08.231 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_108, TtsSpan=null, locale=fr
+11-27 07:44:10.106 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_108, TtsSpan=null, locale=null
+11-27 07:44:13.209 I S16TB   : FOCUS s16-p17-5
+11-27 07:44:13.253 V talkback: SpeechControllerImpl: Speaking fragment text="p17 end", utteranceId=talkback_109, TtsSpan=null, locale=en_US
+11-27 07:44:14.735 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_109, TtsSpan=null, locale=null
+11-27 07:44:18.212 I S16TB   : END p17
+11-27 07:44:20.080 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_110, TtsSpan=null, locale=null
+11-27 07:44:22.208 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_111, TtsSpan=null, locale=en_US
+11-27 07:44:22.915 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_111, TtsSpan=null, locale=null
+11-27 07:44:24.878 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_112, TtsSpan=null, locale=null, event=null
+11-27 07:44:26.737 I S16TB   : FOCUS s16-p18-0
+11-27 07:44:26.765 V talkback: SpeechControllerImpl: Speaking fragment text="Before p18", utteranceId=talkback_113, TtsSpan=null, locale=en_US
+11-27 07:44:28.235 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_113, TtsSpan=null, locale=null
+11-27 07:44:31.742 I S16TB   : FOCUS s16-p18-2
+11-27 07:44:31.783 V talkback: SpeechControllerImpl: Speaking fragment text="日本語", utteranceId=talkback_114, TtsSpan=null, locale=en_US
+11-27 07:44:32.933 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_114, TtsSpan=null, locale=null
+11-27 07:44:36.748 I S16TB   : FOCUS s16-p18-5
+11-27 07:44:36.784 V talkback: SpeechControllerImpl: Speaking fragment text="p18 end", utteranceId=talkback_115, TtsSpan=null, locale=en_US
+11-27 07:44:38.024 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_115, TtsSpan=null, locale=null
+11-27 07:44:41.750 I S16TB   : END p18
+11-27 07:44:43.550 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_116, TtsSpan=null, locale=null
+11-27 07:44:45.676 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_117, TtsSpan=null, locale=en_US
+11-27 07:44:46.356 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_117, TtsSpan=null, locale=null
+11-27 07:44:48.299 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_118, TtsSpan=null, locale=null, event=null
+11-27 07:44:50.267 I S16TB   : FOCUS s16-p19-0
+11-27 07:44:50.298 V talkback: SpeechControllerImpl: Speaking fragment text="Before p19", utteranceId=talkback_119, TtsSpan=null, locale=en_US
+11-27 07:44:51.828 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_119, TtsSpan=null, locale=null
+11-27 07:44:55.274 I S16TB   : FOCUS s16-p19-4
+11-27 07:44:55.320 V talkback: SpeechControllerImpl: Speaking fragment text="日本語", utteranceId=talkback_120, TtsSpan=null, locale=ja
+11-27 07:44:55.323 I VoiceDataManager: Explicitly adding voicepack to downloads: ja-jp-x-multi-seanet
+11-27 07:44:55.323 I VoiceDataDownloader: voicesToFetch ja-jp
+11-27 07:44:55.323 I VoiceDataDownloader: fetchVoiceInternal ja-jp
+11-27 07:44:55.323 I VoiceDataManager: start to download voice ja-jp
+11-27 07:44:55.323 I VoiceDataDownloader: Download of ja-jp started.
+11-27 07:44:55.323 I VoiceDataDownloader: Registered slicing strategy for ja-jp
+11-27 07:44:55.323 I VoiceDataDownloader: Got pack name "ja-jp-x-multi-r60" for voicemetadata ja-jp, voice ja-jp-x-multi
+11-27 07:44:55.323 I VoiceDataDownloader: Adding pack ja-jp-x-multi-r60 to superpack.
+11-27 07:44:55.323 I VoiceDataDownloader: Got pack name "ja-jp-x-multi-seanet-r60" for voicemetadata ja-jp, voice ja-jp-x-multi
+11-27 07:44:55.323 I VoiceDataDownloader: Adding pack ja-jp-x-multi-seanet-r60 to superpack.
+11-27 07:44:55.323 I VoiceDataDownloader: Got pack name "" for voicemetadata ja-jp, voice ja-jp-x-gia
+11-27 07:44:55.324 I VoiceDataDownloader: Syncing superpack ja-jp
+11-27 07:44:55.398 I VoiceDataManager: Already downloading ja-jp, ignoring async download request...
+11-27 07:44:56.656 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_120, TtsSpan=null, locale=null
+11-27 07:45:00.281 I S16TB   : FOCUS s16-p19-7
+11-27 07:45:00.318 V talkback: SpeechControllerImpl: Speaking fragment text="p19 end", utteranceId=talkback_121, TtsSpan=null, locale=en_US
+11-27 07:45:01.754 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_121, TtsSpan=null, locale=null
+11-27 07:45:03.046 I VoiceDataDownloader: Superpack download completed.
+11-27 07:45:03.046 I VoiceDataDownloader: Download ja-jp Success true
+11-27 07:45:03.046 I VoiceDataManager: Downloaded voice ja-jp
+11-27 07:45:03.046 I VoiceDataManager: checkData: Refreshing list of all available voices...
+11-27 07:45:03.049 I VoiceDataDownloader: getAvailableVoicesInfo en-us
+11-27 07:45:03.049 I VoiceDataDownloader: getAvailableVoicesInfo ja-jp
+11-27 07:45:03.049 I VoiceDataDownloader: getAvailableVoicesInfo fr-ca
+11-27 07:45:03.049 I VoiceDataDownloader: getAvailableVoicesInfo fr-fr
+11-27 07:45:03.049 I VoiceDataManager: Calling onVoicesDataChange: updated voices
+11-27 07:45:05.284 I S16TB   : END p19
+11-27 07:45:07.086 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_122, TtsSpan=null, locale=null
+11-27 07:45:09.351 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_123, TtsSpan=null, locale=en_US
+11-27 07:45:10.055 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_123, TtsSpan=null, locale=null
+11-27 07:45:12.094 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_124, TtsSpan=null, locale=null, event=null
+11-27 07:45:13.804 I S16TB   : FOCUS s16-p20-0
+11-27 07:45:13.833 V talkback: SpeechControllerImpl: Speaking fragment text="Before p20", utteranceId=talkback_125, TtsSpan=null, locale=en_US
+11-27 07:45:15.177 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_125, TtsSpan=null, locale=null
+11-27 07:45:18.811 I S16TB   : FOCUS s16-p20-4
+11-27 07:45:18.850 V talkback: SpeechControllerImpl: Speaking fragment text="繁體中文", utteranceId=talkback_126, TtsSpan=null, locale=zh__#Hant
+11-27 07:45:18.960 I VoiceDataManager: Explicitly adding voicepack to downloads: cmn-cn-x-multi-seanet
+11-27 07:45:18.960 I VoiceDataDownloader: voicesToFetch cmn-cn
+11-27 07:45:18.960 I VoiceDataDownloader: fetchVoiceInternal cmn-cn
+11-27 07:45:18.960 I VoiceDataManager: start to download voice cmn-cn
+11-27 07:45:18.960 I VoiceDataDownloader: Download of cmn-cn started.
+11-27 07:45:18.960 I VoiceDataDownloader: Registered slicing strategy for cmn-cn
+11-27 07:45:18.960 I VoiceDataDownloader: Got pack name "cmn-cn-x-multi-r58" for voicemetadata cmn-cn, voice cmn-cn-x-multi
+11-27 07:45:18.961 I VoiceDataDownloader: Adding pack cmn-cn-x-multi-r58 to superpack.
+11-27 07:45:18.961 I VoiceDataDownloader: Got pack name "cmn-cn-x-multi-seanet-r58" for voicemetadata cmn-cn, voice cmn-cn-x-multi
+11-27 07:45:18.961 I VoiceDataDownloader: Adding pack cmn-cn-x-multi-seanet-r58 to superpack.
+11-27 07:45:18.961 I VoiceDataDownloader: Syncing superpack cmn-cn
+11-27 07:45:19.011 I VoiceDataManager: Already downloading cmn-cn, ignoring async download request...
+11-27 07:45:20.615 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_126, TtsSpan=null, locale=null
+11-27 07:45:23.817 I S16TB   : FOCUS s16-p20-7
+11-27 07:45:23.848 V talkback: SpeechControllerImpl: Speaking fragment text="p20 end", utteranceId=talkback_127, TtsSpan=null, locale=en_US
+11-27 07:45:24.095 I VoiceDataDownloader: Superpack download completed.
+11-27 07:45:24.095 I VoiceDataDownloader: Download cmn-cn Success true
+11-27 07:45:24.095 I VoiceDataManager: Downloaded voice cmn-cn
+11-27 07:45:24.095 I VoiceDataManager: checkData: Refreshing list of all available voices...
+11-27 07:45:24.096 I VoiceDataDownloader: getAvailableVoicesInfo en-us
+11-27 07:45:24.096 I VoiceDataDownloader: getAvailableVoicesInfo ja-jp
+11-27 07:45:24.096 I VoiceDataDownloader: getAvailableVoicesInfo fr-ca
+11-27 07:45:24.096 I VoiceDataDownloader: getAvailableVoicesInfo cmn-cn
+11-27 07:45:24.096 I VoiceDataDownloader: getAvailableVoicesInfo fr-fr
+11-27 07:45:24.096 I VoiceDataManager: Calling onVoicesDataChange: updated voices
+11-27 07:45:25.197 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_127, TtsSpan=null, locale=null
+11-27 07:45:28.821 I S16TB   : END p20
+11-27 07:45:30.643 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_128, TtsSpan=null, locale=null
+11-27 07:45:32.791 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_129, TtsSpan=null, locale=en_US
+11-27 07:45:33.481 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_129, TtsSpan=null, locale=null
+11-27 07:45:35.441 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_130, TtsSpan=null, locale=null, event=null
+11-27 07:45:37.387 I S16TB   : FOCUS s16-p21-0
+11-27 07:45:37.419 V talkback: SpeechControllerImpl: Speaking fragment text="Before p21", utteranceId=talkback_131, TtsSpan=null, locale=en_US
+11-27 07:45:38.997 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_131, TtsSpan=null, locale=null
+11-27 07:45:42.391 I S16TB   : FOCUS s16-p21-4
+11-27 07:45:42.432 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_132, TtsSpan=null, locale=fr
+11-27 07:45:44.463 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_132, TtsSpan=null, locale=null
+11-27 07:45:47.395 I S16TB   : FOCUS s16-p21-6
+11-27 07:45:47.435 V talkback: SpeechControllerImpl: Speaking fragment text="Hello everyone", utteranceId=talkback_133, TtsSpan=null, locale=en
+11-27 07:45:52.400 I S16TB   : FOCUS s16-p21-9
+11-27 07:45:52.429 V talkback: SpeechControllerImpl: Speaking fragment text="p21 end", utteranceId=talkback_134, TtsSpan=null, locale=en_US
+11-27 07:45:53.919 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_134, TtsSpan=null, locale=null
+11-27 07:45:57.403 I S16TB   : END p21
+11-27 07:45:59.271 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_135, TtsSpan=null, locale=null
+11-27 07:46:01.407 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_136, TtsSpan=null, locale=en_US
+11-27 07:46:02.101 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_136, TtsSpan=null, locale=null
+11-27 07:46:04.063 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_137, TtsSpan=null, locale=null, event=null
+11-27 07:46:05.999 I S16TB   : FOCUS s16-p22-0
+11-27 07:46:06.031 V talkback: SpeechControllerImpl: Speaking fragment text="Before p22", utteranceId=talkback_138, TtsSpan=null, locale=en_US
+11-27 07:46:07.573 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_138, TtsSpan=null, locale=null
+11-27 07:46:11.003 I S16TB   : FOCUS s16-p22-2
+11-27 07:46:11.031 V talkback: SpeechControllerImpl: Speaking fragment text="She said ", utteranceId=talkback_139, TtsSpan=null, locale=en_US
+11-27 07:46:11.868 V talkback: SpeechControllerImpl: Speaking fragment text="bonjour", utteranceId=talkback_139, TtsSpan=null, locale=fr_FR
+11-27 07:46:13.072 V talkback: SpeechControllerImpl: Speaking fragment text=" to me.", utteranceId=talkback_139, TtsSpan=null, locale=en_US
+11-27 07:46:13.986 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_139, TtsSpan=null, locale=null
+11-27 07:46:16.008 I S16TB   : FOCUS s16-p22-5
+11-27 07:46:16.048 V talkback: SpeechControllerImpl: Speaking fragment text="p22 end", utteranceId=talkback_140, TtsSpan=null, locale=en_US
+11-27 07:46:17.555 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_140, TtsSpan=null, locale=null
+11-27 07:46:21.010 I S16TB   : END p22
+11-27 07:46:22.825 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_141, TtsSpan=null, locale=null
+11-27 07:46:24.956 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_142, TtsSpan=null, locale=en_US
+11-27 07:46:25.658 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_142, TtsSpan=null, locale=null
+11-27 07:46:27.619 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_143, TtsSpan=null, locale=null, event=null
+11-27 07:46:29.551 I S16TB   : FOCUS s16-p23-0
+11-27 07:46:29.580 V talkback: SpeechControllerImpl: Speaking fragment text="Before p23", utteranceId=talkback_144, TtsSpan=null, locale=en_US
+11-27 07:46:31.177 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_144, TtsSpan=null, locale=null
+11-27 07:46:34.555 I S16TB   : FOCUS s16-p23-4
+11-27 07:46:34.580 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_145, TtsSpan=null, locale=fr
+11-27 07:46:36.480 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_145, TtsSpan=null, locale=null
+11-27 07:46:39.560 I S16TB   : FOCUS s16-p23-7
+11-27 07:46:39.596 V talkback: SpeechControllerImpl: Speaking fragment text="p23 end", utteranceId=talkback_146, TtsSpan=null, locale=en_US
+11-27 07:46:41.210 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_146, TtsSpan=null, locale=null
+11-27 07:46:44.562 I S16TB   : END p23
+11-27 07:46:46.344 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_147, TtsSpan=null, locale=null
+11-27 07:46:48.469 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_148, TtsSpan=null, locale=en_US
+11-27 07:46:49.152 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_148, TtsSpan=null, locale=null
+11-27 07:46:51.118 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_149, TtsSpan=null, locale=null, event=null
+11-27 07:46:53.085 I S16TB   : FOCUS s16-p24-0
+11-27 07:46:53.119 V talkback: SpeechControllerImpl: Speaking fragment text="Before p24", utteranceId=talkback_150, TtsSpan=null, locale=en_US
+11-27 07:46:54.728 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_150, TtsSpan=null, locale=null
+11-27 07:46:58.089 I S16TB   : FOCUS s16-p24-3
+11-27 07:46:58.113 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_151, TtsSpan=null, locale=en_US
+11-27 07:46:59.799 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_151, TtsSpan=null, locale=null
+11-27 07:47:03.093 I S16TB   : FOCUS s16-p24-6
+11-27 07:47:03.132 V talkback: SpeechControllerImpl: Speaking fragment text="p24 end", utteranceId=talkback_152, TtsSpan=null, locale=en_US
+11-27 07:47:04.549 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_152, TtsSpan=null, locale=null
+11-27 07:47:08.095 I S16TB   : END p24
+11-27 07:47:09.895 V talkback: SpeechControllerImpl: Speaking fragment text="Flutter A11Y Techniques", utteranceId=talkback_153, TtsSpan=null, locale=null
+11-27 07:47:12.023 V talkback: SpeechControllerImpl: Speaking fragment text="Back", utteranceId=talkback_154, TtsSpan=null, locale=fr
+11-27 07:47:13.492 V talkback: SpeechControllerImpl: Speaking fragment text="Button. Out of list", utteranceId=talkback_154, TtsSpan=null, locale=null
+11-27 07:47:15.667 V talkback: SpeechControllerImpl: Speaking fragment text="Double-tap to activate", utteranceId=talkback_155, TtsSpan=null, locale=null, event=null
+11-27 07:47:16.601 I S16TB   : FOCUS s16-p25-0
+11-27 07:47:16.631 V talkback: SpeechControllerImpl: Speaking fragment text="Before p25", utteranceId=talkback_156, TtsSpan=null, locale=fr
+11-27 07:47:18.959 V talkback: SpeechControllerImpl: Speaking fragment text="1 of 5. In list. 5 items", utteranceId=talkback_156, TtsSpan=null, locale=null
+11-27 07:47:21.607 I S16TB   : FOCUS s16-p25-5
+11-27 07:47:21.649 V talkback: SpeechControllerImpl: Speaking fragment text="Bonjour tout le monde", utteranceId=talkback_157, TtsSpan=null, locale=fr
+11-27 07:47:23.512 V talkback: SpeechControllerImpl: Speaking fragment text="3 of 5", utteranceId=talkback_157, TtsSpan=null, locale=null
+11-27 07:47:26.612 I S16TB   : FOCUS s16-p25-8
+11-27 07:47:26.649 V talkback: SpeechControllerImpl: Speaking fragment text="p25 end", utteranceId=talkback_158, TtsSpan=null, locale=fr
+11-27 07:47:28.360 V talkback: SpeechControllerImpl: Speaking fragment text="5 of 5", utteranceId=talkback_158, TtsSpan=null, locale=null
+11-27 07:47:31.614 I S16TB   : END p25
+11-27 07:47:31.714 V talkback: SpeechControllerImpl: Speaking fragment text="Allow Android Accessibility Suite to send you notifications?", utteranceId=talkback_159, TtsSpan=null, locale=null

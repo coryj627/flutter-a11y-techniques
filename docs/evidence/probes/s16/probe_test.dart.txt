@@ -1,0 +1,47 @@
+// S16 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s16/probe_test.dart.txt): each fixture of
+// lib/probe.dart under `flutter test`, its semantics nodes between "Before
+// pNN" and "pNN end", with each node's locale and its label's attributes.
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  for (final id in fixtures.keys) {
+    testWidgets('S16PROBE $id', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(const ProbeApp());
+      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/$id');
+      await tester.pumpAndSettle();
+      final out = <String>[];
+      void walk(SemanticsNode n, int depth) {
+        final d = n.getSemanticsData();
+        final l = d.attributedLabel;
+        if (l.string.isNotEmpty ||
+            d.identifier.isNotEmpty ||
+            n.mergeAllDescendantsIntoThisNode) {
+          out.add(
+            '${'  ' * depth}#${n.id} label="${l.string}" attrs=${l.attributes} '
+            'locale=${d.locale} id="${d.identifier}" '
+            'flags=${d.flagsCollection.toStrings()}',
+          );
+        }
+        n.visitChildren((c) {
+          walk(c, depth + 1);
+          return true;
+        });
+      }
+
+      walk(
+        tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!,
+        0,
+      );
+      final start = out.indexWhere((l) => l.contains('Before $id'));
+      final end = out.indexWhere((l) => l.contains('$id end'));
+      // ignore: avoid_print
+      print('S16PROBE $id\n${out.sublist(start, end + 1).join('\n')}');
+      handle.dispose();
+    });
+  }
+}
