@@ -264,7 +264,8 @@ title was expected, and every later stop in its place; the judge of the
 time counted that as wrong. The judge is now S08's: an empty phrase is a
 failed capture, walked again, and VoiceOver's help message is left out
 (spec, section 7). The second recording, with that judge, passed 12 of 12
-(`docs/evidence/S09/voiceover-web.md`): every reading the same as in the
+(`docs/evidence/probes/s09/voiceover-web-before-judge-update.md.txt`, moved from
+`docs/evidence/S09/voiceover-web.md` on 2026-11-28): every reading the same as in the
 first, in both browsers; WebKit's `good-tap-target` was walked twice, its
 first walk's title an empty phrase.
 

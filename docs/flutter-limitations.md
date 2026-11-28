@@ -508,6 +508,18 @@ yet), **Fixed in x.y** (verified on that version).
     after the list: items 7 to 30 were not reached by moving forward, and
     the list was not scrolled. VoiceOver's three-finger scroll was not
     tried.
+  - VoiceOver on the web, moving with `next()` through S08 `bad-lazy-list`:
+    how far it goes varied between recordings in both browsers, and the
+    cause was not found. Six recordings (2026-11-26 and 27, with no end
+    witness) ended at item 13, the last in the page when it opens, in
+    Chromium and WebKit. Four with an end witness (2026-11-28,
+    `docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt` to
+    `voiceover-web-round10-fail.md.txt`) ended in Chromium at items 30, 22,
+    30 and 20, and in WebKit at items 13, 13, 21 and 30, VoiceOver
+    scrolling the list as it moved; the fifth
+    (`docs/evidence/S08/voiceover-web.md`) ended at item 13 in both. S08's row
+    therefore proves only that items 1 to 13 are read, with no list role,
+    and that whatever is read beyond them is the next items in order.
   - What each platform says about the list itself is FL-312 (web) and
     FL-313 (Android); on iOS a list is a container of no particular kind (FL-310).
 - Upstream issue: not searched yet. Lazy building is by design; the effect on
@@ -5156,7 +5168,10 @@ yet), **Fixed in x.y** (verified on that version).
   widget the Flutter documentation gives for long lists, cannot be a list
   on the web. With FL-011 the page also holds only the items near the
   view: 13 of 30 when p08 opened, 18 to 30 after it was scrolled to the
-  end.
+  end. VoiceOver on the web, moving with `next()` through S08
+  `bad-lazy-list`, read no list role; how far it went varied between
+  recordings in both browsers, Chromium 13, 30, 22, 30, 20, 13 and WebKit 13, 21, 30, 13,
+  the cause not found ([FL-011](#fl-011)).
 - WCAG: 1.3.1 Info and Relationships, on the web: a list shown as a list
   is not programmatically a list.
 - Workaround: none in the SDK. For a list short enough to lay out whole,
@@ -5395,7 +5410,9 @@ yet), **Fixed in x.y** (verified on that version).
       "Rating: 3.4 / 5 Reviews: 856 68" (`web.txt`). VoiceOver read it
       "Rating: 3.4 / 5 Reviews: 856 68 68% progress indicator" in Chromium
       and WebKit, the value twice, and `bad-not-excluded` the same after
-      the label (recorded 2026-11-27, `docs/evidence/S10/voiceover-web.md`).
+      the label (recorded 2026-11-27,
+      `docs/evidence/probes/s10/voiceover-web-before-judge-update.md.txt`,
+      and the same again on 2026-11-28, `docs/evidence/S10/voiceover-web.md`).
     - Android: one `android.widget.ProgressBar` with the range 0 to 100 at
       68, named "68, Rating:\n3.4 / 5\nReviews: 856" (`android-tree.txt`).
       TalkBack read "68.0.", "68,", and "Rating: 3.4 / 5 Reviews: 856", and
@@ -6164,7 +6181,9 @@ yet), **Fixed in x.y** (verified on that version).
   keyboard registered with the shell's `uinput` tool), VoiceOver's
   `moveForward()` on iOS, and the document's order and Chromium's tree on
   the web, and VoiceOver's `next()` on the web for S11's examples
-  (`docs/evidence/S11/voiceover-web.md`, Chromium and WebKit):
+  (`docs/evidence/probes/s11/voiceover-web-before-judge-update.md.txt`, and
+  the same again on 2026-11-28, `docs/evidence/S11/voiceover-web.md`;
+  Chromium and WebKit):
   - The order is the framework's, the same on every platform, with one
     exception on the web. In nineteen of the twenty probe fixtures the
     widget tests' traversal order, the web document's order, the order of
