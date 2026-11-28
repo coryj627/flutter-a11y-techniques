@@ -101,9 +101,10 @@ example is added without a decision.
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
 | [S16 Language of page and parts](#s16-language-of-page-and-parts) | 3 | 0 | 0 | 3 |
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
+| [V01 Colour contrast](#v01-colour-contrast) | 4 | 0 | 0 | 4 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 146 | 51 | 13 | 82 |
+| All | 150 | 51 | 13 | 86 |
 
 ## C01 Button
 
@@ -529,6 +530,18 @@ Flagged: `good-cupertino`, `good-custom`.
 | `good-cupertino` | An `Actions` for Enter on the web round the `CupertinoButton` | `CupertinoButton` | Enter on the web ([FL-002](flutter-limitations.md#fl-002)) | R1, R2, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | custom |
 | `good-custom` | A button drawn by hand: `Semantics(button: true, label:, onTap:)`, with focus, keys, and a focus ring of its own | None for a drawn control | none | R1, R2, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | custom |
 | `good-field` | `TestId` round a `TextField` | `Semantics.identifier` | As `good-merged` | R1, R2, R3, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | borderline: As `good-merged`: the project's `TestId` round a framework widget. |
+
+## V01 Colour contrast
+
+Nothing flagged. Each good example is a framework widget at the theme's
+defaults, or with its own documented colour parameters; nothing is built.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-material` | Nothing: the theme's defaults, with `floatingLabelBehavior` and `hintMaxLines` | `TextField`, `CheckboxListTile`, `OutlinedButton` | none | R1 to R4, R7: iOS SwiftUI: Contrast, Understanding 1.4.3, Understanding 1.4.11 | not custom |
+| `good-cupertino` | Nothing: `placeholderStyle`, `decoration`, and `pressedOpacity` with colours from `CupertinoColors.systemGrey`'s high-contrast variants | `CupertinoTextField`, `CupertinoButton` | A faint placeholder ([FL-510](flutter-limitations.md#fl-510)), a faint edge ([FL-511](flutter-limitations.md#fl-511)), text faded while pressed ([FL-514](flutter-limitations.md#fl-514)), each filled with the widget's own parameter | R1 to R4, R7: iOS SwiftUI: Contrast, Understanding 1.4.3, Understanding 1.4.11 | not custom |
+| `good-caption` | Nothing: `GridTileBar(backgroundColor:)` | `GridTile`, `GridTileBar` | A caption with no background ([FL-512](flutter-limitations.md#fl-512)) | R1, R5: iOS SwiftUI: Contrast, F83, Understanding 1.4.11 | not custom |
+| `good-selection` | Nothing: `RadioListTile` in a `RadioGroup` | `RadioListTile` | none | R6: Understanding 1.4.1 | not custom |
 
 ## V13 Minimum touch target size
 

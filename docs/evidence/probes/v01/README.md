@@ -104,7 +104,10 @@ FL-441.
 - `widget_tests.txt`: the V01 widget tests' logged measures.
 - `web_tests_round1.txt`: the first full run of the web tree spec, which
   found FL-515; `web_pressed.txt`: its pressed-state tests again, with
-  FL-515's readings asserted.
+  FL-515's readings asserted; `web_tests_evidence_run1.txt`: the web layer
+  of the first evidence run, where the dark "Send me updates" read 4.65:1
+  at 0.3 s (4.25:1 before), after which only the 2 s readings are
+  asserted.
 - `android_tests.txt` and `android_tests_320x640.txt`: the Android tests
   at the emulator's own size and at CI's 320 by 640 at 160 dpi.
 - `ios_tests.txt`: the iOS tests, from the evidence run.

@@ -555,7 +555,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S11", "S12", "S16"})
+        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S11", "S12", "S16", "V01"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
@@ -1830,6 +1830,126 @@ class S12WholeUtterances(unittest.TestCase):
         self.assertTrue(tb.problems(ident, ["off. ", "Show tracking", "Switch"]))
         self.assertTrue(tb.problems(ident, ["on. ", "Show tracking", "Switch", "Double-tap to toggle"]))
         self.assertTrue(tb.problems(ident, ["checked. off. ", "Show tracking", "Switch", "Double-tap to toggle"]))
+
+
+class V01WholeUtterances(unittest.TestCase):
+    """V01's strict rows are whole-utterance rows ("== A / B" in said()),
+    written from what TalkBack said (docs/evidence/V01/talkback-android.md).
+    Each mutation a word match would pass must be wrong for every row:
+    speech said twice, an added role, a wrong word, and each sibling's
+    label, alone in place of the row's own or before it. The walk is judged
+    whole (V01 is in STRICT), and the committed transcript must still be
+    right."""
+    TRANSCRIPT = os.path.join(tb.ROOT, "docs", "evidence", "V01", "talkback-android.md")
+    STATES = ("checked.", "selected.")
+
+    def rows(self):
+        return [i for i in tb.EXPECT if i.startswith("v01-")]
+
+    def heard(self, ident):
+        """The utterances a right reading of `ident` has: its "==" row."""
+        (phrase,), _ = tb.EXPECT[ident]
+        self.assertTrue(phrase.startswith("== "), ident)
+        return [p.strip() for p in phrase[3:].split(" / ")]
+
+    def label(self, ident):
+        """The row's name: its first utterance that is not a state."""
+        return next(u for u in self.heard(ident) if u not in self.STATES)
+
+    def judge(self, speech):
+        cut, closed = {}, set()
+        spoken = tb.parse_speech(log_for(speech), cut, closed)
+        return tb.judge_walk(spoken, self.rows(), cut, closed)
+
+    def test_every_row_is_a_whole_utterance_row(self):
+        rows = self.rows()
+        # good-material 4, good-cupertino 2, the captions 1 each, the two
+        # choices 4 each, and each field of the bad examples 1.
+        self.assertEqual(len(rows), 18)
+        self.assertEqual([i for i in rows if tb.is_silent(i)], [])
+        for ident in rows:
+            must, must_not = tb.EXPECT[ident]
+            self.assertEqual(len(must), 1, ident)
+            self.assertTrue(must[0].startswith("== "), ident)
+            self.assertEqual(must_not, [], ident)
+
+    def test_the_right_walk_is_right(self):
+        self.assertEqual(self.judge({i: self.heard(i) for i in self.rows()}), ("right", []))
+
+    def test_the_committed_transcript_is_still_right(self):
+        found = {}
+        with open(self.TRANSCRIPT) as f:
+            for line in f:
+                m = re.match(r"^\| `(v01-[^`]+)` \| (.*) \|$", line.rstrip("\n"))
+                if m and m.group(1) not in found:
+                    found[m.group(1)] = m.group(2).split(" / ")
+        self.assertEqual(sorted(found), sorted(self.rows()))
+        for ident, fragments in found.items():
+            self.assertEqual(tb.problems(ident, fragments), [], ident)
+
+    def test_each_mutation_of_each_row_is_wrong(self):
+        labels = {ident: self.label(ident) for ident in self.rows()}
+        for ident in self.rows():
+            right = self.heard(ident)
+            own = labels[ident]
+            at = right.index(own)
+            self.assertEqual(tb.problems(ident, right), [], f"{ident}: right")
+            self.assertEqual(tb.problems(ident, right + [tb.USAGE_HINT]), [],
+                             f"{ident}: right, with the usage hint")
+            first = own.split(" ")[0]
+            wrong_word = own.replace(first, first + "s", 1)
+            cases = {
+                "speech said twice": right + right,
+                "the name said twice": right[:at + 1] + [own] + right[at + 1:],
+                "an added role": right + (["Heading"] if "Button" in right else ["Button"]),
+                "an added role inside": right[:at + 1] + ["Heading"] + right[at + 1:],
+                "a wrong word": right[:at] + [wrong_word] + right[at + 1:],
+                "the usage hint twice": right + [tb.USAGE_HINT, tb.USAGE_HINT],
+            }
+            for other, label in labels.items():
+                if label != own:
+                    cases[f"the sibling label of {other}"] = right[:at] + [label] + right[at + 1:]
+                    cases[f"the sibling label of {other} before its own"] = [label] + right
+                    cases[f"the sibling label of {other} after its own"] = right + [label]
+            for what, fragments in cases.items():
+                self.assertNotEqual(fragments, right, f"{ident}: {what} is a mutation")
+                self.assertTrue(tb.problems(ident, fragments), f"{ident}: {what}: {fragments}")
+                speech = {i: self.heard(i) for i in self.rows()}
+                speech[ident] = fragments
+                verdict, reasons = self.judge(speech)
+                self.assertEqual(verdict, "wrong", f"{ident}: {what}")
+                self.assertTrue(any(r.startswith(f"{ident}:") for r in reasons), reasons)
+
+    def test_a_state_must_be_the_one_heard(self):
+        # The chosen radio button says "checked." and the chosen tile
+        # "selected."; each without it, the other's, or on a sibling is wrong.
+        for slug, state in (("good-selection", "checked."), ("bad-colour-only", "selected.")):
+            week = f"v01-{slug}-week"
+            right = self.heard(week)
+            other = "selected." if state == "checked." else "checked."
+            self.assertEqual(tb.problems(week, ["checked.  " if state == "checked." else "selected.  "]
+                                         + right[1:]), [], week)
+            self.assertTrue(tb.problems(week, right[1:]), f"{week} with no state")
+            self.assertTrue(tb.problems(week, [other] + right[1:]), f"{week} {other}")
+            day = f"v01-{slug}-day"
+            self.assertTrue(tb.problems(day, [state] + self.heard(day)), f"{day} {state}")
+
+    def test_each_field_is_its_own_name_and_hint(self):
+        # The Material field says "Email" alone and the Cupertino field
+        # "Email Required"; each with the other's name is wrong, and a field
+        # with a button's or a toggle's hint is wrong.
+        material = ["v01-good-material-email", "v01-bad-faint-edge-email"]
+        cupertino = ["v01-good-cupertino-email", "v01-bad-cupertino-placeholder-email"]
+        for ident in material + cupertino:
+            right = self.heard(ident)
+            name = "Email Required" if ident in material else "Email"
+            self.assertTrue(tb.problems(ident, [name] + right[1:]), f"{ident} as {name}")
+            for hint in ("Double-tap to activate", "Double-tap to toggle"):
+                self.assertTrue(tb.problems(ident, right[:2] + [hint]), f"{ident} with {hint}")
+        # A toggle's own hint is required as heard.
+        updates = self.heard("v01-good-material-updates")
+        self.assertTrue(tb.problems("v01-good-material-updates", updates[:2]))
+        self.assertTrue(tb.problems("v01-good-material-updates", updates[:2] + [tb.USAGE_HINT]))
 
 
 if __name__ == "__main__":
