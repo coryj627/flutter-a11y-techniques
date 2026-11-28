@@ -1,0 +1,303 @@
+# V01 Android tests, native, 2026-11-28 09:44: gradle exit 0
+BUILD SUCCESSFUL in 4m 34s
+## badCaptionIsUnder45To1OverThePalePartOfThePicture
+android bad-caption light caption: text #E6E0E9, lowest 1.35:1 over #BDC2E4 (722 of 1170 pixels the text colour)
+android bad-caption light: the caption's colour #E6E0E9 against the picture's dark end #1B247E: 10.13:1
+android bad-caption dark caption: text #E6E0E9, lowest 1.35:1 over #BDC2E4 (722 of 1170 pixels the text colour)
+android bad-caption dark: the caption's colour #E6E0E9 against the picture's dark end #1B247E: 10.13:1
+android night mode put back to no (was no)
+## badColourOnlyTheChosenTitleDiffersByColourAloneUnder3To1
+android bad-colour-only Day pieces in Rect(45, 796 - 1035, 937): [Rect(88, 850 - 157, 889)]
+android bad-colour-only Week pieces in Rect(45, 943 - 1035, 1084): [Rect(86, 995 - 191, 1027)]
+android bad-colour-only Month pieces in Rect(45, 1090 - 1035, 1231): [Rect(88, 1142 - 208, 1174)]
+android bad-colour-only light before Day: text #1B1B21, lowest 16.30:1 over #FBF8FF (504 of 879 pixels the text colour)
+android bad-colour-only light before Week: text #515B92, lowest 6.12:1 over #FBF8FF (749 of 1295 pixels the text colour)
+android bad-colour-only light before Month: text #1B1B21, lowest 16.30:1 over #FBF8FF (849 of 1472 pixels the text colour)
+android bad-colour-only light: Week #515B92 against Day #1B1B21 2.66:1
+android bad-colour-only light: Week #515B92 against Month #1B1B21 2.66:1
+android bad-colour-only light after the tap Day: text #515B92, lowest 6.12:1 over #FBF8FF (504 of 870 pixels the text colour)
+android bad-colour-only light after the tap Week: text #1B1B21, lowest 16.30:1 over #FBF8FF (749 of 1309 pixels the text colour)
+android bad-colour-only light after the tap Month: text #1B1B21, lowest 16.30:1 over #FBF8FF (849 of 1472 pixels the text colour)
+android bad-colour-only light after the tap on Day: Day #515B92, Week #1B1B21
+android bad-colour-only Day pieces in Rect(45, 796 - 1035, 937): [Rect(88, 850 - 157, 889)]
+android bad-colour-only Week pieces in Rect(45, 943 - 1035, 1084): [Rect(86, 995 - 191, 1027)]
+android bad-colour-only Month pieces in Rect(45, 1090 - 1035, 1231): [Rect(88, 1142 - 208, 1174)]
+android bad-colour-only dark before Day: text #E4E1E9, lowest 14.35:1 over #121318 (504 of 874 pixels the text colour)
+android bad-colour-only dark before Week: text #BAC3FF, lowest 10.90:1 over #121318 (749 of 1309 pixels the text colour)
+android bad-colour-only dark before Month: text #E4E1E9, lowest 14.35:1 over #121318 (849 of 1465 pixels the text colour)
+android bad-colour-only dark: Week #BAC3FF against Day #E4E1E9 1.32:1
+android bad-colour-only dark: Week #BAC3FF against Month #E4E1E9 1.32:1
+android bad-colour-only dark after the tap Day: text #BAC3FF, lowest 10.90:1 over #121318 (504 of 879 pixels the text colour)
+android bad-colour-only dark after the tap Week: text #E4E1E9, lowest 14.35:1 over #121318 (749 of 1306 pixels the text colour)
+android bad-colour-only dark after the tap Month: text #E4E1E9, lowest 14.35:1 over #121318 (849 of 1465 pixels the text colour)
+android bad-colour-only dark after the tap on Day: Day #BAC3FF, Week #E4E1E9
+android night mode put back to no (was no)
+## badCupertinoPlaceholderIsUnder45To1
+android bad-cupertino-placeholder light label pieces in Rect(42, 662 - 1038, 738): [Rect(45, 689 - 134, 717)]
+android bad-cupertino-placeholder light placeholder pieces in Rect(50, 749 - 1030, 827): [Rect(66, 770 - 227, 813)]
+android bad-cupertino-placeholder light placeholder: text #C5C5C7, lowest 1.72:1 over #FFFFFF (1337 of 2083 pixels the text colour)
+android bad-cupertino-placeholder light label: text #1B1B21, lowest 16.30:1 over #FBF8FF (515 of 951 pixels the text colour)
+android bad-cupertino-placeholder light field edge: edge #6C6C70: 4.97:1 against #FBF8FF, 5.23:1 against #FFFFFF
+android bad-cupertino-placeholder dark label pieces in Rect(42, 662 - 1038, 738): [Rect(45, 689 - 134, 717)]
+android bad-cupertino-placeholder dark placeholder pieces in Rect(50, 749 - 1030, 827): [Rect(66, 770 - 228, 813)]
+android bad-cupertino-placeholder dark placeholder: text #464649, lowest 2.23:1 over #000000 (1337 of 2154 pixels the text colour)
+android bad-cupertino-placeholder dark label: text #E4E1E9, lowest 14.35:1 over #121318 (515 of 948 pixels the text colour)
+android bad-cupertino-placeholder dark field edge: edge #AEAEB2: 8.39:1 against #121318, 9.50:1 against #000000
+android night mode put back to no (was no)
+## badFaintEdgeIsUnder3To1AtRestAndThe3To1EdgeWithFocus
+android bad-faint-edge light rest edge: edge #C7C5D0: 1.62:1 against #FBF8FF, 1.62:1 against #FBF8FF
+android bad-faint-edge light field Rect(42, 741 - 1038, 888), top edge at 741; pieces in Rect(58, 709 - 1022, 773): [Rect(87, 729 - 164, 752)]
+android bad-faint-edge light label: text #46464F, lowest 8.88:1 over #FBF8FF (371 of 691 pixels the text colour)
+android bad-faint-edge light focused edge: edge #515B92: 6.12:1 against #FBF8FF, 6.12:1 against #FBF8FF
+android bad-faint-edge dark rest edge: edge #46464F: 1.99:1 against #121318, 1.99:1 against #121318
+android bad-faint-edge dark field Rect(42, 741 - 1038, 888), top edge at 741; pieces in Rect(58, 709 - 1022, 773): [Rect(87, 729 - 164, 752)]
+android bad-faint-edge dark label: text #C7C5D0, lowest 10.89:1 over #121318 (371 of 691 pixels the text colour)
+android bad-faint-edge dark focused edge: edge #BAC3FF: 10.90:1 against #121318, 10.90:1 against #121318
+android night mode put back to no (was no)
+## everyExampleHasItsNodes
+android tree good-material:
+View id= desc="We reply within two days." hint="null" text="null" checkable=false checked=false selected=false focusable=true clickable=false
+EditText id=v01-good-material-email desc="" hint="Email" text="null" checkable=false checked=false selected=false focusable=true clickable=true
+CheckBox id=v01-good-material-updates desc="Send me updates" hint="null" text="null" checkable=true checked=false selected=false focusable=true clickable=true
+Button id=v01-good-material-send desc="Send" hint="null" text="null" checkable=false checked=false selected=false focusable=true clickable=true
+android tree good-cupertino:
+EditText id=v01-good-cupertino-email desc="" hint="Email
+Required" text="null" checkable=false checked=false selected=false focusable=true clickable=true
+Button id=v01-good-cupertino-send desc="Send" hint="null" text="null" checkable=false checked=false selected=false focusable=true clickable=true
+android tree good-caption:
+View id= desc="Harbour" hint="null" text="null" checkable=false checked=false selected=false focusable=true clickable=false
+android tree good-selection:
+RadioGroup id= desc="Calendar view" hint="null" text="null" checkable=false checked=false selected=false focusable=true clickable=false
+RadioButton id=v01-good-selection-day desc="Day" hint="null" text="null" checkable=true checked=false selected=false focusable=true clickable=true
+RadioButton id=v01-good-selection-week desc="Week" hint="null" text="null" checkable=true checked=true selected=false focusable=true clickable=true
+RadioButton id=v01-good-selection-month desc="Month" hint="null" text="null" checkable=true checked=false selected=false focusable=true clickable=true
+android tree bad-cupertino-placeholder:
+EditText id=v01-bad-cupertino-placeholder-email desc="" hint="Email
+Required" text="null" checkable=false checked=false selected=false focusable=true clickable=true
+android tree bad-caption:
+View id= desc="Harbour" hint="null" text="null" checkable=false checked=false selected=false focusable=true clickable=false
+android tree bad-colour-only:
+View id= desc="Calendar view" hint="null" text="null" checkable=false checked=false selected=false focusable=true clickable=false
+Button id=v01-bad-colour-only-day desc="Day" hint="null" text="null" checkable=false checked=false selected=false focusable=true clickable=true
+Button id=v01-bad-colour-only-week desc="Week" hint="null" text="null" checkable=false checked=false selected=true focusable=true clickable=true
+Button id=v01-bad-colour-only-month desc="Month" hint="null" text="null" checkable=false checked=false selected=false focusable=true clickable=true
+android tree bad-faint-edge:
+EditText id=v01-bad-faint-edge-email desc="" hint="Email" text="null" checkable=false checked=false selected=false focusable=true clickable=true
+## goodCaptionIs45To1OverTheWholePicture
+android good-caption light caption: text #E6E0E9, lowest 5.33:1 over #575969 (722 of 1274 pixels the text colour)
+android good-caption dark caption: text #E6E0E9, lowest 5.33:1 over #575969 (722 of 1274 pixels the text colour)
+android night mode put back to no (was no)
+## goodCupertinoEveryTextAndTheFieldsEdgeAtRestAndWithKeyboardFocus
+android good-cupertino light label pieces in Rect(42, 578 - 1038, 654): [Rect(45, 605 - 134, 633)]
+android good-cupertino light placeholder pieces in Rect(50, 665 - 1030, 743): [Rect(66, 686 - 228, 729)]
+android good-cupertino send pieces in Rect(63, 804 - 222, 919): [Rect(95, 843 - 188, 877)]
+android good-cupertino light rest label: text #1B1B21, lowest 16.30:1 over #FBF8FF (515 of 951 pixels the text colour)
+android good-cupertino light rest placeholder: text #6C6C70, lowest 5.23:1 over #FFFFFF (1337 of 2207 pixels the text colour)
+android good-cupertino light rest send: text #FFFFFF, lowest 6.44:1 over #515B92 (733 of 1258 pixels the text colour)
+android good-cupertino light field edge: edge #6C6C70: 4.97:1 against #FBF8FF, 5.23:1 against #FFFFFF
+android good-cupertino light focused label: text #1B1B21, lowest 16.30:1 over #FBF8FF (515 of 951 pixels the text colour)
+android good-cupertino light focused placeholder: text #6C6C70, lowest 5.23:1 over #FFFFFF (1337 of 2207 pixels the text colour)
+android good-cupertino light focused send: text #FFFFFF, lowest 6.44:1 over #515B92 (733 of 1258 pixels the text colour)
+android good-cupertino dark label pieces in Rect(42, 578 - 1038, 654): [Rect(45, 605 - 134, 633)]
+android good-cupertino dark placeholder pieces in Rect(50, 665 - 1030, 743): [Rect(66, 686 - 228, 729)]
+android good-cupertino send pieces in Rect(63, 804 - 222, 919): [Rect(95, 843 - 188, 877)]
+android good-cupertino dark rest label: text #E4E1E9, lowest 14.35:1 over #121318 (515 of 948 pixels the text colour)
+android good-cupertino dark rest placeholder: text #AEAEB2, lowest 9.50:1 over #000000 (1337 of 2237 pixels the text colour)
+android good-cupertino dark rest send: text #222C61, lowest 7.71:1 over #BAC3FF (733 of 1240 pixels the text colour)
+android good-cupertino dark field edge: edge #AEAEB2: 8.39:1 against #121318, 9.50:1 against #000000
+android good-cupertino dark focused label: text #E4E1E9, lowest 14.35:1 over #121318 (515 of 948 pixels the text colour)
+android good-cupertino dark focused placeholder: text #AEAEB2, lowest 9.50:1 over #000000 (1337 of 2237 pixels the text colour)
+android good-cupertino dark focused send: text #222C61, lowest 7.71:1 over #BAC3FF (733 of 1240 pixels the text colour)
+android night mode put back to no (was no)
+## goodCupertinoTheButtonsTextWhilePressed
+android good-cupertino send pieces in Rect(63, 804 - 222, 919): [Rect(95, 843 - 188, 877)]
+android good-cupertino light pressed send at 196 ms, before the reading (logged, not judged): text #FFFEFF, lowest 5.13:1 over #626A9D (733 of 1240 pixels the text colour)
+android good-cupertino light pressed send at 389 ms, before the reading (logged, not judged): text #FFFEFF, lowest 5.13:1 over #626A9D (733 of 1240 pixels the text colour)
+android good-cupertino light pressed send at 524 ms, before the reading (logged, not judged): text #FFFEFF, lowest 5.13:1 over #626A9D (733 of 1240 pixels the text colour)
+android good-cupertino light pressed send at 658 ms, before the reading (logged, not judged): text #FFFEFF, lowest 5.13:1 over #626A9D (733 of 1240 pixels the text colour)
+android good-cupertino-light-pressed-send: try 1 held 1166 ms, 6 screenshots, steady from 883 ms; 21800 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-cupertino light pressed send: text #FFFEFF, lowest 5.13:1 over #626A9D (733 of 1240 pixels the text colour)
+android good-cupertino light send after the lift: 0 pixels differ from the screenshot at rest
+android good-cupertino send pieces in Rect(63, 804 - 222, 919): [Rect(95, 843 - 188, 877)]
+android good-cupertino dark pressed send at 264 ms, before the reading (logged, not judged): text #202A5A, lowest 6.65:1 over #AAB2E8 (733 of 1240 pixels the text colour)
+android good-cupertino dark pressed send at 407 ms, before the reading (logged, not judged): text #202A5A, lowest 6.65:1 over #AAB2E8 (733 of 1240 pixels the text colour)
+android good-cupertino dark pressed send at 635 ms, before the reading (logged, not judged): text #202A5A, lowest 6.65:1 over #AAB2E8 (733 of 1240 pixels the text colour)
+android good-cupertino-dark-pressed-send: try 1 held 1059 ms, 5 screenshots, steady from 800 ms; 21800 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-cupertino dark pressed send: text #202A5A, lowest 6.65:1 over #AAB2E8 (733 of 1240 pixels the text colour)
+android good-cupertino dark send after the lift: 0 pixels differ from the screenshot at rest
+android night mode put back to no (was no)
+## goodMaterialEachTextWhilePressedAndTheCheckboxChecked
+android good-material email field Rect(42, 688 - 1038, 835), top edge at 688; pieces in Rect(58, 656 - 1022, 720): [Rect(87, 676 - 164, 699)]
+android good-material email hint pieces in Rect(58, 723 - 1022, 824): [Rect(88, 743 - 256, 784)]
+android good-material updates pieces: [Rect(86, 890 - 426, 931), Rect(899, 885 - 946, 932)]
+android good-material send pieces in Rect(95, 1003 - 199, 1087): [Rect(106, 1031 - 187, 1058)]
+android good-material light pressed send at 433 ms, before the reading (logged, not judged): text #515B92, lowest 5.71:1 over #F2F0F9 (632 of 1033 pixels the text colour)
+android good-material light pressed send at 571 ms, before the reading (logged, not judged): text #515B92, lowest 5.32:1 over #EAE8F4 (632 of 1029 pixels the text colour)
+android good-material light pressed send at 709 ms, before the reading (logged, not judged): text #515B92, lowest 5.32:1 over #EAE8F4 (632 of 1029 pixels the text colour)
+android good-material-light-pressed-send: try 1 held 1104 ms, 5 screenshots, steady from 875 ms; 16021 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-material light pressed send: text #515B92, lowest 5.32:1 over #EAE8F4 (632 of 1029 pixels the text colour)
+android good-material light send after the lift: 0 pixels differ from the screenshot at rest
+android good-material light pressed updates at 201 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.83:1 over #E8E6EB (2065 of 3602 pixels the text colour)
+android good-material light pressed updates at 312 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (2065 of 3593 pixels the text colour)
+android good-material light pressed updates at 425 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (2065 of 3593 pixels the text colour)
+android good-material light pressed updates at 537 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (2065 of 3593 pixels the text colour)
+android good-material light pressed updates at 648 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (2065 of 3593 pixels the text colour)
+android good-material-light-pressed-updates: try 1 held 903 ms, 7 screenshots, steady from 767 ms; 125989 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-material light pressed updates: text #1B1B21, lowest 13.07:1 over #E2E0E4 (2065 of 3593 pixels the text colour)
+android good-material light checked fill: edge #515B92: 6.12:1 against #FBF8FF, 6.44:1 against #FFFFFF
+android good-material light checked mark: 182 pixels 3:1 or more against #515B92
+android good-material light checked updates: text #1B1B21, lowest 16.30:1 over #FBF8FF (2065 of 3623 pixels the text colour)
+android good-material-light-pressed-email: try 1 held 227 ms, 1 screenshots, 0 pixels differ from the screenshot at rest; the reading
+android good-material light pressed label: text #46464F, lowest 8.88:1 over #FBF8FF (371 of 691 pixels the text colour)
+android good-material email field Rect(42, 688 - 1038, 835), top edge at 688; pieces in Rect(58, 656 - 1022, 720): [Rect(87, 676 - 164, 699)]
+android good-material email hint pieces in Rect(58, 723 - 1022, 824): [Rect(88, 743 - 256, 784)]
+android good-material updates pieces: [Rect(86, 890 - 426, 931), Rect(899, 885 - 946, 932)]
+android good-material send pieces in Rect(95, 1003 - 199, 1087): [Rect(106, 1031 - 187, 1058)]
+android good-material dark pressed send at 210 ms, before the reading (logged, not judged): text #BAC3FF, lowest 9.51:1 over #1F2029 (632 of 1047 pixels the text colour)
+android good-material dark pressed send at 415 ms, before the reading (logged, not judged): text #BAC3FF, lowest 8.95:1 over #232530 (632 of 1041 pixels the text colour)
+android good-material dark pressed send at 552 ms, before the reading (logged, not judged): text #BAC3FF, lowest 8.95:1 over #232530 (632 of 1041 pixels the text colour)
+android good-material dark pressed send at 689 ms, before the reading (logged, not judged): text #BAC3FF, lowest 8.95:1 over #232530 (632 of 1041 pixels the text colour)
+android good-material-dark-pressed-send: try 1 held 1202 ms, 6 screenshots, steady from 980 ms; 16021 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-material dark pressed send: text #BAC3FF, lowest 8.95:1 over #232530 (632 of 1041 pixels the text colour)
+android good-material dark send after the lift: 0 pixels differ from the screenshot at rest
+android good-material dark pressed updates at 190 ms, before the reading (logged, not judged): text #E4E1E9, lowest 9.34:1 over #35363A (2065 of 3581 pixels the text colour)
+android good-material dark pressed updates at 303 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (2065 of 3579 pixels the text colour)
+android good-material dark pressed updates at 417 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (2065 of 3579 pixels the text colour)
+android good-material dark pressed updates at 530 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (2065 of 3579 pixels the text colour)
+android good-material dark pressed updates at 646 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (2065 of 3579 pixels the text colour)
+android good-material-dark-pressed-updates: try 1 held 908 ms, 7 screenshots, steady from 763 ms; 125989 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-material dark pressed updates: text #E4E1E9, lowest 7.86:1 over #414145 (2065 of 3579 pixels the text colour)
+android good-material dark checked fill: edge #BAC3FF: 10.90:1 against #121318, 7.71:1 against #222C61
+android good-material dark checked mark: 182 pixels 3:1 or more against #BAC3FF
+android good-material dark checked updates: text #E4E1E9, lowest 14.35:1 over #121318 (2065 of 3602 pixels the text colour)
+android good-material-dark-pressed-email: try 1 held 230 ms, 1 screenshots, 0 pixels differ from the screenshot at rest; the reading
+android good-material dark pressed label: text #C7C5D0, lowest 10.89:1 over #121318 (371 of 691 pixels the text colour)
+android night mode put back to no (was no)
+## goodMaterialEveryTextAndEdgeAtRestAndWithKeyboardFocus
+android good-material light: page #FBF8FF, density 2.625
+android good-material email field Rect(42, 688 - 1038, 835), top edge at 688; pieces in Rect(58, 656 - 1022, 720): [Rect(87, 676 - 164, 699)]
+android good-material email hint pieces in Rect(58, 723 - 1022, 824): [Rect(88, 743 - 256, 784)]
+android good-material updates pieces: [Rect(86, 890 - 426, 931), Rect(899, 885 - 946, 932)]
+android good-material send pieces in Rect(95, 1003 - 199, 1087): [Rect(106, 1031 - 187, 1058)]
+android good-material light rest body: text #1B1B21, lowest 16.30:1 over #FBF8FF (1973 of 3878 pixels the text colour)
+android good-material light rest label: text #46464F, lowest 8.88:1 over #FBF8FF (371 of 691 pixels the text colour)
+android good-material light rest hint: text #46464F, lowest 8.88:1 over #FBF8FF (1202 of 2010 pixels the text colour)
+android good-material light rest updates: text #1B1B21, lowest 16.30:1 over #FBF8FF (2065 of 3623 pixels the text colour)
+android good-material light rest send: text #515B92, lowest 6.12:1 over #FBF8FF (632 of 1034 pixels the text colour)
+android good-material light field edge: edge #767680: 4.27:1 against #FBF8FF, 4.27:1 against #FBF8FF
+android good-material light checkbox edge: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+android good-material light button outline: edge #767680: 4.27:1 against #FBF8FF, 4.27:1 against #FBF8FF
+android good-material light focused email label: text #515B92, lowest 6.12:1 over #FBF8FF (371 of 691 pixels the text colour)
+android good-material light focused email hint: text #46464F, lowest 8.88:1 over #FBF8FF (1202 of 2010 pixels the text colour)
+android good-material light focused updates updates: text #1B1B21, lowest 12.36:1 over #DCDAE0 (2065 of 3593 pixels the text colour)
+android good-material light focused send send: text #515B92, lowest 5.32:1 over #EAE8F4 (632 of 1029 pixels the text colour)
+android good-material dark: page #121318, density 2.625
+android good-material email field Rect(42, 688 - 1038, 835), top edge at 688; pieces in Rect(58, 656 - 1022, 720): [Rect(87, 676 - 164, 699)]
+android good-material email hint pieces in Rect(58, 723 - 1022, 824): [Rect(88, 743 - 256, 784)]
+android good-material updates pieces: [Rect(86, 890 - 426, 931), Rect(899, 885 - 946, 932)]
+android good-material send pieces in Rect(95, 1003 - 199, 1087): [Rect(106, 1031 - 187, 1058)]
+android good-material dark rest body: text #E4E1E9, lowest 14.35:1 over #121318 (1973 of 3863 pixels the text colour)
+android good-material dark rest label: text #C7C5D0, lowest 10.89:1 over #121318 (371 of 691 pixels the text colour)
+android good-material dark rest hint: text #C7C5D0, lowest 10.89:1 over #121318 (1202 of 2010 pixels the text colour)
+android good-material dark rest updates: text #E4E1E9, lowest 14.35:1 over #121318 (2065 of 3602 pixels the text colour)
+android good-material dark rest send: text #BAC3FF, lowest 10.90:1 over #121318 (632 of 1049 pixels the text colour)
+android good-material dark field edge: edge #90909A: 5.87:1 against #121318, 5.87:1 against #121318
+android good-material dark checkbox edge: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+android good-material dark button outline: edge #90909A: 5.87:1 against #121318, 5.87:1 against #121318
+android good-material dark focused email label: text #BAC3FF, lowest 10.90:1 over #121318 (371 of 710 pixels the text colour)
+android good-material dark focused email hint: text #C7C5D0, lowest 10.89:1 over #121318 (1202 of 2010 pixels the text colour)
+android good-material dark focused updates updates: text #E4E1E9, lowest 10.20:1 over #2F3034 (2065 of 3586 pixels the text colour)
+android good-material dark focused send send: text #BAC3FF, lowest 8.95:1 over #232530 (632 of 1041 pixels the text colour)
+android night mode put back to no (was no)
+## goodSelectionEachTitleWhilePressed
+android good-selection Day pieces: [Rect(113, 696 - 160, 743), Rect(235, 703 - 304, 742)]
+android good-selection Week pieces: [Rect(113, 843 - 160, 890), Rect(233, 848 - 338, 880)]
+android good-selection Month pieces: [Rect(113, 990 - 160, 1037), Rect(235, 995 - 355, 1027)]
+android good-selection light pressed Day title at 378 ms, before the reading (logged, not judged): text #1B1B21, lowest 16.30:1 over #FBF8FF (504 of 879 pixels the text colour)
+android good-selection light pressed Day title at 697 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (504 of 870 pixels the text colour)
+android good-selection-light-pressed-day: try 1 held 1179 ms, 4 screenshots, steady from 848 ms; 141813 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-selection light pressed Day title: text #1B1B21, lowest 13.07:1 over #E2E0E4 (504 of 870 pixels the text colour)
+android good-selection light pressed Month title at 194 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.83:1 over #E8E6EB (849 of 1465 pixels the text colour)
+android good-selection light pressed Month title at 307 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (849 of 1465 pixels the text colour)
+android good-selection light pressed Month title at 421 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (849 of 1465 pixels the text colour)
+android good-selection light pressed Month title at 533 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (849 of 1465 pixels the text colour)
+android good-selection light pressed Month title at 645 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (849 of 1465 pixels the text colour)
+android good-selection-light-pressed-month: try 1 held 896 ms, 7 screenshots, steady from 756 ms; 139876 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-selection light pressed Month title: text #1B1B21, lowest 13.07:1 over #E2E0E4 (849 of 1465 pixels the text colour)
+android good-selection light pressed Week title at 194 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.83:1 over #E8E6EB (749 of 1306 pixels the text colour)
+android good-selection light pressed Week title at 306 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (749 of 1305 pixels the text colour)
+android good-selection light pressed Week title at 419 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (749 of 1305 pixels the text colour)
+android good-selection light pressed Week title at 530 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (749 of 1305 pixels the text colour)
+android good-selection light pressed Week title at 642 ms, before the reading (logged, not judged): text #1B1B21, lowest 13.07:1 over #E2E0E4 (749 of 1305 pixels the text colour)
+android good-selection-light-pressed-week: try 1 held 898 ms, 7 screenshots, steady from 755 ms; 140596 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-selection light pressed Week title: text #1B1B21, lowest 13.07:1 over #E2E0E4 (749 of 1305 pixels the text colour)
+android good-selection Day pieces: [Rect(113, 696 - 160, 743), Rect(235, 703 - 304, 742)]
+android good-selection Week pieces: [Rect(113, 843 - 160, 890), Rect(233, 848 - 338, 880)]
+android good-selection Month pieces: [Rect(113, 990 - 160, 1037), Rect(235, 995 - 355, 1027)]
+android good-selection dark pressed Day title at 189 ms, before the reading (logged, not judged): text #E4E1E9, lowest 9.91:1 over #313236 (504 of 870 pixels the text colour)
+android good-selection dark pressed Day title at 300 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (504 of 870 pixels the text colour)
+android good-selection dark pressed Day title at 410 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (504 of 870 pixels the text colour)
+android good-selection dark pressed Day title at 533 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (504 of 870 pixels the text colour)
+android good-selection dark pressed Day title at 647 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (504 of 870 pixels the text colour)
+android good-selection-dark-pressed-day: try 1 held 905 ms, 7 screenshots, steady from 760 ms; 141821 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-selection dark pressed Day title: text #E4E1E9, lowest 7.86:1 over #414145 (504 of 870 pixels the text colour)
+android good-selection dark pressed Month title at 189 ms, before the reading (logged, not judged): text #E4E1E9, lowest 9.34:1 over #35363A (849 of 1460 pixels the text colour)
+android good-selection dark pressed Month title at 304 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (849 of 1460 pixels the text colour)
+android good-selection dark pressed Month title at 415 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (849 of 1460 pixels the text colour)
+android good-selection dark pressed Month title at 524 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (849 of 1460 pixels the text colour)
+android good-selection dark pressed Month title at 634 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (849 of 1460 pixels the text colour)
+android good-selection dark pressed Month title at 749 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (849 of 1460 pixels the text colour)
+android good-selection-dark-pressed-month: try 1 held 1008 ms, 8 screenshots, steady from 859 ms; 139884 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-selection dark pressed Month title: text #E4E1E9, lowest 7.86:1 over #414145 (849 of 1460 pixels the text colour)
+android good-selection dark pressed Week title at 186 ms, before the reading (logged, not judged): text #E4E1E9, lowest 9.34:1 over #35363A (749 of 1295 pixels the text colour)
+android good-selection dark pressed Week title at 300 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (749 of 1292 pixels the text colour)
+android good-selection dark pressed Week title at 413 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (749 of 1292 pixels the text colour)
+android good-selection dark pressed Week title at 527 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (749 of 1292 pixels the text colour)
+android good-selection dark pressed Week title at 641 ms, before the reading (logged, not judged): text #E4E1E9, lowest 7.86:1 over #414145 (749 of 1292 pixels the text colour)
+android good-selection-dark-pressed-week: try 1 held 887 ms, 7 screenshots, steady from 757 ms; 140604 pixels of the control outside the text differ from the screenshot at rest; the reading
+android good-selection dark pressed Week title: text #E4E1E9, lowest 7.86:1 over #414145 (749 of 1292 pixels the text colour)
+android night mode put back to no (was no)
+## goodSelectionTitlesRingsAndTheDotAtRestAfterATapAndWithKeyboardFocus
+android good-selection Day pieces: [Rect(113, 696 - 160, 743), Rect(235, 703 - 304, 742)]
+android good-selection Week pieces: [Rect(113, 843 - 160, 890), Rect(233, 848 - 338, 880)]
+android good-selection Month pieces: [Rect(113, 990 - 160, 1037), Rect(235, 995 - 355, 1027)]
+android good-selection light rest Day ring: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+android good-selection light rest Day title: text #1B1B21, lowest 16.30:1 over #FBF8FF (504 of 879 pixels the text colour)
+android good-selection light rest Week ring: edge #515B92: 6.12:1 against #FBF8FF, 1.00:1 against #515B92
+android good-selection light rest Week title: text #1B1B21, lowest 16.30:1 over #FBF8FF (749 of 1309 pixels the text colour)
+android good-selection light rest Month ring: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+android good-selection light rest Month title: text #1B1B21, lowest 16.30:1 over #FBF8FF (849 of 1472 pixels the text colour)
+android good-selection light dots before: {Day=0, Week=407, Month=0}
+android good-selection light after the tap Day ring: edge #515B92: 6.12:1 against #FBF8FF, 1.00:1 against #515B92
+android good-selection light after the tap Day title: text #1B1B21, lowest 16.30:1 over #FBF8FF (504 of 879 pixels the text colour)
+android good-selection light after the tap Week ring: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+android good-selection light after the tap Week title: text #1B1B21, lowest 16.30:1 over #FBF8FF (749 of 1309 pixels the text colour)
+android good-selection light after the tap Month ring: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+android good-selection light after the tap Month title: text #1B1B21, lowest 16.30:1 over #FBF8FF (849 of 1472 pixels the text colour)
+android good-selection light dots after the tap on Day: {Day=407, Week=0, Month=0}
+android good-selection light focused Day title: text #1B1B21, lowest 12.36:1 over #DCDAE0 (504 of 870 pixels the text colour)
+android good-selection light focused Week title: text #1B1B21, lowest 12.36:1 over #DCDAE0 (749 of 1305 pixels the text colour)
+android good-selection light focused Month title: text #1B1B21, lowest 12.36:1 over #DCDAE0 (849 of 1465 pixels the text colour)
+android good-selection Day pieces: [Rect(113, 696 - 160, 743), Rect(235, 703 - 304, 742)]
+android good-selection Week pieces: [Rect(113, 843 - 160, 890), Rect(233, 848 - 338, 880)]
+android good-selection Month pieces: [Rect(113, 990 - 160, 1037), Rect(235, 995 - 355, 1027)]
+android good-selection dark rest Day ring: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+android good-selection dark rest Day title: text #E4E1E9, lowest 14.35:1 over #121318 (504 of 874 pixels the text colour)
+android good-selection dark rest Week ring: edge #BAC3FF: 10.90:1 against #121318, 1.00:1 against #BAC3FF
+android good-selection dark rest Week title: text #E4E1E9, lowest 14.35:1 over #121318 (749 of 1306 pixels the text colour)
+android good-selection dark rest Month ring: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+android good-selection dark rest Month title: text #E4E1E9, lowest 14.35:1 over #121318 (849 of 1465 pixels the text colour)
+android good-selection dark dots before: {Day=0, Week=419, Month=0}
+android good-selection dark after the tap Day ring: edge #BAC3FF: 10.90:1 against #121318, 1.00:1 against #BAC3FF
+android good-selection dark after the tap Day title: text #E4E1E9, lowest 14.35:1 over #121318 (504 of 874 pixels the text colour)
+android good-selection dark after the tap Week ring: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+android good-selection dark after the tap Week title: text #E4E1E9, lowest 14.35:1 over #121318 (749 of 1306 pixels the text colour)
+android good-selection dark after the tap Month ring: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+android good-selection dark after the tap Month title: text #E4E1E9, lowest 14.35:1 over #121318 (849 of 1465 pixels the text colour)
+android good-selection dark dots after the tap on Day: {Day=419, Week=0, Month=0}
+android good-selection dark focused Day title: text #E4E1E9, lowest 10.20:1 over #2F3034 (504 of 870 pixels the text colour)
+android good-selection dark focused Week title: text #E4E1E9, lowest 10.20:1 over #2F3034 (749 of 1300 pixels the text colour)
+android good-selection dark focused Month title: text #E4E1E9, lowest 10.20:1 over #2F3034 (849 of 1461 pixels the text colour)
+android night mode put back to no (was no)
+## talkBackWalk
+## theMeasureGivesWcagsRatiosForKnownPairs

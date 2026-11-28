@@ -26,8 +26,18 @@
 // only at the position of a stop already judged whose spoken role is the
 // one it names (helpAfterStop); it stays in the logged row, and the web tree
 // spec's judgeTranscript leaves it out by the same rule, from the positions
-// row. That rule is tested only on made-up walks: no V01 walk has been
-// recorded.
+// row. That rule is tested only on made-up walks.
+//
+// The text fields (the principal's decisions of 2026-11-28, after the first
+// recording, docs/evidence/probes/v01/voiceover-web-round1-fail.md.txt; the
+// header of v01_vo_walks.js): the three fields with a hint are judged by
+// FIELD_PATTERN, one stop each; such a field read again in another form at
+// exactly its position is a re-read, not a stop, kept in the walk's row and
+// marked on its positions row; and when the last stop is a marked text
+// field, the end witness's move forward may read "" or another form of it
+// at exactly its position, and its move back may read the stop before the
+// last in its other form only when that stop is a field with a hint, at
+// exactly its position. Every other stop is judged as before.
 //
 // Every phrase is recorded with its white space made single spaces
 // (spokenText): the Cupertino fields' names hold a line break, and a line
@@ -36,8 +46,8 @@
 //
 // VoiceOver's last phrase is text, and a colour is drawn, not spoken: no
 // V01 defect is in what is judged, which is the words and the stops. The
-// expected lists are predictions (v01_vo_walks.js says from what); no V01
-// walk has been recorded. The browser's colour scheme here is Playwright's
+// expected lists are predictions (v01_vo_walks.js says from what), corrected
+// for the text fields after the first recording. The browser's colour scheme here is Playwright's
 // default, light, whatever the Mac's is.
 // Each test opens its example in a page of its own, from a fresh load, so
 // that nothing one example does reaches another.
@@ -46,6 +56,7 @@ import { expect } from '@playwright/test';
 import { cursorBounds, lastPhrase, walkToEnd } from './vo_helpers.js';
 import {
   EXPECTED_STOPS, VO_HELP, collectWalk, judgeCollectedWalk, runWalks, screenStops, spokenText, walkLogLines,
+  wholeScreen,
 } from './v01_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
@@ -60,9 +71,10 @@ test.describe.configure({ retries: 0 });
  * replaced by the phrase Guidepup logged for it, the rule of phraseForMove
  * in vo_logic.js (which on main knows only the first wording); one that
  * comes anyway is left out by the judge only when it is about the stop
- * before it, at the same position.
+ * before it, at the same position. `whole` is the screen's whole expected
+ * list (wholeScreen), from which collectWalk knows the marked text fields.
  */
-async function walkOnce(page, voiceOver, browserName, max = 40) {
+async function walkOnce(page, voiceOver, browserName, whole, max = 40) {
   await walkToEnd(page, voiceOver, browserName, 0);
   const capture = async () => {
     let phrase = spokenText(await lastPhrase());
@@ -77,6 +89,7 @@ async function walkOnce(page, voiceOver, browserName, max = 40) {
     // compared with like every other.
     start: await capture(),
     max,
+    whole,
   });
 }
 
@@ -88,7 +101,7 @@ for (const [slug, expected] of Object.entries(EXPECTED_STOPS)) {
     let latest;
     const { verdict, reason, walks } = await runWalks(
       async () => {
-        latest = await walkOnce(page, voiceOver, browserName, 40);
+        latest = await walkOnce(page, voiceOver, browserName, wholeScreen(expected, screenStops(slug)), 40);
         return latest;
       },
       // A failed end witness is wrong for good, and an unresolved read
@@ -103,7 +116,8 @@ for (const [slug, expected] of Object.entries(EXPECTED_STOPS)) {
           // walk with no stops "(nothing)", and "/" in a stop "\/". Every
           // walk logs its start capture (`<slug>-walk-<n>-start`), the
           // cursor's position at each stop (`-positions`), and its
-          // unresolved reads (`-unresolved`, "none" or each); a walk that
+          // unresolved reads (`-unresolved`, "none" or each), a re-read's
+          // position marked "re-read" on the positions row; a walk that
           // read its end witness logs it (`-end`). judgeTranscript in
           // v01_vo_walks.js reads them back, and
           // web_tests/v01_colour_contrast.spec.js judges the committed

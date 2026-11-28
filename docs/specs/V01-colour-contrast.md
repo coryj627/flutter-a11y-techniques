@@ -180,9 +180,8 @@ The principal's, made in review on 2026-11-28 (the owner may overrule):
    measured pressed ratio is 4.5:1 or more would serve. At 0.9 the text is
    5.14:1 (light) and 6.66:1 (dark) while pressed in the widget tests, and
    5.13:1 and 6.65:1 on the web with a mouse button held 2 s and 4 s
-   (`web_pressed_without_splash.txt`); Android asserts it 4.5:1 or more
-   with a finger held until steady, and its figures are in the test's log,
-   which the evidence run does not keep; 0.85 sits on the threshold, 4.54:1 in light mode
+   (`web_pressed_without_splash.txt`), and 5.13:1 and 6.65:1 on Android
+   with a finger held until steady (`android_tests_native.txt`); 0.85 sits on the threshold, 4.54:1 in light mode
    (computed from the colours, not measured). The default, 0.4, is 1.88:1
    and 2.42:1 ([FL-514](../flutter-limitations.md#fl-514)), measured in
    the widget tests only: the default's press is not measured on a
@@ -197,6 +196,15 @@ The principal's, made in review on 2026-11-28 (the owner may overrule):
    [FL-517](../flutter-limitations.md#fl-517)).
 5. **C02's `good-toggle-buttons`** is not V01's to change: it is handed on
    as a question for the owner (section 8).
+6. **The web VoiceOver walk's text fields** (after the first recording
+   failed on them): the expected lists stay as they were where both
+   browsers and both directions agreed; the three fields with a hint or
+   placeholder are judged by a pattern, a same-position re-read of one is
+   logged and not a second stop, and the end witness on a marked field may
+   read "" or the field's other form at its exact position (section 6
+   says what this no longer proves and what it still does). The sentence
+   that the Material hint is not spoken holds for TalkBack and VoiceOver
+   on iOS and not for the web (section 7, FL-142).
 
 ### Not built
 
@@ -297,7 +305,39 @@ What these measures leave out, and what each gives up:
 | L3 iOS | Type and label of every element; a tap moving each choice (`isSelected`). The same pixel assertions on `XCUIScreen` screenshots in sRGB, light and dark by `XCUIDevice.appearance` (the page colour checked, put back, checked), focus by Tab with no modifier, witnessed by `hasKeyboardFocus` for a field and by pixels changed in the control outside its texts for the others, and shown gone after the next Tab; a checkbox and a choice put back by a tap and checked. No held press (XCUITest cannot hold one and take a screenshot), no hover |
 | L4 TalkBack | Each text and control of each example in turn, every row a whole utterance (`== A / B`), each walk judged whole (`walk_strictly`) |
 | L4 VoiceOver iOS | Every utterance from the top of the screen to its end (V01Walk, S16's walk): the screen's own title, description, and defect, then exactly the example's stops |
-| L4 VoiceOver web | S16's walk and judge (`web_tests/vo/v01_vo_walks.js`), every stop judged; the transcript re-judged by the tree spec from its rows |
+| L4 VoiceOver web | S16's walk and judge with the S08 to S12 update (`web_tests/vo/v01_vo_walks.js`), every stop judged; the transcript re-judged by the tree spec from its rows. Three stops are relaxed, by the principal's decision (section 5): the fields with a hint or placeholder (below) |
+
+**The web VoiceOver walk's field rules** (the principal's decisions,
+2026-11-28). This technique is about contrast, which no screen reader
+speaks; the walk's purpose here is to show that each example's texts and
+controls are reached, in order, with their roles. Because a field's words
+change with its focus (section 7), three stops, each marked in the
+expected list as a field with a hint (`good-material`'s, `good-cupertino`'s,
+and `bad-cupertino-placeholder`'s field), are judged by the pattern
+`^Email( Required){0,2} edit text$`, and `bad-faint-edge`'s field is marked
+as a text field for the end witness only (its words are judged exactly):
+
+- **What the relaxed rows no longer prove**: how many times "Required" is
+  read at those three fields, so nothing about whether the hint or the
+  placeholder is in the spoken name; and, where a marked field is the
+  last stop, that its words are read again on the return to it.
+- **What the walk still proves**: each field is one stop, in its place in
+  the list, whose words begin "Email" and end with its role, "edit text",
+  with nothing else; every other stop exactly as before. A reading of the
+  pattern at exactly the position of the field just read is that field
+  read again, logged on the positions row as a re-read, not a second
+  stop; at another position it is a second stop and fails. The end's
+  witness still needs the move back to read the stop before the last,
+  freshly and not empty, at another position (the proof the capture was
+  live); the move forward may read "" or another form of the last stop
+  only if that stop is a marked field and the position is its exact
+  recorded position; a move back may read the stop before the last in its
+  other field form only at that stop's exact recorded position.
+- No other stop has any of this leniency; regressions in the tree spec
+  show it (an empty witness on a button, a repeated word on a heading, a
+  third "Required", "Email edit", a role after the field's, a second field
+  reading elsewhere, a witness in the other form elsewhere), and
+  `judgeTranscript` applies the same rules from the transcript's rows.
 
 A colour is drawn, not spoken: the screen-reader layers record that the
 bad examples read as their good counterparts, and that
@@ -380,8 +420,13 @@ its raw output, and the analyser. Every figure here is read from pixels;
   `backgroundColor: Colors.black54`, 5.28:1 to 5.43:1 over the whole
   picture.
 - **What the examples measured**, by layer (logs in the probe folder:
-  `widget_tests.txt`, `web_tests.txt`, `android_tests.txt` and
-  `android_tests_320x640.txt`, `ios_tests.txt`):
+  `widget_tests.txt`, `web_tests_round1.txt`, `ios_tests.txt`, and for
+  Android `android_tests_native.txt` and
+  `android_tests_320x640_animations_off.txt`, which come from the
+  engineer's own run of the Android suite with `android_runs.sh.txt`, not
+  from the evidence run, whose log does not keep the test's measures;
+  `android_tests.txt` and `android_tests_320x640.txt` are the first
+  version of the suite, before review):
 
   | Example | Widget | Web | Android | iOS |
   | --- | --- | --- | --- | --- |
@@ -400,9 +445,30 @@ its raw output, and the analyser. Every figure here is read from pixels;
   tiles are buttons with no selected, pressed, or checked state; Flutter
   writes `aria-current="true"` on the chosen one, which the tree read over
   the DevTools protocol does not show. The Material field's hint is not
-  spoken by TalkBack or VoiceOver on iOS, and is not in Chromium's
-  accessible name; the Cupertino field's placeholder is part of its name,
-  "Email Required", on every platform.
+  spoken by TalkBack or VoiceOver on iOS. The Cupertino field's
+  placeholder is part of its name, "Email Required", on every platform.
+- **On the web a field's hint joins its name, and is read twice, once the
+  field has focus.** From the dumps in `fields_web.txt` (from
+  `fields_web.spec.js.txt`; Playwright's Chromium and WebKit, the same in
+  both; the accessibility tree read in Chromium only, over the DevTools
+  protocol, which WebKit does not offer): at rest `good-material`'s input
+  has `aria-label="Email"` and no placeholder attribute (Chromium's name
+  "Email"), and each Cupertino field's input `aria-label="Email\nRequired"`
+  and no placeholder attribute (Chromium's name "Email Required"). Given
+  DOM focus, `good-material`'s input has `aria-label="Email\nRequired"`
+  (the hint joins the name while the field is focused and empty, FL-142),
+  and all three inputs gain `placeholder="Required"`; Chromium's name then
+  comes from the label and the placeholder. `bad-faint-edge`'s input, with
+  no hint, does not change. In the first web VoiceOver recording
+  (`voiceover-web-round1-fail.md.txt` and `.log.txt`), whose cursor gives
+  a field DOM focus, VoiceOver read the focused fields "Email Required
+  Required edit text" in Chromium and in WebKit, and a Cupertino field
+  before its focus "Email Required edit text"; in Chromium
+  `bad-cupertino-placeholder`'s field was read in both forms, one after
+  the other, at the same position; and the move forward that witnesses
+  the end, back to `bad-faint-edge`'s field, read "" at its exact position
+  in both browsers. So on the web the hint is spoken, twice, once the
+  field has focus ([FL-142](../flutter-limitations.md#fl-142)).
 - **The shared iOS simulator during the build** (notes, not findings).
   From about 05:07 on 2026-11-28 the simulator drew no dark mode: the
   appearance set by `XCUIDevice.appearance`, by `simctl ui appearance

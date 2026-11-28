@@ -91,9 +91,11 @@ import zlib from 'node:zlib';
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
 import {
-  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, TRANSCRIPT_ROWS, VO_HELP, collectWalk, endRow, helpRole,
-  judgeCollectedWalk, judgeExampleWalk, judgeTranscript, judgeWalk, positionsRow, runWalks, screenStops, spokenRole,
-  spokenText, startRow, stopsOf, stopsText, transcriptRow, unresolvedRow, walkLogLines, witnessBackHolds,
+  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, FIELD_PATTERN, REREAD, TRANSCRIPT_ROWS, VO_HELP,
+  collectWalk, endRow, helpRole, isFieldWithHint, isMarkedField, judgeCollectedWalk, judgeExampleWalk, judgeTranscript,
+  judgeWalk, matchesStop, positionsOf, positionsRow, readingOf, rereadAt, runWalks, screenStops, splitReadings,
+  spokenRole, spokenText, startRow, stopsOf, stopsText, transcriptRow, unresolvedRow, walkLogLines, walkReadings,
+  wholeScreen, witnessBackHolds, witnessForwardHolds,
 } from './vo/v01_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
@@ -1416,9 +1418,11 @@ test.describe('the VoiceOver walks are made again only while incomplete', () => 
     }
     for (const [row, { expected: stops, screen }] of Object.entries(TRANSCRIPT_ROWS)) {
       // A recorded phrase is spokenText's: no line break, no white space
-      // doubled or at either end.
-      for (const s of [...screen, ...stops]) {
-        expect(s !== '' && !VO_HELP.test(s) && spokenText(s) === s, `${row}: "${s}"`).toBe(true);
+      // doubled or at either end. A marked text field's sample reading is
+      // one, and is the stop (matchesStop).
+      for (const entry of [...screen, ...stops]) {
+        const s = readingOf(entry);
+        expect(s !== '' && !VO_HELP.test(s) && spokenText(s) === s && matchesStop(s, entry), `${row}: "${s}"`).toBe(true);
       }
     }
     expect(Object.keys(EXPECTED_STOPS)).toEqual(Object.keys(EXAMPLE_SCREENS));
@@ -1707,7 +1711,9 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
 test.describe('the web VoiceOver transcript is judged again from what it recorded', () => {
   const rows = Object.keys(TRANSCRIPT_ROWS);
   const R = rows[0];
-  const whole = (row) => [...TRANSCRIPT_ROWS[row].screen, EXAMPLE_HEADING, ...TRANSCRIPT_ROWS[row].expected];
+  // A row's whole screen as a made-up walk reads it (a marked text field
+  // read as its sample, readingOf).
+  const whole = (row) => wholeScreen(TRANSCRIPT_ROWS[row].expected, TRANSCRIPT_ROWS[row].screen).map(readingOf);
   const pos = (i) => `318, ${251 + 40 * i}, 1011, ${271 + 40 * i}`;
   const placesOf = (stops) => stops.map((_, i) => pos(i));
   const witnessOf = (stops) => ({ back: { phrase: stops.at(-2), position: pos(stops.length - 2) }, forward: { phrase: stops.at(-1), position: pos(stops.length - 1) } });
@@ -1771,7 +1777,7 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
       ['the last walk recorded wrong', replaced('', transcriptRow(R, 1, w, 'wrong', 'x')), false],
       ['the last walk recorded incomplete', replaced('', transcriptRow(R, 1, w, 'incomplete', 'x')), false],
       ['the old form, only what follows the heading', transcript(() => rows.flatMap((row) =>
-        walkRows(row, 1, TRANSCRIPT_ROWS[row].expected, 'complete'))), false],
+        walkRows(row, 1, TRANSCRIPT_ROWS[row].expected.map(readingOf), 'complete'))), false],
       ['another row\'s screen stops', replaced('', transcriptRow(R, 1, [...TRANSCRIPT_ROWS[rows.at(-1)].screen, ...w.slice(h)], 'complete', 'x')), false],
       ['a walk whose title is an empty phrase', replaced('', transcriptRow(R, 1, ['', ...w.slice(1)], 'complete', 'x')), false],
       ['a stop past the end, empty', transcript(() => rows.flatMap((row) => (row === R ? walkRows(R, 1, [...w, ''], 'complete') : rowsOf(row)))), false],
@@ -1929,7 +1935,7 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     };
     const transcriptOf = (log) => ['# V01 Colour contrast: VoiceOver transcript (web, macOS)', '', 'Result: PASS', ...toolRows(log)].join('\n');
     const raw = (s) => s.replace('Email Required', 'Email\nRequired');
-    expect(raw(EXPECTED_STOPS['good-cupertino'][0]), 'the field\'s name as the page has it').toBe('Email\nRequired edit text');
+    expect(raw(readingOf(EXPECTED_STOPS['good-cupertino'][0])), 'the field\'s name as the page has it').toBe('Email\nRequired edit text');
     expect(spokenText('Email\nRequired  edit text\n')).toBe('Email Required edit text');
     // One walk of every example in both browsers, each capture made as the
     // VoiceOver spec makes it, from raw phrases with the page's line break,
@@ -1945,6 +1951,7 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
             previous: async () => { cursor = Math.max(cursor - 1, 0); },
             capture: async () => ({ phrase: record(raw(words[cursor])), position: pos(cursor) }),
             start: { phrase: '', position: '30, 147, 70, 187' },
+            whole: wholeScreen(TRANSCRIPT_ROWS[row].expected, TRANSCRIPT_ROWS[row].screen),
           });
           const judged = judgeCollectedWalk(latest, TRANSCRIPT_ROWS[row].expected, TRANSCRIPT_ROWS[row].screen);
           lines.push(...walkLogLines(b, row, 1, judged, latest));
@@ -1970,5 +1977,341 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
       'docs/evidence/V01/voiceover-web.md is missing: the web VoiceOver recording has not been made yet '
       + '(python3 tool/voiceover_web.py V01, run by the principal only)').toBe(true);
     expect(judgeTranscript(fs.readFileSync(file, 'utf8'))).toEqual([]);
+  });
+});
+
+// --- The web VoiceOver text fields ------------------------------------------
+//
+// The principal's decisions of 2026-11-28, after the first web recording
+// (docs/evidence/probes/v01/voiceover-web-round1-fail.md.txt), which failed
+// on the text fields only (the header of web_tests/vo/v01_vo_walks.js): the
+// three fields with a hint are one stop each, judged by FIELD_PATTERN; such a
+// field read again in a form of it at exactly its position is a re-read, not
+// a stop, marked on the positions row; the end witness on a marked text field
+// may read "" or another form of it forward, at exactly its position, and,
+// back, the stop before the last in its other form only when that stop is a
+// field with a hint, at exactly its position. Nothing else is relaxed.
+//
+// Each case is a made-up walk through collectWalk and judgeCollectedWalk,
+// then the same walk's rows (walkLogLines, as the tool writes them),
+// recorded "complete" whatever it judged, in a transcript of right walks,
+// through judgeTranscript, which must come to the same verdict from the rows
+// alone. Then the first recording's own rows, judged again. Never skipped.
+test.describe('the text fields: one stop by FIELD_PATTERN, a same-position re-read, and the end witness on a field', () => {
+  const P = (i) => `318, ${251 + 40 * i}, 1011, ${271 + 40 * i}`;
+  const START = { phrase: '', position: '30, 147, 70, 187' };
+  const ER = 'Email Required edit text';
+  const ERR = 'Email Required Required edit text';
+  const WRONG_FORMS = ['Email Required Required Required edit text', 'Email edit', 'Email Required edit text button'];
+  const HINTED = ['good-material', 'good-cupertino', 'bad-cupertino-placeholder'];
+  const allOf = (slug) => wholeScreen(EXPECTED_STOPS[slug], screenStops(slug));
+  const fieldAt = (slug) => allOf(slug).findIndex(isMarkedField);
+  const headingAt = (slug) => screenStops(slug).length;
+  const elementsOf = (slug) => allOf(slug).map((e, i) => ({ phrase: readingOf(e), position: P(i) }));
+  /** `slug`'s elements with `extra` put in after the element at `after`. */
+  const withAfter = (slug, after, extra) => {
+    const els = elementsOf(slug);
+    return [...els.slice(0, after + 1), extra, ...els.slice(after + 1)];
+  };
+  /**
+   * A walk of `elements` (by default `slug`'s screen, each element its
+   * sample reading at P(i)) with `slug`'s whole screen given to collectWalk.
+   * `reads({ cursor, visit, phase })` may give another capture: `visit`
+   * counts the captures at the cursor's element, `phase` is "walk", then
+   * "back" and "forward" for the end witness.
+   */
+  const walkOn = (slug, reads = () => undefined, elements = elementsOf(slug)) => {
+    let cursor = -1;
+    let phase = 'walk';
+    const visits = new Map();
+    return collectWalk({
+      next: async () => {
+        if (phase === 'back') phase = 'forward';
+        cursor = Math.min(cursor + 1, elements.length - 1);
+      },
+      previous: async () => { phase = 'back'; cursor = Math.max(cursor - 1, 0); },
+      capture: async () => {
+        const visit = (visits.get(cursor) ?? 0) + 1;
+        visits.set(cursor, visit);
+        return reads({ cursor, visit, phase }) ?? elements[cursor];
+      },
+      start: START,
+      whole: allOf(slug),
+    });
+  };
+  /** Reads the element at `index` as `phrase` at its own position, every time. */
+  const readAs = (index, phrase) => ({ cursor }) => (cursor === index ? { phrase, position: P(index) } : undefined);
+  /** Reads the witness's move `side` ("back" or "forward") as `capture`. */
+  const witnessReads = (side, capture) => ({ phase }) => (phase === side ? capture : undefined);
+  // The tool's way from console lines to the transcript (the line-break
+  // test above has the same).
+  const transcriptOf = (lines) => {
+    const out = new Map();
+    for (const [, b, row, spoken] of lines.join('\n').matchAll(/^V01VO (\S+) (\S+) \| (.*)$/gm)) out.set(`${b} ${row}`, spoken);
+    return ['# V01 Colour contrast: VoiceOver transcript (web, macOS)', '', 'Result: PASS',
+      ...BROWSERS.flatMap((b) => ['', `## ${b}`, '', '| Example | Spoken, in order |', '| --- | --- |',
+        ...[...out].filter(([k]) => k.startsWith(`${b} `)).map(([k, spoken]) => `| \`${k.slice(b.length + 1)}\` | ${spoken} |`)]),
+    ].join('\n');
+  };
+  /**
+   * judgeTranscript's problems for a transcript of right walks of every row
+   * in both browsers, but `slug`'s in Chromium, which is `walk`, recorded
+   * "complete" whatever it judged.
+   */
+  const transcriptProblems = async (slug, walk) => {
+    const lines = [];
+    for (const b of BROWSERS) {
+      for (const s of Object.keys(EXPECTED_STOPS)) {
+        const w = b === 'chromium' && s === slug ? walk : await walkOn(s);
+        lines.push(...walkLogLines(b, s, 1, { verdict: 'complete', reason: 'x' }, w));
+      }
+    }
+    return judgeTranscript(transcriptOf(lines));
+  };
+  /** Each case `[what, slug, walk, verdict]`: the walk judges `verdict`, and its rows pass judgeTranscript only if complete. */
+  const check = async (cases) => {
+    for (const [what, slug, walking, verdict] of cases) {
+      const walk = await walking;
+      const judged = judgeCollectedWalk(walk, EXPECTED_STOPS[slug], screenStops(slug));
+      expect(judged.verdict, `${what}: ${judged.reason}: ${JSON.stringify(walkReadings(walk).readings)}`).toBe(verdict);
+      const problems = await transcriptProblems(slug, walk);
+      expect(problems.length === 0, `${what}, from the transcript's rows: ${problems.join('; ') || 'no problems'}`)
+        .toBe(verdict === 'complete');
+    }
+  };
+
+  test('exactly the three fields with a hint are field-pattern stops, and bad-faint-edge\'s field a text field', async () => {
+    const marked = Object.entries(EXPECTED_STOPS).flatMap(([slug, list]) => list
+      .map((entry, i) => [slug, i, entry]).filter(([, , entry]) => typeof entry !== 'string'));
+    expect(marked.map(([slug, i, entry]) => [slug, i, entry.kind])).toEqual([
+      ['good-material', 1, 'text field with a hint'],
+      ['good-cupertino', 0, 'text field with a hint'],
+      ['bad-cupertino-placeholder', 0, 'text field with a hint'],
+      ['bad-faint-edge', 0, 'text field'],
+    ]);
+    expect(String(FIELD_PATTERN)).toBe('/^Email( Required){0,2} edit text$/');
+    for (const [, , entry] of marked) expect(isMarkedField(entry)).toBe(true);
+    expect(EXPECTED_STOPS['bad-faint-edge'][0].text).toBe('Email edit text');
+    expect(isFieldWithHint(EXPECTED_STOPS['bad-faint-edge'][0])).toBe(false);
+    // The pattern is matched after white space is made single spaces.
+    const hint = EXPECTED_STOPS['good-cupertino'][0];
+    for (const form of ['Email edit text', ER, ERR, 'Email\nRequired edit text', ' Email  Required edit text ']) {
+      expect(matchesStop(form, hint), form).toBe(true);
+    }
+    for (const form of ['', ...WRONG_FORMS, 'email edit text', 'Required edit text', 'Email Required']) {
+      expect(matchesStop(form, hint), form).toBe(false);
+    }
+    // A text field with no hint, by its words exactly.
+    expect(matchesStop('Email edit text', EXPECTED_STOPS['bad-faint-edge'][0])).toBe(true);
+    expect(matchesStop(ER, EXPECTED_STOPS['bad-faint-edge'][0])).toBe(false);
+    // Every walk of the right screens passes.
+    await check(Object.keys(EXPECTED_STOPS).map((slug) => [`${slug}, its right walk`, slug, walkOn(slug), 'complete']));
+  });
+
+  test('a field with a hint is one stop in any of its three forms; any other form, and a heading read with a word repeated, is wrong', async () => {
+    const cases = [];
+    for (const slug of HINTED) {
+      const f = fieldAt(slug);
+      for (const form of ['Email edit text', ER, ERR]) cases.push([`${slug}: the field read "${form}"`, slug, walkOn(slug, readAs(f, form)), 'complete']);
+      for (const form of WRONG_FORMS) cases.push([`${slug}: the field read "${form}"`, slug, walkOn(slug, readAs(f, form)), 'wrong']);
+    }
+    for (const slug of ['good-material', 'good-caption', 'bad-cupertino-placeholder']) {
+      cases.push([`${slug}: the heading read "heading level 2 Example Example"`, slug,
+        walkOn(slug, readAs(headingAt(slug), 'heading level 2 Example Example')), 'wrong']);
+    }
+    // bad-faint-edge's field has no hint: its words, exactly.
+    cases.push(['bad-faint-edge: the field read "Email Required edit text"', 'bad-faint-edge',
+      walkOn('bad-faint-edge', readAs(fieldAt('bad-faint-edge'), ER)), 'wrong']);
+    await check(cases);
+  });
+
+  test('a field with a hint read again at exactly its position is that stop read again; anything else is a stop', async () => {
+    const bad = 'bad-cupertino-placeholder';
+    const f = fieldAt(bad);
+    // The first recording's Chromium walk of bad-cupertino-placeholder:
+    // "Email Required edit text", then "Email Required Required edit text"
+    // at the same position, and that form again for the witness's move
+    // forward.
+    const round1 = await walkOn(bad, ({ cursor, visit }) => (cursor === f && visit > 1 ? { phrase: ERR, position: P(f) } : undefined));
+    expect(round1.rereads).toEqual([{ after: f + 1, phrase: ERR, position: P(f) }]);
+    expect(round1.stops).toEqual(allOf(bad).map(readingOf));
+    expect(round1.witness.forward).toEqual({ phrase: ERR, position: P(f) });
+    const { readings, places } = walkReadings(round1);
+    expect(readings).toEqual([...allOf(bad).map(readingOf), ERR]);
+    expect(places.at(-1)).toBe(rereadAt(P(f)));
+    expect(positionsRow(bad, 1, places)).toBe(`| \`${bad}-walk-1-positions\` | ${[...round1.positions, `${REREAD}${P(f)}`].join(' / ')} |`);
+    expect(splitReadings(readings, positionsOf(places.join(' / ')))).toEqual(
+      { stops: round1.stops, positions: round1.positions, rereads: round1.rereads });
+    const gm = 'good-material';
+    const g = fieldAt(gm);
+    const cup = 'good-cupertino';
+    const faint = 'bad-faint-edge';
+    await check([
+      ['the first recording\'s same-position re-read (bad-cupertino-placeholder, Chromium)', bad, round1, 'complete'],
+      // How many times "Required" is read is recorded, not judged.
+      ['the field read in one form, the other, and the first again, all at its position', bad,
+        walkOn(bad, ({ cursor, visit }) => (cursor === f && visit === 2 ? { phrase: ERR, position: P(f) } : undefined)), 'complete'],
+      // good-material's field reads "Email Required Required edit text"
+      // (its sample), then "Email edit text" at its position.
+      ['good-material\'s field read again in another form at its position, mid-walk', gm,
+        walkOn(gm, undefined, withAfter(gm, g, { phrase: 'Email edit text', position: P(g) })), 'complete'],
+      ['good-cupertino\'s field read again in another form at its position, mid-walk', cup,
+        walkOn(cup, undefined, withAfter(cup, fieldAt(cup), { phrase: ERR, position: P(fieldAt(cup)) })), 'complete'],
+      // A second field reading at a different position is a second stop.
+      ['a second field reading at another position, after the last stop', bad,
+        walkOn(bad, undefined, withAfter(bad, f, { phrase: ERR, position: P(99) })), 'wrong'],
+      ['a second field reading at another position, mid-walk', gm,
+        walkOn(gm, undefined, withAfter(gm, g, { phrase: ERR, position: P(98) })), 'wrong'],
+      // A different phrase at the same position is a stop, as before.
+      ['"Email Required Required Required edit text" at the field\'s position after it', gm,
+        walkOn(gm, undefined, withAfter(gm, g, { phrase: WRONG_FORMS[0], position: P(g) })), 'wrong'],
+      ['a field form at the position of a stop that is no field', gm,
+        walkOn(gm, undefined, withAfter(gm, g - 1, { phrase: 'Email edit text', position: P(g - 1) })), 'wrong'],
+      ['a field form at the heading\'s position after it', bad,
+        walkOn(bad, undefined, withAfter(bad, headingAt(bad), { phrase: ER, position: P(headingAt(bad)) })), 'wrong'],
+      // bad-faint-edge's field has no hint: no re-read on its screen.
+      ['bad-faint-edge\'s field read again as "Email Required edit text" at its position', faint,
+        walkOn(faint, undefined, withAfter(faint, fieldAt(faint), { phrase: ER, position: P(fieldAt(faint)) })), 'wrong'],
+    ]);
+  });
+
+  test('the end witness on a marked text field: forward "" or a form of it at exactly its position; back, the other form only for a field with a hint at its position', async () => {
+    const faint = 'bad-faint-edge';
+    const ff = fieldAt(faint);
+    const bad = 'bad-cupertino-placeholder';
+    const bf = fieldAt(bad);
+    const cup = 'good-cupertino';
+    const cf = fieldAt(cup);
+    const lastAt = (slug) => P(allOf(slug).length - 1);
+    await check([
+      // The move forward.
+      ['bad-faint-edge: forward "" at the field\'s position (the first recording)', faint,
+        walkOn(faint, witnessReads('forward', { phrase: '', position: P(ff) })), 'complete'],
+      ['bad-faint-edge: forward "" at another position', faint, walkOn(faint, witnessReads('forward', { phrase: '', position: P(50) })), 'wrong'],
+      ['bad-faint-edge: forward "Email Required edit text" at its position', faint,
+        walkOn(faint, witnessReads('forward', { phrase: ER, position: P(ff) })), 'wrong'],
+      ['bad-cupertino-placeholder: forward "" at the field\'s position', bad,
+        walkOn(bad, witnessReads('forward', { phrase: '', position: P(bf) })), 'complete'],
+      ['bad-cupertino-placeholder: forward the other form at its position', bad,
+        walkOn(bad, witnessReads('forward', { phrase: ERR, position: P(bf) })), 'complete'],
+      ['bad-cupertino-placeholder: forward the other form at another position', bad,
+        walkOn(bad, witnessReads('forward', { phrase: ERR, position: P(50) })), 'wrong'],
+      ['bad-cupertino-placeholder: forward "Email Required Required Required edit text" at its position', bad,
+        walkOn(bad, witnessReads('forward', { phrase: WRONG_FORMS[0], position: P(bf) })), 'wrong'],
+      // No leniency for any other last stop.
+      ['good-material: forward "" on its last stop, a button, at its position', 'good-material',
+        walkOn('good-material', witnessReads('forward', { phrase: '', position: lastAt('good-material') })), 'wrong'],
+      ['good-cupertino: forward "" on its last stop, a button, at its position', cup,
+        walkOn(cup, witnessReads('forward', { phrase: '', position: lastAt(cup) })), 'wrong'],
+      ['good-caption: forward "" on its last stop, a text, at its position', 'good-caption',
+        walkOn('good-caption', witnessReads('forward', { phrase: '', position: lastAt('good-caption') })), 'wrong'],
+      // The move back.
+      ['good-cupertino: back the field\'s other form at its recorded position (the first recording, Chromium)', cup,
+        walkOn(cup, witnessReads('back', { phrase: ERR, position: P(cf) })), 'complete'],
+      ['good-cupertino: back "Email edit text" at the field\'s recorded position', cup,
+        walkOn(cup, witnessReads('back', { phrase: 'Email edit text', position: P(cf) })), 'complete'],
+      ['good-cupertino: back the field\'s other form at another position', cup,
+        walkOn(cup, witnessReads('back', { phrase: ERR, position: P(50) })), 'wrong'],
+      ['good-cupertino: back "Email Required Required Required edit text" at its position', cup,
+        walkOn(cup, witnessReads('back', { phrase: WRONG_FORMS[0], position: P(cf) })), 'wrong'],
+      ['good-cupertino: back "" at the field\'s position', cup, walkOn(cup, witnessReads('back', { phrase: '', position: P(cf) })), 'wrong'],
+      ['good-material: back a field form at the position of its stop before the last, a checkbox', 'good-material',
+        walkOn('good-material', witnessReads('back', { phrase: ERR, position: P(allOf('good-material').length - 2) })), 'wrong'],
+      ['bad-cupertino-placeholder: back a field form at the heading\'s position', bad,
+        walkOn(bad, witnessReads('back', { phrase: ER, position: P(headingAt(bad)) })), 'wrong'],
+    ]);
+    // The rules as functions; with no screen given, S16's exactly.
+    const stops = [EXAMPLE_HEADING, ER];
+    const positions = [P(0), P(1)];
+    expect(witnessForwardHolds({ phrase: '', position: P(1) }, stops, positions)).toBe(false);
+    expect(witnessForwardHolds({ phrase: ER, position: P(1) }, stops, positions)).toBe(true);
+    expect(witnessForwardHolds({ phrase: '', position: P(1) }, stops, positions, allOf(bad))).toBe(true);
+    expect(witnessForwardHolds({ phrase: '', position: P(1) }, stops, undefined, allOf(bad))).toBe(false);
+    expect(witnessBackHolds({ phrase: ERR, position: P(0) }, [ER, 'Send button'], positions)).toBe(false);
+    expect(witnessBackHolds({ phrase: ERR, position: P(0) }, [ER, 'Send button'], positions, allOf(cup))).toBe(true);
+  });
+
+  test('judgeWalk takes a re-read only of a field with a hint, at exactly its recorded position', () => {
+    const judge = (slug, rereads, { positions = allOf(slug).map((_, i) => P(i)), gaps = [] } = {}) => judgeWalk(
+      allOf(slug).map(readingOf), true, EXPECTED_STOPS[slug], screenStops(slug), positions, gaps, rereads).verdict;
+    const gm = 'good-material';
+    const g = fieldAt(gm) + 1; // the field, as "after stop K"
+    const faint = 'bad-faint-edge';
+    const ff = fieldAt(faint) + 1;
+    const cases = [
+      ['a re-read of good-material\'s field at its position', judge(gm, [{ after: g, phrase: ER, position: P(g - 1) }]), 'complete'],
+      ['the same, with a gap before it', judge(gm, [{ after: g, phrase: ER, position: P(g - 1) }], { gaps: [1] }), 'incomplete'],
+      ['a re-read at another position', judge(gm, [{ after: g, phrase: ER, position: P(70) }]), 'wrong'],
+      ['a re-read with no positions recorded', judge(gm, [{ after: g, phrase: ER, position: P(g - 1) }], { positions: null }), 'wrong'],
+      ['a re-read in a form no field has', judge(gm, [{ after: g, phrase: WRONG_FORMS[2], position: P(g - 1) }]), 'wrong'],
+      ['a re-read of a stop that is no field (the paragraph)', judge(gm, [{ after: g - 1, phrase: ER, position: P(g - 2) }]), 'wrong'],
+      ['a re-read before any stop', judge(gm, [{ after: 0, phrase: ER, position: START.position }]), 'wrong'],
+      ['a re-read after a stop the walk does not have', judge(gm, [{ after: 99, phrase: ER, position: P(98) }]), 'wrong'],
+      // bad-faint-edge's field reads as a field form, but is no field with
+      // a hint: no re-read of it is taken, with or without a gap.
+      ['a re-read of bad-faint-edge\'s field at its position', judge(faint, [{ after: ff, phrase: ER, position: P(ff - 1) }]), 'wrong'],
+      ['the same, with a gap before it', judge(faint, [{ after: ff, phrase: ER, position: P(ff - 1) }], { gaps: [1] }), 'wrong'],
+    ];
+    for (const [what, verdict, want] of cases) expect(verdict, what).toBe(want);
+  });
+
+  test('the first recording\'s rows pass by these rules, with its re-read marked, and fail with any of these faults', () => {
+    // Never skipped: the first recording is committed; a missing file throws.
+    const round1 = fs.readFileSync(new URL('../docs/evidence/probes/v01/voiceover-web-round1-fail.md.txt', import.meta.url), 'utf8');
+    // Its walk rows as recorded "complete" (it recorded the walks wrong by
+    // the rules of the time).
+    const asComplete = (text) => text.split('\n').map((l) => (/^\| `[a-z-]+-walk-\d+` \|/.test(l)
+      ? l.replace(/ \((?:complete|wrong|incomplete): .*\) \|$/, ' (complete: x) |') : l)).join('\n');
+    // `f` applied to the row named `row` in `browser`'s section only.
+    const edit = (text, browser, row, f) => {
+      let b = null;
+      return text.split('\n').map((l) => {
+        const section = /^## (\S+)$/.exec(l);
+        if (section) [, b] = section;
+        return b === browser && l.startsWith(`| \`${row}\` |`) ? f(l) : l;
+      }).join('\n');
+    };
+    const changed = (text, browser, row, f) => {
+      const out = edit(text, browser, row, f);
+      expect(out, `${browser} ${row} was changed`).not.toBe(text);
+      return out;
+    };
+    const plain = asComplete(round1);
+    const FIELD = '318, 367, 1014, 409'; // bad-cupertino-placeholder's field in Chromium
+    const marked = changed(plain, 'chromium', 'bad-cupertino-placeholder-walk-1-positions',
+      (l) => l.replace(` / ${FIELD} |`, ` / ${rereadAt(FIELD)} |`));
+    expect(judgeTranscript(marked)).toEqual([]);
+    const headingTwice = changed(changed(marked, 'chromium', 'good-caption-walk-1-positions',
+      (l) => l.replace(' / 334, 399, 994, 415 |', ` / ${rereadAt('318, 259, 1006, 287')} / 334, 399, 994, 415 |`)),
+    'chromium', 'good-caption-walk-1', (l) => l.replace('/ heading level 2 Example /', '/ heading level 2 Example / heading level 2 Example /'));
+    const cases = [
+      ['as it was recorded, walks wrong', round1],
+      // The same-position re-read missing from its row: a second stop.
+      ['the re-read not marked on the positions row', plain],
+      ['the re-read\'s reading missing from the walk row, its position marked', changed(marked, 'chromium', 'bad-cupertino-placeholder-walk-1',
+        (l) => l.replace(` / ${ERR} (complete: x) |`, ' (complete: x) |'))],
+      ['the re-read marked at another position', changed(marked, 'chromium', 'bad-cupertino-placeholder-walk-1-positions',
+        (l) => l.replace(rereadAt(FIELD), rereadAt('318, 400, 1014, 442')))],
+      ['the second field reading at another position, not marked', changed(plain, 'chromium', 'bad-cupertino-placeholder-walk-1-positions',
+        (l) => l.replace(` / ${FIELD} |`, ' / 318, 400, 1014, 442 |'))],
+      ['a re-read marked on a stop that is no field (the heading read again)', headingTwice],
+      // The end witness.
+      ['good-cupertino\'s back witness in the other form at another position', changed(marked, 'chromium', 'good-cupertino-walk-1-end',
+        (l) => l.replace(`back "${ERR}" at 318, 335, 1014, 377`, `back "${ERR}" at 318, 300, 1014, 342`))],
+      ['bad-faint-edge\'s forward witness "Email Required edit text"', changed(marked, 'chromium', 'bad-faint-edge-walk-1-end',
+        (l) => l.replace('forward "" at', `forward "${ER}" at`))],
+      ['bad-faint-edge\'s forward witness "" at another position', changed(marked, 'webkit', 'bad-faint-edge-walk-1-end',
+        (l) => l.replace('forward "" at 526, 308, 1228, 364', 'forward "" at 526, 300, 1228, 356'))],
+      ['an empty forward witness on good-material\'s last stop, a button', changed(marked, 'chromium', 'good-material-walk-1-end',
+        (l) => l.replace('forward "Send button"', 'forward ""'))],
+      // The words.
+      ...WRONG_FORMS.map((form) => [`good-material's field read "${form}"`, changed(marked, 'webkit', 'good-material-walk-1',
+        (l) => l.replace(` / ${ERR} / `, ` / ${form} / `))]),
+      ['a heading read "heading level 2 Example Example"', changed(marked, 'chromium', 'good-caption-walk-1',
+        (l) => l.replace('/ heading level 2 Example /', '/ heading level 2 Example Example /'))],
+    ];
+    for (const [what, text] of cases) {
+      expect(judgeTranscript(text).length, what).toBeGreaterThan(0);
+    }
   });
 });

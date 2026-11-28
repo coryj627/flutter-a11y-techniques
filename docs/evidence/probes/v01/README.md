@@ -122,9 +122,25 @@ FL-441.
   of the first evidence run, where the dark "Send me updates" read 4.65:1
   at 0.3 s (4.25:1 before), after which only the 2 s readings are
   asserted.
-- `android_tests.txt` and `android_tests_320x640.txt`: the Android tests
-  at the emulator's own size and at CI's 320 by 640 at 160 dpi.
+- `android_tests.txt` and `android_tests_320x640.txt`: the first version
+  of the Android tests, before review, at the emulator's own size and at
+  CI's 320 by 640 at 160 dpi.
+- `android_tests_native.txt` and `android_tests_320x640_animations_off.txt`:
+  the reviewed Android tests, run by the engineer with
+  `android_runs.sh.txt` under the device lock (not by the evidence run,
+  whose log does not keep the test's measures): at the emulator's own
+  size, then at 320 by 640 at 160 dpi with the three animation scales at
+  0, as CI's runner sets them; the size, the density, and the scales read
+  first, put back, and compared (all the same as before). Each file is the
+  test's own "V01" log lines, per test, from the logcat files Gradle
+  keeps.
 - `ios_tests.txt`: the iOS tests, from the evidence run.
+- `voiceover-web-round1-fail.md.txt` and `.log.txt`: the principal's
+  first web VoiceOver recording, which failed on the text fields' words;
+  `fields_web.txt` (from `fields_web.spec.js.txt` with
+  `fields_web.config.js.txt`): what each field's input carries at rest and
+  with DOM focus, in Chromium and WebKit, and Chromium's accessibility
+  tree.
 - `talkback-android-round1.md.txt`: the first TalkBack walk, with no rows
   yet, from which the rows were written; `voiceover-ios-round1.txt`: the
   first iOS VoiceOver walk, the same way.

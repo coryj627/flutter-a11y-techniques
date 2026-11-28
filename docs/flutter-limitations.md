@@ -2357,6 +2357,33 @@ yet), **Fixed in x.y** (verified on that version).
   it is being edited.
 - Workaround: put the format in helper text and in the field's hint, as
   [F02](techniques/F02.md) `good-helper` does ([FL-140](#fl-140)).
+- Measured in V01 on the web (2026-11-28), and read twice by VoiceOver:
+  - The element (`docs/evidence/probes/v01/fields_web.txt`, from
+    `fields_web.spec.js.txt`; Playwright's Chromium and WebKit, the same in
+    both; the accessibility tree in Chromium only, over the DevTools
+    protocol, which WebKit does not offer). V01 `good-material`'s outlined
+    field, with a label and a hint shown at rest
+    (`floatingLabelBehavior: always`): at rest its input has
+    `aria-label="Email"` and no `placeholder` attribute; given DOM focus,
+    `aria-label="Email\nRequired"` and `placeholder="Required"`, and
+    Chromium's name is "Email Required", from the label and the
+    placeholder. A `CupertinoTextField` with a placeholder (V01
+    `good-cupertino` and `bad-cupertino-placeholder`) has
+    `aria-label="Email\nRequired"` at rest, the placeholder joined to the
+    name, and gains `placeholder="Required"` with focus. A Material field
+    with no hint (`bad-faint-edge`) does not change.
+  - What VoiceOver said (V01's first web recording,
+    `docs/evidence/probes/v01/voiceover-web-round1-fail.md.txt` and
+    `.log.txt`), its cursor giving the field DOM focus: "Email Required
+    Required edit text" for the Material field in Chromium and in WebKit,
+    and for the Cupertino fields "Email Required Required edit text" or,
+    read before the focus, "Email Required edit text", varying within one
+    walk. TalkBack and VoiceOver on iOS did not speak the Material field's
+    hint (V01's transcripts).
+  - The earlier sighting: F02's web transcript reads a field's hint in its
+    name ("Username 4 to 10 characters, no spaces. edit text").
+  - Effect: a screen-reader user hears the hint as part of the field's
+    name, twice, once the field has focus. Not judged as a failure here.
 - Upstream issue: not searched yet (D25).
 
 ## FL-160

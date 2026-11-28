@@ -1,0 +1,59 @@
+#!/bin/sh
+# V01's Android suite under the device lock (throwaway; kept as
+# docs/evidence/probes/v01/android_runs.sh.txt), run from the worktree root:
+# once at the emulator's own size, then at CI's 320 by 640 at 160 dpi with
+# the three animation scales at 0, as CI's runner sets them. Each run's
+# measures, the test's "V01" log lines, are copied from the logcat files
+# Gradle keeps into docs/evidence/probes/v01/. The size, the density, and
+# the scales are read first, put back to what was read, and checked.
+ADB=$HOME/Library/Android/sdk/platform-tools/adb
+OUT=docs/evidence/probes/v01
+RES=build/app/outputs/androidTest-results/connected/debug
+state() {
+  echo "size: $($ADB shell wm size | tr -d '\r' | tr '\n' ' ')"
+  echo "density: $($ADB shell wm density | tr -d '\r' | tr '\n' ' ')"
+  for k in window_animation_scale transition_animation_scale animator_duration_scale; do
+    echo "$k: $($ADB shell settings get global $k | tr -d '\r')"
+  done
+}
+run() { # name
+  rm -rf "$RES"
+  (cd android && ./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process \
+    app:connectedDebugAndroidTest \
+    -Pandroid.testInstrumentationRunnerArguments.class=dev.fluttera11y.flutter_a11y_techniques.V01ColourContrastTest \
+    -Pandroid.testInstrumentationRunnerArguments.timeout_msec=180000) > "build/v01-$1.log" 2>&1
+  rc=$?
+  {
+    echo "# V01 Android tests, $1, $(date '+%Y-%m-%d %H:%M'): gradle exit $rc"
+    grep -E "tests completed|FAILED|BUILD (SUCCESSFUL|FAILED)" "build/v01-$1.log"
+    for f in "$RES"/*/logcat-*.txt; do
+      echo "## $(basename "$f" .txt | sed 's/.*V01ColourContrastTest-//')"
+      grep -E " V01 *: " "$f" | sed 's/^.* V01 *: //'
+    done
+  } > "$OUT/android_tests_$1.txt"
+  echo "$1: gradle exit $rc"
+  return $rc
+}
+echo "== before"; state > build/v01-before.txt; cat build/v01-before.txt
+W=$($ADB shell settings get global window_animation_scale | tr -d '\r')
+T=$($ADB shell settings get global transition_animation_scale | tr -d '\r')
+A=$($ADB shell settings get global animator_duration_scale | tr -d '\r')
+run native; r1=$?
+$ADB shell wm size 320x640
+$ADB shell wm density 160
+for k in window_animation_scale transition_animation_scale animator_duration_scale; do
+  $ADB shell settings put global $k 0
+done
+echo "== set"; state
+run 320x640_animations_off; r2=$?
+$ADB shell wm size reset
+$ADB shell wm density reset
+put() { # key value-read
+  if [ "$2" = null ]; then $ADB shell settings delete global $1 >/dev/null; else $ADB shell settings put global $1 "$2"; fi
+}
+put window_animation_scale "$W"
+put transition_animation_scale "$T"
+put animator_duration_scale "$A"
+echo "== after"; state > build/v01-after.txt; cat build/v01-after.txt
+if cmp -s build/v01-before.txt build/v01-after.txt; then echo "restored: same as before"; else echo "NOT RESTORED"; fi
+exit $((r1 + r2))
