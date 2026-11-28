@@ -7360,7 +7360,7 @@ yet), **Fixed in x.y** (verified on that version).
 - Effect: on the web an app cannot tell from `accessibleNavigation`
   whether a screen reader is running, and an app that turns semantics on
   is told one always is: a timeout lengthened for screen reader users,
-  for example, is lengthened for everyone.
+  for example, would be lengthened for everyone (no such app was built).
 - Reproduce: `/t/V12/good-media-query` says "Accessible navigation: on"
   with no screen reader, and `/t/V12/bad-read-once`, which reads once in
   the first frame, says "off" (`web_tests/v12_accessibility_settings.spec.js`).
@@ -7389,8 +7389,8 @@ yet), **Fixed in x.y** (verified on that version).
     throughout, and the engine has no code that sets them (source read).
     `inverted-colors`, a media feature some browsers report, is not read;
     Playwright cannot set it, so it was not measured.
-- Effect: a user who asks the system for more contrast, without forcing
-  colours, gets none from an app that reads `highContrast`.
+- Effect: an app that reads `highContrast` is not told of a user's
+  request for more contrast made without forcing colours.
 - Reproduce: `/t/V12/good-media-query` in
   `web_tests/v12_accessibility_settings.spec.js`, "prefers-contrast: more
   leaves High contrast: off".
@@ -7423,9 +7423,10 @@ yet), **Fixed in x.y** (verified on that version).
   `prefers-reduced-motion` sets both. So no one flag means "reduce motion"
   on all three platforms.
 - Effect: an app that follows the documented `MediaQuery` flag for
-  animations does not reduce motion for an iOS user who asked for it, and
-  `AnimationController`'s own behaviour, which reads `disableAnimations`,
-  does not change.
+  animations is not told to reduce motion for an iOS user who asked for
+  it (measured: `bad-animations-only`), and `AnimationController`'s own
+  behaviour, which reads `disableAnimations`, would not change (source
+  read; no animation was measured).
 - Reproduce: `/t/V12/bad-animations-only` says "Reduce motion: off" on iOS
   with Reduce Motion on; `/t/V12/good-motion`, which reads both flags,
   says "on".
@@ -7503,9 +7504,12 @@ yet), **Fixed in x.y** (verified on that version).
     Whether the flags would follow a change with the manifest listing them
     was not measured; the engine reads both once, when the bridge is made
     (source read).
-- Effect: a user who turns on Bold text or more contrast while using an
-  app loses where they were in it; one who turns on "High contrast text"
-  gets no high contrast theme.
+- Effect: when a user turns on Bold text or more contrast while using an
+  app, the app's code starts again (`main` runs again), so whatever it
+  held only in memory is gone; what that loses depends on the app and was
+  not measured (the probe has one screen). A user who turns on "High
+  contrast text" gets no high contrast theme (measured: the probe's theme
+  stayed light).
 - Reproduce: `docs/evidence/probes/v12/probe_android.py.txt`; "High
   contrast text" in
   `V12AccessibilitySettingsTest.highContrastTextLeavesHighContrastOff`.

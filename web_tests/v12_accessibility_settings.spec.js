@@ -231,8 +231,12 @@ test.describe('a setting changed while the example is open', () => {
   test('bad-read-once: reduced motion and forced colours turned on, the lines still say off', async ({ page }) => {
     await open(page, 'bad-read-once');
     await page.emulateMedia({ reducedMotion: 'reduce', forcedColors: 'active' });
-    // No witness on this screen shows either change, so the same change is
-    // made on good-media-query in the same page after it, and must show.
+    // The browser has both: the page's own media queries match them.
+    expect(await page.evaluate(() => [
+      matchMedia('(prefers-reduced-motion: reduce)').matches, matchMedia('(forced-colors: active)').matches,
+    ])).toEqual([true, true]);
+    // Nothing on this screen draws either change, so the same change is
+    // then made on good-media-query in the same page, and must show there.
     await page.waitForTimeout(1500);
     expect(await lines(page, 'bad-read-once')).toEqual(OPENED_ONCE);
     await page.emulateMedia({ reducedMotion: 'no-preference', forcedColors: 'none' });
@@ -766,8 +770,7 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
   });
 
   test('the committed recording (docs/evidence/V12/voiceover-web.md) is right, every browser and example once', () => {
-    // Never skipped: a missing file fails here, as it does until the first
-    // recording is made.
+    // Never skipped: a missing file fails here. Recorded 2026-11-28.
     const text = readFileSync(new URL('../docs/evidence/V12/voiceover-web.md', import.meta.url), 'utf8');
     expect(judgeTranscript(text)).toEqual([]);
   });

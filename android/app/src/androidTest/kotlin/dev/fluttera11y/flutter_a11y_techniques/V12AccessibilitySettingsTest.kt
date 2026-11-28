@@ -74,6 +74,8 @@ class V12AccessibilitySettingsTest : TechniqueTest("V12") {
         val original = changes.keys.associateWith { shell("settings get $it") }
         try {
             for ((key, value) in changes) shell("settings put $key $value")
+            // The change took: each reads back as set.
+            for ((key, value) in changes) assertEquals("$key set", value, shell("settings get $key"))
             body()
         } finally {
             for ((key, value) in original) {
@@ -88,6 +90,8 @@ class V12AccessibilitySettingsTest : TechniqueTest("V12") {
         val original = shell("cmd uimode night").substringAfter(":").trim()
         try {
             shell("cmd uimode night yes")
+            // The change took.
+            assertEquals("night mode set", "Night mode: yes", shell("cmd uimode night"))
             body()
         } finally {
             shell("cmd uimode night $original")

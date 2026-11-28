@@ -23,10 +23,14 @@
 // What is judged is what each line says. VoiceOver running does not change
 // it on the web: the web engine's accessible navigation is whether the
 // app's semantics are on (FL-500), and the app turns them on at start. The
-// expected lists are predictions from the web tree spec's measurements
-// (v12_vo_walks.js); no recording has been made yet. They assume that the
-// Mac's own Reduce motion, Increase contrast, and dark appearance are off:
-// a browser follows the system's, and the lines would say so.
+// expected lists were predictions from the web tree spec's measurements
+// (v12_vo_walks.js), and the first recording (recorded 2026-11-28,
+// docs/evidence/V12/voiceover-web.md) read every one as predicted, in
+// Chromium and WebKit, each on its first walk. The browsers' colour scheme,
+// reduced motion, forced colours, and contrast are Playwright's defaults
+// (light, no-preference, none, no-preference: its documented defaults,
+// which this config does not change), not the Mac's: this Mac's appearance
+// was Dark during the recording, and every walk read "Dark mode: off".
 // Each test opens its example in a page of its own, from a fresh load.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';

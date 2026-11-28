@@ -7,9 +7,9 @@
 //
 // What a walk can show: VoiceOver's last phrase is text, so these lists
 // judge what each line says. Which setting a line reports is what the app
-// was told: with nothing changed in the browser, and the Mac's own
-// display and motion settings off, as on this Mac when the recording is
-// made.
+// was told: the browser's media features are Playwright's defaults (light,
+// no reduced motion, no forced colours, no contrast preference), whatever
+// the Mac's own settings are.
 
 import { VO_HELP } from './vo_logic.js';
 
@@ -50,7 +50,9 @@ const REST = [
 // can judge the committed transcripts with it too) after the "Example"
 // heading, to the end of the screen, in order, one entry for each element
 // its cursor stops on. Predicted before any recording, from the page's
-// elements and what the web tree spec measured: good-media-query's
+// elements and what the web tree spec measured, and read as predicted by
+// the first recording (recorded 2026-11-28,
+// docs/evidence/V12/voiceover-web.md), in Chromium and WebKit: good-media-query's
 // accessible navigation is on because the app turns its semantics on at
 // start, with or without a screen reader (FL-500); bad-read-once's is off,
 // because it read the setting in the app's first frame, before the first
@@ -156,8 +158,8 @@ export function helpAfterStop(stops, positions, i) {
  * good-numbered) read every expected stop and then the list's help message
  * after "end of list"; it recorded no positions, so such a walk judges
  * wrong. The rule for a help message is tested only on made-up walks
- * (web_tests/v12_accessibility_settings.spec.js): no V12 walk has been
- * recorded.
+ * (web_tests/v12_accessibility_settings.spec.js): the V12 recording
+ * (recorded 2026-11-28) gave no help message.
  *
  * An empty stop holds the place of the stop expected there: the walks that
  * gave one in S08 (its second and third recordings, WebKit, the screen's

@@ -22,13 +22,13 @@ a flag that the platform never sets.
 | --- | --- | --- |
 | Applies | Applies | Limitation |
 
-These are the engineer's proposal; the principal has not decided them yet
-(section 7, "Platform statuses").
+The principal decided these statuses on 2026-11-28 (section 5,
+"Decisions"); the owner may overrule.
 
 - **Android, applies.** Every flag Android sets reaches `MediaQuery` while
-  the app runs, but two: Bold text and the contrast level, which reach it
-  only because the app is started again
-  ([FL-504](../flutter-limitations.md#fl-504)). `accessibleNavigation` is
+  the app runs, but two: a change of Bold text or of the contrast level
+  starts the app again, and the app's new first frame is told the new
+  value ([FL-504](../flutter-limitations.md#fl-504)). `accessibleNavigation` is
   on for TalkBack, and also for any other service that reads the app's
   nodes, and off in a screen's first frame
   ([FL-503](../flutter-limitations.md#fl-503)); "High contrast text" sets
@@ -38,8 +38,9 @@ These are the engineer's proposal; the principal has not decided them yet
   Animated Images, Larger Text), but four: Bold Text, On/Off Labels,
   Auto-Play Video Previews, and Prefer Non-Blinking Cursor, which reached
   no running app on this simulator, a native UIKit app's included, only a
-  new start.
-  Reduce Motion sets `reduceMotion` only
+  new start (`docs/evidence/probes/v12/ios-round3.txt`, the native app's readings).
+  Reduce Motion sets only `reduceMotion`, the second flag, which
+  `MediaQueryData` does not carry
   ([FL-502](../flutter-limitations.md#fl-502)); `good-motion` reads it.
   Dark mode was not measured: neither tool changed the simulator's
   appearance for any app.
@@ -164,8 +165,22 @@ its one defect is iOS's, as S16's `bad-region-tag` is the web's.
 
 ### Decisions
 
-None yet: the platform statuses are the engineer's proposal (section 7,
-"Platform statuses"), for the principal to decide.
+The principal's, on 2026-11-28, on the engineer's questions; the owner
+may overrule:
+
+1. The web is `PlatformStatus.limitation`, citing FL-500 and FL-501: a
+   contrast preference other than forced colours is not detected, and
+   `accessibleNavigation` does not mean a screen reader is running.
+   Android and iOS apply. On Android a change of Bold text or of the
+   contrast level starts the app again (FL-504); on iOS Reduce Motion
+   needs the second flag, `AccessibilityFeatures.reduceMotion` (FL-502).
+2. The iOS VoiceOver walk judges the 65-character description line by its
+   first 64 characters, the most the service returns; every other
+   expectation of 64 characters or more is refused.
+3. `good-motion` is not a custom solution.
+4. The `onOffSwitchLabels` line says "Switch labels": a "/" would be read
+   as the TalkBack row form's separator. No V12 stop holds " / ", so the
+   web VoiceOver rows need no escaping for it.
 
 ### Not built
 
@@ -193,7 +208,7 @@ None yet: the platform statuses are the engineer's proposal (section 7,
 | L3 iOS | Each list's eight lines, every one off and 100%, and each motion example "off", with VoiceOver off. VoiceOver turned on and off with `XCUIVoiceOverService` while `good-media-query` is open: its line follows, on then off. `bad-read-once`, opened with VoiceOver off, then VoiceOver on: its line still says off for four seconds and every line is unchanged; the witness, `good-media-query` opened by its address in the same running app, says on. Increase Contrast, turned on in the simulator's Settings app and off again: `good-media-query`'s line follows and no other changes; `bad-read-once` stays off, with `good-media-query` opened in the same running app as the witness. Reduce Motion turned on in Settings: `bad-animations-only` stays off for four seconds (its defect, FL-502), and `good-motion`, opened in the same running app, says on, then off again once Reduce Motion is off. Every switch turned on is turned off again, checked, whatever the test found. Each reading after a change is waited for in a bounded loop |
 | L4 TalkBack | TalkBack on before each example opens; focus moved to each line in turn; every row a whole-utterance form (`== A`, `tool/talkback.py`): `good-media-query`'s eight lines with accessible navigation on, `bad-read-once`'s with it off (its first frame, before TalkBack had read a node, FL-503), each motion line "off". Mutation tests in `tool/test_talkback.py`: a line said twice, an added role, the other value, a wrong number, every sibling line in its place. Each walk is judged whole (`walk_strictly`) |
 | L4 VoiceOver iOS | Each example opened with VoiceOver off, then VoiceOver on and a walk from the top of the screen to its end (V12Walk, S16's walk copied): the screen's own stops (the title as a heading, the description, a bad example's defect, the "Example" heading), then exactly the example's lines: `good-media-query` with accessible navigation on, which VoiceOver itself turned on; `bad-read-once` with it off, read before VoiceOver was on. A stop read twice mid-walk fails; the end only with its witness; made-up walks test a duplicate title, a duplicate stop, stale speech at the end, a wrong witness, a walk out of moves, and the judge's refusal of another screen, a missing or empty title, a wrong value, a missing or swapped line, an extra stop, the description whole or cut shorter; every expected utterance is under 64 characters, and the judge refuses one that is not, but the screen's description line, which the app writes from the technique's title and which is 65 characters on a good example's screen ("Good example for Detecting accessibility settings. Widgets layer."): `XCUIVoiceOverService` returns the first 64 characters, so it is judged as exactly those |
-| L4 VoiceOver web | S16's walk and judge, copied whole (`web_tests/vo/v12_vo_walks.js`), and S16's VoiceOver spec with V12's screens. The expected stops are predictions from the web tree spec: `good-media-query` with accessible navigation on, `bad-read-once` off, everything else off and 100%, which assumes the Mac's own appearance, contrast and motion settings are off. The judge's regression cases are S16's, on `good-media-query`'s screen with a made-up content of four stops, one a button (V12's own lines are plain text, and the help-message rule needs a role to tie to); the committed transcript is judged again from its rows by a test that is never skipped, and which fails until the first recording is made |
+| L4 VoiceOver web | S16's walk and judge, copied whole (`web_tests/vo/v12_vo_walks.js`), and S16's VoiceOver spec with V12's screens. The expected stops were predictions from the web tree spec: `good-media-query` with accessible navigation on, `bad-read-once` off, everything else off and 100%; the recording (recorded 2026-11-28) read every one as predicted. The browsers' media features are Playwright's defaults, not the Mac's (section 7). The judge's regression cases are S16's, on `good-media-query`'s screen with a made-up content of four stops, one a button (V12's own lines are plain text, and the help-message rule needs a role to tie to); the committed transcript (recorded 2026-11-28) is judged again from its rows by a test that is never skipped |
 
 What the tests skip or cannot see, and what each gives up:
 
@@ -240,18 +255,18 @@ before (section 7, "Device state").
 | Flag | Android | iOS | Web |
 | --- | --- | --- | --- |
 | `accessibleNavigation` | TalkBack, while running; any service that reads the app's nodes (a UI Automator dump: on, then off 150 ms later; the tree test's own connection: on); off in the first frame with TalkBack already on, on about 0.4 s after it (FL-503) | VoiceOver, while running (and `autoPlayVideos` went false with it) | whether semantics are on: true with no screen reader once the app has called `ensureSemantics`, false before (FL-500) |
-| `boldText` | Bold text (`font_weight_adjustment` 300); the app started again, its first frame told (FL-504) | Bold Text, only at a new start: changed in Settings while the app ran, it was not told, and a native UIKit app was not either (its `UIAccessibility` value, its trait collection, and its notifications, section 7) | never (FL-501) |
+| `boldText` | Bold text (`font_weight_adjustment` 300); the app started again, its first frame told (FL-504) | Bold Text, only at a new start: changed in Settings while the app ran, it was not told, and a native UIKit app was not either (its `UIAccessibility` value, its trait collection, and its notifications: (`docs/evidence/probes/v12/ios-round3.txt`, the native app's readings)) | never (FL-501) |
 | `highContrast` | the contrast level (1.0), the app started again (FL-504); "High contrast text": nothing | Increase Contrast, while running | `forced-colors: active`, while running; `prefers-contrast: more`: nothing (FL-501) |
 | `invertColors` | Colour inversion, while running | Smart Invert, while running | never (FL-501) |
 | `disableAnimations` | the transition animation scale 0 (and "Remove animations", all three 0), while running; the animator duration scale alone: nothing | never (FL-502) | `prefers-reduced-motion: reduce`, while running |
 | `reduceMotion` | never | Reduce Motion, while running | with `disableAnimations` |
-| `onOffSwitchLabels` | never | On/Off Labels, only at a new start, as a native app | never |
+| `onOffSwitchLabels` | never | On/Off Labels, only at a new start, as the native app (`docs/evidence/probes/v12/ios-round3.txt`, the native app's readings) | never |
 | `platformBrightness` | Dark theme, while running | not measured: `XCUIDevice.appearance` and `xcrun simctl ui appearance` set to dark changed nothing, in the probe app or in a native UIKit app (its trait collection stayed light), live or after a new start; a test-tool problem, not Flutter's | `prefers-color-scheme`, while running |
 | `textScaler` | Font size, while running: at 1.5, `scale(14)` 22 and `scale(100)` 100; at 2.0, `scale(14)` 26 | Larger Text (`xcrun simctl ui content_size`), while running: the largest accessibility size gave `scale(100)` 311.8, and back; a native app's content size category followed the same steps | the root font size: 32 px gave 200% |
 | `supportsAnnounce` | false throughout | true | true |
 | `autoPlayAnimatedImages` | true throughout | Auto-Play Animated Images, while running | true throughout |
-| `autoPlayVideos` | true throughout | Auto-Play Video Previews, only at a new start, as a native app; also false while VoiceOver ran (native not measured) | true throughout |
-| `deterministicCursor` | false throughout | Prefer Non-Blinking Cursor, only at a new start, as a native app | false throughout |
+| `autoPlayVideos` | true throughout | Auto-Play Video Previews, only at a new start, as the native app (`docs/evidence/probes/v12/ios-round3.txt`, the native app's readings); also false while VoiceOver ran (native not measured) | true throughout |
+| `deterministicCursor` | false throughout | Prefer Non-Blinking Cursor, only at a new start, as the native app (`docs/evidence/probes/v12/ios-round3.txt`, the native app's readings) | false throughout |
 | text spacing overrides | null | null | a user style sheet's line height, letter and word spacing, and paragraph margin, while running |
 | `semanticsEnabled` | on with TalkBack or a UI Automator connection, off when it closes | on throughout the XCUITest runs | on after `ensureSemantics` |
 
@@ -275,11 +290,13 @@ colour inversion.
   larger) or the good example in the same running app following the same
   change. It also shows FL-500 and FL-503 at work: the first frame of an
   app opened at the example is told accessible navigation is off, on the
-  web (before the first semantics update) and on Android (before TalkBack
-  or the test tool has read a node); so TalkBack read
+  web (before the first semantics update, which is when the web engine
+  turns it on: source read) and on Android (before TalkBack or the test
+  tool has read a node: the probe's timestamps); so TalkBack read
   "Accessible navigation: off" for it while TalkBack was running
-  (`docs/evidence/V12/talkback-android.md`), and VoiceOver on iOS, turned
-  on after it opened, read it the same way.
+  (`docs/evidence/V12/talkback-android.md`), VoiceOver on iOS, turned on
+  after it opened, read it the same way (`docs/evidence/V12/voiceover-ios.md`),
+  and so did VoiceOver in both browsers (`docs/evidence/V12/voiceover-web.md`).
 - **`bad-animations-only`**: on iOS, Reduce Motion on, the line stayed off,
   and `good-motion`, opened in the same running app, said on (tree test).
   On Android and the web both followed (tree tests).
@@ -328,19 +345,18 @@ problem, and dark mode on iOS is not measured.
 Following the owner's rule of 2026-11-23 (where Flutter is measured not
 to meet a requirement on a platform and no documented parameter fixes it,
 the platform is a limitation and has no good example for it), the
-engineer proposes:
+engineer proposed, and the principal decided (section 5, "Decisions"):
 
 1. **Web: limitation**, citing FL-500 (R1) and FL-501 (R2 in part).
 2. **Android: applies.** R1 is met for TalkBack, Switch Access, and Voice
    Access, the services the engine's own comment names; that a test tool
    such as UI Automator turns it on as well is FL-503, and so is the first
-   frame, which `good-media-query` hears the change from. R3: Bold text
-   and the contrast level do reach the app, by its being started again
-   (FL-504), which loses what the user was doing; the principal may judge
-   that R3 is not met there, and Android a limitation.
-3. **iOS: applies**, with dark mode not measured.
-
-These are for the principal to decide.
+   frame, which `good-media-query` hears the change from. A change of Bold
+   text or of the contrast level starts the app again (FL-504): the app's
+   `main` runs again and its new first frame is told the new value; what
+   an app loses by it was not measured (the probe has one screen).
+3. **iOS: applies.** Reduce Motion needs the second flag (FL-502); dark
+   mode was not measured.
 
 ### Device state
 
@@ -375,12 +391,39 @@ anew. Every test that changed a setting through the device (Increase
 Contrast and Reduce Motion in the Settings app, VoiceOver) passed on its
 first run, each switch taking on its first tap. The web tree spec passed
 but for the test that judges the web VoiceOver recording again, which
-fails until that recording is made. The Android tree tests passed at CI's
+failed then because there was no recording; it passes on the recording
+below. The Android tree tests passed at CI's
 320 by 640 at 160 dpi as well, on their first run there (10 tests, the
 TalkBack walk skipped; `docs/evidence/probes/v12/android_320x640.txt`), and
-the size and density were reset afterwards.
+the size and density were reset afterwards. On review each Android setting
+change was made to check that it took (`settings get`, `cmd uimode night`)
+before the example is read; the Android tree tests passed again with it
+(`python3 tool/evidence.py V12 --only android`).
 
-**Not done yet.** The web VoiceOver recording (the principal makes it). Dark mode on
+**The web VoiceOver recording** (recorded 2026-11-28 by the principal,
+`docs/evidence/V12/voiceover-web.md`, 141 s) passed on its first run: 8
+walks of 8, each complete on its first walk, in Playwright's Chromium and
+WebKit builds. Every walk read its screen's title, description, a bad
+example's defect, and the "Example" heading, then every line as
+predicted: `good-media-query` "Accessible navigation: on",
+`bad-read-once` "off", every other line off and 100%, each motion example
+"Reduce motion: off". Every walk's start row read an empty phrase on Back,
+every unresolved-reads row is "none", and every end was witnessed (a move
+back to the stop before the last at another position, a move forward to
+the last again); no help message was read. The web tree spec judges the
+transcript again from its rows, and it passes. The Mac's appearance was
+Dark during the recording (`defaults read -g AppleInterfaceStyle`: Dark,
+read afterwards), and both browsers' walks read "Dark mode: off": the
+browsers' colour scheme is Playwright's documented default, light, which
+the VoiceOver config (`web_tests/vo/playwright.config.js`, with
+Guidepup's `screenReaderConfig`, neither of which sets `colorScheme`) does
+not change; likewise reduced motion, forced colours, and contrast keep
+Playwright's defaults. That the browsers ignored the Mac's appearance is
+shown by the one line; that Playwright's default is what set it rests on
+its documentation (the pinned 1.65.0's `colorScheme`: "Defaults to
+'light'").
+
+**Not done yet.** Dark mode on
 iOS: neither `XCUIDevice.appearance` nor `simctl ui appearance` changed
 the appearance of any app on this simulator. A real iPhone, where Bold
 Text and the three other settings that reached no running app here may
