@@ -6,118 +6,122 @@
 //
 // No test in this file is retried by the runner. The shared config retries
 // a failed test twice, and a retry that passes makes the run pass, so a wrong
-// reading on the first attempt would be hidden. Each test retries instead,
-// itself, only a walk cut short before the end of the screen with every stop
-// right so far, or a walk whose capture failed (a stop read as an empty
-// phrase) with nothing wrong read in it (runWalks and judgeExampleWalk in
-// s11_vo_walks.js, S08's judge). Every walk must read the whole screen, the
-// title and the description, the "Example" heading, and every expected stop
-// after it, each in its place: a wrong stop, or a walk that reached the end
-// with any expected stop not read, fails the test for good, and every try is
-// logged, so every attempt is in the transcript.
+// reading on the first attempt would be hidden. Each test walks again
+// instead, itself, only a walk with nothing wrong read in it whose capture
+// failed: a stop read as an empty phrase, or an unresolved read, a move that
+// read nothing new mid-walk (runWalks, collectWalk, and judgeCollectedWalk
+// in s11_vo_walks.js, S16's). Such a walk never passes, and at most three
+// walks are made. Every walk must read the whole screen, the title and the
+// description, the "Example" heading, and every expected stop after it, each
+// in its place, and its end must be witnessed by a move back and a move
+// forward again. A stop past the last expected one, a wrong stop before or
+// across an unresolved read, a failed witness, a walk that ran out of moves,
+// or one that reached the end with an expected stop not read, fails the test
+// for good, and no later walk is made. Every try is logged with its start
+// capture, the cursor's position at each stop, its unresolved reads, and its
+// end witness, so every attempt is in the transcript.
 //
-// The expected lists were written before any S11 recording, from the order
-// of the elements in the page, which the web tree spec measures
-// (web_tests/s11_reading_traversal_order.spec.js), and from how VoiceOver
-// read headings, text, and buttons in earlier techniques' recordings. The
-// first recording (2026-11-26, with the judge before review,
-// docs/evidence/probes/s11/voiceover-web-round1.md.txt) read exactly these lists in
-// Chromium and WebKit, every walk complete on its first try but WebKit's
-// bad-columns-mixed, whose first walk read the screen's title as an empty
-// phrase and whose second was complete. The second (2026-11-27, the present
-// judge, docs/evidence/S11/voiceover-web.md) read them again, every walk
-// complete on its first try. No help message came in either.
+// VoiceOver's help message ("You are currently on ...") is left out only at
+// the position of a stop already judged whose spoken role is the one it
+// names (helpAfterStop); it stays in the logged row, and the web tree spec's
+// judgeTranscript leaves it out by the same rule, from the positions row.
+// That rule is still tested only on made-up walks: no S11 recording has had
+// a help message. In S16's recording (docs/evidence/S16/voiceover-web.md)
+// the start capture on Back read an empty phrase in all 14 walks, and it did
+// in S17's recordings too (made on S17's own branch); why was not looked
+// into. With an empty start, the first move is compared with "", and any
+// phrase it reads is a stop.
+//
+// The expected lists (EXPECTED_STOPS in s11_vo_walks.js) were written before
+// any S11 recording, from the order of the elements in the page, which the
+// web tree spec measures (web_tests/s11_reading_traversal_order.spec.js),
+// and from how VoiceOver read headings, text, and buttons in earlier
+// techniques' recordings. The first recording (2026-11-26, with the judge
+// before review, docs/evidence/probes/s11/voiceover-web-round1.md.txt) read
+// exactly these lists in Chromium and WebKit, every walk complete on its
+// first try but WebKit's bad-columns-mixed, whose first walk read the
+// screen's title as an empty phrase and whose second was complete. The
+// second (2026-11-27,
+// docs/evidence/probes/s11/voiceover-web-before-judge-update.md.txt) read
+// them again, every walk complete on its first try. No help message came in
+// either. Both were made before the walk took S16's rules, and logged only
+// what follows the "Example" heading of a complete walk, so neither passes
+// judgeTranscript now.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
-import { EXAMPLE_HEADING, judgeExampleWalk, runWalks, screenStops } from './s11_vo_walks.js';
+import {
+  EXPECTED_STOPS, collectWalk, judgeCollectedWalk, positionsText, runWalks, screenStops,
+  startText, stopsText, unresolvedText, witnessText,
+} from './s11_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
 
 /**
- * walkToEnd (vo_helpers.js), keeping the cursor's position at each stop, so
- * that the judge can tie a help message to the stop before it (S08's walk,
- * mirrored). walkToEnd returns no positions, so the walk is made here:
- * walkToEnd with no moves starts it exactly as the shared walk does (from
- * Back, once VoiceOver is quiet), and the moves follow its rule (stopsToEnd
- * in vo_logic.js: a move is a stop when the cursor moved or a new phrase was
- * spoken; two moves in a row that do neither are the end), with
- * `loggedForHelp` as the form techniques use it (phraseForMove). The one
- * difference is that each stop's position is kept. Resolves to
- * `{ stops, positions, reachedEnd }`.
+ * One walk of the screen: walkToEnd with no moves starts it exactly as the
+ * shared walk does (from Back, once VoiceOver is quiet), and collectWalk
+ * (s11_vo_walks.js) captures the phrase and position on Back first, makes
+ * the moves, keeps each stop's cursor position and every unchanged read,
+ * and accepts the end only with its witness, a move back and a move forward
+ * again. A help message VoiceOver gives for a move is replaced by the phrase
+ * Guidepup logged for it (phraseForMove), as the form techniques' walks do;
+ * one that comes anyway is left out by the judge only when it is about the
+ * stop before it, at the same position.
  */
-async function walkWithPositions(page, voiceOver, browserName, max = 40) {
+async function walkOnce(page, voiceOver, browserName, max = 40) {
   await walkToEnd(page, voiceOver, browserName, 0);
-  const stops = [];
-  const positions = [];
-  let position = await cursorBounds();
-  let unmoved = 0;
-  for (let i = 0; i < max; i++) {
-    await voiceOver.next();
+  const capture = async () => {
     let phrase = await lastPhrase();
     if (VO_HELP.test(phrase)) {
       phrase = phraseForMove(phrase, (await voiceOver.lastSpokenPhrase()).replace(/\s+/g, ' ').trim());
     }
-    const now = await cursorBounds();
-    const spokeAnew = phrase !== '' && stops.length > 0 && phrase !== stops[stops.length - 1];
-    if (now === position && !spokeAnew) {
-      unmoved++;
-      if (unmoved === 2) return { stops, positions, reachedEnd: true };
-      continue;
-    }
-    unmoved = 0;
-    position = now;
-    stops.push(phrase);
-    positions.push(now);
-  }
-  return { stops, positions, reachedEnd: false };
+    return { phrase, position: await cursorBounds() };
+  };
+  return collectWalk({
+    next: () => voiceOver.next(),
+    previous: () => voiceOver.previous(),
+    capture,
+    // The capture before the first move, on Back, which the first move is
+    // compared with like every other.
+    start: await capture(),
+    max,
+  });
 }
 
-const ROUTE = ['heading level 3 Route', 'Park at the gate.', 'Climb the ridge.', 'Walk back.', 'Save route button'];
-const BRING = ['heading level 3 Bring', 'Water', 'A map', 'Save list button'];
-const COUNTS = ['Route saves: 0', 'List saves: 0'];
-
-// slug -> everything VoiceOver speaks after the "Example" heading, to the
-// end of the screen, in order, one entry for each element its cursor stops
-// on. Because every stop is listed, the lists also show the order.
-const EXAMPLES = {
-  // One column, then the other.
-  'good-columns': [...ROUTE, ...BRING, ...COUNTS],
-  'good-sort-keys': [...ROUTE, ...BRING, ...COUNTS],
-  // Bad examples: the defect must be audible. Row by row, both titles
-  // first, as the page's order is in Chromium at the default window.
-  'bad-columns-mixed': [
-    ROUTE[0], BRING[0], ROUTE[1], BRING[1], ROUTE[2], BRING[2], ROUTE[3], ROUTE[4], BRING[3], ...COUNTS,
-  ],
-  // The Bring title second, then the route, then the list with no title.
-  'bad-key-missing': [ROUTE[0], BRING[0], ...ROUTE.slice(1), ...BRING.slice(1), ...COUNTS],
-};
-
-for (const [slug, expected] of Object.entries(EXAMPLES)) {
+for (const [slug, expected] of Object.entries(EXPECTED_STOPS)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
     await page.goto(`/#/t/S11/${slug}`, { waitUntil: 'load' });
     await expect(page.getByRole('heading', { name: 'Example', exact: true, level: 2 })).toBeVisible();
     await page.waitForTimeout(600);
-    let positions;
+    let latest;
     const { verdict, reason, walks } = await runWalks(
-      // A help message VoiceOver gives for a move is replaced by the phrase
-      // Guidepup logged for it (phraseForMove); one that comes anyway is
-      // left out by the judge only when it is about the stop before it, at
-      // the same position.
       async () => {
-        const walk = await walkWithPositions(page, voiceOver, browserName, 40);
-        positions = walk.positions;
-        return walk;
+        latest = await walkOnce(page, voiceOver, browserName, 40);
+        return latest;
       },
-      (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, screenStops(slug), positions),
+      // A failed end witness is wrong for good, and an unresolved read
+      // makes the walk incomplete (judgeCollectedWalk).
+      () => judgeCollectedWalk(latest, expected, screenStops(slug)),
       {
         log: (walk, stops, judged) => {
-          // A complete walk read the screen's own stops exactly as listed,
-          // so only what follows the heading is shown; any other try is
-          // shown whole.
-          const start = stops.indexOf(EXAMPLE_HEADING);
-          const shown = (judged.verdict === 'complete' ? stops.slice(start + 1) : stops).join(' / ') || '(nothing)';
+          // Every try is logged whole, the screen's own stops and any help
+          // message included, so that the committed transcript keeps each
+          // walk's browser, example, try, and every stop it read, as
+          // stopsText writes them: an empty phrase "(empty)", a walk with
+          // no stops "(nothing)", and "/" in a stop "\/". Every walk logs
+          // its start capture (`<slug>-walk-<n>-start`), the cursor's
+          // position at each stop
+          // (`-positions`), and its unresolved reads (`-unresolved`, "none"
+          // or each); a walk that read its end witness logs it (`-end`).
+          // judgeTranscript in s11_vo_walks.js reads them back, and
+          // web_tests/s11_hiding_content.spec.js judges the committed
+          // transcript again from these rows alone.
+          const shown = stopsText(stops);
           console.log(`S11VO ${browserName} ${slug}-walk-${walk} | ${shown} (${judged.verdict}: ${judged.reason})`);
+          console.log(`S11VO ${browserName} ${slug}-walk-${walk}-start | ${startText(latest.start)}`);
+          console.log(`S11VO ${browserName} ${slug}-walk-${walk}-positions | ${positionsText(latest.positions)}`);
+          if (latest.witness) console.log(`S11VO ${browserName} ${slug}-walk-${walk}-end | ${witnessText(latest.witness)}`);
+          console.log(`S11VO ${browserName} ${slug}-walk-${walk}-unresolved | ${unresolvedText(latest.unresolved)}`);
         },
       });
     expect(verdict, `${slug}, walk ${walks}: ${reason}`).toBe('complete');
