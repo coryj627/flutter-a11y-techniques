@@ -1,0 +1,5 @@
+ancestors: id=6 dir=TextDirection.ltr label="r01 A0" rect=Rect.fromLTRB(0.0, 0.0, 85.5, 20.0) <- id=4 dir=null label="" rect=Rect.fromLTRB(0.0, 0.0, 800.0, 208.0) <- id=3 dir=null label="" rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) <- id=2 dir=null label="" rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) <- id=1 dir=TextDirection.ltr label="" rect=Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) <- id=0 dir=null label="" rect=Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+r01 rtl app order: r01 / Before r01 / r01 B0 / r01 A0 / r01 B1 / r01 A1 / r01 B2 / r01 A2 / r01 A3 / After r01: 
+r02 rtl app order: r02 / Before r02 / r02 B0\nr02 B1\nr02 B2 / r02 A0\nr02 A1\nr02 A2\nr02 A3 / After r02: 
+r14 rtl app order: r14 / Before r14 / r14 B0\nr14 B1\nr14 B2 / r14 A0\nr14 A1\nr14 A2\nr14 A3 / After r14: 
+r16 rtl app order: r16 / Before r16 / r16 B0 / r16 B1 / r16 B2 / r16 A0 / r16 A1 / r16 A2 / r16 A3 / After r16: 

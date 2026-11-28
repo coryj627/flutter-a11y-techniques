@@ -94,6 +94,7 @@ example is added without a decision.
 | [S08 List semantics](#s08-list-semantics) | 4 | 0 | 0 | 4 |
 | [S09 Content grouping](#s09-content-grouping) | 4 | 0 | 1 | 3 |
 | [S10 Content group replacement](#s10-content-group-replacement) | 3 | 0 | 0 | 3 |
+| [S11 Reading and traversal order](#s11-reading-and-traversal-order) | 2 | 0 | 0 | 2 |
 | [S12 Hiding content from AT](#s12-hiding-content-from-at) | 3 | 0 | 0 | 3 |
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
@@ -102,7 +103,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 144 | 51 | 13 | 80 |
+| All | 146 | 51 | 13 | 82 |
 
 ## C01 Button
 
@@ -450,6 +451,15 @@ Nothing flagged.
 | `good-exclude-semantics` | Nothing: `Semantics(label:, excludeSemantics: true)` round the rating's pieces, the documented property for replacing all child semantics with one node, its label worked out from the shown values; a `TextButton` with a focus outline through its own `style` | `Semantics.excludeSemantics` | A faint focus tint on a `TextButton` ([FL-430](flutter-limitations.md#fl-430)), filled with its `style` | R1, R2, R3: Android View Content Group Replacement, Android Compose Content Group Replacement, Flutter's Semantics.excludeSemantics documentation | not custom |
 | `good-hidden-pieces` | Nothing: `MergeSemantics` round `Semantics(label:)`, with each piece in `ExcludeSemantics` | `MergeSemantics`, `ExcludeSemantics` | none | R1, R2: Android Compose Content Group Replacement | not custom |
 | `good-stars` | Nothing: `Semantics(label:, excludeSemantics: true)` round star `Icon`s and two texts | `Semantics.excludeSemantics` | none | R1, R2: Android View Content Group Replacement, Android Compose Content Group Replacement | not custom |
+
+## S11 Reading and traversal order
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-columns` | Nothing: `Semantics(container: true, explicitChildNodes: true)` and a `FocusTraversalGroup` round each `Column`, `TextButton`s with a focus outline from their own `style` | `Semantics.container`, `FocusTraversalGroup` | none | R1, R2, R4, R5: iOS Reading Order, Android View Accessibility Reading Order, Android Compose Accessibility Traversal Order, Understanding 1.3.2, Understanding 2.4.3 | not custom |
+| `good-sort-keys` | Nothing: `Semantics(container: true, sortKey: OrdinalSortKey(n))` on every part, as the `sortKey` documentation describes ("the position of this node among its siblings") | `Semantics.sortKey`, `OrdinalSortKey` | A part with no key is not sorted with the others ([FL-340](flutter-limitations.md#fl-340)), filled by giving every part its key | R1, R3, R4, R5: iOS Reading Order, iOS Accessibility Sort Priority, Android Compose Accessibility Traversal Order, Understanding 1.3.2, Understanding 2.4.3 | not custom |
 
 ## S12 Hiding content from AT
 

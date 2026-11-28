@@ -555,7 +555,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S12", "S16"})
+        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S11", "S12", "S16"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
@@ -713,6 +713,157 @@ class C06SilentClicks(unittest.TestCase):
         self.assertEqual(self.judge(speech), ("right", []))
 
 
+class S11OrderedWalk(unittest.TestCase):
+    """S11's walk moves TalkBack with its own "next" key and logs a marker
+    before each press (S11ReadingTraversalOrderTest.talkBackWalk), so each
+    row is what TalkBack said after one move. A row must name the part
+    meant there and no other part, so a walk that moves in a different
+    order is wrong, not only one that says the wrong words."""
+    PREFIX = "s11-"
+
+    def setUp(self):
+        self.expected = [i for i in tb.EXPECT if i.startswith(self.PREFIX)]
+        self.assertEqual(len(self.expected), 44)
+        self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
+        self.right = {i: self.utterances(i) for i in self.expected}
+
+    @staticmethod
+    def utterances(ident):
+        """The whole utterances a row expects, from its one "== A / B"
+        phrase (S06's whole-utterance form, tb.said)."""
+        (phrase,) = tb.EXPECT[ident][0]
+        assert phrase.startswith("== "), phrase
+        return phrase[len("== "):].split(" / ")
+
+    def judge(self, speech):
+        cut, closed = {}, set()
+        spoken = tb.parse_speech(log_for(speech), cut, closed)
+        return tb.judge_walk(spoken, self.expected, cut, closed)
+
+    def test_the_right_walk_is_right(self):
+        self.assertEqual(self.judge(self.right), ("right", []))
+
+    def test_good_columns_read_across_the_columns_is_wrong(self):
+        # TalkBack moving row by row through good-columns, as it does
+        # through bad-columns-mixed: the second row says "Bring".
+        speech = dict(self.right)
+        for n in range(1, 12):
+            speech[f"s11-good-columns-{n}"] = self.utterances(f"s11-bad-columns-mixed-{n}")
+        verdict, reasons = self.judge(speech)
+        self.assertEqual(verdict, "wrong")
+        self.assertTrue(any(r.startswith("s11-good-columns-2:") for r in reasons), reasons)
+
+    def test_two_stops_the_other_way_round_are_wrong(self):
+        speech = dict(self.right)
+        speech["s11-good-sort-keys-2"], speech["s11-good-sort-keys-3"] = (
+            self.right["s11-good-sort-keys-3"], self.right["s11-good-sort-keys-2"])
+        self.assertEqual(self.judge(speech)[0], "wrong")
+
+    def test_a_count_does_not_pass_for_a_heading_or_a_button(self):
+        # "Route saves: 0" holds "Route" and "saves": it must not pass as
+        # the Route heading, nor as Save route.
+        speech = dict(self.right)
+        speech["s11-good-columns-1"] = ["Route saves: 0"]
+        self.assertEqual(self.judge(speech)[0], "wrong")
+        speech = dict(self.right)
+        speech["s11-good-columns-5"] = ["Route saves: 0"]
+        self.assertEqual(self.judge(speech)[0], "wrong")
+
+    def test_a_sibling_whose_label_overlaps_is_caught(self):
+        # Codex's cases: labels that hold each other ("Route" is in "Save
+        # route" and in "Route saves: 0") must still fail a row they are
+        # heard in, beside the row's own reading.
+        for row, extra in [
+            ("s11-good-columns-1", ["Save route", "Button"]),
+            ("s11-good-columns-1", ["Route saves: 0"]),
+            ("s11-good-columns-10", ["Route", "Heading"]),
+            ("s11-good-columns-5", ["Route", "Heading"]),
+        ]:
+            speech = dict(self.right)
+            speech[row] = self.right[row] + extra
+            verdict, reasons = self.judge(speech)
+            self.assertEqual(verdict, "wrong", (row, extra))
+            self.assertTrue(any(r.startswith(f"{row}:") for r in reasons), reasons)
+
+    def test_every_other_parts_reading_fails_every_row(self):
+        # Each part's whole reading, as TalkBack gives it, heard after the
+        # row's own reading in any row of any example, fails that row.
+        readings = {tuple(self.utterances(i)) for i in self.expected}
+        for row in self.expected:
+            for reading in readings:
+                if list(reading) == self.right[row]:
+                    continue
+                speech = dict(self.right)
+                speech[row] = self.right[row] + list(reading)
+                self.assertEqual(self.judge(speech)[0], "wrong", (row, reading))
+
+    def labels(self):
+        """Every part's label, the first utterance of its reading."""
+        return sorted({self.utterances(i)[0] for i in self.expected})
+
+    def test_every_other_label_alone_fails_every_row(self):
+        # Codex's second review: "Route" said as a fragment of its own beside
+        # "Save route" or "Route saves: 0" must fail, as must every other
+        # label, before or after the row's own utterances.
+        for row in self.expected:
+            own = self.right[row][0]
+            for label in self.labels():
+                if label == own:
+                    continue
+                for speech_row in (self.right[row] + [label], [label] + self.right[row]):
+                    speech = dict(self.right)
+                    speech[row] = speech_row
+                    self.assertEqual(self.judge(speech)[0], "wrong", (row, speech_row))
+
+    def test_every_other_label_joined_to_the_rows_own_fails(self):
+        for row in self.expected:
+            own = self.right[row][0]
+            for label in self.labels():
+                if label == own:
+                    continue
+                for joined in (f"{own} {label}", f"{label} {own}", f"{own}, {label}"):
+                    speech = dict(self.right)
+                    speech[row] = [joined] + self.right[row][1:]
+                    self.assertEqual(self.judge(speech)[0], "wrong", (row, joined))
+
+    def test_route_alone_beside_save_route_or_route_saves(self):
+        for row in ("s11-good-columns-5", "s11-good-columns-10", "s11-bad-key-missing-6"):
+            speech = dict(self.right)
+            speech[row] = self.right[row] + ["Route"]
+            verdict, reasons = self.judge(speech)
+            self.assertEqual(verdict, "wrong", row)
+            self.assertTrue(any(r.startswith(f"{row}:") for r in reasons), reasons)
+
+    def test_the_keyboard_usage_hint_is_part_of_a_button_row(self):
+        # With a keyboard attached TalkBack says "Press select to activate"
+        # after a button, in every button row of both recordings; S06's form
+        # lets "Double-tap to activate" through once at the end.
+        speech = dict(self.right)
+        self.assertEqual(speech["s11-good-columns-5"], ["Save route", "Button", "Press select to activate"])
+        speech["s11-good-columns-9"] = ["Save list", "Button", "Press select to activate", "Double-tap to activate"]
+        self.assertEqual(self.judge(speech), ("right", []))
+        for row in ("s11-good-columns-5", "s11-bad-columns-mixed-9"):
+            short = dict(self.right)
+            short[row] = self.right[row][:2]
+            self.assertEqual(self.judge(short)[0], "wrong", row)
+
+    def test_the_committed_transcript_judges_right(self):
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "docs", "evidence",
+                            "S11", "talkback-android.md")
+        speech = {}
+        with open(path, encoding="utf-8") as transcript:
+            for line in transcript:
+                m = re.match(r"\| `(s11-[^`]+)` \| (.*) \|$", line.rstrip("\n"))
+                if m:
+                    speech[m.group(1)] = m.group(2).split(" / ")
+        self.assertEqual(sorted(speech), sorted(self.expected))
+        self.assertEqual(self.judge(speech), ("right", []))
+
+    def test_a_press_that_moved_nothing_is_incomplete(self):
+        # Nothing said after a press: walked again, never passed.
+        speech = dict(self.right)
+        speech["s11-bad-key-missing-4"] = []
+        self.assertEqual(self.judge(speech), ("incomplete", ["s11-bad-key-missing-4: nothing was spoken"]))
 class S06WholeUtterances(unittest.TestCase):
     """S06 judges a screen's title as a whole utterance ("== A / B" and
     "^= A" in said()), because "Orders" is inside "Open orders". The cases

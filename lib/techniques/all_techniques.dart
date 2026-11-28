@@ -34,6 +34,7 @@ import 's06_screen_titles/s06_screen_titles.dart';
 import 's08_list_semantics/s08_list_semantics.dart';
 import 's09_content_grouping/s09_content_grouping.dart';
 import 's10_content_group_replacement/s10_content_group_replacement.dart';
+import 's11_reading_traversal_order/s11_reading_traversal_order.dart';
 import 's12_hiding_content/s12_hiding_content.dart';
 import 's13_roles_and_traits/s13_roles_and_traits.dart';
 import 's14_values_and_state_descriptions/s14_values_and_state_descriptions.dart';
@@ -79,6 +80,7 @@ final List<Technique> allTechniques = [
   s08ListSemantics,
   s09ContentGrouping,
   s10ContentGroupReplacement,
+  s11ReadingTraversalOrder,
   s12HidingContent,
   s13RolesAndTraits,
   s14ValuesAndStateDescriptions,

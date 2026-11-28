@@ -1,0 +1,66 @@
+// S11 probe, round 2 in widget tests (throwaway; kept as
+// docs/evidence/probes/s11/probe2_test.dart.txt): which ancestors of a
+// fixture's parts carry a text direction (the direction their children are
+// sorted in), and the order of r01, r02, r14 and r16 in an app that is
+// right-to-left as a whole.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+List<String> order(WidgetTester tester, String id) {
+  final out = <String>[];
+  void visit(SemanticsNode node) {
+    final l = node.label.replaceAll('\n', r'\n');
+    if (l.contains(id)) out.add(l);
+    for (final k in node.debugListChildrenInOrder(
+      DebugSemanticsDumpOrder.traversalOrder,
+    )) {
+      visit(k);
+    }
+  }
+
+  visit(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!);
+  return out;
+}
+
+void main() {
+  testWidgets('ancestors of r01 A0', (tester) async {
+    final handle = tester.ensureSemantics();
+    await tester.pumpWidget(
+      MaterialApp(home: FixtureScreen(ids: const ['r01'])),
+    );
+    await tester.pumpAndSettle();
+    SemanticsNode? n = tester.getSemantics(find.text('r01 A0'));
+    final chain = <String>[];
+    while (n != null) {
+      chain.add(
+        'id=${n.id} dir=${n.textDirection} label="${n.label}" '
+        'rect=${n.rect}',
+      );
+      n = n.parent;
+    }
+    debugPrint('S11PROBE2 ancestors: ${chain.join(' <- ')}');
+    handle.dispose();
+  });
+  for (final id in ['r01', 'r02', 'r14', 'r16']) {
+    testWidgets('$id in a right-to-left app', (tester) async {
+      tester.view.physicalSize = const Size(412, 915);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) =>
+              Directionality(textDirection: TextDirection.rtl, child: child!),
+          home: FixtureScreen(ids: [id]),
+        ),
+      );
+      await tester.pumpAndSettle();
+      debugPrint(
+        'S11PROBE2 $id rtl app order: ${order(tester, id).join(' / ')}',
+      );
+      handle.dispose();
+    });
+  }
+}

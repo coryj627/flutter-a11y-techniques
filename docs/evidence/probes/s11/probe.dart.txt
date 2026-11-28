@@ -1,0 +1,331 @@
+// S11 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s11/probe.dart.txt): the order in which screen
+// readers and the keyboard move through side-by-side content, by default
+// and with each of Flutter's ordering parameters. One fixture per route,
+// `/r01` to `/r20`; `/` lists them all.
+//
+// Each fixture sits between a "Before rNN" text and an "After rNN" text.
+// Its parts are named "rNN A0", "rNN A1", ... for the left column (A0 is
+// the column's title) and "rNN B0", ... for the right one, so that any
+// order read out can be told at a glance. Fixtures with buttons count the
+// presses in the "After" line.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      onGenerateRoute: (settings) {
+        final name = (settings.name ?? '/').replaceFirst('/', '');
+        final page = fixtures.containsKey(name)
+            ? FixtureScreen(ids: [name])
+            : FixtureScreen(ids: fixtures.keys.toList());
+        return MaterialPageRoute<void>(settings: settings, builder: (_) => page);
+      },
+    );
+  }
+}
+
+typedef Build = Widget Function(String id, void Function(String) press);
+
+const _a = 4; // A0 (title) to A3
+const _b = 3; // B0 (title) to B2
+
+Widget t(String id, String part, {double? height}) {
+  final text = Text('$id $part');
+  return height == null ? text : SizedBox(height: height, child: text);
+}
+
+/// A column of [n] parts named [col]0 .. [col]n-1.
+List<Widget> parts(String id, String col, int n, {double? height}) => [
+  for (var i = 0; i < n; i++) t(id, '$col$i', height: height),
+];
+
+Widget column(List<Widget> children, {double spacing = 8}) => Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  spacing: spacing,
+  children: children,
+);
+
+Widget two(Widget left, Widget right) => Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  spacing: 16,
+  children: [
+    Expanded(child: left),
+    Expanded(child: right),
+  ],
+);
+
+Widget container(Widget child, {SemanticsSortKey? key, bool explicit = false}) =>
+    Semantics(container: true, explicitChildNodes: explicit, sortKey: key, child: child);
+
+Widget keyed(double n, Widget child, {bool asContainer = true}) => asContainer
+    ? Semantics(container: true, sortKey: OrdinalSortKey(n), child: child)
+    : Semantics(sortKey: OrdinalSortKey(n), child: child);
+
+Widget button(String id, String part, void Function(String) press) =>
+    TextButton(onPressed: () => press(part), child: Text('$id $part'));
+
+/// The parts of the two columns built row by row: a Row per line, the left
+/// part and the right one, so that no widget holds a column. [wrap] is
+/// given each part and its place in the meant order (A first, then B).
+Widget rowBuilt(
+  String id, {
+  Widget Function(Widget part, double order, String name)? wrap,
+}) {
+  Widget cell(String col, int i) {
+    final has = col == 'A' ? i < _a : i < _b;
+    if (!has) return const SizedBox.shrink();
+    final order = col == 'A' ? 1.0 + i : 1.0 + _a + i;
+    final part = t(id, '$col$i');
+    return wrap == null ? part : wrap(part, order, '$col$i');
+  }
+
+  return column([
+    for (var i = 0; i < _a; i++) two(cell('A', i), cell('B', i)),
+  ]);
+}
+
+final Map<String, (String, Build)> fixtures = {
+  'r01': (
+    'Two columns, a Row of two Columns of texts, level rows 8 apart, no container',
+    (id, press) => two(column(parts(id, 'A', _a)), column(parts(id, 'B', _b))),
+  ),
+  'r02': (
+    'r01 with Semantics(container: true) round each column',
+    (id, press) => two(
+      container(column(parts(id, 'A', _a))),
+      container(column(parts(id, 'B', _b))),
+    ),
+  ),
+  'r03': (
+    'r01 with the left parts 40 high and the right parts 24 high (rows not level), no container',
+    (id, press) => two(
+      column(parts(id, 'A', _a, height: 40)),
+      column(parts(id, 'B', _b, height: 24)),
+    ),
+  ),
+  'r04': (
+    'r01 with no space between the parts (each touches the next), no container',
+    (id, press) => two(
+      column(parts(id, 'A', _a), spacing: 0),
+      column(parts(id, 'B', _b), spacing: 0),
+    ),
+  ),
+  'r05': (
+    'Built row by row: a Row per line (left part, right part), no keys',
+    (id, press) => rowBuilt(id),
+  ),
+  'r06': (
+    'r05 with Semantics(container: true, sortKey: OrdinalSortKey(n)) on every part, A 1-4, B 5-7',
+    (id, press) => rowBuilt(id, wrap: (p, n, _) => keyed(n, p)),
+  ),
+  'r07': (
+    'r06 with Semantics(sortKey:) and no container',
+    (id, press) => rowBuilt(id, wrap: (p, n, _) => keyed(n, p, asContainer: false)),
+  ),
+  'r08': (
+    'r06 with B0 given no key',
+    (id, press) => rowBuilt(id, wrap: (p, n, name) => name == 'B0' ? p : keyed(n, p)),
+  ),
+  'r09': (
+    'r06 with each keyed part inside a MergeSemantics (as TestId does)',
+    (id, press) => rowBuilt(id, wrap: (p, n, _) => MergeSemantics(child: keyed(n, p))),
+  ),
+  'r10': (
+    'Two containers in a Row, the left one OrdinalSortKey(1), the right one OrdinalSortKey(0): the right column first',
+    (id, press) => two(
+      container(column(parts(id, 'A', _a)), key: const OrdinalSortKey(1)),
+      container(column(parts(id, 'B', _b)), key: const OrdinalSortKey(0)),
+    ),
+  ),
+  'r11': (
+    'r10 with a TextButton at the end of each column',
+    (id, press) => two(
+      container(
+        column([...parts(id, 'A', _a), button(id, 'A btn', press)]),
+        key: const OrdinalSortKey(1),
+      ),
+      container(
+        column([...parts(id, 'B', _b), button(id, 'B btn', press)]),
+        key: const OrdinalSortKey(0),
+      ),
+    ),
+  ),
+  'r12': (
+    'r11 inside FocusTraversalGroup(policy: OrderedTraversalPolicy()), each column a FocusTraversalGroup with FocusTraversalOrder (B 1, A 2)',
+    (id, press) => FocusTraversalGroup(
+      policy: OrderedTraversalPolicy(),
+      child: two(
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(2),
+          child: FocusTraversalGroup(
+            child: container(
+              column([...parts(id, 'A', _a), button(id, 'A btn', press)]),
+              key: const OrdinalSortKey(1),
+            ),
+          ),
+        ),
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(1),
+          child: FocusTraversalGroup(
+            child: container(
+              column([...parts(id, 'B', _b), button(id, 'B btn', press)]),
+              key: const OrdinalSortKey(0),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+  'r13': (
+    'r01 with the left column Semantics(container: true, traversalParentIdentifier:) and a text below the Row with traversalChildIdentifier: the same value',
+    (id, press) => column([
+      two(
+        Semantics(
+          container: true,
+          traversalParentIdentifier: '$id-a',
+          child: column(parts(id, 'A', _a)),
+        ),
+        container(column(parts(id, 'B', _b))),
+      ),
+      Semantics(traversalChildIdentifier: '$id-a', child: t(id, 'A9 grafted')),
+    ]),
+  ),
+  'r14': (
+    'r02 inside Directionality(textDirection: TextDirection.rtl)',
+    (id, press) => Directionality(
+      textDirection: TextDirection.rtl,
+      child: two(
+        container(column(parts(id, 'A', _a))),
+        container(column(parts(id, 'B', _b))),
+      ),
+    ),
+  ),
+  'r15': (
+    'r02 with a TextButton at the end of each column and no focus group (containers only)',
+    (id, press) => two(
+      container(column([...parts(id, 'A', _a), button(id, 'A btn', press)])),
+      container(column([...parts(id, 'B', _b), button(id, 'B btn', press)])),
+    ),
+  ),
+  'r16': (
+    'r02 with explicitChildNodes: true on each container',
+    (id, press) => two(
+      container(column(parts(id, 'A', _a)), explicit: true),
+      container(column(parts(id, 'B', _b)), explicit: true),
+    ),
+  ),
+  'r17': (
+    'r14 with Semantics(container: true, explicitChildNodes: true, textDirection: TextDirection.rtl) round the Row',
+    (id, press) => Directionality(
+      textDirection: TextDirection.rtl,
+      child: Semantics(
+        container: true,
+        explicitChildNodes: true,
+        textDirection: TextDirection.rtl,
+        child: two(
+          container(column(parts(id, 'A', _a)), explicit: true),
+          container(column(parts(id, 'B', _b)), explicit: true),
+        ),
+      ),
+    ),
+  ),
+  'r18': (
+    'r10 with explicitChildNodes: true on each container (the right column first, its parts apart)',
+    (id, press) => two(
+      container(column(parts(id, 'A', _a)), key: const OrdinalSortKey(1), explicit: true),
+      container(column(parts(id, 'B', _b)), key: const OrdinalSortKey(0), explicit: true),
+    ),
+  ),
+  'r19': (
+    'r12 with explicitChildNodes: true on each container',
+    (id, press) => FocusTraversalGroup(
+      policy: OrderedTraversalPolicy(),
+      child: two(
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(2),
+          child: FocusTraversalGroup(
+            child: container(
+              column([...parts(id, 'A', _a), button(id, 'A btn', press)]),
+              key: const OrdinalSortKey(1),
+              explicit: true,
+            ),
+          ),
+        ),
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(1),
+          child: FocusTraversalGroup(
+            child: container(
+              column([...parts(id, 'B', _b), button(id, 'B btn', press)]),
+              key: const OrdinalSortKey(0),
+              explicit: true,
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+  'r20': (
+    'r16 with a TextButton at the end of each column, each column also a FocusTraversalGroup',
+    (id, press) => two(
+      FocusTraversalGroup(
+        child: container(column([...parts(id, 'A', _a), button(id, 'A btn', press)]), explicit: true),
+      ),
+      FocusTraversalGroup(
+        child: container(column([...parts(id, 'B', _b), button(id, 'B btn', press)]), explicit: true),
+      ),
+    ),
+  ),
+};
+
+class FixtureScreen extends StatefulWidget {
+  const FixtureScreen({super.key, required this.ids});
+
+  final List<String> ids;
+
+  @override
+  State<FixtureScreen> createState() => _FixtureScreenState();
+}
+
+class _FixtureScreenState extends State<FixtureScreen> {
+  final presses = <String, List<String>>{};
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.ids.length == 1 ? widget.ids.single : 'S11 probe')),
+      body: FocusTraversalGroup(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 16,
+            children: [
+              for (final id in widget.ids) ...[
+                Text('Before $id'),
+                fixtures[id]!.$2(id, (part) {
+                  debugPrint('S11PROBE PRESS $id $part');
+                  setState(() => (presses[id] ??= []).add(part));
+                }),
+                Semantics(
+                  identifier: '$id-after',
+                  child: Text('After $id: ${(presses[id] ?? const []).join(',')}'),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

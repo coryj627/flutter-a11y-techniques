@@ -1,0 +1,207 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420; TalkBack versionName=17.0.0.889642762
+==== r01 tree
+                   | android.view.View | "Before r01" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r01 A0" Rect(42, 426 - 153, 478) after="Before r01" before="-" focusable=true children=0
+                   | android.view.View | "r01 B0" Rect(561, 426 - 671, 478) after="r01 A0" before="-" focusable=true children=0
+                   | android.view.View | "r01 A1" Rect(42, 499 - 153, 552) after="r01 B0" before="-" focusable=true children=0
+                   | android.view.View | "r01 B1" Rect(561, 499 - 671, 552) after="r01 A1" before="-" focusable=true children=0
+                   | android.view.View | "r01 A2" Rect(42, 573 - 153, 625) after="r01 B1" before="-" focusable=true children=0
+                   | android.view.View | "r01 B2" Rect(561, 573 - 671, 625) after="r01 A2" before="-" focusable=true children=0
+                   | android.view.View | "r01 A3" Rect(42, 646 - 153, 699) after="r01 B2" before="-" focusable=true children=0
+                  r01-after | android.view.View | "After r01: " Rect(42, 741 - 1038, 793) after="r01 A3" before="-" focusable=true children=0
+r01 tree order: Before r01 / r01 A0 / r01 B0 / r01 A1 / r01 B1 / r01 A2 / r01 B2 / r01 A3 / After r01: 
+==== r02 tree
+                   | android.view.View | "Before r02" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r02 A0\nr02 A1\nr02 A2\nr02 A3" Rect(42, 426 - 519, 699) after="Before r02" before="-" focusable=true children=0
+                   | android.view.View | "r02 B0\nr02 B1\nr02 B2" Rect(561, 426 - 1038, 625) after="r02 A0\nr02 A1\nr02 A2\nr02 A3" before="-" focusable=true children=0
+                  r02-after | android.view.View | "After r02: " Rect(42, 741 - 1038, 793) after="r02 B0\nr02 B1\nr02 B2" before="-" focusable=true children=0
+r02 tree order: Before r02 / r02 A0\nr02 A1\nr02 A2\nr02 A3 / r02 B0\nr02 B1\nr02 B2 / After r02: 
+==== r03 tree
+                   | android.view.View | "Before r03" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r03 A0" Rect(42, 426 - 153, 531) after="Before r03" before="-" focusable=true children=0
+                   | android.view.View | "r03 A1" Rect(42, 552 - 153, 657) after="r03 A0" before="-" focusable=true children=0
+                   | android.view.View | "r03 B0" Rect(561, 426 - 671, 489) after="r03 A1" before="-" focusable=true children=0
+                   | android.view.View | "r03 B1" Rect(561, 510 - 671, 573) after="r03 B0" before="-" focusable=true children=0
+                   | android.view.View | "r03 B2" Rect(561, 594 - 671, 657) after="r03 B1" before="-" focusable=true children=0
+                   | android.view.View | "r03 A2" Rect(42, 678 - 153, 783) after="r03 B2" before="-" focusable=true children=0
+                   | android.view.View | "r03 A3" Rect(42, 804 - 153, 909) after="r03 A2" before="-" focusable=true children=0
+                  r03-after | android.view.View | "After r03: " Rect(42, 951 - 1038, 1003) after="r03 A3" before="-" focusable=true children=0
+r03 tree order: Before r03 / r03 A0 / r03 A1 / r03 B0 / r03 B1 / r03 B2 / r03 A2 / r03 A3 / After r03: 
+==== r04 tree
+                   | android.view.View | "Before r04" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r04 A0" Rect(42, 426 - 153, 478) after="Before r04" before="-" focusable=true children=0
+                   | android.view.View | "r04 B0" Rect(561, 426 - 671, 478) after="r04 A0" before="-" focusable=true children=0
+                   | android.view.View | "r04 A1" Rect(42, 478 - 153, 531) after="r04 B0" before="-" focusable=true children=0
+                   | android.view.View | "r04 B1" Rect(561, 478 - 671, 531) after="r04 A1" before="-" focusable=true children=0
+                   | android.view.View | "r04 A2" Rect(42, 531 - 153, 583) after="r04 B1" before="-" focusable=true children=0
+                   | android.view.View | "r04 B2" Rect(561, 531 - 671, 583) after="r04 A2" before="-" focusable=true children=0
+                   | android.view.View | "r04 A3" Rect(42, 583 - 153, 636) after="r04 B2" before="-" focusable=true children=0
+                  r04-after | android.view.View | "After r04: " Rect(42, 678 - 1038, 730) after="r04 A3" before="-" focusable=true children=0
+r04 tree order: Before r04 / r04 A0 / r04 B0 / r04 A1 / r04 B1 / r04 A2 / r04 B2 / r04 A3 / After r04: 
+==== r05 tree
+                   | android.view.View | "Before r05" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r05 A0" Rect(42, 426 - 519, 478) after="Before r05" before="-" focusable=true children=0
+                   | android.view.View | "r05 B0" Rect(561, 426 - 1038, 478) after="r05 A0" before="-" focusable=true children=0
+                   | android.view.View | "r05 A1" Rect(42, 499 - 519, 552) after="r05 B0" before="-" focusable=true children=0
+                   | android.view.View | "r05 B1" Rect(561, 499 - 1038, 552) after="r05 A1" before="-" focusable=true children=0
+                   | android.view.View | "r05 A2" Rect(42, 573 - 519, 625) after="r05 B1" before="-" focusable=true children=0
+                   | android.view.View | "r05 B2" Rect(561, 573 - 1038, 625) after="r05 A2" before="-" focusable=true children=0
+                   | android.view.View | "r05 A3" Rect(42, 646 - 519, 699) after="r05 B2" before="-" focusable=true children=0
+                  r05-after | android.view.View | "After r05: " Rect(42, 741 - 1038, 793) after="r05 A3" before="-" focusable=true children=0
+r05 tree order: Before r05 / r05 A0 / r05 B0 / r05 A1 / r05 B1 / r05 A2 / r05 B2 / r05 A3 / After r05: 
+==== r06 tree
+                   | android.view.View | "Before r06" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r06 A0" Rect(42, 426 - 519, 478) after="Before r06" before="-" focusable=true children=0
+                   | android.view.View | "r06 A1" Rect(42, 499 - 519, 552) after="r06 A0" before="-" focusable=true children=0
+                   | android.view.View | "r06 A2" Rect(42, 573 - 519, 625) after="r06 A1" before="-" focusable=true children=0
+                   | android.view.View | "r06 A3" Rect(42, 646 - 519, 699) after="r06 A2" before="-" focusable=true children=0
+                   | android.view.View | "r06 B0" Rect(561, 426 - 1038, 478) after="r06 A3" before="-" focusable=true children=0
+                   | android.view.View | "r06 B1" Rect(561, 499 - 1038, 552) after="r06 B0" before="-" focusable=true children=0
+                   | android.view.View | "r06 B2" Rect(561, 573 - 1038, 625) after="r06 B1" before="-" focusable=true children=0
+                  r06-after | android.view.View | "After r06: " Rect(42, 741 - 1038, 793) after="r06 B2" before="-" focusable=true children=0
+r06 tree order: Before r06 / r06 A0 / r06 A1 / r06 A2 / r06 A3 / r06 B0 / r06 B1 / r06 B2 / After r06: 
+==== r07 tree
+                   | android.view.View | "Before r07" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r07 A0" Rect(42, 426 - 519, 478) after="Before r07" before="-" focusable=true children=0
+                   | android.view.View | "r07 A1" Rect(42, 499 - 519, 552) after="r07 A0" before="-" focusable=true children=0
+                   | android.view.View | "r07 A2" Rect(42, 573 - 519, 625) after="r07 A1" before="-" focusable=true children=0
+                   | android.view.View | "r07 A3" Rect(42, 646 - 519, 699) after="r07 A2" before="-" focusable=true children=0
+                   | android.view.View | "r07 B0" Rect(561, 426 - 1038, 478) after="r07 A3" before="-" focusable=true children=0
+                   | android.view.View | "r07 B1" Rect(561, 499 - 1038, 552) after="r07 B0" before="-" focusable=true children=0
+                   | android.view.View | "r07 B2" Rect(561, 573 - 1038, 625) after="r07 B1" before="-" focusable=true children=0
+                  r07-after | android.view.View | "After r07: " Rect(42, 741 - 1038, 793) after="r07 B2" before="-" focusable=true children=0
+r07 tree order: Before r07 / r07 A0 / r07 A1 / r07 A2 / r07 A3 / r07 B0 / r07 B1 / r07 B2 / After r07: 
+==== r08 tree
+                   | android.view.View | "Before r08" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r08 A0" Rect(42, 426 - 519, 478) after="Before r08" before="-" focusable=true children=0
+                   | android.view.View | "r08 B0" Rect(561, 426 - 1038, 478) after="r08 A0" before="-" focusable=true children=0
+                   | android.view.View | "r08 A1" Rect(42, 499 - 519, 552) after="r08 B0" before="-" focusable=true children=0
+                   | android.view.View | "r08 A2" Rect(42, 573 - 519, 625) after="r08 A1" before="-" focusable=true children=0
+                   | android.view.View | "r08 A3" Rect(42, 646 - 519, 699) after="r08 A2" before="-" focusable=true children=0
+                   | android.view.View | "r08 B1" Rect(561, 499 - 1038, 552) after="r08 A3" before="-" focusable=true children=0
+                   | android.view.View | "r08 B2" Rect(561, 573 - 1038, 625) after="r08 B1" before="-" focusable=true children=0
+                  r08-after | android.view.View | "After r08: " Rect(42, 741 - 1038, 793) after="r08 B2" before="-" focusable=true children=0
+r08 tree order: Before r08 / r08 A0 / r08 B0 / r08 A1 / r08 A2 / r08 A3 / r08 B1 / r08 B2 / After r08: 
+==== r09 tree
+                   | android.view.View | "Before r09" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r09 A0" Rect(42, 426 - 519, 478) after="Before r09" before="-" focusable=true children=0
+                   | android.view.View | "r09 B0" Rect(561, 426 - 1038, 478) after="r09 A0" before="-" focusable=true children=0
+                   | android.view.View | "r09 A1" Rect(42, 499 - 519, 552) after="r09 B0" before="-" focusable=true children=0
+                   | android.view.View | "r09 B1" Rect(561, 499 - 1038, 552) after="r09 A1" before="-" focusable=true children=0
+                   | android.view.View | "r09 A2" Rect(42, 573 - 519, 625) after="r09 B1" before="-" focusable=true children=0
+                   | android.view.View | "r09 B2" Rect(561, 573 - 1038, 625) after="r09 A2" before="-" focusable=true children=0
+                   | android.view.View | "r09 A3" Rect(42, 646 - 519, 699) after="r09 B2" before="-" focusable=true children=0
+                  r09-after | android.view.View | "After r09: " Rect(42, 741 - 1038, 793) after="r09 A3" before="-" focusable=true children=0
+r09 tree order: Before r09 / r09 A0 / r09 B0 / r09 A1 / r09 B1 / r09 A2 / r09 B2 / r09 A3 / After r09: 
+==== r10 tree
+                   | android.view.View | "Before r10" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r10 B0\nr10 B1\nr10 B2" Rect(561, 426 - 1038, 625) after="Before r10" before="-" focusable=true children=0
+                   | android.view.View | "r10 A0\nr10 A1\nr10 A2\nr10 A3" Rect(42, 426 - 519, 699) after="r10 B0\nr10 B1\nr10 B2" before="-" focusable=true children=0
+                  r10-after | android.view.View | "After r10: " Rect(42, 741 - 1038, 793) after="r10 A0\nr10 A1\nr10 A2\nr10 A3" before="-" focusable=true children=0
+r10 tree order: Before r10 / r10 B0\nr10 B1\nr10 B2 / r10 A0\nr10 A1\nr10 A2\nr10 A3 / After r10: 
+==== r11 tree
+                   | android.view.View | "Before r11" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r11 B0\nr11 B1\nr11 B2" Rect(561, 426 - 1038, 772) after="Before r11" before="-" focusable=true children=1
+                     | android.widget.Button | "r11 B btn" Rect(561, 646 - 776, 772) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r11 A0\nr11 A1\nr11 A2\nr11 A3" Rect(42, 426 - 519, 846) after="r11 B0\nr11 B1\nr11 B2" before="-" focusable=true children=1
+                     | android.widget.Button | "r11 A btn" Rect(42, 720 - 258, 846) after="-" before="-" focusable=true children=0
+                  r11-after | android.view.View | "After r11: " Rect(42, 888 - 1038, 940) after="r11 A0\nr11 A1\nr11 A2\nr11 A3" before="-" focusable=true children=0
+r11 tree order: Before r11 / r11 B0\nr11 B1\nr11 B2 / r11 B btn / r11 A0\nr11 A1\nr11 A2\nr11 A3 / r11 A btn / After r11: 
+r11 Tab stops: (android.widget.FrameLayout no name) -> Back -> r11 A btn -> r11 B btn -> Back -> r11 A btn
+r11 Shift+Tab stops: (none) -> r11 A btn -> Back -> r11 B btn -> r11 A btn -> Back
+==== r12 tree
+                   | android.view.View | "Before r12" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r12 B0\nr12 B1\nr12 B2" Rect(561, 426 - 1038, 772) after="Before r12" before="-" focusable=true children=1
+                     | android.widget.Button | "r12 B btn" Rect(561, 646 - 776, 772) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r12 A0\nr12 A1\nr12 A2\nr12 A3" Rect(42, 426 - 519, 846) after="r12 B0\nr12 B1\nr12 B2" before="-" focusable=true children=1
+                     | android.widget.Button | "r12 A btn" Rect(42, 720 - 258, 846) after="-" before="-" focusable=true children=0
+                  r12-after | android.view.View | "After r12: " Rect(42, 888 - 1038, 940) after="r12 A0\nr12 A1\nr12 A2\nr12 A3" before="-" focusable=true children=0
+r12 tree order: Before r12 / r12 B0\nr12 B1\nr12 B2 / r12 B btn / r12 A0\nr12 A1\nr12 A2\nr12 A3 / r12 A btn / After r12: 
+r12 Tab stops: (none) -> r12 B btn -> r12 A btn -> Back -> r12 B btn -> r12 A btn
+r12 Shift+Tab stops: (none) -> r12 B btn -> Back -> r12 A btn -> r12 B btn -> Back
+==== r13 tree
+                   | android.view.View | "Before r13" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r13 A0\nr13 A1\nr13 A2\nr13 A3" Rect(42, 426 - 519, 699) after="Before r13" before="-" focusable=true children=1
+                       | android.view.View | "r13 A9 grafted" Rect(42, 720 - 285, 772) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r13 B0\nr13 B1\nr13 B2" Rect(561, 426 - 1038, 625) after="r13 A0\nr13 A1\nr13 A2\nr13 A3" before="-" focusable=true children=0
+                  r13-after | android.view.View | "After r13: " Rect(42, 814 - 1038, 867) after="r13 B0\nr13 B1\nr13 B2" before="-" focusable=true children=0
+r13 tree order: Before r13 / r13 A0\nr13 A1\nr13 A2\nr13 A3 / r13 A9 grafted / r13 B0\nr13 B1\nr13 B2 / After r13: 
+==== r14 tree
+                   | android.view.View | "Before r14" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r14 B0\nr14 B1\nr14 B2" Rect(42, 426 - 519, 625) after="Before r14" before="-" focusable=true children=0
+                   | android.view.View | "r14 A0\nr14 A1\nr14 A2\nr14 A3" Rect(561, 426 - 1038, 699) after="r14 B0\nr14 B1\nr14 B2" before="-" focusable=true children=0
+                  r14-after | android.view.View | "After r14: " Rect(42, 741 - 1038, 793) after="r14 A0\nr14 A1\nr14 A2\nr14 A3" before="-" focusable=true children=0
+r14 tree order: Before r14 / r14 B0\nr14 B1\nr14 B2 / r14 A0\nr14 A1\nr14 A2\nr14 A3 / After r14: 
+==== r15 tree
+                   | android.view.View | "Before r15" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r15 A0\nr15 A1\nr15 A2\nr15 A3" Rect(42, 426 - 519, 846) after="Before r15" before="-" focusable=true children=1
+                     | android.widget.Button | "r15 A btn" Rect(42, 720 - 258, 846) after="-" before="-" focusable=true children=0
+                   | android.view.View | "r15 B0\nr15 B1\nr15 B2" Rect(561, 426 - 1038, 772) after="r15 A0\nr15 A1\nr15 A2\nr15 A3" before="-" focusable=true children=1
+                     | android.widget.Button | "r15 B btn" Rect(561, 646 - 776, 772) after="-" before="-" focusable=true children=0
+                  r15-after | android.view.View | "After r15: " Rect(42, 888 - 1038, 940) after="r15 B0\nr15 B1\nr15 B2" before="-" focusable=true children=0
+r15 tree order: Before r15 / r15 A0\nr15 A1\nr15 A2\nr15 A3 / r15 A btn / r15 B0\nr15 B1\nr15 B2 / r15 B btn / After r15: 
+r15 Tab stops: (none) -> r15 A btn -> r15 B btn -> Back -> r15 A btn -> r15 B btn
+r15 Shift+Tab stops: (none) -> r15 A btn -> Back -> r15 B btn -> r15 A btn -> Back
+==== r16 tree
+                   | android.view.View | "Before r16" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r16 A0" Rect(42, 426 - 153, 478) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r16 A1" Rect(42, 499 - 153, 552) after="r16 A0" before="-" focusable=true children=0
+                     | android.view.View | "r16 A2" Rect(42, 573 - 153, 625) after="r16 A1" before="-" focusable=true children=0
+                     | android.view.View | "r16 A3" Rect(42, 646 - 153, 699) after="r16 A2" before="-" focusable=true children=0
+                     | android.view.View | "r16 B0" Rect(561, 426 - 671, 478) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r16 B1" Rect(561, 499 - 671, 552) after="r16 B0" before="-" focusable=true children=0
+                     | android.view.View | "r16 B2" Rect(561, 573 - 671, 625) after="r16 B1" before="-" focusable=true children=0
+                  r16-after | android.view.View | "After r16: " Rect(42, 741 - 1038, 793) after="(android.view.View no name)" before="-" focusable=true children=0
+r16 tree order: Before r16 / r16 A0 / r16 A1 / r16 A2 / r16 A3 / r16 B0 / r16 B1 / r16 B2 / After r16: 
+==== r17 tree
+                   | android.view.View | "Before r17" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                       | android.view.View | "r17 A0" Rect(927, 426 - 1038, 478) after="-" before="-" focusable=true children=0
+                       | android.view.View | "r17 A1" Rect(927, 499 - 1038, 552) after="r17 A0" before="-" focusable=true children=0
+                       | android.view.View | "r17 A2" Rect(927, 573 - 1038, 625) after="r17 A1" before="-" focusable=true children=0
+                       | android.view.View | "r17 A3" Rect(927, 646 - 1038, 699) after="r17 A2" before="-" focusable=true children=0
+                       | android.view.View | "r17 B0" Rect(409, 426 - 519, 478) after="-" before="-" focusable=true children=0
+                       | android.view.View | "r17 B1" Rect(409, 499 - 519, 552) after="r17 B0" before="-" focusable=true children=0
+                       | android.view.View | "r17 B2" Rect(409, 573 - 519, 625) after="r17 B1" before="-" focusable=true children=0
+                  r17-after | android.view.View | "After r17: " Rect(42, 741 - 1038, 793) after="(android.view.View no name)" before="-" focusable=true children=0
+r17 tree order: Before r17 / r17 A0 / r17 A1 / r17 A2 / r17 A3 / r17 B0 / r17 B1 / r17 B2 / After r17: 
+==== r18 tree
+                   | android.view.View | "Before r18" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r18 B0" Rect(561, 426 - 671, 478) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r18 B1" Rect(561, 499 - 671, 552) after="r18 B0" before="-" focusable=true children=0
+                     | android.view.View | "r18 B2" Rect(561, 573 - 671, 625) after="r18 B1" before="-" focusable=true children=0
+                     | android.view.View | "r18 A0" Rect(42, 426 - 153, 478) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r18 A1" Rect(42, 499 - 153, 552) after="r18 A0" before="-" focusable=true children=0
+                     | android.view.View | "r18 A2" Rect(42, 573 - 153, 625) after="r18 A1" before="-" focusable=true children=0
+                     | android.view.View | "r18 A3" Rect(42, 646 - 153, 699) after="r18 A2" before="-" focusable=true children=0
+                  r18-after | android.view.View | "After r18: " Rect(42, 741 - 1038, 793) after="(android.view.View no name)" before="-" focusable=true children=0
+r18 tree order: Before r18 / r18 B0 / r18 B1 / r18 B2 / r18 A0 / r18 A1 / r18 A2 / r18 A3 / After r18: 
+==== r19 tree
+                   | android.view.View | "Before r19" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r19 B0" Rect(561, 426 - 671, 478) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r19 B1" Rect(561, 499 - 671, 552) after="r19 B0" before="-" focusable=true children=0
+                     | android.view.View | "r19 B2" Rect(561, 573 - 671, 625) after="r19 B1" before="-" focusable=true children=0
+                     | android.widget.Button | "r19 B btn" Rect(561, 646 - 776, 772) after="r19 B2" before="-" focusable=true children=0
+                     | android.view.View | "r19 A0" Rect(42, 426 - 153, 478) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r19 A1" Rect(42, 499 - 153, 552) after="r19 A0" before="-" focusable=true children=0
+                     | android.view.View | "r19 A2" Rect(42, 573 - 153, 625) after="r19 A1" before="-" focusable=true children=0
+                     | android.view.View | "r19 A3" Rect(42, 646 - 153, 699) after="r19 A2" before="-" focusable=true children=0
+                     | android.widget.Button | "r19 A btn" Rect(42, 720 - 258, 846) after="r19 A3" before="-" focusable=true children=0
+                  r19-after | android.view.View | "After r19: " Rect(42, 888 - 1038, 940) after="(android.view.View no name)" before="-" focusable=true children=0
+r19 tree order: Before r19 / r19 B0 / r19 B1 / r19 B2 / r19 B btn / r19 A0 / r19 A1 / r19 A2 / r19 A3 / r19 A btn / After r19: 
+r19 Tab stops: (none) -> r19 B btn -> r19 A btn -> Back -> r19 B btn -> r19 A btn
+r19 Shift+Tab stops: (none) -> r19 B btn -> Back -> r19 A btn -> r19 B btn -> Back
+==== r20 tree
+                   | android.view.View | "Before r20" Rect(42, 331 - 1038, 384) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r20 A0" Rect(42, 426 - 153, 478) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r20 A1" Rect(42, 499 - 153, 552) after="r20 A0" before="-" focusable=true children=0
+                     | android.view.View | "r20 A2" Rect(42, 573 - 153, 625) after="r20 A1" before="-" focusable=true children=0
+                     | android.view.View | "r20 A3" Rect(42, 646 - 153, 699) after="r20 A2" before="-" focusable=true children=0
+                     | android.widget.Button | "r20 A btn" Rect(42, 720 - 258, 846) after="r20 A3" before="-" focusable=true children=0
+                     | android.view.View | "r20 B0" Rect(561, 426 - 671, 478) after="-" before="-" focusable=true children=0
+                     | android.view.View | "r20 B1" Rect(561, 499 - 671, 552) after="r20 B0" before="-" focusable=true children=0
+                     | android.view.View | "r20 B2" Rect(561, 573 - 671, 625) after="r20 B1" before="-" focusable=true children=0
+                     | android.widget.Button | "r20 B btn" Rect(561, 646 - 776, 772) after="r20 B2" before="-" focusable=true children=0
+                  r20-after | android.view.View | "After r20: " Rect(42, 888 - 1038, 940) after="(android.view.View no name)" before="-" focusable=true children=0
+r20 tree order: Before r20 / r20 A0 / r20 A1 / r20 A2 / r20 A3 / r20 A btn / r20 B0 / r20 B1 / r20 B2 / r20 B btn / After r20: 
+r20 Tab stops: (none) -> r20 A btn -> r20 B btn -> Back -> r20 A btn -> r20 B btn
+r20 Shift+Tab stops: (none) -> r20 A btn -> Back -> r20 B btn -> r20 A btn -> Back

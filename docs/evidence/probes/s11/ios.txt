@@ -1,0 +1,217 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+large
+== testTree
+r01 EL type=48 label="Before r01" frame=(16.0, 134.0, 370.0, 20.0)
+r01 EL type=48 label="r01 A0" frame=(16.0, 170.0, 44.197265625, 20.0)
+r01 EL type=48 label="r01 B0" frame=(209.0, 170.0, 44.1015625, 20.0)
+r01 EL type=48 label="r01 A1" frame=(16.0, 198.0, 41.53125, 20.0)
+r01 EL type=48 label="r01 B1" frame=(209.0, 198.0, 41.77734375, 20.0)
+r01 EL type=48 label="r01 A2" frame=(16.0, 226.0, 43.96484375, 20.0)
+r01 EL type=48 label="r01 B2" frame=(209.0, 226.0, 43.732421875, 20.0)
+r01 EL type=48 label="r01 A3" frame=(16.0, 254.0, 44.29296875, 20.0)
+r01 EL type=48 label="After r01: " frame=(16.0, 290.0, 370.0, 20.0)
+r01 element order: Before r01 / r01 A0 / r01 B0 / r01 A1 / r01 B1 / r01 A2 / r01 B2 / r01 A3 / After r01: 
+r02 EL type=48 label="Before r02" frame=(16.0, 134.0, 370.0, 20.0)
+r02 EL type=48 label="r02 A0\nr02 A1\nr02 A2\nr02 A3" frame=(16.0, 170.0, 177.0, 104.0)
+r02 EL type=48 label="r02 B0\nr02 B1\nr02 B2" frame=(209.0, 170.0, 177.0, 76.0)
+r02 EL type=48 label="After r02: " frame=(16.0, 290.0, 370.0, 20.0)
+r02 element order: Before r02 / r02 A0\nr02 A1\nr02 A2\nr02 A3 / r02 B0\nr02 B1\nr02 B2 / After r02: 
+r03 EL type=48 label="Before r03" frame=(16.0, 134.0, 370.0, 20.0)
+r03 EL type=48 label="r03 A0" frame=(16.0, 170.0, 46.48046875, 40.0)
+r03 EL type=48 label="r03 A1" frame=(16.0, 218.0, 43.814453125, 40.0)
+r03 EL type=48 label="r03 B0" frame=(209.0, 170.0, 46.384765625, 24.0)
+r03 EL type=48 label="r03 B1" frame=(209.0, 202.0, 44.060546875, 24.0)
+r03 EL type=48 label="r03 B2" frame=(209.0, 234.0, 46.015625, 24.0)
+r03 EL type=48 label="r03 A2" frame=(16.0, 266.0, 46.248046875, 40.0)
+r03 EL type=48 label="r03 A3" frame=(16.0, 314.0, 46.576171875, 40.0)
+r03 EL type=48 label="After r03: " frame=(16.0, 370.0, 370.0, 20.0)
+r03 element order: Before r03 / r03 A0 / r03 A1 / r03 B0 / r03 B1 / r03 B2 / r03 A2 / r03 A3 / After r03: 
+r04 EL type=48 label="Before r04" frame=(16.0, 134.0, 370.0, 20.0)
+r04 EL type=48 label="r04 A0" frame=(16.0, 170.0, 46.712890625, 20.0)
+r04 EL type=48 label="r04 B0" frame=(209.0, 170.0, 46.6171875, 20.0)
+r04 EL type=48 label="r04 A1" frame=(16.0, 190.0, 44.046875, 20.0)
+r04 EL type=48 label="r04 B1" frame=(209.0, 190.0, 44.29296875, 20.0)
+r04 EL type=48 label="r04 A2" frame=(16.0, 210.0, 46.48046875, 20.0)
+r04 EL type=48 label="r04 B2" frame=(209.0, 210.0, 46.248046875, 20.0)
+r04 EL type=48 label="r04 A3" frame=(16.0, 230.0, 46.80859375, 20.0)
+r04 EL type=48 label="After r04: " frame=(16.0, 266.0, 370.0, 20.0)
+r04 element order: Before r04 / r04 A0 / r04 B0 / r04 A1 / r04 B1 / r04 A2 / r04 B2 / r04 A3 / After r04: 
+r05 EL type=48 label="Before r05" frame=(16.0, 134.0, 370.0, 20.0)
+r05 EL type=48 label="r05 A0" frame=(16.0, 170.0, 177.0, 20.0)
+r05 EL type=48 label="r05 B0" frame=(209.0, 170.0, 177.0, 20.0)
+r05 EL type=48 label="r05 A1" frame=(16.0, 198.0, 177.0, 20.0)
+r05 EL type=48 label="r05 B1" frame=(209.0, 198.0, 177.0, 20.0)
+r05 EL type=48 label="r05 A2" frame=(16.0, 226.0, 177.0, 20.0)
+r05 EL type=48 label="r05 B2" frame=(209.0, 226.0, 177.0, 20.0)
+r05 EL type=48 label="r05 A3" frame=(16.0, 254.0, 177.0, 20.0)
+r05 EL type=48 label="After r05: " frame=(16.0, 290.0, 370.0, 20.0)
+r05 element order: Before r05 / r05 A0 / r05 B0 / r05 A1 / r05 B1 / r05 A2 / r05 B2 / r05 A3 / After r05: 
+r06 EL type=48 label="Before r06" frame=(16.0, 134.0, 370.0, 20.0)
+r06 EL type=48 label="r06 A0" frame=(16.0, 170.0, 177.0, 20.0)
+r06 EL type=48 label="r06 A1" frame=(16.0, 198.0, 177.0, 20.0)
+r06 EL type=48 label="r06 A2" frame=(16.0, 226.0, 177.0, 20.0)
+r06 EL type=48 label="r06 A3" frame=(16.0, 254.0, 177.0, 20.0)
+r06 EL type=48 label="r06 B0" frame=(209.0, 170.0, 177.0, 20.0)
+r06 EL type=48 label="r06 B1" frame=(209.0, 198.0, 177.0, 20.0)
+r06 EL type=48 label="r06 B2" frame=(209.0, 226.0, 177.0, 20.0)
+r06 EL type=48 label="After r06: " frame=(16.0, 290.0, 370.0, 20.0)
+r06 element order: Before r06 / r06 A0 / r06 A1 / r06 A2 / r06 A3 / r06 B0 / r06 B1 / r06 B2 / After r06: 
+r07 EL type=48 label="Before r07" frame=(16.0, 134.0, 370.0, 20.0)
+r07 EL type=48 label="r07 A0" frame=(16.0, 170.0, 177.0, 20.0)
+r07 EL type=48 label="r07 A1" frame=(16.0, 198.0, 177.0, 20.0)
+r07 EL type=48 label="r07 A2" frame=(16.0, 226.0, 177.0, 20.0)
+r07 EL type=48 label="r07 A3" frame=(16.0, 254.0, 177.0, 20.0)
+r07 EL type=48 label="r07 B0" frame=(209.0, 170.0, 177.0, 20.0)
+r07 EL type=48 label="r07 B1" frame=(209.0, 198.0, 177.0, 20.0)
+r07 EL type=48 label="r07 B2" frame=(209.0, 226.0, 177.0, 20.0)
+r07 EL type=48 label="After r07: " frame=(16.0, 290.0, 370.0, 20.0)
+r07 element order: Before r07 / r07 A0 / r07 A1 / r07 A2 / r07 A3 / r07 B0 / r07 B1 / r07 B2 / After r07: 
+r08 EL type=48 label="Before r08" frame=(16.0, 134.0, 370.0, 20.0)
+r08 EL type=48 label="r08 A0" frame=(16.0, 170.0, 177.0, 20.0)
+r08 EL type=48 label="r08 B0" frame=(209.0, 170.0, 177.0, 20.0)
+r08 EL type=48 label="r08 A1" frame=(16.0, 198.0, 177.0, 20.0)
+r08 EL type=48 label="r08 A2" frame=(16.0, 226.0, 177.0, 20.0)
+r08 EL type=48 label="r08 A3" frame=(16.0, 254.0, 177.0, 20.0)
+r08 EL type=48 label="r08 B1" frame=(209.0, 198.0, 177.0, 20.0)
+r08 EL type=48 label="r08 B2" frame=(209.0, 226.0, 177.0, 20.0)
+r08 EL type=48 label="After r08: " frame=(16.0, 290.0, 370.0, 20.0)
+r08 element order: Before r08 / r08 A0 / r08 B0 / r08 A1 / r08 A2 / r08 A3 / r08 B1 / r08 B2 / After r08: 
+r09 EL type=48 label="Before r09" frame=(16.0, 134.0, 370.0, 20.0)
+r09 EL type=48 label="r09 A0" frame=(16.0, 170.0, 177.0, 20.0)
+r09 EL type=48 label="r09 B0" frame=(209.0, 170.0, 177.0, 20.0)
+r09 EL type=48 label="r09 A1" frame=(16.0, 198.0, 177.0, 20.0)
+r09 EL type=48 label="r09 B1" frame=(209.0, 198.0, 177.0, 20.0)
+r09 EL type=48 label="r09 A2" frame=(16.0, 226.0, 177.0, 20.0)
+r09 EL type=48 label="r09 B2" frame=(209.0, 226.0, 177.0, 20.0)
+r09 EL type=48 label="r09 A3" frame=(16.0, 254.0, 177.0, 20.0)
+r09 EL type=48 label="After r09: " frame=(16.0, 290.0, 370.0, 20.0)
+r09 element order: Before r09 / r09 A0 / r09 B0 / r09 A1 / r09 B1 / r09 A2 / r09 B2 / r09 A3 / After r09: 
+r10 EL type=48 label="Before r10" frame=(16.0, 134.0, 370.0, 20.0)
+r10 EL type=48 label="r10 B0\nr10 B1\nr10 B2" frame=(209.0, 170.0, 177.0, 76.0)
+r10 EL type=48 label="r10 A0\nr10 A1\nr10 A2\nr10 A3" frame=(16.0, 170.0, 177.0, 104.0)
+r10 EL type=48 label="After r10: " frame=(16.0, 290.0, 370.0, 20.0)
+r10 element order: Before r10 / r10 B0\nr10 B1\nr10 B2 / r10 A0\nr10 A1\nr10 A2\nr10 A3 / After r10: 
+r11 EL type=48 label="Before r11" frame=(16.0, 134.0, 370.0, 20.0)
+r11 EL type=48 label="After r11: " frame=(16.0, 346.0, 370.0, 20.0)
+r11 EL type=1 label="r11 B0\nr11 B1\nr11 B2" frame=(209.0, 170.0, 177.0, 132.0)
+r11 EL type=9 label="r11 B btn" frame=(209.0, 254.0, 83.40779622395831, 48.0)
+r11 EL type=1 label="r11 A0\nr11 A1\nr11 A2\nr11 A3" frame=(16.0, 170.0, 177.0, 160.0)
+r11 EL type=9 label="r11 A btn" frame=(16.0, 282.0, 83.7450459798177, 48.0)
+r11 element order: Before r11 / After r11:  / r11 B0\nr11 B1\nr11 B2 / r11 B btn / r11 A0\nr11 A1\nr11 A2\nr11 A3 / r11 A btn
+r11 1 Tab(s) then Space: After r11: 
+r11 2 Tab(s) then Space: After r11: A btn
+r11 3 Tab(s) then Space: After r11: B btn
+r12 EL type=48 label="Before r12" frame=(16.0, 134.0, 370.0, 20.0)
+r12 EL type=48 label="After r12: " frame=(16.0, 346.0, 370.0, 20.0)
+r12 EL type=1 label="r12 B0\nr12 B1\nr12 B2" frame=(209.0, 170.0, 177.0, 132.0)
+r12 EL type=9 label="r12 B btn" frame=(209.0, 254.0, 85.32413736979169, 48.0)
+r12 EL type=1 label="r12 A0\nr12 A1\nr12 A2\nr12 A3" frame=(16.0, 170.0, 177.0, 160.0)
+r12 EL type=9 label="r12 A btn" frame=(16.0, 282.0, 85.66139729817708, 48.0)
+r12 element order: Before r12 / After r12:  / r12 B0\nr12 B1\nr12 B2 / r12 B btn / r12 A0\nr12 A1\nr12 A2\nr12 A3 / r12 A btn
+r12 1 Tab(s) then Space: After r12: 
+r12 2 Tab(s) then Space: After r12: B btn
+r12 3 Tab(s) then Space: After r12: A btn
+r13 EL type=48 label="Before r13" frame=(16.0, 134.0, 370.0, 20.0)
+r13 EL type=48 label="r13 B0\nr13 B1\nr13 B2" frame=(209.0, 170.0, 177.0, 76.0)
+r13 EL type=48 label="After r13: " frame=(16.0, 318.0, 370.0, 20.0)
+r13 EL type=1 label="r13 A0\nr13 A1\nr13 A2\nr13 A3" frame=(16.0, 170.0, 177.0, 104.0)
+r13 EL type=48 label="r13 A9 grafted" frame=(16.0, 282.0, 98.423828125, 20.0)
+r13 element order: Before r13 / r13 B0\nr13 B1\nr13 B2 / After r13:  / r13 A0\nr13 A1\nr13 A2\nr13 A3 / r13 A9 grafted
+r14 EL type=48 label="Before r14" frame=(16.0, 134.0, 370.0, 20.0)
+r14 EL type=48 label="r14 B0\nr14 B1\nr14 B2" frame=(16.0, 170.0, 177.0, 76.0)
+r14 EL type=48 label="r14 A0\nr14 A1\nr14 A2\nr14 A3" frame=(209.0, 170.0, 177.0, 104.0)
+r14 EL type=48 label="After r14: " frame=(16.0, 290.0, 370.0, 20.0)
+r14 element order: Before r14 / r14 B0\nr14 B1\nr14 B2 / r14 A0\nr14 A1\nr14 A2\nr14 A3 / After r14: 
+r15 EL type=48 label="Before r15" frame=(16.0, 134.0, 370.0, 20.0)
+r15 EL type=48 label="After r15: " frame=(16.0, 346.0, 370.0, 20.0)
+r15 EL type=1 label="r15 A0\nr15 A1\nr15 A2\nr15 A3" frame=(16.0, 170.0, 177.0, 160.0)
+r15 EL type=9 label="r15 A btn" frame=(16.0, 282.0, 85.89267985026042, 48.0)
+r15 EL type=1 label="r15 B0\nr15 B1\nr15 B2" frame=(209.0, 170.0, 177.0, 132.0)
+r15 EL type=9 label="r15 B btn" frame=(209.0, 254.0, 85.555419921875, 48.0)
+r15 element order: Before r15 / After r15:  / r15 A0\nr15 A1\nr15 A2\nr15 A3 / r15 A btn / r15 B0\nr15 B1\nr15 B2 / r15 B btn
+r15 1 Tab(s) then Space: After r15: 
+r15 2 Tab(s) then Space: After r15: A btn
+r15 3 Tab(s) then Space: After r15: B btn
+r16 EL type=48 label="Before r16" frame=(16.0, 134.0, 370.0, 20.0)
+r16 EL type=48 label="After r16: " frame=(16.0, 290.0, 370.0, 20.0)
+r16 EL type=48 label="r16 A0" frame=(16.0, 170.0, 44.29296875, 20.0)
+r16 EL type=48 label="r16 A1" frame=(16.0, 198.0, 41.626953125, 20.0)
+r16 EL type=48 label="r16 A2" frame=(16.0, 226.0, 44.060546875, 20.0)
+r16 EL type=48 label="r16 A3" frame=(16.0, 254.0, 44.388671875, 20.0)
+r16 EL type=48 label="r16 B0" frame=(209.0, 170.0, 44.197265625, 20.0)
+r16 EL type=48 label="r16 B1" frame=(209.0, 198.0, 41.873046875, 20.0)
+r16 EL type=48 label="r16 B2" frame=(209.0, 226.0, 43.828125, 20.0)
+r16 element order: Before r16 / After r16:  / r16 A0 / r16 A1 / r16 A2 / r16 A3 / r16 B0 / r16 B1 / r16 B2
+r17 EL type=48 label="Before r17" frame=(16.0, 134.0, 370.0, 20.0)
+r17 EL type=48 label="After r17: " frame=(16.0, 290.0, 370.0, 20.0)
+r17 EL type=48 label="r17 A0" frame=(342.650390625, 170.0, 43.349609375, 20.0)
+r17 EL type=48 label="r17 A1" frame=(345.31640625, 198.0, 40.68359375, 20.0)
+r17 EL type=48 label="r17 A2" frame=(342.8828125, 226.0, 43.1171875, 20.0)
+r17 EL type=48 label="r17 A3" frame=(342.5546875, 254.0, 43.4453125, 20.0)
+r17 EL type=48 label="r17 B0" frame=(149.74609375, 170.0, 43.25390625, 20.0)
+r17 EL type=48 label="r17 B1" frame=(152.0703125, 198.0, 40.9296875, 20.0)
+r17 EL type=48 label="r17 B2" frame=(150.115234375, 226.0, 42.884765625, 20.0)
+r17 element order: Before r17 / After r17:  / r17 A0 / r17 A1 / r17 A2 / r17 A3 / r17 B0 / r17 B1 / r17 B2
+r18 EL type=48 label="Before r18" frame=(16.0, 134.0, 370.0, 20.0)
+r18 EL type=48 label="After r18: " frame=(16.0, 290.0, 370.0, 20.0)
+r18 EL type=48 label="r18 B0" frame=(209.0, 170.0, 44.224609375, 20.0)
+r18 EL type=48 label="r18 B1" frame=(209.0, 198.0, 41.900390625, 20.0)
+r18 EL type=48 label="r18 B2" frame=(209.0, 226.0, 43.85546875, 20.0)
+r18 EL type=48 label="r18 A0" frame=(16.0, 170.0, 44.3203125, 20.0)
+r18 EL type=48 label="r18 A1" frame=(16.0, 198.0, 41.654296875, 20.0)
+r18 EL type=48 label="r18 A2" frame=(16.0, 226.0, 44.087890625, 20.0)
+r18 EL type=48 label="r18 A3" frame=(16.0, 254.0, 44.416015625, 20.0)
+r18 element order: Before r18 / After r18:  / r18 B0 / r18 B1 / r18 B2 / r18 A0 / r18 A1 / r18 A2 / r18 A3
+r19 EL type=48 label="Before r19" frame=(16.0, 134.0, 370.0, 20.0)
+r19 EL type=48 label="After r19: " frame=(16.0, 346.0, 370.0, 20.0)
+r19 EL type=48 label="r19 B0" frame=(209.0, 170.0, 44.197265625, 20.0)
+r19 EL type=48 label="r19 B1" frame=(209.0, 198.0, 41.873046875, 20.0)
+r19 EL type=48 label="r19 B2" frame=(209.0, 226.0, 43.828125, 20.0)
+r19 EL type=9 label="r19 B btn" frame=(209.0, 254.0, 85.82316080729169, 48.0)
+r19 EL type=48 label="r19 A0" frame=(16.0, 170.0, 44.29296875, 20.0)
+r19 EL type=48 label="r19 A1" frame=(16.0, 198.0, 41.626953125, 20.0)
+r19 EL type=48 label="r19 A2" frame=(16.0, 226.0, 44.060546875, 20.0)
+r19 EL type=48 label="r19 A3" frame=(16.0, 254.0, 44.388671875, 20.0)
+r19 EL type=9 label="r19 A btn" frame=(16.0, 282.0, 86.16042073567708, 48.0)
+r19 element order: Before r19 / After r19:  / r19 B0 / r19 B1 / r19 B2 / r19 B btn / r19 A0 / r19 A1 / r19 A2 / r19 A3 / r19 A btn
+r19 1 Tab(s) then Space: After r19: 
+r19 2 Tab(s) then Space: After r19: B btn
+r19 3 Tab(s) then Space: After r19: A btn
+r20 EL type=48 label="Before r20" frame=(16.0, 134.0, 370.0, 20.0)
+r20 EL type=48 label="After r20: " frame=(16.0, 346.0, 370.0, 20.0)
+r20 EL type=48 label="r20 A0" frame=(16.0, 170.0, 46.15234375, 20.0)
+r20 EL type=48 label="r20 A1" frame=(16.0, 198.0, 43.486328125, 20.0)
+r20 EL type=48 label="r20 A2" frame=(16.0, 226.0, 45.919921875, 20.0)
+r20 EL type=48 label="r20 A3" frame=(16.0, 254.0, 46.248046875, 20.0)
+r20 EL type=9 label="r20 A btn" frame=(16.0, 282.0, 88.0175272623698, 48.0)
+r20 EL type=48 label="r20 B0" frame=(209.0, 170.0, 46.056640625, 20.0)
+r20 EL type=48 label="r20 B1" frame=(209.0, 198.0, 43.732421875, 20.0)
+r20 EL type=48 label="r20 B2" frame=(209.0, 226.0, 45.6875, 20.0)
+r20 EL type=9 label="r20 B btn" frame=(209.0, 254.0, 87.68027750651044, 48.0)
+r20 element order: Before r20 / After r20:  / r20 A0 / r20 A1 / r20 A2 / r20 A3 / r20 A btn / r20 B0 / r20 B1 / r20 B2 / r20 B btn
+r20 1 Tab(s) then Space: After r20: 
+r20 2 Tab(s) then Space: After r20: A btn
+r20 3 Tab(s) then Space: After r20: B btn
+Test Case '-[RunnerUITests.ProbeS11UITests testTree]' passed (335.547 seconds).
+== testVoiceOver
+VO r01 walk: r01 / Before r01 / r01 A0 / r01 B0 / r01 A1 / r01 B1 / r01 A2 / r01 B2 / r01 A3 / After r01:
+VO r02 walk: r02 / Before r02 / r02 A0 r02 A1 r02 A2 r02 A3 / r02 B0 r02 B1 r02 B2 / After r02:
+VO r03 walk: r03 / Before r03 / r03 A0 / r03 A1 / r03 B0 / r03 B1 / r03 B2 / r03 A2 / r03 A3 / After r03:
+VO r04 walk: r04 / Before r04 / r04 A0 / r04 B0 / r04 A1 / r04 B1 / r04 A2 / r04 B2 / r04 A3 / After r04:
+VO r05 walk: r05 / Before r05 / r05 A0 / r05 B0 / r05 A1 / r05 B1 / r05 A2 / r05 B2 / r05 A3 / After r05:
+VO r06 walk: r06 / Before r06 / r06 A0 / r06 A1 / r06 A2 / r06 A3 / r06 B0 / r06 B1 / r06 B2 / After r06:
+VO r07 walk: r07 / Before r07 / r07 A0 / r07 A1 / r07 A2 / r07 A3 / r07 B0 / r07 B1 / r07 B2 / After r07:
+VO r08 walk: r08 / Before r08 / r08 A0 / r08 B0 / r08 A1 / r08 A2 / r08 A3 / r08 B1 / r08 B2 / After r08:
+VO r09 walk: r09 / Before r09 / r09 A0 / r09 B0 / r09 A1 / r09 B1 / r09 A2 / r09 B2 / r09 A3 / After r09:
+VO r10 walk: r10 / Before r10 / r10 B0 r10 B1 r10 B2 / r10 A0 r10 A1 r10 A2 r10 A3 / After r10:
+VO r11 walk: r11 / Before r11 / r11 B0 r11 B1 r11 B2 / r11 B btn Button / r11 A0 r11 A1 r11 A2 r11 A3 / r11 A btn Button / After r11:
+VO r12 walk: r12 / Before r12 / r12 B0 r12 B1 r12 B2 / r12 B btn Button / r12 A0 r12 A1 r12 A2 r12 A3 / r12 A btn Button / After r12:
+VO r13 walk: r13 / Before r13 / r13 A0 r13 A1 r13 A2 r13 A3 / r13 A9 grafted / r13 B0 r13 B1 r13 B2 / After r13:
+VO r14 walk: r14 / Before r14 / r14 B0 r14 B1 r14 B2 / r14 A0 r14 A1 r14 A2 r14 A3 / After r14:
+VO r15 walk: r15 / Before r15 / r15 A0 r15 A1 r15 A2 r15 A3 / r15 A btn Button / r15 B0 r15 B1 r15 B2 / r15 B btn Button / After r15:
+VO r16 walk: r16 / Before r16 / r16 A0 / r16 A1 / r16 A2 / r16 A3 / r16 B0 / r16 B1 / r16 B2 / After r16:
+VO r17 walk: r17 / Before r17 / r17 A0 / r17 A1 / r17 A2 / r17 A3 / r17 B0 / r17 B1 / r17 B2 / After r17:
+VO r18 walk: r18 / Before r18 / r18 B0 / r18 B1 / r18 B2 / r18 A0 / r18 A1 / r18 A2 / r18 A3 / After r18:
+VO r19 walk: r19 / Before r19 / r19 B0 / r19 B1 / r19 B2 / r19 B btn Button / r19 A0 / r19 A1 / r19 A2 / r19 A3 / r19 A btn Button / After r19:
+VO r20 walk: r20 / Before r20 / r20 A0 / r20 A1 / r20 A2 / r20 A3 / r20 A btn Button / r20 B0 / r20 B1 / r20 B2 / r20 B btn Button / After r20:
+Test Case '-[RunnerUITests.ProbeS11UITests testVoiceOver]' passed (363.710 seconds).

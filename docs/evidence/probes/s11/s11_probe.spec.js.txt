@@ -1,0 +1,118 @@
+// S11 probe on the web (throwaway, not committed; kept as
+// docs/evidence/probes/s11/s11_probe.spec.js.txt with s11probe.config.js.txt).
+// For each fixture of lib/probe.dart, at 412 by 915 and at 320 by 640: the
+// fixture's semantics elements with text, in the page's (DOM) order, with
+// their depth; Chromium's accessibility tree in its order; any aria
+// attribute that could change the order (aria-owns, aria-flowto); and, for
+// the fixtures with buttons, every stop of Tab until focus has been round
+// twice, and of Shift+Tab. Then plain HTML pages for comparison.
+import { test } from '@playwright/test';
+
+const ids = Array.from({ length: 20 }, (_, i) => `r${String(i + 1).padStart(2, '0')}`);
+const withButtons = ['r11', 'r12', 'r15', 'r19', 'r20'];
+
+function log(...a) {
+  console.log('S11WEB', ...a.map((x) => String(x).replace(/\n/g, '\\n')));
+}
+
+async function fresh(page, id) {
+  await page.goto('about:blank');
+  await page.goto(`/#/${id}`);
+  await page.locator(`[flt-semantics-identifier="${id}-after"]`).waitFor();
+  await page.waitForTimeout(800);
+}
+
+async function active(page) {
+  return page.evaluate(() => {
+    const e = document.activeElement;
+    if (!e || !e.closest('flt-semantics-host')) return `(page: ${e?.tagName})`;
+    const role = e.getAttribute('role');
+    return `${e.tagName}${role ? `[role=${role}]` : ''} "${(e.getAttribute('aria-label') || e.textContent.trim()).slice(0, 40)}"`;
+  });
+}
+
+async function axOrder(page, context, id) {
+  const cdp = await context.newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const byId = new Map(nodes.map((n) => [n.nodeId, n]));
+  const out = [];
+  // Depth first from the root, in the tree's own child order.
+  const root = nodes.find((n) => !n.parentId);
+  const visit = (n, d) => {
+    if (!n) return;
+    const name = n.name?.value ?? '';
+    if (!n.ignored && n.role?.value !== 'InlineTextBox' && (name.includes(id) || name.startsWith('Before') || name.startsWith('After'))) {
+      out.push(`${d}:${n.role?.value}:"${name}"`);
+    }
+    for (const c of n.childIds ?? []) visit(byId.get(c), d + 1);
+  };
+  visit(root, 0);
+  return out;
+}
+
+test.describe.configure({ mode: 'serial' });
+
+for (const [w, h] of [[412, 915], [320, 640]]) {
+  for (const id of ids) {
+    test(`probe ${id} at ${w}x${h}`, async ({ page, context }) => {
+      await page.setViewportSize({ width: w, height: h });
+      await fresh(page, id);
+      const dom = await page.evaluate((id) => {
+        const host = document.querySelector('flt-semantics-host');
+        const out = [];
+        const depth = (e) => {
+          let d = 0;
+          for (let p = e.parentElement; p && p !== host; p = p.parentElement) d++;
+          return d;
+        };
+        for (const e of host.querySelectorAll('*')) {
+          const own = [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent.trim()).join('');
+          const label = e.getAttribute('aria-label') || own;
+          if (!label || !(label.includes(id))) continue;
+          const role = e.getAttribute('role') || e.tagName.toLowerCase();
+          const r = e.getBoundingClientRect();
+          out.push(`${depth(e)}:${role}:"${label}" @${Math.round(r.x)},${Math.round(r.y)}`);
+        }
+        const attrs = [...host.querySelectorAll('[aria-owns],[aria-flowto]')].map((e) => e.outerHTML.slice(0, 120));
+        return { out, attrs };
+      }, id);
+      log(id, `${w}`, 'dom order', dom.out.join(' / '));
+      log(id, `${w}`, 'aria-owns/flowto', dom.attrs.length ? dom.attrs.join(' | ') : '(none)');
+      log(id, `${w}`, 'ax order', (await axOrder(page, context, id)).join(' / '));
+      if (withButtons.includes(id) && w === 412) {
+        for (const key of ['Tab', 'Shift+Tab']) {
+          await fresh(page, id);
+          const stops = [];
+          for (let i = 0; i < 8; i++) {
+            await page.keyboard.press(key);
+            await page.waitForTimeout(200);
+            stops.push(await active(page));
+          }
+          log(id, `${w}`, `${key} stops`, stops.join(' -> '));
+        }
+      }
+    });
+  }
+}
+
+test('plain HTML comparison', async ({ page, context }) => {
+  const pages = {
+    // Two columns written one after the other in the document and laid out
+    // side by side with CSS: the document's order is the reading order.
+    'flex-columns':
+      '<div style="display:flex;gap:16px"><div><p>h1 A0</p><p>h1 A1</p></div><div><p>h1 B0</p><p>h1 B1</p></div></div>',
+    // The same written row by row in a grid: the document's order is row by row.
+    'grid-rows':
+      '<div style="display:grid;grid-template-columns:1fr 1fr"><p>h2 A0</p><p>h2 B0</p><p>h2 A1</p><p>h2 B1</p></div>',
+    // CSS order moves the second column first on screen; the document's order stays.
+    'css-order':
+      '<div style="display:flex"><div style="order:2"><p>h3 A0</p></div><div style="order:1"><p>h3 B0</p></div></div>',
+  };
+  for (const [name, html] of Object.entries(pages)) {
+    await page.setContent(`<!doctype html><html lang="en"><body>${html}</body></html>`);
+    const cdp = await context.newCDPSession(page);
+    const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+    const names = nodes.filter((n) => !n.ignored && n.role?.value === 'StaticText').map((n) => n.name?.value);
+    log('html', name, 'ax order', names.join(' / '));
+  }
+});
