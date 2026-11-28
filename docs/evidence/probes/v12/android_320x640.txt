@@ -1,0 +1,18 @@
+during the run: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+> Task :app:connectedDebugAndroidTest
+BUILD SUCCESSFUL in 1m 13s
+after reset: Physical size: 1080x2424  Physical density: 420 
+
+JUnit result of the run (build/app/outputs/androidTest-results, Sat Nov 28 03:23:42 2026):
+<testsuite name="dev.fluttera11y.flutter_a11y_techniques.V12AccessibilitySettingsTest" tests="10" failures="0" errors="0" skipped="1" time="52.613" timestamp="2026-11-28T08:23:42" hostname="localhost"
+<testcase name="goodMediaQueryFollowsDarkModeAndBack"
+<testcase name="bothMotionExamplesFollowRemoveAnimations"
+<testcase name="highContrastTextLeavesHighContrastOff"
+<testcase name="badReadOnceKeepsItsReadingWhenTheScreenGoesDark"
+<testcase name="eachListSaysWhatTheAppWasToldWhenItOpens"
+<testcase name="goodMediaQueryFollowsTheFontScaleAndBack"
+<testcase name="badReadOnceKeepsItsReadingWhenTheTextGrows"
+<testcase name="goodMediaQueryFollowsColourInversionAndBack"
+<testcase name="goodMediaQueryFollowsRemoveAnimationsAndBack"
+<testcase name="talkBackWalk"
+failures: 0

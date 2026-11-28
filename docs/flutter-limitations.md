@@ -211,6 +211,11 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-483](#fl-483) | A `ModalBarrier` in an `OverlayPortal`'s overlay takes the whole screen out of the semantics tree, the overlay with it | All (widget test only) | Confirmed (widget test only) |
 | [FL-484](#fl-484) | While a tooltip counts as open, `WidgetsApp` takes Escape for it before the app's default Escape shortcut reaches the focused layers; a tooltip still hiding when a screen is pushed over it took every Escape | Web (Chromium) | Observed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
+| [FL-500](#fl-500) | On the web `accessibleNavigation` says whether the app's semantics are on, not whether a screen reader is running: an app that turns them on at start, as Flutter's web guide says to, is told it is always on | Web | Confirmed |
+| [FL-501](#fl-501) | On the web `highContrast` comes from `forced-colors: active` only: `prefers-contrast: more` sets nothing, and `boldText`, `invertColors`, and `onOffSwitchLabels` are never set | Web | Confirmed |
+| [FL-502](#fl-502) | On iOS Reduce Motion sets only `AccessibilityFeatures.reduceMotion`, which `MediaQueryData` does not carry: `disableAnimations` is never set, so `MediaQuery.disableAnimationsOf` and framework animations ignore Reduce Motion | iOS | Confirmed |
+| [FL-503](#fl-503) | On Android `accessibleNavigation` turns on when any accessibility service reads the app's nodes, not only TalkBack, and is off at a screen's first frame even with TalkBack running | Android | Confirmed |
+| [FL-504](#fl-504) | On Android `highContrast` follows the contrast level of Android 14 and later, not "High contrast text", and changing the contrast level or Bold text starts the app again | Android | Confirmed ("High contrast text"); Observed (the restart) |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
 | **FL-800 to FL-899** | Wave 8, navigation and complex components | | |
@@ -969,6 +974,16 @@ yet), **Fixed in x.y** (verified on that version).
     `disableAnimations`, `boldText`, `reduceMotion`, `highContrast`,
     `onOffSwitchLabels`, `supportsAnnounce`, `autoPlayAnimatedImages`,
     `autoPlayVideos`, and `deterministicCursor`, and nothing else.
+  - The other settings the iOS reference's Accessibility Detection lists
+    (V12, read 2026-11-28): Differentiate Without Color, Grayscale, Dim
+    Flashing Lights, Prefer Cross-Fade Transitions, Closed Captions, Speak
+    Screen, Guided Access, Assistive Touch, Zoom, and the large content
+    viewer's setting. The engine listens for Speak Screen's notification
+    (`AccessibilityFeatures.swift`) but sets no flag for it, and listens
+    for none of the others (source read). Measured in V12's probe:
+    Reduce Transparency and Differentiate Without Color, turned on in the
+    simulator's Settings app while the app ran, changed nothing the app
+    is told (`docs/evidence/probes/v12/ios-round1.txt`).
 - Effect: the iOS techniques for these features cannot be reproduced in
   Flutter without writing platform code, which is outside this project's
   rule that good examples use SDK mechanisms.
@@ -7318,6 +7333,184 @@ yet), **Fixed in x.y** (verified on that version).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->
+
+## FL-500
+
+**On the web `accessibleNavigation` says whether the app's semantics are on, not whether a screen reader is running: an app that turns them on at start, as Flutter's web guide says to, is told it is always on.**
+
+- Status: Confirmed, Flutter 3.47.5, web (Chromium and WebKit, Playwright,
+  no screen reader running), and the web engine's source read
+  (`EngineSemantics.semanticsEnabled`, which sets `accessibleNavigation`
+  to its own value, and `updateSemantics`, which turns semantics on at the
+  framework's first semantics update). Found in V12.
+- WCAG: none of its own; it serves the criteria a technique adapts for.
+- What happens: the web engine reports `accessibleNavigation` as whether
+  its semantics tree is on. The catalog app calls
+  `SemanticsBinding.instance.ensureSemantics()` at start
+  (`lib/main.dart`), as Flutter's web accessibility guide says to, so
+  `MediaQuery.accessibleNavigationOf` is true with no screen reader
+  running, in both browsers (`docs/evidence/probes/v12/web.txt`). Without
+  that call (the probe's second build) it is false until something
+  activates Flutter's "Enable accessibility" placeholder, which a plain
+  click by Playwright did, and true after it
+  (`web_noensure.txt`). The change comes at the framework's first
+  semantics update, after the first frame: a screen built in that first
+  frame reads it false. The engine has no other source for it; browsers
+  do not tell a page whether a screen reader is running.
+- Effect: on the web an app cannot tell from `accessibleNavigation`
+  whether a screen reader is running, and an app that turns semantics on
+  is told one always is: a timeout lengthened for screen reader users,
+  for example, is lengthened for everyone.
+- Reproduce: `/t/V12/good-media-query` says "Accessible navigation: on"
+  with no screen reader, and `/t/V12/bad-read-once`, which reads once in
+  the first frame, says "off" (`web_tests/v12_accessibility_settings.spec.js`).
+- Workaround: none. Flutter has not added a way to tell a screen reader
+  from semantics being on.
+- Upstream issue: not searched yet (D25).
+
+## FL-501
+
+**On the web `highContrast` comes from `forced-colors: active` only: `prefers-contrast: more` sets nothing, and `boldText`, `invertColors`, and `onOffSwitchLabels` are never set.**
+
+- Status: Confirmed, Flutter 3.47.5, web (Chromium and WebKit, Playwright's
+  `emulateMedia`), and the web engine's source read (`MediaQueryManager`
+  listens to `prefers-color-scheme`, `prefers-reduced-motion`, and
+  `forced-colors`, and to nothing else). Found in V12.
+- WCAG: none of its own; it serves 1.4.3 and 1.4.6 where a technique raises
+  contrast on request (V02).
+- What happens (`docs/evidence/probes/v12/web.txt`):
+  - `forced-colors: active` set `highContrast`, and `MaterialApp` drew its
+    `highContrastTheme`, while the page was open.
+  - `prefers-contrast: more`, which macOS's Increase contrast and other
+    systems' contrast settings set, set nothing: `highContrast` stayed
+    false while the page's own `matchMedia('(prefers-contrast: more)')`
+    matched.
+  - `boldText`, `invertColors`, and `onOffSwitchLabels` were false
+    throughout, and the engine has no code that sets them (source read).
+    `inverted-colors`, a media feature some browsers report, is not read;
+    Playwright cannot set it, so it was not measured.
+- Effect: a user who asks the system for more contrast, without forcing
+  colours, gets none from an app that reads `highContrast`.
+- Reproduce: `/t/V12/good-media-query` in
+  `web_tests/v12_accessibility_settings.spec.js`, "prefers-contrast: more
+  leaves High contrast: off".
+- Workaround: none within the framework's settings. Flutter has not added
+  `prefers-contrast` to them.
+- Upstream issue: not searched yet (D25).
+
+## FL-502
+
+**On iOS Reduce Motion sets only `AccessibilityFeatures.reduceMotion`, which `MediaQueryData` does not carry: `disableAnimations` is never set, so `MediaQuery.disableAnimationsOf` and framework animations ignore Reduce Motion.**
+
+- Status: Confirmed, Flutter 3.47.5, iOS 27.0 simulator: the iOS tree test
+  (`testReduceMotionReachesGoodMotionAndNotBadAnimationsOnly`) and the
+  probe; the engine's source read (`AccessibilityFeatures.swift`, which
+  maps Reduce Motion to `reduceMotion` and has no setting it maps to
+  `disableAnimations`). The framework documents it
+  (`MediaQueryData.disableAnimations`: "On iOS, reduced motion is exposed
+  separately"). Found in V12.
+- WCAG: none of its own; it serves 2.3.3 and 2.2.2 where a technique stops
+  motion on request (V09).
+- What happens: Reduce Motion, turned on in the simulator's Settings app
+  while the app ran, set `reduceMotion` and nothing else
+  (`docs/evidence/probes/v12/ios.txt`). `MediaQueryData` has no field for
+  it, and `MediaQuery` does not rebuild a widget for it: a widget that
+  reads `View.of(context).platformDispatcher.accessibilityFeatures` must
+  listen with `WidgetsBindingObserver.didChangeAccessibilityFeatures` to
+  hear of the change (`good-motion`). On Android "Remove animations" sets
+  `disableAnimations` and never `reduceMotion` ("NOT SUPPORTED" in the
+  Android engine's `AccessibilityBridge`); on the web
+  `prefers-reduced-motion` sets both. So no one flag means "reduce motion"
+  on all three platforms.
+- Effect: an app that follows the documented `MediaQuery` flag for
+  animations does not reduce motion for an iOS user who asked for it, and
+  `AnimationController`'s own behaviour, which reads `disableAnimations`,
+  does not change.
+- Reproduce: `/t/V12/bad-animations-only` says "Reduce motion: off" on iOS
+  with Reduce Motion on; `/t/V12/good-motion`, which reads both flags,
+  says "on".
+- Workaround: read both flags, as `good-motion` does and as the
+  framework's own `CupertinoMenuAnchor` does (source read). Framework
+  animations that read only `disableAnimations` cannot be changed this way.
+- Upstream issue: not searched yet (D25).
+
+## FL-503
+
+**On Android `accessibleNavigation` turns on when any accessibility service reads the app's nodes, not only TalkBack, and is off at a screen's first frame even with TalkBack running.**
+
+- Status: Confirmed, Flutter 3.47.5, Android 17 emulator: the probe, the
+  Android tree test, and the TalkBack walk; the Android engine's source
+  read (`AccessibilityBridge.createAccessibilityNodeInfo` calls
+  `setAccessibleNavigation(true)`; it is set false only when touch
+  exploration or accessibility is turned off). Found in V12.
+- WCAG: none of its own; it serves 2.2.1 where a time limit is lengthened
+  for a screen reader user (C13).
+- What happens (`docs/evidence/probes/v12/android-summary.txt`):
+  - A UI Automator dump, with no accessibility service on, turned
+    `semanticsEnabled` and then `accessibleNavigation` on, and both off
+    again about 150 ms later, as the dump ended. In the Android tree test,
+    whose own connection (UiAutomation) reads the screen, `good-media-query`
+    said "Accessible navigation: on" with no screen reader.
+  - With TalkBack already on and the app started, the first frame was told
+    `accessibleNavigation` false (01:37:48.481, `main` having run at
+    48.259); it became true at 48.908, about 0.4 s after that first
+    reading, as TalkBack read the screen. A screen built in that first
+    frame and read once (`bad-read-once`) kept "off" while TalkBack spoke
+    it (the TalkBack transcript).
+  - TalkBack turned on and off while the app ran set it on and off within
+    half a second.
+- Effect: `accessibleNavigation` on Android means "an accessibility
+  service has read the app's nodes", which a test tool, a password
+  manager, or Switch Access does as well as a screen reader; and a value
+  read as the app starts can be wrong for its first frame.
+- Reproduce: `/t/V12/good-media-query` and `/t/V12/bad-read-once` in
+  `V12AccessibilitySettingsTest.eachListSaysWhatTheAppWasToldWhenItOpens`.
+- Workaround: none to tell TalkBack from other services; read the flag
+  with `MediaQuery.accessibleNavigationOf`, which hears of the change, not
+  once.
+- Upstream issue: not searched yet (D25).
+
+## FL-504
+
+**On Android `highContrast` follows the contrast level of Android 14 and later, not "High contrast text", and changing the contrast level or Bold text starts the app again.**
+
+- Status: Confirmed for "High contrast text" (the Android tree test);
+  Observed for the contrast level and Bold text (the probe, in both of its
+  runs; no test in the repository changes them). Flutter 3.47.5, Android
+  17 emulator; the Android engine's source read (`setHighContrastFlag`
+  reads `UiModeManager.getContrast()`, and `setBoldTextFlag` the
+  configuration's `fontWeightAdjustment`, each once when the bridge is
+  made). Found in V12.
+- WCAG: none of its own; it serves 1.4.3 and 1.4.6 (V02) and 1.4.4 (V05).
+- What happens (`docs/evidence/probes/v12/android-summary.txt`):
+  - "High contrast text" (`high_text_contrast_enabled`) set nothing.
+    `MediaQueryData.highContrast`'s documentation says it corresponds to
+    "the 'High contrast text' or similar accessibility settings" on
+    Android.
+  - The contrast level (`contrast_level` 1.0) set `highContrast`, and
+    `MaterialApp` drew its `highContrastTheme`, but the app was started
+    again within a second: `main` ran again and the screen opened afresh.
+    Setting it back to 0.0 did the same.
+  - Bold text (`font_weight_adjustment` 300) did the same: the app was
+    started again, and its first frame was told `boldText` true; back to 0,
+    started again, `boldText` false.
+  - In both cases the system logged a configuration change ("Config
+    changes"), and `main` ran again in the same process: the app's screen
+    started afresh, with a new Flutter engine. The app's manifest
+    (`android:configChanges`) lists neither `fontWeightAdjustment` nor the
+    contrast, and Android starts an activity again on a configuration
+    change it does not list (Android's documentation; the manifest read).
+    Whether the flags would follow a change with the manifest listing them
+    was not measured; the engine reads both once, when the bridge is made
+    (source read).
+- Effect: a user who turns on Bold text or more contrast while using an
+  app loses where they were in it; one who turns on "High contrast text"
+  gets no high contrast theme.
+- Reproduce: `docs/evidence/probes/v12/probe_android.py.txt`; "High
+  contrast text" in
+  `V12AccessibilitySettingsTest.highContrastTextLeavesHighContrastOff`.
+- Workaround: none within the SDK.
+- Upstream issue: not searched yet (D25).
 
 <!-- FL-600 to FL-699: Wave 6, remaining forms. Entries in this range go below, in id order. -->
 

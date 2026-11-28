@@ -87,7 +87,7 @@ at 01:36:06 and 01:36:10, where the summary shows the change.
 | Colour correction | nothing | |
 | A UI Automator dump, no service on | `semanticsEnabled`, then `accessibleNavigation` true; both false about 150 ms later (FL-503) | |
 | TalkBack on, then off | `semanticsEnabled` and `accessibleNavigation` true within 0.4 s; false | while running |
-| App started with TalkBack already on | first frame `accessibleNavigation` false; true 650 ms later (FL-503) | |
+| App started with TalkBack already on | first frame `accessibleNavigation` false; true about 0.4 s after it (FL-503) | |
 
 `reduceMotion` and `onOffSwitchLabels` were never set, `supportsAnnounce`
 was false throughout (FL-018), `autoPlayAnimatedImages` and
