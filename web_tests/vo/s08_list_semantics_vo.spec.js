@@ -43,16 +43,27 @@
 // (docs/evidence/probes/s08/voiceover-web-before-judge-update.md.txt). Both
 // were made before the walk took S16's rules, and logged only what follows
 // the "Example" heading of a complete walk, so neither passes
-// judgeTranscript now.
+// judgeTranscript now. Every one of those six recordings ended
+// bad-lazy-list's walk after "Order 13" in both browsers, with no witness;
+// the recording of 2026-11-28, with this walk, read all 30 orders in
+// Chromium, its end witnessed, and 13 in WebKit, witnessed too, so the
+// lists for bad-lazy-list differ by browser (BROWSER_STOPS in
+// s08_vo_walks.js).
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
 import {
-  EXPECTED_STOPS, collectWalk, judgeCollectedWalk, positionsText, runWalks, screenStops,
+  EXPECTED_STOPS, collectWalk, expectedStops, judgeCollectedWalk, positionsText, runWalks, screenStops,
   startText, stopsText, unresolvedText, witnessText,
 } from './s08_vo_walks.js';
 
 test.describe.configure({ retries: 0 });
+
+// The most moves a walk makes. S16's walk has 40; bad-lazy-list's Chromium
+// walk of 2026-11-28 took 36 to its end (34 stops and the two unchanged
+// reads), so a few lost reads would have run it out of moves, which is
+// wrong for good. 60 leaves room for that list's 30 orders.
+const MAX_MOVES = 60;
 
 /**
  * One walk of the screen: walkToEnd with no moves starts it exactly as the
@@ -65,7 +76,7 @@ test.describe.configure({ retries: 0 });
  * one that comes anyway is left out by the judge only when it is about the
  * stop before it, at the same position.
  */
-async function walkOnce(page, voiceOver, browserName, max = 40) {
+async function walkOnce(page, voiceOver, browserName, max = MAX_MOVES) {
   await walkToEnd(page, voiceOver, browserName, 0);
   const capture = async () => {
     let phrase = await lastPhrase();
@@ -85,15 +96,17 @@ async function walkOnce(page, voiceOver, browserName, max = 40) {
   });
 }
 
-for (const [slug, expected] of Object.entries(EXPECTED_STOPS)) {
+for (const slug of Object.keys(EXPECTED_STOPS)) {
   test(`voiceover reads ${slug}`, async ({ page, voiceOver, browserName }) => {
+    // The browser's own list where it reads otherwise (BROWSER_STOPS).
+    const expected = expectedStops(slug, browserName);
     await page.goto(`/#/t/S08/${slug}`, { waitUntil: 'load' });
     await expect(page.getByRole('heading', { name: 'Example', exact: true, level: 2 })).toBeVisible();
     await page.waitForTimeout(600);
     let latest;
     const { verdict, reason, walks } = await runWalks(
       async () => {
-        latest = await walkOnce(page, voiceOver, browserName, 40);
+        latest = await walkOnce(page, voiceOver, browserName, MAX_MOVES);
         return latest;
       },
       // A failed end witness is wrong for good, and an unresolved read

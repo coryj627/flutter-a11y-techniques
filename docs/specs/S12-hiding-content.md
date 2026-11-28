@@ -604,31 +604,36 @@ What the tests skip or cannot see, and what each gives up:
   VoiceOver reads alike; no example has two.
 
 - **The web VoiceOver walk and its judges were brought to S16's rules,
-  with S17's positions row** (2026-11-28, not yet recorded with them).
-  Before, S12's walk had S16's rules but the last: it compared its first
-  move with nothing, so a first reading at Back's bounds went to the
-  unresolved reads whatever its words, and it recorded no start capture
-  and no positions row. The transcript recorded before
+  with S17's positions row** (2026-11-28). Before, S12's walk had S16's
+  rules but the last: it compared its first move with nothing, so a first
+  reading at Back's bounds went to the unresolved reads whatever its
+  words, and it recorded no start capture and no positions row. The
+  transcript recorded before
   (`docs/evidence/probes/s12/voiceover-web-before-judge-update.md.txt`,
   moved from `docs/evidence/S12/voiceover-web.md`) has none of the new
   rows, and the web tree spec shows that it fails `judgeTranscript` for
   that alone: every pair lacks its start row and its positions row, and
-  nothing else is wrong with it. `docs/evidence/S12/voiceover-web.md` is
-  absent until the next recording, and the never-skipped test of it fails
-  until then. Two things differ from S16's rules: the positions row,
-  S17's, so that `judgeTranscript` leaves out a help message by the rule
-  the walk used (S16's counts every help message in a transcript as a
-  stop), and the escaping of " / " in a stop (S10's `bad-merged` reads
-  "3.4 / 5", which S16's walk row splits into two stops). A made-up walk
-  in the web tree spec shows a property of S16's walk: a help message read
-  after the last element, at its position, is the walk's last stop, and
-  the witness's move back then reads the element before it, not the stop
-  before the last, so the walk fails for good; the help rule cannot leave
-  out such a message. S08's fourth recording read a help message there,
-  after "end of list". The help rule is still tested only on made-up
-  walks. In S16's recording (`docs/evidence/S16/voiceover-web.md`) the
-  start capture on Back read an empty phrase in all 14 walks, and it did
-  in S17's recordings too (on S17's branch); why was not looked into.
+  nothing else is wrong with it. The recording with them (2026-11-28, made
+  by the coordinator, `docs/evidence/S12/voiceover-web.md`) passed: 14 walks
+  of 14, each complete on its first walk in Chromium and WebKit, every
+  start capture on Back an empty phrase, every unresolved row "none",
+  every end witnessed, and no help message; every example's stops after
+  the heading as in the recording before. The web tree spec judges it
+  again from its rows, and it passes. Two things differ from S16's rules:
+  the positions row, S17's, so that `judgeTranscript` leaves out a help
+  message by the rule the walk used (S16's counts every help message in a
+  transcript as a stop), and the escaping of " / " in a stop (S10's
+  `bad-merged` reads "3.4 / 5", which S16's walk row splits into two
+  stops). A made-up walk in the web tree spec shows a property of S16's
+  walk: a help message read after the last element, at its position, is
+  the walk's last stop, and the witness's move back then reads the element
+  before it, not the stop before the last, so the walk fails for good; the
+  help rule cannot leave out such a message. S08's fourth recording read a
+  help message there, after "end of list". The help rule is still tested
+  only on made-up walks. In S16's recording
+  (`docs/evidence/S16/voiceover-web.md`) the start capture on Back read an
+  empty phrase in all 14 walks, and it did in S17's recordings too (on
+  S17's branch); why was not looked into.
 
 **Not done yet.** How each screen reader pronounces the
 ornaments' symbols. TalkBack's and VoiceOver's own navigation by swipe or

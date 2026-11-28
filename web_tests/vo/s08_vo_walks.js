@@ -57,6 +57,9 @@ const STEPS = ['1. Fork the repository', '2. Make the change', '3. Open a pull r
 /** A list item as VoiceOver read it: "Milk empty group (1 of 3) 1 of 3". */
 const item = (text, i, kind) => `${text} ${kind} (${i + 1} of 3) ${i + 1} of 3`;
 
+/** bad-lazy-list's orders, all 30 of the fixture (`orderCount` in its examples.dart). */
+const ORDERS = Array.from({ length: 30 }, (_, i) => `Order ${i + 1}`);
+
 // slug -> everything VoiceOver speaks (web_tests/vo/s08_list_semantics_vo.spec.js,
 // which judges each walk against it; kept here so that the web tree spec
 // can judge the committed transcripts with it too) after the "Example" heading, to the
@@ -79,9 +82,34 @@ export const EXPECTED_STOPS = {
   'bad-no-list': GROCERIES,
   // Each tile a list item, read as a group and not as a button (FL-262).
   'bad-tile-in-item': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'group')), 'end of list', 'Chosen: none'],
-  // No list; the orders the page holds when it opens (FL-011).
-  'bad-lazy-list': Array.from({ length: 13 }, (_, i) => `Order ${i + 1}`),
+  // No list. In WebKit, the orders the page holds when it opens, 1 to 13
+  // (FL-011); in Chromium every order (BROWSER_STOPS).
+  'bad-lazy-list': ORDERS.slice(0, 13),
 };
+
+/**
+ * Where one browser's walk must read otherwise than EXPECTED_STOPS: browser
+ * -> slug -> stops. `bad-lazy-list` in Chromium: the recording of
+ * 2026-11-28 (docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt),
+ * the first with the end witness, read all 30 orders, the
+ * fixture's whole list (`orderCount`), VoiceOver scrolling the list as it
+ * moved (from "Order 11" on, the cursor's position jumps back up the
+ * screen every three or four orders), and its end was witnessed at "Order
+ * 30". Every earlier recording (rounds 1 to 5 and the sixth,
+ * voiceover-web-before-judge-update.md.txt) ended Chromium's walk after
+ * "Order 13", the last order in the page when it opens (13 in both
+ * browsers, measured without VoiceOver), with no witness and no
+ * positions recorded, so whether VoiceOver stopped there or the capture
+ * stopped changing cannot be told from them. WebKit's walk of 2026-11-28
+ * ended after "Order 13" with its witness, a move back to "Order 12" at
+ * another position: VoiceOver in WebKit did not move past it.
+ */
+export const BROWSER_STOPS = {
+  chromium: { 'bad-lazy-list': ORDERS },
+};
+
+/** The stops `browser`'s walk of `slug` must read after the "Example" heading. */
+export const expectedStops = (slug, browser) => BROWSER_STOPS[browser]?.[slug] ?? EXPECTED_STOPS[slug];
 
 /** The stops VoiceOver reads above the "Example" heading of `slug`'s screen. */
 export const screenStops = (slug) => {
@@ -132,7 +160,8 @@ export function helpAfterStop(stops, positions, i) {
 
 /**
  * Every row name of a transcript (`<row>-walk-<n>`), with the stops its
- * walk must read after the "Example" heading (`expected`) and the screen's
+ * walk must read after the "Example" heading (`expected`, which
+ * judgeTranscript takes from expectedStops, by browser) and the screen's
  * own stops before it (`screen`): one per example.
  */
 export const TRANSCRIPT_ROWS = Object.fromEntries(Object.entries(EXPECTED_STOPS)
@@ -389,7 +418,9 @@ export function judgeTranscript(text) {
     walks.get(key).set(Number(n), { stops, was });
   }
   for (const b of BROWSERS) {
-    for (const [slug, { expected, screen }] of Object.entries(TRANSCRIPT_ROWS)) {
+    for (const [slug, { screen }] of Object.entries(TRANSCRIPT_ROWS)) {
+      // The browser's own list where it reads otherwise (BROWSER_STOPS).
+      const expected = expectedStops(slug, b);
       const key = `${b} ${slug}`;
       const tries = walks.get(key);
       if (!tries) {

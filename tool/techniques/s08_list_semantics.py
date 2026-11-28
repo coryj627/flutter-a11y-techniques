@@ -99,5 +99,7 @@ VOICEOVER_WEB_METHOD = (
     "at the position of the stop before it, whose reading speaks the role the help names; it stays "
     "in the walk's row, and the web tree spec judges the transcript again from its rows by the "
     "same rule, from the positions row. "
+    "At most 60 moves a walk. bad-lazy-list's expected list is by browser: all 30 orders in "
+    "Chromium, 13 in WebKit. "
     "No runner retries"
 )
