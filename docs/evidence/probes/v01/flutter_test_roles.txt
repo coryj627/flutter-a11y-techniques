@@ -1,0 +1,58 @@
+V01ROLE dark surface #121318
+V01ROLE dark onSurface #E4E1E9
+V01ROLE dark onSurfaceVariant #C7C5D0
+V01ROLE dark primary #BAC3FF
+V01ROLE dark onPrimary #222C61
+V01ROLE dark primaryContainer #394379
+V01ROLE dark onPrimaryContainer #DEE0FF
+V01ROLE dark secondaryContainer #434659
+V01ROLE dark onSecondaryContainer #E0E1F9
+V01ROLE dark outline #90909A
+V01ROLE dark outlineVariant #46464F
+V01ROLE dark error #FFB4AB
+V01ROLE dark onError #690005
+V01ROLE dark surfaceContainerLow #1B1B21
+V01ROLE dark surfaceContainer #1F1F25
+V01ROLE dark surfaceContainerHigh #29292F
+V01ROLE dark surfaceContainerHighest #34343A
+V01ROLE dark inverseSurface #E4E1E9
+V01ROLE dark onInverseSurface #303036
+V01ROLE dark cupertino.label #FFFFFF
+V01ROLE dark cupertino.secondaryLabel #EBEBF5 a=0.600
+V01ROLE dark cupertino.tertiaryLabel #EBEBF5 a=0.298
+V01ROLE dark cupertino.placeholderText #EBEBF5 a=0.298
+V01ROLE dark cupertino.separator #545458 a=0.600
+V01ROLE dark cupertino.secondarySystemFill #787880 a=0.318
+V01ROLE dark cupertino.tertiarySystemFill #767680 a=0.239
+V01ROLE dark cupertino.systemBlue #0A84FF
+V01ROLE dark cupertino.systemGreen #30D158
+V01ROLE dark cupertino.systemBackground #000000
+V01ROLE light surface #FBF8FF
+V01ROLE light onSurface #1B1B21
+V01ROLE light onSurfaceVariant #46464F
+V01ROLE light primary #515B92
+V01ROLE light onPrimary #FFFFFF
+V01ROLE light primaryContainer #DEE0FF
+V01ROLE light onPrimaryContainer #394379
+V01ROLE light secondaryContainer #E0E1F9
+V01ROLE light onSecondaryContainer #434659
+V01ROLE light outline #767680
+V01ROLE light outlineVariant #C7C5D0
+V01ROLE light error #BA1A1A
+V01ROLE light onError #FFFFFF
+V01ROLE light surfaceContainerLow #F5F2FA
+V01ROLE light surfaceContainer #EFEDF4
+V01ROLE light surfaceContainerHigh #E9E7EF
+V01ROLE light surfaceContainerHighest #E4E1E9
+V01ROLE light inverseSurface #303036
+V01ROLE light onInverseSurface #F2EFF7
+V01ROLE light cupertino.label #000000
+V01ROLE light cupertino.secondaryLabel #3C3C43 a=0.600
+V01ROLE light cupertino.tertiaryLabel #3C3C43 a=0.298
+V01ROLE light cupertino.placeholderText #3C3C43 a=0.298
+V01ROLE light cupertino.separator #3C3C43 a=0.286
+V01ROLE light cupertino.secondarySystemFill #787880 a=0.157
+V01ROLE light cupertino.tertiarySystemFill #767680 a=0.118
+V01ROLE light cupertino.systemBlue #007AFF
+V01ROLE light cupertino.systemGreen #34C759
+V01ROLE light cupertino.systemBackground #FFFFFF

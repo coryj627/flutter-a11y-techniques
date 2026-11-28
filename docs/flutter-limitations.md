@@ -211,6 +211,14 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-483](#fl-483) | A `ModalBarrier` in an `OverlayPortal`'s overlay takes the whole screen out of the semantics tree, the overlay with it | All (widget test only) | Confirmed (widget test only) |
 | [FL-484](#fl-484) | While a tooltip counts as open, `WidgetsApp` takes Escape for it before the app's default Escape shortcut reaches the focused layers; a tooltip still hiding when a screen is pushed over it took every Escape | Web (Chromium) | Observed |
 | **FL-500 to FL-599** | Wave 5, visual preferences | | |
+| [FL-510](#fl-510) | A `CupertinoTextField`'s default placeholder is under 4.5:1 on the field, light and dark | All | Confirmed |
+| [FL-511](#fl-511) | A `CupertinoTextField`'s default edge is a hairline under 3:1 against the page and the field | All | Confirmed |
+| [FL-512](#fl-512) | `GridTileBar` draws its title straight on the tile, with no background, unless `backgroundColor` is given | All | Confirmed |
+| [FL-513](#fl-513) | A selected `ListTile` is told from the others by the colour of its text alone, and `ToggleButtons`' chosen button by colours alone | All | Confirmed (`ListTile`); Observed (`ToggleButtons`) |
+| [FL-514](#fl-514) | A `CupertinoButton` fades to 0.4 opacity while pressed, and a filled one's text to under 4.5:1 | All (widget tests only) | Confirmed (widget tests only) |
+| [FL-515](#fl-515) | On the web, a mouse button held on a Material button or list tile lowers its text under 4.5:1: the ink splash is drawn over the pressed highlight and the hover tint | Web (Chromium, WebKit) | Confirmed |
+| [FL-516](#fl-516) | A `CupertinoSwitch` at its defaults is under 3:1 against the page in light mode, off and on | All | Observed |
+| [FL-517](#fl-517) | `CupertinoColors.secondaryLabel` and `tertiaryLabel` are under 4.5:1 as text on a light page, and Cupertino widgets use them for text by default | All | Observed |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
 | **FL-800 to FL-899** | Wave 8, navigation and complex components | | |
@@ -2349,6 +2357,38 @@ yet), **Fixed in x.y** (verified on that version).
   it is being edited.
 - Workaround: put the format in helper text and in the field's hint, as
   [F02](techniques/F02.md) `good-helper` does ([FL-140](#fl-140)).
+- Measured in V01 on the web (2026-11-28), and read twice by VoiceOver:
+  - The element (`docs/evidence/probes/v01/fields_web.txt`, from
+    `fields_web.spec.js.txt`; Playwright's Chromium and WebKit, the same in
+    both; the accessibility tree in Chromium only, over the DevTools
+    protocol, which WebKit does not offer). V01 `good-material`'s outlined
+    field, with a label and a hint shown at rest
+    (`floatingLabelBehavior: always`): at rest its input has
+    `aria-label="Email"` and no `placeholder` attribute; given DOM focus,
+    `aria-label="Email\nRequired"` and `placeholder="Required"`, and
+    Chromium's name is "Email Required", from the label and the
+    placeholder. A `CupertinoTextField` with a placeholder (V01
+    `good-cupertino` and `bad-cupertino-placeholder`) has
+    `aria-label="Email\nRequired"` at rest, the placeholder joined to the
+    name, and gains `placeholder="Required"` with focus. A Material field
+    with no hint (`bad-faint-edge`) does not change.
+  - What VoiceOver said (V01's first web recording,
+    `docs/evidence/probes/v01/voiceover-web-round1-fail.md.txt` and
+    `.log.txt`), its cursor giving the field DOM focus: "Email Required
+    Required edit text" for the Material field in Chromium and in WebKit,
+    and for the Cupertino fields "Email Required Required edit text" or,
+    read before the focus, "Email Required edit text", varying within one
+    walk. In V01's second recording (`docs/evidence/V01/voiceover-web.md`,
+    recorded 2026-11-28) the Material field read "Email edit text" in
+    Chromium, before its focus, and "Email Required Required edit text" in
+    WebKit; the Cupertino fields "Email Required Required edit text" in
+    both, and once in Chromium "Email Required edit text" first, then the
+    other form at the same position. TalkBack and VoiceOver on iOS did not
+    speak the Material field's hint (V01's transcripts).
+  - The earlier sighting: F02's web transcript reads a field's hint in its
+    name ("Username 4 to 10 characters, no spaces. edit text").
+  - Effect: a screen-reader user hears the hint as part of the field's
+    name, twice, once the field has focus. Not judged as a failure here.
 - Upstream issue: not searched yet (D25).
 
 ## FL-160
@@ -3186,6 +3226,14 @@ yet), **Fixed in x.y** (verified on that version).
 - How to read this entry: this is the platform's colour, copied; the SDK
   does not resolve to the high-contrast variant unless the device asks for
   more contrast.
+- Also measured in V01's probe (fixtures c3s and c4s, the widget tests,
+  Chromium, Android, and iOS, light mode): under a default
+  `CupertinoThemeData`, whose primary colour is `systemBlue`, a
+  `CupertinoButton`'s text is #007AFF, 3.82:1 on the Material page, and a
+  `CupertinoButton.filled`'s white text is on #007AFF, 4.02:1; both are
+  17 logical pixels, not large text. In dark mode `systemBlue` is #0A84FF,
+  5.09:1 on the page (widget tests). In this app the Cupertino theme comes from the
+  Material one, and its primary colour is the scheme's `primary`, 6.12:1.
 - Upstream issue: not searched yet (D25).
 
 ## FL-243
@@ -3576,9 +3624,18 @@ yet), **Fixed in x.y** (verified on that version).
   with focus, a hover, and both, in light and dark: only the
   `FilledButton` with both, in light mode, failed. Not measured on a
   device. Why was not looked into.
+- Measured from pixels in V01's probe (fixtures m1 and m21, widget tests
+  at a device pixel ratio of 3, `docs/evidence/probes/v01/flutter_test_round1.txt`):
+  the `FilledButton`'s fill with focus and a hover is #6F78A5, on which
+  its white text is 4.28:1 (the ratio computed from the two measured
+  colours). A selected `ListTile` with focus and a hover is tinted
+  #D3D1D7, on which its `primary` title is 4.25:1; with focus alone
+  4.64:1. In Chromium the probe's hover after Tab did not show, so these
+  were not measured on the web.
 - WCAG: 1.4.3 Contrast (Minimum), in that state.
-- Workaround: another button (C12 uses an `OutlinedButton`), or a
-  `style` whose overlay keeps the contrast. Not tried.
+- Workaround: another button (C12 and V01 `good-material` use an
+  `OutlinedButton`: 4.80:1 with focus and a hover in V01's widget tests),
+  or a `style` whose overlay keeps the contrast. Not tried.
 - Upstream issue: not searched yet (D25).
 
 ## FL-254
@@ -6669,9 +6726,14 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround, in the SDK: give the title and message a style with
   `CupertinoColors.label`, as I03 `good-cupertino` does; with it the
   widget tests' contrast check passes in light and dark mode.
-- This entry belongs with the contrast techniques of wave 5, visual
-  preferences, which should measure it properly. It is not verified on a
-  device.
+- Measured from pixels in V01's probe (fixture c14, a sheet drawn in the
+  page, not in a route): in light mode the title and the message are
+  #888788 on the sheet's #FCFBFD, 3.47:1 (3.40:1 against the page),
+  in the widget tests, Chromium, Android, and iOS; in dark mode #9C9C9D on
+  #232325, 5.72:1, in the widget tests (both ratios computed from the
+  measured colours). The sheet is translucent, so
+  its colour depends on what is under it; in a route over a page the
+  figures were not measured.
 - Upstream issue: not searched yet (D25).
 
 ## FL-442
@@ -7318,6 +7380,248 @@ yet), **Fixed in x.y** (verified on that version).
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-500 to FL-599: Wave 5, visual preferences. Entries in this range go below, in id order. -->
+
+## FL-510
+
+**A `CupertinoTextField`'s default placeholder is under 4.5:1 on the field, light and dark.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by V01 `bad-cupertino-placeholder`
+  in the widget tests, on the web, on Android, and on iOS, in light and
+  dark mode, written to fail when the placeholder reaches 4.5:1. Read in
+  the source: `cupertino/text_field.dart`, `_kDefaultPlaceholderStyle`,
+  `CupertinoColors.placeholderText`: #3C3C43 at an opacity of 0.30 in light
+  mode, #EBEBF5 at 0.30 in dark.
+- What happens: on the field's own background, white in light mode and
+  black in dark, the placeholder is #C5C5C7, 1.72:1, and #464649, 2.23:1
+  (V01's logs, every layer; the probe, fixture c5).
+- WCAG: 1.4.3 Contrast (Minimum), which applies to placeholder text
+  (Understanding 1.4.3).
+- Workaround, in the SDK: `placeholderStyle` with a colour of 4.5:1 on the
+  field in both modes. V01 `good-cupertino` uses `systemGrey`'s
+  high-contrast colours, #6C6C70 and #AEAEB2, 5.23:1 and 9.50:1 on every
+  layer. `CupertinoColors.secondaryLabel` is not enough in light mode
+  ([FL-517](#fl-517)).
+- How to read this entry: Flutter has not made Cupertino's placeholder
+  meet 4.5:1 yet; the colour is the platform's, copied. Re-check when the
+  pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-511
+
+**A `CupertinoTextField`'s default edge is a hairline under 3:1 against the page and the field.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by the V01 widget test
+  "FL-511", light and dark, written to fail when the edge reaches 3:1.
+  Measured in the probe (fixture c5) in the widget tests and Chromium,
+  light and dark, and on Android and iOS in light mode. Read in the
+  source: `cupertino/text_field.dart`, `_kDefaultRoundedBorderSide`, black
+  at an opacity of 0.2 (white in dark mode) and a width of 0, one physical
+  pixel.
+- What happens: in the catalog app's theme the field is white on the page
+  #FBF8FF (1.05:1) in light mode and black on #121318 (1.13:1) in dark, so
+  its edge is what shows where it is. The edge is #E2DFE6, 1.25:1 against
+  the page and 1.32:1 against the field, in light mode (Android, at its
+  density, #CCCCCC, 1.53:1), and #2A2B2F, 1.31:1 and 1.49:1, in dark.
+- WCAG: 1.4.11 Non-text Contrast: the edge is "required to identify the
+  presence of the input" (Understanding 1.4.11's failing example of a
+  light grey input border). The user agent exception does not cover it
+  (V01's spec, section 3).
+- Workaround, in the SDK: `decoration` with a border of 3:1 against both.
+  V01 `good-cupertino` draws a one logical pixel edge in #6C6C70 and
+  #AEAEB2: 4.97:1 against the page and 5.23:1 against the field in light
+  mode, 8.39:1 and 9.50:1 in dark, on every layer.
+- How to read this entry: Flutter has not given Cupertino's field an edge
+  of 3:1 yet. Re-check when the pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-512
+
+**`GridTileBar` draws its title straight on the tile, with no background, unless `backgroundColor` is given.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by V01 `bad-caption` in the
+  widget tests, on the web, on Android, and on iOS, light and dark, written
+  to fail when the caption reaches 4.5:1. Read in the source:
+  `material/grid_tile_bar.dart` (a decoration only when `backgroundColor`
+  is set; the title in a dark theme's text colour, #E6E0E9 here).
+- What happens: over the pale end of V01's picture (#C5CAE9 to #BDC2E4)
+  the caption is 1.33:1 to 1.35:1 (1.39:1 on Android at 320 by 640). The
+  same colour is 10:1 over the picture's dark end. Whether the default
+  fails depends on the picture: the bar's title has no contrast of its
+  own.
+- WCAG: 1.4.3 Contrast (Minimum); failure
+  [F83](https://www.w3.org/WAI/WCAG22/Techniques/failures/F83).
+- Workaround, in the SDK: `backgroundColor`. V01 `good-caption` uses
+  `Colors.black54`: 5.28:1 to 5.43:1 over the whole picture, every layer.
+- How to read this entry: this is a default that leaves the contrast to
+  the picture. Flutter has not given the bar a background by default.
+- Upstream issue: not searched yet (D25).
+
+## FL-513
+
+**A selected `ListTile` is told from the others by the colour of its text alone, and `ToggleButtons`' chosen button by colours alone.**
+
+- Status: Confirmed, Flutter 3.47.5, for `ListTile`: asserted by V01
+  `bad-colour-only` in the widget tests, on the web, on Android, and on
+  iOS, light and dark, written to fail when the colours reach 3:1 apart
+  or anything else is drawn on a tile. `ToggleButtons` measured in the
+  probe only (fixture m25): its fill and its two text colours in the
+  widget tests, on Android, and on iOS, light and dark; in Chromium the
+  fill only (the anti-aliased letters left no solid text colour).
+  Read in the source: `material/list_tile.dart` (a selected tile's text
+  and icon take `selectedColor`, by default `primary`; `selectedTileColor`
+  is transparent by default).
+- What happens:
+  - `ListTile(selected: true)`: the title is `primary`, #515B92 in light
+    mode and #BAC3FF in dark; the others' are `onSurface`, #1B1B21 and
+    #E4E1E9. They are 2.66:1 apart in light mode and 1.32:1 in dark, and
+    nothing else is drawn on any tile.
+  - `ToggleButtons`: the chosen button is filled #E6E5F2, 1.19:1 against
+    the page, and its text is `primary`, 1.81:1 from the others' #38383E,
+    in light mode; in dark mode the fill #262834, 1.27:1, and the text
+    #BAC3FF, 1.01:1 from the others' #C9C6CE (ratios computed from the
+    measured colours).
+  - The state reaches TalkBack ("selected.") and VoiceOver on iOS
+    ("selected"); on the web a selected `ListTile` is a button with
+    `aria-current="true"` and no selected state in Chromium's tree (V01's
+    web tree spec).
+- WCAG: 1.4.1 Use of Color: the chosen item differs by hue and by a
+  lightness under 3:1 (Understanding 1.4.1), and by nothing else that is
+  drawn.
+- Workaround, in the SDK: a widget whose state has a shape of its own.
+  V01 `good-selection` uses `RadioListTile`s in a `RadioGroup`, whose
+  chosen radio button has a dot. A `SegmentedButton`, a `FilterChip`, and
+  a `ChoiceChip` draw a check mark (probe m22 to m24). For a `ListTile`
+  itself, a mark in `trailing` would be the author's; not tried.
+- How to read this entry: Flutter has not drawn a selected `ListTile` or
+  `ToggleButtons` button with more than colour yet. C02's
+  `good-toggle-buttons` uses `ToggleButtons`.
+- Upstream issue: not searched yet (D25).
+
+## FL-514
+
+**A `CupertinoButton` fades to 0.4 opacity while pressed, and a filled one's text to under 4.5:1.**
+
+- Status: Confirmed, Flutter 3.47.5: asserted by the V01 widget test
+  "FL-514", light and dark, written to fail when the pressed text reaches
+  4.5:1. Not measured on a device with the default (V01's Android test
+  measures `good-cupertino`, which changes it). Read in the source:
+  `cupertino/button.dart`, `pressedOpacity` "defaults to 0.4", applied to
+  the whole button, fill and text.
+- What happens: a `CupertinoButton.filled` in the app's theme, held down
+  300 ms: its white text 1.88:1 on its faded fill in light mode (6.44:1 at
+  rest), 2.42:1 in dark (7.71:1 at rest).
+- WCAG: 1.4.3 Contrast (Minimum), in the pressed state; the criterion has
+  no exception for it, and the label is still text the user reads while
+  pressing (the principal's decision, 2026-11-28).
+- Workaround, in the SDK: `pressedOpacity`, at a value whose measured
+  pressed ratio is 4.5:1 or more; there is no source for a value. V01
+  `good-cupertino` sets 0.9: 5.14:1 and 6.66:1 while pressed in the widget
+  tests, 5.13:1 and 6.65:1 on the web with a mouse button held (V01's web
+  tree spec). 0.85 gives 4.54:1 in light mode,
+  on the threshold (computed from the colours, not measured).
+- Upstream issue: not searched yet (D25).
+
+## FL-515
+
+**On the web, a mouse button held on a Material button or list tile lowers its text under 4.5:1: the ink splash is drawn over the pressed highlight and the hover tint.**
+
+- Status: Confirmed on the web, Flutter 3.47.5, in Chromium and in WebKit
+  (Playwright's builds): measured in V01's probe round 3
+  (`docs/evidence/probes/v01/probe3_web.txt`, from `probe3.dart.txt`), and
+  in V01's first web tree runs (`web_tests_round1.txt`, `web_pressed.txt`),
+  with the mouse over the control and its button held, light and dark,
+  at 0.3 s, 2 s, and 4 s; the readings at 2 s and 4 s were the same. Not
+  seen in the widget tests, which held a mouse 2 s on the same controls
+  (4.80:1 and more), nor on Android, which held a finger 180 to 300 ms
+  (4.86:1 and more; longer holds not measured with the default).
+- What happens, at 2 s and 4 s, the same in both browsers:
+  - `OutlinedButton` "Send", light mode: 4.19:1 (6.12:1 at rest, 5.50:1
+    hovered). Dark mode 5.92:1.
+  - `CheckboxListTile` and `RadioListTile` titles, dark mode: 4.25:1 over
+    #68696C (14.35:1 at rest, 13.16:1 hovered). Light mode 11.26:1.
+  - A `TextField`'s label and hint stay 6.12:1 or more.
+- The cause, read in the source and confirmed by turning each layer off
+  (probe round 3, fixtures b0 to b3, c0 to c5, r0 to r4):
+  - Read in the source: a Material control's `InkWell` draws, while
+    pressed with the mouse over it, its hover tint, its pressed highlight,
+    and a splash (`material/ink_well.dart`). On the web the theme's
+    `splashFactory` is `InkRipple`, on Android off the web `InkSparkle`
+    (`material/theme_data.dart`). A button's tints and splash are its
+    `overlayColor` (`primary` at 0.08 hovered, 0.1 pressed); a list tile's
+    highlight and splash are the theme's `highlightColor` and
+    `splashColor`, each #CCCCCC at an opacity of 0x40 in dark mode.
+  - Measured: the button with no splash (`ButtonStyle(splashFactory:
+    NoSplash.splashFactory)`) 4.79:1 in light mode and 7.45:1 in dark;
+    with no pressed tint, so no highlight and no splash, 5.50:1, the hover
+    alone. The tiles with no splash (`ThemeData.splashFactory`), or with
+    no highlight, or with a transparent `splashColor`, 7.07:1 in dark mode;
+    with neither splash nor highlight 13.16:1, the hover alone; with a
+    transparent `hoverColor` still 4.25:1. So in the tiles the highlight
+    and the splash together take the title under 4.5:1, and each alone
+    does not; in the button the splash takes it under.
+- WCAG: 1.4.3 Contrast (Minimum), in the pressed state. The label is still
+  text the user reads while pressing (the principal's decision, 2026-11-28).
+- Workaround, in the SDK: `ThemeData.splashFactory:
+  NoSplash.splashFactory` round the controls. V01 `good-material` and
+  `good-selection` are under such a theme (`WithoutSplash`); the press is
+  still shown by the highlight. Their web tree spec measures every text
+  with the mouse held, after 2 s and 4 s, at 4.5:1 or more. The
+  `OutlinedButton`'s own `ButtonStyle.splashFactory` does the same for a
+  button alone (probe round 3).
+- How to read this entry: Flutter's default splash, over the highlight and
+  the hover, has not been made to keep text at 4.5:1 yet. Re-check when the
+  pinned version changes.
+- Upstream issue: not searched yet (D25).
+
+## FL-516
+
+**A `CupertinoSwitch` at its defaults is under 3:1 against the page in light mode, off and on.**
+
+- Status: Observed, Flutter 3.47.5: measured in the V01 probe (fixtures c7
+  and c8) in the widget tests and Chromium, light and dark, and on Android
+  and iOS in light mode; no test in the repo asserts it. Read in the
+  source: `cupertino/switch.dart` (the track off is `secondarySystemFill`,
+  on `systemGreen`; the thumb white).
+- What happens, against the page (#FBF8FF light, #121318 dark):
+  - Off: the track #E6E4EB, 1.20:1, and the thumb white, 1.05:1, shown
+    only by its shadow, in light mode. In dark mode the track #323339,
+    1.47:1, and the thumb 18.55:1.
+  - On: the track `systemGreen` #34C759, 2.11:1, and the white thumb on
+    it 2.2:1 (computed from the two measured colours), in light mode. In dark mode the track #30D158, 9.18:1.
+- WCAG: 1.4.11 Non-text Contrast, in light mode: neither the track nor
+  the thumb has 3:1 against what is next to it, off or on. In dark mode no
+  verdict is given beyond the figures.
+- Workaround: `activeTrackColor`, `inactiveTrackColor`, and `thumbColor`
+  are documented; not tried.
+- Upstream issue: not searched yet (D25).
+
+## FL-517
+
+**`CupertinoColors.secondaryLabel` and `tertiaryLabel` are under 4.5:1 as text on a light page, and Cupertino widgets use them for text by default.**
+
+- Status: Observed, Flutter 3.47.5: measured in the V01 probe (fixtures k2
+  to k5, c12, c17) in the widget tests and Chromium, light and dark, and
+  k2 to k4, c12, and c17 on Android and iOS in light mode; no test in the
+  repo asserts it.
+  Read in the source: `cupertino/colors.dart`; `cupertino/list_tile.dart`
+  (the subtitle and the additional information in `secondaryLabel`).
+- What happens, on the app's page (#FBF8FF light, #121318 dark):
+  `secondaryLabel` #88878E, 3.38:1 in light mode (#94959D, 6.22:1, in
+  dark); its high-contrast colour 4.10:1 to 4.16:1 in light mode (widget
+  tests and Chromium);
+  `tertiaryLabel` and `placeholderText` #C2C0C7, 1.71:1 (#53535A, 2.43:1,
+  in dark). A `CupertinoListTile`'s subtitle and additional information
+  are drawn in `secondaryLabel`: 3.38:1 in light mode. A
+  `CupertinoSearchTextField`'s placeholder #828188 on its fill #EBE9F0
+  is 3.20:1 in light mode (computed from the two measured colours).
+- WCAG: 1.4.3 Contrast (Minimum), in light mode, for text under 18 point
+  (24 pixels) or 14 point bold.
+- How to read this entry: these are the platform's colours, copied. The
+  iOS reference repository says `.secondary` meets 4.5:1 "in most
+  configurations"; on this page its counterpart does not.
+- Workaround: a `style` with `CupertinoColors.label`, or another colour
+  of 4.5:1; not tried on these widgets.
+- Upstream issue: not searched yet (D25).
 
 <!-- FL-600 to FL-699: Wave 6, remaining forms. Entries in this range go below, in id order. -->
 

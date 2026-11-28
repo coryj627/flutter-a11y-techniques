@@ -1,0 +1,149 @@
+V01TREE m7
+  generic "V01 m7 light name@example.com" focusable=true
+  StaticText "V01 m7 light" 
+  textbox "name@example.com" invalid=false focusable=true required=false
+  InlineTextBox "V01 m7 light" 
+V01TREE m10
+  generic "V01 m10 light Email Enter an email address" focusable=true
+  StaticText "V01 m10 light" 
+  textbox "Email" invalid=false focusable=true required=false
+  InlineTextBox "V01 m10 light" 
+  StaticText "Enter an email address" 
+  InlineTextBox "Enter an email address" 
+V01TREE m13
+  generic "V01 m13 light" focusable=true
+  checkbox "" focusable=true checked=false
+  StaticText "V01 m13 light" 
+  InlineTextBox "V01 m13 light" 
+V01TREE m14
+  generic "V01 m14 light" focusable=true
+  checkbox "" focusable=true checked=true
+  StaticText "V01 m14 light" 
+  InlineTextBox "V01 m14 light" 
+V01TREE m15
+  generic "V01 m15 light" focusable=true
+  checkbox "" focusable=true checked=false
+  StaticText "V01 m15 light" 
+  InlineTextBox "V01 m15 light" 
+V01TREE m18
+  generic "V01 m18 light" focusable=true
+  switch "" focusable=true checked=false
+  StaticText "V01 m18 light" 
+  InlineTextBox "V01 m18 light" 
+V01TREE m19
+  generic "V01 m19 light" focusable=true
+  switch "" focusable=true checked=true
+  StaticText "V01 m19 light" 
+  InlineTextBox "V01 m19 light" 
+V01TREE m21
+  generic "V01 m21 light Inbox Archive" focusable=true
+  button "Inbox" focusable=true
+  button "Archive" focusable=true
+  StaticText "V01 m21 light" 
+  StaticText "Inbox" 
+  StaticText "Archive" 
+  InlineTextBox "V01 m21 light" 
+  InlineTextBox "Inbox" 
+  InlineTextBox "Archive" 
+V01TREE m22
+  generic "V01 m22 light Open Free" focusable=true
+  checkbox "Open" focusable=true checked=true
+  checkbox "Free" focusable=true checked=false
+  StaticText "V01 m22 light" 
+  InlineTextBox "V01 m22 light" 
+V01TREE m23
+  generic "V01 m23 light Day Week" focusable=true
+  checkbox "Day" focusable=true checked=true
+  checkbox "Week" focusable=true checked=false
+  StaticText "V01 m23 light" 
+  InlineTextBox "V01 m23 light" 
+V01TREE m24
+  generic "V01 m24 light Day Week" focusable=true
+  button "Day" focusable=true
+  button "Week" focusable=true
+  StaticText "V01 m24 light" 
+  StaticText "Day" 
+  StaticText "Week" 
+  InlineTextBox "V01 m24 light" 
+  InlineTextBox "Day" 
+  InlineTextBox "Week" 
+V01TREE m25
+  generic "V01 m25 light Day Week" focusable=true
+  checkbox "Day" focusable=true checked=true
+  checkbox "Week" focusable=true checked=false
+  StaticText "V01 m25 light" 
+  InlineTextBox "V01 m25 light" 
+V01TREE m26
+  generic "V01 m26 light" focusable=true
+  tablist "" 
+  StaticText "V01 m26 light" 
+  tab "Day" focusable=true selected=true
+  tab "Week" focusable=true selected=false
+  InlineTextBox "V01 m26 light" 
+V01TREE m27
+  generic "V01 m27 light" focusable=true
+  tablist "" 
+  StaticText "V01 m27 light" 
+  tab "Home" focusable=true selected=true
+  tab "Map" focusable=true selected=false
+  InlineTextBox "V01 m27 light" 
+V01TREE c5
+  generic "V01 c5 light name@example.com" focusable=true
+  StaticText "V01 c5 light" 
+  textbox "name@example.com" invalid=false focusable=true required=false
+  InlineTextBox "V01 c5 light" 
+V01TREE c7
+  generic "V01 c7 light" focusable=true
+  switch "" focusable=true checked=false
+  StaticText "V01 c7 light" 
+  InlineTextBox "V01 c7 light" 
+V01TREE c8
+  generic "V01 c8 light" focusable=true
+  switch "" focusable=true checked=true
+  StaticText "V01 c8 light" 
+  InlineTextBox "V01 c8 light" 
+V01TREE c9
+  generic "V01 c9 light" focusable=true
+  checkbox "" focusable=true checked=false
+  checkbox "" focusable=true checked=true
+  StaticText "V01 c9 light" 
+  InlineTextBox "V01 c9 light" 
+V01TREE c10
+  generic "V01 c10 light" focusable=true
+  radiogroup "" required=false
+  StaticText "V01 c10 light" 
+  button "Day" focusable=true
+  button "Week" focusable=true
+  InlineTextBox "V01 c10 light" 
+  StaticText "Day" 
+  StaticText "Week" 
+  InlineTextBox "Day" 
+  InlineTextBox "Week" 
+V01TREE c11
+  generic "V01 c11 light" focusable=true
+  radiogroup "" required=false
+  StaticText "V01 c11 light" 
+  button "Day" focusable=true
+  button "Week" focusable=true
+  InlineTextBox "V01 c11 light" 
+  StaticText "Day" 
+  StaticText "Week" 
+  InlineTextBox "Day" 
+  InlineTextBox "Week" 
+V01TREE g2
+  generic "V01 g2 light Lakeside trail" focusable=true
+  StaticText "V01 g2 light" 
+  StaticText "Lakeside trail" 
+  InlineTextBox "V01 g2 light" 
+  InlineTextBox "Lakeside trail" 
+V01TREE g3
+  generic "V01 g3 light Lakeside trail" focusable=true
+  StaticText "V01 g3 light" 
+  StaticText "Lakeside trail" 
+  InlineTextBox "V01 g3 light" 
+  InlineTextBox "Lakeside trail" 
+  ✓  2 v01_probe.spec.js:67:1 › trees (32.3s)
+
+  Slow test file: v01_probe.spec.js (7.0m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 passed (7.0m)

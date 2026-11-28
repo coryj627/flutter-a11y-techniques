@@ -1,0 +1,381 @@
+npm notice run npx
+npm notice run 'playwright' test v01_colour_contrast.spec.js --retries=0 --workers=2
+Running 80 tests using 1 worker
+  ✓   1 v01_colour_contrast.spec.js:432:3 › the measure › the contrast ratio is WCAG's, on known pairs (2ms)
+  ✓   2 v01_colour_contrast.spec.js:456:3 › the measure › on a made-up picture inkBox leaves out a line and a cursor, and the text measure gives the text's ratio (5ms)
+  ✓   3 v01_colour_contrast.spec.js:470:3 › the measure › the edge measure takes the strongest pixel on the way against both ends (0ms)
+  ✓   4 v01_colour_contrast.spec.js:481:3 › roles, names, and states in Chromium's accessibility tree › good-material: a text field named "Email", an unchecked checkbox, and a button (1.4s)
+  ✓   5 v01_colour_contrast.spec.js:506:5 › roles, names, and states in Chromium's accessibility tree › good-cupertino: a text field named "Email Required" in Chromium's tree, and the label above it no element of its own (1.4s)
+  ✓   6 v01_colour_contrast.spec.js:506:5 › roles, names, and states in Chromium's accessibility tree › bad-cupertino-placeholder: a text field named "Email Required" in Chromium's tree, and the label above it no element of its own (1.4s)
+  ✓   7 v01_colour_contrast.spec.js:526:5 › roles, names, and states in Chromium's accessibility tree › good-caption: the caption is one text, "Harbour", and the picture no element (1.3s)
+  ✓   8 v01_colour_contrast.spec.js:526:5 › roles, names, and states in Chromium's accessibility tree › bad-caption: the caption is one text, "Harbour", and the picture no element (1.3s)
+  ✓   9 v01_colour_contrast.spec.js:534:3 › roles, names, and states in Chromium's accessibility tree › good-selection: a radio group named "Calendar view", three radio buttons, Week checked; a click on Day checks Day (1.6s)
+V01 web good-selection Tab cycle: v01-good-selection-week, v01-good-selection-month, none, other: FLUTTER-VIEW
+  ✓  10 v01_colour_contrast.spec.js:564:5 › roles, names, and states in Chromium's accessibility tree › good-selection: a whole Tab cycle stops on Week and Month, and never on Day (3.0s)
+V01 web good-selection Shift+Tab cycle: none, v01-good-selection-month, v01-good-selection-week
+  ✓  11 v01_colour_contrast.spec.js:564:5 › roles, names, and states in Chromium's accessibility tree › good-selection: a whole Shift+Tab cycle stops on Week and Month, and never on Day (2.1s)
+  ✓  12 v01_colour_contrast.spec.js:603:3 › roles, names, and states in Chromium's accessibility tree › bad-colour-only: three buttons with no state in Chromium's tree; the page marks Week aria-current="true"; a click on Day moves it (1.6s)
+  ✓  13 v01_colour_contrast.spec.js:628:3 › roles, names, and states in Chromium's accessibility tree › bad-faint-edge: a text field named "Email" (1.3s)
+  ✓  14 v01_colour_contrast.spec.js:640:5 › the stops the VoiceOver spec expects above each example › good-material shows its title and its lines (1.3s)
+  ✓  15 v01_colour_contrast.spec.js:640:5 › the stops the VoiceOver spec expects above each example › good-cupertino shows its title and its lines (1.4s)
+  ✓  16 v01_colour_contrast.spec.js:640:5 › the stops the VoiceOver spec expects above each example › good-caption shows its title and its lines (1.3s)
+  ✓  17 v01_colour_contrast.spec.js:640:5 › the stops the VoiceOver spec expects above each example › good-selection shows its title and its lines (1.3s)
+  ✓  18 v01_colour_contrast.spec.js:640:5 › the stops the VoiceOver spec expects above each example › bad-cupertino-placeholder shows its title and its lines (1.3s)
+  ✓  19 v01_colour_contrast.spec.js:640:5 › the stops the VoiceOver spec expects above each example › bad-caption shows its title and its lines (1.3s)
+  ✓  20 v01_colour_contrast.spec.js:640:5 › the stops the VoiceOver spec expects above each example › bad-colour-only shows its title and its lines (1.3s)
+  ✓  21 v01_colour_contrast.spec.js:640:5 › the stops the VoiceOver spec expects above each example › bad-faint-edge shows its title and its lines (1.3s)
+V01 web good-material "We reply within two days." rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (2846 of 4946 pixels the text colour)
+V01 web good-material "Email" rest light: text #46464F, lowest 8.88:1 over #FBF8FF (464 of 921 pixels the text colour)
+V01 web good-material "Required" rest light: text #46464F, lowest 8.88:1 over #FBF8FF (1553 of 2526 pixels the text colour)
+V01 web good-material "Send me updates" rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (2777 of 4569 pixels the text colour)
+V01 web good-material "Send" rest light: text #515B92, lowest 6.12:1 over #FBF8FF (657 of 1164 pixels the text colour)
+V01 web good-material field rest light: edge #767680: 4.27:1 against #FBF8FF, 4.27:1 against #FBF8FF
+V01 web good-material checkbox rest light: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 web good-material outline rest light: edge #767680: 4.27:1 against #FBF8FF, 4.27:1 against #FBF8FF
+  ✓  22 v01_colour_contrast.spec.js:655:5 › at rest, light › good-material: every text 4.5:1 or more, and the field's edge, the checkbox, and the button's outline 3:1 or more (1.6s)
+V01 web good-material checked fill rest light: edge #515B92: 6.12:1 against #FBF8FF, 1.77:1 against #7D84AD
+V01 web good-material checked mark rest light: 241 pixels 3:1 or more against #515B92
+V01 web good-material "Send me updates" checked rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (2777 of 4569 pixels the text colour)
+  ✓  23 v01_colour_contrast.spec.js:688:5 › at rest, light › good-material: the checkbox checked, its fill 3:1 or more against the page and its mark 3:1 or more against the fill (2.5s)
+V01 web good-cupertino "Email" rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (761 of 1218 pixels the text colour)
+V01 web good-cupertino "Required" rest light: text #6C6C70, lowest 5.23:1 over #FFFFFF (1950 of 2956 pixels the text colour)
+V01 web good-cupertino "Send" rest light: text #FFFFFF, lowest 6.44:1 over #515B92 (1071 of 1773 pixels the text colour)
+V01 web good-cupertino field rest light: edge #6C6C70: 4.97:1 against #FBF8FF, 5.23:1 against #FFFFFF
+  ✓  24 v01_colour_contrast.spec.js:711:5 › at rest, light › good-cupertino: the label, the placeholder, and the button's text 4.5:1 or more; the field's edge 3:1 or more against the page and the field (1.6s)
+V01 web good-caption "Harbour" rest light: text #E6E0E9, lowest 5.33:1 over #575969 (1027 of 1801 pixels the text colour)
+  ✓  25 v01_colour_contrast.spec.js:732:5 › at rest, light › good-caption: the caption 4.5:1 or more over the whole picture (1.5s)
+V01 web good-selection Day ring before rest light: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 web good-selection "Day" before rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (699 of 1123 pixels the text colour)
+V01 web good-selection Week ring before rest light: edge #515B92: 6.12:1 against #FBF8FF, 1.00:1 against #515B92
+V01 web good-selection "Week" before rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (976 of 1613 pixels the text colour)
+V01 web good-selection Month ring before rest light: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 web good-selection "Month" before rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (1154 of 1881 pixels the text colour)
+V01 web good-selection dots before light: {"Day":0,"Week":516,"Month":0}
+V01 web good-selection Day ring after rest light: edge #515B92: 6.12:1 against #FBF8FF, 1.00:1 against #515B92
+V01 web good-selection "Day" after rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (699 of 1123 pixels the text colour)
+V01 web good-selection Week ring after rest light: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 web good-selection "Week" after rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (976 of 1613 pixels the text colour)
+V01 web good-selection Month ring after rest light: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 web good-selection "Month" after rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (1154 of 1881 pixels the text colour)
+V01 web good-selection dots after light: {"Day":516,"Week":0,"Month":0}
+  ✓  26 v01_colour_contrast.spec.js:741:5 › at rest, light › good-selection: each option 4.5:1 or more, each radio button's ring 3:1 or more, only the chosen one has a dot; a click on Day moves the dot (2.5s)
+V01 web bad-cupertino-placeholder "Required" rest light: text #C5C5C7, lowest 1.72:1 over #FFFFFF (1950 of 2745 pixels the text colour)
+V01 web bad-cupertino-placeholder "Email" rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (761 of 1218 pixels the text colour)
+V01 web bad-cupertino-placeholder field rest light: edge #6C6C70: 4.97:1 against #FBF8FF, 5.23:1 against #FFFFFF
+  ✓  27 v01_colour_contrast.spec.js:780:5 › at rest, light › bad-cupertino-placeholder: the placeholder under 4.5:1; the label and the field's edge as in good-cupertino (1.5s)
+V01 web bad-caption "Harbour" rest light: text #E6E0E9, lowest 1.35:1 over #BDC2E4 (1046 of 1764 pixels the text colour)
+V01 web bad-caption dark end light: #1C257F, 10.00:1 against the caption
+  ✓  28 v01_colour_contrast.spec.js:798:5 › at rest, light › bad-caption: the caption under 4.5:1 over the pale part of the picture, in a colour 4.5:1 or more over its dark end (1.5s)
+V01 web bad-colour-only "Day" before rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (699 of 1123 pixels the text colour)
+V01 web bad-colour-only "Week" before rest light: text #515B92, lowest 6.12:1 over #FBF8FF (976 of 1610 pixels the text colour)
+V01 web bad-colour-only "Month" before rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (1154 of 1881 pixels the text colour)
+V01 web bad-colour-only light: Week #515B92 against Day #1B1B21 2.66:1
+V01 web bad-colour-only light: Week #515B92 against Month #1B1B21 2.66:1
+V01 web bad-colour-only "Day" after rest light: text #515B92, lowest 6.12:1 over #FBF8FF (699 of 1117 pixels the text colour)
+V01 web bad-colour-only "Week" after rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (976 of 1613 pixels the text colour)
+V01 web bad-colour-only "Month" after rest light: text #1B1B21, lowest 16.30:1 over #FBF8FF (1154 of 1881 pixels the text colour)
+  ✓  29 v01_colour_contrast.spec.js:814:5 › at rest, light › bad-colour-only: the chosen title differs from the others by colour alone, under 3:1 against theirs; each 4.5:1 or more against the page; a click on Day moves the colour (2.4s)
+V01 web bad-faint-edge field rest light: edge #C7C5D0: 1.62:1 against #FBF8FF, 1.62:1 against #FBF8FF
+V01 web bad-faint-edge "Email" rest light: text #46464F, lowest 8.88:1 over #FBF8FF (464 of 921 pixels the text colour)
+V01 web bad-faint-edge field focused light: edge #515B92: 6.12:1 against #FBF8FF, 6.12:1 against #FBF8FF
+  ✓  30 v01_colour_contrast.spec.js:863:5 › at rest, light › bad-faint-edge: the field's edge under 3:1 against the page at rest; with focus by Tab the same measure finds it 3:1 or more (3.7s)
+V01 web good-material "We reply within two days." rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (2878 of 5294 pixels the text colour)
+V01 web good-material "Email" rest dark: text #C7C5D0, lowest 10.89:1 over #121318 (464 of 936 pixels the text colour)
+V01 web good-material "Required" rest dark: text #C7C5D0, lowest 10.89:1 over #121318 (1553 of 2608 pixels the text colour)
+V01 web good-material "Send me updates" rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (2804 of 4771 pixels the text colour)
+V01 web good-material "Send" rest dark: text #BAC3FF, lowest 10.90:1 over #121318 (657 of 1212 pixels the text colour)
+V01 web good-material field rest dark: edge #90909A: 5.87:1 against #121318, 5.87:1 against #121318
+V01 web good-material checkbox rest dark: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 web good-material outline rest dark: edge #90909A: 5.87:1 against #121318, 5.87:1 against #121318
+  ✓  31 v01_colour_contrast.spec.js:655:5 › at rest, dark › good-material: every text 4.5:1 or more, and the field's edge, the checkbox, and the button's outline 3:1 or more (1.9s)
+V01 web good-material checked fill rest dark: edge #BAC3FF: 10.90:1 against #121318, 1.53:1 against #949DD7
+V01 web good-material checked mark rest dark: 241 pixels 3:1 or more against #BAC3FF
+V01 web good-material "Send me updates" checked rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (2804 of 4771 pixels the text colour)
+  ✓  32 v01_colour_contrast.spec.js:688:5 › at rest, dark › good-material: the checkbox checked, its fill 3:1 or more against the page and its mark 3:1 or more against the fill (2.8s)
+V01 web good-cupertino "Email" rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (761 of 1273 pixels the text colour)
+V01 web good-cupertino "Required" rest dark: text #AEAEB2, lowest 9.50:1 over #000000 (1950 of 3017 pixels the text colour)
+V01 web good-cupertino "Send" rest dark: text #222C61, lowest 7.71:1 over #BAC3FF (1068 of 1644 pixels the text colour)
+V01 web good-cupertino field rest dark: edge #AEAEB2: 8.39:1 against #121318, 9.50:1 against #000000
+  ✓  33 v01_colour_contrast.spec.js:711:5 › at rest, dark › good-cupertino: the label, the placeholder, and the button's text 4.5:1 or more; the field's edge 3:1 or more against the page and the field (1.8s)
+V01 web good-caption "Harbour" rest dark: text #E6E0E9, lowest 5.33:1 over #575969 (1027 of 1801 pixels the text colour)
+  ✓  34 v01_colour_contrast.spec.js:732:5 › at rest, dark › good-caption: the caption 4.5:1 or more over the whole picture (1.8s)
+V01 web good-selection Day ring before rest dark: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 web good-selection "Day" before rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (703 of 1173 pixels the text colour)
+V01 web good-selection Week ring before rest dark: edge #BAC3FF: 10.90:1 against #121318, 1.00:1 against #BAC3FF
+V01 web good-selection "Week" before rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (985 of 1685 pixels the text colour)
+V01 web good-selection Month ring before rest dark: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 web good-selection "Month" before rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (1164 of 1930 pixels the text colour)
+V01 web good-selection dots before dark: {"Day":0,"Week":528,"Month":0}
+V01 web good-selection Day ring after rest dark: edge #BAC3FF: 10.90:1 against #121318, 1.00:1 against #BAC3FF
+V01 web good-selection "Day" after rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (703 of 1173 pixels the text colour)
+V01 web good-selection Week ring after rest dark: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 web good-selection "Week" after rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (985 of 1685 pixels the text colour)
+V01 web good-selection Month ring after rest dark: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 web good-selection "Month" after rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (1164 of 1930 pixels the text colour)
+V01 web good-selection dots after dark: {"Day":528,"Week":0,"Month":0}
+  ✓  35 v01_colour_contrast.spec.js:741:5 › at rest, dark › good-selection: each option 4.5:1 or more, each radio button's ring 3:1 or more, only the chosen one has a dot; a click on Day moves the dot (2.9s)
+V01 web bad-cupertino-placeholder "Required" rest dark: text #464649, lowest 2.23:1 over #000000 (1998 of 3026 pixels the text colour)
+V01 web bad-cupertino-placeholder "Email" rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (761 of 1273 pixels the text colour)
+V01 web bad-cupertino-placeholder field rest dark: edge #AEAEB2: 8.39:1 against #121318, 9.50:1 against #000000
+  ✓  36 v01_colour_contrast.spec.js:780:5 › at rest, dark › bad-cupertino-placeholder: the placeholder under 4.5:1; the label and the field's edge as in good-cupertino (1.8s)
+V01 web bad-caption "Harbour" rest dark: text #E6E0E9, lowest 1.35:1 over #BDC2E4 (1046 of 1764 pixels the text colour)
+V01 web bad-caption dark end dark: #1C257F, 10.00:1 against the caption
+  ✓  37 v01_colour_contrast.spec.js:798:5 › at rest, dark › bad-caption: the caption under 4.5:1 over the pale part of the picture, in a colour 4.5:1 or more over its dark end (1.9s)
+V01 web bad-colour-only "Day" before rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (703 of 1173 pixels the text colour)
+V01 web bad-colour-only "Week" before rest dark: text #BAC3FF, lowest 10.90:1 over #121318 (976 of 1673 pixels the text colour)
+V01 web bad-colour-only "Month" before rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (1164 of 1930 pixels the text colour)
+V01 web bad-colour-only dark: Week #BAC3FF against Day #E4E1E9 1.32:1
+V01 web bad-colour-only dark: Week #BAC3FF against Month #E4E1E9 1.32:1
+V01 web bad-colour-only "Day" after rest dark: text #BAC3FF, lowest 10.90:1 over #121318 (699 of 1166 pixels the text colour)
+V01 web bad-colour-only "Week" after rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (985 of 1685 pixels the text colour)
+V01 web bad-colour-only "Month" after rest dark: text #E4E1E9, lowest 14.35:1 over #121318 (1164 of 1930 pixels the text colour)
+  ✓  38 v01_colour_contrast.spec.js:814:5 › at rest, dark › bad-colour-only: the chosen title differs from the others by colour alone, under 3:1 against theirs; each 4.5:1 or more against the page; a click on Day moves the colour (2.7s)
+V01 web bad-faint-edge field rest dark: edge #46464F: 1.99:1 against #121318, 1.99:1 against #121318
+V01 web bad-faint-edge "Email" rest dark: text #C7C5D0, lowest 10.89:1 over #121318 (464 of 936 pixels the text colour)
+V01 web bad-faint-edge field focused dark: edge #BAC3FF: 10.90:1 against #121318, 10.90:1 against #121318
+  ✓  39 v01_colour_contrast.spec.js:863:5 › at rest, dark › bad-faint-edge: the field's edge under 3:1 against the page at rest; with focus by Tab the same measure finds it 3:1 or more (3.9s)
+V01 web good-material email "Email" focused light: text #515B92, lowest 6.12:1 over #FBF8FF (439 of 868 pixels the text colour)
+V01 web good-material email "Required" focused light: text #46464F, lowest 8.88:1 over #FBF8FF (1553 of 2526 pixels the text colour)
+V01 web good-material updates "Send me updates" focused light: text #1B1B21, lowest 12.36:1 over #DCDAE0 (2777 of 4519 pixels the text colour)
+V01 web good-material send "Send" focused light: text #515B92, lowest 5.31:1 over #E9E8F4 (657 of 1163 pixels the text colour)
+  ✓  40 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-material: each control's text 4.5:1 or more when focused (6.9s)
+V01 web good-material email "Email" hovered light: text #46464F, lowest 8.88:1 over #FBF8FF (464 of 921 pixels the text colour)
+V01 web good-material email "Required" hovered light: text #46464F, lowest 8.88:1 over #FBF8FF (1553 of 2526 pixels the text colour)
+V01 web good-material updates "Send me updates" hovered light: text #1B1B21, lowest 14.93:1 over #F1EEF5 (2777 of 4569 pixels the text colour)
+V01 web good-material send "Send" hovered light: text #515B92, lowest 5.50:1 over #EDECF6 (657 of 1163 pixels the text colour)
+  ✓  41 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-material: each control's text 4.5:1 or more when hovered (5.4s)
+V01 web good-material email "Email" focused and hovered light: text #515B92, lowest 6.12:1 over #FBF8FF (439 of 868 pixels the text colour)
+V01 web good-material email "Required" focused and hovered light: text #46464F, lowest 8.88:1 over #FBF8FF (1553 of 2526 pixels the text colour)
+V01 web good-material updates "Send me updates" focused and hovered light: text #1B1B21, lowest 11.32:1 over #D3D1D7 (2777 of 4513 pixels the text colour)
+V01 web good-material send "Send" focused and hovered light: text #515B92, lowest 4.79:1 over #DDDDEC (657 of 1163 pixels the text colour)
+  ✓  42 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-material: each control's text 4.5:1 or more when focused and hovered (6.9s)
+V01 web good-material email "Email" pressed 0.3 s light: text #515B92, lowest 6.12:1 over #FBF8FF (439 of 868 pixels the text colour)
+V01 web good-material email "Required" pressed 0.3 s light: text #46464F, lowest 8.88:1 over #FBF8FF (1553 of 2526 pixels the text colour)
+V01 web good-material email "Email" pressed 2 s light: text #515B92, lowest 6.12:1 over #FBF8FF (439 of 868 pixels the text colour)
+V01 web good-material email "Required" pressed 2 s light: text #46464F, lowest 8.88:1 over #FBF8FF (1553 of 2526 pixels the text colour)
+V01 web good-material updates "Send me updates" pressed 0.3 s light: text #1B1B21, lowest 11.38:1 over #D3D2D4 (2777 of 4514 pixels the text colour)
+V01 web good-material updates "Send me updates" pressed 2 s light: text #1B1B21, lowest 11.26:1 over #D2D1D3 (2777 of 4513 pixels the text colour)
+V01 web good-material send "Send" pressed 0.3 s light: text #515B92, lowest 4.52:1 over #D6D7E8 (657 of 1214 pixels the text colour)
+V01 web good-material send "Send" pressed 2 s light: text #515B92, lowest 4.19:1 over #CECFE3 (657 of 1156 pixels the text colour)
+  ✘  43 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-material: each control's text 4.5:1 or more when pressed (9.9s)
+V01 web good-cupertino email "Email" focused light: text #1B1B21, lowest 16.30:1 over #FBF8FF (761 of 1218 pixels the text colour)
+V01 web good-cupertino email "Required" focused light: text #6C6C70, lowest 5.23:1 over #FFFFFF (1950 of 2956 pixels the text colour)
+V01 web good-cupertino send "Send" focused light: text #FFFFFF, lowest 6.44:1 over #515B92 (1071 of 1773 pixels the text colour)
+  ✓  44 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-cupertino: each control's text 4.5:1 or more when focused (6.5s)
+V01 web good-cupertino email "Email" hovered light: text #1B1B21, lowest 16.30:1 over #FBF8FF (761 of 1218 pixels the text colour)
+V01 web good-cupertino email "Required" hovered light: text #6C6C70, lowest 5.23:1 over #FFFFFF (1950 of 2956 pixels the text colour)
+V01 web good-cupertino send "Send" hovered light: text #FFFFFF, lowest 6.44:1 over #515B92 (1071 of 1773 pixels the text colour)
+  ✓  45 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-cupertino: each control's text 4.5:1 or more when hovered (4.1s)
+V01 web good-cupertino email "Email" focused and hovered light: text #1B1B21, lowest 16.30:1 over #FBF8FF (761 of 1218 pixels the text colour)
+V01 web good-cupertino email "Required" focused and hovered light: text #6C6C70, lowest 5.23:1 over #FFFFFF (1950 of 2956 pixels the text colour)
+V01 web good-cupertino send "Send" focused and hovered light: text #FFFFFF, lowest 6.44:1 over #515B92 (1071 of 1773 pixels the text colour)
+  ✓  46 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-cupertino: each control's text 4.5:1 or more when focused and hovered (6.4s)
+V01 web good-cupertino email "Email" pressed 0.3 s light: text #1B1B21, lowest 16.30:1 over #FBF8FF (761 of 1218 pixels the text colour)
+V01 web good-cupertino email "Required" pressed 0.3 s light: text #6C6C70, lowest 5.23:1 over #FFFFFF (1950 of 2956 pixels the text colour)
+V01 web good-cupertino email "Email" pressed 2 s light: text #1B1B21, lowest 16.30:1 over #FBF8FF (761 of 1218 pixels the text colour)
+V01 web good-cupertino email "Required" pressed 2 s light: text #6C6C70, lowest 5.23:1 over #FFFFFF (1950 of 2956 pixels the text colour)
+V01 web good-cupertino send "Send" pressed 0.3 s light: text #FFFEFF, lowest 5.13:1 over #626A9D (1071 of 1773 pixels the text colour)
+V01 web good-cupertino send "Send" pressed 2 s light: text #FFFEFF, lowest 5.13:1 over #626A9D (1071 of 1773 pixels the text colour)
+  ✓  47 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-cupertino: each control's text 4.5:1 or more when pressed (7.5s)
+V01 web good-selection day "Day" focused light: text #1B1B21, lowest 12.36:1 over #DCDAE0 (699 of 1113 pixels the text colour)
+V01 web good-selection week "Week" focused light: text #1B1B21, lowest 12.36:1 over #DCDAE0 (976 of 1608 pixels the text colour)
+V01 web good-selection month "Month" focused light: text #1B1B21, lowest 12.36:1 over #DCDAE0 (1154 of 1876 pixels the text colour)
+  ✓  48 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-selection: each control's text 4.5:1 or more when focused (6.9s)
+V01 web good-selection day "Day" hovered light: text #1B1B21, lowest 14.93:1 over #F1EEF5 (699 of 1123 pixels the text colour)
+V01 web good-selection week "Week" hovered light: text #1B1B21, lowest 14.93:1 over #F1EEF5 (976 of 1613 pixels the text colour)
+V01 web good-selection month "Month" hovered light: text #1B1B21, lowest 14.93:1 over #F1EEF5 (1154 of 1881 pixels the text colour)
+  ✓  49 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-selection: each control's text 4.5:1 or more when hovered (5.3s)
+V01 web good-selection day "Day" focused and hovered light: text #1B1B21, lowest 11.32:1 over #D3D1D7 (699 of 1110 pixels the text colour)
+V01 web good-selection week "Week" focused and hovered light: text #1B1B21, lowest 11.32:1 over #D3D1D7 (976 of 1603 pixels the text colour)
+V01 web good-selection month "Month" focused and hovered light: text #1B1B21, lowest 11.32:1 over #D3D1D7 (1154 of 1873 pixels the text colour)
+  ✓  50 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-selection: each control's text 4.5:1 or more when focused and hovered (6.9s)
+V01 web good-selection day "Day" pressed 0.3 s light: text #1B1B21, lowest 12.83:1 over #E0DEE2 (699 of 1113 pixels the text colour)
+V01 web good-selection day "Day" pressed 2 s light: text #1B1B21, lowest 11.26:1 over #D2D1D3 (699 of 1110 pixels the text colour)
+V01 web good-selection week "Week" pressed 0.3 s light: text #1B1B21, lowest 13.20:1 over #E3E1E6 (976 of 1610 pixels the text colour)
+V01 web good-selection week "Week" pressed 2 s light: text #1B1B21, lowest 11.26:1 over #D2D1D3 (976 of 1603 pixels the text colour)
+V01 web good-selection month "Month" pressed 0.3 s light: text #1B1B21, lowest 13.20:1 over #E3E1E6 (1154 of 1877 pixels the text colour)
+V01 web good-selection month "Month" pressed 2 s light: text #1B1B21, lowest 11.26:1 over #D2D1D3 (1154 of 1873 pixels the text colour)
+  ✓  51 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-selection: each control's text 4.5:1 or more when pressed (9.2s)
+V01 web good-material email "Email" focused dark: text #BAC3FF, lowest 10.90:1 over #121318 (439 of 887 pixels the text colour)
+V01 web good-material email "Required" focused dark: text #C7C5D0, lowest 10.89:1 over #121318 (1553 of 2608 pixels the text colour)
+V01 web good-material updates "Send me updates" focused dark: text #E4E1E9, lowest 10.20:1 over #2F3034 (2804 of 4771 pixels the text colour)
+V01 web good-material send "Send" focused dark: text #BAC3FF, lowest 8.95:1 over #232530 (657 of 1212 pixels the text colour)
+  ✓  52 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-material: each control's text 4.5:1 or more when focused (7.3s)
+V01 web good-material email "Email" hovered dark: text #C7C5D0, lowest 10.89:1 over #121318 (464 of 936 pixels the text colour)
+V01 web good-material email "Required" hovered dark: text #C7C5D0, lowest 10.89:1 over #121318 (1553 of 2608 pixels the text colour)
+V01 web good-material updates "Send me updates" hovered dark: text #E4E1E9, lowest 13.16:1 over #1B1C21 (2804 of 4771 pixels the text colour)
+V01 web good-material send "Send" hovered dark: text #BAC3FF, lowest 9.40:1 over #20212A (657 of 1212 pixels the text colour)
+  ✓  53 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-material: each control's text 4.5:1 or more when hovered (5.6s)
+V01 web good-material email "Email" focused and hovered dark: text #BAC3FF, lowest 10.90:1 over #121318 (439 of 887 pixels the text colour)
+V01 web good-material email "Required" focused and hovered dark: text #C7C5D0, lowest 10.89:1 over #121318 (1553 of 2608 pixels the text colour)
+V01 web good-material updates "Send me updates" focused and hovered dark: text #E4E1E9, lowest 9.06:1 over #37383C (2804 of 4771 pixels the text colour)
+V01 web good-material send "Send" focused and hovered dark: text #BAC3FF, lowest 7.55:1 over #2F3140 (657 of 1206 pixels the text colour)
+  ✓  54 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-material: each control's text 4.5:1 or more when focused and hovered (7.3s)
+V01 web good-material email "Email" pressed 0.3 s dark: text #BAC3FF, lowest 10.90:1 over #121318 (439 of 887 pixels the text colour)
+V01 web good-material email "Required" pressed 0.3 s dark: text #C7C5D0, lowest 10.89:1 over #121318 (1553 of 2608 pixels the text colour)
+V01 web good-material email "Email" pressed 2 s dark: text #BAC3FF, lowest 10.90:1 over #121318 (439 of 887 pixels the text colour)
+V01 web good-material email "Required" pressed 2 s dark: text #C7C5D0, lowest 10.89:1 over #121318 (1553 of 2608 pixels the text colour)
+V01 web good-material updates "Send me updates" pressed 0.3 s dark: text #E4E1E9, lowest 4.25:1 over #68696C (2819 of 4776 pixels the text colour)
+V01 web good-material updates "Send me updates" pressed 2 s dark: text #E4E1E9, lowest 4.25:1 over #68696C (2855 of 4750 pixels the text colour)
+V01 web good-material send "Send" pressed 0.3 s dark: text #BAC3FF, lowest 6.68:1 over #37394A (657 of 1262 pixels the text colour)
+V01 web good-material send "Send" pressed 2 s dark: text #BAC3FF, lowest 5.92:1 over #3E4153 (657 of 1206 pixels the text colour)
+  ✘  55 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-material: each control's text 4.5:1 or more when pressed (10.3s)
+V01 web good-cupertino email "Email" focused dark: text #E4E1E9, lowest 14.35:1 over #121318 (761 of 1273 pixels the text colour)
+V01 web good-cupertino email "Required" focused dark: text #AEAEB2, lowest 9.50:1 over #000000 (1950 of 3017 pixels the text colour)
+V01 web good-cupertino send "Send" focused dark: text #222C61, lowest 7.71:1 over #BAC3FF (1068 of 1644 pixels the text colour)
+  ✓  56 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-cupertino: each control's text 4.5:1 or more when focused (6.8s)
+V01 web good-cupertino email "Email" hovered dark: text #E4E1E9, lowest 14.35:1 over #121318 (761 of 1273 pixels the text colour)
+V01 web good-cupertino email "Required" hovered dark: text #AEAEB2, lowest 9.50:1 over #000000 (1950 of 3017 pixels the text colour)
+V01 web good-cupertino send "Send" hovered dark: text #222C61, lowest 7.71:1 over #BAC3FF (1068 of 1644 pixels the text colour)
+  ✓  57 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-cupertino: each control's text 4.5:1 or more when hovered (4.4s)
+V01 web good-cupertino email "Email" focused and hovered dark: text #E4E1E9, lowest 14.35:1 over #121318 (761 of 1273 pixels the text colour)
+V01 web good-cupertino email "Required" focused and hovered dark: text #AEAEB2, lowest 9.50:1 over #000000 (1950 of 3017 pixels the text colour)
+V01 web good-cupertino send "Send" focused and hovered dark: text #222C61, lowest 7.71:1 over #BAC3FF (1068 of 1644 pixels the text colour)
+  ✓  58 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-cupertino: each control's text 4.5:1 or more when focused and hovered (6.7s)
+V01 web good-cupertino email "Email" pressed 0.3 s dark: text #E4E1E9, lowest 14.35:1 over #121318 (761 of 1273 pixels the text colour)
+V01 web good-cupertino email "Required" pressed 0.3 s dark: text #AEAEB2, lowest 9.50:1 over #000000 (1950 of 3017 pixels the text colour)
+V01 web good-cupertino email "Email" pressed 2 s dark: text #E4E1E9, lowest 14.35:1 over #121318 (761 of 1273 pixels the text colour)
+V01 web good-cupertino email "Required" pressed 2 s dark: text #AEAEB2, lowest 9.50:1 over #000000 (1950 of 3017 pixels the text colour)
+V01 web good-cupertino send "Send" pressed 0.3 s dark: text #202A5A, lowest 6.65:1 over #AAB2E8 (1068 of 1635 pixels the text colour)
+V01 web good-cupertino send "Send" pressed 2 s dark: text #202A5A, lowest 6.65:1 over #AAB2E8 (1068 of 1635 pixels the text colour)
+  ✓  59 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-cupertino: each control's text 4.5:1 or more when pressed (7.8s)
+V01 web good-selection day "Day" focused dark: text #E4E1E9, lowest 10.20:1 over #2F3034 (703 of 1173 pixels the text colour)
+V01 web good-selection week "Week" focused dark: text #E4E1E9, lowest 10.20:1 over #2F3034 (985 of 1685 pixels the text colour)
+V01 web good-selection month "Month" focused dark: text #E4E1E9, lowest 10.20:1 over #2F3034 (1164 of 1930 pixels the text colour)
+  ✓  60 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-selection: each control's text 4.5:1 or more when focused (7.2s)
+V01 web good-selection day "Day" hovered dark: text #E4E1E9, lowest 13.16:1 over #1B1C21 (703 of 1173 pixels the text colour)
+V01 web good-selection week "Week" hovered dark: text #E4E1E9, lowest 13.16:1 over #1B1C21 (985 of 1685 pixels the text colour)
+V01 web good-selection month "Month" hovered dark: text #E4E1E9, lowest 13.16:1 over #1B1C21 (1164 of 1930 pixels the text colour)
+  ✓  61 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-selection: each control's text 4.5:1 or more when hovered (5.5s)
+V01 web good-selection day "Day" focused and hovered dark: text #E4E1E9, lowest 9.06:1 over #37383C (703 of 1173 pixels the text colour)
+V01 web good-selection week "Week" focused and hovered dark: text #E4E1E9, lowest 9.06:1 over #37383C (985 of 1685 pixels the text colour)
+V01 web good-selection month "Month" focused and hovered dark: text #E4E1E9, lowest 9.06:1 over #37383C (1164 of 1930 pixels the text colour)
+  ✓  62 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-selection: each control's text 4.5:1 or more when focused and hovered (7.1s)
+V01 web good-selection day "Day" pressed 0.3 s dark: text #E4E1E9, lowest 8.01:1 over #3F4044 (703 of 1173 pixels the text colour)
+V01 web good-selection day "Day" pressed 2 s dark: text #E4E1E9, lowest 4.25:1 over #68696C (721 of 1170 pixels the text colour)
+V01 web good-selection week "Week" pressed 0.3 s dark: text #E4E1E9, lowest 8.92:1 over #38393D (985 of 1685 pixels the text colour)
+V01 web good-selection week "Week" pressed 2 s dark: text #E4E1E9, lowest 4.25:1 over #68696C (1002 of 1677 pixels the text colour)
+V01 web good-selection month "Month" pressed 0.3 s dark: text #E4E1E9, lowest 8.92:1 over #38393D (1164 of 1930 pixels the text colour)
+V01 web good-selection month "Month" pressed 2 s dark: text #E4E1E9, lowest 4.25:1 over #68696C (1177 of 1926 pixels the text colour)
+  ✘  63 v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-selection: each control's text 4.5:1 or more when pressed (9.5s)
+  ✓  64 v01_colour_contrast.spec.js:1027:3 › the VoiceOver example walks are judged on every walk › the judge: whole screens, wrong readings, short walks, and empty captures (4ms)
+  ✓  65 v01_colour_contrast.spec.js:1054:3 › the VoiceOver example walks are judged on every walk › a help message is left out only when tied to the stop before it, by position and spoken role (1ms)
+  ✓  66 v01_colour_contrast.spec.js:1084:3 › the VoiceOver example walks are judged on every walk › a reading's spoken role comes from its role part only, and a help message names its role (2ms)
+  ✓  67 v01_colour_contrast.spec.js:1108:3 › the VoiceOver example walks are judged on every walk › every screen: a bad example's own stops end with its defect, no screen has a custom solution note, and no expected stop is empty, help, or holds the row separator (3ms)
+  ✓  68 v01_colour_contrast.spec.js:1121:3 › the VoiceOver example walks are judged on every walk › walks are made again only while incomplete, at most three, and every try is logged (2ms)
+  ✓  69 v01_colour_contrast.spec.js:1177:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › made-up walks: a whole screen passes, and each fault fails or is not complete (1ms)
+  ✓  70 v01_colour_contrast.spec.js:1241:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › the reviewer's frozen capture, with elements after the last expected stop, would pass without the witness, and fails with it (0ms)
+  ✓  71 v01_colour_contrast.spec.js:1251:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › a lost capture mid-walk (stale, or empty at the old bounds) is unresolved, and the walk is incomplete (1ms)
+  ✓  72 v01_colour_contrast.spec.js:1267:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › a lost capture of an expected stop is unresolved too, so the walk is walked again (0ms)
+  ✓  73 v01_colour_contrast.spec.js:1276:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › a lost capture of the stop before the last fails the witness, and is wrong for good (0ms)
+  ✓  74 v01_colour_contrast.spec.js:1285:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › a wrong verdict wins over a gap, and a gap passes over at most the next expected stop (0ms)
+  ✓  75 v01_colour_contrast.spec.js:1312:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › a wrong first title at the start bounds is a stop, judged wrong, not a gap (0ms)
+  ✓  76 v01_colour_contrast.spec.js:1331:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › in the retry loop a wrong first title at the start bounds ends the example, and a clean retry is never made (0ms)
+  ✓  77 v01_colour_contrast.spec.js:1341:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › in the retry loop a wrong walk with a gap ends the example, and a clean walk after it is never made (0ms)
+  ✓  78 v01_colour_contrast.spec.js:1365:3 › the VoiceOver walk keeps every unchanged read and needs a witness for its end › an unchanged read at the true end is the end, through the witness, and logged (0ms)
+  ✓  79 v01_colour_contrast.spec.js:1402:3 › the web VoiceOver transcript is judged again from what it recorded › made-up transcripts: a right one passes, and each wrong one names its problem (10ms)
+  ✘  80 v01_colour_contrast.spec.js:1508:3 › the web VoiceOver transcript is judged again from what it recorded › the committed recording (docs/evidence/V01/voiceover-web.md) is right, every browser and example once (1ms)
+  1) v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-material: each control's text 4.5:1 or more when pressed 
+    Error: send "Send" pressed 2 s: text #515B92, lowest 4.19:1 over #CECFE3 (657 of 1156 pixels the text colour)
+    expect(received).toBeGreaterThanOrEqual(expected)
+    Expected: >= 4.5
+    Received:    4.188032532209018
+      968 |                 const m = textContrast(s, box);
+      969 |                 report(slug, `${c.name} "${t}"`, when, mode, m);
+    > 970 |                 expect.soft(m.lowest, `${c.name} "${t}" ${when}: ${m.text}`).toBeGreaterThanOrEqual(4.5);
+          |                                                                              ^
+      971 |               }
+      972 |             };
+      973 |             if (state.includes('focused')) {
+        at measure (/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:970:78)
+        at /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:983:15
+    Error Context: test-results/v01_colour_contrast-the-go-ab31c--4-5-1-or-more-when-pressed/error-context.md
+  2) v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-material: each control's text 4.5:1 or more when pressed 
+    Error: updates "Send me updates" pressed 0.3 s: text #E4E1E9, lowest 4.25:1 over #68696C (2819 of 4776 pixels the text colour)
+    expect(received).toBeGreaterThanOrEqual(expected)
+    Expected: >= 4.5
+    Received:    4.246325210301116
+      968 |                 const m = textContrast(s, box);
+      969 |                 report(slug, `${c.name} "${t}"`, when, mode, m);
+    > 970 |                 expect.soft(m.lowest, `${c.name} "${t}" ${when}: ${m.text}`).toBeGreaterThanOrEqual(4.5);
+          |                                                                              ^
+      971 |               }
+      972 |             };
+      973 |             if (state.includes('focused')) {
+        at measure (/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:970:78)
+        at /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:981:15
+    Error: updates "Send me updates" pressed 2 s: text #E4E1E9, lowest 4.25:1 over #68696C (2855 of 4750 pixels the text colour)
+    expect(received).toBeGreaterThanOrEqual(expected)
+    Expected: >= 4.5
+    Received:    4.246325210301116
+      968 |                 const m = textContrast(s, box);
+      969 |                 report(slug, `${c.name} "${t}"`, when, mode, m);
+    > 970 |                 expect.soft(m.lowest, `${c.name} "${t}" ${when}: ${m.text}`).toBeGreaterThanOrEqual(4.5);
+          |                                                                              ^
+      971 |               }
+      972 |             };
+      973 |             if (state.includes('focused')) {
+        at measure (/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:970:78)
+        at /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:983:15
+    Error Context: test-results/v01_colour_contrast-the-go-7bb91--4-5-1-or-more-when-pressed/error-context.md
+  3) v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-selection: each control's text 4.5:1 or more when pressed 
+    Error: day "Day" pressed 2 s: text #E4E1E9, lowest 4.25:1 over #68696C (721 of 1170 pixels the text colour)
+    expect(received).toBeGreaterThanOrEqual(expected)
+    Expected: >= 4.5
+    Received:    4.246325210301116
+      968 |                 const m = textContrast(s, box);
+      969 |                 report(slug, `${c.name} "${t}"`, when, mode, m);
+    > 970 |                 expect.soft(m.lowest, `${c.name} "${t}" ${when}: ${m.text}`).toBeGreaterThanOrEqual(4.5);
+          |                                                                              ^
+      971 |               }
+      972 |             };
+      973 |             if (state.includes('focused')) {
+        at measure (/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:970:78)
+        at /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:983:15
+    Error: week "Week" pressed 2 s: text #E4E1E9, lowest 4.25:1 over #68696C (1002 of 1677 pixels the text colour)
+    expect(received).toBeGreaterThanOrEqual(expected)
+    Expected: >= 4.5
+    Received:    4.246325210301116
+      968 |                 const m = textContrast(s, box);
+      969 |                 report(slug, `${c.name} "${t}"`, when, mode, m);
+    > 970 |                 expect.soft(m.lowest, `${c.name} "${t}" ${when}: ${m.text}`).toBeGreaterThanOrEqual(4.5);
+          |                                                                              ^
+      971 |               }
+      972 |             };
+      973 |             if (state.includes('focused')) {
+        at measure (/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:970:78)
+        at /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:983:15
+    Error: month "Month" pressed 2 s: text #E4E1E9, lowest 4.25:1 over #68696C (1177 of 1926 pixels the text colour)
+    expect(received).toBeGreaterThanOrEqual(expected)
+    Expected: >= 4.5
+    Received:    4.246325210301116
+      968 |                 const m = textContrast(s, box);
+      969 |                 report(slug, `${c.name} "${t}"`, when, mode, m);
+    > 970 |                 expect.soft(m.lowest, `${c.name} "${t}" ${when}: ${m.text}`).toBeGreaterThanOrEqual(4.5);
+          |                                                                              ^
+      971 |               }
+      972 |             };
+      973 |             if (state.includes('focused')) {
+        at measure (/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:970:78)
+        at /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:983:15
+    Error Context: test-results/v01_colour_contrast-the-go-f576c--4-5-1-or-more-when-pressed/error-context.md
+  4) v01_colour_contrast.spec.js:1508:3 › the web VoiceOver transcript is judged again from what it recorded › the committed recording (docs/evidence/V01/voiceover-web.md) is right, every browser and example once 
+    Error: docs/evidence/V01/voiceover-web.md is missing: the web VoiceOver recording has not been made yet (python3 tool/voiceover_web.py V01, run by the principal only)
+    expect(received).toBe(expected) // Object.is equality
+    Expected: true
+    Received: false
+      1511 |     expect(fs.existsSync(file),
+      1512 |       'docs/evidence/V01/voiceover-web.md is missing: the web VoiceOver recording has not been made yet '
+    > 1513 |       + '(python3 tool/voiceover_web.py V01, run by the principal only)').toBe(true);
+           |                                                                           ^
+      1514 |     expect(judgeTranscript(fs.readFileSync(file, 'utf8'))).toEqual([]);
+      1515 |   });
+      1516 | });
+        at /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-ac4a4550bcc42523e/web_tests/v01_colour_contrast.spec.js:1513:75
+    Error Context: test-results/v01_colour_contrast-the-we-64f9a-ry-browser-and-example-once/error-context.md
+  4 failed
+    v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, light › good-material: each control's text 4.5:1 or more when pressed 
+    v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-material: each control's text 4.5:1 or more when pressed 
+    v01_colour_contrast.spec.js:945:9 › the good examples' texts in each state, dark › good-selection: each control's text 4.5:1 or more when pressed 
+    v01_colour_contrast.spec.js:1508:3 › the web VoiceOver transcript is judged again from what it recorded › the committed recording (docs/evidence/V01/voiceover-web.md) is right, every browser and example once 
+  76 passed (3.9m)

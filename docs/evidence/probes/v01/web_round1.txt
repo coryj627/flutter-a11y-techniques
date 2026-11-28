@@ -1,0 +1,1494 @@
+== web-dark-c1-rest box=302x74 page=#121318
+   #121318  98.97%  1.00:1 surface
+== web-dark-c10-rest box=302x54 page=#121318
+   #121318  45.41%  1.00:1 surface
+   #1E1F24  27.76%  1.13:1 surfaceContainer
+   #FFFFFF  22.29% 18.55:1 cupertino.label
+   #1B1C20   1.88%  1.09:1 surfaceContainerLow
+   #E4E1E9   0.48% 14.35:1 onSurface inverseSurface
+== web-dark-c11-rest box=302x50 page=#121318
+   #121318  50.41%  1.00:1 surface
+   #515B92  21.95%  2.88:1 
+   #FFFFFF  19.64% 18.55:1 cupertino.label
+   #323755   3.36%  1.60:1 
+   #A8ADC9   1.85%  8.38:1 
+== web-dark-c12-rest box=302x70 page=#121318
+   #121318  96.97%  1.00:1 surface
+   #000000   0.29%  1.13:1 cupertino.systemBackground
+   #0E0F13   0.26%  1.03:1 
+   #27282E   0.25%  1.26:1 surfaceContainerHigh
+   #15161B   0.21%  1.03:1 surface
+== web-dark-c13-rest box=302x121 page=#121318
+   #F2F2F7  45.31% 16.62:1 
+   #FFFFFF  27.87% 18.55:1 cupertino.label
+   #121318  24.14%  1.00:1 surface
+   #000000   0.93%  1.13:1 cupertino.systemBackground
+== web-dark-c14-rest box=302x168 page=#121318
+   #CACACB  57.53% 11.33:1 
+   #121318  38.28%  1.00:1 surface
+   #9D9EA0   0.50%  6.92:1 
+   #3F3E44   0.48%  1.75:1 
+   #707070   0.34%  3.75:1 
+== web-dark-c15-rest box=302x66 page=#121318
+   #121318  94.08%  1.00:1 surface
+   #FFFFFF   2.85% 18.55:1 cupertino.label
+   #26272D   1.16%  1.25:1 surfaceContainerHigh
+   #515B92   1.13%  2.88:1 
+   #101115   0.26%  1.02:1 surface
+== web-dark-c17-rest box=302x58 page=#121318
+   #1E1F24  54.94%  1.13:1 surfaceContainer
+   #121318  42.77%  1.00:1 surface
+   #303036   0.46%  1.41:1 onInverseSurface
+   #222328   0.41%  1.18:1 
+   #2B2C31   0.29%  1.33:1 surfaceContainerHigh
+== web-dark-c2-rest box=302x74 page=#121318
+   #515B92  63.28%  2.88:1 
+   #121318  35.34%  1.00:1 surface
+== web-dark-c3s-rest box=302x74 page=#121318
+   #121318  98.94%  1.00:1 surface
+== web-dark-c4s-rest box=302x74 page=#121318
+   #0A84FF  63.28%  5.09:1 cupertino.systemBlue
+   #121318  35.34%  1.00:1 surface
+== web-dark-c5-rest box=302x56 page=#121318
+   #FFFFFF  46.99% 18.55:1 cupertino.label
+   #121318  43.78%  1.00:1 surface
+   #E6E6E6   3.57% 14.86:1 
+   #C5C5C7   0.69% 10.76:1 
+   #F6F6F6   0.41% 17.16:1 
+   #F0F0F1   0.31% 16.29:1 
+== web-dark-c6-rest box=302x56 page=#121318
+   #FFFFFF  47.06% 18.55:1 cupertino.label
+   #121318  43.78%  1.00:1 surface
+   #E6E6E6   3.48% 14.86:1 
+   #000000   0.56%  1.13:1 cupertino.systemBackground
+== web-dark-c7-rest box=302x61 page=#121318
+   #121318  92.38%  1.00:1 surface
+   #222328   3.41%  1.18:1 
+   #FFFFFF   3.13% 18.55:1 cupertino.label
+   #1F2025   0.25%  1.14:1 surfaceContainer
+== web-dark-c8-rest box=302x61 page=#121318
+   #121318  92.29%  1.00:1 surface
+   #FFFFFF   3.13% 18.55:1 cupertino.label
+   #34C759   2.40%  8.36:1 
+   #33C257   0.72%  7.95:1 
+== web-dark-c9-rest box=302x36 page=#121318
+   #121318  96.47%  1.00:1 surface
+   #FFFFFF   1.36% 18.55:1 cupertino.label
+   #007AFF   1.15%  4.62:1 
+== web-dark-g1-rest box=302x118 page=#121318
+   #121318  24.57%  1.00:1 surface
+   #979DCC   2.19%  7.08:1 
+   #C0C5E6   2.19% 10.93:1 
+   #424A97   2.16%  2.35:1 
+   #48509B   2.16%  2.56:1 
+   #9DA3D0   2.16%  7.58:1 
+   #7D84BC   2.12%  5.21:1 
+   #B5BADF   2.12%  9.76:1 
+   #3A4292   2.09%  2.10:1 
+   #A5ABD5   2.09%  8.29:1 
+   #242D84   2.09%  1.58:1 
+   #BBC0E3   2.09% 10.39:1 
+   text #FFFFFF: lowest 2.75:1 at x=208 over #9399C9; highest 6.86:1 at x=93 over #4C549D
+== web-dark-g2-rest box=302x118 page=#121318
+   #121318  24.57%  1.00:1 surface
+   #6D74B2   2.22%  4.23:1 
+   #7279B5   2.22%  4.52:1 
+   #979DCC   2.19%  7.08:1 
+   #C0C5E6   2.19% 10.93:1 
+   #9DA3D0   2.16%  7.58:1 
+   #6269AB   2.16%  3.65:1 
+   #7D84BC   2.16%  5.21:1 
+   #9298C9   2.16%  6.68:1 
+   #686FAF   2.16%  3.96:1 
+   #777EB8   2.16%  4.82:1 
+   #B5BADF   2.12%  9.76:1 
+== web-dark-g3-rest box=302x118 page=#121318
+   #121318  24.57%  1.00:1 surface
+   #383B55   2.42%  1.70:1 
+   #2D304E   2.36%  1.45:1 
+   #44475D   2.27%  2.04:1 
+   #3D4059   2.26%  1.83:1 
+   #494C60   2.19%  2.20:1 
+   #575969   2.19%  2.68:1 
+   #0E123B   2.09%  1.03:1 
+   #161A40   2.02%  1.11:1 
+   #535566   1.95%  2.53:1 
+   #1C2044   1.94%  1.18:1 
+   #232748   1.93%  1.29:1 
+   text #484B5F: lowest 2.16:1 at x=218 over #121318; highest 3.71:1 at x=234 over #A2A8D3
+== web-dark-g4-rest box=302x118 page=#121318
+   #121318  30.14%  1.00:1 surface
+   #0D0E17   8.12%  1.04:1 
+   #14151B   5.84%  1.02:1 surface
+   #17181D   5.08%  1.05:1 
+   #040511   4.53%  1.09:1 
+   #0A0B15   4.32%  1.06:1 
+   #070813   1.60%  1.07:1 
+   #1A1B1F   1.21%  1.08:1 surfaceContainerLow
+   #6D74B2   1.11%  4.23:1 
+   #7279B5   1.11%  4.52:1 
+   #979DCC   1.09%  7.08:1 
+   #C0C5E6   1.09% 10.93:1 
+   text #090A14: lowest 1.06:1 at x=48 over #121318; highest 3.28:1 at x=109 over #565DA3
+== web-dark-k1-rest box=302x42 page=#121318
+   #121318  96.56%  1.00:1 surface
+   #0F1014   0.71%  1.02:1 
+   #000000   0.49%  1.13:1 cupertino.systemBackground
+   #070709   0.46%  1.09:1 
+   #0B0C0F   0.38%  1.05:1 
+== web-dark-k2-rest box=302x42 page=#121318
+   #121318  96.45%  1.00:1 surface
+   #15161B   0.61%  1.03:1 surface
+   #2B2C32   0.56%  1.33:1 surfaceContainerHigh
+   #1B1C21   0.34%  1.09:1 surfaceContainerLow
+== web-dark-k3-rest box=302x42 page=#121318
+   #121318  97.09%  1.00:1 surface
+   #1F1F25   0.80%  1.13:1 surfaceContainer
+   #1B1B21   0.76%  1.08:1 surfaceContainerLow
+   #15161B   0.64%  1.03:1 surface
+== web-dark-k4-rest box=302x42 page=#121318
+   #121318  97.09%  1.00:1 surface
+   #1F1F25   0.80%  1.13:1 surfaceContainer
+   #1B1B21   0.76%  1.08:1 surfaceContainerLow
+   #15161B   0.64%  1.03:1 surface
+== web-dark-k5-rest box=302x42 page=#121318
+   #121318  95.68%  1.00:1 surface
+   #A5A5AE   0.56%  7.59:1 
+== web-dark-m1-rest box=302x54 page=#121318
+   #BAC3FF  52.19% 10.90:1 primary
+   #121318  46.14%  1.00:1 surface
+== web-dark-m10-rest box=302x90 page=#121318
+   #121318  94.33%  1.00:1 surface
+   #FFB4AB   2.53% 10.93:1 error
+== web-dark-m11-rest box=302x70 page=#121318
+   #121318  95.67%  1.00:1 surface
+   #2C2C31   3.01%  1.34:1 surfaceContainerHigh
+   #626268   0.26%  3.06:1 
+== web-dark-m12-rest box=302x70 page=#121318
+   #121318  92.13%  1.00:1 surface
+   #90909A   2.81%  5.87:1 outline
+   #E4E1E9   0.45% 14.35:1 onSurface inverseSurface
+== web-dark-m13-rest box=302x62 page=#121318
+   #121318  99.32%  1.00:1 surface
+   #C7C5D0   0.62% 10.89:1 onSurfaceVariant
+== web-dark-m14-rest box=302x62 page=#121318
+   #121318  98.27%  1.00:1 surface
+   #BAC3FF   1.39% 10.90:1 primary
+== web-dark-m15-rest box=302x62 page=#121318
+   #121318  99.32%  1.00:1 surface
+   #FFB4AB   0.62% 10.93:1 error
+== web-dark-m16-rest box=302x54 page=#121318
+   #121318  97.65%  1.00:1 surface
+   #BAC3FF   0.52% 10.90:1 primary
+   #C7C5D0   0.32% 10.89:1 onSurfaceVariant
+== web-dark-m18-rest box=302x62 page=#121318
+   #121318  92.05%  1.00:1 surface
+   #34343A   4.91%  1.50:1 surfaceContainerHighest
+   #90909A   1.90%  5.87:1 outline
+== web-dark-m19-rest box=302x62 page=#121318
+   #121318  92.05%  1.00:1 surface
+   #BAC3FF   4.87% 10.90:1 primary
+   #222C61   2.26%  1.41:1 onPrimary
+== web-dark-m1d-rest box=302x54 page=#121318
+   #2C2C31  52.25%  1.34:1 surfaceContainerHigh
+   #121318  46.19%  1.00:1 surface
+== web-dark-m2-rest box=302x54 page=#121318
+   #121318  94.63%  1.00:1 surface
+   #90909A   3.09%  5.87:1 outline
+== web-dark-m20-rest box=302x70 page=#121318
+   #121318  93.39%  1.00:1 surface
+   #BAC3FF   4.25% 10.90:1 primary
+   #34343A   1.98%  1.50:1 surfaceContainerHighest
+== web-dark-m21-rest box=302x118 page=#121318
+   #121318  98.39%  1.00:1 surface
+== web-dark-m22-rest box=302x56 page=#121318
+   #121318  80.45%  1.00:1 surface
+   #434659  15.60%  2.00:1 secondaryContainer
+   #46464F   0.71%  1.99:1 outlineVariant
+   #E0E1F9   0.24% 14.41:1 onSecondaryContainer
+== web-dark-m23-rest box=302x56 page=#121318
+   #121318  81.62%  1.00:1 surface
+   #434659  13.96%  2.00:1 secondaryContainer
+   #46464F   0.79%  1.99:1 outlineVariant
+== web-dark-m24-rest box=302x54 page=#121318
+   #121318  69.33%  1.00:1 surface
+   #434659  23.45%  2.00:1 secondaryContainer
+   #90909A   3.09%  5.87:1 outline
+== web-dark-m25-rest box=302x72 page=#121318
+   #121318  86.79%  1.00:1 surface
+   #272934   9.89%  1.28:1 
+   #2C2C31   1.57%  1.34:1 surfaceContainerHigh
+== web-dark-m26-rest box=302x70 page=#121318
+   #121318  96.61%  1.00:1 surface
+   #46464F   1.21%  1.99:1 outlineVariant
+   #BAC3FF   0.35% 10.90:1 primary
+== web-dark-m27-rest box=302x102 page=#121318
+   #1F1F25  64.82%  1.13:1 surfaceContainer
+   #121318  27.28%  1.00:1 surface
+   #434659   5.10%  2.00:1 secondaryContainer
+   #C7C5D0   0.63% 10.89:1 onSurfaceVariant
+   #E0E1F9   0.53% 14.41:1 onSecondaryContainer
+== web-dark-m28-rest box=302x78 page=#121318
+   #121318  94.35%  1.00:1 surface
+   #2C2C34   2.40%  1.34:1 
+   #E4E1E9   0.34% 14.35:1 onSurface inverseSurface
+== web-dark-m29-rest box=302x82 page=#121318
+   #121318  96.32%  1.00:1 surface
+   #46464F   2.26%  1.99:1 outlineVariant
+== web-dark-m2d-rest box=302x54 page=#121318
+   #121318  94.83%  1.00:1 surface
+   #2C2C31   3.14%  1.34:1 surfaceContainerHigh
+== web-dark-m3-rest box=302x54 page=#121318
+   #121318  98.85%  1.00:1 surface
+== web-dark-m30-rest box=302x26 page=#121318
+   #121318  85.74%  1.00:1 surface
+   #BAC3FF   7.13% 10.90:1 primary
+   #434659   7.13%  2.00:1 secondaryContainer
+== web-dark-m31-rest box=302x56 page=#121318
+   #121318  97.27%  1.00:1 surface
+   #46464F   0.64%  1.99:1 outlineVariant
+   #383941   0.47%  1.62:1 
+== web-dark-m32-rest box=302x62 page=#121318
+   #121318  99.30%  1.00:1 surface
+   #C7C5D0   0.22% 10.89:1 onSurfaceVariant
+== web-dark-m35-rest box=302x70 page=#121318
+   #121318  88.77%  1.00:1 surface
+   #BAC3FF   5.71% 10.90:1 primary
+   #C7C5D0   0.52% 10.89:1 onSurfaceVariant
+   #515B92   0.23%  2.88:1 
+== web-dark-m4-rest box=302x54 page=#121318
+   #1B1B21  52.30%  1.08:1 surfaceContainerLow
+   #121318  44.75%  1.00:1 surface
+   #0F1014   1.58%  1.02:1 
+== web-dark-m5-rest box=302x54 page=#121318
+   #434659  52.15%  2.00:1 secondaryContainer
+   #121318  46.14%  1.00:1 surface
+== web-dark-m6-rest box=302x70 page=#121318
+   #121318  95.63%  1.00:1 surface
+   #90909A   2.95%  5.87:1 outline
+   #C7C5D0   0.22% 10.89:1 onSurfaceVariant
+== web-dark-m7-rest box=302x70 page=#121318
+   #121318  92.34%  1.00:1 surface
+   #90909A   2.95%  5.87:1 outline
+   #C7C5D0   0.52% 10.89:1 onSurfaceVariant
+== web-dark-m8-rest box=302x70 page=#121318
+   #121318  97.46%  1.00:1 surface
+   #90909A   1.32%  5.87:1 outline
+   #C7C5D0   0.22% 10.89:1 onSurfaceVariant
+== web-dark-m9-rest box=302x70 page=#121318
+   #34343A  61.00%  1.50:1 surfaceContainerHighest
+   #121318  36.43%  1.00:1 surface
+   #C7C5D0   1.58% 10.89:1 onSurfaceVariant
+== web-dark-t1-rest box=302x42 page=#121318
+   #121318  95.68%  1.00:1 surface
+   #E4E1E9   0.56% 14.35:1 onSurface inverseSurface
+== web-dark-t2-rest box=302x42 page=#121318
+   #121318  95.68%  1.00:1 surface
+   #C7C5D0   0.49% 10.89:1 onSurfaceVariant
+== web-dark-t3-rest box=302x42 page=#121318
+   #121318  95.78%  1.00:1 surface
+   #90909A   0.49%  5.87:1 outline
+== web-dark-t4-rest box=302x42 page=#121318
+   #121318  95.68%  1.00:1 surface
+   #BAC3FF   0.47% 10.90:1 primary
+== web-dark-t5-rest box=302x42 page=#121318
+   #121318  95.68%  1.00:1 surface
+   #FFB4AB   0.47% 10.93:1 error
+== web-dark-t6-rest box=302x42 page=#121318
+   #121318  95.68%  1.00:1 surface
+   #626268   0.69%  3.06:1 
+== web-dark-t7-rest box=302x42 page=#121318
+   #121318  95.78%  1.00:1 surface
+   #9E9E9E   0.49%  6.92:1 
+== web-dark-t8-rest box=302x42 page=#121318
+   #121318  96.16%  1.00:1 surface
+   #46464F   0.56%  1.99:1 outlineVariant
+== web-light-c1-rest box=302x74 page=#FBF8FF
+   #FBF8FF  98.95%  1.00:1 surface
+== web-light-c10-rest box=302x54 page=#FBF8FF
+   #FBF8FF  45.41%  1.00:1 surface
+   #EBE9F0  24.95%  1.14:1 surfaceContainerHigh
+   #FFFFFF  22.29%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E6E4EB   1.61%  1.20:1 surfaceContainerHighest
+   #E0DEE4   0.98%  1.27:1 
+   #CBC9CF   0.75%  1.56:1 
+   #D1CFD6   0.75%  1.47:1 
+== web-light-c11-rest box=302x50 page=#FBF8FF
+   #FBF8FF  50.41%  1.00:1 surface
+   #515B92  21.95%  6.12:1 primary
+   #FFFFFF  19.64%  1.05:1 onPrimary onError cupertino.systemBackground
+   #A6AAC9   3.36%  2.17:1 
+   #A8ADC9   1.85%  2.11:1 
+== web-light-c12-rest box=302x70 page=#FBF8FF
+   #FBF8FF  96.45%  1.00:1 surface
+   #000000   0.26% 19.97:1 cupertino.label
+== web-light-c13-rest box=302x121 page=#FBF8FF
+   #F2F2F7  45.31%  1.06:1 surfaceContainerLow onInverseSurface
+   #FFFFFF  27.87%  1.05:1 onPrimary onError cupertino.systemBackground
+   #FBF8FF  24.14%  1.00:1 surface
+   #000000   0.93% 19.97:1 cupertino.label
+== web-light-c14-rest box=302x168 page=#FBF8FF
+   #FCFBFD  57.07%  1.02:1 surface
+   #FBF8FF  38.81%  1.00:1 surface
+   #F7F6F8   1.11%  1.02:1 
+   #888788   0.33%  3.40:1 
+== web-light-c15-rest box=302x66 page=#FBF8FF
+   #FBF8FF  91.21%  1.00:1 surface
+   #FFFFFF   2.90%  1.05:1 onPrimary onError cupertino.systemBackground
+   #F8F5FC   1.30%  1.03:1 surface surfaceContainerLow
+   #E1DEE6   1.13%  1.26:1 surfaceContainerHighest
+   #515B92   1.13%  6.12:1 primary
+   #F5F2F9   0.67%  1.05:1 surfaceContainerLow onInverseSurface
+   #F1EEF5   0.38%  1.09:1 surfaceContainer onInverseSurface
+== web-light-c17-rest box=302x58 page=#FBF8FF
+   #EBE9F0  54.56%  1.14:1 surfaceContainerHigh
+   #FBF8FF  42.73%  1.00:1 surface
+   #828188   0.25%  3.67:1 
+== web-light-c2-rest box=302x74 page=#FBF8FF
+   #515B92  63.28%  6.12:1 primary
+   #FBF8FF  35.34%  1.00:1 surface
+== web-light-c3s-rest box=302x74 page=#FBF8FF
+   #FBF8FF  98.94%  1.00:1 surface
+== web-light-c4s-rest box=302x74 page=#FBF8FF
+   #007AFF  63.28%  3.82:1 cupertino.systemBlue
+   #FBF8FF  35.34%  1.00:1 surface
+== web-light-c5-rest box=302x56 page=#FBF8FF
+   #FFFFFF  46.99%  1.05:1 onPrimary onError cupertino.systemBackground
+   #FBF8FF  40.16%  1.00:1 surface
+   #E6E6E6   3.61%  1.19:1 
+   #E2DFE6   3.52%  1.25:1 surfaceContainerHighest
+   #C5C5C7   0.69%  1.64:1 
+   #F6F6F6   0.41%  1.03:1 
+   #F0F0F1   0.31%  1.08:1 surfaceContainer
+== web-light-c6-rest box=302x56 page=#FBF8FF
+   #FFFFFF  47.06%  1.05:1 onPrimary onError cupertino.systemBackground
+   #FBF8FF  40.16%  1.00:1 surface
+   #E2DFE6   3.52%  1.25:1 surfaceContainerHighest
+   #E6E6E6   3.52%  1.19:1 
+   #000000   0.56% 19.97:1 cupertino.label
+== web-light-c7-rest box=302x61 page=#FBF8FF
+   #FBF8FF  92.36%  1.00:1 surface
+   #FFFFFF   3.15%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E7E4EB   2.38%  1.20:1 surfaceContainerHighest
+   #E4E1E8   0.49%  1.23:1 surfaceContainerHighest
+   #E1DEE5   0.25%  1.27:1 
+== web-light-c8-rest box=302x61 page=#FBF8FF
+   #FBF8FF  92.29%  1.00:1 surface
+   #FFFFFF   3.13%  1.05:1 onPrimary onError cupertino.systemBackground
+   #34C759   2.40%  2.11:1 cupertino.systemGreen
+   #33C257   0.71%  2.22:1 
+== web-light-c9-rest box=302x36 page=#FBF8FF
+   #FBF8FF  96.47%  1.00:1 surface
+   #FFFFFF   1.36%  1.05:1 onPrimary onError cupertino.systemBackground
+   #007AFF   1.15%  3.82:1 cupertino.systemBlue
+== web-light-g1-rest box=302x118 page=#FBF8FF
+   #FBF8FF  24.57%  1.00:1 surface
+   #979DCC   2.19%  2.49:1 
+   #C0C5E6   2.19%  1.61:1 
+   #424A97   2.16%  7.51:1 
+   #48509B   2.16%  6.90:1 
+   #9DA3D0   2.16%  2.33:1 
+   #7D84BC   2.12%  3.39:1 
+   #B5BADF   2.12%  1.81:1 
+   #3A4292   2.09%  8.41:1 
+   #A5ABD5   2.09%  2.13:1 
+   #242D84   2.09% 11.20:1 
+   #BBC0E3   2.09%  1.70:1 
+   text #FFFFFF: lowest 2.75:1 at x=208 over #9399C9; highest 6.86:1 at x=93 over #4C549D
+== web-light-g2-rest box=302x118 page=#FBF8FF
+   #FBF8FF  24.57%  1.00:1 surface
+   #6D74B2   2.22%  4.17:1 
+   #7279B5   2.22%  3.90:1 
+   #979DCC   2.19%  2.49:1 
+   #C0C5E6   2.19%  1.61:1 
+   #9DA3D0   2.16%  2.33:1 
+   #6269AB   2.16%  4.84:1 
+   #7D84BC   2.16%  3.39:1 
+   #9298C9   2.16%  2.64:1 
+   #686FAF   2.16%  4.46:1 
+   #777EB8   2.16%  3.66:1 
+   #B5BADF   2.12%  1.81:1 
+== web-light-g3-rest box=302x118 page=#FBF8FF
+   #FBF8FF  24.57%  1.00:1 surface
+   #383B55   2.42% 10.38:1 
+   #2D304E   2.36% 12.15:1 
+   #44475D   2.27%  8.66:1 
+   #3D4059   2.26%  9.62:1 
+   #494C60   2.19%  8.03:1 
+   #575969   2.19%  6.57:1 
+   #0E123B   2.09% 17.09:1 
+   #161A40   2.02% 15.90:1 
+   #535566   1.95%  6.99:1 
+   #1C2044   1.94% 14.91:1 
+   #232748   1.93% 13.72:1 
+   text #484B5F: lowest 3.35:1 at x=218 over #999FCD; highest 8.16:1 at x=218 over #FBF8FF
+== web-light-g4-rest box=302x118 page=#FBF8FF
+   #FBF8FF  24.57%  1.00:1 surface
+   #12131A   8.13% 17.62:1 
+   #0D0E17   8.12% 18.29:1 
+   #15161C   5.07% 17.17:1 
+   #040511   4.53% 19.30:1 
+   #18191E   4.51% 16.69:1 onSurface
+   #0A0B15   4.32% 18.64:1 
+   #070813   1.60% 18.96:1 
+   #6D74B2   1.11%  4.17:1 
+   #7279B5   1.11%  3.90:1 
+   #979DCC   1.09%  2.49:1 
+   #C0C5E6   1.09%  1.61:1 
+   text #090A14: lowest 1.97:1 at x=48 over #31398C; highest 18.75:1 at x=48 over #FBF8FF
+== web-light-k1-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.78%  1.00:1 surface
+   #000000   0.34% 19.97:1 cupertino.label
+== web-light-k2-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.88%  1.00:1 surface
+   #88878E   0.39%  3.38:1 
+== web-light-k3-rest box=302x42 page=#FBF8FF
+   #FBF8FF  96.17%  1.00:1 surface
+   #C2C0C7   0.47%  1.71:1 
+== web-light-k4-rest box=302x42 page=#FBF8FF
+   #FBF8FF  96.17%  1.00:1 surface
+   #C2C0C7   0.47%  1.71:1 
+== web-light-k5-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.86%  1.00:1 surface
+   #7A797F   0.39%  4.10:1 
+== web-light-m1-rest box=302x54 page=#FBF8FF
+   #515B92  52.15%  6.12:1 primary
+   #FBF8FF  46.14%  1.00:1 surface
+== web-light-m10-rest box=302x90 page=#FBF8FF
+   #FBF8FF  94.38%  1.00:1 surface
+   #BA1A1A   2.52%  6.14:1 error
+== web-light-m11-rest box=302x70 page=#FBF8FF
+   #FBF8FF  95.70%  1.00:1 surface
+   #DFDDE4   3.02%  1.28:1 
+   #A6A4AB   0.22%  2.34:1 
+== web-light-m12-rest box=302x70 page=#FBF8FF
+   #FBF8FF  92.23%  1.00:1 surface
+   #767680   2.76%  4.27:1 outline
+   #1B1B21   0.31% 16.30:1 onSurface
+== web-light-m13-rest box=302x62 page=#FBF8FF
+   #FBF8FF  99.32%  1.00:1 surface
+   #46464F   0.62%  8.88:1 onSurfaceVariant
+== web-light-m14-rest box=302x62 page=#FBF8FF
+   #FBF8FF  98.27%  1.00:1 surface
+   #515B92   1.39%  6.12:1 primary
+== web-light-m15-rest box=302x62 page=#FBF8FF
+   #FBF8FF  99.32%  1.00:1 surface
+   #BA1A1A   0.62%  6.14:1 error
+== web-light-m16-rest box=302x54 page=#FBF8FF
+   #FBF8FF  97.67%  1.00:1 surface
+   #515B92   0.64%  6.12:1 primary
+   #46464F   0.32%  8.88:1 onSurfaceVariant
+== web-light-m18-rest box=302x62 page=#FBF8FF
+   #FBF8FF  92.05%  1.00:1 surface
+   #E4E1E9   4.91%  1.23:1 surfaceContainerHighest
+   #767680   1.90%  4.27:1 outline
+== web-light-m19-rest box=302x62 page=#FBF8FF
+   #FBF8FF  92.05%  1.00:1 surface
+   #515B92   4.87%  6.12:1 primary
+   #FFFFFF   2.26%  1.05:1 onPrimary onError cupertino.systemBackground
+== web-light-m1d-rest box=302x54 page=#FBF8FF
+   #DFDDE4  52.34%  1.28:1 
+   #FBF8FF  46.19%  1.00:1 surface
+== web-light-m2-rest box=302x54 page=#FBF8FF
+   #FBF8FF  94.67%  1.00:1 surface
+   #767680   3.09%  4.27:1 outline
+== web-light-m20-rest box=302x70 page=#FBF8FF
+   #FBF8FF  93.24%  1.00:1 surface
+   #515B92   4.29%  6.12:1 primary
+   #E4E1E9   1.98%  1.23:1 surfaceContainerHighest
+== web-light-m21-rest box=302x118 page=#FBF8FF
+   #FBF8FF  98.43%  1.00:1 surface
+== web-light-m22-rest box=302x56 page=#FBF8FF
+   #FBF8FF  80.48%  1.00:1 surface
+   #E0E1F9  15.63%  1.22:1 secondaryContainer
+   #C7C5D0   0.71%  1.62:1 outlineVariant
+== web-light-m23-rest box=302x56 page=#FBF8FF
+   #FBF8FF  81.69%  1.00:1 surface
+   #E0E1F9  13.99%  1.22:1 secondaryContainer
+   #C7C5D0   0.80%  1.62:1 outlineVariant
+== web-light-m24-rest box=302x54 page=#FBF8FF
+   #FBF8FF  69.38%  1.00:1 surface
+   #E0E1F9  23.44%  1.22:1 secondaryContainer
+   #767680   3.09%  4.27:1 outline
+== web-light-m25-rest box=302x72 page=#FBF8FF
+   #FBF8FF  86.83%  1.00:1 surface
+   #E6E5F2   9.92%  1.19:1 surfaceContainerHigh
+   #E0DDE4   1.57%  1.28:1 
+== web-light-m26-rest box=302x70 page=#FBF8FF
+   #FBF8FF  96.70%  1.00:1 surface
+   #C7C5D0   1.21%  1.62:1 outlineVariant
+   #515B92   0.35%  6.12:1 primary
+== web-light-m27-rest box=302x102 page=#FBF8FF
+   #EFEDF4  64.90%  1.10:1 surfaceContainer onInverseSurface
+   #FBF8FF  27.28%  1.00:1 surface
+   #E0E1F9   5.20%  1.22:1 secondaryContainer
+   #46464F   0.60%  8.88:1 onSurfaceVariant
+   #434659   0.44%  8.84:1 onSecondaryContainer
+== web-light-m28-rest box=302x78 page=#FBF8FF
+   #FBF8FF  94.43%  1.00:1 surface
+   #E1DFE8   2.42%  1.25:1 surfaceContainerHighest
+== web-light-m29-rest box=302x82 page=#FBF8FF
+   #FBF8FF  96.35%  1.00:1 surface
+   #C7C5D0   2.26%  1.62:1 outlineVariant
+== web-light-m2d-rest box=302x54 page=#FBF8FF
+   #FBF8FF  94.90%  1.00:1 surface
+   #DFDDE4   3.14%  1.28:1 
+== web-light-m3-rest box=302x54 page=#FBF8FF
+   #FBF8FF  98.89%  1.00:1 surface
+== web-light-m30-rest box=302x26 page=#FBF8FF
+   #FBF8FF  85.74%  1.00:1 surface
+   #515B92   7.13%  6.12:1 primary
+   #E0E1F9   7.13%  1.22:1 secondaryContainer
+== web-light-m31-rest box=302x56 page=#FBF8FF
+   #FBF8FF  97.32%  1.00:1 surface
+   #C7C5D0   0.64%  1.62:1 outlineVariant
+   #D5D2DC   0.47%  1.42:1 
+== web-light-m32-rest box=302x62 page=#FBF8FF
+   #FBF8FF  99.32%  1.00:1 surface
+== web-light-m35-rest box=302x70 page=#FBF8FF
+   #FBF8FF  88.92%  1.00:1 surface
+   #515B92   5.94%  6.12:1 primary
+   #46464F   0.47%  8.88:1 onSurfaceVariant
+== web-light-m4-rest box=302x54 page=#FBF8FF
+   #F5F2FA  52.35%  1.05:1 surfaceContainerLow onInverseSurface
+   #FBF8FF  42.69%  1.00:1 surface
+   #F3F0F7   1.58%  1.07:1 surfaceContainerLow onInverseSurface
+   #D2D0D5   1.55%  1.46:1 
+== web-light-m5-rest box=302x54 page=#FBF8FF
+   #E0E1F9  52.29%  1.22:1 secondaryContainer
+   #FBF8FF  46.19%  1.00:1 surface
+== web-light-m6-rest box=302x70 page=#FBF8FF
+   #FBF8FF  95.64%  1.00:1 surface
+   #767680   2.95%  4.27:1 outline
+   #46464F   0.22%  8.88:1 onSurfaceVariant
+== web-light-m7-rest box=302x70 page=#FBF8FF
+   #FBF8FF  92.47%  1.00:1 surface
+   #767680   2.95%  4.27:1 outline
+   #46464F   0.47%  8.88:1 onSurfaceVariant
+== web-light-m8-rest box=302x70 page=#FBF8FF
+   #FBF8FF  97.48%  1.00:1 surface
+   #767680   1.32%  4.27:1 outline
+   #46464F   0.22%  8.88:1 onSurfaceVariant
+== web-light-m9-rest box=302x70 page=#FBF8FF
+   #E4E1E9  61.00%  1.23:1 surfaceContainerHighest
+   #FBF8FF  36.43%  1.00:1 surface
+   #46464F   1.55%  8.88:1 onSurfaceVariant
+== web-light-t1-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.78%  1.00:1 surface
+   #1B1B21   0.34% 16.30:1 onSurface
+== web-light-t2-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.83%  1.00:1 surface
+   #46464F   0.40%  8.88:1 onSurfaceVariant
+== web-light-t3-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.83%  1.00:1 surface
+   #767680   0.47%  4.27:1 outline
+== web-light-t4-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.83%  1.00:1 surface
+   #515B92   0.41%  6.12:1 primary
+== web-light-t5-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.78%  1.00:1 surface
+   #BA1A1A   0.34%  6.14:1 error
+== web-light-t6-rest box=302x42 page=#FBF8FF
+   #FBF8FF  96.02%  1.00:1 surface
+   #A6A4AB   0.39%  2.34:1 
+== web-light-t7-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.83%  1.00:1 surface
+   #9E9E9E   0.56%  2.55:1 
+== web-light-t8-rest box=302x42 page=#FBF8FF
+   #FBF8FF  95.78%  1.00:1 surface
+   #C7C5D0   0.76%  1.62:1 outlineVariant
+   #CDCBD5   0.35%  1.52:1 
+== web-dark-c1-focused box=302x74 page=#121318
+   #121318  87.11%  1.00:1 surface
+   #5C8EC6   8.70%  5.42:1 
+   #375170   2.56%  2.27:1 
+   #243244   0.23%  1.43:1 
+   new against rest: #5C8EC6 5.42:1, #375170 2.27:1, #243244 1.43:1
+== web-dark-c1-focushover box=302x74 page=#121318
+   #121318  87.11%  1.00:1 surface
+   #5C8EC6   8.70%  5.42:1 
+   #375170   2.56%  2.27:1 
+   #243244   0.23%  1.43:1 
+   new against rest: #5C8EC6 5.42:1, #375170 2.27:1, #243244 1.43:1
+== web-dark-c1-hover box=302x74 page=#121318
+   #121318  98.97%  1.00:1 surface
+   new against rest: none
+== web-dark-c1-pressed box=302x74 page=#121318
+   #121318  98.97%  1.00:1 surface
+   new against rest: none
+== web-dark-c2-focused box=302x74 page=#121318
+   #515B92  63.27%  2.88:1 
+   #121318  23.80%  1.00:1 surface
+   #5C6CC6   8.70%  3.90:1 
+   #374070   2.52%  1.88:1 
+   new against rest: #5C6CC6 3.90:1, #374070 1.88:1
+== web-dark-c2-focushover box=302x74 page=#121318
+   #515B92  63.27%  2.88:1 
+   #121318  23.80%  1.00:1 surface
+   #5C6CC6   8.70%  3.90:1 
+   #374070   2.52%  1.88:1 
+   new against rest: #5C6CC6 3.90:1, #374070 1.88:1
+== web-dark-c2-hover box=302x74 page=#121318
+   #515B92  63.28%  2.88:1 
+   #121318  35.34%  1.00:1 surface
+   new against rest: none
+== web-dark-c2-pressed box=302x74 page=#121318
+   #515B92  63.28%  2.88:1 
+   #121318  35.34%  1.00:1 surface
+   new against rest: none
+== web-dark-c3s-focused box=302x74 page=#121318
+   #121318  87.09%  1.00:1 surface
+   #5C8EC6   8.70%  5.42:1 
+   #375170   2.56%  2.27:1 
+   #243244   0.23%  1.43:1 
+   new against rest: #5C8EC6 5.42:1, #375170 2.27:1, #243244 1.43:1
+== web-dark-c3s-focushover box=302x74 page=#121318
+   #121318  87.09%  1.00:1 surface
+   #5C8EC6   8.70%  5.42:1 
+   #375170   2.56%  2.27:1 
+   #243244   0.23%  1.43:1 
+   new against rest: #5C8EC6 5.42:1, #375170 2.27:1, #243244 1.43:1
+== web-dark-c3s-hover box=302x74 page=#121318
+   #121318  98.94%  1.00:1 surface
+   new against rest: none
+== web-dark-c3s-pressed box=302x74 page=#121318
+   #121318  98.94%  1.00:1 surface
+   new against rest: none
+== web-dark-c4s-focused box=302x74 page=#121318
+   #0A84FF  63.27%  5.09:1 cupertino.systemBlue
+   #121318  23.80%  1.00:1 surface
+   #5C91C6   8.70%  5.58:1 
+   #375270   2.52%  2.30:1 
+   new against rest: #5C91C6 5.58:1, #375270 2.30:1
+== web-dark-c4s-focushover box=302x74 page=#121318
+   #0A84FF  63.27%  5.09:1 cupertino.systemBlue
+   #121318  23.80%  1.00:1 surface
+   #5C91C6   8.70%  5.58:1 
+   #375270   2.52%  2.30:1 
+   new against rest: #5C91C6 5.58:1, #375270 2.30:1
+== web-dark-c4s-hover box=302x74 page=#121318
+   #0A84FF  63.28%  5.09:1 cupertino.systemBlue
+   #121318  35.34%  1.00:1 surface
+   new against rest: none
+== web-dark-c4s-pressed box=302x74 page=#121318
+   #0A84FF  63.28%  5.09:1 cupertino.systemBlue
+   #121318  35.34%  1.00:1 surface
+   new against rest: none
+== web-dark-c5-focused box=302x56 page=#121318
+   #FFFFFF  46.99% 18.55:1 cupertino.label
+   #121318  43.78%  1.00:1 surface
+   #E6E6E6   3.57% 14.86:1 
+   #C5C5C7   0.69% 10.76:1 
+   #F6F6F6   0.41% 17.16:1 
+   #F0F0F1   0.31% 16.29:1 
+   new against rest: none
+== web-dark-c5-focushover box=302x56 page=#121318
+   #FFFFFF  46.84% 18.55:1 cupertino.label
+   #121318  43.78%  1.00:1 surface
+   #E6E6E6   3.57% 14.86:1 
+   #C5C5C7   0.64% 10.76:1 
+   #F6F6F6   0.41% 17.16:1 
+   #F0F0F1   0.31% 16.29:1 
+   new against rest: none
+== web-dark-c5-hover box=302x56 page=#121318
+   #FFFFFF  46.99% 18.55:1 cupertino.label
+   #121318  43.78%  1.00:1 surface
+   #E6E6E6   3.57% 14.86:1 
+   #C5C5C7   0.69% 10.76:1 
+   #F6F6F6   0.41% 17.16:1 
+   #F0F0F1   0.31% 16.29:1 
+   new against rest: none
+== web-dark-c5-pressed box=302x56 page=#121318
+   #FFFFFF  46.99% 18.55:1 cupertino.label
+   #121318  43.78%  1.00:1 surface
+   #E6E6E6   3.57% 14.86:1 
+   #C5C5C7   0.69% 10.76:1 
+   #F6F6F6   0.41% 17.16:1 
+   #F0F0F1   0.31% 16.29:1 
+   new against rest: none
+== web-dark-c7-focused box=302x61 page=#121318
+   #121318  89.31%  1.00:1 surface
+   #222328   3.35%  1.18:1 
+   #FFFFFF   3.13% 18.55:1 cupertino.label
+   #5CC677   2.14%  8.66:1 
+   #376C47   0.24%  3.00:1 
+   new against rest: #5CC677 8.66:1, #376C47 3.00:1
+== web-dark-c7-focushover box=302x61 page=#121318
+   #121318  89.31%  1.00:1 surface
+   #222328   3.35%  1.18:1 
+   #FFFFFF   3.13% 18.55:1 cupertino.label
+   #5CC677   2.14%  8.66:1 
+   #376C47   0.24%  3.00:1 
+   new against rest: #5CC677 8.66:1, #376C47 3.00:1
+== web-dark-c7-hover box=302x61 page=#121318
+   #121318  92.38%  1.00:1 surface
+   #222328   3.41%  1.18:1 
+   #FFFFFF   3.13% 18.55:1 cupertino.label
+   #1F2025   0.25%  1.14:1 surfaceContainer
+   new against rest: none
+== web-dark-c7-pressed box=302x61 page=#121318
+   #121318  92.38%  1.00:1 surface
+   #222328   3.41%  1.18:1 
+   #FFFFFF   3.13% 18.55:1 cupertino.label
+   #1F2025   0.25%  1.14:1 surfaceContainer
+   new against rest: none
+== web-dark-c9-focused box=302x36 page=#121318
+   #121318  95.14%  1.00:1 surface
+   #FFFFFF   1.43% 18.55:1 cupertino.label
+   #007AFF   1.15%  4.62:1 
+   #5C8EC7   0.86%  5.43:1 
+   new against rest: #5C8EC7 5.43:1
+== web-dark-c9-focushover box=302x36 page=#121318
+   #121318  95.14%  1.00:1 surface
+   #FFFFFF   1.43% 18.55:1 cupertino.label
+   #007AFF   1.15%  4.62:1 
+   #5C8EC7   0.86%  5.43:1 
+   new against rest: #5C8EC7 5.43:1
+== web-dark-c9-hover box=302x36 page=#121318
+   #121318  96.47%  1.00:1 surface
+   #FFFFFF   1.36% 18.55:1 cupertino.label
+   #007AFF   1.15%  4.62:1 
+   new against rest: none
+== web-dark-c9-pressed box=302x36 page=#121318
+   #121318  96.47%  1.00:1 surface
+   #FFFFFF   1.36% 18.55:1 cupertino.label
+   #007AFF   1.15%  4.62:1 
+   new against rest: none
+== web-dark-m1-focused box=302x54 page=#121318
+   #AAB3EF  52.19%  9.19:1 
+   #121318  46.14%  1.00:1 surface
+   new against rest: #AAB3EF 9.19:1
+== web-dark-m1-focushover box=302x54 page=#121318
+   #AAB3EF  52.19%  9.19:1 
+   #121318  46.14%  1.00:1 surface
+   new against rest: #AAB3EF 9.19:1
+== web-dark-m1-hover box=302x54 page=#121318
+   #BAC3FF  52.19% 10.90:1 primary
+   #121318  46.14%  1.00:1 surface
+   new against rest: none
+== web-dark-m1-pressed box=302x54 page=#121318
+   #BAC3FF  52.19% 10.90:1 primary
+   #121318  46.14%  1.00:1 surface
+   new against rest: none
+== web-dark-m12-focused box=302x70 page=#121318
+   #121318  77.02%  1.00:1 surface
+   #2B2F48  12.03%  1.42:1 
+   #BAC3FF   5.71% 10.90:1 primary
+   #E4E1E9   0.45% 14.35:1 onSurface inverseSurface
+   #25283C   0.23%  1.28:1 
+   new against rest: #2B2F48 1.42:1, #BAC3FF 10.90:1, #25283C 1.28:1
+== web-dark-m12-focushover box=302x70 page=#121318
+   #121318  77.02%  1.00:1 surface
+   #2B2F48  12.03%  1.42:1 
+   #BAC3FF   5.71% 10.90:1 primary
+   #E4E1E9   0.45% 14.35:1 onSurface inverseSurface
+   #25283C   0.23%  1.28:1 
+   new against rest: #2B2F48 1.42:1, #BAC3FF 10.90:1, #25283C 1.28:1
+== web-dark-m12-hover box=302x70 page=#121318
+   #121318  92.13%  1.00:1 surface
+   #90909A   2.81%  5.87:1 outline
+   #E4E1E9   0.45% 14.35:1 onSurface inverseSurface
+   new against rest: none
+== web-dark-m12-pressed box=302x70 page=#121318
+   #121318  92.13%  1.00:1 surface
+   #90909A   2.81%  5.87:1 outline
+   #E4E1E9   0.45% 14.35:1 onSurface inverseSurface
+   new against rest: none
+== web-dark-m13-focused box=302x62 page=#121318
+   #121318  93.08%  1.00:1 surface
+   #27282E   5.77%  1.26:1 surfaceContainerHigh
+   #E4E1E9   0.62% 14.35:1 onSurface inverseSurface
+   new against rest: #27282E 1.26:1, #E4E1E9 14.35:1
+== web-dark-m13-focushover box=302x62 page=#121318
+   #121318  93.08%  1.00:1 surface
+   #27282E   5.77%  1.26:1 surfaceContainerHigh
+   #E4E1E9   0.62% 14.35:1 onSurface inverseSurface
+   new against rest: #27282E 1.26:1, #E4E1E9 14.35:1
+== web-dark-m13-hover box=302x62 page=#121318
+   #121318  99.32%  1.00:1 surface
+   #C7C5D0   0.62% 10.89:1 onSurfaceVariant
+   new against rest: none
+== web-dark-m13-pressed box=302x62 page=#121318
+   #121318  99.32%  1.00:1 surface
+   #C7C5D0   0.62% 10.89:1 onSurfaceVariant
+   new against rest: none
+== web-dark-m14-focused box=302x62 page=#121318
+   #121318  93.08%  1.00:1 surface
+   #232530   4.72%  1.22:1 
+   #BAC3FF   1.39% 10.90:1 primary
+   new against rest: #232530 1.22:1
+== web-dark-m14-focushover box=302x62 page=#121318
+   #121318  93.08%  1.00:1 surface
+   #232530   4.72%  1.22:1 
+   #BAC3FF   1.39% 10.90:1 primary
+   new against rest: #232530 1.22:1
+== web-dark-m14-hover box=302x62 page=#121318
+   #121318  98.27%  1.00:1 surface
+   #BAC3FF   1.39% 10.90:1 primary
+   new against rest: none
+== web-dark-m14-pressed box=302x62 page=#121318
+   #121318  98.27%  1.00:1 surface
+   #BAC3FF   1.39% 10.90:1 primary
+   new against rest: none
+== web-dark-m18-focused box=302x62 page=#121318
+   #121318  90.46%  1.00:1 surface
+   #46464C   3.05%  1.98:1 outlineVariant
+   #34343A   1.75%  1.50:1 surfaceContainerHighest
+   #27282E   1.26%  1.26:1 surfaceContainerHigh
+   #C7C5D0   0.96% 10.89:1 onSurfaceVariant
+   #9898A2   0.53%  6.49:1 
+   #90909A   0.40%  5.87:1 outline
+   new against rest: #46464C 1.98:1, #27282E 1.26:1, #C7C5D0 10.89:1, #9898A2 6.49:1
+== web-dark-m18-focushover box=302x62 page=#121318
+   #121318  90.46%  1.00:1 surface
+   #46464C   3.05%  1.98:1 outlineVariant
+   #34343A   1.75%  1.50:1 surfaceContainerHighest
+   #27282E   1.26%  1.26:1 surfaceContainerHigh
+   #C7C5D0   0.96% 10.89:1 onSurfaceVariant
+   #9898A2   0.53%  6.49:1 
+   #90909A   0.40%  5.87:1 outline
+   new against rest: #46464C 1.98:1, #27282E 1.26:1, #C7C5D0 10.89:1, #9898A2 6.49:1
+== web-dark-m18-hover box=302x62 page=#121318
+   #121318  92.05%  1.00:1 surface
+   #34343A   4.91%  1.50:1 surfaceContainerHighest
+   #90909A   1.90%  5.87:1 outline
+   new against rest: none
+== web-dark-m18-pressed box=302x62 page=#121318
+   #121318  92.05%  1.00:1 surface
+   #34343A   4.91%  1.50:1 surfaceContainerHighest
+   #90909A   1.90%  5.87:1 outline
+   new against rest: none
+== web-dark-m19-focused box=302x62 page=#121318
+   #121318  90.46%  1.00:1 surface
+   #BAC3FF   4.87% 10.90:1 primary
+   #394379   2.26%  1.99:1 primaryContainer
+   #232530   1.26%  1.22:1 
+   new against rest: #394379 1.99:1, #232530 1.22:1
+== web-dark-m19-focushover box=302x62 page=#121318
+   #121318  90.46%  1.00:1 surface
+   #BAC3FF   4.87% 10.90:1 primary
+   #394379   2.26%  1.99:1 primaryContainer
+   #232530   1.26%  1.22:1 
+   new against rest: #394379 1.99:1, #232530 1.22:1
+== web-dark-m19-hover box=302x62 page=#121318
+   #121318  92.05%  1.00:1 surface
+   #BAC3FF   4.87% 10.90:1 primary
+   #222C61   2.26%  1.41:1 onPrimary
+   new against rest: none
+== web-dark-m19-pressed box=302x62 page=#121318
+   #121318  92.05%  1.00:1 surface
+   #BAC3FF   4.87% 10.90:1 primary
+   #222C61   2.26%  1.41:1 onPrimary
+   new against rest: none
+== web-dark-m2-focused box=302x54 page=#121318
+   #232530  48.50%  1.22:1 
+   #121318  46.14%  1.00:1 surface
+   #BAC3FF   3.12% 10.90:1 primary
+   new against rest: #232530 1.22:1, #BAC3FF 10.90:1
+== web-dark-m2-focushover box=302x54 page=#121318
+   #232530  48.50%  1.22:1 
+   #121318  46.14%  1.00:1 surface
+   #BAC3FF   3.12% 10.90:1 primary
+   new against rest: #232530 1.22:1, #BAC3FF 10.90:1
+== web-dark-m2-hover box=302x54 page=#121318
+   #121318  94.63%  1.00:1 surface
+   #90909A   3.09%  5.87:1 outline
+   new against rest: none
+== web-dark-m2-pressed box=302x54 page=#121318
+   #121318  94.63%  1.00:1 surface
+   #90909A   3.09%  5.87:1 outline
+   new against rest: none
+== web-dark-m21-focused box=302x118 page=#121318
+   #121318  61.37%  1.00:1 surface
+   #2F3034  37.02%  1.41:1 onInverseSurface
+   new against rest: #2F3034 1.41:1
+== web-dark-m21-focushover box=302x118 page=#121318
+   #121318  61.37%  1.00:1 surface
+   #2F3034  37.02%  1.41:1 onInverseSurface
+   new against rest: #2F3034 1.41:1
+== web-dark-m21-hover box=302x118 page=#121318
+   #121318  98.39%  1.00:1 surface
+   new against rest: none
+== web-dark-m21-pressed box=302x118 page=#121318
+   #121318  98.39%  1.00:1 surface
+   new against rest: none
+== web-dark-m22-focused box=302x56 page=#121318
+   #121318  80.45%  1.00:1 surface
+   #5A5C6D  15.60%  2.81:1 
+   #46464F   0.71%  1.99:1 outlineVariant
+   #E0E1F9   0.25% 14.41:1 onSecondaryContainer
+   new against rest: #5A5C6D 2.81:1
+== web-dark-m22-focushover box=302x56 page=#121318
+   #121318  80.45%  1.00:1 surface
+   #5A5C6D  15.60%  2.81:1 
+   #46464F   0.71%  1.99:1 outlineVariant
+   #E0E1F9   0.25% 14.41:1 onSecondaryContainer
+   new against rest: #5A5C6D 2.81:1
+== web-dark-m22-hover box=302x56 page=#121318
+   #121318  80.45%  1.00:1 surface
+   #434659  15.60%  2.00:1 secondaryContainer
+   #46464F   0.71%  1.99:1 outlineVariant
+   #E0E1F9   0.24% 14.41:1 onSecondaryContainer
+   new against rest: none
+== web-dark-m22-pressed box=302x56 page=#121318
+   #121318  80.45%  1.00:1 surface
+   #434659  15.60%  2.00:1 secondaryContainer
+   #46464F   0.71%  1.99:1 outlineVariant
+   #E0E1F9   0.24% 14.41:1 onSecondaryContainer
+   new against rest: none
+== web-dark-m25-focused box=302x72 page=#121318
+   #121318  86.79%  1.00:1 surface
+   #393C4D   9.89%  1.70:1 
+   #2C2C31   1.57%  1.34:1 surfaceContainerHigh
+   new against rest: #393C4D 1.70:1
+== web-dark-m25-focushover box=302x72 page=#121318
+   #121318  86.79%  1.00:1 surface
+   #393C4D   9.89%  1.70:1 
+   #2C2C31   1.57%  1.34:1 surfaceContainerHigh
+   new against rest: #393C4D 1.70:1
+== web-dark-m25-hover box=302x72 page=#121318
+   #121318  86.79%  1.00:1 surface
+   #272934   9.89%  1.28:1 
+   #2C2C31   1.57%  1.34:1 surfaceContainerHigh
+   new against rest: none
+== web-dark-m25-pressed box=302x72 page=#121318
+   #121318  86.79%  1.00:1 surface
+   #272934   9.89%  1.28:1 
+   #2C2C31   1.57%  1.34:1 surfaceContainerHigh
+   new against rest: none
+== web-dark-m3-focused box=302x54 page=#121318
+   #232530  52.25%  1.22:1 
+   #121318  46.19%  1.00:1 surface
+   new against rest: #232530 1.22:1
+== web-dark-m3-focushover box=302x54 page=#121318
+   #232530  52.25%  1.22:1 
+   #121318  46.19%  1.00:1 surface
+   new against rest: #232530 1.22:1
+== web-dark-m3-hover box=302x54 page=#121318
+   #121318  98.85%  1.00:1 surface
+   new against rest: none
+== web-dark-m3-pressed box=302x54 page=#121318
+   #121318  98.85%  1.00:1 surface
+   new against rest: none
+== web-dark-m32-focused box=302x62 page=#121318
+   #24252B  57.07%  1.21:1 
+   #121318  41.81%  1.00:1 surface
+   #C7C5D0   0.22% 10.89:1 onSurfaceVariant
+   new against rest: #24252B 1.21:1
+== web-dark-m32-focushover box=302x62 page=#121318
+   #24252B  57.07%  1.21:1 
+   #121318  41.81%  1.00:1 surface
+   #C7C5D0   0.22% 10.89:1 onSurfaceVariant
+   new against rest: #24252B 1.21:1
+== web-dark-m32-hover box=302x62 page=#121318
+   #121318  99.30%  1.00:1 surface
+   #C7C5D0   0.22% 10.89:1 onSurfaceVariant
+   new against rest: none
+== web-dark-m32-pressed box=302x62 page=#121318
+   #121318  99.30%  1.00:1 surface
+   #C7C5D0   0.22% 10.89:1 onSurfaceVariant
+   new against rest: none
+== web-dark-m4-focused box=302x54 page=#121318
+   #2B2C38  52.15%  1.34:1 
+   #121318  44.62%  1.00:1 surface
+   #0F1014   1.57%  1.02:1 
+   new against rest: #2B2C38 1.34:1
+== web-dark-m4-focushover box=302x54 page=#121318
+   #2B2C38  52.15%  1.34:1 
+   #121318  44.62%  1.00:1 surface
+   #0F1014   1.57%  1.02:1 
+   new against rest: #2B2C38 1.34:1
+== web-dark-m4-hover box=302x54 page=#121318
+   #1B1B21  52.30%  1.08:1 surfaceContainerLow
+   #121318  44.75%  1.00:1 surface
+   #0F1014   1.58%  1.02:1 
+   new against rest: none
+== web-dark-m4-pressed box=302x54 page=#121318
+   #1B1B21  52.30%  1.08:1 surfaceContainerLow
+   #121318  44.75%  1.00:1 surface
+   #0F1014   1.58%  1.02:1 
+   new against rest: none
+== web-dark-m5-focused box=302x54 page=#121318
+   #535669  52.15%  2.56:1 
+   #121318  46.14%  1.00:1 surface
+   new against rest: #535669 2.56:1
+== web-dark-m5-focushover box=302x54 page=#121318
+   #535669  52.15%  2.56:1 
+   #121318  46.14%  1.00:1 surface
+   new against rest: #535669 2.56:1
+== web-dark-m5-hover box=302x54 page=#121318
+   #434659  52.15%  2.00:1 secondaryContainer
+   #121318  46.14%  1.00:1 surface
+   new against rest: none
+== web-dark-m5-pressed box=302x54 page=#121318
+   #434659  52.15%  2.00:1 secondaryContainer
+   #121318  46.14%  1.00:1 surface
+   new against rest: none
+== web-dark-m6-focused box=302x70 page=#121318
+   #121318  93.48%  1.00:1 surface
+   #BAC3FF   5.71% 10.90:1 primary
+   new against rest: #BAC3FF 10.90:1
+== web-dark-m6-focushover box=302x70 page=#121318
+   #121318  93.48%  1.00:1 surface
+   #BAC3FF   5.71% 10.90:1 primary
+   new against rest: #BAC3FF 10.90:1
+== web-dark-m6-hover box=302x70 page=#121318
+   #121318  95.63%  1.00:1 surface
+   #90909A   2.95%  5.87:1 outline
+   #C7C5D0   0.22% 10.89:1 onSurfaceVariant
+   new against rest: none
+== web-dark-m6-pressed box=302x70 page=#121318
+   #121318  95.63%  1.00:1 surface
+   #90909A   2.95%  5.87:1 outline
+   #C7C5D0   0.22% 10.89:1 onSurfaceVariant
+   new against rest: none
+== web-light-c1-focused box=302x74 page=#FBF8FF
+   #FBF8FF  87.10%  1.00:1 surface
+   #8ABCF5   8.70%  1.89:1 
+   #C2DAFA   2.56%  1.36:1 
+   #DFE9FC   0.23%  1.16:1 
+   new against rest: #8ABCF5 1.89:1, #C2DAFA 1.36:1, #DFE9FC 1.16:1
+== web-light-c1-focushover box=302x74 page=#FBF8FF
+   #FBF8FF  87.10%  1.00:1 surface
+   #8ABCF5   8.70%  1.89:1 
+   #C2DAFA   2.56%  1.36:1 
+   #DFE9FC   0.23%  1.16:1 
+   new against rest: #8ABCF5 1.89:1, #C2DAFA 1.36:1, #DFE9FC 1.16:1
+== web-light-c1-hover box=302x74 page=#FBF8FF
+   #FBF8FF  98.95%  1.00:1 surface
+   new against rest: none
+== web-light-c1-pressed box=302x74 page=#FBF8FF
+   #FBF8FF  98.95%  1.00:1 surface
+   new against rest: none
+== web-light-c2-focused box=302x74 page=#FBF8FF
+   #515B92  63.27%  6.12:1 primary
+   #FBF8FF  23.80%  1.00:1 surface
+   #8A9AF5   8.70%  2.49:1 
+   #C2C9FA   2.52%  1.53:1 
+   new against rest: #8A9AF5 2.49:1, #C2C9FA 1.53:1
+== web-light-c2-focushover box=302x74 page=#FBF8FF
+   #515B92  63.27%  6.12:1 primary
+   #FBF8FF  23.80%  1.00:1 surface
+   #8A9AF5   8.70%  2.49:1 
+   #C2C9FA   2.52%  1.53:1 
+   new against rest: #8A9AF5 2.49:1, #C2C9FA 1.53:1
+== web-light-c2-hover box=302x74 page=#FBF8FF
+   #515B92  63.28%  6.12:1 primary
+   #FBF8FF  35.34%  1.00:1 surface
+   new against rest: none
+== web-light-c2-pressed box=302x74 page=#FBF8FF
+   #515B92  63.28%  6.12:1 primary
+   #FBF8FF  35.34%  1.00:1 surface
+   new against rest: none
+== web-light-c3s-focused box=302x74 page=#FBF8FF
+   #FBF8FF  87.09%  1.00:1 surface
+   #8ABCF5   8.70%  1.89:1 
+   #C2DAFA   2.56%  1.36:1 
+   #DFE9FC   0.23%  1.16:1 
+   new against rest: #8ABCF5 1.89:1, #C2DAFA 1.36:1, #DFE9FC 1.16:1
+== web-light-c3s-focushover box=302x74 page=#FBF8FF
+   #FBF8FF  87.09%  1.00:1 surface
+   #8ABCF5   8.70%  1.89:1 
+   #C2DAFA   2.56%  1.36:1 
+   #DFE9FC   0.23%  1.16:1 
+   new against rest: #8ABCF5 1.89:1, #C2DAFA 1.36:1, #DFE9FC 1.16:1
+== web-light-c3s-hover box=302x74 page=#FBF8FF
+   #FBF8FF  98.94%  1.00:1 surface
+   new against rest: none
+== web-light-c3s-pressed box=302x74 page=#FBF8FF
+   #FBF8FF  98.94%  1.00:1 surface
+   new against rest: none
+== web-light-c4s-focused box=302x74 page=#FBF8FF
+   #007AFF  63.27%  3.82:1 cupertino.systemBlue
+   #FBF8FF  23.80%  1.00:1 surface
+   #8ABCF5   8.70%  1.89:1 
+   #C2DAFA   2.52%  1.36:1 
+   new against rest: #8ABCF5 1.89:1, #C2DAFA 1.36:1
+== web-light-c4s-focushover box=302x74 page=#FBF8FF
+   #007AFF  63.27%  3.82:1 cupertino.systemBlue
+   #FBF8FF  23.80%  1.00:1 surface
+   #8ABCF5   8.70%  1.89:1 
+   #C2DAFA   2.52%  1.36:1 
+   new against rest: #8ABCF5 1.89:1, #C2DAFA 1.36:1
+== web-light-c4s-hover box=302x74 page=#FBF8FF
+   #007AFF  63.28%  3.82:1 cupertino.systemBlue
+   #FBF8FF  35.34%  1.00:1 surface
+   new against rest: none
+== web-light-c4s-pressed box=302x74 page=#FBF8FF
+   #007AFF  63.28%  3.82:1 cupertino.systemBlue
+   #FBF8FF  35.34%  1.00:1 surface
+   new against rest: none
+== web-light-c5-focused box=302x56 page=#FBF8FF
+   #FFFFFF  46.99%  1.05:1 onPrimary onError cupertino.systemBackground
+   #FBF8FF  40.16%  1.00:1 surface
+   #E6E6E6   3.61%  1.19:1 
+   #E2DFE6   3.52%  1.25:1 surfaceContainerHighest
+   #C5C5C7   0.69%  1.64:1 
+   #F6F6F6   0.41%  1.03:1 
+   #F0F0F1   0.31%  1.08:1 surfaceContainer
+   new against rest: none
+== web-light-c5-focushover box=302x56 page=#FBF8FF
+   #FFFFFF  46.84%  1.05:1 onPrimary onError cupertino.systemBackground
+   #FBF8FF  40.16%  1.00:1 surface
+   #E6E6E6   3.61%  1.19:1 
+   #E2DFE6   3.52%  1.25:1 surfaceContainerHighest
+   #C5C5C7   0.64%  1.64:1 
+   #F6F6F6   0.41%  1.03:1 
+   #F0F0F1   0.31%  1.08:1 surfaceContainer
+   new against rest: none
+== web-light-c5-hover box=302x56 page=#FBF8FF
+   #FFFFFF  46.99%  1.05:1 onPrimary onError cupertino.systemBackground
+   #FBF8FF  40.16%  1.00:1 surface
+   #E6E6E6   3.61%  1.19:1 
+   #E2DFE6   3.52%  1.25:1 surfaceContainerHighest
+   #C5C5C7   0.69%  1.64:1 
+   #F6F6F6   0.41%  1.03:1 
+   #F0F0F1   0.31%  1.08:1 surfaceContainer
+   new against rest: none
+== web-light-c5-pressed box=302x56 page=#FBF8FF
+   #FFFFFF  46.99%  1.05:1 onPrimary onError cupertino.systemBackground
+   #FBF8FF  40.16%  1.00:1 surface
+   #E6E6E6   3.61%  1.19:1 
+   #E2DFE6   3.52%  1.25:1 surfaceContainerHighest
+   #C5C5C7   0.69%  1.64:1 
+   #F6F6F6   0.41%  1.03:1 
+   #F0F0F1   0.31%  1.08:1 surfaceContainer
+   new against rest: none
+== web-light-c7-focused box=302x61 page=#FBF8FF
+   #FBF8FF  89.31%  1.00:1 surface
+   #FFFFFF   3.15%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E7E4EB   2.35%  1.20:1 surfaceContainerHighest
+   #8AF4A5   2.14%  1.28:1 
+   #E4E1E8   0.48%  1.23:1 surfaceContainerHighest
+   #E1DEE5   0.26%  1.27:1 
+   #C3F6D2   0.24%  1.15:1 
+   new against rest: #8AF4A5 1.28:1, #C3F6D2 1.15:1
+== web-light-c7-focushover box=302x61 page=#FBF8FF
+   #FBF8FF  89.31%  1.00:1 surface
+   #FFFFFF   3.15%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E7E4EB   2.35%  1.20:1 surfaceContainerHighest
+   #8AF4A5   2.14%  1.28:1 
+   #E4E1E8   0.48%  1.23:1 surfaceContainerHighest
+   #E1DEE5   0.26%  1.27:1 
+   #C3F6D2   0.24%  1.15:1 
+   new against rest: #8AF4A5 1.28:1, #C3F6D2 1.15:1
+== web-light-c7-hover box=302x61 page=#FBF8FF
+   #FBF8FF  92.36%  1.00:1 surface
+   #FFFFFF   3.15%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E7E4EB   2.38%  1.20:1 surfaceContainerHighest
+   #E4E1E8   0.49%  1.23:1 surfaceContainerHighest
+   #E1DEE5   0.25%  1.27:1 
+   new against rest: none
+== web-light-c7-pressed box=302x61 page=#FBF8FF
+   #FBF8FF  92.36%  1.00:1 surface
+   #FFFFFF   3.15%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E7E4EB   2.38%  1.20:1 surfaceContainerHighest
+   #E4E1E8   0.49%  1.23:1 surfaceContainerHighest
+   #E1DEE5   0.25%  1.27:1 
+   new against rest: none
+== web-light-c9-focused box=302x36 page=#FBF8FF
+   #FBF8FF  95.14%  1.00:1 surface
+   #FFFFFF   1.43%  1.05:1 onPrimary onError cupertino.systemBackground
+   #007AFF   1.15%  3.82:1 cupertino.systemBlue
+   #8ABCF5   0.94%  1.89:1 
+   #A6CBF8   0.37%  1.60:1 
+   new against rest: #8ABCF5 1.89:1, #A6CBF8 1.60:1
+== web-light-c9-focushover box=302x36 page=#FBF8FF
+   #FBF8FF  95.14%  1.00:1 surface
+   #FFFFFF   1.43%  1.05:1 onPrimary onError cupertino.systemBackground
+   #007AFF   1.15%  3.82:1 cupertino.systemBlue
+   #8ABCF5   0.94%  1.89:1 
+   #A6CBF8   0.37%  1.60:1 
+   new against rest: #8ABCF5 1.89:1, #A6CBF8 1.60:1
+== web-light-c9-hover box=302x36 page=#FBF8FF
+   #FBF8FF  96.47%  1.00:1 surface
+   #FFFFFF   1.36%  1.05:1 onPrimary onError cupertino.systemBackground
+   #007AFF   1.15%  3.82:1 cupertino.systemBlue
+   new against rest: none
+== web-light-c9-pressed box=302x36 page=#FBF8FF
+   #FBF8FF  96.47%  1.00:1 surface
+   #FFFFFF   1.36%  1.05:1 onPrimary onError cupertino.systemBackground
+   #007AFF   1.15%  3.82:1 cupertino.systemBlue
+   new against rest: none
+== web-light-m1-focused box=302x54 page=#FBF8FF
+   #636C9D  52.15%  4.80:1 
+   #FBF8FF  46.14%  1.00:1 surface
+   new against rest: #636C9D 4.80:1
+== web-light-m1-focushover box=302x54 page=#FBF8FF
+   #636C9D  52.15%  4.80:1 
+   #FBF8FF  46.14%  1.00:1 surface
+   new against rest: #636C9D 4.80:1
+== web-light-m1-hover box=302x54 page=#FBF8FF
+   #515B92  52.15%  6.12:1 primary
+   #FBF8FF  46.14%  1.00:1 surface
+   new against rest: none
+== web-light-m1-pressed box=302x54 page=#FBF8FF
+   #515B92  52.15%  6.12:1 primary
+   #FBF8FF  46.14%  1.00:1 surface
+   new against rest: none
+== web-light-m12-focused box=302x70 page=#FBF8FF
+   #FBF8FF  77.03%  1.00:1 surface
+   #B7B9D3  12.14%  1.83:1 
+   #515B92   5.71%  6.12:1 primary
+   #1B1B21   0.31% 16.30:1 onSurface
+   #C8C9DE   0.26%  1.55:1 
+   new against rest: #B7B9D3 1.83:1, #515B92 6.12:1, #C8C9DE 1.55:1
+== web-light-m12-focushover box=302x70 page=#FBF8FF
+   #FBF8FF  77.03%  1.00:1 surface
+   #B7B9D3  12.14%  1.83:1 
+   #515B92   5.71%  6.12:1 primary
+   #1B1B21   0.31% 16.30:1 onSurface
+   #C8C9DE   0.26%  1.55:1 
+   new against rest: #B7B9D3 1.83:1, #515B92 6.12:1, #C8C9DE 1.55:1
+== web-light-m12-hover box=302x70 page=#FBF8FF
+   #FBF8FF  92.23%  1.00:1 surface
+   #767680   2.76%  4.27:1 outline
+   #1B1B21   0.31% 16.30:1 onSurface
+   new against rest: none
+== web-light-m12-pressed box=302x70 page=#FBF8FF
+   #FBF8FF  92.23%  1.00:1 surface
+   #767680   2.76%  4.27:1 outline
+   #1B1B21   0.31% 16.30:1 onSurface
+   new against rest: none
+== web-light-m13-focused box=302x62 page=#FBF8FF
+   #FBF8FF  93.08%  1.00:1 surface
+   #E4E2E8   5.77%  1.22:1 surfaceContainerHighest
+   #1B1B21   0.62% 16.30:1 onSurface
+   new against rest: #E4E2E8 1.22:1, #1B1B21 16.30:1
+== web-light-m13-focushover box=302x62 page=#FBF8FF
+   #FBF8FF  93.08%  1.00:1 surface
+   #E4E2E8   5.77%  1.22:1 surfaceContainerHighest
+   #1B1B21   0.62% 16.30:1 onSurface
+   new against rest: #E4E2E8 1.22:1, #1B1B21 16.30:1
+== web-light-m13-hover box=302x62 page=#FBF8FF
+   #FBF8FF  99.32%  1.00:1 surface
+   #46464F   0.62%  8.88:1 onSurfaceVariant
+   new against rest: none
+== web-light-m13-pressed box=302x62 page=#FBF8FF
+   #FBF8FF  99.32%  1.00:1 surface
+   #46464F   0.62%  8.88:1 onSurfaceVariant
+   new against rest: none
+== web-light-m14-focused box=302x62 page=#FBF8FF
+   #FBF8FF  93.08%  1.00:1 surface
+   #E9E8F4   4.76%  1.15:1 
+   #515B92   1.39%  6.12:1 primary
+   new against rest: #E9E8F4 1.15:1
+== web-light-m14-focushover box=302x62 page=#FBF8FF
+   #FBF8FF  93.08%  1.00:1 surface
+   #E9E8F4   4.76%  1.15:1 
+   #515B92   1.39%  6.12:1 primary
+   new against rest: #E9E8F4 1.15:1
+== web-light-m14-hover box=302x62 page=#FBF8FF
+   #FBF8FF  98.27%  1.00:1 surface
+   #515B92   1.39%  6.12:1 primary
+   new against rest: none
+== web-light-m14-pressed box=302x62 page=#FBF8FF
+   #FBF8FF  98.27%  1.00:1 surface
+   #515B92   1.39%  6.12:1 primary
+   new against rest: none
+== web-light-m18-focused box=302x62 page=#FBF8FF
+   #FBF8FF  90.46%  1.00:1 surface
+   #D0CDD4   3.05%  1.49:1 
+   #E4E1E9   3.01%  1.23:1 surfaceContainerHighest
+   #46464F   0.96%  8.88:1 onSurfaceVariant
+   #6D6D76   0.52%  4.87:1 
+   #767680   0.40%  4.27:1 outline
+   new against rest: #D0CDD4 1.49:1, #46464F 8.88:1, #6D6D76 4.87:1
+== web-light-m18-focushover box=302x62 page=#FBF8FF
+   #FBF8FF  90.46%  1.00:1 surface
+   #D0CDD4   3.05%  1.49:1 
+   #E4E1E9   3.01%  1.23:1 surfaceContainerHighest
+   #46464F   0.96%  8.88:1 onSurfaceVariant
+   #6D6D76   0.52%  4.87:1 
+   #767680   0.40%  4.27:1 outline
+   new against rest: #D0CDD4 1.49:1, #46464F 8.88:1, #6D6D76 4.87:1
+== web-light-m18-hover box=302x62 page=#FBF8FF
+   #FBF8FF  92.05%  1.00:1 surface
+   #E4E1E9   4.91%  1.23:1 surfaceContainerHighest
+   #767680   1.90%  4.27:1 outline
+   new against rest: none
+== web-light-m18-pressed box=302x62 page=#FBF8FF
+   #FBF8FF  92.05%  1.00:1 surface
+   #E4E1E9   4.91%  1.23:1 surfaceContainerHighest
+   #767680   1.90%  4.27:1 outline
+   new against rest: none
+== web-light-m19-focused box=302x62 page=#FBF8FF
+   #FBF8FF  90.46%  1.00:1 surface
+   #515B92   4.87%  6.12:1 primary
+   #DEE0FF   2.26%  1.23:1 primaryContainer
+   #E9E8F4   1.29%  1.15:1 
+   new against rest: #DEE0FF 1.23:1, #E9E8F4 1.15:1
+== web-light-m19-focushover box=302x62 page=#FBF8FF
+   #FBF8FF  90.46%  1.00:1 surface
+   #515B92   4.87%  6.12:1 primary
+   #DEE0FF   2.26%  1.23:1 primaryContainer
+   #E9E8F4   1.29%  1.15:1 
+   new against rest: #DEE0FF 1.23:1, #E9E8F4 1.15:1
+== web-light-m19-hover box=302x62 page=#FBF8FF
+   #FBF8FF  92.05%  1.00:1 surface
+   #515B92   4.87%  6.12:1 primary
+   #FFFFFF   2.26%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== web-light-m19-pressed box=302x62 page=#FBF8FF
+   #FBF8FF  92.05%  1.00:1 surface
+   #515B92   4.87%  6.12:1 primary
+   #FFFFFF   2.26%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== web-light-m2-focused box=302x54 page=#FBF8FF
+   #E9E8F4  48.53%  1.15:1 
+   #FBF8FF  46.14%  1.00:1 surface
+   #515B92   3.10%  6.12:1 primary
+   new against rest: #E9E8F4 1.15:1, #515B92 6.12:1
+== web-light-m2-focushover box=302x54 page=#FBF8FF
+   #E9E8F4  48.53%  1.15:1 
+   #FBF8FF  46.14%  1.00:1 surface
+   #515B92   3.10%  6.12:1 primary
+   new against rest: #E9E8F4 1.15:1, #515B92 6.12:1
+== web-light-m2-hover box=302x54 page=#FBF8FF
+   #FBF8FF  94.67%  1.00:1 surface
+   #767680   3.09%  4.27:1 outline
+   new against rest: none
+== web-light-m2-pressed box=302x54 page=#FBF8FF
+   #FBF8FF  94.67%  1.00:1 surface
+   #767680   3.09%  4.27:1 outline
+   new against rest: none
+== web-light-m21-focused box=302x118 page=#FBF8FF
+   #FBF8FF  61.39%  1.00:1 surface
+   #DCDAE0  37.04%  1.32:1 
+   new against rest: #DCDAE0 1.32:1
+== web-light-m21-focushover box=302x118 page=#FBF8FF
+   #FBF8FF  61.39%  1.00:1 surface
+   #DCDAE0  37.04%  1.32:1 
+   new against rest: #DCDAE0 1.32:1
+== web-light-m21-hover box=302x118 page=#FBF8FF
+   #FBF8FF  98.43%  1.00:1 surface
+   new against rest: none
+== web-light-m21-pressed box=302x118 page=#FBF8FF
+   #FBF8FF  98.43%  1.00:1 surface
+   new against rest: none
+== web-light-m22-focused box=302x56 page=#FBF8FF
+   #FBF8FF  80.48%  1.00:1 surface
+   #C5C6DB  15.63%  1.60:1 
+   #C7C5D0   0.71%  1.62:1 outlineVariant
+   new against rest: #C5C6DB 1.60:1
+== web-light-m22-focushover box=302x56 page=#FBF8FF
+   #FBF8FF  80.48%  1.00:1 surface
+   #C5C6DB  15.63%  1.60:1 
+   #C7C5D0   0.71%  1.62:1 outlineVariant
+   new against rest: #C5C6DB 1.60:1
+== web-light-m22-hover box=302x56 page=#FBF8FF
+   #FBF8FF  80.48%  1.00:1 surface
+   #E0E1F9  15.63%  1.22:1 secondaryContainer
+   #C7C5D0   0.71%  1.62:1 outlineVariant
+   new against rest: none
+== web-light-m22-pressed box=302x56 page=#FBF8FF
+   #FBF8FF  80.48%  1.00:1 surface
+   #E0E1F9  15.63%  1.22:1 secondaryContainer
+   #C7C5D0   0.71%  1.62:1 outlineVariant
+   new against rest: none
+== web-light-m25-focused box=302x72 page=#FBF8FF
+   #FBF8FF  86.83%  1.00:1 surface
+   #D4D4E7   9.92%  1.39:1 
+   #E0DDE4   1.57%  1.28:1 
+   new against rest: #D4D4E7 1.39:1
+== web-light-m25-focushover box=302x72 page=#FBF8FF
+   #FBF8FF  86.83%  1.00:1 surface
+   #D4D4E7   9.92%  1.39:1 
+   #E0DDE4   1.57%  1.28:1 
+   new against rest: #D4D4E7 1.39:1
+== web-light-m25-hover box=302x72 page=#FBF8FF
+   #FBF8FF  86.83%  1.00:1 surface
+   #E6E5F2   9.92%  1.19:1 surfaceContainerHigh
+   #E0DDE4   1.57%  1.28:1 
+   new against rest: none
+== web-light-m25-pressed box=302x72 page=#FBF8FF
+   #FBF8FF  86.83%  1.00:1 surface
+   #E6E5F2   9.92%  1.19:1 surfaceContainerHigh
+   #E0DDE4   1.57%  1.28:1 
+   new against rest: none
+== web-light-m3-focused box=302x54 page=#FBF8FF
+   #E9E8F4  52.29%  1.15:1 
+   #FBF8FF  46.19%  1.00:1 surface
+   new against rest: #E9E8F4 1.15:1
+== web-light-m3-focushover box=302x54 page=#FBF8FF
+   #E9E8F4  52.29%  1.15:1 
+   #FBF8FF  46.19%  1.00:1 surface
+   new against rest: #E9E8F4 1.15:1
+== web-light-m3-hover box=302x54 page=#FBF8FF
+   #FBF8FF  98.89%  1.00:1 surface
+   new against rest: none
+== web-light-m3-pressed box=302x54 page=#FBF8FF
+   #FBF8FF  98.89%  1.00:1 surface
+   new against rest: none
+== web-light-m32-focused box=302x62 page=#FBF8FF
+   #E8E6ED  57.08%  1.18:1 surfaceContainerHigh
+   #FBF8FF  41.81%  1.00:1 surface
+   new against rest: #E8E6ED 1.18:1
+== web-light-m32-focushover box=302x62 page=#FBF8FF
+   #E8E6ED  57.08%  1.18:1 surfaceContainerHigh
+   #FBF8FF  41.81%  1.00:1 surface
+   new against rest: #E8E6ED 1.18:1
+== web-light-m32-hover box=302x62 page=#FBF8FF
+   #FBF8FF  99.32%  1.00:1 surface
+   new against rest: none
+== web-light-m32-pressed box=302x62 page=#FBF8FF
+   #FBF8FF  99.32%  1.00:1 surface
+   new against rest: none
+== web-light-m4-focused box=302x54 page=#FBF8FF
+   #E4E2F0  52.29%  1.22:1 
+   #FBF8FF  42.69%  1.00:1 surface
+   #F3F0F7   1.59%  1.07:1 surfaceContainerLow onInverseSurface
+   #D2D0D5   1.53%  1.46:1 
+   new against rest: #E4E2F0 1.22:1
+== web-light-m4-focushover box=302x54 page=#FBF8FF
+   #E4E2F0  52.29%  1.22:1 
+   #FBF8FF  42.69%  1.00:1 surface
+   #F3F0F7   1.59%  1.07:1 surfaceContainerLow onInverseSurface
+   #D2D0D5   1.53%  1.46:1 
+   new against rest: #E4E2F0 1.22:1
+== web-light-m4-hover box=302x54 page=#FBF8FF
+   #F5F2FA  52.35%  1.05:1 surfaceContainerLow onInverseSurface
+   #FBF8FF  42.69%  1.00:1 surface
+   #F3F0F7   1.58%  1.07:1 surfaceContainerLow onInverseSurface
+   #D2D0D5   1.55%  1.46:1 
+   new against rest: none
+== web-light-m4-pressed box=302x54 page=#FBF8FF
+   #F5F2FA  52.35%  1.05:1 surfaceContainerLow onInverseSurface
+   #FBF8FF  42.69%  1.00:1 surface
+   #F3F0F7   1.58%  1.07:1 surfaceContainerLow onInverseSurface
+   #D2D0D5   1.55%  1.46:1 
+   new against rest: none
+== web-light-m5-focused box=302x54 page=#FBF8FF
+   #D0D1E9  52.19%  1.43:1 
+   #FBF8FF  46.19%  1.00:1 surface
+   new against rest: #D0D1E9 1.43:1
+== web-light-m5-focushover box=302x54 page=#FBF8FF
+   #D0D1E9  52.19%  1.43:1 
+   #FBF8FF  46.19%  1.00:1 surface
+   new against rest: #D0D1E9 1.43:1
+== web-light-m5-hover box=302x54 page=#FBF8FF
+   #E0E1F9  52.29%  1.22:1 secondaryContainer
+   #FBF8FF  46.19%  1.00:1 surface
+   new against rest: none
+== web-light-m5-pressed box=302x54 page=#FBF8FF
+   #E0E1F9  52.29%  1.22:1 secondaryContainer
+   #FBF8FF  46.19%  1.00:1 surface
+   new against rest: none
+== web-light-m6-focused box=302x70 page=#FBF8FF
+   #FBF8FF  93.49%  1.00:1 surface
+   #515B92   5.71%  6.12:1 primary
+   new against rest: #515B92 6.12:1
+== web-light-m6-focushover box=302x70 page=#FBF8FF
+   #FBF8FF  93.49%  1.00:1 surface
+   #515B92   5.71%  6.12:1 primary
+   new against rest: #515B92 6.12:1
+== web-light-m6-hover box=302x70 page=#FBF8FF
+   #FBF8FF  95.64%  1.00:1 surface
+   #767680   2.95%  4.27:1 outline
+   #46464F   0.22%  8.88:1 onSurfaceVariant
+   new against rest: none
+== web-light-m6-pressed box=302x70 page=#FBF8FF
+   #FBF8FF  95.64%  1.00:1 surface
+   #767680   2.95%  4.27:1 outline
+   #46464F   0.22%  8.88:1 onSurfaceVariant
+   new against rest: none

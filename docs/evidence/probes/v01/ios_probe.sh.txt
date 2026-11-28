@@ -1,0 +1,14 @@
+#!/bin/sh
+# V01 probe on iOS, under tool/with_devices.py (throwaway; kept as
+# docs/evidence/probes/v01/ios_probe.sh.txt). Run from the worktree root,
+# after `fvm flutter build ios --simulator --debug -t lib/probe.dart` and
+# `xcodebuild build-for-testing` into build/ios_uitest. $1: output folder.
+cd ios || exit 1
+xcrun simctl list devices booted | grep -i iphone
+TEST_RUNNER_V01_OUT="$1" TEST_RUNNER_V01_IDS="$IDS" xcodebuild test-without-building \
+  -workspace Runner.xcworkspace -scheme Runner \
+  -destination "platform=iOS Simulator,name=iPhone 17" \
+  -only-testing:"RunnerUITests/V01ProbeUITests/testFixtures" \
+  -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "V01PROBE|error:|passed|failed" | grep -v "Test Suite"
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

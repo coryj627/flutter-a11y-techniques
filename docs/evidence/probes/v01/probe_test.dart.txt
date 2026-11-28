@@ -1,0 +1,138 @@
+// V01 probe, widget tests (throwaway; kept as
+// docs/evidence/probes/v01/probe_test.dart.txt). Renders every fixture of
+// lib/probe.dart at a device pixel ratio of 3, light and dark, at rest and,
+// for the fixtures that take input, hovered by a mouse, pressed, focused by
+// Tab, and focused and hovered; writes each capture as a PNG for
+// analyse.py, and prints the colour scheme's roles.
+import 'dart:io';
+import 'dart:ui' as ui;
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+final out = Platform.environment['V01_OUT'] ?? '/tmp/v01probe';
+
+String hex(Color c) =>
+    '#${(c.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}'
+    '${c.a < 1 ? ' a=${c.a.toStringAsFixed(3)}' : ''}';
+
+Future<void> capture(WidgetTester tester, String name) async {
+  final view = tester.binding.renderViews.first;
+  final layer = view.debugLayer! as OffsetLayer;
+  // The root layer already scales by the device pixel ratio.
+  final ui.Image image = await layer.toImage(
+    Offset.zero & tester.view.physicalSize,
+  );
+  final bytes = await tester.runAsync(
+    () => image.toByteData(format: ui.ImageByteFormat.png),
+  );
+  File('$out/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+  image.dispose();
+}
+
+/// The first control inside the box: its centre.
+Offset? controlCentre(WidgetTester tester) {
+  final box = find.byType(SizedBox).evaluate().where(
+    (e) => (e.widget as SizedBox).width == 280,
+  );
+  if (box.isEmpty) return null;
+  final r = tester.getRect(find.byWidget(box.first.widget));
+  return Offset(r.left + 40, r.top + 20);
+}
+
+const inputs = {
+  'm1', 'm2', 'm3', 'm4', 'm5', 'm32', 'm6', 'm12', 'm13', 'm14', 'm18',
+  'm19', 'm21', 'm22', 'm25', 'c1', 'c2', 'c3s', 'c4s', 'c5', 'c7', 'c9',
+};
+
+void main() {
+  Directory(out).createSync(recursive: true);
+
+  testWidgets('colour scheme roles', (tester) async {
+    for (final b in Brightness.values) {
+      final s = ThemeData(colorSchemeSeed: Colors.indigo, brightness: b)
+          .colorScheme;
+      final roles = {
+        'surface': s.surface, 'onSurface': s.onSurface,
+        'onSurfaceVariant': s.onSurfaceVariant, 'primary': s.primary,
+        'onPrimary': s.onPrimary, 'primaryContainer': s.primaryContainer,
+        'onPrimaryContainer': s.onPrimaryContainer,
+        'secondaryContainer': s.secondaryContainer,
+        'onSecondaryContainer': s.onSecondaryContainer,
+        'outline': s.outline, 'outlineVariant': s.outlineVariant,
+        'error': s.error, 'onError': s.onError,
+        'surfaceContainerLow': s.surfaceContainerLow,
+        'surfaceContainer': s.surfaceContainer,
+        'surfaceContainerHigh': s.surfaceContainerHigh,
+        'surfaceContainerHighest': s.surfaceContainerHighest,
+        'inverseSurface': s.inverseSurface, 'onInverseSurface': s.onInverseSurface,
+      };
+      for (final e in roles.entries) {
+        // ignore: avoid_print
+        print('V01ROLE ${b.name} ${e.key} ${hex(e.value)}');
+      }
+      final cupertino = {
+        'label': CupertinoColors.label, 'secondaryLabel': CupertinoColors.secondaryLabel,
+        'tertiaryLabel': CupertinoColors.tertiaryLabel,
+        'placeholderText': CupertinoColors.placeholderText,
+        'separator': CupertinoColors.separator,
+        'secondarySystemFill': CupertinoColors.secondarySystemFill,
+        'tertiarySystemFill': CupertinoColors.tertiarySystemFill,
+        'systemBlue': CupertinoColors.systemBlue,
+        'systemGreen': CupertinoColors.systemGreen,
+        'systemBackground': CupertinoColors.systemBackground,
+      };
+      for (final e in cupertino.entries) {
+        final c = b == Brightness.dark ? e.value.darkColor : e.value.color;
+        // ignore: avoid_print
+        print('V01ROLE ${b.name} cupertino.${e.key} ${hex(c)}');
+      }
+    }
+  });
+
+  for (final id in fixtures.keys) {
+    for (final dark in [false, true]) {
+      final theme = dark ? 'dark' : 'light';
+      testWidgets('fixture $id $theme', (tester) async {
+        tester.view.physicalSize = const Size(1200, 1800);
+        tester.view.devicePixelRatio = 3;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(const ProbeApp());
+        final nav = tester.state<NavigatorState>(find.byType(Navigator));
+        nav.pushReplacementNamed('/f/$id${dark ? '/dark' : ''}');
+        await tester.pumpAndSettle();
+        await capture(tester, 'flutter-$theme-$id-rest');
+        if (!inputs.contains(id)) return;
+        final at = controlCentre(tester)!;
+        // Hover.
+        final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+        await mouse.addPointer(location: Offset.zero);
+        await mouse.moveTo(at);
+        await tester.pumpAndSettle();
+        await capture(tester, 'flutter-$theme-$id-hover');
+        // Pressed, held.
+        final touch = await tester.startGesture(at, kind: PointerDeviceKind.mouse);
+        await tester.pump(const Duration(milliseconds: 600));
+        await capture(tester, 'flutter-$theme-$id-pressed');
+        await touch.up();
+        await mouse.moveTo(const Offset(1, 599));
+        await tester.pumpAndSettle();
+        // Focused by Tab: the box's first control.
+        FocusManager.instance.primaryFocus?.unfocus();
+        await tester.pumpAndSettle();
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pumpAndSettle();
+        await capture(tester, 'flutter-$theme-$id-focused');
+        await mouse.moveTo(at);
+        await tester.pumpAndSettle();
+        await capture(tester, 'flutter-$theme-$id-focushover');
+        await mouse.removePointer();
+      });
+    }
+  }
+}

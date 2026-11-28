@@ -1,0 +1,104 @@
+== device: Android 17, Physical size: 1080x2424, density 420
+android-light-m1 pressed at 186 359
+android-dark-m1 pressed at 186 359
+android-light-m2 pressed at 186 359
+android-dark-m2 pressed at 186 359
+android-light-m3 pressed at 186 359
+android-dark-m3 pressed at 186 359
+android-light-m4 pressed at 186 359
+android-dark-m4 pressed at 186 359
+android-light-m5 pressed at 186 359
+android-dark-m5 pressed at 186 359
+android-light-m32 pressed at 186 359
+android-dark-m32 pressed at 186 359
+== tree m7
+  android.view.View text='' desc='V01 m7 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][246,226]
+  android.widget.EditText text='' desc='' checkable=false checked=false selected=false clickable=true enabled=true bounds=[74,300][809,447]
+== tree m10
+  android.view.View text='' desc='V01 m10 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.EditText text='' desc='' checkable=false checked=false selected=false clickable=true enabled=true bounds=[74,300][809,499]
+  android.view.View text='' desc='Enter an email address' checkable=false checked=false selected=false clickable=false enabled=true bounds=[116,457][459,499]
+== tree m13
+  android.view.View text='' desc='V01 m13 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.CheckBox text='' desc='' checkable=true checked=false selected=false clickable=true enabled=true bounds=[74,300][809,426]
+== tree m14
+  android.view.View text='' desc='V01 m14 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.CheckBox text='' desc='' checkable=true checked=true selected=false clickable=true enabled=true bounds=[74,300][809,426]
+== tree m15
+  android.view.View text='' desc='V01 m15 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.CheckBox text='' desc='' checkable=true checked=false selected=false clickable=true enabled=true bounds=[74,300][809,426]
+== tree m18
+  android.view.View text='' desc='V01 m18 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.Switch text='' desc='' checkable=true checked=false selected=false clickable=true enabled=true bounds=[74,300][809,426]
+== tree m19
+  android.view.View text='' desc='V01 m19 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.Switch text='' desc='' checkable=true checked=true selected=false clickable=true enabled=true bounds=[74,300][809,426]
+android-light-m21 pressed at 186 359
+== tree m21
+  android.view.View text='' desc='V01 m21 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.Button text='' desc='Inbox' checkable=false checked=false selected=true clickable=true enabled=true bounds=[74,300][809,447]
+  android.widget.Button text='' desc='Archive' checkable=false checked=false selected=false clickable=true enabled=true bounds=[74,447][809,594]
+android-dark-m21 pressed at 186 359
+android-light-m22 pressed at 186 359
+== tree m22
+  android.view.View text='' desc='V01 m22 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.Button text='' desc='Open' checkable=false checked=false selected=true clickable=true enabled=true bounds=[74,300][302,426]
+  android.widget.Button text='' desc='Free' checkable=false checked=false selected=false clickable=true enabled=true bounds=[323,300][486,426]
+android-dark-m22 pressed at 186 359
+== tree m23
+  android.view.View text='' desc='V01 m23 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.Button text='' desc='Day' checkable=false checked=false selected=true clickable=true enabled=true bounds=[74,300][278,426]
+  android.widget.Button text='' desc='Week' checkable=false checked=false selected=false clickable=true enabled=true bounds=[299,300][479,426]
+== tree m24
+  android.view.View text='' desc='V01 m24 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.Button text='' desc='Day' checkable=false checked=false selected=true clickable=true enabled=true bounds=[74,300][441,426]
+  android.widget.Button text='' desc='Week' checkable=false checked=false selected=false clickable=true enabled=true bounds=[441,300][809,426]
+android-light-m25 pressed at 186 359
+== tree m25
+  android.view.View text='' desc='V01 m25 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.CheckBox text='' desc='Day' checkable=true checked=true selected=false clickable=true enabled=true bounds=[74,300][202,431]
+  android.widget.CheckBox text='' desc='Week' checkable=true checked=false selected=false clickable=true enabled=true bounds=[202,300][333,431]
+android-dark-m25 pressed at 186 359
+== tree m26
+  android.view.View text='' desc='V01 m26 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.view.View text='' desc='Day&#10;Tab 1 of 2' checkable=false checked=false selected=true clickable=true enabled=true bounds=[74,300][441,426]
+  android.view.View text='' desc='Week&#10;Tab 2 of 2' checkable=false checked=false selected=false clickable=true enabled=true bounds=[441,300][809,426]
+== tree m27
+  android.view.View text='' desc='V01 m27 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][267,226]
+  android.widget.Button text='' desc='Home&#10;Tab 1 of 2' checkable=false checked=false selected=true clickable=true enabled=true bounds=[74,300][441,510]
+  android.widget.Button text='' desc='Map&#10;Tab 2 of 2' checkable=false checked=false selected=false clickable=true enabled=true bounds=[441,300][809,510]
+android-light-c1 pressed at 186 359
+android-dark-c1 pressed at 186 359
+android-light-c2 pressed at 186 359
+android-dark-c2 pressed at 186 359
+android-light-c3s pressed at 186 359
+android-dark-c3s pressed at 186 359
+android-light-c4s pressed at 186 359
+android-dark-c4s pressed at 186 359
+== tree c5
+  android.view.View text='' desc='V01 c5 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][233,226]
+  android.widget.EditText text='' desc='' checkable=false checked=false selected=false clickable=true enabled=true bounds=[74,300][809,389]
+== tree c7
+  android.view.View text='' desc='V01 c7 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][233,226]
+  android.widget.Switch text='' desc='' checkable=true checked=false selected=false clickable=true enabled=true bounds=[74,300][809,402]
+== tree c8
+  android.view.View text='' desc='V01 c8 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][233,226]
+  android.widget.Switch text='' desc='' checkable=true checked=true selected=false clickable=true enabled=true bounds=[74,300][809,402]
+== tree c9
+  android.view.View text='' desc='V01 c9 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][233,226]
+  android.widget.CheckBox text='' desc='' checkable=true checked=false selected=false clickable=true enabled=true bounds=[74,300][189,415]
+  android.widget.CheckBox text='' desc='' checkable=true checked=true selected=false clickable=true enabled=true bounds=[189,300][305,415]
+== tree c10
+  android.view.View text='' desc='V01 c10 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][254,226]
+  android.widget.Button text='' desc='Day' checkable=false checked=false selected=true clickable=true enabled=true bounds=[81,305][440,378]
+  android.widget.Button text='' desc='Week' checkable=false checked=false selected=false clickable=true enabled=true bounds=[442,305][801,378]
+== tree c11
+  android.view.View text='' desc='V01 c11 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][254,226]
+  android.widget.Button text='' desc='Day' checkable=false checked=false selected=true clickable=true enabled=true bounds=[116,300][441,373]
+  android.widget.Button text='' desc='Week' checkable=false checked=false selected=false clickable=true enabled=true bounds=[441,300][767,373]
+== tree g2
+  android.view.View text='' desc='V01 g2 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][234,226]
+  android.view.View text='' desc='Lakeside trail' checkable=false checked=false selected=false clickable=false enabled=true bounds=[116,468][767,510]
+== tree g3
+  android.view.View text='' desc='V01 g3 light' checkable=false checked=false selected=false clickable=false enabled=true bounds=[32,174][234,226]
+  android.view.View text='' desc='Lakeside trail' checkable=false checked=false selected=false clickable=false enabled=true bounds=[116,468][767,510]

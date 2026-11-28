@@ -1,0 +1,545 @@
+== flutter-dark-c1-rest box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #BAC3FF   4.95% 10.90:1 primary
+== flutter-dark-c10-rest box=914x170 page=#121318
+   #121318  48.47%  1.00:1 surface
+   #2A2B31  23.45%  1.31:1 surfaceContainerHigh
+   #636366  18.96%  3.10:1 
+   #E4E1E9   6.85% 14.35:1 onSurface inverseSurface
+   #242529   1.62%  1.21:1 
+== flutter-dark-c11-rest box=914x158 page=#121318
+   #121318  54.50%  1.00:1 surface
+   #BAC3FF  24.42% 10.90:1 primary
+   #222C61  18.91%  1.41:1 onPrimary
+   #666B8C   1.01%  3.57:1 
+   #6E78B0   0.57%  4.40:1 
+== flutter-dark-c12-rest box=914x218 page=#121318
+   #121318  83.62%  1.00:1 surface
+   #94959D   8.96%  6.22:1 
+   #FFFFFF   6.25% 18.55:1 cupertino.label
+== flutter-dark-c13-rest box=914x362 page=#121318
+   #000000  36.83%  1.13:1 cupertino.systemBackground
+   #121318  26.88%  1.00:1 surface
+   #1C1C1E  24.52%  1.09:1 surfaceContainerLow
+   #FFFFFF  11.52% 18.55:1 cupertino.label
+== flutter-dark-c14-rest box=914x540 page=#121318
+   #232325  44.91%  1.18:1 
+   #121318  38.76%  1.00:1 surface
+   #9C9C9D   8.30%  6.76:1 
+   #BAC3FF   4.75% 10.90:1 primary
+   #262327   1.98%  1.19:1 
+   #AEAEAE   0.22%  8.36:1 
+== flutter-dark-c15-rest box=914x206 page=#121318
+   #121318  94.37%  1.00:1 surface
+   #FFFFFF   2.84% 18.55:1 cupertino.label
+   #36373D   1.12%  1.56:1 surfaceContainerHighest
+   #BAC3FF   1.12% 10.90:1 primary
+   #0D0E12   0.27%  1.04:1 
+== flutter-dark-c17-rest box=914x182 page=#121318
+   #121318  45.81%  1.00:1 surface
+   #2A2B31  43.86%  1.31:1 surfaceContainerHigh
+   #9E9EA7   9.22%  6.98:1 
+== flutter-dark-c2-rest box=914x221 page=#121318
+   #BAC3FF  55.31% 10.90:1 primary
+   #121318  39.38%  1.00:1 surface
+   #222C61   4.95%  1.41:1 onPrimary
+== flutter-dark-c3s-rest box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #0A84FF   4.95%  5.09:1 cupertino.systemBlue
+== flutter-dark-c4s-rest box=914x221 page=#121318
+   #0A84FF  55.31%  5.09:1 cupertino.systemBlue
+   #121318  39.38%  1.00:1 surface
+   #FFFFFF   4.95% 18.55:1 cupertino.label
+== flutter-dark-c5-rest box=914x167 page=#121318
+   #121318  47.76%  1.00:1 surface
+   #464649  24.03%  1.97:1 
+   #000000  23.79%  1.13:1 cupertino.systemBackground
+   #2A2B2F   1.14%  1.31:1 surfaceContainerHigh
+   #1A1A1A   1.14%  1.07:1 
+   #414144   0.55%  1.82:1 
+   #77777C   0.54%  4.16:1 
+   #6B6B70   0.24%  3.50:1 
+   #4A4A4D   0.24%  2.10:1 
+   #5C5C60   0.20%  2.79:1 
+== flutter-dark-c6-rest box=914x167 page=#121318
+   #121318  47.76%  1.00:1 surface
+   #000000  25.47%  1.13:1 cupertino.systemBackground
+   #FFFFFF  23.29% 18.55:1 cupertino.label
+   #2A2B2F   1.14%  1.31:1 surfaceContainerHigh
+   #1A1A1A   1.14%  1.07:1 
+   #ECECEC   0.47% 15.70:1 
+   #F8F8F8   0.44% 17.47:1 
+== flutter-dark-c7-rest box=914x191 page=#121318
+   #121318  92.85%  1.00:1 surface
+   #323339   3.49%  1.47:1 surfaceContainerHighest onInverseSurface
+   #FFFFFF   3.08% 18.55:1 cupertino.label
+   #28282E   0.27%  1.27:1 surfaceContainerHigh
+== flutter-dark-c8-rest box=914x191 page=#121318
+   #121318  92.82%  1.00:1 surface
+   #30D158   3.36%  9.18:1 cupertino.systemGreen
+   #FFFFFF   3.08% 18.55:1 cupertino.label
+== flutter-dark-c9-rest box=914x206 page=#121318
+   #121318  98.22%  1.00:1 surface
+   #3264D7   0.68%  3.48:1 
+== flutter-dark-k1-rest box=914x134 page=#121318
+   #121318  83.02%  1.00:1 surface
+   #FFFFFF  16.05% 18.55:1 cupertino.label
+   #BBBBBD   0.40%  9.68:1 
+   #ECECED   0.27% 15.71:1 
+== flutter-dark-k2-rest box=914x134 page=#121318
+   #121318  83.02%  1.00:1 surface
+   #94959D  16.05%  6.22:1 
+   #6F6F77   0.44%  3.72:1 
+   #8A8A92   0.41%  5.42:1 
+== flutter-dark-k3-rest box=914x134 page=#121318
+   #121318  83.02%  1.00:1 surface
+   #53535A  16.19%  2.43:1 
+   #404147   0.44%  1.82:1 
+   #4E4E55   0.27%  2.25:1 
+== flutter-dark-k4-rest box=914x134 page=#121318
+   #121318  83.02%  1.00:1 surface
+   #53535A  16.19%  2.43:1 
+   #404147   0.44%  1.82:1 
+   #4E4E55   0.27%  2.25:1 
+== flutter-dark-k5-rest box=914x134 page=#121318
+   #121318  83.02%  1.00:1 surface
+   #A5A6AE  16.05%  7.65:1 
+   #7B7C83   0.40%  4.46:1 
+   #9A9AA2   0.33%  6.64:1 
+== flutter-light-c1-rest box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #515B92   4.95%  6.12:1 primary
+== flutter-light-c10-rest box=914x170 page=#FBF8FF
+   #FBF8FF  48.48%  1.00:1 surface
+   #EBE9F0  22.83%  1.14:1 surfaceContainerHigh
+   #FFFFFF  18.97%  1.05:1 onPrimary onError cupertino.systemBackground
+   #1B1B21   6.85% 16.30:1 onSurface
+   #C6C5CB   1.08%  1.63:1 
+   #E2E0E7   0.34%  1.24:1 surfaceContainerHighest
+   #E6E4EB   0.28%  1.20:1 surfaceContainerHighest
+   #BEBDC3   0.27%  1.77:1 
+   #C2C1C7   0.25%  1.70:1 
+== flutter-light-c11-rest box=914x158 page=#FBF8FF
+   #FBF8FF  54.50%  1.00:1 surface
+   #515B92  24.41%  6.12:1 primary
+   #FFFFFF  18.91%  1.05:1 onPrimary onError cupertino.systemBackground
+   #A6A9C8   1.03%  2.19:1 
+   #A8ADC8   0.57%  2.11:1 
+== flutter-light-c12-rest box=914x218 page=#FBF8FF
+   #FBF8FF  83.62%  1.00:1 surface
+   #88878E   8.98%  3.38:1 
+   #000000   6.25% 19.97:1 cupertino.label
+== flutter-light-c13-rest box=914x362 page=#FBF8FF
+   #F2F2F7  36.83%  1.06:1 surfaceContainerLow onInverseSurface
+   #FBF8FF  26.88%  1.00:1 surface
+   #FFFFFF  24.52%  1.05:1 onPrimary onError cupertino.systemBackground
+   #000000  11.52% 19.97:1 cupertino.label
+== flutter-light-c14-rest box=914x540 page=#FBF8FF
+   #FBF8FF  61.35%  1.00:1 surface
+   #FCFBFD  24.24%  1.02:1 surface
+   #888788   8.30%  3.40:1 
+   #515B92   4.75%  6.12:1 primary
+   #7D7C7D   0.22%  3.95:1 
+   #FBF8FC   0.21%  1.00:1 surface
+== flutter-light-c15-rest box=914x206 page=#FBF8FF
+   #FBF8FF  94.26%  1.00:1 surface
+   #FFFFFF   2.86%  1.05:1 onPrimary onError cupertino.systemBackground
+   #515B92   1.12%  6.12:1 primary
+   #E1DEE6   1.12%  1.26:1 surfaceContainerHighest
+   #C0BDC3   0.20%  1.77:1 
+== flutter-light-c17-rest box=914x182 page=#FBF8FF
+   #FBF8FF  45.82%  1.00:1 surface
+   #EBE9F0  43.87%  1.14:1 surfaceContainerHigh
+   #828188   9.28%  3.67:1 
+== flutter-light-c2-rest box=914x221 page=#FBF8FF
+   #515B92  55.31%  6.12:1 primary
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+== flutter-light-c3s-rest box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #007AFF   4.95%  3.82:1 cupertino.systemBlue
+== flutter-light-c4s-rest box=914x221 page=#FBF8FF
+   #007AFF  55.31%  3.82:1 cupertino.systemBlue
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+== flutter-light-c5-rest box=914x167 page=#FBF8FF
+   #FBF8FF  47.76%  1.00:1 surface
+   #C5C5C7  23.80%  1.64:1 
+   #FFFFFF  23.79%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E2DFE6   1.14%  1.25:1 surfaceContainerHighest
+   #E5E5E5   1.14%  1.20:1 
+   #D5D5D7   0.50%  1.39:1 
+   #CECED0   0.47%  1.49:1 
+   #9C9CA0   0.44%  2.60:1 
+   #B0B0B3   0.24%  2.06:1 
+   #A5A5A9   0.20%  2.33:1 
+   #BABABD   0.20%  1.84:1 
+== flutter-light-c6-rest box=914x167 page=#FBF8FF
+   #FBF8FF  47.76%  1.00:1 surface
+   #FFFFFF  25.47%  1.05:1 onPrimary onError cupertino.systemBackground
+   #000000  23.27% 19.97:1 cupertino.label
+   #E2DFE6   1.14%  1.25:1 surfaceContainerHighest
+   #E5E5E5   1.14%  1.20:1 
+   #474747   0.47%  8.84:1 
+   #2A2A2A   0.44% 13.65:1 
+== flutter-light-c7-rest box=914x191 page=#FBF8FF
+   #FBF8FF  92.85%  1.00:1 surface
+   #E6E4EB   3.37%  1.20:1 surfaceContainerHighest
+   #FFFFFF   3.09%  1.05:1 onPrimary onError cupertino.systemBackground
+== flutter-light-c8-rest box=914x191 page=#FBF8FF
+   #FBF8FF  92.82%  1.00:1 surface
+   #34C759   3.36%  2.11:1 cupertino.systemGreen
+   #FFFFFF   3.08%  1.05:1 onPrimary onError cupertino.systemBackground
+== flutter-light-c9-rest box=914x206 page=#FBF8FF
+   #FBF8FF  98.23%  1.00:1 surface
+   #FFFFFF   0.74%  1.05:1 onPrimary onError cupertino.systemBackground
+   #007AFF   0.68%  3.82:1 cupertino.systemBlue
+== flutter-light-k1-rest box=914x134 page=#FBF8FF
+   #FBF8FF  83.02%  1.00:1 surface
+   #000000  16.05% 19.97:1 cupertino.label
+   #878589   0.40%  3.48:1 
+   #484749   0.27%  8.79:1 
+== flutter-light-k2-rest box=914x134 page=#FBF8FF
+   #FBF8FF  83.02%  1.00:1 surface
+   #88878E  16.05%  3.38:1 
+   #C6C4CB   0.44%  1.64:1 
+   #A9A7AE   0.27%  2.26:1 
+== flutter-light-k3-rest box=914x134 page=#FBF8FF
+   #FBF8FF  83.02%  1.00:1 surface
+   #C2C0C7  16.05%  1.71:1 
+   #E1DEE5   0.44%  1.27:1 
+   #D2D0D7   0.27%  1.45:1 
+== flutter-light-k4-rest box=914x134 page=#FBF8FF
+   #FBF8FF  83.02%  1.00:1 surface
+   #C2C0C7  16.05%  1.71:1 
+   #E1DEE5   0.44%  1.27:1 
+   #D2D0D7   0.27%  1.45:1 
+== flutter-light-k5-rest box=914x134 page=#FBF8FF
+   #FBF8FF  83.02%  1.00:1 surface
+   #79787F  16.05%  4.16:1 outline
+   #BFBDC4   0.44%  1.77:1 
+   #9F9DA4   0.27%  2.55:1 
+== flutter-dark-c1-focused box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #BAC3FF   4.95% 10.90:1 primary
+   new against rest: none
+== flutter-dark-c1-focushover box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #BAC3FF   4.95% 10.90:1 primary
+   new against rest: none
+== flutter-dark-c1-hover box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #BAC3FF   4.95% 10.90:1 primary
+   new against rest: none
+== flutter-dark-c1-pressed box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #BAC3FF   4.95% 10.90:1 primary
+   new against rest: none
+== flutter-dark-c2-focused box=914x221 page=#121318
+   #BAC3FF  55.31% 10.90:1 primary
+   #121318  39.38%  1.00:1 surface
+   #222C61   4.95%  1.41:1 onPrimary
+   new against rest: none
+== flutter-dark-c2-focushover box=914x221 page=#121318
+   #BAC3FF  55.31% 10.90:1 primary
+   #121318  39.38%  1.00:1 surface
+   #222C61   4.95%  1.41:1 onPrimary
+   new against rest: none
+== flutter-dark-c2-hover box=914x221 page=#121318
+   #BAC3FF  55.31% 10.90:1 primary
+   #121318  39.38%  1.00:1 surface
+   #222C61   4.95%  1.41:1 onPrimary
+   new against rest: none
+== flutter-dark-c2-pressed box=914x221 page=#121318
+   #BAC3FF  55.31% 10.90:1 primary
+   #121318  39.38%  1.00:1 surface
+   #222C61   4.95%  1.41:1 onPrimary
+   new against rest: none
+== flutter-dark-c3s-focused box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #0A84FF   4.95%  5.09:1 cupertino.systemBlue
+   new against rest: none
+== flutter-dark-c3s-focushover box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #0A84FF   4.95%  5.09:1 cupertino.systemBlue
+   new against rest: none
+== flutter-dark-c3s-hover box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #0A84FF   4.95%  5.09:1 cupertino.systemBlue
+   new against rest: none
+== flutter-dark-c3s-pressed box=914x221 page=#121318
+   #121318  94.80%  1.00:1 surface
+   #0A84FF   4.95%  5.09:1 cupertino.systemBlue
+   new against rest: none
+== flutter-dark-c4s-focused box=914x221 page=#121318
+   #0A84FF  55.31%  5.09:1 cupertino.systemBlue
+   #121318  39.38%  1.00:1 surface
+   #FFFFFF   4.95% 18.55:1 cupertino.label
+   new against rest: none
+== flutter-dark-c4s-focushover box=914x221 page=#121318
+   #0A84FF  55.31%  5.09:1 cupertino.systemBlue
+   #121318  39.38%  1.00:1 surface
+   #FFFFFF   4.95% 18.55:1 cupertino.label
+   new against rest: none
+== flutter-dark-c4s-hover box=914x221 page=#121318
+   #0A84FF  55.31%  5.09:1 cupertino.systemBlue
+   #121318  39.38%  1.00:1 surface
+   #FFFFFF   4.95% 18.55:1 cupertino.label
+   new against rest: none
+== flutter-dark-c4s-pressed box=914x221 page=#121318
+   #0A84FF  55.31%  5.09:1 cupertino.systemBlue
+   #121318  39.38%  1.00:1 surface
+   #FFFFFF   4.95% 18.55:1 cupertino.label
+   new against rest: none
+== flutter-dark-c5-focused box=914x167 page=#121318
+   #121318  47.76%  1.00:1 surface
+   #464649  23.83%  1.97:1 
+   #000000  23.79%  1.13:1 cupertino.systemBackground
+   #2A2B2F   1.14%  1.31:1 surfaceContainerHigh
+   #1A1A1A   1.14%  1.07:1 
+   #414144   0.55%  1.82:1 
+   #77777C   0.54%  4.16:1 
+   #6B6B70   0.24%  3.50:1 
+   #4A4A4D   0.24%  2.10:1 
+   #5C5C60   0.20%  2.79:1 
+   new against rest: none
+== flutter-dark-c5-focushover box=914x167 page=#121318
+   #121318  47.76%  1.00:1 surface
+   #464649  23.83%  1.97:1 
+   #000000  23.79%  1.13:1 cupertino.systemBackground
+   #2A2B2F   1.14%  1.31:1 surfaceContainerHigh
+   #1A1A1A   1.14%  1.07:1 
+   #414144   0.55%  1.82:1 
+   #77777C   0.54%  4.16:1 
+   #6B6B70   0.24%  3.50:1 
+   #4A4A4D   0.24%  2.10:1 
+   #5C5C60   0.20%  2.79:1 
+   new against rest: none
+== flutter-dark-c5-hover box=914x167 page=#121318
+   #121318  47.76%  1.00:1 surface
+   #464649  24.03%  1.97:1 
+   #000000  23.79%  1.13:1 cupertino.systemBackground
+   #2A2B2F   1.14%  1.31:1 surfaceContainerHigh
+   #1A1A1A   1.14%  1.07:1 
+   #414144   0.55%  1.82:1 
+   #77777C   0.54%  4.16:1 
+   #6B6B70   0.24%  3.50:1 
+   #4A4A4D   0.24%  2.10:1 
+   #5C5C60   0.20%  2.79:1 
+   new against rest: none
+== flutter-dark-c5-pressed box=914x167 page=#121318
+   #121318  47.76%  1.00:1 surface
+   #464649  24.03%  1.97:1 
+   #000000  23.79%  1.13:1 cupertino.systemBackground
+   #2A2B2F   1.14%  1.31:1 surfaceContainerHigh
+   #1A1A1A   1.14%  1.07:1 
+   #414144   0.55%  1.82:1 
+   #77777C   0.54%  4.16:1 
+   #6B6B70   0.24%  3.50:1 
+   #4A4A4D   0.24%  2.10:1 
+   #5C5C60   0.20%  2.79:1 
+   new against rest: none
+== flutter-dark-c7-focused box=914x191 page=#121318
+   #121318  92.85%  1.00:1 surface
+   #323339   3.49%  1.47:1 surfaceContainerHighest onInverseSurface
+   #FFFFFF   3.08% 18.55:1 cupertino.label
+   #28282E   0.27%  1.27:1 surfaceContainerHigh
+   new against rest: none
+== flutter-dark-c7-focushover box=914x191 page=#121318
+   #121318  92.85%  1.00:1 surface
+   #323339   3.49%  1.47:1 surfaceContainerHighest onInverseSurface
+   #FFFFFF   3.08% 18.55:1 cupertino.label
+   #28282E   0.27%  1.27:1 surfaceContainerHigh
+   new against rest: none
+== flutter-dark-c7-hover box=914x191 page=#121318
+   #121318  92.85%  1.00:1 surface
+   #323339   3.49%  1.47:1 surfaceContainerHighest onInverseSurface
+   #FFFFFF   3.08% 18.55:1 cupertino.label
+   #28282E   0.27%  1.27:1 surfaceContainerHigh
+   new against rest: none
+== flutter-dark-c7-pressed box=914x191 page=#121318
+   #121318  92.85%  1.00:1 surface
+   #323339   3.49%  1.47:1 surfaceContainerHighest onInverseSurface
+   #FFFFFF   3.08% 18.55:1 cupertino.label
+   #28282E   0.27%  1.27:1 surfaceContainerHigh
+   new against rest: none
+== flutter-dark-c9-focused box=914x206 page=#121318
+   #121318  98.22%  1.00:1 surface
+   #3264D7   0.68%  3.48:1 
+   new against rest: none
+== flutter-dark-c9-focushover box=914x206 page=#121318
+   #121318  98.22%  1.00:1 surface
+   #3264D7   0.68%  3.48:1 
+   new against rest: none
+== flutter-dark-c9-hover box=914x206 page=#121318
+   #121318  98.22%  1.00:1 surface
+   #3264D7   0.68%  3.48:1 
+   new against rest: none
+== flutter-dark-c9-pressed box=914x206 page=#121318
+   #121318  98.22%  1.00:1 surface
+   #3264D7   0.68%  3.48:1 
+   new against rest: none
+== flutter-light-c1-focused box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #515B92   4.95%  6.12:1 primary
+   new against rest: none
+== flutter-light-c1-focushover box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #515B92   4.95%  6.12:1 primary
+   new against rest: none
+== flutter-light-c1-hover box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #515B92   4.95%  6.12:1 primary
+   new against rest: none
+== flutter-light-c1-pressed box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #515B92   4.95%  6.12:1 primary
+   new against rest: none
+== flutter-light-c2-focused box=914x221 page=#FBF8FF
+   #515B92  55.31%  6.12:1 primary
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c2-focushover box=914x221 page=#FBF8FF
+   #515B92  55.31%  6.12:1 primary
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c2-hover box=914x221 page=#FBF8FF
+   #515B92  55.31%  6.12:1 primary
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c2-pressed box=914x221 page=#FBF8FF
+   #515B92  55.31%  6.12:1 primary
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c3s-focused box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #007AFF   4.95%  3.82:1 cupertino.systemBlue
+   new against rest: none
+== flutter-light-c3s-focushover box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #007AFF   4.95%  3.82:1 cupertino.systemBlue
+   new against rest: none
+== flutter-light-c3s-hover box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #007AFF   4.95%  3.82:1 cupertino.systemBlue
+   new against rest: none
+== flutter-light-c3s-pressed box=914x221 page=#FBF8FF
+   #FBF8FF  94.80%  1.00:1 surface
+   #007AFF   4.95%  3.82:1 cupertino.systemBlue
+   new against rest: none
+== flutter-light-c4s-focused box=914x221 page=#FBF8FF
+   #007AFF  55.31%  3.82:1 cupertino.systemBlue
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c4s-focushover box=914x221 page=#FBF8FF
+   #007AFF  55.31%  3.82:1 cupertino.systemBlue
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c4s-hover box=914x221 page=#FBF8FF
+   #007AFF  55.31%  3.82:1 cupertino.systemBlue
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c4s-pressed box=914x221 page=#FBF8FF
+   #007AFF  55.31%  3.82:1 cupertino.systemBlue
+   #FBF8FF  39.38%  1.00:1 surface
+   #FFFFFF   4.95%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c5-focused box=914x167 page=#FBF8FF
+   #FBF8FF  47.76%  1.00:1 surface
+   #FFFFFF  23.79%  1.05:1 onPrimary onError cupertino.systemBackground
+   #C5C5C7  23.60%  1.64:1 
+   #E2DFE6   1.14%  1.25:1 surfaceContainerHighest
+   #E5E5E5   1.14%  1.20:1 
+   #D5D5D7   0.50%  1.39:1 
+   #CECED0   0.47%  1.49:1 
+   #9C9CA0   0.44%  2.60:1 
+   #B0B0B3   0.24%  2.06:1 
+   #A5A5A9   0.20%  2.33:1 
+   #BABABD   0.20%  1.84:1 
+   new against rest: none
+== flutter-light-c5-focushover box=914x167 page=#FBF8FF
+   #FBF8FF  47.76%  1.00:1 surface
+   #FFFFFF  23.79%  1.05:1 onPrimary onError cupertino.systemBackground
+   #C5C5C7  23.60%  1.64:1 
+   #E2DFE6   1.14%  1.25:1 surfaceContainerHighest
+   #E5E5E5   1.14%  1.20:1 
+   #D5D5D7   0.50%  1.39:1 
+   #CECED0   0.47%  1.49:1 
+   #9C9CA0   0.44%  2.60:1 
+   #B0B0B3   0.24%  2.06:1 
+   #A5A5A9   0.20%  2.33:1 
+   #BABABD   0.20%  1.84:1 
+   new against rest: none
+== flutter-light-c5-hover box=914x167 page=#FBF8FF
+   #FBF8FF  47.76%  1.00:1 surface
+   #C5C5C7  23.80%  1.64:1 
+   #FFFFFF  23.79%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E2DFE6   1.14%  1.25:1 surfaceContainerHighest
+   #E5E5E5   1.14%  1.20:1 
+   #D5D5D7   0.50%  1.39:1 
+   #CECED0   0.47%  1.49:1 
+   #9C9CA0   0.44%  2.60:1 
+   #B0B0B3   0.24%  2.06:1 
+   #A5A5A9   0.20%  2.33:1 
+   #BABABD   0.20%  1.84:1 
+   new against rest: none
+== flutter-light-c5-pressed box=914x167 page=#FBF8FF
+   #FBF8FF  47.76%  1.00:1 surface
+   #C5C5C7  23.80%  1.64:1 
+   #FFFFFF  23.79%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E2DFE6   1.14%  1.25:1 surfaceContainerHighest
+   #E5E5E5   1.14%  1.20:1 
+   #D5D5D7   0.50%  1.39:1 
+   #CECED0   0.47%  1.49:1 
+   #9C9CA0   0.44%  2.60:1 
+   #B0B0B3   0.24%  2.06:1 
+   #A5A5A9   0.20%  2.33:1 
+   #BABABD   0.20%  1.84:1 
+   new against rest: none
+== flutter-light-c7-focused box=914x191 page=#FBF8FF
+   #FBF8FF  92.85%  1.00:1 surface
+   #E6E4EB   3.37%  1.20:1 surfaceContainerHighest
+   #FFFFFF   3.09%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c7-focushover box=914x191 page=#FBF8FF
+   #FBF8FF  92.85%  1.00:1 surface
+   #E6E4EB   3.37%  1.20:1 surfaceContainerHighest
+   #FFFFFF   3.09%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c7-hover box=914x191 page=#FBF8FF
+   #FBF8FF  92.85%  1.00:1 surface
+   #E6E4EB   3.37%  1.20:1 surfaceContainerHighest
+   #FFFFFF   3.09%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c7-pressed box=914x191 page=#FBF8FF
+   #FBF8FF  92.85%  1.00:1 surface
+   #E6E4EB   3.37%  1.20:1 surfaceContainerHighest
+   #FFFFFF   3.09%  1.05:1 onPrimary onError cupertino.systemBackground
+   new against rest: none
+== flutter-light-c9-focused box=914x206 page=#FBF8FF
+   #FBF8FF  98.23%  1.00:1 surface
+   #FFFFFF   0.74%  1.05:1 onPrimary onError cupertino.systemBackground
+   #007AFF   0.68%  3.82:1 cupertino.systemBlue
+   new against rest: none
+== flutter-light-c9-focushover box=914x206 page=#FBF8FF
+   #FBF8FF  98.23%  1.00:1 surface
+   #FFFFFF   0.74%  1.05:1 onPrimary onError cupertino.systemBackground
+   #007AFF   0.68%  3.82:1 cupertino.systemBlue
+   new against rest: none
+== flutter-light-c9-hover box=914x206 page=#FBF8FF
+   #FBF8FF  98.23%  1.00:1 surface
+   #FFFFFF   0.74%  1.05:1 onPrimary onError cupertino.systemBackground
+   #007AFF   0.68%  3.82:1 cupertino.systemBlue
+   new against rest: none
+== flutter-light-c9-pressed box=914x206 page=#FBF8FF
+   #FBF8FF  98.22%  1.00:1 surface
+   #007AFF   0.68%  3.82:1 cupertino.systemBlue
+   #D9D9D9   0.63%  1.34:1 
+   new against rest: #D9D9D9 1.34:1

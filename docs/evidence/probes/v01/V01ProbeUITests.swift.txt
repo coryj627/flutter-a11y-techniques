@@ -1,0 +1,64 @@
+// V01 probe on iOS (throwaway, not committed; kept as
+// docs/evidence/probes/v01/V01ProbeUITests.swift.txt). For each fixture of
+// lib/probe.dart (V01_IDS), light and dark: opens it, waits for its title
+// line, and writes a screenshot (rest); for the fixtures that take input,
+// types Tab and writes another (focused). For the tree fixtures, light only,
+// prints every element of the screen with its type, label, value, and
+// whether it is selected.
+import XCTest
+
+final class V01ProbeUITests: XCTestCase {
+  let app = XCUIApplication()
+
+  func open(_ route: String, _ title: String) -> Bool {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y://\(route)")!)
+      let t = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", title)).firstMatch
+      if t.waitForExistence(timeout: 30) { sleep(2); return true }
+    }
+    return false
+  }
+
+  func shot(_ path: String) {
+    try! XCUIScreen.main.screenshot().pngRepresentation.write(to: URL(fileURLWithPath: path))
+  }
+
+  func testFixtures() throws {
+    let env = ProcessInfo.processInfo.environment
+    let out = env["V01_OUT"]!
+    try FileManager.default.createDirectory(atPath: out, withIntermediateDirectories: true)
+    let ids = env["V01_IDS"]!.split(separator: " ").map(String.init)
+    let inputs = Set("m1 m2 m3 m4 m5 m32 m6 m12 m13 m14 m18 m19 m21 m22 m25 c1 c2 c3s c4s c5 c7 c9".split(separator: " ").map(String.init))
+    let trees = Set("m13 m14 m18 m19 m21 m22 m23 m24 m25 m26 m27 c7 c8 c9 c10 c11 m10 m15 c5 m7 g2 g3".split(separator: " ").map(String.init))
+    for id in ids {
+      for theme in ["light", "dark"] {
+        let tag = "ios-\(theme)-\(id)"
+        let route = "/f/\(id)" + (theme == "dark" ? "/dark" : "")
+        guard open(route, "V01 \(id) \(theme)") else {
+          print("V01PROBE \(tag): did not open")
+          continue
+        }
+        shot("\(out)/\(tag)-rest.png")
+        if theme == "light" && trees.contains(id) {
+          print("V01PROBE == tree \(id)")
+          for e in app.descendants(matching: .any).allElementsBoundByIndex {
+            let s = e.snapshotOrNil()
+            guard let s else { continue }
+            if s.label.isEmpty && (s.value as? String ?? "").isEmpty && s.elementType == .other { continue }
+            print("V01PROBE   \(s.elementType.rawValue) label=\(s.label.debugDescription) value=\(String(describing: s.value)) selected=\(s.isSelected) enabled=\(s.isEnabled) frame=\(s.frame)")
+          }
+        }
+        if inputs.contains(id) {
+          app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+          usleep(1_200_000)
+          shot("\(out)/\(tag)-focused.png")
+        }
+      }
+    }
+  }
+}
+
+extension XCUIElement {
+  func snapshotOrNil() -> XCUIElementSnapshot? { try? snapshot() }
+}

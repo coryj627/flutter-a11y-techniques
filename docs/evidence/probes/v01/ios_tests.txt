@@ -1,0 +1,257 @@
+V01 ios appearance at the start: light
+2026-11-28 06:52:57.788 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-28 06:53:05.610 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+Test Case '-[RunnerUITests.V01ColourContrastUITests testATapOnDayMovesTheChoice]' passed (13.910 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:53:14.757 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios bad-caption light "Harbour": text #E6E0E9, lowest 1.33:1 over #BEC4E5 (968 of 1390 pixels the text colour)
+V01 ios bad-caption light: the caption's colour against the dark end #19227D 10.35:1
+2026-11-28 06:53:24.006 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios bad-caption dark "Harbour": text #E6E0E9, lowest 1.33:1 over #BEC4E5 (968 of 1390 pixels the text colour)
+V01 ios bad-caption dark: the caption's colour against the dark end #19227D 10.35:1
+2026-11-28 06:53:33.208 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testBadCaptionIsUnder4_5To1OverThePalePart]' passed (27.291 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:53:42.038 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios bad-colour-only rest light "Day": text #1B1B21, lowest 16.30:1 over #FBF8FF (650 of 1074 pixels the text colour)
+V01 ios bad-colour-only rest light "Week": text #515B92, lowest 6.12:1 over #FBF8FF (935 of 1603 pixels the text colour)
+V01 ios bad-colour-only rest light "Month": text #1B1B21, lowest 16.30:1 over #FBF8FF (1088 of 1806 pixels the text colour)
+V01 ios bad-colour-only light: Week #515B92 against Day #1B1B21 2.66:1
+V01 ios bad-colour-only light: Week #515B92 against Month #1B1B21 2.66:1
+V01 ios bad-colour-only after a tap on Day light "Day": text #515B92, lowest 6.12:1 over #FBF8FF (650 of 1065 pixels the text colour)
+V01 ios bad-colour-only after a tap on Day light "Week": text #1B1B21, lowest 16.30:1 over #FBF8FF (935 of 1622 pixels the text colour)
+V01 ios bad-colour-only after a tap on Day light "Month": text #1B1B21, lowest 16.30:1 over #FBF8FF (1088 of 1806 pixels the text colour)
+2026-11-28 06:53:53.458 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios bad-colour-only rest dark "Day": text #E4E1E9, lowest 14.35:1 over #121318 (650 of 1069 pixels the text colour)
+V01 ios bad-colour-only rest dark "Week": text #BAC3FF, lowest 10.90:1 over #121318 (935 of 1625 pixels the text colour)
+V01 ios bad-colour-only rest dark "Month": text #E4E1E9, lowest 14.35:1 over #121318 (1088 of 1802 pixels the text colour)
+V01 ios bad-colour-only dark: Week #BAC3FF against Day #E4E1E9 1.32:1
+V01 ios bad-colour-only dark: Week #BAC3FF against Month #E4E1E9 1.32:1
+V01 ios bad-colour-only after a tap on Day dark "Day": text #BAC3FF, lowest 10.90:1 over #121318 (650 of 1074 pixels the text colour)
+V01 ios bad-colour-only after a tap on Day dark "Week": text #E4E1E9, lowest 14.35:1 over #121318 (935 of 1618 pixels the text colour)
+V01 ios bad-colour-only after a tap on Day dark "Month": text #E4E1E9, lowest 14.35:1 over #121318 (1088 of 1802 pixels the text colour)
+2026-11-28 06:54:04.825 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testBadColourOnlyShowsTheChoiceByColourAlone]' passed (31.582 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:54:13.609 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios bad-cupertino-placeholder light "Required": text #C5C5C7, lowest 1.72:1 over #FFFFFF (1679 of 2592 pixels the text colour)
+V01 ios bad-cupertino-placeholder light "Email": text #1B1B21, lowest 16.30:1 over #FBF8FF (650 of 1201 pixels the text colour)
+V01 ios bad-cupertino-placeholder light field edge: edge #6C6C70: 4.97:1 against #FBF8FF, 5.23:1 against #FFFFFF
+2026-11-28 06:54:22.813 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios bad-cupertino-placeholder dark "Required": text #464649, lowest 2.23:1 over #000000 (1679 of 2638 pixels the text colour)
+V01 ios bad-cupertino-placeholder dark "Email": text #E4E1E9, lowest 14.35:1 over #121318 (650 of 1201 pixels the text colour)
+V01 ios bad-cupertino-placeholder dark field edge: edge #AEAEB2: 8.39:1 against #121318, 9.50:1 against #000000
+2026-11-28 06:54:32.011 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testBadCupertinoPlaceholderIsUnder4_5To1]' passed (27.190 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:54:40.825 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios bad-faint-edge light field edge at rest: edge #C7C5D0: 1.62:1 against #FBF8FF, 1.62:1 against #FBF8FF
+V01 ios bad-faint-edge light "Email": text #46464F, lowest 8.88:1 over #FBF8FF (442 of 916 pixels the text colour)
+V01 ios bad-faint-edge light field edge with focus: edge #515B92: 6.12:1 against #FBF8FF, 6.12:1 against #FBF8FF
+2026-11-28 06:54:53.426 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios bad-faint-edge dark field edge at rest: edge #46464F: 1.99:1 against #121318, 1.99:1 against #121318
+V01 ios bad-faint-edge dark "Email": text #C7C5D0, lowest 10.89:1 over #121318 (442 of 916 pixels the text colour)
+V01 ios bad-faint-edge dark field edge with focus: edge #BAC3FF: 10.90:1 against #121318, 10.90:1 against #121318
+2026-11-28 06:55:05.930 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testBadFaintEdgeIsUnder3To1AndPrimaryWithFocus]' passed (33.984 seconds).
+V01 ios appearance at the start: light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testContrastRatioIsWCAGs]' passed (0.076 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:55:12.846 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios tree bad-caption: [48 "Harbour" ]
+2026-11-28 06:55:19.235 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios tree bad-colour-only: [48 "Calendar view" , 9 "Day" v01-bad-colour-only-day, 9 "Week" v01-bad-colour-only-week, 9 "Month" v01-bad-colour-only-month]
+2026-11-28 06:55:25.592 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios tree bad-cupertino-placeholder: [49 "Email\nRequired" v01-bad-cupertino-placeholder-email]
+2026-11-28 06:55:31.968 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios tree bad-faint-edge: [49 "Email" v01-bad-faint-edge-email]
+2026-11-28 06:55:38.359 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios tree good-caption: [48 "Harbour" ]
+2026-11-28 06:55:44.812 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios tree good-cupertino: [49 "Email\nRequired" v01-good-cupertino-email, 9 "Send" v01-good-cupertino-send]
+2026-11-28 06:55:51.191 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios tree good-material: [48 "We reply within two days." , 49 "Email" v01-good-material-email, 40 "Send me updates" v01-good-material-updates, 9 "Send" v01-good-material-send]
+2026-11-28 06:55:57.629 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios tree good-selection: [1 "Calendar view" , 9 "Day" v01-good-selection-day, 9 "Week" v01-good-selection-week, 9 "Month" v01-good-selection-month]
+2026-11-28 06:56:04.045 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+Test Case '-[RunnerUITests.V01ColourContrastUITests testEachExampleHasItsElements]' passed (57.872 seconds).
+V01 ios appearance at the start: light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testExpectedUtterancesAreShortEnough]' passed (0.051 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:56:12.776 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios good-caption light "Harbour": text #E6E0E9, lowest 5.28:1 over #575A69 (968 of 1713 pixels the text colour)
+2026-11-28 06:56:22.009 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios good-caption dark "Harbour": text #E6E0E9, lowest 5.28:1 over #575A69 (968 of 1713 pixels the text colour)
+2026-11-28 06:56:31.244 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testGoodCaption]' passed (27.201 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:56:40.002 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios good-cupertino rest light "Email": text #1B1B21, lowest 16.30:1 over #FBF8FF (650 of 1201 pixels the text colour)
+V01 ios good-cupertino rest light "Required": text #6C6C70, lowest 5.23:1 over #FFFFFF (1679 of 2781 pixels the text colour)
+V01 ios good-cupertino rest light "Send": text #FFFFFF, lowest 6.44:1 over #515B92 (998 of 1606 pixels the text colour)
+V01 ios good-cupertino rest light field edge: edge #6C6C70: 4.97:1 against #FBF8FF, 5.23:1 against #FFFFFF
+2026-11-28 06:56:49.243 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios good-cupertino rest dark "Email": text #E4E1E9, lowest 14.35:1 over #121318 (650 of 1201 pixels the text colour)
+V01 ios good-cupertino rest dark "Required": text #AEAEB2, lowest 9.50:1 over #000000 (1679 of 2820 pixels the text colour)
+V01 ios good-cupertino rest dark "Send": text #222C61, lowest 7.71:1 over #BAC3FF (998 of 1600 pixels the text colour)
+V01 ios good-cupertino rest dark field edge: edge #AEAEB2: 8.39:1 against #121318, 9.50:1 against #000000
+2026-11-28 06:56:58.458 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testGoodCupertinoAtRest]' passed (27.331 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:57:07.327 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios good-cupertino focused light "Email": text #1B1B21, lowest 16.30:1 over #FBF8FF (650 of 1201 pixels the text colour)
+V01 ios good-cupertino focused light "Required": text #6C6C70, lowest 5.23:1 over #FFFFFF (1679 of 2781 pixels the text colour)
+V01 ios good-cupertino focused light focus on "Send": 1396 pixels changed; elsewhere [0]
+V01 ios good-cupertino focused light "Send": text #FFFFFF, lowest 6.44:1 over #515B92 (998 of 1606 pixels the text colour)
+2026-11-28 06:57:21.916 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios good-cupertino focused dark "Email": text #E4E1E9, lowest 14.35:1 over #121318 (650 of 1201 pixels the text colour)
+V01 ios good-cupertino focused dark "Required": text #AEAEB2, lowest 9.50:1 over #000000 (1679 of 2820 pixels the text colour)
+V01 ios good-cupertino focused dark focus on "Send": 1396 pixels changed; elsewhere [0]
+V01 ios good-cupertino focused dark "Send": text #222C61, lowest 7.71:1 over #BAC3FF (998 of 1600 pixels the text colour)
+2026-11-28 06:57:36.512 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testGoodCupertinoTextsWithFocus]' passed (38.009 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:57:45.331 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios good-material rest light "We reply within two days.": text #1B1B21, lowest 16.30:1 over #FBF8FF (2510 of 4843 pixels the text colour)
+V01 ios good-material rest light "Email": text #46464F, lowest 8.88:1 over #FBF8FF (442 of 916 pixels the text colour)
+V01 ios good-material rest light "Required": text #46464F, lowest 8.88:1 over #FBF8FF (1483 of 2563 pixels the text colour)
+V01 ios good-material rest light "Send me updates": text #1B1B21, lowest 16.30:1 over #FBF8FF (2639 of 4584 pixels the text colour)
+V01 ios good-material rest light "Send": text #515B92, lowest 6.12:1 over #FBF8FF (806 of 1293 pixels the text colour)
+V01 ios good-material rest light field edge: edge #767680: 4.27:1 against #FBF8FF, 4.27:1 against #FBF8FF
+V01 ios good-material rest light checkbox border: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 ios good-material rest light button outline: edge #767680: 4.27:1 against #FBF8FF, 4.27:1 against #FBF8FF
+2026-11-28 06:57:54.612 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios good-material rest dark "We reply within two days.": text #E4E1E9, lowest 14.35:1 over #121318 (2510 of 4820 pixels the text colour)
+V01 ios good-material rest dark "Email": text #C7C5D0, lowest 10.89:1 over #121318 (442 of 916 pixels the text colour)
+V01 ios good-material rest dark "Required": text #C7C5D0, lowest 10.89:1 over #121318 (1483 of 2563 pixels the text colour)
+V01 ios good-material rest dark "Send me updates": text #E4E1E9, lowest 14.35:1 over #121318 (2639 of 4578 pixels the text colour)
+V01 ios good-material rest dark "Send": text #BAC3FF, lowest 10.90:1 over #121318 (806 of 1331 pixels the text colour)
+V01 ios good-material rest dark field edge: edge #90909A: 5.87:1 against #121318, 5.87:1 against #121318
+V01 ios good-material rest dark checkbox border: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 ios good-material rest dark button outline: edge #90909A: 5.87:1 against #121318, 5.87:1 against #121318
+2026-11-28 06:58:03.845 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testGoodMaterialAtRest]' passed (27.308 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:58:12.642 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios good-material checked light checkbox fill: edge #515B92: 6.12:1 against #FBF8FF, 1.00:1 against #515B92
+V01 ios good-material checked light mark: 241 pixels 3:1 or more against the fill
+V01 ios good-material checked light "Send me updates": text #1B1B21, lowest 16.30:1 over #FBF8FF (2639 of 4584 pixels the text colour)
+2026-11-28 06:58:23.306 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios good-material checked dark checkbox fill: edge #BAC3FF: 10.90:1 against #121318, 1.00:1 against #BAC3FF
+V01 ios good-material checked dark mark: 241 pixels 3:1 or more against the fill
+V01 ios good-material checked dark "Send me updates": text #E4E1E9, lowest 14.35:1 over #121318 (2639 of 4578 pixels the text colour)
+2026-11-28 06:58:33.960 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testGoodMaterialCheckboxChecked]' passed (30.080 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:58:42.728 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios good-material focused light "Email": text #515B92, lowest 6.12:1 over #FBF8FF (442 of 916 pixels the text colour)
+V01 ios good-material focused light "Required": text #46464F, lowest 8.88:1 over #FBF8FF (1483 of 2563 pixels the text colour)
+V01 ios good-material focused light focus on "Send me updates": 182201 pixels changed; elsewhere [0, 0]
+V01 ios good-material focused light "Send me updates": text #1B1B21, lowest 12.36:1 over #DCDAE0 (2639 of 4573 pixels the text colour)
+V01 ios good-material focused light focus on "Send": 25595 pixels changed; elsewhere [0, 0]
+V01 ios good-material focused light "Send": text #515B92, lowest 5.32:1 over #EAE8F4 (806 of 1284 pixels the text colour)
+2026-11-28 06:58:59.025 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios good-material focused dark "Email": text #BAC3FF, lowest 10.90:1 over #121318 (442 of 917 pixels the text colour)
+V01 ios good-material focused dark "Required": text #C7C5D0, lowest 10.89:1 over #121318 (1483 of 2993 pixels the text colour)
+V01 ios good-material focused dark focus on "Send me updates": 182164 pixels changed; elsewhere [0, 0]
+V01 ios good-material focused dark "Send me updates": text #E4E1E9, lowest 10.20:1 over #2F3034 (2639 of 4563 pixels the text colour)
+V01 ios good-material focused dark focus on "Send": 25769 pixels changed; elsewhere [0, 0]
+V01 ios good-material focused dark "Send": text #BAC3FF, lowest 8.95:1 over #232530 (806 of 1306 pixels the text colour)
+2026-11-28 06:59:15.363 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testGoodMaterialTextsWithFocus]' passed (41.465 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:59:24.178 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios good-selection rest light day ring: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 ios good-selection rest light "Day": text #1B1B21, lowest 16.30:1 over #FBF8FF (650 of 1074 pixels the text colour)
+V01 ios good-selection rest light week ring: edge #515B92: 6.12:1 against #FBF8FF, 1.00:1 against #515B92
+V01 ios good-selection rest light "Week": text #1B1B21, lowest 16.30:1 over #FBF8FF (935 of 1622 pixels the text colour)
+V01 ios good-selection rest light month ring: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 ios good-selection rest light "Month": text #1B1B21, lowest 16.30:1 over #FBF8FF (1088 of 1806 pixels the text colour)
+V01 ios good-selection rest light dots: [(key: "day", value: 0), (key: "month", value: 0), (key: "week", value: 516)]
+V01 ios good-selection after a tap on Day light day ring: edge #515B92: 6.12:1 against #FBF8FF, 1.00:1 against #515B92
+V01 ios good-selection after a tap on Day light "Day": text #1B1B21, lowest 16.30:1 over #FBF8FF (650 of 1074 pixels the text colour)
+V01 ios good-selection after a tap on Day light week ring: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 ios good-selection after a tap on Day light "Week": text #1B1B21, lowest 16.30:1 over #FBF8FF (935 of 1622 pixels the text colour)
+V01 ios good-selection after a tap on Day light month ring: edge #46464F: 8.88:1 against #FBF8FF, 8.88:1 against #FBF8FF
+V01 ios good-selection after a tap on Day light "Month": text #1B1B21, lowest 16.30:1 over #FBF8FF (1088 of 1806 pixels the text colour)
+V01 ios good-selection after a tap on Day light dots: [(key: "day", value: 516), (key: "month", value: 0), (key: "week", value: 0)]
+2026-11-28 06:59:35.528 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios good-selection rest dark day ring: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 ios good-selection rest dark "Day": text #E4E1E9, lowest 14.35:1 over #121318 (650 of 1069 pixels the text colour)
+V01 ios good-selection rest dark week ring: edge #BAC3FF: 10.90:1 against #121318, 1.00:1 against #BAC3FF
+V01 ios good-selection rest dark "Week": text #E4E1E9, lowest 14.35:1 over #121318 (935 of 1618 pixels the text colour)
+V01 ios good-selection rest dark month ring: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 ios good-selection rest dark "Month": text #E4E1E9, lowest 14.35:1 over #121318 (1088 of 1802 pixels the text colour)
+V01 ios good-selection rest dark dots: [(key: "day", value: 0), (key: "month", value: 0), (key: "week", value: 528)]
+V01 ios good-selection after a tap on Day dark day ring: edge #BAC3FF: 10.90:1 against #121318, 1.00:1 against #BAC3FF
+V01 ios good-selection after a tap on Day dark "Day": text #E4E1E9, lowest 14.35:1 over #121318 (650 of 1069 pixels the text colour)
+V01 ios good-selection after a tap on Day dark week ring: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 ios good-selection after a tap on Day dark "Week": text #E4E1E9, lowest 14.35:1 over #121318 (935 of 1618 pixels the text colour)
+V01 ios good-selection after a tap on Day dark month ring: edge #C7C5D0: 10.89:1 against #121318, 10.89:1 against #121318
+V01 ios good-selection after a tap on Day dark "Month": text #E4E1E9, lowest 14.35:1 over #121318 (1088 of 1802 pixels the text colour)
+V01 ios good-selection after a tap on Day dark dots: [(key: "day", value: 528), (key: "month", value: 0), (key: "week", value: 0)]
+2026-11-28 06:59:46.861 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testGoodSelection]' passed (31.477 seconds).
+V01 ios appearance at the start: light
+2026-11-28 06:59:55.644 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios good-selection focused light focus on "Week": 183928 pixels changed; elsewhere [0, 0]
+V01 ios good-selection focused light "Week": text #1B1B21, lowest 12.36:1 over #DCDAE0 (935 of 1617 pixels the text colour)
+V01 ios good-selection focused light focus on "Back": 10716 pixels changed; elsewhere [0, 0, 0]
+2026-11-28 07:00:09.512 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in dark: #121318
+V01 ios good-selection focused dark focus on "Week": 183912 pixels changed; elsewhere [0, 0]
+V01 ios good-selection focused dark "Week": text #E4E1E9, lowest 10.20:1 over #2F3034 (935 of 1606 pixels the text colour)
+V01 ios good-selection focused dark focus on "Back": 10704 pixels changed; elsewhere [0, 0, 0]
+2026-11-28 07:00:23.295 xcodebuild[90845:85983495] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+V01 ios page in light: #FBF8FF
+V01 ios appearance put back to light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testGoodSelectionTextWithFocus]' passed (36.475 seconds).
+V01 ios appearance at the start: light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testTheCollectorFailsADuplicateStopAndAnUnwitnessedEnd]' passed (0.077 seconds).
+V01 ios appearance at the start: light
+Test Case '-[RunnerUITests.V01ColourContrastUITests testTheJudgeTiesAWalkToItsScreen]' passed (0.054 seconds).
