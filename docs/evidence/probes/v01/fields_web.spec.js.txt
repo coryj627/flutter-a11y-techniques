@@ -1,0 +1,48 @@
+// Throwaway (kept as docs/evidence/probes/v01/fields_web.spec.js.txt, run
+// with fields_web.config.js.txt against the app's web build): what each
+// V01 text field's element carries on the web, in Playwright's Chromium and
+// WebKit, at rest and after the input is given DOM focus with focus(); in
+// Chromium also the accessibility tree's name and its sources, read over
+// the DevTools protocol, which WebKit does not have.
+import { test } from '@playwright/test';
+
+const axDump = async (page, browserName, slug, when) => {
+  if (browserName !== 'chromium') return;
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  for (const n of nodes) {
+    if (n.role?.value !== 'textbox') continue;
+    const props = (n.properties ?? []).map((p) => `${p.name}=${JSON.stringify(p.value.value)}`).join(' ');
+    console.log(`V01F ax ${when} ${slug} textbox name=${JSON.stringify(n.name?.value)} description=${JSON.stringify(n.description?.value)} value=${JSON.stringify(n.value?.value)} nameSources=${JSON.stringify((n.name?.sources ?? []).filter((s) => s.value || s.attributeValue).map((s) => [s.type, s.attribute, s.value?.value ?? s.attributeValue?.value]))} ${props}`);
+  }
+  await cdp.detach();
+};
+
+for (const slug of ['good-material', 'good-cupertino', 'bad-cupertino-placeholder', 'bad-faint-edge']) {
+  test(`fields ${slug}`, async ({ page, browserName }) => {
+    await page.goto('about:blank');
+    await page.goto(`/#/t/V01/${slug}`);
+    await page.getByRole('heading', { name: 'Example', exact: true }).waitFor();
+    await page.waitForTimeout(1000);
+    const found = await page.evaluate(() => [...document.querySelectorAll('input, textarea')].map((e) => {
+      const attrs = Object.fromEntries([...e.attributes].map((a) => [a.name, a.value]));
+      const host = e.closest('[flt-semantics-identifier]');
+      return { tag: e.tagName, value: e.value, attrs, hostId: host?.getAttribute('flt-semantics-identifier'), hostLabel: host?.getAttribute('aria-label') };
+    }));
+    console.log(`V01F ${browserName} ${slug} ${JSON.stringify(found)}`);
+    const host = await page.evaluate((slug) => {
+      const h = document.querySelector(`[flt-semantics-identifier="v01-${slug}-email"]`);
+      const clean = (e) => e.outerHTML.replace(/ style="[^"]*"/g, '').replace(/ spellcheck="false" autocorrect="off" autocomplete="off"/g, '');
+      return h ? clean(h.parentElement) : null;
+    }, slug);
+    console.log(`V01F host ${browserName} ${slug} ${host}`);
+    await axDump(page, browserName, slug, 'at rest');
+    await page.locator('input').first().focus();
+    await page.waitForTimeout(800);
+    const focused = await page.evaluate(() => [...document.querySelectorAll('input')].map((e) => ({
+      active: e === document.activeElement, value: e.value,
+      attrs: Object.fromEntries([...e.attributes].filter((a) => a.name !== 'style').map((a) => [a.name, a.value])) })));
+    console.log(`V01F focused ${browserName} ${slug} ${JSON.stringify(focused)}`);
+    await axDump(page, browserName, slug, 'focused');
+  });
+}
