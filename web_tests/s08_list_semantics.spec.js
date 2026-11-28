@@ -9,7 +9,7 @@ import { VO_HELP, phraseForMove } from './vo/vo_logic.js';
 import {
   BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, TRANSCRIPT_ROWS, collectWalk, endRow, expectedStops,
   helpRole, judgeCollectedWalk, judgeExampleWalk, judgeTranscript, judgeWalk, ordersRead, positionsRow, runWalks,
-  screenStops, spokenRole, startRow, stopsOf, stopsText, transcriptRow, unresolvedRow,
+  screenStops, spokenRole, startRow, stopsOf, stopsText, transcriptRow, unresolvedRow, witnessBackHolds,
 } from './vo/s08_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
@@ -442,6 +442,17 @@ const TIED = {
     + 'Control-Option-Right Arrow or Control-Option-Left Arrow. To exit this web area, press Control-Option-Shift-Up Arrow.',
 };
 const VO_HELP_PREFIX = /^You are currently (?:on|in) /;
+// The end witness's move back may read VoiceOver's help about the stop
+// before the last (witnessBackHolds; the principal's decision of
+// 2026-11-28): `pair` is a reading with a spoken role and a stop after it,
+// `help` names that role, `wrongHelp` another; `row` is a transcript row
+// whose stop before the last has that role, or null.
+const WITNESS = {
+  row: 'good-bulleted',
+  help: 'You are currently in a empty group.',
+  wrongHelp: 'You are currently on a button, inside of web content. To click this button, press Control-Option-Space.',
+  pair: ['Bread empty group (3 of 3) 3 of 3', 'end of list'],
+};
 
 // How the walks are made again (runWalks), judged by judgeWalk as the
 // VoiceOver spec's walks are, and the screens and lists every judge reads.
@@ -930,26 +941,21 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     }
   });
 
-  test('rounds 7, 8 and 9 (2026-11-28) judge by today\'s rule as listed: bad-lazy-list\'s recorded verdicts, and round 9\'s three witnesses that read a help message', () => {
-    // Each end witnessed: Chromium's bad-lazy-list read to "Order 30",
-    // "Order 22" and "Order 30", WebKit's to "Order 13", "Order 13" and
-    // "Order 21". Rounds 7 and 8 were recorded wrong on Chromium's, round 9
-    // on WebKit's, each against the list it was judged by then. In round 9
-    // the end witness's move back read VoiceOver's "You are currently in a
-    // empty group." at the last item's position, in place of the item, in
-    // three list walks; those walks are wrong for good, today as then.
-    const lazyRecorded = (b) => `${b} bad-lazy-list: the last walk, 1, was recorded wrong and judges complete`;
-    const helpWitness = (b, slug, item, at, forwardAt) => [
-      `${b} ${slug}: walk 1's end witness read back "You are currently in a empty group." at ${at} and forward "end of list" at ${forwardAt}, where "${item}" and then "end of list" at another position were expected`,
-      `${b} ${slug}: the last walk, 1, was recorded wrong and judges wrong`];
+  test('rounds 7 to 10 (2026-11-28) judge by today\'s rules as listed: only the verdicts they recorded', () => {
+    // Each end witnessed. bad-lazy-list read, Chromium/WebKit: 30/13,
+    // 22/13, 30/21 and 20/30; rounds 7 and 8 were recorded wrong on
+    // Chromium's, round 9 on WebKit's, each against the list it was judged
+    // by then. In rounds 9 and 10 the end witness's move back read
+    // VoiceOver's "You are currently in a empty group." at the position
+    // recorded for the last item, in place of the item; those walks were
+    // recorded wrong, and the witness now holds (witnessBackHolds).
+    const recorded = (b, slug) => `${b} ${slug}: the last walk, 1, was recorded wrong and judges complete`;
     const rounds = [
-      [7, { chromium: 30, webkit: 13 }, [lazyRecorded('chromium')]],
-      [8, { chromium: 22, webkit: 13 }, [lazyRecorded('chromium')]],
-      [9, { chromium: 30, webkit: 21 }, [
-        ...helpWitness('chromium', 'good-bulleted', 'Bread empty group (3 of 3) 3 of 3', '318, 367, 1006, 395', '318, 311, 1006, 395'),
-        ...helpWitness('chromium', 'good-numbered', '3. Open a pull request empty group (3 of 3) 3 of 3', '318, 367, 459, 395', '318, 311, 1006, 395'),
-        ...helpWitness('webkit', 'good-bulleted', 'Bread empty group (3 of 3) 3 of 3', '526, 332, 1214, 360', '526, 276, 1214, 360'),
-        lazyRecorded('webkit')]],
+      [7, { chromium: 30, webkit: 13 }, [recorded('chromium', 'bad-lazy-list')]],
+      [8, { chromium: 22, webkit: 13 }, [recorded('chromium', 'bad-lazy-list')]],
+      [9, { chromium: 30, webkit: 21 }, [recorded('chromium', 'good-bulleted'), recorded('chromium', 'good-numbered'),
+        recorded('webkit', 'good-bulleted'), recorded('webkit', 'bad-lazy-list')]],
+      [10, { chromium: 20, webkit: 30 }, [recorded('chromium', 'good-cupertino'), recorded('webkit', 'good-numbered')]],
     ];
     for (const [round, reached, problems] of rounds) {
       const file = `docs/evidence/probes/s08/voiceover-web-round${round}-fail.md.txt`;
@@ -966,28 +972,103 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     }
   });
 
-  test('round 9\'s three failed end witnesses read only the help text: the kept transcript cannot show what the walk would capture there now', () => {
-    // The end row keeps one phrase for each move of the witness, the one the
-    // capture gave. With VO_HELP matching "You are currently in", today's
-    // capture puts the phrase Guidepup logged for the move in place of the
-    // help text (phraseForMove); that logged phrase was not recorded, so
-    // whether the witness would now read the item, and pass, is not known.
-    const text = readFileSync(new URL('../docs/evidence/probes/s08/voiceover-web-round9-fail.md.txt', import.meta.url), 'utf8');
-    let browser = null;
-    const helped = [];
-    for (const line of text.split('\n')) {
-      browser = /^## (\S+)$/.exec(line)?.[1] ?? browser;
-      const m = /^\| `([a-z-]+)-walk-1-end` \| back "(.*)" at (.*) \/ forward "(.*)" at (.*) \|$/.exec(line);
-      if (m && VO_HELP.test(m[2])) helped.push(`${browser} ${m[1]}: ${m[2]}`);
+  test('rounds 9 and 10: every end witness that read a help message read it at exactly the position recorded for the last item', () => {
+    // Round 10 was recorded with VO_HELP matching "You are currently in",
+    // so its capture put the phrase Guidepup logged for the move in place of
+    // the help text (phraseForMove); the help text was still what it gave,
+    // so the phrase logged for that move was the help text itself.
+    const seen = [];
+    for (const round of [9, 10]) {
+      const text = readFileSync(new URL(`../docs/evidence/probes/s08/voiceover-web-round${round}-fail.md.txt`, import.meta.url), 'utf8');
+      let browser = null;
+      const rowsOf = {};
+      for (const line of text.split('\n')) {
+        browser = /^## (\S+)$/.exec(line)?.[1] ?? browser;
+        const walk = /^\| `([a-z-]+)-walk-1` \| (.*) \((?:complete|wrong|incomplete): .*\) \|$/.exec(line);
+        if (walk) (rowsOf[`${browser} ${walk[1]}`] ??= {}).stops = stopsOf(walk[2]);
+        const at = /^\| `([a-z-]+)-walk-1-positions` \| (.*) \|$/.exec(line);
+        if (at) (rowsOf[`${browser} ${at[1]}`] ??= {}).positions = at[2].split(' / ');
+        const end = /^\| `([a-z-]+)-walk-1-end` \| back "(.*)" at (.*) \/ forward "(.*)" at (.*) \|$/.exec(line);
+        if (end) (rowsOf[`${browser} ${end[1]}`] ??= {}).back = { phrase: end[2], position: end[3] };
+      }
+      for (const [key, { stops, positions, back }] of Object.entries(rowsOf)) {
+        if (!VO_HELP.test(back.phrase)) continue;
+        seen.push(`${round} ${key}: ${back.phrase}`);
+        expect(back.position, key).toBe(positions.at(-2));
+        expect(back.position, key).not.toBe(positions.at(-1));
+        expect(helpRole(back.phrase), key).toBe(spokenRole(stops.at(-2)));
+        expect(witnessBackHolds(back, stops, positions), key).toBe(true);
+      }
     }
-    expect(helped).toEqual([
-      'chromium good-bulleted: You are currently in a empty group.',
-      'chromium good-numbered: You are currently in a empty group.',
-      'webkit good-bulleted: You are currently in a empty group.',
+    expect(seen).toEqual([
+      '9 chromium good-bulleted: You are currently in a empty group.',
+      '9 chromium good-numbered: You are currently in a empty group.',
+      '9 webkit good-bulleted: You are currently in a empty group.',
+      '10 chromium good-cupertino: You are currently in a empty group.',
+      '10 webkit good-numbered: You are currently in a empty group.',
     ]);
-    // Today's capture would not keep the help text; what it would keep is
-    // the logged phrase, whatever that was.
-    expect(phraseForMove('You are currently in a empty group.', 'logged')).toBe('logged');
+    expect(phraseForMove('You are currently in a empty group.', 'You are currently in a empty group.')).toBe('You are currently in a empty group.');
+  });
+
+  test('the end witness\'s move back: the stop before the last, or VoiceOver\'s help about it at exactly its recorded position', async () => {
+    const [a, b] = WITNESS.pair;
+    const at = (i) => `318, ${251 + 40 * i}, 1011, ${271 + 40 * i}`;
+    const stops = ['heading level 2 Example', a, b];
+    const positions = [at(0), at(1), at(2)];
+    const cases = [
+      ['the stop before the last, read again', { phrase: a, position: at(1) }, positions, true],
+      ['help naming its role, at its recorded position', { phrase: WITNESS.help, position: at(1) }, positions, true],
+      ['help naming another role, at its recorded position', { phrase: WITNESS.wrongHelp, position: at(1) }, positions, false],
+      ['help naming its role, at another position', { phrase: WITNESS.help, position: at(7) }, positions, false],
+      ['help naming its role, at the last stop\'s position', { phrase: WITNESS.help, position: at(2) }, positions, false],
+      ['help naming its role, with no positions', { phrase: WITNESS.help, position: at(1) }, undefined, false],
+      ['help naming its role, with positions one short', { phrase: WITNESS.help, position: at(1) }, positions.slice(1), false],
+      ['an empty reading at its recorded position', { phrase: '', position: at(1) }, positions, false],
+      ['the last stop again at its position (a frozen capture)', { phrase: b, position: at(2) }, positions, false],
+    ];
+    for (const [what, back, p, holds] of cases) expect(witnessBackHolds(back, stops, p), what).toBe(holds);
+    // The collector, on a made-up screen of those stops, whose move back
+    // reads the help at the stop's position, or elsewhere.
+    const walk = async (back) => {
+      let cursor = -1;
+      let witnessing = false;
+      return collectWalk({
+        next: async () => { cursor = Math.min(cursor + 1, stops.length - 1); },
+        previous: async () => { witnessing = true; cursor = Math.max(cursor - 1, 0); },
+        capture: async () => (witnessing && cursor === 1 ? back : { phrase: stops[cursor], position: at(cursor) }),
+        start: { phrase: '', position: '1, 1, 1, 1' },
+      });
+    };
+    const held = await walk({ phrase: WITNESS.help, position: at(1) });
+    expect(held.reachedEnd, 'help at the recorded position').toBe(true);
+    expect(held.problem, 'help at the recorded position').toBeNull();
+    expect(held.witness.back.phrase, 'the end row keeps the help as captured').toBe(WITNESS.help);
+    for (const back of [{ phrase: WITNESS.help, position: at(7) }, { phrase: WITNESS.wrongHelp, position: at(1) }]) {
+      const failed = await walk(back);
+      expect(failed.problem, JSON.stringify(back)).toMatch(/^the end is not witnessed: a move back read/);
+    }
+    if (!WITNESS.row) return;
+    // judgeTranscript, from the positions row.
+    const wr = WITNESS.row;
+    const ws = whole(wr);
+    const wp = placesOf(ws);
+    expect(ws.at(-2), 'the row\'s stop before the last is the pair\'s reading').toBe(a);
+    const helpEnd = (phrase, position, { noPositions = false } = {}) => transcript(() => rows.flatMap((row) => (row !== wr ? rowsOf(row) : [
+      transcriptRow(wr, 1, ws, 'complete', 'x'), startRow(wr, 1, BACK),
+      ...(noPositions ? [] : [positionsRow(wr, 1, wp)]),
+      endRow(wr, 1, { back: { phrase, position }, forward: { phrase: ws.at(-1), position: wp.at(-1) } }),
+      unresolvedRow(wr, 1, [])])));
+    const transcripts = [
+      ['help naming its role at the stop\'s recorded position', helpEnd(WITNESS.help, wp.at(-2)), true],
+      ['help naming another role there', helpEnd(WITNESS.wrongHelp, wp.at(-2)), false],
+      ['help at another position', helpEnd(WITNESS.help, '9, 9, 9, 9'), false],
+      ['help at the last stop\'s position', helpEnd(WITNESS.help, wp.at(-1)), false],
+      ['help at the recorded position, with no positions row', helpEnd(WITNESS.help, wp.at(-2), { noPositions: true }), false],
+    ];
+    for (const [what, text, ok] of transcripts) {
+      const problems = judgeTranscript(text);
+      expect(problems.length === 0, `${what}: ${problems.join('; ') || 'no problems'}`).toBe(ok);
+    }
   });
 
   test('the committed recording (docs/evidence/S08/voiceover-web.md) is right, every browser and row once', () => {

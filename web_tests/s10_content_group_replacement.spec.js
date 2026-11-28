@@ -10,6 +10,7 @@ import {
   EXPECTED_AFTER_ADDING, BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, TRANSCRIPT_ROWS,
   collectWalk, endRow, helpRole, judgeCollectedWalk, judgeExampleWalk, judgeTranscript, judgeWalk, positionsRow,
   runWalks, screenStops, spokenRole, startRow, stopsOf, stopsText, transcriptRow, unresolvedRow,
+  witnessBackHolds,
 } from './vo/s10_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
@@ -386,6 +387,17 @@ const TIED = {
   help: 'You are currently on a text element, inside of web content. To exit this web area, press Control-Option-Shift-Up Arrow.',
 };
 const VO_HELP_PREFIX = /^You are currently (?:on|in) /;
+// The end witness's move back may read VoiceOver's help about the stop
+// before the last (witnessBackHolds; the principal's decision of
+// 2026-11-28): `pair` is a reading with a spoken role and a stop after it,
+// `help` names that role, `wrongHelp` another; `row` is a transcript row
+// whose stop before the last has that role, or null.
+const WITNESS = {
+  row: 'good-exclude-semantics',
+  help: 'You are currently on a text element, inside of web content.',
+  wrongHelp: 'You are currently on a button, inside of web content. To click this button, press Control-Option-Space.',
+  pair: [WORDS, 'Add a 5-star review button'],
+};
 
 // How the walks are made again (runWalks), judged by judgeWalk as the
 // VoiceOver spec's walks are, and the screens and lists every judge reads.
@@ -849,6 +861,67 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
       section = /^## (\S+)$/.exec(line)?.[1] ?? section;
       const m = /^\| `([a-z-]+)-walk-\d+` \| (.*) \(complete: .*\) \|$/.exec(line);
       if (m) expect(m[2], `${section} ${m[1]}`).toBe(TRANSCRIPT_ROWS[m[1]].expected.join(' / '));
+    }
+  });
+
+  test('the end witness\'s move back: the stop before the last, or VoiceOver\'s help about it at exactly its recorded position', async () => {
+    const [a, b] = WITNESS.pair;
+    const at = (i) => `318, ${251 + 40 * i}, 1011, ${271 + 40 * i}`;
+    const stops = ['heading level 2 Example', a, b];
+    const positions = [at(0), at(1), at(2)];
+    const cases = [
+      ['the stop before the last, read again', { phrase: a, position: at(1) }, positions, true],
+      ['help naming its role, at its recorded position', { phrase: WITNESS.help, position: at(1) }, positions, true],
+      ['help naming another role, at its recorded position', { phrase: WITNESS.wrongHelp, position: at(1) }, positions, false],
+      ['help naming its role, at another position', { phrase: WITNESS.help, position: at(7) }, positions, false],
+      ['help naming its role, at the last stop\'s position', { phrase: WITNESS.help, position: at(2) }, positions, false],
+      ['help naming its role, with no positions', { phrase: WITNESS.help, position: at(1) }, undefined, false],
+      ['help naming its role, with positions one short', { phrase: WITNESS.help, position: at(1) }, positions.slice(1), false],
+      ['an empty reading at its recorded position', { phrase: '', position: at(1) }, positions, false],
+      ['the last stop again at its position (a frozen capture)', { phrase: b, position: at(2) }, positions, false],
+    ];
+    for (const [what, back, p, holds] of cases) expect(witnessBackHolds(back, stops, p), what).toBe(holds);
+    // The collector, on a made-up screen of those stops, whose move back
+    // reads the help at the stop's position, or elsewhere.
+    const walk = async (back) => {
+      let cursor = -1;
+      let witnessing = false;
+      return collectWalk({
+        next: async () => { cursor = Math.min(cursor + 1, stops.length - 1); },
+        previous: async () => { witnessing = true; cursor = Math.max(cursor - 1, 0); },
+        capture: async () => (witnessing && cursor === 1 ? back : { phrase: stops[cursor], position: at(cursor) }),
+        start: { phrase: '', position: '1, 1, 1, 1' },
+      });
+    };
+    const held = await walk({ phrase: WITNESS.help, position: at(1) });
+    expect(held.reachedEnd, 'help at the recorded position').toBe(true);
+    expect(held.problem, 'help at the recorded position').toBeNull();
+    expect(held.witness.back.phrase, 'the end row keeps the help as captured').toBe(WITNESS.help);
+    for (const back of [{ phrase: WITNESS.help, position: at(7) }, { phrase: WITNESS.wrongHelp, position: at(1) }]) {
+      const failed = await walk(back);
+      expect(failed.problem, JSON.stringify(back)).toMatch(/^the end is not witnessed: a move back read/);
+    }
+    if (!WITNESS.row) return;
+    // judgeTranscript, from the positions row.
+    const wr = WITNESS.row;
+    const ws = whole(wr);
+    const wp = placesOf(ws);
+    expect(ws.at(-2), 'the row\'s stop before the last is the pair\'s reading').toBe(a);
+    const helpEnd = (phrase, position, { noPositions = false } = {}) => transcript(() => rows.flatMap((row) => (row !== wr ? rowsOf(row) : [
+      transcriptRow(wr, 1, ws, 'complete', 'x'), startRow(wr, 1, BACK),
+      ...(noPositions ? [] : [positionsRow(wr, 1, wp)]),
+      endRow(wr, 1, { back: { phrase, position }, forward: { phrase: ws.at(-1), position: wp.at(-1) } }),
+      unresolvedRow(wr, 1, [])])));
+    const transcripts = [
+      ['help naming its role at the stop\'s recorded position', helpEnd(WITNESS.help, wp.at(-2)), true],
+      ['help naming another role there', helpEnd(WITNESS.wrongHelp, wp.at(-2)), false],
+      ['help at another position', helpEnd(WITNESS.help, '9, 9, 9, 9'), false],
+      ['help at the last stop\'s position', helpEnd(WITNESS.help, wp.at(-1)), false],
+      ['help at the recorded position, with no positions row', helpEnd(WITNESS.help, wp.at(-2), { noPositions: true }), false],
+    ];
+    for (const [what, text, ok] of transcripts) {
+      const problems = judgeTranscript(text);
+      expect(problems.length === 0, `${what}: ${problems.join('; ') || 'no problems'}`).toBe(ok);
     }
   });
 

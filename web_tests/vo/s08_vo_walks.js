@@ -510,9 +510,15 @@ export function judgeTranscript(text) {
         const before = stops[stops.length - 2];
         const lastStop = stops[stops.length - 1];
         const lastAt = positions ? positions[positions.length - 1] : undefined;
-        const witnessed = Boolean(end) && stops.length >= 2 && end.back === before && end.forward === lastStop
-          && end.back !== '' && end.backAt !== end.forwardAt
-          && (positions === undefined || (end.backAt !== lastAt && end.forwardAt === lastAt));
+        // The move back is judged by witnessBackHolds, from the positions
+        // row; with no usable positions row, by S16's rule only (the stop
+        // before the last, at a position other than the move forward's),
+        // so a help message there then fails.
+        const backHolds = Boolean(end) && (positions === undefined
+          ? end.back !== '' && end.back === before && end.backAt !== end.forwardAt
+          : witnessBackHolds({ phrase: end.back, position: end.backAt }, stops, positions));
+        const witnessed = Boolean(end) && stops.length >= 2 && backHolds && end.forward === lastStop
+          && (positions === undefined || end.forwardAt === lastAt);
         if (end && !witnessed) {
           problems.push(`${key}: walk ${n}'s end witness read back "${end.back}" at ${end.backAt} and forward "${end.forward}" at ${end.forwardAt}, where "${before}" and then "${lastStop}" at another position were expected`);
         }
@@ -589,7 +595,10 @@ export function transcriptRow(slug, n, stops, verdict, reason) {
 //   one move back, whose fresh capture must be the stop before the last,
 //   by its phrase, not empty, at a position other than the last stop's;
 //   then one move forward, whose capture must be the last stop again, by
-//   its phrase and its position. A frozen capture reads the last stop at
+//   its phrase and its position. The move back may instead read
+//   VoiceOver's help message about the stop before the last, at exactly
+//   that stop's recorded position (witnessBackHolds, the principal's
+//   decision of 2026-11-28). A frozen capture reads the last stop at
 //   its position for the move back, an empty one reads "": either fails,
 //   for good ("wrong"). Both readings are logged as the walk's end row.
 //
@@ -641,9 +650,9 @@ export async function collectWalk({ next, previous, capture, start, max = 40 }) 
       const before = stops[stops.length - 2];
       const last = stops[stops.length - 1];
       const lastAt = positions[positions.length - 1];
-      if (back.phrase === '' || back.phrase !== before || back.position === lastAt) {
+      if (!witnessBackHolds(back, stops, positions)) {
         return done(false, witness,
-          `the end is not witnessed: a move back read "${back.phrase}" at ${back.position}, where "${before}" was expected away from ${lastAt}`);
+          `the end is not witnessed: a move back read "${back.phrase}" at ${back.position}, where "${before}" (or VoiceOver's help about it, at ${positions[positions.length - 2]}) was expected away from ${lastAt}`);
       }
       if (forward.phrase !== last || forward.position !== lastAt) {
         return done(false, witness,
@@ -659,6 +668,36 @@ export async function collectWalk({ next, previous, capture, start, max = 40 }) 
     positions.push(now);
   }
   return done(false, null, null);
+}
+
+/**
+ * Whether the end witness's move back holds, for a walk's `stops` and
+ * `positions`. It must read something other than an empty phrase, at a
+ * position other than the last stop's, and either:
+ *
+ * - the stop before the last, by its phrase (S16's rule); or
+ * - VoiceOver's help message about that stop (VO_HELP, either wording),
+ *   whose role (helpRole) is the role spoken in that stop's reading, at
+ *   exactly the position recorded for that stop during the walk
+ *   (helpAfterStop, this technique's own rule, on the stop and the move
+ *   back). The principal's decision, 2026-11-28, after S08's ninth and tenth
+ *   web recordings read "You are currently in a empty group." there: the
+ *   position recorded during the walk ties the help to that element, and a
+ *   new phrase at another position than the last stop's shows the capture
+ *   is live. Such a witness shows liveness and position, not the element's
+ *   words.
+ *
+ * Help of another role, help at any other position, an empty or a frozen
+ * reading fail. Without positions, only the first form can hold.
+ */
+export function witnessBackHolds(back, stops, positions) {
+  if (stops.length < 2 || back.phrase === '') return false;
+  const before = stops[stops.length - 2];
+  const lastAt = Array.isArray(positions) ? positions[positions.length - 1] : undefined;
+  if (back.position === lastAt) return false;
+  if (back.phrase === before) return true;
+  if (!Array.isArray(positions) || positions.length !== stops.length) return false;
+  return helpAfterStop([before, back.phrase], [positions[positions.length - 2], back.position], 1);
 }
 
 /**
