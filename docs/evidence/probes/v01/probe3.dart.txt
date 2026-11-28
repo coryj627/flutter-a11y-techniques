@@ -1,0 +1,233 @@
+// V01 probe, round 3 (throwaway, not committed; kept as
+// docs/evidence/probes/v01/probe3.dart.txt): FL-515, what lowers a Material
+// control's text while a mouse button is held on the web, and which
+// documented parameter keeps it at 4.5:1.
+//
+// Route `/p/<id>` shows one fixture, identified `p` (a `Semantics` with an
+// identifier round it), with 24 logical pixels of the page round it. The
+// app is the catalog app's `MaterialApp`, theme and dark theme from the
+// indigo seed and no theme mode, so the browser's colour scheme chooses.
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        brightness: Brightness.dark,
+      ),
+      onGenerateRoute: (settings) {
+        final parts = (settings.name ?? '').split('/')
+          ..removeWhere((p) => p.isEmpty);
+        final id = parts.length >= 2 ? parts[1] : '';
+        final build = fixtures[id];
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (context) => Scaffold(
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('V01P $id'),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: 320,
+                      child: Semantics(
+                        identifier: 'p',
+                        container: true,
+                        child: build == null
+                            ? const Text('none')
+                            : Builder(builder: (c) => build.$2(c)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+void _noop() {}
+
+WidgetStateProperty<Color?> _overlayWithout(Set<WidgetState> off, Color c) =>
+    WidgetStateProperty.resolveWith((states) {
+      if (states.any(off.contains)) return Colors.transparent;
+      if (states.contains(WidgetState.pressed)) return c.withValues(alpha: 0.1);
+      if (states.contains(WidgetState.hovered)) return c.withValues(alpha: 0.08);
+      if (states.contains(WidgetState.focused)) return c.withValues(alpha: 0.1);
+      return null;
+    });
+
+Widget _button(BuildContext c, {ButtonStyle? style}) => Align(
+  alignment: Alignment.centerLeft,
+  child: OutlinedButton(
+    onPressed: _noop,
+    style: style,
+    child: const Text('Send'),
+  ),
+);
+
+Widget _check(BuildContext c, {Color? hoverColor}) => _Check(hoverColor: hoverColor);
+
+class _Check extends StatefulWidget {
+  const _Check({this.hoverColor});
+  final Color? hoverColor;
+  @override
+  State<_Check> createState() => _CheckState();
+}
+
+class _CheckState extends State<_Check> {
+  var _v = false;
+  @override
+  Widget build(BuildContext context) => CheckboxListTile(
+    title: const Text('Send me updates'),
+    value: _v,
+    hoverColor: widget.hoverColor,
+    onChanged: (v) => setState(() => _v = v ?? false),
+  );
+}
+
+Widget _radio(BuildContext c, {Color? hoverColor}) => RadioGroup<int>(
+  groupValue: 2,
+  onChanged: (_) {},
+  child: RadioListTile<int>(
+    value: 1,
+    hoverColor: hoverColor,
+    title: const Text('Day'),
+  ),
+);
+
+Widget _themed(BuildContext c, ThemeData Function(ThemeData) change, Widget child) =>
+    Theme(data: change(Theme.of(c)), child: child);
+
+/// id: (description, builder).
+final fixtures = <String, (String, Widget Function(BuildContext))>{
+  'b0': ('OutlinedButton, default', (c) => _button(c)),
+  'b1': (
+    'OutlinedButton, style: splashFactory: NoSplash.splashFactory',
+    (c) => _button(
+      c,
+      style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
+    ),
+  ),
+  'b2': (
+    'OutlinedButton, overlayColor transparent when hovered (M3 tints otherwise)',
+    (c) => _button(
+      c,
+      style: ButtonStyle(
+        overlayColor: _overlayWithout(
+          {WidgetState.hovered},
+          Theme.of(c).colorScheme.primary,
+        ),
+      ),
+    ),
+  ),
+  'b3': (
+    'OutlinedButton, overlayColor transparent when pressed (so no highlight and no splash)',
+    (c) => _button(
+      c,
+      style: ButtonStyle(
+        overlayColor: _overlayWithout(
+          {WidgetState.pressed},
+          Theme.of(c).colorScheme.primary,
+        ),
+      ),
+    ),
+  ),
+  'c0': ('CheckboxListTile, default', (c) => _check(c)),
+  'c1': (
+    'CheckboxListTile under Theme(splashFactory: NoSplash.splashFactory)',
+    (c) => _themed(
+      c,
+      (t) => t.copyWith(splashFactory: NoSplash.splashFactory),
+      _check(c),
+    ),
+  ),
+  'c2': (
+    'CheckboxListTile under Theme(highlightColor: transparent)',
+    (c) => _themed(
+      c,
+      (t) => t.copyWith(highlightColor: Colors.transparent),
+      _check(c),
+    ),
+  ),
+  'c3': (
+    'CheckboxListTile under Theme(splashColor: transparent)',
+    (c) => _themed(
+      c,
+      (t) => t.copyWith(splashColor: Colors.transparent),
+      _check(c),
+    ),
+  ),
+  'c4': (
+    'CheckboxListTile(hoverColor: transparent)',
+    (c) => _check(c, hoverColor: Colors.transparent),
+  ),
+  'c5': (
+    'CheckboxListTile under Theme(splashFactory: NoSplash, highlightColor: transparent)',
+    (c) => _themed(
+      c,
+      (t) => t.copyWith(
+        splashFactory: NoSplash.splashFactory,
+        highlightColor: Colors.transparent,
+      ),
+      _check(c),
+    ),
+  ),
+  'r0': ('RadioListTile, default', (c) => _radio(c)),
+  'r1': (
+    'RadioListTile under Theme(splashFactory: NoSplash.splashFactory)',
+    (c) => _themed(
+      c,
+      (t) => t.copyWith(splashFactory: NoSplash.splashFactory),
+      _radio(c),
+    ),
+  ),
+  'r2': (
+    'RadioListTile under Theme(highlightColor: transparent)',
+    (c) => _themed(
+      c,
+      (t) => t.copyWith(highlightColor: Colors.transparent),
+      _radio(c),
+    ),
+  ),
+  'r3': (
+    'RadioListTile under Theme(splashColor: transparent)',
+    (c) => _themed(
+      c,
+      (t) => t.copyWith(splashColor: Colors.transparent),
+      _radio(c),
+    ),
+  ),
+  'r4': (
+    'RadioListTile(hoverColor: transparent)',
+    (c) => _radio(c, hoverColor: Colors.transparent),
+  ),
+  'e0': (
+    'TextField, OutlineInputBorder, label floating, hint',
+    (c) => const TextField(
+      decoration: InputDecoration(
+        labelText: 'Email',
+        hintText: 'Required',
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        border: OutlineInputBorder(),
+      ),
+    ),
+  ),
+};

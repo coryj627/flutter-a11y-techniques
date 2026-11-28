@@ -1886,6 +1886,43 @@ class V01WholeUtterances(unittest.TestCase):
         self.assertEqual(sorted(found), sorted(self.rows()))
         for ident, fragments in found.items():
             self.assertEqual(tb.problems(ident, fragments), [], ident)
+        # The walk that decided, the transcript's first table, judged whole
+        # as walk_strictly judges a walk.
+        self.assertEqual(tb.judge_walk(found, self.rows()), ("right", []))
+
+    def walker(self, logs):
+        """A walk_once for walk_strictly that gives `logs` in turn, counting
+        the walks made in self.walks."""
+        logs = iter(logs)
+        self.walks = 0
+
+        def walk_once():
+            self.walks += 1
+            return mock.Mock(returncode=0, stdout=""), next(logs)
+
+        return walk_once
+
+    def test_a_wrong_walk_fails_for_good_and_an_incomplete_one_is_walked_again(self):
+        right = {i: self.heard(i) for i in self.rows()}
+        # The chosen tile's state not heard: wrong, and no walk is made after it.
+        wrong = dict(right)
+        wrong["v01-bad-colour-only-week"] = right["v01-bad-colour-only-week"][1:]
+        tries = tb.walk_strictly("v01-", self.walker([log_for(wrong), log_for(right)]))
+        self.assertEqual([t.verdict for t in tries], ["wrong"])
+        self.assertEqual(self.walks, 1, "no walk after a wrong one")
+        failures, out = tb.strict_report(tries)
+        self.assertTrue(any(f.startswith("v01-bad-colour-only-week:") for f in failures), failures)
+        self.assertIn("Result: FAIL", out)
+        # A caption never focused: incomplete, walked again, and the right
+        # walk that follows decides on its own.
+        short = dict(right)
+        del short["v01-good-caption-caption"]
+        tries = tb.walk_strictly("v01-", self.walker([log_for(short), log_for(right)]))
+        self.assertEqual([t.verdict for t in tries], ["incomplete", "right"])
+        self.assertEqual(self.walks, 2)
+        failures, out = tb.strict_report(tries)
+        self.assertEqual(failures, [])
+        self.assertIn("Result: PASS", out)
 
     def test_each_mutation_of_each_row_is_wrong(self):
         labels = {ident: self.label(ident) for ident in self.rows()}

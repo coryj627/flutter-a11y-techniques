@@ -15,8 +15,9 @@ WEB_VO_SPEC = "v01_colour_contrast_vo.spec.js"
 # (bad-colour-only's selected tile).
 #
 # Every row is a whole-utterance row ("== A / B / C" in tool/talkback.py's
-# said()), written from what TalkBack said in the first walk
-# (docs/evidence/V01/talkback-android.md): the row's utterances must be
+# said()), written from what TalkBack said in the first walk, and said the
+# same in every walk since (the committed one is
+# docs/evidence/V01/talkback-android.md): the row's utterances must be
 # exactly these, in this order, and nothing else; TalkBack's usage hint
 # "Double-tap to activate" is allowed once at the end. A field's or a
 # toggle's own hint is not that one, so it is written into the row as heard.
@@ -92,10 +93,17 @@ VOICEOVER_IOS_METHOD = (
     "end only when one move back then reads the stop before it and one move "
     "forward the last again; the walk must first read this example's own "
     "title, description and, for a bad example, its defect, then the "
-    "\"Example\" heading, and after it exactly the expected stops; what is "
-    "shown is everything after the heading. A walk that does not reach the "
-    "end fails. A colour is not spoken: these rows record what each example's "
-    "texts and controls say, not its defect",
+    "\"Example\" heading, and after it exactly the expected stops, each "
+    "compared with its runs of white space made one space; the Cupertino "
+    "field's utterance is also compared as the service gave it, with the line "
+    "break between \"Email\" and \"Required\". A move that gives no speech is "
+    "checked by a move back and one forward again; unless the move back reads "
+    "the stop before it, the stop is recorded as not known, which fails. What "
+    "is shown is everything after the heading, white space made one space. A "
+    "walk that does not reach the end fails, and every expected utterance is "
+    "under 64 characters (a test refuses a longer one). A colour is not "
+    "spoken: these rows record what each example's texts and controls say, "
+    "not its defect",
     "Spoken, in swipe order",
 )
 
@@ -103,20 +111,28 @@ VOICEOVER_IOS_METHOD = (
 VOICEOVER_WEB_METHOD = (
     "focus the Back button and capture VoiceOver's last phrase and its cursor's position there "
     "(the walk's start row), then `voiceOver.next()` to the end of the screen, capturing both "
-    "over AppleScript after every move (collectWalk, web_tests/vo/v01_vo_walks.js). A move that "
+    "over AppleScript after every move (collectWalk, web_tests/vo/v01_vo_walks.js, S16's walk "
+    "with the S08 to S12 judge update). Every phrase is recorded with its white space, a line "
+    "break included, made single spaces (the Cupertino fields' names hold one). A move that "
     "changes the position, or that speaks a non-empty phrase other than the stop before it (or "
-    "than the start, before the first stop), is a stop. A move that does neither is kept: one "
-    "followed by a move on is an unresolved read, a gap after the stop before it, and is listed "
-    "on the walk's unresolved row; two in a row are the end only when a move back then reads the "
-    "stop before the last, not empty, at another position, and a move forward the last again at "
-    "its position, both on the walk's end row; a failed witness is wrong for good. Every walk is "
-    "judged whole (judgeWalk): the title, the description, the \"Example\" heading, and the "
-    "expected list after it, each in its place; a wrong stop always wins, across a gap the next "
-    "stop must be the next expected one or the one after it, and a walk that ran out of moves is "
-    "wrong. Only a walk with no wrong stop and a gap, or a stop read as an empty phrase, is "
-    "walked again, up to three walks, each its own row (`-walk-<n>`), and it never passes. "
-    "VoiceOver's own help message (\"You are currently on ...\") is left out only at the position "
-    "of the stop before it, whose reading speaks the role the help names. No runner retries. "
-    "The browser's colour scheme is Playwright's default, light. VoiceOver's last phrase is "
-    "text: a colour is not in it, so what is judged is the words and the stops, not the contrast"
+    "than the start, before the first stop), is a stop, and the position at each stop is the "
+    "walk's positions row. A move that does neither is kept: one followed by a move on is an "
+    "unresolved read, a gap after the stop before it, and is listed on the walk's unresolved row; "
+    "two in a row are the end only when a move back then reads the stop before the last, not "
+    "empty, at another position, and a move forward the last again at its position, both on the "
+    "walk's end row; the move back may instead read VoiceOver's help about the stop before the "
+    "last, naming its spoken role, at exactly that stop's recorded position; a failed witness is "
+    "wrong for good. Every walk is judged whole (judgeWalk): the title, the description, a bad "
+    "example's defect, the \"Example\" heading, and the expected list after it, each in its "
+    "place; a stop past the last expected one, empty or not, is wrong; a wrong stop always wins, "
+    "across a gap the next stop must be the next expected one or the one after it, and a walk "
+    "that ran out of moves is wrong. Only a walk with no wrong stop and a gap, or a stop read as "
+    "an empty phrase, is walked again, up to three walks, each its own row (`-walk-<n>`, a \"/\" "
+    "in a stop written \"\\/\"), and it never passes. VoiceOver's own help message (\"You are "
+    "currently on ...\" or \"in ...\") is left out only at the position of the stop before it, "
+    "whose reading speaks the role the help names; it stays in the walk's row, and the web tree "
+    "spec judges the transcript again from its rows by the same rule, from the positions row. "
+    "No runner retries. The browser's colour scheme is Playwright's default, light. VoiceOver's "
+    "last phrase is text: a colour is not in it, so what is judged is the words and the stops, "
+    "not the contrast"
 )

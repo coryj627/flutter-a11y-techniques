@@ -216,7 +216,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-512](#fl-512) | `GridTileBar` draws its title straight on the tile, with no background, unless `backgroundColor` is given | All | Confirmed |
 | [FL-513](#fl-513) | A selected `ListTile` is told from the others by the colour of its text alone, and `ToggleButtons`' chosen button by colours alone | All | Confirmed (`ListTile`); Observed (`ToggleButtons`) |
 | [FL-514](#fl-514) | A `CupertinoButton` fades to 0.4 opacity while pressed, and a filled one's text to under 4.5:1 | All (widget tests only) | Confirmed (widget tests only) |
-| [FL-515](#fl-515) | On the web, a mouse button held on a Material button or list tile lowers its text under 4.5:1 | Web (Chromium) | Confirmed |
+| [FL-515](#fl-515) | On the web, a mouse button held on a Material button or list tile lowers its text under 4.5:1: the ink splash is drawn over the pressed highlight and the hover tint | Web (Chromium, WebKit) | Confirmed |
 | [FL-516](#fl-516) | A `CupertinoSwitch` at its defaults is under 3:1 against the page in light mode, off and on | All | Observed |
 | [FL-517](#fl-517) | `CupertinoColors.secondaryLabel` and `tertiaryLabel` are under 4.5:1 as text on a light page, and Cupertino widgets use them for text by default | All | Observed |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
@@ -3200,7 +3200,7 @@ yet), **Fixed in x.y** (verified on that version).
   `CupertinoButton`'s text is #007AFF, 3.82:1 on the Material page, and a
   `CupertinoButton.filled`'s white text is on #007AFF, 4.02:1; both are
   17 logical pixels, not large text. In dark mode `systemBlue` is #0A84FF,
-  5.09:1 on the page. In this app the Cupertino theme comes from the
+  5.09:1 on the page (widget tests). In this app the Cupertino theme comes from the
   Material one, and its primary colour is the scheme's `primary`, 6.12:1.
 - Upstream issue: not searched yet (D25).
 
@@ -7432,7 +7432,9 @@ yet), **Fixed in x.y** (verified on that version).
   `bad-colour-only` in the widget tests, on the web, on Android, and on
   iOS, light and dark, written to fail when the colours reach 3:1 apart
   or anything else is drawn on a tile. `ToggleButtons` measured in the
-  probe only (fixture m25: the widget tests, Chromium, Android, and iOS).
+  probe only (fixture m25): its fill and its two text colours in the
+  widget tests, on Android, and on iOS, light and dark; in Chromium the
+  fill only (the anti-aliased letters left no solid text colour).
   Read in the source: `material/list_tile.dart` (a selected tile's text
   and icon take `selectedColor`, by default `primary`; `selectedTileColor`
   is transparent by default).
@@ -7443,7 +7445,9 @@ yet), **Fixed in x.y** (verified on that version).
     nothing else is drawn on any tile.
   - `ToggleButtons`: the chosen button is filled #E6E5F2, 1.19:1 against
     the page, and its text is `primary`, 1.81:1 from the others' #38383E,
-    in light mode.
+    in light mode; in dark mode the fill #262834, 1.27:1, and the text
+    #BAC3FF, 1.01:1 from the others' #C9C6CE (ratios computed from the
+    measured colours).
   - The state reaches TalkBack ("selected.") and VoiceOver on iOS
     ("selected"); on the web a selected `ListTile` is a button with
     `aria-current="true"` and no selected state in Chromium's tree (V01's
@@ -7475,41 +7479,65 @@ yet), **Fixed in x.y** (verified on that version).
   300 ms: its white text 1.88:1 on its faded fill in light mode (6.44:1 at
   rest), 2.42:1 in dark (7.71:1 at rest).
 - WCAG: 1.4.3 Contrast (Minimum), in the pressed state; the criterion has
-  no exception for it. Whether a state that lasts as long as a press is
-  held is meant to be held to it is the principal's decision (V01's spec,
-  section 5).
-- Workaround, in the SDK: `pressedOpacity`. V01 `good-cupertino` sets 0.9:
-  5.14:1 and 6.66:1 while pressed in the widget tests, 5.13:1 and 6.65:1
-  on Android. 0.85 gives 4.54:1 in light mode, on the threshold (computed
-  from the colours, not measured).
+  no exception for it, and the label is still text the user reads while
+  pressing (the principal's decision, 2026-11-28).
+- Workaround, in the SDK: `pressedOpacity`, at a value whose measured
+  pressed ratio is 4.5:1 or more; there is no source for a value. V01
+  `good-cupertino` sets 0.9: 5.14:1 and 6.66:1 while pressed in the widget
+  tests (Android: V01's spec, section 7). 0.85 gives 4.54:1 in light mode,
+  on the threshold (computed from the colours, not measured).
 - Upstream issue: not searched yet (D25).
 
 ## FL-515
 
-**On the web, a mouse button held on a Material button or list tile lowers its text under 4.5:1.**
+**On the web, a mouse button held on a Material button or list tile lowers its text under 4.5:1: the ink splash is drawn over the pressed highlight and the hover tint.**
 
-- Status: Confirmed on the web (Chromium), Flutter 3.47.5: asserted by
-  V01's web tree spec, written to fail when these readings reach 4.5:1
-  (`docs/evidence/probes/v01/web_pressed.txt`). Not seen in the widget
-  tests, which held a mouse 2 s on the same controls (4.80:1 and more),
-  nor on Android, which held a finger 180 to 300 ms (4.86:1 and more).
-  The cause was not measured: the press's highlight, the hover's, and the
-  ripple (on the web Flutter's `InkRipple`; in the widget tests on
-  Android `InkSparkle`, read in the source, `material/theme_data.dart`)
-  are drawn together under the text.
-- What happens, with the mouse over the control and its button held:
-  - `OutlinedButton` "Send", light mode: 4.52:1 at 0.3 s, 4.19:1 at 2 s.
-  - `CheckboxListTile` title, dark mode: 4.25:1 at 2 s, over #68696C; at
-    0.3 s, while the ripple spreads, 4.25:1 in two runs and 4.65:1 in a
-    third (only the 2 s readings are asserted).
-  - `RadioListTile` titles, dark mode: 8.9:1 to 9.9:1 at 0.3 s, 4.25:1 at
-    2 s.
-- WCAG: 1.4.3 Contrast (Minimum), in the pressed state.
-- Workaround: none tried. `ButtonStyle.overlayColor`, `splashFactory`, and
-  a tile's `splashColor` are documented parameters that could change it.
-- Effect on V01: two of its good examples, `good-material` and
-  `good-selection`, have these texts. Their platform status is the
-  principal's decision (V01's spec, section 5).
+- Status: Confirmed on the web, Flutter 3.47.5, in Chromium and in WebKit
+  (Playwright's builds): measured in V01's probe round 3
+  (`docs/evidence/probes/v01/probe3_web.txt`, from `probe3.dart.txt`), and
+  in V01's first web tree runs (`web_tests_round1.txt`, `web_pressed.txt`),
+  with the mouse over the control and its button held, light and dark,
+  at 0.3 s, 2 s, and 4 s; the readings at 2 s and 4 s were the same. Not
+  seen in the widget tests, which held a mouse 2 s on the same controls
+  (4.80:1 and more), nor on Android, which held a finger 180 to 300 ms
+  (4.86:1 and more; longer holds not measured with the default).
+- What happens, at 2 s and 4 s, the same in both browsers:
+  - `OutlinedButton` "Send", light mode: 4.19:1 (6.12:1 at rest, 5.50:1
+    hovered). Dark mode 5.92:1.
+  - `CheckboxListTile` and `RadioListTile` titles, dark mode: 4.25:1 over
+    #68696C (14.35:1 at rest, 13.16:1 hovered). Light mode 11.26:1.
+  - A `TextField`'s label and hint stay 6.12:1 or more.
+- The cause, read in the source and confirmed by turning each layer off
+  (probe round 3, fixtures b0 to b3, c0 to c5, r0 to r4):
+  - Read in the source: a Material control's `InkWell` draws, while
+    pressed with the mouse over it, its hover tint, its pressed highlight,
+    and a splash (`material/ink_well.dart`). On the web the theme's
+    `splashFactory` is `InkRipple`, on Android off the web `InkSparkle`
+    (`material/theme_data.dart`). A button's tints and splash are its
+    `overlayColor` (`primary` at 0.08 hovered, 0.1 pressed); a list tile's
+    highlight and splash are the theme's `highlightColor` and
+    `splashColor`, each #CCCCCC at an opacity of 0x40 in dark mode.
+  - Measured: the button with no splash (`ButtonStyle(splashFactory:
+    NoSplash.splashFactory)`) 4.79:1 in light mode and 7.45:1 in dark;
+    with no pressed tint, so no highlight and no splash, 5.50:1, the hover
+    alone. The tiles with no splash (`ThemeData.splashFactory`), or with
+    no highlight, or with a transparent `splashColor`, 7.07:1 in dark mode;
+    with neither splash nor highlight 13.16:1, the hover alone; with a
+    transparent `hoverColor` still 4.25:1. So in the tiles the highlight
+    and the splash together take the title under 4.5:1, and each alone
+    does not; in the button the splash takes it under.
+- WCAG: 1.4.3 Contrast (Minimum), in the pressed state. The label is still
+  text the user reads while pressing (the principal's decision, 2026-11-28).
+- Workaround, in the SDK: `ThemeData.splashFactory:
+  NoSplash.splashFactory` round the controls. V01 `good-material` and
+  `good-selection` are under such a theme (`WithoutSplash`); the press is
+  still shown by the highlight. Their web tree spec measures every text
+  with the mouse held, after 2 s and 4 s, at 4.5:1 or more. The
+  `OutlinedButton`'s own `ButtonStyle.splashFactory` does the same for a
+  button alone (probe round 3).
+- How to read this entry: Flutter's default splash, over the highlight and
+  the hover, has not been made to keep text at 4.5:1 yet. Re-check when the
+  pinned version changes.
 - Upstream issue: not searched yet (D25).
 
 ## FL-516

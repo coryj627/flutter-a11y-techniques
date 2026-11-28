@@ -55,6 +55,25 @@ class CaptionedPicture extends StatelessWidget {
   }
 }
 
+/// [child] under the app's theme with no ink splash
+/// (`ThemeData.splashFactory: NoSplash.splashFactory`). The splash, drawn
+/// over a control's pressed highlight and its hover tint while a mouse
+/// button is held, takes its text under 4.5:1 on the web (FL-515); without
+/// it the control still shows the press by its highlight.
+class WithoutSplash extends StatelessWidget {
+  const WithoutSplash({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory),
+      child: child,
+    );
+  }
+}
+
 /// The calendar views a person can choose between.
 enum CalendarView { day, week, month }
 
@@ -129,9 +148,11 @@ class CupertinoEmailField extends StatelessWidget {
 /// A short form at the theme's defaults: body text in `onSurface`, a field
 /// with its label floating so that its hint shows at rest, a checkbox, and
 /// a button. Every text is 4.5:1 or more and every edge that marks a
-/// control 3:1 or more, light and dark. The button is an `OutlinedButton`:
-/// a `FilledButton`'s text drops under 4.5:1 with focus and a hover in
-/// light mode (FL-253).
+/// control 3:1 or more, light and dark, in every state, a held press
+/// included: the form is under the theme with no ink splash
+/// (`WithoutSplash`, FL-515). The button is an `OutlinedButton`: a
+/// `FilledButton`'s text drops under 4.5:1 with focus and a hover in light
+/// mode (FL-253).
 class GoodMaterial extends StatefulWidget {
   const GoodMaterial({super.key});
 
@@ -144,39 +165,44 @@ class _GoodMaterialState extends State<GoodMaterial> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Text('We reply within two days.'),
-        const SizedBox(height: 16),
-        const TestId(
-          'v01-good-material-email',
-          child: TextField(
-            decoration: InputDecoration(
-              labelText: 'Email',
-              hintText: 'Required',
-              hintMaxLines: 2,
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(),
+    return WithoutSplash(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('We reply within two days.'),
+          const SizedBox(height: 16),
+          const TestId(
+            'v01-good-material-email',
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Email',
+                hintText: 'Required',
+                hintMaxLines: 2,
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                border: OutlineInputBorder(),
+              ),
             ),
           ),
-        ),
-        TestId(
-          'v01-good-material-updates',
-          child: CheckboxListTile(
-            title: const Text('Send me updates'),
-            value: _updates,
-            onChanged: (v) => setState(() => _updates = v ?? false),
+          TestId(
+            'v01-good-material-updates',
+            child: CheckboxListTile(
+              title: const Text('Send me updates'),
+              value: _updates,
+              onChanged: (v) => setState(() => _updates = v ?? false),
+            ),
           ),
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TestId(
-            'v01-good-material-send',
-            child: OutlinedButton(onPressed: () {}, child: const Text('Send')),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TestId(
+              'v01-good-material-send',
+              child: OutlinedButton(
+                onPressed: () {},
+                child: const Text('Send'),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -235,7 +261,8 @@ class GoodCaption extends StatelessWidget {
 /// The same choice as `bad-colour-only`, as `RadioListTile`s in a
 /// `RadioGroup`: the chosen one's radio button is a filled ring and the
 /// others' are empty, so the choice is shown by a shape as well as by
-/// colour.
+/// colour. The list is under the theme with no ink splash (`WithoutSplash`,
+/// FL-515).
 class GoodSelection extends StatefulWidget {
   const GoodSelection({super.key});
 
@@ -248,22 +275,24 @@ class _GoodSelectionState extends State<GoodSelection> {
 
   @override
   Widget build(BuildContext context) {
-    return RadioGroup<CalendarView>(
-      groupValue: _view,
-      onChanged: (v) => setState(() => _view = v ?? _view),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text('Calendar view'),
-          for (final v in CalendarView.values)
-            TestId(
-              'v01-good-selection-${v.name}',
-              child: RadioListTile<CalendarView>(
-                value: v,
-                title: Text(v.title),
+    return WithoutSplash(
+      child: RadioGroup<CalendarView>(
+        groupValue: _view,
+        onChanged: (v) => setState(() => _view = v ?? _view),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text('Calendar view'),
+            for (final v in CalendarView.values)
+              TestId(
+                'v01-good-selection-${v.name}',
+                child: RadioListTile<CalendarView>(
+                  value: v,
+                  title: Text(v.title),
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

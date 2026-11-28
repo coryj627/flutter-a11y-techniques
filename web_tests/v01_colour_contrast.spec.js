@@ -32,36 +32,68 @@
 //   colours change only from left to right, both give the same colours. A
 //   letter that touched the region's edge would be left out; the tests
 //   would then find fewer text pixels, or none, and fail, not pass.
+//   The box found is the ink's own rectangle, not grown: Android's layer
+//   grows it by 2 pixels (the spec, section 6, says "grown by 2 pixels"),
+//   the web's and iOS's do not.
+// - The text's colour is the commonest text pixel; where two colours are
+//   equally common, the first met, columns left to right and each column
+//   top to bottom, as in the widget tests.
 // - A focused field draws a blinking cursor; each screenshot of a field is
 //   taken when the cursor is not drawn in it (caretFree), at most 3 s.
 // - The checkbox and the radio buttons have no element of their own (each
 //   is merged into its tile), so each is found as the shape drawn in the
 //   tile's control part (inkBox again), and the edge measure walks from 4
-//   logical pixels outside it. Every walk checks that it begins on the
-//   page's colour, and fails if not.
+//   logical pixels outside it (the widget tests walk from inside the
+//   Checkbox's or Radio's own rectangle). Every walk checks that it begins
+//   on the page's colour, and fails if not.
+// - bad-caption's dark end is read 8 logical pixels past the caption's ink
+//   box on the same line (the widget tests read 4 pixels inside the
+//   GridTileBar's right end); bad-colour-only's "nothing else drawn" leaves
+//   out the title's ink box grown by 2 logical pixels (the widget tests,
+//   its paragraph grown by 2 pixels).
 // - The light and dark modes are the browser's own setting
 //   (page.emulateMedia({ colorScheme })), which the app follows (it sets no
-//   themeMode); each test checks the media query matches and that the page
-//   is drawn in the mode's colour (#FBF8FF, #121318) before it measures,
-//   and after it sets light again checks that the page is drawn light.
+//   themeMode). Each test reads the scheme the page had first, sets the
+//   mode, checks that the media query matches and that the page is drawn in
+//   the mode's colour (#FBF8FF, #121318) before it measures, and afterwards,
+//   pass or fail, sets back the scheme it read and checks the media query
+//   and the page's colour again.
 //
 // States: every example at rest, light and dark; then, for the good
 // examples' texts, light and dark: keyboard focus on each control, a mouse
 // hover, focus and hover together, and a mouse button held down, measured
-// at 300 ms (as the widget tests hold a finger) and at 2 s (once the
-// press's ripple, InkRipple, which spreads over 1 s, covers the control).
+// after 2 s and after 4 s, each from a steady screenshot, the two required
+// to agree.
 // Focus is by Tab, except good-selection's Day, which no Tab or Shift+Tab
 // reaches (measured below): it is focused by Up from Week, which chooses it
-// too. The mouse is moved off every control before each keyboard step
-// (FL-484). The text cursor of a focused field is not measured (it is not
-// text, and it blinks).
+// too, and Down puts the choice back on Week. The mouse is moved off every
+// control before each keyboard step (FL-484). The text cursor of a focused
+// field is not measured (it is not text, and it blinks).
+//
+// Each state is shown set before a pixel is read, by a witness that is not
+// the measured text: focus by the page's focus (document.activeElement); a
+// hover by the mouse cursor Flutter sets on the page's body for the control
+// under the mouse ("text" over a field, "pointer" over a button or a tile;
+// none over nothing), since a Cupertino field draws nothing on a hover; a
+// press by the focus a mouse button pressed on a control gives it, which it
+// did not have before, and the cursor. A choice or a check is shown by the
+// element's state in the tree, and a mode by the page's colour. Each state
+// is then undone: the mouse is moved off the control before the button is
+// let go (so the press is no click: nothing is checked or chosen), focus is
+// moved to Back with Shift+Tab, a choice or a check is put back as it was;
+// and the undoing is checked: no cursor, focus on Back, the state in the
+// tree as at first, and every pixel of the control and its texts as in the
+// screenshot at rest. Every measure is taken from two screenshots, 250 ms
+// apart, that agree in every pixel of what is measured (steadyShot), so
+// that no state still moving is measured.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
 import {
-  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, collectWalk, endRow, helpRole, judgeCollectedWalk, judgeExampleWalk, startRow,
-  judgeTranscript, runWalks, screenStops, spokenRole, transcriptRow, unresolvedRow,
+  BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, TRANSCRIPT_ROWS, VO_HELP, collectWalk, endRow, helpRole,
+  judgeCollectedWalk, judgeExampleWalk, judgeTranscript, judgeWalk, positionsRow, runWalks, screenStops, spokenRole,
+  spokenText, startRow, stopsOf, stopsText, transcriptRow, unresolvedRow, walkLogLines, witnessBackHolds,
 } from './vo/v01_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
@@ -75,6 +107,21 @@ test.use({ viewport: { width: 400, height: 800 }, deviceScaleFactor: DPR });
 const MODES = ['light', 'dark'];
 /** The page's colour in each mode: the scheme's surface. */
 const PAGE = { light: 0xfbf8ff, dark: 0x121318 };
+
+// The thresholds, as each criterion is written. No text in these examples
+// is large text (18 point, or 14 point bold), and none is disabled, so
+// 1.4.3's 3:1 for large text and its exception for inactive components do
+// not apply.
+/** 1.4.3 Contrast (Minimum): text against its background. */
+const TEXT = { min: 4.5, sc: '1.4.3, 4.5:1' };
+/** 1.4.11 Non-text Contrast: a control's boundary, its state marks, against what is next to them. */
+const NON_TEXT = { min: 3, sc: '1.4.11, 3:1' };
+/**
+ * 1.4.1 Use of Color: colour must not be the only visual means of showing
+ * a state; Understanding 1.4.1 counts a lightness difference of 3:1 or more
+ * between the colours as more than colour (the spec, section 3, R6).
+ */
+const USE_OF_COLOR = { min: 3, sc: '1.4.1, 3:1 lightness difference' };
 /** The part of the page every screenshot takes, in logical pixels. */
 const CLIP = { x: 0, y: 0, width: 400, height: 440 };
 
@@ -189,8 +236,10 @@ function textContrast(s, box) {
     }
   }
   expect(textPixels, `no text found in ${JSON.stringify(box)}`).toBeGreaterThan(20);
+  // The commonest; of two as common, the first met (the Map keeps the order
+  // the pixels were met in), as the widget tests' reduce keeps the first.
   let colour = 0, most = -1;
-  for (const [c, n] of counts) if (n > most || (n === most && c < colour)) { colour = c; most = n; }
+  for (const [c, n] of counts) if (n > most) { colour = c; most = n; }
   let lowest = Infinity, under = 0;
   for (let x = l; x <= r; x++) {
     let has = false;
@@ -298,6 +347,42 @@ async function shotWithoutCaret(page, regions) {
   throw new Error('a text cursor stayed drawn for 3 s');
 }
 
+/** The pixels of `regions` (logical) where `s` differs from `base` by more than `by` in some channel. */
+function changedIn(s, base, regions, by = 12) {
+  let n = 0;
+  const seen = new Set();
+  for (const region of regions) {
+    const a = px(region);
+    for (let y = Math.max(0, Math.floor(a.top)); y < Math.min(s.height, Math.ceil(a.bottom)); y++) {
+      for (let x = Math.max(0, Math.floor(a.left)); x < Math.min(s.width, Math.ceil(a.right)); x++) {
+        const i = y * s.width + x;
+        if (seen.has(i)) continue;
+        seen.add(i);
+        if (diff(s.at(x, y), base.at(x, y)) > by) n++;
+      }
+    }
+  }
+  return n;
+}
+
+/**
+ * A screenshot to measure: the later of two in a row, 250 ms apart, each
+ * with no text cursor drawn in `caret` (logical regions), that agree in
+ * every pixel of `regions` (logical), so that what is measured is no longer
+ * moving. Fails if no two agree within 5 s.
+ */
+async function steadyShot(page, regions, caret = []) {
+  const take = () => (caret.length ? shotWithoutCaret(page, caret) : shot(page));
+  let last = await take();
+  for (let i = 0; i < 20; i++) {
+    await page.waitForTimeout(250);
+    const now = await take();
+    if (changedIn(now, last, regions, 0) === 0) return now;
+    last = now;
+  }
+  throw new Error(`what is measured did not stay still for 250 ms within 5 s: ${JSON.stringify(regions)}`);
+}
+
 /**
  * The edge measure (section 6, item 2; _edge in the widget tests): from the
  * pixel (x0, y0), outside the control, `steps` pixels in the direction
@@ -371,27 +456,72 @@ function shapeIn(s, region, what) {
 /** Moves the mouse to the bottom right of the page, over nothing. */
 const park = (page) => page.mouse.move(398, 798);
 
+/** The colour scheme the page's media query matches now: "light" or "dark". */
+const schemeOf = (page) => page.evaluate(() => (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
+/** page -> the colour scheme it had before openIn set one, and whether the example opened. */
+const before = new WeakMap();
+
 /**
- * Sets the browser's colour scheme to `mode`, opens `slug`, and checks that
- * the media query matches and that the page is drawn in the mode's colour.
+ * Reads the browser's colour scheme, sets it to `mode`, opens `slug`, and
+ * checks that the media query matches and that the page is drawn in the
+ * mode's colour.
  */
 async function openIn(page, slug, mode) {
+  before.set(page, { scheme: await schemeOf(page), opened: false });
   await page.emulateMedia({ colorScheme: mode });
   await open(page, slug);
+  before.get(page).opened = true;
   await park(page);
   expect(await page.evaluate((m) => matchMedia(`(prefers-color-scheme: ${m})`).matches, mode), `the media query matches ${mode}`).toBe(true);
   await expect.poll(async () => hex(pageColour(await shot(page))), { message: `the page is drawn ${mode}` }).toBe(hex(PAGE[mode]));
 }
 
-/** Sets the colour scheme back to light, Playwright's default, and checks it took. */
+/**
+ * Sets the colour scheme back to the one openIn read, and checks it took:
+ * the media query, and, once the example had opened, the page's colour.
+ * Run after every test, pass or fail.
+ */
 async function restore(page) {
-  await page.emulateMedia({ colorScheme: 'light' });
-  expect(await page.evaluate(() => matchMedia('(prefers-color-scheme: light)').matches), 'the media query matches light again').toBe(true);
-  await expect.poll(async () => hex(pageColour(await shot(page))), { message: 'the page is drawn light again' }).toBe(hex(PAGE.light));
+  const was = before.get(page);
+  if (!was) return;
+  before.delete(page);
+  await page.emulateMedia({ colorScheme: was.scheme });
+  expect(await schemeOf(page), `the media query matches ${was.scheme} again`).toBe(was.scheme);
+  if (was.opened) {
+    await expect.poll(async () => hex(pageColour(await shot(page))), { message: `the page is drawn ${was.scheme} again` }).toBe(hex(PAGE[was.scheme]));
+  }
 }
 
 /** Whether keyboard focus is on `locator`'s element or inside it. */
 const hasFocus = (locator) => locator.evaluate((e) => e.contains(document.activeElement));
+
+/**
+ * The mouse cursor Flutter has set for what is under the mouse: the page's
+ * body's cursor style, "text" over a field, "pointer" over a button or a
+ * tile, "" over nothing (seen in Chromium with this build). The witness of
+ * a hover: Flutter's own record of the control under the mouse.
+ */
+const cursorOf = (page) => page.evaluate(() => document.body.style.cursor);
+
+/** The screen's Back button. */
+const backButton = (page) => page.getByRole('button', { name: 'Back', exact: true });
+
+/**
+ * Moves focus to Back with Shift+Tab, the mouse off every control, and
+ * checks it is there: how a test undoes a focus, a keyboard one or the one a
+ * mouse press gives.
+ */
+async function focusBack(page) {
+  await park(page);
+  for (let i = 0; i < 12 && !(await hasFocus(backButton(page))); i++) {
+    const was = await page.evaluateHandle(() => document.activeElement);
+    await page.keyboard.press('Shift+Tab');
+    await page.waitForFunction((e) => document.activeElement !== e, was, { timeout: 1000 }).catch(() => {});
+    await page.waitForTimeout(100);
+  }
+  expect(await hasFocus(backButton(page)), 'focus is back on Back').toBe(true);
+}
 
 /** Presses Tab until focus is on `locator`, at most 12 times, the mouse off every control. */
 async function focusByTab(page, locator) {
@@ -653,6 +783,15 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
 /** Logs one measure, as the widget tests print theirs. */
 const report = (slug, what, state, mode, m) => console.log(`V01 web ${slug} ${what} ${state} ${mode}: ${m.text}`);
 
+/** The whole of every screenshot, in logical pixels. */
+const WHOLE = { left: 0, top: 0, right: CLIP.width, bottom: CLIP.height };
+
+/** Expects a text's measure to meet 1.4.3's 4.5:1. */
+const expectText = (m, what) => expect(m.lowest, `${TEXT.sc}: "${what}": ${m.text}`).toBeGreaterThanOrEqual(TEXT.min);
+
+/** Expects an edge's contrast `q` (one side of the walk `e`) to meet 1.4.11's 3:1. */
+const expectNonText = (q, what, e) => expect(q, `${NON_TEXT.sc}: ${what}: ${e.text}`).toBeGreaterThanOrEqual(NON_TEXT.min);
+
 for (const mode of MODES) {
   test.describe(`at rest, ${mode}`, () => {
     test.afterEach(async ({ page }) => restore(page));
@@ -664,7 +803,7 @@ for (const mode of MODES) {
       const tile = await rectOf(control(page, slug, 'updates'));
       const send = await rectOf(control(page, slug, 'send'));
       const body = await rectOf(page.getByText('We reply within two days.', { exact: true }));
-      const s = await shotWithoutCaret(page, [outlinedInside(field)]);
+      const s = await steadyShot(page, [WHOLE], [outlinedInside(field)]);
       for (const [t, m] of [
         ['We reply within two days.', textContrast(s, px(body))],
         ['Email', textIn(s, outlinedLabel(field))],
@@ -673,44 +812,51 @@ for (const mode of MODES) {
         ['Send', textIn(s, buttonInside(send, 12, 4))],
       ]) {
         report(slug, `"${t}"`, 'rest', mode, m);
-        expect(m.lowest, `"${t}": ${m.text}`).toBeGreaterThanOrEqual(4.5);
+        expectText(m, t);
       }
       const e = edge(s, field.left * DPR - 12, field.cy * DPR, 1, 0, 30);
       report(slug, 'field', 'rest', mode, e);
       expectOnPage(e, mode, 'field');
-      expect(e.outside, `field ${e.text}`).toBeGreaterThanOrEqual(3);
+      expectNonText(e.outside, 'the field\'s edge against the page', e);
       const box = shapeIn(s, tileCheckbox(tile), 'the checkbox');
       const boxEdge = edge(s, (box.right + 4) * DPR, box.cy * DPR, -1, 0, 30);
       report(slug, 'checkbox', 'rest', mode, boxEdge);
       expectOnPage(boxEdge, mode, 'checkbox');
-      expect(boxEdge.outside, `box ${boxEdge.text}`).toBeGreaterThanOrEqual(3);
+      expectNonText(boxEdge.outside, 'the checkbox\'s border against the page', boxEdge);
       const outline = edge(s, send.left * DPR - 6, send.cy * DPR, 1, 0, 30);
       report(slug, 'outline', 'rest', mode, outline);
       expectOnPage(outline, mode, 'outline');
-      expect(outline.outside, `outline ${outline.text}`).toBeGreaterThanOrEqual(3);
+      expectNonText(outline.outside, 'the button\'s outline against the page', outline);
     });
 
-    test('good-material: the checkbox checked, its fill 3:1 or more against the page and its mark 3:1 or more against the fill', async ({ page }) => {
+    test('good-material: the checkbox checked, its fill 3:1 or more against the page and its mark 3:1 or more against the fill; unchecked again after', async ({ page }) => {
       const slug = 'good-material';
       await openIn(page, slug, mode);
       const updates = control(page, slug, 'updates');
+      await expect(updates).not.toBeChecked();
       await updates.click();
+      // The witness: the checkbox's state in the tree. The click's focus is
+      // moved to Back, so that what is measured is checked, not focused.
       await expect(updates).toBeChecked();
-      await park(page);
-      await page.waitForTimeout(800);
+      await focusBack(page);
       const tile = await rectOf(updates);
-      const s = await shot(page);
+      const s = await steadyShot(page, [WHOLE]);
       const box = shapeIn(s, tileCheckbox(tile), 'the checkbox');
       const fill = edge(s, (box.right + 4) * DPR, box.cy * DPR, -1, 0, 30);
       report(slug, 'checked fill', 'rest', mode, fill);
       expectOnPage(fill, mode, 'fill');
-      expect(fill.outside, `fill ${fill.text}`).toBeGreaterThanOrEqual(3);
+      expectNonText(fill.outside, 'the checked fill against the page', fill);
       const mark = marks(s, { left: box.cx - 5, top: box.cy - 5, right: box.cx + 5, bottom: box.cy + 5 }, fill.edge);
       console.log(`V01 web ${slug} checked mark rest ${mode}: ${mark} pixels 3:1 or more against ${hex(fill.edge)}`);
-      expect(mark, 'a mark 3:1 or more on the fill').toBeGreaterThan(30);
+      expect(mark, `${NON_TEXT.sc}: a mark 3:1 or more against the fill ${hex(fill.edge)}`).toBeGreaterThan(30);
       const m = textIn(s, tileTitle(tile));
       report(slug, '"Send me updates" checked', 'rest', mode, m);
-      expect(m.lowest, m.text).toBeGreaterThanOrEqual(4.5);
+      expectText(m, 'Send me updates');
+      // Undone: unchecked again, and the page's focus off the tile.
+      await updates.click();
+      await expect(updates).not.toBeChecked();
+      await focusBack(page);
+      expect(await hasFocus(updates), 'the tile no longer has focus').toBe(false);
     });
 
     test('good-cupertino: the label, the placeholder, and the button\'s text 4.5:1 or more; the field\'s edge 3:1 or more against the page and the field', async ({ page }) => {
@@ -718,65 +864,79 @@ for (const mode of MODES) {
       await openIn(page, slug, mode);
       const field = await rectOf(control(page, slug, 'email'));
       const send = await rectOf(control(page, slug, 'send'));
-      const s = await shotWithoutCaret(page, [cupertinoInside(field)]);
+      const s = await steadyShot(page, [WHOLE], [cupertinoInside(field)]);
       for (const [t, m] of [
         ['Email', textIn(s, labelAbove(field))],
         ['Required', textIn(s, cupertinoInside(field))],
         ['Send', textIn(s, buttonInside(send, 10, 8))],
       ]) {
         report(slug, `"${t}"`, 'rest', mode, m);
-        expect(m.lowest, `"${t}": ${m.text}`).toBeGreaterThanOrEqual(4.5);
+        expectText(m, t);
       }
       const e = edge(s, field.left * DPR - 6, field.cy * DPR, 1, 0, 18);
       report(slug, 'field', 'rest', mode, e);
       expectOnPage(e, mode, 'field');
-      expect(e.outside, e.text).toBeGreaterThanOrEqual(3);
-      expect(e.inside, e.text).toBeGreaterThanOrEqual(3);
+      expectNonText(e.outside, 'the field\'s edge against the page', e);
+      expectNonText(e.inside, 'the field\'s edge against the field', e);
     });
 
     test('good-caption: the caption 4.5:1 or more over the whole picture', async ({ page }) => {
       const slug = 'good-caption';
       await openIn(page, slug, mode);
-      const s = await shot(page);
+      const s = await steadyShot(page, [WHOLE]);
       const m = textContrast(s, px(await rectOf(page.getByText('Harbour', { exact: true }))));
       report(slug, '"Harbour"', 'rest', mode, m);
-      expect(m.lowest, m.text).toBeGreaterThanOrEqual(4.5);
+      expectText(m, 'Harbour');
     });
 
-    test('good-selection: each option 4.5:1 or more, each radio button\'s ring 3:1 or more, only the chosen one has a dot; a click on Day moves the dot', async ({ page }) => {
+    test('good-selection: each option 4.5:1 or more, each radio button\'s ring 3:1 or more, only the chosen one has a dot; a click on Day moves the dot, and one on Week moves it back', async ({ page }) => {
       const slug = 'good-selection';
       await openIn(page, slug, mode);
+      const radio = (v) => control(page, slug, v.toLowerCase());
       const dots = async (when) => {
-        const s = await shot(page);
+        const s = await steadyShot(page, [WHOLE]);
         const out = {};
         for (const v of ['Day', 'Week', 'Month']) {
-          const tile = await rectOf(control(page, slug, v.toLowerCase()));
+          const tile = await rectOf(radio(v));
           const ring = shapeIn(s, radioRing(tile), `${v}'s radio button`);
           const e = edge(s, (ring.left - 4) * DPR, ring.cy * DPR, 1, 0, Math.round((4 + (ring.right - ring.left) / 2) * DPR));
           report(slug, `${v} ring ${when}`, 'rest', mode, e);
           expectOnPage(e, mode, `${v} ring`);
-          expect(e.outside, `${v} ring ${e.text}`).toBeGreaterThanOrEqual(3);
+          expectNonText(e.outside, `${v}'s ring against the page`, e);
           const title = textIn(s, radioTitle(tile));
           report(slug, `"${v}" ${when}`, 'rest', mode, title);
-          expect(title.lowest, `${v}: ${title.text}`).toBeGreaterThanOrEqual(4.5);
+          expectText(title, v);
           // The dot: the middle of the ring, 4 logical pixels each way.
           out[v] = marks(s, { left: ring.cx - 4, top: ring.cy - 4, right: ring.cx + 4, bottom: ring.cy + 4 }, PAGE[mode]);
         }
         console.log(`V01 web ${slug} dots ${when} ${mode}: ${JSON.stringify(out)}`);
         return out;
       };
-      const before = await dots('before');
-      expect(before.Week, JSON.stringify(before)).toBeGreaterThan(100);
-      expect(before.Day, JSON.stringify(before)).toBe(0);
-      expect(before.Month, JSON.stringify(before)).toBe(0);
-      await control(page, slug, 'day').click();
-      await expect(control(page, slug, 'day')).toBeChecked();
-      await park(page);
-      await page.waitForTimeout(800);
+      // The dot is a mark of 1.4.11 (the state of the radio button), 3:1 or
+      // more against the page, and the only sign of the choice but the
+      // colour (1.4.1).
+      const dotMessage = (o) => `${NON_TEXT.sc}, the chosen radio button's dot against the page: ${JSON.stringify(o)}`;
+      await expect(radio('Week')).toBeChecked();
+      const first = await dots('before');
+      expect(first.Week, dotMessage(first)).toBeGreaterThan(100);
+      expect(first.Day, dotMessage(first)).toBe(0);
+      expect(first.Month, dotMessage(first)).toBe(0);
+      // The witness of the new choice: Day's state in the tree. The click's
+      // focus is moved to Back before the measure.
+      await radio('Day').click();
+      await expect(radio('Day')).toBeChecked();
+      await focusBack(page);
       const after = await dots('after');
-      expect(after.Day, JSON.stringify(after)).toBeGreaterThan(100);
-      expect(after.Week, JSON.stringify(after)).toBe(0);
-      expect(after.Month, JSON.stringify(after)).toBe(0);
+      expect(after.Day, dotMessage(after)).toBeGreaterThan(100);
+      expect(after.Week, dotMessage(after)).toBe(0);
+      expect(after.Month, dotMessage(after)).toBe(0);
+      // Undone: Week chosen again, its dot back.
+      await radio('Week').click();
+      await expect(radio('Week')).toBeChecked();
+      await focusBack(page);
+      const back = await dots('back');
+      expect(back.Week, dotMessage(back)).toBeGreaterThan(100);
+      expect(back.Day, dotMessage(back)).toBe(0);
     });
 
     // --- Bad examples: each defect, measured, written to fail if Flutter
@@ -786,49 +946,51 @@ for (const mode of MODES) {
       const slug = 'bad-cupertino-placeholder';
       await openIn(page, slug, mode);
       const field = await rectOf(control(page, slug, 'email'));
-      const s = await shotWithoutCaret(page, [cupertinoInside(field)]);
+      const s = await steadyShot(page, [WHOLE], [cupertinoInside(field)]);
       const placeholder = textIn(s, cupertinoInside(field));
       report(slug, '"Required"', 'rest', mode, placeholder);
-      expect(placeholder.lowest, placeholder.text).toBeLessThan(4.5);
+      expect(placeholder.lowest, `the defect, under ${TEXT.sc}: ${placeholder.text}`).toBeLessThan(TEXT.min);
       expect(placeholder.lowest, `the placeholder is drawn: ${placeholder.text}`).toBeGreaterThan(1.2);
       const label = textIn(s, labelAbove(field));
       report(slug, '"Email"', 'rest', mode, label);
-      expect(label.lowest, label.text).toBeGreaterThanOrEqual(4.5);
+      expectText(label, 'Email');
       const e = edge(s, field.left * DPR - 6, field.cy * DPR, 1, 0, 18);
       report(slug, 'field', 'rest', mode, e);
       expectOnPage(e, mode, 'field');
-      expect(e.outside, e.text).toBeGreaterThanOrEqual(3);
+      expectNonText(e.outside, 'the field\'s edge against the page', e);
     });
 
     test('bad-caption: the caption under 4.5:1 over the pale part of the picture, in a colour 4.5:1 or more over its dark end', async ({ page }) => {
       const slug = 'bad-caption';
       await openIn(page, slug, mode);
-      const s = await shot(page);
+      const s = await steadyShot(page, [WHOLE]);
       const box = await rectOf(page.getByText('Harbour', { exact: true }));
       const whole = textContrast(s, px(box));
       report(slug, '"Harbour"', 'rest', mode, whole);
-      expect(whole.lowest, whole.text).toBeLessThan(4.5);
+      expect(whole.lowest, `the defect, under ${TEXT.sc}: ${whole.text}`).toBeLessThan(TEXT.min);
       expect(whole.lowest, `the caption is drawn: ${whole.text}`).toBeGreaterThan(1);
       // The dark end of the picture, at the right of the same bar, 8 past
       // the caption's box (the picture is 16 to 384).
       const dark = s.at(Math.round((box.right + 8) * DPR), Math.round(box.cy * DPR));
       console.log(`V01 web ${slug} dark end ${mode}: ${hex(dark)}, ${ratio(whole.colour, dark).toFixed(2)}:1 against the caption`);
-      expect(ratio(whole.colour, dark)).toBeGreaterThanOrEqual(4.5);
+      expect(ratio(whole.colour, dark), `the positive control, ${TEXT.sc}: the caption's colour over the dark end ${hex(dark)}`)
+        .toBeGreaterThanOrEqual(TEXT.min);
     });
 
-    test('bad-colour-only: the chosen title differs from the others by colour alone, under 3:1 against theirs; each 4.5:1 or more against the page; a click on Day moves the colour', async ({ page }) => {
+    test('bad-colour-only: the chosen title differs from the others by colour alone, under 3:1 against theirs; each 4.5:1 or more against the page; a click on Day moves the colour, and one on Week moves it back', async ({ page }) => {
       const slug = 'bad-colour-only';
       await openIn(page, slug, mode);
+      const tileOf = (v) => control(page, slug, v.toLowerCase());
       const titles = async (when) => {
-        const s = await shot(page);
+        const s = await steadyShot(page, [WHOLE]);
         const out = {};
         for (const v of ['Day', 'Week', 'Month']) {
-          const tile = await rectOf(control(page, slug, v.toLowerCase()));
+          const tile = await rectOf(tileOf(v));
           const box = inkBox(s, px(tileInside(tile)));
           expect(box, `${v}: nothing drawn`).not.toBeNull();
           const m = textContrast(s, box);
           report(slug, `"${v}" ${when}`, 'rest', mode, m);
-          expect(m.lowest, `${v}: ${m.text}`).toBeGreaterThanOrEqual(4.5);
+          expectText(m, v);
           out[v] = m;
           // Nothing but the title is drawn on the tile: every pixel of the
           // tile outside the title's box (2 logical pixels wider each way)
@@ -843,50 +1005,67 @@ for (const mode of MODES) {
               if (!inTitle && diff(s.at(x, y), corner) > 2) other++;
             }
           }
-          expect(other, `${v}: ${other} pixels besides the title`).toBe(0);
+          expect(other, `${USE_OF_COLOR.sc}: ${v}: ${other} pixels besides the title`).toBe(0);
         }
         return out;
       };
-      const before = await titles('before');
-      const chosen = before.Week.colour;
+      await expect(tileOf('Week')).toHaveAttribute('aria-current', 'true');
+      const first = await titles('before');
+      const chosen = first.Week.colour;
       for (const v of ['Day', 'Month']) {
-        const q = ratio(chosen, before[v].colour);
-        console.log(`V01 web ${slug} ${mode}: Week ${hex(chosen)} against ${v} ${hex(before[v].colour)} ${q.toFixed(2)}:1`);
-        expect(hex(before[v].colour)).not.toBe(hex(chosen));
-        expect(q, `Week against ${v}`).toBeLessThan(3);
+        const q = ratio(chosen, first[v].colour);
+        console.log(`V01 web ${slug} ${mode}: Week ${hex(chosen)} against ${v} ${hex(first[v].colour)} ${q.toFixed(2)}:1`);
+        expect(hex(first[v].colour)).not.toBe(hex(chosen));
+        expect(q, `the defect, under ${USE_OF_COLOR.sc}: Week against ${v}`).toBeLessThan(USE_OF_COLOR.min);
         expect(q, `Week against ${v}: the colours differ`).toBeGreaterThan(1);
       }
-      await control(page, slug, 'day').click();
-      await expect(control(page, slug, 'day')).toHaveAttribute('aria-current', 'true');
-      await park(page);
-      await page.waitForTimeout(800);
+      // The witness of the new choice: aria-current on Day. The click's
+      // focus is moved to Back before the measure.
+      await tileOf('Day').click();
+      await expect(tileOf('Day')).toHaveAttribute('aria-current', 'true');
+      await focusBack(page);
       const after = await titles('after');
       expect(hex(after.Day.colour), 'the colour moved to Day').toBe(hex(chosen));
-      expect(hex(after.Week.colour)).toBe(hex(before.Day.colour));
+      expect(hex(after.Week.colour)).toBe(hex(first.Day.colour));
+      // Undone: Week chosen again, in the tree and in its colour.
+      await tileOf('Week').click();
+      await expect(tileOf('Week')).toHaveAttribute('aria-current', 'true');
+      await expect(tileOf('Day')).toHaveAttribute('aria-current', 'false');
+      await focusBack(page);
+      const again = await titles('back');
+      expect(hex(again.Week.colour), 'the colour moved back to Week').toBe(hex(chosen));
     });
 
-    test('bad-faint-edge: the field\'s edge under 3:1 against the page at rest; with focus by Tab the same measure finds it 3:1 or more', async ({ page }) => {
+    test('bad-faint-edge: the field\'s edge under 3:1 against the page at rest; with focus by Tab the same measure finds it 3:1 or more, and under 3:1 again once focus leaves', async ({ page }) => {
       const slug = 'bad-faint-edge';
       await openIn(page, slug, mode);
       const locator = control(page, slug, 'email');
       const field = await rectOf(locator);
-      let s = await shot(page);
-      const rest = edge(s, field.left * DPR - 12, field.cy * DPR, 1, 0, 30);
+      const walk = (s) => edge(s, field.left * DPR - 12, field.cy * DPR, 1, 0, 30);
+      let s = await steadyShot(page, [WHOLE]);
+      const rest = walk(s);
       report(slug, 'field', 'rest', mode, rest);
       expectOnPage(rest, mode, 'field');
-      expect(rest.outside, rest.text).toBeLessThan(3);
+      expect(rest.outside, `the defect, under ${NON_TEXT.sc}: ${rest.text}`).toBeLessThan(NON_TEXT.min);
       expect(rest.outside, `the edge is drawn: ${rest.text}`).toBeGreaterThan(1.2);
       const label = textIn(s, outlinedLabel(field));
       report(slug, '"Email"', 'rest', mode, label);
-      expect(label.lowest, label.text).toBeGreaterThanOrEqual(4.5);
-      // The positive control: focus on the field, by Tab.
+      expectText(label, 'Email');
+      // The positive control: focus on the field, by Tab; its witness the
+      // page's focus.
+      expect(await hasFocus(locator), 'the field has no focus at first').toBe(false);
       expect(await focusByTab(page, locator), 'Tab reaches the field').toBe(true);
-      await page.waitForTimeout(800);
-      s = await shot(page);
-      const focused = edge(s, field.left * DPR - 12, field.cy * DPR, 1, 0, 30);
+      s = await steadyShot(page, [WHOLE], [outlinedInside(field)]);
+      expect(await hasFocus(locator), 'the field still has focus').toBe(true);
+      const focused = walk(s);
       report(slug, 'field', 'focused', mode, focused);
       expectOnPage(focused, mode, 'field focused');
-      expect(focused.outside, focused.text).toBeGreaterThanOrEqual(3);
+      expectNonText(focused.outside, 'the focused field\'s edge against the page', focused);
+      // Undone: focus on Back, and the edge as at rest.
+      await focusBack(page);
+      expect(await hasFocus(locator), 'the field no longer has focus').toBe(false);
+      const after = walk(await steadyShot(page, [WHOLE]));
+      expect(hex(after.edge), `the edge as at rest once focus leaves: ${after.text}`).toBe(hex(rest.edge));
     });
   });
 }
@@ -895,92 +1074,98 @@ for (const mode of MODES) {
 const focusLands = (locator) => expect.poll(() => hasFocus(locator), { timeout: 1000 }).toBe(true).then(() => true, () => false);
 
 /**
- * Puts keyboard focus on one of good-selection's radio buttons, called for
- * Day, Week, and Month in turn. Tab never reaches Day (the Tab cycle test
- * above), so Day is reached by Tab to Week and then Up, which chooses Day
- * as well (checked here); Week by Down from Day, which chooses Week again;
- * and Month by Tab from Week, which leaves Week chosen.
+ * Puts keyboard focus on one of good-selection's radio buttons, with Week
+ * chosen and focus on Back or nowhere. Tab never reaches Day (the Tab cycle
+ * test above), so Day is reached by Tab to Week and then Up, which chooses
+ * Day as well (checked here; unfocusRadio puts the choice back); Week by
+ * Tab; and Month by Tab past Week, which leaves Week chosen.
  */
 async function focusRadio(page, name) {
   const radio = (v) => control(page, 'good-selection', v);
-  if (name === 'month') return focusByTab(page, radio('month'));
-  if (name === 'day') {
-    if (!(await focusByTab(page, radio('week')))) return false;
-    await park(page);
-    await page.keyboard.press('ArrowUp');
-  } else {
-    await park(page);
-    await page.keyboard.press('ArrowDown');
-  }
-  if (!(await focusLands(radio(name)))) return false;
-  await expect(radio(name)).toBeChecked();
+  await expect(radio('week')).toBeChecked();
+  if (name !== 'day') return focusByTab(page, radio(name));
+  if (!(await focusByTab(page, radio('week')))) return false;
+  await park(page);
+  await page.keyboard.press('ArrowUp');
+  if (!(await focusLands(radio('day')))) return false;
+  await expect(radio('day')).toBeChecked();
   return true;
 }
 
+/**
+ * Undoes what focusRadio did beyond the focus: after Day, Down chooses Week
+ * again (checked, with focus on Week). Focus is then moved to Back.
+ */
+async function unfocusRadio(page, name) {
+  const radio = (v) => control(page, 'good-selection', v);
+  if (name === 'day') {
+    await park(page);
+    await page.keyboard.press('ArrowDown');
+    expect(await focusLands(radio('week')), 'Down from Day reaches Week').toBe(true);
+  }
+  await expect(radio('week')).toBeChecked();
+  await focusBack(page);
+}
+
 // The good examples' texts in each state. For each control in turn: the
-// state is set, the drawing left 800 ms to settle, the control's texts
-// measured, and the state undone (the button let go, the mouse parked).
-// A press is measured twice while it is held: at 300 ms, as the widget
-// tests do with a finger, and at 2 s, once the press's ripple (InkRipple,
-// which spreads over 1 s) and highlight cover the control. Every text is
-// measured and logged in every state (soft expectations), and the test
-// fails if any is under 4.5:1.
+// control is checked to be as at rest (no focus on it, no mouse cursor, and
+// every pixel of it and its texts as in the screenshot at rest); the state
+// is set and shown set (the header says by what); the control's texts are
+// measured; and the state is undone and shown undone the same way. A press
+// is measured twice while it is held, after 2 s and after 4 s, each from
+// two screenshots that agree (steadyShot), and the two readings must be
+// the same. Every other state is measured from two screenshots that agree.
+// Every text is measured and logged in every state
+// (soft expectations), and the test fails if any is under 4.5:1 (1.4.3).
+// `cursor` is the mouse cursor Flutter sets over the control.
 const STATE_CONTROLS = {
   'good-material': [
-    { name: 'email', texts: (r) => ({ Email: outlinedLabel(r), Required: outlinedInside(r) }), caret: outlinedInside },
-    { name: 'updates', texts: (r) => ({ 'Send me updates': tileTitle(r) }) },
-    { name: 'send', texts: (r) => ({ Send: buttonInside(r, 12, 4) }) },
+    { name: 'email', cursor: 'text', texts: (r) => ({ Email: outlinedLabel(r), Required: outlinedInside(r) }), caret: outlinedInside },
+    { name: 'updates', cursor: 'pointer', texts: (r) => ({ 'Send me updates': tileTitle(r) }), checkbox: true },
+    { name: 'send', cursor: 'pointer', texts: (r) => ({ Send: buttonInside(r, 12, 4) }) },
   ],
   'good-cupertino': [
-    { name: 'email', texts: (r) => ({ Email: labelAbove(r), Required: cupertinoInside(r) }), caret: cupertinoInside },
-    { name: 'send', texts: (r) => ({ Send: buttonInside(r, 10, 8) }) },
+    { name: 'email', cursor: 'text', texts: (r) => ({ Email: labelAbove(r), Required: cupertinoInside(r) }), caret: cupertinoInside },
+    { name: 'send', cursor: 'pointer', texts: (r) => ({ Send: buttonInside(r, 10, 8) }) },
   ],
   'good-selection': ['Day', 'Week', 'Month'].map((v) => ({
-    name: v.toLowerCase(), texts: (r) => ({ [v]: radioTitle(r) }), focus: (page) => focusRadio(page, v.toLowerCase()),
+    name: v.toLowerCase(),
+    cursor: 'pointer',
+    texts: (r) => ({ [v]: radioTitle(r) }),
+    focus: (page) => focusRadio(page, v.toLowerCase()),
+    unfocus: (page) => unfocusRadio(page, v.toLowerCase()),
   })),
 };
 const STATE_NAMES = ['focused', 'hovered', 'focused and hovered', 'pressed'];
 
-// FL-515: on the web, a press held with the mouse lowers some of the good
-// examples' texts under 4.5:1 (the highlight, the hover, and the ripple
-// over the control; the cause was not measured). These were measured under
-// 4.5:1 in every run (docs/evidence/probes/v01/web_pressed.txt), and are
-// asserted under it, so that the test fails when Flutter changes; every
-// other text in every state is asserted 4.5:1 or more. Two readings at
-// 0.3 s are only logged, as they are taken while the ripple is still
-// spreading and moved across the threshold between runs: good-material's
-// "Send" in light mode (4.52:1) and its "Send me updates" in dark mode
-// (4.25:1 in two runs, 4.65:1 in a third). At 2 s each reading was the same
-// as at 4 s.
-const FL515 = new Set([
-  'good-material|send|pressed 2 s|light',
-  'good-material|updates|pressed 2 s|dark',
-  'good-selection|day|pressed 2 s|dark',
-  'good-selection|week|pressed 2 s|dark',
-  'good-selection|month|pressed 2 s|dark',
-]);
-const LOGGED_ONLY = new Set([
-  'good-material|send|pressed 0.3 s|light',
-  'good-material|updates|pressed 0.3 s|dark',
-]);
-
+// A press is a mouse button held on the control. good-material and
+// good-selection are under the theme with no ink splash (WithoutSplash, for
+// FL-515): with the default splash, a press held on their button and tiles
+// took a text under 4.5:1 (docs/evidence/probes/v01/probe3_web.txt). The
+// press is measured once it has settled: a steady screenshot (two agreeing
+// 250 ms apart) after 2 s held, and another after 4 s, which must agree
+// with it; both are asserted.
 for (const mode of MODES) {
   test.describe(`the good examples' texts in each state, ${mode}`, () => {
     test.afterEach(async ({ page }) => restore(page));
 
     for (const [slug, controls] of Object.entries(STATE_CONTROLS)) {
       for (const state of STATE_NAMES) {
-        test(`${slug}: each control's text 4.5:1 or more when ${state}${state === 'pressed' ? ', but for FL-515' : ''}`, async ({ page }) => {
+        test(`${slug}: each control's text 4.5:1 or more when ${state}`, async ({ page }) => {
+          // A press is held 4 s on each control.
+          if (state === 'pressed') test.setTimeout(120_000);
           await openIn(page, slug, mode);
           // Each text's rectangle is found at rest, with nothing focused,
           // hovered, or pressed: a state's overlay, and a press's ripple
           // part way across, can join the letters to shapes that touch the
           // region's edge. The texts do not move in any of these states.
-          const rest = await shot(page);
+          const rest = await steadyShot(page, [WHOLE]);
           const found = {};
           for (const c of controls) {
-            found[c.name] = { r: await rectOf(control(page, slug, c.name)), boxes: {} };
-            for (const [t, region] of Object.entries(c.texts(found[c.name].r))) {
+            const r = await rectOf(control(page, slug, c.name));
+            const regions = c.texts(r);
+            found[c.name] = { r, boxes: {}, around: [r, ...Object.values(regions)] };
+            for (const [t, region] of Object.entries(regions)) {
               const box = inkBox(rest, px(region));
               expect(box, `${c.name} "${t}": nothing drawn at rest`).not.toBeNull();
               found[c.name].boxes[t] = box;
@@ -988,42 +1173,72 @@ for (const mode of MODES) {
           }
           for (const c of controls) {
             const locator = control(page, slug, c.name);
-            const { r, boxes } = found[c.name];
+            const { r, boxes, around } = found[c.name];
             expect(await rectOf(locator), `${c.name} did not move`).toEqual(r);
-            const measure = async (when) => {
-              const s = c.caret ? await shotWithoutCaret(page, [c.caret(r)]) : await shot(page);
+            const caret = c.caret ? [c.caret(r)] : [];
+            // As at rest: what the last control's undoing is checked by too.
+            const asAtRest = async (when) => {
+              await expect.poll(async () => {
+                const s = caret.length ? await shotWithoutCaret(page, caret) : await shot(page);
+                return { focus: await hasFocus(locator), cursor: await cursorOf(page), changed: changedIn(s, rest, around) };
+              }, { message: `${c.name} ${when}: no focus, no cursor, and drawn as at rest`, timeout: 3000 })
+                .toEqual({ focus: false, cursor: '', changed: 0 });
+              if (c.checkbox) await expect(locator, `${c.name} ${when}: not checked`).not.toBeChecked();
+              if (slug === 'good-selection') await expect(control(page, slug, 'week'), `${when}: Week chosen`).toBeChecked();
+            };
+            const measure = (s, when) => {
               for (const [t, box] of Object.entries(boxes)) {
                 const m = textContrast(s, box);
                 report(slug, `${c.name} "${t}"`, when, mode, m);
-                const key = `${slug}|${c.name}|${when}|${mode}`;
-                if (LOGGED_ONLY.has(key)) continue;
-                if (FL515.has(key)) {
-                  expect.soft(m.lowest, `FL-515 ${c.name} "${t}" ${when}: ${m.text}`).toBeLessThan(4.5);
-                  expect.soft(m.lowest, `${c.name} "${t}" ${when} drawn`).toBeGreaterThan(1.5);
-                } else {
-                  expect.soft(m.lowest, `${c.name} "${t}" ${when}: ${m.text}`).toBeGreaterThanOrEqual(4.5);
-                }
+                expect.soft(m.lowest, `${TEXT.sc}: ${c.name} "${t}" ${when}: ${m.text}`).toBeGreaterThanOrEqual(TEXT.min);
+                readings[`${t} ${when}`] = m.text;
               }
             };
+            const readings = {};
+            // Shows each part of the state set, by its witness.
+            const witness = async (when) => {
+              if (state.includes('focused') || state === 'pressed') {
+                expect(await hasFocus(locator), `${c.name} ${when}: the page's focus is on it`).toBe(true);
+              }
+              if (state.includes('hovered') || state === 'pressed') {
+                expect(await cursorOf(page), `${c.name} ${when}: Flutter's cursor for it`).toBe(c.cursor);
+              }
+            };
+            await asAtRest('before');
             if (state.includes('focused')) {
               expect(await (c.focus ?? ((p) => focusByTab(p, locator)))(page), `focus reaches ${c.name}`).toBe(true);
             }
-            if (state.includes('hovered')) await page.mouse.move(r.cx, r.cy);
-            if (state === 'pressed') {
+            if (state.includes('hovered') || state === 'pressed') {
               await page.mouse.move(r.cx, r.cy);
+              await expect.poll(() => cursorOf(page), { message: `${c.name}: Flutter's cursor for it`, timeout: 2000 }).toBe(c.cursor);
+            }
+            if (state === 'pressed') {
               await page.mouse.down();
-              await page.waitForTimeout(300);
-              await measure('pressed 0.3 s');
-              await page.waitForTimeout(1700);
-              await measure('pressed 2 s');
+              await page.waitForTimeout(2000);
+              // A mouse button pressed on a control gives it focus, which it
+              // did not have before (asAtRest).
+              await witness('pressed 2 s');
+              measure(await steadyShot(page, around, caret), 'pressed 2 s');
+              await page.waitForTimeout(2000);
+              await witness('pressed 4 s');
+              measure(await steadyShot(page, around, caret), 'pressed 4 s');
+              for (const t of Object.keys(boxes)) {
+                expect.soft(readings[`${t} pressed 4 s`], `${c.name} "${t}": the press had settled by 2 s`)
+                  .toBe(readings[`${t} pressed 2 s`]);
+              }
+              // Off the control before the button is let go: no click.
+              await park(page);
               await page.mouse.up();
             } else {
-              await page.waitForTimeout(800);
-              if (state.includes('focused')) expect(await hasFocus(locator), `${c.name} still has focus`).toBe(true);
-              await measure(state);
+              await witness(state);
+              const s = await steadyShot(page, around, caret);
+              await witness(state);
+              measure(s, state);
             }
+            // Undone, and shown undone.
             await park(page);
-            await page.waitForTimeout(400);
+            if (state.includes('focused') || state === 'pressed') await (c.unfocus ?? focusBack)(page);
+            await asAtRest('after');
           }
         });
       }
@@ -1031,18 +1246,52 @@ for (const mode of MODES) {
   });
 }
 
-const VO_HELP_PREFIX = /^You are currently on /;
 
-// The VoiceOver judge (web_tests/vo/v01_vo_walks.js, S16's), on made-up
-// walks. Each test names every case it holds, and fails on the first case
+// --- The web VoiceOver judge ----------------------------------------------
+//
+// S16's tests of its walk and judge (web_tests/s16_language_page_parts.spec.js
+// on main), with the S08 to S12 judge update's (s12_hiding_content.spec.js on
+// branch origin/web-vo-judges-s08-s12): the positions row, a stop's " / "
+// escaped, both wordings of VoiceOver's help message, and the end witness's
+// move back reading that help. Drawn on V01's screens. VO_SLUG is the
+// example the made-up walks are drawn on; WRONG_TITLE is another V01
+// example's title, read where VO_SLUG's is expected; TIED is a help message
+// that the positions tie to the stop before it (helpAfterStop), at `after`
+// in the whole screen of `slug`.
+const VO_SLUG = 'bad-colour-only';
+const WRONG_TITLE = `heading level 1 ${EXAMPLE_SCREENS['bad-faint-edge'][0]}`;
+const BUTTON_HELP = 'You are currently on a button, inside of web content. To click this button, press Control-Option-Space.';
+const TIED = {
+  slug: VO_SLUG,
+  // Day's button: the screen's own stops, the heading, "Calendar view", Day.
+  after: screenStops(VO_SLUG).length + 2,
+  help: BUTTON_HELP,
+};
+// The end witness's move back may read VoiceOver's help about the stop
+// before the last (witnessBackHolds; the principal's decision of
+// 2026-11-28): `pair` is a reading with a spoken role and a stop after it,
+// `help` names that role, `wrongHelp` another; `row` is the transcript row
+// whose stop before the last is `pair`'s first.
+const WITNESS = {
+  row: 'good-material',
+  help: 'You are currently on a checkbox, inside of web content. To select or deselect this checkbox, press Control-Option-Space.',
+  wrongHelp: BUTTON_HELP,
+  pair: ['Send me updates unchecked checkbox', 'Send button'],
+};
+
+// How the web VoiceOver spec judges one walk's stops (judgeWalk, S16's, on
+// S08's judgeExampleWalk). The walks here are made up; VoiceOver is not
+// used. Each test names every case it holds, and fails on the first case
 // whose verdict is not the one given, with the case's name.
 test.describe('the VoiceOver example walks are judged on every walk', () => {
-  const own = screenStops('bad-colour-only');
-  const expected = EXPECTED_STOPS['bad-colour-only'];
+  const own = screenStops(VO_SLUG);
+  const expected = EXPECTED_STOPS[VO_SLUG];
   const [calendar, day, week, month] = expected;
-  const HELP = 'You are currently on a button, inside of web content. To click this button, press Control-Option-Space.';
   const TEXT_FIELD_HELP = 'You are currently on a text field, inside of web content.';
   const HEADING_HELP = 'You are currently on a heading level 1, inside of web content.';
+  // VoiceOver's other wording, as S08's ninth web recording read it.
+  const IN_BUTTON_HELP = 'You are currently in a button, inside of web content.';
+  const IN_GROUP_HELP = 'You are currently in a empty group.';
   const screen = (...content) => [...own, EXAMPLE_HEADING, ...content];
   const whole = screen(...expected);
   const n = whole.length;
@@ -1077,46 +1326,54 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
       ['an empty first stop and a walk that reached the end short', 'wrong', ['', ...own.slice(1), EXAMPLE_HEADING, calendar], true],
       ['an empty phrase after the last expected stop', 'wrong', [...whole, ''], true],
       ['every stop an empty phrase', 'incomplete', Array(n).fill(''), true],
-      ['a help message with no positions recorded', 'wrong', [...whole, HELP], true],
+      ['a help message with no positions recorded', 'wrong', [...whole, BUTTON_HELP], true],
       ['no title', 'wrong', [...own.slice(1), EXAMPLE_HEADING, ...expected], true],
+      ['no defect', 'wrong', [own[0], own[1], EXAMPLE_HEADING, ...expected], true],
       ['no heading', 'wrong', [...own, ...expected], true],
-      ['an empty walk cut short', 'incomplete', [], false],
-      ['a walk cut short after the heading', 'incomplete', screen(), false],
-      ['every stop read, but the end not reached', 'incomplete', whole, false],
-    ], (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, own));
+      // A walk that ran out of moves is wrong (judgeWalk, rule 4): with 40
+      // moves it can only have gone on past the screen.
+      ['an empty walk that ran out of moves', 'wrong', [], false],
+      ['a walk that ran out of moves after the heading', 'wrong', screen(), false],
+      ['every stop read, but the end not reached', 'wrong', whole, false],
+    ], (stops, reachedEnd) => judgeWalk(stops, reachedEnd, expected, own));
   });
 
-  test('a help message is left out only when tied to the stop before it, by position and spoken role', () => {
+  test('a help message, in either wording, is left out only when tied to the stop before it, by position and spoken role', () => {
     const h = own.length + 1; // the index of the first stop after the heading
     check([
       ['help after the last tile\'s stop, at its position', 'complete',
-        screen(calendar, day, week, month, HELP), at(screen(calendar, day, week, month, HELP), [h + 4])],
+        screen(calendar, day, week, month, BUTTON_HELP), at(screen(calendar, day, week, month, BUTTON_HELP), [h + 4])],
       ['help after the chosen tile\'s stop, at its position', 'complete',
-        screen(calendar, day, week, HELP, month), at(screen(calendar, day, week, HELP, month), [h + 3])],
-      ['help at a new position after the whole screen (an extra element)', 'wrong', [...whole, HELP], at([...whole, HELP])],
+        screen(calendar, day, week, BUTTON_HELP, month), at(screen(calendar, day, week, BUTTON_HELP, month), [h + 3])],
+      ['help in the other wording after Day\'s stop, at its position', 'complete',
+        screen(calendar, day, IN_BUTTON_HELP, week, month), at(screen(calendar, day, IN_BUTTON_HELP, week, month), [h + 2])],
+      ['"in a empty group" after Day\'s stop, at its position (the roles differ)', 'wrong',
+        screen(calendar, day, IN_GROUP_HELP, week, month), at(screen(calendar, day, IN_GROUP_HELP, week, month), [h + 2])],
+      ['help in the other wording at a new position after the whole screen', 'wrong', [...whole, IN_BUTTON_HELP], at([...whole, IN_BUTTON_HELP])],
+      ['help at a new position after the whole screen (an extra element)', 'wrong', [...whole, BUTTON_HELP], at([...whole, BUTTON_HELP])],
       ['a text field\'s help at a new position after the whole screen', 'wrong', [...whole, TEXT_FIELD_HELP], at([...whole, TEXT_FIELD_HELP])],
-      ['button help after a text with no role, at its position', 'wrong', screen(calendar, HELP, day, week, month),
-        at(screen(calendar, HELP, day, week, month), [h + 1])],
+      ['button help after a text with no role, at its position', 'wrong', screen(calendar, BUTTON_HELP, day, week, month),
+        at(screen(calendar, BUTTON_HELP, day, week, month), [h + 1])],
       ['help naming another role than the stop before it, at its position', 'wrong',
         screen(calendar, day, TEXT_FIELD_HELP, week, month), at(screen(calendar, day, TEXT_FIELD_HELP, week, month), [h + 2])],
-      ['help in place of an expected stop', 'wrong', screen(calendar, day, HELP, month), at(screen(calendar, day, HELP, month))],
-      ['help after an empty stop, at its position', 'wrong', screen(calendar, '', HELP, week, month),
-        at(screen(calendar, '', HELP, week, month), [h + 2])],
-      ['help with positions of the wrong length', 'wrong', screen(calendar, day, HELP, week, month), at(whole)],
-      ['help and a wrong reading', 'wrong', screen(calendar, 'Day', HELP, week, month),
-        at(screen(calendar, 'Day', HELP, week, month), [h + 2])],
+      ['help in place of an expected stop', 'wrong', screen(calendar, day, BUTTON_HELP, month), at(screen(calendar, day, BUTTON_HELP, month))],
+      ['help after an empty stop, at its position', 'wrong', screen(calendar, '', BUTTON_HELP, week, month),
+        at(screen(calendar, '', BUTTON_HELP, week, month), [h + 2])],
+      ['help with positions of the wrong length', 'wrong', screen(calendar, day, BUTTON_HELP, week, month), at(whole)],
+      ['help and a wrong reading', 'wrong', screen(calendar, 'Day', BUTTON_HELP, week, month),
+        at(screen(calendar, 'Day', BUTTON_HELP, week, month), [h + 2])],
       // helpRole gives "heading level 1", which is not spokenRole's
       // "heading": a made-up heading help is not left out (the rule errs
       // toward failing).
       ['a heading help with its level after the title, at its position', 'wrong', [own[0], HEADING_HELP, ...whole.slice(1)],
         at([own[0], HEADING_HELP, ...whole.slice(1)], [1])],
-      ['button help after the title heading, at its position', 'wrong', [own[0], HELP, ...whole.slice(1)],
-        at([own[0], HELP, ...whole.slice(1)], [1])],
+      ['button help after the title heading, at its position', 'wrong', [own[0], BUTTON_HELP, ...whole.slice(1)],
+        at([own[0], BUTTON_HELP, ...whole.slice(1)], [1])],
       ['no help message', 'complete', whole, at(whole)],
-    ], (stops, positions) => judgeExampleWalk(stops, true, expected, own, positions));
+    ], (stops, positions) => judgeWalk(stops, true, expected, own, positions));
   });
 
-  test('a reading\'s spoken role comes from its role part only, and a help message names its role', () => {
+  test('a reading\'s spoken role comes from its role part only, and a help message, in either wording, names its role', () => {
     const roles = [
       ['heading level 1 Choice shown by colour alone', 'heading'],
       ['heading level 2 Example', 'heading'],
@@ -1135,30 +1392,45 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
       ['Defect: The chosen view differs from the others only by colour.', null],
     ];
     for (const [reading, role] of roles) expect(spokenRole(reading), reading).toBe(role);
-    expect(helpRole(HELP)).toBe('button');
+    expect(helpRole(BUTTON_HELP)).toBe('button');
     expect(helpRole(TEXT_FIELD_HELP)).toBe('text field');
+    expect(helpRole(IN_BUTTON_HELP)).toBe('button');
+    expect(helpRole(IN_GROUP_HELP)).toBe('group');
     expect(helpRole('Calendar view')).toBe(null);
+    for (const help of [BUTTON_HELP, TEXT_FIELD_HELP, IN_BUTTON_HELP, IN_GROUP_HELP]) expect(VO_HELP.test(help), help).toBe(true);
+    expect(VO_HELP.test('You are currently at the top.')).toBe(false);
   });
+});
 
-  test('every screen: a bad example\'s own stops end with its defect, no screen has a custom solution note, and no expected stop is empty, help, or holds the row separator', () => {
+// How the walks are made again (runWalks), judged by judgeWalk as the
+// VoiceOver spec's walks are, and the screens and lists every judge reads.
+test.describe('the VoiceOver walks are made again only while incomplete', () => {
+  const own = screenStops(VO_SLUG);
+  const expected = EXPECTED_STOPS[VO_SLUG];
+  const whole = [...own, EXAMPLE_HEADING, ...expected];
+
+  test('every screen: a bad example\'s own stops end with its defect, no screen has a custom solution note, and no expected stop is empty, help, or anything a recorded phrase cannot be', () => {
     for (const slug of Object.keys(EXAMPLE_SCREENS)) {
       if (slug.startsWith('bad-')) expect(screenStops(slug).at(-1), slug).toMatch(/^Defect: /);
       expect(screenStops(slug).some((s) => s.startsWith('Custom solution')), slug).toBe(false);
     }
-    for (const [slug, stops] of Object.entries(EXPECTED_STOPS)) {
-      for (const s of [...screenStops(slug), ...stops]) {
-        expect(s !== '' && !VO_HELP_PREFIX.test(s) && !s.includes(' / ') && !s.includes('\n'), `${slug}: "${s}"`).toBe(true);
+    for (const [row, { expected: stops, screen }] of Object.entries(TRANSCRIPT_ROWS)) {
+      // A recorded phrase is spokenText's: no line break, no white space
+      // doubled or at either end.
+      for (const s of [...screen, ...stops]) {
+        expect(s !== '' && !VO_HELP.test(s) && spokenText(s) === s, `${row}: "${s}"`).toBe(true);
       }
     }
     expect(Object.keys(EXPECTED_STOPS)).toEqual(Object.keys(EXAMPLE_SCREENS));
+    expect(Object.keys(TRANSCRIPT_ROWS)).toEqual(Object.keys(EXAMPLE_SCREENS));
   });
 
-  test('walks are made again only while incomplete, at most three, and every try is logged', async () => {
-    const judge = (stops, reachedEnd) => judgeExampleWalk(stops, reachedEnd, expected, own);
+  test('walks are made again only while incomplete, at most three, every try is logged, and a wrong walk ends the example', async () => {
+    const judge = (stops, reachedEnd) => judgeWalk(stops, reachedEnd, expected, own);
     const right = { stops: whole, reachedEnd: true };
-    const short = { stops: screen(calendar), reachedEnd: false };
-    const wrong = { stops: screen(calendar, 'Day', week, month), reachedEnd: true };
-    const emptyTitle = { stops: ['', ...own.slice(1), EXAMPLE_HEADING, ...expected], reachedEnd: true };
+    const short = { stops: whole.slice(0, 3), reachedEnd: false };
+    const wrong = { stops: [WRONG_TITLE, ...whole.slice(1)], reachedEnd: true };
+    const emptyTitle = { stops: ['', ...whole.slice(1)], reachedEnd: true };
     const pastEnd = { stops: [...whole, ''], reachedEnd: true };
     const cases = [
       ['a wrong reading, then a right walk', [wrong, right], 'wrong', 1],
@@ -1166,9 +1438,9 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
       ['an empty first stop, then a right walk', [emptyTitle, right], 'complete', 2],
       ['an empty first stop, then a wrong reading, then a right walk', [emptyTitle, wrong, right], 'wrong', 2],
       ['three empty captures, then a right walk', [emptyTitle, emptyTitle, emptyTitle, right], 'incomplete', 3],
-      ['a short walk, then a wrong one, then a right one', [short, wrong, right], 'wrong', 2],
-      ['a short walk, then a right one', [short, right], 'complete', 2],
-      ['three short walks, then a right one', [short, short, short, right], 'incomplete', 3],
+      // A walk that ran out of moves is wrong for good (judgeWalk, rule 4).
+      ['a walk that ran out of moves, then a right one', [short, right], 'wrong', 1],
+      ['an empty first stop, then a walk that ran out of moves, then a right one', [emptyTitle, short, right], 'wrong', 2],
     ];
     for (const [what, walks, verdict, made] of cases) {
       let i = 0;
@@ -1186,14 +1458,13 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
 // position; `next` and `previous` move a cursor over it, and `capture`
 // reads what a capture function makes of the element the cursor is on.
 test.describe('the VoiceOver walk keeps every unchanged read and needs a witness for its end', () => {
-  const slug = 'bad-colour-only';
+  const slug = VO_SLUG;
   const own = screenStops(slug);
   const expected = EXPECTED_STOPS[slug];
   const words = [...own, EXAMPLE_HEADING, ...expected];
   const at = (i) => `${10 + i}, ${100 + 20 * i}, 300, ${118 + 20 * i}`;
   // The capture before the first move: the walk begins on Back.
   const START = { phrase: 'Back button', position: '10, 60, 300, 78' };
-  const WRONG_TITLE = 'heading level 1 Field with a faint edge';
   /** A screen of `elements` ({ phrase, position }) and a capture rule. */
   const drive = (elements, reads = (cursor, el, count) => el, max = 40) => {
     let cursor = -1;
@@ -1208,55 +1479,6 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
   };
   const screen = words.map((phrase, i) => ({ phrase, position: at(i) }));
   const judge = (walk) => judgeCollectedWalk(walk, expected, own);
-
-  test('made-up walks: a whole screen passes, and each fault fails or is not complete', async () => {
-    const right = await drive(screen);
-    expect(judge(right).verdict, 'the whole screen').toBe('complete');
-    expect(right.witness.back).toEqual(screen.at(-2));
-    expect(right.witness.forward).toEqual(screen.at(-1));
-    expect(right.unresolved).toEqual([]);
-
-    let frozenAt = -1;
-    const cases = [
-      // The capture froze at the heading: every later element reads as the
-      // heading at its position, so the walk looks ended there, and the
-      // move back reads the heading again at its own position.
-      ['a frozen capture with elements after it', await drive(screen, (c, el) => {
-        if (el.phrase === EXAMPLE_HEADING && frozenAt < 0) frozenAt = c;
-        return frozenAt >= 0 ? screen[frozenAt] : el;
-      }), 'wrong'],
-      // From the heading on every read is an empty phrase at the heading's
-      // position.
-      ['empty phrases with frozen bounds', await drive(screen, (c, el) => (c >= own.length
-        ? { phrase: '', position: at(own.length) } : el)), 'wrong'],
-      // The move back at the end reads the last element again where it is.
-      ['a wrong witness: the move back reads the last stop', await drive(screen, (c, el, n) => (n === words.length + 3
-        ? screen.at(-1) : el)), 'wrong'],
-      ['a wrong witness: the move back reads an empty phrase', await drive(screen, (c, el, n) => (n === words.length + 3
-        ? { phrase: '', position: at(words.length - 2) } : el)), 'wrong'],
-      ['a wrong witness: the move forward reads another place', await drive(screen, (c, el, n) => (n === words.length + 4
-        ? { phrase: expected.at(-1), position: '1, 1, 1, 1' } : el)), 'wrong'],
-      // One stale read at an element mid-walk (the previous phrase and
-      // bounds), then the walk moves on: that element is never a stop.
-      ['one stale read at an unexpected element mid-walk', await drive(
-        [...screen.slice(0, own.length + 2), { phrase: 'Extra', position: at(90) }, ...screen.slice(own.length + 2)],
-        (c, el) => (el.phrase === 'Extra' ? screen[own.length + 1] : el)), 'incomplete'],
-      // One empty read at an element mid-walk, at the previous bounds.
-      ['one empty read at an unexpected element mid-walk', await drive(
-        [...screen.slice(0, own.length + 2), { phrase: 'Extra', position: at(90) }, ...screen.slice(own.length + 2)],
-        (c, el) => (el.phrase === 'Extra' ? { phrase: '', position: screen[own.length + 1].position } : el)), 'incomplete'],
-      // A repeated heading mid-walk at the heading's bounds.
-      ['the Example heading read again mid-walk at its bounds', await drive(
-        [...screen.slice(0, own.length + 1), { phrase: EXAMPLE_HEADING, position: at(own.length) }, ...screen.slice(own.length + 1)]), 'incomplete'],
-      // A walk that runs out of moves is wrong for good (judgeWalk, rule 4).
-      ['a walk that runs out of moves', await drive(screen, undefined, 3), 'wrong'],
-    ];
-    for (const [what, walk, verdict] of cases) {
-      expect(judge(walk).verdict, `${what}: ${JSON.stringify(walk)}`).toBe(verdict);
-    }
-  });
-
-  // S12's regression cases, carried over by S16, on V01's screens.
   const heading = own.length; // the index of the Example heading
   const extra = { phrase: 'Extra', position: at(90) };
   const injected = [...screen.slice(0, heading + 1), extra, ...screen.slice(heading + 1)];
@@ -1272,6 +1494,71 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
       return as === 'stale' ? elements[index - 1] : { phrase: '', position: elements[index - 1].position };
     };
   };
+  const wrongTitle = [{ phrase: WRONG_TITLE, position: at(0) }, ...screen.slice(1)];
+  const atStart = (c, el, n) => (n === 1 ? { phrase: WRONG_TITLE, position: START.position } : el);
+  const run = async (walks) => {
+    let i = 0;
+    let latest;
+    const result = await runWalks(async () => { latest = walks[i++]; return latest; }, () => judge(latest));
+    return { ...result, made: i };
+  };
+
+  test('made-up walks: a whole screen passes, and each fault fails or is not complete', async () => {
+    const right = await drive(screen);
+    expect(judge(right).verdict, 'the whole screen').toBe('complete');
+    expect(right.witness.back).toEqual(screen.at(-2));
+    expect(right.witness.forward).toEqual(screen.at(-1));
+    expect(right.unresolved).toEqual([]);
+    expect(right.positions).toEqual(screen.map((e) => e.position));
+
+    let frozenAt = -1;
+    const cases = [
+      // The capture froze at the heading: every later element reads as the
+      // heading at its position, so the walk looks ended there, and the
+      // move back reads the heading again at its own position.
+      ['a frozen capture with elements after it', await drive(screen, (c, el) => {
+        if (el.phrase === EXAMPLE_HEADING && frozenAt < 0) frozenAt = c;
+        return frozenAt >= 0 ? screen[frozenAt] : el;
+      }), 'wrong'],
+      // From the heading on every read is an empty phrase at the heading's
+      // position.
+      ['empty phrases with frozen bounds', await drive(screen, (c, el) => (c >= heading
+        ? { phrase: '', position: at(heading) } : el)), 'wrong'],
+      // The move back at the end reads the last element again where it is.
+      ['a wrong witness: the move back reads the last stop', await drive(screen, (c, el, n) => (n === words.length + 3
+        ? screen.at(-1) : el)), 'wrong'],
+      ['a wrong witness: the move back reads an empty phrase', await drive(screen, (c, el, n) => (n === words.length + 3
+        ? { phrase: '', position: at(words.length - 2) } : el)), 'wrong'],
+      ['a wrong witness: the move back reads the right words at the last stop\'s position', await drive(screen, (c, el, n) => (n === words.length + 3
+        ? { phrase: words.at(-2), position: at(words.length - 1) } : el)), 'wrong'],
+      ['a wrong witness: the move forward reads another place', await drive(screen, (c, el, n) => (n === words.length + 4
+        ? { phrase: words.at(-1), position: '1, 1, 1, 1' } : el)), 'wrong'],
+      ['a wrong witness: the move forward reads another stop', await drive(screen, (c, el, n) => (n === words.length + 4
+        ? { phrase: 'Extra', position: at(words.length - 1) } : el)), 'wrong'],
+      // One stale read at an element mid-walk (the previous phrase and
+      // bounds), then the walk moves on: that element is never a stop.
+      ['one stale read at an unexpected element mid-walk', await drive(injected,
+        (c, el) => (el === extra ? screen[heading] : el)), 'incomplete'],
+      // One empty read at an element mid-walk, at the previous bounds.
+      ['one empty read at an unexpected element mid-walk', await drive(injected,
+        (c, el) => (el === extra ? { phrase: '', position: screen[heading].position } : el)), 'incomplete'],
+      // A repeated heading mid-walk at the heading's bounds.
+      ['the Example heading read again mid-walk at its bounds', await drive(
+        [...screen.slice(0, heading + 1), screen[heading], ...screen.slice(heading + 1)]), 'incomplete'],
+      // A walk that runs out of moves is wrong for good (judgeWalk, rule 4).
+      ['a walk exhausted at the move limit', await drive(screen, undefined, 3), 'wrong'],
+      ['a screen of one stop', await drive(screen.slice(0, 1)), 'wrong'],
+      // A help message read after the last element, at its position, is a
+      // stop (new words), the walk's last; the witness's move back then
+      // reads the element before it, not the stop before the last, so the
+      // walk fails for good: the help rule cannot leave it out.
+      ['a help message at the last element\'s position, after its reading', await drive(screen, (c, el, n) => (
+        n > words.length && c === words.length - 1 ? { phrase: TIED.help, position: at(words.length - 1) } : el)), 'wrong'],
+    ];
+    for (const [what, walk, verdict] of cases) {
+      expect(judge(walk).verdict, `${what}: ${JSON.stringify(walk)}`).toBe(verdict);
+    }
+  });
 
   test('the reviewer\'s frozen capture, with elements after the last expected stop, would pass without the witness, and fails with it', async () => {
     const elements = [...screen, { phrase: 'Week current item button', position: at(80) }, extra];
@@ -1283,7 +1570,9 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
     expect(judge(walk).verdict).toBe('wrong');
   });
 
-  test('a lost capture mid-walk (stale, or empty at the old bounds) is unresolved, and the walk is incomplete', async () => {
+  test('a lost capture (stale, or empty at the old bounds) is a gap: incomplete when nothing is wrong, wrong for good otherwise', async () => {
+    // At an unexpected element mid-walk: the stops are exactly the screen,
+    // and only the unresolved read shows an element went unrecorded.
     for (const as of ['stale', 'empty']) {
       const walk = await drive(injected, losing(injected, heading + 1, as));
       expect(walk.stops, as).toEqual(words);
@@ -1297,59 +1586,71 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
       expect(unresolvedRow(slug, 1, walk.unresolved), as).toBe(
         `| \`${slug}-walk-1-unresolved\` | after stop ${heading + 1}: "${phrase}" at ${at(heading)} |`);
     }
+    // At an expected stop: the stops lack it, which alone judges wrong; the
+    // gap makes the walk incomplete, walked again. Three from the end, so
+    // that neither of the last two, which the witness reads, is the one lost.
+    const lostAt = words.length - 3;
+    const lost = await drive(screen, losing(screen, lostAt));
+    expect(lost.stops).toEqual(words.filter((_, i) => i !== lostAt));
+    expect(lost.unresolved).toEqual([{ after: lostAt, phrase: words[lostAt - 1], position: at(lostAt - 1) }]);
+    expect(judgeExampleWalk(lost.stops, true, expected, own).verdict).toBe('wrong');
+    expect(judge(lost).verdict).toBe('incomplete');
+    // At the stop before the last: the move back reads it, which the stops
+    // do not have before the last, so the witness fails, for good.
+    const beforeLast = await drive(screen, losing(screen, screen.length - 2));
+    expect(beforeLast.unresolved).toHaveLength(1);
+    expect(beforeLast.problem).toMatch(/^the end is not witnessed: a move back read/);
+    expect(judge(beforeLast).verdict).toBe('wrong');
   });
 
-  test('a lost capture of an expected stop is unresolved too, so the walk is walked again', async () => {
-    const lostAt = heading + 2; // Day button
-    const walk = await drive(screen, losing(screen, lostAt));
-    expect(walk.stops).toEqual(words.filter((_, i) => i !== lostAt));
-    expect(walk.unresolved).toEqual([{ after: lostAt, phrase: words[lostAt - 1], position: at(lostAt - 1) }]);
-    expect(judgeExampleWalk(walk.stops, true, expected, own).verdict).toBe('wrong');
-    expect(judge(walk).verdict).toBe('incomplete');
-  });
-
-  test('a lost capture of the stop before the last fails the witness, and is wrong for good', async () => {
-    const walk = await drive(screen, losing(screen, screen.length - 2));
-    expect(walk.unresolved).toHaveLength(1);
-    expect(walk.problem).toMatch(/^the end is not witnessed: a move back read/);
-    expect(judge(walk).verdict).toBe('wrong');
-  });
-
-  // judgeWalk (web_tests/vo/v01_vo_walks.js): an unresolved read is a gap
-  // in the walk, never a pass for what was captured around it.
+  // judgeWalk: an unresolved read is a gap in the walk, never a pass for
+  // what was captured around it.
   test('a wrong verdict wins over a gap, and a gap passes over at most the next expected stop', async () => {
-    const wrongTitle = [{ phrase: WRONG_TITLE, position: at(0) }, ...screen.slice(1)];
     const extraFirst = [...screen.slice(0, heading + 1), extra, { phrase: 'Extra 2', position: at(91) }, ...screen.slice(heading + 1)];
+    const wrongAfter = [...screen.slice(0, heading + 1), extra, { phrase: 'Wrong', position: at(92) }, ...screen.slice(heading + 2)];
     const cases = [
       ['a wrong title, then one stale read', await drive(wrongTitle, losing(wrongTitle, 2)), 'wrong'],
       ['a wrong title, then one empty read', await drive(wrongTitle, losing(wrongTitle, 2, 'empty')), 'wrong'],
       // An extra stop captured before the read that was lost.
       ['an extra stop before the lost read', await drive(extraFirst, losing(extraFirst, heading + 2)), 'wrong'],
       // A wrong stop captured after the gap.
-      ['a wrong stop after the gap', await drive(
-        [...screen.slice(0, heading + 1), extra, { phrase: 'Wrong', position: at(92) }, ...screen.slice(heading + 2)],
-        losing([...screen.slice(0, heading + 1), extra], heading + 1)), 'wrong'],
+      ['a wrong stop after the gap', await drive(wrongAfter, losing(wrongAfter, heading + 1)), 'wrong'],
       // A right prefix, one lost read, then the next expected stop (the
       // lost read was an extra element) or the one after it (the lost read
       // was the next expected stop): both stay incomplete.
       ['a right prefix, one lost extra element, then the next expected stop', await drive(injected, losing(injected, heading + 1)), 'incomplete'],
-      ['a right prefix, one lost expected stop, then the one after it', await drive(screen, losing(screen, heading + 1)), 'incomplete'],
+      ['a right prefix, one lost expected stop, then the one after it', await drive(screen, losing(screen, words.length - 3)), 'incomplete'],
     ];
     for (const [what, walk, verdict] of cases) {
       expect(judge(walk).verdict, `${what}: ${JSON.stringify(walk.stops)} ${JSON.stringify(walk.unresolved)}`).toBe(verdict);
     }
+    // The same rule on stops alone, with gaps given as "after stop K".
+    const byGaps = (stops, gaps, reachedEnd = true) => judgeWalk(stops, reachedEnd, expected, own, undefined, gaps).verdict;
+    const gapCases = [
+      ['a gap after the heading, then the next expected stop', words, [heading + 1], 'incomplete'],
+      ['a gap after the heading, then the stop after the next', words.filter((_, i) => i !== heading + 1), [heading + 1], 'incomplete'],
+      ['a gap, then a stop two places on', [...words.slice(0, heading), words.at(-1)], [heading], 'wrong'],
+      ['a wrong title before a gap', [WRONG_TITLE, ...words.slice(1)], [heading + 1], 'wrong'],
+      ['a stop past the end after a gap', [...words, 'Extra'], [heading + 1], 'wrong'],
+      ['the end reached with an expected stop neither read nor lost', words.slice(0, -1), [1], 'wrong'],
+      ['a walk that ran out of moves, with a gap', words, [heading + 1], 'wrong', false],
+      ['no gap, every stop right', words, [], 'complete'],
+    ];
+    for (const [what, stops, gaps, verdict, reachedEnd] of gapCases) {
+      expect(byGaps(stops, gaps, reachedEnd), what).toBe(verdict);
+    }
   });
 
-  // S16's fourth review's reproduction: the first capture reads a wrong
-  // title at the start's bounds (Back's, which had not changed yet).
-  // Compared with the start capture, its words are new, so it is a stop,
-  // judged wrong.
+  // The fourth review of S16's walk: the first capture reads a wrong title
+  // at the start's bounds (Back's, which had not changed yet). Compared
+  // with the start capture, its words are new, so it is a stop, judged
+  // wrong.
   test('a wrong first title at the start bounds is a stop, judged wrong, not a gap', async () => {
-    const atStart = (c, el, n) => (n === 1 ? { phrase: WRONG_TITLE, position: START.position } : el);
     const elements = [{ phrase: 'x', position: START.position }, ...screen.slice(1)];
     const walk = await drive(elements, atStart);
     expect(walk.unresolved).toEqual([]);
     expect(walk.stops[0]).toBe(WRONG_TITLE);
+    expect(walk.start).toEqual(START);
     expect(judge(walk).verdict).toBe('wrong');
     // A first capture that repeats the start at its bounds is a gap, and
     // the next stop the title: incomplete, walked again.
@@ -1363,46 +1664,34 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
     }
   });
 
-  test('in the retry loop a wrong first title at the start bounds ends the example, and a clean retry is never made', async () => {
-    const atStart = (c, el, n) => (n === 1 ? { phrase: WRONG_TITLE, position: START.position } : el);
-    const walks = [await drive([{ phrase: 'x', position: START.position }, ...screen.slice(1)], atStart), await drive(screen)];
-    let i = 0;
-    let latest;
-    const result = await runWalks(async () => { latest = walks[i++]; return latest; }, () => judge(latest));
-    expect(result.verdict).toBe('wrong');
-    expect(i).toBe(1);
-  });
-
-  test('in the retry loop a wrong walk with a gap ends the example, and a clean walk after it is never made', async () => {
-    const wrongTitle = [{ phrase: WRONG_TITLE, position: at(0) }, ...screen.slice(1)];
-    for (const as of ['stale', 'empty']) {
-      const walks = [await drive(wrongTitle, losing(wrongTitle, 2, as)), await drive(screen)];
-      let i = 0;
-      let latest;
-      const result = await runWalks(async () => { latest = walks[i++]; return latest; }, () => judge(latest));
-      expect(result.verdict, as).toBe('wrong');
-      expect(i, as).toBe(1);
+  test('in the retry loop a wrong walk ends the example, and a clean walk after it is never made', async () => {
+    const cases = [
+      ['a wrong first title at the start bounds', [await drive([{ phrase: 'x', position: START.position }, ...screen.slice(1)], atStart)]],
+      ['a wrong title, then one stale read', [await drive(wrongTitle, losing(wrongTitle, 2))]],
+      ['a wrong title, then one empty read', [await drive(wrongTitle, losing(wrongTitle, 2, 'empty'))]],
+      ['a walk exhausted at the move limit', [await drive(screen, undefined, 3)]],
+      ['a wrong title, then a stale read, after a walk with a gap and nothing wrong', [await drive(injected, losing(injected, heading + 1)),
+        await drive(wrongTitle, losing(wrongTitle, 2))]],
+    ];
+    for (const [what, walks] of cases) {
+      const result = await run([...walks, await drive(screen)]);
+      expect(result.verdict, what).toBe('wrong');
+      expect(result.made, what).toBe(walks.length);
     }
-    // A walk that ran out of moves, then a clean one: wrong, one walk made.
-    const walks = [await drive(screen, undefined, 3), await drive(screen)];
-    let i = 0;
-    let latest;
-    const result = await runWalks(async () => { latest = walks[i++]; return latest; }, () => judge(latest));
-    expect(result.verdict).toBe('wrong');
-    expect(i).toBe(1);
     // A walk with a gap and nothing wrong, then a clean one: complete on the second.
-    const healed = [await drive(injected, losing(injected, heading + 1)), await drive(screen)];
-    i = 0;
-    const again = await runWalks(async () => { latest = healed[i++]; return latest; }, () => judge(latest));
-    expect(again).toMatchObject({ verdict: 'complete', walks: 2 });
+    const healed = await run([await drive(injected, losing(injected, heading + 1)), await drive(screen)]);
+    expect(healed).toMatchObject({ verdict: 'complete', walks: 2, made: 2 });
   });
 
-  test('an unchanged read at the true end is the end, through the witness, and logged', async () => {
+  test('an unchanged read at the true end is the end, through the witness, and every row is logged', async () => {
     const walk = await drive(screen);
     expect(walk.reachedEnd).toBe(true);
     expect(unresolvedRow(slug, 1, walk.unresolved)).toBe(`| \`${slug}-walk-1-unresolved\` | none |`);
     expect(endRow(slug, 1, walk.witness)).toBe(
       `| \`${slug}-walk-1-end\` | back "${words.at(-2)}" at ${at(words.length - 2)} / forward "${words.at(-1)}" at ${at(words.length - 1)} |`);
+    expect(startRow(slug, 1, walk.start)).toBe(`| \`${slug}-walk-1-start\` | "Back button" at 10, 60, 300, 78 |`);
+    expect(positionsRow(slug, 1, walk.positions)).toBe(
+      `| \`${slug}-walk-1-positions\` | ${words.map((_, i) => at(i)).join(' / ')} |`);
     const lost = await drive(injected, losing(injected, heading + 1));
     expect(lost.reachedEnd).toBe(true);
     expect(lost.witness).toEqual({ back: screen.at(-2), forward: screen.at(-1) });
@@ -1412,135 +1701,269 @@ test.describe('the VoiceOver walk keeps every unchanged read and needs a witness
 
 // The committed web VoiceOver transcript, judged again from its rows alone
 // (judgeTranscript in web_tests/vo/v01_vo_walks.js), never skipped: every
-// browser and example once, walks in order, the last complete, with its end
-// witness row and its unresolved-reads row. Made-up transcripts test the
-// judge first.
+// browser and row once, walks in order, the last complete, each walk with
+// its start, positions and unresolved-reads rows and the last with its end
+// witness row. Made-up transcripts test the judge first.
 test.describe('the web VoiceOver transcript is judged again from what it recorded', () => {
-  const FIRST = 'good-material';
-  const whole = (slug) => [...screenStops(slug), EXAMPLE_HEADING, ...EXPECTED_STOPS[slug]];
-  const witness = (slug) => {
-    const w = whole(slug);
-    return { back: { phrase: w.at(-2), position: '10, 300, 300, 318' }, forward: { phrase: w.at(-1), position: '10, 320, 300, 338' } };
-  };
-  const BACK = { phrase: 'Back button', position: '10, 60, 300, 78' };
-  const rowsOf = (slug, n = 1) => [transcriptRow(slug, n, whole(slug), 'complete', 'the whole screen, every stop in its place'),
-    startRow(slug, n, BACK),
-    endRow(slug, n, witness(slug)), unresolvedRow(slug, n, [])];
-  const section = (browser, rows) => ['', `## ${browser}`, '', '| Example | Spoken, in order |', '| --- | --- |', ...rows];
+  const rows = Object.keys(TRANSCRIPT_ROWS);
+  const R = rows[0];
+  const whole = (row) => [...TRANSCRIPT_ROWS[row].screen, EXAMPLE_HEADING, ...TRANSCRIPT_ROWS[row].expected];
+  const pos = (i) => `318, ${251 + 40 * i}, 1011, ${271 + 40 * i}`;
+  const placesOf = (stops) => stops.map((_, i) => pos(i));
+  const witnessOf = (stops) => ({ back: { phrase: stops.at(-2), position: pos(stops.length - 2) }, forward: { phrase: stops.at(-1), position: pos(stops.length - 1) } });
+  const BACK = { phrase: '', position: '30, 147, 70, 187' };
+  // A walk's rows as the VoiceOver spec logs them; `end` false leaves out
+  // the end row, as for a walk that ran out of moves.
+  const walkRows = (row, n, stops, verdict, { end = true, unresolved = [], positions = placesOf(stops), start = BACK } = {}) => [
+    transcriptRow(row, n, stops, verdict, 'x'), startRow(row, n, start), positionsRow(row, n, positions),
+    ...(end ? [endRow(row, n, witnessOf(stops))] : []), unresolvedRow(row, n, unresolved)];
+  const rowsOf = (row, n = 1) => walkRows(row, n, whole(row), 'complete');
+  const section = (browser, lines) => ['', `## ${browser}`, '', '| Example | Spoken, in order |', '| --- | --- |', ...lines];
   const transcript = (rowsFor) => ['# V01 Colour contrast: VoiceOver transcript (web, macOS)', '',
     'Result: PASS', ...BROWSERS.flatMap((b) => section(b, rowsFor(b)))].join('\n');
-  const right = () => Object.keys(EXAMPLE_SCREENS).flatMap((slug) => rowsOf(slug));
-  const rest = () => Object.keys(EXAMPLE_SCREENS).slice(1).flatMap((x) => rowsOf(x));
-  const short = (slug) => [transcriptRow(slug, 1, whole(slug).slice(0, 3), 'incomplete', 'cut short'), startRow(slug, 1, BACK), unresolvedRow(slug, 1, [])];
-  const startsWith = (prefix, replacement) => () => right().map((r) => (r.startsWith(prefix) ? replacement : r));
+  const right = () => rows.flatMap((row) => rowsOf(row));
+  // R's walks replaced by `first`, then a complete second walk.
+  const thenRight = (first) => transcript(() => [...first, ...rowsOf(R, 2), ...rows.slice(1).flatMap((x) => rowsOf(x))]);
+  const replaced = (prefix, line) => transcript(() => right().map((r) => (r.startsWith(`| \`${R}-walk-1${prefix}\``) ? line : r)));
+  const w = whole(R);
+  const h = w.indexOf(EXAMPLE_HEADING);
+  // The tied help message, in TIED.slug's walk, at the position of the stop
+  // before it, or at a new one.
+  const helped = [...whole(TIED.slug).slice(0, TIED.after + 1), TIED.help, ...whole(TIED.slug).slice(TIED.after + 1)];
+  const tiedAt = placesOf(helped).map((p, i) => (i === TIED.after + 1 ? pos(TIED.after) : p));
+  const withHelp = (positions) => transcript(() => rows.flatMap((row) => (row === TIED.slug
+    ? walkRows(row, 1, helped, 'complete', { positions }) : rowsOf(row))));
+  const ROW_KINDS = ['', '-start', '-positions', '-end', '-unresolved'];
 
   test('made-up transcripts: a right one passes, and each wrong one names its problem', () => {
-    expect(Object.keys(EXAMPLE_SCREENS)[0]).toBe(FIRST);
-    const first = transcriptRow(FIRST, 1, whole(FIRST), 'complete', 'x');
+    const one = transcriptRow(R, 1, w, 'complete', 'x');
+    // A stop with " / " or a backslash in it is written escaped and read
+    // back whole (S10's bad-merged reads "3.4 / 5").
+    const odd = ['Rating: 3.4 / 5 Reviews', '', 'a\\b', '(x)'];
+    expect(stopsOf(stopsText(odd))).toEqual(odd);
+    expect(stopsText(odd).split(' / ')).toHaveLength(odd.length);
+    expect(helped[TIED.after], 'TIED.after is the stop the help is about').toBe('Day button');
+    const exhausted = Array.from({ length: 20 }, (_, i) => w[i % w.length]);
     const cases = [
-      ['a whole walk of every example in both browsers', transcript(right), true],
-      // A first walk that ran out of moves (no end row) is wrong for good,
-      // and a complete second walk cannot rescue it.
-      ['a first walk exhausted at the move limit, then a complete second', transcript(() => [...short(FIRST),
-        ...rowsOf(FIRST, 2), ...rest()]), false],
+      ['a whole walk of every row in both browsers', transcript(right), true],
       ['an empty transcript', '', false],
-      ['every end row removed', transcript(() => right().filter((r) => !r.includes('-end`'))), false],
-      ['every unresolved-reads row removed', transcript(() => right().filter((r) => !r.includes('-unresolved`'))), false],
-      ['an end row whose positions are one word', transcript(startsWith(`| \`${FIRST}-walk-1-end\``,
-        `| \`${FIRST}-walk-1-end\` | back "x" at here / forward "y" at here |`)), false],
-      ['an end witness that read back the last stop', transcript(startsWith(`| \`${FIRST}-walk-1-end\``,
-        endRow(FIRST, 1, { back: witness(FIRST).forward, forward: witness(FIRST).forward }))), false],
-      ['an end witness that read back an empty phrase', transcript(startsWith(`| \`${FIRST}-walk-1-end\``,
-        endRow(FIRST, 1, { back: { phrase: '', position: '1, 2, 3, 4' }, forward: witness(FIRST).forward }))), false],
-      ['the last walk with an unresolved read', transcript(startsWith(`| \`${FIRST}-walk-1-unresolved\``,
-        unresolvedRow(FIRST, 1, [{ after: 3, phrase: '', position: '1, 2, 3, 4' }]))), false],
-      ['sixteen copies of one row', transcript(() => Array(8).fill(first)), false],
-      ['one walk row twice', transcript(() => [...right(), first]), false],
-      ['an example missing in one browser', transcript((b) => (b === 'webkit' ? right().slice(4) : right())), false],
+      ['sixteen copies of one walk row', transcript(() => Array(8).fill(one)), false],
+      ['sixteen copies of one walk\'s rows', transcript(() => Array(8).fill(rowsOf(R)).flat()), false],
+      // Each kind of row removed, from every walk.
+      ...ROW_KINDS.map((kind) => [`every ${kind || 'walk'} row removed`,
+        transcript(() => right().filter((r) => !new RegExp(`^\\| \`[a-z-]+-walk-\\d+${kind}\` \\|`).test(r))), false]),
+      // Each kind of row removed from one walk only.
+      ...ROW_KINDS.map((kind) => [`${R}'s ${kind || 'walk'} row removed in WebKit`,
+        transcript((b) => right().filter((r) => b !== 'webkit' || !r.startsWith(`| \`${R}-walk-1${kind}\` |`))), false]),
+      // Each kind of row given twice.
+      ...ROW_KINDS.map((kind) => [`${R}'s ${kind || 'walk'} row twice`,
+        transcript(() => { const all = right(); return [...all, all.find((r) => r.startsWith(`| \`${R}-walk-1${kind}\` |`))]; }), false]),
+      // Each kind of row for a walk that is not there.
+      ...ROW_KINDS.slice(1).map((kind) => [`a ${kind} row for a walk that is not there`,
+        transcript(() => [...right(), rowsOf(R, 2).find((r) => r.startsWith(`| \`${R}-walk-2${kind}\` |`))]), false]),
+      ['a row missing in one browser', transcript((b) => (b === 'webkit' ? right().slice(5) : right())), false],
       ['a browser section missing', ['Result: PASS', ...section('chromium', right())].join('\n'), false],
       ['an unknown browser section', [transcript(right), ...section('firefox', [])].join('\n'), false],
-      ['an unknown example', transcript(() => [...right(), transcriptRow('good-other', 1, whole(FIRST), 'complete', 'x')]), false],
-      ['a malformed row', transcript(() => [...right(), `| \`${FIRST}-walk-x\` | something |`]), false],
-      ['a row outside any section', [first, transcript(right)].join('\n'), false],
-      ['walk 2 with no walk 1', transcript(() => right().map((r) => r.replace(`${FIRST}-walk-1`, `${FIRST}-walk-2`))), false],
-      ['the last walk recorded wrong', transcript(() => right().map((r) => (r.startsWith(`| \`${FIRST}-walk-1\``) ? r.replace('(complete:', '(wrong:') : r))), false],
-      ['only what follows the heading', transcript(() => Object.keys(EXAMPLE_SCREENS).flatMap((slug) => [
-        transcriptRow(slug, 1, EXPECTED_STOPS[slug], 'complete', 'x'), startRow(slug, 1, BACK), endRow(slug, 1, witness(slug)), unresolvedRow(slug, 1, [])])), false],
-      ['another example\'s screen stops', transcript(startsWith(`| \`${FIRST}-walk-1\``,
-        transcriptRow(FIRST, 1, [...screenStops('bad-caption'), EXAMPLE_HEADING, ...EXPECTED_STOPS[FIRST]], 'complete', 'x'))), false],
+      ['an unknown example', transcript(() => [...right(), ...walkRows('good-other', 1, w, 'complete')]), false],
+      ['a malformed row', transcript(() => [...right(), `| \`${R}-walk-x\` | something |`]), false],
+      ['a row outside any section', [one, transcript(right)].join('\n'), false],
+      ['walk 2 with no walk 1', transcript(() => right().map((r) => r.replace(`${R}-walk-1`, `${R}-walk-2`))), false],
+      ['the last walk recorded wrong', replaced('', transcriptRow(R, 1, w, 'wrong', 'x')), false],
+      ['the last walk recorded incomplete', replaced('', transcriptRow(R, 1, w, 'incomplete', 'x')), false],
+      ['the old form, only what follows the heading', transcript(() => rows.flatMap((row) =>
+        walkRows(row, 1, TRANSCRIPT_ROWS[row].expected, 'complete'))), false],
+      ['another row\'s screen stops', replaced('', transcriptRow(R, 1, [...TRANSCRIPT_ROWS[rows.at(-1)].screen, ...w.slice(h)], 'complete', 'x')), false],
+      ['a walk whose title is an empty phrase', replaced('', transcriptRow(R, 1, ['', ...w.slice(1)], 'complete', 'x')), false],
+      ['a stop past the end, empty', transcript(() => rows.flatMap((row) => (row === R ? walkRows(R, 1, [...w, ''], 'complete') : rowsOf(row)))), false],
       // bad-colour-only's chosen tile read without its state.
-      ['the chosen tile read as a plain button', transcript(startsWith('| `bad-colour-only-walk-1`', transcriptRow('bad-colour-only', 1,
-        whole('bad-colour-only').map((s) => (s === 'Week current item button' ? 'Week button' : s)), 'complete', 'x'))), false],
-      // S12's cases, carried over by S16.
-      ['a walk whose title is an empty phrase', transcript(startsWith(`| \`${FIRST}-walk-1\``,
-        transcriptRow(FIRST, 1, ['', ...whole(FIRST).slice(1)], 'complete', 'x'))), false],
-      ['an end witness whose move back read the right words at the last position', transcript(startsWith(`| \`${FIRST}-walk-1-end\``,
-        endRow(FIRST, 1, { back: { phrase: witness(FIRST).back.phrase, position: witness(FIRST).forward.position }, forward: witness(FIRST).forward }))), false],
-      ['an end witness whose move forward read another stop', transcript(startsWith(`| \`${FIRST}-walk-1-end\``,
-        endRow(FIRST, 1, { back: witness(FIRST).back, forward: { phrase: 'Extra', position: witness(FIRST).forward.position } }))), false],
-      ['an end witness row twice', transcript(() => [...right(), endRow(FIRST, 1, witness(FIRST))]), false],
-      ['an end witness row for a walk that is not there', transcript(() => [...right(), endRow(FIRST, 2, witness(FIRST))]), false],
-      ['an unresolved-reads row twice', transcript(() => [...right(), unresolvedRow(FIRST, 1, [])]), false],
-      ['an unresolved-reads row for a walk that is not there', transcript(() => [...right(), unresolvedRow(FIRST, 2, [])]), false],
-      ['a first walk with no unresolved-reads row, walked again', transcript(() => [
-        transcriptRow(FIRST, 1, whole(FIRST).slice(0, 3), 'incomplete', 'cut short'),
-        ...rowsOf(FIRST, 2), ...rest()]), false],
-      ['a first walk with an unresolved read, witnessed at its end, recorded incomplete though its stops judge complete, then complete', transcript(() => [
-        transcriptRow(FIRST, 1, whole(FIRST), 'incomplete', 'unresolved'),
-        startRow(FIRST, 1, BACK),
-        endRow(FIRST, 1, witness(FIRST)),
-        unresolvedRow(FIRST, 1, [{ after: 3, phrase: '', position: '1, 2, 3, 4' }]),
-        ...rowsOf(FIRST, 2), ...rest()]), true],
-      // S16's fourth review's cases: an unresolved read hides no words.
-      ['a first walk whose unresolved read after the start read a wrong title, then a clean walk', transcript(() => [
-        transcriptRow(FIRST, 1, whole(FIRST).slice(1), 'incomplete', 'unresolved'),
-        startRow(FIRST, 1, BACK),
-        endRow(FIRST, 1, witness(FIRST)),
-        unresolvedRow(FIRST, 1, [{ after: 0, phrase: 'heading level 1 Field with a faint edge', position: BACK.position }]),
-        ...rowsOf(FIRST, 2), ...rest()]), false],
-      ['an unresolved read mid-walk whose words differ from the stop before it', transcript(() => [
-        transcriptRow(FIRST, 1, whole(FIRST), 'incomplete', 'unresolved'),
-        startRow(FIRST, 1, BACK),
-        endRow(FIRST, 1, witness(FIRST)),
-        unresolvedRow(FIRST, 1, [{ after: 3, phrase: 'Extra', position: '1, 2, 3, 4' }]),
-        ...rowsOf(FIRST, 2), ...rest()]), false],
-      ['an unresolved read after the start that repeats the start, then complete', transcript(() => [
-        transcriptRow(FIRST, 1, whole(FIRST), 'incomplete', 'unresolved'),
-        startRow(FIRST, 1, BACK),
-        endRow(FIRST, 1, witness(FIRST)),
-        unresolvedRow(FIRST, 1, [{ after: 0, phrase: BACK.phrase, position: BACK.position }]),
-        ...rowsOf(FIRST, 2), ...rest()]), true],
-      ['every start row removed', transcript(() => right().filter((r) => !r.includes('-start`'))), false],
-      ['a start row twice', transcript(() => [...right(), startRow(FIRST, 1, BACK)]), false],
-      ['a start row whose position is one word', transcript(startsWith(`| \`${FIRST}-walk-1-start\``,
-        `| \`${FIRST}-walk-1-start\` | "Back button" at here |`)), false],
-      ['a first walk with an unresolved read recorded complete, then complete', transcript(() => [
-        transcriptRow(FIRST, 1, whole(FIRST), 'complete', 'x'),
-        unresolvedRow(FIRST, 1, [{ after: 3, phrase: '', position: '1, 2, 3, 4' }]),
-        ...rowsOf(FIRST, 2), ...rest()]), false],
-      // judgeWalk's regressions in a transcript: each first walk fails the
-      // transcript despite the complete second.
-      ...[
-        ['a wrong title, then one stale read', ['heading level 1 Field with a faint edge', ...whole(FIRST).slice(1)], 2],
-        ['a wrong stop after the gap', [...whole(FIRST).slice(0, 3), 'Extra', ...whole(FIRST).slice(4)], 3],
-      ].map(([what, stops, after]) => [`${what}, witnessed, then a complete walk`, transcript(() => [
-        transcriptRow(FIRST, 1, stops, 'incomplete', 'unresolved'),
-        endRow(FIRST, 1, witness(FIRST)),
-        unresolvedRow(FIRST, 1, [{ after, phrase: 'x', position: '1, 2, 3, 4' }]),
-        ...rowsOf(FIRST, 2), ...rest()]), false]),
-      ['an unresolved-reads row whose position is one word', transcript(startsWith(`| \`${FIRST}-walk-1-unresolved\``,
-        `| \`${FIRST}-walk-1-unresolved\` | after stop 3: "x" at here |`)), false],
-      ['a wrong first walk followed by a complete one', transcript(() => [
-        transcriptRow(FIRST, 1, ['x'], 'wrong', 'x'), unresolvedRow(FIRST, 1, []),
-        ...rowsOf(FIRST, 2), ...rest()]), false],
+      ['the chosen tile read as a plain button', transcript(() => rows.flatMap((row) => (row === 'bad-colour-only'
+        ? walkRows(row, 1, whole(row).map((s) => (s === 'Week current item button' ? 'Week button' : s)), 'complete') : rowsOf(row)))), false],
+      // The end witness row.
+      ['an end row whose positions are one word', replaced('-end', `| \`${R}-walk-1-end\` | back "x" at here / forward "y" at here |`), false],
+      ['an end witness that read back the last stop', replaced('-end', endRow(R, 1, { back: witnessOf(w).forward, forward: witnessOf(w).forward })), false],
+      ['an end witness that read back an empty phrase', replaced('-end', endRow(R, 1, { back: { phrase: '', position: '1, 2, 3, 4' }, forward: witnessOf(w).forward })), false],
+      ['an end witness whose move back read the right words at the last position', replaced('-end',
+        endRow(R, 1, { back: { phrase: witnessOf(w).back.phrase, position: witnessOf(w).forward.position }, forward: witnessOf(w).forward })), false],
+      ['an end witness whose move forward read another stop', replaced('-end',
+        endRow(R, 1, { back: witnessOf(w).back, forward: { phrase: 'Extra', position: witnessOf(w).forward.position } })), false],
+      // The start row.
+      ['a start row whose position is one word', replaced('-start', `| \`${R}-walk-1-start\` | "Back button" at here |`), false],
+      // The positions row.
+      ['a positions row with one position too few', replaced('-positions', positionsRow(R, 1, placesOf(w).slice(1))), false],
+      ['a positions row with a position that is one word', replaced('-positions', positionsRow(R, 1, [...placesOf(w).slice(1), 'here'])), false],
+      // The unresolved-reads row.
+      ['the last walk with an unresolved read', replaced('-unresolved', unresolvedRow(R, 1, [{ after: 3, phrase: '', position: pos(2) }])), false],
+      ['an unresolved-reads row whose position is one word', replaced('-unresolved', `| \`${R}-walk-1-unresolved\` | after stop 3: "" at here |`), false],
+      ['malformed unresolved reads', replaced('-unresolved', `| \`${R}-walk-1-unresolved\` | lost one |`), false],
+      // Earlier walks: each judged again, and a wrong one fails the
+      // transcript however clean the walk after it.
+      ['an empty first title, walked again, then complete', thenRight(walkRows(R, 1, ['', ...w.slice(1)], 'incomplete')), true],
+      ['a first walk with an unresolved read, witnessed at its end, recorded incomplete though its stops judge complete, then complete',
+        thenRight(walkRows(R, 1, w, 'incomplete', { unresolved: [{ after: h + 1, phrase: '', position: pos(h) }] })), true],
+      ['an unresolved read after the start that repeats the start, then complete',
+        thenRight(walkRows(R, 1, w, 'incomplete', {
+          start: { phrase: 'Back button', position: BACK.position },
+          unresolved: [{ after: 0, phrase: 'Back button', position: BACK.position }],
+        })), true],
+      ['a right prefix, one lost read, then the stop after the next; then complete',
+        thenRight(walkRows(R, 1, w.filter((_, i) => i !== h + 1), 'incomplete', { unresolved: [{ after: h + 1, phrase: EXAMPLE_HEADING, position: pos(h) }] })), true],
+      ['a first walk exhausted at the move limit (no end row), then complete',
+        thenRight(walkRows(R, 1, exhausted, 'incomplete', { end: false, unresolved: exhausted.map((_, i) => ({ after: i, phrase: '', position: i === 0 ? BACK.position : pos(i - 1) })) })), false],
+      ['the same exhausted walk given an end row, then complete',
+        thenRight(walkRows(R, 1, exhausted, 'incomplete', { unresolved: exhausted.map((_, i) => ({ after: i, phrase: '', position: i === 0 ? BACK.position : pos(i - 1) })) })), false],
+      ['a first walk cut short with no end row, then complete', thenRight(walkRows(R, 1, w.slice(0, 3), 'incomplete', { end: false })), false],
+      ['a wrong first walk recorded wrong, then complete', thenRight(walkRows(R, 1, [WRONG_TITLE, ...w.slice(1)], 'wrong')), false],
+      ['a wrong title, then a stale read, witnessed, then complete',
+        thenRight(walkRows(R, 1, [WRONG_TITLE, ...w.slice(1)], 'incomplete', { unresolved: [{ after: 1, phrase: WRONG_TITLE, position: pos(0) }] })), false],
+      ['a wrong title, then an empty read, witnessed, then complete',
+        thenRight(walkRows(R, 1, [WRONG_TITLE, ...w.slice(1)], 'incomplete', { unresolved: [{ after: 1, phrase: '', position: pos(0) }] })), false],
+      ['a wrong stop after the gap, witnessed, then complete',
+        thenRight(walkRows(R, 1, [...w.slice(0, h + 1), 'Wrong', ...w.slice(h + 2)], 'incomplete', { unresolved: [{ after: h + 1, phrase: '', position: pos(h) }] })), false],
+      ['a first walk with an unresolved read recorded complete, then complete',
+        thenRight(walkRows(R, 1, w, 'complete', { unresolved: [{ after: h + 1, phrase: '', position: pos(h) }] })), false],
+      // An unresolved read is an unchanged read.
+      ['an unresolved read at a position other than the one before it',
+        thenRight(walkRows(R, 1, w, 'incomplete', { unresolved: [{ after: h + 1, phrase: '', position: pos(h + 5) }] })), false],
+      ['an unresolved read after a stop the walk does not have',
+        thenRight(walkRows(R, 1, w, 'incomplete', { unresolved: [{ after: w.length + 1, phrase: '', position: pos(w.length) }] })), false],
+      ['an end witness whose move forward read the last stop away from its recorded position', replaced('-end',
+        endRow(R, 1, { back: witnessOf(w).back, forward: { phrase: w.at(-1), position: '9, 9, 9, 9' } })), false],
+      ['an end witness whose move back read at the last stop\'s recorded position', transcript(() => rows.flatMap((row) => (row === R
+        ? walkRows(R, 1, w, 'complete', { positions: [...placesOf(w).slice(0, -1), pos(w.length - 2)] }) : rowsOf(row)))), false],
+      // An unresolved read hides no words.
+      ['an unresolved read after the start that read a wrong title, then a clean walk',
+        thenRight(walkRows(R, 1, w.slice(1), 'incomplete', { unresolved: [{ after: 0, phrase: WRONG_TITLE, position: BACK.position }] })), false],
+      ['an unresolved read mid-walk whose words differ from the stop before it',
+        thenRight(walkRows(R, 1, w, 'incomplete', { unresolved: [{ after: 3, phrase: 'Extra', position: pos(2) }] })), false],
+      // A help message, judged by the walk's rule from the positions row.
+      ['a help message tied by its position to the stop before it, whose role it names', withHelp(tiedAt), true],
+      ['the same help message at a new position', withHelp(placesOf(helped)), false],
+      ['the same help message with the positions row one short', withHelp(tiedAt.slice(1)), false],
+      ['the same help message with no positions row', transcript(() => rows.flatMap((row) => (row === TIED.slug
+        ? walkRows(row, 1, helped, 'complete', { positions: tiedAt }).filter((r) => !r.includes('-positions`')) : rowsOf(row)))), false],
     ];
     for (const [what, text, ok] of cases) {
       const problems = judgeTranscript(text);
-      expect(problems.length === 0, `${what}: ${problems.join('; ')}`).toBe(ok);
+      expect(problems.length === 0, `${what}: ${problems.join('; ') || 'no problems'}`).toBe(ok);
     }
   });
 
-  test('the committed recording (docs/evidence/V01/voiceover-web.md) is right, every browser and example once', () => {
+  test('the end witness\'s move back: the stop before the last, or VoiceOver\'s help about it, in either wording, at exactly its recorded position', async () => {
+    const [a, b] = WITNESS.pair;
+    const at = (i) => `318, ${251 + 40 * i}, 1011, ${271 + 40 * i}`;
+    const stops = ['heading level 2 Example', a, b];
+    const positions = [at(0), at(1), at(2)];
+    const inHelp = WITNESS.help.replace(/^You are currently on /, 'You are currently in ');
+    const cases = [
+      ['the stop before the last, read again', { phrase: a, position: at(1) }, positions, true],
+      ['help naming its role, at its recorded position', { phrase: WITNESS.help, position: at(1) }, positions, true],
+      ['help in the other wording naming its role, at its recorded position', { phrase: inHelp, position: at(1) }, positions, true],
+      ['help naming another role, at its recorded position', { phrase: WITNESS.wrongHelp, position: at(1) }, positions, false],
+      ['help naming its role, at another position', { phrase: WITNESS.help, position: at(7) }, positions, false],
+      ['help naming its role, at the last stop\'s position', { phrase: WITNESS.help, position: at(2) }, positions, false],
+      ['help naming its role, with no positions', { phrase: WITNESS.help, position: at(1) }, undefined, false],
+      ['help naming its role, with positions one short', { phrase: WITNESS.help, position: at(1) }, positions.slice(1), false],
+      ['an empty reading at its recorded position', { phrase: '', position: at(1) }, positions, false],
+      ['the last stop again at its position (a frozen capture)', { phrase: b, position: at(2) }, positions, false],
+    ];
+    for (const [what, back, p, holds] of cases) expect(witnessBackHolds(back, stops, p), what).toBe(holds);
+    // The collector, on a made-up screen of those stops, whose move back
+    // reads the help at the stop's position, or elsewhere.
+    const walk = async (back) => {
+      let cursor = -1;
+      let witnessing = false;
+      return collectWalk({
+        next: async () => { cursor = Math.min(cursor + 1, stops.length - 1); },
+        previous: async () => { witnessing = true; cursor = Math.max(cursor - 1, 0); },
+        capture: async () => (witnessing && cursor === 1 ? back : { phrase: stops[cursor], position: at(cursor) }),
+        start: { phrase: '', position: '1, 1, 1, 1' },
+      });
+    };
+    const held = await walk({ phrase: WITNESS.help, position: at(1) });
+    expect(held.reachedEnd, 'help at the recorded position').toBe(true);
+    expect(held.problem, 'help at the recorded position').toBeNull();
+    expect(held.witness.back.phrase, 'the end row keeps the help as captured').toBe(WITNESS.help);
+    for (const back of [{ phrase: WITNESS.help, position: at(7) }, { phrase: WITNESS.wrongHelp, position: at(1) }]) {
+      const failed = await walk(back);
+      expect(failed.problem, JSON.stringify(back)).toMatch(/^the end is not witnessed: a move back read/);
+    }
+    // judgeTranscript, from the positions row.
+    const wr = WITNESS.row;
+    const ws = whole(wr);
+    const wp = placesOf(ws);
+    expect(ws.at(-2), 'the row\'s stop before the last is the pair\'s reading').toBe(a);
+    const helpEnd = (phrase, position, { noPositions = false } = {}) => transcript(() => rows.flatMap((row) => (row !== wr ? rowsOf(row) : [
+      transcriptRow(wr, 1, ws, 'complete', 'x'), startRow(wr, 1, BACK),
+      ...(noPositions ? [] : [positionsRow(wr, 1, wp)]),
+      endRow(wr, 1, { back: { phrase, position }, forward: { phrase: ws.at(-1), position: wp.at(-1) } }),
+      unresolvedRow(wr, 1, [])])));
+    const transcripts = [
+      ['help naming its role at the stop\'s recorded position', helpEnd(WITNESS.help, wp.at(-2)), true],
+      ['the same in the other wording', helpEnd(inHelp, wp.at(-2)), true],
+      ['help naming another role there', helpEnd(WITNESS.wrongHelp, wp.at(-2)), false],
+      ['help at another position', helpEnd(WITNESS.help, '9, 9, 9, 9'), false],
+      ['help at the last stop\'s position', helpEnd(WITNESS.help, wp.at(-1)), false],
+      ['help at the recorded position, with no positions row', helpEnd(WITNESS.help, wp.at(-2), { noPositions: true }), false],
+    ];
+    for (const [what, text, ok] of transcripts) {
+      const problems = judgeTranscript(text);
+      expect(problems.length === 0, `${what}: ${problems.join('; ') || 'no problems'}`).toBe(ok);
+    }
+  });
+
+  // The Cupertino fields' names hold a line break: the page's aria-label is
+  // "Email\nRequired". tool/voiceover_web.py reads each console line
+  // "V01VO <browser> <row> | <text>" to the end of the line only (its
+  // regular expression, `^V01VO (\S+) (\S+) \| (.*)$` with re.M, copied in
+  // toolRows), so a phrase holding a line break would cut its row in two.
+  // The walk records every phrase through spokenText; this test drives the
+  // collector with captures that hold line breaks, prints the lines as the
+  // VoiceOver spec does (walkLogLines), turns them into the transcript as
+  // the tool does, and judges it.
+  test('a phrase with a line break (the Cupertino field\'s "Email\\nRequired") survives the walk\'s console row and the transcript row', async () => {
+    const toolRows = (log) => {
+      const out = new Map();
+      for (const [, browser, slug, spoken] of log.matchAll(/^V01VO (\S+) (\S+) \| (.*)$/gm)) out.set(`${browser} ${slug}`, spoken);
+      return BROWSERS.flatMap((b) => section(b, [...out].filter(([k]) => k.startsWith(`${b} `))
+        .map(([k, spoken]) => `| \`${k.slice(b.length + 1)}\` | ${spoken} |`)));
+    };
+    const transcriptOf = (log) => ['# V01 Colour contrast: VoiceOver transcript (web, macOS)', '', 'Result: PASS', ...toolRows(log)].join('\n');
+    const raw = (s) => s.replace('Email Required', 'Email\nRequired');
+    expect(raw(EXPECTED_STOPS['good-cupertino'][0]), 'the field\'s name as the page has it').toBe('Email\nRequired edit text');
+    expect(spokenText('Email\nRequired  edit text\n')).toBe('Email Required edit text');
+    // One walk of every example in both browsers, each capture made as the
+    // VoiceOver spec makes it, from raw phrases with the page's line break,
+    // through `record`.
+    const walkLog = async (record) => {
+      const lines = [];
+      for (const b of BROWSERS) {
+        for (const row of rows) {
+          const words = whole(row);
+          let cursor = -1;
+          const latest = await collectWalk({
+            next: async () => { cursor = Math.min(cursor + 1, words.length - 1); },
+            previous: async () => { cursor = Math.max(cursor - 1, 0); },
+            capture: async () => ({ phrase: record(raw(words[cursor])), position: pos(cursor) }),
+            start: { phrase: '', position: '30, 147, 70, 187' },
+          });
+          const judged = judgeCollectedWalk(latest, TRANSCRIPT_ROWS[row].expected, TRANSCRIPT_ROWS[row].screen);
+          lines.push(...walkLogLines(b, row, 1, judged, latest));
+        }
+      }
+      return lines.join('\n');
+    };
+    const log = await walkLog(spokenText);
+    expect(log.split('\n').every((l) => l.startsWith('V01VO ')), 'every printed line is a row').toBe(true);
+    expect(log).toContain('| heading level 1 Cupertino field with stronger greys / Good example for Colour contrast. Cupertino. / heading level 2 Example / Email Required edit text / Send button (complete:');
+    expect(judgeTranscript(transcriptOf(log))).toEqual([]);
+    // The control: phrases recorded with their line break. The cut rows
+    // lose the rest of their walk, and the transcript fails.
+    const cut = await walkLog((s) => s);
+    expect(cut.split('\n').some((l) => !l.startsWith('V01VO ')), 'a line break cuts a row').toBe(true);
+    expect(judgeTranscript(transcriptOf(cut)).length).toBeGreaterThan(0);
+  });
+
+  test('the committed recording (docs/evidence/V01/voiceover-web.md) is right, every browser and row once', () => {
     // Never skipped: a missing file fails here, with what to do.
     const file = new URL('../docs/evidence/V01/voiceover-web.md', import.meta.url);
     expect(fs.existsSync(file),

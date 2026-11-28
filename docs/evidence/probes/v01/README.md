@@ -39,6 +39,20 @@ Two rounds of the fixture:
 | m22 to m27 | `FilterChip`, `ChoiceChip`, `SegmentedButton`, `ToggleButtons`, `TabBar`, `NavigationBar`, each with one chosen | g1 | white text on a gradient from #1A237E to #C5CAE9 |
 | m28 to m31 | `Divider`, `Card.outlined`, `LinearProgressIndicator`, `Chip` | g2 to g4 | `GridTileBar` over the gradient, with no background, `Colors.black54`, `Colors.black87` |
 
+- **Round 3** (Chromium and WebKit, after the principal's review):
+  FL-515. `probe3.dart.txt` shows one control per route in the catalog
+  app's `MaterialApp` (theme and dark theme, the browser's colour scheme
+  choosing): an `OutlinedButton`, a `CheckboxListTile`, a `RadioListTile`,
+  and an outlined `TextField`, each at its default and with one layer of
+  its ink turned off by a documented parameter (b0 to b3, c0 to c5, r0 to
+  r4, e0; the fixtures' own descriptions in the file). `probe3_web.spec.js.txt`
+  with `probe3_web.config.js.txt`, at a scale factor of 3, measures each
+  text with V01's text measure (its helpers copied from the web tree spec)
+  at rest, hovered, and with the mouse button held 0.3 s, 2 s, and 4 s,
+  light and dark, in Playwright's Chromium and WebKit
+  (`probe3_web.txt`). The V01 web tests with the examples under the theme
+  with no splash: `web_pressed_without_splash.txt`.
+
 ## How it was looked at
 
 - **Widget tests**: `probe_test.dart.txt`, at a device pixel ratio of 3,

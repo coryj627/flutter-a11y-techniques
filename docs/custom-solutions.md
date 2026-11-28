@@ -538,10 +538,10 @@ defaults, or with its own documented colour parameters; nothing is built.
 
 | Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
 | --- | --- | --- | --- | --- | --- |
-| `good-material` | Nothing: the theme's defaults, with `floatingLabelBehavior` and `hintMaxLines` | `TextField`, `CheckboxListTile`, `OutlinedButton` | none | R1 to R4, R7: iOS SwiftUI: Contrast, Understanding 1.4.3, Understanding 1.4.11 | not custom |
+| `good-material` | Nothing: the theme's colours, with `floatingLabelBehavior` and `hintMaxLines`, under a `Theme` with `splashFactory: NoSplash.splashFactory` | `TextField`, `CheckboxListTile`, `OutlinedButton` | Text under 4.5:1 while a mouse button is held on the web ([FL-515](flutter-limitations.md#fl-515)), filled with the theme's own parameter | R1 to R4, R7: iOS SwiftUI: Contrast, Understanding 1.4.3, Understanding 1.4.11 | not custom |
 | `good-cupertino` | Nothing: `placeholderStyle`, `decoration`, and `pressedOpacity` with colours from `CupertinoColors.systemGrey`'s high-contrast variants | `CupertinoTextField`, `CupertinoButton` | A faint placeholder ([FL-510](flutter-limitations.md#fl-510)), a faint edge ([FL-511](flutter-limitations.md#fl-511)), text faded while pressed ([FL-514](flutter-limitations.md#fl-514)), each filled with the widget's own parameter | R1 to R4, R7: iOS SwiftUI: Contrast, Understanding 1.4.3, Understanding 1.4.11 | not custom |
 | `good-caption` | Nothing: `GridTileBar(backgroundColor:)` | `GridTile`, `GridTileBar` | A caption with no background ([FL-512](flutter-limitations.md#fl-512)) | R1, R5: iOS SwiftUI: Contrast, F83, Understanding 1.4.11 | not custom |
-| `good-selection` | Nothing: `RadioListTile` in a `RadioGroup` | `RadioListTile` | none | R6: Understanding 1.4.1 | not custom |
+| `good-selection` | Nothing: `RadioListTile` in a `RadioGroup`, under a `Theme` with `splashFactory: NoSplash.splashFactory` | `RadioListTile` | Text under 4.5:1 while a mouse button is held on the web ([FL-515](flutter-limitations.md#fl-515)), filled with the theme's own parameter | R6, R7: Understanding 1.4.1, Understanding 1.4.3 | not custom |
 
 ## V13 Minimum touch target size
 

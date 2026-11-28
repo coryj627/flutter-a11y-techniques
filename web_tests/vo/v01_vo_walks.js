@@ -1,9 +1,20 @@
-// How web_tests/vo/v01_colour_contrast_vo.spec.js judges and repeats
-// its VoiceOver walks. Kept apart from the spec, with no VoiceOver and no
-// browser, so that web_tests/v01_colour_contrast.spec.js can test it on
-// made-up walks in CI. A copy of S16's s16_vo_walks.js (not imported: that
-// file is another technique's), with V01's screens and roles; the judge and
-// the walk are the same.
+// How web_tests/vo/v01_colour_contrast_vo.spec.js walks, judges and repeats
+// its VoiceOver walks, and how web_tests/v01_colour_contrast.spec.js judges
+// the committed transcript again. Kept apart from the spec, with no VoiceOver
+// and no browser, so that the web tree spec can test it on made-up walks in
+// CI. The screens, the expected stops, and the roles spokenRole knows are
+// V01's own; everything else is a copy of S16's s16_vo_walks.js (on main)
+// with the update the S08 to S12 judges have on branch
+// origin/web-vo-judges-s08-s12 (s12_vo_walks.js there, read, not imported:
+// both files are other techniques'): every walk logs the cursor's position
+// at each stop on a row of its own (`-positions`); a stop's "/" and "\" are
+// escaped in its row (stopsText), so that " / " only ever separates two
+// stops; judgeTranscript judges a help message by the rule the walk was
+// judged by, and checks the end witness and each unresolved read against the
+// recorded positions; VoiceOver's help message is taken in both its
+// wordings, "You are currently on ..." and "You are currently in ...", and
+// the end witness's move back may read that help about the stop before the
+// last, at exactly that stop's recorded position (witnessBackHolds).
 //
 // What a walk can show: VoiceOver's last phrase is text. A colour is drawn,
 // not spoken, so no V01 defect is in it: these lists judge words, and a
@@ -11,7 +22,27 @@
 // contrast is judged by web_tests/v01_colour_contrast.spec.js, from
 // Chromium's screenshots.
 
-import { VO_HELP } from './vo_logic.js';
+/**
+ * How VoiceOver's own help message for the element under its cursor starts,
+ * in both its wordings: "You are currently on a button, …", and "You are
+ * currently in a empty group.", first captured in S08's ninth web recording
+ * (2026-11-28), which the principal decided is the same kind of message.
+ * Defined here, not taken from vo_logic.js, whose VO_HELP on main has only
+ * the first wording (the second is on branch origin/web-vo-judges-s08-s12);
+ * the VoiceOver spec tests with this one.
+ */
+export const VO_HELP = /^You are currently (?:on|in) /;
+
+/**
+ * A phrase as the walk records it: every run of white space, a line break
+ * included, one space, and none at either end. VoiceOver's last phrase,
+ * read over AppleScript, comes so already (runAppleScript in vo_logic.js);
+ * the phrase Guidepup logs is made so in the VoiceOver spec. The Cupertino
+ * fields' names hold a line break ("Email\nRequired", their aria-label), and
+ * a line break in a phrase would cut the walk's console row in two:
+ * tool/voiceover_web.py reads each row to the end of its line only.
+ */
+export const spokenText = (raw) => String(raw).replace(/\s+/g, ' ').trim();
 
 /** The heading every example screen has, as VoiceOver reads it. */
 export const EXAMPLE_HEADING = 'heading level 2 Example';
@@ -51,7 +82,8 @@ export const EXAMPLE_SCREENS = {
 
 // The Cupertino field's name is its Semantics label and its placeholder,
 // "Email\nRequired" in the page (aria-label, with a line break); Chromium's
-// tree names it "Email Required" (web_tests/v01_colour_contrast.spec.js).
+// tree names it "Email Required" (web_tests/v01_colour_contrast.spec.js),
+// and the walk records the line break as a space (spokenText).
 const CUPERTINO_FIELD = 'Email Required edit text';
 // good-selection's RadioGroup: the group is named by its "Calendar view"
 // text, and each radio button not chosen has the description "Not
@@ -92,10 +124,15 @@ export const screenStops = (slug) => {
   return [`heading level 1 ${title}`, ...lines];
 };
 
-/** The role a help message names: "list" for "You are currently on a list, …". */
+/**
+ * The role a help message names: "button" for "You are currently on a
+ * button, …". Both of VoiceOver's wordings, "You are currently on a …" and
+ * "You are currently in a …" (VO_HELP); "empty group" in the second, as
+ * S08's ninth recording heard it, is taken as a group.
+ */
 export function helpRole(phrase) {
-  const m = /^You are currently on (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
-  return m ? m[1].trim() : null;
+  const m = /^You are currently (?:on|in) (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
+  return m ? m[1].trim().replace(/^empty /, '') : null;
 }
 
 /**
@@ -108,7 +145,7 @@ export function helpRole(phrase) {
  * "Email edit text". Null for a reading with no role part, such as a plain
  * text, and for the end of a group ("end of Calendar view radio group"):
  * such a stop allows no help message after it. These are the roles V01's
- * screens have.
+ * lists expect.
  */
 export function spokenRole(reading) {
   if (/^heading level \d+ /.test(reading)) return 'heading';
@@ -140,75 +177,47 @@ export function helpAfterStop(stops, positions, i) {
 }
 
 /**
- * Judges one walk of an example screen: `stops` in order, whether the walk
- * reached the end of the screen (two moves in a row that changed nothing),
- * `expected`, everything VoiceOver must say after the "Example" heading to
- * the end of the screen, in order, and `screen`, the stops the screen has
- * before the heading (screenStops), and `positions`, the cursor's position
- * at each stop, when the walk recorded them. The walk must read the whole screen:
+ * Every row name of a transcript (`<row>-walk-<n>`), with the stops its
+ * walk must read after the "Example" heading (`expected`) and the screen's
+ * own stops before it (`screen`): one per example.
+ */
+export const TRANSCRIPT_ROWS = Object.fromEntries(Object.entries(EXPECTED_STOPS)
+  .map(([slug, expected]) => [slug, { expected, screen: screenStops(slug) }]));
+
+/**
+ * Judges one walk of an example screen with no gaps: `walked`, its stops in
+ * order, whether the walk reached the end of the screen, `expected`,
+ * everything VoiceOver must say after the "Example" heading to the end of
+ * the screen, in order, `screen`, the stops the screen has before the
+ * heading (screenStops), and `positions`, the cursor's position at each
+ * stop, when the walk recorded them. The walk must read the whole screen:
  * `screen`, then the heading, then `expected`, every stop in its place and
- * nothing else. Returns `{ verdict, reason }`, the verdict one of:
+ * nothing else. S08's judge, as S16's copy has it. Returns
+ * `{ verdict, reason }`, the verdict one of:
  *
- * - "wrong": a stop that READ something other than the one expected in its
- *   place (a stop read in other words, a stop skipped so that a later one
- *   comes early, a stop after the last expected one), or a walk that
- *   reached the end of the screen with any expected stop not read, the
- *   title, the description, the heading, or a list item included. This
- *   fails the test whichever try it is in, and is looked for first: a walk
- *   with a wrong reading is wrong even if a capture in it also failed.
- * - "incomplete": a walk whose capture failed or fell short, with nothing
- *   wrong read in it: a stop read as an empty phrase (the AppleScript read
- *   of VoiceOver's last phrase gave nothing for a move that changed the
- *   cursor's position), or a walk cut short before the end (it ran out of
- *   moves) with every stop so far the expected one in its place. Only such
- *   a walk may be walked again (runWalks, at most three walks, each
- *   logged), and an empty phrase never passes: no expected stop is empty,
- *   so three such walks fail the test. An empty stop past the last expected
- *   one is not a failed capture but an element the screen does not have:
- *   it is wrong, as any stop there is.
+ * - "wrong": a stop past the last expected one, empty or not, which is
+ *   looked for before anything else (an empty phrase there is an element
+ *   the screen does not have, not a failed capture of one it does); a stop
+ *   that READ something other than the one expected in its place; or a walk
+ *   that reached the end with any expected stop not read. A walk with a
+ *   wrong reading is wrong even if a capture in it also failed.
+ * - "incomplete": a stop read as an empty phrase (a failed capture, which
+ *   holds the place of the stop expected there), with nothing wrong read;
+ *   or a walk that did not reach its end, every stop so far right (judgeWalk
+ *   makes that one wrong: a walk that ran out of moves is wrong for good).
+ *   No expected stop is empty, so an empty phrase never passes.
  * - "complete": the walk reached the end and read exactly the whole screen,
  *   with no empty stop.
  *
- * A stop that is VoiceOver's help message ("You are currently on a button,
- * inside of web content. …", VO_HELP) is left out only when it is tied to
- * the stop before it (helpAfterStop): `positions`, the cursor's position at
- * each stop as the walk recorded it, shows the cursor had not moved, the
- * stop before it is a reading (neither empty nor help), and the role the
- * help names ("on a button") is the role spoken in that reading, from its
- * role part only (spokenRole: "Week current item button" is a button's;
- * "heading level 1 Choice shown by a shape" is a heading's, whatever its
- * name says). It is
- * then VoiceOver's speech about the element just judged. Any other help
- * message is a stop like any other, and since no expected stop is a help
- * message it is wrong and fails for good: one at a new position (an
- * element nothing else was read for), one naming a role the reading before
- * it does not have, one with no stop before it, and every help message in
- * a walk with no positions. A help message given in place of an element's
- * own speech is at a new position, and fails. S08's fourth recording
- * (docs/evidence/probes/s08/voiceover-web-round4-fail.md.txt, WebKit,
- * good-numbered) read every expected stop and then the list's help message
- * after "end of list"; it recorded no positions, so such a walk judges
- * wrong. The rule for a help message is tested only on made-up walks
- * (web_tests/v01_colour_contrast.spec.js): no V01 walk has been
- * recorded.
- *
- * An empty stop holds the place of the stop expected there: the walks that
- * gave one in S08 (its second and third recordings, WebKit, the screen's
- * level 1 heading; docs/evidence/probes/s08/voiceover-web-round2-fail.md.txt
- * and round 3) read every later stop in its place. This is the rule the
- * principal set on 2026-11-26: an empty reading is a failed capture, walked
- * again, and a reading of the wrong words fails for good.
+ * A help message (VO_HELP) is left out only when helpAfterStop ties it to
+ * the stop before it; any other is a stop like any other, and since no
+ * expected stop is a help message it is wrong.
  */
 export function judgeExampleWalk(walked, reachedEnd, expected, screen = [], positions = undefined) {
-  // VoiceOver's own help message (VO_HELP, vo_logic.js), when it is about
-  // the element just read, is not a stop of the page (helpAfterStop).
   const stops = walked.filter((stop, i) => !helpAfterStop(walked, positions, i));
   const whole = [...screen, EXAMPLE_HEADING, ...expected];
   const empty = [];
   for (let i = 0; i < stops.length; i++) {
-    // A stop past the end of the screen is wrong, empty or not: an empty
-    // phrase there is an element the screen does not have, not a failed
-    // capture of one it does.
     if (i >= whole.length) {
       return { verdict: 'wrong', reason: `"${stops[i]}" was read after the last expected stop` };
     }
@@ -278,54 +287,67 @@ const ROW = /^\| `([a-z-]+)-walk-(\d+)` \| (.*) \((complete|wrong|incomplete): (
 const END_ROW = /^\| `([a-z-]+)-walk-(\d+)-end` \| back "(.*)" at (.*) \/ forward "(.*)" at (.*) \|$/;
 const UNRESOLVED_ROW = /^\| `([a-z-]+)-walk-(\d+)-unresolved` \| (.*) \|$/;
 const START_ROW = /^\| `([a-z-]+)-walk-(\d+)-start` \| "(.*)" at (.*) \|$/;
+const POSITIONS_ROW = /^\| `([a-z-]+)-walk-(\d+)-positions` \| (.*) \|$/;
 
 /**
  * Judges a committed web VoiceOver transcript (docs/evidence/V01/voiceover-web.md)
  * again, from its rows alone, never from stops rebuilt from the
  * expectations. The VoiceOver spec logs every try whole, the screen's own
- * stops included, as `<slug>-walk-<n>`, its unresolved reads as
- * `<slug>-walk-<n>-unresolved`, and the last walk's end witness as
- * `<slug>-walk-<n>-end`; tool/voiceover_web.py writes them under a heading
- * per browser. Returns the problems found, empty when the transcript is
- * right. S16's judge (s16_vo_walks.js, copied, not imported), written to
- * the rules S12's judge follows:
+ * stops included, as `<row>-walk-<n>`, and with it the walk's start
+ * capture (`-start`), the cursor's position at each stop (`-positions`), its
+ * unresolved reads (`-unresolved`), and, when it read one, its end witness
+ * (`-end`); tool/voiceover_web.py writes them under a heading per browser.
+ * `<row>` is a key of TRANSCRIPT_ROWS. Returns the problems found, empty
+ * when the transcript is right. S16's judgeTranscript (s16_vo_walks.js),
+ * as the S08 to S12 judge update has it (s12_vo_walks.js on branch
+ * origin/web-vo-judges-s08-s12, which took S17's positions row and the
+ * checks S17's judgeTranscript makes with it; each read, not imported): an
+ * unresolved read must be at the position before it, and
+ * the end witness's move forward at the last stop's recorded position and
+ * its move back elsewhere:
  *
- * - every table row must be one of the three kinds, in a known browser's
+ * - every table row must be one of the five kinds, in a known browser's
  *   section; a malformed one, or one outside a browser's section, is a
  *   problem; a section for an unknown browser is a problem;
- * - every browser in BROWSERS and every example in EXPECTED_STOPS must have
+ * - every browser in BROWSERS and every row in TRANSCRIPT_ROWS must have
  *   walks, numbered 1, 2, … with no gap and no repeat, at most three, and
  *   nothing else may have any; so an empty transcript fails, and so do
  *   sixteen copies of one row;
- * - every walk must have its start row, once (`<slug>-walk-<n>-start`, the
- *   capture before its first move, at cursor bounds), and its
- *   unresolved-reads row, once, which gives its gaps ("none", or each read
- *   "after stop K"); an unresolved read whose phrase is not empty and not
- *   the phrase of the stop it came after (or of the start, after none)
- *   hides words, and fails; and the last walk its end
- *   witness row: the move back read the stop before the last, not empty,
- *   at a position other than the move forward's, which read the last stop;
- *   both positions must be cursor bounds (BOUNDS). An earlier walk has an
- *   end row when it reached its end (the VoiceOver spec logs every
- *   witness); one without has not, and judges wrong. So a transcript with
- *   its end rows removed fails;
+ * - every walk must have its start row, once (the capture before its first
+ *   move, at cursor bounds), its positions row, once (one cursor bounds per
+ *   stop), and its unresolved-reads row, once ("none", or each read "after
+ *   stop K"); an unresolved read whose phrase is not empty and not the
+ *   phrase of the stop it came after (or of the start, after none) hides
+ *   words, and fails, and so does one after a stop the walk does not have,
+ *   or at a position other than the one before it (the start's, or the
+ *   stop's it came after); and the last walk its end witness row: the move
+ *   back read the stop before the last, not empty, at a position other
+ *   than the last stop's, and the move forward read the last stop at its
+ *   recorded position; every position must be cursor bounds (BOUNDS). An earlier walk has an end row when it reached its end
+ *   (the VoiceOver spec logs every witness); one without has not, and
+ *   judges wrong. So a transcript with any kind of row removed fails;
  * - every walk is judged again by judgeWalk on the stops it recorded, with
- *   its gaps and with whether it was witnessed at its end: the last must be
- *   recorded complete and judge complete; every earlier one must be
- *   recorded incomplete and judge incomplete, so a wrong earlier walk, or
- *   one that ran out of moves, fails the transcript, whatever came after.
+ *   its positions, its gaps, and whether it was witnessed at its end: the
+ *   last must be recorded complete and judge complete; every earlier one
+ *   must be recorded incomplete and judge incomplete, so a wrong earlier
+ *   walk, or one that ran out of moves, fails the transcript, whatever came
+ *   after.
  *
- * The transcript holds no cursor positions for the stops, so a help
- * message the judge left out by its position counts as a stop here and
- * fails: this errs toward failing.
+ * Because the positions are recorded, a help message is judged here by the
+ * rule the walk was judged by (helpAfterStop): left out only at the
+ * position of the stop before it, whose spoken role is the one it names. A
+ * walk whose positions row is malformed is judged with no positions, so
+ * that every help message in it is a stop, and fails.
  */
 export function judgeTranscript(text) {
   const problems = [];
-  const walks = new Map(); // "browser slug" -> Map(n -> { stops, was })
-  const ends = new Map(); // "browser slug n" -> the end witness
-  const unresolvedRows = new Map(); // "browser slug n" -> "none" or the reads
-  const starts = new Map(); // "browser slug n" -> the start capture
+  const walks = new Map(); // "browser row" -> Map(n -> { stops, was })
+  const ends = new Map(); // "browser row n" -> the end witness
+  const unresolvedRows = new Map(); // "browser row n" -> "none" or the reads
+  const starts = new Map(); // "browser row n" -> the start capture
+  const positionRows = new Map(); // "browser row n" -> the positions' text
   let browser = null;
+  const known = (slug) => BROWSERS.includes(browser) && Object.hasOwn(TRANSCRIPT_ROWS, slug);
   for (const line of text.split('\n')) {
     const section = /^## (\S+)$/.exec(line);
     if (section) {
@@ -338,7 +360,7 @@ export function judgeTranscript(text) {
     if (startRow) {
       const [, slug, n, phrase, position] = startRow;
       const key = `${browser} ${slug} ${n}`;
-      if (!BROWSERS.includes(browser) || !(slug in EXPECTED_STOPS)) {
+      if (!known(slug)) {
         problems.push(`a start row for an unknown browser or example: ${line}`);
       } else if (!BOUNDS.test(position)) {
         problems.push(`${browser} ${slug}: walk ${n}'s start row has a position that is not cursor bounds: ${line}`);
@@ -349,11 +371,24 @@ export function judgeTranscript(text) {
       }
       continue;
     }
+    const positionsRow = POSITIONS_ROW.exec(line);
+    if (positionsRow) {
+      const [, slug, n, shown] = positionsRow;
+      const key = `${browser} ${slug} ${n}`;
+      if (!known(slug)) {
+        problems.push(`a positions row for an unknown browser or example: ${line}`);
+      } else if (positionRows.has(key)) {
+        problems.push(`${browser} ${slug}: the positions of walk ${n} appear twice`);
+      } else {
+        positionRows.set(key, shown);
+      }
+      continue;
+    }
     const unresolvedRow = UNRESOLVED_ROW.exec(line);
     if (unresolvedRow) {
       const [, slug, n, reads] = unresolvedRow;
       const key = `${browser} ${slug} ${n}`;
-      if (!BROWSERS.includes(browser) || !(slug in EXPECTED_STOPS)) {
+      if (!known(slug)) {
         problems.push(`an unresolved-reads row for an unknown browser or example: ${line}`);
       } else if (unresolvedRows.has(key)) {
         problems.push(`${browser} ${slug}: the unresolved reads of walk ${n} appear twice`);
@@ -366,7 +401,7 @@ export function judgeTranscript(text) {
     if (end) {
       const [, slug, n, back, backAt, forward, forwardAt] = end;
       const key = `${browser} ${slug}`;
-      if (!BROWSERS.includes(browser) || !(slug in EXPECTED_STOPS)) {
+      if (!known(slug)) {
         problems.push(`an end row for an unknown browser or example: ${line}`);
       } else if (!BOUNDS.test(backAt) || !BOUNDS.test(forwardAt)) {
         problems.push(`${key}: walk ${n}'s end row has positions that are not cursor bounds: ${line}`);
@@ -387,7 +422,7 @@ export function judgeTranscript(text) {
       problems.push(`a row outside a browser's section: ${line}`);
       continue;
     }
-    if (!(slug in EXPECTED_STOPS)) {
+    if (!Object.hasOwn(TRANSCRIPT_ROWS, slug)) {
       problems.push(`${browser}: a row for an unknown example, "${slug}"`);
       continue;
     }
@@ -397,11 +432,11 @@ export function judgeTranscript(text) {
       problems.push(`${key}: walk ${n} appears twice`);
       continue;
     }
-    const stops = shown === NO_STOPS ? [] : shown.split(' / ').map((s) => (s === EMPTY_STOP ? '' : s));
+    const stops = stopsOf(shown);
     walks.get(key).set(Number(n), { stops, was });
   }
   for (const b of BROWSERS) {
-    for (const slug of Object.keys(EXPECTED_STOPS)) {
+    for (const [slug, { expected, screen }] of Object.entries(TRANSCRIPT_ROWS)) {
       const key = `${b} ${slug}`;
       const tries = walks.get(key);
       if (!tries) {
@@ -422,6 +457,14 @@ export function judgeTranscript(text) {
         const start = starts.get(`${key} ${n}`);
         starts.delete(`${key} ${n}`);
         if (!start) problems.push(`${key}: walk ${n} has no start row`);
+        const shownAt = positionRows.get(`${key} ${n}`);
+        positionRows.delete(`${key} ${n}`);
+        if (shownAt === undefined) problems.push(`${key}: walk ${n} has no positions row`);
+        const at = shownAt === undefined ? null : positionsOf(shownAt);
+        if (shownAt !== undefined && (at === null || at.length !== stops.length)) {
+          problems.push(`${key}: walk ${n}'s positions row does not give cursor bounds for each of its ${stops.length} stops: ${shownAt}`);
+        }
+        const positions = at !== null && at.length === stops.length ? at : undefined;
         const read = reads === undefined ? [] : readsOf(reads);
         if (read === null) problems.push(`${key}: walk ${n}'s unresolved-reads row is malformed: ${reads}`);
         // An unresolved read hides no words: its phrase is empty, or the
@@ -432,23 +475,44 @@ export function judgeTranscript(text) {
             problems.push(`${key}: walk ${n}'s unresolved read after stop ${r.after} read "${r.phrase}", where only "" or "${before}" is a gap: those words are a stop`);
           }
         }
+        // An unresolved read is an unchanged read: after a stop the walk
+        // has, at the position the cursor had before it (the start's, or
+        // the stop's before it). S17's check (s17_vo_walks.js, read, not
+        // imported).
+        for (const r of read ?? []) {
+          const prior = r.after === 0 ? start?.position : positions?.[r.after - 1];
+          if (r.after > stops.length || (prior !== undefined && r.position !== prior)) {
+            problems.push(`${key}: walk ${n} has an unresolved read that is not an unchanged one: after stop ${r.after} at ${r.position}`);
+          }
+        }
         const gaps = (read ?? []).map((r) => r.after);
         // The walk reached its end only if its end row is there and is a
         // witness: the move back read the stop before the last, not empty,
-        // at a position other than the move forward's, which read the last.
+        // at a position other than the last stop's, and the move forward
+        // read the last stop at its recorded position (S17's check, from
+        // the positions row; with no usable positions row, S16's: the two
+        // readings at different positions).
         const end = ends.get(`${key} ${n}`);
         ends.delete(`${key} ${n}`);
         const before = stops[stops.length - 2];
         const lastStop = stops[stops.length - 1];
-        const witnessed = Boolean(end) && end.back === before && end.forward === lastStop && end.back !== ''
-          && end.backAt !== end.forwardAt;
+        const lastAt = positions ? positions[positions.length - 1] : undefined;
+        // The move back is judged by witnessBackHolds, from the positions
+        // row; with no usable positions row, by S16's rule only (the stop
+        // before the last, at a position other than the move forward's),
+        // so a help message there then fails.
+        const backHolds = Boolean(end) && (positions === undefined
+          ? end.back !== '' && end.back === before && end.backAt !== end.forwardAt
+          : witnessBackHolds({ phrase: end.back, position: end.backAt }, stops, positions));
+        const witnessed = Boolean(end) && stops.length >= 2 && backHolds && end.forward === lastStop
+          && (positions === undefined || end.forwardAt === lastAt);
         if (end && !witnessed) {
           problems.push(`${key}: walk ${n}'s end witness read back "${end.back}" at ${end.backAt} and forward "${end.forward}" at ${end.forwardAt}, where "${before}" and then "${lastStop}" at another position were expected`);
         }
         if (last && !end) problems.push(`${key}: the last walk, ${n}, has no end witness`);
         // Every walk judged again with judgeWalk, its gaps included: a wrong
         // verdict always wins, so a wrong earlier walk fails the transcript.
-        const judged = judgeWalk(stops, witnessed, EXPECTED_STOPS[slug], screenStops(slug), undefined, gaps).verdict;
+        const judged = judgeWalk(stops, witnessed, expected, screen, positions, gaps).verdict;
         if (last && (was !== 'complete' || judged !== 'complete')) {
           problems.push(`${key}: the last walk, ${n}, was recorded ${was} and judges ${judged}`);
         }
@@ -461,26 +525,47 @@ export function judgeTranscript(text) {
   for (const key of ends.keys()) problems.push(`${key}: an end witness for a walk that does not exist`);
   for (const key of unresolvedRows.keys()) problems.push(`${key}: an unresolved-reads row for a walk that does not exist`);
   for (const key of starts.keys()) problems.push(`${key}: a start row for a walk that does not exist`);
+  for (const key of positionRows.keys()) problems.push(`${key}: a positions row for a walk that does not exist`);
   return problems;
+}
+
+/**
+ * A walk's stops as its row writes them: " / " between two stops, an empty
+ * phrase "(empty)", no stops "(nothing)", and in a stop every backslash
+ * and "/" written with a backslash before it, so that " / " only ever
+ * separates two stops. Not in S16's: S10's bad-merged reads "Rating: 3.4 /
+ * 5 Reviews: 856 68 68% progress indicator", which S16's row would split
+ * into two stops.
+ */
+export function stopsText(stops) {
+  return stops.map((s) => (s === '' ? EMPTY_STOP : s.replace(/[\\/]/g, '\\$&'))).join(' / ') || NO_STOPS;
+}
+
+/** The stops of a walk row's text (stopsText), each as it was read. */
+export function stopsOf(shown) {
+  if (shown === NO_STOPS) return [];
+  return shown.split(' / ').map((s) => (s === EMPTY_STOP ? '' : s.replace(/\\(.)/g, '$1')));
 }
 
 /** One transcript row, as the VoiceOver spec logs a walk and the tool writes it. */
 export function transcriptRow(slug, n, stops, verdict, reason) {
-  const shown = stops.map((s) => (s === '' ? EMPTY_STOP : s)).join(' / ') || NO_STOPS;
-  return `| \`${slug}-walk-${n}\` | ${shown} (${verdict}: ${reason}) |`;
+  return `| \`${slug}-walk-${n}\` | ${stopsText(stops)} (${verdict}: ${reason}) |`;
 }
 
 // --- The walk and its end witness -----------------------------------------
 //
-// S16's walk (s16_vo_walks.js, copied, not imported), written to the
-// rules of the collector S12 uses. collectWalk moves VoiceOver's
-// cursor forward through a screen and keeps every stop with the cursor's
-// position. Its moves and its capture are passed in, so that the web tree
-// spec can drive it with made-up screens and captures.
+// S16's collector (s16_vo_walks.js, read, not imported). collectWalk moves
+// VoiceOver's cursor forward through a screen and keeps every stop with the
+// cursor's position. Its moves and its capture are passed in, so that the
+// web tree spec can drive it with made-up screens and captures.
 //
-// A move is a stop when the cursor moved or a new, non-empty phrase was
-// spoken. A move that does neither, an unchanged read, is kept, never
-// dropped:
+// The walk begins with a capture on Back, before the first move (its start
+// row), and every move, the first included, is compared with the stop
+// before it, or with that start capture. A move is a stop when the cursor
+// moved or a non-empty phrase other than that one was spoken, even at
+// unchanged bounds; so a move that is not a stop, an unchanged read, is an
+// empty phrase or a repeat, and hides no words. An unchanged read is kept,
+// never dropped:
 //
 // - One unchanged read followed by a move that moves on is unresolved: the
 //   move may have reached an element whose capture was lost (the old
@@ -494,7 +579,10 @@ export function transcriptRow(slug, n, stops, verdict, reason) {
 //   one move back, whose fresh capture must be the stop before the last,
 //   by its phrase, not empty, at a position other than the last stop's;
 //   then one move forward, whose capture must be the last stop again, by
-//   its phrase and its position. A frozen capture reads the last stop at
+//   its phrase and its position. The move back may instead read
+//   VoiceOver's help message about the stop before the last, at exactly
+//   that stop's recorded position (witnessBackHolds, the principal's
+//   decision of 2026-11-28). A frozen capture reads the last stop at
 //   its position for the move back, an empty one reads "": either fails,
 //   for good ("wrong"). Both readings are logged as the walk's end row.
 //
@@ -507,12 +595,12 @@ export function transcriptRow(slug, n, stops, verdict, reason) {
  * Walks forward with `next()` (one move), reading `capture()` (resolves to
  * `{ phrase, position }`) after each, from `start`, the capture before the
  * first move (`{ phrase, position }`, where the walk begins, on Back); at
- * most `max` moves. At the apparent end, moves
- * back with `previous()` and forward again with `next()`, capturing after
- * each (the witness). Resolves to `{ stops, positions, reachedEnd, witness,
- * problem, unresolved }`: `witness` is `{ back, forward }`, each a capture,
- * when it was read; `problem` says why the walk failed for good, or is
- * null; `unresolved` lists the unresolved reads.
+ * most `max` moves. At the apparent end, moves back with `previous()` and
+ * forward again with `next()`, capturing after each (the witness). Resolves
+ * to `{ stops, positions, reachedEnd, witness, problem, unresolved, start }`:
+ * `witness` is `{ back, forward }`, each a capture, when it was read;
+ * `problem` says why the walk failed for good, or is null; `unresolved`
+ * lists the unresolved reads.
  */
 export async function collectWalk({ next, previous, capture, start, max = 40 }) {
   const stops = [];
@@ -546,9 +634,9 @@ export async function collectWalk({ next, previous, capture, start, max = 40 }) 
       const before = stops[stops.length - 2];
       const last = stops[stops.length - 1];
       const lastAt = positions[positions.length - 1];
-      if (back.phrase === '' || back.phrase !== before || back.position === lastAt) {
+      if (!witnessBackHolds(back, stops, positions)) {
         return done(false, witness,
-          `the end is not witnessed: a move back read "${back.phrase}" at ${back.position}, where "${before}" was expected away from ${lastAt}`);
+          `the end is not witnessed: a move back read "${back.phrase}" at ${back.position}, where "${before}" (or VoiceOver's help about it, at ${positions[positions.length - 2]}) was expected away from ${lastAt}`);
       }
       if (forward.phrase !== last || forward.position !== lastAt) {
         return done(false, witness,
@@ -564,6 +652,36 @@ export async function collectWalk({ next, previous, capture, start, max = 40 }) 
     positions.push(now);
   }
   return done(false, null, null);
+}
+
+/**
+ * Whether the end witness's move back holds, for a walk's `stops` and
+ * `positions`. It must read something other than an empty phrase, at a
+ * position other than the last stop's, and either:
+ *
+ * - the stop before the last, by its phrase (S16's rule); or
+ * - VoiceOver's help message about that stop (VO_HELP, either wording),
+ *   whose role (helpRole) is the role spoken in that stop's reading, at
+ *   exactly the position recorded for that stop during the walk
+ *   (helpAfterStop, this technique's own rule, on the stop and the move
+ *   back). The principal's decision, 2026-11-28, after S08's ninth and tenth
+ *   web recordings read "You are currently in a empty group." there: the
+ *   position recorded during the walk ties the help to that element, and a
+ *   new phrase at another position than the last stop's shows the capture
+ *   is live. Such a witness shows liveness and position, not the element's
+ *   words.
+ *
+ * Help of another role, help at any other position, an empty or a frozen
+ * reading fail. Without positions, only the first form can hold.
+ */
+export function witnessBackHolds(back, stops, positions) {
+  if (stops.length < 2 || back.phrase === '') return false;
+  const before = stops[stops.length - 2];
+  const lastAt = Array.isArray(positions) ? positions[positions.length - 1] : undefined;
+  if (back.position === lastAt) return false;
+  if (back.phrase === before) return true;
+  if (!Array.isArray(positions) || positions.length !== stops.length) return false;
+  return helpAfterStop([before, back.phrase], [positions[positions.length - 2], back.position], 1);
 }
 
 /**
@@ -592,7 +710,7 @@ export function readsOf(text) {
  * Judges a walk's captured stops with its gaps: `gaps` lists, for each
  * unresolved read, the number of stops captured before it ("after stop
  * K"), a place where the walk may have passed an element it never
- * captured. The rule, in order:
+ * captured. S16's rule, in order:
  *
  * 1. A wrong verdict always wins: the captured stops are judged even when
  *    there are gaps.
@@ -682,14 +800,34 @@ export function witnessText(witness) {
   return `back ${side(witness.back)} / forward ${side(witness.forward)}`;
 }
 
-/** A walk's start row: the capture before its first move. */
-export function startRow(slug, n, start) {
-  return `| \`${slug}-walk-${n}-start\` | "${start.phrase}" at ${start.position} |`;
-}
-
 /** The transcript row's text for a walk's start capture. */
 export function startText(start) {
   return `"${start.phrase}" at ${start.position}`;
+}
+
+/** The transcript row's text for the cursor's position at each stop of a walk. */
+export function positionsText(positions) {
+  return positions.join(' / ') || NO_STOPS;
+}
+
+/**
+ * The positions of a positions row's text, one per stop, [] for a walk with
+ * no stops; null when one of them is not cursor bounds (BOUNDS).
+ */
+export function positionsOf(text) {
+  if (text === NO_STOPS) return [];
+  const positions = text.split(' / ');
+  return positions.every((p) => BOUNDS.test(p)) ? positions : null;
+}
+
+/** A walk's start row: the capture before its first move. */
+export function startRow(slug, n, start) {
+  return `| \`${slug}-walk-${n}-start\` | ${startText(start)} |`;
+}
+
+/** A walk's positions row: the cursor's position at each of its stops. */
+export function positionsRow(slug, n, positions) {
+  return `| \`${slug}-walk-${n}-positions\` | ${positionsText(positions)} |`;
 }
 
 /** A walk's end witness row, as the VoiceOver spec logs it and the tool writes it. */
@@ -700,4 +838,23 @@ export function endRow(slug, n, witness) {
 /** A walk's unresolved-reads row, as the VoiceOver spec logs it and the tool writes it. */
 export function unresolvedRow(slug, n, unresolved) {
   return `| \`${slug}-walk-${n}-unresolved\` | ${unresolvedText(unresolved)} |`;
+}
+
+/**
+ * The console lines the VoiceOver spec prints for one try of `slug` in
+ * `browser`: `walk` its number, `judged` its verdict, `latest` the
+ * collected walk (collectWalk). tool/voiceover_web.py turns each line
+ * "V01VO <browser> <row> | <text>" into the transcript row "| `<row>` |
+ * <text> |" under the browser's heading, reading <text> to the end of its
+ * line, so no line may hold a line break (spokenText).
+ */
+export function walkLogLines(browser, slug, walk, judged, latest) {
+  const at = `V01VO ${browser} ${slug}-walk-${walk}`;
+  return [
+    `${at} | ${stopsText(latest.stops)} (${judged.verdict}: ${judged.reason})`,
+    `${at}-start | ${startText(latest.start)}`,
+    `${at}-positions | ${positionsText(latest.positions)}`,
+    ...(latest.witness ? [`${at}-end | ${witnessText(latest.witness)}`] : []),
+    `${at}-unresolved | ${unresolvedText(latest.unresolved)}`,
+  ];
 }

@@ -22,7 +22,7 @@ in light and dark mode and in every state a control can be in.
 
 | Android | iOS | Web |
 | --- | --- | --- |
-| Applies | Applies | Applies (a held mouse press: section 5, Decisions) |
+| Applies | Applies | Applies |
 
 Every good example is Flutter's own widgets through their documented
 parameters; none is a custom solution (section 5). Every colour cited here
@@ -31,21 +31,22 @@ screenshots, the Android emulator's, and the iOS simulator's, in light and
 dark mode (section 6).
 
 - **Android, applies.** Every example measured at rest, with keyboard focus
-  from a registered keyboard, and with a finger held down 180 to 300 ms, in
-  light and dark mode set with `cmd uimode night`. Hover was not measured:
-  the emulator has no mouse the tests can drive.
+  from a registered keyboard, and with a finger held down until two
+  screenshots agree, the first at 750 ms or later, in light and dark mode
+  set with `cmd uimode night`. Hover was not measured: the emulator has no
+  mouse the tests can drive.
 - **iOS, applies.** Every example measured at rest and with keyboard focus
   by Tab, in light and dark mode set with `XCUIDevice.appearance`. A held
   press and a hover could not be measured: XCUITest's press returns only
   after the finger is lifted, and has no pointer.
-- **Web, applies, with one finding for the principal.** Every example
-  measured at rest, focused, hovered, focused and hovered, and with a mouse
-  button held, in light and dark mode by `prefers-color-scheme`. With a
-  mouse button held, three good-example texts fall under 4.5:1
-  ([FL-515](../flutter-limitations.md#fl-515)). A documented parameter may
-  fix it (the overlay or the splash of the button and the tiles); none was
-  tried. Whether this makes the web a limitation for that state is the
-  principal's decision (section 5, Decisions).
+- **Web, applies.** Every example measured at rest, focused, hovered,
+  focused and hovered, and with a mouse button held 2 s and 4 s, in light
+  and dark mode by `prefers-color-scheme`, in Chromium. With the theme's
+  default ink splash, a mouse button held on a Material button or list
+  tile takes its text under 4.5:1, in Chromium and in WebKit
+  ([FL-515](../flutter-limitations.md#fl-515)); `good-material` and
+  `good-selection` are under the theme with no splash, a documented
+  parameter, which keeps every text at 4.5:1 or more (section 5).
 
 ## 3. WCAG 2.2 success criteria
 
@@ -119,6 +120,7 @@ Flutter references for the mechanisms used:
 - [`InputDecoration.floatingLabelBehavior`](https://api.flutter.dev/flutter/material/InputDecoration/floatingLabelBehavior.html), `hintMaxLines`
 - [`CupertinoTextField.placeholderStyle`](https://api.flutter.dev/flutter/cupertino/CupertinoTextField/placeholderStyle.html) and [`decoration`](https://api.flutter.dev/flutter/cupertino/CupertinoTextField/decoration.html), with [`CupertinoDynamicColor`](https://api.flutter.dev/flutter/cupertino/CupertinoDynamicColor/highContrastColor.html) colours
 - `CupertinoButton.pressedOpacity`
+- [`ThemeData.splashFactory`](https://api.flutter.dev/flutter/material/ThemeData/splashFactory.html) and [`NoSplash.splashFactory`](https://api.flutter.dev/flutter/material/NoSplash/splashFactory-constant.html)
 - [`GridTileBar.backgroundColor`](https://api.flutter.dev/flutter/material/GridTileBar/backgroundColor.html)
 - [`RadioListTile`](https://api.flutter.dev/flutter/material/RadioListTile-class.html) in a `RadioGroup`; [`ListTile.selected`](https://api.flutter.dev/flutter/material/ListTile/selected.html)
 
@@ -128,10 +130,10 @@ Flutter references for the mechanisms used:
 
 | Slug | Variant | What it shows | Mechanism | Reqs |
 | --- | --- | --- | --- | --- |
-| `good-material` | Material | A line of body text, an outlined field "Email" with its hint "Required" shown at rest, a checkbox "Send me updates", and a button "Send", all at the theme's defaults | `TextField(decoration: InputDecoration(border: OutlineInputBorder(), floatingLabelBehavior: always, hintMaxLines: 2))`, `CheckboxListTile`, `OutlinedButton`; colours from the app's `colorSchemeSeed` | R1 to R4, R7 |
+| `good-material` | Material | A line of body text, an outlined field "Email" with its hint "Required" shown at rest, a checkbox "Send me updates", and a button "Send", at the theme's colours | `TextField(decoration: InputDecoration(border: OutlineInputBorder(), floatingLabelBehavior: always, hintMaxLines: 2))`, `CheckboxListTile`, `OutlinedButton`; colours from the app's `colorSchemeSeed`; under `Theme(data: ….copyWith(splashFactory: NoSplash.splashFactory))` (FL-515) | R1 to R4, R7 |
 | `good-cupertino` | Cupertino | A field "Email", with a label above it, its placeholder "Required" and its edge in a stronger grey, and a filled button "Send" | `CupertinoTextField(placeholderStyle:, decoration:)` with `systemGrey`'s high-contrast colours, #6C6C70 and #AEAEB2, as one `CupertinoDynamicColor`; `CupertinoButton.filled(pressedOpacity: 0.9)` | R1 to R4, R7 |
 | `good-caption` | Material | A picture, pale at the left and dark at the right, with the caption "Harbour" on a bar | `GridTile` with `GridTileBar(backgroundColor: Colors.black54)` | R1, R5 |
-| `good-selection` | Material | A choice of view, Day, Week, or Month, Week chosen | `RadioListTile`s in a `RadioGroup`: the chosen radio button has a dot | R6 |
+| `good-selection` | Material | A choice of view, Day, Week, or Month, Week chosen | `RadioListTile`s in a `RadioGroup`: the chosen radio button has a dot; under the theme with no splash, as `good-material` | R6, R7 |
 
 The `OutlinedButton` in `good-material` is not a `FilledButton` because a
 `FilledButton`'s text is under 4.5:1 with focus and a hover in light mode
@@ -154,44 +156,44 @@ register's rows, with what each fills, are in
 | `bad-colour-only` | The same choice as three `ListTile`s with `selected`: the chosen title is `primary` and the others `onSurface`, 2.66:1 apart in light mode and 1.32:1 in dark, and nothing else is drawn ([FL-513](../flutter-limitations.md#fl-513)) | R6 | 1.4.1, all platforms, light and dark |
 | `bad-faint-edge` | An outlined field whose edge is `outlineVariant`, the scheme's role for decorative lines: 1.62:1 against the page in light mode, 1.99:1 in dark. With focus its edge turns `primary`, 6.12:1 and 10.90:1 | R2 | 1.4.11, all platforms, light and dark |
 
-### Decisions for the principal
+### Decisions
 
-These were made by the engineer to finish the build, and are the
-principal's to keep or change:
+The principal's, made in review on 2026-11-28 (the owner may overrule):
 
-1. **The pressed state is held to 1.4.3.** The criterion has no exception
-   for it. `CupertinoButton`'s default fades the whole button to 0.4
-   opacity while it is pressed, and its text to 1.88:1 (light) and 2.42:1
-   (dark) on its fill ([FL-514](../flutter-limitations.md#fl-514)).
-   `good-cupertino` sets `pressedOpacity: 0.9`, the documented parameter,
-   which keeps it at 5.13:1 and 6.65:1 (measured on Android; 5.14 and 6.66
-   in the widget tests). 0.85 gives 4.54:1 in light mode, on the threshold.
-   The value is the engineer's; there is no source for it.
-2. **The web with a mouse button held** ([FL-515](../flutter-limitations.md#fl-515)).
-   Measured in Chromium with the mouse held on a control: `good-material`'s
-   "Send" 4.19:1 in light mode after 2 s (4.52:1 at 0.3 s), its
-   "Send me updates" 4.25:1 in dark mode after 2 s (at 0.3 s 4.25:1 or
-   4.65:1, by run), and
-   `good-selection`'s three titles 4.25:1 in dark mode after 2 s (8.9:1 to
-   9.9:1 at 0.3 s). The widget tests, holding a mouse 2 s, and Android,
-   holding a finger 180 to 300 ms, stay over 4.5:1 for each. The web tree
-   spec asserts the five readings at 2 s under 4.5:1, written to fail when
-   they change, logs the two at 0.3 s that crossed the threshold between
-   runs, and asserts every other text over it. A documented parameter may fix
-   them (`ButtonStyle.overlayColor`, `splashFactory`, a tile's
-   `splashColor`); none was tried. The engineer has left the web status as
-   applies and the examples as they are; under the owner's rule of
-   2026-11-23 the web would be a limitation for this state only if no
-   documented parameter fixes it.
-3. **`good-cupertino`'s greys** are `systemGrey`'s high-contrast
-   colours, chosen by the engineer as the nearest system grey that meets
-   4.5:1 on the field in both modes. `secondaryLabel` and its high-contrast
-   colour do not in light mode (3.38:1 and 4.10:1 on the page;
+1. **A held press is held to 1.4.3**, as every state is: the label is
+   still text the user reads while pressing.
+2. **FL-515: the documented parameter, not a limitation.** With the
+   theme's default ink splash, a mouse button held on `good-material`'s
+   button and tile and on `good-selection`'s tiles took their texts to
+   4.19:1 ("Send", light) and 4.25:1 (the tile titles, dark) in Chromium
+   and WebKit, at 2 s and 4 s. Measured in probe round 3, each layer
+   turned off in turn: the splash, drawn over the pressed highlight and
+   the hover tint, is what takes them under (FL-515 gives every figure).
+   `ThemeData.splashFactory: NoSplash.splashFactory` round the two
+   examples (`WithoutSplash`) keeps them at 4.79:1 and more ("Send",
+   light) and 7.07:1 and more (the titles, dark) in both browsers; the
+   press is still shown by its highlight. The web is therefore applies,
+   and FL-515 stays as the default's gap with that workaround.
+3. **`pressedOpacity: 0.9` in `good-cupertino` stays.** It is
+   `CupertinoButton`'s documented parameter, and the value is the
+   example's own choice: there is no source for it, and any value whose
+   measured pressed ratio is 4.5:1 or more would serve. At 0.9 the text is
+   5.14:1 (light) and 6.66:1 (dark) while pressed in the widget tests
+   (Android, section 7); 0.85 sits on the threshold, 4.54:1 in light mode
+   (computed from the colours, not measured). The default, 0.4, is 1.88:1
+   and 2.42:1 ([FL-514](../flutter-limitations.md#fl-514)), measured in
+   the widget tests only: the default's press is not measured on a
+   device.
+4. **`good-cupertino`'s greys stay**, the example's choice among
+   `CupertinoColors`' documented colours: `systemGrey`'s high-contrast
+   colours, #6C6C70 and #AEAEB2. Measured on every layer: the placeholder
+   5.23:1 on the field's white and 9.50:1 on its black; the edge 4.97:1
+   against the page and 5.23:1 against the field in light mode, 8.39:1 and
+   9.50:1 in dark. `secondaryLabel` and its high-contrast colour do not
+   reach 4.5:1 in light mode (3.38:1 and 4.10:1 to 4.16:1 on the page;
    [FL-517](../flutter-limitations.md#fl-517)).
-4. **`ToggleButtons` and C02.** The probe found `ToggleButtons`' chosen
-   button shown by colour alone in the same way as `ListTile`'s
-   ([FL-513](../flutter-limitations.md#fl-513)). C02's `good-toggle-buttons`
-   uses it. Whether that example changes is not V01's to decide.
+5. **C02's `good-toggle-buttons`** is not V01's to change: it is handed on
+   as a question for the owner (section 8).
 
 ### Not built
 
@@ -257,10 +259,24 @@ What these measures leave out, and what each gives up:
   field's label and hint, a tile's title, a button's text, which are
   merged into the control's node) has its box found from the pixels at
   rest: the pixels of a search area that differ from its commonest colour
-  by more than 12, grown by 2 pixels. The search areas are each layer's,
-  from the control's rectangle and the probe's geometry (the layers' file
-  headers name them). The box is kept for the other states, after
-  checking the control did not move.
+  by more than 12. On Android and iOS the box is grown by 2 pixels; on the
+  web it is not (its rows 6 above and below are outside the letters either
+  way). The search areas are each layer's, from the control's rectangle
+  and the probe's geometry (the layers' file headers name them). The box
+  is kept for the other states, after checking the control did not move.
+- A state is measured once it has stopped moving: the widget tests settle
+  the frame (`pumpAndSettle`, or 300 ms held for a press); the web takes
+  two screenshots 250 ms apart that agree in every pixel of what is
+  measured; Android holds a press until two screenshots agree, the first
+  at 750 ms or later (earlier ones are logged, not judged), and settles
+  other states to within a caret's area; iOS settles to within 0.5% of the
+  region, and measures a focused field's texts in two screenshots 600 ms
+  apart that must agree, as its caret blinks. Each state is set and shown
+  set by a witness other than the pixels measured (a focus flag, the tree,
+  Flutter's mouse cursor on the web, the page's colour for the mode,
+  pixels changed elsewhere than the text), and undone and shown undone.
+- Colours: the widget tests, the web, and iOS compare colours exactly;
+  Android within 2 in each channel.
 - The edge measure walks one line, at the control's vertical middle. A
   faint stretch of edge elsewhere is not seen; a mark on the line (a
   letter) would be taken as the edge, which leans to passing, so each
@@ -272,10 +288,10 @@ What these measures leave out, and what each gives up:
 
 | Layer | What is asserted |
 | --- | --- |
-| L1 widget tests | Good, light and dark: the four guidelines; at 200% text on 320 by 640, no overflow and no text cut short, for every example. Names and roles: the fields (the Cupertino field's name is "Email" and its placeholder, `Email\nRequired`), the checkbox, the button, the caption as one node, `good-selection`'s three radio buttons in a group with Week checked and a tap on Day checking Day, `bad-colour-only`'s three buttons with Week selected and a tap selecting Day. Pixels, light and dark: every text of `good-material` 4.5:1 or more at rest, focused, hovered, focused and hovered, pressed 300 ms, and held 2 s by a mouse; its field's edge, checkbox, and outline 3:1 or more; checked, the fill 3:1 against the page and the mark 3:1 on the fill. `good-cupertino`: label, placeholder, and "Send" 4.5:1 or more, the edge 3:1 against the page and the field; "Send" focused, hovered, and pressed 4.5:1 or more. `good-caption` 4.5:1 or more over the whole picture. `good-selection`: titles 4.5:1, rings 3:1, a dot in Week's radio only, moving to Day with a tap. Each bad example's defect, under its threshold and over 1:1, with its positive control (`bad-faint-edge` with focus 3:1 or more; `bad-caption`'s colour 4.5:1 or more against the picture's dark end; `bad-colour-only`'s colour moving with a tap; nothing else drawn on its tiles). FL-511 and FL-514, each widget on its own, light and dark |
-| L3 web | Role, name, and state of every control by Chromium's accessibility tree; the Cupertino field named "Email Required"; `good-selection` a radio group with Week checked, a click checking Day; `bad-colour-only` three buttons with no selected, pressed, or checked state (Flutter writes `aria-current` on the chosen one). The same pixel assertions on Chromium screenshots at a scale factor of 3, light and dark by `prefers-color-scheme` (the page colour and the media query checked first, light put back after), states by Tab, mouse hover, both, and a mouse button held 0.3 s and 2 s, with FL-515's five readings at 2 s asserted under 4.5:1. The VoiceOver judge regressions and the transcript re-judge (section 7) |
-| L3 Android | Class, name, and checked or selected state of every control; a tap moving each choice. The same pixel assertions on `UiAutomation.takeScreenshot`, light and dark by `cmd uimode night` (asserted, put back, asserted), focus from a `uinput` keyboard (FL-433), a finger held 180 to 300 ms by injected events, each press witnessed by a change on the screen or of state. Run at the emulator's own size and at 320 by 640 at 160 dpi |
-| L3 iOS | Type and label of every element; a tap moving each choice (`isSelected`). The same pixel assertions on `XCUIScreen` screenshots in sRGB, light and dark by `XCUIDevice.appearance` (the page colour checked, put back, checked), focus by Tab with no modifier. No held press (XCUITest cannot hold one and take a screenshot), no hover |
+| L1 widget tests | Good, light and dark: the four guidelines; at 200% text on 320 by 640, no overflow and no text cut short, for every example. Names and roles: the fields (the Cupertino field's name is "Email" and its placeholder, `Email\nRequired`), the checkbox, the button, the caption as one node, `good-selection`'s three radio buttons in a group with Week checked and a tap on Day checking Day, `bad-colour-only`'s three buttons with Week selected and a tap selecting Day. Pixels, light and dark: every text of `good-material` 4.5:1 or more at rest, focused, hovered, focused and hovered, pressed 300 ms by a finger, and held 2 s by a mouse; its field's edge, checkbox, and outline 3:1 or more; checked, the fill 3:1 against the page and the mark 3:1 on the fill. `good-cupertino`: label, placeholder, and "Send" 4.5:1 or more, the edge 3:1 against the page and the field; "Send" focused, hovered, and pressed 4.5:1 or more. `good-caption` 4.5:1 or more over the whole picture. `good-selection`: titles 4.5:1, rings 3:1, a dot in Week's radio only, moving to Day with a tap. Each bad example's defect, under its threshold and over 1:1, with its positive control (`bad-faint-edge` with focus 3:1 or more; `bad-caption`'s colour 4.5:1 or more against the picture's dark end; `bad-colour-only`'s colour moving with a tap; nothing else drawn on its tiles). FL-511 and FL-514, each widget on its own, light and dark |
+| L3 web | Role, name, and state of every control by Chromium's accessibility tree; the Cupertino field named "Email Required"; `good-selection` a radio group with Week checked, a click checking Day; `bad-colour-only` three buttons with no selected, pressed, or checked state (Flutter writes `aria-current` on the chosen one). The same pixel assertions on Chromium screenshots at a scale factor of 3, light and dark by `prefers-color-scheme` (the page colour and the media query checked first, light put back after), states by Tab, mouse hover (witnessed by Flutter's mouse cursor on the page), both, and a mouse button held 2 s and 4 s, the two readings required to agree, every text 4.5:1 or more; each state undone (focus back to Back, the mouse moved off before it is let go, so no click) and shown undone. The VoiceOver judge regressions and the transcript re-judge (section 7) |
+| L3 Android | Class, name, and checked or selected state of every control; a tap moving each choice. The same pixel assertions on `UiAutomation.takeScreenshot`, light and dark by `cmd uimode night` (asserted, put back, asserted), focus from a `uinput` keyboard (FL-433), a finger held by injected events until two screenshots agree, the first at 750 ms or later, each press witnessed by pixels changed outside the measured text or by the control's state after the lift, and the button's press shown undone. TalkBack walked in light mode, set and checked. Run at the emulator's own size and at 320 by 640 at 160 dpi |
+| L3 iOS | Type and label of every element; a tap moving each choice (`isSelected`). The same pixel assertions on `XCUIScreen` screenshots in sRGB, light and dark by `XCUIDevice.appearance` (the page colour checked, put back, checked), focus by Tab with no modifier, witnessed by `hasKeyboardFocus` for a field and by pixels changed in the control outside its texts for the others, and shown gone after the next Tab; a checkbox and a choice put back by a tap and checked. No held press (XCUITest cannot hold one and take a screenshot), no hover |
 | L4 TalkBack | Each text and control of each example in turn, every row a whole utterance (`== A / B`), each walk judged whole (`walk_strictly`) |
 | L4 VoiceOver iOS | Every utterance from the top of the screen to its end (V01Walk, S16's walk): the screen's own title, description, and defect, then exactly the example's stops |
 | L4 VoiceOver web | S16's walk and judge (`web_tests/vo/v01_vo_walks.js`), every stop judged; the transcript re-judged by the tree spec from its rows |
@@ -319,8 +335,12 @@ its raw output, and the analyser. Every figure here is read from pixels;
   text's contrast. A `FilledButton` with focus and a hover is 4.28:1 in
   light mode (FL-253), and a selected `ListTile` with focus and a hover
   4.25:1 (probe m21, widget tests; FL-253); every other state measured
-  stays over 4.5:1 in the widget tests. In Chromium a mouse button held
-  lowers three of the good examples' texts under 4.5:1 (FL-515).
+  stays over 4.5:1 in the widget tests. On the web, in Chromium and
+  WebKit, a mouse button held on an `OutlinedButton` or a list tile with
+  the default ink splash takes its text to 4.19:1 (the button, light) and
+  4.25:1 (the tiles, dark) once the splash has spread; with the theme's
+  `splashFactory: NoSplash.splashFactory` 4.79:1 and 7.07:1 or more
+  (FL-515, probe round 3). The good examples are under that theme.
 - **Material shows some states by colour alone.** A selected `ListTile`
   colours its title `primary`, 2.66:1 against the others' `onSurface` in
   light mode and 1.32:1 in dark, and draws nothing else (FL-513,
@@ -380,14 +400,24 @@ its raw output, and the analyser. Every figure here is read from pixels;
   spoken by TalkBack or VoiceOver on iOS, and is not in Chromium's
   accessible name; the Cupertino field's placeholder is part of its name,
   "Email Required", on every platform.
-- **iOS simulator.** During the build the simulator stopped drawing dark
-  mode for a while: the appearance read back dark and the app stayed
-  light. A reboot of the simulator ended it; the cause was not found. The
-  iOS tests fail, measuring nothing, if the page does not show the mode.
+- **The shared iOS simulator during the build** (notes, not findings).
+  From about 05:07 on 2026-11-28 the simulator drew no dark mode: the
+  appearance set by `XCUIDevice.appearance`, by `simctl ui appearance
+  dark`, and by a tap on Dark in Settings each read back dark, and
+  Settings and the app stayed light; at 04:39 the same test had drawn
+  dark. At 06:38 it was shut down and booted again, under the device
+  lock, and dark mode was drawn again, also after a VoiceOver walk. The
+  cause was not found. While looking, `simctl openurl` left two "Open in
+  'Flutter A11Y Techniques'?" dialogs on the home screen; a later run
+  under the lock tapped Cancel on both, and a screenshot showed the home
+  screen clear. The appearance was put back to light, and checked, after
+  every run. The iOS tests fail, measuring nothing, if the page does not
+  show the mode.
 
-**Not done yet.** Hover on Android and iOS, a held press on iOS, a press
-on Android longer than 300 ms; the colour schemes of other seeds; forced
-colours and Windows High Contrast (V02); WebKit and Firefox; text over a
+**Not done yet.** Hover on Android and iOS; a held press on iOS; the
+default ink splash held on Android (the examples are without it; the
+probe's Android presses were short); the colour schemes of other seeds; forced
+colours and Windows High Contrast (V02); the examples in WebKit and Firefox (probe round 3 measured FL-515 in WebKit); text over a
 real photograph (the picture is a gradient so that every layer measures
 the same pixels); every other Material and Cupertino widget in every
 state on the devices (the probe measured them in the widget tests and
