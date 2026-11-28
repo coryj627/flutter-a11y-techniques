@@ -215,7 +215,7 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-501](#fl-501) | On the web `highContrast` comes from `forced-colors: active` only: `prefers-contrast: more` sets nothing, and `boldText`, `invertColors`, and `onOffSwitchLabels` are never set | Web | Confirmed |
 | [FL-502](#fl-502) | On iOS Reduce Motion sets only `AccessibilityFeatures.reduceMotion`, which `MediaQueryData` does not carry: `disableAnimations` is never set, so `MediaQuery.disableAnimationsOf` and framework animations ignore Reduce Motion | iOS | Confirmed |
 | [FL-503](#fl-503) | On Android `accessibleNavigation` turns on when any accessibility service reads the app's nodes, not only TalkBack, and is off at a screen's first frame even with TalkBack running | Android | Confirmed |
-| [FL-504](#fl-504) | On Android `highContrast` follows the contrast level of Android 14 and later, not "High contrast text", and changing the contrast level or Bold text starts the app again | Android | Confirmed ("High contrast text"); Observed (the restart) |
+| [FL-504](#fl-504) | On Android `highContrast` follows the contrast level of Android 14 and later, not "High contrast text"; a change of the contrast level reaches the running app and then the app starts again, and Bold text reaches it only when it starts again | Android | Confirmed ("High contrast text"); Observed (the restart) |
 | **FL-600 to FL-699** | Wave 6, remaining forms | | |
 | **FL-700 to FL-799** | Wave 7, dialogs and overlays | | |
 | **FL-800 to FL-899** | Wave 8, navigation and complex components | | |
@@ -7341,7 +7341,8 @@ yet), **Fixed in x.y** (verified on that version).
 - Status: Confirmed, Flutter 3.47.5, web (Chromium and WebKit, Playwright,
   no screen reader running), and the web engine's source read
   (`EngineSemantics.semanticsEnabled`, which sets `accessibleNavigation`
-  to its own value, and `updateSemantics`, which turns semantics on at the
+  to its own value, and `EngineSemanticsOwner.updateSemantics`, which calls
+  `EngineSemantics.didReceiveSemanticsUpdate`, which turns semantics on at the
   framework's first semantics update). Found in V12.
 - WCAG: none of its own; it serves the criteria a technique adapts for.
 - What happens: the web engine reports `accessibleNavigation` as whether
@@ -7473,37 +7474,47 @@ yet), **Fixed in x.y** (verified on that version).
 
 ## FL-504
 
-**On Android `highContrast` follows the contrast level of Android 14 and later, not "High contrast text", and changing the contrast level or Bold text starts the app again.**
+**On Android `highContrast` follows the contrast level of Android 14 and later, not "High contrast text"; a change of the contrast level reaches the running app and then the app starts again, and Bold text reaches it only when it starts again.**
 
 - Status: Confirmed for "High contrast text" (the Android tree test);
   Observed for the contrast level and Bold text (the probe, in both of its
   runs; no test in the repository changes them). Flutter 3.47.5, Android
-  17 emulator; the Android engine's source read (`setHighContrastFlag`
-  reads `UiModeManager.getContrast()`, and `setBoldTextFlag` the
-  configuration's `fontWeightAdjustment`, each once when the bridge is
-  made). Found in V12.
+  17 emulator; the pinned Android engine's `AccessibilityBridge` read:
+  `setHighContrastFlag` reads `UiModeManager.getContrast()`, once when the
+  bridge is made and again from the `ContrastChangeListener` it registers
+  then (`addContrastChangeListener`); `setBoldTextFlag` reads the
+  configuration's `fontWeightAdjustment`, and is called only when the
+  bridge is made. Found in V12.
 - WCAG: none of its own; it serves 1.4.3 and 1.4.6 (V02) and 1.4.4 (V05).
-- What happens (`docs/evidence/probes/v12/android-summary.txt`):
+- What happens (`docs/evidence/probes/v12/android-logcat.txt`, second
+  run; the first run, `android-round1-logcat.txt`, gave the same order):
   - "High contrast text" (`high_text_contrast_enabled`) set nothing.
     `MediaQueryData.highContrast`'s documentation says it corresponds to
     "the 'High contrast text' or similar accessibility settings" on
     Android.
-  - The contrast level (`contrast_level` 1.0) set `highContrast`, and
-    `MaterialApp` drew its `highContrastTheme`, but the app was started
-    again within a second: `main` ran again and the screen opened afresh.
-    Setting it back to 0.0 did the same.
-  - Bold text (`font_weight_adjustment` 300) did the same: the app was
-    started again, and its first frame was told `boldText` true; back to 0,
-    started again, `boldText` false.
-  - In both cases the system logged a configuration change ("Config
-    changes"), and `main` ran again in the same process: the app's screen
-    started afresh, with a new Flutter engine. The app's manifest
-    (`android:configChanges`) lists neither `fontWeightAdjustment` nor the
-    contrast, and Android starts an activity again on a configuration
-    change it does not list (Android's documentation; the manifest read).
-    Whether the flags would follow a change with the manifest listing them
-    was not measured; the engine reads both once, when the bridge is made
-    (source read).
+  - The contrast level set to 1.0 (about 01:36:06.5; the step's own
+    marker was not logged): the running app was told `highContrast` true
+    at 01:36:06.603, its first run of `main` still the one at 01:34:53
+    and its feature-change count 7, and `MaterialApp` began its
+    `highContrastTheme`. The system logged a configuration change
+    ("Config changes") at 01:36:06.731, and `main` ran again at
+    01:36:07.283, in the same process (pid 26944); the new first frame
+    was told `highContrast` true. Set back to 0.0: the app, now that new
+    run, was told `highContrast` false at 01:36:10.711 (its count 1), the
+    system logged a configuration change at 01:36:10.728, and `main` ran
+    again at 01:36:11.222.
+  - Bold text (`font_weight_adjustment` 300, at 01:36:56.682): nothing
+    reached the running app; the system logged a configuration change at
+    01:36:56.720, `main` ran again at 01:36:57.152 in the same process (pid
+    28684), and that run's first frame was told `boldText` true (its count
+    0). Back to 0 (01:37:04.764): the same, `main` again at 01:37:05.250,
+    `boldText` false.
+  - The app's manifest (`android:configChanges`) lists neither
+    `fontWeightAdjustment` nor the contrast, and Android starts an activity
+    again on a configuration change it does not list (Android's
+    documentation; the manifest read). Whether, with the manifest listing
+    them, the app would keep running and what it would be told was not
+    measured.
 - Effect: when a user turns on Bold text or more contrast while using an
   app, the app's code starts again (`main` runs again), so whatever it
   held only in memory is gone; what that loses depends on the app and was

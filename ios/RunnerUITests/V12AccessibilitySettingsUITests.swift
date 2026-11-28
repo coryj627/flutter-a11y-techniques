@@ -7,8 +7,12 @@
 // and off through XCUIVoiceOverService, which sets accessibleNavigation;
 // and the simulator's own Settings app, driven by XCUITest, for Reduce
 // Motion (AccessibilityFeatures.reduceMotion, and never disableAnimations)
-// and Increase Contrast (highContrast). Every switch a test turns on is
-// turned off again, and checked. Each reading
+// and Increase Contrast (highContrast). A Settings test reads its switch
+// first and, before changing anything, registers a teardown block that
+// puts that value back and checks it; it then sets the switch off, checks
+// it reads off, and shows the example's baseline before turning it on.
+// Each turn is checked on the switch itself and, for a line that must
+// change, on the line. Each reading
 // after a change is waited for in a bounded loop; where a line must not
 // change, the witness that the change reached the app is good-media-query
 // or good-motion, opened by its address in the same running app, saying
@@ -140,21 +144,51 @@ final class V12AccessibilitySettingsUITests: XCTestCase, TechniqueUITest {
   static let display = ["Accessibility", "Display & Text Size"]
   static let motion = ["Accessibility", "Motion"]
 
-  /// Turns `name` on for the length of `body`, and off again after it,
-  /// whatever its checks found (a failed check does not stop the test:
-  /// continueAfterFailure); fails the test if it cannot be turned off.
-  private func withSetting(_ path: [String], _ name: String, _ body: () -> Void) {
-    guard setSwitch(path, name, true) else {
-      XCTFail("\(name) could not be turned on")
-      XCTAssertTrue(setSwitch(path, name, false), "\(name) not put back")
-      return
+  /// The value the switch `name` under `path` reads now, "1" or "0"; nil
+  /// when the switch cannot be found.
+  private func readSwitch(_ path: [String], _ name: String) -> String? {
+    guard openSettings(path) else { return nil }
+    let sw = settingSwitch(name)
+    return sw.exists ? sw.value as? String : nil
+  }
+
+  /// Reads the switch `name` under `path` and keeps its value, and before
+  /// anything is changed registers a teardown block that puts that value
+  /// back and checks it, however the test ends. Then sets the switch to
+  /// off, the baseline, and checks it reads off. Returns whether both the
+  /// reading and the baseline took; the test stops checking if not.
+  private func savedThenOff(_ path: [String], _ name: String) -> Bool {
+    guard let original = readSwitch(path, name) else {
+      XCTFail("\(name): its switch could not be read")
+      return false
     }
-    defer {
-      XCTAssertTrue(setSwitch(path, name, false), "\(name) not put back")
-      settings.terminate()
+    print("V12 switch \(name) was \(original) before the test")
+    addTeardownBlock { [self] in
+      let back = self.setSwitch(path, name, original == "1")
+      XCTAssertTrue(back, "\(name) not put back to \(original)")
+      XCTAssertEqual(self.readSwitch(path, name), original, "\(name) put back to \(original)")
+      self.settings.terminate()
     }
+    guard setSwitch(path, name, false) else {
+      XCTFail("\(name) could not be set off for the baseline")
+      return false
+    }
+    settings.terminate()
+    return true
+  }
+
+  /// Turns the switch on and checks it reads on, then brings the app back.
+  private func turnOn(_ path: [String], _ name: String) -> Bool {
+    let on = setSwitch(path, name, true)
+    XCTAssertTrue(on, "\(name) could not be turned on")
     app.activate()
-    body()
+    return on
+  }
+
+  /// Turns the switch off and checks it reads off, then brings the app back.
+  private func turnOff(_ path: [String], _ name: String) {
+    XCTAssertTrue(setSwitch(path, name, false), "\(name) could not be turned off")
+    app.activate()
   }
 
   // --- L3: the tree ---------------------------------------------------------
@@ -174,6 +208,8 @@ final class V12AccessibilitySettingsUITests: XCTestCase, TechniqueUITest {
     #if compiler(>=6.4)
     guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
     let voiceOver = XCUIDevice.shared.voiceOverService
+    // VoiceOver is off between tests; whatever happens, it is off after.
+    addTeardownBlock { try? voiceOver.disable() }
     open("good-media-query")
     expectLine("good-media-query", "navigation", "Accessible navigation: off")
     try voiceOver.enable()
@@ -184,47 +220,105 @@ final class V12AccessibilitySettingsUITests: XCTestCase, TechniqueUITest {
     // VoiceOver on. The witness, in the same running app: good-media-query
     // opened by its address says "on".
     open("bad-read-once")
+    expectLine("bad-read-once", "navigation", "Accessible navigation: off")
     try voiceOver.enable()
-    defer { try? voiceOver.disable() }
     expectLineStays("bad-read-once", "navigation", "Accessible navigation: off")
     XCTAssertEqual(lines("bad-read-once"), Self.lines())
     openInPlace("good-media-query")
     expectLine("good-media-query", "navigation", "Accessible navigation: on")
+    try voiceOver.disable()
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
     #endif
   }
 
+  /// Increase Contrast from a checked off baseline: on, and good-media-query
+  /// follows (the switch reads on and the line changes); off, and it
+  /// follows back. Then bad-read-once, opened at the baseline, keeps "off"
+  /// with the switch on, and good-media-query, opened in the same running
+  /// app, says on: the witness that the setting reached the app. The
+  /// switch's value before the test is put back after it and checked.
   func testIncreaseContrastReachesGoodMediaQueryAndNotBadReadOnce() {
+    let name = "Increase Contrast"
+    guard savedThenOff(Self.display, name) else { return }
     open("good-media-query")
-    withSetting(Self.display, "Increase Contrast") {
-      expectLine("good-media-query", "contrast", "High contrast: on")
-      XCTAssertEqual(lines("good-media-query"), Self.lines(contrast: "on"))
-    }
-    app.activate()
+    XCTAssertEqual(lines("good-media-query"), Self.lines(), "the baseline, every line off")
+    guard turnOn(Self.display, name) else { return }
+    expectLine("good-media-query", "contrast", "High contrast: on")
+    XCTAssertEqual(lines("good-media-query"), Self.lines(contrast: "on"))
+    turnOff(Self.display, name)
     expectLine("good-media-query", "contrast", "High contrast: off")
     open("bad-read-once")
-    withSetting(Self.display, "Increase Contrast") {
-      expectLineStays("bad-read-once", "contrast", "High contrast: off")
-      // The witness, in the same running app.
-      openInPlace("good-media-query")
-      expectLine("good-media-query", "contrast", "High contrast: on")
-    }
+    XCTAssertEqual(lines("bad-read-once"), Self.lines(), "the baseline, every line off")
+    guard turnOn(Self.display, name) else { return }
+    expectLineStays("bad-read-once", "contrast", "High contrast: off")
+    openInPlace("good-media-query")
+    expectLine("good-media-query", "contrast", "High contrast: on")
+    turnOff(Self.display, name)
+    expectLine("good-media-query", "contrast", "High contrast: off")
   }
 
   /// bad-animations-only's defect: iOS's Reduce Motion sets reduceMotion
   /// and never disableAnimations (the engine's AccessibilityFeatures.swift,
   /// read; measured in the probe), so a line from disableAnimations alone
-  /// stays off. good-motion reads both, and is the control, opened in the
-  /// same running app.
+  /// stays off. From a checked off baseline, each example shown "off"
+  /// first; then Reduce Motion on (the switch reads on): bad-animations-only
+  /// stays off, and good-motion, opened in the same running app, says on,
+  /// which shows the setting reached the app; then off, and good-motion
+  /// follows back. The switch's value before the test is put back.
   func testReduceMotionReachesGoodMotionAndNotBadAnimationsOnly() {
+    let name = "Reduce Motion"
+    guard savedThenOff(Self.motion, name) else { return }
+    open("good-motion")
+    expectLine("good-motion", "motion", "Reduce motion: off")
     open("bad-animations-only")
-    withSetting(Self.motion, "Reduce Motion") {
-      expectLineStays("bad-animations-only", "motion", "Reduce motion: off")
-      openInPlace("good-motion")
-      expectLine("good-motion", "motion", "Reduce motion: on")
-    }
-    app.activate()
+    expectLine("bad-animations-only", "motion", "Reduce motion: off")
+    guard turnOn(Self.motion, name) else { return }
+    expectLineStays("bad-animations-only", "motion", "Reduce motion: off")
+    openInPlace("good-motion")
+    expectLine("good-motion", "motion", "Reduce motion: on")
+    turnOff(Self.motion, name)
+    expectLine("good-motion", "motion", "Reduce motion: off")
+  }
+
+  /// A switch found on before a test is put back on. The device's own value
+  /// is kept first (savedThenOff, whose teardown block puts it back and
+  /// runs last); then Reduce Motion is turned on, as on a device where the
+  /// user has it on, and a second savedThenOff keeps "1", sets the off
+  /// baseline, and good-motion shows the change from off to on and back.
+  /// Its teardown block, which runs first, must put the switch back on and
+  /// read it on; the outer one then puts back the device's own value.
+  func testASwitchFoundOnIsPutBackOn() {
+    let name = "Reduce Motion"
+    guard savedThenOff(Self.motion, name) else { return }
+    XCTAssertTrue(setSwitch(Self.motion, name, true), "\(name) could not be turned on")
+    XCTAssertEqual(readSwitch(Self.motion, name), "1", "found on")
+    guard savedThenOff(Self.motion, name) else { return }
+    XCTAssertEqual(readSwitch(Self.motion, name), "0", "the baseline")
+    settings.terminate()
+    open("good-motion")
+    expectLine("good-motion", "motion", "Reduce motion: off")
+    guard turnOn(Self.motion, name) else { return }
+    expectLine("good-motion", "motion", "Reduce motion: on")
+    turnOff(Self.motion, name)
+    expectLine("good-motion", "motion", "Reduce motion: off")
+  }
+
+  /// A setting that is on when the example opens: Reduce Motion turned on
+  /// from the off baseline before the app starts. good-motion opens saying
+  /// on and bad-animations-only off (its defect, at the start as well);
+  /// turned off, good-motion follows. The switch's value before the test
+  /// is put back.
+  func testReduceMotionOnWhenTheExampleOpens() {
+    let name = "Reduce Motion"
+    guard savedThenOff(Self.motion, name) else { return }
+    XCTAssertTrue(setSwitch(Self.motion, name, true), "\(name) could not be turned on")
+    settings.terminate()
+    open("bad-animations-only")
+    expectLineStays("bad-animations-only", "motion", "Reduce motion: off")
+    open("good-motion")
+    expectLine("good-motion", "motion", "Reduce motion: on")
+    turnOff(Self.motion, name)
     expectLine("good-motion", "motion", "Reduce motion: off")
   }
 

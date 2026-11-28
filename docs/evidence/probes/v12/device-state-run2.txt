@@ -1,0 +1,55 @@
+[V12] build ios: running (log: build/evidence/V12/build-ios.log)
+[V12] build ios: ok, 11 s
+[V12] ios: running (log: build/evidence/V12/ios.log)
+[V12] ios: ok, 540 s
+
+Summary
+=======
+V12:
+  ios            PASS     540 s
+
+Result: PASS
+evidence exit 0
+android-system: unchanged
+android-secure: unchanged
+android-global: unchanged
+android-night: unchanged
+android-wm: unchanged
+ios-a11y: unchanged
+ios-ui: unchanged
+V12 switch Reduce Motion was 0 before the test
+V12 switch Reduce Motion now 0 after 0 taps
+V12 switch Reduce Motion now 1 after 1 taps
+V12 switch Reduce Motion was 1 before the test
+V12 switch Reduce Motion now 0 after 1 taps
+V12 switch Reduce Motion now 1 after 1 taps
+V12 switch Reduce Motion now 0 after 1 taps
+V12 switch Reduce Motion now 1 after 1 taps
+V12 switch Reduce Motion now 0 after 1 taps
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testASwitchFoundOnIsPutBackOn]' passed (143.403 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testExpectedUtterancesAreShortEnough]' passed (0.075 seconds).
+V12 switch Increase Contrast was 0 before the test
+V12 switch Increase Contrast now 0 after 0 taps
+V12 switch Increase Contrast now 1 after 1 taps
+V12 switch Increase Contrast now 0 after 1 taps
+V12 switch Increase Contrast now 1 after 1 taps
+V12 switch Increase Contrast now 0 after 1 taps
+V12 switch Increase Contrast now 0 after 0 taps
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testIncreaseContrastReachesGoodMediaQueryAndNotBadReadOnce]' passed (108.931 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testListsSayWhatTheAppWasToldWhenItOpens]' passed (22.107 seconds).
+V12 switch Reduce Motion was 0 before the test
+V12 switch Reduce Motion now 0 after 0 taps
+V12 switch Reduce Motion now 1 after 1 taps
+V12 switch Reduce Motion now 0 after 1 taps
+V12 switch Reduce Motion now 0 after 0 taps
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testReduceMotionOnWhenTheExampleOpens]' passed (75.366 seconds).
+V12 switch Reduce Motion was 0 before the test
+V12 switch Reduce Motion now 0 after 0 taps
+V12 switch Reduce Motion now 1 after 1 taps
+V12 switch Reduce Motion now 0 after 1 taps
+V12 switch Reduce Motion now 0 after 0 taps
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testReduceMotionReachesGoodMotionAndNotBadAnimationsOnly]' passed (80.886 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testTheCollectorFailsADuplicateStopAndAnUnwitnessedEnd]' passed (0.061 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testTheJudgeRefusesALongExpectedUtterance]' passed (0.055 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testTheJudgeTiesAWalkToItsScreen]' passed (0.052 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverTurnedOnReachesGoodMediaQueryAndNotBadReadOnce]' passed (39.159 seconds).

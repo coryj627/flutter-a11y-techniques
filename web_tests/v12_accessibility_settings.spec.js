@@ -133,7 +133,7 @@ test.beforeEach(async ({ page }) => {
 // bad-read-once reads its settings as its screen is first built. Opened
 // from its address, that is the app's first frame, which comes before the
 // app's first semantics update, and the web engine turns accessibleNavigation
-// on only at that update (the engine's EngineSemantics.updateSemantics,
+// on only at that update (EngineSemanticsOwner.updateSemantics calling EngineSemantics.didReceiveSemanticsUpdate,
 // source read). So it read accessible navigation off, and never reads again.
 const OPENED_ONCE = ['Accessible navigation: off', ...OPENED.slice(1)];
 
@@ -163,33 +163,89 @@ test.describe('what each example says when it opens', () => {
       expect(await page.locator(`[flt-semantics-identifier^="v12-${slug}-"]`).count()).toBe(1);
     });
   }
+});
+
+// The browser's media features a test changes, each with the media query
+// that matches it when it is on. A page starts at Playwright's defaults:
+// light, no reduced motion, no forced colours, no contrast preference. Each
+// test checks that baseline before it opens an example, checks each change
+// on the browser's own media query as well as on the line, and ends at the
+// baseline again, checked (the page is the test's own: nothing outlives it).
+const MATCH = {
+  colorScheme: '(prefers-color-scheme: dark)',
+  reducedMotion: '(prefers-reduced-motion: reduce)',
+  forcedColors: '(forced-colors: active)',
+  contrast: '(prefers-contrast: more)',
+};
+const BASELINE = { colorScheme: 'light', reducedMotion: 'no-preference', forcedColors: 'none', contrast: 'no-preference' };
+const ON = { colorScheme: 'dark', reducedMotion: 'reduce', forcedColors: 'active', contrast: 'more' };
+
+/** Whether each media feature of MATCH is on in the page, by its own query. */
+const mediaOn = (page) => page.evaluate((m) => Object.fromEntries(
+  Object.entries(m).map(([k, q]) => [k, matchMedia(q).matches])), MATCH);
+
+/** The page's media features, every one off but `on`. */
+const only = (...on) => Object.fromEntries(Object.keys(MATCH).map((k) => [k, on.includes(k)]));
+
+/** Sets the media features `features` ({ colorScheme: 'dark' }, ...) and checks the page has `want`. */
+async function emulate(page, features, want) {
+  await page.emulateMedia(features);
+  expect(await mediaOn(page)).toEqual(want);
+}
+
+/** The page's root font size, as computed. */
+const rootFontSize = (page) => page.evaluate(() => getComputedStyle(document.documentElement).fontSize);
+
+/** Sets the page's root font size (`''` for the browser's own) and checks the computed size is `want`. */
+async function setRootFont(page, size, want) {
+  await page.evaluate((s) => { document.documentElement.style.fontSize = s; }, size);
+  expect(await rootFontSize(page)).toBe(want);
+}
+
+/** Checks the page is at the baseline: every media feature off, a 16 px root font. */
+async function expectBaseline(page) {
+  expect(await mediaOn(page)).toEqual(only());
+  expect(await rootFontSize(page)).toBe('16px');
+}
+
+test.describe('a setting on when the example opens', () => {
   for (const [slug, navigation] of [['good-media-query', 'on'], ['bad-read-once', 'off']]) {
     test(`${slug}: opened with dark mode, reduced motion and forced colours on, says so`, async ({ page }) => {
-      await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce', forcedColors: 'active' });
+      await emulate(page, { colorScheme: 'dark', reducedMotion: 'reduce', forcedColors: 'active' },
+        only('colorScheme', 'reducedMotion', 'forcedColors'));
       await open(page, slug);
+      expect(await mediaOn(page)).toEqual(only('colorScheme', 'reducedMotion', 'forcedColors'));
       expect(await lines(page, slug)).toEqual([
         `Accessible navigation: ${navigation}`, 'Bold text: off', 'High contrast: on', 'Invert colours: off',
         'Disable animations: on', 'Switch labels: off', 'Dark mode: on', 'Text scale: 100%',
       ]);
+      // Turned off again, good-media-query follows.
+      if (slug === 'good-media-query') {
+        await emulate(page, BASELINE, only());
+        await expectLine(page, slug, 'dark', 'Dark mode: off');
+        expect(await lines(page, slug)).toEqual(OPENED);
+      }
     });
   }
 });
 
 test.describe('a setting changed while the example is open', () => {
-  // Each media feature, on and then off again, with the line it sets.
+  // Each media feature, with the line it sets.
   const MEDIA = [
-    ['prefers-color-scheme: dark', { colorScheme: 'dark' }, { colorScheme: 'light' }, 'dark', 'Dark mode'],
-    ['prefers-reduced-motion: reduce', { reducedMotion: 'reduce' }, { reducedMotion: 'no-preference' }, 'animations', 'Disable animations'],
-    ['forced-colors: active', { forcedColors: 'active' }, { forcedColors: 'none' }, 'contrast', 'High contrast'],
+    ['prefers-color-scheme: dark', 'colorScheme', 'dark', 'Dark mode'],
+    ['prefers-reduced-motion: reduce', 'reducedMotion', 'animations', 'Disable animations'],
+    ['forced-colors: active', 'forcedColors', 'contrast', 'High contrast'],
   ];
-  for (const [name, on, off, key, label] of MEDIA) {
+  for (const [name, feature, key, label] of MEDIA) {
     test(`good-media-query: ${name} turned on and off again, the line follows it and no other line changes`, async ({ page }) => {
       await open(page, 'good-media-query');
-      await page.emulateMedia(on);
+      await expectBaseline(page);
+      expect(await lines(page, 'good-media-query')).toEqual(OPENED);
+      await emulate(page, { [feature]: ON[feature] }, only(feature));
       await expectLine(page, 'good-media-query', key, `${label}: on`);
       const changed = OPENED.map((l) => (l.startsWith(`${label}:`) ? `${label}: on` : l));
       expect(await lines(page, 'good-media-query')).toEqual(changed);
-      await page.emulateMedia(off);
+      await emulate(page, { [feature]: BASELINE[feature] }, only());
       await expectLine(page, 'good-media-query', key, `${label}: off`);
       expect(await lines(page, 'good-media-query')).toEqual(OPENED);
     });
@@ -197,62 +253,77 @@ test.describe('a setting changed while the example is open', () => {
 
   test('good-media-query: a root font size of 32 pixels gives "Text scale: 200%", and back 100%', async ({ page }) => {
     await open(page, 'good-media-query');
-    await page.evaluate(() => { document.documentElement.style.fontSize = '32px'; });
+    await expectBaseline(page);
+    await expectLine(page, 'good-media-query', 'scale', 'Text scale: 100%');
+    await setRootFont(page, '32px', '32px');
     await expectLine(page, 'good-media-query', 'scale', 'Text scale: 200%');
-    await page.evaluate(() => { document.documentElement.style.fontSize = ''; });
+    await setRootFont(page, '', '16px');
     await expectLine(page, 'good-media-query', 'scale', 'Text scale: 100%');
   });
 
   test('good-media-query: prefers-contrast: more leaves "High contrast: off"; only forced colours set it (FL-501)', async ({ page }) => {
     await open(page, 'good-media-query');
-    await page.emulateMedia({ contrast: 'more' });
+    await expectBaseline(page);
+    expect(await lines(page, 'good-media-query')).toEqual(OPENED);
     // The witness that the browser has the setting: the page's own media
     // query matches it.
-    expect(await page.evaluate(() => matchMedia('(prefers-contrast: more)').matches)).toBe(true);
+    await emulate(page, { contrast: 'more' }, only('contrast'));
     // Given time to arrive; written to fail when Flutter starts to read it.
     await page.waitForTimeout(1500);
     expect(await lines(page, 'good-media-query')).toEqual(OPENED);
     // The control, through the same path in the same page: forced colours
     // does set it.
-    await page.emulateMedia({ contrast: 'no-preference', forcedColors: 'active' });
+    await emulate(page, { contrast: 'no-preference', forcedColors: 'active' }, only('forcedColors'));
     await expectLine(page, 'good-media-query', 'contrast', 'High contrast: on');
+    await emulate(page, BASELINE, only());
+    await expectLine(page, 'good-media-query', 'contrast', 'High contrast: off');
   });
 
   test('bad-read-once: dark mode turned on, the line still says off, though the screen went dark', async ({ page }) => {
     await open(page, 'bad-read-once');
+    await expectBaseline(page);
+    expect(await lines(page, 'bad-read-once')).toEqual(OPENED_ONCE);
     const light = await meanLuminance(page);
     expect(light).toBeGreaterThan(0.6);
-    await page.emulateMedia({ colorScheme: 'dark' });
-    // The witness: the app's dark theme is drawn.
+    await emulate(page, { colorScheme: 'dark' }, only('colorScheme'));
+    // The witness that the change reached the app: its dark theme is drawn.
     await expect.poll(() => meanLuminance(page), { timeout: 5000 }).toBeLessThan(0.2);
     expect(await lines(page, 'bad-read-once')).toEqual(OPENED_ONCE);
+    await emulate(page, BASELINE, only());
+    await expect.poll(() => meanLuminance(page), { timeout: 5000 }).toBeGreaterThan(0.6);
   });
 
   test('bad-read-once: reduced motion and forced colours turned on, the lines still say off', async ({ page }) => {
     await open(page, 'bad-read-once');
-    await page.emulateMedia({ reducedMotion: 'reduce', forcedColors: 'active' });
+    await expectBaseline(page);
+    expect(await lines(page, 'bad-read-once')).toEqual(OPENED_ONCE);
     // The browser has both: the page's own media queries match them.
-    expect(await page.evaluate(() => [
-      matchMedia('(prefers-reduced-motion: reduce)').matches, matchMedia('(forced-colors: active)').matches,
-    ])).toEqual([true, true]);
+    await emulate(page, { reducedMotion: 'reduce', forcedColors: 'active' }, only('reducedMotion', 'forcedColors'));
     // Nothing on this screen draws either change, so the same change is
-    // then made on good-media-query in the same page, and must show there.
+    // then made on good-media-query in the same page, and must show there:
+    // the witness that it reaches the app.
     await page.waitForTimeout(1500);
     expect(await lines(page, 'bad-read-once')).toEqual(OPENED_ONCE);
-    await page.emulateMedia({ reducedMotion: 'no-preference', forcedColors: 'none' });
+    await emulate(page, BASELINE, only());
     await open(page, 'good-media-query');
-    await page.emulateMedia({ reducedMotion: 'reduce', forcedColors: 'active' });
+    await expectLine(page, 'good-media-query', 'animations', 'Disable animations: off');
+    await emulate(page, { reducedMotion: 'reduce', forcedColors: 'active' }, only('reducedMotion', 'forcedColors'));
     await expectLine(page, 'good-media-query', 'animations', 'Disable animations: on');
     await expectLine(page, 'good-media-query', 'contrast', 'High contrast: on');
+    await emulate(page, BASELINE, only());
   });
 
   test('bad-read-once: a root font size of 32 pixels, the line still says 100%, though its text is drawn larger', async ({ page }) => {
     await open(page, 'bad-read-once');
+    await expectBaseline(page);
+    expect(await textOf(page, 'v12-bad-read-once-scale')).toBe('Text scale: 100%');
     const before = await widthOf(page, 'v12-bad-read-once-scale');
-    await page.evaluate(() => { document.documentElement.style.fontSize = '32px'; });
-    // The witness: the line's own text is laid out at twice the size.
+    await setRootFont(page, '32px', '32px');
+    // The witness that the change reached the app: the line's own text is
+    // laid out at twice the size.
     await expect.poll(() => widthOf(page, 'v12-bad-read-once-scale'), { timeout: 5000 }).toBeGreaterThan(before * 1.6);
     expect(await textOf(page, 'v12-bad-read-once-scale')).toBe('Text scale: 100%');
+    await setRootFont(page, '', '16px');
   });
 
   for (const slug of ['good-motion', 'bad-animations-only']) {
@@ -261,17 +332,16 @@ test.describe('a setting changed while the example is open', () => {
       // from the one media feature, so bad-animations-only's defect, iOS's,
       // is not seen here.
       await open(page, slug);
-      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await expectBaseline(page);
+      await expectLine(page, slug, 'motion', 'Reduce motion: off');
+      await emulate(page, { reducedMotion: 'reduce' }, only('reducedMotion'));
       await expectLine(page, slug, 'motion', 'Reduce motion: on');
-      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await emulate(page, { reducedMotion: 'no-preference' }, only());
       await expectLine(page, slug, 'motion', 'Reduce motion: off');
     });
   }
 });
 
-// The web VoiceOver spec's judge, collector, and transcript judge
-// (web_tests/vo/v12_vo_walks.js, S16's, copied whole), tested here on
-// made-up walks and transcripts, as S16's web tree spec tests its own.
 test.describe('the stops the VoiceOver spec expects above each example', () => {
   for (const [slug, [title, ...lines]] of Object.entries(EXAMPLE_SCREENS)) {
     test(`${slug} shows its title and its lines`, async ({ page }) => {

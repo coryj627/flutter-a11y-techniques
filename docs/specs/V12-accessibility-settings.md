@@ -26,9 +26,10 @@ The principal decided these statuses on 2026-11-28 (section 5,
 "Decisions"); the owner may overrule.
 
 - **Android, applies.** Every flag Android sets reaches `MediaQuery` while
-  the app runs, but two: a change of Bold text or of the contrast level
-  starts the app again, and the app's new first frame is told the new
-  value ([FL-504](../flutter-limitations.md#fl-504)). `accessibleNavigation` is
+  the app runs, but Bold text: a change of it starts the app again, and
+  only the new first frame is told it. A change of the contrast level
+  reaches the running app and then starts it again
+  ([FL-504](../flutter-limitations.md#fl-504)). `accessibleNavigation` is
   on for TalkBack, and also for any other service that reads the app's
   nodes, and off in a screen's first frame
   ([FL-503](../flutter-limitations.md#fl-503)); "High contrast text" sets
@@ -172,7 +173,9 @@ may overrule:
    contrast preference other than forced colours is not detected, and
    `accessibleNavigation` does not mean a screen reader is running.
    Android and iOS apply. On Android a change of Bold text or of the
-   contrast level starts the app again (FL-504); on iOS Reduce Motion
+   contrast level starts the app again (FL-504: the contrast level
+   reaches the running app first, Bold text only the new start); on iOS
+   Reduce Motion
    needs the second flag, `AccessibilityFeatures.reduceMotion` (FL-502).
 2. The iOS VoiceOver walk judges the 65-character description line by its
    first 64 characters, the most the service returns; every other
@@ -203,9 +206,9 @@ may overrule:
 | Layer | What is asserted |
 | --- | --- |
 | L1 widget tests | Good, in light and dark, with every flag off: the four guidelines. Every example: at 200% text on a 320 by 640 screen, no layout overflow, no text that hits its line limit, none taller than its box, none past the screen's edge, and the settings lists' scale line's text drawn at 200%. Each list's lines after the "Example" heading, in traversal order, each one node with its identifier and its text, every one off and 100%. Opened with each flag on in turn, and dark at 150%, both lists say so (the positive control for `bad-read-once`: it does read the settings, once). A setting changed while the example is open is a test value set on the test's platform dispatcher, whose setter calls the change callback, as the engine does: for `good-media-query`, each flag on its own turned on and off again, only its own line follows; dark and 150% follow; for `bad-read-once`, each flag on and the lines unchanged, with the witness that the framework has the change (the screen's `MediaQuery` has it), and dark and 150% unchanged, with the witnesses that the theme went dark and the line's own text is drawn at 150%. Motion: `reduceMotion` alone, `disableAnimations` alone, and both, on and off again: `good-motion` says on for each; `bad-animations-only` says off for `reduceMotion` alone (its defect, as on iOS) and on for the other two (its positive control). Which system setting sets which flag is not seen here: the engine is not run |
-| L3 web | Each list one element per line, eight, in order: `good-media-query` with accessible navigation on and no screen reader (FL-500), `bad-read-once` off, read in the app's first frame, with the witness that it is on by then (`good-media-query` opened by address in the same page says on); each motion example one element, "off". Opened with dark mode, reduced motion, and forced colours: both lists say so. While open, each change made once and each reading waited for in a bounded loop: `prefers-color-scheme: dark`, `prefers-reduced-motion: reduce`, `forced-colors: active`, each on and off again, `good-media-query`'s own line follows and no other changes; a 32-pixel root font size gives "Text scale: 200%" and back; `prefers-contrast: more` leaves "High contrast: off", with the witness that the page's own media query matches it and the control, forced colours in the same page, that does set it (FL-501, written to fail when the engine reads it). `bad-read-once`: dark mode on and its lines unchanged, the witness the screen's mean luminance falling below 0.2 (MaterialApp's dark theme drawn); reduced motion and forced colours on and unchanged, with `good-media-query` in the same page then following the same change; a 32-pixel root font and its scale line still 100%, the witness its element 1.6 times as wide. Both motion examples follow `prefers-reduced-motion` on and off (the web sets both flags). Each screen shows the title and lines the VoiceOver judge expects; the judge's regression cases (below) |
-| L3 Android | Each list after opening, with no accessibility service on but the test's own UiAutomation: `good-media-query` accessible navigation on (FL-503), `bad-read-once` off, every other line off and 100%; each motion example "off". While open, each through the device's own settings from the test's shell, each read first and put back after, whatever the test found, and each reading waited for: dark mode (`cmd uimode night yes`), Remove animations (the three animation scales 0), colour inversion, each followed by `good-media-query`'s line and back; a font scale of 1.5 grows the scale line by at least 30% (the platform's curve gave 157% in the probe; one number is not asserted, since the curve may differ by Android version) and back to 100%; "High contrast text" leaves "High contrast: off" for four seconds, with the font scale, changed on the same screen after it, as the control that the line is read (FL-504). `bad-read-once`: dark mode on, the witness the screen's mean luminance below 0.2, and its lines unchanged; a font scale of 1.5, the witness its scale line's node 1.3 times as wide, and still "Text scale: 100%". Both motion examples follow Remove animations. Bold text and the contrast level are not changed: each starts the app again (FL-504). Run once at CI's 320 by 640 at 160 dpi as well |
-| L3 iOS | Each list's eight lines, every one off and 100%, and each motion example "off", with VoiceOver off. VoiceOver turned on and off with `XCUIVoiceOverService` while `good-media-query` is open: its line follows, on then off. `bad-read-once`, opened with VoiceOver off, then VoiceOver on: its line still says off for four seconds and every line is unchanged; the witness, `good-media-query` opened by its address in the same running app, says on. Increase Contrast, turned on in the simulator's Settings app and off again: `good-media-query`'s line follows and no other changes; `bad-read-once` stays off, with `good-media-query` opened in the same running app as the witness. Reduce Motion turned on in Settings: `bad-animations-only` stays off for four seconds (its defect, FL-502), and `good-motion`, opened in the same running app, says on, then off again once Reduce Motion is off. Every switch turned on is turned off again, checked, whatever the test found. Each reading after a change is waited for in a bounded loop |
+| L3 web | Each list one element per line, eight, in order: `good-media-query` with accessible navigation on and no screen reader (FL-500), `bad-read-once` off, read in the app's first frame, with the witness that it is on by then (`good-media-query` opened by address in the same page says on); each motion example one element, "off". Every test that changes a setting starts from a checked baseline (the page's own media queries for dark, reduced motion, forced colours, and more contrast all false, the computed root font 16 px: Playwright's defaults), shows the example at it, checks each change on the browser's own media query (or the computed root font size) as well as on the line, and ends at the baseline, checked. Opened with dark mode, reduced motion, and forced colours on: both lists say so, and turned off `good-media-query` follows. While open, each change made once and each reading waited for in a bounded loop: `prefers-color-scheme: dark`, `prefers-reduced-motion: reduce`, `forced-colors: active`, each on and off again, `good-media-query`'s own line follows and no other changes; a 32-pixel root font size gives "Text scale: 200%" and back; `prefers-contrast: more` leaves "High contrast: off", with the witness that the page's own media query matches it and the control, forced colours in the same page, that does set it (FL-501, written to fail when the engine reads it). `bad-read-once`: dark mode on and its lines unchanged, the witness the screen's mean luminance falling below 0.2 (MaterialApp's dark theme drawn), and back above 0.6 once off; reduced motion and forced colours on and unchanged, the browser's media queries matching both, with `good-media-query` then shown off, and following the same change, in the same page; a 32-pixel root font and its scale line still 100%, the witness its element 1.6 times as wide. Both motion examples follow `prefers-reduced-motion` on and off (the web sets both flags). Each screen shows the title and lines the VoiceOver judge expects; the judge's regression cases (below) |
+| L3 Android | Every test reads each setting it may change (the font scale, colour inversion, "High contrast text", the three animation scales) and night mode first, sets each to its baseline (1.0, off, night mode no) and checks it, and afterwards, however it ends, puts every one back to what it was (deleted where it was not set) and checks it (`withBaseline`). Each change is made from the test's shell and checked to have taken (`settings get`, `cmd uimode night`) before the example is read; each reading is waited for. At the baseline, with no accessibility service on but the test's own UiAutomation: `good-media-query` accessible navigation on (FL-503), `bad-read-once` off, every other line off and 100%; each motion example "off". Colour inversion on before the app starts: both lists open saying so, and turned off `good-media-query` follows. While open, each example first shown at the baseline: dark mode, Remove animations (the three animation scales 0), and colour inversion, each on and off again, followed by `good-media-query`'s line; a font scale of 1.5 grows the scale line by at least 30% (the platform's curve gave 157% in the probe; one number is not asserted, since the curve may differ by Android version) and back to 100%; "High contrast text" on leaves "High contrast: off" for four seconds, with the font scale, changed on the same screen after it, as the control that the line is read (FL-504). `bad-read-once`: dark mode on, the witness the screen's mean luminance below 0.2, and its lines unchanged; a font scale of 1.5, the witness its scale line's node 1.3 times as wide, and still "Text scale: 100%". Both motion examples follow Remove animations on and off. Bold text and the contrast level are not changed: after a change of either the app starts again (FL-504). Run once at CI's 320 by 640 at 160 dpi as well |
+| L3 iOS | Each list's eight lines, every one off and 100%, and each motion example "off", with VoiceOver off. VoiceOver turned on and off with `XCUIVoiceOverService` while `good-media-query` is open: its line follows, on then off. `bad-read-once`, opened with VoiceOver off and shown "off", then VoiceOver on: its line still says off for four seconds and every line is unchanged; the witness, `good-media-query` opened by its address in the same running app, says on; VoiceOver is turned off in a teardown block as well. Each Settings test reads its switch first and, before changing anything, registers a teardown block that puts that value back and checks it; it sets the switch off, checks it reads off, and shows the example at that baseline; each turn is checked on the switch itself and, for a line that must change, on the line. Increase Contrast on and off again: `good-media-query`'s line follows and no other changes; `bad-read-once`, at the baseline, stays off with it on, and `good-media-query`, opened in the same running app, says on, then off once it is off. Reduce Motion on: `bad-animations-only` stays off for four seconds (its defect, FL-502), and `good-motion`, opened in the same running app, says on, then off again once Reduce Motion is off. Reduce Motion on before the app starts: `bad-animations-only` opens off, `good-motion` on, and turned off `good-motion` follows. A switch found on is put back on: Reduce Motion turned on first, as on a device where the user has it on, the test's own reading keeps "1", and its teardown block puts it back on and reads it on before the device's own value is put back. Each reading after a change is waited for in a bounded loop |
 | L4 TalkBack | TalkBack on before each example opens; focus moved to each line in turn; every row a whole-utterance form (`== A`, `tool/talkback.py`): `good-media-query`'s eight lines with accessible navigation on, `bad-read-once`'s with it off (its first frame, before TalkBack had read a node, FL-503), each motion line "off". Mutation tests in `tool/test_talkback.py`: a line said twice, an added role, the other value, a wrong number, every sibling line in its place. Each walk is judged whole (`walk_strictly`) |
 | L4 VoiceOver iOS | Each example opened with VoiceOver off, then VoiceOver on and a walk from the top of the screen to its end (V12Walk, S16's walk copied): the screen's own stops (the title as a heading, the description, a bad example's defect, the "Example" heading), then exactly the example's lines: `good-media-query` with accessible navigation on, which VoiceOver itself turned on; `bad-read-once` with it off, read before VoiceOver was on. A stop read twice mid-walk fails; the end only with its witness; made-up walks test a duplicate title, a duplicate stop, stale speech at the end, a wrong witness, a walk out of moves, and the judge's refusal of another screen, a missing or empty title, a wrong value, a missing or swapped line, an extra stop, the description whole or cut shorter; every expected utterance is under 64 characters, and the judge refuses one that is not, but the screen's description line, which the app writes from the technique's title and which is 65 characters on a good example's screen ("Good example for Detecting accessibility settings. Widgets layer."): `XCUIVoiceOverService` returns the first 64 characters, so it is judged as exactly those |
 | L4 VoiceOver web | S16's walk and judge, copied whole (`web_tests/vo/v12_vo_walks.js`), and S16's VoiceOver spec with V12's screens. The expected stops were predictions from the web tree spec: `good-media-query` with accessible navigation on, `bad-read-once` off, everything else off and 100%; the recording (recorded 2026-11-28) read every one as predicted. The browsers' media features are Playwright's defaults, not the Mac's (section 7). The judge's regression cases are S16's, on `good-media-query`'s screen with a made-up content of four stops, one a button (V12's own lines are plain text, and the help-message rule needs a role to tie to); the committed transcript (recorded 2026-11-28) is judged again from its rows by a test that is never skipped |
@@ -215,8 +218,9 @@ What the tests skip or cannot see, and what each gives up:
 - No layer reads a setting's effect on the app beyond the lines and, as a
   witness, the theme or a line's size: what an app should do with a
   setting is the adapting technique's.
-- The Android tree test changes no setting that restarts the app (bold
-  text, the contrast level): those are measured in the probe only.
+- The Android tree test changes no setting after which the app starts
+  again (Bold text, the contrast level): those are measured in the probe
+  only.
 - On iOS, Bold Text, On/Off Labels, Auto-Play Video Previews, Prefer
   Non-Blinking Cursor and the appearance are not changed by the tests:
   on this simulator the first four reach no running app, Flutter or
@@ -224,7 +228,11 @@ What the tests skip or cannot see, and what each gives up:
   anything; the appearance could not be changed at all (section 7).
 - The iOS layers reach the Settings app through XCUITest; a tap on a
   switch did not always take in the probe, so each switch is tapped until
-  it reads as wanted, at most four times, and checked.
+  it reads as wanted, at most four times, and checked. Before the first
+  review the Settings tests turned a switch on without reading it first
+  and always turned it off after: a switch already on would have made a
+  test pass without the setting changing, and been left off. They now read
+  and restore the value they found (section 6).
 - On the web the browser's own text size setting is not changed: no
   Playwright call sets it, and the page's root font size stands in for it.
   `inverted-colors` cannot be emulated, so `invertColors` on the web rests
@@ -255,8 +263,8 @@ before (section 7, "Device state").
 | Flag | Android | iOS | Web |
 | --- | --- | --- | --- |
 | `accessibleNavigation` | TalkBack, while running; any service that reads the app's nodes (a UI Automator dump: on, then off 150 ms later; the tree test's own connection: on); off in the first frame with TalkBack already on, on about 0.4 s after it (FL-503) | VoiceOver, while running (and `autoPlayVideos` went false with it) | whether semantics are on: true with no screen reader once the app has called `ensureSemantics`, false before (FL-500) |
-| `boldText` | Bold text (`font_weight_adjustment` 300); the app started again, its first frame told (FL-504) | Bold Text, only at a new start: changed in Settings while the app ran, it was not told, and a native UIKit app was not either (its `UIAccessibility` value, its trait collection, and its notifications: (`docs/evidence/probes/v12/ios-round3.txt`, the native app's readings)) | never (FL-501) |
-| `highContrast` | the contrast level (1.0), the app started again (FL-504); "High contrast text": nothing | Increase Contrast, while running | `forced-colors: active`, while running; `prefers-contrast: more`: nothing (FL-501) |
+| `boldText` | Bold text (`font_weight_adjustment` 300): nothing while running; the app started again, and its new first frame was told (FL-504) | Bold Text, only at a new start: changed in Settings while the app ran, it was not told, and a native UIKit app was not either (its `UIAccessibility` value, its trait collection, and its notifications: (`docs/evidence/probes/v12/ios-round3.txt`, the native app's readings)) | never (FL-501) |
+| `highContrast` | the contrast level (1.0), while running, and then the app started again, its new first frame told it as well (FL-504); "High contrast text": nothing | Increase Contrast, while running | `forced-colors: active`, while running; `prefers-contrast: more`: nothing (FL-501) |
 | `invertColors` | Colour inversion, while running | Smart Invert, while running | never (FL-501) |
 | `disableAnimations` | the transition animation scale 0 (and "Remove animations", all three 0), while running; the animator duration scale alone: nothing | never (FL-502) | `prefers-reduced-motion: reduce`, while running |
 | `reduceMotion` | never | Reduce Motion, while running | with `disableAnimations` |
@@ -351,10 +359,11 @@ engineer proposed, and the principal decided (section 5, "Decisions"):
 2. **Android: applies.** R1 is met for TalkBack, Switch Access, and Voice
    Access, the services the engine's own comment names; that a test tool
    such as UI Automator turns it on as well is FL-503, and so is the first
-   frame, which `good-media-query` hears the change from. A change of Bold
-   text or of the contrast level starts the app again (FL-504): the app's
-   `main` runs again and its new first frame is told the new value; what
-   an app loses by it was not measured (the probe has one screen).
+   frame, which `good-media-query` hears the change from. A change of the
+   contrast level reaches the running app and then starts it again; a
+   change of Bold text starts it again, and only its new first frame is
+   told (FL-504); what an app loses by a new start was not measured (the
+   probe has one screen).
 3. **iOS: applies.** Reduce Motion needs the second flag (FL-502); dark
    mode was not measured.
 
@@ -395,10 +404,43 @@ failed then because there was no recording; it passes on the recording
 below. The Android tree tests passed at CI's
 320 by 640 at 160 dpi as well, on their first run there (10 tests, the
 TalkBack walk skipped; `docs/evidence/probes/v12/android_320x640.txt`), and
-the size and density were reset afterwards. On review each Android setting
+the size and density were reset afterwards. After the first review's
+changes the Android, iOS, iOS VoiceOver, and web layers passed again, run
+with every system, secure, and global setting of the emulator, its night
+mode, size and density, the simulator's accessibility defaults, and its
+`simctl ui` state read before and after: every one unchanged
+(`docs/evidence/probes/v12/device-state-run1.txt`,
+`evidence_with_state.sh.txt`); then the iOS layer once more, with the
+test of a switch found on (it read "1", put it back on, and the device's
+own "0" was put back after it), every iOS test passing and the same
+settings unchanged (`device-state-run2.txt`). On review each Android setting
 change was made to check that it took (`settings get`, `cmd uimode night`)
 before the example is read; the Android tree tests passed again with it
 (`python3 tool/evidence.py V12 --only android`).
+
+**CI's Android job on d492e14** (run 46127183486, image
+`system-images;android-35;google_apis;x86_64`, 320 by 640 at 160 dpi)
+failed four V12 tests of ten: `eachListSaysWhatTheAppWasToldWhenItOpens`
+and `badReadOnceKeepsItsReadingWhenTheScreenGoesDark` read "Disable
+animations: on" where "off" was expected, and
+`goodMediaQueryFollowsRemoveAnimationsAndBack` and
+`bothMotionExamplesFollowRemoveAnimations` read "on" after the scales had
+been put back. The cause is in the job's log: the emulator action starts
+the emulator with `disable-animations: true`, which sets all three
+animation scales to 0.0 before any test, so `disableAnimations` was true
+from the start, and the tests of that commit put back the value they had
+found, 0.0. The tests made no baseline of their own. Since the first
+review every Android setting test sets each setting it may change to a
+checked baseline first (the animation scales 1.0) and puts back what it
+found afterwards (section 6). Run locally with the three scales set to
+0.0 first, as CI's emulator starts, the Android tree tests passed, and the
+scales read 1.0, 1.0, and unset afterwards, as before the run
+(`docs/evidence/probes/v12/android_ci_animations.txt`). The same CI run
+measured the other settings
+on API 35: dark mode, colour inversion, the font scale, "High contrast
+text", and the bad example's font-scale witness passed there. Bold text
+and the contrast level are changed by no test, on either image; what
+they do on API 35 was not measured.
 
 **The web VoiceOver recording** (recorded 2026-11-28 by the principal,
 `docs/evidence/V12/voiceover-web.md`, 141 s) passed on its first run: 8

@@ -81,8 +81,8 @@ at 01:36:06 and 01:36:10, where the summary shows the change.
 | `transition_animation_scale` 0, and all three scales 0 ("Remove animations") | `disableAnimations` | while running; back |
 | Colour inversion (`accessibility_display_inversion_enabled`) | `invertColors` | while running; back |
 | High contrast text (`high_text_contrast_enabled`) | nothing (FL-504) | |
-| Contrast level 1.0 (`secure contrast_level`) | `highContrast`, the high contrast theme | then the app was started again (`main` ran again, after the system's "Config changes" line); back to 0.0, the same (FL-504) |
-| Bold text (`font_weight_adjustment` 300) | `boldText` | the app started again, its first frame told `boldText`; back, the same (FL-504) |
+| Contrast level 1.0 (`secure contrast_level`) | `highContrast`, the high contrast theme | while running (01:36:06.603, the first `main`'s run, its feature-change count 7), then the app was started again (the system's "Config changes" at 06.731, `main` again at 07.283, same process); back to 0.0, the same order (10.711, 10.728, 11.222) (FL-504) |
+| Bold text (`font_weight_adjustment` 300) | `boldText` | nothing while running; the app started again ("Config changes" 01:36:56.720, `main` 57.152), and its new first frame was told `boldText`; back, the same (FL-504) |
 | 24-hour time (`system time_12_24`) | nothing while running | |
 | Colour correction | nothing | |
 | A UI Automator dump, no service on | `semanticsEnabled`, then `accessibleNavigation` true; both false about 150 ms later (FL-503) | |

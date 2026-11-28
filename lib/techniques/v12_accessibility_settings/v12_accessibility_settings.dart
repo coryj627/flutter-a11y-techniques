@@ -18,8 +18,9 @@ final v12AccessibilitySettings = Technique(
           'Accessible navigation turns on when any accessibility service '
           'reads the app, not only TalkBack, and is off in the first frame '
           '(limitation FL-503). High contrast follows the contrast level, '
-          'not High contrast text, and changing it or Bold text starts the '
-          'app again (FL-504).',
+          'not High contrast text; a change of it reaches the app and then '
+          'starts the app again, and Bold text reaches it only by a new '
+          'start (FL-504).',
     ),
     AppPlatform.ios: PlatformStatus.applies(
       note:
