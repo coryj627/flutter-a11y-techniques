@@ -204,29 +204,55 @@ final class V12AccessibilitySettingsUITests: XCTestCase, TechniqueUITest {
     }
   }
 
+  /// VoiceOver's state is read first and put back afterwards, checked, and
+  /// the test starts from a checked off baseline (voiceOverOffBaseline);
+  /// each turn is checked on the service's own state and on the line.
   func testVoiceOverTurnedOnReachesGoodMediaQueryAndNotBadReadOnce() throws {
     #if compiler(>=6.4)
     guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
     let voiceOver = XCUIDevice.shared.voiceOverService
-    // VoiceOver is off between tests; whatever happens, it is off after.
-    addTeardownBlock { try? voiceOver.disable() }
+    try voiceOverOffBaseline(voiceOver)
     open("good-media-query")
     expectLine("good-media-query", "navigation", "Accessible navigation: off")
-    try voiceOver.enable()
+    try VoiceOverState.set(voiceOver, on: true)
     expectLine("good-media-query", "navigation", "Accessible navigation: on")
-    try voiceOver.disable()
+    try VoiceOverState.set(voiceOver, on: false)
     expectLine("good-media-query", "navigation", "Accessible navigation: off")
     // bad-read-once: opened with VoiceOver off, it keeps "off" with
     // VoiceOver on. The witness, in the same running app: good-media-query
     // opened by its address says "on".
     open("bad-read-once")
     expectLine("bad-read-once", "navigation", "Accessible navigation: off")
-    try voiceOver.enable()
+    try VoiceOverState.set(voiceOver, on: true)
     expectLineStays("bad-read-once", "navigation", "Accessible navigation: off")
     XCTAssertEqual(lines("bad-read-once"), Self.lines())
     openInPlace("good-media-query")
     expectLine("good-media-query", "navigation", "Accessible navigation: on")
-    try voiceOver.disable()
+    try VoiceOverState.set(voiceOver, on: false)
+    #else
+    throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
+    #endif
+  }
+
+  /// VoiceOver found on is put back on: turned on first, as on a device
+  /// where the user has it on; the test's own baseline reads "on", sets it
+  /// off, and its teardown block, which runs first, must put it back on and
+  /// read it on; the outer one then puts back the state the simulator had.
+  /// A walk made from the baseline (VoiceOverState.withOn) turns it on and
+  /// puts it back off.
+  func testVoiceOverFoundOnIsPutBackOn() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("XCUIVoiceOverService needs iOS 27") }
+    let voiceOver = XCUIDevice.shared.voiceOverService
+    try voiceOverOffBaseline(voiceOver)
+    try VoiceOverState.set(voiceOver, on: true)
+    XCTAssertTrue(try voiceOverOffBaseline(voiceOver), "found on")
+    XCTAssertFalse(voiceOver.isEnabled, "the baseline")
+    open("good-media-query")
+    expectLine("good-media-query", "navigation", "Accessible navigation: off")
+    let seen = try VoiceOverState.withOn(voiceOver) { voiceOver.isEnabled }
+    XCTAssertTrue(seen, "on during the walk")
+    XCTAssertFalse(voiceOver.isEnabled, "the walk put it back off")
     #else
     throw XCTSkip("XCUIVoiceOverService needs Xcode 27 or later")
     #endif
@@ -471,6 +497,9 @@ final class V12AccessibilitySettingsUITests: XCTestCase, TechniqueUITest {
       }
     }
     let voiceOver = XCUIDevice.shared.voiceOverService
+    // VoiceOver's state read first and put back after, checked; each walk
+    // starts from the off baseline, turns it on, and puts it back off.
+    try voiceOverOffBaseline(voiceOver)
     for example in Self.speech {
       open(example.slug)
       let walk = try V12Walk.walk(voiceOver)
@@ -592,12 +621,17 @@ enum V12Walk {
 
   #if compiler(>=6.4)
   /// Switches VoiceOver on, walks to the end of the screen (collect), and
-  /// switches it off. A move with no speech is handled as
-  /// VoiceOverWalk.forward does (afterNoSpeech).
+  /// puts back the state it found, checked (VoiceOverState.withOn): a
+  /// failed restore fails the walk, whether the walk itself passed or not.
+  /// A move with no speech is handled as VoiceOverWalk.forward does
+  /// (afterNoSpeech).
   @available(iOS 27.0, *)
   static func walk(_ voiceOver: XCUIVoiceOverService) throws -> Result {
-    try voiceOver.enable()
-    defer { try? voiceOver.disable() }
+    try VoiceOverState.withOn(voiceOver) { try walkOn(voiceOver) }
+  }
+
+  @available(iOS 27.0, *)
+  private static func walkOn(_ voiceOver: XCUIVoiceOverService) throws -> Result {
     var previous: String? = nil
     return try collect(
       next: {

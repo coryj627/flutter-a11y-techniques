@@ -41,6 +41,9 @@ private const val FONT_SCALE = "system font_scale"
 private const val INVERSION = "secure accessibility_display_inversion_enabled"
 private const val HIGH_TEXT_CONTRAST = "secure high_text_contrast_enabled"
 
+/** The accessibility service settings, which no test here changes. */
+private val ACCESSIBILITY = listOf("secure enabled_accessibility_services", "secure accessibility_enabled")
+
 /** Every setting a test may change, with its baseline value: off, 1.0. */
 private val BASELINE = linkedMapOf(
     FONT_SCALE to "1.0",
@@ -102,6 +105,11 @@ class V12AccessibilitySettingsTest : TechniqueTest("V12") {
     private fun withBaseline(body: () -> Unit) {
         val original = BASELINE.keys.associateWith { shell("settings get $it") }
         val originalNight = shell("cmd uimode night").substringAfter(":").trim()
+        // The accessibility services, TalkBack among them, are changed by no
+        // test here (tool/talkback.py turns TalkBack on for the walk and puts
+        // the services back itself); they are read so that a test that left
+        // them changed would fail.
+        val services = ACCESSIBILITY.associateWith { shell("settings get $it") }
         try {
             for ((key, value) in BASELINE) put(key, value)
             night("no")
@@ -113,6 +121,7 @@ class V12AccessibilitySettingsTest : TechniqueTest("V12") {
             shell("cmd uimode night $originalNight")
             for ((key, value) in original) assertEquals("$key put back", value, shell("settings get $key"))
             assertEquals("night mode put back", "Night mode: $originalNight", shell("cmd uimode night"))
+            for ((key, value) in services) assertEquals("$key unchanged", value, shell("settings get $key"))
         }
     }
 
