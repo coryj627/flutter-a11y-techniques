@@ -178,8 +178,11 @@ The principal's, made in review on 2026-11-28 (the owner may overrule):
    `CupertinoButton`'s documented parameter, and the value is the
    example's own choice: there is no source for it, and any value whose
    measured pressed ratio is 4.5:1 or more would serve. At 0.9 the text is
-   5.14:1 (light) and 6.66:1 (dark) while pressed in the widget tests
-   (Android, section 7); 0.85 sits on the threshold, 4.54:1 in light mode
+   5.14:1 (light) and 6.66:1 (dark) while pressed in the widget tests, and
+   5.13:1 and 6.65:1 on the web with a mouse button held 2 s and 4 s
+   (`web_pressed_without_splash.txt`); Android asserts it 4.5:1 or more
+   with a finger held until steady, and its figures are in the test's log,
+   which the evidence run does not keep; 0.85 sits on the threshold, 4.54:1 in light mode
    (computed from the colours, not measured). The default, 0.4, is 1.88:1
    and 2.42:1 ([FL-514](../flutter-limitations.md#fl-514)), measured in
    the widget tests only: the default's press is not measured on a

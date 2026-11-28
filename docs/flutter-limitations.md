@@ -7484,7 +7484,8 @@ yet), **Fixed in x.y** (verified on that version).
 - Workaround, in the SDK: `pressedOpacity`, at a value whose measured
   pressed ratio is 4.5:1 or more; there is no source for a value. V01
   `good-cupertino` sets 0.9: 5.14:1 and 6.66:1 while pressed in the widget
-  tests (Android: V01's spec, section 7). 0.85 gives 4.54:1 in light mode,
+  tests, 5.13:1 and 6.65:1 on the web with a mouse button held (V01's web
+  tree spec). 0.85 gives 4.54:1 in light mode,
   on the threshold (computed from the colours, not measured).
 - Upstream issue: not searched yet (D25).
 
