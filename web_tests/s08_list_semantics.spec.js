@@ -8,7 +8,8 @@ import { readFileSync } from 'node:fs';
 import { VO_HELP, phraseForMove } from './vo/vo_logic.js';
 import {
   BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, TRANSCRIPT_ROWS, collectWalk, endRow, expectedStops,
-  helpRole, judgeCollectedWalk, judgeExampleWalk, judgeTranscript, judgeWalk, ordersRead, positionsRow, runWalks,
+  helpRole, judgeByRange, judgeCollectedWalk, judgeExampleWalk, judgeTranscript, judgeWalk, judgeWalkOf, ordersRead,
+  positionsRow, runWalks,
   screenStops, spokenRole, startRow, stopsOf, stopsText, transcriptRow, unresolvedRow, witnessBackHolds,
 } from './vo/s08_vo_walks.js';
 
@@ -283,7 +284,8 @@ const transcriptRows = (file) => {
     })
     .filter(Boolean);
 };
-const verdictOf = ({ browser, slug, stops }) => judgeExampleWalk(stops, true, expectedStops(slug, browser, stops), screenStops(slug)).verdict;
+const verdictOf = ({ browser, slug, stops }) => judgeByRange(slug, browser, stops,
+  (expected) => judgeExampleWalk(stops, true, expected, screenStops(slug))).verdict;
 
 test.describe('the earlier web VoiceOver transcripts\' stops judge as recorded', () => {
   test('the sixth and fifth recordings: every walk complete; the fourth: good-numbered in WebKit wrong, the rest complete', () => {
@@ -1068,6 +1070,79 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     for (const [what, text, ok] of transcripts) {
       const problems = judgeTranscript(text);
       expect(problems.length === 0, `${what}: ${problems.join('; ') || 'no problems'}`).toBe(ok);
+    }
+  });
+
+  // Codex's first review of #222: a ranged walk is judged against every N
+  // of its range (judgeByRange), so an empty stop or a gap among the orders
+  // is a failed capture, walked again, and a wrong order stays wrong for
+  // good, in the live loop (collectWalk, runWalks, judgeWalkOf, as the
+  // VoiceOver spec runs them) and in the transcript judge.
+  test('bad-lazy-list: an empty stop or a gap among the orders is a failed capture, walked again; a wrong order is wrong, empty stops or not', async () => {
+    const lazyScreen = [...screenStops('bad-lazy-list'), EXAMPLE_HEADING];
+    const h = lazyScreen.length;
+    const at = (i) => `318, ${251 + 40 * i}, 1011, ${271 + 40 * i}`;
+    // A walk of `orders` (the screen's own stops first): `empty` lists the
+    // stop indexes, counted from the first order, read as an empty phrase;
+    // `lose` the one whose move's capture is lost (the stop before it read
+    // again, a gap).
+    const collect = (orders, { empty = [], lose = null } = {}) => {
+      const elements = [...lazyScreen, ...orders];
+      let cursor = -1;
+      let lost = false;
+      return collectWalk({
+        next: async () => { cursor = Math.min(cursor + 1, elements.length - 1); },
+        previous: async () => { cursor = Math.max(cursor - 1, 0); },
+        capture: async () => {
+          const k = cursor - h;
+          if (k === lose && !lost) { lost = true; return { phrase: elements[cursor - 1], position: at(cursor - 1) }; }
+          return { phrase: empty.includes(k) ? '' : elements[cursor], position: at(cursor) };
+        },
+        start: { phrase: '', position: '1, 1, 1, 1' },
+        max: 60,
+      });
+    };
+    const skip = (list, o) => list.filter((x) => x !== `Order ${o}`);
+    const cases = [
+      ['Orders 1 to 21, then an empty final stop', lazyOrders(22), { empty: [21] }, 'incomplete'],
+      ['an empty stop in the middle of Orders 1 to 22', lazyOrders(22), { empty: [9] }, 'incomplete'],
+      ['an empty stop in place of Order 13, nothing after', lazyOrders(13), { empty: [12] }, 'incomplete'],
+      ['a gap after Order 20, then Orders 22 to 24', lazyOrders(24), { lose: 20 }, 'incomplete'],
+      ['Orders 1 to 22, every stop read', lazyOrders(22), {}, 'complete'],
+      ['Order 15 skipped, an empty stop at Order 5', skip(lazyOrders(22), 15), { empty: [4] }, 'wrong'],
+      ['Order 15 read twice, an empty stop at Order 5', [...lazyOrders(15), 'Order 15', ...lazyOrders(22).slice(15)], { empty: [4] }, 'wrong'],
+      ['to Order 31, an empty stop at Order 5', lazyOrders(31), { empty: [4] }, 'wrong'],
+      ['another stop after Order 22, an empty stop at Order 5', [...lazyOrders(22), 'Extra'], { empty: [4] }, 'wrong'],
+      ['to Order 12, an empty stop at Order 3', lazyOrders(12), { empty: [2] }, 'wrong'],
+      ['Order 14 in place of Order 13, an empty stop at Order 5', [...lazyOrders(12), 'Order 14'], { empty: [4] }, 'wrong'],
+    ];
+    for (const browser of BROWSERS) {
+      for (const [what, orders, how, verdict] of cases) {
+        const walk = await collect(orders, how);
+        expect(walk.reachedEnd, `${browser} ${what}: ${walk.problem}`).toBe(true);
+        expect(judgeWalkOf('bad-lazy-list', browser, walk).verdict, `${browser} ${what}`).toBe(verdict);
+        // The live loop: walked again only when incomplete, so a clean walk
+        // after it passes; a wrong walk ends the example.
+        const walks = [walk, await collect(lazyOrders(22))];
+        let i = 0;
+        let latest;
+        const result = await runWalks(async () => { latest = walks[i++]; return latest; },
+          () => judgeWalkOf('bad-lazy-list', browser, latest));
+        if (verdict === 'incomplete') expect(result, `${browser} ${what}: then a clean walk`).toMatchObject({ verdict: 'complete', walks: 2 });
+        if (verdict === 'wrong') expect(result, `${browser} ${what}: no second walk`).toMatchObject({ verdict: 'wrong', walks: 1 });
+        // The transcript judge, from the rows the VoiceOver spec logs: the
+        // walk recorded as judged, then a clean second walk.
+        const second = await collect(lazyOrders(22));
+        const rowsFor = (n, w, judged) => [transcriptRow('bad-lazy-list', n, w.stops, judged.verdict, judged.reason),
+          startRow('bad-lazy-list', n, w.start), positionsRow('bad-lazy-list', n, w.positions),
+          endRow('bad-lazy-list', n, w.witness), unresolvedRow('bad-lazy-list', n, w.unresolved)];
+        const first = judgeWalkOf('bad-lazy-list', browser, walk);
+        const lazyRows = verdict === 'complete' ? rowsFor(1, walk, first)
+          : [...rowsFor(1, walk, { ...first, verdict: 'incomplete' }), ...rowsFor(2, second, judgeWalkOf('bad-lazy-list', browser, second))];
+        const text = transcript((b) => rows.flatMap((row) => (row === 'bad-lazy-list' && b === browser ? lazyRows : rowsOf(row))));
+        const problems = judgeTranscript(text);
+        expect(problems.length === 0, `${browser} ${what} in a transcript: ${problems.join('; ') || 'no problems'}`).toBe(verdict !== 'wrong');
+      }
     }
   });
 

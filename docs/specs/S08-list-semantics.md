@@ -284,7 +284,7 @@ their text.
 | L3 iOS | The labels of the example's elements after the "Example" heading, in order: `good-bulleted` exactly the three lines, each the label of one element; `good-numbered` the steps; `good-material` the three tiles, each a button with its identifier and label; `good-cupertino` "Groceries" and the three items, and no button but Back. For each tile of `good-material` and `bad-tile-in-item`: a tap opens it; and Tabs then Enter, and then Space, each key sent once from a fresh launch, open it (XCUITest cannot see Flutter's focus; the first Tab goes to Back, as in the widget tests). Bad: `bad-one-text` one element with the three lines, and no element named by one of them; `bad-no-list` the three lines; `bad-tile-in-item` three buttons. The iOS tree test reads labels and types, not the hierarchy, and XCUITest gives no traits; an element with no label is left out (the probe found no element for an unnamed list on iOS, and a list named by a header, p25, as an element of type other); the VoiceOver walk is what shows that nothing says "list" |
 | L4 TalkBack | Focus moved to each item of each list, in order: the first item of each list with its name and "In list", the others with their name and no "In list", and none with the list's size or an item's place ("3 items", "1 of 3"; FL-311); `good-material`'s and `bad-tile-in-item`'s tiles with "Button", and the line after them with "Out of list"; `good-cupertino`'s list itself named "Groceries" with "List"; `bad-one-text` the three lines as one reading, with no "In list"; `bad-no-list` each line with no "In list"; `bad-lazy-list` the first two orders with no "In list" and no size or place (FL-313). Each walk is judged whole (`walk_strictly` in `tool/talkback.py`, as C18's is): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, each in the transcript |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk, `C03Walk`): each item by its text alone, with no word about a list (FL-310); the tiles with "Button" and the "Chosen" line; `good-cupertino` "Groceries" then the items; `bad-one-text` the three lines as one utterance; `bad-lazy-list` the measured stops. Every expected utterance is under the service's 64 characters, and a test refuses a longer one |
-| L4 VoiceOver web | The walk, its judge, and the transcript judge are S16's (`web_tests/vo/s08_vo_walks.js`, a copy, read and not imported), with S17's positions row (S17's `s17_vo_walks.js`, on S17's branch, read and not imported). In Chromium and WebKit; no runner retries. The walk (`collectWalk`) begins with a capture on Back (the walk's start row) and compares every move, the first included, with the stop before it, or with the start: a move that changes the position or speaks a non-empty phrase other than that one is a stop, even at unchanged bounds, and its position is kept (the positions row). A move that does neither, an empty phrase or a repeat, is kept: one followed by a move on is unresolved, a gap after the stop before it (the unresolved row); two in a row are the end only with a witness, a move back that freshly reads the stop before the last, not empty, at another position, then a move forward that reads the last again at its position (both on the end row); a frozen, empty, or wrong witness fails for good. The end witness's move back may also read VoiceOver's help message about the stop before the last (the principal's decision, 2026-11-28, after S08's ninth and tenth recordings read "You are currently in a empty group." there): a help message, either wording, whose role (`helpRole`) is the role spoken in that stop's reading, at exactly the position recorded for that stop during the walk and not the last stop's (`witnessBackHolds`); the `-end` row keeps the help text as captured, and `judgeTranscript` applies the same rule from the positions row. Such a witness proves that the capture is live (a new phrase at a new position) and that the cursor stood on the element the walk recorded there, not that element's words. Help of another role, help at any other position or at the last stop's, an empty or a frozen reading still fail for good. Every walk is judged whole (`judgeWalk`): the screen's title, its description, a bad example's defect, the "Example" heading, then exactly the expected list. A stop past the last expected one, empty or not, is wrong, checked before anything else; a wrong reading always wins; before the first gap the stops must be the expected list exactly; across a gap the next stop must be the next expected one or the one after it; a walk that ran out of moves is wrong. Only a walk with no wrong stop and a gap or a stop read as an empty phrase is incomplete: walked again, at most three walks, each logged, and never passed; a wrong walk ends the example (`runWalks`), so a clean walk after it is never made. VoiceOver's help message ("You are currently on …" or "You are currently in …", `VO_HELP`) is left out only at the position of an already-judged stop whose spoken role (`spokenRole`, from the reading's role part, never its name) is the one it names (`helpAfterStop`); it stays in the walk row. A stop with " / " or a backslash in it is written with a backslash before each in the walk row (`stopsText`). The web tree spec drives the walk with made-up screens, S16's regression cases on S08's screens: a frozen capture with elements after it, empty phrases with frozen bounds, wrong witnesses, a stale and an empty lost read at an unexpected element mid-walk, a wrong title then a stale read then a clean retry (which fails), a wrong first title at the start position, a walk exhausted at the move limit, and a help message read after the last element at its position (wrong: the witness's move back then reads the element before it). It judges the committed transcript again from its rows alone (`judgeTranscript`, never skipped): every browser and row exactly once, walks numbered from 1, at most three, each with its start, positions, and unresolved rows and the last with its end row, every position four whole numbers; the help rule applied from the positions row; the end witness checked against the last recorded position and each unresolved read against the position before it, and one whose words are neither empty nor the phrase before it fails; every walk judged again with `judgeWalk`, the last complete and every earlier one incomplete. Duplicate, malformed, unknown, or missing rows fail, and so do an empty transcript, fourteen copies of one row, and a transcript with any kind of row removed (made-up transcripts test each). The help rule is still tested only on made-up walks for a help message during the forward walk; S08's ninth web recording (2026-11-28) is the first in the repository with VoiceOver's "You are currently in a empty group.", which came at an end witness's move back, where the help rule does not apply (section 7). The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted; `bad-lazy-list`, where how far VoiceOver goes varied between recordings in both browsers (Chromium 13, 30, 22, 30, 20, 13; WebKit 13, 21, 30, 13; section 7), "Order 1" to "Order N", consecutive, for N from 13 to 30, nothing after, N recorded in the verdict: that row proves only that the first thirteen orders are read with no list role and that whatever is read beyond them is consecutive orders. S08's walk allows 60 moves, S16's 40. Spoken roles: heading, list ("list 3 items", "end of list"), button, group. The web tree spec also judges the stops of the sixth, fifth, and fourth recordings again with `judgeExampleWalk` (the screen's own stops put back, no positions): the sixth and fifth complete, the fourth wrong on its help message |
+| L4 VoiceOver web | The walk, its judge, and the transcript judge are S16's (`web_tests/vo/s08_vo_walks.js`, a copy, read and not imported), with S17's positions row (S17's `s17_vo_walks.js`, on S17's branch, read and not imported). In Chromium and WebKit; no runner retries. The walk (`collectWalk`) begins with a capture on Back (the walk's start row) and compares every move, the first included, with the stop before it, or with the start: a move that changes the position or speaks a non-empty phrase other than that one is a stop, even at unchanged bounds, and its position is kept (the positions row). A move that does neither, an empty phrase or a repeat, is kept: one followed by a move on is unresolved, a gap after the stop before it (the unresolved row); two in a row are the end only with a witness, a move back that freshly reads the stop before the last, not empty, at another position, then a move forward that reads the last again at its position (both on the end row); a frozen, empty, or wrong witness fails for good. The end witness's move back may also read VoiceOver's help message about the stop before the last (the principal's decision, 2026-11-28, after S08's ninth and tenth recordings read "You are currently in a empty group." there): a help message, either wording, whose role (`helpRole`) is the role spoken in that stop's reading, at exactly the position recorded for that stop during the walk and not the last stop's (`witnessBackHolds`); the `-end` row keeps the help text as captured, and `judgeTranscript` applies the same rule from the positions row. Such a witness proves that the capture is live (a new phrase at a new position) and that the cursor stood on the element the walk recorded there, not that element's words. Help of another role, help at any other position or at the last stop's, an empty or a frozen reading still fail for good. Every walk is judged whole (`judgeWalk`): the screen's title, its description, a bad example's defect, the "Example" heading, then exactly the expected list. A stop past the last expected one, empty or not, is wrong, checked before anything else; a wrong reading always wins; before the first gap the stops must be the expected list exactly; across a gap the next stop must be the next expected one or the one after it; a walk that ran out of moves is wrong. Only a walk with no wrong stop and a gap or a stop read as an empty phrase is incomplete: walked again, at most three walks, each logged, and never passed; a wrong walk ends the example (`runWalks`), so a clean walk after it is never made. VoiceOver's help message ("You are currently on …" or "You are currently in …", `VO_HELP`) is left out only at the position of an already-judged stop whose spoken role (`spokenRole`, from the reading's role part, never its name) is the one it names (`helpAfterStop`); it stays in the walk row. A stop with " / " or a backslash in it is written with a backslash before each in the walk row (`stopsText`). The web tree spec drives the walk with made-up screens, S16's regression cases on S08's screens: a frozen capture with elements after it, empty phrases with frozen bounds, wrong witnesses, a stale and an empty lost read at an unexpected element mid-walk, a wrong title then a stale read then a clean retry (which fails), a wrong first title at the start position, a walk exhausted at the move limit, and a help message read after the last element at its position (wrong: the witness's move back then reads the element before it). It judges the committed transcript again from its rows alone (`judgeTranscript`, never skipped): every browser and row exactly once, walks numbered from 1, at most three, each with its start, positions, and unresolved rows and the last with its end row, every position four whole numbers; the help rule applied from the positions row; the end witness checked against the last recorded position and each unresolved read against the position before it, and one whose words are neither empty nor the phrase before it fails; every walk judged again with `judgeWalk`, the last complete and every earlier one incomplete. Duplicate, malformed, unknown, or missing rows fail, and so do an empty transcript, fourteen copies of one row, and a transcript with any kind of row removed (made-up transcripts test each). The help rule is still tested only on made-up walks for a help message during the forward walk; S08's ninth web recording (2026-11-28) is the first in the repository with VoiceOver's "You are currently in a empty group.", which came at an end witness's move back, where the help rule does not apply (section 7). The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted; `bad-lazy-list`, where how far VoiceOver goes varied between recordings in both browsers (Chromium 13, 30, 22, 30, 20, 13; WebKit 13, 21, 30, 13; section 7), "Order 1" to "Order N", consecutive, for N from 13 to 30, nothing after, N recorded in the verdict; it is judged against every N of the range (`judgeByRange`): complete for some N passes; incomplete for some N (an empty stop in the place of an order, or a gap where an order may have been passed) is walked again and never passes; anything else, a wrong, skipped, repeated, or excess order, short of 13 or past 30, is wrong for good: that row proves only that the first thirteen orders are read with no list role and that whatever is read beyond them is consecutive orders. S08's walk allows 60 moves, S16's 40. Spoken roles: heading, list ("list 3 items", "end of list"), button, group. The web tree spec also judges the stops of the sixth, fifth, and fourth recordings again with `judgeExampleWalk` (the screen's own stops put back, no positions): the sixth and fifth complete, the fourth wrong on its help message |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -636,45 +636,60 @@ What the tests skip or cannot see, and what each gives up:
   A reading that varies is recorded and not judged: in both browsers the
   walk of `bad-lazy-list` must now read the screen's stops, then "Order
   1", "Order 2", … to some "Order N", consecutive, for N from 13 to 30,
-  and nothing after, its end witnessed at "Order N" (`STOP_RANGES` and
-  `ordersRead` in `s08_vo_walks.js`; N is recorded in the walk row's
-  verdict); a skipped or repeated order, another stop, or N below 13 or
-  above 30 is wrong. So that row proves only that the first thirteen
-  orders are read with no list role and that whatever is read beyond them
-  is consecutive orders; it proves nothing about how far VoiceOver goes.
-  In every one of these walks that ended before "Order 30", the last
-  order's lower bound is at neither a whole row's (Chromium 533, WebKit
-  498) nor the list's lower edge (Chromium 543, WebKit 508): Chromium
-  "Order 22" at 497 to 532 and "Order 20" at 533 to 541, WebKit "Order 13"
-  at 462 to 480 and "Order 21" at 462 to 470. Every order the walks moved
-  on from just before the list scrolled ended at one of those two; the
-  rows hold no times, so they do not show whether that is a matter of
-  timing between VoiceOver's move and the list's scrolling. In round 9
-  three other walks failed, for good, on their end witness: in
-  `good-bulleted` (Chromium and WebKit) and `good-numbered` (Chromium) the
-  move back from "end of list" read VoiceOver's "You are currently in a
-  empty group." at the last item's position, in place of the item, a help
-  message in a wording no earlier recording had ("in", where `VO_HELP` in
-  the shared `vo_logic.js` matches "You are currently on "), so the walk
-  did not put the phrase logged for the move in its place; their stops and
-  positions were the same as in rounds 7 and 8. The principal decided
-  (2026-11-28) that "You are currently in …" is VoiceOver's help text, the
-  same kind as "You are currently on …": `VO_HELP` in the shared
-  `vo_logic.js` now matches both, and S08 to S12's `helpRole` reads the
-  "in a <role>" form ("empty group" a group). Round 9 is not the first
-  recording to capture a help message: S08's fourth read "You are
-  currently on a list, …" after "end of list", and other techniques'
-  transcripts hold "You are currently on …" too. It is the first with the
-  "in" wording, and the first with a help message at an end witness: the
-  move back from "end of list", at the last item's position, in
-  `good-bulleted` (Chromium and WebKit) and `good-numbered` (Chromium).
-  With the matcher changed, the walk's capture now puts the phrase
-  Guidepup logged for such a move in place of the help text; round 9's
-  rows hold only the help text, so whether its witnesses would then have
-  passed is not known (a test in the web tree spec shows the rows). Rounds
-  7, 8 and 9 had the same screen stops and orders 1 to 13 in every walk of
-  `bad-lazy-list`, and every other walk the same stops, positions, and
-  start as each other. Round 7's Chromium walk took 36 moves of the 40
+  and nothing after, its end witnessed at "Order N" (`STOP_RANGES` in
+  `s08_vo_walks.js`; N, or the Ns the walk is consistent with, is recorded
+  in the walk row's verdict), and it is judged against every N of the
+  range (`judgeByRange`): complete for some N passes; incomplete for some
+  N (an empty stop in the place of an order, or a gap where an order may
+  have been passed) is walked again and never passes; anything else, a
+  wrong, skipped, repeated, or excess order, short of 13 or past 30, is
+  wrong for good. Until Codex's first review of #222 N was taken from the
+  walk's last stop alone, so a walk of orders 1 to 21 and then an empty
+  stop was judged against 13 orders and wrong for good, where it is a
+  failed capture of order 22; `judgeTranscript` judges a recorded walk the
+  same way. Regressions in the web tree spec, in both browsers, through
+  the collector, the retry loop, and the transcript judge: orders 1 to 21
+  then an empty stop, an empty stop among orders 1 to 22, an empty stop in
+  place of order 13 with nothing after, and a gap after order 20 then
+  orders 22 to 24 are incomplete, and a clean walk after them passes; a
+  skipped, a repeated, an excess, or a wrong order, a stop after the last
+  order, and a walk to order 12 stay wrong with an empty stop elsewhere. A
+  lost read of the order before the last fails the end witness, as on
+  every screen. So that row proves only that the first thirteen orders are
+  read with no list role and that whatever is read beyond them is
+  consecutive orders; it proves nothing about how far VoiceOver goes. In
+  every one of these walks that ended before "Order 30", the last order's
+  lower bound is at neither a whole row's (Chromium 533, WebKit 498) nor
+  the list's lower edge (Chromium 543, WebKit 508): Chromium "Order 22" at
+  497 to 532 and "Order 20" at 533 to 541, WebKit "Order 13" at 462 to 480
+  and "Order 21" at 462 to 470. Every order the walks moved on from just
+  before the list scrolled ended at one of those two; the rows hold no
+  times, so they do not show whether that is a matter of timing between
+  VoiceOver's move and the list's scrolling. In round 9 three other walks
+  failed, for good, on their end witness: in `good-bulleted` (Chromium and
+  WebKit) and `good-numbered` (Chromium) the move back from "end of list"
+  read VoiceOver's "You are currently in a empty group." at the last
+  item's position, in place of the item, a help message in a wording no
+  earlier recording had ("in", where `VO_HELP` in the shared `vo_logic.js`
+  matches "You are currently on "), so the walk did not put the phrase
+  logged for the move in its place; their stops and positions were the
+  same as in rounds 7 and 8. The principal decided (2026-11-28) that "You
+  are currently in …" is VoiceOver's help text, the same kind as "You are
+  currently on …": `VO_HELP` in the shared `vo_logic.js` now matches both,
+  and S08 to S12's `helpRole` reads the "in a <role>" form ("empty group"
+  a group). Round 9 is not the first recording to capture a help message:
+  S08's fourth read "You are currently on a list, …" after "end of list",
+  and other techniques' transcripts hold "You are currently on …" too. It
+  is the first with the "in" wording, and the first with a help message at
+  an end witness: the move back from "end of list", at the last item's
+  position, in `good-bulleted` (Chromium and WebKit) and `good-numbered`
+  (Chromium). With the matcher changed, the walk's capture now puts the
+  phrase Guidepup logged for such a move in place of the help text; round
+  9's rows hold only the help text, so whether its witnesses would then
+  have passed is not known (a test in the web tree spec shows the rows).
+  Rounds 7, 8 and 9 had the same screen stops and orders 1 to 13 in every
+  walk of `bad-lazy-list`, and every other walk the same stops, positions,
+  and start as each other. Round 7's Chromium walk took 36 moves of the 40
   S16's walk allows (34 stops and the two unchanged reads), so S08's walk
   now allows 60. The fifth recording with them (2026-11-28, made by the
   coordinator, `docs/evidence/S08/voiceover-web.md`) passed: 16 walks of

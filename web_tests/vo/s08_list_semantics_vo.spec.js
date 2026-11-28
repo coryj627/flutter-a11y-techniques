@@ -55,7 +55,7 @@ import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
 import {
-  EXPECTED_STOPS, collectWalk, expectedStops, judgeCollectedWalk, ordersRead, positionsText, runWalks, screenStops,
+  EXPECTED_STOPS, collectWalk, judgeWalkOf, positionsText, runWalks,
   startText, stopsText, unresolvedText, witnessText,
 } from './s08_vo_walks.js';
 
@@ -111,14 +111,10 @@ for (const slug of Object.keys(EXPECTED_STOPS)) {
       },
       // A failed end witness is wrong for good, and an unresolved read
       // makes the walk incomplete (judgeCollectedWalk).
-      () => {
-        // The browser's own list; where how far the walk reads varies
-        // (STOP_RANGES), orders 1 to N by its own stops, and N is
-        // recorded in the verdict.
-        const judged = judgeCollectedWalk(latest, expectedStops(slug, browserName, latest.stops), screenStops(slug));
-        const n = ordersRead(slug, browserName, latest.stops);
-        return n === null ? judged : { ...judged, reason: `${judged.reason}; read to Order ${n}` };
-      },
+      // The browser's own list; where how far the walk reads varies
+      // (STOP_RANGES), every N of the range, N recorded in the verdict
+      // (judgeWalkOf, judgeByRange).
+      () => judgeWalkOf(slug, browserName, latest),
       {
         log: (walk, stops, judged) => {
           // Every try is logged whole, the screen's own stops and any help

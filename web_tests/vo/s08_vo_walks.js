@@ -109,13 +109,11 @@ const LAZY_RANGE = { 'bad-lazy-list': { min: 13, max: 30 } };
 export const STOP_RANGES = { chromium: LAZY_RANGE, webkit: LAZY_RANGE };
 
 /**
- * The last order a walk of a ranged slug is judged to have read (N): the
- * number of its last stop when that is "Order K", held between the range's
- * ends; the range's least when the last stop is anything else. A walk that
- * stops short of the least, goes past the most, skips or repeats an order,
- * or reads anything after the last order is then judged wrong against
- * orders 1 to N, as any walk is against its list. Null for a slug with no
- * range in `browser`.
+ * The number of a ranged walk's last stop when that is "Order K", held
+ * between the range's ends, or the range's least when the last stop is
+ * anything else; null for a slug with no range in `browser`. Only the
+ * reason of a wrong walk uses it (judgeByRange), and the tests, to read
+ * how far a recorded walk went.
  */
 export function ordersRead(slug, browser, walked = []) {
   const range = STOP_RANGES[browser]?.[slug];
@@ -127,12 +125,69 @@ export function ordersRead(slug, browser, walked = []) {
 
 /**
  * The stops `browser`'s walk of `slug` must read after the "Example"
- * heading: EXPECTED_STOPS, or for a ranged slug orders 1 to N, N from the
- * walk's own stops (`walked`, ordersRead).
+ * heading when it reads no further than it must: EXPECTED_STOPS, or for a
+ * ranged slug orders 1 to the range's least. A ranged walk is judged by
+ * judgeByRange, against every N of its range.
  */
-export function expectedStops(slug, browser, walked = []) {
+export function expectedStops(slug, browser) {
+  const range = STOP_RANGES[browser]?.[slug];
+  return range ? ORDERS.slice(0, range.min) : EXPECTED_STOPS[slug];
+}
+
+/**
+ * Judges `walked`, a walk's stops, of `slug` in `browser` with
+ * `judge(expected)`, which judges the walk against one expected list after
+ * the heading (judgeWalk or judgeCollectedWalk, with the walk's own empty
+ * stops, gaps, and end). For a slug with no range that list is
+ * EXPECTED_STOPS. For a ranged slug every N of the range is tried, orders 1
+ * to N, and the walk is:
+ *
+ * - "complete" if it is complete for some N;
+ * - else "incomplete" if it is incomplete for some N: an empty stop holds
+ *   the place of the order expected there, and across a gap the walk may
+ *   have passed an order, so the walk is consistent with that N, and is
+ *   walked again and never passed;
+ * - else "wrong", judged against orders 1 to the N of its last stop
+ *   (ordersRead): a wrong, skipped, repeated, or excess order, a walk short
+ *   of the least or past the most, or anything after the last order.
+ *
+ * Returns the verdict with `orders`, the N (complete), the Ns it is
+ * consistent with (incomplete, [least, most]), or the N it was judged
+ * against (wrong), and the reason with that added; `orders` is null for a
+ * slug with no range. Codex's first review of #222: N was taken from the
+ * last stop alone, so a walk of orders 1 to 21 and then an empty stop was
+ * judged against 13 orders and wrong for good, where it is a failed
+ * capture of order 22.
+ */
+export function judgeByRange(slug, browser, walked, judge) {
+  const range = STOP_RANGES[browser]?.[slug];
+  if (!range) return { ...judge(EXPECTED_STOPS[slug]), orders: null };
+  const consistent = [];
+  let first = null;
+  for (let n = range.min; n <= range.max; n++) {
+    const judged = judge(ORDERS.slice(0, n));
+    if (judged.verdict === 'complete') return { ...judged, orders: n, reason: `${judged.reason}; read to Order ${n}` };
+    if (judged.verdict === 'incomplete') {
+      consistent.push(n);
+      first ??= judged;
+    }
+  }
+  if (first) {
+    const [a, b] = [consistent[0], consistent[consistent.length - 1]];
+    return { ...first, orders: [a, b], reason: `${first.reason}; consistent with orders 1 to ${a === b ? a : `N, N from ${a} to ${b}`}` };
+  }
   const n = ordersRead(slug, browser, walked);
-  return n === null ? EXPECTED_STOPS[slug] : ORDERS.slice(0, n);
+  const judged = judge(ORDERS.slice(0, n));
+  return { ...judged, orders: n, reason: `${judged.reason}; judged against orders 1 to ${n}` };
+}
+
+/**
+ * Judges a collected walk of `slug` in `browser` as the VoiceOver spec
+ * does: judgeCollectedWalk against its list, or for a ranged slug through
+ * judgeByRange.
+ */
+export function judgeWalkOf(slug, browser, walk) {
+  return judgeByRange(slug, browser, walk.stops, (expected) => judgeCollectedWalk(walk, expected, screenStops(slug)));
 }
 
 /** The stops VoiceOver reads above the "Example" heading of `slug`'s screen. */
@@ -191,8 +246,8 @@ export function helpAfterStop(stops, positions, i) {
 /**
  * Every row name of a transcript (`<row>-walk-<n>`), with the stops its
  * walk must read after the "Example" heading (`expected`, which
- * judgeTranscript takes from expectedStops, by browser and, for a ranged
- * slug, by the walk's own stops) and the screen's
+ * judgeTranscript tries, for a ranged slug, against every N of its range,
+ * judgeByRange) and the screen's
  * own stops before it (`screen`): one per example.
  */
 export const TRANSCRIPT_ROWS = Object.fromEntries(Object.entries(EXPECTED_STOPS)
@@ -525,10 +580,10 @@ export function judgeTranscript(text) {
         if (last && !end) problems.push(`${key}: the last walk, ${n}, has no end witness`);
         // Every walk judged again with judgeWalk, its gaps included: a wrong
         // verdict always wins, so a wrong earlier walk fails the transcript.
-        // The browser's own list, by the walk's own stops where how far it
-        // reads varies (expectedStops, STOP_RANGES).
-        const expected = expectedStops(slug, b, stops);
-        const judged = judgeWalk(stops, witnessed, expected, screen, positions, gaps).verdict;
+        // The browser's own list; where how far the walk reads varies,
+        // every N of its range (judgeByRange, STOP_RANGES).
+        const judged = judgeByRange(slug, b, stops,
+          (expected) => judgeWalk(stops, witnessed, expected, screen, positions, gaps)).verdict;
         if (last && (was !== 'complete' || judged !== 'complete')) {
           problems.push(`${key}: the last walk, ${n}, was recorded ${was} and judges ${judged}`);
         }
