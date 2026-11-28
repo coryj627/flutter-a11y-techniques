@@ -7,8 +7,8 @@ import { byId, technique } from './support/techniques.js';
 import { readFileSync } from 'node:fs';
 import {
   BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, TRANSCRIPT_ROWS, collectWalk, endRow, expectedStops,
-  helpRole, judgeCollectedWalk, judgeExampleWalk, judgeTranscript, judgeWalk, positionsRow, runWalks, screenStops,
-  spokenRole, startRow, stopsOf, stopsText, transcriptRow, unresolvedRow,
+  helpRole, judgeCollectedWalk, judgeExampleWalk, judgeTranscript, judgeWalk, ordersRead, positionsRow, runWalks,
+  screenStops, spokenRole, startRow, stopsOf, stopsText, transcriptRow, unresolvedRow,
 } from './vo/s08_vo_walks.js';
 
 // The example screen's own "Example" heading; the technique's page has
@@ -264,10 +264,10 @@ test.describe('the stops the VoiceOver spec expects above each example', () => {
 // follows the "Example" heading, so the screen's own stops are put back),
 // with no positions, as none is in them. They were made before the walk
 // took S16's rules and fail judgeTranscript (below); this shows what their
-// stops alone judge. The sixth and fifth recordings passed, and now judge
-// complete but for Chromium's bad-lazy-list, which ended after "Order 13"
-// where the recording of 2026-11-28 read all 30 orders; the fourth failed
-// on a help message after the last stop and still judges wrong.
+// stops alone judge. The sixth and fifth recordings passed and still judge
+// complete (Chromium's bad-lazy-list, read to "Order 13", is N = 13 of its
+// range); the fourth failed on a help message after the last stop and
+// still judges wrong.
 const transcriptRows = (file) => {
   let browser = null;
   return readFileSync(new URL(`../${file}`, import.meta.url), 'utf8')
@@ -282,16 +282,16 @@ const transcriptRows = (file) => {
     })
     .filter(Boolean);
 };
-const verdictOf = ({ browser, slug, stops }) => judgeExampleWalk(stops, true, expectedStops(slug, browser), screenStops(slug)).verdict;
+const verdictOf = ({ browser, slug, stops }) => judgeExampleWalk(stops, true, expectedStops(slug, browser, stops), screenStops(slug)).verdict;
 
 test.describe('the earlier web VoiceOver transcripts\' stops judge as recorded', () => {
-  test('the sixth and fifth recordings: complete but Chromium\'s bad-lazy-list, cut at Order 13; the fourth: that and good-numbered in WebKit wrong', () => {
+  test('the sixth and fifth recordings: every walk complete; the fourth: good-numbered in WebKit wrong, the rest complete', () => {
     for (const file of ['docs/evidence/probes/s08/voiceover-web-before-judge-update.md.txt', 'docs/evidence/probes/s08/voiceover-web-round5-pass.md.txt',
       'docs/evidence/probes/s08/voiceover-web-round4-fail.md.txt']) {
       const rows = transcriptRows(file);
       expect(rows, file).toHaveLength(16);
       const wrong = rows.filter((r) => verdictOf(r) !== 'complete').map((r) => `${r.browser} ${r.slug} ${verdictOf(r)}`);
-      const expectedWrong = ['chromium bad-lazy-list wrong', ...(file.includes('round4') ? ['webkit good-numbered wrong'] : [])];
+      const expectedWrong = file.includes('round4') ? ['webkit good-numbered wrong'] : [];
       expect(wrong, file).toEqual(expectedWrong);
       const lazy = rows.find((r) => r.browser === 'chromium' && r.slug === 'bad-lazy-list');
       expect(lazy.stops.at(-1), file).toBe('Order 13');
@@ -760,6 +760,11 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
   const withHelp = (positions) => transcript(() => rows.flatMap((row) => (row === TIED.slug
     ? walkRows(row, 1, helped, 'complete', { positions }) : rowsOf(row))));
   const ROW_KINDS = ['', '-start', '-positions', '-end', '-unresolved'];
+  // bad-lazy-list's orders 1 to n, and a transcript whose `browser` walk of
+  // it read `orders` after its screen's own stops and heading.
+  const lazyOrders = (n) => Array.from({ length: n }, (_, i) => `Order ${i + 1}`);
+  const lazyIn = (browser, orders) => transcript((b) => rows.flatMap((row) => (row === 'bad-lazy-list' && b === browser
+    ? walkRows(row, 1, [...TRANSCRIPT_ROWS[row].screen, EXAMPLE_HEADING, ...orders], 'complete') : rowsOf(row))));
 
   test('made-up transcripts: a right one passes, and each wrong one names its problem', () => {
     const one = transcriptRow(R, 1, w, 'complete', 'x');
@@ -771,11 +776,21 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     const exhausted = Array.from({ length: 20 }, (_, i) => w[i % w.length]);
     const cases = [
       ['a whole walk of every row in both browsers', transcript(right), true],
-      // bad-lazy-list: Chromium's walk must read all 30 orders, WebKit's 13.
-      ['Chromium\'s bad-lazy-list read to Order 13 only, as before 2026-11-28', transcript((b) => rows.flatMap((row) => (row === 'bad-lazy-list' && b === 'chromium'
-        ? walkRows(row, 1, whole(row, 'webkit'), 'complete') : rowsOf(row)))), false],
-      ['WebKit\'s bad-lazy-list read to Order 30', transcript((b) => rows.flatMap((row) => (row === 'bad-lazy-list' && b === 'webkit'
-        ? walkRows(row, 1, whole(row, 'chromium'), 'complete') : rowsOf(row)))), false],
+      // bad-lazy-list: Chromium's walk reads orders 1 to N, consecutive, for
+      // some N from 13 to 30 (STOP_RANGES); WebKit's exactly 1 to 13.
+      ...[
+        ['to Order 13 (the six earlier recordings)', lazyOrders(13), true],
+        ['to Order 22 (round 8)', lazyOrders(22), true],
+        ['to Order 30 (round 7)', lazyOrders(30), true],
+        ['to Order 12', lazyOrders(12), false],
+        ['to Order 31', lazyOrders(31), false],
+        ['to Order 22 with Order 15 skipped', lazyOrders(22).filter((o) => o !== 'Order 15'), false],
+        ['to Order 22 with Order 15 read twice', [...lazyOrders(15), 'Order 15', ...lazyOrders(22).slice(15)], false],
+        ['to Order 22, then another stop', [...lazyOrders(22), 'Extra'], false],
+        ['to Order 22, then Order 13 again', [...lazyOrders(22), 'Order 13'], false],
+      ].map(([what, orders, ok]) => [`Chromium's bad-lazy-list read ${what}`, lazyIn('chromium', orders), ok]),
+      ['WebKit\'s bad-lazy-list read to Order 22', lazyIn('webkit', lazyOrders(22)), false],
+      ['WebKit\'s bad-lazy-list read to Order 12', lazyIn('webkit', lazyOrders(12)), false],
       ['an empty transcript', '', false],
       ['fourteen copies of one walk row', transcript(() => Array(7).fill(one)), false],
       ['fourteen copies of one walk\'s rows', transcript(() => Array(7).fill(rowsOf(R)).flat()), false],
@@ -900,14 +915,20 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     }
   });
 
-  test('the recording of 2026-11-28 (voiceover-web-round7-fail.md.txt) judges right by today\'s lists but for the verdict it recorded', () => {
-    // Chromium's bad-lazy-list read all 30 orders, its end witnessed, and
-    // was recorded wrong against the list of 13 it was judged by then.
-    const text = readFileSync(new URL('../docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt', import.meta.url), 'utf8');
-    expect(judgeTranscript(text)).toEqual(['chromium bad-lazy-list: the last walk, 1, was recorded wrong and judges complete']);
-    const lazy = (b) => transcriptRows('docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt')
-      .find((r) => r.browser === b && r.slug === 'bad-lazy-list').stops.slice(-1)[0];
-    expect([lazy('chromium'), lazy('webkit')]).toEqual(['Order 30', 'Order 13']);
+  test('rounds 7 and 8 (2026-11-28) judge right by today\'s rule, their only problem the verdict recorded for Chromium\'s bad-lazy-list', () => {
+    // Chromium's bad-lazy-list read to "Order 30" in round 7 and to "Order
+    // 22" in round 8, each end witnessed, and each was recorded wrong
+    // against the list of 13 or 30 it was judged by then. WebKit's read to
+    // "Order 13" both times.
+    for (const [round, n] of [[7, 30], [8, 22]]) {
+      const file = `docs/evidence/probes/s08/voiceover-web-round${round}-fail.md.txt`;
+      const text = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
+      expect(judgeTranscript(text), file).toEqual(['chromium bad-lazy-list: the last walk, 1, was recorded wrong and judges complete']);
+      const lazy = (b) => transcriptRows(file).find((r) => r.browser === b && r.slug === 'bad-lazy-list').stops;
+      expect(lazy('chromium').slice(4), file).toEqual(lazyOrders(n));
+      expect(ordersRead('bad-lazy-list', 'chromium', lazy('chromium')), file).toBe(n);
+      expect(lazy('webkit').at(-1), file).toBe('Order 13');
+    }
   });
 
   test('the committed recording (docs/evidence/S08/voiceover-web.md) is right, every browser and row once', () => {

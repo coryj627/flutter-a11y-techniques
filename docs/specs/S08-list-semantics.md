@@ -284,7 +284,7 @@ their text.
 | L3 iOS | The labels of the example's elements after the "Example" heading, in order: `good-bulleted` exactly the three lines, each the label of one element; `good-numbered` the steps; `good-material` the three tiles, each a button with its identifier and label; `good-cupertino` "Groceries" and the three items, and no button but Back. For each tile of `good-material` and `bad-tile-in-item`: a tap opens it; and Tabs then Enter, and then Space, each key sent once from a fresh launch, open it (XCUITest cannot see Flutter's focus; the first Tab goes to Back, as in the widget tests). Bad: `bad-one-text` one element with the three lines, and no element named by one of them; `bad-no-list` the three lines; `bad-tile-in-item` three buttons. The iOS tree test reads labels and types, not the hierarchy, and XCUITest gives no traits; an element with no label is left out (the probe found no element for an unnamed list on iOS, and a list named by a header, p25, as an element of type other); the VoiceOver walk is what shows that nothing says "list" |
 | L4 TalkBack | Focus moved to each item of each list, in order: the first item of each list with its name and "In list", the others with their name and no "In list", and none with the list's size or an item's place ("3 items", "1 of 3"; FL-311); `good-material`'s and `bad-tile-in-item`'s tiles with "Button", and the line after them with "Out of list"; `good-cupertino`'s list itself named "Groceries" with "List"; `bad-one-text` the three lines as one reading, with no "In list"; `bad-no-list` each line with no "In list"; `bad-lazy-list` the first two orders with no "In list" and no size or place (FL-313). Each walk is judged whole (`walk_strictly` in `tool/talkback.py`, as C18's is): a walk with any wrong reading fails for good, and only a walk shown to be incomplete is walked again, up to three walks, each in the transcript |
 | L4 VoiceOver iOS | Every utterance after the "Example" heading to the end of the screen, compared as a whole list (C03's walk, `C03Walk`): each item by its text alone, with no word about a list (FL-310); the tiles with "Button" and the "Chosen" line; `good-cupertino` "Groceries" then the items; `bad-one-text` the three lines as one utterance; `bad-lazy-list` the measured stops. Every expected utterance is under the service's 64 characters, and a test refuses a longer one |
-| L4 VoiceOver web | The walk, its judge, and the transcript judge are S16's (`web_tests/vo/s08_vo_walks.js`, a copy, read and not imported), with S17's positions row (S17's `s17_vo_walks.js`, on S17's branch, read and not imported). In Chromium and WebKit; no runner retries. The walk (`collectWalk`) begins with a capture on Back (the walk's start row) and compares every move, the first included, with the stop before it, or with the start: a move that changes the position or speaks a non-empty phrase other than that one is a stop, even at unchanged bounds, and its position is kept (the positions row). A move that does neither, an empty phrase or a repeat, is kept: one followed by a move on is unresolved, a gap after the stop before it (the unresolved row); two in a row are the end only with a witness, a move back that freshly reads the stop before the last, not empty, at another position, then a move forward that reads the last again at its position (both on the end row); a frozen, empty, or wrong witness fails for good. Every walk is judged whole (`judgeWalk`): the screen's title, its description, a bad example's defect, the "Example" heading, then exactly the expected list. A stop past the last expected one, empty or not, is wrong, checked before anything else; a wrong reading always wins; before the first gap the stops must be the expected list exactly; across a gap the next stop must be the next expected one or the one after it; a walk that ran out of moves is wrong. Only a walk with no wrong stop and a gap or a stop read as an empty phrase is incomplete: walked again, at most three walks, each logged, and never passed; a wrong walk ends the example (`runWalks`), so a clean walk after it is never made. VoiceOver's help message ("You are currently on …") is left out only at the position of an already-judged stop whose spoken role (`spokenRole`, from the reading's role part, never its name) is the one it names (`helpAfterStop`); it stays in the walk row. A stop with " / " or a backslash in it is written with a backslash before each in the walk row (`stopsText`). The web tree spec drives the walk with made-up screens, S16's regression cases on S08's screens: a frozen capture with elements after it, empty phrases with frozen bounds, wrong witnesses, a stale and an empty lost read at an unexpected element mid-walk, a wrong title then a stale read then a clean retry (which fails), a wrong first title at the start position, a walk exhausted at the move limit, and a help message read after the last element at its position (wrong: the witness's move back then reads the element before it). It judges the committed transcript again from its rows alone (`judgeTranscript`, never skipped): every browser and row exactly once, walks numbered from 1, at most three, each with its start, positions, and unresolved rows and the last with its end row, every position four whole numbers; the help rule applied from the positions row; the end witness checked against the last recorded position and each unresolved read against the position before it, and one whose words are neither empty nor the phrase before it fails; every walk judged again with `judgeWalk`, the last complete and every earlier one incomplete. Duplicate, malformed, unknown, or missing rows fail, and so do an empty transcript, fourteen copies of one row, and a transcript with any kind of row removed (made-up transcripts test each). The help rule is still tested only on made-up walks. The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted; `bad-lazy-list` by browser since the recording of 2026-11-28: all 30 orders in Chromium, "Order 1" to "Order 13" in WebKit (section 7). S08's walk allows 60 moves, S16's 40. Spoken roles: heading, list ("list 3 items", "end of list"), button, group. The web tree spec also judges the stops of the sixth, fifth, and fourth recordings again with `judgeExampleWalk` (the screen's own stops put back, no positions): the sixth and fifth complete, the fourth wrong on its help message |
+| L4 VoiceOver web | The walk, its judge, and the transcript judge are S16's (`web_tests/vo/s08_vo_walks.js`, a copy, read and not imported), with S17's positions row (S17's `s17_vo_walks.js`, on S17's branch, read and not imported). In Chromium and WebKit; no runner retries. The walk (`collectWalk`) begins with a capture on Back (the walk's start row) and compares every move, the first included, with the stop before it, or with the start: a move that changes the position or speaks a non-empty phrase other than that one is a stop, even at unchanged bounds, and its position is kept (the positions row). A move that does neither, an empty phrase or a repeat, is kept: one followed by a move on is unresolved, a gap after the stop before it (the unresolved row); two in a row are the end only with a witness, a move back that freshly reads the stop before the last, not empty, at another position, then a move forward that reads the last again at its position (both on the end row); a frozen, empty, or wrong witness fails for good. Every walk is judged whole (`judgeWalk`): the screen's title, its description, a bad example's defect, the "Example" heading, then exactly the expected list. A stop past the last expected one, empty or not, is wrong, checked before anything else; a wrong reading always wins; before the first gap the stops must be the expected list exactly; across a gap the next stop must be the next expected one or the one after it; a walk that ran out of moves is wrong. Only a walk with no wrong stop and a gap or a stop read as an empty phrase is incomplete: walked again, at most three walks, each logged, and never passed; a wrong walk ends the example (`runWalks`), so a clean walk after it is never made. VoiceOver's help message ("You are currently on …") is left out only at the position of an already-judged stop whose spoken role (`spokenRole`, from the reading's role part, never its name) is the one it names (`helpAfterStop`); it stays in the walk row. A stop with " / " or a backslash in it is written with a backslash before each in the walk row (`stopsText`). The web tree spec drives the walk with made-up screens, S16's regression cases on S08's screens: a frozen capture with elements after it, empty phrases with frozen bounds, wrong witnesses, a stale and an empty lost read at an unexpected element mid-walk, a wrong title then a stale read then a clean retry (which fails), a wrong first title at the start position, a walk exhausted at the move limit, and a help message read after the last element at its position (wrong: the witness's move back then reads the element before it). It judges the committed transcript again from its rows alone (`judgeTranscript`, never skipped): every browser and row exactly once, walks numbered from 1, at most three, each with its start, positions, and unresolved rows and the last with its end row, every position four whole numbers; the help rule applied from the positions row; the end witness checked against the last recorded position and each unresolved read against the position before it, and one whose words are neither empty nor the phrase before it fails; every walk judged again with `judgeWalk`, the last complete and every earlier one incomplete. Duplicate, malformed, unknown, or missing rows fail, and so do an empty transcript, fourteen copies of one row, and a transcript with any kind of row removed (made-up transcripts test each). The help rule is still tested only on made-up walks. The expected lists are the stops the first recording measured: the list with "list 3 items" (`good-cupertino` "list Groceries 3 items"), each text-only item with "empty group" and its place twice, "end of list"; `good-material`'s buttons with their place (WebKit; Chromium quit in that walk, so its list is WebKit's); `bad-tile-in-item`'s items as "group"; the bad examples with no list as predicted; `bad-lazy-list` in WebKit "Order 1" to "Order 13", and in Chromium, where how far VoiceOver goes varied between recordings (13, 30, 22; section 7), "Order 1" to "Order N", consecutive, for N from 13 to 30, nothing after, N recorded in the verdict: that row proves only that the first thirteen orders are read with no list role and that whatever is read beyond them is consecutive orders. S08's walk allows 60 moves, S16's 40. Spoken roles: heading, list ("list 3 items", "end of list"), button, group. The web tree spec also judges the stops of the sixth, fifth, and fourth recordings again with `judgeExampleWalk` (the screen's own stops put back, no positions): the sixth and fifth complete, the fourth wrong on its help message |
 
 ## 7. What the build found (Flutter 3.47.5)
 
@@ -606,41 +606,48 @@ What the tests skip or cannot see, and what each gives up:
   moved from `docs/evidence/S08/voiceover-web.md`) has none of the new
   rows, and the web tree spec shows that it fails `judgeTranscript` for
   that, and for its rows' old form, which logged only what follows the
-  "Example" heading of a complete walk. The recording with them
-  (2026-11-28, made by the coordinator, kept as
-  `docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt`) failed one
-  walk of 16: in Chromium `bad-lazy-list` read "Order 1" to "Order 30",
-  every order of the fixture (`orderCount` is 30), its end witnessed (back
-  "Order 29", forward "Order 30" at the list's lower edge), with no
-  unresolved read, and was judged wrong at "Order 14" against the list of
-  13. Its positions show VoiceOver scrolling the list as it moved: from
-  "Order 11" on, the cursor's position jumps back up the screen every
-  three or four orders. In WebKit the same walk read "Order 1" to "Order
-  13" and ended there with its witness (back "Order 12" at another
-  position), so VoiceOver in WebKit did not move past "Order 13". Every
-  other walk was complete on its first walk in both browsers, with an
-  empty start capture, no unresolved read, its end witnessed, and no help
-  message, every example's stops after the heading as in the recording
-  before. **A finding about the earlier recordings:** all six (rounds 1 to
-  5, and the sixth, `voiceover-web-before-judge-update.md.txt`) ended
-  Chromium's walk of `bad-lazy-list` after "Order 13", the last order in
-  the page when it opens (13 in both browsers, measured with Playwright
-  and no VoiceOver), and the judge passed it. That walk took two moves
-  that changed neither the phrase nor the cursor's position as the end,
-  with no witness, and its transcripts kept no positions, so whether
-  VoiceOver stopped there or the capture stopped changing cannot be told
-  from them; it was not the move limit (17 stops of 40 moves). The old
-  walk and the new one move and capture alike: had VoiceOver stopped at
-  "Order 13", the new walk would have ended there too, through its
-  witness; had the capture stopped changing, its witness would have
-  failed. So the list of 13 rested on walks that could not show their end,
-  and Chromium's 30 is the one walk of it with a witness. The expected
-  list for `bad-lazy-list` is now by browser (`BROWSER_STOPS` in
-  `s08_vo_walks.js`): all 30 orders in Chromium, 13 in WebKit. The
-  Chromium walk took 36 moves of the 40 S16's walk allows (34 stops and
-  the two unchanged reads), so S08's walk now allows 60. Whether Chromium
-  reads all 30 orders on every walk is shown by one recording only. S08's
-  web transcript is to be recorded again; until then
+  "Example" heading of a complete walk. Two recordings were made with them
+  on 2026-11-28, by the coordinator, and each failed one walk of 16,
+  Chromium's `bad-lazy-list`; both are kept
+  (`docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt` and
+  `voiceover-web-round8-fail.md.txt`). In round 7 that walk read "Order 1"
+  to "Order 30", every order of the fixture (`orderCount` is 30), its end
+  witnessed (back "Order 29", forward "Order 30"); in round 8 it read
+  "Order 1" to "Order 22", its end witnessed (back "Order 21", forward
+  "Order 22"); neither had an unresolved read, and each was judged wrong
+  against the list it had then (13 orders, then 30). Their positions show
+  VoiceOver scrolling the list as it moved: from "Order 11" on, the
+  cursor's position jumps back up the screen every three or four orders.
+  In WebKit the same walk read "Order 1" to "Order 13" both times and
+  ended there with its witness (back "Order 12" at another position).
+  Every other walk of both was complete on its first walk in both
+  browsers, with an empty start capture, no unresolved read, its end
+  witnessed, and no help message, every example's stops after the heading
+  as in the recordings before. **How far VoiceOver goes in Chromium varied
+  between recordings**, and the cause was not found: "Order 13" in all six
+  earlier recordings (rounds 1 to 5, and the sixth,
+  `voiceover-web-before-judge-update.md.txt`), "Order 30" in round 7,
+  "Order 22" in round 8. The six earlier walks took two moves that changed
+  neither the phrase nor the cursor's position as the end, with no
+  witness, and their transcripts kept no positions, so whether VoiceOver
+  stopped at "Order 13" or the capture stopped changing cannot be told
+  from them; it was not the move limit (17 stops of 40 moves). "Order 13"
+  is the last order in the page when it opens (13 in both browsers,
+  measured with Playwright and no VoiceOver). The old judge passed a list
+  of 13 that rested on walks that could not show their end. A reading that
+  varies is recorded and not judged: Chromium's walk of `bad-lazy-list`
+  must now read the screen's stops, then "Order 1", "Order 2", … to some
+  "Order N", consecutive, for N from 13 to 30, and nothing after, its end
+  witnessed at "Order N" (`STOP_RANGES` and `ordersRead` in
+  `s08_vo_walks.js`; N is recorded in the walk row's verdict); a skipped
+  or repeated order, another stop, or N below 13 or above 30 is wrong. So
+  that row proves only that the first thirteen orders are read with no
+  list role, and that whatever is read beyond them is consecutive orders;
+  it proves nothing about how far VoiceOver goes. WebKit's walk read to
+  "Order 13" in all eight recordings, the last two witnessed, and stays
+  exactly 13. Round 7's Chromium walk took 36 moves of the 40 S16's walk
+  allows (34 stops and the two unchanged reads), so S08's walk now allows
+  60. S08's web transcript is to be recorded again; until then
   `docs/evidence/S08/voiceover-web.md` is absent and the never-skipped
   test of it fails. Two things differ from S16's rules: the positions row,
   S17's, so that `judgeTranscript` leaves out a help message by the rule

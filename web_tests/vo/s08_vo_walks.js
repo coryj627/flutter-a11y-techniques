@@ -82,34 +82,58 @@ export const EXPECTED_STOPS = {
   'bad-no-list': GROCERIES,
   // Each tile a list item, read as a group and not as a button (FL-262).
   'bad-tile-in-item': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'group')), 'end of list', 'Chosen: none'],
-  // No list. In WebKit, the orders the page holds when it opens, 1 to 13
-  // (FL-011); in Chromium every order (BROWSER_STOPS).
+  // No list; the orders the page holds when it opens, 1 to 13 (FL-011). In
+  // Chromium, 1 to N for N from 13 to 30 (STOP_RANGES).
   'bad-lazy-list': ORDERS.slice(0, 13),
 };
 
 /**
- * Where one browser's walk must read otherwise than EXPECTED_STOPS: browser
- * -> slug -> stops. `bad-lazy-list` in Chromium: the recording of
- * 2026-11-28 (docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt),
- * the first with the end witness, read all 30 orders, the
- * fixture's whole list (`orderCount`), VoiceOver scrolling the list as it
- * moved (from "Order 11" on, the cursor's position jumps back up the
- * screen every three or four orders), and its end was witnessed at "Order
- * 30". Every earlier recording (rounds 1 to 5 and the sixth,
- * voiceover-web-before-judge-update.md.txt) ended Chromium's walk after
- * "Order 13", the last order in the page when it opens (13 in both
- * browsers, measured without VoiceOver), with no witness and no
- * positions recorded, so whether VoiceOver stopped there or the capture
- * stopped changing cannot be told from them. WebKit's walk of 2026-11-28
- * ended after "Order 13" with its witness, a move back to "Order 12" at
- * another position: VoiceOver in WebKit did not move past it.
+ * Where how far a browser's walk reads varies between recordings, and so is
+ * recorded and not judged: browser -> slug -> the range of the last order
+ * read. `bad-lazy-list` in Chromium: its walk ended after "Order 13" in the
+ * six recordings before the end witness (rounds 1 to 5 and the sixth,
+ * voiceover-web-before-judge-update.md.txt; no witness, no positions), and,
+ * each end witnessed, after "Order 30" (round 7) and after "Order 22"
+ * (round 8), both 2026-11-28, VoiceOver scrolling the list as it moved. The
+ * cause was not found. The page holds orders 1 to 13 when it opens (in both
+ * browsers, measured without VoiceOver), and the fixture has 30. So the walk
+ * must read orders 1, 2, … N, consecutive, for some N from 13 to 30, and
+ * nothing after; its end witness is still required. It proves only that
+ * the first thirteen orders are read with no list role, and that whatever
+ * is read beyond them is consecutive orders. WebKit's walk ended after
+ * "Order 13" in all eight recordings, the last two witnessed (a move back
+ * to "Order 12" at another position), so WebKit's stays exactly 13.
  */
-export const BROWSER_STOPS = {
-  chromium: { 'bad-lazy-list': ORDERS },
+export const STOP_RANGES = {
+  chromium: { 'bad-lazy-list': { min: 13, max: 30 } },
 };
 
-/** The stops `browser`'s walk of `slug` must read after the "Example" heading. */
-export const expectedStops = (slug, browser) => BROWSER_STOPS[browser]?.[slug] ?? EXPECTED_STOPS[slug];
+/**
+ * The last order a walk of a ranged slug is judged to have read (N): the
+ * number of its last stop when that is "Order K", held between the range's
+ * ends; the range's least when the last stop is anything else. A walk that
+ * stops short of the least, goes past the most, skips or repeats an order,
+ * or reads anything after the last order is then judged wrong against
+ * orders 1 to N, as any walk is against its list. Null for a slug with no
+ * range in `browser`.
+ */
+export function ordersRead(slug, browser, walked = []) {
+  const range = STOP_RANGES[browser]?.[slug];
+  if (!range) return null;
+  const m = /^Order (\d+)$/.exec(walked[walked.length - 1] ?? '');
+  const n = m ? Number(m[1]) : range.min;
+  return Math.min(Math.max(n, range.min), range.max);
+}
+
+/**
+ * The stops `browser`'s walk of `slug` must read after the "Example"
+ * heading: EXPECTED_STOPS, or for a ranged slug orders 1 to N, N from the
+ * walk's own stops (`walked`, ordersRead).
+ */
+export function expectedStops(slug, browser, walked = []) {
+  const n = ordersRead(slug, browser, walked);
+  return n === null ? EXPECTED_STOPS[slug] : ORDERS.slice(0, n);
+}
 
 /** The stops VoiceOver reads above the "Example" heading of `slug`'s screen. */
 export const screenStops = (slug) => {
@@ -161,7 +185,8 @@ export function helpAfterStop(stops, positions, i) {
 /**
  * Every row name of a transcript (`<row>-walk-<n>`), with the stops its
  * walk must read after the "Example" heading (`expected`, which
- * judgeTranscript takes from expectedStops, by browser) and the screen's
+ * judgeTranscript takes from expectedStops, by browser and, for a ranged
+ * slug, by the walk's own stops) and the screen's
  * own stops before it (`screen`): one per example.
  */
 export const TRANSCRIPT_ROWS = Object.fromEntries(Object.entries(EXPECTED_STOPS)
@@ -419,8 +444,6 @@ export function judgeTranscript(text) {
   }
   for (const b of BROWSERS) {
     for (const [slug, { screen }] of Object.entries(TRANSCRIPT_ROWS)) {
-      // The browser's own list where it reads otherwise (BROWSER_STOPS).
-      const expected = expectedStops(slug, b);
       const key = `${b} ${slug}`;
       const tries = walks.get(key);
       if (!tries) {
@@ -490,6 +513,9 @@ export function judgeTranscript(text) {
         if (last && !end) problems.push(`${key}: the last walk, ${n}, has no end witness`);
         // Every walk judged again with judgeWalk, its gaps included: a wrong
         // verdict always wins, so a wrong earlier walk fails the transcript.
+        // The browser's own list, by the walk's own stops where how far it
+        // reads varies (expectedStops, STOP_RANGES).
+        const expected = expectedStops(slug, b, stops);
         const judged = judgeWalk(stops, witnessed, expected, screen, positions, gaps).verdict;
         if (last && (was !== 'complete' || judged !== 'complete')) {
           problems.push(`${key}: the last walk, ${n}, was recorded ${was} and judges ${judged}`);
