@@ -1,0 +1,52 @@
+"""V01 probe: compares two analyser outputs fixture by fixture (throwaway;
+kept as docs/evidence/probes/v01/compare.py.txt).
+
+Usage: compare.py A.txt B.txt [STATE]
+
+For every capture of STATE (default rest) in both, compares the solid
+colours each lists (in order, the first four) and prints the captures where
+they differ, with both lists, then how many were the same.
+"""
+import re
+import sys
+
+
+def load(path):
+    caps = {}
+    cur = None
+    for line in open(path):
+        m = re.match(r"== (\w+)-(\w+)-(\S+)-(\w+) box=\S+ page=(\S+)", line)
+        if m:
+            cur = (m.group(3), m.group(2), m.group(4))
+            caps[cur] = {"page": m.group(5), "colours": [], "text": ""}
+            continue
+        if cur is None:
+            continue
+        s = line.strip()
+        if s.startswith("#"):
+            p = s.split()
+            caps[cur]["colours"].append("%s %s" % (p[0], p[2]))
+        elif s.startswith("text"):
+            caps[cur]["text"] = s
+
+
+    return caps
+
+
+a, b = load(sys.argv[1]), load(sys.argv[2])
+state = sys.argv[3] if len(sys.argv) > 3 else "rest"
+same = 0
+for key in sorted(set(a) & set(b)):
+    if key[2] != state:
+        continue
+    ca = [c.split()[0] for c in a[key]["colours"][:4]]
+    cb = [c.split()[0] for c in b[key]["colours"][:4]]
+    if ca == cb and a[key]["page"] == b[key]["page"]:
+        same += 1
+        if a[key]["text"] or b[key]["text"]:
+            print("%s %s: same colours; A %s | B %s" % (key[0], key[1], a[key]["text"], b[key]["text"]))
+        continue
+    print("%s %s %s:" % key)
+    print("   A page %s: %s" % (a[key]["page"], ", ".join(a[key]["colours"][:6])))
+    print("   B page %s: %s" % (b[key]["page"], ", ".join(b[key]["colours"][:6])))
+print("same: %d" % same)

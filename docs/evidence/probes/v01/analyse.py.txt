@@ -1,0 +1,244 @@
+"""V01 probe analyser (throwaway; kept as
+docs/evidence/probes/v01/analyse.py.txt).
+
+Usage: analyse.py ROLES_FILE PNG...
+
+For each PNG (a screenshot of one fixture of lib/probe.dart, named
+<platform>-<theme>-<id>-<state>.png), finds the fixture's box by its magenta
+frame (#FF00FF) and reads the pixels inside it, less the frame. Prints:
+
+- page: the commonest colour along the inside edge of the box;
+- the solid colours in the box (a pixel is solid if one of its four
+  neighbours has the same colour, within 2 in every channel), commonest
+  first, those with at least 0.2% of the box's pixels or 40 pixels, each
+  with its share, its contrast against the page, and the colour roles it
+  matches within 3 in every channel (ROLES_FILE: the V01ROLE lines of the
+  widget-test probe);
+- for a capture in a state other than rest: the solid colours that are new
+  against the same fixture's rest capture of the same platform and theme;
+- for g* fixtures (text over the gradient): the text colour, taken as the
+  commonest solid colour that is not the commonest of its column, and for
+  each column with text, the colours 6 pixels above the highest text pixel
+  and 6 below the lowest, in that column (the colours round the text
+  there); the lowest and highest
+  contrast of the text against it, and where.
+
+Colours are the pixels' own; ratios are WCAG's relative luminance formula.
+No libraries: its own PNG decoder.
+"""
+import collections
+import os
+import re
+import struct
+import sys
+import zlib
+
+
+def read_png(path):
+    data = open(path, "rb").read()
+    assert data[:8] == b"\x89PNG\r\n\x1a\n", path
+    pos, idat = 8, b""
+    while pos < len(data):
+        n, = struct.unpack(">I", data[pos:pos + 4])
+        kind = data[pos + 4:pos + 8]
+        body = data[pos + 8:pos + 8 + n]
+        pos += 12 + n
+        if kind == b"IHDR":
+            w, h, depth, ctype, _, _, interlace = struct.unpack(">IIBBBBB", body)
+            assert depth == 8 and interlace == 0, (path, depth, interlace)
+            ch = {2: 3, 6: 4}[ctype]
+        elif kind == b"IDAT":
+            idat += body
+        elif kind == b"IEND":
+            break
+    raw = zlib.decompress(idat)
+    stride = w * ch
+    prev = bytearray(stride)
+    px = [None] * h
+    i = 0
+    for y in range(h):
+        f = raw[i]
+        line = bytearray(raw[i + 1:i + 1 + stride])
+        i += 1 + stride
+        for x in range(stride):
+            a = line[x - ch] if x >= ch else 0
+            b = prev[x]
+            c = prev[x - ch] if x >= ch else 0
+            if f == 1:
+                line[x] = (line[x] + a) & 255
+            elif f == 2:
+                line[x] = (line[x] + b) & 255
+            elif f == 3:
+                line[x] = (line[x] + ((a + b) >> 1)) & 255
+            elif f == 4:
+                p = a + b - c
+                pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+                pr = a if pa <= pb and pa <= pc else (b if pb <= pc else c)
+                line[x] = (line[x] + pr) & 255
+        px[y] = [(line[x] << 16) | (line[x + 1] << 8) | line[x + 2] for x in range(0, stride, ch)]
+        prev = line
+    return w, h, px
+
+
+def lin(v):
+    s = v / 255
+    return s / 12.92 if s <= 0.04045 else ((s + 0.055) / 1.055) ** 2.4
+
+
+def lum(c):
+    return 0.2126 * lin((c >> 16) & 255) + 0.7152 * lin((c >> 8) & 255) + 0.0722 * lin(c & 255)
+
+
+def ratio(a, b):
+    x, y = lum(a), lum(b)
+    hi, lo = max(x, y), min(x, y)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def near(a, b, t):
+    return all(abs(((a >> s) & 255) - ((b >> s) & 255)) <= t for s in (16, 8, 0))
+
+
+def hexc(c):
+    return "#%06X" % c
+
+
+def box(w, h, px):
+    xs, ys = [], []
+    for y in range(h):
+        row = px[y]
+        for x in range(w):
+            c = row[x]
+            if ((c >> 16) & 255) > 240 and ((c >> 8) & 255) < 15 and (c & 255) > 240:
+                xs.append(x)
+                ys.append(y)
+    if not xs:
+        return None
+    l, r, t, b = min(xs), max(xs), min(ys), max(ys)
+    # The frame's thickness: the magenta run along the middle row from the left.
+    mid = (t + b) // 2
+    k = 0
+    while near(px[mid][l + k], 0xFF00FF, 15):
+        k += 1
+    inset = k + 2
+    return l + inset, t + inset, r - inset, b - inset
+
+
+def load_roles(path):
+    roles = collections.defaultdict(list)
+    for line in open(path):
+        m = re.search(r"V01ROLE (\w+) (\S+) #([0-9A-F]{6})( a=)?", line)
+        if m and not m.group(4):
+            roles[m.group(1)].append((m.group(2), int(m.group(3), 16)))
+    return roles
+
+
+def solid_hist(px, l, t, r, b):
+    hist = collections.Counter()
+    for y in range(t, b + 1):
+        for x in range(l, r + 1):
+            c = px[y][x]
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                xx, yy = x + dx, y + dy
+                if l <= xx <= r and t <= yy <= b and near(px[yy][xx], c, 2):
+                    hist[c] += 1
+                    break
+    return hist
+
+
+def merge(hist):
+    """Colours within 2 of a commoner one are counted as it."""
+    out = collections.Counter()
+    for c, n in hist.most_common():
+        for k in out:
+            if near(k, c, 2):
+                out[k] += n
+                break
+        else:
+            out[c] = n
+    return out
+
+
+def edge_page(px, l, t, r, b):
+    ring = collections.Counter()
+    for x in range(l, r + 1):
+        ring[px[t][x]] += 1
+        ring[px[b][x]] += 1
+    for y in range(t, b + 1):
+        ring[px[y][l]] += 1
+        ring[px[y][r]] += 1
+    return ring.most_common(1)[0][0]
+
+
+def gradient_text(px, l, t, r, b, colours, page):
+    """Text over the gradient: the commonest solid colour that is not the
+    commonest of its column."""
+    colbg = {}
+    for x in range(l, r + 1):
+        col = collections.Counter(px[y][x] for y in range(t, b + 1) if not near(px[y][x], page, 2))
+        colbg[x] = col.most_common(1)[0][0] if col else page
+    cand = collections.Counter()
+    for y in range(t, b + 1):
+        for x in range(l, r + 1):
+            c = px[y][x]
+            if not near(c, colbg[x], 12) and not near(c, page, 2):
+                cand[c] += 1
+    solid = [c for c, _ in cand.most_common(20) if any(near(c, k, 2) for k in colours)]
+    if not solid:
+        return None
+    text = solid[0]
+    rows = [y for y in range(t, b + 1) if any(near(px[y][x], text, 2) for x in range(l, r + 1))]
+    if not rows:
+        return None
+    y0, y1 = min(rows), max(rows)
+    worst, best = None, None
+    for x in range(l, r + 1):
+        if not any(near(px[y][x], text, 2) for y in range(y0, y1 + 1)):
+            continue
+        for u in (px[max(t, y0 - 6)][x], px[min(b, y1 + 6)][x]):
+            q = ratio(text, u)
+            if worst is None or q < worst[0]:
+                worst = (q, x - l, u)
+            if best is None or q > best[0]:
+                best = (q, x - l, u)
+    return text, worst, best
+
+
+def main():
+    roles = load_roles(sys.argv[1])
+    rests = {}
+    paths = sorted(sys.argv[2:], key=lambda p: (not p.endswith("-rest.png"), p))
+    for path in paths:
+        name = os.path.basename(path)[:-4]
+        plat, theme, rest = name.split("-", 2)
+        fid, state = rest.rsplit("-", 1)
+        w, h, px = read_png(path)
+        bx = box(w, h, px)
+        if bx is None:
+            print("%s: no box" % name)
+            continue
+        l, t, r, b = bx
+        page = edge_page(px, l, t, r, b)
+        hist = merge(solid_hist(px, l, t, r, b))
+        area = (r - l + 1) * (b - t + 1)
+        print("== %s box=%dx%d page=%s" % (name, r - l + 1, b - t + 1, hexc(page)))
+        keep = [(c, n) for c, n in hist.most_common() if n >= max(40, area * 0.002)]
+        for c, n in keep[:12]:
+            names = [k for k, v in roles.get(theme, []) if near(v, c, 3)]
+            print("   %s %6.2f%% %5.2f:1 %s" % (hexc(c), 100 * n / area, ratio(c, page), " ".join(names)))
+        key = (plat, theme, fid)
+        if state == "rest":
+            rests[key] = [c for c, _ in keep]
+        elif key in rests:
+            new = [c for c, _ in keep if not any(near(c, k, 2) for k in rests[key])]
+            print("   new against rest: %s" % (", ".join(
+                "%s %.2f:1" % (hexc(c), ratio(c, page)) for c in new) or "none"))
+        if fid.startswith("g"):
+            g = gradient_text(px, l, t, r, b, [c for c, _ in keep], page)
+            if g:
+                text, worst, best = g
+                print("   text %s: lowest %.2f:1 at x=%d over %s; highest %.2f:1 at x=%d over %s" % (
+                    hexc(text), worst[0], worst[1], hexc(worst[2]), best[0], best[1], hexc(best[2])))
+
+
+main()

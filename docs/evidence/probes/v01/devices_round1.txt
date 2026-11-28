@@ -1,0 +1,229 @@
+== android-dark-g2-rest box=799x316 page=#121318
+   #121318  26.64%  1.00:1 surface
+   #474F9A   2.13%  2.52:1 
+   #757CB7   2.10%  4.70:1 
+   #C0C5E6   2.10% 10.93:1 
+   #A8AED7   2.10%  8.57:1 
+   #646BAC   2.01%  3.75:1 
+   #3F4795   2.00%  2.25:1 
+   #1C257F   2.00%  1.43:1 
+   #9298C9   2.00%  6.68:1 
+   #283187   1.95%  1.66:1 
+   #4D559E   1.94%  2.75:1 
+   #525AA1   1.91%  2.95:1 
+   text #E6E0E9: lowest 4.66:1 at x=286 over #555DA3; highest 9.04:1 at x=78 over #252D85
+== android-dark-m1-rest box=799x190 page=#121318
+   #121318  50.73%  1.00:1 surface
+   #BAC3FF  48.62% 10.90:1 primary
+   #222C61   0.37%  1.41:1 onPrimary
+== android-dark-m21-rest box=799x358 page=#121318
+   #121318  99.02%  1.00:1 surface
+   #E4E1E9   0.30% 14.35:1 onSurface inverseSurface
+   #BAC3FF   0.24% 10.90:1 primary
+== android-dark-m25-rest box=799x195 page=#121318
+   #121318  87.67%  1.00:1 surface
+   #262834   9.72%  1.27:1 
+   #2C2C31   1.48%  1.34:1 surfaceContainerHigh
+   #C9C6CE   0.33% 11.00:1 onSurfaceVariant
+   #BAC3FF   0.24% 10.90:1 primary
+== android-dark-t3-rest box=799x116 page=#121318
+   #121318  97.36%  1.00:1 surface
+   #90909A   1.32%  5.87:1 outline
+== android-light-c12-rest box=799x190 page=#FBF8FF
+   #FBF8FF  97.62%  1.00:1 surface
+   #88878E   0.79%  3.38:1 
+   #000000   0.46% 19.97:1 cupertino.label
+== android-light-c14-rest box=800x450 page=#FBF8FF
+   #FBF8FF  64.48%  1.00:1 surface
+   #FCFBFD  33.12%  1.02:1 surface
+   #888788   0.80%  3.40:1 
+   #515B92   0.46%  6.12:1 primary
+   #D1D1D2   0.20%  1.45:1 
+== android-light-c17-rest box=799x158 page=#FBF8FF
+   #EBE9F0  52.58%  1.14:1 surfaceContainerHigh
+   #FBF8FF  45.64%  1.00:1 surface
+   #828188   1.00%  3.67:1 
+== android-light-c3s-rest box=799x200 page=#FBF8FF
+   #FBF8FF  99.25%  1.00:1 surface
+   #007AFF   0.41%  3.82:1 cupertino.systemBlue
+== android-light-c4s-rest box=799x200 page=#FBF8FF
+   #007AFF  61.22%  3.82:1 cupertino.systemBlue
+   #FBF8FF  38.02%  1.00:1 surface
+   #FFFFFF   0.41%  1.05:1 onPrimary onError cupertino.systemBackground
+== android-light-c5-rest box=799x153 page=#FBF8FF
+   #FFFFFF  48.69%  1.05:1 onPrimary onError cupertino.systemBackground
+   #FBF8FF  45.94%  1.00:1 surface
+   #C5C5C7   2.34%  1.64:1 
+   #CCCCCC   0.67%  1.53:1 
+   #C9C6CC   0.66%  1.61:1 
+== android-light-c7-rest box=799x166 page=#FBF8FF
+   #FBF8FF  92.88%  1.00:1 surface
+   #FFFFFF   3.12%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E6E4EB   2.11%  1.20:1 surfaceContainerHighest
+   #DFDDE4   0.48%  1.28:1 
+   #E3E1E8   0.46%  1.23:1 surfaceContainerHighest
+== android-light-c8-rest box=799x166 page=#FBF8FF
+   #FBF8FF  92.88%  1.00:1 surface
+   #FFFFFF   3.11%  1.05:1 onPrimary onError cupertino.systemBackground
+   #34C759   2.20%  2.11:1 cupertino.systemGreen
+   #32C056   0.49%  2.27:1 
+   #33C458   0.49%  2.18:1 cupertino.systemGreen
+== android-light-g2-rest box=799x316 page=#FBF8FF
+   #FBF8FF  26.64%  1.00:1 surface
+   #474F9A   2.13%  7.00:1 
+   #757CB7   2.10%  3.75:1 
+   #C0C5E6   2.10%  1.61:1 
+   #A8AED7   2.10%  2.06:1 
+   #646BAC   2.01%  4.71:1 
+   #3F4795   2.00%  7.84:1 
+   #1C257F   2.00% 12.33:1 
+   #9298C9   2.00%  2.64:1 
+   #283187   1.95% 10.63:1 
+   #4D559E   1.94%  6.42:1 
+   #525AA1   1.91%  5.99:1 
+   text #E6E0E9: lowest 4.66:1 at x=286 over #555DA3; highest 9.04:1 at x=78 over #252D85
+== android-light-k2-rest box=799x116 page=#FBF8FF
+   #FBF8FF  97.37%  1.00:1 surface
+   #88878E   1.32%  3.38:1 
+== android-light-k3-rest box=799x116 page=#FBF8FF
+   #FBF8FF  97.43%  1.00:1 surface
+   #C2C0C7   1.36%  1.71:1 
+== android-light-k4-rest box=799x116 page=#FBF8FF
+   #FBF8FF  97.43%  1.00:1 surface
+   #C2C0C7   1.36%  1.71:1 
+== android-light-m1-rest box=799x190 page=#FBF8FF
+   #FBF8FF  50.73%  1.00:1 surface
+   #515B92  48.62%  6.12:1 primary
+   #FFFFFF   0.37%  1.05:1 onPrimary onError cupertino.systemBackground
+== android-light-m21-rest box=799x358 page=#FBF8FF
+   #FBF8FF  99.02%  1.00:1 surface
+   #1B1B21   0.30% 16.30:1 onSurface
+   #515B92   0.24%  6.12:1 primary
+== android-light-m25-rest box=799x195 page=#FBF8FF
+   #FBF8FF  87.67%  1.00:1 surface
+   #E6E5F2   9.73%  1.19:1 surfaceContainerHigh
+   #E0DDE4   1.48%  1.28:1 
+   #38383E   0.33% 11.08:1 
+   #515B92   0.24%  6.12:1 primary
+== android-light-m29-rest box=799x221 page=#FBF8FF
+   #FBF8FF  96.67%  1.00:1 surface
+   #C7C5D0   2.74%  1.62:1 outlineVariant
+   #1B1B21   0.28% 16.30:1 onSurface
+== android-light-t3-rest box=799x116 page=#FBF8FF
+   #FBF8FF  97.36%  1.00:1 surface
+   #767680   1.32%  4.27:1 outline
+== ios-dark-g2-rest box=914x362 page=#121318
+   #121318  26.88%  1.00:1 surface
+   #7077B4   2.15%  4.41:1 
+   #9AA0CE   2.14%  7.33:1 
+   #757CB7   2.11%  4.70:1 
+   #959BCB   2.10%  6.92:1 
+   #A2A8D3   2.09%  8.02:1 
+   #BDC2E4   2.09% 10.60:1 
+   #222B83   2.07%  1.54:1 
+   #454D99   2.06%  2.45:1 
+   #656CAD   2.06%  3.80:1 
+   #4A529C   2.05%  2.63:1 
+   #8D93C6   2.03%  6.29:1 
+   text #E6E0E9: lowest 4.45:1 at x=341 over #5960A5; highest 9.08:1 at x=90 over #242D84
+== ios-dark-m1-rest box=914x218 page=#121318
+   #121318  50.91%  1.00:1 surface
+   #BAC3FF  48.33% 10.90:1 primary
+   #222C61   0.36%  1.41:1 onPrimary
+== ios-dark-m21-rest box=914x410 page=#121318
+   #121318  99.07%  1.00:1 surface
+   #E4E1E9   0.29% 14.35:1 onSurface inverseSurface
+   #BAC3FF   0.22% 10.90:1 primary
+== ios-dark-m25-rest box=914x224 page=#121318
+   #121318  87.73%  1.00:1 surface
+   #262834   9.70%  1.27:1 
+   #2C2C31   1.50%  1.34:1 surfaceContainerHigh
+   #C9C6CE   0.32% 11.00:1 onSurfaceVariant
+   #BAC3FF   0.22% 10.90:1 primary
+== ios-dark-t3-rest box=914x134 page=#121318
+   #121318  97.43%  1.00:1 surface
+   #90909A   1.32%  5.87:1 outline
+== ios-light-c12-rest box=914x218 page=#FBF8FF
+   #FBF8FF  97.69%  1.00:1 surface
+   #88878E   0.78%  3.38:1 
+   #000000   0.44% 19.97:1 cupertino.label
+== ios-light-c14-rest box=914x519 page=#FBF8FF
+   #FBF8FF  61.34%  1.00:1 surface
+   #FCFBFD  36.36%  1.02:1 surface
+   #888788   0.81%  3.40:1 
+   #515B92   0.41%  6.12:1 primary
+== ios-light-c17-rest box=914x182 page=#FBF8FF
+   #EBE9F0  52.40%  1.14:1 surfaceContainerHigh
+   #FBF8FF  45.81%  1.00:1 surface
+   #828188   0.99%  3.67:1 
+== ios-light-c3s-rest box=914x230 page=#FBF8FF
+   #FBF8FF  99.27%  1.00:1 surface
+   #007AFF   0.41%  3.82:1 cupertino.systemBlue
+== ios-light-c4s-rest box=914x230 page=#FBF8FF
+   #007AFF  60.95%  3.82:1 cupertino.systemBlue
+   #FBF8FF  38.18%  1.00:1 surface
+   #FFFFFF   0.41%  1.05:1 onPrimary onError cupertino.systemBackground
+== ios-light-c5-rest box=914x176 page=#FBF8FF
+   #FFFFFF  48.13%  1.05:1 onPrimary onError cupertino.systemBackground
+   #FBF8FF  45.71%  1.00:1 surface
+   #C5C5C7   2.29%  1.64:1 
+   #E6E6E6   1.14%  1.19:1 
+   #E2DFE6   1.11%  1.25:1 surfaceContainerHighest
+== ios-light-c7-rest box=914x191 page=#FBF8FF
+   #FBF8FF  92.86%  1.00:1 surface
+   #FFFFFF   3.11%  1.05:1 onPrimary onError cupertino.systemBackground
+   #E6E4EB   2.07%  1.20:1 surfaceContainerHighest
+   #E3E1E8   0.46%  1.23:1 surfaceContainerHighest
+   #E0DEE5   0.38%  1.27:1 
+   #DDDBE2   0.24%  1.30:1 
+== ios-light-c8-rest box=914x191 page=#FBF8FF
+   #FBF8FF  92.86%  1.00:1 surface
+   #FFFFFF   3.09%  1.05:1 onPrimary onError cupertino.systemBackground
+   #34C759   2.15%  2.11:1 cupertino.systemGreen
+   #33C458   0.49%  2.18:1 cupertino.systemGreen
+   #32C056   0.47%  2.27:1 
+   #31BB54   0.21%  2.39:1 
+== ios-light-g2-rest box=914x362 page=#FBF8FF
+   #FBF8FF  26.88%  1.00:1 surface
+   #7077B4   2.15%  4.01:1 
+   #9AA0CE   2.14%  2.41:1 
+   #757CB7   2.11%  3.75:1 
+   #959BCB   2.10%  2.55:1 
+   #A2A8D3   2.09%  2.20:1 
+   #BDC2E4   2.09%  1.66:1 
+   #222B83   2.07% 11.47:1 
+   #454D99   2.06%  7.20:1 
+   #656CAD   2.06%  4.64:1 
+   #4A529C   2.05%  6.71:1 
+   #8D93C6   2.03%  2.80:1 
+   text #E6E0E9: lowest 4.45:1 at x=341 over #5960A5; highest 9.08:1 at x=90 over #242D84
+== ios-light-k2-rest box=914x134 page=#FBF8FF
+   #FBF8FF  97.45%  1.00:1 surface
+   #88878E   1.32%  3.38:1 
+== ios-light-k3-rest box=914x134 page=#FBF8FF
+   #FBF8FF  97.51%  1.00:1 surface
+   #C2C0C7   1.34%  1.71:1 
+== ios-light-k4-rest box=914x134 page=#FBF8FF
+   #FBF8FF  97.51%  1.00:1 surface
+   #C2C0C7   1.34%  1.71:1 
+== ios-light-m1-rest box=914x218 page=#FBF8FF
+   #FBF8FF  50.91%  1.00:1 surface
+   #515B92  48.32%  6.12:1 primary
+   #FFFFFF   0.36%  1.05:1 onPrimary onError cupertino.systemBackground
+== ios-light-m21-rest box=914x410 page=#FBF8FF
+   #FBF8FF  99.07%  1.00:1 surface
+   #1B1B21   0.29% 16.30:1 onSurface
+   #515B92   0.22%  6.12:1 primary
+== ios-light-m25-rest box=914x224 page=#FBF8FF
+   #FBF8FF  87.73%  1.00:1 surface
+   #E6E5F2   9.70%  1.19:1 surfaceContainerHigh
+   #E0DDE4   1.50%  1.28:1 
+   #38383E   0.32% 11.08:1 
+   #515B92   0.22%  6.12:1 primary
+== ios-light-m29-rest box=914x254 page=#FBF8FF
+   #FBF8FF  96.95%  1.00:1 surface
+   #C7C5D0   2.36%  1.62:1 outlineVariant
+   #1B1B21   0.27% 16.30:1 onSurface
+== ios-light-t3-rest box=914x134 page=#FBF8FF
+   #FBF8FF  97.43%  1.00:1 surface
+   #767680   1.32%  4.27:1 outline

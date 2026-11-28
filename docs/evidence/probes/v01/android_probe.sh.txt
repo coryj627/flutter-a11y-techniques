@@ -1,0 +1,71 @@
+#!/bin/sh
+# V01 probe on Android, under tool/with_devices.py (throwaway; kept as
+# docs/evidence/probes/v01/android_probe.sh.txt). Run from the worktree root
+# after `fvm flutter build apk --debug -t lib/probe.dart`. For each fixture
+# of lib/probe.dart, light and dark: opens it by its route, waits 3 s, and
+# takes a screenshot (rest). For the fixtures that take a press, holds a
+# finger down 40 by 20 logical pixels into the box with `input motionevent`
+# and takes a screenshot while it is down (pressed). For the tree fixtures,
+# light only, dumps the UI Automator tree. Writes to $1.
+ADB=$HOME/Library/Android/sdk/platform-tools/adb
+PKG=dev.fluttera11y.flutter_a11y_techniques
+OUT=$1
+mkdir -p "$OUT"
+$ADB install -r build/app/outputs/flutter-apk/app-debug.apk >/dev/null || exit 1
+DENS=$($ADB shell wm density | tail -1 | sed 's/.*: //' | tr -d '\r')
+echo "== device: Android $($ADB shell getprop ro.build.version.release | tr -d '\r'), $($ADB shell wm size | tail -1 | tr -d '\r'), density $DENS"
+open() {
+  $ADB shell am force-stop $PKG
+  $ADB shell am start -W -n $PKG/.MainActivity --es route "$1" >/dev/null
+  sleep 3
+}
+point() { # the fixture point, from the title line's bounds
+  $ADB exec-out uiautomator dump /dev/tty 2>/dev/null | python3 -c '
+import re, sys
+xml = sys.stdin.read()
+d = float(sys.argv[1]) / 160
+m = re.search(r"(?:text|content-desc)=\"V01 [^\"]*\"[^>]*bounds=\"\[(\d+),(\d+)\]\[(\d+),(\d+)\]\"", xml)
+if m:
+    a, b, c, e = map(int, m.groups())
+    print(int(a + 59 * d), int(e + 51 * d))
+' "$DENS"
+}
+PRESS="m1 m2 m3 m4 m5 m32 m21 m22 m25 c1 c2 c3s c4s"
+TREE="m13 m14 m18 m19 m21 m22 m23 m24 m25 m26 m27 c7 c8 c9 c10 c11 m10 m15 c5 m7 g2 g3"
+for id in $IDS; do
+  for theme in light dark; do
+    route="/f/$id"; [ $theme = dark ] && route="$route/dark"
+    tag="android-$theme-$id"
+    open "$route"
+    $ADB exec-out screencap -p > "$OUT/$tag-rest.png"
+    case " $PRESS " in *" $id "*)
+      P=$(point)
+      if [ -n "$P" ]; then
+        $ADB shell input motionevent DOWN $P
+        sleep 0.6
+        $ADB exec-out screencap -p > "$OUT/$tag-pressed.png"
+        $ADB shell input motionevent UP $P
+        echo "$tag pressed at $P"
+      else
+        echo "$tag: no title line found"
+      fi
+    ;; esac
+    if [ $theme = light ]; then case " $TREE " in *" $id "*)
+      echo "== tree $id"
+      $ADB exec-out uiautomator dump /dev/tty 2>/dev/null | python3 -c '
+import re, sys
+for m in re.finditer(r"<node ([^>]*)>", sys.stdin.read()):
+    a = dict(re.findall(r"([\w-]+)=\"([^\"]*)\"", m.group(1)))
+    if a.get("package") != "dev.fluttera11y.flutter_a11y_techniques":
+        continue
+    if not (a.get("text") or a.get("content-desc") or a.get("checkable") == "true" or a.get("clickable") == "true"):
+        continue
+    print("  %s text=%r desc=%r checkable=%s checked=%s selected=%s clickable=%s enabled=%s bounds=%s" % (
+        a.get("class"), a.get("text"), a.get("content-desc"), a.get("checkable"), a.get("checked"),
+        a.get("selected"), a.get("clickable"), a.get("enabled"), a.get("bounds")))
+'
+    ;; esac; fi
+  done
+done
+$ADB shell am force-stop $PKG
+exit 0

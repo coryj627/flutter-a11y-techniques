@@ -1,0 +1,589 @@
+// V01 probe (throwaway, not committed; kept as
+// docs/evidence/probes/v01/probe.dart.txt): what colours Flutter's own
+// widgets draw at their theme's defaults, light and dark, and what reaches
+// assistive technology for the candidate defects.
+//
+// Route `/f/<id>` shows one fixture, `/f/<id>/dark` the same in the dark
+// theme. The theme is the catalog app's: `ThemeData(colorSchemeSeed:
+// Colors.indigo)`, light or dark, with no `CupertinoTheme` of its own, so
+// the Cupertino widgets take the theme Material derives for them, as in the
+// app. Fixtures whose id ends in `s` (c3s, c4s) put a default
+// `CupertinoThemeData(brightness:)` round the fixture instead, whose primary
+// colour is `systemBlue`.
+//
+// The fixture sits in a box, 16 logical pixels of the page round it, framed
+// by a magenta (#FF00FF) line 3 logical pixels wide, so that the analyser
+// can find the box in any screenshot. Nothing else is on the screen but a
+// line at the top naming the fixture.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+void main() {
+  runApp(const ProbeApp());
+  SemanticsBinding.instance.ensureSemantics();
+}
+
+const _seed = Colors.indigo;
+
+ThemeData _theme(bool dark) => ThemeData(
+  colorSchemeSeed: _seed,
+  brightness: dark ? Brightness.dark : Brightness.light,
+);
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: _theme(false),
+      darkTheme: _theme(true),
+      themeMode: ThemeMode.light,
+      initialRoute: '/f/t1',
+      onGenerateRoute: (settings) {
+        final parts = (settings.name ?? '').split('/')
+          ..removeWhere((p) => p.isEmpty);
+        Widget screen = const Scaffold(body: Center(child: Text('probe')));
+        if (parts.length >= 2 && parts[0] == 'f') {
+          final dark = parts.length > 2 && parts[2] == 'dark';
+          // As the app in dark mode: the dark theme, the Cupertino theme
+          // derived from it, and the platform's brightness dark. A nested
+          // `Theme` passes on the Cupertino theme above it rather than
+          // deriving one from its own data (`material/theme.dart`,
+          // `_inheritedCupertinoThemeData`), so round 1, which had the
+          // nested `Theme` only, drew the Cupertino fixtures light in its
+          // dark routes. Round 2 adds the derived Cupertino theme here.
+          screen = Builder(
+            builder: (context) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                platformBrightness: dark ? Brightness.dark : Brightness.light,
+              ),
+              child: CupertinoTheme(
+                data: MaterialBasedCupertinoThemeData(
+                  materialTheme: _theme(dark),
+                ),
+                child: Theme(
+                  data: _theme(dark),
+                  child: FixtureScreen(id: parts[1], dark: dark),
+                ),
+              ),
+            ),
+          );
+        }
+        return PageRouteBuilder<void>(
+          settings: settings,
+          pageBuilder: (_, _, _) => screen,
+        );
+      },
+    );
+  }
+}
+
+class FixtureScreen extends StatelessWidget {
+  const FixtureScreen({super.key, required this.id, required this.dark});
+
+  final String id;
+  final bool dark;
+
+  @override
+  Widget build(BuildContext context) {
+    final build = fixtures[id];
+    Widget fixture = build == null
+        ? Text('no fixture $id')
+        : Builder(builder: (c) => build.$2(c));
+    if (id.endsWith('s')) {
+      fixture = CupertinoTheme(
+        data: CupertinoThemeData(
+          brightness: dark ? Brightness.dark : Brightness.light,
+        ),
+        child: fixture,
+      );
+    }
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('V01 $id ${dark ? 'dark' : 'light'}'),
+              const SizedBox(height: 12),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFFFF00FF), width: 3),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SizedBox(width: 280, child: fixture),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Widget _col(List<Widget> c) => Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  mainAxisSize: MainAxisSize.min,
+  children: c,
+);
+
+void _noop() {}
+
+const _gradient = LinearGradient(
+  colors: [Color(0xFF1A237E), Color(0xFFC5CAE9)],
+);
+
+Widget _onGradient(Widget child) => DecoratedBox(
+  decoration: const BoxDecoration(gradient: _gradient),
+  child: SizedBox(height: 96, width: 280, child: child),
+);
+
+/// id: (description, builder).
+final fixtures = <String, (String, Widget Function(BuildContext))>{
+  // Text in the theme's colour roles.
+  't1': ('Text, default style', (_) => const Text('Opening hours')),
+  't2': (
+    'Text, onSurfaceVariant',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(color: Theme.of(c).colorScheme.onSurfaceVariant),
+    ),
+  ),
+  't3': (
+    'Text, outline',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(color: Theme.of(c).colorScheme.outline),
+    ),
+  ),
+  't4': (
+    'Text, primary',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(color: Theme.of(c).colorScheme.primary),
+    ),
+  ),
+  't5': (
+    'Text, error',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(color: Theme.of(c).colorScheme.error),
+    ),
+  ),
+  't6': (
+    'Text, onSurface at 0.38 (the disabled colour)',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(
+        color: Theme.of(c).colorScheme.onSurface.withValues(alpha: 0.38),
+      ),
+    ),
+  ),
+  't7': (
+    'Text, Colors.grey',
+    (_) => const Text('Opening hours', style: TextStyle(color: Colors.grey)),
+  ),
+  't8': (
+    'Text, outlineVariant',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(color: Theme.of(c).colorScheme.outlineVariant),
+    ),
+  ),
+  // Cupertino text colours, resolved for the theme's brightness.
+  'k1': (
+    'Text, CupertinoColors.label',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(color: CupertinoColors.label.resolveFrom(c)),
+    ),
+  ),
+  'k2': (
+    'Text, CupertinoColors.secondaryLabel',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(color: CupertinoColors.secondaryLabel.resolveFrom(c)),
+    ),
+  ),
+  'k3': (
+    'Text, CupertinoColors.tertiaryLabel',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(color: CupertinoColors.tertiaryLabel.resolveFrom(c)),
+    ),
+  ),
+  'k4': (
+    'Text, CupertinoColors.placeholderText',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(color: CupertinoColors.placeholderText.resolveFrom(c)),
+    ),
+  ),
+  'k5': (
+    'Text, CupertinoColors.secondaryLabel.highContrastColor '
+        '(darkHighContrastColor in dark)',
+    (c) => Text(
+      'Opening hours',
+      style: TextStyle(
+        color: Theme.of(c).brightness == Brightness.dark
+            ? CupertinoColors.secondaryLabel.darkHighContrastColor
+            : CupertinoColors.secondaryLabel.highContrastColor,
+      ),
+    ),
+  ),
+  // Material buttons.
+  'm1': (
+    'FilledButton',
+    (_) => const FilledButton(onPressed: _noop, child: Text('Save')),
+  ),
+  'm1d': (
+    'FilledButton, disabled',
+    (_) => const FilledButton(onPressed: null, child: Text('Save')),
+  ),
+  'm2': (
+    'OutlinedButton',
+    (_) => const OutlinedButton(onPressed: _noop, child: Text('Save')),
+  ),
+  'm2d': (
+    'OutlinedButton, disabled',
+    (_) => const OutlinedButton(onPressed: null, child: Text('Save')),
+  ),
+  'm3': (
+    'TextButton',
+    (_) => const TextButton(onPressed: _noop, child: Text('Save')),
+  ),
+  'm4': (
+    'ElevatedButton',
+    (_) => const ElevatedButton(onPressed: _noop, child: Text('Save')),
+  ),
+  'm5': (
+    'FilledButton.tonal',
+    (_) => const FilledButton.tonal(onPressed: _noop, child: Text('Save')),
+  ),
+  'm32': (
+    'IconButton',
+    (_) => IconButton(
+      onPressed: _noop,
+      tooltip: 'Search',
+      icon: const Icon(Icons.search),
+    ),
+  ),
+  // Text fields.
+  'm6': (
+    'TextField, OutlineInputBorder, labelText, empty',
+    (_) => const TextField(
+      decoration: InputDecoration(
+        labelText: 'Email',
+        border: OutlineInputBorder(),
+      ),
+    ),
+  ),
+  'm7': (
+    'TextField, OutlineInputBorder, hintText, empty',
+    (_) => const TextField(
+      decoration: InputDecoration(
+        hintText: 'name@example.com',
+        border: OutlineInputBorder(),
+      ),
+    ),
+  ),
+  'm8': (
+    'TextField, default decoration (underline), labelText',
+    (_) => const TextField(decoration: InputDecoration(labelText: 'Email')),
+  ),
+  'm9': (
+    'TextField, filled, labelText',
+    (_) => const TextField(
+      decoration: InputDecoration(labelText: 'Email', filled: true),
+    ),
+  ),
+  'm10': (
+    'TextField, OutlineInputBorder, errorText',
+    (_) => const TextField(
+      decoration: InputDecoration(
+        labelText: 'Email',
+        errorText: 'Enter an email address',
+        border: OutlineInputBorder(),
+      ),
+    ),
+  ),
+  'm11': (
+    'TextField, OutlineInputBorder, disabled',
+    (_) => const TextField(
+      enabled: false,
+      decoration: InputDecoration(
+        labelText: 'Email',
+        border: OutlineInputBorder(),
+      ),
+    ),
+  ),
+  'm12': (
+    'TextField, OutlineInputBorder, labelText, with text',
+    (_) => TextField(
+      controller: TextEditingController(text: 'ada@example.com'),
+      decoration: const InputDecoration(
+        labelText: 'Email',
+        border: OutlineInputBorder(),
+      ),
+    ),
+  ),
+  'm35': (
+    'TextField, OutlineInputBorder, labelText and hintText, focused',
+    (_) => const TextField(
+      autofocus: true,
+      decoration: InputDecoration(
+        labelText: 'Email',
+        hintText: 'name@example.com',
+        border: OutlineInputBorder(),
+      ),
+    ),
+  ),
+  // Selection controls.
+  'm13': (
+    'Checkbox, not checked',
+    (_) => Checkbox(value: false, onChanged: (_) {}),
+  ),
+  'm14': ('Checkbox, checked', (_) => Checkbox(value: true, onChanged: (_) {})),
+  'm15': (
+    'Checkbox, not checked, isError',
+    (_) => Checkbox(value: false, isError: true, onChanged: (_) {}),
+  ),
+  'm16': (
+    'Radio, not selected and selected, in a RadioGroup',
+    (_) => RadioGroup<int>(
+      groupValue: 2,
+      onChanged: (_) {},
+      child: const Row(children: [Radio(value: 1), Radio(value: 2)]),
+    ),
+  ),
+  'm18': ('Switch, off', (_) => Switch(value: false, onChanged: (_) {})),
+  'm19': ('Switch, on', (_) => Switch(value: true, onChanged: (_) {})),
+  'm20': ('Slider, 0.5', (_) => Slider(value: 0.5, onChanged: (_) {})),
+  'm21': (
+    'ListTile, selected (first) and not',
+    (_) => _col([
+      ListTile(title: const Text('Inbox'), selected: true, onTap: _noop),
+      ListTile(title: const Text('Archive'), onTap: _noop),
+    ]),
+  ),
+  'm22': (
+    'FilterChip, selected (first) and not',
+    (_) => Wrap(
+      spacing: 8,
+      children: [
+        FilterChip(label: const Text('Open'), selected: true, onSelected: (_) {}),
+        FilterChip(label: const Text('Free'), onSelected: (_) {}),
+      ],
+    ),
+  ),
+  'm23': (
+    'ChoiceChip, selected (first) and not',
+    (_) => Wrap(
+      spacing: 8,
+      children: [
+        ChoiceChip(label: const Text('Day'), selected: true, onSelected: (_) {}),
+        ChoiceChip(label: const Text('Week'), selected: false, onSelected: (_) {}),
+      ],
+    ),
+  ),
+  'm24': (
+    'SegmentedButton, first selected',
+    (_) => SegmentedButton<int>(
+      segments: const [
+        ButtonSegment(value: 1, label: Text('Day')),
+        ButtonSegment(value: 2, label: Text('Week')),
+      ],
+      selected: const {1},
+      onSelectionChanged: (_) {},
+    ),
+  ),
+  'm25': (
+    'ToggleButtons, first selected',
+    (_) => ToggleButtons(
+      isSelected: const [true, false],
+      onPressed: (_) {},
+      children: const [Text('Day'), Text('Week')],
+    ),
+  ),
+  'm26': (
+    'TabBar, first selected',
+    (_) => const DefaultTabController(
+      length: 2,
+      child: TabBar(tabs: [Tab(text: 'Day'), Tab(text: 'Week')]),
+    ),
+  ),
+  'm27': (
+    'NavigationBar, first selected',
+    (_) => NavigationBar(
+      selectedIndex: 0,
+      destinations: const [
+        NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+        NavigationDestination(icon: Icon(Icons.map), label: 'Map'),
+      ],
+    ),
+  ),
+  'm28': (
+    'Divider between two texts',
+    (_) => _col(const [Text('Opening hours'), Divider(), Text('Prices')]),
+  ),
+  'm29': (
+    'Card.outlined with text',
+    (_) => const Card.outlined(
+      child: Padding(padding: EdgeInsets.all(16), child: Text('Prices')),
+    ),
+  ),
+  'm30': (
+    'LinearProgressIndicator, 0.5',
+    (_) => const LinearProgressIndicator(value: 0.5),
+  ),
+  'm31': ('Chip', (_) => const Chip(label: Text('Open'))),
+  // Cupertino, under the theme Material derives.
+  'c1': (
+    'CupertinoButton',
+    (_) => const CupertinoButton(onPressed: _noop, child: Text('Save')),
+  ),
+  'c2': (
+    'CupertinoButton.filled',
+    (_) => const CupertinoButton.filled(onPressed: _noop, child: Text('Save')),
+  ),
+  'c3s': (
+    'CupertinoButton, default CupertinoThemeData',
+    (_) => const CupertinoButton(onPressed: _noop, child: Text('Save')),
+  ),
+  'c4s': (
+    'CupertinoButton.filled, default CupertinoThemeData',
+    (_) => const CupertinoButton.filled(onPressed: _noop, child: Text('Save')),
+  ),
+  'c5': (
+    'CupertinoTextField, placeholder, empty',
+    (_) => const CupertinoTextField(placeholder: 'name@example.com'),
+  ),
+  'c6': (
+    'CupertinoTextField, with text',
+    (_) => CupertinoTextField(
+      controller: TextEditingController(text: 'ada@example.com'),
+    ),
+  ),
+  'c7': (
+    'CupertinoSwitch, off',
+    (_) => CupertinoSwitch(value: false, onChanged: (_) {}),
+  ),
+  'c8': (
+    'CupertinoSwitch, on',
+    (_) => CupertinoSwitch(value: true, onChanged: (_) {}),
+  ),
+  'c9': (
+    'CupertinoCheckbox, not checked and checked',
+    (_) => Row(
+      children: [
+        CupertinoCheckbox(value: false, onChanged: (_) {}),
+        CupertinoCheckbox(value: true, onChanged: (_) {}),
+      ],
+    ),
+  ),
+  'c10': (
+    'CupertinoSlidingSegmentedControl, first selected',
+    (_) => CupertinoSlidingSegmentedControl<int>(
+      groupValue: 1,
+      onValueChanged: (_) {},
+      children: const {1: Text('Day'), 2: Text('Week')},
+    ),
+  ),
+  'c11': (
+    'CupertinoSegmentedControl, first selected',
+    (_) => CupertinoSegmentedControl<int>(
+      groupValue: 1,
+      onValueChanged: (_) {},
+      children: const {1: Text('Day'), 2: Text('Week')},
+    ),
+  ),
+  'c12': (
+    'CupertinoListTile, title, subtitle, additionalInfo',
+    (_) => const CupertinoListTile(
+      title: Text('Wi-Fi'),
+      subtitle: Text('Home network'),
+      additionalInfo: Text('On'),
+    ),
+  ),
+  'c13': (
+    'CupertinoListSection.insetGrouped, header and a tile',
+    (_) => CupertinoListSection.insetGrouped(
+      header: const Text('Network'),
+      children: const [CupertinoListTile(title: Text('Wi-Fi'))],
+    ),
+  ),
+  'c14': (
+    'CupertinoActionSheet, title, message, one action',
+    (_) => CupertinoActionSheet(
+      title: const Text('Delete photo'),
+      message: const Text('This cannot be undone'),
+      actions: [
+        CupertinoActionSheetAction(onPressed: _noop, child: const Text('Delete')),
+      ],
+    ),
+  ),
+  'c15': (
+    'CupertinoSlider, 0.5',
+    (_) => CupertinoSlider(value: 0.5, onChanged: (_) {}),
+  ),
+  'c17': (
+    'CupertinoSearchTextField, default placeholder',
+    (_) => const CupertinoSearchTextField(),
+  ),
+  // Text over a gradient, dark indigo (#1A237E) to pale indigo (#C5CAE9).
+  'g1': (
+    'White text on the gradient',
+    (_) => _onGradient(
+      const Center(
+        child: Text(
+          'Lakeside trail',
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+      ),
+    ),
+  ),
+  'g2': (
+    'GridTile, GridTileBar with title, default colours, over the gradient',
+    (_) => SizedBox(
+      height: 96,
+      width: 280,
+      child: GridTile(
+        footer: const GridTileBar(title: Text('Lakeside trail')),
+        child: _onGradient(const SizedBox()),
+      ),
+    ),
+  ),
+  'g3': (
+    'GridTile, GridTileBar(backgroundColor: Colors.black54), over the gradient',
+    (_) => SizedBox(
+      height: 96,
+      width: 280,
+      child: GridTile(
+        footer: const GridTileBar(
+          backgroundColor: Colors.black54,
+          title: Text('Lakeside trail'),
+        ),
+        child: _onGradient(const SizedBox()),
+      ),
+    ),
+  ),
+  'g4': (
+    'GridTile, GridTileBar(backgroundColor: Colors.black87), over the gradient',
+    (_) => SizedBox(
+      height: 96,
+      width: 280,
+      child: GridTile(
+        footer: const GridTileBar(
+          backgroundColor: Colors.black87,
+          title: Text('Lakeside trail'),
+        ),
+        child: _onGradient(const SizedBox()),
+      ),
+    ),
+  ),
+};
