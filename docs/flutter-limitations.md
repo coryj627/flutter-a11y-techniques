@@ -509,16 +509,16 @@ yet), **Fixed in x.y** (verified on that version).
     the list was not scrolled. VoiceOver's three-finger scroll was not
     tried.
   - VoiceOver on the web, moving with `next()` through S08 `bad-lazy-list`:
-    how far it goes in Chromium varied between recordings, and the cause
-    was not found. Six recordings (2026-11-26 and 27, with no end witness)
-    ended at item 13; two with an end witness (2026-11-28,
-    `docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt` and
-    `voiceover-web-round8-fail.md.txt`) ended at item 30 and at item 22,
-    VoiceOver scrolling the list as it moved. In WebKit every recording
-    ended at item 13, the last in the page when it opens, the two
-    witnessed. S08's Chromium row therefore proves only that items 1 to 13
-    are read, with no list role, and that whatever is read beyond them is
-    the next items in order.
+    how far it goes varied between recordings in both browsers, and the
+    cause was not found. Six recordings (2026-11-26 and 27, with no end
+    witness) ended at item 13, the last in the page when it opens, in
+    Chromium and WebKit. Three with an end witness (2026-11-28,
+    `docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt`,
+    `voiceover-web-round8-fail.md.txt`, `voiceover-web-round9-fail.md.txt`)
+    ended in Chromium at items 30, 22 and 30, and in WebKit at items 13,
+    13 and 21, VoiceOver scrolling the list as it moved. S08's row
+    therefore proves only that items 1 to 13 are read, with no list role,
+    and that whatever is read beyond them is the next items in order.
   - What each platform says about the list itself is FL-312 (web) and
     FL-313 (Android); on iOS a list is a container of no particular kind (FL-310).
 - Upstream issue: not searched yet. Lazy building is by design; the effect on
@@ -5168,9 +5168,9 @@ yet), **Fixed in x.y** (verified on that version).
   on the web. With FL-011 the page also holds only the items near the
   view: 13 of 30 when p08 opened, 18 to 30 after it was scrolled to the
   end. VoiceOver on the web, moving with `next()` through S08
-  `bad-lazy-list`, read no list role; in WebKit it reached item 13 in
-  every recording, and in Chromium how far it went varied between
-  recordings, 13, 30, and 22, the cause not found ([FL-011](#fl-011)).
+  `bad-lazy-list`, read no list role; how far it went varied between
+  recordings in both browsers, Chromium 13, 30, 22, 30 and WebKit 13, 21,
+  the cause not found ([FL-011](#fl-011)).
 - WCAG: 1.3.1 Info and Relationships, on the web: a list shown as a list
   is not programmatically a list.
 - Workaround: none in the SDK. For a list short enough to lay out whole,

@@ -45,11 +45,12 @@
 // the "Example" heading of a complete walk, so neither passes
 // judgeTranscript now. Every one of those six recordings ended
 // bad-lazy-list's walk after "Order 13" in both browsers, with no witness.
-// The two of 2026-11-28 with this walk (rounds 7 and 8, kept in
-// docs/evidence/probes/s08/) ended Chromium's after "Order 30" and after
-// "Order 22", each witnessed, and WebKit's after "Order 13" both times: how
-// far Chromium's walk goes varies, so it is judged as orders 1 to N for N
-// from 13 to 30 (STOP_RANGES in s08_vo_walks.js), with N in the verdict.
+// The three of 2026-11-28 with this walk (rounds 7, 8 and 9, kept in
+// docs/evidence/probes/s08/), each end witnessed, ended Chromium's after
+// "Order 30", "Order 22" and "Order 30", and WebKit's after "Order 13",
+// "Order 13" and "Order 21": how far the walk goes varies in both browsers,
+// so it is judged as orders 1 to N for N from 13 to 30 (STOP_RANGES in
+// s08_vo_walks.js), with N in the verdict.
 import { voiceOverTest as test } from '@guidepup/playwright';
 import { expect } from '@playwright/test';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';

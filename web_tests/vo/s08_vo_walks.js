@@ -82,31 +82,31 @@ export const EXPECTED_STOPS = {
   'bad-no-list': GROCERIES,
   // Each tile a list item, read as a group and not as a button (FL-262).
   'bad-tile-in-item': ['list 3 items', ...GROCERIES.map((g, i) => item(g, i, 'group')), 'end of list', 'Chosen: none'],
-  // No list; the orders the page holds when it opens, 1 to 13 (FL-011). In
-  // Chromium, 1 to N for N from 13 to 30 (STOP_RANGES).
+  // No list. The orders the page holds when it opens, 1 to 13 (FL-011);
+  // judged, in both browsers, as 1 to N for N from 13 to 30 (STOP_RANGES).
   'bad-lazy-list': ORDERS.slice(0, 13),
 };
 
 /**
  * Where how far a browser's walk reads varies between recordings, and so is
  * recorded and not judged: browser -> slug -> the range of the last order
- * read. `bad-lazy-list` in Chromium: its walk ended after "Order 13" in the
- * six recordings before the end witness (rounds 1 to 5 and the sixth,
- * voiceover-web-before-judge-update.md.txt; no witness, no positions), and,
- * each end witnessed, after "Order 30" (round 7) and after "Order 22"
- * (round 8), both 2026-11-28, VoiceOver scrolling the list as it moved. The
- * cause was not found. The page holds orders 1 to 13 when it opens (in both
- * browsers, measured without VoiceOver), and the fixture has 30. So the walk
- * must read orders 1, 2, … N, consecutive, for some N from 13 to 30, and
- * nothing after; its end witness is still required. It proves only that
- * the first thirteen orders are read with no list role, and that whatever
- * is read beyond them is consecutive orders. WebKit's walk ended after
- * "Order 13" in all eight recordings, the last two witnessed (a move back
- * to "Order 12" at another position), so WebKit's stays exactly 13.
+ * read. `bad-lazy-list`, in both browsers: in the six recordings before the
+ * end witness (rounds 1 to 5 and the sixth,
+ * voiceover-web-before-judge-update.md.txt; no witness, no positions) its
+ * walk ended after "Order 13" in Chromium and WebKit. With the witness
+ * (2026-11-28, docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt,
+ * round8 and round9), each end witnessed, Chromium's ended after "Order 30",
+ * "Order 22" and "Order 30", and WebKit's after "Order 13", "Order 13" and
+ * "Order 21", VoiceOver scrolling the list as it moved. The cause was not
+ * found. The page holds orders 1 to 13 when it opens (in both browsers,
+ * measured without VoiceOver), and the fixture has 30. So the walk must
+ * read orders 1, 2, … N, consecutive, for some N from 13 to 30, and nothing
+ * after; its end witness is still required. It proves only that the first
+ * thirteen orders are read with no list role, and that whatever is read
+ * beyond them is consecutive orders.
  */
-export const STOP_RANGES = {
-  chromium: { 'bad-lazy-list': { min: 13, max: 30 } },
-};
+const LAZY_RANGE = { 'bad-lazy-list': { min: 13, max: 30 } };
+export const STOP_RANGES = { chromium: LAZY_RANGE, webkit: LAZY_RANGE };
 
 /**
  * The last order a walk of a ranged slug is judged to have read (N): the

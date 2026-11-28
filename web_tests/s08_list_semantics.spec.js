@@ -776,21 +776,20 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     const exhausted = Array.from({ length: 20 }, (_, i) => w[i % w.length]);
     const cases = [
       ['a whole walk of every row in both browsers', transcript(right), true],
-      // bad-lazy-list: Chromium's walk reads orders 1 to N, consecutive, for
-      // some N from 13 to 30 (STOP_RANGES); WebKit's exactly 1 to 13.
-      ...[
-        ['to Order 13 (the six earlier recordings)', lazyOrders(13), true],
-        ['to Order 22 (round 8)', lazyOrders(22), true],
-        ['to Order 30 (round 7)', lazyOrders(30), true],
+      // bad-lazy-list: each browser's walk reads orders 1 to N, consecutive,
+      // for some N from 13 to 30 (STOP_RANGES).
+      ...BROWSERS.flatMap((browser) => [
+        ['to Order 13', lazyOrders(13), true],
+        ['to Order 21', lazyOrders(21), true],
+        ['to Order 22', lazyOrders(22), true],
+        ['to Order 30', lazyOrders(30), true],
         ['to Order 12', lazyOrders(12), false],
         ['to Order 31', lazyOrders(31), false],
         ['to Order 22 with Order 15 skipped', lazyOrders(22).filter((o) => o !== 'Order 15'), false],
         ['to Order 22 with Order 15 read twice', [...lazyOrders(15), 'Order 15', ...lazyOrders(22).slice(15)], false],
         ['to Order 22, then another stop', [...lazyOrders(22), 'Extra'], false],
         ['to Order 22, then Order 13 again', [...lazyOrders(22), 'Order 13'], false],
-      ].map(([what, orders, ok]) => [`Chromium's bad-lazy-list read ${what}`, lazyIn('chromium', orders), ok]),
-      ['WebKit\'s bad-lazy-list read to Order 22', lazyIn('webkit', lazyOrders(22)), false],
-      ['WebKit\'s bad-lazy-list read to Order 12', lazyIn('webkit', lazyOrders(12)), false],
+      ].map(([what, orders, ok]) => [`${browser}'s bad-lazy-list read ${what}`, lazyIn(browser, orders), ok])),
       ['an empty transcript', '', false],
       ['fourteen copies of one walk row', transcript(() => Array(7).fill(one)), false],
       ['fourteen copies of one walk\'s rows', transcript(() => Array(7).fill(rowsOf(R)).flat()), false],
@@ -915,19 +914,39 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     }
   });
 
-  test('rounds 7 and 8 (2026-11-28) judge right by today\'s rule, their only problem the verdict recorded for Chromium\'s bad-lazy-list', () => {
-    // Chromium's bad-lazy-list read to "Order 30" in round 7 and to "Order
-    // 22" in round 8, each end witnessed, and each was recorded wrong
-    // against the list of 13 or 30 it was judged by then. WebKit's read to
-    // "Order 13" both times.
-    for (const [round, n] of [[7, 30], [8, 22]]) {
+  test('rounds 7, 8 and 9 (2026-11-28) judge by today\'s rule as listed: bad-lazy-list\'s recorded verdicts, and round 9\'s three witnesses that read a help message', () => {
+    // Each end witnessed: Chromium's bad-lazy-list read to "Order 30",
+    // "Order 22" and "Order 30", WebKit's to "Order 13", "Order 13" and
+    // "Order 21". Rounds 7 and 8 were recorded wrong on Chromium's, round 9
+    // on WebKit's, each against the list it was judged by then. In round 9
+    // the end witness's move back read VoiceOver's "You are currently in a
+    // empty group." at the last item's position, in place of the item, in
+    // three list walks; those walks are wrong for good, today as then.
+    const lazyRecorded = (b) => `${b} bad-lazy-list: the last walk, 1, was recorded wrong and judges complete`;
+    const helpWitness = (b, slug, item, at, forwardAt) => [
+      `${b} ${slug}: walk 1's end witness read back "You are currently in a empty group." at ${at} and forward "end of list" at ${forwardAt}, where "${item}" and then "end of list" at another position were expected`,
+      `${b} ${slug}: the last walk, 1, was recorded wrong and judges wrong`];
+    const rounds = [
+      [7, { chromium: 30, webkit: 13 }, [lazyRecorded('chromium')]],
+      [8, { chromium: 22, webkit: 13 }, [lazyRecorded('chromium')]],
+      [9, { chromium: 30, webkit: 21 }, [
+        ...helpWitness('chromium', 'good-bulleted', 'Bread empty group (3 of 3) 3 of 3', '318, 367, 1006, 395', '318, 311, 1006, 395'),
+        ...helpWitness('chromium', 'good-numbered', '3. Open a pull request empty group (3 of 3) 3 of 3', '318, 367, 459, 395', '318, 311, 1006, 395'),
+        ...helpWitness('webkit', 'good-bulleted', 'Bread empty group (3 of 3) 3 of 3', '526, 332, 1214, 360', '526, 276, 1214, 360'),
+        lazyRecorded('webkit')]],
+    ];
+    for (const [round, reached, problems] of rounds) {
       const file = `docs/evidence/probes/s08/voiceover-web-round${round}-fail.md.txt`;
       const text = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
-      expect(judgeTranscript(text), file).toEqual(['chromium bad-lazy-list: the last walk, 1, was recorded wrong and judges complete']);
-      const lazy = (b) => transcriptRows(file).find((r) => r.browser === b && r.slug === 'bad-lazy-list').stops;
-      expect(lazy('chromium').slice(4), file).toEqual(lazyOrders(n));
-      expect(ordersRead('bad-lazy-list', 'chromium', lazy('chromium')), file).toBe(n);
-      expect(lazy('webkit').at(-1), file).toBe('Order 13');
+      expect(judgeTranscript(text), file).toEqual(problems);
+      for (const b of BROWSERS) {
+        // These rows hold the whole walk (the screen's own stops first).
+        const section = text.slice(text.indexOf(`## ${b}`));
+        const row = /^\| `bad-lazy-list-walk-1` \| (.*) \((?:complete|wrong|incomplete): .*\) \|$/m.exec(section)[1];
+        const stops = stopsOf(row);
+        expect(stops.slice(4), `${file} ${b}`).toEqual(lazyOrders(reached[b]));
+        expect(ordersRead('bad-lazy-list', b, stops), `${file} ${b}`).toBe(reached[b]);
+      }
     }
   });
 
